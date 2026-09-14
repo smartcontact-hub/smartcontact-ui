@@ -45,9 +45,14 @@
 2. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
    ~20 de las 79 entradas de `p-table`.
 
-- **Llevar la tabla con scroll propio (DD-95) al resto de listas**: Usuarios, Grupos, Etiquetas, Plantillas,
-  repositorios y Conversaciones (esta lleva `stickyHeader` y su e2e). Agentes ya la tiene. Las ramas
-  `comparar/tabla-*` sobran cuando esto aterrice: archivarlas con tag antes de borrarlas.
+- **Conversaciones y Entidades a `sc-list-page` (DD-98)**: las demás listas ya van sobre la pieza. Conversaciones
+  lleva filtros, tabla propia y `stickyHeader` con su e2e; Entidades, dos tablas. Después, archivar con tag las
+  ramas `comparar/tabla-*` y borrar la local `arebury/tabla-scroll-listas` (la copia por pantalla que no se subió).
+- **Una columna oculta que se reactiva en el selector sale al final** (Agentes, Usuarios, Grupos): el selector
+  hace `push`. Si Rafa lo pide, insertarla en su sitio declarado, en `sc-column-selector` para todas.
+- **Las tablas de dentro de los formularios** (agentes de un grupo, grupos de un agente) las rehace la sesión de
+  `hind` (`arebury/agents-groups-users-ds`, sin commit el 2026-09-14): toca también Usuarios, Grupos y
+  `audit-page-anatomy`, así que rebasa sobre DD-98 antes de subir.
 - **El foco de los campos del DS enseña anillo sky de 2 px y borde oscuro a la vez** (Rafa lo vio en el buscador,
   2026-09-14): es igual en todos los campos; decidir si se queda solo uno (Aura usa solo el borde).
 
@@ -146,6 +151,20 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · Las listas se montan sobre una sola pieza, `sc-list-page` (DD-98)
+
+**Sello:** rama `arebury/pieza-lista` sobre `486feb6` (#168). DD-98. Rafa, visto en local: «adelante».
+El tramo «Conversaciones lleva la piel de Aura» (2026-09-13) vive en el tag `archive/handoff-ds-2026-09-14-piel-aura`.
+
+**Lo que cambia.** 16 pantallas (Usuarios, Agentes, Grupos, Etiquetas, Plantillas, 9 repositorios, Reglas,
+Categorías) ponen columnas, celdas, acciones y diálogos; la pieza, el resto. Red antes/después y capturas en el
+scratchpad de la sesión (`red-listas.mjs`): igual salvo exportar con icono, «⋮» a `scale/4` y casillas nombradas.
+
+- ⚠️ **p-table reemite `sortChange` cada vez que recibe filas nuevas**: guardar el mismo orden como objeto nuevo es
+  un bucle que cuelga la pestaña. Compara antes de escribir (`onSortChange` de la pieza).
+- ⚠️ **Una dependencia de idioma declarada y no leída no hace nada**, y el gate la daba por buena por el nombre.
+  Lee `injectLangChange()` dentro del `computed`; `audit:datatables` ya exige la lectura.
+
 ## ✅ 2026-09-14 · Los controles llevan el interlineado de la rampa, atado en Figma (DD-91)
 
 **Sello:** rama `arebury/densidad-controles` sobre `1707074` (#159). DD-91. Rafa: opción 1 «con 20/18», «adelante».
@@ -211,25 +230,6 @@ pasar el ratón. El ID de Conversaciones pasa a 133 (se salía a cualquier ancho
 - ⚠️ **Un `<thead>` fijo crea contexto de apilamiento**: sin `z-index` las filas (celdas `relative`)
   pintan ENCIMA. Mide `elementFromPoint`, no solo el `top`: la posición salía bien con el fallo puesto.
 - **Una rueda lanzada nada más pintarse la tabla se pierde** (`scrollTop` 0): el spec la reintenta.
-
-## ✅ 2026-09-13 · Conversaciones lleva la piel de Aura, las pastillas salen del tag del DS y el producto deja la mono
-
-**Sello:** rama `arebury/conversaciones-piel-aura`, con `main` fusionado hasta `b7cd451` (#137). DD-76.
-Rafa, viéndolo en local: «me va gustando», «beben directamente del DS», «no queremos cosas en mono».
-
-**Lo que cambia.** Conversaciones sin piel propia (8/14, fila 44.5), anchos medidos y sin ⋮. Tipo,
-Estrategia, Servicio y Grupo usan `sc-tag` secundario, que baja a 1.75 de relleno (21.5, maestro
-`373:13337`). Doce sitios dejan la mono. La selección en oscuro de las 25 listas deja de salir clara.
-**Barrido (DD-77, #139) y hub (DD-78)**: 140 pastillas a mano pasan a `sc-tag`/`sc-badge`, el hub de
-Repositorios al `Menu` del DS, inventario de `hand-made-pieces` a CERO; Figma revinculado (Agentes ×3).
-
-**Lo que hay que recordar**, porque volverá a morder:
-
-- ⚠️ **Mi sonda de piezas a mano leyó de menos dos veces**: excluía lo que vive DENTRO de un `sc-*` (las
-  celdas) y pedía radio ≥3 (`sc-label` tiene 2). Se atribuye por `_ngcontent-X` → `_nghost-X`.
-- **`<kbd>`/`<code>` salen en mono por la hoja del navegador** (así sobrevivió el «⌘K»): mide lo CALCULADO.
-- **Invertir `_layers.scss` no invierte nada**: PrimeNG antepone `@layer reset, primeng`. El testigo
-  nuevo del test de capas (tinte de la fila fallida) se vio rojo quitando la regla.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

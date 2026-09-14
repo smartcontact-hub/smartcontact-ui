@@ -1,5 +1,3 @@
-import { map, startWith } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,24 +9,21 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { injectLangChange } from '@core/utils/lang-change';
 
+import { ListPageComponent } from '@shared/components';
 import {
-  ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,
   type ScColumnCellContext,
   type ScColumnDef,
-  ScDatatableComponent as DatatableComponent,
-  type ScDatatableRowEvent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
-  ScSearchComponent as SearchComponent,
 } from '@smartcontact-hub/components';
 import { Template, TemplateType } from '../data/templates-data';
 import { TemplatesStore } from '../state/templates.store';
@@ -40,15 +35,12 @@ import {
 @Component({
   selector: 'sc-templates-page',
   imports: [
-    BulkActionBarComponent,
     ButtonComponent,
     ClickOutsideDirective,
-    DatatableComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
-    MenuModule,
-    SearchComponent,
+    ListPageComponent,
     TemplateFormPanelComponent,
     TranslateModule,
   ],
@@ -60,6 +52,7 @@ export class TemplatesPageComponent {
   private readonly templatesStore = inject(TemplatesStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
 
   /** CTA + panel inline proyectados a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
@@ -70,12 +63,9 @@ export class TemplatesPageComponent {
 
   protected readonly plusIcon = 'add';
   protected readonly searchIcon = 'search';
-  protected readonly closeIcon = 'close';
-  protected readonly downloadIcon = 'download';
   protected readonly fileStackIcon = 'file_copy';
   protected readonly chatIcon = 'chat_bubble';
   protected readonly emailIcon = 'mail';
-  protected readonly moreIcon = 'more_vert';
 
   protected readonly templates = this.templatesStore.templates;
 
@@ -83,9 +73,8 @@ export class TemplatesPageComponent {
   protected readonly searchQuery = signal('');
   protected readonly creating = signal(false);
   protected readonly editingId = signal<number | null>(null);
-  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
-  protected readonly menuTargetTemplate = signal<Template | null>(null);
+  /** Selección: la lista la marca; de ella cuelgan la barra en lote y el borrado. */
+  protected readonly selectedIds = signal<ReadonlySet<Template['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly Template[] | null>(null);
 
   protected readonly chatCount = computed(
@@ -95,21 +84,20 @@ export class TemplatesPageComponent {
     () => this.templates().filter((t) => t.type === 'email').length,
   );
 
-  protected readonly filtered = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
+  /** Las de la pestaña activa, por título: esta lista no tiene cabeceras para ordenar. */
+  protected readonly tabRows = computed(() => {
     const tab = this.activeTab();
-    return this.templates().filter(
-      (t) =>
-        t.type === tab &&
-        (query === '' ||
-          t.title.toLowerCase().includes(query) ||
-          t.body.toLowerCase().includes(query)),
-    );
+    return this.templates()
+      .filter((t) => t.type === tab)
+      .sort((a, b) => a.title.localeCompare(b.title));
   });
 
-  protected readonly sorted = computed(() =>
-    [...this.filtered()].sort((a, b) => a.title.localeCompare(b.title)),
-  );
+  /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas). */
+  protected readonly matchesSearch = (t: Template, q: string): boolean =>
+    t.title.toLowerCase().includes(q) || t.body.toLowerCase().includes(q);
+
+  /** Nombre de la fila para lectores de pantalla: una plantilla se llama por su título. */
+  protected readonly rowLabel = (t: Template): string => t.title;
 
   protected readonly existingTitles = computed(() => this.templates().map((t) => t.title));
 
@@ -119,81 +107,32 @@ export class TemplatesPageComponent {
   private readonly titleTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('titleTpl');
   private readonly bodyTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('bodyTpl');
   private readonly updatedTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('updatedTpl');
-  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('actionsTpl');
 
-  /** Dependencia de IDIOMA para las cabeceras.
-   *
-   * `columns` es un `computed()` cuyas únicas dependencias eran los `viewChild`
-   * de las plantillas de celda. Como los `header` se resuelven con
-   * `translate.instant()` —no con el pipe `| translate`, que es impuro y sí
-   * reaccionaba— el computed NO se re-evaluaba al cambiar de idioma y las
-   * cabeceras se quedaban CONGELADAS en el idioma de carga.
-   *
-   * Lo destapó `audit:datatables` en su primera pasada, sobre 7 páginas. No lo
-   * veía ningún gate: `i18n:check` solo compara claves y todo el e2e corre en
-   * español. Mismo patrón que ya usaba `repo-list-page` para otra cosa. */
-  /** Nombre accesible de las casillas de selección.
-   *
-   * Sin esto PrimeNG anuncia sus literales por defecto —`'Row Selected'`,
-   * `'All items selected'`— que son inglés FIJO (no pasan por i18n) y no dicen
-   * qué fila es. La tabla a mano sí las nombraba; la migración lo perdió en
-   * silencio en todas. Ver `ScRowAriaLabelFn`. */
-  protected readonly ariaFila = (row: { title: string }): string =>
-    this.translate.instant('common.select_row', { name: row.title });
-  protected readonly ariaTodo = this.translate.instant('common.select_all');
-
-  private readonly currentLang = toSignal(
-    this.translate.onLangChange.pipe(
-      map((e) => e.lang),
-      startWith(this.translate.currentLang),
-    ),
-    { initialValue: this.translate.currentLang },
-  );
-
-  protected readonly columns = computed<readonly ScColumnDef<Template>[]>(() => [
-    {
-      field: 'title',
-      header: this.translate.instant('templates.table.title'),
-      cellTemplate: this.titleTpl(),
-    },
-    {
-      field: 'body',
-      header: this.translate.instant('templates.table.body'),
-      cellTemplate: this.bodyTpl(),
-    },
-    /* `updatedAt` sí lleva cellTemplate aunque sea texto plano: su tipografía
-     * (12px, gris tenue) vive en el SCSS de ESTA página, y el `<td>` lo pinta
-     * ahora el DS — una regla encapsulada aquí no lo alcanzaría. El `<span>`
-     * proyectado sí conserva el encapsulado de la página. */
-    {
-      field: 'updatedAt',
-      header: this.translate.instant('templates.table.updated'),
-      width: '112px',
-      cellTemplate: this.updatedTpl(),
-    },
-    { field: 'actions', stopRowClick: true, header: '', headerAriaLabel: this.translate.instant('common.actions'), width: '48px', cellTemplate: this.actionsTpl() },
-  ]);
-
-  /* Puente de selección: `selectedIds` sigue siendo la fuente de verdad (de
-   * ella cuelgan la barra masiva y el borrado); `sc-datatable` habla de filas. */
-  protected readonly selectedTemplates = computed<readonly Template[]>(() => {
-    const ids = this.selectedIds();
-    return this.sorted().filter((tpl) => ids.has(tpl.id));
+  protected readonly columns = computed<readonly ScColumnDef<Template>[]>(() => {
+    this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        field: 'title',
+        header: this.translate.instant('templates.table.title'),
+        cellTemplate: this.titleTpl(),
+      },
+      {
+        field: 'body',
+        header: this.translate.instant('templates.table.body'),
+        cellTemplate: this.bodyTpl(),
+      },
+      /* `updatedAt` sí lleva cellTemplate aunque sea texto plano: su tipografía
+       * (12px, gris tenue) vive en el SCSS de ESTA página, y el `<td>` lo pinta
+       * ahora el DS — una regla encapsulada aquí no lo alcanzaría. El `<span>`
+       * proyectado sí conserva el encapsulado de la página. */
+      {
+        field: 'updatedAt',
+        header: this.translate.instant('templates.table.updated'),
+        width: '112px',
+        cellTemplate: this.updatedTpl(),
+      },
+    ];
   });
-
-  protected onSelectionChange(selection: Template | readonly Template[] | null): void {
-    const rows = Array.isArray(selection) ? selection : selection ? [selection as Template] : [];
-    this.selectedIds.set(new Set(rows.map((tpl) => tpl.id)));
-  }
-
-  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). */
-  protected onRowContextMenu(
-    event: ScDatatableRowEvent<Template>,
-    menu: { toggle: (e: Event) => void },
-  ): void {
-    this.setMenuTarget(event.row);
-    menu.toggle(event.originalEvent);
-  }
 
   protected readonly deleteItems = computed(() =>
     (this.deleteTarget() ?? []).map((t) => ({ id: t.id, name: t.title })),
@@ -243,11 +182,6 @@ export class TemplatesPageComponent {
     this.toastSuccess('templates.toasts.updated', { name: submission.title });
   }
 
-  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
-   * migración: los sirven `p-tableCheckbox` y `p-tableHeaderCheckbox`, con la
-   * misma semántica (la de cabecera marca lo FILTRADO, que aquí además es lo
-   * de la pestaña activa). */
-
   protected clearSelection(): void {
     this.selectedIds.set(new Set());
   }
@@ -289,23 +223,8 @@ export class TemplatesPageComponent {
     this.deleteTarget.set(null);
   }
 
-  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
-   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
-   * HTML por fila y, aparte, un menú contextual con sus propios handlers
-   * duplicados — dos implementaciones que ya divergían. */
-
-  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
-   *  apuntar a otra fila. Con `[model]="build(tpl)"` el array se recreaba en
-   *  cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer clic
-   *  (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
-  protected readonly menuItems = computed<MenuItem[]>(() => {
-    const tpl = this.menuTargetTemplate();
-    return tpl ? this.buildMenuItems(tpl) : [];
-  });
-
-  protected setMenuTarget(tpl: Template): void {
-    this.menuTargetTemplate.set(tpl);
-  }
+  /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  protected readonly rowMenu = (tpl: Template): MenuItem[] => this.buildMenuItems(tpl);
 
   private buildMenuItems(tpl: Template): MenuItem[] {
     return [
@@ -342,15 +261,6 @@ export class TemplatesPageComponent {
 
   protected closeEditPanel(): void {
     this.editingId.set(null);
-  }
-
-  protected onSearchKey(event: KeyboardEvent): void {
-    if (event.key !== 'Escape') return;
-    if (this.searchQuery()) {
-      this.searchQuery.set('');
-    } else {
-      (event.target as HTMLInputElement).blur();
-    }
   }
 
   private toastSuccess(key: string, params?: Record<string, string | number>): void {

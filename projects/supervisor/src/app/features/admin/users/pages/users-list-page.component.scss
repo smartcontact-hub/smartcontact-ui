@@ -4,57 +4,7 @@
   background: var(--sc-bg-surface);
 }
 
-.page {
-  flex: 1;
-  /* Sin `overflow-y: auto` (2026-09-14): convertía `.page` en contenedor de scroll
-   * sin que nunca hiciera scroll (el que lo hace es `main.app-shell__content`), y
-   * la barra `sticky` de abajo quedaba atada a él: se iba con la lista. */
-  background: var(--sc-bg-surface);
-  /* Always reserve room for the overlaid bulk action bar — no CLS. */
-  padding-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-125));
-
-  &__inner {
-    padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
-  }
-
-  &__action-bar {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    /* Buscador → tabla `0-875`, menos que título → buscador (`1`): la barra es de la
-     * tabla. En margen y no en relleno: el degradado de 12 px de `::after` taparía
-     * el borde de la tabla (2026-09-14). */
-    margin-bottom: var(--sc-spacing-0-875);
-    /* Sticky on scroll — see DD#43 / agents-list-page.component.scss
-     * for the rationale; pattern shared across all three list pages. */
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: var(--sc-bg-surface);
-    padding-top: var(--sc-spacing-0-875);
-    /* El relleno de arriba solo hace falta cuando la barra se queda fija (que no
-     * pegue los controles al borde). En reposo se sumaba al margen del título:
-     * se sube lo mismo y el título queda a la distancia de las 13 pantallas. */
-    margin-top: calc(var(--sc-spacing-0-875) * -1);
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 100%;
-      height: 12px;
-      background: linear-gradient(to bottom, var(--sc-bg-surface), transparent);
-      pointer-events: none;
-    }
-  }
-
-  &__search {
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: 480px;
-  }
-}
+/* La página, la barra y el vacío de búsqueda los pinta `sc-list-page` (DD-97). Aquí solo las celdas. */
 
 /* `.table-card` chrome promovido a SCDS partial S55. Sin delta scoped.
  *
@@ -79,11 +29,6 @@
     color: var(--sc-text-primary);
   }
 
-  &__no-results {
-    padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
-    text-align: center;
-    color: var(--sc-text-subtle);
-  }
 }
 
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos

@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una pantalla de lista se monta sobre `<sc-list-page>`: la pantalla pone columnas, celdas, acciones y diálogos; la pieza, título, barra, tabla, selección y menú de fila · un `computed` con `translate.instant()` LEE el idioma (`injectLangChange`) | DD-98 |
 > | El clic derecho en una fila abre su menú en el puntero (lo hace `sc-datatable`, en todas las tablas) · el estado de un agente se cambia con un botón compacto y su lista, como el dialpad | DD-96 |
 > | Una lista de tabla lleva `.page--tabla` y `<sc-datatable scrollable scrollHeight="flex" virtualScroll>`: la tabla hace scroll dentro, se ajusta a sus filas y con más de 100 pinta solo las visibles | DD-95 |
 > | TopBar y bloque del logo con el mismo `scale/4` (56) · tallas de dentro con tokens del DS · barra → título `1-25`, lados `2`, buscador → tabla `0-875` · una barra `sticky` necesita que ningún antepasado tenga `overflow: auto` | DD-94 |
@@ -64,6 +65,45 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-98 · 2026-09-14 — Las listas se montan sobre una sola pieza, `sc-list-page`, y cada pantalla pone solo lo suyo
+
+**Contexto** · Al llevar la tabla con scroll propio (DD-95) a las demás listas, el cambio había que copiarlo en
+siete pantallas casi iguales (300-800 líneas cada una: título, barra, tabla, selección, menú de fila). Rafa:
+«el objetivo es poder reutilizar tablas. No tener 23287347 tablas alrededor», y eligió ir directo a la pieza.
+
+**Decisión** · (1) `shared/components/list-page` (`<sc-list-page>`) monta título, barra (selector de columnas,
+buscador, exportar), `<sc-datatable>` con scroll propio y lista virtual, selección con barra en lote y un menú
+de fila para «⋮» y clic derecho. La pantalla da `rows`, `columns` con sus celdas, `searchFn`, `sortFn` (orden
+que no es un campo tal cual), `rowMenu`, `rowOpenable`, `rowClass` y ranuras `[scListEmpty]`,
+`[scListNoResults]`, `[scListBeforeToolbar]` (pestañas, avisos) y `[scListBulkActions]`; diálogos, paneles y
+acciones siguen en la pantalla. (2) La montan Usuarios, Agentes, Grupos, Etiquetas, Plantillas, los nueve
+repositorios, Reglas y Categorías. (3) Unificado de paso: exportar es el botón de icono en todas; la columna del
+menú mide `scale/4`; las casillas de Repositorios se nombran («Seleccionar …», antes «Row Unselected»); Enter abre
+la fila solo con el foco en la fila, no en un control de dentro. (4) `core/utils/lang-change.ts`
+(`injectLangChange`): las columnas LEEN el idioma; `audit:datatables` exige la lectura y mira también las
+pantallas sobre la pieza, y `audit:page-anatomy` cuenta la pieza como arquetipo `list`.
+
+**Razón** · Una red de comportamiento antes/después sobre 9 listas (buscar, Escape, ordenar, columnas, «⋮», clic
+derecho, seleccionar una y todas, limpiar, abrir con clic y con Enter, exportar): igual en todo salvo lo
+unificado adrede. Los nueve repositorios, mismo título, filas, cabeceras y alto. Pestañas de Plantillas y panel
+de edición de Etiquetas, iguales. 161 e2e del Supervisor en verde. −1.300 líneas en `features/`.
+
+**Descartadas** ·
+- **Copiar el patrón en cada pantalla** (rama local `arebury/tabla-scroll-listas`, sin subir) → siete copias más
+  de lo mismo; el siguiente cambio de lista vuelve a costar siete.
+- **Meter en la pieza las tablas de dentro de un formulario** (agentes de un grupo, grupos de un agente) → viven
+  en una tarjeta, sin título ni exportar y con controles por fila; las rehace otra sesión (`hind`).
+- **Guardar el orden de la tabla como objeto nuevo en cada `sortChange`** → p-table reemite el orden al recibir
+  filas nuevas: bucle que colgaba la pestaña al primer clic en una cabecera (medido en Agentes y Grupos).
+
+**Consecuencias** · En Grupos, arrastrar en el selector reordena la tabla (como Agentes y Usuarios); una columna
+oculta que se reactiva sale al final, en las tres. «Agentes» de Grupos pierde su ancho fijo (partía la cabecera
+en dos líneas). Siete listas declaraban una dependencia de idioma que nunca leían: cabeceras congeladas con el
+gate en verde. Fuera de la pieza: Conversaciones (filtros y tabla propia) y Entidades (dos tablas). Ya estaba
+antes: el panel de edición de la última fila de Etiquetas, Plantillas y Repositorios hace scroll dentro de la tabla.
 
 ---
 

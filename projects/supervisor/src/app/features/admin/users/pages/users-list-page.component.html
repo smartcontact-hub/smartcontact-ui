@@ -8,87 +8,46 @@
   </sc-button>
 </ng-template>
 
-<div class="page">
-  <div class="page__inner page__inner--list">
-    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
-         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
-         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
-         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ 'sidebar.users' | translate }}</h1>
+<!-- La lista (título, barra, tabla, selección, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo
+     que es de Usuarios: columnas y celdas, acciones y diálogos. -->
+<sc-list-page
+  [heading]="'sidebar.users' | translate"
+  [rows]="users()"
+  [columns]="columns()"
+  [columnChoices]="columnDefs()"
+  [columnStorageKey]="columnPrefKey"
+  [searchPlaceholder]="'users.search_placeholder' | translate"
+  [searchFn]="matchesSearch"
+  [noResultsText]="'users.no_results' | translate"
+  exportable
+  [rowMenu]="rowMenu"
+  [rowOpenable]="isOpenable"
+  selectable
+  [bulkEntity]="bulkEntity()"
+  [(selectedIds)]="selectedIds"
+  tableTestId="users-table"
+  (rowOpen)="onRowOpen($event)"
+  (exportRequest)="onExport($event)"
+>
+  <sc-empty-state
+    scListEmpty
+    [icon]="emptyIcon"
+    titleKey="users.empty.title"
+    bodyKey="users.empty.body"
+    ctaKey="users.create_button"
+    (cta)="onCreateClick()"
+  />
 
-    <div class="page__action-bar">
-      <!-- `orderedVisibleChange` y no `visibilityChange`: el `Set` solo dice
-           CUÁLES, y `[visibleColumns]` de la tabla respeta también el ORDEN —
-           que es lo que el usuario arrastra en el selector. Su `key` es el
-           `field` de la columna. -->
-      <sc-column-selector
-        [columns]="columnDefs()"
-        [storageKey]="columnPrefKey"
-        (orderedVisibleChange)="onColumnsChange($event)"
-      />
-      <sc-search
-        class="page__search"
-        [placeholder]="'users.search_placeholder' | translate"
-        shortcutHint="⌘K"
-        [clearAriaLabel]="'labels.clear_search' | translate"
-        [value]="searchQuery()"
-        (valueChange)="searchQuery.set($event)"
-        (keydown)="onSearchKey($event)"
-      />
-      <span class="sc-action-divider" aria-hidden="true"></span>
-      <sc-button variant="secondary" appearance="outlined" [icon]="downloadIcon" [ariaLabel]="'labels.export_button' | translate" [attr.title]="'labels.export_button' | translate" (clicked)="onExport()" />
-    </div>
+  <ng-container ngProjectAs="[scListBulkActions]">
+    <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (commit)="onBulkEditCommit($event)" />
+    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+      <span>{{ 'common.delete' | translate }}</span>
+    </sc-button>
+  </ng-container>
+</sc-list-page>
 
-    @if (users().length === 0) {
-      <sc-empty-state
-        [icon]="emptyIcon"
-        titleKey="users.empty.title"
-        bodyKey="users.empty.body"
-        ctaKey="users.create_button"
-        (cta)="onCreateClick()"
-      />
-    } @else {
-      <!-- B4: la tabla la pinta el componente del DS. `variant="list"` le
-           pone la gramática de tabla-lista de la app (54px de fila, cabecera
-           silenciosa de S59); sin ella el preset la dejaría más densa y con la
-           cabecera oscura, distinta de las tablas hermanas.
-
-           La zebra de `.sc-table-zebra` NO viaja: la separación de filas en una
-           tabla-lista la fija la piel con su hairline, igual que en labels,
-           plantillas, agentes y grupos. `[stripedRows]` del DS la traería de
-           vuelta, pero dejaría a usuarios como la única con las dos. -->
-
-      <div class="table-card">
-        <sc-datatable
-          variant="list"
-          [value]="sorted()"
-          [columns]="columns()"
-          [visibleColumns]="tableColumns()"
-          [rowStyleClass]="rowStyleClass"
-          dataKey="id"
-          selectionMode="multiple"
-    [rowSelectionAriaLabel]="ariaFila"
-    [selectAllAriaLabel]="ariaTodo"
-          [selection]="selectedUsers()"
-          (selectionChange)="onSelectionChange($any($event))"
-          rowsFocusable
-        (rowClick)="onRowClick($event.row)"
-        (rowKeydown)="onRowKeydown($event)"
-          (rowContextMenu)="onRowContextMenu($event, rowMenu)"
-          data-testid="users-table"
-        >
-          <div scTableEmpty class="table__no-results sc-text-body-regular">
-            {{ 'users.no_results' | translate }}
-          </div>
-        </sc-datatable>
-      </div>
-    }
-  </div>
-</div>
-
-<!-- Celdas de la tabla. Viven FUERA del `<sc-datatable>` para que los
-     `viewChild` las resuelvan; `columns()` las recoge. El contexto es
-     `{ $implicit: user }`. -->
+<!-- Celdas de la tabla. Viven FUERA de la lista para que los `viewChild` las resuelvan; `columns()` las
+     recoge. El contexto es `{ $implicit: user }`. -->
 <ng-template #nameTpl let-user>
   <div class="table__td-name sc-text-body-semibold">
     @if (renamingId() === user.id) {
@@ -105,7 +64,7 @@
   </div>
 </ng-template>
 
-<!-- Texto plano, pero con `<span>` propio: el `<td>` lo pinta ahora el DS y una
+<!-- Texto plano, pero con `<span>` propio: el `<td>` lo pinta el DS y una
      regla encapsulada de esta página no lo alcanzaría (trampa 3 de la receta). -->
 <ng-template #emailTpl let-user>
   <span class="table__td-text sc-text-body-regular" [title]="user.email">{{ user.email }}</span>
@@ -125,18 +84,6 @@
     [value]="'users.status.' + user.status | translate"
   />
 </ng-template>
-
-<!-- `stopPropagation` no es decorativo: el `<td>` del DS ya no corta el click
-     (solo lo hace la celda de la casilla), así que sin él abrir el kebab
-     dispararía además `rowClick` y navegaría al detalle. -->
-<ng-template #actionsTpl let-user>
-  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="moreIcon" [ariaLabel]="'labels.row_menu' | translate" (clicked)="setMenuTarget(user); rowMenu.toggle($event); $event.stopPropagation()" />
-</ng-template>
-
-<!-- Kebab ÚNICO y compartido por toda la tabla (antes: un panel HTML por fila
-     MÁS un menú contextual aparte con sus propios handlers). El click derecho
-     en la fila abre este mismo menú — R3 del modelo canónico. -->
-<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
 
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"
@@ -160,16 +107,3 @@
   (cancelled)="onBulkPreviewCancel()"
   (confirm)="onBulkPreviewConfirm($event)"
 />
-
-<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-  <!-- Usuarios era la única de las tres hermanas sin edición masiva, y la
-       ausencia era accidental: los tres ficheros son casi el mismo. -->
-  <sc-bulk-edit-menu
-    [fields]="bulkEditFields()"
-    [buttonLabel]="'Editar'"
-    (commit)="onBulkEditCommit($event)"
-  />
-  <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
-    <span>{{ 'common.delete' | translate }}</span>
-  </sc-button>
-</sc-bulk-action-bar>

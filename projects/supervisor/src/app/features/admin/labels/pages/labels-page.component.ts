@@ -1,5 +1,3 @@
-import { map, startWith } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,7 +10,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
@@ -20,16 +17,13 @@ import { ClickOutsideDirective } from '@core/directives';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { XlsxExportService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { LabelChipComponent } from '@shared/components';
+import { injectLangChange } from '@core/utils/lang-change';
+import { LabelChipComponent, ListPageComponent } from '@shared/components';
 import {
-  ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,
   type ScColumnCellContext,
   type ScColumnDef,
-  ScDatatableComponent as DatatableComponent,
-  type ScDatatableRowEvent,
   ScEmptyStateComponent as EmptyStateComponent,
-  ScSearchComponent as SearchComponent,
 } from '@smartcontact-hub/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { LabelCascadeService } from '@features/admin/services/label-cascade.service';
@@ -44,18 +38,15 @@ import {
 @Component({
   selector: 'sc-labels-page',
   imports: [
-    BulkActionBarComponent,
     ButtonComponent,
     ClickOutsideDirective,
-    DatatableComponent,
     DeleteLabelsDialogComponent,
     EmptyStateComponent,
     FormsModule,
     IconComponent,
     LabelChipComponent,
     LabelFormPanelComponent,
-    MenuModule,
-    SearchComponent,
+    ListPageComponent,
     TranslateModule,
   ],
   templateUrl: './labels-page.component.html',
@@ -69,6 +60,7 @@ export class LabelsPageComponent {
   private readonly xlsx = inject(XlsxExportService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
 
   /** CTA + panel inline proyectados a la TopBar (modelo "todo arriba" S59):
    * la banda de page-header desaparece; identidad → breadcrumb, acción → barra.
@@ -81,10 +73,7 @@ export class LabelsPageComponent {
 
   protected readonly plusIcon = 'add';
   protected readonly searchIcon = 'search';
-  protected readonly closeIcon = 'close';
-  protected readonly downloadIcon = 'download';
   protected readonly tagIcon = 'label';
-  protected readonly moreIcon = 'more_vert';
 
   protected readonly labels = this.labelsStore.labels;
   protected readonly agentCountByLabel = this.agentsStore.agentCountByLabel;
@@ -92,25 +81,16 @@ export class LabelsPageComponent {
   protected readonly searchQuery = signal('');
   protected readonly creating = signal(false);
   protected readonly editingId = signal<number | null>(null);
-  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
-  protected readonly menuTargetLabel = signal<Label | null>(null);
+  /** Selección: la lista la marca; de ella cuelgan la barra en lote y el borrado. */
+  protected readonly selectedIds = signal<ReadonlySet<Label['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly Label[] | null>(null);
 
-  protected readonly filtered = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    const all = this.labels();
-    if (!query) return all;
-    return all.filter(
-      (label) =>
-        label.name.toLowerCase().includes(query) ||
-        (label.description ?? '').toLowerCase().includes(query),
-    );
-  });
+  /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas). */
+  protected readonly matchesSearch = (label: Label, q: string): boolean =>
+    label.name.toLowerCase().includes(q) || (label.description ?? '').toLowerCase().includes(q);
 
-  protected readonly sorted = computed(() =>
-    [...this.filtered()].sort((a, b) => a.name.localeCompare(b.name)),
-  );
+  /** Siempre por nombre: esta lista no tiene cabeceras para ordenar. */
+  protected readonly sorted = computed(() => [...this.labels()].sort((a, b) => a.name.localeCompare(b.name)));
 
   protected readonly existingNames = computed(() => this.labels().map((label) => label.name));
 
@@ -126,72 +106,22 @@ export class LabelsPageComponent {
    */
   private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Label>>>('nameTpl');
   private readonly descTpl = viewChild<TemplateRef<ScColumnCellContext<Label>>>('descTpl');
-  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Label>>>('actionsTpl');
 
-  /** Dependencia de IDIOMA para las cabeceras.
-   *
-   * `columns` es un `computed()` cuyas únicas dependencias eran los `viewChild`
-   * de las plantillas de celda. Como los `header` se resuelven con
-   * `translate.instant()` —no con el pipe `| translate`, que es impuro y sí
-   * reaccionaba— el computed NO se re-evaluaba al cambiar de idioma y las
-   * cabeceras se quedaban CONGELADAS en el idioma de carga.
-   *
-   * Lo destapó `audit:datatables` en su primera pasada, sobre 7 páginas. No lo
-   * veía ningún gate: `i18n:check` solo compara claves y todo el e2e corre en
-   * español. Mismo patrón que ya usaba `repo-list-page` para otra cosa. */
-  /** Nombre accesible de las casillas de selección.
-   *
-   * Sin esto PrimeNG anuncia sus literales por defecto —`'Row Selected'`,
-   * `'All items selected'`— que son inglés FIJO (no pasan por i18n) y no dicen
-   * qué fila es. La tabla a mano sí las nombraba; la migración lo perdió en
-   * silencio en todas. Ver `ScRowAriaLabelFn`. */
-  protected readonly ariaFila = (row: { name: string }): string =>
-    this.translate.instant('common.select_row', { name: row.name });
-  protected readonly ariaTodo = this.translate.instant('common.select_all');
-
-  private readonly currentLang = toSignal(
-    this.translate.onLangChange.pipe(
-      map((e) => e.lang),
-      startWith(this.translate.currentLang),
-    ),
-    { initialValue: this.translate.currentLang },
-  );
-
-  protected readonly columns = computed<readonly ScColumnDef<Label>[]>(() => [
-    {
-      field: 'name',
-      header: this.translate.instant('labels.table.name'),
-      cellTemplate: this.nameTpl(),
-    },
-    {
-      field: 'description',
-      header: this.translate.instant('labels.table.description'),
-      cellTemplate: this.descTpl(),
-    },
-    // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
-    // igual que el `<th aria-hidden>` que sustituye.
-    { field: 'actions', stopRowClick: true, header: '', headerAriaLabel: this.translate.instant('common.actions'), width: '48px', cellTemplate: this.actionsTpl() },
-  ]);
-
-  /* Puente de selección: la fuente de verdad sigue siendo `selectedIds` —de
-   * ella cuelgan la barra masiva, el borrado y el export— y `sc-datatable`
-   * habla de filas. Traducir en los dos sentidos aquí evita reescribir media
-   * página por un cambio de tabla. */
-  protected readonly selectedLabels = computed<readonly Label[]>(() => {
-    const ids = this.selectedIds();
-    return this.sorted().filter((label) => ids.has(label.id));
+  protected readonly columns = computed<readonly ScColumnDef<Label>[]>(() => {
+    this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        field: 'name',
+        header: this.translate.instant('labels.table.name'),
+        cellTemplate: this.nameTpl(),
+      },
+      {
+        field: 'description',
+        header: this.translate.instant('labels.table.description'),
+        cellTemplate: this.descTpl(),
+      },
+    ];
   });
-
-  protected onSelectionChange(selection: Label | readonly Label[] | null): void {
-    const rows = Array.isArray(selection) ? selection : selection ? [selection as Label] : [];
-    this.selectedIds.set(new Set(rows.map((label) => label.id)));
-  }
-
-  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). */
-  protected onRowContextMenu(event: ScDatatableRowEvent<Label>, menu: { toggle: (e: Event) => void }): void {
-    this.setMenuTarget(event.row);
-    menu.toggle(event.originalEvent);
-  }
 
   protected readonly bulkEntity = useBulkEntityI18n({
     singular: 'common.bulk.entity.label_singular',
@@ -224,11 +154,6 @@ export class LabelsPageComponent {
     this.editingId.set(null);
     this.toastSuccess('labels.toasts.updated', { name: submission.name });
   }
-
-  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
-   * migración a `sc-datatable`: la casilla de fila y la de cabecera las
-   * sirven `p-tableCheckbox` y `p-tableHeaderCheckbox`, con la misma
-   * semántica de antes (la de cabecera marca lo FILTRADO, no todo). */
 
   protected clearSelection(): void {
     this.selectedIds.set(new Set());
@@ -265,23 +190,8 @@ export class LabelsPageComponent {
     this.deleteTarget.set(null);
   }
 
-  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
-   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
-   * HTML por fila MÁS un menú contextual aparte con sus propios handlers
-   * duplicados — dos implementaciones que ya divergían. */
-
-  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
-   *  apuntar a otra fila. Con `[model]="build(label)"` el array se recreaba en
-   *  cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer clic
-   *  (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
-  protected readonly menuItems = computed<MenuItem[]>(() => {
-    const label = this.menuTargetLabel();
-    return label ? this.buildMenuItems(label) : [];
-  });
-
-  protected setMenuTarget(label: Label): void {
-    this.menuTargetLabel.set(label);
-  }
+  /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  protected readonly rowMenu = (label: Label): MenuItem[] => this.buildMenuItems(label);
 
   private buildMenuItems(label: Label): MenuItem[] {
     return [
@@ -320,17 +230,7 @@ export class LabelsPageComponent {
     this.editingId.set(null);
   }
 
-  protected onSearchKey(event: KeyboardEvent): void {
-    if (event.key === 'Escape') {
-      if (this.searchQuery()) {
-        this.searchQuery.set('');
-      } else {
-        (event.target as HTMLInputElement).blur();
-      }
-    }
-  }
-
-  protected onExport(): void {
+  protected onExport(visibleRows: readonly Label[]): void {
     const headers = [
       this.translate.instant('labels.export.name'),
       this.translate.instant('labels.export.color'),
@@ -338,7 +238,7 @@ export class LabelsPageComponent {
       this.translate.instant('labels.export.assigned_agents'),
     ];
     const counts = this.agentCountByLabel();
-    const rows = this.sorted().map((label) => [
+    const rows = visibleRows.map((label) => [
       label.name,
       label.color,
       label.description ?? '',

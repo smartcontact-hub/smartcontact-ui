@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  height: 100%;
+  background: var(--sc-bg-surface);
+}
+
+/* El molde de la página (anchos, `.page--tabla`, título) es global: `styles/_page.scss`. Aquí solo lo que
+ * es de la lista. */
+.page {
+  background: var(--sc-bg-surface);
+
+  &__inner {
+    /* Barra → título 17,5 y lados 28, los de la miga (DD-94). */
+    padding: var(--sc-spacing-1-25) var(--sc-spacing-2);
+  }
+
+  /* Buscador → tabla `0-875`, menos que título → buscador (`1`): la barra es de la tabla (DD-94). */
+  &__action-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    margin-bottom: var(--sc-spacing-0-875);
+  }
+
+  &__search {
+    flex: 1 1 auto;
+    min-width: 0;
+    /* Heredado de las listas (sin paso de escala: `scale/25` = 350 cortaría el texto de ayuda de Agentes).
+     * Pendiente de un token de ancho de campo. */
+    max-width: 480px;
+  }
+}
+
+/* Vacío de búsqueda: los mismos valores que tenían las listas. */
+.list-page__no-results {
+  padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
+  text-align: center;
+  color: var(--sc-text-subtle);
+}

@@ -1,5 +1,3 @@
-import { map, startWith } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,35 +10,29 @@ import {
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { injectLangChange } from '@core/utils/lang-change';
 
+import { ListPageComponent } from '@shared/components';
 import {
-  ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,
   BulkEditCommit,
   BulkEditFieldOption,
   ScBulkEditMenuComponent as BulkEditMenuComponent,
   ColumnDef,
-  ScColumnSelectorComponent as ColumnSelectorComponent,
   type ScColumnCellContext,
   type ScColumnDef,
-  ScDatatableComponent as DatatableComponent,
-  type ScDatatableRowEvent,
-  type ScDatatableRowKeyEvent,
-  type ScRowStyleClassFn,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ImpactBadge,
   ImpactItem,
   ScImpactPreviewDialogComponent as ImpactPreviewDialogComponent,
   ScInlineRenameCellComponent as InlineRenameCellComponent,
-  ScSearchComponent as SearchComponent,
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import { USER_TYPE_LABEL_KEYS, USER_TYPES, User, UserType } from '../data/users-data';
@@ -58,19 +50,15 @@ interface PendingBulkEdit {
 @Component({
   selector: 'sc-users-list-page',
   imports: [
-    BulkActionBarComponent,
     BulkEditMenuComponent,
     ButtonComponent,
-    ColumnSelectorComponent,
-    DatatableComponent,
-    TagComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
-    ImpactPreviewDialogComponent,
     IconComponent,
+    ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
-    MenuModule,
-    SearchComponent,
+    ListPageComponent,
+    TagComponent,
     TranslateModule,
   ],
   templateUrl: './users-list-page.component.html',
@@ -82,6 +70,7 @@ export class UsersListPageComponent {
   private readonly xlsx = inject(XlsxExportService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly router = inject(Router);
   private readonly undoStack = inject(UndoStackService);
 
@@ -94,12 +83,7 @@ export class UsersListPageComponent {
   }
 
   protected readonly plusIcon = 'add';
-  protected readonly searchIcon = 'search';
-  protected readonly closeIcon = 'close';
-  protected readonly downloadIcon = 'download';
-  protected readonly moreIcon = 'more_vert';
   protected readonly emptyIcon = 'manage_accounts';
-  protected readonly pageIcon = 'manage_accounts';
 
   protected readonly typeLabelKeys = USER_TYPE_LABEL_KEYS;
   protected readonly users = this.usersStore.users;
@@ -119,54 +103,29 @@ export class UsersListPageComponent {
     return map;
   })();
 
-  protected readonly searchQuery = signal('');
-  /** See `agents-list-page` for the rationale behind the delegate pattern. */
-  /* Fuente de verdad de la selección — ver la nota gemela en `groups-list-page`.
-   * El `SelectionState` que había aquí se retiró el 2026-08-24: sus casillas las
-   * sirve `sc-datatable` desde la migración. */
-  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
-  protected readonly menuTargetUser = signal<User | null>(null);
+  /** Selección: la lista la marca; de ella cuelgan la edición en lote, el borrado y el diálogo de impacto. */
+  protected readonly selectedIds = signal<ReadonlySet<User['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly User[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
-  /** Columnas elegidas en el selector, EN SU ORDEN (antes era un `Set`: el
-   *  orden lo fijaba el marcado, que ya no existe). */
-  protected readonly visibleColumnKeys = signal<readonly string[]>([]);
 
-  protected readonly columnDefs = computed<readonly ColumnDef[]>(() => [
-    { key: 'name', label: this.translate.instant('users.table.name'), locked: true },
-    { key: 'email', label: this.translate.instant('users.table.email') },
-    { key: 'identifier', label: this.translate.instant('users.table.identifier') },
-    { key: 'type', label: this.translate.instant('users.table.type') },
-    { key: 'status', label: this.translate.instant('users.table.status') },
-  ]);
-
-  protected readonly filtered = computed(() => {
-    const q = this.searchQuery().toLowerCase().trim();
-    const all = this.users();
-    if (!q) return all;
-    return all.filter(
-      (u) =>
-        u.name.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.identifier.toLowerCase().includes(q) ||
-        (this.translatedTypeLabels.get(u.type) ?? '').toLowerCase().includes(q),
-    );
+  protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
+    this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      { key: 'name', label: this.translate.instant('users.table.name'), locked: true },
+      { key: 'email', label: this.translate.instant('users.table.email') },
+      { key: 'identifier', label: this.translate.instant('users.table.identifier') },
+      { key: 'type', label: this.translate.instant('users.table.type') },
+      { key: 'status', label: this.translate.instant('users.table.status') },
+    ];
   });
 
-  /**
-   * Lo que ve la tabla. El ORDEN ya no lo pone esta página: las columnas van
-   * `sortable`, así que lo resuelve p-table client-side (y por eso `sortField`,
-   * `sortDir`, `toggleSort` y `getSortDir` murieron con la migración).
-   *
-   * Sigue siendo una COPIA de `filtered()`, y eso no es cosmético: p-table
-   * ordena el array que recibe **in place**, y `filtered()` devuelve el array
-   * del store tal cual cuando no hay búsqueda. Sin la copia, ordenar la tabla
-   * reordenaría el store. Como la copia es la MISMA que ordena p-table, el
-   * export sigue saliendo en el orden que se ve.
-   */
-  protected readonly sorted = computed(() => [...this.filtered()]);
+  /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas). */
+  protected readonly matchesSearch = (u: User, q: string): boolean =>
+    u.name.toLowerCase().includes(q) ||
+    u.email.toLowerCase().includes(q) ||
+    u.identifier.toLowerCase().includes(q) ||
+    (this.translatedTypeLabels.get(u.type) ?? '').toLowerCase().includes(q);
 
   protected readonly deleteItems = computed(() =>
     (this.deleteTarget() ?? []).map((u) => ({ id: u.id, name: u.name })),
@@ -198,136 +157,44 @@ export class UsersListPageComponent {
     viewChild<TemplateRef<ScColumnCellContext<User>>>('identifierTpl');
   private readonly typeTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('typeTpl');
   private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('statusTpl');
-  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('actionsTpl');
-
-  /** Dependencia de IDIOMA para las cabeceras.
-   *
-   * `columns` es un `computed()` cuyas únicas dependencias eran los `viewChild`
-   * de las plantillas de celda. Como los `header` se resuelven con
-   * `translate.instant()` —no con el pipe `| translate`, que es impuro y sí
-   * reaccionaba— el computed NO se re-evaluaba al cambiar de idioma y las
-   * cabeceras se quedaban CONGELADAS en el idioma de carga.
-   *
-   * Lo destapó `audit:datatables` en su primera pasada, sobre 7 páginas. No lo
-   * veía ningún gate: `i18n:check` solo compara claves y todo el e2e corre en
-   * español. Mismo patrón que ya usaba `repo-list-page` para otra cosa. */
-  /** Nombre accesible de las casillas de selección.
-   *
-   * Sin esto PrimeNG anuncia sus literales por defecto —`'Row Selected'`,
-   * `'All items selected'`— que son inglés FIJO (no pasan por i18n) y no dicen
-   * qué fila es. La tabla a mano sí las nombraba; la migración lo perdió en
-   * silencio en todas. Ver `ScRowAriaLabelFn`. */
-  protected readonly ariaFila = (row: { name: string }): string =>
-    this.translate.instant('common.select_row', { name: row.name });
-  protected readonly ariaTodo = this.translate.instant('common.select_all');
-
-  private readonly currentLang = toSignal(
-    this.translate.onLangChange.pipe(
-      map((e) => e.lang),
-      startWith(this.translate.currentLang),
-    ),
-    { initialValue: this.translate.currentLang },
-  );
-
-  protected readonly columns = computed<readonly ScColumnDef<User>[]>(() => [
-    {
-      field: 'name',
-      header: this.translate.instant('users.table.name'),
-      sortable: true,
-      cellTemplate: this.nameTpl(),
-    },
-    {
-      field: 'email',
-      header: this.translate.instant('users.table.email'),
-      sortable: true,
-      cellTemplate: this.emailTpl(),
-    },
-    {
-      field: 'identifier',
-      header: this.translate.instant('users.table.identifier'),
-      sortable: true,
-      cellTemplate: this.identifierTpl(),
-    },
-    {
-      field: 'type',
-      header: this.translate.instant('users.table.type'),
-      sortable: true,
-      cellTemplate: this.typeTpl(),
-    },
-    {
-      field: 'status',
-      header: this.translate.instant('users.table.status'),
-      sortable: true,
-      cellTemplate: this.statusTpl(),
-    },
-    // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
-    // igual que el `<th aria-hidden>` que sustituye.
-    {
-      field: 'actions', stopRowClick: true,
-      header: '', headerAriaLabel: this.translate.instant('common.actions'),
-      width: '48px',
-      align: 'right',
-      cellTemplate: this.actionsTpl(),
-    },
-  ]);
-
-  /**
-   * Lo que la tabla pinta de verdad: las columnas elegidas en el selector, EN
-   * SU ORDEN, más la de acciones — que no es configurable y por eso no está en
-   * el selector, pero sí en `columns()`. `[visibleColumns]` FILTRA por este
-   * array, así que omitirla la borraría de la tabla.
-   *
-   * Esto sustituye a los `@if (isColVisible(...))` del marcado: la visibilidad
-   * ya no se decide celda a celda, y el orden —que antes fijaba el orden de los
-   * `<th>`— ahora obedece al arrastre del selector.
-   */
-  protected readonly tableColumns = computed<readonly string[]>(() => {
-    const chosen = this.visibleColumnKeys();
-    /* Hasta que el selector hidrata desde localStorage no ha emitido nada, y
-     * un array vacío dejaría la tabla con solo la columna de acciones. Mismo
-     * fallback que hacía `isColVisible`: las declaradas, salvo las que nazcan
-     * con `defaultVisible: false`. */
-    const base =
-      chosen.length > 0
-        ? chosen
-        : this.columnDefs()
-            .filter((c) => c.defaultVisible !== false)
-            .map((c) => c.key);
-    return [...base, 'actions'];
+  protected readonly columns = computed<readonly ScColumnDef<User>[]>(() => {
+    this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        field: 'name',
+        header: this.translate.instant('users.table.name'),
+        sortable: true,
+        cellTemplate: this.nameTpl(),
+      },
+      {
+        field: 'email',
+        header: this.translate.instant('users.table.email'),
+        sortable: true,
+        cellTemplate: this.emailTpl(),
+      },
+      {
+        field: 'identifier',
+        header: this.translate.instant('users.table.identifier'),
+        sortable: true,
+        cellTemplate: this.identifierTpl(),
+      },
+      {
+        field: 'type',
+        header: this.translate.instant('users.table.type'),
+        sortable: true,
+        cellTemplate: this.typeTpl(),
+      },
+      {
+        field: 'status',
+        header: this.translate.instant('users.table.status'),
+        sortable: true,
+        cellTemplate: this.statusTpl(),
+      },
+    ];
   });
 
-  protected onColumnsChange(ordered: readonly string[]): void {
-    this.visibleColumnKeys.set(ordered);
-  }
-
-  /**
-   * Clases por fila. Solo queda el cursor: «fila seleccionada» la pinta ahora
-   * la piel `.list-table` vía `p-datatable-row-selected`.
-   *
-   * Lee `renamingId()` a propósito, aunque no dependa de la fila: mientras se
-   * renombra, `onRowClick` no abre nada, y un cursor de mano ahí mentiría.
-   */
-  protected readonly rowStyleClass: ScRowStyleClassFn<User> = (user) =>
-    this.renamingId() === user.id ? undefined : 'sc-row--clickable';
-
-  /* Puente de selección: la fuente de verdad sigue siendo `selectedIds` —de
-   * ella cuelgan la barra masiva, la edición masiva, el borrado y el export— y
-   * `sc-datatable` habla de filas. Traducir en los dos sentidos aquí evita
-   * reescribir media página por un cambio de tabla. */
-  protected readonly selectedUsers = computed<readonly User[]>(() => {
-    const ids = this.selectedIds();
-    return this.sorted().filter((user) => ids.has(user.id));
-  });
-
-  protected onSelectionChange(selection: User | readonly User[] | null): void {
-    const rows = Array.isArray(selection) ? selection : selection ? [selection as User] : [];
-    this.selectedIds.set(new Set(rows.map((user) => user.id)));
-  }
-
-  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
-   * migración a `sc-datatable`: la casilla de fila y la de cabecera las sirven
-   * `p-tableCheckbox` y `p-tableHeaderCheckbox`, con la misma semántica de
-   * antes (la de cabecera marca lo FILTRADO, no todo). */
+  /** Mientras se renombra una fila, abrirla no hace nada (y no enseña el cursor de mano). */
+  protected readonly isOpenable = (user: User): boolean => this.renamingId() !== user.id;
 
   protected clearSelection(): void {
     this.selectedIds.set(new Set());
@@ -414,45 +281,12 @@ export class UsersListPageComponent {
     void this.router.navigateByUrl('/admin/usuarios/crear');
   }
 
-  protected onRowClick(user: User): void {
-    if (this.renamingId() === user.id) return;
+  protected onRowOpen(user: User): void {
     void this.router.navigateByUrl(`/admin/usuarios/editar/${user.id}`);
   }
 
-  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). El
-   *  `preventDefault()` del menú nativo lo hace ya `sc-datatable`. */
-  /* WCAG 2.1.1: la fila abre la ficha con el ratón, así que tiene que abrirla
-   * también con el teclado. Estas tres listas NUNCA lo tuvieron —ni antes ni
-   * después de migrar; se comprobó en el árbol anterior: cero `tabindex`, cero
-   * `keydown`, cero enlaces— o sea que la acción existía solo para quien usa
-   * ratón. Enter abre; Espacio lo deja para la casilla, que es el reparto que
-   * fijó la Ola 6 en transcripciones. */
-  protected onRowKeydown(event: ScDatatableRowKeyEvent<User>): void {
-    if (event.originalEvent.key !== 'Enter') return;
-    event.originalEvent.preventDefault();
-    this.onRowClick(event.row);
-  }
-
-  protected onRowContextMenu(
-    event: ScDatatableRowEvent<User>,
-    menu: { toggle: (e: Event) => void },
-  ): void {
-    this.setMenuTarget(event.row);
-    menu.toggle(event.originalEvent);
-  }
-
-  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
-   *  apuntar a otra fila. Con `[model]="build(user)"` el array se recreaba en
-   *  cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer clic
-   *  (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
-  protected readonly menuItems = computed<MenuItem[]>(() => {
-    const user = this.menuTargetUser();
-    return user ? this.buildMenuItems(user) : [];
-  });
-
-  protected setMenuTarget(user: User): void {
-    this.menuTargetUser.set(user);
-  }
+  /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  protected readonly rowMenu = (user: User): MenuItem[] => this.buildMenuItems(user);
 
   private buildMenuItems(user: User): MenuItem[] {
     return [
@@ -556,21 +390,7 @@ export class UsersListPageComponent {
     this.deleteTarget.set(null);
   }
 
-  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
-   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
-   * HTML por fila y, aparte, un menú contextual con sus propios handlers
-   * duplicados — dos implementaciones que ya divergían. */
-
-  protected onSearchKey(event: KeyboardEvent): void {
-    if (event.key !== 'Escape') return;
-    if (this.searchQuery()) {
-      this.searchQuery.set('');
-    } else {
-      (event.target as HTMLInputElement).blur();
-    }
-  }
-
-  protected onExport(): void {
+  protected onExport(rows: readonly User[]): void {
     const headers = [
       this.translate.instant('users.export.code'),
       this.translate.instant('users.export.name'),
@@ -580,7 +400,7 @@ export class UsersListPageComponent {
       this.translate.instant('users.export.status'),
       this.translate.instant('users.export.created_at'),
     ];
-    const rows = this.sorted().map((u) => [
+    const data = rows.map((u) => [
       u.code,
       u.name,
       u.email,
@@ -591,7 +411,7 @@ export class UsersListPageComponent {
     ]);
     this.xlsx.export({
       headers,
-      rows,
+      rows: data,
       sheetName: this.translate.instant('users.export.sheet'),
       filePrefix: 'usuarios',
     });

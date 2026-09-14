@@ -4,20 +4,8 @@
   background: var(--sc-bg-surface);
 }
 
+/* La página, la barra y la tabla las pinta `sc-list-page` (DD-97). Aquí las pestañas, los paneles y las celdas. */
 .page {
-  flex: 1;
-  overflow-y: auto;
-  background: var(--sc-bg-surface);
-  transition: padding-bottom var(--sc-transition-base) var(--sc-easing-default);
-
-  &--has-selection {
-    padding-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-125));
-  }
-
-  &__inner {
-    padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
-  }
-
   &__create-anchor {
     position: relative;
   }
@@ -34,22 +22,6 @@
     }
   }
 
-  &__action-bar {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    margin-bottom: var(--sc-spacing-0-875); /* buscador → tabla, como todas las listas (2026-09-14) */
-  }
-
-  /* Mismo ancho que las otras cinco listas. Traía un 288px fijo sin dueño
-   * escrito: ni DD, ni comentario, ni entrada en el ledger de la plataforma.
-   * Plantillas es la única barra con un solo control, así que el fijo era
-   * defendible, pero nadie lo defendió. Medido antes/después (DD-53). */
-  &__search {
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: 480px;
-  }
 }
 
 .tabs {
@@ -131,11 +103,8 @@
     color: var(--sc-text-subtle);
   }
 
+  /* El relleno y el centrado los pone la lista; aquí solo el contenido. */
   &__no-results {
-    padding: var(--sc-spacing-4) var(--sc-spacing-0-875);
-    text-align: center;
-    color: var(--sc-text-subtle);
-
     > sc-icon {
       display: inline-block;
       color: var(--sc-icon-disabled);
@@ -156,11 +125,3 @@
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos
  * los sustituye el <p-menu> compartido, y el botón usa `.rules-kebab-btn`,
  * el kebab global de `main.scss`. */
-
-input[type='checkbox'] {
-  width: var(--sc-spacing-1-125);
-  height: var(--sc-spacing-1-125);
-  accent-color: var(--sc-bg-primary);
-  cursor: pointer;
-  vertical-align: middle;
-}

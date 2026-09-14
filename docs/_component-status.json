@@ -77,7 +77,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 10
+      "usedInSupervisor": 5
     },
     {
       "name": "bulk-edit-menu",
@@ -160,7 +160,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 119
+      "usedInSupervisor": 108
     },
     {
       "name": "card",
@@ -255,7 +255,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 1
     },
     {
       "name": "command-palette",
@@ -331,7 +331,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 26
+      "usedInSupervisor": 12
     },
     {
       "name": "datepicker",
@@ -956,7 +956,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 14
+      "usedInSupervisor": 9
     },
     {
       "name": "section-card",

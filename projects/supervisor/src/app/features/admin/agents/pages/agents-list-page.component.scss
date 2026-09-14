@@ -4,74 +4,14 @@
   background: var(--sc-bg-surface);
 }
 
-.page {
-  flex: 1;
-  /* Sin `overflow-y: auto` (2026-09-14): convertía `.page` en contenedor de scroll
-   * sin que nunca hiciera scroll (el que lo hace es `main.app-shell__content`), y
-   * la barra `sticky` de abajo quedaba atada a él: se iba con la lista. */
-  background: var(--sc-bg-surface);
-  /* La barra de selección ya no se reserva aquí: la tabla le deja sitio (`.page--tabla`, DD-95). */
-
-  &__inner {
-    padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
-  }
-
-  &__action-bar {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    /* Buscador → tabla `0-875`, menos que título → buscador (`1`): la barra es de la
-     * tabla. En margen y no en relleno: el degradado de 12 px de `::after` taparía
-     * el borde de la tabla (2026-09-14). */
-    margin-bottom: var(--sc-spacing-0-875);
-    /* Sticky on scroll. Sits at the top of the scrolling .page so the
-     * search + column manager + export stay reachable as the user
-     * scrolls long lists. The pseudo-element below paints a 12px
-     * surface→transparent gradient so the table content slides under
-     * the bar gradually rather than cutting off — backdrop-blur was
-     * rejected as the AI-SaaS-default fingerprint. */
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: var(--sc-bg-surface);
-    padding-top: var(--sc-spacing-0-875);
-    /* El relleno de arriba solo hace falta cuando la barra se queda fija (que no
-     * pegue los controles al borde). En reposo se sumaba al margen del título:
-     * se sube lo mismo y el título queda a la distancia de las 13 pantallas. */
-    margin-top: calc(var(--sc-spacing-0-875) * -1);
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 100%;
-      height: 12px;
-      background: linear-gradient(to bottom, var(--sc-bg-surface), transparent);
-      pointer-events: none;
-    }
-  }
-
-  /* `.page__search` queda como wrapper de sizing del `<sc-search>` (el
-   * componente trae su propio chrome internamente). Las reglas
-   * `&__search-input/-icon/-clear/-kbd` migraron al componente y se
-   * eliminaron de aquí. */
-  &__search {
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: 480px;
-  }
-}
-
-/* Sin `overflow-x: auto` en `.table-card` (DD-95): la tabla hace scroll dentro de sí misma, también
- * de lado, y un contenedor de scroll aquí rompería la cadena de altos de `.page--tabla`. */
+/* La página, la barra y el vacío de búsqueda los pinta `sc-list-page` (DD-97). Aquí solo las celdas y el estado. */
 
 /* ─────────── Celdas ─────────── */
 /* El bloque `.table` (cabecera, filas, hover, seleccionada, paddings, anchos —
  * unas 115 líneas) desapareció de aquí: lo pinta ahora `sc-datatable` con la
  * piel compartida `.list-table` de `styles/_sc-datatable-list.scss`. Lo que
- * queda es lo que sigue siendo de ESTA página: el contenido de las celdas y el
- * vacío de búsqueda, que se proyectan desde su plantilla y por tanto conservan
+ * queda es lo que sigue siendo de ESTA página: el contenido de las celdas, que
+ * se proyecta desde su plantilla y por tanto conservan
  * el encapsulado del componente.
  *
  * Por eso las clases van sobre un `<span>` propio y no sobre el `<td>`: el
@@ -101,13 +41,6 @@
     white-space: nowrap;
     min-width: 0;
   }
-}
-
-/* Búsqueda sin resultados: se proyecta vía [scTableEmpty]. */
-.table__no-results {
-  padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
-  text-align: center;
-  color: var(--sc-text-subtle);
 }
 
 .ext {

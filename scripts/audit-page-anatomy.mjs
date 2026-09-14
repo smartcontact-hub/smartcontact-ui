@@ -70,11 +70,18 @@ export const ANCHOS_PENDIENTES = {};
 
 const sinComentariosHtml = (html) => html.replace(/<!--[\s\S]*?-->/g, '');
 
-/** ¿Declara la plantilla su arquetipo, y cuál? */
+/**
+ * ¿Declara la plantilla su arquetipo, y cuál?
+ *
+ * Una página montada sobre `<sc-list-page>` (DD-97) lo declara a través de la pieza: la
+ * pieza pinta `page__inner--list` y la página no repite el molde. Cuenta como `list`.
+ */
 export function arquetipoDe(html) {
   const limpio = sinComentariosHtml(html);
-  const tiene = /\bpage__inner\b/.test(limpio);
-  const modificadores = [...new Set([...limpio.matchAll(/\bpage__inner--([a-z-]+)/g)].map((m) => m[1]))];
+  const sobrePiezaLista = /<sc-list-page\b/.test(limpio);
+  const tiene = sobrePiezaLista || /\bpage__inner\b/.test(limpio);
+  const propios = [...limpio.matchAll(/\bpage__inner--([a-z-]+)/g)].map((m) => m[1]);
+  const modificadores = [...new Set(sobrePiezaLista ? ['list', ...propios] : propios)];
   return { tiene, modificadores };
 }
 

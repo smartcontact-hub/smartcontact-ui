@@ -1,11 +1,8 @@
-import { map, startWith } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
-  signal,
   type TemplateRef,
   viewChild,
 } from '@angular/core';
@@ -21,17 +18,12 @@ import type { MenuItem } from 'primeng/api';
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
 import { ScMessageComponent as MessageComponent } from '@smartcontact-hub/components';
 import { ScConfirmService } from '@smartcontact-hub/components';
-import {
-  type ScColumnCellContext,
-  type ScColumnDef,
-  ScDatatableComponent as DatatableComponent,
-  type ScDatatableRowEvent,
-  type ScDatatableRowKeyEvent,
-  type ScRowStyleClassFn,
-} from '@smartcontact-hub/components';
+import { type ScColumnCellContext, type ScColumnDef } from '@smartcontact-hub/components';
 import { LanguageService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { injectLangChange } from '@core/utils/lang-change';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
+import { ListPageComponent } from '@shared/components';
 
 import { ConditionResolverService } from '../../data/condition-resolver.service';
 import { describeConditionTree } from '../../data/condition.types';
@@ -50,9 +42,9 @@ import { RulesStore } from '../../state/rules.store';
   imports: [
     TagComponent,
     ButtonComponent,
-    DatatableComponent,
     EmptyStateComponent,
     IconComponent,
+    ListPageComponent,
     MenuModule,
     MessageComponent,
     RouterLink,
@@ -68,6 +60,7 @@ export class RulesPageComponent {
   private readonly confirm = inject(ScConfirmService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly language = inject(LanguageService);
   private readonly router = inject(Router);
 
@@ -106,87 +99,46 @@ export class RulesPageComponent {
   private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('actionsTpl');
   private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('statusTpl');
   private readonly modifiedTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('modifiedTpl');
-  private readonly kebabTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('kebabTpl');
 
   /** Los anchos son los mismos `width` que tenían los `<th>` a mano; con
    *  `table-layout: fixed` (lo pone `.list-table`) nombre y alcance se reparten
    *  el resto, igual que antes. */
-  /** Dependencia de IDIOMA para las cabeceras.
-   *
-   * `columns` es un `computed()` cuyas únicas dependencias eran los `viewChild`
-   * de las plantillas de celda. Como los `header` se resuelven con
-   * `translate.instant()` —no con el pipe `| translate`, que es impuro y sí
-   * reaccionaba— el computed NO se re-evaluaba al cambiar de idioma y las
-   * cabeceras se quedaban CONGELADAS en el idioma de carga.
-   *
-   * Lo destapó `audit:datatables` en su primera pasada, sobre 7 páginas. No lo
-   * veía ningún gate: `i18n:check` solo compara claves y todo el e2e corre en
-   * español. Mismo patrón que ya usaba `repo-list-page` para otra cosa. */
-  private readonly currentLang = toSignal(
-    this.translate.onLangChange.pipe(
-      map((e) => e.lang),
-      startWith(this.translate.currentLang),
-    ),
-    { initialValue: this.translate.currentLang },
-  );
-
-  protected readonly columns = computed<readonly ScColumnDef<Rule>[]>(() => [
-    {
-      field: 'name',
-      header: this.translate.instant('memory.rules.cols.name'),
-      cellTemplate: this.nameTpl(),
-    },
-    {
-      field: 'scope',
-      header: this.translate.instant('memory.rules.cols.scope'),
-      cellTemplate: this.scopeTpl(),
-    },
-    {
-      field: 'actions',
-      header: this.translate.instant('memory.rules.cols.actions'),
-      width: '110px',
-      cellTemplate: this.actionsTpl(),
-    },
-    {
-      field: 'status',
-      header: this.translate.instant('memory.rules.cols.status'),
-      width: '140px',
-      cellTemplate: this.statusTpl(),
-    },
-    {
-      field: 'lastModified',
-      header: this.translate.instant('memory.rules.cols.last_modified'),
-      width: '120px',
-      cellTemplate: this.modifiedTpl(),
-    },
-    // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
-    // igual que el `<th aria-hidden>` que sustituye. `stopRowClick` porque
-    // fallar el botón por unos píxeles abría la regla: el kebab para la
-    // propagación, pero el padding del `<td>` —que ahora pinta el DS— no.
-    {
-      field: 'kebab',
-      header: '', headerAriaLabel: this.translate.instant('common.actions'),
-      width: '44px',
-      stopRowClick: true,
-      cellTemplate: this.kebabTpl(),
-    },
-  ]);
-
-  /** La fila abre la regla, y el cursor tiene que decirlo. Vive aquí y no en el
-   *  SCSS de la página porque el `<tr>` lo pinta el DS; `.list-table` define
-   *  `sc-row--clickable`. Es constante: no lee ninguna señal. */
-  protected readonly rowClass: ScRowStyleClassFn<Rule> = () => 'sc-row--clickable';
-
-  protected readonly menuTargetRule = signal<Rule | null>(null);
-
-  /** Modelo del menú kebab (único y compartido). Es un computed estable: solo
-   *  cambia al abrir otro kebab. Antes `[model]="buildMenuItems(rule)"` recreaba
-   *  el array en cada ciclo de CD → PrimeNG repintaba el menú y se perdía el 1er
-   *  clic (hacía falta doble). Con esto, un solo clic aplica la acción. */
-  protected readonly menuItems = computed<MenuItem[]>(() => {
-    const rule = this.menuTargetRule();
-    return rule ? this.buildMenuItems(rule) : [];
+  protected readonly columns = computed<readonly ScColumnDef<Rule>[]>(() => {
+    this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        field: 'name',
+        header: this.translate.instant('memory.rules.cols.name'),
+        cellTemplate: this.nameTpl(),
+      },
+      {
+        field: 'scope',
+        header: this.translate.instant('memory.rules.cols.scope'),
+        cellTemplate: this.scopeTpl(),
+      },
+      {
+        field: 'actions',
+        header: this.translate.instant('memory.rules.cols.actions'),
+        width: '110px',
+        cellTemplate: this.actionsTpl(),
+      },
+      {
+        field: 'status',
+        header: this.translate.instant('memory.rules.cols.status'),
+        width: '140px',
+        cellTemplate: this.statusTpl(),
+      },
+      {
+        field: 'lastModified',
+        header: this.translate.instant('memory.rules.cols.last_modified'),
+        width: '120px',
+        cellTemplate: this.modifiedTpl(),
+      },
+    ];
   });
+
+  /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  protected readonly rowMenu = (rule: Rule): MenuItem[] => this.buildMenuItems(rule);
 
   protected readonly settingsIcon = 'tune';
   protected readonly emptyIcon = 'rule';
@@ -194,7 +146,6 @@ export class RulesPageComponent {
   /** Mismo icono que el flujo de transcripciones (player, `description`) → ley de similitud. */
   protected readonly transcriptionIcon = 'description';
   protected readonly sparklesIcon = 'auto_awesome';
-  protected readonly kebabIcon = 'more_vert';
 
   protected onNewRule(type: 'transcription' | 'classification' = 'transcription'): void {
     this.router.navigate(['/conversaciones/reglas/nueva'], {
@@ -257,32 +208,9 @@ export class RulesPageComponent {
     return date.toLocaleDateString(this.language.locale(), { day: 'numeric', month: 'short' });
   }
 
-  protected setMenuTarget(rule: Rule): void {
-    this.menuTargetRule.set(rule);
-  }
-
   /** Click en la fila abre la regla en el constructor (la fila actúa de enlace). */
   protected openRule(rule: Rule): void {
     this.router.navigate(['/conversaciones/reglas', rule.id]);
-  }
-
-  /* WCAG 2.1.1: la fila abre la regla con el ratón, así que tiene que abrirla
-   * también con el teclado. `rowsFocusable` la hace parada de tabulador; qué
-   * hace cada tecla lo decide el consumidor (el DS no interpreta ninguna). */
-  protected onRowKeydown(event: ScDatatableRowKeyEvent<Rule>): void {
-    if (event.originalEvent.key !== 'Enter') return;
-    event.originalEvent.preventDefault();
-    this.openRule(event.row);
-  }
-
-  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). El DS ya canceló
-   *  el menú nativo del navegador. */
-  protected onRowContextMenu(
-    event: ScDatatableRowEvent<Rule>,
-    menu: { toggle: (e: Event) => void },
-  ): void {
-    this.setMenuTarget(event.row);
-    menu.toggle(event.originalEvent);
   }
 
   protected buildMenuItems(rule: Rule): MenuItem[] {

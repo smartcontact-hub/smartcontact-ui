@@ -25,74 +25,50 @@
   </div>
 </ng-template>
 
-<div class="page" [class.page--has-selection]="selectedIds().size > 0">
-  <div class="page__inner page__inner--list">
-    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
-         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
-         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
-         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ 'labels.breadcrumb' | translate }}</h1>
+<!-- La lista (título, barra, tabla, selección, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo
+     que es de Etiquetas: columnas y celdas, el panel de edición, acciones y diálogos. -->
+<sc-list-page
+  [heading]="'labels.breadcrumb' | translate"
+  [rows]="sorted()"
+  [columns]="columns()"
+  [searchPlaceholder]="'common.search' | translate"
+  [searchFn]="matchesSearch"
+  [(query)]="searchQuery"
+  exportable
+  [rowMenu]="rowMenu"
+  selectable
+  [bulkEntity]="bulkEntity()"
+  [(selectedIds)]="selectedIds"
+  tableTestId="labels-table"
+  (exportRequest)="onExport($event)"
+>
+  <sc-empty-state
+    scListEmpty
+    [icon]="tagIcon"
+    titleKey="labels.empty.title"
+    bodyKey="labels.empty.text"
+    ctaKey="labels.empty.cta"
+    (cta)="creating.set(true)"
+  />
 
-    <div class="page__action-bar">
-      <sc-search
-        class="page__search"
-        [placeholder]="'common.search' | translate"
-        shortcutHint="⌘K"
-        [clearAriaLabel]="'labels.clear_search' | translate"
-        [value]="searchQuery()"
-        (valueChange)="searchQuery.set($event)"
-        (keydown)="onSearchKey($event)"
-      />
-
-      <sc-button type="button" variant="secondary" (clicked)="onExport()">
-        <sc-icon [name]="downloadIcon" size="inherit" />
-        <span>{{ 'labels.export_button' | translate }}</span>
-      </sc-button>
+  <div scListNoResults class="table__no-results">
+    <sc-icon [name]="searchIcon" [size]="20" />
+    <div class="table__no-results-title sc-text-body-semibold">
+      {{ 'labels.no_results.title' | translate }}
     </div>
-
-    @if (labels().length === 0) {
-      <sc-empty-state
-        [icon]="tagIcon"
-        titleKey="labels.empty.title"
-        bodyKey="labels.empty.text"
-        ctaKey="labels.empty.cta"
-        (cta)="creating.set(true)"
-      />
-    } @else {
-      <!-- B4: la tabla la pinta el componente del DS. `variant="list"` le
-           pone la gramática de tabla-lista de la app (54px de fila, cabecera
-           silenciosa de S59); sin ella el preset la dejaría más densa y con
-           la cabecera oscura, distinta de las seis tablas sin migrar. -->
-      <div class="table-card">
-        <sc-datatable
-          variant="list"
-          [value]="sorted()"
-          [columns]="columns()"
-          dataKey="id"
-          selectionMode="multiple"
-    [rowSelectionAriaLabel]="ariaFila"
-    [selectAllAriaLabel]="ariaTodo"
-          [selection]="selectedLabels()"
-          (selectionChange)="onSelectionChange($any($event))"
-          (rowContextMenu)="onRowContextMenu($event, rowMenu)"
-          data-testid="labels-table"
-        >
-          <div scTableEmpty class="table__no-results">
-            <sc-icon [name]="searchIcon" [size]="20" />
-            <div class="table__no-results-title sc-text-body-semibold">
-              {{ 'labels.no_results.title' | translate }}
-            </div>
-            <div class="table__no-results-text sc-text-caption-regular">
-              {{ 'labels.no_results.text' | translate: { query: searchQuery() } }}
-            </div>
-          </div>
-        </sc-datatable>
-      </div>
-    }
+    <div class="table__no-results-text sc-text-caption-regular">
+      {{ 'labels.no_results.text' | translate: { query: searchQuery() } }}
+    </div>
   </div>
-</div>
 
-<!-- Celdas de la tabla. Viven FUERA del `<sc-datatable>` para que los
+  <ng-container ngProjectAs="[scListBulkActions]">
+    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+      <span>{{ 'common.delete' | translate }}</span>
+    </sc-button>
+  </ng-container>
+</sc-list-page>
+
+<!-- Celdas de la tabla. Viven FUERA de la lista para que los
      `viewChild` las resuelvan; `columns()` las recoge. El contexto es
      `{ $implicit: label }`. -->
 <ng-template #nameTpl let-label>
@@ -126,15 +102,6 @@
   }
 </ng-template>
 
-<ng-template #actionsTpl let-label>
-  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="moreIcon" [ariaLabel]="'labels.row_menu' | translate" (clicked)="setMenuTarget(label); rowMenu.toggle($event); $event.stopPropagation()" />
-</ng-template>
-
-<!-- Kebab ÚNICO y compartido por toda la tabla (antes: un panel HTML por fila
-     MÁS un menú contextual aparte con sus propios handlers). El click derecho
-     en la fila abre este mismo menú — R3 del modelo canónico. -->
-<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
-
 <sc-delete-labels-dialog
   [labels]="deleteTarget() ?? []"
   [visible]="!!deleteTarget()"
@@ -142,9 +109,3 @@
   (confirm)="confirmDelete()"
   (cancelled)="cancelDelete()"
 />
-
-<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-  <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
-    <span>{{ 'common.delete' | translate }}</span>
-  </sc-button>
-</sc-bulk-action-bar>

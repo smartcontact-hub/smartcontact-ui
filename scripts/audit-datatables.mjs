@@ -48,7 +48,18 @@ const leer = (f) => {
 const limpio = (html) => html.replace(/<!--[\s\S]*?-->/g, '');
 
 const APP = 'projects/supervisor/src';
-const htmls = sh(`grep -rl '<sc-datatable' ${APP} --include=*.html`).split('\n').filter(Boolean);
+/* Las pantallas montadas sobre `<sc-list-page>` (DD-97) no escriben `<sc-datatable>`: lo escribe la pieza.
+ * Entran igual, porque las columnas, su idioma y su ruta siguen siendo de la pantalla; sin ellas este gate
+ * vigilaba la pieza y dejaba de mirar nueve listas. */
+const PIEZA_LISTA = `${APP}/app/shared/components/list-page/list-page.component.html`;
+const htmls = [
+  ...new Set(
+    [
+      ...sh(`grep -rl '<sc-datatable' ${APP} --include=*.html`).split('\n'),
+      ...sh(`grep -rl '<sc-list-page' ${APP} --include=*.html`).split('\n'),
+    ].filter(Boolean),
+  ),
+].sort();
 const spec = leer('e2e/supervisor/list-table-grammar.spec.ts');
 
 /** Ruta de una página desde su `*.routes.ts`: los directorios están en inglés
@@ -98,7 +109,7 @@ const rutaDe = (html) => {
   return vigilada ?? null;
 };
 
-log(`audit:datatables — ${htmls.length} página(s) con <sc-datatable>\n`);
+log(`audit:datatables — ${htmls.length} página(s) con <sc-datatable> o <sc-list-page>\n`);
 
 for (const f of htmls) {
   const html = limpio(leer(f));
@@ -154,19 +165,24 @@ for (const f of htmls) {
    *     re-evalúa: el pipe `| translate` que había antes SÍ reaccionaba.
    *     Ningún otro gate lo ve — `i18n:check` solo compara claves y todo el
    *     e2e corre en español. */
-  if (/\bcolumns\s*=\s*computed/.test(ts) && /translate\.instant\(/.test(ts) && !/currentLang|onLangChange/.test(ts)) {
-    fallo(donde, 'cabeceras con translate.instant() en un computed sin dependencia de idioma', 'se quedan congeladas al cambiar de idioma');
+  /*     ⚠️ Endurecido el 2026-09-14: bastaba con que el fichero NOMBRARA `currentLang`, y siete listas lo
+   *     declaraban sin leerlo nunca — cabeceras congeladas y este gate en verde. Ahora exige la LECTURA de la
+   *     señal (`currentLang()` / `lang()`, ver `core/utils/lang-change.ts`). */
+  if (/\bcolumns\s*=\s*computed/.test(ts) && /translate\.instant\(/.test(ts) && !/\b(currentLang|lang)\(\)/.test(ts)) {
+    fallo(donde, 'cabeceras con translate.instant() en un computed que no LEE el idioma', 'se quedan congeladas al cambiar de idioma');
   }
 
   /* 7 · La red tiene que VISITAR la página. Si su ruta no está en el guardián
    *     de la gramática, ese spec pasa en verde sin mirarla y el "todo verde"
    *     no prueba nada de esta tabla. */
+  /* La pieza no tiene ruta propia: la vigilan las rutas de las pantallas que la montan, que entran aquí. */
+  if (f === PIEZA_LISTA) continue;
   const ruta = rutaDe(f);
   if (!ruta) {
     fallo(donde, 'no consigo deducir su ruta desde los *.routes.ts', 'compruébalo a mano contra e2e/supervisor/list-table-grammar.spec.ts');
   } else if (!spec.includes(ruta)) {
     fallo(donde, `su ruta ("${ruta}") no está en list-table-grammar.spec.ts`, 'el guardián de la gramática pasa en verde SIN VISITAR la página');
-  } else if (/\(rowClick\)/.test(html) && !new RegExp(`ABREN_FILA[\\s\\S]*?${ruta}`).test(spec)) {
+  } else if (/\((rowClick|rowOpen)\)/.test(html) && !new RegExp(`ABREN_FILA[\\s\\S]*?${ruta}`).test(spec)) {
     fallo(donde, `la fila abre pero "${ruta}" no está en ABREN_FILA`, 'quedan sin comprobar el cursor, el tabindex y la apertura por teclado');
   }
 }

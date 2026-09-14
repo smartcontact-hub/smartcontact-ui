@@ -25,108 +25,88 @@
   </div>
 </ng-template>
 
-<div class="page" [class.page--has-selection]="selectedIds().size > 0">
-  <div class="page__inner page__inner--list">
-    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
-         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
-         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
-         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ 'templates.breadcrumb' | translate }}</h1>
-
-    <div class="tabs" role="tablist">
-      <button
-        type="button"
-        role="tab"
-        class="tabs__tab sc-text-body-regular"
-        [class.tabs__tab--active]="activeTab() === 'chat'"
-        [attr.aria-selected]="activeTab() === 'chat'"
-        (click)="switchTab('chat')"
-      >
-        <sc-icon [name]="chatIcon" size="inherit" />
-        <span>{{ 'templates.type.chat' | translate }}</span>
-        <span class="tabs__count">{{ chatCount() }}</span>
-      </button>
-      <button
-        type="button"
-        role="tab"
-        class="tabs__tab sc-text-body-regular"
-        [class.tabs__tab--active]="activeTab() === 'email'"
-        [attr.aria-selected]="activeTab() === 'email'"
-        (click)="switchTab('email')"
-      >
-        <sc-icon [name]="emailIcon" size="inherit" />
-        <span>{{ 'templates.type.email' | translate }}</span>
-        <span class="tabs__count">{{ emailCount() }}</span>
-      </button>
-    </div>
-
-    <div class="page__action-bar">
-      <sc-search
-        class="page__search"
-        [placeholder]="'common.search' | translate"
-        shortcutHint="⌘K"
-        [clearAriaLabel]="'labels.clear_search' | translate"
-        [value]="searchQuery()"
-        (valueChange)="searchQuery.set($event)"
-        (keydown)="onSearchKey($event)"
-      />
-    </div>
-
-    @if (templates().length === 0) {
-      <sc-empty-state
-        [icon]="fileStackIcon"
-        titleKey="templates.empty.title"
-        bodyKey="templates.empty.text"
-        ctaKey="templates.empty.cta"
-        (cta)="creating.set(true)"
-      />
-    } @else {
-      <!-- B4: tabla del DS + piel `variant="list"` (misma gramática que las seis
-           tablas sin migrar: 54px de fila, cabecera silenciosa de S59). -->
-      <div class="table-card">
-        <sc-datatable
-          variant="list"
-          [value]="sorted()"
-          [columns]="columns()"
-          dataKey="id"
-          selectionMode="multiple"
-    [rowSelectionAriaLabel]="ariaFila"
-    [selectAllAriaLabel]="ariaTodo"
-          [selection]="selectedTemplates()"
-          (selectionChange)="onSelectionChange($any($event))"
-          (rowContextMenu)="onRowContextMenu($event, rowMenu)"
-          data-testid="templates-table"
-        >
-          <div scTableEmpty class="table__no-results">
-            <sc-icon [name]="searchIcon" [size]="20" />
-            <div class="table__no-results-title sc-text-body-semibold">
-              {{ 'labels.no_results.title' | translate }}
-            </div>
-            <div class="table__no-results-text sc-text-caption-regular">
-              @if (searchQuery()) {
-                {{
-                  'templates.no_results.text_with_query'
-                    | translate
-                      : {
-                          tab: 'templates.type.' + activeTab() | translate,
-                          query: searchQuery(),
-                        }
-                }}
-              } @else {
-                {{
-                  'templates.no_results.text'
-                    | translate: { tab: 'templates.type.' + activeTab() | translate }
-                }}
-              }
-            </div>
-          </div>
-        </sc-datatable>
-      </div>
-    }
+<!-- La lista (título, barra, tabla, selección, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo
+     que es de Plantillas: las pestañas, columnas y celdas, el panel de edición, acciones y diálogos. -->
+<sc-list-page
+  [heading]="'templates.breadcrumb' | translate"
+  [rows]="tabRows()"
+  [empty]="templates().length === 0"
+  [columns]="columns()"
+  [searchPlaceholder]="'common.search' | translate"
+  [searchFn]="matchesSearch"
+  [(query)]="searchQuery"
+  [rowMenu]="rowMenu"
+  selectable
+  [bulkEntity]="bulkEntity()"
+  [rowLabel]="rowLabel"
+  [(selectedIds)]="selectedIds"
+  tableTestId="templates-table"
+>
+  <div scListBeforeToolbar class="tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      class="tabs__tab sc-text-body-regular"
+      [class.tabs__tab--active]="activeTab() === 'chat'"
+      [attr.aria-selected]="activeTab() === 'chat'"
+      (click)="switchTab('chat')"
+    >
+      <sc-icon [name]="chatIcon" size="inherit" />
+      <span>{{ 'templates.type.chat' | translate }}</span>
+      <span class="tabs__count">{{ chatCount() }}</span>
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="tabs__tab sc-text-body-regular"
+      [class.tabs__tab--active]="activeTab() === 'email'"
+      [attr.aria-selected]="activeTab() === 'email'"
+      (click)="switchTab('email')"
+    >
+      <sc-icon [name]="emailIcon" size="inherit" />
+      <span>{{ 'templates.type.email' | translate }}</span>
+      <span class="tabs__count">{{ emailCount() }}</span>
+    </button>
   </div>
-</div>
 
-<!-- Celdas de la tabla. Fuera del `<sc-datatable>` para que los `viewChild`
+  <sc-empty-state
+    scListEmpty
+    [icon]="fileStackIcon"
+    titleKey="templates.empty.title"
+    bodyKey="templates.empty.text"
+    ctaKey="templates.empty.cta"
+    (cta)="creating.set(true)"
+  />
+
+  <div scListNoResults class="table__no-results">
+    <sc-icon [name]="searchIcon" [size]="20" />
+    <div class="table__no-results-title sc-text-body-semibold">
+      {{ 'labels.no_results.title' | translate }}
+    </div>
+    <div class="table__no-results-text sc-text-caption-regular">
+      @if (searchQuery()) {
+        {{
+          'templates.no_results.text_with_query'
+            | translate
+              : {
+                  tab: 'templates.type.' + activeTab() | translate,
+                  query: searchQuery(),
+                }
+        }}
+      } @else {
+        {{ 'templates.no_results.text' | translate: { tab: 'templates.type.' + activeTab() | translate } }}
+      }
+    </div>
+  </div>
+
+  <ng-container ngProjectAs="[scListBulkActions]">
+    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+      <span>{{ 'common.delete' | translate }}</span>
+    </sc-button>
+  </ng-container>
+</sc-list-page>
+
+<!-- Celdas de la tabla. Fuera de la lista para que los `viewChild`
      las resuelvan; `columns()` las recoge. Contexto `{ $implicit: tpl }`. -->
 <ng-template #titleTpl let-tpl>
   <span class="table__title-text sc-text-body-semibold">{{ tpl.title }}</span>
@@ -156,15 +136,6 @@
   <span class="table__updated-text sc-text-caption-regular">{{ tpl.updatedAt }}</span>
 </ng-template>
 
-<ng-template #actionsTpl let-tpl>
-  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="moreIcon" [ariaLabel]="'labels.row_menu' | translate" (clicked)="setMenuTarget(tpl); rowMenu.toggle($event); $event.stopPropagation()" />
-</ng-template>
-
-<!-- Kebab ÚNICO y compartido por toda la tabla (antes: un panel HTML por fila
-     MÁS un menú contextual aparte con sus propios handlers). El click derecho
-     en la fila abre este mismo menú — R3 del modelo canónico. -->
-<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
-
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"
   [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
@@ -176,9 +147,3 @@
   (cancelled)="cancelDelete()"
   (confirm)="confirmDelete($event)"
 />
-
-<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-  <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
-    <span>{{ 'common.delete' | translate }}</span>
-  </sc-button>
-</sc-bulk-action-bar>

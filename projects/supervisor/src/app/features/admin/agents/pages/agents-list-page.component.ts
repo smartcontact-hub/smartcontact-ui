@@ -1,5 +1,3 @@
-import { map, startWith } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,9 +17,9 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 import { UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IllustratedAvatarComponent } from '@shared/components';
+import { injectLangChange } from '@core/utils/lang-change';
+import { IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
 import {
-  ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,
   BulkEditCommit,
   BulkEditFieldOption,
@@ -29,12 +27,6 @@ import {
   type ScColumnCellContext,
   type ScColumnDef,
   ColumnDef,
-  ScColumnSelectorComponent as ColumnSelectorComponent,
-  ScDatatableComponent as DatatableComponent,
-  type ScDatatableRowEvent,
-  type ScDatatableRowKeyEvent,
-  type ScRowStyleClassFn,
-  type ScDatatableSortEvent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
@@ -42,7 +34,6 @@ import {
   ImpactItem,
   ScImpactPreviewDialogComponent as ImpactPreviewDialogComponent,
   ScInlineRenameCellComponent as InlineRenameCellComponent,
-  ScSearchComponent as SearchComponent,
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import {
@@ -57,8 +48,6 @@ import { AgentBulkField, AgentsStore } from '../state/agents.store';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { Channel } from '@features/admin/services/group-agent-links.types';
-
-type SortField = 'name' | 'code' | 'extension' | 'type' | 'status';
 
 interface PendingBulkEdit {
   readonly field: AgentBulkField;
@@ -83,11 +72,8 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
 @Component({
   selector: 'sc-agents-list-page',
   imports: [
-    BulkActionBarComponent,
     BulkEditMenuComponent,
     ButtonComponent,
-    ColumnSelectorComponent,
-    DatatableComponent,
     TagComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
@@ -96,8 +82,8 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
     GroupPopoverComponent,
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
+    ListPageComponent,
     MenuModule,
-    SearchComponent,
     TranslateModule,
   ],
   templateUrl: './agents-list-page.component.html',
@@ -111,6 +97,7 @@ export class AgentsListPageComponent {
   private readonly xlsx = inject(XlsxExportService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly router = inject(Router);
   private readonly undoStack = inject(UndoStackService);
 
@@ -148,40 +135,20 @@ export class AgentsListPageComponent {
   }
 
   protected readonly plusIcon = 'add';
-  protected readonly searchIcon = 'search';
-  protected readonly closeIcon = 'close';
-  protected readonly downloadIcon = 'download';
-  protected readonly moreIcon = 'more_vert';
   protected readonly chevronDownIcon = 'expand_more';
   protected readonly checkIcon = 'check';
   protected readonly phoneIcon = 'call';
   protected readonly chatIcon = 'chat_bubble';
   protected readonly emailIcon = 'mail';
   protected readonly emptyIcon = 'headphones';
-  protected readonly pageIcon = 'headphones';
 
   protected readonly typeKeys = AGENT_TYPE_LABEL_KEYS;
   protected readonly presenceKeys = PRESENCE_LABEL_KEYS;
   protected readonly presenceStates = PRESENCE_STATES;
   protected readonly agents = this.agentsStore.agents;
 
-  protected readonly searchQuery = signal('');
-  protected readonly sortField = signal<SortField | null>(null);
-  protected readonly sortDir = signal<'asc' | 'desc'>('asc');
-  /**
-   * Selección por id — la fuente de verdad de la página. De ella cuelgan la
-   * barra masiva, la edición en lote, el borrado y el diálogo de impacto;
-   * `sc-datatable` habla de FILAS, así que `selectedAgents` / `onSelectionChange`
-   * traducen en los dos sentidos y nada más de la página cambia.
-   *
-   * `SelectionState` se fue con la migración: lo único que aportaba —`allSelected`
-   * y `toggleAll` sobre la lista visible— lo sirven ahora `p-tableHeaderCheckbox`
-   * y `p-tableCheckbox`, con la misma semántica (la casilla de cabecera marca lo
-   * FILTRADO, no todo).
-   */
-  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
-  protected readonly menuTargetAgent = signal<Agent | null>(null);
+  /** Selección: la lista la marca; de ella cuelgan la edición en lote, el borrado y el diálogo de impacto. */
+  protected readonly selectedIds = signal<ReadonlySet<Agent['id']>>(new Set());
   /** Agente cuya lista de estados está abierta (el menú es uno solo para toda la tabla). */
   protected readonly presenceMenuAgent = signal<Agent | null>(null);
   protected readonly presenceMenuItems = computed<MenuItem[]>(() =>
@@ -198,40 +165,23 @@ export class AgentsListPageComponent {
   protected readonly renamingId = signal<number | null>(null);
   protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
-  /** Ordered list of currently-visible column keys. Drives both the
-   *  column-selector menu and the table's data-driven `<thead>` /
-   *  `<tbody>` render loops. */
-  private readonly orderedColumns = signal<readonly string[]>([]);
-
-  /**
-   * Effective column order rendered by the table. Falls back to the
-   * declared columnDefs (filtered by `defaultVisible`) when the
-   * column-selector hasn't emitted yet — without this guard the table
-   * would paint with an EMPTY visible list on first paint, es decir sin
-   * ninguna columna de contenido.
-   */
-  protected readonly visibleColumnKeys = computed<readonly string[]>(() => {
-    const ordered = this.orderedColumns();
-    if (ordered.length > 0) return ordered;
-    return this.columnDefs()
-      .filter((c) => c.defaultVisible !== false)
-      .map((c) => c.key);
+  protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
+    this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        key: 'code',
+        label: this.translate.instant('agents.table.code'),
+        defaultVisible: false,
+      },
+      { key: 'name', label: this.translate.instant('agents.table.name'), locked: true },
+      { key: 'extension', label: this.translate.instant('agents.table.extension') },
+      { key: 'channels', label: this.translate.instant('agents.table.channels') },
+      { key: 'type', label: this.translate.instant('agents.table.type') },
+      { key: 'presence', label: this.translate.instant('agents.table.presence') },
+      { key: 'status', label: this.translate.instant('agents.table.status') },
+      { key: 'groups', label: this.translate.instant('agents.table.groups') },
+    ];
   });
-
-  protected readonly columnDefs = computed<readonly ColumnDef[]>(() => [
-    {
-      key: 'code',
-      label: this.translate.instant('agents.table.code'),
-      defaultVisible: false,
-    },
-    { key: 'name', label: this.translate.instant('agents.table.name'), locked: true },
-    { key: 'extension', label: this.translate.instant('agents.table.extension') },
-    { key: 'channels', label: this.translate.instant('agents.table.channels') },
-    { key: 'type', label: this.translate.instant('agents.table.type') },
-    { key: 'presence', label: this.translate.instant('agents.table.presence') },
-    { key: 'status', label: this.translate.instant('agents.table.status') },
-    { key: 'groups', label: this.translate.instant('agents.table.groups') },
-  ]);
 
   /* ── La tabla, ahora `sc-datatable` ───────────────────────────────────
    * Las nueve celdas son composiciones propias de la página (avatar +
@@ -257,112 +207,66 @@ export class AgentsListPageComponent {
   private readonly presenceTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('presenceTpl');
   private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('statusTpl');
   private readonly groupsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('groupsTpl');
-  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('actionsTpl');
 
-  /** Dependencia de IDIOMA para las cabeceras.
-   *
-   * `columns` es un `computed()` cuyas únicas dependencias eran los `viewChild`
-   * de las plantillas de celda. Como los `header` se resuelven con
-   * `translate.instant()` —no con el pipe `| translate`, que es impuro y sí
-   * reaccionaba— el computed NO se re-evaluaba al cambiar de idioma y las
-   * cabeceras se quedaban CONGELADAS en el idioma de carga.
-   *
-   * Lo destapó `audit:datatables` en su primera pasada, sobre 7 páginas. No lo
-   * veía ningún gate: `i18n:check` solo compara claves y todo el e2e corre en
-   * español. Mismo patrón que ya usaba `repo-list-page` para otra cosa. */
-  /** Nombre accesible de las casillas de selección.
-   *
-   * Sin esto PrimeNG anuncia sus literales por defecto —`'Row Selected'`,
-   * `'All items selected'`— que son inglés FIJO (no pasan por i18n) y no dicen
-   * qué fila es. La tabla a mano sí las nombraba; la migración lo perdió en
-   * silencio en todas. Ver `ScRowAriaLabelFn`. */
-  protected readonly ariaFila = (row: { name: string }): string =>
-    this.translate.instant('common.select_row', { name: row.name });
-  protected readonly ariaTodo = this.translate.instant('common.select_all');
-
-  private readonly currentLang = toSignal(
-    this.translate.onLangChange.pipe(
-      map((e) => e.lang),
-      startWith(this.translate.currentLang),
-    ),
-    { initialValue: this.translate.currentLang },
-  );
-
-  protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => [
-    {
-      field: 'code',
-      header: this.translate.instant('agents.table.code'),
-      sortable: true,
-      cellTemplate: this.codeTpl(),
-    },
-    {
-      field: 'name',
-      header: this.translate.instant('agents.table.name'),
-      sortable: true,
-      /* Más ancho que el reparto igual (176): cortaba 4 de cada 16 nombres mientras Canales usaba 30 px de
-       * los suyos. El resto de columnas se reparte lo que queda (2026-09-14). */
-      width: 'var(--sc-spacing-18)',
-      cellTemplate: this.nameTpl(),
-    },
-    {
-      field: 'extension',
-      header: this.translate.instant('agents.table.extension'),
-      sortable: true,
-      cellTemplate: this.extensionTpl(),
-    },
-    {
-      field: 'channels',
-      header: this.translate.instant('agents.table.channels'),
-      cellTemplate: this.channelsTpl(),
-    },
-    {
-      // `field: 'type'` no existe en `Agent` (la propiedad es `agentType`), así
-      // que el orden client-side de p-table sobre esta columna compara
-      // undefined con undefined: es un no-op estable. Quien ordena de verdad es
-      // `sorted()`, que sí sabe leer `agentType`. El `field` no se puede
-      // renombrar: es la identidad de la columna para el selector y lo que hay
-      // guardado en localStorage.
-      field: 'type',
-      header: this.translate.instant('agents.table.type'),
-      sortable: true,
-      cellTemplate: this.typeTpl(),
-    },
-    {
-      field: 'presence',
-      header: this.translate.instant('agents.table.presence'),
-      cellTemplate: this.presenceTpl(),
-    },
-    {
-      field: 'status',
-      header: this.translate.instant('agents.table.status'),
-      sortable: true,
-      cellTemplate: this.statusTpl(),
-    },
-    {
-      field: 'groups',
-      header: this.translate.instant('agents.table.groups'),
-      cellTemplate: this.groupsTpl(),
-    },
-    // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
-    // igual que el `<th aria-hidden>` que sustituye.
-    {
-      field: 'actions', stopRowClick: true,
-      header: '', headerAriaLabel: this.translate.instant('common.actions'),
-      width: '48px',
-      align: 'right',
-      cellTemplate: this.actionsTpl(),
-    },
-  ]);
-
-  /**
-   * Lo que `sc-datatable` pinta: las columnas que manda el `sc-column-selector`
-   * (visibilidad Y orden) más la de acciones, que no es configurable y va
-   * siempre la última.
-   */
-  protected readonly tableVisibleColumns = computed<readonly string[]>(() => [
-    ...this.visibleColumnKeys(),
-    'actions',
-  ]);
+  protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => {
+    this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        field: 'code',
+        header: this.translate.instant('agents.table.code'),
+        sortable: true,
+        cellTemplate: this.codeTpl(),
+      },
+      {
+        field: 'name',
+        header: this.translate.instant('agents.table.name'),
+        sortable: true,
+        /* Más ancho que el reparto igual (176): cortaba 4 de cada 16 nombres mientras Canales usaba 30 px de
+         * los suyos. El resto de columnas se reparte lo que queda (2026-09-14). */
+        width: 'var(--sc-spacing-18)',
+        cellTemplate: this.nameTpl(),
+      },
+      {
+        field: 'extension',
+        header: this.translate.instant('agents.table.extension'),
+        sortable: true,
+        cellTemplate: this.extensionTpl(),
+      },
+      {
+        field: 'channels',
+        header: this.translate.instant('agents.table.channels'),
+        cellTemplate: this.channelsTpl(),
+      },
+      {
+        // `field: 'type'` no existe en `Agent` (la propiedad es `agentType`), así
+        // que el orden client-side de p-table sobre esta columna compara
+        // undefined con undefined: es un no-op estable. Quien ordena de verdad es
+        // `compareAgents`, que sí sabe leer `agentType`. El `field` no se puede
+        // renombrar: es la identidad de la columna para el selector y lo que hay
+        // guardado en localStorage.
+        field: 'type',
+        header: this.translate.instant('agents.table.type'),
+        sortable: true,
+        cellTemplate: this.typeTpl(),
+      },
+      {
+        field: 'presence',
+        header: this.translate.instant('agents.table.presence'),
+        cellTemplate: this.presenceTpl(),
+      },
+      {
+        field: 'status',
+        header: this.translate.instant('agents.table.status'),
+        sortable: true,
+        cellTemplate: this.statusTpl(),
+      },
+      {
+        field: 'groups',
+        header: this.translate.instant('agents.table.groups'),
+        cellTemplate: this.groupsTpl(),
+      },
+    ];
+  });
 
   protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => [
     {
@@ -399,71 +303,34 @@ export class AgentsListPageComponent {
     },
   ]);
 
-  protected readonly filtered = computed(() => {
-    const q = this.searchQuery().toLowerCase().trim();
-    const all = this.agents();
-    if (!q) return all;
-    return all.filter(
-      (a) =>
-        a.name.toLowerCase().includes(q) ||
-        a.code.includes(q) ||
-        a.extension.includes(q) ||
-        (a.email?.toLowerCase().includes(q) ?? false),
-    );
-  });
+  /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas). */
+  protected readonly matchesSearch = (a: Agent, q: string): boolean =>
+    a.name.toLowerCase().includes(q) ||
+    a.code.includes(q) ||
+    a.extension.includes(q) ||
+    (a.email?.toLowerCase().includes(q) ?? false);
 
-  protected readonly sorted = computed(() => {
-    const list = [...this.filtered()];
-    const field = this.sortField();
-    const dir = this.sortDir();
-    list.sort((a, b) => {
-      if (!field) return 0;
-      let cmp = 0;
-      switch (field) {
-        case 'name':
-          cmp = a.name.localeCompare(b.name, 'es');
-          break;
-        case 'code':
-          cmp = a.code.localeCompare(b.code);
-          break;
-        case 'extension':
-          cmp = a.extension.localeCompare(b.extension);
-          break;
-        case 'type':
-          cmp = a.agentType.localeCompare(b.agentType);
-          break;
-        case 'status':
-          cmp = a.status.localeCompare(b.status);
-          break;
-      }
-      return dir === 'asc' ? cmp : -cmp;
-    });
-    return list;
-  });
+  /* El orden lo resuelve ESTA página y no la tabla: `type` se ordena por `agentType` (no hay `row.type`) y `name`
+   * compara con locale 'es'. Devuelve el orden ascendente; la dirección la pone la lista. */
+  protected readonly compareAgents = (a: Agent, b: Agent, field: string): number => {
+    switch (field) {
+      case 'name':
+        return a.name.localeCompare(b.name, 'es');
+      case 'code':
+        return a.code.localeCompare(b.code);
+      case 'extension':
+        return a.extension.localeCompare(b.extension);
+      case 'type':
+        return a.agentType.localeCompare(b.agentType);
+      case 'status':
+        return a.status.localeCompare(b.status);
+      default:
+        return 0;
+    }
+  };
 
-  /* Puente de selección: la fuente de verdad sigue siendo `selectedIds` —de
-   * ella cuelgan la barra masiva, la edición en lote, el borrado y el export— y
-   * `sc-datatable` habla de filas. Traducir en los dos sentidos aquí evita
-   * reescribir media página por un cambio de tabla. */
-  /* La fila abre la ficha, así que tiene que ANUNCIARLO. Al pintar el `<tr>`
-   * el DS, `pSelectableRowDisabled` (modo multiple) le quita la clase de la
-   * que PrimeNG saca el cursor, y la fila quedaba abriendo en silencio —
-   * medido: `cursor: auto`. La clase la recoge la piel compartida. Mientras
-   * se renombra en sitio no se marca: ahí el click es del input. */
-  protected readonly rowClass = computed<ScRowStyleClassFn<Agent>>(() => {
-    const renaming = this.renamingId();
-    return (row) => (row.id === renaming ? undefined : 'sc-row--clickable');
-  });
-
-  protected readonly selectedAgents = computed<readonly Agent[]>(() => {
-    const ids = this.selectedIds();
-    return this.sorted().filter((agent) => ids.has(agent.id));
-  });
-
-  protected onSelectionChange(selection: Agent | readonly Agent[] | null): void {
-    const rows = Array.isArray(selection) ? selection : selection ? [selection as Agent] : [];
-    this.selectedIds.set(new Set(rows.map((agent) => agent.id)));
-  }
+  /** Mientras se renombra una fila, abrirla no hace nada (y no enseña el cursor de mano). */
+  protected readonly isOpenable = (agent: Agent): boolean => this.renamingId() !== agent.id;
 
   protected readonly deleteItems = computed(() =>
     (this.deleteTarget() ?? []).map((a) => ({ id: a.id, name: a.name })),
@@ -503,30 +370,6 @@ export class AgentsListPageComponent {
     return this.typeKeys[agent.agentType];
   }
 
-  protected onOrderedColumnsChange(keys: readonly string[]): void {
-    this.orderedColumns.set(keys);
-  }
-
-  /**
-   * La cabecera de orden la pinta ahora el DS (`pSortableColumn` + icono, con
-   * su `aria-sort` y su activación por teclado), así que `toggleSort` y
-   * `getSortDir` desaparecen: aquí solo se recoge el estado que emite.
-   *
-   * `sorted()` sigue siendo quien ordena de verdad —es lo que lee el export y
-   * lo que sabe que "type" se ordena por `agentType`—. p-table reordena
-   * ADEMÁS el mismo array en sitio con un comparador idéntico
-   * (`localeCompare`), así que las dos pasadas convergen en vez de pelearse.
-   */
-  protected onSortChange(event: ScDatatableSortEvent): void {
-    this.sortField.set((event.field as SortField | undefined) ?? null);
-    this.sortDir.set(event.order < 0 ? 'desc' : 'asc');
-  }
-
-  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
-   * migración a `sc-datatable`: la casilla de fila y la de cabecera las sirven
-   * `p-tableCheckbox` y `p-tableHeaderCheckbox`, con la misma semántica de
-   * antes (la de cabecera marca lo FILTRADO, no todo). */
-
   protected clearSelection(): void {
     this.selectedIds.set(new Set());
   }
@@ -535,51 +378,12 @@ export class AgentsListPageComponent {
     void this.router.navigateByUrl('/admin/agentes/crear');
   }
 
-  /** Row-body click → enter edit. Ignored if user is renaming this row.
-   *
-   *  El DS ya separa los dos gestos: la celda de la casilla corta la
-   *  propagación, así que marcar cinco filas no abre cinco fichas. Lo mismo
-   *  hacen el kebab y el selector de presencia desde su plantilla. */
-  protected onRowClick(agent: Agent): void {
-    if (this.renamingId() === agent.id) return;
+  protected onRowOpen(agent: Agent): void {
     void this.router.navigateByUrl(`/admin/agentes/editar/${agent.id}`);
   }
 
-  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). El
-   *  `preventDefault()` del menú nativo ya lo hace el DS. */
-  /* WCAG 2.1.1: la fila abre la ficha con el ratón, así que tiene que abrirla
-   * también con el teclado. Estas tres listas NUNCA lo tuvieron —ni antes ni
-   * después de migrar; se comprobó en el árbol anterior: cero `tabindex`, cero
-   * `keydown`, cero enlaces— o sea que la acción existía solo para quien usa
-   * ratón. Enter abre; Espacio lo deja para la casilla, que es el reparto que
-   * fijó la Ola 6 en transcripciones. */
-  protected onRowKeydown(event: ScDatatableRowKeyEvent<Agent>): void {
-    if (event.originalEvent.key !== 'Enter') return;
-    event.originalEvent.preventDefault();
-    this.onRowClick(event.row);
-  }
-
-  protected onRowContextMenu(
-    event: ScDatatableRowEvent<Agent>,
-    menu: { toggle: (e: Event) => void },
-  ): void {
-    this.setMenuTarget(event.row);
-    menu.toggle(event.originalEvent);
-  }
-
-  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
-   *  apuntar a otra fila (o al variar el tamaño de la selección, que decide
-   *  si "Duplicar" aplica). Con `[model]="build(agent)"` el array se recreaba
-   *  en cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer
-   *  clic (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
-  protected readonly menuItems = computed<MenuItem[]>(() => {
-    const agent = this.menuTargetAgent();
-    return agent ? this.buildMenuItems(agent) : [];
-  });
-
-  protected setMenuTarget(agent: Agent): void {
-    this.menuTargetAgent.set(agent);
-  }
+  /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  protected readonly rowMenu = (agent: Agent): MenuItem[] => this.buildMenuItems(agent);
 
   private buildMenuItems(agent: Agent): MenuItem[] {
     return [
@@ -758,21 +562,7 @@ export class AgentsListPageComponent {
     this.deleteTarget.set(null);
   }
 
-  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
-   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
-   * HTML por fila y, aparte, un menú contextual con sus propios handlers
-   * duplicados — dos implementaciones que ya divergían. */
-
-  protected onSearchKey(event: KeyboardEvent): void {
-    if (event.key !== 'Escape') return;
-    if (this.searchQuery()) {
-      this.searchQuery.set('');
-    } else {
-      (event.target as HTMLInputElement).blur();
-    }
-  }
-
-  protected onExport(): void {
+  protected onExport(visibleRows: readonly Agent[]): void {
     const headers = [
       this.translate.instant('agents.export.code'),
       this.translate.instant('agents.export.name'),
@@ -782,7 +572,7 @@ export class AgentsListPageComponent {
       this.translate.instant('agents.export.status'),
       this.translate.instant('agents.export.groups'),
     ];
-    const rows = this.sorted().map((a) => [
+    const rows = visibleRows.map((a) => [
       a.code,
       a.name,
       a.extension,

@@ -12,7 +12,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
 import { MessageService, type MenuItem } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
@@ -20,15 +19,11 @@ import { ClickOutsideDirective } from '@core/directives/click-outside.directive'
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { ScBulkActionBarComponent as BulkActionBarComponent } from '@smartcontact-hub/components';
-import { ScDeleteEntityDialogComponent as DeleteEntityDialogComponent } from '@smartcontact-hub/components';
-
-import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
+import { ListPageComponent } from '@shared/components';
 import {
   type ScColumnCellContext,
   type ScColumnDef,
-  ScDatatableComponent as DatatableComponent,
-  type ScDatatableRowEvent,
+  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
@@ -40,20 +35,17 @@ import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
  * that supplies the data. Mirrors the prototype's `RepositoryListPage`
  * including search, sort, table with a shared row menu (kebab + right-click),
  * dynamic edit panel, bulk delete (via shared `DeleteEntityDialog`), and XLSX
- * export.
+ * export. La lista en sí (barra, tabla, selección, menú) la monta `sc-list-page` (DD-97).
  */
 @Component({
   selector: 'sc-repo-list-page',
   imports: [
-    BulkActionBarComponent,
     ButtonComponent,
-    DatatableComponent,
     ClickOutsideDirective,
     DeleteEntityDialogComponent,
     IconComponent,
-    MenuModule,
+    ListPageComponent,
     RepoFormPanelComponent,
-    SearchComponent,
     TagComponent,
     TranslateModule,
   ],
@@ -77,37 +69,25 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   protected readonly plusIcon = 'add';
-  protected readonly searchIcon = 'search';
-  protected readonly closeIcon = 'close';
-  protected readonly downloadIcon = 'download';
-  protected readonly moreIcon = 'more_vert';
 
   protected readonly searchQuery = signal('');
   protected readonly creating = signal(false);
   protected readonly editingId = signal<number | null>(null);
-  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
-  protected readonly menuTargetItem = signal<T | null>(null);
+  /** Selección: la lista la marca; de ella cuelgan la barra en lote y el borrado. */
+  protected readonly selectedIds = signal<ReadonlySet<T['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly T[] | null>(null);
 
   protected readonly items = computed(() => this.store().items());
 
-  protected readonly filtered = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    const all = this.items();
-    if (!query) return all;
-    const keys = this.config().searchKeys;
-    return all.filter((item) =>
-      keys.some((key) => {
-        const value = (item as unknown as Record<string, unknown>)[key];
-        return typeof value === 'string' && value.toLowerCase().includes(query);
-      }),
-    );
-  });
+  /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): los campos de `searchKeys`. */
+  protected readonly matchesSearch = (item: T, q: string): boolean =>
+    this.config().searchKeys.some((key) => {
+      const value = (item as unknown as Record<string, unknown>)[key];
+      return typeof value === 'string' && value.toLowerCase().includes(q);
+    });
 
-  protected readonly sorted = computed(() =>
-    [...this.filtered()].sort((a, b) => a.name.localeCompare(b.name)),
-  );
+  /** Siempre por nombre: esta lista no tiene cabeceras para ordenar. */
+  protected readonly sorted = computed(() => [...this.items()].sort((a, b) => a.name.localeCompare(b.name)));
 
   protected readonly existingNames = computed(() => this.items().map((item) => item.name));
 
@@ -153,21 +133,15 @@ export class RepoListPageComponent<T extends RepoEntity> {
    * hueco lo destapó esta página, no el piloto.
    */
   private readonly cellTpl = viewChild<TemplateRef<ScColumnCellContext<T>>>('cellTpl');
-  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<T>>>('actionsTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<T>[]>(() => {
     const cell = this.cellTpl();
-    const actions = this.actionsTpl();
-    return [
-      ...this.config().columns.map((c) => ({
-        field: c.key,
-        header: this.translate.instant(c.labelKey),
-        width: c.width,
-        cellTemplate: cell,
-      })),
-      // Columna sin datos: `field` es solo su identidad.
-      { field: '__actions', stopRowClick: true, header: '', headerAriaLabel: this.translate.instant('common.actions'), width: '48px', cellTemplate: actions },
-    ];
+    return this.config().columns.map((c) => ({
+      field: c.key,
+      header: this.translate.instant(c.labelKey),
+      width: c.width,
+      cellTemplate: cell,
+    }));
   });
 
   /** ¿Esta columna es la destacada (la que ancla el panel de edición)? */
@@ -178,26 +152,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
   /** ¿Esta columna es de este `kind`? (mono, truncate…) */
   protected isKind(key: string, kind: string): boolean {
     return this.config().columns.find((c) => c.key === key)?.kind === kind;
-  }
-
-  /* Puente de selección: `selectedIds` sigue siendo la fuente de verdad. */
-  protected readonly selectedItems = computed<readonly T[]>(() => {
-    const ids = this.selectedIds();
-    return this.sorted().filter((item) => ids.has(item.id));
-  });
-
-  protected onSelectionChange(selection: T | readonly T[] | null): void {
-    const rows = Array.isArray(selection) ? selection : selection ? [selection as T] : [];
-    this.selectedIds.set(new Set(rows.map((item) => item.id)));
-  }
-
-  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). */
-  protected onRowContextMenu(
-    event: ScDatatableRowEvent<T>,
-    menu: { toggle: (e: Event) => void },
-  ): void {
-    this.setMenuTarget(event.row);
-    menu.toggle(event.originalEvent);
   }
 
   protected getCellValue(item: T, key: string): string {
@@ -239,9 +193,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
       name,
     });
   }
-
-  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
-   * migración: los sirven `p-tableCheckbox` y `p-tableHeaderCheckbox`. */
 
   protected clearSelection(): void {
     this.selectedIds.set(new Set());
@@ -290,18 +241,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.deleteTarget.set(null);
   }
 
-  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
-   *  apuntar a otra fila. Con `[model]="build(item)"` el array se recreaba en
-   *  cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer clic
-   *  (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
-  protected readonly menuItems = computed<MenuItem[]>(() => {
-    const item = this.menuTargetItem();
-    return item ? this.buildMenuItems(item) : [];
-  });
-
-  protected setMenuTarget(item: T): void {
-    this.menuTargetItem.set(item);
-  }
+  /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  protected readonly rowMenu = (item: T): MenuItem[] => this.buildMenuItems(item);
 
   private buildMenuItems(item: T): MenuItem[] {
     return [
@@ -324,11 +265,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
     ];
   }
 
-  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
-   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
-   * HTML por fila y, aparte, un menú contextual con sus propios handlers
-   * duplicados — dos implementaciones que ya divergían. */
-
   protected onRowEdit(item: T): void {
     this.editingId.set(item.id);
     this.creating.set(false);
@@ -346,19 +282,10 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.editingId.set(null);
   }
 
-  protected onSearchKey(event: KeyboardEvent): void {
-    if (event.key !== 'Escape') return;
-    if (this.searchQuery()) {
-      this.searchQuery.set('');
-    } else {
-      (event.target as HTMLInputElement).blur();
-    }
-  }
-
-  protected onExport(): void {
+  protected onExport(visibleRows: readonly T[]): void {
     const cfg = this.config();
     const headers = cfg.columns.map((c) => this.translate.instant(c.labelKey));
-    const rows = this.sorted().map((item) =>
+    const rows = visibleRows.map((item) =>
       cfg.columns.map((c) => {
         if (c.kind === 'status' && c.statusMap) {
           const entry = c.statusMap[c.accessor(item)];

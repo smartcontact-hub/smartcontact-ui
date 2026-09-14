@@ -39,6 +39,16 @@ test('EXCLUYE lo que solo aparece en un comentario HTML', () => {
   assert.equal(arquetipoDe('<!-- usa page__inner--list --><div>x</div>').tiene, false);
 });
 
+test('una página sobre <sc-list-page> declara `list` a través de la pieza (DD-97)', () => {
+  const r = arquetipoDe('<sc-list-page [heading]="t" [rows]="r" [columns]="c" />');
+  assert.equal(r.tiene, true);
+  assert.deepEqual(r.modificadores, ['list']);
+});
+
+test('EXCLUYE la pieza de lista citada solo en un comentario', () => {
+  assert.equal(arquetipoDe('<!-- la monta <sc-list-page> --><div>x</div>').tiene, false);
+});
+
 test('caza dos arquetipos a la vez', () => {
   const r = arquetipoDe('<div class="page__inner page__inner--list page__inner--hub">x</div>');
   assert.deepEqual(r.modificadores.sort(), ['hub', 'list']);
