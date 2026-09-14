@@ -5828,6 +5828,19 @@ var dangerMenuItemCss = () => `
     color: var(--sc-text-danger);
 }
 `;
+var breadcrumbLinkCss = () => `
+.sc-breadcrumb-item--link {
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .sc-breadcrumb-item--link:hover .p-breadcrumb-item-label {
+        text-decoration-line: underline;
+        text-decoration-thickness: from-font;
+        text-underline-position: from-font;
+    }
+}
+`;
 var presetCss = ({ dt } = {}) => `
 ${typographyRule(
   mdTypographySelectors,
@@ -5858,6 +5871,8 @@ ${tagOneLineCss()}
 ${buttonMotionCss()}
 
 ${dangerMenuItemCss()}
+
+${breadcrumbLinkCss()}
 `;
 var css_default = presetCss;
 
