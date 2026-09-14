@@ -7,7 +7,7 @@
 
 ## ✅ 2026-09-14 · El Monitor del Supervisor queda adaptado y subido en su rama, para iterar con Rafa
 
-> **Sello: rama `arebury/dashboard-adapt-supervisor-monitor` (caja `volute`), sobre `origin/main` HEAD `a9f7c19`,
+> **Sello: rama `arebury/dashboard-adapt-supervisor-monitor` (caja `volute`), sobre `origin/main` HEAD `e4d2885`,
 > con PR abierto SIN fundir: Rafa pidió subirlo e iterar después sobre las decisiones de abajo.**
 > Local: `npm run ng -- serve supervisor --port 4311` → `http://localhost:4311/dashboard`.
 
