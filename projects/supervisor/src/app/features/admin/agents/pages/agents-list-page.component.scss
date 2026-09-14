@@ -57,12 +57,9 @@
   }
 }
 
-/* Base `.table-card` chrome promovido a SCDS partial S55
- * (`packages/design-system/styles/_sc-list-table.scss`). Delta scoped:
- * overflow-x:auto para tablas anchas con scroll horizontal. */
-.table-card {
-  overflow-x: auto;
-}
+/* RAMA A: sin el `overflow-x: auto` que había aquí. Convertía la tarjeta en contenedor de
+ * scroll y la cabecera fija se quedaba atada a ella, no a la página (la trampa de DD-80).
+ * Precio: si las columnas no caben, lo que se desplaza de lado es la página entera. */
 
 /* ─────────── Celdas ─────────── */
 /* El bloque `.table` (cabecera, filas, hover, seleccionada, paddings, anchos —
