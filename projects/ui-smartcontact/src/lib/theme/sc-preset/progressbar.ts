@@ -2,7 +2,7 @@ import type { ProgressBarDesignTokens } from '@primeuix/themes/types/progressbar
 
  export default {
     root: {
-        height: "var(--sc-scale-1-25)",
+        height: "var(--sc-cmp-progressbar-height)",
         background: "{content.border.color}",
         borderRadius: "{content.border.radius}"
     },

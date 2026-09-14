@@ -4,7 +4,7 @@ import type { CascadeSelectDesignTokens } from '@primeuix/themes/types/cascadese
     list: {
         gap: "{list.gap}",
         padding: "{list.padding}",
-        mobileIndent: "var(--sc-scale-1)"
+        mobileIndent: "var(--sc-cmp-cascadeselect-list-mobile-indent)"
     },
     root: {
         lg: {
@@ -45,7 +45,7 @@ import type { CascadeSelectDesignTokens } from '@primeuix/themes/types/cascadese
     },
     option: {
         icon: {
-            size: "var(--sc-scale-0-875)",
+            size: "var(--sc-cmp-cascadeselect-option-icon-size)",
             color: "{list.option.icon.color}",
             focusColor: "{list.option.icon.focus.color}"
         },
@@ -68,7 +68,7 @@ import type { CascadeSelectDesignTokens } from '@primeuix/themes/types/cascadese
     },
     dropdown: {
         color: "{form.field.icon.color}",
-        width: "var(--sc-scale-2-5)"
+        width: "var(--sc-cmp-cascadeselect-dropdown-width)"
     },
     clearIcon: {
         color: "{form.field.icon.color}"

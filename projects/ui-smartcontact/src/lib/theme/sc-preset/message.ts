@@ -56,13 +56,13 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
     },
     content: {
         lg: {
-            padding: "var(--sc-scale-0-625) var(--sc-scale-0-875)"
+            padding: "var(--sc-cmp-message-content-lg-padding-y) var(--sc-cmp-message-content-lg-padding-x)"
         },
         sm: {
-            padding: "var(--sc-scale-0-375) var(--sc-scale-0-625)"
+            padding: "var(--sc-cmp-message-content-sm-padding-y) var(--sc-cmp-message-content-sm-padding-x)"
         },
         gap: "var(--sc-cmp-message-content-gap)",
-        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)"
+        padding: "var(--sc-cmp-message-content-padding-y) var(--sc-cmp-message-content-padding-x)"
     },
     success: {
         shadow: "var(--sc-cmp-message-success-shadow)",

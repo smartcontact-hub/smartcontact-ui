@@ -5,12 +5,12 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
         transitionDuration: "{transition.duration}"
     },
     step: {
-        gap: "var(--sc-scale-1)",
-        padding: "var(--sc-scale-0-5)"
+        gap: "var(--sc-cmp-stepper-step-gap)",
+        padding: "var(--sc-cmp-stepper-step-padding)"
     },
     separator: {
         size: "0.142857rem",
-        margin: "0 0 0 var(--sc-scale-1-625)",
+        margin: "var(--sc-cmp-stepper-separator-margin-top) var(--sc-cmp-stepper-separator-margin-right) var(--sc-cmp-stepper-separator-margin-bottom) var(--sc-cmp-stepper-separator-margin-left)",
         background: "{content.border.color}",
         activeBackground: "{primary.color}"
     },
@@ -26,7 +26,7 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
         background: "{content.background}"
     },
     stepHeader: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-stepper-step-header-gap)",
         padding: "0",
         focusRing: {
             color: "{focus.ring.color}",
@@ -38,7 +38,7 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
         borderRadius: "{content.border.radius}"
     },
     stepNumber: {
-        size: "var(--sc-scale-2)",
+        size: "var(--sc-cmp-stepper-step-number-size)",
         color: "{text.muted.color}",
         shadow: "var(--sc-cmp-stepper-step-number-shadow)",
         fontSize: "var(--sc-scale-1-143)",
@@ -46,11 +46,11 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
         fontWeight: "500",
         activeColor: "{primary.color}",
         borderColor: "{content.border.color}",
-        borderRadius: "var(--sc-scale-1)",
+        borderRadius: "var(--sc-cmp-stepper-step-number-border-radius)",
         activeBackground: "{content.background}",
         activeBorderColor: "{content.border.color}"
     },
     steppanels: {
-        padding: "var(--sc-scale-0-875) var(--sc-scale-0-5) var(--sc-scale-1-125)"
+        padding: "var(--sc-cmp-stepper-steppanels-padding-top) var(--sc-cmp-stepper-steppanels-padding-right) var(--sc-cmp-stepper-steppanels-padding-bottom) var(--sc-cmp-stepper-steppanels-padding-left)"
     }
 } satisfies StepperDesignTokens;

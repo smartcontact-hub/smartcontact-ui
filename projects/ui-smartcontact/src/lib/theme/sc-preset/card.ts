@@ -3,7 +3,7 @@ import type { CardDesignTokens } from '@primeuix/themes/types/card';
  export default {
     body: {
         gap: "var(--sc-scale-0-5)",
-        padding: "var(--sc-scale-1-25)"
+        padding: "var(--sc-cmp-card-body-padding)"
     },
     root: {
         color: "{content.color}",
@@ -16,7 +16,7 @@ import type { CardDesignTokens } from '@primeuix/themes/types/card';
         fontWeight: "500"
     },
     caption: {
-        gap: "var(--sc-scale-0-5)"
+        gap: "var(--sc-cmp-card-caption-gap)"
     },
     /* `fontSize: "1em"` = el de la tarjeta, como antes de Aura (2026-09-13). El Kit no le
      * da tamaño al subtítulo; Aura sí (`1rem`, 16px) y un valor propio le gana al heredado:

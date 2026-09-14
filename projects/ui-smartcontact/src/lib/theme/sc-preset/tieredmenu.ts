@@ -29,7 +29,7 @@ import type { TieredMenuDesignTokens } from '@primeuix/themes/types/tieredmenu';
         transitionDuration: "{transition.duration}"
     },
     submenu: {
-        mobileIndent: "var(--sc-scale-1)"
+        mobileIndent: "var(--sc-cmp-tieredmenu-submenu-mobile-indent)"
     },
     separator: {
         borderColor: "{content.border.color}"

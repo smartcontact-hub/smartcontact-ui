@@ -2,7 +2,7 @@ import type { ConfirmPopupDesignTokens } from '@primeuix/themes/types/confirmpop
 
  export default {
     icon: {
-        size: "var(--sc-scale-1-5)",
+        size: "var(--sc-cmp-confirmpopup-icon-size)",
         color: "{overlay.popover.color}"
     },
     root: {
@@ -10,16 +10,16 @@ import type { ConfirmPopupDesignTokens } from '@primeuix/themes/types/confirmpop
         gutter: "0.714286rem",
         shadow: "var(--sc-cmp-confirmpopup-shadow)",
         background: "{overlay.popover.background}",
-        arrowOffset: "var(--sc-scale-1-25)",
+        arrowOffset: "var(--sc-cmp-confirmpopup-arrow-offset)",
         borderColor: "{overlay.popover.border.color}",
         borderRadius: "{overlay.popover.border.radius}"
     },
     footer: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-confirmpopup-footer-gap)",
         padding: "0 {overlay.popover.padding} {overlay.popover.padding}"
     },
     content: {
-        gap: "var(--sc-scale-1)",
+        gap: "var(--sc-cmp-confirmpopup-content-gap)",
         padding: "{overlay.popover.padding}"
     }
 } satisfies ConfirmPopupDesignTokens;

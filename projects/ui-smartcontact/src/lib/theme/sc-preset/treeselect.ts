@@ -53,7 +53,7 @@ import type { TreeSelectDesignTokens } from '@primeuix/themes/types/treeselect';
     },
     dropdown: {
         color: "{form.field.icon.color}",
-        width: "var(--sc-scale-2-5)"
+        width: "var(--sc-cmp-treeselect-dropdown-width)"
     },
     clearIcon: {
         color: "{form.field.icon.color}"

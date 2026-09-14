@@ -2,10 +2,10 @@ import type { ConfirmDialogDesignTokens } from '@primeuix/themes/types/confirmdi
 
  export default {
     icon: {
-        size: "var(--sc-scale-2)",
+        size: "var(--sc-cmp-confirmdialog-icon-size)",
         color: "{overlay.modal.color}"
     },
     content: {
-        gap: "var(--sc-scale-1)"
+        gap: "var(--sc-cmp-confirmdialog-content-gap)"
     }
 } satisfies ConfirmDialogDesignTokens;

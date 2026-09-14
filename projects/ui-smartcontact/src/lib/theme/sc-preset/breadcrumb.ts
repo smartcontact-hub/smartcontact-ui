@@ -32,8 +32,8 @@ import type { BreadcrumbDesignTokens } from '@primeuix/themes/types/breadcrumb';
         borderRadius: "{content.border.radius}"
     },
     root: {
-        gap: "var(--sc-scale-0-5)",
-        padding: "var(--sc-scale-1)",
+        gap: "var(--sc-cmp-breadcrumb-gap)",
+        padding: "var(--sc-cmp-breadcrumb-padding)",
         background: "{content.background}",
         transitionDuration: "{transition.duration}"
     },

@@ -3,18 +3,18 @@ import type { OrganizationChartDesignTokens } from '@primeuix/themes/types/organ
  export default {
     node: {
         color: "{content.color}",
-        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-organizationchart-node-padding-y) var(--sc-cmp-organizationchart-node-padding-x)",
         background: "{content.background}",
         hoverColor: "{content.hover.color}",
         borderColor: "{content.border.color}",
         borderRadius: "{content.border.radius}",
         selectedColor: "{highlight.color}",
         hoverBackground: "{content.hover.background}",
-        toggleablePadding: "var(--sc-scale-0-75) var(--sc-scale-1) var(--sc-scale-1-25)",
+        toggleablePadding: "var(--sc-cmp-organizationchart-node-toggleable-padding-top) var(--sc-cmp-organizationchart-node-toggleable-padding-right) var(--sc-cmp-organizationchart-node-toggleable-padding-bottom) var(--sc-cmp-organizationchart-node-toggleable-padding-left)",
         selectedBackground: "{highlight.background}"
     },
     root: {
-        gutter: "var(--sc-scale-0-75)",
+        gutter: "var(--sc-cmp-organizationchart-gutter)",
         transitionDuration: "{transition.duration}"
     },
     connector: {
@@ -23,7 +23,7 @@ import type { OrganizationChartDesignTokens } from '@primeuix/themes/types/organ
         borderRadius: "{content.border.radius}"
     },
     nodeToggleButton: {
-        size: "var(--sc-scale-1-5)",
+        size: "var(--sc-cmp-organizationchart-node-toggle-button-size)",
         color: "{text.muted.color}",
         focusRing: {
             color: "{focus.ring.color}",
@@ -35,7 +35,7 @@ import type { OrganizationChartDesignTokens } from '@primeuix/themes/types/organ
         background: "{content.background}",
         hoverColor: "{text.color}",
         borderColor: "{content.border.color}",
-        borderRadius: "var(--sc-scale-0-75)",
+        borderRadius: "var(--sc-cmp-organizationchart-node-toggle-button-border-radius)",
         hoverBackground: "{content.hover.background}"
     }
 } satisfies OrganizationChartDesignTokens;

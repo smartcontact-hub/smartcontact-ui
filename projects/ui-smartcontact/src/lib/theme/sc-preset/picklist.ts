@@ -2,9 +2,9 @@ import type { PickListDesignTokens } from '@primeuix/themes/types/picklist';
 
  export default {
     root: {
-        gap: "var(--sc-scale-1-125)"
+        gap: "var(--sc-cmp-picklist-gap)"
     },
     controls: {
-        gap: "var(--sc-scale-0-5)"
+        gap: "var(--sc-cmp-picklist-controls-gap)"
     }
 } satisfies PickListDesignTokens;

@@ -9,7 +9,7 @@ import type { ContextMenuDesignTokens } from '@primeuix/themes/types/contextmenu
             activeColor: "{navigation.item.icon.active.color}"
         },
         color: "{navigation.item.color}",
-        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)",
+        padding: "var(--sc-cmp-contextmenu-item-padding-y) var(--sc-cmp-contextmenu-item-padding-x)",
         focusColor: "{navigation.item.focus.color}",
         activeColor: "{navigation.item.active.color}",
         borderRadius: "{navigation.item.border.radius}",
@@ -29,7 +29,7 @@ import type { ContextMenuDesignTokens } from '@primeuix/themes/types/contextmenu
         transitionDuration: "{transition.duration}"
     },
     submenu: {
-        mobileIndent: "var(--sc-scale-1)"
+        mobileIndent: "var(--sc-cmp-contextmenu-submenu-mobile-indent)"
     },
     separator: {
         borderColor: "{content.border.color}"

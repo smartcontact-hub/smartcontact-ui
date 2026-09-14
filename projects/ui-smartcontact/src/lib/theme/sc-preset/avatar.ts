@@ -3,39 +3,39 @@ import type { AvatarDesignTokens } from '@primeuix/themes/types/avatar';
  export default {
     lg: {
         icon: {
-            size: "var(--sc-scale-1-5)"
+            size: "var(--sc-cmp-avatar-lg-icon-size)"
         },
         group: {
-            offset: "var(--sc-scale-neg-1)"
+            offset: "var(--sc-cmp-avatar-lg-group-offset)"
         },
-        width: "var(--sc-scale-3)",
-        height: "var(--sc-scale-3)",
-        fontSize: "var(--sc-scale-1-5)"
+        width: "var(--sc-cmp-avatar-lg-width)",
+        height: "var(--sc-cmp-avatar-lg-height)",
+        fontSize: "var(--sc-cmp-avatar-lg-font-size)"
     },
     xl: {
         icon: {
-            size: "var(--sc-scale-2)"
+            size: "var(--sc-cmp-avatar-xl-icon-size)"
         },
         group: {
-            offset: "var(--sc-scale-neg-1-5)"
+            offset: "var(--sc-cmp-avatar-xl-group-offset)"
         },
-        width: "var(--sc-scale-4)",
-        height: "var(--sc-scale-4)",
-        fontSize: "var(--sc-scale-2)"
+        width: "var(--sc-cmp-avatar-xl-width)",
+        height: "var(--sc-cmp-avatar-xl-height)",
+        fontSize: "var(--sc-cmp-avatar-xl-font-size)"
     },
     icon: {
-        size: "var(--sc-scale-1)"
+        size: "var(--sc-cmp-avatar-icon-size)"
     },
     root: {
         color: "{content.color}",
-        width: "var(--sc-scale-2)",
-        height: "var(--sc-scale-2)",
-        fontSize: "var(--sc-scale-1)",
+        width: "var(--sc-cmp-avatar-width)",
+        height: "var(--sc-cmp-avatar-height)",
+        fontSize: "var(--sc-cmp-avatar-font-size)",
         background: "{content.border.color}",
         borderRadius: "{content.border.radius}"
     },
     group: {
-        offset: "var(--sc-scale-neg-0-75)",
+        offset: "var(--sc-cmp-avatar-group-offset)",
         borderColor: "{content.background}"
     }
 } satisfies AvatarDesignTokens;

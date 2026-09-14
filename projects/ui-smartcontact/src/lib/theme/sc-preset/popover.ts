@@ -6,7 +6,7 @@ import type { PopoverDesignTokens } from '@primeuix/themes/types/popover';
         gutter: "0.714286rem",
         shadow: "var(--sc-cmp-popover-shadow)",
         background: "{overlay.popover.background}",
-        arrowOffset: "var(--sc-scale-1-25)",
+        arrowOffset: "var(--sc-cmp-popover-arrow-offset)",
         borderColor: "{overlay.popover.border.color}",
         borderRadius: "{overlay.popover.border.radius}"
     },

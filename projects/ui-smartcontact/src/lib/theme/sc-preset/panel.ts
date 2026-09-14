@@ -11,20 +11,20 @@ import type { PanelDesignTokens } from '@primeuix/themes/types/panel';
         fontWeight: "600"
     },
     footer: {
-        padding: "0 var(--sc-scale-1-125) var(--sc-scale-1-125)"
+        padding: "var(--sc-cmp-panel-footer-padding-top) var(--sc-cmp-panel-footer-padding-right) var(--sc-cmp-panel-footer-padding-bottom) var(--sc-cmp-panel-footer-padding-left)"
     },
     header: {
         color: "{text.color}",
-        padding: "var(--sc-scale-1-125)",
+        padding: "var(--sc-cmp-panel-header-padding)",
         background: "#00000000",
         borderColor: "{content.border.color}",
         borderWidth: "0",
         borderRadius: "0"
     },
     content: {
-        padding: "0 var(--sc-scale-1-125) var(--sc-scale-1-125)"
+        padding: "var(--sc-cmp-panel-content-padding-top) var(--sc-cmp-panel-content-padding-right) var(--sc-cmp-panel-content-padding-bottom) var(--sc-cmp-panel-content-padding-left)"
     },
     toggleableHeader: {
-        padding: "var(--sc-scale-0-375) var(--sc-scale-1-125)"
+        padding: "var(--sc-cmp-panel-toggleable-header-padding-y) var(--sc-cmp-panel-toggleable-header-padding-x)"
     }
 } satisfies PanelDesignTokens;

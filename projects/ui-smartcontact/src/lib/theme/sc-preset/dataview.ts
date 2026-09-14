@@ -9,7 +9,7 @@ import type { DataViewDesignTokens } from '@primeuix/themes/types/dataview';
     },
     footer: {
         color: "{content.color}",
-        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-dataview-footer-padding-y) var(--sc-cmp-dataview-footer-padding-x)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderWidth: "0.071429rem",
@@ -17,7 +17,7 @@ import type { DataViewDesignTokens } from '@primeuix/themes/types/dataview';
     },
     header: {
         color: "{content.color}",
-        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-dataview-header-padding-y) var(--sc-cmp-dataview-header-padding-x)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderWidth: "0.071429rem",

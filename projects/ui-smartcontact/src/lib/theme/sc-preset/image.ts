@@ -5,9 +5,9 @@ import type { ImageDesignTokens } from '@primeuix/themes/types/image';
         transitionDuration: "{transition.duration}"
     },
     action: {
-        size: "var(--sc-scale-3)",
+        size: "var(--sc-cmp-image-action-size)",
         color: "{surface.50}",
-        iconSize: "var(--sc-scale-1-5)",
+        iconSize: "var(--sc-cmp-image-action-icon-size)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -16,12 +16,12 @@ import type { ImageDesignTokens } from '@primeuix/themes/types/image';
             shadow: "none"
         },
         hoverColor: "{surface.0}",
-        borderRadius: "var(--sc-scale-1-5)",
+        borderRadius: "var(--sc-cmp-image-action-border-radius)",
         hoverBackground: "#ffffff1a"
     },
     preview: {
         icon: {
-            size: "var(--sc-scale-1-5)"
+            size: "var(--sc-cmp-image-preview-icon-size)"
         },
         mask: {
             color: "{mask.color}",
@@ -29,13 +29,13 @@ import type { ImageDesignTokens } from '@primeuix/themes/types/image';
         }
     },
     toolbar: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-image-toolbar-gap)",
         blur: "0.571429rem",
-        padding: "var(--sc-scale-0-5)",
+        padding: "var(--sc-cmp-image-toolbar-padding)",
         position: {
-            top: "var(--sc-scale-1)",
+            top: "var(--sc-cmp-image-toolbar-position-top)",
             left: "auto",
-            right: "var(--sc-scale-1)",
+            right: "var(--sc-cmp-image-toolbar-position-right)",
             bottom: "auto"
         },
         background: "#ffffff1a",
