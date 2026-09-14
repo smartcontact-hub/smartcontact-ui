@@ -12,50 +12,20 @@
     <sc-memory-conversation-filters
       [filters]="filters()"
       [availableAiCategories]="availableAiCategories()"
-      [failedCount]="failedCount()"
       [filteredCount]="filteredCount()"
-      [lastSearchAt]="lastSearchAt()"
       (filtersChange)="onFiltersChange($event)"
     />
 
-    @if (conversations().length === 0) {
-      <!-- El vacío pasa al componente compartido, como las tres hermanas de
-           memory. El CTA es "limpiar filtros" y NO "crear": aquí no se crean
-           conversaciones, entran solas. Ofrecer un "crear" sería mentir sobre
-           lo que el usuario puede hacer.
-           Y solo se ofrece si hay filtros que limpiar: sin filtros activos no
-           hay nada que deshacer, y un botón que no hace nada es peor que
-           ninguno. -->
+    <!-- Sin ninguna conversación todavía, el vacío de página. Con filtros o una vista que se quedan
+         sin resultados, el vacío va DENTRO de la tabla, con la cabecera visible: la misma regla que
+         las listas de administración (2026-09-14). -->
+    @if (allConversations().length === 0) {
       <sc-empty-state
         [icon]="emptyIcon"
         titleKey="memory.conversations.empty.title"
-        [bodyKey]="
-          hasActiveFilters()
-            ? 'memory.conversations.empty.body'
-            : 'memory.conversations.empty.body_unfiltered'
-        "
-        [ctaKey]="hasActiveFilters() ? 'memory.conversations.empty.clear_filters' : ''"
-        ctaIcon="filter_alt_off"
-        (cta)="onClearFilters()"
+        bodyKey="memory.conversations.empty.body_unfiltered"
       />
     } @else {
-      <!-- Puerta de entrada al flujo en LOTE.
-           Cuando las 3 acciones masivas vivían en la toolbar como iconos
-           grises, eran un mal control pero al menos ANUNCIABAN que se podía
-           transcribir. Al llevarlas a la barra de selección se ganó el
-           antipatrón de Nielsen y se perdió el anuncio: un recorrido cognitivo
-           destapó que la palabra "transcribir" no aparecía en ninguna parte de
-           la pantalla de entrada, y ningún test podía verlo.
-           Esta línea lo devuelve, ya no como control muerto sino como frase, y
-           de paso nombra el atajo del rango, que tampoco se anunciaba.
-           Desaparece en cuanto hay selección: a partir de ahí lo cuenta todo la
-           barra, y repetirlo sería ruido. -->
-      @if (selectedCount() === 0) {
-        <p class="conversations-bulk-hint sc-text-caption-regular">
-          {{ 'memory.conversations.bulk_hint' | translate }}
-        </p>
-      }
-
       <sc-memory-conversation-table
         [conversations]="conversations()"
         [selectedIds]="selectedIds()"
@@ -64,7 +34,16 @@
         (conversationOpen)="onConversationOpen($event)"
         (selectionChange)="onSelectionChange($event)"
         (contextActionRequested)="onContextAction($event)"
-      />
+      >
+        <sc-empty-state
+          [icon]="emptyCopy().icon"
+          [titleKey]="emptyCopy().titleKey"
+          [bodyKey]="emptyCopy().bodyKey"
+          [ctaKey]="emptyCopy().ctaKey"
+          [ctaIcon]="emptyCopy().ctaIcon"
+          (cta)="onClearFilters()"
+        />
+      </sc-memory-conversation-table>
     }
   </div>
 </div>

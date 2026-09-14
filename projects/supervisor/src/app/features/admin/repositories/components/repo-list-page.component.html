@@ -45,13 +45,29 @@
   tableTestId="repo-table"
   (exportRequest)="onExport($event)"
 >
-  <span scListNoResults>
+  <!-- Sin filas: con búsqueda, «Sin resultados» y limpiarla; sin búsqueda, que aún no hay ninguno y crear el
+       primero. El MISMO vacío del DS que el resto de listas (2026-09-14). -->
+  <div scListNoResults>
     @if (searchQuery()) {
-      {{ 'repositories.no_results.with_query' | translate: { entity: entityPlural(), query: searchQuery() } }}
+      <sc-empty-state
+        icon="search_off"
+        titleKey="labels.no_results.title"
+        bodyKey="repositories.no_results.with_query"
+        [params]="{ entity: entityPlural(), query: searchQuery() }"
+        ctaKey="labels.clear_search"
+        ctaIcon="close"
+        (cta)="searchQuery.set('')"
+      />
     } @else {
-      {{ 'repositories.no_results.empty' | translate: { entity: entityPlural() } }}
+      <sc-empty-state
+        icon="inventory_2"
+        titleKey="repositories.no_results.empty"
+        [params]="{ entity: entityPlural() }"
+        ctaKey="common.create"
+        (cta)="onCreateClick()"
+      />
     }
-  </span>
+  </div>
 
   <ng-container ngProjectAs="[scListBulkActions]">
     <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">

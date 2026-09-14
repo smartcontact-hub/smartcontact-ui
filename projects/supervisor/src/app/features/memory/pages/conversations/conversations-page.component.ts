@@ -97,6 +97,8 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
   }
 
   protected readonly conversations = this.conversationsStore.filteredConversations;
+  /** Todas, sin filtrar: decide entre el vacío de página (no hay ninguna) y el de la tabla. */
+  protected readonly allConversations = this.conversationsStore.conversations;
   protected readonly filters = this.conversationsStore.filters;
   protected readonly selectedIds = this.conversationsStore.selectedIds;
   protected readonly selectedCount = this.conversationsStore.selectedCount;
@@ -126,14 +128,43 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
     () => JSON.stringify(this.filters()) !== JSON.stringify(EMPTY_FILTERS),
   );
 
+  /**
+   * El vacío dice lo que de verdad pasa (2026-09-14). Con una vista rápida y NINGÚN otro filtro,
+   * no encontrar nada es una buena noticia —ninguna ha fallado, no queda nada por transcribir— y
+   * no un «ajusta los filtros», que culpaba al usuario de algo que no hizo. Las vistas se quedan
+   * siempre visibles aunque estén vacías: un conjunto fijo se aprende de memoria y no salta.
+   */
+  protected readonly emptyCopy = computed(() => {
+    const f = this.filters();
+    const onlyView =
+      JSON.stringify({ ...f, status: EMPTY_FILTERS.status }) === JSON.stringify(EMPTY_FILTERS);
+    const view = f.status.onlyFailed ? 'failed' : f.status.onlyPending ? 'pending' : null;
+    if (view && onlyView) {
+      return {
+        icon: 'task_alt',
+        titleKey: `memory.conversations.empty.${view}_title`,
+        // «Sin transcribir» vacía se explica sola; «Fallidas» dice dónde aparecerán si las hay.
+        bodyKey: view === 'failed' ? 'memory.conversations.empty.failed_body' : '',
+        ctaKey: 'memory.conversations.empty.view_all',
+        ctaIcon: 'list',
+      };
+    }
+    return {
+      icon: this.emptyIcon,
+      titleKey: 'memory.conversations.empty.title',
+      bodyKey: this.hasActiveFilters()
+        ? 'memory.conversations.empty.body'
+        : 'memory.conversations.empty.body_unfiltered',
+      ctaKey: this.hasActiveFilters() ? 'memory.conversations.empty.clear_filters' : '',
+      ctaIcon: 'filter_alt_off',
+    };
+  });
+
   protected onClearFilters(): void {
     this.conversationsStore.setFilters(EMPTY_FILTERS);
   }
   protected readonly pageIcon = 'forum';
 
-  /** Última búsqueda — placeholder hoy = now. Con backend real, lo seteará
-   *  el dispatcher al recibir respuesta. */
-  protected readonly lastSearchAt = signal<Date>(new Date());
 
   /** S50: download modal trigger desde toolbar. NULL = no abierto. Cuando el
    *  toolbar dispara download sin selección, descarga todo filtered; con

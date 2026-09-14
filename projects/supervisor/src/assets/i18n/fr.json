@@ -14,17 +14,19 @@
         "title": "Aucune conversation à afficher",
         "body": "Ajustez les filtres ou la plage de dates pour voir des résultats.",
         "body_unfiltered": "Aucune conversation n'est encore arrivée.",
-        "clear_filters": "Effacer les filtres"
+        "clear_filters": "Effacer les filtres",
+        "failed_title": "Aucune transcription n'a échoué",
+        "failed_body": "Si l'une échoue, elle apparaîtra ici.",
+        "pending_title": "Plus rien à transcrire",
+        "view_all": "Tout voir"
       },
       "page_title": "Conversations",
       "open_aria": "Ouvrir la conversation {{id}}",
       "open_aria_with_state": "Ouvrir la conversation {{id}} — État : {{state}}",
-      "open_player": "Ouvrir dans le lecteur",
       "select_all_aria": "Sélectionner toutes les conversations filtrées",
       "select_row_aria": "Sélectionner la conversation {{id}}",
       "table": {
         "status": "État",
-        "hour": "Heure",
         "date": "Date",
         "service": "Service",
         "origin": "Origine",
@@ -32,7 +34,9 @@
         "destination": "Destination",
         "duration": "Durée conv.",
         "waiting": "T. attente",
-        "id": "ID"
+        "id": "ID",
+        "today": "Aujourd'hui",
+        "yesterday": "Hier"
       },
       "status": {
         "call": "Appel",
@@ -45,31 +49,35 @@
         "transcribing": "Transcription en cours…",
         "analyzing": "Analyse en cours…",
         "failed": "Transcription échouée",
-        "multi_recording": "{{count}} enregistrements"
+        "multi_recording": "{{count}} enregistrements",
+        "deleted": "Enregistrement supprimé"
       },
       "filters": {
+        "search_placeholder": "Rechercher",
         "services_label": "Services",
-        "services_placeholder": "Tout service",
         "date_label": "Date",
-        "date_placeholder": "Toute date",
-        "origin_label": "Origine",
-        "origin_placeholder": "Toute origine",
-        "destination_label": "Destination",
-        "destination_placeholder": "Toute destination",
         "groups_label": "Groupes ACD",
-        "groups_placeholder": "Tout groupe",
         "agents_label": "Agents",
-        "agents_placeholder": "Tout agent",
         "reset": "Effacer les filtres",
-        "only_failed": "Échouées uniquement",
-        "only_failed_hint": "Afficher uniquement les conversations avec transcription échouée",
         "transcribe": "Transcrire la sélection",
         "transcribe_aria": "Transcrire la sélection ({{count}})",
         "download": "Télécharger",
         "mark_read": "Marquer comme lues",
         "mark_read_aria": "Marquer comme lues ({{count}})",
-        "results": "Résultats",
-        "last_search": "Dernière recherche"
+        "results_one": "{{count}} conversation",
+        "results_other": "{{count}} conversations",
+        "services_selected": "{0} services",
+        "groups_selected": "{0} groupes",
+        "agents_selected": "{0} agents",
+        "categories_selected": "{0} catégories",
+        "date_presets": {
+          "today": "Aujourd'hui",
+          "yesterday": "Hier",
+          "last_7": "7 derniers jours",
+          "clear": "Effacer"
+        },
+        "search_chip": "Recherche",
+        "remove_chip": "Retirer le filtre {{filter}}"
       },
       "context": {
         "process": "Traiter",
@@ -79,46 +87,47 @@
       "cols": {
         "more": "Plus d'actions"
       },
-      "bulk_hint": "Sélectionnez des conversations pour les transcrire ou les télécharger en lot. Maj+clic sélectionne une plage.",
-      "select_row_title": "Sélectionner (n'ouvre pas la conversation)"
+      "select_row_title": "Sélectionner (n'ouvre pas la conversation)",
+      "views": {
+        "label": "Vues",
+        "all": "Toutes",
+        "pending": "Non transcrites",
+        "failed": "Échouées"
+      }
     },
     "type_filter": {
-      "label": "Type",
+      "label": "Plus de filtres",
       "aria_default": "Filtres de type et état",
       "aria_active": "Filtres de type et état · actifs",
-      "panel_title": "Filtres",
+      "panel_title": "Plus de filtres",
       "reset": "Effacer",
       "groups": {
         "type": "Type de conversation",
         "channel": "Canal",
         "direction": "Direction",
         "rules": "Traitement appliqué",
-        "status": "État",
         "multirec": "Multi-enregistrement"
       },
       "types": {
-        "interna": "interne",
-        "externa": "externe"
+        "interna": "Interne",
+        "externa": "Externe"
       },
       "channels": {
-        "llamada": "appel",
-        "chat": "chat"
+        "llamada": "Appel",
+        "chat": "Chat"
       },
       "directions": {
-        "entrante": "entrant",
-        "saliente": "sortant"
+        "entrante": "Entrante",
+        "saliente": "Sortante"
       },
       "rules": {
-        "recording": "avec enregistrement",
-        "transcription": "avec transcription",
-        "classification": "avec classification"
-      },
-      "status": {
-        "only_failed": "uniquement échouées"
+        "recording": "Avec enregistrement",
+        "transcription": "Avec transcription",
+        "classification": "Avec classification"
       },
       "multirec": {
-        "only_multi": "uniquement avec plusieurs tronçons",
-        "only_partial": "uniquement avec tronçons partiellement transcrits"
+        "only_multi": "Uniquement avec plusieurs tronçons",
+        "only_partial": "Uniquement avec tronçons partiellement transcrits"
       }
     },
     "player": {
@@ -624,12 +633,7 @@
     },
     "category_filter": {
       "label": "Catégories IA",
-      "aria": "Filtres par catégorie IA",
-      "panel_title": "Catégories IA",
-      "clear": "Effacer",
-      "empty": "Pas encore de catégories. Traitez des conversations avec analyse pour les voir ici.",
-      "select_all": "Tout sélectionner",
-      "deselect_all": "Tout désélectionner"
+      "empty": "Pas encore de catégories. Traitez des conversations avec analyse pour les voir ici."
     },
     "dispatch": {
       "transcribing": "Génération de la transcription de {{n}} conversations…",
@@ -807,7 +811,7 @@
     },
     "no_results": {
       "title": "Aucun résultat",
-      "text": "Aucune étiquette ne correspond à \"{{query}}\""
+      "text": "Aucune étiquette ne correspond à « {{query}} »."
     },
     "form": {
       "create_title": "Nouvelle étiquette",
@@ -878,8 +882,8 @@
       "updated": "Mis à jour"
     },
     "no_results": {
-      "text": "Aucun modèle de {{tab}} dans ce filtre",
-      "text_with_query": "Aucun modèle de {{tab}} ne correspond à \"{{query}}\""
+      "text": "Aucun modèle de {{tab}} dans ce filtre.",
+      "text_with_query": "Aucun modèle de {{tab}} ne correspond à « {{query}} »."
     },
     "form": {
       "create_title": "Nouveau modèle",
@@ -925,7 +929,7 @@
       "deleted_bulk": "{{count}} {{entity}} supprimés(es)"
     },
     "no_results": {
-      "with_query": "Aucun(e) {{entity}} ne correspond à \"{{query}}\"",
+      "with_query": "Aucun(e) {{entity}} ne correspond à « {{query}} ».",
       "empty": "Pas encore de {{entity}}"
     },
     "columns": {
@@ -1075,7 +1079,7 @@
     "page_title": "Utilisateurs",
     "create_button": "Nouvel utilisateur",
     "search_placeholder": "Rechercher un utilisateur par nom, email, identifiant...",
-    "no_results": "Aucun utilisateur trouvé",
+    "no_results_query": "Aucun utilisateur ne correspond à « {{query}} ».",
     "entity_singular": "utilisateur",
     "table": {
       "name": "Nom",
@@ -1181,7 +1185,7 @@
     "page_title": "Groupes",
     "create_button": "Nouveau groupe",
     "search_placeholder": "Rechercher un groupe par nom, code, téléphone ou stratégie...",
-    "no_results": "Aucun groupe trouvé",
+    "no_results_query": "Aucun groupe ne correspond à « {{query}} ».",
     "entity_singular": "groupe",
     "table": {
       "code": "Code",
@@ -1297,7 +1301,7 @@
     "page_title": "Agents",
     "create_button": "Nouvel agent",
     "search_placeholder": "Rechercher un agent par nom, code, extension ou email...",
-    "no_results": "Aucun agent trouvé",
+    "no_results_query": "Aucun agent ne correspond à « {{query}} ».",
     "entity_singular": "agent",
     "table": {
       "code": "Code",
@@ -1770,5 +1774,10 @@
         "confirm_body": "Cette action effacera toutes les modifications que vous avez faites sur agents, groupes, utilisateurs, étiquettes, modèles et référentiels. La page se rechargera."
       }
     }
+  },
+  "primeng": {
+    "today": "Aujourd'hui",
+    "clear": "Effacer",
+    "week_header": "Sem"
   }
 }

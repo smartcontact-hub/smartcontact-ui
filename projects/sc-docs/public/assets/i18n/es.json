@@ -82,6 +82,11 @@
       "bulkactionbar": "Barra que aparece al seleccionar filas, con el recuento y las acciones en bloque.",
       "bulkeditmenu": "Menú de acciones para aplicar a varias filas seleccionadas a la vez.",
       "bulktranscriptionmodal": "Modal para lanzar la transcripción de varias conversaciones en lote."
+    },
+    "emptystate": {
+      "search_title": "Sin resultados",
+      "search_body": "No hay agentes que coincidan con «{{query}}».",
+      "clear_search": "Limpiar búsqueda"
     }
   },
   "fundamentos": {

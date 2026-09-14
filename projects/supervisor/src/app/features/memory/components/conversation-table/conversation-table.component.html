@@ -17,10 +17,9 @@
     (rowContextMenu)="onRowContextMenu($event, rowMenu)"
     data-testid="conversations-table"
   >
-    <!-- La página monta `<sc-empty-state>` cuando no hay conversaciones, así que
-         esta rama solo se ve si un filtro deja la tabla a cero — defensivo. -->
-    <div scTableEmpty class="table__no-results">
-      {{ 'memory.conversations.empty.title' | translate }}
+    <div scTableEmpty>
+      <!-- Lo pone la página: el vacío de la vista o de los filtros activos (2026-09-14). -->
+      <ng-content />
     </div>
   </sc-datatable>
 </div>
@@ -32,11 +31,9 @@
   <button
     type="button"
     class="memory-status-button"
-    [attr.aria-label]="
-      'memory.conversations.open_aria_with_state'
-        | translate: { id: conv.id, state: statusLabelKey(conv) | translate }
-    "
-    [attr.title]="'memory.conversations.open_player' | translate"
+    [attr.aria-label]="'memory.conversations.open_aria_with_state' | translate: { id: conv.id, state: statusDescription(conv) }"
+    [pTooltip]="statusDescription(conv)"
+    tooltipPosition="top"
     (click)="onStatusClick($event, conv)"
     (keydown)="onStatusKeydown($event, conv)"
   >
@@ -48,8 +45,7 @@
     @if (conv.hasFailedTranscription) {
       <span
         class="memory-status-button__failed"
-        [attr.aria-label]="'memory.conversations.status.failed' | translate"
-        [attr.title]="'memory.conversations.status.failed' | translate"
+        aria-hidden="true"
       >
         <svg
           width="12"
@@ -71,12 +67,7 @@
     @if (recordingsCount(conv) > 1) {
       <span
         class="memory-status-button__multi"
-        [attr.aria-label]="
-          'memory.conversations.status.multi_recording' | translate: { count: recordingsCount(conv) }
-        "
-        [attr.title]="
-          'memory.conversations.status.multi_recording' | translate: { count: recordingsCount(conv) }
-        "
+        aria-hidden="true"
       >
         <sc-badge size="sm" variant="info" [label]="recordingsCount(conv)" />
       </span>
@@ -114,6 +105,10 @@
 
 <ng-template #numTpl let-conv let-col="col">
   <span class="memory-num-cell sc-text-body-regular">{{ $any(conv)[col.field] }}</span>
+</ng-template>
+
+<ng-template #whenTpl let-conv>
+  <span class="sc-text-body-regular">{{ when(conv) }}</span>
 </ng-template>
 
 <ng-template #idTpl let-conv>

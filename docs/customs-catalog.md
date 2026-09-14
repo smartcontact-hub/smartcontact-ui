@@ -383,6 +383,28 @@ que le dijeran que el gate que le acababa de fallar no estaba construido.)*
 
 ---
 
+### 1.10 La opción no elegida de `SelectButton` bajo AA · 2026-09-14
+
+`SelectButton` entró en uso con las vistas rápidas de Conversaciones («Todas · Sin transcribir ·
+Fallidas») y `theme-contrast` lo cazó en el CI: el texto de la opción no elegida no llegaba a AA.
+
+| Slot | Kit | Ahora | Medido sobre su carril (`surface.100`) |
+|---|---|---|---|
+| `togglebutton.color` (claro) | `surface.500` | **`surface.700`** | 2,56:1 → **6,40:1** |
+| `togglebutton.hover.color` (claro) | `surface.700` | **`surface.900`** | sube un paso para que el hover se siga notando |
+
+`surface.600` no basta (3,92:1). En oscuro ya cumplía.
+
+**Por qué va por referencia de paleta y no por token (cuando se escribió).** Los slots SÍ existen generados
+(`--sc-cmp-togglebutton-color`, `-hover-color`… en `04-component.css`), pero el preset no los puede
+leer todavía: `cmp-color-rewire` espera que el slot `root.color` del preset lea un token con un nivel
+`root` en el nombre, y el Kit no tiene ese nivel, así que cablearlos rompe el guard. Hasta que se arregle ese mapeo, va por
+referencia de paleta en `sc-preset/togglebutton.ts`, como el `danger` sólido de §1.8.
+
+**Cómo se cierra**: que el Kit suba `togglebutton.color` en claro (pregunta abierta en
+`docs/figma-pendiente.md` §10). El guard ya acepta los slots de `root` (#177), así que entonces el
+preset lee `var(--sc-cmp-togglebutton-*)` y el bloque a mano se borra.
+
 ## 2. Component extensions (el DS añade lo que Figma no modela)
 
 ### 2.1 Toast action button (undo pattern)

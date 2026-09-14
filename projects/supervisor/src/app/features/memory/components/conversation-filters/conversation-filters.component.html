@@ -1,119 +1,140 @@
 <div class="memory-conversation-filters">
-  <div class="memory-conversation-filters__grid">
-    <sc-multiselect
-      size="sm"
-      [label]="'memory.conversations.filters.services_label' | translate"
-      [options]="serviceOptions"
+  <!-- 1 · Vistas rápidas y recuento. Una vista es un filtro guardado de un clic: «Sin
+       transcribir» son las que puedes mandar a transcribir, «Fallidas» las que fallaron. Sustituye
+       a «Solo fallidas» (chip suelto y casilla en «Más filtros»), que decían lo mismo dos veces.
+       Botones segmentados (`p-selectbutton`, primeng.dev/selectbutton), elegidos frente a pestañas
+       el 2026-09-14. ⚠️ PrimeNG directo, sin wrapper del DS todavía. -->
+  <div class="memory-conversation-filters__top">
+    <span class="visually-hidden" [id]="ids.views">{{ 'memory.conversations.views.label' | translate }}</span>
+    <p-selectbutton
+      class="memory-conversation-filters__views"
+      [options]="quickViewOptions()"
       optionLabel="label"
       optionValue="value"
-      [placeholder]="'memory.conversations.filters.services_placeholder' | translate"
-      [filter]="true"
-      [value]="[...filters().services]"
-      (valueChange)="setServices($event)"
+      [allowEmpty]="false"
+      [ngModel]="quickView()"
+      (ngModelChange)="setQuickView($event)"
+      [attr.aria-labelledby]="ids.views"
     />
 
-    <sc-datepicker
-      size="sm"
-      [label]="'memory.conversations.filters.date_label' | translate"
-      [placeholder]="'memory.conversations.filters.date_placeholder' | translate"
-      [value]="filters().date"
-      (valueChange)="setDate($event)"
-      [showClear]="true"
-    />
-
-    <sc-inputtext
-      size="sm"
-      [label]="'memory.conversations.filters.origin_label' | translate"
-      [placeholder]="'memory.conversations.filters.origin_placeholder' | translate"
-      [value]="filters().origin"
-      (valueChange)="setOrigin($event)"
-    />
-
-    <sc-inputtext
-      size="sm"
-      [label]="'memory.conversations.filters.destination_label' | translate"
-      [placeholder]="'memory.conversations.filters.destination_placeholder' | translate"
-      [value]="filters().destination"
-      (valueChange)="setDestination($event)"
-    />
-
-    <sc-multiselect
-      size="sm"
-      [label]="'memory.conversations.filters.groups_label' | translate"
-      [options]="groupOptions"
-      optionLabel="label"
-      optionValue="value"
-      [placeholder]="'memory.conversations.filters.groups_placeholder' | translate"
-      [filter]="true"
-      [value]="[...filters().groups]"
-      (valueChange)="setGroups($event)"
-    />
-
-    <sc-multiselect
-      size="sm"
-      [label]="'memory.conversations.filters.agents_label' | translate"
-      [options]="agentOptions"
-      optionLabel="label"
-      optionValue="value"
-      [placeholder]="'memory.conversations.filters.agents_placeholder' | translate"
-      [filter]="true"
-      [value]="[...filters().agents]"
-      (valueChange)="setAgents($event)"
-    />
+    <p class="memory-conversation-filters__count sc-text-body-regular" role="status" aria-live="polite" aria-atomic="true">
+      {{
+        (filteredCount() === 1 ? 'memory.conversations.filters.results_one' : 'memory.conversations.filters.results_other')
+          | translate: { count: filteredCount() }
+      }}
+    </p>
   </div>
 
-  <div class="memory-conversation-filters__actions">
-    <div class="memory-conversation-filters__actions-left">
-      <sc-memory-type-filter-button [(filters)]="filters" />
-      <sc-memory-category-filter-button
-        [available]="availableAiCategories()"
-        [selected]="filters().aiCategories"
-        (selectedChange)="onAiCategoriesChange($event)"
+  <!-- 2 · Filtros. El nombre de cada uno va dentro del campo; la etiqueta, oculta, para lector. -->
+  <div class="memory-conversation-filters__bar">
+    <sc-search
+      class="memory-conversation-filters__search"
+      [placeholder]="'memory.conversations.filters.search_placeholder' | translate"
+      [clearAriaLabel]="'labels.clear_search' | translate"
+      shortcutHint="/"
+      [value]="filters().query"
+      (valueChange)="setQuery($event)"
+    />
+
+    <div class="memory-conversation-filters__fields">
+      <span class="visually-hidden" [id]="ids.services">{{ 'memory.conversations.filters.services_label' | translate }}</span>
+      <sc-multiselect
+        [ariaLabelledBy]="ids.services"
+        [options]="serviceOptions"
+        optionLabel="label"
+        optionValue="value"
+        [placeholder]="'memory.conversations.filters.services_label' | translate"
+        [filter]="true"
+        [maxSelectedLabels]="1"
+        [selectedItemsLabel]="'memory.conversations.filters.services_selected' | translate"
+        [value]="[...filters().services]"
+        (valueChange)="setServices($event)"
       />
-      @if (failedCount() > 0) {
-        <button
-          type="button"
-          class="memory-failed-chip"
-          [class.is-active]="filters().status.onlyFailed"
-          (click)="toggleOnlyFailed()"
-          [attr.aria-pressed]="filters().status.onlyFailed"
-          [attr.title]="'memory.conversations.filters.only_failed_hint' | translate"
-        >
-          <sc-icon [name]="alertIcon" size="inherit" />
-          <span>{{ 'memory.conversations.filters.only_failed' | translate }}</span>
-          <!-- Contador con el `badge` del DS (DD-76), en `contrast`: el rojo ya lo pone el chip, y
-               el `danger` del DS mide 3.76:1 (blanco sobre red-500, bajo AA; medido por
-               `theme-contrast`), el mismo valor que el botón danger pendiente de decidir. -->
-          <sc-badge size="sm" variant="contrast" [label]="failedCount()" />
-        </button>
-      }
 
-      <!-- Aquí vivían Transcribir / Descargar / Marcar leídas, los tres
-           DESHABILITADOS mientras no hubiese selección: tres controles grises
-           que no explicaban por qué (antipatrón nº1 de Nielsen) y que además
-           partían la selección en dos sitios — la casilla en la fila, sus
-           consecuencias arriba del todo.
-           R5: la selección se manifiesta en UN solo sitio. Las tres se han ido
-           a la `<sc-bulk-action-bar>` de la página, que aparece cuando hay algo
-           seleccionado y desaparece cuando no. Ver la Ola 5 del plan. -->
+      <label class="visually-hidden" [for]="ids.date">{{ 'memory.conversations.filters.date_label' | translate }}</label>
+      <sc-datepicker
+        [inputId]="ids.date"
+        selectionMode="range"
+        dateFormat="dd/mm"
+        [placeholder]="'memory.conversations.filters.date_label' | translate"
+        [presets]="datePresets()"
+        [clearLabel]="'memory.conversations.filters.date_presets.clear' | translate"
+        [range]="filters().dateRange"
+        (rangeChange)="setDateRange($event)"
+        [showClear]="true"
+      />
+
+      <span class="visually-hidden" [id]="ids.groups">{{ 'memory.conversations.filters.groups_label' | translate }}</span>
+      <sc-multiselect
+        [ariaLabelledBy]="ids.groups"
+        [options]="groupOptions"
+        optionLabel="label"
+        optionValue="value"
+        [placeholder]="'memory.conversations.filters.groups_label' | translate"
+        [filter]="true"
+        [maxSelectedLabels]="1"
+        [selectedItemsLabel]="'memory.conversations.filters.groups_selected' | translate"
+        [value]="[...filters().groups]"
+        (valueChange)="setGroups($event)"
+      />
+
+      <span class="visually-hidden" [id]="ids.agents">{{ 'memory.conversations.filters.agents_label' | translate }}</span>
+      <sc-multiselect
+        [ariaLabelledBy]="ids.agents"
+        [options]="agentOptions"
+        optionLabel="label"
+        optionValue="value"
+        [placeholder]="'memory.conversations.filters.agents_label' | translate"
+        [filter]="true"
+        [maxSelectedLabels]="1"
+        [selectedItemsLabel]="'memory.conversations.filters.agents_selected' | translate"
+        [value]="[...filters().agents]"
+        (valueChange)="setAgents($event)"
+      />
+
+      <span class="visually-hidden" [id]="ids.categories">{{ 'memory.category_filter.label' | translate }}</span>
+      <sc-multiselect
+        [ariaLabelledBy]="ids.categories"
+        [options]="categoryOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [placeholder]="'memory.category_filter.label' | translate"
+        [filter]="true"
+        [maxSelectedLabels]="1"
+        [selectedItemsLabel]="'memory.conversations.filters.categories_selected' | translate"
+        [emptyMessage]="'memory.category_filter.empty' | translate"
+        [value]="[...filters().aiCategories]"
+        (valueChange)="onAiCategoriesChange($any($event))"
+      />
     </div>
 
-    <div class="memory-conversation-filters__actions-right">
-      <span
-        class="memory-conversation-filters__results sc-text-body-regular"
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        {{ 'memory.conversations.filters.results' | translate }}:
-        <span class="memory-conversation-filters__results-num">{{ filteredCount() }}</span>
-        @if (lastSearchAt()) {
-          <span class="memory-conversation-filters__results-sep">·</span>
-          {{ 'memory.conversations.filters.last_search' | translate }}:
-          <span class="memory-conversation-filters__results-time">{{ lastSearchLabel() }}</span>
-        }
-      </span>
-      <sc-button variant="secondary" appearance="outlined" [icon]="resetIcon" [ariaLabel]="'memory.conversations.filters.reset' | translate" [attr.title]="'memory.conversations.filters.reset' | translate" (clicked)="onReset()" />
-    </div>
+    <sc-memory-type-filter-button class="memory-conversation-filters__more" [(filters)]="filters" />
   </div>
+
+  <!-- 3 · Filtros activos: qué está filtrando la tabla, con el valor ENTERO (el campo lo corta)
+       y lo que hay dentro de «Más filtros», que desde fuera no se ve. «Limpiar filtros» vive
+       aquí porque solo tiene sentido cuando hay algo que limpiar. -->
+  @if (chips().length > 0) {
+    <div class="memory-conversation-filters__chips">
+      @for (chip of chips(); track chip.key) {
+        <sc-chip
+          [label]="chip.label"
+          removable
+          [removeAriaLabel]="'memory.conversations.filters.remove_chip' | translate: { filter: chip.label }"
+          (removed)="removeChip(chip.key)"
+        />
+      }
+      <!-- Sin resultados, la pantalla vacía ya ofrece «Limpiar filtros» como acción principal:
+           aquí se callaría para no decirlo dos veces. -->
+      @if (filteredCount() > 0) {
+        <sc-button
+          variant="primary"
+          appearance="link"
+          size="sm"
+          [label]="'memory.conversations.filters.reset' | translate"
+          (clicked)="onReset()"
+        />
+      }
+    </div>
+  }
 </div>

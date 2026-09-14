@@ -41,6 +41,23 @@
   </div>
 </ng-template>
 
+<!-- Rango con atajos: la selección por rango y la plantilla «buttonbar» de primeng.dev/datepicker. -->
+<ng-template #rango>
+  <div class="col">
+    <sc-datepicker
+      label="Periodo"
+      selectionMode="range"
+      placeholder="Cualquier fecha"
+      [presets]="atajos"
+      clearLabel="Quitar periodo"
+      [(range)]="periodo"
+      [showClear]="true"
+      data-testid="sc-datepicker-range"
+    />
+    <p>Periodo: «{{ periodoTexto() }}»</p>
+  </div>
+</ng-template>
+
 <ng-template #estados>
   <div class="col">
     <sc-datepicker label="Obligatoria" [required]="true" />

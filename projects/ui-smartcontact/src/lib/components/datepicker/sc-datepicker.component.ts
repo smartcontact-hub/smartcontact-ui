@@ -2,15 +2,18 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   model,
   output,
+  viewChild,
   ViewEncapsulation,
 } from '@angular/core';
 // `FormsModule` sigue haciendo falta: la plantilla usa `[ngModel]` como puente
 // INTERNO hacia `<p-datepicker>` (no es el CVA exterior, que se retiró).
 import { FormsModule } from '@angular/forms';
-import { DatePickerModule } from 'primeng/datepicker';
+import { DatePicker, DatePickerModule } from 'primeng/datepicker';
+import { ScButtonComponent } from '../button/sc-button.component';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import { createScFieldState, createScPanelSizing, type ScFieldSize } from '../field/sc-field';
@@ -18,6 +21,17 @@ import { createScFieldState, createScPanelSizing, type ScFieldSize } from '../fi
 /** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
 export type ScDatepickerSize = ScFieldSize;
 export type ScDatepickerView = 'date' | 'month' | 'year';
+export type ScDatepickerSelectionMode = 'single' | 'range';
+
+/**
+ * Atajo del pie del calendario («Hoy», «Últimos 7 días»). `resolve` se evalúa AL PULSAR, no al
+ * montar: «Hoy» es el día en que se usa, aunque la pantalla lleve abierta desde ayer.
+ * Devuelve un día o un rango `[inicio, fin]`; en modo `single` de un rango se toma el inicio.
+ */
+export interface ScDatepickerPreset {
+  readonly label: string;
+  readonly resolve: () => Date | readonly [Date, Date];
+}
 
 /**
  * Smart Contact date picker. Wraps PrimeNG `<p-datepicker>` with the
@@ -39,7 +53,7 @@ export type ScDatepickerView = 'date' | 'month' | 'year';
 @Component({
   selector: 'sc-datepicker',
   standalone: true,
-  imports: [DatePickerModule, FormsModule, ScFieldLabelComponent, ScFieldMsgComponent],
+  imports: [DatePickerModule, FormsModule, ScButtonComponent, ScFieldLabelComponent, ScFieldMsgComponent],
   templateUrl: './sc-datepicker.component.html',
   styleUrl: './sc-datepicker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -86,9 +100,23 @@ export class ScDatepickerComponent {
   readonly showButtonBar = input(false, { transform: booleanAttribute });
   /** Locale identifier consumed by PrimeNG. Default Spanish. */
   readonly locale = input<unknown>();
+  /**
+   * `single` (un día, en `value`) o `range` (dos, en `range`). El rango es el `selectionMode`
+   * nativo de PrimeNG: primer clic abre, segundo cierra.
+   */
+  readonly selectionMode = input<ScDatepickerSelectionMode>('single');
+  /**
+   * Atajos en el pie del panel (plantilla `#buttonbar` de PrimeNG). Con al menos uno, el pie
+   * se muestra con los atajos y «Limpiar» en lugar de «Hoy / Limpiar».
+   */
+  readonly presets = input<readonly ScDatepickerPreset[]>([]);
+  /** Rótulo del botón que vacía la fecha en el pie con atajos. */
+  readonly clearLabel = input<string>('Limpiar');
 
   // ─── Two-way value binding ─────────────────────────────────────────
   readonly value = model<Date | null>(null);
+  /** Valor en modo `range`: `[inicio, fin]`, con `fin` a `null` mientras se elige. */
+  readonly range = model<readonly (Date | null)[] | null>(null);
 
   // ─── Outputs (paridad con sc-inputtext / sc-select) ────────────────
   readonly focused = output<FocusEvent>();
@@ -110,8 +138,29 @@ export class ScDatepickerComponent {
   protected readonly pSize = this.panel.pSize;
   protected readonly panelStyleClass = this.panel.panelStyleClass;
 
-  protected onModelChange(v: Date | null): void {
-    this.value.set(v);
+  private readonly picker = viewChild(DatePicker);
+
+  protected readonly isRange = computed(() => this.selectionMode() === 'range');
+  protected readonly pickerValue = computed(() => (this.isRange() ? this.range() : this.value()));
+  protected readonly hasPresets = computed(() => this.presets().length > 0);
+
+  protected onModelChange(v: Date | (Date | null)[] | null): void {
+    if (this.isRange()) this.range.set((v as (Date | null)[] | null) ?? null);
+    else this.value.set((v as Date | null) ?? null);
+  }
+
+  protected applyPreset(preset: ScDatepickerPreset): void {
+    const r = preset.resolve();
+    const [start, end] = r instanceof Date ? [r, r] : r;
+    if (this.isRange()) this.range.set([start, end]);
+    else this.value.set(start);
+    this.picker()?.hideOverlay();
+  }
+
+  protected clearFromBar(): void {
+    if (this.isRange()) this.range.set(null);
+    else this.value.set(null);
+    this.picker()?.hideOverlay();
   }
 
   protected onFocus(event: Event): void {

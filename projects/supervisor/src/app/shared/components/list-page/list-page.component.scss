@@ -30,10 +30,3 @@
     max-width: 480px;
   }
 }
-
-/* Vacío de búsqueda: los mismos valores que tenían las listas. */
-.list-page__no-results {
-  padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
-  text-align: center;
-  color: var(--sc-text-subtle);
-}

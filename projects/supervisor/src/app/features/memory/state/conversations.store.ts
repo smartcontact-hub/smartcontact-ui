@@ -310,11 +310,17 @@ function matchesFilters(c: Conversation, f: MemoryConversationFilters): boolean 
   if (f.services.length > 0 && !f.services.includes(c.service)) return false;
   if (f.groups.length > 0 && !f.groups.includes(c.group)) return false;
   if (f.agents.length > 0 && !f.agents.includes(c.origin)) return false;
+  if (f.query) {
+    const q = f.query.toLowerCase();
+    if (![c.origin, c.destination, c.id].some((v) => v.toLowerCase().includes(q))) return false;
+  }
   if (f.origin && !c.origin.toLowerCase().includes(f.origin.toLowerCase())) return false;
   if (f.destination && !c.destination.toLowerCase().includes(f.destination.toLowerCase())) {
     return false;
   }
-  if (f.date && !sameDateAsMockDateString(f.date, c.date)) return false;
+  if (f.dateRange?.[0] && !inMockDateRange(c.date, f.dateRange[0], f.dateRange[1] ?? f.dateRange[0])) {
+    return false;
+  }
 
   // Tipo/Estado popover filters (iter 7)
   if (c.type === 'interna' && !f.types.interna) return false;
@@ -333,6 +339,7 @@ function matchesFilters(c: Conversation, f: MemoryConversationFilters): boolean 
 
   // Status onlyFailed: solo conversaciones con transcripción fallida
   if (f.status.onlyFailed && !c.hasFailedTranscription) return false;
+  if (f.status.onlyPending && !isPendingTranscription(c)) return false;
 
   // Multi-rec
   const recCount = c.recordings?.length ?? 0;
@@ -359,7 +366,17 @@ function matchesFilters(c: Conversation, f: MemoryConversationFilters): boolean 
  * (formato `"dd/mm/yyyy"` heredado del prototipo). Comparación por
  * componentes para evitar líos de timezone.
  */
-function sameDateAsMockDateString(date: Date, mockDate: string): boolean {
+/** ¿El `dd/mm/yyyy` del mock cae entre dos días, ambos incluidos? Compara por día, sin horas. */
+function inMockDateRange(mockDate: string, start: Date, end: Date): boolean {
   const [dd, mm, yyyy] = mockDate.split('/').map((n) => Number(n));
-  return date.getDate() === dd && date.getMonth() + 1 === mm && date.getFullYear() === yyyy;
+  const day = new Date(yyyy, mm - 1, dd).getTime();
+  const from = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+  const to = new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime();
+  return day >= Math.min(from, to) && day <= Math.max(from, to);
+}
+
+/** Se puede transcribir y aún no está: hay audio (o es un chat), no está transcrita, no falló
+ *  y no se borró. */
+function isPendingTranscription(c: Conversation): boolean {
+  return !c.deleted && !c.hasTranscription && !c.hasFailedTranscription && (!!c.hasRecording || c.channel === 'chat');
 }

@@ -13,7 +13,7 @@ import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../
 const ESTADOS_SNIPPET = `<!-- El valor va en dos sentidos y es un ARRAY: "[(value)]". -->
 <sc-multiselect label="Grupos" [options]="groups" placeholder="Selecciona grupos" [(value)]="value" />
 <sc-multiselect label="Con chips" [options]="groups" display="chip" />
-<sc-multiselect label="Con filtro" [options]="groups" [filter]="true" />
+<sc-multiselect label="Con filtro" [options]="groups" [filter]="true" filterPlaceholder="Buscar grupo" />
 <sc-multiselect label="Con error" [options]="groups" error="Selecciona al menos uno" />`;
 
 const MENOS_VISTOS_SNIPPET = `<!-- Con OBJETOS hay que decir qué campo se lee y cuál se guarda:
@@ -120,6 +120,7 @@ export class MultiSelectDemoComponent {
       { name: 'error', type: 'string', default: '—', description: 'Texto de error (gana a helper).' },
       { name: 'required', type: 'boolean', default: 'false' },
       { name: 'filter', type: 'boolean', default: 'false', description: 'Buscador dentro del panel.' },
+      { name: 'filterPlaceholder', type: 'string', default: "'Buscar'", description: 'Texto de ayuda del buscador del panel.' },
       { name: 'showToggleAll', type: 'boolean', default: 'true', description: 'Toggle «seleccionar todo».' },
       { name: 'selectionLimit', type: 'number', default: '—', description: 'Máximo de ítems seleccionables.' },
       { name: 'maxSelectedLabels', type: 'number', default: '3', description: 'Pliega a «N seleccionados» (comma).' },

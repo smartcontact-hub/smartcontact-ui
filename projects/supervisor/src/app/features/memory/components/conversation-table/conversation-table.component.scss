@@ -41,10 +41,12 @@
   border-radius: var(--sc-radius-200);
   background: transparent;
   cursor: pointer;
-  transition: background-color 200ms ease-out;
+  /* Hover con el mismo gris que la opción de una lista del DS y a 120 ms: con `--sc-bg-elevated`
+   * (el blanco de la fila) el botón no cambiaba al pasar por encima (2026-09-14). */
+  transition: background-color var(--sc-transition-fast) ease-out;
 
   &:hover {
-    background: var(--sc-bg-elevated);
+    background: var(--sc-bg-secondary-hover);
   }
   &:focus-visible {
     outline: 2px solid var(--sc-border-focus);

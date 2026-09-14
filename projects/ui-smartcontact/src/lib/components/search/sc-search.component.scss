@@ -31,6 +31,16 @@
   width: 100%;
 }
 
+/* `type="search"` hace que Chrome y Safari pinten SU propia aspa de borrar, además de la nuestra:
+ * salían dos «×» seguidas en cuanto había texto (medido en Agentes y en Conversaciones,
+ * 2026-09-14). La nuestra es la que tiene rótulo accesible y estilo del DS. */
+.sc-search__control::-webkit-search-cancel-button,
+.sc-search__control::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
 /* El input nativo hereda el chrome de sc-preset → formField.*.
  * Solo ajustamos width 100% para que llene el iconfield wrapper, y
  * pequeño tweak de padding-right si hay clear/kbd para evitar overlap. */

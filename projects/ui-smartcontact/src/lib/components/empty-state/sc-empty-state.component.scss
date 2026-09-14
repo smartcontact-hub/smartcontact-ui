@@ -21,9 +21,14 @@
     margin-bottom: var(--sc-spacing-0-875);
   }
 
+  /* Título y cuerpo con los estilos de texto del DS (2026-09-14): los MISMOS tokens de rol que
+   * `.sc-text-h3-semibold` y `.sc-text-body-regular`. Antes el título iba a 16 px, que no es
+   * ninguno de los 12 estilos, y el cuerpo a 12 px con un interlineado suelto de 1,5. */
   &__title {
     margin: 0;
-    font-size: var(--sc-font-size-300);
+    font-family: var(--sc-font-family-primary);
+    font-size: var(--sc-font-size-h3);
+    line-height: var(--sc-line-height-h3);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
@@ -31,32 +36,15 @@
   &__body {
     margin: 0;
     max-width: 420px;
-    font-size: var(--sc-font-size-100);
-    line-height: 1.5;
-    color: var(--sc-text-subtle);
+    font-family: var(--sc-font-family-primary);
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-regular);
+    color: var(--sc-text-secondary);
   }
 
+  /* El botón es `sc-button`: aquí solo su separación del texto. */
   &__cta {
-    margin-top: var(--sc-spacing-1-125);
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-75);
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-5);
-    border: 1px solid transparent;
-    background: var(--sc-bg-primary);
-    color: var(--sc-text-on-primary);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-    transition: background 150ms ease;
-
-    &:hover {
-      background: var(--sc-bg-primary-hover);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
+    margin-top: var(--sc-spacing-0-5);
   }
 }

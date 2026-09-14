@@ -20,7 +20,12 @@
 export interface MemoryConversationFilters {
   // Header top-bar (iter 3)
   readonly services: readonly string[];
-  readonly date: Date | null;
+  /** Rango `[inicio, fin]` (fin a `null` mientras se elige); `null` = cualquier fecha. Antes era
+   *  un único día: `sc-datepicker` ya admite rango y atajos (2026-09-14). */
+  readonly dateRange: readonly (Date | null)[] | null;
+  /** Búsqueda libre de la barra (2026-09-14): casa con origen, destino o ID. Sustituye en la
+   *  barra a los campos Origen y Destino, que siguen en el modelo por si vuelven. */
+  readonly query: string;
   readonly origin: string;
   readonly destination: string;
   readonly groups: readonly string[];
@@ -46,6 +51,8 @@ export interface MemoryConversationFilters {
   };
   readonly status: {
     readonly onlyFailed: boolean;
+    /** Solo las que se pueden transcribir y aún no lo están (vista «Sin transcribir»). */
+    readonly onlyPending: boolean;
   };
   readonly multirec: {
     readonly onlyMulti: boolean;
@@ -63,7 +70,8 @@ export interface MemoryConversationFilters {
 
 export const EMPTY_FILTERS: MemoryConversationFilters = {
   services: [],
-  date: null,
+  dateRange: null,
+  query: '',
   origin: '',
   destination: '',
   groups: [],
@@ -72,7 +80,7 @@ export const EMPTY_FILTERS: MemoryConversationFilters = {
   channels: { llamada: true, chat: true },
   directions: { entrante: true, saliente: true },
   rules: { recording: false, transcription: false, classification: false },
-  status: { onlyFailed: false },
+  status: { onlyFailed: false, onlyPending: false },
   multirec: { onlyMulti: false, onlyPartial: false },
   aiCategories: [],
 };

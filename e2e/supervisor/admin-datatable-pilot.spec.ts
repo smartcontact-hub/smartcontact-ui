@@ -120,8 +120,10 @@ test('una búsqueda sin resultados enseña el vacío proyectado, no una tabla pe
 
   await page.locator('sc-search input').fill('zzzz-no-existe');
   await expect(table.locator('.p-datatable-tbody > tr')).toHaveCount(1);
-  await expect(table.locator('.table__no-results')).toBeVisible();
-  await expect(table.locator('.table__no-results-title')).toBeVisible();
+  // El vacío de búsqueda es el `sc-empty-state` del DS dentro de la tabla (2026-09-14), con su
+  // título y el botón para limpiar la búsqueda.
+  await expect(table.locator('sc-empty-state .empty-state__title')).toBeVisible();
+  await expect(table.locator('sc-empty-state .empty-state__cta')).toBeVisible();
 });
 
 /* ─────────────────────────── plantillas ─────────────────────────── */

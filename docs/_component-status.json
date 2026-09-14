@@ -77,7 +77,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 6
+      "usedInSupervisor": 4
     },
     {
       "name": "bulk-edit-menu",
@@ -160,7 +160,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 103
+      "usedInSupervisor": 102
     },
     {
       "name": "card",
@@ -198,7 +198,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 30
+      "usedInSupervisor": 28
     },
     {
       "name": "chip",
@@ -223,7 +223,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 4
     },
     {
       "name": "color-dot-picker",
@@ -341,9 +341,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/datepicker",
       "cva": false,
-      "inputs": 20,
+      "inputs": 24,
       "api": [
         "blurred",
+        "clearLabel",
         "dateFormat",
         "disabled",
         "error",
@@ -358,7 +359,11 @@
         "minDate",
         "name",
         "placeholder",
+        "presets",
+        "range",
+        "rangeChange",
         "required",
+        "selectionMode",
         "showButtonBar",
         "showClear",
         "showIcon",
@@ -369,10 +374,11 @@
       ],
       "nested": [
         "sc-field-label",
+        "sc-button",
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 1
     },
     {
       "name": "delete-entity-dialog",
@@ -475,15 +481,19 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 2,
+      "inputs": 4,
       "api": [
+        "bodyKey",
         "cta",
         "ctaIcon",
-        "ctaKey"
+        "ctaKey",
+        "params"
       ],
-      "nested": [],
+      "nested": [
+        "sc-button"
+      ],
       "hasDemo": true,
-      "usedInSupervisor": 10
+      "usedInSupervisor": 13
     },
     {
       "name": "field",
@@ -705,7 +715,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 28
+      "usedInSupervisor": 26
     },
     {
       "name": "keyboard-shortcuts",
@@ -750,7 +760,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/multiselect",
       "cva": false,
-      "inputs": 28,
+      "inputs": 29,
       "api": [
         "appendTo",
         "ariaLabelledBy",
@@ -763,6 +773,7 @@
         "filled",
         "filter",
         "filterBy",
+        "filterPlaceholder",
         "focused",
         "helperText",
         "iftaLabel",
@@ -959,7 +970,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 7
+      "usedInSupervisor": 8
     },
     {
       "name": "section-card",
@@ -990,7 +1001,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": false,
-      "inputs": 26,
+      "inputs": 27,
       "api": [
         "appendTo",
         "ariaLabelledBy",
@@ -1002,6 +1013,7 @@
         "filled",
         "filter",
         "filterBy",
+        "filterPlaceholder",
         "focused",
         "helperText",
         "iftaLabel",

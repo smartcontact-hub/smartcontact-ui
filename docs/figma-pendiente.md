@@ -334,6 +334,28 @@ publicar la librería (ficha 1).
 
 ---
 
+## 10 · Dos buscadores que no se parecen: decisión de Figma, no de código (2026-09-14)
+
+**Estado:** pendiente de decidir en el fichero · **Sin verificar** contra el fichero del DS: sale de
+medir la barra de Conversaciones del Supervisor en local (capturas a 3x, 2026-09-14).
+
+En la misma barra conviven dos buscadores del DS que se leen como piezas distintas. Se probó a igualarlos
+en código y **se revirtió**: el chrome de un componente del catálogo solo cambia cuando lo dice Figma
+(`.impeccable.md`, «Alcance de pulir»). Queda aquí para decidirlo allí.
+
+- **La lupa de `sc-search` es más gruesa que sus vecinos.** Es el glifo `search` de Material Symbols; al
+  lado, la flecha del desplegable y el calendario son los SVG finos de PrimeNG. Pregunta para Figma: ¿la
+  lupa del Input con icono sigue el trazo de los iconos de campo o el de Material?
+- **La lupa del buscador de dentro de un panel va a la derecha** (`p-select` y `p-multiselect`, como
+  PrimeNG), y la de `sc-search`, a la izquierda. Pregunta para Figma: ¿en qué lado va la lupa en los dos?
+  Si es el mismo, cambiarlo en código cuesta cinco clases `.p-*` en el preset (medido).
+- **El texto de una opción NO elegida de `SelectButton` no llegaba a AA.** El Kit pinta `surface.500`
+  sobre el gris de su carril: **2,56:1** (el mínimo para texto es 4,5:1). El código ya diverge por AA
+  a `surface.700` (6,40:1) y el hover a `surface.900` (customs-catalog §1.10). En Figma:
+  `togglebutton/color` en claro al mismo paso, para que el preset deje de divergir.
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

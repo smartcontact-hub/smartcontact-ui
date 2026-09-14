@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_DISPLAY_SM, ScIconComponent } from '@smartcontact-hub/icons';
+import { SC_ICON_SIZE_DISPLAY_SM, ScIconComponent } from '@smartcontact-hub/icons';
+
+import { ScButtonComponent } from '../button/sc-button.component';
 
 /**
  * Centered empty-state card shown by list pages when there are zero rows
@@ -19,7 +21,7 @@ import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_DISPLAY_SM, ScIconComponent } from '
 @Component({
   selector: 'sc-empty-state',
   standalone: true,
-  imports: [ScIconComponent, TranslateModule],
+  imports: [ScButtonComponent, ScIconComponent, TranslateModule],
   templateUrl: './sc-empty-state.component.html',
   styleUrl: './sc-empty-state.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,7 +29,13 @@ import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_DISPLAY_SM, ScIconComponent } from '
 export class ScEmptyStateComponent {
   readonly icon = input.required<string>();
   readonly titleKey = input.required<string>();
-  readonly bodyKey = input.required<string>();
+  /** Opcional: un vacío que se explica con el título no necesita una segunda frase. */
+  readonly bodyKey = input<string>('');
+  /**
+   * Parámetros de interpolación para título y cuerpo (`{{query}}`, `{{entity}}`). Nace con el vacío
+   * de búsqueda sin resultados, que tiene que decir QUÉ se buscó (2026-09-14).
+   */
+  readonly params = input<Record<string, unknown> | undefined>(undefined);
   /** When set, renders a primary action button labeled with this i18n key. */
   readonly ctaKey = input<string | null>(null);
 
@@ -42,7 +50,6 @@ export class ScEmptyStateComponent {
   /** Emite el MouseEvent del click — permite anclar menús popup al botón
    *  (`menu.toggle($event)`). Los listeners sin parámetro siguen valiendo. */
   readonly cta = output<MouseEvent>();
-  protected readonly iconSizeDefault = SC_ICON_SIZE_DEFAULT;
   protected readonly iconSizeDisplay = SC_ICON_SIZE_DISPLAY_SM;
 
   protected onCtaClick(ev: MouseEvent): void {
