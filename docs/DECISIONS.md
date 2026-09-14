@@ -64,6 +64,52 @@
 
 ---
 
+## DD-92 · 2026-09-14 — La colección «App» de PrimeOne se retira de Figma: sus enlaces pasan a Custom sin mover un valor
+
+**Contexto** · Al cerrar DD-91 quedó a la vista una colección duplicada en el Smart-Contact Design System:
+«App», la que vino con PrimeOne, con `app/font/size`, `app/sm|lg/font/size`, `app/sm|lg/line/height` y
+`app/card/background`. Dice lo mismo que `app/typography/{sm,md,lg}/*` de Custom, pero sin interlineado md, y
+el código no la lee (`coverage-map`: `not-consumed`). Rafa: estudiarlo contra el DS de sus devs «para no
+petarles la cabeza».
+
+**Decisión** · Retirarla en cuatro pasos, porque borrarla sin más deja sin atar lo que la usa. (1) Hecho:
+revincular 1:1, con versión guardada antes, cada enlace del fichero del DS: `app/font/size` →
+`app/typography/md/fontSize`, `app/sm|lg/font/size` → `app/typography/sm|lg/fontSize`, `app/sm|lg/line/height`
+→ `app/typography/sm|lg/lineHeight`, `app/card/background` → `content/background`. (2) Rafa publica la
+librería y acepta la actualización en el fichero Supervisor. (3) Se vuelve a escanear el Supervisor y se
+revinculan los overrides que queden. (4) Se borra la colección y se publica; el siguiente export ya no trae
+`aura/app`.
+
+**Razón** · Cada variable de «App» era un alias de otra que ya existe, así que el cambio de enlace no cambia
+ningún valor: medido nodo a nodo, antes y después, letra, interlineado y color idénticos en los 1.572 enlaces
+de maestros (32 páginas) y en los 37 overrides de instancias (AutoComplete, DatePicker, InputNumber, InputOtp,
+OrganizationChart, Flujos); relectura final, 0 enlaces a «App» en el fichero. Mientras existiera, un cambio
+en `app/typography/md/fontSize` movía el código y no el botón md de Figma, cuya letra colgaba de «App». Y no
+afecta a los devs: en su web y su bundle (ui.smart-contact.com) hay 0 apariciones de `app.font`, `app.sm.` o
+`--p-app-font-size`; su tema es un preset propio que ya lee `app.typography.*`, con tokens de otro Figma.
+Tampoco es «la estructura por defecto que espera el tema» (la duda de Rafa): la guía del UI Kit de PrimeTek
+(https://primeng.dev/uikit/guide/v4, «Collections») dice «App: Variables in this collection are not part of
+the PrimeUIX system. They are intended for values defined in your own application», y la que llega al Theme
+Designer es Custom; ninguna se declara obligatoria. El preset Aura de `@primeuix/themes` solo trae
+`primitive`, `semantic`, `components` y `css`, y hay 0 referencias a `{app.` o `p-app-` en `@primeuix/*` y
+en `primeng`. Probado con una copia del export sin `aura/app` (`SC_KIT_EXPORT`): los cinco generadores y
+`token-parity` salen igual que con el export real, salvo el recuento de hojas de `aura/app` (6 → 0).
+
+**Descartadas** ·
+- **Borrarla directamente** → los 1.572 enlaces se quedan con el número suelto, sin variable.
+- **Dejarla** → es la primera que aparece al buscar «app line height» en Figma y está incompleta: la trampa
+  que ató el botón md a una variable que el código no lee.
+- **Revincular ya las instancias del Supervisor** (939 enlaces a «App» dentro de instancias) → sin publicar
+  antes la librería no se distingue lo heredado de un override, y revincular lo heredado lo convertiría en
+  override y cortaría la herencia del maestro.
+
+**Consecuencias** · Sin cambio de píxeles. El código ya aguanta la ausencia de `aura/app` (nadie la
+referencia; `dtcg-export` y `token-parity` la leen con `?.`); cuando llegue el export sin ella, sobra su
+regla de `coverage-map` y su línea del censo. Versión de Figma: «Antes de limpiar la colección App:
+revincular a Custom».
+
+---
+
 ## DD-91 · 2026-09-14 — Los controles llevan el interlineado de la rampa, atado en Figma: campo y botón 32,5, sm 27, lg 40
 
 **Contexto** · Tras DD-81 el campo y el botón md medían 29,5 y el sm 24, un 12 % por debajo de primeng.dev
