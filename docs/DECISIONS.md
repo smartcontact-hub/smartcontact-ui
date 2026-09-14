@@ -94,6 +94,68 @@ la densidad ni cambia la escala: eso lo lleva otra sesión.
 
 ---
 
+## DD-87 · 2026-09-14 — Lo que es marca, la densidad y cada divergencia con Aura que se queda: una sola página vigente
+
+**Contexto** · Encargo de Rafa (2026-09-13): «Aura + color de marca», con el export de Figma en un clic.
+Medido con `tools/aura-diff.mjs` en los 33 componentes de PrimeNG que usan el DS, el Supervisor y
+sc-docs: 724 diferencias (clave × tema) entre nuestro código y Aura 3.0.0 en `main` del 2026-09-14. Las
+razones estaban repartidas en DD-3, DD-40, DD-41, DD-79, DD-81, `customs-catalog.md` y `color-map.mjs`,
+y algunas se contradecían o habían caducado (el aviso «ámbar» de DD-3, el hover a blue/500 de las notas
+de marca). Rafa pidió criterio experto sobre cada una («no nos casamos con ellas») y una sola referencia
+que no se contradiga.
+
+**Decisión** · (1) **Marca** = azul marino como primario claro (`blue/700`, `#1B273D`, hover 600, active
+800), `sky` como azul eléctrico (info, enlaces, foco y primario oscuro, DD-81) y **el gris de marca**
+(`slate` del Kit) para la superficie en claro; en oscuro, `zinc` (DD-79). Tipografía propia (Inter y los
+12 estilos, DD-67). (2) **Densidad**: la de DD-81, medidas de Aura enlazadas por nombre a la escala a 14
+px por rem; campo y botón a 29,5 px. Se mantiene `typography.lineHeight: 'inherit'`. (3) **Divergencias
+que se quedan**, cada una con su motivo: foco `sky` a 2 px; aviso en amarillo; botón rojo un paso más
+oscuro; grises de texto e icono subidos un paso por AA; info de toast y message en `sky`; icono atenuado
+del oscuro en zinc-400; la selección y el foco de opción del multiselect como PrimeOne. (4) **Vuelven a
+Aura** (quitando lo nuestro de `sc-preset`): borde y hover de borde de campo, relleno de campo en oscuro,
+borde de error, hover de texto y de contenido, velo de los diálogos, anillo «solid» de grosor 0 del campo,
+transiciones de menú y toast y el esqueleto de carga. (5) Las medidas que PrimeOne dibujó con el Aura de 2024 y
+Aura ya cambió (123 filas, 73 claves) se alinean EN FIGMA, por nombre de escala como en DD-81: con el cableado de DD-85
+y DD-86 ya en `main`, el cambio llega al código por el robot.
+
+**Razón** · (1) Gris de marca, medido en OKLCH contra el original PrimeOne 4.0.0 (`bJ01Ym4NrCvxFm7dJXvhqp`):
+el `slate` de Tailwind tiene el mismo tono que el marino (257° contra 262°) y la misma croma (0,041 contra
+0,044), y su 900 casi no se distingue del primario; el gris de marca conserva el tono con la mitad de
+croma (0,02) y el marino destaca. Es lo que decía la nota de marca de Rafa. Pasarse al de Tailwind solo
+quitaba 31 diferencias, que el Kit ya resuelve solo. (2) Medido el 2026-09-14 en build estático:
+primeng.dev 35 px (relleno 6/10, interlineado 21), `main` 29,5, y con el interlineado de Aura 33,5. No
+existe variable de 21 px en el Kit (18, 20, 24…) y la app ya es más compacta que primeng.dev, que es lo
+que Rafa busca. Una letra de 14 px es lo normal en interfaces densas; los componentes de primeng.dev
+también la usan. (3) Foco: la barra lateral del Supervisor es exactamente `#1B273D` y el foco del teclado
+cae en ella (medido: tres tabuladores, anillo sky de 2 px); un anillo en el primario sería invisible ahí.
+2 px por WCAG 2.4.13. Aviso: medido en primeng.dev, el botón de aviso de Aura (blanco sobre naranja 500)
+da 2,80:1, y el amarillo se distingue mejor del rojo de error (45° contra 25°). Botón rojo: Aura 3,76:1,
+el nuestro 4,83:1. Icono oscuro: con el zinc-500 de Aura quedaría a 3,08:1 sobre el hover, y el token
+lo usa toda la app. Multiselect: el PrimeOne original ya trae la selección tintada (herencia de PrimeTek);
+tocar Figma por esto nos alejaría de su kit. (4) Sin motivo escrito, y el Kit ya dice lo mismo que Aura
+o no lo define. Red: todas las claves resueltas de los 33 componentes, antes y después, en claro y oscuro:
+cambian 96, todas de estos grupos, y las diferencias bajan de 724 a 630; contraste y foco del Supervisor
+60/60. De las 630: 236 son medidas de Aura a densidad 14 (decisión), 123 son medidas de PrimeOne que
+Aura ya cambió (punto 5), 10 son radios en % que Figma no admite y el resto tienen motivo aquí.
+
+**Descartadas** ·
+- **Gris `slate` de Tailwind en claro** (recomendación inicial de Claude) → compite con el marino, medido.
+- **Foco en el color primario** (recomendación intermedia de Claude, por contraste sobre blanco) → invisible
+  sobre la barra lateral marina; no se había medido la superficie donde cae el foco.
+- **Densidad a 35 px, igual que primeng.dev** (recomendación de Claude medida antes de que DD-81 entrara)
+  → pide llevar la escala a 16 o una variable de interlineado que no existe, y agranda la app. La
+  simulación a 16 queda como experimento local aparte (hand-off).
+- **Aviso en el naranja de Aura** → no pasa AA en el botón.
+- **Reescribir las decisiones antiguas** → se pierde el porqué de cada momento; se anota «sustituida en
+  esto por DD-87» en las que se contradicen.
+
+**Consecuencias** · Las diferencias con Aura que quedan tienen todas motivo escrito aquí o en DD-81:
+medidas de densidad 14, foco, aviso, rojo, grises AA, info, primario oscuro, tipografía, icono oscuro,
+multiselect e interlineado heredado. Si PrimeTek publica un kit nuevo, esta página es la lista de lo que
+se reaplica; las familias de color se reaplican solas desde el export (DD-83).
+
+---
+
 ## DD-86 · 2026-09-14 — El resto de medidas de los temas sigue a Figma, sin mover un píxel
 
 **Contexto** · Tras DD-85 quedaban 238 medidas escritas a mano con un paso de escala en los temas: 184
@@ -4427,6 +4489,9 @@ primary, electric-blue saturado para info, amber para warn (no orange).
 
 **Consecuencia**: re-sync con PrimeOne upstream nunca toca estos overrides
 automáticamente. Si Aura cambia su default, SC sigue navy.
+
+> **Sustituida en parte por DD-41 y DD-87** (2026-09-14): el aviso es amarillo, no ámbar; lo vigente
+> sobre marca y divergencias con Aura está en DD-87.
 
 ---
 

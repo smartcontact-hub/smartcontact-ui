@@ -22,8 +22,7 @@ import type { MenuDesignTokens } from '@primeuix/themes/types/menu';
         shadow: "var(--sc-cmp-menu-shadow)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
-        borderRadius: "{content.border.radius}",
-        transitionDuration: "{transition.duration}"
+        borderRadius: "{content.border.radius}"
     },
     separator: {
         borderColor: "{content.border.color}"

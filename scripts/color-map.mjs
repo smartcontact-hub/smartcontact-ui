@@ -92,8 +92,10 @@ export const COLOR = [
   // ── DIVERGENCIAS CONSCIENTES (opt-in) ─────────────────────────────────────────
   //    El generador NO las escribe; parity las informa (no fallan). Para divergir un
   //    color a propósito: mover su fila enforce a aquí (kind:'diverge', token:null, reason).
-  { mode: 'light', exp: 'form.field.border.color', token: null, kind: 'diverge', reason: 'borde de input gray-200 (=content/overlay) vs Kit surface-300 — 1 paso, jerarquía propia' },
-  { mode: 'light', exp: 'form.field.placeholder.color', token: null, kind: 'diverge', reason: 'placeholder gray-400 vs Kit surface-500 — un punto más tenue' },
+  // Borde de campo: fue divergencia («gray-200, jerarquía propia», 1,34:1) hasta DD-87 (2026-09-14), que lo
+  // devuelve a Aura quitando el override del tema. Ahora el tema pinta `{surface.300}`, lo mismo que el Kit.
+  { mode: 'light', exp: 'form.field.border.color', token: 'sc-color-slate-300', kind: 'enforce' },
+  { mode: 'light', exp: 'form.field.placeholder.color', token: null, kind: 'diverge', reason: 'placeholder slate-600 vs Kit surface-500: con el gris de marca el 500 da 2,95:1 sobre blanco, bajo AA. DD-87.' },
   { mode: 'light', exp: 'overlay.select.background', token: null, kind: 'diverge', reason: '--sc-bg-elevated (elevación propia) vs Kit surface-0' },
   // `text.muted.color` FUE divergencia de marca desde julio (el Kit daba surface-500 = 2.95:1 sobre
   // blanco, bajo AA en sus 178 usos) y volvió a enforce el 2026-08-24: el sync del Theme Designer
