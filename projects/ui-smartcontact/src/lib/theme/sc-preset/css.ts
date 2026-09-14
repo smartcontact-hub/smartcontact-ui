@@ -460,6 +460,44 @@ const dangerMenuItemCss = () => `
 }
 `;
 
+/* ══════════════════════════════════════════════════════════════════════════
+ * TRAMO PULSABLE DE LA MIGA (`sc-breadcrumb-item--link`)
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * Un tramo que lleva a algún sitio tiene que PARECERLO antes de pulsarlo. Medido
+ * el 2026-09-14 en sc-docs: los tramos con solo `command` salían con cursor de
+ * texto, y al pasar el ratón se oscurecían justo al color del tramo actual, que
+ * es lo único de la miga que no se pulsa. El CSS de la miga de PrimeNG no pide
+ * `cursor: pointer` en ningún sitio (su menú sí); el navegador solo lo pone en un
+ * `<a>` con dirección.
+ *
+ * La clase la emite `sc-breadcrumb` en cada tramo con `routerLink`, `url` o
+ * `command` que no sea el último ni esté deshabilitado. Nunca en el tramo actual.
+ *
+ * El subrayado va solo con ratón (`hover: hover`): en táctil se quedaría pegado
+ * tras el toque. Grosor y posición salen de la fuente, no de un número. Es la
+ * pista que no depende del color: el padre y el tramo actual acaban en el mismo
+ * gris al pasar el ratón, así que el color solo no los distingue.
+ *
+ * Todo cuelga del `<li>` (la clase es nuestra) y no de `.p-breadcrumb-item-link`:
+ * `cursor` se hereda y el `<li>` mide lo mismo que su enlace, así que no hace
+ * falta un `.p-*` más (`audit:primeng-coupling`). La etiqueta ya estaba en la
+ * lista de tipografía de arriba.
+ */
+const breadcrumbLinkCss = () => `
+.sc-breadcrumb-item--link {
+    cursor: pointer;
+}
+
+@media (hover: hover) {
+    .sc-breadcrumb-item--link:hover .p-breadcrumb-item-label {
+        text-decoration-line: underline;
+        text-decoration-thickness: from-font;
+        text-underline-position: from-font;
+    }
+}
+`;
+
 /* `@primeuix/themes` 3 cambió `ExtendedCSS` a `(options?: StyleOptions) => string`:
  * el argumento pasó a ser OPCIONAL. La firma se relaja igual para casar con el tipo;
  * en la práctica PrimeUIX siempre lo pasa, y si no lo hiciera reventaría al usar `dt`,
@@ -494,6 +532,8 @@ ${tagOneLineCss()}
 ${buttonMotionCss()}
 
 ${dangerMenuItemCss()}
+
+${breadcrumbLinkCss()}
 `;
 
 export default presetCss;

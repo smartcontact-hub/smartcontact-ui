@@ -169,6 +169,55 @@ del marco.
 
 ---
 
+## 6 · La miga: un tramo que se puede pulsar se subraya al pasar el ratón (2026-09-14)
+
+**Estado:** pendiente de bajarlo al fichero · **Verificado el 2026-09-14** contra el fichero del DS con el
+server de la nube: página `❖ Breadcrumb` (`6738:52933`), conjunto `breadcrumb-item` (`6115:29096`). Las
+dos variantes `Type=Label, Hover=True` (`6115:29104` sin foco y `6115:29419` con foco) solo oscurecen el
+texto; ninguna lo subraya. El código ya subraya (DD-103).
+
+**Qué cambia en Figma:**
+
+- **`Type=Label, Hover=True`**, con y sin foco: el texto, subrayado. Grosor y posición los de la fuente;
+  el color no cambia respecto a lo que ya dibuja.
+- **`Type=Icon, Hover=True`**: sin subrayado. Un icono subrayado no se lee; el icono ya cambia de color.
+- **El tramo actual** (el último, en color pleno y peso medio desde el 2026-08-31) **no se subraya nunca**:
+  no se puede pulsar. Si el maestro `breadcrumb` (`185:6637`) usa una variante con hover para ese tramo,
+  hay que quitársela.
+- **La manita no se dibuja**, pero se anota en la descripción del componente: «los tramos que llevan a
+  algún sitio muestran la mano; el tramo actual, no». Es lo que hace el código, y quien lea Figma no
+  tiene otro sitio donde verlo.
+
+**Lo que dice PrimeNG** ([primeng.dev/breadcrumb](https://primeng.dev/breadcrumb), sección Accessibility,
+leída el 2026-09-14):
+
+- La miga es un `nav` y se describe con `aria-label` o `aria-labelledby`.
+- Los tramos van en una lista ordenada y los separadores se ocultan al lector de pantalla.
+- «Si el último enlace es la ruta actual, se le añade `aria-current="page"`». ⚠️ **PrimeNG Angular no lo
+  hace**: medido el 2026-09-14 en sc-docs y en el Supervisor (`null`), y no aparece en
+  `primeng-breadcrumb.mjs`. Para Figma no cambia nada; en código queda anotado en el wrapper.
+- Teclado: ninguna interacción especial; cada tramo entra en el orden del tabulador.
+- Su CSS de la miga no pide la manita en ningún sitio (su menú sí). Por eso la pone nuestro tema.
+
+**Lo que dicen las guías de comportamiento:**
+
+- **W3C, patrón Breadcrumb** ([APG](https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/)): región de
+  navegación con nombre; el enlace a la página actual lleva `aria-current="page"`, y si la página actual
+  no es un enlace, es opcional. Sin interacción de teclado propia.
+- **Nielsen Norman Group** ([Breadcrumbs: 11 Design Guidelines](https://www.nngroup.com/articles/breadcrumbs/)):
+  la miga muestra jerarquía, no historial; incluye la página actual como último tramo, **y ese tramo no es
+  un enlace**; se distingue a la vista de los tramos que sí lo son; todos los demás llevan a una página
+  real; no se parte en dos líneas.
+- **Accesibilidad del repo** (`better-accessibility`): lo que lleva a otra página es un enlace con
+  dirección (Cmd+clic, «copiar enlace»), y **un estado no se dice solo con color**. El subrayado es esa
+  segunda pista: al pasar el ratón, el padre acaba en el mismo gris que el tramo actual.
+
+**Cómo sabes que está hecho:** captura de `6115:29096` con las dos `Label, Hover=True` subrayadas y las de
+icono sin subrayar; el maestro `185:6637` sin subrayado en el último tramo; y la descripción del
+componente con la nota de la manita. Luego, publicar la librería (ficha 1).
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**
