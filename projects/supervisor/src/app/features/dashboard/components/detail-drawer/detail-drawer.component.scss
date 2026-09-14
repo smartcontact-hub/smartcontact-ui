@@ -1,0 +1,45 @@
+.detail {
+  &__scope {
+    margin: 0 0 var(--sc-spacing-1);
+    color: var(--sc-text-secondary);
+  }
+
+  &__who {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-75);
+    min-width: 0;
+  }
+
+  &__channel {
+    color: var(--sc-text-secondary);
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    color: var(--sc-text-primary);
+  }
+
+  &__sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--sc-text-secondary);
+  }
+
+  &__time {
+    font-variant-numeric: tabular-nums;
+
+    /* Dos minutos o más esperando: el tiempo pasa a color de peligro. El número sigue ahí. */
+    &--late {
+      color: var(--sc-text-danger);
+    }
+  }
+
+  &__empty {
+    padding: var(--sc-spacing-1) 0;
+    color: var(--sc-text-secondary);
+  }
+}

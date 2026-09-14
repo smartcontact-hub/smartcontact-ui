@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  height: 100%;
+  padding: var(--sc-spacing-1);
+  border: 1px dashed var(--sc-border-strong);
+  border-radius: var(--sc-radius-200);
+  transition-property: border-color, background-color;
+  transition-duration: var(--sc-transition-fast);
+  transition-timing-function: var(--sc-easing-default);
+}
+
+/* Al arrastrar un widget encima, el hueco que lo aceptaría se marca. */
+:host-context(.cdk-drop-list-receiving) .slot {
+  border-color: var(--sc-border-primary);
+  background: var(--sc-bg-primary-subtle);
+}

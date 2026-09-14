@@ -1,0 +1,53 @@
+<sc-drawer
+  position="right"
+  [visible]="open()"
+  [header]="titleKey() ? (titleKey() | translate: { count: rows()?.rows?.length ?? 0 }) : null"
+  (visibleChange)="onVisibleChange($event)"
+>
+  @if (widget(); as w) {
+    <p class="detail__scope sc-text-caption-regular">{{ w.entities.join(', ') }}</p>
+  }
+  @if (rows(); as d) {
+    <!-- La tabla del DS, como la de agentes del tablero. Dos columnas: quién y cuánto tiempo. -->
+    <sc-datatable class="detail__table" size="sm" dataKey="id" [value]="d.rows" [columns]="columns()" />
+    @if (!d.rows.length) {
+      <p class="detail__empty sc-text-body-regular">{{ emptyKey() | translate }}</p>
+    }
+  }
+</sc-drawer>
+
+<ng-template #whoTpl let-r>
+  <span class="detail__who">
+    @if (r.presence) {
+      <sc-badge
+        aria-hidden="true"
+        [variant]="r.presence === 'available' ? 'success' : r.presence === 'paused' ? 'warning' : 'secondary'"
+      />
+    } @else {
+      <sc-icon
+        class="detail__channel"
+        [name]="channelIconOf(r.channel)"
+        [size]="iconSize"
+        [ariaLabel]="'dashboard.menu.channel.' + r.channel | translate"
+      />
+    }
+    <span class="detail__main">
+      <span class="sc-text-body-semibold">{{ r.agent ?? r.name ?? ('dashboard.detail.customer' | translate: { id: r.customer }) }}</span>
+      <span class="detail__sub sc-text-caption-regular">
+        @if (r.presence) {
+          {{ 'dashboard.presence.' + r.presence | translate }}
+        } @else if (r.agent) {
+          {{ 'dashboard.detail.customer' | translate: { id: r.customer } }} · {{ r.queue }}
+        } @else {
+          {{ r.queue }}
+        }
+      </span>
+    </span>
+  </span>
+</ng-template>
+
+<ng-template #timeTpl let-r>
+  <span class="detail__time" [class.detail__time--late]="rows()?.kind === 'waiting' && r.seconds + elapsed() >= 120">
+    {{ formatDuration(r.seconds + elapsed()) }}
+  </span>
+</ng-template>

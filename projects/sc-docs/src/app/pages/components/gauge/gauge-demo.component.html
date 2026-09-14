@@ -35,3 +35,7 @@
   <sc-gauge [segments]="bicolor" size="md" [thickness]="18" label="234" sublabel="grueso" />
   <sc-gauge [segments]="bicolor" size="md" [trackVisible]="false" label="234" sublabel="sin track" />
 </ng-template>
+
+<ng-template #max>
+  <sc-gauge [segments]="available" [max]="9" size="md" label="5" sublabel="de 9 conectados" />
+</ng-template>

@@ -1,0 +1,60 @@
+<div class="tabs">
+  <p-tabs class="tabs__tabs" scrollable [value]="activeId()" (valueChange)="onValueChange($event)">
+    <p-tablist
+      [attr.aria-label]="'dashboard.tabs.aria' | translate"
+      cdkDropList
+      cdkDropListOrientation="horizontal"
+      cdkDropListLockAxis="x"
+      [cdkDropListData]="monitors()"
+      (cdkDropListDropped)="dropped($event)"
+    >
+      @for (m of monitors(); track m.id) {
+        <p-tab
+          cdkDrag
+          [value]="m.id"
+          [attr.title]="'dashboard.tabs.hint' | translate"
+          (dblclick)="m.id === activeId() && openRename($event)"
+          (keydown)="onTabKeydown($event, m.id)"
+        >
+          {{ m.name }}
+        </p-tab>
+      }
+    </p-tablist>
+  </p-tabs>
+
+  <div class="tabs__actions">
+    <sc-button
+      variant="secondary"
+      appearance="text"
+      size="sm"
+      icon="more_vert"
+      [ariaLabel]="'dashboard.tabs.more_aria' | translate: { name: activeName() }"
+      (clicked)="menu.toggle($event)"
+    />
+    <sc-button
+      variant="secondary"
+      appearance="text"
+      size="sm"
+      icon="add"
+      [label]="'dashboard.tabs.add' | translate"
+      (clicked)="add.emit()"
+    />
+  </div>
+</div>
+
+<p-menu #menu [model]="menuItems()" [popup]="true" appendTo="body" />
+
+<p-popover
+  #renamePopover
+  appendTo="body"
+  role="dialog"
+  [attr.aria-label]="'dashboard.tabs.rename_aria' | translate"
+  (onShow)="focusRename()"
+>
+  <sc-inline-rename-cell
+    [initialValue]="activeName()"
+    [ariaLabel]="'dashboard.tabs.rename_aria' | translate"
+    (commit)="commitRename($event)"
+    (cancelled)="renamePopover.hide()"
+  />
+</p-popover>

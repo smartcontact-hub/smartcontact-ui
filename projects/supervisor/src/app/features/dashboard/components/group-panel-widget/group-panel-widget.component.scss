@@ -1,0 +1,178 @@
+:host {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  /* Scroll solo vertical: a 1280 el reparto de columnas deja 1 px de redondeo en horizontal. */
+  overflow: hidden auto;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+
+  &__band + &__band {
+    padding-top: var(--sc-spacing-0-5);
+    border-top: 1px solid var(--sc-border-subtle);
+  }
+
+  &__band-title {
+    margin: 0 0 var(--sc-spacing-0-25);
+    color: var(--sc-text-secondary);
+  }
+
+  /* Cifras principales a la izquierda, su desglose a la derecha tras una raya. */
+  &__split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sc-spacing-0-75);
+
+    /* Cuatro tiempos contra dos niveles: a partes iguales, «Posconversación» no cabe. Y la
+       columna nunca por debajo de su palabra más larga (a 1440 le faltaba 1 px y la partía). */
+    &--times {
+      grid-template-columns: minmax(min-content, 2fr) minmax(0, 1fr);
+    }
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sc-spacing-0-5);
+    margin: 0;
+
+    &--four {
+      grid-template-columns: repeat(4, minmax(min-content, 1fr));
+    }
+
+    &--secondary {
+      grid-auto-flow: column;
+      grid-template-columns: none;
+      grid-auto-columns: minmax(min-content, 1fr);
+      padding-left: var(--sc-spacing-0-75);
+      border-left: 1px solid var(--sc-border-subtle);
+    }
+  }
+
+  /* En el DOM va la etiqueta primero (`dt` antes que `dd`, lo pide `<dl>`); a la vista, la
+     cifra arriba. Orden visual: cifra, etiqueta, barra. */
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-125);
+    min-width: 0;
+
+    .panel__value {
+      order: -1;
+    }
+
+    /* La etiqueta parte en dos líneas antes que cortarse: «Desconectadas» con elipsis ya no
+       dice qué es. Parte por palabras, nunca con guion a media palabra. */
+    dt {
+      color: var(--sc-text-secondary);
+      overflow-wrap: break-word;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__value {
+    color: var(--sc-text-primary);
+    font-variant-numeric: tabular-nums;
+
+    &--success {
+      color: var(--sc-text-success);
+    }
+
+    &--warning {
+      color: var(--sc-text-warning);
+    }
+
+    &--danger {
+      color: var(--sc-text-danger);
+    }
+  }
+
+  &__digits {
+    display: inline-block;
+  }
+
+  /* Cifra que abre su detalle: la misma letra, subrayado punteado que se vuelve sólido al pasar. */
+  &__open {
+    padding: 0;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline dotted var(--sc-border-strong);
+    text-underline-offset: var(--sc-spacing-0-25);
+    transition-property: text-decoration-color;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: var(--sc-easing-default);
+
+    &:hover {
+      text-decoration: underline solid var(--sc-text-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--sc-shadow-focus-ring);
+    }
+  }
+
+  &__digits--in {
+    animation: panel-digits-in var(--sc-transition-slow) var(--sc-easing-emphasized);
+  }
+
+  &__bar {
+    margin: 0;
+  }
+}
+
+@keyframes panel-digits-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-0-375));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel__digits--in {
+    animation: none;
+  }
+}
+
+/* Panel estrecho (móvil, o una caja partida muy estrecha): cada banda apila sus dos mitades y la de
+ * cuatro cifras pasa a dos por fila. 30rem es el ancho en el que «Abandonadas · Desbordadas ·
+ * Desconectadas» dejan de caber al lado de los totales; a 40rem apilaba ya en la caja de 1440
+ * (el panel mide ~620 px) y el panel dejaba de caber (medido con Playwright el 2026-09-14). */
+@container (max-width: 30rem) {
+  .panel__split,
+  .panel__split--times {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel__stats--secondary {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@container (max-width: 26rem) {
+  .panel__stats--four,
+  .panel__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .panel__stats--secondary {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

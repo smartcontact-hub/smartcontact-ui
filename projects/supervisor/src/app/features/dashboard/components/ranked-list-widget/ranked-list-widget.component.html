@@ -1,0 +1,18 @@
+@if (rows().length) {
+  <ol class="ranked">
+    @for (row of rows(); track row.label) {
+      <li class="ranked__row">
+        <span class="ranked__label sc-text-body-regular" [attr.title]="row.label">{{ row.label }}</span>
+        <span class="ranked__total sc-text-body-semibold">
+          <span class="ranked__digits" [scAnimateOnChange]="row.total" animateClass="ranked__digits--in">{{ row.total }}</span>
+        </span>
+        <!-- MeterGroup de primeng.dev con el tema: alto y fondo los pone el preset; el color, el dato. -->
+        <p-metergroup class="ranked__bar" aria-hidden="true" [value]="row.meter">
+          <ng-template #label />
+        </p-metergroup>
+      </li>
+    }
+  </ol>
+} @else {
+  <p class="ranked__empty sc-text-body-regular">{{ emptyKey() | translate }}</p>
+}
