@@ -448,7 +448,12 @@ tanto.
 
 ## La rutina por tema
 
-**Al recibir un zip del plugin**, antes de pasarlo:
+> **Desde el 2026-09-14 (DD-88) esta rutina la hace una máquina, y el zip ya no es el del plugin.**
+> `scripts/tema-zip.mjs` empaqueta el tema que pintan NUESTRAS apps (preset + tokens + tipografía), hace
+> las tres comprobaciones de abajo y `tema-zip.yml` lo publica en la rama `tema-zip` cada vez que el tema
+> cambia en `main` (enlace fijo: `…/raw/tema-zip/tema-smartcontact.zip`). Lo de abajo explica el porqué.
+
+**Al recibir un zip del plugin** (histórico), antes de pasarlo:
 
 1. **Ningún token puede salir a `0`.** El respaldo de `var()` NO entra si la variable está
    definida, así que un `0` gana. Un zip de septiembre llevaba dos tallas de tipografía a `0` y
@@ -458,8 +463,9 @@ tanto.
    importar; el consumidor que recibe solo el zip, no.
 3. **Diff contra el zip anterior**, que es lo que contesta «qué cambia con este tema».
 
-Las tres son comprobables por script y **ese script todavía no está escrito**. Hoy se hacen a mano
-al preparar el envío. No entra en `verify`: es manual y con argumento.
+Las tres las hace ya `scripts/tema-zip.mjs`: un token que pasa a 0 pone rojo el workflow y no se
+publica; la base de rem desaparece como riesgo porque nuestro preset ya está a raíz 16; y el manifiesto
+del zip dice qué variables y componentes cambian respecto al anterior.
 
 **Después de que lo instalen**, dos sondas sobre su deploy: si alguna regla suya redeclara un token
 `--p-<componente>-*`, y el control de siempre. Si la sonda no encuentra el Tag, la sonda está mal.

@@ -103,6 +103,10 @@ generado de la misma fuente — opción, no obligación.
 
 > **El "tema crudo" del plugin no se ofrece a nadie** — es peor (solo estándar, sin componentes
 > propios, casado con PrimeNG). Una sola oferta para los dos equipos: **el DS.**
+>
+> **Corrección (2026-09-14, DD-88):** el equipo externo SÍ recibía un zip, el del plugin, preparado a
+> mano. Desde DD-88 recibe el tema de nuestras apps (mismo preset y tokens), generado y comprobado por
+> `tema-zip.yml` en la rama `tema-zip`. Sigue sin distribuirse el preset crudo del plugin.
 
 ### ¿Qué falta para que los equipos externos puedan instalarlo? (la propuesta)
 

@@ -136,6 +136,42 @@ la densidad ni cambia la escala: eso lo lleva otra sesión.
 
 ---
 
+## DD-88 · 2026-09-14 — El equipo externo recibe el tema de nuestras apps, empaquetado y comprobado por una máquina
+
+**Contexto** · Hasta hoy el equipo externo recibía el zip del plugin de Figma (el preset que monta el
+Theme Designer), descargado y enviado a mano, con tres comprobaciones a mano que `conexion-variables.md`
+describía y ningún script hacía. Medido (H3): con el mismo Kit, ese preset y el de nuestras apps difieren
+en el 43 % de las claves (pesos con «px», esquema anterior a Aura 3, rem pensados para raíz 14, 714
+claves que Aura 3 lee y el plugin no define). Rafa: «ellos nos siguen a nosotros… no deberíamos ser
+esclavos».
+
+**Decisión** · (1) `scripts/tema-zip.mjs` empaqueta el tema de NUESTRAS apps: el preset (`sc-preset`, con
+Aura dentro) en un solo `sc-preset.mjs`, las 6 capas de tokens, las clases de tipografía, una guía de
+instalación en llano y un manifiesto. (2) Hace las tres comprobaciones de la rutina: ningún token que
+tenía valor pasa a 0 (sale con error), raíz 16 declarada, y diferencia con el zip anterior (variables,
+semántica común y componentes). (3) `tema-zip.yml` lo genera en cada cambio del tema en `main` y, si algo
+cambió, lo publica en la rama `tema-zip` (enlace fijo al zip y a su guía).
+
+**Razón** · Medido en local: el preset empaquetado genera el mismo CSS que el del código en los 97
+componentes, y un valor tocado en el paquete lo caza (sale `button`). La diferencia entre `main` y la
+tanda de DD-87 sale exacta: 0 variables, semántica común distinta y `menu`, `skeleton` y `toast`. Un token
+puesto a 0 respecto al anterior pone el script en rojo nombrándolo. La publicación se probó en un repo
+desechable en tres pasadas: crea la rama, se salta la pasada sin cambios, añade la siguiente.
+
+**Descartadas** ·
+- **Seguir enviando el zip del plugin** → no es lo que pintan nuestras apps, y había que prepararlo a mano.
+- **Publicarlo como versión de GitHub** → publicar una versión dispara `publish-packages.yml` (sube los
+  paquetes del DS) y quitaría a v1.0.0 la marca de «última».
+- **Un preset con los valores resueltos, sin CSS de tokens** → habría que partir cada clave por tema a
+  mano; con los tokens, el zip es exactamente lo que usan nuestras apps.
+
+**Consecuencias** · El paso a mano del zip desaparece: el enlace no cambia y siempre sirve la última
+versión. El equipo externo tiene que cambiar cómo instala el tema (guía en el zip); el mensaje lo envía
+Rafa. Pendiente de medir: que el preset empaquetado funcione en su PrimeNG 21 (el nuestro es 22); su
+paquete de estilos pide login desde el 2026-09-14.
+
+---
+
 ## DD-87 · 2026-09-14 — Lo que es marca, la densidad y cada divergencia con Aura que se queda: una sola página vigente
 
 **Contexto** · Encargo de Rafa (2026-09-13): «Aura + color de marca», con el export de Figma en un clic.
