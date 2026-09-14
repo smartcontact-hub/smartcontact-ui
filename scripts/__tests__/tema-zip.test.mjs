@@ -4,7 +4,47 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { FICHEROS, cerosNuevos, comparaPreset, diferencias, ficherosDistintos, hayCambios, leeme, variables } from '../tema-zip.mjs';
+import { FICHEROS, cerosNuevos, comparaPreset, contratoDelPlugin, diferencias, extendDesdeKit, ficherosDistintos, hayCambios, leeme, paqueteNpm, variables } from '../tema-zip.mjs';
+
+const hoja = ($value) => ({ $value });
+const CUSTOM = {
+  primitive: { typography: { font: { size: { 100: hoja(12), 950: hoja(70) }, weight: { semibold: hoja(600) } } } },
+  semantic: { text: { accent: hoja('{violet.400}') }, presence: { available: hoja('{green.400}') } },
+  component: { custommodal: { header: { gap: hoja('{scale.0-5}') }, footer: { padding: { top: hoja(0) } } } },
+  app: { typography: { md: { fontSize: hoja('{primitive.typography.font.size.200}') }, xl: { lineHeight: hoja('{primitive.typography.line.height.300}') } } },
+};
+
+test('extend del plugin: a nuestro token si existe, el valor del Kit si no, y lo nuestro gana', () => {
+  const declaradas = new Set(['--sc-font-size-100', '--sc-font-weight-semibold', '--sc-scale-0-5']);
+  const e = extendDesdeKit(CUSTOM, declaradas, { app: { typography: { md: { fontSize: 'var(--sc-font-size-200)' } } } });
+  assert.equal(e.primitive.typography.font.size[100], 'var(--sc-font-size-100)');
+  assert.equal(e.primitive.typography.font.size[950], '70px', 'sin token, el valor del Kit');
+  assert.equal(e.primitive.typography.font.weight.semibold, 'var(--sc-font-weight-semibold)');
+  assert.equal(e.semantic.text.accent, 'var(--sc-text-accent)', 'divergencia escrita: manda el DS');
+  assert.equal(e.semantic.presence.available, '{green.400}', 'sin divergencia: el Kit');
+  assert.equal(e.component.custommodal.header.gap, 'var(--sc-scale-0-5)');
+  assert.equal(e.component.custommodal.footer.padding.top, '0');
+  assert.equal(e.app.typography.md, undefined, 'lo que nuestro extend ya declara no se pisa');
+  assert.equal(e.app.typography.xl.lineHeight, '{primitive.typography.line.height.300}');
+  assert.equal(extendDesdeKit({ primitive: { typography: { font: { weight: { bold: hoja(700) } } } } }, new Set()).primitive.typography.font.weight.bold, '700', 'peso sin «px»');
+});
+
+test('contrato del plugin: los nombres que da el runtime (sin primitive./semantic., con component./app.)', () => {
+  assert.deepEqual(contratoDelPlugin(CUSTOM), [
+    '--p-typography-font-size-100', '--p-typography-font-size-950', '--p-typography-font-weight-semibold',
+    '--p-text-accent', '--p-presence-available',
+    '--p-component-custommodal-header-gap', '--p-component-custommodal-footer-padding-top',
+    '--p-app-typography-md-font-size', '--p-app-typography-xl-line-height',
+  ]);
+});
+
+test('paquete npm: versión semver válida (sin ceros delante) y solo los ficheros del tema', () => {
+  const p = paqueteNpm({ commit: 'abc1234', generado: '2026-09-04T09:05:00Z' });
+  assert.equal(p.version, '0.20260904.905');
+  assert.match(p.version, /^\d+\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/);
+  assert.equal(p.exports['.'].default, './sc-preset.mjs');
+  assert.deepEqual(p.files.filter((f) => !/\.(md|json)$/.test(f)), ['sc-preset.mjs', 'sc-preset.d.ts', 'smartcontact-tokens.css', 'smartcontact-typography.css']);
+});
 
 test('variables: separa claro y oscuro por la regla, e ignora comentarios', () => {
   const v = variables(':root { --sc-a: 1px; /* --sc-b: 2px; */ } .sc-dark { --sc-a: 3px; }');
@@ -45,15 +85,20 @@ test('publicar: manda que cambie un fichero, aunque el desglose diga «igual»',
   assert.equal(hayCambios({ anterior: false, ficheros: [] }), true, 'sin zip anterior se publica');
 });
 
-test('guía: dice qué cambia, o que es el primer zip, y nunca la raíz 14', () => {
-  const base = { commit: 'abc1234', primeng: '22.0.0', themes: '3.0.0' };
-  const primero = leeme({ ...base, comprobaciones: { diferencia: { anterior: false } } });
-  assert.match(primero, /Es el primer zip generado así/);
-  const cambio = leeme({ ...base, comprobaciones: { diferencia: { anterior: true, ficheros: ['sc-preset.mjs'], variables: ['x'], semanticaComun: true, reglasCss: true, componentes: ['menu', 'toast'] } } });
-  assert.match(cambio, /Ficheros distintos: sc-preset\.mjs/);
-  assert.match(cambio, /Variables de tokens: 1/);
-  assert.match(cambio, /Semántica común .*: cambia/);
-  assert.match(cambio, /Reglas CSS del tema .*: cambian/);
+test('guía: versión, cambios o primera versión, comprobaciones, raíz 16 y sin tuteo', () => {
+  const base = { commit: 'abc1234', primeng: '22.0.0', themes: '3.0.0', version: '0.20260914.1133', generado: '2026-09-14T11:33:00Z' };
+  const ok = { ceros: [], contratoPlugin: { promete: 65, faltan: [] } };
+  const primero = leeme({ ...base, comprobaciones: { ...ok, diferencia: { anterior: false } } });
+  assert.match(primero, /Primera versión distribuida como paquete/);
+  assert.match(primero, /Versión 0\.20260914\.1133 · 2026-09-14/);
+  assert.match(primero, /npm install \.\/local-libs\/archives\/smartcontact-tema\.tgz/, 'nombre fijo: el del enlace de descarga');
+  const cambio = leeme({ ...base, comprobaciones: { ...ok, diferencia: { anterior: true, ficheros: ['sc-preset.mjs'], variables: ['x'], semanticaComun: true, reglasCss: true, componentes: ['menu', 'toast'] } } });
+  assert.match(cambio, /Ficheros modificados: sc-preset\.mjs/);
+  assert.match(cambio, /Tokens de diseño modificados: 1/);
+  assert.match(cambio, /Estilos comunes del tema: modificados/);
+  assert.match(cambio, /Reglas CSS del tema: modificadas/);
   assert.match(cambio, /menu, toast/);
-  assert.match(cambio, /raíz de la página a 16 px/);
+  assert.match(cambio, /Variables `extend` del plugin de Figma definidas: 65 de 65/);
+  assert.match(cambio, /fuente raíz de 16 px/);
+  assert.doesNotMatch(cambio, /\b(vuestr[oa]s?|os pasamos|pon la|nuestras)\b/i, 'redacción neutra, sin tuteo');
 });
