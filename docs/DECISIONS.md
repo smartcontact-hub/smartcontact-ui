@@ -293,6 +293,14 @@ versión. El equipo externo tiene que cambiar cómo instala el tema (guía en el
 Rafa. Pendiente de medir: que el preset empaquetado funcione en su PrimeNG 21 (el nuestro es 22); su
 paquete de estilos pide login desde el 2026-09-14.
 
+**Corrección (2026-09-14, mismo día)** · La comprobación 3 leía de menos: comparaba variables, semántica
+común y el CSS de variables de cada componente, pero no las reglas CSS del preset (`css.ts`, el campo
+`style` de `@primeuix/styled`). DD-91 cambió esas reglas, el zip dijo «no cambia» y no se publicó. Ahora
+se publica si cambia cualquiera de los tres ficheros del tema (el build es determinista: dos builds del
+mismo árbol dan los mismos bytes), y la guía añade las reglas CSS al desglose. Medido: contra el zip
+publicado sale `sc-preset.mjs` y «reglas CSS distintas»; contra sí mismo, nada. Los dos tests nuevos se
+ponen rojos con la comprobación vieja.
+
 ---
 
 ## DD-87 · 2026-09-14 — Lo que es marca, la densidad y cada divergencia con Aura que se queda: una sola página vigente
@@ -356,6 +364,9 @@ Aura ya cambió (punto 5), 10 son radios en % que Figma no admite y el resto tie
 medidas de densidad 14, foco, aviso, rojo, grises AA, info, primario oscuro, tipografía, icono oscuro,
 multiselect e interlineado heredado. Si PrimeTek publica un kit nuevo, esta página es la lista de lo que
 se reaplica; las familias de color se reaplican solas desde el export (DD-83).
+
+> **Sustituida en parte por DD-91** (2026-09-14): campo y botón md ya no miden 29,5 sino 32,5 (sm 27,
+> lg 40), con el interlineado de la rampa atado en Figma. La escala a 14 de DD-81 no cambia.
 
 ---
 
