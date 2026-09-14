@@ -230,7 +230,7 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
  */
 const PAGINAS_EN_FORMULARIO = [
   /* Aquí estaba «plantillas del agente». Salió el 2026-09-14: Plantillas y Agendas dejaron de
-   * ser tablas dentro de la ficha y son un `sc-multiselect` cada una (Repositorios). */
+   * ser tablas dentro de la ficha y son un `sc-multiselect` cada una (Recursos). */
   {
     ruta: 'admin/agentes/editar/1',
     seccion: 'Grupos asignados',

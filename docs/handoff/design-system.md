@@ -31,9 +31,8 @@
 
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
-- **«Repositorios» dentro de la ficha de agente se confunde con la página Repositorios** (a Rafa le pasó al
-  probarlo, 2026-09-14). Nombre alternativo a decidir con él; hoy se queda. Y el índice lateral a componente de la
-  librería: `figma-pendiente.md` §5.
+- **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
+  «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
@@ -160,6 +159,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · Recursos: nombre propio, los campos que acumulan son multiselect y «todos» quita (DD-105)
+
+**Sello:** rama `arebury/nombre-repositorios`, HEAD `6c60e7f` (#176) más este cambio. DD-105. Rafa: «adelante». El tramo «Los controles llevan el
+interlineado de la rampa» (DD-91) vive en el tag `archive/handoff-ds-2026-09-14-interlineado`.
+
+**Lo que cambia.** La sección «Repositorios» de la ficha de agente pasa a «Recursos» (icono de libros); Idiomas y
+Etiquetas son `sc-multiselect`; la casilla de «todos» de `sc-multiselect` desmarca (fallo de PrimeNG 22.1.0,
+arreglado en el DS). Antes y ahora en la comparación de las fichas, sección Recursos.
+
+- ⚠️ **Un fallo que ves en una pantalla, repítelo en la documentación del DS antes de arreglarlo en la pantalla**:
+  aquí estaba en el componente y el arreglo en la ficha solo lo habría tapado ahí.
+
 ## ✅ 2026-09-14 · Los iconos pintan el tamaño que prometen: el glifo de Material se calibra (DD-104)
 
 **Sello:** rama `arebury/fix-admin-icon-scale`, HEAD `7b7554d` (#175) más este cambio. DD-104. Rafa, visto en local: «sí», y pidió el
@@ -181,7 +192,7 @@ ponerse rojo» viven en el tag `archive/handoff-ds-2026-09-14-robot-tokens`.
 
 **Lo que cambia.** Las tres fichas usan el molde de Contact Center (`.page__inner--rail`), su índice y su
 vocabulario; los editores agente↔grupo van por columnas con selección en lote; Grupos y Usuarios bajan a 3
-secciones y Agentes sube a 5 («Repositorios», cuatro campos en vez de dos tablas); «Deshacer» solo con cambios
+secciones y Agentes sube a 5 («Recursos», cuatro campos en vez de dos tablas); «Deshacer» solo con cambios
 (también en Contact Center); las listas nunca cortan (`tableMinWidth`). Comparación antes/después:
 https://claude.ai/code/artifact/04c101ea-f9bf-4539-9ae3-afbf3b3ea703.
 
@@ -221,21 +232,6 @@ scratchpad de la sesión (`red-listas.mjs`): igual salvo exportar con icono, «�
   un bucle que cuelga la pestaña. Compara antes de escribir (`onSortChange` de la pieza).
 - ⚠️ **Una dependencia de idioma declarada y no leída no hace nada**, y el gate la daba por buena por el nombre.
   Lee `injectLangChange()` dentro del `computed`; `audit:datatables` ya exige la lectura.
-
-## ✅ 2026-09-14 · Los controles llevan el interlineado de la rampa, atado en Figma (DD-91)
-
-**Sello:** rama `arebury/densidad-controles` sobre `1707074` (#159). DD-91. Rafa: opción 1 «con 20/18», «adelante».
-
-**Lo que cambia.** Campo y botón md 29,5 → 32,5, sm 24 → 27, lg 36 → 40; Conversaciones no pierde filas (13 con la barra de DD-90).
-Figma primero (1.570 textos de maestros de control atados a `app/typography/*/lineHeight`, dos versiones
-guardadas) y `css.ts` con una regla por talla. `sc-inputtext/select/multiselect/datepicker` dejan de
-escribir tallas a mano. Página, capturas y sondas: `~/Documents/Claude/2026-09 densidad-controles/`.
-
-- ⚠️ **La regla de `css.ts` vive en `@layer primeng`**: un wrapper sin capa le gana siempre. Antes de mover
-  un token de tipografía, busca tallas a mano en los SCSS de wrappers.
-- ⚠️ **Por el bridge, carga fuentes con `t.fontName`**: con `getRangeAllFontNames` una docena de textos agota 30 s.
-- **Colección «App» (DD-92)**: se queda como alias de Custom; el DS ya no la usa y el Supervisor la hereda
-  (939 enlaces) hasta actualizar la librería. Revisar más adelante si se borra. De DD-91: hora del datepicker 17,5 contra 14; botón solo icono no cuadrado; filtros 2px.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

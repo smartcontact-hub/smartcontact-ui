@@ -223,7 +223,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 3
     },
     {
       "name": "color-dot-picker",
@@ -789,7 +789,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 13
+      "usedInSupervisor": 15
     },
     {
       "name": "option-card",
@@ -1027,7 +1027,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 36
+      "usedInSupervisor": 31
     },
     {
       "name": "skeleton",

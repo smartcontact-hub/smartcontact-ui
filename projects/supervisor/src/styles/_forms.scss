@@ -308,22 +308,8 @@
   }
 }
 
-/* ------------------------------------------------------------------ *
- * Chip rows — `language-chips` and `label-chips` shared the exact
- * same rule. Both classes are kept (changing either name is a wider
- * template churn) but they alias the same definition here.
- *
- * `min-height: 32px` reserves a row so toggling chips doesn't shift
- * the section below (DD#8).
- * ------------------------------------------------------------------ */
-.language-chips,
-.label-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sc-spacing-0-75);
-  min-height: 32px;
-  margin-top: var(--sc-spacing-0-875);
-}
+/* `.language-chips` y `.label-chips` (la fila de pastillas bajo un select que se vaciaba tras
+ * cada elección) se fueron el 2026-09-14: Idiomas y Etiquetas son un `sc-multiselect`. */
 
 /* ------------------------------------------------------------------ *
  * Switch field — el interruptor DELANTE de su etiqueta, pegado (Figma 393:12592).

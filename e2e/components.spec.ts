@@ -483,6 +483,32 @@ test.describe('sc-multiselect', () => {
     await expect(page.getByTestId('sc-multiselect-error').getByText('Selecciona al menos uno')).toBeVisible();
     await screenshotBaseline(page, 'multiselect');
   });
+
+  /* PrimeNG 22.1.0 declara `selectAll` sin valor (undefined) y compara con `!== null`: sin pasarle
+   * `null`, «todo seleccionado» salía siempre falso y la casilla de arriba volvía a marcarlo todo en
+   * cada clic, sin quitar nada nunca (visto por Rafa en la ficha de agente, 2026-09-14). */
+  test('la casilla de «todos» marca y desmarca, también con una parte ya elegida', async ({ page }) => {
+    await gotoPage(page, 'multiselect');
+    const field = page.getByTestId('sc-multiselect-objetos').locator('.p-multiselect');
+    const label = field.locator('.p-multiselect-label');
+    await field.click();
+    const overlay = page.locator('.p-multiselect-overlay');
+    const todos = overlay.locator('.p-multiselect-header .p-checkbox');
+    const elegidas = overlay.locator('.p-multiselect-option[aria-selected="true"]');
+
+    await todos.click();
+    await expect(elegidas).toHaveCount(3);
+    await todos.click();
+    await expect(elegidas).toHaveCount(0);
+    await expect(label).toHaveText('Elige prioridades');
+
+    await overlay.locator('.p-multiselect-option').first().click();
+    await expect(elegidas).toHaveCount(1);
+    await todos.click();
+    await expect(elegidas).toHaveCount(3);
+    await todos.click();
+    await expect(elegidas).toHaveCount(0);
+  });
 });
 
 test.describe('sc-grouppopover', () => {

@@ -16,7 +16,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ScChipComponent as ChipComponent } from '@smartcontact-hub/components';
 import type {
   ScMatrixColumn,
   ScMatrixColumnToggle,
@@ -31,10 +30,7 @@ import { CrossTabLockService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import {
-  IllustratedAvatarComponent,
-  LabelChipComponent,
-} from '@shared/components';
+import { IllustratedAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -133,16 +129,15 @@ interface FormState {
 }
 
 /** ¿Son la misma selección, sin importar el orden? */
-function sameIds(a: readonly number[], b: readonly number[]): boolean {
+function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
   if (a.length !== b.length) return false;
   const set = new Set(b);
-  return a.every((id) => set.has(id));
+  return a.every((v) => set.has(v));
 }
 
 @Component({
   selector: 'sc-agent-form-page',
   imports: [
-    ChipComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
@@ -150,7 +145,6 @@ function sameIds(a: readonly number[], b: readonly number[]): boolean {
     GroupAssignmentTableComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
-    LabelChipComponent,
     PermissionMatrixComponent,
     PhotoUploadComponent,
     RouterLink,
@@ -250,36 +244,25 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     }))
   );
 
-  /** Selected labels resolved to {id, name, color} for chip rendering. */
-  protected readonly selectedLabelChips = computed(() => {
-    const ids = this.form().labelIds;
-    return this.labelsStore
-      .labels()
-      .filter((label) => ids.has(label.id))
-      .map((label) => ({ id: label.id, name: label.name, color: label.color }));
-  });
+  /* Idiomas y Etiquetas ACUMULAN, así que son un `sc-multiselect` como Agendas y Plantillas
+   * (Rafa, 2026-09-14). Antes eran un select que se vaciaba tras cada elección más una fila de
+   * pastillas debajo. Valores `computed` por lo mismo que las plantillas: una lista estable. */
+  protected readonly languageValue = computed(() => [...this.form().languages]);
 
-  /** Labels still available to add — current store minus already-selected. */
-  protected readonly addableLabels = computed(() => {
-    const ids = this.form().labelIds;
-    return this.labelsStore.labels().filter((label) => !ids.has(label.id));
-  });
+  protected onLanguagesChange(langs: unknown[]): void {
+    if (sameValues(langs as string[], this.languageValue())) return;
+    this.form.update((f) => ({ ...f, languages: [...(langs as string[])] }));
+  }
 
-  /** Idiomas aún no añadidos — para alimentar el `<sc-select>` action-add. */
-  protected readonly addableLanguages = computed(() => {
-    const set = new Set(this.form().languages);
-    return this.availableLanguages.filter((l) => !set.has(l));
-  });
+  protected readonly labelOptions = computed(() =>
+    this.labelsStore.labels().map((l) => ({ label: l.name, value: l.id })),
+  );
+  protected readonly labelValue = computed(() => [...this.form().labelIds]);
 
-  /**
-   * Signals "transitorios" del valor del select action-add. Siempre vuelven
-   * a `null` tras un pick exitoso porque el patrón es "elegir uno → se va
-   * al chip de fuera → el select queda vacío para el siguiente". Con un
-   * `<select>` nativo bastaba con `event.target.value = ''`; con sc-select
-   * (bind unidireccional) hay que mover el reset al signal del consumer.
-   */
-  protected readonly labelPickValue = signal<number | null>(null);
-  protected readonly languagePickValue = signal<string | null>(null);
+  protected onLabelsChange(ids: unknown[]): void {
+    if (sameValues(ids as number[], this.labelValue())) return;
+    this.form.update((f) => ({ ...f, labelIds: new Set(ids as number[]) }));
+  }
 
   /* ── Repositorios ─────────────────────────────────────────────────────────────
    *
@@ -298,7 +281,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
 
   protected onSchedulesChange(ids: unknown[]): void {
-    if (sameIds(ids as number[], this.scheduleValue())) return;
+    if (sameValues(ids as number[], this.scheduleValue())) return;
     this.form.update((f) => ({ ...f, scheduleIds: new Set(ids as number[]) }));
   }
 
@@ -326,7 +309,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** Sustituye las de UN tipo sin tocar las del otro. */
   protected onTemplatesChange(type: TemplateType, ids: unknown[]): void {
     const current = type === 'chat' ? this.chatTemplateValue() : this.emailTemplateValue();
-    if (sameIds(ids as number[], current)) return;
+    if (sameValues(ids as number[], current)) return;
     const ofType = new Set(this.templatesOf(type).map((t) => t.id));
     this.form.update((f) => {
       const next = new Set([...f.templateIds].filter((id) => !ofType.has(id)));
@@ -364,19 +347,20 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       icon: 'tune',
     };
     // Lo que se le ASIGNA al agente desde Repositorios (2026-09-14): antes eran tres
-    // desplegables al final de Avanzado.
-    const repositories: FormNavSection = {
-      id: 'agent-section-repositories',
-      labelKey: 'agents.form.section.repositories',
-      icon: 'folder_open',
+    // desplegables al final de Avanzado. Ni el nombre ni el icono son los del menú (carpeta): con
+    // los mismos, quien buscaba la sección acababa en la página Repositorios.
+    const resources: FormNavSection = {
+      id: 'agent-section-resources',
+      labelKey: 'agents.form.section.resources',
+      icon: 'library_books',
     };
     // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
     // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
     // ficha del panel ya da su contexto siempre visible.
     if (this.mode() === 'edit') {
-      return [groups, permissions, advanced, repositories, identity];
+      return [groups, permissions, advanced, resources, identity];
     }
-    return [identity, groups, permissions, advanced, repositories];
+    return [identity, groups, permissions, advanced, resources];
   });
 
   protected readonly activeSection = signal<string>('agent-section-identity');
@@ -866,52 +850,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected onPhotoChange(photo: string | null): void {
     this.form.update((f) => ({ ...f, photo }));
-  }
-
-  /**
-   * Adapter `<sc-select>` para el patrón action-add de idiomas. El select
-   * usa `addableLanguages()` (filtra ya añadidos) — el guard de duplicados
-   * queda como red de seguridad. Reset del signal a null tras el pick.
-   */
-  protected onLanguageValueAdd(value: unknown): void {
-    if (typeof value !== 'string' || !value) return;
-    this.form.update((f) =>
-      f.languages.includes(value)
-        ? f
-        : { ...f, languages: [...f.languages, value] }
-    );
-    this.languagePickValue.set(null);
-  }
-
-  protected onLanguageRemove(lang: string): void {
-    this.form.update((f) => ({
-      ...f,
-      languages: f.languages.filter((l) => l !== lang),
-    }));
-  }
-
-  /**
-   * Adapter `<sc-select>` para el patrón action-add de labels. El select
-   * usa `addableLabels()` con `optionValue="id"` así emite el number directo.
-   * Reset del signal a null tras el pick para volver a placeholder.
-   */
-  protected onLabelValueAdd(value: unknown): void {
-    if (typeof value !== 'number' || !Number.isFinite(value)) return;
-    this.form.update((f) => {
-      if (f.labelIds.has(value)) return f;
-      const next = new Set(f.labelIds);
-      next.add(value);
-      return { ...f, labelIds: next };
-    });
-    this.labelPickValue.set(null);
-  }
-
-  protected onLabelRemove(id: number): void {
-    this.form.update((f) => {
-      const next = new Set(f.labelIds);
-      next.delete(id);
-      return { ...f, labelIds: next };
-    });
   }
 
   protected onNameRename(name: string): void {
