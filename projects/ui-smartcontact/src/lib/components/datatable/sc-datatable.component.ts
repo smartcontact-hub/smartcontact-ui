@@ -124,6 +124,12 @@ export class ScDatatableComponent<T = unknown> {
   readonly variant = input<ScDatatableVariant>('default');
   readonly scrollable = input(false, { transform: booleanAttribute });
   readonly scrollHeight = input<string | undefined>(undefined);
+  /**
+   * Lista virtual (RAMA DE COMPARACIÓN B, 2026-09-14): solo pinta las filas que se ven. Necesita
+   * `scrollable` con `scrollHeight` y un alto de fila FIJO en `virtualScrollItemSize` (px).
+   */
+  readonly virtualScroll = input(false, { transform: booleanAttribute });
+  readonly virtualScrollItemSize = input<number | undefined>(undefined);
 
   /**
    * Cabecera fija al scroll de la PÁGINA: se queda arriba mientras se desplaza

@@ -171,6 +171,8 @@ export class AgentsListPageComponent {
    * SOLO EN LAS RAMAS DE COMPARACIÓN (`comparar/tabla-*`, 2026-09-14): `?filas=N` repite los agentes de
    * prueba hasta N filas, para medir la tabla con muchísimas líneas. No se funde tal cual.
    */
+  /** RAMA B: alto fijo de fila que necesita la lista virtual (medido en el build). */
+  protected readonly filaAlto = 54;
   private readonly filasDemo = Number(new URLSearchParams(globalThis.location?.search ?? '').get('filas')) || 0;
   protected readonly agents = computed(() => {
     const base = this.agentsStore.agents();
