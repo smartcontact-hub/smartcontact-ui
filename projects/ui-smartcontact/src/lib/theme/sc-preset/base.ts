@@ -76,9 +76,7 @@ const primaryScheme = {
 
 const textScheme = {
   color: 'var(--sc-text-primary)',
-  hoverColor: 'var(--sc-text-primary)',
   mutedColor: 'var(--sc-text-secondary)',
-  hoverMutedColor: 'var(--sc-text-primary)',
 };
 
 const contentScheme = {
@@ -86,7 +84,6 @@ const contentScheme = {
   hoverBackground: 'var(--sc-bg-secondary-hover)',
   borderColor: 'var(--sc-border-default)',
   color: 'var(--sc-text-primary)',
-  hoverColor: 'var(--sc-text-primary)',
 };
 
 const overlayScheme = {
@@ -105,11 +102,6 @@ const overlayScheme = {
     borderColor: 'var(--sc-border-default)',
     color: 'var(--sc-text-primary)',
   },
-};
-
-const maskScheme = {
-  background: 'rgb(var(--sc-shadow-color-rgb) / 0.4)',
-  color: 'var(--sc-text-inverse)',
 };
 
 const listScheme = {
@@ -162,14 +154,8 @@ const formFieldScheme = {
   disabledBackground: 'var(--sc-bg-disabled)',
   disabledColor: 'var(--sc-text-disabled)',
   placeholderColor: 'var(--sc-text-subtle)',
-  borderColor: 'var(--sc-border-default)',
-  hoverBorderColor: 'var(--sc-border-strong)',
   focusBorderColor: 'var(--sc-bg-primary)',
-  invalidBorderColor: 'var(--sc-border-error)',
   invalidPlaceholderColor: 'var(--sc-text-danger)',
-  filledBackground: 'var(--sc-bg-default)',
-  filledFocusBackground: 'var(--sc-bg-default)',
-  filledHoverBackground: 'var(--sc-bg-default)',
   floatLabelColor: 'var(--sc-text-subtle)',
   floatLabelFocusColor: 'var(--sc-text-subtle)',
   floatLabelActiveColor: 'var(--sc-text-subtle)',
@@ -221,9 +207,6 @@ export default {
     anchorGutter: '0.142857rem',
     content: {
       borderRadius: '{border.radius.md}',
-    },
-    mask: {
-      transitionDuration: 'var(--sc-transition-base)',
     },
     list: {
       gap: '0.142857rem',
@@ -277,14 +260,6 @@ export default {
       borderRadius: 'var(--sc-cmp-form-field-border-radius)',
       transitionDuration: 'var(--sc-transition-base)',
       shadow: 'var(--sc-cmp-form-field-shadow)',
-      focusRing: {
-        // El Kit apaga el ring del campo (focus = borde): width 0.
-        color: 'transparent',
-        style: 'solid',
-        width: '0',
-        offset: '0',
-        shadow: 'none',
-      },
     },
     navigation: {
       item: {
@@ -311,7 +286,6 @@ export default {
         text: textScheme,
         content: contentScheme,
         overlay: overlayScheme,
-        mask: maskScheme,
         list: listScheme,
         navigation: navigationScheme,
         formField: {
@@ -331,7 +305,6 @@ export default {
         text: textScheme,
         content: contentScheme,
         overlay: overlayScheme,
-        mask: maskScheme,
         list: listScheme,
         navigation: navigationScheme,
         formField: {
