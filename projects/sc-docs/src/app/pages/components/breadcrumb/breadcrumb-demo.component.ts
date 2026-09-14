@@ -14,6 +14,11 @@ const BASIC_SNIPPET = `<sc-breadcrumb
     { label: 'Wireless' },
   ]" />`;
 
+const FLUSH_SNIPPET = `<!-- "flush" quita el relleno propio de la miga, para cuando va dentro de una barra que ya pone su aire (la TopBar). -->
+<header class="barra">
+  <sc-breadcrumb [flush]="true" [model]="[{ label: 'Administración', command: open }, { label: 'Usuarios' }]" />
+</header>`;
+
 /** Demo de `sc-breadcrumb` (motor «Storybook-like»). Primer componente del
  *  puente Figma→código: el aspecto sale del preset ya tokenizado, y las
  *  historias reproducen los Examples del nodo de Figma (`❖ Breadcrumb`). */
@@ -27,6 +32,7 @@ export class BreadcrumbDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
   protected readonly noHomeTpl = viewChild<TemplateRef<StoryContext>>('noHome');
   protected readonly rootTpl = viewChild<TemplateRef<StoryContext>>('root');
+  protected readonly flushTpl = viewChild<TemplateRef<StoryContext>>('flush');
 
   /** No-op para que los tramos intermedios se pinten como enlaces (clicables)
    *  sin navegar en la demo; el último tramo NO lo lleva → es la página actual. */
@@ -43,6 +49,7 @@ export class BreadcrumbDemoComponent {
     { label: 'Wireless' },
   ];
   protected readonly rootOnly: MenuItem[] = [{ label: 'Inicio' }];
+  protected readonly inBar: MenuItem[] = [{ label: 'Administración', command: this.noop }, { label: 'Usuarios' }];
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-breadcrumb',
@@ -71,6 +78,12 @@ export class BreadcrumbDemoComponent {
         description: 'Nombre accesible del icono de inicio.',
       },
       {
+        name: 'flush',
+        type: 'boolean',
+        default: 'false',
+        description: 'Sin relleno propio: para cuando la miga va dentro de una barra que ya pone su aire (la TopBar).',
+      },
+      {
         name: 'itemClick',
         type: 'output<MenuItemCommandEvent>',
         default: '—',
@@ -83,11 +96,13 @@ export class BreadcrumbDemoComponent {
     const pg = this.playgroundTpl();
     const nh = this.noHomeTpl();
     const ro = this.rootTpl();
-    if (!pg || !nh || !ro) return [];
+    const fl = this.flushTpl();
+    if (!pg || !nh || !ro || !fl) return [];
     return [
       { name: 'Básico', playground: true, template: pg, snippet: BASIC_SNIPPET },
       { name: 'Sin inicio', template: nh },
       { name: 'Página raíz', template: ro },
+      { name: 'Dentro de una barra', template: fl, snippet: FLUSH_SNIPPET },
     ];
   });
 }

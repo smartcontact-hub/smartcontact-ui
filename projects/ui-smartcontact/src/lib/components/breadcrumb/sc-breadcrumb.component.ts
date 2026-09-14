@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import type { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 
@@ -41,6 +41,18 @@ export class ScBreadcrumbComponent {
   readonly home = input<MenuItem | undefined>(undefined);
   /** Nombre accesible del icono de inicio (i18n del consumidor). */
   readonly homeAriaLabel = input<string | undefined>(undefined);
+  /**
+   * Sin relleno propio. La miga de Aura (y la del Kit) trae relleno a los cuatro
+   * lados porque se dibuja como una barra suelta. Metida dentro de una barra que ya
+   * pone su aire, como la TopBar del Supervisor, el relleno se suma dos veces:
+   * medido el 2026-09-14, 48 de los 91 px de esa barra eran la miga (14 + 20 + 14).
+   * Aura resuelve lo mismo así: la `Toolbar` lleva el relleno y lo de dentro, ninguno.
+   *
+   * Va en línea sobre la raíz (`style` de `<p-breadcrumb>`), como `labelStyle` más
+   * abajo: sin `::ng-deep` ni selectores `.p-*`.
+   */
+  readonly flush = input(false, { transform: booleanAttribute });
+  protected readonly rootStyle = computed(() => (this.flush() ? { padding: 'var(--sc-spacing-0)' } : undefined));
 
   /** Click en un tramo (o en el inicio). Reemite el evento de PrimeNG. */
   readonly itemClick = output<MenuItemCommandEvent>();
