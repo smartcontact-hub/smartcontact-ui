@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Un campo que ACUMULA valores de una lista es un `sc-multiselect` con chips, no un `sc-select` que se vacía más pastillas debajo · la casilla de «todos» de `sc-multiselect` marca y desmarca (`[selectAll]="null"` contra PrimeNG 22.1.0) · una sección no se llama ni se dibuja como una página del menú | DD-105 |
 > | Una miga que navega pasa `routerLink`, no un `command` · el tramo pulsable lleva manita y subrayado en hover (lo pone `sc-breadcrumb`) | DD-103 |
 > | Una lista nunca corta texto: columnas cortas con el ancho MEDIDO de su dato y `<sc-list-page tableMinWidth>`; por debajo, la tabla se desplaza de lado | DD-102 |
 > | Los editores agente↔grupo: una columna por canal con `sc-checkbox`, elegir varios con la barra en lote, «Añadir» con `sc-select` · una asignación de repositorio es un `sc-multiselect`, no una tabla · se juntan secciones que responden la misma pregunta | DD-101 |
@@ -70,6 +71,44 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-105 · 2026-09-14 — Un campo que acumula es un multiselect, su casilla de «todos» también quita, y la sección del agente se llama «Recursos»
+
+**Contexto** · Rafa, probando la ficha de agente tras #174: buscó la sección «Repositorios» en la página del
+menú del mismo nombre; en «Plantillas de email», la casilla de «todos» marcaba pero no quitaba; y pidió que
+«cuando permite acumular chips sea un multiselect». Medido: 2 elegidas → clic → 6 → clic → 6, igual en la
+documentación del DS (sin la ficha por medio). PrimeNG 22.1.0 declara `selectAll = input()` (undefined) y
+`allSelected()` hace `selectAll !== null ? selectAll : …`, así que «todo seleccionado» es siempre falso y
+`onToggleAll` vuelve a marcarlo todo.
+
+**Decisión** ·
+1. **`sc-multiselect` pasa `[selectAll]="null"`** a `p-multiselect`: la selección la calcula el propio control y
+   la casilla alterna. Arreglo en el DS, no en la ficha: vale para todo multiselect de las apps. Test en
+   `e2e/components.spec.ts` (rojo con el fallo dentro, verde con el arreglo; la captura del componente no cambia).
+2. **Un campo que acumula valores de una lista es un `sc-multiselect` con chips.** Idiomas (Avanzado) y Etiquetas
+   (Recursos) eran un `sc-select` que se vaciaba tras cada elección más una fila de pastillas debajo; ahora son
+   como Agendas y Plantillas. «Idioma» pasa a «Idiomas». Se van `.language-chips` y `.label-chips`.
+3. **La sección se llama «Recursos»**, con icono `library_books`: ni el nombre ni la carpeta del menú.
+   «Gestionar en Repositorios» se queda y dice dónde se crean.
+
+**Razón** · Dos controles para una lista (uno para añadir, otro para ver y quitar) es el patrón que el
+multiselect ya resuelve, con buscador y «todos». Y una sección con el nombre y el icono de una página se lee
+como esa página: quien la busca va al menú.
+
+**Descartadas** ·
+- **Herramientas** → suena a funciones del puesto. **Asignaciones** → choca con «Grupos asignados» en la misma
+  ficha. **Etiquetas, agendas y plantillas** → no cabe en el índice y crece con cada repositorio.
+- **Arreglar la casilla en la ficha** (reescribir la selección en `onTemplatesChange`) → el fallo es del
+  control y estaba en todos.
+- **Los motivos de «No disponible» de Contact Center › Servicio como multiselect** → se escriben a mano, no se
+  eligen de una lista.
+
+**Consecuencias** · Las etiquetas pierden su color dentro del campo (chips grises); devolverlo pide un chip con
+plantilla en `sc-multiselect`, propuesto y sin hacer. CusCare usa `p-multiselect` a pelo en los filtros de Tickets, con la
+casilla de «todos» por defecto: lleva el mismo `[selectAll]="null"` (mismo patrón, no medido en su navegador). Si
+PrimeNG corrige `selectAll`, el `null` sigue siendo correcto.
 
 ---
 
@@ -110,10 +149,6 @@ el de los dos índices, el mismo en los dos: 2,9px (`groups` y `hub`, glifos anc
 fichero hasta que se ajuste (`docs/figma-pendiente.md` §7). Un glifo ANCHO (`groups`, `manage_accounts`) sobresale
 hasta 0,11em por lado de su caja: donde el hueco icono↔texto sea menor de ~3px, lo caza el spec. Las 38 baselines
 visuales de sc-docs se regeneran con este cambio.
-
----
-
----
 
 ---
 
@@ -191,8 +226,8 @@ grupos» y, de Repositorios, «es mucho ruido».
 2. **Sin contadores que hay que leer para descartar**: el recuento solo al filtrar («5 de 12») y un aviso solo si
    hay agentes activos sin canal. Fuera los subtítulos que repetían las columnas.
 3. **Secciones**: Grupos junta Canales y Estrategia (la estrategia depende de los canales marcados); Usuarios junta
-   Secciones y Permisos en «Acceso»; Agentes saca Etiquetas, Agendas y Plantillas de Avanzado a «Repositorios».
-4. **Repositorios de un agente**: un campo por repositorio con lo asignado a la vista, `sc-multiselect` para
+   Secciones y Permisos en «Acceso»; Agentes saca Etiquetas, Agendas y Plantillas de Avanzado a «Recursos».
+4. **Recursos de un agente**: un campo por repositorio con lo asignado a la vista, `sc-multiselect` para
    Agendas y Plantillas (de chat y de email por separado) y el selector con etiquetas de color para Etiquetas.
 5. **Copy**: «Activo» en vez de «Estado»; «Grabar llamadas» sin ayuda que repita; «Expirar contraseña» una vez.
 
@@ -205,6 +240,9 @@ previa) para responder qué tiene asignado el agente: el mismo dato cabe en cuat
 - **Quitar la selección de filas** para que no convivan dos casillas en la fila → se probó; Rafa quiere elegir
   varios, y la cabecera de cada columna ya dice qué es cada casilla.
 - **Repositorios con los desplegables de antes abiertos** → mismo ruido en una sección propia.
+- **Llamar a la sección «Repositorios», como el menú** → así salió primero, y Rafa, al probarla, acabó en la
+  página del menú buscando el cambio. Se llama «Recursos», con icono de libros y no la carpeta del menú, y su enlace
+  «Gestionar en Repositorios» dice dónde viven.
 
 **Consecuencias** · Grupos pasa de 4 secciones a 3, Usuarios de 4 a 3 y Agentes de 4 a 5 (lo vigila
 `form-section-nav-legibility.spec.ts`). `sc-multiselect` necesita un valor estable: con un método que devolvía un

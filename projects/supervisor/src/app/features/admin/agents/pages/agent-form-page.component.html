@@ -396,20 +396,19 @@
                   <label class="field__label sc-text-caption-semibold" for="agent-language">
                     {{ 'common.languages.label' | translate }}
                   </label>
-                  <sc-select
+                  <!-- Un campo que ACUMULA es un multiselect (Rafa, 2026-09-14). Antes, un select que se
+                       vaciaba tras cada elección y una fila de pastillas debajo: dos controles para una
+                       lista, y la casilla de «todos» no existía. -->
+                  <sc-multiselect
                     inputId="agent-language"
-                    [options]="addableLanguages()"
+                    display="chip"
+                    [maxSelectedLabels]="4"
+                    [selectedItemsLabel]="'common.languages.selected_many' | translate"
                     [placeholder]="'common.languages.placeholder' | translate"
-                    [value]="languagePickValue()"
-                    (valueChange)="onLanguageValueAdd($event)"
+                    [options]="availableLanguages"
+                    [value]="languageValue()"
+                    (valueChange)="onLanguagesChange($event)"
                   />
-                  @if (form().languages.length > 0) {
-                    <div class="language-chips">
-                      @for (lang of form().languages; track lang) {
-                        <sc-chip [label]="lang" removable [removeAriaLabel]="'common.languages.remove' | translate: { lang }" (removed)="onLanguageRemove(lang)" />
-                      }
-                    </div>
-                  }
                 </div>
               </div>
 
@@ -504,16 +503,17 @@
           </sc-section-card>
         }
 
-        @case ('agent-section-repositories') {
+        @case ('agent-section-resources') {
           <!-- Etiquetas, Agendas y Plantillas en su propia sección desde el 2026-09-14. Eran
                tres desplegables al final de Avanzado, que con ellos abiertos medía casi dos
                pantallas. No son ajustes del agente sino cosas que se le ASIGNAN y que viven en
-               Repositorios (de ahí el nombre, el mismo del menú). Aquí van abiertas: la
-               sección entera es para ellas. -->
+               Repositorios. Se llama «Recursos», no «Repositorios» como el menú: con el mismo
+               nombre, quien la buscaba acababa en la página del menú (Rafa, 2026-09-14). Aquí
+               van abiertas: la sección entera es para ellas. -->
           <sc-section-card
-            anchorId="agent-section-repositories"
+            anchorId="agent-section-resources"
             surface="card"
-            titleKey="agents.form.section.repositories"
+            titleKey="agents.form.section.resources"
             [icon]="activeIcon()"
           >
             <!-- Un campo por repositorio, con lo asignado a la vista y el desplegable del DS para
@@ -529,27 +529,20 @@
                   @if (availableLabels().length === 0) {
                     <p class="field__help sc-text-caption-regular">{{ 'agents.form.labels_empty' | translate }}</p>
                   } @else {
-                    <sc-select
+                    <!-- Como Agendas y Plantillas: acumula, así que es un multiselect. -->
+                    <sc-multiselect
                       inputId="agent-label"
-                      optionValue="id"
-                      [options]="addableLabels()"
-                      [placeholder]="'agents.form.labels_placeholder' | translate"
-                      [value]="labelPickValue()"
-                      (valueChange)="onLabelValueAdd($event)"
-                    >
-                      <ng-template #item let-l>{{ l.name }}</ng-template>
-                    </sc-select>
-                  }
-                  @if (selectedLabelChips().length > 0) {
-                    <div class="label-chips">
-                      @for (chip of selectedLabelChips(); track chip.id) {
-                        <sc-label-chip
-                          [label]="{ name: chip.name, color: chip.color }"
-                          [removable]="true"
-                          (remove)="onLabelRemove(chip.id)"
-                        />
-                      }
-                    </div>
+                      display="chip"
+                      optionLabel="label"
+                      optionValue="value"
+                      [filter]="true"
+                      [maxSelectedLabels]="4"
+                      [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+                      [placeholder]="'agents.form.resources.none' | translate"
+                      [options]="labelOptions()"
+                      [value]="labelValue()"
+                      (valueChange)="onLabelsChange($event)"
+                    />
                   }
                 </div>
 
@@ -564,8 +557,8 @@
                     optionValue="value"
                     [filter]="true"
                     [maxSelectedLabels]="4"
-                    [selectedItemsLabel]="'agents.form.repositories.selected_many' | translate"
-                    [placeholder]="'agents.form.repositories.none' | translate"
+                    [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+                    [placeholder]="'agents.form.resources.none' | translate"
                     [options]="scheduleOptions()"
                     [value]="scheduleValue()"
                     (valueChange)="onSchedulesChange($event)"
@@ -574,7 +567,7 @@
 
                 <div class="field">
                   <label class="field__label sc-text-caption-semibold" for="agent-templates-chat">
-                    {{ 'agents.form.repositories.templates_chat' | translate }}
+                    {{ 'agents.form.resources.templates_chat' | translate }}
                   </label>
                   <sc-multiselect
                     inputId="agent-templates-chat"
@@ -583,8 +576,8 @@
                     optionValue="value"
                     [filter]="true"
                     [maxSelectedLabels]="4"
-                    [selectedItemsLabel]="'agents.form.repositories.selected_many' | translate"
-                    [placeholder]="'agents.form.repositories.none' | translate"
+                    [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+                    [placeholder]="'agents.form.resources.none' | translate"
                     [options]="chatTemplateOptions()"
                     [value]="chatTemplateValue()"
                     (valueChange)="onTemplatesChange('chat', $event)"
@@ -593,7 +586,7 @@
 
                 <div class="field">
                   <label class="field__label sc-text-caption-semibold" for="agent-templates-email">
-                    {{ 'agents.form.repositories.templates_email' | translate }}
+                    {{ 'agents.form.resources.templates_email' | translate }}
                   </label>
                   <sc-multiselect
                     inputId="agent-templates-email"
@@ -602,8 +595,8 @@
                     optionValue="value"
                     [filter]="true"
                     [maxSelectedLabels]="4"
-                    [selectedItemsLabel]="'agents.form.repositories.selected_many' | translate"
-                    [placeholder]="'agents.form.repositories.none' | translate"
+                    [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+                    [placeholder]="'agents.form.resources.none' | translate"
                     [options]="emailTemplateOptions()"
                     [value]="emailTemplateValue()"
                     (valueChange)="onTemplatesChange('email', $event)"
@@ -612,7 +605,7 @@
               </div>
 
               <!-- Dónde se crean y se editan. Antes «Gestionar agendas», solo para una de las tres. -->
-              <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.repositories.manage_link' | translate }}</a>
+              <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
             </section>
           </sc-section-card>
         }

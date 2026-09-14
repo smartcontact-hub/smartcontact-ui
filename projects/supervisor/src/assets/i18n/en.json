@@ -719,9 +719,9 @@
       "too_large": "Image exceeds 800 KB."
     },
     "languages": {
-      "label": "Language",
-      "placeholder": "Select language...",
-      "remove": "Remove {{lang}}"
+      "label": "Languages",
+      "placeholder": "None",
+      "selected_many": "{0} selected"
     },
     "groups_count": "{{count}} groups",
     "groups_count_short": "{{count}}",
@@ -1357,7 +1357,7 @@
         "permissions_hint": "Agent capabilities",
         "advanced": "Advanced",
         "advanced_hint": "Labels, behavior, language",
-        "repositories": "Repositories"
+        "resources": "Resources"
       },
       "advanced": {
         "labels": {
@@ -1421,7 +1421,6 @@
         "active_hint": "Can receive calls and chats",
         "recording": "Record calls"
       },
-      "labels_placeholder": "Add label…",
       "labels_empty": "No labels yet. Create one from the Labels section.",
       "assigned": {
         "picker_placeholder": "Search or add group…",
@@ -1459,7 +1458,7 @@
       "duplicate_title": "Duplicate agent",
       "duplicate_breadcrumb": "Duplicate agent",
       "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
-      "repositories": {
+      "resources": {
         "templates_chat": "Chat templates",
         "templates_email": "Email templates",
         "none": "None",

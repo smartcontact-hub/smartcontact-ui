@@ -38,7 +38,7 @@
 | `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 103 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 30 |
-| `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 4 |
+| `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 3 |
 | `sc-color-dot-picker` | CUSTOM | — | 1 inputs | — | ✓ | 3 |
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 1 |
 | `sc-command-palette` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
@@ -62,7 +62,7 @@
 | `sc-inputtext` | EXTENDED | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 28 |
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 1 |
-| `sc-multiselect` | EXTENDED | primeng/multiselect | 28 inputs | sc-field-label sc-field-msg | ✓ | 13 |
+| `sc-multiselect` | EXTENDED | primeng/multiselect | 28 inputs | sc-field-label sc-field-msg | ✓ | 15 |
 | `sc-option-cards` | CUSTOM | — | 4 inputs | — | — | 1 |
 | `sc-panel` | EXTENDED | primeng/panel | 4 inputs | — | ✓ | — |
 | `sc-permission-matrix` | CUSTOM | — | 5 inputs | sc-checkbox | — | 2 |
@@ -72,7 +72,7 @@
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 7 |
 | `sc-section-card` | CUSTOM | — | 8 inputs | — | ✓ | 20 |
-| `sc-select` | EXTENDED | primeng/select | 26 inputs | sc-field-label sc-field-msg | ✓ | 36 |
+| `sc-select` | EXTENDED | primeng/select | 26 inputs | sc-field-label sc-field-msg | ✓ | 31 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 3 |

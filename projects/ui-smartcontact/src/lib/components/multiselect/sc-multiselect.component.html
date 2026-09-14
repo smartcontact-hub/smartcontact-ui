@@ -9,6 +9,9 @@
 }
 
 <div class="sc-multiselect__field">
+  <!-- `[selectAll]="null"` no es ruido: PrimeNG 22.1.0 deja `selectAll` en undefined y compara con
+       `!== null`, así que sin él «todo seleccionado» es siempre falso y la casilla de arriba marca
+       todo en cada clic sin desmarcar nunca. `null` = la selección la calcula el propio control. -->
   <p-multiselect
     [ariaLabelledBy]="resolvedLabelledBy()"
     class="sc-multiselect__control"
@@ -22,6 +25,7 @@
     [filter]="filter()"
     [filterBy]="filterBy() ?? resolvedOptionLabel()"
     [showToggleAll]="showToggleAll()"
+    [selectAll]="null"
     [selectionLimit]="selectionLimit() ?? null"
     [maxSelectedLabels]="maxSelectedLabels()"
     [selectedItemsLabel]="selectedItemsLabel()"
