@@ -13,7 +13,9 @@
    * se llama `.hub` y no `.page`, así que declara el arquetipo con la clase
    * canónica añadida. Aquí queda solo el padding, que es delta suyo. */
   &__inner {
-    padding: var(--sc-spacing-2-75) var(--sc-spacing-2-25);
+    /* Arriba y a los lados, lo mismo que el resto de pantallas (barra → título 17,5,
+     * lados 28): aquí medía 38,5 arriba (2026-09-14). Abajo se queda el aire de antes. */
+    padding: var(--sc-spacing-1-25) var(--sc-spacing-2) var(--sc-spacing-2-75);
   }
 }
 

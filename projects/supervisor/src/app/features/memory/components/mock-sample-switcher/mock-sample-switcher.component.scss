@@ -15,8 +15,10 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
-  height: 36px;
-  padding: 0 12px;
+  /* Alto de un botón pequeño del DS (28), para no estirar la TopBar por encima de sus 56 (2026-09-14).
+   * Antes 36 y 12 escritos a mano. */
+  height: var(--sc-cmp-button-sm-icon-only-width);
+  padding: 0 var(--sc-spacing-0-875);
   border: 1px dashed color-mix(in srgb, var(--sc-color-amber-500) 40%, transparent);
   border-radius: var(--sc-radius-full);
   background: color-mix(in srgb, var(--sc-color-amber-100) 70%, white);

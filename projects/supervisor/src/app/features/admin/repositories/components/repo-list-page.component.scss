@@ -15,7 +15,7 @@
   }
 
   &__inner {
-    padding: var(--sc-spacing-1-75) var(--sc-spacing-2-25);
+    padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
   }
 
   &__create-anchor {
@@ -38,7 +38,7 @@
     display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-875);
-    margin-bottom: var(--sc-spacing-1-125);
+    margin-bottom: var(--sc-spacing-0-875); /* buscador → tabla, como todas las listas (2026-09-14) */
   }
 
   &__search {
