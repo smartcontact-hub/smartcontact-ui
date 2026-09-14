@@ -174,6 +174,20 @@ el Dashboard toma de PrimeNG y el fichero del DS aún no dibuja.
 - ⚠️ **Un valor del Kit pasado a rem pierde la forma del shorthand**: `1` dibujado abajo en Figma es `0 0 1px 0` en
   Aura, y escrito `0.071429rem` pinta cuatro lados. Solo se ve el día que alguien usa el componente.
 
+## ✅ 2026-09-14 · Grises intermedios decididos, y un color de Figma que no llegaba al tema (DD-106)
+
+**Sello:** HEAD `8098f58` (#177, rama `arebury/grises-intermedios`). DD-106. Rafa: «me convence el intermedio». El tramo de las fichas
+(DD-100 a DD-102) vive en el tag `archive/handoff-ds-2026-09-14-fichas-contact-center`.
+
+**Lo que cambia.** Nada en pantalla aún: los grises intermedios se hacen en Figma (`figma-pendiente.md` §8). El guard
+`cmp-color-rewire` empareja los slots `root` con su token del Kit. `ROADMAP.md` recoge el color del botón principal
+(9 opciones, sin decidir) y 185 colores de componente que Figma no alcanza. El hook de correcciones deja de contar
+los sobres `<task-notification>` y `<scheduled-task>`.
+
+- ⚠️ **Una caja `x-2` puede ser gemela de otra que trabaja la misma rama**: esta nació para el CI del PR 171 y
+  `coelacanth` ya lo arreglaba; se vio al ir a subir, hora y media después. `npm run sesiones` lo canta al abrir.
+- ⚠️ **Un `--sc-cmp-*` generado no significa que el tema lo lea**: mídelo en pantalla con el export simulado.
+
 ## ✅ 2026-09-14 · Recursos: nombre propio, los campos que acumulan son multiselect y «todos» quita (DD-105)
 
 **Sello:** rama `arebury/nombre-repositorios`, HEAD `6c60e7f` (#176) más este cambio. DD-105. Rafa: «adelante». El tramo «Los controles llevan el
@@ -216,24 +230,6 @@ a mano): enlace de verdad, con mano, Cmd+clic y «copiar enlace». `sc-breadcrum
 - ⚠️ **Con la máquina a carga ~60, `e2e:visual` tumba `sc-form-section-nav` y `sc-form-danger-zone`** por
   timeout (0 elementos); solas pasan. Y el preflight de 25-40 min vio fundir tres PRs: DD-99 → DD-103 en tres
   rebases.
-
-## ✅ 2026-09-14 · Las fichas de agente, grupo y usuario riman con Contact Center (DD-100, DD-101, DD-102)
-
-**Sello:** rama `arebury/agents-groups-users-ds`, HEAD `7007c73` (#172) más este cambio. DD-100, DD-101 y DD-102. Rafa, visto en
-local: «por mí esto ya tiene buena pinta». Los tramos «La cabecera baja de 91 a 56» y «El robot de tokens deja de
-ponerse rojo» viven en el tag `archive/handoff-ds-2026-09-14-robot-tokens`.
-
-**Lo que cambia.** Las tres fichas usan el molde de Contact Center (`.page__inner--rail`), su índice y su
-vocabulario; los editores agente↔grupo van por columnas con selección en lote; Grupos y Usuarios bajan a 3
-secciones y Agentes sube a 5 («Recursos», cuatro campos en vez de dos tablas); «Deshacer» solo con cambios
-(también en Contact Center); las listas nunca cortan (`tableMinWidth`). Comparación antes/después:
-https://claude.ai/code/artifact/04c101ea-f9bf-4539-9ae3-afbf3b3ea703.
-
-- ⚠️ **Un `sc-multiselect` con `[value]` de un método se cuelga**: un array nuevo por ciclo es un cambio por ciclo.
-  Dale un `computed` y compara antes de escribir (`sameIds` en la ficha de agente).
-- ⚠️ **Mientras trabajas en una pantalla, otra sesión puede estar rehaciéndola**: #170 rehízo las tres listas el
-  mismo día. `git fetch` antes de tocar listas; se resolvió cogiendo lo de `main` y reaplicando encima.
-- ⚠️ **`verify` reconstruye `dist/`** y el servidor local pierde el DS a mitad: reinícialo después, no depures.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

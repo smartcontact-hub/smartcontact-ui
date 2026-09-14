@@ -78,7 +78,11 @@ export const ultimaFrase = (texto) =>
 // infla la cuenta de la sesión y deja PENDIENTES de enrutar lecciones que no son tuyas.
 // Medido s43: 2 de las 6 correcciones registradas en 24 h eran esto (LEARNINGS #2, un guardián con
 // falsos positivos enseña a ignorarlo).
-const SOBRE_DE_AGENTE = /^\s*<cross-session-message\b/i;
+// Lo mismo con los sobres de la HERRAMIENTA: el aviso de una tarea de fondo o de un monitor
+// (`<task-notification>`) y el arranque de una tarea programada (`<scheduled-task>`). El veredicto
+// del CI dice «está en CONFLICTO… Rebasa primero» y casaba como si Rafa te corrigiera: 3 de las 6
+// apuntadas en 48 h el 2026-09-14, más una tarea programada.
+const SOBRE_DE_AGENTE = /^\s*<(?:cross-session-message|task-notification|scheduled-task)\b/i;
 export const esDeOtroAgente = (texto) => typeof texto === 'string' && SOBRE_DE_AGENTE.test(texto);
 
 export const esCorreccion = (texto) =>
