@@ -24,14 +24,14 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
         padding: "var(--sc-cmp-treetable-footer-padding-y) var(--sc-cmp-treetable-footer-padding-x)",
         background: "{content.background}",
         borderColor: "{treetable.border.color}",
-        borderWidth: "0.071429rem"
+        borderWidth: "0 0 0.071429rem 0"
     },
     header: {
         color: "{content.color}",
         padding: "var(--sc-cmp-treetable-header-padding-y) var(--sc-cmp-treetable-header-padding-x)",
         background: "{content.background}",
         borderColor: "{treetable.border.color}",
-        borderWidth: "0.071429rem"
+        borderWidth: "0 0 0.071429rem 0"
     },
     bodyCell: {
         gap: "var(--sc-cmp-treetable-body-cell-gap)",
@@ -96,14 +96,14 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
     },
     paginatorTop: {
         borderColor: "{content.border.color}",
-        borderWidth: "0.071429rem"
+        borderWidth: "0 0 0.071429rem 0"
     },
     columnResizer: {
         width: "var(--sc-cmp-treetable-column-resizer-width)"
     },
     paginatorBottom: {
         borderColor: "{content.border.color}",
-        borderWidth: "0.071429rem"
+        borderWidth: "0 0 0.071429rem 0"
     },
     resizeIndicator: {
         color: "{primary.color}",

@@ -6,7 +6,7 @@ import type { AccordionDesignTokens } from '@primeuix/themes/types/accordion';
     },
     panel: {
         borderColor: "{content.border.color}",
-        borderWidth: "0.071429rem"
+        borderWidth: "0 0 0.071429rem 0"
     },
     header: {
         last: {
