@@ -11,6 +11,9 @@
  *   · ≤ MAX_TRAMOS tramos (`## ✅ …`): el vigente y los pocos que aún se citan.
  * Lo que sobra no se borra: se archiva con `git tag -a archive/handoff-<frente>-<fecha>` (así se
  * hizo con `archive/handoff-ds-2026-09-11`) y se deja el tramo vigente + las secciones fijas.
+ * Antes de quitar un tramo, sus avisos `⚠️` que no vivan ya en LEARNINGS o en la sección de trampas
+ * suben a esa sección: el tag los guarda, pero nadie lo lee al abrir. El 2026-09-14 se archivó el de
+ * las fichas con el cuelgue de `sc-multiselect` dentro, y no estaba escrito en ningún otro sitio.
  *
  * Se prueba en rojo con casos fabricados en `scripts/__tests__/handoff-shape.test.mjs`.
  */
@@ -25,10 +28,10 @@ export function revisarHandoff(texto, nombre = 'hand-off') {
   const lineas = texto.split('\n');
   if (lineas.length > MAX_LINEAS)
     problemas.push(
-      `${nombre} mide ${lineas.length} líneas; el tope es ${MAX_LINEAS}. Archiva los tramos viejos con un tag \`archive/handoff-<frente>-<fecha>\` y deja el vigente + las secciones fijas.`,
+      `${nombre} mide ${lineas.length} líneas; el tope es ${MAX_LINEAS}. Archiva los tramos viejos con un tag \`archive/handoff-<frente>-<fecha>\` y deja el vigente + las secciones fijas. Antes, sube a la sección de trampas los avisos ⚠️ de esos tramos que no estén ya en LEARNINGS: el tag no se lee al abrir.`,
     );
   const tramos = lineas.filter((l) => TRAMO.test(l)).length;
   if (tramos > MAX_TRAMOS)
-    problemas.push(`${nombre} tiene ${tramos} tramos \`## ✅\`; el tope es ${MAX_TRAMOS}. Un hand-off es el estado, no el diario: lo anterior vive en git y en DECISIONS.`);
+    problemas.push(`${nombre} tiene ${tramos} tramos \`## ✅\`; el tope es ${MAX_TRAMOS}. Un hand-off es el estado, no el diario: lo anterior vive en git y en DECISIONS. Sube antes a la sección de trampas los avisos ⚠️ que solo vivían en el tramo que archivas.`);
   return problemas;
 }
