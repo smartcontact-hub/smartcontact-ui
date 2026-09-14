@@ -1,5 +1,9 @@
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
+  DestroyRef,
+  ElementRef,
+  inject,
   TemplateRef,
   contentChild,
   booleanAttribute,
@@ -453,6 +457,23 @@ export class ScDatatableComponent<T = unknown> {
   protected readonly pTotalRecords = computed<number>(() => this.totalRecords() ?? this.value().length);
 
   private readonly table = viewChild.required(Table);
+
+  /* RAMA DE COMPARACIÓN B (2026-09-14): con scroll propio, la barra de scroll empieza DEBAJO de la
+   * cabecera de columnas. El tema coloca la pista con `--sc-datatable-thead-height`, que se mide aquí
+   * porque el alto de la cabecera cambia con la talla y con el texto de las columnas. */
+  private readonly theadHeight = (() => {
+    const host = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      if (!this.scrollable()) return;
+      const thead = host.querySelector<HTMLElement>('thead');
+      if (!thead) return;
+      const ro = new ResizeObserver(() => host.style.setProperty('--sc-datatable-thead-height', `${thead.offsetHeight}px`));
+      ro.observe(thead, { box: 'border-box' });
+      destroyRef.onDestroy(() => ro.disconnect());
+    });
+    return true;
+  })();
 
   /**
    * Filtra por el término global (imperativo — p-table no reacciona a cambios del
