@@ -1386,7 +1386,7 @@ var tabs_default = {
   tab: {
     gap: "var(--sc-cmp-tabs-tab-gap)",
     color: "{text.muted.color}",
-    margin: "0 0 -0.071429rem 0",
+    margin: "0",
     padding: "var(--sc-cmp-tabs-tab-padding-y) var(--sc-cmp-tabs-tab-padding-x)",
     focusRing: {
       color: "{focus.ring.color}",
@@ -1399,12 +1399,12 @@ var tabs_default = {
     fontWeight: "600",
     hoverColor: "{text.color}",
     activeColor: "{primary.color}",
-    borderColor: "{content.border.color}",
-    borderWidth: "0.071429rem",
+    borderColor: "transparent",
+    borderWidth: "0",
     hoverBackground: "#00000000",
     activeBackground: "#00000000",
-    hoverBorderColor: "{content.border.color}",
-    activeBorderColor: "{primary.color}"
+    hoverBorderColor: "transparent",
+    activeBorderColor: "transparent"
   },
   root: {
     transitionDuration: "{transition.duration}"
@@ -1412,7 +1412,7 @@ var tabs_default = {
   tablist: {
     background: "{content.background}",
     borderColor: "{content.border.color}",
-    borderWidth: "0.071429rem"
+    borderWidth: "0 0 0.071429rem 0"
   },
   tabpanel: {
     color: "{content.color}",
@@ -1427,7 +1427,7 @@ var tabs_default = {
     background: "{content.background}"
   },
   activeBar: {
-    bottom: "-0.071429rem",
+    bottom: "0",
     height: "0.071429rem",
     background: "{primary.color}"
   },
@@ -3501,7 +3501,7 @@ var dataview_default = {
     padding: "var(--sc-cmp-dataview-footer-padding-y) var(--sc-cmp-dataview-footer-padding-x)",
     background: "{content.background}",
     borderColor: "{content.border.color}",
-    borderWidth: "0.071429rem",
+    borderWidth: "0.071429rem 0 0 0",
     borderRadius: "0"
   },
   header: {
@@ -3509,7 +3509,7 @@ var dataview_default = {
     padding: "var(--sc-cmp-dataview-header-padding-y) var(--sc-cmp-dataview-header-padding-x)",
     background: "{content.background}",
     borderColor: "{content.border.color}",
-    borderWidth: "0.071429rem",
+    borderWidth: "0 0 0.071429rem 0",
     borderRadius: "0"
   },
   content: {
@@ -3522,11 +3522,11 @@ var dataview_default = {
   },
   paginatorTop: {
     borderColor: "{content.border.color}",
-    borderWidth: "0.071429rem"
+    borderWidth: "0 0 0.071429rem 0"
   },
   paginatorBottom: {
     borderColor: "{content.border.color}",
-    borderWidth: "0.071429rem"
+    borderWidth: "0.071429rem 0 0 0"
   }
 };
 
@@ -3972,7 +3972,7 @@ var accordion_default = {
   },
   panel: {
     borderColor: "{content.border.color}",
-    borderWidth: "0.071429rem"
+    borderWidth: "0 0 0.071429rem 0"
   },
   header: {
     last: {
@@ -4207,14 +4207,14 @@ var treetable_default = {
     padding: "var(--sc-cmp-treetable-footer-padding-y) var(--sc-cmp-treetable-footer-padding-x)",
     background: "{content.background}",
     borderColor: "{treetable.border.color}",
-    borderWidth: "0.071429rem"
+    borderWidth: "0 0 0.071429rem 0"
   },
   header: {
     color: "{content.color}",
     padding: "var(--sc-cmp-treetable-header-padding-y) var(--sc-cmp-treetable-header-padding-x)",
     background: "{content.background}",
     borderColor: "{treetable.border.color}",
-    borderWidth: "0.071429rem"
+    borderWidth: "0 0 0.071429rem 0"
   },
   bodyCell: {
     gap: "var(--sc-cmp-treetable-body-cell-gap)",
@@ -4279,14 +4279,14 @@ var treetable_default = {
   },
   paginatorTop: {
     borderColor: "{content.border.color}",
-    borderWidth: "0.071429rem"
+    borderWidth: "0 0 0.071429rem 0"
   },
   columnResizer: {
     width: "var(--sc-cmp-treetable-column-resizer-width)"
   },
   paginatorBottom: {
     borderColor: "{content.border.color}",
-    borderWidth: "0.071429rem"
+    borderWidth: "0 0 0.071429rem 0"
   },
   resizeIndicator: {
     color: "{primary.color}",
