@@ -16,7 +16,7 @@
             class="dashboard-head__tabs"
             [monitors]="store.monitors()"
             [activeId]="m.id"
-            (select)="store.select($event)"
+            (activate)="store.select($event)"
             (add)="addMonitor()"
             (rename)="store.rename($event.id, $event.name)"
             (duplicate)="duplicateMonitor($event)"

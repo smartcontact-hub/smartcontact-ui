@@ -49,7 +49,7 @@ export class MonitorTabsComponent {
   readonly monitors = input.required<readonly DashboardMonitor[]>();
   readonly activeId = input.required<string>();
 
-  readonly select = output<string>();
+  readonly activate = output<string>();
   readonly add = output<void>();
   readonly rename = output<{ id: string; name: string }>();
   readonly duplicate = output<string>();
@@ -80,7 +80,7 @@ export class MonitorTabsComponent {
   });
 
   protected onValueChange(value: string | number | undefined): void {
-    if (typeof value === 'string') this.select.emit(value);
+    if (typeof value === 'string') this.activate.emit(value);
   }
 
   /** Abre el campo de renombrar junto a la pestaña activa (doble clic, F2 o el ⋮). */

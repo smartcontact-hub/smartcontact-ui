@@ -46,6 +46,18 @@ test('el asistente de widget no cambia de tamaño al cambiar de categoría', asy
   }
 });
 
+test('pulsar otra pestaña cambia el monitor que se ve', async ({ page }) => {
+  await goto(page, 'dashboard');
+  const pestanas = page.getByRole('tab');
+  await expect(pestanas).toHaveCount(2);
+  const titulos = () => page.locator('sc-dashboard-widget-card h2').allTextContents();
+  const antes = await titulos();
+
+  await pestanas.nth(1).click();
+  await expect(pestanas.nth(1)).toHaveAttribute('aria-selected', 'true');
+  await expect.poll(titulos).not.toEqual(antes);
+});
+
 for (const ancho of [1440, 1024, 768, 390]) {
   test(`la rejilla cabe sin scroll lateral a ${ancho}px`, async ({ page }) => {
     await page.setViewportSize({ width: ancho, height: 900 });
