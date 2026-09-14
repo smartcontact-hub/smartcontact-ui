@@ -57,6 +57,13 @@ const looksColor = (v) =>
   (v.startsWith('#') || v.startsWith('{') || v.startsWith('var(') || v.startsWith('color-mix(') || v === 'transparent');
 const kebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 export const tokenFor = (comp, path) => `sc-cmp-${comp}-${path.map(kebab).join('-')}`;
+/**
+ * El export del Kit no tiene nivel `root`: `colorScheme.light.root.color` del preset es
+ * `togglebutton.color` en Figma, y el generador lo escribe `--sc-cmp-togglebutton-color`. Sin
+ * quitarlo, ningún slot de `root` casaba con su token y no se podía cablear (2026-09-14, medido
+ * con el color de SelectButton: Figma cambiaba y el tema no).
+ */
+export const kitSlot = (path) => (path[0] === 'root' ? path.slice(1) : path);
 
 /** `export default { … } satisfies X` → objeto evaluable. */
 function loadPreset(src) {
@@ -102,9 +109,13 @@ export function lintPreset(comp, src, gen) {
     const token = tokenFor(comp, path);
     const m = raw.match(/^var\(--(sc-cmp-[a-z0-9-]+)\)$/);
     if (m && isCmpColor(m[1])) {
-      if (m[1] !== token)
-        problems.push(`[${comp}] ${mode}.${path.join('.')} referencia --${m[1]} pero el slot mapea a --${token}.`);
+      const kitToken = tokenFor(comp, kitSlot(path));
+      if (m[1] !== kitToken)
+        problems.push(`[${comp}] ${mode}.${path.join('.')} referencia --${m[1]} pero el slot mapea a --${kitToken}.`);
     } else if (/^#[0-9a-fA-F]{6,8}$/.test(raw) && hasInMode(token, mode)) {
+      // ⚠️ Punto ciego conocido: aquí `token` conserva `root`, así que un hex en un slot de `root`
+      // no se caza. Quitarlo destapa los textos blancos de las severidades de `button` (mismo
+      // valor que su token): pendiente en docs/ROADMAP.md, «Color de componente que Figma no alcanza».
       problems.push(
         `[${comp}] ${mode}.${path.join('.')} = ${raw} es hex hardcodeado pero existe --${token}. Repunta o excluye en cmp-color-map.`,
       );

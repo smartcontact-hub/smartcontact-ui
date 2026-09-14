@@ -243,6 +243,49 @@ buscadores, índice de las fichas, barra lateral y menús.
 
 ---
 
+## 8 · Grises intermedios: los textos y la opción no elegida, un paso más oscuros (2026-09-14)
+
+**Estado:** pendiente de hacer en el fichero · decidido por Rafa el 2026-09-14 (DD-106) · **Verificado de
+punta a punta en código, no en el fichero**: se simuló este cambio en `kit-export-dtcg.json`, `tokens:import`
+lo escribió, se construyó y el Supervisor pintó los grises nuevos (`theme-contrast`: 53 de 53). Las rutas de
+variable salen del export; sus nombres en el fichero no se han mirado. Capturas de las tres versiones en
+`~/Documents/Claude/2026-09 grises-y-primario/grises-y-primario.html`.
+
+**Cómo se hace, sin crear variables ni tocar la paleta:** cada una pasa a apuntar a otro paso. Todo en modo
+claro; el oscuro no se toca.
+
+| Export | Variable | Hoy | Nuevo | Qué consigue |
+|---|---|---|---|---|
+| `aura/semantic/light` | `text/color` | `surface/700` | **`surface/800`** | texto principal 7,38 → 12,16:1 |
+| `aura/semantic/light` | `form/field/color` | `surface/700` | **`surface/800`** | alimenta el mismo `--sc-text-primary` (`color-map.mjs`): se mueven juntas |
+| `aura/semantic/light` | `text/muted/color` | `slate/600` | **`slate/700`** | texto secundario 4,52 → 7,38:1 |
+| `aura/component/light` | `togglebutton/color` | `surface/500` | **`surface/700`** | opción no elegida de SelectButton 2,56 → 6,40:1 |
+| `aura/component/light` | `togglebutton/hover/color` | `surface/700` | **`surface/900`** | que el ratón encima se siga notando |
+| `aura/component/light` | `togglebutton/icon/color` | `surface/500` | **`surface/700`** | el icono, igual que su texto |
+| `aura/component/light` | `togglebutton/icon/hover/color` | `surface/700` | **`surface/900`** | ídem |
+
+**Dos preguntas para el fichero, de la misma tanda:**
+
+- `text/hover/color` es hoy `surface/800`, el mismo gris que el principal nuevo: el texto con el ratón encima
+  dejaría de cambiar. ¿Pasa a `surface/900`?
+- `--sc-text-heading` (§2, solo en código) es `slate-800`: con el principal en 800, título y texto miden igual.
+  ¿El título sube a `slate-900`?
+
+**Lo que cierra el código cuando llegue el export** (Figma no lo alcanza):
+
+- `togglebutton.ts` lee en claro `{surface.*}` escrito a mano: sus 8 slots de `root` pasan a
+  `var(--sc-cmp-togglebutton-*)`, o el cambio de Figma no llega a la pantalla (medido: el export decía 700 y la
+  opción seguía pintando 500). El guard ya lo permite (DD-106).
+- `--sc-text-subtle` vive fuera de la zona generada: pasa a `slate-700` a mano, con el secundario.
+- En `e2e/supervisor/theme-contrast.spec.ts` la excepción `fg=rgb(111,119,132)` (secundario en 600) deja de
+  aplicar: se borra.
+
+**Cómo sabes que está hecho:** el PR del robot trae `--sc-text-primary: var(--sc-color-slate-800)` y
+`--sc-text-secondary: var(--sc-color-slate-700)` en `02-semantic.css`, y `--sc-cmp-togglebutton-color:
+var(--sc-color-slate-700)` en `04-component.css`.
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**
