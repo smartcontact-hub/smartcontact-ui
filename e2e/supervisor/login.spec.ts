@@ -9,11 +9,18 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *  - la guía del email dice QUÉ falta, y se va en cuanto el campo queda bien;
  *  - el fallo de credenciales es uno solo y no delata qué campo falla;
  *  - recuperar la contraseña responde lo mismo exista o no la cuenta;
- *  - salir desde el menú del avatar deja la sesión cerrada y lo dice.
+ *  - salir desde el menú del avatar deja la sesión cerrada y lo dice;
+ *  - quien entró hace menos de 48 h lee «Hola de nuevo», y pasado ese plazo se olvida;
+ *  - el fondo se mueve, se para con menos movimiento y sin WebGL queda la imagen fija.
  * La cuenta de demostración vive en `AuthService` (`DEMO_ACCOUNT`).
  */
 
-test.use({ storageState: { cookies: [], origins: [] } });
+/* Con menos movimiento el fondo WebGL pinta un fotograma y para: sin GPU en el CI, un
+ * shader a pantalla completa en bucle solo gasta CPU. El test del fondo lo enciende a mano. */
+test.use({
+  storageState: { cookies: [], origins: [] },
+  contextOptions: { reducedMotion: 'reduce' },
+});
 
 const DEMO = { email: 'supervisor@example.com', password: 'demo1234' };
 
@@ -141,9 +148,86 @@ test('contacto · lleva a la web de contacto de SmartContact en pestaña nueva',
 
 test('estabilidad · un aviso nuevo no mueve el título', async ({ page }) => {
   await openLogin(page);
+  // El canal de este fichero: aquí se pide menos movimiento, y el navegador lo recibe.
+  expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
   const before = await page.locator('#login-title').boundingBox();
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await expect.poll(() => messageOf(page, 'login-email')).not.toBeNull();
   const after = await page.locator('#login-title').boundingBox();
   expect(after?.y).toBe(before?.y);
+});
+
+/** Deja la marca de «última entrada» como si hubiera sido hace `hours` horas. */
+const lastSignInHoursAgo = async (page: Page, hours: number): Promise<void> => {
+  await page.addInitScript(
+    (ms) => localStorage.setItem('sc-last-sign-in', String(ms)),
+    Date.now() - hours * 3_600_000,
+  );
+};
+
+test('de vuelta · entró hace menos de 48 h: «Hola de nuevo»', async ({ page }) => {
+  await lastSignInHoursAgo(page, 1);
+  await openLogin(page);
+  await expect(page.getByRole('heading', { name: 'Hola de nuevo', exact: true })).toBeVisible();
+});
+
+test('de vuelta · pasadas 48 h el saludo vuelve a «Hola» y la marca se borra', async ({ page }) => {
+  await lastSignInHoursAgo(page, 49);
+  await openLogin(page);
+  await expect(page.getByRole('heading', { name: 'Hola', exact: true })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem('sc-last-sign-in'))).toBeNull();
+});
+
+test('de vuelta · entrar deja la marca y al salir ya saluda «Hola de nuevo»', async ({ page }) => {
+  await openLogin(page);
+  await expect(page.getByRole('heading', { name: 'Hola', exact: true })).toBeVisible();
+  await page.fill('#login-email', DEMO.email);
+  await page.fill('#login-password', DEMO.password);
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/dashboard$/);
+
+  await goto(page, 'dashboard');
+  await page.locator('.top-bar__avatar').click();
+  await page.getByRole('menuitem', { name: 'Cerrar sesión' }).click();
+  await expect(page.getByRole('heading', { name: 'Hola de nuevo', exact: true })).toBeVisible();
+});
+
+test.describe('fondo', () => {
+  test.use({ contextOptions: { reducedMotion: 'no-preference' } });
+
+  const frameOfArt = (page: Page): Promise<Buffer> =>
+    page.locator('sc-login-art').screenshot({ animations: 'allow' });
+
+  test('se mueve, y con menos movimiento se queda quieto', async ({ page }) => {
+    await openLogin(page);
+    expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(false);
+    await expect(page.locator('sc-login-art canvas')).toBeVisible();
+    await expect(page.locator('sc-login-art img')).toHaveAttribute(
+      'src',
+      '/illustrations/login-bg-light.webp',
+    );
+
+    const first = await frameOfArt(page);
+    await page.waitForTimeout(1200);
+    expect((await frameOfArt(page)).equals(first)).toBe(false);
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForTimeout(300);
+    const still = await frameOfArt(page);
+    await page.waitForTimeout(1200);
+    expect((await frameOfArt(page)).equals(still)).toBe(true);
+  });
+
+  test('sin WebGL se ve la imagen fija y el canvas no tapa nada', async ({ page }) => {
+    await page.addInitScript(() => {
+      const original = HTMLCanvasElement.prototype.getContext;
+      const noWebgl = function (this: HTMLCanvasElement, id: string, options?: unknown) {
+        return id === 'webgl' ? null : original.call(this, id as '2d', options);
+      };
+      HTMLCanvasElement.prototype.getContext = noWebgl as typeof original;
+    });
+    await openLogin(page);
+    await expect(page.locator('sc-login-art canvas')).toBeHidden();
+    await expect(page.locator('sc-login-art img')).toBeVisible();
+  });
 });

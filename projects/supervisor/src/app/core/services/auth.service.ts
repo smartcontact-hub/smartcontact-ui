@@ -5,6 +5,12 @@ export type SignInResult = 'ok' | 'invalid-credentials';
 
 const STORAGE_KEY = 'sc-session';
 
+/** Última entrada con éxito (epoch ms). En `localStorage`: tiene que sobrevivir a cerrar la pestaña. */
+const LAST_SIGN_IN_KEY = 'sc-last-sign-in';
+
+/** Cuánto dura el «de vuelta»: pasado este tiempo sin entrar, el saludo vuelve a ser el de siempre. */
+export const RETURNING_WINDOW_MS = 48 * 60 * 60 * 1000;
+
 /**
  * Credenciales de la demo. El Supervisor no tiene backend: la pantalla de acceso
  * existe para enseñar el recorrido (entrar, equivocarse, recuperar, salir), así que
@@ -50,6 +56,23 @@ export class AuthService {
     this.write(false);
   }
 
+  /**
+   * ¿Entró alguien en este navegador en las últimas 48 h? Solo se guarda la HORA, ni el
+   * email ni el nombre: en un puesto compartido no se delata quién estuvo. Si la marca
+   * caducó, se borra, y el siguiente acceso empieza de cero.
+   */
+  isReturning(now = Date.now()): boolean {
+    try {
+      const last = Number(localStorage.getItem(LAST_SIGN_IN_KEY));
+      if (!last) return false;
+      if (now - last < RETURNING_WINDOW_MS && now >= last) return true;
+      localStorage.removeItem(LAST_SIGN_IN_KEY);
+    } catch {
+      /* Almacenamiento bloqueado: se saluda como a alguien nuevo. */
+    }
+    return false;
+  }
+
   private read(): boolean {
     try {
       return sessionStorage.getItem(STORAGE_KEY) === '1';
@@ -61,7 +84,10 @@ export class AuthService {
   private write(value: boolean): void {
     this.signedIn.set(value);
     try {
-      if (value) sessionStorage.setItem(STORAGE_KEY, '1');
+      if (value) {
+        sessionStorage.setItem(STORAGE_KEY, '1');
+        localStorage.setItem(LAST_SIGN_IN_KEY, String(Date.now()));
+      }
       else sessionStorage.removeItem(STORAGE_KEY);
     } catch {
       /* Almacenamiento bloqueado (ventana privada): la sesión vive solo en memoria. */

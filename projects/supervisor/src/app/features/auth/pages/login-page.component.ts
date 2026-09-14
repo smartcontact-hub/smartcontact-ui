@@ -20,6 +20,7 @@ import {
 
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { LoginArtComponent } from '../components/login-art.component';
 import { emailProblem } from '../email-problem';
 
 /** Estado de navegación con el que `top-bar` llega aquí al cerrar sesión. */
@@ -46,6 +47,7 @@ const CONTACT_URL = 'https://www.smart-contact.com/contacto/';
 @Component({
   selector: 'sc-login-page',
   imports: [
+    LoginArtComponent,
     ScButtonComponent,
     ScDividerComponent,
     ScIconComponent,
@@ -72,6 +74,11 @@ export class LoginPageComponent {
       ? '/illustrations/login-bg-dark.webp'
       : '/illustrations/login-bg-light.webp',
   );
+
+  /** Quien entró en las últimas 48 h lee «Hola de nuevo» (`AuthService.isReturning`). */
+  protected readonly greetingKey = this.auth.isReturning()
+    ? 'auth.login.title_returning'
+    : 'auth.login.title';
 
   protected readonly view = signal<LoginView>('signin');
   private readonly heading = viewChild<ElementRef<HTMLElement>>('heading');

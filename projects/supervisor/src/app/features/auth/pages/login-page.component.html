@@ -1,7 +1,6 @@
 <main class="login">
-  <!-- Decorativa: alt vacío. Va a sangre con `object-fit: cover`, así que las medidas
-       solo fijan la proporción. -->
-  <img class="login__art" [src]="artSrc()" alt="" width="2400" height="1683" />
+  <!-- Ilustración a sangre con movimiento (WebGL) y la imagen fija debajo como reserva. -->
+  <sc-login-art class="login__art" [src]="artSrc()" />
 
   <section class="login__brand">
     <!-- El logo se pinta por máscara con un token de texto: el SVG de marca solo
@@ -21,7 +20,7 @@
         @case ('signin') {
           <h1 #heading id="login-title" class="login__hello sc-text-h1-semibold" tabindex="-1">
             <sc-icon class="login__wave" name="waving_hand" size="inherit" filled />
-            <span>{{ 'auth.login.title' | translate }}</span>
+            <span>{{ greetingKey | translate }}</span>
           </h1>
 
           @if (signedOut()) {

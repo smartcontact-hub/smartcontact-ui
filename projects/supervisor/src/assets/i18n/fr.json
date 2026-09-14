@@ -2037,7 +2037,8 @@
       "contact": "Nous contacter",
       "new_tab": "(s'ouvre dans un nouvel onglet)",
       "show_password": "Afficher le mot de passe",
-      "hide_password": "Masquer le mot de passe"
+      "hide_password": "Masquer le mot de passe",
+      "title_returning": "Rebonjour"
     },
     "back": "Retour à la connexion",
     "forgot": {
