@@ -21,10 +21,14 @@
 
 /* El contenedor del cuerpo ya es una rejilla de una fila (`1fr`) para la animación de colapsar; con
  * `minmax(0, 1fr)` esa fila puede encoger y el contenido hace scroll dentro en vez de estirar el panel. */
+/* Y la columna, igual: sin ella queda implícita en `auto`, toma el ancho mínimo de lo que lleva dentro y una tabla
+ * ancha se sale de la tarjeta (medido en el Dashboard a 390: 271 de scroll lateral). Con `minmax(0, 1fr)` lo ancho
+ * se desplaza en su propio contenedor. */
 .sc-panel--fill .sc-panel__body {
   flex: 1 1 auto;
   min-height: 0;
   grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .sc-panel--fill .sc-panel__wrapper {
