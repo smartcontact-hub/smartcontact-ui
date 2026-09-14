@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Un `borderWidth` del tema tiene la FORMA de Aura: si Aura pinta un lado (`0 0 1px 0`), nosotros también; si Aura dice `0`, sin borde · `p-tabs` como Aura 3: pestaña sin borde, tira con raya abajo, marca de la activa en `activeBar` · lo vigila `preset-border-shorthand.test.mjs` | DD-107 |
 > | Un campo que ACUMULA valores de una lista es un `sc-multiselect` con chips, no un `sc-select` que se vacía más pastillas debajo · la casilla de «todos» de `sc-multiselect` marca y desmarca (`[selectAll]="null"` contra PrimeNG 22.1.0) · una sección no se llama ni se dibuja como una página del menú | DD-105 |
 > | Una miga que navega pasa `routerLink`, no un `command` · el tramo pulsable lleva manita y subrayado en hover (lo pone `sc-breadcrumb`) | DD-103 |
 > | Una lista nunca corta texto: columnas cortas con el ancho MEDIDO de su dato y `<sc-list-page tableMinWidth>`; por debajo, la tabla se desplaza de lado | DD-102 |
@@ -71,6 +72,39 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-107 · 2026-09-14 — Un borde de un lado se escribe de un lado: `p-tabs` y otros tres temas dejan de pintar cajas
+
+**Contexto** · La sesión del Dashboard usó `p-tabs` por primera vez en la app (Rafa pidió componentes de
+primeng.dev con los valores de Aura) y cada pestaña salió como una caja de 1 px, la activa en navy. Medido allí con
+Playwright: `.p-tab { border-width: var(--p-tabs-tab-border-width) }` y el tema daba `tab.borderWidth: "0.071429rem"`,
+un solo valor, que CSS aplica a los cuatro lados; lo mismo `tablist.borderWidth`. El Kit (PrimeOne 4.0.0) guarda ese
+borde como `1` y lo dibuja solo abajo; al pasar a rem se perdió la forma. Barrido con Aura puro en los 82 temas: la
+misma pérdida en `accordion.panel`, `dataview` (cabecera, pie, paginadores) y `treetable` (cabecera, pie,
+paginadores). Ninguno de los cuatro se usaba aún en `projects/`.
+
+**Decisión** ·
+1. **`tabs` sigue a Aura 3** (DD-97): `tab.borderWidth` `0`, colores de borde `transparent`, `tab.margin` `0`,
+   `tablist.borderWidth` `0 0 0.071429rem 0`, `activeBar.bottom` `0`. La marca de la activa es la barra.
+2. **`accordion`, `dataview` y `treetable`** llevan el shorthand de Aura con nuestro grosor
+   (`0 0 0.071429rem 0` o `0.071429rem 0 0 0`).
+3. **Red:** `scripts/__tests__/preset-border-shorthand.test.mjs` compara cada `borderWidth` con Aura puro: varios
+   valores en Aura y uno en el tema (caja donde Aura pinta un lado), o `0` en Aura y grosor en el tema. Probado en
+   rojo con los cuatro temas de antes (11 filas) y exige haber comparado más de 50 temas, para no pasar en verde
+   si deja de cargar Aura.
+
+**Razón** · `tools/aura-diff.mjs tabs` tras el cambio: ya no sale ninguna fila de borde, margen ni barra; las 22 que
+quedan son color de marca, anillo de foco y medidas del Kit, todas con motivo.
+
+**Descartadas** ·
+- **`0 0 0.071429rem 0` en la pestaña, con el margen negativo** (el Aura de 2024, el que dibuja PrimeOne) → mismo
+  resultado a la vista, pero DD-97 ya decidió seguir a Aura 3 donde difieren.
+- **Arreglarlo en la rama del Dashboard** → es el tema del DS; un parche en una pantalla deja la caja en las demás.
+
+**Consecuencias** · Sin cambio en pantallas ni capturas: ningún tema tocado estaba en uso. En Figma, `tabs-tab`
+dibuja la marca de la activa como borde del propio tab: pasa a la barra (`docs/figma-pendiente.md` §9).
 
 ---
 
