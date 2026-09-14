@@ -41,6 +41,9 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una lista nunca corta texto: columnas cortas con el ancho MEDIDO de su dato y `<sc-list-page tableMinWidth>`; por debajo, la tabla se desplaza de lado | DD-102 |
+> | Los editores agente↔grupo: una columna por canal con `sc-checkbox`, elegir varios con la barra en lote, «Añadir» con `sc-select` · una asignación de repositorio es un `sc-multiselect`, no una tabla · se juntan secciones que responden la misma pregunta | DD-101 |
+> | Las fichas de agente, grupo y usuario usan el molde de Contact Center: `.page__inner--rail`, índice sin cajas, tarjeta `surface="card"` con `.sub-section`, interruptor delante con su ayuda visible, «Deshacer» solo con cambios | DD-100 |
 > | Todo suelo de pantalla es `--sc-bg-canvas` (las tarjetas, `--sc-bg-surface`) · el color de pantallas y componentes va por rol, nunca `--sc-color-*`, a pelo ni `.sc-dark` a mano: el oscuro vive en la capa 7 · lo vigilan `tokens:guard` (regla 8) y `theme-contrast` | DD-99 |
 > | Una pantalla de lista se monta sobre `<sc-list-page>`: la pantalla pone columnas, celdas, acciones y diálogos; la pieza, título, barra, tabla, selección y menú de fila · un `computed` con `translate.instant()` LEE el idioma (`injectLangChange`) | DD-98 |
 > | El clic derecho en una fila abre su menú en el puntero (lo hace `sc-datatable`, en todas las tablas) · el estado de un agente se cambia con un botón compacto y su lista, como el dialpad | DD-96 |
@@ -69,6 +72,105 @@
 
 ---
 
+## DD-102 · 2026-09-14 — Una lista nunca corta texto: las columnas cortas miden su dato y, si no cabe, la tabla se desplaza de lado
+
+**Contexto** · Rafa, mirando `/admin/agentes`: «si hay truncamiento de texto… ponerlo fijo en el sentido que
+nunca corte». Medido en las tres listas de admin, de 1024 a 1920 de ancho: en Grupos el nombre se cortaba hasta
+1440, en Usuarios el email hasta 1440 y en Agentes «CusCare Carrier» hasta 1280. Con `table-layout: fixed` y sin
+anchos, las columnas miden lo mismo: Canales o Grupos con media columna vacía y el nombre recortado al lado.
+
+**Decisión** · (1) Cada columna de dato corto lleva el ancho del dato más largo en los cuatro idiomas, con la
+cabecera y su flecha de orden en una línea (medido, no a ojo). El nombre, y en Usuarios también el email, se
+reparten el resto. (2) `sc-datatable` gana `tableMinWidth` (va a `tableStyle` de `p-table`) y `<sc-list-page>` lo
+pasa: la suma de lo que necesita cada columna (Agentes 66rem, Usuarios 61rem, Grupos 56rem). Por debajo, la tabla
+se desplaza de lado dentro de su contenedor de scroll (DD-95) en vez de estrechar columnas.
+
+**Razón** · Con las filas a un renglón la lista virtual sigue midiendo bien (DD-95), y ningún texto se pierde a
+ningún ancho. Medido tras el cambio: cero textos recortados en las tres listas de 1024 a 1920 y cabeceras de 37 px;
+solo a 1024 aparece el desplazamiento lateral. El instrumento, probado con el fallo: a 900 marca los 16 nombres.
+
+**Descartadas** ·
+- **Que el nombre parta en dos líneas** → primera versión; con los anchos fijos que necesitan las demás columnas,
+  a 1024 el nombre de Agentes se quedaba en 62 px, y dos renglones rompen el alto de fila de la lista virtual.
+- **La regla de ancho mínimo como CSS de la app sobre `.p-datatable-table`** → funcionaba, pero una regla de app
+  sobre `.p-*` no viaja con el tema; `audit:primeng-coupling` la paró y va como entrada del componente.
+
+**Consecuencias** · Matiza DD-80 en las listas: «una etiqueta no se parte, recorta» sigue valiendo, pero en una
+lista con `tableMinWidth` ya no llega a recortar. El número de «Agentes» de Grupos abre la lista de sus agentes
+con el mismo `sc-group-popover` que «Grupos» en Agentes (entrada nueva `countAriaLabel`).
+
+---
+
+## DD-101 · 2026-09-14 — Los editores agente↔grupo se leen por columnas, y cada sección responde una sola pregunta
+
+**Contexto** · Tras DD-100, Rafa pidió quitar el relleno de las fichas («redundancias como 12 asignados · 0 sin
+canales») y aprovechar el espacio de cada sección, y después: «sí me gustaría poder seleccionar varios agentes en
+grupos» y, de Repositorios, «es mucho ruido».
+
+**Decisión** ·
+1. **Agentes de un grupo y grupos de un agente**, el mismo editor visto desde cada lado: barra con buscador que
+   solo filtra y «Añadir…» con `sc-select`; una columna por canal con `sc-checkbox` (donde el grupo no ofrece el
+   canal, un guion); la tabla siempre, también vacía, con la línea de qué hacer dentro. En el de grupo, elegir
+   varios agentes con `sc-bulk-action-bar` (Pausar, Quitar del grupo).
+2. **Sin contadores que hay que leer para descartar**: el recuento solo al filtrar («5 de 12») y un aviso solo si
+   hay agentes activos sin canal. Fuera los subtítulos que repetían las columnas.
+3. **Secciones**: Grupos junta Canales y Estrategia (la estrategia depende de los canales marcados); Usuarios junta
+   Secciones y Permisos en «Acceso»; Agentes saca Etiquetas, Agendas y Plantillas de Avanzado a «Repositorios».
+4. **Repositorios de un agente**: un campo por repositorio con lo asignado a la vista, `sc-multiselect` para
+   Agendas y Plantillas (de chat y de email por separado) y el selector con etiquetas de color para Etiquetas.
+5. **Copy**: «Activo» en vez de «Estado»; «Grabar llamadas» sin ayuda que repita; «Expirar contraseña» una vez.
+
+**Razón** · Las columnas con casilla son la gramática de la matriz de Contact Center y se leen en vertical. Las
+dos tablas de Repositorios listaban todo lo que existe (6 plantillas y 8 agendas, con buscador, pestañas y vista
+previa) para responder qué tiene asignado el agente: el mismo dato cabe en cuatro campos, sin caja dentro de caja.
+
+**Descartadas** ·
+- **El chip de canal de DD-74** (gramática de togglebutton) → queda por columnas; `_channel-chip.scss` se borra.
+- **Quitar la selección de filas** para que no convivan dos casillas en la fila → se probó; Rafa quiere elegir
+  varios, y la cabecera de cada columna ya dice qué es cada casilla.
+- **Repositorios con los desplegables de antes abiertos** → mismo ruido en una sección propia.
+
+**Consecuencias** · Grupos pasa de 4 secciones a 3, Usuarios de 4 a 3 y Agentes de 4 a 5 (lo vigila
+`form-section-nav-legibility.spec.ts`). `sc-multiselect` necesita un valor estable: con un método que devolvía un
+array nuevo por ciclo la sección se colgaba (medido), por eso son `computed`. `list-table-grammar.spec.ts` deja de
+medir la tabla de Plantillas, que ya no existe, y `audit:datatables` reconoce rutas con parámetro (`editar/:id`).
+
+---
+
+## DD-100 · 2026-09-14 — Las fichas de agente, grupo y usuario usan el molde de Contact Center
+
+**Contexto** · Rafa: «tenemos un tema con los flujos de agentes, grupos y usuarios. Está todo a mano. No rima nada
+con lo que hay en contact center». Medido en capturas a 1440: índice con iconos en cajitas grises dentro de un
+panel, tarjetas grises, cabeceras en MAYÚSCULAS, tres estilos de etiqueta en un mismo formulario, interruptores
+unas veces a la derecha y otras a la izquierda, ayudas escondidas en iconos ⓘ y, a 1440, 67 px de blanco entre el
+índice y el formulario. Contact Center se había casado con su maqueta (DD-57, DD-61) y las fichas no.
+
+**Decisión** ·
+1. **Un molde para las dos**: `.page__inner--rail` + `.page__rail` + `.page__main` en `_page.scss` (tope 1200,
+   centrado, índice de 196 fijo al scroll, 28 entre índice y contenido). `settings-shell` deja su copia y lo usa.
+   `--with-panel` se queda para el constructor de reglas. `audit:page-anatomy` conoce el arquetipo `rail`.
+2. **El índice** `sc-form-section-nav [flush]` se ve como el de Contact Center: sin panel, icono desnudo a 20,
+   `Body/body-regular`, activo con `--sc-bg-hover`. Es lo que dibuja la maqueta: el marco `393:12565` se llama
+   «sc-form-section-nav (pure-sc)». La librería del DS no tiene componente de índice (`figma-pendiente` §5).
+3. **La ficha** de encima del índice, sin panel y sin pastilla dibujada a mano; recorta el dato largo.
+4. **Tarjeta** `surface="card"`, contenido en `.sub-section` con `<sc-divider />` entre tramos y títulos en
+   `Body/body-semibold`; etiquetas de campo `.field__label` + `Caption/caption-semibold` en todos los campos.
+5. **Interruptor delante de su etiqueta** (`.switch-field`, que sube a `_forms.scss`) con la ayuda visible debajo.
+6. **Barra de arriba como Contact Center**: Guardar y, solo con cambios, «Deshacer» (vuelve al último estado
+   guardado; `createFormDirtyState` gana `pristineValue()`). Sin «Cancelar» fijo ni «No hay cambios que guardar».
+   «Descartar cambios» pasa a «Deshacer» también en Contact Center.
+
+**Razón** · Contact Center antes y después, comparado píxel a píxel: idéntico (salvo el avatar, que cambió en main
+por otro motivo). Las fichas quedan en las mismas coordenadas que él (índice en x=180, tarjeta en x=404).
+
+**Descartadas** ·
+- **Dejar las fichas de admin fuera, como decía DD-57** (su `<h1>` oculto y la ficha como identidad) → el `<h1>`
+  sigue oculto y la ficha se queda; lo que cambia es todo lo demás, que es lo que no rimaba.
+- **Una caja de índice propia para las fichas** → sería la tercera versión del mismo índice.
+
+**Consecuencias** · `page-anatomy.spec.ts` mide el molde en las tres altas y en dos pantallas de Contact Center con
+las mismas aserciones. Se van `.pill`, `.perm-matrix__head`, `.field--inline`, `.ipanel__delete`, `.disclosure` y
+unas 450 líneas de la hoja de la ficha de agente. `customs-catalog` §2.7 describía el índice antiguo.
 ## DD-99 · 2026-09-14 — El modo oscuro cae en cascada: todo suelo es el lienzo y ningún color de pantalla o componente es fijo
 
 **Contexto** · Rafa: «toda la app en dark mode no responde igual que Contact Center, el fondo no es el mismo.

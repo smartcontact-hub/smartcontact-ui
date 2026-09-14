@@ -18,6 +18,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 import { IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
+import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
@@ -33,6 +34,7 @@ import {
   ScImpactPreviewDialogComponent as ImpactPreviewDialogComponent,
   ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScTagComponent as TagComponent,
+  ScGroupPopoverComponent as GroupPopoverComponent,
 } from '@smartcontact-hub/components';
 import {
   CHANNEL_LABEL_KEYS,
@@ -66,6 +68,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v2';
     TagComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
+    GroupPopoverComponent,
     IconComponent,
     IllustratedAvatarComponent,
     ImpactPreviewDialogComponent,
@@ -80,6 +83,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v2';
 export class GroupsListPageComponent {
   private readonly groupsStore = inject(GroupsStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
+  private readonly agentsStore = inject(AgentsStore);
   private readonly xlsx = inject(XlsxExportService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
@@ -98,6 +102,18 @@ export class GroupsListPageComponent {
   /** Derived count of agents assigned to a group. */
   protected assignedCountForGroup(groupId: number): number {
     return this.linksStore.linksForGroup(groupId).length;
+  }
+
+  /** Los agentes de un grupo, para el MISMO desplegable que abre «Grupos» en la lista de agentes. */
+  protected agentsForGroup(groupId: number): readonly { id: number; name: string; active: boolean }[] {
+    const byId = new Map(this.agentsStore.agents().map((a) => [a.id, a]));
+    return this.linksStore
+      .linksForGroup(groupId)
+      .map((l) => {
+        const a = byId.get(l.agentId);
+        return a ? { id: a.id, name: a.name, active: l.active } : null;
+      })
+      .filter((a): a is { id: number; name: string; active: boolean } => a !== null);
   }
 
   protected readonly plusIcon = 'add';
@@ -215,32 +231,39 @@ export class GroupsListPageComponent {
         field: 'phone',
         header: this.translate.instant('groups.table.phone'),
         cellTemplate: this.phoneTpl(),
+        /* Anchos MEDIDOS del dato más largo de cada columna corta (2026-09-14); el nombre se come el
+         * resto y la tabla lleva `tableMinWidth`: por debajo se desplaza en vez de cortar. */
+        width: '7rem',
       },
       {
         field: 'channels',
         header: this.translate.instant('groups.table.channels'),
         cellTemplate: this.channelsTpl(),
+        width: '6.5rem',
       },
       {
         field: 'priority',
         header: this.translate.instant('groups.table.priority'),
         sortable: true,
         cellTemplate: this.priorityTpl(),
+        width: '7rem',
       },
       {
         field: 'strategy',
         header: this.translate.instant('groups.table.strategy'),
         sortable: true,
         cellTemplate: this.strategyTpl(),
+        width: '9.5rem',
       },
       {
         field: 'agents',
         header: this.translate.instant('groups.table.agents'),
         sortable: true,
-        /* Sin ancho fijo: con 96 px la cabecera y su flecha de orden no cabían y partían en dos líneas
-         * (cabecera de 57 px en vez de 37). */
-        align: 'right',
+        /* 7rem: con 96 px la cabecera y su flecha de orden partían en dos líneas. A la izquierda y
+         * con el mismo desplegable que «Grupos» en la lista de agentes (2026-09-14): es la misma
+         * relación vista desde el otro lado. */
         cellTemplate: this.agentsTpl(),
+        width: '7rem',
       },
     ];
   });

@@ -18,7 +18,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 
-import { ListPageComponent } from '@shared/components';
+import { IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
@@ -57,6 +57,7 @@ interface PendingBulkEdit {
     IconComponent,
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
+    IllustratedAvatarComponent,
     ListPageComponent,
     TagComponent,
     TranslateModule,
@@ -177,18 +178,23 @@ export class UsersListPageComponent {
         header: this.translate.instant('users.table.identifier'),
         sortable: true,
         cellTemplate: this.identifierTpl(),
+        /* Anchos MEDIDOS del dato más largo (2026-09-14): Nombre y Email se reparten el resto, y la
+         * tabla lleva `tableMinWidth`: por debajo se desplaza en vez de cortar el email. */
+        width: '9rem',
       },
       {
         field: 'type',
         header: this.translate.instant('users.table.type'),
         sortable: true,
         cellTemplate: this.typeTpl(),
+        width: '8.5rem',
       },
       {
         field: 'status',
         header: this.translate.instant('users.table.status'),
         sortable: true,
         cellTemplate: this.statusTpl(),
+        width: '6.5rem',
       },
     ];
   });

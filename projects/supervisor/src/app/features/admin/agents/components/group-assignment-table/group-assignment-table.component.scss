@@ -1,216 +1,69 @@
-.gatbl {
-  /* Panel embebido gris-50 + radius-xl + FLAT, igual que `sc-section-card`
-   * (S62-ext-3): este componente ES la "card" de la sección Grupos, así que
-   * sigue el mismo tratamiento que las demás secciones del form (gray-50, sin
-   * sombra). La página es blanca; el panel gris se recoge sobre ella. Header
-   * inset + filas a sangre dentro. */
+/*
+ * Editor de los grupos de un agente. La CAJA (título, icono, borde) la pone la
+ * `sc-section-card` del formulario; la tabla, `sc-datatable` con su gramática de
+ * lista, también vacía. Aquí solo queda la barra y dos celdas.
+ *
+ * `.assign` es el MISMO bloque que `agent-channel-table` (los agentes de un grupo):
+ * son la misma relación vista desde cada lado, y hasta el 2026-09-14 cada una tenía
+ * su propio panel, su propia lista desplegable a mano y su propio vacío.
+ */
+.assign {
   display: flex;
   flex-direction: column;
-  background: var(--sc-bg-secondary-subtle);
-  border-radius: var(--sc-radius-400);
-  overflow: hidden;
+  gap: var(--sc-spacing-0-875);
 
-  /* Header: título+subtítulo (izq) · buscador (der), una sola fila.
-   * Figma 12277-4185: header 28,5px, search 216px a la derecha. */
-  &__head {
+  &__bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--sc-spacing-1-5);
-    padding: var(--sc-spacing-1) var(--sc-spacing-1-143);
+    flex-wrap: wrap;
+    gap: var(--sc-spacing-0-875);
   }
 
-  &__title-block {
-    display: flex;
-    align-items: baseline;
-    gap: var(--sc-spacing-0-625);
+  &__search {
+    flex: 1 1 240px;
     min-width: 0;
+    max-width: 320px;
   }
 
-  /* `Body/body-semibold` por la clase. El `letter-spacing` se queda: es un
-   * delta de esta cabecera, no parte del text style, y la regla encapsulada
-   * le gana a la clase global sin pelearse con ella. */
-  &__title {
-    margin: 0;
-    color: var(--sc-text-primary);
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-  }
-
-  &__hint {
+  &__counter {
     color: var(--sc-text-subtle);
     white-space: nowrap;
   }
 
-  &__picker {
-    position: relative;
-    flex: 0 0 auto;
-    width: 216px;
-    display: flex;
-    align-items: center;
+  &__add {
+    margin-left: auto;
+    flex: 0 1 240px;
+    min-width: 200px;
   }
 
-  &__picker-menu {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    z-index: 5;
-    margin: 0;
-    padding: var(--sc-spacing-0-25);
-    list-style: none;
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-    box-shadow: 0 4px 12px rgb(var(--sc-shadow-color-rgb) / 0.12);
-    max-height: 280px;
-    overflow-y: auto;
-  }
-
-  &__picker-option {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-    background: transparent;
-    border: 0;
-    border-radius: var(--sc-radius-50);
-    text-align: left;
-    color: var(--sc-text-primary);
-    cursor: pointer;
-    gap: var(--sc-spacing-0-875);
-
-    &:hover {
-      background: var(--sc-bg-hover);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: -2px;
-    }
-  }
-
-  &__picker-meta {
-    display: inline-flex;
-    gap: var(--sc-spacing-0-25);
-    flex: 0 0 auto;
-  }
-
-  &__picker-channel {
-    font-size: var(--sc-font-size-50);
-    color: var(--sc-text-subtle);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-50);
-    padding: 1px var(--sc-spacing-0-5);
-    line-height: 1.3;
-  }
-
-  /* Empty state — icon + title + body. The picker bar above the table
-   * is the call to action; the empty state just explains the void. */
-  &__empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-2-25) var(--sc-spacing-1-5);
-    text-align: center;
-    color: var(--sc-text-subtle);
-    border: 1px dashed var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-  }
-
-  &__empty-icon {
+  &__name {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-secondary-subtle);
-    color: var(--sc-text-secondary);
-  }
-
-  &__empty-title {
-    margin: var(--sc-spacing-0-5) 0 0;
-    color: var(--sc-text-primary);
-  }
-
-  &__empty-body {
-    margin: 0;
-    color: var(--sc-text-subtle);
-    max-width: 360px;
-  }
-
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
-
-    thead th {
-      text-align: left;
-      font-weight: var(--sc-font-weight-regular);
-      color: var(--sc-text-secondary);
-      font-size: var(--sc-font-size-100);
-      padding: var(--sc-spacing-0-75) var(--sc-spacing-1-143);
-      border-bottom: 1px solid var(--sc-border-default);
-      vertical-align: middle;
-    }
-  }
-
-  &__th-active {
-    width: 84px;
-    text-align: center;
-  }
-  &__th-actions {
-    width: 36px;
-  }
-
-  &__row {
-    transition: background-color 100ms ease;
-
-    &:hover {
-      background: var(--sc-row-hover-bg);
-    }
-    &--paused {
-      opacity: 0.6;
-    }
-
-    td {
-      /* Fila ≈48px (Figma): chip 31-32px + padding 7px = ~47-48. */
-      padding: var(--sc-spacing-0-5) var(--sc-spacing-1-143);
-      border-bottom: 1px solid var(--sc-border-subtle);
-      vertical-align: middle;
-    }
-  }
-
-  /* Grid de 3 columnas: avatar · nombre (ancho FIJO) · chips. El ancho fijo del
-   * nombre hace que el cluster de chips arranque en la MISMA X en todas las filas
-   * (alineadas en columna), aunque los nombres varíen de longitud — sin la "trampa"
-   * de Figma de nombres iguales. Nombres largos: ellipsis + title nativo (S62-ext-3,
-   * recurso ui-ux-pro-max: truncar con ellipsis + tooltip, no overflow roto). */
-  &__td-name {
-    display: grid;
-    grid-template-columns: auto var(--gatbl-name-w, 160px) 1fr;
-    align-items: center;
     gap: var(--sc-spacing-0-875);
+    min-width: 0;
+    max-width: 100%;
   }
 
   &__name-label {
     color: var(--sc-text-primary);
-    font-weight: var(--sc-font-weight-semibold);
-    min-width: 0; /* permite el ellipsis dentro de la celda grid */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  &__td-active {
-    text-align: center;
+  &__none {
+    color: var(--sc-text-disabled);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    &__row,
-    &__chip {
-      transition: none;
-    }
+  &__no-results {
+    padding: var(--sc-spacing-1-5) var(--sc-spacing-0-875);
+    text-align: center;
+    color: var(--sc-text-subtle);
+  }
+
+  /* El vacío en dos renglones dentro de la tabla: qué pasa, y debajo qué hacer. */
+  &__empty-title {
+    display: block;
+    color: var(--sc-text-primary);
   }
 }

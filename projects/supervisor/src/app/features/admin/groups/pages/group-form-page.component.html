@@ -1,57 +1,55 @@
 <!-- Modelo "todo arriba" (experiment S59): fuera la banda sticky-form-header.
      Identidad → breadcrumb + campos del cuerpo (avatar/nombre en Identidad);
      Guardar/Cancelar → barra de arriba vía TopBarSlotService (ver el .ts). -->
+<!-- Las acciones suben a la barra de arriba vía TopBarSlotService (ver el .ts), con los
+     mismos botones que Contact Center: «Deshacer» SOLO si hay algo que deshacer, y
+     Guardar. Hasta el 2026-09-14 aquí había un «Cancelar» siempre visible que volvía a la
+     lista; para salir ya están la miga y el menú, y el guardián de cambios avisa si dejas
+     algo sin guardar. -->
 <ng-template #topbarActions>
-  <!-- El motivo va VISIBLE, no en un aria oculto: 'sc-button' reenvía
-       'ariaLabel' al <button> real pero no 'aria-describedby', así que ese
-       texto se quedaba colgando del custom element, sin rol y sin foco — un
-       aria que no llega al control es peor que ninguno, porque parece
-       accesible. Visible sirve además a quien ve la pantalla. -->
-  @if (saveDisabledReason(); as reason) {
+  <!-- El motivo va VISIBLE, y solo cuando FALTA algo (ver `saveBlockedReason`). -->
+  @if (saveBlockedReason(); as reason) {
     <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
   }
-  <sc-button size="sm" type="button" variant="secondary" (clicked)="cancel()">
-    <span>{{ 'common.cancel' | translate }}</span>
-  </sc-button>
+  @if (formDirty()) {
+    <sc-button
+      size="sm"
+      variant="secondary"
+      appearance="outlined"
+      [label]="'common.undo' | translate"
+      (clicked)="discard()"
+    />
+  }
   <sc-button
     size="sm"
-    type="button"
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
+    [label]="'common.save' | translate"
     [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
     (clicked)="save()"
-  >
-    <span>{{ 'common.save' | translate }}</span>
-  </sc-button>
+  />
 </ng-template>
 
 <div class="page">
-  <!-- El modelo "todo arriba" (S59) dejó estas páginas sin <h1>: la
-       identidad la daba solo un <ol> de breadcrumb, y el documento quedaba
-       sin encabezado. Visualmente oculto porque el diseño no lo pide. -->
+  <!-- Único <h1> del documento, oculto: la identidad la dicen la miga y la ficha. -->
   <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'groups.form.edit_breadcrumb' : 'groups.form.create_breadcrumb') | translate }}</h1>
 
-  <div class="page__inner page__inner--with-panel">
-    <aside class="ipanel" [attr.aria-label]="'common.form_index_aria' | translate">
-      <!-- La ficha: resumen de identidad (solo lectura) arriba del índice.
-           Modelo "todo arriba" S59 — qué grupo editas + su estrategia, de un
-           vistazo. Avatar abstracto generado del nombre. Solo en editar. -->
+  <!-- El molde de Contact Center (`.page__inner--rail`). -->
+  <div class="page__inner page__inner--rail">
+    <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
       @if (mode() === 'edit') {
         <div class="ficha">
           <sc-illustrated-avatar
             class="ficha__avatar"
             [name]="(initial()?.name ?? form().name) || 'Grupo'"
             pool="abstract"
-            [size]="40"
+            [size]="36"
           />
           <div class="ficha__body">
-            <span class="ficha__name" [title]="form().name">{{ form().name }}</span>
-            @if (form().strategy) {
-              <span class="pill">{{ form().strategy }}</span>
-            }
+            <span class="ficha__name sc-text-body-semibold" [title]="form().name">{{ form().name }}</span>
             @if (form().phone) {
-              <span class="ficha__ext sc-text-caption-regular">{{ form().phone }}</span>
+              <span class="ficha__meta sc-text-caption-regular">{{ form().phone }}</span>
             }
           </div>
         </div>
@@ -65,181 +63,187 @@
         (activeChange)="activeSection.set($event)"
       />
 
-      <!-- Zona de peligro: Eliminar al fondo del panel, enlace discreto y
-           apartado del índice → fuera del scan primario (S59). -->
       @if (mode() === 'edit') {
-        <sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
+        <sc-button class="rail-delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
-    <div class="page__form">
+
+    <div class="page__main">
       @switch (activeSection()) {
         @case ('group-section-identity') {
           <sc-section-card
             anchorId="group-section-identity"
+            surface="card"
             [icon]="activeIcon()"
             titleKey="groups.form.section.identity"
           >
-            <!-- Avatar + nombre re-homed al cuerpo (experiment S59 "todo arriba"):
-                 al quitar la banda sticky-form-header, la identidad vuelve a
-                 ser campo del form (+ el breadcrumb arriba la repite). El avatar
-                 es generado (no editable), se actualiza con el nombre. -->
-            <div class="form-identity">
-              <sc-illustrated-avatar
-                [name]="(initial()?.name ?? form().name) || 'Grupo'"
-                pool="abstract"
-                [size]="44"
-              />
-              <div class="field form-identity__name">
-                <!-- El nombre no tiene regla de contenido: o está o no está, y
-                     que falte lo dice el motivo del botón, no un error rojo
-                     sobre un campo que aún no has tocado. -->
-                <sc-inputtext
-                  inputId="group-name"
-                  [label]="'groups.form.fields.name' | translate"
-                  [required]="true"
-                  [value]="form().name"
-                  (valueChange)="onNameRename($event)"
+            <section class="sub-section">
+              <!-- El avatar es generado (no editable) y sigue al nombre. -->
+              <div class="form-identity">
+                <sc-illustrated-avatar
+                  [name]="(initial()?.name ?? form().name) || 'Grupo'"
+                  pool="abstract"
+                  [size]="36"
                 />
-              </div>
-            </div>
-
-            <div class="grid grid--2">
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-phone">
-                  {{ 'groups.form.fields.phone' | translate }}
-                </label>
-                <sc-inputtext
-                  inputId="group-phone"
-                  type="tel"
-                  autocomplete="tel"
-                  [value]="form().phone"
-                  (valueChange)="onPhoneValueChange($event)"
-                />
+                <div class="field form-identity__name">
+                  <label class="field__label sc-text-caption-semibold" for="group-name">
+                    {{ 'groups.form.fields.name' | translate }}
+                    <span class="field__required" aria-hidden="true">*</span>
+                  </label>
+                  <sc-inputtext
+                    inputId="group-name"
+                    [required]="true"
+                    [value]="form().name"
+                    (valueChange)="onNameRename($event)"
+                  />
+                </div>
               </div>
 
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-priority">
-                  {{ 'groups.form.fields.priority' | translate }}
-                </label>
-                <sc-select
-                  inputId="group-priority"
-                  [options]="priorities"
-                  [value]="form().priority"
-                  (valueChange)="onPriorityValueChange($event)"
-                >
-                  <ng-template #item let-p>
-                    {{ priorityKeys[p] | translate }}
-                  </ng-template>
-                  <ng-template #selectedItem let-p>
-                    {{ priorityKeys[p] | translate }}
-                  </ng-template>
-                </sc-select>
-              </div>
+              <div class="grid grid--2">
+                <div class="field">
+                  <label class="field__label sc-text-caption-semibold" for="group-phone">
+                    {{ 'groups.form.fields.phone' | translate }}
+                  </label>
+                  <sc-inputtext
+                    inputId="group-phone"
+                    type="tel"
+                    autocomplete="tel"
+                    [value]="form().phone"
+                    (valueChange)="onPhoneValueChange($event)"
+                  />
+                </div>
 
-              <div class="field field--inline">
+                <div class="field">
+                  <label class="field__label sc-text-caption-semibold" for="group-priority">
+                    {{ 'groups.form.fields.priority' | translate }}
+                  </label>
+                  <sc-select
+                    inputId="group-priority"
+                    [options]="priorities"
+                    [value]="form().priority"
+                    (valueChange)="onPriorityValueChange($event)"
+                  >
+                    <ng-template #item let-p>
+                      {{ priorityKeys[p] | translate }}
+                    </ng-template>
+                    <ng-template #selectedItem let-p>
+                      {{ priorityKeys[p] | translate }}
+                    </ng-template>
+                  </sc-select>
+                </div>
+              </div>
+            </section>
+
+            <sc-divider />
+
+            <section class="sub-section">
+              <div class="switch-field switch-field--top">
                 <sc-toggleswitch
                   [checked]="form().typification"
                   [ariaLabel]="'groups.form.fields.typification' | translate"
                   (checkedChange)="onTypificationChange($event)"
                 />
-                <div>
-                  <span class="field__label-inline sc-text-caption-regular">
-                    {{ 'groups.form.fields.typification' | translate }}
-                  </span>
-                  <span class="field__help sc-text-caption-regular">
-                    {{ 'groups.form.fields.typification_hint' | translate }}
-                  </span>
+                <div class="switch-field__copy">
+                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.fields.typification' | translate }}</span>
+                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.fields.typification_hint' | translate }}</p>
                 </div>
               </div>
-            </div>
+            </section>
           </sc-section-card>
         }
 
         @case ('group-section-channels') {
+          <!-- Canales y estrategia en UNA sección desde el 2026-09-14. Eran dos pestañas,
+               y la primera era una tarjeta entera para tres casillas; además la estrategia
+               DEPENDE de los canales (la de chat solo existe con chat, la capacidad con
+               teléfono), así que al marcar un canal su ajuste aparece justo debajo en vez
+               de en otra pestaña. -->
           <sc-section-card
             anchorId="group-section-channels"
+            surface="card"
             [icon]="activeIcon()"
-            titleKey="groups.form.section.channels"
+            titleKey="groups.form.section.distribution"
           >
-            <div class="channel-grid">
-              @for (channel of channels; track channel) {
-                <sc-checkbox class="checkbox-row" [state]="(hasChannel(channel)) ? 'all' : 'none'" (cycle)="toggleChannel(channel)">{{ channelKeys[channel] | translate }}</sc-checkbox>
-              }
-            </div>
-            <!-- Aquí vivía un `<span class="field__error">` que jamás se
-                 rellenaba (el mapa `errors` era código muerto). Que falte
-                 marcar un canal no es contenido equivocado: lo señalan la bola
+            <!-- Que falte marcar un canal no es contenido equivocado: lo señalan la bola
                  roja del índice (`sectionsWithErrors`) y el motivo del botón. -->
-          </sc-section-card>
-        }
-
-        @case ('group-section-strategy') {
-          <sc-section-card
-            anchorId="group-section-strategy"
-            [icon]="activeIcon()"
-            titleKey="groups.form.section.strategy"
-            hintKey="groups.form.section.strategy_hint"
-          >
-            <div class="grid grid--2">
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-strategy">
-                  {{ 'groups.form.fields.phone_strategy' | translate }}
-                </label>
-                <sc-select
-                  inputId="group-strategy"
-                  [options]="phoneStrategies"
-                  [value]="form().strategy"
-                  (valueChange)="onStrategyValueChange($event)"
-                />
+            <section class="sub-section" [attr.aria-label]="'groups.form.section.channels' | translate">
+              <div class="checkbox-grid checkbox-grid--services">
+                @for (channel of channels; track channel) {
+                  <sc-checkbox class="checkbox-row" [state]="hasChannel(channel) ? 'all' : 'none'" (cycle)="toggleChannel(channel)">{{ channelKeys[channel] | translate }}</sc-checkbox>
+                }
               </div>
+            </section>
 
-              @if (hasChat()) {
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">
-                    {{ 'groups.form.fields.chat_strategy' | translate }}
-                  </label>
-                  <sc-select
-                    inputId="group-chat-strategy"
-                    [options]="chatStrategies"
-                    [value]="form().chatStrategy"
-                    (valueChange)="onChatStrategyValueChange($event)"
-                  />
-                </div>
-              }
+            @if (form().channels.size > 0) {
+              <sc-divider />
 
-              @if (hasFixedCapacity()) {
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-capacity">
-                    {{ 'groups.form.fields.capacity' | translate }}
-                    <span class="field__hint">({{ 'common.optional' | translate }})</span>
-                  </label>
-                  <sc-inputnumber
-                    inputId="group-capacity"
-                    [min]="0"
-                    [value]="form().capacityValue"
-                    (valueChange)="onCapacityValueChange($event)"
-                    [helperText]="'groups.form.fields.capacity_hint' | translate"
-                  />
+              <section class="sub-section" [attr.aria-label]="'groups.form.section.strategy' | translate">
+                <div class="grid grid--2">
+                  @if (hasPhone()) {
+                    <div class="field">
+                      <label class="field__label sc-text-caption-semibold" for="group-strategy">
+                        {{ 'groups.form.fields.phone_strategy' | translate }}
+                      </label>
+                      <sc-select
+                        inputId="group-strategy"
+                        [options]="phoneStrategies"
+                        [value]="form().strategy"
+                        (valueChange)="onStrategyValueChange($event)"
+                      />
+                    </div>
+                  }
+
+                  @if (hasChat()) {
+                    <div class="field">
+                      <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">
+                        {{ 'groups.form.fields.chat_strategy' | translate }}
+                      </label>
+                      <sc-select
+                        inputId="group-chat-strategy"
+                        [options]="chatStrategies"
+                        [value]="form().chatStrategy"
+                        (valueChange)="onChatStrategyValueChange($event)"
+                      />
+                    </div>
+                  }
+
+                  @if (hasPhone()) {
+                    <div class="field">
+                      <label class="field__label sc-text-caption-semibold" for="group-capacity">
+                        {{ 'groups.form.fields.capacity' | translate }}
+                        <span class="field__hint">({{ 'common.optional' | translate }})</span>
+                      </label>
+                      <sc-inputnumber
+                        inputId="group-capacity"
+                        [min]="0"
+                        [value]="form().capacityValue"
+                        (valueChange)="onCapacityValueChange($event)"
+                        [helperText]="'groups.form.fields.capacity_hint' | translate"
+                      />
+                    </div>
+                  }
                 </div>
-              }
-            </div>
+              </section>
+            }
           </sc-section-card>
         }
 
         @case ('group-section-agents') {
           <sc-section-card
             anchorId="group-section-agents"
+            surface="card"
             [icon]="activeIcon()"
             titleKey="groups.form.section.agents"
-            hintKey="groups.form.section.agents_hint"
           >
-            <sc-agent-channel-table
-              [groupChannels]="formGroupChannels()"
-              [links]="form().links"
-              [availableAgents]="availableAgents()"
-              [groupId]="editingId() ?? 0"
-              (linksChange)="onLinksChange($event)"
-            />
+            <section class="sub-section">
+              <sc-agent-channel-table
+                [groupChannels]="formGroupChannels()"
+                [links]="form().links"
+                [availableAgents]="availableAgents()"
+                [groupId]="editingId() ?? 0"
+                (linksChange)="onLinksChange($event)"
+              />
+            </section>
           </sc-section-card>
         }
       }
@@ -251,8 +255,8 @@
   [visible]="deleteVisible()"
   mode="single"
   [items]="deleteItems()"
-  [entitySingular]="'grupo'"
-  [entityPlural]="'grupos'"
+  [entitySingular]="'groups.entity_singular' | translate"
+  [entityPlural]="'groups.entity_plural' | translate"
   (cancelled)="cancelDelete()"
   (confirm)="confirmDelete()"
 />
@@ -272,7 +276,7 @@
     (cancelled)="cancelCascade()"
   >
     <div modal-actions>
-      <sc-button type="button" size="sm" variant="secondary" (clicked)="cancelCascade()">
+      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cancelCascade()">
         <span>{{ 'common.cancel' | translate }}</span>
       </sc-button>
       <sc-button type="button" size="sm" variant="danger" (clicked)="confirmCascade()">

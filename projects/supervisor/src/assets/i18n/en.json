@@ -706,7 +706,6 @@
     "discard_body": "Unsaved changes will be lost.",
     "discard_confirm": "Discard",
     "discard_keep": "Keep editing",
-    "discard_changes": "Discard changes",
     "cross_tab_warning": "This record is being edited in another tab. Changes may overwrite each other.",
     "undo": "Undo",
     "change_reverted": "Change reverted",
@@ -744,7 +743,8 @@
     "actions": "Actions",
     "select_row": "Select {{name}}",
     "select_all": "Select all",
-    "form_index_aria": "Form index"
+    "form_index_aria": "Form index",
+    "filter_count": "{{shown}} of {{total}}"
   },
   "topbar": {
     "go_to_dashboard": "Go to dashboard",
@@ -1127,7 +1127,8 @@
         "permissions": "Permissions",
         "permissions_hint": "Advanced actions",
         "services": "Assigned services",
-        "services_hint": "VUI services under supervision"
+        "services_hint": "VUI services under supervision",
+        "access": "Access"
       },
       "fields": {
         "name": "Full name",
@@ -1136,8 +1137,8 @@
         "identifier_hint": "If left empty it will be generated automatically on save.",
         "type": "User type",
         "status": "Status",
-        "status_active": "Active user: can log in and operate.",
-        "status_inactive": "Inactive user: cannot log in until reactivated."
+        "active": "Active",
+        "active_hint": "Can sign in and operate"
       },
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
       "duplicate_title": "Duplicate user",
@@ -1189,7 +1190,8 @@
       "channels": "Channels",
       "priority": "Priority",
       "strategy": "Strategy",
-      "agents": "Agents"
+      "agents": "Agents",
+      "agents_count": "{{count}} agents"
     },
     "priority": {
       "low": "Low",
@@ -1212,18 +1214,13 @@
         "channels": "Channels",
         "channels_hint": "Contact types",
         "strategy": "Strategy",
-        "strategy_hint": "Distribution of calls and chats",
         "agents": "Assigned agents",
-        "agents_hint": "Channels per agent"
+        "distribution": "Channels and strategy"
       },
       "assigned": {
         "query_placeholder": "Search agent…",
-        "query_aria": "Search assigned agent or add a new one",
-        "add_suggest": "Add to group:",
-        "add_suggest_aria": "Add {{name}} to group",
-        "counter": "{{assigned}} assigned · {{zero}} without channels",
         "empty_title": "No assigned agents",
-        "empty": "Use the search above to assign the first agent to this group.",
+        "empty": "Use \"Add agent\" to assign the first agent to this group.",
         "no_results": "No assigned agents match the filter.",
         "col_agent": "Agent",
         "col_active": "Active",
@@ -1231,7 +1228,9 @@
         "active_aria": "Pause {{name}} in this group",
         "remove_aria": "Remove {{name}} from group",
         "warn_no_channels": "Active but no channels assigned",
-        "bulk_count": "{{count}} selected",
+        "add_placeholder": "Add agent…",
+        "add_aria": "Add agent to the group",
+        "no_channels_warn": "{{count}} with no channel",
         "bulk_pause": "Pause",
         "bulk_unassign": "Remove from group"
       },
@@ -1349,47 +1348,31 @@
         "identification_hint": "Photo, contact and extension",
         "channels": "Channels",
         "recording": "Recording",
-        "recording_hint": "Agent calls are recorded if enabled",
         "languages": "Languages",
         "languages_hint": "Languages the agent speaks for routing",
         "labels": "Labels",
         "labels_hint": "Categories that help filter and organize agents",
         "groups": "Assigned groups",
-        "groups_hint": "Groups and channels per group",
         "permissions": "Permissions",
         "permissions_hint": "Agent capabilities",
         "advanced": "Advanced",
-        "advanced_hint": "Labels, behavior, language"
+        "advanced_hint": "Labels, behavior, language",
+        "repositories": "Repositories"
       },
       "advanced": {
         "labels": {
-          "title": "Labels",
-          "count_one": "1 assigned",
-          "count_many": "{{count}} assigned"
+          "title": "Labels"
         },
         "agendas": {
-          "title": "Address books",
-          "count_one": "1 assigned",
-          "count_many": "{{count}} assigned",
-          "search_placeholder": "Search address book…",
-          "footnote": "Repositories > Address books"
+          "title": "Address books"
         },
         "plantillas": {
-          "title": "Templates",
-          "count_one": "1 assigned",
-          "count_many": "{{count}} assigned",
-          "search_placeholder": "Search template…",
-          "tab_chat": "Chat",
-          "tab_email": "Email",
-          "col_title": "Title",
-          "col_preview": "Preview",
-          "select_all": "Select all visible templates",
-          "empty": "No {{tab}} templates found"
+          "title": "Templates"
         },
         "comportamiento": {
           "title": "Behavior",
-          "pickup_call": "Pickup — Call",
-          "pickup_chat": "Pickup — Chat",
+          "pickup_call": "Call pickup",
+          "pickup_chat": "Chat pickup",
           "max_chats": "Concurrent chats",
           "random_order": "Random order",
           "random_order_hint": "Show agents in random order within the group"
@@ -1410,7 +1393,7 @@
           "login_ext_override_hint": "If the agent logs in from another device, their extension updates automatically",
           "security": "Security",
           "expire_pwd": "Expire password",
-          "expire_pwd_hint": "Forces the agent to set a new password on their next login",
+          "expire_pwd_hint": "Forces a new password at the next sign-in",
           "expire_title": "Expire password?",
           "expire_body": "{{name}} will have to set a new password on their next login. The action cannot be undone.",
           "expire_accept": "Expire password",
@@ -1429,27 +1412,31 @@
         "pickup_manual": "Manual",
         "presence": "Initial presence",
         "status": "Status",
-        "status_active": "Active agent: can receive calls and chats.",
-        "status_inactive": "Inactive agent: does not receive new interactions.",
         "phone": "Mobile phone",
         "email": "Email",
         "pin": "PIN",
         "pin_hint": "3-6 digits. Used for self-activation from phone.",
-        "labels": "Assigned labels"
+        "labels": "Assigned labels",
+        "active": "Active",
+        "active_hint": "Can receive calls and chats",
+        "recording": "Record calls"
       },
       "labels_placeholder": "Add label…",
       "labels_empty": "No labels yet. Create one from the Labels section.",
       "assigned": {
         "picker_placeholder": "Search or add group…",
         "picker_aria": "Add group to agent",
-        "counter": "{{count}} groups",
         "empty_title": "No assigned groups",
-        "empty": "Use the search above to assign the first group to this agent.",
+        "empty": "Use \"Add group\" to assign the first group to this agent.",
         "col_group": "Group",
         "col_channels_here": "Channels in this group",
         "col_active": "Active",
         "active_aria": "Pause agent in {{name}}",
-        "remove_aria": "Remove agent from {{name}}"
+        "remove_aria": "Remove agent from {{name}}",
+        "add_placeholder": "Add group…",
+        "filter_placeholder": "Search group…",
+        "no_results": "No assigned groups match the filter.",
+        "channel_not_offered": "This group does not offer the channel"
       },
       "permissions": {
         "manage_devices": "Device management",
@@ -1465,12 +1452,20 @@
         "row_fijos": "Landlines",
         "row_moviles": "Mobiles",
         "row_internacionales": "International",
-        "row_especial": "Special numbering"
+        "row_especial": "Special numbering",
+        "config_title": "Configuration"
       },
       "danger_zone_description": "Deleting this agent unassigns them from all groups they participate in. The action cannot be undone.",
       "duplicate_title": "Duplicate agent",
       "duplicate_breadcrumb": "Duplicate agent",
-      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save"
+      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
+      "repositories": {
+        "templates_chat": "Chat templates",
+        "templates_email": "Email templates",
+        "none": "None",
+        "selected_many": "{0} selected",
+        "manage_link": "Manage in Repositories"
+      }
     },
     "toasts": {
       "created": "Agent \"{{name}}\" created",

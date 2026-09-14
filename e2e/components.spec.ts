@@ -682,7 +682,7 @@ test.describe('sc-empty-state', () => {
 });
 
 test.describe('sc-form-section-nav', () => {
-  test('chip 28² (32² flush), activo aria-current, punto de error, click controla', async ({ page }) => {
+  test('chip 28² (icono desnudo en flush), activo aria-current, punto de error, click controla', async ({ page }) => {
     await gotoPage(page, 'formsectionnav');
 
     const nav = page.getByTestId('sc-formnav-default');
@@ -704,9 +704,12 @@ test.describe('sc-form-section-nav', () => {
     await nav.locator('.form-nav__item').nth(1).click();
     await expect(nav.locator('.form-nav__item').nth(1)).toHaveClass(/form-nav__item--active/);
 
-    // flush: chip 32×32 (Figma índice)
+    // flush: icono DESNUDO, sin chip (el índice de Contact Center, Figma 393:12565).
+    // Desde el 2026-09-14; antes era un chip de 32×32 con fondo.
     const flushChip = page.getByTestId('sc-formnav-flush').locator('.form-nav__icon').first();
-    expect(await styleOf(flushChip, ['width', 'height'])).toEqual({ width: '32px', height: '32px' });
+    expect(await styleOf(flushChip, ['background-color'])).toEqual({ 'background-color': 'rgba(0, 0, 0, 0)' });
+    const flushLabel = page.getByTestId('sc-formnav-flush').locator('.form-nav__label').first();
+    expect(await styleOf(flushLabel, ['font-size'])).toEqual({ 'font-size': '14px' });
 
     await screenshotBaseline(page, 'formsectionnav');
   });

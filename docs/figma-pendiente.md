@@ -148,6 +148,27 @@ además, las filas pasan a leer `…padding.y` y `…padding.x` en `exp`.
 
 ---
 
+## 5 · El índice lateral de las pantallas con rail no es componente de la librería (2026-09-14)
+
+**Estado:** pendiente · **Verificado** con el server de Figma el 2026-09-14: en el fichero del DS no hay
+ningún componente de índice lateral (revisados sus 228 componentes y conjuntos); en el fichero Supervisor
+el único dibujo es un MARCO, no una instancia: `393:12565`, «sc-form-section-nav (pure-sc)», 196 de
+ancho, dentro de la maqueta de Contact Center.
+
+En código es `sc-form-section-nav` con `[flush]`, y desde el 2026-09-14 lo usan igual Contact Center y
+las fichas de agente, grupo y usuario (con la ficha de identidad encima). Mientras sea un marco suelto,
+cada maqueta nueva lo vuelve a dibujar a mano y puede salir distinto: es justo lo que pasó con la
+generación anterior (`12277:4818`, panel gris con el icono en su cajita).
+
+**Cómo se hace:** convertir el marco `393:12565` en componente del DS con dos estados de item (reposo y
+activo: fondo `--sc-bg-hover`, texto en semibold), el icono de 20 y la etiqueta en `Body/body-regular`.
+Opcional, la ficha de encima (avatar 36, nombre en `Body/body-semibold`, dato en `Caption/caption-regular`).
+
+**Cómo sabes que está hecho:** la maqueta de Contact Center usa una instancia del componente en lugar
+del marco.
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

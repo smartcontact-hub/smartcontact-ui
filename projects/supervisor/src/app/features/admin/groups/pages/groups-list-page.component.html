@@ -14,6 +14,7 @@
   [heading]="'sidebar.groups' | translate"
   [rows]="groups()"
   [columns]="columns()"
+  tableMinWidth="56rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'groups.search_placeholder' | translate"
@@ -101,10 +102,10 @@
   <sc-tag severity="secondary" [value]="group.strategy" />
 </ng-template>
 
+<!-- El número abre la lista de sus agentes, igual que «Grupos» en la lista de agentes. -->
 <ng-template #agentsTpl let-group>
-  <span class="table__cell table__cell--num sc-text-body-regular">{{
-    assignedCountForGroup(group.id)
-  }}</span>
+  @let agents = agentsForGroup(group.id);
+  <sc-group-popover [groups]="agents" [countAriaLabel]="'groups.table.agents_count' | translate: { count: agents.length }" />
 </ng-template>
 
 <sc-delete-entity-dialog

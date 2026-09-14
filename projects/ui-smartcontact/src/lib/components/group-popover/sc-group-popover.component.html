@@ -2,7 +2,7 @@
   #trigger
   type="button"
   class="group-popover__trigger"
-  [attr.aria-label]="'sc.groupPopover.count' | translate: { count: count() }"
+  [attr.aria-label]="countAriaLabel() ?? ('sc.groupPopover.count' | translate: { count: count() })"
   (mouseenter)="onTriggerEnter($event)"
   (mouseleave)="onPointerLeave()"
   (focus)="onTriggerFocus($event)"

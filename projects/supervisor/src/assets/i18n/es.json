@@ -706,7 +706,6 @@
     "discard_body": "Los cambios no guardados se perderán.",
     "discard_confirm": "Descartar",
     "discard_keep": "Seguir editando",
-    "discard_changes": "Descartar cambios",
     "cross_tab_warning": "Este registro está siendo editado en otra pestaña. Los cambios pueden sobrescribirse.",
     "undo": "Deshacer",
     "change_reverted": "Cambio revertido",
@@ -744,7 +743,8 @@
     "actions": "Acciones",
     "select_row": "Seleccionar {{name}}",
     "select_all": "Seleccionar todo",
-    "form_index_aria": "Índice del formulario"
+    "form_index_aria": "Índice del formulario",
+    "filter_count": "{{shown}} de {{total}}"
   },
   "topbar": {
     "go_to_dashboard": "Ir al dashboard",
@@ -1130,7 +1130,8 @@
         "permissions": "Permisos",
         "permissions_hint": "Acciones avanzadas",
         "services": "Servicios asignados",
-        "services_hint": "Servicios VUI bajo supervisión"
+        "services_hint": "Servicios VUI bajo supervisión",
+        "access": "Acceso"
       },
       "fields": {
         "name": "Nombre completo",
@@ -1139,8 +1140,8 @@
         "identifier_hint": "Si lo dejas vacío se generará automáticamente al guardar.",
         "type": "Tipo de usuario",
         "status": "Estado",
-        "status_active": "Usuario activo: puede iniciar sesión y operar.",
-        "status_inactive": "Usuario inactivo: no podrá iniciar sesión hasta reactivarlo."
+        "active": "Activo",
+        "active_hint": "Puede iniciar sesión y operar"
       },
       "danger_zone_description": "Eliminar este usuario revoca su acceso al panel y borra sus permisos. La acción no se puede deshacer."
     },
@@ -1189,7 +1190,8 @@
       "channels": "Canales",
       "priority": "Prioridad",
       "strategy": "Estrategia",
-      "agents": "Agentes"
+      "agents": "Agentes",
+      "agents_count": "{{count}} agentes"
     },
     "priority": {
       "low": "Baja",
@@ -1215,18 +1217,13 @@
         "channels": "Canales",
         "channels_hint": "Tipos de contacto",
         "strategy": "Estrategia",
-        "strategy_hint": "Distribución de llamadas y chats",
         "agents": "Agentes asignados",
-        "agents_hint": "Canales por agente"
+        "distribution": "Canales y estrategia"
       },
       "assigned": {
         "query_placeholder": "Buscar agente…",
-        "query_aria": "Buscar agente asignado o añadir uno nuevo",
-        "add_suggest": "Añadir al grupo:",
-        "add_suggest_aria": "Añadir a {{name}} al grupo",
-        "counter": "{{assigned}} asignados · {{zero}} sin canales",
         "empty_title": "Sin agentes asignados",
-        "empty": "Usa el buscador de arriba para asignar el primer agente a este grupo.",
+        "empty": "Usa «Añadir agente» para asignar el primer agente a este grupo.",
         "no_results": "Ningún agente asignado coincide con el filtro.",
         "col_agent": "Agente",
         "col_active": "Activo",
@@ -1234,7 +1231,9 @@
         "active_aria": "Pausar a {{name}} en este grupo",
         "remove_aria": "Quitar a {{name}} del grupo",
         "warn_no_channels": "Activo pero sin canales asignados",
-        "bulk_count": "{{count}} seleccionados",
+        "add_placeholder": "Añadir agente…",
+        "add_aria": "Añadir agente al grupo",
+        "no_channels_warn": "{{count}} sin canal",
         "bulk_pause": "Pausar",
         "bulk_unassign": "Quitar del grupo"
       },
@@ -1352,47 +1351,31 @@
         "identification_hint": "Foto, contacto y extensión",
         "channels": "Canales",
         "recording": "Grabación",
-        "recording_hint": "Las llamadas del agente quedan grabadas si está activado",
         "languages": "Idiomas",
         "languages_hint": "Idiomas que domina el agente para enrutamiento",
         "labels": "Etiquetas",
         "labels_hint": "Categorías que ayudan a filtrar y organizar agentes",
         "groups": "Grupos asignados",
-        "groups_hint": "Grupos y canales por grupo",
         "permissions": "Permisos",
         "permissions_hint": "Capacidades del agente",
         "advanced": "Avanzado",
-        "advanced_hint": "Etiquetas, comportamiento, idioma"
+        "advanced_hint": "Etiquetas, comportamiento, idioma",
+        "repositories": "Repositorios"
       },
       "advanced": {
         "labels": {
-          "title": "Etiquetas",
-          "count_one": "1 asignada",
-          "count_many": "{{count}} asignadas"
+          "title": "Etiquetas"
         },
         "agendas": {
-          "title": "Agendas",
-          "count_one": "1 asignada",
-          "count_many": "{{count}} asignadas",
-          "search_placeholder": "Buscar agenda…",
-          "footnote": "Repositorios > Agendas"
+          "title": "Agendas"
         },
         "plantillas": {
-          "title": "Plantillas",
-          "count_one": "1 asignada",
-          "count_many": "{{count}} asignadas",
-          "search_placeholder": "Buscar plantilla…",
-          "tab_chat": "Chat",
-          "tab_email": "Email",
-          "col_title": "Título",
-          "col_preview": "Vista previa",
-          "select_all": "Seleccionar todas las plantillas visibles",
-          "empty": "No se encontraron plantillas de {{tab}}"
+          "title": "Plantillas"
         },
         "comportamiento": {
           "title": "Comportamiento",
-          "pickup_call": "Descuelgue — Llamada",
-          "pickup_chat": "Descuelgue — Chat",
+          "pickup_call": "Descuelgue de llamadas",
+          "pickup_chat": "Descuelgue de chats",
           "max_chats": "Chats simultáneos",
           "random_order": "Orden aleatorio",
           "random_order_hint": "Visualizar agentes en orden aleatorio dentro del grupo"
@@ -1413,7 +1396,7 @@
           "login_ext_override_hint": "Si el agente inicia sesión desde otro dispositivo, su extensión se actualiza automáticamente",
           "security": "Seguridad",
           "expire_pwd": "Expirar contraseña",
-          "expire_pwd_hint": "Fuerza al agente a establecer una nueva contraseña en su próximo inicio de sesión",
+          "expire_pwd_hint": "Obliga a crear una contraseña nueva al volver a entrar",
           "expire_title": "¿Expirar contraseña?",
           "expire_body": "{{name}} tendrá que establecer una nueva contraseña en su próximo inicio de sesión. La acción no se puede deshacer.",
           "expire_accept": "Expirar contraseña",
@@ -1432,27 +1415,31 @@
         "pickup_manual": "Manual",
         "presence": "Presencia inicial",
         "status": "Estado",
-        "status_active": "Agente activo: puede recibir llamadas y chats.",
-        "status_inactive": "Agente inactivo: no recibe nuevas interacciones.",
         "phone": "Teléfono móvil",
         "email": "Email",
         "pin": "PIN",
         "pin_hint": "3-6 dígitos. Se usa para auto-activación desde el teléfono.",
-        "labels": "Etiquetas asignadas"
+        "labels": "Etiquetas asignadas",
+        "active": "Activo",
+        "active_hint": "Puede recibir llamadas y chats",
+        "recording": "Grabar llamadas"
       },
       "labels_placeholder": "Añadir etiqueta…",
       "labels_empty": "Aún no hay etiquetas. Crea una desde la sección Etiquetas.",
       "assigned": {
         "picker_placeholder": "Buscar o añadir grupo…",
         "picker_aria": "Añadir grupo al agente",
-        "counter": "{{count}} grupos",
         "empty_title": "Sin grupos asignados",
-        "empty": "Usa el buscador de arriba para asignar el primer grupo a este agente.",
+        "empty": "Usa «Añadir grupo» para asignar el primer grupo a este agente.",
         "col_group": "Grupo",
         "col_channels_here": "Canales en este grupo",
         "col_active": "Activo",
         "active_aria": "Pausar al agente en {{name}}",
-        "remove_aria": "Quitar al agente de {{name}}"
+        "remove_aria": "Quitar al agente de {{name}}",
+        "add_placeholder": "Añadir grupo…",
+        "filter_placeholder": "Buscar grupo…",
+        "no_results": "Ningún grupo asignado coincide con el filtro.",
+        "channel_not_offered": "Este grupo no ofrece el canal"
       },
       "permissions": {
         "manage_devices": "Gestión de dispositivos",
@@ -1468,9 +1455,17 @@
         "row_fijos": "Fijos",
         "row_moviles": "Móviles",
         "row_internacionales": "Internacionales",
-        "row_especial": "Numeración especial"
+        "row_especial": "Numeración especial",
+        "config_title": "Configuración"
       },
-      "danger_zone_description": "Eliminar este agente lo desasigna de todos los grupos donde participa. La acción no se puede deshacer."
+      "danger_zone_description": "Eliminar este agente lo desasigna de todos los grupos donde participa. La acción no se puede deshacer.",
+      "repositories": {
+        "templates_chat": "Plantillas de chat",
+        "templates_email": "Plantillas de email",
+        "none": "Ninguna",
+        "selected_many": "{0} seleccionadas",
+        "manage_link": "Gestionar en Repositorios"
+      }
     },
     "toasts": {
       "created": "Agente \"{{name}}\" creado",

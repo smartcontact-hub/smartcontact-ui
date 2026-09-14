@@ -3,29 +3,17 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * EL MOLDE DEL FORMULARIO CON RAIL, MEDIDO ANTES DE MOVERLO.
+ * EL MOLDE DE LAS PANTALLAS DE AJUSTES CON ÍNDICE, MEDIDO EN TODAS LAS QUE LO USAN.
  *
- * Los tres formularios de admin (agente · grupo · usuario) declaran su layout
- * TRES VECES, byte a byte: `.page__inner--with-panel` (rejilla rail 240 + columna),
- * `.page__form` (la columna, capada a 1100) e `.ipanel` (el rail). Van a subir a
- * `styles/_page.scss` y `styles/_forms.scss`, y ahí espera una trampa con nombre
- * y apellidos, avisada por la cabecera del propio `_page.scss`: esas reglas son
- * GLOBALES (0,1,0) y una regla encapsulada de componente (0,2,0) les gana
- * siempre. Subir el modificador y dejarse el `padding` base scoped "por si
- * acaso" le devolvería 24.5/28px al rail sin que nada se quejara.
+ * Nació el 2026-09-06 (DD-53) como red ANTES de subir a `_page.scss` el molde que los tres
+ * formularios de admin declaraban byte a byte (LEARNINGS #16), porque esas reglas son
+ * GLOBALES (0,1,0) y una regla encapsulada de componente (0,2,0) les gana siempre: dejarse
+ * un `padding` scoped «por si acaso» desvía una pantalla sin que nada se queje.
  *
- * Por eso esta red va ANTES del refactor (LEARNINGS #16): congela los computados
- * que DEFINEN el molde, para que el movimiento tenga que ser un no-op
- * demostrable y no una promesa. Los tres formularios miden lo mismo, así que el
- * mismo bloque de aserciones corre sobre los tres.
- *
- * Lo que este fichero NO fija todavía: `.ipanel { top }`. Hoy computa `auto`
- * porque el rail ya no declara `top`: la declaración que traía apuntaba a
- * `--sc-form-panel-top`, un token que se usaba y no se definía en ninguna parte
- * del repo, así que era inválida y caía a `auto` igualmente. Se retiró con el
- * molde (DD-53) y hoy quedan cero usos. El rail sigue pidiendo quedarse fijo al
- * hacer scroll y no se queda: el valor se anota en el informe del test, y la
- * aserción entra cuando el anclaje sea una decisión tomada.
+ * El 2026-09-14 el molde cambió de forma: las fichas de agente, grupo y usuario pasan al de
+ * Contact Center (`.page__inner--rail`), que hasta ese día vivía escrito a mano en
+ * `settings-shell.component.scss`. Este fichero mide ahora las cinco pantallas con las
+ * mismas aserciones. `--with-panel` sigue existiendo para el constructor de reglas.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -35,11 +23,19 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-/** Las tres altas comparten molde: mismo HTML de layout, mismo SCSS duplicado. */
+/**
+ * Las tres altas comparten molde, Y ES EL DE CONTACT CENTER: desde el 2026-09-14 las fichas
+ * de agente, grupo y usuario y las tres pantallas de `config/aed` pintan `.page__inner--rail`.
+ * Hasta ese día las fichas tenían otro molde (rail 240 pegado al borde + columna de 1100
+ * flotando) y la misma app parecía dos. Medir las cinco con el MISMO bloque de aserciones es
+ * lo que impide que vuelvan a separarse.
+ */
 const FORMULARIOS = [
   { ruta: 'admin/usuarios/crear', nombre: 'alta de usuario' },
   { ruta: 'admin/agentes/crear', nombre: 'alta de agente' },
   { ruta: 'admin/grupos/crear', nombre: 'alta de grupo' },
+  { ruta: 'config/aed/agentes', nombre: 'contact center · agentes' },
+  { ruta: 'config/aed/grupos', nombre: 'contact center · grupos' },
 ] as const;
 
 /** Los computados que definen el molde, leídos en el nodo exacto (no en un padre). */
@@ -50,24 +46,20 @@ const medirMolde = (page: Page) =>
       if (!el) throw new Error(`no existe ${sel} en esta página`);
       return { el, s: getComputedStyle(el) };
     };
-    const inner = nodo('.page__inner');
-    const form = nodo('.page__form');
-    const rail = nodo('.ipanel');
+    const inner = nodo('.page__inner--rail');
+    const rail = nodo('.page__rail');
+    const main = nodo('.page__main');
     return {
       inner: {
         display: inner.s.display,
-        columnas: inner.s.gridTemplateColumns,
+        direccion: inner.s.flexDirection,
         padding: inner.s.padding,
         maxWidth: inner.s.maxWidth,
-        margin: inner.s.margin,
+        gap: inner.s.columnGap,
       },
-      form: {
-        maxWidth: form.s.maxWidth,
-        padding: form.s.padding,
-        display: form.s.display,
-        direccion: form.s.flexDirection,
-        minWidth: form.s.minWidth,
-        ancho: Math.round(form.el.getBoundingClientRect().width),
+      main: {
+        minWidth: main.s.minWidth,
+        ancho: Math.round(main.el.getBoundingClientRect().width),
       },
       rail: {
         position: rail.s.position,
@@ -78,46 +70,37 @@ const medirMolde = (page: Page) =>
   });
 
 for (const { ruta, nombre } of FORMULARIOS) {
-  test(`${nombre} · el molde con rail mide lo mismo antes y después de mudarse`, async ({
-    page,
-  }) => {
+  test(`${nombre} · el molde de ajustes mide lo mismo que Contact Center`, async ({ page }) => {
     await goto(page, ruta);
     const m = await medirMolde(page);
 
-    // La rejilla: rail fijo de 240 + columna que se come el resto. El `padding: 0`
-    // y el `max-width: none` son del MODIFICADOR anulando la base — justo el par
-    // que la trampa de especificidad rompería.
-    expect(m.inner.display).toBe('grid');
-    expect(m.inner.columnas).toMatch(/^240px \d/);
-    expect(m.inner.padding).toBe('0px');
-    expect(m.inner.maxWidth).toBe('none');
+    // La pieza: rail + contenido en fila, con tope de 1200 y el aire de la maqueta
+    // (`--sc-spacing-1-625` = 22.75px arriba · `--sc-spacing-2` = 28px a los lados y entre
+    // columnas).
+    expect(m.inner.display).toBe('flex');
+    expect(m.inner.direccion).toBe('row');
+    expect(m.inner.maxWidth).toBe('1200px');
+    expect(m.inner.padding).toBe('22.75px 28px');
+    expect(m.inner.gap).toBe('28px');
 
-    // La columna de formulario: 1100 de tope y el aire que da la escala 14-base
-    // (`--sc-spacing-1-75` = 24.5px · `--sc-spacing-2` = 28px).
-    expect(m.form.maxWidth).toBe('1100px');
-    expect(m.form.padding).toBe('24.5px 28px');
-    expect(m.form.display).toBe('flex');
-    expect(m.form.direccion).toBe('column');
-    expect(m.form.minWidth).toBe('0px');
-
-    // El rail: 240 reales, y PIDE quedarse fijo.
+    // El rail: 196 reales, y SE QUEDA fijo con el mismo `top` que el relleno de arriba.
     expect(m.rail.position).toBe('sticky');
-    expect(m.rail.ancho).toBe(240);
+    expect(m.rail.top).toBe('22.75px');
+    expect(m.rail.ancho).toBe(196);
 
-    // El `top` del rail se anota, no se asevera: hoy es `auto` porque el rail no
-    // declara ninguno. Queda en el informe para que el arreglo se vea, no se cuente.
-    test.info().annotations.push({ type: 'ipanel.top medido', description: m.rail.top });
+    // La columna de contenido se come el resto: 1200 − 2×28 − 196 − 28 = 920 a 1440,
+    // el ancho del `Block` 393:12587.
+    expect(m.main.minWidth).toBe('0px');
+    expect(m.main.ancho).toBe(920);
   });
 
-  test(`${nombre} · por debajo de 1024 la rejilla colapsa a una columna`, async ({ page }) => {
+  test(`${nombre} · por debajo de 1024 el índice sube encima del contenido`, async ({ page }) => {
     await goto(page, ruta);
     await page.setViewportSize({ width: 1000, height: 900 });
 
     // El colapso es una media query: se resuelve al reflow, así que se sondea en
     // vez de leerse una sola vez.
-    await expect
-      .poll(async () => (await medirMolde(page)).inner.columnas.trim().split(/\s+/).length)
-      .toBe(1);
+    await expect.poll(async () => (await medirMolde(page)).inner.direccion).toBe('column');
   });
 }
 

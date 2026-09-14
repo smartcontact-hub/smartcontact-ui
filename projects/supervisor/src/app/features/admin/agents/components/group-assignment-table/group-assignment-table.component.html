@@ -1,90 +1,84 @@
-<div class="gatbl">
-  <!-- Header: título + subtítulo (izq) · buscador (der). Figma 12277-4185. -->
-  <div class="gatbl__head">
-    @if (titleKey() || hintKey()) {
-      <div class="gatbl__title-block">
-        @if (titleKey(); as t) {
-          <h2 class="gatbl__title sc-text-body-semibold">{{ t | translate }}</h2>
-        }
-        @if (hintKey(); as h) {
-          <span class="gatbl__hint sc-text-caption-regular">{{ h | translate }}</span>
-        }
-      </div>
+<!-- Misma barra que el editor hermano (los agentes de un grupo): filtrar a la
+     izquierda, recuento, y «Añadir» con el desplegable del DS a la derecha. Antes
+     cada lado tenía su gesto (aquí un buscador que abría una lista a mano; allí un
+     buscador que sugería chips), para la misma relación vista desde cada lado. -->
+<div class="assign">
+  <div class="assign__bar">
+    <sc-search
+      class="assign__search"
+      [placeholder]="'agents.form.assigned.filter_placeholder' | translate"
+      [clearAriaLabel]="'labels.clear_search' | translate"
+      [value]="query()"
+      (valueChange)="query.set($event)"
+    />
+    <!-- Sin contador fijo: «12 grupos» lo dice la propia lista. Solo aparece cuando
+         el filtro esconde filas. -->
+    @if (query().trim()) {
+      <span class="assign__counter sc-text-caption-regular">
+        {{ 'common.filter_count' | translate: { shown: visibleRows().length, total: assignedRows().length } }}
+      </span>
     }
-    <div class="gatbl__picker">
-      <sc-search [placeholder]="'agents.form.assigned.picker_placeholder' | translate" [value]="pickerQuery()" (valueChange)="onPickerQuery($event)" (keydown)="onPickerKeydown($event)" (focusin)="openPicker()" [clearAriaLabel]="'labels.clear_search' | translate" />
-      @if (pickerOpen() && pickerCandidates().length > 0) {
-        <ul class="gatbl__picker-menu" role="listbox">
-          @for (cand of pickerCandidates(); track cand.id) {
-            <li role="option" [attr.aria-selected]="false">
-              <button type="button" class="gatbl__picker-option sc-text-body-regular" (click)="addGroup(cand)">
-                <span>{{ cand.name }}</span>
-                <span class="gatbl__picker-meta">
-                  @for (ch of cand.channels; track ch) {
-                    <span class="gatbl__picker-channel">
-                      {{ channelKey(ch) | translate }}
-                    </span>
-                  }
-                </span>
-              </button>
-            </li>
-          }
-        </ul>
-      }
-    </div>
+    <span id="agent-add-group-label" class="visually-hidden">{{ 'agents.form.assigned.picker_aria' | translate }}</span>
+    <sc-select
+      class="assign__add"
+      inputId="agent-add-group"
+      ariaLabelledBy="agent-add-group-label"
+      optionLabel="name"
+      optionValue="id"
+      [filter]="true"
+      filterBy="name"
+      [options]="pickerCandidates()"
+      [placeholder]="'agents.form.assigned.add_placeholder' | translate"
+      [value]="addPick()"
+      (valueChange)="onAddPick($event)"
+    />
   </div>
 
-  @if (assignedRows().length === 0) {
-    <div class="gatbl__empty">
-      <span class="gatbl__empty-icon" aria-hidden="true">
-        <sc-icon [name]="emptyIcon" [size]="22" />
-      </span>
-      <p class="gatbl__empty-title sc-text-body-semibold">{{ 'agents.form.assigned.empty_title' | translate }}</p>
-      <p class="gatbl__empty-body sc-text-caption-regular">{{ 'agents.form.assigned.empty' | translate }}</p>
-    </div>
-  } @else {
+  <!-- La tabla SIEMPRE, también vacía: sus columnas ya enseñan qué se va a rellenar, y
+       el vacío es una línea dentro de ella. Hasta el 2026-09-14 era `sc-empty-state`, un
+       círculo con icono y mucho aire que ocupaba media tarjeta para decir una frase. -->
+  <div class="table-card">
     <sc-datatable
       variant="list"
-      [value]="assignedRows()"
+      [value]="visibleRows()"
       [columns]="columns()"
-      [rowStyleClass]="rowClass"
       dataKey="group.id"
-    />
-  }
+    >
+      <div scTableEmpty class="assign__no-results sc-text-body-regular">
+        @if (assignedRows().length === 0) {
+          <span class="assign__empty-title sc-text-body-semibold">{{ 'agents.form.assigned.empty_title' | translate }}</span>
+          {{ 'agents.form.assigned.empty' | translate }}
+        } @else {
+          {{ 'agents.form.assigned.no_results' | translate }}
+        }
+      </div>
+    </sc-datatable>
+  </div>
 </div>
-
 
 <!-- Celdas del editor. Fuera del `<sc-datatable>` para que `viewChild` las
      resuelva (mismo patrón que las listas de administración). -->
 <ng-template #groupTpl let-row>
-  <span class="gatbl__td-name">
+  <span class="assign__name">
     <sc-illustrated-avatar [name]="row.group.name" pool="abstract" [size]="24" />
-    <span class="gatbl__name-label" [title]="row.group.name">{{ row.group.name }}</span>
-    <span class="channel-chips">
-      @for (ch of row.group.channels; track ch) {
-        <label
-          class="channel-chip"
-          [class.channel-chip--on]="hasChannel(row.link, ch)"
-          [class.channel-chip--off]="!hasChannel(row.link, ch)"
-          [class.channel-chip--disabled]="!row.link.active"
-        >
-          <input
-            type="checkbox"
-            [checked]="hasChannel(row.link, ch)"
-            [disabled]="!row.link.active"
-            (change)="toggleChannel(row.group.id, ch)"
-            [attr.aria-label]="row.group.name + ' — ' + (channelKey(ch) | translate)"
-          />
-          <sc-icon
-            [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
-            size="inherit"
-            class="channel-chip__icon"
-          />
-          <span>{{ channelKey(ch) | translate }}</span>
-        </label>
-      }
-    </span>
+    <span class="assign__name-label sc-text-body-semibold" [title]="row.group.name">{{ row.group.name }}</span>
   </span>
+</ng-template>
+
+<!-- Una columna por canal, como la matriz de Contact Center. Un grupo que no ofrece
+     ese canal no tiene nada que marcar: la celda lo dice con un guion, no con una
+     casilla apagada que parece un permiso negado. -->
+<ng-template #channelTpl let-row let-col="col">
+  @if (offers(row.group, col.field)) {
+    <sc-checkbox
+      [state]="hasChannel(row.link, col.field) ? 'all' : 'none'"
+      [disabled]="!row.link.active"
+      [ariaLabel]="row.group.name + ' — ' + col.header"
+      (cycle)="toggleChannel(row.group.id, col.field)"
+    />
+  } @else {
+    <span class="assign__none sc-text-body-regular" [attr.aria-label]="'agents.form.assigned.channel_not_offered' | translate">—</span>
+  }
 </ng-template>
 
 <ng-template #activeTpl let-row>
