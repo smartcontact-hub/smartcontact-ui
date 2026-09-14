@@ -61,7 +61,8 @@ jobs:
       - name: Publicar si cambió algo
         run: |
           PUB="$RUNNER_TEMP/pub"
-          CAMBIA=$(node -e 'const m=require(process.argv[1]).comprobaciones.diferencia; console.log(!m.anterior || m.variables.length > 0 || m.semanticaComun || m.componentes.length > 0 ? "si" : "no")' "$RUNNER_TEMP/tema/manifiesto.json")
+          # Decide el script (`hayCambios`: cambia un fichero del tema), no un desglose repetido aquí.
+          CAMBIA=$(node -e 'console.log(require(process.argv[1]).comprobaciones.cambia ? "si" : "no")' "$RUNNER_TEMP/tema/manifiesto.json")
           if [ "$CAMBIA" = "no" ]; then echo "El tema no cambia respecto al publicado: no se publica."; exit 0; fi
           rm -f "$PUB/tema-smartcontact.zip"
           (cd "$RUNNER_TEMP/tema" && zip -qr "$PUB/tema-smartcontact.zip" .)
