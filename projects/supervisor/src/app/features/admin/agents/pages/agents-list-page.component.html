@@ -57,6 +57,10 @@
           [columns]="columns()"
           [visibleColumns]="tableVisibleColumns()"
           dataKey="id"
+          scrollable
+          scrollHeight="flex"
+          [virtualScroll]="sorted().length > 100"
+          [virtualScrollItemSize]="filaAlto"
           selectionMode="multiple"
     [rowSelectionAriaLabel]="ariaFila"
     [selectAllAriaLabel]="ariaTodo"

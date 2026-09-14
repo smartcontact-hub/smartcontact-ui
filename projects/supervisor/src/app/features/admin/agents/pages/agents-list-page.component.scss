@@ -4,8 +4,15 @@
   background: var(--sc-bg-surface);
 }
 
+/* RAMA B (scroll propio): la página NO hace scroll. La tabla ocupa el alto que queda y hace
+ * scroll dentro; su cabecera de columnas se queda fija sola (`scrollable`). Para eso cada caja,
+ * de `.page` a `sc-datatable`, tiene que tener alto definido: una columna flex de arriba abajo. */
 .page {
   flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
   /* Sin `overflow-y: auto` (2026-09-14): convertía `.page` en contenedor de scroll
    * sin que nunca hiciera scroll (el que lo hace es `main.app-shell__content`), y
    * la barra `sticky` de abajo quedaba atada a él: se iba con la lista. */
@@ -16,6 +23,12 @@
 
   &__inner {
     padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
   }
 
   &__action-bar {
@@ -180,3 +193,18 @@
  * checkbox en esta plantilla al que la regla encapsulada llegara. Con él se
  * fueron `@keyframes draft-in` (solo lo usaba `.table__row--draft`) y un
  * `@media (prefers-reduced-motion)` que estaba vacío. */
+
+/* RAMA B: la tarjeta y la tabla llenan el alto que queda. */
+.table-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+sc-datatable {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
