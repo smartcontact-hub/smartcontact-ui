@@ -1,16 +1,21 @@
 {
-  "commit": "49f5aae",
+  "commit": "0b1a90a",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-14T09:48:00.238Z",
+  "generado": "2026-09-14T10:39:50.417Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
-      "anterior": false,
+      "anterior": true,
+      "ficheros": [
+        "sc-preset.mjs"
+      ],
       "variables": [],
       "semanticaComun": false,
+      "reglasCss": true,
       "componentes": []
-    }
+    },
+    "cambia": true
   }
 }

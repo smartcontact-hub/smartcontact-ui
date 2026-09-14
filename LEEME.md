@@ -1,6 +1,6 @@
 # Tema de Smart Contact para PrimeNG
 
-Generado desde el commit `49f5aae` del Design System (PrimeNG 22.1.0, Aura 3.0.0).
+Generado desde el commit `0b1a90a` del Design System (PrimeNG 22.1.0, Aura 3.0.0).
 Es el mismo tema que usan las apps de Smart Contact: con él, vuestra web se ve igual que las nuestras.
 En la misma rama está también `tema-plugin.zip`, el export del plugin de Figma, con su propia guía
 (`LEEME-plugin.md`) y la medida de cuánto se aparta de este.
@@ -35,4 +35,8 @@ En la misma rama está también `tema-plugin.zip`, el export del plugin de Figma
 
 ## Qué cambia respecto al zip anterior
 
-- Es el primer zip generado así.
+- Ficheros distintos: sc-preset.mjs.
+- Variables de tokens: 0.
+- Semántica común (colores y medidas que comparten todos): igual.
+- Reglas CSS del tema (interlineados de los controles): cambian.
+- Componentes con CSS propio distinto: ninguno.
