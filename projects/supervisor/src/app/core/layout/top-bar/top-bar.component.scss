@@ -3,12 +3,16 @@
 }
 
 .top-bar {
-  /* Header padding (Figma 12277-4705): 20px vertical · 28px horizontal.
-   * 28 = --sc-spacing-2 (exacto); 20 ≈ --sc-spacing-1-5 (21, Δ1, no hay 20 en
-   * la escala). La altura la define el contenido + padding (~70px, Figma 72),
-   * sin altura fija. El 28px izquierdo alinea el breadcrumb con el rail (x=28).
-   * Ese ~70 solo sale si la miga va `flush`: con su relleno propio medía 91. */
-  padding: var(--sc-spacing-1-5) var(--sc-spacing-2);
+  /* Figma 12277-4705 dibuja 20 arriba y abajo y 28 a los lados (72 de alto). Los 28
+   * se quedan: alinean la miga con el título de la página (x=92). */
+  /* ALTO `scale/4` (56), el MISMO token que el bloque del logo de la barra lateral
+   * (`.sidebar__brand`), para que las dos rayas de abajo casen (2026-09-14). Es la
+   * altura de la barra de Sakai, la app de PrimeTek sobre Aura. Antes 75: relleno 21 +
+   * avatar 32. Lo más alto de dentro mide 28 (botón pequeño y avatar del DS), así que
+   * manda este mínimo. `min-height` y no `height`: en estrecho la fila envuelve (regla
+   * de abajo). Figma dibuja 72: apuntado en `docs/figma-pendiente.md`. */
+  min-height: var(--sc-spacing-4);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-2);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,8 +56,9 @@
   }
 
   &__home {
-    width: 28px;
-    height: 28px;
+    /* El ancho de un botón pequeño de solo icono del DS (28). */
+    width: var(--sc-cmp-button-sm-icon-only-width);
+    height: var(--sc-cmp-button-sm-icon-only-width);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -79,7 +84,7 @@
 
   &__lead-divider {
     width: 1px;
-    height: 16px;
+    height: var(--sc-spacing-1-143);
     background: var(--sc-border-default);
     flex-shrink: 0;
   }
@@ -101,15 +106,16 @@
    * cost) and tinted toward the brand cyan so the affordance reads
    * as branded, not as a default focus halo.
    *
-   * `flex: 0 0 32px` + explicit `width/height` + `line-height: 0`
+   * Size = the DS avatar (`--sc-cmp-avatar-width`, 28; was 32 by hand).
+   * `flex: 0 0 <size>` + explicit `width/height` + `line-height: 0`
    * lock the button to a true square. `inline-flex` alone leaves the
    * button on the inline baseline, where the inherited line-height
    * adds vertical room — pushing the button out of square and the
    * border-radius:full produces an oval, not a circle. */
   &__avatar {
-    flex: 0 0 32px;
-    width: 32px;
-    height: 32px;
+    flex: 0 0 var(--sc-cmp-avatar-width);
+    width: var(--sc-cmp-avatar-width);
+    height: var(--sc-cmp-avatar-height);
     padding: 0;
     line-height: 0;
     background: transparent;
