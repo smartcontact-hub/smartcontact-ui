@@ -12,6 +12,17 @@ import {
 import { NgTemplateOutlet } from '@angular/common';
 import { PanelModule } from 'primeng/panel';
 
+/** Aviso del panel: pinta el borde, y un anillo de 1 del mismo color, en el rol de estado. */
+export type ScPanelSeverity = 'warn' | 'danger';
+
+/** Contexto de `<ng-template #header>`: el id que debe llevar el título para que nombre la región del cuerpo. */
+export interface ScPanelHeaderContext {
+    $implicit: string;
+    titleId: string;
+}
+
+let scPanelIdSeq = 0;
+
 @Component({
     selector: 'sc-panel',
     standalone: true,
@@ -22,7 +33,9 @@ import { PanelModule } from 'primeng/panel';
     encapsulation: ViewEncapsulation.None,
     host: {
         class: 'sc-panel',
-        '[class.sc-panel--fill]': 'fill()'
+        '[class.sc-panel--fill]': 'fill()',
+        '[class.sc-panel--warn]': "severity() === 'warn'",
+        '[class.sc-panel--danger]': "severity() === 'danger'"
     }
 })
 export class ScPanelComponent {
@@ -47,6 +60,13 @@ export class ScPanelComponent {
      */
     readonly fill = input(false, { transform: booleanAttribute });
 
+    /**
+     * Panel en aviso: borde y anillo de 1 en `--sc-border-warning` o `--sc-border-danger`. El motivo lo dice
+     * el contenido (una etiqueta en la cabecera); el borde solo lo hace visible de lejos. Decidido en código
+     * (DD-109); Figma lo recoge en `docs/figma-pendiente.md`.
+     */
+    readonly severity = input<ScPanelSeverity | null>(null);
+
     readonly beforeToggle = output<unknown>();
 
     readonly afterToggle = output<unknown>();
@@ -58,8 +78,25 @@ export class ScPanelComponent {
      */
     protected readonly iconsTemplate = contentChild<TemplateRef<unknown>>('icons');
 
-    /* Clases propias en las piezas de dentro por `pt` (la vía pública de PrimeNG): `fill` se estila sobre
-     * ellas y no sobre `.p-panel-*`, que no es API y cuenta en `audit:primeng-coupling`. */
+    /**
+     * Cabecera propia: `<ng-template #header let-titleId>` (plantilla `header` de Panel en primeng.dev). Para
+     * un título que es encabezado de verdad (`h2`, `h3`) o que lleva una línea debajo. Pon `[id]="titleId"` en
+     * el título: es el id al que apunta el `aria-labelledby` de la región del cuerpo.
+     */
+    protected readonly headerTemplate = contentChild<TemplateRef<ScPanelHeaderContext>>('header');
+
+    /* En la plantilla, `#header` (el nombre que busca `p-panel`) tapa al input `header`: se lee por aquí. */
+    protected readonly headerText = this.header;
+
+    /* Id propio y estable para `p-panel`: su título se llama `<id>_header`, y así el consumidor lo conoce. */
+    protected readonly panelId = `sc-panel-${++scPanelIdSeq}`;
+    protected readonly headerContext: ScPanelHeaderContext = {
+        $implicit: `${this.panelId}_header`,
+        titleId: `${this.panelId}_header`
+    };
+
+    /* Clases propias en las piezas de dentro por `pt` (la vía pública de PrimeNG): `fill` y `severity` se
+     * estilan sobre ellas y no sobre `.p-panel-*`, que no es API y cuenta en `audit:primeng-coupling`. */
     protected readonly pt = {
         root: { class: 'sc-panel__root' },
         contentContainer: { class: 'sc-panel__body' },

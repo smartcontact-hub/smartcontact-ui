@@ -1,5 +1,6 @@
 <p-panel
-    [header]="header() || undefined"
+    [id]="panelId"
+    [header]="headerText() || undefined"
     [toggleable]="toggleable()"
     [collapsed]="collapsed()"
     [showHeader]="showHeader()"
@@ -7,8 +8,11 @@
     (collapsedChange)="collapsed.set($event ?? false)"
     (onBeforeToggle)="beforeToggle.emit($event)"
     (onAfterToggle)="afterToggle.emit($event)">
-    <!-- Siempre presente y sin `@if`: `p-panel` busca `#icons` entre sus hijos directos, y un bloque de
-         control flow por medio lo esconde. Sin plantilla del consumidor no pinta nada. -->
+    <!-- Siempre presentes y sin `@if`: `p-panel` busca `#header` e `#icons` entre sus hijos directos, y un
+         bloque de control flow por medio los esconde. Sin plantilla del consumidor no pintan nada. -->
+    <ng-template #header>
+        <ng-container *ngTemplateOutlet="headerTemplate() ?? null; context: headerContext"></ng-container>
+    </ng-template>
     <ng-template #icons>
         <ng-container *ngTemplateOutlet="iconsTemplate() ?? null"></ng-container>
     </ng-template>
