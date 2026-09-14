@@ -51,10 +51,8 @@
  * dentro del p-datepicker) — el selector descendant aquí es correcto. */
 .sc-datepicker__control .p-datepicker-input {
   width: 100%;
-  /* Base (md) font-size. PrimeNG hardcodea `.p-inputtext { font-size: 1rem }`
-   * (16px); el Kit no define base → md se fugaba. Rampa Kit → md = 14px.
-   * (0,2,0) gana al `.p-inputtext`/`.p-datepicker-input` (0,1,0). */
-  font-size: var(--sc-font-size-200);
+  /* La letra la pone el TEMA por talla (`sc-preset/css.ts`, DD-91). Aquí había un
+   * `font-size` md SIN CAPA que ganaba también en sm y lg: la fecha sm salía a 14. */
 }
 
 /* Inline mode: no input, the panel itself takes the space. Hide the

@@ -297,6 +297,10 @@ table.table {
  * diseño; se retiró por un motivo equivocado y el arreglo bueno acabó donde debía, en el
  * tema. Sigue sin haber que ponerlo aquí, pero por la razón contraria: ahora el tema ya
  * da `normal` a los controles, y repetirlo en la app sería pisar por pisar.
+ *
+ * ⚠️ 2026-09-14 (DD-91): los maestros de Figma atan ya el interlineado de los controles a
+ * la rampa, y el tema lo sigue (botón md 32,5). Un `normal` aquí, sin capa, lo devolvería
+ * a 29,5 en esta app y en ninguna otra. Tampoco lo pongas.
  */
 
 /*

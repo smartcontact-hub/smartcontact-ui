@@ -67,25 +67,28 @@ test.beforeEach(async ({ page }) => {
  *   44.5 → 41.5  2026-09-14, DD-81: los botones pequeños enlazan su relleno a scale/0-25 (3.5 en
  *              vez de 5.25) y el kebab baja a 24. 24 + 8×2 + 1 = 41; medido 41 y en labels 42.5
  *              (su celda más alta manda, por eso lleva su propio número). Con avatar sigue en 54.
+ *   41.5 → 44  2026-09-14, DD-91: los controles leen el interlineado de la rampa (18 en sm, atado
+ *              en Figma) y el kebab sube a 27. 27 + 8×2 + 1 = 44, también en labels: el kebab
+ *              vuelve a ser lo más alto de su fila. Con avatar sigue en 54.
  */
 const PAGINAS = [
-  { ruta: 'admin/labels', nombre: 'labels', altoFila: 42.5 },
-  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 41.5 },
-  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 41.5 },
+  { ruta: 'admin/labels', nombre: 'labels', altoFila: 44 },
+  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 44 },
+  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 44 },
   { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 54 },
   { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 54 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
   // commit que la migración, y eso no es formalismo: sin esta línea el spec
   // pasaba en verde sin visitar la página, y el "108/108" que traían los
   // informes de migración no probaba nada sobre lo migrado.
-  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 41.5 },
-  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 41.5 },
-  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 41.5 },
+  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 44 },
+  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 44 },
+  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 44 },
   /* Una de las NUEVE páginas de repositorios, que comparten `repo-list-page`.
    * No estaba ninguna: `audit:datatables` lo destapó al no encontrar su ruta.
    * Con una basta —las nueve son el mismo componente— pero sin ninguna, la
    * tabla más reutilizada de la app era la única sin vigilar. */
-  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 41.5 },
+  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 44 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */

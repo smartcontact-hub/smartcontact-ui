@@ -162,12 +162,12 @@ Siguen entrando en el chequeo de huérfanos, porque un renombrado de PrimeNG las
 | `sc-inputgroup` | `p-inputgroup-addon` · `p-inputtext` | el addon iguala el padding y la letra de `sc-inputtext` en sm/lg |
 | `sc-dialog` | `p-dialog-content` | desnuda el contenedor de `p-dialog` para que el cromo lo ponga `.sc-dialog` |
 
-**Lo que sí queda medido y pendiente aquí.** Cuatro declaraciones de este grupo repiten lo que el
+**Lo que sí queda medido y pendiente aquí.** Cuatro declaraciones de este grupo repetían lo que el
 tema YA publica: el `font-size` md de `.p-select-label`, `.p-multiselect-label`, `.p-inputtext` (en
-`sc-inputgroup`) y `.p-datepicker-input` está en `sc-preset/css.ts` (`mdControlSelectors`) con el
-mismo valor. Retirarlas no baja el recuento —esas clases se usan también para el padding sm/lg—,
-así que es limpieza, no deuda estructural, y pide correr `e2e/component-styles.spec.ts` delante
-para probar que el computado no se mueve. **No se hizo en esta pasada**, que iba a lo que no viaja.
+`sc-inputgroup`) y `.p-datepicker-input` está en `sc-preset/css.ts` (`mdTypographySelectors`) con el
+mismo valor. DD-91 (2026-09-14) retiró las de `sc-select`, `sc-multiselect` y `sc-datepicker`, junto
+con su letra y relleno sm/lg escritos a mano, porque sin capa pisaban la talla del tema (la fecha sm
+salía a 14). Queda la de `sc-inputgroup`.
 
 ---
 

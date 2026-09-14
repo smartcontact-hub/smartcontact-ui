@@ -75,43 +75,16 @@
   }
 }
 
-/* Base (md) font-size. PrimeNG hardcodes `.p-inputtext { font-size: 1rem }`
- * (16px) y el export del Kit Pro NO define `form.field.font.size` base, así
- * que el md se fugaba a 16px (Aura). La rampa del Kit es 12.25/[14]/15.75 →
- * md = 14px. Host-prefijado para ganar a `.p-inputtext` (misma cuenta de
- * clases). Sin esto, lo que el comentario de size-variants llamaba "Normal:
- * font 14 (heredado del preset)" nunca era cierto. */
-.sc-inputtext .sc-inputtext__control {
-  font-size: var(--sc-font-size-200);
-}
-
 /* ────────────────────────────────────────────────────────────────────
- * Size variants — valores EXACTOS Figma Smart Contact Prime,
- * verificados en nodos 7039:21970 (Small) y 7039:74791 (Large).
- *
- *  Small:  font 12.25 / padding 8.75x / 5.25y
- *  Normal: font 14    / padding 10.5x / 7y   (heredado del preset)
- *  Large:  font 15.75 / padding 12.25x / 8.75y
- *
- * Decimales raw (no token) porque caen off-scale en `--sc-font-size-*`
- * y `--sc-spacing-*`. Esta es la cota 1:1 que pide la audit con Figma.
+ * Tallas: las pinta el TEMA, no este fichero (DD-91, 2026-09-14).
+ * El input recibe `p-inputtext-sm/lg` (`[pSize]`), y el preset le da letra e
+ * interlineado (`sc-preset/css.ts`, rampa `app.typography.*`) y relleno
+ * (`inputtext.sm/lg.padding.*` → `form.field.sm/lg.padding.*` del export).
+ * Aquí había letra y relleno escritos a mano, SIN CAPA: ganaban siempre al
+ * tema, y el sm llevaba el relleno md (5,25 × 8,75) de una generación vieja
+ * de Figma. El maestro de hoy dice sm 3,5 × 7 y lg 7 × 10,5, igual que el export.
  * ────────────────────────────────────────────────────────────────────
  */
-.sc-inputtext--sm .sc-inputtext__control {
-  padding-top: var(--sc-spacing-0-375);
-  padding-bottom: var(--sc-spacing-0-375);
-  padding-left: var(--sc-spacing-0-625);
-  padding-right: var(--sc-spacing-0-625);
-  font-size: var(--sc-font-size-100);
-}
-
-.sc-inputtext--lg .sc-inputtext__control {
-  padding-top: var(--sc-spacing-0-625);
-  padding-bottom: var(--sc-spacing-0-625);
-  padding-left: var(--sc-spacing-0-875);
-  padding-right: var(--sc-spacing-0-875);
-  font-size: var(--sc-font-size-300);
-}
 
 /* ────────────────────────────────────────────────────────────────────
  * Filled variant — Figma `Filled=True` node 1729:42481.
