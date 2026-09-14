@@ -285,6 +285,35 @@ function evaluarBase(cmd, ctx = {}) {
         'quedó viejo), añade `# sc:ok`.',
     };
 
+  // Portada de PR y mensaje de commit: el repo es PÚBLICO (decisión de Rafa, 2026-09-14).
+  //
+  // En 9 de los PRs #146-#167 la portada abría con un rótulo dirigido a Rafa por su nombre: la
+  // regla del parte llano es para el mensaje del CHAT al cerrar, y se llevó sola a un documento
+  // que lee cualquiera. La atribución de la herramienta (la línea de Claude Code, el co-autor y
+  // el enlace a la sesión) ya la apaga `attribution` en `.claude/settings.json`; esto caza lo que
+  // un ajuste no ve: el rótulo, y la atribución escrita a mano por una sesión con otra config.
+  //
+  // Mira el comando CRUDO, no `segs`: el cuerpo viaja casi siempre en un heredoc, y ahí es donde
+  // está el texto. Un `--body-file` no lo ve; estrecho a propósito (LEARNINGS #2).
+  const PUBLICA = /^(git\s+commit|gh\s+pr\s+(create|edit))\b/;
+  const NO_EN_PUBLICO = [
+    [/Para Rafa,?\s+en llano/i, 'un rótulo dirigido a Rafa por su nombre'],
+    [/Generated with \[?Claude Code/i, 'la línea «Generated with Claude Code»'],
+    [/Co-Authored-By:\s*Claude/i, 'el co-autor Claude'],
+    [/claude\.ai\/code\/session_/i, 'el enlace a la sesión de claude.ai'],
+  ];
+  if (segs.some((s) => empiezaPor(s, PUBLICA))) {
+    const hallado = NO_EN_PUBLICO.find(([re]) => re.test(cmd));
+    if (hallado)
+      return {
+        decision: 'deny',
+        reason:
+          `Portada pública (AGENTS.md §Pull requests y commits) — este texto lleva ${hallado[1]}, y el repo es público. ` +
+          'El resumen llano de arriba va sin destinatario (`**En resumen:**`) y sin atribución de la herramienta. ' +
+          'Quítalo y repite. Si citas la regla a propósito (un commit que habla de ella), añade `# sc:ok`.',
+      };
+  }
+
   // #5 — un bucle de espera cuyo patrón SE CASA A SÍ MISMO no termina nunca.
   //
   // `until ! pgrep -f "preflight-scope"; do sleep; done` corre dentro de un shell cuya propia

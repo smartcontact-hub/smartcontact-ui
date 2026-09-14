@@ -9,7 +9,8 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
 - **La guía que se impone sola** vive en `.claude/settings.json` → `scripts/hooks/`. El hook de
   Bash deniega, con la regla como motivo, los cinco comandos de LEARNINGS #7 #11 #12 (push sin
   preflight sobre ESTE árbol, `echo $?` colgado, volcar credenciales, `git diff main...rama`,
-  `for f in $VAR`). El de Stop exige leer el CI tras un push (`npm run ci:verdict`), que cada
+  `for f in $VAR`), y un PR o commit con atribución de la herramienta o rotulado para Rafa (el
+  repo es público; AGENTS.md §Pull requests y commits). El de Stop exige leer el CI tras un push (`npm run ci:verdict`), que cada
   corrección lleve ruta si reflexionaste, y que el mensaje de cierre lleve el parte en llano (qué
   cambia · en qué te ayuda · rastro · seguro cerrar, que MIDE el árbol y te desmiente; AGENTS.md
   §Session-Close, paso 6). El de compactación avisa
