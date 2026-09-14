@@ -1,0 +1,153 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.kpi {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sc-spacing-0-5);
+  min-width: 0;
+
+  &__figure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-125);
+  }
+
+  &__value {
+    color: var(--sc-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__caption,
+  &__delta {
+    color: var(--sc-text-secondary);
+  }
+
+  /* La tendencia no se colorea: que suban las conversaciones en curso no es bueno ni malo. */
+  &__delta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__digits {
+    display: inline-block;
+  }
+
+  &__digits--in {
+    animation: kpi-digits-in var(--sc-transition-slow) var(--sc-easing-emphasized);
+  }
+
+  /* ─── Con evolución: cifra a la izquierda, trazo a la derecha ─── */
+  &__spark {
+    display: block;
+    inline-size: 100%;
+    block-size: var(--sc-spacing-3);
+    overflow: visible;
+  }
+
+  &__spark-line {
+    fill: none;
+    stroke: var(--sc-border-accent);
+    stroke-width: var(--sc-spacing-0-125);
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  &__spark-area {
+    fill: color-mix(in oklch, var(--sc-border-accent) 12%, transparent);
+    stroke: none;
+  }
+
+  &__unit {
+    margin-inline-start: var(--sc-spacing-0-125);
+    color: var(--sc-text-secondary);
+  }
+
+  /* ─── Con estado de agente: anillo a la izquierda, sobre cuántos a la derecha ─── */
+  &--ring &__figure {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sc-spacing-1);
+  }
+
+  /* ─── Cifra que abre su detalle ───
+     Sin caja: la cifra ES el botón. Al pasar por encima sale un fondo suave y la flecha, que dice
+     «esto se abre»; el foco de teclado se ve igual que en el resto de botones. */
+  &__open {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: var(--sc-spacing-0-25);
+    padding: 0;
+    border: 0;
+    border-radius: var(--sc-radius-200);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition-property: background-color, box-shadow;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: var(--sc-easing-default);
+
+    /* El fondo de hover sobresale con una sombra sin desenfoque en vez de con padding: la cifra no se
+       mueve de su sitio y no hace falta un margen negativo calculado. */
+    &:hover {
+      background: var(--sc-bg-hover);
+      box-shadow: 0 0 0 var(--sc-spacing-0-375) var(--sc-bg-hover);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--sc-shadow-focus-ring);
+    }
+  }
+
+  &__open-icon {
+    color: var(--sc-text-secondary);
+    opacity: 0;
+    transition-property: opacity, translate;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: var(--sc-easing-default);
+  }
+
+  &__open:hover &__open-icon,
+  &__open:focus-visible &__open-icon {
+    opacity: 1;
+    translate: var(--sc-spacing-0-25) 0;
+  }
+
+  /* Sin ratón (tablet, móvil) no hay hover que la descubra: la flecha se ve siempre. */
+  @media (hover: none) {
+    &__open-icon {
+      opacity: 1;
+    }
+  }
+}
+
+:host(.kpi--trend) .kpi {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--sc-spacing-1);
+}
+
+@keyframes kpi-digits-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-0-375));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kpi__digits--in {
+    animation: none;
+  }
+}

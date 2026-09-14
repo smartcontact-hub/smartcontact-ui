@@ -1,0 +1,37 @@
+<sc-datatable
+  class="agents-table"
+  [value]="rows()"
+  [columns]="columns()"
+  dataKey="name"
+  size="sm"
+  scrollable
+  scrollHeight="flex"
+>
+  <ng-template #footer>
+    <tr>
+      <td class="agents-table__total agents-table__total--label">{{ 'dashboard.agents_table.totals' | translate }}</td>
+      <td class="agents-table__total">{{ totals().conversations }}</td>
+      <td class="agents-table__total">{{ totals().attended }}</td>
+      <td class="agents-table__total">{{ totals().rejected }}</td>
+      <td class="agents-table__total">{{ totals().transferred }}</td>
+      <td class="agents-table__total">{{ totals().avg }}</td>
+    </tr>
+  </ng-template>
+</sc-datatable>
+
+<ng-template #nameTpl let-row>
+  <span class="agents-table__agent">
+    <!-- Punto de presencia: el badge del DS sin valor (p-badge-dot), con el color de su severidad. -->
+    <sc-badge
+      role="img"
+      [variant]="row.presence === 'available' ? 'success' : row.presence === 'paused' ? 'warning' : 'secondary'"
+      [attr.aria-label]="'dashboard.presence.' + row.presence | translate"
+      [attr.title]="'dashboard.presence.' + row.presence | translate"
+    />
+    {{ row.name }}
+  </span>
+</ng-template>
+
+<ng-template #timeTpl let-row>
+  <span class="agents-table__num">{{ formatDuration(row.avgSeconds) }}</span>
+</ng-template>

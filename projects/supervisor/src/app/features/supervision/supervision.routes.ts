@@ -12,7 +12,10 @@ const placeholder = () =>
  * out of scope for the Admin/Config-focused migration.
  */
 export const supervisionRoutes: Routes = [
-  { path: 'dashboard', loadComponent: placeholder },
+  {
+    path: 'dashboard',
+    loadChildren: () => import('../dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
+  },
   { path: 'servicios', loadComponent: placeholder },
   { path: 'nodo-ia', loadComponent: placeholder },
   { path: 'campanas', loadComponent: placeholder },

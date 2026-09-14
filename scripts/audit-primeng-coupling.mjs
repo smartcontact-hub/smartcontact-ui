@@ -84,8 +84,13 @@ const sh = (cmd) => {
  * 58 → 59 el 2026-09-14 (DD-95), por `.p-virtualscroller`: con lista virtual el que hace scroll es
  * el scroller de PrimeNG y no el contenedor de la tabla, y su barra tiene que empezar bajo la
  * cabecera igual que la otra. `.p-datatable-scrollable` se evitó con `sc-datatable--scroll`.
+ *
+ * 59 → 60 el 2026-09-14, por `.p-datatable-tfoot`: el pie de tabla tenía el mismo agujero de
+ * tipografía que cabecera y cuerpo (Table no declara `fontSize` de celda) y heredaba los 16 del
+ * `<body>`. Salió con la fila de totales del Dashboard del Supervisor. Sin la clase, un selector
+ * de elementos pierde en especificidad frente a las dos reglas hermanas.
  */
-const TOPE = { app: 6, ds: 20, preset: 59 };
+const TOPE = { app: 6, ds: 20, preset: 60 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de

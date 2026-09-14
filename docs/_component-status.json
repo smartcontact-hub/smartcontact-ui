@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "52 componentes · 17 custom · 11 standard · 24 extended · 38 usados en Supervisor.",
+  "summary": "52 componentes · 17 custom · 11 standard · 24 extended · 40 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -43,7 +43,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 6
     },
     {
       "name": "breadcrumb",
@@ -160,7 +160,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 102
+      "usedInSupervisor": 119
     },
     {
       "name": "card",
@@ -223,7 +223,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 5
     },
     {
       "name": "color-dot-picker",
@@ -332,7 +332,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 11
+      "usedInSupervisor": 13
     },
     {
       "name": "datepicker",
@@ -430,7 +430,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 9
+      "usedInSupervisor": 10
     },
     {
       "name": "divider",
@@ -472,7 +472,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 1
     },
     {
       "name": "empty-state",
@@ -556,10 +556,11 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 8,
+      "inputs": 9,
       "api": [
         "ariaLabel",
         "label",
+        "max",
         "segments",
         "size",
         "startAngle",
@@ -569,7 +570,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 1
     },
     {
       "name": "group-popover",
@@ -623,7 +624,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 4
     },
     {
       "name": "inputgroup",
@@ -715,7 +716,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 26
+      "usedInSupervisor": 27
     },
     {
       "name": "keyboard-shortcuts",
@@ -1040,7 +1041,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 31
+      "usedInSupervisor": 32
     },
     {
       "name": "skeleton",
@@ -1135,7 +1136,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 21
+      "usedInSupervisor": 23
     },
     {
       "name": "textarea",

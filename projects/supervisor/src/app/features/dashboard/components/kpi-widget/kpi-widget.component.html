@@ -1,0 +1,65 @@
+<!-- La cifra, como texto o como botón que abre su detalle. Un solo sitio para las dos formas. -->
+<ng-template #figure let-size="size">
+  @if (presence() !== null) {
+    <sc-gauge
+      size="sm"
+      [thickness]="10"
+      [segments]="ringSegments()"
+      [max]="total()"
+      [label]="'' + value()"
+      [ariaLabel]="interactive() ? null : ('dashboard.kpi.ratio_aria' | translate: { ratio: ratio() })"
+    />
+  } @else {
+    <span class="kpi__value sc-text-h1-semibold">
+      <!-- Al cambiar la cifra, entra con un paso corto: se nota que se ha actualizado sin tener
+           que compararla de memoria. -->
+      <span class="kpi__digits" [scAnimateOnChange]="value()" animateClass="kpi__digits--in">{{ value() }}</span>
+      @if (unit() === 'percent') {
+        <span class="kpi__unit sc-text-h3-regular">%</span>
+      }
+    </span>
+  }
+</ng-template>
+
+<div class="kpi" [class.kpi--ring]="presence() !== null">
+  <div class="kpi__figure">
+    @if (interactive()) {
+      <button
+        type="button"
+        class="kpi__open"
+        [attr.aria-label]="'dashboard.detail.open_aria' | translate: { value: value() }"
+        (click)="open.emit()"
+      >
+        <ng-container *ngTemplateOutlet="figure" />
+        <sc-icon class="kpi__open-icon" name="chevron_right" [size]="deltaIconSize" aria-hidden="true" />
+      </button>
+    } @else {
+      <ng-container *ngTemplateOutlet="figure" />
+    }
+    @if (presence() !== null && total() !== null) {
+      <span class="kpi__caption sc-text-caption-regular">
+        {{ 'dashboard.kpi.of_connected' | translate: { total: total() } }}
+      </span>
+    } @else if (delta(); as d) {
+      <span class="kpi__delta sc-text-caption-regular">
+        <sc-icon [name]="d.icon" [size]="deltaIconSize" aria-hidden="true" />
+        {{ 'dashboard.kpi.delta' | translate: { delta: d.text } }}
+      </span>
+    } @else if (label()) {
+      <span class="kpi__caption sc-text-caption-regular">{{ label() }}</span>
+    }
+  </div>
+
+  @if (sparkline(); as spark) {
+    <svg
+      class="kpi__spark"
+      [attr.viewBox]="spark.viewBox"
+      preserveAspectRatio="none"
+      role="img"
+      [attr.aria-label]="'dashboard.kpi.trend_aria' | translate"
+    >
+      <polygon class="kpi__spark-area" [attr.points]="spark.area" />
+      <polyline class="kpi__spark-line" [attr.points]="spark.line" />
+    </svg>
+  }
+</div>

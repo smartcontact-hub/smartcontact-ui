@@ -1,0 +1,80 @@
+<ng-template #statTpl let-s let-size="size">
+  <div class="panel__stat">
+    <dt class="sc-text-caption-regular">{{ 'dashboard.group_panel.' + s.key | translate }}</dt>
+    <dd
+      class="panel__value"
+      [class]="size === 'lg' ? 'sc-text-h3-semibold' : 'sc-text-body-semibold'"
+      [class.panel__value--success]="s.tone === 'success'"
+      [class.panel__value--warning]="s.tone === 'warning'"
+      [class.panel__value--danger]="s.tone === 'danger'"
+    >
+      <ng-template #digits>
+        <span class="panel__digits" [scAnimateOnChange]="s.value" animateClass="panel__digits--in">{{ s.value }}</span>
+      </ng-template>
+      @if (interactive() && s.detail) {
+        <button
+          type="button"
+          class="panel__open"
+          [attr.aria-label]="'dashboard.detail.open_stat_aria' | translate: { value: s.value, label: ('dashboard.group_panel.' + s.key | translate) }"
+          (click)="open.emit(s.detail)"
+        >
+          <ng-container *ngTemplateOutlet="digits" />
+        </button>
+      } @else {
+        <ng-container *ngTemplateOutlet="digits" />
+      }
+    </dd>
+    @if (s.meter) {
+      <dd class="panel__bar" role="img" [attr.aria-label]="'dashboard.kpi.ratio_aria' | translate: { ratio: s.ratio }">
+        <p-metergroup [value]="s.meter">
+          <ng-template #label />
+        </p-metergroup>
+      </dd>
+    }
+  </div>
+</ng-template>
+
+<div class="panel">
+  <section class="panel__band">
+    <h3 class="panel__band-title sc-text-caption-semibold">{{ 'dashboard.group_panel.now' | translate }}</h3>
+    <dl class="panel__stats panel__stats--four">
+      @for (s of now(); track s.key) {
+        <ng-container *ngTemplateOutlet="statTpl; context: { $implicit: s, size: 'lg' }" />
+      }
+    </dl>
+  </section>
+
+  <section class="panel__band">
+    <h3 class="panel__band-title sc-text-caption-semibold">
+      {{ 'dashboard.group_panel.conversations' | translate }}
+    </h3>
+    <div class="panel__split">
+      <dl class="panel__stats">
+        @for (s of conversations(); track s.key) {
+          <ng-container *ngTemplateOutlet="statTpl; context: { $implicit: s, size: 'lg' }" />
+        }
+      </dl>
+      <dl class="panel__stats panel__stats--secondary">
+        @for (s of lost(); track s.key) {
+          <ng-container *ngTemplateOutlet="statTpl; context: { $implicit: s, size: 'md' }" />
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="panel__band">
+    <h3 class="panel__band-title sc-text-caption-semibold">{{ 'dashboard.group_panel.times' | translate }}</h3>
+    <div class="panel__split panel__split--times">
+      <dl class="panel__stats panel__stats--four">
+        @for (s of times(); track s.key) {
+          <ng-container *ngTemplateOutlet="statTpl; context: { $implicit: s, size: 'md' }" />
+        }
+      </dl>
+      <dl class="panel__stats panel__stats--secondary">
+        @for (s of levels(); track s.key) {
+          <ng-container *ngTemplateOutlet="statTpl; context: { $implicit: s, size: 'md' }" />
+        }
+      </dl>
+    </div>
+  </section>
+</div>

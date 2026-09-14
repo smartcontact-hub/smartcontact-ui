@@ -1,0 +1,35 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.agents-table {
+  flex: 1;
+  min-height: 0;
+
+  /* El nombre en una línea: partido en dos, cada fila dobla su alto y la tabla enseña la mitad. */
+  &__agent {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    white-space: nowrap;
+  }
+
+  &__num {
+    display: block;
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Fila de totales: cifras a la derecha como las de arriba. La letra la pone el DS. */
+  &__total {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+
+    &--label {
+      text-align: start;
+    }
+  }
+}

@@ -22,14 +22,22 @@ interface GaugeArc {
   readonly dashOffset: number;
 }
 
-/** PURA: deriva radio, circunferencia y arcos del anillo de los segmentos. Exportada → testeable. */
+/**
+ * PURA: deriva radio, circunferencia y arcos del anillo de los segmentos. Exportada → testeable.
+ *
+ * `max`: el total contra el que se mide. Sin él, los segmentos llenan el anillo entero; con él, lo
+ * que falta hasta `max` queda como track. Nació con «5 disponibles de 9 conectados» en el Dashboard
+ * (2026-09-14): pintar el resto como un segundo segmento gris se leía como un estado más.
+ */
 export function buildGaugeArcs(
   segments: readonly ScGaugeSegment[],
   thickness: number,
+  max: number | null = null,
 ): { radius: number; circumference: number; arcs: GaugeArc[] } {
   const radius = (VIEWBOX - thickness) / 2;
   const circumference = 2 * Math.PI * radius;
-  const total = segments.reduce((sum, s) => sum + Math.max(0, s.value), 0);
+  const sum = segments.reduce((acc, s) => acc + Math.max(0, s.value), 0);
+  const total = max !== null && max > sum ? max : sum;
   const arcs: GaugeArc[] = [];
   if (total > 0) {
     let cumulative = 0;
@@ -67,12 +75,14 @@ export class ScGaugeComponent {
   readonly startAngle = input<number>(-90);
   /** Etiqueta accesible del anillo (decorativo si null). */
   readonly ariaLabel = input<string | null>(null);
+  /** Total contra el que se miden los segmentos; lo que falta hasta él queda como track. Null → llenan el anillo. */
+  readonly max = input<number | null>(null);
   /** Atajo para el centro: número grande. Ignorado si se proyecta contenido. */
   readonly label = input<string | null>(null);
   /** Atajo para el centro: texto pequeño bajo el número. */
   readonly sublabel = input<string | null>(null);
 
   protected readonly sizePx = computed(() => SIZE_PX[this.size()]);
-  protected readonly geom = computed(() => buildGaugeArcs(this.segments(), this.thickness()));
+  protected readonly geom = computed(() => buildGaugeArcs(this.segments(), this.thickness(), this.max()));
   protected readonly rotation = computed(() => `rotate(${this.startAngle()} 50 50)`);
 }

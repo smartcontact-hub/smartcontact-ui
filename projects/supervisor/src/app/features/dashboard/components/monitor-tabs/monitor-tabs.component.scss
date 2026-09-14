@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+/* La tira y sus acciones comparten la raya inferior: la de la tira la pinta el tema, la de las
+   acciones la iguala con el mismo color de borde de contenido. */
+.tabs {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+
+  &__tabs {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    flex: none;
+    padding-inline-start: var(--sc-spacing-0-5);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+}
+
+/* Arrastrar una pestaña: la que se mueve flota con sombra; las demás se apartan con una transición. */
+p-tab.cdk-drag-preview {
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-popover);
+}
+
+p-tab.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+p-tablist.cdk-drop-list-dragging p-tab:not(.cdk-drag-placeholder),
+p-tab.cdk-drag-animating {
+  transition: transform var(--sc-transition-base) var(--sc-easing-emphasized);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  p-tablist.cdk-drop-list-dragging p-tab:not(.cdk-drag-placeholder),
+  p-tab.cdk-drag-animating {
+    transition: none;
+  }
+}

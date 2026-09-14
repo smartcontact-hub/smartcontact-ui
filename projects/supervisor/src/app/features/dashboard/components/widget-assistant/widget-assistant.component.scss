@@ -1,0 +1,144 @@
+:host {
+  display: block;
+}
+
+.assistant {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: var(--sc-spacing-2);
+  min-height: var(--sc-spacing-25);
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-1-25);
+    min-width: 0;
+  }
+
+  &__step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-5);
+
+    &--row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--sc-spacing-1);
+      align-items: start;
+    }
+  }
+
+  &__label {
+    margin: 0;
+    color: var(--sc-text-primary);
+  }
+
+  /* ─── Categorías: seis botones de radio con icono, en 3×2 ─── */
+  &__categories {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-5);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-200);
+    background: var(--sc-bg-surface);
+    color: var(--sc-text-secondary);
+    cursor: pointer;
+    transition-property: border-color, background-color, color;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: var(--sc-easing-default);
+
+    &:hover {
+      border-color: var(--sc-border-strong);
+      color: var(--sc-text-primary);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--sc-shadow-focus-ring);
+    }
+
+    &--active {
+      border-color: var(--sc-border-primary);
+      background: var(--sc-bg-primary-subtle);
+      color: var(--sc-text-primary);
+    }
+
+    /* Sin tipos que quepan en este hueco: se puede elegir (y el panel lo explica), pero se atenúa. */
+    &--empty:not(&--active) {
+      color: var(--sc-text-subtle);
+      border-style: dashed;
+    }
+  }
+
+  /* ─── Vista previa ─── */
+  &__preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-5);
+    min-width: 0;
+  }
+
+  &__stage {
+    flex: 1;
+    min-block-size: 0;
+    display: grid;
+    place-items: center;
+    padding: var(--sc-spacing-1-5);
+    border-radius: var(--sc-radius-200);
+    background: var(--sc-bg-default);
+  }
+
+  /* El marco tiene la proporción del hueco de verdad: caja entera o un cuarto de caja. */
+  &__frame {
+    inline-size: 100%;
+    block-size: var(--sc-spacing-25);
+
+    &--small {
+      inline-size: 50%;
+      block-size: var(--sc-spacing-12-5);
+    }
+  }
+
+  &__hint {
+    margin: 0;
+    max-inline-size: var(--sc-spacing-18);
+    color: var(--sc-text-secondary);
+    text-align: center;
+  }
+
+  /* Siempre ocupa sus dos líneas, haya descripción o no (en «Nodo IA» con hueco pequeño no hay tipo). */
+  &__description {
+    min-block-size: var(--sc-spacing-3);
+    margin: 0;
+    color: var(--sc-text-secondary);
+  }
+}
+
+/* Diálogo estrecho (tablet vertical, móvil): una sola columna, la vista previa debajo con su alto
+ * propio, y la previa de un hueco pequeño a todo el ancho (a la mitad no se leía). */
+@media (max-width: 767px) {
+  .assistant {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .assistant__stage {
+    flex: none;
+    block-size: var(--sc-spacing-25);
+  }
+
+  .assistant__frame--small {
+    inline-size: 100%;
+  }
+
+  .assistant__step--row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,67 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.ranked {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-625);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: var(--sc-spacing-0-25);
+    column-gap: var(--sc-spacing-1);
+    align-items: baseline;
+  }
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--sc-text-primary);
+  }
+
+  &__total {
+    color: var(--sc-text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__bar {
+    grid-column: 1 / -1;
+  }
+
+  &__digits {
+    display: inline-block;
+  }
+
+  &__digits--in {
+    animation: ranked-digits-in var(--sc-transition-slow) var(--sc-easing-emphasized);
+  }
+
+  &__empty {
+    margin: auto;
+    color: var(--sc-text-secondary);
+    text-align: center;
+  }
+}
+
+@keyframes ranked-digits-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-0-375));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ranked__digits--in {
+    animation: none;
+  }
+}

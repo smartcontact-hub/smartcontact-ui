@@ -1,0 +1,469 @@
+:host {
+  display: block;
+  height: 100%;
+  background: var(--sc-bg-canvas);
+}
+
+/* La página ocupa el alto de la ventana y las cuatro cajas se reparten el sitio, como un
+ * monitor de pared: nada queda por debajo del pliegue (en el original, la barra de pestañas
+ * se cortaba a 780 de alto). Por debajo del mínimo de caja, la página hace scroll. */
+.page {
+  height: 100%;
+  background: var(--sc-bg-canvas);
+
+  /* Modo pared: tapa la app entera aunque el navegador niegue la pantalla completa. */
+  &--wall {
+    position: fixed;
+    inset: 0;
+    z-index: var(--sc-z-modal);
+    height: auto;
+  }
+}
+
+.dashboard-frame {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--sc-spacing-1) var(--sc-spacing-2) var(--sc-spacing-1-25);
+
+  .page--wall & {
+    padding: var(--sc-spacing-1) var(--sc-spacing-1-5) var(--sc-spacing-1-5);
+  }
+}
+
+/* ─── Cabecera ─── */
+.dashboard-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
+  margin-bottom: var(--sc-spacing-0-75);
+  border-bottom: 1px solid var(--sc-border-subtle);
+
+  &__tabs {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-75);
+    flex: none;
+  }
+
+  &__live {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-375);
+    margin: 0;
+    color: var(--sc-text-secondary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__updated::before {
+    content: '· ';
+  }
+
+  &__carousel {
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Barra de cuánto falta para el siguiente monitor del carrusel, sobre el borde inferior de la
+ * cabecera. Avanza con `scale`, no con el ancho. */
+.dashboard-progress {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -1px;
+  block-size: var(--sc-spacing-0-125);
+  overflow: hidden;
+  pointer-events: none;
+
+  &__bar {
+    display: block;
+    block-size: 100%;
+    background: var(--sc-border-primary);
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+
+  &__bar--run {
+    animation-name: carousel-progress;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+  }
+}
+
+/* ─── Rejilla ─── */
+.dashboard {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(var(--sc-spacing-18), 1fr));
+  gap: var(--sc-spacing-1);
+  min-height: 0;
+
+  &__box {
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+
+    &--split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: var(--sc-spacing-1);
+    }
+  }
+
+  /* Lo que sale y lo que entra ocupan la misma casilla a la vez. */
+  &__cell {
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    border-radius: var(--sc-radius-200);
+    transition-property: box-shadow;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: var(--sc-easing-default);
+
+    > * {
+      grid-area: 1 / 1;
+    }
+
+    /* Mientras se arrastra, las celdas que aceptarían el widget se marcan con el color de foco. */
+    &.cdk-drop-list-receiving {
+      box-shadow: var(--sc-shadow-focus-ring);
+    }
+  }
+}
+
+/* Arrastrar un widget: la copia flota con sombra; el original se queda atenuado en su sitio. */
+.cdk-drag-preview {
+  border-radius: var(--sc-radius-200);
+  box-shadow: var(--sc-shadow-dialog);
+  cursor: grabbing;
+}
+
+/* El hueco de reserva que CDK mueve a la celda de destino no se ve: allí se superponía al widget
+ * que va a cambiar de sitio (medido con Playwright el 2026-09-14). La celda marcada ya dice dónde cae. */
+sc-dashboard-widget-card.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform var(--sc-transition-base) var(--sc-easing-emphasized);
+}
+
+/* ─── Entrada y salida de un widget o de un hueco ───
+ * Entrada: `--sc-transition-slow`, sube un peldaño (0-875) y enfoca; escalonada al cargar y al
+ * cambiar de monitor (--enter-delay, por caja y por hueco). Salida: más corta y suave,
+ * `--sc-transition-fast`. Solo transform, opacity y filter. */
+.dash-enter {
+  animation: dash-enter var(--sc-transition-slow) var(--sc-easing-emphasized) both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+.dash-leave {
+  animation: dash-leave var(--sc-transition-fast) var(--sc-easing-default) forwards;
+  pointer-events: none;
+}
+
+/* Encontrar un widget desde la lista de alertas: el anillo de foco late dos veces y se va. El anillo
+ * es un pseudo-elemento fijo; lo que se anima es su opacidad. */
+.dash-flash {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--sc-radius-200);
+    box-shadow: var(--sc-shadow-focus-ring);
+    opacity: 0;
+    pointer-events: none;
+    animation: dash-flash var(--sc-transition-slow) var(--sc-easing-emphasized) 4 alternate;
+  }
+}
+
+/* ─── Modo pared ───
+ * La caja, el fondo y el relleno los pone el tema de la Toolbar. Aquí solo el contenido. */
+/* Toolbar y barra del carrusel juntas: la barra se monta sobre el borde inferior de la toolbar. */
+.wall-head {
+  position: relative;
+  margin-bottom: var(--sc-spacing-0-75);
+}
+
+.wall-bar {
+  display: block;
+
+  &__start,
+  &__controls {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-1);
+  }
+
+  /* Sin tocar el ratón, los controles se apartan; el nombre del monitor sigue leyéndose. */
+  &__controls {
+    gap: var(--sc-spacing-0-25);
+    transition-property: opacity;
+    transition-duration: var(--sc-transition-base);
+    transition-timing-function: var(--sc-easing-default);
+  }
+
+  &--hidden &__controls {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &__name {
+    color: var(--sc-text-primary);
+  }
+
+  &__dots {
+    display: inline-flex;
+    gap: var(--sc-spacing-0-375);
+  }
+
+  &__dot {
+    inline-size: var(--sc-spacing-0-5);
+    block-size: var(--sc-spacing-0-5);
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-border-default);
+    transition-property: background-color, scale;
+    transition-duration: var(--sc-transition-base);
+    transition-timing-function: var(--sc-easing-default);
+
+    &--active {
+      background: var(--sc-border-primary);
+      scale: 1.25;
+    }
+  }
+
+  &__live {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-375);
+    color: var(--sc-text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ─── Panel de alertas (va en el body: estilos con la misma encapsulación de esta página) ─── */
+.alerts-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  inline-size: var(--sc-spacing-25);
+  max-inline-size: 100%;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sc-spacing-1);
+    min-block-size: var(--sc-spacing-2);
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--sc-text-primary);
+  }
+
+  &__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--sc-spacing-0-5);
+    align-items: start;
+    padding: var(--sc-spacing-0-5);
+    border: 0;
+    border-radius: var(--sc-radius-200);
+    background: transparent;
+    color: var(--sc-text-primary);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition-property: background-color;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: var(--sc-easing-default);
+
+    &:hover {
+      background: var(--sc-bg-hover);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--sc-shadow-focus-ring);
+    }
+  }
+
+  /* Vista: sigue en la lista (el problema sigue ahí), pero ya no reclama atención. */
+  &__item--seen {
+    color: var(--sc-text-secondary);
+
+    .alerts-panel__icon--warning,
+    .alerts-panel__icon--danger {
+      color: var(--sc-text-subtle);
+    }
+  }
+
+  &__icon--warning {
+    color: var(--sc-text-warning);
+  }
+
+  &__icon--danger {
+    color: var(--sc-text-danger);
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__where {
+    color: var(--sc-text-secondary);
+  }
+
+  &__empty {
+    margin: 0;
+    padding: var(--sc-spacing-0-5) 0;
+    color: var(--sc-text-secondary);
+  }
+
+  &__rules {
+    margin: var(--sc-spacing-0-25) 0 0;
+    padding-top: var(--sc-spacing-0-5);
+    border-top: 1px solid var(--sc-border-subtle);
+    color: var(--sc-text-secondary);
+  }
+}
+
+@keyframes count-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-0-25));
+  }
+}
+
+@keyframes carousel-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes dash-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-0-875));
+    filter: blur(var(--sc-spacing-0-25));
+  }
+}
+
+@keyframes dash-leave {
+  to {
+    opacity: 0;
+    transform: translateY(calc(var(--sc-spacing-0-875) * -1));
+    filter: blur(var(--sc-spacing-0-25));
+  }
+}
+
+@keyframes dash-flash {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-enter,
+  .dash-leave,
+  .dash-flash::after,
+  .dashboard-head__alerts-count--in {
+    animation: none;
+  }
+
+  /* Sin movimiento, la barra del carrusel no avanza: se ve llena como señal de que está en marcha. */
+  .dashboard-progress__bar {
+    transform: none;
+    animation: none;
+  }
+}
+
+/* ─── Responsive ───
+ * Dos cortes de la PÁGINA (locales, como los de la barra superior; DD-53 no fija una política):
+ *   · < 1200: las cuatro cajas se apilan en una columna y la página hace scroll. Cada caja tiene un
+ *     alto mínimo (grande 350, hueco pequeño 175) para que nada se aplaste. Es la tablet y el
+ *     portátil pequeño: a 1024 las dos columnas dejaban las tablas cortadas.
+ *   · < 640: móvil. Los huecos pequeños también se apilan, la cabecera deja solo lo esencial y el
+ *     carrusel y el modo pared se quitan (son de una pantalla grande).
+ * Dentro de cada widget manda su propio ancho (consultas de contenedor en cada componente). */
+@media (max-width: 1199px) {
+  .page,
+  .dashboard-frame {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .dashboard-head {
+    flex-wrap: wrap;
+    row-gap: var(--sc-spacing-0-5);
+
+    &__tabs {
+      flex-basis: 100%;
+    }
+
+    /* Las acciones suben encima de las pestañas: así el subrayado de la pestaña activa sigue
+       tocando el borde de la cabecera. */
+    &__actions {
+      order: -1;
+      flex: 1 1 100%;
+      justify-content: flex-end;
+    }
+  }
+
+  .dashboard {
+    flex: none;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+
+    &__box {
+      min-block-size: var(--sc-spacing-25);
+
+      &--split {
+        min-block-size: 0;
+        grid-template-rows: repeat(2, minmax(var(--sc-spacing-12-5), auto));
+      }
+    }
+  }
+}
+
+@media (max-width: 639px) {
+  .dashboard-frame {
+    padding-inline: var(--sc-spacing-1);
+  }
+
+  .dashboard-head {
+    &__updated,
+    &__carousel,
+    &__wall {
+      display: none;
+    }
+
+    &__actions {
+      justify-content: space-between;
+    }
+  }
+
+  .dashboard__box--split {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-rows: minmax(var(--sc-spacing-12-5), auto);
+  }
+}

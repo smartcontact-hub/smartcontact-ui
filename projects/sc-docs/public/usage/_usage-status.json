@@ -504,19 +504,27 @@
   "gated": [
     {
       "selector": "sc-badge",
-      "usedInSupervisor": 2
+      "usedInSupervisor": 6
     },
     {
       "selector": "sc-bulk-edit-menu",
       "usedInSupervisor": 3
     },
     {
+      "selector": "sc-drawer",
+      "usedInSupervisor": 1
+    },
+    {
       "selector": "sc-empty-state",
       "usedInSupervisor": 13
     },
     {
+      "selector": "sc-gauge",
+      "usedInSupervisor": 1
+    },
+    {
       "selector": "sc-inline-rename-cell",
-      "usedInSupervisor": 3
+      "usedInSupervisor": 4
     },
     {
       "selector": "sc-inputgroup",
@@ -540,7 +548,7 @@
     },
     {
       "selector": "sc-tag",
-      "usedInSupervisor": 21
+      "usedInSupervisor": 23
     },
     {
       "selector": "sc-textarea",

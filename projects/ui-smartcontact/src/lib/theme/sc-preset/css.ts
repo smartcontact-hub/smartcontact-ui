@@ -171,7 +171,11 @@ const typographyRule = (
  * tokens que su Table declara, y `bodyCell` no tiene `fontSize`. El hook `css`
  * existe justo para lo que el juego de tokens no cubre.
  *
- * La `list` sigue mandando sobre esto por especificidad (lleva su clase). */
+ * La `list` sigue mandando sobre esto por especificidad (lleva su clase).
+ *
+ * El PIE tenía el mismo agujero y salió con el primer `#footer` de una app (la fila de
+ * totales del Dashboard, 2026-09-14): heredaba los 16 del `<body>` bajo filas de 14. Va en
+ * semibold porque un pie de tabla es una fila de totales. */
 const baseTableCss = () => `
 sc-datatable .p-datatable-thead > tr > th {
     font-size: var(--sc-font-size-body-2);
@@ -183,6 +187,12 @@ sc-datatable .p-datatable-tbody > tr > td {
     font-size: var(--sc-font-size-body-2);
     line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-regular);
+}
+
+sc-datatable .p-datatable-tfoot > tr > td {
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-semibold);
 }
 `;
 
