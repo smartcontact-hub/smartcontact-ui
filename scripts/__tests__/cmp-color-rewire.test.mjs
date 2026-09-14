@@ -34,6 +34,19 @@ test('CARA ROJA · var(--sc-cmp-*) que NO corresponde al slot → problema', () 
   assert.match(probs[0], /mapea a --sc-cmp-toast-info-background/);
 });
 
+// `root` del preset no existe en el Kit: `root.color` es el token `--sc-cmp-<comp>-color`.
+test('CARA VERDE · slot de root cableado a su token del Kit (sin root) → sin problema', () => {
+  const src = PRESET(`{ light: { root: { color: "var(--sc-cmp-togglebutton-color)" } } }`);
+  assert.deepEqual(lintPreset('togglebutton', src, GEN('sc-cmp-togglebutton-color')), []);
+});
+
+test('CARA ROJA · slot de root cableado a OTRO token → problema, y nombra el del Kit', () => {
+  const src = PRESET(`{ light: { root: { color: "var(--sc-cmp-togglebutton-hover-color)" } } }`);
+  const probs = lintPreset('togglebutton', src, GEN('sc-cmp-togglebutton-color', 'sc-cmp-togglebutton-hover-color'));
+  assert.equal(probs.length, 1);
+  assert.match(probs[0], /mapea a --sc-cmp-togglebutton-color\./);
+});
+
 test('CARA VERDE · hex en un slot NO generado (excluido) → se ignora (se deja a mano)', () => {
   const src = PRESET(`{ light: { warn: { color: "#f59e0b" } } }`);
   assert.deepEqual(lintPreset('toast', src, GEN()), []);

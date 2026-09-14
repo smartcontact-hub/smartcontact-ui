@@ -74,6 +74,44 @@
 
 ---
 
+## DD-106 · 2026-09-14 — Grises intermedios: los textos y la opción no elegida suben un paso, y la paleta gris del Kit se queda
+
+**Contexto** · `theme-contrast` cazó en el PR 171 la opción no elegida de SelectButton («Todas · Sin transcribir ·
+Fallidas») a 2,56:1: gris 500 sobre el carril gris 100. Rafa preguntó por Aura: sus ajustes de ToggleButton son los
+mismos que los nuestros (`surface.500` sobre `surface.100`); lo que cambia es la paleta. Se miraron en capturas de
+las mismas pantallas tres versiones: los grises de hoy, una «intermedia» y la paleta slate de Aura
+(`~/Documents/Claude/2026-09 grises-y-primario/`). Y preguntó si un cambio de color en Figma llega de verdad al tema.
+
+**Decisión** · (1) Se queda la paleta `aura/primitive.slate` del Kit (DD-87) y en claro suben un paso el texto
+principal (`slate-800`), el secundario y `subtle` (`slate-700`) y la opción no elegida de ToggleButton (`slate-700`,
+con el ratón encima `slate-900`). Se hace en Figma, con alias a otro paso y sin variables nuevas
+(`figma-pendiente.md` §8). (2) `cmp-color-rewire` empareja un slot `root` del preset con su token del Kit, que no
+tiene ese nivel: `root.color` es `--sc-cmp-togglebutton-color`.
+
+**Razón** · Medido en el navegador: principal 7,38 → 12,16:1, secundario 4,52 → 7,38:1 y opción no elegida
+2,56 → 6,40:1. Con la paleta de Aura: 10,35, 7,58 y **4,34:1**, que no llega al 4,5 del test. En OKLCH, el gris 900
+de Aura tiene tono 266° e intensidad 0,040, casi los del marino de marca (262° y 0,044); el del Kit, 262° y 0,019,
+que es lo que deja destacar al marino (DD-87, razón 1). La migración se probó de punta a punta: con el cambio
+simulado en el export, `tokens:import` escribe los tres textos y los cuatro colores de ToggleButton; los textos
+llegan a la pantalla (celda `rgb(47, 54, 66)`), pero la opción no elegida seguía en `rgb(143, 151, 163)` porque el
+preset tiene `{surface.*}` escrito a mano. Cableado a `var(--sc-cmp-togglebutton-*)`, pinta `rgb(79, 86, 99)` y
+`theme-contrast` da 53 de 53. Ese cable no se podía poner: el guard esperaba un token con `root` en el nombre, que el
+generador nunca escribe (dos tests nuevos, rojos con el guard anterior).
+
+**Descartadas** ·
+- **La paleta slate de Aura** (11 valores en el Kit) → la opción no elegida se queda bajo AA, el gris compite con
+  el marino y reabre DD-87.
+- **Subir solo la opción no elegida** → pasa el test, pero no da el contraste general que Rafa eligió al ver las
+  capturas.
+- **Apuntarla en el test como fallo conocido sin decidir su valor** → deja el defecto sin fecha de cierre.
+
+**Consecuencias** · Hasta que llegue el export, el código sigue con los grises de hoy. Cuando llegue, el preset de
+ToggleButton se cablea, `--sc-text-subtle` sube a mano y se borra una excepción de `theme-contrast` (§8). El guard
+sigue sin ver un hex o una referencia `{…}` en un slot generado: 185 slots de 7 componentes que un cambio de
+Figma no alcanza hoy (`ROADMAP.md`). El color del botón principal queda sin decidir, también en `ROADMAP.md`.
+
+---
+
 ## DD-105 · 2026-09-14 — Un campo que acumula es un multiselect, su casilla de «todos» también quita, y la sección del agente se llama «Recursos»
 
 **Contexto** · Rafa, probando la ficha de agente tras #174: buscó la sección «Repositorios» en la página del
@@ -182,6 +220,8 @@ navegación secundaria y el Kit no lo dibuja; con el hover basta para separar el
 PrimeNG y de comportamiento. `aria-current` no lo pone PrimeNG Angular aunque su guía lo diga (medido); queda
 anotado en el wrapper, sin cambiar. `e2e/baselines/component-structure.json` recoge la clase nueva, y
 `e2e/breadcrumb-affordance.spec.ts` vigila lo que hace (se pone rojo si la regla del tema no llega).
+
+---
 
 ## DD-102 · 2026-09-14 — Una lista nunca corta texto: las columnas cortas miden su dato y, si no cabe, la tabla se desplaza de lado
 
