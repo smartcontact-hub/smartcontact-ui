@@ -263,6 +263,19 @@ Before considering any token/theme/component change done, run:
 - `npm run verify` — runs the full guardrail chain (canonical list: the table in README.md); also includes test:unit, docs:guard, docs:coherence, build, typecheck, lint
 - `npm run preflight:scope -- --run` before a push (gates + AOT builds, ~8 min; the e2e suites run only in CI since DD-60, so run by hand the suite that covers what you touched; it writes the `.preflight-ok` mark the push hook requires; the `--` is required, without it npm swallows the flag and the script only PRINTS the lane), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message. `correction-capture` (UserPromptSubmit) logs every message of Rafa's that sounds like a correction to `correcciones.jsonl` and asks you to name the rule that already covered it, and on a closing message ("cerramos") tells you to invoke `reflect`; `/reflect` reads that log first and routes each correction with `--enrutar <id> <destino> "<motivo>"` — the Stop hook blocks the close while any is unrouted, y también si el mensaje final no lleva el parte de cierre (§Session-Close Protocol, paso 6); and `docs:coherence` escalates any LEARNINGS rule broken in ≥3 sessions that is still prose (CHECK K), caps the agent memory (CHECK N) and demands a red test per `verify` script (CHECK O).
 
+### Pull requests y commits (el repo es público)
+
+Decisión de Rafa, 2026-09-14. La portada de un PR y un mensaje de commit son documentos del
+proyecto, y los lee cualquiera:
+
+- **El resumen llano de arriba va sin destinatario**: `**En resumen:**`, nunca un rótulo con el
+  nombre de Rafa. El parte dirigido a él es el del CHAT al cerrar (§Session-Close Protocol,
+  paso 6); llevarlo al PR fue un desliz que se repitió en 9 PRs (#146-#167).
+- **Sin atribución de la herramienta**: ni «Generated with Claude Code», ni `Co-Authored-By: Claude`,
+  ni el enlace `claude.ai/code/session_…`. Los apaga `attribution` en `.claude/settings.json`
+  (y en el `~/.claude/settings.json` de Rafa), y `bash-guard` deniega un `git commit` o
+  `gh pr create|edit` que los lleve escritos a mano.
+
 ---
 
 ## Token Strategy
