@@ -2065,6 +2065,9 @@
       },
       "d": {
         "label": "Résumé + éditeur"
+      },
+      "e": {
+        "label": "Résumé + panneau latéral"
       }
     },
     "pending": {
@@ -2100,7 +2103,7 @@
     },
     "guide": {
       "title": "Comment comparer",
-      "intro": "La même fiche sous quatre formes. Passez de l’une à l’autre avec la barre du bas et faites la même chose dans chacune. Ce sont des données de démonstration : touchez sans crainte.",
+      "intro": "La même fiche sous cinq formes. Passez de l’une à l’autre avec la barre du bas et faites la même chose dans chacune. Ce sont des données de démonstration : touchez sans crainte.",
       "current": "Vous regardez",
       "try": "Essayez ceci",
       "look": "Observez",
@@ -2169,6 +2172,24 @@
         "step3": "Cliquez sur une autre carte : l’éditeur change de section et le reste de la fiche reste visible.",
         "look": "Si voir toute la fiche en résumé pendant que vous en modifiez une partie suffit pour comprendre ce que cela affecte, sans le bruit de tous les contrôles devant vous.",
         "summary": "Un résumé de tout ; vous modifiez une partie à droite."
+      },
+      "e": {
+        "what": "Les mêmes cartes de résumé, mais sur toute la largeur. Cliquez sur « Éditer » sur l’une d’elles et ses réglages s’ouvrent dans un panneau à droite ; fermez-le pour revoir toute la fiche.",
+        "agent": {
+          "step1": "Cliquez sur « Éditer » sur la carte « Identification » : ses réglages s’ouvrent dans un panneau à droite.",
+          "step2": "Désactivez « Actif » : la carte de gauche l’affiche aussitôt."
+        },
+        "group": {
+          "step1": "Cliquez sur « Éditer » sur la carte « Canaux et stratégie ».",
+          "step2": "Décochez « Téléphone » et fermez le panneau : la carte « Agents assignés », que le panneau cachait, n’a plus le téléphone."
+        },
+        "user": {
+          "step1": "Cliquez sur « Éditer » sur la carte « Accès ».",
+          "step2": "Décochez « Statistiques » : la carte l’affiche aussitôt."
+        },
+        "step3": "Fermez le panneau avec le X ou Échap : vous revoyez toute la fiche.",
+        "look": "Si gagner de la place pour le résumé compense le panneau qui cache une partie de la fiche pendant l’édition.",
+        "summary": "Résumé sur toute la largeur ; les réglages dans un panneau via Éditer."
       }
     },
     "board": {

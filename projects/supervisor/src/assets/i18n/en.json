@@ -2065,6 +2065,9 @@
       },
       "d": {
         "label": "Summary + editor"
+      },
+      "e": {
+        "label": "Summary + side panel"
       }
     },
     "pending": {
@@ -2100,7 +2103,7 @@
     },
     "guide": {
       "title": "How to compare",
-      "intro": "The same record in four forms. Switch between them with the bar at the bottom and try the same thing in each. This is demo data: touch anything.",
+      "intro": "The same record in five forms. Switch between them with the bar at the bottom and try the same thing in each. This is demo data: touch anything.",
       "current": "You are viewing",
       "try": "Try this",
       "look": "Pay attention to",
@@ -2169,6 +2172,24 @@
         "step3": "Click another card: the editor switches section and the rest of the record stays in view.",
         "look": "Whether seeing the whole record summarised while you edit one part is enough to understand what it affects, without the noise of every control in front of you.",
         "summary": "A summary of everything; edit one part on the right."
+      },
+      "e": {
+        "what": "The same summary cards, but full width. Click “Edit” on one and its settings open in a panel on the right; close it to see the whole record again.",
+        "agent": {
+          "step1": "Click “Edit” on the “Identification” card: its settings open in a panel on the right.",
+          "step2": "Turn off “Active”: the card on the left shows it straight away."
+        },
+        "group": {
+          "step1": "Click “Edit” on the “Channels and strategy” card.",
+          "step2": "Untick “Phone” and close the panel: the “Assigned agents” card, which the panel covered, has lost phone."
+        },
+        "user": {
+          "step1": "Click “Edit” on the “Access” card.",
+          "step2": "Untick “Statistics”: the card shows it straight away."
+        },
+        "step3": "Close the panel with the X or Esc: you see the whole record again.",
+        "look": "Whether gaining room for the summary makes up for the panel covering part of the record while you edit.",
+        "summary": "Full-width summary; settings in a panel when you click Edit."
       }
     },
     "board": {

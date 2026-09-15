@@ -12,16 +12,20 @@ import { filter } from 'rxjs';
  *   · `c` — pestañas, y el lateral cuenta lo que has cambiado y a qué más afecta.
  *   · `d` — toda la ficha en una pantalla como tarjetas-resumen; la que pulsas se edita en un
  *           panel a la derecha y las demás siguen a la vista (2026-09-15, tras ver Meridian).
+ *   · `e` — las mismas tarjetas a todo el ancho; «Editar» abre los ajustes de esa tarjeta en un
+ *           panel lateral (drawer) que se cierra al acabar (Rafa, 2026-09-15).
  *
  * La variante se elige con `?variante=a|b|c` en cualquier URL y se recuerda en el navegador,
  * así que se puede pasar un enlace y navegar por la app sin perderla. Sin ese parámetro (los
  * e2e, o quien abra la app sin enlace) no hay barra y la ficha es la de hoy.
  */
-export type FichaVariant = 'a' | 'b' | 'c' | 'd';
+export type FichaVariant = 'a' | 'b' | 'c' | 'd' | 'e';
 
-/** En el orden de la barra: primero las que lo enseñan todo (una página, resumen), luego las
+/** En el orden de la barra: primero las que lo enseñan todo (una página, los dos resúmenes), luego las
  * dos de pestañas juntas (Rafa, 2026-09-15). Las letras solo viven en la URL. */
-export const FICHA_VARIANTS: readonly FichaVariant[] = ['b', 'd', 'a', 'c'];
+export const FICHA_VARIANTS: readonly FichaVariant[] = ['b', 'd', 'e', 'a', 'c'];
+/** Cuántas van antes del separador de la barra (la familia «lo enseña todo»). */
+export const SHOW_ALL_COUNT = 3;
 
 const STORAGE_KEY = 'sc-comparar-fichas';
 const GUIDE_SEEN_KEY = 'sc-comparar-guia-vista';
@@ -56,6 +60,9 @@ export class FichaVariantService {
   readonly comparing = signal(false);
   /** La guía lateral («Cómo comparar»). */
   readonly guideOpen = signal(false);
+  /** El panel lateral de ajustes de la variante `e`. Vive aquí y no en la ficha para que la barra
+   * se aparte de él, y para que guía y panel no se abran nunca a la vez. */
+  readonly editorOpen = signal(false);
 
   /** La primera vez que alguien compara en este navegador, la guía se abre sola: quien llega
    * con el enlace no sabe qué tiene delante ni qué probar. Después, solo si la pide. */

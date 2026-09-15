@@ -36,7 +36,7 @@
   <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'groups.form.edit_breadcrumb' : 'groups.form.create_breadcrumb') | translate }}</h1>
 
   <!-- El molde de Contact Center (`.page__inner--rail`). -->
-  <div class="page__inner page__inner--rail" [class.compare-board]="isBoard()">
+  <div class="page__inner page__inner--rail" [class.compare-board]="hasBoard()" [class.compare-board--cards]="isCards()">
     <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
       @if (mode() === 'edit') {
         <div class="ficha">
@@ -56,7 +56,7 @@
       }
 
       <!-- COMPARAR (variante d): el mosaico de tarjetas hace de índice. -->
-      @if (!isBoard()) {
+      @if (!hasBoard()) {
         <sc-form-section-nav
           [sections]="navSections()"
           [activeId]="activeSection()"
@@ -78,14 +78,14 @@
 
     <!-- COMPARAR (variante d, «Resumen + editor»): toda la ficha en tarjetas-resumen. La que
          pulsas se edita a la derecha (`.page__main`) y las demás siguen aquí, al día. -->
-    @if (isBoard()) {
+    @if (hasBoard()) {
       <div class="board">
         <sc-board-card
           sectionId="group-section-identity"
           icon="badge"
           titleKey="groups.form.section.identity"
-          [selected]="activeSection() === 'group-section-identity'"
-          (pick)="goToSection('group-section-identity')"
+          [selected]="isPicked('group-section-identity')"
+          (pick)="pickCard('group-section-identity')"
         >
           <sc-board-row [label]="'groups.form.fields.name' | translate">{{ orNone(form().name) }}</sc-board-row>
           <sc-board-row [label]="'groups.form.fields.phone' | translate">{{ orNone(form().phone) }}</sc-board-row>
@@ -97,8 +97,8 @@
           sectionId="group-section-channels"
           icon="account_tree"
           titleKey="groups.form.section.distribution"
-          [selected]="activeSection() === 'group-section-channels'"
-          (pick)="goToSection('group-section-channels')"
+          [selected]="isPicked('group-section-channels')"
+          (pick)="pickCard('group-section-channels')"
         >
           <sc-board-row [label]="'groups.form.section.channels' | translate">{{ channelsSummary(form().channels) }}</sc-board-row>
           <sc-board-row [label]="'groups.form.fields.phone_strategy' | translate">{{ orNone(form().strategy) }}</sc-board-row>
@@ -110,8 +110,8 @@
           sectionId="group-section-agents"
           icon="group"
           titleKey="groups.form.section.agents"
-          [selected]="activeSection() === 'group-section-agents'"
-          (pick)="goToSection('group-section-agents')"
+          [selected]="isPicked('group-section-agents')"
+          (pick)="pickCard('group-section-agents')"
         >
           @for (link of form().links; track link.agentId) {
             <sc-board-row [label]="agentName(link.agentId)">{{ linkSummary(link) }}</sc-board-row>
@@ -122,184 +122,19 @@
       </div>
     }
 
-    <div class="page__main">
-      @if (showSection('group-section-identity')) {
-        <sc-section-card
-          anchorId="group-section-identity"
-          surface="card"
-          [icon]="iconOf('group-section-identity')"
-          titleKey="groups.form.section.identity"
-        >
-          <section class="sub-section">
-            <!-- El avatar es generado (no editable) y sigue al nombre. -->
-            <div class="form-identity">
-              <sc-illustrated-avatar
-                [name]="(initial()?.name ?? form().name) || 'Grupo'"
-                pool="abstract"
-                [size]="36"
-              />
-              <div class="field form-identity__name">
-                <label class="field__label sc-text-caption-semibold" for="group-name">
-                  {{ 'groups.form.fields.name' | translate }}
-                  <span class="field__required" aria-hidden="true">*</span>
-                </label>
-                <sc-inputtext
-                  inputId="group-name"
-                  [required]="true"
-                  [value]="form().name"
-                  (valueChange)="onNameRename($event)"
-                />
-              </div>
-            </div>
-
-            <div class="grid grid--2">
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-phone">
-                  {{ 'groups.form.fields.phone' | translate }}
-                </label>
-                <sc-inputtext
-                  inputId="group-phone"
-                  type="tel"
-                  autocomplete="tel"
-                  [value]="form().phone"
-                  (valueChange)="onPhoneValueChange($event)"
-                />
-              </div>
-
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-priority">
-                  {{ 'groups.form.fields.priority' | translate }}
-                </label>
-                <sc-select
-                  inputId="group-priority"
-                  [options]="priorities"
-                  [value]="form().priority"
-                  (valueChange)="onPriorityValueChange($event)"
-                >
-                  <ng-template #item let-p>
-                    {{ priorityKeys[p] | translate }}
-                  </ng-template>
-                  <ng-template #selectedItem let-p>
-                    {{ priorityKeys[p] | translate }}
-                  </ng-template>
-                </sc-select>
-              </div>
-            </div>
-          </section>
-
-          <sc-divider />
-
-          <section class="sub-section">
-            <div class="switch-field switch-field--top">
-              <sc-toggleswitch
-                [checked]="form().typification"
-                [ariaLabel]="'groups.form.fields.typification' | translate"
-                (checkedChange)="onTypificationChange($event)"
-              />
-              <div class="switch-field__copy">
-                <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.fields.typification' | translate }}</span>
-                <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.fields.typification_hint' | translate }}</p>
-              </div>
-            </div>
-          </section>
-        </sc-section-card>
-      }
-
-      @if (showSection('group-section-channels')) {
-        <!-- Canales y estrategia en UNA sección desde el 2026-09-14. Eran dos pestañas,
-             y la primera era una tarjeta entera para tres casillas; además la estrategia
-             DEPENDE de los canales (la de chat solo existe con chat, la capacidad con
-             teléfono), así que al marcar un canal su ajuste aparece justo debajo en vez
-             de en otra pestaña. -->
-        <sc-section-card
-          anchorId="group-section-channels"
-          surface="card"
-          [icon]="iconOf('group-section-channels')"
-          titleKey="groups.form.section.distribution"
-        >
-          <!-- Que falte marcar un canal no es contenido equivocado: lo señalan la bola
-               roja del índice (`sectionsWithErrors`) y el motivo del botón. -->
-          <section class="sub-section" [attr.aria-label]="'groups.form.section.channels' | translate">
-            <div class="checkbox-grid checkbox-grid--services">
-              @for (channel of channels; track channel) {
-                <sc-checkbox class="checkbox-row" [state]="hasChannel(channel) ? 'all' : 'none'" (cycle)="toggleChannel(channel)">{{ channelKeys[channel] | translate }}</sc-checkbox>
-              }
-            </div>
-          </section>
-
-          @if (form().channels.size > 0) {
-            <sc-divider />
-
-            <section class="sub-section" [attr.aria-label]="'groups.form.section.strategy' | translate">
-              <div class="grid grid--2">
-                @if (hasPhone()) {
-                  <div class="field">
-                    <label class="field__label sc-text-caption-semibold" for="group-strategy">
-                      {{ 'groups.form.fields.phone_strategy' | translate }}
-                    </label>
-                    <sc-select
-                      inputId="group-strategy"
-                      [options]="phoneStrategies"
-                      [value]="form().strategy"
-                      (valueChange)="onStrategyValueChange($event)"
-                    />
-                  </div>
-                }
-
-                @if (hasChat()) {
-                  <div class="field">
-                    <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">
-                      {{ 'groups.form.fields.chat_strategy' | translate }}
-                    </label>
-                    <sc-select
-                      inputId="group-chat-strategy"
-                      [options]="chatStrategies"
-                      [value]="form().chatStrategy"
-                      (valueChange)="onChatStrategyValueChange($event)"
-                    />
-                  </div>
-                }
-
-                @if (hasPhone()) {
-                  <div class="field">
-                    <label class="field__label sc-text-caption-semibold" for="group-capacity">
-                      {{ 'groups.form.fields.capacity' | translate }}
-                      <span class="field__hint">({{ 'common.optional' | translate }})</span>
-                    </label>
-                    <sc-inputnumber
-                      inputId="group-capacity"
-                      [min]="0"
-                      [value]="form().capacityValue"
-                      (valueChange)="onCapacityValueChange($event)"
-                      [helperText]="'groups.form.fields.capacity_hint' | translate"
-                    />
-                  </div>
-                }
-              </div>
-            </section>
-          }
-        </sc-section-card>
-      }
-
-      @if (showSection('group-section-agents')) {
-        <sc-section-card
-          anchorId="group-section-agents"
-          surface="card"
-          [icon]="iconOf('group-section-agents')"
-          titleKey="groups.form.section.agents"
-        >
-          <section class="sub-section">
-            <sc-agent-channel-table
-              [groupChannels]="formGroupChannels()"
-              [links]="form().links"
-              [availableAgents]="availableAgents()"
-              [groupId]="editingId() ?? 0"
-              (linksChange)="onLinksChange($event)"
-            />
-          </section>
-        </sc-section-card>
-      }
-    </div>
+    @if (isCards()) {
+      <!-- COMPARAR (variante e): la sección se edita en un panel lateral que abre «Editar». No es
+           modal: las tarjetas de la izquierda siguen a la vista y al día mientras editas. -->
+      <sc-drawer position="right" width="44rem" [modal]="false" [visible]="variants.editorOpen()" (visibleChange)="variants.editorOpen.set($event)">
+        <div class="compare-drawer-body">
+          <ng-container *ngTemplateOutlet="sections" />
+        </div>
+      </sc-drawer>
+    } @else {
+      <div class="page__main">
+        <ng-container *ngTemplateOutlet="sections" />
+      </div>
+    }
   </div>
 
   <!-- COMPARAR: la barra para cambiar de variante (solo mientras se compara). -->
@@ -340,3 +175,184 @@
     </div>
   </sc-dialog>
 }
+
+<!-- Las secciones de la ficha, una sola vez: se pintan en `.page__main` o, en la variante e,
+     dentro del panel lateral. -->
+<ng-template #sections>
+  @if (showSection('group-section-identity')) {
+    <sc-section-card
+      anchorId="group-section-identity"
+      surface="card"
+      [icon]="iconOf('group-section-identity')"
+      titleKey="groups.form.section.identity"
+    >
+      <section class="sub-section">
+        <!-- El avatar es generado (no editable) y sigue al nombre. -->
+        <div class="form-identity">
+          <sc-illustrated-avatar
+            [name]="(initial()?.name ?? form().name) || 'Grupo'"
+            pool="abstract"
+            [size]="36"
+          />
+          <div class="field form-identity__name">
+            <label class="field__label sc-text-caption-semibold" for="group-name">
+              {{ 'groups.form.fields.name' | translate }}
+              <span class="field__required" aria-hidden="true">*</span>
+            </label>
+            <sc-inputtext
+              inputId="group-name"
+              [required]="true"
+              [value]="form().name"
+              (valueChange)="onNameRename($event)"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid--2">
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-phone">
+              {{ 'groups.form.fields.phone' | translate }}
+            </label>
+            <sc-inputtext
+              inputId="group-phone"
+              type="tel"
+              autocomplete="tel"
+              [value]="form().phone"
+              (valueChange)="onPhoneValueChange($event)"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-priority">
+              {{ 'groups.form.fields.priority' | translate }}
+            </label>
+            <sc-select
+              inputId="group-priority"
+              [options]="priorities"
+              [value]="form().priority"
+              (valueChange)="onPriorityValueChange($event)"
+            >
+              <ng-template #item let-p>
+                {{ priorityKeys[p] | translate }}
+              </ng-template>
+              <ng-template #selectedItem let-p>
+                {{ priorityKeys[p] | translate }}
+              </ng-template>
+            </sc-select>
+          </div>
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section">
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch
+            [checked]="form().typification"
+            [ariaLabel]="'groups.form.fields.typification' | translate"
+            (checkedChange)="onTypificationChange($event)"
+          />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.fields.typification' | translate }}</span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.fields.typification_hint' | translate }}</p>
+          </div>
+        </div>
+      </section>
+    </sc-section-card>
+  }
+
+  @if (showSection('group-section-channels')) {
+    <!-- Canales y estrategia en UNA sección desde el 2026-09-14. Eran dos pestañas,
+         y la primera era una tarjeta entera para tres casillas; además la estrategia
+         DEPENDE de los canales (la de chat solo existe con chat, la capacidad con
+         teléfono), así que al marcar un canal su ajuste aparece justo debajo en vez
+         de en otra pestaña. -->
+    <sc-section-card
+      anchorId="group-section-channels"
+      surface="card"
+      [icon]="iconOf('group-section-channels')"
+      titleKey="groups.form.section.distribution"
+    >
+      <!-- Que falte marcar un canal no es contenido equivocado: lo señalan la bola
+           roja del índice (`sectionsWithErrors`) y el motivo del botón. -->
+      <section class="sub-section" [attr.aria-label]="'groups.form.section.channels' | translate">
+        <div class="checkbox-grid checkbox-grid--services">
+          @for (channel of channels; track channel) {
+            <sc-checkbox class="checkbox-row" [state]="hasChannel(channel) ? 'all' : 'none'" (cycle)="toggleChannel(channel)">{{ channelKeys[channel] | translate }}</sc-checkbox>
+          }
+        </div>
+      </section>
+
+      @if (form().channels.size > 0) {
+        <sc-divider />
+
+        <section class="sub-section" [attr.aria-label]="'groups.form.section.strategy' | translate">
+          <div class="grid grid--2">
+            @if (hasPhone()) {
+              <div class="field">
+                <label class="field__label sc-text-caption-semibold" for="group-strategy">
+                  {{ 'groups.form.fields.phone_strategy' | translate }}
+                </label>
+                <sc-select
+                  inputId="group-strategy"
+                  [options]="phoneStrategies"
+                  [value]="form().strategy"
+                  (valueChange)="onStrategyValueChange($event)"
+                />
+              </div>
+            }
+
+            @if (hasChat()) {
+              <div class="field">
+                <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">
+                  {{ 'groups.form.fields.chat_strategy' | translate }}
+                </label>
+                <sc-select
+                  inputId="group-chat-strategy"
+                  [options]="chatStrategies"
+                  [value]="form().chatStrategy"
+                  (valueChange)="onChatStrategyValueChange($event)"
+                />
+              </div>
+            }
+
+            @if (hasPhone()) {
+              <div class="field">
+                <label class="field__label sc-text-caption-semibold" for="group-capacity">
+                  {{ 'groups.form.fields.capacity' | translate }}
+                  <span class="field__hint">({{ 'common.optional' | translate }})</span>
+                </label>
+                <sc-inputnumber
+                  inputId="group-capacity"
+                  [min]="0"
+                  [value]="form().capacityValue"
+                  (valueChange)="onCapacityValueChange($event)"
+                  [helperText]="'groups.form.fields.capacity_hint' | translate"
+                />
+              </div>
+            }
+          </div>
+        </section>
+      }
+    </sc-section-card>
+  }
+
+  @if (showSection('group-section-agents')) {
+    <sc-section-card
+      anchorId="group-section-agents"
+      surface="card"
+      [icon]="iconOf('group-section-agents')"
+      titleKey="groups.form.section.agents"
+    >
+      <section class="sub-section">
+        <sc-agent-channel-table
+          [groupChannels]="formGroupChannels()"
+          [links]="form().links"
+          [availableAgents]="availableAgents()"
+          [groupId]="editingId() ?? 0"
+          (linksChange)="onLinksChange($event)"
+        />
+      </section>
+    </sc-section-card>
+  }
+</ng-template>

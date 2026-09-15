@@ -1,7 +1,10 @@
+/* Alto FIJO, el que le da la rejilla, y scroll por dentro: añadir un grupo o una sección no
+ * empuja a las demás tarjetas (Rafa, 2026-09-15: «el layout shift según voy añadiendo cosas es
+ * confuso»). */
 :host {
   display: block;
-  break-inside: avoid;
-  margin-bottom: var(--sc-spacing-1);
+  height: 100%;
+  min-height: 0;
 }
 
 /* La misma superficie que la tarjeta de sección del DS (`sc-section-card surface="card"`), para
@@ -9,6 +12,8 @@
 .board-card {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
   background: var(--sc-bg-surface);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-400);
@@ -32,6 +37,7 @@
 
 .board-card__head {
   display: flex;
+  flex: none;
   align-items: center;
   gap: var(--sc-spacing-0-5);
   width: 100%;
@@ -69,7 +75,11 @@
   color: var(--sc-text-primary);
 }
 
+/* Lo que no cabe en el alto de la tarjeta se desplaza aquí dentro, no fuera. */
 .board-card__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-375);

@@ -49,6 +49,8 @@ import {
   UserType,
 } from '../data/users-data';
 import { UsersStore } from '../state/users.store';
+import { NgTemplateOutlet } from '@angular/common';
+import { ScDrawerComponent as DrawerComponent } from '@smartcontact-hub/components';
 import { BoardCardComponent } from '@features/admin/comparar/board-card.component';
 import { BoardRowComponent } from '@features/admin/comparar/board-row.component';
 import { FichaVariantBarComponent } from '@features/admin/comparar/ficha-variant-bar.component';
@@ -59,6 +61,7 @@ import {
   type PendingSection,
 } from '@features/admin/comparar/pending-changes-panel.component';
 import { createSectionScrollSpy } from '@features/admin/comparar/section-scroll-spy';
+import { injectLangChange } from '@core/utils/lang-change';
 
 interface FormState {
   name: string;
@@ -77,6 +80,8 @@ interface FormState {
   selector: 'sc-user-form-page',
   imports: [
     BoardCardComponent,
+    DrawerComponent,
+    NgTemplateOutlet,
     BoardRowComponent,
     CheckboxComponent,
     ButtonComponent,
@@ -247,6 +252,22 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   /* ── Variante `d`: el resumen de cada sección. Solo LEE el estado actual del formulario. ── */
   protected readonly isBoard = computed(() => this.variants.variant() === 'd');
+  /** Variante `e`: las mismas tarjetas a todo el ancho, y la sección en un panel lateral. */
+  protected readonly isCards = computed(() => this.variants.variant() === 'e');
+  protected readonly hasBoard = computed(() => this.isBoard() || this.isCards());
+
+  /** Pulsar una tarjeta: en `d` cambia la sección del editor; en `e` además abre el panel, y
+   * cierra la guía para que no se monten dos paneles a la derecha. */
+  protected pickCard(id: string): void {
+    this.activeSection.set(id);
+    if (!this.isCards()) return;
+    this.variants.guideOpen.set(false);
+    this.variants.editorOpen.set(true);
+  }
+
+  protected isPicked(id: string): boolean {
+    return this.activeSection() === id && (this.isBoard() || this.variants.editorOpen());
+  }
 
   protected yesNo(value: boolean): string {
     return value ? 'common.yes' : 'common.no';
@@ -277,7 +298,9 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /** Variante `c`: lo cambiado sin guardar, por sección, y lo que mueve fuera de ella. */
+  private readonly lang = injectLangChange();
   protected readonly pendingChanges = computed<readonly PendingSection[]>(() => {
+    this.lang();
     if (!this.dirtyState.dirty()) return [];
     const before = this.dirtyState.pristineValue();
     const now = this.form();

@@ -79,6 +79,8 @@ import {
   AgentGroupAssignmentRef,
   GroupAssignmentTableComponent,
 } from '../components/group-assignment-table/group-assignment-table.component';
+import { NgTemplateOutlet } from '@angular/common';
+import { ScDrawerComponent as DrawerComponent } from '@smartcontact-hub/components';
 import { BoardCardComponent } from '@features/admin/comparar/board-card.component';
 import { BoardRowComponent } from '@features/admin/comparar/board-row.component';
 import { FichaVariantBarComponent } from '@features/admin/comparar/ficha-variant-bar.component';
@@ -149,6 +151,8 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
   selector: 'sc-agent-form-page',
   imports: [
     BoardCardComponent,
+    DrawerComponent,
+    NgTemplateOutlet,
     BoardRowComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
@@ -404,6 +408,22 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   /* ── Variante `d`: el resumen de cada sección. Solo LEE el estado actual del formulario. ── */
   protected readonly isBoard = computed(() => this.variants.variant() === 'd');
+  /** Variante `e`: las mismas tarjetas a todo el ancho, y la sección en un panel lateral. */
+  protected readonly isCards = computed(() => this.variants.variant() === 'e');
+  protected readonly hasBoard = computed(() => this.isBoard() || this.isCards());
+
+  /** Pulsar una tarjeta: en `d` cambia la sección del editor; en `e` además abre el panel, y
+   * cierra la guía para que no se monten dos paneles a la derecha. */
+  protected pickCard(id: string): void {
+    this.activeSection.set(id);
+    if (!this.isCards()) return;
+    this.variants.guideOpen.set(false);
+    this.variants.editorOpen.set(true);
+  }
+
+  protected isPicked(id: string): boolean {
+    return this.activeSection() === id && (this.isBoard() || this.variants.editorOpen());
+  }
 
   protected yesNo(value: boolean): string {
     return value ? 'common.yes' : 'common.no';
