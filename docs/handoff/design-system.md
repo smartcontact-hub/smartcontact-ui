@@ -173,8 +173,9 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 ## ✅ 2026-09-15 · Conversaciones hace scroll dentro de la tabla, como el resto de listas (DD-95)
 
-**Sello:** rama `arebury/fix-conversaciones-tabla-contenida`, sobre `568b14a`. Rafa preguntó por qué la tabla no iba
-contenida como las demás; visto en local junto a Agentes: «me gusta».
+**Sello:** rama `arebury/fix-conversaciones-tabla-contenida`, sobre `bacabca` (#191). Rafa preguntó por qué la tabla no iba
+contenida como las demás; visto en local junto a Agentes: «me gusta». Los tramos «La barra de Conversaciones se
+simplifica» y «`sc-panel` con acciones» (DD-108) viven en `archive/handoff-ds-2026-09-14-barra-conversaciones` y `-sc-panel`.
 
 **Lo que cambia.** `.page--tabla` y `<sc-datatable scrollable scrollHeight="flex" virtualScroll>` en Conversaciones:
 título, vistas, filtros y cabecera quietos; la tarjeta vuelve a tener borde (se quita el «flush» de S59) y deja
@@ -213,38 +214,6 @@ WebGL de Claude Design (`sc-login-art`), con la imagen fija debajo. Cuenta demo 
   que traía la propuesta de Claude Design no se aplicaba. Esos estilos van en el propio componente.
 - ⚠️ **Día de muchas PRs, segunda parte**: seis rebases, todos por `DECISIONS.md` (el número del DD) e inventarios. Un
   script que toma la versión de `origin/main`, pone tu DD en `max+1` y regenera evita resolverlos a mano.
-
-## ✅ 2026-09-14 · `sc-panel` con acciones y cabecera propias, `fill` y aviso (DD-108, DD-109)
-
-**Sello:** rama `arebury/sc-panel-icons-fill`, HEAD `c55f857` (#183) más este cambio. DD-108 y DD-109. Rafa: «adelante» y la variante de aviso. El tramo «Las fichas de agente, grupo
-y usuario riman con Contact Center» vive en el tag `archive/handoff-ds-2026-09-14-fichas-contact-center`, y «Los iconos pintan el
-tamaño que prometen» (DD-104), en `archive/handoff-ds-2026-09-14-iconos-calibrados`.
-
-**Lo que cambia.** `<ng-template #icons>` en `sc-panel` (plantilla `icons` de Panel; Figma `Custom Icon=True`) y
-`[fill]` para llenar el hueco, estilado por clases de `pt`; `#header let-titleId` y `severity` warn/danger (Figma §11).
-Lo pidió la tarjeta de widget del Dashboard.
-
-- ⚠️ **Para estilar un interno de PrimeNG sin `.p-*`, ponle clase propia por `pt`**: `pBind` la mezcla con la suya y
-  el acoplamiento no crece.
-
-## ✅ 2026-09-14 · La barra de Conversaciones se simplifica y todos los vacíos se ven igual
-
-**Sello:** rama `arebury/conversaciones-filtros` (#171), sobre `2b9e0e7` (#181). Rafa, visto en local y en la
-previsualización: «ok adelante». El tramo «La miga deja claro qué se puede pulsar» (DD-103) vive en el tag
-`archive/handoff-ds-2026-09-14-miga`.
-
-**Lo que cambia.** Filtros de Conversaciones en una fila (buscador, fecha como rango con atajos, vistas «Todas · Sin
-transcribir · Fallidas», etiquetas de lo filtrado); fecha y hora en una columna y tooltip de estado. DS: `sc-datepicker`
-con `selectionMode="range"` y `presets`, `filterPlaceholder`, `sc-search` con «/», `sc-empty-state` con `sc-button`,
-estilos de texto y `params`. El vacío de búsqueda es uno, dentro de la tabla (`sc-list-page` y Conversaciones).
-PrimeNG habla el idioma de la app. `SelectButton` a AA (customs-catalog §1.10). Figma: `figma-pendiente.md` §10.
-
-- ⚠️ **«Sin transcribir» en el backend real**: `getTranscriptions` da 503 por encima de ~416-663 resultados y solo
-  marca tres meses; la vista podría ofrecer volver a pagar. Hablarlo con los devs antes de llevarla a la app real.
-- ⚠️ **Con varias cajas en preflight, `e2e:visual` se pisa en :4280 o tumba `sc-datatable`** (captura inestable;
-  sola pasa): sirve un sc-docs de TU árbol en otro puerto y lanza con `SC_DOCS_URL` + `SC_ALLOW_PARALLEL_SUITES=1`.
-- ⚠️ **Día de muchas PRs**: cada rebase renumeró la sección de `figma-pendiente.md` (§5 → §10) y regeneró
-  capturas que otra PR también tocaba (#176). Mira `git log HEAD..origin/main` justo antes de cada preflight.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -320,6 +289,14 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Para estilar un interno de PrimeNG sin `.p-*`, ponle clase propia por `pt`**: `pBind` la mezcla con la suya y el
+  acoplamiento no crece (DD-108).
+- 🪤 **«Sin transcribir» en el backend real**: `getTranscriptions` da 503 por encima de ~416-663 resultados y solo marca
+  tres meses. Hablarlo con los devs antes de llevar la vista a la app real.
+- 🪤 **Con varias cajas en preflight, `e2e:visual` se pisa en :4280** (o tumba `sc-datatable`): sirve un sc-docs de TU
+  árbol en otro puerto y lanza con `SC_DOCS_URL` + `SC_ALLOW_PARALLEL_SUITES=1`.
+- 🪤 **Día de muchas PRs**: cada rebase renumera DD, secciones de `figma-pendiente.md` y regenera capturas ajenas (#171,
+  #176). Mira `git log HEAD..origin/main` justo antes de cada preflight.
 - 🪤 **Un valor del Kit pasado a rem pierde la forma del shorthand**: `1` dibujado abajo en Figma es `0 0 1px 0` en
   Aura, y escrito `0.071429rem` pinta cuatro lados. Solo se ve el día que alguien usa el componente (DD-107).
 - 🪤 **Una caja `x-2` puede ser gemela de otra que trabaja la misma rama** (el PR 171 lo arreglaba ya `coelacanth`, y se
