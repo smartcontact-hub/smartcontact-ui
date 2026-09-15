@@ -2046,5 +2046,53 @@
       "sent_title": "Consultez vos emails",
       "sent_lead": "Si un compte existe pour {{email}}, un lien arrivera dans quelques minutes. Pensez à vérifier vos spams."
     }
+  },
+  "compare": {
+    "bar": {
+      "label": "Comparer la fiche"
+    },
+    "variant": {
+      "a": {
+        "label": "A · Onglets",
+        "hint": "Comme aujourd’hui : l’index change de section et vous en voyez une à la fois."
+      },
+      "b": {
+        "label": "B · Une page",
+        "hint": "Toutes les sections visibles. L’index vous y emmène en défilant et indique où vous êtes."
+      },
+      "c": {
+        "label": "C · Onglets avec modifications",
+        "hint": "Une section à la fois. Sur le côté, ce que vous avez modifié et ce que cela affecte ailleurs."
+      }
+    },
+    "pending": {
+      "title": "Modifications non enregistrées",
+      "empty": "Vos modifications apparaîtront ici, avec ce qu’elles affectent hors de leur section."
+    },
+    "fields": {
+      "photo": "Photo",
+      "templates": "Modèles",
+      "added": "Ajoute {{items}}",
+      "removed": "Retire {{items}}"
+    },
+    "effects": {
+      "no_channels": "aucun canal",
+      "agent_inactive": "Ne reçoit plus d’appels ni de chats dans ses {{count}} groupes",
+      "agent_inactive_one": "Ne reçoit plus d’appels ni de chats dans son groupe",
+      "agent_joins": "Rejoint {{group}} avec {{channels}}",
+      "agent_leaves": "Quitte {{group}}",
+      "agent_channels": "Dans {{group}}, traite désormais {{channels}}",
+      "agent_paused": "Dans {{group}}, ne reçoit plus de contacts",
+      "agent_resumed": "Dans {{group}}, reçoit à nouveau des contacts",
+      "group_channel_removed": "{{count}} agents ne traitent plus {{channel}} dans ce groupe",
+      "group_channel_removed_one": "1 agent ne traite plus {{channel}} dans ce groupe",
+      "group_agent_joins": "{{agent}} rejoint le groupe avec {{channels}}",
+      "group_agent_leaves": "{{agent}} quitte le groupe",
+      "group_agent_channels": "{{agent}} traite désormais {{channels}}",
+      "group_agent_paused": "{{agent}} ne reçoit plus de contacts ici",
+      "group_agent_resumed": "{{agent}} reçoit à nouveau des contacts ici",
+      "user_inactive": "Ne pourra plus se connecter ni opérer",
+      "user_section_children": "Sans {{section}}, ne verra pas non plus {{children}}"
+    }
   }
 }

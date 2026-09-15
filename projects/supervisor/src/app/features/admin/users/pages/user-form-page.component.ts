@@ -49,6 +49,14 @@ import {
   UserType,
 } from '../data/users-data';
 import { UsersStore } from '../state/users.store';
+import { FichaVariantBarComponent } from '@features/admin/comparar/ficha-variant-bar.component';
+import { FichaVariantService } from '@features/admin/comparar/ficha-variant.service';
+import {
+  changed,
+  PendingChangesPanelComponent,
+  type PendingSection,
+} from '@features/admin/comparar/pending-changes-panel.component';
+import { createSectionScrollSpy } from '@features/admin/comparar/section-scroll-spy';
 
 interface FormState {
   name: string;
@@ -70,7 +78,9 @@ interface FormState {
     ButtonComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
+    FichaVariantBarComponent,
     FormSectionNavComponent,
+    PendingChangesPanelComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
     PhotoUploadComponent,
@@ -201,7 +211,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
     // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
     // ficha del panel ya da su contexto siempre visible.
-    if (this.mode() === 'edit') {
+    // COMPARAR: en una sola página (`b`) el índice sigue el orden de la página.
+    if (this.mode() === 'edit' && this.variants.variant() !== 'b') {
       return [access, services, identity];
     }
     return [identity, access, services];
@@ -209,9 +220,91 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly activeSection = signal<string>('user-section-identity');
 
-  protected readonly activeIcon = computed(() => {
-    const id = this.activeSection();
+  /* ── COMPARAR (rama `comparar/fichas`) ──────────────────────────────────────────────── */
+  protected readonly variants = inject(FichaVariantService);
+  private readonly scrollSpy = createSectionScrollSpy({
+    enabled: () => this.variants.variant() === 'b',
+    ids: () => this.navSections().map((s) => s.id),
+    active: this.activeSection,
+  });
+
+  protected iconOf(id: string): string | null {
     return this.navSections().find((s) => s.id === id)?.icon ?? null;
+  }
+
+  /** En `b` se ven todas; en `a` y `c`, la del índice. */
+  protected showSection(id: string): boolean {
+    return this.variants.variant() === 'b' || this.activeSection() === id;
+  }
+
+  protected goToSection(id: string): void {
+    this.scrollSpy.jump(id);
+  }
+
+  /** Variante `c`: lo cambiado sin guardar, por sección, y lo que mueve fuera de ella. */
+  protected readonly pendingChanges = computed<readonly PendingSection[]>(() => {
+    if (!this.dirtyState.dirty()) return [];
+    const before = this.dirtyState.pristineValue();
+    const now = this.form();
+    const t = (key: string, params?: Record<string, unknown>): string => this.translate.instant(key, params);
+    const fieldsOf = (pairs: readonly (readonly [unknown, unknown, string])[]): string[] =>
+      pairs.filter(([a, b]) => changed(a, b)).map(([, , key]) => t(key));
+
+    const identityEffects: string[] = [];
+    // La consecuencia que ya cuenta la ayuda de «Activo».
+    if (before.status === 'active' && now.status === 'inactive') {
+      identityEffects.push(t('compare.effects.user_inactive'));
+    }
+
+    const sectionFields = SECTION_DEFS.filter((d) => before.sections[d.key] !== now.sections[d.key]).map((d) =>
+      t(now.sections[d.key] ? 'compare.fields.added' : 'compare.fields.removed', { items: t(d.labelKey) }),
+    );
+    // Apagar una sección madre deja a sus hijas grises aunque sigan marcadas.
+    const accessEffects = SECTION_DEFS.filter((d) => !d.parent && before.sections[d.key] && !now.sections[d.key]).flatMap((d) => {
+      const children = SECTION_DEFS.filter((c) => c.parent === d.key && now.sections[c.key]).map((c) => t(c.labelKey));
+      return children.length > 0 ? [t('compare.effects.user_section_children', { section: t(d.labelKey), children: children.join(', ') })] : [];
+    });
+    const permissionFields = PERMISSION_DEFS.filter((d) => before.permissions[d.key] !== now.permissions[d.key]).map((d) =>
+      t(now.permissions[d.key] ? 'compare.fields.added' : 'compare.fields.removed', { items: t(d.labelKey) }),
+    );
+    const added = [...now.services].filter((x) => !before.services.has(x));
+    const removed = [...before.services].filter((x) => !now.services.has(x));
+    const serviceFields = [
+      ...(added.length > 0 ? [t('compare.fields.added', { items: added.join(', ') })] : []),
+      ...(removed.length > 0 ? [t('compare.fields.removed', { items: removed.join(', ') })] : []),
+    ];
+
+    const sections: PendingSection[] = [
+      {
+        sectionId: 'user-section-identity',
+        icon: 'badge',
+        labelKey: 'users.form.section.identity',
+        fields: fieldsOf([
+          [before.name, now.name, 'users.form.fields.name'],
+          [before.photo, now.photo, 'compare.fields.photo'],
+          [before.email, now.email, 'users.form.fields.email'],
+          [before.identifier, now.identifier, 'users.form.fields.identifier'],
+          [before.type, now.type, 'users.form.fields.type'],
+          [before.status, now.status, 'users.form.fields.active'],
+        ]),
+        effects: identityEffects,
+      },
+      {
+        sectionId: 'user-section-access',
+        icon: 'verified_user',
+        labelKey: 'users.form.section.access',
+        fields: [...sectionFields, ...permissionFields],
+        effects: accessEffects,
+      },
+      {
+        sectionId: 'user-section-services',
+        icon: 'hub',
+        labelKey: 'users.form.section.services',
+        fields: serviceFields,
+        effects: [],
+      },
+    ];
+    return sections.filter((s) => s.fields.length > 0 || s.effects.length > 0);
   });
 
   protected readonly mode = computed<'edit' | 'duplicate' | 'create'>(() => {
@@ -282,7 +375,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.dirtyState.markPristine();
       // En edición aterriza en Secciones (1ª del orden de edición): identidad
       // va al fondo porque casi no se toca tras crear; la ficha la resume (S60).
-      this.activeSection.set('user-section-access');
+      // COMPARAR: en una sola página se empieza por arriba.
+      this.activeSection.set(this.variants.variant() === 'b' ? 'user-section-identity' : 'user-section-access');
       this.releaseLock = this.crossTab.acquire('user', user.id, () =>
         this.conflictWarning.set(true),
       );

@@ -2046,5 +2046,53 @@
       "sent_title": "Revisa tu correo",
       "sent_lead": "Si hay una cuenta con {{email}}, te llegará un enlace en unos minutos. Mira también en la carpeta de spam."
     }
+  },
+  "compare": {
+    "bar": {
+      "label": "Comparar ficha"
+    },
+    "variant": {
+      "a": {
+        "label": "A · Pestañas",
+        "hint": "Como hoy: el índice cambia de sección y ves una a la vez."
+      },
+      "b": {
+        "label": "B · Una página",
+        "hint": "Todas las secciones a la vista. El índice te lleva con scroll y marca dónde estás."
+      },
+      "c": {
+        "label": "C · Pestañas con cambios",
+        "hint": "Una sección a la vez. En el lateral, lo que has cambiado y a qué más afecta."
+      }
+    },
+    "pending": {
+      "title": "Cambios sin guardar",
+      "empty": "Lo que cambies aparecerá aquí, con lo que afecta fuera de su sección."
+    },
+    "fields": {
+      "photo": "Foto",
+      "templates": "Plantillas",
+      "added": "Añade {{items}}",
+      "removed": "Quita {{items}}"
+    },
+    "effects": {
+      "no_channels": "ningún canal",
+      "agent_inactive": "Deja de recibir llamadas y chats en sus {{count}} grupos",
+      "agent_inactive_one": "Deja de recibir llamadas y chats en su grupo",
+      "agent_joins": "Entra en {{group}} con {{channels}}",
+      "agent_leaves": "Sale de {{group}}",
+      "agent_channels": "En {{group}} pasa a atender {{channels}}",
+      "agent_paused": "En {{group}} deja de recibir contactos",
+      "agent_resumed": "En {{group}} vuelve a recibir contactos",
+      "group_channel_removed": "{{count}} agentes dejan de atender {{channel}} en este grupo",
+      "group_channel_removed_one": "1 agente deja de atender {{channel}} en este grupo",
+      "group_agent_joins": "{{agent}} entra con {{channels}}",
+      "group_agent_leaves": "{{agent}} sale del grupo",
+      "group_agent_channels": "{{agent}} pasa a atender {{channels}}",
+      "group_agent_paused": "{{agent}} deja de recibir contactos aquí",
+      "group_agent_resumed": "{{agent}} vuelve a recibir contactos aquí",
+      "user_inactive": "No podrá iniciar sesión ni operar",
+      "user_section_children": "Sin {{section}}, tampoco verá {{children}}"
+    }
   }
 }
