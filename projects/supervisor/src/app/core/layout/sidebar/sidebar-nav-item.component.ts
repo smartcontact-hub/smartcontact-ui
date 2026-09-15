@@ -1,6 +1,7 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { NAV_ICONS } from '../../icons/nav-icons';
 import type { NavItem } from './nav-data';
@@ -22,13 +23,15 @@ import type { NavItem } from './nav-data';
  */
 @Component({
   selector: 'sc-sidebar-nav-item',
-  imports: [IconComponent, TranslateModule],
+  imports: [IconComponent, TooltipModule, TranslateModule],
   templateUrl: './sidebar-nav-item.component.html',
   styleUrl: './sidebar-nav-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     /* The sidebar paints the open first-level category as a block when collapsed. */
-    '[class.nav-group--open]': 'depth() === 0 && hasChildren() && effectivelyExpanded()',
+    '[class.nav-group--open]': 'depth() === 0 && hasChildren() && effectivelyExpanded() && !rail()',
+    /* Slim: el padre de primer nivel cuyo panel flotante está abierto. */
+    '[class.nav-group--flyout]': 'rail() && effectivelyExpanded()',
   },
 })
 export class SidebarNavItemComponent {
@@ -38,10 +41,14 @@ export class SidebarNavItemComponent {
   readonly openKeys = input.required<readonly string[]>();
   /** `labelKey` of the single parent that marks where the current page lives. */
   readonly accentKey = input.required<string | null>();
+  /** Slim de Apollo: la fila vive en el raíl plegado, sin hijos debajo; su nombre sale en un tooltip. */
+  readonly rail = input(false);
 
   readonly navigate = output<string>();
   /** A parent asked to open or close; emits its `labelKey`. */
   readonly toggleOpen = output<string>();
+  /** Slim: el ratón entró en un padre del raíl (el sidebar cambia el panel si ya hay uno abierto). */
+  readonly rootHover = output<string>();
 
   protected readonly hasChildren = computed(() => {
     const children = this.item().children;

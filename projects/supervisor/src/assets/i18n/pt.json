@@ -1022,7 +1022,8 @@
     "aed": "Contact Center",
     "integrations": "Integrações",
     "system": "Sistema",
-    "nav_aria": "Navegação principal"
+    "nav_aria": "Navegação principal",
+    "anchor_aria": "Fixar o menu"
   },
   "labels": {
     "breadcrumb": "Etiquetas",
@@ -2061,9 +2062,14 @@
     "cyan": "Ciano",
     "figma_desc": "Selecionado em branco. Recolhida, um só fundo do pai ao último filho.",
     "cyan_desc": "Selecionado em ciano recolhida e ao passar o rato. Os filhos ficam no seu próprio bloco.",
-    "fixed": "Sempre expandida",
-    "hint": "Passe o rato pela barra lateral para ver como abre.",
+    "fixed": "Fixada",
+    "hint": "Expandida, abrir uma secção fecha as outras.",
     "open_aria": "Abrir a comparação da barra lateral",
-    "close_aria": "Fechar a comparação da barra lateral"
+    "close_aria": "Fechar a comparação da barra lateral",
+    "collapsed": "Recolhida",
+    "drawer": "Drawer",
+    "slim": "Slim",
+    "drawer_desc": "Abre ao passar o rato e fecha ao sair. Pode ser fixada.",
+    "slim_desc": "Só o primeiro nível. Clique num ícone para ver os filhos num painel."
   }
 }

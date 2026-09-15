@@ -1,13 +1,14 @@
 <aside
   class="sidebar"
   [class.sidebar--pinned]="pinned()"
+  [class.sidebar--expanded]="hovered()"
+  [class.sidebar--drawer]="compare.collapsedMode() === 'drawer'"
+  [class.sidebar--slim]="slimRail()"
   [class.sidebar--cyan]="compare.variant() === 'cyan'"
   [class.sidebar--fijo]="compare.fixed()"
   [attr.aria-label]="'sidebar.nav_aria' | translate"
-  (mouseenter)="cancelReset()"
-  (focusin)="cancelReset()"
-  (mouseleave)="scheduleReset()"
-  (focusout)="scheduleReset()"
+  (mouseenter)="onEnter()"
+  (mouseleave)="onLeave()"
 >
   <a class="sidebar__brand" routerLink="/" [attr.aria-label]="'app.name' | translate">
     <img
@@ -26,6 +27,20 @@
     />
   </a>
 
+  @if (compare.collapsedMode() === 'drawer') {
+    <!-- Anclar, como el Drawer de Apollo: deja el sidebar desplegado y la página le deja su hueco. -->
+    <button
+      type="button"
+      class="sidebar__anchor"
+      [class.sidebar__anchor--on]="compare.fixed()"
+      [attr.aria-pressed]="compare.fixed()"
+      [attr.aria-label]="'sidebar.anchor_aria' | translate"
+      (click)="compare.fixed.set(!compare.fixed())"
+    >
+      <sc-icon name="keep" [size]="14" [filled]="compare.fixed()" />
+    </button>
+  }
+
   <nav class="sidebar__nav">
     @for (section of sections; track trackBySectionTitle($index, section)) {
       <div class="sidebar__section">
@@ -40,12 +55,31 @@
               [currentPath]="currentPath()"
               [openKeys]="openKeys()"
               [accentKey]="accentKey()"
+              [rail]="slimRail()"
               (navigate)="onNavigate($event)"
               (toggleOpen)="onToggle($event)"
+              (rootHover)="onRootHover($event)"
             />
           }
         </div>
       </div>
     }
   </nav>
+
+  @if (flyoutItem(); as root) {
+    <!-- Slim de Apollo: los hijos del padre pulsado, pegados al raíl y a la altura de su icono. -->
+    <div class="sidebar-flyout" role="group" [style.top.px]="flyoutTop()" [attr.aria-label]="root.labelKey | translate">
+      @for (child of root.children; track child.labelKey) {
+        <sc-sidebar-nav-item
+          [item]="child"
+          [depth]="1"
+          [currentPath]="currentPath()"
+          [openKeys]="openKeys()"
+          [accentKey]="accentKey()"
+          (navigate)="onNavigate($event)"
+          (toggleOpen)="onToggle($event)"
+        />
+      }
+    </div>
+  }
 </aside>

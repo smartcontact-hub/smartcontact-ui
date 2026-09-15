@@ -6,7 +6,7 @@ import {
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 
-import { SidebarVariantService, type SidebarVariant } from './sidebar-variant.service';
+import { SidebarVariantService, type SidebarCollapsedMode, type SidebarVariant } from './sidebar-variant.service';
 
 /**
  * RAMA DE COMPARACIÓN (`comparar/sidebar`). El botón de la esquina inferior derecha que abre un panel
@@ -28,6 +28,15 @@ export class SidebarCompareComponent {
     { value: 'figma', labelKey: 'compare_sidebar.figma' },
     { value: 'cyan', labelKey: 'compare_sidebar.cyan' },
   ];
+
+  protected readonly modes: readonly { value: SidebarCollapsedMode; labelKey: string }[] = [
+    { value: 'drawer', labelKey: 'compare_sidebar.drawer' },
+    { value: 'slim', labelKey: 'compare_sidebar.slim' },
+  ];
+
+  protected selectMode(value: unknown): void {
+    if (value === 'drawer' || value === 'slim') this.compare.collapsedMode.set(value);
+  }
 
   protected selectVariant(value: unknown): void {
     if (value === 'figma' || value === 'cyan') this.compare.variant.set(value);

@@ -1022,7 +1022,8 @@
     "aed": "Contact Center",
     "integrations": "Intégrations",
     "system": "Système",
-    "nav_aria": "Navigation principale"
+    "nav_aria": "Navigation principale",
+    "anchor_aria": "Épingler le menu"
   },
   "labels": {
     "breadcrumb": "Étiquettes",
@@ -2061,9 +2062,14 @@
     "cyan": "Cyan",
     "figma_desc": "Sélection en blanc. Repliée, un seul fond du parent au dernier enfant.",
     "cyan_desc": "Sélection en cyan repliée et au survol. Les enfants sont dans leur propre bloc.",
-    "fixed": "Toujours dépliée",
-    "hint": "Survolez la barre latérale pour voir son ouverture.",
+    "fixed": "Épinglée",
+    "hint": "Dépliée, ouvrir une section ferme les autres.",
     "open_aria": "Ouvrir la comparaison de la barre latérale",
-    "close_aria": "Fermer la comparaison de la barre latérale"
+    "close_aria": "Fermer la comparaison de la barre latérale",
+    "collapsed": "Repliée",
+    "drawer": "Drawer",
+    "slim": "Slim",
+    "drawer_desc": "S’ouvre au survol et se referme en sortant. Elle peut être épinglée.",
+    "slim_desc": "Premier niveau seulement. Cliquez sur une icône pour voir ses enfants dans un panneau."
   }
 }
