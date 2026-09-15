@@ -1,20 +1,38 @@
 {
-  "commit": "8ea9bea6",
+  "commit": "395824f3",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-15T11:06:39.326Z",
+  "generado": "2026-09-15T11:56:13.594Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "sc-preset.mjs"
+        "sc-preset.mjs",
+        "smartcontact-tokens.css"
       ],
-      "variables": [],
+      "variables": [
+        "claro|--sc-cmp-button-danger-active-background",
+        "claro|--sc-cmp-button-danger-active-border-color",
+        "claro|--sc-cmp-button-danger-background",
+        "claro|--sc-cmp-button-danger-border-color",
+        "claro|--sc-cmp-button-danger-hover-background",
+        "claro|--sc-cmp-button-danger-hover-border-color",
+        "claro|--sc-cmp-togglebutton-color",
+        "claro|--sc-cmp-togglebutton-hover-color"
+      ],
       "semanticaComun": false,
-      "reglasCss": true,
-      "componentes": []
+      "reglasCss": false,
+      "componentes": [
+        "button",
+        "chip",
+        "progressspinner",
+        "togglebutton",
+        "toggleswitch",
+        "tooltip",
+        "treetable"
+      ]
     },
     "cambia": true,
     "contratoPlugin": {
@@ -22,5 +40,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260915.1106"
+  "version": "0.20260915.1156"
 }
