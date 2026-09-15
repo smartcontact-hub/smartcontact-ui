@@ -4,13 +4,9 @@
  * Maps kebab-case keys → Material Symbols names (snake_case), consumidos por
  * `<sc-icon [name]="...">`. Los componentes que renderizan iconos dinámicos por
  * clave (nav-data, command palette) resuelven `iconKey -> material name`.
- *
- * GitHub (icono de marca) NO vive aquí — no existe glifo Material; su único
- * consumer (footer del sidebar) usa Lucide directamente (migración S60).
  */
 export const NAV_ICONS = {
   activity: 'monitoring',
-  'arrow-up-right': 'arrow_outward',
   'bar-chart-3': 'bar_chart',
   'book-open': 'menu_book',
   brain: 'psychology',
