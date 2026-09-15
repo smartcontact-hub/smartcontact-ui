@@ -2054,5 +2054,11 @@
       "sent_title": "Check your email",
       "sent_lead": "If there is an account for {{email}}, a link will arrive in a few minutes. Check your spam folder too."
     }
+  },
+  "lab": {
+    "sidebar": {
+      "toggle_aria": "Collapse or expand the menu",
+      "options_aria": "Lab options"
+    }
   }
 }

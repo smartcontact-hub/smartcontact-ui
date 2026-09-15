@@ -18,6 +18,7 @@ import avatar from "./avatar";
 import button from "./button";
 import dialog from "./dialog";
 import drawer from "./drawer";
+import sidebar from "./sidebar";
 import editor from "./editor";
 import rating from "./rating";
 import ripple from "./ripple";
@@ -119,6 +120,7 @@ const preset = definePreset(Aura, normalizeDesignRem({
         button,
         dialog,
         drawer,
+        sidebar,
         editor,
         rating,
         ripple,

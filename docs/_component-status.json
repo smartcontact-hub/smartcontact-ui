@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "54 componentes · 17 custom · 11 standard · 26 extended · 43 usados en Supervisor.",
+  "summary": "54 componentes · 17 custom · 11 standard · 26 extended · 44 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -26,7 +26,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 1
     },
     {
       "name": "badge",
@@ -1081,7 +1081,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 32
+      "usedInSupervisor": 34
     },
     {
       "name": "selectbutton",
@@ -1109,7 +1109,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 6
     },
     {
       "name": "skeleton",
@@ -1277,7 +1277,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 22
+      "usedInSupervisor": 26
     }
   ]
 }
