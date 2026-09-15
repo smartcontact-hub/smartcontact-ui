@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+
+import { ThemeService } from '@core/services/theme.service';
 
 /**
  * Generic "section under construction" page used for routes that exist in the
@@ -13,4 +15,13 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './placeholder-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlaceholderPageComponent {}
+export class PlaceholderPageComponent {
+  private readonly theme = inject(ThemeService);
+
+  /** La ilustración sigue al tema, como la del acceso: la clara en claro y la oscura en oscuro. */
+  protected readonly artSrc = computed(() =>
+    this.theme.effectiveMode() === 'dark'
+      ? '/illustrations/under-construction-dark.webp'
+      : '/illustrations/under-construction-light.webp',
+  );
+}
