@@ -180,6 +180,22 @@
   decidir oscurecer system-wide (al Kit) vs quirúrgico (token propio de form-field), + review
   visual de los 15-22 ficheros. No es un swap rápido.
 
+## Revisión de componentes
+
+### Sidebar: tres detalles de SaaS premium que cuestan poco (2026-09-15)
+- **Qué**:
+  1. **Retardo de intención.** Hoy el sidebar plegado se abre en cuanto el ratón lo roza y se cierra a los 100ms,
+     así que se despliega sin querer al ir a un botón pegado al borde izquierdo. Propuesta: unos 150ms antes de
+     abrir y 300ms antes de cerrar. Es CSS (`transition-delay` en `sidebar.component.scss`).
+  2. **Fijarlo abierto.** Un botón y el atajo `[` para dejarlo desplegado empujando el contenido; la preferencia
+     se guarda en el navegador.
+  3. **Enseñar ⌘K.** La paleta de comandos ya se abre con ⌘K (`sc-command-palette`), pero no se ve en ningún
+     sitio: una pista al pie del sidebar la hace descubrible.
+- **Procedencia**: conversación de SISMAC-4340 (sidebar plegado a 80px). Propuesta sin validar con usuarios.
+- **Disparador**: la revisión de componentes, o la próxima vez que se toque el sidebar.
+- **Validación**: cruzar el sidebar en menos de 150ms no lo abre; fijado sobrevive a una recarga; la pista ⌘K
+  abre la paleta. Lo mismo en claro y oscuro.
+
 ## Profundidad del pipeline (gated en necesidad — DD-15)
 
 ### Color de componente que Figma no alcanza (2026-09-14)

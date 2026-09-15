@@ -1,4 +1,12 @@
-<aside class="sidebar" [attr.aria-label]="'sidebar.nav_aria' | translate">
+<aside
+  class="sidebar"
+  [class.sidebar--pinned]="pinned()"
+  [attr.aria-label]="'sidebar.nav_aria' | translate"
+  (mouseenter)="cancelReset()"
+  (focusin)="cancelReset()"
+  (mouseleave)="scheduleReset()"
+  (focusout)="scheduleReset()"
+>
   <a class="sidebar__brand" routerLink="/" [attr.aria-label]="'app.name' | translate">
     <img
       class="sidebar__brand-isotype"
@@ -28,7 +36,10 @@
             <sc-sidebar-nav-item
               [item]="item"
               [currentPath]="currentPath()"
+              [openKeys]="openKeys()"
+              [accentKey]="accentKey()"
               (navigate)="onNavigate($event)"
+              (toggle)="onToggle($event)"
             />
           }
         </div>

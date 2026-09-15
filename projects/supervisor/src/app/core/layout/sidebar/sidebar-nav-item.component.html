@@ -2,7 +2,7 @@
   type="button"
   class="nav-item sc-text-body-regular"
   [class.nav-item--active]="isActive()"
-  [class.nav-item--child-active]="!isActive() && isChildActive()"
+  [class.nav-item--child-active]="item().labelKey === accentKey()"
   [class.nav-item--parent]="hasChildren()"
   [class.nav-item--expanded]="effectivelyExpanded()"
   [attr.data-depth]="depth()"
@@ -17,21 +17,31 @@
   @if (hasChildren()) {
     <sc-icon
       class="nav-item__chevron"
-      [name]="effectivelyExpanded() ? resolveIcon('chevron-down') : resolveIcon('chevron-right')"
+      [name]="resolveIcon('chevron-right')"
       [size]="14"
     />
   }
 </button>
 
-@if (hasChildren() && effectivelyExpanded()) {
-  <div class="nav-item__children">
-    @for (child of item().children; track child.labelKey) {
-      <sc-sidebar-nav-item
-        [item]="child"
-        [depth]="depth() + 1"
-        [currentPath]="currentPath()"
-        (navigate)="navigate.emit($event)"
-      />
-    }
+@if (hasChildren()) {
+  <!-- Always rendered so opening and closing can animate; `inert` keeps closed rows out of reach. -->
+  <div
+    class="nav-item__children"
+    [class.nav-item__children--open]="effectivelyExpanded()"
+    [attr.inert]="effectivelyExpanded() ? null : ''"
+  >
+    <div class="nav-item__children-inner">
+      @for (child of item().children; track child.labelKey) {
+        <sc-sidebar-nav-item
+          [item]="child"
+          [depth]="depth() + 1"
+          [currentPath]="currentPath()"
+          [openKeys]="openKeys()"
+          [accentKey]="accentKey()"
+          (navigate)="navigate.emit($event)"
+          (toggle)="toggle.emit($event)"
+        />
+      }
+    </div>
   </div>
 }

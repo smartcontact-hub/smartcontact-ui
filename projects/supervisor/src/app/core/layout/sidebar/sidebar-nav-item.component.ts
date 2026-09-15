@@ -1,15 +1,5 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  input,
-  OnInit,
-  output,
-  signal,
-  untracked,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { NAV_ICONS } from '../../icons/nav-icons';
@@ -21,8 +11,13 @@ import type { NavItem } from './nav-data';
  * off the `depth` prop so a single component supports the prototype's 4+ level
  * nesting (DD#302).
  *
+ * Which parents are open is NOT local state: the sidebar owns `openKeys` (only
+ * the user closes a category; entering a page opens its branch) and
+ * `accentKey`, the single parent that marks where the current page lives
+ * (SISMAC-4340).
+ *
  * `currentPath` is a signal input — non-signal `@Input()` would break the
- * `isActive` / `isChildActive` computeds, since plain inputs don't trigger
+ * `isActive` computed, since plain inputs don't trigger
  * computed re-evaluation when the parent route changes.
  */
 @Component({
@@ -31,40 +26,22 @@ import type { NavItem } from './nav-data';
   templateUrl: './sidebar-nav-item.component.html',
   styleUrl: './sidebar-nav-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    /* The sidebar paints the open first-level category as a block when collapsed. */
+    '[class.nav-group--open]': 'depth() === 0 && hasChildren() && effectivelyExpanded()',
+  },
 })
-export class SidebarNavItemComponent implements OnInit {
+export class SidebarNavItemComponent {
   readonly item = input.required<NavItem>();
   readonly depth = input<number>(0);
   readonly currentPath = input.required<string>();
+  readonly openKeys = input.required<readonly string[]>();
+  /** `labelKey` of the single parent that marks where the current page lives. */
+  readonly accentKey = input.required<string | null>();
 
   readonly navigate = output<string>();
-
-  protected readonly expanded = signal(false);
-
-  ngOnInit(): void {
-    if (this.item().defaultExpanded) {
-      this.expanded.set(true);
-    }
-  }
-
-  constructor() {
-    /*
-     * Auto-collapse on navigation away. When the active route leaves this
-     * branch, drop any manual `expanded` state so only the active section
-     * stays open. `effectivelyExpanded` already keeps the active branch
-     * open via `isChildActive`, so this only affects sections the user
-     * peek-opened and then navigated away from.
-     */
-    effect(() => {
-      this.currentPath();
-      const childActive = this.isChildActive();
-      untracked(() => {
-        if (!childActive && this.expanded()) {
-          this.expanded.set(false);
-        }
-      });
-    });
-  }
+  /** A parent asked to open or close; emits its `labelKey`. */
+  readonly toggle = output<string>();
 
   protected readonly hasChildren = computed(() => {
     const children = this.item().children;
@@ -75,19 +52,9 @@ export class SidebarNavItemComponent implements OnInit {
     () => !!this.item().path && this.item().path === this.currentPath(),
   );
 
-  protected readonly isChildActive = computed(() => {
-    const children = this.item().children;
-    if (!children) return false;
-    return this.containsActive(children, this.currentPath());
-  });
-
-  /**
-   * `expanded` (manual user toggle) OR the active branch flag — when the
-   * current route lives somewhere inside this section, render its children
-   * automatically so the collapsed sidebar shows the active page's icon
-   * without the user having to click the parent first.
-   */
-  protected readonly effectivelyExpanded = computed(() => this.expanded() || this.isChildActive());
+  protected readonly effectivelyExpanded = computed(
+    () => this.hasChildren() && this.openKeys().includes(this.item().labelKey),
+  );
 
   protected resolveIcon(name: keyof typeof NAV_ICONS) {
     return NAV_ICONS[name];
@@ -95,7 +62,7 @@ export class SidebarNavItemComponent implements OnInit {
 
   protected onClick(event: MouseEvent): void {
     if (this.hasChildren()) {
-      this.expanded.update((v) => !v);
+      this.toggle.emit(this.item().labelKey);
       /*
        * Parent click toggles expanded but doesn't navigate, so the
        * post-`NavigationEnd` blur effect on the sidebar host never
@@ -117,13 +84,5 @@ export class SidebarNavItemComponent implements OnInit {
     if (path) {
       this.navigate.emit(path);
     }
-  }
-
-  private containsActive(items: readonly NavItem[], current: string): boolean {
-    return items.some((child) => {
-      if (child.path === current) return true;
-      if (child.children) return this.containsActive(child.children, current);
-      return false;
-    });
   }
 }
