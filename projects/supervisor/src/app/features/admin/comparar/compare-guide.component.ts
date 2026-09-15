@@ -52,6 +52,11 @@ const STEPS: Record<FichaVariant, Record<Entity, readonly string[]>> = {
     group: ['compare.guide.d.group.step1', 'compare.guide.d.group.step2', 'compare.guide.d.step3'],
     user: ['compare.guide.d.user.step1', 'compare.guide.d.user.step2', 'compare.guide.d.step3'],
   },
+  e: {
+    agent: ['compare.guide.e.agent.step1', 'compare.guide.e.agent.step2', 'compare.guide.e.step3'],
+    group: ['compare.guide.e.group.step1', 'compare.guide.e.group.step2', 'compare.guide.e.step3'],
+    user: ['compare.guide.e.user.step1', 'compare.guide.e.user.step2', 'compare.guide.e.step3'],
+  },
 };
 
 function entityOf(url: string): Entity {

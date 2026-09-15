@@ -2065,6 +2065,9 @@
       },
       "d": {
         "label": "Resumo + editor"
+      },
+      "e": {
+        "label": "Resumo + painel lateral"
       }
     },
     "pending": {
@@ -2100,7 +2103,7 @@
     },
     "guide": {
       "title": "Como comparar",
-      "intro": "É a mesma ficha de quatro formas. Passe de uma para outra com a barra de baixo e faça o mesmo em cada uma. São dados de demonstração: pode mexer à vontade.",
+      "intro": "É a mesma ficha de cinco formas. Passe de uma para outra com a barra de baixo e faça o mesmo em cada uma. São dados de demonstração: pode mexer à vontade.",
       "current": "Está a ver",
       "try": "Experimente",
       "look": "Repare em",
@@ -2169,6 +2172,24 @@
         "step3": "Clique noutro cartão: o editor muda de secção e o resto da ficha continua à vista.",
         "look": "Se ver a ficha inteira em resumo enquanto edita uma parte chega para perceber o que afeta, sem o ruído de ter todos os controlos à frente.",
         "summary": "Um resumo de tudo; edita uma parte à direita."
+      },
+      "e": {
+        "what": "Os mesmos cartões de resumo, mas a toda a largura. Clique em «Editar» num deles e as definições abrem-se num painel à direita; ao fechá-lo volta a ver a ficha inteira.",
+        "agent": {
+          "step1": "Clique em «Editar» no cartão «Identificação»: as definições abrem-se num painel à direita.",
+          "step2": "Desligue «Ativo»: o cartão da esquerda mostra-o no momento."
+        },
+        "group": {
+          "step1": "Clique em «Editar» no cartão «Canais e estratégia».",
+          "step2": "Desmarque «Telefone» e feche o painel: o cartão «Agentes atribuídos», que o painel tapava, ficou sem telefone."
+        },
+        "user": {
+          "step1": "Clique em «Editar» no cartão «Acesso».",
+          "step2": "Desmarque «Estatísticas»: o cartão mostra-o no momento."
+        },
+        "step3": "Feche o painel com o X ou Esc: volta a ver a ficha inteira.",
+        "look": "Se ganhar espaço para o resumo compensa o painel tapar parte da ficha enquanto edita.",
+        "summary": "Resumo a toda a largura; as definições num painel ao clicar Editar."
       }
     },
     "board": {

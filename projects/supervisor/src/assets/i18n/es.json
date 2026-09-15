@@ -2065,6 +2065,9 @@
       },
       "d": {
         "label": "Resumen + editor"
+      },
+      "e": {
+        "label": "Resumen + panel lateral"
       }
     },
     "pending": {
@@ -2100,7 +2103,7 @@
     },
     "guide": {
       "title": "Cómo comparar",
-      "intro": "Es la misma ficha de cuatro formas. Pasa de una a otra con la barra de abajo y haz lo mismo en cada una. Son datos de demostración: puedes tocar sin miedo.",
+      "intro": "Es la misma ficha de cinco formas. Pasa de una a otra con la barra de abajo y haz lo mismo en cada una. Son datos de demostración: puedes tocar sin miedo.",
       "current": "Estás viendo",
       "try": "Prueba esto",
       "look": "Fíjate en",
@@ -2169,6 +2172,24 @@
         "step3": "Pulsa otra tarjeta: el editor cambia de sección y el resto de la ficha sigue a la vista.",
         "look": "Si ver la ficha entera en resumen mientras editas una parte te basta para entender a qué afecta, sin el ruido de tener todos los controles delante.",
         "summary": "Resumen de todo; editas una parte a la derecha."
+      },
+      "e": {
+        "what": "Las mismas tarjetas-resumen, pero a todo el ancho. Pulsa «Editar» en una y sus ajustes se abren en un panel a la derecha; al cerrarlo vuelves a ver la ficha entera.",
+        "agent": {
+          "step1": "Pulsa «Editar» en la tarjeta «Identificación»: sus ajustes se abren en un panel a la derecha.",
+          "step2": "Apaga «Activo»: la tarjeta de la izquierda lo refleja al momento."
+        },
+        "group": {
+          "step1": "Pulsa «Editar» en la tarjeta «Canales y estrategia».",
+          "step2": "Desmarca «Teléfono» y cierra el panel: la tarjeta «Agentes asignados», que el panel tapaba, se ha quedado sin teléfono."
+        },
+        "user": {
+          "step1": "Pulsa «Editar» en la tarjeta «Acceso».",
+          "step2": "Desmarca «Estadísticas»: la tarjeta lo refleja al momento."
+        },
+        "step3": "Cierra el panel con la X o con Esc: vuelves a ver la ficha entera.",
+        "look": "Si ganar espacio para el resumen compensa que el panel tape parte de la ficha mientras editas.",
+        "summary": "Resumen a todo el ancho; los ajustes, en un panel al pulsar Editar."
       }
     },
     "board": {

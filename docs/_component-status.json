@@ -456,7 +456,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/drawer",
       "cva": false,
-      "inputs": 8,
+      "inputs": 9,
       "api": [
         "closeOnEscape",
         "dismissible",
@@ -468,11 +468,12 @@
         "showCloseIcon",
         "shown",
         "visible",
-        "visibleChange"
+        "visibleChange",
+        "width"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 5
     },
     {
       "name": "empty-state",

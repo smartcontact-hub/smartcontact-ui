@@ -7,6 +7,7 @@
     [closeOnEscape]="closeOnEscape()"
     [showCloseIcon]="showCloseIcon()"
     [fullScreen]="fullScreen()"
+    [style]="width() ? { width: width() } : undefined"
     (visibleChange)="visible.set($event ?? false)"
     (onShow)="shown.emit($event)"
     (onHide)="hidden.emit($event)">

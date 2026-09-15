@@ -2,6 +2,7 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   effect,
   type ElementRef,
   HostListener,
@@ -15,7 +16,7 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { CompareGuideComponent } from './compare-guide.component';
-import { FICHA_VARIANTS, FichaVariantService } from './ficha-variant.service';
+import { FICHA_VARIANTS, FichaVariantService, SHOW_ALL_COUNT } from './ficha-variant.service';
 
 /**
  * RAMA DE COMPARACIÓN (`comparar/fichas`). La barra flotante con la que se cambia de variante
@@ -33,7 +34,7 @@ interface Point {
 const POSITION_KEY = 'sc-comparar-barra';
 /** Lo mínimo que la barra deja libre hasta el borde de la ventana. */
 const EDGE = 16;
-/** El ancho del `sc-drawer` a la derecha (el de PrimeNG, 20rem). */
+/** El ancho de la guía (el `sc-drawer` de PrimeNG, 20rem). */
 const GUIDE_WIDTH_REM = 20;
 
 function readPosition(): Point | null {
@@ -65,6 +66,7 @@ function writePosition(p: Point | null): void {
 export class FichaVariantBarComponent {
   protected readonly variants = inject(FichaVariantService);
   protected readonly options = FICHA_VARIANTS;
+  protected readonly showAllCount = SHOW_ALL_COUNT;
 
   private readonly bar = viewChild<ElementRef<HTMLElement>>('bar');
   /** `null` = su sitio de siempre, abajo al centro. */
@@ -83,9 +85,12 @@ export class FichaVariantBarComponent {
       this.variants.guideOpen();
       untracked(() => this.clampStored());
     });
+    // Al salir de la ficha el panel de ajustes se cierra: la siguiente no debe abrirse con él puesto.
+    inject(DestroyRef).onDestroy(() => this.variants.editorOpen.set(false));
   }
 
   protected toggleGuide(): void {
+    this.variants.editorOpen.set(false);
     this.variants.guideOpen.update((open) => !open);
   }
 

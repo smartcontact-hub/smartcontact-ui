@@ -512,7 +512,7 @@
     },
     {
       "selector": "sc-drawer",
-      "usedInSupervisor": 2
+      "usedInSupervisor": 5
     },
     {
       "selector": "sc-empty-state",

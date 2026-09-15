@@ -14,6 +14,7 @@
     [closeOnEscape]="args.closeOnEscape"
     [showCloseIcon]="args.showCloseIcon"
     [fullScreen]="args.fullScreen"
+    [width]="args.width || null"
     [visible]="open()"
     (visibleChange)="open.set($event)"
     data-testid="sc-drawer"

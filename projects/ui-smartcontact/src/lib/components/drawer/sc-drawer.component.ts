@@ -33,6 +33,13 @@ export class ScDrawerComponent {
 
     readonly fullScreen = input(false, { transform: booleanAttribute });
 
+    /**
+     * Ancho del panel en `left`/`right` (p. ej. `'44rem'`). Sin él manda el de PrimeNG (20rem),
+     * que no deja sitio a una tabla ni a un formulario de dos columnas. Mismo contrato que
+     * `sc-dialog [width]`.
+     */
+    readonly width = input<string | null>(null);
+
     readonly shown = output<unknown>();
 
     readonly hidden = output<unknown>();

@@ -147,25 +147,33 @@
   padding-inline-end: 20rem;
 }
 
-/* COMPARAR (variante `d`, «Resumen + editor»): la ficha de siempre, recolocada sin tocar su
- * plantilla. A la izquierda, arriba la ficha de identidad y debajo el mosaico de tarjetas-resumen
- * (`.board`); a la derecha, `.page__main` hace de editor fijo con la sección elegida, alto como
- * la ventana y con su propio scroll, para que editar no mueva el resumen de su sitio. */
-/* No es un arquetipo más (`audit:page-anatomy`): la página sigue siendo `--rail` y esto la
+/* COMPARAR (variantes `d` y `e`): la ficha de siempre, recolocada sin tocar su plantilla.
+ *
+ * `d` («Resumen + editor»): a la izquierda, arriba la ficha de identidad y debajo el mosaico de
+ * tarjetas-resumen (`.board`); a la derecha, `.page__main` hace de editor con la sección elegida.
+ * `e` («Resumen + panel lateral»): el mosaico a todo el ancho, y la sección se edita en un
+ * `sc-drawer` que abre «Editar».
+ *
+ * Todo mide lo que la ventana: la barra de arriba (`4`) y el hueco de la barra de comparar (`5`)
+ * fuera, y las filas de tarjetas repartidas a partes iguales. Cada tarjeta tiene su scroll, así
+ * que añadir cosas no mueve nada de sitio.
+ *
+ * No es un arquetipo más (`audit:page-anatomy`): la página sigue siendo `--rail` y esto la
  * recoloca solo mientras se compara; por eso gana por especificidad a `--rail`. */
 .page__inner--rail.compare-board {
   max-width: none;
+  height: calc(100dvh - var(--sc-spacing-4) - var(--sc-spacing-5));
   /* Todo el ancho cuenta: la tabla de grupos del editor lleva 25,5rem fijos de canales. */
   padding-inline: var(--sc-spacing-1);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 44rem);
-  /* El editor ocupa las dos filas: sin esto, su alto se reparte también en la de la cabecera
-   * y abre un hueco entre la ficha y las tarjetas. */
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
   grid-template-areas:
     'rail main'
     'board main';
-  align-items: start;
+  /* `--rail` alinea arriba (`flex-start`): sin estirar, el mosaico mediría lo que su contenido y
+   * las filas `1fr` crecerían con cada grupo que se añade, que es justo el salto a evitar. */
+  align-items: stretch;
   column-gap: var(--sc-spacing-1-5);
   row-gap: var(--sc-spacing-1);
 
@@ -180,16 +188,17 @@
 
   > .board {
     grid-area: board;
-    columns: 2 18rem;
-    column-gap: var(--sc-spacing-1);
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    gap: var(--sc-spacing-1);
   }
 
   > .page__main {
     grid-area: main;
-    position: sticky;
-    top: var(--sc-spacing-1-625);
-    /* La ventana menos la barra de arriba (`4`) y el aire de arriba y abajo de la página. */
-    max-height: calc(100dvh - var(--sc-spacing-4) - 2 * var(--sc-spacing-1-625));
+    min-height: 0;
+    height: 100%;
     overflow-y: auto;
     border-radius: var(--sc-radius-400);
   }
@@ -197,6 +206,23 @@
   /* En el editor caben dos campos por fila, no tres. */
   > .page__main .grid--3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* `e`: en el panel lateral (44rem) también caben dos campos por fila, no tres. */
+.compare-drawer-body .grid--3 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* `e`: sin editor fijo, el mosaico se queda todo el ancho y gana una columna. */
+.page__inner--rail.compare-board.compare-board--cards {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'rail'
+    'board';
+
+  > .board {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
