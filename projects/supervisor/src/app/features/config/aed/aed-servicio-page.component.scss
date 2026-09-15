@@ -499,13 +499,17 @@
     color: var(--sc-text-primary);
   }
 
+  /* Las tres columnas de casillas miden su rótulo, y la dirección se queda el resto (Rafa, 2026-09-15:
+   * «me convence el link» a lo ancho). Antes medían 175 cada una, como la matriz de Agentes, y la
+   * dirección se quedaba en 121 px: no se leía ni una dirección corta. */
   &__th-col {
-    /* Ancho FIJO e igual para las tres, el mismo que la matriz de Agentes: 175
-     * (`scale/12-5`). Figma dice 141.6 (`th-ID` 393:12619), que no es peldaño de la
-     * escala; el peldaño que existe manda sobre el número suelto que había aquí. */
-    width: var(--sc-spacing-12-5);
+    white-space: nowrap;
     text-align: center;
     color: var(--sc-text-primary);
+  }
+
+  &__th-url {
+    width: 100%;
   }
 
   /* El nombre de la fila: 14 REGULAR en `--sc-text-primary`, como «Teléfono» o
