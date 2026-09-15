@@ -8,15 +8,19 @@ import { effect, Injectable, signal } from '@angular/core';
  *     del padre al último hijo.
  *   · `cyan`  — seleccionado en cyan al plegar o al pasar el ratón, y fondo de grupo con los hijos
  *     en un segundo bloque.
- * Y `fixed` deja el sidebar desplegado a 240 reservando su hueco, para ver ese estado sin el ratón.
+ * Y `fixed` deja el sidebar desplegado a 240 reservando su hueco (anclado), y `collapsedMode` elige
+ * cómo se comporta plegado, los dos modos de Apollo: `drawer` (se despliega con el ratón) o `slim`
+ * (raíl de primer nivel con panel flotante).
  *
- * Se cambia desde el botón de la esquina (`sc-sidebar-compare`) o con `?sidebar=figma|cyan` y
- * `?fijo=1|0` en cualquier URL, y se recuerda en el navegador.
+ * Se cambia desde el botón de la esquina (`sc-sidebar-compare`) o con `?sidebar=figma|cyan`,
+ * `?plegado=drawer|slim` y `?fijo=1|0` en cualquier URL, y se recuerda en el navegador.
  */
 export type SidebarVariant = 'figma' | 'cyan';
+export type SidebarCollapsedMode = 'drawer' | 'slim';
 
 const VARIANT_KEY = 'sc-comparar-sidebar';
 const FIXED_KEY = 'sc-comparar-sidebar-fijo';
+const MODE_KEY = 'sc-comparar-sidebar-plegado';
 
 function initial(param: string, key: string, allowed: readonly string[], fallback: string): string {
   const fromUrl = new URLSearchParams(location.search).get(param);
@@ -41,9 +45,13 @@ function store(key: string, value: string): void {
 export class SidebarVariantService {
   readonly variant = signal<SidebarVariant>(initial('sidebar', VARIANT_KEY, ['figma', 'cyan'], 'figma') as SidebarVariant);
   readonly fixed = signal(initial('fijo', FIXED_KEY, ['1', '0'], '0') === '1');
+  readonly collapsedMode = signal<SidebarCollapsedMode>(
+    initial('plegado', MODE_KEY, ['drawer', 'slim'], 'drawer') as SidebarCollapsedMode,
+  );
 
   constructor() {
     effect(() => store(VARIANT_KEY, this.variant()));
+    effect(() => store(MODE_KEY, this.collapsedMode()));
     effect(() => {
       const fixed = this.fixed();
       store(FIXED_KEY, fixed ? '1' : '0');

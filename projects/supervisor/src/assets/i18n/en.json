@@ -1022,7 +1022,8 @@
     "aed": "Contact Center",
     "integrations": "Integrations",
     "system": "System",
-    "nav_aria": "Main navigation"
+    "nav_aria": "Main navigation",
+    "anchor_aria": "Pin the menu"
   },
   "labels": {
     "breadcrumb": "Labels",
@@ -2061,9 +2062,14 @@
     "cyan": "Cyan",
     "figma_desc": "Selected in white. Collapsed, one background from the parent to the last child.",
     "cyan_desc": "Selected in cyan when collapsed and on hover. Children sit in their own block.",
-    "fixed": "Pinned open",
-    "hint": "Hover the sidebar to see how it opens.",
+    "fixed": "Pinned",
+    "hint": "When open, opening a section closes the others.",
     "open_aria": "Open the sidebar comparison",
-    "close_aria": "Close the sidebar comparison"
+    "close_aria": "Close the sidebar comparison",
+    "collapsed": "Collapsed",
+    "drawer": "Drawer",
+    "slim": "Slim",
+    "drawer_desc": "Opens on hover and closes when you leave. It can be pinned.",
+    "slim_desc": "First level only. Click an icon to see its children in a panel."
   }
 }

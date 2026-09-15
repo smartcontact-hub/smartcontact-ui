@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   ElementRef,
   inject,
@@ -11,6 +12,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 import { filter, map, startWith } from 'rxjs/operators';
 
 import { ViewTransitionTracker } from '../../services/view-transition-tracker.service';
@@ -33,6 +35,18 @@ function branchTo(items: readonly NavItem[], path: string): string[] {
   return [];
 }
 
+/** The `labelKey` of every ancestor of the item with `key`, outermost first; null if it is not in the tree. */
+function ancestorsOf(items: readonly NavItem[], key: string, trail: readonly string[] = []): string[] | null {
+  for (const item of items) {
+    if (item.labelKey === key) return [...trail];
+    if (item.children) {
+      const found = ancestorsOf(item.children, key, [...trail, item.labelKey]);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 /**
  * Application sidebar — logo header and two-section nav tree. Reads the
  * active URL from the Router and feeds it to the recursive
@@ -40,7 +54,7 @@ function branchTo(items: readonly NavItem[], path: string): string[] {
  */
 @Component({
   selector: 'sc-sidebar',
-  imports: [RouterLink, SidebarNavItemComponent, TranslateModule],
+  imports: [RouterLink, ScIconComponent, SidebarNavItemComponent, TranslateModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,7 +64,7 @@ export class SidebarComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly transitions = inject(ViewTransitionTracker);
 
-  /** RAMA DE COMPARACIÓN: qué propuesta se pinta y si va desplegado fijo (ver el servicio). */
+  /** RAMA DE COMPARACIÓN: propuesta, modo de plegado y anclado (ver el servicio). */
   protected readonly compare = inject(SidebarVariantService);
 
   protected readonly sections = NAV_SECTIONS;
@@ -66,12 +80,15 @@ export class SidebarComponent {
     { initialValue: normalizeRoutePath(this.router.url) },
   );
 
+  /** Plegado en modo Slim, sin anclar: raíl con el primer nivel y los hijos en un panel flotante. */
+  protected readonly slimRail = computed(
+    () => this.compare.collapsedMode() === 'slim' && !this.compare.fixed(),
+  );
+
   /**
-   * `labelKey` of every open parent. While the pointer is in the menu only the
-   * user closes a category; entering a page opens its branch; leaving the menu
-   * folds the rest (SISMAC-4340). Two other closings were tried first: an
-   * accordion moved the clicked row hundreds of pixels under the pointer, and
-   * closing on navigation shut categories the user had just opened.
+   * El camino abierto, como Apollo: un `labelKey` por nivel desde la raíz, así que solo hay una rama
+   * abierta. Abrir un padre cierra cualquier otra; cerrarlo deja abiertos sus ancestros; entrar en
+   * una página abre la suya. En Slim, su primer elemento es el padre del panel flotante.
    */
   protected readonly openKeys = signal<readonly string[]>([]);
 
@@ -87,13 +104,25 @@ export class SidebarComponent {
     return branch.find((key) => !open.includes(key)) ?? branch.at(-1) ?? null;
   });
 
+  /** Drawer: desplegado en cuanto entra el ratón y hasta 300ms después de salir (Apollo). */
+  protected readonly hovered = signal(false);
+  private static readonly COLLAPSE_AFTER_LEAVE_MS = 300;
+  private leaveTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** Slim: el padre del panel flotante y la altura a la que sale, la de su icono. */
+  protected readonly flyoutItem = computed(() => {
+    if (!this.slimRail()) return null;
+    const key = this.openKeys()[0];
+    return this.allItems.find((item) => item.labelKey === key && !!item.children?.length) ?? null;
+  });
+  protected readonly flyoutTop = signal(0);
+
   constructor() {
-    /* Entering a page opens its branch; whatever else was open stays open. */
+    /* Entrar en una página abre su rama (Apollo). En Slim no: el panel se cierra. */
     effect(() => {
       const branch = branchTo(this.allItems, this.currentPath());
-      untracked(() =>
-        this.openKeys.update((open) => [...open, ...branch.filter((key) => !open.includes(key))]),
-      );
+      const slim = this.slimRail();
+      untracked(() => this.openKeys.set(slim ? [] : branch));
     });
 
     /**
@@ -110,6 +139,22 @@ export class SidebarComponent {
         active.blur();
       }
     });
+
+    /* Slim: un clic fuera del sidebar o Escape cierran el panel flotante (Apollo). */
+    const doc = this.host.nativeElement.ownerDocument;
+    const onDocumentClick = (event: MouseEvent): void => {
+      if (this.flyoutItem() && !this.host.nativeElement.contains(event.target as Node)) this.openKeys.set([]);
+    };
+    const onKeydown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape' && this.flyoutItem()) this.openKeys.set([]);
+    };
+    doc.addEventListener('click', onDocumentClick);
+    doc.addEventListener('keydown', onKeydown);
+    inject(DestroyRef).onDestroy(() => {
+      doc.removeEventListener('click', onDocumentClick);
+      doc.removeEventListener('keydown', onKeydown);
+      clearTimeout(this.leaveTimer);
+    });
   }
 
   protected readonly trackBySectionTitle = (_: number, section: { titleKey: string }): string =>
@@ -118,47 +163,57 @@ export class SidebarComponent {
   protected readonly trackByItemKey = (_: number, item: { labelKey: string }): string =>
     item.labelKey;
 
-  /**
-   * Leaving the menu folds every category but the current page's. It waits
-   * until the sidebar has collapsed (hover-out delay plus the width
-   * transition), so the rows reshuffle out of sight and brushing the edge
-   * does not lose what the user had just opened.
-   */
-  private static readonly RESET_AFTER_LEAVE_MS = 400;
-  private resetTimer: ReturnType<typeof setTimeout> | undefined;
-
-  protected cancelReset(): void {
-    clearTimeout(this.resetTimer);
+  protected onEnter(): void {
+    if (this.compare.collapsedMode() !== 'drawer') return;
+    clearTimeout(this.leaveTimer);
+    this.hovered.set(true);
   }
 
-  protected scheduleReset(): void {
-    clearTimeout(this.resetTimer);
-    this.resetTimer = setTimeout(() => {
-      const aside = this.host.nativeElement.querySelector('aside');
-      if (this.pinned() || aside?.matches(':hover, :focus-within')) return;
-      this.openKeys.set(branchTo(this.allItems, this.currentPath()));
-    }, SidebarComponent.RESET_AFTER_LEAVE_MS);
+  protected onLeave(): void {
+    if (this.compare.collapsedMode() !== 'drawer') return;
+    clearTimeout(this.leaveTimer);
+    this.leaveTimer = setTimeout(() => this.hovered.set(false), SidebarComponent.COLLAPSE_AFTER_LEAVE_MS);
   }
 
   protected onToggle(key: string): void {
-    const open = this.openKeys();
-    this.openKeys.set(open.includes(key) ? open.filter((k) => k !== key) : [...open, key]);
+    const ancestors = ancestorsOf(this.allItems, key) ?? [];
+    const open = this.openKeys().includes(key);
+    this.openKeys.set(open ? ancestors : [...ancestors, key]);
+    if (!open && ancestors.length === 0 && this.slimRail()) this.placeFlyout(key);
   }
 
-  /** Holds the sidebar open while a navigation it started cross-fades. */
+  /** Slim: con un panel abierto, pasar el ratón por otro padre de primer nivel lo cambia (Apollo). */
+  protected onRootHover(key: string): void {
+    if (!this.flyoutItem() || this.openKeys()[0] === key) return;
+    this.openKeys.set([key]);
+    this.placeFlyout(key);
+  }
+
+  private placeFlyout(key: string): void {
+    const row = this.host.nativeElement.querySelector<HTMLElement>(`[data-nav-key="${key}"]`);
+    if (!row) return;
+    this.flyoutTop.set(Math.round(row.getBoundingClientRect().top));
+    /* Si no cabe por abajo, sube hasta que cabe. */
+    requestAnimationFrame(() => {
+      const panel = this.host.nativeElement.querySelector<HTMLElement>('.sidebar-flyout');
+      if (!panel) return;
+      const margin = 16;
+      const max = window.innerHeight - panel.offsetHeight - margin;
+      if (this.flyoutTop() > max) this.flyoutTop.set(Math.max(margin, max));
+    });
+  }
+
+  /** Holds the sidebar open while a navigation it started cross-fades (Drawer only). */
   protected readonly pinned = signal(false);
 
   protected async onNavigate(path: string): Promise<void> {
-    this.pinned.set(true);
+    const drawer = this.compare.collapsedMode() === 'drawer';
+    if (drawer) this.pinned.set(true);
     try {
       await this.router.navigateByUrl(path);
-      await this.transitions.settled();
+      if (drawer) await this.transitions.settled();
     } finally {
       this.pinned.set(false);
-      /* The pointer may have left while the page cross-faded. */
-      this.scheduleReset();
     }
   }
-
-  protected readonly hasItems = computed(() => this.sections.length > 0);
 }

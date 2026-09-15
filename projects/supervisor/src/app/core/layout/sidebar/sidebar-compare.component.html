@@ -21,6 +21,25 @@
       {{ (compare.variant() === 'cyan' ? 'compare_sidebar.cyan_desc' : 'compare_sidebar.figma_desc') | translate }}
     </p>
 
+    <span class="compare__label sc-text-body-regular" id="compare-sidebar-mode">{{ 'compare_sidebar.collapsed' | translate }}</span>
+    <sc-selectbutton
+      [options]="modes"
+      optionValue="value"
+      [allowEmpty]="false"
+      fluid
+      size="sm"
+      [value]="compare.collapsedMode()"
+      (valueChange)="selectMode($event)"
+      ariaLabelledBy="compare-sidebar-mode"
+    >
+      <ng-template #item let-option>
+        <span>{{ option.labelKey | translate }}</span>
+      </ng-template>
+    </sc-selectbutton>
+    <p class="compare__desc sc-text-caption-regular">
+      {{ (compare.collapsedMode() === 'slim' ? 'compare_sidebar.slim_desc' : 'compare_sidebar.drawer_desc') | translate }}
+    </p>
+
     <div class="compare__row">
       <label class="sc-text-body-regular" for="compare-sidebar-fixed">{{ 'compare_sidebar.fixed' | translate }}</label>
       <sc-toggleswitch

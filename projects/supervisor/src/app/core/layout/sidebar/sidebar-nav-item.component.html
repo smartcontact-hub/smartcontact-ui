@@ -6,7 +6,13 @@
   [class.nav-item--parent]="hasChildren()"
   [class.nav-item--expanded]="effectivelyExpanded()"
   [attr.data-depth]="depth()"
+  [attr.data-nav-key]="item().labelKey"
+  [pTooltip]="item().labelKey | translate"
+  tooltipPosition="right"
+  appendTo="body"
+  [tooltipDisabled]="!rail()"
   (click)="onClick($event)"
+  (mouseenter)="rail() && hasChildren() && rootHover.emit(item().labelKey)"
 >
   <sc-icon
     class="nav-item__icon"
@@ -14,7 +20,7 @@
     [size]="item().iconSize ?? 14"
   />
   <span class="nav-item__label">{{ item().labelKey | translate }}</span>
-  @if (hasChildren()) {
+  @if (hasChildren() && !rail()) {
     <sc-icon
       class="nav-item__chevron"
       [name]="resolveIcon('chevron-right')"
@@ -23,7 +29,7 @@
   }
 </button>
 
-@if (hasChildren()) {
+@if (hasChildren() && !rail()) {
   <!-- Always rendered so opening and closing can animate; `inert` keeps closed rows out of reach. -->
   <div
     class="nav-item__children"
