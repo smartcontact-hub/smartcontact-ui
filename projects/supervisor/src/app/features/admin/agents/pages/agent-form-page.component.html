@@ -33,7 +33,7 @@
   <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'agents.form.edit_breadcrumb' : 'agents.form.create_breadcrumb') | translate }}</h1>
 
   <!-- El molde de Contact Center (`.page__inner--rail`). -->
-  <div class="page__inner page__inner--rail">
+  <div class="page__inner page__inner--rail" [class.compare-board]="isBoard()">
     <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
       @if (mode() === 'edit') {
         <div class="ficha">
@@ -51,13 +51,16 @@
         </div>
       }
 
-      <sc-form-section-nav
-        [sections]="navSections()"
-        [activeId]="activeSection()"
-        [sectionsWithErrors]="sectionsWithErrors()"
-        [flush]="true"
-        (activeChange)="goToSection($event)"
-      />
+      <!-- COMPARAR (variante d): el mosaico de tarjetas hace de índice. -->
+      @if (!isBoard()) {
+        <sc-form-section-nav
+          [sections]="navSections()"
+          [activeId]="activeSection()"
+          [sectionsWithErrors]="sectionsWithErrors()"
+          [flush]="true"
+          (activeChange)="goToSection($event)"
+        />
+      }
 
       <!-- COMPARAR (variante c): lo cambiado y lo que mueve fuera de su sección. -->
       @if (variants.variant() === 'c') {
@@ -68,6 +71,85 @@
         <sc-button class="rail-delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
+
+    <!-- COMPARAR (variante d, «Resumen + editor»): toda la ficha en tarjetas-resumen. La que
+         pulsas se edita a la derecha (`.page__main`) y las demás siguen aquí, al día. -->
+    @if (isBoard()) {
+      <div class="board">
+        <sc-board-card
+          sectionId="agent-section-identity"
+          icon="badge"
+          titleKey="agents.form.section.identification"
+          [selected]="activeSection() === 'agent-section-identity'"
+          (pick)="goToSection('agent-section-identity')"
+        >
+          <sc-board-row [label]="'agents.form.fields.name' | translate">{{ orNone(form().name) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.fields.extension' | translate">{{ orNone(form().extension) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.fields.type' | translate">{{ typeLabelKeys[form().agentType] | translate }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.fields.email' | translate">{{ orNone(form().email) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.fields.presence' | translate">{{ presenceKeys[form().presenceStatus] | translate }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.fields.active' | translate">{{ yesNo(form().status === 'active') | translate }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.fields.recording' | translate">{{ yesNo(form().permissions.recording) | translate }}</sc-board-row>
+        </sc-board-card>
+
+        <sc-board-card
+          sectionId="agent-section-groups"
+          icon="group"
+          titleKey="agents.form.section.groups"
+          [selected]="activeSection() === 'agent-section-groups'"
+          (pick)="goToSection('agent-section-groups')"
+        >
+          @for (link of form().links; track link.groupId) {
+            <sc-board-row [label]="groupName(link.groupId)">{{ linkSummary(link) }}</sc-board-row>
+          } @empty {
+            <span class="sc-text-body-regular">{{ 'compare.board.none' | translate }}</span>
+          }
+        </sc-board-card>
+
+        <sc-board-card
+          sectionId="agent-section-permissions"
+          icon="verified_user"
+          titleKey="agents.form.section.permissions"
+          [selected]="activeSection() === 'agent-section-permissions'"
+          (pick)="goToSection('agent-section-permissions')"
+        >
+          <sc-board-row [label]="'agents.form.permissions.col_llamada' | translate">{{ destinosFor('llamada') }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.permissions.col_transferencia' | translate">{{ destinosFor('transferencia') }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.permissions.manage_devices' | translate">{{ yesNo(form().permissions.manageDevices) | translate }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.permissions.self_activate' | translate">{{ yesNo(form().permissions.selfActivate) | translate }}</sc-board-row>
+        </sc-board-card>
+
+        <sc-board-card
+          sectionId="agent-section-advanced"
+          icon="tune"
+          titleKey="agents.form.section.advanced"
+          [selected]="activeSection() === 'agent-section-advanced'"
+          (pick)="goToSection('agent-section-advanced')"
+        >
+          <sc-board-row [label]="'agents.form.advanced.comportamiento.pickup_call' | translate">{{ pickupLabel(form().pickupType) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.advanced.comportamiento.pickup_chat' | translate">{{ pickupLabel(form().pickupTypeChat) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.advanced.comportamiento.max_chats' | translate">{{ form().maxChats }}</sc-board-row>
+          <sc-board-row [label]="'common.languages.label' | translate">{{ orNone(form().languages.join(', ')) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.advanced.comportamiento.random_order' | translate">{{ yesNo(form().randomOrder) | translate }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.advanced.integracion.url_iframe' | translate">{{ orNone(form().iframeUrl) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.advanced.integracion.dispositivos_externos' | translate">{{ yesNo(form().permissions.externalDevices) | translate }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.advanced.sesion.login_ext_override' | translate">{{ yesNo(form().loginExtOverride) | translate }}</sc-board-row>
+        </sc-board-card>
+
+        <sc-board-card
+          sectionId="agent-section-resources"
+          icon="library_books"
+          titleKey="agents.form.section.resources"
+          [selected]="activeSection() === 'agent-section-resources'"
+          (pick)="goToSection('agent-section-resources')"
+        >
+          <sc-board-row [label]="'agents.form.advanced.labels.title' | translate">{{ namesOf(labelOptions(), labelValue()) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.advanced.agendas.title' | translate">{{ namesOf(scheduleOptions(), scheduleValue()) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.resources.templates_chat' | translate">{{ namesOf(chatTemplateOptions(), chatTemplateValue()) }}</sc-board-row>
+          <sc-board-row [label]="'agents.form.resources.templates_email' | translate">{{ namesOf(emailTemplateOptions(), emailTemplateValue()) }}</sc-board-row>
+        </sc-board-card>
+      </div>
+    }
 
     <div class="page__main">
       @if (showSection('agent-section-identity')) {

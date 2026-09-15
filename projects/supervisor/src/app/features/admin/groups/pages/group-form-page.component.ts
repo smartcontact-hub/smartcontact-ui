@@ -50,6 +50,8 @@ import { GroupsStore } from '../state/groups.store';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import { BoardCardComponent } from '@features/admin/comparar/board-card.component';
+import { BoardRowComponent } from '@features/admin/comparar/board-row.component';
 import { FichaVariantBarComponent } from '@features/admin/comparar/ficha-variant-bar.component';
 import { FichaVariantService } from '@features/admin/comparar/ficha-variant.service';
 import {
@@ -79,6 +81,8 @@ interface FormState {
 @Component({
   selector: 'sc-group-form-page',
   imports: [
+    BoardCardComponent,
+    BoardRowComponent,
     CheckboxComponent,
     AgentChannelTableComponent,
     ButtonComponent,
@@ -186,6 +190,31 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected goToSection(id: string): void {
     this.scrollSpy.jump(id);
+  }
+
+  /* ── Variante `d`: el resumen de cada sección. Solo LEE el estado actual del formulario. ── */
+  protected readonly isBoard = computed(() => this.variants.variant() === 'd');
+
+  protected yesNo(value: boolean): string {
+    return value ? 'common.yes' : 'common.no';
+  }
+
+  protected orNone(value: string | number | null | undefined): string {
+    return value === null || value === undefined || value === '' ? this.translate.instant('compare.board.none') : String(value);
+  }
+
+  protected channelsSummary(channels: Iterable<GroupChannel>): string {
+    const labels = [...channels].map((c) => this.channelLabel(c));
+    return labels.length > 0 ? labels.join(', ') : this.translate.instant('compare.board.no_channels');
+  }
+
+  protected agentName(agentId: number): string {
+    return this.agentsStore.getAgent(agentId)?.name ?? `#${agentId}`;
+  }
+
+  /** Lo que ese agente hace en el grupo: en pausa, o los canales que atiende. */
+  protected linkSummary(link: GroupAgentLink): string {
+    return link.active ? this.channelsSummary(link.channels) : this.translate.instant('compare.board.paused');
   }
 
   /** Variante `c`: lo cambiado sin guardar, por sección, y lo que mueve fuera de ella. */

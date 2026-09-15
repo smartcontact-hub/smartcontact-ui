@@ -13,7 +13,11 @@
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-625);
+  /* `max-content`: fija y anclada al 50%, el navegador le daría solo media ventana de ancho y
+   * partiría los rótulos en dos líneas. */
+  width: max-content;
   max-width: calc(100vw - 2 * var(--sc-spacing-2));
+  white-space: nowrap;
   padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625) var(--sc-spacing-0-375) var(--sc-spacing-0-25);
   background: var(--sc-bg-elevated);
   border-radius: var(--sc-radius-lg);

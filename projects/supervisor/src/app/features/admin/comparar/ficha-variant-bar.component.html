@@ -30,7 +30,11 @@
     <span class="variant-bar__label sc-text-caption-semibold">{{ 'compare.bar.label' | translate }}</span>
 
     <div class="variant-bar__options">
-      @for (v of options; track v) {
+      @for (v of options; track v; let i = $index) {
+        <!-- Dos familias: las que lo enseñan todo, y las de pestañas. -->
+        @if (i === 2) {
+          <span class="variant-bar__separator" aria-hidden="true"></span>
+        }
         <sc-button
           size="sm"
           [variant]="variants.variant() === v ? 'primary' : 'secondary'"

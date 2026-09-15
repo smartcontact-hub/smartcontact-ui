@@ -2055,13 +2055,16 @@
     },
     "variant": {
       "a": {
-        "label": "A · Pestañas"
+        "label": "Pestañas"
       },
       "b": {
-        "label": "B · Una página"
+        "label": "Una página (mayo)"
       },
       "c": {
-        "label": "C · Pestañas con cambios"
+        "label": "Pestañas con cambios"
+      },
+      "d": {
+        "label": "Resumen + editor"
       }
     },
     "pending": {
@@ -2097,7 +2100,7 @@
     },
     "guide": {
       "title": "Cómo comparar",
-      "intro": "Es la misma ficha de tres formas. Pasa de una a otra con la barra de abajo y haz lo mismo en cada una. Son datos de demostración: puedes tocar sin miedo.",
+      "intro": "Es la misma ficha de cuatro formas. Pasa de una a otra con la barra de abajo y haz lo mismo en cada una. Son datos de demostración: puedes tocar sin miedo.",
       "current": "Estás viendo",
       "try": "Prueba esto",
       "look": "Fíjate en",
@@ -2115,7 +2118,7 @@
         "summary": "La de hoy: una sección cada vez."
       },
       "b": {
-        "what": "Todas las secciones seguidas en una sola página, como antes de mayo. El índice no esconde nada: te lleva hasta la sección y marca por dónde vas.",
+        "what": "La versión de mayo: todas las secciones seguidas en una sola página. El índice no esconde nada: te lleva hasta la sección y marca por dónde vas.",
         "agent": {
           "step1": "Pulsa «Permisos» en el índice: la página baja hasta esa sección."
         },
@@ -2148,7 +2151,31 @@
         "step4": "Pulsa «Deshacer», arriba a la derecha, para dejarlo como estaba.",
         "look": "El recuadro de la izquierda. Es lo que sustituye a verlo todo a la vez.",
         "summary": "Una sección cada vez, y un resumen de a qué afecta cada cambio."
+      },
+      "d": {
+        "what": "Toda la ficha en una pantalla, en tarjetas que resumen cada sección. Pulsas una y se edita en el panel de la derecha; las demás siguen a la vista y se actualizan al momento.",
+        "agent": {
+          "step1": "Pulsa la tarjeta «Grupos asignados»: se abre en el panel de la derecha.",
+          "step2": "Quita un canal a un grupo: la tarjeta de la izquierda lo refleja al momento."
+        },
+        "group": {
+          "step1": "Pulsa la tarjeta «Canales y estrategia».",
+          "step2": "Desmarca «Teléfono»: en la tarjeta «Agentes asignados» los agentes dejan de tener teléfono, sin salir de la pantalla."
+        },
+        "user": {
+          "step1": "Pulsa la tarjeta «Acceso».",
+          "step2": "Desmarca «Estadísticas»: la tarjeta lo refleja al momento."
+        },
+        "step3": "Pulsa otra tarjeta: el editor cambia de sección y el resto de la ficha sigue a la vista.",
+        "look": "Si ver la ficha entera en resumen mientras editas una parte te basta para entender a qué afecta, sin el ruido de tener todos los controles delante.",
+        "summary": "Resumen de todo; editas una parte a la derecha."
       }
+    },
+    "board": {
+      "editing": "Editando",
+      "none": "Ninguno",
+      "paused": "En pausa",
+      "no_channels": "Sin canales"
     }
   }
 }

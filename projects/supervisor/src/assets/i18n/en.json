@@ -2055,13 +2055,16 @@
     },
     "variant": {
       "a": {
-        "label": "A · Tabs"
+        "label": "Tabs"
       },
       "b": {
-        "label": "B · One page"
+        "label": "One page (May)"
       },
       "c": {
-        "label": "C · Tabs with changes"
+        "label": "Tabs with changes"
+      },
+      "d": {
+        "label": "Summary + editor"
       }
     },
     "pending": {
@@ -2097,7 +2100,7 @@
     },
     "guide": {
       "title": "How to compare",
-      "intro": "The same record in three forms. Switch between them with the bar at the bottom and try the same thing in each. This is demo data: touch anything.",
+      "intro": "The same record in four forms. Switch between them with the bar at the bottom and try the same thing in each. This is demo data: touch anything.",
       "current": "You are viewing",
       "try": "Try this",
       "look": "Pay attention to",
@@ -2115,7 +2118,7 @@
         "summary": "Today’s: one section at a time."
       },
       "b": {
-        "what": "Every section one after another on a single page, as before May. The index hides nothing: it takes you to the section and marks where you are.",
+        "what": "The May version: every section one after another on a single page. The index hides nothing: it takes you to the section and marks where you are.",
         "agent": {
           "step1": "Click “Permissions” in the index: the page scrolls to that section."
         },
@@ -2148,7 +2151,31 @@
         "step4": "Click “Undo”, top right, to put it back.",
         "look": "The box on the left. It is what replaces seeing everything at once.",
         "summary": "One section at a time, plus a summary of what each change affects."
+      },
+      "d": {
+        "what": "The whole record on one screen, as cards that sum up each section. Click one and edit it in the panel on the right; the rest stay in view and update as you go.",
+        "agent": {
+          "step1": "Click the “Assigned groups” card: it opens in the panel on the right.",
+          "step2": "Remove a channel from a group: the card on the left shows it straight away."
+        },
+        "group": {
+          "step1": "Click the “Channels and strategy” card.",
+          "step2": "Untick “Phone”: in the “Assigned agents” card the agents lose phone, without leaving the screen."
+        },
+        "user": {
+          "step1": "Click the “Access” card.",
+          "step2": "Untick “Statistics”: the card shows it straight away."
+        },
+        "step3": "Click another card: the editor switches section and the rest of the record stays in view.",
+        "look": "Whether seeing the whole record summarised while you edit one part is enough to understand what it affects, without the noise of every control in front of you.",
+        "summary": "A summary of everything; edit one part on the right."
       }
+    },
+    "board": {
+      "editing": "Editing",
+      "none": "None",
+      "paused": "Paused",
+      "no_channels": "No channels"
     }
   }
 }

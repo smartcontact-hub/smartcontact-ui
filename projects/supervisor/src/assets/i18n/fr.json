@@ -2055,13 +2055,16 @@
     },
     "variant": {
       "a": {
-        "label": "A · Onglets"
+        "label": "Onglets"
       },
       "b": {
-        "label": "B · Une page"
+        "label": "Une page (mai)"
       },
       "c": {
-        "label": "C · Onglets avec modifications"
+        "label": "Onglets avec modifications"
+      },
+      "d": {
+        "label": "Résumé + éditeur"
       }
     },
     "pending": {
@@ -2097,7 +2100,7 @@
     },
     "guide": {
       "title": "Comment comparer",
-      "intro": "La même fiche sous trois formes. Passez de l’une à l’autre avec la barre du bas et faites la même chose dans chacune. Ce sont des données de démonstration : touchez sans crainte.",
+      "intro": "La même fiche sous quatre formes. Passez de l’une à l’autre avec la barre du bas et faites la même chose dans chacune. Ce sont des données de démonstration : touchez sans crainte.",
       "current": "Vous regardez",
       "try": "Essayez ceci",
       "look": "Observez",
@@ -2115,7 +2118,7 @@
         "summary": "L’actuelle : une section à la fois."
       },
       "b": {
-        "what": "Toutes les sections à la suite sur une seule page, comme avant mai. L’index ne cache rien : il vous emmène à la section et indique où vous êtes.",
+        "what": "La version de mai : toutes les sections à la suite sur une seule page. L’index ne cache rien : il vous emmène à la section et indique où vous êtes.",
         "agent": {
           "step1": "Cliquez sur « Permissions » dans l’index : la page descend jusqu’à cette section."
         },
@@ -2148,7 +2151,31 @@
         "step4": "Cliquez sur « Annuler », en haut à droite, pour tout remettre.",
         "look": "L’encadré à gauche. C’est ce qui remplace le fait de tout voir à la fois.",
         "summary": "Une section à la fois, avec un résumé de ce que chaque changement affecte."
+      },
+      "d": {
+        "what": "Toute la fiche sur un écran, en cartes qui résument chaque section. Cliquez sur l’une d’elles pour la modifier dans le panneau de droite ; les autres restent visibles et se mettent à jour aussitôt.",
+        "agent": {
+          "step1": "Cliquez sur la carte « Groupes assignés » : elle s’ouvre dans le panneau de droite.",
+          "step2": "Retirez un canal à un groupe : la carte de gauche l’affiche aussitôt."
+        },
+        "group": {
+          "step1": "Cliquez sur la carte « Canaux et stratégie ».",
+          "step2": "Décochez « Téléphone » : dans la carte « Agents assignés », les agents perdent le téléphone, sans quitter l’écran."
+        },
+        "user": {
+          "step1": "Cliquez sur la carte « Accès ».",
+          "step2": "Décochez « Statistiques » : la carte l’affiche aussitôt."
+        },
+        "step3": "Cliquez sur une autre carte : l’éditeur change de section et le reste de la fiche reste visible.",
+        "look": "Si voir toute la fiche en résumé pendant que vous en modifiez une partie suffit pour comprendre ce que cela affecte, sans le bruit de tous les contrôles devant vous.",
+        "summary": "Un résumé de tout ; vous modifiez une partie à droite."
       }
+    },
+    "board": {
+      "editing": "En cours",
+      "none": "Aucune",
+      "paused": "En pause",
+      "no_channels": "Aucun canal"
     }
   }
 }
