@@ -196,7 +196,9 @@
     },
     "wall": {
       "enter": "Modo parede",
-      "exit": "Sair"
+      "exit": "Sair",
+      "empty_title": "Este monitor não tem widgets",
+      "empty_desc": "Saia do modo parede para adicioná-los. O carrossel pula-o."
     },
     "detail": {
       "open_aria": "Ver o detalhe de {{value}}",

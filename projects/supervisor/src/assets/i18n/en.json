@@ -196,7 +196,9 @@
     },
     "wall": {
       "enter": "Wall mode",
-      "exit": "Exit"
+      "exit": "Exit",
+      "empty_title": "This monitor has no widgets",
+      "empty_desc": "Exit wall mode to add them. The carousel skips it."
     },
     "detail": {
       "open_aria": "See the detail of {{value}}",

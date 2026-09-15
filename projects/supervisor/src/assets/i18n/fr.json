@@ -196,7 +196,9 @@
     },
     "wall": {
       "enter": "Mode mur",
-      "exit": "Quitter"
+      "exit": "Quitter",
+      "empty_title": "Ce moniteur n’a aucun widget",
+      "empty_desc": "Quittez le mode mur pour en ajouter. Le carrousel le saute."
     },
     "detail": {
       "open_aria": "Voir le détail de {{value}}",

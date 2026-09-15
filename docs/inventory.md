@@ -47,9 +47,9 @@
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |
-| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 23 |
+| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 25 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 8 inputs | — | ✓ | 1 |
-| `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 13 |
+| `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 14 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
 | `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 6 |
