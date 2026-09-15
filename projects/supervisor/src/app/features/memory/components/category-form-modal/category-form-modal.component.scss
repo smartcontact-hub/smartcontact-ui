@@ -61,12 +61,6 @@
     gap: var(--sc-spacing-0-875);
   }
 
-  &__link-divider {
-    height: 1px;
-    background: var(--sc-border-default);
-    margin: var(--sc-spacing-0-5) 0;
-  }
-
   &__link-head {
     display: flex;
     align-items: center;

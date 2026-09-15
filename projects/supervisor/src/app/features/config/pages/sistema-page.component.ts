@@ -16,6 +16,8 @@ import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/componen
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScSectionCardComponent as SectionCardComponent } from '@smartcontact-hub/components';
+import { ScSelectButtonComponent as SelectButtonComponent } from '@smartcontact-hub/components';
+import { injectLangChange } from '@core/utils/lang-change';
 
 import {
   LanguageService,
@@ -32,19 +34,6 @@ import {
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 
 import { NumeracionEspecialSectionComponent } from '../sections/numeracion-especial-section.component';
-import { injectLangChange } from '@core/utils/lang-change';
-
-interface ThemeOption {
-  readonly value: ThemeMode;
-  readonly labelKey: string;
-  readonly icon: string;
-}
-
-interface LanguageOption {
-  readonly value: AppLanguage;
-  readonly labelKey: string;
-  readonly flag: string;
-}
 
 interface RegenerationResult {
   readonly count: number;
@@ -97,6 +86,7 @@ const APP_DATA_PREFIX = 'sc-';
     CheckboxComponent,
     ButtonComponent,
     IconComponent,
+    SelectButtonComponent,
     NumeracionEspecialSectionComponent,
     SectionCardComponent,
     ToggleSwitchComponent,
@@ -129,24 +119,26 @@ export class SistemaPageComponent {
   protected readonly downloadIcon = 'download';
   protected readonly checkIcon = 'check';
 
-  protected readonly themeOptions: readonly ThemeOption[] = [
-    { value: 'light', labelKey: 'config.sistema.appearance.theme_light', icon: 'light_mode' },
-    { value: 'dark', labelKey: 'config.sistema.appearance.theme_dark', icon: 'dark_mode' },
-    {
-      value: 'system',
-      labelKey: 'config.sistema.appearance.theme_system',
-      icon: 'desktop_windows',
-    },
-  ];
+  /* El texto de cada opción es también su nombre accesible (`sc-selectbutton`): va traducido. */
+  protected readonly themeOptions = computed(() => {
+    this.lang();
+    const t = (k: string) => this.translate.instant(`config.sistema.appearance.theme_${k}`);
+    return [
+      { value: 'light' as ThemeMode, label: t('light'), icon: 'light_mode' },
+      { value: 'dark' as ThemeMode, label: t('dark'), icon: 'dark_mode' },
+      { value: 'system' as ThemeMode, label: t('system'), icon: 'desktop_windows' },
+    ];
+  });
 
   protected readonly globeIcon = 'public';
 
-  protected readonly languageOptions: readonly LanguageOption[] = [
-    { value: 'es', labelKey: 'config.sistema.language.es', flag: '🇪🇸' },
-    { value: 'en', labelKey: 'config.sistema.language.en', flag: '🇬🇧' },
-    { value: 'fr', labelKey: 'config.sistema.language.fr', flag: '🇫🇷' },
-    { value: 'pt', labelKey: 'config.sistema.language.pt', flag: '🇵🇹' },
-  ];
+  protected readonly languageOptions = computed(() => {
+    this.lang();
+    return (['es', 'en', 'fr', 'pt'] as const).map((value: AppLanguage) => ({
+      value,
+      label: this.translate.instant(`config.sistema.language.${value}`),
+    }));
+  });
 
   protected readonly confirmPhraseToken = CONFIRM_PHRASE;
 
@@ -205,8 +197,12 @@ export class SistemaPageComponent {
       this.selectedIds().size > 0 && this.confirmText() === CONFIRM_PHRASE && !this.processing(),
   );
 
-  protected select(mode: ThemeMode): void {
-    this.theme.set(mode);
+  protected selectTheme(mode: unknown): void {
+    if (mode === 'light' || mode === 'dark' || mode === 'system') this.theme.set(mode);
+  }
+
+  protected selectLanguage(lang: unknown): void {
+    if (lang === 'es' || lang === 'en' || lang === 'fr' || lang === 'pt') this.language.setLang(lang);
   }
 
   protected async resetData(): Promise<void> {

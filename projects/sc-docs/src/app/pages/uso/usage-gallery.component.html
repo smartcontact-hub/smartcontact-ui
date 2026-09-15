@@ -16,14 +16,13 @@
               }
       }}
     </p>
-    <div class="uso-tabs" role="tablist">
-      <button type="button" role="tab" [class.is-active]="view() === 'component'" (click)="setView('component')">
-        {{ 'uso.byComponent' | translate }}
-      </button>
-      <button type="button" role="tab" [class.is-active]="view() === 'screen'" (click)="setView('screen')">
-        {{ 'uso.byScreen' | translate }}
-      </button>
-    </div>
+    <!-- Pestañas de primeng.dev (`p-tabs`): cada una es una forma de recorrer el inventario. -->
+    <p-tabs class="uso-tabs" [value]="view()" (valueChange)="onViewChange($event)">
+      <p-tablist>
+        <p-tab value="component">{{ 'uso.byComponent' | translate }}</p-tab>
+        <p-tab value="screen">{{ 'uso.byScreen' | translate }}</p-tab>
+      </p-tablist>
+    </p-tabs>
   }
 </header>
 

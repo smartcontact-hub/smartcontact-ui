@@ -15,7 +15,8 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
   cambia · en qué te ayuda · rastro · seguro cerrar, que MIDE el árbol y te desmiente; AGENTS.md
   §Session-Close, paso 6). El de compactación avisa
   si la guía cambió en `origin/main`. El de cada mensaje de Rafa apunta lo que suena a corrección y te pide nombrar la
-  regla que ya lo cubría; un cierre («cerramos») invoca `/reflect`. Salida explícita: `# sc:ok`.
+  regla que ya lo cubría; un cierre («cerramos») invoca `/reflect`; un enlace de primeng.dev manda a leer la doc
+  entera con `tools/primeng-doc.mjs` y meter el nativo tal cual (AGENTS.md, «Componentes de primeng.dev»). Salida explícita: `# sc:ok`.
 
 <!-- tarjeta:inicio -->
 ## Antes de AFIRMAR, COMMITEAR o PUSHEAR, relee esto (regla de LEARNINGS entre paréntesis)

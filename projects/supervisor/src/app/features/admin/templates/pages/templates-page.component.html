@@ -44,32 +44,13 @@
   [noResultsParams]="{ tab: ('templates.type.' + activeTab()) | translate }"
   tableTestId="templates-table"
 >
-  <div scListBeforeToolbar class="tabs" role="tablist">
-    <button
-      type="button"
-      role="tab"
-      class="tabs__tab sc-text-body-regular"
-      [class.tabs__tab--active]="activeTab() === 'chat'"
-      [attr.aria-selected]="activeTab() === 'chat'"
-      (click)="switchTab('chat')"
-    >
-      <sc-icon [name]="chatIcon" size="inherit" />
-      <span>{{ 'templates.type.chat' | translate }}</span>
-      <span class="tabs__count">{{ chatCount() }}</span>
-    </button>
-    <button
-      type="button"
-      role="tab"
-      class="tabs__tab sc-text-body-regular"
-      [class.tabs__tab--active]="activeTab() === 'email'"
-      [attr.aria-selected]="activeTab() === 'email'"
-      (click)="switchTab('email')"
-    >
-      <sc-icon [name]="emailIcon" size="inherit" />
-      <span>{{ 'templates.type.email' | translate }}</span>
-      <span class="tabs__count">{{ emailCount() }}</span>
-    </button>
-  </div>
+  <p-tabs scListBeforeToolbar class="tabs" [value]="activeTab()" (valueChange)="onTabChange($event)">
+    <!-- El nombre va al nodo con `role="tablist"`, que es el `content` de dentro de `p-tablist`. -->
+    <p-tablist [pt]="{ content: { 'aria-label': 'templates.form.channel' | translate } }">
+      <p-tab value="chat">{{ 'templates.type.chat' | translate }}</p-tab>
+      <p-tab value="email">{{ 'templates.type.email' | translate }}</p-tab>
+    </p-tablist>
+  </p-tabs>
 
   <sc-empty-state
     scListEmpty

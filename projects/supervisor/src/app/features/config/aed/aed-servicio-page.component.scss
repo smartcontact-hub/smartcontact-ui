@@ -529,12 +529,6 @@
     min-width: 160px;
   }
 
-  /* El `https://` es parte del campo, no un dato: se pinta como el cromo que es. */
-  &__scheme {
-    color: var(--sc-text-secondary);
-    white-space: nowrap;
-  }
-
   /* Solo aparece cuando hay error, y por eso no reserva sitio. */
   &__msg {
     display: block;

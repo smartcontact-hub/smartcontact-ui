@@ -64,25 +64,15 @@
         }
       }
 
+      <!-- Pestañas de primeng.dev (`p-tabs`) sin paneles: el cuerpo de cada una va debajo, en
+           `.player-tab-body`. Las acciones quedan FUERA de la tira para no robarle las flechas. -->
       <div class="player-tabs">
-        <button
-          type="button"
-          class="player-tabs__btn sc-text-body-regular"
-          [class.player-tabs__btn--active]="activeTab() === 'transcription'"
-          (click)="setActiveTab('transcription')"
-        >
-          <sc-icon [name]="fileTextIcon" size="inherit" />
-          {{ 'memory.player.tabs.transcription' | translate }}
-        </button>
-        <button
-          type="button"
-          class="player-tabs__btn sc-text-body-regular"
-          [class.player-tabs__btn--active]="activeTab() === 'analysis'"
-          (click)="setActiveTab('analysis')"
-        >
-          <sc-icon [name]="sparklesIcon" size="inherit" />
-          {{ 'memory.player.tabs.analysis' | translate }}
-        </button>
+        <p-tabs class="player-tabs__tabs" [value]="activeTab()" (valueChange)="onTabChange($event)">
+          <p-tablist>
+            <p-tab value="transcription">{{ 'memory.player.tabs.transcription' | translate }}</p-tab>
+            <p-tab value="analysis">{{ 'memory.player.tabs.analysis' | translate }}</p-tab>
+          </p-tablist>
+        </p-tabs>
 
         <span class="player-tabs__actions">
           @if (c.hasTranscription) {

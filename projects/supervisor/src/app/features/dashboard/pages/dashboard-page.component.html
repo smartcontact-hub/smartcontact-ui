@@ -97,10 +97,10 @@
         <!-- La barra del modo pared es la Toolbar de primeng.dev: nombre y estado al inicio, controles al
              final. Los controles se esconden solos; el nombre del monitor se sigue leyendo. -->
         <div class="wall-head">
-        <p-toolbar class="wall-bar" [class.wall-bar--hidden]="!wallControlsVisible()">
+        <p-toolbar class="wall-bar" [class.wall-bar--hidden]="!wallControlsVisible()" ariaLabelledBy="wall-bar-name">
           <ng-template #start>
             <span class="wall-bar__start">
-              <span class="wall-bar__name sc-text-h3-semibold">{{ m.name }}</span>
+              <span class="wall-bar__name sc-text-h3-semibold" id="wall-bar-name">{{ m.name }}</span>
               @if (canRotate()) {
                 <span class="wall-bar__dots" aria-hidden="true">
                   @for (mm of store.monitors(); track mm.id) {

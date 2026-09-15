@@ -393,7 +393,7 @@ for (const h of files.filter((f) => rel(f.path).startsWith('docs/handoff/')))
   const LEGADO_SIN_TEST = new Set([
     'check-export-clean', 'token-gen', 'token-gen-component', 'token-gen-color', 'token-gen-cmp-color',
     'token-gen-effects', 'token-parity', 'token-guard', 'check-theme-scale', 'check-border-surfaces',
-    'audit-datatables', 'audit-primeng-coupling',
+    'audit-datatables',
     'variables-map', 'docs-guard', 'docs-coherence',
     'audit-base-href', 'audit-titulo-contenido',
   ]);

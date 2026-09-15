@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TabsModule } from 'primeng/tabs';
 import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
@@ -61,6 +62,7 @@ import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
 @Component({
   selector: 'sc-memory-conversation-player-modal',
   imports: [
+    TabsModule,
     SearchComponent,
     ButtonComponent,
     IconComponent,
@@ -266,8 +268,9 @@ export class ConversationPlayerModalComponent {
     });
   }
 
-  protected setActiveTab(tab: 'transcription' | 'analysis'): void {
-    this.activeTab.set(tab);
+  /** `p-tabs` avisa con el `value` de la pestaña (`string | number | undefined`). */
+  protected onTabChange(value: string | number | undefined): void {
+    if (value === 'transcription' || value === 'analysis') this.activeTab.set(value);
   }
 
   protected onTogglePlay(): void {

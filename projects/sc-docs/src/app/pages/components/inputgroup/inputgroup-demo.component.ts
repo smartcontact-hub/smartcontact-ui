@@ -20,6 +20,11 @@ const ADDONS_SNIPPET = `<sc-inputgroup>
 <sc-inputgroup size="sm">
   <p-inputgroup-addon>@</p-inputgroup-addon>
   <input pInputText placeholder="Usuario (sm)" />
+</sc-inputgroup>
+
+<sc-inputgroup size="lg">
+  <p-inputgroup-addon>https://</p-inputgroup-addon>
+  <input pInputText placeholder="Dominio (lg)" />
 </sc-inputgroup>`;
 
 /** Demo de `sc-inputgroup` en formato story (motor «Storybook-like»). */
@@ -47,7 +52,7 @@ export class InputGroupDemoComponent {
       fluid: true,
     },
     props: [
-      { name: 'size', type: 'ScInputGroupSize', default: "'md'", description: 'sm · md · lg (matchea sc-inputtext).' },
+      { name: 'size', type: 'ScInputGroupSize', default: "'md'", description: 'sm · md · lg: el campo y el addon, con la talla de sc-inputtext.' },
       {
         name: 'fluid',
         type: 'boolean',

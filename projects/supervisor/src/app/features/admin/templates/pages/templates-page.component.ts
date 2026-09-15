@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
+import { TabsModule } from 'primeng/tabs';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
@@ -35,6 +36,7 @@ import {
 @Component({
   selector: 'sc-templates-page',
   imports: [
+    TabsModule,
     ButtonComponent,
     ClickOutsideDirective,
     DeleteEntityDialogComponent,
@@ -64,8 +66,6 @@ export class TemplatesPageComponent {
   protected readonly plusIcon = 'add';
   protected readonly searchIcon = 'search';
   protected readonly fileStackIcon = 'file_copy';
-  protected readonly chatIcon = 'chat_bubble';
-  protected readonly emailIcon = 'mail';
 
   protected readonly templates = this.templatesStore.templates;
 
@@ -77,12 +77,6 @@ export class TemplatesPageComponent {
   protected readonly selectedIds = signal<ReadonlySet<Template['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly Template[] | null>(null);
 
-  protected readonly chatCount = computed(
-    () => this.templates().filter((t) => t.type === 'chat').length,
-  );
-  protected readonly emailCount = computed(
-    () => this.templates().filter((t) => t.type === 'email').length,
-  );
 
   /** Las de la pestaña activa, por título: esta lista no tiene cabeceras para ordenar. */
   protected readonly tabRows = computed(() => {
@@ -144,6 +138,11 @@ export class TemplatesPageComponent {
     selectedOne: 'common.bulk.entity.template_selected_one',
     selectedOther: 'common.bulk.entity.template_selected_other',
   });
+
+  /** `p-tabs` avisa con el `value` de la pestaña (`string | number | undefined`). */
+  protected onTabChange(value: string | number | undefined): void {
+    if (value === 'chat' || value === 'email') this.switchTab(value);
+  }
 
   protected switchTab(tab: TemplateType): void {
     this.activeTab.set(tab);

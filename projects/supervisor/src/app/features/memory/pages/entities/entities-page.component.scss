@@ -70,10 +70,15 @@
   }
 }
 
-.entities-divider {
-  border: 0;
-  border-top: 1px solid var(--sc-border-default);
-  margin: var(--sc-spacing-1-75) 0 var(--sc-spacing-2); /* abajo 2 + gap 1 = 42, como antes */
+/* Entre las dos secciones va `<sc-divider />`, que trae su aire (14 arriba y abajo) y suma el
+ * `gap`. Estos dos márgenes devuelven el de antes: 66,5 por encima de la línea y 42 por debajo
+ * (2026-09-15, decidido al pasar el `<hr>` a divider). */
+.entities-section:has(+ sc-divider) {
+  margin-bottom: var(--sc-spacing-2-75);
+}
+
+.entities-section--system {
+  margin-top: var(--sc-spacing-1);
 }
 
 .entities-empty {

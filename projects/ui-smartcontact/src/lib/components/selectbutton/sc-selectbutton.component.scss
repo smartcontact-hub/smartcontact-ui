@@ -1,0 +1,16 @@
+/*
+ * sc-selectbutton — wrapper Extended sobre <p-selectbutton>.
+ *
+ * El carril, la opción elegida, el foco y los tamaños los pone el tema
+ * (`togglebutton.*` y `selectbutton.*` en sc-preset). Aquí solo cómo se coloca el host.
+ */
+
+.sc-selectbutton {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.sc-selectbutton--fluid {
+  display: flex;
+  width: 100%;
+}

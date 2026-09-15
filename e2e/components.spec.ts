@@ -487,6 +487,39 @@ test.describe('sc-inputgroup', () => {
     await expect(page.getByTestId('sc-inputgroup').locator('.p-inputgroupaddon').first()).toBeVisible();
     await screenshotBaseline(page, 'inputgroup');
   });
+
+  /* La talla es del GRUPO: campo y addon a la vez, con la métrica de `sc-inputtext` de esa talla.
+   * Hasta el 2026-09-15 el addon se quedaba en 14 en sm y lg: sus reglas apuntaban a una clase que
+   * PrimeNG 22 ya no pone (DD-113). */
+  for (const talla of ['sm', 'lg'] as const) {
+    test(`size="${talla}" lleva campo y addon a la talla de sc-inputtext`, async ({ page }) => {
+      await gotoPage(page, 'inputgroup');
+      const grupo = page.getByTestId(`sc-inputgroup-${talla}`);
+      const letra = kitPx(`formField.${talla}.fontSize`);
+      expect(await styleOf(grupo.locator('input'), ['padding-left', 'padding-top', 'font-size'])).toEqual({
+        'padding-left': kitPx(`formField.${talla}.paddingX`),
+        'padding-top': kitPx(`formField.${talla}.paddingY`),
+        'font-size': letra,
+      });
+      expect((await styleOf(grupo.locator('.p-inputgroupaddon'), ['font-size']))['font-size']).toBe(letra);
+    });
+  }
+});
+
+test.describe('sc-selectbutton', () => {
+  test('el grupo se nombra por su rótulo, cada opción por su texto, y elegir marca aria-pressed', async ({ page }) => {
+    await gotoPage(page, 'selectbutton');
+    const host = page.getByTestId('sc-selectbutton');
+    const grupo = host.locator('p-selectbutton');
+    await expect(grupo).toHaveAttribute('role', 'group');
+    // `p-selectbutton` pisa un `[attr.aria-labelledby]` puesto encima: el wrapper lo pasa por la entrada.
+    await expect(grupo).toHaveAccessibleName('Vistas');
+    const fallidas = host.getByRole('button', { name: 'Fallidas' });
+    await expect(fallidas).toHaveAttribute('aria-pressed', 'false');
+    await fallidas.click();
+    await expect(fallidas).toHaveAttribute('aria-pressed', 'true');
+    await expect(host.getByRole('button', { name: 'Todas' })).toHaveAttribute('aria-pressed', 'false');
+  });
 });
 
 test.describe('sc-search', () => {
