@@ -1,0 +1,259 @@
+<p-sidebar-layout class="lab">
+  @if (showBackdrop()) {
+    <p-sidebar-backdrop />
+  }
+  @if (side === 'right') {
+    <p-sidebar-main class="lab__main" [class.lab__main--detached]="variant !== 'sidebar'">
+      <ng-container *ngTemplateOutlet="header" />
+      <ng-container *ngTemplateOutlet="body" />
+    </p-sidebar-main>
+  }
+  <p-sidebar
+    id="lab-sidebar"
+    [(open)]="open"
+    [variant]="variant"
+    [collapsible]="effectiveCollapsible()"
+    [side]="side"
+    [overlay]="effectiveOverlay()"
+    [openOnHover]="openOnHover"
+    width="var(--sc-sidebar-width-expanded)"
+  >
+    <p-sidebar-spacer />
+    <p-sidebar-aside>
+      <p-sidebar-panel>
+        <p-sidebar-header>
+          <p-sidebar-menu>
+            <p-sidebar-menu-item>
+              <button pSidebarMenuButton class="lab__brand-button">
+                <div class="lab__brand-mark">
+                  <img src="/logos/smartcontact-isotype-light.svg" alt="" width="14" height="14" />
+                </div>
+                <span class="lab__brand-name lab__label">SmartContact</span>
+              </button>
+            </p-sidebar-menu-item>
+          </p-sidebar-menu>
+        </p-sidebar-header>
+
+        <p-sidebar-content>
+          @for (section of sections; track section.titleKey) {
+            <p-sidebar-group>
+              <p-sidebar-group-label>{{ section.titleKey | translate }}</p-sidebar-group-label>
+              <p-sidebar-group-content>
+                <p-sidebar-menu>
+                  @for (item of section.items; track item.labelKey) {
+                    <ng-container *ngTemplateOutlet="node; context: { $implicit: item }" />
+                  }
+                </p-sidebar-menu>
+              </p-sidebar-group-content>
+            </p-sidebar-group>
+          }
+
+          <!-- Como el ejemplo anidado de primeng.dev: un item con hijos es collapsible y abre su
+               p-sidebar-menu-sub; dentro, un hijo con hijos vuelve a ser item y uno sin hijos es
+               sub-item. Declarado dentro del sidebar: sus piezas lo buscan por inyección. -->
+          <ng-template #node let-item>
+            @if (item.children?.length) {
+              <p-sidebar-menu-item
+                collapsible
+                [open]="isOpen(item)"
+                (openChange)="setOpen(item, $event)"
+              >
+                <button
+                  pSidebarMenuButton
+                  [isActive]="item.labelKey === accentKey()"
+                  [pTooltip]="item.labelKey | translate"
+                  tooltipPosition="right"
+                  appendTo="body"
+                  [tooltipDisabled]="open()"
+                  [class.lab__in-path]="inPath(item)"
+                  (click)="onParentClick(item)"
+                >
+                  <sc-icon class="lab__icon" [name]="icon(item)" [size]="14" />
+                  <span class="lab__label">{{ item.labelKey | translate }}</span>
+                  <sc-icon class="lab__chevron" name="expand_more" [size]="14" />
+                </button>
+                <p-sidebar-menu-sub>
+                  @for (child of item.children; track child.labelKey) {
+                    @if (child.children?.length) {
+                      <ng-container *ngTemplateOutlet="node; context: { $implicit: child }" />
+                    } @else {
+                      <p-sidebar-menu-sub-item>
+                        <button
+                          pSidebarMenuSubButton
+                          [isActive]="child.path === activePath()"
+                          (click)="select(child.path)"
+                        >
+                          <span>{{ child.labelKey | translate }}</span>
+                        </button>
+                      </p-sidebar-menu-sub-item>
+                    }
+                  }
+                </p-sidebar-menu-sub>
+              </p-sidebar-menu-item>
+            } @else {
+              <p-sidebar-menu-item>
+                <button
+                  pSidebarMenuButton
+                  [isActive]="item.path === activePath()"
+                  [pTooltip]="item.labelKey | translate"
+                  tooltipPosition="right"
+                  appendTo="body"
+                  [tooltipDisabled]="open()"
+                  (click)="select(item.path)"
+                >
+                  <sc-icon class="lab__icon" [name]="icon(item)" [size]="14" />
+                  <span class="lab__label">{{ item.labelKey | translate }}</span>
+                </button>
+              </p-sidebar-menu-item>
+            }
+          </ng-template>
+        </p-sidebar-content>
+
+        <p-sidebar-footer>
+          <p-sidebar-menu>
+            <p-sidebar-menu-item>
+              <button pSidebarMenuButton class="lab__user-button">
+                <sc-avatar class="lab__user-avatar" label="SD" shape="circle" />
+                <span class="lab__label">Supervisor demo</span>
+              </button>
+            </p-sidebar-menu-item>
+          </p-sidebar-menu>
+        </p-sidebar-footer>
+      </p-sidebar-panel>
+    </p-sidebar-aside>
+    <button pSidebarRail></button>
+  </p-sidebar>
+  @if (side === 'left') {
+    <p-sidebar-main class="lab__main" [class.lab__main--detached]="variant !== 'sidebar'">
+      <ng-container *ngTemplateOutlet="header" />
+      <ng-container *ngTemplateOutlet="body" />
+    </p-sidebar-main>
+  }
+
+  <!-- Dentro del layout: el trigger busca su sidebar por inyección y fuera no lo encuentra. -->
+  <ng-template #header>
+    <header class="lab__header">
+      <button
+        pButton
+        pSidebarTrigger
+        target="lab-sidebar"
+        severity="secondary"
+        text
+        size="small"
+        [attr.aria-label]="'lab.sidebar.toggle_aria' | translate"
+      >
+        <sc-icon name="left_panel_open" [size]="14" />
+      </button>
+      <span class="lab__trail sc-text-body-regular">
+        @for (key of trail(); track key; let last = $last) {
+          <span [class.lab__trail-current]="last">{{ key | translate }}</span>
+          @if (!last) {
+            <span class="lab__trail-sep" aria-hidden="true">›</span>
+          }
+        }
+      </span>
+      <!-- Como el ejemplo «Responsive»: dice en qué lado del corte de 1024px estás. -->
+      <span class="lab__mode sc-text-caption-regular">{{ isMobile() ? 'Mobile' : 'Desktop' }}</span>
+    </header>
+  </ng-template>
+</p-sidebar-layout>
+
+<!-- Las pantallas reales, las mismas rutas que cuelgan del shell, dentro de un ScrollArea con
+     las dos barras y la esquina, como el ejemplo «Both scrollbars» (visor sin relleno, su p-0). -->
+<ng-template #body>
+  <p-scrollarea class="lab__page">
+    <p-scrollarea-viewport class="lab__viewport">
+      <p-scrollarea-content class="lab__content">
+        <router-outlet />
+      </p-scrollarea-content>
+    </p-scrollarea-viewport>
+    <p-scrollarea-scrollbar orientation="vertical">
+      <p-scrollarea-handle />
+    </p-scrollarea-scrollbar>
+    <p-scrollarea-scrollbar orientation="horizontal">
+      <p-scrollarea-handle />
+    </p-scrollarea-scrollbar>
+    <p-scrollarea-corner />
+  </p-scrollarea>
+</ng-template>
+
+<!-- Los controles del ejemplo «Variants», en un Popover que abre un botón flotante. -->
+<button
+  pButton
+  rounded
+  class="lab__settings-button"
+  [class.lab__settings-button--left]="side === 'right'"
+  [attr.aria-label]="'lab.sidebar.options_aria' | translate"
+  (click)="settings.toggle($event)"
+>
+  <sc-icon name="tune" [size]="14" />
+</button>
+<p-popover #settings [ariaLabel]="'lab.sidebar.options_aria' | translate">
+  <div class="sc-text-body-regular lab__controls">
+    <!-- El tema, con el mismo control que Ajustes › Sistema: ver cada variante en claro y en oscuro sin salir. -->
+    <div class="sc-text-body-regular lab__control">
+      <span id="lab-theme-label">{{ 'config.sistema.appearance.theme_label' | translate }}</span>
+      <sc-selectbutton
+        [options]="themeOptions"
+        optionValue="value"
+        [allowEmpty]="false"
+        [value]="theme.mode()"
+        (valueChange)="selectTheme($event)"
+        ariaLabelledBy="lab-theme-label"
+      >
+        <ng-template #item let-option>
+          <sc-icon [name]="option.icon" size="inherit" />
+          <span>{{ option.labelKey | translate }}</span>
+        </ng-template>
+      </sc-selectbutton>
+    </div>
+    <div class="sc-text-body-regular lab__control lab__control--switch">
+      <label for="lab-responsive">Responsive</label>
+      <sc-toggleswitch inputId="lab-responsive" [checked]="responsive" (checkedChange)="responsive = $event" />
+    </div>
+    <div class="sc-text-body-regular lab__control">
+      <label for="lab-variant">Variant</label>
+      <sc-select
+        inputId="lab-variant"
+        [options]="variantOptions"
+        optionValue="value"
+        [(value)]="variant"
+      />
+    </div>
+    <div class="sc-text-body-regular lab__control">
+      <label for="lab-collapsible">Collapsible</label>
+      <sc-select
+        inputId="lab-collapsible"
+        [options]="collapsibleOptions"
+        optionValue="value"
+        [disabled]="responsive"
+        [(value)]="collapsible"
+      />
+    </div>
+    <div class="sc-text-body-regular lab__control">
+      <span id="lab-side-label">Side</span>
+      <sc-selectbutton
+        [options]="sideOptions"
+        optionValue="value"
+        [allowEmpty]="false"
+        [(value)]="side"
+        ariaLabelledBy="lab-side-label"
+      />
+    </div>
+    <div class="sc-text-body-regular lab__control lab__control--switch">
+      <label for="lab-overlay">Overlay</label>
+      <sc-toggleswitch inputId="lab-overlay" [disabled]="responsive" [checked]="overlay" (checkedChange)="overlay = $event" />
+    </div>
+    <div class="sc-text-body-regular lab__control lab__control--switch">
+      <label for="lab-hover">Open on Hover</label>
+      <sc-toggleswitch inputId="lab-hover" [checked]="openOnHover" (checkedChange)="openOnHover = $event" />
+    </div>
+    <div class="sc-text-body-regular lab__control lab__control--switch">
+      <label for="lab-backdrop">Backdrop</label>
+      <sc-toggleswitch inputId="lab-backdrop" [disabled]="responsive" [checked]="backdrop" (checkedChange)="backdrop = $event" />
+    </div>
+    <button pButton severity="secondary" outlined size="small" (click)="leaveLab()">
+      Volver al shell
+    </button>
+  </div>
+</p-popover>
