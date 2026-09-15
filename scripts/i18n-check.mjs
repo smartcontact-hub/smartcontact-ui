@@ -25,6 +25,7 @@
  *      `placeholder`, `title`, `alt`) con texto literal en vez de una clave.
  *   G. Formato de fecha/número clavado a un idioma (`toLocale*('es-ES')`). El idioma activo lo
  *      sirve `LanguageService.locale()`.
+ *   H. `computed()` con `translate.instant()` que no lee el idioma: se congela en el de carga.
  *
  * Lo que a propósito NO se comprueba, porque se midió y era ruido:
  *   · "traducción idéntica al español" → los 15 casos de en y los 15 de fr eran marca o tecnicismos
@@ -155,6 +156,32 @@ export function localesClavados(ts) {
   return [...ts.matchAll(/toLocale\w*\(\s*['"]([a-z]{2}-[A-Z]{2})['"]/g)].map((m) => m[1]);
 }
 
+/**
+ * H. `computed()` que traducen con `translate.instant()` sin LEER el idioma dentro del bloque: se
+ * quedan en el idioma de carga (el pipe `| translate` sí reacciona). Devuelve la línea de cada uno.
+ * Medido el 2026-09-15: 18 en el Supervisor (menús, filtros, diálogos y dos tablas), con el gate
+ * anterior en verde porque solo miraba un `computed` llamado `columns`. Los comentarios no cuentan
+ * como lectura, y el tipo genérico (`computed<T>(`) sí cuenta como computed.
+ */
+export function computedsSinIdioma(ts) {
+  const lineas = [];
+  const re = /\bcomputed\s*(?:<[^()]*?>)?\s*\(/g;
+  let m;
+  while ((m = re.exec(ts))) {
+    let i = m.index + m[0].length;
+    let d = 1;
+    while (i < ts.length && d) {
+      if (ts[i] === '(') d++;
+      else if (ts[i] === ')') d--;
+      i++;
+    }
+    const bloque = ts.slice(m.index, i).replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+    if (/\.instant\(/.test(bloque) && !/\b(lang|currentLang)\(\)/.test(bloque))
+      lineas.push(ts.slice(0, m.index).split('\n').length);
+  }
+  return lineas;
+}
+
 /** Frases de la referencia que un locale traduce de dos maneras distintas. */
 export function divergencias(ref, target, locale, excepciones = EXCEPCIONES_DIVERGENCIA) {
   const porFrase = new Map();
@@ -273,6 +300,18 @@ if (process.argv[1] && process.argv[1].endsWith('i18n-check.mjs')) {
         clavados,
       );
     else console.log(`  ✓ fechas y números: ninguno clavado a un idioma`);
+
+    // ── H. textos que se congelan al cambiar de idioma ──────────────────────
+    const congelados = [];
+    for (const f of tss.filter((f) => !f.endsWith('.spec.ts')))
+      for (const linea of computedsSinIdioma(readFileSync(f, 'utf8')))
+        congelados.push(`${relative(root, f)}:${linea}`);
+    if (congelados.length)
+      fail(
+        `${congelados.length} computed() con translate.instant() que no leen el idioma (lee injectLangChange() dentro)`,
+        congelados,
+      );
+    else console.log(`  ✓ computed: todos los que traducen leen el idioma`);
   }
 
   console.log(`\n${SEP}`);

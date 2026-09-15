@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import type { Conversation } from '../../data/conversation.types';
+import { injectLangChange } from '@core/utils/lang-change';
 
 /**
  * Pictograma única canal+processing-state para la columna "Estado" de
@@ -50,6 +51,7 @@ interface ResolvedStatus {
 })
 export class MemoryStatusIconComponent {
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
 
   readonly conversation = input.required<Conversation>();
   readonly isProcessing = input<boolean>(false);
@@ -64,6 +66,7 @@ export class MemoryStatusIconComponent {
   });
 
   protected readonly tooltip = computed<string>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
     return this.translate.instant(this.status().labelKey);
   });
 }

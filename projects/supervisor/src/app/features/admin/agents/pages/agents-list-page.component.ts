@@ -151,16 +151,17 @@ export class AgentsListPageComponent {
   protected readonly selectedIds = signal<ReadonlySet<Agent['id']>>(new Set());
   /** Agente cuya lista de estados está abierta (el menú es uno solo para toda la tabla). */
   protected readonly presenceMenuAgent = signal<Agent | null>(null);
-  protected readonly presenceMenuItems = computed<MenuItem[]>(() =>
-    this.presenceStates.map((p) => ({
+  protected readonly presenceMenuItems = computed<MenuItem[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return this.presenceStates.map((p) => ({
       id: p,
       label: this.translate.instant(this.presenceKeys[p]),
       command: () => {
         const agent = this.presenceMenuAgent();
         if (agent) this.onPresenceChange(agent, p);
       },
-    })),
-  );
+    }));
+  });
   protected readonly deleteTarget = signal<readonly Agent[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
   protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
@@ -274,40 +275,43 @@ export class AgentsListPageComponent {
     ];
   });
 
-  protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => [
-    {
-      key: 'status',
-      label: this.translate.instant('agents.table.status'),
-      values: [
-        { value: 'active', label: this.translate.instant('agents.status.active') },
-        { value: 'inactive', label: this.translate.instant('agents.status.inactive') },
-      ],
-    },
-    {
-      key: 'presenceStatus',
-      label: this.translate.instant('agents.table.presence'),
-      values: PRESENCE_STATES.map((p) => ({
-        value: p,
-        label: this.translate.instant(this.presenceKeys[p]),
-      })),
-    },
-    {
-      key: 'agentType',
-      label: this.translate.instant('agents.table.type'),
-      values: AGENT_TYPES.map((t) => ({
-        value: t,
-        label: this.translate.instant(this.typeKeys[t]),
-      })),
-    },
-    {
-      key: 'recording',
-      label: this.translate.instant('agents.permission.recording'),
-      values: [
-        { value: 'true', label: this.translate.instant('common.yes') },
-        { value: 'false', label: this.translate.instant('common.no') },
-      ],
-    },
-  ]);
+  protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        key: 'status',
+        label: this.translate.instant('agents.table.status'),
+        values: [
+          { value: 'active', label: this.translate.instant('agents.status.active') },
+          { value: 'inactive', label: this.translate.instant('agents.status.inactive') },
+        ],
+      },
+      {
+        key: 'presenceStatus',
+        label: this.translate.instant('agents.table.presence'),
+        values: PRESENCE_STATES.map((p) => ({
+          value: p,
+          label: this.translate.instant(this.presenceKeys[p]),
+        })),
+      },
+      {
+        key: 'agentType',
+        label: this.translate.instant('agents.table.type'),
+        values: AGENT_TYPES.map((t) => ({
+          value: t,
+          label: this.translate.instant(this.typeKeys[t]),
+        })),
+      },
+      {
+        key: 'recording',
+        label: this.translate.instant('agents.permission.recording'),
+        values: [
+          { value: 'true', label: this.translate.instant('common.yes') },
+          { value: 'false', label: this.translate.instant('common.no') },
+        ],
+      },
+    ];
+  });
 
   /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas). */
   protected readonly matchesSearch = (a: Agent, q: string): boolean =>

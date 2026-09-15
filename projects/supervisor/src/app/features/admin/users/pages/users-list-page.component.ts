@@ -213,24 +213,27 @@ export class UsersListPageComponent {
    * dejar a diez usuarios con el mismo email. */
   protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
 
-  protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => [
-    {
-      key: 'type',
-      label: this.translate.instant('users.table.type'),
-      values: USER_TYPES.map((t) => ({
-        value: t,
-        label: this.translate.instant(this.typeLabelKeys[t]),
-      })),
-    },
-    {
-      key: 'status',
-      label: this.translate.instant('users.table.status'),
-      values: (['active', 'inactive'] as const).map((s) => ({
-        value: s,
-        label: this.translate.instant(`users.status.${s}`),
-      })),
-    },
-  ]);
+  protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        key: 'type',
+        label: this.translate.instant('users.table.type'),
+        values: USER_TYPES.map((t) => ({
+          value: t,
+          label: this.translate.instant(this.typeLabelKeys[t]),
+        })),
+      },
+      {
+        key: 'status',
+        label: this.translate.instant('users.table.status'),
+        values: (['active', 'inactive'] as const).map((s) => ({
+          value: s,
+          label: this.translate.instant(`users.status.${s}`),
+        })),
+      },
+    ];
+  });
 
   protected readonly impactItems = computed<readonly ImpactItem[]>(() => {
     const ids = this.selectedIds();

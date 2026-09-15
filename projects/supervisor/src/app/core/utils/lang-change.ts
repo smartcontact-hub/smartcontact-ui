@@ -11,7 +11,8 @@ import { map } from 'rxjs';
  * Para qué: un `computed()` que resuelve textos con `translate.instant()` (las cabeceras de una tabla) no se
  * entera de un cambio de idioma; el pipe `| translate` sí. LEERLA dentro del computed es lo que lo hace
  * reaccionar. Declararla y no leerla no hace nada: así estuvieron siete listas hasta el 2026-09-14, con las
- * cabeceras congeladas en el idioma de carga y `audit:datatables` en verde (ahora exige la lectura).
+ * cabeceras congeladas en el idioma de carga y `audit:datatables` en verde. Desde el 2026-09-15 lo vigila
+ * `i18n:check` H en todo `computed()` de la app (menús, filtros y diálogos también se congelaban).
  *
  * Llamar en contexto de inyección (un campo o el constructor).
  */

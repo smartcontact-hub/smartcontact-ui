@@ -37,6 +37,7 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
 import { stableStringify } from '../../../shared/utils/form-dirty-state';
+import { injectLangChange } from '@core/utils/lang-change';
 
 interface VisibilidadEstados {
   postConversando: boolean;
@@ -224,11 +225,13 @@ const BLOQUEO_RULES: readonly {
 export class AedServicioPageComponent implements DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   protected readonly addIcon = 'add';
 
   /** Traducidas aquí y no en la plantilla: `sc-option-cards` recibe DATOS, no plantillas. */
-  protected readonly descuelgueOptions = computed(() =>
-    DESCUELGUE_OPTIONS.map((key) => ({
+  protected readonly descuelgueOptions = computed(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return DESCUELGUE_OPTIONS.map((key) => ({
       value: key,
       label: this.translate.instant(
         `config.aed.subpages.servicio.aviso.descuelgue_options.${key}.label`,
@@ -236,8 +239,8 @@ export class AedServicioPageComponent implements DirtyAware {
       description: this.translate.instant(
         `config.aed.subpages.servicio.aviso.descuelgue_options.${key}.desc`,
       ),
-    })),
-  );
+    }));
+  });
   protected readonly visibilidadLabels = VISIBILIDAD_LABELS;
   protected readonly bloqueoRules = BLOQUEO_RULES;
   protected readonly notifEventos = NOTIF_EVENTOS;

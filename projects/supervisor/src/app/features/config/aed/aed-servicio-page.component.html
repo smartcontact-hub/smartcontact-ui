@@ -494,7 +494,7 @@
                   @for (key of notifEventos; track key) {
                     <td class="notif-table__cell">
                       <sc-checkbox
-                        [state]="form()[canal.key][key] ? 'all' : 'none'"
+                        [state]="tieneUrl(canal.urlKey) && form()[canal.key][key] ? 'all' : 'none'"
                         [disabled]="!tieneUrl(canal.urlKey)"
                         [ariaLabel]="
                           ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
