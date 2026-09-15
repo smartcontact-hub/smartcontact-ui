@@ -2054,5 +2054,11 @@
       "sent_title": "Revisa tu correo",
       "sent_lead": "Si hay una cuenta con {{email}}, te llegará un enlace en unos minutos. Mira también en la carpeta de spam."
     }
+  },
+  "lab": {
+    "sidebar": {
+      "toggle_aria": "Plegar o desplegar el menú",
+      "options_aria": "Opciones del laboratorio"
+    }
   }
 }
