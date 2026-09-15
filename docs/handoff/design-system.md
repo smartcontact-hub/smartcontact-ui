@@ -39,6 +39,8 @@
   (`.login__divider` no llega); `sc-slot` a tokens del divider (e2e y captura); CSS muerto `.seg` e `.inline-field`.
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
+- **Rescatar a `main` el DS de `comparar/fichas`**, decida lo que decida producto: `sc-drawer` (`width`, `topOffset`, X accesible, bordes, sombra) y `sc-section-card showHeader`.
+- **La puerta barata del preflight, contra un ledger en PR ajeno** (LEARNINGS #21, roto el 2026-09-15 con #196): avisar si un PR abierto toca el mismo `docs/handoff/` o `DECISIONS`.
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
@@ -164,6 +166,16 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-15 · Las fichas de agente, grupo y usuario se comparan en tres formas, y decide producto
+
+**Sello:** rama `comparar/fichas` (no se funde), HEAD `4b0aa6b`. Enlace del PM: https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e
+
+**El encargo.** El PM quería verlo todo («tocas algo y afecta a otras cosas»); Rafa, el índice. Tres formas con
+`?variante=`: Una página (mayo, antes de DD#59 de la plataforma), Resumen + panel lateral (`sc-drawer` encima, sin
+mover la ficha) y Pestañas. Quitadas: recuadro de cambios (ruido) y editor fijo (391 px a 900). Archivo: `…-lo-que-se-nota`.
+
+- ⚠️ **Un `sc-drawer` lateral pinta tres bordes de 3 px, sombra hacia abajo y una X sin nombre**: arreglado en la rama, no en `main`.
+
 ## ✅ 2026-09-15 · Tabs, Toolbar, InputGroup, Divider y SelectButton de primeng.dev, bien puestos (DD-113)
 
 **Sello:** rama `arebury/fix-tabs-toolbar-inputgroup`, HEAD `7551099` (#197) más este cambio. Rafa eligió pestañas, separadores
@@ -198,18 +210,6 @@ en claro, opción no elegida de SelectButton) van a EXCLUDE con su motivo y a `f
 
 - ⚠️ **Las capturas de sc-docs no ven el aviso con contorno ni el modo oscuro**: esos colores se miden a mano (Supervisor).
 - 🕳️ **Medido y no hecho**: los 69 `font-size` del Supervisor no tienen text style equivalente salvo ~17 sin cambio a la vista.
-
-## ✅ 2026-09-15 · Lo que se nota: idioma en vivo, casillas sin URL, columna en su sitio, miga y raya del Dashboard
-
-**Sello:** rama `arebury/arreglos-que-se-notan`, sobre `8ea9bea` (#190). Rafa, con la tabla de «qué cambia para quien usa
-la app»: «adelante a todo esto».
-
-**Lo que cambia.** 18 `computed()` con `translate.instant()` leen el idioma (en Sistema, los selectores de contraseña
-seguían en español al pasar a inglés); lo vigila `i18n:check` H en toda la app y la regla 6 de `audit:datatables` se
-retira. Sin URL, las casillas de notificaciones salen desmarcadas. `sc-column-selector` devuelve la columna detrás de
-la visible que la precede. `sc-breadcrumb` marca `aria-current="page"` por `pt`. Cada uno con su e2e, visto en rojo.
-
-- ⚠️ **Mi primer contador de `computed` leía de menos**: no casaba `computed<T>(`. Contó 6 donde había 18.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -259,6 +259,7 @@ la visible que la precede. `sc-breadcrumb` marca `aria-current="page"` por `pt`.
 | ~~**Lienzo de página gris↔blanco**~~ → **DECIDIDO Y HECHO**: [DD-45](../DECISIONS.md) lo llevó a BLANCO el 2026-08-31 (`app-shell.component.scss` pinta `--sc-bg-canvas`), y Rafa lo reconfirmó el 2026-09-11 («el lienzo sí, pasa a blanco») sin saber que ya estaba. La fila llevaba diez días mintiendo: si una espera se resuelve en otro tramo, hay que venir a tacharla aquí |
 | ~~**Tramo actual del breadcrumb**~~ → **DECIDIDO, `bcab818` (2026-08-25)**: la propuesta de Figma `13890:157` (padres slate-500 `#8F97A3`) **se RECHAZA** — da **2,95:1** sobre blanco y no cumple AA. Se queda el código como está (padres slate-600, actual slate-700, ambos AA). Falta solo anotarlo en el nodo de Figma (Bloque 4). *Nota: el mismo commit tokenizó la miga a 14px, otro asunto ya cerrado.* |
 | ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa «que no cambie de anchura porque sí». `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
+| **Qué forma de ficha (agente, grupo, usuario)** | El PM compara las tres de la rama `comparar/fichas` (2026-09-15, tramo de arriba). Con la decisión, la elegida se construye en `main` y la rama se archiva con tag |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
 | ~~**Experimento en LOCAL: la escala al tamaño de Aura (16px por rem)**~~ → **DECIDIDO 2026-09-14 ([DD-91](../DECISIONS.md))** | Rafa eligió solo el interlineado con la rampa que existe (20/18): 32,5 y 27, sin perder filas. La escala se queda a 14. Medido también escala 16 + 20/18: 34 / 28 y 11 filas. Simulación en `~/Documents/Claude/2026-09 escala-16/`; el nombre por clave y el gate de la escala entraron en DD-89 |
 
