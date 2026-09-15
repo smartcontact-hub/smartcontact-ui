@@ -2054,5 +2054,16 @@
       "sent_title": "Check your email",
       "sent_lead": "If there is an account for {{email}}, a link will arrive in a few minutes. Check your spam folder too."
     }
+  },
+  "compare_sidebar": {
+    "title": "Compare sidebar",
+    "figma": "Figma",
+    "cyan": "Cyan",
+    "figma_desc": "Selected in white. Collapsed, one background from the parent to the last child.",
+    "cyan_desc": "Selected in cyan when collapsed and on hover. Children sit in their own block.",
+    "fixed": "Pinned open",
+    "hint": "Hover the sidebar to see how it opens.",
+    "open_aria": "Open the sidebar comparison",
+    "close_aria": "Close the sidebar comparison"
   }
 }

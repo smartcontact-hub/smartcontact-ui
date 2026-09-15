@@ -2054,5 +2054,16 @@
       "sent_title": "Revisa tu correo",
       "sent_lead": "Si hay una cuenta con {{email}}, te llegará un enlace en unos minutos. Mira también en la carpeta de spam."
     }
+  },
+  "compare_sidebar": {
+    "title": "Comparar sidebar",
+    "figma": "Figma",
+    "cyan": "Cyan",
+    "figma_desc": "Seleccionado en blanco. Plegado, un solo fondo del padre al último hijo.",
+    "cyan_desc": "Seleccionado en cyan al plegar y con el ratón encima. Los hijos van en su propio bloque.",
+    "fixed": "Desplegado fijo",
+    "hint": "Pasa el ratón por el sidebar para ver cómo se abre.",
+    "open_aria": "Abrir la comparación del sidebar",
+    "close_aria": "Cerrar la comparación del sidebar"
   }
 }

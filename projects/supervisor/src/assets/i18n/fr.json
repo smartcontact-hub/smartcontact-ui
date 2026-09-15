@@ -2054,5 +2054,16 @@
       "sent_title": "Consultez vos emails",
       "sent_lead": "Si un compte existe pour {{email}}, un lien arrivera dans quelques minutes. Pensez à vérifier vos spams."
     }
+  },
+  "compare_sidebar": {
+    "title": "Comparer la barre latérale",
+    "figma": "Figma",
+    "cyan": "Cyan",
+    "figma_desc": "Sélection en blanc. Repliée, un seul fond du parent au dernier enfant.",
+    "cyan_desc": "Sélection en cyan repliée et au survol. Les enfants sont dans leur propre bloc.",
+    "fixed": "Toujours dépliée",
+    "hint": "Survolez la barre latérale pour voir son ouverture.",
+    "open_aria": "Ouvrir la comparaison de la barre latérale",
+    "close_aria": "Fermer la comparaison de la barre latérale"
   }
 }
