@@ -103,6 +103,30 @@ test('con pocas filas la tarjeta acaba en la última, sin hueco vacío hasta aba
   expect(medida.hueco).toBeLessThan(3);
 });
 
+/* El color de estado de una fila (rojo de fallida, amarillo en proceso) cubre la fila ENTERA, de borde a
+ * borde de la tarjeta (Rafa, 2026-09-15). Hasta ese día la tabla reservaba el hueco de la barra de scroll a
+ * los dos lados y el color se cortaba 10 px antes de cada borde: en ese hueco una fila no puede pintar. */
+test('el rojo de una fila fallida llega a los dos bordes de la tarjeta', async ({ page }) => {
+  await goto(page, 'conversaciones');
+  await expect(page.locator(`${TABLE} tbody tr`).first()).toBeVisible();
+  // «Fallidas»: pocas filas, sin barra de scroll, así que no hay nada que se interponga a ningún lado.
+  await page.locator('.memory-conversation-filters__views').getByText('Fallidas', { exact: true }).click();
+  const fila = page.locator(`${TABLE} tbody tr.is-failed`).first();
+  await expect(fila).toBeVisible();
+
+  const m = await fila.evaluate((tr) => {
+    const card = tr.closest('.table-card')!;
+    const c = card.getBoundingClientRect();
+    const r = tr.getBoundingClientRect();
+    const borde = parseFloat(getComputedStyle(card).borderLeftWidth);
+    return { izquierda: r.left - (c.left + borde), derecha: c.right - borde - r.right, fondo: getComputedStyle(tr).backgroundColor };
+  });
+  // Control: la fila está pintada. Si no tuviera color, llegar al borde no demostraría nada.
+  expect(m.fondo).not.toBe('rgba(0, 0, 0, 0)');
+  expect(Math.abs(m.izquierda)).toBeLessThan(1);
+  expect(Math.abs(m.derecha)).toBeLessThan(1);
+});
+
 test('con una fila marcada, la tarjeta acaba antes que la barra de selección', async ({ page }) => {
   await goto(page, 'conversaciones');
   const fila = page.locator(`${TABLE} tbody tr`).first();

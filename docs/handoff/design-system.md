@@ -179,9 +179,10 @@ simplifica» y «`sc-panel` con acciones» (DD-108) viven en `archive/handoff-ds
 
 **Lo que cambia.** `.page--tabla` y `<sc-datatable scrollable scrollHeight="flex" virtualScroll>` en Conversaciones:
 título, vistas, filtros y cabecera quietos; la tarjeta vuelve a tener borde (se quita el «flush» de S59) y deja
-sitio a la barra de selección. Medido a 1440 contra Agentes: tarjeta acaba en 883, y en 806 con la barra en 815.
-`conversations-sticky-header.spec.ts` pasa a `conversations-table-scroll.spec.ts`: sus tres pruebas nuevas se
-vieron rojas con el fallo puesto (sin `.page--tabla`, host `block`, tarjeta que llena, sin `--seleccion`).
+sitio a la barra de selección (a 1440 acaba en 883, y en 806 con la barra en 815). DS: la tabla con scroll deja de
+reservar el hueco de la barra a los dos lados (Rafa: el rojo y el amarillo de fila se cortaban 10 px antes del borde);
+el precio, aceptado: con barra, las columnas se mueven su ancho. Spec `conversations-table-scroll`: sus pruebas se
+vieron rojas con el fallo puesto (sin `.page--tabla`, host `block`, tarjeta que llena, sin `--seleccion`, hueco).
 
 - ⚠️ **El host de la tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta
   vive dentro de un componente. El host tiene que ser flex (`0 1 auto`, `min-height: 0`); con `display: block`
