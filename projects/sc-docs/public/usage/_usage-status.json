@@ -556,7 +556,7 @@
     },
     {
       "selector": "sc-selectbutton",
-      "usedInSupervisor": 6
+      "usedInSupervisor": 7
     },
     {
       "selector": "sc-sticky-form-header",
