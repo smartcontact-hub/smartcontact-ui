@@ -1,8 +1,8 @@
 {
-  "commit": "22496352",
+  "commit": "47a9f95a",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-15T15:01:00.150Z",
+  "generado": "2026-09-15T19:49:52.322Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
@@ -23,5 +23,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260915.1501"
+  "version": "0.20260915.1949"
 }
