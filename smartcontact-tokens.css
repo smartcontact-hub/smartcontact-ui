@@ -1853,7 +1853,7 @@
    * — the expanded sidebar overlays the page content rather than
    * pushing it.
    */
-  --sc-sidebar-width-collapsed: 64px;
+  --sc-sidebar-width-collapsed: 80px;
   --sc-sidebar-width-expanded: 240px;
   --sc-sidebar-width: var(--sc-sidebar-width-collapsed);
   --sc-sidebar-bg: var(--sc-color-blue-700);

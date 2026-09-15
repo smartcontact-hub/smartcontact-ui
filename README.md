@@ -1,6 +1,6 @@
 # Smart Contact · Tema para PrimeNG
 
-Versión 0.20260915.1220 · 2026-09-15 · origen: Design System de Smart Contact (`0efaf40f`)
+Versión 0.20260915.1424 · 2026-09-15 · origen: Design System de Smart Contact (`7551099f`)
 
 Tema oficial de Smart Contact para aplicaciones Angular con PrimeNG. Es el mismo tema que utilizan las
 aplicaciones de Smart Contact, por lo que los componentes se muestran de forma idéntica en ambos entornos.
@@ -69,8 +69,7 @@ instalada figura en la cabecera de este documento y en `node_modules/smartcontac
 ## Cambios respecto a la versión anterior
 
 - Ficheros modificados: smartcontact-tokens.css.
-- Tokens de diseño modificados: 33.
-- Tokens de diseño retirados (si el código del proyecto los referencia, esas propiedades dejan de aplicarse): `--sc-dialog-divider`, `--sc-dialog-head-icon-size`, `--sc-dialog-padding-x`, `--sc-dialog-padding-y`, `--sc-font-family-body-3`, `--sc-font-family-caption-bold`, `--sc-font-family-display-1`, `--sc-font-family-h1`, `--sc-font-family-h2`, `--sc-font-weight-body-1`, `--sc-font-weight-body-3`, `--sc-font-weight-caption-bold`, `--sc-font-weight-display-1`, `--sc-font-weight-h2`, `--sc-shadow-focus-ring`, `--sc-shadow-focus-ring-rgb`, `--sc-toast-close`, `--sc-toast-close-button-height`, `--sc-toast-close-button-radius`, `--sc-toast-close-button-width`, `--sc-toast-close-icon-size`, `--sc-toast-error-icon`, `--sc-toast-gap-actions`, `--sc-toast-info-icon`, `--sc-toast-secondary-bg`, `--sc-toast-secondary-border`, `--sc-toast-secondary-icon`, `--sc-toast-success-icon`, `--sc-toast-violet-icon`, `--sc-toast-warn-icon`.
+- Tokens de diseño modificados: 1.
 - Estilos comunes del tema: sin cambios.
 - Reglas CSS del tema: sin cambios.
 - Componentes con estilos modificados: ninguno.
