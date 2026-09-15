@@ -173,21 +173,6 @@ body {
 }
 
 /*
- * Global form-field `:focus-visible` outline. Native focus on
- * `<input>` / `<select>` / `<textarea>` only changed the border-color
- * before, which a keyboard user can miss when the border is already
- * tinted. The outline is unambiguous and respects `outline-offset`.
- */
-input,
-select,
-textarea {
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 1px;
-  }
-}
-
-/*
  * Tables get a fixed layout so the column widths don't reshuffle when
  * the sort indicator (▲ / ▼) appears on a header. Per-page styles can
  * still set explicit `width:` on individual `<th>` if a column needs a

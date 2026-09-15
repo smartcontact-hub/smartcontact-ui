@@ -21,6 +21,7 @@
     [attr.min]="min() ?? null"
     [attr.max]="max() ?? null"
     [attr.step]="step()"
+    [invalid]="isInvalid()"
     [attr.aria-invalid]="isInvalid() ? true : null"
     [attr.aria-describedby]="describedBy()"
     [attr.aria-required]="required() ? true : null"

@@ -118,23 +118,7 @@
   }
 }
 
-/* ────────────────────────────────────────────────────────────────────
- * Invalid state — sc-preset paints invalid border via aria-invalid on
- * the inner control. Host class covers the manual `[error]` path.
- * Figma: `select/invalid/border/color: #f87171` (red-400, =
- * `--sc-border-error`), `select/invalid/placeholder/color: #dc2626`
- * (red-600, = `--sc-text-danger`). Ya aligned.
- * ────────────────────────────────────────────────────────────────────
- */
-.sc-select--invalid .sc-select__control {
-  border-color: var(--sc-border-error);
-
-  &:hover,
-  &:focus,
-  &:focus-within {
-    border-color: var(--sc-border-error);
-  }
-}
+/* El error lo pinta PrimeNG (`[invalid]` → `p-invalid`) en su capa, como Aura: así el borde de foco también gana en un campo con error (DD-111). */
 
 /* ────────────────────────────────────────────────────────────────────
  * Footer message — reserve 1.25em so toggling validation never shifts

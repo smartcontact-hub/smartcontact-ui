@@ -122,8 +122,8 @@
     }
 
     &:focus-visible {
-      outline: none;
-      box-shadow: var(--sc-shadow-focus-ring);
+      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+      outline-offset: var(--sc-focus-ring-offset);
     }
   }
 

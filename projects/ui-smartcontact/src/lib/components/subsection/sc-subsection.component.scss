@@ -33,7 +33,7 @@
         background: var(--sc-bg-secondary-hover);
       }
       &:focus-visible {
-        outline: 2px solid var(--sc-border-focus);
+        outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
         outline-offset: -2px;
       }
     }

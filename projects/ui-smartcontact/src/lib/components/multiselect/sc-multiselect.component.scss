@@ -139,22 +139,7 @@
   }
 }
 
-/* ────────────────────────────────────────────────────────────────────
- * Invalid state — Figma `Invalid=True` node 6220:7085 confirma:
- *   `multiselect/invalid/border/color: #f87171` (red-400)
- *   `multiselect/invalid/placeholder/color: #dc2626` (red-600)
- * Ambos ya alineados via --sc-border-error / --sc-text-danger.
- * ────────────────────────────────────────────────────────────────────
- */
-.sc-multiselect--invalid .sc-multiselect__control {
-  border-color: var(--sc-border-error);
-
-  &:hover,
-  &:focus,
-  &:focus-within {
-    border-color: var(--sc-border-error);
-  }
-}
+/* El error lo pinta PrimeNG (`[invalid]` → `p-invalid`) en su capa, como Aura: así el borde de foco también gana en un campo con error (DD-111). */
 
 /* ────────────────────────────────────────────────────────────────────
  * Footer message — reserve 1.25em (no layout shift).

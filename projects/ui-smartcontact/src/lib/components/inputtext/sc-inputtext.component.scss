@@ -99,21 +99,7 @@
   background: var(--sc-bg-hover);
 }
 
-/* ────────────────────────────────────────────────────────────────────
- * Invalid state — sc-preset already maps `--p-inputtext-border-color`
- * to `--sc-border-error` when the `<input>` has aria-invalid OR when
- * we manually paint via this host class. The class path handles cases
- * where the consumer uses `[error]` without a FormControl behind it.
- * ────────────────────────────────────────────────────────────────────
- */
-.sc-inputtext--invalid .sc-inputtext__control {
-  border-color: var(--sc-border-error);
-
-  &:hover,
-  &:focus {
-    border-color: var(--sc-border-error);
-  }
-}
+/* El error lo pinta PrimeNG (`[invalid]` → `p-invalid`) en su capa, como Aura: así el borde de foco también gana en un campo con error (DD-111). */
 
 /* ────────────────────────────────────────────────────────────────────
  * Footer message (helper text OR error).
