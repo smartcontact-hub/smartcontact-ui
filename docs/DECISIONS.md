@@ -41,7 +41,8 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Una pantalla fuera del shell (acceso) va en `features/auth/` y en `EXENTAS` de `audit:page-anatomy` · un error de campo dice QUÉ falta, uno de credenciales no delata cuentas · un SSO de terceros es nuestro `sc-button` con su logo sin tocar · la contraseña es `sc-password` | DD-110 |
+> | El sidebar plegado mide 80px con las filas contenidas · un solo padre en cyan: el más cercano a la página que se vea · con el ratón dentro abrir o cerrar no toca las demás, al salir se cierran las que no son de la página · los hijos se pliegan en altura (300ms, curva estándar) · el sidebar no se pliega durante el fundido de una navegación que inició él | DD-112 |
+| Una pantalla fuera del shell (acceso) va en `features/auth/` y en `EXENTAS` de `audit:page-anatomy` · un error de campo dice QUÉ falta, uno de credenciales no delata cuentas · un SSO de terceros es nuestro `sc-button` con su logo sin tocar · la contraseña es `sc-password` | DD-110 |
 > | `<sc-panel severity="warn|danger">`: borde y anillo de 1 en `--sc-border-warning/danger`, decidido en código y pendiente en Figma · `<ng-template #header let-titleId>` para un título que es encabezado, con `[id]="titleId"` | DD-109 |
 > | Una tarjeta con acciones en la cabecera es `<sc-panel>` con `<ng-template #icons>` (Panel de primeng.dev; Figma `panel` `Custom Icon=True`) · `[fill]` la estira al alto de su hueco · las piezas internas se estilan por `pt` con clases propias, no por `.p-panel-*` | DD-108 |
 > | Un `borderWidth` del tema tiene la FORMA de Aura: si Aura pinta un lado (`0 0 1px 0`), nosotros también; si Aura dice `0`, sin borde · `p-tabs` como Aura 3: pestaña sin borde, tira con raya abajo, marca de la activa en `activeBar` · lo vigila `preset-border-shorthand.test.mjs` | DD-107 |
@@ -75,6 +76,42 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-112 · 2026-09-15 — El sidebar del Supervisor se pliega a 80px, marca un solo padre y abre y cierra sin saltos
+
+**Contexto** · SISMAC-4340. Rafa y Carlos acordaron volver al ancho plegado de 80px (el del Supervisor en producción,
+4,1667vw a 1920), dar icono a los items que no estaban en la v1 (Intenciones, Monitor y Agentic AI dentro de Nodo IA,
+Tipificaciones, Centro de control y Mask Manager) y definir cómo se ve un padre con el sidebar plegado. Al probarlo en
+local salieron cuatro problemas: plegado no se veía dónde acaba un grupo, se encendían en cyan varios padres a la vez,
+abrir una categoría movía otras bajo el ratón y, al pulsar un item, el sidebar se plegaba y volvía a abrirse.
+
+**Decisión** · (1) `--sc-sidebar-width-collapsed` pasa de 64 a 80px; el menú lleva `--sc-spacing-0-875` de margen y las
+filas `--sc-radius-100`, así el Selected y el fondo de grupo quedan contenidos, como en Figma. (2) Un solo padre lleva el
+icono en `--sc-sidebar-accent`: el ancestro de la página actual más cercano que se vea. (3) Con el ratón dentro del menú,
+abrir o cerrar una categoría no toca las demás; al entrar en una página se abre su categoría; 400ms después de salir del
+menú se cierran las que no la contienen. (4) Plegado, la categoría abierta de primer nivel lleva de fondo
+`--sc-sidebar-item-hover-bg`; las subcategorías no. (5) Los hijos se pliegan en altura en `--sc-transition-slow` con
+`--sc-easing-default`, con fundido propio, y el chevron gira. (6) Mientras dura el fundido de una navegación que empezó
+en el sidebar, este se queda abierto (`ViewTransitionTracker`).
+
+**Razón** · Medido con Playwright a 1440×900. La transición del router tapa la página durante su fundido y el sidebar
+pierde `:hover` sin mover el ratón: bajaba a 82px, y en producción a 66px. Con la curva enfatizada, al abrir
+Administración la categoría de debajo bajaba 44px en el primer fotograma; con la estándar el mayor salto es de 21px, a
+mitad del movimiento. Dos fondos del 6% superpuestos suman un 11,6%, casi el Selected: por eso solo el primer nivel.
+
+**Descartadas** ·
+- **Acordeón, una categoría abierta por nivel** → al abrir Administración con Supervisión abierta, Administración subía
+  unos 400px en el momento del clic. Rafa: «parece que está roto».
+- **Cerrar al navegar** → cerraba las categorías que el usuario acababa de abrir.
+- **Encender en cyan todos los ancestros** → dos o tres cyan a la vez y ningún sitio claro donde mirar.
+- **Mask Manager con `contact_phone`** → el equipo pide mantener `theater_comedy`, el icono que ya conocen.
+
+**Consecuencias** · Tablero para Carlos en Figma, página Testing, sección `SISMAC-4340 Sidebar` (`14855:1269`). Pendiente:
+decidir si plegado se ve solo el primer nivel; el Selected va al 15% en código y al 12% en Figma; Nodo IA usa `neurology`
+en código y el componente `brain` de la librería antigua en Figma, que la fuente de iconos no trae; y el drawer de Figma,
+atado a `primary/color`, en oscuro queda en azul claro con el texto blanco a 2,15:1.
 
 ---
 
