@@ -2,13 +2,10 @@
  * El ancho ya NO se declara aquí: la plantilla marca el arquetipo
  * (`page__inner--list`) y `styles/_page.scss` pone max-width + centrado.
  * Lo que queda abajo es el delta propio de esta página: el padding.
- * Ola 5: vuelve el <sc-bulk-action-bar> overlay (revierte el backlog #65), y
- * con él vuelve su consecuencia: la barra es `position: fixed`, así que sin
- * reservarle sitio TAPA las últimas filas. S62 había quitado esa reserva
- * precisamente porque no había barra que tapara nada.
- * Se reserva SIEMPRE, como las cinco listas admin, y no solo cuando hay
- * selección: así el fondo de la tabla no da un salto al marcar la primera
- * fila. Es el precio que ya pagan sus hermanas. */
+ * La forma de la página es `.page--tabla` (DD-95), como el resto de listas: la tabla hace scroll
+ * dentro y, con filas marcadas, la tarjeta deja sitio a la barra de selección
+ * (`.table-card--seleccion`). Por eso aquí ya no se reserva la barra con `padding-bottom`:
+ * rompería la cadena de altos. */
 :host {
   display: block;
   height: 100%;
@@ -16,17 +13,13 @@
 }
 
 .page {
-  flex: 1;
   background: var(--sc-bg-canvas);
-  padding-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-125));
 
   &__inner {
     /* Barra → título `1-25` y lados `2`, como las demás pantallas (2026-09-14). Aquí
      * arriba era `1` para que la tabla arrancara más arriba; con la barra de arriba a
      * 64 caben las mismas 13 filas y el título deja de pegarse a la raya. */
     padding: var(--sc-spacing-1-25) var(--sc-spacing-2);
-    display: flex;
-    flex-direction: column;
     /* S53 gestalt fix: filtros+toolbar+tabla son UNA card continua
      * (stitched-card pattern). El divisor visual es 1 hairline border
      * compartido — sin gap, sin doble shadow, sin doble radius. */

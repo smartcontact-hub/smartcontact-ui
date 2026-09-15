@@ -1,7 +1,8 @@
 <!-- Modelo "todo arriba" (experiment S59): sin banda de page-header — la
      identidad la da el breadcrumb de la TopBar. El switcher de datos demo
      también vive arriba (junto al avatar) vía TopBarSlotService. Ver el .ts. -->
-<div class="page">
+<!-- `.page--tabla` (DD-95): la página no hace scroll; lo hace la tabla, como el resto de listas. -->
+<div class="page page--tabla">
   <div class="page__inner page__inner--list">
     <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
          arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
