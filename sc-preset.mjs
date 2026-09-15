@@ -5763,13 +5763,11 @@ sc-datatable.sc-datatable--fill > p-table {
     min-height: 0;
 }
 
-/* El hueco de la barra se reserva a LOS DOS lados: las rayas de las filas y de la cabecera quedan igual de
- * separadas del borde a izquierda y derecha (Rafa, 2026-09-14: \xABtiene que ser sim\xE9trico\xBB). Solo en la caja
- * que hace scroll: con lista virtual es el scroller, y reservarlo tambi\xE9n en el contenedor lo duplicaba. */
-sc-datatable.sc-datatable--scroll:not(.sc-datatable--fill) > p-table > .p-datatable-table-container,
-sc-datatable.sc-datatable--fill .p-virtualscroller {
-    scrollbar-gutter: stable both-edges;
-}
+/* Sin hueco reservado para la barra (Rafa, 2026-09-15). El 2026-09-14 se reservaba a los dos lados
+ * (\`scrollbar-gutter: stable both-edges\`) para que las rayas quedaran sim\xE9tricas, pero el color de una fila
+ * no puede pintar en ese hueco: el rojo de una fallida, el amarillo de una en proceso, el hover y la selecci\xF3n
+ * se cortaban antes de cada borde de la tarjeta, lo que med\xEDa la barra. Ahora llegan al borde; con barra, a la derecha acaban donde
+ * empieza ella. El precio, aceptado: al aparecer o desaparecer la barra las columnas se mueven su ancho. */
 
 sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar,
 sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar {
