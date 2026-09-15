@@ -2046,5 +2046,53 @@
       "sent_title": "Check your email",
       "sent_lead": "If there is an account for {{email}}, a link will arrive in a few minutes. Check your spam folder too."
     }
+  },
+  "compare": {
+    "bar": {
+      "label": "Compare record"
+    },
+    "variant": {
+      "a": {
+        "label": "A · Tabs",
+        "hint": "As today: the index switches section and you see one at a time."
+      },
+      "b": {
+        "label": "B · One page",
+        "hint": "Every section in view. The index scrolls you there and marks where you are."
+      },
+      "c": {
+        "label": "C · Tabs with changes",
+        "hint": "One section at a time. The side panel shows what you changed and what else it affects."
+      }
+    },
+    "pending": {
+      "title": "Unsaved changes",
+      "empty": "What you change shows up here, with what it affects outside its section."
+    },
+    "fields": {
+      "photo": "Photo",
+      "templates": "Templates",
+      "added": "Adds {{items}}",
+      "removed": "Removes {{items}}"
+    },
+    "effects": {
+      "no_channels": "no channels",
+      "agent_inactive": "Stops receiving calls and chats in its {{count}} groups",
+      "agent_inactive_one": "Stops receiving calls and chats in its group",
+      "agent_joins": "Joins {{group}} with {{channels}}",
+      "agent_leaves": "Leaves {{group}}",
+      "agent_channels": "In {{group}} now handles {{channels}}",
+      "agent_paused": "In {{group}} stops receiving contacts",
+      "agent_resumed": "In {{group}} receives contacts again",
+      "group_channel_removed": "{{count}} agents stop handling {{channel}} in this group",
+      "group_channel_removed_one": "1 agent stops handling {{channel}} in this group",
+      "group_agent_joins": "{{agent}} joins with {{channels}}",
+      "group_agent_leaves": "{{agent}} leaves the group",
+      "group_agent_channels": "{{agent}} now handles {{channels}}",
+      "group_agent_paused": "{{agent}} stops receiving contacts here",
+      "group_agent_resumed": "{{agent}} receives contacts here again",
+      "user_inactive": "Will not be able to sign in or operate",
+      "user_section_children": "Without {{section}}, will not see {{children}} either"
+    }
   }
 }
