@@ -173,7 +173,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 ## ✅ 2026-09-15 · Conversaciones hace scroll dentro de la tabla, como el resto de listas (DD-95)
 
-**Sello:** rama `arebury/fix-conversaciones-tabla-contenida`, sobre `bacabca` (#191). Rafa preguntó por qué la tabla no iba
+**Sello:** rama `arebury/fix-conversaciones-tabla-contenida` (#190), HEAD `bacabca` (#191) más este cambio. Rafa preguntó por qué la tabla no iba
 contenida como las demás; visto en local junto a Agentes: «me gusta». Los tramos «La barra de Conversaciones se
 simplifica» y «`sc-panel` con acciones» (DD-108) viven en `archive/handoff-ds-2026-09-14-barra-conversaciones` y `-sc-panel`.
 
