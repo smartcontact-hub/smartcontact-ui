@@ -5787,15 +5787,16 @@ sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar-thumb {
 var buttonMotionCss = () => `
 .p-component.p-button {
     transition:
-        background-color 100ms ease,
-        border-color 100ms ease,
-        color 100ms ease,
-        box-shadow 100ms ease;
+        background-color 150ms ease-out,
+        border-color 150ms ease-out,
+        color 150ms ease-out,
+        outline-color 150ms ease-out,
+        box-shadow 150ms ease-out,
+        transform 150ms ease-out;
 }
 
 .p-component.p-button:active {
-    transform: scale(0.98);
-    transition-duration: 0ms;
+    transform: scale(0.96);
 }
 
 .p-component.p-button:disabled,
@@ -5847,6 +5848,23 @@ var breadcrumbLinkCss = () => `
     }
 }
 `;
+var inputGroupSizeCss = () => `
+.sc-inputgroup--sm {
+    --p-inputtext-padding-x: var(--p-inputtext-sm-padding-x);
+    --p-inputtext-padding-y: var(--p-inputtext-sm-padding-y);
+    --p-app-typography-md-font-size: var(--p-app-typography-sm-font-size);
+    --p-app-typography-md-line-height: var(--p-app-typography-sm-line-height);
+    --p-inputgroup-addon-font-size: var(--p-inputtext-sm-font-size);
+}
+
+.sc-inputgroup--lg {
+    --p-inputtext-padding-x: var(--p-inputtext-lg-padding-x);
+    --p-inputtext-padding-y: var(--p-inputtext-lg-padding-y);
+    --p-app-typography-md-font-size: var(--p-app-typography-lg-font-size);
+    --p-app-typography-md-line-height: var(--p-app-typography-lg-line-height);
+    --p-inputgroup-addon-font-size: var(--p-inputtext-lg-font-size);
+}
+`;
 var presetCss = ({ dt } = {}) => `
 ${typographyRule(
   mdTypographySelectors,
@@ -5879,6 +5897,8 @@ ${buttonMotionCss()}
 ${dangerMenuItemCss()}
 
 ${breadcrumbLinkCss()}
+
+${inputGroupSizeCss()}
 `;
 var css_default = presetCss;
 
