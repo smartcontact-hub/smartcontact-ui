@@ -503,8 +503,6 @@
    * sin crear variable (`focus/ring/color` vive en «Semantic Common», sin modos), así que
    * es divergencia de código a propósito, igual que el primario oscuro (DD-40). */
   --sc-border-focus: var(--sc-color-sky-400);
-  /* Su halo va a juego (ver 05-extensions): los canales de sky-400, #4a8fff. */
-  --sc-shadow-focus-ring-rgb: 74 143 255;
 
   /* El borde suave del primario. En claro es navy 200/300/400; en oscuro el primario es sky,
    * y el paso que Aura usa para el contorno primario oscuro es el 600 (el mismo que escribe el
@@ -534,7 +532,6 @@
   /* ---------- Component · Modal ---------- */
   --sc-dialog-bg: var(--sc-color-zinc-900);
   --sc-dialog-border: var(--sc-color-zinc-700);
-  --sc-dialog-divider: var(--sc-color-zinc-700);
   --sc-dialog-title: var(--sc-color-slate-0);
   --sc-dialog-subtitle: var(--sc-color-zinc-400);
   --sc-dialog-close-fg: var(--sc-color-zinc-400);
@@ -544,7 +541,6 @@
   /* ---------- Component · Toast ---------- */
   --sc-toast-title: var(--sc-color-slate-0);
   --sc-toast-message: var(--sc-color-zinc-400);
-  --sc-toast-close: var(--sc-color-zinc-200);
   --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-900) 40%, transparent);
   --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-sky-800) 40%, transparent);
   --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-yellow-800) 40%, transparent);

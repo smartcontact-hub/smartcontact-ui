@@ -366,30 +366,20 @@
   --sc-line-height-caption: var(--sc-line-height-100);
 
   /* Weights */
-  --sc-font-weight-display-1: var(--sc-font-weight-regular);
   --sc-font-weight-h1: var(--sc-font-weight-semibold);
-  --sc-font-weight-h2: var(--sc-font-weight-semibold);
   --sc-font-weight-h3: var(--sc-font-weight-semibold);
   --sc-font-weight-h4: var(--sc-font-weight-semibold);
   --sc-font-weight-subtitle-1: var(--sc-font-weight-semibold);
   --sc-font-weight-subtitle-2: var(--sc-font-weight-semibold);
-  --sc-font-weight-body-1: var(--sc-font-weight-regular);
   --sc-font-weight-body-2: var(--sc-font-weight-regular);
-  --sc-font-weight-body-3: var(--sc-font-weight-semibold);
   --sc-font-weight-caption: var(--sc-font-weight-regular);
-  --sc-font-weight-caption-bold: var(--sc-font-weight-semibold);
 
   /* Family selector — primary for everything except captions. */
-  --sc-font-family-display-1: var(--sc-font-family-primary);
-  --sc-font-family-h1: var(--sc-font-family-primary);
-  --sc-font-family-h2: var(--sc-font-family-primary);
   --sc-font-family-h3: var(--sc-font-family-primary);
   --sc-font-family-h4: var(--sc-font-family-primary);
   --sc-font-family-subtitle-1: var(--sc-font-family-primary);
   --sc-font-family-subtitle-2: var(--sc-font-family-primary);
   --sc-font-family-body-1: var(--sc-font-family-primary);
   --sc-font-family-body-2: var(--sc-font-family-primary);
-  --sc-font-family-body-3: var(--sc-font-family-primary);
   --sc-font-family-caption: var(--sc-font-family-primary);
-  --sc-font-family-caption-bold: var(--sc-font-family-primary);
 }

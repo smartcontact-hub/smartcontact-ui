@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { FICHEROS, cerosNuevos, comparaPreset, contratoDelPlugin, diferencias, extendDesdeKit, ficherosDistintos, hayCambios, leeme, paqueteNpm, variables } from '../tema-zip.mjs';
+import { FICHEROS, cerosNuevos, comparaPreset, contratoDelPlugin, diferencias, extendDesdeKit, ficherosDistintos, hayCambios, leeme, paqueteNpm, retirados, variables } from '../tema-zip.mjs';
 
 const hoja = ($value) => ({ $value });
 const CUSTOM = {
@@ -101,4 +101,21 @@ test('guía: versión, cambios o primera versión, comprobaciones, raíz 16 y si
   assert.match(cambio, /Variables `extend` del plugin de Figma definidas: 65 de 65/);
   assert.match(cambio, /fuente raíz de 16 px/);
   assert.doesNotMatch(cambio, /\b(vuestr[oa]s?|os pasamos|pon la|nuestras)\b/i, 'redacción neutra, sin tuteo');
+});
+
+test('retirados: nombra los tokens que desaparecen del todo, no los que solo cambian de valor o de modo', () => {
+  const antes = new Map([['claro|--sc-a', '1'], ['oscuro|--sc-a', '2'], ['claro|--sc-b', '1'], ['oscuro|--sc-c', '3']]);
+  const despues = new Map([['claro|--sc-a', '9'], ['claro|--sc-c', '3']]);
+  assert.deepEqual(retirados(antes, despues), ['--sc-b']);
+  assert.deepEqual(retirados(antes, new Map(antes)), []);
+});
+
+test('guía: los tokens retirados salen por su nombre, y sin retirados no hay línea', () => {
+  const base = { commit: 'abc1234', version: '0.1', generado: '2026-09-15T10:00:00Z' };
+  const ok = { ceros: [], contratoPlugin: { promete: 1, faltan: [] } };
+  const dif = { anterior: true, ficheros: [], variables: ['x'], semanticaComun: false, reglasCss: false, componentes: [] };
+  const con = leeme({ ...base, comprobaciones: { ...ok, diferencia: { ...dif, retirados: ['--sc-dialog-padding-x', '--sc-toast-close'] } } });
+  assert.match(con, /Tokens de diseño retirados .*`--sc-dialog-padding-x`, `--sc-toast-close`/);
+  const sin = leeme({ ...base, comprobaciones: { ...ok, diferencia: { ...dif, retirados: [] } } });
+  assert.doesNotMatch(sin, /retirados/);
 });
