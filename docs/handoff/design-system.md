@@ -160,6 +160,17 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-15 · Salen 30 tokens que no leía nadie, y el tema nombra los retirados
+
+**Sello:** rama `arebury/tokens-sin-uso`, sobre `395824f` (#193). Rafa: «de acuerdo». Archivado: `archive/handoff-ds-2026-09-15-foco`.
+
+**Lo que cambia.** Fuera 10 celdas de la tipografía por rol, 4 de diálogo y 14 de toast antiguos y el halo de foco (DD-111).
+Se quedan los estados de color, las medidas, la paleta de etiquetas (viva en parte: puntos, fondo de teal y azul) y
+presencia y prioridad. `tema-zip` lista por nombre los tokens retirados en la guía del paquete: un `var()` que deja de
+existir falla en silencio en el proyecto del equipo externo.
+
+- ⚠️ **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias.
+
 ## ✅ 2026-09-15 · El tema lee los colores que exporta Figma, y el guard no deja escribir uno a mano
 
 **Sello:** rama `arebury/tema-lee-figma`, sobre `12bdb21` (#192). Rafa: «adelante a todo esto» (criterio Kit, DD-111; AA manda).
@@ -172,8 +183,7 @@ en claro, opción no elegida de SelectButton) van a EXCLUDE con su motivo y a `f
 `tokens:cmp-rewire` caza también la paleta y `root`, en todo preset con `colorScheme` (sobre `main` daba 185).
 
 - ⚠️ **Las capturas de sc-docs no ven el aviso con contorno ni el modo oscuro**: esos colores se miden a mano (Supervisor).
-- 🕳️ **Medido y no hecho**: los 69 `font-size` del Supervisor no tienen text style equivalente salvo ~17 sin cambio a la
-  vista, y 110 tokens a mano sin uso incluyen estados que viajan en el tema del equipo externo. Decide Rafa.
+- 🕳️ **Medido y no hecho**: los 69 `font-size` del Supervisor no tienen text style equivalente salvo ~17 sin cambio a la vista.
 
 ## ✅ 2026-09-15 · Lo que se nota: idioma en vivo, casillas sin URL, columna en su sitio, miga y raya del Dashboard
 
@@ -203,18 +213,6 @@ vieron rojas con el fallo puesto (sin `.page--tabla`, host `block`, tarjeta que 
 - ⚠️ **El host de la tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta
   vive dentro de un componente. El host tiene que ser flex (`0 1 auto`, `min-height: 0`); con `display: block`
   la tarjeta mide 1518 dentro de un host de 680 y la página no hace scroll en ningún sitio.
-
-## ✅ 2026-09-15 · El foco y el error de los campos siguen a Aura y al Kit (DD-111)
-
-**Sello:** rama `arebury/foco-unico`, sobre `568b14a`. Rafa, tras comparar en local anillo contra Aura: «si el kit y aura
-dicen lo contrario a nosotros, es sumar ruido a mis devs». «`p-tabs` sin cajas» (DD-107): `archive/handoff-ds-2026-09-15-tabs`.
-
-**Lo que cambia.** Fuera la regla global que sumaba un anillo al borde marino; los seis campos del DS pasan el error a
-PrimeNG (`[invalid]`) en vez de pintarlo, y el foco se ve también con error (en sc-docs, el relleno en error sale rojo,
-el del Kit). Los 86 anillos a mano leen `--sc-focus-ring-width/offset`, y los halos del Dashboard, el mismo anillo.
-
-- ⚠️ **Una regla SIN CAPA de un wrapper gana siempre al tema**: el rojo de error tapaba el borde de foco del preset.
-  Un estado que PrimeNG sabe pintar (`p-invalid`) se le pasa a PrimeNG; no se repinta en el SCSS del wrapper.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -290,6 +288,8 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Una regla SIN CAPA de un wrapper gana siempre al tema**: el rojo de error de seis campos tapaba el borde de foco.
+  Un estado que PrimeNG sabe pintar (`p-invalid`) se le pasa a PrimeNG, no se repinta en el SCSS del wrapper (DD-111).
 - 🪤 **La hoja de una página no alcanza el `<img>` ni el `<canvas>` de OTRO componente** (encapsulación): esos estilos van
   en el propio componente (DD-110, el fondo del acceso).
 - 🪤 **Para estilar un interno de PrimeNG sin `.p-*`, ponle clase propia por `pt`**: `pBind` la mezcla con la suya y el

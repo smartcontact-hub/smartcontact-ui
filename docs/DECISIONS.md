@@ -106,7 +106,7 @@ primeng.dev (medido: pasa a marino). `e2e/supervisor/focus-ring` lo fija con ema
 
 **Consecuencias** · Sin divergencia nueva: `coverage-map.mjs` sigue con `form.field.focus.ring.*` en `value-match`.
 Como en Aura, un campo en error pierde el rojo mientras está enfocado o con el ratón encima; el mensaje de error
-sigue debajo. `--sc-shadow-focus-ring` se queda sin usos: su retirada va con el barrido de tokens huérfanos. Quedan
+sigue debajo. El token del halo (sc-shadow-focus-ring) se quedó sin usos y se retiró el mismo día con los tokens sin uso. Quedan
 10 separaciones negativas (`-2px`, anillo hacia dentro en la barra lateral y en tablas) sin token.
 
 ---
