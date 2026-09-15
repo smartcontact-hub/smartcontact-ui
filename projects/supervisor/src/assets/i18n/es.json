@@ -1014,8 +1014,6 @@
     "aed": "Contact Center",
     "integrations": "Integraciones",
     "system": "Sistema",
-    "design_decisions": "Decisiones de diseño",
-    "design_decisions_hint": "Ver DECISIONS.md en GitHub (abre en pestaña nueva)",
     "nav_aria": "Navegación principal"
   },
   "labels": {
