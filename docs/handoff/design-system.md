@@ -33,6 +33,10 @@
 
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
+- **`sc-selectbutton`: cablear su color a `var(--sc-cmp-togglebutton-*)`** cuando Figma suba la opción no elegida (§10).
+- **Lo que dejó DD-112:** `sc-form-section-nav` con `role="tab"` sin `tablist` (pestañas verticales o nav como
+  `settings-sidebar`; tres e2e); tira del reproductor sin nombre (clave i18n); la «o» del acceso en primario
+  (`.login__divider` no llega); `sc-slot` a tokens del divider (e2e y captura); CSS muerto `.seg` e `.inline-field`.
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
 
@@ -160,6 +164,16 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-15 · Tabs, Toolbar, InputGroup, Divider y SelectButton de primeng.dev, bien puestos (DD-112)
+
+**Sello:** rama `arebury/fix-tabs-toolbar-inputgroup`, HEAD `cc3c7d7` (#195) más este cambio. Rafa eligió pestañas, separadores
+y pulsación con capturas delante. DD-107 vive en `archive/handoff-ds-2026-09-15-tabs`; «Conversaciones hace scroll», en `…-conversaciones-scroll`.
+
+**Lo que cambia.** DS: `sc-selectbutton`, tallas de `sc-inputgroup`. Supervisor: `p-tabs` nativas de texto, `sc-selectbutton`,
+`sc-divider`, modo pared y tira del Dashboard con nombre (avisar), sin `ripple`, botón que se encoge (better-ui, §8.1). Regla «primeng.dev tal cual»: hook, `tools/primeng-doc.mjs`, §F.
+
+- ⚠️ **Lo nativo manda**: apagué la raya de `p-tabs` por una marca fija y Rafa vio que no se deslizaba. Doc entera y medir.
+
 ## ✅ 2026-09-15 · Salen 30 tokens que no leía nadie, y el tema nombra los retirados
 
 **Sello:** rama `arebury/tokens-sin-uso`, sobre `395824f` (#193). Rafa: «de acuerdo». Archivado: `archive/handoff-ds-2026-09-15-foco`.
@@ -196,23 +210,6 @@ retira. Sin URL, las casillas de notificaciones salen desmarcadas. `sc-column-se
 la visible que la precede. `sc-breadcrumb` marca `aria-current="page"` por `pt`. Cada uno con su e2e, visto en rojo.
 
 - ⚠️ **Mi primer contador de `computed` leía de menos**: no casaba `computed<T>(`. Contó 6 donde había 18.
-
-## ✅ 2026-09-15 · Conversaciones hace scroll dentro de la tabla, como el resto de listas (DD-95)
-
-**Sello:** rama `arebury/fix-conversaciones-tabla-contenida` (#190), HEAD `bacabca` (#191) más este cambio. Rafa preguntó por qué la tabla no iba
-contenida como las demás; visto en local junto a Agentes: «me gusta». Los tramos «La barra de Conversaciones se
-simplifica» y «`sc-panel` con acciones» (DD-108) viven en `archive/handoff-ds-2026-09-14-barra-conversaciones` y `-sc-panel`.
-
-**Lo que cambia.** `.page--tabla` y `<sc-datatable scrollable scrollHeight="flex" virtualScroll>` en Conversaciones:
-título, vistas, filtros y cabecera quietos; la tarjeta vuelve a tener borde (se quita el «flush» de S59) y deja
-sitio a la barra de selección (a 1440 acaba en 883, y en 806 con la barra en 815). DS: la tabla con scroll deja de
-reservar el hueco de la barra a los dos lados (Rafa: el rojo y el amarillo de fila se cortaban 10 px antes del borde);
-el precio, aceptado: con barra, las columnas se mueven su ancho. Spec `conversations-table-scroll`: sus pruebas se
-vieron rojas con el fallo puesto (sin `.page--tabla`, host `block`, tarjeta que llena, sin `--seleccion`, hueco).
-
-- ⚠️ **El host de la tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta
-  vive dentro de un componente. El host tiene que ser flex (`0 1 auto`, `min-height: 0`); con `display: block`
-  la tarjeta mide 1518 dentro de un host de 680 y la página no hace scroll en ningún sitio.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -288,6 +285,8 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **El host de una tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta vive dentro
+  de un componente; el host tiene que ser flex (`0 1 auto`, `min-height: 0`) o la página no hace scroll (DD-95).
 - 🪤 **Una regla SIN CAPA de un wrapper gana siempre al tema**: el rojo de error de seis campos tapaba el borde de foco.
   Un estado que PrimeNG sabe pintar (`p-invalid`) se le pasa a PrimeNG, no se repinta en el SCSS del wrapper (DD-111).
 - 🪤 **La hoja de una página no alcanza el `<img>` ni el `<canvas>` de OTRO componente** (encapsulación): esos estilos van

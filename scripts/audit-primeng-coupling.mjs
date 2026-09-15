@@ -48,6 +48,8 @@
 import { execSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { existeComoClase, sinSelectores } from './primeng-class-exists.mjs';
+import { cambiosDeComportamiento, permisosSinFila, sinPermiso } from './primeng-native-behavior.mjs';
 
 const log = (s = '') => process.stdout.write(s + '\n');
 const sh = (cmd) => {
@@ -89,8 +91,11 @@ const sh = (cmd) => {
  * tipografía que cabecera y cuerpo (Table no declara `fontSize` de celda) y heredaba los 16 del
  * `<body>`. Salió con la fila de totales del Dashboard del Supervisor. Sin la clase, un selector
  * de elementos pierde en especificidad frente a las dos reglas hermanas.
+ *
+ * `ds` 20 → 12 el 2026-09-15 (DD-112): se fueron las reglas muertas de `sc-inputgroup`
+ * (`.p-inputgroup-addon` ya no existe como clase) y su tope baja con ellas.
  */
-const TOPE = { app: 6, ds: 20, preset: 60 };
+const TOPE = { app: 6, ds: 12, preset: 60 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de
@@ -185,14 +190,18 @@ const leerBundle = () => {
 };
 
 const bundle = leerBundle();
-const existeEnPrimeng = (clase) => bundle.some((t) => t.includes(clase));
+/* Búsqueda SUELTA: vale para etiquetas (`p-tabs`), que viven justo en los `selector:`. */
+const existeEnPrimeng = (texto) => bundle.some((t) => t.includes(texto));
+/* Búsqueda de CLASE: sin los `selector:` y con la clase entera. La suelta dio por viva
+ * `.p-inputgroup-addon`, que PrimeNG 22 solo escribe como etiqueta (2026-09-15). */
+const bundleSinSelectores = sinSelectores(bundle);
 
 if (!existeEnPrimeng('p-button')) {
   log('✗ audit:primeng-coupling: no encuentro el código de PrimeNG en node_modules — ¿falta `npm ci`?');
   process.exit(1);
 }
 
-const huerfanos = usados.filter((c) => !existeEnPrimeng(c));
+const huerfanos = usados.filter((c) => !existeComoClase(c, bundleSinSelectores));
 
 const cuenta = Object.fromEntries(
   Object.entries(porHogar).map(([h, mapa]) => [h, mapa.size]),
@@ -657,7 +666,57 @@ if (reachInsDS.length) {
 const cuscareReach = reachInsDeApp('cuscare').length;
 if (cuscareReach) log(`  · cuscare (exenta): ${cuscareReach} reach-in(s) — informativo, no bloquea.`);
 
-const problemas = huerfanos.length + crecidos.length + problemasB + reachInsDS.length;
+/* ══════════════════════════════════════════════════════════════════════════
+ * F · EL COMPORTAMIENTO NATIVO SE RESPETA (DD-112)
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * Un componente de primeng.dev entra «tal cual, adaptado con nuestros tokens» (AGENTS.md,
+ * «Componentes de primeng.dev»). Los tokens no cambian cómo se comporta; una regla que OCULTA una
+ * pieza de PrimeNG, le cambia el MOVIMIENTO o la TRANSFORMA, sí. Cada una que exista vive aquí con
+ * su porqué; una nueva sin entrada pone el gate en rojo. La que lo motivó (2026-09-15): la raya de
+ * `p-tabs` apagada con `display: none` y sustituida por una marca fija, sin el deslizamiento que se
+ * ve en primeng.dev. Clave = selector normalizado (`primeng-native-behavior.mjs`).
+ *
+ * Cada permiso tiene además su fila en `docs/customs-catalog.md` §8 (origen y estado: `se queda` o
+ * `a revisar`), para que el desvío se encuentre y evolucione fuera del gate. Sin fila, rojo.
+ */
+const COMPORTAMIENTO_PERMITIDO = {
+  'sc-datatable .p-datatable-header:empty':
+    'p-table pinta el caption aunque no se proyecte nada y deja una franja en blanco (css.ts, emptyCaptionCss).',
+  '.p-datatable-tbody > tr': 'hover de la gramática de tabla-lista, solo en filas que hacen algo (css.ts, listBehaviorCss, DD-66).',
+  '.p-component.p-button': 'transiciones de 150 ms ease-out de la pulsación de better-ui, elegida por Rafa (css.ts, buttonMotionCss, DD-112).',
+  '.p-component.p-button:active': 'al pulsar se encoge al 96 % y vuelve suave (css.ts, buttonMotionCss, DD-112, customs-catalog §8.1).',
+  '.p-component.p-button:disabled, .p-component.p-button[aria-disabled="true"]': 'un botón deshabilitado no anima (buttonMotionCss).',
+  '.p-component.p-button:disabled:active, .p-component.p-button[aria-disabled="true"]:active': 'ídem, al pulsarlo (buttonMotionCss).',
+  ':host ::ng-deep .p-toast .p-toast-message-icon, :host ::ng-deep .p-toast .p-toast-close-button':
+    'el toast del Supervisor pinta su propio icono y su cierre (app.component.scss, uno de los 6 de `app`).',
+};
+const cambiosNativos = [];
+for (const fs of Object.values(HOGARES)) {
+  for (const f of fs) {
+    let txt;
+    try {
+      txt = readFileSync(f, 'utf8');
+    } catch {
+      continue;
+    }
+    for (const c of sinPermiso(cambiosDeComportamiento(txt), COMPORTAMIENTO_PERMITIDO)) cambiosNativos.push({ f, ...c });
+  }
+}
+const sinFila = permisosSinFila(COMPORTAMIENTO_PERMITIDO, readFileSync('docs/customs-catalog.md', 'utf8'));
+log(`\naudit:primeng-coupling — comportamiento nativo (secc. F): ${cambiosNativos.length} regla(s) sin permiso que ocultan, animan o transforman una pieza de PrimeNG · ${sinFila.length} permiso(s) sin fila en customs-catalog §8`);
+if (sinFila.length) {
+  log('\n  ✗ Permisos sin su fila en docs/customs-catalog.md §8 (selector entre comillas invertidas, tal cual):');
+  for (const s of sinFila) log(`      ${s}`);
+}
+if (cambiosNativos.length) {
+  log('\n  ✗ Estas reglas cambian cómo se COMPORTA un componente de PrimeNG, no solo su aspecto:');
+  for (const c of cambiosNativos) log(`      ${c.f}: \`${c.selector}\` → ${c.cambios.join(', ')}`);
+  log('    → Primero, ¿primeng.dev lo hace así? Mídelo allí. Si de verdad hace falta, añádela a');
+  log('      COMPORTAMIENTO_PERMITIDO con su porqué y su DD, y díselo a Rafa: es un desvío del nativo.');
+}
+
+const problemas = huerfanos.length + crecidos.length + problemasB + reachInsDS.length + cambiosNativos.length + sinFila.length;
 if (problemas === 0) {
   log(
     `✓ audit:primeng-coupling OK — las ${usados.length} clases siguen existiendo, el acoplamiento no crece en ninguno de los tres hogares (app ${cuenta.app}/${TOPE.app} · ds ${cuenta.ds}/${TOPE.ds} · preset ${cuenta.preset}/${TOPE.preset}), los ${consultados.size} elementos consultados casan con lo que escribimos, ninguna entrada quedó inerte, ninguna app crece su CSS sin capa sobre \`.p-*\`, y ninguna app estricta se mete dentro de un componente del DS.`,

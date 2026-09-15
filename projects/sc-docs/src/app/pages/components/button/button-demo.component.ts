@@ -33,6 +33,18 @@ const ICONS_SNIPPET = `<sc-button label="Con icono" icon="check" />
 <sc-button label="Deshabilitado" [disabled]="true" />
 <sc-button label="Full width" [fullWidth]="true" />`;
 
+const PRESS_SNIPPET = `<!-- La pulsación la pone el tema: no hay nada que activar. -->
+<sc-button label="Guardar" />
+<sc-button label="Cancelar" variant="secondary" appearance="outlined" />
+<sc-button label="Ver todo" variant="secondary" appearance="text" />
+<sc-button icon="more_vert" variant="secondary" appearance="text" iconAriaLabel="Más acciones" />`;
+
+const PRESS_DESCRIPTION =
+  'Mantén pulsado un botón: se encoge al 96 % y, al soltarlo, vuelve suave en 150 ms (ease-out), con el cambio de ' +
+  'color a la misma velocidad. Si el sistema pide movimiento reducido, no se mueve. Es un desvío a propósito del ' +
+  'botón de primeng.dev, que no se mueve y tarda 200 ms: se eligió entre seis formas de pulsar probadas sobre este ' +
+  'mismo botón (DD-112, customs-catalog §8.1). En Figma está pendiente (figma-pendiente §13).';
+
 /** Demo de `sc-button` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-button-demo',
@@ -46,6 +58,7 @@ export class ButtonDemoComponent {
   protected readonly appearancesTpl = viewChild<TemplateRef<StoryContext>>('appearances');
   protected readonly sizesTpl = viewChild<TemplateRef<StoryContext>>('sizes');
   protected readonly iconsTpl = viewChild<TemplateRef<StoryContext>>('icons');
+  protected readonly pressTpl = viewChild<TemplateRef<StoryContext>>('press');
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-button',
@@ -126,13 +139,15 @@ export class ButtonDemoComponent {
     const ap = this.appearancesTpl();
     const sz = this.sizesTpl();
     const ic = this.iconsTpl();
-    if (!pg || !va || !ap || !sz || !ic) return [];
+    const pr = this.pressTpl();
+    if (!pg || !va || !ap || !sz || !ic || !pr) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Variantes', template: va, snippet: VARIANTS_SNIPPET },
       { name: 'Apariencias', template: ap, snippet: APPEARANCES_SNIPPET },
       { name: 'Tamaños', template: sz, snippet: SIZES_SNIPPET },
       { name: 'Iconos y estados', template: ic, snippet: ICONS_SNIPPET },
+      { name: 'Al pulsar', template: pr, snippet: PRESS_SNIPPET, description: PRESS_DESCRIPTION },
     ];
   });
 }

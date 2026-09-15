@@ -41,6 +41,7 @@ const CATEGORY: Record<string, ComponentCategory> = {
   radiobutton: 'Inputs',
   search: 'Inputs',
   select: 'Inputs',
+  selectbutton: 'Inputs',
   textarea: 'Inputs',
   toggleswitch: 'Inputs',
   // Datos

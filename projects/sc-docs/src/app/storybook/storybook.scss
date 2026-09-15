@@ -244,6 +244,12 @@
   line-height: 1.55;
 }
 
+.sb-host__story-desc {
+  margin: 0 0 var(--sc-spacing-0-75);
+  max-width: 68ch;
+  color: var(--sc-text-secondary);
+}
+
 .sb-host__tabs {
   display: flex;
   flex-wrap: wrap;

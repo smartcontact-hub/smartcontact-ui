@@ -1,0 +1,61 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<ng-template #playground let-args>
+  <sc-selectbutton
+    [options]="vistas"
+    optionValue="value"
+    [size]="args.size"
+    [allowEmpty]="args.allowEmpty"
+    [multiple]="args.multiple"
+    [fluid]="args.fluid"
+    [disabled]="args.disabled"
+    [invalid]="args.invalid"
+    ariaLabel="Vistas"
+  />
+</ng-template>
+
+<ng-template #views>
+  <div class="col">
+    <span id="demo-vistas-label">Vistas</span>
+    <sc-selectbutton
+      [options]="vistas"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="vista()"
+      (valueChange)="vista.set($event)"
+      ariaLabelledBy="demo-vistas-label"
+      data-testid="sc-selectbutton"
+    />
+    <span>Valor: {{ vista() }}</span>
+  </div>
+</ng-template>
+
+<ng-template #icons>
+  <div class="col">
+    <sc-selectbutton
+      [options]="temas"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="tema()"
+      (valueChange)="tema.set($event)"
+      ariaLabel="Tema"
+      data-testid="sc-selectbutton-icons"
+    >
+      <ng-template #item let-o>
+        <sc-icon [name]="o.icon" size="inherit" />
+        <span>{{ o.label }}</span>
+      </ng-template>
+    </sc-selectbutton>
+  </div>
+</ng-template>
+
+<ng-template #sizes>
+  <div class="col">
+    <sc-selectbutton size="sm" [options]="vistas" optionValue="value" [value]="vista()" (valueChange)="vista.set($event)" ariaLabel="Vistas (sm)" data-testid="sc-selectbutton-sm" />
+    <sc-selectbutton [options]="vistas" optionValue="value" [value]="vista()" (valueChange)="vista.set($event)" ariaLabel="Vistas (md)" />
+    <sc-selectbutton size="lg" [options]="vistas" optionValue="value" [value]="vista()" (valueChange)="vista.set($event)" ariaLabel="Vistas (lg)" data-testid="sc-selectbutton-lg" />
+    <sc-selectbutton [multiple]="true" [options]="canales" optionValue="value" optionDisabled="disabled" [value]="elegidos()" (valueChange)="elegidos.set($event)" ariaLabel="Canales" />
+    <sc-selectbutton [disabled]="true" [options]="vistas" optionValue="value" [value]="'all'" ariaLabel="Vistas deshabilitadas" />
+  </div>
+</ng-template>

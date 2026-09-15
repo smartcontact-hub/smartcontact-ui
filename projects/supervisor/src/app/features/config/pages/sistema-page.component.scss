@@ -59,50 +59,8 @@
   }
 }
 
-.theme-toggle {
-  display: inline-flex;
-  align-items: stretch;
-  background: var(--sc-bg-default);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-100);
-  padding: 2px;
-  gap: 2px;
+.theme-row__control {
   flex-shrink: 0;
-
-  &__option {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    color: var(--sc-text-subtle);
-    background: transparent;
-    border: 0;
-    border-radius: calc(var(--sc-radius-100) - 2px);
-    cursor: pointer;
-    transition:
-      background var(--sc-transition-fast) var(--sc-easing-default),
-      color var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover:not(.theme-toggle__option--active) {
-      color: var(--sc-text-secondary);
-    }
-
-    &--active {
-      background: var(--sc-bg-surface);
-      color: var(--sc-text-primary);
-      box-shadow: var(--sc-shadow-100);
-    }
-
-    &:focus-visible {
-      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-      outline-offset: var(--sc-focus-ring-offset);
-    }
-  }
-
-  &__flag {
-    font-size: var(--sc-font-size-200);
-    line-height: 1;
-  }
 }
 
 /* ---------- Datos (factory reset) ---------- */

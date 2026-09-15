@@ -42,6 +42,9 @@ import { ScArgs, StoryDef, StoryMeta } from './story.types';
       @for (s of stories(); track s.name) {
         <section class="sb-host__story">
           <p class="sb-host__section-title sc-text-caption-semibold">{{ s.playground ? '✦ ' + s.name : s.name }}</p>
+          @if (s.description) {
+            <p class="sb-host__story-desc sc-text-body-regular">{{ s.description }}</p>
+          }
 
           @if (s.playground) {
             <div class="sb-host__play">

@@ -2,19 +2,18 @@
   <!-- 1 · Vistas rápidas y recuento. Una vista es un filtro guardado de un clic: «Sin
        transcribir» son las que puedes mandar a transcribir, «Fallidas» las que fallaron. Sustituye
        a «Solo fallidas» (chip suelto y casilla en «Más filtros»), que decían lo mismo dos veces.
-       Botones segmentados (`p-selectbutton`, primeng.dev/selectbutton), elegidos frente a pestañas
-       el 2026-09-14. ⚠️ PrimeNG directo, sin wrapper del DS todavía. -->
+       Botones segmentados (`sc-selectbutton`, sobre primeng.dev/selectbutton) y no pestañas: filtran
+       la misma lista (DD-112). -->
   <div class="memory-conversation-filters__top">
     <span class="visually-hidden" [id]="ids.views">{{ 'memory.conversations.views.label' | translate }}</span>
-    <p-selectbutton
+    <sc-selectbutton
       class="memory-conversation-filters__views"
       [options]="quickViewOptions()"
-      optionLabel="label"
       optionValue="value"
       [allowEmpty]="false"
-      [ngModel]="quickView()"
-      (ngModelChange)="setQuickView($event)"
-      [attr.aria-labelledby]="ids.views"
+      [value]="quickView()"
+      (valueChange)="setQuickView($event)"
+      [ariaLabelledBy]="ids.views"
     />
 
     <p class="memory-conversation-filters__count sc-text-body-regular" role="status" aria-live="polite" aria-atomic="true">

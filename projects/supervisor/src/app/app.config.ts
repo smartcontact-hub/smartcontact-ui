@@ -58,7 +58,8 @@ export const appConfig: ApplicationConfig = {
     // → sigue ganando a ambos.
     provideSmartContactUi({
       license: PRIMEUI_LICENSE,
-      ripple: true,
+      // Sin `ripple`, como primeng.dev (su valor por defecto es apagado). Venía encendido desde la
+      // migración de la plataforma y pintaba una mancha al 10 % en cada clic de pestaña o botón.
       theme: {
         prefix: 'p',
         darkModeSelector: '.sc-dark',

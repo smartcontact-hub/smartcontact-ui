@@ -27,6 +27,7 @@
 3. **Component overloads** — slots Figma reusados con semántica SC distinta.
 4. **Sizes / density** — SC añade variantes que Figma no contempla (sm/lg en algunos componentes).
 5. **Gaps conocidos** — piezas del Kit Figma que aún no tienen wrapper en el DS (decisión consciente).
+6. **Comportamiento que se aparta de PrimeNG nativo** — §8: lo que ocultamos, animamos o transformamos distinto de primeng.dev, con su origen y su estado. Lo vigila `audit:primeng-coupling` §F.
 
 ---
 
@@ -697,16 +698,18 @@ Componentes del Kit Figma SC que **NO** tienen wrapper todavía. Decisión consc
 - **Figma SC**: 8 variants `Left × Right × SecondLeft × SecondRight` para addons laterales del input (icon, button, prefix/suffix con border merge).
 - **PrimeNG**: `<p-inputgroup>` + `<p-inputgroup-addon>` cubren esto.
 - **Resolución**: wrapper Extended. API minimal (`size`, `fluid`). Tokens fluyen vía `formField.*` sin overrides propios.
+- **Tallas (2026-09-15, DD-112)**: PrimeNG no tiene tallas de grupo. `size="sm|lg"` mueve en el tema (`sc-preset/css.ts`) las variables hoja del campo y del addon, y el grupo queda como `sc-inputtext` de su talla. Hasta ese día lo hacían reglas sobre `.p-inputgroup-addon`, clase que PrimeNG 22 ya no pone: casaban con 0 elementos.
 - **Decisión arquitectónica**: NO se re-empaqueta `<p-inputgroup-addon>` como `<sc-inputgroup-addon>` — los addons son 100% PrimeNG sin overrides, un wrapper añadiría boilerplate sin valor (minimal customization, DD-5). El consumer importa `InputGroupAddonModule` directo. Patrón consistente con `<sc-dialog>` que permite `<p-button>` por dentro.
 - **NO confundir con search**: `<sc-search>` usa `<p-iconfield>` (icon overlay decorativo dentro del input, sin border merge). `<sc-inputgroup>` usa `<p-inputgroup>` (addons con border merge). Semánticas distintas.
 
-### 5.2 `sc-select-button` — gap (Figma `❖ SelectButton` node 6738:46433)
+### 5.2 `sc-selectbutton` — ✅ Resuelto el 2026-09-15 (Figma `❖ SelectButton` node 6738:46433, DD-112)
 
 - **Figma SC**: 24 variants `Select (First/Second/Third/Fourth/Multiple) × OptionAmount (2/3/4) × Multiple (true/false) × Invalid (true/false)`.
 - **PrimeNG**: `<p-selectbutton>` (componente distinto a `<p-select>`).
 - **Composición**: el `❖ SelectButton` Figma **NO** referencia `❖ Button` — son nodes independientes. Si diseño vincula los 2 en el Kit, este wrapper hereda automáticamente.
-- **Estado**: sin uso hoy. Caso típico: filtros segmented horizontal ("Todos / Activos / Archivados"), choice radio visual.
-- **Cuándo crear**: primer filtro segmented real en una app consumidora.
+- **Resolución**: wrapper Extended sobre `<p-selectbutton>`. Añade `ariaLabelledBy` por la entrada (un `[attr.aria-labelledby]` lo pisa PrimeNG), `ariaLabel`, tallas `sm/md/lg` y el reenvío de `#item`. El texto de cada opción es su nombre accesible: traducido y único.
+- **Consumidores**: vistas rápidas de Conversaciones, tema e idioma de Sistema, canal del panel de Plantillas.
+- **Cuándo NO**: para cambiar de colección (se vacían búsqueda y selección) van pestañas `p-tabs` (Plantillas, monitores del Dashboard).
 
 ### 5.3 `sc-tag` — ~~gap~~ **YA EXISTE** (Figma `❖ Tag` node 6738:55116)
 
@@ -949,6 +952,46 @@ El **cinturón tipográfico** está cerrado (tokenización de 367 literales `fon
 - **Tooling** → `npm run tokens:type-parity` (read-only) + `npm run tokens:guard` (**Dura 5**), ambos dentro de `npm run verify`.
 
 **Line-heights**: decididos en DD-13 (por regla) e implementados con la escala redonda.
+
+---
+
+## 8. Comportamiento que se aparta de PrimeNG nativo
+
+Regla (DD-112): un componente de primeng.dev entra tal cual, con su comportamiento y su movimiento. Lo que aquí
+se aparta está a la vista para poder revisarlo: cada fila es una regla que oculta, anima o transforma una pieza de
+PrimeNG. `audit:primeng-coupling` §F no deja entrar una nueva sin su permiso en `COMPORTAMIENTO_PERMITIDO`, y
+exige que cada permiso tenga su fila aquí (el selector entre comillas invertidas, tal cual).
+
+**Estado**: `se queda` (decidido, con motivo vigente) · `a revisar` (decisión vieja que choca con la regla del
+nativo; se mide y se decide con Rafa).
+
+| Selector | Qué hace distinto de primeng.dev | Origen | Estado |
+|---|---|---|---|
+| `.p-component.p-button` | Transiciones de 150 ms ease-out (primeng.dev: 200 ms) | better-ui, elegida por Rafa (ver 8.1) | se queda |
+| `.p-component.p-button:active` | Al pulsar, el botón se encoge al 96 % y vuelve suave al soltar (primeng.dev: no se mueve) | better-ui, elegida por Rafa (ver 8.1) | se queda |
+| `.p-component.p-button:disabled, .p-component.p-button[aria-disabled="true"]` | Un botón deshabilitado no se encoge | El mismo gesto, 8.1 | sigue a 8.1 |
+| `.p-component.p-button:disabled:active, .p-component.p-button[aria-disabled="true"]:active` | Ídem, al pulsarlo | El mismo gesto, 8.1 | sigue a 8.1 |
+| `sc-datatable .p-datatable-header:empty` | Oculta la cabecera de la tabla cuando no se proyecta nada | `emptyCaptionCss` (css.ts), 2026-09-13 | se queda: PrimeNG deja una franja en blanco |
+| `.p-datatable-tbody > tr` | Transición del hover de fila en la tabla-lista | `listBehaviorCss` (css.ts), DD-66 | se queda: solo en filas que hacen algo |
+| `:host ::ng-deep .p-toast .p-toast-message-icon, :host ::ng-deep .p-toast .p-toast-close-button` | Oculta el icono y la X de PrimeNG en el toast del Supervisor | Plataforma (la X doble se arregló en su PR #9; el icono, sin rastrear) | se queda: el toast pinta los suyos |
+
+### 8.1 El botón que se encoge al pulsarlo · se queda, con la receta de better-ui (2026-09-15)
+
+- **Qué hace**: al pulsar, `transform: scale(0.96)` con transición de 150 ms ease-out, así que al soltar vuelve
+  suave; color, borde, contorno y sombra con la misma transición. Con movimiento reducido, nada de eso.
+  primeng.dev no se mueve y usa 200 ms: es un desvío del nativo decidido a propósito.
+- **Cómo se decidió**: Rafa probó seis formas de pulsar en un playground local de `sc-docs` (no se subió; guardado fuera del repo, en
+  `~/Documents/Claude/2026-09 tabs-toolbar-divider/lab-botones/`), sobre
+  el `sc-button` real en tres tallas, seis variantes, tres tipografías, cámara lenta y un clic que navega: el
+  nativo, la de entonces (98 % sin transición y 100 ms), better-ui (96 %, 150 ms), ui-ux-pro-max (95 %, 200 ms),
+  taste-skill (baja 1 px, 300 ms) y solo color a 100 ms. Eligió better-ui: «me parece el más premium de todos».
+- **De dónde venía**: de la app de la plataforma, el 2026-05-06 (PR #9, decisión #21 de
+  `smart-contact-platform/apps/supervisor/docs/DECISIONS.md`), para arreglar un clic que «se sentía borroso»: el
+  fundido del hover seguía corriendo mientras la página navegaba. Aquel arreglo era 98 % con transición cero; DD-66
+  (2026-09-10) lo subió al tema para que viajara.
+- **Figma**: pendiente, `figma-pendiente.md` §13 (la interacción *While pressing* del botón).
+- **Cómo se revisa si vuelve a salir**: el mismo playground (se monta en `sc-docs` con esos tres ficheros y una ruta), y
+  actualizar esta fila, `COMPORTAMIENTO_PERMITIDO` y la DD.
 
 ---
 

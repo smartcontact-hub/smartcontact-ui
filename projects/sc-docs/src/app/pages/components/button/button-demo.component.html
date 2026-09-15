@@ -53,3 +53,10 @@
   <sc-button label="Deshabilitado" [disabled]="true" />
   <sc-button label="Full width" [fullWidth]="true" />
 </ng-template>
+
+<ng-template #press>
+  <sc-button label="Guardar" data-testid="sc-btn-press" />
+  <sc-button label="Cancelar" variant="secondary" appearance="outlined" />
+  <sc-button label="Ver todo" variant="secondary" appearance="text" />
+  <sc-button icon="more_vert" variant="secondary" appearance="text" iconAriaLabel="Más acciones" />
+</ng-template>
