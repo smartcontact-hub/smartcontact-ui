@@ -25,11 +25,11 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**54 componentes** · 17 custom · 11 standard · 26 extended · 43 usados en Supervisor.
+**54 componentes** · 17 custom · 11 standard · 26 extended · 44 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
-| `sc-avatar` | EXTENDED | primeng/avatar, primeng/overlaybadge | 11 inputs | — | ✓ | — |
+| `sc-avatar` | EXTENDED | primeng/avatar, primeng/overlaybadge | 11 inputs | — | ✓ | 1 |
 | `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 6 |
 | `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
@@ -73,8 +73,8 @@
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 8 |
 | `sc-section-card` | CUSTOM | — | 8 inputs | — | ✓ | 20 |
-| `sc-select` | EXTENDED | primeng/select | 27 inputs | sc-field-label sc-field-msg | ✓ | 32 |
-| `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 4 |
+| `sc-select` | EXTENDED | primeng/select | 27 inputs | sc-field-label sc-field-msg | ✓ | 34 |
+| `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 6 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 3 |
@@ -82,7 +82,7 @@
 | `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 23 |
 | `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | 5 |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
-| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 22 |
+| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 26 |
 <!-- @audit:components:end -->
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)

@@ -503,6 +503,10 @@
   ],
   "gated": [
     {
+      "selector": "sc-avatar",
+      "usedInSupervisor": 1
+    },
+    {
       "selector": "sc-badge",
       "usedInSupervisor": 6
     },
@@ -552,7 +556,7 @@
     },
     {
       "selector": "sc-selectbutton",
-      "usedInSupervisor": 4
+      "usedInSupervisor": 6
     },
     {
       "selector": "sc-sticky-form-header",
