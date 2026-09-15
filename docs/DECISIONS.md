@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La cabecera del Dashboard: pestañas sin fondo con `⋮` y `+ Monitor` pegados; las acciones de la página en `p-toolbar` en tres grupos con `sc-divider` (enmienda DD-113 §6) · en modo pared un monitor sin widgets enseña su vacío y el carrusel se lo salta | DD-114 |
 > | Cambiar de COLECCIÓN (se vacían búsqueda y selección) son pestañas `p-tabs`; filtrar la misma lista o elegir un valor son botones segmentados `sc-selectbutton` · un componente de primeng.dev entra NATIVO tal cual (doc entera con `tools/primeng-doc.mjs`, sin contador ni icono que el ejemplo no tenga) y un desvío de comportamiento lo para `audit:primeng-coupling` §F · un separador entre bloques es `sc-divider` salvo que su línea deba alinearse con el contenido · el Supervisor sin `ripple`, como primeng.dev | DD-113 |
 > | El sidebar plegado mide 80px con las filas contenidas · un solo padre en cyan: el más cercano a la página que se vea · con el ratón dentro abrir o cerrar no toca las demás, al salir se cierran las que no son de la página · los hijos se pliegan en altura (300ms, curva estándar) · el sidebar no se pliega durante el fundido de una navegación que inició él | DD-112 |
 | Una pantalla fuera del shell (acceso) va en `features/auth/` y en `EXENTAS` de `audit:page-anatomy` · un error de campo dice QUÉ falta, uno de credenciales no delata cuentas · un SSO de terceros es nuestro `sc-button` con su logo sin tocar · la contraseña es `sc-password` | DD-110 |
@@ -79,6 +80,32 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-114 · 2026-09-15 — La cabecera del Dashboard se ordena en dos bloques y el modo pared no se queda en negro
+
+**Contexto** · Rafa pidió quitar el fondo gris de la tira de pestañas del Dashboard y ordenar sus botones, y propuso
+la Toolbar de primeng.dev. Las acciones del monitor (`⋮`, `+ Monitor`) quedaban en medio de la cabecera, lejos de las
+pestañas y pegadas a «En directo», y se leían como acciones de la página. Después vio el modo pared en negro: era un
+monitor recién creado, sin widgets, cuyos huecos vacíos el modo pared no pinta.
+
+**Decisión** ·
+1. **Pestañas sin fondo**: `p-tabs` con `[dt]` de instancia (`tablist.background: transparent`); la raya sigue.
+2. **Lo del monitor, con el monitor**: `⋮` y `+ Monitor` van pegados a la última pestaña; su hueco se estira hasta
+   las acciones de la página para que la raya de abajo siga siendo una.
+3. **Lo de la página, en `p-toolbar`** (enmienda DD-113 §6, que dejaba la Toolbar solo en el modo pared): sin caja
+   propia (`[dt]` de instancia), nombrada con el monitor, en tres grupos separados por `sc-divider` vertical:
+   estado · alertas y rotación · modo pared. Los botones, de texto; la campana lleva borde de color solo con
+   alertas nuevas.
+4. **Modo pared con un monitor vacío**: enseña `sc-empty-state` («Este monitor no tiene widgets») con «Salir».
+5. **El carrusel se salta los monitores sin widgets**; con las flechas o anterior y siguiente sí se llega a ellos.
+
+**Razón** · Medido con Playwright en claro y oscuro a 1440, 1024 y 390: la raya de abajo es continua, sin desbordes;
+a 1024 las acciones suben encima de las pestañas como antes y a 390 se ocultan los separadores. Con un monitor vacío
+y el carrusel a 20 s, la rotación fue Monitor x → Colas y agentes → Monitor x, y la flecha izquierda llevó al vacío.
+
+**Descartadas** ·
+- **La cabecera entera en `p-toolbar`** → la tira de pestañas quedaba dentro de un `role="toolbar"`.
+- **Separador propio con un `span`** → el DS ya tiene `sc-divider`.
 
 ## DD-113 · 2026-09-15 — Pestañas, botones segmentados, separadores, grupos de campo y barras: los de primeng.dev, bien puestos
 

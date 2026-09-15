@@ -447,7 +447,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 23
+      "usedInSupervisor": 25
     },
     {
       "name": "drawer",
@@ -493,7 +493,7 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 13
+      "usedInSupervisor": 14
     },
     {
       "name": "field",

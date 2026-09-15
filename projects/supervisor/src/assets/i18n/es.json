@@ -196,7 +196,9 @@
     },
     "wall": {
       "enter": "Modo pared",
-      "exit": "Salir"
+      "exit": "Salir",
+      "empty_title": "Este monitor no tiene widgets",
+      "empty_desc": "Sal del modo pared para añadirlos. El carrusel se lo salta."
     },
     "detail": {
       "open_aria": "Ver el detalle de {{value}}",
