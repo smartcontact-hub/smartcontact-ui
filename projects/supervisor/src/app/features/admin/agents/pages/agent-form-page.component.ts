@@ -79,6 +79,8 @@ import {
   AgentGroupAssignmentRef,
   GroupAssignmentTableComponent,
 } from '../components/group-assignment-table/group-assignment-table.component';
+import { BoardCardComponent } from '@features/admin/comparar/board-card.component';
+import { BoardRowComponent } from '@features/admin/comparar/board-row.component';
 import { FichaVariantBarComponent } from '@features/admin/comparar/ficha-variant-bar.component';
 import { FichaVariantService } from '@features/admin/comparar/ficha-variant.service';
 import {
@@ -146,6 +148,8 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
 @Component({
   selector: 'sc-agent-form-page',
   imports: [
+    BoardCardComponent,
+    BoardRowComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
@@ -396,6 +400,48 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected goToSection(id: string): void {
     this.scrollSpy.jump(id);
+  }
+
+  /* ── Variante `d`: el resumen de cada sección. Solo LEE el estado actual del formulario. ── */
+  protected readonly isBoard = computed(() => this.variants.variant() === 'd');
+
+  protected yesNo(value: boolean): string {
+    return value ? 'common.yes' : 'common.no';
+  }
+
+  protected orNone(value: string | number | null | undefined): string {
+    return value === null || value === undefined || value === '' ? this.translate.instant('compare.board.none') : String(value);
+  }
+
+  protected groupName(groupId: number): string {
+    return this.groupsStore.getGroup(groupId)?.name ?? `#${groupId}`;
+  }
+
+  /** Lo que el agente hace en ese grupo: en pausa, o los canales que atiende. */
+  protected linkSummary(link: GroupAgentLink): string {
+    if (!link.active) return this.translate.instant('compare.board.paused');
+    if (link.channels.length === 0) return this.translate.instant('compare.board.no_channels');
+    return link.channels.map((c) => this.translate.instant('agents.channel.' + c)).join(', ');
+  }
+
+  /** A qué destinos puede llamar (o transferir): «Fijos, Móviles», o «No». */
+  protected destinosFor(col: DestinoCol): string {
+    const p = this.form().permissions;
+    const names = this.destinoKeys
+      .filter((row) => p[PERMISSION_MATRIX_KEYS[row][col]])
+      .map((row) => this.translate.instant('agents.form.permissions.row_' + row));
+    return names.length > 0 ? names.join(', ') : this.translate.instant('common.no');
+  }
+
+  protected pickupLabel(value: PickupType): string {
+    return this.pickupOptions().find((o) => o.value === value)?.label ?? value;
+  }
+
+  /** Los nombres de lo elegido en un desplegable, o «Ninguno». */
+  protected namesOf(options: readonly { label: string; value: number }[], ids: readonly number[]): string {
+    const chosen = new Set(ids);
+    const names = options.filter((o) => chosen.has(o.value)).map((o) => o.label);
+    return names.length > 0 ? names.join(', ') : this.translate.instant('compare.board.none');
   }
 
   /** Variante `c`: lo cambiado sin guardar, por sección, y lo que mueve fuera de ella. */

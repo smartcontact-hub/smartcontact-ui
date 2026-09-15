@@ -36,7 +36,7 @@
   <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'groups.form.edit_breadcrumb' : 'groups.form.create_breadcrumb') | translate }}</h1>
 
   <!-- El molde de Contact Center (`.page__inner--rail`). -->
-  <div class="page__inner page__inner--rail">
+  <div class="page__inner page__inner--rail" [class.compare-board]="isBoard()">
     <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
       @if (mode() === 'edit') {
         <div class="ficha">
@@ -55,13 +55,16 @@
         </div>
       }
 
-      <sc-form-section-nav
-        [sections]="navSections()"
-        [activeId]="activeSection()"
-        [sectionsWithErrors]="sectionsWithErrors()"
-        [flush]="true"
-        (activeChange)="goToSection($event)"
-      />
+      <!-- COMPARAR (variante d): el mosaico de tarjetas hace de índice. -->
+      @if (!isBoard()) {
+        <sc-form-section-nav
+          [sections]="navSections()"
+          [activeId]="activeSection()"
+          [sectionsWithErrors]="sectionsWithErrors()"
+          [flush]="true"
+          (activeChange)="goToSection($event)"
+        />
+      }
 
       <!-- COMPARAR (variante c): lo cambiado y lo que mueve fuera de su sección. -->
       @if (variants.variant() === 'c') {
@@ -72,6 +75,52 @@
         <sc-button class="rail-delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
+
+    <!-- COMPARAR (variante d, «Resumen + editor»): toda la ficha en tarjetas-resumen. La que
+         pulsas se edita a la derecha (`.page__main`) y las demás siguen aquí, al día. -->
+    @if (isBoard()) {
+      <div class="board">
+        <sc-board-card
+          sectionId="group-section-identity"
+          icon="badge"
+          titleKey="groups.form.section.identity"
+          [selected]="activeSection() === 'group-section-identity'"
+          (pick)="goToSection('group-section-identity')"
+        >
+          <sc-board-row [label]="'groups.form.fields.name' | translate">{{ orNone(form().name) }}</sc-board-row>
+          <sc-board-row [label]="'groups.form.fields.phone' | translate">{{ orNone(form().phone) }}</sc-board-row>
+          <sc-board-row [label]="'groups.form.fields.priority' | translate">{{ priorityKeys[form().priority] | translate }}</sc-board-row>
+          <sc-board-row [label]="'groups.form.fields.typification' | translate">{{ yesNo(form().typification) | translate }}</sc-board-row>
+        </sc-board-card>
+
+        <sc-board-card
+          sectionId="group-section-channels"
+          icon="account_tree"
+          titleKey="groups.form.section.distribution"
+          [selected]="activeSection() === 'group-section-channels'"
+          (pick)="goToSection('group-section-channels')"
+        >
+          <sc-board-row [label]="'groups.form.section.channels' | translate">{{ channelsSummary(form().channels) }}</sc-board-row>
+          <sc-board-row [label]="'groups.form.fields.phone_strategy' | translate">{{ orNone(form().strategy) }}</sc-board-row>
+          <sc-board-row [label]="'groups.form.fields.chat_strategy' | translate">{{ orNone(form().chatStrategy) }}</sc-board-row>
+          <sc-board-row [label]="'groups.form.fields.capacity' | translate">{{ orNone(form().capacityValue) }}</sc-board-row>
+        </sc-board-card>
+
+        <sc-board-card
+          sectionId="group-section-agents"
+          icon="group"
+          titleKey="groups.form.section.agents"
+          [selected]="activeSection() === 'group-section-agents'"
+          (pick)="goToSection('group-section-agents')"
+        >
+          @for (link of form().links; track link.agentId) {
+            <sc-board-row [label]="agentName(link.agentId)">{{ linkSummary(link) }}</sc-board-row>
+          } @empty {
+            <span class="sc-text-body-regular">{{ 'compare.board.none' | translate }}</span>
+          }
+        </sc-board-card>
+      </div>
+    }
 
     <div class="page__main">
       @if (showSection('group-section-identity')) {

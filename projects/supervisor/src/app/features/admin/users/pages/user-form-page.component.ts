@@ -49,6 +49,8 @@ import {
   UserType,
 } from '../data/users-data';
 import { UsersStore } from '../state/users.store';
+import { BoardCardComponent } from '@features/admin/comparar/board-card.component';
+import { BoardRowComponent } from '@features/admin/comparar/board-row.component';
 import { FichaVariantBarComponent } from '@features/admin/comparar/ficha-variant-bar.component';
 import { FichaVariantService } from '@features/admin/comparar/ficha-variant.service';
 import {
@@ -74,6 +76,8 @@ interface FormState {
 @Component({
   selector: 'sc-user-form-page',
   imports: [
+    BoardCardComponent,
+    BoardRowComponent,
     CheckboxComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
@@ -239,6 +243,37 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected goToSection(id: string): void {
     this.scrollSpy.jump(id);
+  }
+
+  /* ── Variante `d`: el resumen de cada sección. Solo LEE el estado actual del formulario. ── */
+  protected readonly isBoard = computed(() => this.variants.variant() === 'd');
+
+  protected yesNo(value: boolean): string {
+    return value ? 'common.yes' : 'common.no';
+  }
+
+  protected orNone(value: string | number | null | undefined): string {
+    return value === null || value === undefined || value === '' ? this.translate.instant('compare.board.none') : String(value);
+  }
+
+  /** Los rótulos de lo que está marcado, o «Ninguno». */
+  private labelsOf(keys: readonly string[]): string {
+    return keys.length > 0 ? keys.map((k) => this.translate.instant(k)).join(', ') : this.translate.instant('compare.board.none');
+  }
+
+  protected sectionsSummary(): string {
+    const s = this.form().sections;
+    return this.labelsOf(SECTION_DEFS.filter((d) => s[d.key] && (!d.parent || s[d.parent])).map((d) => d.labelKey));
+  }
+
+  protected permissionsSummary(): string {
+    const p = this.form().permissions;
+    return this.labelsOf(PERMISSION_DEFS.filter((d) => p[d.key]).map((d) => d.labelKey));
+  }
+
+  protected servicesSummary(): string {
+    const names = [...this.form().services];
+    return names.length > 0 ? names.join(', ') : this.translate.instant('compare.board.none');
   }
 
   /** Variante `c`: lo cambiado sin guardar, por sección, y lo que mueve fuera de ella. */

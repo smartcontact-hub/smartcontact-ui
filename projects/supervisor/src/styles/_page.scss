@@ -147,6 +147,59 @@
   padding-inline-end: 20rem;
 }
 
+/* COMPARAR (variante `d`, «Resumen + editor»): la ficha de siempre, recolocada sin tocar su
+ * plantilla. A la izquierda, arriba la ficha de identidad y debajo el mosaico de tarjetas-resumen
+ * (`.board`); a la derecha, `.page__main` hace de editor fijo con la sección elegida, alto como
+ * la ventana y con su propio scroll, para que editar no mueva el resumen de su sitio. */
+/* No es un arquetipo más (`audit:page-anatomy`): la página sigue siendo `--rail` y esto la
+ * recoloca solo mientras se compara; por eso gana por especificidad a `--rail`. */
+.page__inner--rail.compare-board {
+  max-width: none;
+  /* Todo el ancho cuenta: la tabla de grupos del editor lleva 25,5rem fijos de canales. */
+  padding-inline: var(--sc-spacing-1);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 44rem);
+  /* El editor ocupa las dos filas: sin esto, su alto se reparte también en la de la cabecera
+   * y abre un hueco entre la ficha y las tarjetas. */
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'rail main'
+    'board main';
+  align-items: start;
+  column-gap: var(--sc-spacing-1-5);
+  row-gap: var(--sc-spacing-1);
+
+  > .page__rail {
+    grid-area: rail;
+    position: static;
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  > .board {
+    grid-area: board;
+    columns: 2 18rem;
+    column-gap: var(--sc-spacing-1);
+  }
+
+  > .page__main {
+    grid-area: main;
+    position: sticky;
+    top: var(--sc-spacing-1-625);
+    /* La ventana menos la barra de arriba (`4`) y el aire de arriba y abajo de la página. */
+    max-height: calc(100dvh - var(--sc-spacing-4) - 2 * var(--sc-spacing-1-625));
+    overflow-y: auto;
+    border-radius: var(--sc-radius-400);
+  }
+
+  /* En el editor caben dos campos por fila, no tres. */
+  > .page__main .grid--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* La columna de formulario que acompaña al rail de `--with-panel`.
  *
  * 1100 no es un número suelto: es lo que cabe junto a un rail de 240 sin que la

@@ -37,7 +37,7 @@
 
   <!-- El molde de Contact Center (`.page__inner--rail`): índice + contenido como una
        sola pieza, centrada y con tope de 1200. -->
-  <div class="page__inner page__inner--rail">
+  <div class="page__inner page__inner--rail" [class.compare-board]="isBoard()">
     <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
       @if (mode() === 'edit') {
         <div class="ficha">
@@ -51,13 +51,16 @@
         </div>
       }
 
-      <sc-form-section-nav
-        [sections]="navSections()"
-        [activeId]="activeSection()"
-        [sectionsWithErrors]="sectionsWithErrors()"
-        [flush]="true"
-        (activeChange)="goToSection($event)"
-      />
+      <!-- COMPARAR (variante d): el mosaico de tarjetas hace de índice. -->
+      @if (!isBoard()) {
+        <sc-form-section-nav
+          [sections]="navSections()"
+          [activeId]="activeSection()"
+          [sectionsWithErrors]="sectionsWithErrors()"
+          [flush]="true"
+          (activeChange)="goToSection($event)"
+        />
+      }
 
       <!-- COMPARAR (variante c): lo cambiado y lo que mueve fuera de su sección. -->
       @if (variants.variant() === 'c') {
@@ -68,6 +71,47 @@
         <sc-button class="rail-delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
+
+    <!-- COMPARAR (variante d, «Resumen + editor»): toda la ficha en tarjetas-resumen. La que
+         pulsas se edita a la derecha (`.page__main`) y las demás siguen aquí, al día. -->
+    @if (isBoard()) {
+      <div class="board">
+        <sc-board-card
+          sectionId="user-section-identity"
+          icon="badge"
+          titleKey="users.form.section.identity"
+          [selected]="activeSection() === 'user-section-identity'"
+          (pick)="goToSection('user-section-identity')"
+        >
+          <sc-board-row [label]="'users.form.fields.name' | translate">{{ orNone(form().name) }}</sc-board-row>
+          <sc-board-row [label]="'users.form.fields.email' | translate">{{ orNone(form().email) }}</sc-board-row>
+          <sc-board-row [label]="'users.form.fields.identifier' | translate">{{ orNone(form().identifier) }}</sc-board-row>
+          <sc-board-row [label]="'users.form.fields.type' | translate">{{ typeLabelKeys[form().type] | translate }}</sc-board-row>
+          <sc-board-row [label]="'users.form.fields.active' | translate">{{ yesNo(form().status === 'active') | translate }}</sc-board-row>
+        </sc-board-card>
+
+        <sc-board-card
+          sectionId="user-section-access"
+          icon="verified_user"
+          titleKey="users.form.section.access"
+          [selected]="activeSection() === 'user-section-access'"
+          (pick)="goToSection('user-section-access')"
+        >
+          <sc-board-row stacked [label]="'users.form.section.sections' | translate">{{ sectionsSummary() }}</sc-board-row>
+          <sc-board-row stacked [label]="'users.form.section.permissions' | translate">{{ permissionsSummary() }}</sc-board-row>
+        </sc-board-card>
+
+        <sc-board-card
+          sectionId="user-section-services"
+          icon="hub"
+          titleKey="users.form.section.services"
+          [selected]="activeSection() === 'user-section-services'"
+          (pick)="goToSection('user-section-services')"
+        >
+          <span class="sc-text-body-regular">{{ servicesSummary() }}</span>
+        </sc-board-card>
+      </div>
+    }
 
     <div class="page__main">
       @if (showSection('user-section-identity')) {
