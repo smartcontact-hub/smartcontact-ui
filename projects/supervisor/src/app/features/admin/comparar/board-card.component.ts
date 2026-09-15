@@ -3,11 +3,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 /**
- * RAMA DE COMPARACIÓN (`comparar/fichas`), variante `d` («Resumen + editor»).
+ * RAMA DE COMPARACIÓN (`comparar/fichas`), variantes `d` y `e` (los dos resúmenes).
  *
  * Una sección de la ficha en RESUMEN: lo que vale ahora, de un vistazo y sin controles. Toda la
  * ficha cabe en una pantalla como un mosaico de estas tarjetas; pulsar una la abre en el editor
- * de la derecha, y la tarjeta se queda marcada y se sigue actualizando mientras editas. Así se
+ * (debajo en `d`, en un panel lateral en `e`), y la tarjeta se queda marcada y se sigue
+ * actualizando mientras editas. Así se
  * cambia una sección sin perder de vista las demás (el patrón lista + detalle de Meridian).
  *
  * El resumen lo escribe cada ficha dentro (`sc-board-row`): solo LEE el estado actual, sin

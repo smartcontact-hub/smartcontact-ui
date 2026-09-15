@@ -187,6 +187,7 @@
     <sc-section-card
       anchorId="agent-section-identity"
       surface="card"
+      [flush]="isCards()"
       [icon]="iconOf('agent-section-identity')"
       titleKey="agents.form.section.identification"
     >
@@ -376,6 +377,7 @@
     <sc-section-card
       anchorId="agent-section-groups"
       surface="card"
+      [flush]="isCards()"
       [icon]="iconOf('agent-section-groups')"
       titleKey="agents.form.section.groups"
     >
@@ -394,6 +396,7 @@
     <sc-section-card
       anchorId="agent-section-permissions"
       surface="card"
+      [flush]="isCards()"
       [icon]="iconOf('agent-section-permissions')"
       titleKey="agents.form.section.permissions"
     >
@@ -451,6 +454,7 @@
     <sc-section-card
       anchorId="agent-section-advanced"
       surface="card"
+      [flush]="isCards()"
       titleKey="agents.form.section.advanced"
       [icon]="iconOf('agent-section-advanced')"
     >
@@ -630,6 +634,7 @@
     <sc-section-card
       anchorId="agent-section-resources"
       surface="card"
+      [flush]="isCards()"
       titleKey="agents.form.section.resources"
       [icon]="iconOf('agent-section-resources')"
     >

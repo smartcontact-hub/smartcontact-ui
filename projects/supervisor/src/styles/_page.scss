@@ -149,33 +149,35 @@
 
 /* COMPARAR (variantes `d` y `e`): la ficha de siempre, recolocada sin tocar su plantilla.
  *
- * `d` («Resumen + editor»): a la izquierda, arriba la ficha de identidad y debajo el mosaico de
- * tarjetas-resumen (`.board`); a la derecha, `.page__main` hace de editor con la sección elegida.
+ * `d` («Resumen + editor»): arriba la ficha de identidad, debajo una FRANJA con las tarjetas-resumen
+ * en fila, y abajo `.page__main` como editor de la tarjeta elegida, a todo el ancho. Se lee de
+ * arriba abajo: el resumen manda y el editor es el detalle de lo que pulsas. Hasta el 2026-09-15 el
+ * editor iba a la derecha, a la altura de las tarjetas, y la sección editada (Recursos) parecía
+ * estar por encima de las principales (Rafa: «parece desordenado»).
  * `e` («Resumen + panel lateral»): el mosaico a todo el ancho, y la sección se edita en un
  * `sc-drawer` que abre «Editar».
  *
  * Todo mide lo que la ventana: la barra de arriba (`4`) y el hueco de la barra de comparar (`5`)
- * fuera, y las filas de tarjetas repartidas a partes iguales. Cada tarjeta tiene su scroll, así
- * que añadir cosas no mueve nada de sitio.
+ * fuera. Cada tarjeta y el editor tienen su propio scroll, así que añadir cosas no mueve nada.
  *
  * No es un arquetipo más (`audit:page-anatomy`): la página sigue siendo `--rail` y esto la
  * recoloca solo mientras se compara; por eso gana por especificidad a `--rail`. */
 .page__inner--rail.compare-board {
   max-width: none;
   height: calc(100dvh - var(--sc-spacing-4) - var(--sc-spacing-5));
-  /* Todo el ancho cuenta: la tabla de grupos del editor lleva 25,5rem fijos de canales. */
   padding-inline: var(--sc-spacing-1);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 44rem);
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  /* Dos quintos para la franja de resumen, tres para el editor. */
+  grid-template-rows: auto minmax(0, 2fr) minmax(0, 3fr);
   grid-template-areas:
-    'rail main'
-    'board main';
-  /* `--rail` alinea arriba (`flex-start`): sin estirar, el mosaico mediría lo que su contenido y
-   * las filas `1fr` crecerían con cada grupo que se añade, que es justo el salto a evitar. */
+    'rail'
+    'board'
+    'main';
+  /* `--rail` alinea arriba (`flex-start`): sin estirar, las filas crecerían con su contenido y
+   * cada grupo que se añade movería lo de debajo, que es justo el salto a evitar. */
   align-items: stretch;
-  column-gap: var(--sc-spacing-1-5);
-  row-gap: var(--sc-spacing-1);
+  gap: var(--sc-spacing-1);
 
   > .page__rail {
     grid-area: rail;
@@ -186,12 +188,14 @@
     justify-content: space-between;
   }
 
+  /* Las tarjetas en UNA fila, tantas columnas iguales como secciones tenga la ficha. */
   > .board {
     grid-area: board;
     min-height: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: minmax(0, 1fr);
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     gap: var(--sc-spacing-1);
   }
 
@@ -202,27 +206,25 @@
     overflow-y: auto;
     border-radius: var(--sc-radius-400);
   }
-
-  /* En el editor caben dos campos por fila, no tres. */
-  > .page__main .grid--3 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
-/* `e`: en el panel lateral (44rem) también caben dos campos por fila, no tres. */
+/* `e`: en el panel lateral (44rem) caben dos campos por fila, no tres. */
 .compare-drawer-body .grid--3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-/* `e`: sin editor fijo, el mosaico se queda todo el ancho y gana una columna. */
+/* `e`: sin editor, el mosaico se come todo el alto, en tres columnas y las filas que haga falta. */
 .page__inner--rail.compare-board.compare-board--cards {
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   grid-template-areas:
     'rail'
     'board';
 
   > .board {
+    grid-auto-flow: row;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: none;
+    grid-auto-rows: minmax(0, 1fr);
   }
 }
 

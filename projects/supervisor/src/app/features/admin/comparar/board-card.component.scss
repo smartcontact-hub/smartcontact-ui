@@ -75,8 +75,10 @@
   color: var(--sc-text-primary);
 }
 
-/* Lo que no cabe en el alto de la tarjeta se desplaza aquí dentro, no fuera. */
+/* Lo que no cabe en el alto de la tarjeta se desplaza aquí dentro, no fuera. Es contenedor de
+ * consulta: las filas (`sc-board-row`) se apilan solas cuando la tarjeta es estrecha. */
 .board-card__body {
+  container-type: inline-size;
   flex: 1;
   min-height: 0;
   overflow-y: auto;

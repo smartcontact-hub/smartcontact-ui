@@ -149,6 +149,7 @@
     <sc-section-card
       anchorId="user-section-identity"
       surface="card"
+      [flush]="isCards()"
       [icon]="iconOf('user-section-identity')"
       titleKey="users.form.section.identity"
     >
@@ -256,6 +257,7 @@
     <sc-section-card
       anchorId="user-section-access"
       surface="card"
+      [flush]="isCards()"
       [icon]="iconOf('user-section-access')"
       titleKey="users.form.section.access"
     >
@@ -297,6 +299,7 @@
     <sc-section-card
       anchorId="user-section-services"
       surface="card"
+      [flush]="isCards()"
       [icon]="iconOf('user-section-services')"
       titleKey="users.form.section.services"
       hintKey="users.form.section.services_hint"
