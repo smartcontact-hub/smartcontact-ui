@@ -17,7 +17,10 @@ export const supervisionRoutes: Routes = [
     loadChildren: () => import('../dashboard/dashboard.routes').then((m) => m.dashboardRoutes),
   },
   { path: 'servicios', loadComponent: placeholder },
-  { path: 'nodo-ia', loadComponent: placeholder },
+  { path: 'nodo-ia/intenciones', loadComponent: placeholder },
+  { path: 'nodo-ia/monitor', loadComponent: placeholder },
+  { path: 'nodo-ia/agentic-ai', loadComponent: placeholder },
+  { path: 'tipificaciones', loadComponent: placeholder },
   { path: 'campanas', loadComponent: placeholder },
   {
     path: 'conversaciones',
@@ -27,4 +30,6 @@ export const supervisionRoutes: Routes = [
   { path: 'analizador', loadComponent: placeholder },
   { path: 'scc', loadComponent: placeholder },
   { path: 'vui-designer', loadComponent: placeholder },
+  { path: 'centro-control', loadComponent: placeholder },
+  { path: 'mask-manager', loadComponent: placeholder },
 ];

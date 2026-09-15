@@ -27,7 +27,7 @@
    * every depth onto the same icon column so the column reads as a
    * single, clean strip of icons.
    */
-  --sidebar-pad-l-0: var(--sc-spacing-0-875);
+  --sidebar-pad-l-0: var(--sc-spacing-0-75);
   --sidebar-pad-l-1: var(--sc-spacing-2-25);
   --sidebar-pad-l-2: var(--sc-spacing-4);
   --sidebar-pad-l-3: var(--sc-spacing-5);
@@ -47,8 +47,14 @@
   transition: width var(--sc-transition-base) var(--sc-easing-emphasized) 100ms;
   will-change: width;
 
+  /*
+   * `--pinned`: a click inside the sidebar navigates, and the router's view
+   * transition covers the page for its whole cross-fade, so `:hover` drops
+   * while the pointer never moved. The sidebar stays open until it ends.
+   */
   &:hover,
-  &:focus-within {
+  &:focus-within,
+  &--pinned {
     width: var(--sc-sidebar-width-expanded);
     transition-delay: 0ms;
     --sidebar-label-opacity: 1;
@@ -72,9 +78,10 @@
     display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-875);
-    /* Padding-left is calculated to center the 40 px isotype inside
-     * the 64 px collapsed gutter: (64 - 40) / 2 = 12 = spacing-200. */
-    padding: 0 var(--sc-spacing-0-875);
+    /* spacing-1-5 (21) centres the 40 px isotype in the 80 px gutter,
+     * (80 - 40) / 2 = 20, and lines it up with the nav icons when
+     * expanded (nav inset 12.25 + item inset 10.5). */
+    padding: 0 var(--sc-spacing-0-875) 0 var(--sc-spacing-1-5);
     border-bottom: 1px solid var(--sc-sidebar-border);
     color: inherit;
     text-decoration: none;
@@ -107,7 +114,8 @@
   }
 
   &:hover &__brand-wordmark,
-  &:focus-within &__brand-wordmark {
+  &:focus-within &__brand-wordmark,
+  &--pinned &__brand-wordmark {
     opacity: 1;
     transform: translateX(0);
   }
@@ -118,7 +126,9 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: var(--sc-spacing-0-875) 0;
+    /* Inline padding keeps rows, their Selected and the collapsed group
+     * block contained inside the column instead of edge to edge. */
+    padding: var(--sc-spacing-0-875);
     display: flex;
     flex-direction: column;
     gap: var(--sc-spacing-0-875);
@@ -156,7 +166,7 @@
   &__section-title {
     position: absolute;
     inset: 0;
-    padding: 0 var(--sc-spacing-1-125);
+    padding: 0 var(--sc-spacing-0-75);
     display: flex;
     align-items: center;
     letter-spacing: 0.15em;
@@ -176,8 +186,8 @@
 
   &__section-divider {
     position: absolute;
-    left: var(--sc-spacing-0-875);
-    right: var(--sc-spacing-0-875);
+    left: 0;
+    right: 0;
     top: 50%;
     height: 1px;
     background: var(--sc-sidebar-divider);
@@ -191,13 +201,15 @@
   }
 
   &:hover &__section-title,
-  &:focus-within &__section-title {
+  &:focus-within &__section-title,
+  &--pinned &__section-title {
     opacity: 1;
     transition-delay: 80ms;
   }
 
   &:hover &__section-divider,
-  &:focus-within &__section-divider {
+  &:focus-within &__section-divider,
+  &--pinned &__section-divider {
     opacity: 0;
     transition-delay: 0ms;
   }
@@ -209,16 +221,31 @@
   /*
    * Collapsed-state padding overrides:
    *   - Every depth flattens onto a single icon column.
-   *   - The padding value is `--sc-spacing-1-75` (24 px) so a 16 px icon
-   *     lands centred in the 64 px gutter (24 + 8 = 32 = sidebar midline).
+   *   - The padding value is `--sc-spacing-1-5` (21 px) so, after the nav
+   *     inset (12.25), a 14 px icon lands centred in the 80 px gutter
+   *     (12.25 + 21 + 7 = 40 = sidebar midline).
    *   - On hover, the locals revert to the depth-tiered defaults so the
    *     expanded view keeps its tree-like indentation.
+   *   - The open first-level category is painted as one block, parent to
+   *     last child: with no indentation it is the only cue of where the
+   *     children end (SISMAC-4340). Only the first level, so two blocks
+   *     never stack into something that reads as the active row.
    */
-  &:not(:hover):not(:focus-within) {
-    --sidebar-pad-l-0: var(--sc-spacing-1-75);
-    --sidebar-pad-l-1: var(--sc-spacing-1-75);
-    --sidebar-pad-l-2: var(--sc-spacing-1-75);
-    --sidebar-pad-l-3: var(--sc-spacing-1-75);
+  &:not(:hover):not(:focus-within):not(.sidebar--pinned) {
+    --sidebar-pad-l-0: var(--sc-spacing-1-5);
+    --sidebar-pad-l-1: var(--sc-spacing-1-5);
+    --sidebar-pad-l-2: var(--sc-spacing-1-5);
+    --sidebar-pad-l-3: var(--sc-spacing-1-5);
+
+    sc-sidebar-nav-item.nav-group--open {
+      background: var(--sc-sidebar-item-hover-bg);
+    }
+  }
+
+  sc-sidebar-nav-item {
+    border-radius: var(--sc-radius-100);
+    /* Same timing as the children folding, so the block fades as it shrinks. */
+    transition: background var(--sc-transition-slow) var(--sc-easing-default);
   }
 }
 

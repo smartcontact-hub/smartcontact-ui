@@ -8,8 +8,6 @@ export interface NavItem {
   readonly iconSize?: number;
   readonly path?: string;
   readonly children?: readonly NavItem[];
-  /** When true the parent renders expanded on first paint. */
-  readonly defaultExpanded?: boolean;
 }
 
 export interface NavSection {
@@ -47,9 +45,34 @@ export const NAV_SECTIONS: readonly NavSection[] = [
           },
           {
             labelKey: 'sidebar.nodo_ia',
-            icon: 'brain',
+            icon: 'brain-circuit',
             iconSize: 14,
-            path: '/nodo-ia',
+            children: [
+              {
+                labelKey: 'sidebar.intenciones',
+                icon: 'data-object',
+                iconSize: 13,
+                path: '/nodo-ia/intenciones',
+              },
+              {
+                labelKey: 'sidebar.monitor_ia',
+                icon: 'table-eye',
+                iconSize: 13,
+                path: '/nodo-ia/monitor',
+              },
+              {
+                labelKey: 'sidebar.agentic_ai',
+                icon: 'robot',
+                iconSize: 13,
+                path: '/nodo-ia/agentic-ai',
+              },
+            ],
+          },
+          {
+            labelKey: 'sidebar.tipificaciones',
+            icon: 'check-check',
+            iconSize: 14,
+            path: '/tipificaciones',
           },
           {
             labelKey: 'sidebar.campanas',
@@ -96,6 +119,18 @@ export const NAV_SECTIONS: readonly NavSection[] = [
         iconSize: 16,
         path: '/vui-designer',
       },
+      {
+        labelKey: 'sidebar.centro_control',
+        icon: 'monitor-heart',
+        iconSize: 16,
+        path: '/centro-control',
+      },
+      {
+        labelKey: 'sidebar.mask_manager',
+        icon: 'theater-comedy',
+        iconSize: 16,
+        path: '/mask-manager',
+      },
     ],
   },
   {
@@ -105,7 +140,6 @@ export const NAV_SECTIONS: readonly NavSection[] = [
         labelKey: 'sidebar.administration',
         icon: 'users',
         iconSize: 16,
-        defaultExpanded: true,
         children: [
           {
             labelKey: 'sidebar.users',

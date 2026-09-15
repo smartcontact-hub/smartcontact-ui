@@ -7,8 +7,9 @@
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
-  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
   text-align: left;
+  border-radius: var(--sc-radius-100);
   color: var(--sc-sidebar-fg-muted);
   background: transparent;
   border: 0;
@@ -24,7 +25,7 @@
    * overrides these locals to flatten every depth onto the icon column.
    */
   &[data-depth='0'] {
-    padding-left: var(--sidebar-pad-l-0, var(--sc-spacing-0-875));
+    padding-left: var(--sidebar-pad-l-0, var(--sc-spacing-0-75));
   }
   &[data-depth='1'] {
     padding-left: var(--sidebar-pad-l-1, var(--sc-spacing-2-25));
@@ -73,10 +74,10 @@
   }
 
   /*
-   * The parent of the active section gets the brand cyan accent
-   * (`cyan-300`) on its icon — a "you are here at the section level"
-   * cue that survives the sidebar collapsing. Other parents stay neutral
-   * so the highlight reads as a unique signal, not as decoration.
+   * One parent gets the brand cyan accent (`cyan-300`) on its icon: the
+   * nearest ancestor of the current page that is on screen (the sidebar
+   * picks it, `accentKey`). A "you are here" cue that survives closing and
+   * collapsing. Only one, so there is a single place to look.
    */
   &--child-active &__icon {
     color: var(--sc-sidebar-accent);
@@ -125,18 +126,66 @@
     flex-shrink: 0;
     color: var(--sc-sidebar-fg-faint);
     opacity: var(--sidebar-label-opacity, 1);
-    transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+    /* One glyph that turns, instead of swapping right for down in one frame. */
+    transition:
+      opacity var(--sc-transition-fast) var(--sc-easing-default),
+      transform var(--sc-transition-slow) var(--sc-easing-default);
+
+    .nav-item--expanded & {
+      transform: rotate(90deg);
+    }
   }
 }
 
+/*
+ * Children fold in height instead of popping in and out: a whole category
+ * vanishing in one frame read as the menu "flying" away. The height runs on
+ * the standard curve over `--sc-transition-slow`: the emphasized one moved
+ * the rows below by a third of the distance in the first frame, and that
+ * read as a jerk. `grid-template-rows` 0fr → 1fr animates to the content's
+ * own height; `visibility` flips at the end of a close so hidden rows are
+ * not painted.
+ */
 .nav-item__children {
-  display: block;
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows var(--sc-transition-slow) var(--sc-easing-default),
+    visibility 0s linear var(--sc-transition-slow);
+
+  &--open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition:
+      grid-template-rows var(--sc-transition-slow) var(--sc-easing-default),
+      visibility 0s;
+  }
+}
+
+/*
+ * The rows fade on their own clock: out at once when closing, in once the
+ * space has started to open, so they never show clipped mid-fold.
+ */
+.nav-item__children-inner {
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+
+  .nav-item__children--open > & {
+    opacity: 1;
+    transition: opacity var(--sc-transition-base) var(--sc-easing-default)
+      var(--sc-transition-fast);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .nav-item,
   .nav-item__label,
-  .nav-item__chevron {
+  .nav-item__chevron,
+  .nav-item__children,
+  .nav-item__children-inner {
     transition: none;
   }
 }
