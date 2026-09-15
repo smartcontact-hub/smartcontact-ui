@@ -36,7 +36,7 @@
   <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'groups.form.edit_breadcrumb' : 'groups.form.create_breadcrumb') | translate }}</h1>
 
   <!-- El molde de Contact Center (`.page__inner--rail`). -->
-  <div class="page__inner page__inner--rail" [class.compare-board]="hasBoard()" [class.compare-board--cards]="isCards()">
+  <div class="page__inner page__inner--rail" [class.compare-board]="isCards()" [class.compare-board--panel-open]="isCards() && variants.editorOpen()">
     <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
       @if (mode() === 'edit') {
         <div class="ficha">
@@ -55,8 +55,8 @@
         </div>
       }
 
-      <!-- COMPARAR (variante d): el mosaico de tarjetas hace de índice. -->
-      @if (!hasBoard()) {
+      <!-- COMPARAR (variante e): el mosaico de tarjetas hace de índice. -->
+      @if (!isCards()) {
         <sc-form-section-nav
           [sections]="navSections()"
           [activeId]="activeSection()"
@@ -66,26 +66,21 @@
         />
       }
 
-      <!-- COMPARAR (variante c): lo cambiado y lo que mueve fuera de su sección. -->
-      @if (variants.variant() === 'c') {
-        <sc-pending-changes-panel [sections]="pendingChanges()" (go)="goToSection($event)" />
-      }
-
       @if (mode() === 'edit') {
         <sc-button class="rail-delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
 
-    <!-- COMPARAR (variante d, «Resumen + editor»): toda la ficha en tarjetas-resumen. La que
-         pulsas se edita a la derecha (`.page__main`) y las demás siguen aquí, al día. -->
-    @if (hasBoard()) {
+    <!-- COMPARAR (variante e, «Resumen + panel lateral»): toda la ficha en tarjetas-resumen. La que
+         pulsas se edita en el panel lateral y las demás siguen aquí, al día. -->
+    @if (isCards()) {
       <div class="board">
         <sc-board-card
           sectionId="group-section-identity"
           icon="badge"
           titleKey="groups.form.section.identity"
-          [selected]="isPicked('group-section-identity')"
-          (pick)="pickCard('group-section-identity')"
+          [selected]="cards.isPicked('group-section-identity')"
+          (pick)="cards.pick('group-section-identity')"
         >
           <sc-board-row [label]="'groups.form.fields.name' | translate">{{ orNone(form().name) }}</sc-board-row>
           <sc-board-row [label]="'groups.form.fields.phone' | translate">{{ orNone(form().phone) }}</sc-board-row>
@@ -97,8 +92,8 @@
           sectionId="group-section-channels"
           icon="account_tree"
           titleKey="groups.form.section.distribution"
-          [selected]="isPicked('group-section-channels')"
-          (pick)="pickCard('group-section-channels')"
+          [selected]="cards.isPicked('group-section-channels')"
+          (pick)="cards.pick('group-section-channels')"
         >
           <sc-board-row [label]="'groups.form.section.channels' | translate">{{ channelsSummary(form().channels) }}</sc-board-row>
           <sc-board-row [label]="'groups.form.fields.phone_strategy' | translate">{{ orNone(form().strategy) }}</sc-board-row>
@@ -110,8 +105,8 @@
           sectionId="group-section-agents"
           icon="group"
           titleKey="groups.form.section.agents"
-          [selected]="isPicked('group-section-agents')"
-          (pick)="pickCard('group-section-agents')"
+          [selected]="cards.isPicked('group-section-agents')"
+          (pick)="cards.pick('group-section-agents')"
         >
           @for (link of form().links; track link.agentId) {
             <sc-board-row [label]="agentName(link.agentId)">{{ linkSummary(link) }}</sc-board-row>
@@ -124,9 +119,19 @@
 
     @if (isCards()) {
       <!-- COMPARAR (variante e): la sección se edita en un panel lateral que abre «Editar». No es
-           modal: las tarjetas de la izquierda siguen a la vista y al día mientras editas. -->
-      <sc-drawer position="right" width="44rem" [modal]="false" [visible]="variants.editorOpen()" (visibleChange)="variants.editorOpen.set($event)">
-        <div class="compare-drawer-body">
+           modal y baja desde la barra de arriba, que sigue a la vista (Guardar, Deshacer, la miga);
+           la ficha se aparta lo que mide (44rem, en `_page.scss`), así que la tarjeta que editas no
+           queda nunca debajo. El título va en la cabecera del panel, junto a la X. -->
+      <sc-drawer
+        position="right"
+        width="44rem"
+        topOffset="var(--sc-spacing-4)"
+        [modal]="false"
+        [header]="activeLabelKey() | translate"
+        [visible]="variants.editorOpen()"
+        (visibleChange)="cards.onVisibleChange($event)"
+      >
+        <div class="compare-drawer-body" tabindex="-1">
           <ng-container *ngTemplateOutlet="sections" />
         </div>
       </sc-drawer>
@@ -184,6 +189,7 @@
       anchorId="group-section-identity"
       surface="card"
       [flush]="isCards()"
+      [showHeader]="!isCards()"
       [icon]="iconOf('group-section-identity')"
       titleKey="groups.form.section.identity"
     >
@@ -272,6 +278,7 @@
       anchorId="group-section-channels"
       surface="card"
       [flush]="isCards()"
+      [showHeader]="!isCards()"
       [icon]="iconOf('group-section-channels')"
       titleKey="groups.form.section.distribution"
     >
@@ -344,6 +351,7 @@
       anchorId="group-section-agents"
       surface="card"
       [flush]="isCards()"
+      [showHeader]="!isCards()"
       [icon]="iconOf('group-section-agents')"
       titleKey="groups.form.section.agents"
     >

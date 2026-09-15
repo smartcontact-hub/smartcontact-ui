@@ -11,7 +11,12 @@
   }
 </ng-template>
 
-<section class="section-card" [attr.id]="anchorId()" [attr.data-section-anchor]="anchorId()">
+<section
+  class="section-card"
+  [attr.id]="anchorId()"
+  [attr.data-section-anchor]="anchorId()"
+  [attr.aria-label]="!collapsible() && !showHeader() ? (titleKey() | translate) : null"
+>
   @if (collapsible()) {
     <button
       type="button"
@@ -33,7 +38,7 @@
         class="section-card__chevron"
       />
     </button>
-  } @else {
+  } @else if (showHeader()) {
     <header class="section-card__head">
       @if (icon(); as ic) {
         <sc-icon [name]="ic" [size]="headIconSize" [weight]="600" class="section-card__icon" />

@@ -42,16 +42,6 @@ const STEPS: Record<FichaVariant, Record<Entity, readonly string[]>> = {
     group: ['compare.guide.b.group.step1', 'compare.guide.b.step2', 'compare.guide.b.step3'],
     user: ['compare.guide.b.user.step1', 'compare.guide.b.step2', 'compare.guide.b.step3'],
   },
-  c: {
-    agent: ['compare.guide.c.agent.step1', 'compare.guide.c.agent.step2', 'compare.guide.c.step3', 'compare.guide.c.step4'],
-    group: ['compare.guide.c.group.step1', 'compare.guide.c.group.step2', 'compare.guide.c.step3', 'compare.guide.c.step4'],
-    user: ['compare.guide.c.user.step1', 'compare.guide.c.user.step2', 'compare.guide.c.step3', 'compare.guide.c.step4'],
-  },
-  d: {
-    agent: ['compare.guide.d.agent.step1', 'compare.guide.d.agent.step2', 'compare.guide.d.step3'],
-    group: ['compare.guide.d.group.step1', 'compare.guide.d.group.step2', 'compare.guide.d.step3'],
-    user: ['compare.guide.d.user.step1', 'compare.guide.d.user.step2', 'compare.guide.d.step3'],
-  },
   e: {
     agent: ['compare.guide.e.agent.step1', 'compare.guide.e.agent.step2', 'compare.guide.e.step3'],
     group: ['compare.guide.e.group.step1', 'compare.guide.e.group.step2', 'compare.guide.e.step3'],

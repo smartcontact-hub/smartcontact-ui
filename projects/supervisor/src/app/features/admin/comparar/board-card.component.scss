@@ -5,6 +5,7 @@
   display: block;
   height: 100%;
   min-height: 0;
+  container: board-card / inline-size;
 }
 
 /* La misma superficie que la tarjeta de sección del DS (`sc-section-card surface="card"`), para
@@ -73,6 +74,15 @@
 
 .board-card--selected .board-card__action {
   color: var(--sc-text-primary);
+}
+
+/* Estrecha (con el panel lateral abierto miden ~205px): el rótulo «Editar» / «Editando» partía el
+ * título en dos líneas y descuadraba las cabeceras de la fila. Ahí ya se está editando, y la
+ * tarjeta elegida conserva su borde doble y su `aria-pressed`: el rótulo sobra. */
+@container board-card (max-width: 16rem) {
+  .board-card__action {
+    display: none;
+  }
 }
 
 /* Lo que no cabe en el alto de la tarjeta se desplaza aquí dentro, no fuera. Es contenedor de

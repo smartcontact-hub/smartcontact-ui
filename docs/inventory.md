@@ -30,7 +30,7 @@
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
 | `sc-avatar` | EXTENDED | primeng/avatar, primeng/overlaybadge | 11 inputs | — | ✓ | — |
-| `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 7 |
+| `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 6 |
 | `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-bulk-edit-menu` | STANDARD | primeng/button | 1 inputs | sc-select | ✓ | 3 |
@@ -48,7 +48,7 @@
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |
 | `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 22 |
-| `sc-drawer` | EXTENDED | primeng/drawer | 9 inputs | — | ✓ | 5 |
+| `sc-drawer` | EXTENDED | primeng/drawer | 10 inputs | — | ✓ | 5 |
 | `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 13 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
@@ -72,7 +72,7 @@
 | `sc-progressspinner` | EXTENDED | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 8 |
-| `sc-section-card` | CUSTOM | — | 8 inputs | — | ✓ | 20 |
+| `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 20 |
 | `sc-select` | EXTENDED | primeng/select | 27 inputs | sc-field-label sc-field-msg | ✓ | 32 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |

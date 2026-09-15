@@ -1,5 +1,7 @@
+<!-- Baja desde la barra de arriba, como el panel de ajustes: sin eso tapaba Guardar. -->
 <sc-drawer
   position="right"
+  topOffset="var(--sc-spacing-4)"
   [modal]="false"
   [visible]="variants.guideOpen()"
   [header]="'compare.guide.title' | translate"

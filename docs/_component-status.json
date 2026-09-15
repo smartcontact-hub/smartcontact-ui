@@ -43,7 +43,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 7
+      "usedInSupervisor": 6
     },
     {
       "name": "breadcrumb",
@@ -456,7 +456,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/drawer",
       "cva": false,
-      "inputs": 9,
+      "inputs": 10,
       "api": [
         "closeOnEscape",
         "dismissible",
@@ -467,6 +467,7 @@
         "position",
         "showCloseIcon",
         "shown",
+        "topOffset",
         "visible",
         "visibleChange",
         "width"
@@ -1022,7 +1023,7 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 8,
+      "inputs": 9,
       "api": [
         "anchorId",
         "collapsible",
@@ -1031,6 +1032,7 @@
         "hintKey",
         "icon",
         "initiallyCollapsed",
+        "showHeader",
         "surface"
       ],
       "nested": [],

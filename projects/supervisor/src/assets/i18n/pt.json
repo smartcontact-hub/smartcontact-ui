@@ -2060,50 +2060,13 @@
       "b": {
         "label": "Uma página (maio)"
       },
-      "c": {
-        "label": "Separadores com alterações"
-      },
-      "d": {
-        "label": "Resumo + editor"
-      },
       "e": {
         "label": "Resumo + painel lateral"
       }
     },
-    "pending": {
-      "title": "Alterações por guardar",
-      "empty": "Altere qualquer campo da ficha: aqui verá o que alterou e o que mais afeta.",
-      "changed": "Alterou",
-      "affects": "Afeta"
-    },
-    "fields": {
-      "photo": "Foto",
-      "templates": "Modelos",
-      "added": "Adiciona {{items}}",
-      "removed": "Remove {{items}}"
-    },
-    "effects": {
-      "no_channels": "nenhum canal",
-      "agent_inactive": "Deixa de receber chamadas e chats nos seus {{count}} grupos",
-      "agent_inactive_one": "Deixa de receber chamadas e chats no seu grupo",
-      "agent_joins": "Entra em {{group}} com {{channels}}",
-      "agent_leaves": "Sai de {{group}}",
-      "agent_channels": "Em {{group}} passa a atender {{channels}}",
-      "agent_paused": "Em {{group}} deixa de receber contactos",
-      "agent_resumed": "Em {{group}} volta a receber contactos",
-      "group_channel_removed": "{{count}} agentes deixam de atender {{channel}} neste grupo",
-      "group_channel_removed_one": "1 agente deixa de atender {{channel}} neste grupo",
-      "group_agent_joins": "{{agent}} entra com {{channels}}",
-      "group_agent_leaves": "{{agent}} sai do grupo",
-      "group_agent_channels": "{{agent}} passa a atender {{channels}}",
-      "group_agent_paused": "{{agent}} deixa de receber contactos aqui",
-      "group_agent_resumed": "{{agent}} volta a receber contactos aqui",
-      "user_inactive": "Não poderá iniciar sessão nem operar",
-      "user_section_children": "Sem {{section}}, também não verá {{children}}"
-    },
     "guide": {
       "title": "Como comparar",
-      "intro": "É a mesma ficha de cinco formas. Passe de uma para outra com a barra de baixo e faça o mesmo em cada uma. São dados de demonstração: pode mexer à vontade.",
+      "intro": "É a mesma ficha de três formas. Passe de uma para outra com a barra de baixo e faça o mesmo em cada uma. São dados de demonstração: pode mexer à vontade.",
       "current": "Está a ver",
       "try": "Experimente",
       "look": "Repare em",
@@ -2136,59 +2099,22 @@
         "look": "Se ver tudo junto ajuda a perceber o que mexe, ou se é tanto que se perde.",
         "summary": "Tudo numa página; o índice leva-o lá."
       },
-      "c": {
-        "what": "Separadores, como hoje, mas com uma caixa sob o índice que resume o que alterou e o que mais afeta, antes de guardar.",
-        "agent": {
-          "step1": "Clique em «Identificação» no índice.",
-          "step2": "Desligue o interruptor «Ativo»."
-        },
-        "group": {
-          "step1": "Clique em «Canais e estratégia» no índice.",
-          "step2": "Desmarque «Telefone»."
-        },
-        "user": {
-          "step1": "Clique em «Acesso» no índice.",
-          "step2": "Desmarque «Estatísticas»."
-        },
-        "step3": "Veja a caixa «Alterações por guardar», à esquerda sob o índice: diz o que alterou e, em «Afeta», o que isso muda fora da secção.",
-        "step4": "Clique em «Desfazer», no canto superior direito, para deixar como estava.",
-        "look": "A caixa da esquerda. É o que substitui ver tudo ao mesmo tempo.",
-        "summary": "Uma secção de cada vez, e um resumo do que cada alteração afeta."
-      },
-      "d": {
-        "what": "Toda a ficha num ecrã: em cima, uma faixa de cartões que resumem cada secção; em baixo, o editor daquele em que clicar. Os outros continuam à vista e atualizam-se no momento.",
-        "agent": {
-          "step1": "Clique no cartão «Grupos atribuídos»: abre-se em baixo, no editor.",
-          "step2": "Retire um canal a um grupo: o cartão da esquerda mostra-o no momento."
-        },
-        "group": {
-          "step1": "Clique no cartão «Canais e estratégia».",
-          "step2": "Desmarque «Telefone»: no cartão «Agentes atribuídos» os agentes deixam de ter telefone, sem sair do ecrã."
-        },
-        "user": {
-          "step1": "Clique no cartão «Acesso».",
-          "step2": "Desmarque «Estatísticas»: o cartão mostra-o no momento."
-        },
-        "step3": "Clique noutro cartão: o editor muda de secção e o resto da ficha continua à vista.",
-        "look": "Se ver a ficha inteira em resumo enquanto edita uma parte chega para perceber o que afeta, sem o ruído de ter todos os controlos à frente.",
-        "summary": "Um resumo de tudo; edita uma parte à direita."
-      },
       "e": {
-        "what": "Os mesmos cartões de resumo, mas a toda a largura. Clique em «Editar» num deles e as definições abrem-se num painel à direita; ao fechá-lo volta a ver a ficha inteira.",
+        "what": "Toda a ficha em cartões de resumo, a toda a largura. Clique em «Editar» num deles e as definições abrem-se num painel à direita; a ficha afasta-se para lhe dar espaço, por isso vê o resumo enquanto edita.",
         "agent": {
           "step1": "Clique em «Editar» no cartão «Identificação»: as definições abrem-se num painel à direita.",
           "step2": "Desligue «Ativo»: o cartão da esquerda mostra-o no momento."
         },
         "group": {
           "step1": "Clique em «Editar» no cartão «Canais e estratégia».",
-          "step2": "Desmarque «Telefone» e feche o painel: o cartão «Agentes atribuídos», que o painel tapava, ficou sem telefone."
+          "step2": "Desmarque «Telefone»: no cartão «Agentes atribuídos» os agentes ficam sem telefone no momento."
         },
         "user": {
           "step1": "Clique em «Editar» no cartão «Acesso».",
           "step2": "Desmarque «Estatísticas»: o cartão mostra-o no momento."
         },
-        "step3": "Feche o painel com o X ou Esc: volta a ver a ficha inteira.",
-        "look": "Se ganhar espaço para o resumo compensa o painel tapar parte da ficha enquanto edita.",
+        "step3": "Clique fora do painel, no X ou Esc para o fechar: a ficha volta a ocupar toda a largura.",
+        "look": "Se ter o resumo à vista enquanto edita no painel chega para perceber o que cada alteração afeta.",
         "summary": "Resumo a toda a largura; as definições num painel ao clicar Editar."
       }
     },

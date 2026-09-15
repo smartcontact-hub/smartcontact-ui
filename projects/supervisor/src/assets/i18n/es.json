@@ -2060,50 +2060,13 @@
       "b": {
         "label": "Una página (mayo)"
       },
-      "c": {
-        "label": "Pestañas con cambios"
-      },
-      "d": {
-        "label": "Resumen + editor"
-      },
       "e": {
         "label": "Resumen + panel lateral"
       }
     },
-    "pending": {
-      "title": "Cambios sin guardar",
-      "empty": "Toca cualquier campo de la ficha: aquí verás qué has cambiado y a qué más afecta.",
-      "changed": "Has cambiado",
-      "affects": "Afecta a"
-    },
-    "fields": {
-      "photo": "Foto",
-      "templates": "Plantillas",
-      "added": "Añade {{items}}",
-      "removed": "Quita {{items}}"
-    },
-    "effects": {
-      "no_channels": "ningún canal",
-      "agent_inactive": "Deja de recibir llamadas y chats en sus {{count}} grupos",
-      "agent_inactive_one": "Deja de recibir llamadas y chats en su grupo",
-      "agent_joins": "Entra en {{group}} con {{channels}}",
-      "agent_leaves": "Sale de {{group}}",
-      "agent_channels": "En {{group}} pasa a atender {{channels}}",
-      "agent_paused": "En {{group}} deja de recibir contactos",
-      "agent_resumed": "En {{group}} vuelve a recibir contactos",
-      "group_channel_removed": "{{count}} agentes dejan de atender {{channel}} en este grupo",
-      "group_channel_removed_one": "1 agente deja de atender {{channel}} en este grupo",
-      "group_agent_joins": "{{agent}} entra con {{channels}}",
-      "group_agent_leaves": "{{agent}} sale del grupo",
-      "group_agent_channels": "{{agent}} pasa a atender {{channels}}",
-      "group_agent_paused": "{{agent}} deja de recibir contactos aquí",
-      "group_agent_resumed": "{{agent}} vuelve a recibir contactos aquí",
-      "user_inactive": "No podrá iniciar sesión ni operar",
-      "user_section_children": "Sin {{section}}, tampoco verá {{children}}"
-    },
     "guide": {
       "title": "Cómo comparar",
-      "intro": "Es la misma ficha de cinco formas. Pasa de una a otra con la barra de abajo y haz lo mismo en cada una. Son datos de demostración: puedes tocar sin miedo.",
+      "intro": "Es la misma ficha de tres formas. Pasa de una a otra con la barra de abajo y haz lo mismo en cada una. Son datos de demostración: puedes tocar sin miedo.",
       "current": "Estás viendo",
       "try": "Prueba esto",
       "look": "Fíjate en",
@@ -2136,59 +2099,22 @@
         "look": "Si verlo todo junto te ayuda a entender lo que tocas, o si hay tanto que te pierdes.",
         "summary": "Todo en una página; el índice te lleva."
       },
-      "c": {
-        "what": "Pestañas, como hoy, pero con un recuadro bajo el índice que resume lo que has cambiado y a qué más afecta, antes de guardar.",
-        "agent": {
-          "step1": "Pulsa «Identificación» en el índice.",
-          "step2": "Apaga el interruptor «Activo»."
-        },
-        "group": {
-          "step1": "Pulsa «Canales y estrategia» en el índice.",
-          "step2": "Desmarca «Teléfono»."
-        },
-        "user": {
-          "step1": "Pulsa «Acceso» en el índice.",
-          "step2": "Desmarca «Estadísticas»."
-        },
-        "step3": "Mira el recuadro «Cambios sin guardar», a la izquierda bajo el índice: dice qué has cambiado y, en «Afecta a», lo que eso mueve fuera de la sección.",
-        "step4": "Pulsa «Deshacer», arriba a la derecha, para dejarlo como estaba.",
-        "look": "El recuadro de la izquierda. Es lo que sustituye a verlo todo a la vez.",
-        "summary": "Una sección cada vez, y un resumen de a qué afecta cada cambio."
-      },
-      "d": {
-        "what": "Toda la ficha en una pantalla: arriba, una franja de tarjetas que resumen cada sección; debajo, el editor de la que pulses. Las demás siguen a la vista y se actualizan al momento.",
-        "agent": {
-          "step1": "Pulsa la tarjeta «Grupos asignados»: se abre debajo, en el editor.",
-          "step2": "Quita un canal a un grupo: la tarjeta de la izquierda lo refleja al momento."
-        },
-        "group": {
-          "step1": "Pulsa la tarjeta «Canales y estrategia».",
-          "step2": "Desmarca «Teléfono»: en la tarjeta «Agentes asignados» los agentes dejan de tener teléfono, sin salir de la pantalla."
-        },
-        "user": {
-          "step1": "Pulsa la tarjeta «Acceso».",
-          "step2": "Desmarca «Estadísticas»: la tarjeta lo refleja al momento."
-        },
-        "step3": "Pulsa otra tarjeta: el editor cambia de sección y el resto de la ficha sigue a la vista.",
-        "look": "Si ver la ficha entera en resumen mientras editas una parte te basta para entender a qué afecta, sin el ruido de tener todos los controles delante.",
-        "summary": "Resumen de todo; editas una parte a la derecha."
-      },
       "e": {
-        "what": "Las mismas tarjetas-resumen, pero a todo el ancho. Pulsa «Editar» en una y sus ajustes se abren en un panel a la derecha; al cerrarlo vuelves a ver la ficha entera.",
+        "what": "Toda la ficha en tarjetas-resumen, a lo ancho. Pulsa «Editar» en una y sus ajustes se abren en un panel a la derecha; la ficha se aparta para dejarle sitio, así que ves el resumen mientras editas.",
         "agent": {
           "step1": "Pulsa «Editar» en la tarjeta «Identificación»: sus ajustes se abren en un panel a la derecha.",
           "step2": "Apaga «Activo»: la tarjeta de la izquierda lo refleja al momento."
         },
         "group": {
           "step1": "Pulsa «Editar» en la tarjeta «Canales y estrategia».",
-          "step2": "Desmarca «Teléfono» y cierra el panel: la tarjeta «Agentes asignados», que el panel tapaba, se ha quedado sin teléfono."
+          "step2": "Desmarca «Teléfono»: en la tarjeta «Agentes asignados» los agentes se quedan sin teléfono al momento."
         },
         "user": {
           "step1": "Pulsa «Editar» en la tarjeta «Acceso».",
           "step2": "Desmarca «Estadísticas»: la tarjeta lo refleja al momento."
         },
-        "step3": "Cierra el panel con la X o con Esc: vuelves a ver la ficha entera.",
-        "look": "Si ganar espacio para el resumen compensa que el panel tape parte de la ficha mientras editas.",
+        "step3": "Pulsa fuera del panel, la X o Esc para cerrarlo: la ficha vuelve a ocupar todo el ancho.",
+        "look": "Si tener el resumen a la vista mientras editas en el panel te basta para entender a qué afecta cada cambio.",
         "summary": "Resumen a todo el ancho; los ajustes, en un panel al pulsar Editar."
       }
     },
