@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { ScBadgeComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { stableStringify } from '@shared/utils/form-dirty-state';
@@ -27,12 +28,17 @@ export function changed(before: unknown, after: unknown): boolean {
 
 @Component({
   selector: 'sc-pending-changes-panel',
-  imports: [ScIconComponent, TranslateModule],
+  imports: [ScBadgeComponent, ScIconComponent, TranslateModule],
   template: `
-    <section class="pending" aria-labelledby="pending-changes-title" aria-live="polite">
-      <p id="pending-changes-title" class="pending__title sc-text-caption-semibold">
-        {{ 'compare.pending.title' | translate }}
-      </p>
+    <!-- Un recuadro propio y un contador: se ve que ha pasado algo sin tener que leer, y los dos
+         rótulos separan lo que TÚ has tocado de lo que eso mueve en otro sitio. -->
+    <section class="pending" [class.pending--active]="count() > 0" aria-labelledby="pending-changes-title" aria-live="polite">
+      <header class="pending__head">
+        <p id="pending-changes-title" class="pending__title sc-text-caption-semibold">{{ 'compare.pending.title' | translate }}</p>
+        @if (count() > 0) {
+          <sc-badge size="sm" [label]="count()" />
+        }
+      </header>
       @if (sections().length === 0) {
         <p class="pending__empty sc-text-caption-regular">{{ 'compare.pending.empty' | translate }}</p>
       } @else {
@@ -44,13 +50,20 @@ export function changed(before: unknown, after: unknown): boolean {
                 {{ s.labelKey | translate }}
               </a>
               @if (s.fields.length > 0) {
-                <p class="pending__fields sc-text-caption-regular">{{ s.fields.join(' · ') }}</p>
+                <div class="pending__group">
+                  <span class="pending__label sc-text-caption-semibold">{{ 'compare.pending.changed' | translate }}</span>
+                  <span class="pending__fields sc-text-caption-regular">{{ s.fields.join(', ') }}</span>
+                </div>
               }
-              @for (e of s.effects; track e) {
-                <p class="pending__effect sc-text-caption-regular">
-                  <span class="pending__effect-icon" aria-hidden="true"><sc-icon name="subdirectory_arrow_right" size="sm" /></span>
-                  <span>{{ e }}</span>
-                </p>
+              @if (s.effects.length > 0) {
+                <div class="pending__group">
+                  <span class="pending__label sc-text-caption-semibold">{{ 'compare.pending.affects' | translate }}</span>
+                  <ul class="pending__effects">
+                    @for (e of s.effects; track e) {
+                      <li class="pending__effect sc-text-caption-regular">{{ e }}</li>
+                    }
+                  </ul>
+                </div>
               }
             </li>
           }
@@ -64,6 +77,12 @@ export function changed(before: unknown, after: unknown): boolean {
 export class PendingChangesPanelComponent {
   readonly sections = input.required<readonly PendingSection[]>();
   readonly go = output<string>();
+
+  /** Cuántas cosas has tocado: los campos, o la consecuencia cuando la sección no tiene campos
+   * sueltos (la tabla de grupos o de agentes). */
+  protected readonly count = computed(() =>
+    this.sections().reduce((n, s) => n + (s.fields.length || s.effects.length), 0),
+  );
 
   protected onGo(event: MouseEvent, id: string): void {
     event.preventDefault();

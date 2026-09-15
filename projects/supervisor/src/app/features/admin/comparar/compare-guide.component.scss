@@ -1,0 +1,99 @@
+.guide {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-25);
+}
+
+.guide__intro,
+.guide__text,
+.guide__eyebrow,
+.guide__variant,
+.guide__subtitle {
+  margin: 0;
+}
+
+.guide__intro,
+.guide__muted {
+  color: var(--sc-text-secondary);
+}
+
+/* La forma que tiene delante, en una superficie propia: se distingue de un vistazo de «las
+ * otras» sin necesidad de leer. */
+.guide__current {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-625);
+  padding: var(--sc-spacing-1);
+  background: var(--sc-bg-subtle);
+  border-radius: var(--sc-radius-lg);
+}
+
+.guide__eyebrow {
+  color: var(--sc-text-secondary);
+}
+
+.guide__variant {
+  color: var(--sc-text-heading);
+}
+
+.guide__subtitle {
+  margin-top: var(--sc-spacing-0-375);
+  color: var(--sc-text-primary);
+}
+
+.guide__steps,
+.guide__others {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide__steps {
+  gap: var(--sc-spacing-0-625);
+}
+
+/* El número en un círculo: los pasos se siguen con el dedo, no se leen como un párrafo. */
+.guide__step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-625);
+  color: var(--sc-text-primary);
+}
+
+.guide__step-number {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--sc-spacing-1-5);
+  height: var(--sc-spacing-1-5);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-primary);
+  color: var(--sc-text-on-primary);
+}
+
+.guide__block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-625);
+}
+
+.guide__others {
+  gap: var(--sc-spacing-0-875);
+}
+
+.guide__other {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+}
+
+.guide__other-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-125);
+  min-width: 0;
+}

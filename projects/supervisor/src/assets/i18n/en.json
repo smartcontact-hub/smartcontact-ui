@@ -2049,25 +2049,26 @@
   },
   "compare": {
     "bar": {
-      "label": "Compare record"
+      "label": "Compare record",
+      "move": "Move the bar: drag it, or use the arrow keys. Double-click puts it back.",
+      "guide": "What to look at"
     },
     "variant": {
       "a": {
-        "label": "A · Tabs",
-        "hint": "As today: the index switches section and you see one at a time."
+        "label": "A · Tabs"
       },
       "b": {
-        "label": "B · One page",
-        "hint": "Every section in view. The index scrolls you there and marks where you are."
+        "label": "B · One page"
       },
       "c": {
-        "label": "C · Tabs with changes",
-        "hint": "One section at a time. The side panel shows what you changed and what else it affects."
+        "label": "C · Tabs with changes"
       }
     },
     "pending": {
       "title": "Unsaved changes",
-      "empty": "What you change shows up here, with what it affects outside its section."
+      "empty": "Change any field in the record: this shows what you changed and what else it affects.",
+      "changed": "You changed",
+      "affects": "Affects"
     },
     "fields": {
       "photo": "Photo",
@@ -2093,6 +2094,61 @@
       "group_agent_resumed": "{{agent}} receives contacts here again",
       "user_inactive": "Will not be able to sign in or operate",
       "user_section_children": "Without {{section}}, will not see {{children}} either"
+    },
+    "guide": {
+      "title": "How to compare",
+      "intro": "The same record in three forms. Switch between them with the bar at the bottom and try the same thing in each. This is demo data: touch anything.",
+      "current": "You are viewing",
+      "try": "Try this",
+      "look": "Pay attention to",
+      "others": "The other forms",
+      "switch": "View",
+      "switch_to": "Switch to {{variant}}",
+      "question_title": "What to decide",
+      "question": "Which one makes it quicker to understand what a change affects, without getting lost in the record?",
+      "move_hint": "If the bar covers something, drag it by the handle on its left. Double-click the handle to put it back.",
+      "a": {
+        "what": "Today’s record. The index on the left works as tabs: it shows one section and hides the rest.",
+        "step1": "Click a few sections in the index on the left.",
+        "step2": "Change something in one section and move to another: what you touched is no longer visible.",
+        "look": "It is the baseline: compare the other two against it.",
+        "summary": "Today’s: one section at a time."
+      },
+      "b": {
+        "what": "Every section one after another on a single page, as before May. The index hides nothing: it takes you to the section and marks where you are.",
+        "agent": {
+          "step1": "Click “Permissions” in the index: the page scrolls to that section."
+        },
+        "group": {
+          "step1": "Click “Assigned agents” in the index: the page scrolls to that section."
+        },
+        "user": {
+          "step1": "Click “Access” in the index: the page scrolls to that section."
+        },
+        "step2": "Scroll up and down: the index marks the section in front of you.",
+        "step3": "Change something and keep scrolling: the rest of the record stays in view.",
+        "look": "Whether seeing everything together helps you understand what you touch, or whether there is so much that you get lost.",
+        "summary": "Everything on one page; the index takes you there."
+      },
+      "c": {
+        "what": "Tabs, as today, but with a box under the index that sums up what you changed and what else it affects, before saving.",
+        "agent": {
+          "step1": "Click “Identification” in the index.",
+          "step2": "Turn off the “Active” switch."
+        },
+        "group": {
+          "step1": "Click “Channels and strategy” in the index.",
+          "step2": "Untick “Phone”."
+        },
+        "user": {
+          "step1": "Click “Access” in the index.",
+          "step2": "Untick “Statistics”."
+        },
+        "step3": "Look at the “Unsaved changes” box, on the left under the index: it says what you changed and, under “Affects”, what that moves outside the section.",
+        "step4": "Click “Undo”, top right, to put it back.",
+        "look": "The box on the left. It is what replaces seeing everything at once.",
+        "summary": "One section at a time, plus a summary of what each change affects."
+      }
     }
   }
 }

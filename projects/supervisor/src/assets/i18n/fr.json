@@ -2049,25 +2049,26 @@
   },
   "compare": {
     "bar": {
-      "label": "Comparer la fiche"
+      "label": "Comparer la fiche",
+      "move": "Déplacer la barre : faites-la glisser ou utilisez les flèches. Un double-clic la remet en place.",
+      "guide": "Quoi regarder"
     },
     "variant": {
       "a": {
-        "label": "A · Onglets",
-        "hint": "Comme aujourd’hui : l’index change de section et vous en voyez une à la fois."
+        "label": "A · Onglets"
       },
       "b": {
-        "label": "B · Une page",
-        "hint": "Toutes les sections visibles. L’index vous y emmène en défilant et indique où vous êtes."
+        "label": "B · Une page"
       },
       "c": {
-        "label": "C · Onglets avec modifications",
-        "hint": "Une section à la fois. Sur le côté, ce que vous avez modifié et ce que cela affecte ailleurs."
+        "label": "C · Onglets avec modifications"
       }
     },
     "pending": {
       "title": "Modifications non enregistrées",
-      "empty": "Vos modifications apparaîtront ici, avec ce qu’elles affectent hors de leur section."
+      "empty": "Modifiez n’importe quel champ : vous verrez ici ce que vous avez changé et ce que cela affecte.",
+      "changed": "Vous avez modifié",
+      "affects": "Affecte"
     },
     "fields": {
       "photo": "Photo",
@@ -2093,6 +2094,61 @@
       "group_agent_resumed": "{{agent}} reçoit à nouveau des contacts ici",
       "user_inactive": "Ne pourra plus se connecter ni opérer",
       "user_section_children": "Sans {{section}}, ne verra pas non plus {{children}}"
+    },
+    "guide": {
+      "title": "Comment comparer",
+      "intro": "La même fiche sous trois formes. Passez de l’une à l’autre avec la barre du bas et faites la même chose dans chacune. Ce sont des données de démonstration : touchez sans crainte.",
+      "current": "Vous regardez",
+      "try": "Essayez ceci",
+      "look": "Observez",
+      "others": "Les autres formes",
+      "switch": "Voir",
+      "switch_to": "Passer à {{variant}}",
+      "question_title": "Ce qu’il faut décider",
+      "question": "Avec laquelle comprenez-vous le plus vite ce qu’un changement affecte, sans vous perdre dans la fiche ?",
+      "move_hint": "Si la barre cache quelque chose, faites-la glisser par la poignée à gauche. Un double-clic sur la poignée la remet en place.",
+      "a": {
+        "what": "La fiche actuelle. L’index à gauche fonctionne comme des onglets : il montre une section et cache les autres.",
+        "step1": "Cliquez sur plusieurs sections de l’index à gauche.",
+        "step2": "Modifiez quelque chose dans une section puis passez à une autre : ce que vous avez touché n’est plus visible.",
+        "look": "C’est la référence : comparez les deux autres avec celle-ci.",
+        "summary": "L’actuelle : une section à la fois."
+      },
+      "b": {
+        "what": "Toutes les sections à la suite sur une seule page, comme avant mai. L’index ne cache rien : il vous emmène à la section et indique où vous êtes.",
+        "agent": {
+          "step1": "Cliquez sur « Permissions » dans l’index : la page descend jusqu’à cette section."
+        },
+        "group": {
+          "step1": "Cliquez sur « Agents assignés » dans l’index : la page descend jusqu’à cette section."
+        },
+        "user": {
+          "step1": "Cliquez sur « Accès » dans l’index : la page descend jusqu’à cette section."
+        },
+        "step2": "Faites défiler vers le haut et le bas : l’index indique la section devant vous.",
+        "step3": "Modifiez quelque chose et continuez à descendre : le reste de la fiche reste visible.",
+        "look": "Si tout voir ensemble vous aide à comprendre ce que vous touchez, ou s’il y en a tant que vous vous perdez.",
+        "summary": "Tout sur une page ; l’index vous y emmène."
+      },
+      "c": {
+        "what": "Des onglets, comme aujourd’hui, avec un encadré sous l’index qui résume ce que vous avez modifié et ce que cela affecte, avant d’enregistrer.",
+        "agent": {
+          "step1": "Cliquez sur « Identification » dans l’index.",
+          "step2": "Désactivez l’interrupteur « Actif »."
+        },
+        "group": {
+          "step1": "Cliquez sur « Canaux et stratégie » dans l’index.",
+          "step2": "Décochez « Téléphone »."
+        },
+        "user": {
+          "step1": "Cliquez sur « Accès » dans l’index.",
+          "step2": "Décochez « Statistiques »."
+        },
+        "step3": "Regardez l’encadré « Modifications non enregistrées », à gauche sous l’index : il indique ce que vous avez modifié et, sous « Affecte », ce que cela change hors de la section.",
+        "step4": "Cliquez sur « Annuler », en haut à droite, pour tout remettre.",
+        "look": "L’encadré à gauche. C’est ce qui remplace le fait de tout voir à la fois.",
+        "summary": "Une section à la fois, avec un résumé de ce que chaque changement affecte."
+      }
     }
   }
 }

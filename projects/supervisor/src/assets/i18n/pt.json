@@ -2049,25 +2049,26 @@
   },
   "compare": {
     "bar": {
-      "label": "Comparar ficha"
+      "label": "Comparar ficha",
+      "move": "Mover a barra: arraste ou use as setas. Duplo clique devolve-a ao lugar.",
+      "guide": "O que ver"
     },
     "variant": {
       "a": {
-        "label": "A · Separadores",
-        "hint": "Como hoje: o índice muda de secção e vê uma de cada vez."
+        "label": "A · Separadores"
       },
       "b": {
-        "label": "B · Uma página",
-        "hint": "Todas as secções à vista. O índice leva-o até lá com scroll e marca onde está."
+        "label": "B · Uma página"
       },
       "c": {
-        "label": "C · Separadores com alterações",
-        "hint": "Uma secção de cada vez. Na lateral, o que alterou e o que mais afeta."
+        "label": "C · Separadores com alterações"
       }
     },
     "pending": {
       "title": "Alterações por guardar",
-      "empty": "O que alterar aparece aqui, com o que afeta fora da sua secção."
+      "empty": "Altere qualquer campo da ficha: aqui verá o que alterou e o que mais afeta.",
+      "changed": "Alterou",
+      "affects": "Afeta"
     },
     "fields": {
       "photo": "Foto",
@@ -2093,6 +2094,61 @@
       "group_agent_resumed": "{{agent}} volta a receber contactos aqui",
       "user_inactive": "Não poderá iniciar sessão nem operar",
       "user_section_children": "Sem {{section}}, também não verá {{children}}"
+    },
+    "guide": {
+      "title": "Como comparar",
+      "intro": "É a mesma ficha de três formas. Passe de uma para outra com a barra de baixo e faça o mesmo em cada uma. São dados de demonstração: pode mexer à vontade.",
+      "current": "Está a ver",
+      "try": "Experimente",
+      "look": "Repare em",
+      "others": "As outras formas",
+      "switch": "Ver",
+      "switch_to": "Mudar para {{variant}}",
+      "question_title": "O que há que decidir",
+      "question": "Com qual percebe mais depressa o que uma alteração afeta, sem se perder na ficha?",
+      "move_hint": "Se a barra tapar alguma coisa, arraste-a pela pega à esquerda. Duplo clique na pega devolve-a ao lugar.",
+      "a": {
+        "what": "A ficha de hoje. O índice à esquerda funciona como separadores: mostra uma secção e esconde as outras.",
+        "step1": "Clique em várias secções do índice à esquerda.",
+        "step2": "Altere algo numa secção e passe para outra: o que mexeu deixa de se ver.",
+        "look": "É a referência: compare as outras duas com esta.",
+        "summary": "A de hoje: uma secção de cada vez."
+      },
+      "b": {
+        "what": "Todas as secções seguidas numa só página, como antes de maio. O índice não esconde nada: leva-o até à secção e marca onde está.",
+        "agent": {
+          "step1": "Clique em «Permissões» no índice: a página desce até essa secção."
+        },
+        "group": {
+          "step1": "Clique em «Agentes atribuídos» no índice: a página desce até essa secção."
+        },
+        "user": {
+          "step1": "Clique em «Acesso» no índice: a página desce até essa secção."
+        },
+        "step2": "Faça scroll para cima e para baixo: o índice marca a secção que tem à frente.",
+        "step3": "Altere algo e continue a descer: o resto da ficha continua à vista.",
+        "look": "Se ver tudo junto ajuda a perceber o que mexe, ou se é tanto que se perde.",
+        "summary": "Tudo numa página; o índice leva-o lá."
+      },
+      "c": {
+        "what": "Separadores, como hoje, mas com uma caixa sob o índice que resume o que alterou e o que mais afeta, antes de guardar.",
+        "agent": {
+          "step1": "Clique em «Identificação» no índice.",
+          "step2": "Desligue o interruptor «Ativo»."
+        },
+        "group": {
+          "step1": "Clique em «Canais e estratégia» no índice.",
+          "step2": "Desmarque «Telefone»."
+        },
+        "user": {
+          "step1": "Clique em «Acesso» no índice.",
+          "step2": "Desmarque «Estatísticas»."
+        },
+        "step3": "Veja a caixa «Alterações por guardar», à esquerda sob o índice: diz o que alterou e, em «Afeta», o que isso muda fora da secção.",
+        "step4": "Clique em «Desfazer», no canto superior direito, para deixar como estava.",
+        "look": "A caixa da esquerda. É o que substitui ver tudo ao mesmo tempo.",
+        "summary": "Uma secção de cada vez, e um resumo do que cada alteração afeta."
+      }
     }
   }
 }

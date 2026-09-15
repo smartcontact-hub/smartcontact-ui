@@ -2049,25 +2049,26 @@
   },
   "compare": {
     "bar": {
-      "label": "Comparar ficha"
+      "label": "Comparar ficha",
+      "move": "Mover la barra: arrastra, o usa las flechas. Doble clic la devuelve a su sitio.",
+      "guide": "Qué mirar"
     },
     "variant": {
       "a": {
-        "label": "A · Pestañas",
-        "hint": "Como hoy: el índice cambia de sección y ves una a la vez."
+        "label": "A · Pestañas"
       },
       "b": {
-        "label": "B · Una página",
-        "hint": "Todas las secciones a la vista. El índice te lleva con scroll y marca dónde estás."
+        "label": "B · Una página"
       },
       "c": {
-        "label": "C · Pestañas con cambios",
-        "hint": "Una sección a la vez. En el lateral, lo que has cambiado y a qué más afecta."
+        "label": "C · Pestañas con cambios"
       }
     },
     "pending": {
       "title": "Cambios sin guardar",
-      "empty": "Lo que cambies aparecerá aquí, con lo que afecta fuera de su sección."
+      "empty": "Toca cualquier campo de la ficha: aquí verás qué has cambiado y a qué más afecta.",
+      "changed": "Has cambiado",
+      "affects": "Afecta a"
     },
     "fields": {
       "photo": "Foto",
@@ -2093,6 +2094,61 @@
       "group_agent_resumed": "{{agent}} vuelve a recibir contactos aquí",
       "user_inactive": "No podrá iniciar sesión ni operar",
       "user_section_children": "Sin {{section}}, tampoco verá {{children}}"
+    },
+    "guide": {
+      "title": "Cómo comparar",
+      "intro": "Es la misma ficha de tres formas. Pasa de una a otra con la barra de abajo y haz lo mismo en cada una. Son datos de demostración: puedes tocar sin miedo.",
+      "current": "Estás viendo",
+      "try": "Prueba esto",
+      "look": "Fíjate en",
+      "others": "Las otras formas",
+      "switch": "Ver",
+      "switch_to": "Cambiar a {{variant}}",
+      "question_title": "Lo que hay que decidir",
+      "question": "¿Con cuál entiendes antes a qué afecta un cambio, sin perderte en la ficha?",
+      "move_hint": "Si la barra te tapa algo, arrástrala por el asa de la izquierda. Con doble clic en el asa vuelve a su sitio.",
+      "a": {
+        "what": "La ficha de hoy. El índice de la izquierda funciona como pestañas: enseña una sección y esconde las demás.",
+        "step1": "Pulsa varias secciones en el índice de la izquierda.",
+        "step2": "Cambia algo en una sección y pasa a otra: lo que tocaste deja de verse.",
+        "look": "Es la referencia: compara las otras dos con esta.",
+        "summary": "La de hoy: una sección cada vez."
+      },
+      "b": {
+        "what": "Todas las secciones seguidas en una sola página, como antes de mayo. El índice no esconde nada: te lleva hasta la sección y marca por dónde vas.",
+        "agent": {
+          "step1": "Pulsa «Permisos» en el índice: la página baja hasta esa sección."
+        },
+        "group": {
+          "step1": "Pulsa «Agentes asignados» en el índice: la página baja hasta esa sección."
+        },
+        "user": {
+          "step1": "Pulsa «Acceso» en el índice: la página baja hasta esa sección."
+        },
+        "step2": "Haz scroll arriba y abajo: el índice marca la sección que tienes delante.",
+        "step3": "Cambia algo y sigue bajando: el resto de la ficha sigue a la vista.",
+        "look": "Si verlo todo junto te ayuda a entender lo que tocas, o si hay tanto que te pierdes.",
+        "summary": "Todo en una página; el índice te lleva."
+      },
+      "c": {
+        "what": "Pestañas, como hoy, pero con un recuadro bajo el índice que resume lo que has cambiado y a qué más afecta, antes de guardar.",
+        "agent": {
+          "step1": "Pulsa «Identificación» en el índice.",
+          "step2": "Apaga el interruptor «Activo»."
+        },
+        "group": {
+          "step1": "Pulsa «Canales y estrategia» en el índice.",
+          "step2": "Desmarca «Teléfono»."
+        },
+        "user": {
+          "step1": "Pulsa «Acceso» en el índice.",
+          "step2": "Desmarca «Estadísticas»."
+        },
+        "step3": "Mira el recuadro «Cambios sin guardar», a la izquierda bajo el índice: dice qué has cambiado y, en «Afecta a», lo que eso mueve fuera de la sección.",
+        "step4": "Pulsa «Deshacer», arriba a la derecha, para dejarlo como estaba.",
+        "look": "El recuadro de la izquierda. Es lo que sustituye a verlo todo a la vez.",
+        "summary": "Una sección cada vez, y un resumen de a qué afecta cada cambio."
+      }
     }
   }
 }
