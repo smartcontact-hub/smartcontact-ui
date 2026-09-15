@@ -81,60 +81,60 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
             },
             root: {
                 help: {
-                    color: "{purple.950}",
+                    color: "var(--sc-cmp-button-help-color)",
                     focusRing: {
-                        color: "{purple.400}"
+                        color: "var(--sc-cmp-button-help-focus-ring-color)"
                     },
-                    background: "{purple.400}",
-                    hoverColor: "{purple.950}",
-                    activeColor: "{purple.950}",
-                    borderColor: "{purple.400}",
-                    hoverBackground: "{purple.300}",
-                    activeBackground: "{purple.200}",
-                    hoverBorderColor: "{purple.300}",
-                    activeBorderColor: "{purple.200}"
+                    background: "var(--sc-cmp-button-help-background)",
+                    hoverColor: "var(--sc-cmp-button-help-hover-color)",
+                    activeColor: "var(--sc-cmp-button-help-active-color)",
+                    borderColor: "var(--sc-cmp-button-help-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-help-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-help-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-help-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-help-active-border-color)"
                 },
                 info: {
-                    color: "{sky.950}",
+                    color: "var(--sc-cmp-button-info-color)",
                     focusRing: {
-                        color: "{sky.400}"
+                        color: "var(--sc-cmp-button-info-focus-ring-color)"
                     },
-                    background: "{sky.400}",
-                    hoverColor: "{sky.950}",
-                    activeColor: "{sky.950}",
-                    borderColor: "{sky.400}",
-                    hoverBackground: "{sky.300}",
-                    activeBackground: "{sky.200}",
-                    hoverBorderColor: "{sky.300}",
-                    activeBorderColor: "{sky.200}"
+                    background: "var(--sc-cmp-button-info-background)",
+                    hoverColor: "var(--sc-cmp-button-info-hover-color)",
+                    activeColor: "var(--sc-cmp-button-info-active-color)",
+                    borderColor: "var(--sc-cmp-button-info-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-info-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-info-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-info-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-info-active-border-color)"
                 },
                 warn: {
-                    color: "{orange.950}",
+                    color: "var(--sc-cmp-button-warn-color)",
                     focusRing: {
-                        color: "{orange.400}"
+                        color: "var(--sc-cmp-button-warn-focus-ring-color)"
                     },
-                    background: "{orange.400}",
-                    hoverColor: "{orange.950}",
-                    activeColor: "{orange.950}",
-                    borderColor: "{orange.400}",
-                    hoverBackground: "{orange.300}",
-                    activeBackground: "{orange.200}",
-                    hoverBorderColor: "{orange.300}",
-                    activeBorderColor: "{orange.200}"
+                    background: "var(--sc-cmp-button-warn-background)",
+                    hoverColor: "var(--sc-cmp-button-warn-hover-color)",
+                    activeColor: "var(--sc-cmp-button-warn-active-color)",
+                    borderColor: "var(--sc-cmp-button-warn-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-warn-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-warn-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-warn-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-warn-active-border-color)"
                 },
                 danger: {
-                    color: "{red.950}",
+                    color: "var(--sc-cmp-button-danger-color)",
                     focusRing: {
-                        color: "{red.400}"
+                        color: "var(--sc-cmp-button-danger-focus-ring-color)"
                     },
-                    background: "{red.400}",
-                    hoverColor: "{red.950}",
-                    activeColor: "{red.950}",
-                    borderColor: "{red.400}",
-                    hoverBackground: "{red.300}",
-                    activeBackground: "{red.200}",
-                    hoverBorderColor: "{red.300}",
-                    activeBorderColor: "{red.200}"
+                    background: "var(--sc-cmp-button-danger-background)",
+                    hoverColor: "var(--sc-cmp-button-danger-hover-color)",
+                    activeColor: "var(--sc-cmp-button-danger-active-color)",
+                    borderColor: "var(--sc-cmp-button-danger-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-danger-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-danger-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-danger-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-danger-active-border-color)"
                 },
                 primary: {
                     color: "{primary.contrast.color}",
@@ -153,44 +153,44 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                 success: {
                     color: "{green.950}",
                     focusRing: {
-                        color: "{green.400}"
+                        color: "var(--sc-cmp-button-success-focus-ring-color)"
                     },
-                    background: "{green.400}",
+                    background: "var(--sc-cmp-button-success-background)",
                     hoverColor: "{green.950}",
                     activeColor: "{green.950}",
-                    borderColor: "{green.400}",
-                    hoverBackground: "{green.300}",
-                    activeBackground: "{green.200}",
-                    hoverBorderColor: "{green.300}",
-                    activeBorderColor: "{green.200}"
+                    borderColor: "var(--sc-cmp-button-success-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-success-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-success-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-success-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-success-active-border-color)"
                 },
                 contrast: {
-                    color: "{surface.950}",
+                    color: "var(--sc-cmp-button-contrast-color)",
                     focusRing: {
-                        color: "{surface.0}"
+                        color: "var(--sc-cmp-button-contrast-focus-ring-color)"
                     },
-                    background: "{surface.0}",
-                    hoverColor: "{surface.950}",
-                    activeColor: "{surface.950}",
-                    borderColor: "{surface.0}",
-                    hoverBackground: "{surface.100}",
-                    activeBackground: "{surface.200}",
-                    hoverBorderColor: "{surface.100}",
-                    activeBorderColor: "{surface.200}"
+                    background: "var(--sc-cmp-button-contrast-background)",
+                    hoverColor: "var(--sc-cmp-button-contrast-hover-color)",
+                    activeColor: "var(--sc-cmp-button-contrast-active-color)",
+                    borderColor: "var(--sc-cmp-button-contrast-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-contrast-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-contrast-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-contrast-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-contrast-active-border-color)"
                 },
                 secondary: {
-                    color: "{surface.300}",
+                    color: "var(--sc-cmp-button-secondary-color)",
                     focusRing: {
-                        color: "{surface.300}"
+                        color: "var(--sc-cmp-button-secondary-focus-ring-color)"
                     },
-                    background: "{surface.800}",
-                    hoverColor: "{surface.200}",
-                    activeColor: "{surface.100}",
-                    borderColor: "{surface.800}",
-                    hoverBackground: "{surface.700}",
-                    activeBackground: "{surface.600}",
-                    hoverBorderColor: "{surface.700}",
-                    activeBorderColor: "{surface.600}"
+                    background: "var(--sc-cmp-button-secondary-background)",
+                    hoverColor: "var(--sc-cmp-button-secondary-hover-color)",
+                    activeColor: "var(--sc-cmp-button-secondary-active-color)",
+                    borderColor: "var(--sc-cmp-button-secondary-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-secondary-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-secondary-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-secondary-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-secondary-active-border-color)"
                 }
             },
             text: {
@@ -205,7 +205,7 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     activeBackground: "color-mix(in srgb, {sky.400}, transparent 84%)"
                 },
                 warn: {
-                    color: "{orange.400}",
+                    color: "var(--sc-cmp-button-text-warn-color)",
                     hoverBackground: "var(--sc-cmp-button-text-warn-hover-background)",
                     activeBackground: "var(--sc-cmp-button-text-warn-active-background)"
                 },
@@ -254,8 +254,8 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     activeBackground: "color-mix(in srgb, {sky.400}, transparent 84%)"
                 },
                 warn: {
-                    color: "{orange.400}",
-                    borderColor: "{orange.700}",
+                    color: "var(--sc-cmp-button-outlined-warn-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-warn-border-color)",
                     hoverBackground: "var(--sc-cmp-button-outlined-warn-hover-background)",
                     activeBackground: "var(--sc-cmp-button-outlined-warn-active-background)"
                 },
@@ -305,32 +305,32 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
             },
             root: {
                 help: {
-                    color: "#ffffffff",
+                    color: "var(--sc-cmp-button-help-color)",
                     focusRing: {
-                        color: "{purple.500}"
+                        color: "var(--sc-cmp-button-help-focus-ring-color)"
                     },
-                    background: "{purple.500}",
-                    hoverColor: "#ffffffff",
-                    activeColor: "#ffffffff",
-                    borderColor: "{purple.500}",
-                    hoverBackground: "{purple.600}",
-                    activeBackground: "{purple.700}",
-                    hoverBorderColor: "{purple.600}",
-                    activeBorderColor: "{purple.700}"
+                    background: "var(--sc-cmp-button-help-background)",
+                    hoverColor: "var(--sc-cmp-button-help-hover-color)",
+                    activeColor: "var(--sc-cmp-button-help-active-color)",
+                    borderColor: "var(--sc-cmp-button-help-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-help-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-help-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-help-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-help-active-border-color)"
                 },
                 info: {
-                    color: "#ffffffff",
+                    color: "var(--sc-cmp-button-info-color)",
                     focusRing: {
-                        color: "{sky.500}"
+                        color: "var(--sc-cmp-button-info-focus-ring-color)"
                     },
-                    background: "{sky.500}",
-                    hoverColor: "#ffffffff",
-                    activeColor: "#ffffffff",
-                    borderColor: "{sky.500}",
-                    hoverBackground: "{sky.600}",
-                    activeBackground: "{sky.700}",
-                    hoverBorderColor: "{sky.600}",
-                    activeBorderColor: "{sky.700}"
+                    background: "var(--sc-cmp-button-info-background)",
+                    hoverColor: "var(--sc-cmp-button-info-hover-color)",
+                    activeColor: "var(--sc-cmp-button-info-active-color)",
+                    borderColor: "var(--sc-cmp-button-info-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-info-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-info-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-info-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-info-active-border-color)"
                 },
                 /* AA · 2026-08-24 — mismo arreglo que `danger` de abajo y por el
                  * mismo motivo, pero aquí ni siquiera hace falta divergir: el
@@ -343,18 +343,18 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                  * lo remapea a la familia yellow, que es lo que el Theme
                  * Designer trajo el 24-ago. */
                 warn: {
-                    color: "#ffffffff",
+                    color: "var(--sc-cmp-button-warn-color)",
                     focusRing: {
-                        color: "{orange.700}"
+                        color: "var(--sc-cmp-button-warn-focus-ring-color)"
                     },
-                    background: "{orange.700}",
-                    hoverColor: "#ffffffff",
-                    activeColor: "#ffffffff",
-                    borderColor: "{orange.700}",
-                    hoverBackground: "{orange.800}",
-                    activeBackground: "{orange.900}",
-                    hoverBorderColor: "{orange.800}",
-                    activeBorderColor: "{orange.900}"
+                    background: "var(--sc-cmp-button-warn-background)",
+                    hoverColor: "var(--sc-cmp-button-warn-hover-color)",
+                    activeColor: "var(--sc-cmp-button-warn-active-color)",
+                    borderColor: "var(--sc-cmp-button-warn-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-warn-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-warn-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-warn-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-warn-active-border-color)"
                 },
                 /* AA · 2026-07-19 — el botón `danger` sólido subía a 3.76:1 con
                  * su texto blanco: era uno de los dos últimos fallos de
@@ -362,25 +362,22 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                  * de 500/600/700 a 600/700/800, para conservar el recorrido
                  * reposo → hover → pulsado. red-600 con blanco da **4.83:1**.
                  *
-                 * Se cambia AQUÍ, por referencia de paleta, y no vía
-                 * `--sc-cmp-button-danger-*`: esos tokens existen pero
-                 * corresponden a otro slot y **nadie los lee** para el sólido —
-                 * lo comprobé cambiándolos y midiendo el píxel, que seguía en
-                 * #ef4444. Cablear el preset a ellos rompe `cmp-color-rewire`,
-                 * que exige que cada `var(--sc-cmp-*)` case con SU slot
-                 * (`root.danger` pediría `--sc-cmp-button-root-danger-*`, que no
-                 * existe). Ver customs-catalog §1.8.
+                 * Divergencia declarada (2026-09-15): los seis slots están en
+                 * `EXCLUDE` de `cmp-color-map.mjs`, así que el generador no
+                 * emite su `--sc-cmp-button-danger-*` y el valor se queda aquí.
+                 * Cuando Figma lo suba (`figma-pendiente.md`), se quitan esas
+                 * filas y se lee la variable. Ver customs-catalog §1.8.
                  *
                  * `focusRing` se queda en {red.500}: es un anillo, no lleva
                  * texto encima, y no cambiarlo evita mover una señal de foco. */
                 danger: {
-                    color: "#ffffffff",
+                    color: "var(--sc-cmp-button-danger-color)",
                     focusRing: {
-                        color: "{red.500}"
+                        color: "var(--sc-cmp-button-danger-focus-ring-color)"
                     },
                     background: "{red.600}",
-                    hoverColor: "#ffffffff",
-                    activeColor: "#ffffffff",
+                    hoverColor: "var(--sc-cmp-button-danger-hover-color)",
+                    activeColor: "var(--sc-cmp-button-danger-active-color)",
                     borderColor: "{red.600}",
                     hoverBackground: "{red.700}",
                     activeBackground: "{red.800}",
@@ -402,46 +399,46 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     activeBorderColor: "{primary.active.color}"
                 },
                 success: {
-                    color: "#ffffffff",
+                    color: "var(--sc-cmp-button-success-color)",
                     focusRing: {
-                        color: "{green.500}"
+                        color: "var(--sc-cmp-button-success-focus-ring-color)"
                     },
-                    background: "{green.500}",
-                    hoverColor: "#ffffffff",
-                    activeColor: "#ffffffff",
-                    borderColor: "{green.500}",
-                    hoverBackground: "{green.600}",
-                    activeBackground: "{green.700}",
-                    hoverBorderColor: "{green.600}",
-                    activeBorderColor: "{green.700}"
+                    background: "var(--sc-cmp-button-success-background)",
+                    hoverColor: "var(--sc-cmp-button-success-hover-color)",
+                    activeColor: "var(--sc-cmp-button-success-active-color)",
+                    borderColor: "var(--sc-cmp-button-success-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-success-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-success-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-success-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-success-active-border-color)"
                 },
                 contrast: {
-                    color: "{surface.0}",
+                    color: "var(--sc-cmp-button-contrast-color)",
                     focusRing: {
-                        color: "{surface.950}"
+                        color: "var(--sc-cmp-button-contrast-focus-ring-color)"
                     },
-                    background: "{surface.950}",
-                    hoverColor: "{surface.0}",
-                    activeColor: "{surface.0}",
-                    borderColor: "{surface.950}",
-                    hoverBackground: "{surface.900}",
-                    activeBackground: "{surface.800}",
-                    hoverBorderColor: "{surface.900}",
-                    activeBorderColor: "{surface.800}"
+                    background: "var(--sc-cmp-button-contrast-background)",
+                    hoverColor: "var(--sc-cmp-button-contrast-hover-color)",
+                    activeColor: "var(--sc-cmp-button-contrast-active-color)",
+                    borderColor: "var(--sc-cmp-button-contrast-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-contrast-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-contrast-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-contrast-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-contrast-active-border-color)"
                 },
                 secondary: {
-                    color: "{surface.600}",
+                    color: "var(--sc-cmp-button-secondary-color)",
                     focusRing: {
-                        color: "{surface.600}"
+                        color: "var(--sc-cmp-button-secondary-focus-ring-color)"
                     },
-                    background: "{surface.100}",
-                    hoverColor: "{surface.700}",
-                    activeColor: "{surface.800}",
-                    borderColor: "{surface.100}",
-                    hoverBackground: "{surface.200}",
-                    activeBackground: "{surface.300}",
-                    hoverBorderColor: "{surface.200}",
-                    activeBorderColor: "{surface.300}"
+                    background: "var(--sc-cmp-button-secondary-background)",
+                    hoverColor: "var(--sc-cmp-button-secondary-hover-color)",
+                    activeColor: "var(--sc-cmp-button-secondary-active-color)",
+                    borderColor: "var(--sc-cmp-button-secondary-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-secondary-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-secondary-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-secondary-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-secondary-active-border-color)"
                 }
             },
             text: {
@@ -456,9 +453,9 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     activeBackground: "var(--sc-cmp-button-text-info-active-background)"
                 },
                 warn: {
-                    color: "{orange.500}",
-                    hoverBackground: "{orange.50}",
-                    activeBackground: "{orange.100}"
+                    color: "var(--sc-cmp-button-text-warn-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-warn-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-warn-active-background)"
                 },
                 plain: {
                     color: "var(--sc-cmp-button-text-plain-color)",
@@ -505,10 +502,10 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     activeBackground: "var(--sc-cmp-button-outlined-info-active-background)"
                 },
                 warn: {
-                    color: "{orange.500}",
-                    borderColor: "{orange.200}",
-                    hoverBackground: "{orange.50}",
-                    activeBackground: "{orange.100}"
+                    color: "var(--sc-cmp-button-outlined-warn-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-warn-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-warn-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-warn-active-background)"
                 },
                 plain: {
                     color: "var(--sc-cmp-button-outlined-plain-color)",

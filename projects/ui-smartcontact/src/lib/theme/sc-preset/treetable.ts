@@ -70,7 +70,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
     colorScheme: {
         dark: {
             root: {
-                borderColor: "{surface.800}"
+                borderColor: "var(--sc-cmp-treetable-border-color)"
             },
             bodyCell: {
                 selectedBorderColor: "var(--sc-cmp-treetable-body-cell-selected-border-color)"

@@ -19,7 +19,7 @@ test('CARA ROJA · hex hardcodeado en un slot GENERADO → problema (2º verde-m
   const src = PRESET(`{ light: { info: { background: "#3b82f6" } } }`);
   const probs = lintPreset('toast', src, GEN('sc-cmp-toast-info-background'));
   assert.equal(probs.length, 1);
-  assert.match(probs[0], /hex hardcodeado/);
+  assert.match(probs[0], /escrito a mano/);
 });
 
 test('CARA VERDE · var(--sc-cmp-*) correcto del slot → sin problema', () => {
@@ -57,4 +57,21 @@ test('CARA VERDE · hex en DARK para un slot solo-light (excluido en dark) → N
   const src = PRESET(`{ dark: { info: { hoverBackground: "#38bdf80a" } } }`);
   const gen = { light: new Set(['sc-cmp-button-info-hover-background']), dark: new Set() };
   assert.deepEqual(lintPreset('button', src, gen), []);
+});
+// 2026-09-15: el guard solo cazaba hex y sin `root`, y dejó pasar 185 colores escritos como paleta.
+test('CARA ROJA · paso de paleta escrito a mano en un slot GENERADO → problema', () => {
+  const src = PRESET(`{ dark: { root: { contrast: { color: "{surface.950}" } } } }`);
+  const probs = lintPreset('button', src, GEN('sc-cmp-button-contrast-color'));
+  assert.equal(probs.length, 1);
+  assert.match(probs[0], /escrito a mano pero existe --sc-cmp-button-contrast-color/);
+});
+
+test('CARA ROJA · hex en un slot de ROOT generado → problema (el punto ciego)', () => {
+  const src = PRESET(`{ light: { root: { help: { color: "#ffffffff" } } } }`);
+  assert.equal(lintPreset('button', src, GEN('sc-cmp-button-help-color')).length, 1);
+});
+
+test('CARA VERDE · paso de paleta en un slot EXCLUIDO (divergencia declarada) → se deja a mano', () => {
+  const src = PRESET(`{ light: { root: { danger: { background: "{red.600}" } } } }`);
+  assert.deepEqual(lintPreset('button', src, GEN()), []);
 });

@@ -106,18 +106,17 @@ export function lintPreset(comp, src, gen) {
   const isCmpColor = (token) => gen.light.has(token) || gen.dark.has(token);
   const problems = [];
   for (const { mode, path, raw } of colorLeaves(loadPreset(src))) {
-    const token = tokenFor(comp, path);
     const m = raw.match(/^var\(--(sc-cmp-[a-z0-9-]+)\)$/);
     if (m && isCmpColor(m[1])) {
       const kitToken = tokenFor(comp, kitSlot(path));
       if (m[1] !== kitToken)
         problems.push(`[${comp}] ${mode}.${path.join('.')} referencia --${m[1]} pero el slot mapea a --${kitToken}.`);
-    } else if (/^#[0-9a-fA-F]{6,8}$/.test(raw) && hasInMode(token, mode)) {
-      // ⚠️ Punto ciego conocido: aquí `token` conserva `root`, así que un hex en un slot de `root`
-      // no se caza. Quitarlo destapa los textos blancos de las severidades de `button` (mismo
-      // valor que su token): pendiente en docs/ROADMAP.md, «Color de componente que Figma no alcanza».
+    } else if ((/^#[0-9a-fA-F]{6,8}$/.test(raw) || /^\{[a-z]+\.\d+\}$/.test(raw)) && hasInMode(tokenFor(comp, kitSlot(path)), mode)) {
+      // Un hex O un paso de paleta (`{surface.950}`) escrito a mano donde Figma exporta la variable: el
+      // tema no la lee y un cambio en Figma no llega. Hasta el 2026-09-15 solo se cazaba el hex y sin
+      // mirar `root`, y quedaban 185 así (166 con el mismo valor que su token).
       problems.push(
-        `[${comp}] ${mode}.${path.join('.')} = ${raw} es hex hardcodeado pero existe --${token}. Repunta o excluye en cmp-color-map.`,
+        `[${comp}] ${mode}.${path.join('.')} = ${raw} está escrito a mano pero existe --${tokenFor(comp, kitSlot(path))}. Repunta o excluye en cmp-color-map.`,
       );
     }
   }
@@ -135,12 +134,16 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   for (const file of readdirSync(PRESET_DIR).filter((f) => f.endsWith('.ts'))) {
     const comp = file.replace(/\.ts$/, '');
     const src = readFileSync(resolve(PRESET_DIR, file), 'utf8');
-    // Solo presets que referencian algún token de COLOR de componente. Gate ANTES de evaluar:
-    // presets no-literales (base.ts referencia consts) no se pueden evaluar como objeto suelto —
-    // pero tampoco usan tokens de COLOR de componente.
-    const refsColor = [...src.matchAll(/var\(--(sc-cmp-[a-z0-9-]+)\)/g)].some((m) => isCmpColorToken(m[1]));
-    if (!refsColor) continue;
-    const problems = lintPreset(comp, src, { light: cmpLight, dark: cmpDark });
+    // Todo preset con `colorScheme`, lea ya alguna variable o no: uno que no leía NINGUNA (chip, tooltip…)
+    // era justo el que se escapaba. Los no literales (base.ts referencia consts) no se evalúan sueltos,
+    // y no tienen slots de componente.
+    if (!/\bcolorScheme\s*:/.test(src)) continue;
+    let problems;
+    try {
+      problems = lintPreset(comp, src, { light: cmpLight, dark: cmpDark });
+    } catch {
+      continue;
+    }
     for (const p of problems) log('✗ ' + p);
     fails += problems.length;
     checked++;
@@ -149,6 +152,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     log(`\n✗ cmp-color-rewire: ${fails} problema(s). Sin hex para slots generados; cada var(--sc-cmp-*) debe corresponder a su slot.`);
     process.exit(1);
   }
-  log(`✓ cmp-color-rewire OK — ${checked} preset(s) con color de componente; sin hex en slots generados.`);
+  log(`✓ cmp-color-rewire OK — ${checked} preset(s) con color de componente; sin color escrito a mano en slots generados.`);
   process.exit(0);
 }
