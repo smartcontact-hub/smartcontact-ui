@@ -2156,9 +2156,9 @@
         "summary": "One section at a time, plus a summary of what each change affects."
       },
       "d": {
-        "what": "The whole record on one screen, as cards that sum up each section. Click one and edit it in the panel on the right; the rest stay in view and update as you go.",
+        "what": "The whole record on one screen: at the top, a strip of cards that sum up each section; below, the editor for the one you click. The rest stay in view and update as you go.",
         "agent": {
-          "step1": "Click the “Assigned groups” card: it opens in the panel on the right.",
+          "step1": "Click the “Assigned groups” card: it opens below, in the editor.",
           "step2": "Remove a channel from a group: the card on the left shows it straight away."
         },
         "group": {

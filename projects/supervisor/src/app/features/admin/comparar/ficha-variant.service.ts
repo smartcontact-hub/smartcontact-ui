@@ -10,8 +10,8 @@ import { filter } from 'rxjs';
  *   · `b` — una sola página: todas las secciones a la vista y el índice te lleva con scroll
  *           (lo que había hasta el 2026-05-13).
  *   · `c` — pestañas, y el lateral cuenta lo que has cambiado y a qué más afecta.
- *   · `d` — toda la ficha en una pantalla como tarjetas-resumen; la que pulsas se edita en un
- *           panel a la derecha y las demás siguen a la vista (2026-09-15, tras ver Meridian).
+ *   · `d` — toda la ficha en una pantalla: franja de tarjetas-resumen arriba; la que pulsas se edita
+ *           debajo y las demás siguen a la vista (2026-09-15, tras ver Meridian).
  *   · `e` — las mismas tarjetas a todo el ancho; «Editar» abre los ajustes de esa tarjeta en un
  *           panel lateral (drawer) que se cierra al acabar (Rafa, 2026-09-15).
  *

@@ -5,7 +5,8 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@an
  * izquierda y valor a la derecha. El rótulo llega ya traducido; el valor, proyectado.
  *
  * `stacked` pone el rótulo encima y el valor a todo el ancho: para las filas que son LISTAS
- * (secciones, permisos), que en media columna se convertían en una torre de texto.
+ * (secciones, permisos), que en media columna se convertían en una torre de texto. En una tarjeta
+ * estrecha pasa lo mismo sin pedirlo (consulta de contenedor).
  */
 @Component({
   selector: 'sc-board-row',
@@ -24,6 +25,14 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@an
     :host(.board-row--stacked) {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--sc-spacing-0-125);
+    }
+    /* En una tarjeta estrecha (la franja de cinco del agente) el rótulo va encima: lado a lado, los
+     * dos se partían en tres líneas. */
+    @container (max-width: 20rem) {
+      :host {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+      }
     }
     .board-row__label {
       color: var(--sc-text-secondary);

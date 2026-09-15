@@ -2156,9 +2156,9 @@
         "summary": "Uma secção de cada vez, e um resumo do que cada alteração afeta."
       },
       "d": {
-        "what": "Toda a ficha num ecrã, em cartões que resumem cada secção. Clique num e edite-o no painel da direita; os outros continuam à vista e atualizam-se no momento.",
+        "what": "Toda a ficha num ecrã: em cima, uma faixa de cartões que resumem cada secção; em baixo, o editor daquele em que clicar. Os outros continuam à vista e atualizam-se no momento.",
         "agent": {
-          "step1": "Clique no cartão «Grupos atribuídos»: abre-se no painel da direita.",
+          "step1": "Clique no cartão «Grupos atribuídos»: abre-se em baixo, no editor.",
           "step2": "Retire um canal a um grupo: o cartão da esquerda mostra-o no momento."
         },
         "group": {

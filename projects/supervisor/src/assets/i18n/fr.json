@@ -2156,9 +2156,9 @@
         "summary": "Une section à la fois, avec un résumé de ce que chaque changement affecte."
       },
       "d": {
-        "what": "Toute la fiche sur un écran, en cartes qui résument chaque section. Cliquez sur l’une d’elles pour la modifier dans le panneau de droite ; les autres restent visibles et se mettent à jour aussitôt.",
+        "what": "Toute la fiche sur un écran : en haut, une bande de cartes qui résument chaque section ; en dessous, l’éditeur de celle que vous cliquez. Les autres restent visibles et se mettent à jour aussitôt.",
         "agent": {
-          "step1": "Cliquez sur la carte « Groupes assignés » : elle s’ouvre dans le panneau de droite.",
+          "step1": "Cliquez sur la carte « Groupes assignés » : elle s’ouvre en dessous, dans l’éditeur.",
           "step2": "Retirez un canal à un groupe : la carte de gauche l’affiche aussitôt."
         },
         "group": {
