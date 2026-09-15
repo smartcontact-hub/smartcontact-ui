@@ -41,7 +41,7 @@ export class SidebarNavItemComponent {
 
   readonly navigate = output<string>();
   /** A parent asked to open or close; emits its `labelKey`. */
-  readonly toggle = output<string>();
+  readonly toggleOpen = output<string>();
 
   protected readonly hasChildren = computed(() => {
     const children = this.item().children;
@@ -62,7 +62,7 @@ export class SidebarNavItemComponent {
 
   protected onClick(event: MouseEvent): void {
     if (this.hasChildren()) {
-      this.toggle.emit(this.item().labelKey);
+      this.toggleOpen.emit(this.item().labelKey);
       /*
        * Parent click toggles expanded but doesn't navigate, so the
        * post-`NavigationEnd` blur effect on the sidebar host never
