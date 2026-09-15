@@ -135,7 +135,7 @@
 
     /* Mientras se arrastra, las celdas que aceptarían el widget se marcan con el color de foco. */
     &.cdk-drop-list-receiving {
-      box-shadow: var(--sc-shadow-focus-ring);
+      box-shadow: 0 0 0 var(--sc-focus-ring-width) var(--sc-border-focus);
     }
   }
 }
@@ -181,7 +181,7 @@ sc-dashboard-widget-card.cdk-drag-placeholder {
     position: absolute;
     inset: 0;
     border-radius: var(--sc-radius-200);
-    box-shadow: var(--sc-shadow-focus-ring);
+    box-shadow: 0 0 0 var(--sc-focus-ring-width) var(--sc-border-focus);
     opacity: 0;
     pointer-events: none;
     animation: dash-flash var(--sc-transition-slow) var(--sc-easing-emphasized) 4 alternate;
@@ -295,8 +295,8 @@ sc-dashboard-widget-card.cdk-drag-placeholder {
     }
 
     &:focus-visible {
-      outline: none;
-      box-shadow: var(--sc-shadow-focus-ring);
+      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+      outline-offset: var(--sc-focus-ring-offset);
     }
   }
 

@@ -31,8 +31,8 @@
 
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
-- **`sc-selectbutton`**: las vistas rápidas de Conversaciones usan `p-selectbutton` directo; envolverlo en el DS
-  (y cablear su color a `var(--sc-cmp-togglebutton-*)` cuando Figma suba la opción no elegida, §10).
+- **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
+  (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
 
@@ -58,8 +58,6 @@
 - **Las tablas de dentro de los formularios** (agentes de un grupo, grupos de un agente) las rehace la sesión de
   `hind` (`arebury/agents-groups-users-ds`, sin commit el 2026-09-14): toca también Usuarios, Grupos y
   `audit-page-anatomy`, así que rebasa sobre DD-98 antes de subir.
-- **El foco de los campos del DS enseña anillo sky de 2 px y borde oscuro a la vez** (Rafa lo vio en el buscador,
-  2026-09-14): es igual en todos los campos; decidir si se queda solo uno (Aura usa solo el borde).
 - **La baseline `datatable` de `e2e:visual` está en rojo en `main`** (medido el 2026-09-14 sobre el build de sc-docs
   de `486feb6` y sobre DD-99): la página mide 5537 y la baseline 5557, con el contenido idéntico píxel a píxel; los
   20 px son aire al final. Y dentro de la captura alterna 5537/5557, así que regenerarla no basta: algo crece al
@@ -168,6 +166,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-15 · El foco y el error de los campos siguen a Aura y al Kit (DD-111)
+
+**Sello:** rama `arebury/foco-unico`, sobre `568b14a`. Rafa, tras comparar en local anillo contra Aura: «si el kit y aura
+dicen lo contrario a nosotros, es sumar ruido a mis devs». «`p-tabs` sin cajas» (DD-107): `archive/handoff-ds-2026-09-15-tabs`.
+
+**Lo que cambia.** Fuera la regla global que sumaba un anillo al borde marino; los seis campos del DS pasan el error a
+PrimeNG (`[invalid]`) en vez de pintarlo, y el foco se ve también con error (en sc-docs, el relleno en error sale rojo,
+el del Kit). Los 86 anillos a mano leen `--sc-focus-ring-width/offset`, y los halos del Dashboard, el mismo anillo.
+
+- ⚠️ **Una regla SIN CAPA de un wrapper gana siempre al tema**: el rojo de error tapaba el borde de foco del preset.
+  Un estado que PrimeNG sabe pintar (`p-invalid`) se le pasa a PrimeNG; no se repinta en el SCSS del wrapper.
+
 ## ✅ 2026-09-14 · El Supervisor tiene pantalla de acceso, `sc-password` y un fondo que se mueve (DD-110)
 
 **Sello:** rama `arebury/login-supervisor` (#179), fundida en `c17d49c`. Rafa, visto en local y en la previsualización:
@@ -215,17 +225,6 @@ PrimeNG habla el idioma de la app. `SelectButton` a AA (customs-catalog §1.10).
   sola pasa): sirve un sc-docs de TU árbol en otro puerto y lanza con `SC_DOCS_URL` + `SC_ALLOW_PARALLEL_SUITES=1`.
 - ⚠️ **Día de muchas PRs**: cada rebase renumeró la sección de `figma-pendiente.md` (§5 → §10) y regeneró
   capturas que otra PR también tocaba (#176). Mira `git log HEAD..origin/main` justo antes de cada preflight.
-
-## ✅ 2026-09-14 · Un borde de un lado se escribe de un lado: `p-tabs` sin cajas (DD-107)
-
-**Sello:** rama `arebury/figma-pendiente-dashboard`, HEAD `58166a4` (#180) más este cambio. DD-107. Rafa: «adelante».
-
-**Lo que cambia.** `tabs` sigue a Aura 3 (pestaña sin borde, raya en la tira, barra activa); `accordion`, `dataview` y
-`treetable` recuperan el shorthand de un lado. Test nuevo `preset-border-shorthand`. `figma-pendiente.md` §9: lo que
-el Dashboard toma de PrimeNG y el fichero del DS aún no dibuja.
-
-- ⚠️ **Un valor del Kit pasado a rem pierde la forma del shorthand**: `1` dibujado abajo en Figma es `0 0 1px 0` en
-  Aura, y escrito `0.071429rem` pinta cuatro lados. Solo se ve el día que alguien usa el componente.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -301,6 +300,8 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Un valor del Kit pasado a rem pierde la forma del shorthand**: `1` dibujado abajo en Figma es `0 0 1px 0` en
+  Aura, y escrito `0.071429rem` pinta cuatro lados. Solo se ve el día que alguien usa el componente (DD-107).
 - 🪤 **Una caja `x-2` puede ser gemela de otra que trabaja la misma rama** (el PR 171 lo arreglaba ya `coelacanth`, y se
   vio hora y media después): `npm run sesiones` lo canta al abrir.
 - 🪤 **Un `--sc-cmp-*` generado no significa que el tema lo lea**: mídelo en pantalla con el export simulado (DD-106).

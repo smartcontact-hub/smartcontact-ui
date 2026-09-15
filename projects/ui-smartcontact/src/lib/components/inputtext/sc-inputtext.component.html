@@ -22,6 +22,7 @@
     [attr.autocomplete]="autocomplete() ?? null"
     [attr.maxlength]="maxlength() ?? null"
     [attr.inputmode]="inputmode() ?? null"
+    [invalid]="isInvalid()"
     [attr.aria-invalid]="isInvalid() ? true : null"
     [attr.aria-label]="ariaLabel() ?? null"
     [attr.aria-describedby]="footerText() ? msgId() : null"

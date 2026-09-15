@@ -32,6 +32,7 @@
   [attr.name]="name() ?? null"
   [attr.aria-describedby]="footerText() ? msgId() : null"
   [attr.aria-required]="required() ? true : null"
+  [invalid]="isInvalid()"
   [attr.aria-invalid]="isInvalid() ? true : null"
 >
   @if (hasPresets()) {

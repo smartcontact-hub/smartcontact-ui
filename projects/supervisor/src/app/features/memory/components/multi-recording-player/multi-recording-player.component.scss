@@ -88,8 +88,8 @@
     border-radius: var(--sc-radius-full);
 
     &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
+      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+      outline-offset: var(--sc-focus-ring-offset);
     }
 
     &:disabled {
@@ -147,8 +147,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
+      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+      outline-offset: var(--sc-focus-ring-offset);
     }
   }
 

@@ -111,19 +111,7 @@
   font-size: var(--sc-font-size-200);
 }
 
-/* ────────────────────────────────────────────────────────────────────
- * Invalid state — sc-preset already paints invalid border via
- * aria-invalid; the host class covers the manual `[error]` path.
- * ────────────────────────────────────────────────────────────────────
- */
-.sc-inputnumber--invalid .sc-inputnumber__control {
-  border-color: var(--sc-border-error);
-
-  &:hover,
-  &:focus {
-    border-color: var(--sc-border-error);
-  }
-}
+/* El error lo pinta PrimeNG (`[invalid]` → `p-invalid`) en su capa, como Aura: así el borde de foco también gana en un campo con error (DD-111). */
 
 .sc-inputnumber--invalid .sc-inputnumber__suffix {
   color: var(--sc-text-danger);

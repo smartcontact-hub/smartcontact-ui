@@ -53,10 +53,12 @@
     margin: 0;
     opacity: 0;
     cursor: inherit;
+    /* El anillo lo pinta la caja; sin esto, el escondido lleva el contorno por defecto del navegador. */
+    outline: none;
 
     &:focus-visible + .tri-checkbox__box {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
+      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+      outline-offset: var(--sc-focus-ring-offset);
     }
   }
 

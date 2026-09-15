@@ -62,20 +62,7 @@
   gap: 0;
 }
 
-/* ────────────────────────────────────────────────────────────────────
- * Invalid state — sc-preset paints invalid border via aria-invalid on
- * the inner input. Host class covers the manual `[error]` path.
- * ────────────────────────────────────────────────────────────────────
- */
-.sc-datepicker--invalid .sc-datepicker__control .p-datepicker-input {
-  border-color: var(--sc-border-error);
-
-  &:hover,
-  &:focus,
-  &:focus-within {
-    border-color: var(--sc-border-error);
-  }
-}
+/* El error lo pinta PrimeNG (`[invalid]` → `p-invalid`) en su capa, como Aura: así el borde de foco también gana en un campo con error (DD-111). */
 
 /* Pie con atajos: los atajos a la izquierda, envolviendo si no caben, y «Limpiar» al final. */
 .sc-datepicker__presets {

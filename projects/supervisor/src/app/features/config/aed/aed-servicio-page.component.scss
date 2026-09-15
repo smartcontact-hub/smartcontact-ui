@@ -106,8 +106,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 1px;
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
   }
 
   /* El `+` rima con el texto del chip (12), no con el reset del <button> — mismo
