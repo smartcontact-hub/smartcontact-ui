@@ -34,6 +34,16 @@
  * es justo lo que se quiere: que el cambio sea deliberado y no un resto de
  * molde.
  *
+ * Y cada app del `angular.json` construye con `deployUrl: "/"`. Motivo, medido el 2026-09-15:
+ * Cloudflare Pages lee los `<link rel="modulepreload">` del HTML y los repite como cabeceras
+ * `Link` (Early Hints). Angular los escribe RELATIVOS (`chunk-X.js`) y la `<base>` no alcanza a
+ * una cabecera: el navegador los resuelve contra la URL pedida. Al entrar por
+ * `/config/sistema` precargaba `/config/chunk-X.js`, recibía el index.html del fallback y la
+ * consola sumaba seis «Failed to load module script» (en producción, en toda URL de dos
+ * segmentos). La app cargaba igual, por la `<base>`, pero cada entrada pedía seis ficheros
+ * de más. Con `deployUrl: "/"` el HTML los escribe absolutos (`/chunk-X.js`) y la cabecera
+ * apunta bien; las fuentes del CSS y los `import()` siguen relativos a su propio fichero.
+ *
  * Lee el FUENTE, no un `dist/`.
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
@@ -69,6 +79,17 @@ export function baseDe(html) {
   return { ok: true, base: '/' };
 }
 
+/**
+ * Apps del `angular.json` (builder `application`) cuyo build NO fija `deployUrl: "/"`.
+ * Devuelve `[{ app, deployUrl }]`.
+ */
+export function sinDeployUrlRaiz(angularJson) {
+  return Object.entries(angularJson.projects ?? {})
+    .filter(([, p]) => p.architect?.build?.builder === '@angular/build:application')
+    .map(([app, p]) => ({ app, deployUrl: p.architect.build.options?.deployUrl }))
+    .filter(({ deployUrl }) => deployUrl !== '/');
+}
+
 const apps = appsConIndex();
 const malas = [];
 
@@ -80,6 +101,21 @@ for (const { app, html } of apps) {
   if (!v.ok) malas.push({ app, ...v });
 }
 log('='.repeat(62));
+
+const sinRaiz = sinDeployUrlRaiz(JSON.parse(readFileSync(resolve(root, 'angular.json'), 'utf8')));
+for (const { app, deployUrl } of sinRaiz) log(`  ✘ ${app.padEnd(12)} deployUrl ${deployUrl === undefined ? '(sin fijar)' : JSON.stringify(deployUrl)}, no "/"`);
+
+if (sinRaiz.length) {
+  log('');
+  log(`✘ ${sinRaiz.length} app(s) sin deployUrl "/" en angular.json.`);
+  log('');
+  log('  Sin él, el index.html escribe los modulepreload RELATIVOS y Cloudflare los repite');
+  log('  como cabecera Link, que la <base> no corrige: en /config/sistema el navegador');
+  log('  precarga /config/chunk-*.js, recibe HTML y la consola se llena de errores de módulo.');
+  log('');
+  log('  Arreglo: "deployUrl": "/" en projects.<app>.architect.build.options.');
+  process.exit(1);
+}
 
 if (malas.length) {
   log('');
@@ -95,4 +131,4 @@ if (malas.length) {
 }
 
 log('');
-log(`✔ Las ${apps.length} apps declaran <base href="/">.`);
+log(`✔ Las ${apps.length} apps declaran <base href="/"> y construyen con deployUrl "/".`);
