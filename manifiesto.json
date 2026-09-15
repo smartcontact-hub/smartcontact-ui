@@ -1,38 +1,86 @@
 {
-  "commit": "395824f3",
+  "commit": "0efaf40f",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-15T11:56:13.594Z",
+  "generado": "2026-09-15T12:20:11.816Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "sc-preset.mjs",
         "smartcontact-tokens.css"
       ],
       "variables": [
-        "claro|--sc-cmp-button-danger-active-background",
-        "claro|--sc-cmp-button-danger-active-border-color",
-        "claro|--sc-cmp-button-danger-background",
-        "claro|--sc-cmp-button-danger-border-color",
-        "claro|--sc-cmp-button-danger-hover-background",
-        "claro|--sc-cmp-button-danger-hover-border-color",
-        "claro|--sc-cmp-togglebutton-color",
-        "claro|--sc-cmp-togglebutton-hover-color"
+        "claro|--sc-dialog-divider",
+        "claro|--sc-dialog-head-icon-size",
+        "claro|--sc-dialog-padding-x",
+        "claro|--sc-dialog-padding-y",
+        "claro|--sc-font-family-body-3",
+        "claro|--sc-font-family-caption-bold",
+        "claro|--sc-font-family-display-1",
+        "claro|--sc-font-family-h1",
+        "claro|--sc-font-family-h2",
+        "claro|--sc-font-weight-body-1",
+        "claro|--sc-font-weight-body-3",
+        "claro|--sc-font-weight-caption-bold",
+        "claro|--sc-font-weight-display-1",
+        "claro|--sc-font-weight-h2",
+        "claro|--sc-shadow-focus-ring",
+        "claro|--sc-shadow-focus-ring-rgb",
+        "claro|--sc-toast-close",
+        "claro|--sc-toast-close-button-height",
+        "claro|--sc-toast-close-button-radius",
+        "claro|--sc-toast-close-button-width",
+        "claro|--sc-toast-close-icon-size",
+        "claro|--sc-toast-error-icon",
+        "claro|--sc-toast-gap-actions",
+        "claro|--sc-toast-info-icon",
+        "claro|--sc-toast-secondary-bg",
+        "claro|--sc-toast-secondary-border",
+        "claro|--sc-toast-secondary-icon",
+        "claro|--sc-toast-success-icon",
+        "claro|--sc-toast-violet-icon",
+        "claro|--sc-toast-warn-icon",
+        "oscuro|--sc-dialog-divider",
+        "oscuro|--sc-shadow-focus-ring-rgb",
+        "oscuro|--sc-toast-close"
+      ],
+      "retirados": [
+        "--sc-dialog-divider",
+        "--sc-dialog-head-icon-size",
+        "--sc-dialog-padding-x",
+        "--sc-dialog-padding-y",
+        "--sc-font-family-body-3",
+        "--sc-font-family-caption-bold",
+        "--sc-font-family-display-1",
+        "--sc-font-family-h1",
+        "--sc-font-family-h2",
+        "--sc-font-weight-body-1",
+        "--sc-font-weight-body-3",
+        "--sc-font-weight-caption-bold",
+        "--sc-font-weight-display-1",
+        "--sc-font-weight-h2",
+        "--sc-shadow-focus-ring",
+        "--sc-shadow-focus-ring-rgb",
+        "--sc-toast-close",
+        "--sc-toast-close-button-height",
+        "--sc-toast-close-button-radius",
+        "--sc-toast-close-button-width",
+        "--sc-toast-close-icon-size",
+        "--sc-toast-error-icon",
+        "--sc-toast-gap-actions",
+        "--sc-toast-info-icon",
+        "--sc-toast-secondary-bg",
+        "--sc-toast-secondary-border",
+        "--sc-toast-secondary-icon",
+        "--sc-toast-success-icon",
+        "--sc-toast-violet-icon",
+        "--sc-toast-warn-icon"
       ],
       "semanticaComun": false,
       "reglasCss": false,
-      "componentes": [
-        "button",
-        "chip",
-        "progressspinner",
-        "togglebutton",
-        "toggleswitch",
-        "tooltip",
-        "treetable"
-      ]
+      "componentes": []
     },
     "cambia": true,
     "contratoPlugin": {
@@ -40,5 +88,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260915.1156"
+  "version": "0.20260915.1220"
 }

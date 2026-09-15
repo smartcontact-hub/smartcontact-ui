@@ -808,32 +808,22 @@
   --sc-line-height-caption: var(--sc-line-height-100);
 
   /* Weights */
-  --sc-font-weight-display-1: var(--sc-font-weight-regular);
   --sc-font-weight-h1: var(--sc-font-weight-semibold);
-  --sc-font-weight-h2: var(--sc-font-weight-semibold);
   --sc-font-weight-h3: var(--sc-font-weight-semibold);
   --sc-font-weight-h4: var(--sc-font-weight-semibold);
   --sc-font-weight-subtitle-1: var(--sc-font-weight-semibold);
   --sc-font-weight-subtitle-2: var(--sc-font-weight-semibold);
-  --sc-font-weight-body-1: var(--sc-font-weight-regular);
   --sc-font-weight-body-2: var(--sc-font-weight-regular);
-  --sc-font-weight-body-3: var(--sc-font-weight-semibold);
   --sc-font-weight-caption: var(--sc-font-weight-regular);
-  --sc-font-weight-caption-bold: var(--sc-font-weight-semibold);
 
   /* Family selector — primary for everything except captions. */
-  --sc-font-family-display-1: var(--sc-font-family-primary);
-  --sc-font-family-h1: var(--sc-font-family-primary);
-  --sc-font-family-h2: var(--sc-font-family-primary);
   --sc-font-family-h3: var(--sc-font-family-primary);
   --sc-font-family-h4: var(--sc-font-family-primary);
   --sc-font-family-subtitle-1: var(--sc-font-family-primary);
   --sc-font-family-subtitle-2: var(--sc-font-family-primary);
   --sc-font-family-body-1: var(--sc-font-family-primary);
   --sc-font-family-body-2: var(--sc-font-family-primary);
-  --sc-font-family-body-3: var(--sc-font-family-primary);
   --sc-font-family-caption: var(--sc-font-family-primary);
-  --sc-font-family-caption-bold: var(--sc-font-family-primary);
 }
 
 /* ── 03-palette.css ── */
@@ -982,7 +972,6 @@
   --sc-dialog-border: var(
     --sc-color-slate-200
   ); /* Figma `dialog/border/color: #e2e8f0` (era blue-100, fix Session 30) */
-  --sc-dialog-divider: var(--sc-color-slate-200);
   --sc-dialog-radius: var(--sc-radius-400); /* 12px — Figma `dialog/border/radius: 12` */
   /* Double drop-shadow per Figma `dialog/shadow`:
    *   #0000001A offset(0,8) r10 spread:-6
@@ -996,7 +985,6 @@
         small content-width el 7px leía apelotonado (feedback de diseño). Token limpio
         de la escala (0.75 = 10.5). Propagar a Figma en el próximo sync del Kit. */
   --sc-dialog-head-icon-fg: var(--sc-color-slate-500);
-  --sc-dialog-head-icon-size: var(--sc-scale-2); /* 28px */ /* Figma `confirmdialog/icon/size: 28` */
   --sc-dialog-title: var(
     --sc-color-slate-800
   ); /* Figma `dialog/color: #334155` (slate-700) — but darker for AED */
@@ -1007,10 +995,6 @@
   --sc-dialog-subtitle: var(--sc-color-slate-600);
   --sc-dialog-close-fg: var(--sc-color-slate-700);
   --sc-dialog-close-bg-hover: var(--sc-color-slate-100);
-
-  /* Back-compat aliases (los componentes existentes referencian estos) */
-  --sc-dialog-padding-x: var(--sc-dialog-padding);
-  --sc-dialog-padding-y: var(--sc-dialog-padding);
 
   /* =========================================================== */
   /* Toast (Smart Contact design — Figma 1050:354)               */
@@ -1037,7 +1021,6 @@
   --sc-toast-message: var(
     --sc-color-slate-700
   ); /* Figma `toast/<sev>/detail/color: #334155` (slate-700) */
-  --sc-toast-close: var(--sc-color-slate-800);
   --sc-toast-icon-fg: var(--sc-color-slate-0); /* white glyph inside icon square */
   --sc-toast-summary-font-size: var(--sc-font-size-200); /* 14 — `toast.summary.font.size =
      {primitive.typography.font.size.200}`. Mismo valor, ahora por token. */
@@ -1053,13 +1036,8 @@
   --sc-toast-padding-y: var(--sc-scale-0-75);
   --sc-toast-gap-content: var(--sc-scale-0-5); /* 7px */ /* Figma `toast/content/gap: 7` (icon ↔ body) */
   --sc-toast-gap-text: var(--sc-scale-0-5); /* 7px */ /* Figma `toast/text/gap: 7` (summary ↔ detail) */
-  --sc-toast-gap-actions: var(--sc-scale-0-5); /* SC extension — gap entre body y action buttons */
   --sc-toast-icon-size: var(--sc-scale-1-125); /* 15.75px */ /* Figma `toast/icon/size: 15.75` (was 24) */
   --sc-toast-icon-radius: var(--sc-radius-200);
-  --sc-toast-close-button-width: var(--sc-scale-1-75); /* 24.5px */ /* Figma `toast/close/button/width: 24.5` */
-  --sc-toast-close-button-height: var(--sc-scale-1-75);
-  --sc-toast-close-button-radius: var(--sc-scale-0-875); /* 12.25px (= mitad del ancho a circular) */ /* Figma `toast/close/button/border/radius: 12.25` (= width/2 → circular) */
-  --sc-toast-close-icon-size: var(--sc-scale-1); /* 14px */ /* Figma `toast/close/icon/size: 14` */
   --sc-toast-backdrop-blur: 1.5px; /* Figma `toast/blur: 1.5` — backdrop-filter frosted glass */
   --sc-toast-shadow: 0 4px 8px 0 rgba(1, 4, 8, 0.04); /* Figma `toast/<sev>/shadow: #0X0X0X0A offset(0,4) r8` */
 
@@ -1068,13 +1046,11 @@
   /* Success — Figma `#f0fdf4f2` bg, `#bbf7d0` border (green-200), `#16a34a` icon (green-600) */
   --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-50) 95%, transparent);
   --sc-toast-success-border: var(--sc-color-green-200);
-  --sc-toast-success-icon: var(--sc-color-green-600);
   --sc-toast-success-icon-bg: var(--sc-color-green-600);
 
   /* Info — Figma `#eff6fff2` bg (blue-50 95%), `#bfdbfe` border (blue-200 ≈ azure), `#2563eb` icon */
   --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-azure-50) 95%, transparent);
   --sc-toast-info-border: var(--sc-color-azure-200);
-  --sc-toast-info-icon: var(--sc-color-azure-600);
   --sc-toast-info-icon-bg: var(
     --sc-color-sky-500
   ); /* SC override: icon-square uses sky-500 per brand */
@@ -1082,19 +1058,14 @@
   /* Warn — Figma `#fefce8f2` bg (yellow-50 95%), `#fef08a` border (yellow-200), `#ca8a04` icon */
   --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-yellow-50) 95%, transparent);
   --sc-toast-warn-border: var(--sc-color-yellow-200);
-  --sc-toast-warn-icon: var(--sc-color-yellow-700);
   --sc-toast-warn-icon-bg: var(--sc-color-yellow-700);
 
   /* Error — Figma `#fef2f2f2` bg (red-50 95%), `#fecaca` border (red-200), `#dc2626` icon */
   --sc-toast-error-bg: color-mix(in srgb, var(--sc-color-red-50) 95%, transparent);
   --sc-toast-error-border: var(--sc-color-red-200);
-  --sc-toast-error-icon: var(--sc-color-red-600);
   --sc-toast-error-icon-bg: var(--sc-color-red-500);
 
   /* Secondary — Figma slate (no alpha — opaco). Mapped to PrimeNG severity="secondary". */
-  --sc-toast-secondary-bg: var(--sc-color-slate-100); /* slate-100 */
-  --sc-toast-secondary-border: var(--sc-color-slate-200); /* slate-200 */
-  --sc-toast-secondary-icon: var(--sc-color-slate-600); /* slate-600 */
   --sc-toast-secondary-icon-bg: var(--sc-color-slate-600);
 
   /* Violet — SC EXTENSION (NO existe en Figma). Reservado para
@@ -1103,7 +1074,6 @@
    * data-severity="violet" en el template del p-toast. */
   --sc-toast-violet-bg: color-mix(in srgb, var(--sc-color-violet-50) 95%, transparent);
   --sc-toast-violet-border: var(--sc-color-violet-200);
-  --sc-toast-violet-icon: var(--sc-color-violet-600);
   --sc-toast-violet-icon-bg: var(--sc-color-violet-500);
 
   /* =========================================================== */
@@ -1922,10 +1892,6 @@
    * `rgb(var(--sc-shadow-color-rgb) / 0.04)`.
    */
   --sc-shadow-color-rgb: 15 23 42;
-  /* sky-500 (#1464fe), a juego con --sc-border-focus. Antes era cyan-500: el
-   * HALO del foco y su BORDE eran de familias distintas — el anillo se veía
-   * turquesa alrededor de un borde azul. Unificado con el acento (§1.4). */
-  --sc-shadow-focus-ring-rgb: 20 100 254;
 
   --sc-shadow-xs: 0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / 0.04);
   /* Numeric alias kept for /config consumers that follow the 100/200…
@@ -1946,7 +1912,6 @@
   --sc-shadow-dialog:
     0 20px 25px -5px rgb(var(--sc-shadow-color-rgb) / 0.12),
     0 8px 10px -6px rgb(var(--sc-shadow-color-rgb) / 0.1);
-  --sc-shadow-focus-ring: 0 0 0 3px rgb(var(--sc-shadow-focus-ring-rgb) / 0.35);
 
   /* @sc-gen:effects — bloque GENERADO desde kit-export-dtcg.json por `npm run tokens:import`
    * (token-gen-effects.mjs). NO editar a mano. Sombras de componente (aura/effects) 1:1 con el
@@ -2548,8 +2513,6 @@
    * sin crear variable (`focus/ring/color` vive en «Semantic Common», sin modos), así que
    * es divergencia de código a propósito, igual que el primario oscuro (DD-40). */
   --sc-border-focus: var(--sc-color-sky-400);
-  /* Su halo va a juego (ver 05-extensions): los canales de sky-400, #4a8fff. */
-  --sc-shadow-focus-ring-rgb: 74 143 255;
 
   /* El borde suave del primario. En claro es navy 200/300/400; en oscuro el primario es sky,
    * y el paso que Aura usa para el contorno primario oscuro es el 600 (el mismo que escribe el
@@ -2579,7 +2542,6 @@
   /* ---------- Component · Modal ---------- */
   --sc-dialog-bg: var(--sc-color-zinc-900);
   --sc-dialog-border: var(--sc-color-zinc-700);
-  --sc-dialog-divider: var(--sc-color-zinc-700);
   --sc-dialog-title: var(--sc-color-slate-0);
   --sc-dialog-subtitle: var(--sc-color-zinc-400);
   --sc-dialog-close-fg: var(--sc-color-zinc-400);
@@ -2589,7 +2551,6 @@
   /* ---------- Component · Toast ---------- */
   --sc-toast-title: var(--sc-color-slate-0);
   --sc-toast-message: var(--sc-color-zinc-400);
-  --sc-toast-close: var(--sc-color-zinc-200);
   --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-900) 40%, transparent);
   --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-sky-800) 40%, transparent);
   --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-yellow-800) 40%, transparent);
