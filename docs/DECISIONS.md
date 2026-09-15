@@ -78,6 +78,39 @@
 
 ---
 
+## DD-111 · 2026-09-15 — El foco y el error de los campos siguen a Aura y al Kit
+
+**Contexto** · Rafa vio en el buscador dos señales de foco a la vez: el borde pasaba a marino (preset,
+`focusBorderColor` = primario, como el Kit y Aura) y una regla global de `supervisor/src/styles/main.scss` le
+sumaba un anillo sky. La regla solo existía en el Supervisor, así que sc-docs enseñaba otro foco. Medido además
+con una sonda que tabula por cuatro pantallas: 86 anillos escritos a mano (`2px`, separación `2px` o `1px`) y 6
+halos difusos en el Dashboard.
+
+**Decisión** · (1) Fuera la regla global: el campo enfoca como Aura y el Kit, con el borde primario y sin anillo.
+(2) **El error lo pinta PrimeNG**: `sc-inputtext`, `sc-password`, `sc-datepicker`, `sc-inputnumber`, `sc-select` y
+`sc-multiselect` le pasan `[invalid]` (`p-invalid`) y dejan de pintar el borde rojo con CSS propio. (3) Los anillos
+a mano de la app y del DS leen `--sc-focus-ring-width` y `--sc-focus-ring-offset`, y los halos del Dashboard, el
+mismo anillo. (4) Criterio de Rafa para lo que venga: si el Kit y Aura dicen una cosa, el código la sigue, y un
+ajuste que quisiéramos se propone en `docs/figma-pendiente.md`, no se mete en código.
+
+**Razón** · Cada divergencia es algo que los devs tienen que aprender y mantener (Rafa). El error pintado a mano
+iba SIN CAPA y una regla sin capa gana siempre a `@layer primeng`: medido en `/login` tras enviar vacío, el campo en
+error enfocado seguía rojo y no enseñaba el foco. Con `p-invalid` en la capa de PrimeNG, el foco gana, como en
+primeng.dev (medido: pasa a marino). `e2e/supervisor/focus-ring` lo fija con email y contraseña.
+
+**Descartadas** ·
+- **Anillo del sistema en los campos y borde quieto** (recomendación de Claude, construida y medida) → una
+  divergencia con el Kit y Aura más que explicar y mantener, para un valor de usuario bajo.
+- **Quitar solo la regla global** → el campo en error enfocado se quedaba mudo (el rojo sin capa tapa el foco).
+- **Dejar las dos señales** → dos colores para una sola cosa, y distinto en sc-docs.
+
+**Consecuencias** · Sin divergencia nueva: `coverage-map.mjs` sigue con `form.field.focus.ring.*` en `value-match`.
+Como en Aura, un campo en error pierde el rojo mientras está enfocado o con el ratón encima; el mensaje de error
+sigue debajo. `--sc-shadow-focus-ring` se queda sin usos: su retirada va con el barrido de tokens huérfanos. Quedan
+10 separaciones negativas (`-2px`, anillo hacia dentro en la barra lateral y en tablas) sin token.
+
+---
+
 ## DD-110 · 2026-09-14 — El Supervisor tiene pantalla de acceso: SSO de Microsoft con nuestro botón, errores que guían sin delatar cuentas y sin guardia de rutas
 
 **Contexto** · Rafa pidió un login con el look & feel de SnowUI «Sign In - B» (Figma `epbXh5uopOOwU1ofdINqbh`,

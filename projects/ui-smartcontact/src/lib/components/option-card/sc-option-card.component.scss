@@ -46,8 +46,8 @@
 
     /* El anillo lo pinta la TARJETA, no el radio escondido. */
     &:has(.sc-option-card__input:focus-visible) {
-        outline: 2px solid var(--sc-border-focus);
-        outline-offset: 2px;
+        outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+        outline-offset: var(--sc-focus-ring-offset);
     }
 
     /*
@@ -74,6 +74,8 @@
     height: 0;
     margin: 0;
     pointer-events: none;
+    /* El anillo lo pinta la tarjeta; sin esto, el escondido lleva el contorno por defecto del navegador. */
+    outline: none;
 }
 
 .sc-option-card__mark {

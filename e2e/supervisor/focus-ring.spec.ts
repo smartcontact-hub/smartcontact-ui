@@ -52,6 +52,68 @@ const RUTAS = [
  *  los filtros y las primeras filas sin alargar la suite. */
 const SALTOS = 22;
 
+/**
+ * UN CAMPO ENFOCADO MARCA EL FOCO COMO AURA Y EL KIT, TAMBIÉN CON ERROR (DD-111).
+ *
+ * Hasta el 2026-09-15 un campo del Supervisor enfocado pintaba DOS señales: el borde pasaba a
+ * marino (el preset, como Aura) y una regla global de la app le sumaba un anillo sky (sc-docs no la
+ * tenía). Ahora sigue a Aura y al Kit: el borde pasa al primario y no hay anillo.
+ *
+ * El caso que muerde es el ERROR: nuestros campos pintaban el borde rojo con una regla SIN CAPA, y
+ * sin capa gana siempre al tema (`@layer primeng`), así que al enfocar no cambiaba nada. Desde DD-111
+ * el error lo pinta PrimeNG (`p-invalid`) en su capa y el foco gana, como en primeng.dev.
+ * Rojo con los tres modelos anteriores: doble señal y anillo (hay contorno) y error sin capa (el
+ * borde se queda rojo al enfocar).
+ */
+for (const id of ['login-email', 'login-password']) {
+  test(`${id} · al enfocar, borde primario y sin anillo, también en error`, async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.locator(`#${id}`)).toBeVisible();
+
+    const leer = () =>
+      page.evaluate((id) => {
+        const el = document.getElementById(id)!;
+        const s = document.createElement('span');
+        s.style.color = getComputedStyle(document.documentElement).getPropertyValue('--sc-bg-primary').trim();
+        document.body.append(s);
+        const primario = getComputedStyle(s).color;
+        s.remove();
+        const cs = getComputedStyle(el);
+        return {
+          enfocado: document.activeElement === el,
+          borde: cs.borderTopColor,
+          anillo: cs.outlineStyle === 'none' || parseFloat(cs.outlineWidth) === 0 ? null : `${cs.outlineWidth} ${cs.outlineColor}`,
+          primario,
+        };
+      }, id);
+
+    /* Llega por teclado, que es el estímulo que produce el foco visible de verdad. */
+    const tabular = async () => {
+      for (let i = 0; i < 14 && !(await leer()).enfocado; i++) await page.keyboard.press('Tab');
+      expect((await leer()).enfocado, 'el tabulador no llegó al campo: la prueba no mediría nada').toBe(true);
+    };
+
+    const reposo = await leer();
+    expect(reposo.primario, 'el token primario no resuelve').toMatch(/^rgb/);
+    expect(reposo.borde, 'en reposo el borde ya es el primario: no mediría el cambio').not.toBe(reposo.primario);
+    await tabular();
+    const foco = await leer();
+    expect(foco.anillo, 'el campo enfocado pinta un anillo: sería una segunda señal').toBeNull();
+    expect(foco.borde, 'el borde no pasó al primario al enfocar').toBe(foco.primario);
+
+    await page.getByRole('button', { name: 'Entrar', exact: true }).click();
+    await expect(page.locator(`#${id}`)).toHaveAttribute('aria-invalid', 'true');
+    await page.locator('#login-title').click();
+    const error = await leer();
+    expect(error.enfocado).toBe(false);
+    expect(error.borde, 'el campo en error no cambió su borde: no mide el caso').not.toBe(reposo.borde);
+    await tabular();
+    const errorFoco = await leer();
+    expect(errorFoco.anillo, 'el campo en error enfocado pinta un anillo').toBeNull();
+    expect(errorFoco.borde, 'el campo en error enfocado no enseña el foco: el borde rojo tapa al primario').toBe(errorFoco.primario);
+  });
+}
+
 for (const ruta of RUTAS) {
   test(`${ruta} · todos los focos usan el mismo anillo`, async ({ page }) => {
     await goto(page, ruta);

@@ -6285,7 +6285,7 @@
       "font-size": "14px",
       "font-weight": "400",
       "line-height": "20px",
-      "color": "rgb(111, 119, 132)",
+      "color": "rgb(220, 38, 38)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-invalid > sc-field-label > label.sc-field__label": {

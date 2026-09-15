@@ -144,7 +144,7 @@
  * sticky header chrome above.
  * ------------------------------------------------------------------ */
 .table__th-sort:focus-visible {
-  outline: 2px solid var(--sc-border-focus);
+  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
   outline-offset: -2px;
   background: var(--sc-bg-secondary-subtle);
 }

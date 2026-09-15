@@ -85,8 +85,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
   }
 
   /* El item ACTIVO llevaba `--sc-color-slate-100` (paleta cruda, que no

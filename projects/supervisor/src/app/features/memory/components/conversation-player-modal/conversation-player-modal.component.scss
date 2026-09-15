@@ -55,8 +55,8 @@
     opacity: 0.5;
   }
   &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
   }
 }
 
@@ -126,8 +126,8 @@
     color: var(--sc-text-primary);
   }
   &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
     border-radius: var(--sc-radius-100);
   }
 
