@@ -2100,21 +2100,21 @@
         "summary": "Tout sur une page ; l’index vous y emmène."
       },
       "e": {
-        "what": "Toute la fiche en cartes de résumé, sur toute la largeur. Cliquez sur « Éditer » sur l’une d’elles et ses réglages s’ouvrent dans un panneau à droite ; la fiche se décale pour lui faire de la place, vous voyez donc le résumé pendant l’édition.",
+        "what": "Toute la fiche en cartes de résumé, sur toute la largeur. Cliquez sur « Éditer » sur l’une d’elles et ses réglages s’ouvrent dans un panneau à droite, par-dessus la fiche ; fermez-le pour revoir toute la fiche.",
         "agent": {
           "step1": "Cliquez sur « Éditer » sur la carte « Identification » : ses réglages s’ouvrent dans un panneau à droite.",
           "step2": "Désactivez « Actif » : la carte de gauche l’affiche aussitôt."
         },
         "group": {
           "step1": "Cliquez sur « Éditer » sur la carte « Canaux et stratégie ».",
-          "step2": "Décochez « Téléphone » : dans la carte « Agents assignés », les agents perdent le téléphone aussitôt."
+          "step2": "Décochez « Téléphone » et fermez le panneau : la carte « Agents assignés », que le panneau cachait, n’a plus le téléphone."
         },
         "user": {
           "step1": "Cliquez sur « Éditer » sur la carte « Accès ».",
           "step2": "Décochez « Statistiques » : la carte l’affiche aussitôt."
         },
-        "step3": "Cliquez en dehors du panneau, sur le X ou Échap pour le fermer : la fiche reprend toute la largeur.",
-        "look": "Si garder le résumé visible pendant que vous éditez dans le panneau suffit pour comprendre ce que chaque changement affecte.",
+        "step3": "Cliquez en dehors du panneau, sur le X ou Échap pour le fermer : vous revoyez toute la fiche.",
+        "look": "Si gagner de la place pour le résumé compense le panneau qui cache une partie de la fiche pendant l’édition.",
         "summary": "Résumé sur toute la largeur ; les réglages dans un panneau via Éditer."
       }
     },
