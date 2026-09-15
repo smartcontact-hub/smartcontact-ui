@@ -85,11 +85,7 @@ import { BoardCardComponent } from '@features/admin/comparar/board-card.componen
 import { BoardRowComponent } from '@features/admin/comparar/board-row.component';
 import { FichaVariantBarComponent } from '@features/admin/comparar/ficha-variant-bar.component';
 import { FichaVariantService } from '@features/admin/comparar/ficha-variant.service';
-import {
-  changed,
-  PendingChangesPanelComponent,
-  type PendingSection,
-} from '@features/admin/comparar/pending-changes-panel.component';
+import { createCardsEditor } from '@features/admin/comparar/cards-editor';
 import { createSectionScrollSpy } from '@features/admin/comparar/section-scroll-spy';
 
 type DestinoKey = 'fijos' | 'moviles' | 'internacionales' | 'especial';
@@ -160,7 +156,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     FichaVariantBarComponent,
     FormSectionNavComponent,
     GroupAssignmentTableComponent,
-    PendingChangesPanelComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
     PermissionMatrixComponent,
@@ -406,24 +401,14 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.scrollSpy.jump(id);
   }
 
-  /* ── Variante `d`: el resumen de cada sección. Solo LEE el estado actual del formulario. ── */
-  protected readonly isBoard = computed(() => this.variants.variant() === 'd');
-  /** Variante `e`: las mismas tarjetas a todo el ancho, y la sección en un panel lateral. */
+  /* ── Variante `e` («Resumen + panel lateral»): las tarjetas-resumen a todo el ancho, y la
+   *   sección en un panel lateral. El resumen solo LEE el estado actual del formulario. ── */
   protected readonly isCards = computed(() => this.variants.variant() === 'e');
-  protected readonly hasBoard = computed(() => this.isBoard() || this.isCards());
-
-  /** Pulsar una tarjeta: en `d` cambia la sección del editor; en `e` además abre el panel, y
-   * cierra la guía para que no se monten dos paneles a la derecha. */
-  protected pickCard(id: string): void {
-    this.activeSection.set(id);
-    if (!this.isCards()) return;
-    this.variants.guideOpen.set(false);
-    this.variants.editorOpen.set(true);
-  }
-
-  protected isPicked(id: string): boolean {
-    return this.activeSection() === id && (this.isBoard() || this.variants.editorOpen());
-  }
+  protected readonly cards = createCardsEditor({ enabled: () => this.isCards(), active: this.activeSection });
+  /** El título del panel: el nombre de la sección que se edita. */
+  protected readonly activeLabelKey = computed(
+    () => this.navSections().find((s) => s.id === this.activeSection())?.labelKey ?? '',
+  );
 
   protected yesNo(value: boolean): string {
     return value ? 'common.yes' : 'common.no';
@@ -464,128 +449,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return names.length > 0 ? names.join(', ') : this.translate.instant('compare.board.none');
   }
 
-  /** Variante `c`: lo cambiado sin guardar, por sección, y lo que mueve fuera de ella. */
-  protected readonly pendingChanges = computed<readonly PendingSection[]>(() => {
-    this.currentLang();
-    if (!this.dirtyState.dirty()) return [];
-    const before = this.dirtyState.pristineValue();
-    const now = this.form();
-    const t = (key: string, params?: Record<string, unknown>): string => this.translate.instant(key, params);
-    const fieldsOf = (pairs: readonly (readonly [unknown, unknown, string])[]): string[] =>
-      pairs.filter(([a, b]) => changed(a, b)).map(([, , key]) => t(key));
 
-    const identityEffects: string[] = [];
-    // Solo consecuencias que la propia app ya dice en otro sitio (aquí, la ayuda de «Activo»).
-    if (before.status === 'active' && now.status === 'inactive' && now.links.length > 0) {
-      identityEffects.push(t(now.links.length === 1 ? 'compare.effects.agent_inactive_one' : 'compare.effects.agent_inactive', { count: now.links.length }));
-    }
-
-    const matrixFields = this.destinoKeys.flatMap((row) =>
-      (['llamada', 'transferencia'] as const)
-        .filter((col) => before.permissions[PERMISSION_MATRIX_KEYS[row][col]] !== now.permissions[PERMISSION_MATRIX_KEYS[row][col]])
-        .map((col) => `${t('agents.form.permissions.col_' + col)} · ${t('agents.form.permissions.row_' + row)}`),
-    );
-
-    const sections: PendingSection[] = [
-      {
-        sectionId: 'agent-section-identity',
-        icon: 'badge',
-        labelKey: 'agents.form.section.identification',
-        fields: fieldsOf([
-          [before.name, now.name, 'agents.form.fields.name'],
-          [before.photo, now.photo, 'compare.fields.photo'],
-          [before.email, now.email, 'agents.form.fields.email'],
-          [before.phone, now.phone, 'agents.form.fields.phone'],
-          [before.extension, now.extension, 'agents.form.fields.extension'],
-          [before.agentType, now.agentType, 'agents.form.fields.type'],
-          [before.presenceStatus, now.presenceStatus, 'agents.form.fields.presence'],
-          [before.pin, now.pin, 'agents.form.fields.pin'],
-          [before.status, now.status, 'agents.form.fields.active'],
-          [before.permissions.recording, now.permissions.recording, 'agents.form.fields.recording'],
-        ]),
-        effects: identityEffects,
-      },
-      {
-        sectionId: 'agent-section-groups',
-        icon: 'group',
-        labelKey: 'agents.form.section.groups',
-        fields: [],
-        effects: this.linkEffects(before.links, now.links),
-      },
-      {
-        sectionId: 'agent-section-permissions',
-        icon: 'verified_user',
-        labelKey: 'agents.form.section.permissions',
-        fields: [
-          ...matrixFields,
-          ...fieldsOf([
-            [before.permissions.manageDevices, now.permissions.manageDevices, 'agents.form.permissions.manage_devices'],
-            [before.permissions.selfActivate, now.permissions.selfActivate, 'agents.form.permissions.self_activate'],
-          ]),
-        ],
-        effects: [],
-      },
-      {
-        sectionId: 'agent-section-advanced',
-        icon: 'tune',
-        labelKey: 'agents.form.section.advanced',
-        fields: fieldsOf([
-          [before.pickupType, now.pickupType, 'agents.form.advanced.comportamiento.pickup_call'],
-          [before.pickupTypeChat, now.pickupTypeChat, 'agents.form.advanced.comportamiento.pickup_chat'],
-          [before.maxChats, now.maxChats, 'agents.form.advanced.comportamiento.max_chats'],
-          [before.languages, now.languages, 'common.languages.label'],
-          [before.randomOrder, now.randomOrder, 'agents.form.advanced.comportamiento.random_order'],
-          [before.iframeUrl, now.iframeUrl, 'agents.form.advanced.integracion.url_iframe'],
-          [before.permissions.externalDevices, now.permissions.externalDevices, 'agents.form.advanced.integracion.dispositivos_externos'],
-          [before.loginExtOverride, now.loginExtOverride, 'agents.form.advanced.sesion.login_ext_override'],
-        ]),
-        effects: [],
-      },
-      {
-        sectionId: 'agent-section-resources',
-        icon: 'library_books',
-        labelKey: 'agents.form.section.resources',
-        fields: fieldsOf([
-          [before.labelIds, now.labelIds, 'agents.form.advanced.labels.title'],
-          [before.scheduleIds, now.scheduleIds, 'agents.form.advanced.agendas.title'],
-          [before.templateIds, now.templateIds, 'compare.fields.templates'],
-        ]),
-        effects: [],
-      },
-    ];
-    return sections.filter((s) => s.fields.length > 0 || s.effects.length > 0);
-  });
-
-  /** Lo que un cambio en la tabla de grupos hace en la ficha de CADA grupo. */
-  private linkEffects(before: readonly GroupAgentLink[], now: readonly GroupAgentLink[]): string[] {
-    const t = (key: string, params?: Record<string, unknown>): string => this.translate.instant(key, params);
-    const name = (groupId: number): string => this.groupsStore.getGroup(groupId)?.name ?? `#${groupId}`;
-    const channels = (link: GroupAgentLink): string =>
-      link.channels.length > 0
-        ? link.channels.map((c) => t('agents.channel.' + c)).join(', ')
-        : t('compare.effects.no_channels');
-    const was = new Map(before.map((l) => [l.groupId, l]));
-    const is = new Map(now.map((l) => [l.groupId, l]));
-    const effects: string[] = [];
-    for (const link of now) {
-      const prev = was.get(link.groupId);
-      const group = name(link.groupId);
-      if (!prev) {
-        effects.push(t('compare.effects.agent_joins', { group, channels: channels(link) }));
-        continue;
-      }
-      if (changed(prev.channels, link.channels)) {
-        effects.push(t('compare.effects.agent_channels', { group, channels: channels(link) }));
-      }
-      if (prev.active !== link.active) {
-        effects.push(t(link.active ? 'compare.effects.agent_resumed' : 'compare.effects.agent_paused', { group }));
-      }
-    }
-    for (const link of before) {
-      if (!is.has(link.groupId)) effects.push(t('compare.effects.agent_leaves', { group: name(link.groupId) }));
-    }
-    return effects;
-  }
 
   /**
    * Matrix layout for the calls/transfers permissions, matching the

@@ -504,7 +504,7 @@
   "gated": [
     {
       "selector": "sc-badge",
-      "usedInSupervisor": 7
+      "usedInSupervisor": 6
     },
     {
       "selector": "sc-bulk-edit-menu",

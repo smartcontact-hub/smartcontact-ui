@@ -55,13 +55,8 @@ import { BoardCardComponent } from '@features/admin/comparar/board-card.componen
 import { BoardRowComponent } from '@features/admin/comparar/board-row.component';
 import { FichaVariantBarComponent } from '@features/admin/comparar/ficha-variant-bar.component';
 import { FichaVariantService } from '@features/admin/comparar/ficha-variant.service';
-import {
-  changed,
-  PendingChangesPanelComponent,
-  type PendingSection,
-} from '@features/admin/comparar/pending-changes-panel.component';
+import { createCardsEditor } from '@features/admin/comparar/cards-editor';
 import { createSectionScrollSpy } from '@features/admin/comparar/section-scroll-spy';
-import { injectLangChange } from '@core/utils/lang-change';
 
 interface FormState {
   name: string;
@@ -89,7 +84,6 @@ interface FormState {
     DividerComponent,
     FichaVariantBarComponent,
     FormSectionNavComponent,
-    PendingChangesPanelComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
     PhotoUploadComponent,
@@ -250,24 +244,14 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.scrollSpy.jump(id);
   }
 
-  /* ── Variante `d`: el resumen de cada sección. Solo LEE el estado actual del formulario. ── */
-  protected readonly isBoard = computed(() => this.variants.variant() === 'd');
-  /** Variante `e`: las mismas tarjetas a todo el ancho, y la sección en un panel lateral. */
+  /* ── Variante `e` («Resumen + panel lateral»): las tarjetas-resumen a todo el ancho, y la
+   *   sección en un panel lateral. El resumen solo LEE el estado actual del formulario. ── */
   protected readonly isCards = computed(() => this.variants.variant() === 'e');
-  protected readonly hasBoard = computed(() => this.isBoard() || this.isCards());
-
-  /** Pulsar una tarjeta: en `d` cambia la sección del editor; en `e` además abre el panel, y
-   * cierra la guía para que no se monten dos paneles a la derecha. */
-  protected pickCard(id: string): void {
-    this.activeSection.set(id);
-    if (!this.isCards()) return;
-    this.variants.guideOpen.set(false);
-    this.variants.editorOpen.set(true);
-  }
-
-  protected isPicked(id: string): boolean {
-    return this.activeSection() === id && (this.isBoard() || this.variants.editorOpen());
-  }
+  protected readonly cards = createCardsEditor({ enabled: () => this.isCards(), active: this.activeSection });
+  /** El título del panel: el nombre de la sección que se edita. */
+  protected readonly activeLabelKey = computed(
+    () => this.navSections().find((s) => s.id === this.activeSection())?.labelKey ?? '',
+  );
 
   protected yesNo(value: boolean): string {
     return value ? 'common.yes' : 'common.no';
@@ -297,73 +281,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return names.length > 0 ? names.join(', ') : this.translate.instant('compare.board.none');
   }
 
-  /** Variante `c`: lo cambiado sin guardar, por sección, y lo que mueve fuera de ella. */
-  private readonly lang = injectLangChange();
-  protected readonly pendingChanges = computed<readonly PendingSection[]>(() => {
-    this.lang();
-    if (!this.dirtyState.dirty()) return [];
-    const before = this.dirtyState.pristineValue();
-    const now = this.form();
-    const t = (key: string, params?: Record<string, unknown>): string => this.translate.instant(key, params);
-    const fieldsOf = (pairs: readonly (readonly [unknown, unknown, string])[]): string[] =>
-      pairs.filter(([a, b]) => changed(a, b)).map(([, , key]) => t(key));
-
-    const identityEffects: string[] = [];
-    // La consecuencia que ya cuenta la ayuda de «Activo».
-    if (before.status === 'active' && now.status === 'inactive') {
-      identityEffects.push(t('compare.effects.user_inactive'));
-    }
-
-    const sectionFields = SECTION_DEFS.filter((d) => before.sections[d.key] !== now.sections[d.key]).map((d) =>
-      t(now.sections[d.key] ? 'compare.fields.added' : 'compare.fields.removed', { items: t(d.labelKey) }),
-    );
-    // Apagar una sección madre deja a sus hijas grises aunque sigan marcadas.
-    const accessEffects = SECTION_DEFS.filter((d) => !d.parent && before.sections[d.key] && !now.sections[d.key]).flatMap((d) => {
-      const children = SECTION_DEFS.filter((c) => c.parent === d.key && now.sections[c.key]).map((c) => t(c.labelKey));
-      return children.length > 0 ? [t('compare.effects.user_section_children', { section: t(d.labelKey), children: children.join(', ') })] : [];
-    });
-    const permissionFields = PERMISSION_DEFS.filter((d) => before.permissions[d.key] !== now.permissions[d.key]).map((d) =>
-      t(now.permissions[d.key] ? 'compare.fields.added' : 'compare.fields.removed', { items: t(d.labelKey) }),
-    );
-    const added = [...now.services].filter((x) => !before.services.has(x));
-    const removed = [...before.services].filter((x) => !now.services.has(x));
-    const serviceFields = [
-      ...(added.length > 0 ? [t('compare.fields.added', { items: added.join(', ') })] : []),
-      ...(removed.length > 0 ? [t('compare.fields.removed', { items: removed.join(', ') })] : []),
-    ];
-
-    const sections: PendingSection[] = [
-      {
-        sectionId: 'user-section-identity',
-        icon: 'badge',
-        labelKey: 'users.form.section.identity',
-        fields: fieldsOf([
-          [before.name, now.name, 'users.form.fields.name'],
-          [before.photo, now.photo, 'compare.fields.photo'],
-          [before.email, now.email, 'users.form.fields.email'],
-          [before.identifier, now.identifier, 'users.form.fields.identifier'],
-          [before.type, now.type, 'users.form.fields.type'],
-          [before.status, now.status, 'users.form.fields.active'],
-        ]),
-        effects: identityEffects,
-      },
-      {
-        sectionId: 'user-section-access',
-        icon: 'verified_user',
-        labelKey: 'users.form.section.access',
-        fields: [...sectionFields, ...permissionFields],
-        effects: accessEffects,
-      },
-      {
-        sectionId: 'user-section-services',
-        icon: 'hub',
-        labelKey: 'users.form.section.services',
-        fields: serviceFields,
-        effects: [],
-      },
-    ];
-    return sections.filter((s) => s.fields.length > 0 || s.effects.length > 0);
-  });
 
   protected readonly mode = computed<'edit' | 'duplicate' | 'create'>(() => {
     if (this.editingId()) return 'edit';

@@ -56,13 +56,8 @@ import { BoardCardComponent } from '@features/admin/comparar/board-card.componen
 import { BoardRowComponent } from '@features/admin/comparar/board-row.component';
 import { FichaVariantBarComponent } from '@features/admin/comparar/ficha-variant-bar.component';
 import { FichaVariantService } from '@features/admin/comparar/ficha-variant.service';
-import {
-  changed,
-  PendingChangesPanelComponent,
-  type PendingSection,
-} from '@features/admin/comparar/pending-changes-panel.component';
+import { createCardsEditor } from '@features/admin/comparar/cards-editor';
 import { createSectionScrollSpy } from '@features/admin/comparar/section-scroll-spy';
-import { injectLangChange } from '@core/utils/lang-change';
 
 import {
   AgentChannelTableAgent,
@@ -95,7 +90,6 @@ interface FormState {
     DividerComponent,
     FichaVariantBarComponent,
     FormSectionNavComponent,
-    PendingChangesPanelComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
     InputNumberComponent,
@@ -197,24 +191,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.scrollSpy.jump(id);
   }
 
-  /* ── Variante `d`: el resumen de cada sección. Solo LEE el estado actual del formulario. ── */
-  protected readonly isBoard = computed(() => this.variants.variant() === 'd');
-  /** Variante `e`: las mismas tarjetas a todo el ancho, y la sección en un panel lateral. */
+  /* ── Variante `e` («Resumen + panel lateral»): las tarjetas-resumen a todo el ancho, y la
+   *   sección en un panel lateral. El resumen solo LEE el estado actual del formulario. ── */
   protected readonly isCards = computed(() => this.variants.variant() === 'e');
-  protected readonly hasBoard = computed(() => this.isBoard() || this.isCards());
-
-  /** Pulsar una tarjeta: en `d` cambia la sección del editor; en `e` además abre el panel, y
-   * cierra la guía para que no se monten dos paneles a la derecha. */
-  protected pickCard(id: string): void {
-    this.activeSection.set(id);
-    if (!this.isCards()) return;
-    this.variants.guideOpen.set(false);
-    this.variants.editorOpen.set(true);
-  }
-
-  protected isPicked(id: string): boolean {
-    return this.activeSection() === id && (this.isBoard() || this.variants.editorOpen());
-  }
+  protected readonly cards = createCardsEditor({ enabled: () => this.isCards(), active: this.activeSection });
+  /** El título del panel: el nombre de la sección que se edita. */
+  protected readonly activeLabelKey = computed(
+    () => this.navSections().find((s) => s.id === this.activeSection())?.labelKey ?? '',
+  );
 
   protected yesNo(value: boolean): string {
     return value ? 'common.yes' : 'common.no';
@@ -238,101 +222,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return link.active ? this.channelsSummary(link.channels) : this.translate.instant('compare.board.paused');
   }
 
-  /** Variante `c`: lo cambiado sin guardar, por sección, y lo que mueve fuera de ella. */
-  private readonly lang = injectLangChange();
-  protected readonly pendingChanges = computed<readonly PendingSection[]>(() => {
-    this.lang();
-    if (!this.dirtyState.dirty()) return [];
-    const before = this.dirtyState.pristineValue();
-    const now = this.form();
-    const t = (key: string, params?: Record<string, unknown>): string => this.translate.instant(key, params);
-    const fieldsOf = (pairs: readonly (readonly [unknown, unknown, string])[]): string[] =>
-      pairs.filter(([a, b]) => changed(a, b)).map(([, , key]) => t(key));
 
-    // Quitar un canal lo quita a los agentes del grupo que lo tenían: lo mismo que avisa el
-    // diálogo de cascada al guardar, contado aquí mientras editas.
-    const channelEffects: string[] = [];
-    for (const channel of GROUP_CHANNELS) {
-      if (!before.channels.has(channel) || now.channels.has(channel)) continue;
-      const count = before.links.filter((l) => l.channels.includes(channel)).length;
-      if (count > 0) {
-        channelEffects.push(t(count === 1 ? 'compare.effects.group_channel_removed_one' : 'compare.effects.group_channel_removed', { channel: this.channelLabel(channel), count }));
-      }
-    }
-
-    const sections: PendingSection[] = [
-      {
-        sectionId: 'group-section-identity',
-        icon: 'badge',
-        labelKey: 'groups.form.section.identity',
-        fields: fieldsOf([
-          [before.name, now.name, 'groups.form.fields.name'],
-          [before.phone, now.phone, 'groups.form.fields.phone'],
-          [before.priority, now.priority, 'groups.form.fields.priority'],
-          [before.typification, now.typification, 'groups.form.fields.typification'],
-        ]),
-        effects: [],
-      },
-      {
-        sectionId: 'group-section-channels',
-        icon: 'account_tree',
-        labelKey: 'groups.form.section.distribution',
-        fields: fieldsOf([
-          [before.channels, now.channels, 'groups.form.section.channels'],
-          [before.strategy, now.strategy, 'groups.form.fields.phone_strategy'],
-          [before.chatStrategy, now.chatStrategy, 'groups.form.fields.chat_strategy'],
-          [before.capacityValue, now.capacityValue, 'groups.form.fields.capacity'],
-        ]),
-        effects: channelEffects,
-      },
-      {
-        sectionId: 'group-section-agents',
-        icon: 'group',
-        labelKey: 'groups.form.section.agents',
-        fields: [],
-        effects: this.linkEffects(before.links, now.links, now.channels),
-      },
-    ];
-    return sections.filter((s) => s.fields.length > 0 || s.effects.length > 0);
-  });
-
-  /** Lo que un cambio en la tabla de agentes hace en la ficha de CADA agente. */
-  private linkEffects(
-    before: readonly GroupAgentLink[],
-    now: readonly GroupAgentLink[],
-    groupChannels: ReadonlySet<GroupChannel>,
-  ): string[] {
-    const t = (key: string, params?: Record<string, unknown>): string => this.translate.instant(key, params);
-    const name = (agentId: number): string => this.agentsStore.getAgent(agentId)?.name ?? `#${agentId}`;
-    const channels = (link: GroupAgentLink): string =>
-      link.channels.length > 0
-        ? link.channels.map((c) => this.channelLabel(c)).join(', ')
-        : t('compare.effects.no_channels');
-    const was = new Map(before.map((l) => [l.agentId, l]));
-    const is = new Map(now.map((l) => [l.agentId, l]));
-    const effects: string[] = [];
-    for (const link of now) {
-      const prev = was.get(link.agentId);
-      const agent = name(link.agentId);
-      if (!prev) {
-        effects.push(t('compare.effects.group_agent_joins', { agent, channels: channels(link) }));
-        continue;
-      }
-      // Si solo perdió lo que el grupo ya no ofrece, eso lo cuenta Canales en una línea, no una
-      // por agente.
-      const expected = prev.channels.filter((c) => groupChannels.has(c));
-      if (changed(expected, link.channels)) {
-        effects.push(t('compare.effects.group_agent_channels', { agent, channels: channels(link) }));
-      }
-      if (prev.active !== link.active) {
-        effects.push(t(link.active ? 'compare.effects.group_agent_resumed' : 'compare.effects.group_agent_paused', { agent }));
-      }
-    }
-    for (const link of before) {
-      if (!is.has(link.agentId)) effects.push(t('compare.effects.group_agent_leaves', { agent: name(link.agentId) }));
-    }
-    return effects;
-  }
 
   protected readonly phoneIcon = 'call';
   protected readonly trashIcon = 'delete';

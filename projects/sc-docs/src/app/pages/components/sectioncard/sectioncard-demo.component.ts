@@ -98,6 +98,7 @@ export class SectionCardDemoComponent {
       { name: 'collapsible', control: { kind: 'boolean' } },
       { name: 'initiallyCollapsed', control: { kind: 'boolean' } },
       { name: 'flush', control: { kind: 'boolean' } },
+      { name: 'showHeader', control: { kind: 'boolean' } },
           { name: 'anchorId', control: { kind: 'text' }, description: 'id del ancla, para el índice lateral.' },
     ],
     defaultArgs: {
@@ -108,6 +109,7 @@ export class SectionCardDemoComponent {
       collapsible: false,
       initiallyCollapsed: false,
       flush: false,
+      showHeader: true,
           anchorId: 'seccion-ejemplo',
     },
     props: [
@@ -152,6 +154,12 @@ export class SectionCardDemoComponent {
         type: 'boolean',
         default: 'false',
         description: 'Sin caja: quita fondo/borde/radio; el contenido va a sangre.',
+      },
+      {
+        name: 'showHeader',
+        type: 'boolean',
+        default: 'true',
+        description: 'false quita icono y título cuando ya los dice el contenedor (la cabecera de un drawer). El nombre queda en aria-label. Ignorado con collapsible.',
       },
       {
         name: 'surface',

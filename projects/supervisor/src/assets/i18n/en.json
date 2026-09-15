@@ -2060,50 +2060,13 @@
       "b": {
         "label": "One page (May)"
       },
-      "c": {
-        "label": "Tabs with changes"
-      },
-      "d": {
-        "label": "Summary + editor"
-      },
       "e": {
         "label": "Summary + side panel"
       }
     },
-    "pending": {
-      "title": "Unsaved changes",
-      "empty": "Change any field in the record: this shows what you changed and what else it affects.",
-      "changed": "You changed",
-      "affects": "Affects"
-    },
-    "fields": {
-      "photo": "Photo",
-      "templates": "Templates",
-      "added": "Adds {{items}}",
-      "removed": "Removes {{items}}"
-    },
-    "effects": {
-      "no_channels": "no channels",
-      "agent_inactive": "Stops receiving calls and chats in its {{count}} groups",
-      "agent_inactive_one": "Stops receiving calls and chats in its group",
-      "agent_joins": "Joins {{group}} with {{channels}}",
-      "agent_leaves": "Leaves {{group}}",
-      "agent_channels": "In {{group}} now handles {{channels}}",
-      "agent_paused": "In {{group}} stops receiving contacts",
-      "agent_resumed": "In {{group}} receives contacts again",
-      "group_channel_removed": "{{count}} agents stop handling {{channel}} in this group",
-      "group_channel_removed_one": "1 agent stops handling {{channel}} in this group",
-      "group_agent_joins": "{{agent}} joins with {{channels}}",
-      "group_agent_leaves": "{{agent}} leaves the group",
-      "group_agent_channels": "{{agent}} now handles {{channels}}",
-      "group_agent_paused": "{{agent}} stops receiving contacts here",
-      "group_agent_resumed": "{{agent}} receives contacts here again",
-      "user_inactive": "Will not be able to sign in or operate",
-      "user_section_children": "Without {{section}}, will not see {{children}} either"
-    },
     "guide": {
       "title": "How to compare",
-      "intro": "The same record in five forms. Switch between them with the bar at the bottom and try the same thing in each. This is demo data: touch anything.",
+      "intro": "The same record in three forms. Switch between them with the bar at the bottom and try the same thing in each. This is demo data: touch anything.",
       "current": "You are viewing",
       "try": "Try this",
       "look": "Pay attention to",
@@ -2136,59 +2099,22 @@
         "look": "Whether seeing everything together helps you understand what you touch, or whether there is so much that you get lost.",
         "summary": "Everything on one page; the index takes you there."
       },
-      "c": {
-        "what": "Tabs, as today, but with a box under the index that sums up what you changed and what else it affects, before saving.",
-        "agent": {
-          "step1": "Click “Identification” in the index.",
-          "step2": "Turn off the “Active” switch."
-        },
-        "group": {
-          "step1": "Click “Channels and strategy” in the index.",
-          "step2": "Untick “Phone”."
-        },
-        "user": {
-          "step1": "Click “Access” in the index.",
-          "step2": "Untick “Statistics”."
-        },
-        "step3": "Look at the “Unsaved changes” box, on the left under the index: it says what you changed and, under “Affects”, what that moves outside the section.",
-        "step4": "Click “Undo”, top right, to put it back.",
-        "look": "The box on the left. It is what replaces seeing everything at once.",
-        "summary": "One section at a time, plus a summary of what each change affects."
-      },
-      "d": {
-        "what": "The whole record on one screen: at the top, a strip of cards that sum up each section; below, the editor for the one you click. The rest stay in view and update as you go.",
-        "agent": {
-          "step1": "Click the “Assigned groups” card: it opens below, in the editor.",
-          "step2": "Remove a channel from a group: the card on the left shows it straight away."
-        },
-        "group": {
-          "step1": "Click the “Channels and strategy” card.",
-          "step2": "Untick “Phone”: in the “Assigned agents” card the agents lose phone, without leaving the screen."
-        },
-        "user": {
-          "step1": "Click the “Access” card.",
-          "step2": "Untick “Statistics”: the card shows it straight away."
-        },
-        "step3": "Click another card: the editor switches section and the rest of the record stays in view.",
-        "look": "Whether seeing the whole record summarised while you edit one part is enough to understand what it affects, without the noise of every control in front of you.",
-        "summary": "A summary of everything; edit one part on the right."
-      },
       "e": {
-        "what": "The same summary cards, but full width. Click “Edit” on one and its settings open in a panel on the right; close it to see the whole record again.",
+        "what": "The whole record as full-width summary cards. Click “Edit” on one and its settings open in a panel on the right; the record moves aside to make room, so you see the summary while you edit.",
         "agent": {
           "step1": "Click “Edit” on the “Identification” card: its settings open in a panel on the right.",
           "step2": "Turn off “Active”: the card on the left shows it straight away."
         },
         "group": {
           "step1": "Click “Edit” on the “Channels and strategy” card.",
-          "step2": "Untick “Phone” and close the panel: the “Assigned agents” card, which the panel covered, has lost phone."
+          "step2": "Untick “Phone”: in the “Assigned agents” card the agents lose phone straight away."
         },
         "user": {
           "step1": "Click “Edit” on the “Access” card.",
           "step2": "Untick “Statistics”: the card shows it straight away."
         },
-        "step3": "Close the panel with the X or Esc: you see the whole record again.",
-        "look": "Whether gaining room for the summary makes up for the panel covering part of the record while you edit.",
+        "step3": "Click outside the panel, the X or Esc to close it: the record takes the full width again.",
+        "look": "Whether keeping the summary in view while you edit in the panel is enough to understand what each change affects.",
         "summary": "Full-width summary; settings in a panel when you click Edit."
       }
     },

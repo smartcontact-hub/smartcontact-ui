@@ -18,6 +18,7 @@ const PLAYGROUND_SNIPPET = `<!-- "visible" es un model: se abre con "[(visible)]
   header="Detalle"
   position="right"
   width="32rem"
+  topOffset="var(--sc-spacing-4)"
   [modal]="true"
   [visible]="open()"
   (visibleChange)="open.set($event)"
@@ -54,6 +55,7 @@ export class DrawerDemoComponent {
       { name: 'showCloseIcon', control: { kind: 'boolean' } },
       { name: 'fullScreen', control: { kind: 'boolean' } },
       { name: 'width', control: { kind: 'text' } },
+      { name: 'topOffset', control: { kind: 'text' } },
     ],
     defaultArgs: {
       header: 'Cabecera del drawer',
@@ -64,6 +66,7 @@ export class DrawerDemoComponent {
       showCloseIcon: true,
       fullScreen: false,
       width: '',
+      topOffset: '',
     },
     props: [
       { name: 'visible', type: 'boolean', default: 'false', description: '`[visible]` + `(visibleChange)`.' },
@@ -89,6 +92,12 @@ export class DrawerDemoComponent {
         type: 'string | null',
         default: 'null',
         description: 'Ancho en `left`/`right` (p. ej. `32rem`). Sin él, el de PrimeNG (20rem).',
+      },
+      {
+        name: 'topOffset',
+        type: 'string | null',
+        default: 'null',
+        description: 'Distancia desde arriba en `left`/`right` (p. ej. la barra de la app, `var(--sc-spacing-4)`), para no taparla. El alto se descuenta solo.',
       },
     ],
   };
