@@ -92,7 +92,7 @@ const sh = (cmd) => {
  * `<body>`. Salió con la fila de totales del Dashboard del Supervisor. Sin la clase, un selector
  * de elementos pierde en especificidad frente a las dos reglas hermanas.
  *
- * `ds` 20 → 12 el 2026-09-15 (DD-112): se fueron las reglas muertas de `sc-inputgroup`
+ * `ds` 20 → 12 el 2026-09-15 (DD-113): se fueron las reglas muertas de `sc-inputgroup`
  * (`.p-inputgroup-addon` ya no existe como clase) y su tope baja con ellas.
  */
 const TOPE = { app: 6, ds: 12, preset: 60 };
@@ -667,7 +667,7 @@ const cuscareReach = reachInsDeApp('cuscare').length;
 if (cuscareReach) log(`  · cuscare (exenta): ${cuscareReach} reach-in(s) — informativo, no bloquea.`);
 
 /* ══════════════════════════════════════════════════════════════════════════
- * F · EL COMPORTAMIENTO NATIVO SE RESPETA (DD-112)
+ * F · EL COMPORTAMIENTO NATIVO SE RESPETA (DD-113)
  * ══════════════════════════════════════════════════════════════════════════
  *
  * Un componente de primeng.dev entra «tal cual, adaptado con nuestros tokens» (AGENTS.md,
@@ -684,8 +684,8 @@ const COMPORTAMIENTO_PERMITIDO = {
   'sc-datatable .p-datatable-header:empty':
     'p-table pinta el caption aunque no se proyecte nada y deja una franja en blanco (css.ts, emptyCaptionCss).',
   '.p-datatable-tbody > tr': 'hover de la gramática de tabla-lista, solo en filas que hacen algo (css.ts, listBehaviorCss, DD-66).',
-  '.p-component.p-button': 'transiciones de 150 ms ease-out de la pulsación de better-ui, elegida por Rafa (css.ts, buttonMotionCss, DD-112).',
-  '.p-component.p-button:active': 'al pulsar se encoge al 96 % y vuelve suave (css.ts, buttonMotionCss, DD-112, customs-catalog §8.1).',
+  '.p-component.p-button': 'transiciones de 150 ms ease-out de la pulsación de better-ui, elegida por Rafa (css.ts, buttonMotionCss, DD-113).',
+  '.p-component.p-button:active': 'al pulsar se encoge al 96 % y vuelve suave (css.ts, buttonMotionCss, DD-113, customs-catalog §8.1).',
   '.p-component.p-button:disabled, .p-component.p-button[aria-disabled="true"]': 'un botón deshabilitado no anima (buttonMotionCss).',
   '.p-component.p-button:disabled:active, .p-component.p-button[aria-disabled="true"]:active': 'ídem, al pulsarlo (buttonMotionCss).',
   ':host ::ng-deep .p-toast .p-toast-message-icon, :host ::ng-deep .p-toast .p-toast-close-button':

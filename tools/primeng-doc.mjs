@@ -2,7 +2,7 @@
 /**
  * primeng-doc — la documentación ENTERA de un componente de primeng.dev, antes de meterlo.
  *
- * La regla de Rafa (2026-09-15, DD-112): cuando pide un componente de primeng.dev, se mete el
+ * La regla de Rafa (2026-09-15, DD-113): cuando pide un componente de primeng.dev, se mete el
  * NATIVO tal cual sale en la documentación, con su comportamiento y su movimiento, y solo se adapta
  * con nuestros tokens. Para eso hay que haber leído la documentación completa —capacidades,
  * propiedades, diferencias entre variantes— y no un ejemplo suelto. primeng.dev pinta sus ejemplos

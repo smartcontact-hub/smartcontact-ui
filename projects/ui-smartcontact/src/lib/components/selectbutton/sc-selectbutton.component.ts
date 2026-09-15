@@ -21,7 +21,7 @@ import { createScOptionState, type ScFieldSize } from '../field/sc-field';
  * la opción elegida, el teclado (Tab y Espacio) y `role="group"` con `aria-pressed` los
  * pone PrimeNG, y el aspecto, el tema (`togglebutton.*`, `selectbutton.*`).
  *
- * **Cuándo sí y cuándo no** (DD-112): filtrar la MISMA lista o elegir un valor
+ * **Cuándo sí y cuándo no** (DD-113): filtrar la MISMA lista o elegir un valor
  * («Todas · Sin transcribir · Fallidas», Claro · Oscuro · Sistema). Para cambiar de
  * COLECCIÓN, cuando se vacían búsqueda y selección, van pestañas (`p-tabs`).
  *

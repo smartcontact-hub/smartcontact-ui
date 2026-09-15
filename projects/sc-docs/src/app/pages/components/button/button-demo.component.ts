@@ -43,7 +43,7 @@ const PRESS_DESCRIPTION =
   'Mantén pulsado un botón: se encoge al 96 % y, al soltarlo, vuelve suave en 150 ms (ease-out), con el cambio de ' +
   'color a la misma velocidad. Si el sistema pide movimiento reducido, no se mueve. Es un desvío a propósito del ' +
   'botón de primeng.dev, que no se mueve y tarda 200 ms: se eligió entre seis formas de pulsar probadas sobre este ' +
-  'mismo botón (DD-112, customs-catalog §8.1). En Figma está pendiente (figma-pendiente §13).';
+  'mismo botón (DD-113, customs-catalog §8.1). En Figma está pendiente (figma-pendiente §13).';
 
 /** Demo de `sc-button` en formato story (motor «Storybook-like»). */
 @Component({

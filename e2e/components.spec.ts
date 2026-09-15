@@ -490,7 +490,7 @@ test.describe('sc-inputgroup', () => {
 
   /* La talla es del GRUPO: campo y addon a la vez, con la métrica de `sc-inputtext` de esa talla.
    * Hasta el 2026-09-15 el addon se quedaba en 14 en sm y lg: sus reglas apuntaban a una clase que
-   * PrimeNG 22 ya no pone (DD-112). */
+   * PrimeNG 22 ya no pone (DD-113). */
   for (const talla of ['sm', 'lg'] as const) {
     test(`size="${talla}" lleva campo y addon a la talla de sc-inputtext`, async ({ page }) => {
       await gotoPage(page, 'inputgroup');

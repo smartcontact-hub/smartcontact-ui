@@ -133,7 +133,7 @@ Examples:
 
 ---
 
-### Componentes de primeng.dev: el nativo tal cual, adaptado con tokens (DD-112)
+### Componentes de primeng.dev: el nativo tal cual, adaptado con tokens (DD-113)
 
 Regla de Rafa (2026-09-15): «parto de la idea de que lo vas a hacer tal cual sale en la docu». Cuando pide un
 componente de primeng.dev (lo pase con enlace o no):
@@ -151,7 +151,7 @@ componente de primeng.dev (lo pase con enlace o no):
    una entrada, `pt`). Ocultar, animar o transformar una pieza de PrimeNG lo para `audit:primeng-coupling` §F:
    si de verdad hace falta, va a su lista con su porqué y se le dice a Rafa con la medida delante.
 
-Lo que la documentación NO dice y se ha medido aquí vive en DD-112 (el `aria-label` de la tira de `p-tabs` va
+Lo que la documentación NO dice y se ha medido aquí vive en DD-113 (el `aria-label` de la tira de `p-tabs` va
 por `[pt]`, el `aria-labelledby` de `p-selectbutton` por su entrada, un icono de fuente dentro de `p-tab`
 descoloca la raya).
 
@@ -247,9 +247,9 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Una etiqueta de solo lectura (estado, severidad) | `sc-tag` | `sc-chip` (eso es lo que el usuario puede quitar: outline + ×) | `customs-catalog.md` §5 |
 | Pedir una contraseña | `sc-password` (ojo con teclado y nombre accesible) | `sc-inputtext type="password"`; un ojo pintado a mano | DD-110 |
 | Buscar dentro de una lista | `sc-search` | `sc-inputgroup` o `sc-inputtext` con un icono a mano | `customs-catalog.md` §5 |
-| Cambiar de colección en la misma pantalla (se vacían búsqueda y selección) | Pestañas `p-tabs` de primeng.dev con texto, como su ejemplo básico; el nombre de la tira por `[pt]="{ content: { 'aria-label': … } }"` | Botones con `role="tab"` a mano; `sc-selectbutton`; contador o icono que repiten lo que ya se ve | DD-112 |
-| Filtrar la misma lista o elegir un valor de un grupo corto que se ve entero | `sc-selectbutton` con `ariaLabelledBy` y opciones traducidas | Un `radiogroup` o botones con estado a mano; `p-tabs` | DD-112 |
-| Separar dos bloques con una línea | `sc-divider` | `<hr>`, un `div` de 1 px o un `border-top` entre hermanos | DD-112 |
+| Cambiar de colección en la misma pantalla (se vacían búsqueda y selección) | Pestañas `p-tabs` de primeng.dev con texto, como su ejemplo básico; el nombre de la tira por `[pt]="{ content: { 'aria-label': … } }"` | Botones con `role="tab"` a mano; `sc-selectbutton`; contador o icono que repiten lo que ya se ve | DD-113 |
+| Filtrar la misma lista o elegir un valor de un grupo corto que se ve entero | `sc-selectbutton` con `ariaLabelledBy` y opciones traducidas | Un `radiogroup` o botones con estado a mano; `p-tabs` | DD-113 |
+| Separar dos bloques con una línea | `sc-divider` | `<hr>`, un `div` de 1 px o un `border-top` entre hermanos | DD-113 |
 | Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco | Spinner centrado; datos que recolocan la página al llegar | UX 2 |
 | Un icono | `<sc-icon>` (Material Symbols) | Emojis; una segunda librería | UX 4 |
 | Borrar una entidad desde su ficha | `sc-form-danger-zone` + `sc-delete-entity-dialog` (el patrón de las nueve fichas que ya lo usan, ver `docs/inventory.md`) | `sc-confirmdialog` genérico; borrar sin confirmar | `docs/inventory.md` |

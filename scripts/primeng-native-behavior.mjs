@@ -3,7 +3,7 @@
  * sección F de `audit-primeng-coupling.mjs`, aparte para probarla con casos fabricados
  * (`scripts/__tests__/audit-primeng-coupling.test.mjs`).
  *
- * POR QUÉ (2026-09-15, DD-112). La regla de Rafa para un componente de primeng.dev es «el nativo
+ * POR QUÉ (2026-09-15, DD-113). La regla de Rafa para un componente de primeng.dev es «el nativo
  * tal cual, adaptado con nuestros tokens». Los tokens no cambian cómo se comporta; lo que sí lo
  * cambia es una regla que OCULTA una pieza, le pone o le quita MOVIMIENTO, o la TRANSFORMA. Ese día
  * se coló una: `.p-tablist-active-bar { display: none }` y una marca fija en su lugar, que quitaba

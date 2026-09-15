@@ -527,7 +527,7 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  *   · texto con FAMILIA propia: la clase impone Inter (las celdas mono, que eran esta familia,
  *     se fueron con DD-76: 99 → 92; y las pastillas y contadores a mano, con DD-77: 92 → 87;
  *     la barra de filtros de Conversaciones pasó a botones, casilla y clases del DS, 2026-09-14: → 69;
- *     la bandera del idioma de Sistema se fue con su segmentado a mano, 2026-09-15, DD-112: → 68;
+ *     la bandera del idioma de Sistema se fue con su segmentado a mano, 2026-09-15, DD-113: → 68;
  *     y el contador de las pestañas de Plantillas, que repetía lo que enseña la tabla, el mismo día: → 67);
  *   · reglas con `font:` shorthand o modificadores que solo cambian el peso (`--active`), que
  *     pisan o complementan a la clase desde la hoja;

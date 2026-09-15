@@ -31,7 +31,7 @@ test('Sistema · al pasar a inglés, los selectores de la misma página también
   const longitud = page.locator('sc-select.policy-row__select').first();
   await expect(longitud, 'la prueba parte del español: si no, no mide el cambio').toContainText('8 caracteres');
 
-  // El idioma se elige con `sc-selectbutton` (DD-112): botones con `aria-pressed` dentro de un grupo con nombre.
+  // El idioma se elige con `sc-selectbutton` (DD-113): botones con `aria-pressed` dentro de un grupo con nombre.
   await page.getByRole('group', { name: 'Idioma de la interfaz' }).getByRole('button', { name: 'Inglés' }).click();
   await expect(page.getByRole('button', { name: 'English' }), 'el cambio de idioma no llegó').toHaveAttribute('aria-pressed', 'true');
 

@@ -698,11 +698,11 @@ Componentes del Kit Figma SC que **NO** tienen wrapper todavía. Decisión consc
 - **Figma SC**: 8 variants `Left × Right × SecondLeft × SecondRight` para addons laterales del input (icon, button, prefix/suffix con border merge).
 - **PrimeNG**: `<p-inputgroup>` + `<p-inputgroup-addon>` cubren esto.
 - **Resolución**: wrapper Extended. API minimal (`size`, `fluid`). Tokens fluyen vía `formField.*` sin overrides propios.
-- **Tallas (2026-09-15, DD-112)**: PrimeNG no tiene tallas de grupo. `size="sm|lg"` mueve en el tema (`sc-preset/css.ts`) las variables hoja del campo y del addon, y el grupo queda como `sc-inputtext` de su talla. Hasta ese día lo hacían reglas sobre `.p-inputgroup-addon`, clase que PrimeNG 22 ya no pone: casaban con 0 elementos.
+- **Tallas (2026-09-15, DD-113)**: PrimeNG no tiene tallas de grupo. `size="sm|lg"` mueve en el tema (`sc-preset/css.ts`) las variables hoja del campo y del addon, y el grupo queda como `sc-inputtext` de su talla. Hasta ese día lo hacían reglas sobre `.p-inputgroup-addon`, clase que PrimeNG 22 ya no pone: casaban con 0 elementos.
 - **Decisión arquitectónica**: NO se re-empaqueta `<p-inputgroup-addon>` como `<sc-inputgroup-addon>` — los addons son 100% PrimeNG sin overrides, un wrapper añadiría boilerplate sin valor (minimal customization, DD-5). El consumer importa `InputGroupAddonModule` directo. Patrón consistente con `<sc-dialog>` que permite `<p-button>` por dentro.
 - **NO confundir con search**: `<sc-search>` usa `<p-iconfield>` (icon overlay decorativo dentro del input, sin border merge). `<sc-inputgroup>` usa `<p-inputgroup>` (addons con border merge). Semánticas distintas.
 
-### 5.2 `sc-selectbutton` — ✅ Resuelto el 2026-09-15 (Figma `❖ SelectButton` node 6738:46433, DD-112)
+### 5.2 `sc-selectbutton` — ✅ Resuelto el 2026-09-15 (Figma `❖ SelectButton` node 6738:46433, DD-113)
 
 - **Figma SC**: 24 variants `Select (First/Second/Third/Fourth/Multiple) × OptionAmount (2/3/4) × Multiple (true/false) × Invalid (true/false)`.
 - **PrimeNG**: `<p-selectbutton>` (componente distinto a `<p-select>`).
@@ -957,7 +957,7 @@ El **cinturón tipográfico** está cerrado (tokenización de 367 literales `fon
 
 ## 8. Comportamiento que se aparta de PrimeNG nativo
 
-Regla (DD-112): un componente de primeng.dev entra tal cual, con su comportamiento y su movimiento. Lo que aquí
+Regla (DD-113): un componente de primeng.dev entra tal cual, con su comportamiento y su movimiento. Lo que aquí
 se aparta está a la vista para poder revisarlo: cada fila es una regla que oculta, anima o transforma una pieza de
 PrimeNG. `audit:primeng-coupling` §F no deja entrar una nueva sin su permiso en `COMPORTAMIENTO_PERMITIDO`, y
 exige que cada permiso tenga su fila aquí (el selector entre comillas invertidas, tal cual).

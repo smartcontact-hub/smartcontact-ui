@@ -394,7 +394,7 @@ generador no emite esos seis `--sc-cmp-button-danger-*`.
 **Estado:** pendiente · **Sin verificar** contra el fichero del DS: no se ha abierto `❖ Button` para ver si tiene
 estado pulsado ni interacciones de prototipo. Compruébalo antes de actuar.
 
-Desde DD-112, al pulsar cualquier `sc-button` el botón se encoge al **96 %** con una transición de **150 ms ease-out**,
+Desde DD-113, al pulsar cualquier `sc-button` el botón se encoge al **96 %** con una transición de **150 ms ease-out**,
 y al soltar vuelve igual de suave; el cambio de color del estado pulsado viaja con la misma transición. Rafa la eligió
 entre seis probadas en un playground (`customs-catalog.md` §8.1). primeng.dev no se mueve: es un desvío a propósito, y
 un prototipo de Figma que no lo lleve enseña otro botón.

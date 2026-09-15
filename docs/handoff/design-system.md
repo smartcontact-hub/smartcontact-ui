@@ -34,7 +34,7 @@
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
 - **`sc-selectbutton`: cablear su color a `var(--sc-cmp-togglebutton-*)`** cuando Figma suba la opción no elegida (§10).
-- **Lo que dejó DD-112:** `sc-form-section-nav` con `role="tab"` sin `tablist` (pestañas verticales o nav como
+- **Lo que dejó DD-113:** `sc-form-section-nav` con `role="tab"` sin `tablist` (pestañas verticales o nav como
   `settings-sidebar`; tres e2e); tira del reproductor sin nombre (clave i18n); la «o» del acceso en primario
   (`.login__divider` no llega); `sc-slot` a tokens del divider (e2e y captura); CSS muerto `.seg` e `.inline-field`.
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
@@ -164,9 +164,9 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
-## ✅ 2026-09-15 · Tabs, Toolbar, InputGroup, Divider y SelectButton de primeng.dev, bien puestos (DD-112)
+## ✅ 2026-09-15 · Tabs, Toolbar, InputGroup, Divider y SelectButton de primeng.dev, bien puestos (DD-113)
 
-**Sello:** rama `arebury/fix-tabs-toolbar-inputgroup`, HEAD `cc3c7d7` (#195) más este cambio. Rafa eligió pestañas, separadores
+**Sello:** rama `arebury/fix-tabs-toolbar-inputgroup`, HEAD `7551099` (#197) más este cambio. Rafa eligió pestañas, separadores
 y pulsación con capturas delante. DD-107 vive en `archive/handoff-ds-2026-09-15-tabs`; «Conversaciones hace scroll», en `…-conversaciones-scroll`.
 
 **Lo que cambia.** DS: `sc-selectbutton`, tallas de `sc-inputgroup`. Supervisor: `p-tabs` nativas de texto, `sc-selectbutton`,

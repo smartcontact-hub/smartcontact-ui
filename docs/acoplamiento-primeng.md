@@ -166,7 +166,7 @@ tema YA publica: el `font-size` md de `.p-select-label`, `.p-multiselect-label`,
 `sc-inputgroup`) y `.p-datepicker-input` está en `sc-preset/css.ts` (`mdTypographySelectors`) con el
 mismo valor. DD-91 (2026-09-14) retiró las de `sc-select`, `sc-multiselect` y `sc-datepicker`, junto
 con su letra y relleno sm/lg escritos a mano, porque sin capa pisaban la talla del tema (la fecha sm
-salía a 14). DD-112 (2026-09-15) retiró la de `sc-inputgroup`: sus reglas del addon apuntaban a
+salía a 14). DD-113 (2026-09-15) retiró la de `sc-inputgroup`: sus reglas del addon apuntaban a
 `.p-inputgroup-addon`, que PrimeNG 22 ya no pone, y sus tallas pasaron al tema.
 
 ---
