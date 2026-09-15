@@ -7,7 +7,7 @@
   <!-- En modo pared deja de ser una página de lista: sin ancho máximo, de borde a borde de la tele. -->
   <div class="dashboard-frame" [class.page__inner]="!wall()" [class.page__inner--list]="!wall()">
     @if (view(); as m) {
-      <h1 class="visually-hidden">{{ m.name }}</h1>
+      <h1 class="visually-hidden" id="dashboard-title">{{ m.name }}</h1>
 
       <!-- ─── Cabecera: pestañas a la izquierda; estado, alertas, carrusel y modo pared a la derecha ─── -->
       @if (!wall()) {
@@ -24,12 +24,17 @@
             (move)="store.move($event.from, $event.to)"
           />
 
-          <div class="dashboard-head__actions">
+          <!-- Las acciones de la página son la Toolbar de primeng.dev, como la barra del modo pared, sin
+               caja propia (token de instancia): en tres grupos separados por el separador vertical del DS,
+               estado | alertas y rotación | modo pared. Las del monitor (⋮, + Monitor) van con sus pestañas. -->
+          <p-toolbar class="dashboard-head__actions" [dt]="toolbarDt" ariaLabelledBy="dashboard-title">
             <p class="dashboard-head__live sc-text-caption-regular">
               <sc-badge variant="success" aria-hidden="true" />
               <span>{{ 'dashboard.live' | translate }}</span>
               <span class="dashboard-head__updated">{{ 'dashboard.updated_at' | translate: { time: updatedAtLabel() } }}</span>
             </p>
+
+            <span class="dashboard-head__sep" aria-hidden="true"><sc-divider layout="vertical" /></span>
 
             <!-- La campana cuenta lo que NO has visto. Sin nada nuevo vuelve a su estado normal, aunque
                  alguna alerta siga activa (la tarjeta lo sigue diciendo). Es el botón del DS: el color lo
@@ -38,7 +43,6 @@
             <sc-button
               class="dashboard-head__alerts"
               size="sm"
-              rounded
               [variant]="alertLevel() === 'danger' ? 'danger' : alertLevel() === 'warning' ? 'warn' : 'secondary'"
               [appearance]="alertLevel() ? 'outlined' : 'text'"
               [icon]="unseenAlerts().length ? 'notifications_active' : 'notifications'"
@@ -69,16 +73,17 @@
               </div>
             }
 
+            <span class="dashboard-head__sep" aria-hidden="true"><sc-divider layout="vertical" /></span>
             <sc-button
               class="dashboard-head__wall"
               variant="secondary"
-              appearance="outlined"
+              appearance="text"
               size="sm"
               icon="fullscreen"
               [label]="'dashboard.wall.enter' | translate"
               (clicked)="enterWall()"
             />
-          </div>
+          </p-toolbar>
           @if (carouselRunning() && canRotate()) {
             <!-- Cuánto falta para el siguiente monitor: se reinicia al cambiar de monitor. -->
             <span class="dashboard-progress" aria-hidden="true">
@@ -149,6 +154,19 @@
 
       <!-- ─── Las cuatro cajas. Cada monitor tiene sus propias cajas (otro `id`): al cambiar de monitor
            se montan de nuevo y sus widgets entran escalonados. ─── -->
+      <!-- En modo pared los huecos vacíos no se pintan: un monitor sin ningún widget se quedaba en negro. -->
+      @if (wall() && activeEmpty()) {
+        <div class="dashboard-empty">
+          <sc-empty-state
+            icon="widgets"
+            titleKey="dashboard.wall.empty_title"
+            bodyKey="dashboard.wall.empty_desc"
+            ctaKey="dashboard.wall.exit"
+            ctaIcon="fullscreen_exit"
+            (cta)="exitWall()"
+          />
+        </div>
+      } @else {
       <div class="dashboard" cdkDropListGroup>
         @for (box of m.boxes; track box.id; let b = $index) {
           <div class="dashboard__box" [class.dashboard__box--split]="box.layout === 'split'">
@@ -206,6 +224,7 @@
           </div>
         }
       </div>
+      }
     }
   </div>
 </div>

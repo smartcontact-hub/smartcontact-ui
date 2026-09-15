@@ -42,6 +42,9 @@ import type { DashboardMonitor } from '../../data/dashboard.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MonitorTabsComponent {
+  /** La tira sin el fondo de contenido de `p-tabs`: sobre el suelo de la página, como el resto de la cabecera. */
+  protected readonly tabsDt = { tablist: { background: 'transparent' } };
+
   private readonly translate = inject(TranslateService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly lang = injectLangChange();

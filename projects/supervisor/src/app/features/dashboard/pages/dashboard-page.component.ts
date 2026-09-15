@@ -16,7 +16,12 @@ import { MenuModule } from 'primeng/menu';
 import { PopoverModule } from 'primeng/popover';
 import { ToolbarModule } from 'primeng/toolbar';
 import type { MenuItem } from 'primeng/api';
-import { ScBadgeComponent as BadgeComponent, ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import {
+  ScBadgeComponent as BadgeComponent,
+  ScButtonComponent as ButtonComponent,
+  ScDividerComponent as DividerComponent,
+  ScEmptyStateComponent as EmptyStateComponent,
+} from '@smartcontact-hub/components';
 import { SC_ICON_SIZE_DEFAULT, ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 
 import { LanguageService } from '@core/services/language.service';
@@ -32,7 +37,7 @@ import { WidgetCardComponent } from '../components/widget-card/widget-card.compo
 import { WidgetViewComponent, type DetailOpen } from '../components/widget-view/widget-view.component';
 import { alertFor, type WidgetAlert } from '../data/alerts';
 import { applyFilter } from '../data/apply-filter';
-import type { DashboardBox, DashboardWidget, WidgetFilter } from '../data/dashboard.types';
+import type { DashboardBox, DashboardMonitor, DashboardWidget, WidgetFilter } from '../data/dashboard.types';
 import type { DetailRequest } from '../data/detail';
 import { typeTitleKey, widgetType, type WidgetSize } from '../data/widget-catalog';
 import { DashboardStore, slotSize, type SlotRef } from '../state/dashboard.store';
@@ -85,6 +90,8 @@ interface MonitorAlert {
     CdkDrag,
     BadgeComponent,
     ButtonComponent,
+    DividerComponent,
+    EmptyStateComponent,
     IconComponent,
     AnimateOnChangeDirective,
     DetailDrawerComponent,
@@ -99,6 +106,10 @@ interface MonitorAlert {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPageComponent {
+  /** La Toolbar de la cabecera sin su caja: sobre el suelo de la página, sin relleno ni esquinas. La raya
+   *  de abajo la pone la cabecera, que continúa la de las pestañas. */
+  protected readonly toolbarDt = { root: { background: 'transparent', padding: '0', borderRadius: '0', gap: 'var(--sc-spacing-0-75)' } };
+
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
   private readonly undoStack = inject(UndoStackService);
@@ -188,6 +199,8 @@ export class DashboardPageComponent {
   protected readonly carouselSeconds = signal<number>(20);
   protected readonly carouselRunning = signal(false);
   protected readonly canRotate = computed(() => this.store.monitors().length > 1);
+  /** El monitor abierto no tiene ningún widget (uno recién creado). */
+  protected readonly activeEmpty = computed(() => !hasWidgets(this.store.active()));
   protected readonly wall = signal(false);
   protected readonly wallControlsVisible = signal(true);
   protected readonly wallZoom = signal(1);
@@ -229,7 +242,7 @@ export class DashboardPageComponent {
       const seconds = this.carouselSeconds();
       this.store.activeId();
       this.clearCarousel();
-      if (running) this.carouselTimer = setTimeout(() => this.store.selectOffset(1), seconds * 1000);
+      if (running) this.carouselTimer = setTimeout(() => this.rotate(), seconds * 1000);
     });
 
     // Una alerta que se resuelve deja de estar «vista»: si vuelve a pasar, tiene que avisar.
@@ -361,6 +374,19 @@ export class DashboardPageComponent {
     this.carouselRunning.update((r) => !r);
   }
 
+  /** Paso del carrusel: al siguiente monitor con widgets. Uno vacío en la tele es una pantalla en negro;
+   *  a mano (flechas, anterior y siguiente) sí se llega a él, y enseña su vacío. */
+  private rotate(): void {
+    const list = this.store.monitors();
+    const at = list.findIndex((m) => m.id === this.store.activeId());
+    for (let step = 1; step < list.length; step++) {
+      if (hasWidgets(list[(at + step) % list.length])) {
+        this.store.selectOffset(step);
+        return;
+      }
+    }
+  }
+
   private clearCarousel(): void {
     if (this.carouselTimer) clearTimeout(this.carouselTimer);
     this.carouselTimer = null;
@@ -409,4 +435,8 @@ export class DashboardPageComponent {
       this.exitWall();
     }
   }
+}
+
+function hasWidgets(monitor: DashboardMonitor | null | undefined): boolean {
+  return !!monitor?.boxes.some((box) => box.slots.some(Boolean));
 }
