@@ -160,6 +160,21 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-15 · El tema lee los colores que exporta Figma, y el guard no deja escribir uno a mano
+
+**Sello:** rama `arebury/tema-lee-figma`, sobre `12bdb21` (#192). Rafa: «adelante a todo esto» (criterio Kit, DD-111; AA manda).
+«Acceso» (DD-110) vive en `archive/handoff-ds-2026-09-15-acceso`.
+
+**Lo que cambia.** 185 colores del preset iban como paso de paleta o hex donde el export ya genera su `--sc-cmp-*`: 166
+valían igual y leen la variable sin mover un píxel; los 11 del botón de aviso siguen al Kit (el texto con contorno o de
+texto estaba a 1,92:1, ahora 4,92:1; medido en «Alertas nuevas»); los 8 que no llegarían a AA con el Kit (botón `danger`
+en claro, opción no elegida de SelectButton) van a EXCLUDE con su motivo y a `figma-pendiente.md` §12 y §8.
+`tokens:cmp-rewire` caza también la paleta y `root`, en todo preset con `colorScheme` (sobre `main` daba 185).
+
+- ⚠️ **Las capturas de sc-docs no ven el aviso con contorno ni el modo oscuro**: esos colores se miden a mano (Supervisor).
+- 🕳️ **Medido y no hecho**: los 69 `font-size` del Supervisor no tienen text style equivalente salvo ~17 sin cambio a la
+  vista, y 110 tokens a mano sin uso incluyen estados que viajan en el tema del equipo externo. Decide Rafa.
+
 ## ✅ 2026-09-15 · Lo que se nota: idioma en vivo, casillas sin URL, columna en su sitio, miga y raya del Dashboard
 
 **Sello:** rama `arebury/arreglos-que-se-notan`, sobre `8ea9bea` (#190). Rafa, con la tabla de «qué cambia para quien usa
@@ -200,22 +215,6 @@ el del Kit). Los 86 anillos a mano leen `--sc-focus-ring-width/offset`, y los ha
 
 - ⚠️ **Una regla SIN CAPA de un wrapper gana siempre al tema**: el rojo de error tapaba el borde de foco del preset.
   Un estado que PrimeNG sabe pintar (`p-invalid`) se le pasa a PrimeNG; no se repinta en el SCSS del wrapper.
-
-## ✅ 2026-09-14 · El Supervisor tiene pantalla de acceso, `sc-password` y un fondo que se mueve (DD-110)
-
-**Sello:** rama `arebury/login-supervisor` (#179), fundida en `c17d49c`. Rafa, visto en local y en la previsualización:
-«fúndelo así». Los tramos «Recursos» (DD-105) y «Grises intermedios» (DD-106) viven en los tags
-`archive/handoff-ds-2026-09-14-recursos` y `archive/handoff-ds-2026-09-14-grises`.
-
-**Lo que cambia.** `/login` fuera del shell con el molde de SnowUI: SSO de Microsoft en nuestro `sc-button`, pistas de
-email, un aviso de credenciales que no delata cuentas, recuperar contraseña, «Contáctanos» a la web y «Cerrar sesión»
-en el avatar. «Hola de nuevo» si se entró en 48 h. DS: `sc-password` (el ojo de PrimeNG era un `svg` sin foco). Fondo
-WebGL de Claude Design (`sc-login-art`), con la imagen fija debajo. Cuenta demo `supervisor@example.com` / `demo1234`.
-
-- ⚠️ **La hoja de una página no alcanza el `<img>` ni el `<canvas>` de OTRO componente** (encapsulación): el SCSS
-  que traía la propuesta de Claude Design no se aplicaba. Esos estilos van en el propio componente.
-- ⚠️ **Día de muchas PRs, segunda parte**: seis rebases, todos por `DECISIONS.md` (el número del DD) e inventarios. Un
-  script que toma la versión de `origin/main`, pone tu DD en `max+1` y regenera evita resolverlos a mano.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -291,6 +290,8 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **La hoja de una página no alcanza el `<img>` ni el `<canvas>` de OTRO componente** (encapsulación): esos estilos van
+  en el propio componente (DD-110, el fondo del acceso).
 - 🪤 **Para estilar un interno de PrimeNG sin `.p-*`, ponle clase propia por `pt`**: `pBind` la mezcla con la suya y el
   acoplamiento no crece (DD-108).
 - 🪤 **«Sin transcribir» en el backend real**: `getTranscriptions` da 503 por encima de ~416-663 resultados y solo marca

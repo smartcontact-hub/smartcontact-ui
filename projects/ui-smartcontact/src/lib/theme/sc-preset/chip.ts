@@ -31,8 +31,8 @@ import type { ChipDesignTokens } from '@primeuix/themes/types/chip';
                 color: "var(--sc-cmp-chip-icon-color)"
             },
             root: {
-                color: "{surface.0}",
-                background: "{surface.800}"
+                color: "var(--sc-cmp-chip-color)",
+                background: "var(--sc-cmp-chip-background)"
             },
             removeIcon: {
                 color: "var(--sc-cmp-chip-remove-icon-color)"
@@ -43,8 +43,8 @@ import type { ChipDesignTokens } from '@primeuix/themes/types/chip';
                 color: "var(--sc-cmp-chip-icon-color)"
             },
             root: {
-                color: "{surface.800}",
-                background: "{surface.100}"
+                color: "var(--sc-cmp-chip-color)",
+                background: "var(--sc-cmp-chip-background)"
             },
             removeIcon: {
                 color: "var(--sc-cmp-chip-remove-icon-color)"

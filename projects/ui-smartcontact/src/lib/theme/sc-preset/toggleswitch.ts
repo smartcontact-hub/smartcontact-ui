@@ -30,10 +30,10 @@ export default {
     colorScheme: {
         dark: {
             root: {
-                background: "{surface.700}",
-                hoverBackground: "{surface.600}",
+                background: "var(--sc-cmp-toggleswitch-background)",
+                hoverBackground: "var(--sc-cmp-toggleswitch-hover-background)",
                 checkedBackground: "{primary.color}",
-                disabledBackground: "{surface.600}",
+                disabledBackground: "var(--sc-cmp-toggleswitch-disabled-background)",
                 checkedHoverBackground: "{primary.hover.color}"
             },
             handle: {
@@ -50,8 +50,8 @@ export default {
         },
         light: {
             root: {
-                background: "{surface.300}",
-                hoverBackground: "{surface.400}",
+                background: "var(--sc-cmp-toggleswitch-background)",
+                hoverBackground: "var(--sc-cmp-toggleswitch-hover-background)",
                 checkedBackground: "{primary.color}",
                 disabledBackground: "{form.field.disabled.background}",
                 checkedHoverBackground: "{primary.hover.color}"

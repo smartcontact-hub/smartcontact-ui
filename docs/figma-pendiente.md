@@ -374,6 +374,21 @@ mismo color. Nada más cambia: cabecera, rellenos y radio siguen atados a `panel
 
 ---
 
+## 12 · El botón rojo en claro, un paso más oscuro por contraste (2026-09-15)
+
+**Estado:** pendiente de hacer en el fichero · **Sin verificar** contra el fichero del DS: sale del export en `main` y del
+guard `tokens:cmp-rewire`.
+
+El Kit pinta el botón `danger` sólido en `red/500` con texto blanco: **3,76:1**, no llega a AA. El código usa un paso más
+(`red/600`, 4,83:1; hover `red/700`, pulsado `red/800`) y lo declara en `scripts/cmp-color-map.mjs` (EXCLUDE), así que el
+generador no emite esos seis `--sc-cmp-button-danger-*`.
+
+**Cómo se hace:** en `aura/component/light`, `button/danger/background` y `border/color` a `red/600`, `hover/*` a `red/700` y
+`active/*` a `red/800`. **Cómo sabes que está hecho:** tras exportar, se quitan las seis filas de EXCLUDE, el preset lee
+`var(--sc-cmp-button-danger-*)` y `tokens:cmp-rewire` sigue en verde.
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

@@ -4,18 +4,18 @@ import type { ProgressSpinnerDesignTokens } from '@primeuix/themes/types/progres
     colorScheme: {
         dark: {
             root: {
-                colorOne: "{red.400}",
-                colorTwo: "{blue.400}",
-                colorFour: "{yellow.400}",
-                colorThree: "{green.400}"
+                colorOne: "var(--sc-cmp-progressspinner-color-one)",
+                colorTwo: "var(--sc-cmp-progressspinner-color-two)",
+                colorFour: "var(--sc-cmp-progressspinner-color-four)",
+                colorThree: "var(--sc-cmp-progressspinner-color-three)"
             }
         },
         light: {
             root: {
-                colorOne: "{red.500}",
-                colorTwo: "{blue.500}",
-                colorFour: "{yellow.500}",
-                colorThree: "{green.500}"
+                colorOne: "var(--sc-cmp-progressspinner-color-one)",
+                colorTwo: "var(--sc-cmp-progressspinner-color-two)",
+                colorFour: "var(--sc-cmp-progressspinner-color-four)",
+                colorThree: "var(--sc-cmp-progressspinner-color-three)"
             }
         }
     }
