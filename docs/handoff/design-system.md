@@ -50,9 +50,14 @@
 2. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
    ~20 de las 79 entradas de `p-table`.
 
-- **Conversaciones y Entidades a `sc-list-page` (DD-98)**: las demás listas ya van sobre la pieza. Conversaciones
-  lleva filtros, tabla propia y `stickyHeader` con su e2e; Entidades, dos tablas. Después, archivar con tag las
-  ramas `comparar/tabla-*` y borrar la local `arebury/tabla-scroll-listas` (la copia por pantalla que no se subió).
+- **Entidades a `.page--tabla` (DD-95)**: la última lista que mueve la página entera; dos tablas en una pantalla.
+  Conversaciones ya va con scroll dentro (tramo 2026-09-15), pero con su tabla propia, no sobre `sc-list-page`
+  (DD-98): pasarla a la pieza es otra tarea. Después, archivar con tag las ramas `comparar/tabla-*` y borrar la
+  local `arebury/tabla-scroll-listas` (la copia por pantalla que no se subió).
+- **Conversaciones con más de 100 filas**: la lista virtual pide filas del mismo alto, y a 1280 Origen y Destino
+  parten en dos líneas. Con los datos demo (34-47) no se activa. Agentes lo resolvió con `tableMinWidth` y scroll
+  lateral (DD-102), pero aquí chocaría con las etiquetas que se recortan a 1280 a propósito: decidirlo con Rafa
+  cuando haya datos reales.
 - **Una columna oculta que se reactiva en el selector sale al final** (Agentes, Usuarios, Grupos): el selector
   hace `push`. Si Rafa lo pide, insertarla en su sitio declarado, en `sc-column-selector` para todas.
 - **Las tablas de dentro de los formularios** (agentes de un grupo, grupos de un agente) las rehace la sesión de
@@ -165,6 +170,21 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
    «bloqueado por herramienta», es trabajo. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+
+## ✅ 2026-09-15 · Conversaciones hace scroll dentro de la tabla, como el resto de listas (DD-95)
+
+**Sello:** rama `arebury/fix-conversaciones-tabla-contenida`, sobre `568b14a`. Rafa preguntó por qué la tabla no iba
+contenida como las demás; visto en local junto a Agentes: «me gusta».
+
+**Lo que cambia.** `.page--tabla` y `<sc-datatable scrollable scrollHeight="flex" virtualScroll>` en Conversaciones:
+título, vistas, filtros y cabecera quietos; la tarjeta vuelve a tener borde (se quita el «flush» de S59) y deja
+sitio a la barra de selección. Medido a 1440 contra Agentes: tarjeta acaba en 883, y en 806 con la barra en 815.
+`conversations-sticky-header.spec.ts` pasa a `conversations-table-scroll.spec.ts`: sus tres pruebas nuevas se
+vieron rojas con el fallo puesto (sin `.page--tabla`, host `block`, tarjeta que llena, sin `--seleccion`).
+
+- ⚠️ **El host de la tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta
+  vive dentro de un componente. El host tiene que ser flex (`0 1 auto`, `min-height: 0`); con `display: block`
+  la tarjeta mide 1518 dentro de un host de 680 y la página no hace scroll en ningún sitio.
 
 ## ✅ 2026-09-15 · El foco y el error de los campos siguen a Aura y al Kit (DD-111)
 
