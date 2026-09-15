@@ -351,10 +351,13 @@ sc-datatable.sc-datatable--fill > p-table {
  * se cortaban antes de cada borde de la tarjeta, lo que medía la barra. Ahora llegan al borde; con barra, a la derecha acaban donde
  * empieza ella. El precio, aceptado: al aparecer o desaparecer la barra las columnas se mueven su ancho. */
 
+/* Como la barra de ScrollArea (Rafa, 2026-09-15): fina, del color de su tirador y solo con el ratón
+ * encima. No es ScrollArea: la lista virtual de \`p-table\` tiene que ser dueña de su contenedor de scroll
+ * (sin ella pinta todas las filas), así que se imita su aspecto sobre la barra nativa. */
 sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar,
 sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar {
-    width: var(--sc-spacing-0-75);
-    height: var(--sc-spacing-0-75);
+    width: var(--sc-spacing-0-25);
+    height: var(--sc-spacing-0-25);
 }
 
 sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar-track,
@@ -365,8 +368,13 @@ sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar-track {
 
 sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar-thumb,
 sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar-thumb {
-    background: var(--sc-border-strong);
+    background: transparent;
     border-radius: var(--sc-radius-full);
+}
+
+sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container:hover::-webkit-scrollbar-thumb,
+sc-datatable.sc-datatable--scroll .p-virtualscroller:hover::-webkit-scrollbar-thumb {
+    background: var(--p-scrollarea-handle-background);
 }
 `;
 
