@@ -30,6 +30,7 @@ import {
 } from '@smartcontact-hub/components';
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
 import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
+import { injectLangChange } from '@core/utils/lang-change';
 
 /**
  * Generic CRUD page used by all 9 repository instances. Driven by a
@@ -59,6 +60,7 @@ import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
 export class RepoListPageComponent<T extends RepoEntity> {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly xlsx = inject(XlsxExportService);
 
   readonly config = input.required<RepoPageConfig<T>>();
@@ -122,12 +124,15 @@ export class RepoListPageComponent<T extends RepoEntity> {
     return this.translate.instant(this.config().entityPluralKey);
   });
 
-  protected readonly bulkEntity = computed(() => ({
-    singular: this.entitySingular(),
-    plural: this.entityPlural(),
-    suffixSingular: this.translate.instant('common.bulk.selected_one'),
-    suffixPlural: this.translate.instant('common.bulk.selected_other'),
-  }));
+  protected readonly bulkEntity = computed(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return {
+      singular: this.entitySingular(),
+      plural: this.entityPlural(),
+      suffixSingular: this.translate.instant('common.bulk.selected_one'),
+      suffixPlural: this.translate.instant('common.bulk.selected_other'),
+    };
+  });
 
   /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
    * Caso especial: las columnas salen de `config()`, así que NO se puede
@@ -138,6 +143,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   private readonly cellTpl = viewChild<TemplateRef<ScColumnCellContext<T>>>('cellTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<T>[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
     const cell = this.cellTpl();
     return this.config().columns.map((c) => ({
       field: c.key,

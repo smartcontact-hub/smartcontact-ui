@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   clavesPedidas,
+  computedsSinIdioma,
   copyAPelo,
   divergencias,
   flat,
@@ -101,4 +102,35 @@ test('variables: la comparación es por nombre, no por orden ni por espacios', (
 
 test('flat: aplana a dot-path y deja el array como hoja', () => {
   assert.deepEqual(flat({ a: { b: 'x' }, c: ['y'] }), { 'a.b': 'x', c: ['y'] });
+});
+
+test('H · computed que traduce sin leer el idioma: rojo con tipo genérico, cuerpo de expresión y lectura solo en comentario', () => {
+  // Los tres casos que se escaparon al contador del 2026-09-15: el primero, con `computed<T>(`.
+  const generico = `
+  readonly items = computed<MenuItem[]>(() =>
+    this.states.map((p) => ({ label: this.translate.instant(this.keys[p]) })),
+  );`;
+  const bloque = `
+  readonly tooltip = computed(() => {
+    return this.translate.instant(this.status().labelKey);
+  });`;
+  const comentario = `
+  readonly cols = computed(() => {
+    // TODO: this.lang() cuando toque
+    return [{ header: this.translate.instant('a.b') }];
+  });`;
+  assert.deepEqual(computedsSinIdioma(generico), [2]);
+  assert.deepEqual(computedsSinIdioma(bloque), [2]);
+  assert.deepEqual(computedsSinIdioma(comentario), [2]);
+});
+
+test('H · verde si lee el idioma dentro, y un computed sin instant no cuenta', () => {
+  const lee = `
+  readonly cols = computed<readonly Col[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma
+    return [{ header: this.translate.instant('a.b', { n: fn(1) }) }];
+  });`;
+  const sinTraducir = `readonly total = computed(() => this.rows().length);`;
+  assert.deepEqual(computedsSinIdioma(lee), []);
+  assert.deepEqual(computedsSinIdioma(sinTraducir), []);
 });

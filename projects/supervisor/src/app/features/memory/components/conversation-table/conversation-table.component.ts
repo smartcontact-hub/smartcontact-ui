@@ -33,6 +33,7 @@ import {
   MemoryStatusIconComponent,
   resolveStatusLabelKey,
 } from '../memory-status-icon/memory-status-icon.component';
+import { injectLangChange } from '@core/utils/lang-change';
 
 /** Acciones del menú contextual por fila.
  *  - `process`: la fila aún no tiene transcripción (no recording ⇒ no
@@ -96,6 +97,7 @@ function primaryActionFor(conv: Conversation): ConversationContextAction | null 
 })
 export class ConversationTableComponent {
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
 
   readonly conversations = input.required<readonly Conversation[]>();
   readonly selectedIds = input.required<ReadonlySet<string>>();
@@ -355,6 +357,7 @@ export class ConversationTableComponent {
   /** Modelo del menú compartido — computed ESTABLE: solo cambia al apuntar a
    *  otra fila. Los items dependen del estado de ESA conversación. */
   protected readonly menuItems = computed<MenuItem[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
     const conv = this.contextConv();
     if (!conv) return [];
     const items: MenuItem[] = [];

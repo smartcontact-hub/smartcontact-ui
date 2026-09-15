@@ -32,6 +32,7 @@ import {
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 
 import { NumeracionEspecialSectionComponent } from '../sections/numeracion-especial-section.component';
+import { injectLangChange } from '@core/utils/lang-change';
 
 interface ThemeOption {
   readonly value: ThemeMode;
@@ -110,6 +111,7 @@ export class SistemaPageComponent {
   protected readonly language = inject(LanguageService);
   private readonly confirm = inject(ScConfirmService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly doc = inject(DOCUMENT);
   private readonly messages = inject(MessageService);
   private readonly agentsStore = inject(AgentsStore);
@@ -156,19 +158,21 @@ export class SistemaPageComponent {
   protected readonly confirmText = signal('');
   /** Políticas de contraseña (maqueta): opciones traducidas para `sc-select`. */
   protected readonly minLength = signal('chars_8');
-  protected readonly minLengthOptions = computed(() =>
-    ['chars_8', 'chars_10', 'chars_12', 'chars_16'].map((k) => ({
+  protected readonly minLengthOptions = computed(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return ['chars_8', 'chars_10', 'chars_12', 'chars_16'].map((k) => ({
       label: this.translate.instant('config.seguridad.policies.min_length_options.' + k),
       value: k,
-    })),
-  );
+    }));
+  });
   protected readonly expiration = signal('never');
-  protected readonly expirationOptions = computed(() =>
-    ['never', 'days_30', 'days_60', 'days_90'].map((k) => ({
+  protected readonly expirationOptions = computed(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return ['never', 'days_30', 'days_60', 'days_90'].map((k) => ({
       label: this.translate.instant('config.seguridad.policies.expiration_options.' + k),
       value: k,
-    })),
-  );
+    }));
+  });
   protected readonly processing = signal(false);
   protected readonly result = signal<RegenerationResult | null>(null);
 

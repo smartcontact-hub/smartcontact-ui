@@ -32,14 +32,15 @@
 }
 
 /* ─── Cabecera ─── */
+/* UNA sola raya bajo la cabecera: la de la tira de pestañas (la pinta el tema) y la continúan sus
+   acciones y las de la derecha, con el mismo borde y a la misma altura (`stretch`). Antes la cabecera
+   pintaba otra, más clara y un píxel más abajo, y la de la tira parecía cortarse tras «+ Monitor». */
 .dashboard-head {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
-  gap: var(--sc-spacing-1);
   margin-bottom: var(--sc-spacing-0-75);
-  border-bottom: 1px solid var(--sc-border-subtle);
 
   &__tabs {
     flex: 1;
@@ -51,6 +52,8 @@
     align-items: center;
     gap: var(--sc-spacing-0-75);
     flex: none;
+    padding-inline-start: var(--sc-spacing-1);
+    border-bottom: 1px solid var(--sc-border-default);
   }
 
   &__live {
@@ -421,10 +424,13 @@ sc-dashboard-widget-card.cdk-drag-placeholder {
 
     /* Las acciones suben encima de las pestañas: así el subrayado de la pestaña activa sigue
        tocando el borde de la cabecera. */
+    /* Encima de las pestañas no continúan ninguna raya: la tira ya ocupa todo el ancho. */
     &__actions {
       order: -1;
       flex: 1 1 100%;
       justify-content: flex-end;
+      padding-inline-start: 0;
+      border-bottom: 0;
     }
   }
 

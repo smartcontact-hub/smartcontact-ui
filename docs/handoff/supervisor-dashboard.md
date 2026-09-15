@@ -5,6 +5,13 @@
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
+## ✅ 2026-09-15 · Rafa acepta los cambios del DS y la raya de las pestañas cruza la cabecera
+
+Aceptados por Rafa: pie de tabla, `sc-gauge max` y las barras de `metergroup` a 7 (medido: las 8 a 7 px). La cabecera
+pintaba DOS rayas (la de la tira, que acababa tras «+ Monitor», y otra más clara un píxel más abajo): ahora hay una,
+la de la tira, que continúan las acciones con el mismo borde (`align-items: stretch`). Visto a 1440, 1024 y 390.
+Rama `arebury/arreglos-que-se-notan`.
+
 ## ✅ 2026-09-15 · La tarjeta de widget pasa a ser un sc-panel
 
 > **Sello: rama `arebury/dashboard-widget-card-panel` (caja `bladderwrack`), sobre `origin/main` HEAD `a4c2209`
@@ -57,9 +64,6 @@ Persiste en `localStorage` (`sc-dashboard-monitors`, versión 1).
 1. **ESPERANDO A RAFA** (no se pregunta, él lo saca):
    - Umbrales: paso «Avisar cuando» en el asistente y objetivo visible en el widget (hoy fijos en `data/alerts.ts`).
    - Plantillas + «Restablecer» por monitor (en vez de «volver a la demo»).
-   - Aceptar o quitar los dos cambios del DS (pie de tabla, `sc-gauge max`).
-   - Barras de `p-metergroup` a 7px (antes 3,5).
-   - Línea bajo las pestañas: acaba tras «+ Monitor»; recomendación, alargarla a toda la cabecera.
 
 **Trampas del frente:**
 - ⚠️ Una prueba de scroll lateral mide `main#main-content`, no `documentElement` (el scroll de la app vive ahí).

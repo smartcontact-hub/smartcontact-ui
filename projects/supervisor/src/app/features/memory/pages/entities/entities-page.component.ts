@@ -31,6 +31,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { EntityFormModalComponent } from '../../components/entity-form-modal/entity-form-modal.component';
 import type { Entity } from '../../data/entity.types';
 import { EntitiesStore } from '../../state/entities.store';
+import { injectLangChange } from '@core/utils/lang-change';
 
 /**
  * Listado de entidades Memory · iter 10a.
@@ -61,6 +62,7 @@ export class EntitiesPageComponent {
   private readonly confirm = inject(ScConfirmService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
@@ -106,38 +108,44 @@ export class EntitiesPageComponent {
   private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Entity>>>('actionsTpl');
 
   /** Las cuatro columnas de datos, iguales en las dos secciones. */
-  private readonly dataColumns = computed<readonly ScColumnDef<Entity>[]>(() => [
-    {
-      field: 'name',
-      header: this.translate.instant('memory.entities.cols.name'),
-      cellTemplate: this.nameTpl(),
-    },
-    {
-      field: 'type',
-      header: this.translate.instant('memory.entities.cols.type'),
-      width: '140px',
-      cellTemplate: this.typeTpl(),
-    },
-    {
-      field: 'description',
-      header: this.translate.instant('memory.entities.cols.description'),
-      cellTemplate: this.descTpl(),
-    },
-    {
-      field: 'format',
-      header: this.translate.instant('memory.entities.cols.format'),
-      width: '140px',
-      cellTemplate: this.formatTpl(),
-    },
-  ]);
+  private readonly dataColumns = computed<readonly ScColumnDef<Entity>[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        field: 'name',
+        header: this.translate.instant('memory.entities.cols.name'),
+        cellTemplate: this.nameTpl(),
+      },
+      {
+        field: 'type',
+        header: this.translate.instant('memory.entities.cols.type'),
+        width: '140px',
+        cellTemplate: this.typeTpl(),
+      },
+      {
+        field: 'description',
+        header: this.translate.instant('memory.entities.cols.description'),
+        cellTemplate: this.descTpl(),
+      },
+      {
+        field: 'format',
+        header: this.translate.instant('memory.entities.cols.format'),
+        width: '140px',
+        cellTemplate: this.formatTpl(),
+      },
+    ];
+  });
 
-  protected readonly userColumns = computed<readonly ScColumnDef<Entity>[]>(() => [
-    ...this.dataColumns(),
-    // Columna sin datos: `field` es solo su identidad. `stopRowClick` porque el
-    // kebab para la propagación pero el HUECO de la celda no, y fallar el botón
-    // por unos píxeles abriría la edición.
-    { field: 'actions', header: '', headerAriaLabel: this.translate.instant('common.actions'), width: '44px', stopRowClick: true, cellTemplate: this.actionsTpl() },
-  ]);
+  protected readonly userColumns = computed<readonly ScColumnDef<Entity>[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      ...this.dataColumns(),
+      // Columna sin datos: `field` es solo su identidad. `stopRowClick` porque el
+      // kebab para la propagación pero el HUECO de la celda no, y fallar el botón
+      // por unos píxeles abriría la edición.
+      { field: 'actions', header: '', headerAriaLabel: this.translate.instant('common.actions'), width: '44px', stopRowClick: true, cellTemplate: this.actionsTpl() },
+    ];
+  });
 
   /** System entities: mismas columnas, sin kebab (son inmutables). */
   protected readonly systemColumns = this.dataColumns;

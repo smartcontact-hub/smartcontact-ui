@@ -58,8 +58,6 @@
   parten en dos líneas. Con los datos demo (34-47) no se activa. Agentes lo resolvió con `tableMinWidth` y scroll
   lateral (DD-102), pero aquí chocaría con las etiquetas que se recortan a 1280 a propósito: decidirlo con Rafa
   cuando haya datos reales.
-- **Una columna oculta que se reactiva en el selector sale al final** (Agentes, Usuarios, Grupos): el selector
-  hace `push`. Si Rafa lo pide, insertarla en su sitio declarado, en `sc-column-selector` para todas.
 - **Las tablas de dentro de los formularios** (agentes de un grupo, grupos de un agente) las rehace la sesión de
   `hind` (`arebury/agents-groups-users-ds`, sin commit el 2026-09-14): toca también Usuarios, Grupos y
   `audit-page-anatomy`, así que rebasa sobre DD-98 antes de subir.
@@ -72,9 +70,6 @@
 - **Acceso (DD-110), a juicio de Rafa**: la intensidad del fondo (`amplitude` 0.045 ≈ 64 px), la frase de marca de la
   izquierda y el texto del botón de Microsoft en pt/fr (de memoria). `p-password` está obsoleto en PrimeNG 22
   (`pInputPassword` no trae conmutador): la API de `sc-password` no depende de ello.
-- **La página actual de la miga no lleva `aria-current`** (DD-103): la guía de primeng.dev dice que sí, PrimeNG
-  Angular no lo pone (medido `null`). El APG lo hace opcional si ese tramo no es enlace, pero PrimeNG le da
-  `tabindex="0"`. Decidir si `sc-breadcrumb` lo pone o le quita el tabulador; hoy se queda.
 
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
 «Si te instalas Aura y le pones este styling estamos así»: una ficha por componente que diga qué
@@ -112,9 +107,6 @@ trae `light-dark()` arriba y nosotros `colorScheme`, y gana lo nuestro); lo que 
 
 - ~~**Las etiquetas de campo a 12 regular** y **`sc-tag`/`sc-chip` a 500**~~ → **HECHO el
   2026-09-13**: las 25 `.field__label` de seis ficheros a semibold, y pastillas a 600.
-- **Las seis casillas de la tabla de notificaciones salen MARCADAS y deshabilitadas** cuando no hay
-  URL: dicen «esto está encendido» de algo que no puede dispararse. Arreglarlo es decidir si el
-  valor por defecto debería ser `false` — es producto, no maquetación.
 
 **Lo que queda de la tanda «adelante a todo» del 2026-09-11** (los dos apuntes de la revisión de
 Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
@@ -137,9 +129,6 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
   el componente ya tiene.
   ⚠️ **Tocar una página con métrica cuesta TRES redes**: captura visual, HTML congelado y estilos
   computados. Hay que correr `npm run e2e` ENTERO en local — el preflight no lo incluye (DD-60).
-
-**Lo que deja el 2026-09-12 (la vuelta a las tablas, DD-72), medido y sin hacer:**
-- **Gate pendiente: la cabecera que se congela al cambiar de idioma.** `audit:datatables` §6 solo mira un `computed` llamado `columns` y solo en páginas con `<sc-datatable>`; el 2026-09-12 el fallo (`translate.instant` en un `computed` sin `currentLang`) estaba en CINCO, dos sin tabla. Hace falta un gate de toda la app, con parser de bloque y caso rojo.
 
 - **Lo que solo se puede tocar en Figma vive ahora en su propio fichero**:
   [`docs/figma-pendiente.md`](../figma-pendiente.md). Allí están la divergencia del título de sección
@@ -170,6 +159,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
    «bloqueado por herramienta», es trabajo. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+
+## ✅ 2026-09-15 · Lo que se nota: idioma en vivo, casillas sin URL, columna en su sitio, miga y raya del Dashboard
+
+**Sello:** rama `arebury/arreglos-que-se-notan`, sobre `8ea9bea` (#190). Rafa, con la tabla de «qué cambia para quien usa
+la app»: «adelante a todo esto».
+
+**Lo que cambia.** 18 `computed()` con `translate.instant()` leen el idioma (en Sistema, los selectores de contraseña
+seguían en español al pasar a inglés); lo vigila `i18n:check` H en toda la app y la regla 6 de `audit:datatables` se
+retira. Sin URL, las casillas de notificaciones salen desmarcadas. `sc-column-selector` devuelve la columna detrás de
+la visible que la precede. `sc-breadcrumb` marca `aria-current="page"` por `pt`. Cada uno con su e2e, visto en rojo.
+
+- ⚠️ **Mi primer contador de `computed` leía de menos**: no casaba `computed<T>(`. Contó 6 donde había 18.
 
 ## ✅ 2026-09-15 · Conversaciones hace scroll dentro de la tabla, como el resto de listas (DD-95)
 

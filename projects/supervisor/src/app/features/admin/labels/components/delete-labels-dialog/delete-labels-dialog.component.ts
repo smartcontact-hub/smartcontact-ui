@@ -5,6 +5,7 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 import { LabelChipComponent } from '@shared/components';
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 import { Label } from '../../data/labels-data';
+import { injectLangChange } from '@core/utils/lang-change';
 
 /**
  * Confirmation dialog for deleting one or many labels. Renders as a single
@@ -23,6 +24,7 @@ import { Label } from '../../data/labels-data';
 })
 export class DeleteLabelsDialogComponent {
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
 
   readonly labels = input.required<readonly Label[]>();
   readonly visible = input.required<boolean>();
@@ -41,9 +43,10 @@ export class DeleteLabelsDialogComponent {
     return this.labels().reduce((sum, label) => sum + (counts.get(label.id) ?? 0), 0);
   });
 
-  protected readonly dialogTitle = computed(() =>
-    this.isSingle()
+  protected readonly dialogTitle = computed(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return this.isSingle()
       ? this.translate.instant('labels.delete.title_single')
-      : this.translate.instant('labels.delete.title_bulk', { count: this.labels().length }),
-  );
+      : this.translate.instant('labels.delete.title_bulk', { count: this.labels().length });
+  });
 }

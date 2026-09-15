@@ -182,8 +182,24 @@ export class ScColumnSelectorComponent {
       .map((c) => c.key);
     const idx = current.indexOf(col.key);
     if (idx >= 0) current.splice(idx, 1);
-    else current.push(col.key);
+    else current.splice(this.returnIndex(current, col.key), 0, col.key);
     this.commit(current);
+  }
+
+  /**
+   * Una columna que vuelve a mostrarse va detrás de la visible que la precede en la declaración, no al
+   * final: la tabla vuelve a como estaba. Si se reordenó, se respeta ese orden. Sin ninguna visible
+   * antes, va detrás de las bloqueadas, que siempre encabezan.
+   */
+  private returnIndex(visible: readonly string[], key: string): number {
+    const cols = this.columns();
+    const declared = cols.map((c) => c.key);
+    for (let i = declared.indexOf(key) - 1; i >= 0; i--) {
+      const at = visible.indexOf(declared[i]);
+      if (at >= 0) return at + 1;
+    }
+    const locked = new Set(cols.filter((c) => c.locked).map((c) => c.key));
+    return visible.filter((k) => locked.has(k)).length;
   }
 
   protected onDrop(event: CdkDragDrop<readonly ColumnDef[]>): void {

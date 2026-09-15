@@ -23,6 +23,7 @@ import {
 } from '../../data/conversation-filters.types';
 import { LanguageService } from '../../../../core/services/language.service';
 import { TypeFilterButtonComponent } from '../type-filter-button/type-filter-button.component';
+import { injectLangChange } from '@core/utils/lang-change';
 
 type QuickView = 'all' | 'pending' | 'failed';
 
@@ -74,6 +75,7 @@ type ChipKey =
 })
 export class ConversationFiltersComponent {
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly language = inject(LanguageService);
 
   readonly filters = model.required<MemoryConversationFilters>();
@@ -103,6 +105,7 @@ export class ConversationFiltersComponent {
    *  SIN número a propósito (2026-09-14): al cambiar de datos de demo el ancho de cada vista
    *  cambiaba con su cifra y la fila saltaba, y el recuento ya lo dice «N conversaciones». */
   protected readonly quickViewOptions = computed(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
     const t = (k: string) => this.translate.instant(`memory.conversations.views.${k}`);
     return [
       { value: 'all' as const, label: t('all') },
@@ -121,6 +124,7 @@ export class ConversationFiltersComponent {
 
   // ─── Fecha: atajos del calendario ──────────────────────────────────
   protected readonly datePresets = computed<readonly ScDatepickerPreset[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
     const t = (k: string) => this.translate.instant(`memory.conversations.filters.date_presets.${k}`);
     const daysAgo = (n: number) => {
       const d = new Date();
@@ -139,6 +143,7 @@ export class ConversationFiltersComponent {
 
   // ─── Etiquetas de filtros activos ──────────────────────────────────
   protected readonly chips = computed<readonly ActiveChip[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
     const f = this.filters();
     const t = (k: string) => this.translate.instant(k);
     const chip = (key: ChipKey, nameKey: string, value: string): ActiveChip => ({
