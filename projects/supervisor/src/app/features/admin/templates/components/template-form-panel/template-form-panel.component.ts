@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   inject,
   input,
@@ -11,12 +12,14 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { injectLangChange } from '@core/utils/lang-change';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScTextareaComponent as TextareaComponent } from '@smartcontact-hub/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScSelectButtonComponent as SelectButtonComponent } from '@smartcontact-hub/components';
 import { Template, TemplateType } from '../../data/templates-data';
 
 export interface TemplateFormSubmission {
@@ -34,7 +37,7 @@ export interface TemplateFormSubmission {
  */
 @Component({
   selector: 'sc-template-form-panel',
-  imports: [TextareaComponent, ButtonComponent, FormsModule, IconComponent, InputTextComponent, TranslateModule],
+  imports: [TextareaComponent, ButtonComponent, FormsModule, IconComponent, InputTextComponent, SelectButtonComponent, TranslateModule],
   templateUrl: './template-form-panel.component.html',
   styleUrl: './template-form-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,7 +56,18 @@ export class TemplateFormPanelComponent implements OnInit, AfterViewInit {
   protected readonly alertIcon = 'warning';
   protected readonly chatIcon = 'chat_bubble';
   protected readonly emailIcon = 'mail';
-  protected readonly typeOptions: readonly TemplateType[] = ['chat', 'email'];
+  private static nextId = 0;
+  protected readonly channelLabelId = `template-form-channel-${TemplateFormPanelComponent.nextId++}`;
+  private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
+  /** Texto traducido: en `sc-selectbutton` es también el nombre accesible de la opción. */
+  protected readonly typeOptions = computed(() => {
+    this.lang();
+    return [
+      { value: 'chat' as TemplateType, label: this.translate.instant('templates.type.chat'), icon: this.chatIcon },
+      { value: 'email' as TemplateType, label: this.translate.instant('templates.type.email'), icon: this.emailIcon },
+    ];
+  });
 
   protected readonly title = signal('');
   protected readonly type = signal<TemplateType>('chat');
@@ -76,6 +90,10 @@ export class TemplateFormPanelComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     queueMicrotask(() => this.titleInput?.nativeElement.querySelector('input')?.focus());
+  }
+
+  protected onTypeChange(value: unknown): void {
+    if (value === 'chat' || value === 'email') this.setType(value);
   }
 
   protected setType(type: TemplateType): void {

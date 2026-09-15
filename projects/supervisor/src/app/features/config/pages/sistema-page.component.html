@@ -14,7 +14,7 @@
       <div class="sub-section">
         <div class="theme-row">
           <div class="theme-row__copy">
-            <span class="theme-row__label sc-text-body-regular">
+            <span class="theme-row__label sc-text-body-regular" id="sistema-theme-label">
               {{ 'config.sistema.appearance.theme_label' | translate }}
             </span>
             <p class="theme-row__hint sc-text-caption-regular">
@@ -22,25 +22,21 @@
             </p>
           </div>
 
-          <div
-            class="theme-toggle"
-            role="radiogroup"
-            [attr.aria-label]="'config.sistema.appearance.theme_label' | translate"
+          <!-- Botones segmentados de primeng.dev (`sc-selectbutton`): se elige un valor (DD-113). -->
+          <sc-selectbutton
+            class="theme-row__control"
+            [options]="themeOptions()"
+            optionValue="value"
+            [allowEmpty]="false"
+            [value]="theme.mode()"
+            (valueChange)="selectTheme($event)"
+            ariaLabelledBy="sistema-theme-label"
           >
-            @for (option of themeOptions; track option.value) {
-              <button
-                type="button"
-                class="theme-toggle__option sc-text-caption-regular"
-                role="radio"
-                [class.theme-toggle__option--active]="theme.mode() === option.value"
-                [attr.aria-checked]="theme.mode() === option.value"
-                (click)="select(option.value)"
-              >
-                <sc-icon [name]="option.icon" size="inherit" />
-                <span>{{ option.labelKey | translate }}</span>
-              </button>
-            }
-          </div>
+            <ng-template #item let-option>
+              <sc-icon [name]="option.icon" size="inherit" />
+              <span>{{ option.label }}</span>
+            </ng-template>
+          </sc-selectbutton>
         </div>
       </div>
     </sc-section-card>
@@ -53,7 +49,7 @@
       <div class="sub-section">
         <div class="theme-row">
           <div class="theme-row__copy">
-            <span class="theme-row__label sc-text-body-regular">
+            <span class="theme-row__label sc-text-body-regular" id="sistema-language-label">
               {{ 'config.sistema.language.label' | translate }}
             </span>
             <p class="theme-row__hint sc-text-caption-regular">
@@ -61,25 +57,16 @@
             </p>
           </div>
 
-          <div
-            class="theme-toggle"
-            role="radiogroup"
-            [attr.aria-label]="'config.sistema.language.label' | translate"
-          >
-            @for (option of languageOptions; track option.value) {
-              <button
-                type="button"
-                class="theme-toggle__option sc-text-caption-regular"
-                role="radio"
-                [class.theme-toggle__option--active]="language.lang() === option.value"
-                [attr.aria-checked]="language.lang() === option.value"
-                (click)="language.setLang(option.value)"
-              >
-                <span class="theme-toggle__flag" aria-hidden="true">{{ option.flag }}</span>
-                <span>{{ option.labelKey | translate }}</span>
-              </button>
-            }
-          </div>
+          <!-- Sin banderas: eran emojis (AGENTS.md, UX 4) y una bandera no es un idioma. -->
+          <sc-selectbutton
+            class="theme-row__control"
+            [options]="languageOptions()"
+            optionValue="value"
+            [allowEmpty]="false"
+            [value]="language.lang()"
+            (valueChange)="selectLanguage($event)"
+            ariaLabelledBy="sistema-language-label"
+          />
         </div>
       </div>
     </sc-section-card>

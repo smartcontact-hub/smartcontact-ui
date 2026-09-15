@@ -87,9 +87,10 @@ export const EMOJI_PENDIENTES = {
   // Banderas de idioma (regional indicators: cada 🇪🇸 son 2 codepoints). Deuda real:
   // sustituir por flag SVG (el seed de cuscare ya trae `src: 'icons/flags/*.svg'`).
   'projects/cuscare/src/app/data/seed.ts': 20,
-  'projects/supervisor/src/app/features/config/pages/sistema-page.component.ts': 8,
   // (Los 2 emoji decorativos que había —⚠️ en un demo y ⏸️ en un modal— ya se
-  //  sustituyeron por <sc-icon> / se quitaron; por eso el trinquete bajó a 2 ficheros.)
+  //  sustituyeron por <sc-icon> / se quitaron; por eso el trinquete bajó a 2 ficheros.
+  //  Las 4 banderas de Sistema se fueron el 2026-09-15 al pasar el idioma a `sc-selectbutton`
+  //  sin ellas (DD-113): una bandera no es un idioma. Queda 1 fichero.)
 };
 
 /** TRINQUETE de imágenes sin dimensiones (fichero → nº). Solo mengua. */

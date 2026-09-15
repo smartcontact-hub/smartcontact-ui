@@ -40,6 +40,7 @@
       "inputnumber": "Entrada numérica con pasos, mínimo/máximo y formato de miles o moneda.",
       "select": "Selección única desplegable, con búsqueda y agrupación de opciones.",
       "multiselect": "Selección de varios valores de una lista, con búsqueda y fichas de lo elegido.",
+      "selectbutton": "Botones segmentados para filtrar la misma lista o elegir un valor de un grupo corto.",
       "checkbox": "Casilla booleana, o selección múltiple dentro de una lista de opciones.",
       "radiobutton": "Elección única dentro de un grupo de opciones excluyentes.",
       "toggleswitch": "Interruptor on/off para ajustes que se aplican al instante.",

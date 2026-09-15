@@ -82,6 +82,11 @@ export interface StoryDef {
   /** ¿Es el Playground (knobs en vivo)? Sólo una story debería serlo. */
   readonly playground?: boolean;
   /**
+   * Texto corto bajo el título de la story: para lo que el lienzo no enseña a simple vista
+   * (un comportamiento, por qué se aparta de primeng.dev). Opcional.
+   */
+  readonly description?: string;
+  /**
    * Snippet a medida (override). Si se omite, se serializa desde `meta.tag` + args.
    * Necesario para stories con proyección/templates (datatable, select con pTemplate).
    */

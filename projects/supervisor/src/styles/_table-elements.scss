@@ -61,53 +61,6 @@
  * `tag` de la librería de Figma (2026-09-13). */
 
 /* ------------------------------------------------------------------ *
- * sc-action-divider — 1px vertical separator between primary and
- * secondary action buttons in list-page toolbars. Visual grouping
- * makes it obvious that "Crear" / "Editar" are the loud actions and
- * "Exportar" / column-selector are the quiet ones.
- * ------------------------------------------------------------------ */
-.sc-action-divider {
-  display: inline-block;
-  width: 1px;
-  height: 20px;
-  background: var(--sc-border-default);
-  margin: 0 var(--sc-spacing-0-5);
-  flex-shrink: 0;
-}
-
-/* ------------------------------------------------------------------ *
- * Row + context menu — separator and destructive variant.
- *
- * Both `.row-menu__panel` (the inline ⋮ menu per row) and
- * `.context-menu` (right-click) live as locally-scoped block-class
- * styles inside each list page's component SCSS, but the destructive
- * "Eliminar" button + the divider above it follow a shared pattern.
- * Define them globally so the three list pages don't each reinvent
- * the rule. View encapsulation keeps the local class rules; these
- * lower-specificity globals layer the destructive-and-separator
- * concerns on top without competing with the base styles.
- * ------------------------------------------------------------------ */
-.row-menu__separator,
-.context-menu__separator {
-  height: 1px;
-  margin: var(--sc-spacing-0-25) var(--sc-spacing-0-875);
-  background: var(--sc-border-subtle);
-}
-
-.row-menu__panel > button.is-danger,
-.context-menu > button.is-danger {
-  color: var(--sc-label-red-text);
-
-  > sc-icon {
-    color: var(--sc-label-red-text);
-  }
-
-  &:hover {
-    background: var(--sc-label-red-bg);
-  }
-}
-
-/* ------------------------------------------------------------------ *
  * Numeric columns get an explicit narrow width + right alignment.
  *
  * `table.table` runs with `table-layout: fixed` (set globally in

@@ -25,7 +25,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**53 componentes** · 17 custom · 11 standard · 25 extended · 42 usados en Supervisor.
+**54 componentes** · 17 custom · 11 standard · 26 extended · 43 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -47,7 +47,7 @@
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |
-| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 20 |
+| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 23 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 8 inputs | — | ✓ | 1 |
 | `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 13 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
@@ -74,6 +74,7 @@
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 8 |
 | `sc-section-card` | CUSTOM | — | 8 inputs | — | ✓ | 20 |
 | `sc-select` | EXTENDED | primeng/select | 27 inputs | sc-field-label sc-field-msg | ✓ | 32 |
+| `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 4 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 3 |
