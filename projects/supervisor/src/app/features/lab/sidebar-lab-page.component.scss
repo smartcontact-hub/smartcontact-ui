@@ -135,6 +135,147 @@ p-sidebar[data-collapsible='icon'] .lab__chevron {
   opacity: 0;
 }
 
+/* La cabecera del sidebar: el logo y, en Drawer, el botón de anclar a su derecha. Plegado no cabe. */
+.lab__header-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+
+  > p-sidebar-menu {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+p-sidebar[data-collapsible='icon'] .lab__anchor {
+  display: none;
+}
+
+/*
+ * Slim de Apollo: el panel flotante de un padre de primer nivel. Colores y bordes del sidebar, sombra
+ * de overlay. Ancho del sidebar desplegado (Apollo usa 210): cabe cualquier etiqueta en los cuatro
+ * idiomas, medido para el laboratorio.
+ */
+.lab__flyout {
+  position: fixed;
+  z-index: var(--sc-z-popover);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  inline-size: var(--sc-sidebar-width-expanded);
+  max-block-size: 80dvh;
+  overflow-y: auto;
+  padding: var(--sc-spacing-0-5);
+  border: 1px solid var(--sc-sidebar-border);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-sidebar-bg);
+  box-shadow: var(--sc-shadow-popover);
+  color: var(--sc-sidebar-fg-muted);
+}
+
+.lab__flyout-title {
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+  color: var(--sc-sidebar-fg-subtle);
+}
+
+.lab__fly-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-125);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  /* Los subniveles entran un poco, como en Apollo. */
+  &--sub {
+    padding-inline-start: var(--sc-spacing-0-5);
+  }
+}
+
+.lab__fly-button {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  inline-size: 100%;
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+  border: 0;
+  border-radius: var(--sc-radius-sm);
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition-property: background-color, color;
+  transition-duration: var(--sc-transition-fast);
+  transition-timing-function: var(--sc-easing-default);
+
+  &:hover {
+    background: var(--sc-sidebar-item-hover-bg);
+    color: var(--sc-sidebar-fg-hover);
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: -2px;
+  }
+
+  &--in-path,
+  &--active {
+    color: var(--sc-sidebar-fg);
+    font-weight: var(--sc-font-weight-semibold);
+  }
+
+  &--active {
+    background: var(--sc-sidebar-item-active-bg);
+  }
+}
+
+.lab__fly-icon {
+  flex-shrink: 0;
+  color: var(--sc-sidebar-fg-subtle);
+}
+
+.lab__fly-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El chevron gira y los hijos se despliegan en altura con la curva y la duración de Apollo
+ * (450ms, cubic-bezier(.86,0,.07,1), leídas en su hoja). Son piezas nuestras, no de PrimeNG. */
+.lab__fly-chevron {
+  flex-shrink: 0;
+  transition: rotate 450ms cubic-bezier(0.86, 0, 0.07, 1);
+
+  [aria-expanded='true'] > & {
+    rotate: 180deg;
+  }
+}
+
+.lab__fly-children {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 450ms cubic-bezier(0.86, 0, 0.07, 1);
+
+  > .lab__fly-list {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &--open {
+    grid-template-rows: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab__fly-chevron,
+  .lab__fly-children,
+  .lab__fly-button {
+    transition: none;
+  }
+}
+
 .lab__brand-button {
   padding-inline: var(--sc-spacing-0-25);
 }

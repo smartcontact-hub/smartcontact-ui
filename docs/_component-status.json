@@ -160,7 +160,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 123
+      "usedInSupervisor": 124
     },
     {
       "name": "card",
@@ -1109,7 +1109,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 6
+      "usedInSupervisor": 7
     },
     {
       "name": "skeleton",
@@ -1277,7 +1277,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 26
+      "usedInSupervisor": 25
     }
   ]
 }

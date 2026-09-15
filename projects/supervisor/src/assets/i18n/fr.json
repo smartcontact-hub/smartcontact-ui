@@ -2058,7 +2058,12 @@
   "lab": {
     "sidebar": {
       "toggle_aria": "Replier ou déplier le menu",
-      "options_aria": "Options du laboratoire"
+      "options_aria": "Options du laboratoire",
+      "collapsed_label": "Replié",
+      "mode_drawer": "Drawer",
+      "mode_slim": "Slim",
+      "anchor_aria": "Épingler le menu déplié",
+      "unanchor_aria": "Désépingler le menu"
     }
   }
 }

@@ -15,23 +15,40 @@
     [collapsible]="effectiveCollapsible()"
     [side]="side"
     [overlay]="effectiveOverlay()"
-    [openOnHover]="openOnHover"
+    [openOnHover]="effectiveOpenOnHover()"
+    [hoverCloseDelay]="300"
     width="var(--sc-sidebar-width-expanded)"
   >
     <p-sidebar-spacer />
     <p-sidebar-aside>
       <p-sidebar-panel>
         <p-sidebar-header>
-          <p-sidebar-menu>
-            <p-sidebar-menu-item>
-              <button pSidebarMenuButton class="lab__brand-button">
-                <div class="lab__brand-mark">
-                  <img src="/logos/smartcontact-isotype-light.svg" alt="" width="14" height="14" />
-                </div>
-                <span class="lab__brand-name lab__label">SmartContact</span>
-              </button>
-            </p-sidebar-menu-item>
-          </p-sidebar-menu>
+          <div class="lab__header-row">
+            <p-sidebar-menu>
+              <p-sidebar-menu-item>
+                <button pSidebarMenuButton class="lab__brand-button">
+                  <div class="lab__brand-mark">
+                    <img src="/logos/smartcontact-isotype-light.svg" alt="" width="14" height="14" />
+                  </div>
+                  <span class="lab__brand-name lab__label">SmartContact</span>
+                </button>
+              </p-sidebar-menu-item>
+            </p-sidebar-menu>
+            <!-- Drawer de Apollo: anclar deja el sidebar desplegado aunque el ratón salga. -->
+            @if (iconMode() && collapsedMode() === 'drawer') {
+              <sc-button
+                class="lab__anchor"
+                [class.lab__anchor--on]="anchored()"
+                variant="secondary"
+                appearance="text"
+                size="sm"
+                icon="keep"
+                [iconFilled]="anchored()"
+                [ariaLabel]="(anchored() ? 'lab.sidebar.unanchor_aria' : 'lab.sidebar.anchor_aria') | translate"
+                (clicked)="toggleAnchor()"
+              />
+            }
+          </div>
         </p-sidebar-header>
 
         <p-sidebar-content>
@@ -41,7 +58,7 @@
               <p-sidebar-group-content>
                 <p-sidebar-menu>
                   @for (item of section.items; track item.labelKey) {
-                    <ng-container *ngTemplateOutlet="node; context: { $implicit: item }" />
+                    <ng-container *ngTemplateOutlet="node; context: { $implicit: item, depth: 0 }" />
                   }
                 </p-sidebar-menu>
               </p-sidebar-group-content>
@@ -51,7 +68,7 @@
           <!-- Como el ejemplo anidado de primeng.dev: un item con hijos es collapsible y abre su
                p-sidebar-menu-sub; dentro, un hijo con hijos vuelve a ser item y uno sin hijos es
                sub-item. Declarado dentro del sidebar: sus piezas lo buscan por inyección. -->
-          <ng-template #node let-item>
+          <ng-template #node let-item let-depth="depth">
             @if (item.children?.length) {
               <p-sidebar-menu-item
                 collapsible
@@ -64,9 +81,12 @@
                   [pTooltip]="item.labelKey | translate"
                   tooltipPosition="right"
                   appendTo="body"
-                  [tooltipDisabled]="open()"
+                  [tooltipDisabled]="open() || flyoutKey() !== null"
                   [class.lab__in-path]="inPath(item)"
-                  (click)="onParentClick(item)"
+                  [attr.data-lab-root]="depth === 0 ? '' : null"
+                  [attr.aria-expanded]="slimCollapsed() && depth === 0 ? flyoutKey() === item.labelKey : null"
+                  (click)="onParentClick(item, $event, depth)"
+                  (mouseenter)="onParentEnter(item, $event, depth)"
                 >
                   <sc-icon class="lab__icon" [name]="icon(item)" [size]="14" />
                   <span class="lab__label">{{ item.labelKey | translate }}</span>
@@ -75,7 +95,7 @@
                 <p-sidebar-menu-sub>
                   @for (child of item.children; track child.labelKey) {
                     @if (child.children?.length) {
-                      <ng-container *ngTemplateOutlet="node; context: { $implicit: child }" />
+                      <ng-container *ngTemplateOutlet="node; context: { $implicit: child, depth: depth + 1 }" />
                     } @else {
                       <p-sidebar-menu-sub-item>
                         <button
@@ -177,6 +197,66 @@
   </p-scrollarea>
 </ng-template>
 
+<!-- Slim de Apollo: con el sidebar plegado, el panel flotante de un padre de primer nivel, pegado al
+     borde del sidebar y alineado con su icono. Sus subniveles abren en acordeón. -->
+@if (flyoutItem(); as root) {
+  <nav
+    #flyout
+    class="lab__flyout"
+    [style.top.px]="flyoutTop()"
+    [style.left.px]="flyoutLeft()"
+    [style.right.px]="flyoutRight()"
+    [attr.aria-label]="root.labelKey | translate"
+  >
+    <span class="lab__flyout-title sc-text-caption-semibold">{{ root.labelKey | translate }}</span>
+    <ul class="lab__fly-list">
+      @for (child of root.children; track child.labelKey) {
+        <ng-container *ngTemplateOutlet="flyNode; context: { $implicit: child }" />
+      }
+    </ul>
+  </nav>
+}
+
+<ng-template #flyNode let-item>
+  <li>
+    @if (item.children?.length) {
+      <button
+        type="button"
+        class="lab__fly-button sc-text-body-regular"
+        [class.lab__fly-button--in-path]="inPath(item)"
+        [attr.aria-expanded]="isFlyOpen(item)"
+        (click)="toggleFly(item)"
+      >
+        <sc-icon class="lab__fly-icon" [name]="icon(item)" [size]="14" />
+        <span class="lab__fly-label">{{ item.labelKey | translate }}</span>
+        <sc-icon class="lab__fly-chevron" name="expand_more" [size]="14" />
+      </button>
+      <div
+        class="lab__fly-children"
+        [class.lab__fly-children--open]="isFlyOpen(item)"
+        [attr.inert]="isFlyOpen(item) ? null : ''"
+      >
+        <ul class="lab__fly-list lab__fly-list--sub">
+          @for (child of item.children; track child.labelKey) {
+            <ng-container *ngTemplateOutlet="flyNode; context: { $implicit: child }" />
+          }
+        </ul>
+      </div>
+    } @else {
+      <button
+        type="button"
+        class="lab__fly-button sc-text-body-regular"
+        [class.lab__fly-button--active]="item.path === activePath()"
+        [attr.aria-current]="item.path === activePath() ? 'page' : null"
+        (click)="selectFromFlyout(item.path)"
+      >
+        <sc-icon class="lab__fly-icon" [name]="icon(item)" [size]="14" />
+        <span class="lab__fly-label">{{ item.labelKey | translate }}</span>
+      </button>
+    }
+  </li>
+</ng-template>
+
 <!-- Los controles del ejemplo «Variants», en un Popover que abre un botón flotante. -->
 <button
   pButton
@@ -220,6 +300,23 @@
         [(value)]="variant"
       />
     </div>
+    <!-- Cómo se pliega: los dos modos de Apollo. Solo aplica en modo icono. -->
+    <div class="sc-text-body-regular lab__control">
+      <span id="lab-collapsed-label">{{ 'lab.sidebar.collapsed_label' | translate }}</span>
+      <sc-selectbutton
+        [options]="collapsedOptions"
+        optionValue="value"
+        [allowEmpty]="false"
+        [disabled]="!iconMode()"
+        [value]="collapsedMode()"
+        (valueChange)="selectCollapsedMode($event)"
+        ariaLabelledBy="lab-collapsed-label"
+      >
+        <ng-template #item let-option>
+          <span>{{ option.labelKey | translate }}</span>
+        </ng-template>
+      </sc-selectbutton>
+    </div>
     <div class="sc-text-body-regular lab__control">
       <label for="lab-collapsible">Collapsible</label>
       <sc-select
@@ -243,10 +340,6 @@
     <div class="sc-text-body-regular lab__control lab__control--switch">
       <label for="lab-overlay">Overlay</label>
       <sc-toggleswitch inputId="lab-overlay" [disabled]="responsive" [checked]="overlay" (checkedChange)="overlay = $event" />
-    </div>
-    <div class="sc-text-body-regular lab__control lab__control--switch">
-      <label for="lab-hover">Open on Hover</label>
-      <sc-toggleswitch inputId="lab-hover" [checked]="openOnHover" (checkedChange)="openOnHover = $event" />
     </div>
     <div class="sc-text-body-regular lab__control lab__control--switch">
       <label for="lab-backdrop">Backdrop</label>
