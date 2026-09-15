@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { SidebarCompareComponent } from '../sidebar/sidebar-compare.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopBarComponent } from '../top-bar/top-bar.component';
 
@@ -11,7 +12,7 @@ import { TopBarComponent } from '../top-bar/top-bar.component';
  */
 @Component({
   selector: 'sc-app-shell',
-  imports: [RouterOutlet, SidebarComponent, TopBarComponent, TranslateModule],
+  imports: [RouterOutlet, SidebarCompareComponent, SidebarComponent, TopBarComponent, TranslateModule],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

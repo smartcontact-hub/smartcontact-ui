@@ -32,6 +32,11 @@
   --sidebar-pad-l-2: var(--sc-spacing-4);
   --sidebar-pad-l-3: var(--sc-spacing-5);
   --sidebar-label-opacity: 0;
+  /* Lo que cambia entre propuestas (SISMAC-4340). Por defecto, la de Figma. */
+  --sidebar-active-bg: var(--sc-sidebar-item-active-bg);
+  --sidebar-active-fg: var(--sc-sidebar-fg);
+  --sidebar-group-bg: transparent;
+  --sidebar-children-bg: transparent;
 
   position: fixed;
   inset: 0 auto 0 0;
@@ -54,7 +59,8 @@
    */
   &:hover,
   &:focus-within,
-  &--pinned {
+  &--pinned,
+  &--fijo {
     width: var(--sc-sidebar-width-expanded);
     transition-delay: 0ms;
     --sidebar-label-opacity: 1;
@@ -115,7 +121,8 @@
 
   &:hover &__brand-wordmark,
   &:focus-within &__brand-wordmark,
-  &--pinned &__brand-wordmark {
+  &--pinned &__brand-wordmark,
+  &--fijo &__brand-wordmark {
     opacity: 1;
     transform: translateX(0);
   }
@@ -202,14 +209,16 @@
 
   &:hover &__section-title,
   &:focus-within &__section-title,
-  &--pinned &__section-title {
+  &--pinned &__section-title,
+  &--fijo &__section-title {
     opacity: 1;
     transition-delay: 80ms;
   }
 
   &:hover &__section-divider,
   &:focus-within &__section-divider,
-  &--pinned &__section-divider {
+  &--pinned &__section-divider,
+  &--fijo &__section-divider {
     opacity: 0;
     transition-delay: 0ms;
   }
@@ -231,21 +240,50 @@
    *     children end (SISMAC-4340). Only the first level, so two blocks
    *     never stack into something that reads as the active row.
    */
-  &:not(:hover):not(:focus-within):not(.sidebar--pinned) {
+  &:not(:hover):not(:focus-within):not(.sidebar--pinned):not(.sidebar--fijo) {
     --sidebar-pad-l-0: var(--sc-spacing-1-5);
     --sidebar-pad-l-1: var(--sc-spacing-1-5);
     --sidebar-pad-l-2: var(--sc-spacing-1-5);
     --sidebar-pad-l-3: var(--sc-spacing-1-5);
+    --sidebar-group-bg: var(--sc-sidebar-item-hover-bg);
+  }
 
-    sc-sidebar-nav-item.nav-group--open {
-      background: var(--sc-sidebar-item-hover-bg);
-    }
+  sc-sidebar-nav-item.nav-group--open {
+    background: var(--sidebar-group-bg);
   }
 
   sc-sidebar-nav-item {
     border-radius: var(--sc-radius-100);
     /* Same timing as the children folding, so the block fades as it shrinks. */
     transition: background var(--sc-transition-slow) var(--sc-easing-default);
+  }
+}
+
+/*
+ * Propuesta con selección en cyan (SISMAC-4340, `?sidebar=cyan`), medida en su captura:
+ *   plegado             seleccionado cyan · grupo abierto 10% · sus hijos otro 10% encima
+ *   con el ratón encima seleccionado cyan · grupo abierto 5%  · sus hijos otro 10% encima
+ *   desplegado fijo     seleccionado blanco 15% · sin fondo de grupo (como la de Figma)
+ */
+.sidebar--cyan {
+  --sidebar-active-bg: var(--sc-sidebar-accent);
+  --sidebar-active-fg: var(--sc-sidebar-bg);
+  --sidebar-group-bg: var(--sc-sidebar-item-hover-bg);
+  --sidebar-children-bg: var(--sc-sidebar-item-group-bg);
+  --sidebar-active-hover-bg: var(--sc-sidebar-accent);
+  --sidebar-active-hover-fg: var(--sc-sidebar-bg);
+
+  &:not(:hover):not(:focus-within):not(.sidebar--pinned):not(.sidebar--fijo) {
+    --sidebar-group-bg: var(--sc-sidebar-item-group-bg);
+  }
+
+  &.sidebar--fijo {
+    --sidebar-active-bg: var(--sc-sidebar-item-active-bg);
+    --sidebar-active-fg: var(--sc-sidebar-fg);
+    --sidebar-group-bg: transparent;
+    --sidebar-children-bg: transparent;
+    --sidebar-active-hover-bg: var(--sc-sidebar-item-hover-bg);
+    --sidebar-active-hover-fg: var(--sc-sidebar-fg-hover);
   }
 }
 

@@ -36,6 +36,8 @@
   --sc-sidebar-fg-faint: color-mix(in srgb, var(--sc-color-slate-0) 40%, transparent);
   --sc-sidebar-item-hover-bg: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-sidebar-item-active-bg: color-mix(in srgb, var(--sc-color-slate-0) 15%, transparent);
+  /* Fondo de grupo de la propuesta con selección en cyan (SISMAC-4340): la categoría abierta y, encima, sus hijos. */
+  --sc-sidebar-item-group-bg: color-mix(in srgb, var(--sc-color-slate-0) 10%, transparent);
   --sc-sidebar-border: color-mix(in srgb, var(--sc-color-slate-0) 8%, transparent);
   --sc-sidebar-scrollbar: color-mix(in srgb, var(--sc-color-slate-0) 16%, transparent);
   --sc-sidebar-divider: var(--sc-color-blue-500);

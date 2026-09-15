@@ -1,0 +1,42 @@
+/* RAMA DE COMPARACIÓN: flota en la esquina inferior derecha, por encima de la página y lejos del sidebar. */
+:host {
+  position: fixed;
+  right: var(--sc-spacing-1-75);
+  bottom: var(--sc-spacing-1-75);
+  z-index: var(--sc-z-popover);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sc-spacing-0-75);
+}
+
+.compare__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  inline-size: var(--sc-spacing-18);
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-300);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-popover);
+}
+
+.compare__title {
+  margin: 0;
+  color: var(--sc-text-primary);
+}
+
+.compare__desc,
+.compare__hint {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.compare__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-75);
+  color: var(--sc-text-primary);
+}

@@ -1,0 +1,46 @@
+@if (open()) {
+  <section class="compare__panel" role="dialog" aria-labelledby="compare-sidebar-title">
+    <h2 class="compare__title sc-text-body-semibold" id="compare-sidebar-title">{{ 'compare_sidebar.title' | translate }}</h2>
+
+    <sc-selectbutton
+      [options]="options"
+      optionValue="value"
+      [allowEmpty]="false"
+      fluid
+      size="sm"
+      [value]="compare.variant()"
+      (valueChange)="selectVariant($event)"
+      ariaLabelledBy="compare-sidebar-title"
+    >
+      <ng-template #item let-option>
+        <span>{{ option.labelKey | translate }}</span>
+      </ng-template>
+    </sc-selectbutton>
+
+    <p class="compare__desc sc-text-caption-regular">
+      {{ (compare.variant() === 'cyan' ? 'compare_sidebar.cyan_desc' : 'compare_sidebar.figma_desc') | translate }}
+    </p>
+
+    <div class="compare__row">
+      <label class="sc-text-body-regular" for="compare-sidebar-fixed">{{ 'compare_sidebar.fixed' | translate }}</label>
+      <sc-toggleswitch
+        inputId="compare-sidebar-fixed"
+        size="sm"
+        [checked]="compare.fixed()"
+        (checkedChange)="compare.fixed.set($event)"
+      />
+    </div>
+
+    <p class="compare__hint sc-text-caption-regular">{{ 'compare_sidebar.hint' | translate }}</p>
+  </section>
+}
+
+<sc-button
+  class="compare__toggle"
+  variant="primary"
+  size="md"
+  rounded
+  icon="compare"
+  [ariaLabel]="(open() ? 'compare_sidebar.close_aria' : 'compare_sidebar.open_aria') | translate"
+  (clicked)="open.set(!open())"
+/>

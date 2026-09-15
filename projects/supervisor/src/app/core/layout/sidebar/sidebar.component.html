@@ -1,6 +1,8 @@
 <aside
   class="sidebar"
   [class.sidebar--pinned]="pinned()"
+  [class.sidebar--cyan]="compare.variant() === 'cyan'"
+  [class.sidebar--fijo]="compare.fixed()"
   [attr.aria-label]="'sidebar.nav_aria' | translate"
   (mouseenter)="cancelReset()"
   (focusin)="cancelReset()"

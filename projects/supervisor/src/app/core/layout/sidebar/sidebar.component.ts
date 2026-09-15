@@ -17,6 +17,7 @@ import { ViewTransitionTracker } from '../../services/view-transition-tracker.se
 import { NAV_SECTIONS, type NavItem } from './nav-data';
 import { normalizeRoutePath } from './path-utils';
 import { SidebarNavItemComponent } from './sidebar-nav-item.component';
+import { SidebarVariantService } from './sidebar-variant.service';
 
 /** The `labelKey` of every parent on the way to `path`, outermost first; empty if none. */
 function branchTo(items: readonly NavItem[], path: string): string[] {
@@ -48,6 +49,9 @@ export class SidebarComponent {
   private readonly router = inject(Router);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly transitions = inject(ViewTransitionTracker);
+
+  /** RAMA DE COMPARACIÓN: qué propuesta se pinta y si va desplegado fijo (ver el servicio). */
+  protected readonly compare = inject(SidebarVariantService);
 
   protected readonly sections = NAV_SECTIONS;
   private readonly allItems = NAV_SECTIONS.flatMap((section) => section.items);

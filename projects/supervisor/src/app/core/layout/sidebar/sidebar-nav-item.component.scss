@@ -58,9 +58,15 @@
   /* Active state: solid tint + bold weight, no left bar.
    * (Side stripe pattern is banned — see /impeccable absolute_bans.) */
   &--active {
-    color: var(--sc-sidebar-fg);
-    background: var(--sc-sidebar-item-active-bg);
+    color: var(--sidebar-active-fg, var(--sc-sidebar-fg));
+    background: var(--sidebar-active-bg, var(--sc-sidebar-item-active-bg));
     font-weight: var(--sc-font-weight-semibold);
+
+    /* En la propuesta con selección en cyan el seleccionado no cambia con el ratón; en la de Figma, sí. */
+    &:hover {
+      color: var(--sidebar-active-hover-fg, var(--sc-sidebar-fg-hover));
+      background: var(--sidebar-active-hover-bg, var(--sc-sidebar-item-hover-bg));
+    }
   }
 
   &__icon {
@@ -69,7 +75,7 @@
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
 
     .nav-item--active & {
-      color: var(--sc-sidebar-fg);
+      color: var(--sidebar-active-fg, var(--sc-sidebar-fg));
     }
   }
 
@@ -172,6 +178,12 @@
   overflow: hidden;
   opacity: 0;
   transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+
+  /* Los hijos de una categoría de primer nivel, en su propio bloque (propuesta con selección en cyan). */
+  .nav-item__children--top > & {
+    border-radius: var(--sc-radius-100);
+    background: var(--sidebar-children-bg, transparent);
+  }
 
   .nav-item__children--open > & {
     opacity: 1;

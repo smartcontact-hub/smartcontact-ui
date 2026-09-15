@@ -28,6 +28,7 @@
   <div
     class="nav-item__children"
     [class.nav-item__children--open]="effectivelyExpanded()"
+    [class.nav-item__children--top]="depth() === 0"
     [attr.inert]="effectivelyExpanded() ? null : ''"
   >
     <div class="nav-item__children-inner">
