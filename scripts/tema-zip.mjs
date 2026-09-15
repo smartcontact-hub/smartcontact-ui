@@ -55,6 +55,17 @@ export function cerosNuevos(antes, despues) {
   return [...despues].filter(([k, v]) => cero(v) && antes.has(k) && !cero(antes.get(k))).map(([k]) => k);
 }
 
+/**
+ * Tokens que el paquete anterior declaraba y este ya no, por nombre. Un `var(--sc-…)` que ya no existe
+ * no da error en el navegador: la propiedad se pierde en silencio. Por eso la guía los nombra uno a uno
+ * (2026-09-15, primer borrado de tokens sin uso).
+ */
+export function retirados(antes, despues) {
+  const nombre = (k) => k.split('|')[1];
+  const quedan = new Set([...despues.keys()].map(nombre));
+  return [...new Set([...antes.keys()].map(nombre))].filter((n) => !quedan.has(n)).sort();
+}
+
 export function diferencias(antes, despues) {
   const claves = new Set([...antes.keys(), ...despues.keys()]);
   return [...claves].filter((k) => antes.get(k) !== despues.get(k)).sort();
@@ -205,6 +216,9 @@ export const leeme = (m) => {
     ? [
         `- Ficheros modificados: ${lista(d.ficheros)}.`,
         `- Tokens de diseño modificados: ${d.variables.length}.`,
+        ...(d.retirados?.length
+          ? [`- Tokens de diseño retirados (si el código del proyecto los referencia, esas propiedades dejan de aplicarse): ${d.retirados.map((t) => `\`${t}\``).join(', ')}.`]
+          : []),
         `- Estilos comunes del tema: ${d.semanticaComun ? 'modificados' : 'sin cambios'}.`,
         `- Reglas CSS del tema: ${d.reglasCss ? 'modificadas' : 'sin cambios'}.`,
         `- Componentes con estilos modificados: ${lista(d.componentes)}.`,
@@ -345,6 +359,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
       anterior: hayAnterior,
       ficheros: hayAnterior ? ficherosDistintos(ANTERIOR, OUT) : [],
       variables: hayAnterior ? diferencias(varsAntes, varsAhora) : [],
+      retirados: hayAnterior ? retirados(varsAntes, varsAhora) : [],
       ...(hayAnterior ? comparaPreset(cssAntes, cssAhora) : { semanticaComun: false, reglasCss: false, componentes: [] }),
     },
   };

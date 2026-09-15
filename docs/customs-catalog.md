@@ -138,7 +138,7 @@ Resultado: el DS tenía **dos acentos conviviendo**.
 | `--sc-border-accent{,-hover,-active}` | `cyan-500/600/700` | `sky-500/600/700` | idem. |
 | `--sc-icon-link` · `--sc-icon-accent` | `cyan-600` | `sky-600` | idem (`--sc-icon-info` ya aliasaba a accent). |
 | **`--sc-text-on-accent` · `--sc-icon-on-accent`** | `slate-800` / `cyan-800` | **`slate-0` (blanco)** | **Obligatorio**: slate-800 daba 5.89:1 sobre cyan-500, pero sobre sky-500 cae a **2.48:1**. Blanco da 4.90:1. |
-| `--sc-shadow-focus-ring-rgb` (`05-extensions.css`) | `cyan-500` | `sky-500` | El **halo** del foco era cyan mientras su **borde** (`--sc-border-focus`) ya era sky: el anillo se veía turquesa alrededor de un borde azul. |
+| sc-shadow-focus-ring-rgb (retirado el 2026-09-15 con el halo, DD-111) | `cyan-500` | `sky-500` | El **halo** del foco era cyan mientras su **borde** (`--sc-border-focus`) ya era sky: el anillo se veía turquesa alrededor de un borde azul. |
 
 **Barrido asociado**: 38 declaraciones `outline: 2px solid var(--sc-color-cyan-500)` en 31
 ficheros (DS + app) hardcodeaban la primitiva para su anillo de foco en vez de consumir
