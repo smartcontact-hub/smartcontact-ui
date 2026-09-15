@@ -150,21 +150,24 @@ export class GroupsListPageComponent {
     ];
   });
 
-  protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => [
-    {
-      key: 'priority',
-      label: this.translate.instant('groups.table.priority'),
-      values: GROUP_PRIORITIES.map((p) => ({
-        value: p,
-        label: this.translate.instant(this.priorityKeys[p]),
-      })),
-    },
-    {
-      key: 'strategy',
-      label: this.translate.instant('groups.table.strategy'),
-      values: [...PHONE_STRATEGIES, ...CHAT_STRATEGIES].map((s) => ({ value: s, label: s })),
-    },
-  ]);
+  protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        key: 'priority',
+        label: this.translate.instant('groups.table.priority'),
+        values: GROUP_PRIORITIES.map((p) => ({
+          value: p,
+          label: this.translate.instant(this.priorityKeys[p]),
+        })),
+      },
+      {
+        key: 'strategy',
+        label: this.translate.instant('groups.table.strategy'),
+        values: [...PHONE_STRATEGIES, ...CHAT_STRATEGIES].map((s) => ({ value: s, label: s })),
+      },
+    ];
+  });
 
   /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas). */
   protected readonly matchesSearch = (g: Group, q: string): boolean =>

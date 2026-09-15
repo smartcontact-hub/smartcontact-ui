@@ -40,9 +40,8 @@ const comoEnlace = (item: MenuItem): MenuItem =>
  *                  [model]="[{ label: 'Electronics', routerLink: '/e' }, { label: 'Wireless' }]" />
  *
  * El ÚLTIMO item es la página actual (sin `routerLink`/`command` → no clicable).
- * ⚠️ `aria-current` NO lo pone PrimeNG Angular, aunque su guía de accesibilidad lo
- * diga: medido el 2026-09-14, `null` en sc-docs y en el Supervisor, y no aparece en
- * `primeng-breadcrumb.mjs`. El `home` es opcional; su `icon` es una clase
+ * `aria-current="page"` en ese último tramo lo pone este wrapper (`pt` más abajo): la guía de
+ * accesibilidad de primeng.dev lo pide y PrimeNG Angular no lo hace (medido el 2026-09-14, `null`). El `home` es opcional; su `icon` es una clase
  * (Material vía `sc-icon-font sc-icon-font--<glifo>`, coherente con el resto del
  * DS — NO `pi pi-*`).
  *
@@ -119,6 +118,19 @@ export class ScBreadcrumbComponent {
       }
       return comoEnlace(item);
     });
+  });
+
+  /**
+   * El último tramo se anuncia como la página actual (`aria-current="page"`, APG Breadcrumb), por el
+   * passthrough de PrimeNG: `itemLink` recibe el tramo en `context` y se compara por identidad.
+   */
+  protected readonly pt = computed(() => {
+    const actual = this.renderModel().at(-1);
+    return {
+      // El inicio pide `itemLink` sin contexto: por eso el `?.`.
+      itemLink: (options?: { context?: { item?: MenuItem } }) =>
+        actual && options?.context?.item === actual ? { 'aria-current': 'page' } : {},
+    };
   });
 
   /** El inicio lleva el mismo trato que un tramo padre: si lleva a algún sitio, se nota. */

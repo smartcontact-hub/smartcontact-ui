@@ -184,17 +184,9 @@ for (const f of htmls) {
     fallo(donde, "hay una columna con header:'' sin headerAriaLabel", 'la columna de acciones queda anónima para un lector de pantalla');
   }
 
-  /* 6 · Cabeceras congeladas al cambiar de idioma. `translate.instant()` dentro
-   *     de un `computed()` cuyas dependencias son solo `viewChild` NO se
-   *     re-evalúa: el pipe `| translate` que había antes SÍ reaccionaba.
-   *     Ningún otro gate lo ve — `i18n:check` solo compara claves y todo el
-   *     e2e corre en español. */
-  /*     ⚠️ Endurecido el 2026-09-14: bastaba con que el fichero NOMBRARA `currentLang`, y siete listas lo
-   *     declaraban sin leerlo nunca — cabeceras congeladas y este gate en verde. Ahora exige la LECTURA de la
-   *     señal (`currentLang()` / `lang()`, ver `core/utils/lang-change.ts`). */
-  if (/\bcolumns\s*=\s*computed/.test(ts) && /translate\.instant\(/.test(ts) && !/\b(currentLang|lang)\(\)/.test(ts)) {
-    fallo(donde, 'cabeceras con translate.instant() en un computed que no LEE el idioma', 'se quedan congeladas al cambiar de idioma');
-  }
+  /* 6 · Cabeceras congeladas al cambiar de idioma: se mudó a `i18n:check` H (2026-09-15), que mira TODO
+   *     `computed()` de la app bloque a bloque. Aquí solo miraba el llamado `columns` y el fichero entero,
+   *     y dejó pasar 18 (dos tablas incluidas). */
 
   /* 7 · La red tiene que VISITAR la página. Si su ruta no está en el guardián
    *     de la gramática, ese spec pasa en verde sin mirarla y el "todo verde"

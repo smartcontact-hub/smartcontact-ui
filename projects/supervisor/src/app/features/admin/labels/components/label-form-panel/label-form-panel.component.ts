@@ -22,6 +22,7 @@ import {
   ScColorDotPickerComponent as ColorDotPickerComponent,
 } from '@smartcontact-hub/components';
 import { LABEL_COLOR_OPTIONS, Label, LabelColor } from '../../data/labels-data';
+import { injectLangChange } from '@core/utils/lang-change';
 
 export interface LabelFormSubmission {
   readonly name: string;
@@ -53,6 +54,7 @@ export interface LabelFormSubmission {
 export class LabelFormPanelComponent implements OnInit, AfterViewInit {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
 
   readonly initial = input<Label | null>(null);
   readonly existingNames = input.required<readonly string[]>();
@@ -61,13 +63,14 @@ export class LabelFormPanelComponent implements OnInit, AfterViewInit {
   readonly cancelled = output<void>();
 
   protected readonly alertIcon = 'warning';
-  protected readonly colorOptions = computed<readonly ColorDotOption[]>(() =>
-    LABEL_COLOR_OPTIONS.map((option) => ({
+  protected readonly colorOptions = computed<readonly ColorDotOption[]>(() => {
+    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    return LABEL_COLOR_OPTIONS.map((option) => ({
       value: option.value,
       label: this.translate.instant(option.labelKey),
       color: option.color,
-    })),
-  );
+    }));
+  });
 
   protected readonly name = signal('');
   protected readonly color = signal<LabelColor>('blue');
