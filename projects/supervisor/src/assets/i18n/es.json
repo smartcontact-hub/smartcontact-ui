@@ -2100,21 +2100,21 @@
         "summary": "Todo en una página; el índice te lleva."
       },
       "e": {
-        "what": "Toda la ficha en tarjetas-resumen, a lo ancho. Pulsa «Editar» en una y sus ajustes se abren en un panel a la derecha; la ficha se aparta para dejarle sitio, así que ves el resumen mientras editas.",
+        "what": "Toda la ficha en tarjetas-resumen, a lo ancho. Pulsa «Editar» en una y sus ajustes se abren en un panel a la derecha, encima de la ficha; al cerrarlo vuelves a verla entera.",
         "agent": {
           "step1": "Pulsa «Editar» en la tarjeta «Identificación»: sus ajustes se abren en un panel a la derecha.",
           "step2": "Apaga «Activo»: la tarjeta de la izquierda lo refleja al momento."
         },
         "group": {
           "step1": "Pulsa «Editar» en la tarjeta «Canales y estrategia».",
-          "step2": "Desmarca «Teléfono»: en la tarjeta «Agentes asignados» los agentes se quedan sin teléfono al momento."
+          "step2": "Desmarca «Teléfono» y cierra el panel: la tarjeta «Agentes asignados», que el panel tapaba, se ha quedado sin teléfono."
         },
         "user": {
           "step1": "Pulsa «Editar» en la tarjeta «Acceso».",
           "step2": "Desmarca «Estadísticas»: la tarjeta lo refleja al momento."
         },
-        "step3": "Pulsa fuera del panel, la X o Esc para cerrarlo: la ficha vuelve a ocupar todo el ancho.",
-        "look": "Si tener el resumen a la vista mientras editas en el panel te basta para entender a qué afecta cada cambio.",
+        "step3": "Pulsa fuera del panel, la X o Esc para cerrarlo: vuelves a ver la ficha entera.",
+        "look": "Si ganar espacio para el resumen compensa que el panel tape parte de la ficha mientras editas.",
         "summary": "Resumen a todo el ancho; los ajustes, en un panel al pulsar Editar."
       }
     },

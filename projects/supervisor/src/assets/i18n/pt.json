@@ -2100,21 +2100,21 @@
         "summary": "Tudo numa página; o índice leva-o lá."
       },
       "e": {
-        "what": "Toda a ficha em cartões de resumo, a toda a largura. Clique em «Editar» num deles e as definições abrem-se num painel à direita; a ficha afasta-se para lhe dar espaço, por isso vê o resumo enquanto edita.",
+        "what": "Toda a ficha em cartões de resumo, a toda a largura. Clique em «Editar» num deles e as definições abrem-se num painel à direita, por cima da ficha; ao fechá-lo volta a vê-la inteira.",
         "agent": {
           "step1": "Clique em «Editar» no cartão «Identificação»: as definições abrem-se num painel à direita.",
           "step2": "Desligue «Ativo»: o cartão da esquerda mostra-o no momento."
         },
         "group": {
           "step1": "Clique em «Editar» no cartão «Canais e estratégia».",
-          "step2": "Desmarque «Telefone»: no cartão «Agentes atribuídos» os agentes ficam sem telefone no momento."
+          "step2": "Desmarque «Telefone» e feche o painel: o cartão «Agentes atribuídos», que o painel tapava, ficou sem telefone."
         },
         "user": {
           "step1": "Clique em «Editar» no cartão «Acesso».",
           "step2": "Desmarque «Estatísticas»: o cartão mostra-o no momento."
         },
-        "step3": "Clique fora do painel, no X ou Esc para o fechar: a ficha volta a ocupar toda a largura.",
-        "look": "Se ter o resumo à vista enquanto edita no painel chega para perceber o que cada alteração afeta.",
+        "step3": "Clique fora do painel, no X ou Esc para o fechar: volta a ver a ficha inteira.",
+        "look": "Se ganhar espaço para o resumo compensa o painel tapar parte da ficha enquanto edita.",
         "summary": "Resumo a toda a largura; as definições num painel ao clicar Editar."
       }
     },

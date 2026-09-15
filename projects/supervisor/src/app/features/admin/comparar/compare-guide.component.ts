@@ -20,8 +20,9 @@ import { FICHA_VARIANTS, FichaVariantService, type FichaVariant } from './ficha-
  * fijarse. Abajo, las otras dos formas con un botón para saltar, y la pregunta que hay que
  * contestar al final.
  *
- * No es modal: la ficha sigue usable al lado, y la página se aparta para que el panel no tape
- * los campos que los pasos mandan tocar (`.compare-guide-open`, en `_page.scss`).
+ * No es modal y se pone encima de la ficha sin moverla (Rafa, 2026-09-15: «no quiero que arrastre
+ * el resto»); los pasos señalan tarjetas de las dos primeras columnas, que no tapa. La clase
+ * `.compare-guide-open` del documento solo la usa la barra de comparar para centrarse en el hueco.
  */
 type Entity = 'agent' | 'group' | 'user';
 

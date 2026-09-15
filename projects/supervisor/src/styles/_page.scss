@@ -140,13 +140,6 @@
   min-width: 0;
 }
 
-/* COMPARAR (rama `comparar/fichas`): con la guía abierta, la página se aparta lo que mide el
- * panel lateral del DS (`sc-drawer` a la derecha, 20rem), para que la guía no tape los campos
- * que sus pasos mandan tocar. */
-.compare-guide-open #main-content {
-  padding-inline-end: 20rem;
-}
-
 /* COMPARAR (variante `e`, «Resumen + panel lateral»): la ficha de siempre, recolocada sin tocar su
  * plantilla. Arriba la ficha de identidad y debajo el mosaico de tarjetas-resumen (`.board`), a
  * todo el ancho; la sección se edita en un `sc-drawer` que abre «Editar».
@@ -181,8 +174,8 @@
     justify-content: space-between;
   }
 
-  /* Tres columnas SIEMPRE, con o sin panel: al abrirlo se estrechan, no se reordenan, y cada
-   * tarjeta sigue donde estaba. */
+  /* Tres columnas. El panel lateral se pone ENCIMA sin mover nada (Rafa, 2026-09-15: «no quiero que
+   * arrastre el resto»): durante un rato se probó a apartar la ficha y las tarjetas se estrechaban. */
   > .board {
     grid-area: board;
     min-height: 0;
@@ -191,13 +184,6 @@
     grid-auto-rows: minmax(0, 1fr);
     gap: var(--sc-spacing-1);
   }
-}
-
-/* Con el panel abierto, la ficha se aparta lo que mide (el `width="44rem"` del `sc-drawer` de las
- * tres fichas): así la tarjeta que editas, y la que enseña el efecto del cambio, nunca quedan
- * debajo del panel. Sin transición: el panel entra deslizando sobre un hueco que ya está hecho. */
-.page__inner--rail.compare-board.compare-board--panel-open {
-  padding-inline-end: calc(44rem + var(--sc-spacing-1));
 }
 
 /* Dentro del panel. El foco llega aquí al abrirlo (para lectores de pantalla y teclado), sin

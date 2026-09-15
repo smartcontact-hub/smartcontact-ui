@@ -33,7 +33,7 @@
   <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'agents.form.edit_breadcrumb' : 'agents.form.create_breadcrumb') | translate }}</h1>
 
   <!-- El molde de Contact Center (`.page__inner--rail`). -->
-  <div class="page__inner page__inner--rail" [class.compare-board]="isCards()" [class.compare-board--panel-open]="isCards() && variants.editorOpen()">
+  <div class="page__inner page__inner--rail" [class.compare-board]="isCards()">
     <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
       @if (mode() === 'edit') {
         <div class="ficha">
@@ -148,9 +148,8 @@
 
     @if (isCards()) {
       <!-- COMPARAR (variante e): la sección se edita en un panel lateral que abre «Editar». No es
-           modal y baja desde la barra de arriba, que sigue a la vista (Guardar, Deshacer, la miga);
-           la ficha se aparta lo que mide (44rem, en `_page.scss`), así que la tarjeta que editas no
-           queda nunca debajo. El título va en la cabecera del panel, junto a la X. -->
+           modal, baja desde la barra de arriba, que sigue a la vista (Guardar, Deshacer, la miga), y
+           se pone encima de la ficha sin moverla. El título va en la cabecera del panel, junto a la X. -->
       <sc-drawer
         position="right"
         width="44rem"

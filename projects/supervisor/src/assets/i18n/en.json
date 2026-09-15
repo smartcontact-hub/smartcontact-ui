@@ -2100,21 +2100,21 @@
         "summary": "Everything on one page; the index takes you there."
       },
       "e": {
-        "what": "The whole record as full-width summary cards. Click “Edit” on one and its settings open in a panel on the right; the record moves aside to make room, so you see the summary while you edit.",
+        "what": "The whole record as full-width summary cards. Click “Edit” on one and its settings open in a panel on the right, over the record; close it to see the whole record again.",
         "agent": {
           "step1": "Click “Edit” on the “Identification” card: its settings open in a panel on the right.",
           "step2": "Turn off “Active”: the card on the left shows it straight away."
         },
         "group": {
           "step1": "Click “Edit” on the “Channels and strategy” card.",
-          "step2": "Untick “Phone”: in the “Assigned agents” card the agents lose phone straight away."
+          "step2": "Untick “Phone” and close the panel: the “Assigned agents” card, which the panel covered, has lost phone."
         },
         "user": {
           "step1": "Click “Edit” on the “Access” card.",
           "step2": "Untick “Statistics”: the card shows it straight away."
         },
-        "step3": "Click outside the panel, the X or Esc to close it: the record takes the full width again.",
-        "look": "Whether keeping the summary in view while you edit in the panel is enough to understand what each change affects.",
+        "step3": "Click outside the panel, the X or Esc to close it: you see the whole record again.",
+        "look": "Whether gaining room for the summary makes up for the panel covering part of the record while you edit.",
         "summary": "Full-width summary; settings in a panel when you click Edit."
       }
     },
