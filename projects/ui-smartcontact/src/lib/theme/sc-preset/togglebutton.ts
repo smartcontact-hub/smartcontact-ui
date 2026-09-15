@@ -49,14 +49,14 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
                 checkedColor: "var(--sc-cmp-togglebutton-icon-checked-color)"
             },
             root: {
-                color: "{surface.400}",
-                background: "{surface.950}",
-                hoverColor: "{surface.300}",
-                borderColor: "{surface.950}",
-                checkedColor: "{surface.0}",
-                hoverBackground: "{surface.950}",
-                checkedBackground: "{surface.950}",
-                checkedBorderColor: "{surface.950}"
+                color: "var(--sc-cmp-togglebutton-color)",
+                background: "var(--sc-cmp-togglebutton-background)",
+                hoverColor: "var(--sc-cmp-togglebutton-hover-color)",
+                borderColor: "var(--sc-cmp-togglebutton-border-color)",
+                checkedColor: "var(--sc-cmp-togglebutton-checked-color)",
+                hoverBackground: "var(--sc-cmp-togglebutton-hover-background)",
+                checkedBackground: "var(--sc-cmp-togglebutton-checked-background)",
+                checkedBorderColor: "var(--sc-cmp-togglebutton-checked-border-color)"
             },
             content: {
                 checkedBackground: "{surface.800}"
@@ -72,16 +72,16 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
                 /* DIVERGENCIA por AA (customs-catalog §1.10, 2026-09-14): el Kit da `surface.500` para la
                  * opción no elegida, 2,56:1 sobre su carril `surface.100` (lo cazó `theme-contrast` en las
                  * vistas de Conversaciones). `surface.700` da 6,40:1. El hover sube un paso más, a
-                 * `surface.900`, para que siga respondiendo al ratón. Cuando el Kit suba el suyo y
-                 * `cmp-color-rewire` acepte los slots de `root`, se lee `var(--sc-cmp-togglebutton-*)`. */
+                 * `surface.900`, para que siga respondiendo al ratón. Declarada en `cmp-color-map.mjs` (EXCLUDE):
+                 * cuando el Kit suba el suyo (`figma-pendiente.md` §8), se quitan esas filas y se lee la variable. */
                 color: "{surface.700}",
-                background: "{surface.100}",
+                background: "var(--sc-cmp-togglebutton-background)",
                 hoverColor: "{surface.900}",
-                borderColor: "{surface.100}",
-                checkedColor: "{surface.900}",
-                hoverBackground: "{surface.100}",
-                checkedBackground: "{surface.100}",
-                checkedBorderColor: "{surface.100}"
+                borderColor: "var(--sc-cmp-togglebutton-border-color)",
+                checkedColor: "var(--sc-cmp-togglebutton-checked-color)",
+                hoverBackground: "var(--sc-cmp-togglebutton-hover-background)",
+                checkedBackground: "var(--sc-cmp-togglebutton-checked-background)",
+                checkedBorderColor: "var(--sc-cmp-togglebutton-checked-border-color)"
             },
             content: {
                 checkedBackground: "var(--sc-cmp-togglebutton-content-checked-background)"

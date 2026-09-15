@@ -17,14 +17,14 @@ import type { TooltipDesignTokens } from '@primeuix/themes/types/tooltip';
     colorScheme: {
         dark: {
             root: {
-                color: "{surface.0}",
-                background: "{surface.700}"
+                color: "var(--sc-cmp-tooltip-color)",
+                background: "var(--sc-cmp-tooltip-background)"
             }
         },
         light: {
             root: {
-                color: "{surface.0}",
-                background: "{surface.700}"
+                color: "var(--sc-cmp-tooltip-color)",
+                background: "var(--sc-cmp-tooltip-background)"
             }
         }
     }

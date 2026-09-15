@@ -27,6 +27,22 @@ export const EXCLUDE = new Set([
   //    no los consume nadie. Va por referencia de paleta en `sc-preset/button.ts`.
   //    Se borra cuando el Kit suba el suyo. Ver customs-catalog §1.8.
   'light:button.outlined.secondary.color',
+  // ── botón `danger` sólido (light) · 2026-09-15 ─────────────────────────────────
+  //    El Kit (y Aura) lo pinta red-500 con texto blanco: 3,76:1, no llega a AA. Se queda un paso más oscuro
+  //    (red-600, 4,83:1; hover y active también un paso), DD-87. Estaba escrito como paleta en el preset y
+  //    el guard no lo veía; ahora es una divergencia declarada. Se borra cuando Figma lo suba
+  //    (`docs/figma-pendiente.md`).
+  'light:button.danger.background',
+  'light:button.danger.border.color',
+  'light:button.danger.hover.background',
+  'light:button.danger.hover.border.color',
+  'light:button.danger.active.background',
+  'light:button.danger.active.border.color',
+  // ── opción no elegida de SelectButton (light) · 2026-09-14 ──────────────────────
+  //    El Kit da surface-500 sobre su carril: 2,56:1. El código va a surface-700 (6,40:1) y el hover a
+  //    surface-900 (customs-catalog §1.10). Se borra cuando Figma haga `figma-pendiente.md` §8.
+  'light:togglebutton.color',
+  'light:togglebutton.hover.color',
   // ── success text (dark): antes la DS curaba su green-950 de marca y aquí no se espejaba.
   //    Desde el 2026-09-14 green-950 sale del export (DD-83), así que el valor ya es el mismo;
   //    las filas se quedan excluidas para no cambiar dos cosas a la vez. Se pueden quitar.
