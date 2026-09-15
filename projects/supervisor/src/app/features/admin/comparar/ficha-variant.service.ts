@@ -56,8 +56,8 @@ export class FichaVariantService {
       this.variant.set(stored);
       this.comparing.set(true);
     }
-    /* El servicio nace con la primera ficha que se abre, cuando la navegación que la trae ya
-     * está en marcha: su NavigationEnd no se oye, así que la URL de entrada se lee a mano. */
+    /* Nace al arrancar la app (`provideAppInitializer` en app.config), antes de la primera
+     * navegación: la URL de entrada se lee a mano por si su NavigationEnd ya pasó. */
     this.readValue(new URLSearchParams(window.location.search).get('variante'));
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))

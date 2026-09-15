@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import {
   PreloadAllModules,
   provideRouter,
@@ -17,6 +17,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { appRoutes } from './app.routes';
+import { FichaVariantService } from './features/admin/comparar/ficha-variant.service';
 
 /**
  * Clave de licencia de PrimeUI (tier community, caduca 2027-08-05).
@@ -67,6 +68,11 @@ export const appConfig: ApplicationConfig = {
     }),
     MessageService,
     ...provideScConfirm(),
+    // COMPARAR (rama `comparar/fichas`): el selector de variante arranca con la app para oír el
+    // `?variante=` de CUALQUIER URL de entrada, también la de una lista antes de abrir la ficha.
+    provideAppInitializer(() => {
+      inject(FichaVariantService);
+    }),
     // ngx-translate v17: `provideTranslateService` + `provideTranslateHttpLoader`
     // (el constructor de TranslateHttpLoader ya no toma args; la config va por
     // el provider funcional). Carga `/assets/i18n/<lang>.json`, idioma `es`.
