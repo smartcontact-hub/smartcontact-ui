@@ -166,6 +166,15 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-15 · En Servicio, la dirección de las notificaciones se lee entera
+
+**Sello:** rama `arebury/notificaciones-direccion-ancha`, sobre `fa21f53` (#198). Rafa probó en local el InputGroup
+con las casillas como addons («me convence solo el link») y eligió volver a las columnas. Archivado:
+`archive/handoff-ds-2026-09-15-tema` («El tema lee los colores», #193).
+
+**Lo que cambia.** Las tres columnas de casillas miden su rótulo y la dirección se queda el resto: a 1440 el campo pasa de
+121 a 452 px. Test en `servicio-notificaciones.spec.ts`, rojo con la hoja de antes.
+
 ## ✅ 2026-09-15 · Las fichas de agente, grupo y usuario se comparan en tres formas, y decide producto
 
 **Sello:** rama `comparar/fichas` (no se funde), HEAD `4b0aa6b`. Enlace del PM: https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e
@@ -196,20 +205,6 @@ presencia y prioridad. `tema-zip` lista por nombre los tokens retirados en la gu
 existir falla en silencio en el proyecto del equipo externo.
 
 - ⚠️ **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias.
-
-## ✅ 2026-09-15 · El tema lee los colores que exporta Figma, y el guard no deja escribir uno a mano
-
-**Sello:** rama `arebury/tema-lee-figma`, sobre `12bdb21` (#192). Rafa: «adelante a todo esto» (criterio Kit, DD-111; AA manda).
-«Acceso» (DD-110) vive en `archive/handoff-ds-2026-09-15-acceso`.
-
-**Lo que cambia.** 185 colores del preset iban como paso de paleta o hex donde el export ya genera su `--sc-cmp-*`: 166
-valían igual y leen la variable sin mover un píxel; los 11 del botón de aviso siguen al Kit (el texto con contorno o de
-texto estaba a 1,92:1, ahora 4,92:1; medido en «Alertas nuevas»); los 8 que no llegarían a AA con el Kit (botón `danger`
-en claro, opción no elegida de SelectButton) van a EXCLUDE con su motivo y a `figma-pendiente.md` §12 y §8.
-`tokens:cmp-rewire` caza también la paleta y `root`, en todo preset con `colorScheme` (sobre `main` daba 185).
-
-- ⚠️ **Las capturas de sc-docs no ven el aviso con contorno ni el modo oscuro**: esos colores se miden a mano (Supervisor).
-- 🕳️ **Medido y no hecho**: los 69 `font-size` del Supervisor no tienen text style equivalente salvo ~17 sin cambio a la vista.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -286,6 +281,7 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Las capturas de sc-docs no ven el botón de aviso con contorno ni el modo oscuro**: esos colores se miden a mano (#193).
 - 🪤 **El host de una tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta vive dentro
   de un componente; el host tiene que ser flex (`0 1 auto`, `min-height: 0`) o la página no hace scroll (DD-95).
 - 🪤 **Una regla SIN CAPA de un wrapper gana siempre al tema**: el rojo de error de seis campos tapaba el borde de foco.
