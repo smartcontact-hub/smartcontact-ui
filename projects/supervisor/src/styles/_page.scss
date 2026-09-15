@@ -140,6 +140,13 @@
   min-width: 0;
 }
 
+/* COMPARAR (rama `comparar/fichas`): con la guía abierta, la página se aparta lo que mide el
+ * panel lateral del DS (`sc-drawer` a la derecha, 20rem), para que la guía no tape los campos
+ * que sus pasos mandan tocar. */
+.compare-guide-open #main-content {
+  padding-inline-end: 20rem;
+}
+
 /* La columna de formulario que acompaña al rail de `--with-panel`.
  *
  * 1100 no es un número suelto: es lo que cabe junto a un rail de 240 sin que la

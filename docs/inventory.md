@@ -30,12 +30,12 @@
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
 | `sc-avatar` | EXTENDED | primeng/avatar, primeng/overlaybadge | 11 inputs | — | ✓ | — |
-| `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 6 |
+| `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 7 |
 | `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-bulk-edit-menu` | STANDARD | primeng/button | 1 inputs | sc-select | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 124 |
+| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 126 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 28 |
 | `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 5 |
@@ -47,8 +47,8 @@
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |
-| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 20 |
-| `sc-drawer` | EXTENDED | primeng/drawer | 8 inputs | — | ✓ | 1 |
+| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 22 |
+| `sc-drawer` | EXTENDED | primeng/drawer | 8 inputs | — | ✓ | 2 |
 | `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 13 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |

@@ -2,39 +2,70 @@
 .pending {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-5);
-  padding-top: var(--sc-spacing-0-875);
-  border-top: 1px solid var(--sc-border-subtle);
+  gap: var(--sc-spacing-0-625);
+  padding: var(--sc-spacing-0-875);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-subtle);
+  transition-property: background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+/* Con cambios, el recuadro toma el tono de marca suave: la señal quieta de que hay algo que
+ * leer (el contador es la otra). */
+.pending--active {
+  background: var(--sc-bg-primary-subtle);
+}
+
+.pending__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-375);
 }
 
 .pending__title,
-.pending__empty,
-.pending__fields,
-.pending__effect {
+.pending__empty {
   margin: 0;
 }
 
 .pending__title {
-  color: var(--sc-text-secondary);
+  color: var(--sc-text-primary);
 }
 
 .pending__empty {
-  color: var(--sc-text-subtle);
+  color: var(--sc-text-secondary);
 }
 
-.pending__list {
+.pending__list,
+.pending__effects {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-875);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.pending__item {
+.pending__list {
+  gap: var(--sc-spacing-0-875);
+}
+
+.pending__effects {
+  gap: var(--sc-spacing-0-25);
+}
+
+.pending__item,
+.pending__group {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-25);
+}
+
+.pending__item {
+  gap: var(--sc-spacing-0-375);
+}
+
+.pending__group {
+  gap: var(--sc-spacing-0-125);
 }
 
 .pending__section {
@@ -56,22 +87,18 @@
   }
 }
 
-.pending__icon,
-.pending__effect-icon {
+.pending__icon {
   display: inline-flex;
   flex: none;
   color: var(--sc-text-secondary);
 }
 
-.pending__fields {
+.pending__label {
   color: var(--sc-text-secondary);
-  overflow-wrap: anywhere;
 }
 
-/* La consecuencia es lo que el panel viene a contar: en el color del texto (no en azul, que
- * se lee como enlace) y con la flecha que dice «esto sale de lo de arriba». */
+.pending__fields,
 .pending__effect {
-  display: flex;
-  gap: var(--sc-spacing-0-25);
   color: var(--sc-text-primary);
+  overflow-wrap: anywhere;
 }

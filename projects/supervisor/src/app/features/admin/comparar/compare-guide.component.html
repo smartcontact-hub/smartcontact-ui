@@ -1,0 +1,67 @@
+<sc-drawer
+  position="right"
+  [modal]="false"
+  [visible]="variants.guideOpen()"
+  [header]="'compare.guide.title' | translate"
+  (visibleChange)="onVisibleChange($event)"
+>
+  <div class="guide">
+    <p class="guide__intro sc-text-body-regular">{{ 'compare.guide.intro' | translate }}</p>
+
+    <!-- Lo que tiene delante, primero y destacado: es lo único que necesita para empezar. -->
+    <section class="guide__current" aria-labelledby="compare-guide-current">
+      <p class="guide__eyebrow sc-text-caption-semibold">{{ 'compare.guide.current' | translate }}</p>
+      <h2 id="compare-guide-current" class="guide__variant sc-text-h3-semibold">
+        {{ 'compare.variant.' + variants.variant() + '.label' | translate }}
+      </h2>
+      <p class="guide__text sc-text-body-regular">{{ current().what | translate }}</p>
+
+      <h3 class="guide__subtitle sc-text-body-semibold">{{ 'compare.guide.try' | translate }}</h3>
+      <ol class="guide__steps">
+        @for (step of current().steps; track step; let i = $index) {
+          <li class="guide__step">
+            <span class="guide__step-number sc-text-caption-semibold" aria-hidden="true">{{ i + 1 }}</span>
+            <span class="sc-text-body-regular">{{ step | translate }}</span>
+          </li>
+        }
+      </ol>
+
+      <h3 class="guide__subtitle sc-text-body-semibold">{{ 'compare.guide.look' | translate }}</h3>
+      <p class="guide__text sc-text-body-regular">{{ current().look | translate }}</p>
+    </section>
+
+    <sc-divider />
+
+    <section class="guide__block" aria-labelledby="compare-guide-others">
+      <h3 id="compare-guide-others" class="guide__subtitle sc-text-body-semibold">{{ 'compare.guide.others' | translate }}</h3>
+      <ul class="guide__others">
+        @for (o of others(); track o) {
+          <li class="guide__other">
+            <div class="guide__other-copy">
+              <span class="sc-text-body-semibold">{{ 'compare.variant.' + o + '.label' | translate }}</span>
+              <span class="guide__muted sc-text-caption-regular">{{ 'compare.guide.' + o + '.summary' | translate }}</span>
+            </div>
+            <sc-button
+              size="sm"
+              variant="secondary"
+              appearance="outlined"
+              [label]="'compare.guide.switch' | translate"
+              [ariaLabel]="'compare.guide.switch_to' | translate: { variant: (labelKey(o) | translate) }"
+              (clicked)="variants.set(o)"
+            />
+          </li>
+        }
+      </ul>
+    </section>
+
+    <sc-divider />
+
+    <!-- Lo que se viene a decidir, al final: después de haber probado. -->
+    <section class="guide__block" aria-labelledby="compare-guide-question">
+      <h3 id="compare-guide-question" class="guide__subtitle sc-text-body-semibold">{{ 'compare.guide.question_title' | translate }}</h3>
+      <p class="guide__text sc-text-body-regular">{{ 'compare.guide.question' | translate }}</p>
+    </section>
+
+    <p class="guide__muted sc-text-caption-regular">{{ 'compare.guide.move_hint' | translate }}</p>
+  </div>
+</sc-drawer>

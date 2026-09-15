@@ -20,6 +20,7 @@ export type FichaVariant = 'a' | 'b' | 'c';
 export const FICHA_VARIANTS: readonly FichaVariant[] = ['a', 'b', 'c'];
 
 const STORAGE_KEY = 'sc-comparar-fichas';
+const GUIDE_SEEN_KEY = 'sc-comparar-guia-vista';
 
 function isVariant(value: unknown): value is FichaVariant {
   return typeof value === 'string' && (FICHA_VARIANTS as readonly string[]).includes(value);
@@ -49,6 +50,20 @@ export class FichaVariantService {
   readonly variant = signal<FichaVariant>('a');
   /** ¿Se está comparando? Solo entonces sale la barra. */
   readonly comparing = signal(false);
+  /** La guía lateral («Cómo comparar»). */
+  readonly guideOpen = signal(false);
+
+  /** La primera vez que alguien compara en este navegador, la guía se abre sola: quien llega
+   * con el enlace no sabe qué tiene delante ni qué probar. Después, solo si la pide. */
+  openGuideFirstTime(): void {
+    try {
+      if (localStorage.getItem(GUIDE_SEEN_KEY)) return;
+      localStorage.setItem(GUIDE_SEEN_KEY, '1');
+    } catch {
+      /* Sin almacenamiento se abre cada vez: mejor de más que perderse. */
+    }
+    this.guideOpen.set(true);
+  }
 
   constructor() {
     const stored = readStored();

@@ -43,7 +43,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 6
+      "usedInSupervisor": 7
     },
     {
       "name": "breadcrumb",
@@ -160,7 +160,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 124
+      "usedInSupervisor": 126
     },
     {
       "name": "card",
@@ -447,7 +447,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 20
+      "usedInSupervisor": 22
     },
     {
       "name": "drawer",
@@ -472,7 +472,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 2
     },
     {
       "name": "empty-state",

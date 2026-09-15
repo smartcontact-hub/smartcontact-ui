@@ -1,0 +1,57 @@
+@if (variants.comparing()) {
+  <!-- Hueco en el flujo para que la barra, en su sitio de siempre, no tape el final de la página. -->
+  <div class="variant-bar-spacer" aria-hidden="true"></div>
+
+  <div
+    #bar
+    class="variant-bar"
+    role="toolbar"
+    [attr.aria-label]="'compare.bar.label' | translate"
+    [class.variant-bar--placed]="position() !== null"
+    [class.variant-bar--dragging]="dragging()"
+    [style.left.px]="position()?.x ?? null"
+    [style.top.px]="position()?.y ?? null"
+  >
+    <button
+      type="button"
+      class="variant-bar__handle"
+      [attr.aria-label]="'compare.bar.move' | translate"
+      [attr.title]="'compare.bar.move' | translate"
+      (pointerdown)="startDrag($event)"
+      (pointermove)="drag($event)"
+      (pointerup)="endDrag($event)"
+      (pointercancel)="endDrag($event)"
+      (keydown)="nudge($event)"
+      (dblclick)="resetPosition()"
+    >
+      <sc-icon name="drag_indicator" size="sm" />
+    </button>
+
+    <span class="variant-bar__label sc-text-caption-semibold">{{ 'compare.bar.label' | translate }}</span>
+
+    <div class="variant-bar__options">
+      @for (v of options; track v) {
+        <sc-button
+          size="sm"
+          [variant]="variants.variant() === v ? 'primary' : 'secondary'"
+          [appearance]="variants.variant() === v ? 'filled' : 'outlined'"
+          [label]="'compare.variant.' + v + '.label' | translate"
+          (clicked)="variants.set(v)"
+        />
+      }
+    </div>
+
+    <span class="variant-bar__separator" aria-hidden="true"></span>
+
+    <sc-button
+      size="sm"
+      variant="secondary"
+      [appearance]="variants.guideOpen() ? 'filled' : 'text'"
+      icon="menu_book"
+      [label]="'compare.bar.guide' | translate"
+      (clicked)="toggleGuide()"
+    />
+  </div>
+
+  <sc-compare-guide />
+}
