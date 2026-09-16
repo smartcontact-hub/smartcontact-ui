@@ -35,6 +35,18 @@ function branchTo(items: readonly NavItem[], path: string): string[] {
   return [];
 }
 
+/** The `labelKey` of the item whose `path` is `path`; null if no row points there. */
+function keyOf(items: readonly NavItem[], path: string): string | null {
+  for (const item of items) {
+    if (item.path === path) return item.labelKey;
+    if (item.children) {
+      const found = keyOf(item.children, path);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 /** The `labelKey` of every ancestor of the item with `key`, outermost first; null if it is not in the tree. */
 function ancestorsOf(items: readonly NavItem[], key: string, trail: readonly string[] = []): string[] | null {
   for (const item of items) {
@@ -91,11 +103,38 @@ export class SidebarComponent {
   );
 
   /**
-   * El camino abierto, como Apollo: un `labelKey` por nivel desde la raíz, así que solo hay una rama
-   * abierta. Abrir un padre cierra cualquier otra; cerrarlo deja abiertos sus ancestros; entrar en
-   * una página abre la suya. En Slim, su primer elemento es el padre del panel flotante.
+   * Las categorías abiertas (Rafa, 2026-09-16). Desplegado, cada padre se abre y se cierra SOLO con su
+   * clic: abrir uno no cierra los demás, y nada se cierra al salir el ratón ni al navegar. Entrar en una
+   * página abre su rama sin tocar el resto, y lo que no cabe se recorre con el scroll del sidebar.
+   * En Slim sigue siendo una sola rama: su primer elemento es el padre del panel flotante.
    */
   protected readonly openKeys = signal<readonly string[]>([]);
+
+  /** Holds the sidebar open while a navigation it started cross-fades (Drawer only). */
+  protected readonly pinned = signal(false);
+
+  /** Foco de teclado dentro del sidebar: en Drawer lo despliega igual que el ratón (`:focus-within`). */
+  protected readonly focusWithin = signal(false);
+
+  /** Desplegado a 240: con el ratón encima, anclado, sujeto durante una navegación o con el foco dentro. */
+  private readonly expanded = computed(
+    () => this.hovered() || this.pinned() || this.compare.fixed() || this.focusWithin(),
+  );
+
+  /**
+   * Lo que se pinta abierto. Plegado a 80 no hay sitio para acumular, así que se queda como antes: solo la
+   * rama de la página actual (lo que de ella siga abierto). Desplegado, todas las que haya abierto.
+   */
+  protected readonly shownOpenKeys = computed<readonly string[]>(() => {
+    const open = this.openKeys();
+    if (this.slimRail() || this.expanded()) return open;
+    const shown: string[] = [];
+    for (const key of branchTo(this.allItems, this.currentPath())) {
+      if (!open.includes(key)) break;
+      shown.push(key);
+    }
+    return shown;
+  });
 
   /**
    * The one parent that wears the accent: the nearest ancestor of the current
@@ -105,7 +144,7 @@ export class SidebarComponent {
    */
   protected readonly accentKey = computed(() => {
     const branch = branchTo(this.allItems, this.currentPath());
-    const open = this.openKeys();
+    const open = this.shownOpenKeys();
     return branch.find((key) => !open.includes(key)) ?? branch.at(-1) ?? null;
   });
 
@@ -113,6 +152,7 @@ export class SidebarComponent {
   protected readonly hovered = signal(false);
   private static readonly COLLAPSE_AFTER_LEAVE_MS = 300;
   private leaveTimer: ReturnType<typeof setTimeout> | undefined;
+  private revealTimer: ReturnType<typeof setTimeout> | undefined;
 
   /** Slim: el padre del panel flotante y la altura a la que sale, la de su icono. */
   protected readonly flyoutItem = computed(() => {
@@ -123,11 +163,20 @@ export class SidebarComponent {
   protected readonly flyoutTop = signal(0);
 
   constructor() {
-    /* Entrar en una página abre su rama (Apollo). En Slim no: el panel se cierra. */
+    /* Entrar en una página abre su rama SIN cerrar las demás, y el sidebar baja hasta ella si no se ve. En
+     * Slim no: el panel se cierra. */
     effect(() => {
       const branch = branchTo(this.allItems, this.currentPath());
       const slim = this.slimRail();
-      untracked(() => this.openKeys.set(slim ? [] : branch));
+      untracked(() => {
+        if (slim) {
+          this.openKeys.set([]);
+          return;
+        }
+        const open = this.openKeys();
+        this.openKeys.set([...open, ...branch.filter((key) => !open.includes(key))]);
+        this.revealCurrent();
+      });
     });
 
     /**
@@ -159,6 +208,7 @@ export class SidebarComponent {
       doc.removeEventListener('click', onDocumentClick);
       doc.removeEventListener('keydown', onKeydown);
       clearTimeout(this.leaveTimer);
+      clearTimeout(this.revealTimer);
     });
   }
 
@@ -181,10 +231,46 @@ export class SidebarComponent {
   }
 
   protected onToggle(key: string): void {
-    const ancestors = ancestorsOf(this.allItems, key) ?? [];
     const open = this.openKeys().includes(key);
+    if (!this.slimRail()) {
+      this.openKeys.set(open ? this.openKeys().filter((k) => k !== key) : [...this.openKeys(), key]);
+      return;
+    }
+    /* Slim: una sola rama, la del panel flotante. */
+    const ancestors = ancestorsOf(this.allItems, key) ?? [];
     this.openKeys.set(open ? ancestors : [...ancestors, key]);
-    if (!open && ancestors.length === 0 && this.slimRail()) this.placeFlyout(key);
+    if (!open && ancestors.length === 0) this.placeFlyout(key);
+  }
+
+  protected onFocusOut(event: FocusEvent): void {
+    const next = event.relatedTarget as Node | null;
+    if (!next || !this.host.nativeElement.contains(next)) this.focusWithin.set(false);
+  }
+
+  /**
+   * Deja a la vista la fila de la página actual. Espera a que terminen de abrirse las categorías (su
+   * duración es `--sc-sidebar-submenu-duration`) y solo desplaza si la fila queda fuera, con una fila de
+   * aire y sin animación si el sistema pide menos movimiento.
+   */
+  private revealCurrent(): void {
+    clearTimeout(this.revealTimer);
+    const key = keyOf(this.allItems, this.currentPath());
+    const nav = this.host.nativeElement.querySelector<HTMLElement>('.sidebar__nav');
+    if (!key || !nav) return;
+    const wait = parseFloat(getComputedStyle(nav).getPropertyValue('--sc-sidebar-submenu-duration')) || 0;
+    this.revealTimer = setTimeout(() => {
+      const row = nav.querySelector<HTMLElement>(`[data-nav-key="${key}"]`);
+      if (!row) return;
+      const box = nav.getBoundingClientRect();
+      const rect = row.getBoundingClientRect();
+      const air = rect.height;
+      let delta = 0;
+      if (rect.top < box.top) delta = rect.top - box.top - air;
+      else if (rect.bottom > box.bottom) delta = rect.bottom - box.bottom + air;
+      if (delta === 0) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      nav.scrollBy({ top: delta, behavior: reduce ? 'auto' : 'smooth' });
+    }, wait);
   }
 
   /** Slim: con un panel abierto, pasar el ratón por otro padre de primer nivel lo cambia (Apollo). */
@@ -207,9 +293,6 @@ export class SidebarComponent {
       if (this.flyoutTop() > max) this.flyoutTop.set(Math.max(margin, max));
     });
   }
-
-  /** Holds the sidebar open while a navigation it started cross-fades (Drawer only). */
-  protected readonly pinned = signal(false);
 
   protected async onNavigate(path: string): Promise<void> {
     if (this.compare.showcase()) {
