@@ -78,7 +78,7 @@
             <h4 [id]="'expl-' + ex.id" class="versioned__title sc-text-h3-semibold">{{ ex.title }}</h4>
             <sc-tag [severity]="statusSeverity(ex.status)" [value]="statusLabel[ex.status]" />
           </div>
-          <p class="versioned__question">{{ ex.question }}</p>
+          <p class="versioned__question sc-text-body-regular">{{ ex.question }}</p>
           @if (ex.statusNote) {
             <p class="versioned__note sc-text-caption-regular">{{ ex.statusNote }}</p>
           }
@@ -91,16 +91,16 @@
             @for (v of ex.versions; track v.href) {
               <li class="version">
                 <a class="version__link" [href]="v.href" target="_blank" rel="noopener">
-                  <span class="version__date">{{ v.date }}</span>
-                  <span class="version__behavior">{{ v.behavior }} <span aria-hidden="true">↗</span></span>
+                  <span class="version__date sc-text-caption-regular">{{ v.date }}</span>
+                  <span class="version__behavior sc-text-body-regular">{{ v.behavior }} <span aria-hidden="true">↗</span></span>
                 </a>
                 @if (v.tag || v.commit) {
                   <span class="version__meta">
                     @if (v.tag) {
-                      <code>{{ v.tag }}</code>
+                      <code class="sc-text-caption-regular">{{ v.tag }}</code>
                     }
                     @if (v.commit) {
-                      <code>{{ v.commit }}</code>
+                      <code class="sc-text-caption-regular">{{ v.commit }}</code>
                     }
                   </span>
                 }

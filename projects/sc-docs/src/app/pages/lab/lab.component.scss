@@ -303,8 +303,6 @@ a.link-item__a:focus-visible {
 
 .versioned__question {
   margin: 0;
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-200);
   color: var(--sc-text-primary);
 }
 
@@ -353,14 +351,7 @@ a.link-item__a:focus-visible {
 .version__date {
   flex: none;
   font-family: var(--sc-font-family-mono);
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-200);
   color: var(--sc-text-subtle);
-}
-
-.version__behavior {
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-200);
 }
 
 .version__meta {
@@ -372,7 +363,6 @@ a.link-item__a:focus-visible {
 
 .version__meta code {
   font-family: var(--sc-font-family-mono);
-  font-size: var(--sc-font-size-100);
   color: var(--sc-text-secondary);
   overflow-wrap: anywhere;
 }
