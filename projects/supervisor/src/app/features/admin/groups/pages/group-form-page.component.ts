@@ -720,10 +720,15 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         chatStrategy: f.channels.has('chat') ? f.chatStrategy : undefined,
       };
 
+      /* Como Contact Center y la ficha de agente (Rafa, 2026-09-16): guardar se queda en la ficha, con su aviso.
+       * Un alta pasa a ser la edición de lo recién creado, sin recargar. */
       const editingId = this.editingId();
+      let createdId: number | null = null;
       if (editingId) {
         this.groupsStore.updateGroup(editingId, { ...payload });
         this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(f.links, editingId));
+        const refreshed = this.groupsStore.getGroup(editingId);
+        if (refreshed) this.initial.set(refreshed);
         this.messages.add({
           severity: 'success',
           summary: this.translate.instant('groups.toasts.updated', { name: payload.name }),
@@ -731,16 +736,24 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         });
       } else {
         const created = this.groupsStore.addGroup(payload);
+        createdId = created.id;
         this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(f.links, created.id));
+        this.editingId.set(created.id);
+        this.initial.set(created);
         this.messages.add({
           severity: 'success',
           summary: this.translate.instant('groups.toasts.created', { name: created.name }),
           life: TOAST_LIFE.success,
         });
       }
+      // Lo guardado pasa a ser la referencia para avisar si luego se quita un canal con agentes.
+      this.initialChannels.set(new Set(f.channels));
+      this.initialLinks.set(this.linksStore.linksForGroup(this.editingId()!));
       this.saving.set(false);
       this.dirtyState.markPristine();
-      void this.router.navigateByUrl('/admin/grupos');
+      /* Un alta abre la edición de lo recién creado: navegar (y no solo cambiar la dirección) pone al día la miga
+       * y el candado entre pestañas. */
+      if (createdId !== null) void this.router.navigateByUrl(`/admin/grupos/editar/${createdId}`, { replaceUrl: true });
     }, 400);
   }
 

@@ -477,9 +477,14 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         photo: f.photo ?? undefined,
       };
 
+      /* Como Contact Center y la ficha de agente (Rafa, 2026-09-16): guardar se queda en la ficha, con su aviso.
+       * Un alta pasa a ser la edición de lo recién creado, sin recargar. */
       const editingId = this.editingId();
+      let createdId: number | null = null;
       if (editingId) {
         this.usersStore.updateUser(editingId, { ...payload });
+        const refreshed = this.usersStore.getUser(editingId);
+        if (refreshed) this.initial.set(refreshed);
         this.messages.add({
           severity: 'success',
           summary: this.translate.instant('users.toasts.updated', { name: payload.name }),
@@ -487,6 +492,9 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         });
       } else {
         const created = this.usersStore.addUser(payload);
+        createdId = created.id;
+        this.editingId.set(created.id);
+        this.initial.set(created);
         this.messages.add({
           severity: 'success',
           summary: this.translate.instant('users.toasts.created', { name: created.name }),
@@ -496,7 +504,9 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
       this.saving.set(false);
       this.dirtyState.markPristine();
-      void this.router.navigateByUrl('/admin/usuarios');
+      /* Un alta abre la edición de lo recién creado: navegar (y no solo cambiar la dirección) pone al día la miga
+       * y el candado entre pestañas. */
+      if (createdId !== null) void this.router.navigateByUrl(`/admin/usuarios/editar/${createdId}`, { replaceUrl: true });
     }, 400);
   }
 
