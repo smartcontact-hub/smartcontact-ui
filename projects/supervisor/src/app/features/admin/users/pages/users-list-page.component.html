@@ -14,7 +14,7 @@
   [heading]="'sidebar.users' | translate"
   [rows]="users()"
   [columns]="columns()"
-  tableMinWidth="61rem"
+  tableMinWidth="54.5rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'users.search_placeholder' | translate"
@@ -79,13 +79,6 @@
 
 <ng-template #typeTpl let-user>
   <sc-tag severity="secondary" [value]="typeLabel(user.type)" />
-</ng-template>
-
-<ng-template #statusTpl let-user>
-  <sc-tag
-    [severity]="user.status === 'active' ? 'success' : 'secondary'"
-    [value]="'users.status.' + user.status | translate"
-  />
 </ng-template>
 
 <sc-delete-entity-dialog

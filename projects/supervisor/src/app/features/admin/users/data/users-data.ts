@@ -98,7 +98,6 @@ export interface User {
   readonly permissions: UserPermissions;
   readonly assignedGroups: readonly number[];
   readonly assignedServices: readonly string[];
-  readonly status: 'active' | 'inactive';
   readonly createdAt: string;
   /** Draft flag — set on duplicated entities (DD#294 in the React prototype). */
 }
@@ -126,7 +125,6 @@ export const USERS_SEED: readonly User[] = [
     permissions: { ...DEFAULT_PERMISSIONS },
     assignedGroups: [1, 2, 3],
     assignedServices: ['Atención general', 'Soporte técnico'],
-    status: 'active',
     createdAt: '2025-06-15',
   },
   {
@@ -140,7 +138,6 @@ export const USERS_SEED: readonly User[] = [
     permissions: { ...DEFAULT_PERMISSIONS, vuiDesignerManagement: false, usersManagement: false },
     assignedGroups: [1, 4],
     assignedServices: ['Atención general', 'Ventas'],
-    status: 'active',
     createdAt: '2025-07-20',
   },
   {
@@ -160,7 +157,6 @@ export const USERS_SEED: readonly User[] = [
     },
     assignedGroups: [2, 3, 5],
     assignedServices: ['Soporte técnico', 'Incidencias'],
-    status: 'active',
     createdAt: '2025-08-10',
   },
   {
@@ -187,7 +183,6 @@ export const USERS_SEED: readonly User[] = [
     },
     assignedGroups: [1],
     assignedServices: ['Atención general'],
-    status: 'active',
     createdAt: '2025-09-05',
   },
   {
@@ -201,7 +196,6 @@ export const USERS_SEED: readonly User[] = [
     permissions: { ...DEFAULT_PERMISSIONS },
     assignedGroups: [1, 2, 3, 4, 5],
     assignedServices: ['Atención general', 'Soporte técnico', 'Ventas', 'Facturación'],
-    status: 'inactive',
     createdAt: '2025-10-12',
   },
   {
@@ -215,7 +209,6 @@ export const USERS_SEED: readonly User[] = [
     permissions: { ...DEFAULT_PERMISSIONS, vuiDesignerManagement: false },
     assignedGroups: [3, 4],
     assignedServices: ['Campañas outbound', 'Ventas'],
-    status: 'active',
     createdAt: '2025-11-01',
   },
 ];

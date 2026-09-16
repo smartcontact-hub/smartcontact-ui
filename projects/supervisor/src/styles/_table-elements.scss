@@ -14,13 +14,12 @@
  * `<sc-tag [severity]>` del DS, como el estado de Agentes en Figma (DD-76). */
 
 /* ------------------------------------------------------------------ *
- * sc-channel-row — bare channel icons, tinted per type.
+ * sc-channel-row — glifos de canal sueltos, sin chip.
  *
- * Drops the chip-with-border-and-bg wrapper that made every channel
- * look identical. Each icon now carries the channel's identity via
- * colour: voice (warm), chat (cyan), email (neutral). Icons sit
- * directly on the cell — no chip — so they read as a glyph row, not
- * three repeated buttons.
+ * Todos del MISMO color (Rafa, 2026-09-16): el canal lo dice la forma del
+ * icono, y cuatro colores en una columna competían con las etiquetas de
+ * al lado. `--sc-icon-secondary` es el neutro de icono que cumple 3:1 en
+ * los dos temas (el `--sc-text-subtle` de antes daba 2.04:1).
  * ------------------------------------------------------------------ */
 .sc-channel-row {
   display: inline-flex;
@@ -33,31 +32,7 @@
     justify-content: center;
     width: 16px;
     height: 16px;
-    color: var(--sc-icon-subtle);
-
-    &[data-channel='phone'] {
-      color: var(--sc-label-green-text);
-    }
-
-    /* Era `--sc-color-cyan-700` crudo — el único de los tres que no volteaba,
-     * y en oscuro se quedaba en 2.99:1, justo por debajo del 3:1 que pide
-     * 1.4.11 para gráficos. `phone` ya usaba la familia `label`; ahora los
-     * tres hablan igual. */
-    &[data-channel='chat'] {
-      color: var(--sc-label-teal-text);
-    }
-
-    /* El verde de marca de WhatsApp, pero de la familia `label` como los demás: vuelta en oscuro y 3:1. */
-    &[data-channel='whatsapp'] {
-      color: var(--sc-label-green-text);
-    }
-
-    /* `--sc-text-subtle` es slate-400: 2.04:1 sobre blanco, ni el 3:1 que
-     * pide 1.4.11 para un glifo. `--sc-icon-secondary` es el token de icono
-     * neutro y cumple en los dos temas. */
-    &[data-channel='email'] {
-      color: var(--sc-icon-secondary);
-    }
+    color: var(--sc-icon-secondary);
   }
 }
 

@@ -14,7 +14,7 @@
   [heading]="'sidebar.agents' | translate"
   [rows]="agents()"
   [columns]="columns()"
-  tableMinWidth="93.5rem"
+  tableMinWidth="86rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'agents.search_placeholder' | translate"
@@ -110,7 +110,13 @@
 </ng-template>
 
 <ng-template #presenceTpl let-agent>
-  @if (agent.presenceStatus; as presence) {
+  @if (isReadonlyPresence(agent)) {
+    <!-- Desconectado, Postconversando y Administrativo se ven pero no se cambian desde aquí: sin botón ni flecha. -->
+    <span class="presence-static">
+      <span class="presence-dot" [attr.data-presence]="agent.presenceStatus" aria-hidden="true"></span>
+      <span class="presence-static__label sc-text-body-regular">{{ presenceLabelKey(agent.presenceStatus) | translate }}</span>
+    </span>
+  } @else if (agent.presenceStatus; as presence) {
     <!-- Botón compacto que abre la lista de estados, como el panel «Estados» del dialpad (2026-09-14).
          Antes era un desplegable con borde en cada fila. `stopPropagation` en `openPresenceMenu` porque
          la fila ABRE el detalle. -->
@@ -129,13 +135,6 @@
   } @else {
     <span class="cell cell--empty">—</span>
   }
-</ng-template>
-
-<ng-template #statusTpl let-agent>
-  <sc-tag
-    [severity]="agent.status === 'active' ? 'success' : 'secondary'"
-    [value]="'agents.status.' + agent.status | translate"
-  />
 </ng-template>
 
 <ng-template #recordingTpl let-agent>

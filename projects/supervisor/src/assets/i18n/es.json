@@ -1323,18 +1323,13 @@
       "name": "Nombre",
       "email": "Email",
       "identifier": "Identificador",
-      "type": "Tipo",
-      "status": "Estado"
+      "type": "Tipo"
     },
     "type": {
       "administrator": "Administrador",
       "supervisor": "Supervisor",
       "agent": "Agente",
       "viewer": "Visor"
-    },
-    "status": {
-      "active": "Activo",
-      "inactive": "Inactivo"
     },
     "section": {
       "dashboard": "Dashboard",
@@ -1381,9 +1376,7 @@
         "identifier": "Identificador interno",
         "identifier_hint": "Si lo dejas vacío se generará automáticamente al guardar.",
         "type": "Tipo de usuario",
-        "status": "Estado",
-        "active": "Activo",
-        "active_hint": "Puede iniciar sesión y operar"
+        "status": "Estado"
       },
       "danger_zone_description": "Eliminar este usuario revoca su acceso al panel y borra sus permisos. La acción no se puede deshacer."
     },
@@ -1411,7 +1404,6 @@
       "email": "Email",
       "identifier": "Identificador",
       "type": "Tipo",
-      "status": "Estado",
       "created_at": "Creado",
       "sheet": "Usuarios"
     },
@@ -1472,15 +1464,15 @@
         "empty": "Usa «Añadir agente» para asignar el primer agente a este grupo.",
         "no_results": "Ningún agente asignado coincide con el filtro.",
         "col_agent": "Agente",
-        "col_active": "Activo",
+        "col_active": "Atiende",
         "toggle_all_channel": "Activar/desactivar {{channel}} en todos los visibles",
-        "active_aria": "Pausar a {{name}} en este grupo",
+        "active_aria": "{{name}} atiende en este grupo",
         "remove_aria": "Quitar a {{name}} del grupo",
-        "warn_no_channels": "Activo pero sin canales asignados",
+        "warn_no_channels": "Atiende, pero sin canales asignados",
         "add_placeholder": "Añadir agente…",
         "add_aria": "Añadir agente al grupo",
         "no_channels_warn": "{{count}} sin canal",
-        "bulk_pause": "Pausar",
+        "bulk_pause": "Dejar de atender",
         "bulk_unassign": "Quitar del grupo"
       },
       "fields": {
@@ -1554,7 +1546,6 @@
       "channels": "Canales",
       "type": "Tipo",
       "presence": "Estado",
-      "status": "Activación",
       "recording": "Grabación",
       "groups": "Grupos"
     },
@@ -1580,11 +1571,10 @@
       "unavailable": "No disponible",
       "bathroom": "Baño",
       "lunch": "Comida",
-      "training": "Formación"
-    },
-    "status": {
-      "active": "Activo",
-      "inactive": "Inactivo"
+      "training": "Formación",
+      "wrap_up": "Postconversando",
+      "administrative": "Administrativo",
+      "offline": "Desconectado"
     },
     "permission": {
       "recording": "Grabación habilitada"
@@ -1670,8 +1660,6 @@
         "pin": "PIN",
         "pin_hint": "3-6 dígitos. Se usa para auto-activación desde el teléfono.",
         "labels": "Etiquetas asignadas",
-        "active": "Activo",
-        "active_hint": "Puede recibir llamadas y chats",
         "recording": "Grabar llamadas"
       },
       "labels_empty": "Aún no hay etiquetas. Crea una desde la sección Etiquetas.",
@@ -1682,8 +1670,8 @@
         "empty": "Usa «Añadir grupo» para asignar el primer grupo a este agente.",
         "col_group": "Grupo",
         "col_channels_here": "Canales en este grupo",
-        "col_active": "Activo",
-        "active_aria": "Pausar al agente en {{name}}",
+        "col_active": "Atiende",
+        "active_aria": "Atiende en {{name}}",
         "remove_aria": "Quitar al agente de {{name}}",
         "add_placeholder": "Añadir grupo…",
         "filter_placeholder": "Buscar grupo…",
@@ -1693,8 +1681,8 @@
       "permissions": {
         "manage_devices": "Gestión de dispositivos",
         "manage_devices_hint": "El agente puede administrar sus dispositivos asignados",
-        "self_activate": "Activación por grupo",
-        "self_activate_hint": "El agente puede activarse o desactivarse en cada grupo",
+        "self_activate": "Elige en qué grupos atiende",
+        "self_activate_hint": "Enciende o apaga «Atiende» en sus grupos desde su app. Necesita que esté permitido en la configuración del AED.",
         "calls_section": "Llamadas",
         "destino": "Destino",
         "col_llamada": "Llamadas",
@@ -1885,7 +1873,8 @@
           },
           "config": {
             "title": "Configuración",
-            "activacion_label": "Activación/ Desactivación por grupo de servicio Contact Center",
+            "activacion_label": "Los agentes eligen en qué grupos atienden",
+            "activacion_hint": "Afecta a todos los agentes. Apagado, ninguno puede encender ni apagar «Atiende» en sus grupos.",
             "gestion_label": "Gestión de dispositivos de trabajo en WebRTC",
             "externos_label": "Uso de dispositivos externos"
           },
@@ -2123,7 +2112,7 @@
         "what": "Toda la ficha en tarjetas-resumen, a lo ancho. Pulsa «Editar» en una y sus ajustes se abren en un panel a la derecha, encima de la ficha; al cerrarlo vuelves a verla entera.",
         "agent": {
           "step1": "Pulsa «Editar» en la tarjeta «Identificación»: sus ajustes se abren en un panel a la derecha.",
-          "step2": "Apaga «Activo»: la tarjeta de la izquierda lo refleja al momento."
+          "step2": "Apaga «Grabar llamadas»: la tarjeta de la izquierda lo refleja al momento."
         },
         "group": {
           "step1": "Pulsa «Editar» en la tarjeta «Canales y estrategia».",
@@ -2141,7 +2130,7 @@
     "board": {
       "editing": "Editando",
       "none": "Ninguno",
-      "paused": "En pausa",
+      "paused": "No atiende",
       "no_channels": "Sin canales"
     }
   }

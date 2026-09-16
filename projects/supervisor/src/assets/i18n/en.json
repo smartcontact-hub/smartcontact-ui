@@ -1323,18 +1323,13 @@
       "name": "Name",
       "email": "Email",
       "identifier": "Identifier",
-      "type": "Type",
-      "status": "Status"
+      "type": "Type"
     },
     "type": {
       "administrator": "Administrator",
       "supervisor": "Supervisor",
       "agent": "Agent",
       "viewer": "Viewer"
-    },
-    "status": {
-      "active": "Active",
-      "inactive": "Inactive"
     },
     "section": {
       "dashboard": "Dashboard",
@@ -1378,9 +1373,7 @@
         "identifier": "Internal identifier",
         "identifier_hint": "If left empty it will be generated automatically on save.",
         "type": "User type",
-        "status": "Status",
-        "active": "Active",
-        "active_hint": "Can sign in and operate"
+        "status": "Status"
       },
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
       "duplicate_title": "Duplicate user",
@@ -1411,7 +1404,6 @@
       "email": "Email",
       "identifier": "Identifier",
       "type": "Type",
-      "status": "Status",
       "created_at": "Created",
       "sheet": "Users"
     },
@@ -1469,15 +1461,15 @@
         "empty": "Use \"Add agent\" to assign the first agent to this group.",
         "no_results": "No assigned agents match the filter.",
         "col_agent": "Agent",
-        "col_active": "Active",
+        "col_active": "Answers",
         "toggle_all_channel": "Toggle {{channel}} on all visible",
-        "active_aria": "Pause {{name}} in this group",
+        "active_aria": "{{name}} answers in this group",
         "remove_aria": "Remove {{name}} from group",
-        "warn_no_channels": "Active but no channels assigned",
+        "warn_no_channels": "Answers, but has no channels assigned",
         "add_placeholder": "Add agent…",
         "add_aria": "Add agent to the group",
         "no_channels_warn": "{{count}} with no channel",
-        "bulk_pause": "Pause",
+        "bulk_pause": "Stop answering",
         "bulk_unassign": "Remove from group"
       },
       "fields": {
@@ -1554,7 +1546,6 @@
       "channels": "Channels",
       "type": "Type",
       "presence": "Status",
-      "status": "Activation",
       "recording": "Recording",
       "groups": "Groups"
     },
@@ -1580,11 +1571,10 @@
       "unavailable": "Unavailable",
       "bathroom": "Restroom",
       "lunch": "Lunch",
-      "training": "Training"
-    },
-    "status": {
-      "active": "Active",
-      "inactive": "Inactive"
+      "training": "Training",
+      "wrap_up": "Wrap-up",
+      "administrative": "Administrative",
+      "offline": "Disconnected"
     },
     "permission": {
       "recording": "Recording enabled"
@@ -1667,8 +1657,6 @@
         "pin": "PIN",
         "pin_hint": "3-6 digits. Used for self-activation from phone.",
         "labels": "Assigned labels",
-        "active": "Active",
-        "active_hint": "Can receive calls and chats",
         "recording": "Record calls"
       },
       "labels_empty": "No labels yet. Create one from the Labels section.",
@@ -1679,8 +1667,8 @@
         "empty": "Use \"Add group\" to assign the first group to this agent.",
         "col_group": "Group",
         "col_channels_here": "Channels in this group",
-        "col_active": "Active",
-        "active_aria": "Pause agent in {{name}}",
+        "col_active": "Answers",
+        "active_aria": "Answers in {{name}}",
         "remove_aria": "Remove agent from {{name}}",
         "add_placeholder": "Add group…",
         "filter_placeholder": "Search group…",
@@ -1690,8 +1678,8 @@
       "permissions": {
         "manage_devices": "Device management",
         "manage_devices_hint": "Agent can manage their assigned devices",
-        "self_activate": "Group activation",
-        "self_activate_hint": "Agent can activate or deactivate themselves in each group",
+        "self_activate": "Chooses which groups to answer in",
+        "self_activate_hint": "Turns “Answers” on or off in their groups from their app. It must be allowed in the AED settings.",
         "calls_section": "Calls",
         "destino": "Destination",
         "col_llamada": "Calls",
@@ -1885,7 +1873,8 @@
           },
           "config": {
             "title": "Configuration",
-            "activacion_label": "Activation/Deactivation by Contact Center service group",
+            "activacion_label": "Agents choose which groups they answer in",
+            "activacion_hint": "Applies to all agents. When off, no agent can turn “Answers” on or off in their groups.",
             "gestion_label": "Management of work devices in WebRTC",
             "externos_label": "Use of external devices"
           },
@@ -2123,7 +2112,7 @@
         "what": "The whole record as full-width summary cards. Click “Edit” on one and its settings open in a panel on the right, over the record; close it to see the whole record again.",
         "agent": {
           "step1": "Click “Edit” on the “Identification” card: its settings open in a panel on the right.",
-          "step2": "Turn off “Active”: the card on the left shows it straight away."
+          "step2": "Turn off “Record calls”: the card on the left shows it straight away."
         },
         "group": {
           "step1": "Click “Edit” on the “Channels and strategy” card.",
@@ -2141,7 +2130,7 @@
     "board": {
       "editing": "Editing",
       "none": "None",
-      "paused": "Paused",
+      "paused": "Doesn’t answer",
       "no_channels": "No channels"
     }
   }

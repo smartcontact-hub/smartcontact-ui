@@ -5,7 +5,7 @@ import { User, USERS_SEED, type UserType } from '../data/users-data';
 import { bulkUpdatePatch } from '@core/utils/store-helpers';
 
 /** Campos que admiten edición masiva. Ver `bulkUpdate`. */
-export type UserBulkField = 'type' | 'status';
+export type UserBulkField = 'type';
 
 function nextCode(items: readonly User[]): string {
   const maxN = items.reduce((max, u) => {
@@ -24,7 +24,8 @@ export class UsersStore {
   private readonly store: LocalStore<User> = createLocalStore<User>({
     storageKey: 'sc-users',
     versionKey: 'sc-users-v',
-    currentVersion: 1,
+    /* 2 (2026-09-16): sin `status`. No había razón documentada para un usuario «activo» y el PM no lo reconoce. */
+    currentVersion: 2,
     defaults: USERS_SEED,
   });
 
@@ -56,15 +57,11 @@ export class UsersStore {
    * —agentes y grupos sí— y la ausencia era accidental, no diseñada: los tres
    * ficheros son casi el mismo.
    *
-   * Solo se exponen `type` y `status`. El resto de campos del usuario (nombre,
+   * Solo se expone `type`. El resto de campos del usuario (nombre,
    * email, identificador) son ÚNICOS por persona: ofrecerlos en lote sería
    * ofrecer pisar a diez usuarios con el mismo email.
    */
   bulkUpdate(ids: readonly number[], field: UserBulkField, value: unknown): void {
-    bulkUpdatePatch(this.store, this.users(), ids, () =>
-      field === 'type'
-        ? { type: value as UserType }
-        : { status: value as User['status'] },
-    );
+    bulkUpdatePatch(this.store, this.users(), ids, () => (field === 'type' ? { type: value as UserType } : null));
   }
 }

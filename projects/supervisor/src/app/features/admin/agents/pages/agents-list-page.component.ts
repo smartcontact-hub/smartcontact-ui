@@ -43,6 +43,7 @@ import {
   AgentType,
   PRESENCE_LABEL_KEYS,
   PresenceStatus,
+  READONLY_PRESENCE,
 } from '../data/agents-data';
 import { AgentBulkField, AgentsStore } from '../state/agents.store';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
@@ -59,8 +60,8 @@ interface PendingBulkEdit {
 /* v2 — schema bumped from a Set<string> to an ordered string[] when the
  * ColumnSelector gained drag-to-reorder + per-column defaultVisible.
  * Older `_v1` caches no longer parse and are silently ignored. */
-/* v3 (2026-09-16): columnas nuevas (Email, Grabación). Una lista guardada no las conoce y no saldrían nunca. */
-const COLUMN_PREF_KEY = 'sc-agents-columns-v3';
+/* v4 (2026-09-16): columnas nuevas (Email, Grabación) y cuál sale de inicio. Una lista guardada no las conoce. */
+const COLUMN_PREF_KEY = 'sc-agents-columns-v4';
 const AGENT_TYPES: readonly AgentType[] = ['normal', 'cuscare', 'cuscare_carrier', 'admin_cuscare'];
 const PRESENCE_STATES: readonly PresenceStatus[] = [
   'disponible',
@@ -175,14 +176,13 @@ export class AgentsListPageComponent {
       },
       { key: 'name', label: this.translate.instant('agents.table.name'), locked: true },
       { key: 'extension', label: this.translate.instant('agents.table.extension') },
-      /* Oculta de inicio: con ella la tabla pide 1496 px y a 1440 se desplazaría de lado (DD-100). Sin
-       * «Grabación» seguirían sobrando 45 px, así que es la única de las dos que lo evita. */
-      { key: 'email', label: this.translate.instant('agents.table.email'), defaultVisible: false },
+      { key: 'email', label: this.translate.instant('agents.table.email') },
       { key: 'channels', label: this.translate.instant('agents.table.channels') },
       { key: 'type', label: this.translate.instant('agents.table.type') },
       { key: 'presence', label: this.translate.instant('agents.table.presence') },
-      { key: 'status', label: this.translate.instant('agents.table.status') },
-      { key: 'recording', label: this.translate.instant('agents.table.recording') },
+      /* Oculta de inicio: con Email y Grabación a la vez la tabla pide 1376 px, y a 1440 (1299 de tabla) se
+       * desplazaría de lado (DD-100). Rafa prefiere ver el email (2026-09-16). */
+      { key: 'recording', label: this.translate.instant('agents.table.recording'), defaultVisible: false },
       { key: 'groups', label: this.translate.instant('agents.table.groups') },
     ];
   });
@@ -200,7 +200,7 @@ export class AgentsListPageComponent {
    *
    * El `field` de cada columna es EL MISMO `key` que usa el `columnDefs` del
    * `sc-column-selector`: es lo que casa `[visibleColumns]` con el selector
-   * (y lo que hay persistido en `sc-agents-columns-v3`).
+   * (y lo que hay persistido en `sc-agents-columns-v4`).
    */
   private readonly codeTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('codeTpl');
   private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('nameTpl');
@@ -210,7 +210,6 @@ export class AgentsListPageComponent {
   private readonly channelsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('channelsTpl');
   private readonly typeTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('typeTpl');
   private readonly presenceTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('presenceTpl');
-  private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('statusTpl');
   private readonly recordingTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('recordingTpl');
   private readonly groupsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('groupsTpl');
 
@@ -274,13 +273,6 @@ export class AgentsListPageComponent {
         width: '10.5rem',
       },
       {
-        field: 'status',
-        header: this.translate.instant('agents.table.status'),
-        sortable: true,
-        cellTemplate: this.statusTpl(),
-        width: '7.5rem',
-      },
-      {
         field: 'recording',
         header: this.translate.instant('agents.table.recording'),
         sortable: true,
@@ -300,14 +292,6 @@ export class AgentsListPageComponent {
   protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => {
     this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
     return [
-      {
-        key: 'status',
-        label: this.translate.instant('agents.table.status'),
-        values: [
-          { value: 'active', label: this.translate.instant('agents.status.active') },
-          { value: 'inactive', label: this.translate.instant('agents.status.inactive') },
-        ],
-      },
       {
         key: 'presenceStatus',
         label: this.translate.instant('agents.table.presence'),
@@ -354,8 +338,6 @@ export class AgentsListPageComponent {
         return a.extension.localeCompare(b.extension);
       case 'type':
         return a.agentType.localeCompare(b.agentType);
-      case 'status':
-        return a.status.localeCompare(b.status);
       case 'email':
         return (a.email ?? '').localeCompare(b.email ?? '');
       case 'recording':
@@ -379,8 +361,9 @@ export class AgentsListPageComponent {
 
   protected readonly impactItems = computed<readonly ImpactItem[]>(() => {
     const ids = this.selectedIds();
+    const presence = this.pendingBulkEdit()?.field === 'presenceStatus';
     return this.agents()
-      .filter((a) => ids.has(a.id))
+      .filter((a) => ids.has(a.id) && !(presence && this.isReadonlyPresence(a)))
       .map((a) => ({ id: a.id, name: a.name, hint: `(ext. ${a.extension || '—'})` }));
   });
 
@@ -479,6 +462,10 @@ export class AgentsListPageComponent {
     this.renamingId.set(null);
   }
 
+  protected isReadonlyPresence(agent: Agent): boolean {
+    return !!agent.presenceStatus && READONLY_PRESENCE.has(agent.presenceStatus);
+  }
+
   protected presenceLabelKey(presence: PresenceStatus): string {
     return this.presenceKeys[presence];
   }
@@ -516,8 +503,6 @@ export class AgentsListPageComponent {
   protected onBulkMatch(match: BulkEditMatch): void {
     const valueOf = (a: Agent): string => {
       switch (match.fieldKey as AgentBulkField) {
-        case 'status':
-          return a.status;
         case 'presenceStatus':
           return a.presenceStatus ?? '';
         case 'agentType':
@@ -545,18 +530,23 @@ export class AgentsListPageComponent {
   protected onBulkPreviewConfirm(remainingIds: readonly number[]): void {
     const op = this.pendingBulkEdit();
     if (!op) return;
-    const idSet = new Set(remainingIds);
+    /* El estado de un agente desconectado, en postconversación o administrativo no se toca, tampoco en lote. */
+    const ids =
+      op.field === 'presenceStatus'
+        ? remainingIds.filter((id) => !this.agents().some((a) => a.id === id && this.isReadonlyPresence(a)))
+        : remainingIds;
+    const idSet = new Set(ids);
     // Snapshot the affected agents before the bulk so undo can restore them.
     const snapshot = this.agents()
       .filter((a) => idSet.has(a.id))
       .map((a) => ({ ...a }));
 
-    this.agentsStore.bulkUpdate(remainingIds, op.field, op.value);
+    this.agentsStore.bulkUpdate(ids, op.field, op.value);
     this.pendingBulkEdit.set(null);
     this.clearSelection();
 
     this.undoStack.push(
-      this.translate.instant('common.bulk_updated', { count: remainingIds.length }),
+      this.translate.instant('common.bulk_updated', { count: ids.length }),
       this.translate.instant('common.change_reverted'),
       () => {
         for (const prev of snapshot) {
@@ -628,7 +618,7 @@ export class AgentsListPageComponent {
       a.extension,
       this.translate.instant(this.typeKeys[a.agentType]),
       a.email ?? '',
-      this.translate.instant(`agents.status.${a.status}`),
+      a.presenceStatus ? this.translate.instant(this.presenceKeys[a.presenceStatus]) : '',
       this.translate.instant(a.permissions.recording ? 'common.yes' : 'common.no'),
       this.groupsForAgent(a.id)
         .map((g) => g.name)

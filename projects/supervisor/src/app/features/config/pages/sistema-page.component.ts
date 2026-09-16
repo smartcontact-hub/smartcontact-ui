@@ -169,7 +169,7 @@ export class SistemaPageComponent {
   protected readonly result = signal<RegenerationResult | null>(null);
 
   protected readonly activeAgents = computed(() =>
-    this.agentsStore.agents().filter((a) => a.status === 'active'),
+    this.agentsStore.agents().filter((a) => a.presenceStatus !== 'desconectado'),
   );
 
   protected readonly filteredAgents = computed(() => {

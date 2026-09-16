@@ -10,8 +10,9 @@ const MATERIAL_NAMES: Readonly<Record<Exclude<ChannelIconKind, 'whatsapp'>, stri
 };
 
 /**
- * El glifo de un canal en las listas. WhatsApp no existe en Material Symbols (no trae marcas), así que
- * va su logo en SVG con `currentColor`, al mismo tamaño que los demás.
+ * El glifo de un canal en las listas. Los iconos son siempre Material Symbols, con UNA excepción decidida por Rafa
+ * (2026-09-16): WhatsApp lleva su logo de marca, que Material no tiene. Va en SVG con `currentColor`, al mismo
+ * tamaño y color que los demás.
  */
 @Component({
   selector: 'sc-channel-icon',

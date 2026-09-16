@@ -545,6 +545,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     'comida',
     'formacion',
   ];
+  /** Un estado de solo lectura (Desconectado…) se enseña si es el actual, pero no se ofrece para elegir. */
+  protected readonly presenceOptions = computed<readonly PresenceStatus[]>(() => {
+    const current = this.form().presenceStatus;
+    return this.presenceStates.includes(current) ? this.presenceStates : [current, ...this.presenceStates];
+  });
 
   protected readonly editingId = signal<number | null>(null);
   /**
@@ -908,9 +913,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     );
   }
 
-  protected onStatusChange(checked: boolean): void {
-    this.updateField('status', checked ? 'active' : 'inactive');
-  }
 
   protected onLinksChange(links: readonly GroupAgentLink[]): void {
     this.form.update((f) => ({ ...f, links }));

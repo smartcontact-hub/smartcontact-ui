@@ -38,7 +38,8 @@ import {
 import { USER_TYPE_LABEL_KEYS, USER_TYPES, User, UserType } from '../data/users-data';
 import { UsersStore, type UserBulkField } from '../state/users.store';
 
-const COLUMN_PREF_KEY = 'sc-users-columns-v1';
+/* v2 (2026-09-16): sin la columna «Estado» (activo/inactivo). */
+const COLUMN_PREF_KEY = 'sc-users-columns-v2';
 
 interface PendingBulkEdit {
   readonly field: UserBulkField;
@@ -117,7 +118,6 @@ export class UsersListPageComponent {
       { key: 'email', label: this.translate.instant('users.table.email') },
       { key: 'identifier', label: this.translate.instant('users.table.identifier') },
       { key: 'type', label: this.translate.instant('users.table.type') },
-      { key: 'status', label: this.translate.instant('users.table.status') },
     ];
   });
 
@@ -157,7 +157,6 @@ export class UsersListPageComponent {
   private readonly identifierTpl =
     viewChild<TemplateRef<ScColumnCellContext<User>>>('identifierTpl');
   private readonly typeTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('typeTpl');
-  private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('statusTpl');
   protected readonly columns = computed<readonly ScColumnDef<User>[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
     return [
@@ -189,13 +188,6 @@ export class UsersListPageComponent {
         cellTemplate: this.typeTpl(),
         width: '8.5rem',
       },
-      {
-        field: 'status',
-        header: this.translate.instant('users.table.status'),
-        sortable: true,
-        cellTemplate: this.statusTpl(),
-        width: '6.5rem',
-      },
     ];
   });
 
@@ -208,7 +200,7 @@ export class UsersListPageComponent {
 
   /* ── Edición masiva ──────────────────────────────────────────────────────
    *
-   * Solo `type` y `status`. El resto de campos del usuario —nombre, email,
+   * Solo `type`. El resto de campos del usuario —nombre, email,
    * identificador— son ÚNICOS por persona: ofrecerlos en lote sería ofrecer
    * dejar a diez usuarios con el mismo email. */
   protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
@@ -222,14 +214,6 @@ export class UsersListPageComponent {
         values: USER_TYPES.map((t) => ({
           value: t,
           label: this.translate.instant(this.typeLabelKeys[t]),
-        })),
-      },
-      {
-        key: 'status',
-        label: this.translate.instant('users.table.status'),
-        values: (['active', 'inactive'] as const).map((s) => ({
-          value: s,
-          label: this.translate.instant(`users.status.${s}`),
         })),
       },
     ];
@@ -406,7 +390,6 @@ export class UsersListPageComponent {
       this.translate.instant('users.export.email'),
       this.translate.instant('users.export.identifier'),
       this.translate.instant('users.export.type'),
-      this.translate.instant('users.export.status'),
       this.translate.instant('users.export.created_at'),
     ];
     const data = rows.map((u) => [
@@ -415,7 +398,6 @@ export class UsersListPageComponent {
       u.email,
       u.identifier,
       this.typeLabel(u.type),
-      this.translate.instant(`users.status.${u.status}`),
       u.createdAt,
     ]);
     this.xlsx.export({

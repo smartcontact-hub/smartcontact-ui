@@ -102,8 +102,7 @@
   <sc-tag severity="secondary" [value]="group.strategy" />
 </ng-template>
 
-<!-- Solo lectura. El número y su desplegable, como «Agentes»: con los nombres en línea, los tres
-     servicios de «Nodo AED 1» piden 406 px y la tabla se desplazaría de lado a 1440 (DD-100). -->
+<!-- Solo lectura. Cuántos servicios, como «Agentes»; el desplegable enseña sus teléfonos y nada más. -->
 <ng-template #servicesTpl let-group>
   @let services = servicesForGroup(group);
   <sc-group-popover [groups]="services" [countAriaLabel]="(services.length === 1 ? 'groups.table.services_count_one' : 'groups.table.services_count') | translate: { count: services.length }" />

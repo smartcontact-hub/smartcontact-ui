@@ -82,7 +82,6 @@
           <sc-board-row [label]="'users.form.fields.email' | translate">{{ orNone(form().email) }}</sc-board-row>
           <sc-board-row [label]="'users.form.fields.identifier' | translate">{{ orNone(form().identifier) }}</sc-board-row>
           <sc-board-row [label]="'users.form.fields.type' | translate">{{ typeLabelKeys[form().type] | translate }}</sc-board-row>
-          <sc-board-row [label]="'users.form.fields.active' | translate">{{ yesNo(form().status === 'active') | translate }}</sc-board-row>
         </sc-board-card>
 
         <sc-board-card
@@ -235,23 +234,6 @@
         </div>
       </section>
 
-      <sc-divider />
-
-      <section class="sub-section">
-        <div class="switch-field switch-field--top">
-          <sc-toggleswitch
-            [checked]="form().status === 'active'"
-            [ariaLabel]="'users.form.fields.active' | translate"
-            (checkedChange)="onStatusChange($event)"
-          />
-          <!-- La etiqueta dice lo que significa ENCENDIDO («Activo»), no el nombre del
-               dato («Estado»); y la ayuda ya no repite «Usuario activo:» delante. -->
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'users.form.fields.active' | translate }}</span>
-            <p class="switch-field__hint sc-text-caption-regular">{{ 'users.form.fields.active_hint' | translate }}</p>
-          </div>
-        </div>
-      </section>
     </sc-section-card>
   }
 
