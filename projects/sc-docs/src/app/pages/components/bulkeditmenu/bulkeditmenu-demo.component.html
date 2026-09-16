@@ -5,7 +5,7 @@
      aquí). Los `data-testid` los miden los e2e de métrica del Kit (no quitar). -->
 
 <ng-template #playground let-args>
-  <sc-bulk-edit-menu [fields]="fields" [buttonLabel]="args.buttonLabel" [matchable]="args.matchable" (commit)="onCommit($event)" />
+  <sc-bulk-edit-menu [fields]="fields" [buttonLabel]="args.buttonLabel" (commit)="onCommit($event)" />
 </ng-template>
 
 <ng-template #inline>
@@ -17,7 +17,7 @@
 </ng-template>
 
 <ng-template #match>
-  <sc-bulk-edit-menu matchable [fields]="fields" (match)="onMatch($event)" (commit)="onCommit($event)" />
+  <sc-bulk-edit-menu [matchable]="true" [fields]="fields" (match)="onMatch($event)" (commit)="onCommit($event)" />
 
   @if (lastMatch(); as m) {
     <p>Seleccionar todos con {{ m.fieldKey }} = {{ m.value }}</p>

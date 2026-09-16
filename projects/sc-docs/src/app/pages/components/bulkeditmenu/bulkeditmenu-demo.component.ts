@@ -16,7 +16,7 @@ import {
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const INLINE_SNIPPET = `<sc-bulk-edit-menu [fields]="fields" (commit)="onCommit($event)" />`;
-const MATCH_SNIPPET = `<sc-bulk-edit-menu matchable [fields]="fields" (match)="onMatch($event)" (commit)="onCommit($event)" />`;
+const MATCH_SNIPPET = `<sc-bulk-edit-menu [matchable]="true" [fields]="fields" (match)="onMatch($event)" (commit)="onCommit($event)" />`;
 
 /** Demo de `sc-bulk-edit-menu` en formato story (motor «Storybook-like»). */
 @Component({
@@ -60,10 +60,8 @@ export class BulkEditMenuDemoComponent {
     // `fields` es un objeto requerido (no un knob escalar) y `buttonLabel` ya no se
     // renderiza → sin controles editables en el Playground.
     argTypes: [      { name: 'buttonLabel', control: { kind: 'text' }, description: 'Rótulo del botón que abre el menú.' },
-      { name: 'matchable', control: { kind: 'boolean' }, description: 'Añade «de [valor]»: elegir un valor pide seleccionar todas las filas que lo tienen.' },
     ],
     defaultArgs: {      buttonLabel: 'Editar',
-      matchable: false,
     },
     props: [
       {
