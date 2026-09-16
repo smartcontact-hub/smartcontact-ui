@@ -2063,7 +2063,7 @@
     "figma_desc": "Selected in white. Collapsed, one background from the parent to the last child.",
     "cyan_desc": "Selected in cyan when collapsed and on hover. Children sit in their own block.",
     "fixed": "Pinned",
-    "hint": "When open, each section opens and closes with its own click without closing the others; what does not fit scrolls.",
+    "hint": "Each section opens and closes only with its own click. It stays that way when collapsed, when navigating and after reloading.",
     "open_aria": "Open the sidebar comparison",
     "close_aria": "Close the sidebar comparison",
     "collapsed": "Collapsed",

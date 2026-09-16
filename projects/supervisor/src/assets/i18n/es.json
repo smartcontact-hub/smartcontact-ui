@@ -2063,7 +2063,7 @@
     "figma_desc": "Seleccionado en blanco. Plegado, un solo fondo del padre al último hijo.",
     "cyan_desc": "Seleccionado en cyan al plegar y con el ratón encima. Los hijos van en su propio bloque.",
     "fixed": "Anclado",
-    "hint": "Desplegado, cada subsección se abre y se cierra con su clic, sin cerrar las demás; lo que no cabe, con scroll.",
+    "hint": "Cada subsección se abre y se cierra solo con su clic. Se queda así al plegar, al navegar y al recargar.",
     "open_aria": "Abrir la comparación del sidebar",
     "close_aria": "Cerrar la comparación del sidebar",
     "collapsed": "Plegado",

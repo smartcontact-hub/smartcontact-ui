@@ -2063,7 +2063,7 @@
     "figma_desc": "Sélection en blanc. Repliée, un seul fond du parent au dernier enfant.",
     "cyan_desc": "Sélection en cyan repliée et au survol. Les enfants sont dans leur propre bloc.",
     "fixed": "Épinglée",
-    "hint": "Dépliée, chaque section s’ouvre et se ferme par son propre clic sans fermer les autres ; le reste défile.",
+    "hint": "Chaque section s’ouvre et se ferme uniquement par son propre clic. Elle reste ainsi repliée, en naviguant et après rechargement.",
     "open_aria": "Ouvrir la comparaison de la barre latérale",
     "close_aria": "Fermer la comparaison de la barre latérale",
     "collapsed": "Repliée",
