@@ -23,13 +23,13 @@
 
 /* DD-24 — companion: el icono hereda el font-size de su componente (rima por
    fuente con el texto, escala junto a él en sm/lg). El eje opsz cae al default
-   (48) en lugar de seguir un px pinneado. */
+   (24) en lugar de seguir un px pinneado. */
 .sc-icon--inherit {
     font-size: 1em;
 }
 
 /* Hasta el 2026-09-16, `inherit` bajaba el opsz a 14 (decisión de marca del 2026-07-18). Ahora todos los iconos
-   dibujan como los SVG del catálogo de los devs: tamaño óptico 48 a cualquier tamaño. */
+   dibujan con el tamaño óptico 24 a cualquier tamaño, como la librería de Figma (ver `material-symbols.css`). */
 
 .sc-icon--weight-100 {
     --sc-icon-weight: 100;
@@ -92,7 +92,7 @@
         'FILL' var(--sc-icon-fill, 0),
         'wght' var(--sc-icon-weight, 400),
         'GRAD' var(--sc-icon-grade, 0),
-        'opsz' var(--sc-icon-optical-size, 48);
+        'opsz' var(--sc-icon-optical-size, 24);
 }
 
 .sc-icon--filled {

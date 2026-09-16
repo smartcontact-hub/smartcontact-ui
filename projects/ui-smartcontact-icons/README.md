@@ -6,6 +6,9 @@
 
 Librería de iconografía SmartContact basada en Material Symbols Rounded.
 
+Regla: Rounded, peso 400, relleno 0, grado 0 y tamaño óptico 24 a cualquier tamaño, igual que la librería de Figma
+(Smart-Contact-Icons). Los nombres son los de Material. Única excepción: los logos de marca, como WhatsApp.
+
 ## Qué expone
 
 - `ScIconComponent` con selector `sc-icon`.
