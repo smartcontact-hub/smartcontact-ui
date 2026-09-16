@@ -34,6 +34,9 @@ const MENOS_VISTOS_SNIPPET = `<!-- "invalid" marca el campo SIN texto de error: 
 <!-- "readonly" deja ver el valor y no deja cambiarlo; distinto de "disabled", que además lo apaga. -->
 <sc-select label="Solo lectura" [options]="groups" [readonly]="true" [value]="groups[0]" />
 
+<!-- "editable" deja escribir un valor que no está en la lista, además de elegir uno. -->
+<sc-select label="Editable" [options]="groups" [editable]="true" placeholder="Elige o escribe" />
+
 <!-- "filterBy" dice POR QUÉ CAMPO se busca (si no, por la etiqueta); "emptyFilterMessage" es lo
      que se lee cuando el filtro no encuentra nada. -->
 <sc-select
