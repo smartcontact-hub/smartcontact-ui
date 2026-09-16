@@ -475,6 +475,9 @@
             />
           </div>
         </div>
+
+        <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
+        <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
       </section>
     </sc-section-card>
   }
@@ -509,6 +512,9 @@
             @if (form().announcements.queueIdSource === 'file') {
               <span class="audio-list__file sc-text-body-regular">{{ form().announcements.queueIdFile ?? ('groups.form.announcements.no_file' | translate) }}</span>
               <ng-container *ngTemplateOutlet="filePicker; context: { key: 'queueIdFile', id: 'group-queue-id' }" />
+            } @else if (form().announcements.queueIdSource === 'tts') {
+              <!-- «Texto a voz» sin texto no dice nada: el campo aparece con la opción. -->
+              <sc-inputtext class="audio-list__text" size="sm" inputId="group-queue-id-text" [ariaLabel]="('groups.form.announcements.queue_id' | translate) + ': ' + ('groups.form.announcements.tts_text' | translate)" [placeholder]="'groups.form.announcements.tts_text' | translate" [value]="form().announcements.queueIdText" (valueChange)="setAnnouncement('queueIdText', $event ?? '')" />
             }
           </span>
 
@@ -518,6 +524,8 @@
             @if (form().announcements.nextInLineSource === 'file') {
               <span class="audio-list__file sc-text-body-regular">{{ form().announcements.nextInLineFile ?? ('groups.form.announcements.no_file' | translate) }}</span>
               <ng-container *ngTemplateOutlet="filePicker; context: { key: 'nextInLineFile', id: 'group-next-in-line' }" />
+            } @else if (form().announcements.nextInLineSource === 'tts') {
+              <sc-inputtext class="audio-list__text" size="sm" inputId="group-next-in-line-text" [ariaLabel]="('groups.form.announcements.next_in_line' | translate) + ': ' + ('groups.form.announcements.tts_text' | translate)" [placeholder]="'groups.form.announcements.tts_text' | translate" [value]="form().announcements.nextInLineText" (valueChange)="setAnnouncement('nextInLineText', $event ?? '')" />
             }
           </span>
 
@@ -526,6 +534,8 @@
             <span class="audio-list__file sc-text-body-regular">{{ form().announcements.periodicFile ?? ('groups.form.announcements.no_file' | translate) }}</span>
             <ng-container *ngTemplateOutlet="filePicker; context: { key: 'periodicFile', id: 'group-periodic' }" />
             @if (form().announcements.periodicFile) {
+              <!-- Sin esto, un anuncio periódico puesto no se podía apagar. -->
+              <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.remove_file' | translate" (clicked)="setAnnouncement('periodicFile', null)" />
               <label class="audio-list__hint sc-text-caption-regular" for="group-periodic-every">{{ 'groups.form.announcements.every' | translate }}</label>
               <sc-inputnumber class="audio-list__number" size="sm" inputId="group-periodic-every" [min]="5" suffix="s" [value]="form().announcements.periodicEverySec" (valueChange)="setAnnouncementNumber('periodicEverySec', $event)" />
             }

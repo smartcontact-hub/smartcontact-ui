@@ -55,8 +55,11 @@ export interface GroupAnnouncements {
   readonly holdMusicFile: string | null;
   readonly queueIdSource: AudioSource;
   readonly queueIdFile: string | null;
+  /** Lo que lee la voz cuando la fuente es «Texto a voz». */
+  readonly queueIdText: string;
   readonly nextInLineSource: AudioSource;
   readonly nextInLineFile: string | null;
+  readonly nextInLineText: string;
   readonly voice: string;
   readonly periodicFile: string | null;
   readonly periodicEverySec: number;
@@ -87,8 +90,10 @@ export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
   holdMusicFile: null,
   queueIdSource: 'none',
   queueIdFile: null,
+  queueIdText: '',
   nextInLineSource: 'none',
   nextInLineFile: null,
+  nextInLineText: '',
   voice: 'Femenina · español',
   periodicFile: null,
   periodicEverySec: 30,

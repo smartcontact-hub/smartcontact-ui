@@ -219,10 +219,12 @@ export class AgentChannelTableComponent {
   }
 
   /** En lote: pausa a los elegidos en este grupo. */
-  protected bulkPause(): void {
+  /** En lote: los elegidos atienden o dejan de atender en este grupo. Las dos, como en el Figma de la migración:
+   *  con solo «Dejar de atender», volver había que hacerlo fila a fila. */
+  protected bulkSetActive(active: boolean): void {
     const sel = this.selectedIds();
     if (sel.size === 0) return;
-    this.linksChange.emit(this.links().map((l) => (sel.has(l.agentId) ? { ...l, active: false } : l)));
+    this.linksChange.emit(this.links().map((l) => (sel.has(l.agentId) ? { ...l, active } : l)));
   }
 
   /** En lote: quita a los elegidos del grupo. */

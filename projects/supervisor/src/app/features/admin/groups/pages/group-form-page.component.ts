@@ -10,7 +10,7 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
@@ -101,6 +101,7 @@ interface FormState {
 @Component({
   selector: 'sc-group-form-page',
   imports: [
+    RouterLink,
     BoardCardComponent,
     DrawerComponent,
     NgTemplateOutlet,

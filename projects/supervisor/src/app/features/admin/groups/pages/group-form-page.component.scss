@@ -77,3 +77,16 @@
 .audio-list__number {
   inline-size: var(--sc-spacing-5);
 }
+
+.audio-list__text {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+/* Igual que en la ficha de agente. */
+.repo-link {
+  align-self: flex-start;
+  color: var(--sc-text-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
