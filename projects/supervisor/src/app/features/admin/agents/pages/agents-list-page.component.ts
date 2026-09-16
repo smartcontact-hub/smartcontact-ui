@@ -244,7 +244,7 @@ export class AgentsListPageComponent {
         header: this.translate.instant('agents.table.email'),
         sortable: true,
         cellTemplate: this.emailTpl(),
-        /* El más largo de los 500 de demo, «penelope.hathaway@company.com», mide 237 px (2026-09-16). */
+        /* El más largo de los 500 de demo (Penélope Hathaway) mide 237 px (2026-09-16). */
         width: '16.75rem',
       },
       {
