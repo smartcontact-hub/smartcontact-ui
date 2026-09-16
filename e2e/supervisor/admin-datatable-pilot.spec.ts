@@ -161,7 +161,7 @@ test.describe('plantillas', () => {
     // Cambiar de pestaña limpia la selección: lo seleccionado ya no está
     // en pantalla, y una barra masiva que actúa sobre filas invisibles es
     // exactamente el tipo de sorpresa que no debe poder ocurrir.
-    await page.locator('.tabs__tab', { hasText: /email/i }).click();
+    await page.getByRole('tab', { name: /email/i }).click();
     await expect(page.locator('sc-bulk-action-bar')).toBeHidden();
   });
 

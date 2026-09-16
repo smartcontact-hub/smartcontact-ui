@@ -389,6 +389,26 @@ generador no emite esos seis `--sc-cmp-button-danger-*`.
 
 ---
 
+## 13 · El botón se encoge al pulsarlo: la interacción que el código ya tiene (2026-09-15)
+
+**Estado:** pendiente · **Sin verificar** contra el fichero del DS: no se ha abierto `❖ Button` para ver si tiene
+estado pulsado ni interacciones de prototipo. Compruébalo antes de actuar.
+
+Desde DD-113, al pulsar cualquier `sc-button` el botón se encoge al **96 %** con una transición de **150 ms ease-out**,
+y al soltar vuelve igual de suave; el cambio de color del estado pulsado viaja con la misma transición. Rafa la eligió
+entre seis probadas en un playground (`customs-catalog.md` §8.1). primeng.dev no se mueve: es un desvío a propósito, y
+un prototipo de Figma que no lo lleve enseña otro botón.
+
+**Cómo se hace:** en el conjunto del botón, una interacción de componente *While pressing* → *Change to* su variante
+pulsada (o `Active`), con *Smart animate*, *Ease out* y **150 ms**. Esa variante, al 96 % del tamaño de la de reposo
+y centrada, con el color pulsado que ya tenga. Si el conjunto no tiene variante pulsada, crearla es parte de la ficha.
+
+**Cómo sabes que está hecho:** en modo prototipo, mantener pulsado un botón lo encoge y soltarlo lo devuelve, a la par
+que la historia «Al pulsar» de `#/components/button` en sc-docs. Luego,
+publicar la librería (ficha 1).
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

@@ -1,7 +1,10 @@
 <div class="tabs">
-  <p-tabs class="tabs__tabs" scrollable [value]="activeId()" (valueChange)="onValueChange($event)">
+  <!-- Sin fondo propio (token de instancia): la tira es parte de la cabecera, no una tarjeta. -->
+  <p-tabs class="tabs__tabs" [dt]="tabsDt" [value]="activeId()" (valueChange)="onValueChange($event)">
+    <!-- El nombre va al nodo con `role="tablist"`, que es el `content` de dentro, no el host
+         (medido 2026-09-15: con `[attr.aria-label]` en el host la tira quedaba sin nombre). -->
     <p-tablist
-      [attr.aria-label]="'dashboard.tabs.aria' | translate"
+      [pt]="{ content: { 'aria-label': 'dashboard.tabs.aria' | translate } }"
       cdkDropList
       cdkDropListOrientation="horizontal"
       cdkDropListLockAxis="x"

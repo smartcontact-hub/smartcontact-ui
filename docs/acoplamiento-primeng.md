@@ -159,7 +159,6 @@ Siguen entrando en el chequeo de huérfanos, porque un renombrado de PrimeNG las
 | `sc-select` | `p-select-label` · `-header` · `-filter` · `-list` · `-option` | tamaño md/sm/lg del valor, y la tipografía del panel, que se renderiza en `<body>` |
 | `sc-multiselect` | `p-multiselect-label` · `-header` · `-filter` · `-list` · `-option` | lo mismo |
 | `sc-datepicker` | `p-datepicker-input` · `-header` · `-day` · `-day-view` · `-month` · `-year` · `-weekday` | ancho y letra del input; tamaño del panel sm/lg |
-| `sc-inputgroup` | `p-inputgroup-addon` · `p-inputtext` | el addon iguala el padding y la letra de `sc-inputtext` en sm/lg |
 | `sc-dialog` | `p-dialog-content` | desnuda el contenedor de `p-dialog` para que el cromo lo ponga `.sc-dialog` |
 
 **Lo que sí queda medido y pendiente aquí.** Cuatro declaraciones de este grupo repetían lo que el
@@ -167,7 +166,8 @@ tema YA publica: el `font-size` md de `.p-select-label`, `.p-multiselect-label`,
 `sc-inputgroup`) y `.p-datepicker-input` está en `sc-preset/css.ts` (`mdTypographySelectors`) con el
 mismo valor. DD-91 (2026-09-14) retiró las de `sc-select`, `sc-multiselect` y `sc-datepicker`, junto
 con su letra y relleno sm/lg escritos a mano, porque sin capa pisaban la talla del tema (la fecha sm
-salía a 14). Queda la de `sc-inputgroup`.
+salía a 14). DD-113 (2026-09-15) retiró la de `sc-inputgroup`: sus reglas del addon apuntaban a
+`.p-inputgroup-addon`, que PrimeNG 22 ya no pone, y sus tallas pasaron al tema.
 
 ---
 

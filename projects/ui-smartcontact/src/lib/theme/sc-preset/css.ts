@@ -351,10 +351,13 @@ sc-datatable.sc-datatable--fill > p-table {
  * se cortaban antes de cada borde de la tarjeta, lo que medía la barra. Ahora llegan al borde; con barra, a la derecha acaban donde
  * empieza ella. El precio, aceptado: al aparecer o desaparecer la barra las columnas se mueven su ancho. */
 
+/* Como la barra de ScrollArea (Rafa, 2026-09-15): fina, del color de su tirador y solo con el ratón
+ * encima. No es ScrollArea: la lista virtual de \`p-table\` tiene que ser dueña de su contenedor de scroll
+ * (sin ella pinta todas las filas), así que se imita su aspecto sobre la barra nativa. */
 sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar,
 sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar {
-    width: var(--sc-spacing-0-75);
-    height: var(--sc-spacing-0-75);
+    width: var(--sc-spacing-0-25);
+    height: var(--sc-spacing-0-25);
 }
 
 sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar-track,
@@ -365,8 +368,13 @@ sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar-track {
 
 sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar-thumb,
 sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar-thumb {
-    background: var(--sc-border-strong);
+    background: transparent;
     border-radius: var(--sc-radius-full);
+}
+
+sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container:hover::-webkit-scrollbar-thumb,
+sc-datatable.sc-datatable--scroll .p-virtualscroller:hover::-webkit-scrollbar-thumb {
+    background: var(--p-scrollarea-handle-background);
 }
 `;
 
@@ -374,10 +382,16 @@ sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar-thumb {
  * MICRO-INTERACCIÓN DE BOTÓN · cómo responde al dedo
  * ══════════════════════════════════════════════════════════════════════════
  *
- * Hover y focus con una transición corta —vivo, no pastoso—; la pulsación
- * (`:active`) chasca con `scale(0.98)` y transición CERO: el click tiene que
- * producir respuesta táctil instantánea, no el desvanecido del hover anterior.
- * Y un botón deshabilitado NO anima: es inerte, y decirlo con el cursor.
+ * La receta de better-ui, elegida por Rafa el 2026-09-15 tras probar seis en un playground
+ * (nativo de primeng.dev, la de antes y la de cada guía de diseño): al pulsar el botón se
+ * encoge al 96 % CON transición de 150 ms ease-out, así que al soltar vuelve suave; color,
+ * borde y sombra con la misma transición. Es un desvío del nativo (primeng.dev no se mueve y
+ * usa 200 ms): vive en `docs/customs-catalog.md` §8.1 y en la lista de §F del gate.
+ * Un botón deshabilitado NO anima: es inerte, y decirlo con el cursor.
+ *
+ * Antes (plataforma, 2026-05-06): `scale(0.98)` con transición CERO y hover a 100 ms, para
+ * arreglar un clic que «se sentía borroso» porque el fundido del hover seguía corriendo al
+ * navegar. La transición corta ya lo evita; lo que cambia es que ahora también vuelve suave.
  *
  * POR QUÉ AQUÍ (2026-09-10). Vivía en `projects/supervisor/src/styles/main.scss`
  * como CSS de app SIN CAPA sobre `.p-button`, con la nota «esta app decide cómo
@@ -399,15 +413,16 @@ sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar-thumb {
 const buttonMotionCss = () => `
 .p-component.p-button {
     transition:
-        background-color 100ms ease,
-        border-color 100ms ease,
-        color 100ms ease,
-        box-shadow 100ms ease;
+        background-color 150ms ease-out,
+        border-color 150ms ease-out,
+        color 150ms ease-out,
+        outline-color 150ms ease-out,
+        box-shadow 150ms ease-out,
+        transform 150ms ease-out;
 }
 
 .p-component.p-button:active {
-    transform: scale(0.98);
-    transition-duration: 0ms;
+    transform: scale(0.96);
 }
 
 .p-component.p-button:disabled,
@@ -506,6 +521,43 @@ const breadcrumbLinkCss = () => `
 }
 `;
 
+/* ══════════════════════════════════════════════════════════════════════════
+ * TALLAS DE `sc-inputgroup` (`sc-inputgroup--sm`, `sc-inputgroup--lg`)
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * PrimeNG no tiene tallas de grupo: la talla es del campo (`pSize`), y el addon se
+ * queda en la letra md. El wrapper pone la talla a TODO el grupo sin reescribir
+ * medidas: dentro de la clase, las variables md del campo valen las sm (o lg) del
+ * tema, y el campo y el addon las leen solas. Queda la talla de `sc-inputtext
+ * size="sm"`: 3,5 × 7 y la rampa de 12.
+ *
+ * Tienen que ser las variables HOJA (`--p-inputtext-padding-y`, no
+ * `--p-form-field-padding-y`): una variable se resuelve donde se declara (`:root`)
+ * y baja ya calculada, así que redefinir la de arriba aquí dentro no mueve nada.
+ *
+ * Hasta el 2026-09-15 lo hacía el SCSS del wrapper con reglas sobre
+ * `.p-inputgroup-addon`, una clase que PrimeNG 22 ya no pone (es `.p-inputgroupaddon`).
+ * Medido en sc-docs: casaban con 0 elementos, y en sm el campo bajaba a 12 px con el
+ * addon en 14 y el mismo alto que md.
+ */
+const inputGroupSizeCss = () => `
+.sc-inputgroup--sm {
+    --p-inputtext-padding-x: var(--p-inputtext-sm-padding-x);
+    --p-inputtext-padding-y: var(--p-inputtext-sm-padding-y);
+    --p-app-typography-md-font-size: var(--p-app-typography-sm-font-size);
+    --p-app-typography-md-line-height: var(--p-app-typography-sm-line-height);
+    --p-inputgroup-addon-font-size: var(--p-inputtext-sm-font-size);
+}
+
+.sc-inputgroup--lg {
+    --p-inputtext-padding-x: var(--p-inputtext-lg-padding-x);
+    --p-inputtext-padding-y: var(--p-inputtext-lg-padding-y);
+    --p-app-typography-md-font-size: var(--p-app-typography-lg-font-size);
+    --p-app-typography-md-line-height: var(--p-app-typography-lg-line-height);
+    --p-inputgroup-addon-font-size: var(--p-inputtext-lg-font-size);
+}
+`;
+
 /* `@primeuix/themes` 3 cambió `ExtendedCSS` a `(options?: StyleOptions) => string`:
  * el argumento pasó a ser OPCIONAL. La firma se relaja igual para casar con el tipo;
  * en la práctica PrimeUIX siempre lo pasa, y si no lo hiciera reventaría al usar `dt`,
@@ -542,6 +594,8 @@ ${buttonMotionCss()}
 ${dangerMenuItemCss()}
 
 ${breadcrumbLinkCss()}
+
+${inputGroupSizeCss()}
 `;
 
 export default presetCss;

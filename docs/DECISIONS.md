@@ -41,7 +41,10 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Una pantalla fuera del shell (acceso) va en `features/auth/` y en `EXENTAS` de `audit:page-anatomy` · un error de campo dice QUÉ falta, uno de credenciales no delata cuentas · un SSO de terceros es nuestro `sc-button` con su logo sin tocar · la contraseña es `sc-password` | DD-110 |
+> | La cabecera del Dashboard: pestañas sin fondo con `⋮` y `+ Monitor` pegados; las acciones de la página en `p-toolbar` en tres grupos con `sc-divider` (enmienda DD-113 §6) · en modo pared un monitor sin widgets enseña su vacío y el carrusel se lo salta | DD-114 |
+> | Cambiar de COLECCIÓN (se vacían búsqueda y selección) son pestañas `p-tabs`; filtrar la misma lista o elegir un valor son botones segmentados `sc-selectbutton` · un componente de primeng.dev entra NATIVO tal cual (doc entera con `tools/primeng-doc.mjs`, sin contador ni icono que el ejemplo no tenga) y un desvío de comportamiento lo para `audit:primeng-coupling` §F · un separador entre bloques es `sc-divider` salvo que su línea deba alinearse con el contenido · el Supervisor sin `ripple`, como primeng.dev | DD-113 |
+> | El sidebar plegado mide 80px con las filas contenidas · un solo padre en cyan: el más cercano a la página que se vea · con el ratón dentro abrir o cerrar no toca las demás, al salir se cierran las que no son de la página · los hijos se pliegan en altura (300ms, curva estándar) · el sidebar no se pliega durante el fundido de una navegación que inició él | DD-112 |
+| Una pantalla fuera del shell (acceso) va en `features/auth/` y en `EXENTAS` de `audit:page-anatomy` · un error de campo dice QUÉ falta, uno de credenciales no delata cuentas · un SSO de terceros es nuestro `sc-button` con su logo sin tocar · la contraseña es `sc-password` | DD-110 |
 > | `<sc-panel severity="warn|danger">`: borde y anillo de 1 en `--sc-border-warning/danger`, decidido en código y pendiente en Figma · `<ng-template #header let-titleId>` para un título que es encabezado, con `[id]="titleId"` | DD-109 |
 > | Una tarjeta con acciones en la cabecera es `<sc-panel>` con `<ng-template #icons>` (Panel de primeng.dev; Figma `panel` `Custom Icon=True`) · `[fill]` la estira al alto de su hueco · las piezas internas se estilan por `pt` con clases propias, no por `.p-panel-*` | DD-108 |
 > | Un `borderWidth` del tema tiene la FORMA de Aura: si Aura pinta un lado (`0 0 1px 0`), nosotros también; si Aura dice `0`, sin borde · `p-tabs` como Aura 3: pestaña sin borde, tira con raya abajo, marca de la activa en `activeBar` · lo vigila `preset-border-shorthand.test.mjs` | DD-107 |
@@ -75,6 +78,159 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-114 · 2026-09-15 — La cabecera del Dashboard se ordena en dos bloques y el modo pared no se queda en negro
+
+**Contexto** · Rafa pidió quitar el fondo gris de la tira de pestañas del Dashboard y ordenar sus botones, y propuso
+la Toolbar de primeng.dev. Las acciones del monitor (`⋮`, `+ Monitor`) quedaban en medio de la cabecera, lejos de las
+pestañas y pegadas a «En directo», y se leían como acciones de la página. Después vio el modo pared en negro: era un
+monitor recién creado, sin widgets, cuyos huecos vacíos el modo pared no pinta.
+
+**Decisión** ·
+1. **Pestañas sin fondo**: `p-tabs` con `[dt]` de instancia (`tablist.background: transparent`); la raya sigue.
+2. **Lo del monitor, con el monitor**: `⋮` y `+ Monitor` van pegados a la última pestaña; su hueco se estira hasta
+   las acciones de la página para que la raya de abajo siga siendo una.
+3. **Lo de la página, en `p-toolbar`** (enmienda DD-113 §6, que dejaba la Toolbar solo en el modo pared): sin caja
+   propia (`[dt]` de instancia), nombrada con el monitor, en tres grupos separados por `sc-divider` vertical:
+   estado · alertas y rotación · modo pared. Los botones, de texto; la campana lleva borde de color solo con
+   alertas nuevas.
+4. **Modo pared con un monitor vacío**: enseña `sc-empty-state` («Este monitor no tiene widgets») con «Salir».
+5. **El carrusel se salta los monitores sin widgets**; con las flechas o anterior y siguiente sí se llega a ellos.
+
+**Razón** · Medido con Playwright en claro y oscuro a 1440, 1024 y 390: la raya de abajo es continua, sin desbordes;
+a 1024 las acciones suben encima de las pestañas como antes y a 390 se ocultan los separadores. Con un monitor vacío
+y el carrusel a 20 s, la rotación fue Monitor x → Colas y agentes → Monitor x, y la flecha izquierda llevó al vacío.
+
+**Descartadas** ·
+- **La cabecera entera en `p-toolbar`** → la tira de pestañas quedaba dentro de un `role="toolbar"`.
+- **Separador propio con un `span`** → el DS ya tiene `sc-divider`.
+
+## DD-113 · 2026-09-15 — Pestañas, botones segmentados, separadores, grupos de campo y barras: los de primeng.dev, bien puestos
+
+**Contexto** · Rafa pidió estudiar Tabs, Toolbar, InputGroup, Divider y SelectButton de primeng.dev porque sospechaba
+que los teníamos hechos a mano o mal usados. Se leyó el código de los ejemplos de primeng.dev (GitHub,
+`apps/showcase/doc/<componente>`), la hoja de cada componente (`@primeuix/styles`) y `tools/aura-diff.mjs`, y cinco
+barridos del Supervisor, sc-docs y el DS. Medido en local a 1440: (1) la barra del modo pared era una `p-toolbar`
+con un `display: block` que apilaba inicio y fin (74 px de alto en vez de 50); (2) las pestañas del Dashboard y el
+SelectButton de Conversaciones no tenían nombre accesible: el `aria-label` iba al host de `p-tablist` y no al nodo
+con `role="tablist"`, y el `[attr.aria-labelledby]` lo pisaba el propio `p-selectbutton`; (3) las reglas de
+`sc-inputgroup` apuntaban a `.p-inputgroup-addon`, que PrimeNG 22 ya no pone, con 0 elementos casados; y
+`audit:primeng-coupling` las daba por vivas porque el texto sigue en el bundle como nombre de etiqueta; (4) el
+reproductor de conversación cambiaba de vista con dos botones sin rol ni estado, y Plantillas decía ser pestañas
+sin flechas ni foco itinerante; (5) al pasar Plantillas a `p-tabs`, la barra de la activa medía 153 px sobre una
+pestaña de 99: PrimeNG la mide solo al cambiar de pestaña, antes de que cargue la fuente de iconos; (6) Rafa vio un
+sombreado al pulsar una pestaña que primeng.dev no tiene: era el `ripple`, encendido en el Supervisor desde la
+migración de junio; (7) la primera versión apagó esa raya y pintó una marca fija, y Rafa lo vio: «en primeng.dev el
+movimiento es más sutil». Medido: allí la raya se desliza en 250 ms y el color cambia en 200; aquí la marca saltaba
+de golpe. Y las pestañas de Plantillas llevaban icono y contador (6 y 6), heredados de la versión a mano, que el
+ejemplo no tiene. Su regla: «parto de la idea de que lo vas a hacer tal cual sale en la docu».
+
+**Decisión** ·
+1. **Pestañas o segmentado, por lo que hace.** Cambiar de colección (Plantillas: se vacían búsqueda y selección,
+   el alta nace del tipo) son `p-tabs`, como los monitores del Dashboard. Filtrar la misma lista o elegir un valor
+   (vistas de Conversaciones, tema, idioma, canal de la plantilla) son botones segmentados. Rafa eligió pestañas
+   para Plantillas con las dos versiones construidas delante.
+2. **`sc-selectbutton` entra en el DS** (wrapper de `p-selectbutton`): pasa `ariaLabelledBy` por la entrada,
+   añade `ariaLabel`, tallas `sm/md/lg` y reenvía `#item`. El texto de cada opción es su nombre accesible: va
+   traducido, y la lista se re-traduce leyendo `injectLangChange`. Lo usan Conversaciones, Sistema (tema e
+   idioma, sin las banderas emoji) y el panel de Plantillas.
+3. **Un componente de primeng.dev entra nativo, tal cual su documentación** (AGENTS.md, «Componentes de
+   primeng.dev»): la doc entera antes de escribir (`tools/primeng-doc.mjs`, que `scripts/hooks/primeng-doc-guard.mjs`
+   recuerda al ver un enlace), su plantilla, sus props y su movimiento, y nuestra capa solo en tokens. Las
+   pestañas de Plantillas y del reproductor son de texto, como el ejemplo básico: sin contador (la tabla ya enseña
+   las filas) ni icono (repetía la palabra). Con eso la raya nativa vuelve a caer en su sitio sin parche: la
+   descolocaba la ligadura del icono antes de cargar su fuente. Fuera también `scrollable` en el Dashboard, que la
+   API instalada marca obsoleto.
+4. **Separadores:** `sc-divider` en el modal de categoría (+7 por lado), Entidades (conservando el aire de antes
+   con los márgenes de sus secciones) y la barra de Etiquetas (+7 por lado). El panel «Tipo» de Conversaciones
+   se queda con su línea: la de PrimeNG sobresale 10,5 px por lado de la columna de casillas.
+5. **`sc-inputgroup`:** fuera las reglas muertas; las tallas mueven en el tema las variables hoja del campo y
+   del addon, y quedan como las de `sc-inputtext`. `audit:primeng-coupling` busca la clase entera y sin los
+   `selector:` (`scripts/primeng-class-exists.mjs`, con su test).
+6. **Barras:** la del modo pared recupera el reparto de la Toolbar y se nombra con el monitor. Ninguna otra barra
+   pasa a `p-toolbar`.
+7. **Sin `ripple` en el Supervisor**, como primeng.dev. Las réplicas (`agent`, `cuscare`) lo conservan (DD-35).
+8. **`audit:primeng-coupling` §F:** una regla que oculta, anima o transforma una pieza de PrimeNG (`display: none`,
+   `visibility: hidden`, `transition`, `animation`, `transform`) tiene que estar en `COMPORTAMIENTO_PERMITIDO` con su
+   porqué. Hoy hay seis: el caption vacío de la tabla, el hover de la tabla-lista, la micro-interacción del botón
+   y el toast del Supervisor. Cada una tiene su fila en `customs-catalog.md` §8, y el gate lo exige.
+9. **La pulsación del botón es la de better-ui**: al pulsar se encoge al 96 % con 150 ms ease-out y vuelve suave, con
+   la misma transición en color y sombra (`buttonMotionCss`). Sustituye al 98 % sin transición y los 100 ms que venían
+   de la plataforma. Rafa la eligió entre seis probadas en un playground local (§8.1): «el más premium de todos». En Figma,
+   `figma-pendiente.md` §13.
+
+**Razón** · Es lo que Rafa pidió: que el código hable el idioma de primeng.dev y que sus piezas lleguen con su
+espaciado, su movimiento y su accesibilidad, sin copiar a mano lo que PrimeNG ya da. Medido tras el cambio: la raya
+nativa casa con su pestaña al pintar y con las fuentes cargadas en Plantillas (63 sobre 63,4), Dashboard (96 sobre
+95,5) y reproductor (125 sobre 124,8), y al pulsar se desliza en ~250 ms con la curva de primeng.dev; flechas e Intro
+cambian de pestaña;
+«Vistas», «Tema», «Canal», «Monitores» y el nombre del monitor llegan como nombre del grupo, tira o barra; la vista
+«Fallidas» filtra (34 → 2); el tema oscuro y el idioma se aplican desde el segmentado; la barra del modo pared
+mide 50 en una fila; los gates nuevos (clase entera, §F) y el gancho se vieron en rojo con su fallo puesto.
+
+**Descartadas** ·
+- **Plantillas con botones segmentados** → iguala a Conversaciones, pero allí se filtra y aquí se cambia de
+  colección; cada opción sería una parada de tabulador y las flechas no harían nada.
+- **Apagar la raya nativa y pintar la marca en la propia pestaña** (`::after` en el tema, la primera versión de este
+  DD) → sigue al ancho sin medir, pero quita el deslizamiento de primeng.dev y cambia el comportamiento desde el tema,
+  que `.impeccable.md` guarda como sagrado. Rafa lo vio en pantalla. Es el caso que §F caza ahora.
+- **Arreglar la barra con un `updateInkBar` al cargar las fuentes** → parche para un icono que sobraba.
+- **Contador en las pestañas** → repite lo que la tabla ya enseña; Conversaciones lo quitó el 2026-09-14 por lo mismo.
+- **`p-toolbar` en la barra de las listas** → su caja (borde, radio, relleno de 10,5) rompe las medidas de DD-94,
+  y sin caja solo se gana el rol. Tampoco la cabecera, la barra de acciones masivas, los filtros ni los reproductores:
+  son cabeceras, piezas fijas o formularios.
+- **`p-tabs` en el índice de las fichas (`sc-form-section-nav`)** → `p-tabs` solo es horizontal (sin ↑↓ ni
+  `aria-orientation`). Su ARIA está mal montado y queda apuntado aparte.
+- **`p-tabs` en Fundamentos de sc-docs** → son enlaces de ruta; se perdería el cmd+clic.
+- **Segmentado en el selector de idioma de la barra lateral de sc-docs y en los filtros de Conexión** → el primero es
+  gemelo visual del interruptor de tema y ya usa el mismo modelo accesible; los segundos son nueve opciones en una
+  celda.
+- **`sc-divider` en el panel «Tipo», los conectores Y/O de reglas, la barra lateral y la barra superior** → la
+  línea pierde la alineación con el contenido, el fondo del contenido del divider asoma o el aire se duplica.
+
+**Consecuencias** · `audit:primeng-coupling`: tope del DS 20 → 12 y sección F. AGENTS.md gana «Componentes de
+primeng.dev» y tres filas en la tabla de bifurcaciones. `e2e/supervisor/admin-datatable-pilot.spec.ts` busca la
+pestaña por rol. `docs/customs-catalog.md` §5.1 y §5.2 al día. Pendiente en Figma: nada nuevo (la marca de la activa
+ya estaba en `figma-pendiente.md` §9). Cada desvío permitido tiene su fila en `customs-catalog.md` §8 (el gate lo exige).
+El botón que se encoge al pulsarlo se queda, con la receta de better-ui (punto 9, §8.1): primeng.dev no lo hace, y es a propósito.
+
+---
+
+## DD-112 · 2026-09-15 — El sidebar del Supervisor se pliega a 80px, marca un solo padre y abre y cierra sin saltos
+
+**Contexto** · SISMAC-4340. Rafa y Carlos acordaron volver al ancho plegado de 80px (el del Supervisor en producción,
+4,1667vw a 1920), dar icono a los items que no estaban en la v1 (Intenciones, Monitor y Agentic AI dentro de Nodo IA,
+Tipificaciones, Centro de control y Mask Manager) y definir cómo se ve un padre con el sidebar plegado. Al probarlo en
+local salieron cuatro problemas: plegado no se veía dónde acaba un grupo, se encendían en cyan varios padres a la vez,
+abrir una categoría movía otras bajo el ratón y, al pulsar un item, el sidebar se plegaba y volvía a abrirse.
+
+**Decisión** · (1) `--sc-sidebar-width-collapsed` pasa de 64 a 80px; el menú lleva `--sc-spacing-0-875` de margen y las
+filas `--sc-radius-100`, así el Selected y el fondo de grupo quedan contenidos, como en Figma. (2) Un solo padre lleva el
+icono en `--sc-sidebar-accent`: el ancestro de la página actual más cercano que se vea. (3) Con el ratón dentro del menú,
+abrir o cerrar una categoría no toca las demás; al entrar en una página se abre su categoría; 400ms después de salir del
+menú se cierran las que no la contienen. (4) Plegado, la categoría abierta de primer nivel lleva de fondo
+`--sc-sidebar-item-hover-bg`; las subcategorías no. (5) Los hijos se pliegan en altura en `--sc-transition-slow` con
+`--sc-easing-default`, con fundido propio, y el chevron gira. (6) Mientras dura el fundido de una navegación que empezó
+en el sidebar, este se queda abierto (`ViewTransitionTracker`).
+
+**Razón** · Medido con Playwright a 1440×900. La transición del router tapa la página durante su fundido y el sidebar
+pierde `:hover` sin mover el ratón: bajaba a 82px, y en producción a 66px. Con la curva enfatizada, al abrir
+Administración la categoría de debajo bajaba 44px en el primer fotograma; con la estándar el mayor salto es de 21px, a
+mitad del movimiento. Dos fondos del 6% superpuestos suman un 11,6%, casi el Selected: por eso solo el primer nivel.
+
+**Descartadas** ·
+- **Acordeón, una categoría abierta por nivel** → al abrir Administración con Supervisión abierta, Administración subía
+  unos 400px en el momento del clic. Rafa: «parece que está roto».
+- **Cerrar al navegar** → cerraba las categorías que el usuario acababa de abrir.
+- **Encender en cyan todos los ancestros** → dos o tres cyan a la vez y ningún sitio claro donde mirar.
+- **Mask Manager con `contact_phone`** → el equipo pide mantener `theater_comedy`, el icono que ya conocen.
+
+**Consecuencias** · Tablero para Carlos en Figma, página Testing, sección `SISMAC-4340 Sidebar` (`14855:1269`). Pendiente:
+decidir si plegado se ve solo el primer nivel; el Selected va al 15% en código y al 12% en Figma; Nodo IA usa `neurology`
+en código y el componente `brain` de la librería antigua en Figma, que la fuente de iconos no trae; y el drawer de Figma,
+atado a `primary/color`, en oscuro queda en azul claro con el texto blanco a 2,15:1.
 
 ---
 

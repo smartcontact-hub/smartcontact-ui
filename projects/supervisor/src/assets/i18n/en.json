@@ -196,7 +196,9 @@
     },
     "wall": {
       "enter": "Wall mode",
-      "exit": "Exit"
+      "exit": "Exit",
+      "empty_title": "This monitor has no widgets",
+      "empty_desc": "Exit wall mode to add them. The carousel skips it."
     },
     "detail": {
       "open_aria": "See the detail of {{value}}",
@@ -996,6 +998,10 @@
     "dashboard": "Dashboard",
     "servicios": "Services",
     "nodo_ia": "AI Node",
+    "intenciones": "Intents",
+    "monitor_ia": "Monitor",
+    "agentic_ai": "Agentic AI",
+    "tipificaciones": "Typifications",
     "campanas": "Campaigns",
     "conversaciones": "Conversations",
     "estadisticas": "Statistics",
@@ -1003,6 +1009,8 @@
     "analizador": "Flow Analyzer",
     "scc": "SCC",
     "vui_designer": "VUI Designer",
+    "centro_control": "Control center",
+    "mask_manager": "Mask Manager",
     "administration": "Administration",
     "configuration": "Configuration",
     "users": "Users",

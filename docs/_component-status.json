@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "53 componentes · 17 custom · 11 standard · 25 extended · 42 usados en Supervisor.",
+  "summary": "54 componentes · 17 custom · 11 standard · 26 extended · 43 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -447,7 +447,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 22
+      "usedInSupervisor": 27
     },
     {
       "name": "drawer",
@@ -495,7 +495,7 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 13
+      "usedInSupervisor": 14
     },
     {
       "name": "field",
@@ -1085,6 +1085,34 @@
       ],
       "hasDemo": true,
       "usedInSupervisor": 32
+    },
+    {
+      "name": "selectbutton",
+      "selector": "sc-selectbutton",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/selectbutton",
+      "cva": false,
+      "inputs": 13,
+      "api": [
+        "allowEmpty",
+        "ariaLabel",
+        "ariaLabelledBy",
+        "disabled",
+        "fluid",
+        "invalid",
+        "multiple",
+        "optionDisabled",
+        "optionLabel",
+        "optionValue",
+        "options",
+        "size",
+        "value",
+        "valueChange"
+      ],
+      "nested": [],
+      "hasDemo": true,
+      "usedInSupervisor": 4
     },
     {
       "name": "skeleton",

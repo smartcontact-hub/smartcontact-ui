@@ -1,0 +1,24 @@
+<p-selectbutton
+  [options]="optionsMutable()"
+  [optionLabel]="resolvedOptionLabel()"
+  [optionValue]="resolvedOptionValue()"
+  [optionDisabled]="optionDisabled()"
+  [multiple]="multiple()"
+  [allowEmpty]="allowEmpty()"
+  [size]="pSize()"
+  [fluid]="fluid()"
+  [disabled]="disabled()"
+  [invalid]="invalid()"
+  [ariaLabelledBy]="ariaLabelledBy()"
+  [attr.aria-label]="ariaLabel() ?? null"
+  [ngModel]="value()"
+  (ngModelChange)="value.set($event)"
+>
+  <!-- Reenvío de `#item`: la consulta de p-selectbutton no ve la plantilla del consumidor
+       a través de dos proyecciones. El nombre tiene que ser estático (PrimeNG 22). -->
+  @if (itemTpl(); as tpl) {
+    <ng-template #item let-option let-i="index">
+      <ng-container *ngTemplateOutlet="tpl; context: { $implicit: option, index: i }" />
+    </ng-template>
+  }
+</p-selectbutton>

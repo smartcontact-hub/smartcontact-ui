@@ -4,14 +4,16 @@
 }
 
 /* La tira y sus acciones comparten la raya inferior: la de la tira la pinta el tema, la de las
-   acciones la iguala con el mismo color de borde de contenido. */
+   acciones la iguala con el mismo color de borde de contenido. Las acciones (⋮, + Monitor) van
+   pegadas a la última pestaña, como el «+» de las pestañas de un navegador, y su hueco se estira
+   hasta las acciones de la página para que la raya siga seguida. */
 .tabs {
   display: flex;
   align-items: stretch;
   min-width: 0;
 
   &__tabs {
-    flex: 1;
+    flex: 0 1 auto;
     min-width: 0;
   }
 
@@ -19,7 +21,7 @@
     display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-25);
-    flex: none;
+    flex: 1 0 auto;
     padding-inline-start: var(--sc-spacing-0-5);
     border-bottom: 1px solid var(--sc-border-default);
   }

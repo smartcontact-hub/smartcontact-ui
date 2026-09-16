@@ -196,7 +196,9 @@
     },
     "wall": {
       "enter": "Mode mur",
-      "exit": "Quitter"
+      "exit": "Quitter",
+      "empty_title": "Ce moniteur n’a aucun widget",
+      "empty_desc": "Quittez le mode mur pour en ajouter. Le carrousel le saute."
     },
     "detail": {
       "open_aria": "Voir le détail de {{value}}",
@@ -996,6 +998,10 @@
     "dashboard": "Tableau de bord",
     "servicios": "Services",
     "nodo_ia": "Nœud IA",
+    "intenciones": "Intentions",
+    "monitor_ia": "Moniteur",
+    "agentic_ai": "Agentic AI",
+    "tipificaciones": "Typifications",
     "campanas": "Campagnes",
     "conversaciones": "Conversations",
     "estadisticas": "Statistiques",
@@ -1003,6 +1009,8 @@
     "analizador": "Analyseur de flux",
     "scc": "SCC",
     "vui_designer": "VUI Designer",
+    "centro_control": "Centre de contrôle",
+    "mask_manager": "Mask Manager",
     "administration": "Administration",
     "configuration": "Configuration",
     "users": "Utilisateurs",

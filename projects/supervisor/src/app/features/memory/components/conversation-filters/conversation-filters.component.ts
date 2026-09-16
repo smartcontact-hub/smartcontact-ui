@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, model } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { SelectButtonModule } from 'primeng/selectbutton';
 
 import {
   ScButtonComponent as ButtonComponent,
@@ -9,6 +7,7 @@ import {
   ScDatepickerComponent as DatepickerComponent,
   ScMultiSelectComponent as MultiSelectComponent,
   ScSearchComponent as SearchComponent,
+  ScSelectButtonComponent as SelectButtonComponent,
   type ScDatepickerPreset,
 } from '@smartcontact-hub/components';
 
@@ -62,10 +61,9 @@ type ChipKey =
     ButtonComponent,
     ChipComponent,
     DatepickerComponent,
-    FormsModule,
     MultiSelectComponent,
     SearchComponent,
-    SelectButtonModule,
+    SelectButtonComponent,
     TranslateModule,
     TypeFilterButtonComponent,
   ],
@@ -114,7 +112,7 @@ export class ConversationFiltersComponent {
     ];
   });
 
-  protected setQuickView(view: QuickView | string | number | null | undefined): void {
+  protected setQuickView(view: unknown): void {
     if (view !== 'all' && view !== 'pending' && view !== 'failed') return;
     this.filters.update((f) => ({
       ...f,

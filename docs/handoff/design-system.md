@@ -33,8 +33,14 @@
 
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
+- **`sc-selectbutton`: cablear su color a `var(--sc-cmp-togglebutton-*)`** cuando Figma suba la opción no elegida (§10).
+- **Lo que dejó DD-113:** `sc-form-section-nav` con `role="tab"` sin `tablist` (pestañas verticales o nav como
+  `settings-sidebar`; tres e2e); tira del reproductor sin nombre (clave i18n); la «o» del acceso en primario
+  (`.login__divider` no llega); `sc-slot` a tokens del divider (e2e y captura); CSS muerto `.seg` e `.inline-field`.
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
+- **Rescatar a `main` el DS de `comparar/fichas`**, decida lo que decida producto: `sc-drawer` (`width`, `topOffset`, X accesible, bordes, sombra) y `sc-section-card showHeader`.
+- **La puerta barata del preflight, contra un ledger en PR ajeno** (LEARNINGS #21, roto el 2026-09-15 con #196): avisar si un PR abierto toca el mismo `docs/handoff/` o `DECISIONS`.
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
@@ -160,6 +166,35 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-15 · En Servicio, la dirección de las notificaciones se lee entera
+
+**Sello:** rama `arebury/notificaciones-direccion-ancha`, sobre `fa21f53` (#198). Rafa probó en local el InputGroup
+con las casillas como addons («me convence solo el link») y eligió volver a las columnas. Archivado:
+`archive/handoff-ds-2026-09-15-tema` («El tema lee los colores», #193).
+
+**Lo que cambia.** Las tres columnas de casillas miden su rótulo y la dirección se queda el resto: a 1440 el campo pasa de
+121 a 452 px. Test en `servicio-notificaciones.spec.ts`, rojo con la hoja de antes.
+
+## ✅ 2026-09-15 · Las fichas de agente, grupo y usuario se comparan en tres formas, y decide producto
+
+**Sello:** rama `comparar/fichas` (no se funde), HEAD `4b0aa6b`. Enlace del PM: https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e
+
+**El encargo.** El PM quería verlo todo («tocas algo y afecta a otras cosas»); Rafa, el índice. Tres formas con
+`?variante=`: Una página (mayo, antes de DD#59 de la plataforma), Resumen + panel lateral (`sc-drawer` encima, sin
+mover la ficha) y Pestañas. Quitadas: recuadro de cambios (ruido) y editor fijo (391 px a 900). Archivo: `…-lo-que-se-nota`.
+
+- ⚠️ **Un `sc-drawer` lateral pinta tres bordes de 3 px, sombra hacia abajo y una X sin nombre**: arreglado en la rama, no en `main`.
+
+## ✅ 2026-09-15 · Tabs, Toolbar, InputGroup, Divider y SelectButton de primeng.dev, bien puestos (DD-113)
+
+**Sello:** rama `arebury/fix-tabs-toolbar-inputgroup`, HEAD `7551099` (#197) más este cambio. Rafa eligió pestañas, separadores
+y pulsación con capturas delante. DD-107 vive en `archive/handoff-ds-2026-09-15-tabs`; «Conversaciones hace scroll», en `…-conversaciones-scroll`.
+
+**Lo que cambia.** DS: `sc-selectbutton`, tallas de `sc-inputgroup`. Supervisor: `p-tabs` nativas de texto, `sc-selectbutton`,
+`sc-divider`, modo pared y tira del Dashboard con nombre (avisar), sin `ripple`, botón que se encoge (better-ui, §8.1). Regla «primeng.dev tal cual»: hook, `tools/primeng-doc.mjs`, §F.
+
+- ⚠️ **Lo nativo manda**: apagué la raya de `p-tabs` por una marca fija y Rafa vio que no se deslizaba. Doc entera y medir.
+
 ## ✅ 2026-09-15 · Salen 30 tokens que no leía nadie, y el tema nombra los retirados
 
 **Sello:** rama `arebury/tokens-sin-uso`, sobre `395824f` (#193). Rafa: «de acuerdo». Archivado: `archive/handoff-ds-2026-09-15-foco`.
@@ -170,49 +205,6 @@ presencia y prioridad. `tema-zip` lista por nombre los tokens retirados en la gu
 existir falla en silencio en el proyecto del equipo externo.
 
 - ⚠️ **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias.
-
-## ✅ 2026-09-15 · El tema lee los colores que exporta Figma, y el guard no deja escribir uno a mano
-
-**Sello:** rama `arebury/tema-lee-figma`, sobre `12bdb21` (#192). Rafa: «adelante a todo esto» (criterio Kit, DD-111; AA manda).
-«Acceso» (DD-110) vive en `archive/handoff-ds-2026-09-15-acceso`.
-
-**Lo que cambia.** 185 colores del preset iban como paso de paleta o hex donde el export ya genera su `--sc-cmp-*`: 166
-valían igual y leen la variable sin mover un píxel; los 11 del botón de aviso siguen al Kit (el texto con contorno o de
-texto estaba a 1,92:1, ahora 4,92:1; medido en «Alertas nuevas»); los 8 que no llegarían a AA con el Kit (botón `danger`
-en claro, opción no elegida de SelectButton) van a EXCLUDE con su motivo y a `figma-pendiente.md` §12 y §8.
-`tokens:cmp-rewire` caza también la paleta y `root`, en todo preset con `colorScheme` (sobre `main` daba 185).
-
-- ⚠️ **Las capturas de sc-docs no ven el aviso con contorno ni el modo oscuro**: esos colores se miden a mano (Supervisor).
-- 🕳️ **Medido y no hecho**: los 69 `font-size` del Supervisor no tienen text style equivalente salvo ~17 sin cambio a la vista.
-
-## ✅ 2026-09-15 · Lo que se nota: idioma en vivo, casillas sin URL, columna en su sitio, miga y raya del Dashboard
-
-**Sello:** rama `arebury/arreglos-que-se-notan`, sobre `8ea9bea` (#190). Rafa, con la tabla de «qué cambia para quien usa
-la app»: «adelante a todo esto».
-
-**Lo que cambia.** 18 `computed()` con `translate.instant()` leen el idioma (en Sistema, los selectores de contraseña
-seguían en español al pasar a inglés); lo vigila `i18n:check` H en toda la app y la regla 6 de `audit:datatables` se
-retira. Sin URL, las casillas de notificaciones salen desmarcadas. `sc-column-selector` devuelve la columna detrás de
-la visible que la precede. `sc-breadcrumb` marca `aria-current="page"` por `pt`. Cada uno con su e2e, visto en rojo.
-
-- ⚠️ **Mi primer contador de `computed` leía de menos**: no casaba `computed<T>(`. Contó 6 donde había 18.
-
-## ✅ 2026-09-15 · Conversaciones hace scroll dentro de la tabla, como el resto de listas (DD-95)
-
-**Sello:** rama `arebury/fix-conversaciones-tabla-contenida` (#190), HEAD `bacabca` (#191) más este cambio. Rafa preguntó por qué la tabla no iba
-contenida como las demás; visto en local junto a Agentes: «me gusta». Los tramos «La barra de Conversaciones se
-simplifica» y «`sc-panel` con acciones» (DD-108) viven en `archive/handoff-ds-2026-09-14-barra-conversaciones` y `-sc-panel`.
-
-**Lo que cambia.** `.page--tabla` y `<sc-datatable scrollable scrollHeight="flex" virtualScroll>` en Conversaciones:
-título, vistas, filtros y cabecera quietos; la tarjeta vuelve a tener borde (se quita el «flush» de S59) y deja
-sitio a la barra de selección (a 1440 acaba en 883, y en 806 con la barra en 815). DS: la tabla con scroll deja de
-reservar el hueco de la barra a los dos lados (Rafa: el rojo y el amarillo de fila se cortaban 10 px antes del borde);
-el precio, aceptado: con barra, las columnas se mueven su ancho. Spec `conversations-table-scroll`: sus pruebas se
-vieron rojas con el fallo puesto (sin `.page--tabla`, host `block`, tarjeta que llena, sin `--seleccion`, hueco).
-
-- ⚠️ **El host de la tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta
-  vive dentro de un componente. El host tiene que ser flex (`0 1 auto`, `min-height: 0`); con `display: block`
-  la tarjeta mide 1518 dentro de un host de 680 y la página no hace scroll en ningún sitio.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -262,6 +254,7 @@ vieron rojas con el fallo puesto (sin `.page--tabla`, host `block`, tarjeta que 
 | ~~**Lienzo de página gris↔blanco**~~ → **DECIDIDO Y HECHO**: [DD-45](../DECISIONS.md) lo llevó a BLANCO el 2026-08-31 (`app-shell.component.scss` pinta `--sc-bg-canvas`), y Rafa lo reconfirmó el 2026-09-11 («el lienzo sí, pasa a blanco») sin saber que ya estaba. La fila llevaba diez días mintiendo: si una espera se resuelve en otro tramo, hay que venir a tacharla aquí |
 | ~~**Tramo actual del breadcrumb**~~ → **DECIDIDO, `bcab818` (2026-08-25)**: la propuesta de Figma `13890:157` (padres slate-500 `#8F97A3`) **se RECHAZA** — da **2,95:1** sobre blanco y no cumple AA. Se queda el código como está (padres slate-600, actual slate-700, ambos AA). Falta solo anotarlo en el nodo de Figma (Bloque 4). *Nota: el mismo commit tokenizó la miga a 14px, otro asunto ya cerrado.* |
 | ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa «que no cambie de anchura porque sí». `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
+| **Qué forma de ficha (agente, grupo, usuario)** | El PM compara las tres de la rama `comparar/fichas` (2026-09-15, tramo de arriba). Con la decisión, la elegida se construye en `main` y la rama se archiva con tag |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
 | ~~**Experimento en LOCAL: la escala al tamaño de Aura (16px por rem)**~~ → **DECIDIDO 2026-09-14 ([DD-91](../DECISIONS.md))** | Rafa eligió solo el interlineado con la rampa que existe (20/18): 32,5 y 27, sin perder filas. La escala se queda a 14. Medido también escala 16 + 20/18: 34 / 28 y 11 filas. Simulación en `~/Documents/Claude/2026-09 escala-16/`; el nombre por clave y el gate de la escala entraron en DD-89 |
 
@@ -288,6 +281,9 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Las capturas de sc-docs no ven el botón de aviso con contorno ni el modo oscuro**: esos colores se miden a mano (#193).
+- 🪤 **El host de una tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta vive dentro
+  de un componente; el host tiene que ser flex (`0 1 auto`, `min-height: 0`) o la página no hace scroll (DD-95).
 - 🪤 **Una regla SIN CAPA de un wrapper gana siempre al tema**: el rojo de error de seis campos tapaba el borde de foco.
   Un estado que PrimeNG sabe pintar (`p-invalid`) se le pasa a PrimeNG, no se repinta en el SCSS del wrapper (DD-111).
 - 🪤 **La hoja de una página no alcanza el `<img>` ni el `<canvas>` de OTRO componente** (encapsulación): esos estilos van

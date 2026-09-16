@@ -196,7 +196,9 @@
     },
     "wall": {
       "enter": "Modo parede",
-      "exit": "Sair"
+      "exit": "Sair",
+      "empty_title": "Este monitor não tem widgets",
+      "empty_desc": "Saia do modo parede para adicioná-los. O carrossel pula-o."
     },
     "detail": {
       "open_aria": "Ver o detalhe de {{value}}",
@@ -996,6 +998,10 @@
     "dashboard": "Dashboard",
     "servicios": "Serviços",
     "nodo_ia": "Nó IA",
+    "intenciones": "Intenções",
+    "monitor_ia": "Monitor",
+    "agentic_ai": "Agentic AI",
+    "tipificaciones": "Tipificações",
     "campanas": "Campanhas",
     "conversaciones": "Conversas",
     "estadisticas": "Estatísticas",
@@ -1003,6 +1009,8 @@
     "analizador": "Analisador de Fluxo",
     "scc": "SCC",
     "vui_designer": "VUI Designer",
+    "centro_control": "Centro de controlo",
+    "mask_manager": "Mask Manager",
     "administration": "Administração",
     "configuration": "Configuração",
     "users": "Usuários",
