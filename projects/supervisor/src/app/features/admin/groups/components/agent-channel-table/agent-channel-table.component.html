@@ -72,7 +72,8 @@
      pintaba su fondo con un color de PALETA que no voltea en oscuro). Rafa, 2026-09-14: «sí me
      gustaría poder seleccionar varios agentes en grupos». -->
 <sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-  <sc-button type="button" variant="secondary" appearance="outlined" [label]="'groups.form.assigned.bulk_pause' | translate" (clicked)="bulkPause()" />
+  <sc-button type="button" variant="secondary" appearance="outlined" [label]="'groups.form.assigned.bulk_resume' | translate" (clicked)="bulkSetActive(true)" />
+  <sc-button type="button" variant="secondary" appearance="outlined" [label]="'groups.form.assigned.bulk_pause' | translate" (clicked)="bulkSetActive(false)" />
   <sc-button type="button" variant="danger" [label]="'groups.form.assigned.bulk_unassign' | translate" (clicked)="bulkUnassign()" />
 </sc-bulk-action-bar>
 
