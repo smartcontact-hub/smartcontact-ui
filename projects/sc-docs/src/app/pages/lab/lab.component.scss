@@ -263,3 +263,135 @@ a.link-item__a:focus-visible {
 .expl__open:hover {
   text-decoration: underline;
 }
+
+/* ---------- exploraciones con versiones ---------- */
+.expl-subtitle {
+  margin: var(--sc-spacing-2) 0 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-text-subtle);
+}
+
+.versioned-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+  gap: var(--sc-spacing-1-5);
+  margin-top: var(--sc-spacing-0-75);
+}
+
+.versioned {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-1-25);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-subtle);
+  min-width: 0;
+}
+
+.versioned__title {
+  margin: 0;
+}
+
+/* Versión, Objetivo y Estado: rótulo a la izquierda y valor a la derecha, en una caja que se distingue del historial. */
+.versioned__facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  margin: 0;
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: var(--sc-spacing-0-75);
+  align-items: baseline;
+}
+
+.fact__label {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-text-subtle);
+}
+
+.fact__value {
+  margin: 0;
+  min-width: 0;
+  color: var(--sc-text-primary);
+}
+
+.fact__value .versioned__note {
+  margin-top: var(--sc-spacing-0-5);
+}
+
+.versioned__note {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.versioned__label {
+  margin: var(--sc-spacing-0-5) 0 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-text-subtle);
+}
+
+.versions,
+.versioned__figma {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.version {
+  min-width: 0;
+}
+
+.version__link {
+  display: flex;
+  gap: var(--sc-spacing-0-75);
+  text-decoration: none;
+  color: var(--sc-text-link);
+}
+
+/* En la caja de arriba no cabe fecha y texto en línea: la fecha va encima. */
+.version__link--stacked {
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+}
+
+.version__link:hover .version__behavior {
+  text-decoration: underline;
+}
+
+.version__link:focus-visible {
+  outline: 2px solid var(--sc-border-focus);
+  outline-offset: 2px;
+}
+
+.version__date {
+  flex: none;
+  font-family: var(--sc-font-family-mono);
+  color: var(--sc-text-subtle);
+}
+
+.version__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  margin-top: var(--sc-spacing-0-25);
+}
+
+.version__meta code {
+  font-family: var(--sc-font-family-mono);
+  color: var(--sc-text-secondary);
+  overflow-wrap: anywhere;
+}
