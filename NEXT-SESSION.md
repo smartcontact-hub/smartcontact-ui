@@ -58,7 +58,8 @@ antes de construir encima.
 | **Design System + herramienta** — tokens, componentes, Figma, tooling | [`docs/handoff/design-system.md`](docs/handoff/design-system.md) | 2026-09-05       |
 | **Agent Mini** — dialpad standalone (réplica del mini aed)            | [`docs/handoff/agent-mini.md`](docs/handoff/agent-mini.md)       | 2026-09-01       |
 | **Supervisor Dashboard** — adaptación del Monitor del Supervisor      | [`docs/handoff/supervisor-dashboard.md`](docs/handoff/supervisor-dashboard.md) | 2026-09-14 |
-| **Sidebar del Supervisor** — plegado a 80px y apertura de categorías (SISMAC-4340) | [`docs/handoff/supervisor-sidebar.md`](docs/handoff/supervisor-sidebar.md) | 2026-09-15 |
+| **Sidebar del Supervisor** — plegado a 80px y apertura de categorías (SISMAC-4340) | [`docs/handoff/supervisor-sidebar.md`](docs/handoff/supervisor-sidebar.md) | 2026-09-16 |
+| **Fichas de administración y Configuración del AED** — agente, grupo, usuario (rama `comparar/fichas`) | [`docs/handoff/supervisor-fichas.md`](docs/handoff/supervisor-fichas.md) | 2026-09-16 |
 
 **Al cerrar, reescribe SOLO el fichero de tu frente.** Si abres una línea de trabajo nueva, crea
 su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.

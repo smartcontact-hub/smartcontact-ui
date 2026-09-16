@@ -1,0 +1,72 @@
+# Frente · Fichas de administración (agente, grupo, usuario) y Configuración del AED — hand-off
+
+> **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
+> No toques los hand-offs de otros frentes.
+>
+> ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
+>
+> Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
+
+## ✅ 2026-09-16 · La ficha de grupo sigue a Voice, Configuración del AED › Grupos habla como ella y los iconos pasan a Rounded opsz 24
+
+> **Sello: rama `comparar/fichas` (no se funde), HEAD `6e183821`.** Vivo: https://comparar-fichas.sc-supervisor.pages.dev ·
+> fijo: https://4994b228.sc-supervisor.pages.dev · tarjeta «Fichas» del Lab (#207).
+
+**Qué hay en la rama.**
+- **Listas:** Servicios con teléfonos demo en el tooltip; WhatsApp con su logo, la única excepción a Material; exportar
+  solo lo seleccionado; «ID» en vez de «Código»; edición masiva «de X a Y»; Email y Grabación en agentes.
+- **«Activo» = sesión abierta** (definición del PM): Desconectado, Post-conversando y Administrativo se ven y no se
+  cambian. Fuera la columna «Activación» y los «Activo» de agente y usuario; por grupo, «Atiende».
+- **Ficha de grupo**, con tres fuentes: manual de Voice (`~/Downloads/aed_mu_mb.pdf`), SISMAC-1975 en COA y el Figma
+  «Migración Voice a Smartcontact Supervisor» (`su0goUM3040xeCrvEPQhTK`).
+  - Canales, estrategia y agentes van en una sección.
+  - Estrategias del COA: fuera Aleatoria; Skills apagada con su motivo; Agente exclusivo se queda.
+  - Ring All de 2 a 10; Niveles con subestrategia y nivel por agente.
+  - Recursos. Anuncios y audio, con el texto de «Texto a voz» y el audio saliente. Avanzado, con tamaño de cola y
+    desbordar sesión. Foto.
+- **Configuración del AED › Grupos**: los mismos campos y palabras que la ficha; lo que guarda lo lee el alta
+  (`GroupDefaultsStore`).
+- **Las tres fichas:** guardar se queda en la ficha, como Contact Center; un alta navega a su edición.
+  Identidad va primero al crear y al final al editar, también en «Una página».
+- **Iconos en código:** Rounded 400, opsz 24, con la calibración 24/18 (DD-104). `icon-glyph-scale.spec.ts` mide con
+  la familia real y vigila que ningún glifo salga recortado.
+
+**Medido** con clics reales (chrome-devtools, localhost:4411 a 1440):
+- Guardar y crear en las tres fichas.
+- Los valores guardados en Configuración llegan al alta.
+- Skills no se elige.
+- Los números del Avanzado miden 175.
+- Índice y página van en el mismo orden en las tres formas.
+- 0 iconos recortados en 8 pantallas.
+- El spec de iconos se pone en rojo con `overflow: hidden` forzado.
+
+## SIGUIENTE — sin preguntar
+
+1. **Cuando Rafa diga «lanza el script de huérfanos»**, ya habrá hecho tres cosas: publicar Smart-Contact-Icons
+   desmarcando los 21 sets `Icon…` de Playground (son de otra sesión), aceptar la actualización en el Design System y
+   arrastrar `dashboard` y `neurology` a Playground. Entonces sigue el `LEEME.md` de
+   `~/Documents/Claude/2026-09 iconos-material/huerfanos/`: 13 `dashboard`, 8 `brain` → `neurology`, y `query_stats`
+   y `graph_5` a 14 × 14. El script para solo si la actualización no está aceptada.
+2. **Rescatar a `main` por PRs separados** (la rama no se funde):
+   - iconos opsz 24 con su spec;
+   - `list-page` (exportar la selección, ancho mínimo con columnas ocultas);
+   - `sc-bulk-edit-menu matchable`;
+   - `sc-select editable`;
+   - las pantallas y el copy.
+3. Escribir en `AGENTS.md` la norma de Rafa: cada commit lleva su «Por qué».
+4. Probar con scroll real el scroll-spy de «Una página»: al hacer scroll por código no cambiaba la sección activa.
+
+## ⏸️ ESPERANDO — no preguntar
+
+- **Producto:** qué forma de ficha se queda (`?variante=a|b|e`).
+- **Devs:** qué son «Audio saliente» y «Desbordar sesión». Solo salen en el Figma; están anotados en `groups-data.ts`.
+- **Rafa:** revisar usuarios contra el Supervisor real.
+
+**Trampas del frente:**
+- ⚠️ `document.fonts.check()` da `true` con una familia que no existe. Para saber si la fuente de iconos cargó, mira
+  `[...document.fonts]` con su nombre y `status === 'loaded'`.
+- ⚠️ La opción apagada de `sc-select` (Skills) lleva `data-p-disabled` pero no `aria-disabled`: PrimeNG no la anuncia.
+- ⚠️ Un formulario sucio deja colgado el `beforeunload` tras el HMR: navega con `handleBeforeUnload: accept`.
+- ⚠️ El preflight no arranca si la memoria compartida pasa de tope (ficha >250 palabras o índice >1.000); lo mide
+  `scripts/memory-shape.mjs`.
+- ⚠️ En Figma, `importComponentByKeyAsync` se cuelga más de 200 s: usa un nodo remoto que ya esté en el fichero.
