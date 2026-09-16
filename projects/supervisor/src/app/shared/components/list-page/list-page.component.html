@@ -50,7 +50,7 @@
           scrollable
           scrollHeight="flex"
           virtualScroll
-          [tableMinWidth]="tableMinWidth()"
+          [tableMinWidth]="effectiveTableMinWidth()"
           variant="list"
           [value]="displayed()"
           [columns]="allColumns()"

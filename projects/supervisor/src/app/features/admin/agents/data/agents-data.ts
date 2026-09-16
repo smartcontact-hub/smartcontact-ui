@@ -401,7 +401,7 @@ const GENERATED_AGENTS: readonly Agent[] = Array.from({ length: TOTAL_AGENTES_DE
   };
 });
 
-/** Email de demo sacado del nombre («Penélope Cruz» → `penelope.cruz@company.com`), para que ninguno se repita. */
+/** Email de demo sacado del nombre (nombre.apellido, sin acentos, en el dominio de demo), para que ninguno se repita. */
 function demoEmail(name: string): string {
   const local = name
     .normalize('NFD')
