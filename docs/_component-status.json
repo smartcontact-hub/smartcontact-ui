@@ -162,7 +162,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 126
+      "usedInSupervisor": 129
     },
     {
       "name": "card",
@@ -449,7 +449,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 26
+      "usedInSupervisor": 28
     },
     {
       "name": "drawer",
@@ -680,7 +680,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 11
+      "usedInSupervisor": 17
     },
     {
       "name": "inputtext",
@@ -805,7 +805,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 15
+      "usedInSupervisor": 21
     },
     {
       "name": "option-card",
@@ -1039,7 +1039,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 20
+      "usedInSupervisor": 22
     },
     {
       "name": "select",
@@ -1048,12 +1048,13 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": false,
-      "inputs": 27,
+      "inputs": 28,
       "api": [
         "appendTo",
         "ariaLabelledBy",
         "blurred",
         "disabled",
+        "editable",
         "emptyFilterMessage",
         "emptyMessage",
         "error",
@@ -1086,7 +1087,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 32
+      "usedInSupervisor": 36
     },
     {
       "name": "selectbutton",
@@ -1114,7 +1115,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 8
     },
     {
       "name": "skeleton",
@@ -1238,7 +1239,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5
+      "usedInSupervisor": 6
     },
     {
       "name": "toast",
@@ -1282,7 +1283,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 20
+      "usedInSupervisor": 23
     }
   ]
 }
