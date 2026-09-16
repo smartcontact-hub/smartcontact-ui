@@ -47,7 +47,7 @@
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |
-| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 27 |
+| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 26 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 10 inputs | — | ✓ | 5 |
 | `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 14 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
@@ -79,10 +79,10 @@
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 3 |
 | `sc-subsection` | CUSTOM | — | 4 inputs | — | ✓ | — |
-| `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 23 |
+| `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 21 |
 | `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | 5 |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
-| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 22 |
+| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 20 |
 <!-- @audit:components:end -->
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)
