@@ -175,13 +175,17 @@
   }
 
   /* Tres columnas. El panel lateral se pone ENCIMA sin mover nada (Rafa, 2026-09-15: «no quiero que
-   * arrastre el resto»): durante un rato se probó a apartar la ficha y las tarjetas se estrechaban. */
+   * arrastre el resto»): durante un rato se probó a apartar la ficha y las tarjetas se estrechaban.
+   *
+   * Dos filas SIEMPRE, aunque la ficha tenga tres tarjetas: con filas automáticas, grupo y usuario
+   * (3) estiraban una fila a toda la pantalla y el agente (5) partía en dos, así que la misma
+   * tarjeta medía el doble según la ficha. */
   > .board {
     grid-area: board;
     min-height: 0;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-auto-rows: minmax(0, 1fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
     gap: var(--sc-spacing-1);
   }
 }
