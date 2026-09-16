@@ -5,6 +5,26 @@
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
+## ✅ 2026-09-16 · Regla oficial: en el sidebar no se cierra nada
+
+> **Sello: rama `comparar/sidebar` (no se funde), HEAD `3c3e76c1`.** Vivo:
+> https://comparar-sidebar.sc-supervisor.pages.dev/solo-sidebar · tarjeta «Sidebar» del Lab con las versiones anteriores.
+
+**Qué decidió Rafa.** Una categoría solo se abre o se cierra con su propio clic. Lo abierto sigue abierto al sacar el
+ratón, al navegar, al plegar a 80px y al recargar; lo que no cabe va con scroll. **Esto sustituye** lo de DD-112 de
+cerrar al salir las categorías que no son de la página.
+
+**Versiones guardadas con tag:**
+- `archive/comparar-sidebar-apollo-2026-09-16`: abrir una cierra las demás.
+- `archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16`: abrir no cierra, pero navegar y plegar sí.
+- `archive/lab-sidebar-2026-09-16`: el laboratorio del Sidebar de primeng.dev.
+
+**Figma:** un solo tablero con el padre en cyan y la regla «no se cierra nada» (`khNq9dJKNi13pNllrqm6dx`, nodo
+`14912-6324`). Las versiones anteriores están en `14930-1011`.
+
+**Siguiente:** llevar la regla a `main` en la rama del sidebar y reescribir DD-112 en esa parte. Lo de 2026-09-15 sigue
+debajo como estaba.
+
 ## ✅ 2026-09-15 · El sidebar se pliega a 80px, marca un solo padre y abre y cierra sin saltos (SISMAC-4340)
 
 > **Sello: rama `arebury/sidebar-plegado-80`, sobre `origin/main` HEAD `cc3c7d72`.**
