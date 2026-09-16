@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ScTagComponent } from '@smartcontact-hub/components';
+
+import { EXPLORATION_STATUS_LABEL, EXPLORATIONS, type ExplorationStatus } from './explorations.data';
 
 /** Un enlace del directorio. `href: null` = pendiente de pegar la URL.
  *  `route` = navega dentro de este mismo sitio (no lleva `meta` de dominio). */
@@ -26,12 +29,22 @@ interface DemoLinkGroup {
  */
 @Component({
   selector: 'app-lab',
-  imports: [RouterLink],
+  imports: [RouterLink, ScTagComponent],
   templateUrl: './lab.component.html',
   styleUrl: './lab.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabComponent {
+  /** Ramas de comparación con sus versiones: el índice para volver a una idea sin buscar enlaces. */
+  protected readonly explorations = EXPLORATIONS;
+  protected readonly statusLabel = EXPLORATION_STATUS_LABEL;
+
+  protected statusSeverity(status: ExplorationStatus): 'success' | 'warn' | 'secondary' {
+    if (status === 'oficial') return 'success';
+    if (status === 'en-revision') return 'warn';
+    return 'secondary';
+  }
+
   protected readonly linkGroups: readonly DemoLinkGroup[] = [
     {
       title: 'En producción',

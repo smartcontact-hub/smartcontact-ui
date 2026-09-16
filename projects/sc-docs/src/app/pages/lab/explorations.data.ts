@@ -1,0 +1,160 @@
+/**
+ * Exploraciones con versiones: ramas de comparación que no se funden y sus puntos de control. Viven aquí, en `main`,
+ * para que el índice no muera con la rama. Cada etiqueta `archive/comparar-*` y `archive/lab-*` del repo tiene que
+ * salir en este fichero: lo vigila `explorations:check` (en `verify`).
+ *
+ * Un enlace fijo (`<hash>.sc-supervisor.pages.dev`) sirve ese build y solo ese; el de la rama cambia con cada push.
+ */
+
+export type ExplorationStatus = 'oficial' | 'en-revision' | 'archivada';
+
+export interface ExplorationLink {
+  readonly label: string;
+  readonly href: string;
+}
+
+export interface ExplorationVersion {
+  /** Fecha ISO del despliegue. */
+  readonly date: string;
+  /** Cómo se comporta esa versión, en una línea. */
+  readonly behavior: string;
+  /** Enlace fijo a ese build. */
+  readonly href: string;
+  readonly tag?: string;
+  readonly commit?: string;
+}
+
+export interface Exploration {
+  readonly id: string;
+  readonly title: string;
+  /** Qué pregunta responde, en una frase. */
+  readonly question: string;
+  readonly status: ExplorationStatus;
+  /** Matiz del estado, si hace falta. */
+  readonly statusNote?: string;
+  readonly live: ExplorationLink;
+  /** De la más nueva a la más vieja. */
+  readonly versions: readonly ExplorationVersion[];
+  readonly figma?: readonly ExplorationLink[];
+}
+
+export const EXPLORATION_STATUS_LABEL: Readonly<Record<ExplorationStatus, string>> = {
+  oficial: 'Oficial',
+  'en-revision': 'En revisión',
+  archivada: 'Archivada',
+};
+
+export const EXPLORATIONS: readonly Exploration[] = [
+  {
+    id: 'sidebar',
+    title: 'Sidebar del Supervisor (SISMAC-4340)',
+    question: '¿Qué se abre y qué se cierra al moverse por el menú?',
+    status: 'oficial',
+    statusNote: 'La regla «no se cierra nada» es la oficial; todavía vive en su rama de comparación.',
+    live: {
+      label: 'comparar-sidebar.sc-supervisor.pages.dev/solo-sidebar',
+      href: 'https://comparar-sidebar.sc-supervisor.pages.dev/solo-sidebar',
+    },
+    versions: [
+      {
+        date: '2026-09-16',
+        behavior: 'No se cierra nada y recuerda lo abierto, también plegado y al recargar.',
+        href: 'https://b360eb07.sc-supervisor.pages.dev/solo-sidebar',
+        commit: '3c3e76c1',
+      },
+      {
+        date: '2026-09-16',
+        behavior: 'Abrir una categoría no cierra otras, pero navegar y plegar sí.',
+        href: 'https://c1ae0539.sc-supervisor.pages.dev/solo-sidebar',
+        tag: 'archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16',
+        commit: '65185e3b',
+      },
+      {
+        date: '2026-09-16',
+        behavior: 'Tipo Apollo: abrir una categoría cierra las demás.',
+        href: 'https://dbf5db2a.sc-supervisor.pages.dev/solo-sidebar',
+        tag: 'archive/comparar-sidebar-apollo-2026-09-16',
+        commit: '2d96a46e',
+      },
+      {
+        date: '2026-09-15',
+        behavior: 'Laboratorio del Sidebar de primeng.dev con sus variantes, el tema y las pantallas reales.',
+        href: 'https://704e9f33.sc-supervisor.pages.dev/config/aed/servicio',
+        tag: 'archive/lab-sidebar-2026-09-16',
+        commit: 'eae86e78',
+      },
+    ],
+    figma: [
+      {
+        label: 'Tablero del sidebar',
+        href: 'https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=14912-6324',
+      },
+      {
+        label: 'Archivo de versiones anteriores',
+        href: 'https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=14930-1011',
+      },
+    ],
+  },
+  {
+    id: 'fichas',
+    title: 'Fichas de agente, grupo y usuario',
+    question: '¿Qué forma de ficha deja editar más rápido sin perder de vista el resto?',
+    status: 'en-revision',
+    statusNote: 'Producto elige entre tres formas: una página, resumen con panel lateral y pestañas.',
+    live: {
+      label: 'comparar-fichas.sc-supervisor.pages.dev',
+      href: 'https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e',
+    },
+    versions: [
+      {
+        date: '2026-09-16',
+        behavior: '«Activo» solo significa sesión abierta, estados de solo lectura e iconos Rounded.',
+        href: 'https://ce21eafb.sc-supervisor.pages.dev/admin/agentes',
+        commit: '78c8cda2',
+      },
+      {
+        date: '2026-09-16',
+        behavior: 'Listas con Servicios, WhatsApp, Email y Grabación; exportar solo lo seleccionado.',
+        href: 'https://158ce908.sc-supervisor.pages.dev/admin/agentes',
+        commit: '90b99c0e',
+      },
+      {
+        date: '2026-09-16',
+        behavior: 'Las tarjetas del resumen miden igual en agente, grupo y usuario.',
+        href: 'https://bd162959.sc-supervisor.pages.dev/admin/grupos/editar/1?variante=e',
+        commit: '3e9f6288',
+      },
+      {
+        date: '2026-09-15',
+        behavior: 'Tres formas a elegir; el panel lateral se pone encima sin mover la ficha.',
+        href: 'https://da89b761.sc-supervisor.pages.dev/admin/agentes/editar/1?variante=e',
+        commit: '4b0aa6b1',
+      },
+    ],
+  },
+  {
+    id: 'tablas',
+    title: 'Tablas con scroll',
+    question: '¿Hace scroll la página con la cabecera fija, o la tabla por dentro?',
+    status: 'oficial',
+    statusNote: 'Decidido en DD-95: la tabla hace scroll por dentro. La cabecera fija queda archivada.',
+    live: {
+      label: 'comparar-tabla-scroll.sc-supervisor.pages.dev',
+      href: 'https://comparar-tabla-scroll.sc-supervisor.pages.dev/admin/agentes',
+    },
+    versions: [
+      {
+        date: '2026-09-14',
+        behavior: 'B, la elegida: la tabla hace scroll dentro, con cabecera fija y lista virtual.',
+        href: 'https://e2aadce5.sc-supervisor.pages.dev/admin/agentes',
+        commit: '1f8f2d54',
+      },
+      {
+        date: '2026-09-14',
+        behavior: 'A, archivada: hace scroll la página, con buscador y cabecera fijos arriba.',
+        href: 'https://2ba0c0f8.sc-supervisor.pages.dev/admin/agentes',
+        commit: 'f939ac4c',
+      },
+    ],
+  },
+];

@@ -65,10 +65,64 @@
   <section class="explorations" aria-labelledby="expl-title">
     <h2 id="expl-title" class="section-title sc-text-h2-semibold">Exploraciones</h2>
     <p class="section-lead">
-      Prototipos guardados para no perderlos: <strong>aún no forman parte del sistema</strong>,
-      son ideas para valorar. Las copias viven en el repo, no dependen de sitios externos.
+      Ideas que <strong>aún no forman parte del sistema</strong>: ramas de comparación con cada
+      versión que se probó, y prototipos guardados en el repo.
     </p>
 
+    <!-- Una tarjeta por rama de comparación. Los datos viven en `explorations.data.ts`, no aquí. -->
+    <h3 class="expl-subtitle sc-text-caption-semibold">Ramas de comparación</h3>
+    <div class="versioned-list">
+      @for (ex of explorations; track ex.id) {
+        <article class="versioned" [attr.aria-labelledby]="'expl-' + ex.id">
+          <div class="versioned__head">
+            <h4 [id]="'expl-' + ex.id" class="versioned__title sc-text-h3-semibold">{{ ex.title }}</h4>
+            <sc-tag [severity]="statusSeverity(ex.status)" [value]="statusLabel[ex.status]" />
+          </div>
+          <p class="versioned__question">{{ ex.question }}</p>
+          @if (ex.statusNote) {
+            <p class="versioned__note sc-text-caption-regular">{{ ex.statusNote }}</p>
+          }
+          <a class="expl__open sc-text-body-semibold" [href]="ex.live.href" target="_blank" rel="noopener">
+            Abrir la versión viva <span aria-hidden="true">↗</span>
+          </a>
+
+          <p class="versioned__label sc-text-caption-semibold">Versiones</p>
+          <ol class="versions">
+            @for (v of ex.versions; track v.href) {
+              <li class="version">
+                <a class="version__link" [href]="v.href" target="_blank" rel="noopener">
+                  <span class="version__date">{{ v.date }}</span>
+                  <span class="version__behavior">{{ v.behavior }} <span aria-hidden="true">↗</span></span>
+                </a>
+                @if (v.tag || v.commit) {
+                  <span class="version__meta">
+                    @if (v.tag) {
+                      <code>{{ v.tag }}</code>
+                    }
+                    @if (v.commit) {
+                      <code>{{ v.commit }}</code>
+                    }
+                  </span>
+                }
+              </li>
+            }
+          </ol>
+
+          @if (ex.figma?.length) {
+            <p class="versioned__label sc-text-caption-semibold">Figma</p>
+            <ul class="versioned__figma">
+              @for (f of ex.figma; track f.href) {
+                <li>
+                  <a class="expl__open" [href]="f.href" target="_blank" rel="noopener">{{ f.label }} <span aria-hidden="true">↗</span></a>
+                </li>
+              }
+            </ul>
+          }
+        </article>
+      }
+    </div>
+
+    <h3 class="expl-subtitle sc-text-caption-semibold">Prototipos guardados</h3>
     <div class="expl-grid">
       <article class="expl">
         <div class="expl__preview">
@@ -80,7 +134,7 @@
         </div>
         <div class="expl__body">
           <p class="expl__kind sc-text-caption-semibold">Patrón · pantalla de carga</p>
-          <h3 class="expl__title sc-text-h3-semibold">Pantalla de carga (esqueleto)</h3>
+          <h4 class="expl__title sc-text-h3-semibold">Pantalla de carga (esqueleto)</h4>
           <p class="expl__by sc-text-caption-regular">Marta Recio · jul 2026</p>
           <p class="expl__note">
             Boceto de la pantalla de carga de la app del agente, con barras tipo esqueleto. Es
@@ -108,7 +162,7 @@
         </div>
         <div class="expl__body">
           <p class="expl__kind sc-text-caption-semibold">Asset · icono animado</p>
-          <h3 class="expl__title sc-text-h3-semibold">Icono de carga (búsqueda)</h3>
+          <h4 class="expl__title sc-text-h3-semibold">Icono de carga (búsqueda)</h4>
           <p class="expl__by sc-text-caption-regular">Marta Recio · jul 2026</p>
           <p class="expl__note">
             Icono animado de una lupa buscando, con el texto «Cargando resultados…». Exportado en
