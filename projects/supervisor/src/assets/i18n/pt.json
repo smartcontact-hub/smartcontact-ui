@@ -2063,7 +2063,7 @@
     "figma_desc": "Selecionado em branco. Recolhida, um só fundo do pai ao último filho.",
     "cyan_desc": "Selecionado em ciano recolhida e ao passar o rato. Os filhos ficam no seu próprio bloco.",
     "fixed": "Fixada",
-    "hint": "Expandida, cada secção abre e fecha com o seu clique sem fechar as outras; o que não cabe faz scroll.",
+    "hint": "Cada secção abre e fecha só com o seu clique. Fica assim ao recolher, ao navegar e ao recarregar.",
     "open_aria": "Abrir a comparação da barra lateral",
     "close_aria": "Fechar a comparação da barra lateral",
     "collapsed": "Recolhida",

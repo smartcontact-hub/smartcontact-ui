@@ -9,8 +9,6 @@
   [attr.aria-label]="'sidebar.nav_aria' | translate"
   (mouseenter)="onEnter()"
   (mouseleave)="onLeave()"
-  (focusin)="focusWithin.set(true)"
-  (focusout)="onFocusOut($event)"
 >
   <a class="sidebar__brand" routerLink="/" [attr.aria-label]="'app.name' | translate">
     <img
