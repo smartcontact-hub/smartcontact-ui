@@ -39,6 +39,8 @@
   /* Fondo de grupo de la propuesta con selección en cyan (SISMAC-4340): la categoría abierta y, encima, sus hijos. */
   --sc-sidebar-item-group-bg: color-mix(in srgb, var(--sc-color-slate-0) 10%, transparent);
   /* Abrir y cerrar subsecciones como Apollo (plantilla de PrimeNG): 450ms con su curva. */
+  /* Suelo del escaparate del sidebar (`/solo-sidebar`): negro en los dos temas, para enseñarlo solo. */
+  --sc-sidebar-showcase-bg: var(--sc-color-zinc-950);
   --sc-sidebar-submenu-duration: 450ms;
   --sc-sidebar-submenu-easing: cubic-bezier(0.86, 0, 0.07, 1);
   --sc-sidebar-border: color-mix(in srgb, var(--sc-color-slate-0) 8%, transparent);

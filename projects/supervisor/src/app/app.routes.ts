@@ -14,6 +14,12 @@ export const appRoutes: Routes = [
     loadComponent: () =>
       import('./features/auth/pages/login-page.component').then((m) => m.LoginPageComponent),
   },
+  /* Rama de comparación: el sidebar solo, en la propuesta de selección en cyan, sobre fondo negro. */
+  {
+    path: 'solo-sidebar',
+    loadComponent: () =>
+      import('./core/layout/sidebar/sidebar-showcase.component').then((m) => m.SidebarShowcaseComponent),
+  },
   {
     path: '',
     loadComponent: () =>
