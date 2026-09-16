@@ -1029,6 +1029,9 @@
     "page_title": "Labels",
     "create_button": "New label",
     "export_button": "Export",
+    "export_selected": "Export {{count}} selected",
+    "export_selected_one": "Export 1 selected",
+    "export_needs_selection": "Select rows to export",
     "clear_search": "Clear search",
     "select_all": "Select all",
     "row_menu": "More actions",
@@ -1419,18 +1422,21 @@
   "groups": {
     "page_title": "Groups",
     "create_button": "New group",
-    "search_placeholder": "Search group by name, code, phone or strategy...",
+    "search_placeholder": "Search group by name, ID, phone or strategy...",
     "no_results_query": "No groups match “{{query}}”.",
     "entity_singular": "group",
     "table": {
-      "code": "Code",
+      "code": "ID",
       "name": "Name",
       "phone": "Phone",
       "channels": "Channels",
       "priority": "Priority",
       "strategy": "Strategy",
+      "services": "Services",
       "agents": "Agents",
-      "agents_count": "{{count}} agents"
+      "agents_count": "{{count}} agents",
+      "services_count": "{{count}} services",
+      "services_count_one": "1 service"
     },
     "priority": {
       "low": "Low",
@@ -1441,6 +1447,7 @@
     "channel": {
       "phone": "Phone",
       "chat": "Chat",
+      "whatsapp": "WhatsApp",
       "email": "Email"
     },
     "form": {
@@ -1519,11 +1526,12 @@
     },
     "entity_plural": "groups",
     "export": {
-      "code": "Code",
+      "code": "ID",
       "name": "Name",
       "phone": "Phone",
       "priority": "Priority",
       "strategy": "Strategy",
+      "services": "Services",
       "channels": "Channels",
       "agent_count": "Nº agents",
       "sheet": "Groups"
@@ -1535,17 +1543,19 @@
   "agents": {
     "page_title": "Agents",
     "create_button": "New agent",
-    "search_placeholder": "Search agent by name, code, extension or email...",
+    "search_placeholder": "Search agent by name, ID, extension or email...",
     "no_results_query": "No agents match “{{query}}”.",
     "entity_singular": "agent",
     "table": {
-      "code": "Code",
+      "code": "ID",
       "name": "Name",
       "extension": "Extension",
+      "email": "Email",
       "channels": "Channels",
       "type": "Type",
       "presence": "Status",
       "status": "Activation",
+      "recording": "Recording",
       "groups": "Groups"
     },
     "type": {
@@ -1557,6 +1567,7 @@
     "channel": {
       "phone": "Phone",
       "chat": "Chat",
+      "whatsapp": "WhatsApp",
       "email": "Email"
     },
     "ext": {
@@ -1727,12 +1738,13 @@
     },
     "entity_plural": "agents",
     "export": {
-      "code": "Code",
+      "code": "ID",
       "name": "Name",
       "extension": "Extension",
       "type": "Type",
       "email": "Email",
       "status": "Status",
+      "recording": "Recording",
       "groups": "Groups",
       "sheet": "Agents"
     },

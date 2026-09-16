@@ -14,7 +14,7 @@
   [heading]="'sidebar.groups' | translate"
   [rows]="groups()"
   [columns]="columns()"
-  tableMinWidth="56rem"
+  tableMinWidth="63.75rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'groups.search_placeholder' | translate"
@@ -41,7 +41,7 @@
   />
 
   <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (commit)="onBulkEditCommit($event)" />
+    <sc-bulk-edit-menu matchable [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (match)="onBulkMatch($event)" (commit)="onBulkEditCommit($event)" />
     <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
@@ -88,7 +88,7 @@
         [attr.data-channel]="channel"
         [title]="channelLabelKey(channel) | translate"
       >
-        <sc-icon [name]="channelIcon(channel)" [size]="14" />
+        <sc-channel-icon [channel]="channel" />
       </span>
     }
   </span>
@@ -100,6 +100,13 @@
 
 <ng-template #strategyTpl let-group>
   <sc-tag severity="secondary" [value]="group.strategy" />
+</ng-template>
+
+<!-- Solo lectura. El número y su desplegable, como «Agentes»: con los nombres en línea, los tres
+     servicios de «Nodo AED 1» piden 406 px y la tabla se desplazaría de lado a 1440 (DD-100). -->
+<ng-template #servicesTpl let-group>
+  @let services = servicesForGroup(group);
+  <sc-group-popover [groups]="services" [countAriaLabel]="(services.length === 1 ? 'groups.table.services_count_one' : 'groups.table.services_count') | translate: { count: services.length }" />
 </ng-template>
 
 <!-- El número abre la lista de sus agentes, igual que «Grupos» en la lista de agentes. -->

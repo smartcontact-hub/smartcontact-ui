@@ -33,7 +33,7 @@
 | `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 6 |
 | `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
-| `sc-bulk-edit-menu` | STANDARD | primeng/button | 1 inputs | sc-select | ✓ | 3 |
+| `sc-bulk-edit-menu` | STANDARD | primeng/button | 2 inputs | sc-select | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
 | `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 126 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
@@ -54,7 +54,7 @@
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
 | `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 6 |
 | `sc-gauge` | CUSTOM | — | 9 inputs | — | ✓ | 1 |
-| `sc-group-popover` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 3 |
+| `sc-group-popover` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 4 |
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
 | `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | ✓ | 4 |
 | `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | 1 |

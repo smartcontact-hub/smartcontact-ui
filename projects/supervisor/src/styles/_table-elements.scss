@@ -47,6 +47,11 @@
       color: var(--sc-label-teal-text);
     }
 
+    /* El verde de marca de WhatsApp, pero de la familia `label` como los demás: vuelta en oscuro y 3:1. */
+    &[data-channel='whatsapp'] {
+      color: var(--sc-label-green-text);
+    }
+
     /* `--sc-text-subtle` es slate-400: 2.04:1 sobre blanco, ni el 3:1 que
      * pide 1.4.11 para un glifo. `--sc-icon-secondary` es el token de icono
      * neutro y cumple en los dos temas. */

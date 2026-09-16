@@ -33,8 +33,9 @@
             variant="secondary"
             appearance="outlined"
             icon="download"
-            [ariaLabel]="'labels.export_button' | translate"
-            [attr.title]="'labels.export_button' | translate"
+            [disabled]="selectedRows().length === 0"
+            [ariaLabel]="exportLabel()"
+            [attr.title]="exportLabel()"
             (clicked)="onExport()"
           />
         }
