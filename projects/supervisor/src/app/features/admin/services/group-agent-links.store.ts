@@ -7,7 +7,7 @@ import { createVersionedStorage } from '@core/services/local-store.factory';
 const STORAGE_KEY = 'sc-group-agent-links';
 const VERSION_KEY = 'sc-group-agent-links-v';
 /** Bump on shape change. v1 = initial DD#54 model. */
-const CURRENT_VERSION = 2;
+const CURRENT_VERSION = 3;
 
 /**
  * Single source of truth for `(agentId, groupId)` permissions.

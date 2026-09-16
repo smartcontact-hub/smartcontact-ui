@@ -1,6 +1,5 @@
 export type GroupPriority = 'Baja' | 'Media' | 'Alta' | 'Máxima';
 export type GroupChannel = 'phone' | 'chat' | 'whatsapp' | 'email';
-export type CapacityType = 'fixed' | 'variable';
 
 export const GROUP_PRIORITIES: readonly GroupPriority[] = ['Baja', 'Media', 'Alta', 'Máxima'];
 export const GROUP_CHANNELS: readonly GroupChannel[] = ['phone', 'chat', 'whatsapp', 'email'];
@@ -19,13 +18,27 @@ export const CHANNEL_LABEL_KEYS: Readonly<Record<GroupChannel, string>> = {
   email: 'groups.channel.email',
 };
 
+/* Las siete del manual de Voice (aed_mu_mb.pdf, p. 10-12), con «Menos reciente» llamada «Más tiempo inactivo»
+ * como en SISMAC-1975. Aleatoria sigue porque el manual la trae; SISMAC-1975 (2023, en revisión) proponía quitarla
+ * junto a Lineal y añadir Skills: pendiente de decidir. */
 export const PHONE_STRATEGIES: readonly string[] = [
   'Balanceada',
-  'Lineal',
-  'Niveles',
+  'Menos llamadas atendidas',
+  'Más tiempo inactivo',
+  'Aleatoria',
   'Ring All',
+  'Niveles',
   'Agente exclusivo',
 ];
+
+/** Desempata entre agentes del mismo nivel. No puede ser Niveles (manual de Voice, p. 12). */
+export const SUB_STRATEGIES: readonly string[] = ['Balanceada', 'Más tiempo inactivo', 'Menos llamadas atendidas'];
+
+/** Ring All suena a la vez en 2 a 10 agentes; por defecto 2 (SISMAC-1975). */
+export const RING_ALL_OPTIONS: readonly number[] = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+/** Niveles de reparto por agente: hasta 5, como el prototipo. */
+export const LEVEL_OPTIONS: readonly number[] = [1, 2, 3, 4, 5];
 
 export const CHAT_STRATEGIES: readonly string[] = [
   'Rotativa (por turnos)',
@@ -39,19 +52,16 @@ export interface Group {
   readonly name: string;
   readonly phone: string;
   readonly priority: GroupPriority;
-  readonly typification: boolean;
   readonly channels: readonly GroupChannel[];
   readonly strategy: string;
   readonly chatStrategy?: string;
-  readonly capacityType?: CapacityType;
-  readonly capacityValue?: number;
   readonly labels?: readonly number[];
   readonly templates?: readonly number[];
-  /** Tiered fallback (Niveles strategy). Each row is one level. */
-  readonly levels?: readonly (readonly string[])[];
   readonly subStrategy?: string;
   readonly ringAllAgents?: number;
   readonly services?: readonly string[];
+  /** Tipificaciones del repositorio. Con alguna, el agente tiene que tipificar antes de cerrar (manual de Voice, p. 14). */
+  readonly typifications?: readonly number[];
   readonly schedules?: readonly number[];
   /** Draft flag — set on duplicated entities until the user saves (DD#294 in the React prototype). */
 }
@@ -63,11 +73,8 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'ACD Demo C2CB',
     phone: '918371548',
     priority: 'Media',
-    typification: false,
     channels: ['phone'],
     strategy: 'Balanceada',
-    capacityType: 'fixed',
-    capacityValue: 5,
     labels: [1, 5],
     templates: [1, 3, 6],
     services: ['Atención general', 'Soporte técnico'],
@@ -79,11 +86,8 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'ACD demo cuscare',
     phone: '918371548',
     priority: 'Baja',
-    typification: false,
     channels: ['phone', 'email'],
     strategy: 'Balanceada',
-    capacityType: 'fixed',
-    capacityValue: 10,
     services: ['Atención general'],
   },
   {
@@ -92,11 +96,9 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'ACD outbound',
     phone: '918371548',
     priority: 'Baja',
-    typification: true,
+    typifications: [1, 3],
     channels: ['phone'],
     strategy: 'Balanceada',
-    capacityType: 'variable',
-    capacityValue: 3,
     services: ['Campañas salientes'],
     schedules: [1],
   },
@@ -106,9 +108,8 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Campaigns',
     phone: '917945449',
     priority: 'Baja',
-    typification: false,
     channels: ['phone'],
-    strategy: 'Lineal',
+    strategy: 'Más tiempo inactivo',
     services: ['Campañas salientes', 'Telemarketing VUI'],
   },
   {
@@ -117,7 +118,6 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Exclusivo',
     phone: '918371548',
     priority: 'Máxima',
-    typification: false,
     channels: ['phone'],
     strategy: 'Agente exclusivo',
     services: ['VIP Empresas'],
@@ -129,7 +129,6 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Grupo de prueba 1',
     phone: '917945449',
     priority: 'Baja',
-    typification: false,
     channels: ['phone'],
     strategy: 'Balanceada',
   },
@@ -139,7 +138,6 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Grupo de prueba 2',
     phone: '917945449',
     priority: 'Baja',
-    typification: false,
     channels: ['phone'],
     strategy: 'Ring All',
     ringAllAgents: 3,
@@ -150,7 +148,7 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Grupo demo',
     phone: '917945449',
     priority: 'Baja',
-    typification: true,
+    typifications: [1, 3],
     channels: ['phone'],
     strategy: 'Balanceada',
     services: ['Demo interno'],
@@ -161,13 +159,9 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Grupo pedidos',
     phone: '917945449',
     priority: 'Baja',
-    typification: true,
+    typifications: [1, 3],
     channels: ['phone'],
     strategy: 'Niveles',
-    levels: [
-      ['Tom Hanks', 'Meryl Streep', 'Denzel Washington', 'Julia Roberts', 'Scarlett Johansson'],
-      ['Morgan Freeman', 'Natalie Portman', 'Keanu Reeves', 'Brad Pitt'],
-    ],
     subStrategy: 'Balanceada',
     services: ['Pedidos online', 'Seguimiento envíos'],
     schedules: [1, 4, 5],
@@ -178,7 +172,6 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Nodo AED 1',
     phone: '917945449',
     priority: 'Baja',
-    typification: false,
     channels: ['phone', 'chat'],
     strategy: 'Balanceada',
     chatStrategy: 'Rotativa (por turnos)',
@@ -190,7 +183,6 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Online Support',
     phone: '918371548',
     priority: 'Máxima',
-    typification: false,
     channels: ['phone', 'chat', 'whatsapp', 'email'],
     strategy: 'Balanceada',
     chatStrategy: 'Menos chats activos',
@@ -205,7 +197,7 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Reclamaciones',
     phone: '918371548',
     priority: 'Alta',
-    typification: true,
+    typifications: [1, 3],
     channels: ['phone', 'chat', 'whatsapp'],
     strategy: 'Balanceada',
     chatStrategy: 'Rotativa (por turnos)',
@@ -220,9 +212,8 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Soporte Taller',
     phone: '917945449',
     priority: 'Máxima',
-    typification: false,
     channels: ['phone', 'chat', 'whatsapp'],
-    strategy: 'Lineal',
+    strategy: 'Más tiempo inactivo',
     chatStrategy: 'Menos chats activos',
     services: ['Soporte taller', 'Averías'],
   },
@@ -232,7 +223,6 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Telemarketing',
     phone: '918371548',
     priority: 'Baja',
-    typification: false,
     channels: ['phone'],
     strategy: 'Balanceada',
     services: ['Telemarketing VUI'],

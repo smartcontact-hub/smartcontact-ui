@@ -1453,7 +1453,8 @@
         "channels_hint": "Types de contact",
         "strategy": "Stratégie",
         "agents": "Agents assignés",
-        "distribution": "Canaux et stratégie"
+        "distribution": "Canaux et stratégie",
+        "channels_agents": "Canaux et agents"
       },
       "assigned": {
         "query_placeholder": "Rechercher un agent…",
@@ -1466,22 +1467,31 @@
         "active_aria": "{{name}} répond dans ce groupe",
         "remove_aria": "Retirer {{name}} du groupe",
         "warn_no_channels": "Répond, mais sans canal assigné",
-        "add_placeholder": "Ajouter un agent…",
+        "add_placeholder": "Ajouter des agents…",
         "add_aria": "Ajouter un agent au groupe",
         "no_channels_warn": "{{count}} sans canal",
         "bulk_pause": "Ne plus répondre",
-        "bulk_unassign": "Retirer du groupe"
+        "bulk_unassign": "Retirer du groupe",
+        "col_level": "Niveau",
+        "level_aria": "Niveau de {{name}}"
       },
       "fields": {
         "name": "Nom",
-        "phone": "Téléphone principal",
+        "phone": "Téléphone associé",
         "priority": "Priorité",
-        "typification": "Typification obligatoire",
-        "typification_hint": "L'agent doit catégoriser la conversation avant de la clôturer",
         "phone_strategy": "Stratégie (téléphone)",
         "chat_strategy": "Stratégie (chat)",
-        "capacity": "Capacité simultanée",
-        "capacity_hint": "Appels que chaque agent peut traiter en parallèle"
+        "phone_hint": "Le numéro que voient les clients quand un agent du groupe appelle. Choisissez-en un ou saisissez-le.",
+        "strategy": "Stratégie",
+        "ring_all": "Sonne chez",
+        "ring_all_suffix": "agents à la fois",
+        "ring_all_summary": "{{count}} à la fois",
+        "sub_strategy": "Dans chaque niveau",
+        "levels_hint": "Choisissez le niveau de chaque agent dans le tableau ci-dessous. Le niveau 1 reçoit en premier.",
+        "exclusive_hint": "Se configure dans l’arbre de l’IVR.",
+        "typifications": "Typifications",
+        "typifications_none": "Aucune typification",
+        "typifications_hint": "Si une est choisie, l’agent doit typifier avant de fermer la conversation. Elles se créent dans Référentiels."
       },
       "assigned_count": "Assignés ({{count}})",
       "available_agents": "Disponibles",
@@ -1670,7 +1680,7 @@
         "col_active": "Répond",
         "active_aria": "Répond dans {{name}}",
         "remove_aria": "Retirer l'agent de {{name}}",
-        "add_placeholder": "Ajouter un groupe…",
+        "add_placeholder": "Ajouter des groupes…",
         "filter_placeholder": "Rechercher un groupe…",
         "no_results": "Aucun groupe assigné ne correspond au filtre.",
         "channel_not_offered": "Ce groupe ne propose pas ce canal"
@@ -2098,7 +2108,7 @@
           "step1": "Cliquez sur « Permissions » dans l’index : la page descend jusqu’à cette section."
         },
         "group": {
-          "step1": "Cliquez sur « Agents assignés » dans l’index : la page descend jusqu’à cette section."
+          "step1": "Cliquez sur « Canaux et agents » dans l’index : la page descend jusqu’à cette section."
         },
         "user": {
           "step1": "Cliquez sur « Accès » dans l’index : la page descend jusqu’à cette section."
@@ -2115,8 +2125,8 @@
           "step2": "Désactivez « Enregistrer les appels » : la carte de gauche l’affiche aussitôt."
         },
         "group": {
-          "step1": "Cliquez sur « Éditer » sur la carte « Canaux et stratégie ».",
-          "step2": "Décochez « Téléphone » et fermez le panneau : la carte « Agents assignés », que le panneau cachait, n’a plus le téléphone."
+          "step1": "Cliquez sur « Éditer » sur la carte « Canaux et agents ».",
+          "step2": "Cochez « Chat » et fermez le panneau : la carte affiche la stratégie de chat et le nouveau canal pour chaque agent."
         },
         "user": {
           "step1": "Cliquez sur « Éditer » sur la carte « Accès ».",

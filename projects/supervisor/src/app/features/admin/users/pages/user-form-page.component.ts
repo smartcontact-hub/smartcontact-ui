@@ -32,7 +32,6 @@ import {
   ScPhotoUploadComponent as PhotoUploadComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
-  ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
 import {
@@ -88,7 +87,6 @@ interface FormState {
     PhotoUploadComponent,
     SectionCardComponent,
     SelectComponent,
-    ToggleSwitchComponent,
     TranslateModule,
   ],
   templateUrl: './user-form-page.component.html',

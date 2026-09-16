@@ -16,3 +16,37 @@
  * Se fueron el 2026-09-14 la paleta `.pill--priority-*` (con su pulso animado) y
  * `.header-meta__chunk`, que ya no pintaba nada: la prioridad no sale en la ficha y
  * la banda a la que se proyectaba se retiró en S59. */
+
+/* Canales con su reparto al lado (2026-09-16). Rejilla de dos columnas: la casilla mide lo que su rótulo más largo
+ * y los ajustes del canal empiezan todos en la misma vertical. */
+.channel-list {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  /* Arriba y no al centro: con la ayuda debajo, la casilla quedaba a media altura de sus selectores. */
+  align-items: start;
+  column-gap: var(--sc-spacing-1-5);
+  row-gap: var(--sc-spacing-0-5);
+}
+
+.channel-list__settings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1-25);
+  min-width: 0;
+}
+
+.channel-list__setting {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.channel-list__label,
+.channel-list__hint {
+  color: var(--sc-text-secondary);
+}
+
+.channel-list__select {
+  inline-size: var(--sc-spacing-12-5);
+}

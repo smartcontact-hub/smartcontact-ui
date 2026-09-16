@@ -34,6 +34,8 @@ export interface GroupAgentLink {
   readonly channels: readonly Channel[];
   /** False = paused (config preserved, agent does not receive contacts in this group). */
   readonly active: boolean;
+  /** Nivel de reparto (1 = primero) cuando la estrategia del grupo es Niveles. */
+  readonly level?: number;
 }
 
 /**

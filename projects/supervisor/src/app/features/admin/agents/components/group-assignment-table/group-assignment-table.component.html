@@ -19,7 +19,8 @@
       </span>
     }
     <span id="agent-add-group-label" class="visually-hidden">{{ 'agents.form.assigned.picker_aria' | translate }}</span>
-    <sc-select
+    <!-- Multiselect, igual que «Añadir agentes» en la ficha de grupo: la misma relación desde el otro lado. -->
+    <sc-multiselect
       class="assign__add"
       inputId="agent-add-group"
       ariaLabelledBy="agent-add-group-label"
@@ -27,10 +28,13 @@
       optionValue="id"
       [filter]="true"
       filterBy="name"
-      [options]="pickerCandidates()"
+      [showToggleAll]="false"
+      [maxSelectedLabels]="0"
+      [selectedItemsLabel]="'agents.form.assigned.add_placeholder' | translate"
       [placeholder]="'agents.form.assigned.add_placeholder' | translate"
-      [value]="addPick()"
-      (valueChange)="onAddPick($event)"
+      [options]="availableGroups()"
+      [value]="assignedIds()"
+      (valueChange)="onAssignedChange($event)"
     />
   </div>
 

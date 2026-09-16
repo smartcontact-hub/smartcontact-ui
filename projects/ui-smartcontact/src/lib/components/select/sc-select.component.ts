@@ -96,6 +96,8 @@ export class ScSelectComponent {
   readonly optionValue = input<string>();
   /** Show an "×" to clear selection. */
   readonly showClear = input(false, { transform: booleanAttribute });
+  /** Deja escribir un valor que no está en la lista (el `editable` nativo de p-select). */
+  readonly editable = input(false, { transform: booleanAttribute });
   /** Enable search/filter inside the dropdown. */
   readonly filter = input(false, { transform: booleanAttribute });
   /** Field(s) used for filtering when `filter` is true. */
