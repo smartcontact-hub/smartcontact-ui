@@ -28,11 +28,10 @@ import {
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
-  ScInputNumberComponent as InputNumberComponent,
+  ScMultiSelectComponent as MultiSelectComponent,
   ScDialogComponent as DialogComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
-  ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import {
   CHANNEL_LABEL_KEYS,
@@ -44,7 +43,10 @@ import {
   GroupPriority,
   PHONE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
+  RING_ALL_OPTIONS,
+  SUB_STRATEGIES,
 } from '../data/groups-data';
+import { TipificacionesStore } from '@features/admin/repositories/instances/tipificaciones';
 import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
@@ -68,11 +70,12 @@ interface FormState {
   name: string;
   phone: string;
   priority: GroupPriority;
-  typification: boolean;
+  typificationIds: ReadonlySet<number>;
   channels: ReadonlySet<GroupChannel>;
   strategy: string;
+  subStrategy: string;
+  ringAllAgents: number;
   chatStrategy: string;
-  capacityValue: number | null;
   links: readonly GroupAgentLink[];
 }
 
@@ -92,11 +95,10 @@ interface FormState {
     FormSectionNavComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
-    InputNumberComponent,
+    MultiSelectComponent,
     DialogComponent,
     SectionCardComponent,
     SelectComponent,
-    ToggleSwitchComponent,
     TranslateModule,
   ],
   templateUrl: './group-form-page.component.html',
@@ -112,6 +114,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly crossTab = inject(CrossTabLockService);
+  private readonly tipificacionesStore = inject(TipificacionesStore);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
    * fuera la banda sticky-form-header; identidad → breadcrumb + campos del
@@ -132,6 +135,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly phoneStrategies = PHONE_STRATEGIES;
   protected readonly chatStrategies = CHAT_STRATEGIES;
+  protected readonly subStrategies = SUB_STRATEGIES;
+  protected readonly ringAllOptions = RING_ALL_OPTIONS;
 
   /**
    * Section index for the form shell. In `edit` mode, Identity drops to
@@ -146,16 +151,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'groups.form.section.identity',
       icon: 'badge',
     };
-    // Canales y estrategia son UNA sección (2026-09-14): la estrategia depende de los
-    // canales marcados. Conserva el id de canales, que es el que lleva la bola de error.
+    // Canales, estrategia y agentes son UNA sección (Rafa, 2026-09-16): marcar un canal enseña su columna en
+    // la tabla de agentes justo debajo, sin ir arriba y abajo. Conserva el id de canales, que lleva la bola de error.
     const channels: FormNavSection = {
       id: 'group-section-channels',
-      labelKey: 'groups.form.section.distribution',
-      icon: 'account_tree',
-    };
-    const agents: FormNavSection = {
-      id: 'group-section-agents',
-      labelKey: 'groups.form.section.agents',
+      labelKey: 'groups.form.section.channels_agents',
       icon: 'group',
     };
     // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
@@ -163,9 +163,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // ficha del panel ya da su contexto siempre visible.
     // COMPARAR: en una sola página (`b`) el índice sigue el orden de la página.
     if (this.mode() === 'edit' && this.variants.variant() !== 'b') {
-      return [channels, agents, identity];
+      return [channels, identity];
     }
-    return [identity, channels, agents];
+    return [identity, channels];
   });
 
   protected readonly activeSection = signal<string>('group-section-identity');
@@ -331,6 +331,35 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly hasChat = computed(() => this.form().channels.has('chat'));
   protected readonly hasPhone = computed(() => this.form().channels.has('phone'));
+  protected readonly isNiveles = computed(() => this.hasPhone() && this.form().strategy === 'Niveles');
+  protected readonly isRingAll = computed(() => this.hasPhone() && this.form().strategy === 'Ring All');
+  protected readonly isExclusive = computed(() => this.hasPhone() && this.form().strategy === 'Agente exclusivo');
+
+  /** Los números que ya usan los grupos; también se puede escribir uno nuevo (Voice lo deja libre). */
+  protected readonly phoneOptions = computed<readonly string[]>(() => {
+    const phones = new Set(this.groupsStore.groups().map((g) => g.phone).filter(Boolean));
+    if (this.form().phone) phones.add(this.form().phone);
+    return [...phones].sort();
+  });
+
+  protected readonly typificationOptions = computed(() =>
+    this.tipificacionesStore.items().map((t) => ({ label: t.name, value: t.id })),
+  );
+  protected readonly typificationValue = computed(() => [...this.form().typificationIds]);
+
+  protected typificationNames(): string {
+    const ids = this.form().typificationIds;
+    const names = this.tipificacionesStore.items().filter((t) => ids.has(t.id)).map((t) => t.name);
+    return names.length > 0 ? names.join(', ') : this.translate.instant('groups.form.fields.typifications_none');
+  }
+
+  /** La estrategia de teléfono con lo que la completa, para el resumen. */
+  protected phoneStrategySummary(): string {
+    const f = this.form();
+    if (this.isRingAll()) return `${f.strategy} · ${this.translate.instant('groups.form.fields.ring_all_summary', { count: f.ringAllAgents })}`;
+    if (this.isNiveles()) return `${f.strategy} · ${f.subStrategy}`;
+    return f.strategy;
+  }
 
   /** Roster passed to the channel table — every agent in the system. */
   protected readonly availableAgents = computed<readonly AgentChannelTableAgent[]>(() =>
@@ -366,11 +395,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         name: group.name,
         phone: group.phone,
         priority: group.priority,
-        typification: group.typification,
+        typificationIds: new Set(group.typifications ?? []),
         channels: new Set(group.channels),
         strategy: group.strategy,
+        subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,
+        ringAllAgents: group.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
         chatStrategy: group.chatStrategy ?? CHAT_STRATEGIES[0]!,
-        capacityValue: group.capacityValue ?? null,
         links: seedLinks,
       });
       this.initialChannels.set(new Set(group.channels));
@@ -404,11 +434,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         phone: '',
         // Resto del payload copiado.
         priority: source.priority,
-        typification: source.typification,
+        typificationIds: new Set(source.typifications ?? []),
         channels: new Set(source.channels),
         strategy: source.strategy,
+        subStrategy: source.subStrategy ?? SUB_STRATEGIES[0]!,
+        ringAllAgents: source.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
         chatStrategy: source.chatStrategy ?? CHAT_STRATEGIES[0]!,
-        capacityValue: source.capacityValue ?? null,
         links: seedLinks,
       });
       this.initialChannels.set(new Set(source.channels));
@@ -440,22 +471,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) => ({ ...f, [key]: value }));
   }
 
-  protected onPhoneValueChange(value: string): void {
-    this.updateField('phone', value);
-  }
-
-  /**
-   * Adapter para `<sc-inputnumber>` (capacityValue). Emite `number | null`;
-   * un null → campo vacío, mantenemos el null en el form para que serialize
-   * lo traduzca a `undefined`. Filtra valores negativos (defensa por si el
-   * usuario teclea un signo: el min="0" del input ya lo bloquea normalmente).
-   */
-  protected onCapacityValueChange(value: number | null): void {
-    if (value === null) {
-      this.updateField('capacityValue', null);
-      return;
-    }
-    if (Number.isFinite(value) && value >= 0) this.updateField('capacityValue', value);
+  protected onPhoneValueChange(value: unknown): void {
+    this.updateField('phone', typeof value === 'string' ? value : '');
   }
 
   protected onPriorityValueChange(value: unknown): void {
@@ -470,8 +487,16 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (typeof value === 'string') this.updateField('chatStrategy', value);
   }
 
-  protected onTypificationChange(checked: boolean): void {
-    this.updateField('typification', checked);
+  protected onTypificationsChange(value: unknown): void {
+    if (Array.isArray(value)) this.updateField('typificationIds', new Set(value as number[]));
+  }
+
+  protected onSubStrategyChange(value: unknown): void {
+    if (typeof value === 'string') this.updateField('subStrategy', value);
+  }
+
+  protected onRingAllChange(value: unknown): void {
+    if (typeof value === 'number') this.updateField('ringAllAgents', value);
   }
 
   protected toggleChannel(channel: GroupChannel): void {
@@ -529,14 +554,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         name: f.name.trim(),
         phone: f.phone.trim(),
         priority: f.priority,
-        typification: f.typification,
+        typifications: [...f.typificationIds],
         channels: Array.from(f.channels),
         strategy: f.strategy,
+        subStrategy: this.isNiveles() ? f.subStrategy : undefined,
+        ringAllAgents: this.isRingAll() ? f.ringAllAgents : undefined,
         chatStrategy: f.channels.has('chat') ? f.chatStrategy : undefined,
-        capacityValue:
-          f.channels.has('phone') && f.capacityValue !== null ? f.capacityValue : undefined,
-        capacityType:
-          f.channels.has('phone') && f.capacityValue !== null ? ('fixed' as const) : undefined,
       };
 
       const editingId = this.editingId();
@@ -614,11 +637,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       name: '',
       phone: '',
       priority: 'Baja',
-      typification: false,
+      typificationIds: new Set<number>(),
       channels: new Set<GroupChannel>(['phone']),
       strategy: PHONE_STRATEGIES[0]!,
+      subStrategy: SUB_STRATEGIES[0]!,
+      ringAllAgents: RING_ALL_OPTIONS[0]!,
       chatStrategy: CHAT_STRATEGIES[0]!,
-      capacityValue: null,
       links: [],
     };
   }

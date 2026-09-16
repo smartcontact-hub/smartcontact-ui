@@ -21,7 +21,9 @@
       <sc-tag severity="warn" icon="warning" [value]="'groups.form.assigned.no_channels_warn' | translate: { count: zeroChannelCount() }" />
     }
     <span id="group-add-agent-label" class="visually-hidden">{{ 'groups.form.assigned.add_aria' | translate }}</span>
-    <sc-select
+    <!-- Multiselect (Rafa, 2026-09-16): se marcan o desmarcan varios agentes de una vez y la tabla
+         lo refleja al momento. Lo marcado es lo asignado; el rótulo dice siempre la acción. -->
+    <sc-multiselect
       class="assign__add"
       inputId="group-add-agent"
       ariaLabelledBy="group-add-agent-label"
@@ -29,10 +31,13 @@
       optionValue="id"
       [filter]="true"
       filterBy="name"
-      [options]="addCandidates()"
+      [showToggleAll]="false"
+      [maxSelectedLabels]="0"
+      [selectedItemsLabel]="'groups.form.assigned.add_placeholder' | translate"
       [placeholder]="'groups.form.assigned.add_placeholder' | translate"
-      [value]="addPick()"
-      (valueChange)="onAddPick($event)"
+      [options]="availableAgents()"
+      [value]="assignedIds()"
+      (valueChange)="onAssignedChange($event)"
     />
   </div>
 
@@ -86,6 +91,18 @@
     [disabled]="!row.link.active"
     [ariaLabel]="row.agent.name + ' — ' + col.header"
     (cycle)="toggleChannel(row.agent.id, col.field)"
+  />
+</ng-template>
+
+<ng-template #levelTpl let-row>
+  <span [id]="'group-level-label-' + row.agent.id" class="visually-hidden">{{ 'groups.form.assigned.level_aria' | translate: { name: row.agent.name } }}</span>
+  <sc-select
+    size="sm"
+    [inputId]="'group-level-' + row.agent.id"
+    [ariaLabelledBy]="'group-level-label-' + row.agent.id"
+    [options]="levelOptions"
+    [value]="row.link.level ?? 1"
+    (valueChange)="setLevel(row.agent.id, $event)"
   />
 </ng-template>
 

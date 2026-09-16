@@ -16,6 +16,7 @@ import {
   ScBulkActionBarComponent as BulkActionBarComponent,
   ScButtonComponent as ButtonComponent,
   ScSearchComponent as SearchComponent,
+  ScMultiSelectComponent as MultiSelectComponent,
   ScSelectComponent as SelectComponent,
   ScTagComponent as TagComponent,
   useBulkEntityI18n,
@@ -35,6 +36,7 @@ import {
 import {
   CHANNEL_LABEL_KEYS,
   GroupChannel,
+  LEVEL_OPTIONS,
 } from '@features/admin/groups/data/groups-data';
 import {
   canonicalizeChannels,
@@ -84,6 +86,7 @@ interface VisibleRow {
     DatatableComponent,
     IllustratedAvatarComponent,
     SearchComponent,
+    MultiSelectComponent,
     SelectComponent,
     TagComponent,
     ToggleSwitchComponent,
@@ -113,6 +116,8 @@ export class AgentChannelTableComponent {
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
   private readonly activeTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('activeTpl');
+  private readonly levelTpl =
+    viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('levelTpl');
   private readonly actionsTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('actionsTpl');
 
@@ -125,6 +130,18 @@ export class AgentChannelTableComponent {
           header: this.translate.instant('groups.form.assigned.col_agent'),
           cellTemplate: this.agentTpl(),
         },
+        /* Con la estrategia Niveles, el nivel de cada agente va en su fila: donde ya se decide quién atiende qué. */
+        ...(this.showLevel()
+          ? [
+              {
+                field: 'level',
+                header: this.translate.instant('groups.form.assigned.col_level'),
+                width: '6.5rem',
+                cellTemplate: this.levelTpl(),
+                stopRowClick: true,
+              },
+            ]
+          : []),
         ...this.groupChannels().map((ch) => ({
           field: ch,
           header: this.translate.instant(CHANNEL_LABEL_KEYS[ch]),
@@ -158,6 +175,8 @@ export class AgentChannelTableComponent {
   readonly availableAgents =
     input.required<readonly AgentChannelTableAgent[]>();
   readonly groupId = input.required<number>();
+  /** Enseña la columna Nivel (estrategia de teléfono Niveles). */
+  readonly showLevel = input(false);
 
   readonly linksChange = output<readonly GroupAgentLink[]>();
 
@@ -217,8 +236,6 @@ export class AgentChannelTableComponent {
   /** Filtro de las filas asignadas. Añadir va por su desplegable, aparte: un solo campo
    *  para las dos cosas obligaba a adivinar qué haría Enter. */
   protected readonly query = signal('');
-  /** El desplegable de «Añadir» vuelve a vacío después de cada alta. */
-  protected readonly addPick = signal<number | null>(null);
 
   /** Map agentId → AgentChannelTableAgent for fast row hydration. */
   private readonly agentById = computed(() => {
@@ -247,11 +264,8 @@ export class AgentChannelTableComponent {
     );
   });
 
-  /** Los agentes que aún se pueden añadir (el desplegable filtra por su cuenta). */
-  protected readonly addCandidates = computed<readonly AgentChannelTableAgent[]>(() => {
-    const used = new Set(this.links().map((l) => l.agentId));
-    return this.availableAgents().filter((a) => !used.has(a.id));
-  });
+  /** Lo marcado en «Añadir agentes»: los que ya están en el grupo. */
+  protected readonly assignedIds = computed<number[]>(() => this.links().map((l) => l.agentId));
 
   /** Counter — how many active rows have zero channels (the soft warning). */
   protected readonly zeroChannelCount = computed(() => {
@@ -266,22 +280,16 @@ export class AgentChannelTableComponent {
 
   // -- mutations -----------------------------------------------------
 
-  protected addAgent(agent: AgentChannelTableAgent): void {
-    if (this.links().some((l) => l.agentId === agent.id)) return;
-    const link: GroupAgentLink = {
-      agentId: agent.id,
-      groupId: this.groupId(),
-      // Default: every channel the group owns is on for new assignments.
-      channels: [...this.groupChannels()],
-      active: true,
-    };
-    this.linksChange.emit([...this.links(), link]);
-  }
-
-  protected onAddPick(value: unknown): void {
-    const agent = this.availableAgents().find((a) => a.id === value);
-    if (agent) this.addAgent(agent);
-    this.addPick.set(null);
+  /** Marcar añade al final (con todos los canales del grupo); desmarcar quita. El orden de los que siguen no cambia. */
+  protected onAssignedChange(value: unknown): void {
+    if (!Array.isArray(value)) return;
+    const next = new Set(value as number[]);
+    const current = new Set(this.links().map((l) => l.agentId));
+    const added: GroupAgentLink[] = [...next]
+      .filter((agentId) => !current.has(agentId))
+      .map((agentId) => ({ agentId, groupId: this.groupId(), channels: [...this.groupChannels()], active: true, level: 1 }));
+    this.linksChange.emit([...this.links().filter((l) => next.has(l.agentId)), ...added]);
+    this.selectedIds.update((prev) => new Set([...prev].filter((id) => next.has(id))));
   }
 
   protected removeRow(agentId: number): void {
@@ -307,6 +315,13 @@ export class AgentChannelTableComponent {
         return { ...l, channels: canonicalizeChannels(channels) };
       })
     );
+  }
+
+  protected readonly levelOptions = LEVEL_OPTIONS;
+
+  protected setLevel(agentId: number, value: unknown): void {
+    if (typeof value !== 'number') return;
+    this.linksChange.emit(this.links().map((l) => (l.agentId === agentId ? { ...l, level: value } : l)));
   }
 
   protected toggleActive(agentId: number, active: boolean): void {

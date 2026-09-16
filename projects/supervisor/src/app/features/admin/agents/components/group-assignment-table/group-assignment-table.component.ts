@@ -18,7 +18,7 @@ import {
   ScButtonComponent as ButtonComponent,
   ScCheckboxComponent as CheckboxComponent,
   ScSearchComponent as SearchComponent,
-  ScSelectComponent as SelectComponent,
+  ScMultiSelectComponent as MultiSelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import {
@@ -74,7 +74,7 @@ interface VisibleRow {
     DatatableComponent,
     IllustratedAvatarComponent,
     SearchComponent,
-    SelectComponent,
+    MultiSelectComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -156,8 +156,6 @@ export class GroupAssignmentTableComponent {
 
   /** Filtro de las filas asignadas. */
   protected readonly query = signal('');
-  /** El desplegable de «Añadir» vuelve a vacío después de cada alta. */
-  protected readonly addPick = signal<number | null>(null);
 
   /** Map groupId → AgentGroupAssignmentRef for fast row hydration. */
   private readonly groupById = computed(() => {
@@ -183,11 +181,8 @@ export class GroupAssignmentTableComponent {
     return this.assignedRows().filter((r) => r.group.name.toLowerCase().includes(q));
   });
 
-  /** Los grupos que aún se pueden añadir (el desplegable filtra por su cuenta). */
-  protected readonly pickerCandidates = computed<readonly AgentGroupAssignmentRef[]>(() => {
-    const used = new Set(this.links().map((l) => l.groupId));
-    return this.availableGroups().filter((g) => !used.has(g.id));
-  });
+  /** Lo marcado en «Añadir grupos»: los grupos en los que ya está. */
+  protected readonly assignedIds = computed<number[]>(() => this.links().map((l) => l.groupId));
 
   protected hasChannel(link: GroupAgentLink, channel: string): boolean {
     return link.channels.includes(channel as Channel);
@@ -199,18 +194,6 @@ export class GroupAssignmentTableComponent {
   }
 
   // -- mutations --
-
-  protected addGroup(group: AgentGroupAssignmentRef): void {
-    if (this.links().some((l) => l.groupId === group.id)) return;
-    const link: GroupAgentLink = {
-      agentId: this.agentId(),
-      groupId: group.id,
-      // Default: every channel the group offers is on for new assignments.
-      channels: [...group.channels],
-      active: true,
-    };
-    this.linksChange.emit([...this.links(), link]);
-  }
 
   protected removeRow(groupId: number): void {
     this.linksChange.emit(this.links().filter((l) => l.groupId !== groupId));
@@ -236,12 +219,18 @@ export class GroupAssignmentTableComponent {
     );
   }
 
-  // -- añadir --
+  // -- añadir y quitar --
 
-  protected onAddPick(value: unknown): void {
-    const group = this.availableGroups().find((g) => g.id === value);
-    if (group) this.addGroup(group);
-    this.addPick.set(null);
+  /** Marcar añade al final (con todos los canales que ofrece el grupo); desmarcar quita. */
+  protected onAssignedChange(value: unknown): void {
+    if (!Array.isArray(value)) return;
+    const next = new Set(value as number[]);
+    const current = new Set(this.links().map((l) => l.groupId));
+    const byId = this.groupById();
+    const added: GroupAgentLink[] = [...next]
+      .filter((groupId) => !current.has(groupId) && byId.has(groupId))
+      .map((groupId) => ({ agentId: this.agentId(), groupId, channels: [...byId.get(groupId)!.channels], active: true }));
+    this.linksChange.emit([...this.links().filter((l) => next.has(l.groupId)), ...added]);
   }
 
   // -- helpers --

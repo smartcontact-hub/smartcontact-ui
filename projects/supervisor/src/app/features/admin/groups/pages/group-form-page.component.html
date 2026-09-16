@@ -85,29 +85,23 @@
           <sc-board-row [label]="'groups.form.fields.name' | translate">{{ orNone(form().name) }}</sc-board-row>
           <sc-board-row [label]="'groups.form.fields.phone' | translate">{{ orNone(form().phone) }}</sc-board-row>
           <sc-board-row [label]="'groups.form.fields.priority' | translate">{{ priorityKeys[form().priority] | translate }}</sc-board-row>
-          <sc-board-row [label]="'groups.form.fields.typification' | translate">{{ yesNo(form().typification) | translate }}</sc-board-row>
+          <sc-board-row [label]="'groups.form.fields.typifications' | translate">{{ typificationNames() }}</sc-board-row>
         </sc-board-card>
 
         <sc-board-card
           sectionId="group-section-channels"
-          icon="account_tree"
-          titleKey="groups.form.section.distribution"
+          icon="group"
+          titleKey="groups.form.section.channels_agents"
           [selected]="cards.isPicked('group-section-channels')"
           (pick)="cards.pick('group-section-channels')"
         >
           <sc-board-row [label]="'groups.form.section.channels' | translate">{{ channelsSummary(form().channels) }}</sc-board-row>
-          <sc-board-row [label]="'groups.form.fields.phone_strategy' | translate">{{ orNone(form().strategy) }}</sc-board-row>
-          <sc-board-row [label]="'groups.form.fields.chat_strategy' | translate">{{ orNone(form().chatStrategy) }}</sc-board-row>
-          <sc-board-row [label]="'groups.form.fields.capacity' | translate">{{ orNone(form().capacityValue) }}</sc-board-row>
-        </sc-board-card>
-
-        <sc-board-card
-          sectionId="group-section-agents"
-          icon="group"
-          titleKey="groups.form.section.agents"
-          [selected]="cards.isPicked('group-section-agents')"
-          (pick)="cards.pick('group-section-agents')"
-        >
+          @if (hasPhone()) {
+            <sc-board-row [label]="'groups.form.fields.phone_strategy' | translate">{{ phoneStrategySummary() }}</sc-board-row>
+          }
+          @if (hasChat()) {
+            <sc-board-row [label]="'groups.form.fields.chat_strategy' | translate">{{ form().chatStrategy }}</sc-board-row>
+          }
           @for (link of form().links; track link.agentId) {
             <sc-board-row [label]="agentName(link.agentId)">{{ linkSummary(link) }}</sc-board-row>
           } @empty {
@@ -215,15 +209,17 @@
         </div>
 
         <div class="grid grid--2">
+          <!-- El «Teléfono asociado» de Voice: se elige entre los que ya usan los grupos o se escribe uno. -->
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-phone">
               {{ 'groups.form.fields.phone' | translate }}
             </label>
-            <sc-inputtext
+            <sc-select
               inputId="group-phone"
-              type="tel"
-              autocomplete="tel"
+              editable
+              [options]="phoneOptions()"
               [value]="form().phone"
+              [helperText]="'groups.form.fields.phone_hint' | translate"
               (valueChange)="onPhoneValueChange($event)"
             />
           </div>
@@ -251,115 +247,96 @@
 
       <sc-divider />
 
+      <!-- Tipificaciones del repositorio, como Agendas y Plantillas en la ficha de agente. Sustituye al interruptor
+           «Tipificación obligatoria»: con alguna elegida el agente ya tiene que tipificar (manual de Voice, p. 14). -->
       <section class="sub-section">
-        <div class="switch-field switch-field--top">
-          <sc-toggleswitch
-            [checked]="form().typification"
-            [ariaLabel]="'groups.form.fields.typification' | translate"
-            (checkedChange)="onTypificationChange($event)"
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="group-typifications">
+            {{ 'groups.form.fields.typifications' | translate }}
+          </label>
+          <sc-multiselect
+            inputId="group-typifications"
+            display="chip"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            [maxSelectedLabels]="4"
+            [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+            [placeholder]="'groups.form.fields.typifications_none' | translate"
+            [helperText]="'groups.form.fields.typifications_hint' | translate"
+            [options]="typificationOptions()"
+            [value]="typificationValue()"
+            (valueChange)="onTypificationsChange($event)"
           />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.fields.typification' | translate }}</span>
-            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.fields.typification_hint' | translate }}</p>
-          </div>
         </div>
       </section>
     </sc-section-card>
   }
 
   @if (showSection('group-section-channels')) {
-    <!-- Canales y estrategia en UNA sección desde el 2026-09-14. Eran dos pestañas,
-         y la primera era una tarjeta entera para tres casillas; además la estrategia
-         DEPENDE de los canales (la de chat solo existe con chat, la capacidad con
-         teléfono), así que al marcar un canal su ajuste aparece justo debajo en vez
-         de en otra pestaña. -->
+    <!-- Canales, estrategia y agentes en UNA sección (Rafa, 2026-09-16). Cada canal lleva a su lado cómo se reparte,
+         y la tabla de agentes va justo debajo: marcar un canal enseña su columna sin ir arriba y abajo. -->
     <sc-section-card
       anchorId="group-section-channels"
       surface="card"
       [flush]="isCards()"
       [showHeader]="!isCards()"
       [icon]="iconOf('group-section-channels')"
-      titleKey="groups.form.section.distribution"
+      titleKey="groups.form.section.channels_agents"
     >
-      <!-- Que falte marcar un canal no es contenido equivocado: lo señalan la bola
-           roja del índice (`sectionsWithErrors`) y el motivo del botón. -->
+      <!-- Que falte marcar un canal no es contenido equivocado: lo señalan la bola roja del índice
+           (`sectionsWithErrors`) y el motivo del botón. -->
       <section class="sub-section" [attr.aria-label]="'groups.form.section.channels' | translate">
-        <div class="checkbox-grid checkbox-grid--services">
+        <div class="channel-list">
           @for (channel of channels; track channel) {
             <sc-checkbox class="checkbox-row" [state]="hasChannel(channel) ? 'all' : 'none'" (cycle)="toggleChannel(channel)">{{ channelKeys[channel] | translate }}</sc-checkbox>
+            <div class="channel-list__settings">
+              @if (channel === 'phone' && hasPhone()) {
+                <span class="channel-list__setting">
+                  <label class="channel-list__label sc-text-caption-regular" for="group-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+                  <sc-select class="channel-list__select" size="sm" inputId="group-strategy" [options]="phoneStrategies" [value]="form().strategy" (valueChange)="onStrategyValueChange($event)" />
+                </span>
+                @if (isRingAll()) {
+                  <span class="channel-list__setting">
+                    <label class="channel-list__label sc-text-caption-regular" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
+                    <sc-select size="sm" inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
+                    <span class="channel-list__label sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
+                  </span>
+                }
+                @if (isNiveles()) {
+                  <span class="channel-list__setting">
+                    <label class="channel-list__label sc-text-caption-regular" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+                    <sc-select class="channel-list__select" size="sm" inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
+                  </span>
+                  <span class="channel-list__hint sc-text-caption-regular">{{ 'groups.form.fields.levels_hint' | translate }}</span>
+                }
+                @if (isExclusive()) {
+                  <span class="channel-list__hint sc-text-caption-regular">{{ 'groups.form.fields.exclusive_hint' | translate }}</span>
+                }
+              }
+              @if (channel === 'chat' && hasChat()) {
+                <span class="channel-list__setting">
+                  <label class="channel-list__label sc-text-caption-regular" for="group-chat-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+                  <sc-select class="channel-list__select" size="sm" inputId="group-chat-strategy" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
+                </span>
+              }
+            </div>
           }
         </div>
       </section>
 
-      @if (form().channels.size > 0) {
-        <sc-divider />
+      <sc-divider />
 
-        <section class="sub-section" [attr.aria-label]="'groups.form.section.strategy' | translate">
-          <div class="grid grid--2">
-            @if (hasPhone()) {
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-strategy">
-                  {{ 'groups.form.fields.phone_strategy' | translate }}
-                </label>
-                <sc-select
-                  inputId="group-strategy"
-                  [options]="phoneStrategies"
-                  [value]="form().strategy"
-                  (valueChange)="onStrategyValueChange($event)"
-                />
-              </div>
-            }
-
-            @if (hasChat()) {
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">
-                  {{ 'groups.form.fields.chat_strategy' | translate }}
-                </label>
-                <sc-select
-                  inputId="group-chat-strategy"
-                  [options]="chatStrategies"
-                  [value]="form().chatStrategy"
-                  (valueChange)="onChatStrategyValueChange($event)"
-                />
-              </div>
-            }
-
-            @if (hasPhone()) {
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-capacity">
-                  {{ 'groups.form.fields.capacity' | translate }}
-                  <span class="field__hint">({{ 'common.optional' | translate }})</span>
-                </label>
-                <sc-inputnumber
-                  inputId="group-capacity"
-                  [min]="0"
-                  [value]="form().capacityValue"
-                  (valueChange)="onCapacityValueChange($event)"
-                  [helperText]="'groups.form.fields.capacity_hint' | translate"
-                />
-              </div>
-            }
-          </div>
-        </section>
-      }
-    </sc-section-card>
-  }
-
-  @if (showSection('group-section-agents')) {
-    <sc-section-card
-      anchorId="group-section-agents"
-      surface="card"
-      [flush]="isCards()"
-      [showHeader]="!isCards()"
-      [icon]="iconOf('group-section-agents')"
-      titleKey="groups.form.section.agents"
-    >
-      <section class="sub-section">
+      <section class="sub-section" aria-labelledby="group-agents-title">
+        <header class="sub-section__head">
+          <h3 id="group-agents-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.section.agents' | translate }}</h3>
+        </header>
         <sc-agent-channel-table
           [groupChannels]="formGroupChannels()"
           [links]="form().links"
           [availableAgents]="availableAgents()"
           [groupId]="editingId() ?? 0"
+          [showLevel]="isNiveles()"
           (linksChange)="onLinksChange($event)"
         />
       </section>

@@ -20,7 +20,7 @@ export class GroupsStore {
   private readonly store: LocalStore<Group> = createLocalStore<Group>({
     storageKey: 'sc-groups',
     versionKey: 'sc-groups-v',
-    currentVersion: 2,
+    currentVersion: 3,
     defaults: GROUPS_SEED,
   });
 
