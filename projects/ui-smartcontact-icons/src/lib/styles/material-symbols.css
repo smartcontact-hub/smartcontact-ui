@@ -1,9 +1,12 @@
-@import '@fontsource-variable/material-symbols-outlined/full.css';
+/* Como el catálogo de los devs (ui.smart-contact.com): `@material-symbols/svg-400/rounded`, es decir Rounded, peso
+ * 400 y el dibujo del tamaño óptico 48, que es de donde salen esos SVG. Medido contra sus SVG el 2026-09-16: esa
+ * combinación casa en 7 de 8 glifos (≈95 %). Siempre Material Symbols. */
+@import '@fontsource-variable/material-symbols-rounded/full.css';
 
 .sc-icon,
 .sc-icon-font::before {
   display: inline-block;
-  font-family: 'Material Symbols Outlined Variable';
+  font-family: 'Material Symbols Rounded Variable';
   font-size: 1em;
   font-style: normal;
   font-weight: normal;
@@ -16,7 +19,7 @@
   font-feature-settings: 'liga';
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
   /* Calibración del glifo. Los tamaños de icono del DS (DD-24: el companion mide
    * su font-size; `--sc-icon-size-*`) vienen del Kit, que dibuja con PrimeIcons, y
    * PrimeIcons llena su caja: un icono de 12 pinta 12. Material Symbols deja aire
@@ -48,5 +51,5 @@
 }
 
 .sc-icon-font--filled::before {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
 }
