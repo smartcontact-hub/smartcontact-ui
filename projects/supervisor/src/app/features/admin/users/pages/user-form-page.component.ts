@@ -211,8 +211,9 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
     // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
     // ficha del panel ya da su contexto siempre visible.
-    // COMPARAR: en una sola página (`b`) el índice sigue el orden de la página.
-    if (this.mode() === 'edit' && this.variants.variant() !== 'b') {
+    // También en una sola página (`b`), que pinta Identidad al final al editar: índice y página
+    // van en el mismo orden (Rafa, 2026-09-16).
+    if (this.mode() === 'edit') {
       return [access, services, identity];
     }
     return [identity, access, services];
@@ -346,8 +347,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.dirtyState.markPristine();
       // En edición aterriza en Secciones (1ª del orden de edición): identidad
       // va al fondo porque casi no se toca tras crear; la ficha la resume (S60).
-      // COMPARAR: en una sola página se empieza por arriba.
-      this.activeSection.set(this.variants.variant() === 'b' ? 'user-section-identity' : 'user-section-access');
+      this.activeSection.set('user-section-access');
       this.releaseLock = this.crossTab.acquire('user', user.id, () =>
         this.conflictWarning.set(true),
       );

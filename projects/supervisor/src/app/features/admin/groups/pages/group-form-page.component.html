@@ -43,6 +43,7 @@
           <sc-illustrated-avatar
             class="ficha__avatar"
             [name]="(initial()?.name ?? form().name) || 'Grupo'"
+            [photo]="form().photo"
             pool="abstract"
             [size]="36"
           />
@@ -226,75 +227,10 @@
 <!-- Las secciones de la ficha, una sola vez: se pintan en `.page__main` o, en la variante e,
      dentro del panel lateral. -->
 <ng-template #sections>
-  @if (showSection('group-section-identity')) {
-    <sc-section-card
-      anchorId="group-section-identity"
-      surface="card"
-      [flush]="isCards()"
-      [showHeader]="!isCards()"
-      [icon]="iconOf('group-section-identity')"
-      titleKey="groups.form.section.identity"
-    >
-      <section class="sub-section">
-        <!-- El avatar es generado (no editable) y sigue al nombre. -->
-        <div class="form-identity">
-          <sc-illustrated-avatar
-            [name]="(initial()?.name ?? form().name) || 'Grupo'"
-            pool="abstract"
-            [size]="36"
-          />
-          <div class="field form-identity__name">
-            <label class="field__label sc-text-caption-semibold" for="group-name">
-              {{ 'groups.form.fields.name' | translate }}
-              <span class="field__required" aria-hidden="true">*</span>
-            </label>
-            <sc-inputtext
-              inputId="group-name"
-              [required]="true"
-              [value]="form().name"
-              (valueChange)="onNameRename($event)"
-            />
-          </div>
-        </div>
-
-        <div class="grid grid--2">
-          <!-- El «Teléfono asociado» de Voice: se elige entre los que ya usan los grupos o se escribe uno. -->
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-phone">
-              {{ 'groups.form.fields.phone' | translate }}
-            </label>
-            <sc-select
-              inputId="group-phone"
-              editable
-              [options]="phoneOptions()"
-              [value]="form().phone"
-              [helperText]="'groups.form.fields.phone_hint' | translate"
-              (valueChange)="onPhoneValueChange($event)"
-            />
-          </div>
-
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-priority">
-              {{ 'groups.form.fields.priority' | translate }}
-            </label>
-            <sc-select
-              inputId="group-priority"
-              [options]="priorities"
-              [value]="form().priority"
-              (valueChange)="onPriorityValueChange($event)"
-            >
-              <ng-template #item let-p>
-                {{ priorityKeys[p] | translate }}
-              </ng-template>
-              <ng-template #selectedItem let-p>
-                {{ priorityKeys[p] | translate }}
-              </ng-template>
-            </sc-select>
-          </div>
-        </div>
-      </section>
-
-    </sc-section-card>
+  <!-- Identidad: al crear, primero (sin nombre no hay nada que guardar); al editar, al final, porque casi no se toca
+       después (Rafa, 2026-09-16). El índice sigue el mismo orden. -->
+  @if (mode() !== 'edit') {
+    <ng-container *ngTemplateOutlet="identitySection" />
   }
 
   @if (showSection('group-section-channels')) {
@@ -318,7 +254,16 @@
               @if (channel === 'phone' && hasPhone()) {
                 <span class="channel-list__setting">
                   <label class="channel-list__label sc-text-caption-regular" for="group-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-                  <sc-select class="channel-list__select" size="sm" inputId="group-strategy" [options]="phoneStrategies" [value]="form().strategy" (valueChange)="onStrategyValueChange($event)" />
+                  <sc-select class="channel-list__select" size="sm" inputId="group-strategy" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" (valueChange)="onStrategyValueChange($event)">
+                    <ng-template #item let-o>
+                      <span class="strategy-option">
+                        <span>{{ o.label }}</span>
+                        @if (o.note) {
+                          <span class="strategy-option__note sc-text-caption-regular">{{ o.note }}</span>
+                        }
+                      </span>
+                    </ng-template>
+                  </sc-select>
                 </span>
                 @if (isRingAll()) {
                   <span class="channel-list__setting">
@@ -537,7 +482,17 @@
               <!-- Sin esto, un anuncio periódico puesto no se podía apagar. -->
               <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.remove_file' | translate" (clicked)="setAnnouncement('periodicFile', null)" />
               <label class="audio-list__hint sc-text-caption-regular" for="group-periodic-every">{{ 'groups.form.announcements.every' | translate }}</label>
-              <sc-inputnumber class="audio-list__number" size="sm" inputId="group-periodic-every" [min]="5" suffix="s" [value]="form().announcements.periodicEverySec" (valueChange)="setAnnouncementNumber('periodicEverySec', $event)" />
+              <sc-inputnumber class="field__number" size="sm" inputId="group-periodic-every" [min]="5" suffix="s" [value]="form().announcements.periodicEverySec" (valueChange)="setAnnouncementNumber('periodicEverySec', $event)" />
+            }
+          </span>
+
+          <!-- «Audio saliente» del Figma de la migración; el manual no lo explica (por confirmar con desarrollo). -->
+          <span class="audio-list__label sc-text-body-regular">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
+          <span class="audio-list__control">
+            <span class="audio-list__file sc-text-body-regular">{{ form().announcements.outboundAudioFile ?? ('groups.form.announcements.no_file' | translate) }}</span>
+            <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio' }" />
+            @if (form().announcements.outboundAudioFile) {
+              <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.remove_file' | translate" (clicked)="setAnnouncement('outboundAudioFile', null)" />
             }
           </span>
         </div>
@@ -562,7 +517,7 @@
             <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.avg_wait' | translate }}</span>
             <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.avg_wait_hint' | translate }}</p>
             @if (form().announcements.announceAvgWait) {
-              <sc-inputnumber class="audio-list__number" size="sm" inputId="group-avg-wait" [min]="0" suffix="s" [value]="form().announcements.avgWaitSec" (valueChange)="setAnnouncementNumber('avgWaitSec', $event)" />
+              <sc-inputnumber class="field__number" size="sm" inputId="group-avg-wait" [min]="0" suffix="s" [value]="form().announcements.avgWaitSec" (valueChange)="setAnnouncementNumber('avgWaitSec', $event)" />
             }
           </div>
         </div>
@@ -604,26 +559,26 @@
             <label class="field__label sc-text-caption-semibold" for="group-queue-size">{{ 'groups.form.advanced.queue_size' | translate }}</label>
             <span class="audio-list__control">
               <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="queueSizeOptions()" [value]="form().advanced.queueSizeType" [ariaLabel]="'groups.form.advanced.queue_size' | translate" (valueChange)="setAdvanced('queueSizeType', $any($event))" />
-              <sc-inputnumber class="audio-list__number" size="sm" inputId="group-queue-size" [min]="1" [value]="form().advanced.queueSize" (valueChange)="setAdvancedNumber('queueSize', $event)" />
+              <sc-inputnumber class="field__number" size="sm" inputId="group-queue-size" [min]="1" [value]="form().advanced.queueSize" (valueChange)="setAdvancedNumber('queueSize', $event)" />
             </span>
             <p class="field__help sc-text-caption-regular">{{ (form().advanced.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: form().advanced.queueSize } }}</p>
           </div>
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-max-wait">{{ 'groups.form.advanced.max_queue_wait' | translate }}</label>
-            <sc-inputnumber inputId="group-max-wait" [min]="0" suffix="s" [value]="form().advanced.maxQueueWaitSec" (valueChange)="setAdvancedNumber('maxQueueWaitSec', $event)" />
+            <sc-inputnumber class="field__number" inputId="group-max-wait" [min]="0" suffix="s" [value]="form().advanced.maxQueueWaitSec" (valueChange)="setAdvancedNumber('maxQueueWaitSec', $event)" />
           </div>
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-transfer">{{ 'groups.form.advanced.transfer' | translate }}</label>
-            <sc-inputnumber inputId="group-transfer" [min]="0" suffix="s" [value]="form().advanced.transferSec" [helperText]="'groups.form.advanced.transfer_hint' | translate" (valueChange)="setAdvancedNumber('transferSec', $event)" />
+            <sc-inputnumber class="field__number" inputId="group-transfer" [min]="0" suffix="s" [value]="form().advanced.transferSec" [helperText]="'groups.form.advanced.transfer_hint' | translate" (valueChange)="setAdvancedNumber('transferSec', $event)" />
           </div>
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-service-level">{{ 'groups.form.advanced.service_level' | translate }}</label>
-            <sc-inputnumber inputId="group-service-level" [min]="0" suffix="s" [value]="form().advanced.serviceLevelSec" [helperText]="'groups.form.advanced.service_level_hint' | translate" (valueChange)="setAdvancedNumber('serviceLevelSec', $event)" />
+            <sc-inputnumber class="field__number" inputId="group-service-level" [min]="0" suffix="s" [value]="form().advanced.serviceLevelSec" [helperText]="'groups.form.advanced.service_level_hint' | translate" (valueChange)="setAdvancedNumber('serviceLevelSec', $event)" />
           </div>
           @if (hasPhone()) {
             <div class="field">
               <label class="field__label sc-text-caption-semibold" for="group-wrap-up">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
-              <sc-inputnumber inputId="group-wrap-up" [min]="0" suffix="s" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" />
+              <sc-inputnumber class="field__number" inputId="group-wrap-up" [min]="0" suffix="s" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" />
             </div>
           }
         </div>
@@ -636,6 +591,14 @@
             </div>
           </div>
         }
+        <!-- «Desbordar sesión» del Figma de la migración; el manual no lo trae (a qué canal aplica, por confirmar). -->
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch [checked]="form().advanced.overflowSession" [ariaLabel]="'groups.form.advanced.overflow_session' | translate" (checkedChange)="setAdvanced('overflowSession', $event)" />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.overflow_session' | translate }}</span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_session_hint' | translate }}</p>
+          </div>
+        </div>
       </section>
 
       <sc-divider />
@@ -653,7 +616,7 @@
           @if (form().advanced.cardOpening === 'embedded') {
             <div class="field">
               <label class="field__label sc-text-caption-semibold" for="group-card-height">{{ 'groups.form.advanced.card_height' | translate }}</label>
-              <sc-inputnumber inputId="group-card-height" [min]="100" suffix="px" [value]="form().advanced.cardHeight" (valueChange)="setAdvancedNumber('cardHeight', $event)" />
+              <sc-inputnumber class="field__number" inputId="group-card-height" [min]="100" suffix="px" [value]="form().advanced.cardHeight" (valueChange)="setAdvancedNumber('cardHeight', $event)" />
             </div>
           }
         </div>
@@ -670,6 +633,85 @@
           <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'groups.form.advanced.script_copy' | translate" (clicked)="copyChatScript()" />
         </section>
       }
+    </sc-section-card>
+  }
+  @if (mode() === 'edit') {
+    <ng-container *ngTemplateOutlet="identitySection" />
+  }
+</ng-template>
+
+<ng-template #identitySection>
+  @if (showSection('group-section-identity')) {
+    <sc-section-card
+      anchorId="group-section-identity"
+      surface="card"
+      [flush]="isCards()"
+      [showHeader]="!isCards()"
+      [icon]="iconOf('group-section-identity')"
+      titleKey="groups.form.section.identity"
+    >
+      <section class="sub-section">
+        <!-- Foto del grupo, como la del agente (Figma de la migración). Sin foto, el avatar generado sigue al nombre. -->
+        <div class="form-identity">
+          <sc-photo-upload
+            size="sm"
+            illustrationPool="abstract"
+            [photo]="form().photo"
+            [name]="(initial()?.name ?? form().name) || 'Grupo'"
+            [ariaLabel]="'common.photo.change' | translate"
+            (photoChange)="onPhotoChange($event)"
+          />
+          <div class="field form-identity__name">
+            <label class="field__label sc-text-caption-semibold" for="group-name">
+              {{ 'groups.form.fields.name' | translate }}
+              <span class="field__required" aria-hidden="true">*</span>
+            </label>
+            <sc-inputtext
+              inputId="group-name"
+              [required]="true"
+              [value]="form().name"
+              (valueChange)="onNameRename($event)"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid--2">
+          <!-- El «Teléfono asociado» de Voice: se elige entre los que ya usan los grupos o se escribe uno. -->
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-phone">
+              {{ 'groups.form.fields.phone' | translate }}
+            </label>
+            <sc-select
+              inputId="group-phone"
+              editable
+              [options]="phoneOptions()"
+              [value]="form().phone"
+              [helperText]="'groups.form.fields.phone_hint' | translate"
+              (valueChange)="onPhoneValueChange($event)"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-priority">
+              {{ 'groups.form.fields.priority' | translate }}
+            </label>
+            <sc-select
+              inputId="group-priority"
+              [options]="priorities"
+              [value]="form().priority"
+              (valueChange)="onPriorityValueChange($event)"
+            >
+              <ng-template #item let-p>
+                {{ priorityKeys[p] | translate }}
+              </ng-template>
+              <ng-template #selectedItem let-p>
+                {{ priorityKeys[p] | translate }}
+              </ng-template>
+            </sc-select>
+          </div>
+        </div>
+      </section>
+
     </sc-section-card>
   }
 </ng-template>

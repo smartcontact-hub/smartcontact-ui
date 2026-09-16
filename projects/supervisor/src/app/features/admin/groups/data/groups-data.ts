@@ -18,18 +18,27 @@ export const CHANNEL_LABEL_KEYS: Readonly<Record<GroupChannel, string>> = {
   email: 'groups.channel.email',
 };
 
-/* Las siete del manual de Voice (aed_mu_mb.pdf, p. 10-12), con «Menos reciente» llamada «Más tiempo inactivo»
- * como en SISMAC-1975. Aleatoria sigue porque el manual la trae; SISMAC-1975 (2023, en revisión) proponía quitarla
- * junto a Lineal y añadir Skills: pendiente de decidir. */
+/* Las de SISMAC-1975 en COA (Rafa, 2026-09-16: «estrategias hay que seguir al COA»): quita Aleatoria y Lineal, y
+ * añade Niveles, Ring All y Skills. «Agente exclusivo» se queda: el COA no la quita, y el manual de Voice (p. 12) y
+ * el Figma de la migración la traen.
+ * Skills sale APAGADA con su motivo a la vista, como pide el COA para las que necesitan configuración posterior: aquí
+ * Niveles y Ring All ya se configuran en la ficha, pero las skills de cada agente todavía no existen. */
 export const PHONE_STRATEGIES: readonly string[] = [
   'Balanceada',
   'Menos llamadas atendidas',
   'Más tiempo inactivo',
-  'Aleatoria',
-  'Ring All',
   'Niveles',
+  'Ring All',
+  'Skills',
   'Agente exclusivo',
 ];
+
+/** Las que aún no se pueden elegir (ver arriba). */
+export const UNAVAILABLE_STRATEGIES: ReadonlySet<string> = new Set(['Skills']);
+
+/** Las que sirven de valor por defecto en Configuración del AED: las que no piden nada más en cada grupo. Niveles,
+ *  Ring All, Skills y Agente exclusivo necesitan niveles, un número de agentes, skills o el IVR (SISMAC-1975). */
+export const DEFAULT_STRATEGY_OPTIONS: readonly string[] = ['Balanceada', 'Menos llamadas atendidas', 'Más tiempo inactivo'];
 
 /** Desempata entre agentes del mismo nivel. No puede ser Niveles (manual de Voice, p. 12). */
 export const SUB_STRATEGIES: readonly string[] = ['Balanceada', 'Más tiempo inactivo', 'Menos llamadas atendidas'];
@@ -63,6 +72,8 @@ export interface GroupAnnouncements {
   readonly voice: string;
   readonly periodicFile: string | null;
   readonly periodicEverySec: number;
+  /** «Audio saliente» del Figma de la migración. No está en el manual: qué suena y cuándo, por confirmar con desarrollo. */
+  readonly outboundAudioFile: string | null;
   readonly announceAvgWait: boolean;
   readonly avgWaitSec: number;
   readonly announcePosition: boolean;
@@ -80,12 +91,16 @@ export interface GroupAdvanced {
   readonly serviceLevelSec: number;
   /** Desbordar llamadas al siguiente nodo si no hay agentes activos (solo teléfono). */
   readonly overflowWhenNoAgents: boolean;
+  /** «Desbordar sesión» del Figma de la migración («Redirige sesiones activas al superar el límite de…»). No está en el
+   *  manual: a qué canal aplica y adónde van, por confirmar con desarrollo. */
+  readonly overflowSession: boolean;
   readonly cardOpening: CardOpening;
   readonly cardUrl: string;
   readonly cardHeight: number;
 }
 
-/** Con lo que nace un grupo: los valores por defecto de Configuración del AED > Grupos. */
+/** Los valores de fábrica. Un grupo nuevo nace con lo guardado en Configuración del AED > Grupos (`GroupDefaultsStore`),
+ *  que arranca con estos. */
 export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
   holdMusicFile: null,
   queueIdSource: 'none',
@@ -97,6 +112,7 @@ export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
   voice: 'Femenina · español',
   periodicFile: null,
   periodicEverySec: 30,
+  outboundAudioFile: null,
   announceAvgWait: false,
   avgWaitSec: 60,
   announcePosition: false,
@@ -111,6 +127,7 @@ export const DEFAULT_ADVANCED: GroupAdvanced = {
   wrapUpSec: 5,
   serviceLevelSec: 20,
   overflowWhenNoAgents: false,
+  overflowSession: false,
   cardOpening: 'embedded',
   cardUrl: '',
   cardHeight: 400,
@@ -133,6 +150,8 @@ export interface Group {
   readonly chatStrategy?: string;
   readonly labels?: readonly number[];
   readonly templates?: readonly number[];
+  /** Foto del grupo (data URL), como la del agente. Sale en el Figma de la migración. */
+  readonly photo?: string;
   readonly subStrategy?: string;
   readonly ringAllAgents?: number;
   readonly services?: readonly string[];
@@ -307,3 +326,19 @@ export const GROUPS_SEED: readonly Group[] = [
     services: ['Telemarketing VUI'],
   },
 ];
+
+/** Lo que Configuración del AED > Grupos fija para los grupos nuevos. Mismos campos y mismas palabras que la ficha de
+ *  grupo: antes esa página tenía sus propias listas (códecs como «voz», FIFO/LIFO, «Urgente») que no casaban con nada. */
+export interface GroupDefaults {
+  readonly strategy: string;
+  readonly priority: GroupPriority;
+  readonly voice: string;
+  readonly advanced: GroupAdvanced;
+}
+
+export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
+  strategy: 'Balanceada',
+  priority: 'Baja',
+  voice: DEFAULT_ANNOUNCEMENTS.voice,
+  advanced: DEFAULT_ADVANCED,
+};

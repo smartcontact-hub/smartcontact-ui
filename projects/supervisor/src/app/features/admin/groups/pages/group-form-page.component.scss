@@ -74,10 +74,6 @@
   color: var(--sc-text-secondary);
 }
 
-.audio-list__number {
-  inline-size: var(--sc-spacing-5);
-}
-
 .audio-list__text {
   flex: 1 1 auto;
   min-inline-size: 0;
@@ -89,4 +85,14 @@
   color: var(--sc-text-link);
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+/* Skills sale apagada con su motivo debajo, a la vista y no en un tooltip. */
+.strategy-option {
+  display: flex;
+  flex-direction: column;
+}
+
+.strategy-option__note {
+  color: var(--sc-text-secondary);
 }

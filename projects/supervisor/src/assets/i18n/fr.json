@@ -1493,6 +1493,7 @@
         "sub_strategy": "Dans chaque niveau",
         "levels_hint": "Choisissez le niveau de chaque agent dans le tableau ci-dessous. Le niveau 1 reçoit en premier.",
         "exclusive_hint": "Se configure dans l’arbre de l’IVR.",
+        "skills_unavailable": "Nécessite des compétences par agent",
         "typification": "Typification",
         "typification_none": "Aucune typification",
         "typification_option": "{{name}} ({{count}})",
@@ -1529,6 +1530,7 @@
         "remove_file": "Retirer le fichier",
         "periodic": "Annonce périodique",
         "every": "Toutes les",
+        "outbound_audio": "Audio sortant",
         "voice": "Voix des annonces",
         "voice_hint": "Celle qui lit les messages en synthèse vocale.",
         "notices_title": "Avis",
@@ -1556,6 +1558,8 @@
         "wrap_up_hint": "Ce que l’agent attend avant de recevoir l’appel suivant.",
         "overflow": "Déborder s’il n’y a pas d’agents actifs",
         "overflow_hint": "Les appels passent au nœud suivant de l’arbre.",
+        "overflow_session": "Débordement de session",
+        "overflow_session_hint": "Redirige les sessions actives au-delà de leur limite.",
         "card_opening": "Ouverture de la fiche",
         "card_embedded": "Intégrée",
         "card_new_window": "Nouvelle fenêtre",
@@ -1961,30 +1965,15 @@
         },
         "grupos": {
           "heading": "Groupes",
-          "params": {
-            "title": "Paramètres",
-            "estrategia": "Stratégie de répartition des conversations",
-            "prioridad": "Priorité du groupe",
-            "voz": "Voix",
-            "desbordar": "Débordement des conversations quand aucun agent n'est disponible",
-            "tipo_cola": "Type de file d'attente",
-            "capacidad_cola": "Nombre maximal de conversations en file",
-            "tiempo_max": "Temps d'attente maximal en file",
-            "tiempo_transfer": "Temps de transfert maximal",
-            "placeholder": "Sélectionner",
-            "input_placeholder": "Saisir",
-            "segundos": "secondes"
-          },
+          "hint": "Chaque nouveau groupe démarre avec ces valeurs. Elles se modifient ensuite dans sa fiche.",
+          "routing_title": "Distribution",
+          "strategy_hint": "Niveaux, Ring All, Skills et Agent exclusif se choisissent dans la fiche de chaque groupe, où ils se configurent.",
           "apertura": {
-            "title": "Ouverture de la fiche",
-            "tipo_label": "Type",
-            "tamano_label": "Taille",
-            "tamano_suffix": "pixels"
+            "tipo_label": "Type"
           },
           "toast": {
             "saved": "Paramètres des groupes enregistrés"
-          },
-          "edit_crumb": "Modifier le groupe"
+          }
         }
       },
       "breadcrumb": {

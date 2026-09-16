@@ -552,7 +552,7 @@
     },
     {
       "selector": "sc-selectbutton",
-      "usedInSupervisor": 8
+      "usedInSupervisor": 10
     },
     {
       "selector": "sc-sticky-form-header",

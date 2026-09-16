@@ -368,9 +368,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
     // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
     // ficha del panel ya da su contexto siempre visible.
-    // COMPARAR: en una sola página (`b`) el índice sigue el orden de la página, que es el de
-    // crear en los dos modos: el índice de un documento no puede saltar de arriba abajo.
-    if (this.mode() === 'edit' && this.variants.variant() !== 'b') {
+    // También en una sola página (`b`), que pinta Identidad al final al editar: índice y página
+    // van en el mismo orden (Rafa, 2026-09-16).
+    if (this.mode() === 'edit') {
       return [groups, permissions, advanced, resources, identity];
     }
     return [identity, groups, permissions, advanced, resources];
@@ -715,8 +715,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.dirtyState.markPristine();
       // En edición aterriza en Grupos (1ª del orden de edición): identidad va
       // al fondo porque casi no se toca tras crear; la ficha ya la resume (S60).
-      // COMPARAR: en una sola página se empieza por arriba.
-      this.activeSection.set(this.variants.variant() === 'b' ? 'agent-section-identity' : 'agent-section-groups');
+      this.activeSection.set('agent-section-groups');
       this.releaseLock = this.crossTab.acquire('agent', agent.id, () =>
         this.conflictWarning.set(true)
       );
