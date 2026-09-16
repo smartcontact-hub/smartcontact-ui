@@ -63,7 +63,6 @@ interface FormState {
   email: string;
   identifier: string;
   type: UserType;
-  status: 'active' | 'inactive';
   sections: UserSections;
   permissions: UserPermissions;
   groups: ReadonlySet<number>;
@@ -340,7 +339,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         email: user.email,
         identifier: user.identifier,
         type: user.type,
-        status: user.status,
         sections: { ...user.sections },
         permissions: { ...user.permissions },
         groups: new Set(user.assignedGroups),
@@ -377,7 +375,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         identifier: '',
         // Resto del payload copiado.
         type: source.type,
-        status: source.status,
         sections: { ...source.sections },
         permissions: { ...source.permissions },
         groups: new Set(source.assignedGroups),
@@ -419,9 +416,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (typeof value === 'string') this.updateField('type', value as UserType);
   }
 
-  protected onStatusChange(checked: boolean): void {
-    this.updateField('status', checked ? 'active' : 'inactive');
-  }
 
   protected toggleSection(key: keyof UserSections): void {
     this.form.update((f) => ({
@@ -478,7 +472,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         email: f.email.trim(),
         identifier: f.identifier.trim(),
         type: f.type,
-        status: f.status,
         sections: f.sections,
         permissions: f.permissions,
         assignedGroups: Array.from(f.groups),
@@ -546,7 +539,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       email: '',
       identifier: '',
       type: 'agent',
-      status: 'active',
       sections: { ...DEFAULT_SECTIONS },
       permissions: { ...DEFAULT_PERMISSIONS },
       groups: new Set(),

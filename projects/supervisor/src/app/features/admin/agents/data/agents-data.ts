@@ -1,4 +1,12 @@
-export type PresenceStatus = 'disponible' | 'no_disponible' | 'bano' | 'comida' | 'formacion';
+export type PresenceStatus =
+  | 'disponible'
+  | 'no_disponible'
+  | 'bano'
+  | 'comida'
+  | 'formacion'
+  | 'post_conversando'
+  | 'administrativo'
+  | 'desconectado';
 
 export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
   disponible: 'agents.presence.available',
@@ -6,7 +14,21 @@ export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
   bano: 'agents.presence.bathroom',
   comida: 'agents.presence.lunch',
   formacion: 'agents.presence.training',
+  post_conversando: 'agents.presence.wrap_up',
+  administrativo: 'agents.presence.administrative',
+  desconectado: 'agents.presence.offline',
 };
+
+/**
+ * Estados que se VEN pero no se cambian desde el Supervisor (el PM, 2026-09-16). «Activo» es cualquier estado con
+ * la sesión abierta; «Desconectado» es no tenerla, y nadie pone a un agente en él. Postconversando y Administrativo
+ * los pone la conversación o el propio agente.
+ */
+export const READONLY_PRESENCE: ReadonlySet<PresenceStatus> = new Set<PresenceStatus>([
+  'post_conversando',
+  'administrativo',
+  'desconectado',
+]);
 
 /**
  * Channel type alias kept on the Agents feature for callers that still
@@ -229,7 +251,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'inactive',
-    presenceStatus: 'no_disponible',
+    presenceStatus: 'desconectado',
     phone: '612345678',
     email: 'jbarcala@company.com',
     pin: '614',
@@ -278,7 +300,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'inactive',
-    presenceStatus: 'no_disponible',
+    presenceStatus: 'desconectado',
     pin: '773',
     permissions: { ...DP },
     pickupType: 'auto',
@@ -304,7 +326,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'active',
-    presenceStatus: 'disponible',
+    presenceStatus: 'post_conversando',
     pin: '419',
     permissions: { ...DP },
     pickupType: 'auto',
@@ -331,7 +353,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'active',
-    presenceStatus: 'disponible',
+    presenceStatus: 'administrativo',
     pin: '284',
     permissions: { ...DP, externalDevices: true, recording: true },
     pickupType: 'auto',
@@ -345,7 +367,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'active',
-    presenceStatus: 'disponible',
+    presenceStatus: 'no_disponible',
     pin: '706',
     permissions: { ...DP },
     pickupType: 'auto',
@@ -372,7 +394,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'phone',
     agentType: 'normal',
     status: 'inactive',
-    presenceStatus: 'no_disponible',
+    presenceStatus: 'desconectado',
     pin: '672',
     permissions: { ...DP },
     pickupType: 'manual',

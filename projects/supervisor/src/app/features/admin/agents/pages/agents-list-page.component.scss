@@ -74,6 +74,35 @@
     background: var(--sc-label-amber-dot);
     box-shadow: 0 0 0 var(--sc-spacing-0-25) var(--sc-label-amber-bg);
   }
+
+  &[data-presence='post_conversando'] {
+    background: var(--sc-label-teal-dot);
+    box-shadow: 0 0 0 var(--sc-spacing-0-25) var(--sc-label-teal-bg);
+  }
+
+  &[data-presence='administrativo'] {
+    background: var(--sc-label-purple-dot);
+    box-shadow: 0 0 0 var(--sc-spacing-0-25) var(--sc-label-purple-bg);
+  }
+
+  &[data-presence='desconectado'] {
+    background: var(--sc-label-gray-dot);
+    box-shadow: 0 0 0 var(--sc-spacing-0-25) var(--sc-label-gray-bg);
+  }
+}
+
+/* El estado que no se cambia desde la lista: el punto y el rótulo en la misma vertical que los del botón de las
+ * demás filas (su relleno, su hueco y su borde de 1 px, transparente aquí). */
+.presence-static {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding-inline: var(--sc-spacing-0-5);
+  border-inline: 1px solid transparent;
+}
+
+.presence-static__label {
+  color: var(--sc-text-secondary);
 }
 
 .presence-menu__item {

@@ -119,8 +119,10 @@ export class GroupsListPageComponent {
       .filter((a): a is { id: number; name: string; active: boolean } => a !== null);
   }
 
+  /** Un teléfono de demo por servicio, sacado del del grupo: el desplegable enseña solo números. */
   protected servicesForGroup(group: Group): readonly { id: number; name: string; active: boolean }[] {
-    return (group.services ?? []).map((name, id) => ({ id, name, active: true }));
+    const base = Number(group.phone) + group.id * 10;
+    return (group.services ?? []).map((_, i) => ({ id: i, name: String(base + i + 1), active: true }));
   }
 
   protected readonly plusIcon = 'add';

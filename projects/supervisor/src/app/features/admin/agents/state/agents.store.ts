@@ -5,7 +5,7 @@ import { Agent, AGENTS_SEED, AgentType, PresenceStatus } from '../data/agents-da
 import { bulkUpdatePatch } from '@core/utils/store-helpers';
 
 /** Fields exposed to bulk edit (subset that is safe to set across many rows). */
-export type AgentBulkField = 'status' | 'presenceStatus' | 'agentType' | 'recording';
+export type AgentBulkField = 'presenceStatus' | 'agentType' | 'recording';
 
 function nextCode(items: readonly Agent[]): string {
   const maxN = items.reduce((max, a) => {
@@ -22,8 +22,9 @@ export class AgentsStore {
     versionKey: 'sc-agents-v',
     /** Bumped to 2 when the slim Agent type was expanded with the full schema; to 3 with the 500 demo
      *  agents and Hollywood names (2026-09-14), so a browser with the old list loads the new one; to 4 with
-     *  WhatsApp and an email for every agent. */
-    currentVersion: 4,
+     *  WhatsApp and an email for every agent; to 5 with the read-only states (Desconectado, Postconversando,
+     *  Administrativo). */
+    currentVersion: 5,
     defaults: AGENTS_SEED,
   });
 
@@ -73,9 +74,6 @@ export class AgentsStore {
     bulkUpdatePatch(this.store, this.agents(), ids, (agent) => {
       let patch: Partial<Agent>;
       switch (field) {
-        case 'status':
-          patch = { status: value as Agent['status'] };
-          break;
         case 'presenceStatus':
           patch = { presenceStatus: value as PresenceStatus };
           break;

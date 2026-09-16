@@ -83,7 +83,6 @@
           <sc-board-row [label]="'agents.form.fields.type' | translate">{{ typeLabelKeys[form().agentType] | translate }}</sc-board-row>
           <sc-board-row [label]="'agents.form.fields.email' | translate">{{ orNone(form().email) }}</sc-board-row>
           <sc-board-row [label]="'agents.form.fields.presence' | translate">{{ presenceKeys[form().presenceStatus] | translate }}</sc-board-row>
-          <sc-board-row [label]="'agents.form.fields.active' | translate">{{ yesNo(form().status === 'active') | translate }}</sc-board-row>
           <sc-board-row [label]="'agents.form.fields.recording' | translate">{{ yesNo(form().permissions.recording) | translate }}</sc-board-row>
         </sc-board-card>
 
@@ -310,7 +309,7 @@
             </label>
             <sc-select
               inputId="agent-presence"
-              [options]="presenceStates"
+              [options]="presenceOptions()"
               [value]="form().presenceStatus"
               (valueChange)="onPresenceValueChange($event)"
             >
@@ -346,22 +345,8 @@
       <sc-divider />
 
       <section class="sub-section">
-        @if (mode() === 'edit') {
-          <div class="switch-field switch-field--top">
-            <sc-toggleswitch
-              [checked]="form().status === 'active'"
-              [ariaLabel]="'agents.form.fields.active' | translate"
-              (checkedChange)="onStatusChange($event)"
-            />
-            <!-- La etiqueta dice lo que significa ENCENDIDO («Activo»), no el nombre del
-                 dato («Estado»); y la ayuda ya no repite «Agente activo:» delante. -->
-            <div class="switch-field__copy">
-              <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.active' | translate }}</span>
-              <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.fields.active_hint' | translate }}</p>
-            </div>
-          </div>
-        }
-
+        <!-- Sin interruptor «Activo» desde el 2026-09-16: activo es tener la sesión abierta, y eso lo dice el Estado
+             (Desconectado = sin sesión), no un ajuste de la ficha. -->
         <!-- Sin ayuda: «Las llamadas del agente quedan grabadas si está activado» repetía
              la etiqueta con más palabras. -->
         <div class="switch-field">
