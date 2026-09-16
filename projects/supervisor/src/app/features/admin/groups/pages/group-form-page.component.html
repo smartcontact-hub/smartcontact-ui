@@ -664,8 +664,9 @@
   }
 </ng-template>
 
-<!-- Elegir un .wav: el input nativo va oculto y lo abre un botón del DS. -->
+<!-- Elegir un .wav: el input nativo va oculto y lo abre un botón del DS. Fuera del tabulador y del lector de pantalla,
+     que si no anuncian un segundo botón «Choose File» en inglés. -->
 <ng-template #filePicker let-key="key" let-id="id">
-  <input #fileInput class="visually-hidden" type="file" accept=".wav,audio/wav" [id]="id + '-file'" (change)="onAudioFile(key, $event)" />
+  <input #fileInput class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".wav,audio/wav" [id]="id + '-file'" (change)="onAudioFile(key, $event)" />
   <sc-button size="sm" variant="secondary" appearance="outlined" icon="upload" [label]="'groups.form.announcements.choose_file' | translate" (clicked)="fileInput.click()" />
 </ng-template>

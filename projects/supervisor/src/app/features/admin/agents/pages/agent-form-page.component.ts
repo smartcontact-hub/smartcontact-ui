@@ -10,7 +10,6 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
@@ -174,7 +173,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
 export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly location = inject(Location);
   private readonly agentsStore = inject(AgentsStore);
   private readonly groupsStore = inject(GroupsStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
@@ -974,6 +972,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       };
 
       const editingId = this.editingId();
+      let createdId: number | null = null;
       if (editingId) {
         this.agentsStore.updateAgent(editingId, { ...payload });
         this.linksStore.replaceLinksForAgent(
@@ -991,17 +990,13 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         });
       } else {
         const created = this.agentsStore.addAgent(payload);
+        createdId = created.id;
         this.linksStore.replaceLinksForAgent(
           created.id,
           this.normalizeLinks(f.links, created.id)
         );
         this.editingId.set(created.id);
         this.initial.set(created);
-        this.location.replaceState(`/admin/agentes/editar/${created.id}`);
-        this.releaseLock?.();
-        this.releaseLock = this.crossTab.acquire('agent', created.id, () =>
-          this.conflictWarning.set(true)
-        );
         this.messages.add({
           severity: 'success',
           summary: this.translate.instant('agents.toasts.created', {
@@ -1012,6 +1007,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       }
       this.saving.set(false);
       this.dirtyState.markPristine();
+      /* Un alta abre la edición de lo recién creado: navegar (y no solo cambiar la dirección) pone al día la miga
+       * y el candado entre pestañas. */
+      if (createdId !== null) void this.router.navigateByUrl(`/admin/agentes/editar/${createdId}`, { replaceUrl: true });
     }, 400);
   }
 
