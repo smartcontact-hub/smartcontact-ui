@@ -43,6 +43,27 @@
     flex: 0 0 auto;
   }
 
+  /* Nombre y su ayuda, apilados; la ayuda es la misma frase que en la ficha de grupo. */
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-25);
+    min-width: 0;
+  }
+
+  &__hint {
+    margin: 0;
+    color: var(--sc-text-subtle);
+    text-wrap: pretty;
+  }
+
+  /* Tamaño de cola: el tipo y el número juntos, como en la ficha. */
+  &__group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-1);
+  }
+
   /*
    * Cada control mide lo que pide su contenido, con peldaños que ya existen:
    * desplegables 252 (`scale/18`), para que quepa «Automático con preview» o

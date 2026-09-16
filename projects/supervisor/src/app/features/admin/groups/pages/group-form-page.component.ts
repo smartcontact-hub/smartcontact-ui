@@ -37,6 +37,7 @@ import {
   ScDialogComponent as DialogComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
+  ScPhotoUploadComponent as PhotoUploadComponent,
 } from '@smartcontact-hub/components';
 import {
   CHANNEL_LABEL_KEYS,
@@ -54,8 +55,10 @@ import {
   DEFAULT_ANNOUNCEMENTS,
   GroupAdvanced,
   GroupAnnouncements,
+  UNAVAILABLE_STRATEGIES,
   VOICE_OPTIONS,
 } from '../data/groups-data';
+import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { TipificacionesStore } from '@features/admin/repositories/instances/tipificaciones';
 import { AgendasStore } from '@features/admin/repositories/instances/agendas';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
@@ -82,6 +85,7 @@ import {
 
 interface FormState {
   name: string;
+  photo: string | null;
   phone: string;
   priority: GroupPriority;
   typification: string | null;
@@ -115,6 +119,7 @@ interface FormState {
     FormSectionNavComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
+    PhotoUploadComponent,
     MultiSelectComponent,
     InputNumberComponent,
     SelectButtonComponent,
@@ -143,6 +148,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly agendasStore = inject(AgendasStore);
   private readonly templatesStore = inject(TemplatesStore);
   private readonly labelsStore = inject(LabelsStore);
+  private readonly defaultsStore = inject(GroupDefaultsStore);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
    * fuera la banda sticky-form-header; identidad → breadcrumb + campos del
@@ -161,7 +167,16 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
   protected readonly channels = GROUP_CHANNELS;
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
-  protected readonly phoneStrategies = PHONE_STRATEGIES;
+  /** Skills se ve pero no se elige, con su motivo escrito en la opción (SISMAC-1975). */
+  protected readonly phoneStrategyOptions = computed(() => {
+    this.lang();
+    return PHONE_STRATEGIES.map((s) => ({
+      label: s,
+      value: s,
+      disabled: UNAVAILABLE_STRATEGIES.has(s),
+      note: UNAVAILABLE_STRATEGIES.has(s) ? this.translate.instant('groups.form.fields.skills_unavailable') : null,
+    }));
+  });
   protected readonly chatStrategies = CHAT_STRATEGIES;
   protected readonly subStrategies = SUB_STRATEGIES;
   protected readonly ringAllOptions = RING_ALL_OPTIONS;
@@ -209,7 +224,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       icon: 'tune',
     };
     const middle = this.hasPhone() ? [resources, announcements, advanced] : [resources, advanced];
-    if (this.mode() === 'edit' && this.variants.variant() !== 'b') {
+    /* Al crear, Identidad primero (sin nombre no hay grupo); al editar, al fondo: casi no se toca después (Rafa,
+     * 2026-09-16, también en «Una página»). */
+    if (this.mode() === 'edit') {
       return [channels, ...middle, identity];
     }
     return [identity, channels, ...middle];
@@ -493,6 +510,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       const seedLinks = this.linksStore.linksForGroup(group.id);
       this.form.set({
         name: group.name,
+        photo: group.photo ?? null,
         phone: group.phone,
         priority: group.priority,
         typification: group.typification ?? null,
@@ -513,8 +531,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.dirtyState.markPristine();
       // En edición aterriza en Canales (1ª del orden de edición): identidad va
       // al fondo porque casi no se toca tras crear; la ficha la resume (S60).
-      // COMPARAR: en una sola página se empieza por arriba.
-      this.activeSection.set(this.variants.variant() === 'b' ? 'group-section-identity' : 'group-section-channels');
+      this.activeSection.set('group-section-channels');
       this.releaseLock = this.crossTab.acquire('group', group.id, () =>
         this.conflictWarning.set(true),
       );
@@ -536,6 +553,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.form.set({
         // Unique identifiers — vaciados.
         name: '',
+        photo: source.photo ?? null,
         phone: '',
         // Resto del payload copiado.
         priority: source.priority,
@@ -633,7 +651,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /** El .wav elegido: de momento solo se guarda su nombre (demo). */
-  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'periodicFile', event: Event): void {
+  protected onPhotoChange(photo: string | null): void {
+    this.form.update((f) => ({ ...f, photo }));
+  }
+
+  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'periodicFile' | 'outboundAudioFile', event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) this.setAnnouncement(key, file.name);
@@ -706,6 +728,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       const f = this.form();
       const payload = {
         name: f.name.trim(),
+        photo: f.photo ?? undefined,
         phone: f.phone.trim(),
         priority: f.priority,
         typification: f.typification ?? undefined,
@@ -804,19 +827,22 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.router.navigateByUrl('/admin/grupos');
   }
 
+  /** Un grupo nuevo nace con lo guardado en Configuración del AED > Grupos. */
   private emptyForm(): FormState {
+    const defaults = this.defaultsStore.defaults();
     return {
       name: '',
+      photo: null,
       phone: '',
-      priority: 'Baja',
+      priority: defaults.priority,
       typification: null,
       scheduleIds: new Set<number>(),
       templateIds: new Set<number>(),
       labelIds: new Set<number>(),
-      announcements: { ...DEFAULT_ANNOUNCEMENTS },
-      advanced: { ...DEFAULT_ADVANCED },
+      announcements: { ...DEFAULT_ANNOUNCEMENTS, voice: defaults.voice },
+      advanced: { ...defaults.advanced },
       channels: new Set<GroupChannel>(['phone']),
-      strategy: PHONE_STRATEGIES[0]!,
+      strategy: defaults.strategy,
       subStrategy: SUB_STRATEGIES[0]!,
       ringAllAgents: RING_ALL_OPTIONS[0]!,
       chatStrategy: CHAT_STRATEGIES[0]!,

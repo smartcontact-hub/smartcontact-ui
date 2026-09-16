@@ -1496,6 +1496,7 @@
         "sub_strategy": "Dentro de cada nivel",
         "levels_hint": "Elige el nivel de cada agente en la tabla de abajo. Reciben primero los del nivel 1.",
         "exclusive_hint": "Se configura en el árbol del IVR.",
+        "skills_unavailable": "Necesita skills en los agentes",
         "typification": "Tipificación",
         "typification_none": "Sin tipificación",
         "typification_option": "{{name}} ({{count}})",
@@ -1529,6 +1530,7 @@
         "remove_file": "Quitar archivo",
         "periodic": "Anuncio periódico",
         "every": "Cada",
+        "outbound_audio": "Audio saliente",
         "voice": "Voz de los anuncios",
         "voice_hint": "La que lee las locuciones de texto a voz.",
         "notices_title": "Avisos",
@@ -1556,6 +1558,8 @@
         "wrap_up_hint": "Lo que espera el agente antes de recibir la siguiente llamada.",
         "overflow": "Desbordar si no hay agentes activos",
         "overflow_hint": "Las llamadas pasan al siguiente nodo del árbol.",
+        "overflow_session": "Desbordar sesión",
+        "overflow_session_hint": "Redirige las sesiones activas al superar su límite.",
         "card_opening": "Apertura de ficha",
         "card_embedded": "Embebida",
         "card_new_window": "Nueva ventana",
@@ -1961,30 +1965,15 @@
         },
         "grupos": {
           "heading": "Grupos",
-          "params": {
-            "title": "Parámetros",
-            "estrategia": "Estrategia de reparto de conversaciones",
-            "prioridad": "Prioridad del grupo",
-            "voz": "Voz",
-            "desbordar": "Desbordar conversaciones si no hay agentes disponibles",
-            "tipo_cola": "Tipo de cola de espera",
-            "capacidad_cola": "Máximo de conversaciones en cola",
-            "tiempo_max": "Tiempo máximo de espera en cola",
-            "tiempo_transfer": "Tiempo máximo de transferencia",
-            "placeholder": "Seleccionar",
-            "input_placeholder": "Escribir",
-            "segundos": "segundos"
-          },
+          "hint": "Con esto nace cada grupo nuevo. Luego se cambia en su ficha.",
+          "routing_title": "Reparto",
+          "strategy_hint": "Niveles, Ring All, Skills y Agente exclusivo se eligen en la ficha de cada grupo, donde se configuran.",
           "apertura": {
-            "title": "Apertura de ficha",
-            "tipo_label": "Tipo",
-            "tamano_label": "Tamaño",
-            "tamano_suffix": "píxeles"
+            "tipo_label": "Tipo"
           },
           "toast": {
             "saved": "Parámetros de grupos guardados"
-          },
-          "edit_crumb": "Editar grupo"
+          }
         }
       },
       "breadcrumb": {

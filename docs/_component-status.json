@@ -162,7 +162,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 129
+      "usedInSupervisor": 132
     },
     {
       "name": "card",
@@ -449,7 +449,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 28
+      "usedInSupervisor": 30
     },
     {
       "name": "drawer",
@@ -680,7 +680,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 17
+      "usedInSupervisor": 18
     },
     {
       "name": "inputtext",
@@ -720,7 +720,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 29
+      "usedInSupervisor": 31
     },
     {
       "name": "keyboard-shortcuts",
@@ -805,7 +805,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 21
+      "usedInSupervisor": 16
     },
     {
       "name": "option-card",
@@ -930,7 +930,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 3
     },
     {
       "name": "progressbar",
@@ -1087,7 +1087,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 36
+      "usedInSupervisor": 37
     },
     {
       "name": "selectbutton",
@@ -1115,7 +1115,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 8
+      "usedInSupervisor": 10
     },
     {
       "name": "skeleton",
@@ -1283,7 +1283,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 23
+      "usedInSupervisor": 25
     }
   ]
 }

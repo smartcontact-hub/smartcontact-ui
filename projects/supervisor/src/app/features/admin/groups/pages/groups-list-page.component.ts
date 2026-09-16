@@ -45,6 +45,7 @@ import {
   GroupChannel,
   GroupPriority,
   PHONE_STRATEGIES,
+  UNAVAILABLE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
 } from '../data/groups-data';
 import { GroupBulkField, GroupsStore } from '../state/groups.store';
@@ -171,7 +172,8 @@ export class GroupsListPageComponent {
       {
         key: 'strategy',
         label: this.translate.instant('groups.table.strategy'),
-        values: [...PHONE_STRATEGIES, ...CHAT_STRATEGIES].map((s) => ({ value: s, label: s })),
+        // Skills no se puede elegir todavía (SISMAC-1975): tampoco en bloque.
+        values: [...PHONE_STRATEGIES.filter((s) => !UNAVAILABLE_STRATEGIES.has(s)), ...CHAT_STRATEGIES].map((s) => ({ value: s, label: s })),
       },
     ];
   });

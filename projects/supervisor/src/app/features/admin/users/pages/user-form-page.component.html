@@ -148,6 +148,83 @@
 <!-- Las secciones de la ficha, una sola vez: se pintan en `.page__main` o, en la variante e,
      dentro del panel lateral. -->
 <ng-template #sections>
+  <!-- Identidad: al crear, primero (sin nombre no hay nada que guardar); al editar, al final, porque casi no se toca
+       después (Rafa, 2026-09-16). El índice sigue el mismo orden. -->
+  @if (mode() !== 'edit') {
+    <ng-container *ngTemplateOutlet="identitySection" />
+  }
+
+  @if (showSection('user-section-access')) {
+    <!-- «Secciones» y «Permisos» en UNA sección desde el 2026-09-14. Eran dos pestañas
+         con la misma forma (una lista de casillas) sobre la misma pregunta: a qué tiene
+         acceso esta persona. Lo que VE y lo que puede HACER, en dos tramos. -->
+    <sc-section-card
+      anchorId="user-section-access"
+      surface="card"
+      [flush]="isCards()"
+      [showHeader]="!isCards()"
+      [icon]="iconOf('user-section-access')"
+      titleKey="users.form.section.access"
+    >
+      <section class="sub-section" aria-labelledby="user-access-sections-title">
+        <header class="sub-section__head">
+          <h3 id="user-access-sections-title" class="sub-section__title sc-text-body-semibold">{{ 'users.form.section.sections' | translate }}</h3>
+        </header>
+        <!-- Las secciones hijas van DEBAJO de su madre, en su misma celda. Antes eran
+             celdas sueltas con sangría en una rejilla de cuatro columnas, y «Analizador de
+             Flujo» caía en la fila de abajo, pareciendo hija de «Campañas». -->
+        <div class="checkbox-grid">
+          @for (node of sectionTree; track node.def.key) {
+            <div class="checkbox-stack">
+              <sc-checkbox class="checkbox-row" [state]="form().sections[node.def.key] ? 'all' : 'none'" (cycle)="toggleSection(node.def.key)">{{ node.def.labelKey | translate }}</sc-checkbox>
+              @for (child of node.children; track child.key) {
+                <sc-checkbox class="checkbox-row checkbox-row--child" [disabled]="!form().sections[node.def.key]" [state]="form().sections[child.key] ? 'all' : 'none'" (cycle)="toggleSection(child.key)">{{ child.labelKey | translate }}</sc-checkbox>
+              }
+            </div>
+          }
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section" aria-labelledby="user-access-permissions-title">
+        <header class="sub-section__head">
+          <h3 id="user-access-permissions-title" class="sub-section__title sc-text-body-semibold">{{ 'users.form.section.permissions' | translate }}</h3>
+        </header>
+        <div class="checkbox-grid">
+          @for (def of permissionDefs; track def.key) {
+            <sc-checkbox class="checkbox-row" [state]="form().permissions[def.key] ? 'all' : 'none'" (cycle)="togglePermission(def.key)">{{ def.labelKey | translate }}</sc-checkbox>
+          }
+        </div>
+      </section>
+    </sc-section-card>
+  }
+
+  @if (showSection('user-section-services')) {
+    <sc-section-card
+      anchorId="user-section-services"
+      surface="card"
+      [flush]="isCards()"
+      [showHeader]="!isCards()"
+      [icon]="iconOf('user-section-services')"
+      titleKey="users.form.section.services"
+      hintKey="users.form.section.services_hint"
+    >
+      <section class="sub-section">
+        <div class="checkbox-grid checkbox-grid--services">
+          @for (service of availableServices; track service) {
+            <sc-checkbox class="checkbox-row" [state]="hasService(service) ? 'all' : 'none'" (cycle)="toggleService(service)">{{ service }}</sc-checkbox>
+          }
+        </div>
+      </section>
+    </sc-section-card>
+  }
+  @if (mode() === 'edit') {
+    <ng-container *ngTemplateOutlet="identitySection" />
+  }
+</ng-template>
+
+<ng-template #identitySection>
   @if (showSection('user-section-identity')) {
     <sc-section-card
       anchorId="user-section-identity"
@@ -234,72 +311,6 @@
         </div>
       </section>
 
-    </sc-section-card>
-  }
-
-  @if (showSection('user-section-access')) {
-    <!-- «Secciones» y «Permisos» en UNA sección desde el 2026-09-14. Eran dos pestañas
-         con la misma forma (una lista de casillas) sobre la misma pregunta: a qué tiene
-         acceso esta persona. Lo que VE y lo que puede HACER, en dos tramos. -->
-    <sc-section-card
-      anchorId="user-section-access"
-      surface="card"
-      [flush]="isCards()"
-      [showHeader]="!isCards()"
-      [icon]="iconOf('user-section-access')"
-      titleKey="users.form.section.access"
-    >
-      <section class="sub-section" aria-labelledby="user-access-sections-title">
-        <header class="sub-section__head">
-          <h3 id="user-access-sections-title" class="sub-section__title sc-text-body-semibold">{{ 'users.form.section.sections' | translate }}</h3>
-        </header>
-        <!-- Las secciones hijas van DEBAJO de su madre, en su misma celda. Antes eran
-             celdas sueltas con sangría en una rejilla de cuatro columnas, y «Analizador de
-             Flujo» caía en la fila de abajo, pareciendo hija de «Campañas». -->
-        <div class="checkbox-grid">
-          @for (node of sectionTree; track node.def.key) {
-            <div class="checkbox-stack">
-              <sc-checkbox class="checkbox-row" [state]="form().sections[node.def.key] ? 'all' : 'none'" (cycle)="toggleSection(node.def.key)">{{ node.def.labelKey | translate }}</sc-checkbox>
-              @for (child of node.children; track child.key) {
-                <sc-checkbox class="checkbox-row checkbox-row--child" [disabled]="!form().sections[node.def.key]" [state]="form().sections[child.key] ? 'all' : 'none'" (cycle)="toggleSection(child.key)">{{ child.labelKey | translate }}</sc-checkbox>
-              }
-            </div>
-          }
-        </div>
-      </section>
-
-      <sc-divider />
-
-      <section class="sub-section" aria-labelledby="user-access-permissions-title">
-        <header class="sub-section__head">
-          <h3 id="user-access-permissions-title" class="sub-section__title sc-text-body-semibold">{{ 'users.form.section.permissions' | translate }}</h3>
-        </header>
-        <div class="checkbox-grid">
-          @for (def of permissionDefs; track def.key) {
-            <sc-checkbox class="checkbox-row" [state]="form().permissions[def.key] ? 'all' : 'none'" (cycle)="togglePermission(def.key)">{{ def.labelKey | translate }}</sc-checkbox>
-          }
-        </div>
-      </section>
-    </sc-section-card>
-  }
-
-  @if (showSection('user-section-services')) {
-    <sc-section-card
-      anchorId="user-section-services"
-      surface="card"
-      [flush]="isCards()"
-      [showHeader]="!isCards()"
-      [icon]="iconOf('user-section-services')"
-      titleKey="users.form.section.services"
-      hintKey="users.form.section.services_hint"
-    >
-      <section class="sub-section">
-        <div class="checkbox-grid checkbox-grid--services">
-          @for (service of availableServices; track service) {
-            <sc-checkbox class="checkbox-row" [state]="hasService(service) ? 'all' : 'none'" (cycle)="toggleService(service)">{{ service }}</sc-checkbox>
-          }
-        </div>
-      </section>
     </sc-section-card>
   }
 </ng-template>

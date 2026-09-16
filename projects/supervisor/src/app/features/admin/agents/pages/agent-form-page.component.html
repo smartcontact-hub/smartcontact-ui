@@ -186,181 +186,10 @@
 <!-- Las secciones de la ficha, una sola vez: se pintan en `.page__main` o, en la variante e,
      dentro del panel lateral. -->
 <ng-template #sections>
-  @if (showSection('agent-section-identity')) {
-    <sc-section-card
-      anchorId="agent-section-identity"
-      surface="card"
-      [flush]="isCards()"
-      [showHeader]="!isCards()"
-      [icon]="iconOf('agent-section-identity')"
-      titleKey="agents.form.section.identification"
-    >
-      <section class="sub-section">
-        <div class="form-identity">
-          <sc-photo-upload
-            size="sm"
-            [photo]="form().photo"
-            [name]="form().name"
-            [ariaLabel]="'common.photo.change' | translate"
-            (photoChange)="onPhotoChange($event)"
-          />
-          <!-- El nombre no tiene regla de contenido: o está o no está, y que
-               falte lo dice el motivo del botón, no un error rojo sobre un
-               campo que aún no has tocado. -->
-          <div class="field form-identity__name">
-            <label class="field__label sc-text-caption-semibold" for="agent-name">
-              {{ 'agents.form.fields.name' | translate }}
-              <span class="field__required" aria-hidden="true">*</span>
-            </label>
-            <sc-inputtext
-              inputId="agent-name"
-              [required]="true"
-              [value]="form().name"
-              (valueChange)="onNameRename($event)"
-            />
-          </div>
-        </div>
-
-        <div class="grid grid--2">
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="agent-email">
-              {{ 'agents.form.fields.email' | translate }}
-            </label>
-            <sc-inputtext
-              inputId="agent-email"
-              type="email"
-              autocomplete="email"
-              [value]="form().email"
-              [error]="emailError() ? (emailError()! | translate) : undefined"
-              (valueChange)="updateField('email', $event)"
-            />
-          </div>
-
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="agent-phone">
-              {{ 'agents.form.fields.phone' | translate }}
-              <span class="field__hint">({{ 'common.optional' | translate }})</span>
-            </label>
-            <sc-inputtext
-              inputId="agent-phone"
-              type="tel"
-              autocomplete="tel"
-              [value]="form().phone"
-              (valueChange)="updateField('phone', $event)"
-            />
-          </div>
-
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="agent-ext">
-              {{ 'agents.form.fields.extension' | translate }}
-              <span class="field__required" aria-hidden="true">*</span>
-            </label>
-            <!-- Lista cerrada: o hay extensión o no la hay. `[required]` solo
-                 añade el aria-required que el `*` visible no da. -->
-            <sc-select
-              inputId="agent-ext"
-              optionLabel="number"
-              optionValue="number"
-              [filter]="true"
-              filterBy="number"
-              [required]="true"
-              [options]="availableExtensions"
-              [placeholder]="'agents.form.fields.extension_placeholder' | translate"
-              [value]="form().extension"
-              (valueChange)="onExtensionValueChange($event)"
-            >
-              <ng-template #item let-ext>
-                {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
-              </ng-template>
-              <ng-template #selectedItem let-ext>
-                {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
-              </ng-template>
-            </sc-select>
-          </div>
-
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="agent-type">
-              {{ 'agents.form.fields.type' | translate }}
-            </label>
-            <sc-select
-              inputId="agent-type"
-              [options]="agentTypes"
-              [value]="form().agentType"
-              (valueChange)="onAgentTypeValueChange($event)"
-            >
-              <ng-template #item let-t>
-                {{ typeLabelKeys[t] | translate }}
-              </ng-template>
-              <ng-template #selectedItem let-t>
-                {{ typeLabelKeys[t] | translate }}
-              </ng-template>
-            </sc-select>
-          </div>
-        </div>
-      </section>
-
-      <sc-divider />
-
-      <section class="sub-section">
-        <div class="grid grid--2">
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="agent-presence">
-              {{ 'agents.form.fields.presence' | translate }}
-            </label>
-            <sc-select
-              inputId="agent-presence"
-              [options]="presenceOptions()"
-              [value]="form().presenceStatus"
-              (valueChange)="onPresenceValueChange($event)"
-            >
-              <ng-template #item let-p>
-                {{ presenceKeys[p] | translate }}
-              </ng-template>
-              <ng-template #selectedItem let-p>
-                {{ presenceKeys[p] | translate }}
-              </ng-template>
-            </sc-select>
-          </div>
-
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="agent-pin">
-              {{ 'agents.form.fields.pin' | translate }}
-              <span class="field__hint">({{ 'common.optional' | translate }})</span>
-            </label>
-            <sc-inputtext
-              inputId="agent-pin"
-              type="text"
-              inputmode="numeric"
-              autocomplete="off"
-              [maxlength]="6"
-              [value]="form().pin"
-              [helperText]="'agents.form.fields.pin_hint' | translate"
-              [error]="pinError() ? (pinError()! | translate) : undefined"
-              (valueChange)="updateField('pin', $event)"
-            />
-          </div>
-        </div>
-      </section>
-
-      <sc-divider />
-
-      <section class="sub-section">
-        <!-- Sin interruptor «Activo» desde el 2026-09-16: activo es tener la sesión abierta, y eso lo dice el Estado
-             (Desconectado = sin sesión), no un ajuste de la ficha. -->
-        <!-- Sin ayuda: «Las llamadas del agente quedan grabadas si está activado» repetía
-             la etiqueta con más palabras. -->
-        <div class="switch-field">
-          <sc-toggleswitch
-            [checked]="form().permissions.recording"
-            [ariaLabel]="'agents.form.fields.recording' | translate"
-            (checkedChange)="onRecordingChange($event)"
-          />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.recording' | translate }}</span>
-          </div>
-        </div>
-      </section>
-    </sc-section-card>
+  <!-- Identidad: al crear, primero (sin nombre no hay nada que guardar); al editar, al final, porque casi no se toca
+       después (Rafa, 2026-09-16). El índice sigue el mismo orden. -->
+  @if (mode() !== 'edit') {
+    <ng-container *ngTemplateOutlet="identitySection" />
   }
 
   @if (showSection('agent-section-groups')) {
@@ -722,6 +551,188 @@
 
         <!-- Dónde se crean y se editan. Antes «Gestionar agendas», solo para una de las tres. -->
         <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
+      </section>
+    </sc-section-card>
+  }
+  @if (mode() === 'edit') {
+    <ng-container *ngTemplateOutlet="identitySection" />
+  }
+</ng-template>
+
+<ng-template #identitySection>
+  @if (showSection('agent-section-identity')) {
+    <sc-section-card
+      anchorId="agent-section-identity"
+      surface="card"
+      [flush]="isCards()"
+      [showHeader]="!isCards()"
+      [icon]="iconOf('agent-section-identity')"
+      titleKey="agents.form.section.identification"
+    >
+      <section class="sub-section">
+        <div class="form-identity">
+          <sc-photo-upload
+            size="sm"
+            [photo]="form().photo"
+            [name]="form().name"
+            [ariaLabel]="'common.photo.change' | translate"
+            (photoChange)="onPhotoChange($event)"
+          />
+          <!-- El nombre no tiene regla de contenido: o está o no está, y que
+               falte lo dice el motivo del botón, no un error rojo sobre un
+               campo que aún no has tocado. -->
+          <div class="field form-identity__name">
+            <label class="field__label sc-text-caption-semibold" for="agent-name">
+              {{ 'agents.form.fields.name' | translate }}
+              <span class="field__required" aria-hidden="true">*</span>
+            </label>
+            <sc-inputtext
+              inputId="agent-name"
+              [required]="true"
+              [value]="form().name"
+              (valueChange)="onNameRename($event)"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid--2">
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="agent-email">
+              {{ 'agents.form.fields.email' | translate }}
+            </label>
+            <sc-inputtext
+              inputId="agent-email"
+              type="email"
+              autocomplete="email"
+              [value]="form().email"
+              [error]="emailError() ? (emailError()! | translate) : undefined"
+              (valueChange)="updateField('email', $event)"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="agent-phone">
+              {{ 'agents.form.fields.phone' | translate }}
+              <span class="field__hint">({{ 'common.optional' | translate }})</span>
+            </label>
+            <sc-inputtext
+              inputId="agent-phone"
+              type="tel"
+              autocomplete="tel"
+              [value]="form().phone"
+              (valueChange)="updateField('phone', $event)"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="agent-ext">
+              {{ 'agents.form.fields.extension' | translate }}
+              <span class="field__required" aria-hidden="true">*</span>
+            </label>
+            <!-- Lista cerrada: o hay extensión o no la hay. `[required]` solo
+                 añade el aria-required que el `*` visible no da. -->
+            <sc-select
+              inputId="agent-ext"
+              optionLabel="number"
+              optionValue="number"
+              [filter]="true"
+              filterBy="number"
+              [required]="true"
+              [options]="availableExtensions"
+              [placeholder]="'agents.form.fields.extension_placeholder' | translate"
+              [value]="form().extension"
+              (valueChange)="onExtensionValueChange($event)"
+            >
+              <ng-template #item let-ext>
+                {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
+              </ng-template>
+              <ng-template #selectedItem let-ext>
+                {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
+              </ng-template>
+            </sc-select>
+          </div>
+
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="agent-type">
+              {{ 'agents.form.fields.type' | translate }}
+            </label>
+            <sc-select
+              inputId="agent-type"
+              [options]="agentTypes"
+              [value]="form().agentType"
+              (valueChange)="onAgentTypeValueChange($event)"
+            >
+              <ng-template #item let-t>
+                {{ typeLabelKeys[t] | translate }}
+              </ng-template>
+              <ng-template #selectedItem let-t>
+                {{ typeLabelKeys[t] | translate }}
+              </ng-template>
+            </sc-select>
+          </div>
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section">
+        <div class="grid grid--2">
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="agent-presence">
+              {{ 'agents.form.fields.presence' | translate }}
+            </label>
+            <sc-select
+              inputId="agent-presence"
+              [options]="presenceOptions()"
+              [value]="form().presenceStatus"
+              (valueChange)="onPresenceValueChange($event)"
+            >
+              <ng-template #item let-p>
+                {{ presenceKeys[p] | translate }}
+              </ng-template>
+              <ng-template #selectedItem let-p>
+                {{ presenceKeys[p] | translate }}
+              </ng-template>
+            </sc-select>
+          </div>
+
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="agent-pin">
+              {{ 'agents.form.fields.pin' | translate }}
+              <span class="field__hint">({{ 'common.optional' | translate }})</span>
+            </label>
+            <sc-inputtext
+              inputId="agent-pin"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              [maxlength]="6"
+              [value]="form().pin"
+              [helperText]="'agents.form.fields.pin_hint' | translate"
+              [error]="pinError() ? (pinError()! | translate) : undefined"
+              (valueChange)="updateField('pin', $event)"
+            />
+          </div>
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section">
+        <!-- Sin interruptor «Activo» desde el 2026-09-16: activo es tener la sesión abierta, y eso lo dice el Estado
+             (Desconectado = sin sesión), no un ajuste de la ficha. -->
+        <!-- Sin ayuda: «Las llamadas del agente quedan grabadas si está activado» repetía
+             la etiqueta con más palabras. -->
+        <div class="switch-field">
+          <sc-toggleswitch
+            [checked]="form().permissions.recording"
+            [ariaLabel]="'agents.form.fields.recording' | translate"
+            (checkedChange)="onRecordingChange($event)"
+          />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.recording' | translate }}</span>
+          </div>
+        </div>
       </section>
     </sc-section-card>
   }

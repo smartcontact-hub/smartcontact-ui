@@ -1493,6 +1493,7 @@
         "sub_strategy": "Within each level",
         "levels_hint": "Set each agent’s level in the table below. Level 1 receives first.",
         "exclusive_hint": "Configured in the IVR tree.",
+        "skills_unavailable": "Needs agent skills",
         "typification": "Typification",
         "typification_none": "No typification",
         "typification_option": "{{name}} ({{count}})",
@@ -1529,6 +1530,7 @@
         "remove_file": "Remove file",
         "periodic": "Periodic announcement",
         "every": "Every",
+        "outbound_audio": "Outbound audio",
         "voice": "Announcement voice",
         "voice_hint": "The one that reads text-to-speech recordings.",
         "notices_title": "Notices",
@@ -1556,6 +1558,8 @@
         "wrap_up_hint": "How long the agent waits before receiving the next call.",
         "overflow": "Overflow when no agents are active",
         "overflow_hint": "Calls go to the next node in the tree.",
+        "overflow_session": "Overflow session",
+        "overflow_session_hint": "Redirects active sessions when they exceed their limit.",
         "card_opening": "Contact card opening",
         "card_embedded": "Embedded",
         "card_new_window": "New window",
@@ -1961,30 +1965,15 @@
         },
         "grupos": {
           "heading": "Groups",
-          "params": {
-            "title": "Parameters",
-            "estrategia": "Conversation distribution strategy",
-            "prioridad": "Group priority",
-            "voz": "Voice",
-            "desbordar": "Overflow conversations when no agents are available",
-            "tipo_cola": "Queue type",
-            "capacidad_cola": "Maximum conversations in queue",
-            "tiempo_max": "Maximum queue wait time",
-            "tiempo_transfer": "Maximum transfer time",
-            "placeholder": "Select",
-            "input_placeholder": "Type",
-            "segundos": "seconds"
-          },
+          "hint": "Every new group starts with these. You can change them later in the group.",
+          "routing_title": "Distribution",
+          "strategy_hint": "Levels, Ring All, Skills and Exclusive agent are chosen in each group, where they are set up.",
           "apertura": {
-            "title": "Contact card opening",
-            "tipo_label": "Type",
-            "tamano_label": "Size",
-            "tamano_suffix": "pixels"
+            "tipo_label": "Type"
           },
           "toast": {
             "saved": "Group settings saved"
-          },
-          "edit_crumb": "Edit group"
+          }
         }
       },
       "breadcrumb": {
