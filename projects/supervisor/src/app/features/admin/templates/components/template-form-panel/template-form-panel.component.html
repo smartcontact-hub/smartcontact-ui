@@ -23,27 +23,21 @@
   </div>
 
   <div class="panel__field">
-    <span class="panel__label sc-text-caption-regular">{{ 'templates.form.channel' | translate }}</span>
-    <div class="panel__type-group" role="radiogroup">
-      @for (option of typeOptions; track option) {
-        <button
-          type="button"
-          role="radio"
-          [attr.aria-checked]="type() === option"
-          class="panel__type sc-text-caption-regular"
-          [class.panel__type--active]="type() === option"
-          (click)="setType(option)"
-        >
-          @if (option === 'chat') {
-            <sc-icon [name]="chatIcon" size="inherit" />
-            <span>{{ 'templates.type.chat' | translate }}</span>
-          } @else {
-            <sc-icon [name]="emailIcon" size="inherit" />
-            <span>{{ 'templates.type.email' | translate }}</span>
-          }
-        </button>
-      }
-    </div>
+    <span class="panel__label sc-text-caption-regular" [id]="channelLabelId">{{ 'templates.form.channel' | translate }}</span>
+    <!-- Botones segmentados (`sc-selectbutton`): se elige el valor del campo (DD-113). -->
+    <sc-selectbutton
+      [options]="typeOptions()"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="type()"
+      (valueChange)="onTypeChange($event)"
+      [ariaLabelledBy]="channelLabelId"
+    >
+      <ng-template #item let-option>
+        <sc-icon [name]="option.icon" size="inherit" />
+        <span>{{ option.label }}</span>
+      </ng-template>
+    </sc-selectbutton>
   </div>
 
   <div class="panel__field">

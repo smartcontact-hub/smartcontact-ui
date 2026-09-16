@@ -99,6 +99,7 @@
             "outputPath": {
               "base": "dist/sc-docs"
             },
+            "deployUrl": "/",
             "index": "projects/sc-docs/src/index.html",
             "polyfills": [
               "zone.js"
@@ -182,6 +183,7 @@
           "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/supervisor",
+            "deployUrl": "/",
             "index": "projects/supervisor/src/index.html",
             "browser": "projects/supervisor/src/main.ts",
             "polyfills": [
@@ -264,6 +266,7 @@
           "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/agent",
+            "deployUrl": "/",
             "index": "projects/agent/src/index.html",
             "browser": "projects/agent/src/main.ts",
             "polyfills": [
@@ -338,6 +341,7 @@
           "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/cuscare",
+            "deployUrl": "/",
             "index": "projects/cuscare/src/index.html",
             "browser": "projects/cuscare/src/main.ts",
             "polyfills": [
@@ -412,6 +416,7 @@
           "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/agent-mini",
+            "deployUrl": "/",
             "index": "projects/agent-mini/src/index.html",
             "browser": "projects/agent-mini/src/main.ts",
             "polyfills": [

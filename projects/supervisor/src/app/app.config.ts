@@ -17,6 +17,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { appRoutes } from './app.routes';
+import { ViewTransitionTracker } from './core/services/view-transition-tracker.service';
 import { FichaVariantService } from './features/admin/comparar/ficha-variant.service';
 
 /**
@@ -37,7 +38,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       appRoutes,
       withComponentInputBinding(),
-      withViewTransitions(),
+      withViewTransitions({
+        onViewTransitionCreated: ({ transition }) => inject(ViewTransitionTracker).track(transition),
+      }),
       // Preload every lazy-loaded chunk in the background once the app
       // shell is interactive. Initial paint stays fast (only the shell
       // is on the critical path), but every subsequent navigation is
@@ -56,7 +59,8 @@ export const appConfig: ApplicationConfig = {
     // → sigue ganando a ambos.
     provideSmartContactUi({
       license: PRIMEUI_LICENSE,
-      ripple: true,
+      // Sin `ripple`, como primeng.dev (su valor por defecto es apagado). Venía encendido desde la
+      // migración de la plataforma y pintaba una mancha al 10 % en cada clic de pestaña o botón.
       theme: {
         prefix: 'p',
         darkModeSelector: '.sc-dark',

@@ -26,26 +26,9 @@ code {
   font-size: 0.9em;
 }
 
+/* La tira la pinta el tema (`p-tabs`). Aquí solo el aire alrededor. */
 .uso-tabs {
-  display: flex;
-  gap: var(--sc-spacing-0-5);
   margin: var(--sc-spacing-1) 0 var(--sc-spacing-1-5);
-
-  button {
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-1);
-    border: 1px solid var(--sc-border, #d4d4d8);
-    border-radius: var(--sc-radius-md, 6px);
-    background: transparent;
-    color: var(--sc-text);
-    cursor: pointer;
-    font: inherit;
-
-    &.is-active {
-      background: var(--sc-surface-selected, var(--sc-color-blue-100, #dbeafe));
-      border-color: var(--sc-text-link, #2563eb);
-      color: var(--sc-text-link, #2563eb);
-    }
-  }
 }
 
 .uso-error {

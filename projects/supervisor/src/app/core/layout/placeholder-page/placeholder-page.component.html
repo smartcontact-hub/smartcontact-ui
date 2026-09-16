@@ -1,21 +1,8 @@
 <div class="placeholder">
-  <div class="placeholder__icon" aria-hidden="true">
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M2 20h20" />
-      <path d="M14 12v.01" />
-      <path d="M10 12v.01" />
-      <path d="M2 20V8a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v12" />
-    </svg>
+  <!-- Decorativa: el título ya dice lo que pasa. Ancho y alto puestos para que no salte al cargar. -->
+  <img class="placeholder__art" [src]="artSrc()" alt="" width="700" height="525" />
+  <div class="placeholder__text">
+    <h2 class="placeholder__title sc-text-h3-semibold">{{ 'placeholder.title' | translate }}</h2>
+    <p class="placeholder__subtitle sc-text-body-regular">{{ 'placeholder.subtitle' | translate }}</p>
   </div>
-  <h2 class="placeholder__title sc-text-body-semibold">{{ 'placeholder.title' | translate }}</h2>
-  <p class="placeholder__subtitle sc-text-caption-regular">{{ 'placeholder.subtitle' | translate }}</p>
 </div>

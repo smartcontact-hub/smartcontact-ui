@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TabsModule } from 'primeng/tabs';
 
 /** Pantalla del Supervisor capturada (subset que necesita la galería). */
 interface UsageScreen {
@@ -30,7 +31,7 @@ interface UsageStatus {
  */
 @Component({
   selector: 'app-usage-gallery',
-  imports: [TranslatePipe],
+  imports: [TabsModule, TranslatePipe],
   templateUrl: './usage-gallery.component.html',
   styleUrl: './usage-gallery.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,6 +73,11 @@ export class UsageGalleryComponent {
 
   protected src(file: string | undefined): string {
     return `/usage/${file ?? ''}`;
+  }
+
+  /** `p-tabs` avisa con el `value` de la pestaña (`string | number | undefined`). */
+  protected onViewChange(value: string | number | undefined): void {
+    if (value === 'component' || value === 'screen') this.setView(value);
   }
 
   protected setView(v: 'component' | 'screen'): void {

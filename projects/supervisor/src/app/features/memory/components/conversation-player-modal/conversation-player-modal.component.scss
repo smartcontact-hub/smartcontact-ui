@@ -102,62 +102,27 @@
 
 /* ─── Tabs ─────────────────────────────────────────────────── */
 
+/* La tira la pinta el tema (`p-tabs`). La raya inferior tiene que llegar a los dos lados del
+ * modal y pasar por debajo de las acciones: la dibuja esta fila con una sombra interior de 1 px,
+ * que cae en la MISMA fila de píxeles que la raya de la tira y del mismo color, así que se ve
+ * una sola. El relleno de la izquierda más el de la pestaña (15,75 + 15,75) deja el texto de la
+ * primera a 31,5, alineado con el cuerpo de abajo, como antes. */
 .player-tabs {
   display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-1-75);
-  padding: 0 var(--sc-spacing-2-25);
-  border-bottom: 1px solid var(--sc-border-default);
+  align-items: stretch;
+  padding-inline: var(--sc-spacing-1-125) var(--sc-spacing-2-25);
+  box-shadow: inset 0 -1px 0 var(--sc-border-default);
 }
 
-.player-tabs__btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-875);
-  padding: var(--sc-spacing-1-125) 0;
-  border: 0;
-  background: transparent;
-  color: var(--sc-text-secondary);
-  cursor: pointer;
-  transition: color 200ms ease-out;
-
-  &:hover {
-    color: var(--sc-text-primary);
-  }
-  &:focus-visible {
-    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-    outline-offset: var(--sc-focus-ring-offset);
-    border-radius: var(--sc-radius-100);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -1px;
-    height: 2px;
-    border-radius: var(--sc-radius-full);
-    background: transparent;
-    transition: background-color 200ms ease-out;
-  }
-
-  &--active {
-    color: var(--sc-text-heading);
-
-    &::after {
-      background: var(--sc-bg-primary);
-    }
-  }
+.player-tabs__tabs {
+  flex: 1;
+  min-width: 0;
 }
 
 .player-tabs__actions {
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
-  padding: var(--sc-spacing-0-875) 0;
 }
 
 /* ─── Tab body ─────────────────────────────────────────────── */

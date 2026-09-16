@@ -156,6 +156,11 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () => import('./select/select-demo.component').then((m) => m.SelectDemoComponent),
   },
   {
+    path: 'selectbutton',
+    label: 'SelectButton',
+    load: () => import('./selectbutton/selectbutton-demo.component').then((m) => m.SelectButtonDemoComponent),
+  },
+  {
     path: 'toggleswitch',
     label: 'ToggleSwitch',
     load: () => import('./toggleswitch/toggleswitch-demo.component').then((m) => m.ToggleSwitchDemoComponent),

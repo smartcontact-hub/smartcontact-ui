@@ -47,6 +47,11 @@
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/correction-capture.mjs",
             "timeout": 5
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/primeng-doc-guard.mjs",
+            "timeout": 5
           }
         ]
       }

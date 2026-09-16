@@ -47,13 +47,14 @@
     min-width: 0;
   }
 
+  /* Solo la raya de abajo del borde de la Toolbar, del mismo color que la de la tira; `nowrap`
+     porque en la cabecera no se parte: a menos ancho sube encima de las pestañas. */
   &__actions {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-75);
     flex: none;
+    flex-wrap: nowrap;
     padding-inline-start: var(--sc-spacing-1);
-    border-bottom: 1px solid var(--sc-border-default);
+    border-width: 0 0 1px;
+    border-color: var(--sc-border-default);
   }
 
   &__live {
@@ -74,6 +75,21 @@
     display: flex;
     align-items: center;
   }
+
+  /* Caja del `sc-divider` vertical (su host es `display: contents`): a la altura de un botón pequeño y
+     no de toda la cabecera, así la raya no toca la de abajo. El aire a los lados es el margen del tema. */
+  &__sep {
+    display: flex;
+    align-self: center;
+    block-size: var(--sc-spacing-1-25);
+  }
+}
+
+/* Vacío del modo pared: centrado en el sitio de las cajas. */
+.dashboard-empty {
+  flex: 1;
+  display: grid;
+  place-items: center;
 }
 
 /* Barra de cuánto falta para el siguiente monitor del carrusel, sobre el borde inferior de la
@@ -200,8 +216,6 @@ sc-dashboard-widget-card.cdk-drag-placeholder {
 }
 
 .wall-bar {
-  display: block;
-
   &__start,
   &__controls {
     display: inline-flex;
@@ -430,7 +444,7 @@ sc-dashboard-widget-card.cdk-drag-placeholder {
       flex: 1 1 100%;
       justify-content: flex-end;
       padding-inline-start: 0;
-      border-bottom: 0;
+      border-bottom-width: 0;
     }
   }
 
@@ -458,7 +472,8 @@ sc-dashboard-widget-card.cdk-drag-placeholder {
   .dashboard-head {
     &__updated,
     &__carousel,
-    &__wall {
+    &__wall,
+    &__sep {
       display: none;
     }
 

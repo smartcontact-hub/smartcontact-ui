@@ -20,12 +20,6 @@
  * migración a `sc-datatable`: el envoltorio de la tabla es ahora `.table-card`,
  * el chrome compartido de `styles/_sc-list-table.scss`. */
 
-.rules-divider {
-  border: 0;
-  border-top: 1px solid var(--sc-border-default);
-  margin: var(--sc-spacing-1-75) 0 var(--sc-spacing-1-5);
-}
-
 /* Empty state migrado a <sc-empty-state> (S62, backlog #64). */
 
 /* B4: el bloque `.rules-table` (tabla, cabecera, filas, celdas, hover y los

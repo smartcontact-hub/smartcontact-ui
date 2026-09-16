@@ -133,6 +133,30 @@ Examples:
 
 ---
 
+### Componentes de primeng.dev: el nativo tal cual, adaptado con tokens (DD-113)
+
+Regla de Rafa (2026-09-15): «parto de la idea de que lo vas a hacer tal cual sale en la docu». Cuando pide un
+componente de primeng.dev (lo pase con enlace o no):
+
+1. **Lee la documentación ENTERA antes de escribir**: `node tools/primeng-doc.mjs <componente>`. Junta las
+   secciones con su código (la web las pinta con JavaScript y un fetch no las trae), la API de la versión
+   INSTALADA con lo obsoleto marcado, el movimiento de su hoja y nuestra capa sobre Aura. Con un enlace en el
+   mensaje, `scripts/hooks/primeng-doc-guard.mjs` lo recuerda.
+2. **Mételo tal cual**: la plantilla, las props y el comportamiento y el movimiento del ejemplo que toque. La
+   capa nuestra va en tokens (`sc-preset`), no en CSS que cambie cómo se comporta. Nada que el ejemplo no tenga
+   (contadores, iconos, envoltorios) sin decir para qué sirve: lo que repite lo que ya se ve, sobra.
+3. **Mídelo contra primeng.dev** en el navegador: espaciado, estados y movimiento, antes de enseñarlo.
+4. **Un desvío se propone, no se cuela.** Si el nativo falla en nuestro contexto (un nombre accesible que no
+   llega, una medida que no casa), primero lo mínimo que lo arregle sin tocar su comportamiento (su propia API:
+   una entrada, `pt`). Ocultar, animar o transformar una pieza de PrimeNG lo para `audit:primeng-coupling` §F:
+   si de verdad hace falta, va a su lista con su porqué y se le dice a Rafa con la medida delante.
+
+Lo que la documentación NO dice y se ha medido aquí vive en DD-113 (el `aria-label` de la tira de `p-tabs` va
+por `[pt]`, el `aria-labelledby` de `p-selectbutton` por su entrada, un icono de fuente dentro de `p-tab`
+descoloca la raya).
+
+---
+
 ## UX de pantalla (al construir pantallas de app)
 
 Aplica al construir **pantallas** de las apps que consumen el DS (supervisor/agent/cuscare),
@@ -223,6 +247,9 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Una etiqueta de solo lectura (estado, severidad) | `sc-tag` | `sc-chip` (eso es lo que el usuario puede quitar: outline + ×) | `customs-catalog.md` §5 |
 | Pedir una contraseña | `sc-password` (ojo con teclado y nombre accesible) | `sc-inputtext type="password"`; un ojo pintado a mano | DD-110 |
 | Buscar dentro de una lista | `sc-search` | `sc-inputgroup` o `sc-inputtext` con un icono a mano | `customs-catalog.md` §5 |
+| Cambiar de colección en la misma pantalla (se vacían búsqueda y selección) | Pestañas `p-tabs` de primeng.dev con texto, como su ejemplo básico; el nombre de la tira por `[pt]="{ content: { 'aria-label': … } }"` | Botones con `role="tab"` a mano; `sc-selectbutton`; contador o icono que repiten lo que ya se ve | DD-113 |
+| Filtrar la misma lista o elegir un valor de un grupo corto que se ve entero | `sc-selectbutton` con `ariaLabelledBy` y opciones traducidas | Un `radiogroup` o botones con estado a mano; `p-tabs` | DD-113 |
+| Separar dos bloques con una línea | `sc-divider` | `<hr>`, un `div` de 1 px o un `border-top` entre hermanos | DD-113 |
 | Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco | Spinner centrado; datos que recolocan la página al llegar | UX 2 |
 | Un icono | `<sc-icon>` (Material Symbols) | Emojis; una segunda librería | UX 4 |
 | Borrar una entidad desde su ficha | `sc-form-danger-zone` + `sc-delete-entity-dialog` (el patrón de las nueve fichas que ya lo usan, ver `docs/inventory.md`) | `sc-confirmdialog` genérico; borrar sin confirmar | `docs/inventory.md` |

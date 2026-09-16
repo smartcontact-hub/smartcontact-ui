@@ -130,6 +130,7 @@ const COMPONENTS = [
   { route: 'search', tag: 'sc-search' },
   { route: 'sectioncard', tag: 'sc-section-card' },
   { route: 'select', tag: 'sc-select' },
+  { route: 'selectbutton', tag: 'sc-selectbutton' },
   { route: 'skeleton', tag: 'sc-skeleton' },
   { route: 'stickyformheader', tag: 'sc-sticky-form-header' },
   { route: 'tag', tag: 'sc-tag' },
