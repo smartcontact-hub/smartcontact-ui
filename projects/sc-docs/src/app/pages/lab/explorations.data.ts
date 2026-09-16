@@ -107,9 +107,9 @@ export const EXPLORATIONS: readonly Exploration[] = [
     title: 'Fichas de agente, grupo y usuario',
     version: {
       date: '2026-09-16',
-      behavior: '«Activo» solo significa sesión abierta, estados de solo lectura e iconos Rounded.',
-      href: 'https://ce21eafb.sc-supervisor.pages.dev/admin/agentes',
-      commit: '78c8cda2',
+      behavior: 'La ficha de grupo sigue al manual de Voice y guardar se queda en la ficha, como Contact Center.',
+      href: 'https://3332127b.sc-supervisor.pages.dev/admin/grupos/editar/3',
+      commit: 'de40e9c0',
     },
     objective: '¿Qué forma de ficha deja editar más rápido sin perder de vista el resto?',
     status: 'en-revision',
@@ -119,6 +119,12 @@ export const EXPLORATIONS: readonly Exploration[] = [
       href: 'https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e',
     },
     history: [
+      {
+        date: '2026-09-16',
+        behavior: '«Activo» solo significa sesión abierta, estados de solo lectura e iconos Rounded.',
+        href: 'https://ce21eafb.sc-supervisor.pages.dev/admin/agentes',
+        commit: '78c8cda2',
+      },
       {
         date: '2026-09-16',
         behavior: 'Listas con Servicios, WhatsApp, Email y Grabación; exportar solo lo seleccionado.',
