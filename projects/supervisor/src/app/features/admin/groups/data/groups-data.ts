@@ -40,6 +40,77 @@ export const RING_ALL_OPTIONS: readonly number[] = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 /** Niveles de reparto por agente: hasta 5, como el prototipo. */
 export const LEVEL_OPTIONS: readonly number[] = [1, 2, 3, 4, 5];
 
+/* ── Anuncios y avanzado: los campos del grupo en el manual de Voice (p. 10 y 13-14) ── */
+
+/** Tamaño de cola: un máximo fijo, o tantas conversaciones por agente conectado. */
+export type QueueSizeType = 'fixed' | 'per_agent';
+/** De dónde sale una locución: ninguna, texto a voz o un archivo .wav. */
+export type AudioSource = 'none' | 'tts' | 'file';
+export type CardOpening = 'new_window' | 'embedded';
+
+export const VOICE_OPTIONS: readonly string[] = ['Femenina · español', 'Masculina · español', 'Femenina · inglés', 'Masculina · inglés'];
+
+export interface GroupAnnouncements {
+  /** Nombre del .wav; null = la música por defecto. */
+  readonly holdMusicFile: string | null;
+  readonly queueIdSource: AudioSource;
+  readonly queueIdFile: string | null;
+  readonly nextInLineSource: AudioSource;
+  readonly nextInLineFile: string | null;
+  readonly voice: string;
+  readonly periodicFile: string | null;
+  readonly periodicEverySec: number;
+  readonly announceAvgWait: boolean;
+  readonly avgWaitSec: number;
+  readonly announcePosition: boolean;
+  readonly announceWaitToAgent: boolean;
+}
+
+export interface GroupAdvanced {
+  readonly queueSizeType: QueueSizeType;
+  readonly queueSize: number;
+  readonly transferSec: number;
+  readonly maxQueueWaitSec: number;
+  /** Tiempo administrativo entre llamadas (solo teléfono). */
+  readonly wrapUpSec: number;
+  /** Tiempo para medir el % de servicio. */
+  readonly serviceLevelSec: number;
+  /** Desbordar llamadas al siguiente nodo si no hay agentes activos (solo teléfono). */
+  readonly overflowWhenNoAgents: boolean;
+  readonly cardOpening: CardOpening;
+  readonly cardUrl: string;
+  readonly cardHeight: number;
+}
+
+/** Con lo que nace un grupo: los valores por defecto de Configuración del AED > Grupos. */
+export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
+  holdMusicFile: null,
+  queueIdSource: 'none',
+  queueIdFile: null,
+  nextInLineSource: 'none',
+  nextInLineFile: null,
+  voice: 'Femenina · español',
+  periodicFile: null,
+  periodicEverySec: 30,
+  announceAvgWait: false,
+  avgWaitSec: 60,
+  announcePosition: false,
+  announceWaitToAgent: false,
+};
+
+export const DEFAULT_ADVANCED: GroupAdvanced = {
+  queueSizeType: 'fixed',
+  queueSize: 50,
+  transferSec: 30,
+  maxQueueWaitSec: 120,
+  wrapUpSec: 5,
+  serviceLevelSec: 20,
+  overflowWhenNoAgents: false,
+  cardOpening: 'embedded',
+  cardUrl: '',
+  cardHeight: 400,
+};
+
 export const CHAT_STRATEGIES: readonly string[] = [
   'Rotativa (por turnos)',
   'Menos chats activos',
@@ -60,8 +131,11 @@ export interface Group {
   readonly subStrategy?: string;
   readonly ringAllAgents?: number;
   readonly services?: readonly string[];
-  /** Tipificaciones del repositorio. Con alguna, el agente tiene que tipificar antes de cerrar (manual de Voice, p. 14). */
-  readonly typifications?: readonly number[];
+  /** La tipificación del grupo: una categoría de `Repositorios > Tipificaciones`. Con ella, el agente tiene que
+   *  tipificar antes de cerrar (manual de Voice, p. 14). */
+  readonly typification?: string;
+  readonly announcements?: GroupAnnouncements;
+  readonly advanced?: GroupAdvanced;
   readonly schedules?: readonly number[];
   /** Draft flag — set on duplicated entities until the user saves (DD#294 in the React prototype). */
 }
@@ -96,7 +170,7 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'ACD outbound',
     phone: '918371548',
     priority: 'Baja',
-    typifications: [1, 3],
+    typification: 'Consulta',
     channels: ['phone'],
     strategy: 'Balanceada',
     services: ['Campañas salientes'],
@@ -148,7 +222,7 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Grupo demo',
     phone: '917945449',
     priority: 'Baja',
-    typifications: [1, 3],
+    typification: 'Consulta',
     channels: ['phone'],
     strategy: 'Balanceada',
     services: ['Demo interno'],
@@ -159,7 +233,7 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Grupo pedidos',
     phone: '917945449',
     priority: 'Baja',
-    typifications: [1, 3],
+    typification: 'Consulta',
     channels: ['phone'],
     strategy: 'Niveles',
     subStrategy: 'Balanceada',
@@ -197,7 +271,7 @@ export const GROUPS_SEED: readonly Group[] = [
     name: 'Reclamaciones',
     phone: '918371548',
     priority: 'Alta',
-    typifications: [1, 3],
+    typification: 'Consulta',
     channels: ['phone', 'chat', 'whatsapp'],
     strategy: 'Balanceada',
     chatStrategy: 'Rotativa (por turnos)',

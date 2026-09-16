@@ -50,3 +50,30 @@
 .channel-list__select {
   inline-size: var(--sc-spacing-12-5);
 }
+
+/* Locuciones: el nombre a la izquierda y, en la misma vertical, de dónde sale y su archivo. */
+.audio-list {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--sc-spacing-1-5);
+  row-gap: var(--sc-spacing-0-75);
+  margin-block-end: var(--sc-spacing-1-25);
+}
+
+.audio-list__control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  min-width: 0;
+}
+
+.audio-list__file,
+.audio-list__hint {
+  color: var(--sc-text-secondary);
+}
+
+.audio-list__number {
+  inline-size: var(--sc-spacing-5);
+}

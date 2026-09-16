@@ -20,6 +20,7 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { injectLangChange } from '@core/utils/lang-change';
 import { IllustratedAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
@@ -29,6 +30,10 @@ import {
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
   ScMultiSelectComponent as MultiSelectComponent,
+  ScInputNumberComponent as InputNumberComponent,
+  ScSelectButtonComponent as SelectButtonComponent,
+  ScTextareaComponent as TextareaComponent,
+  ScToggleSwitchComponent as ToggleSwitchComponent,
   ScDialogComponent as DialogComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
@@ -45,8 +50,17 @@ import {
   PRIORITY_LABEL_KEYS,
   RING_ALL_OPTIONS,
   SUB_STRATEGIES,
+  DEFAULT_ADVANCED,
+  DEFAULT_ANNOUNCEMENTS,
+  GroupAdvanced,
+  GroupAnnouncements,
+  VOICE_OPTIONS,
 } from '../data/groups-data';
 import { TipificacionesStore } from '@features/admin/repositories/instances/tipificaciones';
+import { AgendasStore } from '@features/admin/repositories/instances/agendas';
+import { TemplatesStore } from '@features/admin/templates/state/templates.store';
+import type { TemplateType } from '@features/admin/templates/data/templates-data';
+import { LabelsStore } from '@features/admin/labels/state/labels.store';
 import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
@@ -70,7 +84,12 @@ interface FormState {
   name: string;
   phone: string;
   priority: GroupPriority;
-  typificationIds: ReadonlySet<number>;
+  typification: string | null;
+  scheduleIds: ReadonlySet<number>;
+  templateIds: ReadonlySet<number>;
+  labelIds: ReadonlySet<number>;
+  announcements: GroupAnnouncements;
+  advanced: GroupAdvanced;
   channels: ReadonlySet<GroupChannel>;
   strategy: string;
   subStrategy: string;
@@ -96,6 +115,10 @@ interface FormState {
     IllustratedAvatarComponent,
     InputTextComponent,
     MultiSelectComponent,
+    InputNumberComponent,
+    SelectButtonComponent,
+    TextareaComponent,
+    ToggleSwitchComponent,
     DialogComponent,
     SectionCardComponent,
     SelectComponent,
@@ -113,8 +136,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly crossTab = inject(CrossTabLockService);
   private readonly tipificacionesStore = inject(TipificacionesStore);
+  private readonly agendasStore = inject(AgendasStore);
+  private readonly templatesStore = inject(TemplatesStore);
+  private readonly labelsStore = inject(LabelsStore);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
    * fuera la banda sticky-form-header; identidad → breadcrumb + campos del
@@ -137,6 +164,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly chatStrategies = CHAT_STRATEGIES;
   protected readonly subStrategies = SUB_STRATEGIES;
   protected readonly ringAllOptions = RING_ALL_OPTIONS;
+  protected readonly voiceOptions = VOICE_OPTIONS;
 
   /**
    * Section index for the form shell. In `edit` mode, Identity drops to
@@ -162,10 +190,28 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
     // ficha del panel ya da su contexto siempre visible.
     // COMPARAR: en una sola página (`b`) el índice sigue el orden de la página.
+    // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
+    const resources: FormNavSection = {
+      id: 'group-section-resources',
+      labelKey: 'groups.form.section.resources',
+      icon: 'library_books',
+    };
+    // Solo con teléfono: todo lo que suena en la llamada (manual de Voice, p. 13-14).
+    const announcements: FormNavSection = {
+      id: 'group-section-announcements',
+      labelKey: 'groups.form.section.announcements',
+      icon: 'volume_up',
+    };
+    const advanced: FormNavSection = {
+      id: 'group-section-advanced',
+      labelKey: 'groups.form.section.advanced',
+      icon: 'tune',
+    };
+    const middle = this.hasPhone() ? [resources, announcements, advanced] : [resources, advanced];
     if (this.mode() === 'edit' && this.variants.variant() !== 'b') {
-      return [channels, identity];
+      return [channels, ...middle, identity];
     }
-    return [identity, channels];
+    return [identity, channels, ...middle];
   });
 
   protected readonly activeSection = signal<string>('group-section-identity');
@@ -342,16 +388,69 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return [...phones].sort();
   });
 
-  protected readonly typificationOptions = computed(() =>
-    this.tipificacionesStore.items().map((t) => ({ label: t.name, value: t.id })),
-  );
-  protected readonly typificationValue = computed(() => [...this.form().typificationIds]);
+  /** Una tipificación por grupo: cada categoría del repositorio es un conjunto (el agente elige dentro al cerrar). */
+  protected readonly typificationOptions = computed(() => {
+    this.lang();
+    const counts = new Map<string, number>();
+    for (const t of this.tipificacionesStore.items()) counts.set(t.category, (counts.get(t.category) ?? 0) + 1);
+    return [
+      { label: this.translate.instant('groups.form.fields.typification_none'), value: null },
+      ...[...counts].sort(([a], [b]) => a.localeCompare(b, 'es')).map(([category, count]) => ({
+        label: this.translate.instant('groups.form.fields.typification_option', { name: category, count }),
+        value: category,
+      })),
+    ];
+  });
 
-  protected typificationNames(): string {
-    const ids = this.form().typificationIds;
-    const names = this.tipificacionesStore.items().filter((t) => ids.has(t.id)).map((t) => t.name);
-    return names.length > 0 ? names.join(', ') : this.translate.instant('groups.form.fields.typifications_none');
+  protected typificationName(): string {
+    return this.form().typification ?? this.translate.instant('groups.form.fields.typification_none');
   }
+
+  protected readonly scheduleOptions = computed(() => this.agendasStore.items().map((a) => ({ label: a.name, value: a.id })));
+  protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
+  protected readonly labelOptions = computed(() => this.labelsStore.labels().map((l) => ({ label: l.name, value: l.id })));
+  protected readonly labelValue = computed(() => [...this.form().labelIds]);
+  private templatesOf(type: TemplateType) {
+    return this.templatesStore.templates().filter((t) => t.type === type);
+  }
+  protected readonly chatTemplateOptions = computed(() => this.templatesOf('chat').map((t) => ({ label: t.title, value: t.id })));
+  protected readonly emailTemplateOptions = computed(() => this.templatesOf('email').map((t) => ({ label: t.title, value: t.id })));
+  protected readonly chatTemplateValue = computed(() => this.templatesOf('chat').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
+  protected readonly emailTemplateValue = computed(() => this.templatesOf('email').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
+  protected readonly hasEmail = computed(() => this.form().channels.has('email'));
+
+  protected namesOf(options: readonly { label: string; value: number }[], ids: readonly number[]): string {
+    const names = options.filter((o) => ids.includes(o.value)).map((o) => o.label);
+    return names.length > 0 ? names.join(', ') : this.translate.instant('compare.board.none');
+  }
+
+  /** El código que se pega en la web para el chat de este grupo (manual de Voice, «Script de chat»). */
+  protected readonly chatScript = computed(
+    () => `<script src="https://chat.smart-contact.com/widget.js" data-group="${this.editingId() ?? 'nuevo'}" async></script>`,
+  );
+
+  protected readonly queueSizeOptions = computed(() => {
+    this.lang();
+    return [
+    { label: this.translate.instant('groups.form.advanced.queue_fixed'), value: 'fixed' },
+    { label: this.translate.instant('groups.form.advanced.queue_per_agent'), value: 'per_agent' },
+    ];
+  });
+  protected readonly cardOpeningOptions = computed(() => {
+    this.lang();
+    return [
+    { label: this.translate.instant('groups.form.advanced.card_embedded'), value: 'embedded' },
+    { label: this.translate.instant('groups.form.advanced.card_new_window'), value: 'new_window' },
+    ];
+  });
+  protected readonly audioSourceOptions = computed(() => {
+    this.lang();
+    return [
+    { label: this.translate.instant('groups.form.announcements.source_none'), value: 'none' },
+    { label: this.translate.instant('groups.form.announcements.source_tts'), value: 'tts' },
+    { label: this.translate.instant('groups.form.announcements.source_file'), value: 'file' },
+    ];
+  });
 
   /** La estrategia de teléfono con lo que la completa, para el resumen. */
   protected phoneStrategySummary(): string {
@@ -395,7 +494,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         name: group.name,
         phone: group.phone,
         priority: group.priority,
-        typificationIds: new Set(group.typifications ?? []),
+        typification: group.typification ?? null,
+        scheduleIds: new Set(group.schedules ?? []),
+        templateIds: new Set(group.templates ?? []),
+        labelIds: new Set(group.labels ?? []),
+        announcements: { ...DEFAULT_ANNOUNCEMENTS, ...group.announcements },
+        advanced: { ...DEFAULT_ADVANCED, ...group.advanced },
         channels: new Set(group.channels),
         strategy: group.strategy,
         subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,
@@ -434,7 +538,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         phone: '',
         // Resto del payload copiado.
         priority: source.priority,
-        typificationIds: new Set(source.typifications ?? []),
+        typification: source.typification ?? null,
+        scheduleIds: new Set(source.schedules ?? []),
+        templateIds: new Set(source.templates ?? []),
+        labelIds: new Set(source.labels ?? []),
+        announcements: { ...DEFAULT_ANNOUNCEMENTS, ...source.announcements },
+        advanced: { ...DEFAULT_ADVANCED, ...source.advanced },
         channels: new Set(source.channels),
         strategy: source.strategy,
         subStrategy: source.subStrategy ?? SUB_STRATEGIES[0]!,
@@ -487,8 +596,52 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (typeof value === 'string') this.updateField('chatStrategy', value);
   }
 
-  protected onTypificationsChange(value: unknown): void {
-    if (Array.isArray(value)) this.updateField('typificationIds', new Set(value as number[]));
+  protected onTypificationChange(value: unknown): void {
+    this.updateField('typification', typeof value === 'string' ? value : null);
+  }
+
+  protected onIdsChange(key: 'scheduleIds' | 'labelIds', value: unknown): void {
+    if (Array.isArray(value)) this.updateField(key, new Set(value as number[]));
+  }
+
+  /** Sustituye las plantillas de UN tipo sin tocar las del otro. */
+  protected onTemplatesChange(type: TemplateType, value: unknown): void {
+    if (!Array.isArray(value)) return;
+    const ofType = new Set(this.templatesOf(type).map((t) => t.id));
+    this.form.update((f) => ({
+      ...f,
+      templateIds: new Set([...[...f.templateIds].filter((id) => !ofType.has(id)), ...(value as number[])]),
+    }));
+  }
+
+  protected setAnnouncement<K extends keyof GroupAnnouncements>(key: K, value: GroupAnnouncements[K]): void {
+    this.form.update((f) => ({ ...f, announcements: { ...f.announcements, [key]: value } }));
+  }
+
+  protected setAdvanced<K extends keyof GroupAdvanced>(key: K, value: GroupAdvanced[K]): void {
+    this.form.update((f) => ({ ...f, advanced: { ...f.advanced, [key]: value } }));
+  }
+
+  /** Números: un campo vaciado no se guarda como 0, se queda en su valor anterior. */
+  protected setAdvancedNumber(key: 'queueSize' | 'transferSec' | 'maxQueueWaitSec' | 'wrapUpSec' | 'serviceLevelSec' | 'cardHeight', value: number | null): void {
+    if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
+  }
+
+  protected setAnnouncementNumber(key: 'periodicEverySec' | 'avgWaitSec', value: number | null): void {
+    if (value !== null && Number.isFinite(value) && value >= 0) this.setAnnouncement(key, value);
+  }
+
+  /** El .wav elegido: de momento solo se guarda su nombre (demo). */
+  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'periodicFile', event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) this.setAnnouncement(key, file.name);
+    input.value = '';
+  }
+
+  protected copyChatScript(): void {
+    void navigator.clipboard?.writeText(this.chatScript());
+    this.messages.add({ severity: 'success', summary: this.translate.instant('groups.form.advanced.script_copied'), life: TOAST_LIFE.success });
   }
 
   protected onSubStrategyChange(value: unknown): void {
@@ -554,7 +707,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         name: f.name.trim(),
         phone: f.phone.trim(),
         priority: f.priority,
-        typifications: [...f.typificationIds],
+        typification: f.typification ?? undefined,
+        schedules: [...f.scheduleIds],
+        templates: [...f.templateIds],
+        labels: [...f.labelIds],
+        announcements: f.announcements,
+        advanced: f.advanced,
         channels: Array.from(f.channels),
         strategy: f.strategy,
         subStrategy: this.isNiveles() ? f.subStrategy : undefined,
@@ -637,7 +795,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       name: '',
       phone: '',
       priority: 'Baja',
-      typificationIds: new Set<number>(),
+      typification: null,
+      scheduleIds: new Set<number>(),
+      templateIds: new Set<number>(),
+      labelIds: new Set<number>(),
+      announcements: { ...DEFAULT_ANNOUNCEMENTS },
+      advanced: { ...DEFAULT_ADVANCED },
       channels: new Set<GroupChannel>(['phone']),
       strategy: PHONE_STRATEGIES[0]!,
       subStrategy: SUB_STRATEGIES[0]!,
