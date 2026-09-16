@@ -65,9 +65,15 @@ for (const ruta of RUTAS) {
 
     const h = await page.evaluate(
       ({ escala, huecoMinimo }): Hallazgos => {
-        const FUENTE = '"Material Symbols Outlined Variable"';
-        if (!document.fonts.check(`14px ${FUENTE}`)) {
-          throw new Error('La fuente de iconos no ha cargado: measureText mediría la de reserva.');
+        /* El nombre de la familia que declara `material-symbols.css`. `document.fonts.check` NO sirve para saber si
+         * carga: con una familia que no existe devuelve `true`. Así pasó el 2026-09-16: los iconos pasaron a Rounded,
+         * aquí seguía «Outlined», y `measureText` midió el nombre del icono como texto con la fuente de reserva
+         * (huecos de −42px). Ahora se exige una cara con ESE nombre y ya cargada. */
+        const FAMILIA = 'Material Symbols Rounded Variable';
+        const FUENTE = `"${FAMILIA}"`;
+        const cargada = [...document.fonts].some((f) => f.family.replace(/"/g, '') === FAMILIA && f.status === 'loaded');
+        if (!cargada) {
+          throw new Error(`La fuente de iconos «${FAMILIA}» no está declarada o no ha cargado: measureText mediría la de reserva.`);
         }
         const ctx = document.createElement('canvas').getContext('2d')!;
         const ruta = (el: Element): string => {

@@ -1,6 +1,10 @@
-/* Como el catálogo de los devs (ui.smart-contact.com): `@material-symbols/svg-400/rounded`, es decir Rounded, peso
- * 400 y el dibujo del tamaño óptico 48, que es de donde salen esos SVG. Medido contra sus SVG el 2026-09-16: esa
- * combinación casa en 7 de 8 glifos (≈95 %). Siempre Material Symbols. */
+/* La regla de iconos del DS (2026-09-16): Material Symbols Rounded, peso 400, relleno 0, grado 0 y tamaño óptico 24,
+ * a cualquier tamaño. Los nombres son los de Material; la única excepción son los logos de marca (WhatsApp…).
+ *
+ * El estilo es el del catálogo de los devs (ui.smart-contact.com, `@material-symbols/svg-400/rounded`). El tamaño
+ * óptico NO: sus SVG salen del dibujo de 48, y una lámina a 1x (2026-09-16) midió que a 14 y 16 px, los tamaños de
+ * esta app, ese dibujo deja el trazo en un píxel suave y sobre el azul del sidebar se apaga. El de 24 se lee como
+ * antes. La librería de Figma (Smart-Contact-Icons) lleva el mismo dibujo de 24, así que Figma y código coinciden. */
 @import '@fontsource-variable/material-symbols-rounded/full.css';
 
 .sc-icon,
@@ -19,7 +23,7 @@
   font-feature-settings: 'liga';
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   /* Calibración del glifo. Los tamaños de icono del DS (DD-24: el companion mide
    * su font-size; `--sc-icon-size-*`) vienen del Kit, que dibuja con PrimeIcons, y
    * PrimeIcons llena su caja: un icono de 12 pinta 12. Material Symbols deja aire
@@ -51,5 +55,5 @@
 }
 
 .sc-icon-font--filled::before {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }

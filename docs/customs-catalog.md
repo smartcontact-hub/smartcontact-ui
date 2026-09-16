@@ -452,14 +452,14 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 ### 2.6 `<sc-icon>` — único proveedor de iconos (Material Symbols)
 
 - **Figma**: el Kit Pro pinta iconos con PrimeIcons / la librería `Smart-Contact-Icons` (10.610 glifos a SCALE). No modela un "componente icono" con API.
-- **SC**: `<sc-icon>` (paquete `@smartcontact-hub/icons`) es la **única** API de icono del DS. Renderiza un glifo de la variable font **Material Symbols Outlined** por ligadura de texto (`{{ name() }}`), no SVG. Migración Lucide→Material cerrada (DD-9): ya **no queda `lucide-angular`** en el código.
-  - **API**: `name` (string snake_case Material, p.ej. `delete`, `progress_activity`, requerido) · `size` (number px de diseño, default `--sc-icon-size`; alimenta el eje `opsz`) · `fill` (bool, eje FILL 0→1) · `weight` (number, eje wght 100→700) · `spin` (bool — gira el glifo en bucle para spinners; keyframe + `prefers-reduced-motion` encapsulados en el componente).
+- **SC**: `<sc-icon>` (paquete `@smartcontact-hub/icons`) es la **única** API de icono del DS. Renderiza un glifo de la variable font **Material Symbols Rounded** (peso 400, relleno 0, grado 0, tamaño óptico 24 a cualquier tamaño; regla del 2026-09-16, razonada en `material-symbols.css`) por ligadura de texto (`{{ name() }}`), no SVG. Migración Lucide→Material cerrada (DD-9): ya **no queda `lucide-angular`** en el código.
+  - **API**: `name` (string snake_case Material, p.ej. `delete`, `progress_activity`, requerido) · `size` (number px de diseño, default `--sc-icon-size`; NO mueve el eje `opsz`, que va a 24 salvo `opticalSize` explícito) · `fill` (bool, eje FILL 0→1) · `weight` (number, eje wght 100→700) · `spin` (bool — gira el glifo en bucle para spinners; keyframe + `prefers-reduced-motion` encapsulados en el componente).
   - **Spinner**: el patrón `Loader2` de Lucide se reemplaza por `<sc-icon name="progress_activity" [spin]="true">`. Sin dependencia de animación en el consumer.
   - **Ejes variables**: `font-variation-settings` computado expone `FILL / wght / GRAD / opsz`. Font cargada en el `index.html` de cada app consumidora (rango `opsz 20..48, wght 100..700, FILL 0..1, GRAD -50..200`, `display=block`).
   - **Escala de tamaño**: el `size` numérico consume la escala TS `SC_ICON_SIZE_*` (mirror de `--sc-icon-size-*`). Nota DD-13: `--sc-icon-size-*` está hoy en el *stream de tipo* (redondo, rem), ver §4.2.
-- **Excepción — iconos de marca**: glifos sin equivalente Material (p.ej. **GitHub**) se resuelven con un `<svg>` inline `fill="currentColor"` en el consumer, NO con `<sc-icon>`.
+- **Excepción — iconos de marca**: logos sin equivalente Material (p.ej. **WhatsApp**, **GitHub**) se resuelven con un `<svg>` inline `fill="currentColor"` en el consumer, NO con `<sc-icon>`.
 - **Para qué**: un solo proveedor de iconos (Material) = un solo eje de escala, theming por `color`/variación, y cero dependencias SVG en bundle. Alineado con la librería `Smart-Contact-Icons` del Kit Pro (mismo set Material).
-- **Escalas Material (gotcha)**: Material Outlined se ve ~1.6× más grande que PrimeIcons al mismo px ("a sangre"); al portar tamaños viejos, bajar a ~60-65% del px. En Figma, un glifo Material que "se esquina" = ponerlo a SCALE.
+- **Escalas Material (gotcha)**: Material Symbols se ve ~1.6× más grande que PrimeIcons al mismo px ("a sangre"); al portar tamaños viejos, bajar a ~60-65% del px. En Figma, un glifo Material que "se esquina" = ponerlo a SCALE.
 
 ### 2.7 Variante `[flush]` — lenguaje visual low-chrome (flush)
 
