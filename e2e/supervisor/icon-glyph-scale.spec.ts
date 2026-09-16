@@ -55,7 +55,7 @@ const RUTAS = [
   'admin/repositorios',
 ];
 
-type Hallazgos = { medidos: number; sinCalibrar: string[]; rozan: string[] };
+type Hallazgos = { medidos: number; sinCalibrar: string[]; rozan: string[]; cortados: string[] };
 
 for (const ruta of RUTAS) {
   test(`iconos calibrados y sin rozar su texto · /${ruta}`, async ({ page }) => {
@@ -83,7 +83,7 @@ for (const ruta of RUTAS) {
           }
           return partes.join(' > ');
         };
-        const out: Hallazgos = { medidos: 0, sinCalibrar: [], rozan: [] };
+        const out: Hallazgos = { medidos: 0, sinCalibrar: [], rozan: [], cortados: [] };
 
         document.querySelectorAll('.sc-icon, .sc-icon-font').forEach((el) => {
           const pseudo = el.classList.contains('sc-icon-font') ? '::before' : null;
@@ -105,6 +105,23 @@ for (const ruta of RUTAS) {
           const tinta = (m.actualBoundingBoxLeft + m.actualBoundingBoxRight) * s;
           const cx = caja.x + caja.width / 2;
           const cy = caja.y + caja.height / 2;
+
+          /* Ningún glifo recortado (Rafa, 2026-09-16: «sería una cutrez»). Con 24/18 un glifo ancho dibuja fuera de su
+           * caja (`groups` 2,3px por lado a 14px); se admite solo si ningún padre con `overflow` lo corta. Un icono con
+           * el CENTRO fuera de su padre está oculto (menú plegado, fila fuera del scroll): eso no es recortar el glifo.
+           * Probado en rojo forzando `overflow: hidden` en `sc-icon`: 16 cortados en /admin/grupos/crear. */
+          const alto = (m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) * s;
+          for (let a = el.parentElement; a && a !== document.documentElement; a = a.parentElement) {
+            const acs = getComputedStyle(a);
+            if (acs.overflowX === 'visible' && acs.overflowY === 'visible') continue;
+            const pr = a.getBoundingClientRect();
+            if (cx < pr.left || cx > pr.right || cy < pr.top || cy > pr.bottom) break;
+            const corte = Math.max(
+              acs.overflowX === 'visible' ? 0 : Math.max(pr.left - (cx - tinta / 2), cx + tinta / 2 - pr.right),
+              acs.overflowY === 'visible' ? 0 : Math.max(pr.top - (cy - alto / 2), cy + alto / 2 - pr.bottom),
+            );
+            if (corte > 0.25) out.cortados.push(`${ruta(el)} "${glifo}" ${cs.fontSize} cortado ${corte.toFixed(2)}px por ${ruta(a)}`);
+          }
 
           /* El texto de su línea, dentro del control que lo contiene (o 4 niveles). */
           let cont: Element = el;
@@ -136,5 +153,6 @@ for (const ruta of RUTAS) {
     expect(h.medidos, 'no se midió ningún icono: el selector o la página cambiaron').toBeGreaterThan(0);
     expect(h.sinCalibrar, 'iconos Material sin la calibración del glifo (se verán enanos)').toEqual([]);
     expect(h.rozan, `iconos a menos de ${HUECO_MINIMO}px de su texto`).toEqual([]);
+    expect(h.cortados, 'iconos con el glifo recortado por un padre con overflow').toEqual([]);
   });
 }
