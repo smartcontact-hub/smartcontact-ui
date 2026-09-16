@@ -24,17 +24,24 @@ export interface ExplorationVersion {
   readonly commit?: string;
 }
 
+/**
+ * Versión, Objetivo y Estado son obligatorios (Rafa, 2026-09-16): se enseñan arriba de cada tarjeta, y así ninguna
+ * exploración puede publicarse sin decir cuál es la vigente, qué pregunta responde y en qué quedó.
+ */
 export interface Exploration {
   readonly id: string;
   readonly title: string;
+  /** La versión vigente: la que hay que abrir hoy. */
+  readonly version: ExplorationVersion;
   /** Qué pregunta responde, en una frase. */
-  readonly question: string;
+  readonly objective: string;
   readonly status: ExplorationStatus;
   /** Matiz del estado, si hace falta. */
   readonly statusNote?: string;
+  /** El enlace de la rama, que cambia con cada push. */
   readonly live: ExplorationLink;
-  /** De la más nueva a la más vieja. */
-  readonly versions: readonly ExplorationVersion[];
+  /** Las versiones anteriores, de la más nueva a la más vieja. */
+  readonly history: readonly ExplorationVersion[];
   readonly figma?: readonly ExplorationLink[];
 }
 
@@ -48,20 +55,20 @@ export const EXPLORATIONS: readonly Exploration[] = [
   {
     id: 'sidebar',
     title: 'Sidebar del Supervisor (SISMAC-4340)',
-    question: '¿Qué se abre y qué se cierra al moverse por el menú?',
+    version: {
+      date: '2026-09-16',
+      behavior: 'No se cierra nada y recuerda lo abierto, también plegado y al recargar.',
+      href: 'https://b360eb07.sc-supervisor.pages.dev/solo-sidebar',
+      commit: '3c3e76c1',
+    },
+    objective: '¿Qué se abre y qué se cierra al moverse por el menú?',
     status: 'oficial',
     statusNote: 'La regla «no se cierra nada» es la oficial; todavía vive en su rama de comparación.',
     live: {
       label: 'comparar-sidebar.sc-supervisor.pages.dev/solo-sidebar',
       href: 'https://comparar-sidebar.sc-supervisor.pages.dev/solo-sidebar',
     },
-    versions: [
-      {
-        date: '2026-09-16',
-        behavior: 'No se cierra nada y recuerda lo abierto, también plegado y al recargar.',
-        href: 'https://b360eb07.sc-supervisor.pages.dev/solo-sidebar',
-        commit: '3c3e76c1',
-      },
+    history: [
       {
         date: '2026-09-16',
         behavior: 'Abrir una categoría no cierra otras, pero navegar y plegar sí.',
@@ -98,20 +105,20 @@ export const EXPLORATIONS: readonly Exploration[] = [
   {
     id: 'fichas',
     title: 'Fichas de agente, grupo y usuario',
-    question: '¿Qué forma de ficha deja editar más rápido sin perder de vista el resto?',
+    version: {
+      date: '2026-09-16',
+      behavior: '«Activo» solo significa sesión abierta, estados de solo lectura e iconos Rounded.',
+      href: 'https://ce21eafb.sc-supervisor.pages.dev/admin/agentes',
+      commit: '78c8cda2',
+    },
+    objective: '¿Qué forma de ficha deja editar más rápido sin perder de vista el resto?',
     status: 'en-revision',
     statusNote: 'Producto elige entre tres formas: una página, resumen con panel lateral y pestañas.',
     live: {
       label: 'comparar-fichas.sc-supervisor.pages.dev',
       href: 'https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e',
     },
-    versions: [
-      {
-        date: '2026-09-16',
-        behavior: '«Activo» solo significa sesión abierta, estados de solo lectura e iconos Rounded.',
-        href: 'https://ce21eafb.sc-supervisor.pages.dev/admin/agentes',
-        commit: '78c8cda2',
-      },
+    history: [
       {
         date: '2026-09-16',
         behavior: 'Listas con Servicios, WhatsApp, Email y Grabación; exportar solo lo seleccionado.',
@@ -135,20 +142,20 @@ export const EXPLORATIONS: readonly Exploration[] = [
   {
     id: 'tablas',
     title: 'Tablas con scroll',
-    question: '¿Hace scroll la página con la cabecera fija, o la tabla por dentro?',
+    version: {
+      date: '2026-09-14',
+      behavior: 'B, la elegida: la tabla hace scroll dentro, con cabecera fija y lista virtual.',
+      href: 'https://e2aadce5.sc-supervisor.pages.dev/admin/agentes',
+      commit: '1f8f2d54',
+    },
+    objective: '¿Hace scroll la página con la cabecera fija, o la tabla por dentro?',
     status: 'oficial',
     statusNote: 'Decidido en DD-95: la tabla hace scroll por dentro. La cabecera fija queda archivada.',
     live: {
       label: 'comparar-tabla-scroll.sc-supervisor.pages.dev',
       href: 'https://comparar-tabla-scroll.sc-supervisor.pages.dev/admin/agentes',
     },
-    versions: [
-      {
-        date: '2026-09-14',
-        behavior: 'B, la elegida: la tabla hace scroll dentro, con cabecera fija y lista virtual.',
-        href: 'https://e2aadce5.sc-supervisor.pages.dev/admin/agentes',
-        commit: '1f8f2d54',
-      },
+    history: [
       {
         date: '2026-09-14',
         behavior: 'A, archivada: hace scroll la página, con buscador y cabecera fijos arriba.',

@@ -74,39 +74,61 @@
     <div class="versioned-list">
       @for (ex of explorations; track ex.id) {
         <article class="versioned" [attr.aria-labelledby]="'expl-' + ex.id">
-          <div class="versioned__head">
-            <h4 [id]="'expl-' + ex.id" class="versioned__title sc-text-h3-semibold">{{ ex.title }}</h4>
-            <sc-tag [severity]="statusSeverity(ex.status)" [value]="statusLabel[ex.status]" />
-          </div>
-          <p class="versioned__question sc-text-body-regular">{{ ex.question }}</p>
-          @if (ex.statusNote) {
-            <p class="versioned__note sc-text-caption-regular">{{ ex.statusNote }}</p>
-          }
+          <h4 [id]="'expl-' + ex.id" class="versioned__title sc-text-h3-semibold">{{ ex.title }}</h4>
+
+          <!-- Los tres datos que tiene que decir toda exploración, rotulados y arriba (Rafa, 2026-09-16). -->
+          <dl class="versioned__facts">
+            <div class="fact">
+              <dt class="fact__label sc-text-caption-semibold">Versión</dt>
+              <dd class="fact__value">
+                <a class="version__link version__link--stacked" [href]="ex.version.href" target="_blank" rel="noopener">
+                  <span class="version__date sc-text-caption-regular">{{ ex.version.date }}</span>
+                  <span class="version__behavior sc-text-body-regular">{{ ex.version.behavior }} <span aria-hidden="true">↗</span></span>
+                </a>
+              </dd>
+            </div>
+            <div class="fact">
+              <dt class="fact__label sc-text-caption-semibold">Objetivo</dt>
+              <dd class="fact__value sc-text-body-regular">{{ ex.objective }}</dd>
+            </div>
+            <div class="fact">
+              <dt class="fact__label sc-text-caption-semibold">Estado</dt>
+              <dd class="fact__value">
+                <sc-tag [severity]="statusSeverity(ex.status)" [value]="statusLabel[ex.status]" />
+                @if (ex.statusNote) {
+                  <p class="versioned__note sc-text-caption-regular">{{ ex.statusNote }}</p>
+                }
+              </dd>
+            </div>
+          </dl>
+
           <a class="expl__open sc-text-body-semibold" [href]="ex.live.href" target="_blank" rel="noopener">
-            Abrir la versión viva <span aria-hidden="true">↗</span>
+            Abrir la rama viva <span aria-hidden="true">↗</span>
           </a>
 
-          <p class="versioned__label sc-text-caption-semibold">Versiones</p>
-          <ol class="versions">
-            @for (v of ex.versions; track v.href) {
-              <li class="version">
-                <a class="version__link" [href]="v.href" target="_blank" rel="noopener">
-                  <span class="version__date sc-text-caption-regular">{{ v.date }}</span>
-                  <span class="version__behavior sc-text-body-regular">{{ v.behavior }} <span aria-hidden="true">↗</span></span>
-                </a>
-                @if (v.tag || v.commit) {
-                  <span class="version__meta">
-                    @if (v.tag) {
-                      <code class="sc-text-caption-regular">{{ v.tag }}</code>
-                    }
-                    @if (v.commit) {
-                      <code class="sc-text-caption-regular">{{ v.commit }}</code>
-                    }
-                  </span>
-                }
-              </li>
-            }
-          </ol>
+          @if (ex.history.length) {
+            <p class="versioned__label sc-text-caption-semibold">Versiones anteriores</p>
+            <ol class="versions">
+              @for (v of ex.history; track v.href) {
+                <li class="version">
+                  <a class="version__link" [href]="v.href" target="_blank" rel="noopener">
+                    <span class="version__date sc-text-caption-regular">{{ v.date }}</span>
+                    <span class="version__behavior sc-text-body-regular">{{ v.behavior }} <span aria-hidden="true">↗</span></span>
+                  </a>
+                  @if (v.tag || v.commit) {
+                    <span class="version__meta">
+                      @if (v.tag) {
+                        <code class="sc-text-caption-regular">{{ v.tag }}</code>
+                      }
+                      @if (v.commit) {
+                        <code class="sc-text-caption-regular">{{ v.commit }}</code>
+                      }
+                    </span>
+                  }
+                </li>
+              }
+            </ol>
+          }
 
           @if (ex.figma?.length) {
             <p class="versioned__label sc-text-caption-semibold">Figma</p>
