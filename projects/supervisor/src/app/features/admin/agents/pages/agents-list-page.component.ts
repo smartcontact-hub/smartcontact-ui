@@ -18,11 +18,12 @@ import { UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
+import { ChannelIconComponent, IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
   BulkEditFieldOption,
+  type BulkEditMatch,
   ScBulkEditMenuComponent as BulkEditMenuComponent,
   type ScColumnCellContext,
   type ScColumnDef,
@@ -39,7 +40,6 @@ import {
 import {
   AGENT_TYPE_LABEL_KEYS,
   Agent,
-  AgentChannel,
   AgentType,
   PRESENCE_LABEL_KEYS,
   PresenceStatus,
@@ -59,7 +59,8 @@ interface PendingBulkEdit {
 /* v2 — schema bumped from a Set<string> to an ordered string[] when the
  * ColumnSelector gained drag-to-reorder + per-column defaultVisible.
  * Older `_v1` caches no longer parse and are silently ignored. */
-const COLUMN_PREF_KEY = 'sc-agents-columns-v2';
+/* v3 (2026-09-16): columnas nuevas (Email, Grabación). Una lista guardada no las conoce y no saldrían nunca. */
+const COLUMN_PREF_KEY = 'sc-agents-columns-v3';
 const AGENT_TYPES: readonly AgentType[] = ['normal', 'cuscare', 'cuscare_carrier', 'admin_cuscare'];
 const PRESENCE_STATES: readonly PresenceStatus[] = [
   'disponible',
@@ -74,6 +75,7 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
   imports: [
     BulkEditMenuComponent,
     ButtonComponent,
+    ChannelIconComponent,
     TagComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
@@ -116,7 +118,7 @@ export class AgentsListPageComponent {
       if (!link.active) continue;
       for (const c of link.channels) set.add(c);
     }
-    const order: readonly Channel[] = ['phone', 'chat', 'email'];
+    const order: readonly Channel[] = ['phone', 'chat', 'whatsapp', 'email'];
     return order.filter((c) => set.has(c));
   }
 
@@ -137,9 +139,6 @@ export class AgentsListPageComponent {
   protected readonly plusIcon = 'add';
   protected readonly chevronDownIcon = 'expand_more';
   protected readonly checkIcon = 'check';
-  protected readonly phoneIcon = 'call';
-  protected readonly chatIcon = 'chat_bubble';
-  protected readonly emailIcon = 'mail';
   protected readonly emptyIcon = 'headphones';
 
   protected readonly typeKeys = AGENT_TYPE_LABEL_KEYS;
@@ -176,10 +175,14 @@ export class AgentsListPageComponent {
       },
       { key: 'name', label: this.translate.instant('agents.table.name'), locked: true },
       { key: 'extension', label: this.translate.instant('agents.table.extension') },
+      /* Oculta de inicio: con ella la tabla pide 1496 px y a 1440 se desplazaría de lado (DD-100). Sin
+       * «Grabación» seguirían sobrando 45 px, así que es la única de las dos que lo evita. */
+      { key: 'email', label: this.translate.instant('agents.table.email'), defaultVisible: false },
       { key: 'channels', label: this.translate.instant('agents.table.channels') },
       { key: 'type', label: this.translate.instant('agents.table.type') },
       { key: 'presence', label: this.translate.instant('agents.table.presence') },
       { key: 'status', label: this.translate.instant('agents.table.status') },
+      { key: 'recording', label: this.translate.instant('agents.table.recording') },
       { key: 'groups', label: this.translate.instant('agents.table.groups') },
     ];
   });
@@ -197,16 +200,18 @@ export class AgentsListPageComponent {
    *
    * El `field` de cada columna es EL MISMO `key` que usa el `columnDefs` del
    * `sc-column-selector`: es lo que casa `[visibleColumns]` con el selector
-   * (y lo que hay persistido en `sc-agents-columns-v2`).
+   * (y lo que hay persistido en `sc-agents-columns-v3`).
    */
   private readonly codeTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('codeTpl');
   private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('nameTpl');
   private readonly extensionTpl =
     viewChild<TemplateRef<ScColumnCellContext<Agent>>>('extensionTpl');
+  private readonly emailTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('emailTpl');
   private readonly channelsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('channelsTpl');
   private readonly typeTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('typeTpl');
   private readonly presenceTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('presenceTpl');
   private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('statusTpl');
+  private readonly recordingTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('recordingTpl');
   private readonly groupsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('groupsTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => {
@@ -235,10 +240,19 @@ export class AgentsListPageComponent {
         width: '8rem',
       },
       {
+        field: 'email',
+        header: this.translate.instant('agents.table.email'),
+        sortable: true,
+        cellTemplate: this.emailTpl(),
+        /* El más largo de los 500 de demo, «penelope.hathaway@company.com», mide 237 px (2026-09-16). */
+        width: '16.75rem',
+      },
+      {
         field: 'channels',
         header: this.translate.instant('agents.table.channels'),
         cellTemplate: this.channelsTpl(),
-        width: '6.5rem',
+        /* Cuatro glifos de 16 px con su hueco (teléfono, chat, WhatsApp, email). */
+        width: '7.75rem',
       },
       {
         // `field: 'type'` no existe en `Agent` (la propiedad es `agentType`), así
@@ -265,6 +279,14 @@ export class AgentsListPageComponent {
         sortable: true,
         cellTemplate: this.statusTpl(),
         width: '7.5rem',
+      },
+      {
+        field: 'recording',
+        header: this.translate.instant('agents.table.recording'),
+        sortable: true,
+        cellTemplate: this.recordingTpl(),
+        /* La cabecera en francés, «Enregistrement», con su flecha de orden. */
+        width: '9.5rem',
       },
       {
         field: 'groups',
@@ -334,6 +356,10 @@ export class AgentsListPageComponent {
         return a.agentType.localeCompare(b.agentType);
       case 'status':
         return a.status.localeCompare(b.status);
+      case 'email':
+        return (a.email ?? '').localeCompare(b.email ?? '');
+      case 'recording':
+        return Number(a.permissions.recording) - Number(b.permissions.recording);
       default:
         return 0;
     }
@@ -363,12 +389,6 @@ export class AgentsListPageComponent {
     if (!op) return null;
     return { fieldLabel: op.fieldLabel, newValueLabel: op.valueLabel };
   });
-
-  protected channelIcon(channel: AgentChannel) {
-    if (channel === 'phone') return this.phoneIcon;
-    if (channel === 'chat') return this.chatIcon;
-    return this.emailIcon;
-  }
 
   /**
    * Clave i18n del tipo de agente. Es un método y no un indexado en plantilla
@@ -492,6 +512,25 @@ export class AgentsListPageComponent {
     if (targets.length > 0) this.deleteTarget.set(targets);
   }
 
+  /** «de Inactivo»: la selección pasa a ser todos los agentes que están en Inactivo. */
+  protected onBulkMatch(match: BulkEditMatch): void {
+    const valueOf = (a: Agent): string => {
+      switch (match.fieldKey as AgentBulkField) {
+        case 'status':
+          return a.status;
+        case 'presenceStatus':
+          return a.presenceStatus ?? '';
+        case 'agentType':
+          return a.agentType;
+        case 'recording':
+          return String(a.permissions.recording);
+        default:
+          return '';
+      }
+    };
+    this.selectedIds.set(new Set(this.agents().filter((a) => valueOf(a) === match.value).map((a) => a.id)));
+  }
+
   protected onBulkEditCommit(commit: BulkEditCommit): void {
     const field = commit.fieldKey as AgentBulkField;
     const value: unknown = field === 'recording' ? commit.value === 'true' : commit.value;
@@ -580,6 +619,7 @@ export class AgentsListPageComponent {
       this.translate.instant('agents.export.type'),
       this.translate.instant('agents.export.email'),
       this.translate.instant('agents.export.status'),
+      this.translate.instant('agents.export.recording'),
       this.translate.instant('agents.export.groups'),
     ];
     const rows = visibleRows.map((a) => [
@@ -589,6 +629,7 @@ export class AgentsListPageComponent {
       this.translate.instant(this.typeKeys[a.agentType]),
       a.email ?? '',
       this.translate.instant(`agents.status.${a.status}`),
+      this.translate.instant(a.permissions.recording ? 'common.yes' : 'common.no'),
       this.groupsForAgent(a.id)
         .map((g) => g.name)
         .join(', '),

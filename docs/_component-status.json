@@ -86,10 +86,12 @@
       "kind": "STANDARD",
       "primengBase": "primeng/button",
       "cva": false,
-      "inputs": 1,
+      "inputs": 2,
       "api": [
         "buttonLabel",
-        "commit"
+        "commit",
+        "match",
+        "matchable"
       ],
       "nested": [
         "sc-select"
@@ -587,7 +589,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 4
     },
     {
       "name": "impact-preview-dialog",

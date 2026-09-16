@@ -17,12 +17,13 @@ import { UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
+import { ChannelIconComponent, IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
   BulkEditFieldOption,
+  type BulkEditMatch,
   ScBulkEditMenuComponent as BulkEditMenuComponent,
   type ScColumnCellContext,
   ColumnDef,
@@ -58,13 +59,15 @@ interface PendingBulkEdit {
 
 /* v2 — bumped when ColumnSelector schema changed (set → ordered array)
  * and when `code` started shipping hidden by default. */
-const COLUMN_PREF_KEY = 'sc-groups-columns-v2';
+/* v3 (2026-09-16): columna nueva (Servicios). Una lista guardada no la conoce y no saldría nunca. */
+const COLUMN_PREF_KEY = 'sc-groups-columns-v3';
 
 @Component({
   selector: 'sc-groups-list-page',
   imports: [
     BulkEditMenuComponent,
     ButtonComponent,
+    ChannelIconComponent,
     TagComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
@@ -116,10 +119,11 @@ export class GroupsListPageComponent {
       .filter((a): a is { id: number; name: string; active: boolean } => a !== null);
   }
 
+  protected servicesForGroup(group: Group): readonly { id: number; name: string; active: boolean }[] {
+    return (group.services ?? []).map((name, id) => ({ id, name, active: true }));
+  }
+
   protected readonly plusIcon = 'add';
-  protected readonly phoneIcon = 'call';
-  protected readonly chatIcon = 'chat_bubble';
-  protected readonly emailIcon = 'mail';
   protected readonly emptyIcon = 'group';
 
   protected readonly priorityKeys = PRIORITY_LABEL_KEYS;
@@ -146,6 +150,7 @@ export class GroupsListPageComponent {
       { key: 'channels', label: this.translate.instant('groups.table.channels') },
       { key: 'priority', label: this.translate.instant('groups.table.priority') },
       { key: 'strategy', label: this.translate.instant('groups.table.strategy') },
+      { key: 'services', label: this.translate.instant('groups.table.services') },
       { key: 'agents', label: this.translate.instant('groups.table.agents') },
     ];
   });
@@ -212,6 +217,7 @@ export class GroupsListPageComponent {
   private readonly channelsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('channelsTpl');
   private readonly priorityTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('priorityTpl');
   private readonly strategyTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('strategyTpl');
+  private readonly servicesTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('servicesTpl');
   private readonly agentsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('agentsTpl');
 
   /** `sortable` en las MISMAS cinco que llevaban `scSortable`. La columna del menú de fila la añade la lista. */
@@ -242,7 +248,8 @@ export class GroupsListPageComponent {
         field: 'channels',
         header: this.translate.instant('groups.table.channels'),
         cellTemplate: this.channelsTpl(),
-        width: '6.5rem',
+        /* Cuatro glifos de 16 px con su hueco (teléfono, chat, WhatsApp, email). */
+        width: '7.75rem',
       },
       {
         field: 'priority',
@@ -257,6 +264,12 @@ export class GroupsListPageComponent {
         sortable: true,
         cellTemplate: this.strategyTpl(),
         width: '9.5rem',
+      },
+      {
+        field: 'services',
+        header: this.translate.instant('groups.table.services'),
+        cellTemplate: this.servicesTpl(),
+        width: '6.5rem',
       },
       {
         field: 'agents',
@@ -299,12 +312,6 @@ export class GroupsListPageComponent {
     if (!op) return null;
     return { fieldLabel: op.fieldLabel, newValueLabel: op.valueLabel };
   });
-
-  protected channelIcon(channel: GroupChannel) {
-    if (channel === 'phone') return this.phoneIcon;
-    if (channel === 'chat') return this.chatIcon;
-    return this.emailIcon;
-  }
 
   /* El contexto de un `<ng-template>` de celda es `any`, así que indexar
    * `Record<GroupChannel, string>` desde la plantilla —como hacía el `@for`,
@@ -415,6 +422,15 @@ export class GroupsListPageComponent {
     if (targets.length > 0) this.deleteTarget.set(targets);
   }
 
+  /** «de Baja»: la selección pasa a ser todos los grupos que están en Baja. */
+  protected onBulkMatch(match: BulkEditMatch): void {
+    const key = match.fieldKey as 'priority' | 'strategy';
+    const ids = this.groups()
+      .filter((g) => g[key] === match.value)
+      .map((g) => g.id);
+    this.selectedIds.set(new Set(ids));
+  }
+
   protected onBulkEditCommit(commit: BulkEditCommit): void {
     this.pendingBulkEdit.set({
       field: commit.fieldKey as GroupBulkField,
@@ -500,6 +516,7 @@ export class GroupsListPageComponent {
       this.translate.instant('groups.export.priority'),
       this.translate.instant('groups.export.strategy'),
       this.translate.instant('groups.export.channels'),
+      this.translate.instant('groups.export.services'),
       this.translate.instant('groups.export.agent_count'),
     ];
     const rows = visibleRows.map((g) => [
@@ -509,6 +526,7 @@ export class GroupsListPageComponent {
       this.translate.instant(this.priorityKeys[g.priority]),
       g.strategy,
       g.channels.map((c) => this.translate.instant(this.channelKeys[c])).join(', '),
+      (g.services ?? []).join(', '),
       this.assignedCountForGroup(g.id),
     ]);
     this.xlsx.export({

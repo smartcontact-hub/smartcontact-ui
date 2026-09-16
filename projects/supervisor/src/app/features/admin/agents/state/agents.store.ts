@@ -21,8 +21,9 @@ export class AgentsStore {
     storageKey: 'sc-agents',
     versionKey: 'sc-agents-v',
     /** Bumped to 2 when the slim Agent type was expanded with the full schema; to 3 with the 500 demo
-     *  agents and Hollywood names (2026-09-14), so a browser with the old list loads the new one. */
-    currentVersion: 3,
+     *  agents and Hollywood names (2026-09-14), so a browser with the old list loads the new one; to 4 with
+     *  WhatsApp and an email for every agent. */
+    currentVersion: 4,
     defaults: AGENTS_SEED,
   });
 

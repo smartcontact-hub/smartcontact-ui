@@ -50,8 +50,8 @@ const ACTIONS_FIELD = '__actions';
  *   - los datos (`rows`, ya en el orden por defecto) y las columnas con sus celdas (`columns`, con
  *     `cellTemplate`); `sortFn` si ordena por algo que no es un campo tal cual;
  *   - si busca (`searchPlaceholder` + `searchFn`, y `[(query)]` si necesita lo tecleado), si elige columnas
- *     (`columnChoices` + `columnStorageKey`) y si exporta (`exportable` → `(exportRequest)` con las filas en
- *     el orden visible);
+ *     (`columnChoices` + `columnStorageKey`) y si exporta (`exportable` → `(exportRequest)` con las filas
+ *     SELECCIONADAS en el orden visible; sin selección el botón se apaga);
  *   - el menú de cada fila (`rowMenu`), qué pasa al abrir una (`rowOpenable` → `(rowOpen)`) y sus clases
  *     propias (`rowClass`);
  *   - la selección (`selectable`, `[(selectedIds)]`, `bulkEntity`) y sus acciones en lote
@@ -303,7 +303,16 @@ export class ListPageComponent<T extends { readonly id: number | string }> {
     else (event.target as HTMLInputElement).blur();
   }
 
+  /* Exporta SOLO lo seleccionado; sin selección el botón se apaga y su rótulo dice por qué. */
+  protected readonly exportLabel = computed(() => {
+    this.lang();
+    const count = this.selectedRows().length;
+    if (count === 0) return this.translate.instant('labels.export_needs_selection');
+    return this.translate.instant(count === 1 ? 'labels.export_selected_one' : 'labels.export_selected', { count });
+  });
+
   protected onExport(): void {
-    this.exportRequest.emit(this.displayed());
+    const rows = this.selectedRows();
+    if (rows.length > 0) this.exportRequest.emit(rows);
   }
 }

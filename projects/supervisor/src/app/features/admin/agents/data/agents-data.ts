@@ -14,7 +14,7 @@ export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
  * canonical type lives in `@features/admin/services/group-agent-links.types`
  * — both unions are structurally identical.
  */
-export type AgentChannel = 'phone' | 'chat' | 'email';
+export type AgentChannel = 'phone' | 'chat' | 'whatsapp' | 'email';
 
 export type AgentType = 'normal' | 'cuscare' | 'cuscare_carrier' | 'admin_cuscare';
 export const AGENT_TYPES: readonly AgentType[] = [
@@ -401,4 +401,18 @@ const GENERATED_AGENTS: readonly Agent[] = Array.from({ length: TOTAL_AGENTES_DE
   };
 });
 
-export const AGENTS_SEED: readonly Agent[] = [...BASE_AGENTS, ...GENERATED_AGENTS];
+/** Email de demo sacado del nombre («Penélope Cruz» → `penelope.cruz@company.com`), para que ninguno se repita. */
+function demoEmail(name: string): string {
+  const local = name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '.')
+    .replace(/^\.|\.$/g, '');
+  return `${local}@company.com`;
+}
+
+export const AGENTS_SEED: readonly Agent[] = [
+  ...BASE_AGENTS.map((a) => ({ ...a, email: a.email ?? demoEmail(a.name) })),
+  ...GENERATED_AGENTS.map((a) => ({ ...a, email: demoEmail(a.name) })),
+];

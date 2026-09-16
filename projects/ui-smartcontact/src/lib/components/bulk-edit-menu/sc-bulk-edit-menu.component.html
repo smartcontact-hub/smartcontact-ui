@@ -13,6 +13,22 @@
     />
   </span>
 
+  @if (matchable()) {
+    <span class="bulk-edit__pair">
+      <span class="bulk-edit__lead">{{ 'sc.bulkEditMenu.from' | translate }}</span>
+      <sc-select
+        class="bulk-edit__select"
+        size="sm"
+        optionLabel="label"
+        optionValue="value"
+        [options]="fromOptions()"
+        [value]="fromValue()"
+        (valueChange)="onFromValueChange($event)"
+        name="bulk-from"
+      />
+    </span>
+  }
+
   <span class="bulk-edit__pair">
     <span class="bulk-edit__lead">{{ 'sc.bulkEditMenu.to' | translate }}</span>
     <sc-select

@@ -38,7 +38,7 @@ export interface GroupAgentLink {
 
 /**
  * Deja una lista de canales en su forma canónica: sin repetidos y siempre en el
- * mismo orden (`phone` → `chat` → `email`).
+ * mismo orden (`phone` → `chat` → `whatsapp` → `email`).
  *
  * Estaba duplicada palabra por palabra en `group-assignment-table` y
  * `agent-channel-table`, las dos tablas que editan estos enlaces desde los dos
@@ -51,7 +51,7 @@ export interface GroupAgentLink {
  */
 export function canonicalizeChannels(channels: readonly Channel[]): readonly Channel[] {
   const set = new Set(channels);
-  const order: readonly Channel[] = ['phone', 'chat', 'email'];
+  const order: readonly Channel[] = ['phone', 'chat', 'whatsapp', 'email'];
 
   return order.filter((c) => set.has(c));
 }

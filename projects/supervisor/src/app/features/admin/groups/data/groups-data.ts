@@ -1,9 +1,9 @@
 export type GroupPriority = 'Baja' | 'Media' | 'Alta' | 'Máxima';
-export type GroupChannel = 'phone' | 'chat' | 'email';
+export type GroupChannel = 'phone' | 'chat' | 'whatsapp' | 'email';
 export type CapacityType = 'fixed' | 'variable';
 
 export const GROUP_PRIORITIES: readonly GroupPriority[] = ['Baja', 'Media', 'Alta', 'Máxima'];
-export const GROUP_CHANNELS: readonly GroupChannel[] = ['phone', 'chat', 'email'];
+export const GROUP_CHANNELS: readonly GroupChannel[] = ['phone', 'chat', 'whatsapp', 'email'];
 
 export const PRIORITY_LABEL_KEYS: Readonly<Record<GroupPriority, string>> = {
   Baja: 'groups.priority.low',
@@ -15,6 +15,7 @@ export const PRIORITY_LABEL_KEYS: Readonly<Record<GroupPriority, string>> = {
 export const CHANNEL_LABEL_KEYS: Readonly<Record<GroupChannel, string>> = {
   phone: 'groups.channel.phone',
   chat: 'groups.channel.chat',
+  whatsapp: 'groups.channel.whatsapp',
   email: 'groups.channel.email',
 };
 
@@ -190,7 +191,7 @@ export const GROUPS_SEED: readonly Group[] = [
     phone: '918371548',
     priority: 'Máxima',
     typification: false,
-    channels: ['phone', 'chat', 'email'],
+    channels: ['phone', 'chat', 'whatsapp', 'email'],
     strategy: 'Balanceada',
     chatStrategy: 'Menos chats activos',
     labels: [3, 6],
@@ -205,7 +206,7 @@ export const GROUPS_SEED: readonly Group[] = [
     phone: '918371548',
     priority: 'Alta',
     typification: true,
-    channels: ['phone', 'chat'],
+    channels: ['phone', 'chat', 'whatsapp'],
     strategy: 'Balanceada',
     chatStrategy: 'Rotativa (por turnos)',
     labels: [4, 10],
@@ -220,7 +221,7 @@ export const GROUPS_SEED: readonly Group[] = [
     phone: '917945449',
     priority: 'Máxima',
     typification: false,
-    channels: ['phone', 'chat'],
+    channels: ['phone', 'chat', 'whatsapp'],
     strategy: 'Lineal',
     chatStrategy: 'Menos chats activos',
     services: ['Soporte taller', 'Averías'],

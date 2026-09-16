@@ -14,7 +14,7 @@
   [heading]="'sidebar.agents' | translate"
   [rows]="agents()"
   [columns]="columns()"
-  tableMinWidth="66rem"
+  tableMinWidth="93.5rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'agents.search_placeholder' | translate"
@@ -41,7 +41,7 @@
   />
 
   <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (commit)="onBulkEditCommit($event)" />
+    <sc-bulk-edit-menu matchable [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (match)="onBulkMatch($event)" (commit)="onBulkEditCommit($event)" />
     <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
@@ -83,6 +83,14 @@
   </span>
 </ng-template>
 
+<ng-template #emailTpl let-agent>
+  @if (agent.email) {
+    <span class="cell">{{ agent.email }}</span>
+  } @else {
+    <span class="cell cell--empty">—</span>
+  }
+</ng-template>
+
 <ng-template #channelsTpl let-agent>
   <span class="sc-channel-row">
     @for (channel of channelsForAgent(agent.id); track channel) {
@@ -91,7 +99,7 @@
         [attr.data-channel]="channel"
         [attr.aria-label]="'agents.channel.' + channel | translate"
       >
-        <sc-icon [name]="channelIcon(channel)" [size]="14" />
+        <sc-channel-icon [channel]="channel" />
       </span>
     }
   </span>
@@ -128,6 +136,10 @@
     [severity]="agent.status === 'active' ? 'success' : 'secondary'"
     [value]="'agents.status.' + agent.status | translate"
   />
+</ng-template>
+
+<ng-template #recordingTpl let-agent>
+  <span class="cell">{{ (agent.permissions.recording ? 'common.yes' : 'common.no') | translate }}</span>
 </ng-template>
 
 <ng-template #groupsTpl let-agent>
