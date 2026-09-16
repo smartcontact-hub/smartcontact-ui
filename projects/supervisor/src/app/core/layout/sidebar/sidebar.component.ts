@@ -71,13 +71,18 @@ export class SidebarComponent {
   private readonly allItems = NAV_SECTIONS.flatMap((section) => section.items);
 
   /** Active URL (after stripping /crear, /editar/:id and folding repo subpaths). */
-  protected readonly currentPath = toSignal(
+  private readonly routePath = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
       map((event) => normalizeRoutePath(event.urlAfterRedirects)),
       startWith(normalizeRoutePath(this.router.url)),
     ),
     { initialValue: normalizeRoutePath(this.router.url) },
+  );
+
+  /** En el escaparate la fila marcada la lleva el propio sidebar, sin salir de la página. */
+  protected readonly currentPath = computed(() =>
+    this.compare.showcase() ? this.compare.showcasePath() : this.routePath(),
   );
 
   /** Plegado en modo Slim, sin anclar: raíl con el primer nivel y los hijos en un panel flotante. */
@@ -207,6 +212,11 @@ export class SidebarComponent {
   protected readonly pinned = signal(false);
 
   protected async onNavigate(path: string): Promise<void> {
+    if (this.compare.showcase()) {
+      this.compare.showcasePath.set(path);
+      if (this.slimRail()) this.openKeys.set([]);
+      return;
+    }
     const drawer = this.compare.collapsedMode() === 'drawer';
     if (drawer) this.pinned.set(true);
     try {

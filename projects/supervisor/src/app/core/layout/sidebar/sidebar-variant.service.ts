@@ -45,6 +45,9 @@ function store(key: string, value: string): void {
 export class SidebarVariantService {
   readonly variant = signal<SidebarVariant>(initial('sidebar', VARIANT_KEY, ['figma', 'cyan'], 'figma') as SidebarVariant);
   readonly fixed = signal(initial('fijo', FIXED_KEY, ['1', '0'], '0') === '1');
+  /** Escaparate (`/solo-sidebar`): solo el sidebar sobre fondo negro, y navegar no sale de la página. */
+  readonly showcase = signal(false);
+  readonly showcasePath = signal('/informes');
   readonly collapsedMode = signal<SidebarCollapsedMode>(
     initial('plegado', MODE_KEY, ['drawer', 'slim'], 'drawer') as SidebarCollapsedMode,
   );
