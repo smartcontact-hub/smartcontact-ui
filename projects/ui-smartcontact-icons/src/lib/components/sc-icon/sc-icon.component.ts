@@ -24,8 +24,8 @@ export class ScIconComponent {
     /**
      * Tamaño tokenizado ('sm'|'md'|'lg'), numérico en px (px de diseño del
      * Kit, p. ej. SC_ICON_SIZE_DEFAULT = 14) o 'inherit'. El numérico aplica
-     * font-size inline y alimenta el eje opsz — reconciliación con el sc-icon
-     * del catálogo de diseño (ejes FILL/wght/opsz conservados).
+     * font-size inline. El eje opsz ya no lo sigue: va a 48 por defecto, el dibujo de los SVG del
+     * catálogo de los devs (`@material-symbols/svg-400/rounded`), a cualquier tamaño.
      *
      * 'inherit' (DD-24) → el icono *companion* hereda el font-size de su
      * componente (`font-size: 1em`): icono y texto riman por fuente y escalan
@@ -41,7 +41,7 @@ export class ScIconComponent {
 
     readonly grade = input<ScIconGrade>(0);
 
-    readonly opticalSize = input<ScIconOpticalSize>(24);
+    readonly opticalSize = input<ScIconOpticalSize>(48);
 
     readonly ariaLabel = input<string | null>(null);
 

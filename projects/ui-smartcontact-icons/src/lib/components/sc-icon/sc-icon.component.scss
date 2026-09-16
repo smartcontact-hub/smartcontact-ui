@@ -23,23 +23,13 @@
 
 /* DD-24 — companion: el icono hereda el font-size de su componente (rima por
    fuente con el texto, escala junto a él en sm/lg). El eje opsz cae al default
-   (24) en lugar de seguir un px pinneado. */
+   (48) en lugar de seguir un px pinneado. */
 .sc-icon--inherit {
     font-size: 1em;
 }
 
-/* opsz al default del Kit (14 = `SC_ICON_SIZE_DEFAULT` ↔ `--sc-icon-size`) en vez
-   de al 24 genérico: es el tamaño con el que se dibujó la iconografía de SC, así
-   que un icono heredado rima de trazo con uno pinneado. Decisión de marca
-   (2026-07-18) al converger las 3 apps a este componente.
-
-   El selector lleva `--optical-24` a propósito: solo pisa el opsz cuando está en
-   su DEFAULT. Si el consumidor pide `opticalSize` explícito, su clase es otra y
-   esta regla no casa — su elección manda. Los dos selectores además ganan por
-   especificidad a `.sc-icon--optical-24`, así que no depende del orden. */
-.sc-icon--inherit.sc-icon--optical-24 {
-    --sc-icon-optical-size: 14;
-}
+/* Hasta el 2026-09-16, `inherit` bajaba el opsz a 14 (decisión de marca del 2026-07-18). Ahora todos los iconos
+   dibujan como los SVG del catálogo de los devs: tamaño óptico 48 a cualquier tamaño. */
 
 .sc-icon--weight-100 {
     --sc-icon-weight: 100;
@@ -102,7 +92,7 @@
         'FILL' var(--sc-icon-fill, 0),
         'wght' var(--sc-icon-weight, 400),
         'GRAD' var(--sc-icon-grade, 0),
-        'opsz' var(--sc-icon-optical-size, 24);
+        'opsz' var(--sc-icon-optical-size, 48);
 }
 
 .sc-icon--filled {
