@@ -59,8 +59,15 @@ export type CardOpening = 'new_window' | 'embedded';
 
 export const VOICE_OPTIONS: readonly string[] = ['Femenina · español', 'Masculina · español', 'Femenina · inglés', 'Masculina · inglés'];
 
+/** Un anuncio periódico: su .wav y cada cuánto suena. Postventa, 2026-09-18: «posibilidad de meter más de uno». */
+export interface PeriodicAnnouncement {
+  readonly file: string;
+  readonly everySec: number;
+}
+
 export interface GroupAnnouncements {
-  /** Nombre del .wav; null = la música por defecto. */
+  /** Nombre del .wav; null = la música por defecto. La misma música sirve para espera y transferencia
+   *  (postventa, 2026-09-18: «debería de ser la misma»), así que es un solo campo. */
   readonly holdMusicFile: string | null;
   readonly queueIdSource: AudioSource;
   readonly queueIdFile: string | null;
@@ -70,8 +77,7 @@ export interface GroupAnnouncements {
   readonly nextInLineFile: string | null;
   readonly nextInLineText: string;
   readonly voice: string;
-  readonly periodicFile: string | null;
-  readonly periodicEverySec: number;
+  readonly periodicAnnouncements: readonly PeriodicAnnouncement[];
   /** «Audio saliente» del Figma de la migración. No está en el manual: qué suena y cuándo, por confirmar con desarrollo. */
   readonly outboundAudioFile: string | null;
   readonly announceAvgWait: boolean;
@@ -110,8 +116,7 @@ export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
   nextInLineFile: null,
   nextInLineText: '',
   voice: 'Femenina · español',
-  periodicFile: null,
-  periodicEverySec: 30,
+  periodicAnnouncements: [],
   outboundAudioFile: null,
   announceAvgWait: false,
   avgWaitSec: 60,

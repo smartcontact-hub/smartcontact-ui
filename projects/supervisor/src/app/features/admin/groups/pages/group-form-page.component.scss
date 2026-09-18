@@ -69,6 +69,27 @@
   min-width: 0;
 }
 
+/* Más de un anuncio periódico: una fila por archivo, en vez de un solo control en línea. */
+.audio-list__control--stack {
+  flex-direction: column;
+  align-items: stretch;
+  align-self: start;
+  gap: var(--sc-spacing-0-5);
+}
+
+.audio-list__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+}
+
+/* Arriba y no al centro: con varias filas de anuncios debajo, la etiqueta se quedaba a media altura. */
+.audio-list__label--top {
+  align-self: start;
+  padding-block-start: var(--sc-spacing-0-25);
+}
+
 .audio-list__file,
 .audio-list__hint {
   color: var(--sc-text-secondary);

@@ -646,7 +646,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
   }
 
-  protected setAnnouncementNumber(key: 'periodicEverySec' | 'avgWaitSec', value: number | null): void {
+  protected setAnnouncementNumber(key: 'avgWaitSec', value: number | null): void {
     if (value !== null && Number.isFinite(value) && value >= 0) this.setAnnouncement(key, value);
   }
 
@@ -655,11 +655,51 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) => ({ ...f, photo }));
   }
 
-  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'periodicFile' | 'outboundAudioFile', event: Event): void {
+  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAudioFile', event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) this.setAnnouncement(key, file.name);
     input.value = '';
+  }
+
+  /** Más de un anuncio periódico, cada uno con su frecuencia (postventa, 2026-09-18). Añadir un .wav aquí
+   *  crea una fila nueva; no reemplaza las que ya había. */
+  protected onPeriodicFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.form.update((f) => ({
+        ...f,
+        announcements: {
+          ...f.announcements,
+          periodicAnnouncements: [...f.announcements.periodicAnnouncements, { file: file.name, everySec: 30 }],
+        },
+      }));
+    }
+    input.value = '';
+  }
+
+  protected removePeriodicAnnouncement(index: number): void {
+    this.form.update((f) => ({
+      ...f,
+      announcements: {
+        ...f.announcements,
+        periodicAnnouncements: f.announcements.periodicAnnouncements.filter((_, i) => i !== index),
+      },
+    }));
+  }
+
+  protected setPeriodicFrequency(index: number, value: number | null): void {
+    if (value === null || !Number.isFinite(value) || value < 5) return;
+    this.form.update((f) => ({
+      ...f,
+      announcements: {
+        ...f.announcements,
+        periodicAnnouncements: f.announcements.periodicAnnouncements.map((a, i) =>
+          i === index ? { ...a, everySec: value } : a,
+        ),
+      },
+    }));
   }
 
   protected copyChatScript(): void {

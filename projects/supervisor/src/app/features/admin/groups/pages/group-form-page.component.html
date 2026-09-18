@@ -136,7 +136,7 @@
             (pick)="cards.pick('group-section-announcements')"
           >
             <sc-board-row [label]="'groups.form.announcements.hold_music' | translate">{{ form().announcements.holdMusicFile ?? ('groups.form.announcements.default_music' | translate) }}</sc-board-row>
-            <sc-board-row [label]="'groups.form.announcements.periodic' | translate">{{ form().announcements.periodicFile ?? ('compare.board.none' | translate) }}</sc-board-row>
+            <sc-board-row [label]="'groups.form.announcements.periodic' | translate">{{ form().announcements.periodicAnnouncements.length ? (form().announcements.periodicAnnouncements.length + ' ' + ('groups.form.announcements.periodic_count' | translate)) : ('compare.board.none' | translate) }}</sc-board-row>
             <sc-board-row [label]="'groups.form.announcements.avg_wait' | translate">{{ yesNo(form().announcements.announceAvgWait) | translate }}</sc-board-row>
             <sc-board-row [label]="'groups.form.announcements.position' | translate">{{ yesNo(form().announcements.announcePosition) | translate }}</sc-board-row>
             <sc-board-row [label]="'groups.form.announcements.voice' | translate">{{ form().announcements.voice }}</sc-board-row>
@@ -477,16 +477,21 @@
             }
           </span>
 
-          <span class="audio-list__label sc-text-body-regular">{{ 'groups.form.announcements.periodic' | translate }}</span>
-          <span class="audio-list__control">
-            <span class="audio-list__file sc-text-body-regular">{{ form().announcements.periodicFile ?? ('groups.form.announcements.no_file' | translate) }}</span>
-            <ng-container *ngTemplateOutlet="filePicker; context: { key: 'periodicFile', id: 'group-periodic' }" />
-            @if (form().announcements.periodicFile) {
-              <!-- Sin esto, un anuncio periódico puesto no se podía apagar. -->
-              <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.remove_file' | translate" (clicked)="setAnnouncement('periodicFile', null)" />
-              <label class="audio-list__hint sc-text-caption-regular" for="group-periodic-every">{{ 'groups.form.announcements.every' | translate }}</label>
-              <sc-inputnumber class="field__number" size="sm" inputId="group-periodic-every" [min]="5" suffix="s" [value]="form().announcements.periodicEverySec" (valueChange)="setAnnouncementNumber('periodicEverySec', $event)" />
+          <!-- Más de un anuncio periódico, cada uno con su .wav y su frecuencia (postventa, 2026-09-18). -->
+          <span class="audio-list__label audio-list__label--top sc-text-body-regular" id="group-periodic-label">{{ 'groups.form.announcements.periodic' | translate }}</span>
+          <span class="audio-list__control audio-list__control--stack">
+            @for (announcement of form().announcements.periodicAnnouncements; track $index) {
+              <span class="audio-list__row">
+                <span class="audio-list__file sc-text-body-regular">{{ announcement.file }}</span>
+                <label class="audio-list__hint sc-text-caption-regular" [for]="'group-periodic-every-' + $index">{{ 'groups.form.announcements.every' | translate }}</label>
+                <sc-inputnumber class="field__number" size="sm" [inputId]="'group-periodic-every-' + $index" [min]="5" suffix="s" [value]="announcement.everySec" (valueChange)="setPeriodicFrequency($index, $event)" />
+                <sc-button size="sm" variant="secondary" appearance="text" icon="delete" [ariaLabel]="'groups.form.announcements.remove_periodic_aria' | translate: { file: announcement.file }" (clicked)="removePeriodicAnnouncement($index)" />
+              </span>
             }
+            <span class="audio-list__row">
+              <input #periodicInput class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".wav,audio/wav" id="group-periodic-file" (change)="onPeriodicFile($event)" />
+              <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.announcements.add_periodic' | translate" (clicked)="periodicInput.click()" />
+            </span>
           </span>
 
           <!-- «Audio saliente» del Figma de la migración; el manual no lo explica (por confirmar con desarrollo). -->
