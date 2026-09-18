@@ -125,10 +125,23 @@
   min-height: 0;
 }
 
-/* La etiqueta y su «+ Nueva» comparten fila: el botón crea sin salir de la ficha (Rafa, 2026-09-18). */
+/* La etiqueta y su «+ Nueva»: el botón crea sin salir de la ficha (Rafa, 2026-09-18). Su relleno propio
+ * (27px de alto, hasta con `appearance="link"`, DS: min-height 0 pero padding fijo) es más que el de la
+ * etiqueta sola (18px); si comparte el flujo de la fila, esa fila mide 27px y el desplegable de Tipificación
+ * arranca por debajo del de Agendas, su vecino en la rejilla de dos columnas (medido: 9px de desnivel; Rafa,
+ * 2026-09-18: «no hay alineación»). El botón sale del flujo y se ancla arriba a la derecha: la fila vuelve a
+ * medir solo lo que mide la etiqueta. */
 .field__label-row {
+  /* `display: flex` y no `block`: un bloque vacío de contenido en línea reserva la línea de SU PROPIA fuente
+   * (16/24, la de body) aunque la etiqueta dentro mida menos (12/18, caption) — ese "strut" fantasma era
+   * los 6px que quedaban. Un contenedor flex no lo arrastra: mide justo lo que mide su hijo en flujo. */
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-1);
+  position: relative;
+  padding-inline-end: var(--sc-spacing-4);
+}
+
+.field__label-row__action {
+  position: absolute;
+  inset-block-start: calc(var(--sc-spacing-0-25) * -1);
+  inset-inline-end: calc(var(--sc-spacing-0-5) * -1);
 }

@@ -48,5 +48,20 @@
     justify-content: flex-end;
     gap: var(--sc-spacing-0-5);
   }
+}
 
+/* Dentro de un `sc-dialog` (que ya pone su propia caja, con su borde y su sombra): sin las suyas, y sin su
+ * título, que el dialog ya dice. Sin esto había dos cajas anidadas (medido el 2026-09-18). Fuera de un
+ * dialog —el popover que abre Repositorios bajo su botón «Crear»— el panel sigue con su caja propia. */
+:host(.panel-flush) .panel {
+  width: 100%;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+:host(.panel-flush) .panel__title {
+  display: none;
 }
