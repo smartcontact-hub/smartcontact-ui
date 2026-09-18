@@ -1,13 +1,19 @@
 /*
  * Valores por defecto de los grupos (`/admin/grupos/valores-por-defecto`). El molde de página vive en
- * `src/styles/_page.scss`; aquí solo la LISTA DE AJUSTES, el mismo mueble que usan las pantallas de
- * Configuración del AED: nombre a la izquierda, control a la derecha, una fila por ajuste.
+ * `src/styles/_page.scss`; aquí la LISTA DE AJUSTES (el mismo mueble que Configuración del AED: nombre a la
+ * izquierda, control a la derecha) y el relleno de la página.
  */
 
 :host {
   display: block;
   min-height: 100%;
   background: var(--sc-bg-canvas);
+}
+
+/* Página independiente, sin el panel de Configuración que le daba su relleno (heredado al copiar su
+ * plantilla): el mismo que ponen Sistema y Seguridad para una página suelta bajo `.app-shell__content`. */
+.page__inner {
+  padding: var(--sc-spacing-1-25) var(--sc-spacing-2);
 }
 
 /*
