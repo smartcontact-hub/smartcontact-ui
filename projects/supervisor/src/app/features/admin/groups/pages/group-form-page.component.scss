@@ -17,22 +17,22 @@
  * `.header-meta__chunk`, que ya no pintaba nada: la prioridad no sale en la ficha y
  * la banda a la que se proyectaba se retiró en S59. */
 
-/* Canales con su reparto al lado (2026-09-16). Rejilla de dos columnas: la casilla mide lo que su rótulo más largo
- * y los ajustes del canal empiezan todos en la misma vertical. */
-.channel-list {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  /* Arriba y no al centro: con la ayuda debajo, la casilla quedaba a media altura de sus selectores. */
-  align-items: start;
-  column-gap: var(--sc-spacing-1-5);
-  row-gap: var(--sc-spacing-0-5);
+/* Los cuatro canales en una fila, y debajo los ajustes de los marcados (2026-09-18). Antes iban en columna, uno por
+ * línea con su reparto al lado: cuatro filas de alto para cuatro casillas, y la tabla de agentes empezaba tan abajo
+ * que no cabía en la pantalla. */
+.channel-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-2);
 }
 
-.channel-list__settings {
+.channel-settings {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sc-spacing-0-5) var(--sc-spacing-1-25);
+  margin-block-start: var(--sc-spacing-0-75);
   min-width: 0;
 }
 
@@ -95,4 +95,11 @@
 
 .strategy-option__note {
   color: var(--sc-text-secondary);
+}
+
+/* La sección de agentes se queda con el alto que sobra: su tabla hace scroll dentro (DD-95). */
+.sub-section--fill {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
