@@ -39,6 +39,7 @@ export const CON_RAIL = [
   'features/config/aed/aed-servicio-page.component.html',
   'features/config/aed/aed-agentes-page.component.html',
   'features/config/aed/aed-grupos-page.component.html',
+  'features/admin/groups/pages/group-defaults-page.component.html',
 ];
 
 /** ¿Esta plantilla pinta su `<h1>` visible suelto, fuera de una sección? */
