@@ -1,9 +1,11 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
   AfterViewInit,
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  HostBinding,
   inject,
   input,
   OnInit,
@@ -54,9 +56,17 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
   /** Nombre singular de la entidad ya traducido (resuelto en el caller via
    *  `translate.instant(config().entitySingularKey)`). S51 sweep AED i18n. */
   readonly entitySingular = input.required<string>();
+  /** Dentro de un `sc-dialog` (que ya pone su propia caja, con su borde y su sombra): sin las suyas, a lo ancho
+   *  y sin repetir el título, que ya dice el dialog. Sin `flush`, el panel sigue siendo el popover que abre
+   *  Repositorios bajo su botón «Crear». Medido el 2026-09-18: sin esto, dos cajas anidadas. */
+  readonly flush = input(false, { transform: booleanAttribute });
 
   readonly save = output<RepoFormSubmission>();
   readonly cancelled = output<void>();
+
+  @HostBinding('class.panel-flush') protected get flushClass(): boolean {
+    return this.flush();
+  }
 
   protected readonly alertIcon = 'warning';
   protected readonly values = signal<Record<string, string>>({});

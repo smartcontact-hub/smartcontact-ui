@@ -15,7 +15,7 @@
 
   @for (field of fields(); track field.key; let i = $index) {
     <div class="panel__field">
-      <label class="panel__label sc-text-caption-regular" [attr.for]="'repo-field-' + field.key">
+      <label class="panel__label sc-text-caption-semibold" [attr.for]="'repo-field-' + field.key">
         {{ field.labelKey | translate }}
         @if (!field.required) {
           <span class="panel__hint">({{ 'common.optional' | translate }})</span>

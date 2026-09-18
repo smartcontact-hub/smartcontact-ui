@@ -228,12 +228,12 @@
   <!-- El mismo formulario que Repositorios (`sc-repo-form-panel`), en un diálogo: crear no saca de la ficha. -->
   <sc-dialog
     [visible]="true"
-    [title]="'repositories.tipificaciones.title' | translate"
+    [title]="'repositories.form.create_title' | translate: { entity: ('repositories.tipificaciones.singular' | translate) }"
     [hasFooter]="false"
-    [flushBody]="true"
     (cancelled)="creatingTipificacion.set(false)"
   >
     <sc-repo-form-panel
+      flush
       [fields]="tipificacionFields"
       [existingNames]="tipificacionExistingNames()"
       [entitySingular]="'repositories.tipificaciones.singular' | translate"
@@ -353,8 +353,12 @@
                 {{ 'groups.form.fields.typification' | translate }}
               </label>
               <!-- Crear una sin salir de la ficha (Rafa, 2026-09-18): antes solo quedaba «Gestionar en
-                   Repositorios», que te sacaba del alta del grupo entero para volver a encontrar el camino. -->
-              <sc-button size="sm" variant="secondary" appearance="text" icon="add" [label]="'groups.form.fields.typification_new' | translate" (clicked)="creatingTipificacion.set(true)" />
+                   Repositorios», que te sacaba del alta del grupo entero para volver a encontrar el camino.
+                   Fuera del flujo del texto (`field__label-row__action`): con su propio relleno, el botón
+                   medía 27px contra los 18px de la etiqueta sola, y el desplegable de Tipificación arrancaba
+                   9px más abajo que el de Agendas, su vecino en la rejilla (Rafa, 2026-09-18: «no hay
+                   alineación»). -->
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="link" icon="add" [label]="'groups.form.fields.typification_new' | translate" (clicked)="creatingTipificacion.set(true)" />
             </span>
             <sc-select
               inputId="group-typification"
