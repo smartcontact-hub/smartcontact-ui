@@ -381,7 +381,7 @@ export class SidebarLabPageComponent {
   /** Deja el laboratorio en la misma página, ya en el shell, y la apunta para volver a entrar ahí. */
   protected leaveLab(): void {
     localStorage.setItem(LAB_SIDEBAR_RETURN_KEY, location.pathname + location.search);
-    localStorage.removeItem(LAB_SIDEBAR_KEY);
+    localStorage.setItem(LAB_SIDEBAR_KEY, '0');
     location.reload();
   }
 

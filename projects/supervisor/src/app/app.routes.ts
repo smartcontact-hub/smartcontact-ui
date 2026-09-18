@@ -4,6 +4,18 @@ import { Routes } from '@angular/router';
 export const LAB_SIDEBAR_KEY = 'sc-lab-sidebar';
 /** Página en la que se dejó el laboratorio: al volver a entrar se abre ahí. */
 export const LAB_SIDEBAR_RETURN_KEY = 'sc-lab-sidebar-return';
+/** Dominio del preview por rama de este experimento (`docs/colaboracion.md`): quien entra por
+ * aquí ya está pidiendo el laboratorio, así que no hace falta pasar antes por `/lab/sidebar` ni
+ * recordar un enlace especial para compartirlo. */
+const LAB_SIDEBAR_PREVIEW_HOST = 'lab-sidebar.sc-supervisor.pages.dev';
+
+function isLabSidebarEnabled(): boolean {
+  const explicit = localStorage.getItem(LAB_SIDEBAR_KEY);
+  /* '0' es un apagado a propósito (Salir del laboratorio): gana al dominio, si no nadie podría
+   * salir del laboratorio estando en su propio preview. */
+  if (explicit === '0') return false;
+  return explicit === '1' || location.hostname === LAB_SIDEBAR_PREVIEW_HOST;
+}
 
 /**
  * Top-level route table.
@@ -39,7 +51,7 @@ export const appRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      localStorage.getItem(LAB_SIDEBAR_KEY) === '1'
+      isLabSidebarEnabled()
         ? import('./features/lab/sidebar-lab-page.component').then((m) => m.SidebarLabPageComponent)
         : import('./core/layout/app-shell/app-shell.component').then((m) => m.AppShellComponent),
     children: [
