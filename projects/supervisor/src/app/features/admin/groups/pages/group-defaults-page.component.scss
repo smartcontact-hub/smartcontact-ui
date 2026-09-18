@@ -1,7 +1,14 @@
 /*
- * Grupos (`/config/aed/grupos`). Lo compartido vive en `aed-defaults-page.component.scss`
- * y `styles/_forms.scss`; aquí solo lo propio de esta pantalla.
+ * Valores por defecto de los grupos (`/admin/grupos/valores-por-defecto`). El molde de página vive en
+ * `src/styles/_page.scss`; aquí solo la LISTA DE AJUSTES, el mismo mueble que usan las pantallas de
+ * Configuración del AED: nombre a la izquierda, control a la derecha, una fila por ajuste.
  */
+
+:host {
+  display: block;
+  min-height: 100%;
+  background: var(--sc-bg-canvas);
+}
 
 /*
  * LISTA DE AJUSTES: nombre a la izquierda, control a la derecha. El porqué está en la
@@ -41,6 +48,27 @@
 
   &__control {
     flex: 0 0 auto;
+  }
+
+  /* Nombre y su ayuda, apilados; la ayuda es la misma frase que en la ficha de grupo. */
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-25);
+    min-width: 0;
+  }
+
+  &__hint {
+    margin: 0;
+    color: var(--sc-text-subtle);
+    text-wrap: pretty;
+  }
+
+  /* Tamaño de cola: el tipo y el número juntos, como en la ficha. */
+  &__group {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-1);
   }
 
   /*

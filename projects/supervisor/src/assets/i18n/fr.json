@@ -1542,7 +1542,7 @@
         "wait_to_agent_hint": "Avant de lui passer l’appel."
       },
       "advanced": {
-        "defaults_hint": "Démarre avec les valeurs par défaut des paramètres de l’AED.",
+        "defaults_hint": "Démarre avec les valeurs par défaut des groupes.",
         "queue_title": "File et temps",
         "queue_size": "Taille de la file",
         "queue_fixed": "Fixe",
@@ -1571,6 +1571,16 @@
         "script_copy": "Copier le code",
         "script_copied": "Code copié"
       }
+    },
+    "defaults": {
+      "heading": "Valeurs par défaut",
+      "breadcrumb": "Valeurs par défaut",
+      "button": "Valeurs par défaut",
+      "hint": "Chaque nouveau groupe démarre avec ces valeurs. Elles se modifient ensuite dans sa fiche.",
+      "routing_title": "Distribution",
+      "strategy_hint": "Niveaux, Ring All, Skills et Agent exclusif se choisissent dans la fiche de chaque groupe, où ils se configurent.",
+      "card_opening_type": "Type",
+      "toast_saved": "Valeurs par défaut enregistrées"
     },
     "errors": {
       "name_required": "Le nom est obligatoire",
@@ -1965,15 +1975,30 @@
         },
         "grupos": {
           "heading": "Groupes",
-          "hint": "Chaque nouveau groupe démarre avec ces valeurs. Elles se modifient ensuite dans sa fiche.",
-          "routing_title": "Distribution",
-          "strategy_hint": "Niveaux, Ring All, Skills et Agent exclusif se choisissent dans la fiche de chaque groupe, où ils se configurent.",
+          "params": {
+            "title": "Paramètres",
+            "estrategia": "Stratégie de répartition des conversations",
+            "prioridad": "Priorité du groupe",
+            "voz": "Voix",
+            "desbordar": "Débordement des conversations quand aucun agent n'est disponible",
+            "tipo_cola": "Type de file d'attente",
+            "capacidad_cola": "Nombre maximal de conversations en file",
+            "tiempo_max": "Temps d'attente maximal en file",
+            "tiempo_transfer": "Temps de transfert maximal",
+            "placeholder": "Sélectionner",
+            "input_placeholder": "Saisir",
+            "segundos": "secondes"
+          },
           "apertura": {
-            "tipo_label": "Type"
+            "title": "Ouverture de la fiche",
+            "tipo_label": "Type",
+            "tamano_label": "Taille",
+            "tamano_suffix": "pixels"
           },
           "toast": {
             "saved": "Paramètres des groupes enregistrés"
-          }
+          },
+          "edit_crumb": "Modifier le groupe"
         }
       },
       "breadcrumb": {

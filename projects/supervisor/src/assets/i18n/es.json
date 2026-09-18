@@ -1542,7 +1542,7 @@
         "wait_to_agent_hint": "Se lo dice antes de pasarle la llamada."
       },
       "advanced": {
-        "defaults_hint": "Nace con los valores por defecto de Configuración del AED.",
+        "defaults_hint": "Nace con los valores por defecto de Grupos.",
         "queue_title": "Cola y tiempos",
         "queue_size": "Tamaño de cola",
         "queue_fixed": "Fijo",
@@ -1571,6 +1571,16 @@
         "script_copy": "Copiar código",
         "script_copied": "Código copiado"
       }
+    },
+    "defaults": {
+      "heading": "Valores por defecto",
+      "breadcrumb": "Valores por defecto",
+      "button": "Valores por defecto",
+      "hint": "Con esto nace cada grupo nuevo. Luego se cambia en su ficha.",
+      "routing_title": "Reparto",
+      "strategy_hint": "Niveles, Ring All, Skills y Agente exclusivo se eligen en la ficha de cada grupo, donde se configuran.",
+      "card_opening_type": "Tipo",
+      "toast_saved": "Valores por defecto guardados"
     },
     "errors": {
       "name_required": "El nombre es obligatorio",
@@ -1965,15 +1975,30 @@
         },
         "grupos": {
           "heading": "Grupos",
-          "hint": "Con esto nace cada grupo nuevo. Luego se cambia en su ficha.",
-          "routing_title": "Reparto",
-          "strategy_hint": "Niveles, Ring All, Skills y Agente exclusivo se eligen en la ficha de cada grupo, donde se configuran.",
+          "params": {
+            "title": "Parámetros",
+            "estrategia": "Estrategia de reparto de conversaciones",
+            "prioridad": "Prioridad del grupo",
+            "voz": "Voz",
+            "desbordar": "Desbordar conversaciones si no hay agentes disponibles",
+            "tipo_cola": "Tipo de cola de espera",
+            "capacidad_cola": "Máximo de conversaciones en cola",
+            "tiempo_max": "Tiempo máximo de espera en cola",
+            "tiempo_transfer": "Tiempo máximo de transferencia",
+            "placeholder": "Seleccionar",
+            "input_placeholder": "Escribir",
+            "segundos": "segundos"
+          },
           "apertura": {
-            "tipo_label": "Tipo"
+            "title": "Apertura de ficha",
+            "tipo_label": "Tipo",
+            "tamano_label": "Tamaño",
+            "tamano_suffix": "píxeles"
           },
           "toast": {
             "saved": "Parámetros de grupos guardados"
-          }
+          },
+          "edit_crumb": "Editar grupo"
         }
       },
       "breadcrumb": {
