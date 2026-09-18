@@ -31,6 +31,9 @@ export const SHOW_ALL_COUNT = 2;
 
 const STORAGE_KEY = 'sc-comparar-fichas';
 const GUIDE_SEEN_KEY = 'sc-comparar-guia-vista';
+/** El dominio de preview dedicado de esta rama: un enlace a él, sin `?variante=`, tiene que enseñar la
+ *  barra igual (Rafa lo compartía con compañeros y sin el parámetro exacto no les salía). */
+const COMPARE_HOSTNAME = 'comparar-fichas.sc-supervisor.pages.dev';
 
 function isVariant(value: unknown): value is FichaVariant {
   return typeof value === 'string' && (FICHA_VARIANTS as readonly string[]).includes(value);
@@ -90,6 +93,13 @@ export class FichaVariantService {
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => this.readValue(this.router.parseUrl(e.urlAfterRedirects).queryParamMap.get('variante')));
+    /* Sin variante en la URL ni guardada, y en el dominio de preview dedicado: arranca comparando
+     * igualmente, con la variante de hoy (`a`), para que un enlace sin `?variante=` no se quede sin
+     * barra. En cualquier otro dominio (el compartido con otras ramas, o local) sigue sin ella. */
+    if (!this.comparing() && window.location.hostname === COMPARE_HOSTNAME) {
+      this.variant.set('a');
+      this.comparing.set(true);
+    }
   }
 
   set(value: FichaVariant): void {
