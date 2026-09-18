@@ -1495,6 +1495,7 @@
         "exclusive_hint": "Configura-se na árvore do IVR.",
         "skills_unavailable": "Precisa de skills nos agentes",
         "typification": "Tipificação",
+        "typification_new": "Nova",
         "typification_none": "Sem tipificação",
         "typification_option": "{{name}} ({{count}})",
         "typification_hint": "Com tipificação, o agente tem de tipificar antes de fechar a conversa. Criam-se em Repositórios."

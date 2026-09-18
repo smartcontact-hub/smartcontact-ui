@@ -224,6 +224,25 @@
   </sc-dialog>
 }
 
+@if (creatingTipificacion()) {
+  <!-- El mismo formulario que Repositorios (`sc-repo-form-panel`), en un diálogo: crear no saca de la ficha. -->
+  <sc-dialog
+    [visible]="true"
+    [title]="'repositories.tipificaciones.title' | translate"
+    [hasFooter]="false"
+    [flushBody]="true"
+    (cancelled)="creatingTipificacion.set(false)"
+  >
+    <sc-repo-form-panel
+      [fields]="tipificacionFields"
+      [existingNames]="tipificacionExistingNames()"
+      [entitySingular]="'repositories.tipificaciones.singular' | translate"
+      (save)="onCreateTipificacionSubmit($event)"
+      (cancelled)="creatingTipificacion.set(false)"
+    />
+  </sc-dialog>
+}
+
 <!-- Las secciones de la ficha, una sola vez: se pintan en `.page__main` o, en la variante e,
      dentro del panel lateral. -->
 <ng-template #sections>
@@ -329,9 +348,14 @@
         <div class="grid grid--2">
           <!-- UNA tipificación: el agente recorre un solo árbol al cerrar (manual de Voice, p. 14). -->
           <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-typification">
-              {{ 'groups.form.fields.typification' | translate }}
-            </label>
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-typification">
+                {{ 'groups.form.fields.typification' | translate }}
+              </label>
+              <!-- Crear una sin salir de la ficha (Rafa, 2026-09-18): antes solo quedaba «Gestionar en
+                   Repositorios», que te sacaba del alta del grupo entero para volver a encontrar el camino. -->
+              <sc-button size="sm" variant="secondary" appearance="text" icon="add" [label]="'groups.form.fields.typification_new' | translate" (clicked)="creatingTipificacion.set(true)" />
+            </span>
             <sc-select
               inputId="group-typification"
               optionLabel="label"

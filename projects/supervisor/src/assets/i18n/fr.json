@@ -1495,6 +1495,7 @@
         "exclusive_hint": "Se configure dans l’arbre de l’IVR.",
         "skills_unavailable": "Nécessite des compétences par agent",
         "typification": "Typification",
+        "typification_new": "Nouvelle",
         "typification_none": "Aucune typification",
         "typification_option": "{{name}} ({{count}})",
         "typification_hint": "Avec une typification, l’agent doit typifier avant de fermer la conversation. Elles se créent dans Référentiels."

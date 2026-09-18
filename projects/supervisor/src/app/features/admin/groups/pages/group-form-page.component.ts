@@ -59,8 +59,9 @@ import {
   VOICE_OPTIONS,
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
-import { TipificacionesStore } from '@features/admin/repositories/instances/tipificaciones';
+import { TipificacionesStore, TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
 import { AgendasStore } from '@features/admin/repositories/instances/agendas';
+import { RepoFormPanelComponent, RepoFormSubmission } from '@features/admin/repositories/components/repo-form-panel.component';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import type { TemplateType } from '@features/admin/templates/data/templates-data';
 import { LabelsStore } from '@features/admin/labels/state/labels.store';
@@ -126,6 +127,7 @@ interface FormState {
     TextareaComponent,
     ToggleSwitchComponent,
     DialogComponent,
+    RepoFormPanelComponent,
     SectionCardComponent,
     SelectComponent,
     TranslateModule,
@@ -617,6 +619,24 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected onTypificationChange(value: unknown): void {
     this.updateField('typification', typeof value === 'string' ? value : null);
+  }
+
+  /** Crear una tipificación SIN salir de la ficha (Rafa, 2026-09-18: «me he salido del flujo solo para crear
+   *  una»). Mismo formulario que Repositorios (`TIPIFICACION_FIELDS`), en un diálogo. Al guardar, el grupo
+   *  queda con la categoría recién creada. */
+  protected readonly creatingTipificacion = signal(false);
+  protected readonly tipificacionFields = TIPIFICACION_FIELDS;
+  protected readonly tipificacionExistingNames = computed(() => this.tipificacionesStore.items().map((t) => t.name));
+
+  protected onCreateTipificacionSubmit(submission: RepoFormSubmission): void {
+    const created = this.tipificacionesStore.addItem({
+      name: submission['name'] ?? '',
+      code: submission['code'] ?? '',
+      category: submission['category'] ?? '',
+      description: submission['description'] ?? '',
+    });
+    this.onTypificationChange(created.category);
+    this.creatingTipificacion.set(false);
   }
 
   protected onIdsChange(key: 'scheduleIds' | 'labelIds', value: unknown): void {

@@ -124,3 +124,11 @@
   flex-direction: column;
   min-height: 0;
 }
+
+/* La etiqueta y su «+ Nueva» comparten fila: el botón crea sin salir de la ficha (Rafa, 2026-09-18). */
+.field__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
+}

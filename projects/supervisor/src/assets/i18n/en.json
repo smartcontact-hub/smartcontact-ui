@@ -1495,6 +1495,7 @@
         "exclusive_hint": "Configured in the IVR tree.",
         "skills_unavailable": "Needs agent skills",
         "typification": "Typification",
+        "typification_new": "New",
         "typification_none": "No typification",
         "typification_option": "{{name}} ({{count}})",
         "typification_hint": "With a typification, the agent must typify before closing the conversation. They are created in Repositories."
