@@ -1,4 +1,17 @@
-@import '@fontsource-variable/material-symbols-outlined/full.css';
+/* No @import de fontsource: su @font-face trae `font-display: swap`, que durante
+ * la descarga pinta el nombre crudo del glifo (el companion es texto, "home",
+ * ver sc-icon.component.html) con el sans-serif de sistema — se lee como
+ * "el sidebar no tiene iconos" un instante. `block` oculta ese texto (hasta
+ * 3s, spec) y solo lo muestra ya convertido en glifo; para un icon font es
+ * el comportamiento esperado (medido 2026-09-18: swap se ve, block no). */
+@font-face {
+  font-family: 'Material Symbols Outlined Variable';
+  font-style: normal;
+  font-display: block;
+  font-weight: 100 700; /* rango del axis variable que soporta el archivo (idéntico al de fontsource), no una elección de font-weight de diseño */
+  src: url('@fontsource-variable/material-symbols-outlined/files/material-symbols-outlined-latin-full-normal.woff2')
+    format('woff2-variations');
+}
 
 .sc-icon,
 .sc-icon-font::before {
