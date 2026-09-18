@@ -13,6 +13,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
@@ -129,6 +130,7 @@ interface FormState {
     DialogComponent,
     RepoFormPanelComponent,
     SectionCardComponent,
+    TooltipModule,
     SelectComponent,
     TranslateModule,
   ],
@@ -292,6 +294,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly phoneIcon = 'call';
   protected readonly trashIcon = 'delete';
+  protected readonly infoIcon = 'info';
 
   protected readonly editingId = signal<number | null>(null);
   /** Source name si llegó vía Duplicar (?seedFromId). NULL en create vacío. */

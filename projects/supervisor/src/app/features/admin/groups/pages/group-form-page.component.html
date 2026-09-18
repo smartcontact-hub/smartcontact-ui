@@ -473,7 +473,10 @@
           <h3 id="group-audio-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.announcements.audio_title' | translate }}</h3>
         </header>
         <div class="audio-list">
-          <span class="audio-list__label sc-text-body-regular">{{ 'groups.form.announcements.hold_music' | translate }}</span>
+          <span class="audio-list__label sc-text-body-regular">
+            {{ 'groups.form.announcements.hold_music' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.hold_music_info' }" />
+          </span>
           <span class="audio-list__control">
             <span class="audio-list__file sc-text-body-regular">{{ form().announcements.holdMusicFile ?? ('groups.form.announcements.default_music' | translate) }}</span>
             <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
@@ -482,7 +485,10 @@
             }
           </span>
 
-          <span class="audio-list__label sc-text-body-regular">{{ 'groups.form.announcements.queue_id' | translate }}</span>
+          <span class="audio-list__label sc-text-body-regular">
+            {{ 'groups.form.announcements.queue_id' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.queue_id_info' }" />
+          </span>
           <span class="audio-list__control">
             <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="form().announcements.queueIdSource" [ariaLabel]="'groups.form.announcements.queue_id' | translate" (valueChange)="setAnnouncement('queueIdSource', $any($event))" />
             @if (form().announcements.queueIdSource === 'file') {
@@ -494,7 +500,10 @@
             }
           </span>
 
-          <span class="audio-list__label sc-text-body-regular">{{ 'groups.form.announcements.next_in_line' | translate }}</span>
+          <span class="audio-list__label sc-text-body-regular">
+            {{ 'groups.form.announcements.next_in_line' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.next_in_line_info' }" />
+          </span>
           <span class="audio-list__control">
             <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="form().announcements.nextInLineSource" [ariaLabel]="'groups.form.announcements.next_in_line' | translate" (valueChange)="setAnnouncement('nextInLineSource', $any($event))" />
             @if (form().announcements.nextInLineSource === 'file') {
@@ -506,7 +515,10 @@
           </span>
 
           <!-- Más de un anuncio periódico, cada uno con su .wav y su frecuencia (postventa, 2026-09-18). -->
-          <span class="audio-list__label audio-list__label--top sc-text-body-regular" id="group-periodic-label">{{ 'groups.form.announcements.periodic' | translate }}</span>
+          <span class="audio-list__label audio-list__label--top sc-text-body-regular" id="group-periodic-label">
+            {{ 'groups.form.announcements.periodic' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.periodic_info' }" />
+          </span>
           <span class="audio-list__control audio-list__control--stack">
             @for (announcement of form().announcements.periodicAnnouncements; track $index) {
               <span class="audio-list__row">
@@ -523,7 +535,10 @@
           </span>
 
           <!-- «Audio saliente» del Figma de la migración; el manual no lo explica (por confirmar con desarrollo). -->
-          <span class="audio-list__label sc-text-body-regular">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
+          <span class="audio-list__label sc-text-body-regular">
+            {{ 'groups.form.announcements.outbound_audio' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.outbound_audio_info' }" />
+          </span>
           <span class="audio-list__control">
             <span class="audio-list__file sc-text-body-regular">{{ form().announcements.outboundAudioFile ?? ('groups.form.announcements.no_file' | translate) }}</span>
             <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio' }" />
@@ -535,7 +550,10 @@
 
         <div class="grid grid--2">
           <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
+            <label class="field__label sc-text-caption-semibold" for="group-voice">
+              {{ 'groups.form.announcements.voice' | translate }}
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.voice_info' }" />
+            </label>
             <sc-select inputId="group-voice" [options]="voiceOptions" [value]="form().announcements.voice" [helperText]="'groups.form.announcements.voice_hint' | translate" (valueChange)="setAnnouncement('voice', $any($event))" />
           </div>
         </div>
@@ -550,7 +568,10 @@
         <div class="switch-field switch-field--top">
           <sc-toggleswitch [checked]="form().announcements.announceAvgWait" [ariaLabel]="'groups.form.announcements.avg_wait' | translate" (checkedChange)="setAnnouncement('announceAvgWait', $event)" />
           <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.avg_wait' | translate }}</span>
+            <span class="switch-field__label sc-text-body-regular">
+              {{ 'groups.form.announcements.avg_wait' | translate }}
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.avg_wait_info' }" />
+            </span>
             <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.avg_wait_hint' | translate }}</p>
             @if (form().announcements.announceAvgWait) {
               <sc-inputnumber class="field__number" size="sm" inputId="group-avg-wait" [min]="0" suffix="s" [value]="form().announcements.avgWaitSec" (valueChange)="setAnnouncementNumber('avgWaitSec', $event)" />
@@ -560,14 +581,20 @@
         <div class="switch-field switch-field--top">
           <sc-toggleswitch [checked]="form().announcements.announcePosition" [ariaLabel]="'groups.form.announcements.position' | translate" (checkedChange)="setAnnouncement('announcePosition', $event)" />
           <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.position' | translate }}</span>
+            <span class="switch-field__label sc-text-body-regular">
+              {{ 'groups.form.announcements.position' | translate }}
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.position_info' }" />
+            </span>
             <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.position_hint' | translate }}</p>
           </div>
         </div>
         <div class="switch-field switch-field--top">
           <sc-toggleswitch [checked]="form().announcements.announceWaitToAgent" [ariaLabel]="'groups.form.announcements.wait_to_agent' | translate" (checkedChange)="setAnnouncement('announceWaitToAgent', $event)" />
           <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.wait_to_agent' | translate }}</span>
+            <span class="switch-field__label sc-text-body-regular">
+              {{ 'groups.form.announcements.wait_to_agent' | translate }}
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.wait_to_agent_info' }" />
+            </span>
             <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.wait_to_agent_hint' | translate }}</p>
           </div>
         </div>
@@ -757,4 +784,19 @@
 <ng-template #filePicker let-key="key" let-id="id">
   <input #fileInput class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".wav,audio/wav" [id]="id + '-file'" (change)="onAudioFile(key, $event)" />
   <sc-button size="sm" variant="secondary" appearance="outlined" icon="upload" [label]="'groups.form.announcements.choose_file' | translate" (clicked)="fileInput.click()" />
+</ng-template>
+
+<!-- Qué hace cada campo de Anuncios y audio, para nosotros mientras se decide el copy final (Rafa, 2026-09-18).
+     `pTooltip` nativo, mismo patrón que `category-form-modal`: icono solo, con su aria-label. -->
+<ng-template #infoTip let-key="key">
+  <sc-button
+    size="sm"
+    variant="secondary"
+    appearance="text"
+    [icon]="infoIcon"
+    [ariaLabel]="key | translate"
+    [pTooltip]="key | translate"
+    tooltipPosition="top"
+    tabindex="0"
+  />
 </ng-template>
