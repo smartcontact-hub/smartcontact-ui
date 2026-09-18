@@ -247,59 +247,62 @@
       <!-- Que falte marcar un canal no es contenido equivocado: lo señalan la bola roja del índice
            (`sectionsWithErrors`) y el motivo del botón. -->
       <section class="sub-section" [attr.aria-label]="'groups.form.section.channels' | translate">
-        <div class="channel-list">
+        <!-- Los cuatro canales en UNA fila y, debajo, solo los ajustes de los que están marcados (Rafa, 2026-09-18):
+             así la tabla de agentes empieza más arriba y cabe entera en la pantalla. Cada ajuste dice su canal,
+             que ya no está pegado a su casilla. -->
+        <div class="channel-row">
           @for (channel of channels; track channel) {
             <sc-checkbox class="checkbox-row" [state]="hasChannel(channel) ? 'all' : 'none'" (cycle)="toggleChannel(channel)">{{ channelKeys[channel] | translate }}</sc-checkbox>
-            <div class="channel-list__settings">
-              @if (channel === 'phone' && hasPhone()) {
-                <span class="channel-list__setting">
-                  <label class="channel-list__label sc-text-caption-regular" for="group-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-                  <sc-select class="channel-list__select" size="sm" inputId="group-strategy" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" (valueChange)="onStrategyValueChange($event)">
-                    <ng-template #item let-o>
-                      <span class="strategy-option">
-                        <span>{{ o.label }}</span>
-                        @if (o.note) {
-                          <span class="strategy-option__note sc-text-caption-regular">{{ o.note }}</span>
-                        }
-                      </span>
-                    </ng-template>
-                  </sc-select>
-                </span>
-                @if (isRingAll()) {
-                  <span class="channel-list__setting">
-                    <label class="channel-list__label sc-text-caption-regular" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
-                    <sc-select size="sm" inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
-                    <span class="channel-list__label sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
+          }
+        </div>
+
+        <div class="channel-settings">
+          @if (hasPhone()) {
+            <span class="channel-list__setting">
+              <label class="channel-list__label sc-text-caption-regular" for="group-strategy">{{ 'groups.form.fields.phone_strategy' | translate }}</label>
+              <sc-select class="channel-list__select" size="sm" inputId="group-strategy" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" (valueChange)="onStrategyValueChange($event)">
+                <ng-template #item let-o>
+                  <span class="strategy-option">
+                    <span>{{ o.label }}</span>
+                    @if (o.note) {
+                      <span class="strategy-option__note sc-text-caption-regular">{{ o.note }}</span>
+                    }
                   </span>
-                }
-                @if (isNiveles()) {
-                  <span class="channel-list__setting">
-                    <label class="channel-list__label sc-text-caption-regular" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
-                    <sc-select class="channel-list__select" size="sm" inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
-                  </span>
-                  <span class="channel-list__hint sc-text-caption-regular">{{ 'groups.form.fields.levels_hint' | translate }}</span>
-                }
-                @if (isExclusive()) {
-                  <span class="channel-list__hint sc-text-caption-regular">{{ 'groups.form.fields.exclusive_hint' | translate }}</span>
-                }
-              }
-              @if (channel === 'chat' && hasChat()) {
-                <span class="channel-list__setting">
-                  <label class="channel-list__label sc-text-caption-regular" for="group-chat-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-                  <sc-select class="channel-list__select" size="sm" inputId="group-chat-strategy" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
-                </span>
-              }
-            </div>
+                </ng-template>
+              </sc-select>
+            </span>
+            @if (isRingAll()) {
+              <span class="channel-list__setting">
+                <label class="channel-list__label sc-text-caption-regular" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
+                <sc-select size="sm" inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
+                <span class="channel-list__label sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
+              </span>
+            }
+            @if (isNiveles()) {
+              <span class="channel-list__setting">
+                <label class="channel-list__label sc-text-caption-regular" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+                <sc-select class="channel-list__select" size="sm" inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
+              </span>
+              <span class="channel-list__hint sc-text-caption-regular">{{ 'groups.form.fields.levels_hint' | translate }}</span>
+            }
+            @if (isExclusive()) {
+              <span class="channel-list__hint sc-text-caption-regular">{{ 'groups.form.fields.exclusive_hint' | translate }}</span>
+            }
+          }
+          @if (hasChat()) {
+            <span class="channel-list__setting">
+              <label class="channel-list__label sc-text-caption-regular" for="group-chat-strategy">{{ 'groups.form.fields.chat_strategy' | translate }}</label>
+              <sc-select class="channel-list__select" size="sm" inputId="group-chat-strategy" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
+            </span>
           }
         </div>
       </section>
 
       <sc-divider />
 
-      <section class="sub-section" aria-labelledby="group-agents-title">
-        <header class="sub-section__head">
-          <h3 id="group-agents-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.section.agents' | translate }}</h3>
-        </header>
+      <!-- Sin título: lo que hay debajo es una tabla de agentes con su buscador, y el rótulo solo gastaba alto
+           (Rafa, 2026-09-18). El nombre se queda para el lector de pantalla. -->
+      <section class="sub-section sub-section--fill" [attr.aria-label]="'groups.form.section.agents' | translate">
         <sc-agent-channel-table
           [groupChannels]="formGroupChannels()"
           [links]="form().links"
