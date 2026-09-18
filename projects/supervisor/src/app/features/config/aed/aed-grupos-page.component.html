@@ -24,14 +24,11 @@
          arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
          medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <!-- Con lo que nace cada grupo nuevo. Mismos campos y palabras que la ficha de grupo, en el mismo orden que su
-         «Avanzado» (2026-09-16). -->
     <sc-section-card
       icon="groups"
       [headingLevel]="1"
       surface="card"
       titleKey="config.aed.subpages.grupos.heading"
-      hintKey="config.aed.subpages.grupos.hint"
     >
       <!--
         LISTA DE AJUSTES: nombre a la IZQUIERDA, control a la DERECHA, una fila por ajuste.
@@ -51,93 +48,109 @@
         van rayas entre filas: es la regla de la tabla («la línea está donde hay columnas que
         cruzar»), no una excepción a la de la lista de estados de General.
       -->
-      <section class="sub-section" aria-labelledby="grupos-routing-title">
+      <section class="sub-section" aria-labelledby="grupos-params-title">
         <header class="sub-section__head">
-          <h2 id="grupos-routing-title" class="sub-section__title sc-text-body-semibold">
-            {{ 'config.aed.subpages.grupos.routing_title' | translate }}
+          <h2 id="grupos-params-title" class="sub-section__title sc-text-body-semibold">
+            {{ 'config.aed.subpages.grupos.params.title' | translate }}
           </h2>
         </header>
 
         <div class="settings-list">
           <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" id="grupos-strategy-label" for="grupos-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-              <p class="setting-row__hint sc-text-caption-regular">{{ 'config.aed.subpages.grupos.strategy_hint' | translate }}</p>
-            </div>
-            <sc-select
+            <label class="setting-row__label sc-text-body-regular" id="grupos-estrategia-label" for="grupos-estrategia">
+              {{ 'config.aed.subpages.grupos.params.estrategia' | translate }}
+            </label>
+            <sc-multiselect
               class="setting-row__control setting-row__control--select"
-              inputId="grupos-strategy"
-              ariaLabelledBy="grupos-strategy-label"
-              [options]="strategyOptions"
-              [value]="form().strategy"
-              (valueChange)="setField('strategy', $event)"
+              inputId="grupos-estrategia"
+              ariaLabelledBy="grupos-estrategia-label"
+              [options]="estrategiaOptions"
+              [value]="form().estrategia"
+              [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+              (valueChange)="onMulti('estrategia', $event)"
             />
           </div>
           <div class="setting-row">
-            <label class="setting-row__label sc-text-body-regular" id="grupos-priority-label" for="grupos-priority">{{ 'groups.form.fields.priority' | translate }}</label>
-            <sc-select
+            <label class="setting-row__label sc-text-body-regular" id="grupos-prioridad-label" for="grupos-prioridad">
+              {{ 'config.aed.subpages.grupos.params.prioridad' | translate }}
+            </label>
+            <sc-multiselect
               class="setting-row__control setting-row__control--select"
-              inputId="grupos-priority"
-              ariaLabelledBy="grupos-priority-label"
-              [options]="priorities"
-              [value]="form().priority"
-              (valueChange)="setField('priority', $event)"
-            >
-              <ng-template #item let-p>{{ priorityKeys[p] | translate }}</ng-template>
-              <ng-template #selectedItem let-p>{{ priorityKeys[p] | translate }}</ng-template>
-            </sc-select>
-          </div>
-        </div>
-      </section>
-
-      <sc-divider />
-
-      <section class="sub-section" aria-labelledby="grupos-queue-title">
-        <header class="sub-section__head">
-          <h2 id="grupos-queue-title" class="sub-section__title sc-text-body-semibold">
-            {{ 'groups.form.advanced.queue_title' | translate }}
-          </h2>
-        </header>
-
-        <div class="settings-list">
-          <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" for="grupos-queue-size">{{ 'groups.form.advanced.queue_size' | translate }}</label>
-              <p class="setting-row__hint sc-text-caption-regular">{{ (form().advanced.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: form().advanced.queueSize } }}</p>
-            </div>
-            <span class="setting-row__control setting-row__group">
-              <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="queueSizeOptions()" [value]="form().advanced.queueSizeType" [ariaLabel]="'groups.form.advanced.queue_size' | translate" (valueChange)="setAdvanced('queueSizeType', $any($event))" />
-              <sc-inputnumber class="setting-row__control--number" inputId="grupos-queue-size" [min]="1" [value]="form().advanced.queueSize" (valueChange)="setAdvancedNumber('queueSize', $event)" />
-            </span>
+              inputId="grupos-prioridad"
+              ariaLabelledBy="grupos-prioridad-label"
+              [options]="prioridadOptions"
+              [value]="form().prioridad"
+              [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+              (valueChange)="onMulti('prioridad', $event)"
+            />
           </div>
           <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" for="grupos-max-wait">{{ 'groups.form.advanced.max_queue_wait' | translate }}</label>
-            </div>
-            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-max-wait" suffix="s" [min]="0" [value]="form().advanced.maxQueueWaitSec" (valueChange)="setAdvancedNumber('maxQueueWaitSec', $event)" />
+            <label class="setting-row__label sc-text-body-regular" id="grupos-tipo-cola-label" for="grupos-tipo-cola">
+              {{ 'config.aed.subpages.grupos.params.tipo_cola' | translate }}
+            </label>
+            <sc-multiselect
+              class="setting-row__control setting-row__control--select"
+              inputId="grupos-tipo-cola"
+              ariaLabelledBy="grupos-tipo-cola-label"
+              [options]="tipoColaOptions"
+              [value]="form().tipoColaEspera"
+              [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+              (valueChange)="onMulti('tipoColaEspera', $event)"
+            />
           </div>
           <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" for="grupos-transfer">{{ 'groups.form.advanced.transfer' | translate }}</label>
-              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.transfer_hint' | translate }}</p>
-            </div>
-            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-transfer" suffix="s" [min]="0" [value]="form().advanced.transferSec" (valueChange)="setAdvancedNumber('transferSec', $event)" />
+            <label class="setting-row__label sc-text-body-regular" for="grupos-capacidad-cola">
+              {{ 'config.aed.subpages.grupos.params.capacidad_cola' | translate }}
+            </label>
+            <sc-inputnumber
+              class="setting-row__control setting-row__control--number"
+              inputId="grupos-capacidad-cola"
+              [min]="0"
+              [value]="form().capacidadColaEspera"
+              (valueChange)="onNumber('capacidadColaEspera', $event)"
+            />
           </div>
           <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" for="grupos-service-level">{{ 'groups.form.advanced.service_level' | translate }}</label>
-              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.service_level_hint' | translate }}</p>
-            </div>
-            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-service-level" suffix="s" [min]="0" [value]="form().advanced.serviceLevelSec" (valueChange)="setAdvancedNumber('serviceLevelSec', $event)" />
+            <label class="setting-row__label sc-text-body-regular" for="grupos-tiempo-max">
+              {{ 'config.aed.subpages.grupos.params.tiempo_max' | translate }}
+            </label>
+            <sc-inputnumber
+              class="setting-row__control setting-row__control--number"
+              inputId="grupos-tiempo-max"
+              [suffix]="'config.aed.subpages.grupos.params.segundos' | translate"
+              [min]="0"
+              [value]="form().tiempoMaxEspera"
+              (valueChange)="onNumber('tiempoMaxEspera', $event)"
+            />
           </div>
           <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" for="grupos-wrap-up">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
-              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.wrap_up_hint' | translate }}</p>
-            </div>
-            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-wrap-up" suffix="s" [min]="0" [value]="form().advanced.wrapUpSec" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" />
+            <label class="setting-row__label sc-text-body-regular" for="grupos-tiempo-transfer">
+              {{ 'config.aed.subpages.grupos.params.tiempo_transfer' | translate }}
+            </label>
+            <sc-inputnumber
+              class="setting-row__control setting-row__control--number"
+              inputId="grupos-tiempo-transfer"
+              [suffix]="'config.aed.subpages.grupos.params.segundos' | translate"
+              [min]="0"
+              [value]="form().tiempoTransferencia"
+              (valueChange)="onNumber('tiempoTransferencia', $event)"
+            />
           </div>
-                    <!-- El interruptor va a la DERECHA porque aquí manda el patrón LISTA DE AJUSTES:
+          <div class="setting-row">
+            <label class="setting-row__label sc-text-body-regular" id="grupos-voz-label" for="grupos-voz">
+              {{ 'config.aed.subpages.grupos.params.voz' | translate }}
+            </label>
+            <sc-multiselect
+              class="setting-row__control setting-row__control--select"
+              inputId="grupos-voz"
+              ariaLabelledBy="grupos-voz-label"
+              [options]="vozOptions"
+              [value]="form().voz"
+              [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+              (valueChange)="onMulti('voz', $event)"
+            />
+          </div>
+          <!-- El interruptor va a la DERECHA porque aquí manda el patrón LISTA DE AJUSTES:
                todos los controles comparten borde derecho y uno a la izquierda sería el
                único fuera de sitio. En General y Agentes va a la IZQUIERDA porque allí manda
                el patrón FILA DE FRASE: el mando abre la frase que gobierna y detrás vienen
@@ -145,44 +158,14 @@
                va donde van los controles de SU patrón, y nunca se mezclan los dos patrones
                en la misma sección. Decidido con Rafa el 2026-09-13. -->
           <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" for="grupos-overflow">{{ 'groups.form.advanced.overflow' | translate }}</label>
-              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_hint' | translate }}</p>
-            </div>
-            <sc-toggleswitch class="setting-row__control" inputId="grupos-overflow" [checked]="form().advanced.overflowWhenNoAgents" (checkedChange)="setAdvanced('overflowWhenNoAgents', $event)" />
-          </div>
-          <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" for="grupos-overflow-session">{{ 'groups.form.advanced.overflow_session' | translate }}</label>
-              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_session_hint' | translate }}</p>
-            </div>
-            <sc-toggleswitch class="setting-row__control" inputId="grupos-overflow-session" [checked]="form().advanced.overflowSession" (checkedChange)="setAdvanced('overflowSession', $event)" />
-          </div>
-        </div>
-      </section>
-
-      <sc-divider />
-
-      <section class="sub-section" aria-labelledby="grupos-announcements-title">
-        <header class="sub-section__head">
-          <h2 id="grupos-announcements-title" class="sub-section__title sc-text-body-semibold">
-            {{ 'groups.form.section.announcements' | translate }}
-          </h2>
-        </header>
-
-        <div class="settings-list">
-          <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" id="grupos-voice-label" for="grupos-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
-              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.announcements.voice_hint' | translate }}</p>
-            </div>
-            <sc-select
-              class="setting-row__control setting-row__control--select"
-              inputId="grupos-voice"
-              ariaLabelledBy="grupos-voice-label"
-              [options]="voiceOptions"
-              [value]="form().voice"
-              (valueChange)="setField('voice', $event)"
+            <label class="setting-row__label sc-text-body-regular" for="grupos-desbordar">
+              {{ 'config.aed.subpages.grupos.params.desbordar' | translate }}
+            </label>
+            <sc-toggleswitch
+              class="setting-row__control"
+              inputId="grupos-desbordar"
+              [checked]="form().desbordar"
+              (checkedChange)="update('desbordar', $event)"
             />
           </div>
         </div>
@@ -190,26 +173,41 @@
 
       <sc-divider />
 
-      <section class="sub-section" aria-labelledby="grupos-card-title">
+      <section class="sub-section" aria-labelledby="grupos-apertura-title">
         <header class="sub-section__head">
-          <h2 id="grupos-card-title" class="sub-section__title sc-text-body-semibold">
-            {{ 'groups.form.advanced.card_opening' | translate }}
+          <h2 id="grupos-apertura-title" class="sub-section__title sc-text-body-semibold">
+            {{ 'config.aed.subpages.grupos.apertura.title' | translate }}
           </h2>
         </header>
 
         <div class="settings-list">
           <div class="setting-row">
-            <span class="setting-row__label sc-text-body-regular" id="grupos-card-opening-label">{{ 'config.aed.subpages.grupos.apertura.tipo_label' | translate }}</span>
-            <sc-selectbutton class="setting-row__control" size="sm" optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
+            <label class="setting-row__label sc-text-body-regular" id="grupos-apertura-tipo-label" for="grupos-apertura-tipo">
+              {{ 'config.aed.subpages.grupos.apertura.tipo_label' | translate }}
+            </label>
+            <sc-select
+              class="setting-row__control setting-row__control--select"
+              inputId="grupos-apertura-tipo"
+              ariaLabelledBy="grupos-apertura-tipo-label"
+              [options]="aperturaOptions"
+              [value]="form().aperturaTipo"
+              [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+              (valueChange)="onSelect('aperturaTipo', $event)"
+            />
           </div>
-          @if (form().advanced.cardOpening === 'embedded') {
-            <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" for="grupos-card-height">{{ 'groups.form.advanced.card_height' | translate }}</label>
-            </div>
-            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-card-height" suffix="px" [min]="100" [value]="form().advanced.cardHeight" (valueChange)="setAdvancedNumber('cardHeight', $event)" />
+          <div class="setting-row">
+            <label class="setting-row__label sc-text-body-regular" for="grupos-apertura-tamano">
+              {{ 'config.aed.subpages.grupos.apertura.tamano_label' | translate }}
+            </label>
+            <sc-inputnumber
+              class="setting-row__control setting-row__control--number"
+              inputId="grupos-apertura-tamano"
+              [suffix]="'config.aed.subpages.grupos.apertura.tamano_suffix' | translate"
+              [min]="0"
+              [value]="form().aperturaTamano"
+              (valueChange)="onNumber('aperturaTamano', $event)"
+            />
           </div>
-          }
         </div>
       </section>
     </sc-section-card>

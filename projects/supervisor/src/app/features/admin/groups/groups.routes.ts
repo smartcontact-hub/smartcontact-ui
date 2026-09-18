@@ -10,6 +10,14 @@ export const GROUPS_ROUTES: Routes = [
       import('./pages/groups-list-page.component').then((m) => m.GroupsListPageComponent),
   },
   {
+    /* Con qué nace un grupo nuevo. Vive con Grupos y no en Configuración del AED (Rafa, 2026-09-18). */
+    path: 'valores-por-defecto',
+    data: { breadcrumb: { labelKey: 'groups.defaults.breadcrumb' } },
+    loadComponent: () =>
+      import('./pages/group-defaults-page.component').then((m) => m.GroupDefaultsPageComponent),
+    canDeactivate: [formDirtyGuard],
+  },
+  {
     path: 'crear',
     data: { breadcrumb: { labelKey: 'groups.form.create_breadcrumb' } },
     loadComponent: () =>

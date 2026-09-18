@@ -347,6 +347,10 @@ export class GroupsListPageComponent {
     this.selectedIds.set(new Set());
   }
 
+  protected onDefaultsClick(): void {
+    void this.router.navigateByUrl('/admin/grupos/valores-por-defecto');
+  }
+
   protected onCreateClick(): void {
     void this.router.navigateByUrl('/admin/grupos/crear');
   }

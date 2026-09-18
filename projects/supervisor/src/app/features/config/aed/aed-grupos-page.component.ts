@@ -12,39 +12,77 @@ import { MessageService } from 'primeng/api';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { injectLangChange } from '@core/utils/lang-change';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import {
-  DEFAULT_STRATEGY_OPTIONS,
-  GROUP_PRIORITIES,
-  GroupAdvanced,
-  GroupDefaults,
-  PRIORITY_LABEL_KEYS,
-  VOICE_OPTIONS,
-} from '@features/admin/groups/data/groups-data';
-import { GroupDefaultsStore } from '@features/admin/groups/state/group-defaults.store';
 
 import {
   ScButtonComponent as ButtonComponent,
   ScDividerComponent as DividerComponent,
   ScInputNumberComponent as InputNumberComponent,
+  ScMultiSelectComponent as MultiSelectComponent,
   ScSectionCardComponent as SectionCardComponent,
-  ScSelectButtonComponent as SelectButtonComponent,
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { stableStringify } from '../../../shared/utils/form-dirty-state';
 
+interface FormState {
+  /** Multi-select (varias opciones) — Figma `❖ multiselect`. */
+  estrategia: string[];
+  prioridad: string[];
+  voz: string[];
+  tipoColaEspera: string[];
+  /**
+   * Numéricos. Eran `string` con `sc-inputtext`; la maqueta (2286:5411, 2286:5417, 2286:5400)
+   * los dibuja con `inputnumber` y la etiqueta al lado, que además es lo que corresponde a un
+   * número: teclado numérico, flechas y sin texto libre que validar.
+   */
+  capacidadColaEspera: number | null;
+  tiempoMaxEspera: number | null;
+  tiempoTransferencia: number | null;
+  /** Tamaño en píxeles de la ficha embebida — maqueta 2286:5402. */
+  aperturaTamano: number | null;
+  /** Single-select. */
+  aperturaTipo: string;
+  desbordar: boolean;
+}
+
+const ESTRATEGIA_OPTIONS = [
+  'Distribución equitativa',
+  'Más tiempo libre',
+  'Última asignación',
+  'Round robin',
+  'Aleatoria',
+] as const;
+const PRIORIDAD_OPTIONS = ['Baja', 'Media', 'Alta', 'Urgente'] as const;
+const VOZ_OPTIONS = ['G.711 (alaw/ulaw)', 'G.722', 'G.729', 'OPUS'] as const;
+const TIPO_COLA_OPTIONS = [
+  'Orden de llegada (FIFO)',
+  'Por prioridad',
+  'Último en entrar (LIFO)',
+] as const;
+const APERTURA_OPTIONS = ['Automática', 'Manual', 'Ninguna'] as const;
+
+const DEFAULT_FORM: FormState = {
+  estrategia: [],
+  prioridad: [],
+  voz: [],
+  tipoColaEspera: [],
+  capacidadColaEspera: null,
+  tiempoMaxEspera: null,
+  tiempoTransferencia: null,
+  aperturaTamano: null,
+  aperturaTipo: '',
+  desbordar: true,
+};
+
 /**
- * Grupos defaults page — `/config/aed/grupos`. Con lo que nace cada grupo nuevo.
+ * Grupos defaults page — `/config/aed/grupos`. Figma Supervisor `1:12676`.
  *
- * Hasta el 2026-09-16 esta página tenía sus propias listas, que no casaban con la ficha de grupo ni con Voice:
- * estrategias que no existen («Round robin», «Distribución equitativa»), códecs de audio como «Voz», una cola
- * FIFO/LIFO, «Urgente» en vez de «Máxima» y una apertura de ficha Automática/Manual/Ninguna. Ahora usa los mismos
- * campos, opciones y palabras que la ficha (`groups-data.ts`), y lo que guarda lo lee la ficha al crear
- * (`GroupDefaultsStore`). Estrategias según SISMAC-1975 en COA.
- *
- * Mantiene el patrón LISTA DE AJUSTES (nombre a la izquierda, control a la derecha) y el guardado único en la TopBar.
+ * Card "Parámetros" en DOS COLUMNAS (estrategia | prioridad, tipo de cola |
+ * máximo en cola, tiempo de espera | tiempo de transferencia, voz | desbordar)
+ * y card "Apertura de ficha" con tipo | tamaño en píxeles. El reparto sale de la
+ * maqueta (Figma Supervisor 2286:5324): filas de 396.25 + 24.5 + 396.25.
+ * Guardado único en la TopBar.
  */
 @Component({
   selector: 'sc-aed-grupos-page',
@@ -52,8 +90,8 @@ import { stableStringify } from '../../../shared/utils/form-dirty-state';
     ButtonComponent,
     DividerComponent,
     InputNumberComponent,
+    MultiSelectComponent,
     SectionCardComponent,
-    SelectButtonComponent,
     SelectComponent,
     ToggleSwitchComponent,
     TranslateModule,
@@ -65,36 +103,21 @@ import { stableStringify } from '../../../shared/utils/form-dirty-state';
 export class AedGruposPageComponent implements DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
-  private readonly lang = injectLangChange();
-  private readonly store = inject(GroupDefaultsStore);
 
-  protected readonly strategyOptions = DEFAULT_STRATEGY_OPTIONS;
-  protected readonly priorities = GROUP_PRIORITIES;
-  protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
-  protected readonly voiceOptions = VOICE_OPTIONS;
+  protected readonly estrategiaOptions = ESTRATEGIA_OPTIONS;
+  protected readonly prioridadOptions = PRIORIDAD_OPTIONS;
+  protected readonly vozOptions = VOZ_OPTIONS;
+  protected readonly tipoColaOptions = TIPO_COLA_OPTIONS;
+  protected readonly aperturaOptions = APERTURA_OPTIONS;
 
-  protected readonly queueSizeOptions = computed(() => {
-    this.lang();
-    return [
-      { label: this.translate.instant('groups.form.advanced.queue_fixed'), value: 'fixed' },
-      { label: this.translate.instant('groups.form.advanced.queue_per_agent'), value: 'per_agent' },
-    ];
-  });
-
-  protected readonly cardOpeningOptions = computed(() => {
-    this.lang();
-    return [
-      { label: this.translate.instant('groups.form.advanced.card_embedded'), value: 'embedded' },
-      { label: this.translate.instant('groups.form.advanced.card_new_window'), value: 'new_window' },
-    ];
-  });
-
-  protected readonly form = signal<GroupDefaults>(structuredClone(this.store.defaults()));
+  private readonly pristine = signal<FormState>({ ...DEFAULT_FORM });
+  protected readonly form = signal<FormState>({ ...DEFAULT_FORM });
   protected readonly saving = signal(false);
 
-  /** Dirty real = el form difiere de lo guardado (deshacer cambios → no deja guardar). */
+  /** Dirty real = el form difiere del original guardado (deshacer cambios →
+   * no deja guardar). */
   protected readonly dirty = computed(
-    () => stableStringify(this.form()) !== stableStringify(this.store.defaults()),
+    () => stableStringify(this.form()) !== stableStringify(this.pristine()),
   );
   protected readonly canSave = computed(() => this.dirty() && !this.saving());
   /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
@@ -106,31 +129,45 @@ export class AedGruposPageComponent implements DirtyAware {
     useTopbarActions(this.topbarActions);
   }
 
-  protected setField<K extends 'strategy' | 'priority' | 'voice'>(key: K, value: unknown): void {
-    if (typeof value === 'string') this.form.update((f) => ({ ...f, [key]: value }));
+
+  protected update<K extends keyof FormState>(key: K, value: FormState[K]): void {
+    this.form.update((f) => ({ ...f, [key]: value }));
   }
 
-  protected setAdvanced<K extends keyof GroupAdvanced>(key: K, value: GroupAdvanced[K]): void {
-    this.form.update((f) => ({ ...f, advanced: { ...f.advanced, [key]: value } }));
-  }
-
-  protected setAdvancedNumber(
-    key: 'queueSize' | 'maxQueueWaitSec' | 'transferSec' | 'serviceLevelSec' | 'wrapUpSec' | 'cardHeight',
+  /** Adapter para `<sc-inputnumber>` (emite `number | null`). */
+  protected onNumber(
+    key: 'capacidadColaEspera' | 'tiempoMaxEspera' | 'tiempoTransferencia' | 'aperturaTamano',
     value: number | null,
   ): void {
-    if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
+    this.update(key, value);
+  }
+
+  /** Adapter para `<sc-select>` single (Apertura de ficha). */
+  protected onSelect(key: 'aperturaTipo', value: unknown): void {
+    if (typeof value === 'string') this.update(key, value);
+  }
+
+  /** Adapter para `<sc-multiselect>` (emite `unknown[]`). Coerce a string[]. */
+  protected onMulti(
+    key: 'estrategia' | 'prioridad' | 'voz' | 'tipoColaEspera',
+    value: unknown[],
+  ): void {
+    this.update(
+      key,
+      value.filter((v): v is string => typeof v === 'string'),
+    );
   }
 
   protected cancel(): void {
-    this.form.set(structuredClone(this.store.defaults()));
+    this.form.set(structuredClone(this.pristine()));
   }
 
   protected save(): void {
     if (!this.canSave()) return;
     this.saving.set(true);
     setTimeout(() => {
-      this.store.save(structuredClone(this.form()));
       this.saving.set(false);
+      this.pristine.set(structuredClone(this.form()));
       this.messages.add({
         severity: 'success',
         summary: this.translate.instant('config.aed.subpages.grupos.toast.saved'),

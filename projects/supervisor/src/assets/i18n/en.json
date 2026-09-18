@@ -1542,7 +1542,7 @@
         "wait_to_agent_hint": "Said before the call is handed over."
       },
       "advanced": {
-        "defaults_hint": "Starts with the default values from AED settings.",
+        "defaults_hint": "Starts with the group defaults.",
         "queue_title": "Queue and times",
         "queue_size": "Queue size",
         "queue_fixed": "Fixed",
@@ -1571,6 +1571,16 @@
         "script_copy": "Copy code",
         "script_copied": "Code copied"
       }
+    },
+    "defaults": {
+      "heading": "Defaults",
+      "breadcrumb": "Defaults",
+      "button": "Defaults",
+      "hint": "Every new group starts with these. You can change them later in the group.",
+      "routing_title": "Distribution",
+      "strategy_hint": "Levels, Ring All, Skills and Exclusive agent are chosen in each group, where they are set up.",
+      "card_opening_type": "Type",
+      "toast_saved": "Defaults saved"
     },
     "errors": {
       "name_required": "Name is required",
@@ -1965,15 +1975,30 @@
         },
         "grupos": {
           "heading": "Groups",
-          "hint": "Every new group starts with these. You can change them later in the group.",
-          "routing_title": "Distribution",
-          "strategy_hint": "Levels, Ring All, Skills and Exclusive agent are chosen in each group, where they are set up.",
+          "params": {
+            "title": "Parameters",
+            "estrategia": "Conversation distribution strategy",
+            "prioridad": "Group priority",
+            "voz": "Voice",
+            "desbordar": "Overflow conversations when no agents are available",
+            "tipo_cola": "Queue type",
+            "capacidad_cola": "Maximum conversations in queue",
+            "tiempo_max": "Maximum queue wait time",
+            "tiempo_transfer": "Maximum transfer time",
+            "placeholder": "Select",
+            "input_placeholder": "Type",
+            "segundos": "seconds"
+          },
           "apertura": {
-            "tipo_label": "Type"
+            "title": "Contact card opening",
+            "tipo_label": "Type",
+            "tamano_label": "Size",
+            "tamano_suffix": "pixels"
           },
           "toast": {
             "saved": "Group settings saved"
-          }
+          },
+          "edit_crumb": "Edit group"
         }
       },
       "breadcrumb": {
