@@ -49,22 +49,6 @@ export class ToggleSwitchDemoComponent {
       readonly: false,
       ariaLabel: 'Activar',
     },
-    props: [
-      { name: 'checked', type: 'boolean', default: 'false', description: 'Estado; emite `checkedChange`.' },
-      { name: 'size', type: 'ScComponentSize', default: "'md'", description: 'sm · md · lg' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      {
-        name: 'readonly',
-        type: 'boolean',
-        default: 'false',
-        description: 'Bloquea la interacción sin pintar disabled.',
-      },
-      { name: 'ariaLabel', type: 'string | null', default: 'null' },
-      { name: 'ariaLabelledBy', type: 'string | null', default: 'null' },
-      { name: 'inputId', type: 'string | null', default: 'null' },
-      { name: 'checkedChange', type: 'EventEmitter<boolean>' },
-      { name: 'changed', type: 'EventEmitter<unknown>', description: 'onChange nativo de PrimeNG.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

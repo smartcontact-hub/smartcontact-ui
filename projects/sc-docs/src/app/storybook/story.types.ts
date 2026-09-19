@@ -45,14 +45,6 @@ export interface ArgType {
   readonly emit?: 'attr' | 'prop' | 'slot';
 }
 
-/** Fila de la tabla de API (referencia estática, no editable). */
-export interface PropRow {
-  readonly name: string;
-  readonly type: string;
-  readonly default?: string;
-  readonly description?: string;
-}
-
 /** Meta del componente: identidad + knobs por defecto + tabla de props. */
 export interface StoryMeta {
   /** Selector del componente DS, p.ej. `sc-button`. Se usa como tag del snippet del Playground. */
@@ -64,8 +56,6 @@ export interface StoryMeta {
   readonly argTypes: readonly ArgType[];
   /** Args iniciales del Playground (default por arg). */
   readonly defaultArgs: ScArgs;
-  /** Tabla de API (opcional pero recomendada). */
-  readonly props?: readonly PropRow[];
 }
 
 /** Una story concreta: un `<ng-template>` + sus args + (opcional) un snippet a medida. */

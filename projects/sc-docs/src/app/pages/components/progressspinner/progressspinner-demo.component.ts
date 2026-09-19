@@ -39,27 +39,6 @@ export class ProgressSpinnerDemoComponent {
       animationDuration: '2s',
       ariaLabel: 'Cargando',
     },
-    props: [
-      { name: 'strokeWidth', type: 'string', default: "'2'", description: 'Grosor del trazo.' },
-      {
-        name: 'fill',
-        type: 'string',
-        default: "'transparent'",
-        description: 'Color de relleno del círculo interior.',
-      },
-      {
-        name: 'animationDuration',
-        type: 'string',
-        default: "'2s'",
-        description: 'Duración de la rotación.',
-      },
-      {
-        name: 'ariaLabel',
-        type: 'string',
-        default: "'Cargando'",
-        description: 'Etiqueta accesible.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

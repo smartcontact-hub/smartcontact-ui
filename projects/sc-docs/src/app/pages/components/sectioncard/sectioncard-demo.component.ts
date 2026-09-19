@@ -110,64 +110,6 @@ export class SectionCardDemoComponent {
       flush: false,
           anchorId: 'seccion-ejemplo',
     },
-    props: [
-      {
-        name: 'titleKey',
-        type: 'string',
-        default: '— (requerido)',
-        description: 'Clave i18n del título de la sección.',
-      },
-      {
-        name: 'hintKey',
-        type: 'string | null',
-        default: 'null',
-        description: 'Clave i18n de la ayuda junto al título.',
-      },
-      {
-        name: 'icon',
-        type: 'string | null',
-        default: 'null',
-        description: 'Icono Material de la cabecera.',
-      },
-      {
-        name: 'anchorId',
-        type: 'string | null',
-        default: 'null',
-        description: 'Id de ancla para el scroll-spy de sc-form-section-nav.',
-      },
-      {
-        name: 'collapsible',
-        type: 'boolean',
-        default: 'false',
-        description: 'La cabecera actúa de toggle y el body colapsa.',
-      },
-      {
-        name: 'initiallyCollapsed',
-        type: 'boolean',
-        default: 'false',
-        description: 'Arranca plegada (solo si collapsible).',
-      },
-      {
-        name: 'flush',
-        type: 'boolean',
-        default: 'false',
-        description: 'Sin caja: quita fondo/borde/radio; el contenido va a sangre.',
-      },
-      {
-        name: 'surface',
-        type: "'subtle' | 'card'",
-        default: "'subtle'",
-        description:
-          'La piel, y con ella las medidas. subtle: gris plano (22.75/16, título a 14 del contenido), para agrupar campos dentro de un formulario. card: blanca con borde (24.5, título a 16 y sangrado 12.25 como el contenido), para una sección que va sola sobre el lienzo. Ninguna de las dos lleva línea bajo la cabecera: las separa el aire, como en Figma.',
-      },
-      {
-        name: 'headingLevel',
-        type: '1 | 2',
-        default: '2',
-        description:
-          'Nivel del encabezado en el DOCUMENTO, no su tamaño: los dos miden 14/20 semibold. 2 es una sección de la página (h2); 1 es el título de LA PÁGINA (h1) — uno por documento, así que una sola card por pantalla. Dentro de la card, lo que distingue al título de la página de los de sección es su icono, no su cuerpo (DD-61).',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

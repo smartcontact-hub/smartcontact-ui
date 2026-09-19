@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, linkedSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal } from '@angular/core';
 
 import { serializeArgs } from './serialize-args';
 import { StoryCanvasComponent } from './story-canvas.component';
@@ -6,6 +6,7 @@ import { StoryControlsComponent } from './story-controls.component';
 import { StoryPropsTableComponent } from './story-props-table.component';
 import { StoryAnatomyComponent } from './story-anatomy.component';
 import { StorySnippetComponent } from './story-snippet.component';
+import { ComponentApiService } from './component-api.service';
 import { ScArgs, StoryDef, StoryMeta } from './story.types';
 
 /**
@@ -72,20 +73,31 @@ import { ScArgs, StoryDef, StoryMeta } from './story.types';
         </section>
       }
 
-      @if (meta().props; as props) {
-        @if (props.length) {
-          <section class="sb-host__story">
-            <p class="sb-host__section-title sc-text-caption-semibold">API</p>
-            <app-story-props-table [props]="props" />
-          </section>
-        }
+      @if (cuando(); as cuando) {
+        <section class="sb-host__story">
+          <p class="sb-host__section-title sc-text-caption-semibold">Cuándo se usa</p>
+          <p class="sb-host__desc">{{ cuando }}</p>
+        </section>
       }
+
+      <section class="sb-host__story">
+        <p class="sb-host__section-title sc-text-caption-semibold">API</p>
+        <app-story-props-table [miembros]="contrato()" [error]="apiError()" />
+      </section>
     </div>
   `,
 })
 export class StoryHostComponent {
   readonly meta = input.required<StoryMeta>();
   readonly stories = input.required<readonly StoryDef[]>();
+
+  private readonly api = inject(ComponentApiService);
+
+  /** El contrato del componente, DERIVADO del código — ya no se escribe en el demo. */
+  protected readonly contrato = computed(() => this.api.contrato(this.meta().tag));
+  /** Su línea de «cuándo se usa», la pregunta que se hace ANTES que la de las props. */
+  protected readonly cuando = computed(() => this.api.cuando(this.meta().tag));
+  protected readonly apiError = this.api.error;
 
   /** Args editables del Playground; se siembran de `meta.defaultArgs` (writable + reseed). */
   protected readonly playArgs = linkedSignal<ScArgs>(() => ({ ...this.meta().defaultArgs }));

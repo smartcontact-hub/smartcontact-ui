@@ -52,28 +52,6 @@ export class FormDangerZoneDemoComponent {
       actionKey: 'Eliminar agente',
       disabled: false,
     },
-    props: [
-      {
-        name: 'titleKey',
-        type: 'string',
-        default: "'sc.formDangerZone.title'",
-        description: 'Clave i18n del título de la sección.',
-      },
-      {
-        name: 'descriptionKey',
-        type: 'string',
-        default: '— (requerido)',
-        description: 'Clave i18n de la descripción (la suministra el consumidor).',
-      },
-      {
-        name: 'actionKey',
-        type: 'string',
-        default: "'sc.formDangerZone.action'",
-        description: 'Clave i18n de la etiqueta del botón destructivo.',
-      },
-      { name: 'disabled', type: 'boolean', default: 'false', description: 'Deshabilita el trigger.' },
-      { name: 'action', type: 'EventEmitter<void>', description: 'Output al pulsar la acción.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

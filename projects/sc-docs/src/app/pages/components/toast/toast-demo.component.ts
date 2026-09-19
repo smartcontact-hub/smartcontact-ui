@@ -69,35 +69,6 @@ export class ToastDemoComponent {
       preventDuplicates: false,
       preventOpenDuplicates: false,
     },
-    props: [
-      {
-        name: 'key',
-        type: 'string | null',
-        default: 'null',
-        description: 'Agrupa toasts por clave (multi-host).',
-      },
-      {
-        name: 'position',
-        type: 'ScToastPosition',
-        default: "'bottom-right'",
-        description: 'Esquina/centro donde aparece.',
-      },
-      { name: 'life', type: 'number', default: '3000', description: 'Duración en ms.' },
-      { name: 'baseZIndex', type: 'number', default: '5000', description: 'z-index base.' },
-      {
-        name: 'preventDuplicates',
-        type: 'boolean',
-        default: 'false',
-        description: 'Ignora toasts idénticos.',
-      },
-      {
-        name: 'preventOpenDuplicates',
-        type: 'boolean',
-        default: 'false',
-        description: 'Ignora duplicados ya visibles.',
-      },
-      { name: 'closed', type: 'EventEmitter<ScToastCloseEvent>', description: 'Output al cerrar.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

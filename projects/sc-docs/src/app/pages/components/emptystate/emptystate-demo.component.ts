@@ -75,39 +75,6 @@ export class EmptyStateDemoComponent {
       ctaKey: '',
           ctaIcon: 'add',
     },
-    props: [
-      {
-        name: 'icon',
-        type: 'string',
-        default: '—',
-        description: 'Icono Material (requerido).',
-      },
-      {
-        name: 'titleKey',
-        type: 'string',
-        default: '—',
-        description: 'Clave i18n del título (requerido).',
-      },
-      {
-        name: 'bodyKey',
-        type: 'string',
-        default: "''",
-        description: 'Clave i18n del cuerpo. Opcional: sin ella el vacío se queda en el título.',
-      },
-      {
-        name: 'ctaKey',
-        type: 'string | null',
-        default: 'null',
-        description: 'Clave i18n de la CTA; si se define, pinta el botón primario.',
-      },
-      {
-        name: 'params',
-        type: 'Record<string, unknown>',
-        default: 'undefined',
-        description: 'Parámetros de interpolación para título y cuerpo (p. ej. { query }).',
-      },
-      { name: 'cta', type: 'EventEmitter<void>', description: 'Output al pulsar la CTA.' },
-    ],
   };
 
   /** La CTA de la story «Con CTA» tiene que HACER algo: si no, el `(cta)` del código es decorativo. */

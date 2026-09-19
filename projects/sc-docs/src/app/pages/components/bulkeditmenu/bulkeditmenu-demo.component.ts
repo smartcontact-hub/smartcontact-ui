@@ -59,20 +59,6 @@ export class BulkEditMenuDemoComponent {
     ],
     defaultArgs: {      buttonLabel: 'Editar',
     },
-    props: [
-      {
-        name: 'fields',
-        type: 'readonly BulkEditFieldOption[]',
-        description: 'Campos y sus valores posibles (requerido). El primero es el default.',
-      },
-      {
-        name: 'buttonLabel',
-        type: 'string',
-        default: "'Editar'",
-        description: 'Retenido por compatibilidad; ya no se renderiza.',
-      },
-      { name: 'commit', type: 'EventEmitter<BulkEditCommit>', description: 'Output al aplicar.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

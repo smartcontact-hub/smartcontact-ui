@@ -51,27 +51,6 @@ export class DividerDemoComponent {
       type: 'solid',
       align: '',
     },
-    props: [
-      {
-        name: 'layout',
-        type: 'ScDividerLayout',
-        default: "'horizontal'",
-        description: 'horizontal · vertical',
-      },
-      {
-        name: 'type',
-        type: 'ScDividerType',
-        default: "'solid'",
-        description: 'solid · dashed · dotted',
-      },
-      {
-        name: 'align',
-        type: 'ScDividerAlign | null',
-        default: 'null',
-        description:
-          'Alineación del contenido proyectado. Horizontal: left/center/right; vertical: top/center/bottom.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

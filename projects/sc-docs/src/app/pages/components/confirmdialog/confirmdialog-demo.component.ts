@@ -47,25 +47,6 @@ export class ConfirmDialogDemoComponent {
       'Diálogo de confirmación imperativo vía `ScConfirmService.request()` (devuelve una promesa `boolean`). El host `<sc-confirmdialog>` se coloca una vez; el tono (primary/danger) y el énfasis (accept/reject) se pasan por llamada. Pulsa un botón para pedir confirmación.',
     argTypes: [],
     defaultArgs: {},
-    props: [
-      {
-        name: 'request()',
-        type: '(opts) => Promise<boolean>',
-        description: 'API del servicio: title, body, acceptLabel, rejectLabel, acceptTone, emphasis.',
-      },
-      {
-        name: 'acceptTone',
-        type: "'primary' | 'danger'",
-        default: "'primary'",
-        description: 'Color del botón de aceptar.',
-      },
-      {
-        name: 'emphasis',
-        type: "'accept' | 'reject'",
-        default: "'accept'",
-        description: 'Qué botón recibe el foco/énfasis inicial.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

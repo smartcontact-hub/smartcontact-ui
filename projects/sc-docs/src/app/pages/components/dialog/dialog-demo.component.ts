@@ -104,42 +104,6 @@ export class DialogDemoComponent {
       dismissableMask: false,
           flushBody: false,
     },
-    props: [
-      {
-        name: 'visible',
-        type: 'model<boolean>',
-        default: 'false',
-        description: 'Two-way `[(visible)]` o `[visible]` + `(visibleChange)`.',
-      },
-      { name: 'title', type: 'string', description: 'Título del header (requerido).' },
-      { name: 'subtitle', type: 'string | null', default: 'null' },
-      {
-        name: 'icon',
-        type: 'string | null',
-        default: 'null',
-        description: 'Icono Material del header.',
-      },
-      { name: 'width', type: 'string', default: "'440px'" },
-      { name: 'closable', type: 'boolean', default: 'true', description: 'Muestra la X de cierre.' },
-      {
-        name: 'hasFooter',
-        type: 'boolean',
-        default: 'true',
-        description: 'Reserva el slot `modal-actions`.',
-      },
-      {
-        name: 'bodyless',
-        type: 'boolean',
-        default: 'false',
-        description: 'Omite la sección de cuerpo (sin banda vacía).',
-      },
-      { name: 'modal', type: 'boolean', default: 'true' },
-      { name: 'position', type: 'ScDialogPosition', default: "'center'" },
-      { name: 'draggable', type: 'boolean', default: 'false' },
-      { name: 'resizable', type: 'boolean', default: 'false' },
-      { name: 'dismissableMask', type: 'boolean', default: 'false' },
-      { name: 'cancelled', type: 'EventEmitter<void>', description: 'Cierre por X, ESC o máscara.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

@@ -119,28 +119,6 @@ export class SelectDemoComponent {
       disabled: false,
       loading: false,
     },
-    props: [
-      { name: 'value', type: 'unknown', default: 'undefined', description: 'Two-way `[(value)]`.' },
-      { name: 'options', type: 'unknown[]', default: '[]', description: 'string[] u objetos.' },
-      { name: 'optionLabel', type: 'string', default: "'label'", description: 'Clave de la etiqueta (objetos).' },
-      { name: 'optionValue', type: 'string', default: '—', description: 'Clave del valor (objetos).' },
-      { name: 'label', type: 'string', default: '—' },
-      { name: 'placeholder', type: 'string', default: "''" },
-      { name: 'size', type: 'ScSelectSize', default: "'md'", description: 'sm · md · lg' },
-      { name: 'helperText', type: 'string', default: '—' },
-      { name: 'error', type: 'string', default: '—', description: 'Texto de error (gana a helper).' },
-      { name: 'required', type: 'boolean', default: 'false' },
-      { name: 'showClear', type: 'boolean', default: 'false', description: 'Botón «×» para limpiar.' },
-      { name: 'filter', type: 'boolean', default: 'false', description: 'Buscador dentro del panel.' },
-      { name: 'filterPlaceholder', type: 'string', default: "'Buscar'", description: 'Texto de ayuda del buscador del panel.' },
-      { name: 'filled', type: 'boolean', default: 'false', description: 'Fondo slate-50.' },
-      { name: 'iftaLabel', type: 'boolean', default: 'false', description: 'Label dentro del campo.' },
-      { name: 'appendTo', type: "'body' | 'self'", default: "'body'", description: 'Dónde se abre la lista. En `body` no la recorta una tarjeta o un diálogo con `overflow: hidden`; `self` la deja dentro del componente.' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      { name: 'loading', type: 'boolean', default: 'false', description: 'Spinner de carga.' },
-      { name: 'focused', type: 'EventEmitter<FocusEvent>' },
-      { name: 'blurred', type: 'EventEmitter<FocusEvent>' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

@@ -56,18 +56,6 @@ export class SearchDemoComponent {
       disabled: false,
       autoFocus: false,
     },
-    props: [
-      { name: 'value', type: 'string', default: "''", description: 'Two-way `[(value)]`.' },
-      { name: 'placeholder', type: 'string', default: "''" },
-      { name: 'size', type: 'ScSearchSize', default: "'md'", description: 'sm · md · lg' },
-      { name: 'showClear', type: 'boolean', default: 'true', description: 'Botón × cuando hay texto.' },
-      { name: 'shortcutHint', type: 'string', default: '—', description: 'Pista de atajo (campo vacío).' },
-      { name: 'filled', type: 'boolean', default: 'false' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      { name: 'autoFocus', type: 'boolean', default: 'false' },
-      { name: 'clearAriaLabel', type: 'string', default: "'Clear search'" },
-      { name: 'keydown', type: 'EventEmitter<KeyboardEvent>', description: 'Re-emite keydown del input.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

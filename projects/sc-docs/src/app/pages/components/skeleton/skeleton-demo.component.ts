@@ -51,34 +51,6 @@ export class SkeletonDemoComponent {
       size: '',
       borderRadius: '',
     },
-    props: [
-      {
-        name: 'shape',
-        type: 'ScSkeletonShape',
-        default: "'rectangle'",
-        description: 'rectangle · circle',
-      },
-      {
-        name: 'animation',
-        type: 'ScSkeletonAnimation',
-        default: "'wave'",
-        description: 'wave · none',
-      },
-      { name: 'width', type: 'string', default: "'100%'", description: 'Ancho CSS.' },
-      { name: 'height', type: 'string', default: "'1rem'", description: 'Alto CSS.' },
-      {
-        name: 'size',
-        type: 'string | null',
-        default: 'null',
-        description: 'Atajo cuadrado (círculo o rectángulo).',
-      },
-      {
-        name: 'borderRadius',
-        type: 'string | null',
-        default: 'null',
-        description: 'Radio de borde CSS.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

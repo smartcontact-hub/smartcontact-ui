@@ -62,20 +62,6 @@ export class PhotoUploadDemoComponent {
       ariaLabel: '',
           illustrationBase: 'assets/avatars',
     },
-    props: [
-      { name: 'photo', type: 'string | null', default: 'null', description: 'Data URL / src actual.' },
-      { name: 'name', type: 'string | null', default: 'null', description: 'Semilla del fallback.' },
-      { name: 'size', type: "'md' | 'sm'", default: "'md'", description: 'md (64) · sm (44)' },
-      {
-        name: 'illustrationPool',
-        type: 'AvatarIllustrationPool',
-        default: "'illustrated'",
-        description: 'illustrated · abstract',
-      },
-      { name: 'illustrationBase', type: 'string', default: "'assets/avatars'" },
-      { name: 'ariaLabel', type: 'string | null', default: 'null' },
-      { name: 'photoChange', type: 'EventEmitter<string | null>', description: 'Foto elegida o quitada.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

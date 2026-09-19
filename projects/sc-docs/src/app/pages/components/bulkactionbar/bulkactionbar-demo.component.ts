@@ -53,19 +53,6 @@ export class BulkActionBarDemoComponent {
     defaultArgs: {
       count: 3,
     },
-    props: [
-      {
-        name: 'count',
-        type: 'number',
-        description: 'Nº de elementos seleccionados (requerido). La barra se oculta con 0.',
-      },
-      {
-        name: 'entity',
-        type: 'BulkActionEntityLabels',
-        description: 'Etiquetas singular/plural (+ sufijos opcionales) de la entidad (requerido).',
-      },
-      { name: 'clear', type: 'EventEmitter<void>', description: 'Output al pulsar limpiar.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {
