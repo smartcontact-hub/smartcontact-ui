@@ -20,8 +20,11 @@ import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScSlotComponent {
+  /** Clave de traducción del título. */
   readonly titleKey = input.required<string>();
+  /** Icono junto al título. Decorativo. */
   readonly icon = input<string | null>(null);
+  /** Clave de traducción de la aclaración bajo el título. */
   readonly hintKey = input<string | null>(null);
 
   protected readonly iconSizeLg = SC_ICON_SIZE_LG;

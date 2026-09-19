@@ -43,6 +43,11 @@ export class ScButtonComponent {
 
     readonly variant = input<ScButtonVariant>('primary');
 
+    /**
+     * Qué tan presente es el botón: `filled` lo rellena, `outlined` deja solo el borde, `text` solo
+     * la etiqueta y `link` lo pinta como un enlace. En PrimeNG son tres booleanos sueltos
+     * (`outlined`/`text`/`link`); aquí es un valor único para que no puedan darse dos a la vez.
+     */
     readonly appearance = input<ScButtonAppearance>('filled');
 
     readonly size = input<ScButtonSize>('md');
@@ -51,24 +56,39 @@ export class ScButtonComponent {
 
     readonly loading = input(false, { transform: booleanAttribute });
 
+    /** El botón ocupa todo el ancho disponible. Llega a PrimeNG como `fluid`. */
     readonly fullWidth = input(false, { transform: booleanAttribute });
 
     readonly type = input<ScButtonType>('button');
 
     readonly icon = input<string | null>(null);
 
+    /** De qué lado de la etiqueta va el icono. Llega a PrimeNG como `iconPos`. */
     readonly iconPosition = input<ScButtonIconPosition>('left');
 
+    /**
+     * Talla del icono, si tiene que ser distinta de la que le tocaría por la del botón. `null` deja
+     * que la herede.
+     */
     readonly iconSize = input<ScButtonIconSize | null>(null);
 
+    /**
+     * Pinta el icono en su versión rellena (el eje `FILL` de Material Symbols), no en la de solo
+     * trazo.
+     */
     readonly iconFilled = input(false, { transform: booleanAttribute });
 
+    /**
+     * Nombre accesible del icono, para cuando el icono es el que lleva el significado y no hay
+     * etiqueta que lo diga. Sin esto, un botón de solo icono no se anuncia.
+     */
     readonly iconAriaLabel = input<string | null>(null);
 
     readonly ariaLabel = input<string | null>(null);
 
     readonly rounded = input(false, { transform: booleanAttribute });
 
+    /** El botón se ha pulsado. Es el `onClick` de PrimeNG renombrado a la convención del DS. */
     readonly clicked = output<MouseEvent>();
 
     protected readonly isInteractionDisabled = computed(() => this.disabled() || this.loading());

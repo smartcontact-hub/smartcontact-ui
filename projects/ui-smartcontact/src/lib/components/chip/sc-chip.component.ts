@@ -40,8 +40,13 @@ export class ScChipComponent {
     /** Aria-label del botón de quitar (variante label). El consumidor lo traduce. */
     readonly removeAriaLabel = input('Remove');
 
+    /**
+     * El usuario ha quitado la etiqueta. Quitarla de la lista es del consumidor: el componente no
+     * se borra solo.
+     */
     readonly removed = output<unknown>();
 
+    /** La imagen de la etiqueta no se ha podido cargar. */
     readonly imageError = output<unknown>();
 
     protected readonly closeIcon = 'close';

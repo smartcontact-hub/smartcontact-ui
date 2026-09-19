@@ -104,40 +104,77 @@ export class ScBulkTranscriptionModalComponent implements OnDestroy {
     });
   }
 
+  /**
+   * Cuántas conversaciones ha marcado el usuario. Es el número de partida del que salen todos los
+   * demás.
+   */
   readonly selectedCount = input(0);
 
+  /** De las marcadas, cuántas se van a transcribir. */
   readonly transcriptionCount = input(0);
 
+  /** De las marcadas, cuántas se van a analizar. */
   readonly analysisCount = input(0);
 
+  /** Llamadas que aún no se han transcrito nunca. `null` cuando el dato no aplica en esa pantalla. */
   readonly newCallsCount = input<number | null>(null);
 
+  /** Llamadas ya transcritas a las que les falta el análisis. `null` si no aplica. */
   readonly transcribedCallsPendingAnalysisCount = input<number | null>(null);
 
+  /** Chats pendientes de análisis; no se transcriben porque ya son texto. `null` si no aplica. */
   readonly chatsPendingAnalysisCount = input<number | null>(null);
 
+  /** Marcadas que ya estaban procesadas y por tanto no se vuelven a procesar. */
   readonly alreadyProcessedCount = input(0);
 
+  /**
+   * Ids de las que se van a transcribir. Viajan en el resultado para que el consumidor sepa sobre
+   * cuáles actuar.
+   */
   readonly readyToTranscribeIds = input<string[]>([]);
 
+  /** Ids de las que se van a analizar, con el mismo propósito. */
   readonly readyToAnalyzeIds = input<string[]>([]);
 
+  /** Llamadas partidas en varios tramos: cuentan como una conversación pero se procesan por tramos. */
   readonly multiSegmentCallsCount = input(0);
 
+  /** Conversaciones con solo algunos tramos procesados, que por eso quedan a medias. */
   readonly partialSegmentConversationsCount = input(0);
 
+  /**
+   * Marcadas que se dejan fuera por estar en curso: procesarlas mientras pasan cosas daría un
+   * resultado incompleto.
+   */
   readonly excludedInProgressCount = input(0);
 
+  /**
+   * Sobre qué fondo se pinta el modal (`default`, `dark`, `green`), para que case con la pantalla
+   * que lo abre.
+   */
   readonly surface = input<ScBulkTranscriptionModalSurface>('default');
 
+  /** Clase extra en la raíz del modal, para un ajuste puntual del consumidor. */
   readonly styleClass = input('');
 
+  /**
+   * Callback de cierre, alternativa a escuchar `closed`. Está para consumidores que no pueden atar
+   * un output (por ejemplo al abrirlo por servicio). `null` lo desactiva.
+   */
   readonly closeRequested = input<(() => void) | null>(null);
 
+  /** Callback de procesado, la alternativa equivalente a `processed`, con el mismo motivo. */
   readonly processRequested = input<((result: ScBulkTranscriptionModalResult) => void) | null>(null);
 
+  /** El usuario ha cerrado el modal sin procesar nada. */
   readonly closed = output<void>();
 
+  /**
+   * El usuario ha confirmado. Lleva la decisión completa: si incluye análisis, los contadores y los
+   * ids sobre los que actuar. **El modal no procesa nada** — solo dice qué se ha decidido;
+   * ejecutarlo es de la app.
+   */
   readonly processed = output<ScBulkTranscriptionModalResult>();
 
   /**

@@ -38,6 +38,7 @@ const HOVER_LEAVE_DELAY_MS = 150;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScGroupPopoverComponent {
+  /** Los grupos que se listan en el globo. */
   readonly groups = input.required<readonly GroupRef[]>();
   /**
    * Nombre accesible del botón, ya traducido (p. ej. «12 agentes»). Opcional: sin él dice

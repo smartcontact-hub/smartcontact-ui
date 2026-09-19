@@ -15,10 +15,12 @@
  *      documenta, falla.
  *   C. Referencias muertas: AGENTS.md no cita skills inexistentes; ningún doc cita uno de los 6
  *      docs de construcción borrados el 2026-08-13 sin nombrar el tag `archive/docs-history`.
- *   D. (LOCAL-only) Cada hand-off de `docs/handoff/` LLEVA sello `HEAD `<sha>`` y ese commit
+ *   D. (solo con historia completa) Cada hand-off de `docs/handoff/` LLEVA sello `HEAD `<sha>`` y ese commit
  *      EXISTE en git → un hand-off no puede mentir sobre su propio estado ni quedarse sin fechar.
  *      NO exige sello==HEAD (eso lagearía a propósito mid-sesión); solo que el SHA sea real.
- *      Se salta en CI (clone shallow → `git cat-file` daría falso positivo).
+ *      Se salta si el CLON ES SHALLOW (no hay historia con la que comprobarlo). Antes se
+ *      saltaba «si es CI», que era el proxy y no la causa: en un contenedor cloud sin la
+ *      variable `CI` cantó 7 sellos buenos como fantasmas.
  *      Ojo al historial: antes miraba SOLO `NEXT-SESSION.md`, y cuando ese fichero pasó a ser el
  *      índice de frentes (sin sello) la comprobación se quedó en no-op silencioso durante un
  *      commit. Si vuelves a mover dónde vive el sello, mueve también este filtro.
@@ -521,12 +523,27 @@ if (tokensDefinidos.size > 100) {
   }
 }
 
-// ── CHECK D — el sello del hand-off no apunta a un commit fantasma (LOCAL-only) ──
+// ── CHECK D — el sello del hand-off no apunta a un commit fantasma ──────────────
 // El doc anti-pérdida-de-contexto se desfasó EN SILENCIO una vez (sello a un commit ya superado).
 // Esta red NO exige sello==HEAD (mid-sesión el sello lagea a propósito hasta el cierre); solo que
-// el SHA EXISTA. Se salta en CI: el clone suele ser shallow → `git cat-file` daría falso positivo
-// con un sello viejo. Es la red para el HUMANO que retoma la sesión en local, su contexto natural.
-if (!process.env.CI) {
+// el SHA EXISTA.
+//
+// ⚠️ SE SALTA SI EL CLON ES SHALLOW, y esa es la condición de verdad. Antes se saltaba «si es CI»,
+// que era un PROXY del clon shallow, no la causa — y el proxy falla: en un contenedor cloud
+// (shallow, sin la variable `CI`) esto cantó 7 sellos como fantasmas siendo los 7 correctos, solo
+// que anteriores al corte de 51 commits del clon. Un guardián con falsos positivos es peor que
+// ninguno, porque enseña a ignorarlo (LEARNINGS #2). Con `--is-shallow-repository` se pregunta
+// justo lo que hace falta saber: «¿tengo la historia para poder afirmar esto?». De paso, donde el
+// clon SÍ es completo la red ahora también corre, CI incluido. (Medido el 2026-09-19.)
+const clonShallow = (() => {
+  try {
+    return execFileSync('git', ['rev-parse', '--is-shallow-repository'], { cwd: root, encoding: 'utf8' }).trim() === 'true';
+  } catch {
+    return true; // sin git no se puede afirmar nada: mejor callar que mentir.
+  }
+})();
+if (clonShallow) log('  · CHECK D omitido: el clon es shallow, no hay historia para comprobar los sellos.');
+if (!clonShallow) {
   // El sello vive en el hand-off de CADA FRENTE (`docs/handoff/*.md`); `NEXT-SESSION.md` pasó a ser
   // solo el índice y ya no lleva sello. Si esta red siguiera mirando únicamente ahí, habría vuelto
   // a ser un no-op silencioso — que es exactamente el fallo que vino a tapar.
