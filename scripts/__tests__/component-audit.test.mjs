@@ -10,7 +10,9 @@ import {
   informeSupervisor,
   miembrosPublicos,
   nativasDe,
+  usadosEnNativo,
 } from '../component-audit.mjs';
+import { CUANDO } from '../component-audit-map.mjs';
 
 // analyzeComponent: deriva la clasificación del texto del componente. PURA → fixtures directos.
 
@@ -307,4 +309,43 @@ test('informeSupervisor: la obsoleta se canta arriba aunque el componente no se 
 test('informeSupervisor: un wrapper que no esconde nada lo dice, no se calla', () => {
   const md = informeSupervisor([filaInforme({ selector: 'sc-limpio', usedInSupervisor: 2, ocultas: [] })], '22.1.0');
   assert.match(md, /Expone todo lo que PrimeNG documenta/);
+});
+
+test('usadosEnNativo: distingue el usado sin wrapper del que nadie ha traído', () => {
+  /* El tercer estado. Sin él, el catálogo listaba `menu` (18 usos en el Supervisor), `tabs` y
+   * `toolbar` como «nadie los ha envuelto todavía», invitando a envolver lo que DD-113 metió a
+   * propósito en nativo. Cuenta tanto la etiqueta como el import, porque una directiva
+   * (`pTooltip`) se importa pero no se escribe como `<p-…>`. */
+  const catalogo = ['menu', 'tooltip', 'knob', 'picklist'];
+  const apps = `
+    import { Menu } from 'primeng/menu';
+    import { Tooltip } from 'primeng/tooltip';
+    <p-menu [model]="items" />
+  `;
+  const n = usadosEnNativo(catalogo, apps);
+  assert.ok(n.has('menu'), 'la etiqueta cuenta');
+  assert.ok(n.has('tooltip'), 'el import solo también cuenta: una directiva no se escribe como etiqueta');
+  assert.ok(!n.has('knob'), 'lo que no aparece no se inventa');
+  assert.ok(!n.has('picklist'), 'ni se cuela por parecido');
+});
+
+test('CUANDO cubre los 56 componentes, uno a uno, y no sobra ninguna línea', () => {
+  /* El gate del generador lo exige; esto lo fija aquí además para que se vea al leer el test.
+   * Una línea huérfana miente igual que una que falta: nombra un componente que ya no existe. */
+  const sels = new Set(audit().map((r) => r.selector));
+  const claves = new Set(Object.keys(CUANDO));
+  assert.deepEqual([...sels].filter((s) => !claves.has(s)), [], 'componentes sin su línea de CUANDO');
+  assert.deepEqual([...claves].filter((s) => !sels.has(s)), [], 'líneas de CUANDO sin componente');
+});
+
+test('CUANDO empieza por el CASO, no por la descripción', () => {
+  /* El formato es el que hace útil la línea: «Para elegir UNO de pocos…» ayuda a decidir;
+   * «Componente de selección» no. Se gatea la forma mínima que se puede comprobar: que no
+   * arranque describiendo lo que la cosa ES. */
+  const malos = Object.entries(CUANDO).filter(([, t]) => /^(Componente|Wrapper|Elemento|Pieza) /.test(t));
+  assert.deepEqual(malos.map(([k]) => k), [], 'estas líneas describen en vez de decir cuándo usarlo');
+  for (const [sel, texto] of Object.entries(CUANDO)) {
+    assert.ok(texto.length > 30, `${sel}: la línea se queda corta para decidir nada`);
+    assert.ok(texto.endsWith('.'), `${sel}: la línea no termina en punto`);
+  }
 });

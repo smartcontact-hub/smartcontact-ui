@@ -1,12 +1,403 @@
 {
   "generated": "component-audit.mjs",
   "primeng": "22.1.0",
+  "catalogoPrimeng": [
+    {
+      "componente": "accordion",
+      "envuelto": false
+    },
+    {
+      "componente": "autocomplete",
+      "envuelto": false
+    },
+    {
+      "componente": "avatar",
+      "envuelto": true
+    },
+    {
+      "componente": "badge",
+      "envuelto": true
+    },
+    {
+      "componente": "blockui",
+      "envuelto": false
+    },
+    {
+      "componente": "breadcrumb",
+      "envuelto": true
+    },
+    {
+      "componente": "button",
+      "envuelto": true
+    },
+    {
+      "componente": "card",
+      "envuelto": true
+    },
+    {
+      "componente": "carousel",
+      "envuelto": false
+    },
+    {
+      "componente": "cascadeselect",
+      "envuelto": false
+    },
+    {
+      "componente": "checkbox",
+      "envuelto": false
+    },
+    {
+      "componente": "chip",
+      "envuelto": true
+    },
+    {
+      "componente": "colorpicker",
+      "envuelto": false
+    },
+    {
+      "componente": "commandmenu",
+      "envuelto": false
+    },
+    {
+      "componente": "compare",
+      "envuelto": false
+    },
+    {
+      "componente": "confirmdialog",
+      "envuelto": true
+    },
+    {
+      "componente": "confirmpopup",
+      "envuelto": false
+    },
+    {
+      "componente": "contextmenu",
+      "envuelto": false
+    },
+    {
+      "componente": "datatable",
+      "envuelto": true
+    },
+    {
+      "componente": "dataview",
+      "envuelto": false
+    },
+    {
+      "componente": "datepicker",
+      "envuelto": true
+    },
+    {
+      "componente": "dialog",
+      "envuelto": true
+    },
+    {
+      "componente": "divider",
+      "envuelto": true
+    },
+    {
+      "componente": "dock",
+      "envuelto": false
+    },
+    {
+      "componente": "drawer",
+      "envuelto": true
+    },
+    {
+      "componente": "editor",
+      "envuelto": false
+    },
+    {
+      "componente": "fieldset",
+      "envuelto": false
+    },
+    {
+      "componente": "fileupload",
+      "envuelto": false
+    },
+    {
+      "componente": "floatlabel",
+      "envuelto": false
+    },
+    {
+      "componente": "galleria",
+      "envuelto": false
+    },
+    {
+      "componente": "gallery",
+      "envuelto": false
+    },
+    {
+      "componente": "iconfield",
+      "envuelto": true
+    },
+    {
+      "componente": "iftalabel",
+      "envuelto": false
+    },
+    {
+      "componente": "image",
+      "envuelto": false
+    },
+    {
+      "componente": "imagecompare",
+      "envuelto": false
+    },
+    {
+      "componente": "inlinemessage",
+      "envuelto": false
+    },
+    {
+      "componente": "inplace",
+      "envuelto": false
+    },
+    {
+      "componente": "inputchips",
+      "envuelto": false
+    },
+    {
+      "componente": "inputcolor",
+      "envuelto": false
+    },
+    {
+      "componente": "inputgroup",
+      "envuelto": true
+    },
+    {
+      "componente": "inputnumber",
+      "envuelto": false
+    },
+    {
+      "componente": "inputotp",
+      "envuelto": false
+    },
+    {
+      "componente": "inputtags",
+      "envuelto": false
+    },
+    {
+      "componente": "inputtext",
+      "envuelto": true
+    },
+    {
+      "componente": "knob",
+      "envuelto": false
+    },
+    {
+      "componente": "label",
+      "envuelto": false
+    },
+    {
+      "componente": "listbox",
+      "envuelto": false
+    },
+    {
+      "componente": "megamenu",
+      "envuelto": false
+    },
+    {
+      "componente": "menu",
+      "envuelto": false
+    },
+    {
+      "componente": "menubar",
+      "envuelto": false
+    },
+    {
+      "componente": "message",
+      "envuelto": true
+    },
+    {
+      "componente": "metergroup",
+      "envuelto": false
+    },
+    {
+      "componente": "multiselect",
+      "envuelto": true
+    },
+    {
+      "componente": "navigationmenu",
+      "envuelto": false
+    },
+    {
+      "componente": "orderlist",
+      "envuelto": false
+    },
+    {
+      "componente": "organizationchart",
+      "envuelto": false
+    },
+    {
+      "componente": "overlaybadge",
+      "envuelto": true
+    },
+    {
+      "componente": "paginator",
+      "envuelto": false
+    },
+    {
+      "componente": "panel",
+      "envuelto": true
+    },
+    {
+      "componente": "panelmenu",
+      "envuelto": false
+    },
+    {
+      "componente": "password",
+      "envuelto": true
+    },
+    {
+      "componente": "picklist",
+      "envuelto": false
+    },
+    {
+      "componente": "popover",
+      "envuelto": true
+    },
+    {
+      "componente": "progressbar",
+      "envuelto": true
+    },
+    {
+      "componente": "progressspinner",
+      "envuelto": true
+    },
+    {
+      "componente": "radiobutton",
+      "envuelto": true
+    },
+    {
+      "componente": "rating",
+      "envuelto": false
+    },
+    {
+      "componente": "ripple",
+      "envuelto": false
+    },
+    {
+      "componente": "scrollarea",
+      "envuelto": false
+    },
+    {
+      "componente": "scrollpanel",
+      "envuelto": false
+    },
+    {
+      "componente": "select",
+      "envuelto": true
+    },
+    {
+      "componente": "selectbutton",
+      "envuelto": true
+    },
+    {
+      "componente": "sidebar",
+      "envuelto": false
+    },
+    {
+      "componente": "skeleton",
+      "envuelto": true
+    },
+    {
+      "componente": "slider",
+      "envuelto": false
+    },
+    {
+      "componente": "speeddial",
+      "envuelto": false
+    },
+    {
+      "componente": "splitbutton",
+      "envuelto": false
+    },
+    {
+      "componente": "splitter",
+      "envuelto": false
+    },
+    {
+      "componente": "stepper",
+      "envuelto": false
+    },
+    {
+      "componente": "steps",
+      "envuelto": false
+    },
+    {
+      "componente": "tabmenu",
+      "envuelto": false
+    },
+    {
+      "componente": "tabs",
+      "envuelto": false
+    },
+    {
+      "componente": "tabview",
+      "envuelto": false
+    },
+    {
+      "componente": "tag",
+      "envuelto": true
+    },
+    {
+      "componente": "terminal",
+      "envuelto": false
+    },
+    {
+      "componente": "textarea",
+      "envuelto": true
+    },
+    {
+      "componente": "tieredmenu",
+      "envuelto": false
+    },
+    {
+      "componente": "timeline",
+      "envuelto": false
+    },
+    {
+      "componente": "toast",
+      "envuelto": true
+    },
+    {
+      "componente": "togglebutton",
+      "envuelto": false
+    },
+    {
+      "componente": "toggleswitch",
+      "envuelto": true
+    },
+    {
+      "componente": "toolbar",
+      "envuelto": false
+    },
+    {
+      "componente": "tooltip",
+      "envuelto": false
+    },
+    {
+      "componente": "tree",
+      "envuelto": false
+    },
+    {
+      "componente": "treeselect",
+      "envuelto": false
+    },
+    {
+      "componente": "treetable",
+      "envuelto": false
+    },
+    {
+      "componente": "virtualscroller",
+      "envuelto": false
+    }
+  ],
   "nota": "Contrato de los componentes del DS, cruzado con la API de la versión de PrimeNG instalada. NO editar a mano.",
   "components": [
     {
       "selector": "sc-avatar",
       "name": "avatar",
       "primengBase": "primeng/avatar, primeng/overlaybadge",
+      "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
       "contrato": [
         {
           "nombre": "label",
@@ -173,6 +564,7 @@
       "selector": "sc-avatargroup",
       "name": "avatargroup",
       "primengBase": "primeng/avatargroup",
+      "cuando": "Para apilar varios avatares cuando importa «quiénes» y no «cuántos» exactamente.",
       "contrato": [],
       "ocultas": [
         "style"
@@ -182,6 +574,7 @@
       "selector": "sc-badge",
       "name": "badge",
       "primengBase": "primeng/badge",
+      "cuando": "Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.",
       "contrato": [
         {
           "nombre": "label",
@@ -230,6 +623,7 @@
       "selector": "sc-breadcrumb",
       "name": "breadcrumb",
       "primengBase": "primeng/breadcrumb",
+      "cuando": "Para decir dónde estás dentro de una jerarquía y poder subir. No es navegación principal.",
       "contrato": [
         {
           "nombre": "model",
@@ -306,6 +700,7 @@
       "selector": "sc-bulk-action-bar",
       "name": "bulk-action-bar",
       "primengBase": "—",
+      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
       "contrato": [
         {
           "nombre": "count",
@@ -344,6 +739,7 @@
       "selector": "sc-bulk-edit-menu",
       "name": "bulk-edit-menu",
       "primengBase": "primeng/button",
+      "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
       "contrato": [
         {
           "nombre": "fields",
@@ -416,6 +812,7 @@
       "selector": "sc-bulk-transcription-modal",
       "name": "bulk-transcription-modal",
       "primengBase": "—",
+      "cuando": "Solo para el procesado masivo de conversaciones. Es específico del dominio y hoy solo lo usa la demo.",
       "contrato": [
         {
           "nombre": "selectedCount",
@@ -604,6 +1001,7 @@
       "selector": "sc-button",
       "name": "button",
       "primengBase": "primeng/button",
+      "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "contrato": [
         {
           "nombre": "label",
@@ -842,6 +1240,7 @@
       "selector": "sc-card",
       "name": "card",
       "primengBase": "primeng/card",
+      "cuando": "Para agrupar contenido suelto con una superficie propia. Si el grupo tiene título y pertenece a un formulario, es `sc-section-card`.",
       "contrato": [
         {
           "nombre": "header",
@@ -890,6 +1289,7 @@
       "selector": "sc-checkbox",
       "name": "checkbox",
       "primengBase": "—",
+      "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "contrato": [
         {
           "nombre": "state",
@@ -978,6 +1378,7 @@
       "selector": "sc-chip",
       "name": "chip",
       "primengBase": "primeng/chip",
+      "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
       "contrato": [
         {
           "nombre": "label",
@@ -1129,6 +1530,7 @@
       "selector": "sc-color-dot-picker",
       "name": "color-dot-picker",
       "primengBase": "—",
+      "cuando": "Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.",
       "contrato": [
         {
           "nombre": "options",
@@ -1167,6 +1569,7 @@
       "selector": "sc-column-selector",
       "name": "column-selector",
       "primengBase": "primeng/popover",
+      "cuando": "Para que el usuario decida qué columnas ve en una tabla.",
       "contrato": [
         {
           "nombre": "columns",
@@ -1237,6 +1640,7 @@
       "selector": "sc-command-palette",
       "name": "command-palette",
       "primengBase": "—",
+      "cuando": "Para llegar a cualquier sitio o acción escribiendo, sin recorrer menús. Es atajo, nunca el único camino.",
       "contrato": [],
       "ocultas": []
     },
@@ -1244,6 +1648,7 @@
       "selector": "sc-confirmdialog",
       "name": "confirmdialog",
       "primengBase": "primeng/confirmdialog",
+      "cuando": "Para confirmar una acción normal. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.",
       "contrato": [],
       "ocultas": [
         "acceptAriaLabel",
@@ -1287,6 +1692,7 @@
       "selector": "sc-datatable",
       "name": "datatable",
       "primengBase": "primeng/table",
+      "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "contrato": [
         {
           "nombre": "value",
@@ -1827,6 +2233,7 @@
       "selector": "sc-datepicker",
       "name": "datepicker",
       "primengBase": "primeng/datepicker",
+      "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
       "contrato": [
         {
           "nombre": "size",
@@ -2231,6 +2638,7 @@
       "selector": "sc-delete-entity-dialog",
       "name": "delete-entity-dialog",
       "primengBase": "primeng/button",
+      "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "contrato": [
         {
           "nombre": "visible",
@@ -2363,6 +2771,7 @@
       "selector": "sc-dialog",
       "name": "dialog",
       "primengBase": "primeng/dialog",
+      "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "contrato": [
         {
           "nombre": "visible",
@@ -2621,6 +3030,7 @@
       "selector": "sc-divider",
       "name": "divider",
       "primengBase": "primeng/divider",
+      "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "contrato": [
         {
           "nombre": "layout",
@@ -2674,6 +3084,7 @@
       "selector": "sc-drawer",
       "name": "drawer",
       "primengBase": "primeng/drawer",
+      "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
       "contrato": [
         {
           "nombre": "visible",
@@ -2834,6 +3245,7 @@
       "selector": "sc-empty-state",
       "name": "empty-state",
       "primengBase": "—",
+      "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "contrato": [
         {
           "nombre": "icon",
@@ -2912,6 +3324,7 @@
       "selector": "sc-field-label",
       "name": "field-label",
       "primengBase": "—",
+      "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la etiqueta. En una pantalla se usa el campo entero (`sc-inputtext`, `sc-select`…), nunca esto suelto.",
       "contrato": [
         {
           "nombre": "block",
@@ -2970,6 +3383,7 @@
       "selector": "sc-field-msg",
       "name": "field-msg",
       "primengBase": "—",
+      "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la ayuda y del error. En una pantalla se usa el campo entero, nunca esto suelto.",
       "contrato": [
         {
           "nombre": "block",
@@ -3018,6 +3432,7 @@
       "selector": "sc-form-danger-zone",
       "name": "form-danger-zone",
       "primengBase": "primeng/button",
+      "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
       "contrato": [
         {
           "nombre": "titleKey",
@@ -3114,6 +3529,7 @@
       "selector": "sc-form-section-nav",
       "name": "form-section-nav",
       "primengBase": "—",
+      "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
       "contrato": [
         {
           "nombre": "sections",
@@ -3182,6 +3598,7 @@
       "selector": "sc-gauge",
       "name": "gauge",
       "primengBase": "—",
+      "cuando": "Para una magnitud contra su máximo, de un vistazo. Para progreso de una tarea, `sc-progressbar`.",
       "contrato": [
         {
           "nombre": "segments",
@@ -3280,6 +3697,7 @@
       "selector": "sc-group-popover",
       "name": "group-popover",
       "primengBase": "primeng/popover",
+      "cuando": "Para asomar los grupos de algo sin salir de la fila.",
       "contrato": [
         {
           "nombre": "groups",
@@ -3320,6 +3738,7 @@
       "selector": "sc-impact-preview-dialog",
       "name": "impact-preview-dialog",
       "primengBase": "primeng/button",
+      "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
       "contrato": [
         {
           "nombre": "visible",
@@ -3456,6 +3875,7 @@
       "selector": "sc-inline-rename-cell",
       "name": "inline-rename-cell",
       "primengBase": "—",
+      "cuando": "Para renombrar en el sitio, sin abrir un formulario.",
       "contrato": [
         {
           "nombre": "initialValue",
@@ -3514,6 +3934,7 @@
       "selector": "sc-inputgroup",
       "name": "inputgroup",
       "primengBase": "primeng/inputgroup",
+      "cuando": "Para un campo con algo pegado (icono, botón, prefijo). Mantiene alineadas las dos piezas.",
       "contrato": [
         {
           "nombre": "size",
@@ -3542,6 +3963,7 @@
       "selector": "sc-inputnumber",
       "name": "inputnumber",
       "primengBase": "primeng/inputtext",
+      "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "contrato": [
         {
           "nombre": "size",
@@ -3741,6 +4163,7 @@
       "selector": "sc-inputtext",
       "name": "inputtext",
       "primengBase": "primeng/inputtext",
+      "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "contrato": [
         {
           "nombre": "size",
@@ -3984,6 +4407,7 @@
       "selector": "sc-keyboard-shortcuts",
       "name": "keyboard-shortcuts",
       "primengBase": "—",
+      "cuando": "Para enseñar los atajos disponibles en la pantalla.",
       "contrato": [
         {
           "nombre": "groups",
@@ -4002,6 +4426,7 @@
       "selector": "sc-message",
       "name": "message",
       "primengBase": "primeng/message",
+      "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "contrato": [
         {
           "nombre": "text",
@@ -4109,6 +4534,7 @@
       "selector": "sc-multiselect",
       "name": "multiselect",
       "primengBase": "primeng/multiselect",
+      "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "contrato": [
         {
           "nombre": "size",
@@ -4584,6 +5010,7 @@
       "selector": "sc-option-cards",
       "name": "option-card",
       "primengBase": "—",
+      "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
       "contrato": [
         {
           "nombre": "options",
@@ -4652,6 +5079,7 @@
       "selector": "sc-panel",
       "name": "panel",
       "primengBase": "primeng/panel",
+      "cuando": "Para un bloque con cabecera propia, plegable y con acciones.",
       "contrato": [
         {
           "nombre": "header",
@@ -4765,6 +5193,7 @@
       "selector": "sc-password",
       "name": "password",
       "primengBase": "primeng/password",
+      "cuando": "Para una contraseña, con su ojo para mostrarla.",
       "contrato": [
         {
           "nombre": "size",
@@ -5079,6 +5508,7 @@
       "selector": "sc-permission-matrix",
       "name": "permission-matrix",
       "primengBase": "—",
+      "cuando": "Para dar permisos cruzando quién con qué, marcando por columna entera.",
       "contrato": [
         {
           "nombre": "rows",
@@ -5167,6 +5597,7 @@
       "selector": "sc-photo-upload",
       "name": "photo-upload",
       "primengBase": "—",
+      "cuando": "Para la foto de una persona, con ilustración de reserva.",
       "contrato": [
         {
           "nombre": "photo",
@@ -5245,6 +5676,7 @@
       "selector": "sc-progressbar",
       "name": "progressbar",
       "primengBase": "primeng/progressbar",
+      "cuando": "Para el avance de una tarea de la que SÍ se sabe cuánto queda. Si no se sabe, `sc-progressspinner`.",
       "contrato": [
         {
           "nombre": "value",
@@ -5316,6 +5748,7 @@
       "selector": "sc-progressspinner",
       "name": "progressspinner",
       "primengBase": "primeng/progressspinner",
+      "cuando": "Para una espera de duración desconocida. Si la espera es de contenido que va a aparecer, `sc-skeleton` desconcierta menos.",
       "contrato": [
         {
           "nombre": "strokeWidth",
@@ -5388,6 +5821,7 @@
       "selector": "sc-radiobutton",
       "name": "radiobutton",
       "primengBase": "primeng/radiobutton",
+      "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
       "contrato": [
         {
           "nombre": "value",
@@ -5514,6 +5948,7 @@
       "selector": "sc-search",
       "name": "search",
       "primengBase": "primeng/iconfield, primeng/inputicon, primeng/inputtext",
+      "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "contrato": [
         {
           "nombre": "size",
@@ -5650,6 +6085,7 @@
       "selector": "sc-section-card",
       "name": "section-card",
       "primengBase": "—",
+      "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "contrato": [
         {
           "nombre": "titleKey",
@@ -5748,6 +6184,7 @@
       "selector": "sc-select",
       "name": "select",
       "primengBase": "primeng/select",
+      "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "contrato": [
         {
           "nombre": "size",
@@ -6197,6 +6634,7 @@
       "selector": "sc-selectbutton",
       "name": "selectbutton",
       "primengBase": "primeng/selectbutton",
+      "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "contrato": [
         {
           "nombre": "options",
@@ -6398,6 +6836,7 @@
       "selector": "sc-skeleton",
       "name": "skeleton",
       "primengBase": "primeng/skeleton",
+      "cuando": "Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.",
       "contrato": [
         {
           "nombre": "shape",
@@ -6496,6 +6935,7 @@
       "selector": "sc-slot",
       "name": "slot",
       "primengBase": "—",
+      "cuando": "Para una ranura con título dentro de una composición.",
       "contrato": [
         {
           "nombre": "titleKey",
@@ -6534,6 +6974,7 @@
       "selector": "sc-sticky-form-header",
       "name": "sticky-form-header",
       "primengBase": "primeng/button",
+      "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
       "contrato": [
         {
           "nombre": "mode",
@@ -6676,6 +7117,7 @@
       "selector": "sc-subsection",
       "name": "subsection",
       "primengBase": "—",
+      "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "contrato": [
         {
           "nombre": "titleKey",
@@ -6734,6 +7176,7 @@
       "selector": "sc-tag",
       "name": "tag",
       "primengBase": "primeng/tag",
+      "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "contrato": [
         {
           "nombre": "value",
@@ -6822,6 +7265,7 @@
       "selector": "sc-textarea",
       "name": "textarea",
       "primengBase": "primeng/textarea",
+      "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
       "contrato": [
         {
           "nombre": "value",
@@ -6994,6 +7438,7 @@
       "selector": "sc-toast",
       "name": "toast",
       "primengBase": "primeng/toast",
+      "cuando": "Para el resultado de una acción, que se va solo. Si el aviso pertenece a la página y debe quedarse, `sc-message`.",
       "contrato": [
         {
           "nombre": "key",
@@ -7109,6 +7554,7 @@
       "selector": "sc-toggleswitch",
       "name": "toggleswitch",
       "primengBase": "primeng/toggleswitch",
+      "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "contrato": [
         {
           "nombre": "checked",

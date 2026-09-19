@@ -195,3 +195,28 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
+## El catálogo de PrimeNG que NO envolvemos
+
+Aura tematiza **97 componentes**. Envolvemos **31**,
+**6** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
+una pieza nuestra hecha a mano.
+Quedan **59** que existen, están tematizados y funcionan — simplemente nadie los ha
+traído todavía.
+
+⚠️ **«Sin envolver» NO quiere decir «descartado»**: quiere decir que la decisión no se ha tomado.
+Si necesitas uno, envolverlo es más barato (y sale mejor) que construirlo a mano, porque llega con
+su comportamiento, su accesibilidad y su movimiento ya resueltos. Cuando se decida que uno NO se
+quiere, el sitio de esa decisión es `docs/DECISIONS.md`, y entonces se puede anotar aquí.
+
+`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `confirmpopup` · `contextmenu` · `dataview` · `dock` · `editor` · `fieldset` · `fileupload` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inplace` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `inputtags` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `picklist` · `rating` · `ripple` · `scrollarea` · `scrollpanel` · `sidebar` · `slider` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `tieredmenu` · `timeline` · `togglebutton` · `tree` · `treeselect` · `treetable` · `virtualscroller`
+
+### Usados en NATIVO, sin wrapper
+
+Entraron por la vía de DD-113: el nativo tal cual, adaptado solo con tokens. No hay nada que envolver.
+
+`listbox` · `menu` · `metergroup` · `tabs` · `toolbar` · `tooltip`
+
+### Cubiertos por una pieza nuestra
+
+- `checkbox` → sc-checkbox (custom: necesita el tercer estado, el grupo elegido a medias)
+

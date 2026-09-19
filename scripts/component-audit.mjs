@@ -21,7 +21,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { rewriteRegion } from './marker-rewrite.mjs';
-import { PROVENANCE_OVERRIDE, DEMO_EXEMPT, PRIMENG_UTIL, NESTED_IGNORE } from './component-audit-map.mjs';
+import { PROVENANCE_OVERRIDE, DEMO_EXEMPT, PRIMENG_UTIL, NESTED_IGNORE, CUANDO, MODULO_A_TEMA, CUBIERTO_POR_NUESTRO } from './component-audit-map.mjs';
 import { apiConHerencia } from '../tools/primeng-doc.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -288,6 +288,7 @@ export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, sup
     usedInSupervisor,
     contrato,
     ocultas,
+    cuando: CUANDO[selector] ?? null,
   };
 }
 
@@ -296,6 +297,42 @@ export function modulosPrimeng(tsRaw) {
   return [...sinComentarios(tsRaw).matchAll(/from\s+['"]primeng\/([a-z0-9-]+)['"]/g)]
     .map((m) => m[1])
     .filter((x) => !PRIMENG_UTIL.has(x));
+}
+
+/**
+ * Los componentes que Aura tematiza — el CATÁLOGO completo de PrimeNG, 97 hoy.
+ *
+ * Es la capa que se consulta ANTES que el contrato: el contrato dice qué props tiene
+ * `sc-select`, pero primero hay que saber que existe un `picklist`, un `treetable` o un
+ * `inputotp` y que no los envolvemos. Medido el 2026-09-19: envolvemos 34 de 97, así que hay
+ * ~63 componentes que un agente no sabe ni que existen en nuestro contexto y por eso se los
+ * construye a mano.
+ *
+ * Sale del tema INSTALADO, la misma fuente que usa `tools/aura-diff.mjs`, no de una lista a
+ * mano: una lista a mano envejece en la siguiente subida y nadie se entera.
+ */
+async function catalogoAura() {
+  try {
+    const aura = (await import('@primeuix/themes/aura')).default;
+    return Object.keys(aura.components ?? {}).sort();
+  } catch {
+    return []; // sin `node_modules` no se puede afirmar nada del catálogo.
+  }
+}
+
+/**
+ * Componentes de PrimeNG usados EN NATIVO, sin wrapper del DS. Es un tercer estado, y no
+ * reconocerlo hacía mentir al catálogo.
+ *
+ * DD-113 lo dice explícitamente: «un componente de primeng.dev entra NATIVO, tal cual su
+ * documentación», adaptado solo con tokens. Así entraron Tabs y Toolbar. Medido el 2026-09-19:
+ * `menu` se usa 18 veces sin wrapper, `tabs` 4, `toolbar` 2. Listarlos como «nadie los ha
+ * envuelto todavía» invita a envolver algo que ya funciona como debe.
+ *
+ * Se DERIVA de las plantillas, no de una lista: una lista a mano se queda vieja en silencio.
+ */
+export function usadosEnNativo(catalogo, blobApps) {
+  return new Set(catalogo.filter((c) => new RegExp(`<p-${c}[\\s>]|from ['"]primeng/${c}['"]`).test(blobApps)));
 }
 
 /** Lee un `.d.ts` de la versión de PrimeNG INSTALADA. `null` si no está (sin `node_modules`). */
@@ -387,7 +424,7 @@ function table(rows) {
  * Se ordena por props escondidas y no por uso: arriba queda el hueco más grande entre lo que
  * PrimeNG ofrece y lo que la app puede pedir.
  */
-export function informeSupervisor(rows, versionPrimeng) {
+export function informeSupervisor(rows, versionPrimeng, catalogo = [], envueltos = new Set(), nativos = new Set()) {
   const usados = rows
     .filter((r) => r.usedInSupervisor > 0)
     .sort((a, b) => b.ocultas.length - a.ocultas.length || a.selector.localeCompare(b.selector));
@@ -427,6 +464,38 @@ export function informeSupervisor(rows, versionPrimeng) {
       continue;
     }
     l.push(`**${r.ocultas.length} props nativas no expuestas**: ${r.ocultas.map((p) => `\`${p}\``).join(', ')}`, '');
+  }
+
+  if (catalogo.length) {
+    const cubiertos = Object.keys(CUBIERTO_POR_NUESTRO);
+    const enNativo = catalogo.filter((c) => !envueltos.has(c) && !cubiertos.includes(c) && nativos.has(c));
+    const sinEnvolver = catalogo.filter((c) => !envueltos.has(c) && !cubiertos.includes(c) && !nativos.has(c));
+    l.push('## El catálogo de PrimeNG que NO envolvemos', '');
+    l.push(
+      `Aura tematiza **${catalogo.length} componentes**. Envolvemos **${catalogo.filter((c) => envueltos.has(c)).length}**,`,
+      `**${enNativo.length}** se usan en NATIVO sin wrapper (la vía de DD-113) y **${cubiertos.length}** los cubre`,
+      'una pieza nuestra hecha a mano.',
+      `Quedan **${sinEnvolver.length}** que existen, están tematizados y funcionan — simplemente nadie los ha`,
+      'traído todavía.',
+      '',
+      '⚠️ **«Sin envolver» NO quiere decir «descartado»**: quiere decir que la decisión no se ha tomado.',
+      'Si necesitas uno, envolverlo es más barato (y sale mejor) que construirlo a mano, porque llega con',
+      'su comportamiento, su accesibilidad y su movimiento ya resueltos. Cuando se decida que uno NO se',
+      'quiere, el sitio de esa decisión es `docs/DECISIONS.md`, y entonces se puede anotar aquí.',
+      '',
+      sinEnvolver.map((c) => `\`${c}\``).join(' · '),
+      '',
+    );
+    if (enNativo.length) {
+      l.push('### Usados en NATIVO, sin wrapper', '');
+      l.push('Entraron por la vía de DD-113: el nativo tal cual, adaptado solo con tokens. No hay nada que envolver.', '');
+      l.push(enNativo.map((c) => `\`${c}\``).join(' · '), '');
+    }
+    if (cubiertos.length) {
+      l.push('### Cubiertos por una pieza nuestra', '');
+      for (const c of cubiertos) l.push(`- \`${c}\` → ${CUBIERTO_POR_NUESTRO[c]}`);
+      l.push('');
+    }
   }
   return l.join('\n') + '\n';
 }
@@ -497,6 +566,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const cmd = process.argv[2] || (process.argv.includes('--write') ? '--write' : process.argv.includes('--emit') ? '--emit' : 'check');
   const rows = audit();
 
+  const catalogo = await catalogoAura();
+  /* Qué módulos de PrimeNG envolvemos de verdad, derivado de los imports de cada wrapper. */
+  const envueltos = new Set(
+    rows.flatMap((r) => [...r.primengBase.matchAll(/primeng\/([a-z0-9-]+)/g)].map((m) => MODULO_A_TEMA[m[1]] ?? m[1])),
+  );
+  /* Un componente sin su línea de CUANDO entra mudo, y mudo no se puede elegir. */
+  const sinCuando = rows.filter((r) => !r.cuando).map((r) => r.selector);
+  const cuandoHuerfano = Object.keys(CUANDO).filter((s) => !rows.some((r) => r.selector === s));
+
   /* DOS artefactos de UNA pasada, y por qué separados: la pokédex la lee un humano en el diff
    * de cada PR (y el CHECK E de `docs:coherence` cuenta sus filas), mientras que el contrato son
    * 514 miembros con su cruce nativo. Meterlo todo en un fichero haría ilegible justo el diff
@@ -521,14 +599,16 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       {
         generated: 'component-audit.mjs',
         primeng: versionPrimeng,
+        catalogoPrimeng: catalogo.map((c) => ({ componente: c, envuelto: envueltos.has(c) })),
         nota: 'Contrato de los componentes del DS, cruzado con la API de la versión de PrimeNG instalada. NO editar a mano.',
-        components: rows.map((r) => ({ selector: r.selector, name: r.name, primengBase: r.primengBase, contrato: r.contrato, ocultas: r.ocultas })),
+        components: rows.map((r) => ({ selector: r.selector, name: r.name, primengBase: r.primengBase, cuando: r.cuando, contrato: r.contrato, ocultas: r.ocultas })),
       },
       null,
       2,
     ) + '\n';
 
-  const informe = informeSupervisor(rows, versionPrimeng);
+  const nativos = usadosEnNativo(catalogo, blob(SUPERVISOR) + blob(resolve(root, 'projects/sc-docs/src')));
+  const informe = informeSupervisor(rows, versionPrimeng, catalogo, envueltos, nativos);
   const zoneBody = `${summary(rows)}\n\n${table(rows)}`;
 
   // problemas: componente sin demo (y no exento). provenance siempre clasifica → sin "sin clasificar".
@@ -630,6 +710,18 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       log(`✗ ${sinDescripcion.length} miembro(s) sin descripción y el tope sigue en ${MIEMBROS_SIN_DESCRIPCION_MAX}.`);
       log(`      → baja MIEMBROS_SIN_DESCRIPCION_MAX a ${sinDescripcion.length} en scripts/component-audit.mjs: el trinquete avanzando.`);
     }
+  }
+
+  /* CUÁNDO — un componente sin su línea entra mudo, y mudo no se puede elegir. Muerde en las dos
+   * direcciones: una línea que ya no corresponde a ningún componente también miente. */
+  if (sinCuando.length) {
+    problems++;
+    log(`✗ ${sinCuando.length} componente(s) sin su línea de CUANDO: ${sinCuando.join(', ')}`);
+    log('      → añádela en `scripts/component-audit-map.mjs` → `CUANDO`. Una línea, empezando por el CASO.');
+  }
+  if (cuandoHuerfano.length) {
+    problems++;
+    log(`✗ CUANDO cita ${cuandoHuerfano.length} componente(s) que ya no existen: ${cuandoHuerfano.join(', ')}`);
   }
 
   if (noDemo.length) log(`  ⚠ ${noDemo.length} componente(s) sin página demo (informativo, no bloquea): ${noDemo.map((r) => r.name).join(', ')}`);
