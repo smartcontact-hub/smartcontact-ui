@@ -114,7 +114,7 @@
           "tipo": "ScSeverity",
           "porDefecto": "'danger'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Color del distintivo que se pinta sobre el avatar (estado, contador…).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -134,7 +134,7 @@
           "tipo": "AvatarIllustrationPool",
           "porDefecto": "'illustrated'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "De qué repertorio sale la ilustración cuando no hay foto.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -154,7 +154,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "La imagen no se ha podido cargar. El componente ya cae solo a la ilustración de reserva; esto es para que el consumidor se entere si le interesa.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -189,7 +189,7 @@
           "tipo": "string | number",
           "porDefecto": "''",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Lo que se pinta dentro: normalmente un número o un rótulo muy corto.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -199,7 +199,7 @@
           "tipo": "ScBadgeVariant",
           "porDefecto": "'primary'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Color del distintivo, según lo que signifique.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -313,7 +313,7 @@
           "tipo": "number",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Cuántos elementos hay seleccionados. Es lo que da sentido a la barra: sin selección no se enseña.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -323,7 +323,7 @@
           "tipo": "BulkActionEntityLabels",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Cómo se llama lo seleccionado («conversaciones»), para que el recuento se lea en el idioma de la pantalla.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -333,7 +333,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha pulsado deshacer la selección.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -351,7 +351,7 @@
           "tipo": "readonly BulkEditFieldOption[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Qué campos se pueden cambiar en bloque, con el tipo de cada uno.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -371,7 +371,7 @@
           "tipo": "BulkEditCommit",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha confirmado el cambio masivo. Lleva qué campo y con qué valor; **aplicarlo es de la app**.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -423,7 +423,7 @@
           "tipo": "number",
           "porDefecto": "0",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Cuántas conversaciones ha marcado el usuario. Es el número de partida del que salen todos los demás.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -433,7 +433,7 @@
           "tipo": "number",
           "porDefecto": "0",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "De las marcadas, cuántas se van a transcribir.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -443,7 +443,7 @@
           "tipo": "number",
           "porDefecto": "0",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "De las marcadas, cuántas se van a analizar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -453,7 +453,7 @@
           "tipo": "number | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Llamadas que aún no se han transcrito nunca. `null` cuando el dato no aplica en esa pantalla.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -463,7 +463,7 @@
           "tipo": "number | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Llamadas ya transcritas a las que les falta el análisis. `null` si no aplica.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -473,7 +473,7 @@
           "tipo": "number | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Chats pendientes de análisis; no se transcriben porque ya son texto. `null` si no aplica.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -483,7 +483,7 @@
           "tipo": "number",
           "porDefecto": "0",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Marcadas que ya estaban procesadas y por tanto no se vuelven a procesar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -493,7 +493,7 @@
           "tipo": "string[]",
           "porDefecto": "[]",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Ids de las que se van a transcribir. Viajan en el resultado para que el consumidor sepa sobre cuáles actuar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -503,7 +503,7 @@
           "tipo": "string[]",
           "porDefecto": "[]",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Ids de las que se van a analizar, con el mismo propósito.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -513,7 +513,7 @@
           "tipo": "number",
           "porDefecto": "0",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Llamadas partidas en varios tramos: cuentan como una conversación pero se procesan por tramos.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -523,7 +523,7 @@
           "tipo": "number",
           "porDefecto": "0",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Conversaciones con solo algunos tramos procesados, que por eso quedan a medias.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -533,7 +533,7 @@
           "tipo": "number",
           "porDefecto": "0",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Marcadas que se dejan fuera por estar en curso: procesarlas mientras pasan cosas daría un resultado incompleto.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -543,7 +543,7 @@
           "tipo": "ScBulkTranscriptionModalSurface",
           "porDefecto": "'default'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Sobre qué fondo se pinta el modal (`default`, `dark`, `green`), para que case con la pantalla que lo abre.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -553,7 +553,7 @@
           "tipo": "string",
           "porDefecto": "''",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Clase extra en la raíz del modal, para un ajuste puntual del consumidor.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -563,7 +563,7 @@
           "tipo": "(() =",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Callback de cierre, alternativa a escuchar `closed`. Está para consumidores que no pueden atar un output (por ejemplo al abrirlo por servicio). `null` lo desactiva.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -573,7 +573,7 @@
           "tipo": "((result: ScBulkTranscriptionModalResult) =",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Callback de procesado, la alternativa equivalente a `processed`, con el mismo motivo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -583,7 +583,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha cerrado el modal sin procesar nada.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -593,7 +593,7 @@
           "tipo": "ScBulkTranscriptionModalResult",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha confirmado. Lleva la decisión completa: si incluye análisis, los contadores y los ids sobre los que actuar. **El modal no procesa nada** — solo dice qué se ha decidido; ejecutarlo es de la app.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -641,7 +641,7 @@
           "tipo": "ScButtonAppearance",
           "porDefecto": "'filled'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Qué tan presente es el botón: `filled` lo rellena, `outlined` deja solo el borde, `text` solo la etiqueta y `link` lo pinta como un enlace. En PrimeNG son tres booleanos sueltos (`outlined`/`text`/`link`); aquí es un valor único para que no puedan darse dos a la vez.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -696,7 +696,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El botón ocupa todo el ancho disponible. Llega a PrimeNG como `fluid`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -736,7 +736,7 @@
           "tipo": "ScButtonIconPosition",
           "porDefecto": "'left'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "De qué lado de la etiqueta va el icono. Llega a PrimeNG como `iconPos`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -746,7 +746,7 @@
           "tipo": "ScButtonIconSize | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Talla del icono, si tiene que ser distinta de la que le tocaría por la del botón. `null` deja que la herede.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -756,7 +756,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Pinta el icono en su versión rellena (el eje `FILL` de Material Symbols), no en la de solo trazo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -766,7 +766,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Nombre accesible del icono, para cuando el icono es el que lleva el significado y no hay etiqueta que lo diga. Sin esto, un botón de solo icono no se anuncia.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -806,7 +806,7 @@
           "tipo": "MouseEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El botón se ha pulsado. Es el `onClick` de PrimeNG renombrado a la convención del DS.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -897,7 +897,7 @@
           "tipo": "TriState",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Los TRES estados de la casilla: `none` vacía, `all` marcada y `some` a medias (la raya, para cuando representa un grupo del que solo hay parte elegida). No es un booleano a propósito: el estado intermedio no se puede expresar con `true`/`false`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -907,7 +907,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Deshabilita la casilla.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -917,7 +917,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Nombre accesible, para cuando la casilla no lleva una etiqueta visible al lado — el caso típico es la casilla de cabecera de una tabla.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1105,7 +1105,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha quitado la etiqueta. Quitarla de la lista es del consumidor: el componente no se borra solo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1115,7 +1115,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "La imagen de la etiqueta no se ha podido cargar.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -1136,7 +1136,7 @@
           "tipo": "readonly ColorDotOption[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Los colores entre los que elegir, cada uno con su nombre — el nombre es lo que se anuncia, porque el color solo no se puede oír.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1146,7 +1146,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "El color elegido. Enlace de dos sentidos: `[(value)]`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1174,7 +1174,7 @@
           "tipo": "readonly ColumnDef[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Las columnas que se pueden enseñar u ocultar, con su estado actual.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1294,7 +1294,7 @@
           "tipo": "readonly T[]",
           "porDefecto": "[]",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Las filas a pintar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1304,7 +1304,7 @@
           "tipo": "readonly ScColumnDef<T>[]",
           "porDefecto": "[]",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Definición de las columnas: qué campo muestra cada una, cómo se titula y cómo se ordena. Es el modelo que usan las 16 tablas de hoy.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1424,7 +1424,7 @@
           "tipo": "number",
           "porDefecto": "1",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Sentido de la ordenación inicial: `1` ascendente, `-1` descendente.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1664,7 +1664,7 @@
           "tipo": "ScDatatableSortEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha cambiado la ordenación.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1674,7 +1674,7 @@
           "tipo": "TablePageEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha cambiado de página.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1684,7 +1684,7 @@
           "tipo": "TableLazyLoadEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "La tabla pide datos al servidor. Solo se emite en modo `lazy`, y es donde el consumidor engancha su consulta.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1694,7 +1694,7 @@
           "tipo": "TableFilterEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Han cambiado los filtros de la tabla.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1849,7 +1849,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1874,7 +1874,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay: nunca se ven los dos a la vez.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1884,7 +1884,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Mensaje de error. Su sola presencia pone el campo en estado inválido, así que no hace falta tocar `invalid` además.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2134,7 +2134,7 @@
           "tipo": "Date | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "La fecha elegida, o `null` si no hay ninguna. Enlace de dos sentidos: `[(value)]`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2154,7 +2154,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha recibido el foco.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2164,7 +2164,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha perdido el foco. Es el momento en el que suele validarse.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -2238,7 +2238,7 @@
           "tipo": "boolean",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Si el diálogo se ve. Lo controla el consumidor: este componente no se abre ni se cierra solo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2248,7 +2248,7 @@
           "tipo": "'single' | 'bulk'",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "`single` para borrar un elemento y `bulk` para varios. Cambia el texto y lo que se enseña de la lista.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2258,7 +2258,7 @@
           "tipo": "readonly DeletableEntity[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Lo que se va a borrar. Se enseña para que el usuario confirme sobre lo concreto y no sobre un número.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2268,7 +2268,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Cómo se llama una de estas cosas («usuario»), para que el mensaje hable el idioma de la pantalla.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2278,7 +2278,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Cómo se llaman en plural («usuarios»), para el mismo mensaje cuando son varias.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2308,7 +2308,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario se ha echado atrás. No se borra nada.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2385,7 +2385,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Título del diálogo. Es obligatorio porque es su nombre accesible: un diálogo sin nombre no se anuncia.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2395,7 +2395,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Línea secundaria bajo el título, para el contexto que no cabe en él.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2405,7 +2405,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Icono junto al título. Decorativo: el significado tiene que estar en el texto.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2415,7 +2415,7 @@
           "tipo": "string",
           "porDefecto": "'440px'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Ancho del diálogo. Acepta cualquier medida CSS.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2570,7 +2570,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El diálogo ha terminado de abrirse, con su animación incluida.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2580,7 +2580,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El diálogo ha terminado de cerrarse. Es el momento seguro para liberar lo que tuviera dentro.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -2801,7 +2801,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El panel lateral ha terminado de abrirse.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2811,7 +2811,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Ha terminado de cerrarse. Es el momento seguro para liberar lo que tuviera dentro.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -2841,7 +2841,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Icono del estado vacío. Decorativo: lo que explica qué pasa es el texto.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2851,7 +2851,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Clave de traducción del título.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2929,7 +2929,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "El texto de la etiqueta.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2939,7 +2939,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Pinta la marca de campo obligatorio.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2987,7 +2987,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "El mensaje que se pinta.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3007,7 +3007,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Id del mensaje, para que el campo pueda apuntarle con `aria-describedby` y el lector de pantalla lo lea junto al control.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -3025,7 +3025,7 @@
           "tipo": "string",
           "porDefecto": "'sc.formDangerZone.title'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Clave de traducción del título de la zona.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3035,7 +3035,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Clave de traducción del texto que explica qué pasa si se pulsa. Es obligatorio a propósito: una acción irreversible sin explicación no debería poder construirse.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3045,7 +3045,7 @@
           "tipo": "string",
           "porDefecto": "'sc.formDangerZone.action'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Clave de traducción de la etiqueta del botón.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3070,7 +3070,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha pulsado la acción peligrosa. **No confirma nada por sí mismo**: si hace falta confirmación, la pone el consumidor.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -3121,7 +3121,7 @@
           "tipo": "readonly FormNavSection[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Las secciones del formulario, en orden, tal como se listan en el índice lateral.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3131,7 +3131,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Qué sección está activa. La manda el consumidor, normalmente según el scroll.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3141,7 +3141,7 @@
           "tipo": "string",
           "porDefecto": "'sc.formSectionNav.label'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Clave de traducción del nombre accesible del índice, que es lo que oye quien navega por landmarks.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3171,7 +3171,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha pulsado otra sección del índice.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -3287,7 +3287,7 @@
           "tipo": "readonly GroupRef[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Los grupos que se listan en el globo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3327,7 +3327,7 @@
           "tipo": "boolean",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Si el diálogo se ve. Lo controla el consumidor.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3337,7 +3337,7 @@
           "tipo": "'bulkEdit' | 'duplicate'",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "`bulkEdit` o `duplicate`: qué clase de cambio se está previsualizando.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3347,7 +3347,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Título del diálogo, que es además su nombre accesible.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3357,7 +3357,7 @@
           "tipo": "readonly ImpactItem[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "A qué le va a afectar el cambio. El objetivo del diálogo es justo ese: enseñar el alcance ANTES de aplicarlo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3402,7 +3402,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario se ha echado atrás. No se aplica nada.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3463,7 +3463,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "El texto con el que empieza la edición.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3473,7 +3473,7 @@
           "tipo": "string",
           "porDefecto": "''",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto guía mientras el campo está vacío.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3493,7 +3493,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha confirmado el nombre nuevo. Lleva el texto final.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3503,7 +3503,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha cancelado; el nombre se queda como estaba.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -3521,7 +3521,7 @@
           "tipo": "ScInputGroupSize",
           "porDefecto": "'md'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Talla del grupo. La heredan el campo y sus añadidos, para que no queden desalineados entre sí.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3549,7 +3549,7 @@
           "tipo": "ScFieldSize",
           "porDefecto": "'md'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no cambia el comportamiento.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3559,7 +3559,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3569,7 +3569,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Marca el campo como obligatorio: pinta la marca en la etiqueta y lo anuncia con `aria- required`. No valida por sí solo — de eso se encarga el formulario.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3579,7 +3579,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay: nunca se ven los dos a la vez.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3589,7 +3589,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Mensaje de error. Su sola presencia pone el campo en estado inválido, así que no hace falta tocar `invalid` además.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3614,7 +3614,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3624,7 +3624,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Deshabilita el campo. No se puede enfocar ni editar, y no viaja en el envío del formulario.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3634,7 +3634,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se puede copiar**.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3644,7 +3644,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Id del control interno. Si no se pasa se genera uno, así que solo hace falta para atar una etiqueta externa o un `aria-describedby` de fuera.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3654,7 +3654,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Atributo `name` del control, para el envío nativo del formulario y para que el navegador sepa qué autocompletar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3664,7 +3664,7 @@
           "tipo": "number",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Valor mínimo admitido.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3674,7 +3674,7 @@
           "tipo": "number",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Valor máximo admitido.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3684,7 +3684,7 @@
           "tipo": "number",
           "porDefecto": "1",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Cuánto sube o baja el valor con las flechas del teclado y con los botones.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3714,7 +3714,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha recibido el foco.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3724,7 +3724,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha perdido el foco. Es el momento en el que suele validarse.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -3748,7 +3748,7 @@
           "tipo": "ScFieldSize",
           "porDefecto": "'md'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no cambia el comportamiento.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3758,7 +3758,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3768,7 +3768,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Marca el campo como obligatorio: pinta la marca en la etiqueta y lo anuncia con `aria- required`. No valida por sí solo — de eso se encarga el formulario.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3778,7 +3778,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay: nunca se ven los dos a la vez.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3788,7 +3788,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Mensaje de error. Su sola presencia pone el campo en estado inválido, así que no hace falta tocar `invalid` además.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3838,7 +3838,7 @@
           "tipo": "ScInputType",
           "porDefecto": "'text'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Tipo del `<input>` nativo (`text`, `email`, `tel`…). Cambia el teclado del móvil y la validación del navegador.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3848,7 +3848,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3858,7 +3858,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Deshabilita el campo. No se puede enfocar ni editar, y no viaja en el envío del formulario.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3868,7 +3868,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se puede copiar**.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3878,7 +3878,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Id del control interno. Si no se pasa se genera uno, así que solo hace falta para atar una etiqueta externa o un `aria-describedby` de fuera.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3888,7 +3888,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Atributo `name` del control, para el envío nativo del formulario y para que el navegador sepa qué autocompletar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3898,7 +3898,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Pista de autocompletado para el navegador (`email`, `current-password`, `off`…). Va tal cual al atributo nativo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3908,7 +3908,7 @@
           "tipo": "number",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Máximo de caracteres que deja teclear el navegador. Es un tope duro, no un aviso: no avisa, simplemente no deja escribir más.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3958,7 +3958,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha recibido el foco.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3968,7 +3968,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha perdido el foco. Es el momento en el que suele validarse.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -4009,7 +4009,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El texto del aviso.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4094,7 +4094,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha cerrado el aviso.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -4131,7 +4131,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4156,7 +4156,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay: nunca se ven los dos a la vez.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4166,7 +4166,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Mensaje de error. Su sola presencia pone el campo en estado inválido, así que no hace falta tocar `invalid` además.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4516,7 +4516,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha recibido el foco.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4526,7 +4526,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha perdido el foco. Es el momento en el que suele validarse.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -4591,7 +4591,7 @@
           "tipo": "readonly ScOptionCardItem[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Las opciones entre las que elegir, cada una con su título y su explicación.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4601,7 +4601,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Cuál está elegida, o `null` si ninguna.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4631,7 +4631,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Deshabilita la elección entera.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4641,7 +4641,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha elegido otra opción.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -4739,7 +4739,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El panel va a plegarse o desplegarse, ANTES de la animación.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4749,7 +4749,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El panel ya ha terminado de plegarse o desplegarse. Es el momento en el que su alto es el definitivo.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -4817,7 +4817,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay: nunca se ven los dos a la vez.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4827,7 +4827,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Mensaje de error. Su sola presencia pone el campo en estado inválido, así que no hace falta tocar `invalid` además.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5032,7 +5032,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha recibido el foco.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5042,7 +5042,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha perdido el foco. Es el momento en el que suele validarse.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -5086,7 +5086,7 @@
           "tipo": "readonly ScMatrixRow[]",
           "porDefecto": "[]",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Las filas de la matriz: lo que recibe permisos.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5096,7 +5096,7 @@
           "tipo": "readonly ScMatrixColumn[]",
           "porDefecto": "[]",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Las columnas: los permisos que se pueden dar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5156,7 +5156,7 @@
           "tipo": "ScMatrixColumnToggle",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha marcado o desmarcado una columna ENTERA, es decir ese permiso para todas las filas a la vez.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -5174,7 +5174,7 @@
           "tipo": "string | null | undefined",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "La foto actual, o `null` si no hay. Sin ella se pinta una ilustración de reserva.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5184,7 +5184,7 @@
           "tipo": "string | null | undefined",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Nombre de la persona. Se usa para elegir SIEMPRE la misma ilustración de reserva para la misma persona, en vez de una al azar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5204,7 +5204,7 @@
           "tipo": "'md' | 'sm'",
           "porDefecto": "'md'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Talla del control: `md` o `sm`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5214,7 +5214,7 @@
           "tipo": "AvatarIllustrationPool",
           "porDefecto": "'illustrated'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "De qué repertorio sale la ilustración de reserva.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5224,7 +5224,7 @@
           "tipo": "string",
           "porDefecto": "'assets/avatars'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Carpeta de la que se sirven esas ilustraciones.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5234,7 +5234,7 @@
           "tipo": "string | null",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha elegido otra foto, o la ha quitado (`null`).",
           "origen": "nuestro",
           "nativo": null
         }
@@ -5495,7 +5495,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha pulsado la opción.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -5521,7 +5521,7 @@
           "tipo": "ScFieldSize",
           "porDefecto": "'md'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no cambia el comportamiento.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5531,7 +5531,7 @@
           "tipo": "string",
           "porDefecto": "''",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5541,7 +5541,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Deshabilita el campo. No se puede enfocar ni editar, y no viaja en el envío del formulario.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5551,7 +5551,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Id del control interno. Si no se pasa se genera uno, así que solo hace falta para atar una etiqueta externa o un `aria-describedby` de fuera.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5561,7 +5561,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Atributo `name` del control, para el envío nativo del formulario y para que el navegador sepa qué autocompletar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5571,7 +5571,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo se lleva el foco al aparecer. Úsalo solo cuando buscar sea LA acción de la pantalla: robar el foco sin motivo desorienta a quien navega con teclado.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5621,7 +5621,7 @@
           "tipo": "string",
           "porDefecto": "''",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El texto buscado. Enlace de dos sentidos: `[(value)]`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5657,7 +5657,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Clave de traducción del título de la tarjeta.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5667,7 +5667,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Clave de traducción de la aclaración bajo el título.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5770,7 +5770,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5795,7 +5795,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay: nunca se ven los dos a la vez.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5805,7 +5805,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Mensaje de error. Su sola presencia pone el campo en estado inválido, así que no hace falta tocar `invalid` además.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6120,7 +6120,7 @@
           "tipo": "unknown",
           "porDefecto": "undefined",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "La opción elegida. Enlace de dos sentidos: `[(value)]`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6130,7 +6130,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha recibido el foco.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6140,7 +6140,7 @@
           "tipo": "FocusEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El campo ha perdido el foco. Es el momento en el que suele validarse.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -6379,7 +6379,7 @@
           "tipo": "unknown",
           "porDefecto": "undefined",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "La opción elegida.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -6503,7 +6503,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Clave de traducción del título.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6513,7 +6513,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Icono junto al título. Decorativo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6523,7 +6523,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Clave de traducción de la aclaración bajo el título.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -6541,7 +6541,7 @@
           "tipo": "'create' | 'edit'",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "`create` o `edit`. Cambia los textos de la cabecera y del botón de guardar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6611,7 +6611,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha editado el nombre desde la propia cabecera.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6621,7 +6621,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha pulsado guardar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6631,7 +6631,7 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha pulsado cancelar.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -6683,7 +6683,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": null,
+          "descripcion": "Clave de traducción del título. Clave, no texto: el componente traduce por dentro y se re- traduce solo al cambiar de idioma.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6693,7 +6693,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Clave de traducción de la aclaración bajo el título.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6703,7 +6703,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Icono junto al título. Decorativo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6713,7 +6713,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Deja plegar y desplegar la subsección.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6723,7 +6723,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Empieza plegada. Solo tiene efecto con `collapsible`.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -6839,7 +6839,7 @@
           "tipo": "string",
           "porDefecto": "''",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6849,7 +6849,7 @@
           "tipo": "number",
           "porDefecto": "3",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Alto inicial en líneas de texto. Es el alto de partida: si el campo puede crecer, crece desde aquí.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6859,7 +6859,7 @@
           "tipo": "number | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Ancho en caracteres. Normalmente no se usa —el ancho lo manda el contenedor—; está para el caso en que haga falta fijarlo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6869,7 +6869,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Id del control interno. Si no se pasa se genera uno, así que solo hace falta para atar una etiqueta externa o un `aria-describedby` de fuera.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6879,7 +6879,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Atributo `name` del control, para el envío nativo del formulario y para que el navegador sepa qué autocompletar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6889,7 +6889,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Deshabilita el campo. No se puede enfocar ni editar, y no viaja en el envío del formulario.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6899,7 +6899,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se puede copiar**.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6954,7 +6954,7 @@
           "tipo": "ScComponentSize",
           "porDefecto": "'md'",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no cambia el comportamiento.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6979,7 +6979,7 @@
           "tipo": "unknown",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario ha arrastrado la esquina para cambiar el tamaño del campo.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -7091,7 +7091,7 @@
           "tipo": "ScToastCloseEvent",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El aviso emergente se ha cerrado, sea porque el usuario lo cerró o porque se agotó su tiempo.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -7116,7 +7116,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Si el interruptor está encendido.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -7216,7 +7216,7 @@
           "tipo": "boolean",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El usuario lo ha cambiado. Junto con `checked` permite el enlace de dos sentidos `[(checked)]`.",
           "origen": "nuestro",
           "nativo": null
         },

@@ -60,6 +60,7 @@ type OrderedVisible = readonly string[];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScColumnSelectorComponent {
+  /** Las columnas que se pueden enseñar u ocultar, con su estado actual. */
   readonly columns = input.required<readonly ColumnDef[]>();
   /** localStorage key — should already include a `_v<N>` suffix so a future
    *  schema change can invalidate the cache by bumping the suffix. */

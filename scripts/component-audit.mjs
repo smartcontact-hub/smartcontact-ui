@@ -443,17 +443,21 @@ const END = '<!-- @audit:components:end -->';
 /**
  * Tope de miembros públicos SIN NINGUNA descripción — ni propia ni heredable de PrimeNG.
  *
- * Arrancó en **192** el 2026-09-19. Ojo al denominador, que es la mitad del valor de este
- * número: de los 514 miembros del DS, 191 llevan su JSDoc y **131 los describe PrimeNG**
- * (`origen: nativo`), así que la deuda de ESCRITURA nunca fueron los 323 sin JSDoc. Contar los
- * 323 habría mandado a alguien a redactar 131 descripciones que ya existen, peor escritas que
- * el original y sin autoridad.
+ * Arrancó en **192** el 2026-09-19 y **llegó a 0 el mismo día**. Ojo al denominador, que es la
+ * mitad del valor de este número: de los 514 miembros del DS, 191 llevaban ya su JSDoc y **131
+ * los describe PrimeNG** (`origen: nativo`), así que la deuda de ESCRITURA nunca fueron los 323
+ * sin JSDoc. Contar los 323 habría mandado a alguien a redactar 131 descripciones que ya
+ * existen, peor escritas que el original y sin autoridad.
+ *
+ * En CERO el gate cambia de significado: ya no mide deuda, PROTEGE. Un miembro público nuevo sin
+ * describir —y que PrimeNG tampoco describa— pone rojo el commit que lo introduce, que es cuando
+ * escribir esa línea cuesta una línea.
  *
  * TRINQUETE: solo puede BAJAR, y muerde en las dos direcciones (un tope holgado deja volver lo
  * que ya salió). Mismo patrón que `INPUTS_SIN_EJEMPLO_MAX` de `audit-doc-snippets`, que fue de
  * 66 a 0 en un día.
  */
-export const MIEMBROS_SIN_DESCRIPCION_MAX = 192;
+export const MIEMBROS_SIN_DESCRIPCION_MAX = 0;
 
 /**
  * Tope de props NUESTRAS montadas sobre API que PrimeNG marca `@deprecated`.

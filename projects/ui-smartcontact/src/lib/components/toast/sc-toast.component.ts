@@ -37,6 +37,7 @@ export class ScToastComponent {
 
     readonly preventOpenDuplicates = input(false, { transform: booleanAttribute });
 
+    /** El aviso emergente se ha cerrado, sea porque el usuario lo cerró o porque se agotó su tiempo. */
     readonly closed = output<ScToastCloseEvent>();
 
     protected onClose(event: unknown): void {

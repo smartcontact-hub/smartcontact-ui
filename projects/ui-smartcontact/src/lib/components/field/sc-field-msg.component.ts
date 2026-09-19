@@ -21,9 +21,14 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 export class ScFieldMsgComponent {
   /** Nombre del bloque BEM del componente anfitrión, p.ej. `sc-inputtext`. */
   readonly block = input.required<string>();
+  /** El mensaje que se pinta. */
   readonly text = input.required<string>();
   /** Cuando es `true`, el mensaje se pinta como error. */
   readonly isError = input(false);
+  /**
+   * Id del mensaje, para que el campo pueda apuntarle con `aria-describedby` y el lector de
+   * pantalla lo lea junto al control.
+   */
   readonly msgId = input<string>();
 
   protected readonly msgClass = computed(() => {
