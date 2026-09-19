@@ -87,65 +87,6 @@ export class PanelDemoComponent {
       fill: false,
       severity: '',
     },
-    props: [
-      {
-        name: 'header',
-        type: 'string | null',
-        default: 'null',
-        description: 'Título de la cabecera.',
-      },
-      {
-        name: 'toggleable',
-        type: 'boolean',
-        default: 'false',
-        description: 'Permite colapsar/expandir desde la cabecera.',
-      },
-      {
-        name: 'collapsed',
-        type: 'boolean',
-        default: 'false',
-        description: 'Estado colapsado (two-way con collapsedChange).',
-      },
-      {
-        name: 'showHeader',
-        type: 'boolean',
-        default: 'true',
-        description: 'Muestra u oculta la cabecera.',
-      },
-      {
-        name: 'fill',
-        type: 'boolean',
-        default: 'false',
-        description:
-          'Ocupa el alto de su contenedor y estira el cuerpo, para una tabla con scrollHeight="flex" o una rejilla que reparte el alto. Para paneles fijos: al colapsar, el hueco se queda.',
-      },
-      {
-        name: 'severity',
-        type: "'warn' | 'danger' | null",
-        default: 'null',
-        description:
-          'Panel en aviso: borde y anillo de 1 en --sc-border-warning o --sc-border-danger. El motivo lo dice el contenido; el borde lo hace visible de lejos.',
-      },
-      {
-        name: '#header',
-        type: 'TemplateRef<{ titleId }>',
-        description:
-          'Cabecera propia (plantilla `header` de Panel en primeng.dev), para un título que es encabezado o lleva una línea debajo. Pon `[id]="titleId"` en el título: nombra la región del cuerpo.',
-      },
-      {
-        name: '#icons',
-        type: 'TemplateRef',
-        description:
-          'Acciones de la cabecera, a la derecha del título (plantilla `icons` de Panel en primeng.dev; en Figma, `panel` con `Custom Icon=True`).',
-      },
-      {
-        name: 'collapsedChange',
-        type: 'EventEmitter<boolean>',
-        description: 'Output al cambiar el estado colapsado.',
-      },
-      { name: 'beforeToggle', type: 'EventEmitter<unknown>', description: 'Output antes del toggle.' },
-      { name: 'afterToggle', type: 'EventEmitter<unknown>', description: 'Output tras el toggle.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

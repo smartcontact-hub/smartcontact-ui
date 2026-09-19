@@ -40,19 +40,6 @@ export class CommandPaletteDemoComponent {
       'Paleta de comandos global (⌘K / Ctrl K), data-driven: `ScCommandPaletteService` no conoce rutas ni navegación; el consumidor publica comandos con `setCommands()` y cablea cada `action`. El host se monta una vez en el shell. Atajos: ↑↓ navegar · ↵ ejecutar · Esc cerrar · / enfoca el buscador.',
     argTypes: [],
     defaultArgs: {},
-    props: [
-      {
-        name: 'setCommands()',
-        type: '(cmds: ScPaletteCommand[]) => void',
-        description: 'Publica la lista de comandos disponibles.',
-      },
-      { name: 'open()', type: '() => void', description: 'Abre la paleta imperativamente.' },
-      {
-        name: 'visible()',
-        type: 'Signal<boolean>',
-        description: 'Estado de visibilidad (poseído por el servicio).',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

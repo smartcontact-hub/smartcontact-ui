@@ -104,33 +104,6 @@ export class ButtonDemoComponent {
       iconFilled: false,
       type: 'button',
     },
-    props: [
-      { name: 'label', type: 'string', default: "''", description: 'Texto del botón.' },
-      {
-        name: 'variant',
-        type: 'ScButtonVariant',
-        default: "'primary'",
-        description: 'primary · secondary · success · info · warn · danger · contrast',
-      },
-      {
-        name: 'appearance',
-        type: 'ScButtonAppearance',
-        default: "'filled'",
-        description: 'filled · outlined · text · link',
-      },
-      { name: 'size', type: 'ScButtonSize', default: "'md'", description: 'sm · md · lg' },
-      {
-        name: 'icon',
-        type: 'string | null',
-        default: 'null',
-        description: 'Icono Material (ligadura) o legacy `pi pi-*`.',
-      },
-      { name: 'loading', type: 'boolean', default: 'false' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      { name: 'rounded', type: 'boolean', default: 'false' },
-      { name: 'fullWidth', type: 'boolean', default: 'false' },
-      { name: 'clicked', type: 'EventEmitter<MouseEvent>', description: 'Output al pulsar.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

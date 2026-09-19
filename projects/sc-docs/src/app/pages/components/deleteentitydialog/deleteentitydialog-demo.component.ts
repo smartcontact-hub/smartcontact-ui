@@ -83,25 +83,6 @@ export class DeleteEntityDialogDemoComponent {
       singleDetailMessage: '',
       bulkFooterMessage: '',
     },
-    props: [
-      { name: 'visible', type: 'boolean', description: 'Visibilidad (requerido).' },
-      {
-        name: 'mode',
-        type: "'single' | 'bulk'",
-        description: 'single = retype del nombre · bulk = chips quitables.',
-      },
-      { name: 'items', type: 'readonly DeletableEntity[]', description: 'Entidades a borrar (requerido).' },
-      { name: 'entitySingular', type: 'string', description: 'Nombre singular de la entidad (requerido).' },
-      { name: 'entityPlural', type: 'string', description: 'Nombre plural de la entidad (requerido).' },
-      { name: 'singleDetailMessage', type: 'string | null', default: 'null' },
-      { name: 'bulkFooterMessage', type: 'string | null', default: 'null' },
-      { name: 'cancelled', type: 'EventEmitter<void>' },
-      {
-        name: 'confirm',
-        type: 'EventEmitter<readonly number[] | null>',
-        description: 'Ids supervivientes (bulk) o `null` (single).',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {
