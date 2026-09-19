@@ -206,7 +206,28 @@ export function contratoDe(tsRaw, nativas) {
 }
 
 /** Analiza un componente. PURA respecto a los textos pasados → testeable. */
-export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, supervisorBlob, nativas = null }) {
+/**
+ * ¿Usa esta plantilla el selector de PrimeNG `sel`?
+ *
+ * Distingue las dos formas porque se escriben distinto: un selector de ELEMENTO (`p-button`) es
+ * una etiqueta, y uno de ATRIBUTO (`[pButton]`) es una palabra dentro de una etiqueta.
+ *
+ * ⚠️ Y **escapa el selector**, que es donde esto falló al escribirlo: metido crudo en una
+ * expresión regular, `[pButtonLabel]` no es un literal sino una CLASE DE CARACTERES —cualquiera
+ * de esas letras—, así que `<p>` y `<a ` casaban y el gate cantó cuatro componentes que no
+ * usaban nada obsoleto. Un gate con falsos positivos enseña a ignorarlo.
+ */
+export function usaSelector(html, sel) {
+  const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  if (sel.startsWith('[') && sel.endsWith(']')) {
+    const attr = sel.slice(1, -1);
+    // Atributo dentro de una etiqueta: `<span pButtonLabel>`, `<i pButtonIcon class=…>`.
+    return new RegExp(`<[a-zA-Z][^>]*\\s${esc(attr)}(\\s|=|>|/)`).test(html);
+  }
+  return new RegExp(`<${esc(sel)}(\\s|>|/)`).test(html);
+}
+
+export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, supervisorBlob, nativas = null, obsoletosPrimeng = null }) {
   const tsText = sinComentarios(tsRaw);
   const selector = (tsText.match(/selector:\s*['"]([^'"]+)['"]/) || [])[1] || `sc-${name}`;
   // primeng base: imports `from 'primeng/<x>'` con x ∉ utilidades.
@@ -289,6 +310,15 @@ export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, sup
     contrato,
     ocultas,
     cuando: CUANDO[selector] ?? null,
+    /* Los componentes de PrimeNG JUBILADOS que esta plantilla sigue usando. Se mira el HTML
+     * RENDERIZADO, no el import: un módulo puede traer varias clases y solo una estar obsoleta
+     * (`primeng/button` trae `p-button`, jubilado, y `[pButton]`, que es su relevo). */
+    sobreObsoleto: obsoletosPrimeng
+      ? [...obsoletosPrimeng]
+          .filter(([sel]) => usaSelector(htmlText, sel))
+          .map(([sel, motivo]) => ({ sel, motivo }))
+          .sort((a, b) => a.sel.localeCompare(b.sel))
+      : [],
   };
 }
 
@@ -359,6 +389,61 @@ export function nativasDe(mods, leerTipos) {
   return leidoAlguno ? map : null;
 }
 
+/**
+ * Los SELECTORES de un módulo de PrimeNG cuya CLASE entera está marcada `@deprecated`, con su
+ * motivo. `null` si el módulo no se pudo leer — la misma distinción que hace `nativasDe`: «no
+ * lo tiene» no es «no lo hemos podido mirar».
+ *
+ * POR QUÉ HACÍA FALTA, y por qué el trinquete de props no lo cubría. `PROPS_SOBRE_API_OBSOLETA`
+ * pregunta si una prop NUESTRA se llama como una prop obsoleta de PrimeNG. Es una pregunta útil,
+ * pero es otra: **PrimeNG también jubila COMPONENTES enteros**, y eso no aparece en ninguna prop.
+ * Medido el 2026-09-19 sobre PrimeNG 22.1.2: 23 selectores obsoletos, y envolvemos tres
+ * —`p-button` (en SEIS ficheros nuestros, `sc-button` entre ellos), `p-multiselect` y
+ * `p-password`— sin que nada lo dijera. Un wrapper sobre un componente jubilado no rompe hoy;
+ * rompe el día de la subida, y entonces ya es tarde para enterarse.
+ *
+ * Se lee TROCEANDO por `declare class`, no con una expresión sobre el fichero entero. El motivo
+ * es un fallo medido al escribir esto: un `.d.ts` declara varias clases (`primeng-button.d.ts`
+ * trae `Button`, `ButtonDirective`, `ButtonLabel`…) y atribuir las obsoletas del fichero a todos
+ * sus selectores dio **tres falsos positivos seguidos** —decía que `p-button` tenía obsoletas las
+ * props `type` y `loading`, que son de `[pButton]`—. Un gate con falsos positivos es peor que
+ * ninguno: enseña a ignorarlo.
+ *
+ * Y el selector se PARTE por comas: PrimeNG declara `"p-multiselect, p-multi-select"` en una sola
+ * cadena, y buscarla entera no casaba nunca con `<p-multiselect>`. Ese fue el segundo fallo, y es
+ * el que escondía `sc-multiselect`.
+ */
+export function selectoresObsoletos(mod, leerTipos) {
+  const src = leerTipos(mod);
+  if (src == null) return null;
+  const out = new Map();
+  const cortes = [...src.matchAll(/declare class (\w+)/g)].map((m) => m.index);
+  cortes.push(src.length);
+  for (let i = 0; i < cortes.length - 1; i += 1) {
+    const cuerpo = src.slice(cortes[i], cortes[i + 1]);
+    // El JSDoc de la clase es el bloque que la PRECEDE, no uno de dentro.
+    const antes = src.slice(i === 0 ? 0 : cortes[i - 1], cortes[i]);
+    const doc = antes.match(/\/\*\*([\s\S]*?)\*\/\s*$/);
+    if (!doc || !/@deprecated/.test(doc[1])) continue;
+    const motivo = (doc[1].match(/@deprecated\s*([^\n*]*)/) || [])[1]?.trim() ?? '';
+    const raw = (cuerpo.match(/\u0275\u0275(?:Component|Directive)Declaration<\w+(?:<[^>]*>)?,\s*"([^"]+)"/) || [])[1];
+    if (!raw) continue;
+    for (const sel of raw.split(',').map((x) => x.trim()).filter(Boolean)) out.set(sel, motivo);
+  }
+  return out;
+}
+
+/** Une los selectores obsoletos de todos los módulos que envuelve un componente. */
+export function obsoletosDe(mods, leerTipos) {
+  const map = new Map();
+  for (const mod of mods) {
+    const uno = selectoresObsoletos(mod, leerTipos);
+    if (uno == null) continue;
+    for (const [k, v] of uno) map.set(k, v);
+  }
+  return map;
+}
+
 /** Recorre todos los componentes. */
 export function audit(leerTipos = leerTiposInstalados) {
   const pagesText = existsSync(PAGES) ? readFileSync(PAGES, 'utf8') : '';
@@ -388,6 +473,7 @@ export function audit(leerTipos = leerTiposInstalados) {
           pagesText,
           supervisorBlob,
           nativas: nativasDe(modulosPrimeng(tsText), leerTipos),
+          obsoletosPrimeng: obsoletosDe(modulosPrimeng(tsText), leerTipos),
         }),
       );
     }
@@ -542,6 +628,33 @@ export const MIEMBROS_SIN_DESCRIPCION_MAX = 0;
 export const PROPS_SOBRE_API_OBSOLETA_MAX = 1;
 
 /**
+ * Tope de componentes NUESTROS montados sobre un componente de PrimeNG **jubilado entero**.
+ *
+ * No es lo mismo que el trinquete de arriba, y por eso son dos. Aquel pregunta si una prop
+ * nuestra se llama como una prop obsoleta; este pregunta si el COMPONENTE que envolvemos sigue
+ * existiendo en el plan de PrimeNG. Un componente jubilado no aparece en ninguna prop, así que
+ * el primero no podía verlo: medido el 2026-09-19, decía 1 mientras había **8 componentes
+ * nuestros sobre tres componentes jubilados** y nada lo nombraba.
+ *
+ * Arrancó en **8**, y los ocho tienen nombre (PrimeNG 22.1.2):
+ *
+ *   · `p-button` → «Use the `[pButton]` directive instead», en SEIS: `sc-button`,
+ *     `sc-bulk-edit-menu`, `sc-delete-entity-dialog`, `sc-form-danger-zone`,
+ *     `sc-impact-preview-dialog` y `sc-sticky-form-header`.
+ *   · `p-multiselect` → «Use Select component with `multiple` property instead»: `sc-multiselect`.
+ *   · `p-password` → «use pInputPassword directive instead»: `sc-password`.
+ *
+ * NO se arreglan aquí, y el orden importa. `p-password` y `sc-multiselect` son uno cada uno y
+ * acotados. `p-button → [pButton]` cambia el DOM —de componente a directiva sobre un `<button>`
+ * nativo—, así que mueve `component-structure.json` y las capturas, y toca seis componentes:
+ * es de las que se proponen, no se cuelan (AGENTS.md).
+ *
+ * TRINQUETE: solo puede BAJAR. Envolver un componente nuevo ya jubilado pone rojo el commit que
+ * lo mete — que es cuando todavía no cuesta nada elegir el relevo.
+ */
+export const WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX = 8;
+
+/**
  * Las props que el contrato GUARDADO daba por nativas y la versión instalada ya no tiene.
  *
  * Es la alarma de «una subida de PrimeNG te la ha renombrado o retirada», el mismo modo de
@@ -618,6 +731,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const sinDescripcion = rows.flatMap((r) => r.contrato.filter((m) => !m.descripcion && !m.nativo?.descripcion).map((m) => `${r.selector}.${m.nombre}`));
   /** Props nuestras montadas sobre API que PrimeNG declara obsoleta. */
   const sobreObsoleta = rows.flatMap((r) => r.contrato.filter((m) => m.nativo?.obsoleta).map((m) => `${r.selector}.${m.nombre} (${m.nativo.obsoleta})`));
+  /** Componentes nuestros montados sobre un componente de PrimeNG jubilado ENTERO. */
+  const sobreComponenteObsoleto = rows.flatMap((r) => r.sobreObsoleto.map((o) => `${r.selector} → ${o.sel} (${o.motivo})`));
 
   if (cmd === '--emit') {
     log(zoneBody);
@@ -698,6 +813,19 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       problems++;
       log(`✗ ${sobreObsoleta.length} prop(s) sobre API obsoleta y el tope sigue en ${PROPS_SOBRE_API_OBSOLETA_MAX}.`);
       log(`      → baja PROPS_SOBRE_API_OBSOLETA_MAX a ${sobreObsoleta.length} en scripts/component-audit.mjs (un tope holgado deja volver lo que ya salió).`);
+    }
+
+    /* COMPONENTE OBSOLETO — la otra mitad, y la que no se veía: PrimeNG jubila componentes
+     * enteros, no solo props, y eso no aparece en ninguna prop. */
+    if (sobreComponenteObsoleto.length > WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX) {
+      problems++;
+      log(`✗ ${sobreComponenteObsoleto.length} componente(s) nuestro(s) sobre un componente de PrimeNG JUBILADO y el tope es ${WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX}:`);
+      for (const x of sobreComponenteObsoleto) log(`      · ${x}`);
+      log('      → usa el relevo que nombra PrimeNG. Si rompería API pública nuestra, PROPÓNLO (AGENTS.md), no lo cueles.');
+    } else if (sobreComponenteObsoleto.length < WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX) {
+      problems++;
+      log(`✗ ${sobreComponenteObsoleto.length} componente(s) sobre componente jubilado y el tope sigue en ${WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX}.`);
+      log(`      → baja WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX a ${sobreComponenteObsoleto.length} en scripts/component-audit.mjs (un tope holgado deja volver lo que ya salió).`);
     }
 
     // DESCRIPCIÓN — trinquete de la deuda de escritura REAL (la heredable de PrimeNG no cuenta).

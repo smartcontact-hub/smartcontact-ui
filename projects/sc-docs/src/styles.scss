@@ -46,6 +46,53 @@ body {
   color: var(--sc-text-primary);
 }
 
+/* ─────────── El CÓDIGO de la doc se decide UNA vez ───────────
+
+   Hasta hoy cada hoja se lo montó por su cuenta: **24 sitios de `sc-docs` ponían la
+   monoespaciada a mano**, y los 12 que son ELEMENTOS DE CÓDIGO daban **cinco respuestas
+   distintas** a la misma pregunta —«de qué tamaño va un `<code>` dentro de un párrafo»—:
+   `0.92em` (×4), `0.9em` (×3), heredar (×3), `--sc-font-size-100` y `--sc-font-size-50`.
+   Siete de las doce con un `em` a pelo, que no es token ni sale del Kit. Entre la mayor y la
+   menor no hay ni un píxel de diferencia: no eran cinco intenciones, era el mismo criterio
+   reescrito cinco veces. Medido el 2026-09-19.
+
+   POR QUÉ NO ES UN `.sc-text-*` MÁS, que es lo primero que uno piensa. Tres razones, y cada
+   una bastaría:
+     · `base/typography.css` dice de sí mismo que registra **los 12 text styles del Figma**, uno
+       por estilo, y `audit:text-styles` afirma que cada clase vale lo que vale el suyo. Un 13º
+       sin contrapartida en Figma rompe justo esa promesa — y el Kit no define ninguno mono.
+     · El propio guardián lo deja escrito: «`code`/`kbd`/`pre`/`samp`: su mono lo pone el
+       NAVEGADOR, no una regla, y la clase se lo quita. **El código no es tipografía de
+       pantalla**». Las 12 clases comparten una regla que fija Inter.
+     · Y DD-76 quitó la mono DEL PRODUCTO a propósito («no queremos cosas en mono»), con un e2e
+       que mide la familia calculada de cada celda. Una clase en el paquete del DS enviaría mono
+       a una app que la prohibió. Por eso esto vive en la hoja de `sc-docs` y en ningún otro
+       sitio: la mono es cosa de la DOC.
+
+   POR QUÉ UN `em` Y NO UN PELDAÑO. No es una medida de la escala, es una PROPORCIÓN óptica
+   contra el texto que lo rodea: la mono dibuja más grande que Inter al mismo tamaño, y un
+   `<code>` dentro de un titular tiene que crecer con él, cosa que un peldaño fijo no hace. Se
+   toma `0.92em` porque es **el valor que ya usaban 4 de los 12**, no uno nuevo: aquí se elige
+   una vez lo que ya estaba, no se inventa nada.
+
+   POR QUÉ GLOBAL Y NO UNA CLASE. Las hojas de componente se inyectan DESPUÉS con la misma
+   especificidad, así que una página que de verdad quiera otra cosa sigue ganando sin pelear.
+   Esto es el DEFECTO, no una imposición — y por eso el cambio no puede romper nada: lo que no
+   se toque se queda exactamente como estaba. */
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--sc-font-family-mono);
+  font-size: 0.92em;
+}
+
+/* Un `<code>` dentro de un `<pre>` ya hereda la mono de su padre. Sin esto el 0.92em se
+   aplicaría DOS veces (0.85) y el código saldría más pequeño dentro de su propio bloque. */
+pre code {
+  font-size: inherit;
+}
+
 /* ─────────── Story de gestos de `sc-datatable` (B4) ───────────
    `.dt-row--inactive` va aquí y NO en el componente demo A PROPÓSITO: la clase
    la pone `[rowStyleClass]` sobre un `<tr>` que pinta la plantilla de
