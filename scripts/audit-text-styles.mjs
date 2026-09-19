@@ -563,7 +563,7 @@ export const TIPOGRAFIA_SUELTA_MAX = 82;
  *
  * El apartado del simulador también sube por lo mismo: 122 → 141 exentas, ni una nueva.
  */
-export const TIPOGRAFIA_SUELTA_DOCS_MAX = 102;
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 101;
 
 /** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
 export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);
