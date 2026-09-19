@@ -1,6 +1,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { analyzeComponent } from '../component-audit.mjs';
+import {
+  MIEMBROS_SIN_DESCRIPCION_MAX,
+  PROPS_SOBRE_API_OBSOLETA_MAX,
+  analyzeComponent,
+  audit,
+  contratoDe,
+  huerfanas,
+  miembrosPublicos,
+  nativasDe,
+} from '../component-audit.mjs';
 
 // analyzeComponent: deriva la clasificación del texto del componente. PURA → fixtures directos.
 
@@ -123,4 +132,122 @@ test('`model()` publica también su `xChange`, aunque nadie lo escriba', () => {
     r.api.includes('visibleChange'),
     'la mitad implícita del doble binding: un consumidor puede engancharse a ella, así que es API',
   );
+});
+
+// ── El CONTRATO: cada miembro, cruzado con la API nativa de la versión instalada ──────────
+// Añadido el 2026-09-19. Lo que se prueba aquí es que el instrumento LEE, y que enrojece con
+// el caso malo delante: un gate que solo se ha visto pasar no es un gate (LEARNINGS #2).
+
+test('miembrosPublicos: tipo, default, obligatorio y descripción, uno a uno', () => {
+  const ts = `export class X {
+  /** La etiqueta visible. */
+  readonly label = input('');
+
+  readonly variant = input<ScVariant>('primary');
+
+  readonly disabled = input(false, { transform: booleanAttribute });
+
+  readonly total = input(0);
+
+  readonly dato = input.required<string>();
+
+  readonly abierto = model<boolean>(false);
+
+  readonly pulsado = output<MouseEvent>();
+}`;
+  const m = Object.fromEntries(miembrosPublicos(ts).map((x) => [x.nombre, x]));
+  assert.deepEqual(Object.keys(m), ['label', 'variant', 'disabled', 'total', 'dato', 'abierto', 'pulsado']);
+  assert.equal(m.label.descripcion, 'La etiqueta visible.');
+  assert.equal(m.label.tipo, 'string', 'sin genérico, el tipo se infiere del default, como hace TypeScript');
+  assert.equal(m.variant.tipo, 'ScVariant');
+  assert.equal(m.variant.porDefecto, "'primary'");
+  assert.equal(m.disabled.tipo, 'boolean', 'el `transform: booleanAttribute` dice el tipo');
+  assert.equal(m.total.tipo, 'number');
+  assert.equal(m.dato.requerido, true);
+  assert.equal(m.dato.porDefecto, null);
+  assert.equal(m.abierto.clase, 'model');
+  assert.equal(m.pulsado.clase, 'output');
+  assert.equal(m.pulsado.porDefecto, null, 'un output no tiene valor por defecto');
+});
+
+test('ROJO: un genérico ANIDADO no se puede leer con `<[^>]*>` — se corta por la mitad', () => {
+  // 9 de las 514 declaraciones del DS son así: `input<readonly ScColumnDef<T>[]>([])`. Un regex
+  // que pare en el primer `>` devuelve `readonly ScColumnDef<T` y el tipo queda partido.
+  const [m] = miembrosPublicos('  readonly columns = input<readonly ScColumnDef<T>[]>([]);');
+  assert.equal(m.tipo, 'readonly ScColumnDef<T>[]');
+});
+
+test('ROJO: un comentario de línea ENTRE el JSDoc y el miembro no borra la descripción', () => {
+  // El caso real es `sc-search`: JSDoc, luego `// eslint-disable-next-line
+  // @angular-eslint/no-output-native`, luego la declaración.
+  const ts = `  /** Re-emite keydown del input. */
+  // eslint-disable-next-line @angular-eslint/no-output-native
+  readonly keydown = output<KeyboardEvent>();`;
+  assert.equal(miembrosPublicos(ts)[0].descripcion, 'Re-emite keydown del input.');
+});
+
+test('miembrosPublicos: las etiquetas @ del JSDoc no entran en la descripción', () => {
+  const ts = `  /**
+   * Lo que hace.
+   * @deprecated usa otra
+   */
+  readonly x = input('');`;
+  assert.equal(miembrosPublicos(ts)[0].descripcion, 'Lo que hace.');
+});
+
+test('contratoDe: nativo, nuestro y —el que importa— SIN-VERIFICAR', () => {
+  const ts = "  readonly label = input('');\n\n  readonly appearance = input('filled');";
+  const nativas = new Map([['label', { descripcion: 'Text of the button.', porDefecto: null, obsoleta: null }]]);
+
+  const con = contratoDe(ts, nativas);
+  assert.equal(con.find((m) => m.nombre === 'label').origen, 'nativo');
+  assert.equal(con.find((m) => m.nombre === 'label').nativo.descripcion, 'Text of the button.');
+  assert.equal(con.find((m) => m.nombre === 'appearance').origen, 'nuestro');
+  assert.equal(con.find((m) => m.nombre === 'appearance').nativo, null);
+
+  // Sin API que leer NO se dice «nuestro»: sería afirmar algo que no se ha medido.
+  for (const m of contratoDe(ts, null)) {
+    assert.equal(m.origen, 'sin-verificar');
+    assert.equal(m.nativo, null);
+  }
+});
+
+test('nativasDe: sin ningún `.d.ts` legible devuelve null, no un Map vacío', () => {
+  // Un Map vacío significaría «PrimeNG no tiene ninguna de estas props» y marcaría los 514
+  // miembros como nuestros. `null` significa «no se ha podido mirar», que es otra cosa.
+  assert.equal(nativasDe(['button'], () => null), null);
+  assert.deepEqual(nativasDe([], () => null), new Map(), 'un componente CUSTOM no envuelve nada: eso sí es vacío');
+});
+
+test('ROJO: huerfanas caza la prop que PrimeNG renombró bajo nuestros pies', () => {
+  const previo = { components: [{ selector: 'sc-drawer', contrato: [{ nombre: 'showCloseIcon', origen: 'nativo' }] }] };
+  const igual = [{ selector: 'sc-drawer', contrato: [{ nombre: 'showCloseIcon', origen: 'nativo' }] }];
+  const tras = [{ selector: 'sc-drawer', contrato: [{ nombre: 'showCloseIcon', origen: 'nuestro' }] }];
+
+  assert.deepEqual(huerfanas(previo, igual), [], 'sin cambios en PrimeNG, no hay alarma');
+  assert.deepEqual(huerfanas(previo, tras), ['sc-drawer.showCloseIcon'], 'la subida se la llevó y hay que enterarse');
+  assert.deepEqual(huerfanas(null, tras), [], 'sin contrato previo no se puede afirmar nada');
+});
+
+test('trinquetes: los topes dicen la verdad sobre el árbol de HOY', () => {
+  const rows = audit();
+  const sinDescripcion = rows.flatMap((r) => r.contrato.filter((m) => !m.descripcion && !m.nativo?.descripcion));
+  const sobreObsoleta = rows.flatMap((r) => r.contrato.filter((m) => m.nativo?.obsoleta));
+
+  // Sin `node_modules` no hay cruce nativo que medir; el gate ya lo dice y se salta.
+  if (rows.every((r) => r.contrato.every((m) => m.origen === 'sin-verificar'))) return;
+
+  assert.ok(sinDescripcion.length <= MIEMBROS_SIN_DESCRIPCION_MAX, `${sinDescripcion.length} miembros sin descripción y el tope es ${MIEMBROS_SIN_DESCRIPCION_MAX}`);
+  assert.equal(sinDescripcion.length, MIEMBROS_SIN_DESCRIPCION_MAX, `baja MIEMBROS_SIN_DESCRIPCION_MAX a ${sinDescripcion.length}: un tope holgado deja volver lo que ya salió`);
+  assert.ok(sobreObsoleta.length <= PROPS_SOBRE_API_OBSOLETA_MAX, `${sobreObsoleta.length} props sobre API obsoleta y el tope es ${PROPS_SOBRE_API_OBSOLETA_MAX}`);
+  assert.equal(sobreObsoleta.length, PROPS_SOBRE_API_OBSOLETA_MAX, `baja PROPS_SOBRE_API_OBSOLETA_MAX a ${sobreObsoleta.length}`);
+});
+
+test('ROJO: el recorrido va por FICHERO, que si no dos componentes no existen', () => {
+  // `avatar/` tiene `sc-avatar` y `sc-avatargroup`; `field/` tiene `sc-field-label` y
+  // `sc-field-msg`. Coger el primer `.component.ts` de cada carpeta daba 54 filas para 56
+  // componentes, y el CHECK E de `docs:coherence` cuenta esas filas.
+  const selectores = new Set(audit().map((r) => r.selector));
+  for (const s of ['sc-avatar', 'sc-avatargroup', 'sc-field-label', 'sc-field-msg'])
+    assert.ok(selectores.has(s), `${s} tiene que estar en el registro`);
 });

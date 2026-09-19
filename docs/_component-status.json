@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "54 componentes · 17 custom · 11 standard · 26 extended · 43 usados en Supervisor.",
+  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 43 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -26,6 +26,19 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "usedInSupervisor": 0
+    },
+    {
+      "name": "avatargroup",
+      "selector": "sc-avatargroup",
+      "provenance": "WRAPPER",
+      "kind": "STANDARD",
+      "primengBase": "primeng/avatargroup",
+      "cva": false,
+      "inputs": 0,
+      "api": [],
+      "nested": [],
+      "hasDemo": false,
       "usedInSupervisor": 0
     },
     {
@@ -496,7 +509,7 @@
       "usedInSupervisor": 14
     },
     {
-      "name": "field",
+      "name": "field-label",
       "selector": "sc-field-label",
       "provenance": "CUSTOM",
       "kind": "CUSTOM",
@@ -507,6 +520,22 @@
         "for",
         "labelId",
         "required"
+      ],
+      "nested": [],
+      "hasDemo": false,
+      "usedInSupervisor": 0
+    },
+    {
+      "name": "field-msg",
+      "selector": "sc-field-msg",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 2,
+      "api": [
+        "isError",
+        "msgId"
       ],
       "nested": [],
       "hasDemo": false,
