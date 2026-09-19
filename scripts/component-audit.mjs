@@ -31,6 +31,7 @@ const PAGES = resolve(root, 'projects/sc-docs/src/app/pages/components/component
 const INVENTORY = resolve(root, 'docs/inventory.md');
 const MANIFEST = resolve(root, 'docs/_component-status.json');
 const API_MANIFEST = resolve(root, 'projects/sc-docs/public/components/_component-api.json');
+const INFORME = resolve(root, 'docs/AUDIT-PRIMENG-SUPERVISOR.md');
 const log = (s = '') => process.stdout.write(s + '\n');
 
 /** Lee todo el texto de un árbol (.ts/.html) en un solo string — para contar usos del selector. */
@@ -369,6 +370,67 @@ function table(rows) {
   return `${head}\n${body}`;
 }
 
+/**
+ * INFORME · dónde se aparta el Supervisor del nativo de primeng.dev.
+ *
+ * Para qué. La regla de DD-113 es «el nativo tal cual, adaptado con tokens», y el Supervisor es
+ * el ÚNICO consumidor real del DS (medido el 2026-09-19: 43 de los 56 componentes en 456 usos;
+ * `agent` 4, `cuscare` y `agent-mini` 0 por DD-35). Hasta hoy, saber qué props de PrimeNG NO le
+ * llegan a una pantalla era imposible sin abrir el wrapper y compararlo a mano con la
+ * documentación. El resultado previsible: se descubría construyendo, y lo que faltaba se
+ * reinventaba encima del wrapper en vez de pedírselo.
+ *
+ * QUÉ NO ES. No es una lista de defectos. Un wrapper esconde por diseño —los EXTENDED son 26 de
+ * 56— y esconder está bien cuando es una decisión. Lo que no estaba bien es que la decisión no se
+ * viera: esto la pone delante para que alguien diga «sí, a propósito» o «esto falta».
+ *
+ * Se ordena por props escondidas y no por uso: arriba queda el hueco más grande entre lo que
+ * PrimeNG ofrece y lo que la app puede pedir.
+ */
+export function informeSupervisor(rows, versionPrimeng) {
+  const usados = rows
+    .filter((r) => r.usedInSupervisor > 0)
+    .sort((a, b) => b.ocultas.length - a.ocultas.length || a.selector.localeCompare(b.selector));
+  const obsoletas = rows.flatMap((r) => r.contrato.filter((m) => m.nativo?.obsoleta).map((m) => ({ sel: r.selector, m })));
+  const totalOcultas = usados.reduce((a, r) => a + r.ocultas.length, 0);
+
+  const l = [];
+  l.push('# Desvíos del Supervisor respecto al nativo de primeng.dev', '');
+  l.push('<!-- GENERADO por `node scripts/component-audit.mjs --write`. NO editar a mano. -->', '');
+  l.push(
+    `Contra **PrimeNG ${versionPrimeng ?? '¿?'}**, la versión INSTALADA — no la documentación de la web,`,
+    'que puede ir por delante.',
+    '',
+    `**${usados.length} componentes** del DS se usan en el Supervisor, y entre todos esconden`,
+    `**${totalOcultas} props** que PrimeNG sí documenta.`,
+    '',
+    'La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una',
+    'decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se',
+    'veía en ningún sitio, así que no se podía revisar. Esto la pone delante.',
+    '',
+    '**Cómo se usa**: al construir una pantalla, si echas en falta algo, míralo aquí ANTES de',
+    'envolverlo a mano. Si la prop está en esta lista, existe en PrimeNG y solo hay que dejarla pasar.',
+    '',
+  );
+
+  if (obsoletas.length) {
+    l.push('## ⚠️ Props nuestras sobre API que PrimeNG marca obsoleta', '');
+    for (const { sel, m } of obsoletas) l.push(`- **\`${sel}.${m.nombre}\`** → ${m.nativo.obsoleta}`);
+    l.push('', 'Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone, no se cuela.', '');
+  }
+
+  l.push('## Por componente', '');
+  for (const r of usados) {
+    l.push(`### \`${r.selector}\` · ${r.usedInSupervisor} usos · ${r.primengBase}`, '');
+    if (!r.ocultas.length) {
+      l.push('Expone todo lo que PrimeNG documenta.', '');
+      continue;
+    }
+    l.push(`**${r.ocultas.length} props nativas no expuestas**: ${r.ocultas.map((p) => `\`${p}\``).join(', ')}`, '');
+  }
+  return l.join('\n') + '\n';
+}
+
 /** Resumen de conteos. */
 function summary(rows) {
   const by = (k) => rows.filter((r) => r.kind === k).length;
@@ -462,6 +524,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       2,
     ) + '\n';
 
+  const informe = informeSupervisor(rows, versionPrimeng);
   const zoneBody = `${summary(rows)}\n\n${table(rows)}`;
 
   // problemas: componente sin demo (y no exento). provenance siempre clasifica → sin "sin clasificar".
@@ -494,6 +557,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     } else {
       mkdirSync(dirname(API_MANIFEST), { recursive: true });
       writeFileSync(API_MANIFEST, apiManifest);
+      writeFileSync(INFORME, informe);
     }
     log(`✓ audit:components — manifiesto + tabla regenerados (${rows.length} componentes, contrato de ${rows.reduce((a, r) => a + r.contrato.length, 0)} miembros contra PrimeNG ${versionPrimeng ?? '¿?'}).`);
     process.exit(0);
@@ -522,6 +586,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     if (!existsSync(API_MANIFEST) || readFileSync(API_MANIFEST, 'utf8') !== apiManifest) {
       problems++;
       log(`✗ ${API_MANIFEST.replace(root + '/', '')} no está al día — corre \`node scripts/component-audit.mjs --write\`.`);
+    }
+    if (!existsSync(INFORME) || readFileSync(INFORME, 'utf8') !== informe) {
+      problems++;
+      log('✗ docs/AUDIT-PRIMENG-SUPERVISOR.md no está al día — corre `node scripts/component-audit.mjs --write`.');
     }
 
     /* HUÉRFANAS — lo que el contrato guardado daba por nativo y la versión instalada ya no

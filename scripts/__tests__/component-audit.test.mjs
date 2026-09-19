@@ -7,6 +7,7 @@ import {
   audit,
   contratoDe,
   huerfanas,
+  informeSupervisor,
   miembrosPublicos,
   nativasDe,
 } from '../component-audit.mjs';
@@ -250,4 +251,60 @@ test('ROJO: el recorrido va por FICHERO, que si no dos componentes no existen', 
   const selectores = new Set(audit().map((r) => r.selector));
   for (const s of ['sc-avatar', 'sc-avatargroup', 'sc-field-label', 'sc-field-msg'])
     assert.ok(selectores.has(s), `${s} tiene que estar en el registro`);
+});
+
+// ── El informe de desvíos del Supervisor ──────────────────────────────────────────────────
+// Es el artefacto que contesta «¿qué de PrimeNG no le llega a esta pantalla?». Se prueba que
+// FILTRA por uso real y que ORDENA por hueco, porque si listara los 56 componentes o los pusiera
+// por orden alfabético dejaría de ser una lista con la que decidir y sería un volcado.
+
+const filaInforme = (over = {}) => ({
+  selector: 'sc-x',
+  name: 'x',
+  primengBase: 'primeng/x',
+  usedInSupervisor: 1,
+  ocultas: [],
+  contrato: [],
+  ...over,
+});
+
+test('informeSupervisor: solo entra lo que el Supervisor USA, y ordenado por hueco', () => {
+  const md = informeSupervisor(
+    [
+      filaInforme({ selector: 'sc-poco', usedInSupervisor: 9, ocultas: ['a'] }),
+      filaInforme({ selector: 'sc-mucho', usedInSupervisor: 1, ocultas: ['a', 'b', 'c'] }),
+      filaInforme({ selector: 'sc-sinusar', usedInSupervisor: 0, ocultas: ['a', 'b', 'c', 'd'] }),
+    ],
+    '22.1.0',
+  );
+  assert.doesNotMatch(md, /sc-sinusar/, 'un componente que el Supervisor no usa no es un desvío suyo');
+  assert.match(md, /\*\*2 componentes\*\*/);
+  assert.ok(
+    md.indexOf('`sc-mucho`') < md.indexOf('`sc-poco`'),
+    'ordena por props escondidas, no por usos: arriba va el hueco más grande, que es lo accionable',
+  );
+  assert.match(md, /\*\*4 props\*\*/, 'el total suma solo los usados');
+});
+
+test('informeSupervisor: la obsoleta se canta arriba aunque el componente no se use', () => {
+  /* A propósito: una prop nuestra sobre API `@deprecated` es deuda del DS, no del Supervisor, y
+   * desaparecería del informe justo el día que la pantalla deje de usar ese componente. */
+  const md = informeSupervisor(
+    [
+      filaInforme({ selector: 'sc-usado', usedInSupervisor: 3 }),
+      filaInforme({
+        selector: 'sc-drawer',
+        usedInSupervisor: 0,
+        contrato: [{ nombre: 'showCloseIcon', nativo: { obsoleta: "use 'closable' instead." } }],
+      }),
+    ],
+    '22.1.0',
+  );
+  assert.match(md, /`sc-drawer\.showCloseIcon`/);
+  assert.match(md, /use 'closable' instead\./);
+});
+
+test('informeSupervisor: un wrapper que no esconde nada lo dice, no se calla', () => {
+  const md = informeSupervisor([filaInforme({ selector: 'sc-limpio', usedInSupervisor: 2, ocultas: [] })], '22.1.0');
+  assert.match(md, /Expone todo lo que PrimeNG documenta/);
 });
