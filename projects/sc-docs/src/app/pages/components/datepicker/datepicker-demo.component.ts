@@ -113,28 +113,6 @@ export class DatepickerDemoComponent {
       inline: false,
       disabled: false,
     },
-    props: [
-      { name: 'value', type: 'Date | null', default: 'null', description: 'Two-way `[(value)]`, en modo `single`.' },
-      { name: 'range', type: 'readonly (Date | null)[] | null', default: 'null', description: 'Two-way `[(range)]`, en modo `range`: `[inicio, fin]`.' },
-      { name: 'selectionMode', type: 'ScDatepickerSelectionMode', default: "'single'", description: 'single · range' },
-      { name: 'presets', type: 'readonly ScDatepickerPreset[]', default: '[]', description: 'Atajos en el pie del panel; `resolve` se evalúa al pulsar.' },
-      { name: 'clearLabel', type: 'string', default: "'Limpiar'", description: 'Rótulo de «Limpiar» en el pie con atajos.' },
-      { name: 'label', type: 'string', default: '—' },
-      { name: 'placeholder', type: 'string', default: "'dd/mm/aaaa'" },
-      { name: 'size', type: 'ScDatepickerSize', default: "'md'", description: 'sm · md · lg' },
-      { name: 'dateFormat', type: 'string', default: "'dd/mm/yy'", description: 'Formato de display/parseo.' },
-      { name: 'view', type: 'ScDatepickerView', default: "'date'", description: 'date · month · year' },
-      { name: 'minDate', type: 'Date', default: '—', description: 'Fecha mínima seleccionable.' },
-      { name: 'maxDate', type: 'Date', default: '—', description: 'Fecha máxima seleccionable.' },
-      { name: 'helperText', type: 'string', default: '—' },
-      { name: 'error', type: 'string', default: '—', description: 'Texto de error (gana a helper).' },
-      { name: 'required', type: 'boolean', default: 'false' },
-      { name: 'showIcon', type: 'boolean', default: 'true', description: 'Botón de calendario.' },
-      { name: 'showClear', type: 'boolean', default: 'false', description: 'Botón «×» para limpiar.' },
-      { name: 'showButtonBar', type: 'boolean', default: 'false', description: 'Botones hoy/limpiar en el panel.' },
-      { name: 'inline', type: 'boolean', default: 'false', description: 'Panel siempre visible (no popup).' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

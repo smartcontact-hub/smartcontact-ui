@@ -64,13 +64,6 @@ export class InlineRenameCellDemoComponent {
       placeholder: 'Nombre del equipo',
       ariaLabel: 'Renombrar equipo',
     },
-    props: [
-      { name: 'initialValue', type: 'string', default: '(required)', description: 'Valor de arranque (se selecciona al montar).' },
-      { name: 'placeholder', type: 'string', default: "''" },
-      { name: 'ariaLabel', type: 'string', default: "''", description: 'aria-label del input.' },
-      { name: 'commit', type: 'EventEmitter<string>', description: 'Enter / ✓ — valor trimmeado.' },
-      { name: 'cancelled', type: 'EventEmitter<void>', description: 'Esc / ✗.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

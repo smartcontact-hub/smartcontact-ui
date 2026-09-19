@@ -227,11 +227,28 @@
   /* ---------- Typography ---------- */
   --sc-font-family-primary: 'Inter', system-ui, -apple-system, sans-serif;
   --sc-font-family-secondary: 'Open Sans', sans-serif;
-  /* Monospace stack — usado por time labels del player (multi-rec + single
-   * audio bar) y por el gate input "CONFIRMAR" del retranscription modal.
-   * Cocinado S46 al detectar que múltiples consumers ya lo usaban como
-   * fallback hardcoded. No mapea a fuente custom — system mono stack. */
-  --sc-font-family-mono: ui-monospace, 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
+  /* Monospace — AUTOHOSPEDADA desde el 2026-09-19, igual que Inter.
+   *
+   * Era un stack del SISTEMA (`ui-monospace, 'SF Mono', 'Menlo', 'Consolas'…`), o sea que la
+   * dibujaba el ordenador de quien mirara: un Mac una, Windows otra, Linux otra. Dos precios, y
+   * el segundo es el que dolía:
+   *   1. La doc se veía distinta según quién la abriera. Poco, pero sin decidirlo nadie.
+   *   2. Las 38 capturas de regresión de sc-docs se tomaron en un Mac y **fallaban las 38** en
+   *      cualquier otra máquina. Medido en DD-60 (run 34401618582): 37 de las 38 diferencias
+   *      caían ENTERAS en una banda de 14 px de alto —la línea del título, que se pinta en
+   *      monoespaciada— con 87 a 1.100 px de diferencia por captura. Por eso el CI las apagaba
+   *      y solo corrían en el portátil de Rafa. DD-60 dejó escrita esta salida y DD-62 la
+   *      repitió: «la salida no es quitar la red: es autohospedar la fuente monoespaciada».
+   *
+   * Se eligió **JetBrains Mono** (gratuita, pensada para leer código, y del mismo `@fontsource`
+   * que ya sirve Inter, así que no añade proveedor). El stack del sistema se queda DETRÁS como
+   * reserva: si el fichero no cargara, se sigue viendo monoespaciada en vez de romperse.
+   *
+   * Alcance medido antes de tocarlo: 17 ficheros, **todos de `sc-docs`**. Cero en supervisor,
+   * agent, cuscare, agent-mini y cero en los componentes del DS. O sea que esto NO cambia el
+   * aspecto de ninguna app — solo el del código que enseña la documentación. (DD-60 avisaba de
+   * que cambiaría «la doc y las apps»; medido hoy, las apps ya no la usan.) */
+  --sc-font-family-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
 
   /* Tipografía — DD-13: rampas redondas en rem (root 16), DESACOPLADAS de `--sc-scale`.
    * Espejo de los primitivos `typography/*` del Kit (font-size 12·14·16·18·20·24·32·48 ·

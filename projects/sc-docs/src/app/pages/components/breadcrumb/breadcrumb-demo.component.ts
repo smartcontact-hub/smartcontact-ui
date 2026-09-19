@@ -60,39 +60,6 @@ export class BreadcrumbDemoComponent {
       'Migas de pan: dónde estás en la jerarquía. Wrapper de <p-breadcrumb> con modelo MenuItem[] + inicio, tokenizado al DS (item muted → hover, separador, anillo sky). Primer componente traído por el puente Figma→código.',
     argTypes: [],
     defaultArgs: {},
-    props: [
-      {
-        name: 'model',
-        type: 'MenuItem[]',
-        default: '[]',
-        description:
-          'Los tramos, en orden. El último es la página actual (sin command/routerLink). Para navegar, routerLink. Los pulsables llevan manita y se subrayan al pasar el ratón.',
-      },
-      {
-        name: 'home',
-        type: 'MenuItem | undefined',
-        default: 'undefined',
-        description: 'Item de inicio (icono casa). Opcional; se pinta antes del primer tramo.',
-      },
-      {
-        name: 'homeAriaLabel',
-        type: 'string | undefined',
-        default: 'undefined',
-        description: 'Nombre accesible del icono de inicio.',
-      },
-      {
-        name: 'flush',
-        type: 'boolean',
-        default: 'false',
-        description: 'Sin relleno propio: para cuando la miga va dentro de una barra que ya pone su aire (la TopBar).',
-      },
-      {
-        name: 'itemClick',
-        type: 'output<MenuItemCommandEvent>',
-        default: '—',
-        description: 'Click en un tramo (o en el inicio).',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

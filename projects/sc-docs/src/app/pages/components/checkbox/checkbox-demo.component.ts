@@ -57,29 +57,6 @@ export class CheckboxDemoComponent {
           labelPosition: 'end',
       etiqueta: 'Recibir avisos',
     },
-    props: [
-      {
-        name: 'state',
-        type: 'TriState',
-        default: '—',
-        description: "Requerido. 'none' · 'some' (indeterminado) · 'all'.",
-      },
-      { name: 'size', type: 'ScCheckboxSize', default: "'md'", description: 'sm · md · lg' },
-      {
-        name: 'filled',
-        type: 'boolean',
-        default: 'false',
-        description: 'Fondo slate-50 cuando unchecked.',
-      },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      { name: 'ariaLabel', type: 'string | null', default: 'null', description: 'Nombre accesible.' },
-      { name: 'inputId', type: 'string | null', default: 'null', description: 'Id del `<input>` real.' },
-      {
-        name: 'cycle',
-        type: 'EventEmitter<boolean>',
-        description: 'Output: siguiente estado booleano deseado.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

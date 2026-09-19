@@ -69,48 +69,6 @@ export class StickyFormHeaderDemoComponent {
       namePlaceholderKey: 'Nombre del agente',
       showBack: false,
     },
-    props: [
-      {
-        name: 'mode',
-        type: "'create' | 'edit'",
-        default: '— (requerido)',
-        description: 'create (input de nombre) · edit (nombre editable inline).',
-      },
-      {
-        name: 'entityKey',
-        type: 'string',
-        default: '— (requerido)',
-        description: 'Clave i18n del eyebrow de entidad.',
-      },
-      {
-        name: 'name',
-        type: 'string',
-        default: '— (requerido)',
-        description: 'Nombre actual de la entidad (display + edición).',
-      },
-      { name: 'canSave', type: 'boolean', default: 'true', description: 'Deshabilita Guardar si false.' },
-      {
-        name: 'saving',
-        type: 'boolean',
-        default: 'false',
-        description: 'Sustituye Guardar por un spinner.',
-      },
-      {
-        name: 'namePlaceholderKey',
-        type: 'string',
-        default: "'sc.stickyFormHeader.namePlaceholder'",
-        description: 'Clave i18n del placeholder del input de nombre (modo create).',
-      },
-      {
-        name: 'showBack',
-        type: 'boolean',
-        default: 'false',
-        description: 'Muestra el botón "Atrás" en el cluster de acciones.',
-      },
-      { name: 'nameChange', type: 'EventEmitter<string>', description: 'Output al renombrar.' },
-      { name: 'save', type: 'EventEmitter<void>', description: 'Output al pulsar Guardar.' },
-      { name: 'cancelled', type: 'EventEmitter<void>', description: 'Output al cancelar.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

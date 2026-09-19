@@ -124,59 +124,6 @@ export class BulkTranscriptionModalDemoComponent {
       excludedInProgressCount: 1,
       surface: 'default',
     },
-    props: [
-      { name: 'selectedCount', type: 'number', default: '0', description: 'Total seleccionado.' },
-      {
-        name: 'newCallsCount',
-        type: 'number | null',
-        default: 'null',
-        description: 'Llamadas nuevas a transcribir.',
-      },
-      {
-        name: 'transcribedCallsPendingAnalysisCount',
-        type: 'number | null',
-        default: 'null',
-        description: 'Llamadas transcritas pendientes de análisis.',
-      },
-      {
-        name: 'chatsPendingAnalysisCount',
-        type: 'number | null',
-        default: 'null',
-        description: 'Chats pendientes de análisis.',
-      },
-      {
-        name: 'readyToTranscribeIds',
-        type: 'string[]',
-        default: '[]',
-        description: 'Ids elegibles para transcribir.',
-      },
-      {
-        name: 'readyToAnalyzeIds',
-        type: 'string[]',
-        default: '[]',
-        description: 'Ids elegibles para analizar.',
-      },
-      {
-        name: 'multiSegmentCallsCount',
-        type: 'number',
-        default: '0',
-        description: 'Llamadas con varios tramos.',
-      },
-      {
-        name: 'excludedInProgressCount',
-        type: 'number',
-        default: '0',
-        description: 'Excluidas por estar en curso.',
-      },
-      {
-        name: 'surface',
-        type: 'ScBulkTranscriptionModalSurface',
-        default: "'default'",
-        description: 'default · dark · green',
-      },
-      { name: 'processed', type: 'EventEmitter<ScBulkTranscriptionModalResult>' },
-      { name: 'closed', type: 'EventEmitter<void>' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

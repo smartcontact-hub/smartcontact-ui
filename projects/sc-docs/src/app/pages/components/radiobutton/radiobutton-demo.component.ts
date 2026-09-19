@@ -54,17 +54,6 @@ export class RadioButtonDemoComponent {
       variant: 'outlined',
       ariaLabel: 'Opción',
     },
-    props: [
-      { name: 'value', type: 'unknown', default: 'null', description: 'Valor de este radio.' },
-      { name: 'modelValue', type: 'unknown', default: 'null', description: 'Valor activo del grupo.' },
-      { name: 'name', type: 'string | null', default: 'null', description: 'Agrupa radios.' },
-      { name: 'inputId', type: 'string | null', default: 'null', description: 'Enlaza `<label for>`.' },
-      { name: 'size', type: 'ScComponentSize', default: "'md'", description: 'sm · md · lg' },
-      { name: 'variant', type: 'ScInputVariant', default: "'outlined'", description: 'outlined · filled' },
-      { name: 'ariaLabel', type: 'string | null', default: 'null' },
-      { name: 'modelValueChange', type: 'EventEmitter<unknown>', description: 'Nuevo valor del grupo.' },
-      { name: 'clicked', type: 'EventEmitter<unknown>' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

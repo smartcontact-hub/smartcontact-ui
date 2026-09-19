@@ -76,29 +76,6 @@ export class TagDemoComponent {
       variant: 'default',
       labelColor: 'gray',
     },
-    props: [
-      { name: 'value', type: 'string | null', default: 'null', description: 'Texto de la etiqueta.' },
-      {
-        name: 'severity',
-        type: 'ScSeverity',
-        default: "'primary'",
-        description: 'primary · secondary · success · info · warn · danger · contrast',
-      },
-      { name: 'icon', type: 'string | null', default: 'null', description: 'Icono Material.' },
-      { name: 'rounded', type: 'boolean', default: 'false' },
-      {
-        name: 'variant',
-        type: "'default' | 'label'",
-        default: "'default'",
-        description: 'label = etiqueta categórica tintada (§4.1).',
-      },
-      {
-        name: 'labelColor',
-        type: 'LabelColor',
-        default: "'gray'",
-        description: 'gray · red · orange · amber · green · teal · blue · purple',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

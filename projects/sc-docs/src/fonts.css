@@ -26,3 +26,24 @@
  * caption incluida, así que `--sc-font-family-caption` apunta ahora a la primaria
  * (ver 02-semantic.css). Cargarla era peso muerto. El token
  * `--sc-font-family-secondary` sigue existiendo como primitivo por si vuelve a usarse. */
+
+/* JetBrains Mono (monoespaciada) — el código que enseña la doc.
+ *
+ * Antes la ponía el SISTEMA (`ui-monospace, 'SF Mono', 'Consolas'…`), así que cada visitante
+ * veía una distinta según su ordenador. El precio caro no era estético: las 38 capturas de
+ * regresión se tomaron en un Mac y fallaban las 38 en cualquier otra máquina, con 37 de las 38
+ * diferencias dentro de la banda de 14 px donde va el nombre del componente en monoespaciada
+ * (DD-60, run 34401618582). Por eso el CI las tenía apagadas. Autohospedarla es la salida que
+ * DD-60 dejó escrita y que DD-62 repitió cuando se cuestionó quitar las capturas.
+ *
+ * Pesos: los CUATRO con los que se usa de verdad en sc-docs, medidos antes de cargarlos —
+ * 400 por defecto, y `medium`/`semibold`/`bold` (500/600/700) en las páginas de reglas, del
+ * juego de validación y de validar. Ni uno más: cada peso son bytes que se descargan.
+ *
+ * El nombre de la familia ('JetBrains Mono') es EXACTAMENTE el que nombra
+ * `--sc-font-family-mono` en `01-primitive.css`; uno distinto no lo casaría ningún token —
+ * la misma trampa que ya está escrita arriba para Inter. */
+@import '@fontsource/jetbrains-mono/latin-400.css';
+@import '@fontsource/jetbrains-mono/latin-500.css';
+@import '@fontsource/jetbrains-mono/latin-600.css';
+@import '@fontsource/jetbrains-mono/latin-700.css';

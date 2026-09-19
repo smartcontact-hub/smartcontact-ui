@@ -44,27 +44,6 @@ export class ProgressBarDemoComponent {
       unit: '%',
       mode: 'determinate',
     },
-    props: [
-      {
-        name: 'value',
-        type: 'number | null',
-        default: 'null',
-        description: 'Progreso 0–100 (modo determinado).',
-      },
-      {
-        name: 'showValue',
-        type: 'boolean',
-        default: 'true',
-        description: 'Muestra la etiqueta del valor.',
-      },
-      { name: 'unit', type: 'string', default: "'%'", description: 'Sufijo del valor.' },
-      {
-        name: 'mode',
-        type: 'ScProgressBarMode',
-        default: "'determinate'",
-        description: 'determinate · indeterminate',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {
