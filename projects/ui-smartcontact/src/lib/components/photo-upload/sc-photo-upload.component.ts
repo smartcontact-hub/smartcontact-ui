@@ -42,14 +42,23 @@ export class ScPhotoUploadComponent {
   private readonly messages = inject(MessageService, { optional: true });
   private readonly translate = inject(TranslateService);
 
+  /** La foto actual, o `null` si no hay. Sin ella se pinta una ilustración de reserva. */
   readonly photo = input<string | null | undefined>(null);
+  /**
+   * Nombre de la persona. Se usa para elegir SIEMPRE la misma ilustración de reserva para la misma
+   * persona, en vez de una al azar.
+   */
   readonly name = input<string | null | undefined>(null);
   /** Override del aria-label cuando hay foto; default colocado `…changePhoto`. */
   readonly ariaLabel = input<string | null>(null);
+  /** Talla del control: `md` o `sm`. */
   readonly size = input<'md' | 'sm'>('md');
+  /** De qué repertorio sale la ilustración de reserva. */
   readonly illustrationPool = input<AvatarIllustrationPool>('illustrated');
+  /** Carpeta de la que se sirven esas ilustraciones. */
   readonly illustrationBase = input<string>('assets/avatars');
 
+  /** El usuario ha elegido otra foto, o la ha quitado (`null`). */
   readonly photoChange = output<string | null>();
 
   protected readonly cameraIcon = 'photo_camera';

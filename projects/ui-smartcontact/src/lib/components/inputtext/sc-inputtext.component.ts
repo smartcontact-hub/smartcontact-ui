@@ -54,10 +54,27 @@ export type ScInputType = 'text' | 'email' | 'password' | 'tel' | 'url' | 'searc
 })
 export class ScInputTextComponent {
   // ─── Inputs ────────────────────────────────────────────────────────
+  /**
+   * Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no
+   * cambia el comportamiento.
+   */
   readonly size = input<ScFieldSize>('md');
+  /**
+   * Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control,
+   * así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).
+   */
   readonly label = input<string>();
+  /**
+   * Marca el campo como obligatorio: pinta la marca en la etiqueta y lo anuncia con `aria-
+   * required`. No valida por sí solo — de eso se encarga el formulario.
+   */
   readonly required = input(false, { transform: booleanAttribute });
+  /** Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay: nunca se ven los dos a la vez. */
   readonly helperText = input<string>();
+  /**
+   * Mensaje de error. Su sola presencia pone el campo en estado inválido, así que no hace falta
+   * tocar `invalid` además.
+   */
   readonly error = input<string>();
   /** Estado inválido explícito (del catálogo de desarrollo). Se combina con `error`. */
   readonly invalid = input(false, { transform: booleanAttribute });
@@ -67,13 +84,39 @@ export class ScInputTextComponent {
    * (del catálogo de desarrollo). */
   readonly ariaLabel = input<string>();
 
+  /**
+   * Tipo del `<input>` nativo (`text`, `email`, `tel`…). Cambia el teclado del móvil y la
+   * validación del navegador.
+   */
   readonly type = input<ScInputType>('text');
+  /** Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir. */
   readonly placeholder = input<string>();
+  /** Deshabilita el campo. No se puede enfocar ni editar, y no viaja en el envío del formulario. */
   readonly disabled = input(false, { transform: booleanAttribute });
+  /**
+   * El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se
+   * puede copiar**.
+   */
   readonly readonly = input(false, { transform: booleanAttribute });
+  /**
+   * Id del control interno. Si no se pasa se genera uno, así que solo hace falta para atar una
+   * etiqueta externa o un `aria-describedby` de fuera.
+   */
   readonly inputId = input<string>();
+  /**
+   * Atributo `name` del control, para el envío nativo del formulario y para que el navegador sepa
+   * qué autocompletar.
+   */
   readonly name = input<string>();
+  /**
+   * Pista de autocompletado para el navegador (`email`, `current-password`, `off`…). Va tal cual al
+   * atributo nativo.
+   */
   readonly autocomplete = input<string>();
+  /**
+   * Máximo de caracteres que deja teclear el navegador. Es un tope duro, no un aviso: no avisa,
+   * simplemente no deja escribir más.
+   */
   readonly maxlength = input<number>();
   /** Hint al teclado virtual mobile (`numeric`, `tel`, `email`, `decimal`, etc.).
    * No fuerza validación — solo cambia el layout del teclado en iOS/Android. */
@@ -93,7 +136,9 @@ export class ScInputTextComponent {
   readonly value = model<string>('');
 
   // ─── Outputs (del catálogo de desarrollo) ──────────────────────────
+  /** El campo ha recibido el foco. */
   readonly focused = output<FocusEvent>();
+  /** El campo ha perdido el foco. Es el momento en el que suele validarse. */
   readonly blurred = output<FocusEvent>();
 
   // ─── Estado del field-pattern (compartido) ─────────────────────────

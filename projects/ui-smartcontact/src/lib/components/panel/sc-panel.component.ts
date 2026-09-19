@@ -67,8 +67,13 @@ export class ScPanelComponent {
      */
     readonly severity = input<ScPanelSeverity | null>(null);
 
+    /** El panel va a plegarse o desplegarse, ANTES de la animación. */
     readonly beforeToggle = output<unknown>();
 
+    /**
+     * El panel ya ha terminado de plegarse o desplegarse. Es el momento en el que su alto es el
+     * definitivo.
+     */
     readonly afterToggle = output<unknown>();
 
     /**

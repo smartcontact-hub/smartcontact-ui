@@ -62,9 +62,18 @@ export type ScSelectSize = ScFieldSize;
 export class ScSelectComponent {
   // ─── Chrome (mirrors sc-inputtext) ─────────────────────────────────────
   readonly size = input<ScFieldSize>('md');
+  /**
+   * Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control,
+   * así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).
+   */
   readonly label = input<string>();
   readonly required = input(false, { transform: booleanAttribute });
+  /** Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay: nunca se ven los dos a la vez. */
   readonly helperText = input<string>();
+  /**
+   * Mensaje de error. Su sola presencia pone el campo en estado inválido, así que no hace falta
+   * tocar `invalid` además.
+   */
   readonly error = input<string>();
   /** Estado inválido explícito. Se combina con `error` (paridad con sc-inputtext). */
   readonly invalid = input(false, { transform: booleanAttribute });
@@ -135,10 +144,13 @@ export class ScSelectComponent {
   readonly loading = input(false, { transform: booleanAttribute });
 
   // ─── Two-way value binding ─────────────────────────────────────────
+  /** La opción elegida. Enlace de dos sentidos: `[(value)]`. */
   readonly value = model<unknown>(undefined);
 
   // ─── Outputs (paridad con sc-inputtext) ────────────────────────────
+  /** El campo ha recibido el foco. */
   readonly focused = output<FocusEvent>();
+  /** El campo ha perdido el foco. Es el momento en el que suele validarse. */
   readonly blurred = output<FocusEvent>();
 
   // ─── Slots proyectados por el consumer ─────────────────────────────

@@ -52,9 +52,16 @@ export interface ImpactBadge {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScImpactPreviewDialogComponent {
+  /** Si el diálogo se ve. Lo controla el consumidor. */
   readonly visible = input.required<boolean>();
+  /** `bulkEdit` o `duplicate`: qué clase de cambio se está previsualizando. */
   readonly mode = input.required<'bulkEdit' | 'duplicate'>();
+  /** Título del diálogo, que es además su nombre accesible. */
   readonly title = input.required<string>();
+  /**
+   * A qué le va a afectar el cambio. El objetivo del diálogo es justo ese: enseñar el alcance ANTES
+   * de aplicarlo.
+   */
   readonly items = input.required<readonly ImpactItem[]>();
   readonly badge = input<ImpactBadge | null>(null);
   /** Override de la etiqueta del botón confirmar; default colocado `…confirm`. */
@@ -62,6 +69,7 @@ export class ScImpactPreviewDialogComponent {
   /** Override de la etiqueta del botón cancelar; default colocado `…cancel`. */
   readonly cancelLabel = input<string | null>(null);
 
+  /** El usuario se ha echado atrás. No se aplica nada. */
   readonly cancelled = output<void>();
   /** Emits the surviving ids in the order they were originally given. */
   readonly confirm = output<readonly number[]>();

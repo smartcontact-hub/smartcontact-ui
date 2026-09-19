@@ -33,7 +33,9 @@ export class ScDrawerComponent {
 
     readonly fullScreen = input(false, { transform: booleanAttribute });
 
+    /** El panel lateral ha terminado de abrirse. */
     readonly shown = output<unknown>();
 
+    /** Ha terminado de cerrarse. Es el momento seguro para liberar lo que tuviera dentro. */
     readonly hidden = output<unknown>();
 }
