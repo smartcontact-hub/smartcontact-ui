@@ -1,23 +1,23 @@
 {
-  "commit": "8e82f7de",
+  "commit": "84f37bd5",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-19T17:41:02.658Z",
+  "generado": "2026-09-20T19:14:53.006Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "smartcontact-tokens.css"
+        "sc-preset.mjs"
       ],
-      "variables": [
-        "claro|--sc-font-family-mono"
-      ],
+      "variables": [],
       "retirados": [],
       "semanticaComun": false,
-      "reglasCss": false,
-      "componentes": []
+      "reglasCss": true,
+      "componentes": [
+        "sidebar"
+      ]
     },
     "cambia": true,
     "contratoPlugin": {
@@ -25,5 +25,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260919.1741"
+  "version": "0.20260920.1914"
 }
