@@ -1589,6 +1589,7 @@
         "chat_rating_info": "Al terminar la conversación, se le pregunta al cliente si quedó satisfecho con la atención.",
         "chat_rating_hint": "El cliente ve una pregunta corta de valoración justo después de despedirse.",
         "allowed_domains": "Dominios permitidos",
+        "allowed_domains_placeholder": "ejemplo.com",
         "allowed_domains_info": "En qué webs se puede insertar el script del chat de este grupo. Sin ninguno añadido, funciona en cualquier web.",
         "allowed_domains_add": "Añadir",
         "allowed_domains_hint": "Evita que otra web use tu widget de chat sin permiso. Escribe el dominio y pulsa Añadir.",

@@ -1589,6 +1589,7 @@
         "chat_rating_info": "When the conversation ends, the customer is asked whether they were happy with the service.",
         "chat_rating_hint": "The customer sees a short rating question right after saying goodbye.",
         "allowed_domains": "Allowed domains",
+        "allowed_domains_placeholder": "example.com",
         "allowed_domains_info": "Which websites can embed this group's chat script. With none added, it works on any website.",
         "allowed_domains_add": "Add",
         "allowed_domains_hint": "Stops another website from using your chat widget without permission. Type the domain and press Add.",
