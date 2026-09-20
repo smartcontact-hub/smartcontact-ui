@@ -183,14 +183,14 @@
 
 17. **Vas a construir, recomendar o FIRMAR un estado sobre una descripción que no verificaste TÚ
     hoy → es una paráfrasis: abre la fuente.** Da igual de dónde venga: hand-off, README, Figma, tu
-    propio resumen, otro agente, un item de audit ("solo hay que…"), un check de CI atado a un
-    commit VIEJO, o un doc archivado que rescatas (ahí más: el traslado le da credibilidad). Si no
-    lo mediste, etiqueta "según X, sin verificar" y acota a QUÉ artefacto y estado. Si la fuente
-    AVISA de una trampa, cabléala en tu primer comando en vez de redescubrirla. ⚙️ no mecanizable
-    (es juicio; sus síntomas ya los vigilan los checks D, E, J y M de `docs:coherence`).
+    resumen, otro agente, un audit, un check de CI viejo o un doc archivado (ahí más: el traslado da
+    credibilidad). **Y si nombra QUÉ pieza cumple la propiedad, ese nombre es parte de la claim**:
+    mide si es ESA y no otra, o medirás bien el sujeto equivocado. Si no lo mediste, etiqueta "según
+    X, sin verificar". Si la fuente AVISA de una trampa, cabléala en tu primer comando. ⚙️ no
+    mecanizable (es juicio; sus síntomas los vigilan los checks D, E, J y M de `docs:coherence`).
     Evidencia: s14 "número héroe" que era una frase entera · s25 "100 deployments" eran 26 · s27 DD
-    nuevo con una claim de un doc muerto · s36 154 falsos por no aplicar el aviso leído · s39 check
-    rojo de un proyecto ya borrado.
+    nuevo con una claim de un doc muerto · s36 154 falsos por no aplicar el aviso · s45 el comentario
+    decía que alineaba "la miga" y alineaba el lead: heredé su sujeto y firmé un defecto inexistente.
 
 18. **Vas a zanjar una decisión VISUAL discutiendo (con el usuario o contigo mismo) → constrúyela
     en su versión mínima y MÍRALA.** Un principio bien enunciado puede defender algo que ya no
