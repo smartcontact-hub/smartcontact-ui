@@ -7,10 +7,10 @@
 # cerrada CI_ONLY) la EXIGE un test unitario (`ci-preflight-parity`): si divergen, "preflight
 # verde en local" deja de significar "el CI pasará".
 #
-# Las BASELINES VISUALES de sc-docs (`e2e:visual`) NO están aquí, y es una ausencia medida, no
-# un olvido: sus capturas `-darwin.png` se generan en el Mac de Rafa y el runner `macos-latest`
-# pinta el texto monoespaciado con otra métrica, así que fallan las 38 (ver DD-60). Mientras eso
-# no se resuelva, las corre a mano quien toque sc-docs (`npm run e2e:visual`).
+# Las BASELINES VISUALES de sc-docs (`e2e:visual`) SÍ corren aquí, en el job `e2e-smoke`: sus
+# capturas son `*-linux.png`, tomadas en este mismo runner con el workflow `visual-baselines`
+# (desde que la fuente mono se autohospeda, DD-60, ya no dependen del ordenador de nadie). En un
+# Mac se saltan solas; el preflight local no las ve, y las ve el CI.
 #
 # ESTRUCTURA: jobs EN PARALELO (antes un solo job en serie de ~14 min). Cada job
 # arranca en su propio runner; el reloj total es el del job MÁS LENTO, no la suma.
@@ -95,13 +95,10 @@ jobs:
       # `ng serve sc-docs`, que lo consume de dist/.
       - run: npm run build
       - name: e2e smoke (sc-docs)
-        # Las baselines visuales de `components.spec.ts` son `*-darwin.png` y este
-        # runner es ubuntu: aquí no pueden casar, así que se apagan explícitamente y
-        # la red de este job son las métricas del Kit, que sí corren en todas partes.
-        # Apagarlas es cosa de ESTA línea y de nadie más: en local (preflight incluido)
-        # la suite las corre. Ver el porqué en `screenshotBaseline()`.
-        env:
-          SC_SKIP_VISUAL_BASELINES: '1'
+        # Las baselines visuales de `components.spec.ts` son `*-linux.png`, tomadas en este
+        # mismo runner (workflow `visual-baselines`), y AQUÍ se comparan: es la red visual de
+        # cada cambio. En un Mac se saltan solas (`screenshotBaseline()`). Si un cambio de
+        # aspecto es deliberado, se regeneran con ese workflow y se revisa el diff en el PR.
         run: |
           # El runner trae preconfigurado el repo APT de Chrome, y `--with-deps` hace un
           # `apt-get update` que lee su índice. Si ese índice viene desincronizado
