@@ -2054,5 +2054,16 @@
       "sent_title": "Confira seu email",
       "sent_lead": "Se houver uma conta com {{email}}, um link chegará em alguns minutos. Confira também a pasta de spam."
     }
+  },
+  "lab": {
+    "sidebar": {
+      "toggle_aria": "Recolher ou expandir o menu",
+      "options_aria": "Opções do laboratório",
+      "collapsed_label": "Recolhido",
+      "mode_drawer": "Drawer",
+      "mode_slim": "Slim",
+      "anchor_aria": "Fixar o menu expandido",
+      "unanchor_aria": "Soltar o menu"
+    }
   }
 }

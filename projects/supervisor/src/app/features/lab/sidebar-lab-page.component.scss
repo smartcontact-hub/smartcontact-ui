@@ -1,0 +1,313 @@
+/*
+ * Solo el contenido de la página de laboratorio. El Sidebar de PrimeNG no se toca: su aspecto
+ * sale de los tokens del preset (`sc-preset`), como cualquier otro componente nativo.
+ */
+:host {
+  display: block;
+}
+
+/* Como la barra superior del shell (`top-bar`): su fondo es el de superficie, el mismo que el
+ * sidebar en oscuro. Sin fondo dejaba ver el suelo de la app y no casaban. */
+.lab__header {
+  background: var(--sc-bg-surface);
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  height: var(--sc-topbar-height);
+  padding-inline: var(--sc-spacing-1);
+  border-bottom: 1px solid var(--sc-border-default);
+}
+
+/* En Inset y Floating el sidebar no toca la cabecera, así que la cabecera no hace de barra junto a él:
+ * toma el fondo del main. En Inset es parte de la hoja (con el de superficie, en oscuro era del color
+ * del marco y la mitad de arriba de la hoja se fundía con él); en Floating es parte del suelo. */
+.lab__main--detached .lab__header {
+  background: transparent;
+}
+
+.lab__trail {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  color: var(--sc-text-secondary);
+}
+
+.lab__trail-current {
+  color: var(--sc-text-primary);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.lab__controls {
+  display: grid;
+  gap: var(--sc-spacing-1);
+  min-width: var(--sc-spacing-18);
+}
+
+.lab__control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+
+  &--switch {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/*
+ * La zona de contenido copia el contenedor del shell (`app-shell__main` / `__content`): alto de la
+ * ventana, la cabecera fija y el scroll DENTRO. Sin esto, `.p-sidebar-main` (flex sin `min-width: 0`)
+ * crece con una tabla ancha y desplaza la página entera: medido, 256px de scroll lateral en
+ * Usuarios a 1024. Es el único arreglo de maquetación sobre el Sidebar nativo.
+ */
+/* El alto lo fija el layout y el main se estira dentro (con su margen en Inset). Fijar el main a
+ * 100dvh sumaba el margen de Inset: 16px de scroll de página, medido. */
+.lab {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.lab__main {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.lab__page {
+  flex: 1;
+  min-height: 0;
+  /* Como el ejemplo «Both scrollbars»: el ScrollArea es el marco de la zona, sin su borde de tarjeta. */
+  border: 0;
+  border-radius: 0;
+  /* Sin el fondo propio del ScrollArea (content.background): el suelo es el del main, como en el shell. */
+  background: transparent;
+}
+
+.lab__viewport {
+  padding: 0;
+}
+
+/* Las pantallas que llenan el alto (Conversaciones, con la tabla y su scroll dentro) necesitan un
+ * alto definido, como el que les daba el contenedor del shell. */
+.lab__content {
+  height: 100%;
+}
+
+.lab__mode {
+  margin-left: auto;
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-secondary);
+}
+
+.lab__brand-mark {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--sc-spacing-1-75);
+  height: var(--sc-spacing-1-75);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-sidebar-item-active-bg);
+
+  img {
+    width: var(--sc-spacing-1);
+    height: var(--sc-spacing-1);
+  }
+}
+
+.lab__brand-name {
+  color: var(--sc-sidebar-fg);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.lab__chevron {
+  margin-left: auto;
+}
+
+/* Como el ejemplo: el botón del logo y el del usuario llevan menos relleno (px-1 y p-1). */
+/* Plegado, el botón mide lo justo para el icono (tema: `iconOnlyWidth`) y lo de detrás no cabe, pero
+ * asomaba 2px: el nombre y el chevron se apagan como el título de grupo nativo (`opacity: 0`). */
+p-sidebar[data-collapsible='icon'] .lab__label,
+p-sidebar[data-collapsible='icon'] .lab__chevron {
+  opacity: 0;
+}
+
+/* La cabecera del sidebar: el logo y, en Drawer, el botón de anclar a su derecha. Plegado no cabe. */
+.lab__header-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+
+  > p-sidebar-menu {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+p-sidebar[data-collapsible='icon'] .lab__anchor {
+  display: none;
+}
+
+/*
+ * Slim de Apollo: el panel flotante de un padre de primer nivel. Colores y bordes del sidebar, sombra
+ * de overlay. Ancho del sidebar desplegado (Apollo usa 210): cabe cualquier etiqueta en los cuatro
+ * idiomas, medido para el laboratorio.
+ */
+.lab__flyout {
+  position: fixed;
+  z-index: var(--sc-z-popover);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  inline-size: var(--sc-sidebar-width-expanded);
+  max-block-size: 80dvh;
+  overflow-y: auto;
+  padding: var(--sc-spacing-0-5);
+  border: 1px solid var(--sc-sidebar-border);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-sidebar-bg);
+  box-shadow: var(--sc-shadow-popover);
+  color: var(--sc-sidebar-fg-muted);
+}
+
+.lab__flyout-title {
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+  color: var(--sc-sidebar-fg-subtle);
+}
+
+.lab__fly-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-125);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  /* Los subniveles entran un poco, como en Apollo. */
+  &--sub {
+    padding-inline-start: var(--sc-spacing-0-5);
+  }
+}
+
+.lab__fly-button {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  inline-size: 100%;
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+  border: 0;
+  border-radius: var(--sc-radius-sm);
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition-property: background-color, color;
+  transition-duration: var(--sc-transition-fast);
+  transition-timing-function: var(--sc-easing-default);
+
+  &:hover {
+    background: var(--sc-sidebar-item-hover-bg);
+    color: var(--sc-sidebar-fg-hover);
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: -2px;
+  }
+
+  &--in-path,
+  &--active {
+    color: var(--sc-sidebar-fg);
+    font-weight: var(--sc-font-weight-semibold);
+  }
+
+  &--active {
+    background: var(--sc-sidebar-item-active-bg);
+  }
+}
+
+.lab__fly-icon {
+  flex-shrink: 0;
+  color: var(--sc-sidebar-fg-subtle);
+}
+
+.lab__fly-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El chevron gira y los hijos se despliegan en altura con la curva y la duración de Apollo
+ * (450ms, cubic-bezier(.86,0,.07,1), leídas en su hoja). Son piezas nuestras, no de PrimeNG. */
+.lab__fly-chevron {
+  flex-shrink: 0;
+  transition: rotate 450ms cubic-bezier(0.86, 0, 0.07, 1);
+
+  [aria-expanded='true'] > & {
+    rotate: 180deg;
+  }
+}
+
+.lab__fly-children {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 450ms cubic-bezier(0.86, 0, 0.07, 1);
+
+  > .lab__fly-list {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &--open {
+    grid-template-rows: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab__fly-chevron,
+  .lab__fly-children,
+  .lab__fly-button {
+    transition: none;
+  }
+}
+
+.lab__brand-button {
+  padding-inline: var(--sc-spacing-0-25);
+}
+
+/* El avatar a la medida del botón plegado: 24,5 + 3,5 de relleno por lado = 31,5 (tema: `iconOnlyWidth`). */
+.lab__user-avatar {
+  flex-shrink: 0;
+  --p-avatar-width: var(--sc-spacing-1-75);
+  --p-avatar-height: var(--sc-spacing-1-75);
+  --p-avatar-font-size: var(--sc-font-size-75);
+}
+
+.lab__user-button {
+  padding: var(--sc-spacing-0-25);
+}
+
+/* El botón que abre las opciones: flotante en la esquina, lejos del menú. */
+.lab__settings-button {
+  position: fixed;
+  right: var(--sc-spacing-1-75);
+  bottom: var(--sc-spacing-1-75);
+  z-index: var(--sc-z-sidebar);
+
+  &--left {
+    right: auto;
+    left: var(--sc-spacing-1-75);
+  }
+}
+
+/* El padre de la página abierta: la rama se lee en negrita y color principal, sin fondo (el fondo
+ * es del item actual). Es la única capa visual añadida al Sidebar. */
+.lab__in-path {
+  color: var(--sc-sidebar-fg);
+  font-weight: var(--sc-font-weight-semibold);
+}

@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 43 usados en Supervisor.",
+  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 44 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -26,7 +26,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0,
+      "usedInSupervisor": 1,
       "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
       "sobreObsoleto": []
     },
@@ -192,7 +192,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 123,
+      "usedInSupervisor": 124,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -1237,7 +1237,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 32,
+      "usedInSupervisor": 34,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1267,7 +1267,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4,
+      "usedInSupervisor": 7,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },
@@ -1456,7 +1456,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 22,
+      "usedInSupervisor": 25,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }
