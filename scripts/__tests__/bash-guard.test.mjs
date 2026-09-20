@@ -28,6 +28,21 @@ test('#7 push: sin marca fresca → deny; con marca → allow; tags/borrados/dry
   allow('git push origin main # sc:ok', rojo);
 });
 
+test('#1 `claude mcp list` no dice qué herramientas te llegan → deny; vecinos y escape → allow', () => {
+  deny('claude mcp list', verde, /LEARNINGS #1/);
+  deny('cd /tmp && claude mcp list 2>&1 | head -40', verde, /LEARNINGS #1/);
+  deny('claude mcp get playwright', verde, /LEARNINGS #1/);
+  // El motivo tiene que ENSEÑAR el instrumento correcto, o el deny solo estorba.
+  deny('claude mcp list', verde, /ToolSearch/);
+  allow('claude mcp list # sc:ok', verde);
+  // Vecinos legítimos: añadir o quitar un server no es medir alcance.
+  allow('claude mcp add foo npx foo', verde);
+  allow('claude mcp remove foo', verde);
+  // Y no nos comemos otros `list`.
+  allow('npm list --depth=0', verde);
+  allow('gh pr list --state open', verde);
+});
+
 test('#7 exit enmascarado: algo detrás del gate → deny; gate al final o pipefail → allow', () => {
   deny('npm run verify 2>&1 | tail -3; echo "VERIFY=$?"', verde, /exit/);
   deny('(npm run verify && npm run e2e) > log 2>&1; echo "LANE_EXIT=$?"', verde, /exit/);

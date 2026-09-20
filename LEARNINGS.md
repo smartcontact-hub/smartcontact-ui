@@ -44,10 +44,10 @@
    `matchMedia`, `getComputedStyle`), relee tus propias mediciones de la sesión antes de probar, y
    nombra el sujeto EXACTO que mediste: un nombre colectivo ("el MCP", "el CI") son varias piezas
    que caen por separado. Dos validadores con el mismo modo de fallo no se corroboran. Si no puedes
-   probarlo, el veredicto es "sin verificar", nunca "roto". ⚙️ no mecanizable (tarjeta, punto 3).
+   probarlo, el veredicto es "sin verificar", nunca "roto". ⚙️ tarjeta p.3; `bash-guard` para `claude mcp list`.
    Evidencia: s11 Enter en `sc-datatable` (la acción `key` manda `key` vacío) · s31 inyecté `600px`
    y declaré roto lo que PrimeNG normaliza · s32 `reducedMotion` escrito y no entregado · s27 "el
-   MCP de Figma" eran tres servers y sondeé uno.
+   MCP de Figma" eran tres servers y sondeé uno · s44 el CLI decía Playwright ✔ y la sesión no lo tenía.
 
 2. **Tu sonda o tu test te da un hallazgo (positivo o verde) y lo escribiste tú → valida el
    instrumento con un caso cuya respuesta ya sabes, en TODOS los ejes en que varía, y ponle el
