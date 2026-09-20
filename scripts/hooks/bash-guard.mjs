@@ -251,6 +251,24 @@ function evaluarBase(cmd, ctx = {}) {
         "Proyecta solo las claves: `jq 'keys'`, `jq '.mcpServers | keys'`, `node -e \"console.log(Object.keys(require(...)))\"`, o `grep -c`.",
     };
 
+  // #1 — `claude mcp list` NO contesta «¿puedo llamar a esa herramienta?».
+  //
+  // El repertorio de herramientas de una sesión se FIJA al arrancar: un servidor añadido después
+  // sale «✔ Connected» en el CLI y es inalcanzable desde dentro. En s44 declaré «no hay Playwright
+  // MCP conectado» tras correr esto desde el worktree; Rafa enseñó su terminal con
+  // `playwright: ✔ Connected`. Las dos salidas eran ciertas: medí el sujeto equivocado, y encima
+  // le hice decidir el montaje del navegador sobre esa premisa sin verificar.
+  if (segs.some((s) => empiezaPor(s, /^claude\s+mcp\s+(list|get)\b/)))
+    return {
+      decision: 'deny',
+      reason:
+        'LEARNINGS #1 — `claude mcp list` dice qué servidores ve el CLI, NO qué herramientas te llegan a TI: el repertorio ' +
+        'se fija al arrancar la sesión, así que uno añadido después sale «✔ Connected» y no puedes llamarlo (s44: Playwright). ' +
+        'Pregúntaselo a la sesión con `ToolSearch` → `select:mcp__<servidor>__<tool>`: o te devuelve el esquema o no lo tienes. ' +
+        'Y si falta, la frase es «no me llega a esta sesión» (lo arregla reiniciar), no «no está conectado» — y no lo sustituyas ' +
+        'por otro servidor sin avisar. Si de verdad quieres la vista del CLI, añade `# sc:ok`.',
+    };
+
   // #12 (a) — `git diff main...rama` compara contra la BASE DE FUSIÓN, no contra main de hoy.
   if (segs.some((s) => empiezaPor(s, /^git\s+diff\b/) && /\b(origin\/)?main\.\.\.[A-Za-z]/.test(s)))
     return {
