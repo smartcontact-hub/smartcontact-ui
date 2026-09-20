@@ -1584,7 +1584,7 @@
         "card_height": "Alto",
         "chat_config_title": "Configuración de chat",
         "whatsapp_number": "Número de WhatsApp",
-        "whatsapp_number_info": "El número al que llegan los mensajes de WhatsApp de este grupo. Es el que ve el cliente si contacta por ahí.",
+        "whatsapp_number_info": "El número al que llegan los mensajes de WhatsApp de este grupo. PREGUNTA A DESARROLLO: aquí WhatsApp es un canal propio, con su columna por agente, pero este número solo aparece si el grupo ofrece Chat. En Voice es un ajuste del Chat y el permiso del agente solo dice Chat. ¿Cuál de los dos manda?",
         "chat_rating": "Pedir valoración al cerrar el chat",
         "chat_rating_info": "Al terminar la conversación, se le pregunta al cliente si quedó satisfecho con la atención.",
         "chat_rating_hint": "El cliente ve una pregunta corta de valoración justo después de despedirse.",
