@@ -520,7 +520,7 @@
     },
     {
       "selector": "sc-drawer",
-      "usedInSupervisor": 1
+      "usedInSupervisor": 5
     },
     {
       "selector": "sc-empty-state",
@@ -560,7 +560,7 @@
     },
     {
       "selector": "sc-selectbutton",
-      "usedInSupervisor": 7
+      "usedInSupervisor": 13
     },
     {
       "selector": "sc-sticky-form-header",
@@ -568,11 +568,11 @@
     },
     {
       "selector": "sc-tag",
-      "usedInSupervisor": 23
+      "usedInSupervisor": 21
     },
     {
       "selector": "sc-textarea",
-      "usedInSupervisor": 5
+      "usedInSupervisor": 6
     }
   ]
 }
