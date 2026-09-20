@@ -5,10 +5,10 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /*
- * TODO workflow que corre la smoke (`npm run e2e`) en Linux tiene que apagar las baselines
- * visuales con `SC_SKIP_VISUAL_BASELINES`. Las capturas de `components.spec.ts` son
- * `*-darwin.png` (se hacen en el Mac de Rafa): en un runner de Ubuntu no existe su pareja
- * `-linux.png` y Playwright falla escribiendo «A snapshot doesn't exist».
+ * Todo workflow que corre la smoke (`npm run e2e`) en Linux, SALVO `ci.yml`, tiene que apagar
+ * las baselines visuales con `SC_SKIP_VISUAL_BASELINES`. `ci.yml` es la excepción a propósito:
+ * las capturas `-linux.png` se comparan ahí, es la red visual de cada cambio. El robot
+ * `tokens-sync`, en cambio, no sabe regenerarlas y las apaga.
  *
  * Por qué es un test y no una nota: el 2026-09-13 el robot `tokens-sync` falló así con un
  * export IDÉNTICO al de `main`. `ci.yml` llevaba la variable desde el 2026-09-07; el robot no,
@@ -50,8 +50,8 @@ export function smokeStepsWithoutSkip(yml) {
   return faltan;
 }
 
-test('los workflows REALES apagan las baselines darwin donde corren la smoke en Linux', () => {
-  for (const file of readdirSync(workflowsDir).filter((f) => /\.ya?ml$/.test(f))) {
+test('los workflows REALES (salvo ci.yml) apagan las baselines visuales donde corren la smoke en Linux', () => {
+  for (const file of readdirSync(workflowsDir).filter((f) => /\.ya?ml$/.test(f) && f !== 'ci.yml')) {
     const faltan = smokeStepsWithoutSkip(readFileSync(join(workflowsDir, file), 'utf8'));
     assert.deepEqual(faltan, [], `${file}: la smoke corre en Linux sin SC_SKIP_VISUAL_BASELINES`);
   }

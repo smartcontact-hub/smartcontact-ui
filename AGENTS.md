@@ -646,13 +646,12 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   ~9 hojas con tamaños distintos).
 - **Un `:host` de página sin `height: 100%` deja ver el shell por debajo.** Defecto LATENTE
   mientras el contenido llegue abajo: mira la regla, no fíes en «se ve bien».
-- **Las baselines visuales de `npm run e2e` CORREN en local, y solo se apagan en el job
-  `e2e-smoke` de `ci.yml`** (`SC_SKIP_VISUAL_BASELINES=1`, porque son `-darwin` y ese runner
-  es ubuntu). Desde el 2026-09-07: antes se apagaban con `CI`, y como el paso del preflight es
-  `CI=1 npm run e2e`, no las corría NADIE — se pudrieron 213 commits. Ahora un cambio visual
-  de sc-docs tumba tu preflight: si es deliberado, **regenera en el mismo commit**
-  (`npx playwright test -c playwright.config.ts components --update-snapshots`) tras mirar el
-  diff; si es de entorno, el escape explícito es `SC_SKIP_VISUAL_BASELINES=1`.
+- **Las baselines visuales son `-linux.png` y las compara el CI** (job `e2e-smoke` de
+  `ci.yml`); en un Mac `screenshotBaseline()` se salta sola. Un cambio visual de sc-docs, si es
+  deliberado, se regenera con el workflow `visual-baselines` (Actions → `workflow_dispatch`) y
+  se MIRA el diff de imagen en su PR; el robot `tokens-sync` las apaga
+  (`SC_SKIP_VISUAL_BASELINES=1`) porque no sabe regenerarlas. Antes eran `-darwin` y no las
+  corría nadie: se pudrieron 213 commits.
   ↔ `LEARNINGS.md` **#5**.*
 - **La paleta `--sc-color-*` NO se remapea en oscuro** (cero definiciones en `07-dark.css`).
   Usarla en un `background`/`color` de página es escribir un valor fijo → ilegible en un tema.

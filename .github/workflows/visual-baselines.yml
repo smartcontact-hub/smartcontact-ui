@@ -28,11 +28,9 @@
 #
 # ─── Lo que queda después, y no se hace aquí ──────────────────────────────────────────────────
 #
-# Cuando las `-linux.png` estén en `main` y casen, toca quitar `SC_SKIP_VISUAL_BASELINES` de
-# `ci.yml` y de `tokens-sync.yml`, y borrar `scripts/__tests__/workflow-visual-baselines.test.mjs`,
-# que hoy EXIGE que estén apagadas. No se hace en este commit porque hasta que las imágenes no
-# existan, quitarlo pondría el CI en rojo — y un cambio que rompe el CI para arreglarlo «luego»
-# es exactamente lo que este repo evita.
+# HECHO (2026-09-20): las `-linux.png` están en `main` (#213) y `ci.yml` las compara; las
+# `-darwin.png` se borraron y en un Mac la comparación se salta. `tokens-sync.yml` conserva
+# `SC_SKIP_VISUAL_BASELINES` a propósito (su robot no regenera capturas).
 name: visual-baselines
 
 on:

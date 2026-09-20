@@ -177,8 +177,18 @@ const verifySteps = (scripts.verify || '')
   // guard», y `usage:check` llevaba meses en la cadena SIN estar en el README, que es
   // exactamente lo que este check existe para impedir. El hueco no era el README, era el filtro.
   .filter((s) => /^(tokens|audit|test|docs|i18n|usage|variables):/.test(s));
+// El README nombra TODO paso con namespace, no solo los de la lista de arriba. `verifySteps`
+// no se ensancha porque el CHECK D lo reutiliza para exigir test por script, y eso es otra
+// conversación. Esta lista es por EXCLUSIÓN (todo `x:y` salvo los genéricos), así que un
+// namespace nuevo entra solo: el 2026-09-20 se midió que `explorations:check` llevaba corriendo
+// en `verify` sin salir en el README, por el MISMO agujero que dejó pasar a `usage:check`
+// durante meses. Arreglar el README sin arreglar el filtro solo compra tiempo hasta el siguiente.
+const pasosNombrables = (scripts.verify || '')
+  .split('&&')
+  .map((s) => s.trim().replace(/^npm run /, ''))
+  .filter((s) => s.includes(':'));
 const readme = readFileSync(resolve(root, 'README.md'), 'utf8');
-for (const step of verifySteps)
+for (const step of pasosNombrables)
   if (!readme.includes(step))
     fail(`README.md no nombra el guard \`${step}\` de la cadena verify (el README es la fuente única de su composición)`);
 
