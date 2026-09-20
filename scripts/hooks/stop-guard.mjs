@@ -34,8 +34,42 @@ import { fileURLToPath } from 'node:url';
 
 import { DESTINO_AYUDA, pendientes, rutaRegistro } from './correction-capture.mjs';
 
-const esPushDeCommits = (cmd) =>
-  /\bgit\s+push\b/.test(cmd) && !/--tags\b|refs\/tags|\barchive\//.test(cmd) && !/--delete\b|\s:[A-Za-z]/.test(cmd) && !/--dry-run\b/.test(cmd);
+/**
+ * Lo que va entre comillas es un DATO, no un comando: un patrón de `grep`, un mensaje de commit,
+ * el cuerpo de un PR. Se sustituye por un hueco antes de buscar el push.
+ *
+ * La excepción es la cadena que SÍ es un comando, y no se distingue por lo que dice —`rg 'git
+ * push'` y `bash -c "git push"` llevan lo mismo dentro— sino por el `-c` que la precede. Se
+ * reinyecta con un `;` delante para que quede en posición de comando.
+ */
+const sinDatosEntreComillas = (cmd) =>
+  cmd.replace(/(['"])((?:\\.|(?!\1)[^\\])*)\1/g, (_todo, _comilla, dentro, pos, entero) =>
+    /-c\s*$/.test(entero.slice(0, pos)) ? `; ${dentro}` : ' ',
+  );
+
+/**
+ * ¿Este comando SUBE commits?
+ *
+ * Por qué mira la posición y no solo la cadena (2026-09-20): esto era `/\bgit\s+push\b/` sobre el
+ * comando entero, así que **leer** un fichero que habla de `git push` contaba como haberlo hecho.
+ * Un `grep -E "branch|git push" .github/workflows/visual-baselines.yml` —abrir el workflow para
+ * ver cómo sube las capturas— bloqueó el cierre de una sesión que no había subido nada, y mandó a
+ * leer un CI que no existía. Es el mismo error que ya se corrigió en `esLecturaCI`: comprobar el
+ * PROXY (que aparezca un texto) en vez de la CONDICIÓN (que se haya ejecutado el push).
+ *
+ * Queda un hueco conocido y estrecho: una línea de heredoc que EMPIECE por `git push` sigue
+ * contando. Cerrarlo pide parsear heredocs, y el precio de ese falso positivo es un aviso de más,
+ * no un push sin leer.
+ */
+const esPushDeCommits = (cmd) => {
+  const real = sinDatosEntreComillas(cmd);
+  return (
+    /(^|[;&|\n(]|&&|\|\|)\s*(sudo\s+)?git\s+push\b/.test(real) &&
+    !/--tags\b|refs\/tags|\barchive\//.test(real) &&
+    !/--delete\b|\s:[A-Za-z]/.test(real) &&
+    !/--dry-run\b/.test(real)
+  );
+};
 // `gh pr checks` cuenta igual que `gh run`: es la misma lectura, por el PR en vez de por el run.
 // Faltaba, y bloqueó un cierre en el que el CI SÍ estaba leído (2026-09-10, esta misma sesión).
 //

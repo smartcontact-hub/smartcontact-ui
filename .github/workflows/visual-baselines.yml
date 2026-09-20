@@ -21,10 +21,18 @@
 # `publish-packages`. GitHub solo deja lanzar un `workflow_dispatch` cuyo fichero esté en la rama
 # por defecto: hasta que este PR no entre en `main`, el botón no aparece.
 #
-# Deja las `-linux.png` en la rama `visual-baselines-sync` y abre/actualiza su PR. **No empuja a
-# `main` ni se auto-fusiona, y es deliberado**: 38 imágenes nuevas son justo lo que un humano
-# tiene que MIRAR, y GitHub enseña el diff de imagen en la revisión. Que las genere un robot no
-# quiere decir que entren sin que nadie las vea.
+# Toma el input `rama`, y de él depende dónde acaban las capturas:
+#
+#   · `main` (por defecto) — las deja en `visual-baselines-sync` y abre/actualiza su PR.
+#   · cualquier otra rama — las commitea ENCIMA de ella, para que su PR ya las lleve.
+#
+# La segunda vía nació el 2026-09-20: con el `ref: main` fijo que tenía antes, un PR que tocara
+# una página de demo no podía conseguir sus `-linux.png` (en un Mac no se pueden tomar), así que
+# la única salida era fundir en rojo y regenerar después.
+#
+# En los dos casos **no empuja a `main` ni se auto-fusiona, y es deliberado**: 38 imágenes nuevas
+# son justo lo que un humano tiene que MIRAR, y GitHub enseña el diff de imagen en la revisión.
+# Que las genere un robot no quiere decir que entren sin que nadie las vea.
 #
 # ─── Lo que queda después, y no se hace aquí ──────────────────────────────────────────────────
 #
@@ -39,6 +47,11 @@ on:
       motivo:
         description: 'Por qué se regeneran (queda en el commit y en el PR)'
         required: true
+        type: string
+      rama:
+        description: 'Rama cuyas capturas se regeneran. Con main abre el PR de siempre; con otra, commitea encima de ella'
+        required: false
+        default: main
         type: string
 
 permissions:
@@ -57,7 +70,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: main
+          ref: ${{ inputs.rama }}
       - uses: actions/setup-node@v5
         with:
           node-version: 22
@@ -82,6 +95,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           MOTIVO: ${{ inputs.motivo }}
+          RAMA: ${{ inputs.rama }}
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
@@ -108,9 +122,24 @@ jobs:
           Tomadas en ubuntu-latest, que es el mismo sitio donde después se verifican.
           Generadas por el workflow visual-baselines desde ${GITHUB_SHA}."
 
-          # Se resetea la rama a «main + las capturas» en cada pasada, como hace `tokens-sync`:
-          # así el PR es siempre el cambio limpio y no arrastra pasadas anteriores.
-          git push --force origin HEAD:visual-baselines-sync
+          # Dos destinos, según de dónde salgan los píxeles.
+          #
+          # Desde `main`: a `visual-baselines-sync`, reseteada en cada pasada como hace
+          # `tokens-sync`, para que su PR sea siempre el cambio limpio.
+          #
+          # Desde una RAMA de trabajo: encima de ella, sin forzar. Por qué existe esta segunda vía
+          # (2026-09-20): con el `ref: main` fijo de antes, un PR que tocaba una página de demo no
+          # tenía forma de conseguir sus `-linux.png`, porque en un Mac no se pueden tomar. La
+          # única salida era fundir en rojo y regenerar después. Ahora se regenera ANTES, y el
+          # `git pull --rebase` cubre que alguien haya empujado a esa rama mientras corría.
+          if [ "${RAMA}" = 'main' ]; then
+            git push --force origin HEAD:visual-baselines-sync
+          else
+            git pull --rebase origin "${RAMA}"
+            git push origin "HEAD:${RAMA}"
+            echo "Capturas commiteadas encima de \`${RAMA}\`. Su PR las lleva ya; no se abre ninguno nuevo." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
 
           {
             echo "Capturas de \`e2e/components.spec.ts\` regeneradas en **ubuntu-latest**, que es la misma máquina que después las verifica."
