@@ -6,7 +6,9 @@
     [dismissible]="dismissible()"
     [closeOnEscape]="closeOnEscape()"
     [closable]="showCloseIcon()"
+    [ariaCloseLabel]="'sc.drawer.close' | translate"
     [fullScreen]="fullScreen()"
+    [style]="panelStyle()"
     (visibleChange)="visible.set($event ?? false)"
     (onShow)="shown.emit($event)"
     (onHide)="hidden.emit($event)">

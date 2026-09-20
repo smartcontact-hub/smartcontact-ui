@@ -109,10 +109,12 @@
       "kind": "STANDARD",
       "primengBase": "primeng/button",
       "cva": false,
-      "inputs": 1,
+      "inputs": 2,
       "api": [
         "buttonLabel",
-        "commit"
+        "commit",
+        "match",
+        "matchable"
       ],
       "nested": [
         "sc-select"
@@ -524,7 +526,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/drawer",
       "cva": false,
-      "inputs": 8,
+      "inputs": 10,
       "api": [
         "closeOnEscape",
         "dismissible",
@@ -535,8 +537,10 @@
         "position",
         "showCloseIcon",
         "shown",
+        "topOffset",
         "visible",
-        "visibleChange"
+        "visibleChange",
+        "width"
       ],
       "nested": [],
       "hasDemo": true,
@@ -1175,7 +1179,7 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 8,
+      "inputs": 9,
       "api": [
         "anchorId",
         "collapsible",
@@ -1184,6 +1188,7 @@
         "hintKey",
         "icon",
         "initiallyCollapsed",
+        "showHeader",
         "surface"
       ],
       "nested": [],
@@ -1199,12 +1204,13 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": false,
-      "inputs": 27,
+      "inputs": 28,
       "api": [
         "appendTo",
         "ariaLabelledBy",
         "blurred",
         "disabled",
+        "editable",
         "emptyFilterMessage",
         "emptyMessage",
         "error",

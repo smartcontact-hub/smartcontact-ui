@@ -13,6 +13,8 @@ export const SC_BULK_EDIT_MENU_TRANSLATIONS: Record<string, TranslationObject> =
       bulkEditMenu: {
         groupLabel: 'Bulk edit',
         change: 'Change',
+        from: 'from',
+        fromSelection: 'the selection',
         to: 'to',
         apply: 'Apply',
       },
@@ -23,6 +25,8 @@ export const SC_BULK_EDIT_MENU_TRANSLATIONS: Record<string, TranslationObject> =
       bulkEditMenu: {
         groupLabel: 'Editar en bloque',
         change: 'Cambiar',
+        from: 'de',
+        fromSelection: 'la selección',
         to: 'a',
         apply: 'Aplicar',
       },
