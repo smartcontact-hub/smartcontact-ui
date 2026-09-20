@@ -762,12 +762,32 @@
           "nativo": null
         },
         {
+          "nombre": "matchable",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Añade «de [valor]» a la frase: elegir un valor pide seleccionar todas las filas que lo tienen (`match`).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "commit",
           "clase": "output",
           "tipo": "BulkEditCommit",
           "porDefecto": null,
           "requerido": false,
           "descripcion": "El usuario ha confirmado el cambio masivo. Lleva qué campo y con qué valor; **aplicarlo es de la app**.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "match",
+          "clase": "output",
+          "tipo": "BulkEditMatch",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
           "origen": "nuestro",
           "nativo": null
         }
@@ -3205,6 +3225,26 @@
             "obsoleta": null,
             "heredadaDe": null
           }
+        },
+        {
+          "nombre": "width",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Ancho del panel en `left`/`right` (p. ej. `'44rem'`). Sin él manda el de PrimeNG (20rem), que no deja sitio a una tabla ni a un formulario de dos columnas. Mismo contrato que `sc-dialog [width]`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "topOffset",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Cuánto baja el panel desde arriba en `left`/`right` (p. ej. `'var(--sc-spacing-4)'`, la barra de la app). Sin él ocupa toda la altura y tapa lo que haya arriba: la barra con Guardar, la miga. El alto se descuenta solo.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "shown",
@@ -6158,6 +6198,16 @@
           "nativo": null
         },
         {
+          "nombre": "showHeader",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "`false` quita la cabecera (icono y título) cuando ya la dice quien contiene la sección, como la cabecera de un `sc-drawer`: repetida, el mismo título salía dos veces seguidas. El nombre se queda en `aria-label` para que la región siga teniéndolo. Ignorado con `collapsible`, que necesita la cabecera para abrirse.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "headingLevel",
           "clase": "input",
           "tipo": "number",
@@ -6412,6 +6462,21 @@
           }
         },
         {
+          "nombre": "editable",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Deja escribir un valor que no está en la lista (el `editable` nativo de p-select).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When present, custom value instead of predefined options can be entered using the editable input field.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "filter",
           "clase": "input",
           "tipo": "boolean",
@@ -6591,7 +6656,6 @@
         "checkmark",
         "dataKey",
         "dropdownIcon",
-        "editable",
         "filterFields",
         "filterLocale",
         "filterMatchMode",
