@@ -14,14 +14,15 @@
  *   - `global`        = DS presentes en (casi) todas las pantallas (shell: command-palette,
  *                       keyboard-shortcuts) → no se listan como "usado en 18 pantallas".
  *
- * Guard `check` (en verify, sin navegador): recomputa el derivado desde el crudo+pokédex
+ * Guard `check` (en verify, sin navegador): caza PNG FÓSILES (abajo) y recomputa el derivado
+ * desde el crudo+pokédex
  * committeados y FALLA si difiere del committeado (caza renombrar un componente sin
  * recapturar, índice inverso incoherente). Cruza con la pokédex: ⚠ informativo (no bloquea)
  * para usado-pero-no-capturado y visto-pero-grep-0.
  *
  * Uso:  node scripts/usage-status.mjs [--emit | --write | check]
  */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
@@ -121,6 +122,37 @@ function summary(status) {
 }
 
 // ── CLI ─────────────────────────────────────────────────────────────────────
+/**
+ * PNG FÓSILES: una captura en disco que ya no referencia NADIE.
+ *
+ * El spec de captura se traga a propósito el fallo de una acción del manifiesto (`⚠ …
+ * estado saltado`) para que un selector movido no rompa la galería entera. El precio,
+ * medido el 2026-09-20: `selectFirstRow` buscaba `td.table__td-check`, una clase
+ * renombrada hacía tiempo, y los estados «selección» y «borrar» llevaban SEMANAS sin
+ * capturarse. Nadie se enteró porque el PNG viejo seguía en disco y `usage:check` solo
+ * miraba el sentido contrario: que existiera lo referido. Este guard mira el otro.
+ *
+ * Legítimas son las referidas por el derivado y las que la propia sc-docs pone a mano en
+ * una plantilla (el recorrido de reglas usa dos «antes» que no salen de la captura). Se
+ * resuelve leyendo el fuente, no con una lista blanca, para que no haya que mantenerla.
+ */
+const pngFosiles = (status) => {
+  const referidas = new Set(status.screens.flatMap((s) => s.shots));
+  const enDisco = readdirSync(USAGE_DIR).filter((f) => f.endsWith('.png'));
+  const sueltas = enDisco.filter((f) => !referidas.has(f));
+  if (sueltas.length === 0) return [];
+  const fuente = [];
+  const recorrer = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const ruta = resolve(dir, e.name);
+      if (e.isDirectory()) recorrer(ruta);
+      else if (/\.(html|ts|scss|css|md)$/.test(e.name)) fuente.push(readFileSync(ruta, 'utf8'));
+    }
+  };
+  recorrer(resolve(root, 'projects/sc-docs/src'));
+  return sueltas.filter((f) => !fuente.some((t) => t.includes(f)));
+};
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const cmd =
     process.argv[2] ||
@@ -142,11 +174,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const warns = crossCheckAgainstAudit(status, audit.components ?? []);
   const missing = [];
   for (const s of status.screens) for (const f of s.shots) if (!existsSync(resolve(USAGE_DIR, f))) missing.push(f);
+  const fosiles = pngFosiles(status);
 
   if (cmd === '--emit') {
     log(summary(status));
     for (const w of warns) log('  ' + w);
     if (missing.length) log(`  ⚠ ${missing.length} PNG referido(s) no existe(n): ${missing.join(', ')}`);
+    if (fosiles.length) log(`  ⚠ ${fosiles.length} PNG fósil(es): ${fosiles.join(', ')}`);
     process.exit(0);
   }
 
@@ -162,6 +196,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   if (!existsSync(STATUS) || readFileSync(STATUS, 'utf8') !== statusTxt) {
     problems++;
     log('✗ _usage-status.json no está al día — corre `node scripts/usage-status.mjs --write` (o `npm run usage:capture`).');
+  }
+  if (fosiles.length) {
+    problems++;
+    log(
+      `✗ ${fosiles.length} PNG fósil(es) en public/usage: ${fosiles.join(', ')}.\n` +
+        '  No los referencia el derivado ni ninguna plantilla de sc-docs: o su estado del\n' +
+        '  manifiesto dejó de capturarse (mira los ⚠ de `npm run usage:capture`) o sobran.',
+    );
   }
   for (const w of warns) log('  ' + w);
   if (missing.length) log(`  ⚠ ${missing.length} PNG referido(s) no existe(n) (informativo): ${missing.join(', ')}`);
