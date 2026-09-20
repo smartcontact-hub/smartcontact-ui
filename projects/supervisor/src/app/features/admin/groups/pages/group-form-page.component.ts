@@ -39,6 +39,7 @@ import {
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
   ScPhotoUploadComponent as PhotoUploadComponent,
+  ScChipComponent as ChipComponent,
 } from '@smartcontact-hub/components';
 import {
   CHANNEL_LABEL_KEYS,
@@ -62,10 +63,13 @@ import {
 import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { TipificacionesStore, TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
 import { AgendasStore } from '@features/admin/repositories/instances/agendas';
+import { AGENDA_FIELDS } from '@features/admin/repositories/instances/agendas';
 import { RepoFormPanelComponent, RepoFormSubmission } from '@features/admin/repositories/components/repo-form-panel.component';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import type { TemplateType } from '@features/admin/templates/data/templates-data';
+import { TemplateFormPanelComponent, TemplateFormSubmission } from '@features/admin/templates/components/template-form-panel/template-form-panel.component';
 import { LabelsStore } from '@features/admin/labels/state/labels.store';
+import { LabelFormPanelComponent, LabelFormSubmission } from '@features/admin/labels/components/label-form-panel/label-form-panel.component';
 import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
@@ -129,6 +133,9 @@ interface FormState {
     ToggleSwitchComponent,
     DialogComponent,
     RepoFormPanelComponent,
+    TemplateFormPanelComponent,
+    LabelFormPanelComponent,
+    ChipComponent,
     SectionCardComponent,
     TooltipModule,
     SelectComponent,
@@ -642,6 +649,44 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.creatingTipificacion.set(false);
   }
 
+  /** Mismo alivio que Tipificación (arriba), para los otros tres campos multiselección que solo tenían
+   *  «Gestionar en Repositorios»: Agendas, Plantillas (chat y email) y Etiquetas. Al guardar, el recién
+   *  creado se AÑADE a lo ya elegido, no lo sustituye. */
+  protected readonly creatingAgenda = signal(false);
+  protected readonly agendaFields = AGENDA_FIELDS;
+  protected readonly agendaExistingNames = computed(() => this.agendasStore.items().map((a) => a.name));
+
+  protected onCreateAgendaSubmit(submission: RepoFormSubmission): void {
+    const created = this.agendasStore.addItem({
+      name: submission['name'] ?? '',
+      numbers: submission['numbers'] ?? '',
+      description: submission['description'] ?? '',
+      status: submission['status'] || 'active',
+    });
+    this.onIdsChange('scheduleIds', [...this.form().scheduleIds, created.id]);
+    this.creatingAgenda.set(false);
+  }
+
+  protected readonly creatingChatTemplate = signal(false);
+  protected readonly creatingEmailTemplate = signal(false);
+  protected readonly templateExistingTitles = computed(() => this.templatesStore.templates().map((t) => t.title));
+
+  protected onCreateTemplateSubmit(type: TemplateType, submission: TemplateFormSubmission): void {
+    const created = this.templatesStore.addTemplate(submission);
+    this.form.update((f) => ({ ...f, templateIds: new Set([...f.templateIds, created.id]) }));
+    if (type === 'chat') this.creatingChatTemplate.set(false);
+    else this.creatingEmailTemplate.set(false);
+  }
+
+  protected readonly creatingLabel = signal(false);
+  protected readonly labelExistingNames = computed(() => this.labelsStore.labels().map((l) => l.name));
+
+  protected onCreateLabelSubmit(submission: LabelFormSubmission): void {
+    const created = this.labelsStore.addLabel(submission);
+    this.onIdsChange('labelIds', [...this.form().labelIds, created.id]);
+    this.creatingLabel.set(false);
+  }
+
   protected onIdsChange(key: 'scheduleIds' | 'labelIds', value: unknown): void {
     if (Array.isArray(value)) this.updateField(key, new Set(value as number[]));
   }
@@ -667,6 +712,22 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** Números: un campo vaciado no se guarda como 0, se queda en su valor anterior. */
   protected setAdvancedNumber(key: 'queueSize' | 'transferSec' | 'maxQueueWaitSec' | 'wrapUpSec' | 'serviceLevelSec' | 'cardHeight', value: number | null): void {
     if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
+  }
+
+  /** «Dominios permitidos» del script de chat (Rafa, 2026-09-20): en qué webs se puede insertar sin que
+   *  cualquiera lo copie. Texto libre en un campo + Enter/botón lo añade a la lista; sin duplicados. */
+  protected readonly domainInput = signal('');
+
+  protected addDomain(): void {
+    const value = this.domainInput().trim().toLowerCase();
+    if (!value) return;
+    const current = this.form().advanced.allowedDomains;
+    if (!current.includes(value)) this.setAdvanced('allowedDomains', [...current, value]);
+    this.domainInput.set('');
+  }
+
+  protected removeDomain(domain: string): void {
+    this.setAdvanced('allowedDomains', this.form().advanced.allowedDomains.filter((d) => d !== domain));
   }
 
   protected setAnnouncementNumber(key: 'avgWaitSec', value: number | null): void {
