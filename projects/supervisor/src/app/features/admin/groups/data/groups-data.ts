@@ -103,7 +103,28 @@ export interface GroupAdvanced {
   readonly cardOpening: CardOpening;
   readonly cardUrl: string;
   readonly cardHeight: number;
-  /** Número al que llegan los mensajes de WhatsApp de este grupo (solo con el canal Chat). */
+  /**
+   * Número al que llegan los mensajes de WhatsApp de este grupo.
+   *
+   * **Por confirmar con desarrollo, y es una decisión de modelo, no de pantalla.** Aquí conviven
+   * dos respuestas distintas a la misma pregunta:
+   *
+   *   · `GroupChannel` incluye `whatsapp`, así que un grupo puede ofrecer WhatsApp **sin** Chat, y
+   *     entonces la rejilla de agentes le pinta su propia columna: se puede dar WhatsApp a un
+   *     agente y negarle el chat web.
+   *   · Este campo, en cambio, solo se pinta dentro de `@if (hasChat())`. Un grupo con WhatsApp y
+   *     sin Chat se queda **sin sitio donde poner el número** (medido el 2026-09-21).
+   *
+   * En el AED en vivo manda la segunda: el nodo configura `type_chatweb` y `type_whatsapp` por
+   * separado, pero el permiso del agente solo tiene Tlf / Chat / Email, así que quien atiende Chat
+   * atiende los dos. Lo que hay que preguntar:
+   *
+   *   1. ¿El backend nuevo va a tener un permiso de WhatsApp propio por (agente, grupo), o WhatsApp
+   *      es un ajuste dentro de Chat como en Voice?
+   *   2. Si es lo segundo, la capacidad y la estrategia de chat, ¿cuentan también las de WhatsApp?
+   *
+   * Con la respuesta, o sobra la columna de la rejilla, o sobra el `hasChat()` de este campo.
+   */
   readonly whatsappNumber: string;
   /** Al cerrar la conversación de chat, pedir al cliente que valore la atención. */
   readonly chatRatingEnabled: boolean;
