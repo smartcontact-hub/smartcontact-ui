@@ -7,6 +7,32 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
+## ✅ 2026-09-20 · El contenido de página se ancla a la izquierda: el índice lateral deja de colgar (DD-115)
+
+> **Sello: rama `arebury/candlefish`, sobre `origin/main` HEAD `84f37bd5`.** Un solo fichero de código:
+> `projects/supervisor/src/styles/_page.scss`.
+
+**Qué pasó.** Llegó de fuera del equipo que el índice lateral «colgaba». Medido con sonda en local: el sidebar
+está clavado al borde y `.page__inner` se centraba, así que entre las dos navegaciones había lienzo muerto —108px
+a 1440 y 348 a 1920 hasta el índice de `--rail`— y las hermanas arrancaban en cuatro verticales distintas a 1920
+(80 / 200 / 520 / 584).
+
+**Qué cambia.** `.page__inner` pasa a `margin: 0`, `--rail` a `margin-inline: 0` y `.page__form` a `margin: 0`.
+**Los topes no se tocan**: 832 / 960 / 1100 / 1200 / 1600 siguen limitando el ancho de LECTURA. El contenido de
+`--rail` sigue midiendo 920, el `Block` 393:12587. El porqué y las referencias medidas (GitHub, Meridian) están en
+`docs/DECISIONS.md` DD-115.
+
+**Medido** con sonda de navegador a 1440 y 1920, en Configuración del AED, Seguridad, Usuarios y Repositorios: las
+cuatro arrancan en x=80 y el hueco hasta el índice es de 28 (el `padding` del molde) en cualquier ancho. En el
+laboratorio del Sidebar de PrimeNG (`/lab/sidebar`) el sidebar mide 48 y la página arranca en 48: anclado, el
+contenido no depende del ancho del sidebar, así que un cambio de marco no lo mueve.
+
+`audit:page-anatomy` y las 35 pruebas de molde del Supervisor pasan **sin tocarlas**: miden tope, `padding`, `gap`,
+rail de 196 y los 920, no el margen.
+
+**Trampa del tramo:** las capturas de `projects/sc-docs/public/usage/` son del 2026-09-07 y aún enseñan el sidebar
+de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con `npm run usage:capture`.
+
 ## ✅ 2026-09-16 · La ficha de grupo sigue a Voice, Configuración del AED › Grupos habla como ella y los iconos pasan a Rounded opsz 24
 
 > **Sello: rama `comparar/fichas` (no se funde), HEAD `6e183821`.** Vivo: https://comparar-fichas.sc-supervisor.pages.dev ·
