@@ -1,6 +1,6 @@
 {
   "generated": "usage-status.mjs",
-  "capturedAt": "2026-09-06",
+  "capturedAt": "2026-09-20",
   "viewport": "1440x900",
   "theme": "light",
   "dsSelectors": 56,
@@ -21,8 +21,10 @@
         "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
+        "sc-divider",
         "sc-keyboard-shortcuts",
-        "sc-search"
+        "sc-search",
+        "sc-tag"
       ]
     },
     {
@@ -30,11 +32,13 @@
       "route": "admin/agentes",
       "label": "Agentes · listado",
       "shots": [
-        "admin-agentes.png"
+        "admin-agentes.png",
+        "admin-agentes-seleccion.png"
       ],
       "ds": [
         "sc-breadcrumb",
         "sc-bulk-action-bar",
+        "sc-bulk-edit-menu",
         "sc-button",
         "sc-column-selector",
         "sc-command-palette",
@@ -42,11 +46,13 @@
         "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
+        "sc-divider",
         "sc-group-popover",
         "sc-impact-preview-dialog",
         "sc-keyboard-shortcuts",
         "sc-search",
-        "sc-select"
+        "sc-select",
+        "sc-tag"
       ]
     },
     {
@@ -67,9 +73,12 @@
         "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
+        "sc-divider",
+        "sc-group-popover",
         "sc-impact-preview-dialog",
         "sc-keyboard-shortcuts",
-        "sc-search"
+        "sc-search",
+        "sc-tag"
       ]
     },
     {
@@ -90,6 +99,7 @@
         "sc-confirmdialog",
         "sc-datatable",
         "sc-dialog",
+        "sc-divider",
         "sc-field-label",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
@@ -135,11 +145,14 @@
       "route": "admin/usuarios",
       "label": "Usuarios · listado",
       "shots": [
-        "admin-usuarios.png"
+        "admin-usuarios.png",
+        "admin-usuarios-seleccion.png",
+        "admin-usuarios-borrar.png"
       ],
       "ds": [
         "sc-breadcrumb",
         "sc-bulk-action-bar",
+        "sc-bulk-edit-menu",
         "sc-button",
         "sc-column-selector",
         "sc-command-palette",
@@ -147,9 +160,12 @@
         "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
+        "sc-divider",
         "sc-impact-preview-dialog",
         "sc-keyboard-shortcuts",
-        "sc-search"
+        "sc-search",
+        "sc-select",
+        "sc-tag"
       ]
     },
     {
@@ -166,7 +182,7 @@
         "sc-confirmdialog",
         "sc-delete-entity-dialog",
         "sc-dialog",
-        "sc-field-label",
+        "sc-divider",
         "sc-field-msg",
         "sc-form-section-nav",
         "sc-inputtext",
@@ -193,6 +209,8 @@
         "sc-divider",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
+        "sc-permission-matrix",
+        "sc-section-card",
         "sc-toggleswitch"
       ]
     },
@@ -208,9 +226,11 @@
         "sc-button",
         "sc-command-palette",
         "sc-confirmdialog",
-        "sc-inputtext",
+        "sc-divider",
+        "sc-inputnumber",
         "sc-keyboard-shortcuts",
         "sc-multiselect",
+        "sc-section-card",
         "sc-select",
         "sc-toggleswitch"
       ]
@@ -229,13 +249,14 @@
         "sc-chip",
         "sc-command-palette",
         "sc-confirmdialog",
-        "sc-dialog",
         "sc-divider",
+        "sc-inputgroup",
         "sc-inputnumber",
-        "sc-inputtext",
         "sc-keyboard-shortcuts",
+        "sc-option-cards",
         "sc-radiobutton",
-        "sc-select",
+        "sc-section-card",
+        "sc-tag",
         "sc-toggleswitch"
       ]
     },
@@ -268,7 +289,9 @@
         "sc-confirmdialog",
         "sc-keyboard-shortcuts",
         "sc-search",
+        "sc-section-card",
         "sc-select",
+        "sc-selectbutton",
         "sc-toggleswitch"
       ]
     },
@@ -280,6 +303,7 @@
         "conversaciones.png"
       ],
       "ds": [
+        "sc-badge",
         "sc-breadcrumb",
         "sc-bulk-action-bar",
         "sc-button",
@@ -288,10 +312,11 @@
         "sc-datatable",
         "sc-datepicker",
         "sc-dialog",
-        "sc-field-label",
-        "sc-inputtext",
         "sc-keyboard-shortcuts",
-        "sc-multiselect"
+        "sc-multiselect",
+        "sc-search",
+        "sc-selectbutton",
+        "sc-tag"
       ]
     },
     {
@@ -308,7 +333,8 @@
         "sc-confirmdialog",
         "sc-datatable",
         "sc-dialog",
-        "sc-keyboard-shortcuts"
+        "sc-keyboard-shortcuts",
+        "sc-tag"
       ]
     },
     {
@@ -325,7 +351,9 @@
         "sc-confirmdialog",
         "sc-datatable",
         "sc-dialog",
-        "sc-keyboard-shortcuts"
+        "sc-divider",
+        "sc-keyboard-shortcuts",
+        "sc-tag"
       ]
     },
     {
@@ -341,7 +369,8 @@
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-datatable",
-        "sc-keyboard-shortcuts"
+        "sc-keyboard-shortcuts",
+        "sc-tag"
       ]
     },
     {
@@ -363,6 +392,9 @@
     }
   ],
   "components": {
+    "sc-badge": [
+      "conversaciones"
+    ],
     "sc-bulk-action-bar": [
       "admin-agendas",
       "admin-agentes",
@@ -371,6 +403,10 @@
       "admin-plantillas",
       "admin-usuarios",
       "conversaciones"
+    ],
+    "sc-bulk-edit-menu": [
+      "admin-agentes",
+      "admin-usuarios"
     ],
     "sc-checkbox": [
       "config-aed-agentes",
@@ -420,19 +456,24 @@
       "admin-plantillas",
       "admin-usuarios",
       "admin-usuarios-crear",
-      "config-aed-servicio",
       "conversaciones",
       "conversaciones-categorias",
       "conversaciones-entidades"
     ],
     "sc-divider": [
+      "admin-agendas",
+      "admin-agentes",
+      "admin-grupos",
+      "admin-labels",
+      "admin-usuarios",
+      "admin-usuarios-crear",
       "config-aed-agentes",
-      "config-aed-servicio"
+      "config-aed-grupos",
+      "config-aed-servicio",
+      "conversaciones-entidades"
     ],
     "sc-field-label": [
-      "admin-labels",
-      "admin-usuarios-crear",
-      "conversaciones"
+      "admin-labels"
     ],
     "sc-field-msg": [
       "admin-usuarios-crear"
@@ -442,27 +483,35 @@
       "conversaciones-reglas-nueva"
     ],
     "sc-group-popover": [
-      "admin-agentes"
+      "admin-agentes",
+      "admin-grupos"
     ],
     "sc-impact-preview-dialog": [
       "admin-agentes",
       "admin-grupos",
       "admin-usuarios"
     ],
+    "sc-inputgroup": [
+      "config-aed-servicio"
+    ],
     "sc-inputnumber": [
+      "config-aed-grupos",
       "config-aed-servicio"
     ],
     "sc-inputtext": [
       "admin-labels",
       "admin-usuarios-crear",
-      "config-aed-agentes",
-      "config-aed-grupos",
-      "config-aed-servicio",
-      "conversaciones"
+      "config-aed-agentes"
     ],
     "sc-multiselect": [
       "config-aed-grupos",
       "conversaciones"
+    ],
+    "sc-option-cards": [
+      "config-aed-servicio"
+    ],
+    "sc-permission-matrix": [
+      "config-aed-agentes"
     ],
     "sc-photo-upload": [
       "admin-usuarios-crear"
@@ -477,18 +526,38 @@
       "admin-labels",
       "admin-plantillas",
       "admin-usuarios",
-      "config-sistema"
+      "config-sistema",
+      "conversaciones"
     ],
     "sc-section-card": [
-      "admin-usuarios-crear"
+      "admin-usuarios-crear",
+      "config-aed-agentes",
+      "config-aed-grupos",
+      "config-aed-servicio",
+      "config-sistema"
     ],
     "sc-select": [
       "admin-agentes",
+      "admin-usuarios",
       "admin-usuarios-crear",
       "config-aed-grupos",
-      "config-aed-servicio",
       "config-sistema",
       "conversaciones-reglas-nueva"
+    ],
+    "sc-selectbutton": [
+      "config-sistema",
+      "conversaciones"
+    ],
+    "sc-tag": [
+      "admin-agendas",
+      "admin-agentes",
+      "admin-grupos",
+      "admin-usuarios",
+      "config-aed-servicio",
+      "conversaciones",
+      "conversaciones-categorias",
+      "conversaciones-entidades",
+      "conversaciones-reglas"
     ],
     "sc-toggleswitch": [
       "admin-usuarios-crear",
@@ -511,14 +580,6 @@
       "usedInSupervisor": 1
     },
     {
-      "selector": "sc-badge",
-      "usedInSupervisor": 6
-    },
-    {
-      "selector": "sc-bulk-edit-menu",
-      "usedInSupervisor": 3
-    },
-    {
       "selector": "sc-drawer",
       "usedInSupervisor": 1
     },
@@ -535,16 +596,8 @@
       "usedInSupervisor": 4
     },
     {
-      "selector": "sc-inputgroup",
-      "usedInSupervisor": 1
-    },
-    {
       "selector": "sc-message",
       "usedInSupervisor": 3
-    },
-    {
-      "selector": "sc-option-cards",
-      "usedInSupervisor": 1
     },
     {
       "selector": "sc-panel",
@@ -555,20 +608,8 @@
       "usedInSupervisor": 1
     },
     {
-      "selector": "sc-permission-matrix",
-      "usedInSupervisor": 2
-    },
-    {
-      "selector": "sc-selectbutton",
-      "usedInSupervisor": 7
-    },
-    {
       "selector": "sc-sticky-form-header",
       "usedInSupervisor": 3
-    },
-    {
-      "selector": "sc-tag",
-      "usedInSupervisor": 23
     },
     {
       "selector": "sc-textarea",
