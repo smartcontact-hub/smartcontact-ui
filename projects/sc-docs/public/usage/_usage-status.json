@@ -507,6 +507,10 @@
   ],
   "gated": [
     {
+      "selector": "sc-avatar",
+      "usedInSupervisor": 1
+    },
+    {
       "selector": "sc-badge",
       "usedInSupervisor": 6
     },
@@ -516,7 +520,7 @@
     },
     {
       "selector": "sc-drawer",
-      "usedInSupervisor": 5
+      "usedInSupervisor": 1
     },
     {
       "selector": "sc-empty-state",
@@ -556,7 +560,7 @@
     },
     {
       "selector": "sc-selectbutton",
-      "usedInSupervisor": 10
+      "usedInSupervisor": 7
     },
     {
       "selector": "sc-sticky-form-header",
@@ -564,11 +568,11 @@
     },
     {
       "selector": "sc-tag",
-      "usedInSupervisor": 21
+      "usedInSupervisor": 23
     },
     {
       "selector": "sc-textarea",
-      "usedInSupervisor": 6
+      "usedInSupervisor": 5
     }
   ]
 }

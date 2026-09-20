@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 43 usados en Supervisor.",
+  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 44 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -26,7 +26,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0,
+      "usedInSupervisor": 1,
       "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
       "sobreObsoleto": []
     },
@@ -109,12 +109,10 @@
       "kind": "STANDARD",
       "primengBase": "primeng/button",
       "cva": false,
-      "inputs": 2,
+      "inputs": 1,
       "api": [
         "buttonLabel",
-        "commit",
-        "match",
-        "matchable"
+        "commit"
       ],
       "nested": [
         "sc-select"
@@ -194,7 +192,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 143,
+      "usedInSupervisor": 124,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -268,7 +266,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 6,
+      "usedInSupervisor": 5,
       "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
       "sobreObsoleto": []
     },
@@ -496,7 +494,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 15,
+      "usedInSupervisor": 10,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -515,7 +513,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 32,
+      "usedInSupervisor": 25,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -526,7 +524,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/drawer",
       "cva": false,
-      "inputs": 10,
+      "inputs": 8,
       "api": [
         "closeOnEscape",
         "dismissible",
@@ -537,14 +535,12 @@
         "position",
         "showCloseIcon",
         "shown",
-        "topOffset",
         "visible",
-        "visibleChange",
-        "width"
+        "visibleChange"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5,
+      "usedInSupervisor": 1,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
       "sobreObsoleto": []
     },
@@ -692,7 +688,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4,
+      "usedInSupervisor": 3,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
       "sobreObsoleto": []
     },
@@ -796,7 +792,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 11,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -838,7 +834,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 33,
+      "usedInSupervisor": 29,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -929,7 +925,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 21,
+      "usedInSupervisor": 15,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "sobreObsoleto": [
         {
@@ -1074,7 +1070,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 2,
       "cuando": "Para la foto de una persona, con ilustración de reserva.",
       "sobreObsoleto": []
     },
@@ -1179,7 +1175,7 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 9,
+      "inputs": 8,
       "api": [
         "anchorId",
         "collapsible",
@@ -1188,12 +1184,11 @@
         "hintKey",
         "icon",
         "initiallyCollapsed",
-        "showHeader",
         "surface"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 20,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1204,13 +1199,12 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": false,
-      "inputs": 28,
+      "inputs": 27,
       "api": [
         "appendTo",
         "ariaLabelledBy",
         "blurred",
         "disabled",
-        "editable",
         "emptyFilterMessage",
         "emptyMessage",
         "error",
@@ -1243,7 +1237,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 39,
+      "usedInSupervisor": 34,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1273,7 +1267,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 10,
+      "usedInSupervisor": 7,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },
@@ -1383,7 +1377,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 21,
+      "usedInSupervisor": 23,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
@@ -1414,7 +1408,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 6,
+      "usedInSupervisor": 5,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1462,7 +1456,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 27,
+      "usedInSupervisor": 25,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }
