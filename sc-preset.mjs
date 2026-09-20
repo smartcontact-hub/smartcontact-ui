@@ -2554,6 +2554,70 @@ var drawer_default = {
   }
 };
 
+// projects/ui-smartcontact/src/lib/theme/sc-preset/sidebar.ts
+var sidebar_default = {
+  root: {
+    borderColor: "var(--sc-sidebar-border)"
+  },
+  layout: {
+    background: "var(--sc-sidebar-bg)"
+  },
+  panel: {
+    background: "var(--sc-sidebar-bg)",
+    color: "var(--sc-sidebar-fg-muted)",
+    floatingShadow: "var(--sc-shadow-xs)",
+    floatingBorderRadius: "var(--sc-radius-xl)"
+  },
+  groupLabel: {
+    color: "var(--sc-sidebar-fg-subtle)"
+  },
+  groupAction: {
+    color: "var(--sc-sidebar-fg-faint)",
+    focusColor: "var(--sc-sidebar-fg-hover)",
+    focusBackground: "var(--sc-sidebar-item-hover-bg)"
+  },
+  menuButton: {
+    padding: "{navigation.item.padding}",
+    iconOnlyWidth: "var(--sc-scale-2-25)",
+    color: "var(--sc-sidebar-fg-muted)",
+    focusBackground: "var(--sc-sidebar-item-hover-bg)",
+    focusColor: "var(--sc-sidebar-fg-hover)",
+    activeBackground: "var(--sc-sidebar-item-active-bg)",
+    activeColor: "var(--sc-sidebar-fg)",
+    icon: {
+      color: "var(--sc-sidebar-fg-subtle)",
+      focusColor: "var(--sc-sidebar-fg-hover)"
+    }
+  },
+  menuAction: {
+    color: "var(--sc-sidebar-fg-faint)",
+    focusColor: "var(--sc-sidebar-fg-hover)",
+    focusBackground: "var(--sc-sidebar-item-hover-bg)"
+  },
+  menuBadge: {
+    background: "var(--sc-sidebar-item-hover-bg)",
+    borderColor: "var(--sc-sidebar-border)",
+    color: "var(--sc-sidebar-fg-muted)"
+  },
+  menuSubButton: {
+    color: "var(--sc-sidebar-fg-muted)",
+    focusBackground: "var(--sc-sidebar-item-hover-bg)",
+    focusColor: "var(--sc-sidebar-fg-hover)",
+    activeBackground: "var(--sc-sidebar-item-active-bg)",
+    activeColor: "var(--sc-sidebar-fg)",
+    icon: {
+      color: "var(--sc-sidebar-fg-subtle)",
+      focusColor: "var(--sc-sidebar-fg-hover)"
+    }
+  },
+  main: {
+    background: "var(--sc-bg-canvas)",
+    floatingBackground: "var(--sc-bg-canvas)",
+    insetBackground: "var(--sc-bg-canvas)",
+    shadow: "0 0 0 0.071429rem var(--sc-sidebar-border), var(--sc-shadow-xs)"
+  }
+};
+
 // projects/ui-smartcontact/src/lib/theme/sc-preset/editor.ts
 var editor_default = {
   content: {
@@ -5856,6 +5920,11 @@ var breadcrumbLinkCss = () => `
     }
 }
 `;
+var sidebarFloatingGroundCss = () => `
+p-sidebar-layout:has(p-sidebar[data-variant="floating"]) {
+    background: var(--p-sidebar-main-floating-background);
+}
+`;
 var inputGroupSizeCss = () => `
 .sc-inputgroup--sm {
     --p-inputtext-padding-x: var(--p-inputtext-sm-padding-x);
@@ -5907,6 +5976,8 @@ ${dangerMenuItemCss()}
 ${breadcrumbLinkCss()}
 
 ${inputGroupSizeCss()}
+
+${sidebarFloatingGroundCss()}
 `;
 var css_default = presetCss;
 
@@ -5931,6 +6002,7 @@ var preset = t($r, normalizeDesignRem({
     button: button_default,
     dialog: dialog_default,
     drawer: drawer_default,
+    sidebar: sidebar_default,
     editor: editor_default,
     rating: rating_default,
     ripple: ripple_default,
