@@ -17,6 +17,8 @@ const PLAYGROUND_SNIPPET = `<!-- "visible" es un model: se abre con "[(visible)]
 <sc-drawer
   header="Detalle"
   position="right"
+  width="32rem"
+  topOffset="var(--sc-spacing-4)"
   [modal]="true"
   [visible]="open()"
   (visibleChange)="open.set($event)"
@@ -52,6 +54,8 @@ export class DrawerDemoComponent {
       { name: 'closeOnEscape', control: { kind: 'boolean' } },
       { name: 'showCloseIcon', control: { kind: 'boolean' } },
       { name: 'fullScreen', control: { kind: 'boolean' } },
+      { name: 'width', control: { kind: 'text' } },
+      { name: 'topOffset', control: { kind: 'text' } },
     ],
     defaultArgs: {
       header: 'Cabecera del drawer',
@@ -61,6 +65,8 @@ export class DrawerDemoComponent {
       closeOnEscape: true,
       showCloseIcon: true,
       fullScreen: false,
+      width: '',
+      topOffset: '',
     },
   };
 

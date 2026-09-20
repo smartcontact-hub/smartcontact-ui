@@ -98,6 +98,7 @@ export class SectionCardDemoComponent {
       { name: 'collapsible', control: { kind: 'boolean' } },
       { name: 'initiallyCollapsed', control: { kind: 'boolean' } },
       { name: 'flush', control: { kind: 'boolean' } },
+      { name: 'showHeader', control: { kind: 'boolean' } },
           { name: 'anchorId', control: { kind: 'text' }, description: 'id del ancla, para el índice lateral.' },
     ],
     defaultArgs: {
@@ -108,6 +109,7 @@ export class SectionCardDemoComponent {
       collapsible: false,
       initiallyCollapsed: false,
       flush: false,
+      showHeader: true,
           anchorId: 'seccion-ejemplo',
     },
   };

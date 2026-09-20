@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -37,6 +38,12 @@ export interface BulkEditCommit {
   readonly valueLabel: string;
 }
 
+/** «Todos los que tienen `value` en `fieldKey`»: el consumidor rehace la selección con esas filas. */
+export interface BulkEditMatch {
+  readonly fieldKey: string;
+  readonly value: string;
+}
+
 /**
  * Inline `Cambiar [field] a [value] [Aplicar]` editor that lives in the
  * bulk action bar. Caller supplies the fields and value choices; this
@@ -64,6 +71,8 @@ export class ScBulkEditMenuComponent {
   readonly fields = input.required<readonly BulkEditFieldOption[]>();
   /** Retained for source compatibility; no longer rendered. */
   readonly buttonLabel = input<string>('Editar');
+  /** Añade «de [valor]» a la frase: elegir un valor pide seleccionar todas las filas que lo tienen (`match`). */
+  readonly matchable = input(false, { transform: booleanAttribute });
 
   /**
    * El usuario ha confirmado el cambio masivo. Lleva qué campo y con qué valor; **aplicarlo es de
@@ -71,8 +80,18 @@ export class ScBulkEditMenuComponent {
    */
   readonly commit = output<BulkEditCommit>();
 
+  /** Se eligió un valor en «de» (solo con `matchable`): la app selecciona las filas que lo tienen. */
+  readonly match = output<BulkEditMatch>();
+
   protected readonly selectedFieldKey = signal<string>('');
   protected readonly selectedValue = signal<string>('');
+  /** '' = la selección tal cual. */
+  protected readonly fromValue = signal<string>('');
+
+  protected readonly fromOptions = computed<readonly BulkEditValueOption[]>(() => [
+    { value: '', label: this.translate.instant('sc.bulkEditMenu.fromSelection') },
+    ...(this.selectedField()?.values ?? []),
+  ]);
 
   protected readonly selectedField = computed<BulkEditFieldOption | null>(
     () => this.fields().find((f) => f.key === this.selectedFieldKey()) ?? this.fields()[0] ?? null,
@@ -84,11 +103,12 @@ export class ScBulkEditMenuComponent {
     return field.values.some((v) => v.value === this.selectedValue());
   });
 
+  private readonly translate = inject(TranslateService);
+
   constructor() {
     // Copy fijo colocado: registra solo el diccionario del componente.
-    const translate = inject(TranslateService);
     for (const [language, dict] of Object.entries(SC_BULK_EDIT_MENU_TRANSLATIONS)) {
-      translate.setTranslation(language, dict, true);
+      this.translate.setTranslation(language, dict, true);
     }
 
     effect(() => {
@@ -106,6 +126,19 @@ export class ScBulkEditMenuComponent {
      * al primer value del nuevo field garantiza un commit consistente. */
     const next = this.fields().find((f) => f.key === value)?.values[0]?.value ?? '';
     this.selectedValue.set(next);
+    this.fromValue.set('');
+  }
+
+  protected onFromValueChange(value: unknown): void {
+    if (typeof value !== 'string') return;
+    this.fromValue.set(value);
+    const field = this.selectedField();
+    if (!value || !field) return;
+    // «de Baja a Baja» no cambia nada: el destino salta al primer valor distinto.
+    if (this.selectedValue() === value) {
+      this.selectedValue.set(field.values.find((v) => v.value !== value)?.value ?? value);
+    }
+    this.match.emit({ fieldKey: field.key, value });
   }
 
   protected onValueValueChange(value: unknown): void {

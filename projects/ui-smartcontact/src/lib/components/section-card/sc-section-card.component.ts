@@ -45,6 +45,13 @@ export class ScSectionCardComponent {
   /** Flush (sin caja): quita fondo/borde/radio + padding lateral; el contenido va a sangre. */
   readonly flush = input(false, { transform: booleanAttribute });
   /**
+   * `false` quita la cabecera (icono y título) cuando ya la dice quien contiene la sección, como
+   * la cabecera de un `sc-drawer`: repetida, el mismo título salía dos veces seguidas. El nombre se
+   * queda en `aria-label` para que la región siga teniéndolo. Ignorado con `collapsible`, que
+   * necesita la cabecera para abrirse.
+   */
+  readonly showHeader = input(true, { transform: booleanAttribute });
+  /**
    * Nivel del encabezado: `2` (por defecto) para una sección DENTRO de una página, `1` cuando
    * esta card lleva el título de LA PÁGINA.
    *
