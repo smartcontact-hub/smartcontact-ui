@@ -75,6 +75,11 @@ const screenshotBaseline = async (page: Page, name: string) => {
    * sitio: el job `e2e-smoke` de `ci.yml`. En un Mac corre siempre, con `CI=1` o sin él.
    * Si algún día hace falta silenciarla por entorno, el escape es explícito y se ve en
    * el comando: `SC_SKIP_VISUAL_BASELINES=1 npm run e2e`. */
+  /* Las capturas de referencia son `*-linux.png`, tomadas en el runner que las verifica
+   * (workflow `visual-baselines`). Fuera de Linux no tienen pareja y Playwright fallaría
+   * escribiendo «A snapshot doesn't exist»: ahí la comparación se salta, y la red visual
+   * es la del CI. */
+  if (process.platform !== 'linux') return;
   if (process.env['SC_SKIP_VISUAL_BASELINES']) return;
   /* Se captura siempre desde el mismo estado de scroll.
    *
