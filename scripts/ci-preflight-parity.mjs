@@ -43,12 +43,9 @@ import { join, dirname } from 'node:path';
 // tocar (el `usage-capture` que las pisaba está en `testIgnore` desde entonces).
 //
 // ACTUALIZACIÓN 2026-09-07: `screenshotBaseline()` ya NO se apaga con `CI`, sino con
-// `SC_SKIP_VISUAL_BASELINES`, que el ci.yml pone solo en el job `e2e-smoke` (allí las
-// baselines `-darwin` no pueden casar contra ubuntu). O sea que este mapeo ya no es
-// «el mismo comando con el entorno del CI»: en local corre ADEMÁS las 38 baselines
-// visuales, que es justo lo que se buscaba —hasta ese día no las corría nadie, y por
-// eso pudieron pudrirse 213 commits—. El lado local es un superconjunto del de CI, que
-// para un gate de pre-push es la dirección correcta.
+// `SC_SKIP_VISUAL_BASELINES`. ACTUALIZACIÓN 2026-09-20: las capturas son `-linux.png` y se
+// comparan en el job `e2e-smoke` del CI; en un Mac (`process.platform !== 'linux'`) se saltan
+// solas. La red visual de cada cambio es, pues, la del CI, no la del preflight local.
 export const LOCAL_SUBSTITUTIONS = {
   // No se puede instalar en limpio en cada push, pero SÍ se puede comprobar lo que hace
   // fallar a `npm ci`: que el lock no cuadre con package.json. Y hay que comprobarlo contra
