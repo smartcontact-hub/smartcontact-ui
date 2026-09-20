@@ -65,6 +65,8 @@ export const EXENTAS = {
     'stub de ruta sin contenido: no pinta página, solo ocupa el sitio de una que vendrá',
   'projects/supervisor/src/app/features/auth/pages/login-page.component.html':
     'acceso, fuera del shell: pantalla completa con ilustración y panel, sin barra ni lienzo de contenido',
+  'projects/supervisor/src/app/features/lab/sidebar-lab-page.component.html':
+    'laboratorio local del Sidebar de primeng.dev: es un MARCO como el shell, no una página; dentro carga las pantallas reales',
 };
 
 /** Anchos sueltos ≥600px/40rem que quedan fuera del molde (fichero → nº). Solo mengua. */

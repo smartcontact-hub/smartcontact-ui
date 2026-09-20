@@ -2054,5 +2054,16 @@
       "sent_title": "Consultez vos emails",
       "sent_lead": "Si un compte existe pour {{email}}, un lien arrivera dans quelques minutes. Pensez à vérifier vos spams."
     }
+  },
+  "lab": {
+    "sidebar": {
+      "toggle_aria": "Replier ou déplier le menu",
+      "options_aria": "Options du laboratoire",
+      "collapsed_label": "Replié",
+      "mode_drawer": "Drawer",
+      "mode_slim": "Slim",
+      "anchor_aria": "Épingler le menu déplié",
+      "unanchor_aria": "Désépingler le menu"
+    }
   }
 }

@@ -5,8 +5,8 @@
 Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la web,
 que puede ir por delante.
 
-**43 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**569 props** que PrimeNG sí documenta.
+**44 componentes** del DS se usan en el Supervisor, y entre todos esconden
+**576 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -35,7 +35,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **46 props nativas no expuestas**: `ariaFilterLabel`, `ariaLabel`, `autoOptionFocus`, `autocomplete`, `autofocus`, `autofocusFilter`, `chipIcon`, `dataKey`, `displaySelectedLabel`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterPlaceHolder`, `filterValue`, `fluid`, `focusOnHover`, `group`, `highlightOnSelect`, `id`, `lazy`, `loading`, `loadingIcon`, `motionOptions`, `optionDisabled`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `overlayVisible`, `panelStyle`, `panelStyleClass`, `readonly`, `resetFilterOnHide`, `scrollHeight`, `selectAll`, `selectOnFocus`, `showHeader`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
-### `sc-select` · 32 usos · primeng/select
+### `sc-select` · 34 usos · primeng/select
 
 **45 props nativas no expuestas**: `ariaFilterLabel`, `ariaLabel`, `autoOptionFocus`, `autofocus`, `autofocusFilter`, `checkmark`, `dataKey`, `dropdownIcon`, `editable`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterValue`, `fluid`, `focusOnHover`, `group`, `id`, `inputSize`, `lazy`, `loadingIcon`, `max`, `maxlength`, `min`, `minlength`, `motionOptions`, `multiple`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `resetFilterOnHide`, `scrollHeight`, `selectOnFocus`, `step`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -67,7 +67,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **25 props nativas no expuestas**: `appendTo`, `ariaLabelledBy`, `autofocus`, `inputSize`, `inputStyle`, `inputStyleClass`, `max`, `mediumLabel`, `mediumRegex`, `min`, `minlength`, `motionOptions`, `overlayOptions`, `pPasswordPT`, `pPasswordUnstyled`, `pattern`, `promptLabel`, `showClear`, `showPassword`, `step`, `strongLabel`, `strongRegex`, `tabindex`, `variant`, `weakLabel`
 
-### `sc-button` · 123 usos · primeng/button
+### `sc-button` · 124 usos · primeng/button
 
 **24 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconOnly`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `severity`, `style`, `styleClass`, `tabindex`, `text`
 
@@ -83,6 +83,10 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **11 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `baseZIndex`, `dismissable`, `focusOnShow`, `motionOptions`, `style`, `styleClass`
 
+### `sc-avatar` · 1 usos · primeng/avatar, primeng/overlaybadge
+
+**7 props nativas no expuestas**: `ariaLabelledBy`, `badgeDisabled`, `badgeSize`, `severity`, `style`, `styleClass`, `value`
+
 ### `sc-radiobutton` · 2 usos · primeng/radiobutton
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `autofocus`, `binary`, `disabled`, `invalid`, `required`, `tabindex`
@@ -91,11 +95,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
-### `sc-selectbutton` · 4 usos · primeng/selectbutton
+### `sc-selectbutton` · 7 usos · primeng/selectbutton
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
-### `sc-toggleswitch` · 22 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 25 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
@@ -198,9 +202,9 @@ Expone todo lo que PrimeNG documenta.
 ## El catálogo de PrimeNG que NO envolvemos
 
 Aura tematiza **97 componentes**. Envolvemos **31**,
-**6** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
+**8** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
 una pieza nuestra hecha a mano.
-Quedan **59** que existen, están tematizados y funcionan — simplemente nadie los ha
+Quedan **57** que existen, están tematizados y funcionan — simplemente nadie los ha
 traído todavía.
 
 ⚠️ **«Sin envolver» NO quiere decir «descartado»**: quiere decir que la decisión no se ha tomado.
@@ -208,13 +212,13 @@ Si necesitas uno, envolverlo es más barato (y sale mejor) que construirlo a man
 su comportamiento, su accesibilidad y su movimiento ya resueltos. Cuando se decida que uno NO se
 quiere, el sitio de esa decisión es `docs/DECISIONS.md`, y entonces se puede anotar aquí.
 
-`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `confirmpopup` · `contextmenu` · `dataview` · `dock` · `editor` · `fieldset` · `fileupload` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inplace` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `inputtags` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `picklist` · `rating` · `ripple` · `scrollarea` · `scrollpanel` · `sidebar` · `slider` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `tieredmenu` · `timeline` · `togglebutton` · `tree` · `treeselect` · `treetable` · `virtualscroller`
+`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `confirmpopup` · `contextmenu` · `dataview` · `dock` · `editor` · `fieldset` · `fileupload` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inplace` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `inputtags` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `picklist` · `rating` · `ripple` · `scrollpanel` · `slider` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `tieredmenu` · `timeline` · `togglebutton` · `tree` · `treeselect` · `treetable` · `virtualscroller`
 
 ### Usados en NATIVO, sin wrapper
 
 Entraron por la vía de DD-113: el nativo tal cual, adaptado solo con tokens. No hay nada que envolver.
 
-`listbox` · `menu` · `metergroup` · `tabs` · `toolbar` · `tooltip`
+`listbox` · `menu` · `metergroup` · `scrollarea` · `sidebar` · `tabs` · `toolbar` · `tooltip`
 
 ### Cubiertos por una pieza nuestra
 

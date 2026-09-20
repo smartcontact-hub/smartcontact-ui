@@ -521,6 +521,20 @@ const breadcrumbLinkCss = () => `
 }
 `;
 
+/*
+ * SIDEBAR FLOTANTE: el panel es una tarjeta sobre el suelo de la app. El layout pinta el fondo del
+ * sidebar (`sidebar.layout.background`), que en las otras variantes es el marco; en `floating` ese
+ * fondo rodea al panel, que es del mismo color, y el panel no se despegaba (en oscuro, además, tres
+ * tonos: marco, cabecera y página). Aquí el layout toma el fondo del main flotante: un solo suelo y
+ * el panel encima. Por token no se puede: `layout.background` es uno para las tres variantes.
+ * Por las etiquetas de los componentes y su `data-variant`, que son su API, y no por clases `.p-*`.
+ */
+const sidebarFloatingGroundCss = () => `
+p-sidebar-layout:has(p-sidebar[data-variant="floating"]) {
+    background: var(--p-sidebar-main-floating-background);
+}
+`;
+
 /* ══════════════════════════════════════════════════════════════════════════
  * TALLAS DE `sc-inputgroup` (`sc-inputgroup--sm`, `sc-inputgroup--lg`)
  * ══════════════════════════════════════════════════════════════════════════
@@ -596,6 +610,8 @@ ${dangerMenuItemCss()}
 ${breadcrumbLinkCss()}
 
 ${inputGroupSizeCss()}
+
+${sidebarFloatingGroundCss()}
 `;
 
 export default presetCss;
