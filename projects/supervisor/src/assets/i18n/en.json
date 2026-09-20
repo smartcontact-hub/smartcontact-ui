@@ -2242,5 +2242,16 @@
       "paused": "Doesn’t answer",
       "no_channels": "No channels"
     }
+  },
+  "lab": {
+    "sidebar": {
+      "toggle_aria": "Collapse or expand the menu",
+      "options_aria": "Lab options",
+      "collapsed_label": "Collapsed",
+      "mode_drawer": "Drawer",
+      "mode_slim": "Slim",
+      "anchor_aria": "Pin the menu open",
+      "unanchor_aria": "Unpin the menu"
+    }
   }
 }
