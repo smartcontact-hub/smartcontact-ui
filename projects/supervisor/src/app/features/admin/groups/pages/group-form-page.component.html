@@ -800,7 +800,7 @@
               <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.allowed_domains_info' }" />
             </span>
             <span class="domain-add">
-              <sc-inputtext inputId="group-chat-domain" placeholder="ejemplo.com" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
+              <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
               <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
             </span>
             @if (form().advanced.allowedDomains.length > 0) {
