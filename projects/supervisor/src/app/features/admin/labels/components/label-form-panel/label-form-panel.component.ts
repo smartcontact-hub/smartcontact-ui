@@ -1,9 +1,11 @@
 import {
   AfterViewInit,
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
   ElementRef,
+  HostBinding,
   inject,
   input,
   OnInit,
@@ -58,9 +60,16 @@ export class LabelFormPanelComponent implements OnInit, AfterViewInit {
 
   readonly initial = input<Label | null>(null);
   readonly existingNames = input.required<readonly string[]>();
+  /** Dentro de un `sc-dialog` (que ya pone su propia caja): sin las suyas, y sin repetir el título, que
+   *  ya dice el dialog. Mismo contrato que `sc-repo-form-panel [flush]`. */
+  readonly flush = input(false, { transform: booleanAttribute });
 
   readonly save = output<LabelFormSubmission>();
   readonly cancelled = output<void>();
+
+  @HostBinding('class.panel-flush') protected get flushClass(): boolean {
+    return this.flush();
+  }
 
   protected readonly alertIcon = 'warning';
   protected readonly colorOptions = computed<readonly ColorDotOption[]>(() => {

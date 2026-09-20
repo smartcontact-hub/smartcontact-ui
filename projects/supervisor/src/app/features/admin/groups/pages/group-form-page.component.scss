@@ -145,3 +145,21 @@
   inset-block-start: calc(var(--sc-spacing-0-25) * -1);
   inset-inline-end: calc(var(--sc-spacing-0-5) * -1);
 }
+
+/* Añadir un dominio permitido: campo + botón en una fila, chips debajo. */
+.domain-add {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.domain-add sc-inputtext {
+  flex: 1 1 auto;
+}
+
+.domain-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: var(--sc-spacing-0-5);
+}

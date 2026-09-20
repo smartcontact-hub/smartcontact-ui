@@ -103,6 +103,12 @@ export interface GroupAdvanced {
   readonly cardOpening: CardOpening;
   readonly cardUrl: string;
   readonly cardHeight: number;
+  /** Número al que llegan los mensajes de WhatsApp de este grupo (solo con el canal Chat). */
+  readonly whatsappNumber: string;
+  /** Al cerrar la conversación de chat, pedir al cliente que valore la atención. */
+  readonly chatRatingEnabled: boolean;
+  /** Webs donde se puede insertar el script del widget de chat (`chatScript`). Vacío = cualquiera. */
+  readonly allowedDomains: readonly string[];
 }
 
 /** Los valores de fábrica. Un grupo nuevo nace con lo guardado en Configuración del AED > Grupos (`GroupDefaultsStore`),
@@ -136,6 +142,9 @@ export const DEFAULT_ADVANCED: GroupAdvanced = {
   cardOpening: 'embedded',
   cardUrl: '',
   cardHeight: 400,
+  whatsappNumber: '',
+  chatRatingEnabled: false,
+  allowedDomains: [],
 };
 
 export const CHAT_STRATEGIES: readonly string[] = [

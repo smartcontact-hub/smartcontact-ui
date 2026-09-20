@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 138,
+      "usedInSupervisor": 143,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -268,7 +268,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5,
+      "usedInSupervisor": 6,
       "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
       "sobreObsoleto": []
     },
@@ -496,7 +496,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 11,
+      "usedInSupervisor": 15,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -515,7 +515,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 31,
+      "usedInSupervisor": 32,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -838,7 +838,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 31,
+      "usedInSupervisor": 33,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1462,7 +1462,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 26,
+      "usedInSupervisor": 27,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

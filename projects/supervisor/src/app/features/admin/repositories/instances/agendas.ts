@@ -106,7 +106,7 @@ const COLUMNS: readonly RepoColumnDef<Agenda>[] = [
   },
 ];
 
-const FIELDS: readonly RepoFieldDef[] = [
+export const AGENDA_FIELDS: readonly RepoFieldDef[] = [
   {
     key: 'name',
     labelKey: 'repositories.columns.name',
@@ -153,7 +153,7 @@ export class AgendasPageComponent {
     icon: 'call',
     breadcrumbExtraKey: 'repositories.agendas.title',
     columns: COLUMNS,
-    fields: FIELDS,
+    fields: AGENDA_FIELDS,
     searchKeys: ['name', 'numbers', 'description'],
     filePrefix: 'agendas',
     sheetNameKey: 'repositories.agendas.title',

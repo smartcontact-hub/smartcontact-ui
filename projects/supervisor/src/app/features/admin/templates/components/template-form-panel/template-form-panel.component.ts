@@ -1,9 +1,11 @@
 import {
   AfterViewInit,
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
   ElementRef,
+  HostBinding,
   inject,
   input,
   OnInit,
@@ -49,9 +51,16 @@ export class TemplateFormPanelComponent implements OnInit, AfterViewInit {
   /** Currently selected tab; used as the default channel for new templates. */
   readonly defaultType = input<TemplateType>('chat');
   readonly existingTitles = input.required<readonly string[]>();
+  /** Dentro de un `sc-dialog` (que ya pone su propia caja): sin las suyas, a lo ancho y sin repetir el
+   *  título, que ya dice el dialog. Mismo contrato que `sc-repo-form-panel [flush]`. */
+  readonly flush = input(false, { transform: booleanAttribute });
 
   readonly save = output<TemplateFormSubmission>();
   readonly cancelled = output<void>();
+
+  @HostBinding('class.panel-flush') protected get flushClass(): boolean {
+    return this.flush();
+  }
 
   protected readonly alertIcon = 'warning';
   protected readonly chatIcon = 'chat_bubble';

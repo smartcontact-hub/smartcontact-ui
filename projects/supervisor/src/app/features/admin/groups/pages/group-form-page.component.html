@@ -243,6 +243,74 @@
   </sc-dialog>
 }
 
+@if (creatingAgenda()) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'repositories.form.create_title' | translate: { entity: ('repositories.agendas.singular' | translate) }"
+    [hasFooter]="false"
+    (cancelled)="creatingAgenda.set(false)"
+  >
+    <sc-repo-form-panel
+      flush
+      [fields]="agendaFields"
+      [existingNames]="agendaExistingNames()"
+      [entitySingular]="'repositories.agendas.singular' | translate"
+      (save)="onCreateAgendaSubmit($event)"
+      (cancelled)="creatingAgenda.set(false)"
+    />
+  </sc-dialog>
+}
+
+@if (creatingChatTemplate()) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'templates.form.create_title' | translate"
+    [hasFooter]="false"
+    (cancelled)="creatingChatTemplate.set(false)"
+  >
+    <sc-template-form-panel
+      flush
+      defaultType="chat"
+      [existingTitles]="templateExistingTitles()"
+      (save)="onCreateTemplateSubmit('chat', $event)"
+      (cancelled)="creatingChatTemplate.set(false)"
+    />
+  </sc-dialog>
+}
+
+@if (creatingEmailTemplate()) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'templates.form.create_title' | translate"
+    [hasFooter]="false"
+    (cancelled)="creatingEmailTemplate.set(false)"
+  >
+    <sc-template-form-panel
+      flush
+      defaultType="email"
+      [existingTitles]="templateExistingTitles()"
+      (save)="onCreateTemplateSubmit('email', $event)"
+      (cancelled)="creatingEmailTemplate.set(false)"
+    />
+  </sc-dialog>
+}
+
+@if (creatingLabel()) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'labels.form.create_title' | translate"
+    [hasFooter]="false"
+    (cancelled)="creatingLabel.set(false)"
+  >
+    <sc-label-form-panel
+      flush
+      [existingNames]="labelExistingNames()"
+      (save)="onCreateLabelSubmit($event)"
+      (cancelled)="creatingLabel.set(false)"
+    />
+  </sc-dialog>
+}
+
 <!-- Las secciones de la ficha, una sola vez: se pintan en `.page__main` o, en la variante e,
      dentro del panel lateral. -->
 <ng-template #sections>
@@ -354,11 +422,13 @@
               </label>
               <!-- Crear una sin salir de la ficha (Rafa, 2026-09-18): antes solo quedaba «Gestionar en
                    Repositorios», que te sacaba del alta del grupo entero para volver a encontrar el camino.
-                   Fuera del flujo del texto (`field__label-row__action`): con su propio relleno, el botón
-                   medía 27px contra los 18px de la etiqueta sola, y el desplegable de Tipificación arrancaba
-                   9px más abajo que el de Agendas, su vecino en la rejilla (Rafa, 2026-09-18: «no hay
-                   alineación»). -->
-              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="link" icon="add" [label]="'groups.form.fields.typification_new' | translate" (clicked)="creatingTipificacion.set(true)" />
+                   Icono solo (Rafa, 2026-09-20): mismo botón «solo icono» en los cuatro campos de abajo, para
+                   que el gesto de crear sin salir sea consistente en toda la sección. Fuera del flujo del
+                   texto (`field__label-row__action`): con su propio relleno, un botón CON etiqueta medía 27px
+                   contra los 18px de la etiqueta sola y desalineaba el desplegable (Rafa, 2026-09-18: «no hay
+                   alineación»); solo icono no tiene ese problema, pero se deja la clase por si vuelve a hacer
+                   falta el ajuste. -->
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.typification_new' | translate" [pTooltip]="'groups.form.fields.typification_new' | translate" tooltipPosition="top" (clicked)="creatingTipificacion.set(true)" />
             </span>
             <sc-select
               inputId="group-typification"
@@ -372,9 +442,12 @@
           </div>
 
           <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-agendas">
-              {{ 'agents.form.advanced.agendas.title' | translate }}
-            </label>
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-agendas">
+                {{ 'agents.form.advanced.agendas.title' | translate }}
+              </label>
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="creatingAgenda.set(true)" />
+            </span>
             <sc-multiselect
               inputId="group-agendas"
               display="chip"
@@ -392,9 +465,12 @@
 
           @if (hasChat()) {
             <div class="field">
-              <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
-                {{ 'agents.form.resources.templates_chat' | translate }}
-              </label>
+              <span class="field__label-row">
+                <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
+                  {{ 'agents.form.resources.templates_chat' | translate }}
+                </label>
+                <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingChatTemplate.set(true)" />
+              </span>
               <sc-multiselect
                 inputId="group-templates-chat"
                 display="chip"
@@ -413,9 +489,12 @@
 
           @if (hasEmail()) {
             <div class="field">
-              <label class="field__label sc-text-caption-semibold" for="group-templates-email">
-                {{ 'agents.form.resources.templates_email' | translate }}
-              </label>
+              <span class="field__label-row">
+                <label class="field__label sc-text-caption-semibold" for="group-templates-email">
+                  {{ 'agents.form.resources.templates_email' | translate }}
+                </label>
+                <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingEmailTemplate.set(true)" />
+              </span>
               <sc-multiselect
                 inputId="group-templates-email"
                 display="chip"
@@ -433,9 +512,12 @@
           }
 
           <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-labels">
-              {{ 'agents.form.advanced.labels.title' | translate }}
-            </label>
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-labels">
+                {{ 'agents.form.advanced.labels.title' | translate }}
+              </label>
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
+            </span>
             <sc-multiselect
               inputId="group-labels"
               display="chip"
@@ -686,6 +768,52 @@
       </section>
 
       @if (hasChat()) {
+        <sc-divider />
+        <section class="sub-section" aria-labelledby="group-chat-config-title">
+          <header class="sub-section__head">
+            <h3 id="group-chat-config-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.advanced.chat_config_title' | translate }}</h3>
+          </header>
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">
+                {{ 'groups.form.advanced.whatsapp_number' | translate }}
+              </label>
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.whatsapp_number_info' }" />
+            </span>
+            <sc-inputtext inputId="group-chat-whatsapp" type="tel" placeholder="+34 900 100 200" [value]="form().advanced.whatsappNumber" (valueChange)="setAdvanced('whatsappNumber', $event)" />
+          </div>
+          <div class="switch-field switch-field--top">
+            <sc-toggleswitch [checked]="form().advanced.chatRatingEnabled" [ariaLabel]="'groups.form.advanced.chat_rating' | translate" (checkedChange)="setAdvanced('chatRatingEnabled', $event)" />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">
+                {{ 'groups.form.advanced.chat_rating' | translate }}
+                <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.chat_rating_info' }" />
+              </span>
+              <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.chat_rating_hint' | translate }}</p>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-chat-domain">
+                {{ 'groups.form.advanced.allowed_domains' | translate }}
+              </label>
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.allowed_domains_info' }" />
+            </span>
+            <span class="domain-add">
+              <sc-inputtext inputId="group-chat-domain" placeholder="ejemplo.com" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
+              <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
+            </span>
+            @if (form().advanced.allowedDomains.length > 0) {
+              <div class="domain-chips">
+                @for (domain of form().advanced.allowedDomains; track domain) {
+                  <sc-chip [label]="domain" removable [removeAriaLabel]="'common.delete' | translate" (removed)="removeDomain(domain)" />
+                }
+              </div>
+            }
+            <p class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.allowed_domains_hint' | translate }}</p>
+          </div>
+        </section>
+
         <sc-divider />
         <section class="sub-section" aria-labelledby="group-script-title">
           <header class="sub-section__head">

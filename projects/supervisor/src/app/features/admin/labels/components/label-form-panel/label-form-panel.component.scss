@@ -50,3 +50,18 @@
   }
 
 }
+
+/* Dentro de un `sc-dialog` (que ya pone su propia caja): sin las suyas, y sin su título, que el dialog ya
+ * dice. Mismo contrato que `sc-repo-form-panel [flush]` (`repo-form-panel.component.scss`). */
+:host(.panel-flush) .panel {
+  width: 100%;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+:host(.panel-flush) .panel__title {
+  display: none;
+}
