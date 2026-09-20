@@ -129,11 +129,10 @@ jobs:
         id: e2e
         if: steps.verify.outcome == 'success'
         continue-on-error: true
-        # Lo mismo que el job `e2e-smoke` de ci.yml, y por lo mismo: las baselines de
-        # `components.spec.ts` son `*-darwin.png` y este runner es Ubuntu, así que sin esta
-        # variable falla SIEMPRE («A snapshot doesn't exist»), traiga el export lo que traiga.
-        # Pasó el 2026-09-13 con un export idéntico a main. La red de aquí son las métricas del
-        # Kit, que sí corren en Linux; lo vigila `workflow-visual-baselines.test.mjs`.
+        # A diferencia del job `e2e-smoke` de ci.yml, AQUÍ las capturas `-linux.png` se apagan
+        # a propósito: un export con cambios de token cambia el aspecto y este robot no sabe
+        # regenerarlas, así que llegaría en rojo por diseño. La red de aquí son las métricas del
+        # Kit; el aspecto lo vigila el CI del PR. Lo vigila `workflow-visual-baselines.test.mjs`.
         env:
           SC_SKIP_VISUAL_BASELINES: '1'
         run: |

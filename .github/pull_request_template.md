@@ -23,7 +23,7 @@
 | **No — es tu palabra** | capturas visuales · demo y export · bump y CHANGELOG · DECISIONS |
 
 - [ ] **[gate: sí]** `npm run verify` limpio (tokens:gen · parity · guard · type-parity · audit:theme-scale · build · typecheck · lint)
-- [ ] **[gate: no]** Si toqué algo visual: `CI=1 npm run e2e` verde. ⚠️ El CI corre las suites e2e pero **no las capturas** (`SC_SKIP_VISUAL_BASELINES`), así que esa parte solo la sabes tú
+- [ ] **[gate: no]** Si toqué algo visual: `CI=1 npm run e2e` verde. ⚠️ Las capturas `-linux.png` las compara el CI; en un Mac se saltan, así que esa parte la ves en el CI
 - [ ] **[gate: sí]** Tokens: solo `--sc-*` (nunca `--p-*` fuera del preset); escala 14-base (sin 8-point, sin `calc` a mano)
 - [ ] **[gate: a medias]** Si añadí/cambié un componente: demo en `sc-docs` + export en `public-api.ts`. `audit:components` avisa de los que no tienen demo, pero **no bloquea** (hoy hay 5)
 - [ ] **[gate: no]** Si es un cambio consumible del paquete: bump de versión (`npm run version:bump`) + nota en `CHANGELOG.md`

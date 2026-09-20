@@ -22,7 +22,10 @@ const fail = (s) => {
 };
 
 // Front door / el propio índice → no son "docs de tema", no requieren entrada.
-const EXEMPT = new Set(['README.md', 'DOCS-INDEX.md']);
+// `README.en.md` es la MISMA puerta en inglés, no un doc nuevo: exigirle fila propia en el
+// índice pondría dos entradas para un solo tipo de información, que es justo lo que el
+// DOCS-INDEX prohíbe. Que no derive del español lo vigila `docs:readme-parity`.
+const EXEMPT = new Set(['README.md', 'README.en.md', 'DOCS-INDEX.md']);
 
 // (1) Todo .md del repo (docs/ recursivo + raíz, incluido .impeccable.md) está mapeado por basename.
 function mdBasenames(dir) {

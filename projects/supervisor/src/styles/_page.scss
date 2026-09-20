@@ -22,7 +22,20 @@
  * de tocar nada de aquí.
  */
 .page__inner {
-  margin: 0 auto;
+  /* ANCLADO a la izquierda, no centrado (2026-09-20). El tope de cada arquetipo
+   * limita el ancho de LECTURA; no sirve para empujar la página al centro. Con
+   * `margin: 0 auto` el shell tenía dos navegaciones con lienzo muerto en medio: a
+   * 1920, medido, 504px entre el sidebar y `--reading`, 440 en `--hub`, 120 en
+   * `--list` y 348 hasta el índice de `--rail`. Cuatro pantallas hermanas
+   * arrancaban en cuatro verticales distintas (80 / 200 / 520 / 584) y el índice
+   * lateral se leía como colgado. Anclado, las cuatro arrancan en 80 y el aire que
+   * sobra se va a la derecha.
+   *
+   * La referencia de la que salió el centrado son los ajustes de GitHub, que PUEDE
+   * centrar porque su navegación es horizontal y no hay rail vertical del que
+   * despegarse. Meridian (el agéntico de PrimeNG) sí centra teniendo rail, pero con
+   * tope 1680: no muerde hasta ~1760, así que en portátil y en 1920 no se le ve. */
+  margin: 0;
 
   /* Editor: formulario con controles. Por defecto, porque es el caso en el que
    * una línea demasiado larga más duele al rellenar. */
@@ -81,8 +94,16 @@
    * de blanco entre el índice y lo que indexa, y la misma app parecía dos. Rafa: «no
    * rima nada con lo que hay en contact center».
    *
-   *   · 1200 de tope y centrado: por encima deja de estirarse y el bloque flota con
-   *     el rail siempre pegado a su contenido (patrón de ajustes GitHub/Stripe).
+   *   · 1200 de tope y ANCLADO A LA IZQUIERDA, no centrado. Medido el 2026-09-20 con
+   *     `margin-inline: auto`: a 1440 quedaban 108px de lienzo vacío entre el borde
+   *     del sidebar y el índice, y a 1920, 348. Dos navegaciones con un hueco muerto
+   *     en medio: el índice no toca nada por su izquierda y se lee como colgado. El
+   *     centrado salió de los ajustes de GitHub, que PUEDE centrar porque no tiene
+   *     rail vertical: su navegación es horizontal y no hay nada de lo que
+   *     despegarse. Nosotros sí lo tenemos. Meridian, el agéntico de PrimeNG, sí
+   *     centra teniendo rail, pero con tope 1680: no muerde hasta ~1760. Anclado, el
+   *     índice se queda a 28px del sidebar en CUALQUIER ancho y el aire que sobra se
+   *     va a la derecha.
    *   · `1-625` arriba (22.75) y `2` a los lados (28), las del `content` de la maqueta.
    *   · `2` (28) entre rail y contenido. Con 1200 de tope el contenido sale a 920,
    *     que es lo que mide el `Block` 393:12587.
@@ -92,7 +113,7 @@
    * de impacto (350 de alto) y no cabe en 196. */
   &--rail {
     max-width: 1200px;
-    margin-inline: auto;
+    margin-inline: 0;
     padding: var(--sc-spacing-1-625) var(--sc-spacing-2);
     display: flex;
     align-items: flex-start;
@@ -219,7 +240,9 @@
 .page__form {
   min-width: 0;
   max-width: 1100px;
-  margin: 0 auto;
+  /* Anclada, como `.page__inner`: a 1920 el `auto` la dejaba a 250px de su propio
+   * rail, otra vez con hueco muerto entre el índice y lo que indexa. */
+  margin: 0;
   padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
   display: flex;
   flex-direction: column;

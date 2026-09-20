@@ -4,7 +4,16 @@
 
 .top-bar {
   /* Figma 12277-4705 dibuja 20 arriba y abajo y 28 a los lados (72 de alto). Los 28
-   * se quedan: alinean la miga con el título de la página (x=92). */
+   * se quedan porque son los MISMOS que el gutter de `.page__inner`: con ellos, el
+   * primer elemento de la barra, que es el botón de inicio, cae en la misma vertical
+   * que el primer elemento de la página. Medido a 1440 el 2026-09-20 en los cuatro
+   * arquetipos (lectura, lista, hub y rail): los dos en x=108.
+   *
+   * Lo que NO cae ahí es la MIGA, que arranca en 161.5 porque delante van el botón (28)
+   * y el divisor. Esta nota decía antes «alinean la miga con el título de la página
+   * (x=92)» y engañaba por partida doble: el 92 es de cuando el sidebar medía 64, y
+   * quien sostiene la vertical es el lead, no la miga. Si vas a mover algo de aquí,
+   * la referencia que hay que conservar es el botón en 108. */
   /* ALTO `scale/4` (56), el MISMO token que el bloque del logo de la barra lateral
    * (`.sidebar__brand`), para que las dos rayas de abajo casen (2026-09-14). Es la
    * altura de la barra de Sakai, la app de PrimeTek sobre Aura. Antes 75: relleno 21 +
