@@ -167,4 +167,4 @@ pre code {
 }
 
 /* PRUEBA DESECHABLE (no fundir): un contorno que ninguna métrica del Kit mide. */
-[data-testid='sc-card'] .p-card { outline: 4px solid hotpink; }
+[data-testid='sc-card'] { outline: 4px solid hotpink; }
