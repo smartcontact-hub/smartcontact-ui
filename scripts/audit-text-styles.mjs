@@ -50,7 +50,7 @@ import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { aplanar } from './audit-screen-vocabulary.mjs';
+import { aplanar, sinComentarios } from './audit-screen-vocabulary.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const STYLES = resolve(root, 'projects/design-tokens/src/lib/styles');
@@ -535,8 +535,15 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  *
  * TRINQUETE por conteo: el número de reglas que aún declaran `font-size` solo puede bajar. Si
  * baja, el tope se baja con él (un tope holgado deja entrar de nuevo lo que ya salió).
+ *
+ * ⚠️ **67 → 82 el 2026-09-19, y NO es que haya entrado nada.** El conteo se hacía con
+ * `aplanar()`, que descarta los selectores de elemento y los descendientes (ver
+ * `tipografiaSuelta`): había **15 reglas que este trinquete nunca vio**. El CSS del Supervisor no
+ * se toca en ese cambio; lo que cambia es que el número por fin dice la verdad. La crónica de
+ * arriba (99 → 92 → 87 → 69 → 68 → 67) sigue siendo cierta en su propia escala: son bajadas
+ * REALES, medidas con la regla vieja.
  */
-export const TIPOGRAFIA_SUELTA_MAX = 67;
+export const TIPOGRAFIA_SUELTA_MAX = 82;
 
 /**
  * El mismo trinquete para **sc-docs**, el showcase del DS — el que peor predicaba con el ejemplo:
@@ -546,17 +553,43 @@ export const TIPOGRAFIA_SUELTA_MAX = 67;
  * propósito para enseñar a validar, y su propio fichero lo dice desde que se escribieron («si
  * algún día alguien los tokeniza para dejar esto limpio, el simulador pierde lo único que de
  * verdad importa de la guía»). Son 122 de las 237: contarlas era contar mal.
+ *
+ * ⚠️ **55 → 102 el 2026-09-19, y tampoco ha entrado nada.** El conteo era ciego a **52 de 107**
+ * reglas (el 49%) por lo que explica `tipografiaSuelta`. El 102 ya lleva DENTRO la bajada de ese
+ * mismo día: las 12 reglas de código repartidas por diez hojas se consolidaron en una sola de
+ * `styles.scss`, y eso resta 5 declaraciones (**107 → 102**, medido a los dos lados con la regla
+ * nueva). Con la regla vieja esa mejora habría marcado 55 → 55: exactamente el motivo para
+ * arreglar el instrumento antes de fiarse del número.
+ *
+ * El apartado del simulador también sube por lo mismo: 122 → 141 exentas, ni una nueva.
  */
-export const TIPOGRAFIA_SUELTA_DOCS_MAX = 55;
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 101;
 
 /** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
 export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);
 
-/** Cuántas reglas de una hoja declaran `font-size` (tipografía por token, no por clase). */
+/**
+ * Cuántas declaraciones de `font-size` hay en una hoja (tipografía por token, no por clase).
+ *
+ * ⚠️ **Cuenta el TEXTO, no `aplanar()`, y eso es el arreglo de un punto ciego grande.**
+ * `aplanar()` existe para el gate de VOCABULARIO, que pregunta «¿este NOMBRE de clase vive en dos
+ * hojas?». Para esa pregunta su `componer()` hace bien en registrar solo clases sueltas
+ * (`.foo`) y BEM (`&__x`), y en descartar todo lo demás. Pero este trinquete hace otra pregunta
+ * —«¿cuánta tipografía se pone a mano?»— y ahí ese filtro deja fuera **los selectores de
+ * elemento y los descendientes**: `code`, `pre`, `html`, `.sb-snippet pre`, `.lightbox__hint kbd`,
+ * `.demo-main h1`… también lo que va dentro de un `@media`.
+ *
+ * Lo que costaba, medido el 2026-09-19: el trinquete creía ver **55** reglas en `sc-docs` y había
+ * **107** —ciego a 52, el **49%**—, y **67** frente a **82** en el Supervisor. Y no era un punto
+ * ciego cualquiera: la tipografía del CÓDIGO vive justo ahí, en `code`/`pre`/`kbd`, así que
+ * consolidar las 12 reglas de código de la doc en una sola no movía el contador **ni un punto**.
+ * Un trinquete que no ve el cambio que lo mejora tampoco verá el que lo empeora.
+ *
+ * El test no lo cazaba porque su fixture era entera de clases (`.a`, `.b`, `&__x`): las tres
+ * formas que `componer()` sí acepta. Ahora lleva su caso de elemento.
+ */
 export function tipografiaSuelta(scss) {
-  let n = 0;
-  for (const [, props] of aplanar(scss)) if (props['font-size']) n += 1;
-  return n;
+  return (sinComentarios(scss).match(/(^|[{;])\s*font-size\s*:/g) ?? []).length;
 }
 
 /** El veredicto del trinquete como texto, o null si el conteo está exactamente en su tope. */

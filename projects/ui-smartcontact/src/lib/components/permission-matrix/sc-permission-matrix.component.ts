@@ -68,7 +68,9 @@ export type ScMatrixCellFn = (rowId: string, columnId: string) => boolean;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScPermissionMatrixComponent {
+  /** Las filas de la matriz: lo que recibe permisos. */
   readonly rows = input<readonly ScMatrixRow[]>([]);
+  /** Las columnas: los permisos que se pueden dar. */
   readonly columns = input<readonly ScMatrixColumn[]>([]);
 
   /** Lee el estado de cada casilla. */
@@ -93,6 +95,10 @@ export class ScPermissionMatrixComponent {
    * DOM (el de `<details>`): una salida con ese nombre se confunde con él y lo
    * deniega `@angular-eslint/no-output-native`. */
   readonly cellToggle = output<ScMatrixToggle>();
+  /**
+   * El usuario ha marcado o desmarcado una columna ENTERA, es decir ese permiso para todas las
+   * filas a la vez.
+   */
   readonly columnToggle = output<ScMatrixColumnToggle>();
 
   /** Estado tri-estado de la cabecera de una columna: ninguna, algunas, todas. */

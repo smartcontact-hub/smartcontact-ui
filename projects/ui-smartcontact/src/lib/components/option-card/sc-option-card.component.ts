@@ -46,8 +46,10 @@ let seq = 0;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScOptionCardsComponent {
+    /** Las opciones entre las que elegir, cada una con su título y su explicación. */
     readonly options = input.required<readonly ScOptionCardItem[]>();
 
+    /** Cuál está elegida, o `null` si ninguna. */
     readonly value = input<string | null>(null);
 
     /** Nombre del grupo de radios. Si no se da, uno estable por instancia. */
@@ -56,8 +58,10 @@ export class ScOptionCardsComponent {
     /** `id` del rótulo que nombra el grupo entero (el `<label>` de la sección). */
     readonly ariaLabelledBy = input<string>();
 
+    /** Deshabilita la elección entera. */
     readonly disabled = input(false, { transform: booleanAttribute });
 
+    /** El usuario ha elegido otra opción. */
     readonly valueChange = output<string>();
 
     private readonly fallbackName = `sc-option-cards-${seq++}`;

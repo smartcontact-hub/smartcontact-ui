@@ -35,8 +35,14 @@ export interface FormNavSection {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScFormSectionNavComponent {
+  /** Las secciones del formulario, en orden, tal como se listan en el índice lateral. */
   readonly sections = input.required<readonly FormNavSection[]>();
+  /** Qué sección está activa. La manda el consumidor, normalmente según el scroll. */
   readonly activeId = input<string | null>(null);
+  /**
+   * Clave de traducción del nombre accesible del índice, que es lo que oye quien navega por
+   * landmarks.
+   */
   readonly labelKey = input<string>('sc.formSectionNav.label');
   /**
    * Flush: el índice se renderiza como PANEL embebido del rail (fondo, radio,
@@ -62,6 +68,7 @@ export class ScFormSectionNavComponent {
    */
   readonly sectionsWithErrors = input<ReadonlySet<string>>(new Set());
 
+  /** El usuario ha pulsado otra sección del índice. */
   readonly activeChange = output<string>();
 
   constructor() {

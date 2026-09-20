@@ -42,6 +42,7 @@ export class ScAvatarComponent {
     /** Badge superpuesto (spec Figma Avatar+Badge). `null` = sin badge. */
     readonly badge = input<string | number | null>(null);
 
+    /** Color del distintivo que se pinta sobre el avatar (estado, contador…). */
     readonly badgeVariant = input<ScSeverity>('danger');
 
     /**
@@ -50,11 +51,16 @@ export class ScAvatarComponent {
      */
     readonly illustrationName = input<string | null>(null);
 
+    /** De qué repertorio sale la ilustración cuando no hay foto. */
     readonly illustrationPool = input<AvatarIllustrationPool>('illustrated');
 
     /** Base de los assets de ilustración (el consumidor los sirve). */
     readonly illustrationBase = input('assets/avatars');
 
+    /**
+     * La imagen no se ha podido cargar. El componente ya cae solo a la ilustración de reserva; esto
+     * es para que el consumidor se entere si le interesa.
+     */
     readonly imageError = output<unknown>();
 
     protected readonly avatarIcon = computed<string | undefined>(() =>

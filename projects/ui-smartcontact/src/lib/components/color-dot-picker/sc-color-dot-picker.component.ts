@@ -23,7 +23,12 @@ export interface ColorDotOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScColorDotPickerComponent {
+  /**
+   * Los colores entre los que elegir, cada uno con su nombre — el nombre es lo que se anuncia,
+   * porque el color solo no se puede oír.
+   */
   readonly options = input.required<readonly ColorDotOption[]>();
+  /** El color elegido. Enlace de dos sentidos: `[(value)]`. */
   readonly value = model.required<string>();
   /** Rótulo accesible del radiogroup. Default 'Color' (idéntico es/en). */
   readonly ariaLabel = input<string>('Color');

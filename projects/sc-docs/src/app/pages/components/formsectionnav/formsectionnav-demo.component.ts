@@ -82,43 +82,6 @@ export class FormSectionNavDemoComponent {
       flush: false,
           labelKey: 'sc.formSectionNav.label',
     },
-    props: [
-      {
-        name: 'sections',
-        type: 'readonly FormNavSection[]',
-        default: '— (requerido)',
-        description: 'Secciones a mostrar ({ id, labelKey, icon? }).',
-      },
-      {
-        name: 'activeId',
-        type: 'string | null',
-        default: 'null',
-        description: 'Id de la sección activa (controlado por el padre).',
-      },
-      {
-        name: 'sectionsWithErrors',
-        type: 'ReadonlySet<string>',
-        default: 'new Set()',
-        description: 'Ids con required vacíos → punto rojo.',
-      },
-      {
-        name: 'labelKey',
-        type: 'string',
-        default: "'sc.formSectionNav.label'",
-        description: 'Clave i18n del rótulo accesible del <nav>.',
-      },
-      {
-        name: 'flush',
-        type: 'boolean',
-        default: 'false',
-        description: 'Renderiza el índice como panel embebido del rail.',
-      },
-      {
-        name: 'activeChange',
-        type: 'EventEmitter<string>',
-        description: 'Output con el id de la sección al hacer click.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

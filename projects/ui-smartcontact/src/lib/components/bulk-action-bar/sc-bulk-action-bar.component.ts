@@ -34,9 +34,18 @@ export interface BulkActionEntityLabels {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScBulkActionBarComponent {
+  /**
+   * Cuántos elementos hay seleccionados. Es lo que da sentido a la barra: sin selección no se
+   * enseña.
+   */
   readonly count = input.required<number>();
+  /**
+   * Cómo se llama lo seleccionado («conversaciones»), para que el recuento se lea en el idioma de
+   * la pantalla.
+   */
   readonly entity = input.required<BulkActionEntityLabels>();
 
+  /** El usuario ha pulsado deshacer la selección. */
   readonly clear = output<void>();
 
   private readonly translate = inject(TranslateService);

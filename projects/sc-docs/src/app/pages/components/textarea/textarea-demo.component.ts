@@ -56,21 +56,6 @@ export class TextareaDemoComponent {
       disabled: false,
       readonly: false,
     },
-    props: [
-      { name: 'value', type: 'string', default: "''", description: 'Valor; emite `valueChange`.' },
-      { name: 'placeholder', type: 'string', default: "''" },
-      { name: 'rows', type: 'number', default: '3' },
-      { name: 'cols', type: 'number | null', default: 'null' },
-      { name: 'size', type: 'ScComponentSize', default: "'md'", description: 'sm · md · lg' },
-      { name: 'variant', type: 'ScInputVariant', default: "'outlined'", description: 'outlined · filled' },
-      { name: 'autoResize', type: 'boolean', default: 'false', description: 'Crece con el contenido.' },
-      { name: 'invalid', type: 'boolean', default: 'false' },
-      { name: 'fluid', type: 'boolean', default: 'false', description: 'Ancho completo.' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      { name: 'readonly', type: 'boolean', default: 'false' },
-      { name: 'valueChange', type: 'EventEmitter<string>' },
-      { name: 'resized', type: 'EventEmitter<unknown>' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

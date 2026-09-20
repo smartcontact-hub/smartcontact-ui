@@ -84,47 +84,6 @@ export class GaugeDemoComponent {
       label: '234',
       sublabel: 'Conv. Totales',
     },
-    props: [
-      {
-        name: 'segments',
-        type: 'readonly ScGaugeSegment[]',
-        default: '[]',
-        description: 'Arcos del anillo (pesos relativos). Vacío → solo track.',
-      },
-      { name: 'size', type: 'ScGaugeSize', default: "'md'", description: 'sm 96 · md 140 · lg 180 px' },
-      {
-        name: 'thickness',
-        type: 'number',
-        default: '12',
-        description: 'Grosor del trazo (unidades del viewBox 0–100).',
-      },
-      { name: 'trackVisible', type: 'boolean', default: 'true', description: 'Pinta el track de fondo.' },
-      {
-        name: 'max',
-        type: 'number | null',
-        default: 'null',
-        description: 'Total contra el que se miden los segmentos; lo que falta hasta él queda como track. Null → llenan el anillo.',
-      },
-      {
-        name: 'startAngle',
-        type: 'number',
-        default: '-90',
-        description: 'Ángulo de inicio en grados (-90 = 12 en punto).',
-      },
-      {
-        name: 'ariaLabel',
-        type: 'string | null',
-        default: 'null',
-        description: 'Etiqueta accesible (decorativo si null).',
-      },
-      { name: 'label', type: 'string | null', default: 'null', description: 'Número grande del centro.' },
-      {
-        name: 'sublabel',
-        type: 'string | null',
-        default: 'null',
-        description: 'Texto pequeño bajo el número.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

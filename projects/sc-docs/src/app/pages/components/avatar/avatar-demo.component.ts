@@ -82,50 +82,6 @@ export class AvatarDemoComponent {
           image: '',
       illustrationBase: 'assets/avatars',
     },
-    props: [
-      { name: 'label', type: 'string | null', default: 'null', description: 'Iniciales (cara Label).' },
-      { name: 'icon', type: 'string | null', default: 'null', description: 'Icono Material (cara Icon).' },
-      { name: 'image', type: 'string | null', default: 'null', description: 'URL de la foto (cara Image).' },
-      {
-        name: 'size',
-        type: 'ScAvatarSize',
-        default: "'normal'",
-        description: 'normal (28) · large (42) · xlarge (56)',
-      },
-      { name: 'shape', type: 'ScAvatarShape', default: "'circle'", description: 'circle · square' },
-      { name: 'ariaLabel', type: 'string | null', default: 'null' },
-      {
-        name: 'badge',
-        type: 'string | number | null',
-        default: 'null',
-        description: 'Badge superpuesto. null = sin badge.',
-      },
-      {
-        name: 'badgeVariant',
-        type: 'ScSeverity',
-        default: "'danger'",
-        description: 'Severidad del badge.',
-      },
-      {
-        name: 'illustrationName',
-        type: 'string | null',
-        default: 'null',
-        description: 'Nombre para el fallback de ilustración (§4.2).',
-      },
-      {
-        name: 'illustrationPool',
-        type: 'AvatarIllustrationPool',
-        default: "'illustrated'",
-        description: 'illustrated · abstract',
-      },
-      {
-        name: 'illustrationBase',
-        type: 'string',
-        default: "'assets/avatars'",
-        description: 'Base de los assets de ilustración.',
-      },
-      { name: 'imageError', type: 'EventEmitter<unknown>', description: 'Output al fallar la imagen.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

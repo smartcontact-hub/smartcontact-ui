@@ -76,30 +76,6 @@ export class ImpactPreviewDialogDemoComponent {
       confirmLabel: '',
       cancelLabel: '',
     },
-    props: [
-      { name: 'visible', type: 'boolean', description: 'Visibilidad (requerido).' },
-      {
-        name: 'mode',
-        type: "'bulkEdit' | 'duplicate'",
-        description: 'Tipo de operación previsualizada (requerido).',
-      },
-      { name: 'title', type: 'string', description: 'Título del diálogo (requerido).' },
-      { name: 'items', type: 'readonly ImpactItem[]', description: 'Items afectados (requerido).' },
-      {
-        name: 'badge',
-        type: 'ImpactBadge | null',
-        default: 'null',
-        description: 'Chip campo/valor actual→nuevo.',
-      },
-      { name: 'confirmLabel', type: 'string | null', default: 'null' },
-      { name: 'cancelLabel', type: 'string | null', default: 'null' },
-      { name: 'cancelled', type: 'EventEmitter<void>' },
-      {
-        name: 'confirm',
-        type: 'EventEmitter<readonly number[]>',
-        description: 'Ids supervivientes en orden original.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

@@ -49,6 +49,7 @@ export type ScInputGroupSize = 'sm' | 'md' | 'lg';
   },
 })
 export class ScInputGroupComponent {
+  /** Talla del grupo. La heredan el campo y sus añadidos, para que no queden desalineados entre sí. */
   readonly size = input<ScInputGroupSize>('md');
   /** Fluid mode — el grupo ocupa todo el ancho disponible (default true). */
   readonly fluid = input(true, { transform: booleanAttribute });

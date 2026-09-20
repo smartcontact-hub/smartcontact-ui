@@ -34,6 +34,7 @@ let toggleIdCounter = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScToggleSwitchComponent {
+  /** Si el interruptor está encendido. */
   readonly checked = input(false, { transform: booleanAttribute });
   readonly disabled = input(false, { transform: booleanAttribute });
   /** Bloquea la interacción sin pintar el estado disabled (del catálogo de desarrollo). */
@@ -49,6 +50,7 @@ export class ScToggleSwitchComponent {
    */
   readonly inputId = input<string | null>(null);
 
+  /** El usuario lo ha cambiado. Junto con `checked` permite el enlace de dos sentidos `[(checked)]`. */
   readonly checkedChange = output<boolean>();
   /** Evento nativo de PrimeNG (`onChange`) expuesto para casos avanzados
    * (paridad con el catálogo de desarrollo). */

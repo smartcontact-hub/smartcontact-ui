@@ -17,6 +17,7 @@ type PrimeMessageSize = 'small' | 'large' | undefined;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScMessageComponent {
+    /** El texto del aviso. */
     readonly text = input<string | null>(null);
 
     readonly severity = input<ScSeverity>('info');
@@ -29,6 +30,7 @@ export class ScMessageComponent {
 
     readonly variant = input<'simple' | 'outlined' | 'text'>('simple');
 
+    /** El usuario ha cerrado el aviso. */
     readonly closed = output<unknown>();
 
     protected readonly messageSeverity = computed<PrimeMessageSeverity>(() => {

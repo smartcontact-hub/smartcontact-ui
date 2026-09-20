@@ -30,7 +30,9 @@ import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScSectionCardComponent {
+  /** Clave de traducción del título de la tarjeta. */
   readonly titleKey = input.required<string>();
+  /** Clave de traducción de la aclaración bajo el título. */
   readonly hintKey = input<string | null>(null);
   /** Anchor id que usa `sc-form-section-nav` para scroll-spy / salto a la sección. */
   readonly anchorId = input<string | null>(null);

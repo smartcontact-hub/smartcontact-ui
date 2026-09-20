@@ -27,7 +27,9 @@ import { ScButtonComponent } from '../button/sc-button.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScEmptyStateComponent {
+  /** Icono del estado vacío. Decorativo: lo que explica qué pasa es el texto. */
   readonly icon = input.required<string>();
+  /** Clave de traducción del título. */
   readonly titleKey = input.required<string>();
   /** Opcional: un vacío que se explica con el título no necesita una segunda frase. */
   readonly bodyKey = input<string>('');

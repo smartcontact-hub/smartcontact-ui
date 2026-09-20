@@ -87,8 +87,10 @@ export class ScDrawerComponent {
         return Object.keys(style).length > 0 ? style : undefined;
     });
 
+    /** El panel lateral ha terminado de abrirse. */
     readonly shown = output<unknown>();
 
+    /** Ha terminado de cerrarse. Es el momento seguro para liberar lo que tuviera dentro. */
     readonly hidden = output<unknown>();
 
     constructor() {

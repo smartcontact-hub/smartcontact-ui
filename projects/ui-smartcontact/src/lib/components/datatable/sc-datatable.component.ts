@@ -98,7 +98,12 @@ export interface ScDatatableSortEvent {
   },
 })
 export class ScDatatableComponent<T = unknown> {
+  /** Las filas a pintar. */
   readonly value = input<readonly T[]>([]);
+  /**
+   * Definición de las columnas: qué campo muestra cada una, cómo se titula y cómo se ordena. Es el
+   * modelo que usan las 16 tablas de hoy.
+   */
   readonly columns = input<readonly ScColumnDef<T>[]>([]);
   readonly dataKey = input<string | undefined>(undefined);
 
@@ -123,6 +128,7 @@ export class ScDatatableComponent<T = unknown> {
 
   /** Orden inicial (client-side; p-table reordena `value`). */
   readonly sortField = input<string | undefined>(undefined);
+  /** Sentido de la ordenación inicial: `1` ascendente, `-1` descendente. */
   readonly sortOrder = input<number>(1);
 
   readonly size = input<ScComponentSize>('md');
@@ -281,9 +287,16 @@ export class ScDatatableComponent<T = unknown> {
   protected readonly userPaginatorleft = contentChild<TemplateRef<unknown>>('paginatorleft');
   protected readonly userPaginatorright = contentChild<TemplateRef<unknown>>('paginatorright');
 
+  /** El usuario ha cambiado la ordenación. */
   readonly sortChange = output<ScDatatableSortEvent>();
+  /** El usuario ha cambiado de página. */
   readonly page = output<TablePageEvent>();
+  /**
+   * La tabla pide datos al servidor. Solo se emite en modo `lazy`, y es donde el consumidor
+   * engancha su consulta.
+   */
   readonly lazyLoad = output<TableLazyLoadEvent>();
+  /** Han cambiado los filtros de la tabla. */
   readonly filterChange = output<TableFilterEvent>();
 
   /**

@@ -181,6 +181,34 @@ test('tipografiaSuelta cuenta las reglas que declaran `font-size`, y solo esas',
   assert.equal(tipografiaSuelta(scss), 2, '.a y .c__x declaran tamaño; .b y .c--y no');
 });
 
+/*
+ * EL CASO QUE FALTABA, y por el que el punto ciego duró tanto: la fixture de arriba es entera de
+ * clases sueltas y BEM — las tres formas que `componer()` acepta. Con el conteo viejo, que iba
+ * por `aplanar()`, este bloque contaba **0 de 5**: ni un selector de elemento, ni un
+ * descendiente, ni lo que va dentro de un `@media`. En `sc-docs` eso escondía 47 reglas de 102.
+ *
+ * Es el caso rojo de LEARNINGS #2: con la implementación vieja esta aserción falla.
+ */
+test('tipografiaSuelta ve los selectores de ELEMENTO, los descendientes y el @media', () => {
+  const scss = `
+    code { font-size: 0.92em; }
+    html { font-size: 100%; }
+    .sb-snippet pre { font-size: var(--sc-font-size-100); }
+    .demo-main h1 { font-size: var(--sc-font-size-650) !important; }
+    @media (width <= 40rem) { .x { font-size: 11px; } }
+    .y { color: red; }
+  `;
+  assert.equal(tipografiaSuelta(scss), 5, 'las cinco declaran tamaño; .y no');
+});
+
+test('tipografiaSuelta no cuenta lo que está COMENTADO', () => {
+  const scss = `
+    /* code { font-size: 0.92em; } */
+    .a { font-size: 12px; } // font-size: 99px;
+  `;
+  assert.equal(tipografiaSuelta(scss), 1, 'solo la de .a es código vivo');
+});
+
 test('el trinquete enrojece por encima del tope — el fallo puesto', () => {
   assert.match(excesoSuelto(TIPOGRAFIA_SUELTA_MAX + 1, TIPOGRAFIA_SUELTA_MAX) ?? '', /tope es/);
 });

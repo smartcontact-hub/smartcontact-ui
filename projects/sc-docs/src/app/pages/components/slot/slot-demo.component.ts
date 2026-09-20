@@ -30,11 +30,6 @@ export class SlotDemoComponent {
       { name: 'hintKey', control: { kind: 'text' }, description: 'Pista bajo la etiqueta' },
     ],
     defaultArgs: { titleKey: 'Nombre', icon: '', hintKey: '' },
-    props: [
-      { name: 'titleKey', type: 'string', description: 'Etiqueta de la fila (required).' },
-      { name: 'icon', type: 'string | null', default: 'null', description: 'Icono Material opcional.' },
-      { name: 'hintKey', type: 'string | null', default: 'null', description: 'Pista bajo la etiqueta.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

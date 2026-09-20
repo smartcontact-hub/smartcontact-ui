@@ -20,10 +20,18 @@ import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScSubsectionComponent {
+  /**
+   * Clave de traducción del título. Clave, no texto: el componente traduce por dentro y se re-
+   * traduce solo al cambiar de idioma.
+   */
   readonly titleKey = input.required<string>();
+  /** Clave de traducción de la aclaración bajo el título. */
   readonly hintKey = input<string | null>(null);
+  /** Icono junto al título. Decorativo. */
   readonly icon = input<string | null>(null);
+  /** Deja plegar y desplegar la subsección. */
   readonly collapsible = input(false, { transform: booleanAttribute });
+  /** Empieza plegada. Solo tiene efecto con `collapsible`. */
   readonly initiallyCollapsed = input(false, { transform: booleanAttribute });
 
   protected readonly chevronDownIcon = 'expand_more';

@@ -234,3 +234,31 @@ test('Stop: el veredicto del CI manda sobre el enrutado (LEARNINGS #7 primero)',
     delete process.env.SC_CLAUDE_PROJECT_DIR;
   }
 });
+
+// ── El canal MCP · añadido el 2026-09-19 ────────────────────────────────────────────────────
+// Una sesión cloud NO tiene `gh` instalado, y `ci:verdict` lo invoca por dentro (`spawnSync gh
+// ENOENT`). O sea que el único canal que el hook reconocía era IMPOSIBLE de usar ahí, y bloqueaba
+// el cierre de una sesión que sí había leído el CI job a job. Mismo error que tenía
+// `docs:coherence` CHECK D: comprobar el proxy en vez de la condición.
+
+const evMcp = (nombre) =>
+  JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id: 'x', name: nombre, input: {} }] } });
+
+test('comandosBash recoge TAMBIÉN las herramientas MCP de GitHub, en orden con las Bash', () => {
+  // Solo las de GITHUB: lo que este hook pregunta es «¿se pushó?» y «¿se leyó el CI?», y ninguna
+  // otra familia MCP puede contestar a eso. Meterlas todas engordaría la lista sin decir nada.
+  const jsonl = [ev('git push origin main'), evMcp('mcp__github__actions_list'), evMcp('mcp__Claude_Docs__read')].join('\n');
+  assert.deepEqual(comandosBash(jsonl), ['git push origin main', 'mcp__github__actions_list']);
+});
+
+test('ROJO: leer el CI por MCP cuenta como leerlo — si no, una sesión cloud no puede cerrar nunca', () => {
+  assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__actions_list']), false);
+  assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__get_job_logs']), false);
+  assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__get_check_run']), false);
+});
+
+test('y no vale cualquier herramienta de GitHub: leer el CI es leer el CI', () => {
+  assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__add_issue_comment']), true, 'comentar no es leer el CI');
+  assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__create_pull_request']), true, 'abrir el PR tampoco');
+  assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__search_code']), true);
+});

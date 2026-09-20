@@ -174,10 +174,6 @@
 }
 
 /* ---------- código inline ---------- */
-code {
-  font-family: var(--sc-font-family-mono);
-}
-
 p code,
 li code {
   background: var(--sc-bg-subtle);
@@ -591,7 +587,6 @@ summary:focus-visible {
   padding: 0 var(--sc-spacing-0-375);
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: var(--sc-radius-xs);
-  font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-50);
   color: rgba(255, 255, 255, 0.85);
 }

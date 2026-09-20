@@ -75,34 +75,6 @@ export class ChipDemoComponent {
           image: '',
       alt: '',
     },
-    props: [
-      { name: 'label', type: 'string | null', default: 'null' },
-      { name: 'icon', type: 'string | null', default: 'null', description: 'Icono Material.' },
-      { name: 'image', type: 'string | null', default: 'null', description: 'URL de imagen.' },
-      { name: 'alt', type: 'string | null', default: 'null' },
-      { name: 'removable', type: 'boolean', default: 'false' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      {
-        name: 'variant',
-        type: "'default' | 'label'",
-        default: "'default'",
-        description: 'label = etiqueta categórica tintada (§4.1).',
-      },
-      {
-        name: 'labelColor',
-        type: 'LabelColor',
-        default: "'gray'",
-        description: 'gray · red · orange · amber · green · teal · blue · purple',
-      },
-      {
-        name: 'removeAriaLabel',
-        type: 'string',
-        default: "'Remove'",
-        description: 'Aria-label del botón de quitar (variante label).',
-      },
-      { name: 'removed', type: 'EventEmitter<unknown>', description: 'Output al quitar.' },
-      { name: 'imageError', type: 'EventEmitter<unknown>', description: 'Output al fallar la imagen.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

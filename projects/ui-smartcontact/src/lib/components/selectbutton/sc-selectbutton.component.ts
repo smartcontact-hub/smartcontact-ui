@@ -88,6 +88,7 @@ export class ScSelectButtonComponent {
   /** Nombre del grupo cuando no hay rótulo visible. */
   readonly ariaLabel = input<string>();
 
+  /** La opción elegida. */
   readonly value = model<unknown>(undefined);
 
   /** `<ng-template #item let-option let-i="index">` escrito dentro de `<sc-selectbutton>`. */

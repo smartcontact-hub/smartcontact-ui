@@ -55,11 +55,29 @@ export type ScSearchSize = ScFieldSize;
 })
 export class ScSearchComponent {
   // ─── Chrome inputs ─────────────────────────────────────────────────
+  /**
+   * Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no
+   * cambia el comportamiento.
+   */
   readonly size = input<ScFieldSize>('md');
+  /** Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir. */
   readonly placeholder = input<string>('');
+  /** Deshabilita el campo. No se puede enfocar ni editar, y no viaja en el envío del formulario. */
   readonly disabled = input(false, { transform: booleanAttribute });
+  /**
+   * Id del control interno. Si no se pasa se genera uno, así que solo hace falta para atar una
+   * etiqueta externa o un `aria-describedby` de fuera.
+   */
   readonly inputId = input<string>();
+  /**
+   * Atributo `name` del control, para el envío nativo del formulario y para que el navegador sepa
+   * qué autocompletar.
+   */
   readonly name = input<string>();
+  /**
+   * El campo se lleva el foco al aparecer. Úsalo solo cuando buscar sea LA acción de la pantalla:
+   * robar el foco sin motivo desorienta a quien navega con teclado.
+   */
   readonly autoFocus = input(false, { transform: booleanAttribute });
   /** Background "filled" variant (bg slate-50, alineado con sc-inputtext). */
   readonly filled = input(false, { transform: booleanAttribute });
@@ -77,6 +95,7 @@ export class ScSearchComponent {
   readonly clearAriaLabel = input<string>('Clear search');
 
   // ─── Two-way value binding ─────────────────────────────────────────
+  /** El texto buscado. Enlace de dos sentidos: `[(value)]`. */
   readonly value = model<string>('');
 
   // ─── Events ────────────────────────────────────────────────────────

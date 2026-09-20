@@ -3,7 +3,7 @@
   "capturedAt": "2026-09-06",
   "viewport": "1440x900",
   "theme": "light",
-  "dsSelectors": 54,
+  "dsSelectors": 56,
   "screens": [
     {
       "id": "admin-agendas",
@@ -167,6 +167,7 @@
         "sc-delete-entity-dialog",
         "sc-dialog",
         "sc-field-label",
+        "sc-field-msg",
         "sc-form-section-nav",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
@@ -432,6 +433,9 @@
       "admin-labels",
       "admin-usuarios-crear",
       "conversaciones"
+    ],
+    "sc-field-msg": [
+      "admin-usuarios-crear"
     ],
     "sc-form-section-nav": [
       "admin-usuarios-crear",

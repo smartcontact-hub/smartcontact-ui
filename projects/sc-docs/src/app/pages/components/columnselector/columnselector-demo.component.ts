@@ -37,31 +37,6 @@ export class ColumnSelectorDemoComponent {
       'Gestor de columnas sobre popover: visibilidad (checkbox por columna) + reordenado por arrastre (CDK Drag-Drop), persistido en localStorage bajo `storageKey`. Las columnas `locked` quedan visibles y fijas. Emite `(orderedVisibleChange)` en cada cambio.',
     argTypes: [{ name: 'buttonLabel', control: { kind: 'text' } }],
     defaultArgs: { buttonLabel: 'Columnas' },
-    props: [
-      {
-        name: 'columns',
-        type: 'ColumnDef[]',
-        default: '(required)',
-        description: 'key · label · locked? · defaultVisible?',
-      },
-      {
-        name: 'storageKey',
-        type: 'string',
-        default: '(required)',
-        description: 'Clave localStorage; incluye sufijo `_v<N>`.',
-      },
-      { name: 'buttonLabel', type: 'string', default: "'Columnas'", description: 'aria-label del trigger.' },
-      {
-        name: 'orderedVisibleChange',
-        type: 'EventEmitter<readonly string[]>',
-        description: 'Keys visibles en orden.',
-      },
-      {
-        name: 'visibilityChange',
-        type: 'EventEmitter<ReadonlySet<string>>',
-        description: 'Legacy (solo visibilidad).',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

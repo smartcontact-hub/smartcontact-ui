@@ -309,60 +309,6 @@ export class DatatableDemoComponent {
       // Vacío: un ancho mínimo por defecto cambiaría la demo que miden los e2e.
       tableMinWidth: '',
     },
-    props: [
-      { name: 'value', type: 'T[]', default: '[]', description: 'Filas de datos.' },
-      { name: 'columns', type: 'ScColumnDef<T>[]', default: '[]', description: 'Column-defs (field/header/…/cellTemplate).' },
-      { name: 'dataKey', type: 'string', default: '—', description: 'Campo clave único de la fila.' },
-      { name: 'paginator', type: 'boolean', default: 'false' },
-      { name: 'rows', type: 'number', default: '—', description: 'Filas por página.' },
-      { name: 'rowsPerPageOptions', type: 'number[]', default: '—' },
-      { name: 'selectionMode', type: "'single' | 'multiple' | null", default: 'null', description: 'single · multiple · null' },
-      { name: 'selection', type: 'T | T[] | null', default: 'null', description: 'Selección two-way.' },
-      { name: 'sortField', type: 'string', default: '—', description: 'Orden inicial (client-side).' },
-      { name: 'size', type: 'ScComponentSize', default: "'md'", description: 'sm · md · lg' },
-      {
-        name: 'variant',
-        type: 'ScDatatableVariant',
-        default: "'default'",
-        description:
-          'Comportamiento de la tabla. `list` enciende el de TABLA-LISTA que publica el tema, sobre el aspecto de Aura: `table-layout: fixed`, hover solo en filas con `sc-row--clickable`, fila seleccionada marcada y caption vacío oculto. Opt-in a propósito: una tabla que no es una lista de administración se queda en `default`.',
-      },
-      { name: 'stripedRows', type: 'boolean', default: 'false' },
-      { name: 'showGridlines', type: 'boolean', default: 'false' },
-      { name: 'scrollable', type: 'boolean', default: 'false' },
-      {
-        name: 'stickyHeader',
-        type: 'boolean',
-        default: 'false',
-        description:
-          'Cabecera fija al scroll de la PÁGINA (para el scroll dentro de la tabla, `scrollable`). Ningún antepasado hasta el que hace scroll puede llevar `overflow: hidden` o `auto`: usa `clip` para recortar esquinas.',
-      },
-      {
-        name: 'virtualScroll',
-        type: 'boolean',
-        default: 'false',
-        description:
-          'Con `scrollable`: por encima de 100 filas solo pinta las que se ven. Mide sola el alto de fila, así que las filas deben medir igual. Con `scrollHeight="flex"` y sin lista virtual, la tabla se ajusta a sus filas; con ella, llena el alto (DD-95).',
-      },
-      {
-        name: 'tableMinWidth',
-        type: 'string',
-        default: '—',
-        description:
-          'Ancho mínimo de la tabla (`66rem`). Por debajo se desplaza de lado en vez de estrechar columnas y recortar texto; con `scrollable`, dentro de su contenedor. Va por `tableStyle` de `p-table`.',
-      },
-      { name: 'loading', type: 'boolean', default: 'false' },
-      { name: 'lazy', type: 'boolean', default: 'false', description: 'Server-driven (emite `(lazyLoad)`).' },
-      { name: 'totalRecords', type: 'number', default: '—', description: 'Total del servidor (modo lazy).' },
-      { name: 'globalFilterFields', type: 'string[]', default: '—' },
-      { name: 'visibleColumns', type: 'string[]', default: '—', description: 'Columnas visibles por `field`, EN ORDEN. Formato de `sc-column-selector`.' },
-      { name: 'rowStyleClass', type: '(row: T, i: number) => string | undefined', default: '—', description: 'Clases extra por fila.' },
-      { name: 'selectionChange', type: 'EventEmitter<T | T[] | null>' },
-      { name: 'sortChange', type: 'EventEmitter<ScDatatableSortEvent>' },
-      { name: 'lazyLoad', type: 'EventEmitter<TableLazyLoadEvent>' },
-      { name: 'rowClick', type: 'EventEmitter<ScDatatableRowEvent<T>>', description: 'Click en la fila. NO se emite desde la celda de selección.' },
-      { name: 'rowContextMenu', type: 'EventEmitter<ScDatatableRowEvent<T>>', description: 'Click derecho, con el menú nativo ya cancelado.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

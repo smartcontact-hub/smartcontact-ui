@@ -63,30 +63,6 @@ export class MessageDemoComponent {
       icon: '',
       closable: false,
     },
-    props: [
-      { name: 'text', type: 'string | null', default: 'null', description: 'Texto del mensaje.' },
-      {
-        name: 'severity',
-        type: 'ScSeverity',
-        default: "'info'",
-        description: 'info · success · warn · danger · secondary · contrast',
-      },
-      {
-        name: 'variant',
-        type: "'simple' | 'outlined' | 'text'",
-        default: "'simple'",
-        description: 'simple · outlined · text',
-      },
-      { name: 'size', type: 'ScComponentSize', default: "'md'", description: 'sm · md · lg' },
-      {
-        name: 'icon',
-        type: 'string | null',
-        default: 'null',
-        description: 'Icono Material (ligadura) o legacy `pi pi-*`.',
-      },
-      { name: 'closable', type: 'boolean', default: 'false', description: 'Muestra botón de cierre.' },
-      { name: 'closed', type: 'EventEmitter<unknown>', description: 'Output al cerrar.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

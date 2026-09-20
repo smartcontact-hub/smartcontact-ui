@@ -38,18 +38,39 @@ const esPushDeCommits = (cmd) =>
   /\bgit\s+push\b/.test(cmd) && !/--tags\b|refs\/tags|\barchive\//.test(cmd) && !/--delete\b|\s:[A-Za-z]/.test(cmd) && !/--dry-run\b/.test(cmd);
 // `gh pr checks` cuenta igual que `gh run`: es la misma lectura, por el PR en vez de por el run.
 // Faltaba, y bloqueó un cierre en el que el CI SÍ estaba leído (2026-09-10, esta misma sesión).
-const esLecturaCI = (cmd) => /\bci:verdict\b|\bgh run (list|view|watch)\b|\bgh pr checks\b/.test(cmd);
+//
+// ⚠️ Y las herramientas MCP de GitHub cuentan TAMBIÉN, por el mismo motivo y por uno más grave
+// (2026-09-19): en una sesión cloud **`gh` no está instalado**, y `ci:verdict` lo invoca por
+// dentro, así que sale `spawnSync gh ENOENT`. O sea que el único canal que este hook reconocía
+// era imposible de usar ahí, y bloqueaba el cierre de una sesión que SÍ había leído el CI —
+// job a job, por `mcp__github__actions_list`. Es el mismo error que tenía `docs:coherence`
+// CHECK D: comprobar el PROXY (que se teclee un comando concreto) en vez de la CONDICIÓN (que
+// el veredicto se haya leído). Un guardián que no se puede satisfacer enseña a saltárselo.
+const esLecturaCI = (cmd) =>
+  /\bci:verdict\b|\bgh run (list|view|watch)\b|\bgh pr checks\b/.test(cmd) ||
+  /^mcp__github__(actions_list|actions_get|get_job_logs|get_commit|pull_request_read|get_check_run)$/.test(cmd);
 
-/** Comandos Bash del transcript (jsonl), en orden. */
+/**
+ * Los ACTOS del transcript, en orden: el comando de cada Bash y el NOMBRE de cada herramienta
+ * MCP de GitHub.
+ *
+ * Las dos cosas en la misma lista a propósito, porque para lo que se pregunta aquí —¿se pushó?,
+ * ¿se leyó el CI?— son el mismo acto por dos canales. Mirar solo Bash dejaba ciego al canal MCP,
+ * que es el ÚNICO disponible en una sesión cloud (ahí no hay `gh`).
+ */
 export function comandosBash(jsonl) {
   const out = [];
   for (const linea of jsonl.split('\n')) {
-    if (!linea.includes('"tool_use"') || !linea.includes('"Bash"')) continue;
+    if (!linea.includes('"tool_use"')) continue;
     try {
       const ev = JSON.parse(linea);
       const contenido = ev?.message?.content;
       if (!Array.isArray(contenido)) continue;
-      for (const c of contenido) if (c.type === 'tool_use' && c.name === 'Bash' && c.input?.command) out.push(c.input.command);
+      for (const c of contenido) {
+        if (c.type !== 'tool_use') continue;
+        if (c.name === 'Bash' && c.input?.command) out.push(c.input.command);
+        else if (typeof c.name === 'string' && c.name.startsWith('mcp__github__')) out.push(c.name);
+      }
     } catch {
       /* línea no JSON */
     }
@@ -251,7 +272,7 @@ function main() {
     const comandos = comandosBash(jsonl);
     if (necesitaVeredicto(comandos))
       return bloquear(
-        'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, `gh run view --log-failed`) y cuéntale a Rafa el resultado LEÍDO, no el exit del wrapper.',
+        'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, `gh run view --log-failed`). Sin `gh` —una sesión cloud— léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y `list_workflow_jobs` si algo sale rojo). En los dos casos, cuéntale a Rafa el resultado LEÍDO, no el exit del wrapper.',
       );
 
     if (!invocoReflect(jsonl)) return;

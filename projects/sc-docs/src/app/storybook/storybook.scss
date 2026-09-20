@@ -182,7 +182,6 @@
   padding-right: 6rem;
   overflow-x: auto;
   color: rgb(226 232 240 / 1);
-  font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-100);
   line-height: 1.6;
 }
@@ -214,6 +213,24 @@
   td:first-child code {
     color: var(--sc-text-primary);
     font-weight: var(--sc-font-weight-semibold);
+  }
+
+  /* Marca de «obligatorio» y de «esta prop es de PrimeNG». Va en la MISMA celda del nombre
+   * porque es una propiedad del nombre, no una columna más: una columna nueva se lee en todas
+   * las filas aunque esté vacía en casi todas. */
+  &__marca {
+    display: inline-block;
+    margin-left: var(--sc-spacing-0-375);
+    padding: 0 var(--sc-spacing-0-25);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-sm);
+    /* Sin `font-size` propio A PROPÓSITO: hereda el de la tabla. La tipografía de pantalla se
+     * pone por su clase `.sc-text-*`, no con tokens sueltos, y el trinquete de
+     * `audit:text-styles` lo vigila — se estrenó cazando esta misma regla. La marca ya se
+     * distingue por el borde y el color, que es lo que tiene que hacer. */
+    font-weight: var(--sc-font-weight-regular);
+    color: var(--sc-text-secondary);
+    vertical-align: middle;
   }
 }
 
@@ -418,6 +435,5 @@ app-story-anatomy {
 .sb-anatomy pre {
   margin: 0;
   overflow-x: auto;
-  font-family: var(--sc-font-family-mono);
   color: var(--sc-text-default);
 }

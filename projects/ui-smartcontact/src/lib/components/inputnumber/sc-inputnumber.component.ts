@@ -52,22 +52,56 @@ export type ScInputNumberSize = ScFieldSize;
 })
 export class ScInputNumberComponent {
   // ─── Chrome inputs (mirror sc-inputtext) ───────────────────────────────
+  /**
+   * Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no
+   * cambia el comportamiento.
+   */
   readonly size = input<ScFieldSize>('md');
+  /**
+   * Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control,
+   * así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).
+   */
   readonly label = input<string>();
+  /**
+   * Marca el campo como obligatorio: pinta la marca en la etiqueta y lo anuncia con `aria-
+   * required`. No valida por sí solo — de eso se encarga el formulario.
+   */
   readonly required = input(false, { transform: booleanAttribute });
+  /** Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay: nunca se ven los dos a la vez. */
   readonly helperText = input<string>();
+  /**
+   * Mensaje de error. Su sola presencia pone el campo en estado inválido, así que no hace falta
+   * tocar `invalid` además.
+   */
   readonly error = input<string>();
   /** Estado inválido explícito. Se combina con `error` (paridad con sc-inputtext). */
   readonly invalid = input(false, { transform: booleanAttribute });
+  /** Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir. */
   readonly placeholder = input<string>();
+  /** Deshabilita el campo. No se puede enfocar ni editar, y no viaja en el envío del formulario. */
   readonly disabled = input(false, { transform: booleanAttribute });
+  /**
+   * El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se
+   * puede copiar**.
+   */
   readonly readonly = input(false, { transform: booleanAttribute });
+  /**
+   * Id del control interno. Si no se pasa se genera uno, así que solo hace falta para atar una
+   * etiqueta externa o un `aria-describedby` de fuera.
+   */
   readonly inputId = input<string>();
+  /**
+   * Atributo `name` del control, para el envío nativo del formulario y para que el navegador sepa
+   * qué autocompletar.
+   */
   readonly name = input<string>();
 
   // ─── Number-specific ───────────────────────────────────────────────
+  /** Valor mínimo admitido. */
   readonly min = input<number>();
+  /** Valor máximo admitido. */
   readonly max = input<number>();
+  /** Cuánto sube o baja el valor con las flechas del teclado y con los botones. */
   readonly step = input<number>(1);
   /** Unit text after the number (e.g. "s", "min", "%", "agentes"). */
   readonly suffix = input<string>();
@@ -77,7 +111,9 @@ export class ScInputNumberComponent {
   readonly value = model<number | null>(null);
 
   // ─── Outputs (paridad con sc-inputtext) ────────────────────────────
+  /** El campo ha recibido el foco. */
   readonly focused = output<FocusEvent>();
+  /** El campo ha perdido el foco. Es el momento en el que suele validarse. */
   readonly blurred = output<FocusEvent>();
 
   // ─── Derived ───────────────────────────────────────────────────────

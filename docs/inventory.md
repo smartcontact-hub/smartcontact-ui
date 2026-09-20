@@ -13,6 +13,15 @@
 > (lo confirma Rafa). **No editar la tabla a mano** → `node scripts/component-audit.mjs --write`.
 > Manifiesto máquina: `docs/_component-status.json`.
 >
+> **¿Y qué props acepta cada uno?** El CONTRATO completo —cada miembro público con su tipo, su
+> valor por defecto, su descripción, y **de quién es**: `nativo` si PrimeNG la documenta con ese
+> nombre, `nuestro` si la añadimos nosotros— vive en
+> `projects/sc-docs/public/components/_component-api.json`, generado por el mismo comando y
+> cruzado contra la API de la versión de PrimeNG **instalada**. Lleva también las props nativas
+> que NO exponemos (`ocultas`), que es la lista con la que se decide si un wrapper se queda corto.
+> Es lo que hay que consultar antes de escribir un `<sc-*>`: la respuesta es exacta y no se
+> desfasa, porque `audit:components` la regenera y compara byte a byte.
+>
 > **¿Dónde se usa cada componente?** La galería **Uso real** en `sc-docs` (ruta `/uso`) muestra las
 > pantallas REALES del Supervisor donde aparece cada componente — capturas del DOM renderizado,
 > auto-generadas por `npm run usage:capture` (no se desfasan). Manifiesto:
@@ -25,11 +34,12 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**54 componentes** · 17 custom · 11 standard · 26 extended · 43 usados en Supervisor.
+**56 componentes** · 18 custom · 12 standard · 26 extended · 43 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
 | `sc-avatar` | EXTENDED | primeng/avatar, primeng/overlaybadge | 11 inputs | — | ✓ | — |
+| `sc-avatargroup` | STANDARD | primeng/avatargroup | 0 inputs | — | — | — |
 | `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 6 |
 | `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
@@ -51,6 +61,7 @@
 | `sc-drawer` | EXTENDED | primeng/drawer | 10 inputs | — | ✓ | 5 |
 | `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 14 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
+| `sc-field-msg` | CUSTOM | — | 2 inputs | — | — | — |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
 | `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 6 |
 | `sc-gauge` | CUSTOM | — | 9 inputs | — | ✓ | 1 |

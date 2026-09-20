@@ -14,8 +14,10 @@ type PrimeBadgeSize = 'small' | 'large' | 'xlarge' | undefined;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScBadgeComponent {
+    /** Lo que se pinta dentro: normalmente un número o un rótulo muy corto. */
     readonly label = input<string | number>('');
 
+    /** Color del distintivo, según lo que signifique. */
     readonly variant = input<ScBadgeVariant>('primary');
 
     readonly size = input<ScBadgeSize>('md');

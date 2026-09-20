@@ -68,38 +68,6 @@ export class DrawerDemoComponent {
       width: '',
       topOffset: '',
     },
-    props: [
-      { name: 'visible', type: 'boolean', default: 'false', description: '`[visible]` + `(visibleChange)`.' },
-      { name: 'header', type: 'string | null', default: 'null' },
-      {
-        name: 'position',
-        type: 'ScOverlayPosition',
-        default: "'left'",
-        description: 'left · right · top · bottom',
-      },
-      { name: 'modal', type: 'boolean', default: 'true' },
-      {
-        name: 'dismissible',
-        type: 'boolean',
-        default: 'true',
-        description: 'Cierra al pulsar la máscara.',
-      },
-      { name: 'closeOnEscape', type: 'boolean', default: 'true' },
-      { name: 'showCloseIcon', type: 'boolean', default: 'true' },
-      { name: 'fullScreen', type: 'boolean', default: 'false' },
-      {
-        name: 'width',
-        type: 'string | null',
-        default: 'null',
-        description: 'Ancho en `left`/`right` (p. ej. `32rem`). Sin él, el de PrimeNG (20rem).',
-      },
-      {
-        name: 'topOffset',
-        type: 'string | null',
-        default: 'null',
-        description: 'Distancia desde arriba en `left`/`right` (p. ej. la barra de la app, `var(--sc-spacing-4)`), para no taparla. El alto se descuenta solo.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

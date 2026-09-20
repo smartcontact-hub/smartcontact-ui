@@ -38,13 +38,6 @@ export class SubsectionDemoComponent {
       collapsible: false,
       initiallyCollapsed: false,
     },
-    props: [
-      { name: 'titleKey', type: 'string', description: 'Título de la subsección (required).' },
-      { name: 'hintKey', type: 'string | null', default: 'null', description: 'Pista bajo el título.' },
-      { name: 'icon', type: 'string | null', default: 'null', description: 'Icono Material opcional.' },
-      { name: 'collapsible', type: 'boolean', default: 'false', description: 'Permite plegar/desplegar.' },
-      { name: 'initiallyCollapsed', type: 'boolean', default: 'false', description: 'Arranca plegada.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

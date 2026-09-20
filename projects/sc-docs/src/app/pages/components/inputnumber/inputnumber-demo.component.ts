@@ -63,21 +63,6 @@ export class InputNumberDemoComponent {
       readonly: false,
           invalid: false,
     },
-    props: [
-      { name: 'value', type: 'number | null', default: 'null', description: 'Two-way `[(value)]`. `null` = vacío.' },
-      { name: 'label', type: 'string', default: '—' },
-      { name: 'size', type: 'ScInputNumberSize', default: "'md'", description: 'sm · md · lg' },
-      { name: 'placeholder', type: 'string', default: '—' },
-      { name: 'suffix', type: 'string', default: '—', description: 'Unidad tras el número.' },
-      { name: 'helperText', type: 'string', default: '—' },
-      { name: 'error', type: 'string', default: '—', description: 'Texto de error (fuerza inválido).' },
-      { name: 'min', type: 'number', default: '—' },
-      { name: 'max', type: 'number', default: '—' },
-      { name: 'step', type: 'number', default: '1' },
-      { name: 'required', type: 'boolean', default: 'false' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      { name: 'readonly', type: 'boolean', default: 'false' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {
