@@ -15,3 +15,11 @@
     <p data-testid="sc-bulkedit-result">Commit: {{ c.fieldLabel }} → {{ c.valueLabel }}</p>
   }
 </ng-template>
+
+<ng-template #match>
+  <sc-bulk-edit-menu [matchable]="true" [fields]="fields" (match)="onMatch($event)" (commit)="onCommit($event)" />
+
+  @if (lastMatch(); as m) {
+    <p>Seleccionar todos con {{ m.fieldKey }} = {{ m.value }}</p>
+  }
+</ng-template>
