@@ -81,6 +81,46 @@
 
 ---
 
+## DD-115 · 2026-09-20 — El contenido de página se ANCLA a la izquierda: el tope limita la lectura, no empuja al centro
+
+**Contexto** · Llegó la queja de que el índice lateral de las pantallas con rail «colgaba». Medido
+en local con sonda, a 1440 y a 1920, sobre `main`: el sidebar está clavado al borde izquierdo y
+reserva 80px, y `.page__inner` se centraba con `margin: 0 auto`. Entre las dos navegaciones quedaba
+lienzo muerto: **108px a 1440 y 348 a 1920** hasta el índice de `--rail`. Y las pantallas hermanas
+arrancaban en cuatro verticales distintas a 1920: `--rail` en 80, `--list` en 200, `--hub` en 520 y
+`--reading` en 584. La miga de la barra, que `top-bar.component.scss` dice alinear con el título de
+la página, solo casaba por casualidad a 1440.
+
+**Decisión** ·
+
+1. **`.page__inner` va anclado**: `margin: 0 auto` → `margin: 0`. `--rail` pierde su
+   `margin-inline: auto` y `.page__form` su `margin: 0 auto`.
+2. **Los topes NO se tocan** (832 / 960 / 1100 / 1200 / 1600): siguen siendo límite de ancho de
+   LECTURA. Lo que se retira es su uso como empuje al centro.
+3. La regla, en una línea: **se acota lo que se lee; lo que es navegación va pegado.**
+
+**Razón** · Medido después, a 1440 y 1920, las cuatro pantallas arrancan en x=80 y el hueco hasta
+el índice de `--rail` es de 28 (el `padding` del molde) en cualquier ancho. El contenido de `--rail`
+sigue midiendo 920, el `Block` 393:12587 de Figma. `audit:page-anatomy` y las 35 pruebas de molde
+del Supervisor pasan sin tocarlas: miden tope, `padding`, `gap`, rail de 196 y los 920, no el margen.
+
+Las referencias se midieron el mismo día en el navegador. Los ajustes de GitHub sí centran (bloque
+de 1280 a 1440), pero **pueden**: su navegación es horizontal y no hay rail vertical del que
+despegarse. Su vista de código, que sí tiene árbol lateral pegado, no acota el contenido: a 2560 lo
+deja en 2239. Meridian (el agéntico de PrimeNG) centra teniendo rail, pero con tope 1680: no muerde
+hasta ~1760, así que en portátil y en 1920 no se le ve. El centrado de `_page.scss` nació citando
+«patrón de ajustes GitHub/Stripe» y se aplicó a un shell que GitHub no tiene.
+
+**Descartadas** ·
+
+- **Subir el tope de `--rail` a 1680, como Meridian** → tapa el síntoma en las dos pantallas
+  medidas pero lo devuelve por encima de ~1760, y mueve el contenido de 920 a 1400, que es el ancho
+  del `Block` de Figma.
+- **Anclar solo `--rail`**, que es lo que se señaló → a 1920 dejaba las hermanas arrancando en
+  80 / 200 / 520 / 584. Cambiaba un desajuste por otro.
+- **Tocar la miga de la barra** para que case con el título → quedan 53px por el botón de inicio y
+  el divisor que van delante. Es otra decisión; anclar no la empeora.
+
 ## DD-114 · 2026-09-15 — La cabecera del Dashboard se ordena en dos bloques y el modo pared no se queda en negro
 
 **Contexto** · Rafa pidió quitar el fondo gris de la tira de pestañas del Dashboard y ordenar sus botones, y propuso

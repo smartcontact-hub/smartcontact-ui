@@ -38,10 +38,22 @@ const MOD = process.platform === 'darwin' ? 'Meta' : 'Control';
 
 /** Marca la 1ª fila de una tabla de listado (dispara la bulk-action-bar). */
 const selectFirstRow = async (page: Page): Promise<void> => {
-  await page
-    .locator('tbody tr td.table__td-check input[type="checkbox"]')
-    .first()
-    .check({ timeout: 4000 });
+  /* La casilla la pinta el DS: la celda es `.sc-datatable__check` y dentro va un
+   * `p-table-checkbox` cuyo `input` tapa la caja de PrimeNG, así que se pulsa el
+   * componente, no el input (igual que `admin-datatable-pilot.spec.ts`). El selector
+   * anterior buscaba `td.table__td-check`, una clase que ya no existe: la acción
+   * fallaba en silencio desde el renombrado y los estados «selección» y «borrar»
+   * llevaban sin capturarse, con sus PNG viejos fosilizados (visto el 2026-09-20).
+   *
+   * IDEMPOTENTE a propósito: los estados de una pantalla corren SOBRE LA MISMA página,
+   * sin recargar (`usage-capture.spec.ts`, bucle de `states`), así que «borrar» vuelve
+   * a llamar aquí con la fila ya marcada. Un clic a secas la desmarcaría y la barra de
+   * acciones desaparecería. El `.check()` de antes sí lo era; el clic no, así que la
+   * condición lo devuelve. */
+  const casilla = page.locator('tbody tr td.sc-datatable__check p-table-checkbox').first();
+  const marcada = await casilla.locator('p-checkbox').getAttribute('data-p-checked');
+  if (marcada === 'true') return;
+  await casilla.click({ timeout: 4000 });
 };
 
 export const USAGE_SCREENS: readonly UsageScreen[] = [
@@ -56,8 +68,14 @@ export const USAGE_SCREENS: readonly UsageScreen[] = [
         name: 'borrar', // → sc-delete-entity-dialog / sc-dialog
         action: async (page) => {
           await selectFirstRow(page);
-          await page
-            .locator('sc-bulk-action-bar button, sc-bulk-action-bar p-button')
+          /* La barra aparece DESPUÉS de que la selección llegue al store, así que se
+           * espera a que esté pintada antes de buscar su botón. Y se busca dentro de
+           * `.bulk-bar` y solo entre `button`: el selector anterior casaba también el
+           * `p-button` que lo envuelve, con el mismo texto. */
+          const barra = page.locator('sc-bulk-action-bar .bulk-bar');
+          await barra.waitFor({ state: 'visible', timeout: 4000 });
+          await barra
+            .locator('button')
             .filter({ hasText: /elimin|borrar|delete/i })
             .first()
             .click({ timeout: 4000 });
