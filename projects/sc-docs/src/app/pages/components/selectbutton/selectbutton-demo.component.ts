@@ -97,22 +97,6 @@ export class SelectButtonDemoComponent {
       disabled: false,
       invalid: false,
     },
-    props: [
-      { name: 'options', type: 'readonly unknown[]', default: '[]', description: '`string[]` o lista de objetos.' },
-      { name: 'optionLabel', type: 'string', default: "'label'", description: 'Texto visible y nombre accesible de cada opción.' },
-      { name: 'optionValue', type: 'string', description: 'Clave del valor; sin ella se enlaza el objeto.' },
-      { name: 'optionDisabled', type: 'string', description: 'Clave del indicador de opción deshabilitada.' },
-      { name: 'multiple', type: 'boolean', default: 'false', description: 'Varias a la vez: el valor es una lista.' },
-      { name: 'allowEmpty', type: 'boolean', default: 'true', description: 'Pulsar la elegida la deselecciona.' },
-      { name: 'size', type: 'ScFieldSize', default: "'md'", description: 'sm · md · lg' },
-      { name: 'fluid', type: 'boolean', default: 'false', description: 'Todo el ancho, opciones a partes iguales.' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      { name: 'invalid', type: 'boolean', default: 'false' },
-      { name: 'ariaLabelledBy', type: 'string', description: '`id` del rótulo visible del grupo.' },
-      { name: 'ariaLabel', type: 'string', description: 'Nombre del grupo sin rótulo visible.' },
-      { name: 'value', type: 'model<unknown>', description: 'Valor elegido; `[(value)]`.' },
-      { name: '#item', type: 'TemplateRef', description: 'Contenido de cada opción (`let-option`, `let-i="index"`).' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

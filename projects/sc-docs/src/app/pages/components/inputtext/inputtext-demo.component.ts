@@ -79,29 +79,6 @@ export class InputTextDemoComponent {
       disabled: false,
       readonly: false,
     },
-    props: [
-      { name: 'value', type: 'string', default: "''", description: 'Two-way `[(value)]`.' },
-      { name: 'label', type: 'string', default: '—' },
-      { name: 'size', type: 'ScInputSize', default: "'md'", description: 'sm · md · lg' },
-      {
-        name: 'type',
-        type: 'ScInputType',
-        default: "'text'",
-        description: 'text · email · password · tel · url · search',
-      },
-      { name: 'placeholder', type: 'string', default: '—' },
-      { name: 'helperText', type: 'string', default: '—' },
-      { name: 'error', type: 'string', default: '—', description: 'Texto de error (gana a helper).' },
-      { name: 'required', type: 'boolean', default: 'false' },
-      { name: 'invalid', type: 'boolean', default: 'false', description: 'Estado inválido explícito.' },
-      { name: 'filled', type: 'boolean', default: 'false', description: 'Fondo slate-50.' },
-      { name: 'iftaLabel', type: 'boolean', default: 'false', description: 'Label dentro del campo.' },
-      { name: 'fluid', type: 'boolean', default: 'false', description: 'Ancho completo.' },
-      { name: 'disabled', type: 'boolean', default: 'false' },
-      { name: 'readonly', type: 'boolean', default: 'false' },
-      { name: 'focused', type: 'EventEmitter<FocusEvent>' },
-      { name: 'blurred', type: 'EventEmitter<FocusEvent>' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

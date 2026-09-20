@@ -67,12 +67,17 @@ export interface BulkEditMatch {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScBulkEditMenuComponent {
+  /** Qué campos se pueden cambiar en bloque, con el tipo de cada uno. */
   readonly fields = input.required<readonly BulkEditFieldOption[]>();
   /** Retained for source compatibility; no longer rendered. */
   readonly buttonLabel = input<string>('Editar');
   /** Añade «de [valor]» a la frase: elegir un valor pide seleccionar todas las filas que lo tienen (`match`). */
   readonly matchable = input(false, { transform: booleanAttribute });
 
+  /**
+   * El usuario ha confirmado el cambio masivo. Lleva qué campo y con qué valor; **aplicarlo es de
+   * la app**.
+   */
   readonly commit = output<BulkEditCommit>();
   readonly match = output<BulkEditMatch>();
 

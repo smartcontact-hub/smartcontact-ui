@@ -45,6 +45,7 @@ import { SC_STICKY_FORM_HEADER_TRANSLATIONS } from './i18n/sc-sticky-form-header
 export class ScStickyFormHeaderComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
+  /** `create` o `edit`. Cambia los textos de la cabecera y del botón de guardar. */
   readonly mode = input.required<'create' | 'edit'>();
   /** Entity-singular label key (`'users.entity_singular'`). */
   readonly entityKey = input.required<string>();
@@ -64,8 +65,11 @@ export class ScStickyFormHeaderComponent {
    */
   readonly showBack = input(false);
 
+  /** El usuario ha editado el nombre desde la propia cabecera. */
   readonly nameChange = output<string>();
+  /** El usuario ha pulsado guardar. */
   readonly save = output<void>();
+  /** El usuario ha pulsado cancelar. */
   readonly cancelled = output<void>();
 
   protected readonly pencilIcon = 'edit';

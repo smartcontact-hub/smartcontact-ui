@@ -55,16 +55,6 @@ export class BadgeDemoComponent {
       variant: 'primary',
       size: 'md',
     },
-    props: [
-      { name: 'label', type: 'string | number', default: "''", description: 'Contenido del badge.' },
-      {
-        name: 'variant',
-        type: 'ScBadgeVariant',
-        default: "'primary'",
-        description: 'primary · secondary · success · info · warning · danger · contrast',
-      },
-      { name: 'size', type: 'ScBadgeSize', default: "'md'", description: 'sm · md · lg · xl' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

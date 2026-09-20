@@ -41,13 +41,6 @@ export class GroupPopoverDemoComponent {
       'Celda inline con conteo de grupos; lista flotante en hover/focus (máx. 5 + «+N más»). Data-driven vía `[groups]` — no tiene inputs escalares. Pasa el ratón por encima o enfoca la celda.',
     argTypes: [],
     defaultArgs: {},
-    props: [
-      {
-        name: 'groups',
-        type: 'readonly GroupRef[]',
-        description: 'Grupos a listar; { id, name, active } (requerido).',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

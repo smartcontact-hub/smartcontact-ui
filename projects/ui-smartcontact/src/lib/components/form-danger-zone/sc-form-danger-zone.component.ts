@@ -27,11 +27,21 @@ import { SC_FORM_DANGER_ZONE_TRANSLATIONS } from './i18n/sc-form-danger-zone.tra
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScFormDangerZoneComponent {
+  /** Clave de traducción del título de la zona. */
   readonly titleKey = input<string>('sc.formDangerZone.title');
+  /**
+   * Clave de traducción del texto que explica qué pasa si se pulsa. Es obligatorio a propósito: una
+   * acción irreversible sin explicación no debería poder construirse.
+   */
   readonly descriptionKey = input.required<string>();
+  /** Clave de traducción de la etiqueta del botón. */
   readonly actionKey = input<string>('sc.formDangerZone.action');
   readonly disabled = input(false, { transform: booleanAttribute });
 
+  /**
+   * El usuario ha pulsado la acción peligrosa. **No confirma nada por sí mismo**: si hace falta
+   * confirmación, la pone el consumidor.
+   */
   readonly action = output<void>();
 
   protected readonly trashIcon = 'delete';

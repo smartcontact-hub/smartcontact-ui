@@ -58,16 +58,31 @@ export class ScDeleteEntityDialogComponent {
   private readonly messages = inject(MessageService, { optional: true });
   private readonly translate = inject(TranslateService);
 
+  /** Si el diálogo se ve. Lo controla el consumidor: este componente no se abre ni se cierra solo. */
   readonly visible = input.required<boolean>();
+  /**
+   * `single` para borrar un elemento y `bulk` para varios. Cambia el texto y lo que se enseña de la
+   * lista.
+   */
   readonly mode = input.required<'single' | 'bulk'>();
+  /**
+   * Lo que se va a borrar. Se enseña para que el usuario confirme sobre lo concreto y no sobre un
+   * número.
+   */
   readonly items = input.required<readonly DeletableEntity[]>();
+  /**
+   * Cómo se llama una de estas cosas («usuario»), para que el mensaje hable el idioma de la
+   * pantalla.
+   */
   readonly entitySingular = input.required<string>();
+  /** Cómo se llaman en plural («usuarios»), para el mismo mensaje cuando son varias. */
   readonly entityPlural = input.required<string>();
   /** Optional extra paragraph shown under the single-mode body. */
   readonly singleDetailMessage = input<string | null>(null);
   /** Optional footer paragraph for bulk mode. */
   readonly bulkFooterMessage = input<string | null>(null);
 
+  /** El usuario se ha echado atrás. No se borra nada. */
   readonly cancelled = output<void>();
   /** Emits the ids that survived chip pruning (bulk) or `null` for single. */
   readonly confirm = output<readonly number[] | null>();

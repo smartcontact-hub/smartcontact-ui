@@ -62,9 +62,16 @@ let modalIdCounter = 0;
 export class ScDialogComponent {
   /** Two-way: `[(visible)]` o `[visible]` + `(visibleChange)`. */
   readonly visible = model<boolean>(false);
+  /**
+   * Título del diálogo. Es obligatorio porque es su nombre accesible: un diálogo sin nombre no se
+   * anuncia.
+   */
   readonly title = input.required<string>();
+  /** Línea secundaria bajo el título, para el contexto que no cabe en él. */
   readonly subtitle = input<string | null>(null);
+  /** Icono junto al título. Decorativo: el significado tiene que estar en el texto. */
   readonly icon = input<string | null>(null);
+  /** Ancho del diálogo. Acepta cualquier medida CSS. */
   readonly width = input<string>('440px');
   readonly closable = input(true);
   /** When false, the footer slot stays empty; consumers can omit `<div modal-actions>`. */
@@ -94,7 +101,9 @@ export class ScDialogComponent {
 
   /** Emitido en cualquier cierre (X, ESC, máscara). Alias semántico de `visible=false`. */
   readonly cancelled = output<void>();
+  /** El diálogo ha terminado de abrirse, con su animación incluida. */
   readonly shown = output<void>();
+  /** El diálogo ha terminado de cerrarse. Es el momento seguro para liberar lo que tuviera dentro. */
   readonly hidden = output<void>();
 
   protected readonly closeIcon = 'close';

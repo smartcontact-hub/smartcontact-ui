@@ -35,7 +35,9 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 export class ScFieldLabelComponent {
   /** Nombre del bloque BEM del componente anfitrión, p.ej. `sc-inputtext`. */
   readonly block = input.required<string>();
+  /** El texto de la etiqueta. */
   readonly text = input.required<string>();
+  /** Pinta la marca de campo obligatorio. */
   readonly required = input(false);
   /** `id` del control al que apunta la etiqueta. */
   readonly for = input<string>();

@@ -41,12 +41,16 @@ import { SC_INLINE_RENAME_CELL_TRANSLATIONS } from './i18n/sc-inline-rename-cell
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScInlineRenameCellComponent implements AfterViewInit {
+  /** El texto con el que empieza la edición. */
   readonly initialValue = input.required<string>();
+  /** Texto guía mientras el campo está vacío. */
   readonly placeholder = input<string>('');
   /** aria-label del input. Si se omite, cae a `sc.inlineRenameCell.defaultAriaLabel`. */
   readonly ariaLabel = input<string>('');
 
+  /** El usuario ha confirmado el nombre nuevo. Lleva el texto final. */
   readonly commit = output<string>();
+  /** El usuario ha cancelado; el nombre se queda como estaba. */
   readonly cancelled = output<void>();
 
   protected readonly checkIcon = 'check';

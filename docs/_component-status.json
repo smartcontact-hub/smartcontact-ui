@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "54 componentes · 17 custom · 11 standard · 26 extended · 43 usados en Supervisor.",
+  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 43 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -26,7 +26,24 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "avatargroup",
+      "selector": "sc-avatargroup",
+      "provenance": "WRAPPER",
+      "kind": "STANDARD",
+      "primengBase": "primeng/avatargroup",
+      "cva": false,
+      "inputs": 0,
+      "api": [],
+      "nested": [],
+      "hasDemo": false,
+      "usedInSupervisor": 0,
+      "cuando": "Para apilar varios avatares cuando importa «quiénes» y no «cuántos» exactamente.",
+      "sobreObsoleto": []
     },
     {
       "name": "badge",
@@ -43,7 +60,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 6
+      "usedInSupervisor": 6,
+      "cuando": "Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.",
+      "sobreObsoleto": []
     },
     {
       "name": "breadcrumb",
@@ -62,7 +81,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 1,
+      "cuando": "Para decir dónde estás dentro de una jerarquía y poder subir. No es navegación principal.",
+      "sobreObsoleto": []
     },
     {
       "name": "bulk-action-bar",
@@ -77,7 +98,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 4,
+      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
+      "sobreObsoleto": []
     },
     {
       "name": "bulk-edit-menu",
@@ -86,18 +109,23 @@
       "kind": "STANDARD",
       "primengBase": "primeng/button",
       "cva": false,
-      "inputs": 2,
+      "inputs": 1,
       "api": [
         "buttonLabel",
-        "commit",
-        "match",
-        "matchable"
+        "commit"
       ],
       "nested": [
         "sc-select"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 3,
+      "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
+      "sobreObsoleto": [
+        {
+          "sel": "p-button",
+          "motivo": "Use the `[pButton]` directive instead."
+        }
+      ]
     },
     {
       "name": "bulk-transcription-modal",
@@ -132,7 +160,9 @@
         "sc-toggleswitch"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Solo para el procesado masivo de conversaciones. Es específico del dominio y hoy solo lo usa la demo.",
+      "sobreObsoleto": []
     },
     {
       "name": "button",
@@ -162,7 +192,14 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 138
+      "usedInSupervisor": 123,
+      "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
+      "sobreObsoleto": [
+        {
+          "sel": "p-button",
+          "motivo": "Use the `[pButton]` directive instead."
+        }
+      ]
     },
     {
       "name": "card",
@@ -179,7 +216,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Para agrupar contenido suelto con una superficie propia. Si el grupo tiene título y pertenece a un formulario, es `sc-section-card`.",
+      "sobreObsoleto": []
     },
     {
       "name": "checkbox",
@@ -200,7 +239,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 28
+      "usedInSupervisor": 28,
+      "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
+      "sobreObsoleto": []
     },
     {
       "name": "chip",
@@ -225,7 +266,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5
+      "usedInSupervisor": 5,
+      "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
+      "sobreObsoleto": []
     },
     {
       "name": "color-dot-picker",
@@ -240,7 +283,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 3,
+      "cuando": "Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.",
+      "sobreObsoleto": []
     },
     {
       "name": "column-selector",
@@ -257,7 +302,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 1,
+      "cuando": "Para que el usuario decida qué columnas ve en una tabla.",
+      "sobreObsoleto": []
     },
     {
       "name": "command-palette",
@@ -270,7 +317,9 @@
       "api": [],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 4,
+      "cuando": "Para llegar a cualquier sitio o acción escribiendo, sin recorrer menús. Es atajo, nunca el único camino.",
+      "sobreObsoleto": []
     },
     {
       "name": "confirmdialog",
@@ -283,7 +332,9 @@
       "api": [],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 1,
+      "cuando": "Para confirmar una acción normal. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.",
+      "sobreObsoleto": []
     },
     {
       "name": "datatable",
@@ -334,7 +385,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 13
+      "usedInSupervisor": 13,
+      "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
+      "sobreObsoleto": []
     },
     {
       "name": "datepicker",
@@ -380,7 +433,9 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 1,
+      "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
+      "sobreObsoleto": []
     },
     {
       "name": "delete-entity-dialog",
@@ -400,7 +455,14 @@
         "sc-dialog"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 9
+      "usedInSupervisor": 9,
+      "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
+      "sobreObsoleto": [
+        {
+          "sel": "p-button",
+          "motivo": "Use the `[pButton]` directive instead."
+        }
+      ]
     },
     {
       "name": "dialog",
@@ -432,7 +494,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 11
+      "usedInSupervisor": 10,
+      "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
+      "sobreObsoleto": []
     },
     {
       "name": "divider",
@@ -449,7 +513,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 31
+      "usedInSupervisor": 25,
+      "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
+      "sobreObsoleto": []
     },
     {
       "name": "drawer",
@@ -458,7 +524,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/drawer",
       "cva": false,
-      "inputs": 10,
+      "inputs": 8,
       "api": [
         "closeOnEscape",
         "dismissible",
@@ -469,14 +535,14 @@
         "position",
         "showCloseIcon",
         "shown",
-        "topOffset",
         "visible",
-        "visibleChange",
-        "width"
+        "visibleChange"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5
+      "usedInSupervisor": 1,
+      "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
+      "sobreObsoleto": []
     },
     {
       "name": "empty-state",
@@ -497,10 +563,12 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 14
+      "usedInSupervisor": 14,
+      "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
+      "sobreObsoleto": []
     },
     {
-      "name": "field",
+      "name": "field-label",
       "selector": "sc-field-label",
       "provenance": "CUSTOM",
       "kind": "CUSTOM",
@@ -514,7 +582,27 @@
       ],
       "nested": [],
       "hasDemo": false,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la etiqueta. En una pantalla se usa el campo entero (`sc-inputtext`, `sc-select`…), nunca esto suelto.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "field-msg",
+      "selector": "sc-field-msg",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 2,
+      "api": [
+        "isError",
+        "msgId"
+      ],
+      "nested": [],
+      "hasDemo": false,
+      "usedInSupervisor": 0,
+      "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la ayuda y del error. En una pantalla se usa el campo entero, nunca esto suelto.",
+      "sobreObsoleto": []
     },
     {
       "name": "form-danger-zone",
@@ -532,7 +620,14 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
+      "sobreObsoleto": [
+        {
+          "sel": "p-button",
+          "motivo": "Use the `[pButton]` directive instead."
+        }
+      ]
     },
     {
       "name": "form-section-nav",
@@ -551,7 +646,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 6
+      "usedInSupervisor": 6,
+      "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
+      "sobreObsoleto": []
     },
     {
       "name": "gauge",
@@ -574,7 +671,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 1,
+      "cuando": "Para una magnitud contra su máximo, de un vistazo. Para progreso de una tarea, `sc-progressbar`.",
+      "sobreObsoleto": []
     },
     {
       "name": "group-popover",
@@ -589,7 +688,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 3,
+      "cuando": "Para asomar los grupos de algo sin salir de la fila.",
+      "sobreObsoleto": []
     },
     {
       "name": "impact-preview-dialog",
@@ -610,7 +711,14 @@
         "sc-dialog"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 3,
+      "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
+      "sobreObsoleto": [
+        {
+          "sel": "p-button",
+          "motivo": "Use the `[pButton]` directive instead."
+        }
+      ]
     },
     {
       "name": "inline-rename-cell",
@@ -628,7 +736,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 4,
+      "cuando": "Para renombrar en el sitio, sin abrir un formulario.",
+      "sobreObsoleto": []
     },
     {
       "name": "inputgroup",
@@ -644,7 +754,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 1,
+      "cuando": "Para un campo con algo pegado (icono, botón, prefijo). Mantiene alineadas las dos piezas.",
+      "sobreObsoleto": []
     },
     {
       "name": "inputnumber",
@@ -680,7 +792,9 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 23
+      "usedInSupervisor": 11,
+      "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
+      "sobreObsoleto": []
     },
     {
       "name": "inputtext",
@@ -720,7 +834,9 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 31
+      "usedInSupervisor": 29,
+      "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
+      "sobreObsoleto": []
     },
     {
       "name": "keyboard-shortcuts",
@@ -735,7 +851,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 2,
+      "cuando": "Para enseñar los atajos disponibles en la pantalla.",
+      "sobreObsoleto": []
     },
     {
       "name": "message",
@@ -756,7 +874,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 3,
+      "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
+      "sobreObsoleto": []
     },
     {
       "name": "multiselect",
@@ -805,7 +925,14 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 21
+      "usedInSupervisor": 15,
+      "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
+      "sobreObsoleto": [
+        {
+          "sel": "p-multiselect",
+          "motivo": "Use Select component with `multiple` property instead."
+        }
+      ]
     },
     {
       "name": "option-card",
@@ -824,7 +951,9 @@
       ],
       "nested": [],
       "hasDemo": false,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 1,
+      "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
+      "sobreObsoleto": []
     },
     {
       "name": "panel",
@@ -847,7 +976,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 1,
+      "cuando": "Para un bloque con cabecera propia, plegable y con acciones.",
+      "sobreObsoleto": []
     },
     {
       "name": "password",
@@ -886,7 +1017,14 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 1,
+      "cuando": "Para una contraseña, con su ojo para mostrarla.",
+      "sobreObsoleto": [
+        {
+          "sel": "p-password",
+          "motivo": "since v22, use pInputPassword directive instead."
+        }
+      ]
     },
     {
       "name": "permission-matrix",
@@ -909,7 +1047,9 @@
         "sc-checkbox"
       ],
       "hasDemo": false,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 2,
+      "cuando": "Para dar permisos cruzando quién con qué, marcando por columna entera.",
+      "sobreObsoleto": []
     },
     {
       "name": "photo-upload",
@@ -930,7 +1070,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 2,
+      "cuando": "Para la foto de una persona, con ilustración de reserva.",
+      "sobreObsoleto": []
     },
     {
       "name": "progressbar",
@@ -948,7 +1090,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Para el avance de una tarea de la que SÍ se sabe cuánto queda. Si no se sabe, `sc-progressspinner`.",
+      "sobreObsoleto": []
     },
     {
       "name": "progressspinner",
@@ -966,7 +1110,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Para una espera de duración desconocida. Si la espera es de contenido que va a aparecer, `sc-skeleton` desconcierta menos.",
+      "sobreObsoleto": []
     },
     {
       "name": "radiobutton",
@@ -989,7 +1135,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 2,
+      "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
+      "sobreObsoleto": []
     },
     {
       "name": "search",
@@ -1016,7 +1164,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 8
+      "usedInSupervisor": 8,
+      "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
+      "sobreObsoleto": []
     },
     {
       "name": "section-card",
@@ -1025,7 +1175,7 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 9,
+      "inputs": 8,
       "api": [
         "anchorId",
         "collapsible",
@@ -1034,12 +1184,13 @@
         "hintKey",
         "icon",
         "initiallyCollapsed",
-        "showHeader",
         "surface"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 23
+      "usedInSupervisor": 20,
+      "cuando": "Para una sección con título dentro de un formulario o una ficha.",
+      "sobreObsoleto": []
     },
     {
       "name": "select",
@@ -1048,13 +1199,12 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": false,
-      "inputs": 28,
+      "inputs": 27,
       "api": [
         "appendTo",
         "ariaLabelledBy",
         "blurred",
         "disabled",
-        "editable",
         "emptyFilterMessage",
         "emptyMessage",
         "error",
@@ -1087,7 +1237,9 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 39
+      "usedInSupervisor": 32,
+      "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
+      "sobreObsoleto": []
     },
     {
       "name": "selectbutton",
@@ -1115,7 +1267,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 10
+      "usedInSupervisor": 4,
+      "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
+      "sobreObsoleto": []
     },
     {
       "name": "skeleton",
@@ -1135,7 +1289,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.",
+      "sobreObsoleto": []
     },
     {
       "name": "slot",
@@ -1151,7 +1307,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Para una ranura con título dentro de una composición.",
+      "sobreObsoleto": []
     },
     {
       "name": "sticky-form-header",
@@ -1172,7 +1330,14 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 3,
+      "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
+      "sobreObsoleto": [
+        {
+          "sel": "p-button",
+          "motivo": "Use the `[pButton]` directive instead."
+        }
+      ]
     },
     {
       "name": "subsection",
@@ -1190,7 +1355,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
+      "sobreObsoleto": []
     },
     {
       "name": "tag",
@@ -1210,7 +1377,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 21
+      "usedInSupervisor": 23,
+      "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
+      "sobreObsoleto": []
     },
     {
       "name": "textarea",
@@ -1239,7 +1408,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 6
+      "usedInSupervisor": 5,
+      "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
+      "sobreObsoleto": []
     },
     {
       "name": "toast",
@@ -1260,7 +1431,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 0,
+      "cuando": "Para el resultado de una acción, que se va solo. Si el aviso pertenece a la página y debe quedarse, `sc-message`.",
+      "sobreObsoleto": []
     },
     {
       "name": "toggleswitch",
@@ -1283,7 +1456,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 26
+      "usedInSupervisor": 22,
+      "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
+      "sobreObsoleto": []
     }
   ]
 }

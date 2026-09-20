@@ -45,27 +45,6 @@ export class CardDemoComponent {
       subheader: 'Subtítulo',
       icon: '',
     },
-    props: [
-      {
-        name: 'header',
-        type: 'string | null',
-        default: 'null',
-        description: 'Título de la cabecera. Si es null, no se pinta cabecera.',
-      },
-      {
-        name: 'subheader',
-        type: 'string | null',
-        default: 'null',
-        description: 'Subtítulo bajo el título.',
-      },
-      {
-        name: 'icon',
-        type: 'string | null',
-        default: 'null',
-        description:
-          'Icono de cabecera opcional (nombre Material Symbols, p. ej. "auto_awesome"). Null = sin icono.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

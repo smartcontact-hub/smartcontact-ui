@@ -1,0 +1,146 @@
+# Regenera las CAPTURAS de regresión de `sc-docs` en un runner de Ubuntu, y abre un PR con ellas.
+#
+# ─── Por qué existe ───────────────────────────────────────────────────────────────────────────
+#
+# Las 38 baselines de `e2e/components.spec.ts` eran `*-darwin.png`: se tomaron en el Mac de Rafa y
+# **fallaban las 38 en cualquier otra máquina**. Consecuencia medida: `ci.yml` las apaga a
+# propósito (`SC_SKIP_VISUAL_BASELINES`) y la suite solo corría si alguien se acordaba, en su
+# portátil. Una alarma que solo suena en una máquina no es una alarma.
+#
+# La causa de fondo era la fuente: el código iba en una monoespaciada DEL SISTEMA, así que la
+# dibujaba el ordenador de quien mirara (DD-60 lo midió: 37 de las 38 diferencias caían en la
+# banda de 14 px del nombre del componente). Desde que la mono se autohospeda, esa causa ya no
+# existe y las capturas se pueden tomar donde se van a verificar.
+#
+# Y eso es lo que hace este workflow: las toma **en el mismo sitio que después las comprueba**,
+# el runner de GitHub. Nadie necesita su ordenador — ni Rafa, ni una sesión en la nube.
+#
+# ─── Cómo se usa ──────────────────────────────────────────────────────────────────────────────
+#
+# A mano, desde la pestaña Actions (`workflow_dispatch`), como `deploy-record`, `tema-zip` y
+# `publish-packages`. GitHub solo deja lanzar un `workflow_dispatch` cuyo fichero esté en la rama
+# por defecto: hasta que este PR no entre en `main`, el botón no aparece.
+#
+# Deja las `-linux.png` en la rama `visual-baselines-sync` y abre/actualiza su PR. **No empuja a
+# `main` ni se auto-fusiona, y es deliberado**: 38 imágenes nuevas son justo lo que un humano
+# tiene que MIRAR, y GitHub enseña el diff de imagen en la revisión. Que las genere un robot no
+# quiere decir que entren sin que nadie las vea.
+#
+# ─── Lo que queda después, y no se hace aquí ──────────────────────────────────────────────────
+#
+# Cuando las `-linux.png` estén en `main` y casen, toca quitar `SC_SKIP_VISUAL_BASELINES` de
+# `ci.yml` y de `tokens-sync.yml`, y borrar `scripts/__tests__/workflow-visual-baselines.test.mjs`,
+# que hoy EXIGE que estén apagadas. No se hace en este commit porque hasta que las imágenes no
+# existan, quitarlo pondría el CI en rojo — y un cambio que rompe el CI para arreglarlo «luego»
+# es exactamente lo que este repo evita.
+name: visual-baselines
+
+on:
+  workflow_dispatch:
+    inputs:
+      motivo:
+        description: 'Por qué se regeneran (queda en el commit y en el PR)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# Dos regeneraciones a la vez se pisarían la rama. La segunda espera, no se cancela: una
+# regeneración a medias dejaría la rama con parte de las capturas viejas y parte nuevas.
+concurrency:
+  group: visual-baselines
+  cancel-in-progress: false
+
+jobs:
+  regenerar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # El DS construido hace falta ANTES: `playwright.config.ts` levanta `ng serve sc-docs`, que
+      # lo consume de `dist/`. Mismo orden que los jobs de e2e de `ci.yml`.
+      - run: npm run build
+
+      - name: Regenerar las capturas en Linux
+        run: |
+          # El runner trae preconfigurado el repo APT de Chrome y `--with-deps` lee su índice; si
+          # viene desincronizado, el paso muere antes de bajar nada. De ese repo no se instala
+          # nada, así que se quita. El porqué largo está en `ci.yml`, misma línea.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          npx playwright install --with-deps chromium
+          # `--update-snapshots` REESCRIBE las de esta plataforma. Sin él no habría nada que
+          # generar: al no existir su `-linux.png`, Playwright falla con «A snapshot doesn't exist».
+          npm run e2e:visual -- --update-snapshots
+
+      - name: Abrir el PR con lo generado
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MOTIVO: ${{ inputs.motivo }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # Solo las capturas. Un `git add -A` se llevaría por delante `dist/`, `node_modules/` y
+          # cualquier resto del run.
+          git add -- 'e2e/**/*.png'
+          if git diff --cached --quiet; then
+            echo "Ninguna captura ha cambiado: las baselines de Linux ya están al día."
+            exit 0
+          fi
+
+          # Cuántas entran y cuántas se van, para que el PR lo diga sin que nadie cuente a mano.
+          NUEVAS=$(git diff --cached --name-only --diff-filter=A -- 'e2e/**/*.png' | wc -l | tr -d ' ')
+          CAMBIADAS=$(git diff --cached --name-only --diff-filter=M -- 'e2e/**/*.png' | wc -l | tr -d ' ')
+          BORRADAS=$(git diff --cached --name-only --diff-filter=D -- 'e2e/**/*.png' | wc -l | tr -d ' ')
+
+          git commit -m "chore(e2e): baselines visuales regeneradas en Linux
+
+          Motivo: ${MOTIVO}
+
+          ${NUEVAS} nueva(s), ${CAMBIADAS} cambiada(s), ${BORRADAS} borrada(s).
+          Tomadas en ubuntu-latest, que es el mismo sitio donde después se verifican.
+          Generadas por el workflow visual-baselines desde ${GITHUB_SHA}."
+
+          # Se resetea la rama a «main + las capturas» en cada pasada, como hace `tokens-sync`:
+          # así el PR es siempre el cambio limpio y no arrastra pasadas anteriores.
+          git push --force origin HEAD:visual-baselines-sync
+
+          {
+            echo "Capturas de \`e2e/components.spec.ts\` regeneradas en **ubuntu-latest**, que es la misma máquina que después las verifica."
+            echo
+            echo "**Motivo:** ${MOTIVO}"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Nuevas | ${NUEVAS} |"
+            echo "| Cambiadas | ${CAMBIADAS} |"
+            echo "| Borradas | ${BORRADAS} |"
+            echo
+            echo "**Qué mirar antes de fundir:** GitHub enseña el diff de cada imagen. Son la referencia contra la que se comparará todo lo que venga después, así que una captura mal tomada aquí se convierte en la verdad. Si alguna sale rara, es mejor descartar el PR y volver a lanzarlo que arreglarla a mano."
+            echo
+            echo "Generado por el workflow \`visual-baselines\` desde \`${GITHUB_SHA}\`."
+          } > "$RUNNER_TEMP/body.md"
+
+          gh pr edit visual-baselines-sync --body-file "$RUNNER_TEMP/body.md" \
+            || gh pr create --base main --head visual-baselines-sync \
+                 --title 'chore(e2e): baselines visuales regeneradas en Linux' \
+                 --body-file "$RUNNER_TEMP/body.md"
+
+      # No es un gate: es la caja negra por si la regeneración se cae. Mismo criterio que `ci.yml`.
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-baselines
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

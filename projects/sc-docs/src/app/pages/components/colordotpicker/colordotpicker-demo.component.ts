@@ -48,21 +48,6 @@ export class ColorDotPickerDemoComponent {
       value: 'blue',
       ariaLabel: 'Color',
     },
-    props: [
-      {
-        name: 'options',
-        type: 'readonly ColorDotOption[]',
-        default: '—',
-        description: 'Requerido. `{ value, label, color }` por punto.',
-      },
-      {
-        name: 'value',
-        type: 'string',
-        default: '—',
-        description: 'Requerido. Two-way `[(value)]` — id del color activo.',
-      },
-      { name: 'ariaLabel', type: 'string', default: "'Color'", description: 'Rótulo del radiogroup.' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

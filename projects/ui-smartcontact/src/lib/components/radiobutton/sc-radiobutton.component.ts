@@ -39,6 +39,7 @@ export class ScRadioButtonComponent {
 
     readonly variant = input<ScInputVariant>('outlined');
 
+    /** El usuario ha pulsado la opción. */
     readonly clicked = output<unknown>();
 
     protected readonly radioName = computed<string>(() => this.name() ?? '');

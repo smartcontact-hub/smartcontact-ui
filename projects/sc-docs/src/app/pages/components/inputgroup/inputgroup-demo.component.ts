@@ -51,15 +51,6 @@ export class InputGroupDemoComponent {
       size: 'md',
       fluid: true,
     },
-    props: [
-      { name: 'size', type: 'ScInputGroupSize', default: "'md'", description: 'sm · md · lg: el campo y el addon, con la talla de sc-inputtext.' },
-      {
-        name: 'fluid',
-        type: 'boolean',
-        default: 'true',
-        description: 'El grupo ocupa todo el ancho disponible.',
-      },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

@@ -63,27 +63,6 @@ export class BulkEditMenuDemoComponent {
     ],
     defaultArgs: {      buttonLabel: 'Editar',
     },
-    props: [
-      {
-        name: 'fields',
-        type: 'readonly BulkEditFieldOption[]',
-        description: 'Campos y sus valores posibles (requerido). El primero es el default.',
-      },
-      {
-        name: 'buttonLabel',
-        type: 'string',
-        default: "'Editar'",
-        description: 'Retenido por compatibilidad; ya no se renderiza.',
-      },
-      {
-        name: 'matchable',
-        type: 'boolean',
-        default: 'false',
-        description: 'Añade «de [valor]» a la frase. Elegir un valor emite `match` para que la lista seleccione todas las filas con ese valor; «la selección» deja la selección como está.',
-      },
-      { name: 'commit', type: 'EventEmitter<BulkEditCommit>', description: 'Output al aplicar.' },
-      { name: 'match', type: 'EventEmitter<BulkEditMatch>', description: 'Output al elegir un valor en «de» (solo con `matchable`).' },
-    ],
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

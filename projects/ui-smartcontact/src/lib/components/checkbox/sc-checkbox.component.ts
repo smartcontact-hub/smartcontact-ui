@@ -75,8 +75,18 @@ let triStateIdCounter = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScCheckboxComponent {
+  /**
+   * Los TRES estados de la casilla: `none` vacía, `all` marcada y `some` a medias (la raya, para
+   * cuando representa un grupo del que solo hay parte elegida). No es un booleano a propósito: el
+   * estado intermedio no se puede expresar con `true`/`false`.
+   */
   readonly state = input.required<TriState>();
+  /** Deshabilita la casilla. */
   readonly disabled = input(false, { transform: booleanAttribute });
+  /**
+   * Nombre accesible, para cuando la casilla no lleva una etiqueta visible al lado — el caso típico
+   * es la casilla de cabecera de una tabla.
+   */
   readonly ariaLabel = input<string | null>(null);
   /** Size variant (Figma `Size=Small/Normal/Large`). Default 'md' (17.5px). */
   readonly size = input<ScCheckboxSize>('md');
