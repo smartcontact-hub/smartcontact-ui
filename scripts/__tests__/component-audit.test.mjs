@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   MIEMBROS_SIN_DESCRIPCION_MAX,
   PROPS_SOBRE_API_OBSOLETA_MAX,
+  WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX,
   analyzeComponent,
   audit,
   contratoDe,
@@ -10,6 +11,9 @@ import {
   informeSupervisor,
   miembrosPublicos,
   nativasDe,
+  obsoletosDe,
+  selectoresObsoletos,
+  usaSelector,
   usadosEnNativo,
 } from '../component-audit.mjs';
 import { CUANDO } from '../component-audit-map.mjs';
@@ -348,4 +352,100 @@ test('CUANDO empieza por el CASO, no por la descripción', () => {
     assert.ok(texto.length > 30, `${sel}: la línea se queda corta para decidir nada`);
     assert.ok(texto.endsWith('.'), `${sel}: la línea no termina en punto`);
   }
+});
+
+
+/* ── COMPONENTES de PrimeNG jubilados enteros ──────────────────────────────────────────────
+ *
+ * El trinquete de props no podía ver esto: un componente jubilado no aparece en ninguna prop.
+ * Los dos tests de abajo son los DOS FALLOS que se cometieron al escribirlo, puestos como caso
+ * rojo para que no vuelvan (LEARNINGS 2).
+ */
+
+// Un `.d.ts` con DOS clases: una jubilada y otra no. Es la forma real de `primeng-button.d.ts`.
+const DTS_DOS_CLASES = `
+/**
+ * @deprecated Use the \`[pButton]\` directive instead.
+ * @group Components
+ */
+declare class Button extends BaseComponent {
+    label: InputSignal<string>;
+    static \u0275cmp: _angular_core.\u0275\u0275ComponentDeclaration<Button, "p-button", never, {}, {}, never, never, true, never>;
+}
+/**
+ * ButtonDirective aplica estilo de bot\u00f3n a un elemento.
+ * @group Directives
+ */
+declare class ButtonDirective extends BaseComponent {
+    iconOnly: InputSignal<boolean>;
+    static \u0275dir: _angular_core.\u0275\u0275DirectiveDeclaration<ButtonDirective, "[pButton]", never, {}, {}, never, never, true, never>;
+}
+`;
+
+test('selectoresObsoletos NO contagia la obsolescencia de una clase a sus vecinas del fichero', () => {
+  const m = selectoresObsoletos('button', () => DTS_DOS_CLASES);
+  assert.equal(m.get('p-button'), 'Use the `[pButton]` directive instead.');
+  assert.equal(
+    m.has('[pButton]'),
+    false,
+    '`[pButton]` es el RELEVO, no est\u00e1 jubilado: atribuirle la marca de `Button` fue el primer falso positivo',
+  );
+});
+
+test('selectoresObsoletos PARTE la lista de selectores por comas', () => {
+  const dts = `
+/**
+ * @deprecated Use Select component with \`multiple\` property instead.
+ */
+declare class MultiSelect extends BaseComponent {
+    static \u0275cmp: _angular_core.\u0275\u0275ComponentDeclaration<MultiSelect, "p-multiselect, p-multi-select", never, {}, {}, never, never, true, never>;
+}
+`;
+  const m = selectoresObsoletos('multiselect', () => dts);
+  assert.ok(m.has('p-multiselect'), 'buscar la cadena entera no casaba nunca: ese fue el segundo fallo');
+  assert.ok(m.has('p-multi-select'));
+});
+
+test('selectoresObsoletos devuelve null si el m\u00f3dulo no se puede leer, no un Map vac\u00edo', () => {
+  assert.equal(selectoresObsoletos('loquesea', () => null), null, '«no lo tiene» no es «no lo hemos mirado»');
+  assert.deepEqual([...obsoletosDe(['a', 'b'], () => null)], [], 'y unidos, no inventan nada');
+});
+
+test('usaSelector distingue ELEMENTO de ATRIBUTO, y escapa el selector', () => {
+  assert.equal(usaSelector('<p-button [label]="x"></p-button>', 'p-button'), true);
+  assert.equal(usaSelector('<p-buttonset></p-buttonset>', 'p-button'), false, 'un prefijo m\u00e1s largo no es el mismo');
+  // EL CASO ROJO: metido crudo en una regexp, `[pButtonLabel]` es una clase de caracteres.
+  assert.equal(usaSelector('<p>hola</p>', '[pButtonLabel]'), false, '`<p>` casaba con la clase de caracteres');
+  assert.equal(usaSelector('<a href="x">y</a>', '[pButtonLabel]'), false);
+  assert.equal(usaSelector('<span pButtonLabel>Guardar</span>', '[pButtonLabel]'), true, 'el atributo de verdad s\u00ed');
+});
+
+test('analyzeComponent marca el componente montado sobre uno jubilado, y solo ese', () => {
+  const obsoletos = new Map([['p-button', 'Use the `[pButton]` directive instead.']]);
+  const sobre = analyzeComponent({
+    ...base,
+    name: 'button',
+    tsText: "import { ButtonModule } from 'primeng/button';\nselector: 'sc-button',",
+    htmlText: '<p-button [label]="label()"></p-button>',
+    obsoletosPrimeng: obsoletos,
+  });
+  assert.deepEqual(sobre.sobreObsoleto, [{ sel: 'p-button', motivo: 'Use the `[pButton]` directive instead.' }]);
+
+  const limpio = analyzeComponent({
+    ...base,
+    name: 'boton2',
+    tsText: "import { ButtonModule } from 'primeng/button';\nselector: 'sc-boton2',",
+    htmlText: '<button pButton>Guardar</button>',
+    obsoletosPrimeng: obsoletos,
+  });
+  assert.deepEqual(limpio.sobreObsoleto, [], 'quien ya usa el relevo no debe salir');
+});
+
+test('el trinquete de componentes jubilados est\u00e1 en su n\u00famero MEDIDO', () => {
+  const n = audit().flatMap((r) => r.sobreObsoleto).length;
+  assert.equal(
+    n,
+    WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX,
+    `hay ${n} componente(s) sobre uno jubilado y el tope dice ${WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX}`,
+  );
 });

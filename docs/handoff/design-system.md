@@ -41,6 +41,10 @@
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
 - **Rescatar a `main` el DS de `comparar/fichas`**, decida lo que decida producto: `sc-drawer` (`width`, `topOffset`, X accesible, bordes, sombra) y `sc-section-card showHeader`.
 - **La puerta barata del preflight, contra un ledger en PR ajeno** (LEARNINGS #21, roto el 2026-09-15 con #196): avisar si un PR abierto toca el mismo `docs/handoff/` o `DECISIONS`.
+- **Guardianes que miden un PROXY, no la condición** (tanda 2026-09-19: seis hallados, cuatro ya arreglados; el patrón lo caza LEARNINGS #2, «ante un trinquete que NO baja, mira un caso a mano»). Quedan cuatro, en orden de valor: (a) **2º punto ciego de `audit-text-styles`** — la comprobación de ROLES usa el mismo `aplanar()` que no ve `code`/`pre`/descendientes ni `@media`; antes de tocarla hay que DECIDIR si un `html { font-size: 100% }` debe cumplir un rol (probablemente no): primero la regla, luego el gate.
+  (b) **El hook de cierre casa la cadena `git push`**, no el acto: un workflow o un `.md` que la CONTENGA dispara el aviso de «has pusheado». Mismo fallo que ya se le arregló una vez.
+  (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 8): `sc-password` y `sc-multiselect` son uno cada uno y lo bajan a 6; `p-button → [pButton]` el último —mueve el DOM, `component-structure.json` y las capturas, y toca SEIS componentes—, y es de las que se proponen.
+  (d) **La plantilla de PR promete lo que no sabe**: medido, ningún gate lee el checklist y solo 2 de sus 6 casillas están respaldadas (`verify` y tokens). Barato: que cada línea diga si la vigila un gate y que «no aplica» no se escriba con un tick. Gateables de verdad, si Rafa quiere: bump de versión y CHANGELOG.
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
