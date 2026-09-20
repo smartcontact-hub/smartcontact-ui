@@ -118,8 +118,13 @@ hasta ~1760, así que en portátil y en 1920 no se le ve. El centrado de `_page.
   del `Block` de Figma.
 - **Anclar solo `--rail`**, que es lo que se señaló → a 1920 dejaba las hermanas arrancando en
   80 / 200 / 520 / 584. Cambiaba un desajuste por otro.
-- **Tocar la miga de la barra** para que case con el título → quedan 53px por el botón de inicio y
-  el divisor que van delante. Es otra decisión; anclar no la empeora.
+- **Mover la miga de la barra** para que case con el contenido → **no hace falta, y la primera
+  lectura de este PR se equivocó al decir que sí.** Medido a 1440 en los cuatro arquetipos, el
+  botón de inicio de la barra ya cae en x=108, la misma vertical que el primer elemento de la
+  página. Lo que arranca en 161.5 es el TEXTO de la miga, que va detrás del botón y del divisor,
+  y no tiene debajo nada con lo que deba casar. Lo que sí estaba mal era el comentario de
+  `top-bar.component.scss`, que prometía esa alineación con un número de la época del sidebar de
+  64px; se corrige aquí.
 
 ## DD-114 · 2026-09-15 — La cabecera del Dashboard se ordena en dos bloques y el modo pared no se queda en negro
 
