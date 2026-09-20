@@ -787,7 +787,7 @@
           "tipo": "BulkEditMatch",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "Se eligió un valor en «de» (solo con `matchable`): la app selecciona las filas que lo tienen.",
           "origen": "nuestro",
           "nativo": null
         }

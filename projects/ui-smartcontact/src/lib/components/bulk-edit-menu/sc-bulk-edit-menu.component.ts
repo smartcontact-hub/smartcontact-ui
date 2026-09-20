@@ -79,6 +79,8 @@ export class ScBulkEditMenuComponent {
    * la app**.
    */
   readonly commit = output<BulkEditCommit>();
+
+  /** Se eligió un valor en «de» (solo con `matchable`): la app selecciona las filas que lo tienen. */
   readonly match = output<BulkEditMatch>();
 
   protected readonly selectedFieldKey = signal<string>('');
