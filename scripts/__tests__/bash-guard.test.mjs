@@ -226,3 +226,20 @@ test('escrituras(): cuenta las de verdad e ignora /dev, /tmp y los descriptores'
   assert.deepEqual(escrituras('npm run build > salida.log 2>&1'), ['salida.log']);
   assert.deepEqual(escrituras("cat > a.txt <<'EOF'\n> esto es texto del heredoc\nEOF"), ['a.txt']);
 });
+
+// ROJO que motivó el arreglo (2026-09-20): el splitter no honraba la barra invertida, así que una
+// comilla doble ESCAPADA dentro de otra cerraba el entrecomillado, y a partir de ahí el DATO se
+// leía como comandos. Un `node -e` cuyo texto citaba un patrón con «git push» dentro se denegó como
+// si fuera un push, y mandó a repetir un preflight que no hacía falta.
+test('segmentos: una comilla escapada no abre la veda dentro de una cadena', () => {
+  const cmd = [
+    'node -e "',
+    '  const casos = [',
+    '    [\'grep -E \\"a|b|git push|c\\" fichero.yml\', false],',
+    '  ];',
+    '"',
+  ].join('\n');
+  assert.match(cmd, /\\"a\|b\|git push/, 'el caso debe llevar la comilla ESCAPADA, que es lo que rompía');
+  const r = evaluar(cmd, { cwd: process.cwd() });
+  assert.notEqual(r.decision, 'deny', 'el patrón entrecomillado es un DATO, no un push');
+});

@@ -52,6 +52,27 @@ test('necesitaVeredicto: sin push, o solo tags/borrados → false', () => {
   assert.equal(necesitaVeredicto(['git push --tags', 'git push origin --delete rama']), false);
 });
 
+// ROJO que motivó la pieza (2026-09-20): la detección era `/\bgit\s+push\b/` sobre el comando
+// entero, así que LEER un fichero que habla de `git push` contaba como haberlo hecho. Bloqueó el
+// cierre de una sesión que no había subido nada.
+test('necesitaVeredicto: nombrar «git push» dentro de un dato no es pushear', () => {
+  assert.equal(
+    necesitaVeredicto(['grep -n -E "checkout|ref:|branch|git push|BRANCH=" .github/workflows/visual-baselines.yml']),
+    false,
+    'un patrón de grep entre comillas es un DATO, no un comando',
+  );
+  assert.equal(necesitaVeredicto(["rg 'git push' scripts/"]), false);
+  assert.equal(necesitaVeredicto(['echo "recuerda: git push va después del preflight"']), false);
+});
+
+test('necesitaVeredicto: un push de verdad se sigue viendo, esté donde esté', () => {
+  assert.equal(necesitaVeredicto(['git push origin rama']), true, 'al principio');
+  assert.equal(necesitaVeredicto(['cd repo && git push --force-with-lease origin rama']), true, 'tras &&');
+  assert.equal(necesitaVeredicto(['npm run preflight; git push -u origin rama']), true, 'tras ;');
+  assert.equal(necesitaVeredicto(['bash -c "git push origin rama"']), true, 'la cadena ES el comando');
+  assert.equal(necesitaVeredicto(['git fetch origin\ngit push origin rama']), true, 'en otra línea');
+});
+
 // ── El cierre no se da sin enrutar cada corrección ───────────────────────────────────────
 // Reflexionar es decidir dónde va cada lección. El caso ROJO es el que motiva la pieza: se invocó
 // `reflect`, la corrección se quedó en prosa y la sesión cerró igual.

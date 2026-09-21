@@ -65,7 +65,15 @@ export function escrituras(cmd) {
   return [...salida];
 }
 
-/** Parte un comando compuesto en segmentos por `;`, `&&`, `|` (no `||`). Ignora comillas simples. */
+/**
+ * Parte un comando compuesto en segmentos por `;`, `&&`, `|` (no `||`). Lo entrecomillado no se
+ * parte: ahí dentro un `|` o un `;` son texto.
+ *
+ * La barra invertida cuenta (2026-09-20). Antes no, y una comilla doble ESCAPADA cerraba el
+ * entrecomillado: a partir de ahí el DATO se leía como comandos. Un `node -e "… '…\"a|git push|b\"…' …"`
+ * se denegó como si fuera un push de verdad y mandó a repetir un preflight que no hacía falta.
+ * Dentro de comillas SIMPLES la barra no escapa nada, y aquí tampoco.
+ */
 function segmentos(cmdCrudo) {
   const cmd = sinHeredocs(cmdCrudo);
   const out = [];
@@ -75,6 +83,12 @@ function segmentos(cmdCrudo) {
     const c = cmd[i];
     if (q) {
       cur += c;
+      // `\"` dentro de comillas dobles es una comilla literal, no el cierre.
+      if (c === '\\' && q === '"' && i + 1 < cmd.length) {
+        cur += cmd[i + 1];
+        i++;
+        continue;
+      }
       if (c === q) q = null;
       continue;
     }

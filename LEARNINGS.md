@@ -23,7 +23,7 @@
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
 | **7** | hacer `git push`, **o lanzar la cadena** | `preflight` (o `:scope --run`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta los builds AOT de las apps**. Los e2e los corre el CI (9 pasos), no el preflight (DD-60): si tocaste e2e o algo visual, corre a mano la suite que toca — las baselines visuales de sc-docs NO las corre ningún gate. **+ `guard:lockfile` si tocaste el lock**. Confirma el verde LEYENDO el CI: `npm run ci:verdict` |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
-| **10** | declarar algo bloqueado, deducir un dato a ojo, **o diseñar un mecanismo nuevo** | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos) y **qué lo vigila ya** (`.githooks/`, `.claude/settings.json`, `scripts/`) |
+| **10** | declarar algo bloqueado, deducir un dato a ojo, diseñar un mecanismo nuevo **o RECOMENDAR un cambio de criterio** | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos), **qué lo vigila ya** (`.githooks/`, `scripts/`) y **qué decidió ya una DD — puede estar escrita DENTRO del gate que la aplica** |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
 | **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado **y en qué unidad lo dices** (¿herederos?, ¿visitas repetidas?); si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
 | **14** | responder a un "hazlo todo", escribir "esperando a X", **o anotar en un reporte algo que mediste** | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado ni por estar ya redactando** |
@@ -119,15 +119,15 @@
 
 ## Alcance y ediciones
 
-10. **Vas a declarar algo BLOQUEADO, a deducir un dato a ojo, o a DISEÑAR un mecanismo nuevo →
-    gasta una llamada en ver qué te sirve ya el sistema.** DOM oculto (los overlays viven en el
-    árbol desde la carga), ficheros `i18n`, hoja de estilos, `docs/DECISIONS.md` antes de
-    hipotetizar. Y si lo que vas a montar es un GUARDIÁN, la pregunta es "¿qué vigila esto hoy?":
-    `.githooks/`, `.claude/settings.json`, `scripts/`, `package.json`. Un diagnóstico que enumera
-    los ficheros que se LEEN y no los mecanismos que se EJECUTAN mide media realidad. ⚙️ no
-    mecanizable: es juicio y ya va en la tarjeta (punto 7).
-    Evidencia: s26 cuatro modales "imposibles" medidos sin pulsar nada, y 1.449 claves de `en.json`
-    · s41 propuse un hook de pre-push que ya existía desde s39 (lo vi al repetir 10 min de cadena).
+10. **Vas a declarar algo BLOQUEADO, deducir un dato a ojo, DISEÑAR un mecanismo nuevo o
+    RECOMENDARLE a Rafa un cambio de criterio → gasta una llamada en ver qué decidió ya el
+    repo.** DOM oculto (los overlays viven en el árbol desde la carga), `i18n`, hoja de estilos y
+    `docs/DECISIONS.md` antes de hipotetizar; si montas un GUARDIÁN, "¿qué vigila esto hoy?" en
+    `.githooks/`, `scripts/`, `package.json`. **Una DD puede estar escrita DENTRO del gate que la
+    aplica**, no solo en DECISIONS. ⚙️ no mecanizable: juicio; va en la tarjeta (punto 7).
+    Evidencia: s26 cuatro modales "imposibles" medidos sin pulsar nada · s41 propuse un hook de
+    pre-push que ya existía · 2026-09-19 iba a sacar `e2e:visual` del preflight "por incoherente"
+    y lo había metido DD-62 a propósito; y recomendé un `sc-text` mono que su gate ya prohibía.
 
 11. **Toda edición masiva —shell o API— lleva su verificación de outcome PEGADA en la misma
     operación. Y si la clave con la que escribes puede REPETIRSE en el árbol, no es una asignación:

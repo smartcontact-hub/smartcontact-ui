@@ -73,14 +73,19 @@ de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con
    arrastrar `dashboard` y `neurology` a Playground. Entonces sigue el `LEEME.md` de
    `~/Documents/Claude/2026-09 iconos-material/huerfanos/`: 13 `dashboard`, 8 `brain` → `neurology`, y `query_stats`
    y `graph_5` a 14 × 14. El script para solo si la actualización no está aceptada.
-2. **Rescatar a `main` por PRs separados** (la rama no se funde):
-   - iconos opsz 24 con su spec;
-   - `list-page` (exportar la selección, ancho mínimo con columnas ocultas);
-   - `sc-bulk-edit-menu matchable`;
-   - `sc-select editable`;
-   - las pantallas y el copy.
-3. Escribir en `AGENTS.md` la norma de Rafa: cada commit lleva su «Por qué».
-4. Probar con scroll real el scroll-spy de «Una página»: al hacer scroll por código no cambiaba la sección activa.
+2. **Rescatar a `main` por PRs separados** (la rama no se funde). Medido el 2026-09-20 contra
+   `origin/main`, de los cinco puntos **solo queda uno**:
+   - ~~iconos opsz 24 con su spec~~ · ya estaban en `main` antes de mirarlo;
+   - ~~`list-page` (exportar la selección, ancho mínimo con columnas ocultas)~~ · ídem;
+   - ~~`sc-bulk-edit-menu matchable`~~ y ~~`sc-select editable`~~ · entraron en **#218**, junto con
+     `sc-section-card showHeader` y `sc-drawer width/topOffset`;
+   - **las pantallas y el copy** — lo único pendiente, y lo bloquea la pregunta de producto de
+     ⏸️ ESPERANDO (qué forma de ficha se queda). Son ~3.700 líneas en ~43 ficheros, más 932 de
+     textos. El andamio de `admin/comparar/` (12 ficheros, 1.088 líneas: la barra `?variante=`,
+     la guía «Qué mirar», el scroll-spy) **no se funde: se tira** cuando haya decisión.
+   ⚠️ Antes de rescatar nada más, compruébalo contra `origin/main`: dos de los cinco puntos ya
+   estaban hechos y el hand-off no se había enterado.
+3. Probar con scroll real el scroll-spy de «Una página»: al hacer scroll por código no cambiaba la sección activa.
 
 ## ⏸️ ESPERANDO — no preguntar
 
