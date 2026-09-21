@@ -13,6 +13,82 @@
 
 ---
 
+## 2026-09-21
+
+> Método: pasada A (deuda de código, ≤5, incluye calidad de copy i18n de las claves nuevas en
+> los cuatro idiomas) + pasada B (deriva de docs) + pasada C (PRs parados >7d) + pasada D (panel
+> de Cloudflare). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md. Semana con 50
+> commits desde la última pasada (2026-09-14): sidebar (DD-112), dashboard completo con modo
+> pared (DD-114), login/SSO, componentes de primeng.dev nativos (DD-113), el preset reescrito en
+> 88 ficheros para leer variables del Kit (`395824f`, #193) y 14 componentes nuevos con i18n
+> propio (`bulk-*`, `command-palette`, `delete-entity-dialog`…). Los cuatro hallazgos de la
+> sección 2026-09-14 y los tres de 2026-09-07 siguen sin tocar esta semana — no se repiten aquí.
+> `LEGACY_PENDIENTES` de `scripts/audit-api-era.mjs` sigue vacía: sin declaraciones nuevas de
+> `@Input()/@Output()`.
+
+### Deuda de código
+
+- [ ] **P1** El helper `useBulkEntityI18n()` (nacido del bug S49 de `bulkEntity` sin traducir en
+      EN/FR/PT, hoy con 7 consumers) se reinventó a mano al arreglar el MISMO bug esta semana en
+      la página CRUD genérica de Repositorios — que alimenta las 9 instancias de Repositorios —
+      construyendo el mismo objeto `{singular, plural, suffixSingular, suffixPlural}` con
+      `injectLangChange()` en vez de llamar al helper ya promovido para exactamente este caso:
+      reinventado en `projects/supervisor/src/app/features/admin/repositories/components/repo-list-page.component.ts:127-135`,
+      patrón canónico en `projects/ui-smartcontact/src/lib/components/bulk-action-bar/use-bulk-entity-i18n.ts:52-73`
+      (uso real en `projects/supervisor/src/app/features/admin/agents/pages/agents-list-page.component.ts:349`)
+      → sustituir el `computed()` manual por `useBulkEntityI18n({ singular, plural, selectedOne, selectedOther })`.
+      [arréglalo]
+
+- [ ] **P2** El bloque `<ng-template #topbarActions>` (aviso de guardado bloqueado + «Deshacer»
+      condicional + «Guardar») se copió verbatim en las tres fichas de admin, las tres reescritas
+      a fondo esta misma semana — la misma clase de duplicación que `use-topbar-actions.ts:8-19`
+      ya documentó haber roto una vez (17 páginas con el mismo bloque, causó un bug real de
+      limpieza olvidada en un refactor): `projects/supervisor/src/app/features/admin/agents/pages/agent-form-page.component.html:6-29`,
+      `projects/supervisor/src/app/features/admin/groups/pages/group-form-page.component.html:9-32`,
+      `projects/supervisor/src/app/features/admin/users/pages/user-form-page.component.html:6-32`
+      (de propina, `discard()` es idéntico en los tres `.ts`) → extraer un componente compartido
+      (p. ej. `sc-form-topbar-actions`, inputs `saveBlockedReason/formDirty/canSave/saving/saveDisabledReason`,
+      outputs `discard/save`) usado por las tres páginas. [gate-able — un detector de bloques
+      duplicados ≥15 líneas entre ficheros hermanos lo cazaría para siempre]
+
+- [ ] **P2** El ES de `partialSegmentConversations` flexiona mal «tramo/tramos»: ata la flexión al
+      `{{count}}` de CONVERSACIONES cuando el campo cuenta conversaciones que tienen VARIOS tramos
+      cada una — EN y FR dejan «segments»/«segments» invariante en las dos formas
+      (`projects/ui-smartcontact/src/lib/components/bulk-transcription-modal/i18n/sc-bulk-transcription-modal.translations.ts:40-41`
+      ES vs `:85-86` EN), así que para `count=1` el ES dice «1 con **tramo** ya iniciado» (uno) en
+      vez de «1 [conversación] con **tramos** ya iniciados» (varios, que es lo que cuenta el
+      negocio) → unificar las dos formas ES en `'{{count}} con tramos ya iniciados'`. [arréglalo]
+
+- [ ] **P3** `tooLarge` de `sc-photo-upload` solo constata el error sin decir qué hacer, rompiendo
+      el patrón que su propio vecino `invalidType` establece una línea antes en el mismo fichero
+      (`projects/ui-smartcontact/src/lib/components/photo-upload/i18n/sc-photo-upload.translations.ts:16-17`
+      en, `:28-29` es) → en: `'Image too large. Choose a file under 800 KB.'` / es: `'La imagen
+      pesa demasiado. Elige un archivo de menos de 800 KB.'`. [arréglalo]
+
+### Deriva de docs
+
+- [ ] `docs/customs-catalog.md:680` sigue citando conteos de `scripts/color-map.mjs` fechados
+      2026-08-13 (38 filas `enforce`, 10 `diverge`) que la migración de esta semana (`395824f`,
+      #193 — «el guard ya no deja escribir un color a mano») dejó atrás: contado hoy sobre el
+      propio array, hay **51** filas `enforce` y **4** `diverge` (`form.field.icon.color:59`,
+      `navigation.item.icon.color:62`, `form.field.placeholder.color:98`,
+      `overlay.select.background:99`) — ninguna de las otras divergencias que el párrafo lista de
+      memoria (`form.field.border.color`, `form.field.disabled.color`, `text.muted.color`, «las de
+      superficie/contraste en oscuro») es `diverge` hoy, todas son `enforce` → reescribir el
+      párrafo sin cifra fija (remitir solo al nombre del array) o derivarla del propio array en vez
+      de teclearla a mano. [gate-able — el mismo tratamiento que ya recibieron los hex de esta
+      sección el 2026-08-24]
+
+### Trabajo sin mergear
+
+sin hallazgos (0 PRs abiertos en el repo).
+
+### Panel de Cloudflare
+
+no comprobado (sin `CLOUDFLARE_API_TOKEN` en este entorno).
+
+---
+
 ## 2026-09-14
 
 > Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados >7d)
