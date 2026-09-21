@@ -22,12 +22,12 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
 ## Antes de AFIRMAR, COMMITEAR o PUSHEAR, relee esto (regla de LEARNINGS entre paréntesis)
 
 1. ¿Lo medí YO, hoy, en ESTE build? Si no: "según X, sin verificar". (#17 #5)
-2. ¿Mi sonda o mi test enrojece con el fallo puesto? Si no lo probé, no es evidencia. (#2 #6)
+2. ¿Mi sonda —o la CIFRA que voy a decir— enrojece con el fallo puesto? Si no, no es evidencia. (#2 #6 #12)
 3. ¿El estímulo LLEGÓ, y es el que produce el sistema real, no uno que inyecté? (#1)
 4. Cifra o escritura EN MASA → ¿qué entra? Clave repetida = emisión: diffea antes/después. (#12 #11)
 5. El primer arreglo falló → lo siguiente es una MEDICIÓN, no otro arreglo. (#8)
 6. Push → preflight UNA vez sobre el árbol FINAL; veredicto = `npm run ci:verdict`. (#7)
-7. "Bloqueado" o "esperando a Rafa" → una sonda más: ¿ya lo sirve el sistema? (#10 #14)
+7. "Bloqueado", "esperando a Rafa", o voy a RECOMENDAR un cambio → ¿qué decidió ya el repo? (#10 #14)
 <!-- tarjeta:fin -->
 
 Resumen operativo:
