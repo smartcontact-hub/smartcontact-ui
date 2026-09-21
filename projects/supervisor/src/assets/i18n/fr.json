@@ -2179,6 +2179,9 @@
       "b": {
         "label": "Une page (mai)"
       },
+      "u": {
+        "label": "Une page dense"
+      },
       "e": {
         "label": "Résumé + panneau latéral"
       }
@@ -2217,6 +2220,13 @@
         "step3": "Modifiez quelque chose et continuez à descendre : le reste de la fiche reste visible.",
         "look": "Si tout voir ensemble vous aide à comprendre ce que vous touchez, ou s’il y en a tant que vous vous perdez.",
         "summary": "Tout sur une page ; l’index vous y emmène."
+      },
+      "u": {
+        "what": "La même page, ordonnée pour être lue d’une traite : le groupe se présente d’abord, les agents ensuite, et ce qui naît déjà configuré reste replié.",
+        "step2": "Déplie « Annonces et audio » ou « Avancé » : ils sont fermés car ils héritent des valeurs par défaut des Groupes.",
+        "step3": "Regarde par où commence la page : le nom du groupe, pas la liste des agents.",
+        "look": "Si replier ce qu’on ne touche presque jamais rend la fiche abordable, ou si cela cache ce que tu cherchais.",
+        "summary": "Une page avec l’Identité en haut et le préconfiguré replié."
       },
       "e": {
         "what": "Toute la fiche en cartes de résumé, sur toute la largeur. Cliquez sur « Éditer » sur l’une d’elles et ses réglages s’ouvrent dans un panneau à droite, par-dessus la fiche ; fermez-le pour revoir toute la fiche.",

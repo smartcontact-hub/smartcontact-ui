@@ -2179,6 +2179,9 @@
       "b": {
         "label": "Una página (mayo)"
       },
+      "u": {
+        "label": "Una página densa"
+      },
       "e": {
         "label": "Resumen + panel lateral"
       }
@@ -2217,6 +2220,13 @@
         "step3": "Cambia algo y sigue bajando: el resto de la ficha sigue a la vista.",
         "look": "Si verlo todo junto te ayuda a entender lo que tocas, o si hay tanto que te pierdes.",
         "summary": "Todo en una página; el índice te lleva."
+      },
+      "u": {
+        "what": "La misma página de siempre, ordenada para leerla de una pasada: el grupo se presenta primero, los agentes van detrás, y lo que nace ya configurado queda plegado.",
+        "step2": "Despliega «Anuncios y audio» o «Avanzado»: están cerrados porque nacen con los valores por defecto de Grupos.",
+        "step3": "Mira por dónde empieza la página: el nombre del grupo, no la lista de agentes.",
+        "look": "Si plegar lo que casi nunca se toca hace la ficha abarcable, o si esconde algo que sí ibas a buscar.",
+        "summary": "Una página con Identidad arriba y lo que nace configurado plegado."
       },
       "e": {
         "what": "Toda la ficha en tarjetas-resumen, a lo ancho. Pulsa «Editar» en una y sus ajustes se abren en un panel a la derecha, encima de la ficha; al cerrarlo vuelves a verla entera.",

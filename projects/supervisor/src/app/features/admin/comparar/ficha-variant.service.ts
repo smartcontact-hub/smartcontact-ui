@@ -21,11 +21,11 @@ import { filter } from 'rxjs';
  * así que se puede pasar un enlace y navegar por la app sin perderla. Sin ese parámetro (los
  * e2e, o quien abra la app sin enlace) no hay barra y la ficha es la de hoy.
  */
-export type FichaVariant = 'a' | 'b' | 'e';
+export type FichaVariant = 'a' | 'b' | 'e' | 'u';
 
 /** En el orden de la barra: primero las que lo enseñan todo (una página, resumen), y luego la de
  * hoy (Rafa, 2026-09-15). Las letras solo viven en la URL. */
-export const FICHA_VARIANTS: readonly FichaVariant[] = ['b', 'e', 'a'];
+export const FICHA_VARIANTS: readonly FichaVariant[] = ['b', 'u', 'e', 'a'];
 /** Cuántas van antes del separador de la barra (la familia «lo enseña todo»). */
 export const SHOW_ALL_COUNT = 2;
 

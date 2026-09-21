@@ -43,6 +43,14 @@ const STEPS: Record<FichaVariant, Record<Entity, readonly string[]>> = {
     group: ['compare.guide.b.group.step1', 'compare.guide.b.step2', 'compare.guide.b.step3'],
     user: ['compare.guide.b.user.step1', 'compare.guide.b.step2', 'compare.guide.b.step3'],
   },
+  /* La densa se recorre igual que `b` —es la misma página— y lo que cambia es qué hay que mirar:
+   * si lo plegado estorba o descansa. Reusa los pasos de `b` a propósito, para no inventar copy
+   * de una forma que todavía puede no quedarse. */
+  u: {
+    agent: ['compare.guide.b.agent.step1', 'compare.guide.u.step2', 'compare.guide.u.step3'],
+    group: ['compare.guide.b.group.step1', 'compare.guide.u.step2', 'compare.guide.u.step3'],
+    user: ['compare.guide.b.user.step1', 'compare.guide.u.step2', 'compare.guide.u.step3'],
+  },
   e: {
     agent: ['compare.guide.e.agent.step1', 'compare.guide.e.agent.step2', 'compare.guide.e.step3'],
     group: ['compare.guide.e.group.step1', 'compare.guide.e.group.step2', 'compare.guide.e.step3'],
