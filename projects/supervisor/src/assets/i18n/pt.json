@@ -2179,6 +2179,9 @@
       "b": {
         "label": "Uma página (maio)"
       },
+      "u": {
+        "label": "Uma página densa"
+      },
       "e": {
         "label": "Resumo + painel lateral"
       }
@@ -2217,6 +2220,13 @@
         "step3": "Altere algo e continue a descer: o resto da ficha continua à vista.",
         "look": "Se ver tudo junto ajuda a perceber o que mexe, ou se é tanto que se perde.",
         "summary": "Tudo numa página; o índice leva-o lá."
+      },
+      "u": {
+        "what": "A mesma página, ordenada para ser lida de uma vez: o grupo apresenta-se primeiro, os agentes a seguir, e o que nasce já configurado fica recolhido.",
+        "step2": "Abre «Anúncios e áudio» ou «Avançado»: estão fechados porque nascem com os valores por omissão de Grupos.",
+        "step3": "Repara por onde começa a página: o nome do grupo, não a lista de agentes.",
+        "look": "Se recolher o que quase nunca se toca torna a ficha abarcável, ou se esconde algo que ias procurar.",
+        "summary": "Uma página com a Identidade em cima e o pré-configurado recolhido."
       },
       "e": {
         "what": "Toda a ficha em cartões de resumo, a toda a largura. Clique em «Editar» num deles e as definições abrem-se num painel à direita, por cima da ficha; ao fechá-lo volta a vê-la inteira.",

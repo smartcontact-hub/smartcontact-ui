@@ -236,8 +236,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     };
     const middle = this.hasPhone() ? [resources, announcements, advanced] : [resources, advanced];
     /* Al crear, Identidad primero (sin nombre no hay grupo); al editar, al fondo: casi no se toca después (Rafa,
-     * 2026-09-16, también en «Una página»). */
-    if (this.mode() === 'edit') {
+     * 2026-09-16, también en «Una página»).
+     *
+     * En la DENSA (`u`) va primero SIEMPRE: una página que se lee de arriba abajo de una pasada
+     * no es un índice al que se vuelve, y empezar por una tabla de doce nombres deja el grupo sin
+     * presentar. Medido el 2026-09-21 en «Una página»: lo primero de la pantalla era la lista de
+     * agentes y el nombre del grupo caía a 2.626px de scroll. */
+    if (this.mode() === 'edit' && !this.isDense()) {
       return [channels, ...middle, identity];
     }
     return [identity, channels, ...middle];
@@ -247,8 +252,37 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   /* ── COMPARAR (rama `comparar/fichas`) ──────────────────────────────────────────────── */
   protected readonly variants = inject(FichaVariantService);
+
+  /** Las dos formas que enseñan la ficha entera de una vez: «Una página» (`b`) y la densa (`u`). */
+  protected readonly isOnePage = computed(() => {
+    const v = this.variants.variant();
+    return v === 'b' || v === 'u';
+  });
+
+  /**
+   * `u` — «Una página densa». La misma página, con tres cosas medidas el 2026-09-21 sobre `b`:
+   *
+   *   · Identidad primero (ver `navSections`).
+   *   · La tabla de agentes con tope de alto y scroll propio. Con 12 agentes ocupaba 723px, y
+   *     crece con la plantilla: sin tope, un grupo de 40 agentes empuja el resto de la ficha
+   *     fuera de la pantalla y la página deja de ser una página.
+   *   · «Anuncios y audio» y «Avanzado» plegadas de entrada. Las dos nacen con los valores por
+   *     defecto de Configuración del AED › Grupos, así que en un alta normal no se tocan: 1.391px
+   *     de los 2.888 totales estaban ahí, medidos, para lo que casi nunca se cambia.
+   *
+   * Lo que NO se toca: el ancho. Los 920px salen del `Block` 393:12587 de Contact Center y son
+   * la razón por la que esta ficha rima con él. Ensanchar la columna resolvía el alto rompiendo
+   * justo lo que hay que conservar.
+   */
+  protected readonly isDense = computed(() => this.variants.variant() === 'u');
+
+  /** Plegadas de entrada en la densa: lo que nace configurado y casi nadie cambia. */
+  protected isCollapsedByDefault(id: string): boolean {
+    return this.isDense() && (id === 'group-section-announcements' || id === 'group-section-advanced');
+  }
+
   private readonly scrollSpy = createSectionScrollSpy({
-    enabled: () => this.variants.variant() === 'b',
+    enabled: () => this.isOnePage(),
     ids: () => this.navSections().map((s) => s.id),
     active: this.activeSection,
   });
@@ -257,9 +291,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return this.navSections().find((s) => s.id === id)?.icon ?? null;
   }
 
-  /** En `b` se ven todas; en `a` y `c`, la del índice. */
+  /** En `b` y `u` se ven todas; en `a` y `e`, la del índice. */
   protected showSection(id: string): boolean {
-    return this.variants.variant() === 'b' || this.activeSection() === id;
+    return this.isOnePage() || this.activeSection() === id;
   }
 
   protected goToSection(id: string): void {

@@ -2179,6 +2179,9 @@
       "b": {
         "label": "One page (May)"
       },
+      "u": {
+        "label": "Dense one page"
+      },
       "e": {
         "label": "Summary + side panel"
       }
@@ -2217,6 +2220,13 @@
         "step3": "Change something and keep scrolling: the rest of the record stays in view.",
         "look": "Whether seeing everything together helps you understand what you touch, or whether there is so much that you get lost.",
         "summary": "Everything on one page; the index takes you there."
+      },
+      "u": {
+        "what": "The same single page, ordered to be read in one pass: the group introduces itself first, agents come next, and whatever is born already configured stays collapsed.",
+        "step2": "Expand \"Announcements and audio\" or \"Advanced\": they start closed because they inherit the Groups defaults.",
+        "step3": "Look at where the page starts: the group name, not the agent list.",
+        "look": "Whether collapsing what is rarely touched makes the form graspable, or hides something you were after.",
+        "summary": "One page with Identity on top and the preconfigured parts collapsed."
       },
       "e": {
         "what": "The whole record as full-width summary cards. Click “Edit” on one and its settings open in a panel on the right, over the record; close it to see the whole record again.",

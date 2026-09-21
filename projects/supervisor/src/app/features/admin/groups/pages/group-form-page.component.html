@@ -315,8 +315,10 @@
      dentro del panel lateral. -->
 <ng-template #sections>
   <!-- Identidad: al crear, primero (sin nombre no hay nada que guardar); al editar, al final, porque casi no se toca
-       después (Rafa, 2026-09-16). El índice sigue el mismo orden. -->
-  @if (mode() !== 'edit') {
+       después (Rafa, 2026-09-16). El índice sigue el mismo orden.
+       En la DENSA (`u`) va primero también al editar: una página que se recorre de una pasada no puede empezar por
+       una tabla de doce nombres, con el grupo sin presentar. Medido: el nombre caía a 2.626px de scroll. -->
+  @if (mode() !== 'edit' || isDense()) {
     <ng-container *ngTemplateOutlet="identitySection" />
   }
 
@@ -547,6 +549,8 @@
       surface="card"
       [flush]="isCards()"
       [showHeader]="!isCards()"
+      [collapsible]="isDense()"
+      [initiallyCollapsed]="isCollapsedByDefault('group-section-announcements')"
       [icon]="iconOf('group-section-announcements')"
       titleKey="groups.form.section.announcements"
     >
@@ -691,6 +695,8 @@
       surface="card"
       [flush]="isCards()"
       [showHeader]="!isCards()"
+      [collapsible]="isDense()"
+      [initiallyCollapsed]="isCollapsedByDefault('group-section-advanced')"
       [icon]="iconOf('group-section-advanced')"
       titleKey="groups.form.section.advanced"
       hintKey="groups.form.advanced.defaults_hint"
@@ -826,7 +832,7 @@
       }
     </sc-section-card>
   }
-  @if (mode() === 'edit') {
+  @if (mode() === 'edit' && !isDense()) {
     <ng-container *ngTemplateOutlet="identitySection" />
   }
 </ng-template>
