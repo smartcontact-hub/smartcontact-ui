@@ -354,9 +354,12 @@
   container-type: inline-size;
 }
 
-/* De estrecho a ancho, solo con `min-width`. Además de ser el orden sano, un `max-width` con una
- * cifra de tres dígitos aquí lo cuenta `audit:page-anatomy` como un ancho de página a mano (no
- * distingue la condición de una `@container` de la de una regla suelta), y su lista no crece. */
+/* De estrecho a ancho, solo con `min-width`: el orden sano, y el que deja una sola dirección de
+ * lectura en las tres reglas.
+ *
+ * (Se escribió así el 2026-09-21 porque `audit:page-anatomy` contaba un `@container (max-width:
+ * 720px)` como un ancho de página a mano. Ese hueco del gate se cerró el 2026-09-22 con su caso
+ * rojo, así que ya no es el motivo; el motivo es el de arriba.) */
 .identity-fields {
   display: grid;
   /* Estrecho: uno por línea. */

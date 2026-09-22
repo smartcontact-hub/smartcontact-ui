@@ -19,7 +19,7 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
   entera con `tools/primeng-doc.mjs` y meter el nativo tal cual (AGENTS.md, «Componentes de primeng.dev»). Salida explícita: `# sc:ok`.
 
 <!-- tarjeta:inicio -->
-## Antes de AFIRMAR, COMMITEAR o PUSHEAR, relee esto (regla de LEARNINGS entre paréntesis)
+## Antes de AFIRMAR, PREGUNTAR, COMMITEAR o PUSHEAR, relee esto (regla de LEARNINGS entre paréntesis)
 
 1. ¿Lo medí YO, hoy, en ESTE build? Si no: "según X, sin verificar". (#17 #5)
 2. ¿Mi sonda —o la CIFRA que voy a decir— enrojece con el fallo puesto? Si no, no es evidencia. (#2 #6 #12)
@@ -27,7 +27,7 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
 4. Cifra o escritura EN MASA → ¿qué entra? Clave repetida = emisión: diffea antes/después. (#12 #11)
 5. El primer arreglo falló → lo siguiente es una MEDICIÓN, no otro arreglo. (#8)
 6. Push → preflight UNA vez sobre el árbol FINAL; veredicto = `npm run ci:verdict`. (#7)
-7. "Bloqueado", "esperando a Rafa", o voy a RECOMENDAR un cambio → ¿qué decidió ya el repo? (#10 #14)
+7. "Bloqueado", "esperando a Rafa", "dime si", o RECOMENDAR → ¿lo decide ya el repo, o la SKILL que cargué? (#10 #14)
 <!-- tarjeta:fin -->
 
 Resumen operativo:

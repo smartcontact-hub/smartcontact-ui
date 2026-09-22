@@ -133,12 +133,20 @@ export function maxWidthEnInner(scss) {
   return n;
 }
 
-/** Anchos grandes sueltos: ≥600px o ≥40rem, fuera de una condición de media query. */
+/**
+ * Anchos grandes sueltos: ≥600px o ≥40rem, fuera de la CONDICIÓN de una consulta.
+ *
+ * `@container` cuenta igual que `@media`, y hasta el 2026-09-21 solo se saltaba la segunda: un
+ * `@container (max-width: 720px)` perfectamente legítimo entraba al trinquete como si fuera un
+ * ancho de página escrito a mano. Las dos son puntos de ruptura, no declaraciones — y la de
+ * contenedor es la que el repo prefiere para un componente que vive en dos anchos de página con la
+ * misma ventana detrás (la ficha de grupo, que es donde se vio).
+ */
 export function anchosSueltos(scss) {
   const limpio = sinComentarios(scss);
   let n = 0;
   for (const linea of limpio.split('\n')) {
-    if (linea.includes('@media')) continue;
+    if (linea.includes('@media') || linea.includes('@container')) continue;
     const m = linea.match(/max-width\s*:\s*([\d.]+)(px|rem)/);
     if (!m) continue;
     const valor = Number(m[1]);
