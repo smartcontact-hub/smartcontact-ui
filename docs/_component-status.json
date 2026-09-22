@@ -1273,7 +1273,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 13,
+      "usedInSupervisor": 14,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },

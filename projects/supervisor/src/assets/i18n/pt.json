@@ -2176,6 +2176,9 @@
       "a": {
         "label": "Separadores"
       },
+      "s": {
+        "label": "Uma página + separadores"
+      },
       "b": {
         "label": "Uma página (maio)"
       },
@@ -2204,6 +2207,14 @@
         "step2": "Altere algo numa secção e passe para outra: o que mexeu deixa de se ver.",
         "look": "É a referência: compare as outras duas com esta.",
         "summary": "A de hoje: uma secção de cada vez."
+      },
+      "s": {
+        "what": "Sem índice lateral. Em cima, quem é o grupo e como está. Abaixo, o que se mexe de verdade: canais, estratégia e agentes. O resto em separadores, a toda a largura.",
+        "step1": "Olha para a faixa de cima: nome, telefone, prioridade e três números sobre o grupo.",
+        "step2": "Muda de separador: Recursos, Anúncios e Avançado deixam de empurrar a página para baixo.",
+        "step3": "Repara na largura: a tabela de agentes respira, que era onde fazia falta.",
+        "look": "Se perder o índice te desorienta, ou se pelo contrário tira ruído.",
+        "summary": "Sem índice: o importante na página, o resto em separadores, a toda a largura."
       },
       "b": {
         "what": "A versão de maio: todas as secções seguidas numa só página. O índice não esconde nada: leva-o até à secção e marca onde está.",

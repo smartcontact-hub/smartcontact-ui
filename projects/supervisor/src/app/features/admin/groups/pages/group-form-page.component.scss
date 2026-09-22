@@ -17,7 +17,22 @@
  * `.header-meta__chunk`, que ya no pintaba nada: la prioridad no sale en la ficha y
  * la banda a la que se proyectaba se retiró en S59. */
 
-/* Los cuatro canales en una fila, y debajo los ajustes de los marcados (2026-09-18). Antes iban en columna, uno por
+/* Los cuatro canales y los ajustes de los marcados, en LA MISMA línea mientras quepan (2026-09-21).
+ *
+ * Venían en dos: las casillas arriba y «Estrategia (teléfono)» sola debajo, gastando una fila
+ * entera de la tarjeta para un select de 175px que dejaba 900 en blanco a su derecha. Cuando no
+ * caben —cuatro canales encendidos con su reparto— envuelve, que es para lo que está el `wrap`.
+ *
+ * El hueco entre los dos grupos es 56, el doble de los 28 que separan una casilla de la
+ * siguiente: por debajo de eso la estrategia se lee como un canal más de la fila. */
+.channel-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-75) var(--sc-spacing-4);
+}
+
+/* Los cuatro canales en una fila, y al lado los ajustes de los marcados (2026-09-18). Antes iban en columna, uno por
  * línea con su reparto al lado: cuatro filas de alto para cuatro casillas, y la tabla de agentes empezaba tan abajo
  * que no cabía en la pantalla. */
 .channel-row {
@@ -32,7 +47,8 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sc-spacing-0-5) var(--sc-spacing-1-25);
-  margin-block-start: var(--sc-spacing-0-75);
+  /* Sin `margin-block-start`: el aire entre los dos grupos lo pone ahora el `gap` de
+   * `.channel-line`, y si lo pusieran los dos la fila envuelta quedaría al doble de distancia. */
   min-width: 0;
 }
 
@@ -164,3 +180,232 @@
   margin-block-start: var(--sc-spacing-0-5);
 }
 
+/* ── Variante `s` · «Una página + pestañas» (rama `comparar/fichas`) ─────────────────────
+ *
+ * El ANCHO no se pide desde aquí: lo ensancha `.page__inner--rail.compare-tabs` en `_page.scss`,
+ * junto a la regla hermana de la variante `e`. Y el PADDING tampoco hace falta: al seguir siendo
+ * `--rail`, la página conserva los 22.75/28 del molde. (El primer intento cambió el modificador a
+ * `--list`, y eso dejó la página a `0px 0px 0px 0px` —`--list` solo declara `max-width`— con todo
+ * pegado al sidebar; el parche era repetir aquí el padding, y el gate tenía razón en que el
+ * problema era el cambio de arquetipo, no el padding que faltaba.)
+ */
+
+/* EL BLOQUE A SANGRE (variante `s`): lo que era la tarjeta «Canales y agentes», sin caja.
+ *
+ * No declara ni fondo, ni borde, ni radio: por eso no es una «caja a mano» de las que persigue
+ * `audit:screen-vocabulary`, es la ausencia de una. Y por eso su contenido tampoco lleva la
+ * sangría de 12.25 de `.sub-section`: esa sangría existe para casar con el filo de la tarjeta, y
+ * aquí no hay filo.
+ *
+ * 28 entre los dos bloques que contiene (canales y agentes) contra los 14 de dentro de cada uno:
+ * es el 2× que pide la regla de agrupación para que se vea dónde acaba uno. En la maqueta iban a
+ * 14 los dos, que es la misma distancia fuera que dentro. */
+.plain-section {
+  display: flex;
+  flex-direction: column;
+  /* 14 del rótulo a lo que rotula: la cabecera PERTENECE a lo que viene debajo. Con 28 aquí
+   * quedaba a la misma distancia de su contenido que los dos bloques entre sí, y entonces se lee
+   * como un tercer bloque suelto en vez de como el título de los otros dos. */
+  gap: var(--sc-spacing-1);
+  scroll-margin-top: var(--sc-form-anchor-offset);
+}
+
+/* Y 28 entre bloque y bloque (los 14 del `gap` más estos 14): el doble de los 14 de dentro de cada
+ * uno, que es lo que pide la regla para que se vea dónde acaba «Canales» y empieza «Agentes». */
+.plain-block + .plain-block {
+  margin-block-start: var(--sc-spacing-1);
+}
+
+/* El rótulo del bloque baja a `body-semibold` (14) y ya no es `h3` (18). El 18 se lo lleva el
+ * nombre del grupo, que es el sujeto de la pantalla; con los dos a 18 competían dos títulos en la
+ * misma pantalla y ninguno mandaba («don't overload the entry point»). 14 semibold es el rol que
+ * ya usan los rótulos de tramo en esta misma ficha (`.sub-section__title`), así que no nace nada. */
+.plain-section__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-625);
+  margin: 0;
+  color: var(--sc-text-heading);
+}
+
+.plain-section__icon {
+  flex: 0 0 auto;
+  color: var(--sc-icon-subtle);
+}
+
+/* El equivalente de `.sub-section` sin la sangría. Mismo `gap`: las filas de dentro de un bloque
+ * se separan igual dé caja o no. */
+.plain-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  min-inline-size: 0;
+}
+
+/* LA FRANJA DE ESTADO.
+ *
+ * Sin línea abajo a propósito: la tarjeta que va debajo ya trae su borde, y dos filos a
+ * 12px uno de otro se leen como un error de montaje. Separa el aire, no una raya.
+ */
+.headline {
+  display: flex;
+  align-items: center;
+  /* 10.5 con el avatar a 28 = 38.5, que es donde arranca el título de TODAS las tarjetas de
+   * debajo (24.5 de padding + 1 de borde + 12.25 de sangría = 37.75). Medido el 2026-09-21 con
+   * avatar 32 y hueco 14: el nombre caía en x=154 y los títulos en x=146 — ocho píxeles, los
+   * justos para que los dos textos más grandes de la pantalla se lean como dos columnas que no
+   * llegan a serlo. Ahora los dos redondean a 146. */
+  gap: var(--sc-spacing-0-75);
+  /* 28 hasta el rótulo de la sección, que está a 14 de su propio contenido: la cabecera de la
+   * PÁGINA tiene que despegarse el doble que la cabecera de un bloque de lo suyo, o las dos se
+   * leen como un mismo montón de texto. */
+  padding-block-end: var(--sc-spacing-2);
+}
+
+.headline__who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  /* Ancho FIJO por el mismo motivo que las cifras de al lado: sin él, las cifras arrancaban donde
+   * terminara el nombre, así que dos grupos abiertos uno detrás de otro las enseñaban en dos
+   * verticales distintas. 252 da de sobra para un nombre y su teléfono; lo que se pase se recorta
+   * y su valor entero sigue en el `title`. */
+  inline-size: var(--sc-spacing-18);
+}
+
+.headline__name {
+  color: var(--sc-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.headline__meta {
+  color: var(--sc-text-secondary);
+}
+
+/* LAS CIFRAS.
+ *
+ * Ancladas al INICIO y con ancho mínimo fijo, no pegadas al borde derecho. Medido el
+ * 2026-09-21 con el anclaje anterior (`margin-inline-start: auto`): al encender el canal
+ * Chat, «Canales» pasaba de 102 a 142px y empujaba «Agentes asignados» 40px a la izquierda.
+ * Un dato que se mueve solo cuando cambias OTRA cosa es un dato que hay que volver a leer.
+ *
+ * El ancho mínimo aguanta los valores de un idioma; el que se pase se recorta con puntos
+ * suspensivos y su valor entero vive en el `title`. Es el peaje de una franja de cifras:
+ * dejarla crecer devuelve el salto, y dejarla envolver mueve el alto de la banda.
+ */
+.headline__stats {
+  /* Rejilla de ancho FIJO y tres columnas iguales, no una fila que se acomoda. Es la unica
+   * forma de que ningun dato se mueva: con anchos elasticos, «Canales» pasaba de 70 a 98px al
+   * encender Chat y empujaba «Estrategia» 28px (medido). El ancho da de sobra para la etiqueta
+   * mas larga que hay hoy («Agentes asignados», 108px). */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Un hueco entre columnas, no solo el reparto: con tres canales encendidos el valor de
+   * «Canales» llena su columna y el recorte («Teléfono, Chat,…») quedaba pegado a «Balanceada»,
+   * sin una sola pausa entre dos datos distintos. Visto en la captura de tres canales el
+   * 2026-09-21. 12.25 y no más: 350 es el peldaño más alto de la tabla y de él sale todo. */
+  column-gap: var(--sc-spacing-0-875);
+  inline-size: var(--sc-spacing-25);
+  margin: 0;
+  margin-inline-start: var(--sc-spacing-2);
+}
+
+.headline__stat {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.headline__label {
+  color: var(--sc-text-secondary);
+  margin: 0;
+}
+
+.headline__value {
+  color: var(--sc-text-primary);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* Las cifras no bailan al cambiar de dígito. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* LA FILA DE IDENTIDAD. Foto + nombre, teléfono y prioridad.
+ *
+ * POR QUÉ NO ES UN `.grid--2`. Medido el 2026-09-21 en la variante `s`, que corre sobre el
+ * arquetipo ancho (`--list`, 1360 útiles): el campo «Nombre» salía de 1.171px y los dos selects
+ * de 602 cada uno. Un cuadro de texto de metro y medio para «ACD Demo C2CB» no dice cuánto
+ * escribir y deja la etiqueta sola en una llanura — es justo lo que se lee como puesto al boleo.
+ *
+ * En cuanto hay sitio los tres campos van en UNA línea, así que además se ahorra una fila entera.
+ * Por debajo, uno por línea: el reparto lo decide EL CONTENEDOR, no la ventana, porque el mismo
+ * formulario vive en dos anchos (`--rail` da 844 útiles y `--list`, 1.229) con la misma ventana
+ * detrás. Por eso una `@container` y no una `@media`.
+ *
+ * `1-2fr` para el primero: la foto se come 58 de su columna y el nombre es el campo que más
+ * agradece el resto. Los huecos son los de `.grid` (24.5 entre columnas, 12.25 entre filas): esta
+ * fila se parece a las demás del formulario, no se inventa su propia medida. */
+/* El CONTENEDOR que se mide es la sección, no la ventana: `container-type` va aquí y la consulta
+ * la hacen sus hijos (una `@container` no puede estilar al contenedor que la declara). */
+.identity-section {
+  container-type: inline-size;
+}
+
+/* De estrecho a ancho, solo con `min-width`. Además de ser el orden sano, un `max-width` con una
+ * cifra de tres dígitos aquí lo cuenta `audit:page-anatomy` como un ancho de página a mano (no
+ * distingue la condición de una `@container` de la de una regla suelta), y su lista no crece. */
+.identity-fields {
+  display: grid;
+  /* Estrecho: uno por línea. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sc-spacing-0-875) var(--sc-spacing-1-75);
+  /* ARRIBA, igual que `.grid`: cada campo se queda con su alto y las tres etiquetas arrancan en la
+   * misma línea. Con `end` —que fue el primer intento, para casar la foto con su campo— mandaba el
+   * campo más alto: «Teléfono asociado» lleva dos líneas de ayuda debajo del control, así que su
+   * etiqueta subía 42px por encima de las otras dos y las tres cabeceras salían a tres alturas.
+   * Visto en la captura antes de darlo por bueno. La foto ya se casa sola con su campo: quien lo
+   * hace es el `align-items: flex-end` de `.form-identity`, dentro de la celda. */
+  align-items: start;
+}
+
+/* Con sitio para dos: el nombre a lo ancho y los dos selects debajo, a mitades. Es lo que hace
+ * hoy la ficha publicada, y a este ancho no se mueve. */
+@container (min-width: 721px) {
+  .identity-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .identity-fields__who {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Los tres en UNA línea solo cuando de verdad sobra sitio. 1.000 es el corte porque a partir de
+ * ahí las tres columnas dan ≥280 de control: por debajo, el nombre con su foto dentro de 300 se
+ * queda en 240 y el campo empieza a pedir disculpas. En `--rail` (844 útiles) no muerde, así que
+ * la ficha que hoy está publicada no se mueve; muerde en la variante ancha (1.229), que es donde
+ * el problema estaba. */
+@container (min-width: 1000px) {
+  .identity-fields {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .identity-fields__who {
+    grid-column: auto;
+  }
+}
+
+/* EL CONMUTADOR. Pegado a lo que abre y separado de lo que cierra, para que se lea como cabecera
+ * de lo que viene y no como pie de lo anterior.
+ *
+ * 28 arriba y no 21: los márgenes verticales COLAPSAN, y la tarjeta de encima ya trae 21 propios
+ * (`sc-section-card` pone su `margin-bottom`). Con 21 aquí el mayor de los dos seguía siendo 21 y
+ * esta línea no hacía nada — el conmutador quedaba a 21 de lo que cierra y a 7 de lo que abre, un
+ * 3:1 que venía de fuera. Con 28 gana el colapso y la relación es la que se pretendía. Medido el
+ * 2026-09-21. */
+.tabbar {
+  margin-block: var(--sc-spacing-2) var(--sc-spacing-0-5);
+}

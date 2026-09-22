@@ -2176,6 +2176,9 @@
       "a": {
         "label": "Onglets"
       },
+      "s": {
+        "label": "Une page + onglets"
+      },
       "b": {
         "label": "Une page (mai)"
       },
@@ -2204,6 +2207,14 @@
         "step2": "Modifiez quelque chose dans une section puis passez à une autre : ce que vous avez touché n’est plus visible.",
         "look": "C’est la référence : comparez les deux autres avec celle-ci.",
         "summary": "L’actuelle : une section à la fois."
+      },
+      "s": {
+        "what": "Sans index latéral. En haut, qui est le groupe et son état. En dessous, ce qu’on touche vraiment : canaux, stratégie et agents. Le reste en onglets, sur toute la largeur.",
+        "step1": "Regarde la bande du haut : nom, téléphone, priorité et trois chiffres sur le groupe.",
+        "step2": "Change d’onglet : Ressources, Annonces et Avancé ne rallongent plus la page.",
+        "step3": "Note la largeur : le tableau des agents respire, là où il en avait besoin.",
+        "look": "Si perdre l’index te désoriente, ou si au contraire cela retire du bruit.",
+        "summary": "Sans index : l’essentiel sur la page, le reste en onglets, pleine largeur."
       },
       "b": {
         "what": "La version de mai : toutes les sections à la suite sur une seule page. L’index ne cache rien : il vous emmène à la section et indique où vous êtes.",

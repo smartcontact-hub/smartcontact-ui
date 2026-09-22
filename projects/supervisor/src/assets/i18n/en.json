@@ -2176,6 +2176,9 @@
       "a": {
         "label": "Tabs"
       },
+      "s": {
+        "label": "One page + tabs"
+      },
       "b": {
         "label": "One page (May)"
       },
@@ -2204,6 +2207,14 @@
         "step2": "Change something in one section and move to another: what you touched is no longer visible.",
         "look": "It is the baseline: compare the other two against it.",
         "summary": "Today’s: one section at a time."
+      },
+      "s": {
+        "what": "No side index. On top, who the group is and how it stands. Below, what actually gets touched: channels, strategy and agents. Everything else in tabs. Full width.",
+        "step1": "Look at the top band: name, phone, priority and three figures about the group.",
+        "step2": "Switch tabs: Resources, Announcements and Advanced no longer push the page down.",
+        "step3": "Notice the width: the agent table breathes, which is where it was needed.",
+        "look": "Whether losing the index disorients you, or removes noise instead.",
+        "summary": "No index: the important part on the page, the rest in tabs, full width."
       },
       "b": {
         "what": "The May version: every section one after another on a single page. The index hides nothing: it takes you to the section and marks where you are.",

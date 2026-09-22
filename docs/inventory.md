@@ -85,7 +85,7 @@
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 8 |
 | `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 23 |
 | `sc-select` | EXTENDED | primeng/select | 28 inputs | sc-field-label sc-field-msg | ✓ | 41 |
-| `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 13 |
+| `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 14 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 3 |
