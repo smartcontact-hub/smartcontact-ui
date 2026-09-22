@@ -142,5 +142,24 @@ export class LabComponent {
         { label: 'Cómo validar un componente', href: null, route: '/validar' },
       ],
     },
+    {
+      // Cómo trabajamos, no cómo se construye el sistema: por eso no cuelga de «Código y diseño»
+      // (#226). Es una página suelta bajo `public/explorations/`, con dirección de arte propia y
+      // sin tokens del DS: documenta una propuesta, no el sistema.
+      //
+      // Llegó con una nota de tres líneas —«doce acuerdos que ya coinciden, cinco decisiones donde
+      // los documentos se contradicen y cuatro huecos que no escribió nadie; los desempates son una
+      // postura de Diseño, no un consenso»— y se queda aquí, en el código, porque desde el
+      // 2026-09-22 el directorio no lleva notas: eso lo cuenta la página al abrirla, que es donde
+      // se puede contar entero.
+      title: 'Cómo trabajamos',
+      links: [
+        {
+          label: 'Flujo de producto · síntesis de equipo',
+          href: '/explorations/flujo-producto/index.html',
+          meta: 'Las tres propuestas del 22 de septiembre, cruzadas',
+        },
+      ],
+    },
   ];
 }

@@ -215,7 +215,9 @@ export const LABS: readonly Lab[] = [
     question: '¿Las 20 decisiones del teardown mejoran el alta y la edición de grupos y usuarios?',
     controls: ['Reglas nuevas', 'Grietas de hoy'],
     where: 'El botón flotante, abajo a la derecha: apaga las dos reglas y enseña lo de hoy en vivo.',
-    href: 'https://arebury-supervisor-admin-lab.sc-supervisor.pages.dev/lab/admin/grupos',
-    label: 'arebury-supervisor-admin-lab.sc-supervisor.pages.dev',
+    /* Producción desde que entró #225 (medido: 200). Antes apuntaba al preview de su rama, que es
+     * lo que existía; un enlace del Lab a una rama es un 404 esperando a que alguien la borre. */
+    href: 'https://sc-supervisor.pages.dev/lab/admin/grupos',
+    label: 'sc-supervisor.pages.dev/lab/admin',
   },
 ];
