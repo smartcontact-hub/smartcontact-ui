@@ -7,6 +7,47 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
+## 🔶 2026-09-22 · La quinta forma de ficha («Una página + pestañas») pierde la caja del bloque principal
+
+> **Sello: rama `comparar/fichas`, HEAD `3bb6d020`. NO se funde, y NO dispara CI** (`ci.yml` solo corre en push a
+> `main` o en un PR: medido en sus líneas 36-39). Lo único que la ha verificado es `verify` + preflight en local.
+
+**Qué es.** La variante `s` del comparador (`?variante=s`), la quinta. Nace de que Rafa miró «Resumen + panel
+lateral» y dijo que no parecía una SaaS; pidió lo importante en una página con pestañas para lo demás. Luego lo
+maquetó él en Figma (fichero «Gestión de errores», nodo `381:2463`) prescindiendo del componente sección.
+
+**Las tres decisiones que la definen**, todas medidas a 1440 en la ficha de grupo 1:
+
+- **Sin caja en el bloque principal, con caja en el formulario.** Una caja separa un grupo de sus vecinos y ese
+  bloque no tiene vecinos: ES la página. Al quitarla los filos de entrada pasan de tres (108 / 146 / 147) a **uno
+  (x=108)** y la tabla gana 76px. Las variantes con índice (`a`, `b`, `u`, `e`) conservan la caja y no se han movido.
+- **El nombre del grupo es el título de la página** (`sc-text-h3-semibold`, el rol del `h1` de las nueve listas), y
+  «Canales y agentes» baja a `body-semibold`. En la maqueta el título era «Canales y agentes» y el nombre vivía en
+  una caja arriba a la derecha; eso pedía 933 de contenido y a 1024 ya no cabía. La banda de ahora pide 630 y **no
+  necesita ningún punto de ruptura** dentro del rango soportado.
+- **El ancho NO cambia de arquetipo.** La página sigue siendo `--rail` y la ensancha `.page__inner--rail.compare-tabs`
+  en `_page.scss`, junto a la regla hermana de la variante `e`. Cambiar el modificador a `--list` la dejó a `0px` de
+  relleno por los cuatro lados y `audit:page-anatomy` lo cazó dos veces: una página es de UN tipo.
+
+**Página: 1.209px → 1.082px, de 1,43 a 1,28 pantallas.** Sin scroll lateral a 1440 ni a 1024.
+
+**⚠️ Trampa del tramo, y es la que bloquea fundir.** `npm run e2e:supervisor` da **10 rojos que ya estaban** antes
+de este trabajo: son los contratos que rompió la reestructuración de la ficha de grupo (`form-section-nav-legibility`
+espera **3** secciones en el índice del rail y hay **5**; `list-table-grammar` busca «Agentes asignados» como item
+del índice y ya no lo es). Dos de los diez fallan en `/admin/agentes/editar/1` y `/admin/usuarios`, que esta rama no
+toca, así que no son de aquí. **Hay que actualizarlos antes de fundir nada de esta rama.**
+
+**Abierto, en orden de coste:**
+- Con los cuatro canales encendidos la cifra «Canales» se recorta a «Teléfono, Ch…» (el entero va en el `title`).
+  Decisión de copy de Rafa: dejarlo, o poner «4 canales».
+- En las variantes con índice el campo «Nombre» sigue midiendo 787px. Tocarlo cambia la ficha publicada.
+- Falta aplicar la forma elegida a las fichas de agente y de usuario, y montar un tab group de verdad en el DS
+  (hoy hace de conmutador un `sc-selectbutton`).
+- **Transcripción del equipo (2026-09-22, sin trabajar).** Choca con lo construido: dicen que «teléfono asociado» y
+  «prioridad» se tocan mucho y el nombre casi nunca, y aquí el nombre es el título y esos dos están tras una pestaña.
+  Además piden renombrar «Anuncios» (nadie entiende el concepto) y bajar los canales de la tabla de agentes a acción
+  secundaria.
+
 ## ✅ 2026-09-20 · El contenido de página se ancla a la izquierda: el índice lateral deja de colgar (DD-115)
 
 > **Sello: rama `arebury/candlefish`, sobre `origin/main` HEAD `84f37bd5`.** Un solo fichero de código:
