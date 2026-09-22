@@ -16,6 +16,7 @@ import { MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -123,6 +124,7 @@ interface FormState {
     DividerComponent,
     FichaVariantBarComponent,
     FormSectionNavComponent,
+    IconComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
     PhotoUploadComponent,
@@ -242,7 +244,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
      * no es un índice al que se vuelve, y empezar por una tabla de doce nombres deja el grupo sin
      * presentar. Medido el 2026-09-21 en «Una página»: lo primero de la pantalla era la lista de
      * agentes y el nombre del grupo caía a 2.626px de scroll. */
-    if (this.mode() === 'edit' && !this.isDense()) {
+    if (this.mode() === 'edit' && !this.isDense() && !this.isTabbed()) {
       return [channels, ...middle, identity];
     }
     return [identity, channels, ...middle];
@@ -276,6 +278,74 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   protected readonly isDense = computed(() => this.variants.variant() === 'u');
 
+  /**
+   * `s` — «Una página + pestañas». La forma que quita el índice lateral.
+   *
+   * De dónde sale (2026-09-21, Rafa): «aspirar a tener lo importante en una sola página ocupando
+   * el ancho que haga falta, y con otros componentes como tab group poder navegar a otras cosas».
+   * Las dos referencias que dio (Meridian y SnowUI) coinciden en tres cosas y ninguna es un índice
+   * dentro de la página: identidad y estado arriba, navegación en pestañas, y el ancho que pide el
+   * contenido.
+   *
+   *   · ANCHO. Pasa del arquetipo `--rail` (1200, con 920 de columna) al `--list` (1600), que es
+   *     el que el molde reserva para cuando la TABLA es el contenido. Aquí lo es: la de agentes
+   *     medía 723px con doce filas y crece con la plantilla.
+   *   · LO IMPORTANTE, EN LA PÁGINA. Identidad y «Canales y agentes» siempre visibles: es lo que
+   *     se toca de verdad.
+   *   · EL RESTO, EN PESTAÑAS. Recursos, Anuncios y audio y Avanzado nacen con los valores por
+   *     defecto de Grupos, así que dejan de empujar la página hacia abajo.
+   *
+   * El conmutador es un `sc-selectbutton` y no un tab group: el DS no tiene pestañas todavía, y
+   * el gesto es el mismo. Si esta forma se queda, ese componente es lo primero que hay que hacer.
+   */
+  protected readonly isTabbed = computed(() => this.variants.variant() === 's');
+
+  /**
+   * Las secciones que viven detrás del conmutador, en orden.
+   *
+   * Identidad va aquí y no en la página, aunque sea «importante»: la franja de arriba ya dice el
+   * nombre, el teléfono y la prioridad, que son sus tres campos. Teniéndola suelta se veía lo
+   * mismo dos veces seguidas, con la foto repetida (medido el 2026-09-21 en la primera pasada).
+   * Lo importante de VERDAD en un grupo es a quién enruta y por dónde, y eso sí se queda fijo.
+   */
+  protected readonly tabSections = computed(() =>
+    this.navSections().filter((s) => s.id !== 'group-section-channels'),
+  );
+
+  /** `lang()` leído a propósito: `instant()` no es reactivo, así que sin esto los rótulos del
+   *  conmutador se quedaban en el idioma con el que se abrió la ficha. Lo caza `i18n:check`. */
+  protected readonly tabOptions = computed(() => {
+    this.lang();
+    return this.tabSections().map((s) => ({ label: this.translate.instant(s.labelKey), value: s.id }));
+  });
+
+  /** La pestaña elegida. Si la de ahora desaparece (un canal que se apaga), cae en la primera. */
+  private readonly pickedTab = signal<string>('');
+  protected readonly activeTab = computed(() => {
+    const ids = this.tabSections().map((s) => s.id);
+    const picked = this.pickedTab();
+    return ids.includes(picked) ? picked : (ids[0] ?? '');
+  });
+
+  protected onTabChange(value: unknown): void {
+    if (typeof value === 'string' && value) this.pickedTab.set(value);
+  }
+
+  /**
+   * Las tres cifras de la franja de arriba: el estado del grupo de un vistazo, como la banda de
+   * SnowUI. No son decoración — son las tres preguntas que se hacen al abrir un grupo: cuántos
+   * atienden, por dónde entra el trabajo y cómo se reparte.
+   */
+  protected readonly headline = computed(() => {
+    const f = this.form();
+    const activos = f.links.filter((l) => l.active).length;
+    return [
+      { valor: `${activos}/${f.links.length}`, etiqueta: 'groups.form.section.agents' },
+      { valor: this.channelsSummary(f.channels) || '—', etiqueta: 'groups.form.section.channels' },
+      { valor: this.hasPhone() ? this.phoneStrategySummary() : '—', etiqueta: 'groups.form.section.strategy' },
+    ];
+  });
+
   /** Plegadas de entrada en la densa: lo que nace configurado y casi nadie cambia. */
   protected isCollapsedByDefault(id: string): boolean {
     return this.isDense() && (id === 'group-section-announcements' || id === 'group-section-advanced');
@@ -291,8 +361,16 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return this.navSections().find((s) => s.id === id)?.icon ?? null;
   }
 
-  /** En `b` y `u` se ven todas; en `a` y `e`, la del índice. */
+  /**
+   * En `b` y `u` se ven todas; en `a` y `e`, la del índice.
+   *
+   * En `s` hay dos grupos: identidad y canales+agentes están SIEMPRE (son la página), y del resto
+   * solo la pestaña elegida.
+   */
   protected showSection(id: string): boolean {
+    if (this.isTabbed()) {
+      return id === 'group-section-channels' || id === this.activeTab();
+    }
     return this.isOnePage() || this.activeSection() === id;
   }
 

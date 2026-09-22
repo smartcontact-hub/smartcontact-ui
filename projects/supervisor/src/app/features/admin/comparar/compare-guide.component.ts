@@ -51,6 +51,12 @@ const STEPS: Record<FichaVariant, Record<Entity, readonly string[]>> = {
     group: ['compare.guide.b.group.step1', 'compare.guide.u.step2', 'compare.guide.u.step3'],
     user: ['compare.guide.b.user.step1', 'compare.guide.u.step2', 'compare.guide.u.step3'],
   },
+  /* Sin índice: la identidad y lo que se toca de verdad van en la página, y el resto en pestañas. */
+  s: {
+    agent: ['compare.guide.s.step1', 'compare.guide.s.step2', 'compare.guide.s.step3'],
+    group: ['compare.guide.s.step1', 'compare.guide.s.step2', 'compare.guide.s.step3'],
+    user: ['compare.guide.s.step1', 'compare.guide.s.step2', 'compare.guide.s.step3'],
+  },
   e: {
     agent: ['compare.guide.e.agent.step1', 'compare.guide.e.agent.step2', 'compare.guide.e.step3'],
     group: ['compare.guide.e.group.step1', 'compare.guide.e.group.step2', 'compare.guide.e.step3'],

@@ -2176,6 +2176,9 @@
       "a": {
         "label": "Pestañas"
       },
+      "s": {
+        "label": "Una página + pestañas"
+      },
       "b": {
         "label": "Una página (mayo)"
       },
@@ -2204,6 +2207,14 @@
         "step2": "Cambia algo en una sección y pasa a otra: lo que tocaste deja de verse.",
         "look": "Es la referencia: compara las otras dos con esta.",
         "summary": "La de hoy: una sección cada vez."
+      },
+      "s": {
+        "what": "Sin índice lateral. Arriba, quién es el grupo y cómo está de un vistazo. Debajo, lo que de verdad se toca: canales, estrategia y agentes. El resto, en pestañas. Y a todo el ancho.",
+        "step1": "Mira la franja de arriba: nombre, teléfono, prioridad y tres cifras del estado del grupo.",
+        "step2": "Cambia de pestaña: Recursos, Anuncios y audio y Avanzado ya no empujan la página hacia abajo.",
+        "step3": "Fíjate en el ancho: la tabla de agentes respira, que es donde hacía falta.",
+        "look": "Si perder el índice te desorienta, o si al contrario te quita ruido.",
+        "summary": "Sin índice: lo importante en la página y el resto en pestañas, a todo el ancho."
       },
       "b": {
         "what": "La versión de mayo: todas las secciones seguidas en una sola página. El índice no esconde nada: te lleva hasta la sección y marca por dónde vas.",

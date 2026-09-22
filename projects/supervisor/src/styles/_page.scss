@@ -161,6 +161,21 @@
   min-width: 0;
 }
 
+/* COMPARAR (variante `s`, «Una página + pestañas»): la misma página, más ancha.
+ *
+ * Sin índice lateral la tabla de agentes pasa a ser el contenido, y el tope de editor (1200) la
+ * estrangula: con cuatro canales encendidos son cuatro columnas más el nombre. 1600 es el tope de
+ * `--list`, que es el que el molde reserva justo para eso — y se pide por AQUÍ, no cambiando el
+ * modificador de la página, porque una página es de UN tipo (`audit:page-anatomy`). La página
+ * sigue siendo `--rail`: conserva su padding y su `display: flex`, y con el `<aside>` ausente la
+ * columna de contenido se queda el ancho entero.
+ *
+ * Misma forma que `.compare-board` de aquí abajo, y por el mismo motivo: esto solo existe
+ * mientras se comparan formas de ficha. El día que se elija una, sale una de las dos. */
+.page__inner--rail.compare-tabs {
+  max-width: 1600px;
+}
+
 /* COMPARAR (variante `e`, «Resumen + panel lateral»): la ficha de siempre, recolocada sin tocar su
  * plantilla. Arriba la ficha de identidad y debajo el mosaico de tarjetas-resumen (`.board`), a
  * todo el ancho; la sección se edita en un `sc-drawer` que abre «Editar».
