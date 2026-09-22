@@ -17,7 +17,7 @@
 | # | Si estás a punto de… | → |
 |---|---|---|
 | **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ **y que es el que el sistema produce de verdad, no uno que inyectaste tú**; no extiendas el negativo más allá de lo que mediste |
-| **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); mira si tu **doble contesta la pregunta que hace el código**; y ante un trinquete que NO baja o un rojo demasiado redondo, mira UN caso a mano: el que lee de menos suele ser tu contador |
+| **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST o un GATE | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); **mira qué ENUMERA el gate — `git ls-files` no ve lo que no has añadido** ⚙️; y ante un trinquete que NO baja o un rojo demasiado redondo, mira UN caso a mano: el que lee de menos suele ser tu contador |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies** ⚙️, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
@@ -49,18 +49,17 @@
    y declaré roto lo que PrimeNG normaliza · s32 `reducedMotion` escrito y no entregado · s27 "el
    MCP de Figma" eran tres servers y sondeé uno · s44 el CLI decía Playwright ✔ y la sesión no lo tenía.
 
-2. **Tu sonda o tu test te da un hallazgo (positivo o verde) y lo escribiste tú → valida el
-   instrumento con un caso cuya respuesta ya sabes, en TODOS los ejes en que varía, y ponle el
-   fallo delante para ver que enrojece.** Pregunta por la MAGNITUD (¿color o geometría?) y por el
-   NODO exacto de la claim; lee el control (un rojo o un verde puede venir de otro sitio: servidor
-   muerto, puerto de OTRO worktree, filtro `jq` que nunca casa); si un doble contesta la pregunta
-   que hace el código, el test se mide a sí mismo. **Dos olores de que el que lee de menos es TU
-   contador: un trinquete que no baja aunque arregles, y un rojo demasiado REDONDO** — mira UN caso
-   a mano antes de creerte el informe. ⚙️ CHECK O de `docs:coherence` exige test rojo por script.
+2. **Tu sonda, tu test o un GATE te da un verde y lo escribiste tú → valida el instrumento con
+   un caso cuya respuesta ya sabes, en todos sus ejes, y ponle el fallo delante para verlo
+   enrojecer.** Pregunta por la MAGNITUD (¿color o geometría?) y por el NODO exacto; lee el
+   control (servidor muerto, puerto de OTRO worktree, `jq` que nunca casa); si un doble contesta
+   la pregunta que hace el código, el test se mide a sí mismo. **Y un gate solo mide lo que
+   ENUMERA: `git ls-files` no ve lo que no has añadido.** Dos olores de que el que lee de menos
+   es TU contador: un trinquete que no baja aunque arregles, y un rojo demasiado REDONDO — mira
+   UN caso a mano. ⚙️ CHECK O de `docs:coherence`; el hook deniega la cadena con fuentes sin indexar.
    Evidencia: s18 regex `/\d+/g` sobre `color(srgb …)` = verde imposible · s34 `closest: () => ({})`
    dejó 8 verdes con el gesto muerto · s31 verdes contra el `ng serve` de otro worktree ·
-   2026-09-12 trinquete atascado en 55 = cuatro formas de leer de menos, y «21 de 24 discrepan»
-   era mi `modeId`, no deriva.
+   2026-09-22 `verify` verde sobre 908 ficheros sin ver mis 35 nuevos; al commitear, 932 y 2 fallos.
 
 4. **Vas a arreglar un valor sustituyéndolo por otro token → MIDE el token de destino antes.**
    Fondo y texto van de la misma familia: mezclar uno que voltea de tema con uno que no es el
