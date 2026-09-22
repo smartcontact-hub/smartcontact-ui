@@ -177,3 +177,45 @@ export const EXPLORATIONS: readonly Exploration[] = [
     ],
   },
 ];
+
+/* ── LABORATORIOS ───────────────────────────────────────────────────────────────────────────────
+ *
+ * Un laboratorio no es una exploración. Una exploración son VERSIONES que se comparan abriendo
+ * enlaces distintos; un laboratorio es UNA página con su propio conmutador dentro, donde el mismo
+ * ojo ve las dos respuestas sin cambiar de pestaña. Por eso aquí no hay historial: la comparación
+ * ocurre dentro. (Rafa, 2026-09-22: «así no tenemos muchos links».)
+ */
+export interface Lab {
+  readonly id: string;
+  readonly title: string;
+  /** La pregunta que se contesta tocando, no leyendo. */
+  readonly question: string;
+  /** Qué se acciona dentro. Dos o tres, cortos: son pistas, no documentación. */
+  readonly controls: readonly string[];
+  /** Dónde está el mando, para no buscarlo. */
+  readonly where: string;
+  readonly href: string;
+  /** El dominio que se ve bajo el título. */
+  readonly label: string;
+}
+
+export const LABS: readonly Lab[] = [
+  {
+    id: 'lab-sidebar',
+    title: 'Sidebar, el de PrimeNG',
+    question: '¿Cómo se comporta el menú lateral en cada modo, y cuál queremos?',
+    controls: ['Inset', 'Responsive', 'Drawer o Slim'],
+    where: 'La barra de mandos, arriba de la página.',
+    href: 'https://sc-supervisor.pages.dev/lab/sidebar',
+    label: 'sc-supervisor.pages.dev/lab/sidebar',
+  },
+  {
+    id: 'lab-admin',
+    title: 'Administración, tras el teardown',
+    question: '¿Las 20 decisiones del teardown mejoran el alta y la edición de grupos y usuarios?',
+    controls: ['Reglas nuevas', 'Grietas de hoy'],
+    where: 'El botón flotante, abajo a la derecha: apaga las dos reglas y enseña lo de hoy en vivo.',
+    href: 'https://arebury-supervisor-admin-lab.sc-supervisor.pages.dev/lab/admin/grupos',
+    label: 'arebury-supervisor-admin-lab.sc-supervisor.pages.dev',
+  },
+];
