@@ -1,203 +1,230 @@
 <article class="lab">
+  <!-- ── CABECERA ──────────────────────────────────────────────────────────────────────────────
+       El título dice lo que ES la página, no cómo se llama en el menú: «Lab» ya está en el
+       sidebar y en el eyebrow, y repetirlo tres veces no orienta a nadie. La tira de abajo hace
+       de índice y de resumen a la vez — cuántas cosas hay de cada tipo y a un clic de distancia. -->
   <header class="lab__head">
     <p class="eyebrow sc-text-caption-semibold">Lab</p>
-    <h1>Lab</h1>
+    <h1>Lo que estamos probando</h1>
     <p class="lead">
-      Los <strong>enlaces</strong> que usas cada día y los <strong>prototipos</strong> que aún no
-      forman parte del sistema.
+      Ideas a medio cocer, laboratorios para tocar y los enlaces de cada día. Nada de aquí es
+      todavía el sistema.
     </p>
+
+    <nav class="jump" aria-label="Secciones de esta página">
+      @for (s of sections(); track s.id) {
+        <button class="jump__item" type="button" (click)="goTo(s.id)">
+          <span class="jump__count sc-text-h3-semibold">{{ s.count }}</span>
+          <span class="jump__label sc-text-caption-semibold">{{ s.label }}</span>
+          <span class="jump__hint sc-text-caption-regular">{{ s.hint }}</span>
+        </button>
+      }
+    </nav>
   </header>
 
-  <!-- ─────────────────────────── ENLACES ─────────────────────────── -->
-  <section class="links" aria-labelledby="links-title">
-    <h2 id="links-title" class="section-title sc-text-h2-semibold">Enlaces</h2>
-    <p class="section-lead">
-      Todo lo desplegado, el repositorio y el Kit de Figma, para no memorizar URLs.
-    </p>
+  <!-- ── EXPLORACIONES ─────────────────────────────────────────────────────────────────────────
+       Lo primero porque es lo que espera una decisión. El color no decora: dice en qué quedó cada
+       una (verde decidida, ámbar esperando, gris archivada) y se ve antes de leer el rótulo. -->
+  <section class="sec" id="sec-exploraciones" #secExploraciones aria-labelledby="t-exploraciones">
+    <header class="sec__head">
+      <h2 id="t-exploraciones" class="sc-text-h2-semibold">Exploraciones</h2>
+      <p class="sec__lead">Cada versión que se probó, con un enlace que no caduca.</p>
+    </header>
 
-    @for (group of linkGroups; track group.title) {
-      <div class="link-group">
-        <div class="link-group__head">
-          <h3 class="link-group__title sc-text-caption-semibold">{{ group.title }}</h3>
-          @if (group.meta) {
-            <span class="link-group__meta">{{ group.meta }}</span>
-          }
-        </div>
-        <ul class="link-list">
-          @for (link of group.links; track link.label) {
-            <li class="link-item">
-              @if (link.route) {
-                <a class="link-item__a" [routerLink]="link.route">
-                  <span class="link-item__label"
-                    >{{ link.label }} <span aria-hidden="true">→</span></span
-                  >
-                </a>
-              } @else if (link.href) {
-                <a class="link-item__a" [href]="link.href" target="_blank" rel="noopener">
-                  <span class="link-item__label"
-                    >{{ link.label }} <span aria-hidden="true">↗</span></span
-                  >
-                  @if (link.meta) {
-                    <span class="link-item__url">{{ link.meta }}</span>
-                  }
-                </a>
-              } @else {
-                <div class="link-item__a link-item__a--pending">
-                  <span class="link-item__label">{{ link.label }}</span>
-                  <span class="link-item__url">Próximamente</span>
-                </div>
-              }
-              <p class="link-item__note sc-text-caption-regular">{{ link.note }}</p>
-            </li>
-          }
-        </ul>
-      </div>
-    }
-
-    <p class="branch-note">
-      <strong>Preview por rama:</strong> cada rama con cambios visibles publica su propia copia en
-      <code>&lt;rama&gt;.sc-doc.pages.dev</code> y
-      <code>&lt;rama&gt;.sc-supervisor.pages.dev</code> (guiones en vez de barras).
-    </p>
-  </section>
-
-  <!-- ──────────────────────── EXPLORACIONES ───────────────────────── -->
-  <section class="explorations" aria-labelledby="expl-title">
-    <h2 id="expl-title" class="section-title sc-text-h2-semibold">Exploraciones</h2>
-    <p class="section-lead">
-      Ideas que <strong>aún no forman parte del sistema</strong>: ramas de comparación con cada
-      versión que se probó, y prototipos guardados en el repo.
-    </p>
-
-    <!-- Una tarjeta por rama de comparación. Los datos viven en `explorations.data.ts`, no aquí. -->
-    <h3 class="expl-subtitle sc-text-caption-semibold">Ramas de comparación</h3>
-    <div class="versioned-list">
+    <div class="cards">
       @for (ex of explorations; track ex.id) {
-        <article class="versioned" [attr.aria-labelledby]="'expl-' + ex.id">
-          <h4 [id]="'expl-' + ex.id" class="versioned__title sc-text-h3-semibold">{{ ex.title }}</h4>
+        <article class="card" [attr.data-status]="ex.status" [attr.aria-labelledby]="'expl-' + ex.id">
+          <div class="card__top">
+            <sc-tag [severity]="statusSeverity(ex.status)" [value]="statusLabel[ex.status]" />
+            <span class="card__date sc-text-caption-regular">{{ ex.version.date }}</span>
+          </div>
 
-          <!-- Los tres datos que tiene que decir toda exploración, rotulados y arriba (Rafa, 2026-09-16). -->
-          <dl class="versioned__facts">
-            <div class="fact">
-              <dt class="fact__label sc-text-caption-semibold">Versión</dt>
-              <dd class="fact__value">
-                <a class="version__link version__link--stacked" [href]="ex.version.href" target="_blank" rel="noopener">
-                  <span class="version__date sc-text-caption-regular">{{ ex.version.date }}</span>
-                  <span class="version__behavior sc-text-body-regular">{{ ex.version.behavior }} <span aria-hidden="true">↗</span></span>
-                </a>
-              </dd>
-            </div>
-            <div class="fact">
-              <dt class="fact__label sc-text-caption-semibold">Objetivo</dt>
-              <dd class="fact__value sc-text-body-regular">{{ ex.objective }}</dd>
-            </div>
-            <div class="fact">
-              <dt class="fact__label sc-text-caption-semibold">Estado</dt>
-              <dd class="fact__value">
-                <sc-tag [severity]="statusSeverity(ex.status)" [value]="statusLabel[ex.status]" />
-                @if (ex.statusNote) {
-                  <p class="versioned__note sc-text-caption-regular">{{ ex.statusNote }}</p>
-                }
-              </dd>
-            </div>
-          </dl>
+          <h3 [id]="'expl-' + ex.id" class="card__title sc-text-h3-semibold">{{ ex.title }}</h3>
+          <p class="card__q sc-text-body-regular">{{ ex.objective }}</p>
 
-          <a class="expl__open sc-text-body-semibold" [href]="ex.live.href" target="_blank" rel="noopener">
-            Abrir la rama viva <span aria-hidden="true">↗</span>
-          </a>
-
-          @if (ex.history.length) {
-            <p class="versioned__label sc-text-caption-semibold">Versiones anteriores</p>
-            <ol class="versions">
-              @for (v of ex.history; track v.href) {
-                <li class="version">
-                  <a class="version__link" [href]="v.href" target="_blank" rel="noopener">
-                    <span class="version__date sc-text-caption-regular">{{ v.date }}</span>
-                    <span class="version__behavior sc-text-body-regular">{{ v.behavior }} <span aria-hidden="true">↗</span></span>
-                  </a>
-                  @if (v.tag || v.commit) {
-                    <span class="version__meta">
-                      @if (v.tag) {
-                        <code class="sc-text-caption-regular">{{ v.tag }}</code>
-                      }
-                      @if (v.commit) {
-                        <code class="sc-text-caption-regular">{{ v.commit }}</code>
-                      }
-                    </span>
-                  }
-                </li>
-              }
-            </ol>
+          @if (ex.statusNote) {
+            <p class="card__note sc-text-caption-regular">{{ ex.statusNote }}</p>
           }
 
-          @if (ex.figma?.length) {
-            <p class="versioned__label sc-text-caption-semibold">Figma</p>
-            <ul class="versioned__figma">
-              @for (f of ex.figma; track f.href) {
-                <li>
-                  <a class="expl__open" [href]="f.href" target="_blank" rel="noopener">{{ f.label }} <span aria-hidden="true">↗</span></a>
-                </li>
+          <div class="card__foot">
+            <a class="cta sc-text-body-semibold" [href]="ex.live.href" target="_blank" rel="noopener">
+              Abrir <span class="cta__arrow" aria-hidden="true">↗</span>
+            </a>
+            <span class="card__where sc-text-caption-regular">{{ ex.live.label }}</span>
+          </div>
+
+          <!-- Lo que solo hace falta a veces, plegado: el historial es el 70 % del texto de esta
+               tarjeta y casi nunca es lo que se viene a buscar. -->
+          @if (ex.history.length || ex.figma?.length) {
+            <details class="more">
+              <summary class="more__summary sc-text-caption-semibold">
+                <span class="more__chevron" aria-hidden="true"></span>
+                {{ ex.history.length }} versión(es) anterior(es){{ ex.figma?.length ? ' · Figma' : '' }}
+              </summary>
+
+              <ol class="versions">
+                @for (v of ex.history; track v.href) {
+                  <li class="version">
+                    <a class="version__link" [href]="v.href" target="_blank" rel="noopener">
+                      <span class="version__date sc-text-caption-regular">{{ v.date }}</span>
+                      <span class="version__behavior sc-text-caption-regular">{{ v.behavior }}</span>
+                    </a>
+                  </li>
+                }
+              </ol>
+
+              @if (ex.figma?.length) {
+                <ul class="figma">
+                  @for (f of ex.figma; track f.href) {
+                    <li>
+                      <a class="version__link" [href]="f.href" target="_blank" rel="noopener">
+                        <span class="version__behavior sc-text-caption-regular">{{ f.label }} ↗</span>
+                      </a>
+                    </li>
+                  }
+                </ul>
               }
-            </ul>
+            </details>
           }
         </article>
       }
     </div>
+  </section>
 
-    <h3 class="expl-subtitle sc-text-caption-semibold">Prototipos guardados</h3>
-    <div class="expl-grid">
-      <article class="expl">
-        <div class="expl__preview">
+  <!-- ── LABORATORIOS ──────────────────────────────────────────────────────────────────────────
+       NO son tarjetas, y es a propósito. Dos rejillas de tarjetas seguidas se leen como lo mismo
+       repetido, y esto es otra cosa: aquí no hay nada que comparar por fuera. Van en filas
+       anchas, numeradas, separadas por una línea — la familia se distingue por su FORMA y no por
+       un color de marca nuevo, que el acento de este sistema es uno solo (`.impeccable.md`). -->
+  <section class="sec" id="sec-laboratorios" #secLaboratorios aria-labelledby="t-laboratorios">
+    <header class="sec__head">
+      <h2 id="t-laboratorios" class="sc-text-h2-semibold">Laboratorios</h2>
+      <p class="sec__lead">Una sola página con el conmutador dentro: comparas sin cambiar de pestaña.</p>
+    </header>
+
+    <ol class="benches">
+      @for (lab of labs; track lab.id; let i = $index) {
+        <li class="bench">
+          <span class="bench__n sc-text-caption-semibold" aria-hidden="true">{{ i + 1 }}</span>
+
+          <div class="bench__body">
+            <h3 class="bench__title sc-text-h3-semibold">{{ lab.title }}</h3>
+            <p class="bench__q sc-text-body-regular">{{ lab.question }}</p>
+            <p class="bench__where sc-text-caption-regular">{{ lab.where }}</p>
+          </div>
+
+          <div class="bench__aside">
+            <!-- Lo que se toca, como una lista de verdad: son los mandos del laboratorio, y un
+                 lector de pantalla tiene que poder contarlos. -->
+            <ul class="knobs" [attr.aria-label]="'Lo que se toca en ' + lab.title">
+              @for (c of lab.controls; track c) {
+                <li class="knob sc-text-caption-regular">{{ c }}</li>
+              }
+            </ul>
+            <a class="cta sc-text-body-semibold" [href]="lab.href" target="_blank" rel="noopener">
+              Abrir <span class="cta__arrow" aria-hidden="true">↗</span>
+            </a>
+            <span class="bench__url sc-text-caption-regular">{{ lab.label }}</span>
+          </div>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <!-- ── ENLACES ───────────────────────────────────────────────────────────────────────────────
+       Un destino por fila, el dominio bajo el nombre y NADA más: esto es una agenda, no una
+       explicación. Lo que antes eran tres líneas de nota por enlace vive donde se explica de
+       verdad, en la página de cada cosa. -->
+  <section class="sec" id="sec-enlaces" #secEnlaces aria-labelledby="t-enlaces">
+    <header class="sec__head">
+      <h2 id="t-enlaces" class="sc-text-h2-semibold">Enlaces</h2>
+      <p class="sec__lead">Lo desplegado, el repositorio y el Kit, para no memorizar URLs.</p>
+    </header>
+
+    <div class="groups">
+      @for (group of linkGroups; track group.title) {
+        <section class="group" [attr.aria-label]="group.title">
+          <h3 class="group__title sc-text-caption-semibold">{{ group.title }}</h3>
+          <ul class="links">
+            @for (link of group.links; track link.label) {
+              <li>
+                @if (link.route) {
+                  <a class="link" [routerLink]="link.route">
+                    <span class="link__label sc-text-body-semibold">{{ link.label }}</span>
+                    <span class="link__meta sc-text-caption-regular">En este sitio</span>
+                    <span class="link__arrow" aria-hidden="true">→</span>
+                  </a>
+                } @else if (link.href) {
+                  <a class="link" [href]="link.href" target="_blank" rel="noopener">
+                    <span class="link__label sc-text-body-semibold">{{ link.label }}</span>
+                    <span class="link__meta sc-text-caption-regular">{{ link.meta }}</span>
+                    <span class="link__arrow" aria-hidden="true">↗</span>
+                  </a>
+                }
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+
+    <p class="branch-note sc-text-caption-regular">
+      <strong>Preview por rama:</strong> cada rama publica su copia en
+      <code>&lt;rama&gt;.sc-supervisor.pages.dev</code>, con guiones en vez de barras y
+      <strong>cortada a 28 caracteres</strong> (medido el 2026-09-22: por eso el laboratorio de
+      administración pierde el <code>-teardown</code>).
+    </p>
+  </section>
+
+  <!-- ── GUARDADO ──────────────────────────────────────────────────────────────────────────────
+       Piezas sueltas que no son ni exploración ni laboratorio: no se comparan ni se tocan, se
+       miran. Van al final y en pequeño, que es el sitio que les toca. -->
+  <section class="sec" aria-labelledby="t-guardado">
+    <header class="sec__head">
+      <h2 id="t-guardado" class="sc-text-h2-semibold">Guardado</h2>
+      <p class="sec__lead">Bocetos que aún no son del sistema. Se miran, no se comparan.</p>
+    </header>
+
+    <div class="saved">
+      <article class="save">
+        <div class="save__preview">
           <iframe
             src="/explorations/skeleton-screen/index.html"
             title="Pantalla de carga (esqueleto) — prototipo"
             loading="lazy"
           ></iframe>
         </div>
-        <div class="expl__body">
-          <p class="expl__kind sc-text-caption-semibold">Patrón · pantalla de carga</p>
-          <h4 class="expl__title sc-text-h3-semibold">Pantalla de carga (esqueleto)</h4>
-          <p class="expl__by sc-text-caption-regular">Marta Recio · jul 2026</p>
-          <p class="expl__note">
-            Boceto de la pantalla de carga de la app del agente, con barras tipo esqueleto. Es
-            HTML puro: aún no usa los tokens del sistema. El DS ya tiene <code>sc-skeleton</code>
-            suelto; falta convertir esto en un patrón completo.
-          </p>
+        <div class="save__body">
+          <h3 class="save__title sc-text-body-semibold">Pantalla de carga (esqueleto)</h3>
+          <p class="save__by sc-text-caption-regular">Marta Recio · jul 2026 · HTML sin tokens</p>
           <a
-            class="expl__open sc-text-body-semibold"
+            class="cta cta--sm sc-text-caption-semibold"
             href="/explorations/skeleton-screen/index.html"
             target="_blank"
             rel="noopener"
+            >Abrir <span aria-hidden="true">↗</span></a
           >
-            Abrir a pantalla completa ↗
-          </a>
         </div>
       </article>
 
-      <article class="expl">
-        <div class="expl__preview expl__preview--image">
+      <article class="save">
+        <div class="save__preview save__preview--image">
           <img
             src="/explorations/search-loading/search_loading_icon.gif"
             alt="Icono animado de carga: una lupa buscando con el texto Cargando resultados"
             loading="lazy"
           />
         </div>
-        <div class="expl__body">
-          <p class="expl__kind sc-text-caption-semibold">Asset · icono animado</p>
-          <h4 class="expl__title sc-text-h3-semibold">Icono de carga (búsqueda)</h4>
-          <p class="expl__by sc-text-caption-regular">Marta Recio · jul 2026</p>
-          <p class="expl__note">
-            Icono animado de una lupa buscando, con el texto «Cargando resultados…». Exportado en
-            Lottie y GIF. Por decidir si sustituye al spinner actual.
-          </p>
+        <div class="save__body">
+          <h3 class="save__title sc-text-body-semibold">Icono de carga (búsqueda)</h3>
+          <p class="save__by sc-text-caption-regular">Marta Recio · jul 2026 · Lottie y GIF</p>
           <a
-            class="expl__open sc-text-body-semibold"
+            class="cta cta--sm sc-text-caption-semibold"
             href="/explorations/search-loading/search_loading_icon.gif"
             target="_blank"
             rel="noopener"
+            >Abrir <span aria-hidden="true">↗</span></a
           >
-            Abrir el GIF ↗
-          </a>
         </div>
       </article>
     </div>

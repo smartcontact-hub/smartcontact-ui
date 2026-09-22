@@ -562,8 +562,12 @@ export const TIPOGRAFIA_SUELTA_MAX = 82;
  * arreglar el instrumento antes de fiarse del número.
  *
  * El apartado del simulador también sube por lo mismo: 122 → 141 exentas, ni una nueva.
+ *
+ * 101 → 96 el 2026-09-22, al rehacer el Lab: la página ponía su tipografía a mano (`.eyebrow`,
+ * `.section-lead`, `.link-item__*`, `.expl__*`…) y ahora la pide por su nombre con `.sc-text-*` en
+ * la plantilla, que es DD-69. Cinco declaraciones menos, ninguna nueva.
  */
-export const TIPOGRAFIA_SUELTA_DOCS_MAX = 101;
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 96;
 
 /** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
 export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);
