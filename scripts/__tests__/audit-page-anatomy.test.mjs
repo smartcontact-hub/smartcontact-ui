@@ -116,6 +116,26 @@ test('EXCLUYE la CONDICIÓN de una media query, que no es una declaración', () 
   assert.equal(anchosSueltos('@media (max-width: 1024px) {\n  .a { display: block; }\n}'), 0);
 });
 
+/* La condición de una `@container` es un punto de ruptura igual que la de una `@media`, y el gate
+ * solo saltaba la segunda: un `@container (max-width: 720px)` legítimo entraba al trinquete de
+ * anchos sueltos como si fuera un ancho de página a mano (visto el 2026-09-21 en la ficha de
+ * grupo). Y sí, es la construcción que el repo QUIERE, porque un componente que vive en dos anchos
+ * con la misma ventana detrás se adapta a su contenedor, no a la ventana. */
+test('EXCLUYE también la CONDICIÓN de una container query', () => {
+  assert.equal(anchosSueltos('@container (max-width: 720px) {\n  .a { display: block; }\n}'), 0);
+  assert.equal(
+    anchosSueltos('@container ficha (max-width: 900px) {\n  .a { display: block; }\n}'),
+    0,
+  );
+});
+
+test('pero SIGUE cazando un ancho suelto grande dentro de una container query', () => {
+  assert.equal(
+    anchosSueltos('@container (min-width: 700px) {\n  .a { max-width: 1100px; }\n}'),
+    1,
+  );
+});
+
 /* ── revisarPagina: verde sobre lo real, rojo con la regresión puesta ──────── */
 
 const RUTA_REAL =
