@@ -175,25 +175,29 @@ export function driftFromPackage(type: LabUserType, granted: ReadonlySet<string>
 }
 
 
+/* Los correos usan `example.com`, un dominio RESERVADO para ficción (RFC 2606) y por eso
+ * exento en `audit:seed-pii`. No los cambies a algo con pinta de real —`@ejemplo.es`,
+ * `@empresa.com`—: ese gate existe porque un dato de contacto copiado de una pantalla real
+ * y uno inventado se ven exactamente igual. */
 export const LAB_PEOPLE: readonly LabPerson[] = [
-  { id: 'p-01', name: 'Elena Vidal', identifier: 'evidal', email: 'elena.vidal@ejemplo.es', job: 'Coordinadora de turno', status: 'activo', groups: ['g-atencion', 'g-premium'], type: 'supervisor', grants: [...TYPE_PACKAGES.supervisor] },
-  { id: 'p-02', name: 'Marc Ferrer', identifier: 'mferrer', email: 'marc.ferrer@ejemplo.es', job: 'Técnico de soporte', status: 'activo', groups: ['g-soporte'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
-  { id: 'p-03', name: 'Nadia Bouzid', identifier: 'nbouzid', email: 'nadia.bouzid@ejemplo.es', job: 'Agente', status: 'activo', groups: ['g-atencion'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
-  { id: 'p-04', name: 'Tomás Iglesias', identifier: 'tiglesias', email: 'tomas.iglesias@ejemplo.es', job: 'Agente de ventas', status: 'pausado', groups: ['g-ventas'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
-  { id: 'p-05', name: 'Júlia Roca', identifier: 'jroca', email: 'julia.roca@ejemplo.es', job: 'Técnica de soporte', status: 'activo', groups: ['g-soporte'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
-  { id: 'p-06', name: 'Andrés Pardo', identifier: 'apardo', email: 'andres.pardo@ejemplo.es', job: 'Agente de ventas', status: 'activo', groups: ['g-ventas'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
-  { id: 'p-07', name: 'Lucía Serrano', identifier: 'lserrano', email: 'lucia.serrano@ejemplo.es', job: 'Agente', status: 'activo', groups: ['g-atencion'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
-  { id: 'p-08', name: 'Iker Mendoza', identifier: 'imendoza', email: 'iker.mendoza@ejemplo.es', job: 'Agente de ventas', status: 'pendiente', groups: ['g-ventas'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
+  { id: 'p-01', name: 'Elena Vidal', identifier: 'evidal', email: 'elena.vidal@example.com', job: 'Coordinadora de turno', status: 'activo', groups: ['g-atencion', 'g-premium'], type: 'supervisor', grants: [...TYPE_PACKAGES.supervisor] },
+  { id: 'p-02', name: 'Marc Ferrer', identifier: 'mferrer', email: 'marc.ferrer@example.com', job: 'Técnico de soporte', status: 'activo', groups: ['g-soporte'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
+  { id: 'p-03', name: 'Nadia Bouzid', identifier: 'nbouzid', email: 'nadia.bouzid@example.com', job: 'Agente', status: 'activo', groups: ['g-atencion'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
+  { id: 'p-04', name: 'Tomás Iglesias', identifier: 'tiglesias', email: 'tomas.iglesias@example.com', job: 'Agente de ventas', status: 'pausado', groups: ['g-ventas'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
+  { id: 'p-05', name: 'Júlia Roca', identifier: 'jroca', email: 'julia.roca@example.com', job: 'Técnica de soporte', status: 'activo', groups: ['g-soporte'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
+  { id: 'p-06', name: 'Andrés Pardo', identifier: 'apardo', email: 'andres.pardo@example.com', job: 'Agente de ventas', status: 'activo', groups: ['g-ventas'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
+  { id: 'p-07', name: 'Lucía Serrano', identifier: 'lserrano', email: 'lucia.serrano@example.com', job: 'Agente', status: 'activo', groups: ['g-atencion'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
+  { id: 'p-08', name: 'Iker Mendoza', identifier: 'imendoza', email: 'iker.mendoza@example.com', job: 'Agente de ventas', status: 'pendiente', groups: ['g-ventas'], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
   /* Rosa se aparta de su paquete a propósito: sin Campañas y CON gestión de usuarios. Es el
    * caso que hace visible A1 —«Supervisor · 2 cambios»— ya desde la lista. */
   {
-    id: 'p-09', name: 'Rosa Calvet', identifier: 'rcalvet', email: 'rosa.calvet@ejemplo.es',
+    id: 'p-09', name: 'Rosa Calvet', identifier: 'rcalvet', email: 'rosa.calvet@example.com',
     job: 'Supervisora', status: 'activo', groups: ['g-premium'], type: 'supervisor',
     grants: [...TYPE_PACKAGES.supervisor.filter((k) => k !== 'campaigns'), 'usersManagement'],
   },
-  { id: 'p-10', name: 'Hugo Salas', identifier: 'hsalas', email: 'hugo.salas@ejemplo.es', job: 'Administrativo', status: 'activo', groups: ['g-facturacion'], type: 'viewer', grants: [...TYPE_PACKAGES.viewer] },
-  { id: 'p-11', name: 'Paula Nieto', identifier: 'pnieto', email: 'paula.nieto@ejemplo.es', job: 'Agente', status: 'activo', groups: [], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
-  { id: 'p-12', name: 'Dani Requena', identifier: 'drequena', email: 'dani.requena@ejemplo.es', job: 'Agente', status: 'activo', groups: [], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
+  { id: 'p-10', name: 'Hugo Salas', identifier: 'hsalas', email: 'hugo.salas@example.com', job: 'Administrativo', status: 'activo', groups: ['g-facturacion'], type: 'viewer', grants: [...TYPE_PACKAGES.viewer] },
+  { id: 'p-11', name: 'Paula Nieto', identifier: 'pnieto', email: 'paula.nieto@example.com', job: 'Agente', status: 'activo', groups: [], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
+  { id: 'p-12', name: 'Dani Requena', identifier: 'drequena', email: 'dani.requena@example.com', job: 'Agente', status: 'activo', groups: [], type: 'agent', grants: [...TYPE_PACKAGES.agent] },
 ];
 
 export const PERSON_BY_ID: ReadonlyMap<string, LabPerson> = new Map(LAB_PEOPLE.map((p) => [p.id, p]));
