@@ -25,7 +25,8 @@
       width: 100%;
       background: none;
       border: 0;
-      text-align: left;
+      /* `start` y no `left`, como en `sc-section-card`: en árabe el otro filo. */
+      text-align: start;
       cursor: pointer;
       transition: background var(--sc-transition-fast) ease;
 
@@ -46,7 +47,8 @@
   }
 
   &__chevron {
-    margin-left: auto;
+    /* Lógica, no física: al filo FINAL de la cabecera. */
+    margin-inline-start: auto;
     color: var(--sc-icon-subtle);
     flex: 0 0 auto;
     align-self: center;

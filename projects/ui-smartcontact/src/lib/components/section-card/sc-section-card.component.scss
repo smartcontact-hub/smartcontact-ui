@@ -3,6 +3,18 @@
   margin-bottom: var(--sc-spacing-1-5);
 }
 
+/* EL MARGEN DE LA ÚLTIMA SE QUEDA, y aquí está el porqué para que nadie lo vuelva a quitar.
+ *
+ * El 2026-09-21 se probó `:host(:last-of-type) { margin-bottom: 0 }`, con el argumento de que la
+ * última tarjeta gasta 21px contra el final del contenedor y que el aire de abajo es de la
+ * página, no del componente. El argumento es bueno; el hecho no lo acompaña. Medido con la regla
+ * puesta: `config/aed/servicio` tiene UNA tarjeta y su `.page__inner` no pone padding abajo
+ * (0px), así que la caja pasaba a tocar el final del scroll. Ese margen no es aire muerto: es el
+ * respiro de abajo que varias pantallas NO declaran por su cuenta.
+ *
+ * Quitarlo de verdad exige que cada página se haga cargo de su pie primero, y eso es una pasada
+ * por el DS entero, no un apaño desde una rama de comparación. */
+
 .section-card {
   /* Contenedor gris (Figma: gray/50 #f9fafb → --sc-bg-secondary-subtle), flat
      (sin sombra), radio xl=12 → --sc-radius-400. La jerarquía la lleva el tipo +
@@ -11,7 +23,10 @@
   border: 0;
   border-radius: var(--sc-radius-400);
   overflow: hidden;
-  transition: border-color var(--sc-transition-fast) ease;
+  /* Sin `transition` aquí: había una de `border-color` y NADA cambia el borde de esta caja —ni
+   * un estado, ni una clase, ni otra hoja (barrido el 2026-09-21 en los diez ficheros que la
+   * usan). Una transición sobre una propiedad que no se mueve no se ve, pero dice que sí lo hace
+   * a quien lea esto luego. La que sí trabaja está en la cabecera colapsable, sobre `background`. */
   /* Offset para el salto-a-ancla de sc-form-section-nav (limpia el sticky header). */
   scroll-margin-top: var(--sc-form-anchor-offset);
 
@@ -40,12 +55,19 @@
       width: 100%;
       background: none;
       border: 0;
-      text-align: left;
+      /* `start` y no `left`: en árabe la cabecera tiene que alinearse al otro filo. */
+      text-align: start;
       cursor: pointer;
       transition: background var(--sc-transition-fast) ease;
 
+      /* `secondary-hover` (slate-100) y no `secondary-subtle` (slate-50), que es EL FONDO DE ESTA
+       * MISMA CAJA en su variante gris: sobre la caja gris el hover pintaba el color que ya había
+       * y no pasaba nada al pasar el ratón por encima. Hoy no se ve porque la única cabecera
+       * colapsable de la app está sobre `surface="card"` (blanca) —así que era una trampa armada,
+       * no una avería servida—, y `sc-subsection`, su hermana, ya usaba el token correcto.
+       * Medido el 2026-09-21: subtle = slate-50 = el fondo de `.section-card`. */
       &:hover {
-        background: var(--sc-bg-secondary-subtle);
+        background: var(--sc-bg-secondary-hover);
       }
       &:focus-visible {
         outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
@@ -61,7 +83,8 @@
   }
 
   &__chevron {
-    margin-left: auto;
+    /* Lógica, no física: el chevron va al filo FINAL de la cabecera, que en árabe es el izquierdo. */
+    margin-inline-start: auto;
     color: var(--sc-icon-subtle);
     flex: 0 0 auto;
     align-self: center;
