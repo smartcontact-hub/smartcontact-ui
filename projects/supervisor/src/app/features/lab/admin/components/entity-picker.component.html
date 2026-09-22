@@ -1,0 +1,32 @@
+<div class="picker">
+  <sc-search [(value)]="query" [placeholder]="searchPlaceholder()" size="sm" />
+
+  <!-- B5 · las fichas de lo elegido, con su botón de quitar. Hueco reservado siempre. -->
+  <div class="picker__chips">
+    @if (chips().length === 0) {
+      <span class="picker__hint sc-text-caption-regular">{{ emptyHint() }}</span>
+    } @else {
+      @for (chip of chips(); track chip.id) {
+        <sc-chip [label]="chip.name" removable [removeAriaLabel]="removeLabel(chip.name)" (removed)="toggle(chip.id)" />
+      }
+    }
+  </div>
+
+  <!-- La lista está SIEMPRE visible, también con cosas ya elegidas: la fila elegida no se
+       mueve de sitio, solo se marca (Telegram). -->
+  <div class="checkbox-grid">
+    @for (item of visible(); track item.id) {
+      <!-- La pila es la del formulario de usuario: una fila y lo que cuelga de ella. -->
+      <div class="checkbox-stack">
+        <sc-checkbox class="checkbox-row" [state]="isSelected(item.id) ? 'all' : 'none'" (cycle)="toggle(item.id)">
+          {{ item.name }}
+        </sc-checkbox>
+        <p class="picker__sub sc-text-caption-regular" [title]="item.sub">{{ item.sub }}</p>
+      </div>
+    }
+  </div>
+
+  @if (hidden() > 0) {
+    <p class="picker__hint sc-text-caption-regular">El filtro esconde {{ hidden() }} de {{ items().length }}.</p>
+  }
+</div>

@@ -1,0 +1,31 @@
+/* La lista entera la monta `sc-list-page` (DD-97) y `.table__td-text` es global
+ * (`styles/_table-elements.scss`). Aquí solo la celda de nombre y el lienzo.
+ *
+ * ⚠️ `.table__td-name` NO es global: hoy está declarada, idéntica, en la hoja de CADA lista
+ * (grupos, usuarios y agentes), y esto la copia una cuarta vez. Es la misma clase de deriva
+ * que persigue `audit:screen-vocabulary`, salvo que ese nombre no está en su `VOCABULARIO`.
+ * Sitio correcto: `styles/_table-elements.scss`, al lado de `.table__td-text`. Anotado en la
+ * nota de decisiones; no se mueve desde un laboratorio.
+ */
+:host {
+  display: block;
+  min-height: 100%;
+  background: var(--sc-bg-canvas);
+}
+
+/* Celda de nombre: avatar + nombre en una línea. Copiada byte a byte de
+ * `features/admin/groups/pages/groups-list-page.component.scss`. */
+.table__td-name {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  color: var(--sc-text-primary);
+
+  span {
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+}

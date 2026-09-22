@@ -1,0 +1,37 @@
+<div class="checkbox-grid">
+  @for (mother of nodes(); track mother.id) {
+    <div class="checkbox-stack">
+      <sc-checkbox
+        class="checkbox-row"
+        [state]="motherState(mother)"
+        [disabled]="!!mother.lockedReason"
+        (cycle)="onMother(mother, $event)"
+      >
+        {{ mother.label }}@if (count(mother); as counter) {<span class="perm-count sc-text-caption-regular">{{ counter }}</span>}
+      </sc-checkbox>
+
+      @if (mother.detail) {
+        <p class="perm-detail sc-text-caption-regular">{{ mother.detail }}</p>
+      }
+
+      <!-- B18 · el bloqueo se anuncia: candado y motivo, no solo el cursor. -->
+      @if (mother.lockedReason) {
+        <p class="perm-locked sc-text-caption-regular">
+          <sc-icon name="lock" size="sm" />
+          {{ mother.lockedReason }}
+        </p>
+      }
+
+      @for (child of mother.children; track child.id) {
+        <sc-checkbox
+          class="checkbox-row checkbox-row--child"
+          [state]="childState(child.id)"
+          [disabled]="modoHoy() && motherState(mother) === 'none'"
+          (cycle)="onChild(mother, child.id, $event)"
+        >
+          {{ child.label }}
+        </sc-checkbox>
+      }
+    </div>
+  }
+</div>
