@@ -23,7 +23,7 @@
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
 | **7** | hacer `git push`, **o lanzar la cadena** | `preflight` (o `:scope --run`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta los builds AOT de las apps**. Los e2e los corre el CI (9 pasos), no el preflight (DD-60): si tocaste e2e o algo visual, corre a mano la suite que toca — las baselines visuales de sc-docs NO las corre ningún gate. **+ `guard:lockfile` si tocaste el lock**. Confirma el verde LEYENDO el CI: `npm run ci:verdict` |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
-| **10** | declarar algo bloqueado, deducir un dato a ojo, diseñar un mecanismo nuevo **o RECOMENDAR un cambio de criterio** | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos), **qué lo vigila ya** (`.githooks/`, `scripts/`) y **qué decidió ya una DD — puede estar escrita DENTRO del gate que la aplica** |
+| **10** | declarar algo bloqueado, deducir un dato a ojo, diseñar un mecanismo nuevo, **LLEVAR código de una app a otra** o RECOMENDAR un cambio de criterio | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos), **qué lo vigila ya** (`.githooks/`, `scripts/`) y **qué decidió ya una DD — puede estar DENTRO del gate que la aplica**; portar es RE-DERIVAR del destino, no mover ficheros |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
 | **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado **y en qué unidad lo dices** (¿herederos?, ¿visitas repetidas?); si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
 | **14** | responder a un "hazlo todo", escribir "esperando a X", **o anotar en un reporte algo que mediste** | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado ni por estar ya redactando** |
@@ -119,15 +119,15 @@
 
 ## Alcance y ediciones
 
-10. **Vas a declarar algo BLOQUEADO, deducir un dato a ojo, DISEÑAR un mecanismo nuevo o
-    RECOMENDARLE a Rafa un cambio de criterio → gasta una llamada en ver qué decidió ya el
-    repo.** DOM oculto (los overlays viven en el árbol desde la carga), `i18n`, hoja de estilos y
-    `docs/DECISIONS.md` antes de hipotetizar; si montas un GUARDIÁN, "¿qué vigila esto hoy?" en
-    `.githooks/`, `scripts/`, `package.json`. **Una DD puede estar escrita DENTRO del gate que la
-    aplica**, no solo en DECISIONS. ⚙️ no mecanizable: juicio; va en la tarjeta (punto 7).
-    Evidencia: s26 cuatro modales "imposibles" medidos sin pulsar nada · s41 propuse un hook de
-    pre-push que ya existía · 2026-09-19 iba a sacar `e2e:visual` del preflight "por incoherente"
-    y lo había metido DD-62 a propósito; y recomendé un `sc-text` mono que su gate ya prohibía.
+10. **Vas a declarar algo BLOQUEADO, deducir un dato a ojo, DISEÑAR un mecanismo nuevo, LLEVAR
+    código de una app a otra, o RECOMENDARLE a Rafa un cambio de criterio → gasta una llamada en
+    ver qué decidió ya el repo.** DOM oculto (los overlays viven en el árbol desde la carga),
+    `i18n`, hoja de estilos y `docs/DECISIONS.md` antes de hipotetizar; si montas un GUARDIÁN,
+    "¿qué vigila esto hoy?" en `.githooks/`, `scripts/`. **Una DD puede estar DENTRO del gate que
+    la aplica.** Y PORTAR no es mover ficheros: el vocabulario no viaja, se RE-DERIVA del destino
+    (`_forms.scss`, `_page.scss`, una pantalla hermana). ⚙️ no mecanizable: juicio; tarjeta p.7.
+    Evidencia: 2026-09-19 iba a sacar `e2e:visual` del preflight y lo metió DD-62 a propósito ·
+    2026-09-22 porté un laboratorio a otra app con mis cajas y mi asistente; Rafa: «un pegote».
 
 11. **Toda edición masiva —shell o API— lleva su verificación de outcome PEGADA en la misma
     operación. Y si la clave con la que escribes puede REPETIRSE en el árbol, no es una asignación:
