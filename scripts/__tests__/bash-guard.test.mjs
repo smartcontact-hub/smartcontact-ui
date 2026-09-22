@@ -7,8 +7,13 @@ import { evaluar, escrituras } from '../hooks/bash-guard.mjs';
 // correcta y los vecinos legítimos). Un guardián que solo se ha visto pasar no prueba que sepa
 // fallar, y uno con falsos positivos enseña a ignorarlo (LEARNINGS 2).
 
-const verde = { preflight: () => ({ ok: true, motivo: 'ok' }) };
-const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }) };
+const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [] };
+const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [] };
+/** Árbol con fuentes nuevas todavía fuera del índice. */
+const sinAdd = {
+  preflight: () => ({ ok: true, motivo: 'ok' }),
+  sinIndexar: () => ['projects/supervisor/src/app/features/lab/admin/admin-lab.model.ts'],
+};
 const deny = (cmd, ctx, regla) => {
   const r = evaluar(cmd, ctx);
   assert.equal(r.decision, 'deny', `debía denegar: ${cmd}`);
@@ -26,6 +31,28 @@ test('#7 push: sin marca fresca → deny; con marca → allow; tags/borrados/dry
   allow('git push origin :feat/vieja', rojo);
   allow('git push --dry-run', rojo);
   allow('git push origin main # sc:ok', rojo);
+});
+
+test('#2 cadena con fuentes sin `git add` → deny; ya indexadas o gate que lee disco → allow', () => {
+  // ROJO: el caso que motivó la regla. `verify` salió verde sobre 908 ficheros y mi trabajo
+  // (35 nuevos, sin añadir) no estaba entre ellos; al commitear pasaron a 932 y salieron 2 fallos.
+  deny('npm run verify', sinAdd, /LEARNINGS #2/);
+  deny('npm run preflight:scope -- --run', sinAdd, /git ls-files/);
+  deny('npm run tokens:guard', sinAdd, /ÍNDICE/);
+  deny('npm run audit:seed-pii', sinAdd, /git add/);
+  // El motivo tiene que decir QUÉ fichero, o el deny no se puede accionar.
+  deny('npm run verify', sinAdd, /admin-lab\.model\.ts/);
+
+  // VERDE: el árbol ya indexado es el caso normal.
+  allow('npm run verify', verde);
+  allow('npm run preflight:scope -- --run', verde);
+  // Vecinos que NO enumeran por índice: leen el disco, así que no les afecta.
+  allow('npm run lint', sinAdd);
+  allow('npm run typecheck', sinAdd);
+  allow('npm run audit:text-styles', sinAdd);
+  allow('npm run e2e', sinAdd);
+  // Y el escape explícito sigue valiendo.
+  allow('npm run verify # sc:ok', sinAdd);
 });
 
 test('#1 `claude mcp list` no dice qué herramientas te llegan → deny; vecinos y escape → allow', () => {

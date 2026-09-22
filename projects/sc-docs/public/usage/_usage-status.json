@@ -585,7 +585,7 @@
     },
     {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 14
+      "usedInSupervisor": 16
     },
     {
       "selector": "sc-gauge",
@@ -613,7 +613,7 @@
     },
     {
       "selector": "sc-textarea",
-      "usedInSupervisor": 5
+      "usedInSupervisor": 6
     }
   ]
 }

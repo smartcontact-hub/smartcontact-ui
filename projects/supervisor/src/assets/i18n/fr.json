@@ -2064,6 +2064,74 @@
       "mode_slim": "Slim",
       "anchor_aria": "Épingler le menu déplié",
       "unanchor_aria": "Désépingler le menu"
+    },
+    "admin": {
+      "breadcrumb": "Laboratoire",
+      "nav_aria": "Sections du formulaire",
+      "options_aria": "Options du laboratoire",
+      "today_switch": "Reproduire le défaut actuel",
+      "today_switch_hint": "Désactive les deux nouvelles règles : le type d'utilisateur redevient une étiquette qui ne coche rien, et désactiver un parent laisse vivante la valeur de ses enfants.",
+      "remove_aria": "Retirer {{name}}",
+      "search_people": "Rechercher par nom, poste ou e-mail",
+      "search_groups": "Rechercher un groupe",
+      "exception": "Exception",
+      "back_to_default": "Revenir à la valeur par défaut",
+      "back_to_template": "Revenir au modèle",
+      "follows_template": "Suit le modèle",
+      "drift": "{{count}} par rapport au modèle",
+      "type_inert": "Juste une étiquette",
+      "default_yes": "Par défaut dans ce groupe : oui",
+      "default_no": "Par défaut dans ce groupe : non",
+      "section": {
+        "members": "Membres",
+        "group_permissions": "Permissions du groupe",
+        "person_permissions": "Permissions d'une personne",
+        "clone": "Cloner la configuration"
+      },
+      "field": {
+        "description": "Description",
+        "notes": "Notes internes"
+      },
+      "table": {
+        "permissions": "Permissions"
+      },
+      "value": {
+        "no_members": "Sans membres",
+        "no_groups": "Sans groupes",
+        "unnamed": "Sans nom",
+        "no_exceptions": "Tous par défaut",
+        "from_other_group": "Depuis un autre groupe"
+      },
+      "blocked": {
+        "no_name": "Le nom manque.",
+        "no_members": "Choisissez au moins une personne : un groupe vide ne reçoit rien.",
+        "no_channel": "Activez au moins un canal, sinon le groupe ne peut recevoir aucune conversation.",
+        "no_identifier": "L'identifiant de connexion manque.",
+        "bad_email": "L'e-mail manque ou n'a pas la forme d'un e-mail.",
+        "no_groups": "Choisissez au moins un groupe : sans groupe, aucune conversation ne lui parvient."
+      },
+      "error": {
+        "email": "L'arobase ou le domaine manque."
+      },
+      "hint": {
+        "pick_members": "Ce que vous cochez en dessous apparaît ici.",
+        "pick_groups": "Ce que vous cochez en dessous apparaît ici.",
+        "pick_groups_lead": "À quels groupes la personne appartient. C'est la première étape car sans groupe aucune conversation ne lui parvient.",
+        "code_fixed": "Le code ({{code}}) a été fixé à la création du groupe et ne se modifie pas : des liens d’agent et des files pointent dessus.",
+        "identifier_fixed": "Fixé maintenant, non modifiable ensuite.",
+        "identifier_read_only": "Se connecte comme {{identifier}} depuis le {{date}}. L’identifiant de connexion n’est pas modifiable : des sessions, des enregistrements et des journaux d’audit pointent dessus.",
+        "person_plane": "Il ne s'agit pas de ce que le groupe peut faire, mais de ce que cette personne peut faire à l'intérieur.",
+        "clone": "Copier un groupe déjà bien configuré. Ce qui changerait est annoncé avant d'appliquer.",
+        "type_is_package": "Le type n'est pas une étiquette : c'est le paquet de permissions. Le choisir coche ses cases, et tout écart est compté ici.",
+        "type_inert": "C'est ainsi que ça marche aujourd'hui : choisir un type ne coche rien.",
+        "sections": "Ce qu’il voit dans le menu.",
+        "capabilities": "Ce qu’il peut faire, partout où cela s’applique."
+      },
+      "clone": {
+        "same": "Ce groupe est configuré exactement pareil. Rien ne changerait.",
+        "diff": "{{added}} permissions seraient activées et {{removed}} désactivées.",
+        "apply": "Appliquer la configuration"
+      }
     }
   }
 }

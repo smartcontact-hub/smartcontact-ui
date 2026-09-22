@@ -1,0 +1,36 @@
+/* `.checkbox-grid` y `.checkbox-row` son GLOBALES (`styles/_forms.scss`). Aquí solo el
+ * carril de fichas, que es lo único que esta pieza añade. */
+:host {
+  display: block;
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-875);
+}
+
+/* Hueco RESERVADO: existe vacío, así nada se recoloca al elegir el primero. */
+.picker__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  min-height: var(--sc-spacing-2);
+}
+
+.picker__hint {
+  margin: 0;
+  color: var(--sc-text-subtle);
+}
+
+/* La segunda línea, colgando de su fila con la misma sangría que una casilla hija. Recorta
+ * como el resto de celdas del sistema: esconder, no perder (de ahí el `title`). */
+.picker__sub {
+  margin: 0;
+  padding-left: var(--sc-spacing-2);
+  color: var(--sc-text-subtle);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

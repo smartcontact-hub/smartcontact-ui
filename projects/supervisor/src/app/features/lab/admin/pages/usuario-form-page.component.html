@@ -1,0 +1,250 @@
+<ng-template #topbarActions>
+  @if (saveBlockedReason(); as reason) {
+    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
+  }
+  @if (mode() === 'edit' && dirty()) {
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    size="sm"
+    variant="primary"
+    [disabled]="!canSave()"
+    [label]="(mode() === 'create' ? 'users.create_button' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <h1 class="visually-hidden">
+    {{ (mode() === 'edit' ? 'users.form.edit_breadcrumb' : 'users.form.create_breadcrumb') | translate }}
+  </h1>
+
+  <div class="page__inner page__inner--rail">
+    <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
+      @if (mode() === 'edit') {
+        <div class="ficha">
+          <sc-illustrated-avatar class="ficha__avatar" [name]="name() || 'Usuario'" [size]="36" />
+          <div class="ficha__body">
+            <span class="ficha__name sc-text-body-semibold" [title]="name()">{{ name() }}</span>
+            <!-- B1 · el identificador se fijó al crear: aquí se LEE, no se edita. -->
+            <span class="ficha__meta sc-text-caption-regular">{{ identifier() }}</span>
+          </div>
+        </div>
+      }
+
+      <nav class="nav-value" [attr.aria-label]="'lab.admin.nav_aria' | translate">
+        <ul class="nav-value__list">
+          @for (section of sections(); track section.id) {
+            <li>
+              <button
+                type="button"
+                class="nav-value__item"
+                [class.nav-value__item--active]="activeSection() === section.id"
+                [attr.aria-current]="activeSection() === section.id ? 'true' : null"
+                (click)="activeSection.set(section.id)"
+              >
+                <span class="nav-value__icon" aria-hidden="true">
+                  <sc-icon [name]="section.icon" [size]="14" />
+                </span>
+                <span class="nav-value__text">
+                  <span
+                    class="nav-value__label"
+                    [class.sc-text-body-semibold]="activeSection() === section.id"
+                    [class.sc-text-body-regular]="activeSection() !== section.id"
+                    >{{ section.labelKey | translate }}</span
+                  >
+                  <span class="nav-value__value sc-text-caption-regular">{{ section.value }}</span>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      </nav>
+
+      @if (mode() === 'edit') {
+        <sc-button
+          class="rail-delete"
+          variant="danger"
+          appearance="text"
+          size="sm"
+          [icon]="trashIcon"
+          [label]="'common.delete' | translate"
+          (clicked)="deleting.set(true)"
+        />
+      }
+    </aside>
+
+    <div class="page__main">
+      @switch (activeSection()) {
+        @case ('grupos') {
+          <sc-section-card surface="card" icon="groups" titleKey="sidebar.groups">
+            <section class="sub-section">
+              <header class="sub-section__head">
+                <p class="sub-section__hint sc-text-caption-regular">{{ 'lab.admin.hint.pick_groups_lead' | translate }}</p>
+              </header>
+              <app-entity-picker
+                [items]="candidates()"
+                [selected]="groups()"
+                [searchPlaceholder]="'lab.admin.search_groups' | translate"
+                [emptyHint]="'lab.admin.hint.pick_groups' | translate"
+                (toggled)="onGroupToggled($event)"
+              />
+            </section>
+          </sc-section-card>
+        }
+
+        @case ('identidad') {
+          <sc-section-card surface="card" icon="badge" titleKey="users.form.section.identity">
+            <section class="sub-section">
+              <div class="form-identity">
+                <sc-illustrated-avatar [name]="name() || 'Usuario'" [size]="36" />
+                <div class="field form-identity__name">
+                  <label class="field__label sc-text-caption-regular" for="lab-user-name">
+                    {{ 'users.form.fields.name' | translate }}<span class="field__required">*</span>
+                  </label>
+                  <sc-inputtext inputId="lab-user-name" fluid [(value)]="name" />
+                </div>
+              </div>
+
+              <div class="grid grid--2">
+                <div class="field">
+                  <label class="field__label sc-text-caption-regular" for="lab-user-email">
+                    {{ 'users.form.fields.email' | translate }}<span class="field__required">*</span>
+                  </label>
+                  <sc-inputtext
+                    inputId="lab-user-email"
+                    type="email"
+                    fluid
+                    [invalid]="emailInvalid()"
+                    [(value)]="email"
+                  />
+                  @if (emailInvalid()) {
+                    <p class="field__error sc-text-caption-regular">{{ 'lab.admin.error.email' | translate }}</p>
+                  }
+                </div>
+
+                <!-- B1 · lo que IDENTIFICA se pide al CREAR; en la ficha ya no está, y en su
+                     sitio aparece un campo que el alta no necesitaba. -->
+                @if (mode() === 'create') {
+                  <div class="field">
+                    <label class="field__label sc-text-caption-regular" for="lab-user-id">
+                      {{ 'users.form.fields.identifier' | translate }}<span class="field__required">*</span>
+                    </label>
+                    <sc-inputtext inputId="lab-user-id" fluid [(value)]="identifier" />
+                    <p class="field__hint sc-text-caption-regular">{{ 'lab.admin.hint.identifier_fixed' | translate }}</p>
+                  </div>
+                } @else {
+                  <div class="field">
+                    <label class="field__label sc-text-caption-regular" for="lab-user-notes">
+                      {{ 'lab.admin.field.notes' | translate }}
+                    </label>
+                    <sc-inputtext inputId="lab-user-notes" fluid [(value)]="notes" />
+                  </div>
+                }
+              </div>
+
+              @if (mode() === 'edit') {
+                <p class="field__help sc-text-caption-regular">
+                  {{ 'lab.admin.hint.identifier_read_only' | translate: { identifier: identifier(), date: createdAt } }}
+                </p>
+              }
+            </section>
+          </sc-section-card>
+        }
+
+        @case ('acceso') {
+          <sc-section-card surface="card" icon="key" titleKey="users.form.section.access">
+            <!-- A1 · el tipo ES el paquete: preselecciona sus casillas y apartarse se ve. -->
+            <section class="sub-section">
+              <header class="sub-section__head">
+                <h3 id="lab-user-type-title" class="sub-section__title sc-text-body-semibold">
+                  {{ 'users.form.fields.type' | translate }}
+                </h3>
+                <p class="sub-section__hint sc-text-caption-regular">{{ 'lab.admin.hint.type_is_package' | translate }}</p>
+              </header>
+
+              <sc-option-cards
+                [options]="typeOptions"
+                [value]="type()"
+                ariaLabelledBy="lab-user-type-title"
+                (valueChange)="onType($event)"
+              />
+
+              <p class="type-state sc-text-caption-regular">
+                @if (store.modoHoy()) {
+                  <sc-tag severity="danger" [value]="'lab.admin.type_inert' | translate" />
+                  {{ 'lab.admin.hint.type_inert' | translate }}
+                } @else if (drift() === 0) {
+                  <sc-tag severity="success" [value]="'lab.admin.follows_template' | translate" />
+                } @else {
+                  <sc-tag severity="warn" [value]="'lab.admin.drift' | translate: { count: drift() }" />
+                  <button type="button" class="type-state__reset" (click)="resetToPackage()">
+                    {{ 'lab.admin.back_to_template' | translate }}
+                  </button>
+                }
+              </p>
+            </section>
+
+            <sc-divider />
+
+            <!-- B11 · dos listas, no una rejilla de 16: ver una sección y poder hacer algo
+                 son dos preguntas distintas. -->
+            <section class="sub-section">
+              <header class="sub-section__head">
+                <h3 class="sub-section__title sc-text-body-semibold">
+                  {{ 'users.form.section.sections' | translate }}
+                  <span class="sub-section__count sc-text-caption-regular">{{ sectionCount().on }}/{{ sectionCount().total }}</span>
+                </h3>
+                <p class="sub-section__hint sc-text-caption-regular">{{ 'lab.admin.hint.sections' | translate }}</p>
+              </header>
+              <app-permission-checks
+                [nodes]="sectionsCatalog"
+                [granted]="grants()"
+                [modoHoy]="store.modoHoy()"
+                (motherToggled)="onMother($event.mother, $event.next)"
+                (childToggled)="onChild($event.mother, $event.childId, $event.next)"
+              />
+            </section>
+
+            <sc-divider />
+
+            <section class="sub-section">
+              <header class="sub-section__head">
+                <h3 class="sub-section__title sc-text-body-semibold">
+                  {{ 'users.form.section.permissions' | translate }}
+                  <span class="sub-section__count sc-text-caption-regular">{{ capabilityCount().on }}/{{ capabilityCount().total }}</span>
+                </h3>
+                <p class="sub-section__hint sc-text-caption-regular">{{ 'lab.admin.hint.capabilities' | translate }}</p>
+              </header>
+              <div class="checkbox-grid">
+                @for (cap of capabilities; track cap.id) {
+                  <div class="checkbox-stack">
+                    <sc-checkbox class="checkbox-row" [state]="has(cap.id) ? 'all' : 'none'" (cycle)="onCapability(cap.id, $event)">
+                      {{ cap.label }}
+                    </sc-checkbox>
+                    @if (cap.detail) {
+                      <p class="cap-detail sc-text-caption-regular">{{ cap.detail }}</p>
+                    }
+                  </div>
+                }
+              </div>
+            </section>
+          </sc-section-card>
+        }
+      }
+    </div>
+  </div>
+</div>
+
+<sc-delete-entity-dialog
+  [visible]="deleting()"
+  mode="single"
+  [items]="deleteItems()"
+  [entitySingular]="'users.entity_singular' | translate"
+  [entityPlural]="'users.entity_plural' | translate"
+  [singleDetailMessage]="deleteDetail()"
+  (cancelled)="deleting.set(false)"
+  (confirm)="confirmDelete()"
+/>
+
+<app-lab-options />

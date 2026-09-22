@@ -20,9 +20,15 @@ import { execFileSync } from 'node:child_process';
 import * as fsSync from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
+
 import { estadoPreflight } from '../preflight-mark.mjs';
 
 export const BYPASS = /#\s*sc:ok\b/;
+
+/** La cadena y los DOS gates que enumeran por índice. Estrecho a propósito: `npm run lint` o
+ *  un `e2e` leen el disco y no les afecta. */
+const CADENA_CIEGA = /^npm run (?:-[-a-z]+ )*(verify|preflight(:scope)?|tokens:guard|audit:seed-pii)\b/;
 
 const GATES = /^(npm run (?:-[-a-z]+ )*(verify|preflight(:scope)?|e2e(:[a-z-]+)?|test:[a-z-]+|lint|typecheck|docs:[a-z-]+|audit:[a-z-]+|tokens:[a-z-]+|guard:[a-z-]+|ci:verdict)|npx playwright test|node --test|gh run (watch|view)|gh pr checks)\b/;
 
@@ -200,6 +206,33 @@ function preflightVivo(cwd) {
 }
 
 /**
+ * Ficheros FUENTE nuevos que el índice de git todavía no conoce.
+ *
+ * Por qué importa: `token-guard.mjs` y `audit-seed-pii.mjs` enumeran con `git ls-files`, que lee
+ * el ÍNDICE y no el disco (está escrito en su propio comentario, y es deliberado: así un fichero
+ * borrado y aún en el índice sigue contando). La consecuencia es que un fichero NUEVO sin
+ * `git add` es INVISIBLE para ellos, y la cadena sale verde sin haberlo mirado.
+ *
+ * Solo mira `projects/` y solo extensiones de código: un `.log` o un apunte suelto no debe
+ * bloquear la cadena (un guardián con falsos positivos enseña a ignorarlo, #2).
+ */
+export function fuentesSinIndexar(cwd) {
+  try {
+    const salida = execSync('git ls-files --others --exclude-standard -- projects', {
+      cwd,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+    return salida
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => /\.(ts|scss|css|html)$/.test(l));
+  } catch {
+    return [];
+  }
+}
+
+/**
  * Evalúa un comando. `ctx.preflight(cwd)` se inyecta para poder testear sin git.
  * Devuelve { decision: 'allow' | 'deny', reason }.
  */
@@ -220,6 +253,7 @@ function evaluarBase(cmd, ctx = {}) {
   if (BYPASS.test(cmd)) return { decision: 'allow', reason: 'sc:ok explícito' };
   const cwd = ctx.cwd || process.cwd();
   const preflight = ctx.preflight || estadoPreflight;
+  const sinIndexar = ctx.sinIndexar || fuentesSinIndexar;
   const segs = segmentos(cmd);
 
   // #7 (a) — push sin preflight fresco sobre el árbol FINAL.
@@ -233,6 +267,21 @@ function evaluarBase(cmd, ctx = {}) {
           'Haz: (1) commitea todo, (2) `npm run preflight:scope -- --run` (o `preflight`) UNA vez ' +
           '(el `--` es obligatorio: sin él npm se come el flag y el script solo imprime el plan), ' +
           '(3) vuelve a pushear. Si Rafa te ha dicho explícitamente que pushees sin cadena, añade `# sc:ok` al comando y díselo en el mensaje.',
+      };
+  }
+
+  // #7 (c) — lanzar la CADENA con fuentes nuevas sin `git add`: verde ciego.
+  // Dos gates enumeran con `git ls-files`, así que no ven lo que no está en el índice.
+  if (segs.some((sg) => CADENA_CIEGA.test(sg))) {
+    const nuevos = sinIndexar(cwd);
+    if (nuevos.length > 0)
+      return {
+        decision: 'deny',
+        reason:
+          `LEARNINGS #2 — ${nuevos.length} fichero(s) fuente sin \`git add\` (${nuevos.slice(0, 3).join(', ')}` +
+          `${nuevos.length > 3 ? ', …' : ''}). \`token-guard\` y \`audit-seed-pii\` enumeran con ` +
+          '`git ls-files`, que lee el ÍNDICE: lo que no está añadido NO se mira, y la cadena sale ' +
+          'verde sin haberlo visto. Haz `git add -A` primero y vuelve a lanzarla.',
       };
   }
 

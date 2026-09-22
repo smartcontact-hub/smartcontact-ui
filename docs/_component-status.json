@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 124,
+      "usedInSupervisor": 133,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -241,7 +241,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 28,
+      "usedInSupervisor": 34,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -268,7 +268,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5,
+      "usedInSupervisor": 6,
       "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
       "sobreObsoleto": []
     },
@@ -457,7 +457,7 @@
         "sc-dialog"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 9,
+      "usedInSupervisor": 11,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "sobreObsoleto": [
         {
@@ -515,7 +515,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 25,
+      "usedInSupervisor": 28,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -567,7 +567,7 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 14,
+      "usedInSupervisor": 16,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "sobreObsoleto": []
     },
@@ -838,7 +838,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 29,
+      "usedInSupervisor": 34,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -955,7 +955,7 @@
       ],
       "nested": [],
       "hasDemo": false,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 2,
       "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
       "sobreObsoleto": []
     },
@@ -1168,7 +1168,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 8,
+      "usedInSupervisor": 9,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
@@ -1193,7 +1193,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 20,
+      "usedInSupervisor": 28,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1383,7 +1383,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 30,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
@@ -1414,7 +1414,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5,
+      "usedInSupervisor": 6,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1462,7 +1462,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 25,
+      "usedInSupervisor": 26,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

@@ -2064,6 +2064,74 @@
       "mode_slim": "Slim",
       "anchor_aria": "Fixar o menu expandido",
       "unanchor_aria": "Soltar o menu"
+    },
+    "admin": {
+      "breadcrumb": "Laboratório",
+      "nav_aria": "Seções do formulário",
+      "options_aria": "Opções do laboratório",
+      "today_switch": "Reproduzir a falha atual",
+      "today_switch_hint": "Desliga as duas regras novas: o tipo de usuário volta a ser uma etiqueta que não toca em nenhuma caixa, e desligar uma mãe deixa vivo o valor das filhas.",
+      "remove_aria": "Retirar {{name}}",
+      "search_people": "Procurar por nome, função ou e-mail",
+      "search_groups": "Procurar grupo",
+      "exception": "Exceção",
+      "back_to_default": "Voltar ao valor por omissão",
+      "back_to_template": "Voltar ao modelo",
+      "follows_template": "Segue o modelo",
+      "drift": "{{count}} sobre o modelo",
+      "type_inert": "Apenas uma etiqueta",
+      "default_yes": "Por omissão neste grupo: sim",
+      "default_no": "Por omissão neste grupo: não",
+      "section": {
+        "members": "Membros",
+        "group_permissions": "Permissões do grupo",
+        "person_permissions": "Permissões de uma pessoa",
+        "clone": "Clonar configuração"
+      },
+      "field": {
+        "description": "Descrição",
+        "notes": "Notas internas"
+      },
+      "table": {
+        "permissions": "Permissões"
+      },
+      "value": {
+        "no_members": "Sem membros",
+        "no_groups": "Sem grupos",
+        "unnamed": "Sem nome",
+        "no_exceptions": "Todos por omissão",
+        "from_other_group": "A partir de outro grupo"
+      },
+      "blocked": {
+        "no_name": "Falta o nome.",
+        "no_members": "Escolhe pelo menos uma pessoa: um grupo vazio não recebe nada.",
+        "no_channel": "Liga pelo menos um canal, senão o grupo não pode receber conversas.",
+        "no_identifier": "Falta o utilizador de acesso.",
+        "bad_email": "Falta o e-mail ou não tem forma de e-mail.",
+        "no_groups": "Escolhe pelo menos um grupo: sem grupo não lhe chega nenhuma conversa."
+      },
+      "error": {
+        "email": "Falta a arroba ou o domínio."
+      },
+      "hint": {
+        "pick_members": "O que marcares abaixo aparece aqui.",
+        "pick_groups": "O que marcares abaixo aparece aqui.",
+        "pick_groups_lead": "A que grupos pertence. Vem primeiro porque sem grupo não lhe chega nenhuma conversa.",
+        "code_fixed": "O código ({{code}}) foi fixado ao criar o grupo e não se edita: há vínculos de agente e filas a apontar para ele.",
+        "identifier_fixed": "Fica fixado agora e não pode ser alterado depois.",
+        "identifier_read_only": "Entra como {{identifier}} desde {{date}}. O utilizador de acesso não se edita: há sessões, gravações e registos de auditoria a apontar para ele.",
+        "person_plane": "Isto não é o que o grupo pode fazer, mas o que esta pessoa pode fazer dentro dele.",
+        "clone": "Copiar um grupo já bem configurado. O que mudaria é dito antes de aplicar.",
+        "type_is_package": "O tipo não é uma etiqueta: é o pacote de permissões. Escolhê-lo marca as suas caixas, e o que se afastar dele conta-se aqui.",
+        "type_inert": "É assim que funciona hoje: escolher um tipo não toca em nenhuma caixa.",
+        "sections": "O que vê no menu.",
+        "capabilities": "O que pode fazer, onde quer que se aplique."
+      },
+      "clone": {
+        "same": "Esse grupo está configurado exatamente igual. Nada mudaria.",
+        "diff": "Seriam ligadas {{added}} permissões e desligadas {{removed}}.",
+        "apply": "Aplicar a configuração"
+      }
     }
   }
 }

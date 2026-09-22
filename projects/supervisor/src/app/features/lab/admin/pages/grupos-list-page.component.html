@@ -1,0 +1,47 @@
+<!-- Modelo «todo arriba»: la identidad la da el breadcrumb y el CTA se proyecta a la barra,
+     igual que en `/admin/grupos`. -->
+<ng-template #topbarActions>
+  <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
+    <sc-icon [name]="plusIcon" size="inherit" />
+    <span>{{ 'groups.create_button' | translate }}</span>
+  </sc-button>
+</ng-template>
+
+<sc-list-page
+  [heading]="'sidebar.groups' | translate"
+  [rows]="groups()"
+  [columns]="columns()"
+  tableMinWidth="48rem"
+  [searchPlaceholder]="'groups.search_placeholder' | translate"
+  [searchFn]="matchesSearch"
+  noResultsKey="groups.no_results_query"
+  rowOpenable
+  tableTestId="lab-groups-table"
+  (rowOpen)="onRowOpen($event)"
+>
+  <sc-empty-state
+    scListEmpty
+    [icon]="emptyIcon"
+    titleKey="groups.empty.title"
+    bodyKey="groups.empty.body"
+    ctaKey="groups.create_button"
+    (cta)="onCreateClick()"
+  />
+</sc-list-page>
+
+<ng-template #nameTpl let-group>
+  <div class="table__td-name sc-text-body-semibold">
+    <sc-illustrated-avatar [name]="group.name" pool="abstract" [size]="32" />
+    <span>{{ group.name }}</span>
+  </div>
+</ng-template>
+
+<ng-template #membersTpl let-group>
+  <span class="table__td-text sc-text-body-regular">{{ memberCount(group) }}</span>
+</ng-template>
+
+<ng-template #permsTpl let-group>
+  <sc-tag [severity]="permSeverity(group)" [value]="permLabel(group)" />
+</ng-template>
+
+<app-lab-options />

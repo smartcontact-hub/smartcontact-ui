@@ -7,6 +7,59 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
+## ✅ 2026-09-22 · Laboratorio de administración: lista + ficha con las decisiones del teardown dentro
+
+> **Sello: rama `arebury/supervisor-admin-lab-teardown`, worktree `humpback`.** Todo nuevo bajo
+> `projects/supervisor/src/app/features/lab/admin/`; de lo existente solo se tocan `app.routes.ts`
+> (una ruta) y los cuatro locales. **No toca ninguna pantalla de producto.**
+
+**Qué pasó.** Del teardown de Telegram y WhatsApp
+(`~/Documents/Claude/2026-09 teardown admin usuarios-grupos/SINTESIS.md`, bloques A y B) salieron
+20 decisiones medidas. Este tramo las pone donde se pueden juzgar: en `/lab/admin/grupos` y
+`/lab/admin/usuarios`, dentro del shell real (sidebar, barra, miga), al lado de `/admin/grupos` y
+`/admin/usuarios`.
+
+**Qué cambia.** Lista con su CTA arriba (`sc-list-page`) → ficha con el molde de siempre
+(`page__inner--rail` + `sc-section-card`, acciones por `TopBarSlotService`). Dentro:
+
+- **A1** · el tipo de usuario ES el paquete: elegirlo preselecciona sus casillas con
+  `sc-option-cards`, y apartarse se cuenta en el índice y en la lista («Supervisor · 2 cambios»).
+  Hoy `onTypeValueChange` solo escribe el campo.
+- **B12** · apagar una madre apaga las hijas de verdad, las deja pulsables y reencenderla las
+  enciende todas. La regla vive en `toggleMother`/`toggleChild` (`admin-lab.model.ts`), no en la
+  plantilla, así que se puede probar sin pintar.
+- **B17** · cada fila del índice lleva su valor debajo del rótulo.
+- **B1 · B4 · B6 · B11 · B14 · B15 · B18 · B19**, cada una con su código en el comentario.
+
+**El interruptor «reproducir el fallo de hoy»** (botón flotante abajo a la derecha, mismo sitio y
+mismo motivo que los controles de `/lab/sidebar`) apaga las dos reglas nuevas y enseña las dos
+grietas en vivo, sin abrir el código.
+
+**Medido**, no supuesto: el item del índice del laboratorio y el de `sc-form-section-nav` dan lo
+mismo en el navegador — relleno 8,75 · hueco 5,25 · radio 12 · etiqueta 14/20/600 · rail 196. Lo
+único que añade es la segunda línea.
+
+**Tres hallazgos del código de HOY, que no son del laboratorio:**
+
+1. **`checkbox-row--child` es una clase muerta.** La usa `user-form-page.component.html:195` y no
+   está declarada en ninguna hoja: hoy una sección hija se lee al mismo nivel que su madre. Su
+   sitio es `styles/_forms.scss`.
+2. **`.table__td-name` está duplicada** en la hoja de cada lista en vez de vivir en
+   `styles/_table-elements.scss`, con su hermana `.table__td-text`. El laboratorio la copia una
+   cuarta vez, con la nota puesta.
+3. **`sc-form-section-nav` no tiene `value` ni `disabled`.** `value` es literalmente B17;
+   `disabled` es lo que impide forzar el orden de un alta. Si B17 se adopta, se añade `value` a
+   `FormNavSection` y se borra la copia del laboratorio.
+
+**Trampa del tramo:** la primera versión se construyó en `sc-docs` y se trasladó tal cual, con
+componentes y espaciados propios. Veredicto de Rafa: «no casa con nada, se siente un pegote». Se
+tiró entero y se rehízo con las piezas de la app. Si vuelves a este frente, **empieza por el
+vocabulario que ya existe** (`_forms.scss`, `_page.scss`, `sc-list-page`) y dibuja solo lo que
+propones.
+
+Decisiones, lo que no cuadró con los tokens y lo que queda abierto:
+`~/Documents/Claude/2026-09 teardown admin usuarios-grupos/LABORATORIO-decisiones.md`.
+
 ## ✅ 2026-09-20 · El contenido de página se ancla a la izquierda: el índice lateral deja de colgar (DD-115)
 
 > **Sello: rama `arebury/candlefish`, sobre `origin/main` HEAD `84f37bd5`.** Un solo fichero de código:
@@ -68,12 +121,20 @@ de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con
 
 ## SIGUIENTE — sin preguntar
 
-1. **Cuando Rafa diga «lanza el script de huérfanos»**, ya habrá hecho tres cosas: publicar Smart-Contact-Icons
+1. **Decidir sobre el laboratorio de administración** (`/lab/admin/grupos`, `/lab/admin/usuarios`).
+   Lo primero que hay que discutir con Rafa y con producto son **los paquetes por tipo**
+   (`TYPE_PACKAGES` en `admin-lab.model.ts`): hoy no existe ninguno porque el tipo no significa
+   nada, así que los propuse yo y **no están validados con nadie**. Lo demás sale del teardown y
+   está medido. Sin esa decisión, A1 no puede aterrizar en el formulario real.
+2. **Pendiente de Rafa:** dijo «tanto para Agents como groups»; se hicieron grupos y usuarios (las
+   dos entidades del teardown). Si se refería a la lista real de `/admin/agentes`, es una tercera
+   con el mismo molde.
+3. **Cuando Rafa diga «lanza el script de huérfanos»**, ya habrá hecho tres cosas: publicar Smart-Contact-Icons
    desmarcando los 21 sets `Icon…` de Playground (son de otra sesión), aceptar la actualización en el Design System y
    arrastrar `dashboard` y `neurology` a Playground. Entonces sigue el `LEEME.md` de
    `~/Documents/Claude/2026-09 iconos-material/huerfanos/`: 13 `dashboard`, 8 `brain` → `neurology`, y `query_stats`
    y `graph_5` a 14 × 14. El script para solo si la actualización no está aceptada.
-2. **Rescatar a `main` por PRs separados** (la rama no se funde). Medido el 2026-09-20 contra
+4. **Rescatar a `main` por PRs separados** (la rama no se funde). Medido el 2026-09-20 contra
    `origin/main`, de los cinco puntos **solo queda uno**:
    - ~~iconos opsz 24 con su spec~~ · ya estaban en `main` antes de mirarlo;
    - ~~`list-page` (exportar la selección, ancho mínimo con columnas ocultas)~~ · ídem;

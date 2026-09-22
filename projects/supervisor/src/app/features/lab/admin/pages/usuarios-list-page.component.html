@@ -1,0 +1,56 @@
+<ng-template #topbarActions>
+  <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
+    <sc-icon [name]="plusIcon" size="inherit" />
+    <span>{{ 'users.create_button' | translate }}</span>
+  </sc-button>
+</ng-template>
+
+<sc-list-page
+  [heading]="'sidebar.users' | translate"
+  [rows]="people()"
+  [columns]="columns()"
+  tableMinWidth="52rem"
+  [searchPlaceholder]="'users.search_placeholder' | translate"
+  [searchFn]="matchesSearch"
+  noResultsKey="users.no_results_query"
+  rowOpenable
+  tableTestId="lab-users-table"
+  (rowOpen)="onRowOpen($event)"
+>
+  <sc-empty-state
+    scListEmpty
+    [icon]="emptyIcon"
+    titleKey="users.empty.title"
+    bodyKey="users.empty.body"
+    ctaKey="users.create_button"
+    (cta)="onCreateClick()"
+  />
+</sc-list-page>
+
+<ng-template #nameTpl let-person>
+  <div class="table__td-name sc-text-body-semibold">
+    <sc-illustrated-avatar [name]="person.name" [size]="32" />
+    <span>{{ person.name }}</span>
+  </div>
+</ng-template>
+
+<ng-template #emailTpl let-person>
+  <span class="table__td-text sc-text-body-regular" [title]="person.email">{{ person.email }}</span>
+</ng-template>
+
+<!-- A1 · el tipo con lo que de verdad lleva puesto: su paquete y cuánto se aparta. -->
+<ng-template #typeTpl let-person>
+  <div class="td-type">
+    <sc-tag severity="secondary" [value]="typeLabel(person)" />
+    @if (driftLabel(person); as drift) {
+      <sc-tag severity="warn" [value]="drift" />
+    }
+    <span class="td-type__grants sc-text-caption-regular">{{ grantLabel(person) }}</span>
+  </div>
+</ng-template>
+
+<ng-template #groupsTpl let-person>
+  <span class="table__td-text sc-text-body-regular">{{ groupCount(person) }}</span>
+</ng-template>
+
+<app-lab-options />

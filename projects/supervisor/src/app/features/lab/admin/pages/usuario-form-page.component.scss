@@ -1,0 +1,147 @@
+/* El MOLDE de esta página NO vive aquí: `.page__inner--rail`, `.page__rail`, `.page__main`,
+ * `.ficha`, `.rail-delete`, `.sub-section`, `.field`, `.form-identity`, `.checkbox-grid`,
+ * `.checkbox-stack` y `.checkbox-row` son globales (`src/styles/_page.scss` y `_forms.scss`),
+ * las mismas que usan los tres formularios de admin. No se re-declaran: una regla
+ * encapsulada de componente le gana a la global y esta pantalla se desviaría sin avisar.
+ * Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`.
+ *
+ * Aquí solo vive lo que este laboratorio PROPONE y todavía no existe en el sistema. */
+:host {
+  display: block;
+  /* `min-height` y no `height`: con alto fijo el índice sticky se suelta al pasar la pantalla. */
+  min-height: 100%;
+  background: var(--sc-bg-canvas);
+}
+
+/* ------------------------------------------------------------------ *
+ * B17 · el índice con su VALOR.
+ *
+ * Mide EXACTAMENTE como `sc-form-section-nav --flush` (su hoja en el DS): mismo relleno
+ * de item (0-625), mismo hueco entre items (0-25), mismo radio (400), mismo fondo activo
+ * (`--sc-bg-hover`), etiqueta en `body-2` regular que pasa a semibold y `--sc-text-primary`
+ * al activarse, e icono desnudo del tamaño de la etiqueta.
+ *
+ * Lo ÚNICO añadido es la segunda línea. Se dibuja aquí y no en el DS a propósito: el
+ * componente es del sistema y esto es todavía una propuesta. Si se adopta, lo que hay que
+ * hacer es añadirle un `value` a `FormNavSection`, no dejar esta copia viva.
+ * ------------------------------------------------------------------ */
+.nav-value {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sc-spacing-0-625) 0;
+}
+
+.nav-value__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+}
+
+.nav-value__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-375);
+  width: 100%;
+  padding: var(--sc-spacing-0-625);
+  border: 0;
+  border-radius: var(--sc-radius-400);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--sc-transition-fast) ease;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+
+  &--active {
+    background: var(--sc-bg-hover);
+
+    .nav-value__icon,
+    .nav-value__label {
+      color: var(--sc-text-primary);
+    }
+  }
+}
+
+/* El companion de la etiqueta mide lo que ella (DD-24): el tamaño lo pide la plantilla
+ * (`[size]="14"`), no una regla de tipografía suelta en esta hoja. */
+.nav-value__icon {
+  flex: 0 0 auto;
+  color: var(--sc-text-secondary);
+}
+
+/* El hueco entre el rótulo y su valor es el de `.ficha__body` (`--sc-spacing-0-25`, 3.5),
+ * que apila nombre y meta DOS filas más arriba en este mismo carril: misma relación —dos
+ * líneas que son un solo dato—, mismo paso, y el carril entero respira igual.
+ *
+ * No es el `2px` de `form-nav__list`: ese separa items HERMANOS, que es otra cosa. Y `2px`
+ * no está en la escala; vive suelto en nueve hojas del Supervisor (barra superior, los
+ * cuatro componentes de memory…), que es una deriva anotada, no un valor que copiar. */
+.nav-value__text {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+}
+
+/* La MÉTRICA la ponen `.sc-text-body-regular` / `.sc-text-body-semibold` en la plantilla
+ * (el activo cambia de peso, como en el índice real). Aquí solo color y envoltura: la
+ * etiqueta ENVUELVE y nunca se corta (DD-52) — un índice que esconde el nombre de la
+ * sección no cumple su único trabajo. */
+.nav-value__label {
+  color: var(--sc-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* La segunda línea: el estado, para no tener que entrar a mirarlo. Recorta —es un dato de
+ * apoyo, no el nombre de la sección— y por eso aquí sí cabe la elipsis. */
+/* La métrica la pone `.sc-text-caption-regular` en la plantilla. */
+.nav-value__value {
+  color: var(--sc-text-subtle);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ *
+ * A1 · el estado del paquete, junto al selector.
+ * ------------------------------------------------------------------ */
+.type-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  color: var(--sc-text-subtle);
+}
+
+.type-state__reset {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sc-text-link);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* El contador de una subsección, junto a su título. */
+.sub-section__count {
+  margin-inline-start: var(--sc-spacing-0-5);
+  color: var(--sc-text-subtle);
+}
+
+.cap-detail {
+  margin: 0;
+  padding-left: var(--sc-spacing-1-75);
+  color: var(--sc-text-subtle);
+}

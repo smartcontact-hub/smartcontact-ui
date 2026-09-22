@@ -17,13 +17,13 @@
 | # | Si estás a punto de… | → |
 |---|---|---|
 | **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ **y que es el que el sistema produce de verdad, no uno que inyectaste tú**; no extiendas el negativo más allá de lo que mediste |
-| **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); mira si tu **doble contesta la pregunta que hace el código**; y ante un trinquete que NO baja o un rojo demasiado redondo, mira UN caso a mano: el que lee de menos suele ser tu contador |
+| **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST o un GATE | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); **mira qué ENUMERA el gate — `git ls-files` no ve lo que no has añadido** ⚙️; y ante un trinquete que NO baja o un rojo demasiado redondo, mira UN caso a mano: el que lee de menos suele ser tu contador |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies** ⚙️, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
 | **7** | hacer `git push`, **o lanzar la cadena** | `preflight` (o `:scope --run`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta los builds AOT de las apps**. Los e2e los corre el CI (9 pasos), no el preflight (DD-60): si tocaste e2e o algo visual, corre a mano la suite que toca — las baselines visuales de sc-docs NO las corre ningún gate. **+ `guard:lockfile` si tocaste el lock**. Confirma el verde LEYENDO el CI: `npm run ci:verdict` |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
-| **10** | declarar algo bloqueado, deducir un dato a ojo, diseñar un mecanismo nuevo **o RECOMENDAR un cambio de criterio** | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos), **qué lo vigila ya** (`.githooks/`, `scripts/`) y **qué decidió ya una DD — puede estar escrita DENTRO del gate que la aplica** |
+| **10** | declarar algo bloqueado, deducir un dato a ojo, diseñar un mecanismo nuevo, **LLEVAR código de una app a otra** o RECOMENDAR un cambio de criterio | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos), **qué lo vigila ya** (`.githooks/`, `scripts/`) y **qué decidió ya una DD — puede estar DENTRO del gate que la aplica**; portar es RE-DERIVAR del destino, no mover ficheros |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
 | **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado **y en qué unidad lo dices** (¿herederos?, ¿visitas repetidas?); si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
 | **14** | responder a un "hazlo todo", escribir "esperando a X", **o anotar en un reporte algo que mediste** | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado ni por estar ya redactando** |
@@ -49,18 +49,17 @@
    y declaré roto lo que PrimeNG normaliza · s32 `reducedMotion` escrito y no entregado · s27 "el
    MCP de Figma" eran tres servers y sondeé uno · s44 el CLI decía Playwright ✔ y la sesión no lo tenía.
 
-2. **Tu sonda o tu test te da un hallazgo (positivo o verde) y lo escribiste tú → valida el
-   instrumento con un caso cuya respuesta ya sabes, en TODOS los ejes en que varía, y ponle el
-   fallo delante para ver que enrojece.** Pregunta por la MAGNITUD (¿color o geometría?) y por el
-   NODO exacto de la claim; lee el control (un rojo o un verde puede venir de otro sitio: servidor
-   muerto, puerto de OTRO worktree, filtro `jq` que nunca casa); si un doble contesta la pregunta
-   que hace el código, el test se mide a sí mismo. **Dos olores de que el que lee de menos es TU
-   contador: un trinquete que no baja aunque arregles, y un rojo demasiado REDONDO** — mira UN caso
-   a mano antes de creerte el informe. ⚙️ CHECK O de `docs:coherence` exige test rojo por script.
+2. **Tu sonda, tu test o un GATE te da un verde y lo escribiste tú → valida el instrumento con
+   un caso cuya respuesta ya sabes, en todos sus ejes, y ponle el fallo delante para verlo
+   enrojecer.** Pregunta por la MAGNITUD (¿color o geometría?) y por el NODO exacto; lee el
+   control (servidor muerto, puerto de OTRO worktree, `jq` que nunca casa); si un doble contesta
+   la pregunta que hace el código, el test se mide a sí mismo. **Y un gate solo mide lo que
+   ENUMERA: `git ls-files` no ve lo que no has añadido.** Dos olores de que el que lee de menos
+   es TU contador: un trinquete que no baja aunque arregles, y un rojo demasiado REDONDO — mira
+   UN caso a mano. ⚙️ CHECK O de `docs:coherence`; el hook deniega la cadena con fuentes sin indexar.
    Evidencia: s18 regex `/\d+/g` sobre `color(srgb …)` = verde imposible · s34 `closest: () => ({})`
    dejó 8 verdes con el gesto muerto · s31 verdes contra el `ng serve` de otro worktree ·
-   2026-09-12 trinquete atascado en 55 = cuatro formas de leer de menos, y «21 de 24 discrepan»
-   era mi `modeId`, no deriva.
+   2026-09-22 `verify` verde sobre 908 ficheros sin ver mis 35 nuevos; al commitear, 932 y 2 fallos.
 
 4. **Vas a arreglar un valor sustituyéndolo por otro token → MIDE el token de destino antes.**
    Fondo y texto van de la misma familia: mezclar uno que voltea de tema con uno que no es el
@@ -119,15 +118,15 @@
 
 ## Alcance y ediciones
 
-10. **Vas a declarar algo BLOQUEADO, deducir un dato a ojo, DISEÑAR un mecanismo nuevo o
-    RECOMENDARLE a Rafa un cambio de criterio → gasta una llamada en ver qué decidió ya el
-    repo.** DOM oculto (los overlays viven en el árbol desde la carga), `i18n`, hoja de estilos y
-    `docs/DECISIONS.md` antes de hipotetizar; si montas un GUARDIÁN, "¿qué vigila esto hoy?" en
-    `.githooks/`, `scripts/`, `package.json`. **Una DD puede estar escrita DENTRO del gate que la
-    aplica**, no solo en DECISIONS. ⚙️ no mecanizable: juicio; va en la tarjeta (punto 7).
-    Evidencia: s26 cuatro modales "imposibles" medidos sin pulsar nada · s41 propuse un hook de
-    pre-push que ya existía · 2026-09-19 iba a sacar `e2e:visual` del preflight "por incoherente"
-    y lo había metido DD-62 a propósito; y recomendé un `sc-text` mono que su gate ya prohibía.
+10. **Vas a declarar algo BLOQUEADO, deducir un dato a ojo, DISEÑAR un mecanismo nuevo, LLEVAR
+    código de una app a otra, o RECOMENDARLE a Rafa un cambio de criterio → gasta una llamada en
+    ver qué decidió ya el repo.** DOM oculto (los overlays viven en el árbol desde la carga),
+    `i18n`, hoja de estilos y `docs/DECISIONS.md` antes de hipotetizar; si montas un GUARDIÁN,
+    "¿qué vigila esto hoy?" en `.githooks/`, `scripts/`. **Una DD puede estar DENTRO del gate que
+    la aplica.** Y PORTAR no es mover ficheros: el vocabulario no viaja, se RE-DERIVA del destino
+    (`_forms.scss`, `_page.scss`, una pantalla hermana). ⚙️ no mecanizable: juicio; tarjeta p.7.
+    Evidencia: 2026-09-19 iba a sacar `e2e:visual` del preflight y lo metió DD-62 a propósito ·
+    2026-09-22 porté un laboratorio a otra app con mis cajas y mi asistente; Rafa: «un pegote».
 
 11. **Toda edición masiva —shell o API— lleva su verificación de outcome PEGADA en la misma
     operación. Y si la clave con la que escribes puede REPETIRSE en el árbol, no es una asignación:

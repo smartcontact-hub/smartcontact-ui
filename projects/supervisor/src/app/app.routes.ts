@@ -71,6 +71,15 @@ export const appRoutes: Routes = [
         path: 'config',
         loadChildren: () => import('./features/config/config.routes').then((m) => m.configRoutes),
       },
+      /* Laboratorio del módulo de administración: cuatro pantallas rehechas con el teardown de
+       * Telegram y WhatsApp. Cuelgan del shell REAL a propósito (sidebar, barra y miga del
+       * Supervisor): es lo que las hace comparables con las de hoy. No están en el menú —se
+       * entra por la URL— porque no son producto. */
+      {
+        path: 'lab/admin',
+        loadChildren: () =>
+          import('./features/lab/admin/admin-lab.routes').then((m) => m.ADMIN_LAB_ROUTES),
+      },
       {
         path: '',
         loadChildren: () =>
