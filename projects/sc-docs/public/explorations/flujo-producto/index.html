@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Las tres propuestas de flujo de producto y lo que hablamos los cinco, cruzado: doce acuerdos, cinco decisiones y cuatro cosas que no escribió nadie.">
+<title>Coincidimos en casi todo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,400;0,500;0,600;0,800;1,400&family=Spectral:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ink:      oklch(0.255 0.035 277);
+  --cream:    oklch(0.965 0.005 75);
+  --blush:    oklch(0.944 0.021 42);
+  --coral:    oklch(0.665 0.165 45);
+
+  --d-fg:     oklch(0.955 0.006 75);
+  --d-mut:    oklch(0.755 0.018 277);
+  --d-rule:   oklch(1 0 0 / 0.15);
+  --l-mut:    oklch(0.495 0.028 277);
+  --l-rule:   oklch(0.255 0.035 277 / 0.16);
+
+  --sans:  'Urbanist', ui-sans-serif, system-ui, sans-serif;
+  --serif: 'Spectral', Georgia, serif;
+
+  --s-2:.5rem; --s-3:.75rem; --s-4:1rem; --s-6:1.5rem;
+  --s-8:2rem; --s-12:3rem;
+
+  --ease: cubic-bezier(.22,.9,.24,1);
+  --pad: clamp(1.25rem, 5vw, 5.5rem);
+  --measure: 58ch;
+}
+
+body{
+  font-family:var(--sans); font-size:clamp(1.0625rem,.5vw + .95rem,1.25rem);
+  line-height:1.45; background:var(--cream); color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- chapters ---------- */
+.act{ padding-block:clamp(4rem,10vh,8rem); padding-inline:var(--pad); position:relative }
+.act > *{ max-width:1320px; margin-inline:auto }
+.act--dark  { background:var(--ink);   color:var(--d-fg); --fg:var(--d-fg); --mut:var(--d-mut); --rule:var(--d-rule); --mark:var(--coral) }
+.act--cream { background:var(--cream); color:var(--ink);  --fg:var(--ink);  --mut:var(--l-mut); --rule:var(--l-rule); --mark:var(--coral) }
+.act--blush { background:var(--blush); color:var(--ink);  --fg:var(--ink);  --mut:var(--l-mut); --rule:var(--l-rule); --mark:var(--coral) }
+.act--coral { background:var(--coral); color:var(--ink);  --fg:var(--ink);  --mut:oklch(0.255 0.035 277 / .76); --rule:oklch(0.255 0.035 277 / .24); --mark:var(--ink) }
+
+/* ---------- type ---------- */
+.eyebrow{ font-size:.75rem; font-weight:600; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--coral); display:block; margin-bottom:var(--s-6) }
+.act--coral .eyebrow{ color:oklch(0.255 0.035 277 / .66) }
+
+h1,h2{ font-family:var(--sans); font-weight:800; line-height:.98; letter-spacing:-.035em; text-wrap:balance }
+h1{ font-size:clamp(2.9rem,9.5vw,7.5rem); letter-spacing:-.045em }
+h2{ font-size:clamp(2rem,5vw,4rem) }
+.statement{ font-family:var(--serif); font-style:italic; font-weight:600;
+  font-size:clamp(2.1rem,6vw,5rem); line-height:1.02; letter-spacing:-.02em;
+  max-width:21ch; margin-inline-start:0; margin-inline-end:auto; text-wrap:balance }
+.statement--mid{ margin-inline:auto; text-align:center; max-width:24ch }
+h3{ font-weight:600; font-size:1.25rem; letter-spacing:-.015em; line-height:1.15 }
+.lede{ font-size:clamp(1.125rem,.9vw + .95rem,1.5rem); color:var(--mut); max-width:var(--measure);
+  margin-top:var(--s-6); margin-inline-start:0; margin-inline-end:auto; text-wrap:pretty }
+p,li{ text-wrap:pretty }
+.tiny{ font-size:.9375rem; color:var(--mut) }
+strong{ font-weight:600; color:var(--fg) }
+
+/* ---------- the mark, used as the bullet ---------- */
+.mark{ display:block; color:currentColor }
+.mark path{ fill:currentColor }
+.bullet{ width:15px; height:14px; flex:none; color:var(--mark); margin-top:.32em }
+
+/* ---------- fixed chrome ---------- */
+.progress{ position:fixed; top:env(safe-area-inset-top,0px); left:0; right:0; height:2px;
+  background:var(--coral); transform:scaleX(0); transform-origin:0 50%; z-index:60; pointer-events:none }
+.nav{ position:fixed; right:clamp(.7rem,1.6vw,1.5rem); top:50%; transform:translateY(-50%);
+  z-index:55; display:grid; gap:.55rem; padding:.5rem .35rem }
+.nav a{ display:block; width:8px; height:8px; border-radius:50%;
+  background:transparent; box-shadow:inset 0 0 0 1.5px currentColor; color:var(--l-mut);
+  transition:background 260ms var(--ease), color 260ms var(--ease), transform 260ms var(--ease) }
+.nav a.on{ background:var(--coral); color:var(--coral); transform:scale(1.35) }
+.nav a:focus-visible{ outline:2px solid var(--coral); outline-offset:3px }
+.nav a span{ position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%) }
+@media (max-width:980px){ .nav{ display:none } }
+
+/* ---------- hero ---------- */
+.hero{ min-height:min(86svh,50rem); display:grid; grid-template-rows:auto 1fr auto; gap:var(--s-8) }
+.hero > *{ width:100% }
+.hero__top{ display:flex; justify-content:space-between; align-items:center; gap:var(--s-4); flex-wrap:wrap;
+  font-size:.75rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--d-mut) }
+.hero__id{ display:flex; align-items:center; gap:var(--s-3) }
+.hero__id .mark{ width:30px; height:27px; color:var(--d-fg) }
+.hero__mid{ display:flex; flex-direction:column; justify-content:center }
+.hero h1 .ln{ display:block; overflow:hidden }
+.hero h1 .ln > span{ display:block }
+.hero__lede{ font-size:clamp(1.125rem,1.1vw + .9rem,1.65rem); color:var(--d-mut); max-width:44ch; margin-top:var(--s-8) }
+.hero__lede b{ color:var(--d-fg); font-weight:600 }
+
+.count{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--s-4);
+  border-top:1px solid var(--d-rule); padding-top:var(--s-6) }
+.count div{ display:flex; flex-direction:column; gap:.25rem }
+.count b{ font-weight:800; font-size:clamp(2.2rem,5vw,4rem); line-height:.85;
+  letter-spacing:-.05em; font-variant-numeric:tabular-nums }
+.count span{ font-size:.75rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--d-mut) }
+.count div:nth-child(1) b{ color:var(--coral) }
+.cue{ display:flex; align-items:center; gap:var(--s-3); font-size:.6875rem; font-weight:600;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--d-mut) }
+.cue .bar{ width:2.5rem; height:1px; background:var(--coral); transform-origin:left }
+
+/* ---------- wide diagram wells ---------- */
+.well{ margin-top:var(--s-12); overflow-x:auto; -webkit-overflow-scrolling:touch }
+.well svg{ display:block; min-width:760px; width:100%; height:auto }
+.well--narrow svg{ min-width:0 }
+
+/* ---------- matrix ---------- */
+.mxwrap{ margin-top:var(--s-12) }
+.mx{ width:100%; border-collapse:collapse; font-size:1rem }
+.mx th{ font-size:.6875rem; letter-spacing:.12em; text-transform:uppercase;
+  font-weight:600; color:var(--mut); text-align:center; padding:0 .4rem var(--s-4); vertical-align:bottom; line-height:1.5 }
+.mx th:first-child{ text-align:left; width:54% }
+.mx td{ padding:.55rem .4rem; border-top:1px solid var(--rule); text-align:center }
+.mx td:first-child{ text-align:left; padding-right:var(--s-6) }
+.mx tr[data-all] td:first-child{ color:var(--coral); font-weight:600 }
+.dot{ width:.6875rem; height:.6875rem; border-radius:50%; display:inline-block; background:var(--coral) }
+.mx tr:not([data-all]) .dot{ background:color-mix(in oklab, var(--fg) 62%, transparent) }
+.mx tr:not([data-all]) .dot.dot--off,
+.mx .dot.dot--off{ background:transparent; box-shadow:inset 0 0 0 1.5px color-mix(in oklab, var(--fg) 34%, transparent) }
+.mxkey{ display:flex; flex-wrap:wrap; gap:var(--s-6); margin-top:var(--s-6);
+  font-size:.75rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--mut) }
+.mxkey span{ display:inline-flex; align-items:center; gap:.5rem }
+
+/* row note: why one document is missing it */
+.why{ position:relative; display:inline-flex; align-items:center; gap:.5rem; cursor:help;
+  border:0; background:none; color:inherit; font:inherit; text-align:left; padding:0 }
+.why::after{ content:'?'; width:1.05rem; height:1.05rem; flex:none; border-radius:50%;
+  font-size:.6875rem; font-weight:600; line-height:1.05rem; text-align:center;
+  color:var(--mut); box-shadow:inset 0 0 0 1px color-mix(in oklab, var(--fg) 34%, transparent) }
+.why .tip{
+  position:absolute; left:0; bottom:calc(100% + .6rem); z-index:20;
+  width:max-content; max-width:min(34ch,70vw); padding:.7rem .85rem;
+  background:var(--cream); color:var(--ink); border-radius:4px;
+  box-shadow:0 1px 0 0 var(--coral) inset, 0 8px 24px oklch(0.255 0.035 277 / .28);
+  font-size:.9375rem; font-weight:400; line-height:1.35; letter-spacing:0;
+  text-transform:none; opacity:0; visibility:hidden; transform:translateY(4px);
+  transition:opacity 180ms var(--ease), transform 180ms var(--ease), visibility 180ms }
+/* :focus, not :focus-visible — a tap on a phone focuses without ever matching
+   focus-visible, and that is exactly the reader who most needs the note. */
+.why:hover .tip, .why:focus .tip{ opacity:1; visibility:visible; transform:none }
+.why:focus-visible{ outline:2px solid var(--coral); outline-offset:3px; border-radius:2px }
+
+/* ---------- flow ---------- */
+.ports{ display:grid; gap:var(--s-4); grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr)); margin-top:var(--s-8) }
+.port{ border-top:2px solid var(--rule); padding-top:var(--s-4) }
+.port b{ display:block; font-size:.6875rem; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--coral); margin-bottom:var(--s-3) }
+.port ul{ list-style:none; display:flex; flex-wrap:wrap; gap:.4rem .9rem }
+.port li{ display:flex; gap:.45rem; align-items:flex-start; font-size:1rem; color:var(--mut) }
+
+.filter{ display:flex; flex-wrap:wrap; gap:var(--s-2); margin:var(--s-8) 0 0 }
+.filter button{ font-size:.6875rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  background:transparent; color:var(--mut); border:1px solid var(--rule);
+  border-radius:2px; padding:.85rem 1rem; cursor:pointer; min-height:44px; font-family:inherit;
+  transition:background 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease) }
+.filter button:hover{ color:var(--fg); border-color:color-mix(in oklab, var(--fg) 45%, transparent) }
+.filter button[aria-pressed="true"]{ background:var(--coral); color:var(--ink); border-color:var(--coral) }
+.filter button:focus-visible{ outline:2px solid var(--coral); outline-offset:3px }
+#lanes [data-lane]{ transition:opacity 320ms var(--ease) }
+#lanes.is-filtered [data-lane]:not(.lane-on){ opacity:.16 }
+.sv-paper{ fill:var(--cream) } .sv-ink{ fill:var(--ink) } .sv-mut{ fill:var(--l-mut) }
+.sv-coral{ fill:var(--coral) } .sv-card{ fill:oklch(1 0 0) }
+.sv-tint{ fill:color-mix(in oklab, var(--coral) 13%, var(--cream)) }
+.sv-str-ink{ stroke:var(--ink); fill:none } .sv-str-mut{ stroke:var(--l-mut); fill:none }
+.sv-str-coral{ stroke:var(--coral); fill:none }
+.sv-rule{ stroke:var(--l-rule) } .sv-rule-2{ stroke:color-mix(in oklab, var(--ink) 32%, transparent) }
+.act--blush .sv-paper{ fill:var(--blush) }
+
+/* ---------- decisions ---------- */
+.decs{ display:grid; gap:var(--s-4); margin-top:var(--s-12) }
+.dec{ border:1px solid var(--rule); border-radius:3px; background:color-mix(in oklab, var(--d-fg) 4%, transparent);
+  transition:border-color 260ms var(--ease) }
+.dec[open]{ border-color:color-mix(in oklab, var(--coral) 55%, transparent) }
+.dec summary{ list-style:none; cursor:pointer; padding:clamp(1rem,2.2vw,1.5rem);
+  display:grid; grid-template-columns:auto 1fr auto; gap:var(--s-4); align-items:center }
+.dec summary::-webkit-details-marker{ display:none }
+.dec summary:focus-visible{ outline:2px solid var(--coral); outline-offset:-3px }
+.dec__q{ font-weight:600; font-size:clamp(1.15rem,1.8vw,1.6rem); letter-spacing:-.02em; line-height:1.12 }
+.dec__t{ font-size:.625rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--mut); white-space:nowrap }
+.dec[open] .dec__t{ color:var(--coral) }
+.dec__t .c{ display:none } .dec[open] .dec__t .o{ display:none } .dec[open] .dec__t .c{ display:inline }
+.dec__peek{ grid-column:2 / -1; font-size:1rem; color:var(--mut); margin-top:.3rem; max-width:66ch }
+.dec[open] .dec__peek{ display:none }
+.dec__body{ padding:0 clamp(1rem,2.2vw,1.5rem) clamp(1.2rem,2.4vw,1.6rem) }
+.pos{ display:grid; grid-template-columns:10rem 1fr; gap:var(--s-6); padding:var(--s-4) 0; border-top:1px solid var(--rule) }
+.pos > b{ font-size:.625rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--mut); font-weight:600; line-height:1.9 }
+.pos p{ font-size:1.0625rem; max-width:62ch }
+.pos--win{ background:var(--coral); color:var(--ink); border-top:0; border-radius:3px;
+  margin-top:var(--s-4); padding:var(--s-6) }
+.pos--win > b{ color:oklch(0.255 0.035 277 / .72) }
+.pos--win p{ font-size:1.125rem; font-weight:500 }
+
+/* ---------- lists with the mark as bullet ---------- */
+.marked{ list-style:none; display:grid; margin-top:var(--s-8) }
+.marked li{ display:grid; grid-template-columns:auto 1fr; gap:var(--s-4);
+  padding:var(--s-4) 0; border-top:1px solid var(--rule); align-items:start }
+.marked b{ font-weight:600; font-size:1.125rem; letter-spacing:-.015em; display:block }
+.marked p{ font-size:1rem; color:var(--mut); margin-top:.15rem }
+.two{ display:grid; gap:0 var(--s-12); grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr)) }
+
+/* ---------- tools: what each one is for, and what it is not ---------- */
+.tools{ display:grid; gap:0 var(--s-8); grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr)); margin-top:var(--s-12) }
+.tool{ border-top:2px solid var(--fg); padding:var(--s-4) 0 var(--s-6) }
+.tool b{ display:block; font-size:1.375rem; font-weight:800; letter-spacing:-.02em; margin-bottom:var(--s-3) }
+.tool .sirve{ font-size:1rem; margin-bottom:var(--s-3) }
+.tool .nosirve{ font-size:1rem; color:var(--mut); padding-top:var(--s-3); border-top:1px solid var(--rule) }
+.tool .nosirve::before{ content:'No · '; color:var(--coral); font-weight:600 }
+
+.rev{ display:grid; gap:var(--s-8); grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr)); margin-top:var(--s-12) }
+.rev section > b{ font-size:.6875rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--coral); display:block; margin-bottom:var(--s-4) }
+.rev ul{ list-style:none; display:grid; gap:var(--s-3) }
+.rev li{ display:grid; grid-template-columns:auto 1fr; gap:.65rem; font-size:1.0625rem;
+  padding-bottom:var(--s-3); border-bottom:1px solid var(--rule) }
+.rev li:last-child{ border-bottom:0 }
+
+/* ---------- the record: quotes with their comment ---------- */
+.quotes{ columns:2; column-gap:var(--s-8); margin-top:var(--s-12) }
+.q{ break-inside:avoid; margin-bottom:var(--s-8); padding-top:var(--s-4); border-top:2px solid var(--fg) }
+.q > p{ font-family:var(--serif); font-style:italic; font-size:1.25rem; line-height:1.3;
+  letter-spacing:-.01em; text-wrap:pretty }
+.q > p + p{ margin-top:var(--s-3); padding-top:var(--s-3); border-top:1px solid var(--rule) }
+.q footer{ margin-top:var(--s-4); font-size:.9375rem; color:var(--mut); line-height:1.45 }
+.q footer b{ display:block; font-size:.625rem; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--coral); margin-bottom:.35rem }
+.q--clash{ border-top-color:var(--coral) }
+.q--own > p{ font-size:1.4rem }
+@media (max-width:820px){ .quotes{ columns:1 } }
+
+/* ---------- closing ---------- */
+.end{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.75fr); gap:clamp(2rem,6vw,5rem); align-items:end }
+.endmark{ display:grid; gap:var(--s-6); justify-items:start }
+.endmark .mark{ width:clamp(64px,8vw,104px); height:auto; color:var(--coral) }
+.foot{ padding:var(--s-8) var(--pad); background:var(--ink); color:var(--d-mut);
+  font-size:.75rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+  display:flex; flex-wrap:wrap; gap:var(--s-3) var(--s-8); border-top:1px solid var(--d-rule) }
+
+/* ================= MOTION ================= */
+@media (prefers-reduced-motion: no-preference){
+  @supports (animation-timeline: view()){
+    [data-rise]{ animation:rise linear both; animation-timeline:view(); animation-range:entry 4% cover 26% }
+    .statement{ animation:statement linear both; animation-timeline:view(); animation-range:entry 2% cover 32% }
+    .mx tbody tr,.marked li,.rev li{ animation:slide linear both; animation-timeline:view(); animation-range:entry 0% cover 22% }
+    #lanes .nd{ animation:step linear both; animation-timeline:view(); animation-range:entry 12% cover 30% }
+    .cue .bar{ animation:cue 2.6s var(--ease) infinite }
+  }
+  @supports (animation-timeline: scroll()){
+    .progress{ animation:grow linear both; animation-timeline:scroll(root block) }
+  }
+  .hero h1 .ln > span{ animation:drop 1.05s var(--ease) both }
+  .hero h1 .ln:nth-child(1) > span{ animation-delay:.06s }
+  .hero h1 .ln:nth-child(2) > span{ animation-delay:.18s }
+  .hero__lede{ animation:rise .9s var(--ease) .42s both }
+  .count{ animation:rise .9s var(--ease) .52s both }
+  .hero__id .mark path{ animation:pop .7s var(--ease) both; transform-origin:50% 50% }
+  .hero__id .mark path:nth-child(1){ animation-delay:.10s }
+  .hero__id .mark path:nth-child(2){ animation-delay:.18s }
+  .hero__id .mark path:nth-child(3){ animation-delay:.30s }
+  .hero__id .mark path:nth-child(4){ animation-delay:.14s }
+  .hero__id .mark path:nth-child(5){ animation-delay:.22s }
+  .hero__id .mark path:nth-child(6){ animation-delay:.34s }
+}
+@keyframes rise{ from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+@keyframes drop{ from{opacity:0;transform:translateY(105%)} to{opacity:1;transform:none} }
+@keyframes slide{ from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:none} }
+@keyframes step{ from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+@keyframes statement{ from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:none} }
+@keyframes pop{ from{opacity:0;transform:scale(.4)} to{opacity:1;transform:none} }
+@keyframes grow{ from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes cue{ 0%,100%{transform:scaleX(.3);opacity:.5} 50%{transform:scaleX(1);opacity:1} }
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important }
+  .progress{ transform:scaleX(0) }
+}
+
+@media (max-width:900px){
+  .count{ grid-template-columns:1fr 1fr; gap:var(--s-6) }
+  .end{ grid-template-columns:1fr }
+  .pos{ grid-template-columns:1fr; gap:var(--s-2) }
+  .dec__t{ grid-column:2; margin-top:.3rem } .dec__peek{ grid-column:2 }
+  .mx th:first-child{ width:46% }
+  .mx, .mx td{ font-size:.9375rem }
+  .why .tip{ left:auto; right:0 }
+}
+@media (max-width:640px){
+  .mxwrap{ overflow-x:auto }
+  .th-sub{ display:none }
+  .mx th{ letter-spacing:.05em; padding-inline:.2rem }
+  .mx td{ padding-inline:.2rem } .mx td:first-child{ padding-right:var(--s-3) }
+}
+
+@media print{
+  .act{ padding-block:2rem; break-inside:avoid }
+  .act--dark,.act--coral,.act--blush{ background:#fff !important; color:#111 !important; --fg:#111; --mut:#555; --rule:#ccc; --mark:#111 }
+  .filter,.cue,.nav,.progress{ display:none !important }
+  *{ animation:none !important; opacity:1 !important; transform:none !important }
+  .dec__body{ display:block !important } .dec__peek{ display:none !important }
+  .why .tip{ position:static; visibility:visible; opacity:1; box-shadow:none; max-width:none; display:block; padding:.2rem 0 }
+  .hero{ min-height:auto }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <symbol id="sc" viewBox="0 0 101 91">
+    <path d="M34.9358 0C47.086 0 56.9356 9.84576 56.9356 21.9913C56.9356 34.1353 47.086 43.981 34.9358 43.981C22.7857 43.981 12.9377 34.1353 12.9377 21.9913C12.9377 9.84576 22.7857 0 34.9358 0Z"/>
+    <path d="M86.3501 7.42413C94.441 7.42413 101 13.9808 101 22.0685C101 30.1578 94.441 36.7145 86.3501 36.7145C78.2593 36.7145 71.7001 30.1578 71.7001 22.0685C71.7001 13.9808 78.2593 7.42413 86.3501 7.42413Z"/>
+    <path fill-opacity="0.45" d="M66.3919 14.3957C61.5574 14.3957 57.1028 12.8183 53.4712 10.1759C55.6545 13.5916 56.9356 17.6387 56.9356 21.9913C56.9356 26.0135 55.8367 29.7717 53.9499 33.0161C57.4888 30.5836 61.7721 29.1559 66.3919 29.1559C69.2808 29.1559 72.0339 29.727 74.5615 30.7395C72.7704 28.3101 71.7001 25.316 71.7001 22.0685C71.7001 18.4167 73.0452 15.0857 75.2563 12.522C72.5418 13.7197 69.5479 14.3957 66.3919 14.3957Z"/>
+    <path d="M66.0626 90.2689C53.9124 90.2689 44.0644 80.4231 44.0644 68.2791C44.0644 56.1336 53.9124 46.2879 66.0626 46.2879C78.2127 46.2879 88.0607 56.1336 88.0607 68.2791C88.0607 80.4231 78.2127 90.2689 66.0626 90.2689Z"/>
+    <path d="M14.65 82.8369C6.55915 82.8369 0 76.2802 0 68.1925C0 60.1032 6.55915 53.5466 14.65 53.5466C22.7409 53.5466 29.3 60.1032 29.3 68.1925C29.3 76.2802 22.7409 82.8369 14.65 82.8369Z"/>
+    <path fill-opacity="0.45" d="M34.6086 75.8668C39.443 75.8668 43.8983 77.4449 47.5283 80.0873C45.345 76.6732 44.0644 72.6317 44.0644 68.2791C44.0644 64.2553 45.1638 60.4893 47.0506 57.2465C43.5116 59.6774 39.2284 61.1067 34.6086 61.1067C31.7197 61.1067 28.9666 60.5341 26.439 59.5231C28.2301 61.951 29.3 64.945 29.3 68.1925C29.3 71.8459 27.9553 75.1754 25.7442 77.7406C28.4586 76.5429 31.4525 75.8668 34.6086 75.8668Z"/>
+  </symbol>
+</svg>
+
+<div class="progress" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Secciones">
+  <a href="#a-inicio" class="on"><span>Inicio</span></a>
+  <a href="#a-lentos"><span>Por qué vamos lentos</span></a>
+  <a href="#a-cambio"><span>El cambio</span></a>
+  <a href="#a-verdad"><span>La verdad incómoda</span></a>
+  <a href="#a-acuerdos"><span>En qué coincidimos</span></a>
+  <a href="#a-flujo"><span>El flujo</span></a>
+  <a href="#a-prototipo"><span>El prototipo</span></a>
+  <a href="#a-decisiones"><span>Las decisiones</span></a>
+  <a href="#a-canales"><span>Dónde se habla</span></a>
+  <a href="#a-reviews"><span>Design reviews</span></a>
+  <a href="#a-falta"><span>Lo que falta</span></a>
+  <a href="#a-registro"><span>El registro</span></a>
+  <a href="#a-manana"><span>Mañana</span></a>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="act act--dark hero" id="a-inicio">
+  <div class="hero__top">
+    <span class="hero__id"><svg class="mark" viewBox="0 0 101 91" aria-label="Smart Contact"><use href="#sc"/></svg> Síntesis de equipo</span>
+    <span>22 · 09 · 2026</span>
+  </div>
+  <div class="hero__mid">
+    <h1><span class="ln"><span>Coincidimos</span></span><span class="ln"><span>en casi todo.</span></span></h1>
+    <p class="hero__lede">Tres documentos escritos por separado y una reunión de los cinco. Puestos uno al lado del otro, <b>casi todo ya está de acuerdo</b>.</p>
+  </div>
+  <div class="count">
+    <div><b>12</b><span>Acuerdos</span></div>
+    <div><b>5</b><span>Decisiones</span></div>
+    <div><b>4</b><span>Sin escribir</span></div>
+    <div><b>9</b><span>Pasos</span></div>
+  </div>
+  <div class="cue"><span class="bar"></span> Baja</div>
+</header>
+
+<!-- ===== POR QUÉ VAMOS LENTOS ===== -->
+<section class="act act--cream" id="a-lentos">
+  <span class="eyebrow" data-rise>El diagnóstico</span>
+  <h2 data-rise>Todo tarda el doble.<br>Estas son las causas.</h2>
+  <p class="lede" data-rise>Nadie pierde el tiempo trabajando. Se pierde repitiendo trabajo ya hecho. Las cinco causas salen de los tres documentos, y la de la izquierda es la que provoca las demás.</p>
+
+  <div class="well">
+    <svg viewBox="-40 0 1480 620" role="img" aria-labelledby="fb-t fb-d">
+      <title id="fb-t">Causas de que todo tarde el doble</title>
+      <desc id="fb-d">Diagrama de causa y efecto. El efecto observado es que todo tarda el doble. Cinco causas lo alimentan: definición, entornos, pruebas, dispersión y prioridad. La definición aparece marcada como causa raíz, porque las otras cuatro se agravan cuando lo que llega no está cerrado.</desc>
+      <defs>
+        <marker id="fb-a" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 Z" class="sv-ink"/></marker>
+      </defs>
+
+      <line x1="60" y1="320" x2="1192" y2="320" class="sv-str-ink" stroke-width="1.4" marker-end="url(#fb-a)"/>
+
+      <g stroke-width="1.4" class="sv-str-mut">
+        <line x1="720" y1="320" x2="624" y2="488"/>
+        <line x1="560" y1="320" x2="464" y2="152"/>
+        <line x1="400" y1="320" x2="304" y2="488"/>
+        <line x1="240" y1="320" x2="144" y2="152"/>
+      </g>
+      <line x1="880" y1="320" x2="784" y2="152" class="sv-str-coral" stroke-width="2.4"/>
+
+      <g class="sv-str-mut" stroke-width="1">
+        <line x1="848" y1="264" x2="816" y2="264"/><line x1="816" y1="208" x2="784" y2="208"/>
+        <line x1="688" y1="376" x2="656" y2="376"/><line x1="656" y1="432" x2="624" y2="432"/>
+        <line x1="528" y1="264" x2="496" y2="264"/><line x1="496" y1="208" x2="464" y2="208"/>
+        <line x1="368" y1="376" x2="336" y2="376"/><line x1="336" y1="432" x2="304" y2="432"/>
+        <line x1="208" y1="264" x2="176" y2="264"/><line x1="176" y1="208" x2="144" y2="208"/>
+      </g>
+
+      <g font-family="Urbanist, sans-serif" font-size="13" class="sv-mut" text-anchor="end">
+        <text x="812" y="260">Llega con incógnitas</text>
+        <text x="780" y="204">Lo decide quien construye</text>
+        <text x="652" y="392">Horas para entrar</text>
+        <text x="620" y="448">Sin datos de prueba</text>
+        <text x="492" y="260">Criterio incompleto</text>
+        <text x="460" y="204">Sin dueño compartido</text>
+        <text x="332" y="392">Jira no es canal</text>
+        <text x="300" y="448">El contexto se pierde</text>
+        <text x="172" y="260">Cambia de rumbo</text>
+        <text x="140" y="204">No sabemos decir que no</text>
+      </g>
+
+      <g font-family="Urbanist, sans-serif" font-size="15" font-weight="600" text-anchor="middle">
+        <rect x="720" y="137" width="128" height="30" rx="4" class="sv-tint"/>
+        <rect x="720" y="137" width="128" height="30" rx="4" class="sv-str-coral" stroke-width="1.6"/>
+        <text x="784" y="157" class="sv-ink">Definición</text>
+
+        <rect x="560" y="473" width="128" height="30" rx="4" class="sv-card"/>
+        <rect x="560" y="473" width="128" height="30" rx="4" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="624" y="493" class="sv-ink">Entornos</text>
+
+        <rect x="400" y="137" width="128" height="30" rx="4" class="sv-card"/>
+        <rect x="400" y="137" width="128" height="30" rx="4" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="464" y="157" class="sv-ink">Pruebas</text>
+
+        <rect x="240" y="473" width="128" height="30" rx="4" class="sv-card"/>
+        <rect x="240" y="473" width="128" height="30" rx="4" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="304" y="493" class="sv-ink">Dispersión</text>
+
+        <rect x="80" y="137" width="128" height="30" rx="4" class="sv-card"/>
+        <rect x="80" y="137" width="128" height="30" rx="4" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="144" y="157" class="sv-ink">Prioridad</text>
+      </g>
+
+      <rect x="1200" y="280" width="220" height="80" rx="4" class="sv-tint"/>
+      <rect x="1200" y="280" width="220" height="80" rx="4" class="sv-str-coral" stroke-width="1.8"/>
+      <text x="1310" y="313" text-anchor="middle" font-family="Urbanist, sans-serif" font-size="19" font-weight="800" class="sv-ink">Todo tarda</text>
+      <text x="1310" y="339" text-anchor="middle" font-family="Urbanist, sans-serif" font-size="19" font-weight="800" class="sv-ink">el doble</text>
+
+      <line x1="-16" y1="560" x2="1420" y2="560" class="sv-rule" stroke-width="1"/>
+      <g font-family="Urbanist, sans-serif" font-size="12" font-weight="600" class="sv-mut" letter-spacing="1.2">
+        <text x="-16" y="590">LEYENDA</text>
+        <rect x="92" y="576" width="18" height="18" rx="4" class="sv-tint"/><rect x="92" y="576" width="18" height="18" rx="4" class="sv-str-coral" stroke-width="1.6"/>
+        <text x="122" y="590">CAUSA RAÍZ</text>
+        <rect x="260" y="576" width="18" height="18" rx="4" class="sv-card"/><rect x="260" y="576" width="18" height="18" rx="4" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="290" y="590">CAUSA</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ===== EL CAMBIO ===== -->
+<section class="act act--blush" id="a-cambio">
+  <span class="eyebrow" data-rise>El cambio</span>
+  <h2 data-rise>Hoy das vueltas.<br>Mañana avanzas.</h2>
+  <p class="lede" data-rise>Hoy una funcionalidad puede volver al principio tres veces, y nadie sabe cuántas vueltas le quedan. Con el flujo nuevo se para <strong>una sola vez</strong>: a comprobar que el diseño está listo. Si pasa, sigue hasta producción.</p>
+
+  <div class="well well--narrow">
+    <svg viewBox="0 0 1000 300" role="img" aria-labelledby="chg-t chg-d" data-rise>
+      <title id="chg-t">De un ciclo de retrabajo a una secuencia con una sola puerta</title>
+      <desc id="chg-d">A la izquierda, el proceso de hoy dibujado como un círculo cerrado que devuelve el trabajo al principio un número indefinido de veces. A la derecha, el proceso propuesto dibujado como una línea de nueve pasos con una única puerta de control entre el paso cinco y el seis.</desc>
+      <defs>
+        <marker id="cg-a" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 Z" class="sv-coral"/></marker>
+        <marker id="cg-m" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 Z" class="sv-mut"/></marker>
+      </defs>
+      <g font-family="Urbanist, sans-serif" font-size="12" font-weight="600" letter-spacing="2" class="sv-mut">
+        <text x="24" y="36">HOY</text><text x="380" y="36">CON EL FLUJO NUEVO</text>
+      </g>
+      <circle cx="150" cy="150" r="76" class="sv-str-mut" stroke-width="1.5" stroke-dasharray="3 7" fill="none"/>
+      <path d="M150 74 A76 76 0 0 1 218 112" class="sv-str-coral" stroke-width="2.5" stroke-linecap="round" marker-end="url(#cg-a)"/>
+      <path d="M82 188 A76 76 0 0 0 150 226" class="sv-str-mut" stroke-width="1.5" stroke-linecap="round" marker-end="url(#cg-m)"/>
+      <text x="150" y="145" text-anchor="middle" class="sv-ink" font-family="Urbanist, sans-serif" font-size="18" font-weight="600">Vuelve</text>
+      <text x="150" y="168" text-anchor="middle" class="sv-ink" font-family="Urbanist, sans-serif" font-size="18" font-weight="600">al principio</text>
+      <text x="150" y="262" text-anchor="middle" class="sv-mut" font-family="Urbanist, sans-serif" font-size="14">Sin saber cuántas vueltas quedan</text>
+      <path d="M254 150 H332" class="sv-str-coral" stroke-width="2" marker-end="url(#cg-a)"/>
+      <line x1="400" y1="150" x2="944" y2="150" class="sv-str-mut" stroke-width="1.5"/>
+      <g class="sv-mut">
+        <circle cx="400" cy="150" r="6"/><circle cx="468" cy="150" r="6"/><circle cx="536" cy="150" r="6"/>
+        <circle cx="604" cy="150" r="6"/><circle cx="672" cy="150" r="6"/><circle cx="740" cy="150" r="6"/>
+        <circle cx="808" cy="150" r="6"/><circle cx="876" cy="150" r="6"/><circle cx="944" cy="150" r="6"/>
+      </g>
+      <line x1="706" y1="112" x2="706" y2="188" class="sv-str-coral" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="706" y="100" text-anchor="middle" class="sv-coral" font-family="Urbanist, sans-serif" font-size="12" font-weight="600" letter-spacing="1">LA ÚNICA PARADA</text>
+      <text x="400" y="262" class="sv-mut" font-family="Urbanist, sans-serif" font-size="14">Nueve pasos hasta producción</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ===== STATEMENT ===== -->
+<section class="act act--coral" id="a-verdad">
+  <span class="eyebrow">La verdad incómoda</span>
+  <p class="statement statement--mid">El buen proceso no se nota. El malo, en cambio, canta.</p>
+</section>
+
+<!-- ===== ACUERDOS ===== -->
+<section class="act act--dark" id="a-acuerdos">
+  <span class="eyebrow" data-rise>En qué coincidimos</span>
+  <h2 data-rise>Doce puntos.<br>Cero discusión.</h2>
+  <p class="lede" data-rise>Los tres documentos dicen lo mismo sin haberse leído entre ellos. <strong>Siete coinciden los tres.</strong> En los otros cinco solo falta uno, y casi siempre porque no lo menciona, no porque esté en contra.</p>
+
+  <div class="mxwrap">
+  <table class="mx">
+    <thead><tr>
+      <th>Acuerdo</th>
+      <th>Protocolo<span class="th-sub"><br>de organización</span></th>
+      <th>Mejora<span class="th-sub"><br>del flujo</span></th>
+      <th>Flujo<span class="th-sub"><br>de producto</span></th>
+    </tr></thead>
+    <tbody>
+      <tr data-all><td>Primero el problema, después la solución</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr data-all><td>Decidir al priorizar: hacer, posponer o descartar</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr data-all><td>Desarrollo entra pronto, a mirar si es viable</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr data-all><td>Producto valida antes de presentar a Desarrollo</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr data-all><td>Se valida en cadena: primero lo técnico, luego lo funcional</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr data-all><td>Una reunión semanal fija con Desarrollo</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr data-all><td>Un panel de seguimiento por encima de Jira</td><td><i class="dot"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr><td><button type="button" class="why">Avisar y documentar cada lanzamiento<span class="tip">La mejora del flujo no lo menciona: se centra en cómo se valida, no en qué pasa el día que sube. Los otros dos sí lo piden, y en la reunión fue el dolor más repetido.</span></button></td><td><i class="dot"></i></td><td><i class="dot dot--off"></i></td><td><i class="dot"></i></td></tr>
+      <tr><td><button type="button" class="why">Entornos de preproducción con datos listos<span class="tip">El protocolo no lo menciona: describe las fases, no lo que hace falta para poder validarlas. Nadie está en contra, simplemente no está escrito ahí.</span></button></td><td><i class="dot dot--off"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr><td><button type="button" class="why">Validar por hitos, no todo al final<span class="tip">El protocolo pone una sola validación al terminar. Los otros dos piden ir enseñando avances, para no descubrir los problemas cuando ya no hay margen.</span></button></td><td><i class="dot dot--off"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr><td><button type="button" class="why">Figma en Dev Mode como puerta a Desarrollo<span class="tip">El protocolo no habla de herramientas de diseño. Los otros dos lo ponen como condición para empezar a desarrollar: sin el diseño preparado, no entra.</span></button></td><td><i class="dot dot--off"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+      <tr><td><button type="button" class="why">Un contacto técnico y un responsable de componentes por área<span class="tip">El protocolo no reparte nombres por área. Los otros dos sí, porque hoy se pregunta a una persona que te manda a otra, y ahí se van las horas.</span></button></td><td><i class="dot dot--off"></i></td><td><i class="dot"></i></td><td><i class="dot"></i></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="mxkey">
+    <span><i class="dot"></i> Lo dice</span>
+    <span><i class="dot dot--off"></i> No lo menciona</span>
+    <span style="color:var(--coral)">Coral · lo dicen los tres</span>
+  </div>
+</section>
+
+<!-- ===== FLUJO ===== -->
+<section class="act act--cream" id="a-flujo">
+  <span class="eyebrow" data-rise>El flujo</span>
+  <h2 data-rise>Nueve pasos.<br>Una puerta.</h2>
+  <p class="lede" data-rise>Los tres documentos, fundidos en uno. Más dos pasos que hacen falta y no escribió nadie: avisar del lanzamiento y sentarse a ver qué se torció.</p>
+
+  <div class="ports">
+    <div class="port">
+      <b>Por aquí entra el trabajo</b>
+      <ul>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Comercial</li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Postventa</li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Cliente</li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Cualquier equipo</li>
+      </ul>
+    </div>
+    <div class="port">
+      <b>Y al final hay que avisar a</b>
+      <ul>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Comercial</li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Postventa</li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Voz y BI</li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Quien atienda la incidencia</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="filter" role="group" aria-label="Filtrar el flujo por equipo">
+    <button type="button" data-filter="all" aria-pressed="true">Todo</button>
+    <button type="button" data-filter="producto" aria-pressed="false">Producto</button>
+    <button type="button" data-filter="diseno" aria-pressed="false">Diseño</button>
+    <button type="button" data-filter="desarrollo" aria-pressed="false">Desarrollo</button>
+  </div>
+
+  <div class="well">
+  <svg id="lanes" viewBox="0 0 1000 992" role="img" aria-labelledby="fl-t fl-d">
+    <title id="fl-t">Flujo de producto en nueve pasos entre Producto, Diseño y Desarrollo</title>
+    <desc id="fl-d">Nueve pasos en tres carriles y tres fases. Producto abre con la entrada y la prioridad. Desarrollo mira si es viable en baja definición. Diseño construye el prototipo sobre el stack real y después documenta Figma. Producto valida antes de entregar, y la entrega a Desarrollo exige Figma en Dev Mode. Cierra con validación en cadena, lanzamiento avisado y una reunión de cierre.</desc>
+    <defs>
+      <marker id="fa" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" class="sv-mut"/></marker>
+      <marker id="fac" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" class="sv-coral"/></marker>
+    </defs>
+    <rect width="100%" height="100%" class="sv-paper"/>
+    <g font-family="Urbanist, sans-serif" font-size="12" font-weight="600" letter-spacing="1.8" class="sv-mut" text-anchor="middle">
+      <text x="180" y="44">PRODUCTO</text><text x="500" y="44">DISEÑO</text><text x="820" y="44">DESARROLLO</text>
+    </g>
+    <line x1="20" y1="60" x2="980" y2="60" class="sv-rule" stroke-width="1"/>
+    <line x1="340" y1="24" x2="340" y2="928" class="sv-rule" stroke-width="1"/>
+    <line x1="660" y1="24" x2="660" y2="928" class="sv-rule" stroke-width="1"/>
+    <line x1="20" y1="264" x2="980" y2="264" class="sv-rule-2" stroke-width="1" stroke-dasharray="3 5"/>
+    <line x1="20" y1="560" x2="980" y2="560" class="sv-rule-2" stroke-width="1" stroke-dasharray="3 5"/>
+    <rect x="16" y="256" width="252" height="16" class="sv-paper"/>
+    <rect x="16" y="552" width="244" height="16" class="sv-paper"/>
+    <g font-family="Urbanist, sans-serif" font-size="12" font-weight="600" letter-spacing="1.2" class="sv-ink">
+      <text x="20" y="80">1 · ENTENDER EL PROBLEMA</text>
+      <text x="20" y="268">2 · DISEÑAR LA SOLUCIÓN</text>
+      <text x="20" y="564">3 · CONSTRUIR Y VALIDAR</text>
+    </g>
+    <g class="sv-str-mut" stroke-width="1.2" marker-end="url(#fa)">
+      <path d="M180 144 V152 A8 8 0 0 0 188 160 H812 A8 8 0 0 1 820 168 V176"/>
+      <path d="M820 232 V240 A8 8 0 0 1 812 248 H508 A8 8 0 0 0 500 256 V296"/>
+      <path d="M500 352 V384"/>
+      <path d="M500 440 V448 A8 8 0 0 1 492 456 H188 A8 8 0 0 0 180 464 V472"/>
+      <path d="M820 648 V656 A8 8 0 0 1 812 664 H508 A8 8 0 0 0 500 672 V680"/>
+      <path d="M500 736 V744 A8 8 0 0 1 492 752 H188 A8 8 0 0 0 180 760 V768"/>
+      <path d="M180 824 V856"/>
+    </g>
+    <path d="M180 528 V536 A8 8 0 0 0 188 544 H812 A8 8 0 0 1 820 552 V592" class="sv-str-coral" stroke-width="1.8" marker-end="url(#fac)"/>
+    <rect x="444" y="522" width="112" height="15" class="sv-paper"/>
+    <text x="500" y="534" class="sv-coral" font-size="11" font-family="Urbanist, sans-serif" font-weight="600" text-anchor="middle" letter-spacing="1">DEV MODE</text>
+
+    <g font-family="Urbanist, sans-serif">
+      <g data-lane="producto"><g class="nd"><rect x="48" y="88" width="264" height="56" rx="3" class="sv-card"/><rect x="48" y="88" width="264" height="56" rx="3" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="64" y="112" font-size="17" font-weight="600" class="sv-ink">Entra y se prioriza</text>
+        <text x="64" y="132" font-size="13" class="sv-mut">Hacer, posponer o descartar</text>
+        <text x="296" y="112" font-size="12" font-weight="600" class="sv-mut" text-anchor="end">01</text></g></g>
+
+      <g data-lane="desarrollo"><g class="nd"><rect x="688" y="176" width="264" height="56" rx="3" class="sv-card"/><rect x="688" y="176" width="264" height="56" rx="3" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="704" y="200" font-size="17" font-weight="600" class="sv-ink">¿Es viable?</text>
+        <text x="704" y="220" font-size="13" class="sv-mut">En bajo, antes de diseñar</text>
+        <text x="936" y="200" font-size="12" font-weight="600" class="sv-mut" text-anchor="end">02</text></g></g>
+
+      <g data-lane="diseno"><g class="nd"><rect x="368" y="296" width="264" height="56" rx="3" class="sv-tint"/><rect x="368" y="296" width="264" height="56" rx="3" class="sv-str-coral" stroke-width="1.6"/>
+        <text x="384" y="320" font-size="17" font-weight="600" class="sv-ink">Prototipo</text>
+        <text x="384" y="340" font-size="13" class="sv-mut">Sobre el stack real</text>
+        <text x="616" y="320" font-size="12" font-weight="600" class="sv-coral" text-anchor="end">03</text></g></g>
+
+      <g data-lane="diseno"><g class="nd"><rect x="368" y="384" width="264" height="56" rx="3" class="sv-card"/><rect x="368" y="384" width="264" height="56" rx="3" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="384" y="408" font-size="17" font-weight="600" class="sv-ink">Figma, después</text>
+        <text x="384" y="428" font-size="13" class="sv-mut">Medido y listo para Dev Mode</text>
+        <text x="616" y="408" font-size="12" font-weight="600" class="sv-mut" text-anchor="end">04</text></g></g>
+
+      <g data-lane="producto"><g class="nd"><rect x="48" y="472" width="264" height="56" rx="3" class="sv-card"/><rect x="48" y="472" width="264" height="56" rx="3" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="64" y="496" font-size="17" font-weight="600" class="sv-ink">Producto valida</text>
+        <text x="64" y="516" font-size="13" class="sv-mut">Antes de enseñárselo a Dev</text>
+        <text x="296" y="496" font-size="12" font-weight="600" class="sv-mut" text-anchor="end">05</text></g></g>
+
+      <g data-lane="desarrollo"><g class="nd"><rect x="688" y="592" width="264" height="56" rx="3" class="sv-card"/><rect x="688" y="592" width="264" height="56" rx="3" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="704" y="616" font-size="17" font-weight="600" class="sv-ink">Se construye por hitos</text>
+        <text x="704" y="636" font-size="13" class="sv-mut">Enseñando avances, no al final</text>
+        <text x="936" y="616" font-size="12" font-weight="600" class="sv-mut" text-anchor="end">06</text></g></g>
+
+      <g data-lane="diseno"><g class="nd"><rect x="368" y="680" width="264" height="56" rx="3" class="sv-card"/><rect x="368" y="680" width="264" height="56" rx="3" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="384" y="704" font-size="17" font-weight="600" class="sv-ink">Se valida en cadena</text>
+        <text x="384" y="724" font-size="13" class="sv-mut">Front fiel a Figma, dos rondas</text>
+        <text x="616" y="704" font-size="12" font-weight="600" class="sv-mut" text-anchor="end">07</text></g></g>
+
+      <g data-lane="producto"><g class="nd"><rect x="48" y="768" width="264" height="56" rx="3" class="sv-card"/><rect x="48" y="768" width="264" height="56" rx="3" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="64" y="792" font-size="17" font-weight="600" class="sv-ink">Sube y se avisa</text>
+        <text x="64" y="812" font-size="13" class="sv-mut">Comercial, Postventa, Voz y BI</text>
+        <text x="296" y="792" font-size="12" font-weight="600" class="sv-mut" text-anchor="end">08</text></g></g>
+
+      <g data-lane="producto"><g class="nd"><rect x="48" y="856" width="264" height="56" rx="3" class="sv-card"/><rect x="48" y="856" width="264" height="56" rx="3" class="sv-str-ink" stroke-width="1.2"/>
+        <text x="64" y="880" font-size="17" font-weight="600" class="sv-ink">Se cierra y se aprende</text>
+        <text x="64" y="900" font-size="13" class="sv-mut">Qué se torció y por qué</text>
+        <text x="296" y="880" font-size="12" font-weight="600" class="sv-mut" text-anchor="end">09</text></g></g>
+    </g>
+
+    <line x1="20" y1="944" x2="980" y2="944" class="sv-rule" stroke-width="1"/>
+    <g font-family="Urbanist, sans-serif" font-size="12" font-weight="600" class="sv-mut" letter-spacing="1.2">
+      <text x="20" y="976">LEYENDA</text>
+      <rect x="112" y="962" width="18" height="18" rx="3" class="sv-card"/><rect x="112" y="962" width="18" height="18" rx="3" class="sv-str-ink" stroke-width="1.2"/>
+      <text x="142" y="976">PASO</text>
+      <rect x="220" y="962" width="18" height="18" rx="3" class="sv-tint"/><rect x="220" y="962" width="18" height="18" rx="3" class="sv-str-coral" stroke-width="1.6"/>
+      <text x="250" y="976">PIEZA CLAVE</text>
+      <line x1="400" y1="972" x2="438" y2="972" class="sv-str-coral" stroke-width="1.8" marker-end="url(#fac)"/>
+      <text x="454" y="976">LA ÚNICA PARADA</text>
+    </g>
+  </svg>
+  </div>
+
+  <div class="ports" style="margin-top:var(--s-12)">
+    <div class="port">
+      <b>Lo mínimo que entrega Diseño</b>
+      <ul>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>El flujo</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>La interfaz</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Los estados y los casos raros</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Cómo se comporta</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Y el prototipo, cuando aporta</span></li>
+      </ul>
+    </div>
+    <div class="port">
+      <b>Lo que se revisa al pasarlo a Desarrollo</b>
+      <ul>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Alcance</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Dependencias</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Viabilidad técnica</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Límites conocidos</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROTOTIPO ===== -->
+<section class="act act--coral" id="a-prototipo">
+  <span class="eyebrow">Por qué el prototipo va primero</span>
+  <p class="statement">Figma sigue al prototipo. No al revés.</p>
+  <p class="lede" style="color:oklch(0.255 0.035 277 / .84);margin-top:1.75rem;max-width:54ch">
+    El prototipo va montado sobre el código real. Es el único sitio donde se ve si se están inventando colores, si el contraste aguanta y si funciona en una pantalla pequeña. <strong>Figma documenta después lo que el prototipo ya ha demostrado.</strong>
+  </p>
+  <p class="lede" style="color:oklch(0.255 0.035 277 / .84);margin-top:1.25rem;max-width:54ch">
+    Y hay una razón nueva para que Figma esté impecable: <strong>ya casi nadie lo abre.</strong> Se copia el enlace, se le pasa a un agente y se programa con lo que el agente entienda. Si el diseño no está medido y en Dev Mode, lo que llega a producción es la interpretación de una máquina.
+  </p>
+</section>
+
+<!-- ===== DECISIONES ===== -->
+<section class="act act--dark" id="a-decisiones">
+  <span class="eyebrow" data-rise>La agenda de verdad</span>
+  <h2 data-rise>Cinco cosas<br>por decidir.</h2>
+  <p class="lede" data-rise>Aquí los documentos se contradicen por escrito. Cada una lleva una propuesta de salida, que es la postura de Diseño, no un acuerdo.</p>
+
+  <div class="decs">
+    <details class="dec" open><summary><span class="dec__q">¿Quién diseña la solución?</span><span class="dec__t"><span class="o">Abrir</span><span class="c">Cerrar</span></span><span class="dec__peek">Producto define el problema, Diseño lo resuelve. Dos personas distintas.</span></summary>
+      <div class="dec__body">
+        <div class="pos"><b>Protocolo</b><p>«Producto desarrolla los diseños y flujos definitivos incorporando el feedback de Desarrollo.»</p></div>
+        <div class="pos"><b>Mejora del flujo</b><p>«Diseño recibe el planteamiento y lo transforma en una solución UX/UI concreta.»</p></div>
+        <div class="pos"><b>En la reunión</b><p>Se dijo que Diseño ha pasado de resolver el problema a solo colocar componentes.</p></div>
+        <div class="pos pos--win"><b>Propuesta</b><p>Producto define el problema y comprueba que la solución lo resuelve. Diseño lo resuelve. Si las dos cosas caen en la misma persona, nadie revisa a nadie.</p></div>
+      </div>
+    </details>
+
+    <details class="dec"><summary><span class="dec__q">¿Se valida en feo o con prototipo?</span><span class="dec__t"><span class="o">Abrir</span><span class="c">Cerrar</span></span><span class="dec__peek">Las dos cosas, pero cada una en su momento.</span></summary>
+      <div class="dec__body">
+        <div class="pos"><b>Protocolo</b><p>«Producto plantea una primera solución en baja definición.»</p></div>
+        <div class="pos"><b>En la reunión</b><p>Se pidió validar «en feo» antes de ver un prototipo, porque cuando algo ya está acabado el feedback llega tarde.</p></div>
+        <div class="pos pos--win"><b>Propuesta</b><p>En feo se acuerda el problema y el flujo, en el paso 02. El prototipo viene después y sirve para otra cosa: comprobar cómo se comporta de verdad. No compiten.</p></div>
+      </div>
+    </details>
+
+    <details class="dec"><summary><span class="dec__q">¿Cuándo se escribe el COA?</span><span class="dec__t"><span class="o">Abrir</span><span class="c">Cerrar</span></span><span class="dec__peek">Los criterios antes de empezar. La solución, al final.</span></summary>
+      <div class="dec__body">
+        <div class="pos"><b>Protocolo</b><p>«COA / validación final: cuando sea necesario, una revisión más completa para detectar errores.»</p></div>
+        <div class="pos"><b>Mejora del flujo</b><p>Una tabla de validaciones que se rellena durante la fase de validación, con el estado de cada punto.</p></div>
+        <div class="pos pos--win"><b>Propuesta</b><p>Se parte en dos. Qué hay que probar se acuerda antes de empezar: es lo que hace que la calidad sea de todos y no solo de quien la revisa. Cómo se resolvió se escribe al final, cuando ya existe.</p></div>
+      </div>
+    </details>
+
+    <details class="dec"><summary><span class="dec__q">¿Una tabla o tres?</span><span class="dec__t"><span class="o">Abrir</span><span class="c">Cerrar</span></span><span class="dec__peek">Dos sitios: el COA y el panel. Ni uno más.</span></summary>
+      <div class="dec__body">
+        <div class="pos"><b>Mejora del flujo</b><p>Tabla de validaciones más un panel de seguimiento transversal.</p></div>
+        <div class="pos"><b>Flujo de producto</b><p>Casos de prueba compartidos más un panel por encima de Jira.</p></div>
+        <div class="pos pos--win"><b>Propuesta</b><p>El COA es lo que hay que probar en un desarrollo concreto. El panel es la vista de todos los proyectos a la vez. La tabla de validaciones son columnas del COA, no un tercer sitio donde volver a perder el contexto.</p></div>
+      </div>
+    </details>
+
+    <details class="dec"><summary><span class="dec__q">¿Una figura técnica o una por área?</span><span class="dec__t"><span class="o">Abrir</span><span class="c">Cerrar</span></span><span class="dec__peek">Las dos, empezando por la que no hay que pedir a nadie.</span></summary>
+      <div class="dec__body">
+        <div class="pos"><b>Mejora del flujo</b><p>Una figura tipo CTO, con visión global, que decida cuando el problema es gordo.</p></div>
+        <div class="pos"><b>Flujo de producto</b><p>Un contacto técnico y un responsable de componentes por área, Voz y BI.</p></div>
+        <div class="pos pos--win"><b>Propuesta</b><p>Resuelven cosas distintas. Los contactos por área se nombran mañana mismo y arreglan el «pregúntale a este, que te manda a aquel». La figura global hay que pedirla arriba. Empezar por la primera.</p></div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ===== CANALES ===== -->
+<section class="act act--cream" id="a-canales">
+  <span class="eyebrow" data-rise>Dónde se habla</span>
+  <h2 data-rise>Jira no es<br>un chat.</h2>
+  <p class="lede" data-rise>Hoy una duda se pregunta en una card, se responde tres días después, y la decisión acaba en una reunión que nadie apuntó. Cada herramienta sirve para una cosa, y ahora mismo las estamos usando todas para todo.</p>
+
+  <div class="tools">
+    <div class="tool">
+      <b>Teams</b>
+      <p class="sirve">Preguntar, desatascar, avisar de que algo sube.</p>
+      <p class="nosirve">No guarda decisiones. Lo que se acuerda aquí hay que apuntarlo fuera.</p>
+    </div>
+    <div class="tool">
+      <b>Jira</b>
+      <p class="sirve">La tarea y su detalle. La solución, las validaciones y el acuerdo, ya cerrados.</p>
+      <p class="nosirve">No es para conversar. Una duda preguntada en una card se queda esperando.</p>
+    </div>
+    <div class="tool">
+      <b>COA</b>
+      <p class="sirve">Qué hay que probar en este desarrollo, y quién ha comprobado cada cosa.</p>
+      <p class="nosirve">No es el sitio para discutir si algo se hace o no. Eso viene decidido.</p>
+    </div>
+    <div class="tool">
+      <b>Panel</b>
+      <p class="sirve">Todos los proyectos de un vistazo: estado, bloqueos, validaciones y qué viene después.</p>
+      <p class="nosirve">No duplica Jira. Si hay que abrirlo para saber el detalle, está bien.</p>
+    </div>
+  </div>
+
+  <ol class="marked two" style="margin-top:var(--s-12)">
+    <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Se habla fuera, se apunta dentro</b><p>La conversación va por Teams. Cuando se resuelve, el acuerdo baja a la card en un comentario. Si no baja, no ha pasado.</p></div></li>
+    <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Un canal con los responsables</b><p>Uno por departamento, solo para lo que afecta a todos: qué sube, cuándo y a quién le va a aparecer.</p></div></li>
+    <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Lo que no está escrito no cuenta</b><p>Ni un email vale si no acaba en la card. Vale la pena ser estrictos: es lo que evita el «yo eso lo dije».</p></div></li>
+    <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Las reuniones acaban en acta</b><p>Con tema cerrado, la gente justa y algo escrito al final. Hoy se habla mucho y las conclusiones no se traducen en ningún sitio.</p></div></li>
+  </ol>
+</section>
+
+<!-- ===== DESIGN REVIEWS ===== -->
+<section class="act act--blush" id="a-reviews">
+  <span class="eyebrow" data-rise>Cómo lo haremos</span>
+  <h2 data-rise>Design reviews,<br>bien curadas.</h2>
+  <p class="lede" data-rise>Dos momentos: una pronto y otra antes de pasar a Desarrollo. Con la gente justa y un tema cerrado.</p>
+
+  <div class="rev">
+    <section><b>Van estos, nadie más</b>
+      <ul>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Producto</li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Diseño</li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg>Un técnico del área</li>
+      </ul></section>
+    <section><b>Se lleva</b>
+      <ul>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>El prototipo, sobre el código real</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Figma, para ver por dónde va</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Un resumen de una página, antes</span></li>
+      </ul></section>
+    <section><b>Sale ordenado</b>
+      <ul>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Por hacer, va a Jira</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Por aclarar, falta info</span></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><span>Por convencer, hacen falta datos</span></li>
+      </ul></section>
+  </div>
+
+  <p class="statement" style="margin-top:3rem;font-size:clamp(1.6rem,3.4vw,2.6rem);max-width:30ch">Si al leerlo no sabes qué cambiar, no es feedback: es una opinión.</p>
+</section>
+
+<!-- ===== LO QUE FALTA ===== -->
+<section class="act act--cream" id="a-falta">
+  <span class="eyebrow" data-rise>Puntos ciegos</span>
+  <h2 data-rise>Cuatro cosas que<br>no escribió nadie.</h2>
+  <p class="lede" data-rise>Salieron hablando y no están en ningún documento. No son decisiones, son deberes.</p>
+  <ol class="marked two">
+    <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Los plazos</b><p>«Dicen cinco días y llegan diez.» Ni una línea sobre estimar, comprometerse o qué pasa cuando no se cumple.</p></div></li>
+    <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>La reunión de cierre</b><p>Mirar con calma por qué se torció algo, cuando ya ha pasado. Se pidió y no se escribió.</p></div></li>
+    <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>El aviso de lanzamiento</b><p>Nadie sabe cuándo sube algo ni a quién le va a aparecer. Comercial y Postventa se enteran cuando les llega la llamada.</p></div></li>
+    <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Cuántas reuniones</b><p>Salen cinco o seis semanales nuevas mientras todos se quejan de que hay demasiadas. Nadie ha dicho cuáles se quitan.</p></div></li>
+  </ol>
+</section>
+
+<!-- ===== EL REGISTRO ===== -->
+<section class="act act--blush" id="a-registro">
+  <span class="eyebrow" data-rise>El registro</span>
+  <h2 data-rise>Lo que se dijo<br>y no llegó a ningún sitio.</h2>
+  <p class="lede" data-rise>Cosas que salieron en la reunión o están escritas en un documento, y que no han entrado en el flujo ni en las decisiones. Quedan aquí para que no se pierdan. <span class="tiny">La transcripción es automática, así que las citas están limpias de ruido pero se ha respetado lo que se dijo.</span></p>
+
+  <div class="quotes">
+
+    <blockquote class="q q--clash">
+      <p>«Si una cosa se cierra, se cierra. No es venir al día siguiente con otra idea porque ya estaba cerrada.»</p>
+      <p>«Cerrar por cerrar tampoco es bueno. Vamos a subir a producción cosas que sabemos que nos van a dar un disgusto en breve.»</p>
+      <footer><b>Contradicción</b> Las dos son razonables y se dijeron en la misma reunión. Falta la regla: qué justifica reabrir algo cerrado y quién lo autoriza. Daría una sexta decisión.</footer>
+    </blockquote>
+
+    <blockquote class="q">
+      <p>«Veo el interfaz y me parece estupendo, pero no veo que cuando le das al combo va a haber cien mil cosas dentro.»</p>
+      <footer><b>El mejor argumento</b> Es la razón más concreta que se dio para pedir preproducción con datos de verdad. No está en ningún documento.</footer>
+    </blockquote>
+
+    <blockquote class="q">
+      <p>«Te dicen cinco días y a los diez todavía no ha llegado.»</p>
+      <footer><b>Sin escribir</b> Se dijo dos veces. Ninguno de los tres documentos dedica una línea a estimar, a comprometerse o a qué pasa cuando no se cumple.</footer>
+    </blockquote>
+
+    <blockquote class="q">
+      <p>«No sé si tenemos potestad para hacer eso.»</p>
+      <footer><b>Sin resolver</b> Sobre decir que no. Todos coinciden en que hay que aprender a hacerlo y nadie sabe quién puede.</footer>
+    </blockquote>
+
+    <blockquote class="q">
+      <p>«Cada vez que pasamos de fase tiene que estar la matriz de requerimientos y de pruebas, la validación de que comercial lo quiere y el assessment de Front, de BI y de Backoffice.»</p>
+      <footer><b>Propuesta suelta</b> Lo más concreto que se dijo sobre cómo cerrar una fase, y no llegó a ningún documento.</footer>
+    </blockquote>
+
+    <blockquote class="q">
+      <p>«Antes teníamos una reunión todas las mañanas de nueve a nueve y media y sabíamos lo que íbamos a hacer en el día. Ahora no sabemos qué ha hecho cada uno en la semana.»</p>
+      <footer><b>Ya existió</b> El equipo tuvo una solución para esto y la perdió por el camino.</footer>
+    </blockquote>
+
+    <blockquote class="q q--clash">
+      <p>«Estamos perdiendo tres horas, no una: tres personas, una hora cada una.»</p>
+      <p>«Las conclusiones al final no se traducen en ningún lado.»</p>
+      <footer><b>Contradicción</b> El coste de las reuniones está contado en personas, no en reuniones. Y aun así, las tres propuestas juntas añaden cinco o seis semanales nuevas.</footer>
+    </blockquote>
+
+    <blockquote class="q">
+      <p>«La intención no es trasladar la responsabilidad de definición a Desarrollo, sino aprovechar su conocimiento técnico antes de llegar a la implementación.»</p>
+      <footer><b>La frase clave</b> Es la que mejor explica por qué Desarrollo entra en el paso 02 y no más tarde.</footer>
+    </blockquote>
+
+    <blockquote class="q">
+      <p>«Sería interesante preparar datos, usuarios y casuísticas de prueba recurrentes, para no montar las mismas condiciones cada vez.»</p>
+      <footer><b>Barato y olvidado</b> Está escrito en un documento, no cuesta casi nada y nadie lo ha recogido en el flujo.</footer>
+    </blockquote>
+
+    <blockquote class="q">
+      <p>«No todo requerimiento de cliente implica desarrollo.»</p>
+      <p>«Los cambios de alcance deben comunicarse y valorarse.»</p>
+      <footer><b>Dos principios escritos</b> Aplicados de verdad, resolverían media discusión de prioridades.</footer>
+    </blockquote>
+
+    <blockquote class="q">
+      <p>«Un design system agiliza una barbaridad, pero tiene que tener un responsable que no sea solo diseño.»</p>
+      <footer><b>Sin resolver</b> Hoy el sistema lo sostiene Diseño entero, y toca código de todos.</footer>
+    </blockquote>
+
+    <blockquote class="q q--own">
+      <p>«Yo pensaba que lo estaba delegando y no se estaba haciendo. Eso es culpa mía.»</p>
+      <footer><b>La única autocrítica</b> Se dijo sobre la fase de definición, que es justo la causa raíz del diagnóstico. Vale la pena que no se pierda.</footer>
+    </blockquote>
+
+  </div>
+</section>
+
+<!-- ===== MAÑANA ===== -->
+<section class="act act--dark" id="a-manana">
+  <div class="end">
+    <div>
+      <span class="eyebrow" data-rise>Y ahora</span>
+      <h2 data-rise>Mañana no se<br>discute el proceso.</h2>
+      <p class="lede" data-rise>Se firman los doce acuerdos, se cierran las cinco decisiones y esto queda escrito. Lo que pedimos para que funcione:</p>
+      <ol class="marked">
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Figma listo antes de desarrollar</b></div></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Poder leer el repo y probar cada rama con datos</b></div></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Front fiel a Figma en dos rondas, y si no, en directo</b></div></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Design reviews sobre prototipo, con la gente justa</b></div></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Acordar qué se prueba antes de empezar</b></div></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Un contacto técnico y un responsable de componentes por área</b></div></li>
+        <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Avisar siempre de lo que sube a producción</b></div></li>
+      </ol>
+    </div>
+    <div class="endmark">
+      <svg class="mark" viewBox="0 0 101 91" aria-label="Smart Contact"><use href="#sc"/></svg>
+      <p class="tiny" style="max-width:30ch">Las propuestas de salida de esta página son la postura de Diseño. Están para que alguien las tumbe con un argumento mejor.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <span>Síntesis de equipo</span>
+  <span>Tres documentos y la reunión del 22 de septiembre</span>
+</footer>
+
+<script>
+(function(){
+  var decs = document.querySelectorAll('.dec');
+  addEventListener('beforeprint', function(){ decs.forEach(function(d){ d.dataset.was = d.open?'1':'0'; d.open = true; }); });
+  addEventListener('afterprint',  function(){ decs.forEach(function(d){ d.open = d.dataset.was === '1'; }); });
+
+  var links = [].slice.call(document.querySelectorAll('.nav a'));
+  var acts  = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if(acts.length && 'IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        var i = acts.indexOf(e.target);
+        links.forEach(function(l,n){ l.classList.toggle('on', n===i); });
+      });
+    }, { rootMargin:'-45% 0px -45% 0px' });
+    acts.forEach(function(a){ io.observe(a); });
+  }
+
+  var svg = document.getElementById('lanes');
+  var btns = document.querySelectorAll('.filter button');
+  if(!svg || !btns.length) return;
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var want = btn.dataset.filter;
+      btns.forEach(function(b){ b.setAttribute('aria-pressed', String(b===btn)); });
+      svg.querySelectorAll('[data-lane]').forEach(function(g){
+        g.classList.toggle('lane-on', want==='all' || g.dataset.lane===want);
+      });
+      svg.classList.toggle('is-filtered', want!=='all');
+    });
+  });
+})();
+</script>
+</body>
+</html>

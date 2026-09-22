@@ -140,5 +140,18 @@ export class LabComponent {
         },
       ],
     },
+    {
+      // Cómo trabajamos, no cómo se construye el sistema: por eso no cuelga de «Código y diseño».
+      // Es una página suelta bajo `public/explorations/`, con dirección de arte propia y sin
+      // tokens del DS, igual que el resto de exploraciones: documenta una propuesta, no el sistema.
+      title: 'Cómo trabajamos',
+      links: [
+        {
+          label: 'Flujo de producto · síntesis de equipo',
+          href: '/explorations/flujo-producto/index.html',
+          note: 'Las tres propuestas de flujo que se presentaron el 22 de septiembre, cruzadas entre sí: doce acuerdos que ya coinciden, cinco decisiones donde los documentos se contradicen y cuatro huecos que no escribió nadie. Los desempates son una postura de Diseño, no un consenso.',
+        },
+      ],
+    },
   ];
 }
