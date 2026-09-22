@@ -1,0 +1,42 @@
+/* La rejilla, la pila y la fila son GLOBALES (`styles/_forms.scss`): las mismas que pinta
+ * hoy la sección «Acceso» del formulario de usuario. Aquí solo viven las dos cosas que esa
+ * sección no tiene todavía — el contador de la madre y el aviso de bloqueo. */
+:host {
+  display: block;
+}
+
+/* El contador vive DENTRO del label, como el punto de error del índice: de hermano flex se
+ * comería su propio carril y estrecharía la caja del texto. */
+.perm-count {
+  margin-inline-start: var(--sc-spacing-0-5);
+  color: var(--sc-text-subtle);
+}
+
+.perm-detail {
+  margin: 0;
+  padding-left: var(--sc-spacing-1-75);
+  color: var(--sc-text-subtle);
+}
+
+.perm-locked {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  margin: 0;
+  padding-left: var(--sc-spacing-1-75);
+  color: var(--sc-text-warning);
+}
+
+/* ------------------------------------------------------------------ *
+ * B12 · las hijas SANGRADAS. `checkbox-row--child` se usa hoy en el formulario de
+ * usuario (`user-form-page.component.html:195`) pero NO ESTÁ DECLARADA en ninguna hoja:
+ * es una clase muerta, y por eso ahora mismo una sección hija se lee al mismo nivel que
+ * su madre. Aquí se le da el valor que su nombre promete.
+ *
+ * 28 (`scale/2`) sale de alinear el texto de la hija con el de la madre: la casilla mide
+ * 17,5 y su hueco con el texto 7. Telegram sangra 48, que es la consecuencia de SU tamaño
+ * de casilla, no una intención que copiar.
+ * ------------------------------------------------------------------ */
+:host ::ng-deep .checkbox-row--child {
+  padding-left: var(--sc-spacing-2);
+}

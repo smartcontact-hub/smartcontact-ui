@@ -1,0 +1,33 @@
+<button
+  pButton
+  rounded
+  class="lab-fab"
+  [attr.aria-label]="'lab.admin.options_aria' | translate"
+  (click)="options.toggle($event)"
+>
+  <sc-icon name="science" [size]="14" />
+</button>
+
+<p-popover #options [ariaLabel]="'lab.admin.options_aria' | translate">
+  <div class="lab-panel">
+    <p class="lab-panel__title sc-text-caption-semibold">{{ 'lab.admin.breadcrumb' | translate }}</p>
+
+    <nav class="lab-panel__nav" [attr.aria-label]="'lab.admin.nav_aria' | translate">
+      @for (screen of screens; track screen.path) {
+        <a class="lab-panel__link sc-text-body-regular" [routerLink]="screen.path" routerLinkActive="is-active">
+          {{ screen.labelKey | translate }}
+        </a>
+      }
+    </nav>
+
+    <div class="lab-panel__switch">
+      <label class="sc-text-body-regular" for="lab-modo-hoy">{{ 'lab.admin.today_switch' | translate }}</label>
+      <sc-toggleswitch
+        inputId="lab-modo-hoy"
+        [checked]="store.modoHoy()"
+        (checkedChange)="store.modoHoy.set($event)"
+      />
+    </div>
+    <p class="lab-panel__hint sc-text-caption-regular">{{ 'lab.admin.today_switch_hint' | translate }}</p>
+  </div>
+</p-popover>

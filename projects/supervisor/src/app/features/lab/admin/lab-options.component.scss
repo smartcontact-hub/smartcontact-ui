@@ -1,0 +1,58 @@
+/* El botón flotante y su panel, copiando el sitio y las medidas del laboratorio del
+ * Sidebar (`features/lab/sidebar-lab-page.component.scss`): abajo a la derecha, por
+ * encima del contenido y por debajo de los diálogos. */
+.lab-fab {
+  position: fixed;
+  right: var(--sc-spacing-1-75);
+  bottom: var(--sc-spacing-1-75);
+  z-index: var(--sc-z-sidebar);
+}
+
+.lab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  min-width: var(--sc-scale-18);
+}
+
+.lab-panel__title {
+  margin: 0;
+  color: var(--sc-text-subtle);
+  text-transform: uppercase;
+}
+
+.lab-panel__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+}
+
+.lab-panel__link {
+  padding: var(--sc-spacing-0-625);
+  border-radius: var(--sc-radius-400);
+  color: var(--sc-text-secondary);
+  text-decoration: none;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &.is-active {
+    background: var(--sc-bg-hover);
+    color: var(--sc-text-primary);
+  }
+}
+
+.lab-panel__switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
+  color: var(--sc-text-primary);
+}
+
+.lab-panel__hint {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--sc-text-subtle);
+}

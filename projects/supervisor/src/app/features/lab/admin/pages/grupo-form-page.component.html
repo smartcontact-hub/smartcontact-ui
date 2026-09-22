@@ -1,0 +1,258 @@
+<!-- Las acciones suben a la barra, como en los tres formularios de admin. El motivo del
+     bloqueo va VISIBLE y solo cuando falta algo — nunca en un `title` escondido. -->
+<ng-template #topbarActions>
+  @if (saveBlockedReason(); as reason) {
+    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
+  }
+  @if (mode() === 'edit' && dirty()) {
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    size="sm"
+    variant="primary"
+    [disabled]="!canSave()"
+    [label]="(mode() === 'create' ? 'groups.create_button' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <!-- Único <h1> del documento, oculto: la identidad la dicen la miga y la ficha. -->
+  <h1 class="visually-hidden">
+    {{ (mode() === 'edit' ? 'groups.form.edit_breadcrumb' : 'groups.form.create_breadcrumb') | translate }}
+  </h1>
+
+  <div class="page__inner page__inner--rail">
+    <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
+      @if (mode() === 'edit') {
+        <div class="ficha">
+          <sc-illustrated-avatar class="ficha__avatar" [name]="name() || 'Grupo'" pool="abstract" [size]="36" />
+          <div class="ficha__body">
+            <span class="ficha__name sc-text-body-semibold" [title]="name()">{{ name() }}</span>
+            <span class="ficha__meta sc-text-caption-regular">{{ code }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- B17 · el índice, con el VALOR de cada sección bajo su rótulo. Mide como
+           `sc-form-section-nav --flush`; lo único que añade es la segunda línea. -->
+      <nav class="nav-value" [attr.aria-label]="'lab.admin.nav_aria' | translate">
+        <ul class="nav-value__list">
+          @for (section of sections(); track section.id) {
+            <li>
+              <button
+                type="button"
+                class="nav-value__item"
+                [class.nav-value__item--active]="activeSection() === section.id"
+                [attr.aria-current]="activeSection() === section.id ? 'true' : null"
+                (click)="activeSection.set(section.id)"
+              >
+                <span class="nav-value__icon" aria-hidden="true">
+                  <sc-icon [name]="section.icon" [size]="14" />
+                </span>
+                <span class="nav-value__text">
+                  <span
+                    class="nav-value__label"
+                    [class.sc-text-body-semibold]="activeSection() === section.id"
+                    [class.sc-text-body-regular]="activeSection() !== section.id"
+                    >{{ section.labelKey | translate }}</span
+                  >
+                  <span class="nav-value__value sc-text-caption-regular">{{ section.value }}</span>
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      </nav>
+
+      @if (mode() === 'edit') {
+        <sc-button
+          class="rail-delete"
+          variant="danger"
+          appearance="text"
+          size="sm"
+          [icon]="trashIcon"
+          [label]="'common.delete' | translate"
+          (clicked)="deleting.set(true)"
+        />
+      }
+    </aside>
+
+    <div class="page__main">
+      @switch (activeSection()) {
+        @case ('miembros') {
+          <sc-section-card surface="card" icon="group" titleKey="lab.admin.section.members">
+            <section class="sub-section">
+              <app-entity-picker
+                [items]="candidates()"
+                [selected]="members()"
+                [searchPlaceholder]="'lab.admin.search_people' | translate"
+                [emptyHint]="'lab.admin.hint.pick_members' | translate"
+                (toggled)="onMemberToggled($event)"
+              />
+            </section>
+          </sc-section-card>
+        }
+
+        @case ('identidad') {
+          <sc-section-card surface="card" icon="badge" titleKey="users.form.section.identity">
+            <section class="sub-section">
+              <!-- El avatar es generado (no editable) y sigue al nombre mientras se teclea (B7). -->
+              <div class="form-identity">
+                <sc-illustrated-avatar [name]="name() || 'Grupo'" pool="abstract" [size]="36" />
+                <div class="field form-identity__name">
+                  <label class="field__label sc-text-caption-regular" for="lab-group-name">
+                    {{ 'groups.form.fields.name' | translate }}<span class="field__required">*</span>
+                  </label>
+                  <sc-inputtext inputId="lab-group-name" fluid [(value)]="name" />
+                </div>
+              </div>
+
+              <div class="field field--full">
+                <label class="field__label sc-text-caption-regular" for="lab-group-desc">
+                  {{ 'lab.admin.field.description' | translate }}
+                </label>
+                <sc-textarea inputId="lab-group-desc" [rows]="3" fluid [(value)]="description" />
+              </div>
+
+              @if (mode() === 'edit') {
+                <!-- B1 · el código se fijó al crear: se lee, no se edita. -->
+                <p class="field__help sc-text-caption-regular">
+                  {{ 'lab.admin.hint.code_fixed' | translate: { code: code } }}
+                </p>
+              }
+            </section>
+          </sc-section-card>
+        }
+
+        @case ('permisos') {
+          <sc-section-card surface="card" icon="tune" titleKey="lab.admin.section.group_permissions">
+            @for (block of blocks; track block.id) {
+              <section class="sub-section">
+                <header class="sub-section__head">
+                  <h3 class="sub-section__title sc-text-body-semibold">{{ block.title }}</h3>
+                  <p class="sub-section__hint sc-text-caption-regular">{{ block.lead }}</p>
+                </header>
+                <app-permission-checks
+                  [nodes]="block.nodes"
+                  [granted]="grants()"
+                  [modoHoy]="store.modoHoy()"
+                  (motherToggled)="onMother($event.mother, $event.next)"
+                  (childToggled)="onChild($event.mother, $event.childId, $event.next)"
+                />
+              </section>
+              @if (!$last) {
+                <sc-divider />
+              }
+            }
+          </sc-section-card>
+        }
+
+        @case ('personas') {
+          <!-- B11 · dos planos SEPARADOS: qué puede hacer el grupo, y qué puede hacer una
+               persona dentro de él. Listas distintas, no una rejilla mezclada. -->
+          <sc-section-card surface="card" icon="person_check" titleKey="lab.admin.section.person_permissions">
+            <section class="sub-section">
+              <header class="sub-section__head">
+                <p class="sub-section__hint sc-text-caption-regular">{{ 'lab.admin.hint.person_plane' | translate }}</p>
+              </header>
+
+              <div class="who">
+                @for (member of memberList(); track member.id) {
+                  <button
+                    type="button"
+                    class="who__chip sc-text-body-regular"
+                    [class.is-current]="person() === member.id"
+                    (click)="person.set(member.id)"
+                  >
+                    <sc-illustrated-avatar [name]="member.name" [size]="24" />
+                    <span>{{ member.name }}</span>
+                  </button>
+                }
+              </div>
+
+              <div class="checkbox-grid">
+                @for (perm of memberPermissions; track perm.id) {
+                  <div class="checkbox-stack">
+                    <sc-checkbox
+                      class="checkbox-row"
+                      [state]="effective(perm.id) ? 'all' : 'none'"
+                      (cycle)="setOverride(perm.id, $event)"
+                    >
+                      {{ perm.label }}
+                    </sc-checkbox>
+                    <!-- B15 · la excepción vive JUNTO al valor por defecto, no en otra pantalla. -->
+                    <p class="perm-default sc-text-caption-regular">
+                      {{ (defaults[perm.id] ? 'lab.admin.default_yes' : 'lab.admin.default_no') | translate }}
+                      @if (isException(perm.id)) {
+                        <sc-tag severity="warn" [value]="'lab.admin.exception' | translate" />
+                        <button type="button" class="perm-reset" (click)="clearOverride(perm.id)">
+                          {{ 'lab.admin.back_to_default' | translate }}
+                        </button>
+                      }
+                    </p>
+                  </div>
+                }
+              </div>
+            </section>
+          </sc-section-card>
+        }
+
+        @case ('clonar') {
+          <sc-section-card surface="card" icon="content_copy" titleKey="lab.admin.section.clone">
+            <section class="sub-section">
+              <header class="sub-section__head">
+                <p class="sub-section__hint sc-text-caption-regular">{{ 'lab.admin.hint.clone' | translate }}</p>
+              </header>
+
+              <div class="checkbox-grid">
+                @for (other of otherGroups(); track other.id) {
+                  <sc-checkbox
+                    class="checkbox-row"
+                    [state]="cloneFrom() === other.id ? 'all' : 'none'"
+                    (cycle)="cloneFrom.set($event ? other.id : null)"
+                  >
+                    {{ other.name }}
+                  </sc-checkbox>
+                }
+              </div>
+
+              @if (cloneDiff(); as diff) {
+                <div class="clone-diff">
+                  <span class="sc-text-body-regular">
+                    @if (diff.added === 0 && diff.removed === 0) {
+                      {{ 'lab.admin.clone.same' | translate }}
+                    } @else {
+                      {{ 'lab.admin.clone.diff' | translate: { added: diff.added, removed: diff.removed } }}
+                    }
+                  </span>
+                  <sc-button
+                    size="sm"
+                    variant="secondary"
+                    appearance="outlined"
+                    [label]="'lab.admin.clone.apply' | translate"
+                    [disabled]="diff.added === 0 && diff.removed === 0"
+                    (clicked)="applyClone()"
+                  />
+                </div>
+              }
+            </section>
+          </sc-section-card>
+        }
+      }
+    </div>
+  </div>
+</div>
+
+<sc-delete-entity-dialog
+  [visible]="deleting()"
+  mode="single"
+  [items]="deleteItems()"
+  [entitySingular]="'groups.entity_singular' | translate"
+  [entityPlural]="'groups.entity_plural' | translate"
+  [singleDetailMessage]="deleteDetail()"
+  (cancelled)="deleting.set(false)"
+  (confirm)="confirmDelete()"
+/>
+
+<app-lab-options />

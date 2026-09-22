@@ -2064,6 +2064,74 @@
       "mode_slim": "Slim",
       "anchor_aria": "Pin the menu open",
       "unanchor_aria": "Unpin the menu"
+    },
+    "admin": {
+      "breadcrumb": "Lab",
+      "nav_aria": "Form sections",
+      "options_aria": "Lab options",
+      "today_switch": "Reproduce today's flaw",
+      "today_switch_hint": "Turns both new rules off: the user type goes back to being a label that touches no checkbox, and turning a parent off leaves its children’s value alive.",
+      "remove_aria": "Remove {{name}}",
+      "search_people": "Search by name, role or email",
+      "search_groups": "Search group",
+      "exception": "Exception",
+      "back_to_default": "Back to default",
+      "back_to_template": "Back to template",
+      "follows_template": "Follows the template",
+      "drift": "{{count}} off the template",
+      "type_inert": "Just a label",
+      "default_yes": "Default in this group: yes",
+      "default_no": "Default in this group: no",
+      "section": {
+        "members": "Members",
+        "group_permissions": "Group permissions",
+        "person_permissions": "One person's permissions",
+        "clone": "Clone configuration"
+      },
+      "field": {
+        "description": "Description",
+        "notes": "Internal notes"
+      },
+      "table": {
+        "permissions": "Permissions"
+      },
+      "value": {
+        "no_members": "No members",
+        "no_groups": "No groups",
+        "unnamed": "Unnamed",
+        "no_exceptions": "All default",
+        "from_other_group": "From another group"
+      },
+      "blocked": {
+        "no_name": "The name is missing.",
+        "no_members": "Pick at least one person: an empty group receives nothing.",
+        "no_channel": "Turn on at least one channel, or the group cannot receive conversations.",
+        "no_identifier": "The sign-in username is missing.",
+        "bad_email": "The email is missing or malformed.",
+        "no_groups": "Pick at least one group: without one, no conversation reaches them."
+      },
+      "error": {
+        "email": "The @ or the domain is missing."
+      },
+      "hint": {
+        "pick_members": "Whatever you tick below shows up here.",
+        "pick_groups": "Whatever you tick below shows up here.",
+        "pick_groups_lead": "Which groups they belong to. It comes first because without a group no conversation reaches them.",
+        "code_fixed": "The code ({{code}}) was set when the group was created and cannot be edited: agent links and queues point at it.",
+        "identifier_fixed": "Set now and cannot be changed later.",
+        "identifier_read_only": "Signs in as {{identifier}} since {{date}}. The sign-in username is not editable: sessions, recordings and audit records point at it.",
+        "person_plane": "This is not what the group can do, but what this person can do inside it.",
+        "clone": "Copy a group that is already set up well. What would change is stated before applying it.",
+        "type_is_package": "The type is not a label: it is the permission package. Picking it ticks its boxes, and anything you change away from it is counted here.",
+        "type_inert": "This is how it works today: picking a type touches no checkbox.",
+        "sections": "What they see in the menu.",
+        "capabilities": "What they can do, wherever it applies."
+      },
+      "clone": {
+        "same": "That group is set up exactly the same. Nothing would change.",
+        "diff": "{{added}} permissions would be turned on and {{removed}} off.",
+        "apply": "Apply the configuration"
+      }
     }
   }
 }
