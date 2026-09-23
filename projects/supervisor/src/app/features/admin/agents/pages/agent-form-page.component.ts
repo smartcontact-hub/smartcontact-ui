@@ -16,6 +16,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { TabsModule } from 'primeng/tabs';
 import type {
   ScMatrixColumn,
   ScMatrixColumnToggle,
@@ -30,18 +31,15 @@ import { CrossTabLockService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IllustratedAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDividerComponent as DividerComponent,
-  ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
   ScPermissionMatrixComponent as PermissionMatrixComponent,
   ScPhotoUploadComponent as PhotoUploadComponent,
   ScMultiSelectComponent as MultiSelectComponent,
-  ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
   type TriState,
@@ -50,7 +48,8 @@ import {
 import { LabelsStore } from '@features/admin/labels/state/labels.store';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import { canonicalizeChannels, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import { CHANNEL_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import {
   Template,
@@ -141,16 +140,14 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     ButtonComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
-    FormSectionNavComponent,
     GroupAssignmentTableComponent,
-    IllustratedAvatarComponent,
     InputTextComponent,
     PermissionMatrixComponent,
     PhotoUploadComponent,
     RouterLink,
-    SectionCardComponent,
     MultiSelectComponent,
     SelectComponent,
+    TabsModule,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -365,9 +362,28 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly activeSection = signal<string>('agent-section-identity');
 
-  protected readonly activeIcon = computed(() => {
-    const id = this.activeSection();
-    return this.navSections().find((s) => s.id === id)?.icon ?? null;
+  protected onTabChange(value: unknown): void {
+    if (typeof value === 'string' && value) this.activeSection.set(value);
+  }
+
+  /**
+   * Las tres cifras de la franja: en cuántos grupos atiende de verdad (activos sobre asignados, como
+   * «Agentes asignados» en la ficha de grupo), por qué canales le llega trabajo y de qué tipo es.
+   */
+  protected readonly headline = computed(() => {
+    this.currentLang();
+    const f = this.form();
+    const activos = f.links.filter((l) => l.active);
+    const canales = canonicalizeChannels(activos.flatMap((l) => l.channels));
+    const etiquetas: Readonly<Record<string, string>> = CHANNEL_LABEL_KEYS;
+    return [
+      { valor: `${activos.length}/${f.links.length}`, etiqueta: 'agents.form.section.groups' },
+      {
+        valor: canales.length ? canales.map((c) => this.translate.instant(etiquetas[c])).join(', ') : '—',
+        etiqueta: 'agents.form.section.channels',
+      },
+      { valor: this.translate.instant(this.typeLabelKeys[f.agentType]), etiqueta: 'agents.form.fields.type' },
+    ];
   });
 
   /**
@@ -563,22 +579,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.mode() === 'edit' ? 'edit' : 'create'
   );
 
-  /**
-   * Set de section ids con required vacíos. El `<sc-form-section-nav>`
-   * pinta una bola roja al lado de cada label aquí presente. Updates en
-   * tiempo real al rellenar.
-   *
-   * Solo señala REQUIRED VACÍOS, no errores de formato (e.g. email
-   * malformado). Razón: la bola roja en el nav comunica "te falta
-   * algo aquí" — errors de formato se ven en el input mismo.
-   */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const f = this.form();
-    const errors = new Set<string>();
-    // Identity section: name + extension son required.
-    if (!f.name.trim() || !f.extension) errors.add('agent-section-identity');
-    return errors;
-  });
 
   protected readonly canSave = computed(() => {
     const f = this.form();

@@ -1,16 +1,12 @@
 :host {
   display: block;
-  /* `min-height` y no `height`: con alto fijo el bloque contenedor acaba en una
-   * pantalla y el índice fijo (`.page__rail`, sticky) se suelta al pasarla. Avanzado,
-   * con los tres selectores abiertos, pasa de largo una pantalla. */
   min-height: 100%;
   background: var(--sc-bg-canvas);
 }
 
-/* El MOLDE de esta página no vive aquí: `.page__inner--rail`, `.page__rail` y
- * `.page__main` están en `src/styles/_page.scss` (el mismo de Contact Center), y
- * `.ficha`, `.rail-delete`, `.form-identity`, `.switch-field`, `.sub-section` (con su
- * `__toggle` de acordeón) y `.grid` en `src/styles/_forms.scss`. No los re-declares
+/* El MOLDE de esta página no vive aquí: `.page__inner--rail`, `.page__main`, `.ficha-tabs` y su
+ * franja y tira (`.headline`, `.tabbar`) están en `src/styles/_page.scss`, y `.plain-section`,
+ * `.form-identity`, `.switch-field`, `.sub-section` y `.grid` en `src/styles/_forms.scss`. No los re-declares
  * aquí: una regla encapsulada de componente le gana siempre a la global, y el molde se
  * desviaría en una sola página sin avisar.
  *
@@ -44,7 +40,7 @@
   align-self: flex-start;
   color: var(--sc-text-link);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: var(--sc-spacing-0-125);
 
   &:focus-visible {
     outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);

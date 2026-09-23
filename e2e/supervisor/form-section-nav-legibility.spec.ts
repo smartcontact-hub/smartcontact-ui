@@ -32,20 +32,17 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  */
 
 const FORMULARIOS = [
-  /* 4 → 3 el 2026-09-14: «Secciones» y «Permisos» son una sola sección, «Acceso». */
-  { nombre: 'usuarios', ruta: 'admin/usuarios/crear', secciones: 3 },
-  /* 4 → 5 el 2026-09-14: Etiquetas, Agendas y Plantillas salen de Avanzado a «Repositorios». */
-  { nombre: 'agentes', ruta: 'admin/agentes/crear', secciones: 5 },
-  /* GRUPOS salió de aquí el 2026-09-23: su ficha ya no tiene índice de rail, sino una tira de
-   * pestañas arriba (`p-tabs`), así que no hay etiqueta que se pueda recortar por el ancho del
-   * rail. Las otras dos fichas SÍ lo conservan, y la regla que este spec fija —que el nombre de
-   * una sección no se esconda— sigue viva para ellas. Si algún día las tres pasan a pestañas,
-   * este spec se va entero y lo que hay que medir es otra cosa: que la tira no parta un rótulo. */
+  /* Las fichas de GRUPO (2026-09-22) y de USUARIO y AGENTE (2026-09-23) salieron de aquí: ya no
+   * tienen índice de rail, sino una tira de pestañas arriba (`p-tabs`). Que esa tira no parta ni
+   * recorte un rótulo lo mide `ficha-usuario-agente.spec.ts`. El índice sigue vivo en el
+   * constructor de reglas, y la regla que este spec fija —que el nombre de una sección no se
+   * esconda— se mide ahí. Tres secciones: General, Alcance y Análisis IA. */
+  { nombre: 'regla', ruta: 'conversaciones/reglas/nueva', secciones: 3 },
 ] as const;
 
 const IDIOMAS = ['es', 'en', 'fr', 'pt'] as const;
 
-/** Cuántas etiquetas se miden en total: la suma de las secciones de los tres. */
+/** Cuántas etiquetas se miden en total: la suma de las secciones de los formularios. */
 const SECCIONES_TOTALES = FORMULARIOS.reduce((n, f) => n + f.secciones, 0);
 
 /**
@@ -134,8 +131,8 @@ for (const idioma of IDIOMAS) {
 }
 
 /*
- * A 1024 el rail deja de ser columna (`@media (max-width: 1024px)` en los tres
- * form-pages pasa la rejilla a `1fr`) y el índice ocupa el ancho de la página.
+ * A 1024 el rail deja de ser columna (`@media (max-width: 1024px)` pasa la rejilla a `1fr`) y el
+ * índice ocupa el ancho de la página.
  * Ahí sobra sitio, pero es justo el ancho en el que el molde cambia de forma, así
  * que se mide en vez de suponerse.
  */

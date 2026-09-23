@@ -20,16 +20,15 @@
 
 <div class="page">
   <div class="page__inner">
-    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de arriba dice DÓNDE estás y esta línea
-         dice QUÉ miras. Con lo que nace cada grupo nuevo, con los mismos campos y palabras que la ficha de grupo y
-         en el mismo orden que su «Avanzado». -->
-    <sc-section-card
-      icon="groups"
-      [headingLevel]="1"
-      surface="card"
-      titleKey="groups.defaults.heading"
-      hintKey="groups.defaults.hint"
-    >
+    <!-- El título de la página vive en el CUERPO, no en la barra (DD-33): la miga de arriba dice DÓNDE
+         estás y esta línea dice QUÉ miras. Sin caja desde el 2026-09-23: era UN bloque sin vecinos de
+         los que separarse, la misma razón por la que la ficha de grupo la perdió (#232). El título va
+         en el rol del de las fichas y las listas, `h3-semibold`. -->
+    <header class="defaults-head">
+      <h1 class="defaults-head__title sc-text-h3-semibold">{{ 'groups.defaults.heading' | translate }}</h1>
+      <p class="defaults-head__hint sc-text-caption-regular">{{ 'groups.defaults.hint' | translate }}</p>
+    </header>
+    <div class="plain-section">
       <!--
         LISTA DE AJUSTES: nombre a la IZQUIERDA, control a la DERECHA, una fila por ajuste.
 
@@ -209,6 +208,6 @@
           }
         </div>
       </section>
-    </sc-section-card>
+    </div>
   </div>
 </div>

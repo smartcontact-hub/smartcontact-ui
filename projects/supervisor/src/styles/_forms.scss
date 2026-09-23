@@ -58,6 +58,13 @@
    */
   margin-inline: var(--sc-spacing-0-875);
 
+  /* Sin caja no hay filo con el que casar: en una ficha «una página + pestañas» (`.ficha-tabs`) o
+   * en un bloque a sangre (`.plain-section`) el contenido arranca en la vertical del título. */
+  .ficha-tabs &,
+  .plain-section & {
+    margin-inline: 0;
+  }
+
   &__head {
     display: flex;
     flex-direction: column;
@@ -467,4 +474,40 @@
   @media (max-width: 1024px) {
     position: static;
   }
+}
+
+/* EL BLOQUE A SANGRE de las fichas «una página + pestañas» (grupo, usuario, agente): el contenido
+ * de una pestaña, sin caja. Vive aquí porque lo usan las tres fichas (DD-65).
+ *
+ * No declara ni fondo, ni borde, ni radio: por eso no es una «caja a mano» de las que persigue
+ * `audit:screen-vocabulary`, es la ausencia de una. Y por eso su contenido tampoco lleva la
+ * sangría de 12.25 de `.sub-section`: esa sangría existe para casar con el filo de la tarjeta, y
+ * aquí no hay filo.
+ *
+ * 28 entre los dos bloques que contiene (canales y agentes) contra los 14 de dentro de cada uno:
+ * es el 2× que pide la regla de agrupación para que se vea dónde acaba uno. En la maqueta iban a
+ * 14 los dos, que es la misma distancia fuera que dentro. */
+.plain-section {
+  display: flex;
+  flex-direction: column;
+  /* 14 entre los dos bloques que contiene (canales y agentes), que con los 14 de
+   * `.plain-block + .plain-block` hacen los 28 de la nota de arriba. Desde el 2026-09-22 ya no hay
+   * rótulo dentro: el nombre de la sección lo dice su pestaña. */
+  gap: var(--sc-spacing-1);
+  scroll-margin-top: var(--sc-form-anchor-offset);
+}
+
+/* Y 28 entre bloque y bloque (los 14 del `gap` más estos 14): el doble de los 14 de dentro de cada
+ * uno, que es lo que pide la regla para que se vea dónde acaba «Canales» y empieza «Agentes». */
+.plain-block + .plain-block {
+  margin-block-start: var(--sc-spacing-1);
+}
+
+/* El equivalente de `.sub-section` sin la sangría. Mismo `gap`: las filas de dentro de un bloque
+ * se separan igual dé caja o no. */
+.plain-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  min-inline-size: 0;
 }

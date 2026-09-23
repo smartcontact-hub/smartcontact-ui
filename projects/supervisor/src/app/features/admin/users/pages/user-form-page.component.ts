@@ -13,6 +13,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { TabsModule } from 'primeng/tabs';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
@@ -21,16 +22,13 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService } from '@core/services';
 import { EMAIL_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IllustratedAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDividerComponent as DividerComponent,
-  ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
   ScPhotoUploadComponent as PhotoUploadComponent,
-  ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -70,12 +68,10 @@ interface FormState {
     ButtonComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
-    FormSectionNavComponent,
-    IllustratedAvatarComponent,
     InputTextComponent,
     PhotoUploadComponent,
-    SectionCardComponent,
     SelectComponent,
+    TabsModule,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -176,10 +172,9 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private releaseLock: (() => void) | null = null;
 
   /**
-   * Section index for the form shell. In `edit` mode, Identity drops to
-   * the end — user identity is set once and rarely touched again.
-   * Delete is *not* in the nav — it lives at the bottom of the Identity
-   * tab (danger zone pattern, GitHub / Stripe).
+   * Las pestañas de la ficha, en orden. Al EDITAR abre por Acceso (lo que se toca) e Identidad va
+   * al final: sus datos ya los dice la franja. Al CREAR, Identidad primero: sin nombre no hay
+   * usuario. Es la forma de la ficha de grupo, «una página + pestañas» (#232).
    */
   protected readonly navSections = computed<readonly FormNavSection[]>(() => {
     const identity: FormNavSection = {
@@ -209,9 +204,23 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly activeSection = signal<string>('user-section-identity');
 
-  protected readonly activeIcon = computed(() => {
-    const id = this.activeSection();
-    return this.navSections().find((s) => s.id === id)?.icon ?? null;
+  protected onTabChange(value: unknown): void {
+    if (typeof value === 'string' && value) this.activeSection.set(value);
+  }
+
+  /**
+   * Las tres cifras de la franja: a qué llega esta persona sin abrir una pestaña. Qué secciones ve,
+   * qué puede hacer y cuántos servicios supervisa.
+   */
+  protected readonly headline = computed(() => {
+    const f = this.form();
+    const secciones = Object.values(f.sections).filter(Boolean).length;
+    const permisos = Object.values(f.permissions).filter(Boolean).length;
+    return [
+      { valor: `${secciones}/${Object.keys(f.sections).length}`, etiqueta: 'users.form.section.sections' },
+      { valor: `${permisos}/${Object.keys(f.permissions).length}`, etiqueta: 'users.form.section.permissions' },
+      { valor: String(f.services.size), etiqueta: 'users.form.headline.services' },
+    ];
   });
 
   protected readonly mode = computed<'edit' | 'duplicate' | 'create'>(() => {
@@ -225,18 +234,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly headerMode = computed<'edit' | 'create'>(() =>
     this.mode() === 'edit' ? 'edit' : 'create',
   );
-
-  /**
-   * Section ids con required vacíos. El `<sc-form-section-nav>` pinta una
-   * bola roja al lado del label de cada section aquí presente.
-   * Solo required vacíos — no errores de formato (e.g. email malformado).
-   */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const f = this.form();
-    const errors = new Set<string>();
-    if (!f.name.trim() || !f.email.trim()) errors.add('user-section-identity');
-    return errors;
-  });
 
   protected readonly canSave = computed(() => {
     const f = this.form();

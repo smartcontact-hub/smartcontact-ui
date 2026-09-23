@@ -45,7 +45,7 @@
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-bulk-edit-menu` | STANDARD | primeng/button | 2 inputs | sc-select | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 149 |
+| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 150 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 34 |
 | `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 7 |
@@ -63,7 +63,7 @@
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
 | `sc-field-msg` | CUSTOM | — | 2 inputs | — | — | — |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
-| `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 5 |
+| `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 1 |
 | `sc-gauge` | CUSTOM | — | 9 inputs | — | ✓ | 1 |
 | `sc-group-popover` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 4 |
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
@@ -83,7 +83,7 @@
 | `sc-progressspinner` | EXTENDED | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 9 |
-| `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 30 |
+| `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 21 |
 | `sc-select` | EXTENDED | primeng/select | 28 inputs | sc-field-label sc-field-msg | ✓ | 42 |
 | `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 13 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |

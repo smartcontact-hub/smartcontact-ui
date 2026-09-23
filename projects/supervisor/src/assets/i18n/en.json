@@ -1397,7 +1397,10 @@
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
       "duplicate_title": "Duplicate user",
       "duplicate_breadcrumb": "Duplicate user",
-      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save"
+      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
+      "headline": {
+        "services": "Services"
+      }
     },
     "errors": {
       "name_required": "Name is required",
