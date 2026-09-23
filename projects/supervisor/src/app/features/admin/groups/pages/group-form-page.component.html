@@ -206,6 +206,11 @@
           </div>
         }
       </dl>
+      <!-- Borrar el grupo. Desde el 2026-09-22 (el índice lateral fuera) no tenía disparador: el
+           diálogo seguía aquí y nada lo abría. -->
+      <div class="headline__actions">
+        <sc-button variant="danger" appearance="text" size="sm" icon="delete" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
+      </div>
     </div>
   }
 

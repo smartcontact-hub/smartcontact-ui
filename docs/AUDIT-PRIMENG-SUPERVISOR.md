@@ -67,7 +67,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **25 props nativas no expuestas**: `appendTo`, `ariaLabelledBy`, `autofocus`, `inputSize`, `inputStyle`, `inputStyleClass`, `max`, `mediumLabel`, `mediumRegex`, `min`, `minlength`, `motionOptions`, `overlayOptions`, `pPasswordPT`, `pPasswordUnstyled`, `pattern`, `promptLabel`, `showClear`, `showPassword`, `step`, `strongLabel`, `strongRegex`, `tabindex`, `variant`, `weakLabel`
 
-### `sc-button` · 149 usos · primeng/button
+### `sc-button` · 150 usos · primeng/button
 
 **24 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconOnly`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `severity`, `style`, `styleClass`, `tabindex`, `text`
 
@@ -159,7 +159,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-form-section-nav` · 5 usos · —
+### `sc-form-section-nav` · 1 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -191,7 +191,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-section-card` · 30 usos · —
+### `sc-section-card` · 21 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

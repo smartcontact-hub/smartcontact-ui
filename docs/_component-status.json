@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 149,
+      "usedInSupervisor": 150,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -650,7 +650,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5,
+      "usedInSupervisor": 1,
       "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
       "sobreObsoleto": []
     },
@@ -1193,7 +1193,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 30,
+      "usedInSupervisor": 21,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
