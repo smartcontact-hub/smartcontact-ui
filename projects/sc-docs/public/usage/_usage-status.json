@@ -609,7 +609,7 @@
     },
     {
       "selector": "sc-sticky-form-header",
-      "usedInSupervisor": 3
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-textarea",

@@ -32,7 +32,7 @@
 | **17** | construir sobre una descripción que no verificaste tú | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
 | **18** | zanjar una decisión VISUAL discutiendo | constrúyela en su versión mínima y MÍRALA |
 | **19** | elegir cómo validar algo | por la PREGUNTA: gesto→Playwright · aspecto→captura · ¿sabrán usarlo?→recorrido cognitivo |
-| **21** | escribir en un LEDGER compartido (`DECISIONS`, `LEARNINGS`, `inventory`, `handoff`, `AGENTS`) o aterrizar en una rama que otro worktree tiene abierta | mira su `status` y el tip ANTES de empezar, no solo al aterrizar; una rama, una sesión; y compara contra `origin/main` tras `fetch`, no contra tu `main` local |
+| **21** | escribir en un LEDGER compartido (`DECISIONS`, `LEARNINGS`, `inventory`, `handoff`, `AGENTS`), aterrizar en una rama que otro worktree tiene abierta, **o enseñarle a Rafa ficheros que otra sesión también toca** | mira su `status` y el tip ANTES, no solo al aterrizar; una rama, una sesión; y compara contra `origin/main` tras `fetch`, no contra tu `main` local ⚙️ |
 
 ---
 
@@ -147,17 +147,16 @@
     2026-09-11 "410 con nombre" eran 341 + 69 que solo heredaban, y "4.517 textos" eran mediciones
     sobre 56 estados (las 38 rutas son 2.503).
 
-21. **Vas a escribir en un fichero COMPARTIDO (los ledgers: `DECISIONS.md`, `LEARNINGS.md`,
-    `inventory.md`, `docs/handoff/`, `AGENTS.md`) o a aterrizar trabajo en una rama que otro
-    worktree tiene checkouteada → mide su árbol y su tip ANTES de empezar, no solo al aterrizar.**
-    `git worktree list`, su `git status --porcelain`, el `rev-parse` de la rama. Si el fichero está
-    sucio en su árbol, no lo toques: quien hace el cambio de código escribe su entrada. Una rama,
-    una sesión: si necesitas su trabajo sin fundir, sal a rama propia y vuelve con PR. Y compara
-    contra `origin/main` tras un `fetch`: tu `main` local puede estar días por detrás y te dirá que
-    no hay conflicto cuando lo hay.
-    Evidencia: 2026-09-06 tres choques en un día con la sesión hermana (DD-52 y la pokédex escritas
-    dos veces, la segunda byte a byte idéntica) y el PR #50 nació CONFLICTING contra el #52 ya
-    fundido; los cuatro choques cayeron en ledgers, ninguno en código.
+21. **Vas a escribir en un fichero COMPARTIDO (ledgers: `DECISIONS.md`, `LEARNINGS.md`, `inventory.md`,
+    `docs/handoff/`, `AGENTS.md`), a aterrizar en una rama que otro worktree tiene checkouteada, o a
+    enseñarle a Rafa ficheros que otra sesión también toca → mide su árbol y su tip ANTES, no solo al
+    aterrizar.** `git worktree list`, su `status --porcelain`, el `rev-parse` de la rama; si el fichero
+    está sucio en su árbol, no lo toques. Una rama, una sesión: si necesitas su trabajo sin fundir,
+    rama propia y PR. Compara contra `origin/main` tras un `fetch`, no contra tu `main` local, que
+    miente sobre los conflictos. ⚙️ `main-drift-guard` lo mira en cada mensaje de Rafa.
+    Evidencia: 2026-09-06 cuatro choques en ledgers con la hermana (el PR #50 nació CONFLICTING) ·
+    2026-09-23 #237, #239 y #240 entraron sobre las fichas mientras Rafa miraba mi local, y vio deshecho
+    «lo que ya se había hecho».
 
 ## Entrega
 

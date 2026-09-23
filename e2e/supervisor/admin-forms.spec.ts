@@ -50,20 +50,18 @@ test('usuarios · el botón de guardar exige los campos obligatorios', async ({ 
 });
 
 /*
- * Guardar un grupo NUEVO lo deja en su ficha, ya en modo edición, y no devuelve a la lista
- * (2026-09-23, la forma de ficha que eligió Rafa; es lo que hace Contact Center). Así que el
- * contrato que se mide cambia de sitio, no de fondo: el grupo existe y se puede seguir
- * trabajando en él. Que además salga en el listado se comprueba entrando a la lista.
+ * El alta de grupo es un DIÁLOGO corto sobre la lista desde el 2026-09-23: nombre y canales, y lo
+ * demás nace con los valores por defecto. Crear deja en la ficha del grupo, ya en edición (como
+ * Contact Center), que es donde se le asignan agentes. Que además salga en el listado se comprueba
+ * entrando a la lista.
  */
 test('grupos · crear un grupo lo deja en su ficha y lo añade al listado', async ({ page }) => {
-  await goto(page, 'admin/grupos/crear');
+  await goto(page, 'admin/grupos');
+  await page.getByRole('button', { name: 'Nuevo grupo' }).click();
 
   const name = `E2E Grupo ${Date.now()}`;
-  await page.locator('#group-name').fill(name);
-
-  const save = page.getByRole('button', { name: /guardar|save/i });
-  await expect(save).toBeEnabled();
-  await save.click();
+  await page.locator('#group-create-name').fill(name);
+  await page.getByRole('dialog', { name: 'Nuevo grupo' }).getByRole('button', { name: 'Crear' }).click();
 
   // El alta navega a la edición del grupo recién creado.
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);

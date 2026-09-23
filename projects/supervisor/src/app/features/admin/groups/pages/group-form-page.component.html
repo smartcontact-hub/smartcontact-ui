@@ -1,6 +1,5 @@
-<!-- Modelo "todo arriba" (experiment S59): fuera la banda sticky-form-header.
-     Identidad → breadcrumb + campos del cuerpo (avatar/nombre en Identidad);
-     Guardar/Cancelar → barra de arriba vía TopBarSlotService (ver el .ts). -->
+<!-- Modelo "todo arriba" (experiment S59): fuera la banda sticky-form-header. El nombre del grupo
+     es el título de la página; Guardar → barra de arriba vía TopBarSlotService (ver el .ts). -->
 <!-- Las acciones suben a la barra de arriba vía TopBarSlotService (ver el .ts), con los
      mismos botones que Contact Center: «Deshacer» SOLO si hay algo que deshacer, y
      Guardar. Hasta el 2026-09-14 aquí había un «Cancelar» siempre visible que volvía a la
@@ -32,13 +31,6 @@
 </ng-template>
 
 <div class="page">
-  <!-- Único <h1> del documento, oculto: la identidad la dicen la miga y la ficha.
-       En la variante `s` al editar NO se pinta: ahí el nombre del grupo es un `<h1>` visible
-       (ver `.headline__name`), y dos `<h1>` en un documento no es una página, son dos. -->
-  @if (mode() !== 'edit') {
-    <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'groups.form.edit_breadcrumb' : 'groups.form.create_breadcrumb') | translate }}</h1>
-  }
-
   <!-- El molde de Contact Center (`.page__inner--rail`). Sin índice y con la tabla de agentes de
        protagonista, esta ficha quiere el ancho de una lista, y se lo da `.ficha-tabs` en
        `_page.scss`. NO cambia de arquetipo por eso: sigue siendo `--rail`. Declarar dos
@@ -180,65 +172,56 @@
   <!-- La franja de estado, lo primero. Quien abre un grupo se pregunta tres
        cosas —cuántos atienden, por dónde entra el trabajo y cómo se reparte— y aquí las tiene sin
        leer un campo. Es la banda de SnowUI, con los datos que este producto sí tiene. -->
-  @if (mode() === 'edit') {
-    <!-- SIN AVATAR, y no por gusto. Al quitar la caja, TODA la página arranca en x=108: el rótulo
-         del bloque, las casillas, el buscador y la tabla. El avatar empujaba el nombre a x=147, así
-         que el texto más importante de la pantalla era lo único fuera de esa vertical, y un filo
-         suelto se lee como ruido aunque nadie sepa nombrarlo. La foto del grupo sigue donde se
-         cambia, en Identidad. (Antes el avatar SÍ trabajaba: alineaba el nombre con el título de la
-         tarjeta, que estaba en 146. Esa tarjeta ya no está.) -->
-    <div class="headline">
-      <!-- El nombre es el TÍTULO DE LA PÁGINA, no un dato más de una franja: el sujeto de esta
-           pantalla es el grupo. `h3-semibold` es el rol que ya usan las nueve listas de la app
-           para su `h1` (`sc-list-page`), así que no nace un tamaño nuevo para esto. -->
-      <div class="headline__who">
-        <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
-        <!-- El teléfono, solo si el grupo ofrece teléfono: un grupo de chat enseñaba aquí un número
-             que ya no se le pide en ningún sitio, o un «Ninguno» que no es una carencia. -->
-        <span class="headline__meta sc-text-caption-regular">
-          @if (hasPhone()) {
-            {{ form().phone || ('groups.form.summary.none' | translate) }} ·
-          }
-          {{ priorityKeys[form().priority] | translate }}
-        </span>
-      </div>
-      <dl class="headline__stats">
-        @for (s of headline(); track s.etiqueta) {
-          <div class="headline__stat">
-            <dt class="headline__label sc-text-caption-regular">{{ s.etiqueta | translate }}</dt>
-            <!-- El `title` es lo que rescata el valor cuando el ancho fijo lo recorta.
-                 Los CANALES no llevan texto sino los glifos de la lista de grupos: el nombre de
-                 cada uno va en su `title`, como allí, y el lector de pantalla oye la lista entera
-                 del `dd`. Cuatro glifos miden 95,5 en una columna de 109, así que ni se recortan
-                 ni bailan al encender un canal. -->
-            <dd class="headline__value sc-text-body-semibold" [title]="s.valor">
-              @if (s.canales; as canales) {
-                <span class="visually-hidden">{{ s.valor }}</span>
-                @if (canales.length) {
-                  <span class="sc-channel-row" aria-hidden="true">
-                    @for (c of canales; track c) {
-                      <span class="sc-channel-row__item" [attr.data-channel]="c" [title]="channelKeys[c] | translate">
-                        <sc-channel-icon [channel]="c" />
-                      </span>
-                    }
-                  </span>
-                } @else {
-                  <span aria-hidden="true">{{ s.valor }}</span>
-                }
-              } @else {
-                {{ s.valor }}
-              }
-            </dd>
-          </div>
-        }
-      </dl>
-      <!-- Borrar el grupo. Desde el 2026-09-22 (el índice lateral fuera) no tenía disparador: el
-           diálogo seguía aquí y nada lo abría. -->
-      <div class="headline__actions">
-        <sc-button variant="danger" appearance="text" size="sm" icon="delete" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
-      </div>
+  <!-- SIN AVATAR NI FOTO: los grupos no llevan cara (Rafa, 2026-09-23; cara = persona). Y sin
+       avatar TODA la página arranca en la misma vertical que el nombre: rótulo, casillas, buscador
+       y tabla. -->
+  <div class="headline">
+    <!-- El nombre es el TÍTULO DE LA PÁGINA, no un dato más de una franja: el sujeto de esta
+         pantalla es el grupo. `h3-semibold` es el rol que ya usan las nueve listas de la app
+         para su `h1` (`sc-list-page`), así que no nace un tamaño nuevo para esto. -->
+    <div class="headline__who">
+      <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
+      <!-- Los datos del grupo, CON su nombre: «Media» a secas no decía de qué. El teléfono, solo si
+           el grupo ofrece teléfono: a un grupo de chat no se le pide, y un «Ninguno» ahí parecía una
+           carencia. Se cambian en la pestaña Identidad, como en las fichas de usuario y agente. -->
+      <span class="headline__meta sc-text-caption-regular" [title]="identitySummary()">{{ identitySummary() }}</span>
     </div>
-  }
+    <dl class="headline__stats">
+      @for (s of headline(); track s.etiqueta) {
+        <div class="headline__stat">
+          <dt class="headline__label sc-text-caption-regular">{{ s.etiqueta | translate }}</dt>
+          <!-- El `title` es lo que rescata el valor cuando el ancho fijo lo recorta.
+               Los CANALES no llevan texto sino los glifos de la lista de grupos: el nombre de
+               cada uno va en su `title`, como allí, y el lector de pantalla oye la lista entera
+               del `dd`. Cuatro glifos miden 95,5 en una columna de 109, así que ni se recortan
+               ni bailan al encender un canal. -->
+          <dd class="headline__value sc-text-body-semibold" [title]="s.valor">
+            @if (s.canales; as canales) {
+              <span class="visually-hidden">{{ s.valor }}</span>
+              @if (canales.length) {
+                <span class="sc-channel-row" aria-hidden="true">
+                  @for (c of canales; track c) {
+                    <span class="sc-channel-row__item" [attr.data-channel]="c" [title]="channelKeys[c] | translate">
+                      <sc-channel-icon [channel]="c" />
+                    </span>
+                  }
+                </span>
+              } @else {
+                <span aria-hidden="true">{{ s.valor }}</span>
+              }
+            } @else {
+              {{ s.valor }}
+            }
+          </dd>
+        </div>
+      }
+    </dl>
+    <!-- Borrar el grupo. Desde el 2026-09-22 (el índice lateral fuera) no tenía disparador: el
+         diálogo seguía aquí y nada lo abría. -->
+    <div class="headline__actions">
+      <sc-button variant="danger" appearance="text" size="sm" icon="delete" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
+    </div>
+  </div>
 
   <!-- El conmutador, ARRIBA y con TODAS las secciones dentro, «Canales y
        agentes» la primera (Rafa, 2026-09-22). Antes vivía debajo del bloque de canales y ese bloque
@@ -269,9 +252,6 @@
     </p-tablist>
   </p-tabs>
 
-  <!-- Identidad es una pestaña más, y no un bloque suelto arriba: la franja del nombre ya dice sus
-       tres campos, así que tenerla fija se veía dos veces seguidas, con la foto repetida. -->
-
   @if (showSection('group-section-channels')) {
     <!-- Canales, estrategia y agentes en UNA sección (Rafa, 2026-09-16). Cada canal lleva a su lado cómo se reparte,
          y la tabla de agentes va justo debajo: marcar un canal enseña su columna sin ir arriba y abajo.
@@ -299,8 +279,7 @@
        los dos es la SANGRÍA: dentro de la caja el contenido se mete 12.25 (`.sub-section`, el
        contrato que vigila `audit:screen-vocabulary`); a sangre no hay filo del que sangrar. -->
   <ng-template #canalesYAgentes>
-      <!-- Que falte marcar un canal no es contenido equivocado: lo señalan la bola roja del índice
-           (`sectionsWithErrors`) y el motivo del botón. -->
+      <!-- Que falte marcar un canal no es contenido equivocado: lo dice el motivo junto a Guardar. -->
       <section class="plain-block" [attr.aria-label]="'groups.form.section.channels' | translate">
         <!-- Los cuatro canales en UNA fila y, debajo, solo los ajustes de los que están marcados (Rafa, 2026-09-18):
              así la tabla de agentes empieza más arriba y cabe entera en la pantalla. Cada ajuste dice su canal,
@@ -372,19 +351,68 @@
       </section>
   </ng-template>
 
-  <!-- Identidad es una pestaña más: la pinta su `showSection`, en el orden de la tira. -->
   @if (showSection('group-section-identity')) {
-    <ng-container *ngTemplateOutlet="identitySection" />
+    <!-- IDENTIDAD, la segunda pestaña, como en las fichas de usuario y agente (#240: las tres dicen lo
+         mismo en el mismo sitio). Sin foto (Rafa, 2026-09-23: los grupos no llevan cara) y sin caja,
+         como las demás pestañas. Tres campos en UNA fila de tres columnas y no el nombre a lo ancho:
+         un campo de 1.300px para «ACD Demo C2CB» no dice cuánto escribir. -->
+    <div class="plain-section" id="group-section-identity">
+      <section class="sub-section">
+        <div class="grid grid--3">
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-name">
+              {{ 'groups.form.fields.name' | translate }}
+              <span class="field__required" aria-hidden="true">*</span>
+            </label>
+            <!-- Vacío no es un error (lo dice el motivo de Guardar); REPETIDO sí, y en vivo: ya lo has escrito. -->
+            <sc-inputtext
+              inputId="group-name"
+              [required]="true"
+              [value]="form().name"
+              [error]="nameTaken() ? ('groups.errors.name_taken' | translate) : undefined"
+              (valueChange)="onNameChange($event)"
+            />
+          </div>
+
+          <!-- El «Teléfono asociado» de Voice: el número que ve el cliente cuando llama un agente del
+               grupo. Solo con el canal Teléfono: a un grupo de chat no se le pide. El valor no se borra
+               al apagar el canal; si se vuelve a encender, sigue ahí. -->
+          @if (hasPhone()) {
+            <div class="field">
+              <label class="field__label sc-text-caption-semibold" for="group-phone">
+                {{ 'groups.form.fields.phone' | translate }}
+              </label>
+              <sc-select
+                inputId="group-phone"
+                editable
+                [options]="phoneOptions()"
+                [value]="form().phone"
+                [helperText]="'groups.form.fields.phone_hint' | translate"
+                (valueChange)="onPhoneValueChange($event)"
+              />
+            </div>
+          }
+
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-priority">
+              {{ 'groups.form.fields.priority' | translate }}
+            </label>
+            <sc-select inputId="group-priority" [options]="priorities" [value]="form().priority" (valueChange)="onPriorityValueChange($event)">
+              <ng-template #item let-p>{{ priorityKeys[p] | translate }}</ng-template>
+              <ng-template #selectedItem let-p>{{ priorityKeys[p] | translate }}</ng-template>
+            </sc-select>
+          </div>
+        </div>
+      </section>
+    </div>
   }
 
   @if (showSection('group-section-resources')) {
-    <!-- Lo que se asigna desde Repositorios, como «Recursos» en la ficha de agente (Figma de la migración). -->
-    <sc-section-card
-      anchorId="group-section-resources"
-      surface="card"
-      [icon]="iconOf('group-section-resources')"
-      titleKey="groups.form.section.resources"
-    >
+    <!-- Lo que se asigna desde Repositorios, como «Recursos» en la ficha de agente (Figma de la migración).
+         SIN CAJA NI TÍTULO, como «Canales y agentes» y como las fichas de usuario y agente (#239): con
+         pestañas se ve una sección cada vez, así que la caja no tiene vecinos de los que separarla, y
+         el título repetía la pestaña que está encendida justo encima (Rafa, 2026-09-23). -->
+    <div class="plain-section" id="group-section-resources">
       <section class="sub-section">
         <div class="grid grid--2">
           <!-- UNA tipificación: el agente recorre un solo árbol al cerrar (manual de Voice, p. 14). -->
@@ -510,17 +538,12 @@
         <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
         <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
       </section>
-    </sc-section-card>
+    </div>
   }
 
   @if (hasPhone() && showSection('group-section-announcements')) {
-    <!-- Todo lo que suena en la llamada, solo con teléfono (manual de Voice, p. 13-14). -->
-    <sc-section-card
-      anchorId="group-section-announcements"
-      surface="card"
-      [icon]="iconOf('group-section-announcements')"
-      titleKey="groups.form.section.announcements"
-    >
+    <!-- Todo lo que suena en la llamada, solo con teléfono (manual de Voice, p. 13-14). Sin caja: ver Recursos. -->
+    <div class="plain-section" id="group-section-announcements">
       <section class="sub-section" aria-labelledby="group-audio-title">
         <header class="sub-section__head">
           <h3 id="group-audio-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.announcements.audio_title' | translate }}</h3>
@@ -652,18 +675,14 @@
           </div>
         </div>
       </section>
-    </sc-section-card>
+    </div>
   }
 
   @if (showSection('group-section-advanced')) {
-    <!-- Lo que casi no se toca: nace con los valores por defecto de Configuración del AED (manual de Voice, p. 10). -->
-    <sc-section-card
-      anchorId="group-section-advanced"
-      surface="card"
-      [icon]="iconOf('group-section-advanced')"
-      titleKey="groups.form.section.advanced"
-      hintKey="groups.form.advanced.defaults_hint"
-    >
+    <!-- Lo que casi no se toca: nace con los valores por defecto de Grupos (manual de Voice, p. 10). Sin
+         caja: ver Recursos. La ayuda que llevaba la caja bajo su título se queda, como primera línea. -->
+    <div class="plain-section" id="group-section-advanced">
+      <p class="tab-hint sc-text-caption-regular">{{ 'groups.form.advanced.defaults_hint' | translate }}</p>
       <section class="sub-section" aria-labelledby="group-queue-title">
         <header class="sub-section__head">
           <h3 id="group-queue-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.advanced.queue_title' | translate }}</h3>
@@ -793,93 +812,7 @@
           <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'groups.form.advanced.script_copy' | translate" (clicked)="copyChatScript()" />
         </section>
       }
-    </sc-section-card>
-  }
-</ng-template>
-
-<ng-template #identitySection>
-  @if (showSection('group-section-identity')) {
-    <sc-section-card
-      anchorId="group-section-identity"
-      surface="card"
-      [icon]="iconOf('group-section-identity')"
-      titleKey="groups.form.section.identity"
-    >
-      <!-- Los tres campos en UNA rejilla, no «el nombre a lo ancho y debajo una fila de dos»: en el
-           arquetipo ancho (variante `s`) eso daba un campo de nombre de 1.171px. Cuántas columnas lo
-           decide el ANCHO DE LA SECCIÓN, no el de la ventana — el mismo formulario vive en dos anchos
-           con la misma ventana detrás. Ver `.identity-fields` en el SCSS. -->
-      <section class="sub-section identity-section">
-        <div class="identity-fields">
-          <!-- Foto del grupo, como la del agente (Figma de la migración). Sin foto, el avatar generado sigue al nombre. -->
-          <div class="form-identity identity-fields__who">
-            <sc-photo-upload
-              size="sm"
-              illustrationPool="abstract"
-              [photo]="form().photo"
-              [name]="(initial()?.name ?? form().name) || 'Grupo'"
-              [ariaLabel]="'common.photo.change' | translate"
-              (photoChange)="onPhotoChange($event)"
-            />
-            <div class="field form-identity__name">
-              <label class="field__label sc-text-caption-semibold" for="group-name">
-                {{ 'groups.form.fields.name' | translate }}
-                <span class="field__required" aria-hidden="true">*</span>
-              </label>
-              <sc-inputtext
-                inputId="group-name"
-                [required]="true"
-                [value]="form().name"
-                (valueChange)="onNameRename($event)"
-              />
-            </div>
-          </div>
-
-          <!-- El «Teléfono asociado» de Voice: se elige entre los que ya usan los grupos o se escribe uno.
-               SOLO SI EL GRUPO OFRECE TELÉFONO. Era el último campo de teléfono que seguía saliendo en un
-               grupo que no lo usa, y el que el equipo nombró: «tengo que ponerle un teléfono asociado
-               aunque no se vaya a usar» (2026-09-22). El resto de lo de teléfono ya se ocultaba: la
-               estrategia, la pestaña entera de Anuncios y audio, el tiempo entre llamadas y el desborde.
-               El valor NO se borra al apagar el canal, se deja de pedir: si se vuelve a encender, el
-               número que ya había sigue ahí, igual que un agente pausado conserva sus canales. -->
-          @if (hasPhone()) {
-            <div class="field">
-              <label class="field__label sc-text-caption-semibold" for="group-phone">
-                {{ 'groups.form.fields.phone' | translate }}
-              </label>
-              <sc-select
-                inputId="group-phone"
-                editable
-                [options]="phoneOptions()"
-                [value]="form().phone"
-                [helperText]="'groups.form.fields.phone_hint' | translate"
-                (valueChange)="onPhoneValueChange($event)"
-              />
-            </div>
-          }
-
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-priority">
-              {{ 'groups.form.fields.priority' | translate }}
-            </label>
-            <sc-select
-              inputId="group-priority"
-              [options]="priorities"
-              [value]="form().priority"
-              (valueChange)="onPriorityValueChange($event)"
-            >
-              <ng-template #item let-p>
-                {{ priorityKeys[p] | translate }}
-              </ng-template>
-              <ng-template #selectedItem let-p>
-                {{ priorityKeys[p] | translate }}
-              </ng-template>
-            </sc-select>
-          </div>
-        </div>
-      </section>
-
-    </sc-section-card>
+    </div>
   }
 </ng-template>
 

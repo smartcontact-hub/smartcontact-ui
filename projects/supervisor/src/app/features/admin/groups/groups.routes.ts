@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { formDirtyGuard } from '@core/guards';
 
-/** Groups feature routes — list + create + edit. */
+/** Groups feature routes — list (con el alta en diálogo) + edit. */
 export const GROUPS_ROUTES: Routes = [
   {
     path: '',
@@ -18,11 +18,10 @@ export const GROUPS_ROUTES: Routes = [
     canDeactivate: [formDirtyGuard],
   },
   {
+    /* El alta es un diálogo sobre la lista desde el 2026-09-23 (nombre y canales; lo demás, en la
+     * ficha). La dirección se queda viva para la paleta de comandos y los enlaces guardados. */
     path: 'crear',
-    data: { breadcrumb: { labelKey: 'groups.form.create_breadcrumb' } },
-    loadComponent: () =>
-      import('./pages/group-form-page.component').then((m) => m.GroupFormPageComponent),
-    canDeactivate: [formDirtyGuard],
+    redirectTo: '/admin/grupos?crear=1',
   },
   {
     path: 'editar/:id',

@@ -7,7 +7,8 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
@@ -17,7 +18,7 @@ import { UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent, IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
+import { ChannelIconComponent, ListPageComponent } from '@shared/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import {
   useBulkEntityI18n,
@@ -47,9 +48,16 @@ import {
   PHONE_STRATEGIES,
   UNAVAILABLE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
+  duplicateGroupDraft,
+  newGroupDraft,
 } from '../data/groups-data';
 import { GroupBulkField, GroupsStore } from '../state/groups.store';
+import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
+import {
+  GroupCreateDialogComponent,
+  type GroupCreateSubmission,
+} from '../components/group-create-dialog/group-create-dialog.component';
 
 interface PendingBulkEdit {
   readonly field: GroupBulkField;
@@ -73,8 +81,8 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v3';
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
+    GroupCreateDialogComponent,
     IconComponent,
-    IllustratedAvatarComponent,
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
     ListPageComponent,
@@ -93,7 +101,10 @@ export class GroupsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
   private readonly undoStack = inject(UndoStackService);
+  private readonly defaultsStore = inject(GroupDefaultsStore);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59): la banda de
    * page-header desaparece; identidad → breadcrumb, acción → barra. */
@@ -101,6 +112,13 @@ export class GroupsListPageComponent {
 
   constructor() {
     useTopbarActions(this.topbarActions);
+    // `/admin/grupos/crear` (la paleta de comandos, un enlace guardado) llega aquí con `?crear`: el
+    // alta es un diálogo sobre la lista, no una página. Se abre y se limpia la dirección SIN navegar:
+    // una segunda navegación cortaba la transición de la primera («Transition was skipped», medido).
+    if (this.route.snapshot.queryParamMap.has('crear')) {
+      this.createOpen.set(true);
+      this.location.replaceState('/admin/grupos');
+    }
   }
 
   /** Derived count of agents assigned to a group. */
@@ -351,8 +369,54 @@ export class GroupsListPageComponent {
     void this.router.navigateByUrl('/admin/grupos/valores-por-defecto');
   }
 
+  /** El alta y el duplicado comparten diálogo; `duplicateSource` dice cuál de los dos es. */
+  protected readonly createOpen = signal(false);
+  protected readonly duplicateSource = signal<Group | null>(null);
+  protected readonly groupNames = computed(() => this.groups().map((g) => g.name));
+  protected readonly suggestedCopyName = computed(() => {
+    this.lang();
+    const source = this.duplicateSource();
+    return source ? this.translate.instant('groups.create_dialog.copy_name', { name: source.name }) : '';
+  });
+
   protected onCreateClick(): void {
-    void this.router.navigateByUrl('/admin/grupos/crear');
+    this.duplicateSource.set(null);
+    this.createOpen.set(true);
+  }
+
+  protected onCreateCancel(): void {
+    this.createOpen.set(false);
+  }
+
+  /**
+   * Crea el grupo y abre su ficha en «Canales y agentes», que es lo siguiente que se hace con un
+   * grupo nuevo: asignarle gente. Un duplicado se lleva además los agentes del original, con los
+   * canales recortados a los que se hayan marcado en el alta.
+   */
+  protected onCreateConfirm(submission: GroupCreateSubmission): void {
+    const source = this.duplicateSource();
+    const draft = source
+      ? duplicateGroupDraft(source, submission.name, submission.channels)
+      : newGroupDraft(this.defaultsStore.defaults(), submission.name, submission.channels);
+    const created = this.groupsStore.addGroup(draft);
+    if (source) {
+      const allowed = new Set(submission.channels);
+      this.linksStore.replaceLinksForGroup(
+        created.id,
+        this.linksStore.linksForGroup(source.id).map((l) => ({
+          ...l,
+          groupId: created.id,
+          channels: l.channels.filter((c) => allowed.has(c)),
+        })),
+      );
+    }
+    this.createOpen.set(false);
+    this.messages.add({
+      severity: 'success',
+      summary: this.translate.instant('groups.toasts.created', { name: created.name }),
+      life: TOAST_LIFE.success,
+    });
+    void this.router.navigateByUrl(`/admin/grupos/editar/${created.id}`);
   }
 
   protected onRowOpen(group: Group): void {
@@ -396,14 +460,10 @@ export class GroupsListPageComponent {
     void this.router.navigateByUrl(`/admin/grupos/editar/${group.id}`);
   }
 
+  /** Duplicar es el alta con punto de partida: mismo diálogo, con el nombre propuesto y sus canales. */
   protected onRowDuplicate(group: Group): void {
-    // Navega al form de creación con el source precargado vía queryParam.
-    // El form-page detecta `?seedFromId` y precarga los campos copiables
-    // excepto el name (único). Si abandona sin guardar, no queda nada
-    // persistido (S47 cleanup).
-    void this.router.navigate(['/admin/grupos/crear'], {
-      queryParams: { seedFromId: group.id },
-    });
+    this.duplicateSource.set(group);
+    this.createOpen.set(true);
   }
 
   protected onRowDelete(group: Group): void {

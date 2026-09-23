@@ -13,7 +13,6 @@ import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { inject } from '@angular/core';
 
-import { IllustratedAvatarComponent } from '@shared/components';
 import {
   ScButtonComponent as ButtonComponent,
   ScCheckboxComponent as CheckboxComponent,
@@ -72,7 +71,6 @@ interface VisibleRow {
     ButtonComponent,
     CheckboxComponent,
     DatatableComponent,
-    IllustratedAvatarComponent,
     SearchComponent,
     SelectComponent,
     ToggleSwitchComponent,
