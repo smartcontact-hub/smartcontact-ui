@@ -41,9 +41,10 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Sidebar en producción: abrir una categoría no cierra las demás y nada se cierra al salir · plegado solo la rama de la página · se despliega con el ratón y se ancla con su botón · selección en cyan · subsecciones en 450ms con la curva de Apollo (enmienda DD-112 §3-§5) | DD-118 |
 > | La cabecera del Dashboard: pestañas sin fondo con `⋮` y `+ Monitor` pegados; las acciones de la página en `p-toolbar` en tres grupos con `sc-divider` (enmienda DD-113 §6) · en modo pared un monitor sin widgets enseña su vacío y el carrusel se lo salta | DD-114 |
 > | Cambiar de COLECCIÓN (se vacían búsqueda y selección) son pestañas `p-tabs`; filtrar la misma lista o elegir un valor son botones segmentados `sc-selectbutton` · un componente de primeng.dev entra NATIVO tal cual (doc entera con `tools/primeng-doc.mjs`, sin contador ni icono que el ejemplo no tenga) y un desvío de comportamiento lo para `audit:primeng-coupling` §F · un separador entre bloques es `sc-divider` salvo que su línea deba alinearse con el contenido · el Supervisor sin `ripple`, como primeng.dev | DD-113 |
-> | El sidebar plegado mide 80px con las filas contenidas · un solo padre en cyan: el más cercano a la página que se vea · con el ratón dentro abrir o cerrar no toca las demás, al salir se cierran las que no son de la página · los hijos se pliegan en altura (300ms, curva estándar) · el sidebar no se pliega durante el fundido de una navegación que inició él | DD-112 |
+> | El sidebar plegado mide 80px con las filas contenidas · un solo padre en cyan: el más cercano a la página que se vea · los hijos se pliegan en altura · el sidebar no se pliega durante el fundido de una navegación que inició él (lo que abre y cierra, en DD-118) | DD-112 |
 | Una pantalla fuera del shell (acceso) va en `features/auth/` y en `EXENTAS` de `audit:page-anatomy` · un error de campo dice QUÉ falta, uno de credenciales no delata cuentas · un SSO de terceros es nuestro `sc-button` con su logo sin tocar · la contraseña es `sc-password` | DD-110 |
 > | `<sc-panel severity="warn|danger">`: borde y anillo de 1 en `--sc-border-warning/danger`, decidido en código y pendiente en Figma · `<ng-template #header let-titleId>` para un título que es encabezado, con `[id]="titleId"` | DD-109 |
 > | Una tarjeta con acciones en la cabecera es `<sc-panel>` con `<ng-template #icons>` (Panel de primeng.dev; Figma `panel` `Custom Icon=True`) · `[fill]` la estira al alto de su hueco · las piezas internas se estilan por `pt` con clases propias, no por `.p-panel-*` | DD-108 |
@@ -78,6 +79,43 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-118 · 2026-09-23 — En producción, el sidebar de «abrir no cierra las demás»; «no se cierra nada» espera a primeng.dev
+
+**Contexto** · SISMAC-4340. El 2026-09-16 se compararon tres comportamientos en la rama `comparar/sidebar` (tipo Apollo,
+abrir no cierra las demás y no se cierra nada) y quedó como oficial «no se cierra nada», pero no llegó a `main`: producción
+seguía con DD-112, que cierra al salir del menú lo que no es de la página. Rafa, el 2026-09-23: «el sidebar en main en
+producción tiene que ser este» (https://c1ae0539.sc-supervisor.pages.dev/solo-sidebar), «no es mi favorito, pero
+eventualmente con primeng dev podamos lograr meter el otro».
+
+**Decisión** · Va a `main` la versión del tag `archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16` (`65185e3b`), sin
+el andamio de la comparación (variante de Figma, modo Slim, botón de la esquina y `/solo-sidebar`). Enmienda DD-112 §3,
+§4 y §5:
+1. Desplegado, cada categoría se abre y se cierra con su clic y abrir una no cierra las demás; nada se cierra al salir.
+2. Plegado a 80 solo se pinta la rama de la página actual.
+3. Drawer de Apollo: se despliega al entrar el ratón y se pliega 300ms después de salir.
+4. Selección en cyan (`--sc-sidebar-accent`). Grupo abierto al 10% plegado y al 5% desplegado, y sus hijos otro 10%
+   encima (`--sc-sidebar-item-group-bg`).
+5. Un botón ancla el sidebar desplegado; la página le deja 240 y se recuerda en el navegador (`sc-sidebar-anclado`).
+   Anclado, el seleccionado vuelve al blanco del 15% y sin fondos de grupo.
+6. Las subsecciones abren en altura en `--sc-sidebar-submenu-duration` (450ms) con la curva de Apollo, sin fundido.
+7. Si la página actual queda fuera de la vista, el menú baja hasta ella; y una URL con `?` o `#` ya no deja el menú sin
+   página marcada.
+
+**Razón** · Medido el 2026-09-23 a 1440×900 en Informes de Datos, el build contra el preview: plegado y desplegado dan
+el mismo ancho, las 17 filas a la misma altura y los mismos fondos. Abrir Administración deja Supervisión abierta, y
+anclar lleva el contenido de x=80 a x=240 y lo devuelve al soltar.
+
+**Descartadas** ·
+- **No se cierra nada** (la favorita de Rafa, tablero de Figma `14912-6324`) → espera a poder hacerse con el Sidebar
+  de primeng.dev; no va a producción ahora.
+- **Tipo Apollo, abrir una cierra las demás** y **Slim** (raíl con panel flotante) → comparados el 2026-09-16, no elegidos.
+- **Seleccionado en blanco, la propuesta de Figma** → Rafa eligió la de cyan.
+
+**Consecuencias** · Pendiente: el botón de anclar pisa 5px el texto del logotipo desplegado (el texto acaba en x=208 y
+el botón empieza en 203); sube igual que en el preview.
 
 ---
 

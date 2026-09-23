@@ -58,9 +58,15 @@
   /* Active state: solid tint + bold weight, no left bar.
    * (Side stripe pattern is banned — see /impeccable absolute_bans.) */
   &--active {
-    color: var(--sc-sidebar-fg);
-    background: var(--sc-sidebar-item-active-bg);
+    color: var(--sidebar-active-fg, var(--sc-sidebar-fg));
+    background: var(--sidebar-active-bg, var(--sc-sidebar-item-active-bg));
     font-weight: var(--sc-font-weight-semibold);
+
+    /* Con la selección en cyan, el seleccionado no cambia con el ratón. */
+    &:hover {
+      color: var(--sidebar-active-hover-fg, var(--sc-sidebar-fg-hover));
+      background: var(--sidebar-active-hover-bg, var(--sc-sidebar-item-hover-bg));
+    }
   }
 
   &__icon {
@@ -69,7 +75,7 @@
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
 
     .nav-item--active & {
-      color: var(--sc-sidebar-fg);
+      color: var(--sidebar-active-fg, var(--sc-sidebar-fg));
     }
   }
 
@@ -126,57 +132,54 @@
     flex-shrink: 0;
     color: var(--sc-sidebar-fg-faint);
     opacity: var(--sidebar-label-opacity, 1);
-    /* One glyph that turns, instead of swapping right for down in one frame. */
+    /* One glyph that turns, instead of swapping right for down in one frame; al ritmo del submenú. */
     transition:
       opacity var(--sc-transition-fast) var(--sc-easing-default),
-      transform var(--sc-transition-slow) var(--sc-easing-default);
+      transform var(--sc-sidebar-submenu-duration) var(--sc-sidebar-submenu-easing);
 
     .nav-item--expanded & {
       transform: rotate(90deg);
+    }
+
+    /* Dentro del bloque de hijos de una categoría el fondo suma tres capas (grupo 5%, hijos 10% y la
+     * fila bajo el ratón 5%) y el 40% cae a 2,94:1. Ahí sube al 50%, 3,69:1 (DD-118). */
+    .nav-item__children--top & {
+      color: var(--sc-sidebar-fg-subtle);
     }
   }
 }
 
 /*
- * Children fold in height instead of popping in and out: a whole category
- * vanishing in one frame read as the menu "flying" away. The height runs on
- * the standard curve over `--sc-transition-slow`: the emphasized one moved
- * the rows below by a third of the distance in the first frame, and that
- * read as a jerk. `grid-template-rows` 0fr → 1fr animates to the content's
- * own height; `visibility` flips at the end of a close so hidden rows are
- * not painted.
+ * Las subsecciones abren y cierran como en Apollo: la altura, en `--sc-sidebar-submenu-duration` (450ms)
+ * con su curva, y las filas se recortan mientras se mueve, sin fundido. `grid-template-rows` 0fr → 1fr
+ * anima hasta la altura real del contenido; `visibility` cambia al final de un cierre para que las filas
+ * ocultas no se pinten.
  */
 .nav-item__children {
   display: grid;
   grid-template-rows: 0fr;
   visibility: hidden;
   transition:
-    grid-template-rows var(--sc-transition-slow) var(--sc-easing-default),
-    visibility 0s linear var(--sc-transition-slow);
+    grid-template-rows var(--sc-sidebar-submenu-duration) var(--sc-sidebar-submenu-easing),
+    visibility 0s linear var(--sc-sidebar-submenu-duration);
 
   &--open {
     grid-template-rows: 1fr;
     visibility: visible;
     transition:
-      grid-template-rows var(--sc-transition-slow) var(--sc-easing-default),
+      grid-template-rows var(--sc-sidebar-submenu-duration) var(--sc-sidebar-submenu-easing),
       visibility 0s;
   }
 }
 
-/*
- * The rows fade on their own clock: out at once when closing, in once the
- * space has started to open, so they never show clipped mid-fold.
- */
 .nav-item__children-inner {
   min-height: 0;
   overflow: hidden;
-  opacity: 0;
-  transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
 
-  .nav-item__children--open > & {
-    opacity: 1;
-    transition: opacity var(--sc-transition-base) var(--sc-easing-default)
-      var(--sc-transition-fast);
+  /* Los hijos de una categoría de primer nivel, en su propio bloque. */
+  .nav-item__children--top > & {
+    border-radius: var(--sc-radius-100);
+    background: var(--sidebar-children-bg, transparent);
   }
 }
 

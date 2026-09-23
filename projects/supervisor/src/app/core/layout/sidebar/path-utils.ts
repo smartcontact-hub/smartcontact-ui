@@ -23,9 +23,11 @@ const REPO_SUB_PATHS = [
  *     pages keep the parent list highlighted.
  *   - Maps every repository sub-path to `/admin/repositorios` so the single
  *     "Repositorios" sidebar entry stays highlighted across all 9 instances.
+ *   - Drops the query string and the fragment: `/informes?x=1` is still `/informes`.
+ *     Without it any query parameter left the sidebar with no active page.
  */
 export function normalizeRoutePath(rawPath: string): string {
-  const stripped = rawPath.replace(/\/(crear|editar\/[^/]+)$/, '');
+  const stripped = rawPath.split(/[?#]/)[0].replace(/\/(crear|editar\/[^/]+)$/, '');
   const isRepoSubPath = REPO_SUB_PATHS.some((p) => stripped === p || stripped.startsWith(p + '/'));
   return isRepoSubPath ? '/admin/repositorios' : stripped;
 }
