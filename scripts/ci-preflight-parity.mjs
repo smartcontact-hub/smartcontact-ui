@@ -71,7 +71,13 @@ export const LOCAL_SUBSTITUTIONS = {
 // desde que sus capturas son `*-linux.png` la red visual es la del CI (DD-116).
 export const CI_ONLY = ['npm run e2e', 'npm run e2e:supervisor', 'npm run e2e:cuscare'];
 
-const INFRA = [/^npx playwright install\b/, /^sudo rm -f \/etc\/apt\/sources\.list\.d\//];
+// El último patrón es el job que junta las partes de una suite repartida (`needs.<job>.result`):
+// no corre nada, solo convierte N checks en el único que exige la protección de `main`.
+const INFRA = [
+  /^npx playwright install\b/,
+  /^sudo rm -f \/etc\/apt\/sources\.list\.d\//,
+  /^test "\$\{\{ needs\.[\w-]+\.result \}\}" = success$/,
+];
 const isInfra = (cmd) => INFRA.some((re) => re.test(cmd));
 
 // SOLO LOCAL. La regla NO es «lo que me apetece saltarme en el CI», es **lo que el CI no puede
