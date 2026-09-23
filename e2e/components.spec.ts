@@ -1,6 +1,9 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { kitPx } from './kit-metrics';
 
+// Cada test abre su propia página y no comparte estado: sin esto, los 64 van en serie en un worker.
+test.describe.configure({ mode: 'parallel' });
+
 /**
  * Diff visual de la Mitad B, por componente:
  *  - Métricas computadas (getComputedStyle) contra los valores del Kit ya
@@ -71,10 +74,8 @@ const screenshotBaseline = async (page: Page, name: string) => {
    * durante 213 commits (última regeneración real: `dcad8e2`, 24-ago) y, encima, morir
    * todas por un locator colgado sin que el rojo llegara a ojos de nadie.
    *
-   * Ahora quien la apaga es una variable que solo dice eso, y está puesta en un único
-   * sitio: el job `e2e-smoke` de `ci.yml`. En un Mac corre siempre, con `CI=1` o sin él.
-   * Si algún día hace falta silenciarla por entorno, el escape es explícito y se ve en
-   * el comando: `SC_SKIP_VISUAL_BASELINES=1 npm run e2e`. */
+   * Ahora quien la apaga es una variable que solo dice eso: `SC_SKIP_VISUAL_BASELINES=1`.
+   * Solo la pone `tokens-sync.yml` (su robot no regenera capturas); `e2e-smoke` compara. */
   /* Las capturas de referencia son `*-linux.png`, tomadas en el runner que las verifica
    * (workflow `visual-baselines`). Fuera de Linux no tienen pareja y Playwright fallaría
    * escribiendo «A snapshot doesn't exist»: ahí la comparación se salta, y la red visual
