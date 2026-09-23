@@ -32,6 +32,18 @@
   --sidebar-pad-l-2: var(--sc-spacing-4);
   --sidebar-pad-l-3: var(--sc-spacing-5);
   --sidebar-label-opacity: 0;
+  /*
+   * Selección en cyan (SISMAC-4340), medida en su captura:
+   *   plegado             seleccionado cyan · grupo abierto 10% · sus hijos otro 10% encima
+   *   con el ratón encima seleccionado cyan · grupo abierto 5%  · sus hijos otro 10% encima
+   *   desplegado anclado  seleccionado blanco 15% · sin fondo de grupo
+   */
+  --sidebar-active-bg: var(--sc-sidebar-accent);
+  --sidebar-active-fg: var(--sc-sidebar-bg);
+  --sidebar-group-bg: var(--sc-sidebar-item-hover-bg);
+  --sidebar-children-bg: var(--sc-sidebar-item-group-bg);
+  --sidebar-active-hover-bg: var(--sc-sidebar-accent);
+  --sidebar-active-hover-fg: var(--sc-sidebar-bg);
 
   position: fixed;
   inset: 0 auto 0 0;
@@ -43,8 +55,9 @@
   overflow: hidden;
   background: var(--sc-sidebar-bg);
   color: var(--sc-sidebar-fg);
-  /* Hover-OUT delayed by 100 ms; hover-IN instant (overridden below). */
-  transition: width var(--sc-transition-base) var(--sc-easing-emphasized) 100ms;
+  /* Drawer de Apollo: se despliega al entrar el ratón y se pliega 300ms después de salir (lo cuenta el
+   * componente, `sidebar--expanded`), así que el ancho ya no lleva retardo propio. */
+  transition: width var(--sc-transition-base) var(--sc-easing-emphasized);
   will-change: width;
 
   /*
@@ -52,9 +65,10 @@
    * transition covers the page for its whole cross-fade, so `:hover` drops
    * while the pointer never moved. The sidebar stays open until it ends.
    */
-  &:hover,
+  &--expanded,
   &:focus-within,
-  &--pinned {
+  &--pinned,
+  &--anchored {
     width: var(--sc-sidebar-width-expanded);
     transition-delay: 0ms;
     --sidebar-label-opacity: 1;
@@ -113,9 +127,10 @@
       transform var(--sc-transition-base) var(--sc-easing-emphasized) 60ms;
   }
 
-  &:hover &__brand-wordmark,
+  &--expanded &__brand-wordmark,
   &:focus-within &__brand-wordmark,
-  &--pinned &__brand-wordmark {
+  &--pinned &__brand-wordmark,
+  &--anchored &__brand-wordmark {
     opacity: 1;
     transform: translateX(0);
   }
@@ -200,16 +215,18 @@
     display: none;
   }
 
-  &:hover &__section-title,
+  &--expanded &__section-title,
   &:focus-within &__section-title,
-  &--pinned &__section-title {
+  &--pinned &__section-title,
+  &--anchored &__section-title {
     opacity: 1;
     transition-delay: 80ms;
   }
 
-  &:hover &__section-divider,
+  &--expanded &__section-divider,
   &:focus-within &__section-divider,
-  &--pinned &__section-divider {
+  &--pinned &__section-divider,
+  &--anchored &__section-divider {
     opacity: 0;
     transition-delay: 0ms;
   }
@@ -231,21 +248,72 @@
    *     children end (SISMAC-4340). Only the first level, so two blocks
    *     never stack into something that reads as the active row.
    */
-  &:not(:hover):not(:focus-within):not(.sidebar--pinned) {
+  &:not(.sidebar--expanded):not(.sidebar:focus-within):not(.sidebar--pinned):not(.sidebar--anchored) {
     --sidebar-pad-l-0: var(--sc-spacing-1-5);
     --sidebar-pad-l-1: var(--sc-spacing-1-5);
     --sidebar-pad-l-2: var(--sc-spacing-1-5);
     --sidebar-pad-l-3: var(--sc-spacing-1-5);
+    --sidebar-group-bg: var(--sc-sidebar-item-group-bg);
+  }
 
-    sc-sidebar-nav-item.nav-group--open {
-      background: var(--sc-sidebar-item-hover-bg);
-    }
+  &--anchored {
+    --sidebar-active-bg: var(--sc-sidebar-item-active-bg);
+    --sidebar-active-fg: var(--sc-sidebar-fg);
+    --sidebar-group-bg: transparent;
+    --sidebar-children-bg: transparent;
+    --sidebar-active-hover-bg: var(--sc-sidebar-item-hover-bg);
+    --sidebar-active-hover-fg: var(--sc-sidebar-fg-hover);
+  }
+
+  sc-sidebar-nav-item.nav-group--open {
+    background: var(--sidebar-group-bg);
   }
 
   sc-sidebar-nav-item {
     border-radius: var(--sc-radius-100);
     /* Same timing as the children folding, so the block fades as it shrinks. */
     transition: background var(--sc-transition-slow) var(--sc-easing-default);
+  }
+}
+
+/* Anclar (Drawer de Apollo): arriba a la derecha de la cabecera, solo con el sidebar desplegado. */
+.sidebar__anchor {
+  position: absolute;
+  top: var(--sc-spacing-1);
+  right: var(--sc-spacing-0-875);
+  display: grid;
+  place-items: center;
+  inline-size: var(--sc-spacing-1-75);
+  block-size: var(--sc-spacing-1-75);
+  padding: 0;
+  border: 1px solid var(--sc-sidebar-border);
+  border-radius: var(--sc-radius-full);
+  background: transparent;
+  color: var(--sc-sidebar-fg-muted);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--sc-transition-fast) var(--sc-easing-default),
+    background var(--sc-transition-fast) var(--sc-easing-default),
+    color var(--sc-transition-fast) var(--sc-easing-default);
+
+  &:hover,
+  &--on {
+    color: var(--sc-sidebar-fg);
+    background: var(--sc-sidebar-item-hover-bg);
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+
+  .sidebar--expanded &,
+  .sidebar:focus-within &,
+  .sidebar--anchored & {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 

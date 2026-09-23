@@ -6,6 +6,7 @@
   [class.nav-item--parent]="hasChildren()"
   [class.nav-item--expanded]="effectivelyExpanded()"
   [attr.data-depth]="depth()"
+  [attr.data-nav-key]="item().labelKey"
   (click)="onClick($event)"
 >
   <sc-icon
@@ -28,6 +29,7 @@
   <div
     class="nav-item__children"
     [class.nav-item__children--open]="effectivelyExpanded()"
+    [class.nav-item__children--top]="depth() === 0"
     [attr.inert]="effectivelyExpanded() ? null : ''"
   >
     <div class="nav-item__children-inner">

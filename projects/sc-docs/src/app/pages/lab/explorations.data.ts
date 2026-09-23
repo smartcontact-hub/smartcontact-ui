@@ -63,7 +63,8 @@ export const EXPLORATIONS: readonly Exploration[] = [
     },
     objective: '¿Qué se abre y qué se cierra al moverse por el menú?',
     status: 'oficial',
-    statusNote: 'La regla «no se cierra nada» es la oficial; todavía vive en su rama de comparación.',
+    statusNote:
+      'En producción va «abrir una categoría no cierra las demás» (DD-118). «No se cierra nada» es la favorita y espera a hacerse con el Sidebar de primeng.dev.',
     live: {
       label: 'comparar-sidebar.sc-supervisor.pages.dev/solo-sidebar',
       href: 'https://comparar-sidebar.sc-supervisor.pages.dev/solo-sidebar',

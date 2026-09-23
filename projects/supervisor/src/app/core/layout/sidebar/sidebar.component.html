@@ -1,11 +1,13 @@
 <aside
   class="sidebar"
   [class.sidebar--pinned]="pinned()"
+  [class.sidebar--expanded]="hovered()"
+  [class.sidebar--anchored]="anchored()"
   [attr.aria-label]="'sidebar.nav_aria' | translate"
-  (mouseenter)="cancelReset()"
-  (focusin)="cancelReset()"
-  (mouseleave)="scheduleReset()"
-  (focusout)="scheduleReset()"
+  (mouseenter)="onEnter()"
+  (mouseleave)="onLeave()"
+  (focusin)="focusWithin.set(true)"
+  (focusout)="onFocusOut($event)"
 >
   <a class="sidebar__brand" routerLink="/" [attr.aria-label]="'app.name' | translate">
     <img
@@ -24,6 +26,18 @@
     />
   </a>
 
+  <!-- Anclar, como el Drawer de Apollo: deja el sidebar desplegado y la página le deja su hueco. -->
+  <button
+    type="button"
+    class="sidebar__anchor"
+    [class.sidebar__anchor--on]="anchored()"
+    [attr.aria-pressed]="anchored()"
+    [attr.aria-label]="'sidebar.anchor_aria' | translate"
+    (click)="anchored.set(!anchored())"
+  >
+    <sc-icon name="keep" [size]="14" [filled]="anchored()" />
+  </button>
+
   <nav class="sidebar__nav">
     @for (section of sections; track trackBySectionTitle($index, section)) {
       <div class="sidebar__section">
@@ -36,7 +50,7 @@
             <sc-sidebar-nav-item
               [item]="item"
               [currentPath]="currentPath()"
-              [openKeys]="openKeys()"
+              [openKeys]="shownOpenKeys()"
               [accentKey]="accentKey()"
               (navigate)="onNavigate($event)"
               (toggleOpen)="onToggle($event)"
