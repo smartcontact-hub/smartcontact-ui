@@ -171,9 +171,10 @@
 
 15. **Decisión de marca o producto → preséntala con recomendación y evidencia; no la decidas tú.**
     El riesgo es evidencia: "reversible" lleva horizonte y mecanismo (reflog ~30 días), y antes de
-    proponer BORRAR o retirar algo, ofrece la vía que no borra (alias, deprecar, `git tag archive/…`).
+    proponer BORRAR o retirar algo, ofrece la vía que no borra (alias, deprecar, `git tag archive/…`;
+    en Figma, moverlo a una sección «Archivo»: el plugin no deshace).
     ⚙️ no mecanizable (qué opciones se ponen en la mesa es juicio).
-    Evidencia: s11 icono con drift · s27 "borrar la rama es reversible" · 2026-09-14 propuse borrar «App» y el alias lo trajo la duda de Rafa (#161→#163).
+    Evidencia: s27 "borrar la rama es reversible" · 2026-09-14 propuse borrar «App» y el alias lo trajo la duda de Rafa (#161→#163) · 2026-09-23 borré en Figma la tabla vieja al «limpiar» y Rafa pidió volver a ella.
 
 16. **Antes de un refactor —o de una REVISIÓN— transversal, monta primero la red que lo verifica
     (tabla de valores esperados + barrido de anomalías), aunque parezca un rodeo.**
