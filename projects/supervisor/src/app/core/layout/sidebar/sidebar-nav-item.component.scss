@@ -140,6 +140,12 @@
     .nav-item--expanded & {
       transform: rotate(90deg);
     }
+
+    /* Dentro del bloque de hijos de una categoría el fondo suma tres capas (grupo 5%, hijos 10% y la
+     * fila bajo el ratón 5%) y el 40% cae a 2,94:1. Ahí sube al 50%, 3,69:1 (DD-118). */
+    .nav-item__children--top & {
+      color: var(--sc-sidebar-fg-subtle);
+    }
   }
 }
 
