@@ -11,6 +11,7 @@
  *
  * Uso:  node scripts/en-paralelo.mjs 'cmd 1' 'cmd 2' …
  */
+import { Buffer } from 'node:buffer';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
