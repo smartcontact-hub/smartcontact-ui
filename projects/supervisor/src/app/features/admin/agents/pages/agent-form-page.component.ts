@@ -325,7 +325,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly navSections = computed<readonly FormNavSection[]>(() => {
     const identity: FormNavSection = {
       id: 'agent-section-identity',
-      labelKey: 'agents.form.section.identification',
+      labelKey: 'agents.form.section.identity',
       icon: 'badge',
     };
     const groups: FormNavSection = {
@@ -351,13 +351,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'agents.form.section.resources',
       icon: 'library_books',
     };
-    // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
-    // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
-    // ficha del panel ya da su contexto siempre visible.
+    // Mismo orden que las fichas de grupo y usuario: al EDITAR, la pestaña de trabajo, luego
+    // Identidad, y Avanzado la última; al CREAR, Identidad primero, que sin nombre no hay agente.
     if (this.mode() === 'edit') {
-      return [groups, permissions, advanced, resources, identity];
+      return [groups, identity, permissions, resources, advanced];
     }
-    return [identity, groups, permissions, advanced, resources];
+    return [identity, groups, permissions, resources, advanced];
   });
 
   protected readonly activeSection = signal<string>('agent-section-identity');

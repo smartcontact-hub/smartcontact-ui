@@ -1399,7 +1399,7 @@
       },
       "danger_zone_description": "Eliminar este usuario revoca su acceso al panel y borra sus permisos. La acción no se puede deshacer.",
       "headline": {
-        "services": "Servicios"
+        "type": "Tipo"
       }
     },
     "errors": {
@@ -1724,7 +1724,6 @@
       "duplicate_breadcrumb": "Duplicar agente",
       "duplicate_hint": "Duplicando «{{source}}» · rellena los campos obligatorios y guarda",
       "section": {
-        "identification": "Identificación",
         "identification_hint": "Foto, contacto y extensión",
         "channels": "Canales",
         "recording": "Grabación",
@@ -1737,7 +1736,8 @@
         "permissions_hint": "Capacidades del agente",
         "advanced": "Avanzado",
         "advanced_hint": "Etiquetas, comportamiento, idioma",
-        "resources": "Recursos"
+        "resources": "Recursos",
+        "identity": "Identidad"
       },
       "advanced": {
         "labels": {

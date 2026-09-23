@@ -46,7 +46,7 @@
         <div class="headline">
           <div class="headline__who">
             <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
-            <span class="headline__meta sc-text-caption-regular" [title]="form().email">{{ form().email }} · {{ typeLabelKeys[form().type] | translate }}</span>
+            <span class="headline__meta sc-text-caption-regular" [title]="form().email">{{ form().email }}</span>
           </div>
           <dl class="headline__stats">
             @for (s of headline(); track s.etiqueta) {

@@ -44,7 +44,7 @@ const FICHAS = [
     prefijo: 'agent-section-',
     pestañas: 5,
     abreAlEditar: 'Grupos asignados',
-    identidad: 'Identificación',
+    identidad: 'Identidad',
     campoNombre: '#agent-name',
   },
 ] as const;
@@ -80,6 +80,27 @@ for (const f of FICHAS) {
     await expect(page.locator('.headline')).toHaveCount(0);
   });
 }
+
+// Las tres fichas dicen lo mismo en el mismo sitio: al editar, la pestaña de trabajo, luego
+// «Identidad» (no «Identificación» en una y «Identidad» en otra), y «Avanzado», si lo hay, al final.
+test('las tres fichas ordenan igual sus pestañas al editar', async ({ page }) => {
+  for (const ruta of ['admin/grupos/editar/1', 'admin/usuarios/editar/1', 'admin/agentes/editar/1']) {
+    await goto(page, ruta);
+    const nombres = (await page.locator('[role="tab"]').allTextContents()).map((t) => t.trim());
+    expect(nombres[1], ruta).toBe('Identidad');
+    if (nombres.includes('Avanzado')) expect(nombres.at(-1), ruta).toBe('Avanzado');
+  }
+});
+
+// «email · tipo» no cabía en los 252 de la columna y se cortaba; el tipo pasó a ser una cifra.
+test('usuario · la línea bajo el nombre se lee entera', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await goto(page, 'admin/usuarios/editar/1');
+  const meta = page.locator('.headline__meta');
+  const cortada = await meta.evaluate((el) => el.scrollWidth > el.clientWidth);
+  expect(cortada).toBe(false);
+  await expect(page.locator('.headline__label').first()).toHaveText('Tipo');
+});
 
 test('las tres fichas tienen «Eliminar» en su franja', async ({ page }) => {
   for (const ruta of ['admin/grupos/editar/1', 'admin/usuarios/editar/1', 'admin/agentes/editar/1']) {
