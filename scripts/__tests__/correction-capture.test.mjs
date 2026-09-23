@@ -37,6 +37,9 @@ test('rojo: frases reales de corrección disparan', () => {
     'está mal: el min-width sigue ahí',
     'por qué no has mirado el CI',
     'replanteate esto contra tus bias y los mios',
+    // Literales de Rafa, 2026-09-23: lo ya hecho volvía deshecho y el hook no lo apuntó.
+    'hay cosas que me chocan, por ejemplo el espacio entre la cabecera que es mas corto, que se habia hecho ya',
+    'cada componente sección tiene un marco que sobra que se habia aprobado ya',
   ])
     assert.ok(esCorreccion(f), `debía detectar: ${f}`);
 });
@@ -49,6 +52,7 @@ test('verde: mensajes normales no disparan', () => {
     'nos vemos mañana, buen trabajo',
     'monta el tope de memoria',
     'el botón no cierra el modal',
+    'se había decidido en la reunión de ayer que Identidad va segunda',
     '',
     undefined,
   ])
@@ -144,6 +148,8 @@ test('rojo: los mensajes de cierre disparan', () => {
     '¿algo más o cerramos?',
     'el PR ya está fundido. cerramos',
     'lo dejamos aquí, cerramos la sesión',
+    // Literal de Rafa, 2026-09-23: el cierre al final de una cadena de órdenes con «y».
+    'va pues adelante con identidad, y commit y push y cerramos',
   ])
     assert.ok(esCierre(f), `debía detectar cierre: ${f}`);
 });
@@ -161,6 +167,7 @@ test('verde: mencionar la palabra no es cerrar', () => {
     'esto cierra el hueco entre Figma y el build',
     // Vecinos de la ampliación: el verbo va al final, pero lo que lleva detrás no es la sesión.
     'arregla el bug o cerramos el ticket',
+    'arregla el bug y cerramos el ticket',
     '¿lo dejo abierto o cerramos el modal al guardar?',
     'mira si el drawer se queda abierto o cierra el foco dentro',
     '',

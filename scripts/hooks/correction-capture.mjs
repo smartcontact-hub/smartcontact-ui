@@ -46,6 +46,9 @@ const PATRONES = [
   /\best[áa] mal\b/i,
   /\bpor qu[eé] (no )?(has|lo has|me has|hiciste|lo hiciste)\b/i,
   /\bcontra (tus|mis) bias\b/i,
+  // Lo que ya estaba hecho y vuelve deshecho (Rafa, 2026-09-23: «el espacio… que se había hecho ya»,
+  // «un marco que sobra que se había aprobado ya»). Con el «ya»: sin él es un relato, no un reproche.
+  /\b(?:ya se hab[ií]a (?:hecho|aprobado|decidido)|se hab[ií]a (?:hecho|aprobado|decidido) ya)\b/i,
 ];
 
 // Cierre = el verbo ABRE la frase y no lleva más objeto que la sesión. «cerramos el ticket en
@@ -63,11 +66,12 @@ const CIERRES = [
  * sesión?». Anclar solo al principio se lo perdía — pasó con el mensaje de Rafa del 2026-09-10, con
  * el hook recién puesto delante. Se parte por fin de frase y por el «o» que abre la alternativa, y
  * se prueba la ÚLTIMA frase: «arregla el bug o cerramos el ticket» sigue en verde porque lo que va
- * detrás del verbo no es la sesión.
+ * detrás del verbo no es la sesión. Y por el «y» que encadena órdenes: «adelante, y commit y push y
+ * cerramos» (Rafa, 2026-09-23) se escapó entero porque su última frase empezaba por «y commit».
  */
 export const ultimaFrase = (texto) =>
   String(texto)
-    .split(/[.!?\n,]+|\s+o\s+/i)
+    .split(/[.!?\n,]+|\s+[oy]\s+/i)
     .map((c) => c.trim())
     .filter(Boolean)
     .at(-1) ?? '';

@@ -82,6 +82,35 @@
 
 ---
 
+## DD-119 · 2026-09-23 — Los grupos no llevan cara, y se crean con un diálogo corto
+
+**Contexto** · Del equipo: «las fotos en grupo no deberían existir». En WhatsApp, Telegram o Teams la foto distingue un
+grupo de una persona porque van en la misma lista; aquí están separados. Medido en local: la foto que se subía en la
+ficha no salía en ningún otro sitio (la lista y la tabla de grupos del agente pintaban un avatar sacado del nombre), y
+crear un grupo abría la ficha entera, cinco pestañas y unos 35 campos, cuando solo pide un nombre.
+
+**Decisión** ·
+1. **Sin foto ni avatar de grupo** en la ficha, la lista y la tabla de grupos de la ficha de agente. Cara = persona.
+2. **El alta es un diálogo sobre la lista**: nombre y canales (Teléfono marcado). Lo demás nace con los valores por
+   defecto de Grupos (`newGroupDraft`) y crear deja en la ficha, en «Canales y agentes». `/admin/grupos/crear` sigue
+   viva y abre el diálogo.
+3. **Duplicar usa el mismo diálogo** con «… (copia)» y los canales del original; se lleva agentes y ajustes, no el
+   teléfono asociado (`duplicateGroupDraft`).
+4. **La ficha es solo de edición.** Identidad sigue SEGUNDA, como en usuario y agente (#240), sin foto y con nombre,
+   teléfono asociado (solo con canal Teléfono) y prioridad. Recursos, Anuncios y Avanzado van sin caja, como el resto.
+5. Un nombre de grupo repetido se avisa en vivo, en el alta y en Identidad, y Guardar espera.
+
+**Razón** · Rafa lo vio en local y eligió cada punto. El alta ya era de dos pasos por dentro (guardar con solo el
+nombre llevaba a «Canales y agentes»); el diálogo lo hace visible.
+
+**Descartadas** ·
+- **Sin pestaña Identidad** (nombre con un lápiz junto al título, teléfono y prioridad en la fila de canales) → Rafa:
+  «debería ser más obvio, no sé si puedo tocarlo como usuario».
+- **«Editar datos» en la cabecera con un diálogo** → añadía un «Aplicar» que no guardaba, un segundo nivel de
+  confirmación que había que explicar con una frase, y rompía el orden común de las tres fichas (#240).
+- **Avatar generado del nombre** (teardown B7 lo daba por bueno) → B7 medía apps de mensajería, donde grupos y personas
+  se mezclan; en una lista donde todo son grupos no distingue nada.
+
 ## DD-118 · 2026-09-23 — En producción, el sidebar de «abrir no cierra las demás»; «no se cierra nada» espera a primeng.dev
 
 **Contexto** · SISMAC-4340. El 2026-09-16 se compararon tres comportamientos en la rama `comparar/sidebar` (tipo Apollo,

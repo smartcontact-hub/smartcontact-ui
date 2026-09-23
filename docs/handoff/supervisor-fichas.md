@@ -7,6 +7,35 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
+## ✅ 2026-09-23 · Los grupos pierden la cara y se crean con un diálogo corto (DD-119)
+
+> **Sello: rama `arebury/remove-group-avatar-photos`, worktree `shipworm`, sobre `origin/main` `e1b8f5fd` (#242).**
+
+**Qué pasó.** Del equipo: «las fotos en grupo no deberían existir». Medido en local: la foto se guardaba y no salía en
+ningún otro sitio, y crear un grupo abría la ficha entera (5 pestañas, ~35 campos) cuando solo pide el nombre.
+
+**Qué cambia.**
+- **Sin foto ni avatar de grupo**: ficha, lista (fila de 54 a 44) y tabla de grupos de la ficha de agente (46 a 44).
+- **Alta en diálogo** (`sc-group-create-dialog`): nombre y canales; lo demás, de los valores por defecto
+  (`newGroupDraft` en `groups-data.ts`). Crear deja en «Canales y agentes». `/admin/grupos/crear` abre el diálogo.
+- **Duplicar**, el mismo diálogo: «… (copia)», los canales del original, sus agentes; sin teléfono asociado.
+- **Ficha solo de edición**: Identidad segunda (como #240), sin foto; Recursos, Anuncios y Avanzado sin caja.
+- Nombre repetido avisado en vivo (alta e Identidad); la cabecera dice «918371548 · Prioridad: Media».
+- Un grupo nuevo ya no enseña buscador sobre la tabla vacía, y el vacío nombra el botón que existe.
+
+**Medido** con clics en local a 1440, claro y oscuro: alta, duplicado, avisos, grupo sin Teléfono. La cabecera, las
+pestañas y el contenido caen en el mismo píxel que la ficha de agente (121/128/178/185). e2e tocadas en verde.
+
+**Descartado por Rafa, y por qué** (DD-119): sin pestaña Identidad («no sé si puedo tocarlo como usuario») y un
+«Editar datos» con diálogo (un «Aplicar» que no guardaba, y rompía el orden de las tres fichas).
+
+**Integrado con #242** (la otra caja, fundida a las 21:50 sobre el mismo fichero): «Anuncios y audio» siempre en la
+tira, apagada sin Teléfono; «Habilitado» en vez de «Atiende»; glifos de canal en la cabecera. Todo se queda.
+
+**Trampa del tramo:** `main` se movió CUATRO veces bajo estos ficheros mientras Rafa miraba mi local (#237, #239,
+#240, #242), y vio deshecho «lo que ya se había hecho». Al empezar no había nada que ver: hacía falta mirar a mitad
+de sesión. Nace `scripts/hooks/main-drift-guard.mjs` (en cada mensaje de Rafa, LEARNINGS #21 ⚙️).
+
 ## ✅ 2026-09-22 · Laboratorio de administración: lista + ficha con las decisiones del teardown dentro
 
 > **Sello: rama `arebury/supervisor-admin-lab-teardown`, worktree `humpback`.** Todo nuevo bajo
@@ -121,6 +150,9 @@ de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con
 
 ## SIGUIENTE — sin preguntar
 
+0. **Pendiente de producto, de la ficha de grupo:** tres maneras de sacar a un agente de un grupo (desmarcar su canal,
+   apagar «Habilitado», la papelera) y «Habilitado» con cero canales es un estado que no significa nada. Preguntar
+   qué es «deshabilitado» frente a «sin canales» antes de dibujarlo. Y el número de WhatsApp sigue colgando de Chat.
 1. **Decidir sobre el laboratorio de administración** (`/lab/admin/grupos`, `/lab/admin/usuarios`).
    Lo primero que hay que discutir con Rafa y con producto son **los paquetes por tipo**
    (`TYPE_PACKAGES` en `admin-lab.model.ts`): hoy no existe ninguno porque el tipo no significa

@@ -1437,6 +1437,11 @@
   "groups": {
     "page_title": "Groupes",
     "create_button": "Nouveau groupe",
+    "create_dialog": {
+      "subtitle": "Le reste part des valeurs par défaut et se modifie dans la fiche.",
+      "duplicate_subtitle": "Copie les agents et les réglages de «{{source}}», sauf le téléphone associé.",
+      "copy_name": "{{name}} (copie)"
+    },
     "search_placeholder": "Rechercher un groupe par nom, ID, téléphone ou stratégie...",
     "no_results_query": "Aucun groupe ne correspond à « {{query}} ».",
     "entity_singular": "groupe",
@@ -1486,7 +1491,7 @@
       "assigned": {
         "query_placeholder": "Rechercher un agent…",
         "empty_title": "Aucun agent assigné",
-        "empty": "Utilisez « Ajouter un agent » pour assigner le premier agent à ce groupe.",
+        "empty": "Choisissez-les dans « Ajouter des agents », en haut à droite.",
         "no_results": "Aucun agent assigné ne correspond au filtre.",
         "col_agent": "Agent",
         "col_active": "Activé",
@@ -1625,7 +1630,9 @@
       "summary": {
         "none": "Aucune",
         "paused": "Désactivé",
-        "no_channels": "Aucun canal"
+        "no_channels": "Aucun canal",
+        "priority": "Priorité : {{value}}",
+        "no_phone": "Sans téléphone associé"
       }
     },
     "defaults": {
@@ -1640,7 +1647,8 @@
     },
     "errors": {
       "name_required": "Le nom est obligatoire",
-      "channels_required": "Sélectionnez au moins un canal"
+      "channels_required": "Sélectionnez au moins un canal",
+      "name_taken": "Un groupe porte déjà ce nom"
     },
     "toasts": {
       "created": "Groupe \"{{name}}\" créé",

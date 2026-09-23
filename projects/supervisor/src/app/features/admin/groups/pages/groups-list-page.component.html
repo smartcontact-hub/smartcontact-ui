@@ -62,8 +62,10 @@
 </ng-template>
 
 <ng-template #nameTpl let-group>
+  <!-- Sin avatar (Rafa, 2026-09-23). En WhatsApp o Teams la foto distingue un grupo de una persona
+       porque van en la misma lista; aquí todas las filas son grupos, y un dibujo sacado del nombre no
+       dice nada que no diga el nombre. Así queda una regla: cara = persona. -->
   <span class="table__td-name sc-text-body-semibold">
-    <sc-illustrated-avatar [name]="group.name" pool="abstract" [size]="32" />
     @if (renamingId() === group.id) {
       <sc-inline-rename-cell
         [initialValue]="group.name"
@@ -124,6 +126,16 @@
   [entityPlural]="'groups.entity_plural' | translate"
   (cancelled)="cancelDelete()"
   (confirm)="confirmDelete($event)"
+/>
+
+<!-- El alta y el duplicado, en corto: nombre y canales. Lo demás se hace en la ficha. -->
+<sc-group-create-dialog
+  [visible]="createOpen()"
+  [source]="duplicateSource()"
+  [suggestedName]="suggestedCopyName()"
+  [existingNames]="groupNames()"
+  (cancelled)="onCreateCancel()"
+  (confirm)="onCreateConfirm($event)"
 />
 
 <sc-impact-preview-dialog

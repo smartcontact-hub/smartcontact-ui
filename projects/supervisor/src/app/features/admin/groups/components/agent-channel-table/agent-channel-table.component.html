@@ -2,13 +2,17 @@
      izquierda, recuento, y «Añadir» con el desplegable del DS a la derecha. -->
 <div class="assign" [class.assign--bulk]="selectedIds().size > 0">
   <div class="assign__bar">
-    <sc-search
-      class="assign__search"
-      [placeholder]="'groups.form.assigned.query_placeholder' | translate"
-      [clearAriaLabel]="'labels.clear_search' | translate"
-      [value]="query()"
-      (valueChange)="query.set($event)"
-    />
+    <!-- Buscar solo cuando hay en qué (2026-09-23): un grupo recién creado aterriza aquí sin
+         nadie, y un buscador sobre una tabla vacía es un control que no puede hacer nada. -->
+    @if (assignedRows().length > 0 || query()) {
+      <sc-search
+        class="assign__search"
+        [placeholder]="'groups.form.assigned.query_placeholder' | translate"
+        [clearAriaLabel]="'labels.clear_search' | translate"
+        [value]="query()"
+        (valueChange)="query.set($event)"
+      />
+    }
     <!-- Sin contador fijo: «12 asignados» lo dice la propia lista, y «0 sin canales»
          era un cero que había que leer para descartarlo. Solo se habla cuando hay
          algo que decir: el filtro esconde filas, o hay agentes activos sin canal. -->
