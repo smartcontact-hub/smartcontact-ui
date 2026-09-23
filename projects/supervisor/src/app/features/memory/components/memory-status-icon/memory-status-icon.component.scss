@@ -8,15 +8,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--sc-text-subtle);
-  transition: color 200ms ease-out;
-
-  &.is-active {
-    /* Paleta reducida (sec 15.21 audit prototipo): teal/info para
-     * in-flight / completed. La forma del icono carga la distinción
-     * transcrita-vs-analizada (líneas vs sparkle). */
-    color: var(--sc-text-info);
-  }
+  color: inherit;
 
   &.is-animating {
     animation: memory-status-icon-pulse 1100ms ease-in-out infinite;

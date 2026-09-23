@@ -281,7 +281,21 @@
         "analyzing": "Analyse en cours…",
         "failed": "Transcription échouée",
         "multi_recording": "{{count}} enregistrements",
-        "deleted": "Enregistrement supprimé"
+        "deleted": "Enregistrement supprimé",
+        "analysis_failed": "Échec de l’analyse",
+        "failure": {
+          "transcription": {
+            "no_audio": "Enregistrement sans audio",
+            "erroneous": "Transcription erronée",
+            "no_data": "Transcription sans données",
+            "nonsense": "Transcription incohérente"
+          },
+          "analysis": {
+            "erroneous": "Analyse erronée",
+            "no_data": "Transcription sans données",
+            "nonsense": "Transcription incohérente"
+          }
+        }
       },
       "filters": {
         "search_placeholder": "Rechercher",

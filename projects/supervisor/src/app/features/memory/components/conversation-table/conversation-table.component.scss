@@ -29,45 +29,46 @@
 }
 
 /* ------------------------------------------------------------------ *
- * memory-status-button — wrapper de `<sc-memory-status-icon>` con overlays
- * en esquinas (failed bottom-right + multi-recording count top-right).
- * Es el affordance EXPLÍCITO que abre el player modal (Audit A5).
+ * memory-status-button — wrapper de `<sc-memory-status-icon>`, con el contador
+ * multi-grabación en la esquina. Es el affordance EXPLÍCITO que abre el player
+ * modal (Audit A5).
+ *
+ * Caja de Figma «Memory +» › Iconografía transcripciones (2026-09-23): 46×23, borde de
+ * 1, glifo de 20. Gris sin fallo, rojo si algo falló; en hover se rellena del mismo
+ * tono y el glifo pasa a blanco. Los colores de la maqueta son los de la app de los
+ * devs; aquí van sus equivalentes del DS.
  * ------------------------------------------------------------------ */
 .memory-status-button {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-  border: 0;
+  padding: 0 var(--sc-spacing-0-875);
+  border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-200);
-  background: transparent;
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-subtle);
   cursor: pointer;
-  /* Hover con el mismo gris que la opción de una lista del DS y a 120 ms: con `--sc-bg-elevated`
-   * (el blanco de la fila) el botón no cambiaba al pasar por encima (2026-09-14). */
-  transition: background-color var(--sc-transition-fast) ease-out;
+  transition:
+    background-color var(--sc-transition-fast) ease-out,
+    color var(--sc-transition-fast) ease-out;
 
   &:hover {
-    background: var(--sc-bg-secondary-hover);
+    background: var(--sc-bg-secondary);
+    color: var(--sc-text-inverse);
   }
   &:focus-visible {
     outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
     outline-offset: var(--sc-focus-ring-offset);
   }
 
-  &__failed {
-    pointer-events: none;
-    position: absolute;
-    right: -2px;
-    bottom: -2px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 14px;
-    height: 14px;
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-surface);
+  &.is-error {
     color: var(--sc-text-danger);
+
+    &:hover {
+      background: var(--sc-bg-danger);
+      color: var(--sc-text-on-error);
+    }
   }
 
   /* Solo la POSICIÓN del contador sobre el icono: el contador es `sc-badge` del DS
