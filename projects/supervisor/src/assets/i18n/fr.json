@@ -1399,7 +1399,7 @@
       "duplicate_breadcrumb": "Dupliquer l'utilisateur",
       "duplicate_hint": "Duplication de «{{source}}» · remplissez les champs obligatoires et sauvegardez",
       "headline": {
-        "services": "Services"
+        "type": "Type"
       }
     },
     "errors": {
@@ -1721,7 +1721,6 @@
       "create_breadcrumb": "Nouvel agent",
       "edit_breadcrumb": "Modifier l'agent",
       "section": {
-        "identification": "Identification",
         "identification_hint": "Photo, contact et extension",
         "channels": "Canaux",
         "recording": "Enregistrement",
@@ -1734,7 +1733,8 @@
         "permissions_hint": "Capacités de l'agent",
         "advanced": "Avancé",
         "advanced_hint": "Étiquettes, comportement, langue",
-        "resources": "Ressources"
+        "resources": "Ressources",
+        "identity": "Identité"
       },
       "advanced": {
         "labels": {

@@ -20,6 +20,7 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService } from '@core/services';
+import { injectLangChange } from '@core/utils/lang-change';
 import { EMAIL_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
@@ -85,6 +86,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly usersStore = inject(UsersStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly crossTab = inject(CrossTabLockService);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
@@ -193,11 +195,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'users.form.section.services',
       icon: 'hub',
     };
-    // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
-    // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
-    // ficha del panel ya da su contexto siempre visible.
+    // Mismo orden que las fichas de grupo y agente: al EDITAR, la pestaña de trabajo y luego
+    // Identidad; al CREAR, Identidad primero, que sin nombre no hay usuario.
     if (this.mode() === 'edit') {
-      return [access, services, identity];
+      return [access, identity, services];
     }
     return [identity, access, services];
   });
@@ -209,17 +210,20 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /**
-   * Las tres cifras de la franja: a qué llega esta persona sin abrir una pestaña. Qué secciones ve,
-   * qué puede hacer y cuántos servicios supervisa.
+   * Las tres cifras de la franja: qué es esta persona y a qué llega sin abrir una pestaña. El tipo
+   * es cifra y no va junto al email: en la línea de debajo del nombre, «email · tipo» no cabía en
+   * los 252 de la columna y se cortaba (medido en la de Mario Supervisor, 2026-09-23). Lo mismo
+   * que «Tipo de agente» en la ficha de agente.
    */
   protected readonly headline = computed(() => {
+    this.lang(); // el tipo se traduce aquí: al cambiar de idioma, la franja tiene que enterarse
     const f = this.form();
     const secciones = Object.values(f.sections).filter(Boolean).length;
     const permisos = Object.values(f.permissions).filter(Boolean).length;
     return [
+      { valor: this.translate.instant(this.typeLabelKeys[f.type]), etiqueta: 'users.form.headline.type' },
       { valor: `${secciones}/${Object.keys(f.sections).length}`, etiqueta: 'users.form.section.sections' },
       { valor: `${permisos}/${Object.keys(f.permissions).length}`, etiqueta: 'users.form.section.permissions' },
-      { valor: String(f.services.size), etiqueta: 'users.form.headline.services' },
     ];
   });
 
