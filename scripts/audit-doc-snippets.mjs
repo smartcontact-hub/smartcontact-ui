@@ -331,21 +331,24 @@ export function slotsDeComponentes(ficheros, leer = (f) => readFileSync(f, 'utf8
 export function revisarProyeccion(ruta, nombre, codigoCrudo, plantilla, slots) {
   const problemas = [];
   const codigo = sinComentariosHtml(codigoCrudo);
-  for (const tag of Object.keys(slots)) {
-    if (!codigo.includes(`<${tag}`)) continue;
+  const presentes = Object.keys(slots).filter((tag) => codigo.includes(`<${tag}`));
+  for (const tag of presentes) {
     for (const [, slot] of codigo.matchAll(/<ng-template\s+pTemplate="([\w-]+)"/g)) {
       problemas.push([
         `${ruta} · ${nombre}: enseña \`pTemplate="${slot}"\` y \`<${tag}>\` proyecta por \`#${slot}\` (contentChild).`,
         '      → `pTemplate` es la sintaxis vieja de PrimeNG: al wrapper no le llega.',
       ]);
     }
-    for (const [, slot] of codigo.matchAll(/<ng-template\s+#([\w-]+)/g)) {
-      if (slots[tag].has(slot)) continue;
-      problemas.push([
-        `${ruta} · ${nombre}: enseña \`#${slot}\` dentro de \`<${tag}>\`, que no proyecta ese slot.`,
-        `      → los que acepta: ${[...slots[tag]].join(', ')}.`,
-      ]);
-    }
+  }
+  // Sin árbol no se sabe de qué componente es cada plantilla: vale si la acepta ALGUNO de los del
+  // snippet (el `#icons` de un `sc-panel` que lleva un `sc-button` dentro es del panel).
+  const aceptados = new Set(presentes.flatMap((tag) => [...slots[tag]]));
+  for (const [, slot] of codigo.matchAll(/<ng-template\s+#([\w-]+)/g)) {
+    if (!presentes.length || aceptados.has(slot)) continue;
+    problemas.push([
+      `${ruta} · ${nombre}: enseña \`#${slot}\` dentro de \`<${presentes.join('>`/`<')}>\`, que no proyecta ese slot.`,
+      `      → los que acepta: ${[...aceptados].join(', ')}.`,
+    ]);
   }
   return problemas;
 }

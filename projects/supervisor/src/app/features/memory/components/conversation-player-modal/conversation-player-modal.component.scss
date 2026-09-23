@@ -125,6 +125,15 @@
   gap: var(--sc-spacing-0-25);
 }
 
+/* Glifo propio dentro de `sc-button` (`#scButtonIcon`): mide lo que la talla de icono del botón,
+ * y el dibujo de la librería ya trae la ampliación 24/18 (DD-104) y asoma un poco de su caja. */
+.player-tabs__glyph {
+  display: block;
+  width: 1em;
+  height: 1em;
+  overflow: visible;
+}
+
 /* ─── Tab body ─────────────────────────────────────────────── */
 
 .player-tab-body {

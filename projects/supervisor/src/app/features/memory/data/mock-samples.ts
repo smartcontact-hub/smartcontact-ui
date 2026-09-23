@@ -1,5 +1,7 @@
 import { MOCK_CONVERSATIONS } from './conversations-mock';
-import type { Conversation } from './conversation.types';
+import type { Conversation, TranscriptionFailure } from './conversation.types';
+
+const CALL_TRANSCRIPTION_FAILURES: readonly TranscriptionFailure[] = ['no_audio', 'erroneous', 'no_data', 'nonsense'];
 
 /**
  * Mock-data samples · prototype feature permanente (S39).
@@ -127,11 +129,13 @@ export const MOCK_SAMPLES: readonly MockSample[] = [
     build: () =>
       cloneAll()
         .filter((c) => c.channel === 'llamada' && c.hasRecording && !c.deleted)
-        .map((c) => ({
+        .map((c, i) => ({
           ...c,
           hasTranscription: false,
           hasAnalysis: false,
           hasFailedTranscription: true,
+          transcriptionFailure: CALL_TRANSCRIPTION_FAILURES[i % CALL_TRANSCRIPTION_FAILURES.length],
+          analysisFailure: undefined,
           transcription: undefined,
         })),
   },

@@ -26,6 +26,11 @@ export type ConversationType = 'interna' | 'externa';
 export type ConversationChannel = 'llamada' | 'chat';
 export type ConversationDirection = 'entrante' | 'saliente';
 
+/** Motivos de fallo de la iconografía de transcripción (Figma «Memory +», 2026-09-23). Mock:
+ * aún no sabemos cómo los nombra el backend. `no_audio` solo existe en llamadas. */
+export type TranscriptionFailure = 'no_audio' | 'erroneous' | 'no_data' | 'nonsense';
+export type AnalysisFailure = 'erroneous' | 'no_data' | 'nonsense';
+
 export interface Conversation {
   readonly hour: string;
   readonly date: string;
@@ -46,6 +51,10 @@ export interface Conversation {
    * la transcripción con éxito.
    */
   readonly hasFailedTranscription?: boolean;
+  /** Por qué falló la transcripción; solo tiene sentido con `hasFailedTranscription`. */
+  readonly transcriptionFailure?: TranscriptionFailure;
+  /** Presente = el análisis falló, y por qué. */
+  readonly analysisFailure?: AnalysisFailure;
   /**
    * Cuando length > 1 → conversación multi-recording (IVR transfers).
    * Length 1 o undefined → single-audio.

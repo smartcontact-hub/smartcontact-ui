@@ -281,7 +281,21 @@
         "analyzing": "Analyzing…",
         "failed": "Transcription failed",
         "multi_recording": "{{count}} recordings",
-        "deleted": "Recording deleted"
+        "deleted": "Recording deleted",
+        "analysis_failed": "Analysis failed",
+        "failure": {
+          "transcription": {
+            "no_audio": "Recording has no audio",
+            "erroneous": "Transcription is wrong",
+            "no_data": "Transcription has no data",
+            "nonsense": "Transcription makes no sense"
+          },
+          "analysis": {
+            "erroneous": "Analysis is wrong",
+            "no_data": "Transcription has no data",
+            "nonsense": "Transcription makes no sense"
+          }
+        }
       },
       "filters": {
         "search_placeholder": "Search",

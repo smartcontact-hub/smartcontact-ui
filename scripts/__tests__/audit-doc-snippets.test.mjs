@@ -304,7 +304,8 @@ test('VERDE (d): con esos dos en el snippet, la cobertura pasa', () => {
 test('slotsDeComponentes lee los `contentChild` con nombre', () => {
   assert.ok(SLOTS['sc-select']?.has('item'), 'sc-select proyecta #item');
   assert.ok(SLOTS['sc-select']?.has('selectedItem'));
-  assert.equal(SLOTS['sc-button'], undefined, 'sc-button no declara slots con nombre');
+  assert.ok(SLOTS['sc-button']?.has('scButtonIcon'), 'sc-button proyecta #scButtonIcon');
+  assert.equal(SLOTS['sc-badge'], undefined, 'sc-badge no declara slots con nombre');
 });
 
 test('ROJO (c) — select: el snippet enseña `pTemplate="item"` y el componente proyecta por `#item`', () => {
@@ -326,6 +327,16 @@ test('VERDE (c): con `#item` pasa; ROJO si el slot no existe', () => {
   const p = revisarProyeccion('x', 'S', inventado, inventado, SLOTS);
   assert.equal(p.length, 1);
   assert.match(p[0][0], /inventado/);
+});
+
+test('VERDE (c): la plantilla de un componente no se le achaca al otro del mismo snippet', () => {
+  const slots = { 'sc-panel': new Set(['icons']), 'sc-button': new Set(['scButtonIcon']) };
+  const panel = '<sc-panel>\n  <ng-template #icons>\n    <sc-button icon="more_vert" />\n  </ng-template>\n</sc-panel>';
+  assert.deepEqual(revisarProyeccion('x', 'S', panel, panel, slots), []);
+  const inventado = panel.replace('#icons', '#acciones');
+  const p = revisarProyeccion('x', 'S', inventado, inventado, slots);
+  assert.equal(p.length, 1);
+  assert.match(p[0][0], /acciones/);
 });
 
 /* ── (b) inputs sin ejemplo: trinquete ────────────────────────────────────── */

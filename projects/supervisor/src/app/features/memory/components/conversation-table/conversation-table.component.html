@@ -33,6 +33,7 @@
   <button
     type="button"
     class="memory-status-button"
+    [class.is-error]="statusTone(conv) === 'error'"
     [attr.aria-label]="'memory.conversations.open_aria_with_state' | translate: { id: conv.id, state: statusDescription(conv) }"
     [pTooltip]="statusDescription(conv)"
     tooltipPosition="top"
@@ -41,31 +42,10 @@
   >
     <sc-memory-status-icon
       [conversation]="conv"
+      [size]="20"
       [isProcessing]="isProcessing(conv.id)"
       [isAnalyzing]="isAnalyzing(conv.id)"
     />
-    @if (conv.hasFailedTranscription) {
-      <span
-        class="memory-status-button__failed"
-        aria-hidden="true"
-      >
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-      </span>
-    }
     @if (recordingsCount(conv) > 1) {
       <span
         class="memory-status-button__multi"

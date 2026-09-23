@@ -32,6 +32,8 @@ import type { Conversation } from '../../data/conversation.types';
 import {
   MemoryStatusIconComponent,
   resolveStatusLabelKey,
+  resolveStatusTone,
+  type StatusTone,
 } from '../memory-status-icon/memory-status-icon.component';
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -195,9 +197,17 @@ export class ConversationTableComponent {
   protected statusDescription(conv: Conversation): string {
     this.currentLang();
     const t = (k: string, p?: object) => this.translate.instant(`memory.conversations.status.${k}`, p);
-    const parts = [this.translate.instant(this.statusLabelKey(conv))];
+    const failed = this.statusTone(conv) === 'error';
+    const parts: string[] = [];
+    if (failed) parts.push(t(conv.channel === 'llamada' ? 'call' : 'chat'));
+    parts.push(this.translate.instant(this.statusLabelKey(conv)));
+    const reason = conv.analysisFailure
+      ? `analysis.${conv.analysisFailure}`
+      : conv.hasFailedTranscription && conv.transcriptionFailure
+        ? `transcription.${conv.transcriptionFailure}`
+        : null;
+    if (failed && reason) parts.push(t(`failure.${reason}`));
     if (conv.deleted) parts.push(t('deleted'));
-    if (conv.hasFailedTranscription) parts.push(t('failed'));
     if (this.recordingsCount(conv) > 1) parts.push(t('multi_recording', { count: this.recordingsCount(conv) }));
     return parts.join(' · ');
   }
@@ -345,6 +355,10 @@ export class ConversationTableComponent {
    */
   protected statusLabelKey(conv: Conversation): string {
     return resolveStatusLabelKey(conv, this.isProcessing(conv.id), this.isAnalyzing(conv.id));
+  }
+
+  protected statusTone(conv: Conversation): StatusTone {
+    return resolveStatusTone(conv, this.isProcessing(conv.id), this.isAnalyzing(conv.id));
   }
 
   /** Conversación referenciada por el menú actual (si abierto). */

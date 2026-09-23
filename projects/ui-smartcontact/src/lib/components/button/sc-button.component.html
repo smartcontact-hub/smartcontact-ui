@@ -13,7 +13,13 @@
     [link]="link()"
     [rounded]="rounded()"
     (onClick)="onClick($event)">
-    @if (buttonIcon(); as resolvedButtonIcon) {
+    @if (customIcon(); as customIconTpl) {
+        <ng-template #icon let-iconClass="class">
+            <span [class]="iconClass" aria-hidden="true">
+                <ng-container [ngTemplateOutlet]="customIconTpl" />
+            </span>
+        </ng-template>
+    } @else if (buttonIcon(); as resolvedButtonIcon) {
         <ng-template #icon let-iconClass="class">
             <span
                 [class]="buttonIconClass(iconClass, resolvedButtonIcon)"

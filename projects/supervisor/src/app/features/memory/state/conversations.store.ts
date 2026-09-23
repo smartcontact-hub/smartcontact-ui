@@ -156,7 +156,9 @@ export class ConversationsStore {
     const idSet = new Set(ids);
     this._conversations.update((all) =>
       all.map((c) =>
-        idSet.has(c.id) && c.hasFailedTranscription ? { ...c, hasFailedTranscription: false } : c,
+        idSet.has(c.id) && c.hasFailedTranscription
+          ? { ...c, hasFailedTranscription: false, transcriptionFailure: undefined }
+          : c,
       ),
     );
   }
@@ -214,6 +216,7 @@ export class ConversationsStore {
                 ...c,
                 hasTranscription: true,
                 hasFailedTranscription: false,
+                transcriptionFailure: undefined,
                 transcription: c.transcription ?? pickTranscriptionMock(c),
               };
             }
@@ -242,7 +245,7 @@ export class ConversationsStore {
 
         setTimeout(() => {
           this._conversations.update((all) =>
-            all.map((c) => (successIds.includes(c.id) ? { ...c, hasAnalysis: true } : c)),
+            all.map((c) => (successIds.includes(c.id) ? { ...c, hasAnalysis: true, analysisFailure: undefined } : c)),
           );
           this._analyzingIds.update((curr) => {
             const next = new Set(curr);
@@ -280,7 +283,7 @@ export class ConversationsStore {
 
       setTimeout(() => {
         this._conversations.update((all) =>
-          all.map((c) => (eligible.includes(c.id) ? { ...c, hasAnalysis: true } : c)),
+          all.map((c) => (eligible.includes(c.id) ? { ...c, hasAnalysis: true, analysisFailure: undefined } : c)),
         );
         this._analyzingIds.update((curr) => {
           const next = new Set(curr);
