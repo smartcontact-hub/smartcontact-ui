@@ -16,6 +16,9 @@
   --cream:    oklch(0.965 0.005 75);
   --blush:    oklch(0.944 0.021 42);
   --coral:    oklch(0.665 0.165 45);
+  /* El coral de marca se queda en 2,9:1 sobre crema: por debajo del 3:1 que pide un
+     elemento gráfico. Esta variante más profunda es la que usan las viñetas en claro. */
+  --coral-hondo: oklch(0.545 0.152 42);
 
   --d-fg:     oklch(0.955 0.006 75);
   --d-mut:    oklch(0.755 0.018 277);
@@ -44,8 +47,8 @@ body{
 .act{ padding-block:clamp(4rem,10vh,8rem); padding-inline:var(--pad); position:relative }
 .act > *{ max-width:1320px; margin-inline:auto }
 .act--dark  { background:var(--ink);   color:var(--d-fg); --fg:var(--d-fg); --mut:var(--d-mut); --rule:var(--d-rule); --mark:var(--coral) }
-.act--cream { background:var(--cream); color:var(--ink);  --fg:var(--ink);  --mut:var(--l-mut); --rule:var(--l-rule); --mark:var(--coral) }
-.act--blush { background:var(--blush); color:var(--ink);  --fg:var(--ink);  --mut:var(--l-mut); --rule:var(--l-rule); --mark:var(--coral) }
+.act--cream { background:var(--cream); color:var(--ink);  --fg:var(--ink);  --mut:var(--l-mut); --rule:var(--l-rule); --mark:var(--coral-hondo) }
+.act--blush { background:var(--blush); color:var(--ink);  --fg:var(--ink);  --mut:var(--l-mut); --rule:var(--l-rule); --mark:var(--coral-hondo) }
 .act--coral { background:var(--coral); color:var(--ink);  --fg:var(--ink);  --mut:oklch(0.255 0.035 277 / .76); --rule:oklch(0.255 0.035 277 / .24); --mark:var(--ink) }
 
 /* ---------- type ---------- */
@@ -68,8 +71,10 @@ p,li{ text-wrap:pretty }
 strong{ font-weight:600; color:var(--fg) }
 
 /* ---------- the mark, used as the bullet ---------- */
-.mark{ display:block; color:currentColor }
-.mark path{ fill:currentColor }
+/* `fill` va en el <svg>, NO en `.mark path`: <use> monta un shadow tree y un selector de
+   descendiente no entra, así que los path se quedaban con el negro por defecto (invisible
+   sobre el navy). `fill` sí se hereda y cruza esa frontera. */
+.mark{ display:block; fill:currentColor }
 .bullet{ width:15px; height:14px; flex:none; color:var(--mark); margin-top:.32em }
 
 /* ---------- fixed chrome ---------- */
@@ -240,7 +245,8 @@ strong{ font-weight:600; color:var(--fg) }
 /* ---------- closing ---------- */
 .end{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.75fr); gap:clamp(2rem,6vw,5rem); align-items:end }
 .endmark{ display:grid; gap:var(--s-6); justify-items:start }
-.endmark .mark{ width:clamp(64px,8vw,104px); height:auto; color:var(--coral) }
+/* El logo, siempre en claro: es el que tiene que leerse sobre el navy. */
+.endmark .mark{ width:clamp(64px,8vw,104px); height:auto; color:var(--d-fg) }
 .foot{ padding:var(--s-8) var(--pad); background:var(--ink); color:var(--d-mut);
   font-size:.75rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
   display:flex; flex-wrap:wrap; gap:var(--s-3) var(--s-8); border-top:1px solid var(--d-rule) }
@@ -339,7 +345,7 @@ strong{ font-weight:600; color:var(--fg) }
   <a href="#a-reviews"><span>Design reviews</span></a>
   <a href="#a-falta"><span>Lo que falta</span></a>
   <a href="#a-registro"><span>El registro</span></a>
-  <a href="#a-manana"><span>Mañana</span></a>
+  <a href="#a-hacefalta"><span>Lo que hace falta</span></a>
 </nav>
 
 <!-- ===== HERO ===== -->
@@ -448,7 +454,7 @@ strong{ font-weight:600; color:var(--fg) }
 <!-- ===== EL CAMBIO ===== -->
 <section class="act act--blush" id="a-cambio">
   <span class="eyebrow" data-rise>El cambio</span>
-  <h2 data-rise>Hoy das vueltas.<br>Mañana avanzas.</h2>
+  <h2 data-rise>De dar vueltas<br>a avanzar.</h2>
   <p class="lede" data-rise>Hoy una funcionalidad puede volver al principio tres veces, y nadie sabe cuántas vueltas le quedan. Con el flujo nuevo se para <strong>una sola vez</strong>: a comprobar que el diseño está listo. Si pasa, sigue hasta producción.</p>
 
   <div class="well well--narrow">
@@ -735,7 +741,7 @@ strong{ font-weight:600; color:var(--fg) }
       <div class="dec__body">
         <div class="pos"><b>Mejora del flujo</b><p>Una figura tipo CTO, con visión global, que decida cuando el problema es gordo.</p></div>
         <div class="pos"><b>Flujo de producto</b><p>Un contacto técnico y un responsable de componentes por área, Voz y BI.</p></div>
-        <div class="pos pos--win"><b>Propuesta</b><p>Resuelven cosas distintas. Los contactos por área se nombran mañana mismo y arreglan el «pregúntale a este, que te manda a aquel». La figura global hay que pedirla arriba. Empezar por la primera.</p></div>
+        <div class="pos pos--win"><b>Propuesta</b><p>Resuelven cosas distintas. Los contactos por área se pueden nombrar ya, y arreglan el «pregúntale a este, que te manda a aquel». La figura global hay que pedirla arriba. Empezar por la primera.</p></div>
       </div>
     </details>
   </div>
@@ -896,12 +902,12 @@ strong{ font-weight:600; color:var(--fg) }
 </section>
 
 <!-- ===== MAÑANA ===== -->
-<section class="act act--dark" id="a-manana">
+<section class="act act--dark" id="a-hacefalta">
   <div class="end">
     <div>
-      <span class="eyebrow" data-rise>Y ahora</span>
-      <h2 data-rise>Mañana no se<br>discute el proceso.</h2>
-      <p class="lede" data-rise>Se firman los doce acuerdos, se cierran las cinco decisiones y esto queda escrito. Lo que pedimos para que funcione:</p>
+      <span class="eyebrow" data-rise>Lo que hace falta</span>
+      <h2 data-rise>Siete cosas y<br>esto se sostiene.</h2>
+      <p class="lede" data-rise>Ninguna necesita un equipo nuevo ni presupuesto. Son las que convierten los doce acuerdos en algo que se puede cumplir de verdad.</p>
       <ol class="marked">
         <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Figma listo antes de desarrollar</b></div></li>
         <li><svg class="mark bullet" viewBox="0 0 101 91" aria-hidden="true"><use href="#sc"/></svg><div><b>Poder leer el repo y probar cada rama con datos</b></div></li>
