@@ -39,7 +39,6 @@ import {
 import {
   AGENT_TYPE_LABEL_KEYS,
   Agent,
-  AgentChannel,
   AgentType,
   PRESENCE_LABEL_KEYS,
   PresenceStatus,
