@@ -1483,6 +1483,7 @@
         "channels_agents": "Canales y agentes",
         "resources": "Recursos",
         "announcements": "Anuncios y audio",
+        "announcements_needs_phone": "Solo con el canal Teléfono: aquí se configura lo que suena en la llamada.",
         "advanced": "Avanzado"
       },
       "assigned": {
@@ -1491,16 +1492,16 @@
         "empty": "Usa «Añadir agente» para asignar el primer agente a este grupo.",
         "no_results": "Ningún agente asignado coincide con el filtro.",
         "col_agent": "Agente",
-        "col_active": "Atiende",
+        "col_active": "Habilitado",
         "toggle_all_channel": "Activar/desactivar {{channel}} en todos los visibles",
-        "active_aria": "{{name}} atiende en este grupo",
+        "active_aria": "{{name}} habilitado en este grupo",
         "remove_aria": "Quitar a {{name}} del grupo",
-        "warn_no_channels": "Atiende, pero sin canales asignados",
+        "warn_no_channels": "Habilitado, pero sin canales asignados",
         "add_placeholder": "Añadir agentes…",
         "add_aria": "Añadir agente al grupo",
         "no_channels_warn": "{{count}} sin canal",
-        "bulk_resume": "Atender",
-        "bulk_pause": "Dejar de atender",
+        "bulk_resume": "Habilitar",
+        "bulk_pause": "Deshabilitar",
         "bulk_unassign": "Quitar del grupo",
         "col_level": "Nivel",
         "level_aria": "Nivel de {{name}}"
@@ -1623,7 +1624,7 @@
       },
       "summary": {
         "none": "Ninguno",
-        "paused": "No atiende",
+        "paused": "Deshabilitado",
         "no_channels": "Sin canales"
       }
     },
@@ -1809,8 +1810,8 @@
         "empty": "Usa «Añadir grupo» para asignar el primer grupo a este agente.",
         "col_group": "Grupo",
         "col_channels_here": "Canales en este grupo",
-        "col_active": "Activo",
-        "active_aria": "Pausar al agente en {{name}}",
+        "col_active": "Habilitado",
+        "active_aria": "Habilitado en {{name}}",
         "remove_aria": "Quitar al agente de {{name}}",
         "add_placeholder": "Añadir grupo…",
         "filter_placeholder": "Buscar grupo…",
