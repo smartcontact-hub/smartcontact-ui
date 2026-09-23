@@ -185,8 +185,6 @@ export interface Group {
   readonly chatStrategy?: string;
   readonly labels?: readonly number[];
   readonly templates?: readonly number[];
-  /** Foto del grupo (data URL), como la del agente. Sale en el Figma de la migración. */
-  readonly photo?: string;
   readonly subStrategy?: string;
   readonly ringAllAgents?: number;
   readonly services?: readonly string[];
@@ -377,3 +375,50 @@ export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
   voice: DEFAULT_ANNOUNCEMENTS.voice,
   advanced: DEFAULT_ADVANCED,
 };
+
+/**
+ * CÓMO NACE UN GRUPO. El alta pide solo lo que lo identifica —nombre y canales— y todo lo demás sale
+ * de aquí (Rafa, 2026-09-23; teardown B1: crear y editar no son el mismo formulario). Vive en los
+ * datos y no en el diálogo para que la regla se pueda leer y probar sin pintar nada.
+ *
+ * Nuevo: los valores por defecto de Grupos, los mismos que usaba la ficha en su modo alta.
+ */
+export function newGroupDraft(
+  defaults: GroupDefaults,
+  name: string,
+  channels: readonly GroupChannel[],
+): Omit<Group, 'id' | 'code'> {
+  return {
+    name,
+    phone: '',
+    priority: defaults.priority,
+    channels,
+    strategy: defaults.strategy,
+    chatStrategy: channels.includes('chat') ? CHAT_STRATEGIES[0] : undefined,
+    labels: [],
+    templates: [],
+    schedules: [],
+    announcements: { ...DEFAULT_ANNOUNCEMENTS, voice: defaults.voice },
+    advanced: { ...defaults.advanced },
+  };
+}
+
+/**
+ * Duplicado: TODO lo del original salvo lo que identifica a un grupo, que son el nombre y el teléfono
+ * asociado (dos grupos no deben sacar el mismo número a la calle). Los canales son los que se marquen
+ * en el alta, así que lo que dependa de un canal que ya no está se cae con él.
+ */
+export function duplicateGroupDraft(
+  source: Group,
+  name: string,
+  channels: readonly GroupChannel[],
+): Omit<Group, 'id' | 'code'> {
+  const { id: _id, code: _code, services: _services, ...rest } = source;
+  return {
+    ...rest,
+    name,
+    phone: '',
+    channels,
+    chatStrategy: channels.includes('chat') ? (source.chatStrategy ?? CHAT_STRATEGIES[0]) : undefined,
+  };
+}

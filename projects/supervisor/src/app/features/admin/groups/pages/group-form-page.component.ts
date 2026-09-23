@@ -36,9 +36,7 @@ import {
   ScTextareaComponent as TextareaComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
   ScDialogComponent as DialogComponent,
-  ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
-  ScPhotoUploadComponent as PhotoUploadComponent,
   ScChipComponent as ChipComponent,
 } from '@smartcontact-hub/components';
 import {
@@ -84,7 +82,6 @@ import {
 
 interface FormState {
   name: string;
-  photo: string | null;
   phone: string;
   priority: GroupPriority;
   typification: string | null;
@@ -121,7 +118,6 @@ interface HeadlineStat {
     DeleteEntityDialogComponent,
     DividerComponent,
     InputTextComponent,
-    PhotoUploadComponent,
     MultiSelectComponent,
     InputNumberComponent,
     SelectButtonComponent,
@@ -132,7 +128,6 @@ interface HeadlineStat {
     TemplateFormPanelComponent,
     LabelFormPanelComponent,
     ChipComponent,
-    SectionCardComponent,
     TabsModule,
     TooltipModule,
     SelectComponent,
@@ -158,21 +153,19 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly labelsStore = inject(LabelsStore);
   private readonly defaultsStore = inject(GroupDefaultsStore);
 
-  /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
-   * fuera la banda sticky-form-header; identidad → breadcrumb + campos del
-   * cuerpo (avatar/nombre re-alojados en Identidad). */
+  /** Guardar y Deshacer proyectados a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
     useTopbarActions(this.topbarActions);
   }
 
-  protected readonly priorities = GROUP_PRIORITIES;
   /* Widening intencional a `Record<string, string>` para que el `let-p`
    * que llega desde el `<ng-template #item>` proyectado (`any` por diseño) pueda
-   * indexar sin TS7053. Seguro: las keys vienen siempre de `priorities`
+   * indexar sin TS7053. Seguro: las keys vienen siempre de `GROUP_PRIORITIES`
    * (GroupPriority union). Mismo patrón que agent-form-page. */
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
+  protected readonly priorities = GROUP_PRIORITIES;
   protected readonly channels = GROUP_CHANNELS;
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   /** Skills se ve pero no se elige, con su motivo escrito en la opción (SISMAC-1975). */
@@ -191,11 +184,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly voiceOptions = VOICE_OPTIONS;
 
   /**
-   * Section index for the form shell. In `edit` mode, Identity drops to
-   * the end of the list — it's rarely touched once a group exists, so
-   * the index leads with the sections the user actually iterates on.
-   * Delete is *not* in the nav — it lives at the bottom of the Identity
-   * tab (danger zone pattern, GitHub / Stripe).
+   * Las pestañas de la ficha, en orden. «Canales y agentes» abre, porque es lo que se toca de verdad
+   * en un grupo: a quién enruta y por dónde. «Identidad» va SEGUNDA, como en las fichas de usuario y
+   * agente (#240: las tres dicen lo mismo en el mismo sitio, y `ficha-usuario-agente.spec.ts` lo fija).
+   *
+   * Sin alta en esta página (es un diálogo corto sobre la lista, 2026-09-23) no hay dos órdenes de
+   * pestañas según el modo: hay una ficha, siempre de edición.
+   *
+   * (2026-09-23 se probó sin Identidad: el nombre con un lápiz junto al título y luego un botón
+   * «Editar datos» con diálogo. Rafa: «debería ser más obvio, no sé si puedo tocarlo como usuario»;
+   * y el diálogo añadía un «Aplicar» que no guardaba, un segundo nivel de confirmación que había que
+   * explicar con una frase. Se volvió a la pestaña.)
    */
   protected readonly navSections = computed<readonly FormNavSection[]>(() => {
     const identity: FormNavSection = {
@@ -203,17 +202,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'groups.form.section.identity',
       icon: 'badge',
     };
-    // Canales, estrategia y agentes son UNA sección (Rafa, 2026-09-16): marcar un canal enseña su columna en
-    // la tabla de agentes justo debajo, sin ir arriba y abajo. Conserva el id de canales, que lleva la bola de error.
     const channels: FormNavSection = {
       id: 'group-section-channels',
       labelKey: 'groups.form.section.channels_agents',
       icon: 'group',
     };
-    // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
-    // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
-    // ficha del panel ya da su contexto siempre visible.
-    // COMPARAR: en una sola página (`b`) el índice sigue el orden de la página.
     // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
     const resources: FormNavSection = {
       id: 'group-section-resources',
@@ -237,21 +230,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
      * para cuando enciendas teléfono. `disabled` es del `<p-tab>` NATIVO (API instalada 22.1.2), no
      * una capa nuestra. (Rafa, 2026-09-23.) */
     const middle = [resources, announcements, advanced];
-    /* Al crear, Identidad primero (sin nombre no hay grupo); al editar, al fondo: casi no se toca después (Rafa,
-     * 2026-09-16, también en «Una página»).
-     *
-     * En la DENSA (`u`) va primero SIEMPRE: una página que se lee de arriba abajo de una pasada
-     * no es un índice al que se vuelve, y empezar por una tabla de doce nombres deja el grupo sin
-     * presentar. Medido el 2026-09-21 en «Una página»: lo primero de la pantalla era la lista de
-     * agentes y el nombre del grupo caía a 2.626px de scroll. */
-    /* El orden de la tira manda la pestaña que se abre sola. Al EDITAR, canales primero: es lo
-     * importante de verdad en un grupo (a quién enruta y por dónde) y sus tres campos de identidad
-     * ya los dice la franja de arriba. Al CREAR, identidad primero: sin nombre no hay grupo, y
-     * abrir el alta por una tabla de agentes es pedir que asignes gente a algo que no existe. */
-    return this.mode() === 'edit' ? [channels, identity, ...middle] : [identity, channels, ...middle];
+    return [channels, identity, ...middle];
   });
-
-  protected readonly activeSection = signal<string>('group-section-identity');
 
   /**
    * LA FORMA DE ESTA FICHA — «una página + pestañas», elegida por Rafa el 2026-09-22 entre las
@@ -338,10 +318,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     ];
   });
 
-  protected iconOf(id: string): string | null {
-    return this.navSections().find((s) => s.id === id)?.icon ?? null;
-  }
-
   /** Se pinta la sección de la pestaña encendida, y solo esa. */
   protected showSection(id: string): boolean {
     return id === this.activeTab();
@@ -376,8 +352,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly infoIcon = 'info';
 
   protected readonly editingId = signal<number | null>(null);
-  /** Source name si llegó vía Duplicar (?seedFromId). NULL en create vacío. */
-  protected readonly duplicatingFromName = signal<string | null>(null);
   protected readonly initial = signal<Group | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
   /*
@@ -411,8 +385,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (this.canSave()) return null;
     const f = this.form();
     if (f.name.trim().length === 0) return 'groups.errors.name_required';
+    if (this.nameTaken()) return 'groups.errors.name_taken';
     if (f.channels.size === 0) return 'groups.errors.channels_required';
-    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
+    if (!this.dirtyState.dirty()) return 'common.no_changes';
     return null;
   });
   /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
@@ -443,38 +418,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly conflictWarning = signal(false);
   private releaseLock: (() => void) | null = null;
 
-  protected readonly mode = computed<'edit' | 'duplicate' | 'create'>(() => {
-    if (this.editingId()) return 'edit';
-    if (this.duplicatingFromName()) return 'duplicate';
-    return 'create';
-  });
-
-  /** Mode pasado al SCDS <sc-sticky-form-header>, que solo conoce edit/create.
-   *  `duplicate` se mapea a `create` (la entidad NO existe aún hasta Guardar). */
-  protected readonly headerMode = computed<'edit' | 'create'>(() =>
-    this.mode() === 'edit' ? 'edit' : 'create',
-  );
-
-  /**
-   * Section ids con required vacíos. La bola roja en el nav señala las
-   * sections con required vacíos. Solo required — no errores de formato.
-   */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const f = this.form();
-    const errors = new Set<string>();
-    // Identity: name required.
-    if (!f.name.trim()) errors.add('group-section-identity');
-    // Channels: al menos uno required.
-    if (f.channels.size === 0) errors.add('group-section-channels');
-    return errors;
-  });
-
   protected readonly canSave = computed(() => {
     const f = this.form();
-    if (f.name.trim().length === 0 || f.channels.size === 0) return false;
-    // En EDITAR exige cambio neto; en crear/duplicar basta con que sea válido.
-    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return false;
-    return true;
+    if (f.name.trim().length === 0 || this.nameTaken() || f.channels.size === 0) return false;
+    // Exige cambio neto: Guardar se apaga otra vez si deshaces lo que tocaste.
+    return this.dirtyState.dirty();
   });
 
   protected readonly hasChat = computed(() => this.form().channels.has('chat'));
@@ -595,83 +543,39 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
+    // Solo se llega editando: el alta es un diálogo sobre la lista y `crear` redirige allí.
     const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      const group = this.groupsStore.getGroup(Number(idParam));
-      if (!group) {
-        void this.router.navigateByUrl('/admin/grupos', { replaceUrl: true });
-        return;
-      }
-      this.editingId.set(group.id);
-      this.initial.set(group);
-      const seedLinks = this.linksStore.linksForGroup(group.id);
-      this.form.set({
-        name: group.name,
-        photo: group.photo ?? null,
-        phone: group.phone,
-        priority: group.priority,
-        typification: group.typification ?? null,
-        scheduleIds: new Set(group.schedules ?? []),
-        templateIds: new Set(group.templates ?? []),
-        labelIds: new Set(group.labels ?? []),
-        announcements: { ...DEFAULT_ANNOUNCEMENTS, ...group.announcements },
-        advanced: { ...DEFAULT_ADVANCED, ...group.advanced },
-        channels: new Set(group.channels),
-        strategy: group.strategy,
-        subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,
-        ringAllAgents: group.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
-        chatStrategy: group.chatStrategy ?? CHAT_STRATEGIES[0]!,
-        links: seedLinks,
-      });
-      this.initialChannels.set(new Set(group.channels));
-      this.initialLinks.set(seedLinks);
-      this.dirtyState.markPristine();
-      // En edición aterriza en Canales (1ª del orden de edición): identidad va
-      // al fondo porque casi no se toca tras crear; la ficha la resume (S60).
-      this.activeSection.set('group-section-channels');
-      this.releaseLock = this.crossTab.acquire('group', group.id, () =>
-        this.conflictWarning.set(true),
-      );
+    const group = idParam ? this.groupsStore.getGroup(Number(idParam)) : undefined;
+    if (!group) {
+      void this.router.navigateByUrl('/admin/grupos', { replaceUrl: true });
       return;
     }
-
-    // Modo "Duplicar": detecta ?seedFromId y precarga el form desde el
-    // source EXCEPTO los identificadores únicos (name + phone). El usuario
-    // debe rellenar esos antes de guardar.
-    const seedFromId = this.route.snapshot.queryParamMap.get('seedFromId');
-    if (seedFromId) {
-      const source = this.groupsStore.getGroup(Number(seedFromId));
-      if (!source) {
-        void this.router.navigateByUrl('/admin/grupos', { replaceUrl: true });
-        return;
-      }
-      this.duplicatingFromName.set(source.name);
-      const seedLinks = this.linksStore.linksForGroup(source.id);
-      this.form.set({
-        // Unique identifiers — vaciados.
-        name: '',
-        photo: source.photo ?? null,
-        phone: '',
-        // Resto del payload copiado.
-        priority: source.priority,
-        typification: source.typification ?? null,
-        scheduleIds: new Set(source.schedules ?? []),
-        templateIds: new Set(source.templates ?? []),
-        labelIds: new Set(source.labels ?? []),
-        announcements: { ...DEFAULT_ANNOUNCEMENTS, ...source.announcements },
-        advanced: { ...DEFAULT_ADVANCED, ...source.advanced },
-        channels: new Set(source.channels),
-        strategy: source.strategy,
-        subStrategy: source.subStrategy ?? SUB_STRATEGIES[0]!,
-        ringAllAgents: source.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
-        chatStrategy: source.chatStrategy ?? CHAT_STRATEGIES[0]!,
-        links: seedLinks,
-      });
-      this.initialChannels.set(new Set(source.channels));
-      this.initialLinks.set(seedLinks);
-      // El duplicado nace "sucio" por construcción (datos sin guardar): el
-      // snapshot ya difiere del pristine vacío → el guard de salida avisa solo.
-    }
+    this.editingId.set(group.id);
+    this.initial.set(group);
+    const seedLinks = this.linksStore.linksForGroup(group.id);
+    this.form.set({
+      name: group.name,
+      phone: group.phone,
+      priority: group.priority,
+      typification: group.typification ?? null,
+      scheduleIds: new Set(group.schedules ?? []),
+      templateIds: new Set(group.templates ?? []),
+      labelIds: new Set(group.labels ?? []),
+      announcements: { ...DEFAULT_ANNOUNCEMENTS, ...group.announcements },
+      advanced: { ...DEFAULT_ADVANCED, ...group.advanced },
+      channels: new Set(group.channels),
+      strategy: group.strategy,
+      subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,
+      ringAllAgents: group.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
+      chatStrategy: group.chatStrategy ?? CHAT_STRATEGIES[0]!,
+      links: seedLinks,
+    });
+    this.initialChannels.set(new Set(group.channels));
+    this.initialLinks.set(seedLinks);
+    this.dirtyState.markPristine();
+    this.releaseLock = this.crossTab.acquire('group', group.id, () =>
+      this.conflictWarning.set(true),
+    );
   }
 
   ngOnDestroy(): void {
@@ -694,14 +598,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected updateField<K extends keyof FormState>(key: K, value: FormState[K]): void {
     this.form.update((f) => ({ ...f, [key]: value }));
-  }
-
-  protected onPhoneValueChange(value: unknown): void {
-    this.updateField('phone', typeof value === 'string' ? value : '');
-  }
-
-  protected onPriorityValueChange(value: unknown): void {
-    if (typeof value === 'string') this.updateField('priority', value as GroupPriority);
   }
 
   protected onStrategyValueChange(value: unknown): void {
@@ -820,10 +716,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /** El .wav elegido: de momento solo se guarda su nombre (demo). */
-  protected onPhotoChange(photo: string | null): void {
-    this.form.update((f) => ({ ...f, photo }));
-  }
-
   protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAudioFile', event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -907,9 +799,41 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) => ({ ...f, links }));
   }
 
-  protected onNameRename(name: string): void {
-    this.updateField('name', name);
+  /** Otro grupo ya se llama así: se dice en vivo bajo el campo y Guardar espera. */
+  protected readonly nameTaken = computed(() => {
+    const wanted = this.form().name.trim().toLocaleLowerCase('es');
+    return (
+      wanted.length > 0 &&
+      this.groupsStore
+        .groups()
+        .some((g) => g.id !== this.editingId() && g.name.trim().toLocaleLowerCase('es') === wanted)
+    );
+  });
+
+  protected onNameChange(name: string): void {
+    this.updateField('name', name ?? '');
   }
+
+  protected onPhoneValueChange(value: unknown): void {
+    this.updateField('phone', typeof value === 'string' ? value : '');
+  }
+
+  protected onPriorityValueChange(value: unknown): void {
+    if (typeof value === 'string') this.updateField('priority', value as GroupPriority);
+  }
+
+  /** La línea bajo el nombre: el teléfono (solo con canal Teléfono) y la prioridad, con su nombre. */
+  protected readonly identitySummary = computed(() => {
+    this.lang();
+    const f = this.form();
+    const priority = this.translate.instant('groups.form.summary.priority', {
+      value: this.translate.instant(this.priorityKeys[f.priority]),
+    });
+    if (!this.hasPhone()) return priority;
+    const phone = f.phone || this.translate.instant('groups.form.summary.no_phone');
+    return `${phone} · ${priority}`;
+  });
+
 
   protected save(): void {
     if (!this.canSave() || this.saving()) return;
@@ -918,7 +842,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // cascade impact before persisting. The dialog's "Continuar" handler
     // re-enters `save()` with `cascadeConfirm` already shown so this guard
     // only fires once per save.
-    if (this.editingId() && !this.cascadeConfirm()) {
+    if (!this.cascadeConfirm()) {
       const removed = [...this.initialChannels()].filter((c) => !this.form().channels.has(c));
       if (removed.length > 0) {
         const removedSet = new Set(removed);
@@ -937,7 +861,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       const f = this.form();
       const payload = {
         name: f.name.trim(),
-        photo: f.photo ?? undefined,
         phone: f.phone.trim(),
         priority: f.priority,
         typification: f.typification ?? undefined,
@@ -953,40 +876,22 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         chatStrategy: f.channels.has('chat') ? f.chatStrategy : undefined,
       };
 
-      /* Como Contact Center y la ficha de agente (Rafa, 2026-09-16): guardar se queda en la ficha, con su aviso.
-       * Un alta pasa a ser la edición de lo recién creado, sin recargar. */
-      const editingId = this.editingId();
-      let createdId: number | null = null;
-      if (editingId) {
-        this.groupsStore.updateGroup(editingId, { ...payload });
-        this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(f.links, editingId));
-        const refreshed = this.groupsStore.getGroup(editingId);
-        if (refreshed) this.initial.set(refreshed);
-        this.messages.add({
-          severity: 'success',
-          summary: this.translate.instant('groups.toasts.updated', { name: payload.name }),
-          life: TOAST_LIFE.success,
-        });
-      } else {
-        const created = this.groupsStore.addGroup(payload);
-        createdId = created.id;
-        this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(f.links, created.id));
-        this.editingId.set(created.id);
-        this.initial.set(created);
-        this.messages.add({
-          severity: 'success',
-          summary: this.translate.instant('groups.toasts.created', { name: created.name }),
-          life: TOAST_LIFE.success,
-        });
-      }
+      // Como Contact Center y la ficha de agente (Rafa, 2026-09-16): guardar se queda en la ficha, con su aviso.
+      const editingId = this.editingId()!;
+      this.groupsStore.updateGroup(editingId, { ...payload });
+      this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(f.links, editingId));
+      const refreshed = this.groupsStore.getGroup(editingId);
+      if (refreshed) this.initial.set(refreshed);
+      this.messages.add({
+        severity: 'success',
+        summary: this.translate.instant('groups.toasts.updated', { name: payload.name }),
+        life: TOAST_LIFE.success,
+      });
       // Lo guardado pasa a ser la referencia para avisar si luego se quita un canal con agentes.
       this.initialChannels.set(new Set(f.channels));
-      this.initialLinks.set(this.linksStore.linksForGroup(this.editingId()!));
+      this.initialLinks.set(this.linksStore.linksForGroup(editingId));
       this.saving.set(false);
       this.dirtyState.markPristine();
-      /* Un alta abre la edición de lo recién creado: navegar (y no solo cambiar la dirección) pone al día la miga
-       * y el candado entre pestañas. */
-      if (createdId !== null) void this.router.navigateByUrl(`/admin/grupos/editar/${createdId}`, { replaceUrl: true });
     }, 400);
   }
 
@@ -1036,12 +941,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.router.navigateByUrl('/admin/grupos');
   }
 
-  /** Un grupo nuevo nace con lo guardado en Configuración del AED > Grupos. */
+  /** Lo que hay en el formulario hasta que `ngOnInit` carga el grupo: solo un punto de partida. */
   private emptyForm(): FormState {
     const defaults = this.defaultsStore.defaults();
     return {
       name: '',
-      photo: null,
       phone: '',
       priority: defaults.priority,
       typification: null,

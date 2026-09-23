@@ -190,70 +190,8 @@
  * problema era el cambio de arquetipo, no el padding que faltaba.)
  */
 
-/* LA FILA DE IDENTIDAD. Foto + nombre, teléfono y prioridad.
- *
- * POR QUÉ NO ES UN `.grid--2`. Medido el 2026-09-21 en la variante `s`, que corre sobre el
- * arquetipo ancho (`--list`, 1360 útiles): el campo «Nombre» salía de 1.171px y los dos selects
- * de 602 cada uno. Un cuadro de texto de metro y medio para «ACD Demo C2CB» no dice cuánto
- * escribir y deja la etiqueta sola en una llanura — es justo lo que se lee como puesto al boleo.
- *
- * En cuanto hay sitio los tres campos van en UNA línea, así que además se ahorra una fila entera.
- * Por debajo, uno por línea: el reparto lo decide EL CONTENEDOR, no la ventana, porque el mismo
- * formulario vive en dos anchos (`--rail` da 844 útiles y `--list`, 1.229) con la misma ventana
- * detrás. Por eso una `@container` y no una `@media`.
- *
- * `1-2fr` para el primero: la foto se come 58 de su columna y el nombre es el campo que más
- * agradece el resto. Los huecos son los de `.grid` (24.5 entre columnas, 12.25 entre filas): esta
- * fila se parece a las demás del formulario, no se inventa su propia medida. */
-/* El CONTENEDOR que se mide es la sección, no la ventana: `container-type` va aquí y la consulta
- * la hacen sus hijos (una `@container` no puede estilar al contenedor que la declara). */
-.identity-section {
-  container-type: inline-size;
-}
-
-/* De estrecho a ancho, solo con `min-width`: el orden sano, y el que deja una sola dirección de
- * lectura en las tres reglas.
- *
- * (Se escribió así el 2026-09-21 porque `audit:page-anatomy` contaba un `@container (max-width:
- * 720px)` como un ancho de página a mano. Ese hueco del gate se cerró el 2026-09-22 con su caso
- * rojo, así que ya no es el motivo; el motivo es el de arriba.) */
-.identity-fields {
-  display: grid;
-  /* Estrecho: uno por línea. */
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--sc-spacing-0-875) var(--sc-spacing-1-75);
-  /* ARRIBA, igual que `.grid`: cada campo se queda con su alto y las tres etiquetas arrancan en la
-   * misma línea. Con `end` —que fue el primer intento, para casar la foto con su campo— mandaba el
-   * campo más alto: «Teléfono asociado» lleva dos líneas de ayuda debajo del control, así que su
-   * etiqueta subía 42px por encima de las otras dos y las tres cabeceras salían a tres alturas.
-   * Visto en la captura antes de darlo por bueno. La foto ya se casa sola con su campo: quien lo
-   * hace es el `align-items: flex-end` de `.form-identity`, dentro de la celda. */
-  align-items: start;
-}
-
-/* Con sitio para dos: el nombre a lo ancho y los dos selects debajo, a mitades. Es lo que hace
- * hoy la ficha publicada, y a este ancho no se mueve. */
-@container (min-width: 721px) {
-  .identity-fields {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-
-  .identity-fields__who {
-    grid-column: 1 / -1;
-  }
-}
-
-/* Los tres en UNA línea solo cuando de verdad sobra sitio. 1.000 es el corte porque a partir de
- * ahí las tres columnas dan ≥280 de control: por debajo, el nombre con su foto dentro de 300 se
- * queda en 240 y el campo empieza a pedir disculpas. En `--rail` (844 útiles) no muerde, así que
- * la ficha que hoy está publicada no se mueve; muerde en la variante ancha (1.229), que es donde
- * el problema estaba. */
-@container (min-width: 1000px) {
-  .identity-fields {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
-  }
-
-  .identity-fields__who {
-    grid-column: auto;
-  }
+/* La ayuda de una pestaña, arriba del todo: la que antes iba bajo el título de su caja. */
+.tab-hint {
+  margin: 0;
+  color: var(--sc-text-secondary);
 }

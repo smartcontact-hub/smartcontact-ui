@@ -1437,6 +1437,11 @@
   "groups": {
     "page_title": "Groups",
     "create_button": "New group",
+    "create_dialog": {
+      "subtitle": "Everything else starts from the defaults and can be changed on the group page.",
+      "duplicate_subtitle": "Copies the agents and settings of «{{source}}», except the associated phone.",
+      "copy_name": "{{name}} (copy)"
+    },
     "search_placeholder": "Search group by name, ID, phone or strategy...",
     "no_results_query": "No groups match “{{query}}”.",
     "entity_singular": "group",
@@ -1486,7 +1491,7 @@
       "assigned": {
         "query_placeholder": "Search agent…",
         "empty_title": "No assigned agents",
-        "empty": "Use \"Add agent\" to assign the first agent to this group.",
+        "empty": "Pick them in \"Add agents\", top right.",
         "no_results": "No assigned agents match the filter.",
         "col_agent": "Agent",
         "col_active": "Enabled",
@@ -1625,7 +1630,9 @@
       "summary": {
         "none": "None",
         "paused": "Disabled",
-        "no_channels": "No channels"
+        "no_channels": "No channels",
+        "priority": "Priority: {{value}}",
+        "no_phone": "No associated phone"
       }
     },
     "defaults": {
@@ -1640,7 +1647,8 @@
     },
     "errors": {
       "name_required": "Name is required",
-      "channels_required": "Select at least one channel"
+      "channels_required": "Select at least one channel",
+      "name_taken": "A group with this name already exists"
     },
     "toasts": {
       "created": "Group \"{{name}}\" created",

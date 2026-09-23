@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LA FICHA DE GRUPO — «una página + pestañas».
+ * LA FICHA DE GRUPO — «una página + pestañas», y su alta, que es un diálogo.
  *
  * Esta red nace el 2026-09-23, el día que esta forma sustituyó a la de índice lateral. No es
  * opcional: al cambiar de forma, la ficha salió de `page-anatomy` (no tiene rail que medir) y de
@@ -14,8 +14,10 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *
  *   1. UNA sola tira de pestañas gobierna TODO el contenido. Nada de un título suelto arriba y
  *      una tira debajo diciendo lo mismo.
- *   2. Se abre por donde se trabaja: al EDITAR, «Canales y agentes»; al CREAR, «Identidad»,
- *      porque sin nombre no hay grupo al que asignar agentes.
+ *   2. Se abre por donde se trabaja, «Canales y agentes». El ALTA no es esta página desde el
+ *      2026-09-23: es un diálogo corto sobre la lista (nombre y canales) que deja aquí.
+ *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas. La foto
+ *      de WhatsApp o Teams distingue un grupo de una persona porque van mezclados; aquí no.
  *   3. La página se ensancha por `.ficha-tabs` SIN cambiar de arquetipo: sigue siendo `--rail`.
  *      Declarar dos arquetipos es lo que `audit:page-anatomy` prohíbe.
  */
@@ -38,21 +40,62 @@ test('la tira de pestañas gobierna la ficha, y abre por canales al editar', asy
   await expect(page.locator('[id^="group-section-"]')).toHaveCount(1);
   await expect(page.locator('#group-section-channels')).toBeVisible();
 
-  // Y no hay índice lateral: si vuelve, es que la forma se ha revertido a medias.
+  // Y no hay índice lateral ni cajas de sección: si vuelve uno, la forma se ha revertido a medias.
   await expect(page.locator('.page__rail')).toHaveCount(0);
+  await expect(page.locator('sc-section-card')).toHaveCount(0);
 
   await page.locator('[role="tab"]', { hasText: 'Identidad' }).click();
   await expect(page.locator('#group-section-identity')).toBeVisible();
   await expect(page.locator('#group-section-channels')).toHaveCount(0);
 });
 
-test('al crear abre por Identidad: sin nombre no hay grupo al que asignar agentes', async ({
+test('crear es un diálogo corto: pide nombre y canales, y deja en «Canales y agentes»', async ({
   page,
 }) => {
+  // La dirección de siempre sigue viva (paleta de comandos, enlaces guardados): abre el diálogo.
   await goto(page, 'admin/grupos/crear');
+  const dialogo = page.getByRole('dialog', { name: 'Nuevo grupo' });
+  await expect(dialogo).toBeVisible();
+  await expect(page).toHaveURL(/admin\/grupos$/);
 
-  await expect(page.locator('[role="tab"][aria-selected="true"]')).toHaveText('Identidad');
+  // Lo obligatorio se dice al intentar crear, no al abrir.
+  await dialogo.getByRole('button', { name: 'Crear' }).click();
+  await expect(dialogo).toContainText('El nombre es obligatorio');
+
+  // Un nombre que ya existe se dice en vivo.
+  await page.locator('#group-create-name').fill('campaigns');
+  await expect(dialogo).toContainText('Ya hay un grupo con este nombre');
+
+  await page.locator('#group-create-name').fill(`E2E Alta ${Date.now()}`);
+  await page.locator('#group-create-name').press('Enter');
+  await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
+  await expect(page.locator('[role="tab"][aria-selected="true"]')).toHaveText('Canales y agentes');
+});
+
+test('duplicar abre el mismo diálogo y se lleva los agentes del original', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  const fila = page.locator('tbody tr', { hasText: 'Reclamaciones' });
+  await fila.locator('.rules-kebab-btn').click();
+  await page.getByRole('menuitem', { name: 'Duplicar' }).click();
+
+  const dialogo = page.getByRole('dialog', { name: 'Duplicar grupo' });
+  await expect(page.locator('#group-create-name')).toHaveValue('Reclamaciones (copia)');
+  await dialogo.getByRole('button', { name: 'Duplicar' }).click();
+
+  await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
+  await expect(page.locator('.headline__name')).toHaveText('Reclamaciones (copia)');
+  await expect(page.locator('.assign tbody tr').first()).toBeVisible();
+});
+
+test('los grupos no llevan cara: ni avatar en las listas ni foto en la ficha', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  await expect(page.locator('tbody tr').first()).toBeVisible();
+  await expect(page.locator('tbody sc-illustrated-avatar')).toHaveCount(0);
+
+  await goto(page, 'admin/grupos/editar/1');
+  await page.locator('[role="tab"]', { hasText: 'Identidad' }).click();
   await expect(page.locator('#group-name')).toBeVisible();
+  await expect(page.locator('sc-photo-upload')).toHaveCount(0);
 });
 
 test('la página se ensancha sin cambiar de arquetipo', async ({ page }) => {

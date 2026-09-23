@@ -1,0 +1,52 @@
+<sc-dialog
+  [visible]="visible()"
+  [title]="(source() ? 'groups.form.duplicate_title' : 'groups.form.create_title') | translate"
+  [subtitle]="
+    source()
+      ? ('groups.create_dialog.duplicate_subtitle' | translate: { source: source()!.name })
+      : ('groups.create_dialog.subtitle' | translate)
+  "
+  (shown)="onShown()"
+  (cancelled)="cancelled.emit()"
+>
+  <div class="create-form">
+    <div class="field">
+      <label class="field__label sc-text-caption-semibold" for="group-create-name">
+        {{ 'groups.form.fields.name' | translate }}
+        <span class="field__required" aria-hidden="true">*</span>
+      </label>
+      <sc-inputtext
+        inputId="group-create-name"
+        autocomplete="off"
+        [required]="true"
+        [value]="name()"
+        [error]="nameError() ? (nameError()! | translate) : ''"
+        (valueChange)="name.set($event ?? '')"
+        (keydown.enter)="submit()"
+      />
+    </div>
+
+    <!-- Un `fieldset`: las cuatro casillas son UNA pregunta, y así el lector de pantalla la dice al entrar. -->
+    <fieldset class="create-form__channels" [attr.aria-invalid]="channelsError() ? true : null">
+      <legend class="field__label sc-text-caption-semibold">
+        {{ 'groups.form.section.channels' | translate }}
+        <span class="field__required" aria-hidden="true">*</span>
+      </legend>
+      <div class="create-form__channel-row">
+        @for (channel of channelOptions; track channel) {
+          <sc-checkbox class="checkbox-row" [state]="has(channel) ? 'all' : 'none'" (cycle)="toggle(channel)">
+            {{ channelKeys[channel] | translate }}
+          </sc-checkbox>
+        }
+      </div>
+      @if (channelsError(); as error) {
+        <p class="create-form__error sc-text-caption-regular" role="alert">{{ error | translate }}</p>
+      }
+    </fieldset>
+  </div>
+
+  <div modal-actions>
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelled.emit()" />
+    <sc-button size="sm" variant="primary" [label]="(source() ? 'common.duplicate' : 'common.create') | translate" (clicked)="submit()" />
+  </div>
+</sc-dialog>

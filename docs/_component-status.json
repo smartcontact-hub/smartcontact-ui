@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 150,
+      "usedInSupervisor": 152,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -241,7 +241,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 34,
+      "usedInSupervisor": 35,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -496,7 +496,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 15,
+      "usedInSupervisor": 16,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -838,7 +838,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 38,
+      "usedInSupervisor": 39,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1074,7 +1074,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 2,
       "cuando": "Para la foto de una persona, con ilustración de reserva.",
       "sobreObsoleto": []
     },
@@ -1193,7 +1193,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 21,
+      "usedInSupervisor": 17,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1336,7 +1336,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 2,
       "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
       "sobreObsoleto": [
         {

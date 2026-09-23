@@ -76,7 +76,8 @@ const PAGINAS = [
   { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 44 },
   { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 54 }, // 44 hasta el 2026-09-14: la celda de nombre gana el avatar de sus hermanas
   { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 54 },
-  { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 54 },
+  // 54 hasta el 2026-09-23: los grupos dejaron de llevar avatar (cara = persona) y manda el kebab, 27 + 8×2 + 1.
+  { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 44 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
   // commit que la migración, y eso no es formalismo: sin esta línea el spec
   // pasaba en verde sin visitar la página, y el "108/108" que traían los
@@ -235,7 +236,10 @@ const PAGINAS_EN_FORMULARIO = [
     ruta: 'admin/agentes/editar/1',
     seccion: 'Grupos asignados',
     nombre: 'grupos del agente',
-    altoFila: 46, // 69 hasta Aura (2026-09-13); 50 → 46 el 2026-09-14, el chip de canal pasa a casilla
+    // 69 hasta Aura (2026-09-13); 50 → 46 el 2026-09-14, el chip de canal pasa a casilla; 46 → 44 el
+    // 2026-09-23, los grupos pierden el avatar de 24 y la fila la marca el interruptor. Su gemelo de
+    // abajo sigue en 46 porque sus filas son personas, que sí llevan cara.
+    altoFila: 44,
   },
   {
     ruta: 'admin/grupos/editar/1',

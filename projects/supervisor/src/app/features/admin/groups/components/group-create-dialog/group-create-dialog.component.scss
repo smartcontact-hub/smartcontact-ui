@@ -1,0 +1,39 @@
+/* El campo y su etiqueta son los de la casa (`.field`, `.checkbox-row` en `styles/_forms.scss`):
+ * aquí solo lo que es de este diálogo. */
+
+/* 21 entre el nombre y los canales, el doble de lo que separa una etiqueta de su control (`.field`,
+ * 7 + el alto de línea): son dos preguntas, no una. */
+.create-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-5);
+}
+
+/* Sin la caja ni el relleno que el navegador pone a un `fieldset`: es agrupación, no un marco. */
+.create-form__channels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.create-form__channels legend {
+  /* La `legend` no se apila con `gap`; el aire hasta las casillas es el mismo que el de un `.field`. */
+  margin-block-end: var(--sc-spacing-0-5);
+  padding: 0;
+}
+
+/* La fila de canales de la ficha, a escala de diálogo: 28 entre casilla y casilla. */
+.create-form__channel-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-2);
+}
+
+.create-form__error {
+  margin: 0;
+  color: var(--sc-text-danger);
+}
