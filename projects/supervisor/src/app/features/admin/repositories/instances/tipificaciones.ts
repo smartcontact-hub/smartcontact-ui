@@ -137,7 +137,8 @@ const COLUMNS: readonly RepoColumnDef<Tipificacion>[] = [
   },
 ];
 
-const FIELDS: readonly RepoFieldDef[] = [
+/** Exportado: la ficha de grupo lo reutiliza para crear una tipificación sin salir a Repositorios. */
+export const TIPIFICACION_FIELDS: readonly RepoFieldDef[] = [
   {
     key: 'name',
     labelKey: 'repositories.columns.name',
@@ -182,7 +183,7 @@ export class TipificacionesPageComponent {
     icon: 'label',
     breadcrumbExtraKey: 'repositories.tipificaciones.title',
     columns: COLUMNS,
-    fields: FIELDS,
+    fields: TIPIFICACION_FIELDS,
     searchKeys: ['name', 'code', 'category', 'description'],
     filePrefix: 'tipificaciones',
     sheetNameKey: 'repositories.tipificaciones.title',

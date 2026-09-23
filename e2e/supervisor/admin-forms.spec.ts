@@ -49,7 +49,13 @@ test('usuarios · el botón de guardar exige los campos obligatorios', async ({ 
   await expect(page.getByRole('button', { name: /guardar|save/i })).toBeDisabled();
 });
 
-test('grupos · crear un grupo lo añade al listado', async ({ page }) => {
+/*
+ * Guardar un grupo NUEVO lo deja en su ficha, ya en modo edición, y no devuelve a la lista
+ * (2026-09-23, la forma de ficha que eligió Rafa; es lo que hace Contact Center). Así que el
+ * contrato que se mide cambia de sitio, no de fondo: el grupo existe y se puede seguir
+ * trabajando en él. Que además salga en el listado se comprueba entrando a la lista.
+ */
+test('grupos · crear un grupo lo deja en su ficha y lo añade al listado', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
 
   const name = `E2E Grupo ${Date.now()}`;
@@ -59,6 +65,10 @@ test('grupos · crear un grupo lo añade al listado', async ({ page }) => {
   await expect(save).toBeEnabled();
   await save.click();
 
-  await expect(page).toHaveURL(/admin\/grupos$/);
+  // El alta navega a la edición del grupo recién creado.
+  await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
+  await expect(page.locator('.headline__name')).toHaveText(name);
+
+  await goto(page, 'admin/grupos');
   await expect(page.locator('tbody tr', { hasText: name })).toHaveCount(1);
 });

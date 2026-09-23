@@ -106,6 +106,10 @@
   display: grid;
   column-gap: var(--sc-spacing-1-75);
   row-gap: var(--sc-spacing-0-875);
+  /* Sin esto, un campo con texto de ayuda de dos líneas estira a su vecino de la misma fila
+   * (el vecino no crece: se queda con un hueco vacío debajo de su control, hasta 41px medido
+   * en Recursos, «Agendas» junto a «Tipificación»). Cada campo se queda con SU alto. */
+  align-items: start;
 
   &--2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -230,6 +234,14 @@
     display: block;
     margin-top: var(--sc-spacing-0-25);
     color: var(--sc-text-subtle);
+  }
+
+  /* Un número mide lo que pide su contenido, el mismo peldaño que en Configuración del AED (175, `scale/12-5`), y su
+   * ayuda sigue ocupando la columna. Global a propósito: la caja del número es de `sc-inputnumber` y una hoja
+   * encapsulada no la alcanza. Antes, en la ficha de grupo, «Tamaño de cola» medía 70 y los tiempos, media página. */
+  &__number .sc-inputnumber__field {
+    inline-size: var(--sc-spacing-12-5);
+    max-inline-size: 100%;
   }
 
   &__error {

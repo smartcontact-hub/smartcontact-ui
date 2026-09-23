@@ -39,6 +39,9 @@ export const CON_RAIL = [
   'features/config/aed/aed-servicio-page.component.html',
   'features/config/aed/aed-agentes-page.component.html',
   'features/config/aed/aed-grupos-page.component.html',
+  /* Los valores por defecto de Grupos, que llegan con la ficha nueva (2026-09-23): es una
+   * pantalla con rail, así que su título va dentro de su sección como las tres de arriba. */
+  'features/admin/groups/pages/group-defaults-page.component.html',
 ];
 
 /** ¿Esta plantilla pinta su `<h1>` visible suelto, fuera de una sección? */

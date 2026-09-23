@@ -19,6 +19,9 @@ export type { IllustratedAvatarPool } from './illustrated-avatar/illustrated-ava
 
 export { ListPageComponent } from './list-page/list-page.component';
 
+export { ChannelIconComponent } from './channel-icon/channel-icon.component';
+export type { ChannelIconKind } from './channel-icon/channel-icon.component';
+
 export { LabelChipComponent } from './label-chip/label-chip.component';
 export type { LabelChipModel } from './label-chip/label-chip.component';
 export type { LabelColor } from './label-chip/label-chip.types';

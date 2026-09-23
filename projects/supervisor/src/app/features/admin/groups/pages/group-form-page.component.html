@@ -32,223 +32,24 @@
 </ng-template>
 
 <div class="page">
-  <!-- Único <h1> del documento, oculto: la identidad la dicen la miga y la ficha. -->
-  <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'groups.form.edit_breadcrumb' : 'groups.form.create_breadcrumb') | translate }}</h1>
+  <!-- Único <h1> del documento, oculto: la identidad la dicen la miga y la ficha.
+       En la variante `s` al editar NO se pinta: ahí el nombre del grupo es un `<h1>` visible
+       (ver `.headline__name`), y dos `<h1>` en un documento no es una página, son dos. -->
+  @if (mode() !== 'edit') {
+    <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'groups.form.edit_breadcrumb' : 'groups.form.create_breadcrumb') | translate }}</h1>
+  }
 
-  <!-- El molde de Contact Center (`.page__inner--rail`). -->
-  <div class="page__inner page__inner--rail">
-    <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
-      @if (mode() === 'edit') {
-        <div class="ficha">
-          <sc-illustrated-avatar
-            class="ficha__avatar"
-            [name]="(initial()?.name ?? form().name) || 'Grupo'"
-            pool="abstract"
-            [size]="36"
-          />
-          <div class="ficha__body">
-            <span class="ficha__name sc-text-body-semibold" [title]="form().name">{{ form().name }}</span>
-            @if (form().phone) {
-              <span class="ficha__meta sc-text-caption-regular">{{ form().phone }}</span>
-            }
-          </div>
-        </div>
-      }
-
-      <sc-form-section-nav
-        [sections]="navSections()"
-        [activeId]="activeSection()"
-        [sectionsWithErrors]="sectionsWithErrors()"
-        [flush]="true"
-        (activeChange)="activeSection.set($event)"
-      />
-
-      @if (mode() === 'edit') {
-        <sc-button class="rail-delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
-      }
-    </aside>
-
+  <!-- El molde de Contact Center (`.page__inner--rail`). Sin índice y con la tabla de agentes de
+       protagonista, esta ficha quiere el ancho de una lista, y se lo da `.ficha-tabs` en
+       `_page.scss`. NO cambia de arquetipo por eso: sigue siendo `--rail`. Declarar dos
+       arquetipos a la vez es lo que `audit:page-anatomy` prohíbe, y con razón: una página es de
+       UN tipo — probarlo con `--list` la dejó a 0px de relleno por los cuatro lados. -->
+  <div class="page__inner page__inner--rail ficha-tabs">
     <div class="page__main">
-      @switch (activeSection()) {
-        @case ('group-section-identity') {
-          <sc-section-card
-            anchorId="group-section-identity"
-            surface="card"
-            [icon]="activeIcon()"
-            titleKey="groups.form.section.identity"
-          >
-            <section class="sub-section">
-              <!-- El avatar es generado (no editable) y sigue al nombre. -->
-              <div class="form-identity">
-                <sc-illustrated-avatar
-                  [name]="(initial()?.name ?? form().name) || 'Grupo'"
-                  pool="abstract"
-                  [size]="36"
-                />
-                <div class="field form-identity__name">
-                  <label class="field__label sc-text-caption-semibold" for="group-name">
-                    {{ 'groups.form.fields.name' | translate }}
-                    <span class="field__required" aria-hidden="true">*</span>
-                  </label>
-                  <sc-inputtext
-                    inputId="group-name"
-                    [required]="true"
-                    [value]="form().name"
-                    (valueChange)="onNameRename($event)"
-                  />
-                </div>
-              </div>
-
-              <div class="grid grid--2">
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-phone">
-                    {{ 'groups.form.fields.phone' | translate }}
-                  </label>
-                  <sc-inputtext
-                    inputId="group-phone"
-                    type="tel"
-                    autocomplete="tel"
-                    [value]="form().phone"
-                    (valueChange)="onPhoneValueChange($event)"
-                  />
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-priority">
-                    {{ 'groups.form.fields.priority' | translate }}
-                  </label>
-                  <sc-select
-                    inputId="group-priority"
-                    [options]="priorities"
-                    [value]="form().priority"
-                    (valueChange)="onPriorityValueChange($event)"
-                  >
-                    <ng-template #item let-p>
-                      {{ priorityKeys[p] | translate }}
-                    </ng-template>
-                    <ng-template #selectedItem let-p>
-                      {{ priorityKeys[p] | translate }}
-                    </ng-template>
-                  </sc-select>
-                </div>
-              </div>
-            </section>
-
-            <sc-divider />
-
-            <section class="sub-section">
-              <div class="switch-field switch-field--top">
-                <sc-toggleswitch
-                  [checked]="form().typification"
-                  [ariaLabel]="'groups.form.fields.typification' | translate"
-                  (checkedChange)="onTypificationChange($event)"
-                />
-                <div class="switch-field__copy">
-                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.fields.typification' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.fields.typification_hint' | translate }}</p>
-                </div>
-              </div>
-            </section>
-          </sc-section-card>
-        }
-
-        @case ('group-section-channels') {
-          <!-- Canales y estrategia en UNA sección desde el 2026-09-14. Eran dos pestañas,
-               y la primera era una tarjeta entera para tres casillas; además la estrategia
-               DEPENDE de los canales (la de chat solo existe con chat, la capacidad con
-               teléfono), así que al marcar un canal su ajuste aparece justo debajo en vez
-               de en otra pestaña. -->
-          <sc-section-card
-            anchorId="group-section-channels"
-            surface="card"
-            [icon]="activeIcon()"
-            titleKey="groups.form.section.distribution"
-          >
-            <!-- Que falte marcar un canal no es contenido equivocado: lo señalan la bola
-                 roja del índice (`sectionsWithErrors`) y el motivo del botón. -->
-            <section class="sub-section" [attr.aria-label]="'groups.form.section.channels' | translate">
-              <div class="checkbox-grid checkbox-grid--services">
-                @for (channel of channels; track channel) {
-                  <sc-checkbox class="checkbox-row" [state]="hasChannel(channel) ? 'all' : 'none'" (cycle)="toggleChannel(channel)">{{ channelKeys[channel] | translate }}</sc-checkbox>
-                }
-              </div>
-            </section>
-
-            @if (form().channels.size > 0) {
-              <sc-divider />
-
-              <section class="sub-section" [attr.aria-label]="'groups.form.section.strategy' | translate">
-                <div class="grid grid--2">
-                  @if (hasPhone()) {
-                    <div class="field">
-                      <label class="field__label sc-text-caption-semibold" for="group-strategy">
-                        {{ 'groups.form.fields.phone_strategy' | translate }}
-                      </label>
-                      <sc-select
-                        inputId="group-strategy"
-                        [options]="phoneStrategies"
-                        [value]="form().strategy"
-                        (valueChange)="onStrategyValueChange($event)"
-                      />
-                    </div>
-                  }
-
-                  @if (hasChat()) {
-                    <div class="field">
-                      <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">
-                        {{ 'groups.form.fields.chat_strategy' | translate }}
-                      </label>
-                      <sc-select
-                        inputId="group-chat-strategy"
-                        [options]="chatStrategies"
-                        [value]="form().chatStrategy"
-                        (valueChange)="onChatStrategyValueChange($event)"
-                      />
-                    </div>
-                  }
-
-                  @if (hasPhone()) {
-                    <div class="field">
-                      <label class="field__label sc-text-caption-semibold" for="group-capacity">
-                        {{ 'groups.form.fields.capacity' | translate }}
-                        <span class="field__hint">({{ 'common.optional' | translate }})</span>
-                      </label>
-                      <sc-inputnumber
-                        inputId="group-capacity"
-                        [min]="0"
-                        [value]="form().capacityValue"
-                        (valueChange)="onCapacityValueChange($event)"
-                        [helperText]="'groups.form.fields.capacity_hint' | translate"
-                      />
-                    </div>
-                  }
-                </div>
-              </section>
-            }
-          </sc-section-card>
-        }
-
-        @case ('group-section-agents') {
-          <sc-section-card
-            anchorId="group-section-agents"
-            surface="card"
-            [icon]="activeIcon()"
-            titleKey="groups.form.section.agents"
-          >
-            <section class="sub-section">
-              <sc-agent-channel-table
-                [groupChannels]="formGroupChannels()"
-                [links]="form().links"
-                [availableAgents]="availableAgents()"
-                [groupId]="editingId() ?? 0"
-                (linksChange)="onLinksChange($event)"
-              />
-            </section>
-          </sc-section-card>
-        }
-      }
+      <ng-container *ngTemplateOutlet="sections" />
     </div>
   </div>
+
 </div>
 
 <sc-delete-entity-dialog
@@ -285,3 +86,775 @@
     </div>
   </sc-dialog>
 }
+
+@if (creatingTipificacion()) {
+  <!-- El mismo formulario que Repositorios (`sc-repo-form-panel`), en un diálogo: crear no saca de la ficha. -->
+  <sc-dialog
+    [visible]="true"
+    [title]="'repositories.form.create_title' | translate: { entity: ('repositories.tipificaciones.singular' | translate) }"
+    [hasFooter]="false"
+    (cancelled)="creatingTipificacion.set(false)"
+  >
+    <sc-repo-form-panel
+      flush
+      [fields]="tipificacionFields"
+      [existingNames]="tipificacionExistingNames()"
+      [entitySingular]="'repositories.tipificaciones.singular' | translate"
+      (save)="onCreateTipificacionSubmit($event)"
+      (cancelled)="creatingTipificacion.set(false)"
+    />
+  </sc-dialog>
+}
+
+@if (creatingAgenda()) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'repositories.form.create_title' | translate: { entity: ('repositories.agendas.singular' | translate) }"
+    [hasFooter]="false"
+    (cancelled)="creatingAgenda.set(false)"
+  >
+    <sc-repo-form-panel
+      flush
+      [fields]="agendaFields"
+      [existingNames]="agendaExistingNames()"
+      [entitySingular]="'repositories.agendas.singular' | translate"
+      (save)="onCreateAgendaSubmit($event)"
+      (cancelled)="creatingAgenda.set(false)"
+    />
+  </sc-dialog>
+}
+
+@if (creatingChatTemplate()) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'templates.form.create_title' | translate"
+    [hasFooter]="false"
+    (cancelled)="creatingChatTemplate.set(false)"
+  >
+    <sc-template-form-panel
+      flush
+      defaultType="chat"
+      [existingTitles]="templateExistingTitles()"
+      (save)="onCreateTemplateSubmit('chat', $event)"
+      (cancelled)="creatingChatTemplate.set(false)"
+    />
+  </sc-dialog>
+}
+
+@if (creatingEmailTemplate()) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'templates.form.create_title' | translate"
+    [hasFooter]="false"
+    (cancelled)="creatingEmailTemplate.set(false)"
+  >
+    <sc-template-form-panel
+      flush
+      defaultType="email"
+      [existingTitles]="templateExistingTitles()"
+      (save)="onCreateTemplateSubmit('email', $event)"
+      (cancelled)="creatingEmailTemplate.set(false)"
+    />
+  </sc-dialog>
+}
+
+@if (creatingLabel()) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'labels.form.create_title' | translate"
+    [hasFooter]="false"
+    (cancelled)="creatingLabel.set(false)"
+  >
+    <sc-label-form-panel
+      flush
+      [existingNames]="labelExistingNames()"
+      (save)="onCreateLabelSubmit($event)"
+      (cancelled)="creatingLabel.set(false)"
+    />
+  </sc-dialog>
+}
+
+<!-- Las secciones de la ficha, una sola vez: se pintan en `.page__main` o, en la variante e,
+     dentro del panel lateral. -->
+<ng-template #sections>
+  <!-- La franja de estado, lo primero. Quien abre un grupo se pregunta tres
+       cosas —cuántos atienden, por dónde entra el trabajo y cómo se reparte— y aquí las tiene sin
+       leer un campo. Es la banda de SnowUI, con los datos que este producto sí tiene. -->
+  @if (mode() === 'edit') {
+    <!-- SIN AVATAR, y no por gusto. Al quitar la caja, TODA la página arranca en x=108: el rótulo
+         del bloque, las casillas, el buscador y la tabla. El avatar empujaba el nombre a x=147, así
+         que el texto más importante de la pantalla era lo único fuera de esa vertical, y un filo
+         suelto se lee como ruido aunque nadie sepa nombrarlo. La foto del grupo sigue donde se
+         cambia, en Identidad. (Antes el avatar SÍ trabajaba: alineaba el nombre con el título de la
+         tarjeta, que estaba en 146. Esa tarjeta ya no está.) -->
+    <div class="headline">
+      <!-- El nombre es el TÍTULO DE LA PÁGINA, no un dato más de una franja: el sujeto de esta
+           pantalla es el grupo. `h3-semibold` es el rol que ya usan las nueve listas de la app
+           para su `h1` (`sc-list-page`), así que no nace un tamaño nuevo para esto. -->
+      <div class="headline__who">
+        <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
+        <span class="headline__meta sc-text-caption-regular">
+          {{ form().phone || ('groups.form.summary.none' | translate) }} · {{ priorityKeys[form().priority] | translate }}
+        </span>
+      </div>
+      <dl class="headline__stats">
+        @for (s of headline(); track s.etiqueta) {
+          <div class="headline__stat">
+            <dt class="headline__label sc-text-caption-regular">{{ s.etiqueta | translate }}</dt>
+            <!-- El `title` es lo que rescata el valor cuando el ancho fijo lo recorta. -->
+            <dd class="headline__value sc-text-body-semibold" [title]="s.valor">{{ s.valor }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+  }
+
+  <!-- El conmutador, ARRIBA y con TODAS las secciones dentro, «Canales y
+       agentes» la primera (Rafa, 2026-09-22). Antes vivía debajo del bloque de canales y ese bloque
+       llevaba su propio `h2`: la misma cosa —elegir qué sección del grupo miras— se decía de dos
+       maneras y en dos sitios de la página. Con una sola tira arriba, el rótulo de cada sección es
+       su pestaña y la pantalla se lee de arriba abajo: quién es el grupo, qué sección miro, la sección.
+
+       `p-tabs` NATIVO de primeng.dev, su ejemplo básico y de TEXTO (DD-113 §1 y §3): esto cambia el
+       contenido de la pantalla, que es lo que la decisión reserva a pestañas — el segmentado queda
+       para filtrar una lista o elegir un valor, como los cuatro `sc-selectbutton` que siguen abajo
+       en Anuncios y Avanzado. Sin panels, igual que el ejemplo `tabmenu` y que Plantillas: el
+       contenido de cada sección ya vive en el flujo de la página y lo gobierna `showSection`. Sin
+       icono ni contador que el ejemplo no tenga, y sin `scrollable`, que la API instalada marca
+       obsoleto. Así llegan gratis la raya que se desliza (250ms), las flechas, Inicio y Fin. -->
+  <p-tabs class="tabbar" [value]="activeTab()" (valueChange)="onTabChange($event)">
+    <!-- El nombre va al nodo con `role="tablist"`, que es el `content` de dentro de `p-tablist`. -->
+    <p-tablist [pt]="{ content: { 'aria-label': 'common.form_index_aria' | translate } }">
+      @for (s of tabSections(); track s.id) {
+        <p-tab [value]="s.id">{{ s.labelKey | translate }}</p-tab>
+      }
+    </p-tablist>
+  </p-tabs>
+
+  <!-- Identidad es una pestaña más, y no un bloque suelto arriba: la franja del nombre ya dice sus
+       tres campos, así que tenerla fija se veía dos veces seguidas, con la foto repetida. -->
+
+  @if (showSection('group-section-channels')) {
+    <!-- Canales, estrategia y agentes en UNA sección (Rafa, 2026-09-16). Cada canal lleva a su lado cómo se reparte,
+         y la tabla de agentes va justo debajo: marcar un canal enseña su columna sin ir arriba y abajo.
+
+         SIN CAJA en la variante `s` (Rafa, 2026-09-21, maqueta Figma 381:2463). Una caja está para
+         separar un grupo de sus vecinos, y este bloque no tiene vecinos: ES el contenido de la
+         página. Lo único que hacía era meterlo todo 38px hacia dentro y dibujar un marco alrededor
+         de la pantalla. Al quitarla, título, casillas, buscador y tabla arrancan todos en x=108,
+         la misma vertical que la página («align to shared edges»), y la tabla gana 95px de ancho.
+         En las variantes con índice la caja SÍ trabaja: ahí tiene tarjetas vecinas. -->
+    <!-- SIN TÍTULO: el rótulo de esta sección es su pestaña, que está justo encima y encendida
+           (Rafa, 2026-09-22). Repetirlo aquí era decir «Canales y agentes» dos veces seguidas y
+           gastar una vertical en ello. El nombre accesible lo pone `aria-label` con la MISMA clave
+           que la pestaña, así el lector de pantalla oye lo que el ojo lee. -->
+    <section
+      class="plain-section"
+      id="group-section-channels"
+      [attr.aria-label]="'groups.form.section.channels_agents' | translate"
+    >
+      <ng-container *ngTemplateOutlet="canalesYAgentes" />
+    </section>
+  }
+
+  <!-- El contenido, una sola vez: lo pintan la caja o el bloque a sangre. Lo único que cambia entre
+       los dos es la SANGRÍA: dentro de la caja el contenido se mete 12.25 (`.sub-section`, el
+       contrato que vigila `audit:screen-vocabulary`); a sangre no hay filo del que sangrar. -->
+  <ng-template #canalesYAgentes>
+      <!-- Que falte marcar un canal no es contenido equivocado: lo señalan la bola roja del índice
+           (`sectionsWithErrors`) y el motivo del botón. -->
+      <section class="plain-block" [attr.aria-label]="'groups.form.section.channels' | translate">
+        <!-- Los cuatro canales en UNA fila y, debajo, solo los ajustes de los que están marcados (Rafa, 2026-09-18):
+             así la tabla de agentes empieza más arriba y cabe entera en la pantalla. Cada ajuste dice su canal,
+             que ya no está pegado a su casilla. -->
+        <div class="channel-line">
+        <div class="channel-row">
+          @for (channel of channels; track channel) {
+            <sc-checkbox class="checkbox-row" [state]="hasChannel(channel) ? 'all' : 'none'" (cycle)="toggleChannel(channel)">{{ channelKeys[channel] | translate }}</sc-checkbox>
+          }
+        </div>
+
+        <div class="channel-settings">
+          @if (hasPhone()) {
+            <span class="channel-list__setting">
+              <label class="channel-list__label sc-text-caption-regular" for="group-strategy">{{ 'groups.form.fields.phone_strategy' | translate }}</label>
+              <sc-select class="channel-list__select" size="sm" inputId="group-strategy" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" (valueChange)="onStrategyValueChange($event)">
+                <ng-template #item let-o>
+                  <span class="strategy-option">
+                    <span>{{ o.label }}</span>
+                    @if (o.note) {
+                      <span class="strategy-option__note sc-text-caption-regular">{{ o.note }}</span>
+                    }
+                  </span>
+                </ng-template>
+              </sc-select>
+            </span>
+            @if (isRingAll()) {
+              <span class="channel-list__setting">
+                <label class="channel-list__label sc-text-caption-regular" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
+                <sc-select size="sm" inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
+                <span class="channel-list__label sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
+              </span>
+            }
+            @if (isNiveles()) {
+              <span class="channel-list__setting">
+                <label class="channel-list__label sc-text-caption-regular" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+                <sc-select class="channel-list__select" size="sm" inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
+              </span>
+              <span class="channel-list__hint sc-text-caption-regular">{{ 'groups.form.fields.levels_hint' | translate }}</span>
+            }
+            @if (isExclusive()) {
+              <span class="channel-list__hint sc-text-caption-regular">{{ 'groups.form.fields.exclusive_hint' | translate }}</span>
+            }
+          }
+          @if (hasChat()) {
+            <span class="channel-list__setting">
+              <label class="channel-list__label sc-text-caption-regular" for="group-chat-strategy">{{ 'groups.form.fields.chat_strategy' | translate }}</label>
+              <sc-select class="channel-list__select" size="sm" inputId="group-chat-strategy" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
+            </span>
+          }
+        </div>
+        </div>
+      </section>
+
+      <!-- A sangre no hay divisor: los separa el aire (28, el doble de los 14 que separan las filas
+           DENTRO de cada bloque, que es lo que pide la regla de agrupación). Dentro de la caja se
+           queda, porque ahí el aire no puede crecer sin descuadrar el relleno de la tarjeta. -->
+      <!-- Sin título: lo que hay debajo es una tabla de agentes con su buscador, y el rótulo solo gastaba alto
+           (Rafa, 2026-09-18). El nombre se queda para el lector de pantalla. -->
+      <section class="plain-block" [attr.aria-label]="'groups.form.section.agents' | translate">
+        <sc-agent-channel-table
+          [groupChannels]="formGroupChannels()"
+          [links]="form().links"
+          [availableAgents]="availableAgents()"
+          [groupId]="editingId() ?? 0"
+          [showLevel]="isNiveles()"
+          (linksChange)="onLinksChange($event)"
+        />
+      </section>
+  </ng-template>
+
+  <!-- Identidad es una pestaña más: la pinta su `showSection`, en el orden de la tira. -->
+  @if (showSection('group-section-identity')) {
+    <ng-container *ngTemplateOutlet="identitySection" />
+  }
+
+  @if (showSection('group-section-resources')) {
+    <!-- Lo que se asigna desde Repositorios, como «Recursos» en la ficha de agente (Figma de la migración). -->
+    <sc-section-card
+      anchorId="group-section-resources"
+      surface="card"
+      [icon]="iconOf('group-section-resources')"
+      titleKey="groups.form.section.resources"
+    >
+      <section class="sub-section">
+        <div class="grid grid--2">
+          <!-- UNA tipificación: el agente recorre un solo árbol al cerrar (manual de Voice, p. 14). -->
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-typification">
+                {{ 'groups.form.fields.typification' | translate }}
+              </label>
+              <!-- Crear una sin salir de la ficha (Rafa, 2026-09-18): antes solo quedaba «Gestionar en
+                   Repositorios», que te sacaba del alta del grupo entero para volver a encontrar el camino.
+                   Icono solo (Rafa, 2026-09-20): mismo botón «solo icono» en los cuatro campos de abajo, para
+                   que el gesto de crear sin salir sea consistente en toda la sección. Fuera del flujo del
+                   texto (`field__label-row__action`): con su propio relleno, un botón CON etiqueta medía 27px
+                   contra los 18px de la etiqueta sola y desalineaba el desplegable (Rafa, 2026-09-18: «no hay
+                   alineación»); solo icono no tiene ese problema, pero se deja la clase por si vuelve a hacer
+                   falta el ajuste. -->
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.typification_new' | translate" [pTooltip]="'groups.form.fields.typification_new' | translate" tooltipPosition="top" (clicked)="creatingTipificacion.set(true)" />
+            </span>
+            <sc-select
+              inputId="group-typification"
+              optionLabel="label"
+              optionValue="value"
+              [options]="typificationOptions()"
+              [value]="form().typification"
+              [helperText]="'groups.form.fields.typification_hint' | translate"
+              (valueChange)="onTypificationChange($event)"
+            />
+          </div>
+
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-agendas">
+                {{ 'agents.form.advanced.agendas.title' | translate }}
+              </label>
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="creatingAgenda.set(true)" />
+            </span>
+            <sc-multiselect
+              inputId="group-agendas"
+              display="chip"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [maxSelectedLabels]="4"
+              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+              [placeholder]="'agents.form.resources.none' | translate"
+              [options]="scheduleOptions()"
+              [value]="scheduleValue()"
+              (valueChange)="onIdsChange('scheduleIds', $event)"
+            />
+          </div>
+
+          @if (hasChat()) {
+            <div class="field">
+              <span class="field__label-row">
+                <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
+                  {{ 'agents.form.resources.templates_chat' | translate }}
+                </label>
+                <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingChatTemplate.set(true)" />
+              </span>
+              <sc-multiselect
+                inputId="group-templates-chat"
+                display="chip"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [maxSelectedLabels]="4"
+                [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+                [placeholder]="'agents.form.resources.none' | translate"
+                [options]="chatTemplateOptions()"
+                [value]="chatTemplateValue()"
+                (valueChange)="onTemplatesChange('chat', $event)"
+              />
+            </div>
+          }
+
+          @if (hasEmail()) {
+            <div class="field">
+              <span class="field__label-row">
+                <label class="field__label sc-text-caption-semibold" for="group-templates-email">
+                  {{ 'agents.form.resources.templates_email' | translate }}
+                </label>
+                <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingEmailTemplate.set(true)" />
+              </span>
+              <sc-multiselect
+                inputId="group-templates-email"
+                display="chip"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [maxSelectedLabels]="4"
+                [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+                [placeholder]="'agents.form.resources.none' | translate"
+                [options]="emailTemplateOptions()"
+                [value]="emailTemplateValue()"
+                (valueChange)="onTemplatesChange('email', $event)"
+              />
+            </div>
+          }
+
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-labels">
+                {{ 'agents.form.advanced.labels.title' | translate }}
+              </label>
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
+            </span>
+            <sc-multiselect
+              inputId="group-labels"
+              display="chip"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [maxSelectedLabels]="4"
+              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+              [placeholder]="'agents.form.resources.none' | translate"
+              [options]="labelOptions()"
+              [value]="labelValue()"
+              (valueChange)="onIdsChange('labelIds', $event)"
+            />
+          </div>
+        </div>
+
+        <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
+        <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
+      </section>
+    </sc-section-card>
+  }
+
+  @if (hasPhone() && showSection('group-section-announcements')) {
+    <!-- Todo lo que suena en la llamada, solo con teléfono (manual de Voice, p. 13-14). -->
+    <sc-section-card
+      anchorId="group-section-announcements"
+      surface="card"
+      [icon]="iconOf('group-section-announcements')"
+      titleKey="groups.form.section.announcements"
+    >
+      <section class="sub-section" aria-labelledby="group-audio-title">
+        <header class="sub-section__head">
+          <h3 id="group-audio-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.announcements.audio_title' | translate }}</h3>
+        </header>
+        <div class="audio-list">
+          <span class="audio-list__label sc-text-body-regular">
+            {{ 'groups.form.announcements.hold_music' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.hold_music_info' }" />
+          </span>
+          <span class="audio-list__control">
+            <span class="audio-list__file sc-text-body-regular">{{ form().announcements.holdMusicFile ?? ('groups.form.announcements.default_music' | translate) }}</span>
+            <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
+            @if (form().announcements.holdMusicFile) {
+              <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.use_default' | translate" (clicked)="setAnnouncement('holdMusicFile', null)" />
+            }
+          </span>
+
+          <span class="audio-list__label sc-text-body-regular">
+            {{ 'groups.form.announcements.queue_id' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.queue_id_info' }" />
+          </span>
+          <span class="audio-list__control">
+            <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="form().announcements.queueIdSource" [ariaLabel]="'groups.form.announcements.queue_id' | translate" (valueChange)="setAnnouncement('queueIdSource', $any($event))" />
+            @if (form().announcements.queueIdSource === 'file') {
+              <span class="audio-list__file sc-text-body-regular">{{ form().announcements.queueIdFile ?? ('groups.form.announcements.no_file' | translate) }}</span>
+              <ng-container *ngTemplateOutlet="filePicker; context: { key: 'queueIdFile', id: 'group-queue-id' }" />
+            } @else if (form().announcements.queueIdSource === 'tts') {
+              <!-- «Texto a voz» sin texto no dice nada: el campo aparece con la opción. -->
+              <sc-inputtext class="audio-list__text" size="sm" inputId="group-queue-id-text" [ariaLabel]="('groups.form.announcements.queue_id' | translate) + ': ' + ('groups.form.announcements.tts_text' | translate)" [placeholder]="'groups.form.announcements.tts_text' | translate" [value]="form().announcements.queueIdText" (valueChange)="setAnnouncement('queueIdText', $event ?? '')" />
+            }
+          </span>
+
+          <span class="audio-list__label sc-text-body-regular">
+            {{ 'groups.form.announcements.next_in_line' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.next_in_line_info' }" />
+          </span>
+          <span class="audio-list__control">
+            <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="form().announcements.nextInLineSource" [ariaLabel]="'groups.form.announcements.next_in_line' | translate" (valueChange)="setAnnouncement('nextInLineSource', $any($event))" />
+            @if (form().announcements.nextInLineSource === 'file') {
+              <span class="audio-list__file sc-text-body-regular">{{ form().announcements.nextInLineFile ?? ('groups.form.announcements.no_file' | translate) }}</span>
+              <ng-container *ngTemplateOutlet="filePicker; context: { key: 'nextInLineFile', id: 'group-next-in-line' }" />
+            } @else if (form().announcements.nextInLineSource === 'tts') {
+              <sc-inputtext class="audio-list__text" size="sm" inputId="group-next-in-line-text" [ariaLabel]="('groups.form.announcements.next_in_line' | translate) + ': ' + ('groups.form.announcements.tts_text' | translate)" [placeholder]="'groups.form.announcements.tts_text' | translate" [value]="form().announcements.nextInLineText" (valueChange)="setAnnouncement('nextInLineText', $event ?? '')" />
+            }
+          </span>
+
+          <!-- Más de un anuncio periódico, cada uno con su .wav y su frecuencia (postventa, 2026-09-18). -->
+          <span class="audio-list__label audio-list__label--top sc-text-body-regular" id="group-periodic-label">
+            {{ 'groups.form.announcements.periodic' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.periodic_info' }" />
+          </span>
+          <span class="audio-list__control audio-list__control--stack">
+            @for (announcement of form().announcements.periodicAnnouncements; track $index) {
+              <span class="audio-list__row">
+                <span class="audio-list__file sc-text-body-regular">{{ announcement.file }}</span>
+                <label class="audio-list__hint sc-text-caption-regular" [for]="'group-periodic-every-' + $index">{{ 'groups.form.announcements.every' | translate }}</label>
+                <sc-inputnumber class="field__number" size="sm" [inputId]="'group-periodic-every-' + $index" [min]="5" suffix="s" [value]="announcement.everySec" (valueChange)="setPeriodicFrequency($index, $event)" />
+                <sc-button size="sm" variant="secondary" appearance="text" icon="delete" [ariaLabel]="'groups.form.announcements.remove_periodic_aria' | translate: { file: announcement.file }" (clicked)="removePeriodicAnnouncement($index)" />
+              </span>
+            }
+            <span class="audio-list__row">
+              <input #periodicInput class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".wav,audio/wav" id="group-periodic-file" (change)="onPeriodicFile($event)" />
+              <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.announcements.add_periodic' | translate" (clicked)="periodicInput.click()" />
+            </span>
+          </span>
+
+          <!-- «Audio saliente» del Figma de la migración; el manual no lo explica (por confirmar con desarrollo). -->
+          <span class="audio-list__label sc-text-body-regular">
+            {{ 'groups.form.announcements.outbound_audio' | translate }}
+            <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.outbound_audio_info' }" />
+          </span>
+          <span class="audio-list__control">
+            <span class="audio-list__file sc-text-body-regular">{{ form().announcements.outboundAudioFile ?? ('groups.form.announcements.no_file' | translate) }}</span>
+            <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio' }" />
+            @if (form().announcements.outboundAudioFile) {
+              <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.remove_file' | translate" (clicked)="setAnnouncement('outboundAudioFile', null)" />
+            }
+          </span>
+        </div>
+
+        <div class="grid grid--2">
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-voice">
+              {{ 'groups.form.announcements.voice' | translate }}
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.voice_info' }" />
+            </label>
+            <sc-select inputId="group-voice" [options]="voiceOptions" [value]="form().announcements.voice" [helperText]="'groups.form.announcements.voice_hint' | translate" (valueChange)="setAnnouncement('voice', $any($event))" />
+          </div>
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section" aria-labelledby="group-notices-title">
+        <header class="sub-section__head">
+          <h3 id="group-notices-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.announcements.notices_title' | translate }}</h3>
+        </header>
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch [checked]="form().announcements.announceAvgWait" [ariaLabel]="'groups.form.announcements.avg_wait' | translate" (checkedChange)="setAnnouncement('announceAvgWait', $event)" />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">
+              {{ 'groups.form.announcements.avg_wait' | translate }}
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.avg_wait_info' }" />
+            </span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.avg_wait_hint' | translate }}</p>
+            @if (form().announcements.announceAvgWait) {
+              <sc-inputnumber class="field__number" size="sm" inputId="group-avg-wait" [min]="0" suffix="s" [value]="form().announcements.avgWaitSec" (valueChange)="setAnnouncementNumber('avgWaitSec', $event)" />
+            }
+          </div>
+        </div>
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch [checked]="form().announcements.announcePosition" [ariaLabel]="'groups.form.announcements.position' | translate" (checkedChange)="setAnnouncement('announcePosition', $event)" />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">
+              {{ 'groups.form.announcements.position' | translate }}
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.position_info' }" />
+            </span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.position_hint' | translate }}</p>
+          </div>
+        </div>
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch [checked]="form().announcements.announceWaitToAgent" [ariaLabel]="'groups.form.announcements.wait_to_agent' | translate" (checkedChange)="setAnnouncement('announceWaitToAgent', $event)" />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">
+              {{ 'groups.form.announcements.wait_to_agent' | translate }}
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.wait_to_agent_info' }" />
+            </span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.wait_to_agent_hint' | translate }}</p>
+          </div>
+        </div>
+      </section>
+    </sc-section-card>
+  }
+
+  @if (showSection('group-section-advanced')) {
+    <!-- Lo que casi no se toca: nace con los valores por defecto de Configuración del AED (manual de Voice, p. 10). -->
+    <sc-section-card
+      anchorId="group-section-advanced"
+      surface="card"
+      [icon]="iconOf('group-section-advanced')"
+      titleKey="groups.form.section.advanced"
+      hintKey="groups.form.advanced.defaults_hint"
+    >
+      <section class="sub-section" aria-labelledby="group-queue-title">
+        <header class="sub-section__head">
+          <h3 id="group-queue-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.advanced.queue_title' | translate }}</h3>
+        </header>
+        <div class="grid grid--2">
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-queue-size">{{ 'groups.form.advanced.queue_size' | translate }}</label>
+            <span class="audio-list__control">
+              <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="queueSizeOptions()" [value]="form().advanced.queueSizeType" [ariaLabel]="'groups.form.advanced.queue_size' | translate" (valueChange)="setAdvanced('queueSizeType', $any($event))" />
+              <sc-inputnumber class="field__number" size="sm" inputId="group-queue-size" [min]="1" [value]="form().advanced.queueSize" (valueChange)="setAdvancedNumber('queueSize', $event)" />
+            </span>
+            <p class="field__help sc-text-caption-regular">{{ (form().advanced.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: form().advanced.queueSize } }}</p>
+          </div>
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-max-wait">{{ 'groups.form.advanced.max_queue_wait' | translate }}</label>
+            <sc-inputnumber class="field__number" inputId="group-max-wait" [min]="0" suffix="s" [value]="form().advanced.maxQueueWaitSec" (valueChange)="setAdvancedNumber('maxQueueWaitSec', $event)" />
+          </div>
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-transfer">{{ 'groups.form.advanced.transfer' | translate }}</label>
+            <sc-inputnumber class="field__number" inputId="group-transfer" [min]="0" suffix="s" [value]="form().advanced.transferSec" [helperText]="'groups.form.advanced.transfer_hint' | translate" (valueChange)="setAdvancedNumber('transferSec', $event)" />
+          </div>
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-service-level">{{ 'groups.form.advanced.service_level' | translate }}</label>
+            <sc-inputnumber class="field__number" inputId="group-service-level" [min]="0" suffix="s" [value]="form().advanced.serviceLevelSec" [helperText]="'groups.form.advanced.service_level_hint' | translate" (valueChange)="setAdvancedNumber('serviceLevelSec', $event)" />
+          </div>
+          @if (hasPhone()) {
+            <div class="field">
+              <label class="field__label sc-text-caption-semibold" for="group-wrap-up">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
+              <sc-inputnumber class="field__number" inputId="group-wrap-up" [min]="0" suffix="s" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" />
+            </div>
+          }
+        </div>
+        @if (hasPhone()) {
+          <div class="switch-field switch-field--top">
+            <sc-toggleswitch [checked]="form().advanced.overflowWhenNoAgents" [ariaLabel]="'groups.form.advanced.overflow' | translate" (checkedChange)="setAdvanced('overflowWhenNoAgents', $event)" />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.overflow' | translate }}</span>
+              <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_hint' | translate }}</p>
+            </div>
+          </div>
+        }
+        <!-- «Desbordar sesión» del Figma de la migración; el manual no lo trae (a qué canal aplica, por confirmar). -->
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch [checked]="form().advanced.overflowSession" [ariaLabel]="'groups.form.advanced.overflow_session' | translate" (checkedChange)="setAdvanced('overflowSession', $event)" />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.overflow_session' | translate }}</span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_session_hint' | translate }}</p>
+          </div>
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section" aria-labelledby="group-card-title">
+        <header class="sub-section__head">
+          <h3 id="group-card-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.advanced.card_opening' | translate }}</h3>
+        </header>
+        <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
+        <div class="grid grid--2">
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-card-url">{{ 'groups.form.advanced.card_url' | translate }}</label>
+            <sc-inputtext inputId="group-card-url" type="url" [value]="form().advanced.cardUrl" [helperText]="'groups.form.advanced.card_url_hint' | translate" (valueChange)="setAdvanced('cardUrl', $event)" />
+          </div>
+          @if (form().advanced.cardOpening === 'embedded') {
+            <div class="field">
+              <label class="field__label sc-text-caption-semibold" for="group-card-height">{{ 'groups.form.advanced.card_height' | translate }}</label>
+              <sc-inputnumber class="field__number" inputId="group-card-height" [min]="100" suffix="px" [value]="form().advanced.cardHeight" (valueChange)="setAdvancedNumber('cardHeight', $event)" />
+            </div>
+          }
+        </div>
+      </section>
+
+      @if (hasChat()) {
+        <sc-divider />
+        <section class="sub-section" aria-labelledby="group-chat-config-title">
+          <header class="sub-section__head">
+            <h3 id="group-chat-config-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.advanced.chat_config_title' | translate }}</h3>
+          </header>
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">
+                {{ 'groups.form.advanced.whatsapp_number' | translate }}
+              </label>
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.whatsapp_number_info' }" />
+            </span>
+            <sc-inputtext inputId="group-chat-whatsapp" type="tel" placeholder="+34 900 100 200" [value]="form().advanced.whatsappNumber" (valueChange)="setAdvanced('whatsappNumber', $event)" />
+          </div>
+          <div class="switch-field switch-field--top">
+            <sc-toggleswitch [checked]="form().advanced.chatRatingEnabled" [ariaLabel]="'groups.form.advanced.chat_rating' | translate" (checkedChange)="setAdvanced('chatRatingEnabled', $event)" />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">
+                {{ 'groups.form.advanced.chat_rating' | translate }}
+                <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.chat_rating_info' }" />
+              </span>
+              <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.chat_rating_hint' | translate }}</p>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-chat-domain">
+                {{ 'groups.form.advanced.allowed_domains' | translate }}
+              </label>
+              <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.allowed_domains_info' }" />
+            </span>
+            <span class="domain-add">
+              <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
+              <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
+            </span>
+            @if (form().advanced.allowedDomains.length > 0) {
+              <div class="domain-chips">
+                @for (domain of form().advanced.allowedDomains; track domain) {
+                  <sc-chip [label]="domain" removable [removeAriaLabel]="'common.delete' | translate" (removed)="removeDomain(domain)" />
+                }
+              </div>
+            }
+            <p class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.allowed_domains_hint' | translate }}</p>
+          </div>
+        </section>
+
+        <sc-divider />
+        <section class="sub-section" aria-labelledby="group-script-title">
+          <header class="sub-section__head">
+            <h3 id="group-script-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.advanced.script_title' | translate }}</h3>
+          </header>
+          <p class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.script_hint' | translate }}</p>
+          <sc-textarea inputId="group-chat-script" [rows]="2" fluid readonly [value]="chatScript()" />
+          <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'groups.form.advanced.script_copy' | translate" (clicked)="copyChatScript()" />
+        </section>
+      }
+    </sc-section-card>
+  }
+</ng-template>
+
+<ng-template #identitySection>
+  @if (showSection('group-section-identity')) {
+    <sc-section-card
+      anchorId="group-section-identity"
+      surface="card"
+      [icon]="iconOf('group-section-identity')"
+      titleKey="groups.form.section.identity"
+    >
+      <!-- Los tres campos en UNA rejilla, no «el nombre a lo ancho y debajo una fila de dos»: en el
+           arquetipo ancho (variante `s`) eso daba un campo de nombre de 1.171px. Cuántas columnas lo
+           decide el ANCHO DE LA SECCIÓN, no el de la ventana — el mismo formulario vive en dos anchos
+           con la misma ventana detrás. Ver `.identity-fields` en el SCSS. -->
+      <section class="sub-section identity-section">
+        <div class="identity-fields">
+          <!-- Foto del grupo, como la del agente (Figma de la migración). Sin foto, el avatar generado sigue al nombre. -->
+          <div class="form-identity identity-fields__who">
+            <sc-photo-upload
+              size="sm"
+              illustrationPool="abstract"
+              [photo]="form().photo"
+              [name]="(initial()?.name ?? form().name) || 'Grupo'"
+              [ariaLabel]="'common.photo.change' | translate"
+              (photoChange)="onPhotoChange($event)"
+            />
+            <div class="field form-identity__name">
+              <label class="field__label sc-text-caption-semibold" for="group-name">
+                {{ 'groups.form.fields.name' | translate }}
+                <span class="field__required" aria-hidden="true">*</span>
+              </label>
+              <sc-inputtext
+                inputId="group-name"
+                [required]="true"
+                [value]="form().name"
+                (valueChange)="onNameRename($event)"
+              />
+            </div>
+          </div>
+
+          <!-- El «Teléfono asociado» de Voice: se elige entre los que ya usan los grupos o se escribe uno. -->
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-phone">
+              {{ 'groups.form.fields.phone' | translate }}
+            </label>
+            <sc-select
+              inputId="group-phone"
+              editable
+              [options]="phoneOptions()"
+              [value]="form().phone"
+              [helperText]="'groups.form.fields.phone_hint' | translate"
+              (valueChange)="onPhoneValueChange($event)"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-priority">
+              {{ 'groups.form.fields.priority' | translate }}
+            </label>
+            <sc-select
+              inputId="group-priority"
+              [options]="priorities"
+              [value]="form().priority"
+              (valueChange)="onPriorityValueChange($event)"
+            >
+              <ng-template #item let-p>
+                {{ priorityKeys[p] | translate }}
+              </ng-template>
+              <ng-template #selectedItem let-p>
+                {{ priorityKeys[p] | translate }}
+              </ng-template>
+            </sc-select>
+          </div>
+        </div>
+      </section>
+
+    </sc-section-card>
+  }
+</ng-template>
+
+<!-- Elegir un .wav: el input nativo va oculto y lo abre un botón del DS. Fuera del tabulador y del lector de pantalla,
+     que si no anuncian un segundo botón «Choose File» en inglés. -->
+<ng-template #filePicker let-key="key" let-id="id">
+  <input #fileInput class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".wav,audio/wav" [id]="id + '-file'" (change)="onAudioFile(key, $event)" />
+  <sc-button size="sm" variant="secondary" appearance="outlined" icon="upload" [label]="'groups.form.announcements.choose_file' | translate" (clicked)="fileInput.click()" />
+</ng-template>
+
+<!-- Qué hace cada campo de Anuncios y audio, para nosotros mientras se decide el copy final (Rafa, 2026-09-18).
+     `pTooltip` nativo, mismo patrón que `category-form-modal`: icono solo, con su aria-label. -->
+<ng-template #infoTip let-key="key">
+  <sc-button
+    size="sm"
+    variant="secondary"
+    appearance="text"
+    [icon]="infoIcon"
+    [ariaLabel]="key | translate"
+    [pTooltip]="key | translate"
+    tooltipPosition="top"
+    tabindex="0"
+  />
+</ng-template>

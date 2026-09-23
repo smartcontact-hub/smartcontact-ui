@@ -10,9 +10,11 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { TabsModule } from 'primeng/tabs';
+import { TooltipModule } from 'primeng/tooltip';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
@@ -20,19 +22,23 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IllustratedAvatarComponent } from '@shared/components';
+import { injectLangChange } from '@core/utils/lang-change';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDividerComponent as DividerComponent,
-  ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
+  ScMultiSelectComponent as MultiSelectComponent,
   ScInputNumberComponent as InputNumberComponent,
+  ScSelectButtonComponent as SelectButtonComponent,
+  ScTextareaComponent as TextareaComponent,
+  ScToggleSwitchComponent as ToggleSwitchComponent,
   ScDialogComponent as DialogComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
-  ScToggleSwitchComponent as ToggleSwitchComponent,
+  ScPhotoUploadComponent as PhotoUploadComponent,
+  ScChipComponent as ChipComponent,
 } from '@smartcontact-hub/components';
 import {
   CHANNEL_LABEL_KEYS,
@@ -44,12 +50,31 @@ import {
   GroupPriority,
   PHONE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
+  RING_ALL_OPTIONS,
+  SUB_STRATEGIES,
+  DEFAULT_ADVANCED,
+  DEFAULT_ANNOUNCEMENTS,
+  GroupAdvanced,
+  GroupAnnouncements,
+  UNAVAILABLE_STRATEGIES,
+  VOICE_OPTIONS,
 } from '../data/groups-data';
+import { GroupDefaultsStore } from '../state/group-defaults.store';
+import { TipificacionesStore, TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
+import { AgendasStore } from '@features/admin/repositories/instances/agendas';
+import { AGENDA_FIELDS } from '@features/admin/repositories/instances/agendas';
+import { RepoFormPanelComponent, RepoFormSubmission } from '@features/admin/repositories/components/repo-form-panel.component';
+import { TemplatesStore } from '@features/admin/templates/state/templates.store';
+import type { TemplateType } from '@features/admin/templates/data/templates-data';
+import { TemplateFormPanelComponent, TemplateFormSubmission } from '@features/admin/templates/components/template-form-panel/template-form-panel.component';
+import { LabelsStore } from '@features/admin/labels/state/labels.store';
+import { LabelFormPanelComponent, LabelFormSubmission } from '@features/admin/labels/components/label-form-panel/label-form-panel.component';
 import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import { NgTemplateOutlet } from '@angular/common';
 
 import {
   AgentChannelTableAgent,
@@ -58,32 +83,49 @@ import {
 
 interface FormState {
   name: string;
+  photo: string | null;
   phone: string;
   priority: GroupPriority;
-  typification: boolean;
+  typification: string | null;
+  scheduleIds: ReadonlySet<number>;
+  templateIds: ReadonlySet<number>;
+  labelIds: ReadonlySet<number>;
+  announcements: GroupAnnouncements;
+  advanced: GroupAdvanced;
   channels: ReadonlySet<GroupChannel>;
   strategy: string;
+  subStrategy: string;
+  ringAllAgents: number;
   chatStrategy: string;
-  capacityValue: number | null;
   links: readonly GroupAgentLink[];
 }
 
 @Component({
   selector: 'sc-group-form-page',
   imports: [
+    RouterLink,
+    NgTemplateOutlet,
     CheckboxComponent,
     AgentChannelTableComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
-    FormSectionNavComponent,
-    IllustratedAvatarComponent,
     InputTextComponent,
+    PhotoUploadComponent,
+    MultiSelectComponent,
     InputNumberComponent,
-    DialogComponent,
-    SectionCardComponent,
-    SelectComponent,
+    SelectButtonComponent,
+    TextareaComponent,
     ToggleSwitchComponent,
+    DialogComponent,
+    RepoFormPanelComponent,
+    TemplateFormPanelComponent,
+    LabelFormPanelComponent,
+    ChipComponent,
+    SectionCardComponent,
+    TabsModule,
+    TooltipModule,
+    SelectComponent,
     TranslateModule,
   ],
   templateUrl: './group-form-page.component.html',
@@ -98,7 +140,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly crossTab = inject(CrossTabLockService);
+  private readonly tipificacionesStore = inject(TipificacionesStore);
+  private readonly agendasStore = inject(AgendasStore);
+  private readonly templatesStore = inject(TemplatesStore);
+  private readonly labelsStore = inject(LabelsStore);
+  private readonly defaultsStore = inject(GroupDefaultsStore);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
    * fuera la banda sticky-form-header; identidad → breadcrumb + campos del
@@ -117,8 +165,20 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
   protected readonly channels = GROUP_CHANNELS;
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
-  protected readonly phoneStrategies = PHONE_STRATEGIES;
+  /** Skills se ve pero no se elige, con su motivo escrito en la opción (SISMAC-1975). */
+  protected readonly phoneStrategyOptions = computed(() => {
+    this.lang();
+    return PHONE_STRATEGIES.map((s) => ({
+      label: s,
+      value: s,
+      disabled: UNAVAILABLE_STRATEGIES.has(s),
+      note: UNAVAILABLE_STRATEGIES.has(s) ? this.translate.instant('groups.form.fields.skills_unavailable') : null,
+    }));
+  });
   protected readonly chatStrategies = CHAT_STRATEGIES;
+  protected readonly subStrategies = SUB_STRATEGIES;
+  protected readonly ringAllOptions = RING_ALL_OPTIONS;
+  protected readonly voiceOptions = VOICE_OPTIONS;
 
   /**
    * Section index for the form shell. In `edit` mode, Identity drops to
@@ -133,36 +193,146 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'groups.form.section.identity',
       icon: 'badge',
     };
-    // Canales y estrategia son UNA sección (2026-09-14): la estrategia depende de los
-    // canales marcados. Conserva el id de canales, que es el que lleva la bola de error.
+    // Canales, estrategia y agentes son UNA sección (Rafa, 2026-09-16): marcar un canal enseña su columna en
+    // la tabla de agentes justo debajo, sin ir arriba y abajo. Conserva el id de canales, que lleva la bola de error.
     const channels: FormNavSection = {
       id: 'group-section-channels',
-      labelKey: 'groups.form.section.distribution',
-      icon: 'account_tree',
-    };
-    const agents: FormNavSection = {
-      id: 'group-section-agents',
-      labelKey: 'groups.form.section.agents',
+      labelKey: 'groups.form.section.channels_agents',
       icon: 'group',
     };
     // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
     // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
     // ficha del panel ya da su contexto siempre visible.
-    if (this.mode() === 'edit') {
-      return [channels, agents, identity];
-    }
-    return [identity, channels, agents];
+    // COMPARAR: en una sola página (`b`) el índice sigue el orden de la página.
+    // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
+    const resources: FormNavSection = {
+      id: 'group-section-resources',
+      labelKey: 'groups.form.section.resources',
+      icon: 'library_books',
+    };
+    // Solo con teléfono: todo lo que suena en la llamada (manual de Voice, p. 13-14).
+    const announcements: FormNavSection = {
+      id: 'group-section-announcements',
+      labelKey: 'groups.form.section.announcements',
+      icon: 'volume_up',
+    };
+    const advanced: FormNavSection = {
+      id: 'group-section-advanced',
+      labelKey: 'groups.form.section.advanced',
+      icon: 'tune',
+    };
+    const middle = this.hasPhone() ? [resources, announcements, advanced] : [resources, advanced];
+    /* Al crear, Identidad primero (sin nombre no hay grupo); al editar, al fondo: casi no se toca después (Rafa,
+     * 2026-09-16, también en «Una página»).
+     *
+     * En la DENSA (`u`) va primero SIEMPRE: una página que se lee de arriba abajo de una pasada
+     * no es un índice al que se vuelve, y empezar por una tabla de doce nombres deja el grupo sin
+     * presentar. Medido el 2026-09-21 en «Una página»: lo primero de la pantalla era la lista de
+     * agentes y el nombre del grupo caía a 2.626px de scroll. */
+    /* El orden de la tira manda la pestaña que se abre sola. Al EDITAR, canales primero: es lo
+     * importante de verdad en un grupo (a quién enruta y por dónde) y sus tres campos de identidad
+     * ya los dice la franja de arriba. Al CREAR, identidad primero: sin nombre no hay grupo, y
+     * abrir el alta por una tabla de agentes es pedir que asignes gente a algo que no existe. */
+    return this.mode() === 'edit' ? [channels, identity, ...middle] : [identity, channels, ...middle];
   });
 
   protected readonly activeSection = signal<string>('group-section-identity');
 
-  protected readonly activeIcon = computed(() => {
-    const id = this.activeSection();
-    return this.navSections().find((s) => s.id === id)?.icon ?? null;
+  /**
+   * LA FORMA DE ESTA FICHA — «una página + pestañas», elegida por Rafa el 2026-09-22 entre las
+   * cinco que se construyeron en el laboratorio (`comparar/fichas`, que no se funde).
+   *
+   * De dónde sale (2026-09-21, Rafa): «aspirar a tener lo importante en una sola página ocupando
+   * el ancho que haga falta, y con otros componentes como tab group poder navegar a otras cosas».
+   * Las dos referencias que dio —Meridian y SnowUI— coinciden en tres cosas, y ninguna es un
+   * índice dentro de la página: identidad y estado arriba, navegación en pestañas, y el ancho que
+   * pide el contenido.
+   *
+   *   · ANCHO. La página sigue siendo del arquetipo `--rail` y la ensancha `.page__inner--rail.ficha-tabs`
+   *     en `_page.scss`. Cambiar el modificador a `--list` la dejaba a 0px de relleno por los
+   *     cuatro lados y `audit:page-anatomy` lo cazó dos veces: una página es de UN tipo.
+   *   · EL NOMBRE DEL GRUPO ES EL TÍTULO. `sc-text-h3-semibold`, el rol del `h1` de las nueve
+   *     listas, así que no nace un tamaño nuevo para esto.
+   *   · SIN CAJA EN EL BLOQUE PRINCIPAL. Una caja separa un grupo de sus vecinos y ese bloque no
+   *     tiene vecinos: ES la página. Al quitarla los filos de entrada pasaron de tres a uno y la
+   *     tabla ganó 76px.
+   *
+   * Las otras cuatro formas y el conmutador `?variante=` se quedaron en el laboratorio: aquí no
+   * hay variantes, hay una ficha.
+   */
+
+  /**
+   * Las secciones que viven detrás del conmutador, en orden. TODAS, incluida «Canales y agentes»
+   * (Rafa, 2026-09-22): antes ese bloque se quedaba fijo arriba con su propio `h2`, así que la
+   * pantalla tenía dos gramáticas —un título suelto y una tira de pestañas— para la misma cosa,
+   * una sección del grupo. Ahora hay UNA sola tira, arriba, y el nombre de cada sección se lee en
+   * su pestaña. Canales abre por defecto por el orden de `navSections`.
+   */
+  protected readonly tabSections = computed(() => this.navSections());
+
+  /** La pestaña elegida. Si la de ahora desaparece (un canal que se apaga), cae en la primera. */
+  private readonly pickedTab = signal<string>('');
+  protected readonly activeTab = computed(() => {
+    const ids = this.tabSections().map((s) => s.id);
+    const picked = this.pickedTab();
+    return ids.includes(picked) ? picked : (ids[0] ?? '');
   });
+
+  protected onTabChange(value: unknown): void {
+    if (typeof value === 'string' && value) this.pickedTab.set(value);
+  }
+
+  /**
+   * Las tres cifras de la franja de arriba: el estado del grupo de un vistazo, como la banda de
+   * SnowUI. No son decoración — son las tres preguntas que se hacen al abrir un grupo: cuántos
+   * atienden, por dónde entra el trabajo y cómo se reparte.
+   */
+  protected readonly headline = computed(() => {
+    const f = this.form();
+    const activos = f.links.filter((l) => l.active).length;
+    return [
+      { valor: `${activos}/${f.links.length}`, etiqueta: 'groups.form.section.agents' },
+      { valor: this.channelsSummary(f.channels) || '—', etiqueta: 'groups.form.section.channels' },
+      { valor: this.hasPhone() ? this.phoneStrategySummary() : '—', etiqueta: 'groups.form.section.strategy' },
+    ];
+  });
+
+  protected iconOf(id: string): string | null {
+    return this.navSections().find((s) => s.id === id)?.icon ?? null;
+  }
+
+  /** Se pinta la sección de la pestaña encendida, y solo esa. */
+  protected showSection(id: string): boolean {
+    return id === this.activeTab();
+  }
+
+  protected yesNo(value: boolean): string {
+    return value ? 'common.yes' : 'common.no';
+  }
+
+  protected orNone(value: string | number | null | undefined): string {
+    return value === null || value === undefined || value === '' ? this.translate.instant('groups.form.summary.none') : String(value);
+  }
+
+  protected channelsSummary(channels: Iterable<GroupChannel>): string {
+    const labels = [...channels].map((c) => this.channelLabel(c));
+    return labels.length > 0 ? labels.join(', ') : this.translate.instant('groups.form.summary.no_channels');
+  }
+
+  protected agentName(agentId: number): string {
+    return this.agentsStore.getAgent(agentId)?.name ?? `#${agentId}`;
+  }
+
+  /** Lo que ese agente hace en el grupo: en pausa, o los canales que atiende. */
+  protected linkSummary(link: GroupAgentLink): string {
+    return link.active ? this.channelsSummary(link.channels) : this.translate.instant('groups.form.summary.paused');
+  }
+
+
 
   protected readonly phoneIcon = 'call';
   protected readonly trashIcon = 'delete';
+  protected readonly infoIcon = 'info';
 
   protected readonly editingId = signal<number | null>(null);
   /** Source name si llegó vía Duplicar (?seedFromId). NULL en create vacío. */
@@ -268,6 +438,88 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly hasChat = computed(() => this.form().channels.has('chat'));
   protected readonly hasPhone = computed(() => this.form().channels.has('phone'));
+  protected readonly isNiveles = computed(() => this.hasPhone() && this.form().strategy === 'Niveles');
+  protected readonly isRingAll = computed(() => this.hasPhone() && this.form().strategy === 'Ring All');
+  protected readonly isExclusive = computed(() => this.hasPhone() && this.form().strategy === 'Agente exclusivo');
+
+  /** Los números que ya usan los grupos; también se puede escribir uno nuevo (Voice lo deja libre). */
+  protected readonly phoneOptions = computed<readonly string[]>(() => {
+    const phones = new Set(this.groupsStore.groups().map((g) => g.phone).filter(Boolean));
+    if (this.form().phone) phones.add(this.form().phone);
+    return [...phones].sort();
+  });
+
+  /** Una tipificación por grupo: cada categoría del repositorio es un conjunto (el agente elige dentro al cerrar). */
+  protected readonly typificationOptions = computed(() => {
+    this.lang();
+    const counts = new Map<string, number>();
+    for (const t of this.tipificacionesStore.items()) counts.set(t.category, (counts.get(t.category) ?? 0) + 1);
+    return [
+      { label: this.translate.instant('groups.form.fields.typification_none'), value: null },
+      ...[...counts].sort(([a], [b]) => a.localeCompare(b, 'es')).map(([category, count]) => ({
+        label: this.translate.instant('groups.form.fields.typification_option', { name: category, count }),
+        value: category,
+      })),
+    ];
+  });
+
+  protected typificationName(): string {
+    return this.form().typification ?? this.translate.instant('groups.form.fields.typification_none');
+  }
+
+  protected readonly scheduleOptions = computed(() => this.agendasStore.items().map((a) => ({ label: a.name, value: a.id })));
+  protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
+  protected readonly labelOptions = computed(() => this.labelsStore.labels().map((l) => ({ label: l.name, value: l.id })));
+  protected readonly labelValue = computed(() => [...this.form().labelIds]);
+  private templatesOf(type: TemplateType) {
+    return this.templatesStore.templates().filter((t) => t.type === type);
+  }
+  protected readonly chatTemplateOptions = computed(() => this.templatesOf('chat').map((t) => ({ label: t.title, value: t.id })));
+  protected readonly emailTemplateOptions = computed(() => this.templatesOf('email').map((t) => ({ label: t.title, value: t.id })));
+  protected readonly chatTemplateValue = computed(() => this.templatesOf('chat').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
+  protected readonly emailTemplateValue = computed(() => this.templatesOf('email').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
+  protected readonly hasEmail = computed(() => this.form().channels.has('email'));
+
+  protected namesOf(options: readonly { label: string; value: number }[], ids: readonly number[]): string {
+    const names = options.filter((o) => ids.includes(o.value)).map((o) => o.label);
+    return names.length > 0 ? names.join(', ') : this.translate.instant('groups.form.summary.none');
+  }
+
+  /** El código que se pega en la web para el chat de este grupo (manual de Voice, «Script de chat»). */
+  protected readonly chatScript = computed(
+    () => `<script src="https://chat.smart-contact.com/widget.js" data-group="${this.editingId() ?? 'nuevo'}" async></script>`,
+  );
+
+  protected readonly queueSizeOptions = computed(() => {
+    this.lang();
+    return [
+    { label: this.translate.instant('groups.form.advanced.queue_fixed'), value: 'fixed' },
+    { label: this.translate.instant('groups.form.advanced.queue_per_agent'), value: 'per_agent' },
+    ];
+  });
+  protected readonly cardOpeningOptions = computed(() => {
+    this.lang();
+    return [
+    { label: this.translate.instant('groups.form.advanced.card_embedded'), value: 'embedded' },
+    { label: this.translate.instant('groups.form.advanced.card_new_window'), value: 'new_window' },
+    ];
+  });
+  protected readonly audioSourceOptions = computed(() => {
+    this.lang();
+    return [
+    { label: this.translate.instant('groups.form.announcements.source_none'), value: 'none' },
+    { label: this.translate.instant('groups.form.announcements.source_tts'), value: 'tts' },
+    { label: this.translate.instant('groups.form.announcements.source_file'), value: 'file' },
+    ];
+  });
+
+  /** La estrategia de teléfono con lo que la completa, para el resumen. */
+  protected phoneStrategySummary(): string {
+    const f = this.form();
+    if (this.isRingAll()) return `${f.strategy} · ${this.translate.instant('groups.form.fields.ring_all_summary', { count: f.ringAllAgents })}`;
+    if (this.isNiveles()) return `${f.strategy} · ${f.subStrategy}`;
+    return f.strategy;
+  }
 
   /** Roster passed to the channel table — every agent in the system. */
   protected readonly availableAgents = computed<readonly AgentChannelTableAgent[]>(() =>
@@ -301,13 +553,20 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       const seedLinks = this.linksStore.linksForGroup(group.id);
       this.form.set({
         name: group.name,
+        photo: group.photo ?? null,
         phone: group.phone,
         priority: group.priority,
-        typification: group.typification,
+        typification: group.typification ?? null,
+        scheduleIds: new Set(group.schedules ?? []),
+        templateIds: new Set(group.templates ?? []),
+        labelIds: new Set(group.labels ?? []),
+        announcements: { ...DEFAULT_ANNOUNCEMENTS, ...group.announcements },
+        advanced: { ...DEFAULT_ADVANCED, ...group.advanced },
         channels: new Set(group.channels),
         strategy: group.strategy,
+        subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,
+        ringAllAgents: group.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
         chatStrategy: group.chatStrategy ?? CHAT_STRATEGIES[0]!,
-        capacityValue: group.capacityValue ?? null,
         links: seedLinks,
       });
       this.initialChannels.set(new Set(group.channels));
@@ -337,14 +596,21 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.form.set({
         // Unique identifiers — vaciados.
         name: '',
+        photo: source.photo ?? null,
         phone: '',
         // Resto del payload copiado.
         priority: source.priority,
-        typification: source.typification,
+        typification: source.typification ?? null,
+        scheduleIds: new Set(source.schedules ?? []),
+        templateIds: new Set(source.templates ?? []),
+        labelIds: new Set(source.labels ?? []),
+        announcements: { ...DEFAULT_ANNOUNCEMENTS, ...source.announcements },
+        advanced: { ...DEFAULT_ADVANCED, ...source.advanced },
         channels: new Set(source.channels),
         strategy: source.strategy,
+        subStrategy: source.subStrategy ?? SUB_STRATEGIES[0]!,
+        ringAllAgents: source.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
         chatStrategy: source.chatStrategy ?? CHAT_STRATEGIES[0]!,
-        capacityValue: source.capacityValue ?? null,
         links: seedLinks,
       });
       this.initialChannels.set(new Set(source.channels));
@@ -376,22 +642,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) => ({ ...f, [key]: value }));
   }
 
-  protected onPhoneValueChange(value: string): void {
-    this.updateField('phone', value);
-  }
-
-  /**
-   * Adapter para `<sc-inputnumber>` (capacityValue). Emite `number | null`;
-   * un null → campo vacío, mantenemos el null en el form para que serialize
-   * lo traduzca a `undefined`. Filtra valores negativos (defensa por si el
-   * usuario teclea un signo: el min="0" del input ya lo bloquea normalmente).
-   */
-  protected onCapacityValueChange(value: number | null): void {
-    if (value === null) {
-      this.updateField('capacityValue', null);
-      return;
-    }
-    if (Number.isFinite(value) && value >= 0) this.updateField('capacityValue', value);
+  protected onPhoneValueChange(value: unknown): void {
+    this.updateField('phone', typeof value === 'string' ? value : '');
   }
 
   protected onPriorityValueChange(value: unknown): void {
@@ -406,8 +658,176 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (typeof value === 'string') this.updateField('chatStrategy', value);
   }
 
-  protected onTypificationChange(checked: boolean): void {
-    this.updateField('typification', checked);
+  protected onTypificationChange(value: unknown): void {
+    this.updateField('typification', typeof value === 'string' ? value : null);
+  }
+
+  /** Crear una tipificación SIN salir de la ficha (Rafa, 2026-09-18: «me he salido del flujo solo para crear
+   *  una»). Mismo formulario que Repositorios (`TIPIFICACION_FIELDS`), en un diálogo. Al guardar, el grupo
+   *  queda con la categoría recién creada. */
+  protected readonly creatingTipificacion = signal(false);
+  protected readonly tipificacionFields = TIPIFICACION_FIELDS;
+  protected readonly tipificacionExistingNames = computed(() => this.tipificacionesStore.items().map((t) => t.name));
+
+  protected onCreateTipificacionSubmit(submission: RepoFormSubmission): void {
+    const created = this.tipificacionesStore.addItem({
+      name: submission['name'] ?? '',
+      code: submission['code'] ?? '',
+      category: submission['category'] ?? '',
+      description: submission['description'] ?? '',
+    });
+    this.onTypificationChange(created.category);
+    this.creatingTipificacion.set(false);
+  }
+
+  /** Mismo alivio que Tipificación (arriba), para los otros tres campos multiselección que solo tenían
+   *  «Gestionar en Repositorios»: Agendas, Plantillas (chat y email) y Etiquetas. Al guardar, el recién
+   *  creado se AÑADE a lo ya elegido, no lo sustituye. */
+  protected readonly creatingAgenda = signal(false);
+  protected readonly agendaFields = AGENDA_FIELDS;
+  protected readonly agendaExistingNames = computed(() => this.agendasStore.items().map((a) => a.name));
+
+  protected onCreateAgendaSubmit(submission: RepoFormSubmission): void {
+    const created = this.agendasStore.addItem({
+      name: submission['name'] ?? '',
+      numbers: submission['numbers'] ?? '',
+      description: submission['description'] ?? '',
+      status: submission['status'] || 'active',
+    });
+    this.onIdsChange('scheduleIds', [...this.form().scheduleIds, created.id]);
+    this.creatingAgenda.set(false);
+  }
+
+  protected readonly creatingChatTemplate = signal(false);
+  protected readonly creatingEmailTemplate = signal(false);
+  protected readonly templateExistingTitles = computed(() => this.templatesStore.templates().map((t) => t.title));
+
+  protected onCreateTemplateSubmit(type: TemplateType, submission: TemplateFormSubmission): void {
+    const created = this.templatesStore.addTemplate(submission);
+    this.form.update((f) => ({ ...f, templateIds: new Set([...f.templateIds, created.id]) }));
+    if (type === 'chat') this.creatingChatTemplate.set(false);
+    else this.creatingEmailTemplate.set(false);
+  }
+
+  protected readonly creatingLabel = signal(false);
+  protected readonly labelExistingNames = computed(() => this.labelsStore.labels().map((l) => l.name));
+
+  protected onCreateLabelSubmit(submission: LabelFormSubmission): void {
+    const created = this.labelsStore.addLabel(submission);
+    this.onIdsChange('labelIds', [...this.form().labelIds, created.id]);
+    this.creatingLabel.set(false);
+  }
+
+  protected onIdsChange(key: 'scheduleIds' | 'labelIds', value: unknown): void {
+    if (Array.isArray(value)) this.updateField(key, new Set(value as number[]));
+  }
+
+  /** Sustituye las plantillas de UN tipo sin tocar las del otro. */
+  protected onTemplatesChange(type: TemplateType, value: unknown): void {
+    if (!Array.isArray(value)) return;
+    const ofType = new Set(this.templatesOf(type).map((t) => t.id));
+    this.form.update((f) => ({
+      ...f,
+      templateIds: new Set([...[...f.templateIds].filter((id) => !ofType.has(id)), ...(value as number[])]),
+    }));
+  }
+
+  protected setAnnouncement<K extends keyof GroupAnnouncements>(key: K, value: GroupAnnouncements[K]): void {
+    this.form.update((f) => ({ ...f, announcements: { ...f.announcements, [key]: value } }));
+  }
+
+  protected setAdvanced<K extends keyof GroupAdvanced>(key: K, value: GroupAdvanced[K]): void {
+    this.form.update((f) => ({ ...f, advanced: { ...f.advanced, [key]: value } }));
+  }
+
+  /** Números: un campo vaciado no se guarda como 0, se queda en su valor anterior. */
+  protected setAdvancedNumber(key: 'queueSize' | 'transferSec' | 'maxQueueWaitSec' | 'wrapUpSec' | 'serviceLevelSec' | 'cardHeight', value: number | null): void {
+    if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
+  }
+
+  /** «Dominios permitidos» del script de chat (Rafa, 2026-09-20): en qué webs se puede insertar sin que
+   *  cualquiera lo copie. Texto libre en un campo + Enter/botón lo añade a la lista; sin duplicados. */
+  protected readonly domainInput = signal('');
+
+  protected addDomain(): void {
+    const value = this.domainInput().trim().toLowerCase();
+    if (!value) return;
+    const current = this.form().advanced.allowedDomains;
+    if (!current.includes(value)) this.setAdvanced('allowedDomains', [...current, value]);
+    this.domainInput.set('');
+  }
+
+  protected removeDomain(domain: string): void {
+    this.setAdvanced('allowedDomains', this.form().advanced.allowedDomains.filter((d) => d !== domain));
+  }
+
+  protected setAnnouncementNumber(key: 'avgWaitSec', value: number | null): void {
+    if (value !== null && Number.isFinite(value) && value >= 0) this.setAnnouncement(key, value);
+  }
+
+  /** El .wav elegido: de momento solo se guarda su nombre (demo). */
+  protected onPhotoChange(photo: string | null): void {
+    this.form.update((f) => ({ ...f, photo }));
+  }
+
+  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAudioFile', event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) this.setAnnouncement(key, file.name);
+    input.value = '';
+  }
+
+  /** Más de un anuncio periódico, cada uno con su frecuencia (postventa, 2026-09-18). Añadir un .wav aquí
+   *  crea una fila nueva; no reemplaza las que ya había. */
+  protected onPeriodicFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.form.update((f) => ({
+        ...f,
+        announcements: {
+          ...f.announcements,
+          periodicAnnouncements: [...f.announcements.periodicAnnouncements, { file: file.name, everySec: 30 }],
+        },
+      }));
+    }
+    input.value = '';
+  }
+
+  protected removePeriodicAnnouncement(index: number): void {
+    this.form.update((f) => ({
+      ...f,
+      announcements: {
+        ...f.announcements,
+        periodicAnnouncements: f.announcements.periodicAnnouncements.filter((_, i) => i !== index),
+      },
+    }));
+  }
+
+  protected setPeriodicFrequency(index: number, value: number | null): void {
+    if (value === null || !Number.isFinite(value) || value < 5) return;
+    this.form.update((f) => ({
+      ...f,
+      announcements: {
+        ...f.announcements,
+        periodicAnnouncements: f.announcements.periodicAnnouncements.map((a, i) =>
+          i === index ? { ...a, everySec: value } : a,
+        ),
+      },
+    }));
+  }
+
+  protected copyChatScript(): void {
+    void navigator.clipboard?.writeText(this.chatScript());
+    this.messages.add({ severity: 'success', summary: this.translate.instant('groups.form.advanced.script_copied'), life: TOAST_LIFE.success });
+  }
+
+  protected onSubStrategyChange(value: unknown): void {
+    if (typeof value === 'string') this.updateField('subStrategy', value);
+  }
+
+  protected onRingAllChange(value: unknown): void {
+    if (typeof value === 'number') this.updateField('ringAllAgents', value);
   }
 
   protected toggleChannel(channel: GroupChannel): void {
@@ -463,22 +883,31 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       const f = this.form();
       const payload = {
         name: f.name.trim(),
+        photo: f.photo ?? undefined,
         phone: f.phone.trim(),
         priority: f.priority,
-        typification: f.typification,
+        typification: f.typification ?? undefined,
+        schedules: [...f.scheduleIds],
+        templates: [...f.templateIds],
+        labels: [...f.labelIds],
+        announcements: f.announcements,
+        advanced: f.advanced,
         channels: Array.from(f.channels),
         strategy: f.strategy,
+        subStrategy: this.isNiveles() ? f.subStrategy : undefined,
+        ringAllAgents: this.isRingAll() ? f.ringAllAgents : undefined,
         chatStrategy: f.channels.has('chat') ? f.chatStrategy : undefined,
-        capacityValue:
-          f.channels.has('phone') && f.capacityValue !== null ? f.capacityValue : undefined,
-        capacityType:
-          f.channels.has('phone') && f.capacityValue !== null ? ('fixed' as const) : undefined,
       };
 
+      /* Como Contact Center y la ficha de agente (Rafa, 2026-09-16): guardar se queda en la ficha, con su aviso.
+       * Un alta pasa a ser la edición de lo recién creado, sin recargar. */
       const editingId = this.editingId();
+      let createdId: number | null = null;
       if (editingId) {
         this.groupsStore.updateGroup(editingId, { ...payload });
         this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(f.links, editingId));
+        const refreshed = this.groupsStore.getGroup(editingId);
+        if (refreshed) this.initial.set(refreshed);
         this.messages.add({
           severity: 'success',
           summary: this.translate.instant('groups.toasts.updated', { name: payload.name }),
@@ -486,16 +915,24 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         });
       } else {
         const created = this.groupsStore.addGroup(payload);
+        createdId = created.id;
         this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(f.links, created.id));
+        this.editingId.set(created.id);
+        this.initial.set(created);
         this.messages.add({
           severity: 'success',
           summary: this.translate.instant('groups.toasts.created', { name: created.name }),
           life: TOAST_LIFE.success,
         });
       }
+      // Lo guardado pasa a ser la referencia para avisar si luego se quita un canal con agentes.
+      this.initialChannels.set(new Set(f.channels));
+      this.initialLinks.set(this.linksStore.linksForGroup(this.editingId()!));
       this.saving.set(false);
       this.dirtyState.markPristine();
-      void this.router.navigateByUrl('/admin/grupos');
+      /* Un alta abre la edición de lo recién creado: navegar (y no solo cambiar la dirección) pone al día la miga
+       * y el candado entre pestañas. */
+      if (createdId !== null) void this.router.navigateByUrl(`/admin/grupos/editar/${createdId}`, { replaceUrl: true });
     }, 400);
   }
 
@@ -545,16 +982,25 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.router.navigateByUrl('/admin/grupos');
   }
 
+  /** Un grupo nuevo nace con lo guardado en Configuración del AED > Grupos. */
   private emptyForm(): FormState {
+    const defaults = this.defaultsStore.defaults();
     return {
       name: '',
+      photo: null,
       phone: '',
-      priority: 'Baja',
-      typification: false,
+      priority: defaults.priority,
+      typification: null,
+      scheduleIds: new Set<number>(),
+      templateIds: new Set<number>(),
+      labelIds: new Set<number>(),
+      announcements: { ...DEFAULT_ANNOUNCEMENTS, voice: defaults.voice },
+      advanced: { ...defaults.advanced },
       channels: new Set<GroupChannel>(['phone']),
-      strategy: PHONE_STRATEGIES[0]!,
+      strategy: defaults.strategy,
+      subStrategy: SUB_STRATEGIES[0]!,
+      ringAllAgents: RING_ALL_OPTIONS[0]!,
       chatStrategy: CHAT_STRATEGIES[0]!,
-      capacityValue: null,
       links: [],
     };
   }

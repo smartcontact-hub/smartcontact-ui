@@ -1,0 +1,214 @@
+<ng-template #topbarActions>
+  @if (dirty()) {
+    <sc-button
+      size="sm"
+      variant="secondary"
+      appearance="outlined"
+      [label]="'common.undo' | translate"
+      (clicked)="cancel()"
+    />
+  }
+  <sc-button
+    size="sm"
+    variant="primary"
+    [disabled]="!canSave()"
+    [loading]="saving()"
+    [label]="'common.save' | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de arriba dice DÓNDE estás y esta línea
+         dice QUÉ miras. Con lo que nace cada grupo nuevo, con los mismos campos y palabras que la ficha de grupo y
+         en el mismo orden que su «Avanzado». -->
+    <sc-section-card
+      icon="groups"
+      [headingLevel]="1"
+      surface="card"
+      titleKey="groups.defaults.heading"
+      hintKey="groups.defaults.hint"
+    >
+      <!--
+        LISTA DE AJUSTES: nombre a la IZQUIERDA, control a la DERECHA, una fila por ajuste.
+
+        Es la fórmula de las pantallas de ajustes que se sienten cuidadas (Linear, Vercel,
+        GitHub, los Ajustes de macOS) para un caso exacto como este: muchos parámetros
+        SUELTOS, de tipos distintos, sin relación de formulario entre ellos. Resuelve de una
+        vez lo que las dos versiones anteriores no:
+
+          · Los nombres forman UNA columna y se leen de arriba abajo sin saltar de columna.
+          · Los controles forman UN borde derecho, y cada uno mide lo que pide su contenido:
+            un número no ocupa media pantalla ni una fila de tres huecos desiguales.
+          · Todo va en una sola rejilla: antes se apilaban dos (desplegables en 2 columnas y
+            números en 3) y sus verticales no casaban.
+
+        Con nombre a un lado y control al otro, la vista cruza la fila entera, así que aquí SÍ
+        van rayas entre filas: es la regla de la tabla («la línea está donde hay columnas que
+        cruzar»), no una excepción a la de la lista de estados de General.
+      -->
+      <section class="sub-section" aria-labelledby="grupos-routing-title">
+        <header class="sub-section__head">
+          <h2 id="grupos-routing-title" class="sub-section__title sc-text-body-semibold">
+            {{ 'groups.defaults.routing_title' | translate }}
+          </h2>
+        </header>
+
+        <div class="settings-list">
+          <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" id="grupos-strategy-label" for="grupos-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.defaults.strategy_hint' | translate }}</p>
+            </div>
+            <sc-select
+              class="setting-row__control setting-row__control--select"
+              inputId="grupos-strategy"
+              ariaLabelledBy="grupos-strategy-label"
+              [options]="strategyOptions"
+              [value]="form().strategy"
+              (valueChange)="setField('strategy', $event)"
+            />
+          </div>
+          <div class="setting-row">
+            <label class="setting-row__label sc-text-body-regular" id="grupos-priority-label" for="grupos-priority">{{ 'groups.form.fields.priority' | translate }}</label>
+            <sc-select
+              class="setting-row__control setting-row__control--select"
+              inputId="grupos-priority"
+              ariaLabelledBy="grupos-priority-label"
+              [options]="priorities"
+              [value]="form().priority"
+              (valueChange)="setField('priority', $event)"
+            >
+              <ng-template #item let-p>{{ priorityKeys[p] | translate }}</ng-template>
+              <ng-template #selectedItem let-p>{{ priorityKeys[p] | translate }}</ng-template>
+            </sc-select>
+          </div>
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section" aria-labelledby="grupos-queue-title">
+        <header class="sub-section__head">
+          <h2 id="grupos-queue-title" class="sub-section__title sc-text-body-semibold">
+            {{ 'groups.form.advanced.queue_title' | translate }}
+          </h2>
+        </header>
+
+        <div class="settings-list">
+          <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" for="grupos-queue-size">{{ 'groups.form.advanced.queue_size' | translate }}</label>
+              <p class="setting-row__hint sc-text-caption-regular">{{ (form().advanced.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: form().advanced.queueSize } }}</p>
+            </div>
+            <span class="setting-row__control setting-row__group">
+              <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="queueSizeOptions()" [value]="form().advanced.queueSizeType" [ariaLabel]="'groups.form.advanced.queue_size' | translate" (valueChange)="setAdvanced('queueSizeType', $any($event))" />
+              <sc-inputnumber class="setting-row__control--number" inputId="grupos-queue-size" [min]="1" [value]="form().advanced.queueSize" (valueChange)="setAdvancedNumber('queueSize', $event)" />
+            </span>
+          </div>
+          <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" for="grupos-max-wait">{{ 'groups.form.advanced.max_queue_wait' | translate }}</label>
+            </div>
+            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-max-wait" suffix="s" [min]="0" [value]="form().advanced.maxQueueWaitSec" (valueChange)="setAdvancedNumber('maxQueueWaitSec', $event)" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" for="grupos-transfer">{{ 'groups.form.advanced.transfer' | translate }}</label>
+              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.transfer_hint' | translate }}</p>
+            </div>
+            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-transfer" suffix="s" [min]="0" [value]="form().advanced.transferSec" (valueChange)="setAdvancedNumber('transferSec', $event)" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" for="grupos-service-level">{{ 'groups.form.advanced.service_level' | translate }}</label>
+              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.service_level_hint' | translate }}</p>
+            </div>
+            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-service-level" suffix="s" [min]="0" [value]="form().advanced.serviceLevelSec" (valueChange)="setAdvancedNumber('serviceLevelSec', $event)" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" for="grupos-wrap-up">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
+              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.wrap_up_hint' | translate }}</p>
+            </div>
+            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-wrap-up" suffix="s" [min]="0" [value]="form().advanced.wrapUpSec" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" />
+          </div>
+                    <!-- El interruptor va a la DERECHA porque aquí manda el patrón LISTA DE AJUSTES:
+               todos los controles comparten borde derecho y uno a la izquierda sería el
+               único fuera de sitio. En General y Agentes va a la IZQUIERDA porque allí manda
+               el patrón FILA DE FRASE: el mando abre la frase que gobierna y detrás vienen
+               más cosas (número, sufijo, descripción). La regla es una sola: el interruptor
+               va donde van los controles de SU patrón, y nunca se mezclan los dos patrones
+               en la misma sección. Decidido con Rafa el 2026-09-13. -->
+          <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" for="grupos-overflow">{{ 'groups.form.advanced.overflow' | translate }}</label>
+              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_hint' | translate }}</p>
+            </div>
+            <sc-toggleswitch class="setting-row__control" inputId="grupos-overflow" [checked]="form().advanced.overflowWhenNoAgents" (checkedChange)="setAdvanced('overflowWhenNoAgents', $event)" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" for="grupos-overflow-session">{{ 'groups.form.advanced.overflow_session' | translate }}</label>
+              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_session_hint' | translate }}</p>
+            </div>
+            <sc-toggleswitch class="setting-row__control" inputId="grupos-overflow-session" [checked]="form().advanced.overflowSession" (checkedChange)="setAdvanced('overflowSession', $event)" />
+          </div>
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section" aria-labelledby="grupos-announcements-title">
+        <header class="sub-section__head">
+          <h2 id="grupos-announcements-title" class="sub-section__title sc-text-body-semibold">
+            {{ 'groups.form.section.announcements' | translate }}
+          </h2>
+        </header>
+
+        <div class="settings-list">
+          <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" id="grupos-voice-label" for="grupos-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
+              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.announcements.voice_hint' | translate }}</p>
+            </div>
+            <sc-select
+              class="setting-row__control setting-row__control--select"
+              inputId="grupos-voice"
+              ariaLabelledBy="grupos-voice-label"
+              [options]="voiceOptions"
+              [value]="form().voice"
+              (valueChange)="setField('voice', $event)"
+            />
+          </div>
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section" aria-labelledby="grupos-card-title">
+        <header class="sub-section__head">
+          <h2 id="grupos-card-title" class="sub-section__title sc-text-body-semibold">
+            {{ 'groups.form.advanced.card_opening' | translate }}
+          </h2>
+        </header>
+
+        <div class="settings-list">
+          <div class="setting-row">
+            <span class="setting-row__label sc-text-body-regular" id="grupos-card-opening-label">{{ 'groups.defaults.card_opening_type' | translate }}</span>
+            <sc-selectbutton class="setting-row__control" size="sm" optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
+          </div>
+          @if (form().advanced.cardOpening === 'embedded') {
+            <div class="setting-row">
+            <div class="setting-row__text">
+              <label class="setting-row__label sc-text-body-regular" for="grupos-card-height">{{ 'groups.form.advanced.card_height' | translate }}</label>
+            </div>
+            <sc-inputnumber class="setting-row__control setting-row__control--number" inputId="grupos-card-height" suffix="px" [min]="100" [value]="form().advanced.cardHeight" (valueChange)="setAdvancedNumber('cardHeight', $event)" />
+          </div>
+          }
+        </div>
+      </section>
+    </sc-section-card>
+  </div>
+</div>
