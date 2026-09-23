@@ -81,6 +81,39 @@
 
 ---
 
+## DD-116 · 2026-09-23 — `e2e:visual` sale del `preflight`: su única razón para estar ahí ya no existe
+
+**Contexto** · DD-62 metió `e2e:visual` en `preflight` con una regla explícita: es **lo que el CI
+no puede** correr, porque las capturas eran `-darwin`. Esa condición cayó después: las 38 capturas
+son hoy `*-linux.png`, las toma el workflow `visual-baselines` y las compara el job `e2e-smoke`
+(obligatorio en `main`). En un Mac, `screenshotBaseline()` se salta la comparación, así que en
+local el paso solo corría las aserciones de métrica, que el CI también corre.
+
+**Medido el 2026-09-23** ·
+· El CI corre la suite entera: `npm run e2e` lista **92 tests en 8 ficheros**, 64 de ellos de
+  `components.spec.ts`, y el `e2e-smoke` de `main` sale «92 passed».
+· La comparación del CI **enrojece**: la run 35536252484 (PR #218, 20-sep) cayó por
+  `toHaveScreenshot(bulkeditmenu|sectioncard|select.png)`, 66.862 px distintos en una.
+· Nadie apaga las capturas en `ci.yml` (`SC_SKIP_VISUAL_BASELINES` solo está en `tokens-sync`).
+· Coste local: **2m09s** por preflight (la cadena sin él, en frío: **6m28s**, casi todo builds
+  AOT en serie a 111% de CPU en un Mac de 10 núcleos), más la cola del puerto fijo 4280: con otra sesión
+  (o un servidor olvidado) dentro, el guardián espera 25 min y falla. Pasó ese mismo día con un
+  `ng serve` de otro worktree vivo desde las 00:56.
+
+**Decisión** · `e2e:visual` sale de `preflight` y de `preflight:scope`, y de `LOCAL_ONLY` en
+`ci-preflight-parity`. La red visual es la del CI, que es la única que compara píxeles. Además
+`components.spec.ts` corre en paralelo dentro del fichero (`describe.configure({ mode:
+'parallel' })`): medido en local, 2m09s → 1m00s-1m28s, 64/64 en tres pasadas.
+
+**Lo que se acepta** · Un rojo de métrica en el catálogo se ve en el CI tras el push, no antes. La
+promesa «verde en local ⇒ verde en CI» ya no cubría este paso de todos modos: en el Mac no se
+comparaban capturas.
+
+**Descartadas** ·
+· *Servir `dist/sc-docs` estático para acelerar la suite* — con `python3 -m http.server` la app
+  salía en blanco en parte de los tests (4 y 11 fallos). No se persiguió: deja de hacer falta.
+· *Menos workers* — con 3 fue más lento (1m31s y 1m51s) que con los 5 por defecto.
+
 ## DD-115 · 2026-09-20 — El contenido de página se ANCLA a la izquierda: el tope limita la lectura, no empuja al centro
 
 **Contexto** · Llegó la queja de que el índice lateral de las pantallas con rail «colgaba». Medido
