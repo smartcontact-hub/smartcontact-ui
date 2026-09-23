@@ -70,6 +70,21 @@ test('#1 `claude mcp list` no dice qué herramientas te llegan → deny; vecinos
   allow('gh pr list --state open', verde);
 });
 
+test('#7 veredicto de CI: la run más reciente sin acotar → deny; ci:verdict o --workflow → allow', () => {
+  // El rojo: el comando exacto con el que leí «completed/success» de la auditoría semanal y creí
+  // que era el CI (s46).
+  deny('gh run list --branch main --limit 1 --json status,conclusion', verde, /LEARNINGS #7/);
+  deny('gh run list --limit 1', verde, /LEARNINGS #7/);
+  deny('gh run list --branch main --limit=1 --jq ".[0].conclusion"', verde, /LEARNINGS #7/);
+  // Los verdes: el gate que sí contesta, acotar por workflow, y listar varias para filtrar a mano.
+  allow('npm run ci:verdict');
+  allow('npm run ci:verdict -- main');
+  allow('gh run list --branch main --limit 1 --workflow ci');
+  allow('gh run list --branch main --limit 8 --json workflowName,status,conclusion,headSha');
+  allow('gh pr checks 226');
+  allow('gh run list --branch main --limit 1 # sc:ok');
+});
+
 test('#7 exit enmascarado: algo detrás del gate → deny; gate al final o pipefail → allow', () => {
   deny('npm run verify 2>&1 | tail -3; echo "VERIFY=$?"', verde, /exit/);
   deny('(npm run verify && npm run e2e) > log 2>&1; echo "LANE_EXIT=$?"', verde, /exit/);

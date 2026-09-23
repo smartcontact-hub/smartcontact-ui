@@ -301,6 +301,29 @@ function evaluarBase(cmd, ctx = {}) {
       };
   }
 
+  // #7 (c) — la run MÁS RECIENTE de una rama casi nunca es la de `ci`.
+  //
+  // Sobre un mismo commit de `main` conviven varios workflows (`ci`, `deploy-record`, la auditoría
+  // semanal). En s46 leí `gh run list --branch main --limit 1`, vi `completed/success` y estuve a un
+  // mensaje de decirle a Rafa que el CI estaba verde: esa run era la de la auditoría, y `ci` seguía
+  // `in_progress`. El repo ya tiene quien lo contesta bien — `ci:verdict` resuelve el run de `ci`
+  // sobre el commit — y la tarjeta lo dice desde el paso 6. Estrecho a `--limit 1` a propósito
+  // (LEARNINGS #2): listar varias y filtrar por `headSha` es legítimo y así lo diagnostiqué.
+  if (
+    segs.some(
+      (s) =>
+        empiezaPor(s, /^gh\s+run\s+list\b/) && /--limit[= ]\s*1(\s|$)/.test(s) && !/--workflow/.test(s),
+    )
+  )
+    return {
+      decision: 'deny',
+      reason:
+        'LEARNINGS #7 — `--limit 1` te da la run más reciente de CUALQUIER workflow, y en main conviven ' +
+        '`ci`, `deploy-record` y la auditoría semanal: así se lee un verde que no es el del CI. ' +
+        'El veredicto es `npm run ci:verdict` (o `npm run ci:verdict -- main`). ' +
+        'Si de verdad quieres listar, acota con `--workflow ci`, o pide varias y filtra por `headSha`.',
+    };
+
   // #12 (c) — volcar un fichero de config con secretos imprime el secreto en el transcript.
   const SECRETOS = /(~\/\.claude\.json|(^|[\s/'"])\.claude\.json|(^|[\s/'"])\.env(\.[a-z]+)?\b|\.npmrc\b|\.auth\/|\bmcp\.json)/;
   if (
