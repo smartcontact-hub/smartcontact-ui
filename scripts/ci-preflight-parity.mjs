@@ -63,10 +63,8 @@ export const LOCAL_SUBSTITUTIONS = {
 // un paso de aquí que ya no esté en ci.yml es lista rancia (`ciOnlyRancios`), y un paso nuevo del
 // CI que no esté ni aquí ni en preflight es drift (`missing`).
 //
-// `e2e:visual` NO está en esta lista porque no está en el CI y no puede estarlo (sus capturas son
-// del Mac de Rafa; el runner de macOS las falla las 38 por la fuente monoespaciada del sistema,
-// DD-60). Vive en `LOCAL_ONLY`, abajo, con su motivo. En cuanto entre en un workflow, se mueve
-// aquí.
+// `e2e:visual` no hace falta aquí: es un subconjunto de `npm run e2e` (`components.spec.ts`), y
+// desde que sus capturas son `*-linux.png` la red visual es la del CI (DD-116).
 export const CI_ONLY = ['npm run e2e', 'npm run e2e:supervisor', 'npm run e2e:cuscare'];
 
 const INFRA = [/^npx playwright install\b/, /^sudo rm -f \/etc\/apt\/sources\.list\.d\//];
@@ -77,16 +75,11 @@ const isInfra = (cmd) => INFRA.some((re) => re.test(cmd));
 //
 //  1. `preflight-mark` no es un gate: escribe la marca `.preflight-ok` que exige el hook de push.
 //     El CI no la necesita, él ES el oráculo.
-//  2. `e2e:visual` SÍ es un gate, y está aquí porque **es imposible en el CI**: las 38 capturas
-//     son del Mac de Rafa y el runner de macOS las falla TODAS por la fuente monoespaciada del
-//     sistema (DD-60, medido). Volvió a `preflight` el 2026-09-09 (DD-62) cuando se arregló su
-//     falso positivo: capturaban `fullPage` y cualquier cambio del marco las invalidaba (un
-//     enlace en la barra ponía 8 en rojo); ahora capturan el contenido y cuestan 2 min. Dejarlo
-//     fuera de todo carril era tener el coste de mantenerlas sin ninguna de sus ventajas.
 //
-// Este lado hace que el preflight sea MÁS estricto que el CI, nunca menos: la promesa que
-// protege la paridad —«verde en local ⇒ verde en CI»— se mantiene.
-const LOCAL_ONLY = [/^node scripts\/preflight-mark\.mjs\b/, /^npm run e2e:visual$/];
+// `e2e:visual` vivió aquí (DD-62) mientras sus capturas eran del Mac y el CI no podía correrlas.
+// Dejó de serlo al pasar a `*-linux.png`, y salió del preflight en DD-116: no vuelvas a meter
+// aquí un paso que el CI ya corre.
+const LOCAL_ONLY = [/^node scripts\/preflight-mark\.mjs\b/];
 const isLocalOnly = (cmd) => LOCAL_ONLY.some((re) => re.test(cmd));
 
 // SETUP: preparar el terreno, no un gate propio. `npm run build` construye el DS a
