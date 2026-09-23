@@ -20,6 +20,7 @@
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
 import { puertaBarata } from "./preflight-puerta-barata.mjs";
+import { enParalelo } from "./en-paralelo.mjs";
 
 // Antes de mirar qué cambió, y antes de gastar un minuto: ¿la rama lleva `origin/main`? Un
 // preflight sobre una rama rezagada mide un árbol que nunca se pushea tal cual (2026-09-11: dos
@@ -133,13 +134,12 @@ if (completo) {
 }
 
 // Carril acotado: verify + los builds de las apps tocadas. Las suites e2e las corre el CI (DD-60).
-const pasos = [
-  "npm run guard:lockfile",
-  "npm run verify",
-  "npm run build:docs",
-];
+// Como en `preflight`: el DS lo construye `verify`, y luego sc-docs y las apps tocadas compilan a
+// la vez (`en-paralelo.mjs`).
+const pasos = ["npm run guard:lockfile", "npm run verify"];
+const builds = ["npm run build:docs:app"];
 for (const a of appsTocadas) {
-  pasos.push(`npx ng build ${a} --configuration production`);
+  if (a !== "sc-docs") builds.push(`npx ng build ${a} --configuration production`);
 }
 const buildsSaltados = APPS.filter(
   (a) => !appsTocadas.includes(a) && a !== "sc-docs"
@@ -149,6 +149,7 @@ console.log("\nCARRIL ACOTADO. Se corre:");
 for (const p of pasos) {
   console.log(`    ${p}`);
 }
+console.log(`    en paralelo: ${builds.join(" · ")}`);
 console.log("\n⚠️ SE SALTA, y esto es lo que estás aceptando:");
 for (const b of buildsSaltados) {
   console.log(`    npx ng build ${b}  (sin cambios bajo projects/${b}/)`);
@@ -163,6 +164,8 @@ if (process.argv.includes("--run")) {
     console.log(`\n▶ ${p}`);
     execSync(p, { stdio: "inherit" });
   }
+  console.log(`\n▶ en paralelo: ${builds.join(" · ")}`);
+  if (!(await enParalelo(builds))) process.exit(1);
   // Carril acotado en verde: marca el árbol para el hook de push (LEARNINGS #7). La marca dice
   // QUÉ carril pasó; lo que se saltó quedó impreso arriba.
   execSync("node scripts/preflight-mark.mjs preflight:scope", { stdio: "inherit" });

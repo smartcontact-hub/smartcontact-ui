@@ -58,6 +58,11 @@ lo caza el build AOT. Los nueve pasos del CI son esos más las tres suites e2e (
 supervisor y cuscare), que solo corren en GitHub. Las baselines visuales de sc-docs van dentro
 de la smoke (`components.spec.ts`) y se comparan en Linux (DD-116).
 
+Los builds de sc-docs y de las cuatro apps van **a la vez** (`scripts/en-paralelo.mjs`), cada uno
+con su salida entera al acabar; si falla uno, falla la cadena. El DS no se reconstruye ahí: lo deja
+en `dist/` el `npm run build` de `verify`, y por eso preflight corre `build:docs:app` donde el CI
+corre `build:docs` (sustitución vigilada en `ci-preflight-parity`).
+
 Que no se pudra cuando alguien añada un paso al CI lo garantiza un test
 (`scripts/ci-preflight-parity.mjs`, dentro de `test:unit`): se pone rojo si `preflight` y
 `ci.yml` se desincronizan, salvo la lista CERRADA `CI_ONLY` (los e2e), que también vigila en la
