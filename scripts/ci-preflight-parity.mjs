@@ -53,6 +53,10 @@ export const LOCAL_SUBSTITUTIONS = {
   // opcionales según dónde estés, y por eso el `npm ci --dry-run` a secas daba verde en
   // macOS con el CI en rojo en Linux.
   'npm ci': 'npm run guard:lockfile',
+  // `build:docs` = `npm run build` (DS) + `build:docs:app` (sc-docs). En preflight el DS ya lo
+  // construye `verify` justo antes, y rehacerlo mientras las apps compilan en paralelo contra
+  // `dist/` sería una carrera. Lo vigila `verifyConstruyeElDs`.
+  'npm run build:docs': 'npm run build:docs:app',
 };
 
 // SOLO CI (DD-60, 2026-09-09): las suites e2e ya NO van en `preflight`. Las corre el CI, que es
@@ -129,11 +133,22 @@ export function extractCiCommands(ymlText) {
 }
 
 // Extrae los comandos que encadena el script `preflight` (separados por `&&`).
+// `node scripts/en-paralelo.mjs 'a' 'b'` son varios pasos, no uno: se comparan sus argumentos.
+const PARALELO = /^node scripts\/en-paralelo\.mjs\s+/;
+const argsEntreComillas = (s) => [...s.matchAll(/'([^']*)'|"([^"]*)"/g)].map((m) => m[1] ?? m[2]);
+
 export function extractPreflightCommands(preflightScript) {
   return preflightScript
     .split('&&')
     .map(norm)
+    .flatMap((c) => (PARALELO.test(c) ? argsEntreComillas(c.replace(PARALELO, '')).map(norm) : [c]))
     .filter((c) => c && !isIgnored(c) && !isLocalOnly(c));
+}
+
+// La sustitución `build:docs` → `build:docs:app` solo vale si `verify` construye el DS antes: si
+// alguien le quita `npm run build`, las apps se construirían contra un `dist/` viejo.
+export function verifyConstruyeElDs(verifyScript) {
+  return (verifyScript ?? '').split('&&').map(norm).includes('npm run build');
 }
 
 // Lo que preflight DEBERÍA correr = los pasos del CI con la sustitución local aplicada.
@@ -167,6 +182,10 @@ function main() {
   }
   const { ok, missing, extra } = checkParity(yml, preflight);
   const rancios = ciOnlyRancios(yml);
+  if (!verifyConstruyeElDs(pkg.scripts?.verify)) {
+    console.error('✗ `verify` ya no corre `npm run build`: el `build:docs:app` de preflight compilaría contra un `dist/` viejo.');
+    process.exit(1);
+  }
   if (ok && rancios.length === 0) {
     console.log('✓ preflight ≡ ci.yml (menos CI_ONLY, con las sustituciones locales documentadas).');
     return;

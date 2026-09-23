@@ -9,6 +9,7 @@ import {
   extractPreflightCommands,
   checkParity,
   ciOnlyRancios,
+  verifyConstruyeElDs,
   CI_ONLY,
 } from "../ci-preflight-parity.mjs";
 
@@ -151,4 +152,27 @@ test('la marca de preflight (solo local) no cuenta como paso extra, pero otro pa
   assert.ok(checkParity(realYml, conMarcaDoble).ok, 'preflight-mark no es un gate: se filtra');
   const conGateLocal = base + ' && npm run typecheck';
   assert.deepEqual(checkParity(realYml, conGateLocal).extra, ['npm run typecheck'], 'un gate local de más sí es drift');
+});
+
+test("los builds en paralelo cuentan como pasos sueltos, y quitar uno se denuncia", () => {
+  const base = realPkg.scripts.preflight;
+  const cmds = extractPreflightCommands(base);
+  for (const app of ["supervisor", "agent", "cuscare", "agent-mini"]) {
+    assert.ok(cmds.includes(`npx ng build ${app} --configuration production`), `${app} dentro del paralelo`);
+  }
+  assert.ok(cmds.includes("npm run build:docs:app"));
+  assert.ok(!cmds.some((c) => c.startsWith("node scripts/en-paralelo")), "el lanzador no es un paso");
+
+  const sinCuscare = base.replace(" 'npx ng build cuscare --configuration production'", "");
+  assert.notEqual(sinCuscare, base, "la sonda tiene que quitar algo");
+  assert.deepEqual(checkParity(realYml, sinCuscare).missing, ["npx ng build cuscare --configuration production"]);
+
+  const conDeMas = base.replace("'npm run build:docs:app'", "'npm run build:docs:app' 'npx ng build otra --configuration production'");
+  assert.deepEqual(checkParity(realYml, conDeMas).extra, ["npx ng build otra --configuration production"]);
+});
+
+test("build:docs:app sustituye a build:docs solo mientras verify construya el DS", () => {
+  assert.ok(verifyConstruyeElDs(realPkg.scripts.verify), "verify tiene que correr `npm run build`");
+  assert.ok(!verifyConstruyeElDs("npm run lint && npm run build:docs"), "build:docs no es el build del DS");
+  assert.ok(!verifyConstruyeElDs(realPkg.scripts.verify.replace(" && npm run build &&", " &&")));
 });
