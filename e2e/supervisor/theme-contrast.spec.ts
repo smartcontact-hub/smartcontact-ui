@@ -172,7 +172,10 @@ for (const { nombre, aplicar, claseRaiz } of TEMAS) {
         test(`${ruta} · ninguna superficie se queda en claro`, async ({ page }) => {
           await goto(page, ruta);
           await asegurarTema(page, claseRaiz);
-          const { claras } = await page.evaluate(medir, { umbral: L_CLARO });
+          const { claras: todas } = await page.evaluate(medir, { umbral: L_CLARO });
+          /* El seleccionado de la sidebar es cyan a propósito, en los dos temas (DD-118), con el
+           * texto en el azul del fondo de la sidebar encima (~10:1). Solo se perdona ESA fila. */
+          const claras = todas.filter((l) => !l.startsWith('button.nav-item sc-text-body-regular nav-item--acti'));
           expect(claras, `superficies claras en tema oscuro:\n${claras.join('\n')}`).toEqual([]);
         });
       }
