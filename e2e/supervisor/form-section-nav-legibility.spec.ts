@@ -36,8 +36,11 @@ const FORMULARIOS = [
   { nombre: 'usuarios', ruta: 'admin/usuarios/crear', secciones: 3 },
   /* 4 → 5 el 2026-09-14: Etiquetas, Agendas y Plantillas salen de Avanzado a «Repositorios». */
   { nombre: 'agentes', ruta: 'admin/agentes/crear', secciones: 5 },
-  /* 4 → 3 el 2026-09-14: «Canales» y «Estrategia» son una sola sección. */
-  { nombre: 'grupos', ruta: 'admin/grupos/crear', secciones: 3 },
+  /* GRUPOS salió de aquí el 2026-09-23: su ficha ya no tiene índice de rail, sino una tira de
+   * pestañas arriba (`p-tabs`), así que no hay etiqueta que se pueda recortar por el ancho del
+   * rail. Las otras dos fichas SÍ lo conservan, y la regla que este spec fija —que el nombre de
+   * una sección no se esconda— sigue viva para ellas. Si algún día las tres pasan a pestañas,
+   * este spec se va entero y lo que hay que medir es otra cosa: que la tira no parta un rótulo. */
 ] as const;
 
 const IDIOMAS = ['es', 'en', 'fr', 'pt'] as const;

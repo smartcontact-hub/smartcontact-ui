@@ -30,10 +30,13 @@ test.beforeEach(async ({ page }) => {
  * flotando) y la misma app parecía dos. Medir las cinco con el MISMO bloque de aserciones es
  * lo que impide que vuelvan a separarse.
  */
+/* El alta de GRUPO salió de aquí el 2026-09-23: su ficha dejó de tener índice lateral y pasó a una
+ * tira de pestañas, así que no tiene rail que medir y su tope es 1600 y no 1200 (`.ficha-tabs` en
+ * `_page.scss`). Lo que este spec fija —que el molde de ajustes no se desvíe página a página—
+ * sigue vigilando las otras cuatro, que sí lo usan; la de grupo la mide `ficha-grupo.spec.ts`. */
 const FORMULARIOS = [
   { ruta: 'admin/usuarios/crear', nombre: 'alta de usuario' },
   { ruta: 'admin/agentes/crear', nombre: 'alta de agente' },
-  { ruta: 'admin/grupos/crear', nombre: 'alta de grupo' },
   { ruta: 'config/aed/agentes', nombre: 'contact center · agentes' },
   { ruta: 'config/aed/grupos', nombre: 'contact center · grupos' },
 ] as const;

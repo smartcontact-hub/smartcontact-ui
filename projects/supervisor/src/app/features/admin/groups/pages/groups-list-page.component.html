@@ -2,6 +2,8 @@
      identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
+  <!-- Con qué nace un grupo nuevo: al lado de donde se crean, no en Configuración (Rafa, 2026-09-18). -->
+  <sc-button size="sm" type="button" variant="secondary" appearance="outlined" [label]="'groups.defaults.button' | translate" (clicked)="onDefaultsClick()" />
   <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'groups.create_button' | translate }}</span>
@@ -14,7 +16,7 @@
   [heading]="'sidebar.groups' | translate"
   [rows]="groups()"
   [columns]="columns()"
-  tableMinWidth="56rem"
+  tableMinWidth="63.75rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'groups.search_placeholder' | translate"
@@ -41,7 +43,7 @@
   />
 
   <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (commit)="onBulkEditCommit($event)" />
+    <sc-bulk-edit-menu matchable [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (match)="onBulkMatch($event)" (commit)="onBulkEditCommit($event)" />
     <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
@@ -88,7 +90,7 @@
         [attr.data-channel]="channel"
         [title]="channelLabelKey(channel) | translate"
       >
-        <sc-icon [name]="channelIcon(channel)" [size]="14" />
+        <sc-channel-icon [channel]="channel" />
       </span>
     }
   </span>
@@ -100,6 +102,12 @@
 
 <ng-template #strategyTpl let-group>
   <sc-tag severity="secondary" [value]="group.strategy" />
+</ng-template>
+
+<!-- Solo lectura. Cuántos servicios, como «Agentes»; el desplegable enseña sus teléfonos y nada más. -->
+<ng-template #servicesTpl let-group>
+  @let services = servicesForGroup(group);
+  <sc-group-popover [groups]="services" [countAriaLabel]="(services.length === 1 ? 'groups.table.services_count_one' : 'groups.table.services_count') | translate: { count: services.length }" />
 </ng-template>
 
 <!-- El número abre la lista de sus agentes, igual que «Grupos» en la lista de agentes. -->
