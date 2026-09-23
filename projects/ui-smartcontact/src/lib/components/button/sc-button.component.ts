@@ -1,10 +1,13 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    contentChild,
     input,
-    output
+    output,
+    TemplateRef
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 
@@ -34,7 +37,7 @@ type PrimeButtonSize = 'small' | 'large' | undefined;
 @Component({
     selector: 'sc-button',
     standalone: true,
-    imports: [ButtonModule],
+    imports: [ButtonModule, NgTemplateOutlet],
     templateUrl: './sc-button.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -87,6 +90,13 @@ export class ScButtonComponent {
     readonly ariaLabel = input<string | null>(null);
 
     readonly rounded = input(false, { transform: booleanAttribute });
+
+    /**
+     * Icono propio para lo que no está en Material (un SVG de la librería): `<ng-template
+     * #scButtonIcon>`. Llega a PrimeNG como su plantilla `icon`, así que el botón toma la forma
+     * y la talla de icono como con `icon`. El SVG mide `1em` y `fill="currentColor"`.
+     */
+    protected readonly customIcon = contentChild<TemplateRef<unknown>>('scButtonIcon');
 
     /** El botón se ha pulsado. Es el `onClick` de PrimeNG renombrado a la convención del DS. */
     readonly clicked = output<MouseEvent>();

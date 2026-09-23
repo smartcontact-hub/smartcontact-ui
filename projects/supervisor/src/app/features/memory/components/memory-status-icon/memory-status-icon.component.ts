@@ -5,26 +5,15 @@ import type { Conversation } from '../../data/conversation.types';
 import { injectLangChange } from '@core/utils/lang-change';
 
 /**
- * Pictograma única canal+processing-state para la columna "Estado" de
- * `ConversationTable`. Reemplaza el cluster de 3-5 iconos lucide que
- * traía la decisión sparring S37 — el doc canon Memory
- * (`sistema-de-diseno.md §Iconografía`) dicta SVGs propios entregados
- * por diseño + regla "una sola señal por estado".
+ * Pictograma única canal+estado para la columna "Estado" de `ConversationTable`: SVGs propios
+ * entregados por diseño, "una sola señal por estado".
  *
- * Paleta reducida (sec 15.21 audit del prototipo): solo dos tintes
- * activos — gray `--sc-text-subtle` para rest y teal `--sc-text-info`
- * para in-flight/completed. La forma del icono carga la distinción
- * transcrita-vs-analizada (líneas vs sparkle), y la animación pulse
- * comunica actividad.
+ * Dos tonos (Figma «Memory +», Iconografía transcripciones, 2026-09-23): gris sin fallo, rojo si
+ * algo falló. La forma dice en qué punto está (líneas = transcrita, destello = analizada) y el
+ * pulso, que hay trabajo en curso. El color lo pone el botón que lo envuelve (`currentColor`),
+ * porque en hover el botón se rellena y el glifo pasa a blanco.
  *
- * Inputs:
- * - `conversation` — fila a representar (canal + estado).
- * - `isProcessing` — flag externo (mock dispatch transcripción).
- * - `isAnalyzing` — flag externo (mock dispatch análisis).
- *
- * Los overlays (failed badge + multi-recording count) los pinta el
- * caller alrededor de este componente, no aquí (necesitan stack-position
- * con el button trigger).
+ * Los overlays (contador multi-grabación) los pinta el caller alrededor de este componente.
  */
 type StatusKind =
   | 'call'
@@ -35,9 +24,11 @@ type StatusKind =
   | 'chat_transcribed'
   | 'chat_analyzed';
 
+export type StatusTone = 'neutral' | 'error';
+
 interface ResolvedStatus {
   readonly kind: StatusKind;
-  readonly active: boolean;
+  readonly tone: StatusTone;
   readonly animating: boolean;
   readonly labelKey: string;
 }
@@ -58,12 +49,9 @@ export class MemoryStatusIconComponent {
   readonly isAnalyzing = input<boolean>(false);
   readonly size = input<number>(18);
 
-  protected readonly status = computed<ResolvedStatus>(() => {
-    const conv = this.conversation();
-    const processing = this.isProcessing();
-    const analyzing = this.isAnalyzing();
-    return resolveStatus(conv, processing, analyzing);
-  });
+  protected readonly status = computed<ResolvedStatus>(() =>
+    resolveStatus(this.conversation(), this.isProcessing(), this.isAnalyzing()),
+  );
 
   protected readonly tooltip = computed<string>(() => {
     this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
@@ -71,88 +59,33 @@ export class MemoryStatusIconComponent {
   });
 }
 
-/**
- * Helper público: devuelve solo el labelKey i18n del estado resuelto
- * para que el caller (ConversationTable) lo combine con su `aria-label`
- * del button trigger. Evita la regresión a11y del cluster — el screen
- * reader necesita oír el estado además del "Abrir conversación X".
- */
-export function resolveStatusLabelKey(
-  conv: Conversation,
-  processing: boolean,
-  analyzing: boolean,
-): string {
+/** El caller combina el estado con su `aria-label`: el lector de pantalla tiene que oírlo. */
+export function resolveStatusLabelKey(conv: Conversation, processing: boolean, analyzing: boolean): string {
   return resolveStatus(conv, processing, analyzing).labelKey;
 }
 
-function resolveStatus(
-  conv: Conversation,
-  processing: boolean,
-  analyzing: boolean,
-): ResolvedStatus {
+export function resolveStatusTone(conv: Conversation, processing: boolean, analyzing: boolean): StatusTone {
+  return resolveStatus(conv, processing, analyzing).tone;
+}
+
+function resolveStatus(conv: Conversation, processing: boolean, analyzing: boolean): ResolvedStatus {
   const isCall = conv.channel === 'llamada';
-  if (analyzing) {
-    return {
-      kind: isCall ? 'call_analyzed' : 'chat_analyzed',
-      active: true,
-      animating: true,
-      labelKey: 'memory.conversations.status.analyzing',
-    };
-  }
-  if (processing) {
-    return {
-      kind: isCall ? 'call_transcribed' : 'chat_transcribed',
-      active: true,
-      animating: true,
-      labelKey: 'memory.conversations.status.transcribing',
-    };
-  }
+  const st = (kind: StatusKind, labelKey: string, tone: StatusTone = 'neutral', animating = false): ResolvedStatus => ({
+    kind,
+    tone,
+    animating,
+    labelKey: `memory.conversations.status.${labelKey}`,
+  });
+  if (analyzing) return st(isCall ? 'call_analyzed' : 'chat_analyzed', 'analyzing', 'neutral', true);
+  if (processing) return st(isCall ? 'call_transcribed' : 'chat_transcribed', 'transcribing', 'neutral', true);
+  if (conv.analysisFailure) return st(isCall ? 'call_analyzed' : 'chat_analyzed', 'analysis_failed', 'error');
+  if (conv.hasFailedTranscription) return st(isCall ? 'call_transcribed' : 'chat_transcribed', 'failed', 'error');
   if (isCall) {
-    if (conv.hasTranscription && conv.hasAnalysis) {
-      return {
-        kind: 'call_analyzed',
-        active: true,
-        animating: false,
-        labelKey: 'memory.conversations.status.call_analyzed',
-      };
-    }
-    if (conv.hasTranscription) {
-      return {
-        kind: 'call_transcribed',
-        active: true,
-        animating: false,
-        labelKey: 'memory.conversations.status.call_transcribed',
-      };
-    }
-    return {
-      kind: conv.hasRecording ? 'call_recorded' : 'call',
-      active: false,
-      animating: false,
-      labelKey: conv.hasRecording
-        ? 'memory.conversations.status.call_recorded'
-        : 'memory.conversations.status.call',
-    };
+    if (conv.hasTranscription && conv.hasAnalysis) return st('call_analyzed', 'call_analyzed');
+    if (conv.hasTranscription) return st('call_transcribed', 'call_transcribed');
+    return conv.hasRecording ? st('call_recorded', 'call_recorded') : st('call', 'call');
   }
-  if (conv.hasAnalysis) {
-    return {
-      kind: 'chat_analyzed',
-      active: true,
-      animating: false,
-      labelKey: 'memory.conversations.status.chat_analyzed',
-    };
-  }
-  if (conv.hasTranscription) {
-    return {
-      kind: 'chat_transcribed',
-      active: true,
-      animating: false,
-      labelKey: 'memory.conversations.status.chat_transcribed',
-    };
-  }
-  return {
-    kind: 'chat',
-    active: false,
-    animating: false,
-    labelKey: 'memory.conversations.status.chat',
-  };
+  if (conv.hasAnalysis) return st('chat_analyzed', 'chat_analyzed');
+  if (conv.hasTranscription) return st('chat_transcribed', 'chat_transcribed');
+  return st('chat', 'chat');
 }

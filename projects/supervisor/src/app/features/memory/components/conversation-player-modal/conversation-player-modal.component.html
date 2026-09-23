@@ -78,7 +78,16 @@
           @if (c.hasTranscription) {
             <sc-button variant="secondary" appearance="text" size="sm" [icon]="back10Icon" [ariaLabel]="'memory.player.actions.retranscribe' | translate" [attr.title]="'memory.player.actions.retranscribe' | translate" data-testid="player-retrans-btn" (clicked)="onOpenRetransConfirm()" />
           }
-          <sc-button variant="secondary" appearance="text" size="sm" [icon]="sparklesIcon" [ariaLabel]="'memory.player.actions.analyze' | translate" [attr.title]="analyzeTitleKey() | translate" [disabled]="analyzeDisabled()" (clicked)="onRequestAnalysis()" />
+          <!-- «documento con análisis» (librería Smart-Contact Icons, «Custom»): no está en Material,
+               así que va en SVG proyectado, con la geometría 24/18 de la librería. -->
+          <sc-button variant="secondary" appearance="text" size="sm" [ariaLabel]="'memory.player.actions.analyze' | translate" [attr.title]="analyzeTitleKey() | translate" [disabled]="analyzeDisabled()" data-testid="player-analyze-btn" (clicked)="onRequestAnalysis()">
+            <ng-template #scButtonIcon>
+              <svg class="player-tabs__glyph" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+                <path d="M2.3333 14.7778Q1.6917 14.7778 1.2347 14.3208Q0.7778 13.8639 0.7778 13.2222V0.7778Q0.7778 0.1361 1.2347 -0.3208Q1.6917 -0.7778 2.3333 -0.7778H7.9139Q8.225 -0.7778 8.5069 -0.6611Q8.7889 -0.5444 9.0028 -0.3306L12.775 3.4417Q12.9889 3.6556 13.1056 3.9375Q13.2222 4.2194 13.2222 4.5306V13.2222Q13.2222 13.8639 12.7653 14.3208Q12.3083 14.7778 11.6667 14.7778ZM7.7778 3.8889V0.7778H2.3333V13.2222H11.6667V4.6667H8.5556Q8.225 4.6667 8.0014 4.4431Q7.7778 4.2194 7.7778 3.8889Z" />
+                <path d="M6.6953 4.6703C6.7086 4.6004 6.7463 4.5372 6.802 4.4918C6.8576 4.4464 6.9277 4.4215 7 4.4215C7.0723 4.4215 7.1424 4.4464 7.198 4.4918C7.2537 4.5372 7.2914 4.6004 7.3047 4.6703L7.6304 6.3643C7.6535 6.4847 7.713 6.5955 7.8012 6.6821C7.8893 6.7688 8.0019 6.8273 8.1244 6.8501L9.847 7.1704C9.9181 7.1835 9.9823 7.2206 10.0285 7.2753C10.0747 7.33 10.1 7.3989 10.1 7.47C10.1 7.5411 10.0747 7.61 10.0285 7.6647C9.9823 7.7194 9.9181 7.7565 9.847 7.7696L8.1244 8.0899C8.0019 8.1127 7.8893 8.1712 7.8012 8.2579C7.713 8.3445 7.6535 8.4553 7.6304 8.5757L7.3047 10.2697C7.2914 10.3396 7.2537 10.4028 7.198 10.4482C7.1424 10.4936 7.0723 10.5185 7 10.5185C6.9277 10.5185 6.8576 10.4936 6.802 10.4482C6.7463 10.4028 6.7086 10.3396 6.6953 10.2697L6.3696 8.5757C6.3465 8.4553 6.287 8.3445 6.1988 8.2579C6.1107 8.1712 5.9981 8.1127 5.8756 8.0899L4.153 7.7696C4.0819 7.7565 4.0177 7.7194 3.9715 7.6647C3.9253 7.61 3.9 7.5411 3.9 7.47C3.9 7.3989 3.9253 7.33 3.9715 7.2753C4.0177 7.2206 4.0819 7.1835 4.153 7.1704L5.8756 6.8501C5.9981 6.8273 6.1107 6.7688 6.1988 6.6821C6.287 6.5955 6.3465 6.4847 6.3696 6.3643L6.6953 4.6703Z" />
+              </svg>
+            </ng-template>
+          </sc-button>
           <sc-button variant="secondary" appearance="text" size="sm" [icon]="downloadIcon" [ariaLabel]="(isChat() ? 'memory.player.actions.download_chat' : 'memory.player.actions.download_audio' ) | translate" [attr.title]="(isChat() ? 'memory.player.actions.download_chat' : 'memory.player.actions.download_audio' ) | translate" (clicked)="onDownload()" />
         </span>
       </div>
