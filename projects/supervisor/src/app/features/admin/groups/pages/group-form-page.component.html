@@ -193,8 +193,13 @@
            para su `h1` (`sc-list-page`), así que no nace un tamaño nuevo para esto. -->
       <div class="headline__who">
         <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
+        <!-- El teléfono, solo si el grupo ofrece teléfono: un grupo de chat enseñaba aquí un número
+             que ya no se le pide en ningún sitio, o un «Ninguno» que no es una carencia. -->
         <span class="headline__meta sc-text-caption-regular">
-          {{ form().phone || ('groups.form.summary.none' | translate) }} · {{ priorityKeys[form().priority] | translate }}
+          @if (hasPhone()) {
+            {{ form().phone || ('groups.form.summary.none' | translate) }} ·
+          }
+          {{ priorityKeys[form().priority] | translate }}
         </span>
       </div>
       <dl class="headline__stats">
@@ -802,20 +807,28 @@
             </div>
           </div>
 
-          <!-- El «Teléfono asociado» de Voice: se elige entre los que ya usan los grupos o se escribe uno. -->
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-phone">
-              {{ 'groups.form.fields.phone' | translate }}
-            </label>
-            <sc-select
-              inputId="group-phone"
-              editable
-              [options]="phoneOptions()"
-              [value]="form().phone"
-              [helperText]="'groups.form.fields.phone_hint' | translate"
-              (valueChange)="onPhoneValueChange($event)"
-            />
-          </div>
+          <!-- El «Teléfono asociado» de Voice: se elige entre los que ya usan los grupos o se escribe uno.
+               SOLO SI EL GRUPO OFRECE TELÉFONO. Era el último campo de teléfono que seguía saliendo en un
+               grupo que no lo usa, y el que el equipo nombró: «tengo que ponerle un teléfono asociado
+               aunque no se vaya a usar» (2026-09-22). El resto de lo de teléfono ya se ocultaba: la
+               estrategia, la pestaña entera de Anuncios y audio, el tiempo entre llamadas y el desborde.
+               El valor NO se borra al apagar el canal, se deja de pedir: si se vuelve a encender, el
+               número que ya había sigue ahí, igual que un agente pausado conserva sus canales. -->
+          @if (hasPhone()) {
+            <div class="field">
+              <label class="field__label sc-text-caption-semibold" for="group-phone">
+                {{ 'groups.form.fields.phone' | translate }}
+              </label>
+              <sc-select
+                inputId="group-phone"
+                editable
+                [options]="phoneOptions()"
+                [value]="form().phone"
+                [helperText]="'groups.form.fields.phone_hint' | translate"
+                (valueChange)="onPhoneValueChange($event)"
+              />
+            </div>
+          }
 
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-priority">

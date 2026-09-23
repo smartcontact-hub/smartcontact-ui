@@ -293,7 +293,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return [
       { valor: `${activos}/${f.links.length}`, etiqueta: 'groups.form.section.agents' },
       { valor: this.channelsSummary(f.channels) || '—', etiqueta: 'groups.form.section.channels' },
-      { valor: this.hasPhone() ? this.phoneStrategySummary() : '—', etiqueta: 'groups.form.section.strategy' },
+      /* La estrategia del canal que el grupo SÍ tiene. Antes preguntaba solo por teléfono, así que
+       * un grupo de solo chat decía «Estrategia —» teniendo una: la cifra negaba un dato que el
+       * formulario de al lado pedía. Con los dos canales manda la de teléfono, que es la que tiene
+       * niveles y reparto; con solo chat, la suya. (Medido el 2026-09-23 apagando Teléfono.) */
+      { valor: this.strategySummary(), etiqueta: 'groups.form.section.strategy' },
     ];
   });
 
@@ -512,6 +516,19 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     { label: this.translate.instant('groups.form.announcements.source_file'), value: 'file' },
     ];
   });
+
+  /**
+   * La estrategia que se enseña en la cabecera: la del canal que el grupo tiene.
+   *
+   * Teléfono manda cuando están los dos, porque es la que se completa con niveles y reparto; si el
+   * grupo no ofrece teléfono, la del chat, que también es una estrategia de verdad. Solo es «—»
+   * cuando no hay ni uno de los dos, que es la única vez que de verdad no hay nada que decir.
+   */
+  protected strategySummary(): string {
+    if (this.hasPhone()) return this.phoneStrategySummary();
+    if (this.hasChat()) return this.form().chatStrategy;
+    return '—';
+  }
 
   /** La estrategia de teléfono con lo que la completa, para el resumen. */
   protected phoneStrategySummary(): string {
