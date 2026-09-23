@@ -125,9 +125,19 @@ jobs:
             playwright-report/
           retention-days: 7
           if-no-files-found: ignore
-  e2e-supervisor:
+  # La suite del Supervisor va en 4 runners (226 tests, 959 s en serie, medido el 2026-09-23).
+  # Dentro de cada uno sigue con 1 worker y su propio `ng serve`: en una misma máquina el
+  # paralelismo sale PEOR (ver `playwright.supervisor.config.ts`). El reparto es por test.
+  e2e-supervisor-parte:
+    name: e2e-supervisor (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    env:
+      SC_SUPERVISOR_SHARD: ${{ matrix.shard }}/4
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -161,12 +171,21 @@ jobs:
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-supervisor
+          name: playwright-supervisor-${{ matrix.shard }}
           path: |
             test-results/
             playwright-report/
           retention-days: 7
           if-no-files-found: ignore
+  # El check que exige la protección de `main` se llama `e2e-supervisor`: lo da este job, y
+  # solo sale verde si las cuatro partes pasaron. Sin él, `main` esperaría un check que ya no
+  # existe (las partes se llaman `e2e-supervisor (n/4)`).
+  e2e-supervisor:
+    runs-on: ubuntu-latest
+    needs: e2e-supervisor-parte
+    if: always() && (github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync')
+    steps:
+      - run: test "${{ needs.e2e-supervisor-parte.result }}" = success
   e2e-cuscare:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'

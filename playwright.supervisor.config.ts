@@ -2,6 +2,13 @@ import { defineConfig } from '@playwright/test';
 
 import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
 
+function shardDesdeEntorno(valor: string | undefined): { current: number; total: number } | null {
+  if (!valor) return null;
+  const m = /^(\d+)\/(\d+)$/.exec(valor);
+  if (!m) throw new Error(`SC_SUPERVISOR_SHARD="${valor}": se espera «n/total», p. ej. 2/4`);
+  return { current: Number(m[1]), total: Number(m[2]) };
+}
+
 /**
  * Config del e2e de COMPORTAMIENTO del Supervisor. Aislada de las otras dos a
  * propósito:
@@ -31,6 +38,15 @@ export default defineConfig({
    * es pesada y cuatro navegadores ahogan al `ng serve`. En `cuscare` sí compensa.
    */
   workers: 1,
+  /*
+   * El reparto va ENTRE máquinas, no dentro de una: en el CI la suite se parte en 4 runners
+   * (`SC_SUPERVISOR_SHARD=n/4`, ver `ci.yml`), cada uno con su `ng serve` y un solo worker.
+   * `fullyParallel` solo sirve para que cada test sea una unidad repartible: sin él, los 75
+   * tests de `theme-contrast` (250 de 959 s, medido el 2026-09-23) irían todos a la misma parte.
+   * Con `workers: 1` no cambia nada en local: siguen de uno en uno.
+   */
+  fullyParallel: true,
+  shard: shardDesdeEntorno(process.env['SC_SUPERVISOR_SHARD']),
   reporter: process.env['CI'] ? 'list' : 'line',
   use: {
     baseURL: process.env['SC_SUPERVISOR_URL'] ?? 'http://localhost:4405',
