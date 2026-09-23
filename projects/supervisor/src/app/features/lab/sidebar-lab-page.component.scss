@@ -298,10 +298,30 @@ p-sidebar[data-collapsible='icon'] .lab__anchor {
   right: var(--sc-spacing-1-75);
   bottom: var(--sc-spacing-1-75);
   z-index: var(--sc-z-sidebar);
+  /* Con el rótulo al lado deja de ser un círculo: `gap` propio para que el icono no se pegue al
+     texto, y el relleno lateral que pide una píldora con palabras dentro. */
+  gap: var(--sc-spacing-0-5);
+  padding-inline: var(--sc-spacing-0-875);
 
   &--left {
     right: auto;
     left: var(--sc-spacing-1-75);
+  }
+}
+
+.lab__settings-label {
+  white-space: nowrap;
+}
+
+/* En pantalla estrecha el rótulo estorba más de lo que orienta: ahí vuelve a ser el círculo de
+   antes, y el nombre sigue estando en el `aria-label` para quien lo lea con un lector. */
+@media (max-width: 48rem) {
+  .lab__settings-label {
+    display: none;
+  }
+
+  .lab__settings-button {
+    padding-inline: 0;
   }
 }
 
