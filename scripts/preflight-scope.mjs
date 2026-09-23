@@ -141,20 +141,6 @@ const pasos = [
 for (const a of appsTocadas) {
   pasos.push(`npx ng build ${a} --configuration production`);
 }
-/* Las baselines visuales (2 min) solo miran el CATÁLOGO de sc-docs, así que en el carril
- * acotado se corren solo si el cambio puede haberlo movido: la propia app o el DS que pinta
- * sus componentes. Un cambio en `supervisor` no puede tocarlas. En `preflight` entero van
- * siempre (DD-62). */
-const tocaCatalogo = ficheros.some(
-  (f) =>
-    f.startsWith("projects/sc-docs/") ||
-    f.startsWith("projects/ui-smartcontact/") ||
-    f.startsWith("projects/design-tokens/") ||
-    f.startsWith("e2e/components.spec")
-);
-if (tocaCatalogo) {
-  pasos.push("npm run e2e:visual");
-}
 const buildsSaltados = APPS.filter(
   (a) => !appsTocadas.includes(a) && a !== "sc-docs"
 );
@@ -167,10 +153,7 @@ console.log("\n⚠️ SE SALTA, y esto es lo que estás aceptando:");
 for (const b of buildsSaltados) {
   console.log(`    npx ng build ${b}  (sin cambios bajo projects/${b}/)`);
 }
-if (!tocaCatalogo) {
-  console.log("    npm run e2e:visual  (el cambio no toca sc-docs ni el DS)");
-}
-console.log("    (las suites e2e de APP no van en ningún carril: las corre el CI; si tocaste una, córrela a mano)");
+console.log("    (ninguna suite e2e va en ningún carril, tampoco las capturas de sc-docs: las corre el CI; si tocaste una, córrela a mano)");
 console.log(
   "\nSi dudas, corre `npm run preflight` entero. Esto es un atajo, no un sustituto.\n"
 );
