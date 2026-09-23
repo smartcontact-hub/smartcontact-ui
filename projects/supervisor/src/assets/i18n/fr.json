@@ -1396,7 +1396,10 @@
       "danger_zone_description": "Supprimer cet utilisateur révoque son accès au panneau et efface ses permissions. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer l'utilisateur",
       "duplicate_breadcrumb": "Dupliquer l'utilisateur",
-      "duplicate_hint": "Duplication de «{{source}}» · remplissez les champs obligatoires et sauvegardez"
+      "duplicate_hint": "Duplication de «{{source}}» · remplissez les champs obligatoires et sauvegardez",
+      "headline": {
+        "services": "Services"
+      }
     },
     "errors": {
       "name_required": "Le nom est obligatoire",

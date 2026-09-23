@@ -1396,7 +1396,10 @@
         "active": "Activo",
         "active_hint": "Puede iniciar sesión y operar"
       },
-      "danger_zone_description": "Eliminar este usuario revoca su acceso al panel y borra sus permisos. La acción no se puede deshacer."
+      "danger_zone_description": "Eliminar este usuario revoca su acceso al panel y borra sus permisos. La acción no se puede deshacer.",
+      "headline": {
+        "services": "Servicios"
+      }
     },
     "errors": {
       "name_required": "El nombre es obligatorio",

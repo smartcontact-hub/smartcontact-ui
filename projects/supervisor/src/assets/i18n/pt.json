@@ -1396,7 +1396,10 @@
       "danger_zone_description": "Eliminar este usuário revoga seu acesso ao painel e apaga suas permissões. A ação não pode ser desfeita.",
       "duplicate_title": "Duplicar usuário",
       "duplicate_breadcrumb": "Duplicar usuário",
-      "duplicate_hint": "Duplicando «{{source}}» · preencha os campos obrigatórios e salve"
+      "duplicate_hint": "Duplicando «{{source}}» · preencha os campos obrigatórios e salve",
+      "headline": {
+        "services": "Serviços"
+      }
     },
     "errors": {
       "name_required": "O nome é obrigatório",

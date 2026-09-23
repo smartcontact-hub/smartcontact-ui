@@ -13,7 +13,26 @@
 /* Página independiente, sin el panel de Configuración que le daba su relleno (heredado al copiar su
  * plantilla): el mismo que ponen Sistema y Seguridad para una página suelta bajo `.app-shell__content`. */
 .page__inner {
-  padding: var(--sc-spacing-1-25) var(--sc-spacing-2);
+  /* 22.75 arriba, el de `--rail`: el título arranca a la misma altura que el nombre de las fichas
+   * de grupo, usuario y agente (era 17.5 y quedaba 5.25 más arriba, medido a 1440). */
+  padding: var(--sc-spacing-1-625) var(--sc-spacing-2);
+}
+
+/* El título de la página, sin caja, con su ayuda debajo. */
+.defaults-head {
+  display: flex;
+  flex-direction: column;
+  margin-block-end: var(--sc-spacing-1-25);
+}
+
+.defaults-head__title {
+  margin: 0;
+  color: var(--sc-text-primary);
+}
+
+.defaults-head__hint {
+  margin: 0;
+  color: var(--sc-text-secondary);
 }
 
 /*
