@@ -18,7 +18,7 @@ import { UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
+import { ChannelIconComponent, IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
@@ -78,6 +78,7 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
+    ChannelIconComponent,
     IllustratedAvatarComponent,
     GroupPopoverComponent,
     ImpactPreviewDialogComponent,
@@ -363,12 +364,6 @@ export class AgentsListPageComponent {
     if (!op) return null;
     return { fieldLabel: op.fieldLabel, newValueLabel: op.valueLabel };
   });
-
-  protected channelIcon(channel: AgentChannel) {
-    if (channel === 'phone') return this.phoneIcon;
-    if (channel === 'chat') return this.chatIcon;
-    return this.emailIcon;
-  }
 
   /**
    * Clave i18n del tipo de agente. Es un método y no un indexado en plantilla

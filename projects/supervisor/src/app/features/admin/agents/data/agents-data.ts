@@ -14,7 +14,7 @@ export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
  * canonical type lives in `@features/admin/services/group-agent-links.types`
  * — both unions are structurally identical.
  */
-export type AgentChannel = 'phone' | 'chat' | 'email';
+export type AgentChannel = 'phone' | 'chat' | 'whatsapp' | 'email';
 
 export type AgentType = 'normal' | 'cuscare' | 'cuscare_carrier' | 'admin_cuscare';
 export const AGENT_TYPES: readonly AgentType[] = [
