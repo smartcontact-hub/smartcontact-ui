@@ -1036,7 +1036,8 @@
     "aed": "Contact Center",
     "integrations": "Integrações",
     "system": "Sistema",
-    "nav_aria": "Navegação principal"
+    "nav_aria": "Navegação principal",
+    "anchor_aria": "Fixar o menu"
   },
   "labels": {
     "breadcrumb": "Etiquetas",

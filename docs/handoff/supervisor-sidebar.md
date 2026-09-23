@@ -5,7 +5,25 @@
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
-## ✅ 2026-09-16 · Regla oficial: en el sidebar no se cierra nada
+## ✅ 2026-09-23 · En producción va «abrir no cierra las demás» (DD-118)
+
+> **Sello: rama `sidebar-produccion`, sobre `origin/main` HEAD `b55e3017`.**
+
+**Qué decidió Rafa.** El sidebar de `main` es el de https://c1ae0539.sc-supervisor.pages.dev/solo-sidebar (tag
+`archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16`, `65185e3b`): «no es mi favorito, pero eventualmente con
+primeng dev podamos lograr meter el otro». Se trabaja sobre esa base. «No se cierra nada» (tramo de abajo) queda como la
+favorita, pendiente del Sidebar de primeng.dev.
+
+**Qué hay.** La versión del tag sin el andamio de la comparación: selección en cyan, Drawer (se despliega con el ratón,
+se pliega 300ms después de salir), botón de anclar recordado en `sc-sidebar-anclado`, abrir no cierra las demás y
+plegado solo se pinta la rama de la página. Medido contra el preview a 1440×900 en Informes de Datos: igual plegado y
+desplegado.
+
+**Siguiente:**
+1. El botón de anclar pisa 5px el texto del logotipo desplegado (texto hasta x=208, botón desde 203). Viene así del preview.
+2. Probar «no se cierra nada» con el Sidebar de primeng.dev (tag `archive/lab-sidebar-2026-09-16`).
+
+## ✅ 2026-09-16 · Regla oficial (sustituida en producción por el tramo de arriba): en el sidebar no se cierra nada
 
 > **Sello: rama `comparar/sidebar` (no se funde), HEAD `3c3e76c1`.** Vivo:
 > https://comparar-sidebar.sc-supervisor.pages.dev/solo-sidebar · tarjeta «Sidebar» del Lab con las versiones anteriores.
