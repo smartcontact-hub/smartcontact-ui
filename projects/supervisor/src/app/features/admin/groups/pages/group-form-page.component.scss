@@ -121,7 +121,7 @@
   align-self: flex-start;
   color: var(--sc-text-link);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: var(--sc-spacing-0-125);
 }
 
 /* Skills sale apagada con su motivo debajo, a la vista y no en un tooltip. */
@@ -239,10 +239,9 @@
    * justos para que los dos textos más grandes de la pantalla se lean como dos columnas que no
    * llegan a serlo. Ahora los dos redondean a 146. */
   gap: var(--sc-spacing-0-75);
-  /* 28 hasta el rótulo de la sección, que está a 14 de su propio contenido: la cabecera de la
-   * PÁGINA tiene que despegarse el doble que la cabecera de un bloque de lo suyo, o las dos se
-   * leen como un mismo montón de texto. */
-  padding-block-end: var(--sc-spacing-2);
+  /* Sin aire propio abajo: la franja y la tira de pestañas son UNA cabecera, y la distancia la
+   * pone solo `.tabbar` (petición de Rafa, 2026-09-23: con 28 aquí había 63,5 de aire entre las
+   * cifras y el texto de las pestañas, medido a 1440). */
 }
 
 .headline__who {
@@ -385,20 +384,12 @@
 }
 
 /* EL CONMUTADOR. Pegado a lo que abre y separado de lo que cierra, para que se lea como cabecera
- * de lo que viene y no como pie de lo anterior.
- *
- * Desde el 2026-09-22 la tira va ARRIBA, bajo la franja del nombre, y gobierna toda la ficha. Los
- * mismos valores siguen valiendo y ahora se cumplen a pelo, sin colapso de por medio: medido a
- * 1440 en la ficha de grupo 1, 28 de la franja a la tira y 7 de la tira a la sección. Esa es la
- * relación que se busca — la tira es cabecera de lo que abre, no pie de lo que cierra.
- *
- * (Antes vivía debajo de una `sc-section-card`, que trae 21 propios de `margin-bottom`: los
- * márgenes verticales COLAPSAN, así que con 21 aquí el mayor seguía siendo 21 y esta línea no
- * hacía nada. Los 28 nacieron para ganar ese colapso; hoy ya no hay colapso que ganar.) */
+ * de lo que viene y no como pie de lo anterior. Desde el 2026-09-22 la tira va ARRIBA, bajo la
+ * franja del nombre, y gobierna toda la ficha. */
 .tabbar {
-  /* 17,5 arriba (antes 28) por petición de Rafa el 2026-09-22: con la tira ya bajo la franja del
-   * nombre, 28 abría un pasillo entre el sujeto de la pantalla y sus secciones, y las dos cosas
-   * son la misma cabecera. La relación con lo de abajo sigue siendo 2,5:1, así que la tira se
-   * sigue leyendo como cabecera de lo que abre. */
-  margin-block: var(--sc-spacing-1-25) var(--sc-spacing-0-5);
+  /* 7 arriba y 7 abajo (2026-09-23; antes 17,5 arriba y 28 en la franja). Con los 14 de relleno
+   * de la pestaña de PrimeNG, que son su zona de clic, quedan ~25 del texto de las cifras al de la
+   * pestaña y ~28 de la pestaña al contenido: la tira se pega a su franja y el nombre, las cifras y
+   * las secciones se leen como una sola cabecera. */
+  margin-block: var(--sc-spacing-0-5);
 }
