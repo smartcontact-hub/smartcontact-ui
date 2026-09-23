@@ -1483,6 +1483,7 @@
         "channels_agents": "Canales y agentes",
         "resources": "Recursos",
         "announcements": "Anuncios y audio",
+        "announcements_needs_phone": "Solo con el canal Teléfono: aquí se configura lo que suena en la llamada.",
         "advanced": "Avanzado"
       },
       "assigned": {

@@ -1480,6 +1480,7 @@
         "channels_agents": "Channels and agents",
         "resources": "Resources",
         "announcements": "Announcements and audio",
+        "announcements_needs_phone": "Phone channel only: this is what callers hear while they wait.",
         "advanced": "Advanced"
       },
       "assigned": {

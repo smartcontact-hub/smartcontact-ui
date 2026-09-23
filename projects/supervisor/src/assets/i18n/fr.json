@@ -1480,6 +1480,7 @@
         "channels_agents": "Canaux et agents",
         "resources": "Ressources",
         "announcements": "Annonces et audio",
+        "announcements_needs_phone": "Canal Téléphone uniquement : on y configure ce qui se joue pendant l’appel.",
         "advanced": "Avancé"
       },
       "assigned": {

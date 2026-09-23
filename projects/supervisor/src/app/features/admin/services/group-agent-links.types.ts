@@ -51,7 +51,12 @@ export interface GroupAgentLink {
  */
 export function canonicalizeChannels(channels: readonly Channel[]): readonly Channel[] {
   const set = new Set(channels);
-  const order: readonly Channel[] = ['phone', 'chat', 'email'];
+  /* LOS CUATRO CANALES, y `whatsapp` no es opcional aquí. Faltaba, y como esta función es la que
+   * NORMALIZA lo que se escribe en el enlace, marcar WhatsApp a un agente no guardaba nada: la
+   * casilla volvía sola a su sitio, desde la ficha del grupo y desde la del agente. Nadie lo vio
+   * porque todavía no hay clientes con WhatsApp. Medido en el navegador el 2026-09-23: la casilla
+   * pasaba de `false` a `false`. Lo vigila `ficha-grupo-canales.spec.ts`. */
+  const order: readonly Channel[] = ['phone', 'chat', 'whatsapp', 'email'];
 
   return order.filter((c) => set.has(c));
 }

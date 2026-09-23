@@ -23,6 +23,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
+import { ChannelIconComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -73,7 +74,7 @@ import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import { canonicalizeChannels, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import { NgTemplateOutlet } from '@angular/common';
 
 import {
@@ -100,11 +101,20 @@ interface FormState {
   links: readonly GroupAgentLink[];
 }
 
+/** Una cifra de la franja de arriba. `canales` solo la trae la de Canales, que se pinta con glifos. */
+interface HeadlineStat {
+  readonly etiqueta: string;
+  /** El texto. Con `canales`, el que oye el lector de pantalla en vez de los glifos. */
+  readonly valor: string;
+  readonly canales?: readonly GroupChannel[];
+}
+
 @Component({
   selector: 'sc-group-form-page',
   imports: [
     RouterLink,
     NgTemplateOutlet,
+    ChannelIconComponent,
     CheckboxComponent,
     AgentChannelTableComponent,
     ButtonComponent,
@@ -221,7 +231,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'groups.form.section.advanced',
       icon: 'tune',
     };
-    const middle = this.hasPhone() ? [resources, announcements, advanced] : [resources, advanced];
+    /* «Anuncios y audio» se queda SIEMPRE en la tira, apagada cuando no hay teléfono, en vez de
+     * desaparecer. Quitarla movía las dos pestañas de su derecha al marcar o desmarcar un canal, y
+     * además borraba la pista de que existe: una sección que se esfuma no enseña que hay algo ahí
+     * para cuando enciendas teléfono. `disabled` es del `<p-tab>` NATIVO (API instalada 22.1.2), no
+     * una capa nuestra. (Rafa, 2026-09-23.) */
+    const middle = [resources, announcements, advanced];
     /* Al crear, Identidad primero (sin nombre no hay grupo); al editar, al fondo: casi no se toca después (Rafa,
      * 2026-09-16, también en «Una página»).
      *
@@ -270,10 +285,27 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   protected readonly tabSections = computed(() => this.navSections());
 
-  /** La pestaña elegida. Si la de ahora desaparece (un canal que se apaga), cae en la primera. */
+  /**
+   * Una pestaña APAGADA, no escondida: la sección existe, pero este grupo no la usa.
+   *
+   * Hoy solo «Anuncios y audio», que es todo lo que suena en una llamada (manual de Voice, p.
+   * 13-14): sin el canal teléfono no hay nada dentro que configurar.
+   */
+  protected tabDisabled(id: string): boolean {
+    return id === 'group-section-announcements' && !this.hasPhone();
+  }
+
+  /** Por qué está apagada, para el `title`: un control muerto sin motivo es un callejón. */
+  protected tabDisabledReason(id: string): string | null {
+    return this.tabDisabled(id) ? 'groups.form.section.announcements_needs_phone' : null;
+  }
+
+  /** La pestaña elegida. Si la de ahora se APAGA (un canal que se quita), cae en la primera viva. */
   private readonly pickedTab = signal<string>('');
   protected readonly activeTab = computed(() => {
-    const ids = this.tabSections().map((s) => s.id);
+    const ids = this.tabSections()
+      .filter((s) => !this.tabDisabled(s.id))
+      .map((s) => s.id);
     const picked = this.pickedTab();
     return ids.includes(picked) ? picked : (ids[0] ?? '');
   });
@@ -287,12 +319,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * SnowUI. No son decoración — son las tres preguntas que se hacen al abrir un grupo: cuántos
    * atienden, por dónde entra el trabajo y cómo se reparte.
    */
-  protected readonly headline = computed(() => {
+  protected readonly headline = computed<readonly HeadlineStat[]>(() => {
     const f = this.form();
     const activos = f.links.filter((l) => l.active).length;
     return [
       { valor: `${activos}/${f.links.length}`, etiqueta: 'groups.form.section.agents' },
-      { valor: this.channelsSummary(f.channels) || '—', etiqueta: 'groups.form.section.channels' },
+      /* Los canales van con los GLIFOS de la tabla, no con sus nombres. Con los cuatro encendidos
+       * el texto pedía 221px en una columna de 109 y se leía «Teléfono, Ch…»: un dato recortado
+       * que hay que abrir el `title` para entender. Cuatro glifos de 16 con sus huecos miden 95,5 y
+       * caben enteros, así que la cifra deja de recortarse Y deja de moverse. Misma pieza que la
+       * lista de grupos (`sc-channel-icon` dentro de `.sc-channel-row`), no un dibujo nuevo. */
+      { canales: canonicalizeChannels([...f.channels]), valor: this.channelsSummary(f.channels) || '—', etiqueta: 'groups.form.section.channels' },
       /* La estrategia del canal que el grupo SÍ tiene. Antes preguntaba solo por teléfono, así que
        * un grupo de solo chat decía «Estrategia —» teniendo una: la cifra negaba un dato que el
        * formulario de al lado pedía. Con los dos canales manda la de teléfono, que es la que tiene
