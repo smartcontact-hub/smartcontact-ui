@@ -19,13 +19,77 @@
  * app del repo → proyecto de Cloudflare → script que la construye → url que la sirve.
  * Añadir una app es añadir UNA fila; el test dice si te has dejado alguna.
  */
-export const SITIOS = [
-  { app: 'sc-docs', proyecto: 'sc-doc', script: 'build:docs', url: 'https://sc-doc.pages.dev' },
-  { app: 'supervisor', proyecto: 'sc-supervisor', script: 'build:supervisor', url: 'https://sc-supervisor.pages.dev' },
-  { app: 'agent', proyecto: 'sc-agent', script: 'build:agent', url: 'https://sc-agent.pages.dev' },
-  { app: 'cuscare', proyecto: 'sc-cuscare', script: 'build:cuscare', url: 'https://sc-cuscare.pages.dev' },
-  { app: 'agent-mini', proyecto: 'agent-mini', script: 'build:agent-mini', url: 'https://agent-mini.pages.dev' },
+/**
+ * Lo que NINGÚN sitio publica: documentación, tests, herramientas y la configuración del CI.
+ * Cloudflare no reconstruye un sitio si todo lo que cambió cae en sus exclusiones (DD-117).
+ */
+export const NO_SE_PUBLICA = [
+  'docs/*',
+  'findings/*',
+  '.claude/*',
+  '.github/*',
+  'e2e/*',
+  'tools/*',
+  'scripts/__tests__/*',
+  'scripts/hooks/*',
+  'AGENTS.md',
+  'CHANGELOG.md',
+  'CLAUDE.md',
+  'LEARNINGS.md',
+  'NEXT-SESSION.md',
+  'README.md',
+  'README.en.md',
+  '.impeccable.md',
 ];
+
+/** Las carpetas del DS: solo las puede ignorar un sitio cuyo build no lo construye. */
+export const DS = ['projects/design-tokens/*', 'projects/ui-smartcontact/*', 'projects/ui-smartcontact-icons/*'];
+
+const otras = (...apps) => apps.map((a) => `projects/${a}/*`);
+
+/**
+ * app del repo → proyecto de Cloudflare → script que la construye → url que la sirve → lo que
+ * su proyecto de Cloudflare ignora (`excluye`, sobre `path_includes: ['*']`).
+ * Añadir una app es añadir UNA fila; el test dice si te has dejado alguna.
+ *
+ * `excluye` es a prueba de olvidos: se incluye TODO y solo se quita lo que seguro no cambia el
+ * sitio, así que un fichero que nadie previó despliega. Una app nunca excluye una carpeta de la
+ * que tira su build: agent-mini NO excluye `projects/agent`, porque publica `projects/agent/public`
+ * (lo vigila `cf-sites.test.mjs` contra `angular.json`).
+ */
+export const SITIOS = [
+  {
+    app: 'sc-docs', proyecto: 'sc-doc', script: 'build:docs', url: 'https://sc-doc.pages.dev',
+    excluye: [...NO_SE_PUBLICA, ...otras('supervisor', 'agent', 'cuscare', 'agent-mini')],
+  },
+  {
+    app: 'supervisor', proyecto: 'sc-supervisor', script: 'build:supervisor', url: 'https://sc-supervisor.pages.dev',
+    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'agent', 'cuscare', 'agent-mini')],
+  },
+  {
+    app: 'agent', proyecto: 'sc-agent', script: 'build:agent', url: 'https://sc-agent.pages.dev',
+    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'cuscare', 'agent-mini')],
+  },
+  {
+    app: 'cuscare', proyecto: 'sc-cuscare', script: 'build:cuscare', url: 'https://sc-cuscare.pages.dev',
+    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'agent', 'agent-mini')],
+  },
+  {
+    app: 'agent-mini', proyecto: 'agent-mini', script: 'build:agent-mini', url: 'https://agent-mini.pages.dev',
+    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'cuscare'), ...DS],
+  },
+];
+
+/** El comodín de Cloudflare: `*` casa cualquier cosa, `/` incluido. Patrón entero. */
+export function casaCf(patron, ruta) {
+  const re = new RegExp(`^${patron.split('*').map((t) => t.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('.*')}$`);
+  return re.test(ruta);
+}
+
+/** ¿Reconstruye Cloudflare este sitio con estos ficheros? Sí si alguno escapa a sus exclusiones. */
+export function seReconstruye(sitio, ficheros) {
+  return ficheros.some((f) => !sitio.excluye.some((p) => casaCf(p, f)));
+}
 
 /** Un `build:*` de package.json que termina sellando: `… node scripts/stamp-build.mjs <app>`. */
 const SELLO = /node\s+scripts\/stamp-build\.mjs\s+([\w.-]+)\s*$/;

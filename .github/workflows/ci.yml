@@ -43,6 +43,25 @@ on:
 # espurio. En el merge a main, esto corre igual (push → main). El guard va en cada
 # job porque GitHub Actions no tiene un `if` a nivel de workflow.
 jobs:
+  # Qué suites e2e necesita el cambio (DD-117, `scripts/ci-cambios.mjs`): un PR que solo toca
+  # una app corre solo la suite de esa app; uno de solo documentación, ninguna. Lo que no sabe
+  # clasificar, y todo push a `main`, corre TODO. Si este job falla, las e2e corren igual
+  # (`needs.changes.result != 'success'`): ante la duda, se prueba. `verify` y `build` no
+  # dependen de él: corren siempre.
+  changes:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
+    outputs:
+      smoke: ${{ steps.decide.outputs.smoke }}
+      supervisor: ${{ steps.decide.outputs.supervisor }}
+      cuscare: ${{ steps.decide.outputs.cuscare }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - id: decide
+        run: node scripts/ci-cambios.mjs ${{ github.event_name == 'pull_request' && format('{0} HEAD', github.event.pull_request.base.sha) || '--todo' }}
+
   verify:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
@@ -83,7 +102,8 @@ jobs:
 
   e2e-smoke:
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
+    needs: changes
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync') && (needs.changes.result != 'success' || needs.changes.outputs.smoke == 'true') }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -131,7 +151,8 @@ jobs:
   e2e-supervisor-parte:
     name: e2e-supervisor (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
+    needs: changes
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync') && (needs.changes.result != 'success' || needs.changes.outputs.supervisor == 'true') }}
     strategy:
       fail-fast: false
       matrix:
@@ -178,17 +199,19 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
   # El check que exige la protección de `main` se llama `e2e-supervisor`: lo da este job, y
-  # solo sale verde si las cuatro partes pasaron. Sin él, `main` esperaría un check que ya no
-  # existe (las partes se llaman `e2e-supervisor (n/4)`).
+  # solo sale verde si las cuatro partes pasaron, o si `changes` dijo que este cambio no toca el
+  # Supervisor. Sin él, `main` esperaría un check que ya no existe (las partes se llaman
+  # `e2e-supervisor (n/4)`).
   e2e-supervisor:
     runs-on: ubuntu-latest
-    needs: e2e-supervisor-parte
+    needs: [changes, e2e-supervisor-parte]
     if: always() && (github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync')
     steps:
-      - run: test "${{ needs.e2e-supervisor-parte.result }}" = success
+      - run: test "${{ needs.e2e-supervisor-parte.result }}" = success || test "${{ needs.e2e-supervisor-parte.result }}-${{ needs.changes.outputs.supervisor }}" = skipped-false
   e2e-cuscare:
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
+    needs: changes
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync') && (needs.changes.result != 'success' || needs.changes.outputs.cuscare == 'true') }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

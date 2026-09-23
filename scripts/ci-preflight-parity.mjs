@@ -71,12 +71,14 @@ export const LOCAL_SUBSTITUTIONS = {
 // desde que sus capturas son `*-linux.png` la red visual es la del CI (DD-116).
 export const CI_ONLY = ['npm run e2e', 'npm run e2e:supervisor', 'npm run e2e:cuscare'];
 
-// El último patrón es el job que junta las partes de una suite repartida (`needs.<job>.result`):
-// no corre nada, solo convierte N checks en el único que exige la protección de `main`.
+// Los dos últimos no son gates: el job que junta las partes de una suite repartida
+// (`needs.<job>.result`), que convierte N checks en el único que exige la protección de `main`, y
+// el que decide qué suites necesita el cambio (`ci-cambios`, DD-117).
 const INFRA = [
   /^npx playwright install\b/,
   /^sudo rm -f \/etc\/apt\/sources\.list\.d\//,
-  /^test "\$\{\{ needs\.[\w-]+\.result \}\}" = success$/,
+  /^test "\$\{\{ needs\.[\w-]+\.result \}\}" = success( \|\| test "\$\{\{ needs\.[\w-]+\.result \}\}-\$\{\{ needs\.changes\.outputs\.[\w-]+ \}\}" = skipped-false)?$/,
+  /^node scripts\/ci-cambios\.mjs\b/,
 ];
 const isInfra = (cmd) => INFRA.some((re) => re.test(cmd));
 
