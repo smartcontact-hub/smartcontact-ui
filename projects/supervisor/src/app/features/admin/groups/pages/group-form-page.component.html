@@ -193,16 +193,42 @@
            para su `h1` (`sc-list-page`), así que no nace un tamaño nuevo para esto. -->
       <div class="headline__who">
         <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
+        <!-- El teléfono, solo si el grupo ofrece teléfono: un grupo de chat enseñaba aquí un número
+             que ya no se le pide en ningún sitio, o un «Ninguno» que no es una carencia. -->
         <span class="headline__meta sc-text-caption-regular">
-          {{ form().phone || ('groups.form.summary.none' | translate) }} · {{ priorityKeys[form().priority] | translate }}
+          @if (hasPhone()) {
+            {{ form().phone || ('groups.form.summary.none' | translate) }} ·
+          }
+          {{ priorityKeys[form().priority] | translate }}
         </span>
       </div>
       <dl class="headline__stats">
         @for (s of headline(); track s.etiqueta) {
           <div class="headline__stat">
             <dt class="headline__label sc-text-caption-regular">{{ s.etiqueta | translate }}</dt>
-            <!-- El `title` es lo que rescata el valor cuando el ancho fijo lo recorta. -->
-            <dd class="headline__value sc-text-body-semibold" [title]="s.valor">{{ s.valor }}</dd>
+            <!-- El `title` es lo que rescata el valor cuando el ancho fijo lo recorta.
+                 Los CANALES no llevan texto sino los glifos de la lista de grupos: el nombre de
+                 cada uno va en su `title`, como allí, y el lector de pantalla oye la lista entera
+                 del `dd`. Cuatro glifos miden 95,5 en una columna de 109, así que ni se recortan
+                 ni bailan al encender un canal. -->
+            <dd class="headline__value sc-text-body-semibold" [title]="s.valor">
+              @if (s.canales; as canales) {
+                <span class="visually-hidden">{{ s.valor }}</span>
+                @if (canales.length) {
+                  <span class="sc-channel-row" aria-hidden="true">
+                    @for (c of canales; track c) {
+                      <span class="sc-channel-row__item" [attr.data-channel]="c" [title]="channelKeys[c] | translate">
+                        <sc-channel-icon [channel]="c" />
+                      </span>
+                    }
+                  </span>
+                } @else {
+                  <span aria-hidden="true">{{ s.valor }}</span>
+                }
+              } @else {
+                {{ s.valor }}
+              }
+            </dd>
           </div>
         }
       </dl>
@@ -230,8 +256,15 @@
   <p-tabs class="tabbar" [value]="activeTab()" (valueChange)="onTabChange($event)">
     <!-- El nombre va al nodo con `role="tablist"`, que es el `content` de dentro de `p-tablist`. -->
     <p-tablist [pt]="{ content: { 'aria-label': 'common.form_index_aria' | translate } }">
+      <!-- `disabled` es del `<p-tab>` nativo. El `title` NO lo trae el ejemplo y va a propósito: una
+           pestaña apagada sin motivo es un callejón, y el motivo («solo con el canal Teléfono») no
+           cabe en el rótulo. -->
       @for (s of tabSections(); track s.id) {
-        <p-tab [value]="s.id">{{ s.labelKey | translate }}</p-tab>
+        <p-tab
+          [value]="s.id"
+          [disabled]="tabDisabled(s.id)"
+          [attr.title]="tabDisabledReason(s.id) ? (tabDisabledReason(s.id)! | translate) : null"
+        >{{ s.labelKey | translate }}</p-tab>
       }
     </p-tablist>
   </p-tabs>
@@ -802,20 +835,28 @@
             </div>
           </div>
 
-          <!-- El «Teléfono asociado» de Voice: se elige entre los que ya usan los grupos o se escribe uno. -->
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-phone">
-              {{ 'groups.form.fields.phone' | translate }}
-            </label>
-            <sc-select
-              inputId="group-phone"
-              editable
-              [options]="phoneOptions()"
-              [value]="form().phone"
-              [helperText]="'groups.form.fields.phone_hint' | translate"
-              (valueChange)="onPhoneValueChange($event)"
-            />
-          </div>
+          <!-- El «Teléfono asociado» de Voice: se elige entre los que ya usan los grupos o se escribe uno.
+               SOLO SI EL GRUPO OFRECE TELÉFONO. Era el último campo de teléfono que seguía saliendo en un
+               grupo que no lo usa, y el que el equipo nombró: «tengo que ponerle un teléfono asociado
+               aunque no se vaya a usar» (2026-09-22). El resto de lo de teléfono ya se ocultaba: la
+               estrategia, la pestaña entera de Anuncios y audio, el tiempo entre llamadas y el desborde.
+               El valor NO se borra al apagar el canal, se deja de pedir: si se vuelve a encender, el
+               número que ya había sigue ahí, igual que un agente pausado conserva sus canales. -->
+          @if (hasPhone()) {
+            <div class="field">
+              <label class="field__label sc-text-caption-semibold" for="group-phone">
+                {{ 'groups.form.fields.phone' | translate }}
+              </label>
+              <sc-select
+                inputId="group-phone"
+                editable
+                [options]="phoneOptions()"
+                [value]="form().phone"
+                [helperText]="'groups.form.fields.phone_hint' | translate"
+                (valueChange)="onPhoneValueChange($event)"
+              />
+            </div>
+          }
 
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-priority">
