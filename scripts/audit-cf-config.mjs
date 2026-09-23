@@ -37,14 +37,16 @@ export const CUENTA = 'b8361bb4e57ddd2094a0e5ed5a5e247a';
  * con `build:docs`), así que el mapa es explícito allí y el test comprueba que cada script
  * existe y sella su app.
  */
-export const PROYECTOS = SITIOS.map(({ app, proyecto, script }) => ({ app, proyecto, script }));
+export const PROYECTOS = SITIOS.map(({ app, proyecto, script, excluye }) => ({ app, proyecto, script, excluye }));
 
 /** Lo que el repo espera de cada proyecto. Todos los `build:*` terminan en `stamp-build.mjs`. */
-export function esperado({ app, script }) {
+export function esperado({ app, script, excluye = [] }) {
   return {
     build_command: `npm run ${script}`,
     destination_dir: `dist/${app}/browser`,
     production_branch: 'main',
+    path_includes: ['*'],
+    path_excludes: [...excluye].sort(),
   };
 }
 
@@ -69,6 +71,19 @@ export function evaluar(entrada, proyecto) {
     fallos.push(
       `production branch es «${proyecto?.production_branch ?? '(vacío)'}», debe ser «main» ` +
         `(una rama de feature se borra al fundir y el proyecto queda huérfano)`,
+    );
+  }
+  // Qué rutas vigila (DD-117): si el dashboard y `cf-sites.mjs` no coinciden, o se despliega de
+  // más (inofensivo pero es el ruido que se quitó) o de menos (un sitio que no se actualiza).
+  const src = proyecto?.source?.config ?? {};
+  const lista = (v) => JSON.stringify([...(v ?? [])].sort());
+  if (lista(src.path_includes) !== lista(e.path_includes)) {
+    fallos.push(`path_includes es ${lista(src.path_includes)}, debe ser ${lista(e.path_includes)}`);
+  }
+  if (lista(src.path_excludes) !== lista(e.path_excludes)) {
+    fallos.push(
+      `path_excludes no es el de scripts/cf-sites.mjs (tiene ${src.path_excludes?.length ?? 0}, se esperan ` +
+        `${e.path_excludes.length}): corre «node scripts/cf-watch-paths.mjs --aplicar»`,
     );
   }
   const env = proyecto?.deployment_configs?.production?.env_vars ?? {};

@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { SITIOS, appsSelladas, desalineadas } from '../cf-sites.mjs';
+import { execFileSync } from 'node:child_process';
+import { DS, SITIOS, appsSelladas, casaCf, desalineadas, seReconstruye } from '../cf-sites.mjs';
 
 // El catálogo es ahora la ÚNICA lista de sitios de Cloudflare: de él salen los `SITIOS` que
 // registra `record-deploy.mjs` y los `PROYECTOS` que audita `audit-cf-config.mjs`. Lo que la
@@ -82,5 +83,67 @@ test('cada fila lleva sus cuatro datos, y app, proyecto y url son únicos', () =
   for (const clave of ['app', 'proyecto', 'url']) {
     const valores = SITIOS.map((s) => s[clave]);
     assert.equal(new Set(valores).size, valores.length, `hay ${clave} repetido en el catálogo`);
+  }
+});
+
+/* ── Rutas que cada proyecto de Cloudflare ignora (DD-117) ─────────────────────────────── */
+
+const angular = JSON.parse(readFileSync(fileURLToPath(import.meta.resolve('../../angular.json')), 'utf8'));
+const APPS = SITIOS.map((s) => s.app);
+const sitio = (app) => SITIOS.find((s) => s.app === app);
+// `git grep` sale con 1 cuando no encuentra nada: eso es la respuesta buena, no un error.
+function mencionesDelDs(app) {
+  try {
+    return execFileSync('git', ['grep', '-l', '-E', '@smartcontact-hub|design-tokens|ui-smartcontact', '--', `projects/${app}`], {
+      encoding: 'utf8',
+      cwd: fileURLToPath(import.meta.resolve('../..')),
+      env: Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_'))),
+    }).split('\n').filter(Boolean);
+  } catch (e) {
+    if (e.status === 1) return [];
+    throw e;
+  }
+}
+const reconstruye = (ficheros) => SITIOS.filter((s) => seReconstruye(s, ficheros)).map((s) => s.app);
+
+test('el comodín es el de Cloudflare: `*` cruza carpetas y el patrón casa entero', () => {
+  assert.ok(casaCf('docs/*', 'docs/handoff/x.md'));
+  assert.ok(casaCf('README.md', 'README.md'));
+  assert.ok(!casaCf('README.md', 'projects/x/README.md'));
+  assert.ok(!casaCf('projects/agent/*', 'projects/agent-mini/src/a.ts'), 'agent no se come a agent-mini');
+});
+
+test('cada cambio despliega lo suyo', () => {
+  assert.deepEqual(reconstruye(['projects/supervisor/src/app/a.ts']), ['supervisor']);
+  assert.deepEqual(reconstruye(['docs/DECISIONS.md', 'LEARNINGS.md', 'e2e/supervisor/a.spec.ts']), []);
+  assert.deepEqual(reconstruye(['projects/agent/public/fonts/a.woff2']), ['agent', 'agent-mini']);
+  assert.deepEqual(reconstruye(['projects/ui-smartcontact/src/a.ts']), APPS.filter((a) => a !== 'agent-mini'));
+});
+
+test('ROJO si se esconde: lo que nadie previó despliega los cinco', () => {
+  for (const f of ['package.json', 'angular.json', 'scripts/stamp-build.mjs', 'una/ruta/nueva.ts']) {
+    assert.deepEqual(reconstruye([f]), APPS, f);
+  }
+});
+
+test('ninguna app ignora una carpeta de la que tira su build (angular.json)', () => {
+  for (const { app, excluye } of SITIOS) {
+    const opciones = JSON.stringify(angular.projects[app].architect.build.options);
+    for (const patron of excluye) {
+      const m = patron.match(/^projects\/([\w-]+)\/\*$/);
+      if (!m) continue;
+      assert.ok(!opciones.includes(`projects/${m[1]}/`), `${app} excluye ${patron} y su build lo usa`);
+    }
+  }
+  // La sonda: el acoplamiento real que motivó la regla.
+  assert.ok(JSON.stringify(angular.projects['agent-mini'].architect.build.options).includes('projects/agent/'));
+  assert.ok(!sitio('agent-mini').excluye.includes('projects/agent/*'));
+});
+
+test('solo ignora el DS una app cuyo build no lo construye ni lo importa', () => {
+  for (const { app, script, excluye } of SITIOS) {
+    if (!DS.some((d) => excluye.includes(d))) continue;
+    assert.ok(!scripts[script].includes('npm run build'), `${script} construye el DS`);
+    assert.deepEqual(mencionesDelDs(app), [], `projects/${app} menciona el DS`);
   }
 });
