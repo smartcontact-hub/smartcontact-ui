@@ -378,10 +378,12 @@ export class SidebarLabPageComponent {
     if (mode === 'light' || mode === 'dark' || mode === 'system') this.theme.set(mode);
   }
 
-  /** Deja el laboratorio en la misma página, ya en el shell, y la apunta para volver a entrar ahí. */
+  /** Deja el laboratorio en la misma página, ya en el shell, y la apunta para volver a entrar ahí.
+   *  El apagado va en la PESTAÑA (`sessionStorage`), donde vive el modo; el sitio al que volver
+   *  sigue en `localStorage`, que es una comodidad y no enmarca nada por su cuenta. */
   protected leaveLab(): void {
     localStorage.setItem(LAB_SIDEBAR_RETURN_KEY, location.pathname + location.search);
-    localStorage.setItem(LAB_SIDEBAR_KEY, '0');
+    sessionStorage.setItem(LAB_SIDEBAR_KEY, '0');
     location.reload();
   }
 
