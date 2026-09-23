@@ -1,23 +1,25 @@
 {
-  "commit": "84f37bd5",
+  "commit": "b4049977",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-20T19:14:53.006Z",
+  "generado": "2026-09-23T15:11:31.070Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "sc-preset.mjs"
+        "smartcontact-tokens.css"
       ],
-      "variables": [],
+      "variables": [
+        "claro|--sc-sidebar-item-group-bg",
+        "claro|--sc-sidebar-submenu-duration",
+        "claro|--sc-sidebar-submenu-easing"
+      ],
       "retirados": [],
       "semanticaComun": false,
-      "reglasCss": true,
-      "componentes": [
-        "sidebar"
-      ]
+      "reglasCss": false,
+      "componentes": []
     },
     "cambia": true,
     "contratoPlugin": {
@@ -25,5 +27,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260920.1914"
+  "version": "0.20260923.1511"
 }

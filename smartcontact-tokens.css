@@ -1886,6 +1886,11 @@
   --sc-sidebar-fg-faint: color-mix(in srgb, var(--sc-color-slate-0) 40%, transparent);
   --sc-sidebar-item-hover-bg: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-sidebar-item-active-bg: color-mix(in srgb, var(--sc-color-slate-0) 15%, transparent);
+  /* Fondo de grupo (SISMAC-4340): la categoría abierta y, encima, sus hijos. */
+  --sc-sidebar-item-group-bg: color-mix(in srgb, var(--sc-color-slate-0) 10%, transparent);
+  /* Abrir y cerrar subsecciones como Apollo (plantilla de PrimeNG): 450ms con su curva. */
+  --sc-sidebar-submenu-duration: 450ms;
+  --sc-sidebar-submenu-easing: cubic-bezier(0.86, 0, 0.07, 1);
   --sc-sidebar-border: color-mix(in srgb, var(--sc-color-slate-0) 8%, transparent);
   --sc-sidebar-scrollbar: color-mix(in srgb, var(--sc-color-slate-0) 16%, transparent);
   --sc-sidebar-divider: var(--sc-color-blue-500);
