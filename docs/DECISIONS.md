@@ -95,7 +95,8 @@ local el paso solo corría las aserciones de métrica, que el CI también corre.
 · La comparación del CI **enrojece**: la run 35536252484 (PR #218, 20-sep) cayó por
   `toHaveScreenshot(bulkeditmenu|sectioncard|select.png)`, 66.862 px distintos en una.
 · Nadie apaga las capturas en `ci.yml` (`SC_SKIP_VISUAL_BASELINES` solo está en `tokens-sync`).
-· Coste local: **2m09s** de 3,5 min del carril, más la cola del puerto fijo 4280: con otra sesión
+· Coste local: **2m09s** por preflight (la cadena sin él, en frío: **6m28s**, casi todo builds
+  AOT en serie a 111% de CPU en un Mac de 10 núcleos), más la cola del puerto fijo 4280: con otra sesión
   (o un servidor olvidado) dentro, el guardián espera 25 min y falla. Pasó ese mismo día con un
   `ng serve` de otro worktree vivo desde las 00:56.
 
