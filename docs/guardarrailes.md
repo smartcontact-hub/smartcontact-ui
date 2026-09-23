@@ -34,6 +34,12 @@ obligatorio en `main` y paralelo. En un portátil solo cabe un Playwright a la v
 varias sesiones el preflight completo (20-25 min) se hacía cola durante una hora; en GitHub cada
 suite tiene su runner. Si tocaste un e2e de app, córrela a mano antes de pushear.
 
+En un PR, el CI corre solo las suites que el cambio puede romper (DD-117, `scripts/ci-cambios.mjs`):
+un cambio del Supervisor, la del Supervisor; uno de solo documentación, ninguna. El DS, la raíz y
+todo lo que no sabe clasificar corren todas, y `main` las corre siempre todas. Cloudflare igual:
+cada proyecto ignora lo que no publica (`excluye` en `scripts/cf-sites.mjs`), así que un PR del
+Supervisor despliega y comenta una vez, no cinco.
+
 Las **baselines visuales** (`e2e:visual`) tampoco van en `preflight` (DD-116). Estuvieron
 (DD-62) mientras sus capturas eran del Mac y el CI no podía compararlas; hoy son `*-linux.png` y
 las compara el job `e2e-smoke`, obligatorio en `main`. En un Mac la suite se salta las capturas,

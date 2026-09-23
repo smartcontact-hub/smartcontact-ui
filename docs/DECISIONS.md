@@ -81,6 +81,37 @@
 
 ---
 
+## DD-117 · 2026-09-23 — Cada PR prueba y despliega lo que toca; `main` lo sigue probando todo
+
+**Contexto** · Rafa: «siempre veo deployments de Cloudflare, 5 comentarios en cada PR, cuando no
+han pasado cambios en todas». Medido sobre los últimos 40 PR de `main`: 10 tocaban el DS, 10 la
+raíz, 10 una sola app, 6 solo documentación y 4 varias apps. El acoplamiento real con el DS no es
+parejo: importan `@smartcontact-hub/*` 70 ficheros del Supervisor, 62 de sc-docs, 4 de agent, 1 de
+CusCare y 0 de agent-mini.
+
+**Decisión** ·
+1. **CI**: un job `changes` (`scripts/ci-cambios.mjs`) decide qué suites e2e necesita el PR. Un
+   fichero de una app corre solo su suite; documentación, ninguna; un script de `scripts/` que
+   ninguna e2e alcanza (se siguen los `import`), ninguna. **Lo que no sabe clasificar corre todo.**
+   `verify` y `build` corren siempre, y todo push a `main` corre todo. Si `changes` falla, las e2e
+   corren igual. Repetido sobre los 40 PR: 19 se ahorran e2e.
+2. **Cloudflare**: cada proyecto vigila `*` y excluye lo que seguro no le cambia (documentación,
+   tests, herramientas, las otras apps) según `excluye` de `cf-sites.mjs`. Una app nunca excluye
+   una carpeta de la que tira su build (agent-mini publica `projects/agent/public`; lo vigila un
+   test contra `angular.json`), y solo agent-mini ignora el DS, porque su build no lo construye.
+   `audit:cf-config` compara el dashboard con esa lista; `scripts/cf-watch-paths.mjs --aplicar` la
+   pone.
+3. **`record-deploy`** ya no espera a un sitio que el commit no reconstruye (lo dejaría rojo tras
+   35 min sobre algo que no está roto): no lo registra, como a un commit adelantado (DD-64).
+
+**Lo que se acepta** · Un fallo que el filtro no vea se descubre al fundir, en el CI de `main`, no
+en el PR. Una app que entre al DS no necesita tocar nada aquí: un cambio del DS ya corre todo; sí
+necesita su fila en `APPS` (`ci-cambios`) y en `SITIOS` (`cf-sites`), y un test falla si falta.
+
+**Descartadas** · *Un allowlist por app* (lo que no esté listado no corre): un fichero no previsto
+se colaría sin probar. *Filtrar también `verify`/`build`*: cuestan 1-2 min y son los que cazan lo
+que cruza apps.
+
 ## DD-116 · 2026-09-23 — `e2e:visual` sale del `preflight`: su única razón para estar ahí ya no existe
 
 **Contexto** · DD-62 metió `e2e:visual` en `preflight` con una regla explícita: es **lo que el CI

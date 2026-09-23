@@ -22,7 +22,7 @@
  */
 import { pathToFileURL } from 'node:url';
 
-import { SITIOS as CATALOGO } from './cf-sites.mjs';
+import { SITIOS as CATALOGO, seReconstruye } from './cf-sites.mjs';
 
 const REPO = process.env.GITHUB_REPOSITORY ?? 'smartcontact-hub/smartcontact-ui';
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
@@ -32,7 +32,7 @@ const API = 'https://api.github.com';
  * Los sitios que se comprueban, derivados del catálogo único de `cf-sites.mjs` (el mismo del que
  * sale la lista que audita `audit-cf-config.mjs`): el entorno de GitHub es la app del repo.
  */
-export const SITIOS = CATALOGO.map(({ app, url }) => ({ entorno: app, url }));
+export const SITIOS = CATALOGO.map(({ app, url, excluye }) => ({ entorno: app, url, excluye }));
 
 // Cloudflare NO los construye en paralelo: medido el 2026-09-10 sobre 87 builds seguidos de la
 // cuenta, la concurrencia máxima observada fue **1**. Construir cada sitio cuesta ~70 s, pero
@@ -146,6 +146,33 @@ async function adelantadoPorMain(sha) {
   return supersesion(sha, cabeza, await relacionConCabeza(sha, cabeza));
 }
 
+/**
+ * Los ficheros que cambió el commit, o `null` si no se pueden leer o la lista viene cortada (la API
+ * da 300 como mucho): sin la lista entera no se puede afirmar que un sitio no cambió.
+ */
+async function ficherosDe(sha) {
+  try {
+    const d = await gh(`/repos/${REPO}/commits/${sha}`);
+    const ficheros = (d?.files ?? []).map((f) => f.filename);
+    return ficheros.length > 0 && ficheros.length < 300 ? ficheros : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Los sitios que este commit tiene que redesplegar. Cloudflare no reconstruye un sitio si todo lo
+ * que cambió cae en sus exclusiones (`cf-sites.mjs`, DD-117): ese sitio sigue sirviendo su commit
+ * anterior, y esperarlo sería un rojo seguro sobre algo que no está roto. No se registra nada de
+ * él, igual que de un commit adelantado. Sin la lista de ficheros, se esperan todos.
+ * Función pura: es lo que se prueba.
+ */
+export function sitiosAEsperar(sitios, ficheros) {
+  if (!ficheros) return { esperar: sitios, sinCambios: [] };
+  const esperar = sitios.filter((s) => seReconstruye(s, ficheros));
+  return { esperar, sinCambios: sitios.filter((s) => !esperar.includes(s)) };
+}
+
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
@@ -162,12 +189,21 @@ async function main() {
     return;
   }
 
-  const pendientes = new Map(SITIOS.map((s) => [s.entorno, s]));
+  const { esperar, sinCambios } = sitiosAEsperar(SITIOS, await ficherosDe(sha));
+  for (const s of sinCambios) {
+    console.log(`– ${s.entorno}: ${sha.slice(0, 7)} no toca nada que publique; sigue en su commit anterior y no se registra.`);
+  }
+  if (esperar.length === 0) {
+    console.log('\nNingún sitio tenía que redesplegarse con este commit.');
+    return;
+  }
+
+  const pendientes = new Map(esperar.map((s) => [s.entorno, s]));
   const resultado = new Map();
   const conMarca = new Set(); // entornos que han mostrado ALGUNA marca, aunque vieja
   const hasta = Date.now() + ESPERA_MAX_MS;
 
-  console.log(`Esperando a que los ${SITIOS.length} sitios sirvan ${sha.slice(0, 7)}…\n`);
+  console.log(`Esperando a que ${esperar.length} sitio(s) sirvan ${sha.slice(0, 7)}…\n`);
   while (pendientes.size > 0 && Date.now() < hasta) {
     for (const [entorno, sitio] of [...pendientes]) {
       const servido = await commitServido(sitio.url);
@@ -238,7 +274,7 @@ async function main() {
     console.error(`\n${fallos} sitio(s) sin confirmar. El registro lo dice; no se ha apuntado como bueno.`);
     process.exit(1);
   }
-  console.log('\n✓ Los 5 sitios confirmados y registrados.');
+  console.log(`\n✓ ${resultado.size} sitio(s) confirmados y registrados.`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
