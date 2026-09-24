@@ -29,7 +29,7 @@
 >
 > Lo cerrado NO se tacha aquí: se baja al histórico del final del fichero.
 
-**LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
+**LO SIGUIENTE, en orden (Rafa, 2026-09-13: el sistema es automatizable y lo operan agentes; nada a mano salvo que sea necesario):**
 
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
@@ -82,7 +82,7 @@
   (`pInputPassword` no trae conmutador): la API de `sc-password` no depende de ello.
 
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
-«Si te instalas Aura y le pones este styling estamos así»: una ficha por componente que diga qué
+Qué resulta de instalar Aura y aplicarle nuestro styling: una ficha por componente que diga qué
 cambia nuestra capa sobre el `p-*` de primeng.dev, para que el código de cualquier equipo hable el
 mismo idioma. NO es contra el DS de Carlos: es contra Aura puro. El método ya está probado: con
 esbuild se empaquetan `sc-preset/index.ts` y `@primeuix/themes/aura`, y
@@ -176,14 +176,14 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 **Lo que cambia.** Fuera las 194 menciones del autor en comentarios de apps, librería, e2e, scripts, hooks y workflows:
 la procedencia pasa a su DD, ticket o nodo de Figma, y cada cita al criterio que expresaba (AGENTS.md §«Voz del código»).
-Lo vigilan `audit:personal-names` en `verify` y `bash-guard` en commits y PRs. Abierto en DD-120: barrer también los `.md`.
+Lo vigilan `audit:personal-names` en `verify` y `bash-guard` en commits y PRs. Los `.md`, sin citas literales (DD-120).
 
 - ⚠️ **Una rama que rebase encima** puede chocar en comentarios, y el gate le hará reescribir los suyos (`gulper`: `channel-icon`).
 
 ## ✅ 2026-09-15 · En Servicio, la dirección de las notificaciones se lee entera
 
 **Sello:** rama `arebury/notificaciones-direccion-ancha`, sobre `fa21f53` (#198). Rafa probó en local el InputGroup
-con las casillas como addons («me convence solo el link») y eligió volver a las columnas. Archivado:
+con las casillas como addons (solo le convenció el campo de la dirección a lo ancho, con su `https://`; las casillas como addons, no) y eligió volver a las columnas. Archivado:
 `archive/handoff-ds-2026-09-15-tema` («El tema lee los colores», #193).
 
 **Lo que cambia.** Las tres columnas de casillas miden su rótulo y la dirección se queda el resto: a 1440 el campo pasa de
@@ -254,9 +254,9 @@ y pulsación con capturas delante. DD-107 vive en `archive/handoff-ds-2026-09-15
 | ~~**Borrar el proyecto Cloudflare `sc-demo`**~~ → **HECHO por Rafa (2026-09-01)** | Proyecto borrado de Cloudflare. Su check «Cloudflare Pages: sc-demo» todavía sale en rojo en el último commit de `design-tokens-sync`: es un snapshot HISTÓRICO de cuando existía (no vuelve a correr sobre un commit viejo), se limpiará solo en el próximo push del bot de tokens. |
 | **`org-profile.md`** | `smartcontact-hub/.github` → `profile/README.md` → **HTTP 404** (re-medido 2026-08-25): no está pegado. El borrador sigue en `docs/org-profile.md` |
 | ~~**Un primary dark conforme, pero desde el KIT**~~ → **HECHO en DD-81 (2026-09-13)**: el Kit ya lo trae (sky-300 con texto zinc-900, el patrón de Aura) y las filas de `color-map.mjs` volvieron a `enforce` |
-| ~~**Lienzo de página gris↔blanco**~~ → **DECIDIDO Y HECHO**: [DD-45](../DECISIONS.md) lo llevó a BLANCO el 2026-08-31 (`app-shell.component.scss` pinta `--sc-bg-canvas`), y Rafa lo reconfirmó el 2026-09-11 («el lienzo sí, pasa a blanco») sin saber que ya estaba. La fila llevaba diez días mintiendo: si una espera se resuelve en otro tramo, hay que venir a tacharla aquí |
+| ~~**Lienzo de página gris↔blanco**~~ → **DECIDIDO Y HECHO**: [DD-45](../DECISIONS.md) lo llevó a BLANCO el 2026-08-31 (`app-shell.component.scss` pinta `--sc-bg-canvas`), y Rafa lo reconfirmó el 2026-09-11 (lienzo en blanco) sin saber que ya estaba. La fila llevaba diez días mintiendo: si una espera se resuelve en otro tramo, hay que venir a tacharla aquí |
 | ~~**Tramo actual del breadcrumb**~~ → **DECIDIDO, `bcab818` (2026-08-25)**: la propuesta de Figma `13890:157` (padres slate-500 `#8F97A3`) **se RECHAZA** — da **2,95:1** sobre blanco y no cumple AA. Se queda el código como está (padres slate-600, actual slate-700, ambos AA). Falta solo anotarlo en el nodo de Figma (Bloque 4). *Nota: el mismo commit tokenizó la miga a 14px, otro asunto ya cerrado.* |
-| ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa «que no cambie de anchura porque sí». `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
+| ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa: el ancho no cambia sin motivo. `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
 | **Qué forma de ficha (agente, grupo, usuario)** | El PM compara las tres de la rama `comparar/fichas` (2026-09-15, tramo de arriba). Con la decisión, la elegida se construye en `main` y la rama se archiva con tag |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
 | ~~**Experimento en LOCAL: la escala al tamaño de Aura (16px por rem)**~~ → **DECIDIDO 2026-09-14 ([DD-91](../DECISIONS.md))** | Rafa eligió solo el interlineado con la rampa que existe (20/18): 32,5 y 27, sin perder filas. La escala se queda a 14. Medido también escala 16 + 20/18: 34 / 28 y 11 filas. Simulación en `~/Documents/Claude/2026-09 escala-16/`; el nombre por clave y el gate de la escala entraron en DD-89 |

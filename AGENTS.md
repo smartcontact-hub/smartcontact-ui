@@ -135,7 +135,7 @@ Examples:
 
 ### Componentes de primeng.dev: el nativo tal cual, adaptado con tokens (DD-113)
 
-Regla de Rafa (2026-09-15): «parto de la idea de que lo vas a hacer tal cual sale en la docu». Cuando pide un
+Regla de Rafa (2026-09-15): el punto de partida es que se implementa tal cual sale en la documentación. Cuando pide un
 componente de primeng.dev (lo pase con enlace o no):
 
 1. **Lee la documentación ENTERA antes de escribir**: `node tools/primeng-doc.mjs <componente>`. Junta las
@@ -318,9 +318,12 @@ DesignOps en un repo que lee cualquiera:
 - **La procedencia es la fuente**: DD-NN, el ticket (SISMAC-NNNN) o el nodo de Figma. Si no la hay y
   la línea registra una DECISIÓN, «decisión de producto (fecha)»: es lo que le dice a un agente que
   no la deshaga a la ligera, la señal que antes daba el nombre. La fecha sola solo data un hecho.
-- **Sin citas literales de conversación**: la cita pasa al criterio que expresaba. «veo
-  desalineaciones» → «alineación óptica (QA visual, 2026-09-24)»; «nada es clicable» → «sin
-  affordance de clic». Vocabulario: revisión visual, QA visual, decisión de producto, criterio del
+- **Sin citas literales de conversación, tampoco en la documentación**: la cita pasa al criterio
+  que expresaba, con su misma fuerza y alcance. «esto se ve torcido» → «alineación óptica (QA
+  visual, 2026-09-24)»; «no sé qué se puede pulsar» → «sin affordance de clic». En los `.md`, quien
+  decide puede quedar nombrado; sus palabras tal cual, no, salvo que sean DATO de un detector (las
+  frases que prueba `correction-capture`) o la frase que la propia regla usa tal cual como
+  disparador o pregunta de control. Vocabulario: revisión visual, QA visual, decisión de producto, criterio del
   sistema, jerarquía, densidad, affordance, consistencia entre pantallas.
 - **Los hooks, al hablarle al agente**, dicen «el usuario».
 - **La excepción es el nombre como DATO**, nunca como firma: el agente de demo con el nombre del

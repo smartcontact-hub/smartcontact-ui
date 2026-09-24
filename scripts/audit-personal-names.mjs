@@ -5,7 +5,7 @@
  * POR QUÉ EXISTE. El repo es público y el código es lo que más se lee de él. El 2026-09-24 había
  * 197 menciones del autor del repo en ficheros de código, casi todas con una de tres formas: la
  * autoría de una decisión entre paréntesis («(Nombre, fecha)»), una cita literal de conversación
- * («veo desalineaciones») o quién detectó un fallo. Nada de eso ayuda a entender la línea que
+ * (la reacción tal cual, entre comillas) o quién detectó un fallo. Nada de eso ayuda a entender la línea que
  * acompaña: lo que la sostiene es un criterio de diseño o técnico, y la fuente de una decisión es
  * su DD (`docs/DECISIONS.md`), su ticket o su nodo de Figma. La cita literal, además, deja en el
  * código un registro de conversación que no le corresponde. Cómo se escribe en su lugar:

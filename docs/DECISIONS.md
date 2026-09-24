@@ -86,7 +86,7 @@
 
 **Contexto** · El repo es público. Medido el 2026-09-24: 197 menciones del autor en ficheros de código (100 en apps,
 librería y e2e; 97 en scripts, hooks y workflows), casi todas de tres formas: «(Nombre, fecha)» como firma de una
-decisión, citas literales de conversación («veo desalineaciones», «es muy mess») y quién detectó un fallo. Y el «Por
+decisión, citas literales de conversación (la reacción tal cual, entre comillas) y quién detectó un fallo. Y el «Por
 qué» de 28 de los últimos 60 commits contaba quién lo había pedido en vez del criterio. Ninguna ayudaba a entender la
 línea que acompañaba, y todas dejaban un registro de conversación donde se lee el código.
 
@@ -108,8 +108,10 @@ línea que acompañaba, y todas dejaban un registro de conversación donde se le
 y la cita literal suena a chat, no a código de producto. La regla escrita para las portadas de PR (2026-09-14) no
 cubría el código y por ahí se coló.
 
-**Abierto** · La documentación de proceso (`AGENTS`, `LEARNINGS`, hand-offs, esta tabla; 343 menciones) queda fuera
-del gate hasta decidir si también se barre: ahí «quién decide» puede ser contexto para un agente, y las citas no.
+**Documentación de proceso** (enmienda del 2026-09-24) · En los `.md` el nombre se queda como quien decide, que es
+contexto para un agente; lo que sale son sus citas literales (74, pasadas al criterio con su misma fuerza y alcance,
+revisadas una a una por un revisor independiente). Se quedan las que son DATO de un detector o disparador de una regla.
+Los hand-offs de otros frentes los limpia su propia sesión al reescribirlos. Sin gate: lo dice AGENTS.md.
 
 **Descartadas** ·
 - **Reescribir la historia de git** para limpiar los commits viejos → reescribir historia publicada rompe cada clon y
@@ -144,10 +146,10 @@ nombre llevaba a «Canales y agentes»); el diálogo lo hace visible.
 
 **Descartadas** ·
 - **Alta con nombre y canales** (la primera versión) → la ficha abre por la fila de canales, así que al entrar se veía
-  lo que se acababa de rellenar. Rafa: «es un paso extra; al entrar tengo lo mismo que acabo de configurar; tiene que
-  rimar». Pidiendo lo de la cabecera, el alta es el primer paso de la ficha y no una copia de su primera pantalla.
-- **Sin pestaña Identidad** (nombre con un lápiz junto al título, teléfono y prioridad en la fila de canales) → Rafa:
-  «debería ser más obvio, no sé si puedo tocarlo como usuario».
+  lo que se acababa de rellenar. Rafa lo descartó: era un paso extra, al entrar se repetía lo recién configurado, y el
+  alta y la ficha tienen que ser coherentes. Pidiendo lo de la cabecera, el alta es el primer paso de la ficha y no una copia de su primera pantalla.
+- **Sin pestaña Identidad** (nombre con un lápiz junto al título, teléfono y prioridad en la fila de canales) → Rafa lo
+  descartó: la edición no era evidente y, como usuario, no se sabía si esos datos se podían tocar.
 - **«Editar datos» en la cabecera con un diálogo** → añadía un «Aplicar» que no guardaba, un segundo nivel de
   confirmación que había que explicar con una frase, y rompía el orden común de las tres fichas (#240).
 - **Avatar generado del nombre** (teardown B7 lo daba por bueno) → B7 medía apps de mensajería, donde grupos y personas
@@ -157,9 +159,9 @@ nombre llevaba a «Canales y agentes»); el diálogo lo hace visible.
 
 **Contexto** · SISMAC-4340. El 2026-09-16 se compararon tres comportamientos en la rama `comparar/sidebar` (tipo Apollo,
 abrir no cierra las demás y no se cierra nada) y quedó como oficial «no se cierra nada», pero no llegó a `main`: producción
-seguía con DD-112, que cierra al salir del menú lo que no es de la página. Rafa, el 2026-09-23: «el sidebar en main en
-producción tiene que ser este» (https://c1ae0539.sc-supervisor.pages.dev/solo-sidebar), «no es mi favorito, pero
-eventualmente con primeng dev podamos lograr meter el otro».
+seguía con DD-112, que cierra al salir del menú lo que no es de la página. Rafa decidió el 2026-09-23 que
+producción lleve este (https://c1ae0539.sc-supervisor.pages.dev/solo-sidebar), aunque no es su favorito, con la
+intención de llegar más adelante a «no se cierra nada» a través de primeng.dev.
 
 **Decisión** · Va a `main` la versión del tag `archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16` (`65185e3b`), sin
 el andamio de la comparación (variante de Figma, modo Slim, botón de la esquina y `/solo-sidebar`). Enmienda DD-112 §3,
@@ -192,8 +194,8 @@ el botón empieza en 203); sube igual que en el preview.
 
 ## DD-117 · 2026-09-23 — Cada PR prueba y despliega lo que toca; `main` lo sigue probando todo
 
-**Contexto** · Rafa: «siempre veo deployments de Cloudflare, 5 comentarios en cada PR, cuando no
-han pasado cambios en todas». Medido sobre los últimos 40 PR de `main`: 10 tocaban el DS, 10 la
+**Contexto** · Rafa señaló el ruido: cada PR disparaba los despliegues de Cloudflare y cinco comentarios,
+aunque el cambio no tocara todos los sitios. Medido sobre los últimos 40 PR de `main`: 10 tocaban el DS, 10 la
 raíz, 10 una sola app, 6 solo documentación y 4 varias apps. El acoplamiento real con el DS no es
 parejo: importan `@smartcontact-hub/*` 70 ficheros del Supervisor, 62 de sc-docs, 4 de agent, 1 de
 CusCare y 0 de agent-mini.
@@ -340,10 +342,10 @@ reproductor de conversación cambiaba de vista con dos botones sin rol ni estado
 sin flechas ni foco itinerante; (5) al pasar Plantillas a `p-tabs`, la barra de la activa medía 153 px sobre una
 pestaña de 99: PrimeNG la mide solo al cambiar de pestaña, antes de que cargue la fuente de iconos; (6) Rafa vio un
 sombreado al pulsar una pestaña que primeng.dev no tiene: era el `ripple`, encendido en el Supervisor desde la
-migración de junio; (7) la primera versión apagó esa raya y pintó una marca fija, y Rafa lo vio: «en primeng.dev el
-movimiento es más sutil». Medido: allí la raya se desliza en 250 ms y el color cambia en 200; aquí la marca saltaba
+migración de junio; (7) la primera versión apagó esa raya y pintó una marca fija, y Rafa notó que en primeng.dev el
+movimiento era más sutil. Medido: allí la raya se desliza en 250 ms y el color cambia en 200; aquí la marca saltaba
 de golpe. Y las pestañas de Plantillas llevaban icono y contador (6 y 6), heredados de la versión a mano, que el
-ejemplo no tiene. Su regla: «parto de la idea de que lo vas a hacer tal cual sale en la docu».
+ejemplo no tiene. Su regla: se parte de que el componente se implementa tal cual sale en la documentación.
 
 **Decisión** ·
 1. **Pestañas o segmentado, por lo que hace.** Cambiar de colección (Plantillas: se vacían búsqueda y selección,
@@ -376,7 +378,7 @@ ejemplo no tiene. Su regla: «parto de la idea de que lo vas a hacer tal cual sa
    y el toast del Supervisor. Cada una tiene su fila en `customs-catalog.md` §8, y el gate lo exige.
 9. **La pulsación del botón es la de better-ui**: al pulsar se encoge al 96 % con 150 ms ease-out y vuelve suave, con
    la misma transición en color y sombra (`buttonMotionCss`). Sustituye al 98 % sin transición y los 100 ms que venían
-   de la plataforma. Rafa la eligió entre seis probadas en un playground local (§8.1): «el más premium de todos». En Figma,
+   de la plataforma. Rafa la eligió entre seis probadas en un playground local (§8.1) como la de acabado más premium. En Figma,
    `figma-pendiente.md` §13.
 
 **Razón** · Es lo que Rafa pidió: que el código hable el idioma de primeng.dev y que sus piezas lleguen con su
@@ -440,7 +442,7 @@ mitad del movimiento. Dos fondos del 6% superpuestos suman un 11,6%, casi el Sel
 
 **Descartadas** ·
 - **Acordeón, una categoría abierta por nivel** → al abrir Administración con Supervisión abierta, Administración subía
-  unos 400px en el momento del clic. Rafa: «parece que está roto».
+  unos 400px en el momento del clic. Rafa lo descartó: el salto se percibía como un fallo.
 - **Cerrar al navegar** → cerraba las categorías que el usuario acababa de abrir.
 - **Encender en cyan todos los ancestros** → dos o tres cyan a la vez y ningún sitio claro donde mirar.
 - **Mask Manager con `contact_phone`** → el equipo pide mantener `theater_comedy`, el icono que ya conocen.
@@ -693,7 +695,7 @@ Figma no alcanza hoy (`ROADMAP.md`). El color del botón principal queda sin dec
 
 **Contexto** · Rafa, probando la ficha de agente tras #174: buscó la sección «Repositorios» en la página del
 menú del mismo nombre; en «Plantillas de email», la casilla de «todos» marcaba pero no quitaba; y pidió que
-«cuando permite acumular chips sea un multiselect». Medido: 2 elegidas → clic → 6 → clic → 6, igual en la
+un campo que permite acumular chips sea un multiselect. Medido: 2 elegidas → clic → 6 → clic → 6, igual en la
 documentación del DS (sin la ficha por medio). PrimeNG 22.1.0 declara `selectAll = input()` (undefined) y
 `allSelected()` hace `selectAll !== null ? selectAll : …`, así que «todo seleccionado» es siempre falso y
 `onToggleAll` vuelve a marcarlo todo.
@@ -729,7 +731,7 @@ PrimeNG corrige `selectAll`, el `null` sigue siendo correcto.
 
 ## DD-104 · 2026-09-14 — Un icono pinta el tamaño que promete: el glifo de Material se calibra a la rejilla de PrimeIcons
 
-**Contexto** · Rafa, en la ficha de un agente: «tenemos estos iconos sin escalar bien, se ven enanos». Medido: la
+**Contexto** · Rafa, en la ficha de un agente, vio iconos mal escalados, claramente más pequeños de lo debido. Medido: la
 papelera de un botón `sm` de solo icono tenía la caja de 12px en un botón de 28 y pintaba **9**. No era de esa
 pantalla. Los tamaños de icono del DS salen del Kit (DD-24: el companion mide su `font-size`; `--sc-icon-size-*`),
 y el Kit dibuja con PrimeIcons, que llena su caja (`trash` ocupa 100 de 100 unidades). Material Symbols deja aire
@@ -769,7 +771,7 @@ visuales de sc-docs se regeneran con este cambio.
 
 ## DD-103 · 2026-09-14 — Un tramo de la miga que lleva a algún sitio lo parece: enlace de verdad, manita y subrayado al pasar el ratón
 
-**Contexto** · Rafa: «no queda muy claro cuándo puedo clicar en algo». Medido en sc-docs: los tramos con solo
+**Contexto** · Rafa señaló que no quedaba claro qué se podía pulsar. Medido en sc-docs: los tramos con solo
 `command` salían con cursor de texto (el navegador pone la manita solo en un `<a>` con dirección, y el CSS de
 la miga de PrimeNG no la pide; su menú sí), y al pasar el ratón el padre se oscurecía al mismo gris que el
 tramo actual, que es lo único que no se pulsa. El Supervisor navegaba con un `command` que llamaba a
@@ -802,8 +804,8 @@ anotado en el wrapper, sin cambiar. `e2e/baselines/component-structure.json` rec
 
 ## DD-102 · 2026-09-14 — Una lista nunca corta texto: las columnas cortas miden su dato y, si no cabe, la tabla se desplaza de lado
 
-**Contexto** · Rafa, mirando `/admin/agentes`: «si hay truncamiento de texto… ponerlo fijo en el sentido que
-nunca corte». Medido en las tres listas de admin, de 1024 a 1920 de ancho: en Grupos el nombre se cortaba hasta
+**Contexto** · Rafa, mirando `/admin/agentes`, pidió como regla fija que el texto no se trunque
+nunca (aquí, en las listas). Medido en las tres listas de admin, de 1024 a 1920 de ancho: en Grupos el nombre se cortaba hasta
 1440, en Usuarios el email hasta 1440 y en Agentes «CusCare Carrier» hasta 1280. Con `table-layout: fixed` y sin
 anchos, las columnas miden lo mismo: Canales o Grupos con media columna vacía y el nombre recortado al lado.
 
@@ -831,9 +833,9 @@ con el mismo `sc-group-popover` que «Grupos» en Agentes (entrada nueva `countA
 
 ## DD-101 · 2026-09-14 — Los editores agente↔grupo se leen por columnas, y cada sección responde una sola pregunta
 
-**Contexto** · Tras DD-100, Rafa pidió quitar el relleno de las fichas («redundancias como 12 asignados · 0 sin
-canales») y aprovechar el espacio de cada sección, y después: «sí me gustaría poder seleccionar varios agentes en
-grupos» y, de Repositorios, «es mucho ruido».
+**Contexto** · Tras DD-100, Rafa pidió quitar el relleno de las fichas (datos redundantes como «12 asignados · 0
+sin canales») y aprovechar el espacio de cada sección; después, poder seleccionar varios agentes a la vez en
+grupos y, en Repositorios, menos ruido visual.
 
 **Decisión** ·
 1. **Agentes de un grupo y grupos de un agente**, el mismo editor visto desde cada lado: barra con buscador que
@@ -870,8 +872,8 @@ medir la tabla de Plantillas, que ya no existe, y `audit:datatables` reconoce ru
 
 ## DD-100 · 2026-09-14 — Las fichas de agente, grupo y usuario usan el molde de Contact Center
 
-**Contexto** · Rafa: «tenemos un tema con los flujos de agentes, grupos y usuarios. Está todo a mano. No rima nada
-con lo que hay en contact center». Medido en capturas a 1440: índice con iconos en cajitas grises dentro de un
+**Contexto** · Rafa señaló un problema en los flujos de agentes, grupos y usuarios: estaban hechos a mano y no
+eran consistentes con Contact Center. Medido en capturas a 1440: índice con iconos en cajitas grises dentro de un
 panel, tarjetas grises, cabeceras en MAYÚSCULAS, tres estilos de etiqueta en un mismo formulario, interruptores
 unas veces a la derecha y otras a la izquierda, ayudas escondidas en iconos ⓘ y, a 1440, 67 px de blanco entre el
 índice y el formulario. Contact Center se había casado con su maqueta (DD-57, DD-61) y las fichas no.
@@ -905,9 +907,9 @@ unas 450 líneas de la hoja de la ficha de agente. `customs-catalog` §2.7 descr
 
 ## DD-99 · 2026-09-14 — El modo oscuro cae en cascada: todo suelo es el lienzo y ningún color de pantalla o componente es fijo
 
-**Contexto** · Rafa: «toda la app en dark mode no responde igual que Contact Center, el fondo no es el mismo.
-No puede haber valores sueltos: van con las variables de dark mode, así un toque en cualquier sitio cae en
-cascada. Tiene que leer Aura, el tema y PrimeNG», y después «iguala a Aura para dark también». Medido en 19
+**Contexto** · Rafa vio que en modo oscuro la app no respondía igual que Contact Center (el fondo no era el mismo)
+y fijó el criterio: ningún valor suelto; todo va con las variables del modo oscuro, para que un cambio en cualquier
+sitio caiga en cascada; y el modo oscuro tiene que leer de Aura, del tema y de PrimeNG. Después pidió igualar a Aura también en oscuro. Medido en 19
 pantallas: Contact Center pinta su suelo con `--sc-bg-canvas` (zinc-950) y sus tarjetas en `--sc-bg-surface`
 (zinc-900); las otras tapaban el suelo con una caja a toda página en `--sc-bg-surface`. En claro no se ve (los
 dos son blanco).
@@ -953,8 +955,8 @@ y los iconos de menú en zinc-400 (Aura zinc-500), divergencia de accesibilidad 
 ## DD-98 · 2026-09-14 — Las listas se montan sobre una sola pieza, `sc-list-page`, y cada pantalla pone solo lo suyo
 
 **Contexto** · Al llevar la tabla con scroll propio (DD-95) a las demás listas, el cambio había que copiarlo en
-siete pantallas casi iguales (300-800 líneas cada una: título, barra, tabla, selección, menú de fila). Rafa:
-«el objetivo es poder reutilizar tablas. No tener 23287347 tablas alrededor», y eligió ir directo a la pieza.
+siete pantallas casi iguales (300-800 líneas cada una: título, barra, tabla, selección, menú de fila). Rafa
+fijó el objetivo: reutilizar tablas, no multiplicar copias casi iguales, y eligió ir directo a la pieza.
 
 **Decisión** · (1) `shared/components/list-page` (`<sc-list-page>`) monta título, barra (selector de columnas,
 buscador, exportar), `<sc-datatable>` con scroll propio y lista virtual, selección con barra en lote y un menú
@@ -995,8 +997,8 @@ antes: el panel de edición de la última fila de Etiquetas, Plantillas y Reposi
 Aura de 2024) y Aura 3 ya la cambió: relleno de opciones de listas y menús, badge, radio, paginador,
 mensaje, panel, card, divisor, tag, avatar, tooltip, popover, barra de progreso y diálogo de confirmación.
 Vista previa medida en builds estáticos antes de tocar nada (`~/Documents/Claude/2026-09 aura-marca/figma-se-alinea.html`).
-Rafa, tras verla: «sigue a Aura… tenemos que buscar consistencia», los cambios de Figma «se aplicarán
-más tarde» con `docs/figma-pendiente.md`, y todo «atado a variable existente y estilos existentes».
+Rafa, tras verla, decidió seguir a Aura por consistencia, aplicar los cambios de Figma más tarde
+con `docs/figma-pendiente.md`, y que todo quede atado a variables y estilos existentes.
 
 **Decisión** · (1) Las 55 van al paso de escala con el nombre del rem de Aura (como DD-81), una variable
 que ya existe. (2) `PENDIENTE_FIGMA` en `sizing-map.mjs`: el generador escribe ese paso en vez del valor del
@@ -1039,7 +1041,7 @@ estructura y capturas de sc-docs regeneradas en el mismo cambio. DD-87 punto 5 y
 ## DD-96 · 2026-09-14 — El menú de una fila sale donde se hace clic, y el estado de un agente se cambia como en el dialpad
 
 **Contexto** · Revisando Agentes con la tabla nueva (DD-95), Rafa pidió: que el clic derecho abra el menú
-donde se hace clic «como en cualquier SaaS B2B» y siempre igual (salía pegado al borde izquierdo de la
+donde se hace clic, como es habitual en un SaaS B2B, y siempre igual (salía pegado al borde izquierdo de la
 fila); cambiar el desplegable de estado de cada fila por un botón que abra los estados, como el panel
 «Estados» del dialpad de Agent; 500 agentes de demostración con nombres de Hollywood, él incluido como
 «Rafa Areses»; y las mejoras de `better-ui` medidas (dos X en el buscador, nombres cortados con columnas
@@ -1119,7 +1121,7 @@ repositorios, Conversaciones).
 
 ## DD-94 · 2026-09-14 — La cabecera y el bloque del logo miden 56 con el mismo token, y todas las listas reparten el aire igual
 
-**Contexto** · Tras DD-90 y DD-91, Rafa: «todo lo que se pueda compactar». Medido en 15 rutas del Supervisor
+**Contexto** · Tras DD-90 y DD-91, Rafa pidió compactar todo lo posible. Medido en 15 rutas del Supervisor
 (builds estáticos, 1440): barra → título 24,5 en 13 pantallas, 14 en Conversaciones y 38,5 en Repositorios;
 buscador → tabla 28 en Usuarios, Agentes y Grupos, 21 en Etiquetas y Plantillas y 15,75 en las listas de
 repositorio, contra título → buscador 14; la TopBar a 75 contra el bloque del logo de la barra lateral a 64;
@@ -1129,7 +1131,7 @@ lados de página 31,5 contra los 28 de la miga. Y la barra de búsqueda de Usuar
 **Decisión** · (1) TopBar `min-height` y `.sidebar__brand` `height` con el mismo `scale/4` (56, la barra de
 Sakai sobre Aura): las dos rayas casan. Lo de dentro pasa a tokens del DS: botón de la barra lateral
 `--sc-cmp-button-sm-icon-only-width` (28), avatar `--sc-cmp-avatar-width` (28, antes 32 a mano; el avatar ilustrado
-acepta ya una longitud CSS) y raya `scale/1-143`. Rafa: «todo con variables existentes, no valores a mano». (2) Página: arriba `1-25` (17,5) y lados `2` (28) en las 13 pantallas con título y en el hub.
+acepta ya una longitud CSS) y raya `scale/1-143`. Criterio de Rafa: todo con variables existentes, ningún valor a mano. (2) Página: arriba `1-25` (17,5) y lados `2` (28) en las 13 pantallas con título y en el hub.
 (3) Buscador → tabla `0-875` en todas las listas, en MARGEN: el degradado de 12 px de la barra fija tapaba el
 borde de la tabla si iba en relleno. (4) Fuera `overflow-y: auto` de `.page` en las tres listas con barra fija.
 
@@ -1154,8 +1156,8 @@ decisión aparte: cabecera de columnas fija con scroll de página o tabla con sc
 
 ## DD-93 · 2026-09-14 — El tema del equipo externo se instala con npm y habla el idioma del plugin
 
-**Contexto** · Rafa: «que les funcione perfectamente el tema y el extend y se actualice en su código», sin
-pasar por nadie cada vez. Medido el 2026-09-14 sobre su web publicada (ui.smart-contact.com, raíz a 16 px)
+**Contexto** · Rafa pidió que al equipo externo le funcionen sin fallos el tema y el `extend`, y que se actualicen
+en su código sin pasar por nadie cada vez. Medido el 2026-09-14 sobre su web publicada (ui.smart-contact.com, raíz a 16 px)
 y con los paquetes de PrimeNG 21 (`@primeuix/styled` 0.7.4, `@primeuix/styles` 2.0.3): (1) su hoja global
 lee variables del `extend` del plugin (`--p-typography-font-size-100`, `--p-app-typography-xl-line-height`…)
 y nuestro tema no traía 63 de las que el plugin define; (2) con PrimeNG 21, los estilos de sus componentes
@@ -1171,7 +1173,7 @@ gana. Nuestras apps no cambian: solo el paquete. (2) Comprobación 4: rojo si al
 una variable de ese contrato. (3) El tema es un paquete npm, `smartcontact-tema`, que `tema-zip.yml`
 publica también como fichero, `smartcontact-tema.tgz`. Se entrega así, adjunto en Jira; ellos lo guardan
 donde ya guardan paquetes como `.tgz` (`smart-contact-ui-lab/local-libs/archives`) y lo instalan con
-`npm install ./….tgz`. Rafa: «que no tengan que meterse en mi github», y privado. La rama `tema-zip`
+`npm install ./….tgz`. Rafa pidió que no necesiten acceso a su GitHub, y que sea privado. La rama `tema-zip`
 sigue siendo instalable como dependencia git, para uso interno. (4) `tema-zip.yml` también corre cuando
 cambia el export del Kit.
 
@@ -1217,8 +1219,8 @@ siguen a ningún tema; pasarlas a variables es otra tanda.
 **Contexto** · Al cerrar DD-91 quedó a la vista una colección duplicada en el Smart-Contact Design System:
 «App», la que vino con PrimeOne, con `app/font/size`, `app/sm|lg/font/size`, `app/sm|lg/line/height` y
 `app/card/background`. Dice lo mismo que `app/typography/{sm,md,lg}/*` de Custom, pero sin interlineado md, y
-el código no la lee (`coverage-map`: `not-consumed`). Rafa: estudiarlo contra el DS de sus devs «para no
-petarles la cabeza».
+el código no la lee (`coverage-map`: `not-consumed`). Rafa pidió estudiarlo contra el DS de sus devs para no
+sobrecargarlos.
 
 **Decisión** · (1) Revincular 1:1, con versión guardada antes, cada enlace del fichero del DS: `app/font/size` →
 `app/typography/md/fontSize`, `app/sm|lg/font/size` → `app/typography/sm|lg/fontSize`, `app/sm|lg/line/height`
@@ -1228,7 +1230,7 @@ era de `content/background`), cada una con una descripción que dice que es here
 anotado para revisar más adelante si se borra.
 
 *Corregido el mismo día.* La primera versión de esta entrada (#161) decía «se retira», en cuatro pasos que
-acababan borrando la colección. Rafa lo paró: «garantizarnos que nada rompa». Borrar exigía publicar la
+acababan borrando la colección. Rafa lo paró: primero garantizar que nada se rompa. Borrar exigía publicar la
 librería, actualizar el fichero Supervisor y revincular sus 939 enlaces a «App» dentro de instancias; el alias
 consigue lo mismo que importaba (que no se desvíe) sin tocar nada de eso.
 
@@ -1241,7 +1243,7 @@ hermanas de la misma primitiva, no una alias de la otra. Con el alias, releído 
 mismo valor que antes en claro y en oscuro, y un cambio en Custom arrastra a «App». Y no
 afecta a los devs: en su web y su bundle (ui.smart-contact.com) hay 0 apariciones de `app.font`, `app.sm.` o
 `--p-app-font-size`; su tema es un preset propio que ya lee `app.typography.*`, con tokens de otro Figma.
-Tampoco es «la estructura por defecto que espera el tema» (la duda de Rafa): la guía del UI Kit de PrimeTek
+Tampoco es la estructura por defecto que espera el tema (la duda de Rafa): la guía del UI Kit de PrimeTek
 (https://primeng.dev/uikit/guide/v4, «Collections») dice «App: Variables in this collection are not part of
 the PrimeUIX system. They are intended for values defined in your own application», y la que llega al Theme
 Designer es Custom; ninguna se declara obligatoria. El preset Aura de `@primeuix/themes` solo trae
@@ -1271,7 +1273,7 @@ limpiar la colección App: revincular a Custom» y «Antes de apuntar App a Cust
 (35 y 28). La simulación de la escala a 16 (PR #153, `~/Documents/Claude/2026-09 escala-16/`) midió que lo
 que más separa es el interlineado: Aura pone 1,5 a los controles y DD-51 los había dejado en `normal`
 porque sus maestros de Figma iban en `AUTO`. Rafa eligió entre tres opciones (solo interlineado, escala a
-16 más interlineado, solo escala) la primera, «con 20/18»: un interlineado que ya existe como variable.
+16 más interlineado, solo escala) la primera, con 20/18: un interlineado que ya existe como variable.
 Para no decidir con una suma, se midió también la segunda con 20/18.
 
 **Decisión** · (1) Figma primero, con versión guardada antes de cada tanda y todo releído: el texto propio
@@ -1308,7 +1310,7 @@ el md de una generación vieja de Figma: el maestro de hoy y el export dicen 3,5
   la fila de días de la semana sube 1px); en Figma se ajustan al texto y pasarían de 35 a 38. Atarlo abriría
   un desfase que hoy no existe. Se queda en `AUTO`.
 - **Atar las etiquetas (chip, tag, toast) a la variable por talla** → ya van atadas a la primitiva, y no
-  tienen tallas: cumplen el criterio de Rafa («si tienen sm, md y lg, en tallas»).
+  tienen tallas: cumplen el criterio de Rafa (lo que tiene tallas sm, md y lg se ata por talla; lo que no, a la primitiva).
 
 **Consecuencias** · Acota DD-51: los controles ya no llevan `normal`, y la frase «el Kit no modela el
 interlineado del botón» deja de ser cierta. Textarea md 62 → 71 (tres filas de 20). Fila de las
@@ -1325,8 +1327,8 @@ ahí. Página, capturas y sondas en `~/Documents/Claude/2026-09 densidad-control
 
 ## DD-90 · 2026-09-14 — La barra de arriba deja de sumar el relleno de la miga, y el título queda a la distancia de Aura en las 13 pantallas
 
-**Contexto** · Rafa, pensando en llevar la densidad a la de Aura (escala 16 e interlineado 1,5): «el header
-ocupa muchísimo», y los huecos entre título y contenido parecían grandes. Medido en builds estáticos a
+**Contexto** · Rafa, pensando en llevar la densidad a la de Aura (escala 16 e interlineado 1,5), vio que la cabecera
+ocupaba demasiado, y los huecos entre título y contenido parecían grandes. Medido en builds estáticos a
 1440 (`~/Documents/Claude/2026-09 aire-aura/`): (1) la TopBar medía 91 y 48 eran la miga, porque
 `<p-breadcrumb>` trae su relleno de barra suelta (14 a cada lado) dentro de una barra que ya pone 21.
 (2) Título → contenido: 21 en 9 pantallas y 31,5-33 en Usuarios, Agentes, Grupos y Conversaciones, donde
@@ -1370,8 +1372,8 @@ antes ni después (el mismo fallo que DD-80 resolvió en las tablas).
 nombraba cada paso por su valor (`scaleSuffix`, valor/14). Si un valor de `scale/*` cambia en Figma, el
 paso se renombra (con 6px pasaría a llamarse «0-429») y todo lo que apuntaba al nombre viejo (`--sc-spacing-*`,
 temas) queda sin definir. Una variable sin definir es un valor inválido que el navegador ignora, así que
-el build salía verde: 30 de 35 pasos colgados y cientos de usos rotos por pantalla. Rafa dijo «adelante»
-a arreglarlo aunque no se cambie la escala.
+el build salía verde: 30 de 35 pasos colgados y cientos de usos rotos por pantalla. Rafa aprobó
+arreglarlo aunque no se cambie la escala.
 
 **Decisión** · (1) `token-gen.mjs` nombra cada paso por su clave (`scale.0-375` → `--sc-scale-0-375`) con
 `scaleNameFromKey`; si un paso deja de valer rem×14 lo avisa, sin fallar. (2) Un gate en el mismo
@@ -1401,8 +1403,8 @@ la densidad ni cambia la escala: eso lo lleva otra sesión.
 Theme Designer), descargado y enviado a mano, con tres comprobaciones a mano que `conexion-variables.md`
 describía y ningún script hacía. Medido (H3): con el mismo Kit, ese preset y el de nuestras apps difieren
 en el 43 % de las claves (pesos con «px», esquema anterior a Aura 3, rem pensados para raíz 14, 714
-claves que Aura 3 lee y el plugin no define). Rafa: «ellos nos siguen a nosotros… no deberíamos ser
-esclavos».
+claves que Aura 3 lee y el plugin no define). Criterio de Rafa: el equipo externo sigue
+nuestro tema, no al revés.
 
 **Decisión** · (1) `scripts/tema-zip.mjs` empaqueta el tema de NUESTRAS apps: el preset (`sc-preset`, con
 Aura dentro) en un solo `sc-preset.mjs`, las 6 capas de tokens, las clases de tipografía, una guía de
@@ -1410,7 +1412,7 @@ instalación en llano y un manifiesto. (2) Hace las tres comprobaciones de la ru
 tenía valor pasa a 0 (sale con error), raíz 16 declarada, y diferencia con el zip anterior (variables,
 semántica común y componentes). (3) `tema-zip.yml` lo genera en cada cambio del tema en `main` y, si algo
 cambió, lo publica en la rama `tema-zip` (enlace fijo al zip y a su guía). (4) **Y el export del plugin
-también**, porque la licencia comercial es suya (Rafa: «para ahorrarme problemas políticos»): cuando un push
+también**, porque la licencia comercial es suya (Rafa: entregarlo le evita fricciones políticas con el otro equipo): cuando un push
 del plugin trae `.theme-designer/`, el robot de tokens lo empaqueta tal cual (`ts/` y `js/`) con
 `scripts/tema-plugin-zip.mjs`, lo comprueba (token a 0, raíz para la que está pensado, pesos con «px»,
 diferencia con el anterior) y mide cuánto se aparta de nuestras apps, y lo publica en la misma rama como
@@ -1453,12 +1455,12 @@ ponen rojos con la comprobación vieja.
 
 ## DD-87 · 2026-09-14 — Lo que es marca, la densidad y cada divergencia con Aura que se queda: una sola página vigente
 
-**Contexto** · Encargo de Rafa (2026-09-13): «Aura + color de marca», con el export de Figma en un clic.
+**Contexto** · Encargo de Rafa (2026-09-13): Aura más el color de marca, con el export de Figma en un clic.
 Medido con `tools/aura-diff.mjs` en los 33 componentes de PrimeNG que usan el DS, el Supervisor y
 sc-docs: 724 diferencias (clave × tema) entre nuestro código y Aura 3.0.0 en `main` del 2026-09-14. Las
 razones estaban repartidas en DD-3, DD-40, DD-41, DD-79, DD-81, `customs-catalog.md` y `color-map.mjs`,
 y algunas se contradecían o habían caducado (el aviso «ámbar» de DD-3, el hover a blue/500 de las notas
-de marca). Rafa pidió criterio experto sobre cada una («no nos casamos con ellas») y una sola referencia
+de marca). Rafa pidió criterio experto sobre cada una, sin apego a lo decidido antes, y una sola referencia
 que no se contradiga.
 
 **Decisión** · (1) **Marca** = azul marino como primario claro (`blue/700`, `#1B273D`, hover 600, active
@@ -1552,7 +1554,7 @@ tokens semánticos de `base.ts` (listas, navegación, overlays) y 5 en `extend.t
 
 ## DD-85 · 2026-09-14 — Las medidas que los temas escribían a mano salen del export: un cambio de Figma llega solo al código
 
-**Contexto** · Tras DD-81, Rafa pidió que «todo caiga en cascada». Medido con `tools/aura-diff.mjs` en los 15
+**Contexto** · Tras DD-81, Rafa pidió que todo caiga en cascada. Medido con `tools/aura-diff.mjs` en los 15
 componentes del Supervisor: de 209 medidas que el Kit define, 153 ya llegaban del export y 56 no. De esas,
 26 son la tabla, que sigue a Aura a propósito; el resto estaban escritas a mano en el tema con el paso de
 escala de antes (`var(--sc-scale-1-25)` en la casilla, el chip, los avisos, el toast, el calendario, el
@@ -1589,7 +1591,7 @@ etiqueta, que también la marca.
 
 ## DD-84 · 2026-09-14 — El PR del robot de tokens enseña capturas de antes y después del Supervisor
 
-**Contexto** · Para «mirar y fundir con un clic» (Rafa) hacía falta ver el cambio sin montar nada. El
+**Contexto** · Para que Rafa pueda revisar y fundir con un clic hacía falta ver el cambio sin montar nada. El
 PR del robot ya decía qué tokens cambian (DD-82), pero no cómo se ve, y los píxeles no cruzan de
 máquina: una captura del Mac no se puede comparar con una del runner.
 
@@ -1663,7 +1665,7 @@ van con ellas; el porqué de las de marca vive en `customs-catalog.md` §1.
 
 ## DD-82 · 2026-09-14 — El robot de tokens no se pone rojo por lo que Figma cambia a propósito, y dice en llano qué cambia y por qué cae
 
-**Contexto** · Rafa quiere que el paso de Figma a producción sea «miro y fundo con un clic», y preguntó
+**Contexto** · Rafa quiere que el paso de Figma a producción sea revisar y fundir con un clic, y preguntó
 si un Kit que se aparte de Aura dejaría al robot en rojo para siempre. Medido en la historia de
 `tokens-sync`: 28 de 44 pasadas rojas, 11 pasos a mano con el robot en verde y 15 en rojo. El PR #144
 (export de DD-81, 2026-09-13) dio 14 rojos: 11 eran tests con la medida del Kit escrita a mano
@@ -1749,8 +1751,8 @@ porque su interlineado es 21 y el nuestro «normal» (≈17); con este relleno e
 - **D · Aura con nuestro azul marino (azul 200)** → misma claridad que Aura pero una quinta parte de su
   color (croma 0,031 contra 0,153): el interruptor encendido parece apagado.
 - **El número exacto de Aura suelto dentro de la variable** (lo que Claude escribió primero en Figma, 53
-  de 56 sin paso de escala) → rompe la regla de variables existentes. Claude tomó un «yo entiendo que
-  Aura» de Rafa como cambio de criterio sin confirmarlo.
+  de 56 sin paso de escala) → rompe la regla de variables existentes. Claude tomó como cambio de criterio
+  una suposición en voz alta de Rafa sobre Aura, no una instrucción, sin confirmarlo.
 - **El paso más cercano en píxeles** → deforma proporciones: el hueco del botón (Aura 0,5rem, ya en
   `scale/0-5`) habría pasado a `scale/0-625`.
 - **Llevar la escala a 16px por rem** → agranda un 14 % todo lo que la usa y hoy rompe en silencio
@@ -1808,8 +1810,8 @@ en dos líneas. El maestro del Kit (❖ Tag, `373:13337`) es una línea de 21.5.
 - **`sticky` en el `th` (lo que había)** → funciona igual, pero duplica lo que PrimeNG ya pone en el
   `<thead>` en línea, y el `z-index` en cada `th` no escapaba del contexto del `<thead>`.
 - **Ancho fijo a Servicio y Grupo para que no recorten a 1280** → a 1024, el mínimo soportado (DD-53),
-  las columnas fijas sumarían más que la tabla y se saldría de su caja. Rafa lo vio en local con esta
-  alternativa sobre la mesa: «me gusta».
+  las columnas fijas sumarían más que la tabla y se saldría de su caja. Rafa vio en local la solución elegida,
+  con esta alternativa sobre la mesa, y se quedó con la elegida.
 - **`title` siempre en la etiqueta** → un tooltip que repite lo que ya se lee en las 104 que caben.
 
 **Consecuencias** · `e2e/supervisor/conversations-sticky-header.spec.ts` se vio rojo con cada una de las
@@ -1868,9 +1870,9 @@ deshabilitado se pinta a 2,73:1 (ya pasaba con el gris de marca; es DD-40, no es
 ## DD-78 · 2026-09-13 — El hub de Repositorios es el `Menu` del DS, y en lo que dude el código manda Aura y Figma se alinea
 
 **Contexto** · DD-77 dejó el hub de Repositorios como la última pieza del inventario y la justificó mal.
-Rafa: «todo tiene que beber del DS… toma la mejor decisión con estos principios [consistencia,
-sencillez, intuitividad], da igual que no haya maqueta». Y sobre las tres decisiones que le pedí: «lo que
-diga Aura, que lo siga código, y revinculamos en Figma donde haga falta».
+Criterio de Rafa: todo tiene que salir del DS, y el agente decide por su cuenta con tres principios
+(consistencia, sencillez, intuitividad) aunque no haya maqueta. Y sobre las tres decisiones que le pedí: lo que diga Aura lo sigue
+el código, y en Figma se revincula donde haga falta.
 
 **Decisión** · (1) El hub pasa de una fila hecha a mano (botón, icono enmarcado, título, descripción,
 flecha, hover, deshabilitado) al `Menu` de PrimeNG en línea: un grupo por categoría, filas que son
@@ -1907,8 +1909,8 @@ no se tocaron.
 
 ## DD-77 · 2026-09-13 — Los estados y contadores que las pantallas se dibujaban salen del DS, y un test impide que vuelvan
 
-**Contexto** · Tras DD-76, Rafa: «si lo que estamos montando es un sistema de diseño automatizable,
-agéntico, lo suyo es no ir a mano a menos que sea tremendamente necesario». Una sonda que atribuye
+**Contexto** · Tras DD-76, criterio de Rafa: en un sistema de diseño automatizable y operado por agentes,
+nada se hace a mano salvo que sea estrictamente necesario. Una sonda que atribuye
 cada pastilla a la plantilla que la pinta (`_ngcontent-X` → host `_nghost-X` → ¿selector del DS?)
 encontró 14 familias y 140 piezas dibujadas por pantallas en 22 rutas.
 
@@ -1954,8 +1956,8 @@ y que la sonda solo mira pastillas.
 ## DD-76 · 2026-09-13 — Conversaciones lleva la piel de Aura, los valores categóricos salen del `tag` del DS a la medida del Kit, y el producto deja la monoespaciada
 
 **Contexto** · Tras DD-72/#136 (Aura como base), Rafa vio que la tabla de Conversaciones no la
-llevaba: «lo suyo sería tener consistencia», y después «beben directamente del DS» y «no queremos
-cosas en mono». Al mirarlo, la tabla tenía piel propia (relleno 14/15.75, raya de cabecera, gris de
+llevaba y pidió consistencia: que las piezas salgan directamente del DS, y nada en tipografía
+monoespaciada. Al mirarlo, la tabla tenía piel propia (relleno 14/15.75, raya de cabecera, gris de
 selección), una pastilla hecha a mano copiada en dos hojas (`.memory-cell-pill` y `.sc-type-tag`,
 redonda, con borde, 12 regular) y doce sitios en `--sc-font-family-mono`.
 
@@ -2006,7 +2008,7 @@ cabecera fija de Conversaciones, que NO fija: `.table-card` lleva `overflow: hid
 
 **Contexto** · DD-74 subió el título de sección a `h3` en código y dejó cuatro cosas que solo se
 resolvían tocando Figma o decidiendo. Con el bridge abierto se verificaron contra el fichero real
-(`khNq9dJKNi13pNllrqm6dx`), Claude recomendó y Rafa respondió: «adelante a todas tus sugerencias».
+(`khNq9dJKNi13pNllrqm6dx`), Claude recomendó y Rafa aprobó todas las sugerencias.
 
 **Decisión** · (1) En Figma, las 4 capas `Title` del componente `Section` pasan a
 `Heading/h3-semibold`; las 25 de `.Subsection` se quedan en `Body/body-semibold`, igual que en código.
@@ -2047,9 +2049,9 @@ el título nuevo y dejen de ver las dos variables.
 
 ## DD-74 · 2026-09-12 — El chip relleno significa lo mismo en las dos pantallas, y un título vuelve a ser más grande que su contenido
 
-**Contexto** · Rafa, sobre el barrido de tablas: «resuelve las dudas con tu criterio, queremos
-automatización, consistencia, simpleza y que sea intuitivo», y después: «los títulos de cada parte a
-20px y con peso 600, para establecer diferencias entre títulos y el resto». Las dos cosas salieron de
+**Contexto** · Rafa, sobre el barrido de tablas, delegó las dudas en el criterio del agente con cuatro
+principios (automatización, consistencia, sencillez e intuitividad), y después pidió los títulos de cada
+parte a 20px y peso 600, para diferenciar los títulos del resto. Las dos cosas salieron de
 mirar las pantallas, y las dos se midieron antes de tocar nada.
 
 **Decisión** · (1) El **chip de canal** se declara UNA vez (`_channel-chip.scss`), con la gramática
@@ -2137,7 +2139,7 @@ gana es decisión de producto.
 
 ## DD-72 · 2026-09-12 — La tabla publica su tipografía; la matriz de permisos es OTRO componente; las 38 ranuras de PrimeNG se reenvían
 
-**Contexto** · Rafa pidió «dar una vuelta a todas las tablas de la plataforma», partiendo de la página
+**Contexto** · Rafa pidió revisar todas las tablas de la plataforma, partiendo de la página
 del DS y combinándola con la documentación de PrimeNG, con el foco en que fueran **visualmente iguales
 y compatibles**. Medido al abrir: el Supervisor tenía 16 tablas, 11 con `sc-datatable` y **5 escritas a
 mano**, y esas cinco no eran la misma cosa — dos matrices de permisos, dos editores de formulario y un
@@ -2155,7 +2157,7 @@ selector. Las apps réplica quedaron fuera por DD-35 y DD-37.
    hace ni `sc-datatable` ni `p-table`: no es una función de PrimeNG que falte traer.
 3. **Las 38 ranuras de plantilla de `p-table` se reenvían**, para que un ejemplo de primeng.dev se
    pegue dentro de `<sc-datatable>` y funcione ya tokenizado — que es lo que Rafa pidió al elegir
-   «que funcione como PrimeNG, porque eventualmente estudiaríamos evolutivos con todas sus opciones».
+   que funcione como PrimeNG, para poder estudiar más adelante evolutivos con todas sus opciones.
 
 **Razón** · Para (1): el mismo `<td>` rendía **16px en el Supervisor y 14px en sc-docs**, porque cada
 app fija un `body` distinto. Una tabla cuya letra depende de quién la monta no es un componente, es una
@@ -2233,8 +2235,8 @@ el aire de Memory, deliberado y ya vigilado.
 
 ## DD-70 · 2026-09-11 — El código que enseña la doc no se compara por IGUALDAD con el que ejecuta, sino por cuatro relaciones
 
-**Contexto** · Rafa, mirando `/#/components/button`: *«¿el código de cada uno en sc-docs está
-basado realmente en primeng?»*. El ejemplo enseña `<sc-button label=… variant=… />` mientras el DOM
+**Contexto** · Rafa, mirando `/#/components/button`, preguntó si el código de cada ejemplo de sc-docs
+está basado realmente en PrimeNG. El ejemplo enseña `<sc-button label=… variant=… />` mientras el DOM
 que sus devs tienen delante es `sc-button > p-button > button`. Medido: 43 páginas llevan el
 snippet escrito A MANO en una constante y **ningún gate** lo cruzaba con la plantilla que de verdad
 se renderiza. `audit:doc-snippets` (2026-09-07) solo comprobaba que lo que enseña EXISTA.
@@ -2276,7 +2278,7 @@ que se añade, que es cuando cuesta un minuto.
 ## DD-69 · 2026-09-11 — El estilo de texto se pone por su nombre: la clase es el enlace con Figma
 
 **Contexto** · Rafa, inspeccionando el nombre de un agente en la lista: Computed le da 14 / 20 / 600 y
-tiene que traducirlo él a `Body/body-semibold`. «¿No se puede lincar el estilo de texto?». Sí: la clase
+tiene que traducirlo él a `Body/body-semibold`, y preguntó si el estilo de texto se podía vincular. Sí: la clase
 `.sc-text-body-semibold` ES ese enlace (DD-55, `#98`), y existía; pero solo 49 textos la llevaban y
 301 reglas de pantalla seguían declarando los tres valores con tokens sueltos, correctos pero mudos.
 
@@ -2369,8 +2371,8 @@ del run).
 
 ## DD-67 · 2026-09-11 — Los 12 text styles son los únicos: el 500 no es «casi», no existe
 
-**Contexto** · Rafa, al cerrar el barrido de vocabulario: «hay que ir casando cada título, subheader
-etc, todo lo que no sea componente, con el estilo que cuadre». El DS publica **12** text styles —seis
+**Contexto** · Rafa, al cerrar el barrido de vocabulario, pidió casar cada título, subtítulo y todo lo
+que no sea componente con el estilo de texto que le corresponda. El DS publica **12** text styles —seis
 tamaños (64 · 48 · 24 · 18 · 14 · 12) por **dos pesos (400 y 600)**— y `audit:text-styles` ya
 comprobaba que las 12 clases valen lo que Figma. Su propia cabecera decía el hueco: *«no opina sobre
 dónde se usan las clases»*. Nadie miraba, entonces, lo que las pantallas declaran por su cuenta.
@@ -2756,8 +2758,8 @@ media entrada daba 5,15px, 8,78px y 19,09px sobre un valor final de 19,11px.
 **Contexto** · DD-60 sacó las suites e2e del `preflight` y las dejó solo en el CI. Con las
 **baselines visuales de sc-docs** no se pudo: sus 38 capturas son del Mac de Rafa y el runner de
 macOS las falla TODAS por la fuente monoespaciada del sistema. Quedaron **sin gate, a mano** —
-dicho en alto en DD-60, no por omisión. Rafa lo cuestionó al día siguiente: *«realmente no
-necesitamos tenerlas hiper actualizadas… teniendo el storybook ya sería increíble, ¿no?»*.
+dicho en alto en DD-60, no por omisión. Rafa lo cuestionó al día siguiente: no hacía falta
+tenerlas siempre al día, y el storybook podría bastar.
 
 **Razón** · Al medirlo apareció que la pregunta correcta no era si sobraban, sino **por qué
 molestaban**: capturaban `fullPage`, o sea con el shell dentro, así que cualquier cambio del
@@ -2785,7 +2787,7 @@ solapan**: hay cambios reales que solo ve la segunda.
 · *Borrarlas, que era la lectura literal de la pregunta de Rafa* — habría sido tirar la única
   detección de cambio visual no intencionado. Un showcase enseña cómo está algo AHORA; no
   contesta «¿esto ha cambiado sin que nadie quisiera?». Y lo que Rafa describía como su valor
-  («un inventario y un ejemplo de dónde están») es **otra cosa**: la galería *Uso real*, 25
+  (un inventario con ejemplos de dónde está cada cosa) es **otra cosa**: la galería *Uso real*, 25
   capturas que ya se generan solas y tienen gate en `verify`. Se estaba a punto de quitar una
   cosa por la descripción de otra.
 · *Dejarlas a mano, como en DD-60* — es el estado peor: 38 ficheros que **parecen** una red y no
@@ -3061,7 +3063,7 @@ tenga que avisar, y eso es exactamente lo que 1.0.0 deja de permitir.
   dice al que lo instala "esto puede cambiar debajo de ti en cualquier minor", y hace meses que
   no cambia nada debajo de nadie sin un DD que lo explique. La versión describe el **contrato**,
   no el tiempo trabajado.
-· *`2.x` o más alto, "para que se note que está avanzado"* — un major inventado obliga a fingir
+· *`2.x` o más alto, para señalar madurez* — un major inventado obliga a fingir
   un `1.x` que nunca existió. Lo que se nota es el contenido de la nota, no el dígito.
 · *Publicar en el registro A MANO, o no publicar* — descartadas las dos, y aquí está el matiz
   que costó ver. Lo que DD-17 aparcó es el ciclo **DIARIO**: publicar, subir versión e instalar
@@ -3095,9 +3097,9 @@ de descarga; `docs/ROADMAP.md` registra el corte.
 
 **Contexto** · La maqueta de `Contact Center · Agentes` (Figma Supervisor 393:12588) pone el
 título de la página dentro de la primera sección, con su icono. Se aplicó ahí, y Rafa pidió lo
-mismo para el resto de flujos con rail: «ese mismo estilo de contener título en la section
-settings tiene que ser aplicable al resto de flujos que tengan nav trail. Y su posición. Y adapta
-también las clases según corresponda».
+mismo para el resto de flujos con rail: el título contenido en la sección de ajustes, con la
+misma posición, en todos los flujos con índice lateral, y las clases adaptadas donde
+corresponda.
 
 Al ir a replicarlo apareció lo de siempre: el patrón **ya existía** en el DS. `sc-section-card`
 lo usan los tres formularios de admin desde hace tiempo, con su cabecera de icono + título. Y
@@ -3121,8 +3123,8 @@ con 21.
 4. **Lo vigila `audit:titulo-contenido`** (gate 36), en las dos direcciones: las pantallas con
    rail llevan su título dentro, y ninguna otra plantilla se pone el nivel de página.
 
-**Razón** · Lo que pidió Rafa no era replicar el HTML en dos sitios más: era «que mantengamos la
-consistencia y todo vinculado, para que los cambios sean lo más automatizados posibles». Copiar
+**Razón** · Lo que pidió Rafa no era replicar el HTML en dos sitios más: era mantener la
+consistencia con todo vinculado, para que los cambios sean lo más automáticos posible. Copiar
 el patrón a mano en tres pantallas es exactamente lo contrario — a la tercera copia ya hay dos
 que derivan, que es lo que había pasado con el padding.
 
@@ -3157,8 +3159,8 @@ rótulo, la miga y el título.
 enlaces a esas URLs en Confluence y en Jira, y el problema es de fecha, no de contenido: el
 desarrollador que abre el enlace semanas después ve una pantalla que ya no es la que especifica su
 ticket, y no tiene forma de saber que está mirando algo posterior. Su propia preocupación al
-plantearlo: que la alternativa obvia (una rama por entrega) le deje «un montón de ramas basura y
-desfasadas con el tiempo».
+plantearlo: que la alternativa obvia (una rama por entrega) le deje, con el tiempo, muchas
+ramas desfasadas que nadie usa.
 
 **Decisión** · Tres piezas, ninguna con mantenimiento:
 
@@ -3205,7 +3207,7 @@ Dos cosas salieron al probarlo de punta a punta, y las dos eran del mismo tipo: 
 estaba escrita para quien la escribió.
 
 - **Los flags no se memorizan.** La primera versión pedía `-- --ticket … --app … --que …` y Rafa
-  dio con el problema en cuanto la vio: «¿cómo me voy a aprender esos comandos?». Algo que se usa
+  dio con el problema en cuanto la vio: exigía aprenderse los comandos. Algo que se usa
   una vez cada entrega no puede exigir recordar tres flags y un `--`. `npm run proto` pregunta.
 - **El pre-push habría cobrado 10-25 minutos** por subir dos punteros a un commit que ya pasó su
   preflight y su CI al entrar en `main`. Un trámite que cuesta eso no se hace: se acaba usando
@@ -3216,9 +3218,9 @@ estaba escrita para quien la escribió.
 ## DD-55 · 2026-09-09 — Los estilos de texto se ponen a lo que NO es un componente
 
 **Contexto** · Al instalar los 12 estilos de texto del Figma como clases `.sc-text-*` aparece la
-pregunta de dónde se aplican. Rafa lo zanjó con el motivo: «los estilos de texto no van anclados a
-componente para respetar la estructura y arquitectura de PrimeNG como la tenemos en el DS, para
-que el tema se lea automáticamente». La maqueta lo hace exactamente así.
+pregunta de dónde se aplican. Rafa lo zanjó con el motivo: los estilos de texto no se anclan a los
+componentes, para respetar la estructura y la arquitectura de PrimeNG tal como las tiene el DS y
+que el tema se lea automáticamente. La maqueta lo hace exactamente así.
 
 **Decisión** · Una clase `.sc-text-*` se pone al texto de la PÁGINA. Nunca en la etiqueta de un
 `<sc-*>`. El contenido proyectado dentro de un componente (`<sc-dialog><p class="sc-text-…">`) sí
@@ -3439,9 +3441,9 @@ vez de alineado al borde derecho de la fila.
 > rampa, y el tema los sigue: las dos familias vuelven a ser una. Lo de abajo explica por qué hubo
 > `normal` mientras Figma dibujaba `AUTO`.
 
-**Contexto** · Rafa, mirando el Supervisor contra su Figma: *«los botones siguen igual de tamaño
-no lo ves? esto no puede pasar en nuestra plataforma, hay algo que está sobreescribiendo mal, o en
-la sc-docs está mal partiendo del ds»*. No era el consumidor: **sc-docs, que es el DS puro, salía
+**Contexto** · Rafa, mirando el Supervisor contra su Figma, vio que los botones seguían con el tamaño
+desviado y lo marcó como inaceptable en la plataforma: o algo sobrescribía mal, o sc-docs ya partía
+mal del DS. No era el consumidor: **sc-docs, que es el DS puro, salía
 igual de desviado**. Medido en el deploy y contra los maestros del Kit con el Desktop Bridge.
 
 **Dato que decide** · El padding, el `font-size` y el borde casaban EXACTOS con Figma en los tres
@@ -3542,8 +3544,8 @@ pertenece la regla nueva: deliberada, parche caducado o del sistema.
 **Contexto** · El mapa de conexión de variables (816 filas, 18 componentes, medido contra el Kit y
 el CSS que sirve `ui.smart-contact.com`) dejó 8 filas donde el dibujo del Kit y el tema no decían
 lo mismo. El instinto, y lo que yo propuse, fue tratarlas como una lista de arreglos: «¿lo
-corrijo?». Rafa lo paró: *«no lo corrijas, primero analiza si la web o figma debe ser la correcta.
-Estamos viendo diferencias, en conexión y tal para que el tema las lea, nada mas»*.
+corrijo?». Rafa lo paró: no se corrige nada sin analizar antes qué lado debe mandar, la web o Figma;
+el objetivo era ver las diferencias de conexión para que el tema las lea, nada más.
 
 **Dato que decide** · Al reencuadrar la pregunta apareció lo que la versión «¿lo arreglo?»
 escondía. En `button-small`, 143 de 311 variantes pintan el icono DERECHO con la variable gris de
@@ -3627,8 +3629,8 @@ nadie porque **`tokens:type-parity` va export → código**: lo que existe en Fi
 al export le es invisible *por construcción*. Decía «15/15 · al día» con verdad, contestando a
 una pregunta más estrecha de la que se le estaba leyendo.
 
-**Decisión** (de Rafa, 2026-09-03: *«voto por seguir las escalas de Figma, y aceptarlas como
-impepinables a menos que lo diga yo»*):
+**Decisión** (de Rafa, 2026-09-03: se siguen las escalas de Figma y se aceptan como
+innegociables salvo que él diga lo contrario):
 
 1. **Figma manda en las escalas.** Cada rol de `02-semantic.css` apunta al MISMO paso al que
    apunta su text style en el Kit. Si un text style se remapea, la tabla se mueve detrás. No se
@@ -3958,7 +3960,7 @@ versión por sí solo no cerró ninguna.
 
 - *Subir solo Angular y dejar PrimeNG en 21* — imposible: el peer de `primeng@21` lo impide.
 - *Quedarse en 21* — se llegó a recomendar cuando la justificación de seguridad se cayó. Rafa
-  decidió seguir ("actualiza bien") con la razón real escrita: **estar al día**, no la seguridad.
+  decidió actualizar, con la razón real escrita: **estar al día**, no la seguridad.
 - *Migrar `xlsx` a otra librería* — coste alto para un riesgo que el uso real no toca. Se prefiere
   la evidencia y el criterio de revisión.
 
@@ -4644,8 +4646,8 @@ con spec común + gate de integración (AOT + spot-check) por lote. `verify` ent
 > (borradores fuera, sin grabación, sin prioridad/conflictos) sigue vigente.
 
 Cierra la limpieza que **DD-27** dejó pendiente a propósito ("`isDraft`/`recording`/`'draft'` se dejan en el modelo
-para no cascadear errores antes del merge — limpieza follow-up"). Origen: feedback de Rafa — *«solo una regla puede
-estar activa; al desactivar no crea inactivas ni borradores, solo aparece como inactiva»*. El supervisor aún
+para no cascadear errores antes del merge — limpieza follow-up"). Origen: feedback de Rafa: solo una regla puede
+estar activa, y desactivarla no crea inactivas ni borradores; solo aparece como inactiva. El supervisor aún
 contradecía ese modelo: el listado mostraba la sección «Inactivas y borradores», el estado «Borrador sin editar»,
 duplicar→borrador no-activable y el gating del botón Activar; el store mantenía `priority` + detección de conflictos
 (vivos en código, invisibles en UI).
@@ -4697,7 +4699,7 @@ frágil (cambiar miembros de un grupo o renombrar no se reflejaba). Y dirección
   Barra de proporción (amplia vs quirúrgica). **Rechazado** un gráfico día/mes (2 números de escala distinta = slop).
 - **Guía de errores** (`condition-validate.core.mjs`, pura+testeada): incompleta/rango inválido = **error** (bloquean
   guardar, revelado al **intentar guardar** — no acusa al crear); duplicado/contradicción/tautología = **aviso**
-  (elección de Rafa: "guía, bloquea solo lo roto"). Honestidad: contradicción/0-impacto se apoyan en el preview real.
+  (elección de Rafa: la validación guía y solo bloquea lo que está roto). Honestidad: contradicción/0-impacto se apoyan en el preview real.
 - **Scope MVP**: sin priorización ni grabación (obsoleta por ley) → **fuera reglas de grabación** (seed + creación +
   Horario) y **borradores** (banner + flujo + toasts). Tipo por defecto = transcripción. Miembros de tipo
   `recording`/`isDraft`/`'draft'` se dejan en el modelo para no cascadear errores antes del merge (limpieza follow-up).
@@ -4746,7 +4748,7 @@ toca el flujo de **grabación** (dirección vive también ahí). Hoy siguen como
 
 ## DD-25 · 2026-06-22 — Gap del footer de sc-dialog: el wrapper proyectado es la fila flex
 
-**Contexto**: Rafa reportó los botones del footer de los dialogs "muy juntos", comparando con el ConfirmDialog
+**Contexto**: Rafa reportó los botones del footer de los dialogs demasiado juntos, comparando con el ConfirmDialog
 de Figma (`323:12317`, footer/gap 7 Kit). El token `--sc-dialog-footer-gap` (10.5px, divergencia consciente
 del 7 de Figma por feedback de diseño previo) estaba aplicado a `.sc-dialog__foot`, pero su **único hijo** es
 el `<div modal-actions>` que el consumidor envuelve → el `gap` separaba el wrapper, no los botones, que
@@ -4802,7 +4804,7 @@ Validado: AOT + verify + render en vivo (space_dashboard→16, arrow_outward→1
 
 **Contexto**: Tras el re-sync de valores soft-blue↔cyan (DD-22), Rafa aclaró que el punto NO es de
 marca sino de **paridad de nombres**: no tiene sentido que un token `--sc-*` se llame distinto que su
-variable en Figma. "Si en Figma es `cyan`, en código `--sc-color-cyan`."
+variable en Figma: el token lleva el nombre de familia de Figma (`cyan` → `--sc-color-cyan`).
 
 **Decisión (Rafa)**: los nombres de familia de color del CÓDIGO adoptan los nombres del Kit/Figma:
 `soft-blue → cyan`, `electric-blue → sky`, `gray → slate` (`blue` ya coincide). El **rol de marca**
@@ -4890,7 +4892,7 @@ sesión lo CIERRA y lo PRUEBA.
 **Decisión**:
 - **Sombras (`aura/effects`) fluyen del Kit** vía `token-gen-effects.mjs` → `--sc-cmp-*-shadow`,
   leídas por el preset (rewire de 53 slots). El Kit es la verdad: el tinte slate de marca se retira
-  ("el Kit es el camino", Rafa). Guard `tokens:effects-rewire` impide volver a hardcodear hex.
+  (decisión de Rafa: manda el Kit). Guard `tokens:effects-rewire` impide volver a hardcodear hex.
 - **Completitud §8**: cada hoja de `semantic/common`/`app`/`effects` queda clasificada (fluye /
   divergencia / no-consumida); una hoja NUEVA del Kit sin clasificar → ROJO.
 - **Mini-test e2e (la "puerta")**: `bridge-e2e.test.mjs` prueba en sandbox que un cambio del Kit
@@ -5030,7 +5032,7 @@ custom `app.toggleswitch`).
 verlo en la doc Y en los flujos) + **ramas compartibles**. El modelo de **2 repos + paquetes
 publicados versionados** está pensado para equipos; para un solo no-dev es **pura fricción** (token
 401 en CI, lag de publicar+bump, dos repos que confunden, Netlify pidiendo suscripción). Su instinto
-inicial ("meter la app dentro del DS") era **correcto para su caso**. (Memoria [[user-solo-nondev-seamless-first]].)
+inicial (meter la app dentro del DS) era **correcto para su caso**. (Memoria [[user-solo-nondev-seamless-first]].)
 
 **Decisión** · **UN repo.** El Supervisor entra como `projects/supervisor` y consume el DS por
 `tsconfig paths` → `./dist/*` (como `sc-demo`): instantáneo, sin publicar/versionar. Los paquetes

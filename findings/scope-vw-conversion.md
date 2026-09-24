@@ -1,6 +1,6 @@
 # Decisión de alcance — la réplica vuelve a `vw`
 
-Rafa, 2026-08-26: _«hazlo como está en la web original»_. El original es fluido en `vw`;
+Rafa, 2026-08-26: la réplica se hace como está en la web original. El original es fluido en `vw`;
 la réplica estaba congelada en px con referencia 1456, lo cual solo es cierto a 1456. Se
 revierte.
 
