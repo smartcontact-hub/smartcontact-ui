@@ -44,7 +44,21 @@ const MENOS_VISTOS_SNIPPET = `<!-- Con OBJETOS hay que decir qué campo se lee y
 <sc-multiselect label="Inválido" [options]="groups" [invalid]="true" placeholder="Marca el campo sin decir por qué" />
 
 <!-- "emptyMessage" es la lista vacía; "emptyFilterMessage" es "filtraste y no hay". -->
-<sc-multiselect label="Sin opciones" [options]="[]" emptyMessage="Todavía no hay grupos" />`;
+<sc-multiselect label="Sin opciones" [options]="[]" emptyMessage="Todavía no hay grupos" />
+
+<!-- "optionDisabled" deja una opción FIJA: se ve marcada y no se quita. Sin rótulo visible,
+     "ariaLabel" le da nombre. Es el selector de columnas de las listas del Supervisor. -->
+<sc-multiselect
+  [options]="columnas"
+  optionLabel="label"
+  optionValue="key"
+  optionDisabled="locked"
+  [value]="columnasVisibles"
+  [maxSelectedLabels]="0"
+  selectedItemsLabel="{0} columnas"
+  placeholder="Columnas"
+  ariaLabel="Columnas"
+/>`;
 
 /** Demo de `sc-multiselect` en formato story (motor «Storybook-like»). */
 @Component({
@@ -60,6 +74,13 @@ export class MultiSelectDemoComponent {
   protected readonly menosVistosTpl = viewChild<TemplateRef<StoryContext>>('menosVistos');
 
   /** Lista de OBJETOS, para que `optionLabel`/`optionValue`/`filterBy` tengan algo que señalar. */
+  readonly columnas = [
+    { key: 'name', label: 'Nombre', locked: true },
+    { key: 'extension', label: 'Extensión', locked: false },
+    { key: 'email', label: 'Email', locked: false },
+    { key: 'phone', label: 'Teléfono', locked: false },
+  ];
+  readonly columnasVisibles = ['name', 'extension', 'email'];
   readonly prioridades = [
     { id: 'alta', name: 'Alta' },
     { id: 'media', name: 'Media' },

@@ -26,12 +26,16 @@ export interface DeletableEntity {
 
 /**
  * Shared confirmation dialog for entity deletion (Users, Groups, Agents,
- * Templates…). Two modes:
+ * Templates…). Two modes, ONE form: both ask to re-type something before
+ * Delete enables, with a copy button as a Fitts shortcut (2026-09-24:
+ * borrar uno o varios es igual de irreversible, así que pide lo mismo;
+ * antes el lote se confirmaba con un clic).
  *
- *   - **single**: the user must re-type the entity name (with a copy-name
- *     button as a Fitts shortcut). Confirms only the bound id.
- *   - **bulk**: a wall of removable chips lets the user prune the list
- *     before confirming. Emits the surviving ids on confirm.
+ *   - **single**: re-type the entity name. Emits `null` on confirm.
+ *   - **bulk**: re-type how many go («3 agentes»). Emits every id on confirm.
+ *
+ * El lote ya no enseña la lista de nombres para quitar alguno (2026-09-24):
+ * con 500 seleccionados se salía del diálogo y tapaba el campo. Quien quiera dejar uno fuera lo desmarca en la tabla.
  *
  * Compone la `sc-dialog` canónica (§4.3). Mirrors the React prototype's
  * `DeleteEntityDialog` (DD#163, DD#172).
@@ -79,37 +83,40 @@ export class ScDeleteEntityDialogComponent {
   readonly entityPlural = input.required<string>();
   /** Optional extra paragraph shown under the single-mode body. */
   readonly singleDetailMessage = input<string | null>(null);
-  /** Optional footer paragraph for bulk mode. */
+  /** Optional extra paragraph shown under the bulk-mode body. */
   readonly bulkFooterMessage = input<string | null>(null);
 
   /** El usuario se ha echado atrás. No se borra nada. */
   readonly cancelled = output<void>();
-  /** Emits the ids that survived chip pruning (bulk) or `null` for single. */
+  /** Emits every id (bulk) or `null` (single). */
   readonly confirm = output<readonly number[] | null>();
 
   protected readonly alertIcon = 'warning';
   protected readonly copyIcon = 'content_copy';
   protected readonly checkIcon = 'check';
-  protected readonly closeIcon = 'close';
 
   protected readonly confirmText = signal('');
   protected readonly copied = signal(false);
-  protected readonly visibleIds = signal<ReadonlySet<number>>(new Set());
 
-  protected readonly visibleItems = computed(() =>
-    this.items().filter((item) => this.visibleIds().has(item.id)),
+  /** La línea de detalle del modo que toque. */
+  protected readonly detailMessage = computed(() =>
+    this.mode() === 'single' ? this.singleDetailMessage() : this.bulkFooterMessage(),
   );
 
   protected readonly singleTarget = computed(() =>
     this.mode() === 'single' ? (this.items()[0]?.name ?? '') : '',
   );
 
-  protected readonly canConfirm = computed(() => {
-    if (this.mode() === 'single') {
-      return this.confirmText() === this.singleTarget();
-    }
-    return this.visibleItems().length > 0;
-  });
+  /** Lo que hay que teclear: el nombre si es uno, cuántos si son varios («3 agentes»). */
+  protected readonly confirmTarget = computed(() =>
+    this.mode() === 'single'
+      ? this.singleTarget()
+      : `${this.items().length} ${this.entityPlural()}`,
+  );
+
+  protected readonly canConfirm = computed(
+    () => this.items().length > 0 && this.confirmText().trim() === this.confirmTarget(),
+  );
 
   /** i18n title resolved from mode + count, fed into `<sc-dialog [title]>`. */
   protected readonly dialogTitle = computed(() => {
@@ -119,7 +126,7 @@ export class ScDeleteEntityDialogComponent {
       });
     }
     return this.translate.instant('sc.deleteEntityDialog.titleBulk', {
-      count: this.visibleItems().length,
+      count: this.items().length,
       entity: this.entityPlural(),
     });
   });
@@ -143,18 +150,16 @@ export class ScDeleteEntityDialogComponent {
       this.translate.setTranslation(language, dict, true);
     }
     // Reset internal state every time the items list changes (i.e. a new
-    // delete is requested) so the chip pruning and typed name don't bleed
-    // across openings.
+    // delete is requested) so the typed text doesn't bleed across openings.
     effect(() => {
-      const next = new Set(this.items().map((item) => item.id));
-      this.visibleIds.set(next);
+      this.items();
       this.confirmText.set('');
       this.copied.set(false);
     });
   }
 
   protected onCopy(): void {
-    void this.clipboard.copy(this.singleTarget()).then((ok) => {
+    void this.clipboard.copy(this.confirmTarget()).then((ok) => {
       if (ok) {
         this.copied.set(true);
         this.messages?.add({
@@ -173,28 +178,12 @@ export class ScDeleteEntityDialogComponent {
     });
   }
 
-  protected removeChip(id: number): void {
-    const next = new Set(this.visibleIds());
-    next.delete(id);
-    // Keep the dialog open even when the last chip is pruned. The user
-    // sees an empty-state message and Confirm stays disabled (canConfirm
-    // tracks `visibleItems().length > 0`); they can still cancel
-    // explicitly. Auto-closing here was a footgun — users lost their
-    // delete action by accident.
-    this.visibleIds.set(next);
-  }
-
-  /** Re-stage every original item — recovery from "I pruned everything by accident". */
-  protected resetChips(): void {
-    this.visibleIds.set(new Set(this.items().map((item) => item.id)));
-  }
-
   protected onConfirm(): void {
     if (!this.canConfirm()) return;
     if (this.mode() === 'single') {
       this.confirm.emit(null);
     } else {
-      this.confirm.emit(Array.from(this.visibleIds()));
+      this.confirm.emit(this.items().map((item) => item.id));
     }
   }
 }

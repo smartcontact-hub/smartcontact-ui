@@ -14,6 +14,11 @@
   [scrollHeight]="pScrollHeight()"
   [tableStyle]="pTableStyle()"
   [virtualScroll]="pVirtualScroll()"
+  [resizableColumns]="resizableColumns()"
+  [columnResizeMode]="columnResizeMode()"
+  [reorderableColumns]="reorderableColumns()"
+  (onColReorder)="onColReorder($event)"
+  (onColResize)="onColResize()"
   [virtualScrollItemSize]="pVirtualScrollItemSize()"
   [stripedRows]="stripedRows()"
   [showGridlines]="showGridlines()"
@@ -51,20 +56,33 @@
       <th
         scope="col"
         [pSortableColumn]="col.field"
+        pResizableColumn
+        [pResizableColumnDisabled]="!resizableColumns()"
+        pReorderableColumn
+        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false"
+        [attr.data-field]="col.field"
         [style.width]="col.width ?? null"
         [style.text-align]="col.align ?? null"
         [attr.aria-label]="col.headerAriaLabel ?? null"
       >
-        {{ col.header }}<p-sort-icon [field]="col.field" />
+        <!-- El texto va en su propio elemento: al pulsar, `pReorderableColumn` busca el tirador de ancho DENTRO
+             de lo pulsado, y con el texto suelto lo pulsado era el `th`, que lo contiene, así que nunca arrastraba
+             (medido: solo llegaba `mousedown`, sin `dragstart`). -->
+        <span class="sc-datatable__header-label">{{ col.header }}</span><p-sort-icon [field]="col.field" />
       </th>
       } @else {
       <th
         scope="col"
+        pResizableColumn
+        [pResizableColumnDisabled]="!resizableColumns()"
+        pReorderableColumn
+        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false"
+        [attr.data-field]="col.field"
         [style.width]="col.width ?? null"
         [style.text-align]="col.align ?? null"
         [attr.aria-label]="col.headerAriaLabel ?? null"
       >
-        {{ col.header }}
+        <span class="sc-datatable__header-label">{{ col.header }}</span>
       </th>
       } }
     </tr>

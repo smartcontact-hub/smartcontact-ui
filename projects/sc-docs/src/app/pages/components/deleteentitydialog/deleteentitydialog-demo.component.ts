@@ -14,7 +14,7 @@ import {
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const PLAYGROUND_SNIPPET = `<!-- "visible" lo abre y lo cierra; "mode" decide si borra UNO o VARIOS, e "items" es lo que
-     se va a borrar (en bulk, la lista entera, y el diálogo deja quitar alguno antes de confirmar). -->
+     se va a borrar. Los dos modos piden teclear algo: el nombre si es uno, cuántos si son varios. -->
 <button type="button" (click)="openSingle.set(true)">Borrar</button>
 
 <sc-delete-entity-dialog
@@ -27,7 +27,7 @@ const PLAYGROUND_SNIPPET = `<!-- "visible" lo abre y lo cierra; "mode" decide si
   (confirm)="onConfirmSingle()"
 />
 
-<!-- En "bulk", "confirm" devuelve los SUPERVIVIENTES: los que quedaron tras podar la lista. -->
+<!-- En "bulk", "confirm" devuelve los ids de todos los "items". -->
 <sc-delete-entity-dialog
   [visible]="openBulk()"
   mode="bulk"
@@ -62,7 +62,7 @@ export class DeleteEntityDialogDemoComponent {
     tag: 'sc-delete-entity-dialog',
     title: 'DeleteEntityDialog',
     description:
-      'Diálogo de confirmación de borrado sobre la `sc-dialog` canónica. Single: retype del nombre (+ botón copiar vía ScClipboardService). Bulk: chips quitables (el último no auto-cierra). Pulsa un botón para abrirlo.',
+      'Diálogo de confirmación de borrado sobre la `sc-dialog` canónica. Single: retype del nombre. Bulk: retype de cuántos («3 agentes»), sin lista de nombres. Los dos con botón copiar vía ScClipboardService. Pulsa un botón para abrirlo.',
     argTypes: [
       { name: 'entitySingular', control: { kind: 'text' } },
       { name: 'entityPlural', control: { kind: 'text' } },

@@ -1,40 +1,4 @@
 .delete-entity {
-  &__empty {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-1-125) var(--sc-spacing-0-875);
-    color: var(--sc-text-subtle);
-    font-size: var(--sc-font-size-200);
-    line-height: 1.5;
-
-    p {
-      margin: 0;
-    }
-  }
-
-  &__reset {
-    align-self: flex-start;
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-    background: transparent;
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--sc-bg-subtle);
-    }
-
-    &:focus-visible {
-      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-      outline-offset: var(--sc-focus-ring-offset);
-    }
-  }
-
   &__text {
     margin: 0;
     font-size: var(--sc-font-size-200);
@@ -101,48 +65,6 @@
 
     &:focus {
       border-color: var(--sc-bg-primary); /* el `focusBorderColor` de los campos: `primary.color` */
-    }
-  }
-
-  &__chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sc-spacing-0-25);
-    justify-content: center;
-    margin-top: var(--sc-spacing-0-875);
-    min-height: 28px;
-  }
-
-  &__chip {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-25);
-    padding: 2px var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    color: var(--sc-text-secondary);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-  }
-
-  &__chip-remove {
-    width: var(--sc-icon-size-default);
-    height: var(--sc-icon-size-default);
-    padding: 0;
-    background: transparent;
-    border: 0;
-    /* DD-24 — botón transparente al font-size: la × companion (`size="inherit"`)
-       rima con el texto del chip (12), no con el reset UA del <button>. */
-    font-size: inherit;
-    color: var(--sc-icon-subtle);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-      color: var(--sc-text-secondary);
     }
   }
 }

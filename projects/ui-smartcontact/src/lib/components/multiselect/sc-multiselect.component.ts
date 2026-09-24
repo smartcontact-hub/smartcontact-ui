@@ -12,6 +12,7 @@ import {
 // INTERNO hacia `<p-multiselect>` (no es el CVA exterior, que se retiró).
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import {
@@ -41,7 +42,7 @@ export type ScMultiSelectDisplay = 'chip' | 'comma';
 @Component({
   selector: 'sc-multiselect',
   standalone: true,
-  imports: [MultiSelectModule, FormsModule, ScFieldLabelComponent, ScFieldMsgComponent],
+  imports: [MultiSelectModule, FormsModule, ScFieldLabelComponent, ScFieldMsgComponent, ScIconComponent],
   templateUrl: './sc-multiselect.component.html',
   styleUrl: './sc-multiselect.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,12 +80,16 @@ export class ScMultiSelectComponent {
   readonly inputId = input<string>();
   /** `id` de un rótulo EXTERNO que nombra el control (ver `resolvedLabelledBy`). */
   readonly ariaLabelledBy = input<string>();
+  /** Nombre accesible cuando no hay rótulo visible (p. ej. un selector en una barra de herramientas). */
+  readonly ariaLabel = input<string>();
   readonly name = input<string>();
 
   // ─── MultiSelect-specific ──────────────────────────────────────────
   readonly options = input<readonly unknown[]>([]);
   readonly optionLabel = input<string>('label');
   readonly optionValue = input<string>();
+  /** Campo de la opción (o función) que la deja fija: se ve, pero no se puede marcar ni desmarcar. */
+  readonly optionDisabled = input<string | ((option: unknown) => boolean)>();
   /** How to render selected items inside the input. */
   readonly display = input<ScMultiSelectDisplay>('comma');
   /** Show search/filter input inside the dropdown. */
