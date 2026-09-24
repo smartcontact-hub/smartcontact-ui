@@ -99,6 +99,10 @@ línea que acompañaba, y todas dejaban un registro de conversación donde se le
    (`audit-seed-pii.mjs`), declarado con su motivo en `DATO_PERMITIDO`.
 3. **Lo vigila una máquina**: `audit:personal-names` en `verify` para el código, y `bash-guard` para commits y PRs
    (reusa el mismo patrón). Los hooks, al hablarle al agente, dicen «el usuario».
+4. **Nada deja de ser encontrable.** La firma era, de hecho, una llave de búsqueda; la sustituye la etiqueta
+   «decisión de producto (fecha)», que se busca igual. El barrido entra en `.git-blame-ignore-revs` para que
+   `git blame` siga llevando al commit y al PR donde se decidió cada línea, y la redacción original, con sus citas,
+   sigue en la historia de git. AGENTS.md §«Voz del código» da el recorrido para volver a una decisión.
 
 **Razón** · Un comentario explica el criterio que sostiene la línea; la autoría no añade nada que la DD no diga mejor,
 y la cita literal suena a chat, no a código de producto. La regla escrita para las portadas de PR (2026-09-14) no

@@ -326,6 +326,12 @@ DesignOps en un repo que lee cualquiera:
 - **La excepción es el nombre como DATO**, nunca como firma: el agente de demo con el nombre del
   autor está puesto a propósito (`audit-seed-pii.mjs`). Cada caso va declarado con su motivo en
   `DATO_PERMITIDO`.
+- **Todo sigue ubicable.** Para volver a una decisión, en este orden: su DD en `docs/DECISIONS.md`;
+  `git grep -n -i "de producto"` lista las que solo viven en el código; `git blame` lleva al commit
+  y al PR (GitHub salta solo los barridos de `.git-blame-ignore-revs`; en local, añade
+  `--ignore-revs-file .git-blame-ignore-revs`); el hand-off del frente, por la fecha; y
+  `git log -S'<texto>'` recupera la redacción original, citas incluidas. Un barrido masivo de
+  comentarios entra en `.git-blame-ignore-revs`, o el `blame` apunta al barrido y no a la decisión.
 
 ⚙️ `audit:personal-names` (en `verify`) lo mira en todo fichero de código, y `bash-guard` deniega
 un `git commit` o `gh pr create|edit` con el nombre. La documentación de proceso (`.md`) queda
