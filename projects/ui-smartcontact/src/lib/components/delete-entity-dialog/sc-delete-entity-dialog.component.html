@@ -6,73 +6,39 @@
   width="440px"
   (cancelled)="cancelled.emit()"
 >
-  @if (mode() === 'single') {
-    @if (singleDetailMessage(); as detail) {
-      <p class="delete-entity__detail">{{ detail }}</p>
-    }
-
-    <div class="delete-entity__confirm">
-      <label class="delete-entity__confirm-label" for="delete-confirm-input">
-        {{ 'sc.deleteEntityDialog.typeToConfirm' | translate }}
-      </label>
-      <button
-        type="button"
-        class="delete-entity__copy-name"
-        (click)="onCopy()"
-        [title]="'sc.deleteEntityDialog.clickToCopy' | translate"
-      >
-        <span>{{ singleTarget() }}</span>
-        @if (copied()) {
-          <sc-icon [name]="checkIcon" size="inherit" class="delete-entity__copy-check" />
-        } @else {
-          <sc-icon [name]="copyIcon" size="inherit" class="delete-entity__copy-icon" />
-        }
-      </button>
-      <input
-        id="delete-confirm-input"
-        type="text"
-        class="delete-entity__confirm-input"
-        [placeholder]="singleTarget()"
-        [ngModel]="confirmText()"
-        (ngModelChange)="confirmText.set($event)"
-        autocomplete="off"
-      />
-    </div>
-  } @else {
-    @if (visibleItems().length === 0) {
-      <div class="delete-entity__empty" role="status">
-        <p>{{ 'sc.deleteEntityDialog.emptyPruned' | translate }}</p>
-        <p-button
-          type="button"
-          severity="secondary"
-          size="small"
-          data-testid="delete-reset-btn"
-          (onClick)="resetChips()"
-        >
-          <span>{{ 'sc.deleteEntityDialog.reset' | translate }}</span>
-        </p-button>
-      </div>
-    } @else {
-      <div class="delete-entity__chips">
-        @for (item of visibleItems(); track item.id) {
-          <span class="delete-entity__chip">
-            <span>{{ item.name }}</span>
-            <button
-              type="button"
-              class="delete-entity__chip-remove"
-              [attr.aria-label]="'sc.deleteEntityDialog.removeFromList' | translate: { name: item.name }"
-              (click)="removeChip(item.id)"
-            >
-              <sc-icon [name]="closeIcon" size="inherit" />
-            </button>
-          </span>
-        }
-      </div>
-    }
-    @if (bulkFooterMessage(); as footer) {
-      <p class="delete-entity__detail">{{ footer }}</p>
-    }
+  <!-- Uno o varios, la misma forma: el título dice cuántos, una línea
+       opcional de detalle, y la puerta tecleada. Antes el lote enseñaba un muro de nombres quitables que con 500
+       agentes se salía del diálogo y tapaba el campo. -->
+  @if (detailMessage(); as detail) {
+    <p class="delete-entity__detail">{{ detail }}</p>
   }
+  <div class="delete-entity__confirm">
+    <label class="delete-entity__confirm-label" for="delete-confirm-input">
+      {{ (mode() === 'single' ? 'sc.deleteEntityDialog.typeToConfirm' : 'sc.deleteEntityDialog.typeCountToConfirm') | translate }}
+    </label>
+    <button
+      type="button"
+      class="delete-entity__copy-name"
+      (click)="onCopy()"
+      [title]="'sc.deleteEntityDialog.clickToCopy' | translate"
+    >
+      <span>{{ confirmTarget() }}</span>
+      @if (copied()) {
+        <sc-icon [name]="checkIcon" size="inherit" class="delete-entity__copy-check" />
+      } @else {
+        <sc-icon [name]="copyIcon" size="inherit" class="delete-entity__copy-icon" />
+      }
+    </button>
+    <input
+      id="delete-confirm-input"
+      type="text"
+      class="delete-entity__confirm-input"
+      [placeholder]="confirmTarget()"
+      [ngModel]="confirmText()"
+      (ngModelChange)="confirmText.set($event)"
+      autocomplete="off"
+    />
+  </div>
 
   <div modal-actions>
     <p-button

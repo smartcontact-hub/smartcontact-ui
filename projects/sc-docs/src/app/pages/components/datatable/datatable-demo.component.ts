@@ -286,6 +286,9 @@ export class DatatableDemoComponent {
       { name: 'virtualScroll', control: { kind: 'boolean' }, description: 'Lista virtual con scroll propio: entra por encima de 100 filas (esta demo tiene 7).' },
       { name: 'rowsFocusable', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
       { name: 'tableMinWidth', control: { kind: 'text' }, description: 'Ancho mínimo (p.ej. 60rem): por debajo la tabla se desplaza de lado en vez de cortar texto.' },
+      { name: 'resizableColumns', control: { kind: 'boolean' }, description: 'Ancho de columna ajustable arrastrando el borde de la cabecera (el nativo de p-table).' },
+      { name: 'columnResizeMode', control: { kind: 'select', options: ['fit', 'expand'] }, description: 'fit: la tabla no cambia de ancho. expand: crece con la columna.' },
+      { name: 'reorderableColumns', control: { kind: 'boolean' }, description: 'Orden de columnas arrastrando la cabecera (el nativo de p-table); la tabla avisa con (columnOrderChange).' },
     ],
     defaultArgs: {
       paginator: true,
@@ -308,6 +311,10 @@ export class DatatableDemoComponent {
       rowsFocusable: false,
       // Vacío: un ancho mínimo por defecto cambiaría la demo que miden los e2e.
       tableMinWidth: '',
+      // Apagado: con los tiradores puestos, las e2e de gestos que pulsan cabeceras medirían otra cosa.
+      resizableColumns: false,
+      columnResizeMode: 'fit',
+      reorderableColumns: false,
     },
   };
 

@@ -1925,6 +1925,51 @@
           }
         },
         {
+          "nombre": "resizableColumns",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Ancho de columna ajustable arrastrando el borde de su cabecera: el nativo de `p-table` (`resizableColumns` + `pResizableColumn`, primeng.dev/table «Column Resize»), tal cual (DD-113). La casilla de selección no se ajusta.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When enabled, columns can be resized using drag and drop.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "columnResizeMode",
+          "clase": "input",
+          "tipo": "'fit' | 'expand'",
+          "porDefecto": "'fit'",
+          "requerido": false,
+          "descripcion": "`fit` (el de PrimeNG por defecto): la tabla no cambia de ancho, lo que gana una columna lo pierde la de al lado. `expand`: la tabla crece con la columna.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines whether the overall table width should change on column resize, valid values are \"fit\" and \"expand\".",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "reorderableColumns",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Orden de columnas arrastrando su cabecera: el nativo de `p-table` (`reorderableColumns` + `pReorderableColumn`, primeng.dev/table «Reorder»), tal cual (DD-113). La casilla de selección no se mueve, ni las columnas con `reorderable: false`. La tabla NO reordena sola: avisa con `(columnOrderChange)` y el consumidor decide y lo devuelve por `columns`/`visibleColumns`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When enabled, columns can be reordered using drag and drop.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "tableMinWidth",
           "clase": "input",
           "tipo": "string | undefined",
@@ -2153,12 +2198,31 @@
           "descripcion": "Tecla pulsada sobre la fila. El DS **no interpreta ninguna**: el reparto canónico (Enter abre · Espacio selecciona) es del consumidor, porque solo él sabe qué significa \"abrir\" en su tabla. El DS solo garantiza que el evento llega — que es lo que no se podía hacer antes.",
           "origen": "nuestro",
           "nativo": null
+        },
+        {
+          "nombre": "columnOrderChange",
+          "clase": "output",
+          "tipo": "readonly string[]",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha arrastrado una columna a otro sitio: los `field` visibles en su orden nuevo (sin la casilla). Solo con `reorderableColumns`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "columnWidthsChange",
+          "clase": "output",
+          "tipo": "Readonly<Record<string, number>>",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha cambiado el ancho de una columna: el ancho en píxeles de cada columna visible, por su `field`, medido al soltar. Solo con `resizableColumns`; sirve para recordarlo.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": [
         "alwaysShowPaginator",
         "ariaLabel",
-        "columnResizeMode",
         "columnsInput",
         "compareSelectionBy",
         "contextMenu",
@@ -2209,9 +2273,7 @@
         "paginatorStyleClass",
         "placeholder",
         "prefix",
-        "reorderableColumns",
         "resetPageOnSort",
-        "resizableColumns",
         "rowExpandMode",
         "rowGroupMode",
         "rowHover",
@@ -2726,7 +2788,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": "Optional footer paragraph for bulk mode.",
+          "descripcion": "Optional extra paragraph shown under the bulk-mode body.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2746,7 +2808,7 @@
           "tipo": "readonly number[] | null",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": "Emits the ids that survived chip pruning (bulk) or `null` for single.",
+          "descripcion": "Emits every id (bulk) or `null` (single).",
           "origen": "nuestro",
           "nativo": null
         }
@@ -4712,6 +4774,21 @@
           }
         },
         {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Nombre accesible cuando no hay rótulo visible (p. ej. un selector en una barra de herramientas).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines a string that labels the input for accessibility.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "name",
           "clase": "input",
           "tipo": "string",
@@ -4766,6 +4843,21 @@
           "origen": "nativo",
           "nativo": {
             "descripcion": "Name of the value field of an option.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "optionDisabled",
+          "clase": "input",
+          "tipo": "string | ((option: unknown) =",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Campo de la opción (o función) que la deja fija: se ve, pero no se puede marcar ni desmarcar.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Name of the disabled field of an option or function to determine disabled state.",
             "porDefecto": null,
             "obsoleta": null,
             "heredadaDe": null
@@ -4999,7 +5091,6 @@
       ],
       "ocultas": [
         "ariaFilterLabel",
-        "ariaLabel",
         "autoOptionFocus",
         "autocomplete",
         "autofocus",
@@ -5022,7 +5113,6 @@
         "loading",
         "loadingIcon",
         "motionOptions",
-        "optionDisabled",
         "optionGroupChildren",
         "optionGroupLabel",
         "overlayOptions",

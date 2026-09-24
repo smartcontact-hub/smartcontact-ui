@@ -38,7 +38,7 @@ export class GroupPopoverDemoComponent {
     tag: 'sc-group-popover',
     title: 'GroupPopover',
     description:
-      'Celda inline con conteo de grupos; lista flotante en hover/focus (máx. 5 + «+N más»). Data-driven vía `[groups]` — no tiene inputs escalares. Pasa el ratón por encima o enfoca la celda.',
+      'Celda inline con conteo de grupos; lista flotante en hover/focus con TODOS los nombres (pasada media pantalla, hace scroll dentro). Data-driven vía `[groups]` — no tiene inputs escalares. Pasa el ratón por encima o enfoca la celda.',
     argTypes: [],
     defaultArgs: {},
   };
@@ -49,7 +49,7 @@ export class GroupPopoverDemoComponent {
     if (!pg || !ov) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
-      { name: 'Overflow (+N más)', template: ov, snippet: OVERFLOW_SNIPPET },
+      { name: 'Pocos y muchos', template: ov, snippet: OVERFLOW_SNIPPET },
     ];
   });
 }
