@@ -15,7 +15,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. UNA sola tira de pestañas gobierna TODO el contenido. Nada de un título suelto arriba y
  *      una tira debajo diciendo lo mismo.
  *   2. Se abre por donde se trabaja, «Canales y agentes». El ALTA no es esta página desde el
- *      2026-09-23: es un diálogo corto sobre la lista (nombre y canales) que deja aquí.
+ *      2026-09-23: es un diálogo corto sobre la lista que pide lo que dice la CABECERA (la pieza de
+ *      Identidad) y deja aquí. No pide canales (2026-09-24): la ficha abre por ellos, y pedirlos
+ *      antes era enseñar al entrar lo que se acababa de rellenar.
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas. La foto
  *      de WhatsApp o Teams distingue un grupo de una persona porque van mezclados; aquí no.
  *   3. La página se ensancha por `.ficha-tabs` SIN cambiar de arquetipo: sigue siendo `--rail`.
@@ -49,7 +51,7 @@ test('la tira de pestañas gobierna la ficha, y abre por canales al editar', asy
   await expect(page.locator('#group-section-channels')).toHaveCount(0);
 });
 
-test('crear es un diálogo corto: pide nombre y canales, y deja en «Canales y agentes»', async ({
+test('crear es un diálogo corto: pide lo de la cabecera, no los canales, y deja en «Canales y agentes»', async ({
   page,
 }) => {
   // La dirección de siempre sigue viva (paleta de comandos, enlaces guardados): abre el diálogo.
@@ -57,6 +59,11 @@ test('crear es un diálogo corto: pide nombre y canales, y deja en «Canales y a
   const dialogo = page.getByRole('dialog', { name: 'Nuevo grupo' });
   await expect(dialogo).toBeVisible();
   await expect(page).toHaveURL(/admin\/grupos$/);
+
+  // Rima con Identidad: los mismos tres campos, y ninguna casilla de canal (esas abren la ficha).
+  await expect(page.locator('#group-create-phone')).toBeVisible();
+  await expect(page.locator('#group-create-priority')).toBeVisible();
+  await expect(dialogo.locator('sc-checkbox')).toHaveCount(0);
 
   // Lo obligatorio se dice al intentar crear, no al abrir.
   await dialogo.getByRole('button', { name: 'Crear' }).click();
@@ -70,6 +77,8 @@ test('crear es un diálogo corto: pide nombre y canales, y deja en «Canales y a
   await page.locator('#group-create-name').press('Enter');
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
   await expect(page.locator('[role="tab"][aria-selected="true"]')).toHaveText('Canales y agentes');
+  // Lo que se rellenó en el alta es lo que dice la cabecera.
+  await expect(page.locator('.headline__meta')).toContainText('Prioridad: Baja');
 });
 
 test('duplicar abre el mismo diálogo y se lleva los agentes del original', async ({ page }) => {

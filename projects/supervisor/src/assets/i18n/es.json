@@ -1438,8 +1438,8 @@
     "page_title": "Grupos",
     "create_button": "Nuevo grupo",
     "create_dialog": {
-      "subtitle": "Lo demás nace con los valores por defecto y se cambia en la ficha.",
-      "duplicate_subtitle": "Se copian los agentes y los ajustes de «{{source}}», salvo el teléfono asociado.",
+      "subtitle": "Lo que dirá la cabecera de la ficha. Canales y agentes, en el siguiente paso.",
+      "duplicate_subtitle": "Se copian los agentes, los canales y los ajustes de «{{source}}». El teléfono asociado, no.",
       "copy_name": "{{name}} (copia)"
     },
     "search_placeholder": "Buscar grupo por nombre, ID, teléfono o estrategia...",

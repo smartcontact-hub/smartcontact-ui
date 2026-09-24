@@ -128,12 +128,15 @@
   (confirm)="confirmDelete($event)"
 />
 
-<!-- El alta y el duplicado, en corto: nombre y canales. Lo demás se hace en la ficha. -->
+<!-- El alta y el duplicado, en corto: lo que dice la cabecera de la ficha (la pieza de Identidad).
+     Canales y agentes, en la ficha, que abre justo ahí. -->
 <sc-group-create-dialog
   [visible]="createOpen()"
   [source]="duplicateSource()"
   [suggestedName]="suggestedCopyName()"
   [existingNames]="groupNames()"
+  [phoneOptions]="groupPhones()"
+  [defaultPriority]="defaultPriority()"
   (cancelled)="onCreateCancel()"
   (confirm)="onCreateConfirm($event)"
 />

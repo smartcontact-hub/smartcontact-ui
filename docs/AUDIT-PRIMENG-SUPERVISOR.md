@@ -111,7 +111,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `badgeDisabled`, `badgeSize`, `severity`, `value`
 
-### `sc-inputtext` · 39 usos · primeng/inputtext
+### `sc-inputtext` · 38 usos · primeng/inputtext
 
 **4 props nativas no expuestas**: `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -139,7 +139,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-checkbox` · 35 usos · —
+### `sc-checkbox` · 34 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

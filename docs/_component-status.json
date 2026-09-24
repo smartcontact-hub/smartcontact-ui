@@ -241,7 +241,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 35,
+      "usedInSupervisor": 34,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -838,7 +838,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 39,
+      "usedInSupervisor": 38,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },

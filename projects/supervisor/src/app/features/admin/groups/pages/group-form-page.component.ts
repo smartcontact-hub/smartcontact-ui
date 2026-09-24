@@ -43,7 +43,6 @@ import {
   CHANNEL_LABEL_KEYS,
   CHAT_STRATEGIES,
   GROUP_CHANNELS,
-  GROUP_PRIORITIES,
   Group,
   GroupChannel,
   GroupPriority,
@@ -79,6 +78,7 @@ import {
   AgentChannelTableAgent,
   AgentChannelTableComponent,
 } from '../components/agent-channel-table/agent-channel-table.component';
+import { GroupIdentityFieldsComponent } from '../components/group-identity-fields/group-identity-fields.component';
 
 interface FormState {
   name: string;
@@ -114,6 +114,7 @@ interface HeadlineStat {
     ChannelIconComponent,
     CheckboxComponent,
     AgentChannelTableComponent,
+    GroupIdentityFieldsComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
@@ -165,7 +166,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * indexar sin TS7053. Seguro: las keys vienen siempre de `GROUP_PRIORITIES`
    * (GroupPriority union). Mismo patrón que agent-form-page. */
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
-  protected readonly priorities = GROUP_PRIORITIES;
   protected readonly channels = GROUP_CHANNELS;
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   /** Skills se ve pero no se elige, con su motivo escrito en la opción (SISMAC-1975). */
@@ -814,12 +814,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.updateField('name', name ?? '');
   }
 
-  protected onPhoneValueChange(value: unknown): void {
-    this.updateField('phone', typeof value === 'string' ? value : '');
+  protected onPhoneValueChange(phone: string): void {
+    this.updateField('phone', phone);
   }
 
-  protected onPriorityValueChange(value: unknown): void {
-    if (typeof value === 'string') this.updateField('priority', value as GroupPriority);
+  protected onPriorityValueChange(priority: GroupPriority): void {
+    this.updateField('priority', priority);
   }
 
   /** La línea bajo el nombre: el teléfono (solo con canal Teléfono) y la prioridad, con su nombre. */

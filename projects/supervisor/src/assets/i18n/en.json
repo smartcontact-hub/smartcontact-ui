@@ -1438,8 +1438,8 @@
     "page_title": "Groups",
     "create_button": "New group",
     "create_dialog": {
-      "subtitle": "Everything else starts from the defaults and can be changed on the group page.",
-      "duplicate_subtitle": "Copies the agents and settings of «{{source}}», except the associated phone.",
+      "subtitle": "What the page header will show. Channels and agents come next.",
+      "duplicate_subtitle": "Copies the agents, channels and settings of «{{source}}». Not the associated phone.",
       "copy_name": "{{name}} (copy)"
     },
     "search_placeholder": "Search group by name, ID, phone or strategy...",

@@ -91,11 +91,13 @@ crear un grupo abría la ficha entera, cinco pestañas y unos 35 campos, cuando 
 
 **Decisión** ·
 1. **Sin foto ni avatar de grupo** en la ficha, la lista y la tabla de grupos de la ficha de agente. Cara = persona.
-2. **El alta es un diálogo sobre la lista**: nombre y canales (Teléfono marcado). Lo demás nace con los valores por
-   defecto de Grupos (`newGroupDraft`) y crear deja en la ficha, en «Canales y agentes». `/admin/grupos/crear` sigue
-   viva y abre el diálogo.
-3. **Duplicar usa el mismo diálogo** con «… (copia)» y los canales del original; se lleva agentes y ajustes, no el
-   teléfono asociado (`duplicateGroupDraft`).
+2. **El alta es un diálogo sobre la lista que pide lo que dice la cabecera**: nombre, teléfono asociado y prioridad,
+   con la MISMA pieza que la pestaña Identidad (`sc-group-identity-fields`). Nace con Teléfono y lo demás con los
+   valores por defecto de Grupos (`newGroupDraft`); crear deja en la ficha, en «Canales y agentes», que es lo
+   siguiente. `/admin/grupos/crear` sigue viva y abre el diálogo. (Enmienda del 2026-09-24: el primer diálogo pedía
+   nombre y canales.)
+3. **Duplicar usa el mismo diálogo** con «… (copia)» y la prioridad del original; se lleva canales, agentes y ajustes,
+   no el teléfono asociado (`duplicateGroupDraft`).
 4. **La ficha es solo de edición.** Identidad sigue SEGUNDA, como en usuario y agente (#240), sin foto y con nombre,
    teléfono asociado (solo con canal Teléfono) y prioridad. Recursos, Anuncios y Avanzado van sin caja, como el resto.
 5. Un nombre de grupo repetido se avisa en vivo, en el alta y en Identidad, y Guardar espera.
@@ -104,6 +106,9 @@ crear un grupo abría la ficha entera, cinco pestañas y unos 35 campos, cuando 
 nombre llevaba a «Canales y agentes»); el diálogo lo hace visible.
 
 **Descartadas** ·
+- **Alta con nombre y canales** (la primera versión) → la ficha abre por la fila de canales, así que al entrar se veía
+  lo que se acababa de rellenar. Rafa: «es un paso extra; al entrar tengo lo mismo que acabo de configurar; tiene que
+  rimar». Pidiendo lo de la cabecera, el alta es el primer paso de la ficha y no una copia de su primera pantalla.
 - **Sin pestaña Identidad** (nombre con un lápiz junto al título, teléfono y prioridad en la fila de canales) → Rafa:
   «debería ser más obvio, no sé si puedo tocarlo como usuario».
 - **«Editar datos» en la cabecera con un diálogo** → añadía un «Aplicar» que no guardaba, un segundo nivel de
