@@ -2,37 +2,40 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, output, si
 import { TranslateModule } from '@ngx-translate/core';
 import {
   ScButtonComponent as ButtonComponent,
-  ScCheckboxComponent as CheckboxComponent,
   ScDialogComponent as DialogComponent,
-  ScInputTextComponent as InputTextComponent,
 } from '@smartcontact-hub/components';
 
-import { CHANNEL_LABEL_KEYS, GROUP_CHANNELS, Group, GroupChannel } from '../../data/groups-data';
+import { Group, GroupPriority } from '../../data/groups-data';
+import { GroupIdentityFieldsComponent } from '../group-identity-fields/group-identity-fields.component';
 
-/** Lo que devuelve el alta: lo que identifica al grupo, nada más. */
+/** Lo que devuelve el alta: lo que identifica al grupo y dice su cabecera, nada más. */
 export interface GroupCreateSubmission {
   readonly name: string;
-  readonly channels: readonly GroupChannel[];
+  readonly phone: string;
+  readonly priority: GroupPriority;
 }
 
 /**
- * EL ALTA DE GRUPO, EN CORTO (Rafa, 2026-09-23).
+ * EL ALTA DE GRUPO: el primer paso de la ficha, no una copia de su primera pantalla.
  *
- * Antes «Nuevo grupo» abría la ficha entera: cinco pestañas y unos 35 campos para algo que solo
- * pide un nombre. Medido en local: con el nombre escrito y Guardar, la ficha ya te dejaba en
- * «Canales y agentes» del grupo recién creado. El alta ya era de dos pasos; solo que la pantalla
- * no lo decía. Aquí se pide lo que identifica al grupo —nombre y canales— y todo lo demás nace
- * con los valores por defecto de Grupos (teardown B1: crear y editar no son el mismo formulario).
+ * Crear un grupo abría la ficha entera: cinco pestañas y unos 35 campos para algo que solo pide un
+ * nombre (2026-09-23, DD-119). La primera versión corta pedía nombre y CANALES, y la ficha abría por
+ * la fila de canales: lo primero que se veía al entrar era lo que se acababa de rellenar. Rafa
+ * (2026-09-24): «es un paso extra, al entrar tengo lo mismo que acabo de configurar; tiene que
+ * rimar». Ahora el alta pide lo que dice la CABECERA de la ficha —nombre, teléfono asociado,
+ * prioridad— con la misma pieza que la pestaña Identidad (`sc-group-identity-fields`), y la ficha
+ * abre por lo siguiente: canales y agentes. Nada se pregunta dos veces. Los canales nacen con Teléfono,
+ * como antes, y todo lo demás con los valores por defecto de Grupos.
  *
  * El mismo diálogo DUPLICA, cambiando rótulos y el punto de partida (teardown B4: un molde, dos
  * objetos). Quien lo abre decide con `source`; quien crea el grupo es la lista, no el diálogo.
  *
- * Validación, la de la casa: lo obligatorio se dice al intentar crear, no al abrir (un campo
- * vacío aún no es un error); un nombre repetido sí se dice en vivo, porque ya lo has escrito.
+ * Validación, la de la casa: lo obligatorio se dice al intentar crear, no al abrir (un campo vacío
+ * aún no es un error); un nombre repetido sí se dice en vivo, porque ya lo has escrito.
  */
 @Component({
   selector: 'sc-group-create-dialog',
-  imports: [ButtonComponent, CheckboxComponent, DialogComponent, InputTextComponent, TranslateModule],
+  imports: [ButtonComponent, DialogComponent, GroupIdentityFieldsComponent, TranslateModule],
   templateUrl: './group-create-dialog.component.html',
   styleUrl: './group-create-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,15 +48,17 @@ export class GroupCreateDialogComponent {
   readonly suggestedName = input('');
   /** Los nombres que ya están cogidos. */
   readonly existingNames = input<readonly string[]>([]);
+  /** Los números que ya usan los grupos, para el desplegable del teléfono asociado. */
+  readonly phoneOptions = input<readonly string[]>([]);
+  /** La prioridad con la que nace un grupo nuevo (valores por defecto de Grupos). */
+  readonly defaultPriority = input<GroupPriority>('Baja');
 
   readonly cancelled = output<void>();
   readonly confirm = output<GroupCreateSubmission>();
 
-  protected readonly channelOptions = GROUP_CHANNELS;
-  protected readonly channelKeys = CHANNEL_LABEL_KEYS;
-
   protected readonly name = signal('');
-  protected readonly channels = signal<ReadonlySet<GroupChannel>>(new Set(['phone']));
+  protected readonly phone = signal('');
+  protected readonly priority = signal<GroupPriority>('Baja');
   /** Se intentó crear: desde aquí lo que falta se dice. */
   private readonly submitted = signal(false);
 
@@ -63,7 +68,9 @@ export class GroupCreateDialogComponent {
       if (!this.visible()) return;
       const source = this.source();
       this.name.set(source ? this.suggestedName() : '');
-      this.channels.set(new Set(source ? source.channels : ['phone']));
+      // El teléfono asociado identifica: un duplicado no se lo lleva. La prioridad sí.
+      this.phone.set('');
+      this.priority.set(source ? source.priority : this.defaultPriority());
       this.submitted.set(false);
     });
   }
@@ -79,22 +86,11 @@ export class GroupCreateDialogComponent {
     return null;
   });
 
-  protected readonly channelsError = computed<string | null>(() =>
-    this.submitted() && this.channels().size === 0 ? 'groups.errors.channels_required' : null,
-  );
-
-  protected has(channel: GroupChannel): boolean {
-    return this.channels().has(channel);
-  }
-
-  protected toggle(channel: GroupChannel): void {
-    this.channels.update((current) => {
-      const next = new Set(current);
-      if (next.has(channel)) next.delete(channel);
-      else next.add(channel);
-      return next;
-    });
-  }
+  /** Un grupo nuevo nace con Teléfono; un duplicado, con los canales del original. */
+  protected readonly hasPhone = computed(() => {
+    const source = this.source();
+    return source ? source.channels.includes('phone') : true;
+  });
 
   /** Foco al nombre y, al duplicar, seleccionado: lo normal es escribir encima de la propuesta. */
   protected onShown(): void {
@@ -109,10 +105,6 @@ export class GroupCreateDialogComponent {
       document.getElementById('group-create-name')?.focus();
       return;
     }
-    if (this.channelsError()) return;
-    this.confirm.emit({
-      name: this.name().trim(),
-      channels: GROUP_CHANNELS.filter((c) => this.channels().has(c)),
-    });
+    this.confirm.emit({ name: this.name().trim(), phone: this.phone().trim(), priority: this.priority() });
   }
 }

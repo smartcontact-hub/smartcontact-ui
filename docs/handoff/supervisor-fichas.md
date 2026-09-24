@@ -7,6 +7,24 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
+## ✅ 2026-09-24 · El alta de grupo rima con Identidad: pide lo de la cabecera, no los canales (DD-119)
+
+> **Sello: rama `arebury/alta-grupo-rima`, worktree `shipworm`, sobre `origin/main` `9f0cfd88` (#243).**
+
+**Qué pasó.** Rafa, del alta de #243: «es un paso extra; al entrar tengo lo mismo que acabo de configurar; tiene que
+rimar». El diálogo pedía nombre y canales, y la ficha abría por la fila de canales.
+
+**Qué cambia.** El diálogo pide nombre, teléfono asociado y prioridad con `sc-group-identity-fields`, la MISMA pieza
+que la pestaña Identidad (en columna en el diálogo, en fila en la pestaña, por `@container`). Nace con Teléfono y la
+ficha abre en «Canales y agentes». Duplicar: «… (copia)», la prioridad del original, sin teléfono; se lleva canales,
+agentes y ajustes. Enter crea solo desde el nombre (en un desplegable, Enter elige opción).
+
+**Medido** con clics en local a 1440: alta, aterrizaje (la cabecera dice lo rellenado) e Identidad con la misma
+pieza. e2e de grupo y fichas en verde.
+
+**Si vuelve a sonar a paso de más:** la alternativa que rima del todo es sin diálogo, «Nuevo grupo» abre la ficha con
+el nombre como campo en el sitio del título. Rafa pidió no quitar el paso.
+
 ## ✅ 2026-09-23 · Los grupos pierden la cara y se crean con un diálogo corto (DD-119)
 
 > **Sello: rama `arebury/remove-group-avatar-photos`, worktree `shipworm`, sobre `origin/main` `e1b8f5fd` (#242).**

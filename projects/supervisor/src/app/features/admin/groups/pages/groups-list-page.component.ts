@@ -373,6 +373,9 @@ export class GroupsListPageComponent {
   protected readonly createOpen = signal(false);
   protected readonly duplicateSource = signal<Group | null>(null);
   protected readonly groupNames = computed(() => this.groups().map((g) => g.name));
+  /** Los números que ya usan los grupos: el desplegable del teléfono asociado, igual que en la ficha. */
+  protected readonly groupPhones = computed(() => [...new Set(this.groups().map((g) => g.phone).filter(Boolean))].sort());
+  protected readonly defaultPriority = computed(() => this.defaultsStore.defaults().priority);
   protected readonly suggestedCopyName = computed(() => {
     this.lang();
     const source = this.duplicateSource();
@@ -389,25 +392,20 @@ export class GroupsListPageComponent {
   }
 
   /**
-   * Crea el grupo y abre su ficha en «Canales y agentes», que es lo siguiente que se hace con un
-   * grupo nuevo: asignarle gente. Un duplicado se lleva además los agentes del original, con los
-   * canales recortados a los que se hayan marcado en el alta.
+   * Crea el grupo y abre su ficha en «Canales y agentes», que es lo SIGUIENTE: el alta ya dijo quién
+   * es el grupo (lo que enseña su cabecera) y ahora toca por dónde le entra el trabajo y quién lo
+   * atiende. Un duplicado se lleva además los agentes del original.
    */
   protected onCreateConfirm(submission: GroupCreateSubmission): void {
     const source = this.duplicateSource();
     const draft = source
-      ? duplicateGroupDraft(source, submission.name, submission.channels)
-      : newGroupDraft(this.defaultsStore.defaults(), submission.name, submission.channels);
+      ? duplicateGroupDraft(source, submission)
+      : newGroupDraft(this.defaultsStore.defaults(), submission);
     const created = this.groupsStore.addGroup(draft);
     if (source) {
-      const allowed = new Set(submission.channels);
       this.linksStore.replaceLinksForGroup(
         created.id,
-        this.linksStore.linksForGroup(source.id).map((l) => ({
-          ...l,
-          groupId: created.id,
-          channels: l.channels.filter((c) => allowed.has(c)),
-        })),
+        this.linksStore.linksForGroup(source.id).map((l) => ({ ...l, groupId: created.id })),
       );
     }
     this.createOpen.set(false);

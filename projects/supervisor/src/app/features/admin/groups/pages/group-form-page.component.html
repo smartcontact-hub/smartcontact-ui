@@ -355,54 +355,23 @@
     <!-- IDENTIDAD, la segunda pestaña, como en las fichas de usuario y agente (#240: las tres dicen lo
          mismo en el mismo sitio). Sin foto (Rafa, 2026-09-23: los grupos no llevan cara) y sin caja,
          como las demás pestañas. Tres campos en UNA fila de tres columnas y no el nombre a lo ancho:
-         un campo de 1.300px para «ACD Demo C2CB» no dice cuánto escribir. -->
+         un campo de 1.300px para «ACD Demo C2CB» no dice cuánto escribir (lo decide la pieza). -->
     <div class="plain-section" id="group-section-identity">
       <section class="sub-section">
-        <div class="grid grid--3">
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-name">
-              {{ 'groups.form.fields.name' | translate }}
-              <span class="field__required" aria-hidden="true">*</span>
-            </label>
-            <!-- Vacío no es un error (lo dice el motivo de Guardar); REPETIDO sí, y en vivo: ya lo has escrito. -->
-            <sc-inputtext
-              inputId="group-name"
-              [required]="true"
-              [value]="form().name"
-              [error]="nameTaken() ? ('groups.errors.name_taken' | translate) : undefined"
-              (valueChange)="onNameChange($event)"
-            />
-          </div>
-
-          <!-- El «Teléfono asociado» de Voice: el número que ve el cliente cuando llama un agente del
-               grupo. Solo con el canal Teléfono: a un grupo de chat no se le pide. El valor no se borra
-               al apagar el canal; si se vuelve a encender, sigue ahí. -->
-          @if (hasPhone()) {
-            <div class="field">
-              <label class="field__label sc-text-caption-semibold" for="group-phone">
-                {{ 'groups.form.fields.phone' | translate }}
-              </label>
-              <sc-select
-                inputId="group-phone"
-                editable
-                [options]="phoneOptions()"
-                [value]="form().phone"
-                [helperText]="'groups.form.fields.phone_hint' | translate"
-                (valueChange)="onPhoneValueChange($event)"
-              />
-            </div>
-          }
-
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-priority">
-              {{ 'groups.form.fields.priority' | translate }}
-            </label>
-            <sc-select inputId="group-priority" [options]="priorities" [value]="form().priority" (valueChange)="onPriorityValueChange($event)">
-              <ng-template #item let-p>{{ priorityKeys[p] | translate }}</ng-template>
-              <ng-template #selectedItem let-p>{{ priorityKeys[p] | translate }}</ng-template>
-            </sc-select>
-          </div>
-        </div>
+        <!-- La MISMA pieza que el alta (2026-09-24): lo que se pidió al crear se cambia aquí, con los
+             mismos campos, el mismo orden y los mismos avisos. Vacío no es un error (lo dice el motivo
+             de Guardar); REPETIDO sí, y en vivo. -->
+        <sc-group-identity-fields
+          [name]="form().name"
+          [phone]="form().phone"
+          [priority]="form().priority"
+          [hasPhone]="hasPhone()"
+          [phoneOptions]="phoneOptions()"
+          [nameError]="nameTaken() ? 'groups.errors.name_taken' : null"
+          (nameChange)="onNameChange($event)"
+          (phoneChange)="onPhoneValueChange($event)"
+          (priorityChange)="onPriorityValueChange($event)"
+        />
       </section>
     </div>
   }

@@ -1,0 +1,26 @@
+/* El CONTENEDOR que se mide es esta pieza, no la ventana: vive en un diálogo de 440 y en una pestaña de
+ * más de 1.200, con la misma ventana detrás. `container-type` va en el host y la consulta la hacen sus
+ * hijos (una `@container` no puede estilar al contenedor que la declara). */
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+/* Estrecho (el diálogo): uno debajo de otro, con el aire de `.grid` entre filas. Los huecos son los de
+ * `.grid` en `styles/_forms.scss`: esta rejilla se parece a las demás del formulario, no inventa. */
+.identity-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: var(--sc-spacing-1-75);
+  row-gap: var(--sc-spacing-0-875);
+  /* Arriba, como `.grid`: el teléfono lleva ayuda de dos líneas y no debe estirar a sus vecinos. */
+  align-items: start;
+}
+
+/* Ancho (la pestaña): los tres en una fila. 720 es donde tres columnas dan ≥224 de control; por debajo
+ * el teléfono, con su ayuda, se parte en cuatro líneas. Medido el 2026-09-24. */
+@container (min-width: 720px) {
+  .identity-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

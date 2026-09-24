@@ -1438,8 +1438,8 @@
     "page_title": "Groupes",
     "create_button": "Nouveau groupe",
     "create_dialog": {
-      "subtitle": "Le reste part des valeurs par défaut et se modifie dans la fiche.",
-      "duplicate_subtitle": "Copie les agents et les réglages de «{{source}}», sauf le téléphone associé.",
+      "subtitle": "Ce qu'affichera l'en-tête de la fiche. Canaux et agents, à l'étape suivante.",
+      "duplicate_subtitle": "Copie les agents, les canaux et les réglages de «{{source}}». Pas le téléphone associé.",
       "copy_name": "{{name}} (copie)"
     },
     "search_placeholder": "Rechercher un groupe par nom, ID, téléphone ou stratégie...",

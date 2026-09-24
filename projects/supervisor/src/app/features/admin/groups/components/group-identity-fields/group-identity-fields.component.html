@@ -1,0 +1,43 @@
+<div class="identity-fields">
+  <div class="field">
+    <label class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-name'">
+      {{ 'groups.form.fields.name' | translate }}
+      <span class="field__required" aria-hidden="true">*</span>
+    </label>
+    <sc-inputtext
+      [inputId]="idPrefix() + '-name'"
+      autocomplete="off"
+      [required]="true"
+      [value]="name()"
+      [error]="nameError() ? (nameError()! | translate) : undefined"
+      (valueChange)="nameChange.emit($event ?? '')"
+      (keydown.enter)="enter.emit()"
+    />
+  </div>
+
+  @if (hasPhone()) {
+    <div class="field">
+      <label class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-phone'">
+        {{ 'groups.form.fields.phone' | translate }}
+      </label>
+      <sc-select
+        [inputId]="idPrefix() + '-phone'"
+        editable
+        [options]="phoneOptions()"
+        [value]="phone()"
+        [helperText]="'groups.form.fields.phone_hint' | translate"
+        (valueChange)="onPhone($event)"
+      />
+    </div>
+  }
+
+  <div class="field">
+    <label class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-priority'">
+      {{ 'groups.form.fields.priority' | translate }}
+    </label>
+    <sc-select [inputId]="idPrefix() + '-priority'" [options]="priorities" [value]="priority()" (valueChange)="onPriority($event)">
+      <ng-template #item let-p>{{ priorityKeys[p] | translate }}</ng-template>
+      <ng-template #selectedItem let-p>{{ priorityKeys[p] | translate }}</ng-template>
+    </sc-select>
+  </div>
+</div>
