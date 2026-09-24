@@ -14,11 +14,13 @@
        todo en cada clic sin desmarcar nunca. `null` = la selección la calcula el propio control. -->
   <p-multiselect
     [ariaLabelledBy]="resolvedLabelledBy()"
+    [ariaLabel]="ariaLabel()"
     class="sc-multiselect__control"
     [inputId]="resolvedId()"
     [options]="optionsMutable()"
     [optionLabel]="resolvedOptionLabel()"
     [optionValue]="resolvedOptionValue()"
+    [optionDisabled]="$any(optionDisabled())"
     [placeholder]="placeholder()"
     [disabled]="disabled()"
     [display]="display()"
@@ -45,7 +47,13 @@
     [attr.aria-required]="required() ? true : null"
     [invalid]="isInvalid()"
     [attr.aria-invalid]="isInvalid() ? true : null"
-  />
+  >
+    <!-- La flecha en Material Symbols, como todos los iconos de la plataforma: la de PrimeNG es su SVG propio.
+         Por la plantilla nativa `#dropdownicon`, sin tocar el comportamiento. -->
+    <ng-template #dropdownicon>
+      <sc-icon name="expand_more" size="inherit" class="sc-multiselect__dropdown-icon" />
+    </ng-template>
+  </p-multiselect>
 
   @if (iftaLabel() && label()) {
     <label class="sc-multiselect__ifta-label" [attr.for]="resolvedId()" [attr.id]="labelId()">

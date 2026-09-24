@@ -153,6 +153,24 @@ export class ScDatatableComponent<T = unknown> {
    */
   readonly virtualScroll = input(false, { transform: booleanAttribute });
   /**
+   * Ancho de columna ajustable arrastrando el borde de su cabecera: el nativo de `p-table`
+   * (`resizableColumns` + `pResizableColumn`, primeng.dev/table «Column Resize»), tal cual
+   * (DD-113). La casilla de selección no se ajusta.
+   */
+  readonly resizableColumns = input(false, { transform: booleanAttribute });
+  /**
+   * `fit` (el de PrimeNG por defecto): la tabla no cambia de ancho, lo que gana una columna lo
+   * pierde la de al lado. `expand`: la tabla crece con la columna.
+   */
+  readonly columnResizeMode = input<'fit' | 'expand'>('fit');
+  /**
+   * Orden de columnas arrastrando su cabecera: el nativo de `p-table` (`reorderableColumns` +
+   * `pReorderableColumn`, primeng.dev/table «Reorder»), tal cual (DD-113). La casilla de selección
+   * no se mueve, ni las columnas con `reorderable: false`. La tabla NO reordena sola: avisa con
+   * `(columnOrderChange)` y el consumidor decide y lo devuelve por `columns`/`visibleColumns`.
+   */
+  readonly reorderableColumns = input(false, { transform: booleanAttribute });
+  /**
    * Ancho mínimo de la tabla (p. ej. `'66rem'`). Con `scrollable`, por debajo de ese ancho la tabla
    * se desplaza de lado dentro de su contenedor en lugar de estrechar columnas y recortar texto
    * (2026-09-14). Va por `tableStyle` de `p-table`, no por una regla de la app sobre `.p-*`, para
@@ -324,6 +342,18 @@ export class ScDatatableComponent<T = unknown> {
    * evento llega — que es lo que no se podía hacer antes.
    */
   readonly rowKeydown = output<ScDatatableRowKeyEvent<T>>();
+
+  /**
+   * Se ha arrastrado una columna a otro sitio: los `field` visibles en su orden nuevo (sin la
+   * casilla). Solo con `reorderableColumns`.
+   */
+  readonly columnOrderChange = output<readonly string[]>();
+
+  /**
+   * Se ha cambiado el ancho de una columna: el ancho en píxeles de cada columna visible, por su
+   * `field`, medido al soltar. Solo con `resizableColumns`; sirve para recordarlo.
+   */
+  readonly columnWidthsChange = output<Readonly<Record<string, number>>>();
 
   /** Mapea sm/md/lg a la prop `size` de p-table (md = sin atributo → padding base del preset). */
   protected readonly pSize = computed<'small' | 'large' | undefined>(() => {
@@ -630,6 +660,30 @@ export class ScDatatableComponent<T = unknown> {
     this.pointerAnchorEl.style.left = `${x}px`;
     this.pointerAnchorEl.style.top = `${y}px`;
     return this.pointerAnchorEl;
+  }
+
+  /**
+   * `p-table` da los índices DENTRO del grupo de cabeceras con `pReorderableColumn`, que son todas
+   * las de datos en el orden en que se pintan (la casilla no lleva la directiva). Sin `[columns]`
+   * no reordena nada por su cuenta: aquí se traduce a `field` y se avisa.
+   */
+  protected onColReorder(event: { dragIndex?: number; dropIndex?: number }): void {
+    const fields = this.visibleCols().map((c) => c.field);
+    const from = event.dragIndex ?? -1;
+    const to = event.dropIndex ?? -1;
+    if (from < 0 || to < 0 || from >= fields.length || to >= fields.length || from === to) return;
+    const [moved] = fields.splice(from, 1);
+    fields.splice(to, 0, moved!);
+    this.columnOrderChange.emit(fields);
+  }
+
+  /** Al soltar el borde: el ancho que ha quedado en cada cabecera de datos, por su `field`. */
+  protected onColResize(): void {
+    const widths: Record<string, number> = {};
+    for (const th of Array.from(this.hostEl.querySelectorAll<HTMLElement>('thead th[data-field]'))) {
+      widths[th.dataset['field']!] = Math.round(th.getBoundingClientRect().width);
+    }
+    this.columnWidthsChange.emit(widths);
   }
 
   protected onSortEvent(event: { field?: string; order?: number }): void {

@@ -630,14 +630,17 @@ test.describe('sc-multiselect', () => {
 });
 
 test.describe('sc-grouppopover', () => {
-  test('conteo, popover en hover, límite 5 y cola «+N más»', async ({ page }) => {
+  test('conteo, popover en hover y TODOS los nombres, sin cola «+N más»', async ({ page }) => {
     await gotoPage(page, 'grouppopover');
     const trigger = page.getByTestId('sc-grouppopover-many').locator('button, [role="button"], .sc-group-popover__trigger').first();
     await trigger.hover();
     const overlay = page.locator('.p-popover');
     await expect(overlay).toBeVisible();
     await expect(overlay.getByText('Soporte')).toBeVisible();
-    await expect(overlay.getByText('+2 más')).toBeVisible();
+    // Los siete, también los dos que antes se escondían tras la cola «+2 más».
+    await expect(overlay.locator('.group-popover__item')).toHaveCount(7);
+    await expect(overlay.getByText('Incidencias')).toBeVisible();
+    await expect(overlay.getByText(/más$/)).toHaveCount(0);
     await screenshotBaseline(page, 'grouppopover');
   });
 });
@@ -984,20 +987,26 @@ test.describe('sc-delete-entity-dialog', () => {
     await expect(page.getByTestId('delete-result')).toHaveText('borrado: single');
   });
 
-  test('bulk: pruning de chips + confirm emite supervivientes', async ({ page }) => {
+  test('bulk: la MISMA puerta tecleada, sin lista de nombres, y confirm emite todos', async ({ page }) => {
     await gotoPage(page, 'deleteentitydialog');
     await page.getByTestId('open-bulk').click();
 
     const dialog = page.getByTestId('sc-delete-bulk');
-    await expect(dialog.locator('.delete-entity__chip')).toHaveCount(3);
+    const del = dialog.getByTestId('delete-confirm-btn').locator('button');
+    const input = dialog.locator('#delete-confirm-input');
 
-    // quitar 1 chip → quedan 2
-    await dialog.locator('.delete-entity__chip-remove').first().click();
-    await expect(dialog.locator('.delete-entity__chip')).toHaveCount(2);
+    // La misma puerta que el de uno: Delete no se habilita hasta teclear cuántos.
+    await expect(del).toBeDisabled();
+    const target = (await input.getAttribute('placeholder')) ?? '';
+    expect(target, 'lo que se teclea empieza por la cifra').toMatch(/^3 /);
+    await input.fill(target);
+    await expect(del).toBeEnabled();
 
-    // confirmar → emite los 2 supervivientes
-    await dialog.getByTestId('delete-confirm-btn').locator('button').click();
-    await expect(page.getByTestId('delete-result')).toHaveText('borrado: bulk:2');
+    // Sin el muro de nombres quitables: con 500 seleccionados se salía del diálogo.
+    await expect(dialog.locator('.delete-entity__chip')).toHaveCount(0);
+
+    await del.click();
+    await expect(page.getByTestId('delete-result')).toHaveText('borrado: bulk:3');
   });
 });
 

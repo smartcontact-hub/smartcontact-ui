@@ -62,6 +62,18 @@
       data-testid="sc-multiselect-empty"
     />
     <p>Elegidos: «{{ elegidos().join(', ') || '—' }}»</p>
+    <sc-multiselect
+      [options]="columnas"
+      optionLabel="label"
+      optionValue="key"
+      optionDisabled="locked"
+      [value]="columnasVisibles"
+      [maxSelectedLabels]="0"
+      selectedItemsLabel="{0} columnas"
+      placeholder="Columnas"
+      ariaLabel="Columnas"
+      data-testid="sc-multiselect-fija"
+    />
   </div>
 </ng-template>
 

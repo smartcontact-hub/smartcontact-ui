@@ -15,13 +15,13 @@ import { Popover, PopoverModule } from 'primeng/popover';
 
 import type { GroupRef } from './group-popover.types';
 
-const VISIBLE_LIMIT = 5;
 const HOVER_LEAVE_DELAY_MS = 150;
 
 /**
  * Inline cell that shows the group count and reveals a small floating list
- * on hover or keyboard focus. The list shows up to 5 group names plus a
- * "+N más" tail when the agent has more.
+ * on hover or keyboard focus. The list shows EVERY name: past half the
+ * viewport it scrolls inside the panel instead of cutting to «+N más»
+ * (2026-09-24): un agente puede estar en 12 grupos y hay que verlos todos.
  *
  * Built on PrimeNG `<p-popover>` (Figma `Smart Contact Prime → ❖ Popover`)
  * since S34 — overlay rendered into `body`, anchor-positioned to the
@@ -53,8 +53,6 @@ export class ScGroupPopoverComponent {
   private leaveTimer: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly count = computed(() => this.groups().length);
-  protected readonly visible = computed(() => this.groups().slice(0, VISIBLE_LIMIT));
-  protected readonly overflowCount = computed(() => Math.max(0, this.count() - VISIBLE_LIMIT));
 
   constructor() {
     // Copy fijo colocado: registra solo el diccionario del componente.

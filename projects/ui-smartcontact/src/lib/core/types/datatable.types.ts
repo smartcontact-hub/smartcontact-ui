@@ -65,6 +65,11 @@ export interface ScColumnDef<T = unknown> {
    * de la página; ahora el `<td>` lo pinta el DS, y por eso se declara aquí.
    */
   readonly stopRowClick?: boolean;
+  /**
+   * Con `reorderableColumns` en la tabla, si esta columna se puede arrastrar a otro sitio. Por
+   * defecto sí; `false` la deja fija (p. ej. la que da nombre a la fila).
+   */
+  readonly reorderable?: boolean;
 }
 
 /**
