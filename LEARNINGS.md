@@ -29,7 +29,7 @@
 | **14** | responder a un "hazlo todo", escribir "esperando a X", **o anotar en un reporte algo que mediste** | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado ni por estar ya redactando** |
 | **15** | decidir algo de marca/producto, **o proponer borrar algo** | preséntalo con recomendación y evidencia, sin exagerar el riesgo; y **pon antes la vía que no borra** (alias, deprecar) |
 | **16** | empezar un refactor transversal | monta antes la red que lo verifica, aunque parezca rodeo |
-| **17** | construir sobre una descripción que no verificaste tú | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
+| **17** | construir sobre una descripción que no verificaste tú, **o reescribir en masa una que registra decisiones** | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
 | **18** | zanjar una decisión VISUAL discutiendo | constrúyela en su versión mínima y MÍRALA |
 | **19** | elegir cómo validar algo | por la PREGUNTA: gesto→Playwright · aspecto→captura · ¿sabrán usarlo?→recorrido cognitivo |
 | **21** | escribir en un LEDGER compartido (`DECISIONS`, `LEARNINGS`, `inventory`, `handoff`, `AGENTS`), aterrizar en una rama que otro worktree tiene abierta, **o enseñarle a Rafa ficheros que otra sesión también toca** | mira su `status` y el tip ANTES, no solo al aterrizar; una rama, una sesión; y compara contra `origin/main` tras `fetch`, no contra tu `main` local ⚙️ |
@@ -181,15 +181,15 @@
     15 pantallas nodo a nodo hasta montar esas dos; entonces salió todo en una pasada.
 
 17. **Vas a construir, recomendar o FIRMAR un estado sobre una descripción que no verificaste TÚ
-    hoy → es una paráfrasis: abre la fuente.** Da igual de dónde venga: hand-off, README, Figma, tu
-    resumen, otro agente, un audit, un check de CI viejo o un doc archivado (ahí más: el traslado da
-    credibilidad). **Y si nombra QUÉ pieza cumple la propiedad, ese nombre es parte de la claim**:
-    mide si es ESA y no otra, o medirás bien el sujeto equivocado. Si no lo mediste, etiqueta "según
-    X, sin verificar". Si la fuente AVISA de una trampa, cabléala en tu primer comando. ⚙️ no
-    mecanizable (es juicio; sus síntomas los vigilan los checks D, E, J y M de `docs:coherence`).
-    Evidencia: s14 "número héroe" que era una frase entera · s25 "100 deployments" eran 26 · s27 DD
-    nuevo con una claim de un doc muerto · s36 154 falsos por no aplicar el aviso · s45 el comentario
-    decía que alineaba "la miga" y alineaba el lead: heredé su sujeto y firmé un defecto inexistente.
+    hoy, o a REESCRIBIR en masa una que registra decisiones → es una paráfrasis: abre la fuente.**
+    Da igual de dónde venga: hand-off, README, Figma, tu resumen, otro agente, un audit, un check de
+    CI viejo o un doc archivado. **Y si nombra QUÉ pieza cumple la propiedad, ese nombre es parte de
+    la claim**: mide si es ESA y no otra. Si no lo mediste, "según X, sin verificar". Si la fuente
+    AVISA de una trampa, cabléala en tu primer comando. Al reescribir, un revisor SIN tu contexto lee
+    el diff real contra el original: ¿un agente haría lo mismo con el texto nuevo? ⚙️ no mecanizable
+    (es juicio; sus síntomas los vigilan los checks D, E, J y M de `docs:coherence`).
+    Evidencia: s27 DD nuevo con una claim de un doc muerto · s36 154 falsos por no aplicar el aviso ·
+    s45 heredé el sujeto de un comentario · 2026-09-24 una fork reescribió DD-80 firmando lo descartado.
 
 18. **Vas a zanjar una decisión VISUAL discutiendo (con el usuario o contigo mismo) → constrúyela
     en su versión mínima y MÍRALA.** Un principio bien enunciado puede defender algo que ya no
