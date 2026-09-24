@@ -7,10 +7,14 @@ import { evaluar, escrituras } from '../hooks/bash-guard.mjs';
 // correcta y los vecinos legítimos). Un guardián que solo se ha visto pasar no prueba que sepa
 // fallar, y uno con falsos positivos enseña a ignorarlo (LEARNINGS 2).
 
-const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [] };
-const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [] };
+// `distRancio: () => null` en los tres: sin él, el test lee el `dist/` REAL de la máquina, y basta con
+// editar una fuente del DS sin reconstruir para que `npm run e2e` salga denegado y el test rojo
+// (2026-09-24, en mitad de un preflight). El caso rancio se prueba aparte, inyectado.
+const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null };
+const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null };
 /** Árbol con fuentes nuevas todavía fuera del índice. */
 const sinAdd = {
+  distRancio: () => null,
   preflight: () => ({ ok: true, motivo: 'ok' }),
   sinIndexar: () => ['projects/supervisor/src/app/features/lab/admin/admin-lab.model.ts'],
 };
