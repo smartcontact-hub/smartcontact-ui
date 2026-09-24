@@ -958,7 +958,6 @@
     "cross_tab_warning": "This record is being edited in another tab. Changes may overwrite each other.",
     "undo": "Undo",
     "change_reverted": "Change reverted",
-    "presence_changed": "Presence of {{name}} → {{status}}",
     "photo": {
       "select": "Select photo",
       "change": "Change photo",
@@ -1442,7 +1441,7 @@
       "duplicate_subtitle": "Copies the agents, channels and settings of «{{source}}». Not the associated phone.",
       "copy_name": "{{name}} (copy)"
     },
-    "search_placeholder": "Search group by name, ID, phone or strategy...",
+    "search_placeholder": "Search group by name, ID, phone, priority or strategy...",
     "no_results_query": "No groups match “{{query}}”.",
     "entity_singular": "group",
     "table": {
@@ -1682,17 +1681,19 @@
   "agents": {
     "page_title": "Agents",
     "create_button": "New agent",
-    "search_placeholder": "Search agent by name, code, extension or email...",
+    "search_placeholder": "Search agent by name, ID, extension, email or phone...",
     "no_results_query": "No agents match “{{query}}”.",
     "entity_singular": "agent",
     "table": {
-      "code": "Code",
+      "code": "ID",
       "name": "Name",
       "extension": "Extension",
+      "email": "Email",
+      "phone": "Phone",
       "channels": "Channels",
       "type": "Type",
       "presence": "Status",
-      "status": "Activation",
+      "recording": "Recording",
       "groups": "Groups"
     },
     "type": {
@@ -1710,13 +1711,19 @@
       "phone": "Tel",
       "webrtc": "WebRTC"
     },
-    "presence_change_aria": "Change the status of {{name}}: {{status}}",
+    "ext_kind": {
+      "phone": "Phone",
+      "webrtc": "WebRTC"
+    },
     "presence": {
       "available": "Available",
       "unavailable": "Unavailable",
       "bathroom": "Restroom",
       "lunch": "Lunch",
-      "training": "Training"
+      "training": "Training",
+      "wrap_up": "Post-conversation",
+      "administrative": "Administrative",
+      "offline": "Disconnected"
     },
     "status": {
       "active": "Active",
@@ -1874,12 +1881,15 @@
     },
     "entity_plural": "agents",
     "export": {
-      "code": "Code",
+      "code": "ID",
       "name": "Name",
       "extension": "Extension",
-      "type": "Type",
+      "extension_type": "Extension type",
       "email": "Email",
+      "phone": "Phone",
+      "type": "Type",
       "status": "Status",
+      "recording": "Recording",
       "groups": "Groups",
       "sheet": "Agents"
     },
