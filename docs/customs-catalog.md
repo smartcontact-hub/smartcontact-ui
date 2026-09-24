@@ -255,7 +255,7 @@ página está cerrado:
 ### 1.7 AA por delante de la jerarquía: `subtle` sube a slate-600 · 2026-07-19
 
 > **Decisión de Rafa, no inferencia.** Se le presentó el dilema medido y eligió:
-> *«sube text-subtle a slate-600, prefiero AA que la jerarquía»*.
+> subir `text-subtle` a slate-600: el contraste AA va por delante de la jerarquía.
 
 `--sc-text-subtle` valía `slate-400`: **2.04:1 sobre blanco**, en **161 usos** que no son
 adorno — descripciones del hub de repositorios, cuerpo de los estados vacíos, hints de
@@ -537,12 +537,12 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 ### 2.12 Breadcrumb — el tramo ACTUAL en color pleno + peso medio (folded al maestro 2026-08-31)
 
 - **Estado**: `<sc-breadcrumb>` (wrapper fino de `<p-breadcrumb>`, del `❖ Breadcrumb` del Kit, node `185:6637`). El aspecto base sale del preset ya tokenizado, 1:1 con Figma.
-- **El tratamiento**: el DS marca el **último tramo (la página actual) en `--sc-text-primary` Y `--sc-font-weight-medium`**; los tramos padre van en gris muted, peso normal. PrimeNG pinta todos los tramos iguales, y esto es el "aquí estás" que **la guía UX pide**. *(Aquí ponía que PrimeNG añade `aria-current`: su guía lo dice, pero PrimeNG Angular no lo hace. Medido el 2026-09-14: `null` en sc-docs y en el Supervisor.)* **Por qué color + PESO y no solo color** (2026-08-31): el color solo era un único paso de la rampa (slate-700 actual vs slate-600 padres) → demasiado sutil de un vistazo; el peso no se escapa. Decisión de Rafa: *"no puede fallar en algo tan básico, no habrá que adivinar"*.
+- **El tratamiento**: el DS marca el **último tramo (la página actual) en `--sc-text-primary` Y `--sc-font-weight-medium`**; los tramos padre van en gris muted, peso normal. PrimeNG pinta todos los tramos iguales, y esto es el "aquí estás" que **la guía UX pide**. *(Aquí ponía que PrimeNG añade `aria-current`: su guía lo dice, pero PrimeNG Angular no lo hace. Medido el 2026-09-14: `null` en sc-docs y en el Supervisor.)* **Por qué color + PESO y no solo color** (2026-08-31): el color solo era un único paso de la rampa (slate-700 actual vs slate-600 padres) → demasiado sutil de un vistazo; el peso no se escapa. Decisión de Rafa: saber en qué página estás es tan básico que no puede fallar ni obligar a adivinar.
 - **Cómo, sin acoplamiento**: el componente añade `labelStyle` (estilo EN LÍNEA) al último item del modelo → gana al color del preset sin una regla CSS, sin `::ng-deep` y **sin tocar internos `.p-*`** (el `audit:primeng-coupling` sigue en 36). Verificado en la fuente de PrimeNG (`primeng-breadcrumb.mjs`) que la plantilla bindea `[style]="menuitem.labelStyle"` sobre el `<span>` del label, así que el estilo entra de verdad.
 - **Gate (no puede regresar en silencio)**: `sc-breadcrumb` está en `e2e/component-structure` — su `outerHTML` renderizado queda CONGELADO en el baseline, incluido el `style` del tramo actual. Si una regresión lo quita, o PrimeNG deja de pintarlo, el snapshot cambia y el gate lo caza. Es la garantía mecánica del "aquí estás".
 - **NO es el título de página**: el breadcrumb hace wayfinding; el título de pantalla, cuando haga falta, es cosa aparte. Esto **revierte** el "breadcrumb-en-negrita-como-título" del S59, que mezclaba dos trabajos.
 - **Tramo pulsable: manita y subrayado al pasar el ratón** (2026-09-14, DD-103, decisión de Rafa). `sc-breadcrumb` pone la clase `sc-breadcrumb-item--link` en cada tramo con `routerLink`, `url` o `command` que no sea el último, y el tema (`sc-preset/css.ts`) le da `cursor: pointer` y subrayado en hover (solo con ratón). PrimeNG no pide la manita en su miga y el navegador solo la pone en un `<a>` con dirección, así que un tramo con solo `command` salía con cursor de texto. **Divergencia con Figma hasta que el maestro la dibuje**: `docs/figma-pendiente.md` ficha 6.
-- **Ya NO es divergencia**: el tratamiento del tramo actual se **lleva al componente maestro de Figma** (2026-08-31, decisión de Rafa: *"Figma le seguirá"*). Antes vivía solo como frame-ejemplo `Current state · propuesta` (node `13890:157`) junto al maestro; al incorporarlo al maestro pasa a ser 1:1 código↔Figma.
+- **Ya NO es divergencia**: el tratamiento del tramo actual se **lleva al componente maestro de Figma** (2026-08-31, decisión de Rafa: Figma se alinea con el código). Antes vivía solo como frame-ejemplo `Current state · propuesta` (node `13890:157`) junto al maestro; al incorporarlo al maestro pasa a ser 1:1 código↔Figma.
 
 ---
 
@@ -985,7 +985,7 @@ nativo; se mide y se decide con Rafa).
   `~/Documents/Claude/2026-09 tabs-toolbar-divider/lab-botones/`), sobre
   el `sc-button` real en tres tallas, seis variantes, tres tipografías, cámara lenta y un clic que navega: el
   nativo, la de entonces (98 % sin transición y 100 ms), better-ui (96 %, 150 ms), ui-ux-pro-max (95 %, 200 ms),
-  taste-skill (baja 1 px, 300 ms) y solo color a 100 ms. Eligió better-ui: «me parece el más premium de todos».
+  taste-skill (baja 1 px, 300 ms) y solo color a 100 ms. Eligió better-ui, la que percibió como la más premium de las seis.
 - **De dónde venía**: de la app de la plataforma, el 2026-05-06 (PR #9, decisión #21 de
   `smart-contact-platform/apps/supervisor/docs/DECISIONS.md`), para arreglar un clic que «se sentía borroso»: el
   fundido del hover seguía corriendo mientras la página navegaba. Aquel arreglo era 98 % con transición cero; DD-66

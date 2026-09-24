@@ -126,7 +126,7 @@
     la aplica.** Y PORTAR no es mover ficheros: el vocabulario no viaja, se RE-DERIVA del destino
     (`_forms.scss`, `_page.scss`, una pantalla hermana). ⚙️ no mecanizable: juicio; tarjeta p.7.
     Evidencia: 2026-09-19 iba a sacar `e2e:visual` del preflight y lo metió DD-62 a propósito ·
-    2026-09-22 porté un laboratorio a otra app con mis cajas y mi asistente; Rafa: «un pegote».
+    2026-09-22 porté un laboratorio a otra app con mis cajas y mi asistente; Rafa lo vio como un añadido pegado, ajeno a la app de destino.
 
 11. **Toda edición masiva —shell o API— lleva su verificación de outcome PEGADA en la misma
     operación. Y si la clave con la que escribes puede REPETIRSE en el árbol, no es una asignación:

@@ -9,9 +9,9 @@ import { buscar, chequear, DATO_PERMITIDO, esCodigo, NOMBRE_RE } from '../audit-
 
 test('rojo: las formas en que el nombre entraba en los comentarios', () => {
   for (const linea of [
-    "/* Alineación ÓPTICA, no geométrica (Rafa, 2026-09-24: «veo desalineaciones»). */",
+    "/* Alineación ÓPTICA, no geométrica (Rafa, 2026-09-24: «esto se ve torcido»). */",
     '<!-- Sin avatar (Rafa, 2026-09-23). -->',
-    ' * Lo que Rafa cazó de un vistazo: «nada es clicable en lo nuestro».',
+    ' * Lo que Rafa cazó de un vistazo: «no sé qué se puede pulsar».',
     '  // Decisión de rafa: que no cambie de anchura.',
     '## ⏸️ ESPERANDO A RAFA',
     ' * NO SE APLICA a Rafael Areses, autor del repo.',
