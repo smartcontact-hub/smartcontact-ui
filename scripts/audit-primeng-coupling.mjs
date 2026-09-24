@@ -684,7 +684,7 @@ const COMPORTAMIENTO_PERMITIDO = {
   'sc-datatable .p-datatable-header:empty':
     'p-table pinta el caption aunque no se proyecte nada y deja una franja en blanco (css.ts, emptyCaptionCss).',
   '.p-datatable-tbody > tr': 'hover de la gramática de tabla-lista, solo en filas que hacen algo (css.ts, listBehaviorCss, DD-66).',
-  '.p-component.p-button': 'transiciones de 150 ms ease-out de la pulsación de better-ui, elegida por Rafa (css.ts, buttonMotionCss, DD-113).',
+  '.p-component.p-button': 'transiciones de 150 ms ease-out de la pulsación de better-ui, elegida en DD-113 (css.ts, buttonMotionCss).',
   '.p-component.p-button:active': 'al pulsar se encoge al 96 % y vuelve suave (css.ts, buttonMotionCss, DD-113, customs-catalog §8.1).',
   '.p-component.p-button:disabled, .p-component.p-button[aria-disabled="true"]': 'un botón deshabilitado no anima (buttonMotionCss).',
   '.p-component.p-button:disabled:active, .p-component.p-button[aria-disabled="true"]:active': 'ídem, al pulsarlo (buttonMotionCss).',
@@ -713,7 +713,7 @@ if (cambiosNativos.length) {
   log('\n  ✗ Estas reglas cambian cómo se COMPORTA un componente de PrimeNG, no solo su aspecto:');
   for (const c of cambiosNativos) log(`      ${c.f}: \`${c.selector}\` → ${c.cambios.join(', ')}`);
   log('    → Primero, ¿primeng.dev lo hace así? Mídelo allí. Si de verdad hace falta, añádela a');
-  log('      COMPORTAMIENTO_PERMITIDO con su porqué y su DD, y díselo a Rafa: es un desvío del nativo.');
+  log('      COMPORTAMIENTO_PERMITIDO con su porqué y su DD, y díselo al usuario: es un desvío del nativo.');
 }
 
 const problemas = huerfanos.length + crecidos.length + problemasB + reachInsDS.length + cambiosNativos.length + sinFila.length;

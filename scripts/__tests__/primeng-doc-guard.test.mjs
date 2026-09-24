@@ -7,7 +7,7 @@ import { aviso, componentesCitados } from '../hooks/primeng-doc-guard.mjs';
 
 const HOOK = join(dirname(fileURLToPath(import.meta.url)), '../hooks/primeng-doc-guard.mjs');
 
-test('el mensaje real de Rafa: cinco componentes, en orden y sin repetir', () => {
+test('el mensaje real del usuario: cinco componentes, en orden y sin repetir', () => {
   const prompt = `Tenemos un tema con las tabs: https://primeng.dev/tabs
 
 También con el toolbar: https://primeng.dev/toolbar

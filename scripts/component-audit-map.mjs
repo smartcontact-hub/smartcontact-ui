@@ -1,13 +1,13 @@
 /**
  * Curaduría del audit de componentes (Fase 2). Lo DETERMINISTA lo deriva `component-audit.mjs`
  * del código (provenance, primengBase, CVA, inputs, anidados, demo, dónde-se-usa). Lo que pide
- * JUICIO humano vive aquí — fuente única, editable por Rafa sin tocar el generador.
+ * JUICIO humano vive aquí — fuente única, editable a mano sin tocar el generador.
  */
 
 /**
  * STANDARD vs EXTENDED es una línea fina (un wrapper "puro passthrough" vs uno con API/CVA propia).
  * El generador propone por heurística (CVA o muchos inputs propios → EXTENDED). Para FORZAR la
- * clasificación de un wrapper concreto, ponlo aquí: 'standard' | 'extended'. (Confirmado por Rafa.)
+ * clasificación de un wrapper concreto, ponlo aquí: 'standard' | 'extended'. (Confirmado en revisión.)
  */
 export const PROVENANCE_OVERRIDE = {
   // ej.: 'card': 'standard',  // aunque tenga inputs, es passthrough visual
@@ -41,7 +41,7 @@ export const NESTED_IGNORE = new Set(['sc-icon']);
  * el que se confunde, se nombra: la mitad del valor está en decir «esto NO, aquello SÍ».
  *
  * Es JUICIO, no dato derivado, y por eso vive aquí y no en el generador: este fichero es el de la
- * curaduría que confirma Rafa. `audit:components` exige que ningún componente se quede sin su
+ * curaduría humana. `audit:components` exige que ningún componente se quede sin su
  * línea, así que uno nuevo no puede entrar mudo.
  */
 export const CUANDO = {

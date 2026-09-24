@@ -76,8 +76,8 @@ export const HOJA_REFERENCIA =
 export const HOJA_COMPARTIDA = 'projects/supervisor/src/styles/_forms.scss';
 
 /**
- * Los nombres que forman el vocabulario de dentro de la pantalla. Son los que Rafa
- * enumeró el 2026-09-10 al pedir el barrido: la caja, la sangría del contenido, el
+ * Los nombres que forman el vocabulario de dentro de la pantalla. Son los que enumeró
+ * el encargo del barrido, el 2026-09-10: la caja, la sangría del contenido, el
  * ritmo entre secciones, las filas de dos columnas, el campo numérico con la etiqueta
  * al lado y las filas-banda.
  *

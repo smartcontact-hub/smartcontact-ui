@@ -22,6 +22,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 
+import { NOMBRE_RE } from '../audit-personal-names.mjs';
 import { estadoPreflight } from '../preflight-mark.mjs';
 
 export const BYPASS = /#\s*sc:ok\b/;
@@ -266,7 +267,7 @@ function evaluarBase(cmd, ctx = {}) {
           `LEARNINGS #7 — no se pushea sin preflight en verde sobre ESTE árbol: ${st.motivo}. ` +
           'Haz: (1) commitea todo, (2) `npm run preflight:scope -- --run` (o `preflight`) UNA vez ' +
           '(el `--` es obligatorio: sin él npm se come el flag y el script solo imprime el plan), ' +
-          '(3) vuelve a pushear. Si Rafa te ha dicho explícitamente que pushees sin cadena, añade `# sc:ok` al comando y díselo en el mensaje.',
+          '(3) vuelve a pushear. Si el usuario te ha dicho explícitamente que pushees sin cadena, añade `# sc:ok` al comando y díselo en el mensaje.',
       };
   }
 
@@ -305,7 +306,7 @@ function evaluarBase(cmd, ctx = {}) {
   //
   // Sobre un mismo commit de `main` conviven varios workflows (`ci`, `deploy-record`, la auditoría
   // semanal). En s46 leí `gh run list --branch main --limit 1`, vi `completed/success` y estuve a un
-  // mensaje de decirle a Rafa que el CI estaba verde: esa run era la de la auditoría, y `ci` seguía
+  // mensaje de dar el CI por verde: esa run era la de la auditoría, y `ci` seguía
   // `in_progress`. El repo ya tiene quien lo contesta bien — `ci:verdict` resuelve el run de `ci`
   // sobre el commit — y la tarjeta lo dice desde el paso 6. Estrecho a `--limit 1` a propósito
   // (LEARNINGS #2): listar varias y filtrar por `headSha` es legítimo y así lo diagnostiqué.
@@ -341,7 +342,7 @@ function evaluarBase(cmd, ctx = {}) {
   //
   // El repertorio de herramientas de una sesión se FIJA al arrancar: un servidor añadido después
   // sale «✔ Connected» en el CLI y es inalcanzable desde dentro. En s44 declaré «no hay Playwright
-  // MCP conectado» tras correr esto desde el worktree; Rafa enseñó su terminal con
+  // MCP conectado» tras correr esto desde el worktree; la terminal del usuario decía
   // `playwright: ✔ Connected`. Las dos salidas eran ciertas: medí el sujeto equivocado, y encima
   // le hice decidir el montaje del navegador sobre esa premisa sin verificar.
   if (segs.some((s) => empiezaPor(s, /^claude\s+mcp\s+(list|get)\b/)))
@@ -435,19 +436,21 @@ function evaluarBase(cmd, ctx = {}) {
         'quedó viejo), añade `# sc:ok`.',
     };
 
-  // Portada de PR y mensaje de commit: el repo es PÚBLICO (decisión de Rafa, 2026-09-14).
+  // Portada de PR y mensaje de commit: el repo es PÚBLICO (decisión del 2026-09-14).
   //
-  // En 9 de los PRs #146-#167 la portada abría con un rótulo dirigido a Rafa por su nombre: la
+  // En 9 de los PRs #146-#167 la portada abría con un rótulo dirigido al autor por su nombre: la
   // regla del parte llano es para el mensaje del CHAT al cerrar, y se llevó sola a un documento
-  // que lee cualquiera. La atribución de la herramienta (la línea de Claude Code, el co-autor y
-  // el enlace a la sesión) ya la apaga `attribution` en `.claude/settings.json`; esto caza lo que
-  // un ajuste no ve: el rótulo, y la atribución escrita a mano por una sesión con otra config.
+  // que lee cualquiera. Desde el 2026-09-24 no se nombra a nadie en ninguna parte del texto, igual
+  // que en los comentarios de código (AGENTS.md §«Voz del código», `audit:personal-names`, de donde
+  // sale el patrón). La atribución de la herramienta (la línea de Claude Code, el co-autor y el
+  // enlace a la sesión) ya la apaga `attribution` en `.claude/settings.json`; esto caza lo que un
+  // ajuste no ve: el nombre, y la atribución escrita a mano por una sesión con otra config.
   //
   // Mira el comando CRUDO, no `segs`: el cuerpo viaja casi siempre en un heredoc, y ahí es donde
   // está el texto. Un `--body-file` no lo ve; estrecho a propósito (LEARNINGS #2).
   const PUBLICA = /^(git\s+commit|gh\s+pr\s+(create|edit))\b/;
   const NO_EN_PUBLICO = [
-    [/Para Rafa,?\s+en llano/i, 'un rótulo dirigido a Rafa por su nombre'],
+    [NOMBRE_RE, 'el nombre de una persona (la decisión se cita por su fuente, no por quién la pidió)'],
     [/Generated with \[?Claude Code/i, 'la línea «Generated with Claude Code»'],
     [/Co-Authored-By:\s*Claude/i, 'el co-autor Claude'],
     [/claude\.ai\/code\/session_/i, 'el enlace a la sesión de claude.ai'],
@@ -459,7 +462,7 @@ function evaluarBase(cmd, ctx = {}) {
         decision: 'deny',
         reason:
           `Portada pública (AGENTS.md §Pull requests y commits) — este texto lleva ${hallado[1]}, y el repo es público. ` +
-          'El resumen llano de arriba va sin destinatario (`**En resumen:**`) y sin atribución de la herramienta. ' +
+          'El resumen llano de arriba va sin destinatario (`**En resumen:**`), sin nombrar a nadie y sin atribución de la herramienta. ' +
           'Quítalo y repite. Si citas la regla a propósito (un commit que habla de ella), añade `# sc:ok`.',
       };
   }

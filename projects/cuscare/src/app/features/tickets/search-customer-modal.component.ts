@@ -5,8 +5,8 @@ import { FormsModule } from '@angular/forms';
  * Modal "Search customer" — el SEGUNDO paso de "+ New ticket".
  *
  * Estuvo sin replicar por una razón que resultó ser correcta: pulsar **Save** en
- * el selector de grupo **crea un ticket de verdad**. Se confirmó cuando Rafa lo
- * pulsó él mismo: la app saltó a
+ * el selector de grupo **crea un ticket de verdad**. Se confirmó al pulsarlo
+ * en la app real: la app saltó a
  * `#/private/cuscare/tickets/ticket/2051827/pre-ticket` con un ticket nuevo ya
  * existiendo. Por eso no se pulsó antes, y por eso este modal se midió sobre el
  * pre-ticket que abrió él, sin tocar nada.

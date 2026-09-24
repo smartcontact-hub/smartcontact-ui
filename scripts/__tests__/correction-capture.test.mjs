@@ -20,7 +20,7 @@ import {
   validarRuta,
 } from '../hooks/correction-capture.mjs';
 
-// Cada patrón se prueba EN ROJO (frases reales con las que Rafa ha corregido) y EN VERDE (mensajes
+// Cada patrón se prueba EN ROJO (frases reales de corrección del usuario) y EN VERDE (mensajes
 // normales que no deben disparar). Un detector con falsos positivos enseña a ignorarlo (LEARNINGS 2).
 
 test('rojo: frases reales de corrección disparan', () => {
@@ -37,7 +37,7 @@ test('rojo: frases reales de corrección disparan', () => {
     'está mal: el min-width sigue ahí',
     'por qué no has mirado el CI',
     'replanteate esto contra tus bias y los mios',
-    // Literales de Rafa, 2026-09-23: lo ya hecho volvía deshecho y el hook no lo apuntó.
+    // Literales del usuario, 2026-09-23: lo ya hecho volvía deshecho y el hook no lo apuntó.
     'hay cosas que me chocan, por ejemplo el espacio entre la cabecera que es mas corto, que se habia hecho ya',
     'cada componente sección tiene un marco que sobra que se habia aprobado ya',
   ])
@@ -68,7 +68,7 @@ const SOBRES = [
     'Rectifico lo que te dije antes: no gastes tiempo regenerando `sectioncard-darwin.png`.',
 ];
 
-test('verde: un sobre de otro agente no es una corrección de Rafa', () => {
+test('verde: un sobre de otro agente no es una corrección del usuario', () => {
   for (const f of SOBRES) assert.equal(esCorreccion(f), false, `no debía detectar: ${f.slice(0, 60)}…`);
 });
 
@@ -77,7 +77,7 @@ test('rojo: el mismo cuerpo SIN sobre sigue disparando (el filtro es el sobre, n
 });
 
 // Reales, del registro del 2026-09-14: el veredicto del CI que llega por un monitor. Su cuerpo casa
-// con un patrón de corrección; el sobre dice que no lo escribió Rafa.
+// con un patrón de corrección; el sobre dice que no lo escribió el usuario.
 const AVISO_CI =
   '<event>△ el PR #177 de arebury/grises-intermedios está en CONFLICTO con la base: el CI no es la pregunta, ' +
   'porque al rebasar cambia el commit y el run deja de ser el tuyo. Rebasa primero: git fetch origin && git rebase origin/main</event>';
@@ -86,7 +86,7 @@ const SOBRES_HERRAMIENTA = [
   '<scheduled-task name="prs-abiertos-semanal" file="SKILL.md">\nThis is an automated run of a scheduled task.\n' + AVISO_CI,
 ];
 
-test('verde: un aviso de tarea de fondo o de tarea programada no es una corrección de Rafa', () => {
+test('verde: un aviso de tarea de fondo o de tarea programada no es una corrección del usuario', () => {
   for (const f of SOBRES_HERRAMIENTA) assert.equal(esCorreccion(f), false, `no debía detectar: ${f.slice(0, 40)}…`);
 });
 
@@ -123,7 +123,7 @@ test('registrar apunta en la carpeta del proyecto y cuenta por sesión; leer fil
 });
 
 // ── Cierre: «cerramos» dispara /reflect solo ─────────────────────────────────────────────
-// Rojo = las frases con las que Rafa cierra de verdad. Verde = mensajes que solo MENCIONAN la
+// Rojo = las frases con las que el usuario cierra de verdad. Verde = mensajes que solo MENCIONAN la
 // palabra: un falso positivo aquí arranca un /reflect a mitad de tarea (LEARNINGS #2).
 
 test('rojo: los mensajes de cierre disparan', () => {
@@ -142,13 +142,13 @@ test('rojo: los mensajes de cierre disparan', () => {
     'vamos a cerrar la sesión',
     '/reflect',
     '/reflect el enrutador de correcciones',
-    // El cierre al FINAL de un mensaje más largo. El primero es literal de Rafa (2026-09-10) y se
+    // El cierre al FINAL de un mensaje más largo. El primero es literal del usuario (2026-09-10) y se
     // escapó con el hook recién puesto: anclar solo al principio del mensaje no bastaba.
     'entonces resume no dev, lenguaje plano. Algo mas que hacer o cerramos esta sesion?',
     '¿algo más o cerramos?',
     'el PR ya está fundido. cerramos',
     'lo dejamos aquí, cerramos la sesión',
-    // Literal de Rafa, 2026-09-23: el cierre al final de una cadena de órdenes con «y».
+    // Literal del usuario, 2026-09-23: el cierre al final de una cadena de órdenes con «y».
     'va pues adelante con identidad, y commit y push y cerramos',
   ])
     assert.ok(esCierre(f), `debía detectar cierre: ${f}`);

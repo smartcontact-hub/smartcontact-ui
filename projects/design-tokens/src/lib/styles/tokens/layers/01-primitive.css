@@ -237,7 +237,7 @@
    *      cualquier otra máquina. Medido en DD-60 (run 34401618582): 37 de las 38 diferencias
    *      caían ENTERAS en una banda de 14 px de alto —la línea del título, que se pinta en
    *      monoespaciada— con 87 a 1.100 px de diferencia por captura. Por eso el CI las apagaba
-   *      y solo corrían en el portátil de Rafa. DD-60 dejó escrita esta salida y DD-62 la
+   *      y solo corrían en un portátil local. DD-60 dejó escrita esta salida y DD-62 la
    *      repitió: «la salida no es quitar la red: es autohospedar la fuente monoespaciada».
    *
    * Se eligió **JetBrains Mono** (gratuita, pensada para leer código, y del mismo `@fontsource`

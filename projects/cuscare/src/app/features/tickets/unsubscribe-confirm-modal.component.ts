@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
  *
  * La réplica lo tenía apuntando al "Right to be forgotten" por una suposición
  * mía; el árbol de componentes de la app real tiene
- * `app-modal-confirmation-unsubscribe`, que es esto. Rafa mandó reapuntarlo.
+ * `app-modal-confirmation-unsubscribe`, que es esto. Se reapuntó a ese.
  *
  * Medido leyéndolo del DOM sin abrirlo (vive oculto desde el arranque):
  * diálogo de **855.5** —el mismo ancho que el modal de acciones en bloque— con

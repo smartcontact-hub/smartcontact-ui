@@ -307,6 +307,37 @@ proyecto, y los lee cualquiera:
   problema resuelve y qué se descartó. Norma de Rafa del 2026-09-16: el título envejece bien, pero
   el motivo solo lo sabe quien estuvo ahí, y dentro de un mes el `git log` es lo único que queda.
 
+### Voz del código (el repo es público)
+
+Norma del 2026-09-24 (DD-120). Un comentario, un commit o una portada de PR explican el **criterio** que
+sostiene el cambio, no quién lo pidió. Se escriben como los escribiría un UX engineer o alguien de
+DesignOps en un repo que lee cualquiera:
+
+- **Sin nombres de personas**: ni «(Nombre, 2026-09-18)», ni «X pidió / decidió / detectó», ni
+  «decisión de X». Tampoco de colegas: por su rol («diseño del Kit»).
+- **La procedencia es la fuente**: DD-NN, el ticket (SISMAC-NNNN) o el nodo de Figma. Si no la hay y
+  la línea registra una DECISIÓN, «decisión de producto (fecha)»: es lo que le dice a un agente que
+  no la deshaga a la ligera, la señal que antes daba el nombre. La fecha sola solo data un hecho.
+- **Sin citas literales de conversación**: la cita pasa al criterio que expresaba. «veo
+  desalineaciones» → «alineación óptica (QA visual, 2026-09-24)»; «nada es clicable» → «sin
+  affordance de clic». Vocabulario: revisión visual, QA visual, decisión de producto, criterio del
+  sistema, jerarquía, densidad, affordance, consistencia entre pantallas.
+- **Los hooks, al hablarle al agente**, dicen «el usuario».
+- **La excepción es el nombre como DATO**, nunca como firma: el agente de demo con el nombre del
+  autor está puesto a propósito (`audit-seed-pii.mjs`). Cada caso va declarado con su motivo en
+  `DATO_PERMITIDO`.
+- **Todo sigue ubicable.** Para volver a una decisión, en este orden: su DD en `docs/DECISIONS.md`;
+  `git grep -n -i "de producto"` lista las que solo viven en el código; `git blame` lleva al commit
+  y al PR (GitHub salta solo los barridos de `.git-blame-ignore-revs`; en local, añade
+  `--ignore-revs-file .git-blame-ignore-revs`); el hand-off del frente, por la fecha; y
+  `git log -S'<texto>'` recupera la redacción original, citas incluidas. Un barrido masivo de
+  comentarios entra en `.git-blame-ignore-revs`, o el `blame` apunta al barrido y no a la decisión.
+
+⚙️ `audit:personal-names` (en `verify`) lo mira en todo fichero de código, y `bash-guard` deniega
+un `git commit` o `gh pr create|edit` con el nombre. La documentación de proceso (`.md`) queda
+fuera del gate. Nació con 197 menciones en código y el «Por qué» de 28 de los últimos 60 commits
+contando quién lo había pedido.
+
 ---
 
 ## Token Strategy

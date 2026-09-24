@@ -11,8 +11,8 @@ import { InfoTipComponent } from '../../shared/info-tip.component';
  * Medido del real: las KPI cards viven sobre el lienzo `#f4f6fc` en tarjetas
  * blancas de radio 12; la tabla Groups repite el chrome de la de Tickets.
  *
- * La tabla Groups **no era una maqueta en la real**, y aquí sí lo era: Rafa lo
- * cazó («nada es clicable en lo nuestro»). Comprobado en la app viva:
+ * La tabla Groups **no era una maqueta en la real**, y aquí sí lo era: detectado
+ * en revisión visual (los controles no tenían affordance). Comprobado en la app viva:
  *
  *   · las NUEVE cabeceras ordenan — el clic cicla asc → desc → sin orden
  *   · "Search groups" es un `input` que filtra (aquí era un `<span>` pintado)

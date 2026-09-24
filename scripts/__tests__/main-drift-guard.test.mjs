@@ -50,7 +50,7 @@ test('ROJO: main cambia el fichero que estoy tocando, aunque no lo haya commitea
   const t = aviso(d);
   assert.match(t, /ficha\.html/);
   assert.match(t, /#237/);
-  assert.match(t, /ANTES de enseñarle nada a Rafa/);
+  assert.match(t, /ANTES de enseñarle nada al usuario/);
 });
 
 test('VERDE: main se mueve en OTRO fichero → silencio', () => {

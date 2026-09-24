@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 /**
  * Hook `UserPromptSubmit` — `main` se mueve bajo los ficheros que estás tocando, y te lo dice ANTES
- * de que le enseñes nada a Rafa.
+ * de que le enseñes nada al usuario.
  *
  * Por qué (2026-09-23, fichas de grupo, LEARNINGS #21): la sesión arrancó sobre un `main` de las
- * 16:31 y construyó encima. Mientras Rafa miraba en local, entraron #237 (18:28), #239 (18:41) y
- * #240 (20:57), las tres sobre las mismas fichas, y luego otra caja fundió sobre el mismo fichero
- * (21:50). Rafa vio deshecho «lo que ya se había hecho» (el hueco bajo la cabecera, las cajas de
+ * 16:31 y construyó encima. Mientras la revisión en local seguía abierta, entraron #237 (18:28), #239
+ * (18:41) y #240 (20:57), las tres sobre las mismas fichas, y luego otra caja fundió sobre el mismo
+ * fichero (21:50). En la revisión volvió deshecho lo ya aprobado (el hueco bajo la cabecera, las cajas de
  * sección) y una propuesta que rompía una decisión fijada con test ese mismo día. La regla #21 dice
  * «compara con origin/main ANTES de empezar»; al empezar no había nada que ver. Hacía falta mirar
  * a MITAD de sesión, y eso solo lo hace una máquina.
  *
- * Qué hace: en cada mensaje de Rafa (con un `fetch` como mucho cada 5 minutos, para no pagar red en
+ * Qué hace: en cada mensaje del usuario (con un `fetch` como mucho cada 5 minutos, para no pagar red en
  * cada turno) cruza los commits de `HEAD..origin/main` con los ficheros que esta rama cambia respecto
  * a su base, commiteados o no. Si alguno coincide, lo dice con los commits. Falla ABIERTO: sin red o
  * sin `origin`, calla.
@@ -69,7 +69,7 @@ export function aviso({ ficheros, commits }) {
     `⚠️ sc: origin/main ha cambiado ${ficheros.length} fichero(s) que tu rama también toca (LEARNINGS #21):`,
     lista,
     `  Commits: ${commits.slice(0, 5).join(' · ')}${commits.length > 5 ? ' …' : ''}`,
-    '  Rebasa (o fúndelo) ANTES de enseñarle nada a Rafa o de proponer un cambio: puede que ya esté decidido y hecho.',
+    '  Rebasa (o fúndelo) ANTES de enseñarle nada al usuario o de proponer un cambio: puede que ya esté decidido y hecho.',
   ].join('\n');
 }
 

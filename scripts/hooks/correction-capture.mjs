@@ -6,7 +6,7 @@
  * Por qué: `/reflect` corre al final de la sesión, cuando la corrección ya se ha olvidado o
  * racionalizado. Medido el 2026-09-09: las seis reglas más rotas de LEARNINGS (de 3 a 5 sesiones
  * cada una) están TODAS en la tarjeta de CLAUDE.md que viaja en cada turno, y siguen siendo prosa.
- * Más texto no las dispara; lo que falta es que una máquina vea el momento en que Rafa corrige.
+ * Más texto no las dispara; lo que falta es que una máquina vea el momento en que el usuario corrige.
  *
  * Y por qué el ENRUTADO (2026-09-10): apuntar la corrección no la mecaniza. `/reflect` decidía en
  * PROSA dónde iba cada lección, y «lo apunto en LEARNINGS» valía como cierre — que es exactamente
@@ -46,8 +46,8 @@ const PATRONES = [
   /\best[áa] mal\b/i,
   /\bpor qu[eé] (no )?(has|lo has|me has|hiciste|lo hiciste)\b/i,
   /\bcontra (tus|mis) bias\b/i,
-  // Lo que ya estaba hecho y vuelve deshecho (Rafa, 2026-09-23: «el espacio… que se había hecho ya»,
-  // «un marco que sobra que se había aprobado ya»). Con el «ya»: sin él es un relato, no un reproche.
+  // Lo que ya estaba hecho y vuelve deshecho (frases reales del 2026-09-23: «el espacio… que se había
+  // hecho ya», «un marco que sobra que se había aprobado ya»). Con el «ya»: sin él es un relato, no un reproche.
   /\b(?:ya se hab[ií]a (?:hecho|aprobado|decidido)|se hab[ií]a (?:hecho|aprobado|decidido) ya)\b/i,
 ];
 
@@ -63,11 +63,11 @@ const CIERRES = [
 
 /**
  * El cierre suele venir AL FINAL de un mensaje más largo: «¿algo más que hacer o cerramos esta
- * sesión?». Anclar solo al principio se lo perdía — pasó con el mensaje de Rafa del 2026-09-10, con
+ * sesión?». Anclar solo al principio se lo perdía — pasó con un mensaje real del 2026-09-10, con
  * el hook recién puesto delante. Se parte por fin de frase y por el «o» que abre la alternativa, y
  * se prueba la ÚLTIMA frase: «arregla el bug o cerramos el ticket» sigue en verde porque lo que va
  * detrás del verbo no es la sesión. Y por el «y» que encadena órdenes: «adelante, y commit y push y
- * cerramos» (Rafa, 2026-09-23) se escapó entero porque su última frase empezaba por «y commit».
+ * cerramos» (2026-09-23) se escapó entero porque su última frase empezaba por «y commit».
  */
 export const ultimaFrase = (texto) =>
   String(texto)
@@ -76,15 +76,15 @@ export const ultimaFrase = (texto) =>
     .filter(Boolean)
     .at(-1) ?? '';
 
-// Los mensajes de OTRA SESIÓN entran por el mismo hueco que los de Rafa, y su cuerpo suele traer
+// Los mensajes de OTRA SESIÓN entran por el mismo hueco que los del usuario, y su cuerpo suele traer
 // «te dije» o «rectifico lo que te dije»: es el agente que escribe corrigiéndose A SÍ MISMO, no
-// Rafa corrigiéndote a ti, que es el momento para el que existe este hook (ver cabecera). Contarlos
+// el usuario corrigiéndote a ti, que es el momento para el que existe este hook (ver cabecera). Contarlos
 // infla la cuenta de la sesión y deja PENDIENTES de enrutar lecciones que no son tuyas.
 // Medido s43: 2 de las 6 correcciones registradas en 24 h eran esto (LEARNINGS #2, un guardián con
 // falsos positivos enseña a ignorarlo).
 // Lo mismo con los sobres de la HERRAMIENTA: el aviso de una tarea de fondo o de un monitor
 // (`<task-notification>`) y el arranque de una tarea programada (`<scheduled-task>`). El veredicto
-// del CI dice «está en CONFLICTO… Rebasa primero» y casaba como si Rafa te corrigiera: 3 de las 6
+// del CI dice «está en CONFLICTO… Rebasa primero» y casaba como si el usuario te corrigiera: 3 de las 6
 // apuntadas en 48 h el 2026-09-14, más una tarea programada.
 const SOBRE_DE_AGENTE = /^\s*<(?:cross-session-message|task-notification|scheduled-task)\b/i;
 export const esDeOtroAgente = (texto) => typeof texto === 'string' && SOBRE_DE_AGENTE.test(texto);
@@ -95,7 +95,7 @@ export const esCorreccion = (texto) =>
 // El sobre también filtra el CIERRE, y desde que `ultimaFrase` existe no es opcional: los patrones
 // de CIERRES siguen anclados en `^`, pero se prueban además contra la última frase del mensaje, que
 // no lo está. Un sobre de otra sesión acabado en «…o cerramos esta sesión?» arrancaría un /reflect
-// a mitad de tarea sin que Rafa haya dicho nada — el falso positivo que CIERRES evita arriba.
+// a mitad de tarea sin que el usuario haya dicho nada — el falso positivo que CIERRES evita arriba.
 export const esCierre = (texto) =>
   typeof texto === 'string' &&
   !esDeOtroAgente(texto) &&

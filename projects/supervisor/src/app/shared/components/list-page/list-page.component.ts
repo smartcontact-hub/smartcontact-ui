@@ -139,7 +139,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> {
   /**
    * Ancho mínimo de la tabla (p. ej. `'65rem'`), la suma de lo que mide el dato de cada columna.
    * Por debajo, la tabla se desplaza de lado DENTRO de su caja en vez de recortar texto con
-   * puntos suspensivos (2026-09-14, Rafa: «que nunca corte»). Sin él, la tabla se ajusta al
+   * puntos suspensivos (DD-102: una lista nunca corta texto). Sin él, la tabla se ajusta al
    * ancho disponible como hasta ahora.
    */
   readonly tableMinWidth = input<string | undefined>(undefined);

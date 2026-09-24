@@ -309,7 +309,7 @@ test.describe('modal Ticket Status', () => {
 });
 
 /**
- * Lo que Rafa cazó de un vistazo: «nada es clicable en lo nuestro».
+ * Lo que la revisión visual detectó de un vistazo: en la réplica nada tenía affordance de clic.
  *
  * En la app real la tabla Groups del dashboard ordena por sus nueve cabeceras,
  * el buscador filtra y el icono de la derecha abre un panel de columnas. Aquí
@@ -595,7 +595,7 @@ test('el timeline usa contorno, no fondo, y el azul medido', async ({ page }) =>
 });
 
 /**
- * Los tooltips ⓘ. Rafa: «en dashboard no has pillado ninguno» — y no era uno:
+ * Los tooltips ⓘ. La revisión del dashboard encontró que no se había replicado ninguno, y no era uno:
  * la app real tiene 23 iconos ⓘ solo en esa pantalla.
  *
  * Los textos NO se transcribieron de pantallazos: salen del diccionario que

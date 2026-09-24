@@ -17,7 +17,7 @@ import { anatomiaDe } from './anatomy';
  * primer `<tag>` de la página (el mismo `meta.tag` que ya usa el snippet) y recorre su árbol. Si
  * PrimeNG cambia su estructura o el wrapper deja de envolver lo que envuelve, esto cambia solo.
  *
- * Por qué importa (Rafa, 2026-09-11): quien consume el DS escribe `<sc-button label="…">`, pero
+ * Por qué importa (2026-09-11): quien consume el DS escribe `<sc-button label="…">`, pero
  * quien depura CSS o escribe un selector necesita ver `sc-button > p-button > button.p-button`.
  * Las dos cosas son ciertas y la doc solo contaba la primera.
  */

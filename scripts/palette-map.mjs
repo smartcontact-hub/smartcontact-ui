@@ -33,7 +33,7 @@ export const PRIMITIVE_SOURCE = {
 export const PRIMITIVE_DIVERGE = [
   // `green.950` de marca (#0a2916, «un punto más oscuro») se retiró el 2026-09-14: no cumplía
   // ninguna función medible y era la única primitiva que se apartaba del Kit y de Aura. Criterio
-  // de Rafa: las divergencias con motivo escrito se valoran, no se heredan (DD-83).
+  // del sistema: las divergencias con motivo escrito se valoran, no se heredan (DD-83).
   {
     match: 'azure.',
     reason:

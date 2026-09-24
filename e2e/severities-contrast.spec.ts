@@ -78,7 +78,7 @@ const CONOCIDOS: readonly string[] = [
    * sobre blanco da **3.30** en el texto de message y **3.16** en el summary del
    * toast. No es nuestro: el export dice `{green.500}` para el sólido, así que
    * arreglarlo es DIVERGIR del Kit. Existe precedente exacto —`danger` se movió
-   * de red-500 a red-600 el 2026-07-19 por esto mismo, y lo decidió Rafa— pero es
+   * de red-500 a red-600 el 2026-07-19 por esto mismo, como decisión de producto— pero es
    * una decisión de marca, no un arreglo, y no se cuela dentro de otro trabajo. */
   'fg=rgb(255,255,255) 2.28:1',
   'fg=rgb(22,163,74) 3.30:1',

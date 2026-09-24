@@ -10,7 +10,7 @@ const MATERIAL_NAMES: Readonly<Record<Exclude<ChannelIconKind, 'whatsapp'>, stri
 };
 
 /**
- * El glifo de un canal en las listas. Los iconos son siempre Material Symbols, con UNA excepción decidida por Rafa
+ * El glifo de un canal en las listas. Los iconos son siempre Material Symbols, con UNA excepción, decisión de producto
  * (2026-09-16): WhatsApp lleva su logo de marca, que Material no tiene. Va en SVG con `currentColor`, al mismo
  * tamaño y color que los demás.
  */

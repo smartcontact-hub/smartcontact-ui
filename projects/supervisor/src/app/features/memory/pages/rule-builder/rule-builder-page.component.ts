@@ -359,7 +359,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
    * de un árbol de condiciones — un botón gris te dejaría cazando. Pulsar y que
    * te lo cuente todo de golpe es más barato.
    *
-   * Petición explícita de Rafa, además: "botón siempre activo, valida en click".
+   * Decisión de producto explícita, además: botón siempre activo, valida al pulsar.
    * Si alguien viene a 'converger' esto con admin, esto es lo que rompería.
    */
   protected onSave(): void {

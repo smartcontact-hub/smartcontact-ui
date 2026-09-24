@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 /**
  * El icono ⓘ con su explicación — el tooltip de la app.
  *
- * Rafa lo cazó: «en dashboard no has pillado ninguno». Y no era uno: la app
+ * Detectado en revisión visual: la réplica del dashboard no tenía ninguno. Y no era uno: la app
  * real tiene **23 iconos ⓘ** solo en esa pantalla, y la réplica no tenía
  * ninguno.
  *

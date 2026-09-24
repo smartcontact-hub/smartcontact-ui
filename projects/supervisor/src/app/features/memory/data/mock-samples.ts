@@ -8,7 +8,7 @@ const CALL_TRANSCRIPTION_FAILURES: readonly TranscriptionFailure[] = ['no_audio'
  *
  * Cada sample es una re-shaping del mock base `MOCK_CONVERSATIONS` que
  * demuestra un estado distinto del prototipo. La `ConversationsPage`
- * expone un switcher arriba a la derecha (clase demo) para que Rafa,
+ * expone un switcher arriba a la derecha (clase demo) para que quien presenta la demo,
  * el equipo de diseño o un stakeholder cycle entre escenarios sin recargar mock
  * manualmente.
  *

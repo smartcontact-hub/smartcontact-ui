@@ -273,7 +273,7 @@ log(`✔ Las ${CONSUMIDORAS.length} apps consumidoras cargan las clases.`);
 /*
  * §3 · Y NO SE LE PONEN A UN COMPONENTE DEL DS.
  *
- * La regla, de Rafa el 2026-09-09: los estilos de texto se aplican a lo que NO es un
+ * La regla, decisión de producto del 2026-09-09: los estilos de texto se aplican a lo que NO es un
  * componente. Un `<sc-*>` publica su tipografía por el preset de PrimeNG, en su capa; una
  * clase `.sc-text-*` encima del propio elemento la pisa desde fuera de esa capa y lo
  * desconecta del tema — que es justo lo que hace que mover un token llegue solo a todos los

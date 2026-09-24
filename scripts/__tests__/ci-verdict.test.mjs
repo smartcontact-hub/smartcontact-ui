@@ -7,7 +7,7 @@ import { motivo, ramaPorDefecto, shaDeLsRemote, veredicto } from '../ci-verdict.
 //   1. corrí `ci:verdict` en un worktree cuya rama local lleva sufijo `-2` y me dijo «¿aún no has
 //      pusheado?» sobre una rama pusheada y verde;
 //   2. me dijo «✓ ci VERDE» sobre una rama cuyo PR el auto-merge había fundido, y con ese verde le
-//      pregunté a Rafa si lo fundía.
+//      pregunté al usuario si lo fundía.
 // Y el tercero es de la s44, con este mismo comando ya escrito: me dijo «✓ ci VERDE» sobre el #95,
 // que estaba `CONFLICTING` con el #94. El verde lo cantó la máquina; el conflicto lo vi yo a mano.
 // El cuarto, minutos después: `ci:verdict -- main` —lo que el aviso del exit 4 te manda correr—

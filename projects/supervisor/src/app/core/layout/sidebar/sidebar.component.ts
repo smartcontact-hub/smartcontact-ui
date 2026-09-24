@@ -70,7 +70,7 @@ function storeAnchored(anchored: boolean): void {
  * active URL from the Router and feeds it to the recursive
  * `<sc-sidebar-nav-item>` so each row can decide its own active state.
  *
- * Es el de `archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16` (SISMAC-4340), el que Rafa
+ * Es el de `archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16` (SISMAC-4340), el que se
  * eligió para producción el 2026-09-23: selección en cyan, plegado a 80 que se despliega con el
  * ratón (Drawer de Apollo) y se puede anclar desplegado.
  */

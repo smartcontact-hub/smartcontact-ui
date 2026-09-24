@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 /**
  * LA ANATOMÍA QUE ENSEÑA LA DOC ES LA QUE EL NAVEGADOR RENDERIZA.
  *
- * Por qué existe (2026-09-11). Rafa miró `/#/components/button` y preguntó si el código que
+ * Por qué existe (2026-09-11). Revisando `/#/components/button` surgió la duda de si el código que
  * enseña sc-docs está basado de verdad en PrimeNG: la doc contaba solo la API pública
  * (`<sc-button label=… />`) mientras su equipo, depurando, tiene delante
  * `sc-button > p-button > button.p-button`. La ficha ahora lo enseña, y lo LEE del DOM ya

@@ -308,7 +308,7 @@ export class TicketsPageComponent {
    * En la real, "+ New ticket" NO abre un formulario: abre un selector de grupo.
    *
    * Y pulsar "Save" ahí **crea un ticket de verdad** — por eso no se pulsó al
-   * extraer. Confirmado cuando lo hizo Rafa: la app saltó a
+   * extraer. Confirmado en la app real: la app saltó a
    * `…/tickets/ticket/2051827/pre-ticket` con el ticket ya existiendo. Lo que
    * sale NO es un formulario: es la pantalla de detalle en vacío con el modal
    * "Search customer" encima. */

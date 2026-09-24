@@ -15,7 +15,7 @@ import {
  *
  * El botón `Summary` de la tabla de suscripciones **no abre un modal**: abre una
  * vista a pantalla completa de dos columnas, la superficie más densa de toda la
- * app y la última grande que quedaba sin replicar. Lo cazó Rafa pidiendo mirar
+ * app y la última grande que quedaba sin replicar. Salió en revisión, al mirar
  * qué hacían Summary y Nav.
  *
  * Estructura medida en la real (@1460×792, ticket ya `Resolved`, sólo lectura):

@@ -3,9 +3,9 @@ import { Routes } from '@angular/router';
 /**
  * Marca de la PESTAÑA: con ella la app se enmarca en el laboratorio del Sidebar en vez del shell.
  *
- * Vive en `sessionStorage` desde el 2026-09-23, y antes vivía en `localStorage`. El motivo lo
- * contó Rafa en cuanto el Lab de sc-docs empezó a enlazar el laboratorio: entró una vez, y a
- * partir de ahí **la app entera** se le abría enmarcada en el laboratorio —en producción, días
+ * Vive en `sessionStorage` desde el 2026-09-23, y antes vivía en `localStorage`. El motivo salió
+ * en cuanto el Lab de sc-docs empezó a enlazar el laboratorio: tras entrar una vez, a
+ * partir de ahí **la app entera** se abría enmarcada en el laboratorio —en producción, días
  * después y tras cerrar el navegador—, sin nada en pantalla que lo dijera. Un laboratorio puede
  * cambiar el marco mientras lo estás usando; lo que no puede es quedarse. Con `sessionStorage`
  * dura lo que dura la pestaña: cerrarla siempre te saca, y el enlace que le pases a alguien no

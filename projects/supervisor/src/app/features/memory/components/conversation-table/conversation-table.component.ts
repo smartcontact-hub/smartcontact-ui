@@ -241,7 +241,7 @@ export class ConversationTableComponent {
       // 133, no 119 (2026-09-13): `GDPR-MR-EXP` mide 100 + 28 = 128 y un ID no se
       // parte, así que con 119 se salía de la columna a cualquier ancho de ventana.
       { field: 'id', header: t('id'), width: '133px', cellTemplate: this.idTpl() },
-      /* Sin columna de acciones (2026-09-13, Rafa). Sus tres acciones tienen
+      /* Sin columna de acciones (decisión de producto, 2026-09-13). Sus tres acciones tienen
        * otra puerta visible: Transcribir y Marcar como leída, en la barra que
        * sale al seleccionar (Espacio con teclado); Analizar, en el reproductor
        * (Enter o clic en la fila). El clic derecho sigue abriendo el menú. */

@@ -28,9 +28,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * Si este test se pone rojo tras actualizar PrimeNG, la piel necesita nuevos
  * selectores — no bajes los números.
  *
- * ⚠️ 2026-09-13: LOS NÚMEROS CAMBIARON A PROPÓSITO, y no por PrimeNG. Rafa decidió que
- * Aura sea la base del tema («usemos Aura tal cual», y tras verlo: «me gusta, lo
- * aplicamos, para todo el supervisor»). La tabla deja de tener piel propia: la cabecera,
+ * ⚠️ 2026-09-13: LOS NÚMEROS CAMBIARON A PROPÓSITO, y no por PrimeNG. Decisión de producto:
+ * Aura tal cual es la base del tema, validada en pantalla y aplicada a todo el
+ * Supervisor. La tabla deja de tener piel propia: la cabecera,
  * el padding y el alto de fila son los de Aura (primeng.dev/table). Lo que `variant="list"`
  * sigue imponiendo es COMPORTAMIENTO: reparto fijo, casilla de 40, sin banda de caption,
  * cursor en la fila que abre. Eso no se ha movido y aquí sigue fijado igual.

@@ -5,7 +5,7 @@
  * Recorre `projects/ui-smartcontact/src/lib/components/*` y DERIVA del CÓDIGO (no a mano):
  *   - provenance:  CUSTOM (sin import de `primeng/<x>`) vs WRAPPER. Los wrapper se sub-clasifican
  *                  STANDARD (passthrough) vs EXTENDED (CVA o API propia) por heurística +
- *                  override curado (component-audit-map.mjs, lo confirma Rafa).
+ *                  override curado (component-audit-map.mjs, confirmado en revisión).
  *   - primengBase: el/los módulo(s) `primeng/*` que envuelve (XxxModule).
  *   - cva / inputs: señales de "extended" (implementa ControlValueAccessor · nº de input() propios).
  *   - anidados:    otros `sc-*` en su plantilla (excluye sc-icon = primitivo).
@@ -765,7 +765,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // CHECK (guard). FALLA por DRIFT (la pokédex se desfasó del código) — su misión anti-desfase.
   // La cobertura demo se INFORMA (⚠), no bloquea: hoy 20 customs de flujo no tienen demo aislada;
   // forzarlo rojo pararía el gate. Para EXIGIR demo, mueve el componente fuera de exentos y
-  // construye su página (o sube esto a fallo cuando estén todas). Decisión de Rafa.
+  // construye su página (o sube esto a fallo cuando estén todas). Decisión de producto.
   let problems = 0;
   if (nextInv !== invTxt) {
     problems++;

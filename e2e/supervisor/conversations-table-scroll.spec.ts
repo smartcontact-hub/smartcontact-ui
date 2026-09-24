@@ -104,7 +104,7 @@ test('con pocas filas la tarjeta acaba en la última, sin hueco vacío hasta aba
 });
 
 /* El color de estado de una fila (rojo de fallida, amarillo en proceso) cubre la fila ENTERA, de borde a
- * borde de la tarjeta (Rafa, 2026-09-15). Hasta ese día la tabla reservaba el hueco de la barra de scroll a
+ * borde de la tarjeta (decisión de producto, 2026-09-15). Hasta ese día la tabla reservaba el hueco de la barra de scroll a
  * los dos lados y el color se cortaba 10 px antes de cada borde: en ese hueco una fila no puede pintar. */
 test('el rojo de una fila fallida llega a los dos bordes de la tarjeta', async ({ page }) => {
   await goto(page, 'conversaciones');

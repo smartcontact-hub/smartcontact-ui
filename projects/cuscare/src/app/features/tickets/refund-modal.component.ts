@@ -8,7 +8,7 @@ import { TOOLTIPS } from '../../data/tooltips';
  *
  * La réplica lo tenía apuntando al diálogo de "motivo de no reembolso" por una
  * suposición mía; mirando el árbol de componentes de la app real apareció
- * `app-new-modal-refund`, que es otra cosa. Rafa mandó reapuntarlo.
+ * `app-new-modal-refund`, que es otra cosa. Se reapuntó a ese.
  *
  * Cómo se capturó sin tocar dinero: el botón "Refund" **no abre nada si no hay
  * una suscripción marcada**, así que se entró por el **badge** de la columna

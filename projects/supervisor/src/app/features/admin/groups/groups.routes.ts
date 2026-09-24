@@ -10,7 +10,7 @@ export const GROUPS_ROUTES: Routes = [
       import('./pages/groups-list-page.component').then((m) => m.GroupsListPageComponent),
   },
   {
-    /* Con qué nace un grupo nuevo. Vive con Grupos y no en Configuración del AED (Rafa, 2026-09-18). */
+    /* Con qué nace un grupo nuevo. Vive con Grupos y no en Configuración del AED (decisión de producto, 2026-09-18). */
     path: 'valores-por-defecto',
     data: { breadcrumb: { labelKey: 'groups.defaults.breadcrumb' } },
     loadComponent: () =>

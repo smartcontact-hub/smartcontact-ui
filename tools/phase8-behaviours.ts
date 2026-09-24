@@ -3,7 +3,7 @@
  *
  * Censa en el CSS de los dos lados las capacidades que cambian como se compone el texto o
  * la caja, y reporta las que el original usa y la replica no. NO IMPLEMENTA NADA: por el
- * encargo, esta fase describe y decide Rafa.
+ * encargo, esta fase describe y la decisión es de producto.
  *
  * Uso:  node tools/phase8-behaviours.ts
  * Escribe findings/phase-8-new-behaviours.md

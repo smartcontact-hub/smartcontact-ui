@@ -98,8 +98,8 @@ export class ScBreadcrumbComponent {
    * el `<span>` del label (verificado en `primeng-breadcrumb.mjs`), así que el
    * estilo entra de verdad; el gate `e2e/component-structure` lo congela.
    *
-   * Al MAESTRO de Figma (2026-08-31, decisión de Rafa: "no puede fallar en algo
-   * tan básico, y Figma le seguirá"): el tratamiento del tramo actual se lleva al
+   * Al MAESTRO de Figma (2026-08-31, decisión de producto: una pieza tan básica
+   * no puede divergir, y Figma se alinea al código): el tratamiento del tramo actual se lleva al
    * componente maestro para que deje de ser divergencia y quede 1:1.
    */
   protected readonly renderModel = computed<MenuItem[]>(() => {

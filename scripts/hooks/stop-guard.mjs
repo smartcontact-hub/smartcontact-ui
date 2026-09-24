@@ -11,17 +11,17 @@
  *      lección; sin la ruta escrita, «lo apunto en LEARNINGS» vuelve a valer como cierre y la
  *      prosa gana otra vez (2026-09-10: 54 commits de prosa por 4 de hooks). Sin `reflect` no
  *      bloquea: parar a mitad de tarea no es cerrar.
- *   3. el PARTE DE CIERRE. Rafa no programa: su coste no es lo que yo he tecleado, es lo que le
+ *   3. el PARTE DE CIERRE. El usuario no programa: su coste no es lo que yo he tecleado, es lo que le
  *      llega. Un cierre que dice «pusheado, CI verde» le cuenta el trámite y se calla lo único
  *      que decide algo — qué cambia en su día a día, por qué le conviene, y qué le toca a él.
  *      Así que el cierre lleva tres líneas fijas, cortas y en su idioma, y la del PORQUÉ no puede
  *      llevar jerga: si el beneficio solo se sabe decir con «hook» o «gate», no está entendido.
- *      (Petición de Rafa, 2026-09-10.)
+ *      (Norma de proceso, 2026-09-10.)
  *   4. dentro del parte, «¿es seguro cerrar?»: si la caja está vacía o queda algo solo aquí
  *      dentro. Y esta NO se cree lo que yo escribo: el hook MIDE el árbol (sin commitear, sin
  *      pushear, sin upstream) y me desmiente si pongo «sí» con trabajo colgando. Un «todo subido»
- *      afirmado sin mirar es exactamente la regla #17 en su versión más cara: Rafa cierra la
- *      ventana y el contexto no vuelve. (Petición de Rafa, 2026-09-10.)
+ *      afirmado sin mirar es exactamente la regla #17 en su versión más cara: el usuario cierra la
+ *      ventana y el contexto no vuelve. (Norma de proceso, 2026-09-10.)
  *
  * `stop_hook_active` evita el bucle: a la segunda deja parar.
  *
@@ -120,7 +120,7 @@ export function necesitaVeredicto(comandos) {
 }
 
 /**
- * true si la skill `reflect` se invocó en la sesión: por herramienta (`Skill`) o porque Rafa
+ * true si la skill `reflect` se invocó en la sesión: por herramienta (`Skill`) o porque el usuario
  * escribió `/reflect` (que el transcript guarda como `<command-name>`).
  */
 export function invocoReflect(jsonl) {
@@ -238,7 +238,7 @@ const SEGURO = /seguro\s+cerrar\s*\**\s*:\s*\**\s*(.*)$/im;
 /**
  * La línea del veredicto. Aquí no vale el patrón genérico: lo que se comprueba no es que esté
  * escrita, es que lo que dice CUADRE con el árbol. Decir «sí, todo subido» sin mirarlo es lo que
- * hace que Rafa cierre la ventana encima de trabajo que solo existe aquí.
+ * hace que el usuario cierre la ventana encima de trabajo que solo existe aquí.
  */
 export function fallosDeSeguridad(mensaje, estado) {
   const m = SEGURO.exec(mensaje);
@@ -267,14 +267,14 @@ export function fallosDelParte(mensaje, estado) {
     }
     if (texto.length > MAX_LINEA) fallos.push(`«${nombre}:» mide ${texto.length} caracteres y el tope es ${MAX_LINEA}: resúmela.`);
     const jerga = llano ? JERGA.exec(texto) : null;
-    if (jerga) fallos.push(`«${nombre}:» dice «${jerga[0]}». Esa línea es para Rafa, que no programa: cuéntale el efecto, no la pieza.`);
+    if (jerga) fallos.push(`«${nombre}:» dice «${jerga[0]}». Esa línea es para el usuario, que no programa: cuéntale el efecto, no la pieza.`);
   }
   return [...fallos, ...fallosDeSeguridad(mensaje, estado)];
 }
 
 export function motivoParteDeCierre(fallos) {
   return [
-    'Estás cerrando y el parte de cierre no cuadra. Rafa no lee el diff: lo que le llega es este mensaje, así que lleva cuatro líneas fijas, cortas y en su idioma.',
+    'Estás cerrando y el parte de cierre no cuadra. El usuario no lee el diff: lo que le llega es este mensaje, así que lleva cuatro líneas fijas, cortas y en su idioma.',
     ...fallos.map((f) => `  · ${f}`),
     'Vuelve a escribir el mensaje final con esta forma:',
     PLANTILLA,
@@ -306,7 +306,7 @@ function main() {
     const comandos = comandosBash(jsonl);
     if (necesitaVeredicto(comandos))
       return bloquear(
-        'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, `gh run view --log-failed`). Sin `gh` —una sesión cloud— léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y `list_workflow_jobs` si algo sale rojo). En los dos casos, cuéntale a Rafa el resultado LEÍDO, no el exit del wrapper.',
+        'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, `gh run view --log-failed`). Sin `gh` —una sesión cloud— léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y `list_workflow_jobs` si algo sale rojo). En los dos casos, cuéntale al usuario el resultado LEÍDO, no el exit del wrapper.',
       );
 
     if (!invocoReflect(jsonl)) return;

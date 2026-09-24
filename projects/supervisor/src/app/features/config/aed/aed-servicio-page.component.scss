@@ -499,8 +499,8 @@
     color: var(--sc-text-primary);
   }
 
-  /* Las tres columnas de casillas miden su rótulo, y la dirección se queda el resto (Rafa, 2026-09-15:
-   * «me convence el link» a lo ancho). Antes medían 175 cada una, como la matriz de Agentes, y la
+  /* Las tres columnas de casillas miden su rótulo, y la dirección se queda el resto (2026-09-15:
+   * el enlace se lee a lo ancho). Antes medían 175 cada una, como la matriz de Agentes, y la
    * dirección se quedaba en 121 px: no se leía ni una dirección corta. */
   &__th-col {
     white-space: nowrap;

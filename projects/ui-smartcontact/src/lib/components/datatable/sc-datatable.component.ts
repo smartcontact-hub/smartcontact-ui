@@ -580,7 +580,7 @@ export class ScDatatableComponent<T = unknown> {
     // El menú nativo del navegador tapa el nuestro y no ofrece ninguna de las
     // acciones de la fila: cancelarlo es la única lectura útil del gesto.
     event.preventDefault();
-    /* El menú sale DONDE SE HACE CLIC (Rafa, 2026-09-14: «como en cualquier SaaS»). Las pantallas abren su
+    /* El menú sale DONDE SE HACE CLIC (DD-96, el patrón habitual en SaaS). Las pantallas abren su
      * `<p-menu>` compartido con `menu.toggle(event.originalEvent)`, y `p-menu` se coloca junto a
      * `event.currentTarget`, que era la fila entera: salía pegado a su borde izquierdo. Aquí se relanza el
      * gesto desde un punto de 0 px en el puntero, así que `currentTarget` es ese punto y el menú (el mismo,

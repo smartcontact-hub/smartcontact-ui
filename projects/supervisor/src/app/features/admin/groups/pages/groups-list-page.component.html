@@ -2,7 +2,7 @@
      identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
-  <!-- Con qué nace un grupo nuevo: al lado de donde se crean, no en Configuración (Rafa, 2026-09-18). -->
+  <!-- Con qué nace un grupo nuevo: al lado de donde se crean, no en Configuración (decisión de producto, 2026-09-18). -->
   <sc-button size="sm" type="button" variant="secondary" appearance="outlined" [label]="'groups.defaults.button' | translate" (clicked)="onDefaultsClick()" />
   <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
     <sc-icon [name]="plusIcon" size="inherit" />
@@ -62,7 +62,7 @@
 </ng-template>
 
 <ng-template #nameTpl let-group>
-  <!-- Sin avatar (Rafa, 2026-09-23). En WhatsApp o Teams la foto distingue un grupo de una persona
+  <!-- Sin avatar (DD-119). En WhatsApp o Teams la foto distingue un grupo de una persona
        porque van en la misma lista; aquí todas las filas son grupos, y un dibujo sacado del nombre no
        dice nada que no diga el nombre. Así queda una regla: cara = persona. -->
   <span class="table__td-name sc-text-body-semibold">

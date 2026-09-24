@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * Hook `UserPromptSubmit` — cuando Rafa pasa un enlace de primeng.dev, la documentación ENTERA se lee
- * antes de escribir, y el componente entra tal cual.
+ * Hook `UserPromptSubmit` — cuando el usuario pasa un enlace de primeng.dev, la documentación ENTERA se
+ * lee antes de escribir, y el componente entra tal cual.
  *
- * Por qué (2026-09-15, DD-113): Rafa pidió «meter el nativo» de Tabs, Toolbar, InputGroup, Divider y
- * SelectButton pasando sus páginas de primeng.dev, y lo que salió se apartó de la documentación en
- * cosas que él vio a simple vista: la raya de `p-tabs` dejó de deslizarse (se cambió por una marca
- * fija en el tema) y las pestañas llevaban contador e icono que el ejemplo no tiene. Sus palabras:
- * «parto de la idea de que lo vas a hacer tal cual sale en la docu». La web de primeng.dev pinta sus
+ * Por qué (2026-09-15, DD-113): el encargo era «meter el nativo» de Tabs, Toolbar, InputGroup, Divider y
+ * SelectButton a partir de sus páginas de primeng.dev, y lo que salió se apartó de la documentación en
+ * desvíos visibles a simple vista: la raya de `p-tabs` dejó de deslizarse (se cambió por una marca
+ * fija en el tema) y las pestañas llevaban contador e icono que el ejemplo no tiene. El criterio: el
+ * componente entra tal cual sale en la documentación. La web de primeng.dev pinta sus
  * ejemplos con JavaScript: leerla con un fetch trae los títulos, no el código ni la API. Sin una
  * máquina que lo recuerde en ese momento, la tentación es construir desde un ejemplo suelto.
  *
@@ -39,10 +39,10 @@ export function componentesCitados(texto) {
 export function aviso(componentes) {
   const lista = componentes.map((c) => `\`${c}\``).join(', ');
   return [
-    `⚠️ sc: Rafa pide componentes de primeng.dev (${lista}). Regla (AGENTS.md, «Componentes de primeng.dev», DD-113):`,
+    `⚠️ sc: El usuario pide componentes de primeng.dev (${lista}). Regla (AGENTS.md, «Componentes de primeng.dev», DD-113):`,
     `  1. Antes de escribir, la doc ENTERA de cada uno: ${componentes.map((c) => `\`node tools/primeng-doc.mjs ${c}\``).join(' · ')} (secciones, API instalada con lo obsoleto, movimiento, nuestra capa). La web no trae el código.`,
     '  2. El nativo TAL CUAL: su plantilla, sus props y su comportamiento y movimiento. Nuestra capa solo en tokens (preset). Nada que el ejemplo no tenga (contadores, iconos, envoltorios) sin decir por qué.',
-    '  3. Mídelo contra primeng.dev en el navegador (espaciado, estados, movimiento) antes de enseñarlo. Un desvío de comportamiento lo para `audit:primeng-coupling` §F: si hace falta, se propone a Rafa con su medida.',
+    '  3. Mídelo contra primeng.dev en el navegador (espaciado, estados, movimiento) antes de enseñarlo. Un desvío de comportamiento lo para `audit:primeng-coupling` §F: si hace falta, se propone al usuario con su medida.',
   ].join('\n');
 }
 

@@ -10,7 +10,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   S59 ("todo arriba") quitó la banda de título de cada página y dejó la
  *   identidad SOLO en el breadcrumb de la TopBar. Cuatro páginas se quedaron a
  *   medias y decían su nombre DOS veces —barra y banda, misma clave i18n—; lo
- *   cazó Rafa en pantalla. El arreglo escondió el `<h1>` (`visually-hidden`):
+ *   detectó la revisión visual. El arreglo escondió el `<h1>` (`visually-hidden`):
  *   existía para lectores de pantalla y nadie lo veía.
  *
  *   Al medir la referencia (Snow UI, `/orders`) apareció que el título de

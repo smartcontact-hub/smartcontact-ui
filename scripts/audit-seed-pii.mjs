@@ -37,8 +37,8 @@
  * NO cubre: un nombre y apellidos copiados de la app real, que no tienen forma reconocible. Eso
  * sigue dependiendo de la cabecera de cada seed.
  *
- * ⛔ Y NO SE APLICA a Rafael Areses (Rafa), autor del repo. Su nombre y su identificador en las
- * réplicas (`Rafael_3AED` en `agent/seed.ts`) están puestos a propósito y él los quiere ahí:
+ * ⛔ Y NO SE APLICA al autor del repo. Su nombre y su identificador en las réplicas
+ * (`Rafael_3AED` en `agent/seed.ts`, el agente 15 de `supervisor`) están puestos a propósito:
  * no se marcan, no se sustituyen y no se «limpian» en ningún barrido, presente ni futuro.
  *
  * ES ESTÁTICO y PURO respecto al texto (funciones exportadas → testeable sin tocar el disco).
@@ -157,11 +157,11 @@ export const TELEFONOS_PERMITIDOS = new Map([
   // sacó a la luz nada más nacer: van pegados a grupos con nombre de producción («ACD Demo
   // C2CB», «ACD demo cuscare») en `groups-data.ts`, y el primero sale además como teléfono del
   // usuario en la barra superior (`top-bar.component.ts`). No son inventados: son LÍNEAS DE LA
-  // PROPIA SMART CONTACT, copiadas de la app real, y Rafa las confirmó como tales el
+  // PROPIA SMART CONTACT, copiadas de la app real, y confirmadas como líneas corporativas el
   // 2026-09-07. Se quedan a propósito: el número de una empresa no es dato de una persona, y en
   // la réplica dicen la verdad. Si algún día hay que quitarlos, será por otra razón que esta.
-  ['917945449', 'supervisor (groups-data + top-bar): línea de la casa, confirmado por Rafa el 2026-09-07'],
-  ['918371548', 'supervisor (groups-data): línea de la casa, confirmado por Rafa el 2026-09-07'],
+  ['917945449', 'supervisor (groups-data + top-bar): línea de la casa, confirmado el 2026-09-07'],
+  ['918371548', 'supervisor (groups-data): línea de la casa, confirmado el 2026-09-07'],
 ]);
 
 /**

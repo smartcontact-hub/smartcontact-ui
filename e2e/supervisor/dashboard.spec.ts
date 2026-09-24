@@ -5,7 +5,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
 /**
  * Red del Dashboard (adaptación del Monitor del Supervisor).
  *
- * Nació de dos defectos que llegaron a Rafa antes que a ninguna prueba (2026-09-14): el asistente de
+ * Nació de dos defectos que llegaron a revisión antes que a ninguna prueba (2026-09-14): el asistente de
  * widget cambiaba de tamaño hasta 76 px al tocar una categoría, y la rejilla no tenía comprobado
  * ningún ancho de tablet o móvil. Mide geometría, no aspecto: una captura no ve un salto que dura
  * lo que tarda en cargar la lista.

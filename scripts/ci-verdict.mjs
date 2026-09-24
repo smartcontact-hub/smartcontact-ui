@@ -10,7 +10,7 @@
  * «¿está verde?». Con el CI en verde hay dos formas de no poder fundir, y las dice las dos:
  *
  *   · el PR ya está MERGED (exit 4): un verde sobre una rama fundida es un snapshot de algo que ya
- *     no existe, y proponer fundirlo gasta un turno de Rafa (LEARNINGS #5, s43: leí `state` una
+ *     no existe, y proponer fundirlo gasta un turno del usuario (LEARNINGS #5, s43: leí `state` una
  *     vez, releí una proyección más corta que ya no lo incluía, y pregunté «¿lo fundo?» sobre un
  *     PR que el auto-merge había cerrado hacía tres minutos);
  *   · el PR está en CONFLICTO con la base (exit 5): s44, el propio #95 de este comando estaba

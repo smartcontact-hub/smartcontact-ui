@@ -12,8 +12,8 @@ import { GROUP_PRIORITIES, GroupPriority, PRIORITY_LABEL_KEYS } from '../../data
  * pestaña Identidad (2026-09-24).
  *
  * Por qué una pieza y no dos copias: el alta pedía nombre y canales, y la ficha abría por la fila de
- * canales, así que lo primero que se veía al entrar era lo que se acababa de rellenar (Rafa: «al
- * entrar tengo lo mismo que acabo de configurar; tiene que rimar»). Ahora el alta pide lo que dice
+ * canales, así que lo primero que se veía al entrar era lo que se acababa de rellenar: el alta y
+ * la ficha no eran consistentes, y el segundo paso repetía el primero. Ahora el alta pide lo que dice
  * la cabecera y vive en Identidad, y la ficha abre por lo siguiente, canales y agentes. Que sea el
  * mismo componente garantiza la rima: mismos campos, mismo orden, mismas palabras y mismos avisos.
  *

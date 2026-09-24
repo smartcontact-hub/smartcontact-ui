@@ -82,7 +82,7 @@ npm run export:all     # tarballs npm en dist/archives/
 <!--sc:sec=verify-->
 
 ```bash
-npm run verify         # los 41 checks estáticos encadenados (~40s)
+npm run verify         # los 42 checks estáticos encadenados (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run preflight      # gates + builds AOT + baselines visuales (~5 min), antes de pushear
 ```
@@ -97,7 +97,7 @@ y los otros workflows.
 | Tokens | `tokens:gen` · `tokens:gen-component` · `tokens:gen-color` · `tokens:gen-cmp-color` · `tokens:gen-effects` · `tokens:parity` · `tokens:guard` · `tokens:export-clean` · `tokens:cmp-rewire` · `tokens:effects-rewire` · `tokens:type-parity` | Cada valor del tema reproduce el export del Kit, y `--p-*` no sale del preset |
 | Pantalla | `audit:theme-scale` · `audit:border-surfaces` · `audit:screen-hygiene` · `audit:page-anatomy` · `audit:screen-vocabulary` · `audit:text-styles` · `audit:titulo-contenido` · `audit:base-href` | Las pantallas miden por token, con un solo vocabulario y sin saltos de layout |
 | Componentes | `audit:components` · `audit:api-era` · `audit:datatables` · `audit:datatable-slots` · `audit:primeng-coupling` · `audit:doc-snippets` · `test:components` | La API pública, el acoplamiento a PrimeNG y lo que la doc enseña cuadran con el código |
-| Contenido y docs | `i18n:check` · `novedades:check` · `usage:check` · `variables:check` · `audit:seed-pii` · `docs:guard` · `docs:coherence` · `docs:readme-parity` | Multiidioma de verdad, cero datos de contacto reales en demos, y ninguna doc que mienta |
+| Contenido y docs | `i18n:check` · `novedades:check` · `usage:check` · `variables:check` · `audit:seed-pii` · `audit:personal-names` · `docs:guard` · `docs:coherence` · `docs:readme-parity` | Multiidioma de verdad, cero datos de contacto reales en demos, ningún nombre de persona en el código, y ninguna doc que mienta |
 | Repo | `proto:check` · `explorations:check` · `guard:backticks` · `test:unit` · `typecheck` · `lint` · `build` | Versiones congeladas localizables, tipos limpios y las libs construyendo |
 
 El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)), que son
