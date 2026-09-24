@@ -29,9 +29,28 @@ const MATERIAL_NAMES: Readonly<Record<Exclude<ChannelIconKind, 'whatsapp'>, stri
       <sc-icon [name]="materialName()" [size]="size()" />
     }
   `,
+  /* Alineación ÓPTICA, no geométrica (2026-09-24). Las tres cajas están centradas, pero
+   * el peso del dibujo no: medido en píxeles a 14 px, el centro de masa de `call` cae en 8,70, el de `chat_bubble`
+   * en 7,10 y el de `mail` en 7,72. El teléfono carga abajo (el auricular) y el bocadillo arriba (la cola cuelga).
+   * Un píxel a cada uno los deja a 0,4 del sobre, que es la referencia porque es simétrico. */
+  host: { '[attr.data-channel]': 'channel()' },
   styles: `
     :host {
       display: inline-flex;
+    }
+
+    :host([data-channel='phone']) {
+      translate: 0 -1px;
+    }
+
+    :host([data-channel='chat']) {
+      translate: 0 1px;
+    }
+
+    /* El logo de WhatsApp cae 0,7 por debajo del sobre (la cola abajo a la izquierda): medio píxel, que en SVG no
+     * emborrona; uno entero lo pasaba de largo. */
+    :host([data-channel='whatsapp']) {
+      translate: 0 -0.5px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

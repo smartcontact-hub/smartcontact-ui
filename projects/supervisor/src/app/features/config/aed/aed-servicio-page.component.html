@@ -77,11 +77,12 @@
               Apagada y en su sitio dice las dos cosas a la vez: este estado EXISTE y
               ahora mismo no está incluido. Y nada se mueve.
             -->
+            <!-- La etiqueta nativa de aviso (`warn`), la misma que en la columna Estado de Agentes:
+                 el ámbar de antes salía marrón en oscuro. -->
             <sc-tag
               class="state-tag"
               [class.state-tag--off]="!form().estadoAdministrativo"
-              variant="label"
-              labelColor="amber"
+              severity="warn"
               [value]="'config.aed.subpages.servicio.estados.administrativo' | translate"
             />
             <!-- La casilla va EN la fila, detrás de las pastillas que gobierna: es lo
@@ -118,11 +119,13 @@
           }
           <div class="chip-row">
             @for (reason of form().estadosNoDisponibles; track reason) {
+              <!-- Rojos, como «No disponible»: son sus motivos, y así se leen igual en la columna
+                   Estado de Agentes. -->
               <sc-chip
                 class="reason-chip"
                 animate.leave="reason-chip--leaving"
                 variant="label"
-                labelColor="gray"
+                labelColor="red"
                 [label]="reason"
                 [removable]="true"
                 [removeAriaLabel]="('common.delete' | translate) + ' — ' + reason"
