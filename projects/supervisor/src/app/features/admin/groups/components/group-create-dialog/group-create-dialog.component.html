@@ -9,41 +9,21 @@
   (shown)="onShown()"
   (cancelled)="cancelled.emit()"
 >
-  <div class="create-form">
-    <div class="field">
-      <label class="field__label sc-text-caption-semibold" for="group-create-name">
-        {{ 'groups.form.fields.name' | translate }}
-        <span class="field__required" aria-hidden="true">*</span>
-      </label>
-      <sc-inputtext
-        inputId="group-create-name"
-        autocomplete="off"
-        [required]="true"
-        [value]="name()"
-        [error]="nameError() ? (nameError()! | translate) : ''"
-        (valueChange)="name.set($event ?? '')"
-        (keydown.enter)="submit()"
-      />
-    </div>
-
-    <!-- Un `fieldset`: las cuatro casillas son UNA pregunta, y así el lector de pantalla la dice al entrar. -->
-    <fieldset class="create-form__channels" [attr.aria-invalid]="channelsError() ? true : null">
-      <legend class="field__label sc-text-caption-semibold">
-        {{ 'groups.form.section.channels' | translate }}
-        <span class="field__required" aria-hidden="true">*</span>
-      </legend>
-      <div class="create-form__channel-row">
-        @for (channel of channelOptions; track channel) {
-          <sc-checkbox class="checkbox-row" [state]="has(channel) ? 'all' : 'none'" (cycle)="toggle(channel)">
-            {{ channelKeys[channel] | translate }}
-          </sc-checkbox>
-        }
-      </div>
-      @if (channelsError(); as error) {
-        <p class="create-form__error sc-text-caption-regular" role="alert">{{ error | translate }}</p>
-      }
-    </fieldset>
-  </div>
+  <!-- La misma pieza que la pestaña Identidad: lo que se rellena aquí es lo que dice la cabecera de
+       la ficha, y lo que se cambia después en Identidad. Enter en el nombre crea el grupo. -->
+  <sc-group-identity-fields
+    idPrefix="group-create"
+    [name]="name()"
+    [phone]="phone()"
+    [priority]="priority()"
+    [hasPhone]="hasPhone()"
+    [phoneOptions]="phoneOptions()"
+    [nameError]="nameError()"
+    (nameChange)="name.set($event)"
+    (phoneChange)="phone.set($event)"
+    (priorityChange)="priority.set($event)"
+    (enter)="submit()"
+  />
 
   <div modal-actions>
     <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelled.emit()" />

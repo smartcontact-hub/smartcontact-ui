@@ -376,25 +376,29 @@ export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
   advanced: DEFAULT_ADVANCED,
 };
 
+/** Lo que pide el alta: lo que identifica al grupo y dice la cabecera de su ficha. */
+export interface GroupIdentityDraft {
+  readonly name: string;
+  readonly phone: string;
+  readonly priority: GroupPriority;
+}
+
 /**
- * CÓMO NACE UN GRUPO. El alta pide solo lo que lo identifica —nombre y canales— y todo lo demás sale
- * de aquí (Rafa, 2026-09-23; teardown B1: crear y editar no son el mismo formulario). Vive en los
- * datos y no en el diálogo para que la regla se pueda leer y probar sin pintar nada.
+ * CÓMO NACE UN GRUPO. El alta pide solo lo que dice su cabecera —nombre, teléfono asociado,
+ * prioridad— y todo lo demás sale de aquí (DD-119; teardown B1: crear y editar no son el mismo
+ * formulario). Vive en los datos y no en el diálogo para que la regla se pueda leer y probar sin
+ * pintar nada.
  *
- * Nuevo: los valores por defecto de Grupos, los mismos que usaba la ficha en su modo alta.
+ * Nuevo: con Teléfono, como nacía siempre, y los valores por defecto de Grupos. Los canales y los
+ * agentes se eligen en la ficha, que abre justo ahí.
  */
-export function newGroupDraft(
-  defaults: GroupDefaults,
-  name: string,
-  channels: readonly GroupChannel[],
-): Omit<Group, 'id' | 'code'> {
+export function newGroupDraft(defaults: GroupDefaults, identity: GroupIdentityDraft): Omit<Group, 'id' | 'code'> {
+  const channels: readonly GroupChannel[] = ['phone'];
   return {
-    name,
-    phone: '',
-    priority: defaults.priority,
+    ...identity,
     channels,
     strategy: defaults.strategy,
-    chatStrategy: channels.includes('chat') ? CHAT_STRATEGIES[0] : undefined,
+    chatStrategy: undefined,
     labels: [],
     templates: [],
     schedules: [],
@@ -404,21 +408,11 @@ export function newGroupDraft(
 }
 
 /**
- * Duplicado: TODO lo del original salvo lo que identifica a un grupo, que son el nombre y el teléfono
- * asociado (dos grupos no deben sacar el mismo número a la calle). Los canales son los que se marquen
- * en el alta, así que lo que dependa de un canal que ya no está se cae con él.
+ * Duplicado: TODO lo del original, canales incluidos, con los datos que se hayan puesto en el alta.
+ * El alta propone el nombre «… (copia)» y deja vacío el teléfono asociado: identifica al grupo, y dos
+ * grupos no deben sacar el mismo número a la calle.
  */
-export function duplicateGroupDraft(
-  source: Group,
-  name: string,
-  channels: readonly GroupChannel[],
-): Omit<Group, 'id' | 'code'> {
+export function duplicateGroupDraft(source: Group, identity: GroupIdentityDraft): Omit<Group, 'id' | 'code'> {
   const { id: _id, code: _code, services: _services, ...rest } = source;
-  return {
-    ...rest,
-    name,
-    phone: '',
-    channels,
-    chatStrategy: channels.includes('chat') ? (source.chatStrategy ?? CHAT_STRATEGIES[0]) : undefined,
-  };
+  return { ...rest, ...identity };
 }
