@@ -238,7 +238,7 @@
    *      cualquier otra máquina. Medido en DD-60 (run 34401618582): 37 de las 38 diferencias
    *      caían ENTERAS en una banda de 14 px de alto —la línea del título, que se pinta en
    *      monoespaciada— con 87 a 1.100 px de diferencia por captura. Por eso el CI las apagaba
-   *      y solo corrían en el portátil de Rafa. DD-60 dejó escrita esta salida y DD-62 la
+   *      y solo corrían en un portátil local. DD-60 dejó escrita esta salida y DD-62 la
    *      repitió: «la salida no es quitar la red: es autohospedar la fuente monoespaciada».
    *
    * Se eligió **JetBrains Mono** (gratuita, pensada para leer código, y del mismo `@fontsource`
@@ -531,7 +531,7 @@
    * textMutedColor (#8f97a3, gray-500) da 2.95:1 y no cumple AA — ver §1.5 del
    * catálogo de divergencias y la declaración de arriba.
    *
-   * `subtle` TAMPOCO lo sigue ya, y esto es una decisión de Rafa del
+   * `subtle` TAMPOCO lo sigue ya, y esto es una decisión de producto del
    * 2026-07-19: **AA por delante de la jerarquía**. Valía gray-400 y medía
    * 2.04:1 sobre blanco en 161 usos —descripciones del hub, cuerpo de los
    * estados vacíos, hints, placeholders— o sea texto real, no adorno.

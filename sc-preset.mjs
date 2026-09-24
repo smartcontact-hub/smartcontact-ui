@@ -5824,13 +5824,13 @@ sc-datatable.sc-datatable--fill > p-table {
     min-height: 0;
 }
 
-/* Sin hueco reservado para la barra (Rafa, 2026-09-15). El 2026-09-14 se reservaba a los dos lados
+/* Sin hueco reservado para la barra (decisi\xF3n de producto, 2026-09-15). El 2026-09-14 se reservaba a los dos lados
  * (\`scrollbar-gutter: stable both-edges\`) para que las rayas quedaran sim\xE9tricas, pero el color de una fila
  * no puede pintar en ese hueco: el rojo de una fallida, el amarillo de una en proceso, el hover y la selecci\xF3n
  * se cortaban antes de cada borde de la tarjeta, lo que med\xEDa la barra. Ahora llegan al borde; con barra, a la derecha acaban donde
  * empieza ella. El precio, aceptado: al aparecer o desaparecer la barra las columnas se mueven su ancho. */
 
-/* Como la barra de ScrollArea (Rafa, 2026-09-15): fina, del color de su tirador y solo con el rat\xF3n
+/* Como la barra de ScrollArea (decisi\xF3n de producto, 2026-09-15): fina, del color de su tirador y solo con el rat\xF3n
  * encima. No es ScrollArea: la lista virtual de \`p-table\` tiene que ser due\xF1a de su contenedor de scroll
  * (sin ella pinta todas las filas), as\xED que se imita su aspecto sobre la barra nativa. */
 sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar,
