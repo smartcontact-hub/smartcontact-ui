@@ -209,6 +209,13 @@
   white-space: nowrap;
 }
 
+/* El nombre editable en su sitio (`sc-name-inplace`): el fondo de «se puede editar» y el campo sobresalen del
+ * título (compensan el relleno nativo), así que aquí no se recorta; los puntos suspensivos los pone el propio
+ * Inplace sobre el nombre. */
+.ficha-tabs .headline__name--editable {
+  overflow: visible;
+}
+
 .ficha-tabs .headline__meta {
   color: var(--sc-text-secondary);
   /* Una línea, como el nombre: si envolviera, la franja crecería y la tira bajaría solo en esa
