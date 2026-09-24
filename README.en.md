@@ -83,7 +83,7 @@ npm run export:all     # npm tarballs into dist/archives/
 <!--sc:sec=verify-->
 
 ```bash
-npm run verify         # the 41 chained static checks (~40s)
+npm run verify         # the 42 chained static checks (~40s)
 npm run e2e            # browser smoke test (Playwright)
 npm run preflight      # gates + AOT builds + visual baselines (~5 min), before pushing
 ```
@@ -98,7 +98,7 @@ three e2e nets and the other workflows.
 | Tokens | `tokens:gen` · `tokens:gen-component` · `tokens:gen-color` · `tokens:gen-cmp-color` · `tokens:gen-effects` · `tokens:parity` · `tokens:guard` · `tokens:export-clean` · `tokens:cmp-rewire` · `tokens:effects-rewire` · `tokens:type-parity` | Every theme value reproduces the Kit export, and `--p-*` never leaves the preset |
 | Screens | `audit:theme-scale` · `audit:border-surfaces` · `audit:screen-hygiene` · `audit:page-anatomy` · `audit:screen-vocabulary` · `audit:text-styles` · `audit:titulo-contenido` · `audit:base-href` | Screens measure by token, with one shared vocabulary and no layout shifts |
 | Components | `audit:components` · `audit:api-era` · `audit:datatables` · `audit:datatable-slots` · `audit:primeng-coupling` · `audit:doc-snippets` · `test:components` | The public API, the coupling to PrimeNG and what the docs show all match the code |
-| Content and docs | `i18n:check` · `novedades:check` · `usage:check` · `variables:check` · `audit:seed-pii` · `docs:guard` · `docs:coherence` · `docs:readme-parity` | Genuinely multilingual, zero real contact data in demos, and no doc that lies |
+| Content and docs | `i18n:check` · `novedades:check` · `usage:check` · `variables:check` · `audit:seed-pii` · `audit:personal-names` · `docs:guard` · `docs:coherence` · `docs:readme-parity` | Genuinely multilingual, zero real contact data in demos, no personal names in the code, and no doc that lies |
 | Repo | `proto:check` · `explorations:check` · `guard:backticks` · `test:unit` · `typecheck` · `lint` · `build` | Frozen versions stay findable, types stay clean and the libs keep building |
 
 The same gate runs in CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)), which is

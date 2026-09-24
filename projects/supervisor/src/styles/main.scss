@@ -185,7 +185,7 @@ table.table {
 /*
  * El CTA de lista de la TopBar (`.top-bar__cta`): HUG con mínimo y máximo.
  *
- * Decisión de Rafa (2026-08-25): que no cambie de anchura porque sí — que crezca
+ * Decisión de producto (2026-08-25): que no cambie de anchura porque sí — que crezca
  * con su texto, pero acotado. Ni ancho fijo (desperdicia sitio y corta locales
  * largos) ni libre (salta al navegar).
  *
@@ -215,7 +215,7 @@ table.table {
  * proyectan Guardar + Descartar cambios. Medido el 2026-09-11 en el build desplegado
  * a 1440px: «Guardar» hug 65.79 → pintado 128 (62px de aire) y «Descartar cambios»
  * hug 127.84 → 128, o sea 0.16px POR DEBAJO del suelo. Los dos aterrizaban en 128 y
- * parecían igualados a propósito (lo cazó Rafa). El suelo nunca fue para ellos.
+ * parecían igualados a propósito (detectado en revisión visual). El suelo nunca fue para ellos.
  *
  * El caso no se puede deducir del DOM, por eso la clase es explícita:
  *   · En un formulario limpio el botón de descartar NO existe (`@if (dirty())`), así

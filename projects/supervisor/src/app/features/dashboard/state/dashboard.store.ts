@@ -30,7 +30,7 @@ export const slotSize = (box: Pick<DashboardBox, 'layout'>): WidgetSize => (box.
  * Monitores del Dashboard: disposición, widgets y cifras.
  *
  * Se guardan en el navegador (`localStorage`), como el original los guarda en su servidor por
- * usuario: lo que Rafa cambia sigue ahí al recargar. Para volver a la demo de fábrica, sube
+ * usuario: lo que se cambia sigue ahí al recargar. Para volver a la demo de fábrica, sube
  * `currentVersion`.
  */
 @Injectable({ providedIn: 'root' })

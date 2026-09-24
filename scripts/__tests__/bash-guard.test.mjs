@@ -7,10 +7,14 @@ import { evaluar, escrituras } from '../hooks/bash-guard.mjs';
 // correcta y los vecinos legítimos). Un guardián que solo se ha visto pasar no prueba que sepa
 // fallar, y uno con falsos positivos enseña a ignorarlo (LEARNINGS 2).
 
-const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [] };
-const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [] };
+// `distRancio: () => null` en los tres: sin él, el test lee el `dist/` REAL de la máquina, y basta con
+// editar una fuente del DS sin reconstruir para que `npm run e2e` salga denegado y el test rojo
+// (2026-09-24, en mitad de un preflight). El caso rancio se prueba aparte, inyectado.
+const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null };
+const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null };
 /** Árbol con fuentes nuevas todavía fuera del índice. */
 const sinAdd = {
+  distRancio: () => null,
   preflight: () => ({ ok: true, motivo: 'ok' }),
   sinIndexar: () => ['projects/supervisor/src/app/features/lab/admin/admin-lab.model.ts'],
 };
@@ -177,10 +181,16 @@ test('#11 formateador ajeno: `prettier --write` sin config del repo → deny; co
   allow('grep -rn "prettier --write" docs/', sinConfig);
 });
 
-test('portada pública: rótulo con nombre o atribución en un PR o commit → deny; resumen sin destinatario → allow', () => {
+test('portada pública: un nombre o atribución en un PR o commit → deny; resumen sin destinatario → allow', () => {
   // El caso real: la portada del #167, con el cuerpo en un heredoc como lo escribe una sesión.
   const pr = (cuerpo) => `gh pr create --title "x" --body "$(cat <<'EOF'\n${cuerpo}\nEOF\n)"`;
-  deny(pr('**Para Rafa, en llano:** en Agentes la página ya no hace scroll.'), verde, /dirigido a Rafa/);
+  const commit = (cuerpo) => `git commit -m "$(cat <<'EOF'\n${cuerpo}\nEOF\n)"`;
+  deny(pr('**Para Rafa, en llano:** en Agentes la página ya no hace scroll.'), verde, /nombre de una persona/);
+  // Desde el 2026-09-24, el nombre en cualquier parte del cuerpo: el «Por qué» de 28 de los 60
+  // commits anteriores contaba quién lo había pedido en vez del criterio.
+  deny(commit('fix: x\n\n**Por qué.** Esto lo pidió Rafa (2026-09-23).'), verde, /nombre de una persona/);
+  // Un identificador de demo o una ruta no son el nombre como palabra: pasan.
+  allow(commit('fix: el perfil Rafael_3AED firma la tabla\n\nMedido en /Users/rafareses/dev.'));
   deny(pr('## Qué cambia\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)'), verde, /Generated with/);
   deny(pr('Resumen.\n\nhttps://claude.ai/code/session_01TAvmx7HBGPN4hitHprrhqp'), verde, /enlace a la sesión/);
   deny("git commit -m \"$(cat <<'EOF'\nfix: x\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>\nEOF\n)\"", verde, /co-autor/);

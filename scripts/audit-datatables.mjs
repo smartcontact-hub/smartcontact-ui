@@ -4,7 +4,7 @@
  *
  * POR QUÉ ESTÁ EN `verify` Y NO ES UN COMANDO SUELTO. Nació como
  * `migrate:check`, un gate que medía el DIFF y había que acordarse de correr.
- * Rafa lo señaló el mismo día: una herramienta que no está en una cadena
+ * Se corrigió el mismo día: una herramienta que no está en una cadena
  * automática no es una herramienta, es documentación — y la documentación que
  * hay que recordar se pierde. Al reescribirlo se vio que casi todo lo que
  * comprobaba **no necesitaba el diff**: son INVARIANTES del árbol («toda

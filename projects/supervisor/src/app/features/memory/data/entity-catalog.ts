@@ -31,7 +31,7 @@ export interface AgentEntity extends EntityRef {
  * maquilla el **display** para que la presentación no muestre datos de desarrollo
  * (los nombres de desarrollo como "Agente AED 1" o "Oscar Fernandez" sin tilde). La membresía y el match NO se
  * tocan. En producción esto no existe: se mostraría el nombre real de la entidad.
- * Decisión con Rafa (preview pulido). Si un ID no está, cae al nombre real del seed.
+ * Decisión de producto (preview pulido). Si un ID no está, cae al nombre real del seed.
  */
 const AGENT_DISPLAY_NAMES: Readonly<Record<number, string>> = {
   1: 'Tom Hanks',

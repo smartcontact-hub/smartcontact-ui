@@ -91,8 +91,8 @@
    * Center en `settings-shell.component.scss` (rail 196, hueco 28, tope 1200,
    * centrado) y los tres formularios de admin con `--with-panel` (rail 240 pegado al
    * borde y el formulario flotando en el hueco que sobraba). A 1440 eso dejaba 67px
-   * de blanco entre el índice y lo que indexa, y la misma app parecía dos. Rafa: «no
-   * rima nada con lo que hay en contact center».
+   * de blanco entre el índice y lo que indexa, y la misma app parecía dos: no había
+   * consistencia con la estructura de Contact Center.
    *
    *   · 1200 de tope y ANCLADO A LA IZQUIERDA, no centrado. Medido el 2026-09-20 con
    *     `margin-inline: auto`: a 1440 quedaban 108px de lienzo vacío entre el borde
@@ -181,7 +181,7 @@
   align-items: center;
   gap: var(--sc-spacing-0-75);
   /* Sin aire propio abajo: la franja y la tira de pestañas son UNA cabecera, y la distancia la
-   * pone solo `.tabbar` (Rafa, 2026-09-23: con 28 aquí había 63,5 de aire entre las cifras y el
+   * pone solo `.tabbar` (2026-09-23: con 28 aquí había 63,5 de aire entre las cifras y el
    * texto de las pestañas, medido a 1440). */
 }
 
@@ -369,8 +369,8 @@ h1.page__heading {
 /* PÁGINA DE TABLA CON SCROLL PROPIO (`.page--tabla`, DD-95, 2026-09-14).
  *
  * La página no hace scroll: título, buscador y cabecera de columnas se quedan a la vista, y la
- * tabla hace scroll dentro (`<sc-datatable scrollable scrollHeight="flex">`). Lo eligieron Rafa y
- * dos usuarios frente a la cabecera fija con scroll de página (comparación medida en
+ * tabla hace scroll dentro (`<sc-datatable scrollable scrollHeight="flex">`). Se eligió en una comparación
+ * con dos usuarios frente a la cabecera fija con scroll de página (comparación medida en
  * `~/Documents/Claude/2026-09 tabla-sticky-vs-scroll/`). Tres reglas que salieron de medir:
  *
  *   1. La tarjeta mide LO QUE SUS FILAS y solo se estira hasta el fondo si no caben

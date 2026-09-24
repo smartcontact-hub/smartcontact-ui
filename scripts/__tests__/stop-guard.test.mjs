@@ -103,7 +103,7 @@ test('motivoSinEnrutar: el motivo lleva la lista y el comando exacto', () => {
 });
 
 // ── El parte de cierre ───────────────────────────────────────────────────────────────────
-// El caso ROJO es el cierre de trámite: «pusheado, CI verde», que no le dice a Rafa ni qué cambia
+// El caso ROJO es el cierre de trámite: «pusheado, CI verde», que no le dice al usuario ni qué cambia
 // en su día ni por qué le conviene.
 
 // Entorno sin `GIT_*`: dentro de un hook de git esas variables apuntan al repositorio de verdad, y
@@ -125,7 +125,7 @@ const SUCIO = { seguro: false, motivos: ['2 fichero(s) sin commitear (AGENTS.md,
 
 test('ultimoMensaje: coge el texto del último mensaje del asistente y salta lo que no lo es', () => {
   assert.equal(ultimoMensaje([evTexto('primero'), ev('git status'), evTexto('el cierre')].join('\n')), 'el cierre');
-  assert.equal(ultimoMensaje([evTexto('el cierre'), evUsuario('gracias')].join('\n')), 'el cierre', 'lo que escribe Rafa después no es mi cierre');
+  assert.equal(ultimoMensaje([evTexto('el cierre'), evUsuario('gracias')].join('\n')), 'el cierre', 'lo que escribe el usuario después no es mi cierre');
   assert.equal(ultimoMensaje('basura no json\n'), '');
 });
 
@@ -230,7 +230,7 @@ test('Stop: con reflect y correcciones sin ruta bloquea; enrutada, deja cerrar; 
 
     writeFileSync(transcript, [ev('git status'), evSkill('reflect'), evTexto('Pusheado a main, CI verde.')].join('\n'));
     const sinParte = correrHook(entrada, dir);
-    assert.equal(sinParte?.decision, 'block', 'ROJO: cerró con el trámite y sin contarle a Rafa qué cambia');
+    assert.equal(sinParte?.decision, 'block', 'ROJO: cerró con el trámite y sin contarle al usuario qué cambia');
     assert.match(sinParte.reason, /- En qué te ayuda:/);
     assert.match(sinParte.reason, /- Seguro cerrar:/);
     writeFileSync(transcript, [ev('git status'), evSkill('reflect'), evTexto(PARTE_OK)].join('\n'));

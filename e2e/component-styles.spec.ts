@@ -49,7 +49,7 @@ const UPDATING = process.env['SC_UPDATE_STYLES'] === '1';
  * que mueve un token, y son estables entre plataformas.
  *
  * ⚠️ `width` y `height` están FUERA, y no por gusto: **no cruzan de plataforma**. Medido en el
- * primer run de este fichero en CI (34414537272), con el baseline generado en el Mac de Rafa:
+ * primer run de este fichero en CI (34414537272), con el baseline generado en un Mac de desarrollo:
  * 24 de las 38 páginas en rojo y **el diff entero en `width`** —`108.55px` frente a `110px`,
  * `189px` frente a `233px`—, más una sola `height` (21 frente a 22). Ni un padding, ni un gap,
  * ni un radio, ni un tamaño de letra, ni un color se movieron. Un ancho es el del TEXTO

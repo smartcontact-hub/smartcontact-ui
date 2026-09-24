@@ -19,7 +19,7 @@ import { join, resolve } from 'node:path';
  *
  * ⚠️ Y todo `git` de aquí va con el entorno LIMPIO de variables `GIT_*`. Dentro de un hook de git
  * están exportadas y apuntan al repositorio de verdad, así que un `git init --bare` sobre un repo
- * temporal aterriza en el de Rafa y lo deja sin árbol de trabajo. Pasó: es lo que motiva el
+ * temporal aterriza en el principal y lo deja sin árbol de trabajo. Pasó: es lo que motiva el
  * `unset` del hook, y este fichero no puede ser el que lo repita.
  */
 const SIN_GIT = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')));

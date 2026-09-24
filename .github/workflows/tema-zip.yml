@@ -7,7 +7,7 @@
 #   guía: https://github.com/smartcontact-hub/smartcontact-ui/blob/tema-zip/README.md
 # En la misma rama, el robot de tokens publica `tema-plugin.zip` (el export del plugin, el de la licencia).
 #
-# Por qué: hasta el 2026-09-14 el zip lo preparaba Rafa a mano desde el plugin de Figma, con tres
+# Por qué: hasta el 2026-09-14 el zip se preparaba a mano desde el plugin de Figma, con tres
 # comprobaciones a mano, y el tema del plugin no era el que pintan nuestras apps (43 % de claves
 # distintas con el mismo Kit). Si un token pasa a 0, el job sale rojo y no publica nada.
 #

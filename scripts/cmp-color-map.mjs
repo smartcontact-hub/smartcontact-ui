@@ -77,7 +77,7 @@ export const EXCLUDE = new Set([
   //    `base.ts` remapeaba `orange`/`yellow` → amber, porque el warn de marca era el
   //    amber #f59e0b, más cálido que el yellow #eab308 del Kit.
   //
-  //    El sync del Theme Designer del 24-ago trajo el Kit a yellow y Rafa decidió
+  //    El sync del Theme Designer del 24-ago trajo el Kit a yellow y se decidió
   //    seguirlo, así que la divergencia se RETIRÓ (`customs-catalog` §1.3) y con ella
   //    su motivo para estar fuera. El warn vuelve a espejar el export entero.
   //

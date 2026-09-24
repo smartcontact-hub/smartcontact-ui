@@ -6,7 +6,7 @@
  * tiene su `--sc-font-size-N` / `--sc-line-height-N` en código con el MISMO valor px. Sale ≠0
  * si alguno DRIFTA (un cambio de tipografía en Figma que no llegó al código → se escaparía).
  *
- * Por qué importa (Rafa, 2026-06-18): los text styles de Figma vinculan font-size Y line-height
+ * Por qué importa (2026-06-18): los text styles de Figma vinculan font-size Y line-height
  * a variables; antes esto era un informe SOLO-LECTURA que solo miraba font-size y NUNCA
  * line-height → el line-height podía desfasarse en silencio. Ahora NO.
  *

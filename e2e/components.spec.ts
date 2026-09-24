@@ -604,7 +604,7 @@ test.describe('sc-multiselect', () => {
 
   /* PrimeNG 22.1.0 declara `selectAll` sin valor (undefined) y compara con `!== null`: sin pasarle
    * `null`, «todo seleccionado» salía siempre falso y la casilla de arriba volvía a marcarlo todo en
-   * cada clic, sin quitar nada nunca (visto por Rafa en la ficha de agente, 2026-09-14). */
+   * cada clic, sin quitar nada nunca (detectado en QA visual de la ficha de agente, 2026-09-14). */
   test('la casilla de «todos» marca y desmarca, también con una parte ya elegida', async ({ page }) => {
     await gotoPage(page, 'multiselect');
     const field = page.getByTestId('sc-multiselect-objetos').locator('.p-multiselect');

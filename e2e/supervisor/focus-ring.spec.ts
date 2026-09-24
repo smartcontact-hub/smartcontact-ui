@@ -27,7 +27,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * gris en el secundario). Eso es una decisión coherente del sistema —el mismo
  * criterio para todos los botones— y vive en el preset, no en una hoja de
  * página. Meterlos aquí convertiría la prueba en "el preset no me gusta", que
- * es otra conversación y además de Marta. Lo que esta prueba vigila es que la
+ * es otra conversación, y le toca a diseño del Kit. Lo que esta prueba vigila es que la
  * APP no se invente colores de foco por su cuenta, que es lo que pasaba.
  */
 

@@ -90,7 +90,7 @@ import css from "./css";
 import { normalizeDesignRem } from "./rem-scale";
 
 /*
- * AURA DE BASE (2026-09-13, decisión de Rafa): el tema de PrimeNG con el que se ve
+ * AURA DE BASE (2026-09-13, decisión de producto): el tema de PrimeNG con el que se ve
  * primeng.dev, del que además sale el Kit de Figma. Encima va TODO lo nuestro —marca y los
  * ajustes por componente— y, como en cualquier capa, lo de arriba manda. Así el cambio es
  * componente a componente y nada se tira a ciegas: donde lo nuestro está afinado con el

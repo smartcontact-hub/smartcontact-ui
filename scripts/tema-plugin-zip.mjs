@@ -3,7 +3,7 @@
  * El export del plugin de Figma (Theme Designer) para el equipo externo, comprobado por una máquina.
  *
  * Por qué (2026-09-14, DD-88): la licencia comercial es del plugin, así que el equipo externo sigue
- * recibiendo SU export (Rafa: «para ahorrarme problemas políticos»), además del tema de nuestras apps
+ * recibiendo SU export (para no imponerle el tema propio a otro equipo), además del tema de nuestras apps
  * (`tema-zip.mjs`). Hasta hoy ese zip se descargaba, se comprobaba y se enviaba a mano. Ahora el robot
  * de tokens lo coge del push del plugin (`.theme-designer/`), le pasa las comprobaciones de la rutina y
  * lo publica junto al nuestro, diciendo en llano cuánto se aparta de lo que pintan nuestras apps.

@@ -1,8 +1,8 @@
 /**
  * La ANATOMÍA de un componente: qué DOM sale de verdad cuando se escribe `<sc-button …>`.
  *
- * De dónde sale (2026-09-11). Rafa miró `/#/components/button` y preguntó: «¿el código de cada uno
- * en sc-docs está basado realmente en primeng?». La doc enseñaba solo la API pública
+ * De dónde sale (2026-09-11). Revisando `/#/components/button` surgió la pregunta de si el código de
+ * cada componente de sc-docs se apoya de verdad en PrimeNG. La doc enseñaba solo la API pública
  * (`<sc-button label=… variant=… />`), que es lo correcto para quien CONSUME el DS; lo que su
  * equipo tiene delante cuando depura CSS o escribe un selector es otra cosa: `sc-button >
  * p-button > button.p-button`. Eso no estaba en ningún sitio.

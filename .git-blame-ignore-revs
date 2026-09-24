@@ -1,0 +1,8 @@
+# Commits que `git blame` salta: barridos masivos que reescriben líneas sin cambiar su porqué.
+# Sin esta lista, el blame de cada línea barrida apunta al barrido y no al commit (ni al PR) donde
+# se decidió, que es el camino para volver a una decisión (AGENTS.md §«Voz del código», DD-120).
+#
+# GitHub lo lee solo. En local: `git blame --ignore-revs-file .git-blame-ignore-revs <fichero>`,
+# o una vez por clon `git config blame.ignoreRevsFile .git-blame-ignore-revs`.
+#
+# Va el SHA del commit en `main` (el del PR ya fundido, no los de su rama), con su título.

@@ -34,7 +34,7 @@
    * Antes era un panel gray-50 con cada icono en su chip de 32×32 (gray-200 inactivo,
    * navy activo): dos manchas de color por fila en una pieza que solo sirve para
    * indexar, y la razón por la que las fichas de admin no se parecían a Contact
-   * Center aunque las dos pantallas son la misma. Rafa: «no rima nada».
+   * Center aunque las dos pantallas son la misma: no compartían estructura.
    *
    * Lo que NO cambia: la etiqueta ENVUELVE (DD-52). Contact Center tiene tres items
    * cortos y puede ir en una línea; aquí hay «Servicios asignados» en cuatro idiomas. */
@@ -158,8 +158,8 @@
 }
 
 /*
- * El label ENVUELVE; nunca se corta. (2026-09-06, a petición de Rafa: «el
- * índice no debería cortar».)
+ * El label ENVUELVE; nunca se corta. (2026-09-06: un índice que trunca sus
+ * entradas deja de indexar.)
  *
  * Antes era `nowrap` + `text-overflow: ellipsis`, con la idea de que «el ancho
  * del rail define la truncación, no la longitud del copy». Medido en el

@@ -365,7 +365,7 @@ const A11Y_GATED = [
    * actuaba, que es lo que pasa cuando un defecto solo se avisa. */
   ['sc-text-secondary', 'sc-bg-surface'],
   /* Mismo movimiento, un año tarde, con el que quedaba: `subtle` llevaba
-   * MESES informándose en 2.04:1 desde A11Y_INFO. Decisión de Rafa
+   * MESES informándose en 2.04:1 desde A11Y_INFO. Decisión de producto
    * (2026-07-19): AA por delante de la jerarquía. Ver customs-catalog §1.7. */
   ['sc-text-subtle', 'sc-bg-surface'],
 ];

@@ -74,9 +74,9 @@ test('clicar el fondo cierra, clicar el diálogo no', async ({ page }) => {
 });
 
 /**
- * El PASO 2, que estuvo bloqueado hasta que Rafa pulsó Save él mismo.
+ * El PASO 2, que estuvo bloqueado hasta que se pulsó Save a mano en la app real.
  *
- * Y confirmó lo que se temía: **Save crea un ticket de verdad**. La app real
+ * Y se confirmó lo que se temía: **Save crea un ticket de verdad**. La app real
  * saltó a `…/tickets/ticket/2051827/pre-ticket` con el ticket ya existiendo.
  * Lo que sale NO es un formulario: es la pantalla de detalle en vacío (#0) con
  * el modal "Search customer" encima.

@@ -12,7 +12,7 @@ import type {
  * Los datos de demostración son un total; aquí se reparte entre canales y direcciones con unas
  * proporciones fijas y creíbles para un contact center (más llamadas que chats, más entrantes que
  * salientes). Sin esto el filtro solo ponía la etiqueta y las cifras no se movían, que es lo que
- * Rafa vio el 2026-09-14: «le doy a una opción y nada cambia».
+ * salió en revisión el 2026-09-14: elegir una opción no producía ningún cambio visible.
  *
  * Solo se reparten las CONVERSACIONES. Los agentes conectados o disponibles no son de un canal, y
  * los tiempos y niveles no se dividen: cambian de valor (un email tarda más en contestarse).

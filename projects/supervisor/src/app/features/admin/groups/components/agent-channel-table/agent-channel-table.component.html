@@ -25,7 +25,7 @@
       <sc-tag severity="warn" icon="warning" [value]="'groups.form.assigned.no_channels_warn' | translate: { count: zeroChannelCount() }" />
     }
     <span id="group-add-agent-label" class="visually-hidden">{{ 'groups.form.assigned.add_aria' | translate }}</span>
-    <!-- Multiselect (Rafa, 2026-09-16): se marcan o desmarcan varios agentes de una vez y la tabla
+    <!-- Multiselect (decisión de producto, 2026-09-16): se marcan o desmarcan varios agentes de una vez y la tabla
          lo refleja al momento. Lo marcado es lo asignado; el rótulo dice siempre la acción. -->
     <sc-multiselect
       class="assign__add"
@@ -75,8 +75,8 @@
 </div>
 
 <!-- Elegir varios agentes y actuar en lote: la barra de las listas, no una a mano (la de antes
-     pintaba su fondo con un color de PALETA que no voltea en oscuro). Rafa, 2026-09-14: «sí me
-     gustaría poder seleccionar varios agentes en grupos». -->
+     pintaba su fondo con un color de PALETA que no voltea en oscuro). Decisión de producto (2026-09-14): en
+     grupos también se seleccionan varios agentes a la vez, como en el resto de listas. -->
 <sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
   <sc-button type="button" variant="secondary" appearance="outlined" [label]="'groups.form.assigned.bulk_resume' | translate" (clicked)="bulkSetActive(true)" />
   <sc-button type="button" variant="secondary" appearance="outlined" [label]="'groups.form.assigned.bulk_pause' | translate" (clicked)="bulkSetActive(false)" />

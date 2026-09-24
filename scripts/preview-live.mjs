@@ -2,8 +2,8 @@
 /**
  * preview:live — PREVIEW LOCAL INSTANTÁNEO del estado de tokens que hay en Figma.
  *
- * Pensado para Rafa (no-dev): doble-click en un `.command`, sin escribir en la terminal.
- * Es el primer nivel del flujo de 3 (local → preview link → main): aquí experimenta él solo,
+ * Pensado para quien no programa: doble-click en un `.command`, sin escribir en la terminal.
+ * Es el primer nivel del flujo de 3 (local → preview link → main): aquí se experimenta en solitario,
  * al instante, sin esperar al CI (~2-5 min) ni perseguir a nadie.
  *
  * Qué hace:
@@ -14,7 +14,7 @@
  *   3. Regenera las capas CSS de tokens (`@sc-gen:*`) desde ese export.
  *   4. Arranca `ng serve` y abre el navegador. El app sirve las capas DESDE FUENTE, así que
  *      el cambio se ve en cuanto el HMR recarga.
- *   5. VIGILA la rama: si Rafa empuja un cambio nuevo desde Figma, en ~12 s lo baja, regenera
+ *   5. VIGILA la rama: si llega un cambio nuevo desde Figma, en ~12 s lo baja, regenera
  *      y el navegador se recarga solo. "Cambio instantáneo, no manual."
  *
  * Al cerrar la ventana, restaura los ficheros de token al estado committeado (deja el repo limpio).
