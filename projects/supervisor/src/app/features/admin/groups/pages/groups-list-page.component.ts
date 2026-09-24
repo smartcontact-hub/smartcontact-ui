@@ -69,7 +69,8 @@ interface PendingBulkEdit {
 /* v2 — bumped when ColumnSelector schema changed (set → ordered array)
  * and when `code` started shipping hidden by default. */
 /* v3 (2026-09-16): columna nueva (Servicios). Una lista guardada no la conoce y no saldría nunca. */
-const COLUMN_PREF_KEY = 'sc-groups-columns-v3';
+/* v4 (2026-09-24): el ID pasa detrás del nombre. Una lista guardada lo seguiría poniendo el primero. */
+const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
 
 @Component({
   selector: 'sc-groups-list-page',
@@ -161,12 +162,9 @@ export class GroupsListPageComponent {
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
     return [
-      {
-        key: 'code',
-        label: this.translate.instant('groups.table.code'),
-        defaultVisible: false,
-      },
       { key: 'name', label: this.translate.instant('groups.table.name'), locked: true },
+      // Detrás del nombre y opcional, como en Agentes.
+      { key: 'code', label: this.translate.instant('groups.table.code'), defaultVisible: false },
       { key: 'phone', label: this.translate.instant('groups.table.phone') },
       { key: 'channels', label: this.translate.instant('groups.table.channels') },
       { key: 'priority', label: this.translate.instant('groups.table.priority') },
@@ -196,12 +194,15 @@ export class GroupsListPageComponent {
     ];
   });
 
-  /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas). */
+  /**
+   * Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): cualquier campo de texto de la tabla, con
+   * la prioridad en el idioma de la pantalla (2026-09-24). Los canales son iconos, y los servicios y agentes
+   * solo salen al pasar el ratón: casaría una fila sin que se viera por qué.
+   */
   protected readonly matchesSearch = (g: Group, q: string): boolean =>
-    g.name.toLowerCase().includes(q) ||
-    g.code.includes(q) ||
-    g.phone.includes(q) ||
-    g.strategy.toLowerCase().includes(q);
+    [g.name, g.code, g.phone, g.strategy, this.translate.instant(this.priorityKeys[g.priority])].some(
+      (value) => value?.toLowerCase().includes(q) ?? false,
+    );
 
   /* El orden lo resuelve ESTA página y no la tabla: `agents` es un contador DERIVADO de `linksStore` (no hay
    * `row.agents`) y `name` compara con locale 'es'. Devuelve el orden ascendente; la dirección la pone la lista. */
@@ -247,16 +248,18 @@ export class GroupsListPageComponent {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
     return [
       {
-        field: 'code',
-        header: this.translate.instant('groups.table.code'),
-        sortable: true,
-        cellTemplate: this.codeTpl(),
-      },
-      {
         field: 'name',
         header: this.translate.instant('groups.table.name'),
         sortable: true,
         cellTemplate: this.nameTpl(),
+      },
+      {
+        field: 'code',
+        header: this.translate.instant('groups.table.code'),
+        sortable: true,
+        cellTemplate: this.codeTpl(),
+        /* Sin ancho se repartía el sobrante con el nombre y salía desproporcionada (medido a 1440, 2026-09-24). */
+        width: '6rem',
       },
       {
         field: 'phone',
@@ -285,7 +288,8 @@ export class GroupsListPageComponent {
         header: this.translate.instant('groups.table.strategy'),
         sortable: true,
         cellTemplate: this.strategyTpl(),
-        width: '9.5rem',
+        /* «Más tiempo inactivo» mide 118 px de etiqueta y con 9.5rem le quedaban 114: se cortaba (2026-09-24). */
+        width: '9.75rem',
       },
       {
         field: 'services',

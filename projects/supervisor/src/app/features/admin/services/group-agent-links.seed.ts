@@ -174,4 +174,14 @@ export const GROUP_AGENT_LINKS_SEED: readonly GroupAgentLink[] = [
   { agentId: 16, groupId: 7, channels: ['phone'], active: false },
   { agentId: 16, groupId: 8, channels: ['phone'], active: true },
   { agentId: 16, groupId: 12, channels: ['phone'], active: true },
+  // El equipo (2026-09-24): unos pocos grupos cada uno, con canales distintos.
+  { agentId: 17, groupId: 1, channels: ['phone', 'chat'], active: true },
+  { agentId: 17, groupId: 3, channels: ['phone'], active: true },
+  { agentId: 17, groupId: 10, channels: ['chat'], active: true },
+  { agentId: 18, groupId: 2, channels: ['phone'], active: true },
+  { agentId: 18, groupId: 5, channels: ['phone', 'email'], active: true },
+  { agentId: 19, groupId: 4, channels: ['phone'], active: true },
+  { agentId: 19, groupId: 8, channels: ['phone'], active: true },
+  { agentId: 19, groupId: 12, channels: ['phone', 'chat'], active: false },
+  { agentId: 20, groupId: 6, channels: ['phone'], active: true },
 ];

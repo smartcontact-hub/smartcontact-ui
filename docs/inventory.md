@@ -34,7 +34,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**56 componentes** · 18 custom · 12 standard · 26 extended · 44 usados en Supervisor.
+**56 componentes** · 18 custom · 12 standard · 26 extended · 43 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -45,12 +45,12 @@
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-bulk-edit-menu` | STANDARD | primeng/button | 2 inputs | sc-select | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 152 |
+| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 151 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 34 |
 | `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 7 |
 | `sc-color-dot-picker` | CUSTOM | — | 1 inputs | — | ✓ | 3 |
-| `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 1 |
+| `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | — |
 | `sc-command-palette` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
 | `sc-datatable` | EXTENDED | primeng/table | 32 inputs | — | ✓ | 13 |
@@ -73,7 +73,7 @@
 | `sc-inputtext` | EXTENDED | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 38 |
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 3 |
-| `sc-multiselect` | EXTENDED | primeng/multiselect | 31 inputs | sc-field-label sc-field-msg | ✓ | 20 |
+| `sc-multiselect` | EXTENDED | primeng/multiselect | 31 inputs | sc-field-label sc-field-msg | ✓ | 21 |
 | `sc-option-cards` | CUSTOM | — | 4 inputs | — | — | 2 |
 | `sc-panel` | EXTENDED | primeng/panel | 6 inputs | — | ✓ | 1 |
 | `sc-password` | EXTENDED | primeng/password | 19 inputs | sc-field-label sc-field-msg | ✓ | 1 |

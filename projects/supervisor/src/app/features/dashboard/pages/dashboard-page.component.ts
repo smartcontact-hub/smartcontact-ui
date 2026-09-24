@@ -214,7 +214,9 @@ export class DashboardPageComponent {
         label: this.translate.instant('dashboard.carousel.every'),
         items: CAROUSEL_OPTIONS.map((s) => ({
           label: this.translate.instant('dashboard.carousel.seconds', { s }),
-          icon: `sc-icon-font sc-icon-font--${s === this.carouselSeconds() ? 'radio_button_checked' : 'radio_button_unchecked'}`,
+          // Check en la elegida y oculto en las demás, como los menús del widget (`choiceIcon` en widget-card).
+          icon: 'sc-icon-font sc-icon-font--check',
+          iconStyle: s === this.carouselSeconds() ? undefined : { visibility: 'hidden' },
           command: () => this.carouselSeconds.set(s),
         })),
       },

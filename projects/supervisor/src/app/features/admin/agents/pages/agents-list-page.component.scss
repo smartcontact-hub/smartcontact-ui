@@ -49,59 +49,17 @@
   gap: var(--sc-spacing-0-5);
 }
 
-/* Estado del agente: botón compacto (punto + estado + flecha) y su lista, como el panel «Estados» del
- * dialpad (2026-09-14). El punto lleva el color del estado con un halo del mismo tono. */
-.presence-dot {
-  flex-shrink: 0;
-  width: var(--sc-spacing-0-5);
-  height: var(--sc-spacing-0-5);
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-label-gray-dot);
-
-  &[data-presence='disponible'] {
-    background: var(--sc-label-green-dot);
-    box-shadow: 0 0 0 var(--sc-spacing-0-25) var(--sc-label-green-bg);
-  }
-
-  &[data-presence='no_disponible'] {
-    background: var(--sc-label-red-dot);
-    box-shadow: 0 0 0 var(--sc-spacing-0-25) var(--sc-label-red-bg);
-  }
-
-  &[data-presence='bano'],
-  &[data-presence='comida'],
-  &[data-presence='formacion'] {
-    background: var(--sc-label-amber-dot);
-    box-shadow: 0 0 0 var(--sc-spacing-0-25) var(--sc-label-amber-bg);
-  }
-}
-
-.presence-menu__item {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-875);
-  width: 100%;
-
-}
-
-.presence-menu__label {
-  flex: 1 1 auto;
-  color: var(--sc-text-primary);
-}
-
-/* El texto del botón con el color de las demás celdas: el del botón de texto secundario salía más claro. */
-.presence-trigger__label {
-  color: var(--sc-text-secondary);
-}
-
-/* La flecha con el color de icono del DS: la del botón de texto salía a 2,95:1 y un icono pide 3:1
- * (lo cazó `theme-contrast`). */
-.presence-trigger__chevron {
+/* El tipo de extensión, en icono delante del número: antes era una etiqueta «Tel»/«WebRTC»
+ * que ocupaba más que el número. Color de icono secundario, como los glifos de Canales. */
+.ext__kind {
+  display: inline-flex;
   color: var(--sc-icon-subtle);
 }
 
-.presence-menu__check {
-  color: var(--sc-icon-subtle);
+/* Grabación: el REC en el rojo de icono del tema, el de las cosas que están pasando. */
+.recording {
+  display: inline-flex;
+  color: var(--sc-icon-error);
 }
 
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos
