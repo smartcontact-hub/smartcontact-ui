@@ -14,7 +14,7 @@
   [heading]="'sidebar.agents' | translate"
   [rows]="agents()"
   [columns]="columns()"
-  tableMinWidth="66rem"
+  tableMinWidth="99.25rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'agents.search_placeholder' | translate"
@@ -76,11 +76,31 @@
   </span>
 </ng-template>
 
+<!-- El tipo de extensión, en icono y no en etiqueta: el número es lo que se lee. -->
 <ng-template #extensionTpl let-agent>
   <span class="cell ext">
+    @let kind = 'agents.ext_kind.' + agent.extensionType | translate;
+    <span class="ext__kind" role="img" [attr.aria-label]="kind" [attr.title]="kind">
+      <sc-icon [name]="extensionIcon(agent.extensionType)" size="sm" aria-hidden="true" />
+    </span>
     {{ agent.extension }}
-    <sc-tag severity="secondary" [value]="'agents.ext.' + agent.extensionType | translate" />
   </span>
+</ng-template>
+
+<ng-template #emailTpl let-agent>
+  @if (agent.email) {
+    <span class="cell">{{ agent.email }}</span>
+  } @else {
+    <span class="cell cell--empty">—</span>
+  }
+</ng-template>
+
+<ng-template #phoneTpl let-agent>
+  @if (agent.phone) {
+    <span class="cell">{{ agent.phone }}</span>
+  } @else {
+    <span class="cell cell--empty">—</span>
+  }
 </ng-template>
 
 <ng-template #channelsTpl let-agent>
@@ -101,56 +121,36 @@
   <sc-tag severity="secondary" [value]="typeLabelKey(agent) | translate" />
 </ng-template>
 
+<!-- El estado se VE y no se cambia desde la lista, así que es una etiqueta y no un botón: la
+     misma de Contact Center › Servicio, con sus colores (`PRESENCE_TAGS`). «Desconectado» (no tener la sesión
+     abierta, por eso se fue la columna «Activación») es la «Draft» de primeng.dev/tag. -->
 <ng-template #presenceTpl let-agent>
   @if (agent.presenceStatus; as presence) {
-    <!-- Botón compacto que abre la lista de estados, como el panel «Estados» del dialpad (2026-09-14).
-         Antes era un desplegable con borde en cada fila. `stopPropagation` en `openPresenceMenu` porque
-         la fila ABRE el detalle. -->
-    <sc-button
-      class="presence-trigger"
-      variant="secondary"
-      appearance="text"
-      size="sm"
-      [ariaLabel]="'agents.presence_change_aria' | translate: { name: agent.name, status: (presenceLabelKey(presence) | translate) }"
-      (clicked)="openPresenceMenu(agent, presenceMenu, $event)"
-    >
-      <span class="presence-dot" [attr.data-presence]="presence" aria-hidden="true"></span>
-      <span class="presence-trigger__label sc-text-body-regular">{{ presenceLabelKey(presence) | translate }}</span>
-      <sc-icon class="presence-trigger__chevron" [name]="chevronDownIcon" size="inherit" />
-    </sc-button>
+    @if (presenceLabelColor(presence); as color) {
+      <sc-tag variant="label" [labelColor]="color" [value]="presenceLabelKey(presence) | translate" />
+    } @else {
+      <sc-tag [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
+    }
   } @else {
     <span class="cell cell--empty">—</span>
   }
 </ng-template>
 
-<ng-template #statusTpl let-agent>
-  <sc-tag
-    [severity]="agent.status === 'active' ? 'success' : 'secondary'"
-    [value]="'agents.status.' + agent.status | translate"
-  />
+<!-- El REC rojo donde se graba y nada donde no: la columna solo contesta sí o no, y así se barre
+     de un vistazo. `radio_button_checked` relleno, el botón de grabar de siempre; el dashboard dejó de usarlo para
+     «opción elegida». -->
+<ng-template #recordingTpl let-agent>
+  @if (agent.permissions.recording) {
+    @let recording = 'agents.permission.recording' | translate;
+    <span class="recording" role="img" [attr.aria-label]="recording" [attr.title]="recording">
+      <sc-icon [name]="recordingIcon" size="sm" filled aria-hidden="true" />
+    </span>
+  }
 </ng-template>
 
 <ng-template #groupsTpl let-agent>
   <sc-group-popover [groups]="groupsForAgent(agent.id)" />
 </ng-template>
-
-<!-- Lista de estados, UNA para toda la tabla como el menú de fila: el actual va marcado con su punto,
-     en negrita y con ✓, igual que el panel «Estados» del dialpad. -->
-<p-menu #presenceMenu [model]="presenceMenuItems()" [popup]="true" appendTo="body">
-  <ng-template #item let-item>
-    <span class="presence-menu__item" [class.presence-menu__item--current]="item.id === presenceMenuAgent()?.presenceStatus">
-      <span class="presence-dot" [attr.data-presence]="item.id" aria-hidden="true"></span>
-      <span
-        class="presence-menu__label"
-        [class.sc-text-body-regular]="item.id !== presenceMenuAgent()?.presenceStatus"
-        [class.sc-text-body-semibold]="item.id === presenceMenuAgent()?.presenceStatus"
-      >{{ item.label }}</span>
-      @if (item.id === presenceMenuAgent()?.presenceStatus) {
-        <sc-icon class="presence-menu__check" [name]="checkIcon" size="inherit" />
-      }
-    </span>
-  </ng-template>
-</p-menu>
 
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"

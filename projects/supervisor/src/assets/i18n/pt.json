@@ -949,6 +949,7 @@
     "remove_from_list": "Remover {{name}} da lista",
     "bulk_updated": "{{count}} itens atualizados",
     "columns": "Colunas",
+    "columns_count": "{0} colunas",
     "edit_field": "Editar campo",
     "preview_impact": "Pré-visualizar impacto",
     "discard_title": "Descartar alterações?",
@@ -958,7 +959,6 @@
     "cross_tab_warning": "Este registro está sendo editado em outra aba. As alterações podem ser sobrescritas.",
     "undo": "Desfazer",
     "change_reverted": "Alteração revertida",
-    "presence_changed": "Presença de {{name}} → {{status}}",
     "photo": {
       "select": "Selecionar foto",
       "change": "Alterar foto",
@@ -1442,7 +1442,7 @@
       "duplicate_subtitle": "Copia os agentes, os canais e as definições de «{{source}}». O telefone associado, não.",
       "copy_name": "{{name}} (cópia)"
     },
-    "search_placeholder": "Buscar grupo por nome, ID, telefone ou estratégia...",
+    "search_placeholder": "Buscar grupo por nome, ID, telefone, prioridade ou estratégia...",
     "no_results_query": "Nenhum grupo corresponde a “{{query}}”.",
     "entity_singular": "grupo",
     "table": {
@@ -1682,17 +1682,19 @@
   "agents": {
     "page_title": "Agentes",
     "create_button": "Novo agente",
-    "search_placeholder": "Buscar agente por nome, código, ramal ou email...",
+    "search_placeholder": "Buscar agente por nome, ID, ramal, email ou telefone...",
     "no_results_query": "Nenhum agente corresponde a “{{query}}”.",
     "entity_singular": "agente",
     "table": {
-      "code": "Código",
+      "code": "ID",
       "name": "Nome",
       "extension": "Ramal",
+      "email": "Email",
+      "phone": "Telefone",
       "channels": "Canais",
       "type": "Tipo",
       "presence": "Estado",
-      "status": "Ativação",
+      "recording": "Gravação",
       "groups": "Grupos"
     },
     "type": {
@@ -1710,13 +1712,19 @@
       "phone": "Tel",
       "webrtc": "WebRTC"
     },
-    "presence_change_aria": "Mudar o estado de {{name}}: {{status}}",
+    "ext_kind": {
+      "phone": "Telefone",
+      "webrtc": "WebRTC"
+    },
     "presence": {
       "available": "Disponível",
       "unavailable": "Indisponível",
       "bathroom": "Banheiro",
       "lunch": "Almoço",
-      "training": "Treinamento"
+      "training": "Treinamento",
+      "wrap_up": "Pós-conversa",
+      "administrative": "Administrativo",
+      "offline": "Desconectado"
     },
     "status": {
       "active": "Ativo",
@@ -1874,12 +1882,15 @@
     },
     "entity_plural": "agentes",
     "export": {
-      "code": "Código",
+      "code": "ID",
       "name": "Nome",
       "extension": "Ramal",
-      "type": "Tipo",
+      "extension_type": "Tipo de ramal",
       "email": "Email",
+      "phone": "Telefone",
+      "type": "Tipo",
       "status": "Estado",
+      "recording": "Gravação",
       "groups": "Grupos",
       "sheet": "Agentes"
     },

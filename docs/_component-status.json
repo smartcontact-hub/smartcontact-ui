@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 44 usados en Supervisor.",
+  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 43 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 152,
+      "usedInSupervisor": 151,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -304,7 +304,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 0,
       "cuando": "Para que el usuario decida qué columnas ve en una tabla.",
       "sobreObsoleto": []
     },
@@ -936,7 +936,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 20,
+      "usedInSupervisor": 21,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "sobreObsoleto": [
         {

@@ -107,7 +107,7 @@ export class WidgetCardComponent {
         label: this.translate.instant('dashboard.menu.direction'),
         items: DIRECTIONS.map((d) => ({
           label: this.translate.instant(`dashboard.menu.directions.${d}`),
-          icon: radioIcon(f.direction === d),
+          ...choiceIcon(f.direction === d),
           command: () => this.filterChange.emit({ ...f, direction: d }),
         })),
       },
@@ -115,7 +115,7 @@ export class WidgetCardComponent {
         label: this.translate.instant('dashboard.menu.channels'),
         items: CHANNELS.map((c) => ({
           label: this.translate.instant(`dashboard.menu.channel.${c}`),
-          icon: radioIcon(f.channel === c),
+          ...choiceIcon(f.channel === c),
           command: () => this.filterChange.emit({ ...f, channel: c }),
         })),
       },
@@ -126,6 +126,11 @@ export class WidgetCardComponent {
   });
 }
 
-function radioIcon(on: boolean): string {
-  return `sc-icon-font sc-icon-font--${on ? 'radio_button_checked' : 'radio_button_unchecked'}`;
+/**
+ * La opción elegida de un menú de elección única lleva un check; las demás, el mismo check oculto para que los textos
+ * no bailen. Antes era el círculo de radio (`radio_button_checked`), que desde 2026-09-24 es el REC rojo de la
+ * columna Grabación de Agentes: el mismo glifo no puede decir «elegido» y «se graba».
+ */
+function choiceIcon(on: boolean): Pick<MenuItem, 'icon' | 'iconStyle'> {
+  return { icon: 'sc-icon-font sc-icon-font--check', iconStyle: on ? undefined : { visibility: 'hidden' } };
 }
