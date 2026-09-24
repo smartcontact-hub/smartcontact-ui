@@ -6,3 +6,6 @@
 # o una vez por clon `git config blame.ignoreRevsFile .git-blame-ignore-revs`.
 #
 # Va el SHA del commit en `main` (el del PR ya fundido, no los de su rama), con su título.
+
+# 2026-09-24 · El código deja de nombrar personas (#245, DD-120): 194 comentarios reescritos.
+2b19abc58ca75e6f0b5a61e51bffb8709e3e17b9
