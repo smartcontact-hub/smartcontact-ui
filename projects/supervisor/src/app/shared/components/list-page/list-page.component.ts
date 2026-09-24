@@ -6,6 +6,7 @@ import {
   inject,
   input,
   model,
+  type OnInit,
   output,
   signal,
   type TemplateRef,
@@ -20,12 +21,12 @@ import {
   ScBulkActionBarComponent,
   ScButtonComponent,
   type ColumnDef,
-  ScColumnSelectorComponent,
   type ScColumnCellContext,
   type ScColumnDef,
   ScDatatableComponent,
   ScDividerComponent,
   ScEmptyStateComponent,
+  ScMultiSelectComponent,
   type ScDatatableRowEvent,
   type ScDatatableRowKeyEvent,
   type ScDatatableSortEvent,
@@ -36,6 +37,52 @@ import { injectLangChange } from '@core/utils/lang-change';
 
 /** Id de columna reservado para la del menú de fila; ninguna pantalla puede usarlo. */
 const ACTIONS_FIELD = '__actions';
+
+/**
+ * Lo que se recuerda de la tabla de cada lista al volver: qué columnas se ven, en qué orden (el de TODAS, también
+ * las ocultas, para que una columna que se vuelve a enseñar salga donde estaba) y los anchos arrastrados, en rem.
+ * Lo guarda la lista y no `stateKey` de `p-table`, que restaura además el orden de filas y la SELECCIÓN (medido en
+ * `primeng-table.mjs`, `restoreState`): se volvería a una lista con filas marcadas.
+ */
+interface ColumnPrefs {
+  readonly order: readonly string[];
+  readonly visible: readonly string[];
+  readonly widths: Readonly<Record<string, string>>;
+}
+
+/**
+ * Lo guardado, contrastado con las columnas de hoy: fuera las que ya no existen, las nuevas al final (visibles
+ * según su `defaultVisible`) y las fijas (`locked`) en su sitio y siempre visibles. Lee también el formato del
+ * selector anterior (`sc-column-selector`: la lista de visibles en su orden), para no perder lo que cada uno tenía.
+ */
+function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnPrefs {
+  const keys = choices.map((c) => c.key);
+  const known = (k: unknown): k is string => typeof k === 'string' && keys.includes(k);
+  const raw = (stored ?? {}) as Partial<Record<keyof ColumnPrefs, unknown>>;
+  const legacy = Array.isArray(stored) ? stored.filter(known) : null;
+  const storedOrder = legacy ?? (Array.isArray(raw.order) ? raw.order.filter(known) : []);
+  const storedVisible = legacy ?? (Array.isArray(raw.visible) ? raw.visible.filter(known) : null);
+  const fresh = keys.filter((k) => !storedOrder.includes(k));
+
+  const order = [...storedOrder, ...fresh].filter((k) => !choices.find((c) => c.key === k)?.locked);
+  choices.forEach((c, i) => {
+    if (c.locked) order.splice(i, 0, c.key);
+  });
+
+  const visibleSet = new Set(
+    storedVisible
+      ? [...storedVisible, ...fresh.filter((k) => choices.find((c) => c.key === k)?.defaultVisible !== false)]
+      : choices.filter((c) => c.defaultVisible !== false).map((c) => c.key),
+  );
+  for (const c of choices) if (c.locked) visibleSet.add(c.key);
+
+  const widths: Record<string, string> = {};
+  if (raw.widths && typeof raw.widths === 'object')
+    for (const [k, v] of Object.entries(raw.widths as Record<string, unknown>))
+      if (known(k) && typeof v === 'string' && /^\d+(\.\d+)?rem$/.test(v)) widths[k] = v;
+
+  return { order, visible: order.filter((k) => visibleSet.has(k)), widths };
+}
 
 /**
  * PANTALLA DE LISTA (`<sc-list-page>`, DD-97, 2026-09-14).
@@ -67,10 +114,10 @@ const ACTIONS_FIELD = '__actions';
     MenuModule,
     ScBulkActionBarComponent,
     ScButtonComponent,
-    ScColumnSelectorComponent,
     ScDatatableComponent,
     ScDividerComponent,
     ScEmptyStateComponent,
+    ScMultiSelectComponent,
     ScSearchComponent,
     TranslateModule,
   ],
@@ -78,7 +125,7 @@ const ACTIONS_FIELD = '__actions';
   styleUrl: './list-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListPageComponent<T extends { readonly id: number | string }> {
+export class ListPageComponent<T extends { readonly id: number | string }> implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
@@ -186,7 +233,14 @@ export class ListPageComponent<T extends { readonly id: number | string }> {
   private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<T>>>('actionsTpl');
 
   protected readonly allColumns = computed<readonly ScColumnDef<T>[]>(() => {
-    const cols = this.columns();
+    const prefs = this.columnPrefs();
+    const locked = new Set((this.columnChoices() ?? []).filter((c) => c.locked).map((c) => c.key));
+    /* Los anchos arrastrados mandan sobre los medidos; las columnas fijas no se arrastran a otro sitio. */
+    const cols = this.columns().map((c) => ({
+      ...c,
+      width: prefs?.widths[c.field] ?? c.width,
+      reorderable: !locked.has(c.field),
+    }));
     if (!this.rowMenu()) return cols;
     this.lang(); // el nombre accesible de la columna de acciones, al día al cambiar de idioma
     return [
@@ -199,13 +253,50 @@ export class ListPageComponent<T extends { readonly id: number | string }> {
         /* Relleno de celda + botón de 28 + relleno: el «⋮» queda centrado. Con `3` (42) tocaba el borde derecho. */
         width: 'var(--sc-spacing-4)',
         align: 'right',
+        reorderable: false,
         cellTemplate: this.actionsTpl(),
       },
     ];
   });
 
-  /** Columnas elegidas en el selector, en su orden; vacío hasta que el selector hidrata. */
-  private readonly chosenColumns = signal<readonly string[]>([]);
+  /** Lo leído de `localStorage` al abrir (`undefined` hasta entonces); `columnPrefs` lo contrasta con las columnas. */
+  private readonly storedPrefs = signal<unknown>(undefined);
+
+  protected readonly columnPrefs = computed<ColumnPrefs | null>(() => {
+    const choices = this.columnChoices();
+    return choices ? normalizePrefs(choices, this.storedPrefs()) : null;
+  });
+
+  /** Las opciones del selector, en el orden de la tabla: la etiqueta, y fija la que no se puede quitar. */
+  protected readonly columnOptions = computed(() => {
+    const choices = this.columnChoices() ?? [];
+    return (this.columnPrefs()?.order ?? []).map((key) => {
+      const c = choices.find((x) => x.key === key)!;
+      return { key, label: c.label, locked: !!c.locked };
+    });
+  });
+
+  ngOnInit(): void {
+    const key = this.columnStorageKey();
+    if (!key) return;
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) this.storedPrefs.set(JSON.parse(raw));
+    } catch {
+      /* Sin almacenamiento (ventana privada, bloqueado): la lista sale con sus columnas por defecto. */
+    }
+  }
+
+  private savePrefs(next: ColumnPrefs): void {
+    this.storedPrefs.set(next);
+    const key = this.columnStorageKey();
+    if (!key) return;
+    try {
+      localStorage.setItem(key, JSON.stringify(next));
+    } catch {
+      /* Sin almacenamiento: el cambio vale mientras dure la página. */
+    }
+  }
 
   /* Una columna oculta no ocupa sitio: sin descontarla, esconder Email en Agentes dejaba 268 px de scroll lateral
    * (rama `comparar/fichas`, 2026-09-16). Hace falta desde que Agentes tiene columnas opcionales (2026-09-24). */
@@ -220,15 +311,45 @@ export class ListPageComponent<T extends { readonly id: number | string }> {
   });
 
   protected readonly visibleColumns = computed<readonly string[] | undefined>(() => {
-    const choices = this.columnChoices();
-    if (!choices) return undefined;
-    const chosen = this.chosenColumns();
-    const base = chosen.length > 0 ? chosen : choices.filter((c) => c.defaultVisible !== false).map((c) => c.key);
-    return this.rowMenu() ? [...base, ACTIONS_FIELD] : base;
+    const prefs = this.columnPrefs();
+    if (!prefs) return undefined;
+    return this.rowMenu() ? [...prefs.visible, ACTIONS_FIELD] : prefs.visible;
   });
 
-  protected onColumnsChange(ordered: readonly string[]): void {
-    this.chosenColumns.set(ordered);
+  /** El selector: qué columnas se ven. El orden no lo toca (se ordena arrastrando las cabeceras). */
+  protected onVisibleChange(keys: readonly unknown[]): void {
+    const prefs = this.columnPrefs();
+    if (!prefs) return;
+    const chosen = new Set(keys.filter((k): k is string => typeof k === 'string'));
+    for (const c of this.columnChoices() ?? []) if (c.locked) chosen.add(c.key);
+    this.savePrefs({ ...prefs, visible: prefs.order.filter((k) => chosen.has(k)) });
+  }
+
+  /**
+   * Se ha arrastrado una cabecera. Las visibles toman el orden nuevo en los huecos que ya ocupaban, así que las
+   * ocultas no se mueven y vuelven a salir donde estaban. Las fijas vuelven a su sitio aunque se suelte encima.
+   */
+  protected onColumnOrderChange(fields: readonly string[]): void {
+    const prefs = this.columnPrefs();
+    const choices = this.columnChoices();
+    if (!prefs || !choices) return;
+    const moved = fields.filter((f) => f !== ACTIONS_FIELD && prefs.visible.includes(f));
+    const queue = [...moved];
+    const order = prefs.order.map((k) => (prefs.visible.includes(k) ? queue.shift()! : k));
+    const next = normalizePrefs(choices, { order, visible: prefs.visible, widths: prefs.widths });
+    this.savePrefs(next);
+  }
+
+  /** Se ha soltado el borde de una columna: se recuerdan, en rem, los anchos de las que ya tenían uno medido. */
+  protected onColumnWidthsChange(widthsPx: Readonly<Record<string, number>>): void {
+    const prefs = this.columnPrefs();
+    if (!prefs) return;
+    const base = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const measured = new Set(this.columns().filter((c) => c.width).map((c) => c.field));
+    const widths: Record<string, string> = { ...prefs.widths };
+    for (const [field, px] of Object.entries(widthsPx))
+      if (measured.has(field) && px > 0) widths[field] = `${+(px / base).toFixed(3)}rem`;
+    this.savePrefs({ ...prefs, widths });
   }
 
   private isOpenable(row: T): boolean {

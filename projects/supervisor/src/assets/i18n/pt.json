@@ -949,6 +949,7 @@
     "remove_from_list": "Remover {{name}} da lista",
     "bulk_updated": "{{count}} itens atualizados",
     "columns": "Colunas",
+    "columns_count": "{0} colunas",
     "edit_field": "Editar campo",
     "preview_impact": "Pré-visualizar impacto",
     "discard_title": "Descartar alterações?",

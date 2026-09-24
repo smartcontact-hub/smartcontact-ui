@@ -8,12 +8,22 @@
 
     @if (columnChoices() || searchPlaceholder() || exportable()) {
       <div class="page__action-bar">
-        @if (columnChoices(); as choices) {
-          <!-- `orderedVisibleChange`: la tabla respeta también el ORDEN que se arrastra en el selector. -->
-          <sc-column-selector
-            [columns]="choices"
-            [storageKey]="columnStorageKey() ?? ''"
-            (orderedVisibleChange)="onColumnsChange($event)"
+        @if (columnPrefs(); as prefs) {
+          <!-- El selector de columnas NATIVO: el ejemplo «Column Toggle» de primeng.dev/table, un MultiSelect
+               (DD-113). Solo decide qué se ve; el orden se cambia arrastrando las cabeceras de la tabla. Dice
+               siempre «N columnas» (`maxSelectedLabels` 0) y la columna fija sale marcada y sin poder quitarse. -->
+          <sc-multiselect
+            class="page__columns"
+            [options]="columnOptions()"
+            optionLabel="label"
+            optionValue="key"
+            optionDisabled="locked"
+            [value]="$any(prefs.visible)"
+            (valueChange)="onVisibleChange($event)"
+            [maxSelectedLabels]="0"
+            [selectedItemsLabel]="'common.columns_count' | translate"
+            [placeholder]="'common.columns' | translate"
+            [ariaLabel]="'common.columns' | translate"
           />
         }
         @if (searchPlaceholder(); as placeholder) {
@@ -45,14 +55,17 @@
       <ng-content select="[scListEmpty]" />
     } @else {
       <div class="table-card" [class.table-card--seleccion]="selectedIds().size > 0">
-        <!-- Ancho ajustable solo en las listas que eligen columnas: la tabla ajustable nativa recorta cada celda
-             (`overflow: hidden`), y en Etiquetas eso dejaba fuera de sitio el panel que se ancla dentro de la
-             celda (medido: `admin-datatable-pilot`, el panel 70px por encima de su fila). -->
+        <!-- Ancho ajustable y orden arrastrando, solo en las listas que eligen columnas: la tabla ajustable nativa
+             recorta cada celda (`overflow: hidden`), y en Etiquetas eso dejaba fuera de sitio el panel que se
+             ancla dentro de la celda (medido: `admin-datatable-pilot`, el panel 70px por encima de su fila). -->
         <sc-datatable
           scrollable
           scrollHeight="flex"
           virtualScroll
           [resizableColumns]="!!columnChoices()"
+          [reorderableColumns]="!!columnChoices()"
+          (columnOrderChange)="onColumnOrderChange($event)"
+          (columnWidthsChange)="onColumnWidthsChange($event)"
           [tableMinWidth]="effectiveTableMinWidth()"
           variant="list"
           [value]="displayed()"

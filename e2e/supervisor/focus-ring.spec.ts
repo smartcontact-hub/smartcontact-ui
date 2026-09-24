@@ -145,6 +145,10 @@ for (const ruta of RUTAS) {
         // Los botones del preset tiñen el anillo con su propio color, a
         // propósito y de forma uniforme. Ver la nota de cabecera.
         if (el.closest('.p-button')) return null;
+        // El campo oculto con el que los selectores nativos (MultiSelect, Select) reciben el teclado vive en
+        // `.p-hidden-accessible`, recortado a 1px: su anillo no se ve. Lo que se ve es el borde del control, que
+        // pasa al color de foco (medido con Tab en el selector de columnas, 2026-09-24).
+        if (el.closest('.p-hidden-accessible')) return null;
         return {
           color: cs.outlineColor,
           quien: `${el.tagName.toLowerCase()}.${(el.className || '').toString().slice(0, 40)}`,
