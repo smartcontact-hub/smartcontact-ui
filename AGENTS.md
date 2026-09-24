@@ -315,8 +315,9 @@ DesignOps en un repo que lee cualquiera:
 
 - **Sin nombres de personas**: ni «(Nombre, 2026-09-18)», ni «X pidió / decidió / detectó», ni
   «decisión de X». Tampoco de colegas: por su rol («diseño del Kit»).
-- **La procedencia es la fuente**: DD-NN, el ticket (SISMAC-NNNN) o el nodo de Figma. Si no la hay,
-  la fecha sola, o «decisión de producto (fecha)» cuando alguien querrá revisarla.
+- **La procedencia es la fuente**: DD-NN, el ticket (SISMAC-NNNN) o el nodo de Figma. Si no la hay y
+  la línea registra una DECISIÓN, «decisión de producto (fecha)»: es lo que le dice a un agente que
+  no la deshaga a la ligera, la señal que antes daba el nombre. La fecha sola solo data un hecho.
 - **Sin citas literales de conversación**: la cita pasa al criterio que expresaba. «veo
   desalineaciones» → «alineación óptica (QA visual, 2026-09-24)»; «nada es clicable» → «sin
   affordance de clic». Vocabulario: revisión visual, QA visual, decisión de producto, criterio del

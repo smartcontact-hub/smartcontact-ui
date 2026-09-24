@@ -92,7 +92,8 @@ línea que acompañaba, y todas dejaban un registro de conversación donde se le
 
 **Decisión** ·
 1. **Comentarios, commits y portadas de PR sin nombres de personas** ni citas literales. La procedencia es la DD, el
-   ticket o el nodo de Figma; si no hay, la fecha sola o «decisión de producto (fecha)». Las citas pasan al criterio
+   ticket o el nodo de Figma; si no hay, «decisión de producto (fecha)», que avisa de que no se deshace a la ligera
+   (la fecha sola solo data un hecho). Las citas pasan al criterio
    que expresaban, en vocabulario de UX engineering y DesignOps. Colegas, por su rol. AGENTS.md §«Voz del código».
 2. **La excepción es el nombre como DATO**: el agente de demo con el nombre del autor sigue ahí a propósito
    (`audit-seed-pii.mjs`), declarado con su motivo en `DATO_PERMITIDO`.

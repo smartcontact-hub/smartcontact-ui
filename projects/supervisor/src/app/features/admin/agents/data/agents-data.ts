@@ -380,7 +380,7 @@ const BASE_AGENTS: readonly Agent[] = [
 ];
 
 /*
- * DEMO (2026-09-14): 500 agentes por defecto, para que la lista enseñe la tabla con scroll propio
+ * DEMO (decisión de producto, 2026-09-14): 500 agentes por defecto, para que la lista enseñe la tabla con scroll propio
  * y lista virtual (DD-95) con un volumen real. Los 16 de arriba conservan sus ids, que usan la
  * membresía de grupos y el catálogo de entidades; los demás repiten sus datos con nombres de Hollywood.
  */

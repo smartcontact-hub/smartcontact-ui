@@ -242,7 +242,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   );
 
   /* Idiomas y Etiquetas ACUMULAN, así que son un `sc-multiselect` como Agendas y Plantillas
-   * (2026-09-14). Antes eran un select que se vaciaba tras cada elección más una fila de
+   * (DD-105). Antes eran un select que se vaciaba tras cada elección más una fila de
    * pastillas debajo. Valores `computed` por lo mismo que las plantillas: una lista estable. */
   protected readonly languageValue = computed(() => [...this.form().languages]);
 

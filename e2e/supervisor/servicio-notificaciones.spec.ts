@@ -37,7 +37,7 @@ test('Servicio · sin URL las casillas salen desmarcadas; con URL, activas y mar
 /*
  * LA DIRECCIÓN SE LEE. Las tres columnas de casillas medían 175 cada una (como la matriz de Agentes) y el campo
  * de la dirección se quedaba en 121 px a 1440: no cabía ni `mi-sistema.com/eventos`. Ahora las casillas miden
- * su rótulo y la dirección se queda el resto (2026-09-15).
+ * su rótulo y la dirección se queda el resto (decisión de producto, 2026-09-15).
  */
 test('Servicio · a 1440 la dirección cabe entera en su campo', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });

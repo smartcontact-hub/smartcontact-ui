@@ -23,7 +23,8 @@
  * motivo, y la lista no se pudre: una entrada que ya no casa con nada, falla.
  *
  * QUÉ HACER SI SE PONE ROJO: reescribe el comentario sin la persona. «(Nombre, 2026-09-18)» pasa a
- * su fuente (DD, ticket, maqueta) o a la fecha sola; una cita pasa al criterio que expresaba;
+ * su fuente (DD, ticket, maqueta) o, si registra una decisión, a «decisión de producto (fecha)», que
+ * avisa como antes el nombre de que no se deshace a la ligera; una cita pasa al criterio que expresaba;
  * «X lo detectó» pasa a «detectado en revisión visual». Si de verdad es un dato, añádelo abajo con
  * su motivo.
  *
@@ -136,8 +137,8 @@ if (process.argv[1] && process.argv[1].endsWith('audit-personal-names.mjs')) {
       for (const m of menciones) log(`  ${m.fichero}:${m.n}  ${m.linea.trim().slice(0, 140)}`);
       log();
       log('  El repo es público y un comentario explica el criterio, no quién lo pidió. Reescríbelo');
-      log('  sin la persona: la decisión se cita por su fuente (DD, ticket, nodo de Figma) o por la');
-      log('  fecha sola, y una cita literal pasa al criterio de diseño que expresaba.');
+      log('  sin la persona: la decisión se cita por su fuente (DD, ticket, nodo de Figma) o como');
+      log('  «decisión de producto (fecha)», y una cita literal pasa al criterio de diseño que expresaba.');
       log('  Cómo escribirlo: AGENTS.md §«Voz del código». Si es un DATO, va en DATO_PERMITIDO');
       log('  (scripts/audit-personal-names.mjs) con su motivo.');
     }

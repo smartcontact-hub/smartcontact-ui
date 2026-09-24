@@ -228,13 +228,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
      * desaparecer. Quitarla movía las dos pestañas de su derecha al marcar o desmarcar un canal, y
      * además borraba la pista de que existe: una sección que se esfuma no enseña que hay algo ahí
      * para cuando enciendas teléfono. `disabled` es del `<p-tab>` NATIVO (API instalada 22.1.2), no
-     * una capa nuestra. (2026-09-23.) */
+     * una capa nuestra. (Decisión de producto, 2026-09-23.) */
     const middle = [resources, announcements, advanced];
     return [channels, identity, ...middle];
   });
 
   /**
-   * LA FORMA DE ESTA FICHA — «una página + pestañas», elegida el 2026-09-22 entre las
+   * LA FORMA DE ESTA FICHA — «una página + pestañas», decisión de producto del 2026-09-22 entre las
    * cinco que se construyeron en el laboratorio (`comparar/fichas`, que no se funde).
    *
    * De dónde sale (2026-09-21): lo importante en una sola página, ocupando el ancho que pida el
@@ -258,7 +258,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   /**
    * Las secciones que viven detrás del conmutador, en orden. TODAS, incluida «Canales y agentes»
-   * (2026-09-22): antes ese bloque se quedaba fijo arriba con su propio `h2`, así que la
+   * (decisión de producto, 2026-09-22): antes ese bloque se quedaba fijo arriba con su propio `h2`, así que la
    * pantalla tenía dos gramáticas —un título suelto y una tira de pestañas— para la misma cosa,
    * una sección del grupo. Ahora hay UNA sola tira, arriba, y el nombre de cada sección se lee en
    * su pestaña. Canales abre por defecto por el orden de `navSections`.
@@ -612,7 +612,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.updateField('typification', typeof value === 'string' ? value : null);
   }
 
-  /** Crear una tipificación SIN salir de la ficha (2026-09-18): antes había que abandonar el flujo solo para
+  /** Crear una tipificación SIN salir de la ficha (decisión de producto, 2026-09-18): antes había que abandonar el flujo solo para
    *  dar de alta una. Mismo formulario que Repositorios (`TIPIFICACION_FIELDS`), en un diálogo. Al guardar, el grupo
    *  queda con la categoría recién creada. */
   protected readonly creatingTipificacion = signal(false);
@@ -695,7 +695,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
   }
 
-  /** «Dominios permitidos» del script de chat (2026-09-20): en qué webs se puede insertar sin que
+  /** «Dominios permitidos» del script de chat (decisión de producto, 2026-09-20): en qué webs se puede insertar sin que
    *  cualquiera lo copie. Texto libre en un campo + Enter/botón lo añade a la lista; sin duplicados. */
   protected readonly domainInput = signal('');
 
@@ -876,7 +876,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         chatStrategy: f.channels.has('chat') ? f.chatStrategy : undefined,
       };
 
-      // Como Contact Center y la ficha de agente (2026-09-16): guardar se queda en la ficha, con su aviso.
+      // Como Contact Center y la ficha de agente (decisión de producto, 2026-09-16): guardar se queda en la ficha, con su aviso.
       const editingId = this.editingId()!;
       this.groupsStore.updateGroup(editingId, { ...payload });
       this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(f.links, editingId));

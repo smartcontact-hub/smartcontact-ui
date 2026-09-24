@@ -78,7 +78,7 @@
  * la pantalla aunque el grupo tenga veinte agentes. Mide lo que sus filas y solo se recorta cuando no caben; el tope
  * es lo que deja la pantalla descontando el marco (barra de arriba, miga, tarjeta y lo que va sobre la tabla), y
  * nunca baja de `scale/18` para pantallas bajas y zoom, donde entonces hace scroll la página.
- * Criterio (2026-09-18): la tabla absorbe el `1fr` de la rejilla y la ficha entera se ve sin salir de la pantalla. */
+ * Decisión de producto (2026-09-18): la tabla absorbe el `1fr` de la rejilla y la ficha entera se ve sin salir de la pantalla. */
 .table-card {
   display: flex;
   flex-direction: column;

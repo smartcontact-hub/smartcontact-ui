@@ -8,7 +8,7 @@ import { disableAnimations, forceDarkTheme, forceLightTheme } from '../superviso
 /**
  * CAPTURAS DE ANTES Y DESPUÉS DEL EXPORT, PARA EL PR DEL ROBOT DE TOKENS.
  *
- * Por qué (2026-09-14): el PR del robot se revisa y se funde con un clic, y para revisar hace falta ver. Los
+ * Por qué (requisito de producto, 2026-09-14): el PR del robot se revisa y se funde con un clic, y para revisar hace falta ver. Los
  * píxeles no cruzan de máquina, así que las dos tandas se hacen en el MISMO runner: el Supervisor de
  * `main` (antes) y el Supervisor con el export aplicado (después), en claro y en oscuro, a 1440.
  * Este spec solo fotografía; comparar y escribir el PR lo hace `scripts/tokens-sync-capturas.mjs`.
