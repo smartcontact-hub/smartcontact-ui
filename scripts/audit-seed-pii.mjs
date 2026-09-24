@@ -113,6 +113,7 @@ export const TELEFONOS_PERMITIDOS = new Map([
   ['600123456', 'sc-docs: ejemplo de la demo de sc-subsection, patrón de teclado'],
 
   // projects/supervisor
+  ['600000000', 'supervisor (agents-data): base inventada de la serie de demo 600000000 + id × 1237 (2026-09-24), para que cada agente generado tenga su propio móvil'],
   ['698765432', 'supervisor (agents-data): inventado, patrón de teclado'],
   ['900100200', 'supervisor (agendas + i18n): inventado, serie 900 correlativa'],
   ['900100201', 'supervisor (agendas + i18n): inventado, serie 900 correlativa'],

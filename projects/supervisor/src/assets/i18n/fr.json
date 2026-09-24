@@ -958,7 +958,6 @@
     "cross_tab_warning": "Cet enregistrement est édité dans un autre onglet. Les modifications peuvent s'écraser mutuellement.",
     "undo": "Annuler",
     "change_reverted": "Modification annulée",
-    "presence_changed": "Présence de {{name}} → {{status}}",
     "photo": {
       "select": "Sélectionner une photo",
       "change": "Changer la photo",
@@ -1442,7 +1441,7 @@
       "duplicate_subtitle": "Copie les agents, les canaux et les réglages de «{{source}}». Pas le téléphone associé.",
       "copy_name": "{{name}} (copie)"
     },
-    "search_placeholder": "Rechercher un groupe par nom, ID, téléphone ou stratégie...",
+    "search_placeholder": "Rechercher un groupe par nom, ID, téléphone, priorité ou stratégie...",
     "no_results_query": "Aucun groupe ne correspond à « {{query}} ».",
     "entity_singular": "groupe",
     "table": {
@@ -1682,17 +1681,19 @@
   "agents": {
     "page_title": "Agents",
     "create_button": "Nouvel agent",
-    "search_placeholder": "Rechercher un agent par nom, code, extension ou email...",
+    "search_placeholder": "Rechercher un agent par nom, ID, extension, email ou téléphone...",
     "no_results_query": "Aucun agent ne correspond à « {{query}} ».",
     "entity_singular": "agent",
     "table": {
-      "code": "Code",
+      "code": "ID",
       "name": "Nom",
       "extension": "Extension",
+      "email": "Email",
+      "phone": "Téléphone",
       "channels": "Canaux",
       "type": "Type",
       "presence": "État",
-      "status": "Activation",
+      "recording": "Enregistrement",
       "groups": "Groupes"
     },
     "type": {
@@ -1710,13 +1711,19 @@
       "phone": "Tél",
       "webrtc": "WebRTC"
     },
-    "presence_change_aria": "Changer le statut de {{name}} : {{status}}",
+    "ext_kind": {
+      "phone": "Téléphone",
+      "webrtc": "WebRTC"
+    },
     "presence": {
       "available": "Disponible",
       "unavailable": "Indisponible",
       "bathroom": "Toilettes",
       "lunch": "Déjeuner",
-      "training": "Formation"
+      "training": "Formation",
+      "wrap_up": "Post-conversation",
+      "administrative": "Administratif",
+      "offline": "Déconnecté"
     },
     "status": {
       "active": "Actif",
@@ -1874,12 +1881,15 @@
     },
     "entity_plural": "agents",
     "export": {
-      "code": "Code",
+      "code": "ID",
       "name": "Nom",
       "extension": "Extension",
-      "type": "Type",
+      "extension_type": "Type d'extension",
       "email": "Email",
+      "phone": "Téléphone",
+      "type": "Type",
       "status": "État",
+      "recording": "Enregistrement",
       "groups": "Groupes",
       "sheet": "Agents"
     },

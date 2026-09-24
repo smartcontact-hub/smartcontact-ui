@@ -10,7 +10,6 @@ import {
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
@@ -18,7 +17,7 @@ import { UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent, IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
+import { ChannelIconComponent, IllustratedAvatarComponent, ListPageComponent, type LabelColor } from '@shared/components';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
@@ -38,8 +37,9 @@ import {
 } from '@smartcontact-hub/components';
 import {
   AGENT_TYPE_LABEL_KEYS,
+  AGENT_TYPES,
   Agent,
-  AgentType,
+  ExtensionType,
   PRESENCE_LABEL_KEYS,
   PresenceStatus,
 } from '../data/agents-data';
@@ -58,15 +58,36 @@ interface PendingBulkEdit {
 /* v2 — schema bumped from a Set<string> to an ordered string[] when the
  * ColumnSelector gained drag-to-reorder + per-column defaultVisible.
  * Older `_v1` caches no longer parse and are silently ignored. */
-const COLUMN_PREF_KEY = 'sc-agents-columns-v2';
-const AGENT_TYPES: readonly AgentType[] = ['normal', 'cuscare', 'cuscare_carrier', 'admin_cuscare'];
-const PRESENCE_STATES: readonly PresenceStatus[] = [
-  'disponible',
-  'no_disponible',
-  'bano',
-  'comida',
-  'formacion',
-];
+/* v5 (2026-09-24): columnas nuevas (Email, Teléfono, Grabación), fuera Activación, y el ID detrás del nombre.
+ * Una lista guardada no las conoce. Salta la v4, que usó la rama `comparar/fichas` en el mismo origen local. */
+const COLUMN_PREF_KEY = 'sc-agents-columns-v5';
+
+/** El glifo de cada tipo de extensión: la llamada va por un teléfono o por la web. */
+const EXTENSION_ICONS: Readonly<Record<ExtensionType, string>> = {
+  phone: 'smartphone',
+  webrtc: 'language',
+};
+
+/** Cómo se pinta la etiqueta de un estado: un color de etiqueta, o una severidad nativa de `p-tag`. */
+type PresenceTag = { readonly labelColor: LabelColor } | { readonly severity: 'warn' | 'secondary' };
+
+/**
+ * La etiqueta de cada estado, la MISMA que en Contact Center › Servicio, donde se configuran:
+ * Disponible verde; No disponible rojo, y en rojo también sus motivos (Baño, Comida, Formación), porque son maneras de
+ * no estar disponible; Administrativo, la etiqueta nativa de aviso (`warn`), que en oscuro sigue amarilla (el ámbar
+ * salía marrón). Los dos que allí no salen, porque no se eligen: Post-conversando en azul y Desconectado con la
+ * etiqueta «Draft» de PrimeNG (`secondary`).
+ */
+const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
+  disponible: { labelColor: 'green' },
+  no_disponible: { labelColor: 'red' },
+  bano: { labelColor: 'red' },
+  comida: { labelColor: 'red' },
+  formacion: { labelColor: 'red' },
+  administrativo: { severity: 'warn' },
+  post_conversando: { labelColor: 'blue' },
+  desconectado: { severity: 'secondary' },
+};
 
 @Component({
   selector: 'sc-agents-list-page',
@@ -83,7 +104,6 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
     ListPageComponent,
-    MenuModule,
     TranslateModule,
   ],
   templateUrl: './agents-list-page.component.html',
@@ -116,7 +136,7 @@ export class AgentsListPageComponent {
       if (!link.active) continue;
       for (const c of link.channels) set.add(c);
     }
-    const order: readonly Channel[] = ['phone', 'chat', 'email'];
+    const order: readonly Channel[] = ['phone', 'chat', 'whatsapp', 'email'];
     return order.filter((c) => set.has(c));
   }
 
@@ -135,51 +155,33 @@ export class AgentsListPageComponent {
   }
 
   protected readonly plusIcon = 'add';
-  protected readonly chevronDownIcon = 'expand_more';
-  protected readonly checkIcon = 'check';
-  protected readonly phoneIcon = 'call';
-  protected readonly chatIcon = 'chat_bubble';
-  protected readonly emailIcon = 'mail';
   protected readonly emptyIcon = 'headphones';
+  protected readonly recordingIcon = 'radio_button_checked';
 
   protected readonly typeKeys = AGENT_TYPE_LABEL_KEYS;
   protected readonly presenceKeys = PRESENCE_LABEL_KEYS;
-  protected readonly presenceStates = PRESENCE_STATES;
   protected readonly agents = this.agentsStore.agents;
 
   /** Selección: la lista la marca; de ella cuelgan la edición en lote, el borrado y el diálogo de impacto. */
   protected readonly selectedIds = signal<ReadonlySet<Agent['id']>>(new Set());
-  /** Agente cuya lista de estados está abierta (el menú es uno solo para toda la tabla). */
-  protected readonly presenceMenuAgent = signal<Agent | null>(null);
-  protected readonly presenceMenuItems = computed<MenuItem[]>(() => {
-    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
-    return this.presenceStates.map((p) => ({
-      id: p,
-      label: this.translate.instant(this.presenceKeys[p]),
-      command: () => {
-        const agent = this.presenceMenuAgent();
-        if (agent) this.onPresenceChange(agent, p);
-      },
-    }));
-  });
   protected readonly deleteTarget = signal<readonly Agent[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
   protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    /* Lo que sale de inicio es lo que usa todo el mundo. Opcionales: el ID, que solo usa
+     * posventa en sus incidencias; el teléfono, que no todos tienen; y el tipo, que solo existe en CusCare. */
     return [
-      {
-        key: 'code',
-        label: this.translate.instant('agents.table.code'),
-        defaultVisible: false,
-      },
       { key: 'name', label: this.translate.instant('agents.table.name'), locked: true },
+      { key: 'code', label: this.translate.instant('agents.table.code'), defaultVisible: false },
       { key: 'extension', label: this.translate.instant('agents.table.extension') },
+      { key: 'email', label: this.translate.instant('agents.table.email') },
+      { key: 'phone', label: this.translate.instant('agents.table.phone'), defaultVisible: false },
       { key: 'channels', label: this.translate.instant('agents.table.channels') },
-      { key: 'type', label: this.translate.instant('agents.table.type') },
+      { key: 'type', label: this.translate.instant('agents.table.type'), defaultVisible: false },
       { key: 'presence', label: this.translate.instant('agents.table.presence') },
-      { key: 'status', label: this.translate.instant('agents.table.status') },
+      { key: 'recording', label: this.translate.instant('agents.table.recording') },
       { key: 'groups', label: this.translate.instant('agents.table.groups') },
     ];
   });
@@ -197,27 +199,26 @@ export class AgentsListPageComponent {
    *
    * El `field` de cada columna es EL MISMO `key` que usa el `columnDefs` del
    * `sc-column-selector`: es lo que casa `[visibleColumns]` con el selector
-   * (y lo que hay persistido en `sc-agents-columns-v2`).
+   * (y lo que hay persistido en `sc-agents-columns-v5`).
    */
   private readonly codeTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('codeTpl');
   private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('nameTpl');
   private readonly extensionTpl =
     viewChild<TemplateRef<ScColumnCellContext<Agent>>>('extensionTpl');
+  private readonly emailTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('emailTpl');
+  private readonly phoneTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('phoneTpl');
   private readonly channelsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('channelsTpl');
   private readonly typeTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('typeTpl');
   private readonly presenceTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('presenceTpl');
-  private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('statusTpl');
+  private readonly recordingTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('recordingTpl');
   private readonly groupsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('groupsTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    /* Anchos MEDIDOS del dato más largo de cada columna corta en los cuatro idiomas: el nombre se come el
+     * resto y la tabla lleva `tableMinWidth`, así que por debajo se desplaza en vez de cortar. Todas llevan
+     * ancho en rem, también las opcionales: `sc-list-page` descuenta las ocultas del ancho mínimo. */
     return [
-      {
-        field: 'code',
-        header: this.translate.instant('agents.table.code'),
-        sortable: true,
-        cellTemplate: this.codeTpl(),
-      },
       {
         field: 'name',
         header: this.translate.instant('agents.table.name'),
@@ -225,20 +226,40 @@ export class AgentsListPageComponent {
         cellTemplate: this.nameTpl(),
       },
       {
+        // Detrás del nombre y opcional: es un código que solo usa posventa. Antes iba el primero.
+        field: 'code',
+        header: this.translate.instant('agents.table.code'),
+        sortable: true,
+        cellTemplate: this.codeTpl(),
+        width: '6rem',
+      },
+      {
         field: 'extension',
         header: this.translate.instant('agents.table.extension'),
         sortable: true,
         cellTemplate: this.extensionTpl(),
-        /* Anchos MEDIDOS del dato más largo de cada columna corta en los cuatro idiomas (2026-09-14):
-         * el nombre se come el resto y la tabla lleva `tableMinWidth`, así que por debajo se
-         * desplaza en vez de cortar. Antes el nombre iba a 252 y «CusCare Carrier» se cortaba. */
+        width: '7.5rem',
+      },
+      {
+        field: 'email',
+        header: this.translate.instant('agents.table.email'),
+        sortable: true,
+        cellTemplate: this.emailTpl(),
+        width: '16.75rem',
+      },
+      {
+        field: 'phone',
+        header: this.translate.instant('agents.table.phone'),
+        sortable: true,
+        cellTemplate: this.phoneTpl(),
         width: '8rem',
       },
       {
         field: 'channels',
         header: this.translate.instant('agents.table.channels'),
         cellTemplate: this.channelsTpl(),
-        width: '6.5rem',
+        /* Cuatro glifos de 16 px con su hueco (teléfono, chat, WhatsApp, email). */
+        width: '7.75rem',
       },
       {
         // `field: 'type'` no existe en `Agent` (la propiedad es `agentType`), así
@@ -257,14 +278,16 @@ export class AgentsListPageComponent {
         field: 'presence',
         header: this.translate.instant('agents.table.presence'),
         cellTemplate: this.presenceTpl(),
-        width: '10.5rem',
+        /* «Post-conversando» (122) + punto (7) + hueco (7) = 136 px de dato; con 10rem quedaban 132 (2026-09-24). */
+        width: '10.25rem',
       },
       {
-        field: 'status',
-        header: this.translate.instant('agents.table.status'),
+        field: 'recording',
+        header: this.translate.instant('agents.table.recording'),
         sortable: true,
-        cellTemplate: this.statusTpl(),
-        width: '7.5rem',
+        cellTemplate: this.recordingTpl(),
+        /* La cabecera en francés, «Enregistrement», con su flecha de orden. */
+        width: '9.5rem',
       },
       {
         field: 'groups',
@@ -275,25 +298,10 @@ export class AgentsListPageComponent {
     ];
   });
 
+  /* Sin «Activación» (ya no existe) ni «Estado» (no se cambia desde la lista). */
   protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => {
     this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
     return [
-      {
-        key: 'status',
-        label: this.translate.instant('agents.table.status'),
-        values: [
-          { value: 'active', label: this.translate.instant('agents.status.active') },
-          { value: 'inactive', label: this.translate.instant('agents.status.inactive') },
-        ],
-      },
-      {
-        key: 'presenceStatus',
-        label: this.translate.instant('agents.table.presence'),
-        values: PRESENCE_STATES.map((p) => ({
-          value: p,
-          label: this.translate.instant(this.presenceKeys[p]),
-        })),
-      },
       {
         key: 'agentType',
         label: this.translate.instant('agents.table.type'),
@@ -313,12 +321,22 @@ export class AgentsListPageComponent {
     ];
   });
 
-  /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas). */
+  /**
+   * Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): cualquier campo de texto de la tabla, se
+   * vea o no su columna, con los rótulos en el idioma de la pantalla (2026-09-24). Los iconos (canales, tipo de
+   * extensión) y lo que solo sale al pasar el ratón
+   * (los grupos) no cuentan: casaría una fila sin que se viera por qué.
+   */
   protected readonly matchesSearch = (a: Agent, q: string): boolean =>
-    a.name.toLowerCase().includes(q) ||
-    a.code.includes(q) ||
-    a.extension.includes(q) ||
-    (a.email?.toLowerCase().includes(q) ?? false);
+    [
+      a.name,
+      a.code,
+      a.extension,
+      a.email,
+      a.phone,
+      this.translate.instant(this.typeKeys[a.agentType]),
+      a.presenceStatus ? this.translate.instant(this.presenceKeys[a.presenceStatus]) : undefined,
+    ].some((value) => value?.toLowerCase().includes(q) ?? false);
 
   /* El orden lo resuelve ESTA página y no la tabla: `type` se ordena por `agentType` (no hay `row.type`) y `name`
    * compara con locale 'es'. Devuelve el orden ascendente; la dirección la pone la lista. */
@@ -330,10 +348,14 @@ export class AgentsListPageComponent {
         return a.code.localeCompare(b.code);
       case 'extension':
         return a.extension.localeCompare(b.extension);
+      case 'email':
+        return (a.email ?? '').localeCompare(b.email ?? '');
+      case 'phone':
+        return (a.phone ?? '').localeCompare(b.phone ?? '');
       case 'type':
         return a.agentType.localeCompare(b.agentType);
-      case 'status':
-        return a.status.localeCompare(b.status);
+      case 'recording':
+        return Number(a.permissions.recording) - Number(b.permissions.recording);
       default:
         return 0;
     }
@@ -457,27 +479,18 @@ export class AgentsListPageComponent {
     return this.presenceKeys[presence];
   }
 
-  protected openPresenceMenu(agent: Agent, menu: { toggle: (event: Event) => void }, event: Event): void {
-    event.stopPropagation();
-    this.presenceMenuAgent.set(agent);
-    menu.toggle(event);
+  protected presenceLabelColor(presence: PresenceStatus): LabelColor | null {
+    const tag = PRESENCE_TAGS[presence];
+    return 'labelColor' in tag ? tag.labelColor : null;
   }
 
-  protected onPresenceChange(agent: Agent, value: PresenceStatus): void {
-    const previous = agent.presenceStatus ?? 'disponible';
-    if (value === previous) return;
-    this.agentsStore.updatePresence(agent.id, value);
-    this.undoStack.push(
-      this.translate.instant('common.presence_changed', {
-        name: agent.name,
-        status: this.translate.instant(this.presenceKeys[value]),
-      }),
-      this.translate.instant('common.presence_changed', {
-        name: agent.name,
-        status: this.translate.instant(this.presenceKeys[previous]),
-      }),
-      () => this.agentsStore.updatePresence(agent.id, previous),
-    );
+  protected presenceSeverity(presence: PresenceStatus): 'warn' | 'secondary' {
+    const tag = PRESENCE_TAGS[presence];
+    return 'severity' in tag ? tag.severity : 'secondary';
+  }
+
+  protected extensionIcon(type: ExtensionType): string {
+    return EXTENSION_ICONS[type];
   }
 
   protected requestDeleteSelection(): void {
@@ -566,23 +579,31 @@ export class AgentsListPageComponent {
     this.deleteTarget.set(null);
   }
 
+  /** Exporta TODOS los campos de la tabla, se vean o no: el fichero es para trabajar con él, no una foto. */
   protected onExport(visibleRows: readonly Agent[]): void {
+    const t = (key: string): string => this.translate.instant(key);
     const headers = [
-      this.translate.instant('agents.export.code'),
-      this.translate.instant('agents.export.name'),
-      this.translate.instant('agents.export.extension'),
-      this.translate.instant('agents.export.type'),
-      this.translate.instant('agents.export.email'),
-      this.translate.instant('agents.export.status'),
-      this.translate.instant('agents.export.groups'),
+      t('agents.export.code'),
+      t('agents.export.name'),
+      t('agents.export.extension'),
+      t('agents.export.extension_type'),
+      t('agents.export.email'),
+      t('agents.export.phone'),
+      t('agents.export.type'),
+      t('agents.export.status'),
+      t('agents.export.recording'),
+      t('agents.export.groups'),
     ];
     const rows = visibleRows.map((a) => [
       a.code,
       a.name,
       a.extension,
-      this.translate.instant(this.typeKeys[a.agentType]),
+      t(`agents.ext_kind.${a.extensionType}`),
       a.email ?? '',
-      this.translate.instant(`agents.status.${a.status}`),
+      a.phone ?? '',
+      t(this.typeKeys[a.agentType]),
+      a.presenceStatus ? t(this.presenceKeys[a.presenceStatus]) : '',
+      t(a.permissions.recording ? 'common.yes' : 'common.no'),
       this.groupsForAgent(a.id)
         .map((g) => g.name)
         .join(', '),
@@ -590,7 +611,7 @@ export class AgentsListPageComponent {
     this.xlsx.export({
       headers,
       rows,
-      sheetName: this.translate.instant('agents.export.sheet'),
+      sheetName: t('agents.export.sheet'),
       filePrefix: 'agentes',
     });
   }

@@ -958,7 +958,6 @@
     "cross_tab_warning": "Este registro está siendo editado en otra pestaña. Los cambios pueden sobrescribirse.",
     "undo": "Deshacer",
     "change_reverted": "Cambio revertido",
-    "presence_changed": "Presencia de {{name}} → {{status}}",
     "photo": {
       "select": "Seleccionar foto",
       "change": "Cambiar foto",
@@ -1442,7 +1441,7 @@
       "duplicate_subtitle": "Se copian los agentes, los canales y los ajustes de «{{source}}». El teléfono asociado, no.",
       "copy_name": "{{name}} (copia)"
     },
-    "search_placeholder": "Buscar grupo por nombre, ID, teléfono o estrategia...",
+    "search_placeholder": "Buscar grupo por nombre, ID, teléfono, prioridad o estrategia...",
     "no_results_query": "No hay grupos que coincidan con «{{query}}».",
     "entity_singular": "grupo",
     "table": {
@@ -1682,17 +1681,19 @@
   "agents": {
     "page_title": "Agentes",
     "create_button": "Nuevo agente",
-    "search_placeholder": "Buscar agente por nombre, código, extensión o email...",
+    "search_placeholder": "Buscar agente por nombre, ID, extensión, email o teléfono...",
     "no_results_query": "No hay agentes que coincidan con «{{query}}».",
     "entity_singular": "agente",
     "table": {
-      "code": "Código",
+      "code": "ID",
       "name": "Nombre",
       "extension": "Extensión",
+      "email": "Email",
+      "phone": "Teléfono",
       "channels": "Canales",
       "type": "Tipo",
       "presence": "Estado",
-      "status": "Activación",
+      "recording": "Grabación",
       "groups": "Grupos"
     },
     "type": {
@@ -1710,13 +1711,19 @@
       "phone": "Tel",
       "webrtc": "WebRTC"
     },
-    "presence_change_aria": "Cambiar el estado de {{name}}: {{status}}",
+    "ext_kind": {
+      "phone": "Teléfono",
+      "webrtc": "WebRTC"
+    },
     "presence": {
       "available": "Disponible",
       "unavailable": "No disponible",
       "bathroom": "Baño",
       "lunch": "Comida",
-      "training": "Formación"
+      "training": "Formación",
+      "wrap_up": "Post-conversando",
+      "administrative": "Administrativo",
+      "offline": "Desconectado"
     },
     "status": {
       "active": "Activo",
@@ -1874,12 +1881,15 @@
     },
     "entity_plural": "agentes",
     "export": {
-      "code": "Código",
+      "code": "ID",
       "name": "Nombre",
       "extension": "Extensión",
-      "type": "Tipo",
+      "extension_type": "Tipo de extensión",
       "email": "Email",
+      "phone": "Teléfono",
+      "type": "Tipo",
       "status": "Estado",
+      "recording": "Grabación",
       "groups": "Grupos",
       "sheet": "Agentes"
     },

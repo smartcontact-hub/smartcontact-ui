@@ -140,7 +140,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> {
    * Ancho mínimo de la tabla (p. ej. `'65rem'`), la suma de lo que mide el dato de cada columna.
    * Por debajo, la tabla se desplaza de lado DENTRO de su caja en vez de recortar texto con
    * puntos suspensivos (DD-102: una lista nunca corta texto). Sin él, la tabla se ajusta al
-   * ancho disponible como hasta ahora.
+   * ancho disponible como hasta ahora. Cuenta TODAS las columnas con `width` en rem: las que están
+   * ocultas en el selector se descuentan solas.
    */
   readonly tableMinWidth = input<string | undefined>(undefined);
 
@@ -205,6 +206,18 @@ export class ListPageComponent<T extends { readonly id: number | string }> {
 
   /** Columnas elegidas en el selector, en su orden; vacío hasta que el selector hidrata. */
   private readonly chosenColumns = signal<readonly string[]>([]);
+
+  /* Una columna oculta no ocupa sitio: sin descontarla, esconder Email en Agentes dejaba 268 px de scroll lateral
+   * (rama `comparar/fichas`, 2026-09-16). Hace falta desde que Agentes tiene columnas opcionales (2026-09-24). */
+  protected readonly effectiveTableMinWidth = computed<string | undefined>(() => {
+    const min = this.tableMinWidth();
+    const visible = this.visibleColumns();
+    if (!min?.endsWith('rem') || !visible) return min;
+    const hidden = this.columns()
+      .filter((c) => !visible.includes(c.field) && c.width?.endsWith('rem'))
+      .reduce((sum, c) => sum + parseFloat(c.width!), 0);
+    return `${parseFloat(min) - hidden}rem`;
+  });
 
   protected readonly visibleColumns = computed<readonly string[] | undefined>(() => {
     const choices = this.columnChoices();

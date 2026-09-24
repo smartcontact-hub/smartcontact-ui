@@ -1,4 +1,17 @@
-export type PresenceStatus = 'disponible' | 'no_disponible' | 'bano' | 'comida' | 'formacion';
+/**
+ * «Desconectado» es no tener la sesión abierta: sustituye a la columna «Activación», que no existía en el producto
+ * (definición de producto, 2026-09-16). Postconversando y Administrativo los pone la conversación o el propio
+ * agente. En la lista el estado se VE y no se cambia: ninguno se edita desde ahí.
+ */
+export type PresenceStatus =
+  | 'disponible'
+  | 'no_disponible'
+  | 'bano'
+  | 'comida'
+  | 'formacion'
+  | 'post_conversando'
+  | 'administrativo'
+  | 'desconectado';
 
 export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
   disponible: 'agents.presence.available',
@@ -6,6 +19,9 @@ export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
   bano: 'agents.presence.bathroom',
   comida: 'agents.presence.lunch',
   formacion: 'agents.presence.training',
+  post_conversando: 'agents.presence.wrap_up',
+  administrativo: 'agents.presence.administrative',
+  desconectado: 'agents.presence.offline',
 };
 
 /**
@@ -229,7 +245,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'inactive',
-    presenceStatus: 'no_disponible',
+    presenceStatus: 'desconectado',
     phone: '612345678',
     email: 'jbarcala@company.com',
     pin: '614',
@@ -278,7 +294,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'inactive',
-    presenceStatus: 'no_disponible',
+    presenceStatus: 'desconectado',
     pin: '773',
     permissions: { ...DP },
     pickupType: 'auto',
@@ -304,7 +320,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'active',
-    presenceStatus: 'disponible',
+    presenceStatus: 'post_conversando',
     pin: '419',
     permissions: { ...DP },
     pickupType: 'auto',
@@ -331,7 +347,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'active',
-    presenceStatus: 'disponible',
+    presenceStatus: 'administrativo',
     pin: '284',
     permissions: { ...DP, externalDevices: true, recording: true },
     pickupType: 'auto',
@@ -345,7 +361,7 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'cuscare',
     status: 'active',
-    presenceStatus: 'disponible',
+    presenceStatus: 'no_disponible',
     pin: '706',
     permissions: { ...DP },
     pickupType: 'auto',
@@ -372,16 +388,70 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'phone',
     agentType: 'normal',
     status: 'inactive',
-    presenceStatus: 'no_disponible',
+    presenceStatus: 'desconectado',
     pin: '672',
     permissions: { ...DP },
     pickupType: 'manual',
+  },
+  // Cuatro nombres del equipo de producto, junto a los de Hollywood. Sin teléfono propio; el email lo
+  // saca `demoEmail` del nombre, en el dominio de demo.
+  {
+    id: 17,
+    code: '10017',
+    name: 'Ángel Valderrama',
+    extension: '125',
+    extensionType: 'webrtc',
+    agentType: 'normal',
+    status: 'active',
+    presenceStatus: 'disponible',
+    pin: '318',
+    permissions: { ...DP, recording: true },
+    pickupType: 'auto',
+  },
+  {
+    id: 18,
+    code: '10018',
+    name: 'Marta Recio',
+    extension: '126',
+    extensionType: 'webrtc',
+    agentType: 'cuscare',
+    status: 'active',
+    presenceStatus: 'post_conversando',
+    pin: '527',
+    permissions: { ...DP },
+    pickupType: 'auto',
+  },
+  {
+    id: 19,
+    code: '10019',
+    name: 'Miguel Palacios',
+    extension: '127',
+    extensionType: 'phone',
+    agentType: 'normal',
+    status: 'active',
+    presenceStatus: 'comida',
+    pin: '846',
+    permissions: { ...DP, recording: true },
+    pickupType: 'manual',
+  },
+  {
+    id: 20,
+    code: '10020',
+    name: 'Mario Pérez',
+    extension: '128',
+    extensionType: 'webrtc',
+    agentType: 'normal',
+    status: 'inactive',
+    presenceStatus: 'desconectado',
+    pin: '205',
+    permissions: { ...DP },
+    pickupType: 'auto',
   },
 ];
 
 /*
  * DEMO (decisión de producto, 2026-09-14): 500 agentes por defecto, para que la lista enseñe la tabla con scroll propio
- * y lista virtual (DD-95) con un volumen real. Los 16 de arriba conservan sus ids, que usan la
+ * y lista virtual (DD-95) con un volumen real. Los 20 de arriba conservan sus ids, que usan la
  * membresía de grupos y el catálogo de entidades; los demás repiten sus datos con nombres de Hollywood.
  */
 const NOMBRES = ['Nicole', 'Harrison', 'Sandra', 'Will', 'Anne', 'Matt', 'Charlize', 'Ryan', 'Jodie', 'Hugh', 'Julianne', 'Al', 'Halle', 'Johnny', 'Kate', 'Idris', 'Penélope', 'Javier', 'Salma', 'Antonio', 'Zendaya', 'Timothée', 'Margot', 'Pedro', 'Florence'];
@@ -398,7 +468,27 @@ const GENERATED_AGENTS: readonly Agent[] = Array.from({ length: TOTAL_AGENTES_DE
     name: `${NOMBRES[i % NOMBRES.length]} ${APELLIDOS[Math.floor(i / NOMBRES.length) % APELLIDOS.length]}`,
     extension: String(200 + id),
     pin: String(100 + ((id * 37) % 900)),
+    // Solo los que ya lo tenían en su molde, y cada uno el suyo: copiado, el mismo móvil salía en 30 agentes.
+    phone: base.phone ? String(600000000 + id * 1237) : undefined,
   };
 });
 
-export const AGENTS_SEED: readonly Agent[] = [...BASE_AGENTS, ...GENERATED_AGENTS];
+/**
+ * Email de demo sacado del nombre (nombre.apellido, sin acentos, en el dominio de demo), para que ninguno se repita.
+ * También para los 16 de arriba: los suyos venían de antes de que se llamaran como actores («jbarcala» era Scarlett
+ * Johansson) y en la columna Email se leía el desajuste.
+ */
+function demoEmail(name: string): string {
+  const local = name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '.')
+    .replace(/^\.|\.$/g, '');
+  return `${local}@company.com`;
+}
+
+export const AGENTS_SEED: readonly Agent[] = [
+  ...BASE_AGENTS.map((a) => ({ ...a, email: demoEmail(a.name) })),
+  ...GENERATED_AGENTS.map((a) => ({ ...a, email: demoEmail(a.name) })),
+];
