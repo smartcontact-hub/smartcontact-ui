@@ -182,6 +182,19 @@
 
 ## Revisión de componentes
 
+### El avatar que se vuelve check al elegirlo (2026-09-24)
+- **Qué**: el patrón de la demo de primeng.dev/chip: al marcar un elemento, su avatar (o su icono) se
+  sustituye por un check dentro del mismo círculo, y al desmarcarlo vuelve. Es el de Gmail y Google Contactos.
+- **Dónde encajaría**: en las listas con cara (Agentes, Usuarios), el avatar haría de casilla y sobraría la columna
+  de selección (40 px). También en una elección múltiple de personas con pastillas (asignar agentes a un grupo).
+- **Cómo, sin perder lo nativo**: la demo NO es una función de PrimeNG: es un `p-chip` con un clic encima (en la
+  22.1 instalada, Chip no tiene estado de elegido y `p-chip-outlined` no existe en sus estilos), con emojis y el check
+  de PrimeIcons, y sin teclado (el chip no recibe foco ni anuncia si está marcado). Hecho aquí, el control sería la
+  casilla o el `SelectButton multiple` nativo, con el check de Material Symbols y el avatar como su cara.
+- **Disparador**: al revisar la selección de las tablas o al hacer una elección múltiple de personas.
+- **Validación**: se marca y desmarca con teclado (espacio) y el lector de pantalla anuncia «marcado»; en la tabla,
+  la selección sigue funcionando igual (barra de lote, seleccionar todo) sin la columna de casillas.
+
 ### Sidebar: tres detalles de SaaS premium que cuestan poco (2026-09-15)
 - **Qué**:
   1. **Retardo de intención.** Hoy el sidebar plegado se abre en cuanto el ratón lo roza y se cierra a los 100ms,
