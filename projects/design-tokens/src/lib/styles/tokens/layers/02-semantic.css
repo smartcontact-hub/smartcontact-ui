@@ -72,7 +72,7 @@
    * textMutedColor (#8f97a3, gray-500) da 2.95:1 y no cumple AA — ver §1.5 del
    * catálogo de divergencias y la declaración de arriba.
    *
-   * `subtle` TAMPOCO lo sigue ya, y esto es una decisión de Rafa del
+   * `subtle` TAMPOCO lo sigue ya, y esto es una decisión de producto del
    * 2026-07-19: **AA por delante de la jerarquía**. Valía gray-400 y medía
    * 2.04:1 sobre blanco en 161 usos —descripciones del hub, cuerpo de los
    * estados vacíos, hints, placeholders— o sea texto real, no adorno.

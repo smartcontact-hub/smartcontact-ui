@@ -19,15 +19,15 @@
  * Así que gatea lo que SÍ es un defecto sin discusión: que el snippet enseñe **un componente o
  * una propiedad que no existen**. Ese es el fallo que duele, porque el código de la doc se copia.
  *
- * AMPLIADO EL 2026-09-11, y por una pregunta de Rafa mirando `/#/components/button`: «¿el código
- * de cada uno en sc-docs está basado realmente en primeng?». El problema que destapó no es que la
+ * AMPLIADO EL 2026-09-11, a raíz de una revisión de `/#/components/button`: ¿el código que enseña
+ * cada página de sc-docs es el que de verdad se ejecuta sobre PrimeNG? El problema que destapó no es que la
  * doc no beba del tema —bebe, y no lo pisa en ningún sitio—, sino que en cada página hay DOS
  * textos, el que se muestra y el que se ejecuta, y nada los ataba. Sin exigir igualdad (40 falsos
  * positivos de 71), se añaden tres relaciones que sí son defecto, y las tres traen su caso REAL:
  *   (a) SUBCONJUNTO: lo que el snippet enseña, la demo viva lo pinta (`emptystate` enseñaba un
  *       `(cta)` que no existe en la plantilla);
  *   (d) COBERTURA INVERSA: lo que la demo viva pinta, el snippet lo enseña — la que caza el caso
- *       de Rafa: `#icons` de button renderiza `variant` y `fullWidth` y el código no los llevaba;
+ *       de esa revisión: `#icons` de button renderiza `variant` y `fullWidth` y el código no los llevaba;
  *   (c) PROYECCIÓN: `<sc-select>` proyecta por `contentChild('item')` y su snippet enseñaba
  *       `pTemplate="item"`, la sintaxis vieja de PrimeNG, que al wrapper NO le llega.
  * Y (b) un TRINQUETE: cuántos inputs públicos no aparecen en ningún ejemplo ni knob de su página.

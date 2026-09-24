@@ -345,13 +345,13 @@ sc-datatable.sc-datatable--fill > p-table {
     min-height: 0;
 }
 
-/* Sin hueco reservado para la barra (Rafa, 2026-09-15). El 2026-09-14 se reservaba a los dos lados
+/* Sin hueco reservado para la barra (2026-09-15). El 2026-09-14 se reservaba a los dos lados
  * (\`scrollbar-gutter: stable both-edges\`) para que las rayas quedaran simétricas, pero el color de una fila
  * no puede pintar en ese hueco: el rojo de una fallida, el amarillo de una en proceso, el hover y la selección
  * se cortaban antes de cada borde de la tarjeta, lo que medía la barra. Ahora llegan al borde; con barra, a la derecha acaban donde
  * empieza ella. El precio, aceptado: al aparecer o desaparecer la barra las columnas se mueven su ancho. */
 
-/* Como la barra de ScrollArea (Rafa, 2026-09-15): fina, del color de su tirador y solo con el ratón
+/* Como la barra de ScrollArea (2026-09-15): fina, del color de su tirador y solo con el ratón
  * encima. No es ScrollArea: la lista virtual de \`p-table\` tiene que ser dueña de su contenedor de scroll
  * (sin ella pinta todas las filas), así que se imita su aspecto sobre la barra nativa. */
 sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar,
@@ -382,7 +382,7 @@ sc-datatable.sc-datatable--scroll .p-virtualscroller:hover::-webkit-scrollbar-th
  * MICRO-INTERACCIÓN DE BOTÓN · cómo responde al dedo
  * ══════════════════════════════════════════════════════════════════════════
  *
- * La receta de better-ui, elegida por Rafa el 2026-09-15 tras probar seis en un playground
+ * La receta de better-ui, elegida el 2026-09-15 tras comparar seis en un playground
  * (nativo de primeng.dev, la de antes y la de cada guía de diseño): al pulsar el botón se
  * encoge al 96 % CON transición de 150 ms ease-out, así que al soltar vuelve suave; color,
  * borde y sombra con la misma transición. Es un desvío del nativo (primeng.dev no se mueve y

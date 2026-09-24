@@ -2,7 +2,7 @@
 #
 # ─── Por qué existe ───────────────────────────────────────────────────────────────────────────
 #
-# Las 38 baselines de `e2e/components.spec.ts` eran `*-darwin.png`: se tomaron en el Mac de Rafa y
+# Las 38 baselines de `e2e/components.spec.ts` eran `*-darwin.png`: se tomaron en un Mac de desarrollo y
 # **fallaban las 38 en cualquier otra máquina**. Consecuencia medida: `ci.yml` las apaga a
 # propósito (`SC_SKIP_VISUAL_BASELINES`) y la suite solo corría si alguien se acordaba, en su
 # portátil. Una alarma que solo suena en una máquina no es una alarma.
@@ -13,7 +13,7 @@
 # existe y las capturas se pueden tomar donde se van a verificar.
 #
 # Y eso es lo que hace este workflow: las toma **en el mismo sitio que después las comprueba**,
-# el runner de GitHub. Nadie necesita su ordenador — ni Rafa, ni una sesión en la nube.
+# el runner de GitHub. No hace falta ninguna máquina concreta: ni un portátil local ni una sesión en la nube.
 #
 # ─── Cómo se usa ──────────────────────────────────────────────────────────────────────────────
 #

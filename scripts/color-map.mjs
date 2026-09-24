@@ -107,8 +107,8 @@ export const COLOR = [
   // ── NEUTROS DEL MODO OSCURO = KIT (zinc), desde el 2026-09-13 ────────────────
   //    Hasta hoy eran divergencia de marca («gray-* navy-tinted, el Kit usa zinc»), y de
   //    ahí salían 262 de las 323 diferencias sin motivo escrito entre nuestro código y el
-  //    Kit en los 15 componentes del Supervisor (`tools/aura-diff.mjs`). Rafa eligió zinc,
-  //    que es lo que dicen Aura y el Kit, mirándolo lado a lado en sc-docs `/aura/oscuro`.
+  //    Kit en los 15 componentes del Supervisor (`tools/aura-diff.mjs`). Se eligió zinc,
+  //    que es lo que dicen Aura y el Kit, comparándolos lado a lado en sc-docs `/aura/oscuro`.
   //    Las filas repiten las de claro, con una salvedad medida: en oscuro el Kit pone el
   //    fondo de campo en zinc-950 (el del lienzo) y el de contenido en zinc-900, así que
   //    `form.field.background` cuelga de `sc-bg-default`, no de `sc-bg-surface`.

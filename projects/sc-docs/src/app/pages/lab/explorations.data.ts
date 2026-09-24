@@ -25,7 +25,7 @@ export interface ExplorationVersion {
 }
 
 /**
- * Versión, Objetivo y Estado son obligatorios (Rafa, 2026-09-16): se enseñan arriba de cada tarjeta, y así ninguna
+ * Versión, Objetivo y Estado son obligatorios (2026-09-16): se enseñan arriba de cada tarjeta, y así ninguna
  * exploración puede publicarse sin decir cuál es la vigente, qué pregunta responde y en qué quedó.
  */
 export interface Exploration {
@@ -184,7 +184,7 @@ export const EXPLORATIONS: readonly Exploration[] = [
  * Un laboratorio no es una exploración. Una exploración son VERSIONES que se comparan abriendo
  * enlaces distintos; un laboratorio es UNA página con su propio conmutador dentro, donde el mismo
  * ojo ve las dos respuestas sin cambiar de pestaña. Por eso aquí no hay historial: la comparación
- * ocurre dentro. (Rafa, 2026-09-22: «así no tenemos muchos links».)
+ * ocurre dentro, y la agenda no se llena de enlaces casi iguales (2026-09-22).
  */
 export interface Lab {
   readonly id: string;

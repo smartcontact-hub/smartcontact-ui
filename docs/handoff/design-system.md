@@ -170,6 +170,16 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-24 · El código deja de nombrar personas (DD-120)
+
+**Sello:** rama `arebury/clean-code-comments-publicity`, sobre `d20ee0f9` (#244). Archivado: `archive/handoff-ds-2026-09-15-tokens-sin-uso`.
+
+**Lo que cambia.** Fuera las 194 menciones del autor en comentarios de apps, librería, e2e, scripts, hooks y workflows:
+la procedencia pasa a su DD, ticket o nodo de Figma, y cada cita al criterio que expresaba (AGENTS.md §«Voz del código»).
+Lo vigilan `audit:personal-names` en `verify` y `bash-guard` en commits y PRs. Abierto en DD-120: barrer también los `.md`.
+
+- ⚠️ **Una rama que rebase encima** puede chocar en comentarios, y el gate le hará reescribir los suyos (`gulper`: `channel-icon`).
+
 ## ✅ 2026-09-15 · En Servicio, la dirección de las notificaciones se lee entera
 
 **Sello:** rama `arebury/notificaciones-direccion-ancha`, sobre `fa21f53` (#198). Rafa probó en local el InputGroup
@@ -198,17 +208,6 @@ y pulsación con capturas delante. DD-107 vive en `archive/handoff-ds-2026-09-15
 `sc-divider`, modo pared y tira del Dashboard con nombre (avisar), sin `ripple`, botón que se encoge (better-ui, §8.1). Regla «primeng.dev tal cual»: hook, `tools/primeng-doc.mjs`, §F.
 
 - ⚠️ **Lo nativo manda**: apagué la raya de `p-tabs` por una marca fija y Rafa vio que no se deslizaba. Doc entera y medir.
-
-## ✅ 2026-09-15 · Salen 30 tokens que no leía nadie, y el tema nombra los retirados
-
-**Sello:** rama `arebury/tokens-sin-uso`, sobre `395824f` (#193). Rafa: «de acuerdo». Archivado: `archive/handoff-ds-2026-09-15-foco`.
-
-**Lo que cambia.** Fuera 10 celdas de la tipografía por rol, 4 de diálogo y 14 de toast antiguos y el halo de foco (DD-111).
-Se quedan los estados de color, las medidas, la paleta de etiquetas (viva en parte: puntos, fondo de teal y azul) y
-presencia y prioridad. `tema-zip` lista por nombre los tokens retirados en la guía del paquete: un `var()` que deja de
-existir falla en silencio en el proyecto del equipo externo.
-
-- ⚠️ **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -285,6 +284,7 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias (DD-111).
 - 🪤 **Las capturas de sc-docs no ven el botón de aviso con contorno ni el modo oscuro**: esos colores se miden a mano (#193).
 - 🪤 **El host de una tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta vive dentro
   de un componente; el host tiene que ser flex (`0 1 auto`, `min-height: 0`) o la página no hace scroll (DD-95).

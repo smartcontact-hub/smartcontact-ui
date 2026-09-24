@@ -30,7 +30,7 @@ interface DemoLinkGroup {
  *   · LABORATORIOS  — una página con su conmutador dentro; se usan.
  *   · ENLACES       — la agenda de destinos.
  *
- * La página se rehízo el 2026-09-22 (Rafa: «es muy mess»). Antes eran 2.809px de alto, 764
+ * La página se rehízo el 2026-09-22 (demasiada densidad y ruido visual). Antes eran 2.809px de alto, 764
  * palabras y cuatro niveles de título en una sola columna, con una nota de tres líneas por
  * enlace. Lo que se fue: las notas largas del directorio (lo que explica un sitio está en ese
  * sitio, no en su agenda) y el historial, que ahora vive plegado dentro de su tarjeta.

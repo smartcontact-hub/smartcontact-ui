@@ -5,7 +5,7 @@
  * Por qué (2026-09-14): hasta hoy el equipo externo recibía el zip del plugin de Figma, preparado a
  * mano y con tres comprobaciones a mano (`docs/conexion-variables.md` §La rutina por tema), y su web y
  * la nuestra diferían en el 43 % de las claves con el mismo Kit (pesos con «px», esquema anterior a
- * Aura 3, rem pensados para raíz 14). Rafa: «ellos nos siguen a nosotros». Así que el zip sale de lo que
+ * Aura 3, rem pensados para raíz 14). Criterio: el tema externo sigue a nuestras apps, no al revés. Así que el zip sale de lo que
  * pintan NUESTRAS apps: el mismo preset y los mismos tokens. Medido: el preset empaquetado genera el
  * mismo CSS que el del código en los 97 componentes, y un valor tocado en el paquete lo caza.
  *

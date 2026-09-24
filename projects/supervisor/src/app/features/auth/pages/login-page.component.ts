@@ -31,7 +31,7 @@ export interface LoginNavigationState {
 /** Las vistas del panel. Todas viven en `/login`: son pasos del mismo acceso, no pantallas. */
 export type LoginView = 'signin' | 'forgot' | 'forgot-sent';
 
-/** «Contáctanos» lleva a la web pública de SmartContact (decisión de Rafa, 2026-09-14). */
+/** «Contáctanos» lleva a la web pública de SmartContact (decisión de producto, 2026-09-14). */
 const CONTACT_URL = 'https://www.smart-contact.com/contacto/';
 
 /**

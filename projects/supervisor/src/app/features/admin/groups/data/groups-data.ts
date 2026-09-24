@@ -18,7 +18,7 @@ export const CHANNEL_LABEL_KEYS: Readonly<Record<GroupChannel, string>> = {
   email: 'groups.channel.email',
 };
 
-/* Las de SISMAC-1975 en COA (Rafa, 2026-09-16: «estrategias hay que seguir al COA»): quita Aleatoria y Lineal, y
+/* Las de SISMAC-1975 en COA (decisión de producto, 2026-09-16: las estrategias siguen al COA): quita Aleatoria y Lineal, y
  * añade Niveles, Ring All y Skills. «Agente exclusivo» se queda: el COA no la quita, y el manual de Voice (p. 12) y
  * el Figma de la migración la traen.
  * Skills sale APAGADA con su motivo a la vista, como pide el COA para las que necesitan configuración posterior: aquí

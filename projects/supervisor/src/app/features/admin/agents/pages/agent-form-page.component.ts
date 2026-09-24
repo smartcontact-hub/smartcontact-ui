@@ -242,7 +242,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   );
 
   /* Idiomas y Etiquetas ACUMULAN, así que son un `sc-multiselect` como Agendas y Plantillas
-   * (Rafa, 2026-09-14). Antes eran un select que se vaciaba tras cada elección más una fila de
+   * (2026-09-14). Antes eran un select que se vaciaba tras cada elección más una fila de
    * pastillas debajo. Valores `computed` por lo mismo que las plantillas: una lista estable. */
   protected readonly languageValue = computed(() => [...this.form().languages]);
 
@@ -266,8 +266,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * Desde el 2026-09-14 cada repositorio es UN campo que enseña lo asignado y deja añadir o
    * quitar desde el desplegable del DS. Antes Plantillas y Agendas eran dos tablas completas
    * dentro de la tarjeta, con buscador, pestañas, casilla por fila y vista previa, listando
-   * TODO lo que existe para responder una sola pregunta: qué tiene este agente. Rafa: «es
-   * mucho ruido». El formulario sigue guardando un `Set` de ids por repositorio; aquí solo
+   * TODO lo que existe para responder una sola pregunta: qué tiene este agente. Demasiado
+   * ruido para tan poca información. El formulario sigue guardando un `Set` de ids por repositorio; aquí solo
    * se traduce a lo que habla `sc-multiselect` (una lista de ids) y de vuelta. */
 
   /** Las agendas de `Repositorios > Agendas`. */

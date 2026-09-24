@@ -207,7 +207,7 @@ test('admin/agendas · la celda destacada de una lista de repositorio mide Body/
 });
 
 /**
- * SIN MONOESPACIADA EN EL PRODUCTO (2026-09-13, Rafa: «no queremos cosas en mono»).
+ * SIN MONOESPACIADA EN EL PRODUCTO (decisión de producto, 2026-09-13).
  *
  * Códigos, claves e identificadores iban en `--sc-font-family-mono`, un token escrito a mano
  * que no está en el Kit; Figma los dibuja en Inter. Ahora son texto de celda. Tipificaciones es

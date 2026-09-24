@@ -45,7 +45,10 @@ Resumen operativo:
   [AGENTS.md](AGENTS.md) §«UX de pantalla» (color funcional, `sc-skeleton` en carga, copy sin
   relleno, `sc-icon` sin emojis, contraste, sin saltos). Navegable: `sc-docs` → Fundamentos →
   Patrones.
-- **Antes de dar nada por bueno**: `npm run verify` (41 gates encadenados) y, si
+- **Voz del código**: comentarios, commits y PRs sin nombres de personas ni citas de conversación;
+  la procedencia es la DD, el ticket o el nodo de Figma (AGENTS.md §«Voz del código»; lo vigilan
+  `audit:personal-names` y `bash-guard`).
+- **Antes de dar nada por bueno**: `npm run verify` (42 gates encadenados) y, si
   tocaste algo visual, `npm run e2e`. **Antes de pushear no basta `verify`**: el CI
   son 9 pasos, enumerados en `.github/workflows/ci.yml`; `npm run preflight:scope -- --run` corre
   la parte rápida (gates + builds, ~8 min) y deja la marca que el hook de push exige (el `--` es

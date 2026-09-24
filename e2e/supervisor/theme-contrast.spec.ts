@@ -108,12 +108,12 @@ const RUTAS_SUELO = [
  * arreglado. Estos cuatro salen de valores del propio DS / del Kit, así que
  * cambiarlos cambia el aspecto de TODAS las pantallas y de cualquier app que
  * consuma el DS. No es una decisión que deba colarse dentro de un arreglo de
- * contraste: necesita a Rafa, y a Marta para los dos de botón.
+ * contraste: necesita una decisión de producto, y de diseño del Kit para los dos de botón.
  *
  * Se fijan AQUÍ, con su número, no se esconden: cualquier OTRO fallo rompe la
  * prueba. Cada línea se borra el día que se decida su valor.
  *
- *  1. ~~`--sc-text-subtle`~~ — **RESUELTO el 2026-07-19**. Rafa eligió: AA por
+ *  1. ~~`--sc-text-subtle`~~ — **RESUELTO el 2026-07-19**. Decisión de producto: AA por
  *     delante de la jerarquía. Sube de slate-400 (2.04:1) a slate-600 (4.52),
  *     con lo que se iguala a `secondary` y el tercer nivel de gris desaparece
  *     en claro. Ver `customs-catalog` §1.7. Su par ya no se informa: se gatea.

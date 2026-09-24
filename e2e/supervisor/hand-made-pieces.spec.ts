@@ -8,8 +8,8 @@ import { goto } from './helpers';
 /**
  * PIEZAS HECHAS A MANO EN PANTALLAS — EL INVENTARIO SOLO PUEDE BAJAR.
  *
- * Por qué existe (2026-09-13, Rafa): «si lo que estamos montando es un sistema de diseño
- * automatizable, agéntico, lo suyo es no ir a mano a menos que sea tremendamente necesario».
+ * Por qué existe (2026-09-13): en un sistema de diseño automatizable y operado por agentes, una
+ * pieza hecha a mano en pantalla es la excepción justificada, nunca el camino por defecto.
  * DD-76 pasó las pastillas de categoría a `sc-tag`, pero una sonda encontró otras ocho familias de
  * etiquetas, estados y contadores que cada pantalla se dibuja con su propio SCSS. Una revisión a ojo
  * no las ve volver; este test sí.

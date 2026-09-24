@@ -82,6 +82,38 @@
 
 ---
 
+## DD-120 · 2026-09-24 — El código no nombra a personas: la procedencia es la fuente, no quien lo pidió
+
+**Contexto** · El repo es público. Medido el 2026-09-24: 197 menciones del autor en ficheros de código (100 en apps,
+librería y e2e; 97 en scripts, hooks y workflows), casi todas de tres formas: «(Nombre, fecha)» como firma de una
+decisión, citas literales de conversación («veo desalineaciones», «es muy mess») y quién detectó un fallo. Y el «Por
+qué» de 28 de los últimos 60 commits contaba quién lo había pedido en vez del criterio. Ninguna ayudaba a entender la
+línea que acompañaba, y todas dejaban un registro de conversación donde se lee el código.
+
+**Decisión** ·
+1. **Comentarios, commits y portadas de PR sin nombres de personas** ni citas literales. La procedencia es la DD, el
+   ticket o el nodo de Figma; si no hay, la fecha sola o «decisión de producto (fecha)». Las citas pasan al criterio
+   que expresaban, en vocabulario de UX engineering y DesignOps. Colegas, por su rol. AGENTS.md §«Voz del código».
+2. **La excepción es el nombre como DATO**: el agente de demo con el nombre del autor sigue ahí a propósito
+   (`audit-seed-pii.mjs`), declarado con su motivo en `DATO_PERMITIDO`.
+3. **Lo vigila una máquina**: `audit:personal-names` en `verify` para el código, y `bash-guard` para commits y PRs
+   (reusa el mismo patrón). Los hooks, al hablarle al agente, dicen «el usuario».
+
+**Razón** · Un comentario explica el criterio que sostiene la línea; la autoría no añade nada que la DD no diga mejor,
+y la cita literal suena a chat, no a código de producto. La regla escrita para las portadas de PR (2026-09-14) no
+cubría el código y por ahí se coló.
+
+**Abierto** · La documentación de proceso (`AGENTS`, `LEARNINGS`, hand-offs, esta tabla; 343 menciones) queda fuera
+del gate hasta decidir si también se barre: ahí «quién decide» puede ser contexto para un agente, y las citas no.
+
+**Descartadas** ·
+- **Reescribir la historia de git** para limpiar los commits viejos → reescribir historia publicada rompe cada clon y
+  cada rama abierta. La regla vale de aquí en adelante.
+- **Una lista de nombres del equipo en el gate** → no hay forma fiable de enumerarlos; el gate caza el nombre del
+  autor y la regla escrita cubre al resto.
+
+---
+
 ## DD-119 · 2026-09-23 — Los grupos no llevan cara, y se crean con un diálogo corto
 
 **Contexto** · Del equipo: «las fotos en grupo no deberían existir». En WhatsApp, Telegram o Teams la foto distingue un

@@ -133,8 +133,8 @@ if (process.argv.includes('--check')) {
 // ── modo congelar ────────────────────────────────────────────────────────────────
 /*
  * PREGUNTA, no exige que te acuerdes. La versión con flags existía primero
- * (`--ticket … --app … --que …`) y Rafa dio con el problema en cuanto la vio: «¿cómo me voy a
- * aprender esos comandos?». Nadie memoriza tres flags y un `--` obligatorio para algo que se usa
+ * (`--ticket … --app … --que …`) y falló en cuanto la probó alguien que no programa: exigía
+ * aprenderse los comandos. Nadie memoriza tres flags y un `--` obligatorio para algo que se usa
  * una vez cada entrega, y un comando que no te sabes es un comando que no usas.
  *
  * Así que `npm run proto` no lleva argumentos: pregunta tres cosas, enseña lo que va a hacer y

@@ -33,6 +33,6 @@ test('rojo: más tramos que el tope (el diario que se acumulaba)', () => {
 
 test('en el tope exacto pasa; las secciones fijas (otros emojis) no cuentan como tramo', () => {
   const tramos = Array.from({ length: MAX_TRAMOS }, (_, i) => `## ✅ 2026-09-${String(i + 1).padStart(2, '0')} · t\n`).join('\n');
-  const doc = `# X\n\n${tramos}\n## ▶︎ SIGUIENTE\n\n## ⚠️ Trampas\n\n## ⏸️ ESPERANDO A RAFA\n`;
+  const doc = `# X\n\n${tramos}\n## ▶︎ SIGUIENTE\n\n## ⚠️ Trampas\n\n## ⏸️ EN ESPERA\n`;
   assert.deepEqual(revisarHandoff(doc, 'x.md'), []);
 });

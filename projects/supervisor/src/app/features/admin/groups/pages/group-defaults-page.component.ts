@@ -37,7 +37,7 @@ import { stableStringify } from '@shared/utils/form-dirty-state';
 /**
  * Valores por defecto de los grupos — `/admin/grupos/valores-por-defecto`. Con esto nace cada grupo nuevo.
  *
- * Vive con Grupos, en Administración, y no en Configuración del AED (Rafa, 2026-09-18): quien crea y edita grupos
+ * Vive con Grupos, en Administración, y no en Configuración del AED (decisión de producto, 2026-09-18): quien crea y edita grupos
  * es quien decide con qué nacen, y así los dos sitios hablan de lo mismo con las mismas palabras. La página de
  * Configuración se queda como estaba.
  *

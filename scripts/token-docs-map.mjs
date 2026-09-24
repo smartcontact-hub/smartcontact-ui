@@ -17,7 +17,7 @@
  *     dónde colgar 38 de las 44**. La capa semántica del Kit es la de PrimeNG y no modela
  *     familias de estado: `danger`, `success`, `warning`, `info`, `accent` y `canvas` no tienen
  *     variable propia, solo aparecen dentro de componentes. Solo 6 tienen sitio, y escribir 6 de
- *     44 deja Figma a medias sin que se pueda saber por qué. Rafa decidió no crear variables
+ *     44 deja Figma a medias sin que se pueda saber por qué. Se decidió no crear variables
  *     nuevas, así que esto se queda como impresora hasta que esa decisión se reabra. Si algún
  *     día se escribe, deja fila en el change-log de `docs/guia-tokens.md`.
  *

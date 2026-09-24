@@ -5,8 +5,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
 /**
  * LAS FICHAS DE USUARIO Y AGENTE — la forma de la de grupo, «una página + pestañas».
  *
- * Nace el 2026-09-23, el día que las dos dejaron el índice lateral y la caja de sección (Rafa: la
- * caja «no aporta»). Al cambiar de forma salieron de `page-anatomy` y de
+ * Nace el 2026-09-23, el día que las dos dejaron el índice lateral y la caja de sección (la caja no
+ * aportaba jerarquía). Al cambiar de forma salieron de `page-anatomy` y de
  * `form-section-nav-legibility`, que medían el índice; sin esto se quedaban sin red propia.
  *
  * Fija lo que define la forma, no el adorno:

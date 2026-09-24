@@ -172,7 +172,7 @@
   <!-- La franja de estado, lo primero. Quien abre un grupo se pregunta tres
        cosas —cuántos atienden, por dónde entra el trabajo y cómo se reparte— y aquí las tiene sin
        leer un campo. Es la banda de SnowUI, con los datos que este producto sí tiene. -->
-  <!-- SIN AVATAR NI FOTO: los grupos no llevan cara (Rafa, 2026-09-23; cara = persona). Y sin
+  <!-- SIN AVATAR NI FOTO: los grupos no llevan cara (2026-09-23; cara = persona). Y sin
        avatar TODA la página arranca en la misma vertical que el nombre: rótulo, casillas, buscador
        y tabla. -->
   <div class="headline">
@@ -224,7 +224,7 @@
   </div>
 
   <!-- El conmutador, ARRIBA y con TODAS las secciones dentro, «Canales y
-       agentes» la primera (Rafa, 2026-09-22). Antes vivía debajo del bloque de canales y ese bloque
+       agentes» la primera (2026-09-22). Antes vivía debajo del bloque de canales y ese bloque
        llevaba su propio `h2`: la misma cosa —elegir qué sección del grupo miras— se decía de dos
        maneras y en dos sitios de la página. Con una sola tira arriba, el rótulo de cada sección es
        su pestaña y la pantalla se lee de arriba abajo: quién es el grupo, qué sección miro, la sección.
@@ -253,17 +253,17 @@
   </p-tabs>
 
   @if (showSection('group-section-channels')) {
-    <!-- Canales, estrategia y agentes en UNA sección (Rafa, 2026-09-16). Cada canal lleva a su lado cómo se reparte,
+    <!-- Canales, estrategia y agentes en UNA sección (2026-09-16). Cada canal lleva a su lado cómo se reparte,
          y la tabla de agentes va justo debajo: marcar un canal enseña su columna sin ir arriba y abajo.
 
-         SIN CAJA en la variante `s` (Rafa, 2026-09-21, maqueta Figma 381:2463). Una caja está para
+         SIN CAJA en la variante `s` (2026-09-21, maqueta Figma 381:2463). Una caja está para
          separar un grupo de sus vecinos, y este bloque no tiene vecinos: ES el contenido de la
          página. Lo único que hacía era meterlo todo 38px hacia dentro y dibujar un marco alrededor
          de la pantalla. Al quitarla, título, casillas, buscador y tabla arrancan todos en x=108,
          la misma vertical que la página («align to shared edges»), y la tabla gana 95px de ancho.
          En las variantes con índice la caja SÍ trabaja: ahí tiene tarjetas vecinas. -->
     <!-- SIN TÍTULO: el rótulo de esta sección es su pestaña, que está justo encima y encendida
-           (Rafa, 2026-09-22). Repetirlo aquí era decir «Canales y agentes» dos veces seguidas y
+           (2026-09-22). Repetirlo aquí era decir «Canales y agentes» dos veces seguidas y
            gastar una vertical en ello. El nombre accesible lo pone `aria-label` con la MISMA clave
            que la pestaña, así el lector de pantalla oye lo que el ojo lee. -->
     <section
@@ -281,7 +281,7 @@
   <ng-template #canalesYAgentes>
       <!-- Que falte marcar un canal no es contenido equivocado: lo dice el motivo junto a Guardar. -->
       <section class="plain-block" [attr.aria-label]="'groups.form.section.channels' | translate">
-        <!-- Los cuatro canales en UNA fila y, debajo, solo los ajustes de los que están marcados (Rafa, 2026-09-18):
+        <!-- Los cuatro canales en UNA fila y, debajo, solo los ajustes de los que están marcados (2026-09-18):
              así la tabla de agentes empieza más arriba y cabe entera en la pantalla. Cada ajuste dice su canal,
              que ya no está pegado a su casilla. -->
         <div class="channel-line">
@@ -338,7 +338,7 @@
            DENTRO de cada bloque, que es lo que pide la regla de agrupación). Dentro de la caja se
            queda, porque ahí el aire no puede crecer sin descuadrar el relleno de la tarjeta. -->
       <!-- Sin título: lo que hay debajo es una tabla de agentes con su buscador, y el rótulo solo gastaba alto
-           (Rafa, 2026-09-18). El nombre se queda para el lector de pantalla. -->
+           (2026-09-18). El nombre se queda para el lector de pantalla. -->
       <section class="plain-block" [attr.aria-label]="'groups.form.section.agents' | translate">
         <sc-agent-channel-table
           [groupChannels]="formGroupChannels()"
@@ -353,7 +353,7 @@
 
   @if (showSection('group-section-identity')) {
     <!-- IDENTIDAD, la segunda pestaña, como en las fichas de usuario y agente (#240: las tres dicen lo
-         mismo en el mismo sitio). Sin foto (Rafa, 2026-09-23: los grupos no llevan cara) y sin caja,
+         mismo en el mismo sitio). Sin foto (2026-09-23: los grupos no llevan cara) y sin caja,
          como las demás pestañas. Tres campos en UNA fila de tres columnas y no el nombre a lo ancho:
          un campo de 1.300px para «ACD Demo C2CB» no dice cuánto escribir (lo decide la pieza). -->
     <div class="plain-section" id="group-section-identity">
@@ -380,7 +380,7 @@
     <!-- Lo que se asigna desde Repositorios, como «Recursos» en la ficha de agente (Figma de la migración).
          SIN CAJA NI TÍTULO, como «Canales y agentes» y como las fichas de usuario y agente (#239): con
          pestañas se ve una sección cada vez, así que la caja no tiene vecinos de los que separarla, y
-         el título repetía la pestaña que está encendida justo encima (Rafa, 2026-09-23). -->
+         el título repetía la pestaña que está encendida justo encima (2026-09-23). -->
     <div class="plain-section" id="group-section-resources">
       <section class="sub-section">
         <div class="grid grid--2">
@@ -390,13 +390,13 @@
               <label class="field__label sc-text-caption-semibold" for="group-typification">
                 {{ 'groups.form.fields.typification' | translate }}
               </label>
-              <!-- Crear una sin salir de la ficha (Rafa, 2026-09-18): antes solo quedaba «Gestionar en
+              <!-- Crear una sin salir de la ficha (2026-09-18): antes solo quedaba «Gestionar en
                    Repositorios», que te sacaba del alta del grupo entero para volver a encontrar el camino.
-                   Icono solo (Rafa, 2026-09-20): mismo botón «solo icono» en los cuatro campos de abajo, para
+                   Icono solo (2026-09-20): mismo botón «solo icono» en los cuatro campos de abajo, para
                    que el gesto de crear sin salir sea consistente en toda la sección. Fuera del flujo del
                    texto (`field__label-row__action`): con su propio relleno, un botón CON etiqueta medía 27px
-                   contra los 18px de la etiqueta sola y desalineaba el desplegable (Rafa, 2026-09-18: «no hay
-                   alineación»); solo icono no tiene ese problema, pero se deja la clase por si vuelve a hacer
+                   contra los 18px de la etiqueta sola y desalineaba el desplegable (detectado en revisión visual,
+                   2026-09-18); solo icono no tiene ese problema, pero se deja la clase por si vuelve a hacer
                    falta el ajuste. -->
               <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.typification_new' | translate" [pTooltip]="'groups.form.fields.typification_new' | translate" tooltipPosition="top" (clicked)="creatingTipificacion.set(true)" />
             </span>
@@ -792,7 +792,7 @@
   <sc-button size="sm" variant="secondary" appearance="outlined" icon="upload" [label]="'groups.form.announcements.choose_file' | translate" (clicked)="fileInput.click()" />
 </ng-template>
 
-<!-- Qué hace cada campo de Anuncios y audio, para nosotros mientras se decide el copy final (Rafa, 2026-09-18).
+<!-- Qué hace cada campo de Anuncios y audio, para nosotros mientras se decide el copy final (2026-09-18).
      `pTooltip` nativo, mismo patrón que `category-form-modal`: icono solo, con su aria-label. -->
 <ng-template #infoTip let-key="key">
   <sc-button

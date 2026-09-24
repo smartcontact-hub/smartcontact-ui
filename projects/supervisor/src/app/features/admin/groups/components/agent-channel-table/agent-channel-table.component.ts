@@ -70,7 +70,7 @@ interface VisibleRow {
  *
  * La casilla del principio de la fila ELIGE agentes para actuar en lote (pausar, quitar
  * del grupo); las de las columnas son permisos de canal. Se quitó y volvió el mismo día
- * (2026-09-14): Rafa quiere poder elegir varios, y la cabecera de cada columna ya dice qué
+ * (2026-09-14): la acción en lote necesita elegir varios, y la cabecera de cada columna ya dice qué
  * es cada casilla.
  *
  * No persiste nada: el formulario tiene el `links` canónico y lo guarda en

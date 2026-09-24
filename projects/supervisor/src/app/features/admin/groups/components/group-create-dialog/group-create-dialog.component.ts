@@ -20,9 +20,9 @@ export interface GroupCreateSubmission {
  *
  * Crear un grupo abría la ficha entera: cinco pestañas y unos 35 campos para algo que solo pide un
  * nombre (2026-09-23, DD-119). La primera versión corta pedía nombre y CANALES, y la ficha abría por
- * la fila de canales: lo primero que se veía al entrar era lo que se acababa de rellenar. Rafa
- * (2026-09-24): «es un paso extra, al entrar tengo lo mismo que acabo de configurar; tiene que
- * rimar». Ahora el alta pide lo que dice la CABECERA de la ficha —nombre, teléfono asociado,
+ * la fila de canales: lo primero que se veía al entrar era lo que se acababa de rellenar
+ * (revisión del 2026-09-24): un paso extra que repetía lo configurado, en vez de continuar el
+ * flujo donde lo deja el alta. Ahora el alta pide lo que dice la CABECERA de la ficha —nombre, teléfono asociado,
  * prioridad— con la misma pieza que la pestaña Identidad (`sc-group-identity-fields`), y la ficha
  * abre por lo siguiente: canales y agentes. Nada se pregunta dos veces. Los canales nacen con Teléfono,
  * como antes, y todo lo demás con los valores por defecto de Grupos.
