@@ -180,7 +180,16 @@
          pantalla es el grupo. `h3-semibold` es el rol que ya usan las nueve listas de la app
          para su `h1` (`sc-list-page`), así que no nace un tamaño nuevo para esto. -->
     <div class="headline__who">
-      <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
+      <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad, con
+           su mismo aviso de nombre repetido. -->
+      <h1 class="headline__name headline__name--editable sc-text-h3-semibold" [title]="form().name">
+        <sc-name-inplace
+          [name]="form().name"
+          [label]="'groups.form.fields.name' | translate"
+          [error]="nameTaken() ? ('groups.errors.name_taken' | translate) : null"
+          (nameChange)="onNameChange($event)"
+        />
+      </h1>
       <!-- Los datos del grupo, CON su nombre: «Media» a secas no decía de qué. El teléfono, solo si
            el grupo ofrece teléfono: a un grupo de chat no se le pide, y un «Ninguno» ahí parecía una
            carencia. Se cambian en la pestaña Identidad, como en las fichas de usuario y agente. -->

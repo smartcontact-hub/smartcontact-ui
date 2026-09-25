@@ -23,7 +23,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent } from '@shared/components';
+import { ChannelIconComponent, NameInplaceComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -112,6 +112,7 @@ interface HeadlineStat {
     RouterLink,
     NgTemplateOutlet,
     ChannelIconComponent,
+    NameInplaceComponent,
     CheckboxComponent,
     AgentChannelTableComponent,
     GroupIdentityFieldsComponent,
