@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PopoverModule } from 'primeng/popover';
 import { SelectModule } from 'primeng/select';
@@ -348,9 +348,6 @@ export class TicketsPageComponent {
 
   /* ── «Request type» (V3): origen AI / Agent y tipos por origen ─────────── */
   protected readonly requestType = signal<RequestTypeFilter>(EMPTY_REQUEST_TYPE_FILTER);
-  /** Dos propuestas en prueba: `?filtro=a` (origen arriba, lista por origen) o la B, por defecto. */
-  protected readonly requestTypeVariant: 'a' | 'b' =
-    inject(ActivatedRoute).snapshot.queryParamMap.get('filtro') === 'a' ? 'a' : 'b';
   protected readonly requestTypeOptions = REQUEST_TYPES;
   protected readonly displayTags = displayTags;
 
