@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-31 (s37) — HEAD `ce92b18`. CI verde, todo en `main`. Sin cambios de producto; solo se arregló un flake de CI (`a1cd5f9`): el test del detalle de ticket comprobaba la carga de las `<img>` de UNA pasada y en CI (frío) daba falso rojo — ahora `expect.poll`. Contenido previo: HEAD `f40d861` (s36, las 4 tareas HECHAS).**
+> **Sello: 2026-09-25 — rama `v3-tipo-solicitud` (`313e21cd`), fuera de `main` a propósito; ver el primer tramo. Lo anterior (2026-08-31, `ce92b18`) sigue en `main`.**
 
 `projects/cuscare` replica `cuscare.smart-contact.com/aed`. **Las 9 vistas montadas**, con
 valores extraídos del sitio real (no estimados) y **100 tests e2e** (`npm run e2e:cuscare`, en CI).
@@ -13,6 +13,38 @@ sus paneles y su modal, el paso 2 de "+ New ticket", el panel Summary, los toolt
 avisos de acción.
 
 Contexto completo: [`projects/cuscare/README.md`](../../projects/cuscare/README.md).
+
+## ✅ 2026-09-25 · Prototipo del filtro «Tipo de solicitud» (V3) y la app en inglés o castellano
+
+**Sello:** HEAD `313e21cd` en la rama `v3-tipo-solicitud`, **no en `main` a propósito**. El CI no
+ha corrido (no corre en push de rama) y se publicó sin preflight, como excepción acordada para
+un prototipo de apoyo.
+
+**Qué hay.** La columna «Request type» de la V3 (SCC 2081) con su filtro: una lista de tipos y, en
+cada fila, un grupo IA | Agente (`p-selectbutton` múltiple); «All types» enciende una columna;
+en el campo cerrado, un chip por origen y una x. Colores: IA = etiqueta «Primary» e Info =
+Agente del DS de ui.smart-contact.com (`--cc-origin-*` en `main.scss`). La lógica, en
+`features/tickets/request-type.ts`; el panel, en `request-type-filter.component.ts`. Y la app
+entera en inglés o castellano: engranaje › Language, o `?lang=es` en el enlace. Los textos
+salen del diccionario real (`.cache/cuscare-es.json` y `cuscare-core-es.json`, bajados del
+sitio vivo: son estáticos). Pipe `tr` y servicio `I18n` en `core/i18n/`, un fichero de
+diccionario por bloque de vistas en `core/i18n/es/`.
+
+**Dónde se ve.** Prototipo: https://v3-tipo-solicitud.sc-cuscare.pages.dev/#/private/cuscare/tickets?lang=es.
+Especificación en Figma, fichero «Landing page», página «🛝 Playground», sección
+`2138:4057`, marco `2138:28318` (cómo funciona, paso a paso, componentes del DS con
+instancias, anatomía con anotaciones de Dev Mode, reglas) y piezas locales `2180:1155`. El
+comentario de SCC 2081 en la página V3 (`1736:13284`) es solo un resumen con enlace.
+
+**⚠️ No fundas `v3-tipo-solicitud` a lo loco.** Fundirla borra la rama y mata el enlace que está
+en Figma y en Jira. Si esto tiene que llegar a `main`: PR con el CI entero (no se han corrido ni
+`e2e:cuscare` ni el gate de inglés, y la columna nueva mueve anchos), y después
+`npm run proto` con el ticket para un enlace congelado; entonces se cambian Figma y Jira.
+
+**Huecos del DS que salieron:** el `multiselect` con chips solo existe en tamaño Normal; el
+`popover` no admite contenido propio en Figma; ui.smart-contact.com no tiene ToggleButton,
+SelectButton ni Popover. Overrides marcados en Figma como candidatos a variante: togglebutton
+de texto con severidad y chip con severidad.
 
 ## ✅ Lo que se cerró el 2026-08-30 (las 4 tareas que dejaba este hand-off)
 
