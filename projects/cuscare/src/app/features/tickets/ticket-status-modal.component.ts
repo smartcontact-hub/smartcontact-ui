@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, output, signal } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
+
 /**
  * Modal "Ticket Status" — el que abre el pill de estado del detalle.
  *
@@ -18,24 +20,25 @@ import { ChangeDetectionStrategy, Component, output, signal } from '@angular/cor
 @Component({
   selector: 'app-ticket-status-modal',
   standalone: true,
+  imports: [TrPipe],
   template: `
     <div class="tsmodal" (click)="onBackdrop($event)">
-      <div class="tsmodal__dialog" role="dialog" aria-modal="true" aria-label="Ticket Status">
+      <div class="tsmodal__dialog" role="dialog" aria-modal="true" [attr.aria-label]="'Ticket Status' | tr">
         <div class="tsmodal__content">
           <header class="tsmodal__head">
-            <h4 class="tsmodal__title">Ticket Status</h4>
+            <h4 class="tsmodal__title">{{ 'Ticket Status' | tr }}</h4>
             <!-- «Close dialog», no «Close»: este modal tiene ADEMÁS un botón de
                  producto llamado Close (cerrar el ticket). Con el mismo nombre,
                  quien navega por voz o lector de pantalla oye dos «Close» y no
                  sabe cuál cierra qué. -->
-            <button class="tsmodal__x" type="button" aria-label="Close dialog" (click)="closed.emit()">
+            <button class="tsmodal__x" type="button" [attr.aria-label]="'Close dialog' | tr" (click)="closed.emit()">
               ×
             </button>
           </header>
 
           <div class="tsmodal__body">
             <section class="tscol">
-              <span class="tscol__label">Nature of demand</span>
+              <span class="tscol__label">{{ 'Nature of demand' | tr }}</span>
               <div class="tsbox tsbox--nature">
                 @for (n of natures; track n) {
                   <label class="tscheck">
@@ -44,14 +47,14 @@ import { ChangeDetectionStrategy, Component, output, signal } from '@angular/cor
                       [checked]="picked().has(n)"
                       (change)="toggleNature(n)"
                     />
-                    <span>{{ n }}</span>
+                    <span>{{ n | tr }}</span>
                   </label>
                 }
               </div>
             </section>
 
             <section class="tscol">
-              <span class="tscol__label">Status</span>
+              <span class="tscol__label">{{ 'Status' | tr }}</span>
               <div class="tsbox tsbox--status">
                 @for (s of statuses; track s) {
                   <label class="tsradio">
@@ -61,7 +64,7 @@ import { ChangeDetectionStrategy, Component, output, signal } from '@angular/cor
                       [checked]="status() === s"
                       (change)="status.set(s)"
                     />
-                    <span>{{ s }}</span>
+                    <span>{{ s | tr }}</span>
                   </label>
                 }
               </div>
@@ -71,11 +74,11 @@ import { ChangeDetectionStrategy, Component, output, signal } from '@angular/cor
           <footer class="tsmodal__foot">
             <label class="tscheck tscheck--gdpr">
               <input type="checkbox" [checked]="gdpr()" (change)="gdpr.set(!gdpr())" />
-              <span>GDPR pending</span>
+              <span>{{ 'GDPR pending' | tr }}</span>
             </label>
             <span class="tsmodal__actions">
-              <button class="tsbtn tsbtn--close" type="button" (click)="closed.emit()">Close</button>
-              <button class="tsbtn tsbtn--save" type="button" (click)="closed.emit()">Save</button>
+              <button class="tsbtn tsbtn--close" type="button" (click)="closed.emit()">{{ 'Close' | tr }}</button>
+              <button class="tsbtn tsbtn--save" type="button" (click)="closed.emit()">{{ 'Save' | tr }}</button>
             </span>
           </footer>
         </div>

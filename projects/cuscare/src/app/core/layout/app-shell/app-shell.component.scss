@@ -171,6 +171,32 @@
   background: #6d7686;
 }
 
+/* Idioma (propio): separador, rótulo y dos opciones con marca en la elegida. */
+.settingsmenu__sep {
+  height: 1px;
+  margin: 4px 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.settingsmenu__group {
+  padding: 4px 11px 2px;
+  font-family: var(--cc-font-head);
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.settingsmenu__item--lang {
+  width: 100%;
+  border: 0;
+  background: none;
+  text-align: left;
+}
+
+.settingsmenu__check {
+  display: inline-block;
+  width: 14px;
+}
+
 /* ── Contenido ──────────────────────────────────────────────────────────── */
 /* Medido: la card arranca en x=117.3 y=20 → 117.3 - 90.3 (sidebar) = 27px de hueco. */
 .content-main {

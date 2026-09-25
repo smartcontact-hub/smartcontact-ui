@@ -448,6 +448,38 @@
   gap: 4px;
 }
 
+/* Etiquetas de «Request type» (V3): las medidas de la etiqueta del DS de ui.smart-contact.com
+   (radio 6, relleno 1.75 / 7, 12px en 700, interlineado 18: 21.5 de alto). */
+:host ::ng-deep .cc-table .chips .p-tag {
+  padding: 1.75px 7px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+/* Cada etiqueta con el color de su origen (--cc-origin-*): IA violeta, agente azul. */
+:host ::ng-deep .cc-table .rt-tag--ai {
+  background: var(--cc-origin-ai-bg);
+  color: var(--cc-origin-ai-fg);
+}
+
+:host ::ng-deep .cc-table .rt-tag--agent {
+  background: var(--cc-origin-agent-bg);
+  color: var(--cc-origin-agent-fg);
+}
+
+/* En castellano los tipos son más largos («GDPR - Derecho de acceso»): que bajen de línea. */
+.rt-chips {
+  flex-wrap: wrap;
+}
+
+/* En una fila bloqueada por otro agente el texto va atenuado; las etiquetas, también. */
+:host ::ng-deep .cc-table .cell--dim .rt-tag {
+  opacity: 0.5;
+}
+
 .chip {
   display: inline-flex;
   align-items: center;

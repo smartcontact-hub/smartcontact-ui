@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
+
 import { TEMPLATE_FOLDERS } from '../../data/seed';
 
 /**
@@ -13,24 +15,25 @@ import { TEMPLATE_FOLDERS } from '../../data/seed';
 @Component({
   selector: 'app-templates-page',
   standalone: true,
+  imports: [TrPipe],
   template: `
     <div class="tpl">
       <header class="tpl__head">
-        <h1 class="cc-page-title">Templates</h1>
+        <h1 class="cc-page-title">{{ 'Templates' | tr }}</h1>
         <div class="tpl__search">
-          <input class="tpl__searchbox" type="text" placeholder="Search" aria-label="Search templates" />
-          <button class="tpl__searchbtn" type="button" aria-label="Search">
+          <input class="tpl__searchbox" type="text" [placeholder]="'action::Search' | tr" [attr.aria-label]="'Search templates' | tr" />
+          <button class="tpl__searchbtn" type="button" [attr.aria-label]="'action::Search' | tr">
             <img src="icons/general/buscar.svg" width="14" height="14" alt="" aria-hidden="true" />
           </button>
         </div>
         <div class="tpl__actions">
           <button class="btn btn--dark" type="button">
             <img src="icons/general/folder_fill.svg" width="14" height="14" alt="" aria-hidden="true" />
-            Add category
+            {{ 'Add category' | tr }}
           </button>
           <button class="btn btn--dark" type="button">
             <img src="icons/general/draft_fill.svg" width="14" height="14" alt="" aria-hidden="true" />
-            Add template
+            {{ 'Add template' | tr }}
           </button>
         </div>
       </header>
@@ -48,13 +51,13 @@ import { TEMPLATE_FOLDERS } from '../../data/seed';
             }
             <!-- Los tres de acción son PNG de 30×30 en el original (no SVG). -->
             <span class="folder__actions">
-              <button class="folder__act" type="button" aria-label="Edit">
+              <button class="folder__act" type="button" [attr.aria-label]="'Edit' | tr">
                 <img src="icons/actions/edit_icon.png" width="15" height="15" alt="" aria-hidden="true" />
               </button>
-              <button class="folder__act" type="button" aria-label="Duplicate">
+              <button class="folder__act" type="button" [attr.aria-label]="'Duplicate' | tr">
                 <img src="icons/actions/duplicate_icon.png" width="15" height="15" alt="" aria-hidden="true" />
               </button>
-              <button class="folder__act" type="button" aria-label="Delete">
+              <button class="folder__act" type="button" [attr.aria-label]="'Delete' | tr">
                 <img src="icons/actions/delete_icon.png" width="15" height="15" alt="" aria-hidden="true" />
               </button>
             </span>

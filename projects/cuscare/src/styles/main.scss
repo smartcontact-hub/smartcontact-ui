@@ -39,6 +39,15 @@
   --cc-text-muted: #8d939d; /* item de nav inactivo */
   --cc-text-body: #4f5663;
 
+  /* «Request type» (V3): el color de cada origen, el MISMO en las etiquetas de la tabla,
+     en el disparador y en los botones del filtro. Son las etiquetas «Primary» (IA) e «Info»
+     (Agente) del DS de ui.smart-contact.com, medidas en su página (#d2d9e3 / #1b273d y
+     #d5e6ff / #0a3ba0). */
+  --cc-origin-ai-bg: var(--sc-color-blue-100);
+  --cc-origin-ai-fg: var(--sc-color-blue-700);
+  --cc-origin-agent-bg: var(--sc-cmp-tag-info-background);
+  --cc-origin-agent-fg: var(--sc-cmp-tag-info-color);
+
   /* Líneas */
   --cc-line: #dadfe6; /* separador de filas */
 

@@ -2,14 +2,14 @@
   <!-- ── Columna izquierda: 360px sobre el lienzo #f4f6fc ─────────────────-->
   <aside class="sum__side">
     <div class="sum__bar">
-      <button class="sum__x" type="button" aria-label="Close" (click)="closed.emit()"><img src="icons/general/x.svg" width="11" height="11" alt="" aria-hidden="true" /></button>
+      <button class="sum__x" type="button" [attr.aria-label]="'Close' | tr" (click)="closed.emit()"><img src="icons/general/x.svg" width="11" height="11" alt="" aria-hidden="true" /></button>
       <span class="sum__ticket">#{{ ticketId() }}</span>
-      <button class="sum__export" type="button" aria-label="Export">
+      <button class="sum__export" type="button" [attr.aria-label]="'Export' | tr">
         <img src="icons/general/descarga.svg" width="14" height="14" alt="" aria-hidden="true" />
       </button>
     </div>
 
-    <h2 class="sum__h2">Service</h2>
+    <h2 class="sum__h2">{{ 'Service' | tr }}</h2>
     <div class="sum__service">
       <span class="sum__name">{{ product() }}</span>
       <span class="sum__price">4.5 €</span>
@@ -27,7 +27,7 @@
           [class.is-on]="periodMode() === 'RECCURING'"
           (click)="periodMode.set('RECCURING')"
         >
-          Reccuring
+          {{ 'Reccuring' | tr }}
         </button>
         <button
           type="button"
@@ -35,38 +35,38 @@
           [class.is-on]="periodMode() === 'DURATION'"
           (click)="periodMode.set('DURATION')"
         >
-          Duration
+          {{ 'Duration' | tr }}
         </button>
       </span>
     </div>
 
-    <h2 class="sum__h2">Subscriptions</h2>
+    <h2 class="sum__h2">{{ 'Subscriptions' | tr }}</h2>
     <div class="sum__subcard">
       <span class="sum__subcheck" aria-hidden="true"><svg width="12" height="12" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M400-304 240-464l56-56 104 104 264-264 56 56-320 320Z" /></svg></span>
       <span class="sum__dots" aria-hidden="true"><i class="on"></i><i></i></span>
       <span class="sum__subcol">
-        <span class="sum__sublabel">Subscribed</span>
+        <span class="sum__sublabel">{{ 'Subscribed' | tr }}</span>
         <span class="sum__subdate">11 Aug 2026</span>
       </span>
       <span class="sum__subcol">
         <!-- "Unsubsribed", sin la segunda c: también del original. -->
-        <span class="sum__sublabel sum__sublabel--out">Unsubsribed</span>
+        <span class="sum__sublabel sum__sublabel--out">{{ 'Unsubsribed' | tr }}</span>
         <span class="sum__subdate sum__subdate--out">11 Aug 2026</span>
       </span>
     </div>
 
-    <h2 class="sum__h2">Customer info</h2>
+    <h2 class="sum__h2">{{ 'Customer info' | tr }}</h2>
     <dl class="sum__fields">
-      <dt>Name</dt>
-      <dd><span class="sum__ph">First name</span> <span class="sum__ph">Last name</span></dd>
-      <dt>Address</dt>
-      <dd><span class="sum__ph">ZIP code</span> <span class="sum__ph">City</span> <img class="sum__flag" src="icons/flags/es.svg" width="16" height="12" alt="" aria-hidden="true" /> ES</dd>
-      <dt>Contact</dt>
-      <dd><span class="sum__ph">Phone</span> +34600222333 <span class="sum__ph">Email</span></dd>
+      <dt>{{ 'Name' | tr }}</dt>
+      <dd><span class="sum__ph">{{ 'First name' | tr }}</span> <span class="sum__ph">{{ 'Last name' | tr }}</span></dd>
+      <dt>{{ 'Address' | tr }}</dt>
+      <dd><span class="sum__ph">{{ 'ZIP code' | tr }}</span> <span class="sum__ph">{{ 'City' | tr }}</span> <img class="sum__flag" src="icons/flags/es.svg" width="16" height="12" alt="" aria-hidden="true" /> ES</dd>
+      <dt>{{ 'Contact' | tr }}</dt>
+      <dd><span class="sum__ph">{{ 'Phone' | tr }}</span> +34600222333 <span class="sum__ph">{{ 'Email' | tr }}</span></dd>
     </dl>
 
     <div class="sum__subsinfo">
-      <h2 class="sum__h2">Subs Info</h2>
+      <h2 class="sum__h2">{{ 'Subs Info' | tr }}</h2>
       <!-- Los dos rótulos son los del diccionario del original: «Expand all» / «Collapse». -->
       <button
         class="sum__expand"
@@ -74,12 +74,12 @@
         [attr.aria-expanded]="subsInfoDesplegado()"
         (click)="alternarSubsInfo()"
       >
-        {{ subsInfoDesplegado() ? 'Collapse' : 'Expand all' }}
+        {{ (subsInfoDesplegado() ? 'Collapse' : 'Expand all') | tr }}
       </button>
     </div>
     @for (campo of subsInfo; track campo.clave) {
       <div class="sum__box" [class.is-open]="subsInfoDesplegado()" data-testid="sum-subsinfo">
-        <span class="sum__boxk">{{ campo.clave }}</span>{{ campo.valor }}
+        <span class="sum__boxk">{{ campo.clave | tr }}</span>{{ campo.valor }}
       </div>
     }
   </aside>
@@ -88,18 +88,18 @@
   <section class="sum__main">
     <div class="sum__strip">
       <span class="sum__state sum__state--out">
-        <strong>Unsubsribed</strong>
+        <strong>{{ 'Unsubsribed' | tr }}</strong>
         <span>CANCELLED</span>
       </span>
-      <span class="sum__state sum__state--off"><svg class="sum__off" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg> Access to service</span>
-      <span class="sum__state sum__state--off"><svg class="sum__off" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg> Download elements</span>
+      <span class="sum__state sum__state--off"><svg class="sum__off" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg> {{ 'Access to service' | tr }}</span>
+      <span class="sum__state sum__state--off"><svg class="sum__off" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg> {{ 'Download elements' | tr }}</span>
       <span class="sum__card sum__card--charges">
-        <span class="sum__cardk">Charges</span>
+        <span class="sum__cardk">{{ 'Charges' | tr }}</span>
         <strong class="sum__cardv">4.5 €</strong>
-        <span class="sum__cardlink">See total</span>
+        <span class="sum__cardlink">{{ 'See total' | tr }}</span>
       </span>
       <span class="sum__card sum__card--refunded">
-        <span class="sum__cardk">Refunded</span>
+        <span class="sum__cardk">{{ 'Refunded' | tr }}</span>
         <strong class="sum__cardv">0 €</strong>
       </span>
     </div>
@@ -107,15 +107,15 @@
     <!-- MO/MT: los SMS que se le mandaron al cliente. -->
     <button class="sum__sech" type="button" (click)="toggle('mtmo')" [attr.aria-expanded]="isOpen('mtmo')">
       <span class="sum__ok" aria-hidden="true"><svg width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg></span>
-      <span class="sum__sectitle">MO/MT<small>Up to date</small></span>
+      <span class="sum__sectitle">MO/MT<small>{{ 'Up to date' | tr }}</small></span>
       <svg class="sum__caret" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path [attr.d]="isOpen('mtmo') ? 'M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z' : 'M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z'" /></svg>
     </button>
     @if (isOpen('mtmo')) {
       <table class="sum__table">
         <thead>
           <tr>
-            <th>Product</th><th>Date time</th><th>Sms content</th>
-            <th>Status</th><th>Type</th><th>Destiny</th>
+            <th>{{ 'Product' | tr }}</th><th>{{ 'Date time' | tr }}</th><th>{{ 'Sms content' | tr }}</th>
+            <th>{{ 'Status' | tr }}</th><th>{{ 'Type' | tr }}</th><th>{{ 'Destiny' | tr }}</th>
           </tr>
         </thead>
         <tbody>
@@ -135,7 +135,7 @@
 
     <button class="sum__sech" type="button" (click)="toggle('billing')" [attr.aria-expanded]="isOpen('billing')">
       <span class="sum__ok" aria-hidden="true"><svg width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg></span>
-      <span class="sum__sectitle">Charges<small>Up to date</small></span>
+      <span class="sum__sectitle">{{ 'Charges' | tr }}<small>{{ 'Up to date' | tr }}</small></span>
       <svg class="sum__caret" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path [attr.d]="isOpen('billing') ? 'M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z' : 'M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z'" /></svg>
     </button>
     @if (isOpen('billing')) {
@@ -144,7 +144,7 @@
           <div class="sum__charge">
             <span class="sum__chargedate">{{ c.date }}<br />{{ c.time }}</span>
             <span class="sum__chargeid">
-              <span class="sum__boxk">Subscription Id</span>{{ c.subscriptionId }}
+              <span class="sum__boxk">{{ 'Subscription Id' | tr }}</span>{{ c.subscriptionId }}
             </span>
             <span class="sum__chargeamt">{{ c.amount }}</span>
             <span class="sum__chargestate">{{ c.state }}</span>
@@ -157,13 +157,13 @@
          sección por la que entra el botón "Nav" de la tabla. -->
     <button #navSection class="sum__sech" type="button" (click)="toggle('nav')" [attr.aria-expanded]="isOpen('nav')">
       <span class="sum__ok" aria-hidden="true"><svg width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg></span>
-      <span class="sum__sectitle">Navigation<small>Up to date</small></span>
+      <span class="sum__sectitle">{{ 'Navigation' | tr }}<small>{{ 'Up to date' | tr }}</small></span>
       <svg class="sum__caret" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path [attr.d]="isOpen('nav') ? 'M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z' : 'M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z'" /></svg>
     </button>
     @if (isOpen('nav')) {
       <table class="sum__table">
         <thead>
-          <tr><th>Date</th><th>Url</th><th>Type</th></tr>
+          <tr><th>{{ 'Date' | tr }}</th><th>Url</th><th>{{ 'Type' | tr }}</th></tr>
         </thead>
         <tbody>
           @for (n of navigation; track n.url) {

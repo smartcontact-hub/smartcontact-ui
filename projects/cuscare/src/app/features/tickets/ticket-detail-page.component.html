@@ -1,7 +1,7 @@
 <div class="detail">
   <!-- En pre-ticket la naturaleza de la demanda sale VACÍA (medido: el bloque
        existe, mide 7px de alto y no lleva texto). -->
-  <span class="detail__kind">{{ isPreTicket ? '' : 'Unsubscription' }}</span>
+  <span class="detail__kind">{{ isPreTicket ? '' : ('Unsubscription' | tr) }}</span>
 
   <section class="cc-card detail__card">
     <header class="detail__head">
@@ -16,7 +16,7 @@
       @if (!isPreTicket) {
         <!-- El pill NO es decorativo: abre el modal "Ticket Status". -->
         <button class="statusbtn" type="button" (click)="statusModalOpen.set(true)">
-          <img class="ccicon" src="icons/ticket/guardar.svg" width="13" height="13" alt="" aria-hidden="true" /> Resolved
+          <img class="ccicon" src="icons/ticket/guardar.svg" width="13" height="13" alt="" aria-hidden="true" /> {{ 'Resolved' | tr }}
         </button>
       }
     </header>
@@ -53,7 +53,7 @@
 
     <div class="subs">
       <div class="subs__actions">
-        <button class="iconbtn" type="button" aria-label="Refresh"><img src="icons/general/icons8-refresh.svg" width="14" height="14" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" [attr.aria-label]="'Refresh' | tr"><img src="icons/general/icons8-refresh.svg" width="14" height="14" alt="" aria-hidden="true" /></button>
         <!-- REAPUNTADOS a sus componentes de verdad: mirando el árbol de la app
              real aparecieron `app-modal-confirmation-unsubscribe` y
              `app-new-modal-refund`. Antes colgaban de "Right to be forgotten" y
@@ -67,7 +67,7 @@
           [disabled]="!hasSubSelection()"
           (click)="unsubOpen.set(true)"
         >
-          Unsubscribe
+          {{ 'detail::Unsubscribe' | tr }}
         </button>
         <button
           class="btn btn--ghost"
@@ -75,7 +75,7 @@
           [disabled]="!hasSubSelection()"
           (click)="refundFor.set(firstSelectedSub())"
         >
-          Refund
+          {{ 'Refund' | tr }}
         </button>
         <button
           class="btn btn--ghost"
@@ -84,7 +84,7 @@
           (click)="subsDetailOpen.set(!subsDetailOpen())"
           [attr.aria-pressed]="subsDetailOpen()"
         >
-          Detail
+          {{ 'Detail' | tr }}
         </button>
       </div>
 
@@ -95,13 +95,13 @@
               <input
                 class="cc-check"
                 type="checkbox"
-                aria-label="Select all"
+                [attr.aria-label]="'Select all' | tr"
                 [checked]="allSubsSelected()"
                 (change)="toggleAllSubs()"
               />
             </th>
             @for (c of subCols; track c) {
-              <th>{{ c }}</th>
+              <th>{{ c | tr }}</th>
             }
           </tr>
         </thead>
@@ -112,7 +112,7 @@
                 <input
                   class="cc-check"
                   type="checkbox"
-                  [attr.aria-label]="'Select ' + s.product"
+                  [attr.aria-label]="('Select' | tr) + ' ' + s.product"
                   [checked]="isSubSelected(s.product)"
                   (change)="toggleSub(s.product)"
                 />
@@ -128,7 +128,7 @@
                 <button
                   class="navpill"
                   type="button"
-                  [attr.aria-label]="'Navigation for ' + s.product"
+                  [attr.aria-label]="('Navigation for' | tr) + ' ' + s.product"
                   (click)="openSummary(s.product, 'nav')"
                 >
                   <img class="ccicon" src="icons/general/globalPic.svg" width="13" height="13" alt="" aria-hidden="true" /> Nav
@@ -143,7 +143,7 @@
                   <button
                     class="badge badge--btn"
                     type="button"
-                    [attr.aria-label]="'Refunds for ' + s.product"
+                    [attr.aria-label]="('Refunds for' | tr) + ' ' + s.product"
                     (click)="refundFor.set(s.product)"
                   >
                     {{ s.refund }}
@@ -159,7 +159,7 @@
                    revisión resultó ser lo más denso de la app). -->
               <td>
                 <button class="summarypill" type="button" (click)="openSummary(s.product)">
-                  Summary
+                  {{ 'Summary' | tr }}
                 </button>
               </td>
             </tr>
@@ -173,13 +173,13 @@
 
   <nav class="tabs" role="tablist">
     <button class="tabs__tab" [class.is-active]="tab() === 'history'" (click)="tab.set('history')" role="tab" [attr.aria-selected]="tab() === 'history'" type="button">
-      History ticket
+      {{ 'History ticket' | tr }}
     </button>
     <button class="tabs__tab" [class.is-active]="tab() === 'notes'" (click)="tab.set('notes')" role="tab" [attr.aria-selected]="tab() === 'notes'" type="button">
-      Notes <img class="ccicon" src="icons/ticket/notas-cabecero.svg" width="14" height="14" alt="" aria-hidden="true" />
+      {{ 'Notes' | tr }} <img class="ccicon" src="icons/ticket/notas-cabecero.svg" width="14" height="14" alt="" aria-hidden="true" />
     </button>
     <button class="tabs__tab" [class.is-active]="tab() === 'files'" (click)="tab.set('files')" role="tab" [attr.aria-selected]="tab() === 'files'" type="button">
-      Attached files <img class="ccicon" src="icons/ticket/adjunto-cabecero.svg" width="14" height="14" alt="" aria-hidden="true" />
+      {{ 'Attached files' | tr }} <img class="ccicon" src="icons/ticket/adjunto-cabecero.svg" width="14" height="14" alt="" aria-hidden="true" />
     </button>
 
     <button
@@ -188,7 +188,7 @@
       [attr.aria-expanded]="historyDetails()"
       (click)="historyDetails.set(!historyDetails())"
     >
-      Show details
+      {{ 'Show details' | tr }}
       <img
         class="ccicon caret"
         [src]="historyDetails() ? 'icons/general/flecha-arriba.svg' : 'icons/general/flecha-abajo.svg'"
@@ -208,13 +208,13 @@
         [attr.aria-expanded]="newMenuOpen()"
         (click)="newMenuOpen.set(!newMenuOpen())"
       >
-        <span aria-hidden="true">＋</span> New
+        <span aria-hidden="true">＋</span> {{ 'New' | tr }}
       </button>
       @if (newMenuOpen()) {
         <div class="newmenu" role="menu">
           @for (item of newMenuItems; track item) {
             <button class="newmenu__item" type="button" role="menuitem" (click)="newMenuOpen.set(false)">
-              {{ item }}
+              {{ item | tr }}
             </button>
           }
         </div>
@@ -225,7 +225,7 @@
   @switch (tab()) {
     @case ('history') {
       <ol class="timeline">
-        @for (e of history; track $index) {
+        @for (e of history(); track $index) {
           <li class="timeline__row">
             <span class="timeline__time">{{ e.time }}</span>
             <span class="timeline__rail">
@@ -254,7 +254,7 @@
                 }}</span>
               }
               @if (e.kind === 'call') {
-                <span class="timeline__meta">| Start time: 8/11/26, 1:19 PM</span>
+                <span class="timeline__meta">| {{ 'Start time' | tr }}: 8/11/26, 1:19 PM</span>
               }
               @if (historyDetails() && e.detail) {
                 <span class="timeline__body">{{ e.detail }}</span>
@@ -265,10 +265,10 @@
       </ol>
     }
     @case ('notes') {
-      <p class="nodata">No Data Found</p>
+      <p class="nodata">{{ 'No Data Found' | tr }}</p>
     }
     @case ('files') {
-      <p class="nodata">No Data Found</p>
+      <p class="nodata">{{ 'No Data Found' | tr }}</p>
     }
   }
 

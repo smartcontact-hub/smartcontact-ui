@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
+
 import { USERS } from '../../data/seed';
 
 /**
@@ -10,30 +12,31 @@ import { USERS } from '../../data/seed';
 @Component({
   selector: 'app-users-page',
   standalone: true,
+  imports: [TrPipe],
   template: `
     <section class="cc-card settings-page">
-      <header class="settings-page__head"><h1 class="cc-page-title">Users</h1></header>
+      <header class="settings-page__head"><h1 class="cc-page-title">{{ 'Users' | tr }}</h1></header>
 
       <div class="settings-page__toolbar">
-        <button class="iconbtn" type="button" aria-label="Filter"><img src="icons/general/filter.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
-        <button class="iconbtn" type="button" aria-label="Search"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
-        <button class="iconbtn settings-page__spacer" type="button" aria-label="Export"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" [attr.aria-label]="'Filter' | tr"><img src="icons/general/filter.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" [attr.aria-label]="'action::Search' | tr"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn settings-page__spacer" type="button" [attr.aria-label]="'Export' | tr"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
       </div>
 
       <table class="mattable">
         <thead>
           <tr>
-            <th class="col-check"><input class="cc-check" type="checkbox" aria-label="Select all" /></th>
-            <th>User Name</th>
-            <th>Default Role</th>
-            <th>Acd Groups</th>
+            <th class="col-check"><input class="cc-check" type="checkbox" [attr.aria-label]="'Select all' | tr" /></th>
+            <th>{{ 'User Name' | tr }}</th>
+            <th>{{ 'Default Role' | tr }}</th>
+            <th>{{ 'Acd Groups' | tr }}</th>
           </tr>
         </thead>
         <tbody>
           @for (u of users; track u.name) {
             <tr>
               <td class="col-check">
-                <input class="cc-check" type="checkbox" [attr.aria-label]="'Select ' + u.name" />
+                <input class="cc-check" type="checkbox" [attr.aria-label]="('Select' | tr) + ' ' + u.name" />
               </td>
               <td>{{ u.name }}</td>
               <td>{{ u.role }}</td>
