@@ -42,7 +42,14 @@
       @if (mode() === 'edit') {
         <div class="headline">
           <div class="headline__who">
-            <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name || ('agents.entity_singular' | translate) }}</h1>
+            <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad. -->
+            <h1 class="headline__name headline__name--editable sc-text-h3-semibold" [title]="form().name">
+              <sc-name-inplace
+                [name]="form().name"
+                [label]="'agents.form.fields.name' | translate"
+                (nameChange)="onNameRename($event)"
+              />
+            </h1>
             <span class="headline__meta sc-text-caption-regular">
               @if (form().extension) {
                 {{ 'agents.form.fields.extension' | translate }} {{ form().extension }}

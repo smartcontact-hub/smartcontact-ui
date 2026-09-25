@@ -31,6 +31,7 @@ import { CrossTabLockService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { NameInplaceComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -138,6 +139,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
   selector: 'sc-agent-form-page',
   imports: [
     ButtonComponent,
+    NameInplaceComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
     GroupAssignmentTableComponent,
