@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
+
 /**
  * "Manage MO in error" (`#/private/cuscare/mo-management`).
  *
@@ -11,11 +13,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 @Component({
   selector: 'app-mo-management-page',
   standalone: true,
+  imports: [TrPipe],
   template: `
     <section class="cc-card mo">
       <div class="mo__toolbar">
-        <button class="iconbtn" type="button" aria-label="Search"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
-        <button class="iconbtn mo__spacer" type="button" aria-label="Export"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" [attr.aria-label]="'action::Search' | tr"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn mo__spacer" type="button" [attr.aria-label]="'Export' | tr"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
       </div>
 
       <table class="mo__table">
@@ -23,10 +26,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
           <tr>
             @for (c of cols; track c) {
               <th>
-                <span class="mo__label">{{ c }}</span>
+                <span class="mo__label">{{ c | tr }}</span>
                 <span class="mo__search">
                   <span class="mo__field"></span>
-                  <button class="mo__mag" type="button" [attr.aria-label]="'Search in ' + c">
+                  <button class="mo__mag" type="button" [attr.aria-label]="('Search in' | tr) + ' ' + (c | tr)">
                     <img src="icons/general/buscar.svg" width="12" height="12" alt="" aria-hidden="true" />
                   </button>
                 </span>
@@ -36,14 +39,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         </thead>
       </table>
 
-      <p class="mo__empty">No data to show</p>
+      <p class="mo__empty">{{ 'No data to show' | tr }}</p>
 
       <footer class="mo__foot">
-        <span>Rows per page <span class="mo__sel">10</span></span>
-        <span>Page <span class="mo__sel">1</span></span>
-        <button class="mo__pg" type="button" aria-label="Previous">‹</button>
-        <span>Page 1 of 0 total results 0</span>
-        <button class="mo__pg" type="button" aria-label="Next">›</button>
+        <span>{{ 'Rows per page' | tr }} <span class="mo__sel">10</span></span>
+        <span>{{ 'Page' | tr }} <span class="mo__sel">1</span></span>
+        <button class="mo__pg" type="button" [attr.aria-label]="'Previous' | tr">‹</button>
+        <span>{{ 'Page' | tr }} 1 {{ 'of' | tr }} 0 {{ 'total results' | tr }} 0</span>
+        <button class="mo__pg" type="button" [attr.aria-label]="'Next' | tr">›</button>
       </footer>
     </section>
   `,

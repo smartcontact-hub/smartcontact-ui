@@ -10,7 +10,7 @@
       [attr.aria-expanded]="open() === a.id"
       (click)="toggle(a.id)"
     >
-      {{ a.label }}
+      {{ a.label | tr }}
       <img
         class="bulkbtn__caret"
         src="icons/general/arrow_drop_down.svg"
@@ -23,9 +23,9 @@
 
     <!-- ── Panel: Assign ───────────────────────────────────────────────── -->
     @if (open() === 'assign' && a.id === 'assign') {
-      <div class="panel panel--assign" role="dialog" aria-label="Assign">
+      <div class="panel panel--assign" role="dialog" [attr.aria-label]="'Assign' | tr">
         <div class="panel__close">
-          <button class="panel__x" type="button" aria-label="Close" (click)="close()">
+          <button class="panel__x" type="button" [attr.aria-label]="'Close' | tr" (click)="close()">
             <img src="icons/general/x.svg" width="10" height="10" alt="" aria-hidden="true" />
           </button>
         </div>
@@ -38,8 +38,8 @@
             <input
               class="panel__searchinput"
               type="text"
-              placeholder="Search"
-              aria-label="Search agent"
+              [placeholder]="'action::Search' | tr"
+              [attr.aria-label]="'Search agent' | tr"
               [ngModel]="agentQuery()"
               (ngModelChange)="agentQuery.set($event)"
             />
@@ -75,7 +75,7 @@
             [disabled]="!agent()"
             (click)="confirmFromPanel('assign')"
           >
-            Assign
+            {{ 'Assign' | tr }}
           </button>
         </div>
       </div>
@@ -83,14 +83,14 @@
 
     <!-- ── Panel: Change status ────────────────────────────────────────── -->
     @if (open() === 'status' && a.id === 'status') {
-      <div class="panel panel--status" role="dialog" aria-label="Change status">
+      <div class="panel panel--status" role="dialog" [attr.aria-label]="'Change status' | tr">
         <div class="panel__close">
-          <button class="panel__x" type="button" aria-label="Close" (click)="close()">
+          <button class="panel__x" type="button" [attr.aria-label]="'Close' | tr" (click)="close()">
             <img src="icons/general/x.svg" width="10" height="10" alt="" aria-hidden="true" />
           </button>
         </div>
 
-        <div class="panel__title"><p>Change status</p></div>
+        <div class="panel__title"><p>{{ 'Change status' | tr }}</p></div>
 
         <div class="panel__body">
           <button
@@ -99,7 +99,7 @@
             [attr.aria-expanded]="statusListOpen()"
             (click)="statusListOpen.set(!statusListOpen())"
           >
-            <span class="cselect__value">{{ status() }}</span>
+            <span class="cselect__value">{{ status() ?? '' | tr }}</span>
             <span class="cselect__arrow">
               <img
                 src="icons/general/flecha-abajo.svg"
@@ -124,7 +124,7 @@
                   (click)="pickStatus(s)"
                   (keydown.enter)="pickStatus(s)"
                 >
-                  {{ s }}
+                  {{ s | tr }}
                 </div>
               }
             </div>
@@ -139,7 +139,7 @@
             [disabled]="!status()"
             (click)="confirmFromPanel('status')"
           >
-            Accept
+            {{ 'Accept' | tr }}
           </button>
         </div>
       </div>
@@ -147,9 +147,9 @@
 
     <!-- ── Panel: Unsubscribe ──────────────────────────────────────────── -->
     @if (open() === 'unsubscribe' && a.id === 'unsubscribe') {
-      <div class="panel panel--unsub" role="dialog" aria-label="Unsubscribe">
+      <div class="panel panel--unsub" role="dialog" [attr.aria-label]="'Unsubscribe' | tr">
         <div class="panel__close">
-          <button class="panel__x" type="button" aria-label="Close" (click)="close()">
+          <button class="panel__x" type="button" [attr.aria-label]="'Close' | tr" (click)="close()">
             <img src="icons/general/x.svg" width="10" height="10" alt="" aria-hidden="true" />
           </button>
         </div>
@@ -164,7 +164,7 @@
               (change)="unsubAll.set(true)"
             />
             <span class="radio__mark" aria-hidden="true"></span>
-            <span class="radio__text">Unsubscribe all products</span>
+            <span class="radio__text">{{ 'Unsubscribe all products' | tr }}</span>
           </label>
         </div>
 
@@ -174,7 +174,7 @@
             type="button"
             (click)="confirmFromPanel('unsubscribe')"
           >
-            Unsubscribe
+            {{ 'Unsubscribe' | tr }}
           </button>
         </div>
       </div>
@@ -199,13 +199,13 @@
             <thead>
               <tr>
                 <th>Id</th>
-                <th>Created at</th>
-                <th>Service</th>
-                <th>Assign</th>
-                <th>Group</th>
-                <th>Status</th>
-                <th>Channel</th>
-                <th>Description</th>
+                <th>{{ 'Created at' | tr }}</th>
+                <th>{{ 'Service' | tr }}</th>
+                <th>{{ 'Assign' | tr }}</th>
+                <th>{{ 'Group' | tr }}</th>
+                <th>{{ 'Status' | tr }}</th>
+                <th>{{ 'Channel' | tr }}</th>
+                <th>{{ 'Description' | tr }}</th>
               </tr>
             </thead>
             <tbody>
@@ -227,7 +227,7 @@
 
         <div class="cmodal__foot">
           <button class="cmodal__btn cmodal__btn--cancel" type="button" (click)="closeModal()">
-            Cancel
+            {{ 'Cancel' | tr }}
           </button>
           <button class="cmodal__btn cmodal__btn--confirm" type="button" (click)="apply()">
             {{ modalCta() }}

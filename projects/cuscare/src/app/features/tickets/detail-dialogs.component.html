@@ -5,10 +5,10 @@
   @case ('selfAssign') {
     <div class="dlg" (click)="onBackdrop($event)">
       <div class="dlg__box dlg__box--plain" role="dialog" aria-modal="true">
-        <h4 class="dlg__bigtitle">Would you like to assign this Ticket to yourself?</h4>
+        <h4 class="dlg__bigtitle">{{ 'Would you like to assign this Ticket to yourself?' | tr }}</h4>
         <div class="dlg__plainbody">
-          <button class="nativebtn" type="button" (click)="closed.emit()">Yes</button>
-          <button class="nativebtn" type="button" (click)="closed.emit()">No</button>
+          <button class="nativebtn" type="button" (click)="closed.emit()">{{ 'Yes' | tr }}</button>
+          <button class="nativebtn" type="button" (click)="closed.emit()">{{ 'No' | tr }}</button>
         </div>
       </div>
     </div>
@@ -19,10 +19,10 @@
   @case ('deleteNote') {
     <div class="dlg" (click)="onBackdrop($event)">
       <div class="dlg__box dlg__box--plain" role="dialog" aria-modal="true">
-        <h4 class="dlg__bigtitle">Are you sure you want to delete this note?</h4>
+        <h4 class="dlg__bigtitle">{{ 'Are you sure you want to delete this note?' | tr }}</h4>
         <div class="dlg__plainbody">
-          <button class="nativebtn" type="button" (click)="closed.emit()">Accept</button>
-          <button class="nativebtn" type="button" (click)="closed.emit()">Cancel</button>
+          <button class="nativebtn" type="button" (click)="closed.emit()">{{ 'Accept' | tr }}</button>
+          <button class="nativebtn" type="button" (click)="closed.emit()">{{ 'Cancel' | tr }}</button>
         </div>
       </div>
     </div>
@@ -32,18 +32,18 @@
        Caja blanca SIN borde (la única), con ocho campos. -->
   @case ('crm') {
     <div class="dlg" (click)="onBackdrop($event)">
-      <div class="dlg__box dlg__box--crm" role="dialog" aria-modal="true" aria-label="Cases">
+      <div class="dlg__box dlg__box--crm" role="dialog" aria-modal="true" [attr.aria-label]="'Cases' | tr">
         <header class="dlg__head">
-          <h5 class="dlg__title">Cases</h5>
+          <h5 class="dlg__title">{{ 'Cases' | tr }}</h5>
         </header>
         <dl class="crm">
           @for (f of crmFields; track f) {
-            <dt class="crm__k">{{ f }}</dt>
+            <dt class="crm__k">{{ f | tr }}</dt>
             <dd class="crm__v">—</dd>
           }
         </dl>
         <footer class="dlg__foot">
-          <button class="dlgbtn dlgbtn--ghost" type="button" (click)="closed.emit()">Close</button>
+          <button class="dlgbtn dlgbtn--ghost" type="button" (click)="closed.emit()">{{ 'Close' | tr }}</button>
         </footer>
       </div>
     </div>
@@ -59,20 +59,21 @@
         class="dlg__box dlg__box--forgotten"
         role="dialog"
         aria-modal="true"
-        aria-label="Right to be forgotten"
+        [attr.aria-label]="'Right to be forgotten' | tr"
       >
         <header class="dlg__head dlg__head--muted">
-          <h5 class="dlg__title dlg__title--muted">Right to be forgotten</h5>
+          <h5 class="dlg__title dlg__title--muted">{{ 'Right to be forgotten' | tr }}</h5>
         </header>
         <div class="forgotten">
           <p class="forgotten__warn">
-            If you continue with the request, all customer-related information will be deleted, as
-            well as the ticket history. In addition, all products and services of the selected
-            companies will be unsuscribed.
+            {{
+              'If you continue with the request, all customer-related information will be deleted, as well as the ticket history. In addition, all products and services of the selected companies will be unsuscribed.'
+                | tr
+            }}
           </p>
           <div class="forgotten__row">
             <label class="forgotten__field">
-              <span>Date of order</span>
+              <span>{{ 'Date of order' | tr }}</span>
               <input type="text" disabled />
             </label>
             <label class="forgotten__field">
@@ -80,17 +81,17 @@
               <input type="text" disabled />
             </label>
             <label class="forgotten__field">
-              <span>Company</span>
+              <span>{{ 'forgotten::Company' | tr }}</span>
               <select disabled>
-                <option>Select company</option>
+                <option>{{ 'Select company' | tr }}</option>
               </select>
             </label>
           </div>
         </div>
         <footer class="dlg__foot">
-          <button class="dlgbtn dlgbtn--cancel" type="button" (click)="closed.emit()">Cancel</button>
+          <button class="dlgbtn dlgbtn--cancel" type="button" (click)="closed.emit()">{{ 'Cancel' | tr }}</button>
           <button class="dlgbtn dlgbtn--primary" type="button" (click)="closed.emit()">
-            Request
+            {{ 'Request' | tr }}
           </button>
         </footer>
       </div>
@@ -105,11 +106,11 @@
         class="dlg__box dlg__box--refund"
         role="dialog"
         aria-modal="true"
-        aria-label="Please confirm the reason why no charges have been refunded to the customer."
+        [attr.aria-label]="'Please confirm the reason why no charges have been refunded to the customer.' | tr"
       >
         <header class="dlg__head">
           <h5 class="dlg__title dlg__title--wrap">
-            Please confirm the reason why no charges have been refunded to the customer.
+            {{ 'Please confirm the reason why no charges have been refunded to the customer.' | tr }}
           </h5>
         </header>
         <div class="refund">
@@ -121,13 +122,13 @@
                 [checked]="refundReason() === r"
                 (change)="refundReason.set(r)"
               />
-              <span>{{ r }}</span>
+              <span>{{ r | tr }}</span>
             </label>
           }
         </div>
         <footer class="dlg__foot">
-          <button class="dlgbtn dlgbtn--ghost" type="button" (click)="closed.emit()">Close</button>
-          <button class="dlgbtn dlgbtn--primary" type="button" (click)="closed.emit()">Save</button>
+          <button class="dlgbtn dlgbtn--ghost" type="button" (click)="closed.emit()">{{ 'Close' | tr }}</button>
+          <button class="dlgbtn dlgbtn--primary" type="button" (click)="closed.emit()">{{ 'Save' | tr }}</button>
         </footer>
       </div>
     </div>

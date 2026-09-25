@@ -7,6 +7,8 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
+
 /** Una columna gestionable: su rótulo y si se ve. */
 export interface ManagedColumn {
   readonly header: string;
@@ -36,10 +38,10 @@ export interface ManagedColumn {
 @Component({
   selector: 'app-column-manager',
   standalone: true,
-  imports: [CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder],
+  imports: [CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder, TrPipe],
   template: `
     <div class="panel" role="dialog" aria-label="Manage columns">
-      <h3 class="panel__title">Manage columns</h3>
+      <h3 class="panel__title">{{ 'Manage columns' | tr }}</h3>
 
       <ul class="collist" role="list" cdkDropList (cdkDropListDropped)="onDrop($event)">
         @for (c of columns(); track c.header) {
@@ -64,7 +66,7 @@ export interface ManagedColumn {
               [attr.aria-label]="'Show column ' + c.header"
               (change)="toggled.emit(c.header)"
             />
-            <span class="colitem__label">{{ c.header }}</span>
+            <span class="colitem__label">{{ c.header | tr }}</span>
 
             <!-- Hueco que deja la fila mientras se arrastra. -->
             <div class="colitem__placeholder" *cdkDragPlaceholder></div>
@@ -73,7 +75,7 @@ export interface ManagedColumn {
       </ul>
 
       <footer class="panel__foot">
-        <button class="resetbtn" type="button" (click)="resetRequested.emit()">Reset to default</button>
+        <button class="resetbtn" type="button" (click)="resetRequested.emit()">{{ 'Reset to default' | tr }}</button>
       </footer>
     </div>
   `,

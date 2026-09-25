@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
+
 /**
  * Modal de confirmación de baja — el destino REAL del botón "Unsubscribe" de la
  * tabla de suscripciones.
@@ -20,24 +22,25 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 @Component({
   selector: 'app-unsubscribe-confirm-modal',
   standalone: true,
+  imports: [TrPipe],
   template: `
     <div class="unsub" (click)="onBackdrop($event)">
-      <div class="unsub__dialog" role="dialog" aria-modal="true" aria-label="Unsubscribe">
+      <div class="unsub__dialog" role="dialog" aria-modal="true" [attr.aria-label]="'Unsubscribe' | tr">
         <div class="unsub__content">
           <header class="unsub__head">
-            <p class="unsub__title">Unsubscribe</p>
-            <p class="unsub__sub">Unsubscribe the following services</p>
+            <p class="unsub__title">{{ 'Unsubscribe' | tr }}</p>
+            <p class="unsub__sub">{{ 'Unsubscribe the following services' | tr }}</p>
           </header>
 
           <div class="unsub__body">
             <table class="unsub__table">
               <thead>
                 <tr>
-                  <th>Product</th>
-                  <th>Keyword</th>
-                  <th>Status</th>
-                  <th>Price</th>
-                  <th>Expired</th>
+                  <th>{{ 'Product' | tr }}</th>
+                  <th>{{ 'Keyword' | tr }}</th>
+                  <th>{{ 'Status' | tr }}</th>
+                  <th>{{ 'Price' | tr }}</th>
+                  <th>{{ 'Expired' | tr }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -45,9 +48,9 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
                   <tr>
                     <td>{{ s.product }}</td>
                     <td>{{ s.keyword }}</td>
-                    <td>{{ s.status }}</td>
+                    <td>{{ s.status | tr }}</td>
                     <td>{{ s.price }}</td>
-                    <td>{{ s.expired }}</td>
+                    <td>{{ s.expired | tr }}</td>
                   </tr>
                 }
               </tbody>
@@ -56,10 +59,10 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 
           <footer class="unsub__foot">
             <button class="unsub__btn unsub__btn--cancel" type="button" (click)="closed.emit()">
-              Cancel
+              {{ 'Cancel' | tr }}
             </button>
             <button class="unsub__btn unsub__btn--confirm" type="button" (click)="closed.emit()">
-              Unsubscribe
+              {{ 'Unsubscribe' | tr }}
             </button>
           </footer>
         </div>

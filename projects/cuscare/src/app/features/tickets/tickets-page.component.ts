@@ -1,15 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PopoverModule } from 'primeng/popover';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 
-import { TICKETS_ALL, TICKETS_TOTAL, TicketRow } from '../../data/seed';
+import { TrPipe } from '../../core/i18n/i18n';
+import { REQUEST_TYPES, TICKETS_ALL, TICKETS_TOTAL, TicketRow } from '../../data/seed';
 import { BulkActionsComponent } from './bulk-actions.component';
 import { ColumnManagerComponent, ManagedColumn } from './column-manager.component';
 import { NewTicketModalComponent } from './new-ticket-modal.component';
+import {
+  displayTags,
+  EMPTY_REQUEST_TYPE_FILTER,
+  matchesRequestType,
+  RequestTypeFilter,
+} from './request-type';
+import { RequestTypeFilterComponent } from './request-type-filter.component';
 
 /**
  * Tipo de filtro por columna. **Medido uno a uno en la app real** inspeccionando
@@ -23,8 +32,11 @@ import { NewTicketModalComponent } from './new-ticket-modal.component';
  *                 MO Error Content
  *
  * Son CUATRO tipos, no dos. El placeholder de select/multiselect es "—".
+ *
+ * El quinto, `requestType`, NO es del original: es la columna «Request type» de la V3
+ * (SCC 2081), montada aquí para enseñar su comportamiento (origen AI / Agent y tipos).
  */
-type FilterKind = 'popover' | 'multiselect' | 'select' | 'input' | 'none';
+type FilterKind = 'popover' | 'multiselect' | 'select' | 'input' | 'requestType' | 'none';
 
 interface Col {
   readonly key: keyof TicketRow;
@@ -60,6 +72,9 @@ type SortDir = 'asc' | 'desc';
     NewTicketModalComponent,
     ColumnManagerComponent,
     BulkActionsComponent,
+    RequestTypeFilterComponent,
+    TagModule,
+    TrPipe,
   ],
   templateUrl: './tickets-page.component.html',
   styleUrl: './tickets-page.component.scss',
@@ -159,6 +174,8 @@ export class TicketsPageComponent {
     { key: 'assignedTo', header: 'Assigned to', width: '186px', filter: 'popover', sortable: true },
     { key: 'group', header: 'Group', width: '130px', filter: 'multiselect', sortable: true },
     { key: 'channel', header: 'Channel', width: '110px', filter: 'select' },
+    // V3 (SCC 2081), no del original: ver `request-type.ts`.
+    { key: 'requestTypes', header: 'Request type', width: '260px', filter: 'requestType' },
     { key: 'source', header: 'Source', width: '140px', filter: 'input' },
     { key: 'email', header: 'Email', width: '167px', filter: 'input' },
     { key: 'country', header: 'Country', width: '101px', filter: 'select' },
@@ -329,6 +346,19 @@ export class TicketsPageComponent {
   protected readonly single = signal<Record<string, string | null | undefined>>({});
   protected readonly text = signal<Record<string, string | undefined>>({});
 
+  /* ── «Request type» (V3): origen AI / Agent y tipos por origen ─────────── */
+  protected readonly requestType = signal<RequestTypeFilter>(EMPTY_REQUEST_TYPE_FILTER);
+  /** Dos propuestas en prueba: `?filtro=a` (origen arriba, lista por origen) o la B, por defecto. */
+  protected readonly requestTypeVariant: 'a' | 'b' =
+    inject(ActivatedRoute).snapshot.queryParamMap.get('filtro') === 'a' ? 'a' : 'b';
+  protected readonly requestTypeOptions = REQUEST_TYPES;
+  protected readonly displayTags = displayTags;
+
+  protected setRequestType(f: RequestTypeFilter): void {
+    this.requestType.set(f);
+    this.page.set(1);
+  }
+
   /** Opciones derivadas de los datos: así nunca ofrecen algo que no existe. */
   private optionsOf(key: keyof TicketRow): { label: string; value: string }[] {
     const seen = new Set<string>();
@@ -352,7 +382,9 @@ export class TicketsPageComponent {
     const m = this.multi();
     const s = this.single();
     const t = this.text();
+    const rt = this.requestType();
     return this.all.filter((row) => {
+      if (!matchesRequestType(row.requestTypes, rt)) return false;
       for (const [key, vals] of Object.entries(m)) {
         if (vals?.length && !vals.includes(String(row[key as keyof TicketRow]))) return false;
       }
@@ -461,7 +493,8 @@ export class TicketsPageComponent {
     () =>
       Object.values(this.multi()).some((v) => v?.length) ||
       Object.values(this.single()).some(Boolean) ||
-      Object.values(this.text()).some(Boolean),
+      Object.values(this.text()).some(Boolean) ||
+      this.requestType().on.length > 0,
   );
 
   /* Al cambiar cualquier filtro se vuelve a la página 1: si no, se puede quedar
@@ -485,6 +518,7 @@ export class TicketsPageComponent {
     this.multi.set({});
     this.single.set({});
     this.text.set({});
+    this.requestType.set(EMPTY_REQUEST_TYPE_FILTER);
     this.page.set(1);
   }
 

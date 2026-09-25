@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { I18n, TrPipe } from '../../core/i18n/i18n';
 import { ASSIGNABLE_AGENTS, TicketRow } from '../../data/seed';
 import { BULK_TOASTS } from '../../data/tooltips';
 import { ToasterService } from '../../shared/toaster.component';
@@ -51,13 +52,14 @@ export type BulkAction = 'assign' | 'status' | 'unsubscribe' | 'archive';
 @Component({
   selector: 'app-bulk-actions',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TrPipe],
   templateUrl: './bulk-actions.component.html',
   styleUrl: './bulk-actions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BulkActionsComponent {
   private readonly toaster = inject(ToasterService);
+  private readonly i18n = inject(I18n);
 
   /** Filas marcadas: alimentan el contador y la tabla del modal. */
   readonly selected = input.required<readonly TicketRow[]>();
@@ -145,24 +147,17 @@ export class BulkActionsComponent {
     if (!a) return;
     // Confirmar SACA UN AVISO: antes se cerraba el modal y no pasaba nada
     // aparente. Los textos son los del diccionario real (SUCCESS.BULK_ACTIONS).
-    this.toaster.show(BULK_TOASTS[a === 'archive' ? 'archive' : a](n));
+    // Para traducirlo se pide la frase con el hueco `{n}` sin rellenar (es la
+    // clave del castellano) y el número se pone después.
+    const toast = BULK_TOASTS[a] as (n: number | string) => string;
+    this.toaster.show(this.i18n.t(toast('{n}')).replace('{n}', String(n)));
     this.applied.emit(a);
   }
 
   /** Rótulos del modal, con el texto EXACTO del original. */
   protected readonly modalTitle = computed(() => {
-    switch (this.modal()) {
-      case 'assign':
-        return 'Assign';
-      case 'status':
-        return 'Change status';
-      case 'unsubscribe':
-        return 'Unsubscribe';
-      case 'archive':
-        return 'Archive';
-      default:
-        return '';
-    }
+    const title = this.modal() ? this.triggers.find((t) => t.id === this.modal())?.label : '';
+    return title ? this.i18n.t(title) : '';
   });
 
   /**
@@ -173,18 +168,25 @@ export class BulkActionsComponent {
    * `"You will assign the following {{number}} tickets to {{name}}"`. Yo había
    * copiado el texto del DOM con el modal cerrado —sin agente elegido— y se
    * quedaba colgando en la preposición.
+   *
+   * Cada frase es la clave del castellano con sus huecos (`{n}`, `{name}`) sin
+   * rellenar; se traduce entera y luego se rellenan. El estado elegido también
+   * se traduce (Pending → Pendiente); el nombre del agente es dato y va tal cual.
    */
   protected readonly modalSubtitle = computed(() => {
-    const n = this.count();
+    const t = (en: string, name = '') =>
+      this.i18n.t(en).replace('{n}', String(this.count())).replace('{name}', name).trimEnd();
     switch (this.modal()) {
       case 'assign':
-        return `You will assign the following ${n} tickets to ${this.agent() ?? ''}`.trimEnd();
-      case 'status':
-        return `You will change the status of the next ${n} tickets to ${this.status() ?? ''}`.trimEnd();
+        return t('You will assign the following {n} tickets to {name}', this.agent() ?? '');
+      case 'status': {
+        const s = this.status();
+        return t('You will change the status of the next {n} tickets to {name}', s ? this.i18n.t(s) : '');
+      }
       case 'unsubscribe':
-        return `You will unsubscribe the following ${n} tickets`;
+        return t('You will unsubscribe the following {n} tickets');
       case 'archive':
-        return `You will archive the following ${n} tickets`;
+        return t('You will archive the following {n} tickets');
       default:
         return '';
     }

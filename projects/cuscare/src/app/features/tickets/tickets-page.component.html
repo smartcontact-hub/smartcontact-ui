@@ -1,8 +1,8 @@
 <section class="cc-card tickets">
   <header class="tickets__head">
-    <h1 class="cc-page-title">Tickets</h1>
+    <h1 class="cc-page-title">{{ 'Tickets' | tr }}</h1>
     <button class="btn btn--primary" type="button" (click)="newTicketOpen.set(true)">
-      + New ticket
+      {{ '+ New ticket' | tr }}
     </button>
   </header>
 
@@ -18,7 +18,7 @@
       <button
         class="iconbtn"
         type="button"
-        aria-label="Manage columns"
+        [attr.aria-label]="'Manage columns' | tr"
         [attr.aria-expanded]="columnsOpen()"
         (click)="columnsOpen.set(!columnsOpen())"
       >
@@ -50,16 +50,16 @@
     @if (hasSelection()) {
       <button class="btn btn--ghost" type="button" (click)="clearSelection()">
         <img src="icons/general/x.svg" width="9" height="9" alt="" aria-hidden="true" />
-        Clear selection
+        {{ 'Clear selection' | tr }}
       </button>
       <button class="btn btn--download" type="button">
         <img src="icons/general/descarga.svg" width="13" height="13" alt="" aria-hidden="true" />
-        Download ({{ selectedCount() }})
+        {{ 'Download' | tr }} ({{ selectedCount() }})
       </button>
     } @else if (hasFilters()) {
       <button class="btn btn--danger-ghost" type="button" (click)="clearFilters()">
         <img src="icons/general/x.svg" width="9" height="9" alt="" aria-hidden="true" />
-        Delete filters
+        {{ 'Delete filters' | tr }}
       </button>
     }
   </div>
@@ -70,8 +70,8 @@
     @if (loading()) {
       <div class="loadingoverlay">
         <div class="loadingstate">
-          <span class="spinner" role="status" aria-label="Loading"></span>
-          <p class="loadingstate__msg">Loading data...</p>
+          <span class="spinner" role="status" [attr.aria-label]="'Loading' | tr"></span>
+          <p class="loadingstate__msg">{{ 'Loading data...' | tr }}</p>
         </div>
       </div>
     }
@@ -82,7 +82,7 @@
             <input
               class="cc-check"
               type="checkbox"
-              aria-label="Select all"
+              [attr.aria-label]="'Select all' | tr"
               [checked]="allVisibleSelected()"
               (change)="toggleAllVisible()"
             />
@@ -99,7 +99,7 @@
               (click)="cycleSort(c)"
             >
               <div class="th__inner">
-                <span class="th__label">{{ c.header }}</span>
+                <span class="th__label">{{ c.header | tr }}</span>
                 @if (c.sortable) {
                   <span class="th__sort" aria-hidden="true">
                     @if (sortKey() === c.key && sortDir() === 'asc') {
@@ -134,7 +134,7 @@
                 @case ('popover') {
                   <button class="filterbtn" type="button" (click)="pop.toggle($event)">
                     <img src="icons/general/search.svg" width="11" height="11" alt="" aria-hidden="true" />
-                    Filter
+                    {{ 'Filter' | tr }}
                   </button>
                   <!-- El popover del original NO es solo un campo: trae tres
                        modos apilados (All / New / Update) y debajo el input.
@@ -149,16 +149,16 @@
                           [class.is-active]="(mode()[c.key] ?? 'All') === m"
                           (click)="setMode(c.key, m)"
                         >
-                          {{ m }}
+                          {{ 'popfilter::' + m | tr }}
                         </button>
                       }
                       <input
                         class="popfilter__input"
                         type="text"
-                        [placeholder]="c.header"
+                        [placeholder]="c.header | tr"
                         [value]="text()[c.key] ?? ''"
                         (input)="setText(c.key, $any($event.target).value)"
-                        [attr.aria-label]="'Filter by ' + c.header"
+                        [attr.aria-label]="('Filter by' | tr) + ' ' + (c.header | tr)"
                       />
                     </div>
                   </p-popover>
@@ -176,7 +176,7 @@
                     [showClear]="true"
                     [selectAll]="null"
                     [filter]="false"
-                    [attr.aria-label]="'Filter by ' + c.header"
+                    [attr.aria-label]="('Filter by' | tr) + ' ' + (c.header | tr)"
                   />
                 }
                 @case ('select') {
@@ -189,17 +189,25 @@
                     optionValue="value"
                     placeholder="—"
                     [showClear]="true"
-                    [attr.aria-label]="'Filter by ' + c.header"
+                    [attr.aria-label]="('Filter by' | tr) + ' ' + (c.header | tr)"
+                  />
+                }
+                @case ('requestType') {
+                  <app-request-type-filter
+                    [state]="requestType()"
+                    [types]="requestTypeOptions"
+                    [variant]="requestTypeVariant"
+                    (stateChange)="setRequestType($event)"
                   />
                 }
                 @case ('input') {
                   <input
                     class="filterinput"
                     type="text"
-                    [placeholder]="c.header"
+                    [placeholder]="c.header | tr"
                     [value]="text()[c.key] ?? ''"
                     (input)="setText(c.key, $any($event.target).value)"
-                    [attr.aria-label]="'Filter by ' + c.header"
+                    [attr.aria-label]="('Filter by' | tr) + ' ' + (c.header | tr)"
                   />
                 }
               }
@@ -212,12 +220,12 @@
         <tr class="row" [class.row--locked]="row.locked" [class.row-selected]="isSelected(row.id)">
           <td class="col-select">
             @if (row.locked) {
-              <img src="icons/general/lock.svg" width="11" height="14" alt="Ticket blocked" />
+              <img src="icons/general/lock.svg" width="11" height="14" [attr.alt]="'Ticket blocked' | tr" />
             } @else {
               <input
                 class="cc-check"
                 type="checkbox"
-                [attr.aria-label]="'Select ticket ' + row.id"
+                [attr.aria-label]="('Select ticket' | tr) + ' ' + row.id"
                 [checked]="isSelected(row.id)"
                 (change)="toggleRow(row.id)"
               />
@@ -231,6 +239,13 @@
                 }
                 @case ('country') {
                   <span class="cell-country"><img class="flag" [src]="row.countryFlagSrc" width="16" height="12" alt="" aria-hidden="true" />{{ row.country }}</span>
+                }
+                @case ('requestTypes') {
+                  <span class="chips rt-chips">
+                    @for (t of displayTags(row.requestTypes); track t.label) {
+                      <p-tag [class]="'rt-tag rt-tag--' + t.origin" [value]="t.label | tr" />
+                    }
+                  </span>
                 }
                 @case ('products') {
                   <span class="chips">
@@ -250,7 +265,7 @@
 
       <ng-template #emptymessage>
         <tr>
-          <td [attr.colspan]="cols().length + 1" class="emptyrow">No data to show</td>
+          <td [attr.colspan]="cols().length + 1" class="emptyrow">{{ 'No data to show' | tr }}</td>
         </tr>
       </ng-template>
     </p-table>
@@ -258,16 +273,16 @@
 
   <footer class="tickets__foot">
     <span class="tickets__count">
-      {{ range().from }}–{{ range().to }} of {{ range().of }} results
+      {{ range().from }}–{{ range().to }} {{ 'of' | tr }} {{ range().of }} {{ 'results' | tr }}
       @if (hasFilters()) {
-        <span class="tickets__filtered">(filtered de {{ total }})</span>
+        <span class="tickets__filtered">({{ 'filtered from' | tr }} {{ total }})</span>
       }
     </span>
 
-    <nav class="pager" aria-label="Pagination">
-      <button class="pager__btn" type="button" aria-label="First page"
+    <nav class="pager" [attr.aria-label]="'Pagination' | tr">
+      <button class="pager__btn" type="button" [attr.aria-label]="'First page' | tr"
         [disabled]="page() === 1" (click)="goToPage(1)">«</button>
-      <button class="pager__btn" type="button" aria-label="Previous page"
+      <button class="pager__btn" type="button" [attr.aria-label]="'Previous page' | tr"
         [disabled]="page() === 1" (click)="goToPage(page() - 1)">‹</button>
 
       <!-- La ventana SIGUE a la página actual y los "…" salen donde hay hueco:
@@ -281,21 +296,21 @@
             type="button"
             [class.is-current]="p === page()"
             [attr.aria-current]="p === page() ? 'page' : null"
-            [attr.aria-label]="'Page ' + p"
+            [attr.aria-label]="('Page' | tr) + ' ' + p"
             (click)="goToPage($any(p))"
           >{{ p }}</button>
         }
       }
 
-      <button class="pager__btn" type="button" aria-label="Next page"
+      <button class="pager__btn" type="button" [attr.aria-label]="'Next page' | tr"
         [disabled]="page() === pageCount()" (click)="goToPage(page() + 1)">›</button>
-      <button class="pager__btn" type="button" aria-label="Last page"
+      <button class="pager__btn" type="button" [attr.aria-label]="'Last page' | tr"
         [disabled]="page() === pageCount()" (click)="goToPage(pageCount())">»</button>
     </nav>
 
     <span class="tickets__rpp">
-      Rows per page
-      <select class="rpp" aria-label="Rows per page"
+      {{ 'Rows per page' | tr }}
+      <select class="rpp" [attr.aria-label]="'Rows per page' | tr"
         [value]="rowsPerPage()"
         (change)="rowsPerPage.set(+$any($event.target).value); goToPage(1); page.set(1)">
         <!-- Las cinco del original (le faltaban 100 y 300). -->

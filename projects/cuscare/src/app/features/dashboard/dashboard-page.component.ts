@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
 import { GROUPS, GROUPS_TOTALS, GroupRow } from '../../data/seed';
 import { TOOLTIPS } from '../../data/tooltips';
 import { InfoTipComponent } from '../../shared/info-tip.component';
@@ -22,7 +23,7 @@ import { InfoTipComponent } from '../../shared/info-tip.component';
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [InfoTipComponent],
+  imports: [InfoTipComponent, TrPipe],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +59,16 @@ export class DashboardPageComponent {
     'SMS sent',
     'Total actions',
   ];
+
+  /**
+   * Clave de traducción de cada cabecera. Solo cambia «Updated»: en Tickets es «Actualización»
+   * y aquí el original dice «Actualizado» (DASHBOARD_GROUPS.TABLE.UPDATED).
+   */
+  private readonly colKey: Record<string, string> = { Updated: 'groups::Updated' };
+
+  protected colLabel(col: string): string {
+    return this.colKey[col] ?? col;
+  }
 
   /** Rótulo de columna → campo de la fila. */
   private readonly field: Record<string, keyof GroupRow> = {

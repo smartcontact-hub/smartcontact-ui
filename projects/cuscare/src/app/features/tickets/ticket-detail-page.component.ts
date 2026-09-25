@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
+import { I18n, TrPipe } from '../../core/i18n/i18n';
 import { TICKETS, TICKETS_ALL } from '../../data/seed';
 import { DetailDialog, DetailDialogsComponent } from './detail-dialogs.component';
 import { SearchCustomerModalComponent } from './search-customer-modal.component';
@@ -59,6 +60,7 @@ interface HistoryEvent {
     SummaryPanelComponent,
     RefundModalComponent,
     UnsubscribeConfirmModalComponent,
+    TrPipe,
   ],
   templateUrl: './ticket-detail-page.component.html',
   styleUrl: './ticket-detail-page.component.scss',
@@ -66,6 +68,7 @@ interface HistoryEvent {
 })
 export class TicketDetailPageComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly i18n = inject(I18n);
 
   /**
    * El id del ticket, leído de la URL.
@@ -284,41 +287,49 @@ export class TicketDetailPageComponent {
    * "Show details" — en la real es el cuerpo del correo, el del error MO o el
    * detalle de la acción. Aquí, como todo el seed de esta réplica, el contenido
    * está inventado y no lleva datos de nadie: lo que se replica es la forma.
+   *
+   * Es un `computed` para que las frases sigan al idioma: se traducen las piezas fijas
+   * («Status changed to», los rótulos del cuerpo) y el dato (agente, estado, producto, ids,
+   * canal, cola) va tal cual.
    */
-  protected readonly history: readonly HistoryEvent[] = [
-    {
-      time: '13:21',
-      kind: 'status',
-      text: 'ES Agent - M. Angeles Status changed to',
-      highlight: 'RESOLVED',
-      detail: 'Previous status: OPEN · Sub-status: — · Nature of demand: Unsubscription',
-    },
-    {
-      time: '13:20',
-      kind: 'unsubscribe',
-      text: 'ES Agent - M. Angeles has unsubscribe the product',
-      highlight: 'iTrip',
-      detail: 'Subscription id 9004471 · Unsubscription source: agent · Result: OK',
-    },
-    {
-      time: '13:20',
-      kind: 'unsubscribe',
-      text: 'ES Agent - M. Angeles has unsubscribe the product',
-      highlight: 'playweez',
-      detail: 'Subscription id 9004470 · Unsubscription source: agent · Result: OK',
-    },
-    {
-      time: '13:19',
-      kind: 'call',
-      text: 'ES Agent - M. Angeles has answered an incoming call',
-      detail: 'Duration 00:04:12 · Queue: ES Support · Recording available',
-    },
-    {
-      time: '13:19',
-      kind: 'created',
-      text: 'ES Agent - M. Angeles created ticket from',
-      highlight: 'call',
-      detail: 'Channel: call · Source: +34600222333 · Group: ES Support',
-    },
-  ];
+  protected readonly history = computed<readonly HistoryEvent[]>(() => {
+    const t = (en: string): string => this.i18n.t(en);
+    const agent = 'ES Agent - M. Angeles';
+    return [
+      {
+        time: '13:21',
+        kind: 'status',
+        text: `${agent} ${t('Status changed to')}`,
+        highlight: 'RESOLVED',
+        detail: `${t('Previous status')}: OPEN · ${t('Sub-status')}: — · ${t('Nature of demand')}: ${t('Unsubscription')}`,
+      },
+      {
+        time: '13:20',
+        kind: 'unsubscribe',
+        text: `${agent} ${t('has unsubscribe the product')}`,
+        highlight: 'iTrip',
+        detail: `${t('Subscription id')} 9004471 · ${t('Unsubscription source')}: agent · ${t('Result')}: OK`,
+      },
+      {
+        time: '13:20',
+        kind: 'unsubscribe',
+        text: `${agent} ${t('has unsubscribe the product')}`,
+        highlight: 'playweez',
+        detail: `${t('Subscription id')} 9004470 · ${t('Unsubscription source')}: agent · ${t('Result')}: OK`,
+      },
+      {
+        time: '13:19',
+        kind: 'call',
+        text: `${agent} ${t('has answered an incoming call')}`,
+        detail: `${t('Duration')} 00:04:12 · ${t('Queue')}: ES Support · ${t('Recording available')}`,
+      },
+      {
+        time: '13:19',
+        kind: 'created',
+        text: `${agent} ${t('created ticket from')}`,
+        highlight: 'call',
+        detail: `${t('Channel')}: call · ${t('Source')}: +34600222333 · ${t('Group')}: ES Support`,
+      },
+    ];
+  });
 }

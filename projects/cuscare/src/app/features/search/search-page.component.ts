@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/c
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
+import { TrPipe } from '../../core/i18n/i18n';
 import { TICKETS_ALL, TicketRow } from '../../data/seed';
 import { SEARCH_EMPTY } from '../../data/tooltips';
 
@@ -22,7 +23,7 @@ import { SEARCH_EMPTY } from '../../data/tooltips';
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, TrPipe],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

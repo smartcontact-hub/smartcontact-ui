@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { TrPipe } from '../../core/i18n/i18n';
+
 /**
  * Modal "Search customer" — el SEGUNDO paso de "+ New ticket".
  *
@@ -21,27 +23,27 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-search-customer-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TrPipe],
   template: `
     <div class="scmodal" (click)="onBackdrop($event)">
-      <div class="scmodal__dialog" role="dialog" aria-modal="true" aria-label="Search customer">
+      <div class="scmodal__dialog" role="dialog" aria-modal="true" [attr.aria-label]="'Search customer' | tr">
         <div class="scmodal__content">
           <header class="scmodal__head">
-            <h5 class="scmodal__title">Search customer</h5>
+            <h5 class="scmodal__title">{{ 'Search customer' | tr }}</h5>
           </header>
 
           <div class="scmodal__body">
             <div class="scmodal__row">
               <!-- Un solo país: el de la entidad del ticket (medido). -->
-              <select class="scselect" aria-label="Country" [(ngModel)]="country">
+              <select class="scselect" [attr.aria-label]="'Country' | tr" [(ngModel)]="country">
                 @for (c of countries; track c) {
-                  <option [value]="c">{{ c }}</option>
+                  <option [value]="c">{{ c | tr }}</option>
                 }
               </select>
 
-              <select class="scselect" aria-label="Search criteria" [(ngModel)]="criterion">
+              <select class="scselect" [attr.aria-label]="'Search criteria' | tr" [(ngModel)]="criterion">
                 @for (c of criteria; track c) {
-                  <option [value]="c">{{ c }}</option>
+                  <option [value]="c">{{ c | tr }}</option>
                 }
               </select>
 
@@ -50,12 +52,12 @@ import { FormsModule } from '@angular/forms';
                 <input
                   class="scsearch__input"
                   type="text"
-                  placeholder="Search"
-                  aria-label="Search customer"
+                  [placeholder]="'action::Search' | tr"
+                  [attr.aria-label]="'Search customer' | tr"
                   [ngModel]="term()"
                   (ngModelChange)="term.set($event)"
                 />
-                <button class="scsearch__go" type="button" aria-label="Search">
+                <button class="scsearch__go" type="button" [attr.aria-label]="'action::Search' | tr">
                   <img
                     src="icons/general/buscar.svg"
                     width="13"
@@ -75,10 +77,10 @@ import { FormsModule } from '@angular/forms';
 
           <footer class="scmodal__foot">
             <button class="scbtn scbtn--cancel" type="button" (click)="cancelled.emit()">
-              Cancel
+              {{ 'Cancel' | tr }}
             </button>
             <button class="scbtn scbtn--assign" type="button" (click)="cancelled.emit()">
-              Assign
+              {{ 'Assign' | tr }}
             </button>
           </footer>
         </div>

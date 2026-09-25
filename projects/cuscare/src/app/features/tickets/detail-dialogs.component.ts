@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
+
 /** Los cinco diálogos que cuelgan del detalle, además de los ya replicados. */
 export type DetailDialog = 'selfAssign' | 'crm' | 'forgotten' | 'deleteNote' | 'noRefund';
 
@@ -27,6 +29,7 @@ export type DetailDialog = 'selfAssign' | 'crm' | 'forgotten' | 'deleteNote' | '
 @Component({
   selector: 'app-detail-dialogs',
   standalone: true,
+  imports: [TrPipe],
   templateUrl: './detail-dialogs.component.html',
   styleUrl: './detail-dialogs.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

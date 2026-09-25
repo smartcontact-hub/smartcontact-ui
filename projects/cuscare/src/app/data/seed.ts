@@ -10,6 +10,33 @@
 export type TicketStatus = 'open' | 'resolved' | 'pending' | 'closed';
 export type TicketChannel = 'call' | 'chat' | 'mail';
 
+/** Quién puso un tipo de solicitud: la IA al clasificar el ticket, o el agente al revisarlo. */
+export type RequestOrigin = 'ai' | 'agent';
+
+/** Un tipo de solicitud con su origen. Un ticket puede llevar varios, de los dos orígenes. */
+export interface RequestTag {
+  readonly label: string;
+  readonly origin: RequestOrigin;
+}
+
+/**
+ * Los tipos de solicitud: los diez de «Nature of demand» del modal Ticket Status, en su
+ * orden. La columna «Request type» y su filtro son de la V3 (SCC 2081), que aún no está en
+ * la app real: aquí se enseña el comportamiento, no se replica una medida.
+ */
+export const REQUEST_TYPES: readonly string[] = [
+  'Unsubscription',
+  'Refund',
+  'GDPR access',
+  'GDPR Forgotten',
+  'Withdrawal Right',
+  'Information',
+  'Product problem',
+  'Log problem',
+  'Pending to define',
+  'Others',
+];
+
 export interface TicketRow {
   readonly id: string;
   readonly status: TicketStatus;
@@ -28,6 +55,8 @@ export interface TicketRow {
    */
   readonly countryFlagSrc: string;
   readonly products: readonly string[];
+  /** Tipos de solicitud con su origen (V3). Vacío = aún sin clasificar. */
+  readonly requestTypes: readonly RequestTag[];
   readonly created: string;
   readonly updated: string;
   readonly description: string;
@@ -67,6 +96,7 @@ export const TICKETS: readonly TicketRow[] = [
     countryFlag: '🇪🇸',
     countryFlagSrc: 'icons/flags/es.svg',
     products: ['Playweez', 'Canaltv'],
+    requestTypes: [{ label: 'Unsubscription', origin: 'ai' }],
     created: '11-08-2026 09:14',
     updated: '11-08-2026 09:20',
     description: '-',
@@ -89,6 +119,7 @@ export const TICKETS: readonly TicketRow[] = [
     countryFlag: '🇪🇸',
     countryFlagSrc: 'icons/flags/es.svg',
     products: ['Playweez', 'itrip'],
+    requestTypes: [{ label: 'Refund', origin: 'agent' }, { label: 'Information', origin: 'agent' }],
     created: '11-08-2026 08:02',
     updated: '11-08-2026 08:41',
     description: '-',
@@ -110,6 +141,7 @@ export const TICKETS: readonly TicketRow[] = [
     countryFlag: '🇪🇸',
     countryFlagSrc: 'icons/flags/es.svg',
     products: ['Canaltv', 'UnlimitedVideos'],
+    requestTypes: [{ label: 'Information', origin: 'ai' }],
     created: '10-08-2026 17:35',
     updated: '10-08-2026 17:52',
     description: '-',
@@ -131,6 +163,11 @@ export const TICKETS: readonly TicketRow[] = [
     countryFlag: '🇪🇸',
     countryFlagSrc: 'icons/flags/es.svg',
     products: ['UnlimitedVideos', 'Trendly_ES_Orange_W'],
+    requestTypes: [
+      { label: 'Unsubscription', origin: 'ai' },
+      { label: 'Unsubscription', origin: 'agent' },
+      { label: 'Refund', origin: 'ai' },
+    ],
     created: '10-08-2026 16:10',
     updated: '10-08-2026 16:44',
     description: '-',
@@ -152,6 +189,7 @@ export const TICKETS: readonly TicketRow[] = [
     countryFlag: '🇪🇸',
     countryFlagSrc: 'icons/flags/es.svg',
     products: ['itrip', 'Clicnscore', 'TopmusicTv', 'Canaltv'],
+    requestTypes: [{ label: 'Unsubscription', origin: 'agent' }],
     created: '10-08-2026 12:22',
     updated: '10-08-2026 13:01',
     description: '-',
@@ -173,6 +211,7 @@ export const TICKETS: readonly TicketRow[] = [
     countryFlag: '🇪🇸',
     countryFlagSrc: 'icons/flags/es.svg',
     products: ['Clicnscore', 'Playweez'],
+    requestTypes: [{ label: 'Unsubscription', origin: 'ai' }, { label: 'Others', origin: 'ai' }],
     created: '09-08-2026 19:03',
     updated: '09-08-2026 19:18',
     description: '-',
@@ -194,6 +233,7 @@ export const TICKETS: readonly TicketRow[] = [
     countryFlag: '🇪🇸',
     countryFlagSrc: 'icons/flags/es.svg',
     products: ['fuzeforge_spain_orange_mo', 'itrip'],
+    requestTypes: [{ label: 'Refund', origin: 'ai' }, { label: 'Withdrawal Right', origin: 'agent' }],
     created: '09-08-2026 11:47',
     updated: '09-08-2026 12:05',
     description: '-',
@@ -215,6 +255,7 @@ export const TICKETS: readonly TicketRow[] = [
     countryFlag: '🇪🇸',
     countryFlagSrc: 'icons/flags/es.svg',
     products: ['Trendly'],
+    requestTypes: [],
     created: '08-08-2026 15:29',
     updated: '08-08-2026 16:02',
     description: '-',
@@ -311,6 +352,39 @@ const COUNTRIES: readonly { name: string; flag: string; src: string }[] = [
 ];
 const GROUPS_NAMES = ['ES - DOD', 'SK - Cuscare'];
 
+/**
+ * Tipos de solicitud de una fila generada. Reparte los cinco casos que el filtro tiene que
+ * distinguir: solo IA, solo agente, los dos coinciden, los dos discrepan, y sin clasificar.
+ */
+function requestTypesFor(i: number): RequestTag[] {
+  const n = REQUEST_TYPES.length;
+  const a = REQUEST_TYPES[i % 7];
+  const b = REQUEST_TYPES[(i * 3 + 2) % n] === a ? REQUEST_TYPES[(i + 1) % n] : REQUEST_TYPES[(i * 3 + 2) % n];
+  switch (i % 6) {
+    case 0:
+      return [{ label: a, origin: 'ai' }];
+    case 1:
+      return [{ label: a, origin: 'agent' }];
+    case 2:
+      return [
+        { label: a, origin: 'ai' },
+        { label: a, origin: 'agent' },
+      ];
+    case 3:
+      return [
+        { label: a, origin: 'ai' },
+        { label: b, origin: 'agent' },
+      ];
+    case 4:
+      return [
+        { label: a, origin: 'ai' },
+        { label: b, origin: 'ai' },
+      ];
+    default:
+      return [];
+  }
+}
+
 function makeRow(i: number): TicketRow {
   const id = String(2050400 - i * 7);
   const c = COUNTRIES[i % COUNTRIES.length];
@@ -336,6 +410,7 @@ function makeRow(i: number): TicketRow {
     countryFlag: c.flag,
     countryFlagSrc: c.src,
     products: [PRODUCTS[i % PRODUCTS.length], PRODUCTS[(i + 3) % PRODUCTS.length]],
+    requestTypes: requestTypesFor(i),
     created: stamp,
     updated: stamp,
     description: '-',

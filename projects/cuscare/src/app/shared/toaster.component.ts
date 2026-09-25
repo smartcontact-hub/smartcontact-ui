@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Injectable, signal } from '@angular/core';
 
+import { TrPipe } from '../core/i18n/i18n';
+
 export type ToastKind = 'success' | 'error' | 'warning' | 'info';
 
 interface Toast {
@@ -34,14 +36,18 @@ export class ToasterService {
  *   toast      radio 10 · padding 12/16 · 13px · blanco · sombra 0 6px 20px rgba(0,0,0,.12)
  *   colores    success #16a34a · error #dc2626 · warning #d97706 · info #2563eb
  *   entrada    animación de 0.3s
+ *
+ * El texto pasa por `tr` al pintarse: un aviso fijo en inglés sale traducido. Los que
+ * llevan cifras llegan ya traducidos de quien los lanza (p. ej. las acciones en bloque).
  */
 @Component({
   selector: 'app-toaster',
   standalone: true,
+  imports: [TrPipe],
   template: `
     <div class="toaster-container" role="status" aria-live="polite">
       @for (t of toaster.toasts(); track t.id) {
-        <div class="toast" [class]="'toast ' + t.kind">{{ t.text }}</div>
+        <div class="toast" [class]="'toast ' + t.kind">{{ t.text | tr }}</div>
       }
     </div>
   `,
