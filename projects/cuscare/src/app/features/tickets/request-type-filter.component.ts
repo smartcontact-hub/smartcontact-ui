@@ -400,8 +400,10 @@ import {
       font-size: var(--sc-font-size-100);
       color: var(--cc-text);
     }
+    /* Fila con algún botón encendido: el nombre, más oscuro y en semibold (como en Figma). */
     .rtf-row.is-on .rtf-row__label {
       color: var(--cc-text-strong);
+      font-weight: 600;
     }
     .rtf-row--all {
       position: sticky;
