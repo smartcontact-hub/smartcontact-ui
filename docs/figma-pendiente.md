@@ -409,6 +409,26 @@ publicar la librería (ficha 1).
 
 ---
 
+## 14 · La etiqueta «Draft» (secundaria) no llega al contraste: revincular su texto a `slate/700` (2026-09-24)
+
+**Estado:** pendiente · **Dónde:** Figma, variable `tag/secondary/color` del Kit (hoy `slate/600`) → `slate/700`, y
+después `npm run tokens:import` · **Esfuerzo:** un cambio de vínculo · **Sin verificar** contra el fichero del DS:
+medido en el navegador y en el código generado.
+
+- **Medido:** el texto de `<p-tag severity="secondary">` sale en `#6f7784` (`slate-600`) sobre `#eceff3`
+  (`slate-100`): **3,92:1**, por debajo del 4,5 que pide un texto de 12 px. En Aura (primeng.dev/tag, la «Draft») es
+  `#475569` sobre `#f1f5f9`: 6,92:1. Nuestro `slate-600` es más claro que el de Aura.
+- **Con `slate-700` (`#4f5663`): 6,40:1.** Y rima: el resto de etiquetas ya apuntan a su 700 sobre su 100 (verde,
+  cielo, amarillo, rojo); la secundaria es la única en 600.
+- **Alcance:** todas las etiquetas secundarias de la plataforma (Desconectado en Agentes, la columna Tipo, lo que use
+  `severity="secondary"`). En código NO se toca a mano: `--sc-cmp-tag-secondary-color` vive en el bloque generado
+  `@sc-gen:cmp-color-light` de `04-component.css`.
+
+**Cómo sabes que está hecho:** tras `tokens:import`, `--sc-cmp-tag-secondary-color` dice `var(--sc-color-slate-700)`
+y la etiqueta «Desconectado» de `/admin/agentes` mide 6,40:1.
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

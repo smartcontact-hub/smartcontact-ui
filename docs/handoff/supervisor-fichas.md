@@ -7,6 +7,40 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
+## ✅ 2026-09-24 · Las tablas de agentes y grupos tras la revisión del equipo, en cinco PRs
+
+> **Sello: rama `arebury/tablas-6-docs` sobre `origin/main` (con #247 y #252 fundidos). Rama de trabajo, ya sin uso:
+> `arebury/actualizar-tabla-grupos`.**
+
+**Qué pasó.** Revisión con el equipo de las tablas de `/admin/agentes` y `/admin/grupos` para entregarlas a
+desarrollo mientras se decide el layout de la ficha. Se cerró tabla a tabla y se partió en PRs por tema.
+
+**Qué cambia, por PR:**
+- **#247 (fundido) · DS.** `sc-group-popover` enseña todos los nombres (scroll desde 50vh). `sc-delete-entity-dialog`:
+  borrar varios pide lo mismo que uno (teclear «N agentes»), sin la lista de nombres quitables. `sc-datatable`: ancho
+  ajustable y orden arrastrando, los nativos de `p-table`, con `(columnOrderChange)` y `(columnWidthsChange)`.
+  `sc-multiselect`: `optionDisabled`, `ariaLabel` y la flecha en Material Symbols.
+- **#249 · Listas + selector de columnas nativo** (#251 se fundió dentro). Agentes: ID opcional detrás del nombre,
+  Email, Teléfono y Tipo opcionales, fuera Activación, Estado en etiqueta de solo lectura con los colores de Contact
+  Center, Grabación con el REC rojo, extensión con icono, búsqueda por todos los campos de texto. Grupos: ID con
+  ancho medido, Estrategia sin corte. Datos de demo nuevos. El dashboard usa check en sus menús de elección. El
+  selector es el «Column Toggle» de primeng.dev/table y la lista recuerda visibles, orden y anchos en `localStorage`
+  (NO con `stateKey`: restaura también la selección).
+- **#252 (fundido) · Coherencia.** Contact Center › Servicio con los colores de la tabla; canales alineados ópticamente.
+- **#253 · Inplace** en el título de la ficha de agente y de grupo (`sc-name-inplace`): el mismo campo que Identidad.
+- **Este · Docs:** `figma-pendiente.md` §14 (la etiqueta «Draft» a `slate/700`) y `ROADMAP.md` (el avatar que se
+  vuelve check).
+
+**Medido** con clics y arrastres reales a 1440 en local: 500 filas sin texto cortado, orden y anchos que vuelven al
+recargar, Inplace sin mover la cabecera (texto en x=108, pestañas en y=127,8). `verify` verde; suite del Supervisor
+240/243 con los tres rojos entendidos y arreglados (ver trampas); sc-docs entera en verde (92), y las pruebas nuevas
+vistas fallar contra `main`.
+
+**Trampa del tramo:** la pila de PRs choca con `main` en movimiento. El preflight exige al EMPEZAR que la rama lleve el
+`main` del momento, y ese día entraron cuatro commits ajenos en dos horas: cada uno obligaba a rebasar la pila entera.
+Solo se apila lo que depende de lo anterior; lo independiente va contra `main`. Y un commit del bot (`visual-baselines`)
+deja el CI del PR en «action_required»: hay que aprobarlo.
+
 ## ✅ 2026-09-24 · El alta de grupo rima con Identidad: pide lo de la cabecera, no los canales (DD-119)
 
 > **Sello: rama `arebury/alta-grupo-rima`, worktree `shipworm`, sobre `origin/main` `9f0cfd88` (#243).**
@@ -187,7 +221,8 @@ de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con
 4. **Rescatar a `main` por PRs separados** (la rama no se funde). Medido el 2026-09-20 contra
    `origin/main`, de los cinco puntos **solo queda uno**:
    - ~~iconos opsz 24 con su spec~~ · ya estaban en `main` antes de mirarlo;
-   - ~~`list-page` (exportar la selección, ancho mínimo con columnas ocultas)~~ · ídem;
+   - `list-page`: el ancho mínimo con columnas ocultas NO estaba en `main` (medido el 2026-09-24; entra con el PR
+     de listas de las tablas). Exportar solo la selección tampoco, y se decidió no hacerlo: exportar baja todo;
    - ~~`sc-bulk-edit-menu matchable`~~ y ~~`sc-select editable`~~ · entraron en **#218**, junto con
      `sc-section-card showHeader` y `sc-drawer width/topOffset`;
    - **las pantallas y el copy** — lo único pendiente, y lo bloquea la pregunta de producto de
@@ -205,6 +240,16 @@ de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con
 - **Rafa:** revisar usuarios contra el Supervisor real.
 
 **Trampas del frente:**
+- ⚠️ `p-table` con ajustar Y reordenar columnas: si el texto de la cabecera va suelto en el `th`, nunca arrastra
+  (la directiva ve el tirador de ancho dentro de lo pulsado). Por eso `sc-datatable` envuelve el texto.
+- ⚠️ La tabla ajustable nativa pone `overflow: hidden` en cada celda: rompe un panel anclado DENTRO de la celda
+  (Etiquetas). Por eso solo se enciende en las listas con selector de columnas.
+- ⚠️ `scripts/__tests__/bash-guard.test.mjs` (caso `npm run e2e`) lee el `dist/` real: falla si has editado el DS y no
+  has reconstruido. Es un defecto del test (depende de la máquina), sin arreglar.
+- ⚠️ El guardián de Bash ve un preflight vivo de OTRA caja como tuyo (la línea de comandos usa ruta relativa); mira su
+  `cwd` con `lsof -a -p <pid> -d cwd` y, si es ajeno, `# sc:ok`.
+- ⚠️ El botón de solo icono mide 31,5 de ancho por 32,5 de alto: el token del Kit para su ancho es 1px menor que su
+  alto. No es de esta tanda.
 - ⚠️ `document.fonts.check()` da `true` con una familia que no existe. Para saber si la fuente de iconos cargó, mira
   `[...document.fonts]` con su nombre y `status === 'loaded'`.
 - ⚠️ La opción apagada de `sc-select` (Skills) lleva `data-p-disabled` pero no `aria-disabled`: PrimeNG no la anuncia.
