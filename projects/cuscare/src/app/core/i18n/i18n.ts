@@ -79,13 +79,11 @@ const ES_TICKETS: Readonly<Record<string, string>> = {
   'MO Error Content': 'Contenido del MO',
   // «Request type» (V3): NATURE_OF_DEMAND.* y el copy de la V3 en Figma
   'Request type': 'Tipo de solicitud',
-  'Classification source': 'Origen de la clasificación',
   AI: 'IA',
   Agent: 'Agente',
   'Search type': 'Buscar tipo',
   'All types': 'Todos los tipos', // propio
   'No types match': 'Ningún tipo coincide', // propio
-  'Select a source to filter by type': 'Selecciona un origen para filtrar por tipo',
   'Filter by Request type': 'Filtrar por Tipo de solicitud',
   'Clear Request type filter': 'Borrar el filtro de Tipo de solicitud',
   Unsubscription: 'Baja',

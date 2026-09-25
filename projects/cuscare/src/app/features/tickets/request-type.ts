@@ -6,12 +6,10 @@ import { RequestOrigin, RequestTag } from '../../data/seed';
  *
  *   · `on`      → orígenes activos. Vacío = sin filtro.
  *   · `types`   → una lista de tipos POR origen: marcar uno en AI no lo marca en Agent.
- *   · `editing` → de qué origen es la lista que enseña el panel.
  */
 export interface RequestTypeFilter {
   readonly on: readonly RequestOrigin[];
   readonly types: Readonly<Record<RequestOrigin, readonly string[]>>;
-  readonly editing: RequestOrigin | null;
 }
 
 export const ORIGINS: readonly RequestOrigin[] = ['ai', 'agent'];
@@ -21,40 +19,7 @@ export const ORIGIN_LABEL: Readonly<Record<RequestOrigin, string>> = { ai: 'AI',
 export const EMPTY_REQUEST_TYPE_FILTER: RequestTypeFilter = {
   on: [],
   types: { ai: [], agent: [] },
-  editing: null,
 };
-
-const other = (o: RequestOrigin): RequestOrigin => (o === 'ai' ? 'agent' : 'ai');
-
-/**
- * Encender un origen lo pone a editar. Apagarlo BORRA sus tipos (si se vuelve a encender,
- * empieza de cero) y el panel pasa a la lista del origen que quede.
- */
-export function toggleOrigin(f: RequestTypeFilter, o: RequestOrigin): RequestTypeFilter {
-  if (!f.on.includes(o)) {
-    return { ...f, on: ORIGINS.filter((x) => x === o || f.on.includes(x)), editing: o };
-  }
-  const on = f.on.filter((x) => x !== o);
-  return {
-    on,
-    types: { ...f.types, [o]: [] },
-    editing: on.includes(other(o)) ? other(o) : null,
-  };
-}
-
-/** Marca o desmarca un tipo en la lista del origen que se está editando. */
-export function toggleType(f: RequestTypeFilter, type: string): RequestTypeFilter {
-  const o = f.editing;
-  if (!o) return f;
-  const cur = f.types[o];
-  const next = cur.includes(type) ? cur.filter((t) => t !== type) : [...cur, type];
-  return { ...f, types: { ...f.types, [o]: next } };
-}
-
-/** Con los dos orígenes activos, el selector AI | Agent elige qué lista se edita. No filtra. */
-export function setEditing(f: RequestTypeFilter, o: RequestOrigin): RequestTypeFilter {
-  return f.on.includes(o) ? { ...f, editing: o } : f;
-}
 
 /**
  * ¿El ticket pasa el filtro?
@@ -84,7 +49,7 @@ export function displayTags(tags: readonly RequestTag[]): RequestTag[] {
   return [...byLabel.values()];
 }
 
-/* ── Variante B: una sola lista, y en cada fila un grupo AI | Agent ──────────
+/* ── Una sola lista, y en cada fila un grupo AI | Agent ─────────────────────
  * Cada fila dice por qué origen filtra ESE tipo: por lo que puso la IA, por lo que
  * puso el agente, o por los dos. No hay sección de origen ni selector: los orígenes
  * activos se deducen de las filas marcadas. «All types» es un marcar-todo por
@@ -92,7 +57,7 @@ export function displayTags(tags: readonly RequestTag[]): RequestTag[] {
 
 /** Rehace `on` desde las listas: activo = el que tiene al menos un tipo. */
 function fromTypes(types: Record<RequestOrigin, readonly string[]>): RequestTypeFilter {
-  return { on: ORIGINS.filter((o) => types[o].length > 0), types, editing: null };
+  return { on: ORIGINS.filter((o) => types[o].length > 0), types };
 }
 
 /** Los orígenes con los que filtra una fila. */
