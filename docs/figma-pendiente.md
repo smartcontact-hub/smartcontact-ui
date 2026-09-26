@@ -155,8 +155,9 @@ ningún componente de índice lateral (revisados sus 228 componentes y conjuntos
 el único dibujo es un MARCO, no una instancia: `393:12565`, «sc-form-section-nav (pure-sc)», 196 de
 ancho, dentro de la maqueta de Contact Center.
 
-En código es `sc-form-section-nav` con `[flush]`, y desde el 2026-09-14 lo usan igual Contact Center y
-las fichas de agente, grupo y usuario (con la ficha de identidad encima). Mientras sea un marco suelto,
+En código es `sc-form-section-nav` con `[flush]`. Lo usan Contact Center y, desde el 2026-09-26, la ficha de
+grupo (DD-121: índice de cuatro secciones con el resumen del grupo debajo). Las fichas de agente y usuario lo
+dejaron por pestañas el 2026-09-22. Mientras sea un marco suelto,
 cada maqueta nueva lo vuelve a dibujar a mano y puede salir distinto: es justo lo que pasó con la
 generación anterior (`12277:4818`, panel gris con el icono en su cajita).
 
@@ -233,8 +234,8 @@ buscadores, índice de las fichas, barra lateral y menús.
   de su caja (W/H atada a la variable de font-size, DD-24). Si es así, la vía más limpia es agrandar el
   glifo dentro de la caja un 33% (24/18) sin tocar la caja, que es lo que hace el código.
 - **Dos casos ya corregidos en código:** el índice de Contact Center (`393:12565`, `IconSet` `393:12581` a 20) y
-  el de las fichas de agente, grupo y usuario, que es la misma pieza (§5), llevan en código el icono al tamaño de
-  su etiqueta (14 de caja). Si en Figma se alinea el glifo, ese 20 debería bajar a 14.
+  el de la ficha de grupo, que es la misma pieza (§5), llevan en código el icono al tamaño de su etiqueta (14 de
+  caja). Si en Figma se alinea el glifo, ese 20 debería bajar a 14.
 - **Se queda fuera, a propósito:** la réplica `agent` no calibra (DD-35), porque sus tamaños se midieron sobre
   el Comunicador en vivo.
 

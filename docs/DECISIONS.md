@@ -41,7 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas bajo el índice · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
+> | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas bajo el índice · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
 > | Sidebar en producción: abrir una categoría no cierra las demás y nada se cierra al salir · plegado solo la rama de la página · se despliega con el ratón y se ancla con su botón · selección en cyan · subsecciones en 450ms con la curva de Apollo (enmienda DD-112 §3-§5) | DD-118 |
 > | La cabecera del Dashboard: pestañas sin fondo con `⋮` y `+ Monitor` pegados; las acciones de la página en `p-toolbar` en tres grupos con `sc-divider` (enmienda DD-113 §6) · en modo pared un monitor sin widgets enseña su vacío y el carrusel se lo salta | DD-114 |
 > | Cambiar de COLECCIÓN (se vacían búsqueda y selección) son pestañas `p-tabs`; filtrar la misma lista o elegir un valor son botones segmentados `sc-selectbutton` · un componente de primeng.dev entra NATIVO tal cual (doc entera con `tools/primeng-doc.mjs`, sin contador ni icono que el ejemplo no tenga) y un desvío de comportamiento lo para `audit:primeng-coupling` §F · un separador entre bloques es `sc-divider` salvo que su línea deba alinearse con el contenido · el Supervisor sin `ripple`, como primeng.dev | DD-113 |
@@ -135,6 +135,30 @@ tres fichas (#240) y el alta en diálogo (DD-119).
    que ofrece el grupo.
 9. **El aviso de «abierto en otra pestaña» se pinta**: `CrossTabLockService` suelta el candado en `pagehide`
    (recargar no destruye el componente, y cada F5 se habría creído otra pestaña).
+10. **Asignar agentes, a un clic desde el listado**: cada fila lleva «Agentes», un botón de TEXTO en la variante
+    `contrast`, en una columna fija junto al «⋮» (un primario por fila haría una pared azul que compite con «Nuevo
+    grupo», y el gris secundario del DS es 2,95:1 sobre blanco). Abre `sc-group-agents-panel`: `sc-drawer` a la
+    derecha, bajo la barra de la app, con la MISMA tabla de la ficha y sin elegir filas (la barra de lote quedaría
+    bajo la máscara). Pie dentro del contenido con «Asignados · Sin guardar», Cancelar y «Guardar (N)», donde N son
+    AGENTES que cambian (`diffLinks`). El cierre de `p-drawer` no se puede vetar, así que su X, el clic fuera y su
+    Escape van apagados y cierra el panel, que pregunta antes si hay cambios; Escape se atiende en el propio panel y
+    no sube, porque el contenedor de `p-drawer` lo escucha y, aun con `closeOnEscape` apagado, llama a `hide(false)`,
+    que quita la máscara y deja el panel abierto (medido con PrimeNG 22.1.2). Coge el mismo candado que la ficha.
+11. **El alta es la propia ficha, en modo alta**: `/admin/grupos/crear` la abre vacía, con los valores por defecto
+    de Grupos y Teléfono marcado. General es la puerta: sin nombre (o repetido) o sin canales no se sale de ella, ni
+    por el índice ni con «Siguiente»; cada campo dice lo que le falta y el foco va al primero. «Siguiente», al pie de
+    cada sección, solo en el alta. «Crear grupo», en la barra, se enciende con General completa (lo demás nace con
+    valores por defecto). Crear guarda también los agentes y abre su edición en la sección en la que se estaba
+    (`?seccion=distribucion|recursos|agentes`, que en el alta no cuenta: siempre abre en General). Agente y usuario
+    ya creaban así, y la de grupo lo hacía hasta el 2026-09-23. Duplicar conserva su diálogo.
+12. **Lo que rodea a la ficha habla como ella.** El listado tiene una columna por estrategia, «Estrategia de
+    teléfono» y «Estrategia de chat», con «—» donde el grupo no tiene el canal (también el teléfono saliente), y
+    buscar, ordenar, editar en bloque y exportar leen lo mismo; el lote de una estrategia escribe SU campo (antes las
+    de chat caían en la de teléfono) y solo en los grupos con su canal. Prioridad ordena por rango: `sc-datatable`
+    gana `externalSort`, porque `p-table` reordenaba por el valor crudo del campo encima del orden de la página.
+    Valores por defecto va en el orden y con las palabras de la ficha, con estrategia y cola por canal y el cierre
+    por inactividad de Chat (aditivo, como el grupo: lo guardado con la cola única cae en las dos). La lista de
+    agentes recorta los canales de cada enlace a los que ofrece su grupo y los nombra como las fichas.
 
 **Razón** · Lo dicho por producto es la vara; las piezas salen del vocabulario de la app (índice del DS, molde de
 Contact Center, `sc-section-card`, `p-metergroup` como el panel de grupo del Dashboard) y no de la maqueta, que es la
@@ -153,9 +177,12 @@ y marca siempre 100 % al editar, y la sección de distribución con Teléfono y 
   clics y un aviso en vez de 2, y la fila desaparecería a mitad del gesto.
 - **Mensajes de chat rellenos de fábrica** → los textos de la maqueta no constan como aprobados; van de ejemplo.
 - **Subir la versión de los stores** para el modelo nuevo → borraría lo que haya guardado quien ya usó la demo.
+- **El pie nativo de `p-drawer` (`#footer`) en el panel rápido** → `sc-drawer` aún no lo deja pasar y solo este
+  panel lo pide; el pie va dentro del contenido y sube al DS cuando otra pantalla lo necesite.
+- **Una sola columna de estrategia con las dos** → no se ordena ni se edita en bloque una sin arrastrar la otra.
 
 **Consecuencias** · Enmienda, una por una: **DD-119 §2 y §4** (el alta en diálogo y la ficha solo de edición: el alta
-pasa a la propia ficha en el tramo siguiente de este mismo cambio; duplicar conserva su diálogo); **la forma «una
+pasa a la propia ficha, §11; duplicar conserva su diálogo); **la forma «una
 página + pestañas» del 2026-09-22** y **el orden común de pestañas de #240**, para grupos; **DD-101 §1** (sin
 «Pausar» en el lote del grupo) y **§2** (el aviso de la barra cuenta todas las filas sin canales, no solo las
 activas); **DD-100 §3** (la identidad no va sobre el índice: la cabecera va a todo lo ancho). Y una licencia sobre
@@ -166,8 +193,11 @@ exactamente el desbordamiento y dónde se configura su destino; si «Desbordar s
 estrategia o capacidad propias; si la URL del script de Web Chat la pone cada grupo o la plataforma; si el backend
 tendrá un permiso de WhatsApp por agente (el AED en vivo solo tiene Tlf / Chat / Email); qué ve el cliente en cola si
 se quita un canal o se cambia la estrategia de un grupo activo; y el choque con postventa (2026-09-18), que pidió
-más de un anuncio periódico en teléfono. Vigilan esto `grupo-vision.spec.ts`, `ficha-grupo.spec.ts`,
-`ficha-grupo-canales.spec.ts` y el grupo en `page-anatomy`, `form-section-nav-legibility` y `theme-contrast`.
+más de un anuncio periódico en teléfono. Fuera a propósito: la forma de las fichas de agente y usuario, y
+`/config/aed/grupos`, la página vieja de Configuración, que no está conectada con la ficha. Vigilan esto
+`grupo-vision.spec.ts`, `ficha-grupo.spec.ts`, `ficha-grupo-canales.spec.ts`, `panel-agentes-grupo.spec.ts`,
+`listado-grupos.spec.ts`, `admin-forms.spec.ts` y el grupo en `page-anatomy`, `form-section-nav-legibility` y
+`theme-contrast`.
 
 ---
 
@@ -243,6 +273,10 @@ nombre llevaba a «Canales y agentes»); el diálogo lo hace visible.
   confirmación que había que explicar con una frase, y rompía el orden común de las tres fichas (#240).
 - **Avatar generado del nombre** (teardown B7 lo daba por bueno) → B7 medía apps de mensajería, donde grupos y personas
   se mezclan; en una lista donde todo son grupos no distingue nada.
+
+**Enmienda del 2026-09-26 (DD-121)** · §2 y §4 dejan de valer: el alta vuelve a ser la ficha, en modo alta,
+porque la visión de producto de grupos pide que al crear queden definidos canales, distribución, colas y recursos.
+`newGroupDraft` ya no existe. Duplicar (§3) conserva su diálogo, que pide nombre, teléfono saliente y prioridad.
 
 ## DD-118 · 2026-09-23 — En producción, el sidebar de «abrir no cierra las demás»; «no se cierra nada» espera a primeng.dev
 
