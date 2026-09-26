@@ -58,6 +58,7 @@ import {
   GroupCreateDialogComponent,
   type GroupCreateSubmission,
 } from '../components/group-create-dialog/group-create-dialog.component';
+import { GroupAgentsPanelComponent } from '../components/group-agents-panel/group-agents-panel.component';
 
 interface PendingBulkEdit {
   readonly field: GroupBulkField;
@@ -83,6 +84,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
     EmptyStateComponent,
     GroupPopoverComponent,
     GroupCreateDialogComponent,
+    GroupAgentsPanelComponent,
     IconComponent,
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
@@ -171,6 +173,8 @@ export class GroupsListPageComponent {
       { key: 'strategy', label: this.translate.instant('groups.table.strategy') },
       { key: 'services', label: this.translate.instant('groups.table.services') },
       { key: 'agents', label: this.translate.instant('groups.table.agents') },
+      // El panel rápido de agentes: fijo, porque es la tarea más frecuente de la lista.
+      { key: 'assign', label: this.translate.instant('groups.table.assign_column'), locked: true },
     ];
   });
 
@@ -242,6 +246,7 @@ export class GroupsListPageComponent {
   private readonly strategyTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('strategyTpl');
   private readonly servicesTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('servicesTpl');
   private readonly agentsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('agentsTpl');
+  private readonly assignTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('assignTpl');
 
   /** `sortable` en las MISMAS cinco que llevaban `scSortable`. La columna del menú de fila la añade la lista. */
   protected readonly columns = computed<readonly ScColumnDef<Group>[]>(() => {
@@ -307,6 +312,19 @@ export class GroupsListPageComponent {
         cellTemplate: this.agentsTpl(),
         width: '7rem',
       },
+      /* EL PANEL RÁPIDO, a un clic de la fila: asignar y desasignar agentes y sus canales es lo que más
+       * se hace con un grupo una vez creado (visión de producto de grupos, 2026-09-25). Un botón de TEXTO
+       * y no primario: en cada fila, un primario haría una pared azul que compite con «Nuevo grupo». Su
+       * columna propia, junto al «⋮», porque `sc-list-page` no tiene sitio para una acción en la fila (el
+       * botón en fila de DD-96 ya no existe). `stopRowClick`: pulsarlo no abre la ficha. */
+      {
+        field: 'assign',
+        header: '',
+        headerAriaLabel: this.translate.instant('groups.table.assign_column'),
+        cellTemplate: this.assignTpl(),
+        width: '7.5rem',
+        stopRowClick: true,
+      },
     ];
   });
 
@@ -367,6 +385,17 @@ export class GroupsListPageComponent {
 
   protected clearSelection(): void {
     this.selectedIds.set(new Set());
+  }
+
+  /** El grupo cuyo panel rápido de agentes está abierto. */
+  protected readonly agentsPanelGroup = signal<Group | null>(null);
+
+  protected openAgentsPanel(group: Group): void {
+    this.agentsPanelGroup.set(group);
+  }
+
+  protected closeAgentsPanel(): void {
+    this.agentsPanelGroup.set(null);
   }
 
   protected onDefaultsClick(): void {

@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 147,
+      "usedInSupervisor": 152,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -501,7 +501,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 16,
+      "usedInSupervisor": 17,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -549,7 +549,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 2,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
       "sobreObsoleto": []
     },
@@ -883,7 +883,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4,
+      "usedInSupervisor": 5,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
     },

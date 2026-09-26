@@ -1456,7 +1456,10 @@
       "agents": "Agentes",
       "agents_count": "{{count}} agentes",
       "services_count": "{{count}} serviços",
-      "services_count_one": "1 serviço"
+      "services_count_one": "1 serviço",
+      "assign": "Agentes",
+      "assign_aria": "Atribuir agentes a {{name}}",
+      "assign_column": "Atribuir agentes"
     },
     "priority": {
       "low": "Baixa",
@@ -1725,7 +1728,14 @@
     },
     "rename_placeholder": "Nome do grupo",
     "rename_aria": "Renomear {{name}}",
-    "bulk_edit_title": "Aplicar alteração a {{count}} grupo(s)"
+    "bulk_edit_title": "Aplicar alteração a {{count}} grupo(s)",
+    "agents_panel": {
+      "title": "Agentes · {{name}}",
+      "assigned": "Atribuídos: {{count}}",
+      "unsaved": "Por guardar: {{count}}",
+      "save_count": "Salvar ({{count}})",
+      "saved": "Agentes de \"{{name}}\" atualizados"
+    }
   },
   "agents": {
     "page_title": "Agentes",

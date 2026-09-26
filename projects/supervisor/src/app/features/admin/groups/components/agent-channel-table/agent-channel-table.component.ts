@@ -182,6 +182,11 @@ export class AgentChannelTableComponent {
   readonly groupId = input.required<number>();
   /** Enseña la columna Nivel (estrategia de teléfono Niveles). */
   readonly showLevel = input(false);
+  /**
+   * Elegir filas para actuar en lote. Apagado en el panel rápido del listado: su barra de lote es
+   * `position: fixed` y quedaría DEBAJO de la máscara del panel (z-index 1050 frente a 1060).
+   */
+  readonly selectable = input(true);
 
   readonly linksChange = output<readonly GroupAgentLink[]>();
 

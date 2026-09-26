@@ -27,3 +27,9 @@ export function channelRemovalImpact(
   links: readonly { readonly channels: readonly string[] }[],
   removedChannels: Iterable<string>,
 ): { affected: number; orphaned: number };
+
+/** Cuántos agentes cambian entre dos juegos de enlaces del mismo grupo (la N de «Guardar (N)»). */
+export function diffLinks(
+  before: readonly { readonly agentId: number; readonly channels: readonly string[]; readonly active: boolean; readonly level?: number }[],
+  after: readonly { readonly agentId: number; readonly channels: readonly string[]; readonly active: boolean; readonly level?: number }[],
+): { added: number; removed: number; changed: number; total: number };

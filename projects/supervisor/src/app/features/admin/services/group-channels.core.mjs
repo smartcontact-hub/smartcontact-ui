@@ -148,3 +148,43 @@ export function channelRemovalImpact(links, removedChannels) {
   }
   return { affected, orphaned };
 }
+
+/**
+ * ¿Dicen lo mismo dos enlaces del mismo agente? Canales (sin mirar el orden), nivel (1 si no lo
+ * tiene) y si está habilitado.
+ * @param {{ channels: readonly string[], active: boolean, level?: number }} a
+ * @param {{ channels: readonly string[], active: boolean, level?: number }} b
+ */
+function sameLink(a, b) {
+  const ca = canonicalizeChannels(a.channels);
+  const cb = canonicalizeChannels(b.channels);
+  return (
+    a.active === b.active &&
+    (a.level ?? 1) === (b.level ?? 1) &&
+    ca.length === cb.length &&
+    ca.every((c, i) => c === cb[i])
+  );
+}
+
+/**
+ * Cuántos agentes cambian entre dos juegos de enlaces del mismo grupo: los que entran, los que
+ * salen y los que siguen pero cambian de canales o de nivel. Es la N de «Guardar (N)» del panel
+ * rápido de agentes: lo que se va a escribir, dicho en agentes y no en casillas.
+ * @param {readonly { agentId: number, channels: readonly string[], active: boolean, level?: number }[]} before
+ * @param {readonly { agentId: number, channels: readonly string[], active: boolean, level?: number }[]} after
+ * @returns {{ added: number, removed: number, changed: number, total: number }}
+ */
+export function diffLinks(before, after) {
+  const prev = new Map(before.map((l) => [l.agentId, l]));
+  const next = new Map(after.map((l) => [l.agentId, l]));
+  let added = 0;
+  let removed = 0;
+  let changed = 0;
+  for (const [agentId, link] of next) {
+    const was = prev.get(agentId);
+    if (!was) added++;
+    else if (!sameLink(was, link)) changed++;
+  }
+  for (const agentId of prev.keys()) if (!next.has(agentId)) removed++;
+  return { added, removed, changed, total: added + removed + changed };
+}

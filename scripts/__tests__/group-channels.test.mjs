@@ -13,6 +13,7 @@ import {
   canonicalizeChannels,
   channelRemovalImpact,
   clampLinksToChannels,
+  diffLinks,
   familyOf,
   hasChatFamily,
   isLastChannel,
@@ -94,4 +95,30 @@ test('channelRemovalImpact: cuenta quién pierde un canal y quién se quedaría 
   assert.deepEqual(channelRemovalImpact(links, ['phone']), { affected: 2, orphaned: 1 });
   assert.deepEqual(channelRemovalImpact(links, ['phone', 'chat']), { affected: 3, orphaned: 3 });
   assert.deepEqual(channelRemovalImpact(links, []), { affected: 0, orphaned: 0 });
+});
+
+test('diffLinks cuenta agentes, no casillas: entran, salen o cambian de canales o de nivel', () => {
+  const antes = [
+    { agentId: 1, channels: ['phone'], active: true },
+    { agentId: 2, channels: ['phone', 'chat'], active: true, level: 2 },
+    { agentId: 3, channels: ['chat'], active: false },
+  ];
+  // Nada cambia, aunque el orden de los canales sea otro y el nivel 1 venga sin escribir.
+  assert.deepEqual(
+    diffLinks(antes, [
+      { agentId: 1, channels: ['phone'], active: true, level: 1 },
+      { agentId: 2, channels: ['chat', 'phone'], active: true, level: 2 },
+      { agentId: 3, channels: ['chat'], active: false },
+    ]),
+    { added: 0, removed: 0, changed: 0, total: 0 },
+  );
+  // Uno entra, uno sale, uno cambia de canal y otro de nivel: 4 agentes.
+  assert.deepEqual(
+    diffLinks(antes, [
+      { agentId: 1, channels: ['phone', 'whatsapp'], active: true },
+      { agentId: 2, channels: ['phone', 'chat'], active: true, level: 3 },
+      { agentId: 4, channels: ['phone'], active: true },
+    ]),
+    { added: 1, removed: 1, changed: 2, total: 4 },
+  );
 });

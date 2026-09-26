@@ -16,7 +16,7 @@
   [heading]="'sidebar.groups' | translate"
   [rows]="groups()"
   [columns]="columns()"
-  tableMinWidth="70rem"
+  tableMinWidth="77.5rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'groups.search_placeholder' | translate"
@@ -117,6 +117,23 @@
   @let agents = agentsForGroup(group.id);
   <sc-group-popover [groups]="agents" [countAriaLabel]="'groups.table.agents_count' | translate: { count: agents.length }" />
 </ng-template>
+
+<!-- Abre el panel rápido de agentes de ESTA fila (la cifra de al lado sigue enseñando quiénes son).
+     `contrast` y no `secondary`: el texto secundario de botón del DS es gris 500 sobre blanco (2.95:1, bajo AA;
+     `theme-contrast` lo cazó aquí), y `contrast` es el color de texto de la tabla, sin color de marca. -->
+<ng-template #assignTpl let-group>
+  <sc-button
+    size="sm"
+    variant="contrast"
+    appearance="text"
+    icon="group_add"
+    [label]="'groups.table.assign' | translate"
+    [ariaLabel]="'groups.table.assign_aria' | translate: { name: group.name }"
+    (clicked)="openAgentsPanel(group)"
+  />
+</ng-template>
+
+<sc-group-agents-panel [group]="agentsPanelGroup()" (closed)="closeAgentsPanel()" />
 
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"

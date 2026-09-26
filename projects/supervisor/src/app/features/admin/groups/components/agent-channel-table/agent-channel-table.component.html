@@ -1,6 +1,6 @@
 <!-- Misma barra que el editor hermano (los grupos de un agente): filtrar a la
      izquierda, recuento, y «Añadir» con el desplegable del DS a la derecha. -->
-<div class="assign" [class.assign--bulk]="selectedIds().size > 0">
+<div class="assign" [class.assign--bulk]="selectable() && selectedIds().size > 0">
   <div class="assign__bar">
     <!-- Buscar solo cuando hay en qué (2026-09-23): un grupo recién creado aterriza aquí sin
          nadie, y un buscador sobre una tabla vacía es un control que no puede hacer nada. -->
@@ -56,7 +56,7 @@
       [value]="visibleRows()"
       [columns]="columns()"
       dataKey="agent.id"
-      selectionMode="multiple"
+      [selectionMode]="selectable() ? 'multiple' : null"
       [selection]="selectedRows()"
       (selectionChange)="onSelectionChange($any($event))"
       [rowSelectionAriaLabel]="rowAriaLabel"
@@ -78,9 +78,11 @@
      pintaba su fondo con un color de PALETA que no voltea en oscuro). Decisión de producto (2026-09-14): en
      grupos también se seleccionan varios agentes a la vez, como en el resto de listas. -->
 <!-- Solo «Quitar del grupo»: la pausa es de la persona y se cambia en su ficha (DD-121). -->
-<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-  <sc-button type="button" variant="danger" [label]="'groups.form.assigned.bulk_unassign' | translate" (clicked)="bulkUnassign()" />
-</sc-bulk-action-bar>
+@if (selectable()) {
+  <sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
+    <sc-button type="button" variant="danger" [label]="'groups.form.assigned.bulk_unassign' | translate" (clicked)="bulkUnassign()" />
+  </sc-bulk-action-bar>
+}
 
 <!-- Celdas del editor. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
 <ng-template #agentTpl let-row>

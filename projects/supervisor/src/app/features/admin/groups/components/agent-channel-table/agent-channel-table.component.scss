@@ -89,9 +89,11 @@
   flex-direction: column;
   flex: 0 1 auto;
   min-height: 0;
-  max-block-size: max(
-    var(--sc-spacing-18),
-    calc(100dvh - (var(--sc-spacing-25) + var(--sc-spacing-5)))
+  /* Quien la aloja en otro marco (el panel rápido del listado) cambia el tope con `--assign-table-max`:
+   * allí el alto lo reparte su columna flexible, no la ventana. */
+  max-block-size: var(
+    --assign-table-max,
+    max(var(--sc-spacing-18), calc(100dvh - (var(--sc-spacing-25) + var(--sc-spacing-5))))
   );
 }
 
