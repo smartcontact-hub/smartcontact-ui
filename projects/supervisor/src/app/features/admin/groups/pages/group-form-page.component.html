@@ -222,10 +222,7 @@
                     <sc-select inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
                   </div>
                 }
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-transfer">{{ 'groups.form.advanced.transfer' | translate }}</label>
-                  <sc-inputnumber class="field__number" inputId="group-transfer" [min]="0" suffix="s" [value]="form().advanced.transferSec" [helperText]="'groups.form.advanced.transfer_hint' | translate" (valueChange)="setAdvancedNumber('transferSec', $event)" />
-                </div>
+                <ng-container *ngTemplateOutlet="transferField; context: { channel: 'phone', queue: form().phoneQueue }" />
                 <div class="field">
                   <label class="field__label sc-text-caption-semibold" for="group-wrap-up">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
                   <sc-inputnumber class="field__number" inputId="group-wrap-up" [min]="0" suffix="s" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" />
@@ -234,23 +231,7 @@
 
               <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue' | translate }}</h4>
               <div class="grid grid--2">
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-max-wait">{{ 'groups.form.advanced.max_queue_wait' | translate }}</label>
-                  <sc-inputnumber class="field__number" inputId="group-max-wait" [min]="0" suffix="s" [value]="form().advanced.maxQueueWaitSec" (valueChange)="setAdvancedNumber('maxQueueWaitSec', $event)" />
-                </div>
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-service-level">{{ 'groups.form.advanced.service_level' | translate }}</label>
-                  <sc-inputnumber class="field__number" inputId="group-service-level" [min]="0" suffix="s" [value]="form().advanced.serviceLevelSec" [helperText]="'groups.form.advanced.service_level_hint' | translate" (valueChange)="setAdvancedNumber('serviceLevelSec', $event)" />
-                </div>
-                <!-- Dos opciones, ni una más: sin «Sin límite» (visión de producto de grupos, 2026-09-25). -->
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-queue-size">{{ 'groups.form.advanced.queue_size' | translate }}</label>
-                  <span class="inline-control">
-                    <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="queueSizeOptions()" [value]="form().advanced.queueSizeType" [ariaLabel]="'groups.form.advanced.queue_size' | translate" (valueChange)="setAdvanced('queueSizeType', $any($event))" />
-                    <sc-inputnumber class="field__number" size="sm" inputId="group-queue-size" [min]="1" [value]="form().advanced.queueSize" (valueChange)="setAdvancedNumber('queueSize', $event)" />
-                  </span>
-                  <p class="field__help sc-text-caption-regular">{{ (form().advanced.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: form().advanced.queueSize } }}</p>
-                </div>
+                <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'phone', queue: form().phoneQueue }" />
                 <div class="field">
                   <span class="field__label-row">
                     <label class="field__label sc-text-caption-semibold" for="group-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
@@ -301,6 +282,22 @@
                   <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
                   <sc-select inputId="group-chat-strategy" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
                 </div>
+                <ng-container *ngTemplateOutlet="transferField; context: { channel: 'chat', queue: form().chatQueue }" />
+              </div>
+              <!-- A la vista, no en un «avanzado» (visión de producto de grupos, 2026-09-25). Los minutos aparecen con el
+                   interruptor: un tiempo que no se aplica es un campo muerto. -->
+              <div class="switch-field switch-field--top">
+                <sc-toggleswitch [checked]="form().chat.closeOnInactivity" [ariaLabel]="'groups.form.chat.close_on_inactivity' | translate" (checkedChange)="setChat('closeOnInactivity', $event)" />
+                <div class="switch-field__copy">
+                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.chat.close_on_inactivity' | translate }}</span>
+                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.chat.close_on_inactivity_hint' | translate }}</p>
+                  @if (form().chat.closeOnInactivity) {
+                    <span class="inline-control">
+                      <label class="inline-control__suffix sc-text-caption-regular" for="group-chat-inactivity">{{ 'groups.form.chat.inactivity_minutes' | translate }}</label>
+                      <sc-inputnumber class="field__number" size="sm" inputId="group-chat-inactivity" [min]="1" suffix=" min" [value]="form().chat.inactivityMinutes" (valueChange)="setInactivityMinutes($event)" />
+                    </span>
+                  }
+                </div>
               </div>
               <div class="switch-field switch-field--top">
                 <sc-toggleswitch [checked]="form().advanced.chatRatingEnabled" [ariaLabel]="'groups.form.advanced.chat_rating' | translate" (checkedChange)="setAdvanced('chatRatingEnabled', $event)" />
@@ -347,6 +344,29 @@
                       <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.whatsapp_number_info' }" />
                     </span>
                     <sc-inputtext inputId="group-chat-whatsapp" type="tel" placeholder="+34 900 100 200" [value]="form().advanced.whatsappNumber" (valueChange)="setAdvanced('whatsappNumber', $event)" />
+                  </div>
+                </div>
+              }
+
+              <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue' | translate }}</h4>
+              <div class="grid grid--2">
+                <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'chat', queue: form().chatQueue }" />
+              </div>
+
+              <!-- Lo que se le escribe al cliente mientras espera, POR SUBCANAL y solo de los marcados: Web Chat y
+                   WhatsApp comparten cola, pero no hablan igual. Vacío = no se envía nada. -->
+              <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue_messages' | translate }}</h4>
+              <p class="field__help sc-text-caption-regular">{{ 'groups.form.chat.messages_hint' | translate }}</p>
+              @for (sub of activeChatSubchannels(); track sub) {
+                <div class="chat-messages" role="group" [attr.aria-labelledby]="'group-chat-messages-' + sub">
+                  <span class="chat-messages__title sc-text-caption-semibold" [id]="'group-chat-messages-' + sub">{{ channelKeys[sub] | translate }}</span>
+                  <div class="grid grid--2">
+                    @for (m of chatMessageKeys; track m.key) {
+                      <div class="field">
+                        <label class="field__label sc-text-caption-semibold" [for]="'group-chat-msg-' + sub + '-' + m.key">{{ m.labelKey | translate }}</label>
+                        <sc-textarea [inputId]="'group-chat-msg-' + sub + '-' + m.key" [rows]="2" fluid [placeholder]="m.placeholderKey | translate" [value]="form().chat.queueMessages[sub][m.key]" (valueChange)="setChatMessage(sub, m.key, $event)" />
+                      </div>
+                    }
                   </div>
                 </div>
               }
@@ -678,6 +698,35 @@
     />
   </sc-dialog>
 }
+
+<!-- La cola de UN canal: Teléfono y Chat tienen cada uno la suya (visión de producto de grupos, 2026-09-25), con
+     los mismos campos. Los `id` llevan el canal: los dos bloques pueden estar en la misma sección. -->
+<ng-template #queueFields let-channel="channel" let-queue="queue">
+  <div class="field">
+    <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-max-wait'">{{ 'groups.form.advanced.max_queue_wait' | translate }}</label>
+    <sc-inputnumber class="field__number" [inputId]="'group-' + channel + '-max-wait'" [min]="0" suffix="s" [value]="queue.maxQueueWaitSec" (valueChange)="setQueueNumber(channel, 'maxQueueWaitSec', $event)" />
+  </div>
+  <div class="field">
+    <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-service-level'">{{ 'groups.form.advanced.service_level' | translate }}</label>
+    <sc-inputnumber class="field__number" [inputId]="'group-' + channel + '-service-level'" [min]="0" suffix="s" [value]="queue.serviceLevelSec" [helperText]="'groups.form.advanced.service_level_hint' | translate" (valueChange)="setQueueNumber(channel, 'serviceLevelSec', $event)" />
+  </div>
+  <!-- Dos opciones, ni una más: sin «Sin límite» (visión de producto de grupos, 2026-09-25). -->
+  <div class="field">
+    <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-queue-size'">{{ 'groups.form.advanced.queue_size' | translate }}</label>
+    <span class="inline-control">
+      <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="queueSizeOptions()" [value]="queue.queueSizeType" [ariaLabel]="'groups.form.advanced.queue_size' | translate" (valueChange)="setQueue(channel, 'queueSizeType', $any($event))" />
+      <sc-inputnumber class="field__number" size="sm" [inputId]="'group-' + channel + '-queue-size'" [min]="1" [value]="queue.queueSize" (valueChange)="setQueueNumber(channel, 'queueSize', $event)" />
+    </span>
+    <p class="field__help sc-text-caption-regular">{{ (queue.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: queue.queueSize } }}</p>
+  </div>
+</ng-template>
+
+<ng-template #transferField let-channel="channel" let-queue="queue">
+  <div class="field">
+    <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-transfer'">{{ 'groups.form.advanced.transfer' | translate }}</label>
+    <sc-inputnumber class="field__number" [inputId]="'group-' + channel + '-transfer'" [min]="0" suffix="s" [value]="queue.transferSec" [helperText]="'groups.form.advanced.transfer_hint' | translate" (valueChange)="setQueueNumber(channel, 'transferSec', $event)" />
+  </div>
+</ng-template>
 
 <!-- Elegir un .wav: el input nativo va oculto y lo abre un botón del DS. Fuera del tabulador y del lector de pantalla,
      que si no anuncian un segundo botón «Choose File» en inglés. -->

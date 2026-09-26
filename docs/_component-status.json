@@ -801,7 +801,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 21,
+      "usedInSupervisor": 22,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1421,7 +1421,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 7,
+      "usedInSupervisor": 8,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1469,7 +1469,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 30,
+      "usedInSupervisor": 31,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

@@ -106,24 +106,15 @@ export interface GroupAdvanced {
   /**
    * Número al que llegan los mensajes de WhatsApp de este grupo.
    *
-   * **Por confirmar con desarrollo, y es una decisión de modelo, no de pantalla.** Aquí conviven
-   * dos respuestas distintas a la misma pregunta:
+   * Desde la visión de producto de grupos (2026-09-25) WhatsApp es un SUBCANAL de Chat, con Web Chat:
+   * comparten estrategia y cola, y el número se pide en el bloque de Chat en cuanto el grupo tiene
+   * WhatsApp, con o sin Web Chat. (Hasta el 2026-09-26 solo se pintaba con Web Chat marcado, y un grupo
+   * con WhatsApp y sin Web Chat se quedaba sin sitio donde ponerlo: medido el 2026-09-21.)
    *
-   *   · `GroupChannel` incluye `whatsapp`, así que un grupo puede ofrecer WhatsApp **sin** Chat, y
-   *     entonces la rejilla de agentes le pinta su propia columna: se puede dar WhatsApp a un
-   *     agente y negarle el chat web.
-   *   · Este campo, en cambio, solo se pinta dentro de `@if (hasChat())`. Un grupo con WhatsApp y
-   *     sin Chat se queda **sin sitio donde poner el número** (medido el 2026-09-21).
-   *
-   * En el AED en vivo manda la segunda: el nodo configura `type_chatweb` y `type_whatsapp` por
-   * separado, pero el permiso del agente solo tiene Tlf / Chat / Email, así que quien atiende Chat
-   * atiende los dos. Lo que hay que preguntar:
-   *
-   *   1. ¿El backend nuevo va a tener un permiso de WhatsApp propio por (agente, grupo), o WhatsApp
-   *      es un ajuste dentro de Chat como en Voice?
-   *   2. Si es lo segundo, la capacidad y la estrategia de chat, ¿cuentan también las de WhatsApp?
-   *
-   * Con la respuesta, o sobra la columna de la rejilla, o sobra el `hasChat()` de este campo.
+   * **Sigue abierto con desarrollo, y es de modelo, no de pantalla:** la tabla de agentes da WhatsApp y
+   * Web Chat POR SEPARADO a cada agente, pero en el AED en vivo el permiso del agente solo tiene
+   * Tlf / Chat / Email (quien atiende Chat atiende los dos). ¿El backend nuevo tendrá un permiso de
+   * WhatsApp propio por (agente, grupo), o WhatsApp es un ajuste dentro de Chat como en Voice?
    */
   readonly whatsappNumber: string;
   /** Al cerrar la conversación de chat, pedir al cliente que valore la atención. */
@@ -174,6 +165,91 @@ export const CHAT_STRATEGIES: readonly string[] = [
   'Balanceada',
 ];
 
+/* ── Por canal: la cola, los tiempos y lo propio de Chat (visión de producto de grupos, 2026-09-25) ──
+ *
+ * «Dentro de cada canal, distribución y colas»: Teléfono y Chat tienen cada uno su cola y sus tiempos.
+ * Hasta el 2026-09-26 había UN juego para todo el grupo, en `GroupAdvanced`. El cambio es ADITIVO: los
+ * campos nuevos son opcionales y, mientras un grupo no guarde los suyos, se leen del juego de antes
+ * (`resolveGroup`). Los stores del repo no migran —subir su versión borra lo guardado y re-siembra—, así
+ * que esta es la vía que no pierde nada de lo que alguien haya creado en la demo. */
+
+/** La cola y los tiempos de UN canal. Mismos nombres que en `GroupAdvanced`, de donde salen al leer. */
+export interface ChannelQueue {
+  readonly queueSizeType: QueueSizeType;
+  readonly queueSize: number;
+  readonly maxQueueWaitSec: number;
+  /** Tiempo para medir el % de servicio. */
+  readonly serviceLevelSec: number;
+  readonly transferSec: number;
+}
+
+/** Los subcanales de Chat. `chat` es Web Chat. */
+export type ChatSubchannel = 'chat' | 'whatsapp';
+
+/** Lo que se le escribe al cliente de chat mientras espera. Vacío = no se envía nada. */
+export interface ChatQueueMessages {
+  readonly onEnter: string;
+  readonly whileWaiting: string;
+  readonly noAgents: string;
+}
+
+/** Lo propio de Chat: cerrar por inactividad (visible, no en un «avanzado») y los mensajes de cola de cada
+ *  subcanal, que se escriben por separado porque Web Chat y WhatsApp no hablan igual. */
+export interface ChatSettings {
+  readonly closeOnInactivity: boolean;
+  readonly inactivityMinutes: number;
+  readonly queueMessages: Readonly<Record<ChatSubchannel, ChatQueueMessages>>;
+}
+
+export const EMPTY_CHAT_MESSAGES: ChatQueueMessages = { onEnter: '', whileWaiting: '', noAgents: '' };
+
+export const DEFAULT_CHAT_SETTINGS: ChatSettings = {
+  closeOnInactivity: false,
+  inactivityMinutes: 10,
+  queueMessages: { chat: EMPTY_CHAT_MESSAGES, whatsapp: EMPTY_CHAT_MESSAGES },
+};
+
+/** La cola de un canal, tal como la dejaba el juego único de antes. */
+export function queueFrom(advanced: GroupAdvanced): ChannelQueue {
+  const { queueSizeType, queueSize, maxQueueWaitSec, serviceLevelSec, transferSec } = advanced;
+  return { queueSizeType, queueSize, maxQueueWaitSec, serviceLevelSec, transferSec };
+}
+
+/** Un grupo con TODO resuelto: lo que guardó, y lo que no, de su juego de antes o de fábrica. */
+export interface ResolvedGroup extends Group {
+  readonly announcements: GroupAnnouncements;
+  readonly advanced: GroupAdvanced;
+  readonly phoneQueue: ChannelQueue;
+  readonly chatQueue: ChannelQueue;
+  readonly chat: ChatSettings;
+}
+
+/**
+ * LA ÚNICA VÍA DE LECTURA de un grupo guardado: lo nuevo, si no lo de antes, si no el valor de fábrica.
+ * Cada objeto anidado se completa campo a campo, así que un grupo guardado ayer (sin colas por canal ni
+ * ajustes de chat) abre con las colas que tenía, y uno de mañana con un campo más no pierde los demás.
+ */
+export function resolveGroup(group: Group): ResolvedGroup {
+  const advanced: GroupAdvanced = { ...DEFAULT_ADVANCED, ...group.advanced };
+  const legacyQueue = queueFrom(advanced);
+  const messages = group.chat?.queueMessages;
+  return {
+    ...group,
+    announcements: { ...DEFAULT_ANNOUNCEMENTS, ...group.announcements },
+    advanced,
+    phoneQueue: { ...legacyQueue, ...group.phoneQueue },
+    chatQueue: { ...legacyQueue, ...group.chatQueue },
+    chat: {
+      ...DEFAULT_CHAT_SETTINGS,
+      ...group.chat,
+      queueMessages: {
+        chat: { ...EMPTY_CHAT_MESSAGES, ...messages?.chat },
+        whatsapp: { ...EMPTY_CHAT_MESSAGES, ...messages?.whatsapp },
+      },
+    },
+  };
+}
+
 export interface Group {
   readonly id: number;
   readonly code: string;
@@ -193,6 +269,11 @@ export interface Group {
   readonly typification?: string;
   readonly announcements?: GroupAnnouncements;
   readonly advanced?: GroupAdvanced;
+  /** La cola y los tiempos de Teléfono. Sin ella, los de `advanced` (se lee con `resolveGroup`). */
+  readonly phoneQueue?: ChannelQueue;
+  /** La cola y los tiempos de Chat (Web Chat y WhatsApp). Sin ella, los de `advanced`. */
+  readonly chatQueue?: ChannelQueue;
+  readonly chat?: ChatSettings;
   readonly schedules?: readonly number[];
   /** Draft flag — set on duplicated entities until the user saves (DD#294 in the React prototype). */
 }

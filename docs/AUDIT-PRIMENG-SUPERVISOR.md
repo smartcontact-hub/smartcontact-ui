@@ -95,11 +95,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
-### `sc-toggleswitch` · 30 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 31 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
-### `sc-inputnumber` · 21 usos · primeng/inputtext
+### `sc-inputnumber` · 22 usos · primeng/inputtext
 
 **5 props nativas no expuestas**: `fluid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -119,7 +119,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
 
-### `sc-textarea` · 7 usos · primeng/textarea
+### `sc-textarea` · 8 usos · primeng/textarea
 
 **3 props nativas no expuestas**: `pSize`, `pTextareaPT`, `pTextareaUnstyled`
 

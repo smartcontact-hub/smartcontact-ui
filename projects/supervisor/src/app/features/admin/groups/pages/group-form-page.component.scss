@@ -115,3 +115,14 @@
   gap: var(--sc-spacing-0-5);
   margin-block-start: var(--sc-spacing-0-5);
 }
+
+/* Los mensajes de cola de UN subcanal: su nombre y sus tres campos. */
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.chat-messages__title {
+  color: var(--sc-text-primary);
+}

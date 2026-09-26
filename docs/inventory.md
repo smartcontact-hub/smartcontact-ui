@@ -69,7 +69,7 @@
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
 | `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | ✓ | 4 |
 | `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
-| `sc-inputnumber` | EXTENDED | primeng/inputtext | 16 inputs | sc-field-label sc-field-msg | ✓ | 21 |
+| `sc-inputnumber` | EXTENDED | primeng/inputtext | 16 inputs | sc-field-label sc-field-msg | ✓ | 22 |
 | `sc-inputtext` | EXTENDED | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 36 |
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 4 |
@@ -91,9 +91,9 @@
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 2 |
 | `sc-subsection` | CUSTOM | — | 4 inputs | — | ✓ | — |
 | `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 30 |
-| `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | 7 |
+| `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | 8 |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
-| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 30 |
+| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 31 |
 <!-- @audit:components:end -->
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)

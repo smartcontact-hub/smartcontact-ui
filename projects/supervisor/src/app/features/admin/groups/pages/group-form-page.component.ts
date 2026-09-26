@@ -59,6 +59,13 @@ import {
   GroupAnnouncements,
   UNAVAILABLE_STRATEGIES,
   VOICE_OPTIONS,
+  type ChannelQueue,
+  type ChatQueueMessages,
+  type ChatSettings,
+  type ChatSubchannel,
+  DEFAULT_CHAT_SETTINGS,
+  queueFrom,
+  resolveGroup,
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { TipificacionesStore, TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
@@ -105,6 +112,10 @@ interface FormState {
   labelIds: ReadonlySet<number>;
   announcements: GroupAnnouncements;
   advanced: GroupAdvanced;
+  /** La cola y los tiempos de cada canal (visión de producto de grupos, 2026-09-25). */
+  phoneQueue: ChannelQueue;
+  chatQueue: ChannelQueue;
+  chat: ChatSettings;
   channels: ReadonlySet<GroupChannel>;
   strategy: string;
   subStrategy: string;
@@ -328,6 +339,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     chat: 'groups.channel.chat_family',
     email: 'groups.channel.email',
   };
+  /** Los subcanales de Chat que el grupo tiene: cada uno escribe sus propios mensajes de cola. */
+  protected readonly activeChatSubchannels = computed<readonly ChatSubchannel[]>(() => {
+    const subchannels: readonly ChatSubchannel[] = ['chat', 'whatsapp'];
+    return subchannels.filter((c) => this.form().channels.has(c));
+  });
+  /** Los tres mensajes de cola de un subcanal, en el orden en que los recibe el cliente. */
+  protected readonly chatMessageKeys: readonly { key: keyof ChatQueueMessages; labelKey: string; placeholderKey: string }[] = [
+    { key: 'onEnter', labelKey: 'groups.form.chat.message_on_enter', placeholderKey: 'groups.form.chat.message_on_enter_placeholder' },
+    { key: 'whileWaiting', labelKey: 'groups.form.chat.message_waiting', placeholderKey: 'groups.form.chat.message_waiting_placeholder' },
+    { key: 'noAgents', labelKey: 'groups.form.chat.message_no_agents', placeholderKey: 'groups.form.chat.message_no_agents_placeholder' },
+  ];
   /** Los subcanales de Chat que el grupo tiene, para la cabecera de su bloque: «Web Chat · WhatsApp». */
   protected readonly chatSubchannelLabels = computed(() => {
     this.lang();
@@ -437,16 +459,21 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.editingId.set(group.id);
     this.initial.set(group);
     const seedLinks = this.linksStore.linksForGroup(group.id);
+    // La única vía de lectura: lo que el grupo no guardó sale de su juego de antes o de fábrica.
+    const g = resolveGroup(group);
     this.form.set({
-      name: group.name,
-      phone: group.phone,
-      priority: group.priority,
-      typification: group.typification ?? null,
-      scheduleIds: new Set(group.schedules ?? []),
-      templateIds: new Set(group.templates ?? []),
-      labelIds: new Set(group.labels ?? []),
-      announcements: { ...DEFAULT_ANNOUNCEMENTS, ...group.announcements },
-      advanced: { ...DEFAULT_ADVANCED, ...group.advanced },
+      name: g.name,
+      phone: g.phone,
+      priority: g.priority,
+      typification: g.typification ?? null,
+      scheduleIds: new Set(g.schedules ?? []),
+      templateIds: new Set(g.templates ?? []),
+      labelIds: new Set(g.labels ?? []),
+      announcements: g.announcements,
+      advanced: g.advanced,
+      phoneQueue: g.phoneQueue,
+      chatQueue: g.chatQueue,
+      chat: g.chat,
       channels: new Set(group.channels),
       strategy: group.strategy,
       subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,
@@ -574,8 +601,41 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) => ({ ...f, advanced: { ...f.advanced, [key]: value } }));
   }
 
+  /** La cola de un canal: cada uno la suya. */
+  protected setQueue<K extends keyof ChannelQueue>(channel: 'phone' | 'chat', key: K, value: ChannelQueue[K]): void {
+    const field = channel === 'phone' ? 'phoneQueue' : 'chatQueue';
+    this.form.update((f) => ({ ...f, [field]: { ...f[field], [key]: value } }));
+  }
+
+  /** Números de la cola: como los de Avanzado, un campo vaciado se queda en su valor anterior. */
+  protected setQueueNumber(channel: 'phone' | 'chat', key: 'queueSize' | 'maxQueueWaitSec' | 'serviceLevelSec' | 'transferSec', value: number | null): void {
+    if (value !== null && Number.isFinite(value) && value >= 0) this.setQueue(channel, key, value);
+  }
+
+  protected setChat<K extends keyof ChatSettings>(key: K, value: ChatSettings[K]): void {
+    this.form.update((f) => ({ ...f, chat: { ...f.chat, [key]: value } }));
+  }
+
+  protected setInactivityMinutes(value: number | null): void {
+    if (value !== null && Number.isFinite(value) && value >= 1) this.setChat('inactivityMinutes', value);
+  }
+
+  /** Un mensaje de cola de UN subcanal, sin tocar los del otro. */
+  protected setChatMessage(subchannel: ChatSubchannel, key: keyof ChatQueueMessages, value: string | null): void {
+    this.form.update((f) => ({
+      ...f,
+      chat: {
+        ...f.chat,
+        queueMessages: {
+          ...f.chat.queueMessages,
+          [subchannel]: { ...f.chat.queueMessages[subchannel], [key]: value ?? '' },
+        },
+      },
+    }));
+  }
+
   /** Números: un campo vaciado no se guarda como 0, se queda en su valor anterior. */
-  protected setAdvancedNumber(key: 'queueSize' | 'transferSec' | 'maxQueueWaitSec' | 'wrapUpSec' | 'serviceLevelSec' | 'cardHeight', value: number | null): void {
+  protected setAdvancedNumber(key: 'wrapUpSec' | 'cardHeight', value: number | null): void {
     if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
   }
 
@@ -743,6 +803,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         labels: [...f.labelIds],
         announcements: f.announcements,
         advanced: f.advanced,
+        phoneQueue: f.phoneQueue,
+        chatQueue: f.chatQueue,
+        chat: f.chat,
         channels: Array.from(f.channels),
         strategy: f.strategy,
         subStrategy: this.isNiveles() ? f.subStrategy : undefined,
@@ -829,6 +892,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelIds: new Set<number>(),
       announcements: { ...DEFAULT_ANNOUNCEMENTS, voice: defaults.voice },
       advanced: { ...defaults.advanced },
+      // Los dos canales nacen con la cola de los valores por defecto de Grupos.
+      phoneQueue: queueFrom({ ...DEFAULT_ADVANCED, ...defaults.advanced }),
+      chatQueue: queueFrom({ ...DEFAULT_ADVANCED, ...defaults.advanced }),
+      chat: DEFAULT_CHAT_SETTINGS,
       channels: new Set<GroupChannel>(['phone']),
       strategy: defaults.strategy,
       subStrategy: SUB_STRATEGIES[0]!,

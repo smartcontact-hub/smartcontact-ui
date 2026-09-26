@@ -1665,6 +1665,18 @@
         "whatsapp_number": "WhatsApp · numéro",
         "email_note": "L'email n'a ni stratégie ni file d'attente propres : les messages arrivent dans la boîte du groupe.",
         "inactive": "{{channel}} n'est pas actif · activez-le dans Général"
+      },
+      "chat": {
+        "close_on_inactivity": "Fermer le chat en cas d'inactivité",
+        "close_on_inactivity_hint": "Si le client cesse d'écrire, la conversation se ferme d'elle-même après ce délai.",
+        "inactivity_minutes": "Minutes sans activité",
+        "messages_hint": "Ce que le client reçoit pendant l'attente. Si vous en laissez un vide, il n'est pas envoyé.",
+        "message_on_enter": "À l'entrée dans la file",
+        "message_waiting": "Pendant l'attente",
+        "message_no_agents": "Aucun agent disponible",
+        "message_on_enter_placeholder": "Ex. : Bonjour, nous sommes à vous tout de suite.",
+        "message_waiting_placeholder": "Ex. : Vous êtes toujours dans la file. Merci de patienter.",
+        "message_no_agents_placeholder": "Ex. : Personne n'est disponible pour le moment. Nous vous écrirons dès que possible."
       }
     },
     "defaults": {
