@@ -30,14 +30,15 @@ test.beforeEach(async ({ page }) => {
  * flotando) y la misma app parecía dos. Medir las cinco con el MISMO bloque de aserciones es
  * lo que impide que vuelvan a separarse.
  */
-/* Las altas de GRUPO (2026-09-22), USUARIO y AGENTE (2026-09-23) salieron de aquí: sus fichas
- * dejaron el índice lateral por una tira de pestañas, así que no tienen rail que medir y su tope es
- * 1600 y no 1200 (`.ficha-tabs` en `_page.scss`). Lo que este spec fija —que el molde de ajustes no
- * se desvíe página a página— sigue vigilando las dos de Contact Center, que sí lo usan; las fichas
- * las miden `ficha-grupo.spec.ts` y `ficha-usuario-agente.spec.ts`. */
+/* Las fichas de USUARIO y AGENTE (2026-09-23) salieron de aquí: dejaron el índice lateral por una
+ * tira de pestañas, así que no tienen rail que medir y su tope es 1600 y no 1200 (`.ficha-tabs` en
+ * `_page.scss`); las mide `ficha-usuario-agente.spec.ts`. La de GRUPO salió el 2026-09-22 y VUELVE
+ * el 2026-09-26 con el índice que pide la visión de producto de grupos (DD-121): el mismo molde
+ * que Contact Center, con su cabecera encima (`.ficha-rail`, que solo parte la fila). */
 const FORMULARIOS = [
   { ruta: 'config/aed/agentes', nombre: 'contact center · agentes' },
   { ruta: 'config/aed/grupos', nombre: 'contact center · grupos' },
+  { ruta: 'admin/grupos/editar/1', nombre: 'ficha de grupo' },
 ] as const;
 
 /** Los computados que definen el molde, leídos en el nodo exacto (no en un padre). */

@@ -1,10 +1,11 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
  * Los CANALES de la ficha de grupo: que se puedan asignar los cuatro, y que lo que no aplica se
- * aparte solo.
+ * aparte solo. Desde el 2026-09-26 se marcan en General (Chat es la madre de Web Chat y WhatsApp)
+ * y cada canal se configura en su bloque de Distribución y colas.
  *
  * Nace de un fallo servido (2026-09-23): `canonicalizeChannels`, que normaliza lo que se escribe
  * en cada enlace (agente, grupo), listaba `['phone', 'chat', 'email']` y se dejaba fuera
@@ -23,16 +24,20 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
+/** Una casilla de canal de General, por su rótulo EXACTO: «Chat» no debe casar con «Web Chat». */
+const canal = (page: Page, nombre: string) =>
+  page.locator('#group-section-general sc-checkbox').filter({ hasText: new RegExp(`^\\s*${nombre}\\s*$`) });
+const irA = (page: Page, seccion: string) =>
+  page.locator('sc-form-section-nav').getByText(seccion, { exact: true }).click();
+
 test('los cuatro canales se pueden asignar a un agente, WhatsApp incluido', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1');
 
-  const canal = (nombre: string) =>
-    page.locator('.channel-row sc-checkbox').filter({ hasText: nombre }).first();
-
   // El grupo ofrece los cuatro.
-  for (const c of ['Chat', 'WhatsApp', 'Email']) {
-    await canal(c).click();
+  for (const c of ['Web Chat', 'WhatsApp', 'Email']) {
+    await canal(page, c).click();
   }
+  await irA(page, 'Agentes');
 
   /* Una columna por canal. Por ROL y no con `hasText: /^WhatsApp$/`: el `th` lleva espacios
    * alrededor del rótulo y el ancla `$` no casa con ellos (me costó una tirada roja). */
@@ -53,26 +58,24 @@ test('los cuatro canales se pueden asignar a un agente, WhatsApp incluido', asyn
   await expect(casilla).toHaveAttribute('aria-checked', 'true');
 });
 
-test('sin el canal teléfono, «Anuncios y audio» se apaga en vez de desaparecer', async ({ page }) => {
+test('sin Teléfono, su bloque se va de Distribución y deja la línea que dice dónde se enciende', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1');
+  await irA(page, 'Distribución y colas');
+  await expect(page.locator('#group-channel-phone')).toBeVisible();
+  await expect(page.locator('#group-phone')).toHaveCount(1);
 
-  const pestanas = page.getByRole('tab');
-  await expect(pestanas).toHaveCount(5);
+  // Fuera el teléfono (con Web Chat, para que el grupo siga teniendo un canal).
+  await irA(page, 'General');
+  await canal(page, 'Web Chat').click();
+  await canal(page, 'Teléfono').click();
 
-  const anuncios = page.getByRole('tab', { name: /anuncios/i });
-  await expect(anuncios).not.toHaveAttribute('aria-disabled', 'true');
-
-  // Fuera el teléfono: todo lo que suena en la llamada deja de aplicar.
-  await page.locator('.channel-row sc-checkbox').filter({ hasText: 'Chat' }).first().click();
-  await page.locator('.channel-row sc-checkbox').filter({ hasText: 'Teléfono' }).first().click();
-
-  /* La tira NO encoge —quitar la pestaña movía las dos de su derecha— y la que no aplica queda
-   * apagada, con su motivo en el `title`. */
-  await expect(pestanas).toHaveCount(5);
-  await expect(anuncios).toHaveAttribute('aria-disabled', 'true');
-  await expect(anuncios).toHaveAttribute('title', /Teléfono/);
-
-  // Y el «Teléfono asociado» deja de pedirse en Identidad.
-  await page.getByRole('tab', { name: /identidad/i }).click();
+  /* Solo se ve lo que aplica (visión de producto de grupos, 2026-09-25): ni su bloque ni el
+   * teléfono saliente. Pero no se esfuma sin rastro: una línea dice que existe y dónde se
+   * enciende (la decisión del 2026-09-23 contra las secciones que desaparecen). Y el índice no
+   * encoge: sigue con sus cuatro secciones. */
+  await irA(page, 'Distribución y colas');
+  await expect(page.locator('#group-channel-phone')).toHaveCount(0);
   await expect(page.locator('#group-phone')).toHaveCount(0);
+  await expect(page.locator('#group-section-distribution')).toContainText('Teléfono no está activo · actívalo en General');
+  await expect(page.locator('sc-form-section-nav .form-nav__item')).toHaveCount(4);
 });

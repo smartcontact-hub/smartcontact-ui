@@ -64,6 +64,9 @@ const RUTAS = [
   'conversaciones/entidades',
   'admin/usuarios',
   'admin/grupos',
+  /* La ficha de grupo con su resumen (2026-09-26, DD-121): las cifras, los avisos en ámbar y las
+   * barras son colores nuevos sobre el carril, y se leen en los dos temas. El 11 es el más cargado. */
+  'admin/grupos/editar/11',
   'admin/agentes',
   'admin/labels',
   'admin/plantillas',
@@ -141,6 +144,14 @@ const CONOCIDOS_CLARO = [
   // un fallo de contraste por uno de jerarquía. Sobre tarjeta (que es donde
   // vive la mayor parte del texto secundario) mide 4.52 y cumple.
   'fg=rgb(111,119,132)',
+  // 5 · `p-button-danger` + `text` → red-500 sobre blanco, **3.76:1**. Salió el 2026-09-26, el
+  // primer día que una ficha entró en este barrido (la de grupo): es el «Eliminar» de la cabecera
+  // de las tres fichas, que ninguna ruta de aquí visitaba. §1.8 arregló el `danger` SÓLIDO, no el
+  // de texto: su color es `--sc-cmp-button-text-danger-color`, dentro de una zona `@sc-gen`, y
+  // subirlo a red-600 cambia TODOS los botones de peligro de texto de la app. Es una decisión del
+  // DS, no de esta ficha: se fija aquí solo ESE caso (etiqueta de botón sobre blanco) y se borra
+  // el día que se decida.
+  'span.p-button-label bg=rgb(255,255,255) fg=rgb(239,68,68)',
 ];
 
 

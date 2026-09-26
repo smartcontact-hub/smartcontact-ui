@@ -1,0 +1,101 @@
+<section class="resumen" aria-labelledby="group-summary-title">
+  <h2 id="group-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'groups.form.summary.title' | translate }}</h2>
+
+  <!-- Lo que falta para poder guardar, dicho en el mismo sitio que el resto del estado del grupo. -->
+  @if (missingText(); as text) {
+    <p class="resumen__missing sc-text-caption-semibold" role="status">
+      <sc-icon name="error" size="inherit" aria-hidden="true" />
+      {{ text }}
+    </p>
+  }
+
+  <!-- Rótulo y cifra en la misma línea, como un widget: el carril no tiene scroll y cada línea cuenta. -->
+  <div class="resumen__kpi">
+    <p class="resumen__head">
+      <span class="resumen__label sc-text-caption-regular">
+        <sc-icon name="group" size="inherit" aria-hidden="true" />
+        {{ 'groups.form.summary.agents' | translate }}
+      </span>
+      <span class="resumen__digits sc-text-h3-semibold" [scAnimateOnChange]="total()" animateClass="animate-sc-bump">{{ total() }}</span>
+    </p>
+    @if (paused() > 0) {
+      <p class="resumen__aside sc-text-caption-regular">{{ 'groups.form.summary.paused_count' | translate: { count: paused() } }}</p>
+    }
+    @if (channelRows().length > 0) {
+      <ul class="resumen__channels">
+        @for (row of channelRows(); track row.channel) {
+          <li class="resumen__channel">
+            <span class="resumen__channel-name sc-text-caption-regular">
+              <sc-channel-icon [channel]="row.channel" [size]="12" />
+              {{ channelKeys[row.channel] | translate }}
+            </span>
+            @if (row.count > 0) {
+              <span class="resumen__digits sc-text-caption-semibold" [scAnimateOnChange]="row.count" animateClass="animate-sc-bump">{{ row.count }}</span>
+              <!-- La barra repite la cifra de al lado: para el lector de pantalla basta con la cifra. -->
+              <p-metergroup class="resumen__meter" aria-hidden="true" [value]="row.meter">
+                <ng-template #label />
+              </p-metergroup>
+            } @else {
+              <!-- Un canal activo al que no atiende nadie: sus contactos esperarían a nadie. -->
+              <span class="resumen__warn sc-text-caption-semibold">
+                <sc-icon name="warning" size="inherit" aria-hidden="true" />
+                {{ 'groups.form.summary.no_agents' | translate }}
+              </span>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  @if (routing().length > 0) {
+    <div class="resumen__kpi">
+      <p class="resumen__label sc-text-caption-regular">
+        <sc-icon name="alt_route" size="inherit" aria-hidden="true" />
+        {{ 'groups.form.summary.routing' | translate }}
+      </p>
+      <dl class="resumen__pairs">
+        @for (r of routing(); track r.family) {
+          <div class="resumen__pair">
+            <dt class="resumen__key sc-text-caption-regular">{{ familyKey(r.family) | translate }}</dt>
+            <dd class="resumen__value sc-text-caption-semibold">{{ r.text }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+  }
+
+  @if (outbound().length > 0) {
+    <div class="resumen__kpi">
+      <p class="resumen__label sc-text-caption-regular">
+        <sc-icon name="call_made" size="inherit" aria-hidden="true" />
+        {{ 'groups.form.summary.outbound' | translate }}
+      </p>
+      <dl class="resumen__pairs">
+        @for (o of outbound(); track o.channel) {
+          <div class="resumen__pair">
+            <dt class="resumen__key sc-text-caption-regular">{{ channelKeys[o.channel] | translate }}</dt>
+            @if (o.number) {
+              <dd class="resumen__value sc-text-caption-semibold">{{ o.number }}</dd>
+            } @else {
+              <dd class="resumen__warn sc-text-caption-semibold">
+                <sc-icon name="warning" size="inherit" aria-hidden="true" />
+                {{ 'groups.form.summary.no_number' | translate }}
+              </dd>
+            }
+          </div>
+        }
+      </dl>
+    </div>
+  }
+
+  <div class="resumen__kpi">
+    <p class="resumen__head">
+      <span class="resumen__label sc-text-caption-regular">
+        <sc-icon name="library_books" size="inherit" aria-hidden="true" />
+        {{ 'groups.form.summary.resources' | translate }}
+      </span>
+      <span class="resumen__digits sc-text-h3-semibold" [scAnimateOnChange]="resourceCount()" animateClass="animate-sc-bump">{{ resourceCount() }}</span>
+    </p>
+  </div>
+</section>

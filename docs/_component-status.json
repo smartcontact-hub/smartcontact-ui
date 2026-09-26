@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 152,
+      "usedInSupervisor": 149,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -241,7 +241,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 34,
+      "usedInSupervisor": 38,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -520,7 +520,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 33,
+      "usedInSupervisor": 35,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -655,7 +655,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 2,
       "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
       "sobreObsoleto": []
     },
@@ -801,7 +801,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 21,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -843,7 +843,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 38,
+      "usedInSupervisor": 36,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -883,7 +883,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 4,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
     },
@@ -1200,7 +1200,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 17,
+      "usedInSupervisor": 21,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1250,7 +1250,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 42,
+      "usedInSupervisor": 43,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1280,7 +1280,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 13,
+      "usedInSupervisor": 11,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },
@@ -1469,7 +1469,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 33,
+      "usedInSupervisor": 30,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

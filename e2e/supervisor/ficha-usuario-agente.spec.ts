@@ -3,7 +3,8 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LAS FICHAS DE USUARIO Y AGENTE — la forma de la de grupo, «una página + pestañas».
+ * LAS FICHAS DE USUARIO Y AGENTE — «una página + pestañas», la forma que tuvo también la de grupo
+ * hasta el 2026-09-26 (desde entonces lleva índice lateral: visión de producto de grupos, DD-121).
  *
  * Nace el 2026-09-23, el día que las dos dejaron el índice lateral y la caja de sección (la caja no
  * aportaba jerarquía). Al cambiar de forma salieron de `page-anatomy` y de
@@ -14,10 +15,11 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   2. UNA tira de pestañas gobierna el contenido: una sección pintada a la vez, sin índice ni caja.
  *   3. Se abre por donde se trabaja al editar (Acceso · Grupos asignados) y por Identidad al crear.
  *   4. Las tres fichas (grupo, usuario, agente) comparten la cabecera: el título en la misma
- *      vertical y la misma distancia hasta la tira, porque sus estilos viven en UN sitio
- *      (`.ficha-tabs` en `_page.scss`). Si una se desvía, es que alguien los ha re-declarado.
- *   5. Ninguna pestaña recorta su rótulo, en ningún idioma: es lo que antes medía
- *      `form-section-nav-legibility` sobre el índice.
+ *      vertical, porque sus estilos viven en UN sitio (`.headline` en `_page.scss`); y las dos de
+ *      pestañas, la misma distancia hasta su tira. Si una se desvía, es que alguien los ha
+ *      re-declarado.
+ *   5. Ninguna pestaña recorta su rótulo, en ningún idioma. El índice de la de grupo lo mide
+ *      `form-section-nav-legibility`.
  * Y «Valores por defecto» va sin caja: su título es el `h1` visible de la página (DD-33).
  */
 
@@ -81,10 +83,11 @@ for (const f of FICHAS) {
   });
 }
 
-// Las tres fichas dicen lo mismo en el mismo sitio: al editar, la pestaña de trabajo, luego
+// Las dos fichas de pestañas dicen lo mismo en el mismo sitio: al editar, la pestaña de trabajo, luego
 // «Identidad» (no «Identificación» en una y «Identidad» en otra), y «Avanzado», si lo hay, al final.
-test('las tres fichas ordenan igual sus pestañas al editar', async ({ page }) => {
-  for (const ruta of ['admin/grupos/editar/1', 'admin/usuarios/editar/1', 'admin/agentes/editar/1']) {
+// La de grupo salió de aquí el 2026-09-26: su índice sigue el orden de la visión de producto (DD-121).
+test('las fichas de pestañas ordenan igual sus pestañas al editar', async ({ page }) => {
+  for (const ruta of ['admin/usuarios/editar/1', 'admin/agentes/editar/1']) {
     await goto(page, ruta);
     const nombres = (await page.locator('[role="tab"]').allTextContents()).map((t) => t.trim());
     expect(nombres[1], ruta).toBe('Identidad');
@@ -109,7 +112,8 @@ test('las tres fichas tienen «Eliminar» en su franja', async ({ page }) => {
   }
 });
 
-/** Dónde arranca el título y cuánto aire hay del último texto de la franja al de la pestaña. */
+/** Dónde arranca el título y cuánto aire hay del último texto de la franja al de la pestaña (o al del
+ *  primer item del índice, en la de grupo: `sc-form-section-nav` también lleva `role="tab"`). */
 const cabecera = (page: Page) =>
   page.evaluate(() => {
     const caja = (el: Element) => {
@@ -126,7 +130,7 @@ const cabecera = (page: Page) =>
     };
   });
 
-test('las tres fichas comparten la cabecera: misma vertical y misma distancia a la tira', async ({ page }) => {
+test('las tres fichas arrancan el título en la misma vertical; las de pestañas, a la misma distancia de su tira', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const medidas: Record<string, { x: number; aire: number }> = {};
   for (const [nombre, ruta] of [
@@ -139,16 +143,16 @@ test('las tres fichas comparten la cabecera: misma vertical y misma distancia a 
     medidas[nombre] = await cabecera(page);
   }
   const { grupo, usuario, agente } = medidas;
-  // 25 medido el 2026-09-23 (de 63,5 que había en la de grupo antes de apretarla, #237).
-  expect(grupo.aire, JSON.stringify(medidas)).toBeLessThanOrEqual(30);
   for (const m of [usuario, agente]) {
     expect(Math.abs(m.x - grupo.x), JSON.stringify(medidas)).toBeLessThanOrEqual(1);
-    expect(Math.abs(m.aire - grupo.aire), JSON.stringify(medidas)).toBeLessThanOrEqual(1);
   }
+  // 25 medido el 2026-09-23 (de 63,5 que había en la de grupo antes de apretarla, #237).
+  expect(usuario.aire, JSON.stringify(medidas)).toBeLessThanOrEqual(30);
+  expect(Math.abs(agente.aire - usuario.aire), JSON.stringify(medidas)).toBeLessThanOrEqual(1);
 });
 
 for (const idioma of ['es', 'en', 'fr', 'pt'] as const) {
-  test(`ninguna pestaña de las tres fichas recorta su rótulo (${idioma})`, async ({ page }) => {
+  test(`ninguna pestaña de las fichas de usuario y agente recorta su rótulo (${idioma})`, async ({ page }) => {
     await page.addInitScript((lang) => {
       try {
         localStorage.setItem('sc-language', lang);
@@ -158,7 +162,7 @@ for (const idioma of ['es', 'en', 'fr', 'pt'] as const) {
     }, idioma);
     const recortadas: string[] = [];
     let medidas = 0;
-    for (const ruta of ['admin/grupos/editar/1', 'admin/usuarios/editar/1', 'admin/agentes/editar/1']) {
+    for (const ruta of ['admin/usuarios/editar/1', 'admin/agentes/editar/1']) {
       await goto(page, ruta);
       await expect(page.locator('[role="tab"]').first()).toBeVisible();
       const tabs = await page.locator('[role="tab"]').evaluateAll((els) =>
@@ -172,8 +176,8 @@ for (const idioma of ['es', 'en', 'fr', 'pt'] as const) {
       const altos = new Set(tabs.map((t) => Math.round(t.alto)));
       if (altos.size > 1) recortadas.push(`${ruta} · pestañas a alturas distintas: ${[...altos].join(', ')}`);
     }
-    // 5 + 3 + 5: un verde con 0 medidas sería un selector que dejó de casar.
-    expect(medidas).toBe(13);
+    // 3 + 5: un verde con 0 medidas sería un selector que dejó de casar.
+    expect(medidas).toBe(8);
     expect(recortadas, recortadas.join('\n')).toEqual([]);
   });
 }

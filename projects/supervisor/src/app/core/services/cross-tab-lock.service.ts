@@ -26,15 +26,31 @@ export class CrossTabLockService {
         onConflict();
       }
     };
-    window.addEventListener('storage', handler);
-
-    return () => {
-      window.removeEventListener('storage', handler);
-      // Only release the lock if it's still ours — another tab may have
-      // overwritten it, in which case it owns the lifecycle now.
+    // Only release the lock if it's still ours — another tab may have
+    // overwritten it, in which case it owns the lifecycle now.
+    const release = () => {
       if (localStorage.getItem(key) === tabId) {
         localStorage.removeItem(key);
       }
+    };
+    /* Recargar (F5) NO destruye el componente, así que sin esto el candado de la carga anterior
+     * seguía en localStorage y la carga nueva se creía en conflicto consigo misma: cada F5 habría
+     * dicho «otra pestaña está editando». `pagehide` salta al recargar, al cerrar la pestaña y al
+     * salir de la app; `pageshow` con `persisted` es la vuelta desde la caché de atrás/adelante,
+     * con la ficha otra vez abierta, y ahí el candado se vuelve a poner. */
+    const onPageHide = () => release();
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) localStorage.setItem(key, tabId);
+    };
+    window.addEventListener('storage', handler);
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('pageshow', onPageShow);
+
+    return () => {
+      window.removeEventListener('storage', handler);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('pageshow', onPageShow);
+      release();
     };
   }
 }

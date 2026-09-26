@@ -1466,9 +1466,10 @@
     },
     "channel": {
       "phone": "Telefone",
-      "chat": "Chat",
+      "chat": "Chat web",
       "whatsapp": "WhatsApp",
-      "email": "Email"
+      "email": "Email",
+      "chat_family": "Chat"
     },
     "form": {
       "create_title": "Novo grupo",
@@ -1480,13 +1481,18 @@
         "channels": "Canais",
         "channels_hint": "Tipos de contato",
         "strategy": "Estratégia",
-        "agents": "Agentes atribuídos",
-        "distribution": "Canais e estratégia",
+        "agents": "Agentes",
+        "distribution": "Distribuição e filas",
         "channels_agents": "Canais e agentes",
         "resources": "Recursos",
         "announcements": "Anúncios e áudio",
         "announcements_needs_phone": "Só com o canal Telefone: aqui configura-se o que soa na chamada.",
-        "advanced": "Avançado"
+        "advanced": "Avançado",
+        "general": "Geral",
+        "general_hint": "Nome, prioridade e canais",
+        "distribution_hint": "Como cada canal distribui e coloca em fila",
+        "resources_hint": "O que se atribui a partir de Repositórios",
+        "agents_hint": "Quem atende e por quais canais"
       },
       "assigned": {
         "query_placeholder": "Buscar agente…",
@@ -1510,7 +1516,7 @@
       },
       "fields": {
         "name": "Nome",
-        "phone": "Telefone associado",
+        "phone": "Telefone de saída",
         "priority": "Prioridade",
         "phone_strategy": "Estratégia (telefone)",
         "chat_strategy": "Estratégia (chat)",
@@ -1601,8 +1607,8 @@
         "service_level_hint": "Contam como atendidas a tempo as que se atendem antes deste tempo.",
         "wrap_up": "Tempo entre chamadas",
         "wrap_up_hint": "O que o agente espera antes de receber a chamada seguinte.",
-        "overflow": "Transbordar se não houver agentes ativos",
-        "overflow_hint": "As chamadas passam para o nó seguinte da árvore.",
+        "overflow": "Transbordar se todos os agentes estiverem inativos",
+        "overflow_hint": "Os contactos passam para o destino seguinte, que não se escolhe aqui.",
         "overflow_session": "Transbordar sessão",
         "overflow_session_hint": "Redireciona as sessões ativas ao ultrapassar o limite.",
         "card_opening": "Abertura da ficha",
@@ -1613,7 +1619,7 @@
         "card_height": "Altura",
         "chat_config_title": "Configuração de chat",
         "whatsapp_number": "Número de WhatsApp",
-        "whatsapp_number_info": "O número onde chegam as mensagens de WhatsApp deste grupo. É o que o cliente vê se contactar por aí.",
+        "whatsapp_number_info": "O número que recebe as mensagens de WhatsApp deste grupo.",
         "chat_rating": "Pedir avaliação ao fechar o chat",
         "chat_rating_info": "Ao terminar a conversa, pergunta-se ao cliente se ficou satisfeito com o atendimento.",
         "chat_rating_hint": "O cliente vê uma pergunta curta de avaliação logo após a despedida.",
@@ -1632,7 +1638,33 @@
         "paused": "Desabilitado",
         "no_channels": "Sem canais",
         "priority": "Prioridade: {{value}}",
-        "no_phone": "Sem telefone associado"
+        "no_phone": "Sem telefone de saída",
+        "title": "Resumo",
+        "agents": "Agentes",
+        "paused_count": "{{count}} em pausa",
+        "no_agents": "Sem agentes",
+        "routing": "Distribuição",
+        "outbound": "Saída",
+        "no_number": "Sem número",
+        "resources": "Recursos",
+        "missing": "Em falta: {{items}}",
+        "missing_name": "nome",
+        "missing_channels": "canais"
+      },
+      "channels": {
+        "title": "Canais",
+        "hint": "Pelo menos um. O que marcar aqui decide o que configura em Distribuição e filas."
+      },
+      "distribution": {
+        "common_title": "Regras comuns",
+        "common_hint": "Aplicam-se a todos os canais do grupo.",
+        "routing": "Distribuição",
+        "queue": "Fila",
+        "queue_messages": "Mensagens na fila",
+        "webchat_access": "Chat web · acesso",
+        "whatsapp_number": "WhatsApp · número",
+        "email_note": "O email não tem estratégia nem fila próprias: as mensagens chegam à caixa do grupo.",
+        "inactive": "{{channel}} não está ativo · ative-o em Geral"
       }
     },
     "defaults": {

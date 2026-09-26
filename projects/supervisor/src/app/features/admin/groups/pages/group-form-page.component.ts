@@ -13,7 +13,6 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { TabsModule } from 'primeng/tabs';
 import { TooltipModule } from 'primeng/tooltip';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
@@ -38,6 +37,10 @@ import {
   ScDialogComponent as DialogComponent,
   ScSelectComponent as SelectComponent,
   ScChipComponent as ChipComponent,
+  ScFormSectionNavComponent as FormSectionNavComponent,
+  ScMessageComponent as MessageComponent,
+  ScSectionCardComponent as SectionCardComponent,
+  triStateOf,
 } from '@smartcontact-hub/components';
 import {
   CHANNEL_LABEL_KEYS,
@@ -71,10 +74,12 @@ import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { canonicalizeChannels, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import {
   channelRemovalImpact,
   clampLinksToChannels,
+  hasChatFamily,
+  toggleChatFamily,
   toggleGroupChannel,
 } from '@features/admin/services/group-channels.core.mjs';
 import { NgTemplateOutlet } from '@angular/common';
@@ -84,6 +89,11 @@ import {
   AgentChannelTableComponent,
 } from '../components/agent-channel-table/agent-channel-table.component';
 import { GroupIdentityFieldsComponent } from '../components/group-identity-fields/group-identity-fields.component';
+import {
+  GroupSummaryComponent,
+  type GroupSummaryOutbound,
+  type GroupSummaryRouting,
+} from '../components/group-summary/group-summary.component';
 
 interface FormState {
   name: string;
@@ -103,14 +113,6 @@ interface FormState {
   links: readonly GroupAgentLink[];
 }
 
-/** Una cifra de la franja de arriba. `canales` solo la trae la de Canales, que se pinta con glifos. */
-interface HeadlineStat {
-  readonly etiqueta: string;
-  /** El texto. Con `canales`, el que oye el lector de pantalla en vez de los glifos. */
-  readonly valor: string;
-  readonly canales?: readonly GroupChannel[];
-}
-
 @Component({
   selector: 'sc-group-form-page',
   imports: [
@@ -121,6 +123,10 @@ interface HeadlineStat {
     CheckboxComponent,
     AgentChannelTableComponent,
     GroupIdentityFieldsComponent,
+    GroupSummaryComponent,
+    FormSectionNavComponent,
+    SectionCardComponent,
+    MessageComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
@@ -135,7 +141,6 @@ interface HeadlineStat {
     TemplateFormPanelComponent,
     LabelFormPanelComponent,
     ChipComponent,
-    TabsModule,
     TooltipModule,
     SelectComponent,
     TranslateModule,
@@ -190,171 +195,44 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly voiceOptions = VOICE_OPTIONS;
 
   /**
-   * Las pestañas de la ficha, en orden. «Canales y agentes» abre, porque es lo que se toca de verdad
-   * en un grupo: a quién enruta y por dónde. «Identidad» va SEGUNDA, como en las fichas de usuario y
-   * agente (#240: las tres dicen lo mismo en el mismo sitio, y `ficha-usuario-agente.spec.ts` lo fija).
+   * LA FORMA DE ESTA FICHA — índice lateral con las cuatro secciones de la visión de producto de
+   * grupos (2026-09-25, DD-121), en el orden de sus dependencias: General define los canales, cada
+   * canal se configura en Distribución y colas, los recursos dependen de los canales y los agentes
+   * se asignan por canal. Una sección a la vista, como Contact Center.
    *
-   * Sin alta en esta página (es un diálogo corto sobre la lista, 2026-09-23) no hay dos órdenes de
-   * pestañas según el modo: hay una ficha, siempre de edición.
-   *
-   * (2026-09-23 se probó sin Identidad: el nombre con un lápiz junto al título y luego un botón
-   * «Editar datos» con diálogo. El lápiz no tenía affordance suficiente: no se leía como editable;
-   * y el diálogo añadía un «Aplicar» que no guardaba, un segundo nivel de confirmación que había que
-   * explicar con una frase. Se volvió a la pestaña.)
+   * Hasta el 2026-09-26 fue «una página + pestañas» (decisión de producto del 2026-09-22 entre cinco
+   * formas construidas en `comparar/fichas`, con Meridian y SnowUI de referencia). La visión pide
+   * menú lateral y quitar las pestañas, y reparte lo que había en Identidad, Anuncios y Avanzado:
+   * el teléfono saliente, la voz y la música pasan al bloque de Teléfono; la cola, a cada canal; la
+   * ficha de cliente, a Recursos. Agente y usuario siguen con pestañas: la divergencia es a
+   * propósito y está escrita en DD-121.
    */
-  protected readonly navSections = computed<readonly FormNavSection[]>(() => {
-    const identity: FormNavSection = {
-      id: 'group-section-identity',
-      labelKey: 'groups.form.section.identity',
-      icon: 'badge',
-    };
-    const channels: FormNavSection = {
-      id: 'group-section-channels',
-      labelKey: 'groups.form.section.channels_agents',
-      icon: 'group',
-    };
+  protected readonly navSections = computed<readonly FormNavSection[]>(() => [
+    { id: 'group-section-general', labelKey: 'groups.form.section.general', icon: 'tune' },
+    { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route' },
     // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
-    const resources: FormNavSection = {
-      id: 'group-section-resources',
-      labelKey: 'groups.form.section.resources',
-      icon: 'library_books',
-    };
-    // Solo con teléfono: todo lo que suena en la llamada (manual de Voice, p. 13-14).
-    const announcements: FormNavSection = {
-      id: 'group-section-announcements',
-      labelKey: 'groups.form.section.announcements',
-      icon: 'volume_up',
-    };
-    const advanced: FormNavSection = {
-      id: 'group-section-advanced',
-      labelKey: 'groups.form.section.advanced',
-      icon: 'tune',
-    };
-    /* «Anuncios y audio» se queda SIEMPRE en la tira, apagada cuando no hay teléfono, en vez de
-     * desaparecer. Quitarla movía las dos pestañas de su derecha al marcar o desmarcar un canal, y
-     * además borraba la pista de que existe: una sección que se esfuma no enseña que hay algo ahí
-     * para cuando enciendas teléfono. `disabled` es del `<p-tab>` NATIVO (API instalada 22.1.2), no
-     * una capa nuestra. (Decisión de producto, 2026-09-23.) */
-    const middle = [resources, announcements, advanced];
-    return [channels, identity, ...middle];
-  });
+    { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books' },
+    { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'group' },
+  ]);
 
-  /**
-   * LA FORMA DE ESTA FICHA — «una página + pestañas», decisión de producto del 2026-09-22 entre las
-   * cinco que se construyeron en el laboratorio (`comparar/fichas`, que no se funde).
-   *
-   * De dónde sale (2026-09-21): lo importante en una sola página, ocupando el ancho que pida el
-   * contenido, y el resto a un gesto de distancia con un tab group en vez de más scroll.
-   * Las dos referencias de partida —Meridian y SnowUI— coinciden en tres cosas, y ninguna es un
-   * índice dentro de la página: identidad y estado arriba, navegación en pestañas, y el ancho que
-   * pide el contenido.
-   *
-   *   · ANCHO. La página sigue siendo del arquetipo `--rail` y la ensancha `.page__inner--rail.ficha-tabs`
-   *     en `_page.scss`. Cambiar el modificador a `--list` la dejaba a 0px de relleno por los
-   *     cuatro lados y `audit:page-anatomy` lo cazó dos veces: una página es de UN tipo.
-   *   · EL NOMBRE DEL GRUPO ES EL TÍTULO. `sc-text-h3-semibold`, el rol del `h1` de las nueve
-   *     listas, así que no nace un tamaño nuevo para esto.
-   *   · SIN CAJA EN EL BLOQUE PRINCIPAL. Una caja separa un grupo de sus vecinos y ese bloque no
-   *     tiene vecinos: ES la página. Al quitarla los filos de entrada pasaron de tres a uno y la
-   *     tabla ganó 76px.
-   *
-   * Las otras cuatro formas y el conmutador `?variante=` se quedaron en el laboratorio: aquí no
-   * hay variantes, hay una ficha.
-   */
+  /** La sección a la vista. Abre en General, en los dos modos: es la que decide lo demás. */
+  protected readonly activeSection = signal<string>('group-section-general');
 
-  /**
-   * Las secciones que viven detrás del conmutador, en orden. TODAS, incluida «Canales y agentes»
-   * (decisión de producto, 2026-09-22): antes ese bloque se quedaba fijo arriba con su propio `h2`, así que la
-   * pantalla tenía dos gramáticas —un título suelto y una tira de pestañas— para la misma cosa,
-   * una sección del grupo. Ahora hay UNA sola tira, arriba, y el nombre de cada sección se lee en
-   * su pestaña. Canales abre por defecto por el orden de `navSections`.
-   */
-  protected readonly tabSections = computed(() => this.navSections());
-
-  /**
-   * Una pestaña APAGADA, no escondida: la sección existe, pero este grupo no la usa.
-   *
-   * Hoy solo «Anuncios y audio», que es todo lo que suena en una llamada (manual de Voice, p.
-   * 13-14): sin el canal teléfono no hay nada dentro que configurar.
-   */
-  protected tabDisabled(id: string): boolean {
-    return id === 'group-section-announcements' && !this.hasPhone();
-  }
-
-  /** Por qué está apagada, para el `title`: un control muerto sin motivo es un callejón. */
-  protected tabDisabledReason(id: string): string | null {
-    return this.tabDisabled(id) ? 'groups.form.section.announcements_needs_phone' : null;
-  }
-
-  /** La pestaña elegida. Si la de ahora se APAGA (un canal que se quita), cae en la primera viva. */
-  private readonly pickedTab = signal<string>('');
-  protected readonly activeTab = computed(() => {
-    const ids = this.tabSections()
-      .filter((s) => !this.tabDisabled(s.id))
-      .map((s) => s.id);
-    const picked = this.pickedTab();
-    return ids.includes(picked) ? picked : (ids[0] ?? '');
-  });
-
-  protected onTabChange(value: unknown): void {
-    if (typeof value === 'string' && value) this.pickedTab.set(value);
-  }
-
-  /**
-   * Las tres cifras de la franja de arriba: el estado del grupo de un vistazo, como la banda de
-   * SnowUI. No son decoración — son las tres preguntas que se hacen al abrir un grupo: cuántos
-   * atienden, por dónde entra el trabajo y cómo se reparte.
-   */
-  protected readonly headline = computed<readonly HeadlineStat[]>(() => {
-    const f = this.form();
-    const activos = f.links.filter((l) => l.active).length;
-    return [
-      { valor: `${activos}/${f.links.length}`, etiqueta: 'groups.form.section.agents' },
-      /* Los canales van con los GLIFOS de la tabla, no con sus nombres. Con los cuatro encendidos
-       * el texto pedía 221px en una columna de 109 y se leía «Teléfono, Ch…»: un dato recortado
-       * que hay que abrir el `title` para entender. Cuatro glifos de 16 con sus huecos miden 95,5 y
-       * caben enteros, así que la cifra deja de recortarse Y deja de moverse. Misma pieza que la
-       * lista de grupos (`sc-channel-icon` dentro de `.sc-channel-row`), no un dibujo nuevo. */
-      { canales: canonicalizeChannels([...f.channels]), valor: this.channelsSummary(f.channels) || '—', etiqueta: 'groups.form.section.channels' },
-      /* La estrategia del canal que el grupo SÍ tiene. Antes preguntaba solo por teléfono, así que
-       * un grupo de solo chat decía «Estrategia —» teniendo una: la cifra negaba un dato que el
-       * formulario de al lado pedía. Con los dos canales manda la de teléfono, que es la que tiene
-       * niveles y reparto; con solo chat, la suya. (Medido el 2026-09-23 apagando Teléfono.) */
-      { valor: this.strategySummary(), etiqueta: 'groups.form.section.strategy' },
-    ];
-  });
-
-  /** Se pinta la sección de la pestaña encendida, y solo esa. */
+  /** Se pinta la sección elegida en el índice, y solo esa. */
   protected showSection(id: string): boolean {
-    return id === this.activeTab();
+    return id === this.activeSection();
   }
 
-  protected yesNo(value: boolean): string {
-    return value ? 'common.yes' : 'common.no';
-  }
+  /**
+   * Las secciones con algo obligatorio sin rellenar: su punto rojo en el índice. Solo General
+   * tiene obligatorios (el nombre, y al menos un canal), y un nombre repetido tampoco deja guardar.
+   */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
+    const f = this.form();
+    const general = f.name.trim().length === 0 || this.nameTaken() || f.channels.size === 0;
+    return new Set(general ? ['group-section-general'] : []);
+  });
 
-  protected orNone(value: string | number | null | undefined): string {
-    return value === null || value === undefined || value === '' ? this.translate.instant('groups.form.summary.none') : String(value);
-  }
-
-  protected channelsSummary(channels: Iterable<GroupChannel>): string {
-    const labels = [...channels].map((c) => this.channelLabel(c));
-    return labels.length > 0 ? labels.join(', ') : this.translate.instant('groups.form.summary.no_channels');
-  }
-
-  protected agentName(agentId: number): string {
-    return this.agentsStore.getAgent(agentId)?.name ?? `#${agentId}`;
-  }
-
-  /** Lo que ese agente hace en el grupo: en pausa, o los canales que atiende. */
-  protected linkSummary(link: GroupAgentLink): string {
-    return link.active ? this.channelsSummary(link.channels) : this.translate.instant('groups.form.summary.paused');
-  }
-
-
-
-  protected readonly phoneIcon = 'call';
-  protected readonly trashIcon = 'delete';
   protected readonly infoIcon = 'info';
 
   protected readonly editingId = signal<number | null>(null);
@@ -431,8 +309,38 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return this.dirtyState.dirty();
   });
 
-  protected readonly hasChat = computed(() => this.form().channels.has('chat'));
+  /* Chat es la MADRE de Web Chat y WhatsApp (visión de producto de grupos, 2026-09-25): comparten
+   * estrategia y bloque en Distribución. Las claves no cambian: `chat` es Web Chat. */
+  protected readonly hasChatFamily = computed(() => hasChatFamily(this.form().channels));
+  protected readonly hasWebChat = computed(() => this.form().channels.has('chat'));
+  protected readonly hasWhatsApp = computed(() => this.form().channels.has('whatsapp'));
   protected readonly hasPhone = computed(() => this.form().channels.has('phone'));
+  /** Las familias de canal que el grupo NO tiene, en el orden de Distribución y colas. */
+  protected readonly inactiveFamilies = computed<readonly ('phone' | 'chat' | 'email')[]>(() => {
+    const off: ('phone' | 'chat' | 'email')[] = [];
+    if (!this.hasPhone()) off.push('phone');
+    if (!this.hasChatFamily()) off.push('chat');
+    if (!this.hasEmail()) off.push('email');
+    return off;
+  });
+  protected readonly familyLabelKeys: Readonly<Record<'phone' | 'chat' | 'email', string>> = {
+    phone: 'groups.channel.phone',
+    chat: 'groups.channel.chat_family',
+    email: 'groups.channel.email',
+  };
+  /** Los subcanales de Chat que el grupo tiene, para la cabecera de su bloque: «Web Chat · WhatsApp». */
+  protected readonly chatSubchannelLabels = computed(() => {
+    this.lang();
+    const subchannels: readonly GroupChannel[] = ['chat', 'whatsapp'];
+    return subchannels
+      .filter((c) => this.form().channels.has(c))
+      .map((c) => this.translate.instant(this.channelKeys[c]))
+      .join(' · ');
+  });
+  /** La casilla madre: marcada con los dos subcanales, a medias con uno. */
+  protected readonly chatFamilyState = computed(() =>
+    triStateOf([this.hasWebChat(), this.hasWhatsApp()].filter(Boolean).length, 2),
+  );
   protected readonly isNiveles = computed(() => this.hasPhone() && this.form().strategy === 'Niveles');
   protected readonly isRingAll = computed(() => this.hasPhone() && this.form().strategy === 'Ring All');
   protected readonly isExclusive = computed(() => this.hasPhone() && this.form().strategy === 'Agente exclusivo');
@@ -458,10 +366,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     ];
   });
 
-  protected typificationName(): string {
-    return this.form().typification ?? this.translate.instant('groups.form.fields.typification_none');
-  }
-
   protected readonly scheduleOptions = computed(() => this.agendasStore.items().map((a) => ({ label: a.name, value: a.id })));
   protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
   protected readonly labelOptions = computed(() => this.labelsStore.labels().map((l) => ({ label: l.name, value: l.id })));
@@ -474,11 +378,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly chatTemplateValue = computed(() => this.templatesOf('chat').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
   protected readonly emailTemplateValue = computed(() => this.templatesOf('email').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
   protected readonly hasEmail = computed(() => this.form().channels.has('email'));
-
-  protected namesOf(options: readonly { label: string; value: number }[], ids: readonly number[]): string {
-    const names = options.filter((o) => ids.includes(o.value)).map((o) => o.label);
-    return names.length > 0 ? names.join(', ') : this.translate.instant('groups.form.summary.none');
-  }
 
   /** El código que se pega en la web para el chat de este grupo (manual de Voice, «Script de chat»). */
   protected readonly chatScript = computed(
@@ -499,27 +398,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     { label: this.translate.instant('groups.form.advanced.card_new_window'), value: 'new_window' },
     ];
   });
-  protected readonly audioSourceOptions = computed(() => {
-    this.lang();
-    return [
-    { label: this.translate.instant('groups.form.announcements.source_none'), value: 'none' },
-    { label: this.translate.instant('groups.form.announcements.source_tts'), value: 'tts' },
-    { label: this.translate.instant('groups.form.announcements.source_file'), value: 'file' },
-    ];
-  });
-
-  /**
-   * La estrategia que se enseña en la cabecera: la del canal que el grupo tiene.
-   *
-   * Teléfono manda cuando están los dos, porque es la que se completa con niveles y reparto; si el
-   * grupo no ofrece teléfono, la del chat, que también es una estrategia de verdad. Solo es «—»
-   * cuando no hay ni uno de los dos, que es la única vez que de verdad no hay nada que decir.
-   */
-  protected strategySummary(): string {
-    if (this.hasPhone()) return this.phoneStrategySummary();
-    if (this.hasChat()) return this.form().chatStrategy;
-    return '—';
-  }
 
   /** La estrategia de teléfono con lo que la completa, para el resumen. */
   protected phoneStrategySummary(): string {
@@ -717,56 +595,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.setAdvanced('allowedDomains', this.form().advanced.allowedDomains.filter((d) => d !== domain));
   }
 
-  protected setAnnouncementNumber(key: 'avgWaitSec', value: number | null): void {
-    if (value !== null && Number.isFinite(value) && value >= 0) this.setAnnouncement(key, value);
-  }
-
-  /** El .wav elegido: de momento solo se guarda su nombre (demo). */
-  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAudioFile', event: Event): void {
+  /** El .wav elegido: de momento solo se guarda su nombre (demo). A la vista solo queda la música de espera. */
+  protected onAudioFile(key: 'holdMusicFile', event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) this.setAnnouncement(key, file.name);
     input.value = '';
-  }
-
-  /** Más de un anuncio periódico, cada uno con su frecuencia (postventa, 2026-09-18). Añadir un .wav aquí
-   *  crea una fila nueva; no reemplaza las que ya había. */
-  protected onPeriodicFile(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) {
-      this.form.update((f) => ({
-        ...f,
-        announcements: {
-          ...f.announcements,
-          periodicAnnouncements: [...f.announcements.periodicAnnouncements, { file: file.name, everySec: 30 }],
-        },
-      }));
-    }
-    input.value = '';
-  }
-
-  protected removePeriodicAnnouncement(index: number): void {
-    this.form.update((f) => ({
-      ...f,
-      announcements: {
-        ...f.announcements,
-        periodicAnnouncements: f.announcements.periodicAnnouncements.filter((_, i) => i !== index),
-      },
-    }));
-  }
-
-  protected setPeriodicFrequency(index: number, value: number | null): void {
-    if (value === null || !Number.isFinite(value) || value < 5) return;
-    this.form.update((f) => ({
-      ...f,
-      announcements: {
-        ...f.announcements,
-        periodicAnnouncements: f.announcements.periodicAnnouncements.map((a, i) =>
-          i === index ? { ...a, everySec: value } : a,
-        ),
-      },
-    }));
   }
 
   protected copyChatScript(): void {
@@ -790,9 +624,53 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     });
   }
 
+  /** La casilla madre: enciende o apaga los dos subcanales de una vez (patrón B12 del laboratorio). */
+  protected toggleChatFamily(): void {
+    this.form.update((f) => {
+      const next = toggleChatFamily(f.channels) as Set<GroupChannel>;
+      return { ...f, channels: next, links: clampLinksToChannels(f.links, next) };
+    });
+  }
+
   protected hasChannel(channel: GroupChannel): boolean {
     return this.form().channels.has(channel);
   }
+
+  /* ── El resumen del índice (`sc-group-summary`) ─────────────────────────────────────────── */
+
+  /** La estrategia de cada familia que el grupo tiene: Teléfono con lo que la completa, y Chat. */
+  protected readonly summaryRouting = computed<readonly GroupSummaryRouting[]>(() => {
+    this.lang();
+    const routing: GroupSummaryRouting[] = [];
+    if (this.hasPhone()) routing.push({ family: 'phone', text: this.phoneStrategySummary() });
+    if (this.hasChatFamily()) routing.push({ family: 'chat', text: this.form().chatStrategy });
+    return routing;
+  });
+
+  /** Por dónde sale y recibe el grupo: el teléfono saliente y el número de WhatsApp. */
+  protected readonly summaryOutbound = computed<readonly GroupSummaryOutbound[]>(() => {
+    const f = this.form();
+    const outbound: GroupSummaryOutbound[] = [];
+    if (this.hasPhone()) outbound.push({ channel: 'phone', number: f.phone.trim() });
+    if (this.hasWhatsApp()) outbound.push({ channel: 'whatsapp', number: f.advanced.whatsappNumber.trim() });
+    return outbound;
+  });
+
+  /** Lo que le llega de Repositorios: tipificación, agendas, plantillas de sus canales y etiquetas. */
+  protected readonly resourceCount = computed(() => {
+    const f = this.form();
+    const templates = (this.hasChatFamily() ? this.chatTemplateValue().length : 0) + (this.hasEmail() ? this.emailTemplateValue().length : 0);
+    return (f.typification ? 1 : 0) + f.scheduleIds.size + templates + f.labelIds.size;
+  });
+
+  /** Lo que falta para poder guardar, en el orden de General. */
+  protected readonly summaryMissing = computed<readonly string[]>(() => {
+    const f = this.form();
+    const missing: string[] = [];
+    if (f.name.trim().length === 0) missing.push('groups.form.summary.missing_name');
+    if (f.channels.size === 0) missing.push('groups.form.summary.missing_channels');
+    return missing;
+  });
 
   protected onLinksChange(links: readonly GroupAgentLink[]): void {
     this.form.update((f) => ({ ...f, links }));
@@ -813,8 +691,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.updateField('name', name ?? '');
   }
 
-  protected onPhoneValueChange(phone: string): void {
-    this.updateField('phone', phone);
+  protected onPhoneValueChange(phone: unknown): void {
+    this.updateField('phone', typeof phone === 'string' ? phone : '');
   }
 
   protected onPriorityValueChange(priority: GroupPriority): void {
@@ -869,7 +747,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         strategy: f.strategy,
         subStrategy: this.isNiveles() ? f.subStrategy : undefined,
         ringAllAgents: this.isRingAll() ? f.ringAllAgents : undefined,
-        chatStrategy: f.channels.has('chat') ? f.chatStrategy : undefined,
+        // La de Chat vale para sus dos subcanales: un grupo solo de WhatsApp también la guarda.
+        chatStrategy: hasChatFamily(f.channels) ? f.chatStrategy : undefined,
       };
 
       // Como Contact Center y la ficha de agente (decisión de producto, 2026-09-16): guardar se queda en la ficha, con su aviso.

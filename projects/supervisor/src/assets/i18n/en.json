@@ -1466,9 +1466,10 @@
     },
     "channel": {
       "phone": "Phone",
-      "chat": "Chat",
+      "chat": "Web Chat",
       "whatsapp": "WhatsApp",
-      "email": "Email"
+      "email": "Email",
+      "chat_family": "Chat"
     },
     "form": {
       "create_title": "New group",
@@ -1480,13 +1481,18 @@
         "channels": "Channels",
         "channels_hint": "Contact types",
         "strategy": "Strategy",
-        "agents": "Assigned agents",
-        "distribution": "Channels and strategy",
+        "agents": "Agents",
+        "distribution": "Distribution and queues",
         "channels_agents": "Channels and agents",
         "resources": "Resources",
         "announcements": "Announcements and audio",
         "announcements_needs_phone": "Phone channel only: this is what callers hear while they wait.",
-        "advanced": "Advanced"
+        "advanced": "Advanced",
+        "general": "General",
+        "general_hint": "Name, priority and channels",
+        "distribution_hint": "How each channel routes and queues",
+        "resources_hint": "What is assigned from Repositories",
+        "agents_hint": "Who handles it and through which channels"
       },
       "assigned": {
         "query_placeholder": "Search agent…",
@@ -1510,7 +1516,7 @@
       },
       "fields": {
         "name": "Name",
-        "phone": "Associated phone",
+        "phone": "Outbound phone",
         "priority": "Priority",
         "phone_strategy": "Strategy (phone)",
         "chat_strategy": "Strategy (chat)",
@@ -1601,8 +1607,8 @@
         "service_level_hint": "Conversations answered within this time count as on time.",
         "wrap_up": "Time between calls",
         "wrap_up_hint": "How long the agent waits before receiving the next call.",
-        "overflow": "Overflow when no agents are active",
-        "overflow_hint": "Calls go to the next node in the tree.",
+        "overflow": "Overflow if all agents are inactive",
+        "overflow_hint": "Contacts move on to the next destination, which is not chosen here.",
         "overflow_session": "Overflow session",
         "overflow_session_hint": "Redirects active sessions when they exceed their limit.",
         "card_opening": "Contact card opening",
@@ -1613,7 +1619,7 @@
         "card_height": "Height",
         "chat_config_title": "Chat settings",
         "whatsapp_number": "WhatsApp number",
-        "whatsapp_number_info": "The number this group's WhatsApp messages arrive at. It is what the customer sees if they reach out there.",
+        "whatsapp_number_info": "The number that receives this group's WhatsApp messages.",
         "chat_rating": "Ask for a rating when the chat closes",
         "chat_rating_info": "When the conversation ends, the customer is asked whether they were happy with the service.",
         "chat_rating_hint": "The customer sees a short rating question right after saying goodbye.",
@@ -1632,7 +1638,33 @@
         "paused": "Disabled",
         "no_channels": "No channels",
         "priority": "Priority: {{value}}",
-        "no_phone": "No associated phone"
+        "no_phone": "No outbound phone",
+        "title": "Summary",
+        "agents": "Agents",
+        "paused_count": "{{count}} paused",
+        "no_agents": "No agents",
+        "routing": "Distribution",
+        "outbound": "Outbound",
+        "no_number": "No number",
+        "resources": "Resources",
+        "missing": "Missing: {{items}}",
+        "missing_name": "name",
+        "missing_channels": "channels"
+      },
+      "channels": {
+        "title": "Channels",
+        "hint": "At least one. What you tick here decides what you set up in Distribution and queues."
+      },
+      "distribution": {
+        "common_title": "Common rules",
+        "common_hint": "They apply to every channel in the group.",
+        "routing": "Distribution",
+        "queue": "Queue",
+        "queue_messages": "Queue messages",
+        "webchat_access": "Web Chat · access",
+        "whatsapp_number": "WhatsApp · number",
+        "email_note": "Email has no strategy or queue of its own: messages arrive in the group's inbox.",
+        "inactive": "{{channel}} is not active · turn it on in General"
       }
     },
     "defaults": {

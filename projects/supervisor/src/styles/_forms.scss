@@ -285,8 +285,16 @@
 .checkbox-stack {
   display: flex;
   flex-direction: column;
+  /* Cada casilla mide lo que su rótulo, no la columna entera. Estirada, la fila enseñaba la mano de
+   * «esto se pulsa» en ~180px en blanco que no hacían nada: medido el 2026-09-26, casillas de 271
+   * con rótulos de 54 a 93 en la ficha de grupo, y de 248 con 77 a 95 en la de usuario. */
+  align-items: flex-start;
   gap: var(--sc-spacing-0-25);
   min-width: 0;
+
+  > * {
+    max-width: 100%;
+  }
 }
 
 .checkbox-row {
@@ -308,6 +316,15 @@
   &:hover {
     color: var(--sc-text-primary);
   }
+}
+
+/* La casilla HIJA bajo su madre (una sección de la ficha de usuario bajo la suya; Web Chat y
+ * WhatsApp bajo Chat en la ficha de grupo). Vivía en la hoja de la ficha de usuario, que era la
+ * única con madres; con los canales del grupo son dos pantallas y sube aquí (DD-65).
+ * 24.5 = lo que mide la casilla más su hueco: la hija arranca bajo el TEXTO de la madre y no bajo
+ * su casilla. */
+.checkbox-row--child {
+  padding-left: var(--sc-spacing-1-75);
 }
 
 /* ------------------------------------------------------------------ *

@@ -1466,9 +1466,10 @@
     },
     "channel": {
       "phone": "Teléfono",
-      "chat": "Chat",
+      "chat": "Web Chat",
       "whatsapp": "WhatsApp",
-      "email": "Email"
+      "email": "Email",
+      "chat_family": "Chat"
     },
     "form": {
       "create_title": "Nuevo grupo",
@@ -1483,13 +1484,18 @@
         "channels": "Canales",
         "channels_hint": "Tipos de contacto",
         "strategy": "Estrategia",
-        "agents": "Agentes asignados",
-        "distribution": "Canales y estrategia",
+        "agents": "Agentes",
+        "distribution": "Distribución y colas",
         "channels_agents": "Canales y agentes",
         "resources": "Recursos",
         "announcements": "Anuncios y audio",
         "announcements_needs_phone": "Solo con el canal Teléfono: aquí se configura lo que suena en la llamada.",
-        "advanced": "Avanzado"
+        "advanced": "Avanzado",
+        "general": "General",
+        "general_hint": "Nombre, prioridad y canales",
+        "distribution_hint": "Cómo reparte y cómo espera cada canal",
+        "resources_hint": "Lo que se asigna desde Repositorios",
+        "agents_hint": "Quién atiende y por qué canales"
       },
       "assigned": {
         "query_placeholder": "Buscar agente…",
@@ -1513,7 +1519,7 @@
       },
       "fields": {
         "name": "Nombre",
-        "phone": "Teléfono asociado",
+        "phone": "Teléfono saliente",
         "priority": "Prioridad",
         "phone_strategy": "Estrategia (teléfono)",
         "chat_strategy": "Estrategia (chat)",
@@ -1601,8 +1607,8 @@
         "service_level_hint": "Cuentan como atendidas a tiempo las que se atienden antes de este tiempo.",
         "wrap_up": "Tiempo entre llamadas",
         "wrap_up_hint": "Lo que espera el agente antes de recibir la siguiente llamada.",
-        "overflow": "Desbordar si no hay agentes activos",
-        "overflow_hint": "Las llamadas pasan al siguiente nodo del árbol.",
+        "overflow": "Desbordar si todos los agentes están inactivos",
+        "overflow_hint": "Los contactos pasan al siguiente destino, que no se elige aquí.",
         "overflow_session": "Desbordar sesión",
         "overflow_session_hint": "Redirige las sesiones activas al superar su límite.",
         "card_opening": "Apertura de ficha",
@@ -1613,7 +1619,7 @@
         "card_height": "Alto",
         "chat_config_title": "Configuración de chat",
         "whatsapp_number": "Número de WhatsApp",
-        "whatsapp_number_info": "El número al que llegan los mensajes de WhatsApp de este grupo. PREGUNTA A DESARROLLO: aquí WhatsApp es un canal propio, con su columna por agente, pero este número solo aparece si el grupo ofrece Chat. En Voice es un ajuste del Chat y el permiso del agente solo dice Chat. ¿Cuál de los dos manda?",
+        "whatsapp_number_info": "El número al que llegan los mensajes de WhatsApp de este grupo.",
         "chat_rating": "Pedir valoración al cerrar el chat",
         "chat_rating_info": "Al terminar la conversación, se le pregunta al cliente si quedó satisfecho con la atención.",
         "chat_rating_hint": "El cliente ve una pregunta corta de valoración justo después de despedirse.",
@@ -1632,7 +1638,33 @@
         "paused": "Deshabilitado",
         "no_channels": "Sin canales",
         "priority": "Prioridad: {{value}}",
-        "no_phone": "Sin teléfono asociado"
+        "no_phone": "Sin teléfono saliente",
+        "title": "Resumen",
+        "agents": "Agentes",
+        "paused_count": "{{count}} en pausa",
+        "no_agents": "Sin agentes",
+        "routing": "Reparto",
+        "outbound": "Salida",
+        "no_number": "Sin número",
+        "resources": "Recursos",
+        "missing": "Falta: {{items}}",
+        "missing_name": "nombre",
+        "missing_channels": "canales"
+      },
+      "channels": {
+        "title": "Canales",
+        "hint": "Al menos uno. Lo que marques aquí decide qué configuras en Distribución y colas."
+      },
+      "distribution": {
+        "common_title": "Reglas comunes",
+        "common_hint": "Valen para todos los canales del grupo.",
+        "routing": "Distribución",
+        "queue": "Cola",
+        "queue_messages": "Mensajes en cola",
+        "webchat_access": "Web Chat · acceso",
+        "whatsapp_number": "WhatsApp · número",
+        "email_note": "Email no tiene estrategia ni cola propias: los correos llegan a la bandeja del grupo.",
+        "inactive": "{{channel}} no está activo · actívalo en General"
       }
     },
     "defaults": {
