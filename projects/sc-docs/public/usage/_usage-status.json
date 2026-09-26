@@ -597,7 +597,7 @@
     },
     {
       "selector": "sc-message",
-      "usedInSupervisor": 3
+      "usedInSupervisor": 4
     },
     {
       "selector": "sc-panel",
@@ -613,7 +613,7 @@
     },
     {
       "selector": "sc-textarea",
-      "usedInSupervisor": 7
+      "usedInSupervisor": 8
     }
   ]
 }
