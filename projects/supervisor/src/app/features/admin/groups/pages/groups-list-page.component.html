@@ -145,8 +145,8 @@
   (confirm)="confirmDelete($event)"
 />
 
-<!-- El alta y el duplicado, en corto: lo que dice la cabecera de la ficha (la pieza de Identidad).
-     Canales y agentes, en la ficha, que abre justo ahí. -->
+<!-- Duplicar, en corto: nombre, teléfono saliente y prioridad del duplicado (la pieza de General). Todo lo
+     demás viene del original. El alta ya no pasa por aquí: es la propia ficha en modo alta (DD-121). -->
 <sc-group-create-dialog
   [visible]="createOpen()"
   [source]="duplicateSource()"

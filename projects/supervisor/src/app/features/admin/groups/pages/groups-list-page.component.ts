@@ -7,8 +7,7 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
@@ -104,8 +103,6 @@ export class GroupsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
-  private readonly location = inject(Location);
   private readonly undoStack = inject(UndoStackService);
   private readonly defaultsStore = inject(GroupDefaultsStore);
 
@@ -115,13 +112,6 @@ export class GroupsListPageComponent {
 
   constructor() {
     useTopbarActions(this.topbarActions);
-    // `/admin/grupos/crear` (la paleta de comandos, un enlace guardado) llega aquí con `?crear`: el
-    // alta es un diálogo sobre la lista, no una página. Se abre y se limpia la dirección SIN navegar:
-    // una segunda navegación cortaba la transición de la primera («Transition was skipped», medido).
-    if (this.route.snapshot.queryParamMap.has('crear')) {
-      this.createOpen.set(true);
-      this.location.replaceState('/admin/grupos');
-    }
   }
 
   /** Derived count of agents assigned to a group. */
@@ -402,7 +392,7 @@ export class GroupsListPageComponent {
     void this.router.navigateByUrl('/admin/grupos/valores-por-defecto');
   }
 
-  /** El alta y el duplicado comparten diálogo; `duplicateSource` dice cuál de los dos es. */
+  /** El diálogo corto, desde el 2026-09-26 solo para DUPLICAR (el alta es la ficha): `duplicateSource` es el original. */
   protected readonly createOpen = signal(false);
   protected readonly duplicateSource = signal<Group | null>(null);
   protected readonly groupNames = computed(() => this.groups().map((g) => g.name));
@@ -415,9 +405,9 @@ export class GroupsListPageComponent {
     return source ? this.translate.instant('groups.create_dialog.copy_name', { name: source.name }) : '';
   });
 
+  /** El alta es la propia ficha en modo alta (DD-121); el diálogo de abajo queda para duplicar. */
   protected onCreateClick(): void {
-    this.duplicateSource.set(null);
-    this.createOpen.set(true);
+    void this.router.navigateByUrl('/admin/grupos/crear');
   }
 
   protected onCreateCancel(): void {
@@ -425,9 +415,8 @@ export class GroupsListPageComponent {
   }
 
   /**
-   * Crea el grupo y abre su ficha en «Canales y agentes», que es lo SIGUIENTE: el alta ya dijo quién
-   * es el grupo (lo que enseña su cabecera) y ahora toca por dónde le entra el trabajo y quién lo
-   * atiende. Un duplicado se lleva además los agentes del original.
+   * Crea el duplicado y abre su ficha: se lleva todo lo del original, agentes incluidos, con el nombre y
+   * el teléfono que se hayan puesto en el diálogo.
    */
   protected onCreateConfirm(submission: GroupCreateSubmission): void {
     const source = this.duplicateSource();

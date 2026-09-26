@@ -993,7 +993,8 @@
     "select_row": "Select {{name}}",
     "select_all": "Select all",
     "form_index_aria": "Form index",
-    "filter_count": "{{shown}} of {{total}}"
+    "filter_count": "{{shown}} of {{total}}",
+    "next": "Next"
   },
   "topbar": {
     "go_to_dashboard": "Go to dashboard",
@@ -1684,7 +1685,8 @@
       "resources": {
         "client_card": "Contact card",
         "client_card_hint": "What the agent sees on receiving a contact from this group."
-      }
+      },
+      "create_submit": "Create group"
     },
     "defaults": {
       "heading": "Defaults",

@@ -126,3 +126,10 @@
 .chat-messages__title {
   color: var(--sc-text-primary);
 }
+
+/* «Siguiente», al pie de la sección y a su derecha: el camino del alta sigue hacia abajo. */
+.section-next {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: var(--sc-spacing-1);
+}

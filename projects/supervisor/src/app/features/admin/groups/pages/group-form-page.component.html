@@ -19,12 +19,13 @@
       (clicked)="discard()"
     />
   }
+  <!-- En el alta, «Crear grupo»: se enciende en cuanto General está completa (DD-121). -->
   <sc-button
     size="sm"
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
-    [label]="'common.save' | translate"
+    [label]="(mode() === 'create' ? 'groups.form.create_submit' : 'common.save') | translate"
     [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
     (clicked)="save()"
   />
@@ -43,21 +44,28 @@
            nativo), con el mismo aviso de nombre repetido que el campo de General. `h3-semibold` es el
            rol que ya usan las nueve listas para su `h1`. -->
       <div class="headline__who">
-        <h1 class="headline__name headline__name--editable sc-text-h3-semibold" [title]="form().name">
-          <sc-name-inplace
-            [name]="form().name"
-            [label]="'groups.form.fields.name' | translate"
-            [error]="nameTaken() ? ('groups.errors.name_taken' | translate) : null"
-            (nameChange)="onNameChange($event)"
-          />
-        </h1>
+        @if (mode() === 'edit') {
+          <h1 class="headline__name headline__name--editable sc-text-h3-semibold" [title]="form().name">
+            <sc-name-inplace
+              [name]="form().name"
+              [label]="'groups.form.fields.name' | translate"
+              [error]="nameTaken() ? ('groups.errors.name_taken' | translate) : null"
+              (nameChange)="onNameChange($event)"
+            />
+          </h1>
+        } @else {
+          <!-- En el alta el nombre se escribe en General; el título lo sigue según se escribe. -->
+          <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name || ('groups.form.create_title' | translate) }}</h1>
+        }
         <!-- Los datos del grupo, CON su nombre: «Media» a secas no decía de qué. El teléfono, solo si
              el grupo ofrece teléfono: a un grupo de chat no se le pide. -->
         <span class="headline__meta sc-text-caption-regular" [title]="identitySummary()">{{ identitySummary() }}</span>
       </div>
-      <div class="headline__actions">
-        <sc-button variant="danger" appearance="text" size="sm" icon="delete" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
-      </div>
+      @if (mode() === 'edit') {
+        <div class="headline__actions">
+          <sc-button variant="danger" appearance="text" size="sm" icon="delete" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
+        </div>
+      }
     </div>
 
     <!-- El índice arriba (gobierna qué ves) y el resumen debajo, en el mismo carril fijo: el patrón
@@ -68,7 +76,7 @@
         [activeId]="activeSection()"
         [sectionsWithErrors]="sectionsWithErrors()"
         [flush]="true"
-        (activeChange)="activeSection.set($event)"
+        (activeChange)="goTo($event)"
       />
       <sc-group-summary
         [channels]="formGroupChannels()"
@@ -102,7 +110,7 @@
               [name]="form().name"
               [priority]="form().priority"
               [hasPhone]="false"
-              [nameError]="nameTaken() ? 'groups.errors.name_taken' : null"
+              [nameError]="nameError()"
               (nameChange)="onNameChange($event)"
               (priorityChange)="onPriorityValueChange($event)"
             />
@@ -120,7 +128,7 @@
             <div class="checkbox-grid">
               <!-- Cada canal en su pila, aunque no tenga hijas: así los tres arrancan en la misma línea. -->
               <div class="checkbox-stack">
-                <sc-checkbox class="checkbox-row" [state]="hasPhone() ? 'all' : 'none'" (cycle)="toggleChannel('phone')">{{ channelKeys.phone | translate }}</sc-checkbox>
+                <sc-checkbox class="checkbox-row" inputId="group-channels-phone" [state]="hasPhone() ? 'all' : 'none'" (cycle)="toggleChannel('phone')">{{ channelKeys.phone | translate }}</sc-checkbox>
               </div>
               <!-- Chat es la MADRE de Web Chat y WhatsApp (patrón B12 del laboratorio): marcarla enciende las dos, y
                    desmarcarla las apaga; con una sola, queda a medias. -->
@@ -133,7 +141,11 @@
                 <sc-checkbox class="checkbox-row" [state]="hasEmail() ? 'all' : 'none'" (cycle)="toggleChannel('email')">{{ channelKeys.email | translate }}</sc-checkbox>
               </div>
             </div>
+            @if (channelsError()) {
+              <p class="field__error" role="alert">{{ 'groups.errors.channels_required' | translate }}</p>
+            }
           </section>
+          <ng-container *ngTemplateOutlet="nextStep" />
         </sc-section-card>
       }
 
@@ -394,6 +406,7 @@
               }
             </section>
           }
+          <ng-container *ngTemplateOutlet="nextStep" />
         </sc-section-card>
       }
 
@@ -549,6 +562,7 @@
               }
             </div>
           </section>
+          <ng-container *ngTemplateOutlet="nextStep" />
         </sc-section-card>
       }
 
@@ -700,6 +714,16 @@
     />
   </sc-dialog>
 }
+
+<!-- «Siguiente», al pie de cada sección y SOLO en el alta: guía por las cuatro en el orden de sus
+     dependencias. Al editar se salta de sección con el índice, y no hay pasos que seguir. -->
+<ng-template #nextStep>
+  @if (mode() === 'create' && nextSectionId()) {
+    <div class="section-next">
+      <sc-button size="sm" variant="secondary" appearance="outlined" icon="arrow_forward" iconPosition="right" [label]="'common.next' | translate" (clicked)="next()" />
+    </div>
+  }
+</ng-template>
 
 <!-- La cola de UN canal: Teléfono y Chat tienen cada uno la suya (visión de producto de grupos, 2026-09-25), con
      los mismos campos. Los `id` llevan el canal: los dos bloques pueden estar en la misma sección. -->

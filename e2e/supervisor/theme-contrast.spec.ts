@@ -97,9 +97,9 @@ const RUTAS = [
 const RUTAS_SUELO = [
   ...RUTAS,
   'supervision',
-  'admin/usuarios/nuevo',
-  'admin/grupos/nuevo',
-  'admin/agentes/nuevo',
+  'admin/usuarios/crear',
+  'admin/grupos/crear',
+  'admin/agentes/crear',
   'conversaciones/reglas/nueva',
 ] as const;
 

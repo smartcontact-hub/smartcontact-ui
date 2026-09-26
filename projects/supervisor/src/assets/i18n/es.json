@@ -993,7 +993,8 @@
     "select_row": "Seleccionar {{name}}",
     "select_all": "Seleccionar todo",
     "form_index_aria": "Índice del formulario",
-    "filter_count": "{{shown}} de {{total}}"
+    "filter_count": "{{shown}} de {{total}}",
+    "next": "Siguiente"
   },
   "topbar": {
     "go_to_dashboard": "Ir al dashboard",
@@ -1684,7 +1685,8 @@
       "resources": {
         "client_card": "Ficha de cliente",
         "client_card_hint": "La que ve el agente al recibir un contacto de este grupo."
-      }
+      },
+      "create_submit": "Crear grupo"
     },
     "defaults": {
       "heading": "Valores por defecto",

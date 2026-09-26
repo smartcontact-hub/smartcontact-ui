@@ -1,9 +1,11 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   HostListener,
   inject,
+  Injector,
   OnDestroy,
   OnInit,
   signal,
@@ -161,6 +163,7 @@ interface FormState {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
+  private readonly injector = inject(Injector);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly groupsStore = inject(GroupsStore);
@@ -234,15 +237,76 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return id === this.activeSection();
   }
 
+  /** Alta o edición: la MISMA ficha (DD-121). El alta no tiene id hasta que se crea. */
+  protected readonly mode = computed<'create' | 'edit'>(() => (this.editingId() === null ? 'create' : 'edit'));
+
+  /** General completa: nombre, que no se repita, y al menos un canal (con Chat, al menos uno de sus dos). */
+  protected readonly generalValid = computed(() => {
+    const f = this.form();
+    return f.name.trim().length > 0 && !this.nameTaken() && f.channels.size > 0;
+  });
+
   /**
-   * Las secciones con algo obligatorio sin rellenar: su punto rojo en el índice. Solo General
-   * tiene obligatorios (el nombre, y al menos un canal), y un nombre repetido tampoco deja guardar.
+   * Se ha intentado salir de General (o crear) sin completarla: desde entonces lo que falta se dice en su
+   * campo. Antes, no: un campo vacío en un alta recién abierta todavía no es un error (R6, ver abajo).
+   */
+  protected readonly attemptedGeneral = signal(false);
+
+  /**
+   * Las secciones con algo obligatorio sin rellenar: su punto rojo en el índice. Solo General tiene
+   * obligatorios (el nombre, y al menos un canal), y un nombre repetido tampoco deja guardar. En el alta,
+   * solo después de intentar salir: el resumen ya dice qué falta sin acusar.
    */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const f = this.form();
-    const general = f.name.trim().length === 0 || this.nameTaken() || f.channels.size === 0;
-    return new Set(general ? ['group-section-general'] : []);
+    const show = !this.generalValid() && (this.mode() === 'edit' || this.attemptedGeneral());
+    return new Set(show ? ['group-section-general'] : []);
   });
+
+  /** El aviso bajo el nombre: repetido siempre; vacío, solo tras intentar salir de General. */
+  protected readonly nameError = computed<string | null>(() => {
+    if (this.nameTaken()) return 'groups.errors.name_taken';
+    if (this.attemptedGeneral() && this.form().name.trim().length === 0) return 'groups.errors.name_required';
+    return null;
+  });
+
+  protected readonly channelsError = computed(() => this.attemptedGeneral() && this.form().channels.size === 0);
+
+  /**
+   * Ir a otra sección. Al editar, libre. En el ALTA, General es la puerta: sin nombre y sin canales las
+   * demás no tienen de qué hablar (qué bloques de canal, qué recursos, qué columnas de agentes), así que
+   * se queda en General y dice qué falta en cada campo.
+   */
+  protected goTo(id: string): void {
+    if (this.mode() === 'create' && id !== 'group-section-general' && !this.generalValid()) {
+      this.stayInGeneral();
+      return;
+    }
+    this.activeSection.set(id);
+  }
+
+  /**
+   * El alta no sale de General: cada campo dice lo que le falta y el foco va al primero, como hacía el
+   * diálogo de alta. Sin eso, con teclado, «Siguiente» no hace nada visible desde donde estás.
+   */
+  private stayInGeneral(): void {
+    this.attemptedGeneral.set(true);
+    this.activeSection.set('group-section-general');
+    const nameMissing = this.form().name.trim().length === 0 || this.nameTaken();
+    const target = nameMissing ? 'group-name' : 'group-channels-phone';
+    afterNextRender(() => document.getElementById(target)?.focus(), { injector: this.injector });
+  }
+
+  /** La sección siguiente en el índice, para «Siguiente» (solo en el alta); `null` en la última. */
+  protected readonly nextSectionId = computed<string | null>(() => {
+    const ids = this.navSections().map((s) => s.id);
+    const i = ids.indexOf(this.activeSection());
+    return i >= 0 && i < ids.length - 1 ? ids[i + 1]! : null;
+  });
+
+  protected next(): void {
+    const id = this.nextSectionId();
+    if (id) this.goTo(id);
+  }
 
   protected readonly infoIcon = 'info';
 
@@ -282,7 +346,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (f.name.trim().length === 0) return 'groups.errors.name_required';
     if (this.nameTaken()) return 'groups.errors.name_taken';
     if (f.channels.size === 0) return 'groups.errors.channels_required';
-    if (!this.dirtyState.dirty()) return 'common.no_changes';
+    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
   });
   /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
@@ -317,10 +381,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private releaseLock: (() => void) | null = null;
 
   protected readonly canSave = computed(() => {
-    const f = this.form();
-    if (f.name.trim().length === 0 || this.nameTaken() || f.channels.size === 0) return false;
-    // Exige cambio neto: Guardar se apaga otra vez si deshaces lo que tocaste.
-    return this.dirtyState.dirty();
+    if (!this.generalValid()) return false;
+    // Al editar exige cambio neto (Guardar se apaga otra vez si deshaces); en el alta basta con General.
+    return this.mode() === 'create' || this.dirtyState.dirty();
   });
 
   /* Chat es la MADRE de Web Chat y WhatsApp (visión de producto de grupos, 2026-09-25): comparten
@@ -452,9 +515,15 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    // Solo se llega editando: el alta es un diálogo sobre la lista y `crear` redirige allí.
     const idParam = this.route.snapshot.paramMap.get('id');
-    const group = idParam ? this.groupsStore.getGroup(Number(idParam)) : undefined;
+    if (!idParam) {
+      // ALTA: la ficha vacía, con los valores por defecto de Grupos y Teléfono marcado (`emptyForm`). Abre en
+      // General aunque la dirección pida otra sección: General es la puerta del alta (`goTo`).
+      this.dirtyState.markPristine();
+      return;
+    }
+    this.openSectionFromUrl();
+    const group = this.groupsStore.getGroup(Number(idParam));
     if (!group) {
       void this.router.navigateByUrl('/admin/grupos', { replaceUrl: true });
       return;
@@ -494,6 +563,25 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.releaseLock = this.crossTab.acquire('group', group.id, () =>
       this.conflictWarning.set(true),
     );
+  }
+
+  /** Enlace a una sección (`?seccion=agentes`): el alta, al crear, sigue en la sección en la que estaba. */
+  private static readonly SECTION_SLUGS: Readonly<Record<string, string>> = {
+    general: 'group-section-general',
+    distribucion: 'group-section-distribution',
+    recursos: 'group-section-resources',
+    agentes: 'group-section-agents',
+  };
+
+  private openSectionFromUrl(): void {
+    const slug = this.route.snapshot.queryParamMap.get('seccion');
+    const id = slug ? GroupFormPageComponent.SECTION_SLUGS[slug] : undefined;
+    if (id) this.activeSection.set(id);
+  }
+
+  private sectionSlug(id: string): string | null {
+    const entry = Object.entries(GroupFormPageComponent.SECTION_SLUGS).find(([, value]) => value === id);
+    return entry ? entry[0] : null;
   }
 
   ngOnDestroy(): void {
@@ -778,8 +866,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return `${phone} · ${priority}`;
   });
 
-
   protected save(): void {
+    if (this.mode() === 'create' && !this.generalValid()) {
+      this.stayInGeneral();
+      return;
+    }
     if (!this.canSave() || this.saving()) return;
 
     // If the user removed any channel the group used to own, surface the
@@ -823,6 +914,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         chatStrategy: hasChatFamily(f.channels) ? f.chatStrategy : undefined,
       };
 
+      if (this.mode() === 'create') {
+        this.createGroup(payload);
+        return;
+      }
+
       // Como Contact Center y la ficha de agente (decisión de producto, 2026-09-16): guardar se queda en la ficha, con su aviso.
       const editingId = this.editingId()!;
       this.groupsStore.updateGroup(editingId, { ...payload });
@@ -840,6 +936,29 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.saving.set(false);
       this.dirtyState.markPristine();
     }, 400);
+  }
+
+  /**
+   * Crea el grupo con lo que haya en las cuatro secciones y abre su EDICIÓN en la sección en la que se
+   * estaba: navegar (y no solo cambiar la dirección) pone al día la miga, el título y el candado entre
+   * pestañas. La ficha se marca limpia antes, para que el guardián de salida no pregunte.
+   */
+  private createGroup(payload: Omit<Group, 'id' | 'code'>): void {
+    const f = this.form();
+    const created = this.groupsStore.addGroup(payload);
+    this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(this.withoutOrphans(f.links), created.id));
+    this.messages.add({
+      severity: 'success',
+      summary: this.translate.instant('groups.toasts.created', { name: created.name }),
+      life: TOAST_LIFE.success,
+    });
+    this.saving.set(false);
+    this.dirtyState.markPristine();
+    const slug = this.sectionSlug(this.activeSection());
+    void this.router.navigate(['/admin/grupos/editar', created.id], {
+      replaceUrl: true,
+      queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
+    });
   }
 
   /** Vuelve al último estado guardado (o al formulario vacío, en un alta). Es el
