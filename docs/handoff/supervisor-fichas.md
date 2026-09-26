@@ -10,7 +10,8 @@
 ## ✅ 2026-09-26 · La ficha de grupo sigue la visión de producto: índice lateral, canal por canal, panel rápido y alta en la ficha (DD-121)
 
 > **Sello: rama `areses/sweet-fermat-r9cxzw`, PR #255, un commit por bloque.** El tramo del 2026-09-16 (la ficha que
-> seguía a Voice, rama `comparar/fichas`) vive en el tag `archive/handoff-fichas-2026-09-16`.
+> seguía a Voice, rama `comparar/fichas`) sale de aquí: `git show 9e25c83:docs/handoff/supervisor-fichas.md` (y el tag
+> `archive/handoff-fichas-2026-09-16`, que apunta ahí).
 
 **Qué pasó.** Llegó la visión de producto de grupos (2026-09-25): un documento que separa lo DICHO de lo que una IA
 rellenó en una maqueta HTML y de lo inferido. Ni el documento ni la maqueta entran en el repo (es público): se citan
