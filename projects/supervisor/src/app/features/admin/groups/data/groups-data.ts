@@ -123,7 +123,7 @@ export interface GroupAdvanced {
   readonly allowedDomains: readonly string[];
 }
 
-/** Los valores de fábrica. Un grupo nuevo nace con lo guardado en Configuración del AED > Grupos (`GroupDefaultsStore`),
+/** Los valores de fábrica. Un grupo nuevo nace con lo guardado en Valores por defecto de Grupos (`GroupDefaultsStore`),
  *  que arranca con estos. */
 export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
   holdMusicFile: null,
@@ -164,6 +164,9 @@ export const CHAT_STRATEGIES: readonly string[] = [
   'Menos chats activos',
   'Balanceada',
 ];
+
+/** Con la que reparte un grupo con Chat que no ha elegido otra. */
+export const DEFAULT_CHAT_STRATEGY = CHAT_STRATEGIES[0]!;
 
 /* ── Por canal: la cola, los tiempos y lo propio de Chat (visión de producto de grupos, 2026-09-25) ──
  *
@@ -248,6 +251,26 @@ export function resolveGroup(group: Group): ResolvedGroup {
       },
     },
   };
+}
+
+/**
+ * La estrategia con la que reparte cada familia de canales que el grupo OFRECE; `null` si no la ofrece.
+ * Una sola lectura para el listado (celda, orden, búsqueda, lote y exportación): un grupo sin Teléfono
+ * guarda una estrategia de teléfono que no se aplica, y uno con Chat que no guardó la suya reparte con
+ * la primera del catálogo, que es con la que abre su ficha.
+ */
+export function phoneStrategyOf(group: Pick<Group, 'channels' | 'strategy'>): string | null {
+  return group.channels.includes('phone') ? group.strategy : null;
+}
+
+export function chatStrategyOf(group: Pick<Group, 'channels' | 'chatStrategy'>): string | null {
+  const hasChat = group.channels.includes('chat') || group.channels.includes('whatsapp');
+  return hasChat ? (group.chatStrategy ?? DEFAULT_CHAT_STRATEGY) : null;
+}
+
+/** Orden de la prioridad: de Baja a Máxima, no alfabético (Alta < Baja < Máxima < Media). */
+export function priorityRank(priority: GroupPriority): number {
+  return GROUP_PRIORITIES.indexOf(priority);
 }
 
 export interface Group {
@@ -441,13 +464,20 @@ export const GROUPS_SEED: readonly Group[] = [
   },
 ];
 
-/** Lo que Configuración del AED > Grupos fija para los grupos nuevos. Mismos campos y mismas palabras que la ficha de
+/** Lo que Valores por defecto de Grupos fija para los grupos nuevos. Mismos campos y mismas palabras que la ficha de
  *  grupo: antes esa página tenía sus propias listas (códecs como «voz», FIFO/LIFO, «Urgente») que no casaban con nada. */
 export interface GroupDefaults {
+  /** La de Teléfono. */
   readonly strategy: string;
   readonly priority: GroupPriority;
   readonly voice: string;
   readonly advanced: GroupAdvanced;
+  /* Por canal, como la ficha desde el 2026-09-26 (visión de producto de grupos, 2026-09-25). Lo guardado antes no
+   * los trae: `GroupDefaultsStore` los resuelve al leer, con la cola única de antes en las dos colas. */
+  readonly chatStrategy: string;
+  readonly phoneQueue: ChannelQueue;
+  readonly chatQueue: ChannelQueue;
+  readonly chat: Pick<ChatSettings, 'closeOnInactivity' | 'inactivityMinutes'>;
 }
 
 export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
@@ -455,9 +485,17 @@ export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
   priority: 'Baja',
   voice: DEFAULT_ANNOUNCEMENTS.voice,
   advanced: DEFAULT_ADVANCED,
+  chatStrategy: DEFAULT_CHAT_STRATEGY,
+  phoneQueue: queueFrom(DEFAULT_ADVANCED),
+  chatQueue: queueFrom(DEFAULT_ADVANCED),
+  chat: {
+    closeOnInactivity: DEFAULT_CHAT_SETTINGS.closeOnInactivity,
+    inactivityMinutes: DEFAULT_CHAT_SETTINGS.inactivityMinutes,
+  },
 };
 
-/** Lo que pide el alta: lo que identifica al grupo y dice la cabecera de su ficha. */
+/** Lo que pide el diálogo de duplicar: lo que identifica al duplicado. Un grupo NUEVO nace en su propia ficha,
+ *  en modo alta, con los valores por defecto de Grupos (DD-121). */
 export interface GroupIdentityDraft {
   readonly name: string;
   readonly phone: string;
@@ -465,32 +503,8 @@ export interface GroupIdentityDraft {
 }
 
 /**
- * CÓMO NACE UN GRUPO. El alta pide solo lo que dice su cabecera —nombre, teléfono asociado,
- * prioridad— y todo lo demás sale de aquí (DD-119; teardown B1: crear y editar no son el mismo
- * formulario). Vive en los datos y no en el diálogo para que la regla se pueda leer y probar sin
- * pintar nada.
- *
- * Nuevo: con Teléfono, como nacía siempre, y los valores por defecto de Grupos. Los canales y los
- * agentes se eligen en la ficha, que abre justo ahí.
- */
-export function newGroupDraft(defaults: GroupDefaults, identity: GroupIdentityDraft): Omit<Group, 'id' | 'code'> {
-  const channels: readonly GroupChannel[] = ['phone'];
-  return {
-    ...identity,
-    channels,
-    strategy: defaults.strategy,
-    chatStrategy: undefined,
-    labels: [],
-    templates: [],
-    schedules: [],
-    announcements: { ...DEFAULT_ANNOUNCEMENTS, voice: defaults.voice },
-    advanced: { ...defaults.advanced },
-  };
-}
-
-/**
- * Duplicado: TODO lo del original, canales incluidos, con los datos que se hayan puesto en el alta.
- * El alta propone el nombre «… (copia)» y deja vacío el teléfono asociado: identifica al grupo, y dos
+ * Duplicado: TODO lo del original, canales incluidos, con los datos que se hayan puesto en el diálogo.
+ * El diálogo propone el nombre «… (copia)» y deja vacío el teléfono asociado: identifica al grupo, y dos
  * grupos no deben sacar el mismo número a la calle.
  */
 export function duplicateGroupDraft(source: Group, identity: GroupIdentityDraft): Omit<Group, 'id' | 'code'> {

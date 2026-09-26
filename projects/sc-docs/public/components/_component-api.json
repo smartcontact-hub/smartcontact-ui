@@ -1855,6 +1855,16 @@
           "nativo": null
         },
         {
+          "nombre": "externalSort",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "El orden lo pone QUIEN USA la tabla: pinta el indicador y emite `(sortChange)`, pero no toca las filas (`customSort` de p-table, sin manejador). Sin esto p-table reordena `value` por el valor crudo del campo ENCIMA del orden que recibe, y un orden propio (una prioridad por rango, nombres con locale) no se ve.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "size",
           "clase": "input",
           "tipo": "ScComponentSize",

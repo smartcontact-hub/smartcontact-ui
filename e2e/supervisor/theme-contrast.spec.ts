@@ -67,6 +67,9 @@ const RUTAS = [
   /* La ficha de grupo con su resumen (2026-09-26, DD-121): las cifras, los avisos en ámbar y las
    * barras son colores nuevos sobre el carril, y se leen en los dos temas. El 11 es el más cargado. */
   'admin/grupos/editar/11',
+  /* Valores por defecto de Grupos: desde el 2026-09-26 va en el orden de la ficha, con el glifo de cada canal
+   * en su título. */
+  'admin/grupos/valores-por-defecto',
   'admin/agentes',
   'admin/labels',
   'admin/plantillas',

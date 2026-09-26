@@ -345,13 +345,14 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 32,
+      "inputs": 33,
       "api": [
         "columnOrderChange",
         "columnResizeMode",
         "columnWidthsChange",
         "columns",
         "dataKey",
+        "externalSort",
         "filterChange",
         "filters",
         "globalFilterFields",
@@ -520,7 +521,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 35,
+      "usedInSupervisor": 36,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -801,7 +802,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 22,
+      "usedInSupervisor": 23,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1250,7 +1251,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 43,
+      "usedInSupervisor": 44,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1390,7 +1391,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 32,
+      "usedInSupervisor": 33,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
@@ -1469,7 +1470,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 30,
+      "usedInSupervisor": 32,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

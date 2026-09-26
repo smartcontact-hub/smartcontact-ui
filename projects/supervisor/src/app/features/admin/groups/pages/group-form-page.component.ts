@@ -55,7 +55,6 @@ import {
   PRIORITY_LABEL_KEYS,
   RING_ALL_OPTIONS,
   SUB_STRATEGIES,
-  DEFAULT_ADVANCED,
   DEFAULT_ANNOUNCEMENTS,
   GroupAdvanced,
   GroupAnnouncements,
@@ -66,7 +65,7 @@ import {
   type ChatSettings,
   type ChatSubchannel,
   DEFAULT_CHAT_SETTINGS,
-  queueFrom,
+  DEFAULT_CHAT_STRATEGY,
   resolveGroup,
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
@@ -554,7 +553,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       strategy: group.strategy,
       subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,
       ringAllAgents: group.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
-      chatStrategy: group.chatStrategy ?? CHAT_STRATEGIES[0]!,
+      chatStrategy: group.chatStrategy ?? DEFAULT_CHAT_STRATEGY,
       links: seedLinks,
     });
     this.initialChannels.set(new Set(group.channels));
@@ -1007,7 +1006,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.router.navigateByUrl('/admin/grupos');
   }
 
-  /** Lo que hay en el formulario hasta que `ngOnInit` carga el grupo: solo un punto de partida. */
+  /** El ALTA, y el punto de partida hasta que `ngOnInit` carga el grupo al editar: los valores por defecto de Grupos,
+   *  con Teléfono marcado. */
   private emptyForm(): FormState {
     const defaults = this.defaultsStore.defaults();
     return {
@@ -1020,15 +1020,15 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelIds: new Set<number>(),
       announcements: { ...DEFAULT_ANNOUNCEMENTS, voice: defaults.voice },
       advanced: { ...defaults.advanced },
-      // Los dos canales nacen con la cola de los valores por defecto de Grupos.
-      phoneQueue: queueFrom({ ...DEFAULT_ADVANCED, ...defaults.advanced }),
-      chatQueue: queueFrom({ ...DEFAULT_ADVANCED, ...defaults.advanced }),
-      chat: DEFAULT_CHAT_SETTINGS,
+      // Cada canal nace con SU cola, su estrategia y (Chat) su cierre por inactividad de los valores por defecto.
+      phoneQueue: { ...defaults.phoneQueue },
+      chatQueue: { ...defaults.chatQueue },
+      chat: { ...DEFAULT_CHAT_SETTINGS, ...defaults.chat },
       channels: new Set<GroupChannel>(['phone']),
       strategy: defaults.strategy,
       subStrategy: SUB_STRATEGIES[0]!,
       ringAllAgents: RING_ALL_OPTIONS[0]!,
-      chatStrategy: CHAT_STRATEGIES[0]!,
+      chatStrategy: defaults.chatStrategy,
       links: [],
     };
   }

@@ -19,13 +19,6 @@
   margin-block-end: var(--sc-spacing-1);
 }
 
-/* El título de un bloque de canal lleva su glifo, el mismo de las listas. */
-.channel-title {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-}
-
 /* Las partes de un canal (Distribución, Cola, Mensajes en cola, Web Chat · acceso…): un rótulo
  * pequeño, no un título más. El bloque es el canal; esto son sus tramos. */
 .channel-part {

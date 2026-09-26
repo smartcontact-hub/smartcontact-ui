@@ -136,3 +136,33 @@ test('quitar un canal del grupo dice cuántos lo pierden y cuántos salen, y al 
   await irA(page, 'Agentes');
   await expect(page.getByText('Sin agentes asignados')).toBeVisible();
 });
+
+/* La lista de agentes dice por dónde atiende cada uno con la MISMA regla que la ficha del grupo: los canales de un
+ * enlace, recortados a los que su grupo ofrece hoy. En el seed, el agente 18 guarda Email en «Exclusivo», que solo
+ * tiene Teléfono, y en «ACD demo cuscare», que sí tiene Email, solo Teléfono: la lista le pintaba un Email que no
+ * atiende en ningún grupo (medido el 2026-09-26). */
+test('la lista de agentes no pinta un canal que ninguno de sus grupos ofrece', async ({ page }) => {
+  await goto(page, 'admin/agentes');
+  const fila = page.locator('tbody tr', { hasText: 'Marta Recio' });
+  await expect(fila.locator('.sc-channel-row__item[data-channel="phone"]')).toHaveCount(1);
+  await expect(fila.locator('.sc-channel-row__item[data-channel="email"]')).toHaveCount(0);
+});
+
+/* Los iconos de canal de la lista de agentes se anuncian con el MISMO nombre que en la lista de grupos y en las
+ * fichas. Tenían sus propias claves, que decían «Chat» y no tenían WhatsApp: su icono se anunciaba como la clave
+ * cruda. En el seed nadie tiene WhatsApp, así que se le da a uno desde el panel rápido (medido el 2026-09-26). */
+test('la lista de agentes anuncia cada canal por su nombre, WhatsApp incluido', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  await page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' }).click();
+  const panel = page.locator('.agents-panel');
+  const casilla = panel.locator('tbody tr').first().getByRole('checkbox', { name: / — WhatsApp$/ });
+  const nombre = (await casilla.getAttribute('aria-label'))!.split(' — ')[0]!;
+  await casilla.click();
+  await panel.getByRole('button', { name: 'Guardar (1)' }).click();
+  await expect(panel).toHaveCount(0);
+
+  await goto(page, 'admin/agentes');
+  const fila = page.locator('tbody tr', { hasText: nombre });
+  await expect(fila.getByRole('img', { name: 'WhatsApp', exact: true })).toHaveCount(1);
+  await expect(fila.getByRole('img', { name: 'Teléfono', exact: true })).toHaveCount(1);
+});

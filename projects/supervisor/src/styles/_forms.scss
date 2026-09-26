@@ -94,6 +94,15 @@
   }
 }
 
+/* El título de un bloque de canal lleva su glifo, el mismo de las listas. Aquí y no en una hoja de pantalla
+ * porque lo usan dos: la ficha de grupo y sus valores por defecto, que hablan de lo mismo con las mismas
+ * palabras (DD-121). */
+.channel-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
 
 /* ------------------------------------------------------------------ *
  * Form grid — 2-column layout shared across every form page.

@@ -80,8 +80,9 @@
   </span>
 </ng-template>
 
+<!-- El saliente es del canal Teléfono: un grupo sin él lo guarda y no lo usa, como su ficha, que no lo pinta. -->
 <ng-template #phoneTpl let-group>
-  <span class="table__cell sc-text-body-regular">{{ group.phone }}</span>
+  <span class="table__cell sc-text-body-regular">{{ hasPhone(group) ? group.phone : '—' }}</span>
 </ng-template>
 
 <ng-template #channelsTpl let-group>
@@ -102,8 +103,21 @@
   <sc-tag [severity]="priorityTone(group.priority)" [value]="priorityLabelKey(group.priority) | translate" />
 </ng-template>
 
+<!-- Una estrategia por familia de canales, como en la ficha; «—» si el grupo no tiene ese canal. -->
 <ng-template #strategyTpl let-group>
-  <sc-tag severity="secondary" [value]="group.strategy" />
+  @if (phoneStrategy(group); as strategy) {
+    <sc-tag severity="secondary" [value]="strategy" />
+  } @else {
+    <span class="table__cell sc-text-body-regular">—</span>
+  }
+</ng-template>
+
+<ng-template #chatStrategyTpl let-group>
+  @if (chatStrategy(group); as strategy) {
+    <sc-tag severity="secondary" [value]="strategy" />
+  } @else {
+    <span class="table__cell sc-text-body-regular">—</span>
+  }
 </ng-template>
 
 <!-- Solo lectura. Cuántos servicios, como «Agentes»; el desplegable enseña sus teléfonos y nada más. -->
@@ -161,7 +175,7 @@
 <sc-impact-preview-dialog
   [visible]="!!pendingBulkEdit()"
   [mode]="'bulkEdit'"
-  [title]="'groups.bulk_edit_title' | translate: { count: selectedIds().size }"
+  [title]="'groups.bulk_edit_title' | translate: { count: impactItems().length }"
   [items]="impactItems()"
   [badge]="impactBadge()"
   (cancelled)="onBulkPreviewCancel()"

@@ -47,8 +47,10 @@ import {
   PHONE_STRATEGIES,
   UNAVAILABLE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
+  chatStrategyOf,
   duplicateGroupDraft,
-  newGroupDraft,
+  phoneStrategyOf,
+  priorityRank,
 } from '../data/groups-data';
 import { GroupBulkField, GroupsStore } from '../state/groups.store';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
@@ -70,7 +72,9 @@ interface PendingBulkEdit {
  * and when `code` started shipping hidden by default. */
 /* v3 (2026-09-16): columna nueva (Servicios). Una lista guardada no la conoce y no saldría nunca. */
 /* v4 (2026-09-24): el ID pasa detrás del nombre. Una lista guardada lo seguiría poniendo el primero. */
-const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
+/* v5 (2026-09-26): la estrategia se parte en la de Teléfono y la de Chat. El selector añade una columna
+ * nueva AL FINAL de lo guardado: la de Chat saldría detrás del botón «Agentes». */
+const COLUMN_PREF_KEY = 'sc-groups-columns-v5';
 
 @Component({
   selector: 'sc-groups-list-page',
@@ -160,7 +164,9 @@ export class GroupsListPageComponent {
       { key: 'phone', label: this.translate.instant('groups.table.phone') },
       { key: 'channels', label: this.translate.instant('groups.table.channels') },
       { key: 'priority', label: this.translate.instant('groups.table.priority') },
-      { key: 'strategy', label: this.translate.instant('groups.table.strategy') },
+      // Una columna por familia de canales, como la ficha: cada una se ordena, se edita en bloque y se exporta sola.
+      { key: 'strategy', label: this.translate.instant('groups.table.strategy_phone') },
+      { key: 'chatStrategy', label: this.translate.instant('groups.table.strategy_chat') },
       { key: 'services', label: this.translate.instant('groups.table.services') },
       { key: 'agents', label: this.translate.instant('groups.table.agents') },
       // El panel rápido de agentes: fijo, porque es la tarea más frecuente de la lista.
@@ -181,22 +187,53 @@ export class GroupsListPageComponent {
       },
       {
         key: 'strategy',
-        label: this.translate.instant('groups.table.strategy'),
+        label: this.translate.instant('groups.table.strategy_phone'),
         // Skills no se puede elegir todavía (SISMAC-1975): tampoco en bloque.
-        values: [...PHONE_STRATEGIES.filter((s) => !UNAVAILABLE_STRATEGIES.has(s)), ...CHAT_STRATEGIES].map((s) => ({ value: s, label: s })),
+        values: PHONE_STRATEGIES.filter((s) => !UNAVAILABLE_STRATEGIES.has(s)).map((s) => ({ value: s, label: s })),
+      },
+      {
+        // Hasta el 2026-09-26 las de chat iban en la lista de «Estrategia» y se escribían en la de TELÉFONO.
+        key: 'chatStrategy',
+        label: this.translate.instant('groups.table.strategy_chat'),
+        values: CHAT_STRATEGIES.map((s) => ({ value: s, label: s })),
       },
     ];
   });
 
+  /** El valor de un campo del lote en un grupo; `null` si el grupo no tiene ese canal (y el cambio no le aplica). */
+  private bulkValueOf(group: Group, field: GroupBulkField): string | null {
+    switch (field) {
+      case 'priority':
+        return group.priority;
+      case 'strategy':
+        return phoneStrategyOf(group);
+      case 'chatStrategy':
+        return chatStrategyOf(group);
+      default:
+        return null;
+    }
+  }
+
+  /** A qué grupos de la selección se les puede aplicar el lote: una estrategia, solo a los que tienen su canal. */
+  private appliesTo(group: Group, field: GroupBulkField): boolean {
+    return field === 'priority' || this.bulkValueOf(group, field) !== null;
+  }
+
   /**
    * Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): cualquier campo de texto de la tabla, con
    * la prioridad en el idioma de la pantalla (2026-09-24). Los canales son iconos, y los servicios y agentes
-   * solo salen al pasar el ratón: casaría una fila sin que se viera por qué.
+   * solo salen al pasar el ratón: casaría una fila sin que se viera por qué. Por lo mismo, el teléfono y cada
+   * estrategia cuentan solo si el grupo tiene ese canal: si no, su celda dice «—».
    */
   protected readonly matchesSearch = (g: Group, q: string): boolean =>
-    [g.name, g.code, g.phone, g.strategy, this.translate.instant(this.priorityKeys[g.priority])].some(
-      (value) => value?.toLowerCase().includes(q) ?? false,
-    );
+    [
+      g.name,
+      g.code,
+      this.hasPhone(g) ? g.phone : null,
+      phoneStrategyOf(g),
+      chatStrategyOf(g),
+      this.translate.instant(this.priorityKeys[g.priority]),
+    ].some((value) => value?.toLowerCase().includes(q) ?? false);
 
   /* El orden lo resuelve ESTA página y no la tabla: `agents` es un contador DERIVADO de `linksStore` (no hay
    * `row.agents`) y `name` compara con locale 'es'. Devuelve el orden ascendente; la dirección la pone la lista. */
@@ -207,11 +244,13 @@ export class GroupsListPageComponent {
       case 'code':
         return a.code.localeCompare(b.code);
       case 'priority':
-        return a.priority.localeCompare(b.priority);
+        return priorityRank(a.priority) - priorityRank(b.priority);
       case 'agents':
         return this.assignedCountForGroup(a.id) - this.assignedCountForGroup(b.id);
       case 'strategy':
-        return a.strategy.localeCompare(b.strategy);
+        return (phoneStrategyOf(a) ?? '').localeCompare(phoneStrategyOf(b) ?? '', 'es');
+      case 'chatStrategy':
+        return (chatStrategyOf(a) ?? '').localeCompare(chatStrategyOf(b) ?? '', 'es');
       default:
         return 0;
     }
@@ -234,6 +273,7 @@ export class GroupsListPageComponent {
   private readonly channelsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('channelsTpl');
   private readonly priorityTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('priorityTpl');
   private readonly strategyTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('strategyTpl');
+  private readonly chatStrategyTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('chatStrategyTpl');
   private readonly servicesTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('servicesTpl');
   private readonly agentsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('agentsTpl');
   private readonly assignTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('assignTpl');
@@ -280,10 +320,17 @@ export class GroupsListPageComponent {
       },
       {
         field: 'strategy',
-        header: this.translate.instant('groups.table.strategy'),
+        header: this.translate.instant('groups.table.strategy_phone'),
         sortable: true,
         cellTemplate: this.strategyTpl(),
         /* «Más tiempo inactivo» mide 118 px de etiqueta y con 9.5rem le quedaban 114: se cortaba (2026-09-24). */
+        width: '9.75rem',
+      },
+      {
+        field: 'chatStrategy',
+        header: this.translate.instant('groups.table.strategy_chat'),
+        sortable: true,
+        cellTemplate: this.chatStrategyTpl(),
         width: '9.75rem',
       },
       {
@@ -330,14 +377,17 @@ export class GroupsListPageComponent {
     plural: 'common.bulk.entity.group_plural',
   });
 
+  /** Los grupos a los que llega el lote: los elegidos, y de ellos, los que tienen el canal de esa estrategia. */
   protected readonly impactItems = computed<readonly ImpactItem[]>(() => {
+    this.lang();
     const ids = this.selectedIds();
+    const field = this.pendingBulkEdit()?.field;
     return this.groups()
-      .filter((g) => ids.has(g.id))
+      .filter((g) => ids.has(g.id) && (!field || this.appliesTo(g, field)))
       .map((g) => ({
         id: g.id,
         name: g.name,
-        hint: `(${this.assignedCountForGroup(g.id)} agentes)`,
+        hint: `(${this.translate.instant('groups.table.agents_count', { count: this.assignedCountForGroup(g.id) })})`,
       }));
   });
 
@@ -357,6 +407,18 @@ export class GroupsListPageComponent {
 
   protected priorityLabelKey(priority: GroupPriority): string {
     return this.priorityKeys[priority];
+  }
+
+  protected hasPhone(group: Group): boolean {
+    return group.channels.includes('phone');
+  }
+
+  protected phoneStrategy(group: Group): string | null {
+    return phoneStrategyOf(group);
+  }
+
+  protected chatStrategy(group: Group): string | null {
+    return chatStrategyOf(group);
   }
 
   /** Severidad del `sc-tag` de prioridad (DD-76): el vocabulario del DS, no tonos propios. */
@@ -420,16 +482,12 @@ export class GroupsListPageComponent {
    */
   protected onCreateConfirm(submission: GroupCreateSubmission): void {
     const source = this.duplicateSource();
-    const draft = source
-      ? duplicateGroupDraft(source, submission)
-      : newGroupDraft(this.defaultsStore.defaults(), submission);
-    const created = this.groupsStore.addGroup(draft);
-    if (source) {
-      this.linksStore.replaceLinksForGroup(
-        created.id,
-        this.linksStore.linksForGroup(source.id).map((l) => ({ ...l, groupId: created.id })),
-      );
-    }
+    if (!source) return;
+    const created = this.groupsStore.addGroup(duplicateGroupDraft(source, submission));
+    this.linksStore.replaceLinksForGroup(
+      created.id,
+      this.linksStore.linksForGroup(source.id).map((l) => ({ ...l, groupId: created.id })),
+    );
     this.createOpen.set(false);
     this.messages.add({
       severity: 'success',
@@ -512,14 +570,25 @@ export class GroupsListPageComponent {
 
   /** «de Baja»: la selección pasa a ser todos los grupos que están en Baja. */
   protected onBulkMatch(match: BulkEditMatch): void {
-    const key = match.fieldKey as 'priority' | 'strategy';
+    const field = match.fieldKey as GroupBulkField;
     const ids = this.groups()
-      .filter((g) => g[key] === match.value)
+      .filter((g) => this.bulkValueOf(g, field) === match.value)
       .map((g) => g.id);
     this.selectedIds.set(new Set(ids));
   }
 
   protected onBulkEditCommit(commit: BulkEditCommit): void {
+    const field = commit.fieldKey as GroupBulkField;
+    const ids = this.selectedIds();
+    // Ninguno de los elegidos tiene el canal de esa estrategia: se dice, y no se abre una vista previa vacía.
+    if (!this.groups().some((g) => ids.has(g.id) && this.appliesTo(g, field))) {
+      this.messages.add({
+        severity: 'warn',
+        summary: this.translate.instant('groups.bulk_edit_none', { field: commit.fieldLabel }),
+        life: TOAST_LIFE.warn,
+      });
+      return;
+    }
     this.pendingBulkEdit.set({
       field: commit.fieldKey as GroupBulkField,
       fieldLabel: commit.fieldLabel,
@@ -602,7 +671,8 @@ export class GroupsListPageComponent {
       this.translate.instant('groups.export.name'),
       this.translate.instant('groups.export.phone'),
       this.translate.instant('groups.export.priority'),
-      this.translate.instant('groups.export.strategy'),
+      this.translate.instant('groups.export.strategy_phone'),
+      this.translate.instant('groups.export.strategy_chat'),
       this.translate.instant('groups.export.channels'),
       this.translate.instant('groups.export.services'),
       this.translate.instant('groups.export.agent_count'),
@@ -610,9 +680,10 @@ export class GroupsListPageComponent {
     const rows = visibleRows.map((g) => [
       g.code,
       g.name,
-      g.phone,
+      this.hasPhone(g) ? g.phone : '',
       this.translate.instant(this.priorityKeys[g.priority]),
-      g.strategy,
+      phoneStrategyOf(g) ?? '',
+      chatStrategyOf(g) ?? '',
       g.channels.map((c) => this.translate.instant(this.channelKeys[c])).join(', '),
       (g.services ?? []).join(', '),
       this.assignedCountForGroup(g.id),

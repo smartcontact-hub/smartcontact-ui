@@ -1452,7 +1452,6 @@
       "phone": "Phone",
       "channels": "Channels",
       "priority": "Priority",
-      "strategy": "Strategy",
       "services": "Services",
       "agents": "Agents",
       "agents_count": "{{count}} agents",
@@ -1460,7 +1459,9 @@
       "services_count_one": "1 service",
       "assign": "Agents",
       "assign_aria": "Assign agents to {{name}}",
-      "assign_column": "Assign agents"
+      "assign_column": "Assign agents",
+      "strategy_phone": "Phone strategy",
+      "strategy_chat": "Chat strategy"
     },
     "priority": {
       "low": "Low",
@@ -1489,7 +1490,6 @@
         "distribution": "Distribution and queues",
         "channels_agents": "Channels and agents",
         "resources": "Resources",
-        "announcements": "Announcements and audio",
         "announcements_needs_phone": "Phone channel only: this is what callers hear while they wait.",
         "advanced": "Advanced",
         "general": "General",
@@ -1598,7 +1598,6 @@
       },
       "advanced": {
         "defaults_hint": "Starts with the group defaults.",
-        "queue_title": "Queue and times",
         "queue_size": "Queue size",
         "queue_fixed": "Fixed",
         "queue_per_agent": "Per connected agent",
@@ -1693,9 +1692,7 @@
       "breadcrumb": "Defaults",
       "button": "Defaults",
       "hint": "Every new group starts with these. You can change them later in the group.",
-      "routing_title": "Distribution",
       "strategy_hint": "Levels, Ring All, Skills and Exclusive agent are chosen in each group, where they are set up.",
-      "card_opening_type": "Type",
       "toast_saved": "Defaults saved"
     },
     "errors": {
@@ -1722,11 +1719,12 @@
       "name": "Name",
       "phone": "Phone",
       "priority": "Priority",
-      "strategy": "Strategy",
       "services": "Services",
       "channels": "Channels",
       "agent_count": "Nº agents",
-      "sheet": "Groups"
+      "sheet": "Groups",
+      "strategy_phone": "Phone strategy",
+      "strategy_chat": "Chat strategy"
     },
     "rename_placeholder": "Group name",
     "rename_aria": "Rename {{name}}",
@@ -1737,7 +1735,8 @@
       "unsaved": "Unsaved: {{count}}",
       "save_count": "Save ({{count}})",
       "saved": "Agents of \"{{name}}\" updated"
-    }
+    },
+    "bulk_edit_none": "{{field}}: none of the selected groups has that channel"
   },
   "agents": {
     "page_title": "Agents",
@@ -1762,11 +1761,6 @@
       "cuscare": "CusCare",
       "cuscare_carrier": "CusCare Carrier",
       "admin_cuscare": "Admin CusCare"
-    },
-    "channel": {
-      "phone": "Phone",
-      "chat": "Chat",
-      "email": "Email"
     },
     "ext": {
       "phone": "Tel",

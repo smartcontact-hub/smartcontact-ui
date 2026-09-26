@@ -53,11 +53,11 @@
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | — |
 | `sc-command-palette` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | primeng/table | 32 inputs | — | ✓ | 13 |
+| `sc-datatable` | EXTENDED | primeng/table | 33 inputs | — | ✓ | 13 |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 11 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 17 |
-| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 35 |
+| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 36 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 10 inputs | — | ✓ | 2 |
 | `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 16 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
@@ -69,7 +69,7 @@
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
 | `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | ✓ | 4 |
 | `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
-| `sc-inputnumber` | EXTENDED | primeng/inputtext | 16 inputs | sc-field-label sc-field-msg | ✓ | 22 |
+| `sc-inputnumber` | EXTENDED | primeng/inputtext | 16 inputs | sc-field-label sc-field-msg | ✓ | 23 |
 | `sc-inputtext` | EXTENDED | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 36 |
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 5 |
@@ -84,16 +84,16 @@
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 9 |
 | `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 21 |
-| `sc-select` | EXTENDED | primeng/select | 28 inputs | sc-field-label sc-field-msg | ✓ | 43 |
+| `sc-select` | EXTENDED | primeng/select | 28 inputs | sc-field-label sc-field-msg | ✓ | 44 |
 | `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 11 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 2 |
 | `sc-subsection` | CUSTOM | — | 4 inputs | — | ✓ | — |
-| `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 32 |
+| `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 33 |
 | `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | 8 |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
-| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 30 |
+| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 32 |
 <!-- @audit:components:end -->
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)
