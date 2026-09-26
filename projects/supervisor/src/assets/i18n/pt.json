@@ -1500,19 +1500,18 @@
         "empty": "Escolha-os em «Adicionar agentes», no canto superior direito.",
         "no_results": "Nenhum agente atribuído corresponde ao filtro.",
         "col_agent": "Agente",
-        "col_active": "Habilitado",
         "toggle_all_channel": "Ativar/desativar {{channel}} em todos os visíveis",
-        "active_aria": "{{name}} habilitado neste grupo",
         "remove_aria": "Remover {{name}} do grupo",
         "warn_no_channels": "Habilitado, mas sem canais atribuídos",
         "add_placeholder": "Adicionar agentes…",
         "add_aria": "Adicionar agente ao grupo",
         "no_channels_warn": "{{count}} sem canal",
-        "bulk_resume": "Habilitar",
-        "bulk_pause": "Desabilitar",
         "bulk_unassign": "Remover do grupo",
         "col_level": "Nível",
-        "level_aria": "Nível de {{name}}"
+        "level_aria": "Nível de {{name}}",
+        "paused": "Em pausa",
+        "last_channel_hint": "Tem de atender pelo menos um canal. Para o tirar do grupo, «Remover do grupo».",
+        "last_channel_aria": "{{name}} — {{channel}}: único canal; para o tirar do grupo, «Remover do grupo»"
       },
       "fields": {
         "name": "Nome",
@@ -1546,8 +1545,9 @@
       "remove_agent": "Remover agente",
       "cascade": {
         "title": "Você vai remover canais",
-        "body": "Isto desativará {{channels}} para {{count}} agentes atribuídos a este grupo. Continuar?",
-        "confirm": "Sim, remover"
+        "body": "{{count}} agentes deste grupo perdem {{channels}}. Continuar?",
+        "confirm": "Sim, remover",
+        "body_orphaned": "{{count}} agentes deste grupo perdem {{channels}}, e {{orphaned}} ficam sem nenhum canal e saem do grupo. Continuar?"
       },
       "danger_zone_description": "Eliminar este grupo o retira das regras e rotas que o referenciam. A ação não pode ser desfeita.",
       "duplicate_title": "Duplicar grupo",

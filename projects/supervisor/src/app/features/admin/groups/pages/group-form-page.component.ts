@@ -302,7 +302,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly initialLinks = signal<readonly GroupAgentLink[]>([]);
   protected readonly cascadeConfirm = signal<{
     readonly removed: readonly GroupChannel[];
+    /** Los que pierden algún canal. */
     readonly affected: number;
+    /** De ellos, los que se quedan sin ninguno: salen del grupo al guardar. */
+    readonly orphaned: number;
   } | null>(null);
 
   /** Dirty-state por CAMBIO NETO (snapshot vs pristine): Guardar refleja si hay
@@ -458,7 +461,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     }
     this.editingId.set(group.id);
     this.initial.set(group);
-    const seedLinks = this.linksStore.linksForGroup(group.id);
+    /* Cada agente, con los canales que el grupo OFRECE: un enlace puede traer uno que el grupo ya no tiene
+     * (datos de antes: en el seed, un Web Chat en un grupo solo de Teléfono). Sin recortarlo al leer, ese
+     * canal fantasma revivía en cuanto el grupo volvía a ofrecerlo, y la confirmación de quitar canales
+     * contaba mal a quién saca del grupo. */
+    const seedLinks = clampLinksToChannels(this.linksStore.linksForGroup(group.id), group.channels);
     // La única vía de lectura: lo que el grupo no guardó sale de su juego de antes o de fábrica.
     const g = resolveGroup(group);
     this.form.set({
@@ -784,7 +791,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       if (removed.length > 0) {
         const { affected } = channelRemovalImpact(this.initialLinks(), removed);
         if (affected > 0) {
-          this.cascadeConfirm.set({ removed, affected });
+          // Los que salen, con LA MISMA regla que los saca al guardar: la cifra dice lo que va a pasar.
+          const orphaned = this.form().links.length - this.withoutOrphans(this.form().links).length;
+          this.cascadeConfirm.set({ removed, affected, orphaned });
           return;
         }
       }
@@ -817,7 +826,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       // Como Contact Center y la ficha de agente (decisión de producto, 2026-09-16): guardar se queda en la ficha, con su aviso.
       const editingId = this.editingId()!;
       this.groupsStore.updateGroup(editingId, { ...payload });
-      this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(f.links, editingId));
+      this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(this.withoutOrphans(f.links), editingId));
       const refreshed = this.groupsStore.getGroup(editingId);
       if (refreshed) this.initial.set(refreshed);
       this.messages.add({
@@ -903,6 +912,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       chatStrategy: CHAT_STRATEGIES[0]!,
       links: [],
     };
+  }
+
+  /**
+   * Un agente asignado tiene al menos un canal (DD-121): quien se queda sin ninguno porque se quitaron
+   * canales del grupo SALE del grupo al guardar, y la confirmación de cascada lo ha dicho con su cifra.
+   * Las filas que YA se cargaron sin canales (datos de antes, o la ficha del agente, que deja
+   * quitarlos todos) se quedan como estaban: la tabla las marca «Sin canales».
+   */
+  private withoutOrphans(links: readonly GroupAgentLink[]): readonly GroupAgentLink[] {
+    const loadedEmpty = new Set(this.initialLinks().filter((l) => l.channels.length === 0).map((l) => l.agentId));
+    return links.filter((l) => l.channels.length > 0 || loadedEmpty.has(l.agentId));
   }
 
   /** Ensure every link points to the right groupId before persistence. */

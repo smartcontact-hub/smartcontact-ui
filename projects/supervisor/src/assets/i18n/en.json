@@ -1500,19 +1500,18 @@
         "empty": "Pick them in \"Add agents\", top right.",
         "no_results": "No assigned agents match the filter.",
         "col_agent": "Agent",
-        "col_active": "Enabled",
         "toggle_all_channel": "Toggle {{channel}} on all visible",
-        "active_aria": "{{name}} enabled in this group",
         "remove_aria": "Remove {{name}} from group",
         "warn_no_channels": "Enabled, but has no channels assigned",
         "add_placeholder": "Add agents…",
         "add_aria": "Add agent to the group",
         "no_channels_warn": "{{count}} with no channel",
-        "bulk_resume": "Enable",
-        "bulk_pause": "Disable",
         "bulk_unassign": "Remove from group",
         "col_level": "Level",
-        "level_aria": "Level for {{name}}"
+        "level_aria": "Level for {{name}}",
+        "paused": "Paused",
+        "last_channel_hint": "They must handle at least one channel. To take them out of the group, use «Remove from group».",
+        "last_channel_aria": "{{name}} — {{channel}}: only channel; to take them out of the group, «Remove from group»"
       },
       "fields": {
         "name": "Name",
@@ -1546,8 +1545,9 @@
       "remove_agent": "Remove agent",
       "cascade": {
         "title": "You are about to remove channels",
-        "body": "This will deactivate {{channels}} for {{count}} agents assigned to this group. Continue?",
-        "confirm": "Yes, remove"
+        "body": "{{count}} agents in this group lose {{channels}}. Continue?",
+        "confirm": "Yes, remove",
+        "body_orphaned": "{{count}} agents in this group lose {{channels}}, and {{orphaned}} are left with no channel and leave the group. Continue?"
       },
       "danger_zone_description": "Deleting this group removes it from the rules and routes that reference it. The action cannot be undone.",
       "duplicate_title": "Duplicate group",

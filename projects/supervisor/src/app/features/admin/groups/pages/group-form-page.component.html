@@ -592,11 +592,12 @@
     [visible]="true"
     [title]="'groups.form.cascade.title' | translate"
     [subtitle]="
-      'groups.form.cascade.body'
+      (c.orphaned > 0 ? 'groups.form.cascade.body_orphaned' : 'groups.form.cascade.body')
         | translate
           : {
               channels: c.removed.map(channelLabel.bind(this)).join(', '),
               count: c.affected,
+              orphaned: c.orphaned,
             }
     "
     (cancelled)="cancelCascade()"

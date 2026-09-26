@@ -55,6 +55,11 @@
     color: var(--sc-text-disabled);
   }
 
+  /* La envoltura del último canal: da al tooltip un sitio que sí recibe el ratón. */
+  &__locked {
+    display: inline-flex;
+  }
+
   /* Con filas elegidas, la barra de acciones en lote flota sobre el pie: se reserva su alto
    * para que no tape la última fila al llegar abajo. */
   &--bulk {

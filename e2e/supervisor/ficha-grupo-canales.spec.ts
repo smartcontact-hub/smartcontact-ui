@@ -79,3 +79,60 @@ test('sin Teléfono, su bloque se va de Distribución y deja la línea que dice 
   await expect(page.locator('#group-section-distribution')).toContainText('Teléfono no está activo · actívalo en General');
   await expect(page.locator('sc-form-section-nav .form-nav__item')).toHaveCount(4);
 });
+
+/* LA TABLA DE AGENTES DEL GRUPO GESTIONA COMPOSICIÓN (visión de producto de grupos, 2026-09-25;
+ * DD-121): quién está y por qué canales. La pausa es de la persona y se cambia en su ficha. */
+test('la vista del grupo no pausa: sin «Habilitado» ni su lote, y la pausa se ve como etiqueta', async ({ page }) => {
+  // El 12 («Reclamaciones») tiene un agente en pausa en el seed, con Teléfono y Web Chat.
+  await goto(page, 'admin/grupos/editar/12');
+  await irA(page, 'Agentes');
+  await expect(page.getByRole('columnheader', { name: 'Habilitado' })).toHaveCount(0);
+
+  const enPausa = page.locator('.assign tbody tr').filter({ has: page.locator('sc-tag', { hasText: 'En pausa' }) });
+  await expect(enPausa).toHaveCount(1);
+  // Sus canales se siguen tocando: la pausa no los apaga aquí.
+  await expect(enPausa.getByRole('checkbox', { name: /WhatsApp/ })).toBeEnabled();
+
+  // En lote, solo «Quitar del grupo».
+  await page.locator('.assign tbody tr').first().locator('td').first().locator('input[type=checkbox]').first().click();
+  const barra = page.locator('sc-bulk-action-bar');
+  await expect(barra.getByRole('button', { name: 'Quitar del grupo' })).toBeVisible();
+  await expect(barra.getByRole('button', { name: /Habilitar|Deshabilitar/ })).toHaveCount(0);
+});
+
+test('un agente asignado tiene al menos un canal: la casilla del último está apagada y dice por qué', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/1');
+  await canal(page, 'Web Chat').click();
+  await irA(page, 'Agentes');
+
+  const fila = page.locator('.assign tbody tr').first();
+  const telefono = fila.getByRole('checkbox', { name: /Teléfono/ });
+  const webChat = fila.getByRole('checkbox', { name: /Web Chat/ });
+  // Solo Teléfono: es su último canal, no se desmarca aquí.
+  await expect(telefono).toBeDisabled();
+  await expect(telefono).toHaveAccessibleName(/único canal/);
+
+  // Con Web Chat, Teléfono se puede quitar, y entonces el último es Web Chat.
+  await webChat.click();
+  await expect(telefono).toBeEnabled();
+  await telefono.click();
+  await expect(telefono).toHaveAttribute('aria-checked', 'false');
+  await expect(webChat).toBeDisabled();
+});
+
+test('quitar un canal del grupo dice cuántos lo pierden y cuántos salen, y al guardar salen', async ({ page }) => {
+  // El 1 es solo de Teléfono: al cambiarlo por Web Chat, sus agentes se quedan sin ningún canal.
+  await goto(page, 'admin/grupos/editar/1');
+  await canal(page, 'Web Chat').click();
+  await canal(page, 'Teléfono').click();
+  await page.getByRole('button', { name: 'Guardar' }).click();
+
+  const dialogo = page.getByRole('dialog', { name: 'Vas a quitar canales' });
+  await expect(dialogo).toContainText(/(\d+) agentes de este grupo pierden Teléfono, y \1 se quedan sin ningún canal y salen del grupo/);
+  await dialogo.getByRole('button', { name: 'Sí, quitar' }).click();
+  await expect(page.getByText('Grupo "ACD Demo C2CB" actualizado')).toBeVisible();
+
+  await page.reload();
+  await irA(page, 'Agentes');
+  await expect(page.getByText('Sin agentes asignados')).toBeVisible();
+});

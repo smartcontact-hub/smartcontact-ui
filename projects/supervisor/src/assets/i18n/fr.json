@@ -1500,19 +1500,18 @@
         "empty": "Choisissez-les dans « Ajouter des agents », en haut à droite.",
         "no_results": "Aucun agent assigné ne correspond au filtre.",
         "col_agent": "Agent",
-        "col_active": "Activé",
         "toggle_all_channel": "Activer/désactiver {{channel}} sur tous les visibles",
-        "active_aria": "{{name}} activé dans ce groupe",
         "remove_aria": "Retirer {{name}} du groupe",
         "warn_no_channels": "Activé, mais sans canal assigné",
         "add_placeholder": "Ajouter des agents…",
         "add_aria": "Ajouter un agent au groupe",
         "no_channels_warn": "{{count}} sans canal",
-        "bulk_resume": "Activer",
-        "bulk_pause": "Désactiver",
         "bulk_unassign": "Retirer du groupe",
         "col_level": "Niveau",
-        "level_aria": "Niveau de {{name}}"
+        "level_aria": "Niveau de {{name}}",
+        "paused": "En pause",
+        "last_channel_hint": "Il doit traiter au moins un canal. Pour le sortir du groupe, « Retirer du groupe ».",
+        "last_channel_aria": "{{name}} — {{channel}} : seul canal ; pour le sortir du groupe, « Retirer du groupe »"
       },
       "fields": {
         "name": "Nom",
@@ -1546,8 +1545,9 @@
       "remove_agent": "Retirer un agent",
       "cascade": {
         "title": "Vous allez retirer des canaux",
-        "body": "Cela désactivera {{channels}} pour {{count}} agents assignés à ce groupe. Continuer ?",
-        "confirm": "Oui, retirer"
+        "body": "{{count}} agents de ce groupe perdent {{channels}}. Continuer ?",
+        "confirm": "Oui, retirer",
+        "body_orphaned": "{{count}} agents de ce groupe perdent {{channels}}, et {{orphaned}} n'ont plus aucun canal et quittent le groupe. Continuer ?"
       },
       "danger_zone_description": "Supprimer ce groupe le retire des règles et routes qui le référencent. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer le groupe",
