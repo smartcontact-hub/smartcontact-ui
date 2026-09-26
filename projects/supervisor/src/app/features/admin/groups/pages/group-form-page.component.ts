@@ -72,6 +72,11 @@ import { GroupsStore } from '../state/groups.store';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { canonicalizeChannels, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import {
+  channelRemovalImpact,
+  clampLinksToChannels,
+  toggleGroupChannel,
+} from '@features/admin/services/group-channels.core.mjs';
 import { NgTemplateOutlet } from '@angular/common';
 
 import {
@@ -779,16 +784,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected toggleChannel(channel: GroupChannel): void {
     this.form.update((f) => {
-      const next = new Set(f.channels);
-      if (next.has(channel)) next.delete(channel);
-      else next.add(channel);
-      // Clamp every link's channels to the new group offering.
-      const allowed = next;
-      const clampedLinks = f.links.map((l) => {
-        const filtered = l.channels.filter((c) => allowed.has(c));
-        return filtered.length === l.channels.length ? l : { ...l, channels: filtered };
-      });
-      return { ...f, channels: next, links: clampedLinks };
+      const next = toggleGroupChannel(f.channels, channel);
+      // Los canales de cada agente se recortan a los que ofrece ahora el grupo.
+      return { ...f, channels: next, links: clampLinksToChannels(f.links, next) };
     });
   }
 
@@ -846,10 +844,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (!this.cascadeConfirm()) {
       const removed = [...this.initialChannels()].filter((c) => !this.form().channels.has(c));
       if (removed.length > 0) {
-        const removedSet = new Set(removed);
-        const affected = this.initialLinks().filter((l) =>
-          l.channels.some((c) => removedSet.has(c)),
-        ).length;
+        const { affected } = channelRemovalImpact(this.initialLinks(), removed);
         if (affected > 0) {
           this.cascadeConfirm.set({ removed, affected });
           return;

@@ -39,10 +39,10 @@ import {
   LEVEL_OPTIONS,
 } from '@features/admin/groups/data/groups-data';
 import {
-  canonicalizeChannels,
   Channel,
   GroupAgentLink,
 } from '@features/admin/services/group-agent-links.types';
+import { newLinkFor, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
 
 /** Lightweight agent reference accepted by the table. */
 export interface AgentChannelTableAgent {
@@ -289,7 +289,7 @@ export class AgentChannelTableComponent {
     const current = new Set(this.links().map((l) => l.agentId));
     const added: GroupAgentLink[] = [...next]
       .filter((agentId) => !current.has(agentId))
-      .map((agentId) => ({ agentId, groupId: this.groupId(), channels: [...this.groupChannels()], active: true, level: 1 }));
+      .map((agentId) => newLinkFor({ agentId, groupId: this.groupId(), groupChannels: [...this.groupChannels()], level: 1 }));
     this.linksChange.emit([...this.links().filter((l) => next.has(l.agentId)), ...added]);
     this.selectedIds.update((prev) => new Set([...prev].filter((id) => next.has(id))));
   }
@@ -307,16 +307,7 @@ export class AgentChannelTableComponent {
 
   protected toggleChannel(agentId: number, field: string): void {
     const channel = field as Channel;
-    this.linksChange.emit(
-      this.links().map((l) => {
-        if (l.agentId !== agentId) return l;
-        const has = l.channels.includes(channel);
-        const channels = has
-          ? l.channels.filter((c) => c !== channel)
-          : [...l.channels, channel];
-        return { ...l, channels: canonicalizeChannels(channels) };
-      })
-    );
+    this.linksChange.emit(this.links().map((l) => (l.agentId === agentId ? toggleLinkChannel(l, channel) : l)));
   }
 
   protected readonly levelOptions = LEVEL_OPTIONS;
