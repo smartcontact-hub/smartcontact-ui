@@ -1677,6 +1677,10 @@
         "message_on_enter_placeholder": "E.g.: Hi, we'll be right with you.",
         "message_waiting_placeholder": "E.g.: You're still in the queue. Thanks for waiting.",
         "message_no_agents_placeholder": "E.g.: Nobody is available right now. We'll write back as soon as we can."
+      },
+      "resources": {
+        "client_card": "Contact card",
+        "client_card_hint": "What the agent sees on receiving a contact from this group."
       }
     },
     "defaults": {

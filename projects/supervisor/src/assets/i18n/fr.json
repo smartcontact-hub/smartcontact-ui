@@ -1677,6 +1677,10 @@
         "message_on_enter_placeholder": "Ex. : Bonjour, nous sommes à vous tout de suite.",
         "message_waiting_placeholder": "Ex. : Vous êtes toujours dans la file. Merci de patienter.",
         "message_no_agents_placeholder": "Ex. : Personne n'est disponible pour le moment. Nous vous écrirons dès que possible."
+      },
+      "resources": {
+        "client_card": "Fiche client",
+        "client_card_hint": "Celle que l'agent voit en recevant un contact de ce groupe."
       }
     },
     "defaults": {

@@ -532,7 +532,8 @@
                las cuatro secciones es su casa menos mala, y la visión la cuenta entre los recursos (DD-121). -->
           <section class="sub-section" aria-labelledby="group-card-title">
             <header class="sub-section__head">
-              <h3 id="group-card-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.advanced.card_opening' | translate }}</h3>
+              <h3 id="group-card-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.resources.client_card' | translate }}</h3>
+              <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.resources.client_card_hint' | translate }}</p>
             </header>
             <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
             <div class="grid grid--2">

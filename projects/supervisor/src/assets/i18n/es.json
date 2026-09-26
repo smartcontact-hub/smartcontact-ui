@@ -1677,6 +1677,10 @@
         "message_on_enter_placeholder": "Ej.: Hola, te atendemos enseguida.",
         "message_waiting_placeholder": "Ej.: Sigues en la cola. Gracias por esperar.",
         "message_no_agents_placeholder": "Ej.: Ahora no hay nadie disponible. Te escribimos en cuanto podamos."
+      },
+      "resources": {
+        "client_card": "Ficha de cliente",
+        "client_card_hint": "La que ve el agente al recibir un contacto de este grupo."
       }
     },
     "defaults": {
