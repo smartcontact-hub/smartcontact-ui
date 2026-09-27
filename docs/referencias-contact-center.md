@@ -64,7 +64,7 @@
 |---|---|---|
 | La pertenencia agente↔grupo se edita desde el agente, desde el grupo y en masivo | Zendesk, Talkdesk, Intercom | Fichas de agente y de grupo (DD-121); comprobar que el masivo existe en las dos listas |
 | Un grupo principal, o la regla de que todo agente tenga al menos uno | Zendesk, Intercom · Zendesk, Talkdesk | Comparar con «Grupos asignados» de la ficha de agente y su grupo saliente por defecto (`defaultOutboundGroup`) |
-| La capacidad por canal es un NÚMERO, no una casilla | Zendesk, Genesys, Twilio, Freshdesk, Intercom | Hoy casillas por canal; `maxChats` ya existe en el agente |
+| La capacidad por canal es un NÚMERO, no una casilla | Zendesk, Genesys, Twilio, Freshdesk, Intercom | Ya lo es: `maxChats` en la ficha de agente (Avanzado, 4 por defecto). Las casillas por canal del grupo dicen en qué canales atiende, que es pertenencia y no capacidad: no hay nada que copiar |
 | Pocos estados base más un motivo | Zendesk, Talkdesk, Aircall, Freshdesk, Twilio, Intercom | Los estados de Config AED (por defecto + personalizados) ya lo son |
 | Tiempo en el estado actual como columna | Zendesk, Talkdesk, Intercom, Freshcaller, Genesys | La tabla de agentes del Dashboard no lo enseña |
 | Una cifra del monitor lleva a su lista | Genesys, Zendesk, Talkdesk, Aircall | Comprobar si las cifras del Dashboard llevan a su lista (sin verificar) |
