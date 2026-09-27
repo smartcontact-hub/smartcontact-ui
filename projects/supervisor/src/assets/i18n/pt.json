@@ -989,6 +989,7 @@
     },
     "delete_gate": "Eliminar…",
     "no_changes": "Não há alterações para guardar",
+    "unsaved_changes": "Alterações não salvas",
     "actions": "Ações",
     "select_row": "Selecionar {{name}}",
     "select_all": "Selecionar tudo",
@@ -1956,11 +1957,8 @@
       "title": "Contact Center",
       "version": "SmartContact · v2.4.0",
       "servicio_label": "Geral",
-      "servicio_hint": "Definições do serviço",
       "agentes_label": "Agentes",
-      "agentes_hint": "Parâmetros padrão",
-      "grupos_label": "Grupos",
-      "grupos_hint": "Parâmetros padrão"
+      "grupos_label": "Grupos"
     },
     "aed": {
       "title": "Contact Center",

@@ -4,13 +4,14 @@ import {
   computed,
   effect,
   inject,
+  input,
   signal,
   type TemplateRef,
   untracked,
   viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
@@ -19,6 +20,7 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { DirtyAware } from '@core/guards';
+import { SectionLinksService } from '@core/services';
 
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
@@ -157,8 +159,46 @@ export class RuleBuilderPageComponent implements DirtyAware {
    * que deja de irse con el scroll.
    *
    * El tercer paso solo existe para los tipos que analizan con IA, así que su
-   * pestaña aparece y desaparece con `ruleType()` en vez de pintarse apagada. */
-  protected readonly activeSection = signal<string>('rule-section-basic');
+   * pestaña aparece y desaparece con `ruleType()` en vez de pintarse apagada.
+   *
+   * Cada fila del índice es un ENLACE a su sección (`?seccion=`, DD-122): la sección a la vista sale
+   * de la dirección, y Atrás vuelve a la anterior. Sin parámetro, la de aterrizaje (`landing`): al
+   * crear, General; al editar, Alcance, que es lo que se retoca; desde una categoría, Análisis IA,
+   * donde esa categoría se ve. */
+  private static readonly SECTION_SLUGS: Readonly<Record<string, string>> = {
+    general: 'rule-section-basic',
+    alcance: 'rule-section-scope',
+    analisis: 'rule-section-ai',
+  };
+
+  /** `?seccion=` de la dirección (`withComponentInputBinding`), también cuando solo cambia la query. */
+  readonly seccion = input<string | undefined>();
+
+  /**
+   * La sección de aterrizaje. La fija el efecto de carga UNA vez por regla; ese efecto no lee
+   * `seccion()` a propósito: se re-ejecuta con cada cambio del store de reglas y recarga el
+   * formulario, así que si dependiera de la sección cada clic del índice borraría lo editado.
+   */
+  private readonly landing = signal<string>('rule-section-basic');
+
+  protected readonly activeSection = computed<string>(() => {
+    const id = RuleBuilderPageComponent.SECTION_SLUGS[this.seccion() ?? ''];
+    // «analisis» en una regla que no analiza con IA no existe: cae en la de aterrizaje.
+    return id && this.navSections().some((s) => s.id === id) ? id : this.landing();
+  });
+
+  private readonly sectionLinks = inject(SectionLinksService);
+
+  /** La dirección de una sección: la de aterrizaje, sin parámetro (es la dirección de la página). */
+  private sectionTree(id: string): UrlTree {
+    const slug = Object.entries(RuleBuilderPageComponent.SECTION_SLUGS).find(([, v]) => v === id)?.[0] ?? null;
+    return this.sectionLinks.section(this.route, id === this.landing() ? null : slug);
+  }
+
+  /** Ir a otra sección. Al crear, sin rastro en el historial: Atrás sale del alta (DD-122). */
+  protected goTo(id: string): void {
+    void this.sectionLinks.go(this.sectionTree(id), { replace: !this.isEditMode() });
+  }
 
   protected readonly tieneIa = computed(
     () => this.ruleType() === 'transcription' || this.ruleType() === 'classification',
@@ -175,12 +215,10 @@ export class RuleBuilderPageComponent implements DirtyAware {
       labelKey: 'memory.rules.builder.scope',
       icon: 'filter_alt',
     };
-    if (!this.tieneIa()) return [basica, alcance];
-    return [
-      basica,
-      alcance,
-      { id: 'rule-section-ai', labelKey: 'memory.rules.builder.ai_analysis', icon: this.sparklesIcon },
-    ];
+    const secciones: FormNavSection[] = this.tieneIa()
+      ? [basica, alcance, { id: 'rule-section-ai', labelKey: 'memory.rules.builder.ai_analysis', icon: this.sparklesIcon }]
+      : [basica, alcance];
+    return secciones.map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionTree(s.id)) }));
   });
 
   /** Punto rojo en el índice. Solo tras intentar guardar: un formulario recién
@@ -196,6 +234,20 @@ export class RuleBuilderPageComponent implements DirtyAware {
   protected readonly canSave = computed(
     () => !this.nameInvalid() && !this.condBlocking() && (!this.isEditMode() || this.formDirty()),
   );
+
+  /** Las secciones con cambios sin guardar (DD-122), al editar: al crear, todo está por guardar. */
+  protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
+    if (!this.isEditMode()) return new Set<string>();
+    const seccionDe: Readonly<Record<string, string>> = {
+      name: 'rule-section-basic',
+      description: 'rule-section-basic',
+      active: 'rule-section-basic',
+      conditionTree: 'rule-section-scope',
+      aiAnalysis: 'rule-section-ai',
+      categorias: 'rule-section-ai',
+    };
+    return new Set([...this.dirtyState.changedKeys()].map((k) => seccionDe[k]).filter((id): id is string => !!id));
+  });
 
   /* ── Estimación de procesado (impacto en vivo; se pinta en el dock del footer,
    *  siempre visible junto a la acción). Resuelve membresía de grupos al vuelo;
@@ -281,9 +333,8 @@ export class RuleBuilderPageComponent implements DirtyAware {
           this.loadFromRule(rule);
           this.ruleId.set(id);
           // Editando se aterriza en Alcance: es lo que se retoca, y el nombre ya
-          // lo dice el breadcrumb. Mismo criterio que agent-form, que abre en
-          // Grupos y deja Identificación al fondo.
-          this.activeSection.set('rule-section-scope');
+          // lo dice el breadcrumb.
+          this.landing.set('rule-section-scope');
           return;
         }
         // Id no encontrado → volver al listado
@@ -305,8 +356,8 @@ export class RuleBuilderPageComponent implements DirtyAware {
           this.aiAnalysis.set(true);
           this.categorias.set([catParam]);
           // El enlace viene del modal de categoría: se abre donde esa categoría
-          // se ve, no en la primera pestaña.
-          this.activeSection.set('rule-section-ai');
+          // se ve, no en la primera sección.
+          this.landing.set('rule-section-ai');
         }
       }
       // New rule: capture the baseline AFTER the preselección — so arriving from
@@ -368,7 +419,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
       // Con una sección visible a la vez, un error en otra pestaña sería
       // invisible. El índice lo marca en rojo y además saltamos a la primera.
       const primera = this.navSections().find((s) => this.sectionsWithErrors().has(s.id));
-      if (primera) this.activeSection.set(primera.id);
+      if (primera && primera.id !== this.activeSection()) this.goTo(primera.id);
       return;
     }
     // El árbol es la fuente de verdad del alcance; derivamos los campos planos

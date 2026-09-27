@@ -6273,7 +6273,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": "Anchor id que usa `sc-form-section-nav` para scroll-spy / salto a la sección.",
+          "descripcion": "Id de la sección (`[id]` y `[data-section-anchor]`), con aire arriba para un enlace con `#`.",
           "origen": "nuestro",
           "nativo": null
         },

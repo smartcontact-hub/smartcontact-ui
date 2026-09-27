@@ -16,11 +16,17 @@
  */
 import { computed, signal, type Signal } from '@angular/core';
 
-import { stableStringify } from './form-dirty-state.core.mjs';
+import { changedKeys, stableStringify } from './form-dirty-state.core.mjs';
 
 export interface FormDirtyState<T = unknown> {
   /** True cuando el estado actual difiere del pristine (CAMBIO NETO; deshacer → false). */
   readonly dirty: Signal<boolean>;
+  /**
+   * Las claves de primer nivel del estado que difieren del pristine, con la misma comparación
+   * que `dirty` (2026-09-27, DD-122): cada ficha las traduce a sus secciones para marcar en el
+   * índice dónde está lo que se va a guardar. Vacío si no hay cambio neto.
+   */
+  readonly changedKeys: Signal<ReadonlySet<string>>;
   /** Fija el estado actual como "limpio" de referencia (al cargar la entidad / tras guardar). */
   markPristine(): void;
   /**
@@ -50,17 +56,22 @@ export interface FormDirtyState<T = unknown> {
  * distintos salen iguales (falso LIMPIO: un cambio real se pierde). Una sola implementación de
  * comparación para todo el repo, con o sin `createFormDirtyState`.
  */
-export { stableStringify } from './form-dirty-state.core.mjs';
+export { changedKeys, stableStringify } from './form-dirty-state.core.mjs';
 
 export function createFormDirtyState<T>(snapshot: () => T): FormDirtyState<T> {
   const pristine = signal(stableStringify(snapshot()));
-  let pristineCopy = structuredClone(snapshot());
+  const pristineCopy = signal(structuredClone(snapshot()));
+  const dirty = computed(() => stableStringify(snapshot()) !== pristine());
   return {
-    dirty: computed(() => stableStringify(snapshot()) !== pristine()),
+    dirty,
+    changedKeys: computed<ReadonlySet<string>>(() => {
+      if (!dirty()) return new Set();
+      return changedKeys(snapshot() as object, pristineCopy() as object);
+    }),
     markPristine: () => {
       pristine.set(stableStringify(snapshot()));
-      pristineCopy = structuredClone(snapshot());
+      pristineCopy.set(structuredClone(snapshot()));
     },
-    pristineValue: () => structuredClone(pristineCopy),
+    pristineValue: () => structuredClone(pristineCopy()),
   };
 }

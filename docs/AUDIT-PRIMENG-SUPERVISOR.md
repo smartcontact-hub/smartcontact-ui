@@ -155,7 +155,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-form-section-nav` · 2 usos · —
+### `sc-form-section-nav` · 3 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

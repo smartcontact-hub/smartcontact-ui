@@ -1,10 +1,17 @@
 <!-- El molde (rail 196 + contenido, tope 1200 y centrado) es `.page__inner--rail`
      de `styles/_page.scss`: el MISMO que usan las fichas de agente, grupo y usuario.
      Hasta el 2026-09-14 vivía aquí escrito a mano y los formularios de admin tenían
-     otro, así que la misma app eran dos pantallas de ajustes distintas. -->
+     otro, así que la misma app eran dos pantallas de ajustes distintas. Y desde el
+     2026-09-27 el índice también es el mismo (DD-122). -->
 <div class="page__inner page__inner--rail">
   <div class="page__rail">
-    <sc-settings-sidebar />
+    <sc-form-section-nav
+      [sections]="sections"
+      [activeId]="activeId()"
+      titleKey="config.sidebar.title"
+      [flush]="true"
+      (activeChange)="go($event)"
+    />
   </div>
   <div class="page__main">
     <router-outlet />
