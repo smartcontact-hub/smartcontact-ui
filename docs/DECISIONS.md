@@ -41,8 +41,8 @@
 >
 > | Tema | DD |
 > |---|---|
-> | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra | DD-125 |
-> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
+> | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra · R4: lo que apilan los envoltorios de dentro de una caja no llega a 7 | DD-125 |
+> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio, y el juego se elige en Configuración → Sistema · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
 > | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` · `sc-dialog` con cuerpo: la botonera a 28 y 14 entre hermanos | DD-123 |
 > | Un solo índice en toda la app (`sc-form-section-nav`: fichas, constructor y Contact Center) · cada fila es un ENLACE a su sitio (ruta o `?seccion=`), la actual con `aria-current="page"` · clic navega, Cmd+clic abre otra pestaña, Atrás vuelve · en un alta la sección no deja rastro · un solo «Guardar» por ficha, con las secciones con cambios marcadas en el índice · agente y usuario al molde de la ficha de grupo (enmienda DD-121 §2 y DD-113) | DD-122 |
 > | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
@@ -131,6 +131,18 @@ prueba `dashboard.spec.ts`, que midió 31,5 contra el build anterior y 14 con el
 panel: bajar su relleno a 10,5 la dejaría en 52,5, pero es una medida del Kit y el monitor ya cabe entero en 900 de
 alto.
 
+**La regla R4, «aire que se suma» (el mismo día)** · El principio se mide ya en la prueba de agrupación
+(`agrupacion-medida.js`), sin decidir cuánto aire es el bueno. Una caja (`sc-section-card`, `sc-panel`) mide su
+relleno y nada más. Se recorre el camino de su cabecera o su cuerpo hasta lo primero y lo último que se ve, y se suma
+lo que añade cada envoltorio intermedio: el margen que de verdad desplaza (no el hueco libre de una rejilla de alto
+fijo), el borde y el relleno. En rojo si llega a 7, el peldaño más pequeño de la escalera. Por debajo no hay
+separación que competir: los 3,5 de `.checkbox-row` agrandan la zona que se pulsa. Un borde solo cuenta como límite
+visible en el lado que se mide: una fila con raya arriba sigue sumando su relleno de abajo. La primera versión no lo
+separaba y dejaba pasar justo el caso de «Políticas». Validado en los dos sentidos: contra el build anterior a esta
+decisión marca «Políticas de contraseñas (abajo): 12,25», y con ella, nada. Mide 90 bordes en 10 pantallas, y la
+suite de agrupación sigue en verde (48). No cubre el hueco del anillo del monitor, que es entre dos piezas y no del
+borde a una: ese lo vigila su propia prueba en `dashboard.spec.ts`.
+
 ---
 
 ## DD-124 · 2026-09-27 — La demo tiene un segundo juego de datos, `?datos=tortura`, para ver dónde se rompe una pantalla
@@ -163,7 +175,12 @@ y las conversaciones de Conversaciones y las entidades del Dashboard, que lo tom
 (`core/services/juego-de-datos.ts`). Solo cambian los campos que guardan un nombre de grupo: «Reclamaciones» también
 es un servicio y ahí sigue. Los agentes conservan sus nombres de Hollywood (decisión de producto del 2026-09-14). Lo
 prueba `e2e/supervisor/juego-de-datos.spec.ts`: el nombre cambia en la lista y en una conversación, y `demo` vuelve.
-Hay decisión de producto pendiente solo si el editorial pasa a ser la demo pública.
+Decidido el mismo día: la demo pública sigue con los datos de siempre (los que reconocen quien compara con el producto
+y los tickets), y el editorial se enseña con su enlace. Para no depender de recordar el parámetro, **el juego se elige
+también en Configuración → Sistema → Datos** (Demo · Editorial · Tortura), delante de «Restaurar datos de fábrica».
+Elegir lo recuerda en la pestaña y navega a la misma página con `?datos=`: el parámetro manda sobre lo recordado, y
+los almacenes leen el juego al arrancar. Lo prueba `juego-de-datos.spec.ts`: entrando con tortura en la dirección,
+elegir Editorial le gana y se recuerda al navegar, y Demo vuelve.
 
 **Descartadas** ·
 - **Cambiar la semilla por defecto** → tumba los e2e que leen nombres («ACD Demo C2CB», «Tom Hanks») y cambia la

@@ -22,12 +22,6 @@
 
 - **Las fichas 15, 16 y 17 de figma-pendiente**: filas de formulario y radios a 14; la caja de sección a 17,5 arriba y
   abajo; el diálogo con formulario, botonera a 28 y 14 entre campos.
-- **Si el juego editorial pasa a ser la demo pública** (DD-124): hoy es `?datos=editorial` y la demo sigue igual. La
-  recomendación dada: dejar la demo como está y compartir el enlace con el parámetro fuera del equipo; y, si cuesta
-  recordarlo, un selector «Juego de datos» en Configuración → Sistema → Datos, junto a «Restaurar datos de fábrica».
-- **La regla R4, «aire que se suma», en la medida de agrupación** (recomendada, pendiente de su sí): de su borde a lo
-  primero y lo último que tiene dentro, una caja mide su relleno y nada más. Caza lo de «Políticas de contraseñas»
-  (39,8 en vez de 17,5) y lo del anillo del Dashboard (DD-125) sin decidir cuánto aire es el bueno.
 - **Los análisis de Telegram y WhatsApp** viven en `~/Documents/Claude/2026-09 teardown admin usuarios-grupos/`, fuera
   del repo: traerlos a `docs/` para que otra sesión (o la nube) los pueda leer.
 - **`npm run correcciones` en su máquina**: el registro de correcciones vive allí; en una sesión en la nube se pierde
@@ -35,7 +29,7 @@
 - **De gusto, visto en la revisión de Sistema**: dos de sus seis secciones llevan icono delante del título
   («Numeración especial» y «Regeneración de contraseñas») y las otras cuatro no. Ni regla ni prueba lo piden.
 
-## ✅ 2026-09-27 (3) · El monitor del Dashboard, medido con la regla de densidad
+## ✅ 2026-09-27 (3) · El monitor medido, el juego de datos en Sistema y la regla del aire que se suma
 
 **Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `a5619a2f` (#258 ya fundido).
 
@@ -44,6 +38,13 @@
   que se ve es de la rejilla de alto fijo. Sobraba una cosa: la flecha invisible de «ver el detalle» separaba el
   anillo de «de 9 conectados» 36 px; ahora van a 14, con su prueba (31,5 en rojo contra el build anterior). Sin
   verificar: la cabecera de la tabla de agentes nombra 10 y la tabla enseña 8.
+- **El juego de datos se elige en Configuración → Sistema** (DD-124): la demo pública sigue con los de siempre y el
+  editorial se enseña con su enlace o eligiéndolo ahí. Prueba nueva en `juego-de-datos.spec.ts` (12 de 12 en tres
+  pasadas); la primera versión la hizo roja una carrera real, navegar antes de que la recarga guardara el juego, y
+  ahora se recuerda antes de navegar.
+- **La regla R4, «aire que se suma»** (DD-125), en la medida de agrupación: de su borde a lo primero y lo último que
+  tiene dentro, una caja no suma 7 o más. En rojo contra el build anterior («Políticas», 12,25); en el actual, 90
+  bordes y ninguno. Los 3,5 de `.checkbox-row` quedan por debajo del umbral: son zona de clic.
 - **Verificado en local**: las e2e del Dashboard, la anatomía de página, el contraste en los dos temas, los estilos de
   texto y la agrupación, 157 en verde; la revisión previa de los dos monitores, en regla; y el lector de pantalla
   anuncia «Ver el detalle de 5» con la descripción «de 9 conectados».
