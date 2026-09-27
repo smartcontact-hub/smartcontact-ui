@@ -8,7 +8,7 @@ import type { DashboardMonitor, DashboardWidget } from './dashboard.types';
  *
  * Los DISPONIBLES no se mueven solos: son el estado de cada agente (`DEMO_AGENT_PRESENCE`), el que
  * enseñan la tabla y el detalle. Derivando por su cuenta, a los 8 s el anillo decía 6 con 5 agentes
- * disponibles en la tabla, y su detalle no podía listar el sexto (DD-126).
+ * disponibles en la tabla, y su detalle no podía listar el sexto (DD-127).
  */
 export function liveTick(monitor: DashboardMonitor, random: () => number = Math.random): DashboardMonitor {
   const step = (max: number) => Math.floor(random() * (max + 1));

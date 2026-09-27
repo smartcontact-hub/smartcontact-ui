@@ -6,7 +6,7 @@ import type { WidgetCategory } from './widget-catalog';
 /**
  * Los agentes de la demo y en qué estado está cada uno. Una sola fuente para la tabla de agentes, los anillos y el
  * detalle que abren, que así cuentan lo mismo: 5 disponibles, 4 en pausa y 1 desconectado, «5 de 9 conectados».
- * Antes cada pieza iba por su lado (medido el 2026-09-27, DD-126): la tabla de «Monitor x» enseñaba 8 de los 10
+ * Antes cada pieza iba por su lado (medido el 2026-09-27, DD-127): la tabla de «Monitor x» enseñaba 8 de los 10
  * agentes que nombraba su cabecera, y el detalle del anillo daba por disponibles a Denzel, en pausa, y a Leonardo,
  * desconectado.
  */

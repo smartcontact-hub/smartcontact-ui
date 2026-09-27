@@ -1,7 +1,7 @@
 # Frente · Calidad visual — agrupación, revisión previa, datos de prueba y referencias — hand-off
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**. Lo durable vive en `docs/`:
-> las decisiones en DD-123, DD-124 y DD-125, la regla en AGENTS §«UX de pantalla» 9, el Kit en
+> las decisiones en DD-123, DD-124, DD-125 y DD-127, la regla en AGENTS §«UX de pantalla» 9, el Kit en
 > `docs/figma-pendiente.md` (fichas 15 a 17) y las referencias en `docs/referencias-contact-center.md`.
 >
 > **Por qué existe este frente.** Nace el 2026-09-27 de contrastar el repo con una lista de consejos de UI (espacio,
@@ -41,7 +41,7 @@
 rama se rehízo desde `main` con los commits de este tramo encima).
 
 **Qué pasó.**
-- **El «sin verificar» del tramo (3) era un fallo** (DD-126). La tabla de «Monitor x» enseñaba 8 de los 10 agentes de su
+- **El «sin verificar» del tramo (3) era un fallo** (DD-127). La tabla de «Monitor x» enseñaba 8 de los 10 agentes de su
   cabecera, el detalle del anillo daba por disponibles a Denzel (en pausa) y a Leonardo (desconectado), y el latido
   movía por su lado los disponibles del anillo y del panel de grupos: a los 24 s, 6 y 4 en la misma pantalla, con 5 en
   la tabla. Ahora hay un solo estado por agente (`DEMO_AGENT_PRESENCE`), la tabla enseña los 10, el latido no mueve los

@@ -30,3 +30,6 @@ export { LABEL_COLORS } from './label-chip/label-chip.types';
 // El DS ya lo exporta (2026-07-18): re-export para no tocar los 8 consumidores.
 export type { GroupRef } from '@smartcontact-hub/components';
 export { NameInplaceComponent } from './name-inplace/name-inplace.component';
+
+// El widget del resumen de las fichas: una cifra con su anillo (DD-126).
+export { SummaryKpiComponent } from './summary-kpi/summary-kpi.component';

@@ -100,7 +100,7 @@ test('la leyenda del anillo va pegada a su cifra, no detrás de la flecha invisi
 });
 
 test('en el primer monitor, la tabla, el anillo y su detalle cuentan los mismos agentes', async ({ page }) => {
-  /* Medido el 2026-09-27 (DD-126): la cabecera de la tabla nombraba 10 agentes y la tabla enseñaba 8, y el detalle
+  /* Medido el 2026-09-27 (DD-127): la cabecera de la tabla nombraba 10 agentes y la tabla enseñaba 8, y el detalle
    * del anillo daba por disponibles a Denzel, en pausa en la tabla, y a Leonardo, desconectado. Aquí se mide sobre
    * lo pintado: una fila por agente de la cabecera, y el anillo y su detalle cuentan los estados de esas filas. */
   await goto(page, 'dashboard');

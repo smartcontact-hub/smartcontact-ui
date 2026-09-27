@@ -2,11 +2,15 @@
  * EL RESUMEN DE LAS FICHAS — la columna de la derecha de las fichas de grupo, agente y usuario
  * (`.ficha-summary`, en `_page.scss`) o, por debajo de 1340, la franja encima del contenido.
  *
- * Nació en `sc-group-summary` (DD-121 §3). El 2026-09-27 las fichas de agente y usuario pasan al mismo
- * molde (DD-122) con sus tres cifras de siempre en tarjetas, y la tarjeta sube aquí para que sea UNA:
- * la encapsulación de Angular es por componente, y copiarla en tres hojas es como tres tarjetas dejan
- * de parecerse. Lo que solo tiene el resumen de grupo (canales con su barra, avisos, pares) sigue en su
- * componente.
+ * Nació en `sc-group-summary` (DD-121 §3) y desde DD-122 es UNO para las tres fichas: la encapsulación de
+ * Angular es por componente, y copiarlo en tres hojas es como tres tarjetas dejan de parecerse. Desde DD-126
+ * cada proporción es un widget (`sc-summary-kpi`): la cifra grande con «/total» y el `p-progress-spinner`
+ * nativo a su lado, como el ejemplo «Preview» de ProgressSpinner de primeng.dev. Lo que solo tiene el resumen
+ * de grupo (canales con su barra, avisos, pares) sigue en su componente.
+ *
+ * La escalera 7 · 14 · 28 (AGENTS «UX de pantalla» 9, DD-123): el título, a 7 de la primera tarjeta; 14 entre
+ * tarjetas, que son hermanas; dentro de un widget, el rótulo, la cifra y su nota son una pieza (7) y lo que
+ * cuelga debajo (las filas por canal del grupo) va a 28, el doble que entre esas filas.
  *
  * La tipografía la ponen las clases `.sc-text-*` de la plantilla; aquí solo viven el sitio, el color y
  * el aire.
@@ -23,30 +27,41 @@
   color: var(--sc-text-secondary);
 }
 
-/* En la franja ancha, las tarjetas van en fila y el título y lo que falta, encima de todas. */
+.resumen__cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+/* En la franja ancha, las tarjetas van en fila. */
 @container (min-width: 37.5rem) {
-  .resumen {
+  .resumen__cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
     align-items: start;
   }
-
-  .resumen__title,
-  .resumen__missing {
-    grid-column: 1 / -1;
-  }
 }
 
-/* Una tarjeta de KPI: una cifra o un par de datos con su rótulo, como los widgets del panel de
- * grupo. No es una sección de campos (esa caja es `sc-section-card`): es un mueble del resumen,
- * hermano del «impacto estimado» del constructor de reglas. */
+/* Una tarjeta del resumen: una cifra con su anillo (`sc-summary-kpi`) o unos datos con su rótulo. No es una
+ * sección de campos (esa caja es `sc-section-card`): es un mueble del resumen, hermano del «impacto estimado»
+ * del constructor de reglas.
+ *
+ * El tinte de marca (DD-126), sin borde a la vista: la tarjeta se lee como un widget sobre la página blanca. En
+ * claro es el mismo color que `--sc-bg-selected`; se eligió sabiéndolo, porque estas tarjetas no se pulsan ni se
+ * eligen. El borde transparente se queda: no se ve, pero con colores forzados (alto contraste de Windows) la
+ * tarjeta sigue teniendo su contorno.
+ *
+ * Todo su texto va en `--sc-text-primary`, rótulos incluidos: el secundario (slate-600) llega a AA solo sobre
+ * blanco (4,52:1) y sobre el tinte se queda en 3,96 (medido en claro, en el build). La jerarquía la llevan el
+ * tamaño y el peso: la cifra en h1 o h2 semibold, el rótulo en caption regular. */
 .resumen__kpi {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-375);
   padding: var(--sc-spacing-0-75);
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-subtle);
+  color: var(--sc-text-primary);
+  background: var(--sc-bg-primary-subtle);
+  border: 1px solid transparent;
   border-radius: var(--sc-radius-xl);
 }
 
@@ -55,7 +70,6 @@
   align-items: center;
   gap: var(--sc-spacing-0-375);
   margin: 0;
-  color: var(--sc-text-secondary);
 }
 
 .resumen__head {
@@ -80,4 +94,62 @@
   margin: 0;
   color: var(--sc-text-primary);
   overflow-wrap: anywhere;
+}
+
+/* ─── El widget (`sc-summary-kpi`) ─────────────────────────────────────────────────────────────────── */
+
+.resumen__kpi--widget {
+  gap: var(--sc-spacing-2);
+}
+
+.resumen__cabeza {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.resumen__widget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-75);
+}
+
+.resumen__figure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-125);
+  margin: 0;
+  min-width: 0;
+}
+
+/* La cifra que cuenta. `transition-property: none` con su duración: no transiciona nada; la duración la
+ * lee `CountUpDirective`, y la apagan el reset de menos movimiento y las e2e. */
+.resumen__count {
+  color: var(--sc-text-primary);
+  font-variant-numeric: tabular-nums;
+  transition-property: none;
+  transition-duration: var(--sc-transition-slow);
+}
+
+.resumen__of {
+  font-variant-numeric: tabular-nums;
+}
+
+/* El anillo nativo a 42 (el ejemplo lo pone a 44, que no está en la escala), como la sección «Custom» de su
+ * doc: tamaño en el host. */
+.resumen__ring {
+  flex: none;
+  inline-size: var(--sc-spacing-3);
+  block-size: var(--sc-spacing-3);
+}
+
+/* El `N%` nativo del anillo, oculto como lo oculta el ejemplo (`customs-catalog` §8): a 42 px mediría ~5, y
+ * la cifra grande ya lo dice. */
+.resumen__ring-value {
+  display: none;
+}
+
+.resumen__note {
+  margin: 0;
 }
