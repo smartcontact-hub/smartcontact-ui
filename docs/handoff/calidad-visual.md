@@ -24,7 +24,12 @@
 
 - **Las fichas 15, 16 y 17 de figma-pendiente**: filas de formulario y radios a 14; la caja de sección a 17,5 arriba y
   abajo; el diálogo con formulario, botonera a 28 y 14 entre campos.
-- **Si el juego editorial pasa a ser la demo pública** (DD-124): hoy es `?datos=editorial` y la demo sigue igual.
+- **Si el juego editorial pasa a ser la demo pública** (DD-124): hoy es `?datos=editorial` y la demo sigue igual. La
+  recomendación dada: dejar la demo como está y compartir el enlace con el parámetro fuera del equipo; y, si cuesta
+  recordarlo, un selector «Juego de datos» en Configuración → Sistema → Datos, junto a «Restaurar datos de fábrica».
+- **La regla R4, «aire que se suma», en la medida de agrupación** (recomendada, pendiente de su sí): de su borde a lo
+  primero y lo último que tiene dentro, una caja mide su relleno y nada más. Caza lo de «Políticas de contraseñas»
+  (39,8 en vez de 17,5) y lo del anillo del Dashboard (DD-125) sin decidir cuánto aire es el bueno.
 - **Los análisis de Telegram y WhatsApp** viven en `~/Documents/Claude/2026-09 teardown admin usuarios-grupos/`, fuera
   del repo: traerlos a `docs/` para que otra sesión (o la nube) los pueda leer.
 - **`npm run correcciones` en su máquina**: el registro de correcciones vive allí; en una sesión en la nube se pierde
@@ -49,6 +54,10 @@ de #257, rehecho desde `main` porque #257 se fusionó antes de que esto llegara)
   Dashboard; `juego-de-datos.spec.ts` lo prueba.
 - **La caja de sección**, 17,5 arriba y abajo (DD-125); «Políticas de contraseñas» de 327 a 260 de alto. Con #256
   alcanza también a las fichas de agente y usuario: revisadas con `npm run revision`, en regla.
+- **El monitor del Dashboard, medido con la regla de densidad** (DD-125): su ritmo ya era el compacto y no se suma
+  relleno dentro de las tarjetas. El blanco que se ve es de la rejilla de alto fijo. Sobraba una cosa: la flecha
+  invisible de «ver el detalle» separaba el anillo de «de 9 conectados» 36 px; ahora van a 14, con su prueba (31,5 en
+  rojo contra el build anterior). Sin verificar: la cabecera de la tabla de agentes nombra 10 y la tabla enseña 8.
 - **La densidad de pantalla**, aceptada en la revisión de producto: compacto donde se escanea (monitor, listas), más
   aire donde se lee y se rellena (fichas, formularios), y ningún aire que no separe nada. Escrita en AGENTS §«UX de
   pantalla» 9 y en su tarjeta de Patrones.

@@ -41,7 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera | DD-125 |
+> | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra | DD-125 |
 > | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
 > | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` · `sc-dialog` con cuerpo: la botonera a 28 y 14 entre hermanos | DD-123 |
 > | Un solo índice en toda la app (`sc-form-section-nav`: fichas, constructor y Contact Center) · cada fila es un ENLACE a su sitio (ruta o `?seccion=`), la actual con `aria-current="page"` · clic navega, Cmd+clic abre otra pestaña, Atrás vuelve · en un alta la sección no deja rastro · un solo «Guardar» por ficha, con las secciones con cambios marcadas en el índice · agente y usuario al molde de la ficha de grupo (enmienda DD-121 §2 y DD-113) | DD-122 |
@@ -117,6 +117,19 @@ cerca de la fila de abajo que de la de arriba por el hueco de 14 de `.sub-sectio
 **Consecuencias** · La captura `sectioncard-linux.png` y la línea base de estilos de `sectioncard` se regeneran. La
 demo de sc-docs dice las medidas nuevas (y deja de decir que el título mide 14/20: es el h3, 18/24, desde el
 2026-09-12).
+
+**En el monitor del Dashboard (el mismo día)** · El principio de densidad pide compacto donde se escanea, y se midió
+el monitor a 1440 para ver qué aire sobraba. Su ritmo ya es el compacto: 14 entre tarjetas y las medidas del panel
+del Kit (14 de cabecera, 15,75 de cuerpo). La cabecera mide 59,5 porque el ⋮ reserva el alto del chip de filtro
+(31,5, decidido para que la cabecera no salte al filtrar). Dentro de las tarjetas no se suma ningún relleno. El
+blanco que se ve sale de la rejilla de alto fijo con menos contenido que hueco: 42 px bajo las 8 filas de la tabla de
+agentes, y las cifras centradas. Eso es tamaño de widget, que elige quien monta el monitor, no densidad. Lo único que
+no separaba nada: en el anillo de «Agentes disponibles», la flecha de «ver el detalle», invisible hasta pasar el
+ratón pero ocupando su sitio, quedaba entre el anillo y «de 9 conectados» y los separaba 36 px. Ahora la leyenda va
+dentro de la cifra pulsable, delante de la flecha, a 14 del anillo, y el botón la anuncia como descripción. Lo
+prueba `dashboard.spec.ts`, que midió 31,5 contra el build anterior y 14 con el cambio. No se tocó la cabecera del
+panel: bajar su relleno a 10,5 la dejaría en 52,5, pero es una medida del Kit y el monitor ya cabe entero en 900 de
+alto.
 
 ---
 
