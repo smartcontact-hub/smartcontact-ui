@@ -545,8 +545,11 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  *
  * 82 → 81 el 2026-09-27: las celdas de la lista de agentes llevan `.sc-text-body-regular` en la
  * plantilla, como las de la lista de grupos, y su `.cell` deja de declarar la métrica (DD-55).
+ *
+ * 81 → 80 el 2026-09-27: sale `.cross-tab-warning` de `styles/main.scss`, un banner hecho a mano
+ * que no pintaba nadie; el aviso de «otra pestaña» es `sc-message` (`.ficha-conflict`).
  */
-export const TIPOGRAFIA_SUELTA_MAX = 81;
+export const TIPOGRAFIA_SUELTA_MAX = 80;
 
 /**
  * El mismo trinquete para **sc-docs**, el showcase del DS — el que peor predicaba con el ejemplo:

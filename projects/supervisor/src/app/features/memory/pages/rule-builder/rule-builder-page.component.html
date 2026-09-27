@@ -15,6 +15,11 @@
        mecanismo que ya usa el listado. -->
   <ng-template #topbarActions>
     <div class="rule-builder__actions">
+      <!-- Un solo «Guardar» para las tres secciones: al editar, lo que hay por guardar se dice en
+           palabras y el índice marca dónde está (DD-122). -->
+      @if (isEditMode() && formDirty()) {
+        <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+      }
       <sc-button size="sm" type="button" variant="secondary" (clicked)="onCancel()">
         <span>{{ 'common.cancel' | translate }}</span>
       </sc-button>
@@ -37,13 +42,17 @@
          ahora está a la vista siempre, que es la mitad de su utilidad. Va
          SEGUNDO y no primero a propósito: mide 350px y, puesto encima, hundía
          la navegación hasta media pantalla. -->
-    <aside class="ipanel" [attr.aria-label]="'common.form_index_aria' | translate">
+    <!-- Un `div` y no un `aside` con el mismo nombre que el índice: el `nav` es el punto de referencia, y
+         cada fila, un enlace a su sección (`?seccion=`, DD-122). -->
+    <div class="ipanel">
       <sc-form-section-nav
         [sections]="navSections()"
         [activeId]="activeSection()"
+        [labelKey]="'common.form_index_aria'"
         [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionsWithChanges]="sectionsWithChanges()"
         [flush]="true"
-        (activeChange)="activeSection.set($event)"
+        (activeChange)="goTo($event)"
       />
 
       <div class="impact impact--rail sc-text-body-regular" aria-live="polite">
@@ -126,7 +135,7 @@
           }
         }
       </div>
-    </aside>
+    </div>
 
     <div class="page__form">
       <!-- Solo el error que BLOQUEA sube aquí: la acción que lo dispara vive

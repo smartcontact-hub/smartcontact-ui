@@ -25,6 +25,22 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   p-table vuelve a ordenar por el valor crudo del campo encima del orden que recibe, y un orden propio
   (una prioridad por rango, nombres con locale) no llegaba a verse. Por defecto apagado: ninguna tabla
   cambia sin pedirlo.
+- **`@smartcontact-hub/components`** — `sc-form-section-nav` es un índice de ENLACES: cada sección puede
+  llevar su `href` (la URL de la sección, que prepara quien lo pinta). Un clic principal sin teclas sigue
+  emitiendo `activeChange` y la página navega; cualquier otro gesto de enlace (Cmd/Ctrl, Mayús, Alt o el
+  clic central) lo hace el navegador, la misma regla que `routerLink`. Sin `href`, la fila apunta a `#`
+  como hasta ahora. Gana además `titleKey` (un rótulo visible encima de las filas, que nombra el índice)
+  y `sectionsWithChanges` (un punto en el color de marca en las secciones con cambios sin guardar,
+  distinto del rojo de lo que falta). ([DD-122](docs/DECISIONS.md))
+
+### Changed
+
+- **`@smartcontact-hub/components`** — las filas de `sc-form-section-nav` dejan de llevar `role="tab"`,
+  que anunciaba una pestaña sin lista de pestañas, y la actual se anuncia con `aria-current="page"` en
+  vez de `"true"`. El texto del punto rojo pasa de un `aria-label` en un `span` sin rol (ARIA 1.2 lo
+  prohíbe; Chrome lo leía igual) a texto oculto dentro del enlace. No se mueve un píxel: ningún estilo
+  miraba esos atributos. Quien los use como selector, que pase a `.form-nav__item--active` o al rol
+  `link`. ([DD-122](docs/DECISIONS.md))
 
 ## [1.0.0] — 2026-09-09
 

@@ -34,8 +34,8 @@
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
 - **`sc-selectbutton`: cablear su color a `var(--sc-cmp-togglebutton-*)`** cuando Figma suba la opción no elegida (§10).
-- **Lo que dejó DD-113:** `sc-form-section-nav` con `role="tab"` sin `tablist` (pestañas verticales o nav como
-  `settings-sidebar`; tres e2e); tira del reproductor sin nombre (clave i18n); la «o» del acceso en primario
+- **Lo que dejó DD-113:** ~~`sc-form-section-nav` con `role="tab"` sin `tablist`~~ (resuelto en DD-122: cada fila
+  es un enlace); tira del reproductor sin nombre (clave i18n); la «o» del acceso en primario
   (`.login__divider` no llega); `sc-slot` a tokens del divider (e2e y captura); CSS muerto `.seg` e `.inline-field`.
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)

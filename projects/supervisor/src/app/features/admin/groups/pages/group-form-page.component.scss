@@ -11,13 +11,8 @@
  * de Contact Center y de las otras fichas), y `.grid`, `.field`, `.sub-section`, `.switch-field` y
  * `.checkbox-*` en `src/styles/_forms.scss`. No los re-declares aquí: una regla encapsulada de
  * componente le gana siempre a la global, y el molde se desviaría en una sola página sin avisar.
- * Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`. */
-
-/* El aviso de «abierto en otra pestaña», encima de la sección. */
-.ficha-conflict {
-  display: block;
-  margin-block-end: var(--sc-spacing-1);
-}
+ * Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`. El aviso de «abierto en otra
+ * pestaña» (`.ficha-conflict`) también es de todas las fichas: vive en `_page.scss`. */
 
 /* Las partes de un canal (Distribución, Cola, Mensajes en cola, Web Chat · acceso…): un rótulo
  * pequeño, no un título más. El bloque es el canal; esto son sus tramos. */

@@ -10,6 +10,10 @@
        lo dice). -->
   @if (saveBlockedReason(); as reason) {
     <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
+  } @else if (mode() === 'edit' && formDirty()) {
+    <!-- Un solo «Guardar» para toda la ficha: lo que hay por guardar se dice en palabras, y el índice marca
+         dónde está (DD-122). `role="status"`: se anuncia una vez, al aparecer. -->
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
     <sc-button
@@ -38,43 +42,51 @@
     <h1 class="visually-hidden">{{ 'users.form.create_breadcrumb' | translate }}</h1>
   }
 
-  <!-- La forma de la ficha de grupo, «una página + pestañas»: sin índice lateral y sin caja, con
-       el ancho de `.ficha-tabs` y el mismo arquetipo `--rail` (ver `_page.scss`). -->
-  <div class="page__inner page__inner--rail ficha-tabs">
-    <div class="page__main">
-      @if (mode() === 'edit') {
-        <div class="headline">
-          <div class="headline__who">
-            <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
-            <span class="headline__meta sc-text-caption-regular" [title]="form().email">{{ form().email }}</span>
-          </div>
-          <dl class="headline__stats">
-            @for (s of headline(); track s.etiqueta) {
-              <div class="headline__stat">
-                <dt class="headline__label sc-text-caption-regular">{{ s.etiqueta | translate }}</dt>
-                <dd class="headline__value sc-text-body-semibold" [title]="s.valor">{{ s.valor }}</dd>
-              </div>
-            }
-          </dl>
-          <div class="headline__actions">
-            <sc-button variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
-          </div>
+  <!-- EL MOLDE DE LA FICHA DE GRUPO (DD-122): la cabecera ENCIMA, a todo lo ancho; el índice a la
+       izquierda (el de Contact Center); una sección a la vista, en su caja; y el resumen a la derecha
+       (`.ficha-rail--summary`, en `_page.scss`). Hasta el 2026-09-27 fue «una página + pestañas». -->
+  <div class="page__inner page__inner--rail ficha-rail ficha-rail--summary">
+    @if (mode() === 'edit') {
+      <div class="headline">
+        <div class="headline__who">
+          <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
+          <span class="headline__meta sc-text-caption-regular" [title]="form().email">{{ form().email }}</span>
         </div>
-      }
+        <!-- Las tres cifras que vivían aquí se fueron al resumen, a la derecha, como en la ficha de grupo. -->
+        <div class="headline__actions">
+          <sc-button variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
+        </div>
+      </div>
+    }
 
-      <!-- `p-tabs` NATIVO de primeng.dev, de texto y sin panels (DD-113 §1 y §3): cambia el
-           contenido de la pantalla. El nombre va al nodo `role="tablist"` por `pt`. -->
-      <p-tabs class="tabbar" [value]="activeSection()" (valueChange)="onTabChange($event)">
-        <p-tablist [pt]="{ content: { 'aria-label': 'common.form_index_aria' | translate } }">
-          @for (s of navSections(); track s.id) {
-            <p-tab [value]="s.id">{{ s.labelKey | translate }}</p-tab>
-          }
-        </p-tablist>
-      </p-tabs>
+    <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). -->
+    <div class="page__rail">
+      <sc-form-section-nav
+        [sections]="navSections()"
+        [activeId]="activeSection()"
+        [labelKey]="'common.form_index_aria'"
+        [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionsWithChanges]="sectionsWithChanges()"
+        [flush]="true"
+        (activeChange)="goTo($event)"
+      />
+    </div>
+
+    <div class="page__main">
+      <!-- El mismo usuario abierto en otra pestaña (DD#169): el candado ya se cogía; ahora se dice. -->
+      @if (conflictWarning()) {
+        <sc-message class="ficha-conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
+      }
 
       @switch (activeSection()) {
         @case ('user-section-identity') {
-          <div class="plain-section" id="user-section-identity">
+          <sc-section-card
+            anchorId="user-section-identity"
+            surface="card"
+            icon="badge"
+            titleKey="users.form.section.identity"
+            hintKey="users.form.section.identity_hint"
+          >
             <section class="sub-section">
               <div class="form-identity">
                 <sc-photo-upload
@@ -169,14 +181,20 @@
                 </div>
               </div>
             </section>
-          </div>
+          </sc-section-card>
         }
 
         @case ('user-section-access') {
           <!-- «Secciones» y «Permisos» en UNA sección desde el 2026-09-14. Eran dos pestañas
                con la misma forma (una lista de casillas) sobre la misma pregunta: a qué tiene
                acceso esta persona. Lo que VE y lo que puede HACER, en dos tramos. -->
-          <div class="plain-section" id="user-section-access">
+          <sc-section-card
+            anchorId="user-section-access"
+            surface="card"
+            icon="verified_user"
+            titleKey="users.form.section.access"
+            hintKey="users.form.section.access_hint"
+          >
             <section class="sub-section" aria-labelledby="user-access-sections-title">
               <header class="sub-section__head">
                 <h3 id="user-access-sections-title" class="sub-section__title sc-text-body-semibold">{{ 'users.form.section.sections' | translate }}</h3>
@@ -208,22 +226,45 @@
                 }
               </div>
             </section>
-          </div>
+          </sc-section-card>
         }
 
         @case ('user-section-services') {
-          <div class="plain-section" id="user-section-services">
+          <!-- La ayuda de la sección («Servicios VUI bajo supervisión») la dice su cabecera: aquí iba repetida. -->
+          <sc-section-card
+            anchorId="user-section-services"
+            surface="card"
+            icon="hub"
+            titleKey="users.form.section.services"
+            hintKey="users.form.section.services_hint"
+          >
             <section class="sub-section">
-              <p class="sub-section__hint sc-text-caption-regular">{{ 'users.form.section.services_hint' | translate }}</p>
               <div class="checkbox-grid checkbox-grid--services">
                 @for (service of availableServices; track service) {
                   <sc-checkbox class="checkbox-row" [state]="hasService(service) ? 'all' : 'none'" (cycle)="toggleService(service)">{{ service }}</sc-checkbox>
                 }
               </div>
             </section>
-          </div>
+          </sc-section-card>
         }
       }
+    </div>
+
+    <!-- EL RESUMEN, a la derecha y fijo, como en la ficha de grupo (`.ficha-summary`; por debajo de 1340, una
+         franja encima). Las tres cifras de siempre: qué es esta persona y a qué llega. -->
+    <div class="ficha-summary">
+      <section class="resumen" aria-labelledby="user-summary-title">
+        <h2 id="user-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'common.summary' | translate }}</h2>
+        @for (s of summary(); track s.etiqueta) {
+          <div class="resumen__kpi">
+            <p class="resumen__label sc-text-caption-regular">
+              <sc-icon [name]="s.icono" size="inherit" aria-hidden="true" />
+              {{ s.etiqueta | translate }}
+            </p>
+            <p class="resumen__value sc-text-body-semibold">{{ s.valor }}</p>
+          </div>
+        }
+      </section>
     </div>
   </div>
 </div>

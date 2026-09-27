@@ -155,18 +155,28 @@ ningún componente de índice lateral (revisados sus 228 componentes y conjuntos
 el único dibujo es un MARCO, no una instancia: `393:12565`, «sc-form-section-nav (pure-sc)», 196 de
 ancho, dentro de la maqueta de Contact Center.
 
-En código son DOS piezas que calcan ese marco: `sc-settings-sidebar` (de la app) en Contact Center y
-`sc-form-section-nav` con `[flush]` (del DS) en la ficha de grupo desde el 2026-09-26 (DD-121: índice de cuatro
-secciones, solo en su carril; el resumen del grupo va en una columna a la derecha). Medidas lado a lado el
-2026-09-27 a 1440, dan lo mismo: carril 196 en x 108, fijo con `top` 22,75, 28 hasta el contenido; item de 37,5
-con relleno 8,75, hueco 5,25 y radio 12; texto 14/20 en 400 (600 el activo), icono de 14, y el activo sobre
-`rgb(236, 239, 243)`. Solo Contact Center lleva su rótulo encima; la ficha lleva su cabecera. Las fichas de agente y
-usuario lo dejaron por pestañas el 2026-09-22. Mientras sea un marco suelto,
-cada maqueta nueva lo vuelve a dibujar a mano y puede salir distinto: es justo lo que pasó con la
-generación anterior (`12277:4818`, panel gris con el icono en su cajita).
+En código es UNA pieza desde el 2026-09-27 (DD-122): `sc-form-section-nav` con `[flush]`, en las cinco pantallas con
+índice (fichas de agente, grupo y usuario, constructor de reglas y Contact Center, que hasta ese día pintaba el suyo con
+`sc-settings-sidebar`, de la app). Contact Center no se movió un píxel al cambiar de pieza (medido contra `main`, en
+claro y en oscuro). Las cifras, medidas lado a lado el 2026-09-27 a 1440: carril 196 en x 108, fijo con `top` 22,75,
+28 hasta el contenido; item de 37,5 con relleno 8,75, hueco 5,25 y radio 12; texto 14/20 en 400 (600 el activo), icono
+de 14, y el activo sobre `rgb(236, 239, 243)`. Mientras sea un marco suelto, cada maqueta nueva lo vuelve a dibujar a
+mano y puede salir distinto: es justo lo que pasó con la generación anterior (`12277:4818`, panel gris con el icono en
+su cajita).
 
-**Cómo se hace:** convertir el marco `393:12565` en componente del DS con dos estados de item (reposo y
-activo: fondo `--sc-bg-hover`, texto en semibold), el icono de 20 y la etiqueta en `Body/body-regular`.
+**Lo que el código ya tiene y Figma no (2026-09-27, DD-122):**
+- **El rótulo de encima** (`titleKey`, «Contact Center», `Text` 393:12569): 14/20 en semibold y gris secundario, con
+  3,5/12,25 de relleno, que es como lo pintaba Contact Center. ⚠️ Sin verificar contra `393:12570`: un comentario
+  anterior del código lo anotaba como 14 **regular**. Si la maqueta dice regular, el código la sigue (DD-111).
+- **Sección con cambios sin guardar** (`sectionsWithChanges`): el mismo punto de 8 que el de error, en
+  `--sc-bg-primary` (navy en claro, sky-300 en oscuro) en vez de rojo. Si una sección tiene las dos cosas, se ve el
+  rojo. Es un estado nuevo del índice: la ficha tiene un solo «Guardar» y el índice dice dónde está lo que se va a
+  guardar.
+
+**Cómo se hace:** convertir el marco `393:12565` en componente del DS con los estados de item que tiene el código:
+reposo, activo (fondo `--sc-bg-hover`, texto en semibold), con algo obligatorio sin rellenar (punto rojo) y con
+cambios sin guardar (punto de marca); el icono de 20, la etiqueta en `Body/body-regular` y el rótulo opcional
+encima.
 Opcional, la ficha de encima (avatar 36, nombre en `Body/body-semibold`, dato en `Caption/caption-regular`).
 
 **Cómo sabes que está hecho:** la maqueta de Contact Center usa una instancia del componente en lugar

@@ -58,9 +58,9 @@
    */
   margin-inline: var(--sc-spacing-0-875);
 
-  /* Sin caja no hay filo con el que casar: en una ficha «una página + pestañas» (`.ficha-tabs`) o
-   * en un bloque a sangre (`.plain-section`) el contenido arranca en la vertical del título. */
-  .ficha-tabs &,
+  /* Sin caja no hay filo con el que casar: en un bloque a sangre (`.plain-section`, hoy «Valores por
+   * defecto» de grupos) el contenido arranca en la vertical del título. Las fichas de agente y usuario
+   * también iban sin caja hasta el 2026-09-27; desde DD-122 van en su `sc-section-card`, como la de grupo. */
   .plain-section & {
     margin-inline: 0;
   }

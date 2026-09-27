@@ -63,6 +63,11 @@ for (const ancho of [1440, 1024, 768, 390]) {
     await page.setViewportSize({ width: ancho, height: 900 });
     await goto(page, 'dashboard');
     await expect(page.locator('sc-dashboard-widget-card').first()).toBeVisible();
+    /* Se mide con las fuentes cargadas. Medido el 2026-09-27, en `main` igual que en la rama: al pintarse la
+     * primera tarjeta, la fuente de iconos aún está cargando, los iconos de la barra se leen como palabras
+     * («notifications», «play_arrow») y la barra mide 707 en vez de 632. A 768 eso eran 47 px de scroll que
+     * un momento después ya no estaban. Un desborde de verdad sigue ahí después de cargar. */
+    await page.evaluate(() => document.fonts.ready);
 
     /* El scroll de la app vive en `main`, no en el documento: medido con el desborde fabricado, el del
      * documento daba 0 igual. */

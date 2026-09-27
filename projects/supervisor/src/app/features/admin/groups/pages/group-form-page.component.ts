@@ -6,13 +6,14 @@ import {
   HostListener,
   inject,
   Injector,
+  input,
   OnDestroy,
   OnInit,
   signal,
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
@@ -21,11 +22,11 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { CrossTabLockService } from '@core/services';
+import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 import { ChannelIconComponent, NameInplaceComponent } from '@shared/components';
-import { createFormDirtyState } from '@shared/utils/form-dirty-state';
+import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDividerComponent as DividerComponent,
@@ -125,6 +126,33 @@ interface FormState {
   links: readonly GroupAgentLink[];
 }
 
+/**
+ * De qué sección es cada campo, para marcar en el índice las que tienen cambios sin guardar (DD-122).
+ * `advanced` se reparte: la ficha de cliente está en Recursos y lo demás (cola, tiempos, desborde, el
+ * número de WhatsApp) en Distribución y colas.
+ */
+const SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
+  name: 'group-section-general',
+  priority: 'group-section-general',
+  channels: 'group-section-general',
+  phone: 'group-section-distribution',
+  strategy: 'group-section-distribution',
+  subStrategy: 'group-section-distribution',
+  ringAllAgents: 'group-section-distribution',
+  chatStrategy: 'group-section-distribution',
+  phoneQueue: 'group-section-distribution',
+  chatQueue: 'group-section-distribution',
+  chat: 'group-section-distribution',
+  announcements: 'group-section-distribution',
+  advanced: 'group-section-distribution',
+  typification: 'group-section-resources',
+  scheduleIds: 'group-section-resources',
+  templateIds: 'group-section-resources',
+  labelIds: 'group-section-resources',
+  links: 'group-section-agents',
+};
+const CLIENT_CARD_KEYS: ReadonlySet<string> = new Set(['cardOpening', 'cardUrl', 'cardHeight']);
+
 @Component({
   selector: 'sc-group-form-page',
   imports: [
@@ -172,6 +200,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly crossTab = inject(CrossTabLockService);
+  private readonly sectionLinks = inject(SectionLinksService);
   private readonly tipificacionesStore = inject(TipificacionesStore);
   private readonly agendasStore = inject(AgendasStore);
   private readonly templatesStore = inject(TemplatesStore);
@@ -220,16 +249,37 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * ficha de cliente, a Recursos. Agente y usuario siguen con pestañas: la divergencia es a
    * propósito y está escrita en DD-121.
    */
-  protected readonly navSections = computed<readonly FormNavSection[]>(() => [
-    { id: 'group-section-general', labelKey: 'groups.form.section.general', icon: 'tune' },
-    { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route' },
-    // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
-    { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books' },
-    { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'group' },
-  ]);
+  protected readonly navSections = computed<readonly FormNavSection[]>(() =>
+    [
+      { id: 'group-section-general', labelKey: 'groups.form.section.general', icon: 'tune' },
+      { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route' },
+      // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
+      { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books' },
+      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'group' },
+    ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) })),
+  );
 
-  /** La sección a la vista. Abre en General, en los dos modos: es la que decide lo demás. */
-  protected readonly activeSection = signal<string>('group-section-general');
+  /**
+   * `?seccion=` de la dirección, que el router pasa a este input (`withComponentInputBinding`) en cada
+   * navegación, también cuando solo cambia la query: cada fila del índice es un ENLACE (DD-122), y
+   * Atrás o un enlace compartido llevan a su sección.
+   */
+  readonly seccion = input<string | undefined>();
+
+  /**
+   * La sección a la vista, la de la dirección. Sin `?seccion=`, General: abre en General en los dos
+   * modos, es la que decide lo demás. En el ALTA General es la puerta: sin nombre ni canales se queda
+   * en General aunque la dirección pida otra (el enlace de otra pestaña, o un `crear?seccion=` escrito).
+   */
+  protected readonly activeSection = computed<string>(() => {
+    const id = GroupFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'group-section-general';
+    // Mientras se crea no: en cuanto el grupo existe, su nombre ya está cogido (por él mismo) y la ficha
+    // pintaría General un instante antes de irse a la edición.
+    if (this.mode() === 'create' && !this.saving() && id !== 'group-section-general' && !this.generalValid()) {
+      return 'group-section-general';
+    }
+    return id;
+  });
 
   /** Se pinta la sección elegida en el índice, y solo esa. */
   protected showSection(id: string): boolean {
@@ -261,6 +311,27 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return new Set(show ? ['group-section-general'] : []);
   });
 
+  /**
+   * Las secciones con cambios sin guardar: su marca en el índice (DD-122). La ficha tiene un solo
+   * «Guardar», y el índice dice dónde está lo que se va a guardar. Solo al editar: en el alta todo está
+   * por guardar. Un cambio puede cruzar secciones —quitar un canal en General recorta los canales de
+   * los agentes— y entonces se marcan las dos.
+   */
+  protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
+    if (this.mode() !== 'edit') return new Set();
+    const out = new Set<string>();
+    for (const key of this.dirtyState.changedKeys()) {
+      if (key !== 'advanced') {
+        out.add(SECTION_OF_FIELD[key as keyof FormState]);
+        continue;
+      }
+      for (const sub of changedKeys(this.form().advanced, this.dirtyState.pristineValue().advanced)) {
+        out.add(CLIENT_CARD_KEYS.has(sub) ? 'group-section-resources' : 'group-section-distribution');
+      }
+    }
+    return out;
+  });
+
   /** El aviso bajo el nombre: repetido siempre; vacío, solo tras intentar salir de General. */
   protected readonly nameError = computed<string | null>(() => {
     if (this.nameTaken()) return 'groups.errors.name_taken';
@@ -280,7 +351,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.stayInGeneral();
       return;
     }
-    this.activeSection.set(id);
+    // En el alta, sin rastro en el historial: Atrás sale del alta (DD-122).
+    void this.sectionLinks.go(this.sectionUrl(id), { replace: this.mode() === 'create' });
+  }
+
+  /** La dirección de una sección de esta ficha: General, la de aterrizaje, sin parámetro. */
+  private sectionUrl(id: string): UrlTree {
+    const slug = this.sectionSlug(id);
+    return this.sectionLinks.section(this.route, slug === 'general' ? null : slug);
   }
 
   /**
@@ -289,7 +367,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   private stayInGeneral(): void {
     this.attemptedGeneral.set(true);
-    this.activeSection.set('group-section-general');
+    if (this.seccion()) void this.sectionLinks.go(this.sectionUrl('group-section-general'), { replace: true });
     const nameMissing = this.form().name.trim().length === 0 || this.nameTaken();
     const target = nameMissing ? 'group-name' : 'group-channels-phone';
     afterNextRender(() => document.getElementById(target)?.focus(), { injector: this.injector });
@@ -517,11 +595,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (!idParam) {
       // ALTA: la ficha vacía, con los valores por defecto de Grupos y Teléfono marcado (`emptyForm`). Abre en
-      // General aunque la dirección pida otra sección: General es la puerta del alta (`goTo`).
+      // General aunque la dirección pida otra sección: General es la puerta del alta (`goTo`). Se quita el
+      // parámetro, o en cuanto General estuviera completa la ficha saltaría sola a esa sección.
       this.dirtyState.markPristine();
+      if (this.route.snapshot.queryParamMap.has('seccion')) {
+        void this.sectionLinks.go(this.sectionUrl('group-section-general'), { replace: true });
+      }
       return;
     }
-    this.openSectionFromUrl();
     const group = this.groupsStore.getGroup(Number(idParam));
     if (!group) {
       void this.router.navigateByUrl('/admin/grupos', { replaceUrl: true });
@@ -564,19 +645,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     );
   }
 
-  /** Enlace a una sección (`?seccion=agentes`): el alta, al crear, sigue en la sección en la que estaba. */
+  /** Cada sección en la dirección (`?seccion=agentes`): el índice enlaza a ellas y el alta, al crear,
+   *  sigue en la sección en la que estaba. */
   private static readonly SECTION_SLUGS: Readonly<Record<string, string>> = {
     general: 'group-section-general',
     distribucion: 'group-section-distribution',
     recursos: 'group-section-resources',
     agentes: 'group-section-agents',
   };
-
-  private openSectionFromUrl(): void {
-    const slug = this.route.snapshot.queryParamMap.get('seccion');
-    const id = slug ? GroupFormPageComponent.SECTION_SLUGS[slug] : undefined;
-    if (id) this.activeSection.set(id);
-  }
 
   private sectionSlug(id: string): string | null {
     const entry = Object.entries(GroupFormPageComponent.SECTION_SLUGS).find(([, value]) => value === id);
@@ -944,6 +1020,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   private createGroup(payload: Omit<Group, 'id' | 'code'>): void {
     const f = this.form();
+    const slug = this.sectionSlug(this.activeSection());
     const created = this.groupsStore.addGroup(payload);
     this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(this.withoutOrphans(f.links), created.id));
     this.messages.add({
@@ -951,13 +1028,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       summary: this.translate.instant('groups.toasts.created', { name: created.name }),
       life: TOAST_LIFE.success,
     });
-    this.saving.set(false);
     this.dirtyState.markPristine();
-    const slug = this.sectionSlug(this.activeSection());
-    void this.router.navigate(['/admin/grupos/editar', created.id], {
-      replaceUrl: true,
-      queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
-    });
+    // `saving` sigue encendido hasta que se va (ver `activeSection`).
+    void this.router
+      .navigate(['/admin/grupos/editar', created.id], {
+        replaceUrl: true,
+        queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
+      })
+      .finally(() => this.saving.set(false));
   }
 
   /** Vuelve al último estado guardado (o al formulario vacío, en un alta). Es el

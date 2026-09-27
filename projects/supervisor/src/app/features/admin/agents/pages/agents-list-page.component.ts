@@ -417,8 +417,10 @@ export class AgentsListPageComponent {
     void this.router.navigateByUrl('/admin/agentes/crear');
   }
 
+  /** Abrir la ficha lleva a su sección de trabajo (`?seccion=grupos`): la ficha, sin parámetro, abre por
+   *  Identidad, la primera de su índice (DD-122). */
   protected onRowOpen(agent: Agent): void {
-    void this.router.navigateByUrl(`/admin/agentes/editar/${agent.id}`);
+    void this.router.navigate(['/admin/agentes/editar', agent.id], { queryParams: { seccion: 'grupos' } });
   }
 
   /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
@@ -454,7 +456,7 @@ export class AgentsListPageComponent {
   }
 
   protected onRowEdit(agent: Agent): void {
-    void this.router.navigateByUrl(`/admin/agentes/editar/${agent.id}`);
+    this.onRowOpen(agent);
   }
 
   protected onRowDuplicate(agent: Agent): void {

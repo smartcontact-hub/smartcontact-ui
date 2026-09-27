@@ -1,15 +1,26 @@
-<nav class="form-nav" [class.form-nav--flush]="flush()" [attr.aria-label]="labelKey() | translate">
+<nav
+  class="form-nav"
+  [class.form-nav--flush]="flush()"
+  [attr.aria-label]="titleKey() ? null : (labelKey() | translate)"
+  [attr.aria-labelledby]="titleKey() ? titleId : null"
+>
+  <!-- El rótulo de encima («Contact Center»): texto, no encabezado; nombra el índice. -->
+  @if (titleKey(); as title) {
+    <span class="form-nav__title" [id]="titleId">{{ title | translate }}</span>
+  }
   <ul class="form-nav__list">
     @for (section of sections(); track section.id) {
       <li>
+        <!-- Un enlace a su sitio (DD-122): sin `role="tab"`, que anunciaba una pestaña sin lista de
+             pestañas, y la actual como `aria-current="page"`, que es lo que es. -->
         <a
           class="form-nav__item"
           [class.form-nav__item--active]="activeId() === section.id"
           [class.form-nav__item--has-error]="hasError(section.id)"
-          [attr.aria-current]="activeId() === section.id ? 'true' : null"
-          href="#"
-          role="tab"
-          (click)="onJump($event, section.id)"
+          [class.form-nav__item--has-changes]="hasChanges(section.id)"
+          [attr.aria-current]="activeId() === section.id ? 'page' : null"
+          [attr.href]="section.href ?? '#'"
+          (click)="onJump($event, section)"
         >
           @if (section.icon; as ic) {
             <span class="form-nav__icon" aria-hidden="true">
@@ -20,13 +31,26 @@
                comía 25 de los 99px de la caja de texto y dejaba 74, con lo que
                «Identificación» (79px) no cabía ni en una línea entera. Aquí
                fluye detrás del texto, la caja conserva su ancho completo y el
-               punto acompaña a la última palabra. -->
+               punto acompaña a la última palabra. Se ve UN punto: el rojo de lo
+               que falta gana al de cambios, porque es lo que no deja guardar. -->
           <span class="form-nav__label">
             {{ section.labelKey | translate }}@if (hasError(section.id)) {<span
                 class="form-nav__dot"
-                [attr.aria-label]="'sc.formSectionNav.sectionHasErrors' | translate"
+                aria-hidden="true"
+              ></span>} @else if (hasChanges(section.id)) {<span
+                class="form-nav__dot form-nav__dot--changes"
+                aria-hidden="true"
               ></span>}
           </span>
+          <!-- Lo que el punto dice, como texto del enlace, que es de lo que sale su nombre. Hasta el
+               2026-09-27 era un `aria-label` en el `span` del punto: Chrome lo leía (medido), pero
+               ARIA 1.2 lo prohíbe en un elemento sin rol. Se oyen las dos marcas. -->
+          @if (hasError(section.id)) {
+            <span class="form-nav__sr">{{ 'sc.formSectionNav.sectionHasErrors' | translate }}</span>
+          }
+          @if (hasChanges(section.id)) {
+            <span class="form-nav__sr">{{ 'sc.formSectionNav.sectionHasChanges' | translate }}</span>
+          }
         </a>
       </li>
     }

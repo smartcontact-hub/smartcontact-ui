@@ -49,16 +49,13 @@ import {
   PRIORITY_LABEL_KEYS,
   chatStrategyOf,
   duplicateGroupDraft,
+  type GroupIdentityDraft,
   phoneStrategyOf,
   priorityRank,
 } from '../data/groups-data';
 import { GroupBulkField, GroupsStore } from '../state/groups.store';
-import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import {
-  GroupCreateDialogComponent,
-  type GroupCreateSubmission,
-} from '../components/group-create-dialog/group-create-dialog.component';
+import { GroupDuplicateDialogComponent } from '../components/group-duplicate-dialog/group-duplicate-dialog.component';
 import { GroupAgentsPanelComponent } from '../components/group-agents-panel/group-agents-panel.component';
 
 interface PendingBulkEdit {
@@ -86,7 +83,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
-    GroupCreateDialogComponent,
+    GroupDuplicateDialogComponent,
     GroupAgentsPanelComponent,
     IconComponent,
     ImpactPreviewDialogComponent,
@@ -108,7 +105,6 @@ export class GroupsListPageComponent {
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
   private readonly undoStack = inject(UndoStackService);
-  private readonly defaultsStore = inject(GroupDefaultsStore);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59): la banda de
    * page-header desaparece; identidad → breadcrumb, acción → barra. */
@@ -457,33 +453,32 @@ export class GroupsListPageComponent {
     void this.router.navigateByUrl('/admin/grupos/valores-por-defecto');
   }
 
-  /** El diálogo corto, desde el 2026-09-26 solo para DUPLICAR (el alta es la ficha): `duplicateSource` es el original. */
-  protected readonly createOpen = signal(false);
+  /** El diálogo de duplicar: `duplicateSource` es el original (el alta es la ficha, DD-121 §11). */
+  protected readonly duplicateOpen = signal(false);
   protected readonly duplicateSource = signal<Group | null>(null);
   protected readonly groupNames = computed(() => this.groups().map((g) => g.name));
   /** Los números que ya usan los grupos: el desplegable del teléfono asociado, igual que en la ficha. */
   protected readonly groupPhones = computed(() => [...new Set(this.groups().map((g) => g.phone).filter(Boolean))].sort());
-  protected readonly defaultPriority = computed(() => this.defaultsStore.defaults().priority);
   protected readonly suggestedCopyName = computed(() => {
     this.lang();
     const source = this.duplicateSource();
     return source ? this.translate.instant('groups.create_dialog.copy_name', { name: source.name }) : '';
   });
 
-  /** El alta es la propia ficha en modo alta (DD-121); el diálogo de abajo queda para duplicar. */
+  /** El alta es la propia ficha en modo alta (DD-121 §11). */
   protected onCreateClick(): void {
     void this.router.navigateByUrl('/admin/grupos/crear');
   }
 
-  protected onCreateCancel(): void {
-    this.createOpen.set(false);
+  protected onDuplicateCancel(): void {
+    this.duplicateOpen.set(false);
   }
 
   /**
    * Crea el duplicado y abre su ficha: se lleva todo lo del original, agentes incluidos, con el nombre y
    * el teléfono que se hayan puesto en el diálogo.
    */
-  protected onCreateConfirm(submission: GroupCreateSubmission): void {
+  protected onDuplicateConfirm(submission: GroupIdentityDraft): void {
     const source = this.duplicateSource();
     if (!source) return;
     const created = this.groupsStore.addGroup(duplicateGroupDraft(source, submission));
@@ -491,7 +486,7 @@ export class GroupsListPageComponent {
       created.id,
       this.linksStore.linksForGroup(source.id).map((l) => ({ ...l, groupId: created.id })),
     );
-    this.createOpen.set(false);
+    this.duplicateOpen.set(false);
     this.messages.add({
       severity: 'success',
       summary: this.translate.instant('groups.toasts.created', { name: created.name }),
@@ -541,10 +536,10 @@ export class GroupsListPageComponent {
     void this.router.navigateByUrl(`/admin/grupos/editar/${group.id}`);
   }
 
-  /** Duplicar es el alta con punto de partida: mismo diálogo, con el nombre propuesto y sus canales. */
+  /** Duplicar: el diálogo corto con el nombre propuesto; el resto se copia del original. */
   protected onRowDuplicate(group: Group): void {
     this.duplicateSource.set(group);
-    this.createOpen.set(true);
+    this.duplicateOpen.set(true);
   }
 
   protected onRowDelete(group: Group): void {

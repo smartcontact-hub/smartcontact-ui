@@ -9,7 +9,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { stableStringify } from '../../projects/supervisor/src/app/shared/utils/form-dirty-state.core.mjs';
+import { changedKeys, stableStringify } from '../../projects/supervisor/src/app/shared/utils/form-dirty-state.core.mjs';
 
 test('Set: el orden no marca sucio', () => {
   assert.equal(stableStringify(new Set([3, 1, 2])), stableStringify(new Set([1, 2, 3])));
@@ -49,4 +49,34 @@ test('null / undefined / primitivos', () => {
   assert.equal(stableStringify('x'), '"x"');
   assert.equal(stableStringify(42), '42');
   assert.equal(stableStringify(true), 'true');
+});
+
+/*
+ * QUÉ CAMPOS CAMBIARON (2026-09-27, DD-122). La ficha tiene un solo «Guardar» para todas sus
+ * secciones, y el índice marca las secciones con cambios sin guardar. Cada página traduce campos a
+ * secciones; aquí se fija la parte común: qué claves de primer nivel difieren del estado limpio,
+ * con la MISMA comparación que decide si se puede guardar (deshacer devuelve el conjunto vacío).
+ */
+test('changedKeys: sin cambios, ninguna clave', () => {
+  const limpio = { name: 'Ana', labelIds: new Set([1, 2]) };
+  assert.deepEqual([...changedKeys({ name: 'Ana', labelIds: new Set([2, 1]) }, limpio)], []);
+});
+
+test('changedKeys: solo la clave que cambió', () => {
+  const limpio = { name: 'Ana', priority: 'Baja', labelIds: new Set([1]) };
+  assert.deepEqual([...changedKeys({ name: 'Ana', priority: 'Alta', labelIds: new Set([1]) }, limpio)], [
+    'priority',
+  ]);
+});
+
+test('changedKeys: un cambio dentro de un objeto anidado marca su clave de primer nivel', () => {
+  const limpio = { advanced: { wrapUp: 30, recording: true }, name: 'Ana' };
+  assert.deepEqual([...changedKeys({ advanced: { recording: true, wrapUp: 45 }, name: 'Ana' }, limpio)], [
+    'advanced',
+  ]);
+});
+
+test('changedKeys: una clave que aparece o desaparece cuenta como cambio', () => {
+  assert.deepEqual([...changedKeys({ a: 1, b: 2 }, { a: 1 })], ['b']);
+  assert.deepEqual([...changedKeys({ a: 1 }, { a: 1, b: 2 })], ['b']);
 });

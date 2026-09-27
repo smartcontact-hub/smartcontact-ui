@@ -14,8 +14,9 @@ import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
  * `collapsible` (DD#57) convierte la cabecera en botón y colapsa el body;
  * `initiallyCollapsed` arranca plegado (secciones "avanzadas"). `flush` (SnowUI
  * S62) quita la caja (fondo/borde/radio/padding lateral) para sangrar el
- * contenido. `anchorId` expone `[id]`/`[data-section-anchor]` + `scroll-margin-top`
- * para el salto-a-ancla de `sc-form-section-nav`.
+ * contenido. `anchorId` expone `[id]`/`[data-section-anchor]` + `scroll-margin-top`:
+ * el id de la sección, y el aire para un enlace con `#` (el índice de secciones ya no
+ * salta a anclas: cada sección es su propia dirección, DD-122).
  */
 @Component({
   selector: 'sc-section-card',
@@ -34,7 +35,7 @@ export class ScSectionCardComponent {
   readonly titleKey = input.required<string>();
   /** Clave de traducción de la aclaración bajo el título. */
   readonly hintKey = input<string | null>(null);
-  /** Anchor id que usa `sc-form-section-nav` para scroll-spy / salto a la sección. */
+  /** Id de la sección (`[id]` y `[data-section-anchor]`), con aire arriba para un enlace con `#`. */
   readonly anchorId = input<string | null>(null);
   /** Icono opcional de la cabecera. Cualquier nombre de Material Symbols. */
   readonly icon = input<string | null>(null);

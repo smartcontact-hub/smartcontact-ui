@@ -160,17 +160,18 @@
 />
 
 <!-- Duplicar, en corto: nombre, teléfono saliente y prioridad del duplicado (la pieza de General). Todo lo
-     demás viene del original. El alta ya no pasa por aquí: es la propia ficha en modo alta (DD-121). -->
-<sc-group-create-dialog
-  [visible]="createOpen()"
-  [source]="duplicateSource()"
-  [suggestedName]="suggestedCopyName()"
-  [existingNames]="groupNames()"
-  [phoneOptions]="groupPhones()"
-  [defaultPriority]="defaultPriority()"
-  (cancelled)="onCreateCancel()"
-  (confirm)="onCreateConfirm($event)"
-/>
+     demás viene del original. Se pinta cuando hay algo que duplicar: sin original no hay título que dar. -->
+@if (duplicateSource(); as origen) {
+  <sc-group-duplicate-dialog
+    [visible]="duplicateOpen()"
+    [source]="origen"
+    [suggestedName]="suggestedCopyName()"
+    [existingNames]="groupNames()"
+    [phoneOptions]="groupPhones()"
+    (cancelled)="onDuplicateCancel()"
+    (confirm)="onDuplicateConfirm($event)"
+  />
+}
 
 <sc-impact-preview-dialog
   [visible]="!!pendingBulkEdit()"

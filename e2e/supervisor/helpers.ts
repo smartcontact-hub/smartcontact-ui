@@ -209,11 +209,12 @@ export const pickSelectOption = async (
 
 /**
  * Cambia de sección en un formulario con `<sc-form-section-nav>` (constructor de
- * reglas, altas de agente/grupo/usuario).
+ * reglas, fichas).
  *
- * El índice son PESTAÑAS: solo una sección está en el DOM a la vez. Un journey
- * que toque dos secciones tiene que pasar por aquí en medio, o el locator de la
- * segunda no existe y el fallo parece un bug de la sección, no de navegación.
+ * Una sección a la vista: la de la dirección (`?seccion=`, DD-122); las demás no
+ * están en el DOM. Un journey que toque dos secciones tiene que pasar por aquí en
+ * medio, o el locator de la segunda no existe y el fallo parece un bug de la
+ * sección, no de navegación.
  *
  * Se casa por texto de la etiqueta a propósito, con `hasText` (subcadena): los
  * iconos son ligaduras de Material y entran en el `innerText` del item, así que

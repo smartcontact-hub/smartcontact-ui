@@ -161,23 +161,11 @@
   min-width: 0;
 }
 
-/* LAS FICHAS DE PESTAÑAS (agente y usuario; la de grupo lo fue hasta el 2026-09-26 y ahora lleva
- * índice, ver `.ficha-rail` debajo), que no tienen índice lateral: la misma página, más ancha.
- *
- * Sin índice, la tabla de agentes pasa a ser el contenido, y el tope de editor (1200) la
- * estrangula: con los cuatro canales encendidos son cuatro columnas más la del nombre. 1600 es el
- * tope de `--list`, que es el que el molde reserva justo para eso — y se pide por AQUÍ, no
- * cambiando el modificador de la página, porque una página es de UN tipo (`audit:page-anatomy`,
- * que lo cazó dos veces al intentarlo). La página sigue siendo `--rail`: conserva su padding y su
- * `display: flex`, y con el `<aside>` ausente la columna de contenido se queda el ancho entero. */
-.page__inner--rail.ficha-tabs {
-  max-width: 1600px;
-}
-
-/* LA FICHA DE GRUPO CON ÍNDICE (visión de producto de grupos, 2026-09-25; DD-121): el molde de
- * Contact Center tal cual —índice de 196 y contenido de 920 a 1440— y, encima de los dos y a todo
- * lo ancho, la MISMA cabecera que las fichas de agente y usuario. Dentro de `.page__main` el `h1`
- * se correría 224px (índice + hueco) respecto a las otras dos; aquí arranca en su misma vertical.
+/* LAS FICHAS CON ÍNDICE (grupo desde el 2026-09-26, DD-121; agente y usuario desde el 2026-09-27,
+ * DD-122, que hasta entonces iban con pestañas): el molde de Contact Center tal cual —índice de 196 y
+ * contenido de 920 a 1440— y, encima de los dos y a todo lo ancho, la cabecera de la ficha. Dentro de
+ * `.page__main` el `h1` se correría 224px (índice + hueco) respecto al índice; aquí arranca en su
+ * misma vertical.
  *
  * La fila se parte: la cabecera ocupa la primera línea entera y el índice y el contenido van en
  * la segunda con su hueco de siempre (el `gap` de `--rail`, que no se toca). Entre la cabecera y
@@ -192,7 +180,8 @@
   flex: 0 0 100%;
 }
 
-/* EL RESUMEN DE LA FICHA DE GRUPO, a la derecha (DD-121 §3, 2026-09-27). Primero vivió bajo el índice,
+/* EL RESUMEN DE LA FICHA, a la derecha (DD-121 §3, 2026-09-27; en las tres fichas desde DD-122). En la de
+ * grupo primero vivió bajo el índice,
  * en el carril de 196, que es el de Contact Center y NO hace scroll. Medido: a 1440×900 cabía (fondo
  * en 844), pero a 1366×768 se cortaba al abrir y, a 1280×720, al bajar hasta el final de una sección
  * larga el índice se escondía 99px por arriba. La navegación se perdía a medio editar.
@@ -201,8 +190,8 @@
  * su propio scroll si no cabe: nunca se corta y nunca se lleva el índice. 240 es el carril del
  * constructor de reglas (`--with-panel`), el del otro «impacto estimado» de la app.
  *
- * El tope sube a 1600, como en las fichas de pestañas (`.ficha-tabs`): con 1200 el contenido se
- * quedaba en 652, y la tabla de agentes con sus cuatro canales pide unos 740. A 1440 queda en 812. */
+ * El tope sube a 1600, el de `--list`: con 1200 el contenido se quedaba en 652, y la tabla de agentes
+ * con sus cuatro canales pide unos 740. A 1440 queda en 812. */
 .page__inner--rail.ficha-rail--summary {
   max-width: 1600px;
 }
@@ -248,46 +237,38 @@
   }
 }
 
+/* EL AVISO DE «ABIERTO EN OTRA PESTAÑA» (DD#169), encima de la sección: un `sc-message` de aviso, el
+ * mismo en todas las fichas. Aquí y no en cada pantalla por lo mismo que la cabecera de abajo. */
+.ficha-conflict {
+  display: block;
+  margin-block-end: var(--sc-spacing-1);
+}
+
 /* LA FRANJA DE ESTADO de las fichas (grupo, usuario, agente): el nombre como único `h1`, una
- * línea meta y, en las de pestañas, tres cifras. Vive aquí y no en cada pantalla porque la usan
- * las tres, y la encapsulación de Angular es por componente. Sin línea abajo: separa el aire. */
-.ficha-tabs .headline,
+ * línea meta y «Eliminar». Vive aquí y no en cada pantalla porque la usan las tres, y la
+ * encapsulación de Angular es por componente. Sin línea abajo: separa el aire. Sin aire propio abajo:
+ * la distancia hasta índice y contenido la pone el `row-gap` de `.ficha-rail`. */
 .ficha-rail .headline {
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-75);
-  /* Sin aire propio abajo: la franja y la tira de pestañas son UNA cabecera, y la distancia la
-   * pone solo `.tabbar` (2026-09-23: con 28 aquí había 63,5 de aire entre las cifras y el
-   * texto de las pestañas, medido a 1440). */
 }
 
 /* «Eliminar», al final de la franja: es una acción sobre el sujeto de la ficha, y la franja es su
- * cabecera. Antes vivía al pie del índice lateral, que ya no existe. */
-.ficha-tabs .headline__actions,
+ * cabecera. */
 .ficha-rail .headline__actions {
   margin-inline-start: auto;
 }
 
-.ficha-tabs .headline__who,
+/* Sin cifras al lado (las dice el resumen de la derecha, desde el 2026-09-27 en las tres fichas) no hay
+ * columna que alinear: el nombre se queda el ancho que sobra y solo se recorta si de verdad no cabe. */
 .ficha-rail .headline__who {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   min-width: 0;
-  /* Ancho FIJO por el mismo motivo que las cifras de al lado: sin él, las cifras arrancaban donde
-   * terminara el nombre, así que dos grupos abiertos uno detrás de otro las enseñaban en dos
-   * verticales distintas. 252 da de sobra para un nombre y su teléfono; lo que se pase se recorta
-   * y su valor entero sigue en el `title`. */
-  inline-size: var(--sc-spacing-18);
 }
 
-/* Sin cifras al lado (las dice el resumen de la derecha) no hay columna que alinear: el nombre se
- * queda el ancho que sobra y solo se recorta si de verdad no cabe. */
-.ficha-rail .headline__who {
-  flex: 1 1 auto;
-  inline-size: auto;
-}
-
-.ficha-tabs .headline__name,
 .ficha-rail .headline__name {
   color: var(--sc-text-primary);
   overflow: hidden;
@@ -298,84 +279,18 @@
 /* El nombre editable en su sitio (`sc-name-inplace`): el fondo de «se puede editar» y el campo sobresalen del
  * título (compensan el relleno nativo), así que aquí no se recorta; los puntos suspensivos los pone el propio
  * Inplace sobre el nombre. */
-.ficha-tabs .headline__name--editable,
 .ficha-rail .headline__name--editable {
   overflow: visible;
 }
 
-.ficha-tabs .headline__meta,
 .ficha-rail .headline__meta {
   color: var(--sc-text-secondary);
-  /* Una línea, como el nombre: si envolviera, la franja crecería y la tira bajaría solo en esa
-   * ficha (medido en la de usuario: email · tipo en dos líneas, la tira 18px más abajo). El texto
-   * entero va en el `title`. */
+  /* Una línea, como el nombre: si envolviera, la franja crecería y el índice bajaría solo en esa
+   * ficha (medido en la de usuario: email · tipo en dos líneas, 18px más abajo). El texto entero va
+   * en el `title`. */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-/* LAS CIFRAS.
- *
- * Ancladas al INICIO y con ancho mínimo fijo, no pegadas al borde derecho. Medido el
- * 2026-09-21 con el anclaje anterior (`margin-inline-start: auto`): al encender el canal
- * Chat, «Canales» pasaba de 102 a 142px y empujaba «Agentes asignados» 40px a la izquierda.
- * Un dato que se mueve solo cuando cambias OTRA cosa es un dato que hay que volver a leer.
- *
- * El ancho mínimo aguanta los valores de un idioma; el que se pase se recorta con puntos
- * suspensivos y su valor entero vive en el `title`. Es el peaje de una franja de cifras:
- * dejarla crecer devuelve el salto, y dejarla envolver mueve el alto de la banda.
- */
-.ficha-tabs .headline__stats {
-  /* Rejilla de ancho FIJO y tres columnas iguales, no una fila que se acomoda. Es la unica
-   * forma de que ningun dato se mueva: con anchos elasticos, «Canales» pasaba de 70 a 98px al
-   * encender Chat y empujaba «Estrategia» 28px (medido). El ancho da de sobra para la etiqueta
-   * mas larga que hay hoy («Agentes asignados», 108px). */
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  /* Un hueco entre columnas, no solo el reparto: con tres canales encendidos el valor de
-   * «Canales» llena su columna y el recorte («Teléfono, Chat,…») quedaba pegado a «Balanceada»,
-   * sin una sola pausa entre dos datos distintos. Visto en la captura de tres canales el
-   * 2026-09-21. 12.25 y no más: 350 es el peldaño más alto de la tabla y de él sale todo. */
-  column-gap: var(--sc-spacing-0-875);
-  inline-size: var(--sc-spacing-25);
-  margin: 0;
-  margin-inline-start: var(--sc-spacing-2);
-}
-
-.ficha-tabs .headline__stat {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.ficha-tabs .headline__label {
-  color: var(--sc-text-secondary);
-  margin: 0;
-  /* Por lo mismo que la meta: una etiqueta en dos líneas mueve el alto de toda la franja. */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.ficha-tabs .headline__value {
-  color: var(--sc-text-primary);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  /* Las cifras no bailan al cambiar de dígito. */
-  font-variant-numeric: tabular-nums;
-}
-
-/* EL CONMUTADOR. Pegado a lo que abre y separado de lo que cierra, para que se lea como cabecera
- * de lo que viene y no como pie de lo anterior. Desde el 2026-09-22 la tira va ARRIBA, bajo la
- * franja del nombre, y gobierna toda la ficha. */
-.ficha-tabs .tabbar {
-  /* 7 arriba y 7 abajo (2026-09-23; antes 17,5 arriba y 28 en la franja). Con los 14 de relleno
-   * de la pestaña de PrimeNG, que son su zona de clic, quedan ~25 del texto de las cifras al de la
-   * pestaña y ~28 de la pestaña al contenido: la tira se pega a su franja y el nombre, las cifras y
-   * las secciones se leen como una sola cabecera. */
-  margin-block: var(--sc-spacing-0-5);
 }
 
 /* La columna de formulario que acompaña al rail de `--with-panel`.

@@ -290,8 +290,10 @@ export class UsersListPageComponent {
     void this.router.navigateByUrl('/admin/usuarios/crear');
   }
 
+  /** Abrir la ficha lleva a su sección de trabajo (`?seccion=acceso`): la ficha, sin parámetro, abre por
+   *  Identidad, la primera de su índice (DD-122). */
   protected onRowOpen(user: User): void {
-    void this.router.navigateByUrl(`/admin/usuarios/editar/${user.id}`);
+    void this.router.navigate(['/admin/usuarios/editar', user.id], { queryParams: { seccion: 'acceso' } });
   }
 
   /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
@@ -323,7 +325,7 @@ export class UsersListPageComponent {
   }
 
   protected onRowEdit(user: User): void {
-    void this.router.navigateByUrl(`/admin/usuarios/editar/${user.id}`);
+    this.onRowOpen(user);
   }
 
   protected onRowDuplicate(user: User): void {
