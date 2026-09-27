@@ -11,7 +11,8 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
   preflight sobre ESTE árbol, `echo $?` colgado, volcar credenciales, `git diff main...rama`,
   `for f in $VAR`), y un PR o commit con atribución de la herramienta o rotulado para Rafa (el
   repo es público; AGENTS.md §Pull requests y commits). El de Stop exige leer el CI tras un push (`npm run ci:verdict`), que cada
-  corrección lleve ruta si reflexionaste, y que el mensaje de cierre lleve el parte en llano (qué
+  corrección lleve ruta si reflexionaste, que una pantalla del Supervisor tocada pase antes por
+  `npm run revision`, y que el mensaje de cierre lleve el parte en llano (qué
   cambia · en qué te ayuda · rastro · seguro cerrar, que MIDE el árbol y te desmiente; AGENTS.md
   §Session-Close, paso 6). El de compactación avisa
   si la guía cambió en `origin/main`. El de cada mensaje de Rafa apunta lo que suena a corrección y te pide nombrar la
@@ -43,8 +44,8 @@ Resumen operativo:
   (`sc-empty-state`).
 - **UX de pantalla**: al construir pantallas de app, sigue la barra de calidad de
   [AGENTS.md](AGENTS.md) §«UX de pantalla» (color funcional, `sc-skeleton` en carga, copy sin
-  relleno, `sc-icon` sin emojis, contraste, sin saltos). Navegable: `sc-docs` → Fundamentos →
-  Patrones.
+  relleno, `sc-icon` sin emojis, contraste, sin saltos, agrupación 7 · 14 · 28 —entre grupos,
+  el doble que dentro—). Navegable: `sc-docs` → Fundamentos → Patrones.
 - **Voz del código**: comentarios, commits y PRs sin nombres de personas ni citas de conversación;
   la procedencia es la DD, el ticket o el nodo de Figma (AGENTS.md §«Voz del código»; lo vigilan
   `audit:personal-names` y `bash-guard`).

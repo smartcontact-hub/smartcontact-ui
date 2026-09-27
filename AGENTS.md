@@ -192,6 +192,21 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    lo desconecta del canal por el que un cambio de token llega solo a todos los componentes. Si
    el texto de un componente tiene que verse distinto, se mueve su TOKEN (DD-55, gateado por
    `audit:text-styles`). Muestrario y regla: **Fundamentos → Tipografía** en `sc-docs`.
+9. **Agrupación por espacio.** Lo que va junto se separa MENOS que lo que no, con una sola
+   escalera: **7 · 14 · 28** (`--sc-spacing-0-5` · `-1` · `-2`). 7 entre una etiqueta y lo que
+   etiqueta (son una pieza); 14 entre hermanos (campos, filas, opciones, celdas); 28 entre grupos
+   y secciones, y entre el último campo y el botón que lo envía. Entre grupos, al menos el doble
+   que dentro: por debajo, una etiqueta se lee a medio camino entre su control y el de arriba, y
+   un botón, como un campo más. Si la maqueta trae otro valor (12.25, 24.5), manda la escalera y
+   el cambio del Kit va a `docs/figma-pendiente.md` (DD-123). Lo mide
+   `e2e/supervisor/agrupacion.spec.ts` en el build, pantalla a pantalla.
+
+**Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
+recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas
+con la skill `better-layout`: lo medible se arregla antes de enseñarlo y lo que sea gusto se le lista al
+usuario, no se decide solo. La IA construye; esta pasada es la que critica, y el primer filtro visual no
+puede ser el usuario. Si escribes plantillas u hojas del Supervisor y cierras sin revisarlas, el hook de
+Stop te lo para una vez.
 
 **Mapa de composición** — punteros, no prosa: la razón vive donde apunta cada línea. Nace de
 medir que ninguno de estos nombres aparecía en AGENTS ni en CLAUDE, así que la regla existía en
@@ -290,7 +305,7 @@ Before considering any token/theme/component change done, run:
 - `npm run tokens:type-parity` — typography parity
 - `npm run audit:theme-scale` — zero `px` in the preset, central `css.ts`
 - `npm run verify` — runs the full guardrail chain (canonical list: the table in README.md); also includes test:unit, docs:guard, docs:coherence, build, typecheck, lint
-- `npm run preflight:scope -- --run` before a push (gates + AOT builds, ~8 min; the e2e suites run only in CI since DD-60, so run by hand the suite that covers what you touched; it writes the `.preflight-ok` mark the push hook requires; the `--` is required, without it npm swallows the flag and the script only PRINTS the lane), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message. `correction-capture` (UserPromptSubmit) logs every message of Rafa's that sounds like a correction to `correcciones.jsonl` and asks you to name the rule that already covered it, and on a closing message ("cerramos") tells you to invoke `reflect`; `/reflect` reads that log first and routes each correction with `--enrutar <id> <destino> "<motivo>"` — the Stop hook blocks the close while any is unrouted, y también si el mensaje final no lleva el parte de cierre (§Session-Close Protocol, paso 6); and `docs:coherence` escalates any LEARNINGS rule broken in ≥3 sessions that is still prose (CHECK K), caps the agent memory (CHECK N) and demands a red test per `verify` script (CHECK O).
+- `npm run preflight:scope -- --run` before a push (gates + AOT builds, ~8 min; the e2e suites run only in CI since DD-60, so run by hand the suite that covers what you touched; it writes the `.preflight-ok` mark the push hook requires; the `--` is required, without it npm swallows the flag and the script only PRINTS the lane), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message. `correction-capture` (UserPromptSubmit) logs every message of Rafa's that sounds like a correction to `correcciones.jsonl` and asks you to name the rule that already covered it (`npm run correcciones` counts that log by type —spacing and alignment, color, copy, behaviour, process— on the machine where it lives), and on a closing message ("cerramos") tells you to invoke `reflect`; `/reflect` reads that log first and routes each correction with `--enrutar <id> <destino> "<motivo>"` — the Stop hook blocks the close while any is unrouted, y también si el mensaje final no lleva el parte de cierre (§Session-Close Protocol, paso 6); and `docs:coherence` escalates any LEARNINGS rule broken in ≥3 sessions that is still prose (CHECK K), caps the agent memory (CHECK N) and demands a red test per `verify` script (CHECK O).
 
 ### Pull requests y commits (el repo es público)
 
