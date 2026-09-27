@@ -248,6 +248,13 @@
   }
 }
 
+/* EL AVISO DE «ABIERTO EN OTRA PESTAÑA» (DD#169), encima de la sección: un `sc-message` de aviso, el
+ * mismo en todas las fichas. Aquí y no en cada pantalla por lo mismo que la cabecera de abajo. */
+.ficha-conflict {
+  display: block;
+  margin-block-end: var(--sc-spacing-1);
+}
+
 /* LA FRANJA DE ESTADO de las fichas (grupo, usuario, agente): el nombre como único `h1`, una
  * línea meta y, en las de pestañas, tres cifras. Vive aquí y no en cada pantalla porque la usan
  * las tres, y la encapsulación de Angular es por componente. Sin línea abajo: separa el aire. */

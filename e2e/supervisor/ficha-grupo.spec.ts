@@ -102,7 +102,7 @@ test('duplicar sigue siendo un diálogo corto y se lleva los agentes del origina
   await page.getByRole('menuitem', { name: 'Duplicar' }).click();
 
   const dialogo = page.getByRole('dialog', { name: 'Duplicar grupo' });
-  await expect(page.locator('#group-create-name')).toHaveValue('Reclamaciones (copia)');
+  await expect(page.locator('#group-duplicate-name')).toHaveValue('Reclamaciones (copia)');
   await dialogo.getByRole('button', { name: 'Duplicar' }).click();
 
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);

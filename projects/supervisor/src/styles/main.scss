@@ -155,23 +155,6 @@ body {
   border: 0;
 }
 
-/* DD#169 cross-tab edit conflict banner — shared across all form pages.
- *
- * Full 1px border (not the side-stripe pattern banned in /impeccable). The
- * yellow background tint already signals warning; no need for a chunky
- * left bar.
- */
-.cross-tab-warning {
-  margin-bottom: var(--sc-spacing-1-5);
-  padding: var(--sc-spacing-1-125) var(--sc-spacing-1-5);
-  border: 1px solid var(--sc-border-warning-subtle);
-  border-radius: var(--sc-radius-100);
-  background: var(--sc-bg-warning-subtle);
-  color: var(--sc-text-warning);
-  font-size: var(--sc-font-size-200);
-  line-height: 1.45;
-}
-
 /*
  * Tables get a fixed layout so the column widths don't reshuffle when
  * the sort indicator (▲ / ▼) appears on a header. Per-page styles can

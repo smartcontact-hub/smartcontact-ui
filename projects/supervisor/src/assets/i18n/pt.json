@@ -1439,7 +1439,6 @@
     "page_title": "Grupos",
     "create_button": "Novo grupo",
     "create_dialog": {
-      "subtitle": "O que o cabeçalho da ficha vai mostrar. Canais e agentes, no passo seguinte.",
       "duplicate_subtitle": "Copia os agentes, os canais e as definições de «{{source}}». O telefone associado, não.",
       "copy_name": "{{name}} (cópia)"
     },

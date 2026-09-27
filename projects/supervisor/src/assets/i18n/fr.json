@@ -1439,7 +1439,6 @@
     "page_title": "Groupes",
     "create_button": "Nouveau groupe",
     "create_dialog": {
-      "subtitle": "Ce qu'affichera l'en-tête de la fiche. Canaux et agents, à l'étape suivante.",
       "duplicate_subtitle": "Copie les agents, les canaux et les réglages de «{{source}}». Pas le téléphone associé.",
       "copy_name": "{{name}} (copie)"
     },

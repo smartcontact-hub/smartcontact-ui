@@ -1439,7 +1439,6 @@
     "page_title": "Groups",
     "create_button": "New group",
     "create_dialog": {
-      "subtitle": "What the page header will show. Channels and agents come next.",
       "duplicate_subtitle": "Copies the agents, channels and settings of «{{source}}». Not the associated phone.",
       "copy_name": "{{name}} (copy)"
     },
