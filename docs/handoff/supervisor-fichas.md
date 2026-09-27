@@ -242,9 +242,8 @@ de sesión. Nace `scripts/hooks/main-drift-guard.mjs` (en cada mensaje de Rafa, 
    aparte. Lo que no está claro y hay que mirar sí o sí:
    - Distribución y colas (2.355 px con cuatro canales, sin plegar).
    - La tabla de agentes del grupo.
-   - El resumen, ya como widget (DD-126): que la cifra acabe con el arco al abrir (hoy, 55–75 ms después), y
-     confirmar el tinte con los rótulos en primario frente a la tarjeta blanca. La columna de 240 sigue quitando
-     492 px de contenido a agente y usuario.
+   - El resumen, ya como widget (DD-126, con el tinte y el texto en primario confirmados): que la cifra acabe con el
+     arco al abrir (hoy, 55–75 ms después). La columna de 240 sigue quitando 492 px de contenido a agente y usuario.
    - Caja o sin caja: #239 las quitó y DD-122 las devuelve. Hay que elegir UNA forma para las tres fichas.
    - En el alta, «Siguiente» frente a «Crear grupo», y el título: grupo lo enseña, agente y usuario lo esconden.
    - Al guardar, grupo y agente se quedan y usuario vuelve al listado.

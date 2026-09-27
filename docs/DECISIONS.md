@@ -161,7 +161,9 @@ capturas y vídeo.
    porque estas tarjetas no se pulsan ni se eligen.
 6. **Todo el texto de la tarjeta, en `--sc-text-primary`**, rótulos, «/total», canales y claves incluidos: sobre el
    tinte, el secundario no llega a AA (ver Razón). La jerarquía la llevan el tamaño y el peso. El aviso ámbar del grupo
-   («Sin agentes», «Sin número») lleva el ámbar en el icono, y el texto en primario.
+   («Sin agentes», «Sin número») lleva el ámbar en el icono, y el texto en primario. Confirmado el mismo día frente a
+   la tarjeta blanca, que dejaba el gris en 4,52: en claro, los rótulos solo suben de slate-600 a slate-700; en
+   oscuro, de gris a blanco.
 7. **`theme-contrast` perdona el gris secundario solo sobre sus dos fondos aceptados** (el lienzo y slate-100), no con
    cualquier fondo, y suma a sus rutas las fichas de agente y usuario.
 
@@ -202,7 +204,7 @@ capturas y vídeo.
 usuario deja las cifras sueltas). `customs-catalog` §8 recoge el «N%» oculto; `figma-pendiente` §18, el widget, que el
 Kit no tiene; la tabla de AGENTS, la pieza. La primera medida del tinte en oscuro, 20,91 la cifra y 4,27 el arco, salió
 de leer mal `color(srgb … / a)`: lo medido son 15,57 y 3,18, y siguen pasando. Queda para el pase de diseño: que la
-cifra acabe con el arco al abrir, y confirmar el tinte con los rótulos en primario frente a la tarjeta blanca.
+cifra acabe con el arco al abrir.
 
 ---
 
