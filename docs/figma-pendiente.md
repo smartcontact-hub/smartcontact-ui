@@ -501,6 +501,26 @@ comentario de `sc-dialog.component.scss` deja de decir que el pie se aparta del 
 
 ---
 
+## 18 · El widget del resumen de las fichas: cifra, «/total» y anillo (2026-09-27)
+
+**Estado:** pendiente · **Dónde:** Figma, las maquetas de las fichas de grupo, agente y usuario (el resumen de la
+derecha) y, si se quiere reutilizable, un componente nuevo en el fichero del Supervisor · **Esfuerzo:** una pieza
+nueva con dos variantes (con anillo y sin él) · **Sin verificar** contra el fichero: el código no cita ningún nodo, porque
+el resumen nació en código (DD-121) y el Kit no lo dibuja.
+
+- **Por qué** (DD-126): cada proporción del resumen es un widget, como el ejemplo «Preview» de ProgressSpinner en
+  primeng.dev.
+- **Anatomía:** la tarjeta en `--sc-bg-primary-subtle`, sin borde a la vista, con `scale/0-75` de relleno y radio
+  `radius/xl`. Arriba, el rótulo con su icono (caption regular); debajo, a 7, la cifra (h1 semibold; h2 en el grupo)
+  con «/total» (h3 regular; body en el grupo) y, a la derecha, el anillo de 42 con trazo 10, el arco en
+  `--sc-bg-accent` y sin el «N%». Todo el texto en `--sc-text-primary`: el secundario no llega a AA sobre el tinte.
+- **Sin total** (un agente sin grupos): sin anillo, y una nota debajo de la cifra.
+
+**Cómo sabes que está hecho:** las tres fichas de Figma enseñan el resumen con esta pieza, y
+`summary-kpi.component.ts` puede citar su nodo.
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

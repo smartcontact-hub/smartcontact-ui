@@ -991,6 +991,7 @@
     "no_changes": "Aucune modification à enregistrer",
     "unsaved_changes": "Modifications non enregistrées",
     "summary": "Résumé",
+    "summary_of": "{{value}} sur {{total}}",
     "actions": "Actions",
     "select_row": "Sélectionner {{name}}",
     "select_all": "Tout sélectionner",
@@ -1645,7 +1646,7 @@
         "priority": "Priorité : {{value}}",
         "no_phone": "Aucun téléphone sortant",
         "title": "Résumé",
-        "agents": "Agents",
+        "agents_active": "Agents actifs",
         "paused_count": "{{count}} en pause",
         "no_agents": "Aucun agent",
         "routing": "Distribution",
@@ -1916,6 +1917,10 @@
         "none": "Aucun",
         "selected_many": "{0} sélectionnés",
         "manage_link": "Gérer dans Référentiels"
+      },
+      "summary": {
+        "no_groups": "Sans groupes",
+        "groups_active": "Groupes actifs"
       }
     },
     "toasts": {

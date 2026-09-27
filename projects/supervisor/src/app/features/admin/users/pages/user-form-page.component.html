@@ -251,19 +251,35 @@
     </div>
 
     <!-- EL RESUMEN, a la derecha y fijo, como en la ficha de grupo (`.ficha-summary`; por debajo de 1340, una
-         franja encima). Las tres cifras de siempre: qué es esta persona y a qué llega. -->
+         franja encima). A qué llega esta persona, secciones y permisos, cada uno con su anillo (DD-126), y de qué
+         tipo es. -->
     <div class="ficha-summary">
       <section class="resumen" aria-labelledby="user-summary-title">
         <h2 id="user-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'common.summary' | translate }}</h2>
-        @for (s of summary(); track s.etiqueta) {
-          <div class="resumen__kpi">
-            <p class="resumen__label sc-text-caption-regular">
-              <sc-icon [name]="s.icono" size="inherit" aria-hidden="true" />
-              {{ s.etiqueta | translate }}
-            </p>
-            <p class="resumen__value sc-text-body-semibold">{{ s.valor }}</p>
-          </div>
-        }
+        <!-- Las tarjetas son hermanas: 14 entre ellas; el título, a 7 de la primera (AGENTS «UX de pantalla» 9). -->
+        <div class="resumen__cards">
+          <sc-summary-kpi
+            icon="dashboard"
+            labelKey="users.form.section.sections"
+            [value]="summaryAccess().secciones"
+            [of]="summaryAccess().totalSecciones"
+          />
+          <sc-summary-kpi
+            icon="verified_user"
+            labelKey="users.form.section.permissions"
+            [value]="summaryAccess().permisos"
+            [of]="summaryAccess().totalPermisos"
+          />
+          @for (s of summaryFacts(); track s.etiqueta) {
+            <div class="resumen__kpi">
+              <p class="resumen__label sc-text-caption-regular">
+                <sc-icon [name]="s.icono" size="inherit" aria-hidden="true" />
+                {{ s.etiqueta | translate }}
+              </p>
+              <p class="resumen__value sc-text-body-semibold">{{ s.valor }}</p>
+            </div>
+          }
+        </div>
       </section>
     </div>
   </div>

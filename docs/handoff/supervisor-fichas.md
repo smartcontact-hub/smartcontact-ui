@@ -7,6 +7,51 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
+## ✅ 2026-09-27 · El resumen de las fichas, como widget: la cifra cuenta y el anillo nativo se llena (DD-126)
+
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `9241498`), PR nuevo: el prototipo y lo elegido.**
+> El tramo del 2026-09-22 (el laboratorio de administración) sale de aquí:
+> `git show 2b8c122:docs/handoff/supervisor-fichas.md`.
+
+**Qué pasó.** Revisión de producto: el resumen de las fichas, como el ejemplo «Preview» de ProgressSpinner en
+primeng.dev (cifra grande, anillo que se llena, una cuenta sutil). Se hizo un prototipo con dos superficies
+(`?resumen=a|b`), se midió, se enseñó en una página de decisión privada y se eligió: el tinte de marca, movimiento al
+abrir y al cambiar, anillo en toda proporción y, en el grupo, agentes activos sobre asignados. El conmutador se fue y
+queda lo elegido.
+
+**Qué cambia** (el detalle y lo descartado, en DD-126):
+- `sc-summary-kpi` (`shared/components/summary-kpi/`): rótulo, cifra con «/total» y el `p-progress-spinner` nativo a
+  42 (`[dt]` pone el arco en el acento, `[pt]` oculta su «N%»). Sin total, sin anillo.
+- `CountUpDirective` (`core/directives/`), con su núcleo en `shared/utils/count-up.core.mjs` (6 pruebas de node):
+  cuenta desde la cifra de antes con ease-out cúbico, y la duración la lee del `transition-duration` de su elemento.
+- `styles/_resumen.scss`: la tarjeta en el tinte, sin borde a la vista y con todo su texto en primario; la escalera
+  7 · 14 · 28. Grupo: agentes activos, con las filas por canal debajo, y reparto, salida y recursos en una tarjeta de
+  datos. Agente: grupos activos. Usuario: secciones y permisos. Los datos sueltos salen de `summaryFacts`.
+- El aviso ámbar del grupo lleva el ámbar en el icono y el texto en primario.
+- i18n: `common.summary_of`, `groups.form.summary.agents_active`, `agents.form.summary.groups_active` y
+  `agents.form.summary.no_groups`; fuera `groups.form.summary.agents`.
+- `theme-contrast`: el gris secundario se perdona solo sobre sus dos fondos, y entran las fichas de agente y usuario.
+
+**Medido:**
+- **Rojo primero.** `resumen-widget.spec.ts`, 6 de 6 contra `main`. Con la duración sin apagar, la de menos movimiento
+  enrojece por las cifras intermedias (1, 4, 6, 7, 8); sin su regla, la del ámbar en el icono enrojece por el gris.
+  `theme-contrast` con el perdón atado a su fondo: rojo en las tres fichas (44 textos a 3,96:1) antes de pasar el
+  texto a primario, y verde en las otras 18 rutas.
+- 16 anillos en seis fichas y dos temas: 42×42, arco en su token, «N%» sin pintar, `aria-hidden`. El grupo 11 a
+  1366×660 mide 554 y cabe.
+- `npm run revision`: en regla las 17 vistas de las tres fichas y el alta de agente con los datos de siempre, y las 12
+  de las fichas con `--datos tortura`.
+
+**Trampas del tramo:**
+- ⚠️ Leer un estilo computado dentro de la detección de cambios hacía nacer lleno el anillo de al lado. La directiva lee
+  su duración en el primer fotograma, y el anillo arranca vacío con una señal que cambia un fotograma después de pintar.
+- ⚠️ Chrome serializa un color con alfa como `color(srgb r g b / a)`, de 0 a 1, y una sonda que lo lee con `/\d+/` saca
+  negro. Así salieron 20,91 y 4,27 para el tinte en oscuro, que miden 15,57 y 3,18: compón las capas translúcidas.
+- ⚠️ `--sc-text-secondary` llega a AA solo sobre blanco (4,52:1), y sobre cualquier fondo teñido baja. Hasta este tramo,
+  `theme-contrast` lo perdonaba con cualquier fondo.
+- ⚠️ En claro, el tinte de marca y «seleccionado» son el mismo color: una tarjeta del resumen no puede hacerse pulsable
+  sin cambiar de superficie.
+
 ## ✅ 2026-09-27 · Un solo índice con una sola forma, y agente y usuario al molde de la ficha de grupo (DD-122)
 
 > **Sello: rama `areses/sweet-fermat-r9cxzw` rearrancada desde `main`, HEAD `168530c`, PR nuevo, un commit por bloque.**
@@ -189,59 +234,6 @@ tira, apagada sin Teléfono; «Habilitado» en vez de «Atiende»; glifos de can
 #240, #242), y vio deshecho «lo que ya se había hecho». Al empezar no había nada que ver: hacía falta mirar a mitad
 de sesión. Nace `scripts/hooks/main-drift-guard.mjs` (en cada mensaje de Rafa, LEARNINGS #21 ⚙️).
 
-## ✅ 2026-09-22 · Laboratorio de administración: lista + ficha con las decisiones del teardown dentro
-
-> **Sello: rama `arebury/supervisor-admin-lab-teardown`, worktree `humpback`.** Todo nuevo bajo
-> `projects/supervisor/src/app/features/lab/admin/`; de lo existente solo se tocan `app.routes.ts`
-> (una ruta) y los cuatro locales. **No toca ninguna pantalla de producto.**
-
-**Qué pasó.** Del teardown de Telegram y WhatsApp
-(`~/Documents/Claude/2026-09 teardown admin usuarios-grupos/SINTESIS.md`, bloques A y B) salieron
-20 decisiones medidas. Este tramo las pone donde se pueden juzgar: en `/lab/admin/grupos` y
-`/lab/admin/usuarios`, dentro del shell real (sidebar, barra, miga), al lado de `/admin/grupos` y
-`/admin/usuarios`.
-
-**Qué cambia.** Lista con su CTA arriba (`sc-list-page`) → ficha con el molde de siempre
-(`page__inner--rail` + `sc-section-card`, acciones por `TopBarSlotService`). Dentro:
-
-- **A1** · el tipo de usuario ES el paquete: elegirlo preselecciona sus casillas con
-  `sc-option-cards`, y apartarse se cuenta en el índice y en la lista («Supervisor · 2 cambios»).
-  Hoy `onTypeValueChange` solo escribe el campo.
-- **B12** · apagar una madre apaga las hijas de verdad, las deja pulsables y reencenderla las
-  enciende todas. La regla vive en `toggleMother`/`toggleChild` (`admin-lab.model.ts`), no en la
-  plantilla, así que se puede probar sin pintar.
-- **B17** · cada fila del índice lleva su valor debajo del rótulo.
-- **B1 · B4 · B6 · B11 · B14 · B15 · B18 · B19**, cada una con su código en el comentario.
-
-**El interruptor «reproducir el fallo de hoy»** (botón flotante abajo a la derecha, mismo sitio y
-mismo motivo que los controles de `/lab/sidebar`) apaga las dos reglas nuevas y enseña las dos
-grietas en vivo, sin abrir el código.
-
-**Medido**, no supuesto: el item del índice del laboratorio y el de `sc-form-section-nav` dan lo
-mismo en el navegador — relleno 8,75 · hueco 5,25 · radio 12 · etiqueta 14/20/600 · rail 196. Lo
-único que añade es la segunda línea.
-
-**Tres hallazgos del código de HOY, que no son del laboratorio:**
-
-1. **`checkbox-row--child` es una clase muerta.** La usa `user-form-page.component.html:195` y no
-   está declarada en ninguna hoja: hoy una sección hija se lee al mismo nivel que su madre. Su
-   sitio es `styles/_forms.scss`.
-2. **`.table__td-name` está duplicada** en la hoja de cada lista en vez de vivir en
-   `styles/_table-elements.scss`, con su hermana `.table__td-text`. El laboratorio la copia una
-   cuarta vez, con la nota puesta.
-3. **`sc-form-section-nav` no tiene `value` ni `disabled`.** `value` es literalmente B17;
-   `disabled` es lo que impide forzar el orden de un alta. Si B17 se adopta, se añade `value` a
-   `FormNavSection` y se borra la copia del laboratorio.
-
-**Trampa del tramo:** la primera versión se construyó en `sc-docs` y se trasladó tal cual, con
-componentes y espaciados propios. Veredicto de Rafa: «no casa con nada, se siente un pegote». Se
-tiró entero y se rehízo con las piezas de la app. Si vuelves a este frente, **empieza por el
-vocabulario que ya existe** (`_forms.scss`, `_page.scss`, `sc-list-page`) y dibuja solo lo que
-propones.
-
-Decisiones, lo que no cuadró con los tokens y lo que queda abierto:
-`~/Documents/Claude/2026-09 teardown admin usuarios-grupos/LABORATORIO-decisiones.md`.
-
 ## SIGUIENTE — sin preguntar
 
 0. **Pase de diseño premium sobre todo el flujo rehecho** (`/impeccable` + `/better-ui`, más `better-layout` y
@@ -250,7 +242,9 @@ Decisiones, lo que no cuadró con los tokens y lo que queda abierto:
    aparte. Lo que no está claro y hay que mirar sí o sí:
    - Distribución y colas (2.355 px con cuatro canales, sin plegar).
    - La tabla de agentes del grupo.
-   - El resumen de agente y usuario: tres cifras en una columna de 240, que les quita 492 px de contenido.
+   - El resumen, ya como widget (DD-126): que la cifra acabe con el arco al abrir (hoy, 55–75 ms después), y
+     confirmar el tinte con los rótulos en primario frente a la tarjeta blanca. La columna de 240 sigue quitando
+     492 px de contenido a agente y usuario.
    - Caja o sin caja: #239 las quitó y DD-122 las devuelve. Hay que elegir UNA forma para las tres fichas.
    - En el alta, «Siguiente» frente a «Crear grupo», y el título: grupo lo enseña, agente y usuario lo esconden.
    - Al guardar, grupo y agente se quedan y usuario vuelve al listado.

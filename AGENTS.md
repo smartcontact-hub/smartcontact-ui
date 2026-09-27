@@ -269,6 +269,7 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Cambiar de colección en la misma pantalla (se vacían búsqueda y selección) | Pestañas `p-tabs` de primeng.dev con texto, como su ejemplo básico; el nombre de la tira por `[pt]="{ content: { 'aria-label': … } }"` | Botones con `role="tab"` a mano; `sc-selectbutton`; contador o icono que repiten lo que ya se ve | DD-113 |
 | Filtrar la misma lista o elegir un valor de un grupo corto que se ve entero | `sc-selectbutton` con `ariaLabelledBy` y opciones traducidas | Un `radiogroup` o botones con estado a mano; `p-tabs` | DD-113 |
 | Separar dos bloques con una línea | `sc-divider` | `<hr>`, un `div` de 1 px o un `border-top` entre hermanos | DD-113 |
+| Una cifra con su proporción en un resumen («8 de 11») | `sc-summary-kpi` del Supervisor: la cifra con «/total» y el `p-progress-spinner` nativo, que cuenta y se llena al abrir y al cambiar | `sc-gauge` (no se mueve y empieza en 96 px); un porcentaje; un anillo SVG a mano | DD-126 |
 | Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco | Spinner centrado; datos que recolocan la página al llegar | UX 2 |
 | Un icono | `<sc-icon>` (Material Symbols) | Emojis; una segunda librería | UX 4 |
 | Borrar una entidad desde su ficha | `sc-form-danger-zone` + `sc-delete-entity-dialog` (el patrón de las nueve fichas que ya lo usan, ver `docs/inventory.md`) | `sc-confirmdialog` genérico; borrar sin confirmar | `docs/inventory.md` |

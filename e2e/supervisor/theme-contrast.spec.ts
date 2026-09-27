@@ -67,6 +67,11 @@ const RUTAS = [
   /* La ficha de grupo con su resumen (2026-09-26, DD-121): las cifras, los avisos en ámbar y las
    * barras son colores nuevos sobre el carril, y se leen en los dos temas. El 11 es el más cargado. */
   'admin/grupos/editar/11',
+  /* Las fichas de agente y usuario, desde que su resumen es un widget (DD-126): la cifra, el «/total» y el
+   * rótulo van sobre el tinte de marca, y eso se lee en los dos temas. El usuario 3 tiene las dos proporciones
+   * a medias (8/11, 2/5). */
+  'admin/agentes/editar/1',
+  'admin/usuarios/editar/3',
   /* Valores por defecto de Grupos: desde el 2026-09-26 va en el orden de la ficha, con el glifo de cada canal
    * en su título. */
   'admin/grupos/valores-por-defecto',
@@ -146,7 +151,12 @@ const CONOCIDOS_CLARO = [
   // propósito en §1.5 — subirlo a slate-700 lo pega a `text-primary` y cambia
   // un fallo de contraste por uno de jerarquía. Sobre tarjeta (que es donde
   // vive la mayor parte del texto secundario) mide 4.52 y cumple.
-  'fg=rgb(111,119,132)',
+  //
+  // Se perdona con su FONDO, no solo con su color: el lienzo (slate-50) y slate-100. Hasta el
+  // 2026-09-27 bastaba el color, y así pasó sin verse el secundario sobre el tinte de marca del
+  // resumen de las fichas (3,96:1, DD-126): cualquier fondo nuevo bajo el gris quedaba perdonado.
+  'bg=rgb(247,248,250) fg=rgb(111,119,132)',
+  'bg=rgb(236,239,243) fg=rgb(111,119,132)',
   // 5 · `p-button-danger` + `text` → red-500 sobre blanco, **3.76:1**. Salió el 2026-09-26, el
   // primer día que una ficha entró en este barrido (la de grupo): es el «Eliminar» de la cabecera
   // de las tres fichas, que ninguna ruta de aquí visitaba. §1.8 arregló el `danger` SÓLIDO, no el

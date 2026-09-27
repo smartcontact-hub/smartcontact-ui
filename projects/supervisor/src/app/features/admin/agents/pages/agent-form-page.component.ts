@@ -31,7 +31,7 @@ import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { NameInplaceComponent } from '@shared/components';
+import { NameInplaceComponent, SummaryKpiComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -171,6 +171,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
   imports: [
     ButtonComponent,
     NameInplaceComponent,
+    SummaryKpiComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
     FormSectionNavComponent,
@@ -457,19 +458,22 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return out;
   });
 
+  /** Grupos activos sobre asignados, la cifra con anillo del resumen (DD-126). */
+  protected readonly summaryGroups = computed(() => {
+    const links = this.form().links;
+    return { activos: links.filter((l) => l.active).length, total: links.length };
+  });
+
   /**
-   * El resumen de la derecha, las tres cifras de siempre: en cuántos grupos atiende de verdad (activos sobre
-   * asignados, como «Agentes asignados» en la ficha de grupo), por qué canales le llega trabajo y de qué
-   * tipo es. Hasta el 2026-09-27 iban en la franja del nombre.
+   * Lo que el resumen dice sin anillo, porque no es una proporción: por qué canales le llega trabajo (los de sus
+   * grupos activos) y de qué tipo es. Los grupos van en su widget (`summaryGroups`).
    */
-  protected readonly summary = computed(() => {
+  protected readonly summaryFacts = computed(() => {
     this.currentLang();
     const f = this.form();
-    const activos = f.links.filter((l) => l.active);
-    const canales = canonicalizeChannels(activos.flatMap((l) => l.channels));
+    const canales = canonicalizeChannels(f.links.filter((l) => l.active).flatMap((l) => l.channels));
     const etiquetas: Readonly<Record<string, string>> = CHANNEL_LABEL_KEYS;
     return [
-      { icono: 'group', valor: `${activos.length}/${f.links.length}`, etiqueta: 'agents.form.section.groups' },
       {
         icono: 'forum',
         valor: canales.length ? canales.map((c) => this.translate.instant(etiquetas[c])).join(', ') : '—',
