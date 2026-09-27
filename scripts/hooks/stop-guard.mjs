@@ -23,7 +23,7 @@
  *      afirmado sin mirar es exactamente la regla #17 en su versión más cara: el usuario cierra la
  *      ventana y el contexto no vuelve. (Norma de proceso, 2026-09-10.)
  *
- *   5. la REVISIÓN PREVIA de una pantalla (DD-122, 2026-09-27): si la sesión escribió plantillas u
+ *   5. la REVISIÓN PREVIA de una pantalla (DD-123, 2026-09-27): si la sesión escribió plantillas u
  *      hojas del Supervisor con Edit/Write y no corrió `npm run revision` DESPUÉS, bloquea una vez.
  *      El primer filtro visual de una pantalla no puede ser el usuario: la revisión la captura a
  *      1440, mide la agrupación y deja las capturas para mirarlas con `better-layout`.
@@ -201,7 +201,7 @@ export function pantallasSinRevisar(jsonl) {
 /** El motivo lleva el comando y lo que se hace con su salida, no solo el aviso. */
 export function motivoSinRevision(rutas) {
   return [
-    `Has tocado ${rutas.length} fichero(s) de pantalla del Supervisor sin pasar la revisión previa: el primer filtro visual no puede ser el usuario (DD-122).`,
+    `Has tocado ${rutas.length} fichero(s) de pantalla del Supervisor sin pasar la revisión previa: el primer filtro visual no puede ser el usuario (DD-123).`,
     ...rutas.slice(0, 5).map((r) => `  · ${r}`),
     'Antes de enseñarlo: `npm run revision -- <ruta de cada pantalla>` (la captura a 1440 y mide la agrupación). Mira las capturas con la skill better-layout, arregla lo medible y lista al usuario lo que sea de gusto.',
     'Si paras a mitad y aún no hay nada que enseñar, dilo en el mensaje y vuelve a cerrar: a la segunda deja pasar.',

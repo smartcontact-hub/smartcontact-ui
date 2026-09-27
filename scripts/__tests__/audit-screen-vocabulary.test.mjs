@@ -126,7 +126,7 @@ test('el vocabulario de formulario vive en la hoja COMPARTIDA, no en una pantall
   }
 });
 
-// Entre columnas, el de la maqueta; entre filas, el doble de etiqueta→control (DD-122): la maqueta
+// Entre columnas, el de la maqueta; entre filas, el doble de etiqueta→control (DD-123): la maqueta
 // pone 12.25 y deja cada campo a 1,75× de su vecino, por debajo de la regla de agrupación.
 test('`.grid` compartida separa filas y columnas por separado, y la fila al doble de etiqueta→control', () => {
   const vocabulario = vocabularioDe(readFileSync(HOJA_COMPARTIDA, 'utf8'));

@@ -8,7 +8,7 @@
  *   npm run correcciones -- --json            la cuenta, para otra herramienta
  *
  * Por qué existe (2026-09-27): para saber qué le cuesta más al usuario —si la agrupación y el aire
- * son lo que más corrige, la revisión previa de DD-122 va bien dirigida; si no, hay que mirar otra
+ * son lo que más corrige, la revisión previa de DD-123 va bien dirigida; si no, hay que mirar otra
  * cosa—. El registro ya existía (`correcciones.jsonl`, en la carpeta del proyecto de Claude, fuera del
  * repo, así que esto se corre en la máquina donde se trabaja); lo que faltaba era contarlo por tipo.
  *

@@ -12,7 +12,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   column-gap: var(--sc-spacing-1-75);
-  /* 14 entre filas, como `.grid` desde DD-122: el doble de etiqueta→control. */
+  /* 14 entre filas, como `.grid` desde DD-123: el doble de etiqueta→control. */
   row-gap: var(--sc-spacing-1);
   /* Arriba, como `.grid`: el teléfono lleva ayuda de dos líneas y no debe estirar a sus vecinos. */
   align-items: start;

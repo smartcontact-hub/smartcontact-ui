@@ -1,7 +1,7 @@
 # Frente · Calidad visual — agrupación, revisión previa, datos de prueba y referencias — hand-off
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**. Lo durable vive en `docs/`:
-> las decisiones en DD-122 y DD-123, la regla en AGENTS §«UX de pantalla» 9, el Kit en `docs/figma-pendiente.md`
+> las decisiones en DD-123 y DD-124, la regla en AGENTS §«UX de pantalla» 9, el Kit en `docs/figma-pendiente.md`
 > (ficha 15) y las referencias en `docs/referencias-contact-center.md`.
 >
 > **Por qué existe este frente.** Nace el 2026-09-27 de contrastar el repo con una lista de consejos de UI (espacio,
@@ -13,7 +13,7 @@
 
 1. **Pasar `npm run revision -- --datos tortura` por el resto de pantallas** (fichas de grupo y usuario, repositorios,
    Config) y llevar lo que se rompa a la decisión de DD-102 de abajo, con su medida. Lo de agentes, grupos y usuarios
-   ya está medido en DD-123.
+   ya está medido en DD-124.
 2. **Cuando se decida el pie de los diálogos** (abajo): aplicarlo y borrar sus tres líneas de `CONOCIDOS` en
    `e2e/supervisor/agrupacion.spec.ts`; la prueba se pone roja si se quedan cuando ya están en verde.
 3. **Cuando lleguen los nombres del juego editorial**: una tabla por id en `core/services/juego-de-datos.ts`, con su
@@ -23,11 +23,11 @@
 
 - **El pie de los diálogos nativos** («Nueva entidad», «Nueva categoría», «Duplicar grupo»): los botones quedan a 18
   del último campo, contra 14–15,75 entre campos. ¿Más aire en el pie desde el tema (todos los diálogos; desvío del
-  nativo por token, DD-113 §2, y al Kit) o solo en esos formularios? (DD-122, «Pendiente».)
+  nativo por token, DD-113 §2, y al Kit) o solo en esos formularios? (DD-123, «Pendiente».)
 - **DD-102 con datos reales**: con `?datos=tortura` las listas cortan 14 nombres de grupo, 28 celdas de agentes y 6
   correos. ¿Anchos medidos con los datos que haya, desplazamiento lateral, o cortar con el texto entero al pasar el
-  ratón? (DD-123, «Lo primero que enseñó».)
-- **Los nombres del juego editorial** (propuesta en DD-123).
+  ratón? (DD-124, «Lo primero que enseñó».)
+- **Los nombres del juego editorial** (propuesta en DD-124).
 - **La ficha 15 de figma-pendiente**: filas de formulario y radios a 14 en las maquetas de Grupos y Servicio.
 - **Los análisis de Telegram y WhatsApp** viven en `~/Documents/Claude/2026-09 teardown admin usuarios-grupos/`, fuera
   del repo: traerlos a `docs/` para que otra sesión (o la nube) los pueda leer.

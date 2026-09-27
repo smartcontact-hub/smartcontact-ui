@@ -4,7 +4,7 @@ import { goto } from './helpers';
 
 /**
  * JUEGO DE DATOS — `?datos=tortura` estira los textos de la demo y `?datos=demo` vuelve a los de
- * siempre, sin que uno pise al otro (DD-123).
+ * siempre, sin que uno pise al otro (DD-124).
  *
  * Qué afirma: que el juego llega de verdad a los almacenes (un nombre de la lista cambia), que se
  * recuerda al navegar sin el parámetro, que vuelve, y que cada juego guarda en SUS claves. No afirma

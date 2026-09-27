@@ -68,7 +68,7 @@ export interface VersionedStorage<T> {
  * de versión, el `try/catch` del JSON corrupto ni la guarda de SSR.
  */
 export function createVersionedStorage<T>(config: LocalStoreConfig<T>): VersionedStorage<T> {
-  /* El juego de datos (`?datos=tortura`, DD-123) cambia las claves y los `defaults`; con `demo`, que es
+  /* El juego de datos (`?datos=tortura`, DD-124) cambia las claves y los `defaults`; con `demo`, que es
    * el de siempre, las dos cosas quedan exactamente como estaban. */
   const juego = juegoDeDatos();
   const storageKey = claveDelJuego(config.storageKey, juego);

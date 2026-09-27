@@ -3,12 +3,12 @@
  * REVISIÓN PREVIA A ENSEÑAR UNA PANTALLA DEL SUPERVISOR.
  *
  *   npm run revision -- <ruta> [<ruta>…]        p. ej. `npm run revision -- admin/grupos/editar/11 login`
- *   npm run revision -- --datos tortura <ruta>   la misma pantalla con los textos al límite (DD-123)
+ *   npm run revision -- --datos tortura <ruta>   la misma pantalla con los textos al límite (DD-124)
  *
  * Por qué existe: el primer filtro visual de una pantalla no puede ser el usuario. Una lista de
  * consejos de UI que se contrastó con el repo el 2026-09-27 lo decía así: pide a la IA que CRITIQUE
  * lo que diseñaste, no que lo diseñe. Aquí la IA construye; esto es la pasada que critica antes de
- * enseñar (DD-122 para la parte medible).
+ * enseñar (DD-123 para la parte medible).
  *
  * Qué hace, por ruta: la abre a 1440×900 en claro, recorre sus pestañas o las secciones de su índice,
  * guarda una captura de cada vista en `.cache/revision/` y mide la agrupación con la MISMA medida que
@@ -124,7 +124,7 @@ async function main() {
   }
   console.log(
     rojas
-      ? `\n${rojas} vista(s) por debajo del doble (DD-122): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO.`
+      ? `\n${rojas} vista(s) por debajo del doble (DD-123): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO.`
       : '\nAgrupación medida: en regla.',
   );
   console.log('Ahora MIRA las capturas con la skill better-layout; arregla lo medible y lista al usuario lo que sea de gusto.');

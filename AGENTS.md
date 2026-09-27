@@ -198,10 +198,10 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    y secciones, y entre el último campo y el botón que lo envía. Entre grupos, al menos el doble
    que dentro: por debajo, una etiqueta se lee a medio camino entre su control y el de arriba, y
    un botón, como un campo más. Si la maqueta trae otro valor (12.25, 24.5), manda la escalera y
-   el cambio del Kit va a `docs/figma-pendiente.md` (DD-122). Lo mide
+   el cambio del Kit va a `docs/figma-pendiente.md` (DD-123). Lo mide
    `e2e/supervisor/agrupacion.spec.ts` en el build, pantalla a pantalla.
 
-**Antes de enseñar una pantalla, revísala tú** (DD-122): `npm run revision -- <ruta>` la abre a 1440,
+**Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
 recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas
 con la skill `better-layout`: lo medible se arregla antes de enseñarlo y lo que sea gusto se le lista al
 usuario, no se decide solo. La IA construye; esta pasada es la que critica, y el primer filtro visual no

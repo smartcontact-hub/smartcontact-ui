@@ -443,7 +443,7 @@ del DS: los nodos son los que cita el código, y el server de Figma no estaba au
 - **Filas de formulario de dos columnas:** `row` 2286:5408 y `container` 2286:5407 (Grupos), 2286:5581 y 2286:5558
   (Servicio) separan las filas 12,25 (`scale/0-875`). En código pasan a 14 (`scale/1`), el doble de los 7 de la etiqueta
   a su control: con 12,25 un campo quedaba a 1,75× de su vecino y su etiqueta se leía a medio camino entre los dos
-  (DD-122). Entre columnas no cambia: 24,5 (`scale/1-75`).
+  (DD-123). Entre columnas no cambia: 24,5 (`scale/1-75`).
 - **Radios en fila:** `container radio buttons` 2286:5583 pone 12 suelto entre radios; en código, 14.
 - **El botón que envía un formulario** va a 28 (`scale/2`) del último campo, no a la misma distancia que hay entre
   campos (acceso del Supervisor y panel «Nueva label»).

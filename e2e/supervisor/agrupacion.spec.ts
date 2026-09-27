@@ -5,7 +5,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { goto } from './helpers';
 
 /**
- * AGRUPACIÓN POR ESPACIO — LO QUE VA JUNTO SE SEPARA MENOS QUE LO QUE NO (DD-122).
+ * AGRUPACIÓN POR ESPACIO — LO QUE VA JUNTO SE SEPARA MENOS QUE LO QUE NO (DD-123).
  *
  * La escalera 7 · 14 · 28 (AGENTS §«UX de pantalla» 9) vivía en un comentario de la hoja de Config
  * AED y no la medía nada; lo único que se medía iba en contra (un test fijaba la fila de `.grid` en
@@ -98,7 +98,7 @@ const ALTAS = [
  * diálogo NATIVO de PrimeNG pone los botones a 18 del último campo (el `padding` inferior del
  * contenido de Aura), y el hueco entre campos es 14 o 15,75. Darles aire es un desvío del nativo
  * que va por token del tema y alcanza a todos los diálogos (DD-113 §2): decisión de producto
- * pendiente, en DD-122.
+ * pendiente, en DD-123.
  */
 const CONOCIDOS: Record<string, string> = {
   'conversaciones/entidades · alta · R3 · Tipo → Crear entidad': 'pie nativo del diálogo (18 contra 15,75 entre campos)',
@@ -166,7 +166,7 @@ const cuadrar = ({ rojos, vistas }: Medido): void => {
   const curados = esperados.filter((k) => !sinMedida.includes(k));
   expect(
     nuevos,
-    'Por debajo del doble (DD-122): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO.',
+    'Por debajo del doble (DD-123): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO.',
   ).toEqual([]);
   expect(curados, 'Ya están en verde: borra su línea de CONOCIDOS.').toEqual([]);
 };

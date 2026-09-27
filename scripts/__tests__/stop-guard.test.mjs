@@ -285,7 +285,7 @@ test('y no vale cualquier herramienta de GitHub: leer el CI es leer el CI', () =
   assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__search_code']), true);
 });
 
-// ── La revisión previa a enseñar una pantalla · añadido el 2026-09-27 (DD-122) ───────────────
+// ── La revisión previa a enseñar una pantalla · añadido el 2026-09-27 (DD-123) ───────────────
 // El primer filtro visual de una pantalla no puede ser el usuario: si la sesión escribe una
 // plantilla u hoja del Supervisor, el cierre pide antes `npm run revision`.
 

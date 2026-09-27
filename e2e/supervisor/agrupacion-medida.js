@@ -1,7 +1,7 @@
 /**
  * MEDIDA DE AGRUPACIÓN — se inyecta en la página (`addInitScript`) y deja `window.__medirAgrupacion`.
  *
- * Mide la regla de la escalera 7 · 14 · 28 (DD-122, AGENTS §«UX de pantalla» 9) sobre las cajas
+ * Mide la regla de la escalera 7 · 14 · 28 (DD-123, AGENTS §«UX de pantalla» 9) sobre las cajas
  * RENDERIZADAS, no sobre el SCSS: la relación entre una etiqueta, su control y el botón que los
  * envía solo existe en el render (márgenes que se funden, envoltorios en línea, `display: contents`).
  *

@@ -41,8 +41,8 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · el editorial, pendiente de producto | DD-123 |
-> | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` | DD-122 |
+> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · el editorial, pendiente de producto | DD-124 |
+> | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` | DD-123 |
 > | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
 > | Sidebar en producción: abrir una categoría no cierra las demás y nada se cierra al salir · plegado solo la rama de la página · se despliega con el ratón y se ancla con su botón · selección en cyan · subsecciones en 450ms con la curva de Apollo (enmienda DD-112 §3-§5) | DD-118 |
 > | La cabecera del Dashboard: pestañas sin fondo con `⋮` y `+ Monitor` pegados; las acciones de la página en `p-toolbar` en tres grupos con `sc-divider` (enmienda DD-113 §6) · en modo pared un monitor sin widgets enseña su vacío y el carrusel se lo salta | DD-114 |
@@ -85,7 +85,7 @@
 
 ---
 
-## DD-123 · 2026-09-27 — La demo tiene un segundo juego de datos, `?datos=tortura`, para ver dónde se rompe una pantalla
+## DD-124 · 2026-09-27 — La demo tiene un segundo juego de datos, `?datos=tortura`, para ver dónde se rompe una pantalla
 
 **Contexto** · Una pantalla se juzga con los datos que tiene delante. Medido en la semilla del Supervisor el
 2026-09-27: 500 agentes con nombres de 7 a 18 letras y ningún campo vacío; 480 salen de cruzar 25 nombres con 25
@@ -132,7 +132,7 @@ lateral), es decisión de producto; queda en el hand-off de calidad visual.
 
 ---
 
-## DD-122 · 2026-09-27 — Lo que va junto se separa menos: la escalera 7 · 14 · 28 manda sobre la maqueta, y se mide en el build
+## DD-123 · 2026-09-27 — Lo que va junto se separa menos: la escalera 7 · 14 · 28 manda sobre la maqueta, y se mide en el build
 
 **Contexto** · Una revisión de calidad visual contra principios generales de UI (el segundo: agrupar por espacio, lo
 relacionado más cerca que lo que no) encontró que el repo ya tenía la regla, pero solo como comentario: la escalera
