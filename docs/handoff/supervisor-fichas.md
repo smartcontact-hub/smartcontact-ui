@@ -7,6 +7,58 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
+## ✅ 2026-09-27 · Un solo índice con una sola forma, y agente y usuario al molde de la ficha de grupo (DD-122)
+
+> **Sello: rama `areses/sweet-fermat-r9cxzw` rearrancada desde `main` (`168530c`), PR nuevo, un commit por bloque.**
+> El tramo del 2026-09-20 (el contenido anclado a la izquierda, DD-115) sale de aquí:
+> `git show 168530c:docs/handoff/supervisor-fichas.md`.
+
+**Qué pasó.** Producto respondió a las preguntas para ir a fondo (DD-121, «Respuestas de producto»): el índice debe
+ser uno y funcionar de una sola forma. Medido, había tres: Contact Center con su pieza propia (`routerLink`), la ficha
+de grupo y el constructor con `sc-form-section-nav` (`href="#"`, `role="tab"`, la sección en memoria), y agente y
+usuario con `p-tabs`.
+
+**Qué cambia** (el detalle y lo descartado, en DD-122):
+- **DS**: cada fila de `sc-form-section-nav` es un enlace (`href` opcional por sección). El clic principal sin teclas
+  avisa (`activeChange`) y la página navega; los gestos de enlace los hace el navegador. `aria-current="page"`, sin
+  `role="tab"`. Gana `titleKey` (rótulo) y `sectionsWithChanges` (punto de marca). CHANGELOG `Added` y `Changed`.
+- **App**: la sección sale de `?seccion=` (input de página); `SectionLinksService` hace el `href` y la navegación. En
+  un alta, `replaceUrl`. La transición de vista se salta si solo cambia la query, y el router cancela volviendo a
+  donde estaba (`canceledNavigationResolution: 'computed'`).
+- **Contact Center** usa el índice del DS con su rótulo; `sc-settings-sidebar` fuera.
+- **Agente y usuario**, al molde de la ficha de grupo: cabecera encima, índice, sección en `sc-section-card` y
+  resumen a la derecha con sus tres cifras (tarjetas en `styles/_resumen.scss`, una para las tres fichas). Un orden
+  fijo; abren en Identidad; los listados enlazan a su sección de trabajo. El alta de agente navega a la edición (antes
+  `Location.replaceState`). El aviso de otra pestaña, en las tres.
+- **Un solo «Guardar» por ficha**: el índice marca las secciones con cambios y la barra dice «Cambios sin guardar».
+- **Pendientes pequeños de DD-121**: el diálogo corto solo duplica (`sc-group-duplicate-dialog`), y sale el banner
+  `.cross-tab-warning` que no pintaba nadie (tipografía suelta de 81 a 80).
+
+**Medido:**
+- **Rojo primero.** Unitaria del índice: 12 de 16 contra el componente anterior. `indice-enlaces.spec.ts`: 11 de 12
+  contra `main`; la que pasaba es Contact Center, que ya iba por rutas. Su prueba de Atrás con «Seguir editando» se
+  vio en rojo antes de `computed`. `ficha-usuario-agente.spec.ts`: 12 de 15 contra `main`, más la del alta de agente
+  con el `replaceState` de antes puesto a propósito.
+- **Sin píxeles de más.** Contact Center, la ficha de grupo y el constructor: 0 píxeles distintos contra `main` a
+  1440, en claro y en oscuro. La sonda enrojece con medio píxel de relleno.
+
+**Trampas del tramo:**
+- ⚠️ `withViewTransitions` abre una transición en TODA navegación, también si solo cambia la query: sin saltarla
+  (`onlyQueryChanged`, en `app.config.ts`), cada clic del índice fundía la página. En e2e no se ve,
+  porque `disableAnimations` apaga los pseudo-elementos: la prueba envuelve `document.startViewTransition`.
+- ⚠️ En el alta de grupo, en cuanto el grupo existe su nombre ya está cogido (por él mismo) y la puerta de General se
+  cierra: lo que dependa de `activeSection()` al crear se lee ANTES de `addGroup`, y la puerta no se aplica mientras
+  se guarda.
+- ⚠️ Con dos `page.goto`, Atrás cruza de documento y el router no se entera: una prueba de un guardián con Atrás
+  tiene que llegar a la ficha navegando dentro de la app. Y el aviso de descartar es un `alertdialog`.
+- ⚠️ Un `input()` de página enlazado a la query recibe el valor nuevo un microtask después de navegar, y un
+  parámetro que falta llega como `undefined`. No lo leas en un efecto que recarga el formulario (el constructor
+  recarga la regla con cada cambio del store): cada clic del índice borraría lo editado.
+- ⚠️ «Todos cumplen» sobre una lista vacía da verde: la prueba del alta de agente pasaba en `main`, sin índice.
+  Cuenta antes de comprobar.
+- ⚠️ La ficha de usuario ya tenía un `sectionTree` (el árbol de Acceso): el ayudante de enlaces se llama
+  `sectionUrl` en las cuatro páginas.
+
 ## ✅ 2026-09-26 · La ficha de grupo sigue la visión de producto: índice lateral, canal por canal, panel rápido y alta en la ficha (DD-121)
 
 > **Sello: rama `areses/sweet-fermat-r9cxzw`, PR #255, un commit por bloque.** El tramo del 2026-09-16 (la ficha que
@@ -190,43 +242,27 @@ propones.
 Decisiones, lo que no cuadró con los tokens y lo que queda abierto:
 `~/Documents/Claude/2026-09 teardown admin usuarios-grupos/LABORATORIO-decisiones.md`.
 
-## ✅ 2026-09-20 · El contenido de página se ancla a la izquierda: el índice lateral deja de colgar (DD-115)
-
-> **Sello: rama `arebury/candlefish`, sobre `origin/main` HEAD `84f37bd5`.** Un solo fichero de código:
-> `projects/supervisor/src/styles/_page.scss`.
-
-**Qué pasó.** Llegó de fuera del equipo que el índice lateral «colgaba». Medido con sonda en local: el sidebar
-está clavado al borde y `.page__inner` se centraba, así que entre las dos navegaciones había lienzo muerto —108px
-a 1440 y 348 a 1920 hasta el índice de `--rail`— y las hermanas arrancaban en cuatro verticales distintas a 1920
-(80 / 200 / 520 / 584).
-
-**Qué cambia.** `.page__inner` pasa a `margin: 0`, `--rail` a `margin-inline: 0` y `.page__form` a `margin: 0`.
-**Los topes no se tocan**: 832 / 960 / 1100 / 1200 / 1600 siguen limitando el ancho de LECTURA. El contenido de
-`--rail` sigue midiendo 920, el `Block` 393:12587. El porqué y las referencias medidas (GitHub, Meridian) están en
-`docs/DECISIONS.md` DD-115.
-
-**Medido** con sonda de navegador a 1440 y 1920, en Configuración del AED, Seguridad, Usuarios y Repositorios: las
-cuatro arrancan en x=80 y el hueco hasta el índice es de 28 (el `padding` del molde) en cualquier ancho. En el
-laboratorio del Sidebar de PrimeNG (`/lab/sidebar`) el sidebar mide 48 y la página arranca en 48: anclado, el
-contenido no depende del ancho del sidebar, así que un cambio de marco no lo mueve.
-
-`audit:page-anatomy` y las 35 pruebas de molde del Supervisor pasan **sin tocarlas**: miden tope, `padding`, `gap`,
-rail de 196 y los 920, no el margen.
-
-**Trampa del tramo:** las capturas de `projects/sc-docs/public/usage/` son del 2026-09-07 y aún enseñan el sidebar
-de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con `npm run usage:capture`.
-
 ## SIGUIENTE — sin preguntar
 
-0. **Validar con producto la ficha de grupo nueva** (DD-121). Si se da por buena, lo siguiente es el mismo índice
-   lateral en las fichas de agente y usuario. Las preguntas abiertas para producto y desarrollo están en DD-121
-   («Consecuencias»). Resuelto ahí lo que aquí estaba pendiente: sacar a alguien del grupo es solo «Quitar», no hay
-   «Habilitado» en el grupo, y el número de WhatsApp ya no cuelga de Web Chat.
-   Pendientes pequeños del tramo: las fichas de agente y usuario calculan `conflictWarning` y no lo pintan (el
-   candado ya se suelta al recargar, así que pintarlo es seguro); `sc-group-create-dialog` conserva un modo alta que
-   ya no abre nadie (solo duplica); el `role="tab"` de `sc-form-section-nav` (DD-113); «Eliminar» en rojo de texto
-   mide 3,76:1 (conocido en `theme-contrast`); y el índice de Contact Center es otra pieza (`sc-settings-sidebar`)
-   que hoy mide igual que `sc-form-section-nav`: unificarlas es el pendiente de `figma-pendiente` §5.
+0. **Pase de diseño premium sobre todo el flujo rehecho** (`/impeccable` + `/better-ui`, más `better-layout` y
+   `better-typography`): listado y panel de grupos, las tres fichas, valores por defecto y Contact Center, a 1440 y
+   1280, en claro y en oscuro. Se revisa, se enseñan los hallazgos con captura y se aplica lo que se elija, en un PR
+   aparte. Lo que no está claro y hay que mirar sí o sí:
+   - Distribución y colas (2.355 px con cuatro canales, sin plegar).
+   - La tabla de agentes del grupo.
+   - El resumen de agente y usuario: tres cifras en una columna de 240, que les quita 492 px de contenido.
+   - Caja o sin caja: #239 las quitó y DD-122 las devuelve. Hay que elegir UNA forma para las tres fichas.
+   - En el alta, «Siguiente» frente a «Crear grupo», y el título: grupo lo enseña, agente y usuario lo esconden.
+   - Al guardar, grupo y agente se quedan y usuario vuelve al listado.
+   - La fila del listado.
+   - Ayudas bajo casi cada campo, y el peso de los iconos junto al texto semibold.
+   - El oscuro y los estados vacíos.
+   - Si el cambio de sección debe moverse igual en Contact Center, que funde, y en las fichas, que no.
+   - «Eliminar» en rojo de texto mide 3,76:1 (conocido en `theme-contrast`).
+   Después, el antes y después al día con agente, usuario y Contact Center. Y luego **el panel rápido de agentes,
+   también en Supervisión** (respuesta de producto del 2026-09-27): es donde trabaja el supervisor, y hoy solo se abre
+   desde el listado de grupos; anotado en DD-121, sin código. Las preguntas abiertas para producto y desarrollo
+   siguen en DD-121 («Consecuencias»).
 1. **Decidir sobre el laboratorio de administración** (`/lab/admin/grupos`, `/lab/admin/usuarios`).
    Lo primero que hay que discutir con Rafa y con producto son **los paquetes por tipo**
    (`TYPE_PACKAGES` en `admin-lab.model.ts`): hoy no existe ninguno porque el tipo no significa
@@ -247,8 +283,8 @@ de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con
      de listas de las tablas). Exportar solo la selección tampoco, y se decidió no hacerlo: exportar baja todo;
    - ~~`sc-bulk-edit-menu matchable`~~ y ~~`sc-select editable`~~ · entraron en **#218**, junto con
      `sc-section-card showHeader` y `sc-drawer width/topOffset`;
-   - **las pantallas y el copy** — para GRUPOS ya no aplica: su ficha nueva (DD-121) no sale de `comparar/fichas`.
-     Para agente y usuario lo bloquea la pregunta de producto de ⏸️ ESPERANDO (qué forma de ficha se queda). Son ~3.700 líneas en ~43 ficheros, más 932 de
+   - **las pantallas y el copy** — ya no aplica: la ficha de grupo (DD-121) y las de agente y usuario (DD-122) no
+     salen de `comparar/fichas`, que queda de referencia. Son ~3.700 líneas en ~43 ficheros, más 932 de
      textos. El andamio de `admin/comparar/` (12 ficheros, 1.088 líneas: la barra `?variante=`,
      la guía «Qué mirar», el scroll-spy) **no se funde: se tira** cuando haya decisión.
    ⚠️ Antes de rescatar nada más, compruébalo contra `origin/main`: dos de los cinco puntos ya
@@ -257,8 +293,9 @@ de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con
 
 ## ⏸️ ESPERANDO — no preguntar
 
-- **Producto:** qué forma de ficha se queda en agente y usuario (`?variante=a|b|e`); en grupos, validar el índice
-  lateral de DD-121.
+- **Producto:** validar en producción el índice único y las tres fichas en su molde (DD-122), con el antes y después.
+  La forma de agente y usuario ya está decidida: el índice lateral (las variantes de `comparar/fichas` quedan de
+  referencia).
 - **Devs:** qué son «Audio saliente» y «Desbordar sesión» (solo salen en el Figma; anotados en `groups-data.ts`), y el
   resto de preguntas abiertas de DD-121: el destino del desbordamiento, Email, el script de Web Chat, WhatsApp por
   agente y qué ve el cliente en cola si se toca un grupo activo.
