@@ -643,18 +643,44 @@
     <!-- EL RESUMEN, a la derecha y fijo, como en la ficha de grupo (`.ficha-summary`; por debajo de 1340, una
          franja encima). Las tres cifras de siempre: en cuántos grupos atiende, por qué canales y de qué tipo es. -->
     <div class="ficha-summary">
-      <section class="resumen" aria-labelledby="agent-summary-title">
-        <h2 id="agent-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'common.summary' | translate }}</h2>
-        @for (s of summary(); track s.etiqueta) {
-          <div class="resumen__kpi">
-            <p class="resumen__label sc-text-caption-regular">
-              <sc-icon [name]="s.icono" size="inherit" aria-hidden="true" />
-              {{ s.etiqueta | translate }}
-            </p>
-            <p class="resumen__value sc-text-body-semibold">{{ s.valor }}</p>
+      <!-- PROTOTIPO (`?resumen=a|b`): el resumen como widget. Sin el parámetro, el de hoy. -->
+      @if (resumenVariante.variante(); as v) {
+        <section class="resumen" [class.resumen--a]="v === 'a'" [class.resumen--b]="v === 'b'" aria-labelledby="agent-summary-title">
+          <h2 id="agent-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'common.summary' | translate }}</h2>
+          <!-- Las tarjetas son hermanas: 14 entre ellas; el título, a 7 de la primera (AGENTS «UX de pantalla» 9). -->
+          <div class="resumen__cards">
+            <sc-summary-kpi
+              icon="group"
+              labelKey="agents.form.summary.groups_active"
+              [value]="summaryGroups().activos"
+              [of]="summaryGroups().total"
+              [noteKey]="summaryGroups().total === 0 ? 'agents.form.summary.no_groups' : null"
+            />
+            @for (s of summary().slice(1); track s.etiqueta) {
+              <div class="resumen__kpi">
+                <p class="resumen__label sc-text-caption-regular">
+                  <sc-icon [name]="s.icono" size="inherit" aria-hidden="true" />
+                  {{ s.etiqueta | translate }}
+                </p>
+                <p class="resumen__value sc-text-body-semibold">{{ s.valor }}</p>
+              </div>
+            }
           </div>
-        }
-      </section>
+        </section>
+      } @else {
+        <section class="resumen" aria-labelledby="agent-summary-title">
+          <h2 id="agent-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'common.summary' | translate }}</h2>
+          @for (s of summary(); track s.etiqueta) {
+            <div class="resumen__kpi">
+              <p class="resumen__label sc-text-caption-regular">
+                <sc-icon [name]="s.icono" size="inherit" aria-hidden="true" />
+                {{ s.etiqueta | translate }}
+              </p>
+              <p class="resumen__value sc-text-body-semibold">{{ s.valor }}</p>
+            </div>
+          }
+        </section>
+      }
     </div>
   </div>
 </div>

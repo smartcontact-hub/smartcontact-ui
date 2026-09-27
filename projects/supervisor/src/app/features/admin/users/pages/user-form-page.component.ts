@@ -38,6 +38,7 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
+import { ResumenVarianteService, SummaryKpiComponent } from '@shared/components';
 import {
   AVAILABLE_SERVICES,
   DEFAULT_PERMISSIONS,
@@ -95,6 +96,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     PhotoUploadComponent,
     SectionCardComponent,
     SelectComponent,
+    SummaryKpiComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -266,6 +268,18 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
     if (this.mode() !== 'edit') return new Set<string>();
     return new Set([...this.dirtyState.changedKeys()].map((k) => USER_SECTION_OF_FIELD[k as keyof FormState]));
+  });
+
+  /** PROTOTIPO: secciones y permisos sobre su total, para las cifras con anillo del widget (`?resumen=a|b`). */
+  protected readonly resumenVariante = inject(ResumenVarianteService);
+  protected readonly summaryAccess = computed(() => {
+    const f = this.form();
+    return {
+      secciones: Object.values(f.sections).filter(Boolean).length,
+      totalSecciones: Object.keys(f.sections).length,
+      permisos: Object.values(f.permissions).filter(Boolean).length,
+      totalPermisos: Object.keys(f.permissions).length,
+    };
   });
 
   /**

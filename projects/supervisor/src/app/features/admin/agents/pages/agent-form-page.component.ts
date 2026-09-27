@@ -31,7 +31,7 @@ import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { NameInplaceComponent } from '@shared/components';
+import { NameInplaceComponent, ResumenVarianteService, SummaryKpiComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -171,6 +171,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
   imports: [
     ButtonComponent,
     NameInplaceComponent,
+    SummaryKpiComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
     FormSectionNavComponent,
@@ -455,6 +456,13 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       }
     }
     return out;
+  });
+
+  /** PROTOTIPO: grupos activos sobre asignados, para la cifra con anillo del widget (`?resumen=a|b`). */
+  protected readonly resumenVariante = inject(ResumenVarianteService);
+  protected readonly summaryGroups = computed(() => {
+    const links = this.form().links;
+    return { activos: links.filter((l) => l.active).length, total: links.length };
   });
 
   /**

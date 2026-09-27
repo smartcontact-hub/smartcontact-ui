@@ -991,6 +991,7 @@
     "no_changes": "No hay cambios que guardar",
     "unsaved_changes": "Cambios sin guardar",
     "summary": "Resumen",
+    "summary_of": "{{value}} de {{total}}",
     "actions": "Acciones",
     "select_row": "Seleccionar {{name}}",
     "select_all": "Seleccionar todo",
@@ -1646,6 +1647,7 @@
         "no_phone": "Sin teléfono saliente",
         "title": "Resumen",
         "agents": "Agentes",
+        "agents_active": "Agentes activos",
         "paused_count": "{{count}} en pausa",
         "no_agents": "Sin agentes",
         "routing": "Reparto",
@@ -1916,6 +1918,10 @@
         "none": "Ninguna",
         "selected_many": "{0} seleccionadas",
         "manage_link": "Gestionar en Repositorios"
+      },
+      "summary": {
+        "no_groups": "Sin grupos",
+        "groups_active": "Grupos activos"
       }
     },
     "toasts": {

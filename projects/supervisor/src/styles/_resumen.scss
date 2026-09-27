@@ -81,3 +81,97 @@
   color: var(--sc-text-primary);
   overflow-wrap: anywhere;
 }
+
+/* ─── PROTOTIPO: el resumen como widget (`?resumen=a|b`, `sc-summary-kpi`) ─────────────────────────────
+ * El ejemplo «Preview» de ProgressSpinner de primeng.dev en nuestros tokens: el rótulo arriba, la cifra
+ * grande y el anillo nativo a su lado; la nota debajo. Sin el parámetro no se pinta nada de esto. */
+
+/* La escalera 7 · 14 · 28 (AGENTS «UX de pantalla» 9, DD-123) en las variantes: el título, a 7 de la primera
+ * tarjeta, y 14 entre tarjetas, que son hermanas; dentro, el rótulo, la cifra y su nota son una pieza (7) y lo
+ * que cuelga debajo (las filas por canal del grupo) va a 14. */
+.resumen__cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+@container (min-width: 37.5rem) {
+  .resumen__cards {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    align-items: start;
+  }
+}
+
+/* La cabeza (rótulo, cifra y nota) y lo que cuelga debajo (las filas por canal del grupo) son dos grupos: 28, el
+ * doble que entre esas filas. */
+.resumen__kpi--widget {
+  gap: var(--sc-spacing-2);
+}
+
+.resumen__cabeza {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+
+.resumen__widget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-75);
+}
+
+.resumen__figure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-125);
+  margin: 0;
+  min-width: 0;
+}
+
+/* La cifra que cuenta. `transition-property: none` con su duración: no transiciona nada; la duración la
+ * lee `CountUpDirective`, y la apagan el reset de menos movimiento y las e2e. */
+.resumen__count {
+  color: var(--sc-text-primary);
+  font-variant-numeric: tabular-nums;
+  transition-property: none;
+  transition-duration: var(--sc-transition-slow);
+}
+
+.resumen__of {
+  color: var(--sc-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* El anillo nativo a 42 (el ejemplo lo pone a 44, que no está en la escala), como la sección «Custom» de su
+ * doc: tamaño en el host. */
+.resumen__ring {
+  flex: none;
+  inline-size: var(--sc-spacing-3);
+  block-size: var(--sc-spacing-3);
+}
+
+/* El `N%` nativo del anillo, oculto como lo oculta el ejemplo (`customs-catalog` §8): a 42 px mediría ~5. */
+.resumen__ring-value {
+  display: none;
+}
+
+.resumen__note {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+/* Las dos superficies que se comparan. A: neutra, con su borde y elevación. B: el tinte de marca.
+ * A no quita el borde: en claro, lienzo y superficie son el mismo blanco, y sin él la tarjeta se deshacía en la
+ * página (revisión previa, 2026-09-27). Ahí el borde es estructura, no profundidad. */
+.resumen--a .resumen__kpi {
+  box-shadow: var(--sc-shadow-card);
+}
+
+.resumen--b .resumen__kpi {
+  background: var(--sc-bg-primary-subtle);
+  border-color: transparent;
+}

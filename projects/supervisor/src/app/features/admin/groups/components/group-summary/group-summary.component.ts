@@ -6,7 +6,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { AnimateOnChangeDirective } from '@core/directives';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent } from '@shared/components';
+import { ChannelIconComponent, ResumenVarianteService, SummaryKpiComponent } from '@shared/components';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 
 import { CHANNEL_LABEL_KEYS, type GroupChannel } from '../../data/groups-data';
@@ -51,7 +51,7 @@ interface ChannelRow {
  */
 @Component({
   selector: 'sc-group-summary',
-  imports: [TranslateModule, MeterGroupModule, ScIconComponent, ChannelIconComponent, AnimateOnChangeDirective],
+  imports: [TranslateModule, MeterGroupModule, ScIconComponent, ChannelIconComponent, AnimateOnChangeDirective, SummaryKpiComponent],
   templateUrl: './group-summary.component.html',
   styleUrl: './group-summary.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,6 +59,8 @@ interface ChannelRow {
 export class GroupSummaryComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
+  /** PROTOTIPO: `?resumen=a|b` pinta el resumen como widget. */
+  protected readonly variante = inject(ResumenVarianteService);
 
   /** Los canales del grupo, en el orden canónico. */
   readonly channels = input.required<readonly GroupChannel[]>();

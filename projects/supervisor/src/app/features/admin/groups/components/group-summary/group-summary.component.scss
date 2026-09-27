@@ -76,3 +76,37 @@
 .resumen__key {
   color: var(--sc-text-secondary);
 }
+
+/* PROTOTIPO (`?resumen=a|b`): reparto, salida y recursos en una sola tarjeta, con la escalera 7 · 14 · 28:
+ * 14 entre los tres, 7 de cada rótulo a sus datos y 14 entre datos hermanos. Un dato (clave sobre valor) y una
+ * fila de canal (nombre sobre su barra) son UNA pieza y se quedan como están. */
+/* Entre los tres grupos, 28: al menos el doble que entre sus filas (14), o la tarjeta se lee como una lista plana
+ * (revisión previa, 2026-09-27). */
+.resumen__facts {
+  gap: var(--sc-spacing-2);
+}
+
+.resumen__fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.resumen--a .resumen__pairs,
+.resumen--b .resumen__pairs,
+.resumen--a .resumen__channels,
+.resumen--b .resumen__channels {
+  gap: var(--sc-spacing-1);
+}
+
+/* Cada dato en una línea, clave a la izquierda y valor a la derecha, como las filas por canal: la tarjeta se lee
+ * con una sola gramática y, en la columna de 240, ahorra una línea por dato (medido: sin esto, con la escalera,
+ * el resumen del grupo 11 no cabía a 1366×660). Si no cabe en la línea, el valor baja a la siguiente. */
+.resumen--a .resumen__pair,
+.resumen--b .resumen__pair {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: var(--sc-spacing-0-5);
+}

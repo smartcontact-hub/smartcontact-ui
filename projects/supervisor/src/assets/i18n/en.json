@@ -991,6 +991,7 @@
     "no_changes": "No changes to save",
     "unsaved_changes": "Unsaved changes",
     "summary": "Summary",
+    "summary_of": "{{value}} of {{total}}",
     "actions": "Actions",
     "select_row": "Select {{name}}",
     "select_all": "Select all",
@@ -1646,6 +1647,7 @@
         "no_phone": "No outbound phone",
         "title": "Summary",
         "agents": "Agents",
+        "agents_active": "Active agents",
         "paused_count": "{{count}} paused",
         "no_agents": "No agents",
         "routing": "Distribution",
@@ -1916,6 +1918,10 @@
         "none": "None",
         "selected_many": "{0} selected",
         "manage_link": "Manage in Repositories"
+      },
+      "summary": {
+        "no_groups": "No groups",
+        "groups_active": "Active groups"
       }
     },
     "toasts": {
