@@ -41,7 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas bajo el índice · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
+> | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
 > | Sidebar en producción: abrir una categoría no cierra las demás y nada se cierra al salir · plegado solo la rama de la página · se despliega con el ratón y se ancla con su botón · selección en cyan · subsecciones en 450ms con la curva de Apollo (enmienda DD-112 §3-§5) | DD-118 |
 > | La cabecera del Dashboard: pestañas sin fondo con `⋮` y `+ Monitor` pegados; las acciones de la página en `p-toolbar` en tres grupos con `sc-divider` (enmienda DD-113 §6) · en modo pared un monitor sin widgets enseña su vacío y el carrusel se lo salta | DD-114 |
 > | Cambiar de COLECCIÓN (se vacían búsqueda y selección) son pestañas `p-tabs`; filtrar la misma lista o elegir un valor son botones segmentados `sc-selectbutton` · un componente de primeng.dev entra NATIVO tal cual (doc entera con `tools/primeng-doc.mjs`, sin contador ni icono que el ejemplo no tenga) y un desvío de comportamiento lo para `audit:primeng-coupling` §F · un separador entre bloques es `sc-divider` salvo que su línea deba alinearse con el contenido · el Supervisor sin `ripple`, como primeng.dev | DD-113 |
@@ -98,17 +98,22 @@ tres fichas (#240) y el alta en diálogo (DD-119).
    Voice, una DD) gana a un relleno de la maqueta; un relleno sin conflicto entra si es barato; lo inferido entra con
    un valor provisional y pasa a las preguntas abiertas. Lo que la visión quita sale de la VISTA y se queda en el
    MODELO, que es la vía reversible.
-2. **Índice lateral, solo en grupos.** Molde de Contact Center (`--rail`: índice de 196 y contenido de 920 a 1440) con
+2. **Índice lateral, solo en grupos.** El índice de Contact Center (`--rail`: carril de 196, fijo, sin scroll) con
    `sc-form-section-nav` y cuatro secciones en el orden de sus dependencias, una a la vista y abriendo en General:
    General · Distribución y colas · Recursos · Agentes. La cabecera (nombre como `h1` editable, línea meta y
    «Eliminar») va ENCIMA de índice y contenido (`.ficha-rail` en `_page.scss` solo parte la fila), en la misma vertical
    que las fichas de agente y usuario, que siguen con pestañas: la divergencia es a propósito, y extender el índice a
    ellas es el siguiente paso si se valida en grupos.
-3. **Resumen bajo el índice**, en el mismo carril fijo: el patrón del «impacto estimado» del constructor de reglas.
-   Tarjetas de KPI (`sc-group-summary`): agentes, con una barra `p-metergroup` por canal (base: el ejemplo «Template»
-   de MeterGroup en primeng.dev) y aviso con icono y texto si un canal activo no tiene quien lo atienda; reparto por
-   familia; salida (teléfono saliente y WhatsApp); recursos; y lo que falta para guardar. Cifras animadas al cambiar
-   (`AnimateOnChangeDirective`, en `core/directives`). El carril no tiene scroll: cabe a 1440×900 (fondo en 844).
+3. **Resumen a la derecha, en su propia columna** (enmendado el 2026-09-27; antes iba bajo el índice, ver
+   Descartadas). Tarjetas de KPI (`sc-group-summary`): agentes, con una barra `p-metergroup` por canal (base: el
+   ejemplo «Template» de MeterGroup en primeng.dev) y aviso con icono y texto si un canal activo no tiene quien lo
+   atienda; reparto por familia; salida (teléfono saliente y WhatsApp); recursos; y lo que falta para guardar. Cifras
+   animadas al cambiar (`AnimateOnChangeDirective`, en `core/directives`). La columna (`.ficha-summary`) mide 240, la
+   del panel del constructor de reglas; va fija al hacer scroll, así que no se va mientras se toca lo que la mueve, y
+   lo que no quepa hace scroll dentro de ella. El índice se queda solo en el carril de Contact Center, que no tiene
+   scroll. El tope de la página sube a 1600 (`.ficha-rail--summary`) y el contenido mide 812 a 1440 y 738 a 1366.
+   Por debajo de 1340 no caben tres columnas: el resumen pasa a una franja encima de índice y contenido, que vuelven a
+   medir lo de Contact Center (contenido de 920 a 1280).
 4. **General: nombre, prioridad y canales, y Chat es la casilla MADRE** de Web Chat y WhatsApp (patrón B12 del
    laboratorio): marcarla enciende los dos; desmarcarla, los apaga; con uno, queda a medias. Las claves no cambian
    (`chat` sigue siendo Web Chat), así que no hay datos que migrar. Las reglas viven en `group-channels.core.mjs`.
@@ -169,8 +174,11 @@ y marca siempre 100 % al editar, y la sección de distribución con Teléfono y 
 **Descartadas** ·
 - **Stepper de PrimeNG** → el horizontal es lo que la visión rechaza; el vertical mete el contenido entre los pasos
   (no hay menú + contenido), y usarlo para crear e índice para editar serían dos formularios.
-- **Resumen en una columna a la derecha, como la maqueta** → el patrón del constructor de reglas lo pone bajo el
-  índice, a la vista mientras se toca lo que lo mueve, sin quitarle ancho al contenido.
+- **Resumen bajo el índice, en el mismo carril** (la primera versión, del 2026-09-26, con el patrón del constructor
+  de reglas) → el carril es el de Contact Center y no tiene scroll, y el resumen lo alargaba hasta 844 px. Medido: a
+  1366×768 se cortaba 20 px al abrir y, a 1280×720, al bajar al final de una sección larga el índice se escondía 99
+  px por arriba; la navegación se perdía a medio editar. El constructor lo puso bajo su índice porque en una columna
+  hermana se iba con el scroll; esta columna es fija, así que eso no pasa. Lo que cuesta: 108 px de contenido a 1440.
 - **Colores por canal en las barras** → los glifos de canal van de un solo color (decisión de producto,
   2026-09-16): el canal lo dice la forma.
 - **El porcentaje de «configuración esencial»** → no informa (ver Razón).
@@ -197,8 +205,9 @@ se quita un canal o se cambia la estrategia de un grupo activo; y el choque con 
 más de un anuncio periódico en teléfono. Fuera a propósito: la forma de las fichas de agente y usuario, y
 `/config/aed/grupos`, la página vieja de Configuración, que no está conectada con la ficha. Vigilan esto
 `grupo-vision.spec.ts`, `ficha-grupo.spec.ts`, `ficha-grupo-canales.spec.ts`, `panel-agentes-grupo.spec.ts`,
-`listado-grupos.spec.ts`, `admin-forms.spec.ts` y el grupo en `page-anatomy`, `form-section-nav-legibility` y
-`theme-contrast`.
+`listado-grupos.spec.ts`, `admin-forms.spec.ts` y el grupo en `form-section-nav-legibility` y `theme-contrast`. De
+`page-anatomy` sale (su tope ya no es el de Contact Center): el índice lo mide `ficha-grupo.spec.ts` con las mismas
+cifras.
 
 ---
 

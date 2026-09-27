@@ -542,8 +542,11 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  * se toca en ese cambio; lo que cambia es que el número por fin dice la verdad. La crónica de
  * arriba (99 → 92 → 87 → 69 → 68 → 67) sigue siendo cierta en su propia escala: son bajadas
  * REALES, medidas con la regla vieja.
+ *
+ * 82 → 81 el 2026-09-27: las celdas de la lista de agentes llevan `.sc-text-body-regular` en la
+ * plantilla, como las de la lista de grupos, y su `.cell` deja de declarar la métrica (DD-55).
  */
-export const TIPOGRAFIA_SUELTA_MAX = 82;
+export const TIPOGRAFIA_SUELTA_MAX = 81;
 
 /**
  * El mismo trinquete para **sc-docs**, el showcase del DS — el que peor predicaba con el ejemplo:

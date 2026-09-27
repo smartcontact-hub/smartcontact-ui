@@ -2,20 +2,17 @@
   display: block;
 }
 
-/* EL RESUMEN, bajo el índice en el carril de 196 (`.page__rail`, fijo y SIN scroll: todo lo de
- * aquí tiene que caber en la ventana, medido a 1440×900). La tipografía la ponen las clases
- * `.sc-text-*` de la plantilla; aquí solo viven el sitio, el color y el aire. */
+/* EL RESUMEN, en su columna a la derecha de la ficha (`.ficha-summary`, fija y con su propio scroll) o,
+ * por debajo de 1340, en una franja encima del contenido. La tipografía la ponen las clases `.sc-text-*`
+ * de la plantilla; aquí solo viven el sitio, el color y el aire. */
 .resumen {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-5);
 }
 
-/* Alineado con el icono de los items del índice (su relleno es `0-625`): índice y resumen se
- * leen como una sola columna. */
 .resumen__title {
   margin: 0;
-  padding-inline: var(--sc-spacing-0-625);
   color: var(--sc-text-secondary);
 }
 
@@ -24,12 +21,25 @@
   align-items: center;
   gap: var(--sc-spacing-0-375);
   margin: 0;
-  padding-inline: var(--sc-spacing-0-625);
   color: var(--sc-text-warning);
 }
 
+/* En la franja ancha, las tarjetas van en fila y el título y lo que falta, encima de todas. */
+@container (min-width: 37.5rem) {
+  .resumen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    align-items: start;
+  }
+
+  .resumen__title,
+  .resumen__missing {
+    grid-column: 1 / -1;
+  }
+}
+
 /* Una tarjeta de KPI: una cifra o un par de datos con su rótulo, como los widgets del panel de
- * grupo. No es una sección de campos (esa caja es `sc-section-card`): es un mueble del carril,
+ * grupo. No es una sección de campos (esa caja es `sc-section-card`): es un mueble del resumen,
  * hermano del «impacto estimado» del constructor de reglas. */
 .resumen__kpi {
   display: flex;

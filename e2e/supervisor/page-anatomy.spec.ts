@@ -32,13 +32,14 @@ test.beforeEach(async ({ page }) => {
  */
 /* Las fichas de USUARIO y AGENTE (2026-09-23) salieron de aquí: dejaron el índice lateral por una
  * tira de pestañas, así que no tienen rail que medir y su tope es 1600 y no 1200 (`.ficha-tabs` en
- * `_page.scss`); las mide `ficha-usuario-agente.spec.ts`. La de GRUPO salió el 2026-09-22 y VUELVE
- * el 2026-09-26 con el índice que pide la visión de producto de grupos (DD-121): el mismo molde
- * que Contact Center, con su cabecera encima (`.ficha-rail`, que solo parte la fila). */
+ * `_page.scss`); las mide `ficha-usuario-agente.spec.ts`. La de GRUPO volvió el 2026-09-26 con el
+ * índice que pide la visión de producto de grupos (DD-121) y sale otra vez el 2026-09-27: lleva su
+ * resumen en una columna a la derecha (`.ficha-rail--summary`), así que su tope es 1600 y su
+ * contenido 812 a 1440. Su índice, que es lo que comparte con Contact Center, lo mide
+ * `ficha-grupo.spec.ts` con las mismas cifras de aquí (196, `sticky`, `top` 22.75). */
 const FORMULARIOS = [
   { ruta: 'config/aed/agentes', nombre: 'contact center · agentes' },
   { ruta: 'config/aed/grupos', nombre: 'contact center · grupos' },
-  { ruta: 'admin/grupos/editar/1', nombre: 'ficha de grupo' },
 ] as const;
 
 /** Los computados que definen el molde, leídos en el nodo exacto (no en un padre). */

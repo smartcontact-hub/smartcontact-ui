@@ -115,7 +115,7 @@ export const EXPLORATIONS: readonly Exploration[] = [
     objective: '¿Qué forma de ficha deja editar más rápido sin perder de vista el resto?',
     status: 'en-revision',
     statusNote:
-      'Grupo, decidido: índice lateral con su resumen, según la visión de producto de grupos (DD-121). Agente y usuario siguen con pestañas hasta validarlo en grupos.',
+      'Grupo, decidido: índice lateral y resumen en una columna a la derecha, según la visión de producto de grupos (DD-121). Agente y usuario siguen con pestañas hasta validarlo en grupos.',
     live: {
       label: 'comparar-fichas.sc-supervisor.pages.dev',
       href: 'https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e',

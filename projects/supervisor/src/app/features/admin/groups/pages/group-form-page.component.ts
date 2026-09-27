@@ -790,7 +790,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return this.form().channels.has(channel);
   }
 
-  /* ── El resumen del índice (`sc-group-summary`) ─────────────────────────────────────────── */
+  /* ── El resumen (`sc-group-summary`), en su columna a la derecha ───────────────────────── */
 
   /** La estrategia de cada familia que el grupo tiene: Teléfono con lo que la completa, y Chat. */
   protected readonly summaryRouting = computed<readonly GroupSummaryRouting[]>(() => {

@@ -155,9 +155,13 @@ ningún componente de índice lateral (revisados sus 228 componentes y conjuntos
 el único dibujo es un MARCO, no una instancia: `393:12565`, «sc-form-section-nav (pure-sc)», 196 de
 ancho, dentro de la maqueta de Contact Center.
 
-En código es `sc-form-section-nav` con `[flush]`. Lo usan Contact Center y, desde el 2026-09-26, la ficha de
-grupo (DD-121: índice de cuatro secciones con el resumen del grupo debajo). Las fichas de agente y usuario lo
-dejaron por pestañas el 2026-09-22. Mientras sea un marco suelto,
+En código son DOS piezas que calcan ese marco: `sc-settings-sidebar` (de la app) en Contact Center y
+`sc-form-section-nav` con `[flush]` (del DS) en la ficha de grupo desde el 2026-09-26 (DD-121: índice de cuatro
+secciones, solo en su carril; el resumen del grupo va en una columna a la derecha). Medidas lado a lado el
+2026-09-27 a 1440, dan lo mismo: carril 196 en x 108, fijo con `top` 22,75, 28 hasta el contenido; item de 37,5
+con relleno 8,75, hueco 5,25 y radio 12; texto 14/20 en 400 (600 el activo), icono de 14, y el activo sobre
+`rgb(236, 239, 243)`. Solo Contact Center lleva su rótulo encima; la ficha lleva su cabecera. Las fichas de agente y
+usuario lo dejaron por pestañas el 2026-09-22. Mientras sea un marco suelto,
 cada maqueta nueva lo vuelve a dibujar a mano y puede salir distinto: es justo lo que pasó con la
 generación anterior (`12277:4818`, panel gris con el icono en su cajita).
 

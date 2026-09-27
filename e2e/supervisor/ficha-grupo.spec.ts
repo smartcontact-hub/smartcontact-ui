@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LA FICHA DE GRUPO — índice lateral con cuatro secciones y el resumen debajo; el alta es la misma
+ * LA FICHA DE GRUPO — índice lateral con cuatro secciones y el resumen a la derecha; el alta es la misma
  * ficha en modo alta, y duplicar, un diálogo corto.
  *
  * Nace el 2026-09-23 como red de la forma «una página + pestañas»; el 2026-09-26 la ficha pasa al
@@ -14,7 +14,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *      que es la que decide las demás (sus canales).
  *   2. El molde es el de Contact Center (`--rail`, índice de 196 y contenido de 920 a 1440), con
  *      la cabecera ENCIMA de los dos: el título arranca en la misma vertical que el índice.
- *   3. El índice y el resumen caben en la ventana: el carril es fijo y no tiene scroll.
+ *   3. El índice y el resumen siguen enteros a la vista al bajar, también en un portátil; por debajo de 1340,
+ *      el resumen es una franja encima del contenido.
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas.
  *   5. Recargar la ficha no es «otra pestaña»; abrirla en otra de verdad, sí.
  *   6. El alta es la MISMA ficha: General es la puerta (nombre y canales antes de seguir),
@@ -122,7 +123,7 @@ test('los grupos no llevan cara: ni avatar en las listas ni foto en la ficha', a
   await expect(page.locator('.page__inner sc-illustrated-avatar')).toHaveCount(0);
 });
 
-test('el molde es el de Contact Center, con la cabecera encima del índice y del contenido', async ({ page }) => {
+test('el índice es el de Contact Center, la cabecera va encima y el resumen a la derecha', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await goto(page, 'admin/grupos/editar/1');
 
@@ -130,43 +131,74 @@ test('el molde es el de Contact Center, con la cabecera encima del índice y del
     const caja = (sel: string) => (document.querySelector(sel) as HTMLElement).getBoundingClientRect();
     const inner = document.querySelector('.page__inner') as HTMLElement;
     const s = getComputedStyle(inner);
+    const r = getComputedStyle(document.querySelector('.page__rail') as HTMLElement);
     const h1 = caja('h1');
     const rail = caja('.page__rail');
     const main = caja('.page__main');
+    const resumen = caja('sc-group-summary');
     return {
       clases: inner.className,
-      maxWidth: s.maxWidth,
       padding: s.padding,
+      rail: { x: Math.round(rail.left), arriba: rail.top, ancho: Math.round(rail.width), derecha: rail.right, pos: r.position, top: r.top },
+      main: { x: main.left, ancho: Math.round(main.width), arriba: main.top, derecha: main.right },
+      resumen: { x: resumen.left, ancho: Math.round(resumen.width), arriba: resumen.top },
       h1: { x: Math.round(h1.left), abajo: h1.bottom },
-      rail: { x: Math.round(rail.left), arriba: rail.top, ancho: Math.round(rail.width) },
-      main: { ancho: Math.round(main.width), arriba: main.top },
     };
   });
 
-  // Un solo arquetipo declarado (`--rail`); `ficha-rail` solo parte la fila para la cabecera.
+  // Un solo arquetipo declarado (`--rail`); `ficha-rail` parte la fila y `--summary` abre la columna del resumen.
   expect(m.clases).toContain('page__inner--rail');
-  expect(m.clases).toContain('ficha-rail');
+  expect(m.clases).toContain('ficha-rail--summary');
   expect(m.clases).not.toContain('ficha-tabs');
-  expect(m.maxWidth).toBe('1200px');
   expect(m.padding).toBe('22.75px 28px');
-  // El índice y el contenido miden lo de Contact Center: 196 y 1200 − 2×28 − 196 − 28 = 920.
+  // El índice, el de Contact Center: 196 y fijo con el mismo `top` que el relleno de arriba.
   expect(m.rail.ancho).toBe(196);
-  expect(m.main.ancho).toBe(920);
-  // La cabecera va ENCIMA de los dos, y el título arranca en la vertical del índice.
+  expect(m.rail.pos).toBe('sticky');
+  expect(m.rail.top).toBe('22.75px');
+  // El resumen, a la derecha: 240, con el hueco de siempre (28) entre las tres columnas. A 1440 el
+  // contenido mide 812, sitio de sobra para la tabla de agentes con sus cuatro canales.
+  expect(m.resumen.ancho).toBe(240);
+  expect(Math.round(m.main.x - m.rail.derecha)).toBe(28);
+  expect(Math.round(m.resumen.x - m.main.derecha)).toBe(28);
+  expect(m.main.ancho).toBe(812);
+  // La cabecera va ENCIMA de las tres, y el título arranca en la vertical del índice.
   expect(m.h1.abajo).toBeLessThan(m.rail.arriba);
   expect(m.rail.arriba).toBe(m.main.arriba);
+  expect(m.resumen.arriba).toBe(m.main.arriba);
   expect(m.h1.x).toBe(m.rail.x);
 });
 
-test('el índice y el resumen caben en la ventana a 1440×900 (el carril no tiene scroll)', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
+test('en un portátil, al bajar hasta el final de la sección más larga, el índice y el resumen siguen enteros', async ({
+  page,
+}) => {
+  // 1366×768 es el portátil más común; con el navegador abierto, la página se queda en unos 660 de alto.
+  await page.setViewportSize({ width: 1366, height: 660 });
   // El 11 es el grupo más cargado del seed: los cuatro canales, dos avisos y dos estrategias.
   await goto(page, 'admin/grupos/editar/11');
-  await expect(page.locator('sc-group-summary')).toBeVisible();
+  await page.locator('sc-form-section-nav').getByText('Distribución y colas', { exact: true }).click();
+  await page.locator('#group-section-distribution').evaluate((el) => el.scrollIntoView({ block: 'end' }));
 
-  const fondo = await page.locator('.page__rail').evaluate((el) => el.getBoundingClientRect().bottom);
-  // Medido el 2026-09-26: 918 con la primera maqueta del resumen (se cortaba Recursos), 844 hoy.
-  expect(fondo).toBeLessThanOrEqual(900);
+  const m = await page.evaluate(() => {
+    const caja = (sel: string) => (document.querySelector(sel) as HTMLElement).getBoundingClientRect();
+    return { indice: caja('sc-form-section-nav'), resumen: caja('sc-group-summary'), alto: window.innerHeight };
+  });
+  // Bajo el índice, en el carril sin scroll, el índice se iba por arriba a medio editar (medido el 2026-09-27).
+  expect(m.indice.top).toBeGreaterThanOrEqual(0);
+  expect(m.resumen.top).toBeGreaterThanOrEqual(0);
+  expect(m.resumen.bottom).toBeLessThanOrEqual(m.alto);
+});
+
+test('por debajo de 1340 el resumen pasa a una franja encima del contenido, que vuelve a medir 920', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await goto(page, 'admin/grupos/editar/11');
+
+  const m = await page.evaluate(() => {
+    const caja = (sel: string) => (document.querySelector(sel) as HTMLElement).getBoundingClientRect();
+    return { resumen: caja('sc-group-summary'), rail: caja('.page__rail'), main: caja('.page__main') };
+  });
+  expect(m.resumen.bottom).toBeLessThanOrEqual(m.main.top);
+  expect(Math.round(m.resumen.left)).toBe(Math.round(m.rail.left));
+  expect(Math.round(m.main.width)).toBe(920);
 });
 
 test('recargar la ficha no es «otra pestaña»; abrirla en otra de verdad, sí', async ({ page, context }) => {

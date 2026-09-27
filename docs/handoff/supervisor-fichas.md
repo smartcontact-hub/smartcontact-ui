@@ -19,8 +19,9 @@ como «visión de producto de grupos (2026-09-25)». Se leyó con una regla de t
 bloques con el vocabulario de la app, no con el de la maqueta.
 
 **Qué cambia** (el detalle y lo descartado, en DD-121):
-- Ficha de grupo con índice lateral (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas bajo
-  el índice. Agente y usuario siguen con pestañas, a propósito.
+- Ficha de grupo con índice lateral (General · Distribución y colas · Recursos · Agentes), el de Contact Center, y
+  resumen en tarjetas en una columna fija a la derecha (una franja arriba por debajo de 1340). Agente y usuario siguen
+  con pestañas, a propósito.
 - Chat, madre de Web Chat y WhatsApp; distribución y cola por canal (`phoneQueue`, `chatQueue`, `chat`, aditivos, se
   leen con `resolveGroup`); en la cola de teléfono, solo la música y la voz a la vista.
 - La tabla de agentes del grupo gestiona composición: sin «Habilitado», al menos un canal, «Quitar» con un sentido.
@@ -28,6 +29,9 @@ bloques con el vocabulario de la app, no con el de la maqueta.
 - Listado con una columna por estrategia y prioridad por rango (`sc-datatable` gana `externalSort`); valores por
   defecto por canal; la lista de agentes recorta los canales a los de su grupo.
 - `CrossTabLockService` suelta el candado en `pagehide`: la ficha de grupo ya pinta el aviso de otra pestaña.
+- Vuelta del 2026-09-27: el resumen pasa a la derecha (bajo el índice se cortaba en portátiles, ver trampas); lo que
+  no es componente lleva su `.sc-text-*` (barrido en navegador: error de canales y celdas de la lista de agentes); y
+  el índice, medido lado a lado con el de Contact Center, da las mismas cifras.
 
 **Medido:** cada prueba nueva se vio en rojo (contra el código anterior o con el arreglo saboteado) antes que en
 verde: `grupo-vision`, `ficha-grupo`, `ficha-grupo-canales`, `panel-agentes-grupo`, `listado-grupos`, y las reglas de
@@ -47,6 +51,10 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
   rótulo no marcaba. `.checkbox-stack` lleva `align-items: flex-start`, que arregla también la ficha de usuario.
 - ⚠️ Mientras un preflight reconstruye `dist/`, el servidor de desarrollo compila en falso: mira la última
   «Application bundle generation complete», no el primer error.
+- ⚠️ El carril de Contact Center (`.page__rail`) es fijo y NO tiene scroll: lo que se le cuelgue debajo del índice
+  se corta en un portátil y, al bajar, se lleva el índice por arriba (el resumen del grupo, bajo el índice, se cortaba
+  20 px a 1366×768 y escondía el índice 99 px a 1280×720). Por eso el resumen vive en su columna, con scroll propio;
+  `ficha-grupo.spec.ts` lo vigila a 1366×660.
 
 ## ✅ 2026-09-24 · Las tablas de agentes y grupos tras la revisión del equipo, en cinco PRs
 
@@ -216,8 +224,9 @@ de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con
    «Habilitado» en el grupo, y el número de WhatsApp ya no cuelga de Web Chat.
    Pendientes pequeños del tramo: las fichas de agente y usuario calculan `conflictWarning` y no lo pintan (el
    candado ya se suelta al recargar, así que pintarlo es seguro); `sc-group-create-dialog` conserva un modo alta que
-   ya no abre nadie (solo duplica); el `role="tab"` de `sc-form-section-nav` (DD-113); y «Eliminar» en rojo de texto
-   mide 3,76:1 (conocido en `theme-contrast`).
+   ya no abre nadie (solo duplica); el `role="tab"` de `sc-form-section-nav` (DD-113); «Eliminar» en rojo de texto
+   mide 3,76:1 (conocido en `theme-contrast`); y el índice de Contact Center es otra pieza (`sc-settings-sidebar`)
+   que hoy mide igual que `sc-form-section-nav`: unificarlas es el pendiente de `figma-pendiente` §5.
 1. **Decidir sobre el laboratorio de administración** (`/lab/admin/grupos`, `/lab/admin/usuarios`).
    Lo primero que hay que discutir con Rafa y con producto son **los paquetes por tipo**
    (`TYPE_PACKAGES` en `admin-lab.model.ts`): hoy no existe ninguno porque el tipo no significa

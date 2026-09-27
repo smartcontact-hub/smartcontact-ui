@@ -33,12 +33,12 @@
 
 <div class="page">
   <!-- El molde de Contact Center (`.page__inner--rail`): índice fijo a la izquierda y una sección a la
-       vista (visión de producto de grupos, 2026-09-25; DD-121). `.ficha-rail` (en `_page.scss`) solo
-       parte la fila para que la cabecera vaya ENCIMA de los dos, a todo lo ancho, en la misma
-       vertical que las fichas de agente y usuario. Sigue siendo UN arquetipo, `--rail`. -->
-  <div class="page__inner page__inner--rail ficha-rail">
+       vista (visión de producto de grupos, 2026-09-25; DD-121). `.ficha-rail` (en `_page.scss`) parte la
+       fila para que la cabecera vaya ENCIMA, a todo lo ancho, en la misma vertical que las fichas de agente
+       y usuario, y `--summary` abre la columna del resumen a la derecha. Sigue siendo UN arquetipo, `--rail`. -->
+  <div class="page__inner page__inner--rail ficha-rail ficha-rail--summary">
     <!-- SIN AVATAR NI FOTO: los grupos no llevan cara (DD-119; cara = persona). Las tres cifras que
-         vivían aquí se fueron al resumen del índice, que las dice con más detalle y a la vista. -->
+         vivían aquí se fueron al resumen, que las dice con más detalle y a la vista. -->
     <div class="headline">
       <!-- El nombre es el TÍTULO DE LA PÁGINA y se edita en su sitio (`sc-name-inplace`, el Inplace
            nativo), con el mismo aviso de nombre repetido que el campo de General. `h3-semibold` es el
@@ -68,8 +68,7 @@
       }
     </div>
 
-    <!-- El índice arriba (gobierna qué ves) y el resumen debajo, en el mismo carril fijo: el patrón
-         del «impacto estimado» del constructor de reglas, a la vista mientras tocas lo que lo mueve. -->
+    <!-- El índice, solo: la navegación no comparte carril con nada, así que no se va de la pantalla. -->
     <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
       <sc-form-section-nav
         [sections]="navSections()"
@@ -77,14 +76,6 @@
         [sectionsWithErrors]="sectionsWithErrors()"
         [flush]="true"
         (activeChange)="goTo($event)"
-      />
-      <sc-group-summary
-        [channels]="formGroupChannels()"
-        [links]="form().links"
-        [routing]="summaryRouting()"
-        [outbound]="summaryOutbound()"
-        [resourceCount]="resourceCount()"
-        [missing]="summaryMissing()"
       />
     </aside>
 
@@ -142,7 +133,7 @@
               </div>
             </div>
             @if (channelsError()) {
-              <p class="field__error" role="alert">{{ 'groups.errors.channels_required' | translate }}</p>
+              <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.channels_required' | translate }}</p>
             }
           </section>
           <ng-container *ngTemplateOutlet="nextStep" />
@@ -588,6 +579,21 @@
           </section>
         </sc-section-card>
       }
+    </div>
+
+    <!-- EL RESUMEN, a la derecha y fijo, con su propio scroll si no cabe: el «impacto estimado» a la vista
+         mientras tocas lo que lo mueve (DD-121 §3). Bajo el índice, en el carril de Contact Center (que no hace
+         scroll), se cortaba en portátiles y al bajar se llevaba el índice. Por debajo de 1340 pasa a una franja
+         encima del contenido (`.ficha-summary` en `_page.scss`). -->
+    <div class="ficha-summary">
+      <sc-group-summary
+        [channels]="formGroupChannels()"
+        [links]="form().links"
+        [routing]="summaryRouting()"
+        [outbound]="summaryOutbound()"
+        [resourceCount]="resourceCount()"
+        [missing]="summaryMissing()"
+      />
     </div>
   </div>
 </div>

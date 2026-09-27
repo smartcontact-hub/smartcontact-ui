@@ -30,10 +30,11 @@ interface ChannelRow {
 }
 
 /**
- * EL RESUMEN DE LA FICHA DE GRUPO, bajo el índice y en el mismo carril fijo: el patrón del
- * «impacto estimado» del constructor de reglas (DD-53), que está a la vista siempre mientras
- * tocas lo que lo mueve. La visión de producto de grupos (2026-09-25) pide ver de un vistazo las
- * estrategias, el teléfono saliente y el WhatsApp; aquí van, con los agentes y los recursos.
+ * EL RESUMEN DE LA FICHA DE GRUPO, en su columna a la derecha, fija al hacer scroll: el «impacto
+ * estimado» del constructor de reglas (DD-53), a la vista siempre mientras tocas lo que lo mueve.
+ * Bajo el índice, en el carril sin scroll de Contact Center, se cortaba en portátiles (DD-121 §3).
+ * La visión de producto de grupos (2026-09-25) pide ver de un vistazo las estrategias, el teléfono
+ * saliente y el WhatsApp; aquí van, con los agentes y los recursos.
  *
  * Habla el idioma del panel de grupo del Dashboard (`group-panel-widget`): cifras que se animan al
  * cambiar (`scAnimateOnChange` + `.animate-sc-bump`, solo `transform`, y nada con movimiento

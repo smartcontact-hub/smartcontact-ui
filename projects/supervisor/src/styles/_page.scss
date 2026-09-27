@@ -192,6 +192,62 @@
   flex: 0 0 100%;
 }
 
+/* EL RESUMEN DE LA FICHA DE GRUPO, a la derecha (DD-121 §3, 2026-09-27). Primero vivió bajo el índice,
+ * en el carril de 196, que es el de Contact Center y NO hace scroll. Medido: a 1440×900 cabía (fondo
+ * en 844), pero a 1366×768 se cortaba al abrir y, a 1280×720, al bajar hasta el final de una sección
+ * larga el índice se escondía 99px por arriba. La navegación se perdía a medio editar.
+ *
+ * Aquí el índice va solo en su carril y el resumen en una columna propia, fija al hacer scroll y con
+ * su propio scroll si no cabe: nunca se corta y nunca se lleva el índice. 240 es el carril del
+ * constructor de reglas (`--with-panel`), el del otro «impacto estimado» de la app.
+ *
+ * El tope sube a 1600, como en las fichas de pestañas (`.ficha-tabs`): con 1200 el contenido se
+ * quedaba en 652, y la tabla de agentes con sus cuatro canales pide unos 740. A 1440 queda en 812. */
+.page__inner--rail.ficha-rail--summary {
+  max-width: 1600px;
+}
+
+.ficha-summary {
+  flex: 0 0 240px;
+  width: 240px;
+  min-width: 0;
+  position: sticky;
+  top: var(--sc-spacing-1-625);
+  align-self: flex-start;
+  /* La ventana menos la barra de arriba y el aire de arriba y abajo: lo que no quepa, hace scroll dentro. */
+  max-block-size: calc(100dvh - var(--sc-topbar-height) - 2 * var(--sc-spacing-1-625));
+  overflow-y: auto;
+  /* Sus tarjetas se colocan según el ancho que tengan (una columna aquí; en fila en la franja de abajo). */
+  container-type: inline-size;
+}
+
+/* Por debajo de 1340 no caben tres columnas sin estrangular el contenido: el resumen pasa a una franja
+ * encima de índice y contenido, que vuelven a medir lo de Contact Center (tope 1200, contenido 920 a
+ * 1280). `order` solo mueve lo que se ve: el resumen no tiene nada que enfocar, así que el tabulador no
+ * salta. */
+@media (max-width: 1339px) {
+  .page__inner--rail.ficha-rail--summary {
+    max-width: 1200px;
+  }
+
+  .ficha-rail--summary > .page__rail {
+    order: 2;
+  }
+
+  .ficha-rail--summary > .page__main {
+    order: 3;
+  }
+
+  .ficha-summary {
+    order: 1;
+    flex: 0 0 100%;
+    width: auto;
+    position: static;
+    max-block-size: none;
+    overflow-y: visible;
+  }
+}
+
 /* LA FRANJA DE ESTADO de las fichas (grupo, usuario, agente): el nombre como único `h1`, una
  * línea meta y, en las de pestañas, tres cifras. Vive aquí y no en cada pantalla porque la usan
  * las tres, y la encapsulación de Angular es por componente. Sin línea abajo: separa el aire. */
@@ -224,7 +280,7 @@
   inline-size: var(--sc-spacing-18);
 }
 
-/* Sin cifras al lado (las dice el resumen del índice) no hay columna que alinear: el nombre se
+/* Sin cifras al lado (las dice el resumen de la derecha) no hay columna que alinear: el nombre se
  * queda el ancho que sobra y solo se recorta si de verdad no cabe. */
 .ficha-rail .headline__who {
   flex: 1 1 auto;
