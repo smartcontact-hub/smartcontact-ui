@@ -153,7 +153,7 @@
     aterrizar.** `git worktree list`, su `status --porcelain`, el `rev-parse` de la rama; si el fichero
     está sucio en su árbol, no lo toques. Una rama, una sesión: si necesitas su trabajo sin fundir,
     rama propia y PR. Compara contra `origin/main` tras un `fetch`, no contra tu `main` local, que
-    miente sobre los conflictos. ⚙️ `main-drift-guard` lo mira en cada mensaje de Rafa.
+    miente sobre los conflictos. ⚙️ `main-drift-guard` (cada mensaje) y `bash-guard` (al sacar su rama).
     Evidencia: 2026-09-06 cuatro choques en ledgers con la hermana (el PR #50 nació CONFLICTING) ·
     2026-09-23 #237, #239 y #240 entraron sobre las fichas mientras Rafa miraba mi local, y vio deshecho
     «lo que ya se había hecho».
