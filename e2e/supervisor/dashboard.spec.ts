@@ -127,3 +127,53 @@ test('en el primer monitor, la tabla, el anillo y su detalle cuentan los mismos 
   expect(await quien.allTextContents(), 'y son los disponibles de la tabla').toEqual(disponibles);
 });
 
+test('con textos largos (`?datos=tortura`), la tabla cabe en su tarjeta, los títulos no se recortan y el detalle es de una línea', async ({ page }) => {
+  /* Medido el 2026-09-27 con los nombres estirados (DD-124): el nombre de agente empujaba las cifras 183 px fuera de
+   * la tarjeta, sin «Transferidas» ni «T. medio»; «Tabla de agentes» se recortaba antes que la lista de a quién
+   * vigila; y en el detalle del anillo cada nombre bajaba a tres líneas. Una tabla recorta el nombre con «…» y
+   * lleva el entero en el `title`; las cifras y sus cabeceras, en una línea. */
+  await goto(page, 'dashboard?datos=tortura');
+  const tabla = page.locator('sc-dashboard-widget-card').filter({ has: page.locator('sc-dashboard-agents-table') });
+  await expect(tabla.locator('tbody tr').first()).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+
+  const medida = await tabla.evaluate((card) => {
+    const anchoDelTexto = (el: Element): number => {
+      const r = document.createRange();
+      r.selectNodeContents(el);
+      return r.getBoundingClientRect().width;
+    };
+    const scroller = card.querySelector('.p-datatable-table-container')!;
+    return {
+      fuera: scroller.scrollWidth - scroller.clientWidth,
+      // Una etiqueta en línea partida en dos devuelve dos rectángulos.
+      cabecerasPartidas: [...card.querySelectorAll('thead .sc-datatable__header-label')].filter((l) => l.getClientRects().length > 1).map((l) => l.textContent?.trim()),
+      nombresSinEntero: [...card.querySelectorAll('tbody tr .agents-table__agent')]
+        .map((c) => c.textContent?.trim() ?? '')
+        .filter((nombre, i) => ![...card.querySelectorAll('tbody tr')][i].querySelector(`[title="${CSS.escape(nombre)}"]`)),
+      titulosRecortados: [...document.querySelectorAll('.widget__title')]
+        .filter((t) => anchoDelTexto(t) > t.getBoundingClientRect().width + 0.01)
+        .map((t) => t.textContent?.trim()),
+    };
+  });
+  expect(medida.fuera, 'la tabla no se sale de su tarjeta').toBe(0);
+  expect(medida.cabecerasPartidas, 'las cabeceras, en una línea').toEqual([]);
+  expect(medida.nombresSinEntero, 'cada nombre lleva el entero en el title').toEqual([]);
+  expect(medida.titulosRecortados, 'el título cede después que la lista de a quién vigila').toEqual([]);
+
+  await page.locator('.kpi--ring .kpi__open').first().click();
+  const detalle = page.locator('.p-drawer');
+  await expect(detalle.locator('tbody tr').first()).toBeVisible();
+  const filas = await detalle.evaluate((d) => ({
+    cabecerasPartidas: [...d.querySelectorAll('thead .sc-datatable__header-label')].filter((l) => l.getClientRects().length > 1).map((l) => l.textContent?.trim()),
+    nombres: [...d.querySelectorAll('.detail__who .sc-text-body-semibold')].map((n) => ({
+      texto: n.textContent?.trim() ?? '',
+      lineas: Math.round(n.getBoundingClientRect().height / parseFloat(getComputedStyle(n).lineHeight)),
+      entero: n.getAttribute('title'),
+    })),
+  }));
+  expect(filas.cabecerasPartidas, 'la cabecera del detalle, en una línea').toEqual([]);
+  expect(filas.nombres.filter((n) => n.lineas > 1).map((n) => n.texto), 'cada nombre en una línea').toEqual([]);
+  expect(filas.nombres.filter((n) => n.entero !== n.texto).map((n) => n.texto), 'y con el entero en el title').toEqual([]);
+});
+
