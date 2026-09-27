@@ -1,10 +1,11 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
  * Los CANALES de la ficha de grupo: que se puedan asignar los cuatro, y que lo que no aplica se
- * aparte solo.
+ * aparte solo. Desde el 2026-09-26 se marcan en General (Chat es la madre de Web Chat y WhatsApp)
+ * y cada canal se configura en su bloque de Distribución y colas.
  *
  * Nace de un fallo servido (2026-09-23): `canonicalizeChannels`, que normaliza lo que se escribe
  * en cada enlace (agente, grupo), listaba `['phone', 'chat', 'email']` y se dejaba fuera
@@ -23,16 +24,20 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
+/** Una casilla de canal de General, por su rótulo EXACTO: «Chat» no debe casar con «Web Chat». */
+const canal = (page: Page, nombre: string) =>
+  page.locator('#group-section-general sc-checkbox').filter({ hasText: new RegExp(`^\\s*${nombre}\\s*$`) });
+const irA = (page: Page, seccion: string) =>
+  page.locator('sc-form-section-nav').getByText(seccion, { exact: true }).click();
+
 test('los cuatro canales se pueden asignar a un agente, WhatsApp incluido', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1');
 
-  const canal = (nombre: string) =>
-    page.locator('.channel-row sc-checkbox').filter({ hasText: nombre }).first();
-
   // El grupo ofrece los cuatro.
-  for (const c of ['Chat', 'WhatsApp', 'Email']) {
-    await canal(c).click();
+  for (const c of ['Web Chat', 'WhatsApp', 'Email']) {
+    await canal(page, c).click();
   }
+  await irA(page, 'Agentes');
 
   /* Una columna por canal. Por ROL y no con `hasText: /^WhatsApp$/`: el `th` lleva espacios
    * alrededor del rótulo y el ancla `$` no casa con ellos (me costó una tirada roja). */
@@ -53,26 +58,111 @@ test('los cuatro canales se pueden asignar a un agente, WhatsApp incluido', asyn
   await expect(casilla).toHaveAttribute('aria-checked', 'true');
 });
 
-test('sin el canal teléfono, «Anuncios y audio» se apaga en vez de desaparecer', async ({ page }) => {
+test('sin Teléfono, su bloque se va de Distribución y deja la línea que dice dónde se enciende', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1');
+  await irA(page, 'Distribución y colas');
+  await expect(page.locator('#group-channel-phone')).toBeVisible();
+  await expect(page.locator('#group-phone')).toHaveCount(1);
 
-  const pestanas = page.getByRole('tab');
-  await expect(pestanas).toHaveCount(5);
+  // Fuera el teléfono (con Web Chat, para que el grupo siga teniendo un canal).
+  await irA(page, 'General');
+  await canal(page, 'Web Chat').click();
+  await canal(page, 'Teléfono').click();
 
-  const anuncios = page.getByRole('tab', { name: /anuncios/i });
-  await expect(anuncios).not.toHaveAttribute('aria-disabled', 'true');
-
-  // Fuera el teléfono: todo lo que suena en la llamada deja de aplicar.
-  await page.locator('.channel-row sc-checkbox').filter({ hasText: 'Chat' }).first().click();
-  await page.locator('.channel-row sc-checkbox').filter({ hasText: 'Teléfono' }).first().click();
-
-  /* La tira NO encoge —quitar la pestaña movía las dos de su derecha— y la que no aplica queda
-   * apagada, con su motivo en el `title`. */
-  await expect(pestanas).toHaveCount(5);
-  await expect(anuncios).toHaveAttribute('aria-disabled', 'true');
-  await expect(anuncios).toHaveAttribute('title', /Teléfono/);
-
-  // Y el «Teléfono asociado» deja de pedirse en Identidad.
-  await page.getByRole('tab', { name: /identidad/i }).click();
+  /* Solo se ve lo que aplica (visión de producto de grupos, 2026-09-25): ni su bloque ni el
+   * teléfono saliente. Pero no se esfuma sin rastro: una línea dice que existe y dónde se
+   * enciende (la decisión del 2026-09-23 contra las secciones que desaparecen). Y el índice no
+   * encoge: sigue con sus cuatro secciones. */
+  await irA(page, 'Distribución y colas');
+  await expect(page.locator('#group-channel-phone')).toHaveCount(0);
   await expect(page.locator('#group-phone')).toHaveCount(0);
+  await expect(page.locator('#group-section-distribution')).toContainText('Teléfono no está activo · actívalo en General');
+  await expect(page.locator('sc-form-section-nav .form-nav__item')).toHaveCount(4);
+});
+
+/* LA TABLA DE AGENTES DEL GRUPO GESTIONA COMPOSICIÓN (visión de producto de grupos, 2026-09-25;
+ * DD-121): quién está y por qué canales. La pausa es de la persona y se cambia en su ficha. */
+test('la vista del grupo no pausa: sin «Habilitado» ni su lote, y la pausa se ve como etiqueta', async ({ page }) => {
+  // El 12 («Reclamaciones») tiene un agente en pausa en el seed, con Teléfono y Web Chat.
+  await goto(page, 'admin/grupos/editar/12');
+  await irA(page, 'Agentes');
+  await expect(page.getByRole('columnheader', { name: 'Habilitado' })).toHaveCount(0);
+
+  const enPausa = page.locator('.assign tbody tr').filter({ has: page.locator('sc-tag', { hasText: 'En pausa' }) });
+  await expect(enPausa).toHaveCount(1);
+  // Sus canales se siguen tocando: la pausa no los apaga aquí.
+  await expect(enPausa.getByRole('checkbox', { name: /WhatsApp/ })).toBeEnabled();
+
+  // En lote, solo «Quitar del grupo».
+  await page.locator('.assign tbody tr').first().locator('td').first().locator('input[type=checkbox]').first().click();
+  const barra = page.locator('sc-bulk-action-bar');
+  await expect(barra.getByRole('button', { name: 'Quitar del grupo' })).toBeVisible();
+  await expect(barra.getByRole('button', { name: /Habilitar|Deshabilitar/ })).toHaveCount(0);
+});
+
+test('un agente asignado tiene al menos un canal: la casilla del último está apagada y dice por qué', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/1');
+  await canal(page, 'Web Chat').click();
+  await irA(page, 'Agentes');
+
+  const fila = page.locator('.assign tbody tr').first();
+  const telefono = fila.getByRole('checkbox', { name: /Teléfono/ });
+  const webChat = fila.getByRole('checkbox', { name: /Web Chat/ });
+  // Solo Teléfono: es su último canal, no se desmarca aquí.
+  await expect(telefono).toBeDisabled();
+  await expect(telefono).toHaveAccessibleName(/único canal/);
+
+  // Con Web Chat, Teléfono se puede quitar, y entonces el último es Web Chat.
+  await webChat.click();
+  await expect(telefono).toBeEnabled();
+  await telefono.click();
+  await expect(telefono).toHaveAttribute('aria-checked', 'false');
+  await expect(webChat).toBeDisabled();
+});
+
+test('quitar un canal del grupo dice cuántos lo pierden y cuántos salen, y al guardar salen', async ({ page }) => {
+  // El 1 es solo de Teléfono: al cambiarlo por Web Chat, sus agentes se quedan sin ningún canal.
+  await goto(page, 'admin/grupos/editar/1');
+  await canal(page, 'Web Chat').click();
+  await canal(page, 'Teléfono').click();
+  await page.getByRole('button', { name: 'Guardar' }).click();
+
+  const dialogo = page.getByRole('dialog', { name: 'Vas a quitar canales' });
+  await expect(dialogo).toContainText(/(\d+) agentes de este grupo pierden Teléfono, y \1 se quedan sin ningún canal y salen del grupo/);
+  await dialogo.getByRole('button', { name: 'Sí, quitar' }).click();
+  await expect(page.getByText('Grupo "ACD Demo C2CB" actualizado')).toBeVisible();
+
+  await page.reload();
+  await irA(page, 'Agentes');
+  await expect(page.getByText('Sin agentes asignados')).toBeVisible();
+});
+
+/* La lista de agentes dice por dónde atiende cada uno con la MISMA regla que la ficha del grupo: los canales de un
+ * enlace, recortados a los que su grupo ofrece hoy. En el seed, el agente 18 guarda Email en «Exclusivo», que solo
+ * tiene Teléfono, y en «ACD demo cuscare», que sí tiene Email, solo Teléfono: la lista le pintaba un Email que no
+ * atiende en ningún grupo (medido el 2026-09-26). */
+test('la lista de agentes no pinta un canal que ninguno de sus grupos ofrece', async ({ page }) => {
+  await goto(page, 'admin/agentes');
+  const fila = page.locator('tbody tr', { hasText: 'Marta Recio' });
+  await expect(fila.locator('.sc-channel-row__item[data-channel="phone"]')).toHaveCount(1);
+  await expect(fila.locator('.sc-channel-row__item[data-channel="email"]')).toHaveCount(0);
+});
+
+/* Los iconos de canal de la lista de agentes se anuncian con el MISMO nombre que en la lista de grupos y en las
+ * fichas. Tenían sus propias claves, que decían «Chat» y no tenían WhatsApp: su icono se anunciaba como la clave
+ * cruda. En el seed nadie tiene WhatsApp, así que se le da a uno desde el panel rápido (medido el 2026-09-26). */
+test('la lista de agentes anuncia cada canal por su nombre, WhatsApp incluido', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  await page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' }).click();
+  const panel = page.locator('.agents-panel');
+  const casilla = panel.locator('tbody tr').first().getByRole('checkbox', { name: / — WhatsApp$/ });
+  const nombre = (await casilla.getAttribute('aria-label'))!.split(' — ')[0]!;
+  await casilla.click();
+  await panel.getByRole('button', { name: 'Guardar (1)' }).click();
+  await expect(panel).toHaveCount(0);
+
+  await goto(page, 'admin/agentes');
+  const fila = page.locator('tbody tr', { hasText: nombre });
+  await expect(fila.getByRole('img', { name: 'WhatsApp', exact: true })).toHaveCount(1);
+  await expect(fila.getByRole('img', { name: 'Teléfono', exact: true })).toHaveCount(1);
 });

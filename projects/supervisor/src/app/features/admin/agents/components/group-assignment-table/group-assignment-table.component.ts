@@ -32,10 +32,10 @@ import {
   GroupChannel,
 } from '@features/admin/groups/data/groups-data';
 import {
-  canonicalizeChannels,
   Channel,
   GroupAgentLink,
 } from '@features/admin/services/group-agent-links.types';
+import { newLinkFor, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
 
 /** Lightweight group reference accepted by this table. */
 export interface AgentGroupAssignmentRef {
@@ -200,13 +200,8 @@ export class GroupAssignmentTableComponent {
 
   protected addGroup(group: AgentGroupAssignmentRef): void {
     if (this.links().some((l) => l.groupId === group.id)) return;
-    const link: GroupAgentLink = {
-      agentId: this.agentId(),
-      groupId: group.id,
-      // Default: every channel the group offers is on for new assignments.
-      channels: [...group.channels],
-      active: true,
-    };
+    // Un enlace nuevo lleva todos los canales que ofrece el grupo, habilitado y sin nivel.
+    const link: GroupAgentLink = newLinkFor({ agentId: this.agentId(), groupId: group.id, groupChannels: group.channels });
     this.linksChange.emit([...this.links(), link]);
   }
 
@@ -216,16 +211,7 @@ export class GroupAssignmentTableComponent {
 
   protected toggleChannel(groupId: number, field: string): void {
     const channel = field as Channel;
-    this.linksChange.emit(
-      this.links().map((l) => {
-        if (l.groupId !== groupId) return l;
-        const has = l.channels.includes(channel);
-        const channels = has
-          ? l.channels.filter((c) => c !== channel)
-          : canonicalizeChannels([...l.channels, channel]);
-        return { ...l, channels };
-      })
-    );
+    this.linksChange.emit(this.links().map((l) => (l.groupId === groupId ? toggleLinkChannel(l, channel) : l)));
   }
 
   protected toggleActive(groupId: number, active: boolean): void {

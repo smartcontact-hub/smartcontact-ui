@@ -1,6 +1,6 @@
 <!-- Misma barra que el editor hermano (los grupos de un agente): filtrar a la
      izquierda, recuento, y «Añadir» con el desplegable del DS a la derecha. -->
-<div class="assign" [class.assign--bulk]="selectedIds().size > 0">
+<div class="assign" [class.assign--bulk]="selectable() && selectedIds().size > 0">
   <div class="assign__bar">
     <!-- Buscar solo cuando hay en qué (2026-09-23): un grupo recién creado aterriza aquí sin
          nadie, y un buscador sobre una tabla vacía es un control que no puede hacer nada. -->
@@ -56,7 +56,7 @@
       [value]="visibleRows()"
       [columns]="columns()"
       dataKey="agent.id"
-      selectionMode="multiple"
+      [selectionMode]="selectable() ? 'multiple' : null"
       [selection]="selectedRows()"
       (selectionChange)="onSelectionChange($any($event))"
       [rowSelectionAriaLabel]="rowAriaLabel"
@@ -77,28 +77,47 @@
 <!-- Elegir varios agentes y actuar en lote: la barra de las listas, no una a mano (la de antes
      pintaba su fondo con un color de PALETA que no voltea en oscuro). Decisión de producto (2026-09-14): en
      grupos también se seleccionan varios agentes a la vez, como en el resto de listas. -->
-<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-  <sc-button type="button" variant="secondary" appearance="outlined" [label]="'groups.form.assigned.bulk_resume' | translate" (clicked)="bulkSetActive(true)" />
-  <sc-button type="button" variant="secondary" appearance="outlined" [label]="'groups.form.assigned.bulk_pause' | translate" (clicked)="bulkSetActive(false)" />
-  <sc-button type="button" variant="danger" [label]="'groups.form.assigned.bulk_unassign' | translate" (clicked)="bulkUnassign()" />
-</sc-bulk-action-bar>
+<!-- Solo «Quitar del grupo»: la pausa es de la persona y se cambia en su ficha (DD-121). -->
+@if (selectable()) {
+  <sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
+    <sc-button type="button" variant="danger" [label]="'groups.form.assigned.bulk_unassign' | translate" (clicked)="bulkUnassign()" />
+  </sc-bulk-action-bar>
+}
 
 <!-- Celdas del editor. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
 <ng-template #agentTpl let-row>
   <span class="assign__name">
     <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
     <span class="assign__name-label sc-text-body-semibold" [title]="row.agent.name">{{ row.agent.name }}</span>
+    <!-- La pausa se VE aquí y se cambia en la ficha del agente: es estado de la persona, no composición del grupo. -->
+    @if (!row.link.active) {
+      <sc-tag severity="secondary" [value]="'groups.form.assigned.paused' | translate" />
+    }
+    @if (row.link.channels.length === 0) {
+      <sc-tag severity="warn" icon="warning" [value]="'groups.form.summary.no_channels' | translate" />
+    }
   </span>
 </ng-template>
 
 <!-- Una columna por canal DEL GRUPO, como la matriz de Contact Center. -->
 <ng-template #channelTpl let-row let-col="col">
-  <sc-checkbox
-    [state]="hasChannel(row.link, col.field) ? 'all' : 'none'"
-    [disabled]="!row.link.active"
-    [ariaLabel]="row.agent.name + ' — ' + col.header"
-    (cycle)="toggleChannel(row.agent.id, col.field)"
-  />
+  @if (isLastChannel(row.link, col.field)) {
+    <!-- El ÚLTIMO canal no se quita aquí. Una casilla apagada no recibe foco ni ratón, así que el porqué va en su
+         nombre accesible y en el tooltip de la envoltura. -->
+    <span class="assign__locked" [pTooltip]="'groups.form.assigned.last_channel_hint' | translate" tooltipPosition="top">
+      <sc-checkbox
+        state="all"
+        [disabled]="true"
+        [ariaLabel]="'groups.form.assigned.last_channel_aria' | translate: { name: row.agent.name, channel: col.header }"
+      />
+    </span>
+  } @else {
+    <sc-checkbox
+      [state]="hasChannel(row.link, col.field) ? 'all' : 'none'"
+      [ariaLabel]="row.agent.name + ' — ' + col.header"
+      (cycle)="toggleChannel(row.agent.id, col.field)"
+    />
+  }
 </ng-template>
 
 <ng-template #levelTpl let-row>
@@ -110,14 +129,6 @@
     [options]="levelOptions"
     [value]="row.link.level ?? 1"
     (valueChange)="setLevel(row.agent.id, $event)"
-  />
-</ng-template>
-
-<ng-template #activeTpl let-row>
-  <sc-toggleswitch
-    [checked]="row.link.active"
-    [ariaLabel]="'groups.form.assigned.active_aria' | translate: { name: row.agent.name }"
-    (checkedChange)="toggleActive(row.agent.id, $event)"
   />
 </ng-template>
 

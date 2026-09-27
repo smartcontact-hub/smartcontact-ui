@@ -317,6 +317,11 @@ se borra.
 
 > Cierra la lista. **Después de esto no queda ningún fallo de contraste en la app**
 > salvo el límite conocido de §1.5.
+>
+> **Queda uno, medido el 2026-09-26:** el `danger` de TEXTO (`appearance="text"`, sin fondo) pinta su
+> etiqueta en `red-500`, 3,76:1 sobre blanco. Es el «Eliminar» de la cabecera de las fichas, y
+> `theme-contrast` lo tiene registrado como conocido desde que barre la ficha de grupo (DD-121). Se
+> arreglaría como el sólido de abajo: su color de texto a `red-600` en `sc-preset/button.ts`.
 
 Los dos venían del **preset**, no de CSS de página — que es la razón de que sobrevivieran
 a toda la limpieza anterior: ninguna hoja de página los mencionaba.
@@ -471,7 +476,7 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 - **Tokens**: el diseño se hizo en **rejilla de 8** (8/12/16/24/48) pero **NO se crea escala nueva** — se snapea a la escala base-14 del Kit Pro (16px de diseño exacto = `--sc-spacing-1-143`; 8→7, 12→12,25, 24→24,5; diferencias ≤1px imperceptibles). Único literal: altura de fila 48px (dimensión de componente, no token de spacing). **NO forkear a un 8-grid paralelo** (rompería el 1:1 con el Kit Pro · `migration-safety.md`); la nomenclatura 8-point (`--sc-space-*`, `--sc-spacing-100`…) está además **prohibida por `tokens:guard`**.
 - **Chips de canal** (tabla de asignación de grupos): on-state = pill claro neutro (`bg-secondary-subtle` + borde sólido + texto primario + ✓); off-state = dashed transparente + muted + ＋. El "activo" se lee por relleno sólido vs dashed, no por color fuerte.
 - **Estado de adopción** (histórico, reconciliado):
-  - **`<sc-form-section-nav> [flush]`** → **EN USO en los 3 forms** (agents/groups/users), con el aspecto del índice de Contact Center desde DD-100; la referencia común ya no es editar-agente `12277:4185` sino la maqueta de Contact Center.
+  - **`<sc-form-section-nav> [flush]`** → **EN USO en la ficha de grupo** (índice lateral desde DD-121), con el aspecto del índice de Contact Center desde DD-100; la referencia común ya no es editar-agente `12277:4185` sino la maqueta de Contact Center. Las fichas de agente y usuario van con pestañas desde el 2026-09-22, y el constructor de reglas usa el índice sin `[flush]`.
   - **`<sc-section-card> [flush]`** → **0 consumidores (reservado)**. La sección que lo motivó (Grupos asignados) acabó siendo panel propio `<sc-group-assignment-table>` (imita el p-card del Figma, sin section-card), así que el flush de section-card quedó sin adoptar. Identity/Permisos/Avanzado siguen carded en los 3 forms (consistente). **Trigger de adopción**: que la referencia muestre esas secciones en flush. Mantenido por ser camino documentado de una dirección activa, NO borrado (evita churn re-add).
 - **⚠️ Verificación obligatoria al aplicar una variante de bajo-chrome (lección aprendida)**: antes de cerrar un `[flush]`/low-chrome, **confirmar dato↔dato** contra el nodo Figma con `get_metadata` + `get_design_context` (autolayout, medidas, **fills y variables**, no solo el layout). Quitar un fondo/borde/sombra lee como "1:1" desde la estructura pero puede ser una **regresión visual silenciosa**: el índice perdió su panel `gray-50` porque el flush se interpretó como "a sangre" sin contrastar el fill real del nodo (`get_design_context` lo da: `bg-[var(--gray/50)]`, radio 6, padding 16). **Acceder al file elemento a elemento es exacto; comparar capturas a ojo NO** — la captura solo sirve como smoke de "renderiza".
 

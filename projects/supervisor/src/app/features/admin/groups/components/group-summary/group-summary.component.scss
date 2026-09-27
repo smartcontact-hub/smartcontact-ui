@@ -1,0 +1,146 @@
+:host {
+  display: block;
+}
+
+/* EL RESUMEN, en su columna a la derecha de la ficha (`.ficha-summary`, fija y con su propio scroll) o,
+ * por debajo de 1340, en una franja encima del contenido. La tipografía la ponen las clases `.sc-text-*`
+ * de la plantilla; aquí solo viven el sitio, el color y el aire. */
+.resumen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.resumen__title {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.resumen__missing {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  margin: 0;
+  color: var(--sc-text-warning);
+}
+
+/* En la franja ancha, las tarjetas van en fila y el título y lo que falta, encima de todas. */
+@container (min-width: 37.5rem) {
+  .resumen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    align-items: start;
+  }
+
+  .resumen__title,
+  .resumen__missing {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Una tarjeta de KPI: una cifra o un par de datos con su rótulo, como los widgets del panel de
+ * grupo. No es una sección de campos (esa caja es `sc-section-card`): es un mueble del resumen,
+ * hermano del «impacto estimado» del constructor de reglas. */
+.resumen__kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-375);
+  padding: var(--sc-spacing-0-75);
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-xl);
+}
+
+.resumen__label {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.resumen__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+}
+
+/* `inline-block` para que la animación de la cifra (`scale`) tenga caja propia. Las cifras no
+ * bailan al cambiar de dígito. */
+.resumen__digits {
+  display: inline-block;
+  color: var(--sc-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.resumen__aside {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.resumen__channels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Canal y cifra en una línea, la barra debajo a todo lo ancho. */
+.resumen__channel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  row-gap: var(--sc-spacing-0-25);
+  column-gap: var(--sc-spacing-0-5);
+}
+
+.resumen__channel-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  min-width: 0;
+  color: var(--sc-text-secondary);
+  white-space: nowrap;
+}
+
+.resumen__meter {
+  display: block;
+  grid-column: 1 / -1;
+}
+
+.resumen__warn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  margin: 0;
+  color: var(--sc-text-warning);
+}
+
+.resumen__pairs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-375);
+  margin: 0;
+}
+
+.resumen__pair {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.resumen__key {
+  color: var(--sc-text-secondary);
+}
+
+/* Un número o una estrategia larga («Menos llamadas atendidas») parte línea antes que recortarse:
+ * un dato del resumen que hay que abrir para leerlo no resume nada. */
+.resumen__value {
+  margin: 0;
+  color: var(--sc-text-primary);
+  overflow-wrap: anywhere;
+}

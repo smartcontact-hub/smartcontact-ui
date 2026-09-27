@@ -243,9 +243,9 @@ const PAGINAS_EN_FORMULARIO = [
   },
   {
     ruta: 'admin/grupos/editar/1',
-    /* «Agentes asignados» hasta el 2026-09-23: era un item del índice de rail. La ficha de grupo
-     * pasó a pestañas y su tabla vive en «Canales y agentes», que además es la que abre sola. */
-    seccion: 'Canales y agentes',
+    /* «Agentes asignados» hasta el 2026-09-23 (item del índice de rail), «Canales y agentes» con
+     * las pestañas, y desde el 2026-09-26 «Agentes», otra vez en un índice lateral (DD-121). */
+    seccion: 'Agentes',
     nombre: 'agentes del grupo',
     /* 65 → 69 el 2026-09-12, al unificar el chip de canal. Los dos editores
      * hermanos tenían su propia copia y no diferían solo en color: la de aquí
@@ -265,11 +265,11 @@ for (const caso of PAGINAS_EN_FORMULARIO) {
   }) => {
     await goto(page, caso.ruta);
 
-    /* El mando de sección es el índice del rail en unas fichas y la tira de `p-tabs` en otras
-     * (la de grupo, desde el 2026-09-23). Se buscan los dos: lo que este spec mide es la TABLA,
-     * no cómo se llega a ella. */
+    /* El mando de sección es el índice del rail en unas fichas (la de grupo) y la tira de `p-tabs`
+     * en otras (agente). Se buscan los dos, el índice por su clase y no por su rol: lo que este
+     * spec mide es la TABLA, no cómo se llega a ella. */
     await page
-      .locator('sc-form-section-nav button, sc-form-section-nav [role=tab], p-tabs [role=tab]')
+      .locator('sc-form-section-nav .form-nav__item, p-tabs [role=tab]')
       .filter({ hasText: caso.seccion })
       .first()
       .click();
