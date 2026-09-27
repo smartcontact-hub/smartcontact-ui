@@ -82,3 +82,19 @@ for (const ancho of [1440, 1024, 768, 390]) {
     expect(medida).toEqual({ scroll: 0, fuera: 0 });
   });
 }
+
+test('la leyenda del anillo va pegada a su cifra, no detrás de la flecha invisible', async ({ page }) => {
+  /* «5 de 9 conectados» es una pieza: la leyenda completa la cifra. Medido el 2026-09-27: la flecha de «ver el
+   * detalle», invisible hasta pasar el ratón pero ocupando su sitio, quedaba entre el anillo y la leyenda y los
+   * separaba 36 px en vez de 14 (DD-125). Se mide del borde del anillo (su caja) a la leyenda. */
+  await goto(page, 'dashboard');
+  const anillo = page.locator('.kpi--ring').first();
+  await expect(anillo).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  const hueco = await anillo.evaluate((k) => {
+    const gauge = k.querySelector('sc-gauge')!.getBoundingClientRect();
+    const leyenda = k.querySelector('.kpi__caption')!.getBoundingClientRect();
+    return Math.round((leyenda.left - gauge.right) * 10) / 10;
+  });
+  expect(hueco, 'del anillo a «de N conectados»').toBeLessThanOrEqual(14.5);
+});
