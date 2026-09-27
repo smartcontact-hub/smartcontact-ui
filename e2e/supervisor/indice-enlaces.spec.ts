@@ -234,7 +234,10 @@ test('constructor de reglas · la sección sale de la dirección, conserva el ti
   await goto(page, 'conversaciones/reglas/1');
   await expect(actual(page)).toHaveText('Alcance');
   await fila(page, 'General').click();
-  expect(seccion(page)).toBe('general');
+  // El router escribe la dirección UNA TAREA después del clic (abre antes la transición de vista, aunque
+  // luego se salte). Medido en la página: vacía tras el clic y tras las microtareas, y `general` tras una
+  // tarea. Leerla sin esperar fue una carrera que el CI perdió.
+  await expect.poll(() => seccion(page)).toBe('general');
   await expect(actual(page)).toHaveText('General');
   await page.goBack();
   await expect(actual(page)).toHaveText('Alcance');
