@@ -581,7 +581,7 @@
     },
     {
       "selector": "sc-drawer",
-      "usedInSupervisor": 1
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-empty-state",
@@ -597,7 +597,7 @@
     },
     {
       "selector": "sc-message",
-      "usedInSupervisor": 3
+      "usedInSupervisor": 5
     },
     {
       "selector": "sc-panel",
@@ -613,7 +613,7 @@
     },
     {
       "selector": "sc-textarea",
-      "usedInSupervisor": 7
+      "usedInSupervisor": 8
     }
   ]
 }

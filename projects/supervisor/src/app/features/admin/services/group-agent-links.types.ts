@@ -20,6 +20,8 @@
 
 import { GroupChannel } from '@features/admin/groups/data/groups-data';
 
+import { canonicalizeChannels as canonicalizeCore } from './group-channels.core.mjs';
+
 /**
  * Single shared `Channel` alias. We keep `GroupChannel` re-exported as the
  * canonical type to avoid a churny rename pass, but at the type level
@@ -34,11 +36,22 @@ export interface GroupAgentLink {
   readonly channels: readonly Channel[];
   /** False = paused (config preserved, agent does not receive contacts in this group). */
   readonly active: boolean;
+  /**
+   * Nivel del agente en el grupo (1 se atiende primero) para la estrategia Niveles. Se guardaba ya
+   * sin tipar desde la tabla de agentes del grupo; ahora es parte del contrato. Se conserva aunque la
+   * estrategia cambie, para no perderlo si vuelve.
+   */
+  readonly level?: number;
+}
+
+/** El nivel de un enlace, 1 si no lo tiene. */
+export function levelOf(link: GroupAgentLink): number {
+  return link.level ?? 1;
 }
 
 /**
  * Deja una lista de canales en su forma canónica: sin repetidos y siempre en el
- * mismo orden (`phone` → `chat` → `email`).
+ * mismo orden (`phone` → `chat` → `whatsapp` → `email`).
  *
  * Estaba duplicada palabra por palabra en `group-assignment-table` y
  * `agent-channel-table`, las dos tablas que editan estos enlaces desde los dos
@@ -50,13 +63,10 @@ export interface GroupAgentLink {
  * eso no se toca: es decisión de producto, no una limpieza.
  */
 export function canonicalizeChannels(channels: readonly Channel[]): readonly Channel[] {
-  const set = new Set(channels);
-  /* LOS CUATRO CANALES, y `whatsapp` no es opcional aquí. Faltaba, y como esta función es la que
-   * NORMALIZA lo que se escribe en el enlace, marcar WhatsApp a un agente no guardaba nada: la
-   * casilla volvía sola a su sitio, desde la ficha del grupo y desde la del agente. Nadie lo vio
-   * porque todavía no hay clientes con WhatsApp. Medido en el navegador el 2026-09-23: la casilla
-   * pasaba de `false` a `false`. Lo vigila `ficha-grupo-canales.spec.ts`. */
-  const order: readonly Channel[] = ['phone', 'chat', 'whatsapp', 'email'];
-
-  return order.filter((c) => set.has(c));
+  /* LOS CUATRO CANALES, y `whatsapp` no es opcional. Faltaba, y como esta función es la que NORMALIZA
+   * lo que se escribe en el enlace, marcar WhatsApp a un agente no guardaba nada: la casilla volvía
+   * sola a su sitio, desde la ficha del grupo y desde la del agente. Medido en el navegador el
+   * 2026-09-23: la casilla pasaba de `false` a `false`. Lo vigila `ficha-grupo-canales.spec.ts`.
+   * Desde el 2026-09-26 el orden vive en `group-channels.core.mjs`, con las demás reglas de canales. */
+  return canonicalizeCore(channels);
 }

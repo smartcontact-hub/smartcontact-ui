@@ -18,6 +18,14 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ## [Unreleased]
 
+### Added
+
+- **`@smartcontact-hub/components`** — `sc-datatable` gana `externalSort`: la tabla pinta el indicador de
+  orden y emite `(sortChange)`, pero **no reordena** las filas; el orden lo pone quien la usa. Sin él,
+  p-table vuelve a ordenar por el valor crudo del campo encima del orden que recibe, y un orden propio
+  (una prioridad por rango, nombres con locale) no llegaba a verse. Por defecto apagado: ninguna tabla
+  cambia sin pedirlo.
+
 ## [1.0.0] — 2026-09-09
 
 Primera versión **estable**. El corte no es de calendario: es que el sistema ya tiene

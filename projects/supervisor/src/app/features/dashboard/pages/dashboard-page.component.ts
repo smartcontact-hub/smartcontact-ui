@@ -28,7 +28,7 @@ import { LanguageService } from '@core/services/language.service';
 import { UndoStackService } from '@core/services/undo-stack.service';
 import { injectLangChange } from '@core/utils/lang-change';
 
-import { AnimateOnChangeDirective } from '../components/animate-on-change.directive';
+import { AnimateOnChangeDirective } from '@core/directives';
 import { DetailDrawerComponent } from '../components/detail-drawer/detail-drawer.component';
 import { EmptySlotComponent } from '../components/empty-slot/empty-slot.component';
 import { MonitorTabsComponent } from '../components/monitor-tabs/monitor-tabs.component';

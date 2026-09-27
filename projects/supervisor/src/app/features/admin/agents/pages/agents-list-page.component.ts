@@ -44,6 +44,7 @@ import {
   PresenceStatus,
 } from '../data/agents-data';
 import { AgentBulkField, AgentsStore } from '../state/agents.store';
+import { CHANNEL_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { Channel } from '@features/admin/services/group-agent-links.types';
@@ -129,15 +130,27 @@ export class AgentsListPageComponent {
     useTopbarActions(this.topbarActions);
   }
 
-  /** Derived: union of every active-link channel for the given agent. */
+  /**
+   * Por dónde atiende: la unión de los canales de sus enlaces activos, cada uno RECORTADO a los que su grupo
+   * ofrece hoy, que es como los lee la ficha del grupo (DD-121). Un enlace puede guardar un canal que su grupo
+   * ya no tiene (se lo quitaron al grupo, datos de antes) y la lista lo pintaba: en el seed, un Email que el
+   * agente 18 no atiende en ningún grupo (medido el 2026-09-26).
+   */
   protected channelsForAgent(agentId: number): readonly Channel[] {
+    const offeredBy = new Map(this.groupsStore.groups().map((g) => [g.id, new Set<Channel>(g.channels)]));
     const set = new Set<Channel>();
     for (const link of this.linksStore.linksForAgent(agentId)) {
-      if (!link.active) continue;
-      for (const c of link.channels) set.add(c);
+      const offered = offeredBy.get(link.groupId);
+      if (!link.active || !offered) continue;
+      for (const c of link.channels) if (offered.has(c)) set.add(c);
     }
     const order: readonly Channel[] = ['phone', 'chat', 'whatsapp', 'email'];
     return order.filter((c) => set.has(c));
+  }
+
+  /** El nombre de un canal, el mismo que en la lista de grupos y en las fichas (Web Chat, no «Chat»). */
+  protected channelLabelKey(channel: Channel): string {
+    return CHANNEL_LABEL_KEYS[channel];
   }
 
   /** Derived: group refs for the given agent (id, name, active flag). */

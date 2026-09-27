@@ -17,9 +17,8 @@
  * Por eso las clases van sobre un `<span>` propio y no sobre el `<td>`: el
  * `<td>` lo pinta el DS y lleva SU `_ngcontent`, así que una regla encapsulada
  * de esta página no lo alcanzaría nunca. */
+/* La métrica la pone `.sc-text-body-regular` en la plantilla, como en la lista de grupos (DD-55); aquí, el color. */
 .cell {
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
   color: var(--sc-text-secondary);
 
   &--empty {

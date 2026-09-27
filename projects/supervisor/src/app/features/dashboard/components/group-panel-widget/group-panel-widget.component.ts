@@ -7,7 +7,7 @@ import type { MeterItem } from 'primeng/types/metergroup';
 import type { AgentPresence, GroupPanelWidget } from '../../data/dashboard.types';
 import type { DetailKind } from '../../data/widget-catalog';
 import { formatDuration } from '../../data/format-duration';
-import { AnimateOnChangeDirective } from '../animate-on-change.directive';
+import { AnimateOnChangeDirective } from '@core/directives';
 
 interface Stat {
   readonly key: string;

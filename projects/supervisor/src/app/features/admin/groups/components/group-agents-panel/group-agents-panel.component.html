@@ -1,0 +1,77 @@
+<!-- Bajo la barra de la app (que es donde vive Guardar en las fichas) y con el ancho de la tabla de la ficha.
+     La X, el clic fuera y Escape de `p-drawer` van apagados: su cierre no se puede vetar, y aquí puede haber
+     cambios sin guardar. Cierra el propio panel (ver el .ts). -->
+<sc-drawer
+  position="right"
+  width="52rem"
+  topOffset="var(--sc-spacing-4)"
+  [visible]="!!group()"
+  [header]="group() ? ('groups.agents_panel.title' | translate: { name: group()!.name }) : null"
+  [dismissible]="false"
+  [closeOnEscape]="false"
+  [showCloseIcon]="false"
+>
+  @if (group(); as g) {
+    <div class="agents-panel" (keydown)="onKeydown($event)">
+      <!-- Por dónde trabaja el grupo: son las columnas de la tabla. -->
+      <p class="agents-panel__channels sc-text-caption-regular">
+        @for (c of channels(); track c) {
+          <span class="agents-panel__channel">
+            <sc-channel-icon [channel]="c" [size]="12" />
+            {{ channelKeys[c] | translate }}
+          </span>
+        }
+      </p>
+
+      @if (conflict()) {
+        <sc-message severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
+      }
+
+      <sc-agent-channel-table
+        [groupChannels]="channels()"
+        [links]="links()"
+        [availableAgents]="availableAgents()"
+        [groupId]="g.id"
+        [showLevel]="showLevel()"
+        [selectable]="false"
+        (linksChange)="onLinksChange($event)"
+      />
+
+      <div class="agents-panel__footer">
+        <span class="agents-panel__count sc-text-caption-regular">
+          {{ 'groups.agents_panel.assigned' | translate: { count: links().length } }}
+          @if (changes() > 0) {
+            · {{ 'groups.agents_panel.unsaved' | translate: { count: changes() } }}
+          }
+        </span>
+        <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="requestClose()" />
+        <sc-button
+          size="sm"
+          variant="primary"
+          [disabled]="changes() === 0"
+          [label]="changes() > 0 ? ('groups.agents_panel.save_count' | translate: { count: changes() }) : ('common.save' | translate)"
+          [attr.title]="changes() === 0 ? ('common.no_changes' | translate) : null"
+          (clicked)="save()"
+        />
+      </div>
+    </div>
+  }
+</sc-drawer>
+
+@if (confirmDiscard()) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'common.discard_title' | translate"
+    [subtitle]="'common.discard_body' | translate"
+    (cancelled)="keepEditing()"
+  >
+    <div modal-actions>
+      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="keepEditing()">
+        <span>{{ 'common.discard_keep' | translate }}</span>
+      </sc-button>
+      <sc-button type="button" size="sm" variant="danger" (clicked)="discard()">
+        <span>{{ 'common.discard_confirm' | translate }}</span>
+      </sc-button>
+    </div>
+  </sc-dialog>
+}

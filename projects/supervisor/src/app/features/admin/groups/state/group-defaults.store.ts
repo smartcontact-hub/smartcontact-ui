@@ -1,12 +1,12 @@
 import { Injectable, signal, Signal } from '@angular/core';
 
 import { createVersionedStorage } from '@core/services/local-store.factory';
-import { FACTORY_GROUP_DEFAULTS, GroupDefaults } from '../data/groups-data';
+import { FACTORY_GROUP_DEFAULTS, GroupDefaults, queueFrom } from '../data/groups-data';
 
 /**
- * Los valores con los que nace un grupo. Los escribe Configuración del AED > Grupos y los lee la ficha de grupo al
- * crear, así que las dos pantallas hablan de lo mismo con las mismas palabras. Un solo objeto, guardado como lista de
- * uno para reutilizar la persistencia versionada.
+ * Los valores con los que nace un grupo. Los escribe Valores por defecto de Grupos (`/admin/grupos/valores-por-defecto`)
+ * y los lee la ficha de grupo en su modo alta, así que las dos pantallas hablan de lo mismo con las mismas palabras. Un
+ * solo objeto, guardado como lista de uno para reutilizar la persistencia versionada.
  */
 @Injectable({ providedIn: 'root' })
 export class GroupDefaultsStore {
@@ -26,13 +26,22 @@ export class GroupDefaultsStore {
     this.storage.write([next]);
   }
 
-  /** Lo guardado sobre los de fábrica: un campo nuevo no llega vacío a quien guardó antes de que existiera. */
+  /**
+   * Lo guardado sobre los de fábrica: un campo nuevo no llega vacío a quien guardó antes de que existiera. Sin
+   * subir la versión, que BORRA lo guardado. Hasta el 2026-09-26 había una sola cola para todo el grupo, en
+   * `advanced`: lo guardado con ella cae en la de Teléfono y en la de Chat, igual que lee un grupo `resolveGroup`.
+   */
   private read(): GroupDefaults {
-    const saved = this.storage.read()[0];
+    const saved = this.storage.read()[0] as Partial<GroupDefaults> | undefined;
+    const advanced = { ...FACTORY_GROUP_DEFAULTS.advanced, ...saved?.advanced };
+    const legacyQueue = queueFrom(advanced);
     return {
       ...FACTORY_GROUP_DEFAULTS,
       ...saved,
-      advanced: { ...FACTORY_GROUP_DEFAULTS.advanced, ...saved?.advanced },
+      advanced,
+      phoneQueue: { ...legacyQueue, ...saved?.phoneQueue },
+      chatQueue: { ...legacyQueue, ...saved?.chatQueue },
+      chat: { ...FACTORY_GROUP_DEFAULTS.chat, ...saved?.chat },
     };
   }
 }

@@ -3,7 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MeterGroupModule } from 'primeng/metergroup';
 
 import type { RankedItem } from '../../data/dashboard.types';
-import { AnimateOnChangeDirective } from '../animate-on-change.directive';
+import { AnimateOnChangeDirective } from '@core/directives';
 
 /**
  * Lista con totales (intenciones, tipificaciones), de más a menos. La barra (`p-metergroup`) es la

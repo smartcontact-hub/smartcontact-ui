@@ -7,6 +7,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
@@ -14,13 +15,17 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { ChannelIconComponent } from '@shared/components';
 import {
+  CHANNEL_LABEL_KEYS,
+  CHAT_STRATEGIES,
   DEFAULT_STRATEGY_OPTIONS,
   GROUP_PRIORITIES,
   GroupAdvanced,
   GroupDefaults,
   PRIORITY_LABEL_KEYS,
   VOICE_OPTIONS,
+  type ChannelQueue,
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
 
@@ -37,6 +42,10 @@ import { stableStringify } from '@shared/utils/form-dirty-state';
 /**
  * Valores por defecto de los grupos — `/admin/grupos/valores-por-defecto`. Con esto nace cada grupo nuevo.
  *
+ * En el ORDEN y con las PALABRAS de la ficha (desde el 2026-09-26, visión de producto de grupos): General, las
+ * reglas comunes, un bloque por canal con su distribución y su cola, y la ficha de cliente de Recursos. Solo lo
+ * que tiene sentido como valor de partida: el nombre, los canales, los números o los mensajes son de cada grupo.
+ *
  * Vive con Grupos, en Administración, y no en Configuración del AED (decisión de producto, 2026-09-18): quien crea y edita grupos
  * es quien decide con qué nacen, y así los dos sitios hablan de lo mismo con las mismas palabras. La página de
  * Configuración se queda como estaba.
@@ -51,8 +60,10 @@ import { stableStringify } from '@shared/utils/form-dirty-state';
   selector: 'sc-group-defaults-page',
   imports: [
     ButtonComponent,
+    ChannelIconComponent,
     DividerComponent,
     InputNumberComponent,
+    NgTemplateOutlet,
     SelectButtonComponent,
     SelectComponent,
     ToggleSwitchComponent,
@@ -69,6 +80,8 @@ export class GroupDefaultsPageComponent implements DirtyAware {
   private readonly store = inject(GroupDefaultsStore);
 
   protected readonly strategyOptions = DEFAULT_STRATEGY_OPTIONS;
+  protected readonly chatStrategyOptions = CHAT_STRATEGIES;
+  protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly priorities = GROUP_PRIORITIES;
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
   protected readonly voiceOptions = VOICE_OPTIONS;
@@ -106,7 +119,7 @@ export class GroupDefaultsPageComponent implements DirtyAware {
     useTopbarActions(this.topbarActions);
   }
 
-  protected setField<K extends 'strategy' | 'priority' | 'voice'>(key: K, value: unknown): void {
+  protected setField<K extends 'strategy' | 'chatStrategy' | 'priority' | 'voice'>(key: K, value: unknown): void {
     if (typeof value === 'string') this.form.update((f) => ({ ...f, [key]: value }));
   }
 
@@ -114,11 +127,32 @@ export class GroupDefaultsPageComponent implements DirtyAware {
     this.form.update((f) => ({ ...f, advanced: { ...f.advanced, [key]: value } }));
   }
 
-  protected setAdvancedNumber(
-    key: 'queueSize' | 'maxQueueWaitSec' | 'transferSec' | 'serviceLevelSec' | 'wrapUpSec' | 'cardHeight',
+  protected setAdvancedNumber(key: 'wrapUpSec' | 'cardHeight', value: number | null): void {
+    if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
+  }
+
+  /** La cola de UN canal: Teléfono y Chat tienen cada uno la suya, como en la ficha. */
+  protected setQueue<K extends keyof ChannelQueue>(channel: 'phone' | 'chat', key: K, value: ChannelQueue[K]): void {
+    const field = channel === 'phone' ? 'phoneQueue' : 'chatQueue';
+    this.form.update((f) => ({ ...f, [field]: { ...f[field], [key]: value } }));
+  }
+
+  protected setQueueNumber(
+    channel: 'phone' | 'chat',
+    key: 'queueSize' | 'maxQueueWaitSec' | 'transferSec' | 'serviceLevelSec',
     value: number | null,
   ): void {
-    if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
+    if (value !== null && Number.isFinite(value) && value >= 0) this.setQueue(channel, key, value);
+  }
+
+  protected setCloseOnInactivity(value: boolean): void {
+    this.form.update((f) => ({ ...f, chat: { ...f.chat, closeOnInactivity: value } }));
+  }
+
+  protected setInactivityMinutes(value: number | null): void {
+    if (value !== null && Number.isFinite(value) && value >= 1) {
+      this.form.update((f) => ({ ...f, chat: { ...f.chat, inactivityMinutes: value } }));
+    }
   }
 
   protected cancel(): void {

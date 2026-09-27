@@ -40,7 +40,11 @@
 > una base común admin). Estas dos siguen vivas, son pequeñas, y **ninguna es urgente**: se
 > anotan aquí para que no vuelvan a ocupar el hueco de "deuda grande" que no son.
 
-- **`toggleChannel` con cascade-clamping, ×3** — `group-form-page.component.ts:408`,
+- ✅ **CERRADO (2026-09-26): las reglas de canales viven en `features/admin/services/group-channels.core.mjs`**,
+  puras y con su test en `scripts/__tests__/group-channels.test.mjs`; las tres vistas las llaman. Se
+  cumplió el disparador: la visión de producto de grupos (2026-09-25) cambia la regla (Chat madre de Web
+  Chat y WhatsApp; un agente asignado no se queda sin canales). Lo que decía la entrada:
+  **`toggleChannel` con cascade-clamping, ×3** — `group-form-page.component.ts:408`,
   `group-assignment-table.component.ts:127`, `agent-channel-table.component.ts:178`.
   *Matiz medido*: **no es duplicación de código**, es lógica de dominio (qué canales se apagan en
   cascada) pegada a tres vistas. Extraerla a un servicio se paga en **testabilidad**, no en DRY —

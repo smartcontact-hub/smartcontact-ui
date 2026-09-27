@@ -35,7 +35,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **44 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autocomplete`, `autofocus`, `autofocusFilter`, `chipIcon`, `dataKey`, `displaySelectedLabel`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterPlaceHolder`, `filterValue`, `fluid`, `focusOnHover`, `group`, `highlightOnSelect`, `id`, `lazy`, `loading`, `loadingIcon`, `motionOptions`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `overlayVisible`, `panelStyle`, `panelStyleClass`, `readonly`, `resetFilterOnHide`, `scrollHeight`, `selectAll`, `selectOnFocus`, `showHeader`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
-### `sc-select` · 42 usos · primeng/select
+### `sc-select` · 44 usos · primeng/select
 
 **44 props nativas no expuestas**: `ariaFilterLabel`, `ariaLabel`, `autoOptionFocus`, `autofocus`, `autofocusFilter`, `checkmark`, `dataKey`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterValue`, `fluid`, `focusOnHover`, `group`, `id`, `inputSize`, `lazy`, `loadingIcon`, `max`, `maxlength`, `min`, `minlength`, `motionOptions`, `multiple`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `resetFilterOnHide`, `scrollHeight`, `selectOnFocus`, `step`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -59,7 +59,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **32 props nativas no expuestas**: `ariaLabel`, `autofocus`, `badgeSeverity`, `buttonProps`, `disabled`, `fluid`, `hostName`, `icon`, `iconOnly`, `iconPos`, `label`, `link`, `loading`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `rounded`, `severity`, `size`, `style`, `styleClass`, `tabindex`, `text`, `type`, `variant`
 
-### `sc-dialog` · 16 usos · primeng/dialog
+### `sc-dialog` · 17 usos · primeng/dialog
 
 **29 props nativas no expuestas**: `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closeButtonProps`, `closeIcon`, `closeOnEscape`, `closeTabindex`, `contentStyle`, `contentStyleClass`, `focusOnShow`, `focusTrap`, `header`, `keepInViewport`, `maskMotionOptions`, `maskStyle`, `maskStyleClass`, `maximizable`, `maximizeButtonProps`, `maximizeIcon`, `minX`, `minY`, `minimizeIcon`, `motionOptions`, `rtl`, `showHeader`, `style`, `styleClass`
 
@@ -67,11 +67,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **25 props nativas no expuestas**: `appendTo`, `ariaLabelledBy`, `autofocus`, `inputSize`, `inputStyle`, `inputStyleClass`, `max`, `mediumLabel`, `mediumRegex`, `min`, `minlength`, `motionOptions`, `overlayOptions`, `pPasswordPT`, `pPasswordUnstyled`, `pattern`, `promptLabel`, `showClear`, `showPassword`, `step`, `strongLabel`, `strongRegex`, `tabindex`, `variant`, `weakLabel`
 
-### `sc-button` · 152 usos · primeng/button
+### `sc-button` · 153 usos · primeng/button
 
 **24 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconOnly`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `severity`, `style`, `styleClass`, `tabindex`, `text`
 
-### `sc-drawer` · 1 usos · primeng/drawer
+### `sc-drawer` · 2 usos · primeng/drawer
 
 **11 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `autoZIndex`, `baseZIndex`, `blockScroll`, `closable`, `closeButtonProps`, `maskStyle`, `motionOptions`, `style`, `styleClass`
 
@@ -91,11 +91,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
-### `sc-selectbutton` · 13 usos · primeng/selectbutton
+### `sc-selectbutton` · 11 usos · primeng/selectbutton
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
-### `sc-toggleswitch` · 33 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 32 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
@@ -107,7 +107,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `badgeDisabled`, `badgeSize`, `severity`, `value`
 
-### `sc-inputtext` · 38 usos · primeng/inputtext
+### `sc-inputtext` · 36 usos · primeng/inputtext
 
 **4 props nativas no expuestas**: `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -115,11 +115,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `iconPos`, `motionOptions`, `toggleButtonProps`, `toggler`
 
-### `sc-message` · 3 usos · primeng/message
+### `sc-message` · 5 usos · primeng/message
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
 
-### `sc-textarea` · 7 usos · primeng/textarea
+### `sc-textarea` · 8 usos · primeng/textarea
 
 **3 props nativas no expuestas**: `pSize`, `pTextareaPT`, `pTextareaUnstyled`
 
@@ -135,7 +135,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-checkbox` · 34 usos · —
+### `sc-checkbox` · 39 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -147,7 +147,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-divider` · 33 usos · primeng/divider
+### `sc-divider` · 36 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
 
@@ -155,7 +155,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-form-section-nav` · 1 usos · —
+### `sc-form-section-nav` · 2 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -187,11 +187,11 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-section-card` · 17 usos · —
+### `sc-section-card` · 21 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-tag` · 30 usos · primeng/tag
+### `sc-tag` · 33 usos · primeng/tag
 
 Expone todo lo que PrimeNG documenta.
 

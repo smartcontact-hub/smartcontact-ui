@@ -6,7 +6,7 @@ import { SC_ICON_SIZE_DEFAULT, ScIconComponent as IconComponent } from '@smartco
 import type { ScGaugeSegment, ScGaugeSeverity } from '@smartcontact-hub/components';
 
 import type { AgentPresence } from '../../data/dashboard.types';
-import { AnimateOnChangeDirective } from '../animate-on-change.directive';
+import { AnimateOnChangeDirective } from '@core/directives';
 
 const PRESENCE_SEVERITY: Record<AgentPresence, ScGaugeSeverity> = {
   available: 'success',

@@ -993,7 +993,8 @@
     "select_row": "Sélectionner {{name}}",
     "select_all": "Tout sélectionner",
     "form_index_aria": "Sommaire du formulaire",
-    "filter_count": "{{shown}} sur {{total}}"
+    "filter_count": "{{shown}} sur {{total}}",
+    "next": "Suivant"
   },
   "topbar": {
     "go_to_dashboard": "Aller au tableau de bord",
@@ -1451,12 +1452,16 @@
       "phone": "Téléphone",
       "channels": "Canaux",
       "priority": "Priorité",
-      "strategy": "Stratégie",
       "services": "Services",
       "agents": "Agents",
       "agents_count": "{{count}} agents",
       "services_count": "{{count}} services",
-      "services_count_one": "1 service"
+      "services_count_one": "1 service",
+      "assign": "Agents",
+      "assign_aria": "Attribuer des agents à {{name}}",
+      "assign_column": "Attribuer des agents",
+      "strategy_phone": "Stratégie téléphone",
+      "strategy_chat": "Stratégie chat"
     },
     "priority": {
       "low": "Basse",
@@ -1466,9 +1471,10 @@
     },
     "channel": {
       "phone": "Téléphone",
-      "chat": "Chat",
+      "chat": "Chat web",
       "whatsapp": "WhatsApp",
-      "email": "Email"
+      "email": "Email",
+      "chat_family": "Chat"
     },
     "form": {
       "create_title": "Nouveau groupe",
@@ -1480,13 +1486,17 @@
         "channels": "Canaux",
         "channels_hint": "Types de contact",
         "strategy": "Stratégie",
-        "agents": "Agents assignés",
-        "distribution": "Canaux et stratégie",
+        "agents": "Agents",
+        "distribution": "Distribution et files d'attente",
         "channels_agents": "Canaux et agents",
         "resources": "Ressources",
-        "announcements": "Annonces et audio",
         "announcements_needs_phone": "Canal Téléphone uniquement : on y configure ce qui se joue pendant l’appel.",
-        "advanced": "Avancé"
+        "advanced": "Avancé",
+        "general": "Général",
+        "general_hint": "Nom, priorité et canaux",
+        "distribution_hint": "Comment chaque canal distribue et met en attente",
+        "resources_hint": "Ce qui est attribué depuis Référentiels",
+        "agents_hint": "Qui traite et par quels canaux"
       },
       "assigned": {
         "query_placeholder": "Rechercher un agent…",
@@ -1494,23 +1504,22 @@
         "empty": "Choisissez-les dans « Ajouter des agents », en haut à droite.",
         "no_results": "Aucun agent assigné ne correspond au filtre.",
         "col_agent": "Agent",
-        "col_active": "Activé",
         "toggle_all_channel": "Activer/désactiver {{channel}} sur tous les visibles",
-        "active_aria": "{{name}} activé dans ce groupe",
         "remove_aria": "Retirer {{name}} du groupe",
         "warn_no_channels": "Activé, mais sans canal assigné",
         "add_placeholder": "Ajouter des agents…",
         "add_aria": "Ajouter un agent au groupe",
         "no_channels_warn": "{{count}} sans canal",
-        "bulk_resume": "Activer",
-        "bulk_pause": "Désactiver",
         "bulk_unassign": "Retirer du groupe",
         "col_level": "Niveau",
-        "level_aria": "Niveau de {{name}}"
+        "level_aria": "Niveau de {{name}}",
+        "paused": "En pause",
+        "last_channel_hint": "Il doit traiter au moins un canal. Pour le sortir du groupe, « Retirer du groupe ».",
+        "last_channel_aria": "{{name}} — {{channel}} : seul canal ; pour le sortir du groupe, « Retirer du groupe »"
       },
       "fields": {
         "name": "Nom",
-        "phone": "Téléphone associé",
+        "phone": "Téléphone sortant",
         "priority": "Priorité",
         "phone_strategy": "Stratégie (téléphone)",
         "chat_strategy": "Stratégie (chat)",
@@ -1540,8 +1549,9 @@
       "remove_agent": "Retirer un agent",
       "cascade": {
         "title": "Vous allez retirer des canaux",
-        "body": "Cela désactivera {{channels}} pour {{count}} agents assignés à ce groupe. Continuer ?",
-        "confirm": "Oui, retirer"
+        "body": "{{count}} agents de ce groupe perdent {{channels}}. Continuer ?",
+        "confirm": "Oui, retirer",
+        "body_orphaned": "{{count}} agents de ce groupe perdent {{channels}}, et {{orphaned}} n'ont plus aucun canal et quittent le groupe. Continuer ?"
       },
       "danger_zone_description": "Supprimer ce groupe le retire des règles et routes qui le référencent. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer le groupe",
@@ -1588,7 +1598,6 @@
       },
       "advanced": {
         "defaults_hint": "Démarre avec les valeurs par défaut des groupes.",
-        "queue_title": "File et temps",
         "queue_size": "Taille de la file",
         "queue_fixed": "Fixe",
         "queue_per_agent": "Par agent connecté",
@@ -1601,8 +1610,8 @@
         "service_level_hint": "Les conversations prises avant ce temps comptent comme à temps.",
         "wrap_up": "Temps entre appels",
         "wrap_up_hint": "Ce que l’agent attend avant de recevoir l’appel suivant.",
-        "overflow": "Déborder s’il n’y a pas d’agents actifs",
-        "overflow_hint": "Les appels passent au nœud suivant de l’arbre.",
+        "overflow": "Déborder si tous les agents sont inactifs",
+        "overflow_hint": "Les contacts passent à la destination suivante, qui ne se choisit pas ici.",
         "overflow_session": "Débordement de session",
         "overflow_session_hint": "Redirige les sessions actives au-delà de leur limite.",
         "card_opening": "Ouverture de la fiche",
@@ -1613,7 +1622,7 @@
         "card_height": "Hauteur",
         "chat_config_title": "Paramètres du chat",
         "whatsapp_number": "Numéro WhatsApp",
-        "whatsapp_number_info": "Le numéro où arrivent les messages WhatsApp de ce groupe. C’est celui que voit le client s’il contacte par ce canal.",
+        "whatsapp_number_info": "Le numéro qui reçoit les messages WhatsApp de ce groupe.",
         "chat_rating": "Demander une évaluation à la fermeture du chat",
         "chat_rating_info": "À la fin de la conversation, on demande au client s’il est satisfait du service.",
         "chat_rating_hint": "Le client voit une courte question d’évaluation juste après la fin de l’échange.",
@@ -1632,17 +1641,58 @@
         "paused": "Désactivé",
         "no_channels": "Aucun canal",
         "priority": "Priorité : {{value}}",
-        "no_phone": "Sans téléphone associé"
-      }
+        "no_phone": "Aucun téléphone sortant",
+        "title": "Résumé",
+        "agents": "Agents",
+        "paused_count": "{{count}} en pause",
+        "no_agents": "Aucun agent",
+        "routing": "Distribution",
+        "outbound": "Sortant",
+        "no_number": "Aucun numéro",
+        "resources": "Ressources",
+        "missing": "Manquant : {{items}}",
+        "missing_name": "nom",
+        "missing_channels": "canaux"
+      },
+      "channels": {
+        "title": "Canaux",
+        "hint": "Au moins un. Ce que vous cochez ici détermine ce que vous configurez dans Distribution et files d'attente."
+      },
+      "distribution": {
+        "common_title": "Règles communes",
+        "common_hint": "Elles s'appliquent à tous les canaux du groupe.",
+        "routing": "Distribution",
+        "queue": "File d'attente",
+        "queue_messages": "Messages en file d'attente",
+        "webchat_access": "Chat web · accès",
+        "whatsapp_number": "WhatsApp · numéro",
+        "email_note": "L'email n'a ni stratégie ni file d'attente propres : les messages arrivent dans la boîte du groupe.",
+        "inactive": "{{channel}} n'est pas actif · activez-le dans Général"
+      },
+      "chat": {
+        "close_on_inactivity": "Fermer le chat en cas d'inactivité",
+        "close_on_inactivity_hint": "Si le client cesse d'écrire, la conversation se ferme d'elle-même après ce délai.",
+        "inactivity_minutes": "Minutes sans activité",
+        "messages_hint": "Ce que le client reçoit pendant l'attente. Si vous en laissez un vide, il n'est pas envoyé.",
+        "message_on_enter": "À l'entrée dans la file",
+        "message_waiting": "Pendant l'attente",
+        "message_no_agents": "Aucun agent disponible",
+        "message_on_enter_placeholder": "Ex. : Bonjour, nous sommes à vous tout de suite.",
+        "message_waiting_placeholder": "Ex. : Vous êtes toujours dans la file. Merci de patienter.",
+        "message_no_agents_placeholder": "Ex. : Personne n'est disponible pour le moment. Nous vous écrirons dès que possible."
+      },
+      "resources": {
+        "client_card": "Fiche client",
+        "client_card_hint": "Celle que l'agent voit en recevant un contact de ce groupe."
+      },
+      "create_submit": "Créer le groupe"
     },
     "defaults": {
       "heading": "Valeurs par défaut",
       "breadcrumb": "Valeurs par défaut",
       "button": "Valeurs par défaut",
       "hint": "Chaque nouveau groupe démarre avec ces valeurs. Elles se modifient ensuite dans sa fiche.",
-      "routing_title": "Distribution",
       "strategy_hint": "Niveaux, Ring All, Skills et Agent exclusif se choisissent dans la fiche de chaque groupe, où ils se configurent.",
-      "card_opening_type": "Type",
       "toast_saved": "Valeurs par défaut enregistrées"
     },
     "errors": {
@@ -1669,15 +1719,24 @@
       "name": "Nom",
       "phone": "Téléphone",
       "priority": "Priorité",
-      "strategy": "Stratégie",
       "services": "Services",
       "channels": "Canaux",
       "agent_count": "Nb agents",
-      "sheet": "Groupes"
+      "sheet": "Groupes",
+      "strategy_phone": "Stratégie téléphone",
+      "strategy_chat": "Stratégie chat"
     },
     "rename_placeholder": "Nom du groupe",
     "rename_aria": "Renommer {{name}}",
-    "bulk_edit_title": "Appliquer la modification à {{count}} groupe(s)"
+    "bulk_edit_title": "Appliquer la modification à {{count}} groupe(s)",
+    "agents_panel": {
+      "title": "Agents · {{name}}",
+      "assigned": "Assignés : {{count}}",
+      "unsaved": "Non enregistrés : {{count}}",
+      "save_count": "Sauvegarder ({{count}})",
+      "saved": "Agents de \"{{name}}\" mis à jour"
+    },
+    "bulk_edit_none": "{{field}} : aucun des groupes sélectionnés n'a ce canal"
   },
   "agents": {
     "page_title": "Agents",
@@ -1702,11 +1761,6 @@
       "cuscare": "CusCare",
       "cuscare_carrier": "CusCare Carrier",
       "admin_cuscare": "Admin CusCare"
-    },
-    "channel": {
-      "phone": "Téléphone",
-      "chat": "Chat",
-      "email": "Email"
     },
     "ext": {
       "phone": "Tél",

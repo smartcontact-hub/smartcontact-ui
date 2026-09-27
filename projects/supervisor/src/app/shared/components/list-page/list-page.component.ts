@@ -215,7 +215,9 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     return list;
   });
 
-  /* Con orden propio, la tabla solo PINTA el indicador: el gesto lo resuelve p-table y la lista lo espeja. */
+  /* Con orden propio, la tabla solo PINTA el indicador: el gesto lo resuelve p-table y la lista lo espeja.
+   * Que no reordene encima lo dice `externalSort` en la plantilla: sin él, p-table volvía a ordenar por el
+   * valor crudo del campo y la prioridad salía alfabética (medido en Grupos, 2026-09-26). */
   protected readonly tableSortField = computed(() => (this.sortFn() ? this.sortState()?.field : undefined));
   protected readonly tableSortOrder = computed(() => this.sortState()?.order ?? 1);
 

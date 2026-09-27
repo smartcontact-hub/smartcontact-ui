@@ -1,0 +1,53 @@
+:host {
+  display: contents;
+}
+
+/* El contenido del panel ocupa su alto entero: la tabla hace scroll dentro (DD-95) y el pie se queda
+ * abajo del todo, a la vista, aunque haya pocos agentes. */
+.agents-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-875);
+  block-size: 100%;
+  min-block-size: 0;
+}
+
+/* La tabla se queda con el alto que sobra entre la línea de canales y el pie, y con muchos agentes hace
+ * scroll dentro; sin esto se quedaba en el tope de la ficha y dejaba un hueco sobre el pie. */
+.agents-panel > sc-agent-channel-table {
+  --assign-table-max: none;
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  min-block-size: 0;
+}
+
+.agents-panel__channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-875);
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.agents-panel__channel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+}
+
+/* Lo que va a pasar y las dos salidas, abajo y siempre a la vista. */
+.agents-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: auto;
+  padding-block-start: var(--sc-spacing-0-875);
+  border-block-start: 1px solid var(--sc-border-subtle);
+}
+
+.agents-panel__count {
+  margin-inline-end: auto;
+  color: var(--sc-text-secondary);
+}

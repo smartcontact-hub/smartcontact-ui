@@ -280,6 +280,7 @@ export class DatatableDemoComponent {
       { name: 'loading', control: { kind: 'boolean' } },
           { name: 'sortField', control: { kind: 'text' }, description: 'Columna por la que sale ordenada.' },
       { name: 'sortOrder', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
+      { name: 'externalSort', control: { kind: 'boolean' }, description: 'El orden lo pone quien usa la tabla: pinta la flecha y emite (sortChange), pero no mueve las filas.' },
       { name: 'scrollable', control: { kind: 'boolean' }, description: 'Cabecera fija y cuerpo con scroll propio.' },
       { name: 'scrollHeight', control: { kind: 'text' }, description: 'Alto de ese scroll (p.ej. 240px).' },
       { name: 'stickyHeader', control: { kind: 'boolean' }, description: 'Cabecera fija al scroll de la página (sin scroll propio).' },
@@ -304,6 +305,7 @@ export class DatatableDemoComponent {
       // defecto en la ficha no puede cambiar el comportamiento de la demo.
       sortField: '',
       sortOrder: 1,
+      externalSort: false,
       scrollable: false,
       scrollHeight: '240px',
       stickyHeader: false,

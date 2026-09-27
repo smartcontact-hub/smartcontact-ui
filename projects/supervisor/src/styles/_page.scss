@@ -161,7 +161,8 @@
   min-width: 0;
 }
 
-/* LA FICHA DE GRUPO, que no tiene índice lateral: la misma página, más ancha.
+/* LAS FICHAS DE PESTAÑAS (agente y usuario; la de grupo lo fue hasta el 2026-09-26 y ahora lleva
+ * índice, ver `.ficha-rail` debajo), que no tienen índice lateral: la misma página, más ancha.
  *
  * Sin índice, la tabla de agentes pasa a ser el contenido, y el tope de editor (1200) la
  * estrangula: con los cuatro canales encendidos son cuatro columnas más la del nombre. 1600 es el
@@ -173,10 +174,85 @@
   max-width: 1600px;
 }
 
-/* LA FRANJA DE ESTADO de las fichas «una página + pestañas» (grupo, usuario, agente): el nombre
- * como único `h1`, una línea meta y tres cifras. Vive aquí y no en cada pantalla porque la usan
+/* LA FICHA DE GRUPO CON ÍNDICE (visión de producto de grupos, 2026-09-25; DD-121): el molde de
+ * Contact Center tal cual —índice de 196 y contenido de 920 a 1440— y, encima de los dos y a todo
+ * lo ancho, la MISMA cabecera que las fichas de agente y usuario. Dentro de `.page__main` el `h1`
+ * se correría 224px (índice + hueco) respecto a las otras dos; aquí arranca en su misma vertical.
+ *
+ * La fila se parte: la cabecera ocupa la primera línea entera y el índice y el contenido van en
+ * la segunda con su hueco de siempre (el `gap` de `--rail`, que no se toca). Entre la cabecera y
+ * esa segunda línea, 14: la cabecera es de lo que viene debajo, como la tira de pestañas de las
+ * otras fichas, y a 28 se leía como un bloque suelto. */
+.page__inner--rail.ficha-rail {
+  flex-wrap: wrap;
+  row-gap: var(--sc-spacing-1);
+}
+
+.ficha-rail > .headline {
+  flex: 0 0 100%;
+}
+
+/* EL RESUMEN DE LA FICHA DE GRUPO, a la derecha (DD-121 §3, 2026-09-27). Primero vivió bajo el índice,
+ * en el carril de 196, que es el de Contact Center y NO hace scroll. Medido: a 1440×900 cabía (fondo
+ * en 844), pero a 1366×768 se cortaba al abrir y, a 1280×720, al bajar hasta el final de una sección
+ * larga el índice se escondía 99px por arriba. La navegación se perdía a medio editar.
+ *
+ * Aquí el índice va solo en su carril y el resumen en una columna propia, fija al hacer scroll y con
+ * su propio scroll si no cabe: nunca se corta y nunca se lleva el índice. 240 es el carril del
+ * constructor de reglas (`--with-panel`), el del otro «impacto estimado» de la app.
+ *
+ * El tope sube a 1600, como en las fichas de pestañas (`.ficha-tabs`): con 1200 el contenido se
+ * quedaba en 652, y la tabla de agentes con sus cuatro canales pide unos 740. A 1440 queda en 812. */
+.page__inner--rail.ficha-rail--summary {
+  max-width: 1600px;
+}
+
+.ficha-summary {
+  flex: 0 0 240px;
+  width: 240px;
+  min-width: 0;
+  position: sticky;
+  top: var(--sc-spacing-1-625);
+  align-self: flex-start;
+  /* La ventana menos la barra de arriba y el aire de arriba y abajo: lo que no quepa, hace scroll dentro. */
+  max-block-size: calc(100dvh - var(--sc-topbar-height) - 2 * var(--sc-spacing-1-625));
+  overflow-y: auto;
+  /* Sus tarjetas se colocan según el ancho que tengan (una columna aquí; en fila en la franja de abajo). */
+  container-type: inline-size;
+}
+
+/* Por debajo de 1340 no caben tres columnas sin estrangular el contenido: el resumen pasa a una franja
+ * encima de índice y contenido, que vuelven a medir lo de Contact Center (tope 1200, contenido 920 a
+ * 1280). `order` solo mueve lo que se ve: el resumen no tiene nada que enfocar, así que el tabulador no
+ * salta. */
+@media (max-width: 1339px) {
+  .page__inner--rail.ficha-rail--summary {
+    max-width: 1200px;
+  }
+
+  .ficha-rail--summary > .page__rail {
+    order: 2;
+  }
+
+  .ficha-rail--summary > .page__main {
+    order: 3;
+  }
+
+  .ficha-summary {
+    order: 1;
+    flex: 0 0 100%;
+    width: auto;
+    position: static;
+    max-block-size: none;
+    overflow-y: visible;
+  }
+}
+
+/* LA FRANJA DE ESTADO de las fichas (grupo, usuario, agente): el nombre como único `h1`, una
+ * línea meta y, en las de pestañas, tres cifras. Vive aquí y no en cada pantalla porque la usan
  * las tres, y la encapsulación de Angular es por componente. Sin línea abajo: separa el aire. */
-.ficha-tabs .headline {
+.ficha-tabs .headline,
+.ficha-rail .headline {
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-75);
@@ -187,11 +263,13 @@
 
 /* «Eliminar», al final de la franja: es una acción sobre el sujeto de la ficha, y la franja es su
  * cabecera. Antes vivía al pie del índice lateral, que ya no existe. */
-.ficha-tabs .headline__actions {
+.ficha-tabs .headline__actions,
+.ficha-rail .headline__actions {
   margin-inline-start: auto;
 }
 
-.ficha-tabs .headline__who {
+.ficha-tabs .headline__who,
+.ficha-rail .headline__who {
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -202,7 +280,15 @@
   inline-size: var(--sc-spacing-18);
 }
 
-.ficha-tabs .headline__name {
+/* Sin cifras al lado (las dice el resumen de la derecha) no hay columna que alinear: el nombre se
+ * queda el ancho que sobra y solo se recorta si de verdad no cabe. */
+.ficha-rail .headline__who {
+  flex: 1 1 auto;
+  inline-size: auto;
+}
+
+.ficha-tabs .headline__name,
+.ficha-rail .headline__name {
   color: var(--sc-text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -212,11 +298,13 @@
 /* El nombre editable en su sitio (`sc-name-inplace`): el fondo de «se puede editar» y el campo sobresalen del
  * título (compensan el relleno nativo), así que aquí no se recorta; los puntos suspensivos los pone el propio
  * Inplace sobre el nombre. */
-.ficha-tabs .headline__name--editable {
+.ficha-tabs .headline__name--editable,
+.ficha-rail .headline__name--editable {
   overflow: visible;
 }
 
-.ficha-tabs .headline__meta {
+.ficha-tabs .headline__meta,
+.ficha-rail .headline__meta {
   color: var(--sc-text-secondary);
   /* Una línea, como el nombre: si envolviera, la franja crecería y la tira bajaría solo en esa
    * ficha (medido en la de usuario: email · tipo en dos líneas, la tira 18px más abajo). El texto
