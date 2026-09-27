@@ -71,7 +71,7 @@
         (cancelled)="onRenameCancel(agent.id)"
       />
     } @else {
-      <span class="cell-name__text">{{ agent.name }}</span>
+      <span class="cell-name__text" [title]="agent.name">{{ agent.name }}</span>
     }
   </span>
 </ng-template>
@@ -89,7 +89,7 @@
 
 <ng-template #emailTpl let-agent>
   @if (agent.email) {
-    <span class="cell sc-text-body-regular">{{ agent.email }}</span>
+    <span class="cell sc-text-body-regular" [title]="agent.email">{{ agent.email }}</span>
   } @else {
     <span class="cell cell--empty sc-text-body-regular">—</span>
   }
