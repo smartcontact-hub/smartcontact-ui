@@ -192,6 +192,21 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    lo desconecta del canal por el que un cambio de token llega solo a todos los componentes. Si
    el texto de un componente tiene que verse distinto, se mueve su TOKEN (DD-55, gateado por
    `audit:text-styles`). Muestrario y regla: **Fundamentos → Tipografía** en `sc-docs`.
+9. **Agrupación por espacio.** Lo que va junto se separa MENOS que lo que no, con una sola
+   escalera: **7 · 14 · 28** (`--sc-spacing-0-5` · `-1` · `-2`). 7 entre una etiqueta y lo que
+   etiqueta (son una pieza); 14 entre hermanos (campos, filas, opciones, celdas); 28 entre grupos
+   y secciones, y entre el último campo y el botón que lo envía. Entre grupos, al menos el doble
+   que dentro: por debajo, una etiqueta se lee a medio camino entre su control y el de arriba, y
+   un botón, como un campo más. Si la maqueta trae otro valor (12.25, 24.5), manda la escalera y
+   el cambio del Kit va a `docs/figma-pendiente.md` (DD-122). Lo mide
+   `e2e/supervisor/agrupacion.spec.ts` en el build, pantalla a pantalla.
+
+**Antes de enseñar una pantalla, revísala tú** (DD-122): `npm run revision -- <ruta>` la abre a 1440,
+recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas
+con la skill `better-layout`: lo medible se arregla antes de enseñarlo y lo que sea gusto se le lista al
+usuario, no se decide solo. La IA construye; esta pasada es la que critica, y el primer filtro visual no
+puede ser el usuario. Si escribes plantillas u hojas del Supervisor y cierras sin revisarlas, el hook de
+Stop te lo para una vez.
 
 **Mapa de composición** — punteros, no prosa: la razón vive donde apunta cada línea. Nace de
 medir que ninguno de estos nombres aparecía en AGENTS ni en CLAUDE, así que la regla existía en

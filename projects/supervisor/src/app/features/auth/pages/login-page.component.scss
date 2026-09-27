@@ -177,6 +177,12 @@
   gap: var(--sc-spacing-1);
 }
 
+/* El botón cierra el formulario: 14 más que entre campos, 28 del último. Con el mismo 14 se leía
+ * como un campo más de la pila, no como la acción de todos ellos (DD-122). */
+.login__submit {
+  margin-top: var(--sc-spacing-1);
+}
+
 .login__links {
   display: flex;
   flex-wrap: wrap;

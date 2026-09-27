@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` | DD-122 |
 > | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
 > | Sidebar en producción: abrir una categoría no cierra las demás y nada se cierra al salir · plegado solo la rama de la página · se despliega con el ratón y se ancla con su botón · selección en cyan · subsecciones en 450ms con la curva de Apollo (enmienda DD-112 §3-§5) | DD-118 |
 > | La cabecera del Dashboard: pestañas sin fondo con `⋮` y `+ Monitor` pegados; las acciones de la página en `p-toolbar` en tres grupos con `sc-divider` (enmienda DD-113 §6) · en modo pared un monitor sin widgets enseña su vacío y el carrusel se lo salta | DD-114 |
@@ -80,6 +81,71 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-122 · 2026-09-27 — Lo que va junto se separa menos: la escalera 7 · 14 · 28 manda sobre la maqueta, y se mide en el build
+
+**Contexto** · Una revisión de calidad visual contra principios generales de UI (el segundo: agrupar por espacio, lo
+relacionado más cerca que lo que no) encontró que el repo ya tenía la regla, pero solo como comentario: la escalera
+**7 · 14 · 28** y «entre grupos, al menos el doble que dentro» vivían en la hoja de Config AED
+(`aed-servicio-page.component.scss`), tomadas de la skill `better-layout`. Ni AGENTS ni Patrones la nombraban y nada la
+medía; lo que sí se medía iba en contra: un test fijaba la fila de `.grid` en los 12,25 de la maqueta. Medido en el
+build de producción a 1440 (34 rutas del Supervisor con cada pestaña o sección, 56 vistas, más los 12 diálogos de alta y
+«Duplicar» de un grupo): **10 vistas en 5 pantallas y 4 diálogos por debajo del doble**. Los campos quedaban a 12,25 de
+su vecino con la etiqueta a 7 de su control (1,75×; 16 pares en la ficha de agente, la de grupo y Config AED); las dos
+opciones de «Mostrar en el aviso», a 12 entre sí; y el botón del acceso, a los mismos 14 del último campo que hay entre
+campos, igual que el de «Nueva label» (15,75 contra 12,25).
+
+**Decisión** ·
+1. **La escalera es regla del sistema** (AGENTS §«UX de pantalla» 9 y su tarjeta en Patrones, que el check L de
+   `docs:coherence` mantiene a la par): 7 entre una etiqueta y lo que etiqueta; 14 entre hermanos (campos, filas,
+   opciones, celdas); 28 entre grupos y secciones, y entre el último campo y el botón que lo envía. Entre grupos, al
+   menos el doble que dentro.
+2. **Cuando la maqueta trae otro valor, manda la escalera**, y el cambio del Kit se apunta en `docs/figma-pendiente.md`
+   (ficha 15). Decisión de Rafa del 2026-09-27. No nace ningún token: los tres peldaños ya existían
+   (`--sc-spacing-0-5`, `-1`, `-2`).
+3. **Aplicado en las piezas, no pantalla a pantalla:** la fila de `.grid` y de su copia en `sc-group-identity-fields`
+   (12,25 → 14), `.radio-row` (12,25 → 14), el botón de las dos vistas del acceso (a 28 del último campo) y el panel
+   «Nueva label» (15,75 → 28).
+4. **Lo mide `e2e/supervisor/agrupacion.spec.ts` sobre las cajas renderizadas** (`agrupacion-medida.js`): campo
+   apilado, opciones en fila y botón que envía. Un test por ruta, por alta y por «Duplicar», para que el CI los reparta.
+   Probado en los dos sentidos: contra el build anterior al arreglo, 7 tests en rojo que nombran cada par; con él, los
+   48 en verde.
+5. **Una pantalla se revisa antes de enseñarla** (`npm run revision -- <ruta>`): la abre a 1440, recorre sus
+   pestañas, guarda las capturas en `.cache/revision/` y aplica la misma medida. Las capturas se miran con la skill
+   `better-layout`: lo medible se arregla y lo que sea gusto se le lista al usuario. El hook de Stop lo recuerda una
+   vez si la sesión escribió plantillas u hojas del Supervisor sin revisarlas después. La IA construye; esta pasada es
+   la que critica, y el primer filtro visual deja de ser el usuario.
+
+**Razón** · Por debajo del doble, la proximidad no agrupa: la etiqueta de un campo queda casi igual de cerca de su
+control que del de arriba, y un botón a la distancia de los campos se lee como uno más. La regla la escribió ya el repo
+(la escalera de Config AED; `better-layout`: «the gap between groups must be at least 2× the gap within one»); lo que
+faltaba era que mandara y que se midiera.
+
+**Descartadas** ·
+- **Seguir la maqueta (12,25 entre filas)** → es lo que salía en rojo en 9 de las 10 vistas.
+- **Medirlo en el SCSS con una auditoría estática** → solo ve valores declarados, y la relación entre etiqueta, campo
+  y botón existe en el render. La primera versión de la sonda dio rojos falsos justo por eso: la etiqueta de los campos
+  del DS vive en un `sc-field-label` con `display: contents` y `sc-textarea` es un elemento en línea cuya caja no
+  coincide con lo que se ve.
+- **Un token por relación (`related`, `group`…)** → sería inventar tokens fuera del Kit (AGENTS §1), y los tres
+  peldaños ya existen.
+- **La revisión previa dentro del preflight** → necesita el Supervisor sirviendo, y mirar las capturas es juicio, no
+  un umbral: el hook la recuerda y no la juzga. Lo medible ya lo cubre la prueba en el CI.
+- **Llevar todos los 12,25 del Supervisor a 14 de una vez** → quedan 54 huecos (`gap`, `row-gap`, `column-gap`) en
+  28 hojas y la mayoría no separa hermanos (icono y texto, celdas, avisos); se cambia lo que la medida señala, no lo
+  que se parece.
+
+**Pendiente (decisión de producto)** · Tres diálogos siguen por debajo del doble en el botón: «Nueva entidad», «Nueva
+categoría» y «Duplicar grupo». Su pie lo pone el diálogo NATIVO de PrimeNG: 18 del último campo (el `padding` inferior
+del contenido de Aura), contra 14–15,75 entre campos. Dos salidas: más aire en el pie desde el tema, que alcanza a todos
+los diálogos y es un desvío del nativo por token (DD-113 §2; también al Kit), o dárselo a esos formularios. Hasta que se
+decida, la prueba los lista en `CONOCIDOS` con su medida, y cualquier otro rojo la rompe.
+
+**Consecuencias** · Una maqueta nueva con 12,25 o 24,5 se implementa en el peldaño de la escalera y se apunta en
+figma-pendiente. La prueba corre en el CI con el resto de la suite del Supervisor (DD-60); en local,
+`npm run e2e:supervisor -- agrupacion`.
 
 ---
 

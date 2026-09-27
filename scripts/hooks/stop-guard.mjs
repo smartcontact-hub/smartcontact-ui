@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Hook `Stop` — tres deudas que no dejan cerrar, las tres leídas del MISMO transcript:
+ * Hook `Stop` — cinco deudas que no dejan cerrar, las cinco leídas del MISMO transcript:
  *
  *   1. «un push sin leer el veredicto del CI no está terminado» (LEARNINGS #7, s35: seis pushes
  *      rojos seguidos escribiendo «preflight verde» sin abrir el CI ni una vez). Si el último
@@ -22,6 +22,11 @@
  *      pushear, sin upstream) y me desmiente si pongo «sí» con trabajo colgando. Un «todo subido»
  *      afirmado sin mirar es exactamente la regla #17 en su versión más cara: el usuario cierra la
  *      ventana y el contexto no vuelve. (Norma de proceso, 2026-09-10.)
+ *
+ *   5. la REVISIÓN PREVIA de una pantalla (DD-122, 2026-09-27): si la sesión escribió plantillas u
+ *      hojas del Supervisor con Edit/Write y no corrió `npm run revision` DESPUÉS, bloquea una vez.
+ *      El primer filtro visual de una pantalla no puede ser el usuario: la revisión la captura a
+ *      1440, mide la agrupación y deja las capturas para mirarlas con `better-layout`.
  *
  * `stop_hook_active` evita el bucle: a la segunda deja parar.
  *
@@ -151,6 +156,55 @@ export function motivoSinEnrutar(pend) {
     ...pend.map((p) => `  [${p.id}] ${String(p.prompt).replace(/\s+/g, ' ').slice(0, 100)}`),
     `Comando: node scripts/hooks/correction-capture.mjs --enrutar <id> <${DESTINO_AYUDA}> "<motivo>"`,
     'hook/gate: el motivo cita la ruta del fichero (los hooks, bajo scripts/hooks/). regla#N/memoria/no-mecanizable: motivo de ≥40 caracteres que empiece por «porque».',
+  ].join('\n');
+}
+
+// ── La revisión previa a enseñar una pantalla ────────────────────────────────────────────
+
+/** Una pantalla del Supervisor que se VE: su plantilla o su hoja (las globales de `styles/`, también). */
+const RE_PANTALLA = /\/projects\/supervisor\/src\/(app\/.+\.(html|scss)|styles\/.+\.scss)$/;
+const ESCRIBEN = new Set(['Edit', 'Write', 'MultiEdit', 'NotebookEdit']);
+/** Correr la revisión; nombrarla dentro de un dato (un `grep "npm run revision"`) no cuenta. */
+const esRevision = (cmd) =>
+  /\bnpm run(?: -s)? revision\b|\bscripts\/revision-pantalla\.mjs\b/.test(sinDatosEntreComillas(cmd));
+
+/**
+ * Ficheros de pantalla del Supervisor escritos DESPUÉS de la última revisión. Vacío = no hace falta.
+ *
+ * Hueco conocido y aceptado: una edición por shell (`sed -i`, un script) no cuenta como escribir. El
+ * precio es un recordatorio de menos, no un bloqueo de más; el canal de siempre es Edit/Write.
+ */
+export function pantallasSinRevisar(jsonl) {
+  const pendientes = new Set();
+  for (const linea of jsonl.split('\n')) {
+    if (!linea.includes('"tool_use"')) continue;
+    let ev;
+    try {
+      ev = JSON.parse(linea);
+    } catch {
+      continue;
+    }
+    const contenido = ev?.message?.content;
+    if (!Array.isArray(contenido)) continue;
+    for (const c of contenido) {
+      if (c?.type !== 'tool_use') continue;
+      if (c.name === 'Bash' && typeof c.input?.command === 'string' && esRevision(c.input.command)) pendientes.clear();
+      else if (ESCRIBEN.has(c.name)) {
+        const ruta = String(c.input?.file_path ?? c.input?.notebook_path ?? '');
+        if (RE_PANTALLA.test(ruta)) pendientes.add(ruta.replace(/^.*\/projects\//, 'projects/'));
+      }
+    }
+  }
+  return [...pendientes];
+}
+
+/** El motivo lleva el comando y lo que se hace con su salida, no solo el aviso. */
+export function motivoSinRevision(rutas) {
+  return [
+    `Has tocado ${rutas.length} fichero(s) de pantalla del Supervisor sin pasar la revisión previa: el primer filtro visual no puede ser el usuario (DD-122).`,
+    ...rutas.slice(0, 5).map((r) => `  · ${r}`),
+    'Antes de enseñarlo: `npm run revision -- <ruta de cada pantalla>` (la captura a 1440 y mide la agrupación). Mira las capturas con la skill better-layout, arregla lo medible y lista al usuario lo que sea de gusto.',
+    'Si paras a mitad y aún no hay nada que enseñar, dilo en el mensaje y vuelve a cerrar: a la segunda deja pasar.',
   ].join('\n');
 }
 
@@ -308,6 +362,9 @@ function main() {
       return bloquear(
         'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, `gh run view --log-failed`). Sin `gh` —una sesión cloud— léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y `list_workflow_jobs` si algo sale rojo). En los dos casos, cuéntale al usuario el resultado LEÍDO, no el exit del wrapper.',
       );
+
+    const sinRevisar = pantallasSinRevisar(jsonl);
+    if (sinRevisar.length) return bloquear(motivoSinRevision(sinRevisar));
 
     if (!invocoReflect(jsonl)) return;
     let pend = [];

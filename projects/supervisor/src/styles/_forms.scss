@@ -107,10 +107,16 @@
 /* ------------------------------------------------------------------ *
  * Form grid — 2-column layout shared across every form page.
  *
- * Las dos separaciones son las de la MAQUETA, no un valor redondo: 24.5
- * (`scale/1-75`) entre columnas —la única atada a variable en esas filas de
- * Figma— y 12.25 (`scale/0-875`) entre filas. Nodos: `row` 2286:5408 y
- * `container` 2286:5407 (Grupos), 2286:5581 y 2286:5558 (Servicio).
+ * Entre columnas, 24.5 (`scale/1-75`), el de la MAQUETA —la única medida atada a
+ * variable en esas filas de Figma—. Nodos: `row` 2286:5408 y `container` 2286:5407
+ * (Grupos), 2286:5581 y 2286:5558 (Servicio).
+ *
+ * Entre filas, 14 (`scale/1`), y aquí la maqueta NO manda (DD-122): pone 12.25, y con
+ * 7 de la etiqueta a su control (`.field`) un campo quedaba a 1,75× de su vecino. Por
+ * debajo del doble, la etiqueta del campo de abajo se lee a medio camino entre su
+ * control y el de arriba (medido en el build el 2026-09-27: 16 pares en 9 vistas, de
+ * la ficha de agente a Config AED). Es el peldaño «entre hermanos» de la escalera
+ * 7 · 14 · 28; el cambio del Kit está en `docs/figma-pendiente.md`.
  *
  * ⚠️ Aquí había un `gap: 15.75` a los dos ejes, y esa era la deriva: las tres
  * pantallas de `config/aed` declaraban su PROPIA `.grid` con las medidas de la
@@ -121,7 +127,7 @@
 .grid {
   display: grid;
   column-gap: var(--sc-spacing-1-75);
-  row-gap: var(--sc-spacing-0-875);
+  row-gap: var(--sc-spacing-1);
   /* Sin esto, un campo con texto de ayuda de dos líneas estira a su vecino de la misma fila
    * (el vecino no crece: se queda con un hueco vacío debajo de su control, hasta 41px medido
    * en Recursos, «Agendas» junto a «Tipificación»). Cada campo se queda con SU alto. */

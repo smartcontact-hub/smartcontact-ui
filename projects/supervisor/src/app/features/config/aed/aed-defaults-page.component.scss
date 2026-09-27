@@ -129,14 +129,16 @@
 
 /* ---------- Radio rows ---------- */
 
-/* 12.25 (`scale/0-875`) entre radios — la maqueta pone 12 suelto (`container radio buttons`,
- * 2286:5583). A 14px de texto los dos no caben en la columna de 214 y envuelven; en la maqueta
- * caben porque su texto va a 12. Envolver está bien aquí: es un grupo de radios, no una fila. */
+/* 14 (`scale/1`) entre radios, el doble de los 7 de cada radio a su texto (`.radio`): con los 12
+ * sueltos de la maqueta (`container radio buttons`, 2286:5583) el texto de una opción quedaba casi
+ * igual de cerca del radio siguiente que del suyo (DD-122; el Kit, en `docs/figma-pendiente.md`).
+ * A 14px de texto los dos no caben en la columna de 214 y envuelven; en la maqueta caben porque su
+ * texto va a 12. Envolver está bien aquí: es un grupo de radios, no una fila. */
 .radio-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-875);
+  gap: var(--sc-spacing-1);
 }
 
 .radio {

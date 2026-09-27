@@ -1,0 +1,215 @@
+import { join } from 'node:path';
+
+import { expect, test, type Page } from '@playwright/test';
+
+import { goto } from './helpers';
+
+/**
+ * AGRUPACIÓN POR ESPACIO — LO QUE VA JUNTO SE SEPARA MENOS QUE LO QUE NO (DD-122).
+ *
+ * La escalera 7 · 14 · 28 (AGENTS §«UX de pantalla» 9) vivía en un comentario de la hoja de Config
+ * AED y no la medía nada; lo único que se medía iba en contra (un test fijaba la fila de `.grid` en
+ * los 12,25 de la maqueta). Medido en el build el 2026-09-27, antes del arreglo: 10 vistas en 5
+ * pantallas y 4 diálogos por debajo del doble.
+ *
+ * QUÉ MIDE, sobre las cajas renderizadas (`agrupacion-medida.js`):
+ *   R1 · un campo está al menos al doble de su vecino de encima que de su etiqueta a su control;
+ *   R2 · dos opciones en fila, al menos al doble entre ellas que de cada control a su texto;
+ *   R3 · el botón que envía, al menos al doble del último campo que los campos entre sí.
+ *
+ * DÓNDE: cada ruta del Supervisor con cada pestaña o sección de su índice, el acceso, los diálogos
+ * de alta que abre la acción «Nuevo…/Crear/Añadir» de cada lista, y «Duplicar» de un grupo. Una
+ * pantalla o un diálogo nuevos entran solos si cuelgan de esas rutas o de esa acción.
+ *
+ * QUÉ NO VE: la agrupación de lo que no es un campo, una opción o un botón (tarjetas, títulos con su
+ * texto, celdas de tabla). Esos huecos siguen siendo juicio: la revisión previa a enseñar una
+ * pantalla (`npm run revision`) los captura para mirarlos.
+ *
+ * CONOCIDOS: lo que está rojo a sabiendas, con su medida y su porqué. Cualquier OTRO rojo rompe la
+ * prueba, y un conocido que se pone verde también, para que se borre su línea el día que se arregle.
+ */
+
+const MEDIDA = join(process.cwd(), 'e2e', 'supervisor', 'agrupacion-medida.js');
+
+interface Par {
+  readonly regla: 'R1' | 'R2' | 'R3';
+  readonly ok: boolean;
+  readonly etiqueta: string;
+  readonly vecino: string;
+  readonly dentro: number;
+  readonly entre: number;
+}
+
+const RUTAS = [
+  'dashboard',
+  'conversaciones',
+  'conversaciones/reglas',
+  'conversaciones/reglas/nueva',
+  'conversaciones/entidades',
+  'conversaciones/categorias',
+  'admin/usuarios',
+  'admin/usuarios/crear',
+  'admin/usuarios/editar/1',
+  'admin/grupos',
+  'admin/grupos/valores-por-defecto',
+  'admin/grupos/crear',
+  'admin/grupos/editar/11',
+  'admin/agentes',
+  'admin/agentes/crear',
+  'admin/agentes/editar/1',
+  'admin/labels',
+  'admin/plantillas',
+  'admin/repositorios',
+  'admin/agendas',
+  'admin/horarios',
+  'admin/tipificaciones',
+  'admin/variables',
+  'admin/entidades',
+  'admin/intenciones',
+  'admin/reglas-ia',
+  'admin/entidades-ia',
+  'admin/clasificacion-ia',
+  'config/aed/servicio',
+  'config/aed/agentes',
+  'config/aed/grupos',
+  'config/seguridad',
+  'config/sistema',
+] as const;
+
+/** Listas cuya acción de alta abre un diálogo o un panel (las demás navegan a su ficha). */
+const ALTAS = [
+  'conversaciones/entidades',
+  'conversaciones/categorias',
+  'admin/labels',
+  'admin/plantillas',
+  'admin/agendas',
+  'admin/horarios',
+  'admin/tipificaciones',
+  'admin/variables',
+  'admin/entidades',
+  'admin/intenciones',
+  'admin/reglas-ia',
+  'admin/entidades-ia',
+  'admin/clasificacion-ia',
+] as const;
+
+/**
+ * Clave `vista · regla · etiqueta → vecino`, y su porqué. Los tres son el mismo caso: el pie del
+ * diálogo NATIVO de PrimeNG pone los botones a 18 del último campo (el `padding` inferior del
+ * contenido de Aura), y el hueco entre campos es 14 o 15,75. Darles aire es un desvío del nativo
+ * que va por token del tema y alcanza a todos los diálogos (DD-113 §2): decisión de producto
+ * pendiente, en DD-122.
+ */
+const CONOCIDOS: Record<string, string> = {
+  'conversaciones/entidades · alta · R3 · Tipo → Crear entidad': 'pie nativo del diálogo (18 contra 15,75 entre campos)',
+  'conversaciones/categorias · alta · R3 · Grupo → Crear categoría': 'pie nativo del diálogo (18 contra 15,75 entre campos)',
+  'admin/grupos · duplicar · R3 · Prioridad → Duplicar': 'pie nativo del diálogo (18 contra 14 entre campos)',
+};
+
+const clave = (vista: string, p: Par): string => `${vista} · ${p.regla} · ${p.etiqueta} → ${p.vecino}`;
+
+/**
+ * Mide la vista que hay en pantalla. Un rojo tiene que AGUANTAR: se repite la medida hasta tres
+ * veces, porque una animación de entrada (el diálogo, un fundido de navegación) da cajas a medio
+ * camino que no son la pantalla.
+ */
+const medir = async (page: Page, vista: string): Promise<string[]> => {
+  await page.evaluate(() => document.fonts.ready);
+  let rojos: string[] = [];
+  for (let intento = 0; intento < 3; intento++) {
+    await page.waitForTimeout(intento === 0 ? 350 : 600);
+    const pares = await page.evaluate(
+      () => (window as unknown as { __medirAgrupacion: () => Par[] }).__medirAgrupacion(),
+    );
+    rojos = pares.filter((p) => !p.ok).map((p) => `${clave(vista, p)} (dentro ${p.dentro}, entre ${p.entre})`);
+    if (!rojos.length) break;
+  }
+  return rojos;
+};
+
+/** Quita la ligadura del icono de Material que va delante del texto de una pestaña o sección. */
+const nombreDe = (txt: string): string => txt.replace(/^\s*[a-z_]+\s*\n/, '').replace(/\s+/g, ' ').trim();
+
+/** Lo medido en un test: los rojos y las vistas que recorrió (para saber qué conocidos le tocan). */
+interface Medido {
+  readonly rojos: string[];
+  readonly vistas: string[];
+}
+
+const medirVista = async (page: Page, vista: string): Promise<Medido> => ({ rojos: await medir(page, vista), vistas: [vista] });
+
+/** Recorre la ruta y, si tiene pestañas o índice de secciones, cada una. */
+const medirRuta = async (page: Page, ruta: string): Promise<Medido> => {
+  const pestanas = page.locator('main [role="tab"]');
+  const secciones = page.locator('sc-form-section-nav .form-nav__item');
+  const nP = await pestanas.count();
+  const nS = await secciones.count();
+  const tira = nP > 1 ? pestanas : nS > 1 ? secciones : null;
+  if (!tira) return medirVista(page, ruta);
+  const rojos: string[] = [];
+  const vistas: string[] = [];
+  for (let i = 0; i < (nP > 1 ? nP : nS); i++) {
+    const item = tira.nth(i);
+    await item.click();
+    const vista = `${ruta} · ${nombreDe(await item.innerText())}`;
+    vistas.push(vista);
+    rojos.push(...(await medir(page, vista)));
+  }
+  return { rojos, vistas };
+};
+
+/** Compara lo medido con los conocidos de ESAS vistas: ni un rojo nuevo, ni un conocido ya verde. */
+const cuadrar = ({ rojos, vistas }: Medido): void => {
+  const sinMedida = rojos.map((r) => r.replace(/ \(dentro .*\)$/, ''));
+  const esperados = Object.keys(CONOCIDOS).filter((k) => vistas.some((v) => k.startsWith(`${v} · R`)));
+  const nuevos = rojos.filter((_, i) => !esperados.includes(sinMedida[i]!));
+  const curados = esperados.filter((k) => !sinMedida.includes(k));
+  expect(
+    nuevos,
+    'Por debajo del doble (DD-122): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO.',
+  ).toEqual([]);
+  expect(curados, 'Ya están en verde: borra su línea de CONOCIDOS.').toEqual([]);
+};
+
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript({ path: MEDIDA });
+});
+
+test('agrupación · acceso', async ({ page }) => {
+  await page.goto('/login');
+  await expect(page.getByRole('button', { name: 'Entrar' })).toBeVisible();
+  cuadrar(await medirVista(page, 'login'));
+});
+
+for (const ruta of RUTAS) {
+  test(`agrupación · ${ruta}`, async ({ page }) => {
+    await goto(page, ruta);
+    await page.waitForLoadState('networkidle');
+    cuadrar(await medirRuta(page, ruta));
+  });
+}
+
+for (const ruta of ALTAS) {
+  test(`agrupación · alta de ${ruta}`, async ({ page }) => {
+    await goto(page, ruta);
+    await page.waitForLoadState('networkidle');
+    const alta = page
+      .locator('header button, main button')
+      .filter({ hasText: /(nuev[oa]|añadir|crear)\b/i })
+      .first();
+    await alta.click();
+    await expect(page.locator('[role="dialog"]:visible, .p-dialog:visible').first()).toBeVisible();
+    cuadrar(await medirVista(page, `${ruta} · alta`));
+  });
+}
+
+test('agrupación · duplicar un grupo', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  await page.waitForLoadState('networkidle');
+  await page.locator('tbody tr').first().locator('button').last().click();
+  const duplicar = page.locator('.p-menu-item, [role="menuitem"]').filter({ hasText: /duplicar/i }).first();
+  await expect(duplicar).toBeVisible();
+  await duplicar.click();
+  await expect(page.locator('[role="dialog"]:visible, .p-dialog:visible').first()).toBeVisible();
+  cuadrar(await medirVista(page, 'admin/grupos · duplicar'));
+});

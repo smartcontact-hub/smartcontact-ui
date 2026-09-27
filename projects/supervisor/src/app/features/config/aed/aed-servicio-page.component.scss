@@ -119,9 +119,9 @@
 
 /*
  * Los dos bloques de esta sección se agrupan por ESPACIO, no por línea: 7 entre
- * las piezas de un bloque y 24.5 entre bloques (12.25 del `gap` de
- * `.sub-section` + 12.25 de aquí). La regla es que el hueco ENTRE grupos mida al
- * menos el doble que el hueco DENTRO de uno; aquí mide 3.5 veces.
+ * las piezas de un bloque y 28 entre bloques (14 del `gap` de `.sub-section` + 14
+ * de aquí). La regla es que el hueco ENTRE grupos mida al menos el doble que el
+ * hueco DENTRO de uno (DD-122); aquí mide 4 veces.
  */
 .state-block {
   display: flex;
@@ -145,9 +145,8 @@
   gap: var(--sc-spacing-1);
   min-width: 0;
 
-  /* La casilla no es una pastilla más: el doble de aire delante (12.25 del `gap` +
-   * 12.25 de aquí = 24.5, `scale/1-75`) la separa del grupo sin una línea, que es la
-   * misma distancia con la que el interruptor manda sobre su fila más abajo. */
+  /* La casilla no es una pastilla más: el doble de aire delante (14 del `gap` + 14 de
+   * aquí = 28, `scale/2`) la separa del grupo sin una línea. */
   &__switch {
     margin-inline-start: var(--sc-spacing-1);
   }
@@ -290,8 +289,8 @@
 .switch-row {
   display: contents;
 
-  /* El mando MANDA sobre el nombre, y un poco más de aire lo dice sin una línea:
-   * 12.25 de `column-gap` + 12.25 de aquí = 24.5 (`scale/1-75`). */
+  /* El mando va en su propia columna, a los 14 del `column-gap` de `.switch-rows`
+   * de su nombre. */
   &__control {
     display: inline-flex;
     align-items: center;
