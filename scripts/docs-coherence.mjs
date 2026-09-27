@@ -312,9 +312,15 @@ for (const { path, lines } of files) {
 // se anexaron ASCENDENTE al final— y estaba anotado como pendiente en DOCS-INDEX todo ese
 // tiempo, creciendo. Un doc que declara una regla y la incumple enseña que sus reglas son
 // decorativas. Los apéndices (`DD-23·b`) van pegados a su padre, no en su propio escalón.
+//
+// Y cada número, una sola vez (2026-09-27): #256 y #257 se abrieron el mismo día y las dos
+// llamaron DD-122 a su decisión. El conflicto de git se resuelve quedándose con las dos, y el
+// orden no ve un empate: dos DD-122 seguidas pasaban. Los apéndices repiten número a propósito
+// y no cuentan como repetidos.
 {
   const dec = readFileSync(resolve(root, 'docs/DECISIONS.md'), 'utf8');
-  const nums = [...dec.matchAll(/^## DD-(\d+)/gm)].map((m) => Number(m[1]));
+  const cabeceras = [...dec.matchAll(/^## DD-(\d+)(·)?/gm)];
+  const nums = cabeceras.map((m) => Number(m[1]));
   for (let i = 1; i < nums.length; i++)
     if (nums[i] > nums[i - 1]) {
       fail(
@@ -322,6 +328,12 @@ for (const { path, lines } of files) {
       );
       break; // uno basta: el arreglo es reordenar, no ir uno a uno
     }
+  const principales = cabeceras.filter((m) => !m[2]).map((m) => Number(m[1]));
+  const repetido = principales.find((n, i) => principales.indexOf(n) !== i);
+  if (repetido !== undefined)
+    fail(
+      `docs/DECISIONS.md — DD-${repetido} está dos veces: dos decisiones no comparten número. Renumera la que entró después al siguiente libre, con todas sus citas.`,
+    );
 }
 
 // ── CHECK H — un doc que declara su propia CADUCIDAD y ya venció ───────────────────
