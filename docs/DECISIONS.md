@@ -44,7 +44,7 @@
 > |---|---|
 > | Los datos de demostración del Dashboard cuadran: un solo estado por agente (`DEMO_AGENT_PRESENCE`) para la tabla, los anillos y su detalle · los disponibles no derivan en el latido · unos totales fijos al pie llevan raya arriba | DD-126 |
 > | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra · R4: lo que apilan los envoltorios de dentro de una caja no llega a 7 | DD-125 |
-> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio, y el juego se elige en Configuración → Sistema · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
+> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio, y el juego se elige en Configuración → Sistema · la tortura llega también a Conversaciones y a los widgets del Dashboard · en una tabla que se ajusta, las cifras miden su dato y el nombre recorta con «…» y el `title` · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
 > | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` · `sc-dialog` con cuerpo: la botonera a 28 y 14 entre hermanos | DD-123 |
 > | Un solo índice en toda la app (`sc-form-section-nav`: fichas, constructor y Contact Center) · cada fila es un ENLACE a su sitio (ruta o `?seccion=`), la actual con `aria-current="page"` · clic navega, Cmd+clic abre otra pestaña, Atrás vuelve · en un alta la sección no deja rastro · un solo «Guardar» por ficha, con las secciones con cambios marcadas en el índice · agente y usuario al molde de la ficha de grupo (enmienda DD-121 §2 y DD-113) | DD-122 |
 > | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
@@ -235,7 +235,8 @@ elegir Editorial le gana y se recuerda al navegar, y Demo vuelve.
   siendo válidos, solo extremos.
 
 **Consecuencias** · Lo que vive en memoria (las pantallas de Conversaciones) y los datos de los widgets del Dashboard
-no pasan por `createVersionedStorage` y no se estiran; los monitores del Dashboard, sí.
+no pasan por `createVersionedStorage` y no se estiran; los monitores del Dashboard, sí. (Resuelto el mismo día: ver «La
+tortura llega a lo que vive en memoria», al final.)
 
 **Lo primero que enseñó** (build de producción a 1440, el mismo día) · Con los datos de siempre ninguna lista corta
 un texto; con tortura, las listas cortan con «…» los **14** nombres de grupo, **28** celdas de agentes (nombre y
@@ -254,6 +255,34 @@ texto entero; ahora lo llevan los 56.
 La cabecera de las fichas de agente y usuario, que recortaba el nombre a 252 con sitio libre al lado, ya no recorta:
 con DD-122 (el mismo día) las dos van al molde de la ficha de grupo, sin cifras al lado, y el nombre toma el ancho que
 queda. Medido tras fundirlo, a 1440: 1213 px para el nombre, y el de tortura más largo mide 461 y cabe entero.
+
+**La tortura llega a lo que vive en memoria (el mismo día)** · Con el molde del editorial. `nombreDeGrupo` estira también
+en tortura, y `nombreDePersona` y `nombreDeCosa` hacen lo mismo con agentes, servicios, intenciones, tipificaciones y
+campañas, con el mismo sufijo que `torturar` da a los almacenes. Lo toman:
+- los widgets del Dashboard: `DEMO_ENTITIES`, las filas de «Monitor x» y el estado de cada agente (DD-126);
+- las conversaciones: el grupo, el servicio, y el origen y el destino cuando son una persona (no un teléfono ni un id de
+  chat). Las opciones de sus filtros pasan por la misma función, así que siguen encontrando lo que filtran;
+- el catálogo del constructor de reglas, cuyas condiciones guardan el id.
+
+Con los datos de siempre no cambia nada. Lo que enseñó a 1440, medido con un barrido de recortes, y lo que se hizo. Cada
+punto salió en rojo contra un build con la tortura y sin el arreglo, y en verde con él:
+- **La tabla de agentes del monitor se salía 183 px de su tarjeta.** El nombre empujaba las cifras, y «Transferidas» y
+  «T. medio» quedaban fuera. Ahora las cifras miden lo que su dato (`width: 1%`) y el nombre se queda el resto, donde
+  recorta con «…» y lleva el entero en el `title`.
+- **El título de cinco tarjetas se recortaba antes que la lista de a quién vigila** («Tabla de agent…»). Cedía una
+  fracción de píxel frente a esa lista, y a Chrome le basta para poner la elipsis. Ahora no encoge frente a ella, y su
+  tope es su hueco.
+- **En el detalle del anillo, cada nombre bajaba a tres líneas.** Ahora va en una, con el entero en el `title`.
+- **Las cabeceras de varias palabras se partían al ajustarse su columna** («T. medio», «En este estado»). Sus palabras van
+  unidas por un espacio que no separa (U+00A0, escrito `\u00a0` en las cuatro traducciones), que es además lo correcto
+  tras una abreviatura.
+- **En Conversaciones, un origen bajaba a cuatro líneas y la tabla triplicaba su alto.** El texto libre llega hasta dos
+  líneas, que es lo que decidió el reparto de anchos (2026-09-13), y a partir de ahí recorta con «…» y lleva el entero en
+  el `title`. Las etiquetas ya lo hacían: `sc-tag` pone el `title` al pasar el ratón si recorta.
+- **En Conversaciones → Entidades, una descripción recortada no llevaba el texto entero**, también con los datos de
+  siempre. Ahora lo lleva.
+
+Lo prueban `dashboard.spec.ts` y `conversations-table-scroll.spec.ts`.
 
 ---
 

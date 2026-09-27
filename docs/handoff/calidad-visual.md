@@ -29,9 +29,37 @@
 - **De gusto, visto en la revisión de Sistema**: dos de sus seis secciones llevan icono delante del título
   («Numeración especial» y «Regeneración de contraseñas») y las otras cuatro no. Ni regla ni prueba lo piden.
 
+## ✅ 2026-09-27 (4) · El monitor deja de contradecirse, y la tortura llega a lo que vive en memoria
+
+**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `2b8c122c` (en #260, abierto).
+
+**Qué pasó.**
+- **El «sin verificar» del tramo (3) era un fallo** (DD-126). La tabla de «Monitor x» enseñaba 8 de los 10 agentes de su
+  cabecera, el detalle del anillo daba por disponibles a Denzel (en pausa) y a Leonardo (desconectado), y el latido
+  movía por su lado los disponibles del anillo y del panel de grupos: a los 24 s, 6 y 4 en la misma pantalla, con 5 en
+  la tabla. Ahora hay un solo estado por agente (`DEMO_AGENT_PRESENCE`), la tabla enseña los 10, el latido no mueve los
+  disponibles y el almacén de monitores sube a la versión 2. Los totales llevan raya arriba: con 10 filas a 900 de alto
+  la tabla se desplaza 8 px por dentro.
+- **La tortura llega a lo que vive en memoria** (DD-124): los widgets del Dashboard, las conversaciones con sus filtros y
+  el catálogo del constructor de reglas, con `nombreDeGrupo`, `nombreDePersona` y `nombreDeCosa`. Lo que rompió, y está
+  arreglado:
+  - la tabla de agentes se salía 183 px;
+  - el título de cinco tarjetas se recortaba por una fracción de píxel;
+  - los nombres del detalle bajaban a tres líneas;
+  - las cabeceras de varias palabras se partían (ahora las une un espacio que no separa);
+  - los orígenes de Conversaciones bajaban a cuatro líneas (ahora, hasta dos y «…»);
+  - a una descripción de Entidades le faltaba el texto entero, también con los datos de siempre.
+- **Cómo se midió.** Un barrido de recortes (sin texto entero, celdas que envuelven, tablas que se salen, títulos y
+  cabeceras partidos) en Dashboard y Conversaciones, contra un build con la tortura y sin los arreglos: todo en rojo. Con
+  ellos, todo a cero, y con los datos de siempre, cero antes y después. Las pruebas nuevas de `dashboard.spec.ts` y
+  `conversations-table-scroll.spec.ts` salieron en rojo contra ese build.
+- **Visto y no tocado:** con tortura, el párrafo de alcance del detalle del anillo lista los 10 nombres largos (unas 12
+  líneas antes de la tabla). Es un párrafo, no una lista, así que no lo cubre DD-124.
+
 ## ✅ 2026-09-27 (3) · El monitor medido, el juego de datos en Sistema y la regla del aire que se suma
 
-**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `a5619a2f` (#258 ya fundido).
+**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `a5619a2f` (#258 ya fundido); en #260,
+hasta `ae639b2`.
 
 **Qué pasó.**
 - **Medido a 1440** (DD-125): su ritmo ya era el compacto y no se suma relleno dentro de las tarjetas. El blanco
