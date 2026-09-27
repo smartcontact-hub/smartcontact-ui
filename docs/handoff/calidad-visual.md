@@ -11,9 +11,10 @@
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-1. **Llevar a verde el PR de seguimiento de #257** y, cuando el workflow `visual-baselines` suba las fotos nuevas (la
-   de `sectioncard`, y las que cambien el pie del diálogo o la tarjeta de Patrones), mirarlas una a una antes de darlas
-   por buenas.
+1. **Llevar a verde #258, el PR de seguimiento de #257.** Las fotos de sc-docs ya están regeneradas (`ac6e054e`) y
+   solo cambia `sectioncard`: 34 px más baja (5064 → 5030), la caja del ejemplo y la «Sección plana» con menos aire
+   arriba y abajo, las subsecciones de dentro igual, y el texto de la ficha con las medidas nuevas. Mirada contra la
+   anterior y dada por buena. El pie del diálogo y la tarjeta de Patrones no salen en ninguna foto.
 2. **Pasar `npm run revision -- --datos editorial` por las pantallas que se enseñen** en la próxima demo: es el juego
    para juzgar cómo luce. Si algo se ve mal con nombres de negocio, se arregla en la pantalla, no en los datos.
 3. **Lo que la tortura aún no estira** (DD-124, «Consecuencias»): los datos en memoria de Conversaciones y de los
