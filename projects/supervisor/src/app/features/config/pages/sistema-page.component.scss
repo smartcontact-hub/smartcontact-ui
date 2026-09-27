@@ -90,6 +90,13 @@
 
 /* ---------- Políticas de contraseñas (ex-Seguridad) ---------- */
 
+/* Las filas se separan con su raya, CENTRADA: 12.25 de relleno a cada lado y nada más. Con el
+ * hueco de 14 de `.sub-section` encima, la raya quedaba 10 px más cerca de la fila de abajo que
+ * de la de arriba, y la primera y la última sumaban 12.25 al aire que ya pone la caja (DD-125). */
+.policy-list {
+  gap: 0;
+}
+
 .policy-row {
   display: flex;
   align-items: center;
@@ -99,6 +106,14 @@
 
   &--bordered {
     border-top: 1px solid var(--sc-border-subtle);
+  }
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
   }
 
   &__label {

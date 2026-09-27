@@ -41,6 +41,9 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   prohíbe; Chrome lo leía igual) a texto oculto dentro del enlace. No se mueve un píxel: ningún estilo
   miraba esos atributos. Quien los use como selector, que pase a `.form-nav__item--active` o al rol
   `link`. ([DD-122](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-section-card` mide 17,5 arriba y abajo en las dos pieles (antes, 22,75
+  la gris y 24,5 la blanca), también plegada. Los lados y el aire del título a su contenido no cambian. El relleno
+  vertical no separaba nada: la caja ya la delimitan su borde y su fondo. ([DD-125](docs/DECISIONS.md))
 
 ## [1.0.0] — 2026-09-09
 
