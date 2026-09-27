@@ -137,8 +137,9 @@ Por orden, de lo que más se usa a lo que menos:
    caja (24/18) si el `IconSet` ata el ancho y el alto a la caja. Si no los ata, dejarlo y anotarlo.** Es lo que hace el
    código, y la caja, que es lo que ocupa sitio, no cambia.
 5. **Los dos buscadores (ficha 10): ¿qué lupa y en qué lado?** **Recomiendo la de Material, a la izquierda, en los
-   dos.** El icono de la app es Material (DD-104), `sc-search` es el buscador que más se ve (el de todas las listas),
-   y cambiar el de los paneles en código son cinco clases `.p-*` (medido).
+   dos.** El icono de la app es Material (DD-104) y `sc-search` es el buscador que más se ve (el de todas las listas).
+   En código, pasar a la izquierda la lupa de los paneles son cinco clases `.p-*` (medido); cambiar su glifo no se ha
+   medido.
 6. **El fondo del item seleccionado de la barra lateral (ficha 20): ¿15 % o 12 %?** **Recomiendo 15 %.** Dos fondos de
    grupo del 6 % superpuestos suman 11,6 % (DD-112): a 12 %, lo seleccionado se confunde con ellos.
 7. **Aparcadas, no para esta sesión:**
