@@ -134,6 +134,35 @@ const empiezaPor = (seg, re) => re.test(seg.replace(/^(\s*[A-Za-z_][A-Za-z_0-9]*
 const esPushDeCommits = (seg) =>
   empiezaPor(seg, /^git\s+push\b/) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
 
+/**
+ * La carpeta donde de verdad corre el comando: la de la sesión, salvo que empiece por `cd <ruta>`.
+ *
+ * Por qué (2026-09-27): el hook recibe el cwd de la SESIÓN, así que `cd <worktree> && git push` o
+ * `cd <worktree> && npx playwright test` se juzgaban contra el árbol principal. Denegó dos veces sin
+ * motivo (la marca de preflight y el `dist/` del worktree estaban al día) y hubo que saltarlo con
+ * `# sc:ok`. Solo rutas LITERALES: con una variable (`cd $DIR`) no se sabe adónde va y manda la sesión.
+ */
+export function carpetaEfectiva(cmd, cwd) {
+  let dir = cwd;
+  for (const seg of segmentos(cmd)) {
+    if (/^(export\s+)?[A-Za-z_][A-Za-z_0-9]*=\S*$/.test(seg)) continue; // asignaciones delante del cd
+    const m = seg.match(/^cd\s+(?:"([^"$`]+)"|'([^']+)'|([^\s"'$`]+))$/);
+    if (!m) break;
+    const ruta = m[1] ?? m[2] ?? m[3];
+    if (ruta === '-') break;
+    dir = ruta === '~' || ruta.startsWith('~/') ? resolve(process.env['HOME'] ?? '/', ruta.slice(2)) : resolve(dir, ruta);
+  }
+  return dir;
+}
+
+/** Una rama remota que no es la principal: casi siempre, la de otra sesión. */
+const RAMA_AJENA = /(?:^|\s)origin\/(?!(?:main|master|HEAD)(?:\s|$))[\w./-]+/;
+/** Sacarla para TRABAJAR en ella: rama local nueva o con seguimiento, o un worktree. Leer un fichero
+ *  suelto (`git checkout origin/x -- f`) o fundirla no es trabajar en ella. */
+const tomaRamaAjena = (seg) =>
+  (empiezaPor(seg, /^git\s+(checkout|switch)\b/) && /\s(-[bBcC]|-t|--track)(\s|$)/.test(seg) && RAMA_AJENA.test(seg)) ||
+  (empiezaPor(seg, /^git\s+worktree\s+add\b/) && RAMA_AJENA.test(seg));
+
 /** Reconstruyen `dist/`: si corren a la vez que un preflight, se lo comen bajo los pies. */
 const BUILDS = /^(npm run (?:-[-a-z]+ )*build(:[a-z-]+)?|ng build)\b/;
 
@@ -252,7 +281,7 @@ export function evaluar(cmd, ctx = {}) {
 
 function evaluarBase(cmd, ctx = {}) {
   if (BYPASS.test(cmd)) return { decision: 'allow', reason: 'sc:ok explícito' };
-  const cwd = ctx.cwd || process.cwd();
+  const cwd = carpetaEfectiva(cmd, ctx.cwd || process.cwd());
   const preflight = ctx.preflight || estadoPreflight;
   const sinIndexar = ctx.sinIndexar || fuentesSinIndexar;
   const segs = segmentos(cmd);
@@ -364,6 +393,25 @@ function evaluarBase(cmd, ctx = {}) {
         'LEARNINGS #12 — `main...rama` usa la base de fusión: enseña cambios ya aplicados y esconde lo que main tiene de más (casi borra 432 ficheros en s35). ' +
         'Para «qué cambia si mergeo» usa DOS puntos: `git diff main..rama`. Si de verdad quieres la base de fusión, añade `# sc:ok`.',
     };
+
+  // #21 — sacar la rama de OTRA sesión para trabajar en ella sin mirar si sigue viva.
+  //
+  // El 2026-09-27 reproduje y arreglé los tres rojos del CI de #256 (~15 min) mientras su sesión,
+  // viva en la nube, subía el mismo arreglo: lo vi al ir a empujar, por el tip, no al empezar. Y
+  // `git worktree list`, la receta de la regla, no ve una sesión cloud; `list_sessions` sí.
+  const ajena = segs.find(tomaRamaAjena);
+  if (ajena) {
+    const rama = ajena.match(RAMA_AJENA)[0].trim();
+    return {
+      decision: 'deny',
+      reason:
+        `LEARNINGS #21 — vas a trabajar sobre \`${rama}\`, y una rama que no es \`main\` suele ser de otra sesión, que puede ` +
+        'seguir viva y empujando lo mismo. Antes de invertir trabajo, mira si lo está: su último push ' +
+        `(\`git log -1 --format='%cr · %s' ${rama}\`) y, en una sesión cloud, \`list_sessions\` (su rama y su \`task_summary\`): ` +
+        '`git worktree list` no la ve. Una rama, una sesión: si está viva, coordina o trabaja en tu rama. ' +
+        'Si ya lo miraste o la rama es tuya, añade `# sc:ok`.',
+    };
+  }
 
   // #11 — zsh no parte `$VAR` por palabras: `for f in $FILES` itera UNA vez sobre todo el texto.
   if (segs.some((s) => empiezaPor(s, /^for\s+\w+\s+in\s+"?\$\{?[A-Za-z_][A-Za-z_0-9]*\}?"?\s*(do\b|$)/)))
