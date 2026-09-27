@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · el editorial, pendiente de producto | DD-123 |
 > | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` | DD-122 |
 > | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
 > | Sidebar en producción: abrir una categoría no cierra las demás y nada se cierra al salir · plegado solo la rama de la página · se despliega con el ratón y se ancla con su botón · selección en cyan · subsecciones en 450ms con la curva de Apollo (enmienda DD-112 §3-§5) | DD-118 |
@@ -81,6 +82,53 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-123 · 2026-09-27 — La demo tiene un segundo juego de datos, `?datos=tortura`, para ver dónde se rompe una pantalla
+
+**Contexto** · Una pantalla se juzga con los datos que tiene delante. Medido en la semilla del Supervisor el
+2026-09-27: 500 agentes con nombres de 7 a 18 letras y ningún campo vacío; 480 salen de cruzar 25 nombres con 25
+apellidos («Harrison Kidman») y no están en ningún grupo; y los grupos llevan nombres de producción o de prueba
+(«Grupo de prueba 1», «ACD demo cuscare», «Campaigns»). No sirven para ver belleza, porque no son editoriales, ni para
+ver roturas, porque no hay extremos. Rafa aceptó tener dos juegos: uno cuidado para juzgar y hacer demos, y uno de
+tortura.
+
+**Decisión** ·
+1. **`?datos=tortura`** estira los textos: `name` y `title` más largos (con un apellido compuesto real si el
+   elemento es una persona), el correo más largo y la descripción larga en la mitad y vacía en la otra mitad. Ids,
+   códigos y referencias no se tocan, así que las relaciones entre almacenes siguen igual. `?datos=demo` vuelve.
+2. **Lo aplica `createVersionedStorage`** (`core/services/juego-de-datos.ts`), por donde pasan todos los almacenes
+   persistidos: ninguna pantalla lo sabe. Cada juego guarda en SUS claves (`sc-agents@tortura`) y la elección se
+   recuerda en `sessionStorage`, que no sobrevive a cerrar la pestaña.
+3. **Los datos de siempre no cambian**: con `demo`, mismas claves y mismos `defaults`. Los e2e y la demo pública
+   siguen igual.
+4. Se mira con `npm run revision -- --datos tortura <ruta>`; lo prueba `e2e/supervisor/juego-de-datos.spec.ts`
+   (llega a los almacenes, se recuerda, vuelve, y no comparte claves).
+
+**Pendiente (decisión de producto)** · El juego **editorial**: grupos con nombres de negocio coherentes y agentes
+generados con nombre y grupos creíbles. Es lo que se enseña en una demo, y los nombres de grupo de hoy vienen de
+producción a propósito (`audit-seed-pii`), así que qué se enseña lo decide producto. Propuesta para los 14 grupos:
+Atención al cliente, Soporte técnico, Ventas, Facturación, Retención, Posventa, Clientes VIP, Incidencias, Campañas
+salientes, Citas y reservas, Distribuidores, Cobros, Bajas y Segundo nivel. Con el mecanismo hecho es una tabla por id.
+
+**Descartadas** ·
+- **Cambiar la semilla por defecto** → tumba los e2e que leen nombres («ACD Demo C2CB», «Tom Hanks») y cambia la
+  demo pública sin decisión.
+- **Un juego por pantalla** → cada pantalla tendría que saberlo; en el almacén no lo sabe ninguna.
+- **Tortura con datos inválidos** (formatos rotos) → eso es validar formularios, otra pregunta. Aquí los datos siguen
+  siendo válidos, solo extremos.
+
+**Consecuencias** · Lo que vive en memoria (las pantallas de Conversaciones) y los datos de los widgets del Dashboard
+no pasan por `createVersionedStorage` y no se estiran; los monitores del Dashboard, sí.
+
+**Lo primero que enseñó** (build de producción a 1440, el mismo día) · Con los datos de siempre ninguna lista corta
+un texto; con tortura, las listas cortan con «…» los **14** nombres de grupo, **28** celdas de agentes (nombre y
+correo) y **6** correos de usuario: «Tom Hanks Fernández-Villaverde de la Concepción» necesita 345 px y recibe 218. Es
+justo lo que DD-102 prometía que no pasaría («una lista nunca corta texto»), pero sus anchos se midieron con nombres
+de 7 a 18 letras, y un nombre compuesto español real pasa de 40. La cabecera de la ficha de agente también corta el
+nombre, con sitio libre a su derecha. Si DD-102 se revisa (anchos medidos con los datos que haya, o desplazamiento
+lateral), es decisión de producto; queda en el hand-off de calidad visual.
 
 ---
 

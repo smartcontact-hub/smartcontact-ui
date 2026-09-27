@@ -3,6 +3,7 @@
  * REVISIÓN PREVIA A ENSEÑAR UNA PANTALLA DEL SUPERVISOR.
  *
  *   npm run revision -- <ruta> [<ruta>…]        p. ej. `npm run revision -- admin/grupos/editar/11 login`
+ *   npm run revision -- --datos tortura <ruta>   la misma pantalla con los textos al límite (DD-123)
  *
  * Por qué existe: el primer filtro visual de una pantalla no puede ser el usuario. Una lista de
  * consejos de UI que se contrastó con el repo el 2026-09-27 lo decía así: pide a la IA que CRITIQUE
@@ -74,8 +75,8 @@ async function revisarVista(page, vista) {
   return { vista, archivo, pares };
 }
 
-async function revisarRuta(page, ruta) {
-  const destino = `${BASE}/${ruta.replace(/^\//, '')}`;
+async function revisarRuta(page, ruta, datos) {
+  const destino = `${BASE}/${ruta.replace(/^\//, '')}${datos ? `${ruta.includes('?') ? '&' : '?'}datos=${datos}` : ''}`;
   const r = await page.goto(destino, { waitUntil: 'networkidle' }).catch((e) => ({ error: e }));
   if (!r || r.error) throw new Error(`no se puede abrir ${destino}: ¿está el Supervisor sirviendo? (${r?.error?.message ?? 'sin respuesta'})`);
   await page.mouse.move(720, 8); // fuera de la barra lateral, que se despliega al pasar el ratón
@@ -95,7 +96,10 @@ async function revisarRuta(page, ruta) {
 }
 
 async function main() {
-  const rutas = process.argv.slice(2).filter((a) => !a.startsWith('-'));
+  const args = process.argv.slice(2);
+  const iDatos = args.indexOf('--datos');
+  const datos = iDatos >= 0 ? args[iDatos + 1] : undefined;
+  const rutas = args.filter((a, i) => !a.startsWith('-') && (iDatos < 0 || i !== iDatos + 1));
   if (!rutas.length) {
     console.error('Uso: npm run revision -- <ruta> [<ruta>…]   (p. ej. admin/grupos/editar/11)');
     process.exit(2);
@@ -108,7 +112,7 @@ async function main() {
   let rojas = 0;
   try {
     for (const ruta of rutas) {
-      for (const { vista, archivo, pares } of await revisarRuta(page, ruta)) {
+      for (const { vista, archivo, pares } of await revisarRuta(page, ruta, datos)) {
         const mal = pares.filter((p) => !p.ok);
         if (mal.length) rojas++;
         console.log(`${mal.length ? '✗' : '✓'} ${vista} · ${pares.length} relaciones medidas · ${archivo}`);
