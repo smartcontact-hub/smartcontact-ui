@@ -11,12 +11,11 @@
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-1. **Llevar a verde el PR del monitor** (el tramo de arriba), que va aparte porque #258 se fusionó antes de que
-   llegara. No cambia ninguna foto de sc-docs: el anillo solo vive en el Supervisor.
-2. **Pasar `npm run revision -- --datos editorial` por las pantallas que se enseñen** en la próxima demo: es el juego
-   para juzgar cómo luce. Si algo se ve mal con nombres de negocio, se arregla en la pantalla, no en los datos.
-3. **Lo que la tortura aún no estira** (DD-124, «Consecuencias»): los datos en memoria de Conversaciones y de los
-   widgets del Dashboard. El editorial sí los alcanza, con `deGrupos` y `nombreDeGrupo`: el mismo molde serviría.
+1. **Llevar a verde el PR de este tramo** (el (4)), que va aparte porque #260 se fusionó antes de que llegara. No cambia
+   ninguna foto de sc-docs: todo vive en el Supervisor.
+2. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
+   a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
+   pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).
 
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
@@ -26,12 +25,20 @@
   del repo: traerlos a `docs/` para que otra sesión (o la nube) los pueda leer.
 - **`npm run correcciones` en su máquina**: el registro de correcciones vive allí; en una sesión en la nube se pierde
   al cerrar el contenedor.
+- **Los agentes en el juego editorial** (decisión de producto: DD-124 los dejó con sus nombres de Hollywood). La lista
+  de Agentes enseña 25 seguidos apellidados «Kidman»: son los 480 del cruce de 25 nombres con 25 apellidos, en orden.
+  En una demo se lee como generado. Propuesta: en el editorial, barajar el cruce («Nicole Kidman», «Harrison Ford»…).
+- **Los servicios en el juego editorial**: Conversaciones enseña «DV: Smart Contact», con un prefijo de producción, y
+  «Atención al Cliente» (servicio) al lado de «Atención al cliente» (grupo). El editorial solo renombra grupos.
+- **De gusto, visto en la revisión editorial**: «Web Chat» baja a dos líneas en la cabecera de la tabla de grupos del
+  agente, y «Grupos / Agentes / Tipificaciones» en el acceso del usuario. Ya pasaba con los datos de siempre.
 - **De gusto, visto en la revisión de Sistema**: dos de sus seis secciones llevan icono delante del título
   («Numeración especial» y «Regeneración de contraseñas») y las otras cuatro no. Ni regla ni prueba lo piden.
 
-## ✅ 2026-09-27 (4) · El monitor deja de contradecirse, y la tortura llega a lo que vive en memoria
+## ✅ 2026-09-27 (4) · El monitor deja de contradecirse, la tortura llega a lo que vive en memoria, y revisión editorial
 
-**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `2b8c122c` (en #260, abierto).
+**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `9241498a` (#260 y #261 fundidos; la
+rama se rehízo desde `main` con los commits de este tramo encima).
 
 **Qué pasó.**
 - **El «sin verificar» del tramo (3) era un fallo** (DD-126). La tabla de «Monitor x» enseñaba 8 de los 10 agentes de su
@@ -53,13 +60,19 @@
   cabeceras partidos) en Dashboard y Conversaciones, contra un build con la tortura y sin los arreglos: todo en rojo. Con
   ellos, todo a cero, y con los datos de siempre, cero antes y después. Las pruebas nuevas de `dashboard.spec.ts` y
   `conversations-table-scroll.spec.ts` salieron en rojo contra ese build.
+- **Revisión con `--datos editorial`** de Dashboard, Conversaciones, las listas y fichas de agentes, grupos y usuarios,
+  y Sistema (19 vistas, agrupación en regla). Salieron dos cosas:
+  - **cuatro colas de Conversaciones sin nombre de negocio**, entre ellas «COLA_PRUEBA». Ya lo tienen (DD-124), y
+    `juego-de-datos.spec.ts` salió en rojo contra el build sin el mapa;
+  - **la revisión fotografiaba el Dashboard a medio entrar**: la última tarjeta y el hueco vacío de «Colas y agentes»
+    salían desvaídos, parecían rotos. `npm run revision` espera ya a que acaben las animaciones con final.
+  Lo que es decisión de producto o de gusto está arriba, en «Esperando».
 - **Visto y no tocado:** con tortura, el párrafo de alcance del detalle del anillo lista los 10 nombres largos (unas 12
   líneas antes de la tabla). Es un párrafo, no una lista, así que no lo cubre DD-124.
 
 ## ✅ 2026-09-27 (3) · El monitor medido, el juego de datos en Sistema y la regla del aire que se suma
 
-**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `a5619a2f` (#258 ya fundido); en #260,
-hasta `ae639b2`.
+**Sello:** fusionado en `main` con #260, HEAD `cd84f8ec`.
 
 **Qué pasó.**
 - **Medido a 1440** (DD-125): su ritmo ya era el compacto y no se suma relleno dentro de las tarjetas. El blanco

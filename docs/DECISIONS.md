@@ -214,7 +214,10 @@ tortura.
 **El juego editorial (el mismo día)** · `?datos=editorial` da a los 14 grupos un nombre de negocio, elegido por lo que
 hace cada uno (sus servicios y sus canales): Atención al cliente (1), Bajas (2), Campañas salientes (3), Ventas (4),
 Clientes VIP (5), Citas y reservas (6), Distribuidores (7), Retención (8), Posventa (9), Facturación (10), Soporte
-técnico (11), Incidencias (12), Segundo nivel (13) y Cobros (14). La tabla va por el NOMBRE de siempre, no por el id,
+técnico (11), Incidencias (12), Segundo nivel (13) y Cobros (14). Desde la revisión con `--datos editorial` del mismo día,
+también las cuatro colas que solo viven en Conversaciones, que sin nombre de negocio enseñaban una cola de prueba en el
+juego para enseñar la app: Soporte Nivel 1 → Primer nivel, Soporte Nivel 2 → Escalados, Clientes vip → Clientes VIP (el
+grupo VIP, el mismo nombre que toma Exclusivo) y COLA_PRUEBA → Desbordamiento. La tabla va por el NOMBRE de siempre, no por el id,
 porque el nombre se repite fuera del almacén de grupos: el grupo saliente del agente, la ficha de usuario, los filtros
 y las conversaciones de Conversaciones y las entidades del Dashboard, que lo toman de `deGrupos` y `nombreDeGrupo`
 (`core/services/juego-de-datos.ts`). Solo cambian los campos que guardan un nombre de grupo: «Reclamaciones» también
