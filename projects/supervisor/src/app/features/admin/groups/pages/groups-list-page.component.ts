@@ -71,10 +71,10 @@ interface PendingBulkEdit {
 /* v2 — bumped when ColumnSelector schema changed (set → ordered array)
  * and when `code` started shipping hidden by default. */
 /* v3 (2026-09-16): columna nueva (Servicios). Una lista guardada no la conoce y no saldría nunca. */
-/* v4 (2026-09-24): el ID pasa detrás del nombre. Una lista guardada lo seguiría poniendo el primero. */
-/* v5 (2026-09-26): la estrategia se parte en la de Teléfono y la de Chat. El selector añade una columna
- * nueva AL FINAL de lo guardado: la de Chat saldría detrás del botón «Agentes». */
-const COLUMN_PREF_KEY = 'sc-groups-columns-v5';
+/* v4 (2026-09-24): el ID pasa detrás del nombre. Una lista guardada lo seguiría poniendo el primero.
+ * La columna «Estrategia de chat» (2026-09-26) no pide versión: es opcional, y el selector solo añade a lo
+ * guardado las columnas nuevas que salen por defecto. */
+const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
 
 @Component({
   selector: 'sc-groups-list-page',
@@ -165,8 +165,9 @@ export class GroupsListPageComponent {
       { key: 'channels', label: this.translate.instant('groups.table.channels') },
       { key: 'priority', label: this.translate.instant('groups.table.priority') },
       // Una columna por familia de canales, como la ficha: cada una se ordena, se edita en bloque y se exporta sola.
+      // La de chat, opcional: con las dos a la vez la tabla no cabe a 1440 sin recortar (medido el 2026-09-26).
       { key: 'strategy', label: this.translate.instant('groups.table.strategy_phone') },
-      { key: 'chatStrategy', label: this.translate.instant('groups.table.strategy_chat') },
+      { key: 'chatStrategy', label: this.translate.instant('groups.table.strategy_chat'), defaultVisible: false },
       { key: 'services', label: this.translate.instant('groups.table.services') },
       { key: 'agents', label: this.translate.instant('groups.table.agents') },
       // El panel rápido de agentes: fijo, porque es la tarea más frecuente de la lista.
@@ -323,15 +324,17 @@ export class GroupsListPageComponent {
         header: this.translate.instant('groups.table.strategy_phone'),
         sortable: true,
         cellTemplate: this.strategyTpl(),
-        /* «Más tiempo inactivo» mide 118 px de etiqueta y con 9.5rem le quedaban 114: se cortaba (2026-09-24). */
-        width: '9.75rem',
+        /* Medido a 1440 (2026-09-26): la cabecera con su flecha pide 198 px y la etiqueta más ancha del
+         * catálogo, «Menos llamadas atendidas», 167 más los 28 de la celda. Con 9.75rem se cortaban las dos. */
+        width: '12.5rem',
       },
       {
         field: 'chatStrategy',
         header: this.translate.instant('groups.table.strategy_chat'),
         sortable: true,
         cellTemplate: this.chatStrategyTpl(),
-        width: '9.75rem',
+        /* La cabecera pide 171 px; la etiqueta más ancha, «Rotativa (por turnos)», 131 más los 28 de la celda. */
+        width: '11rem',
       },
       {
         field: 'services',

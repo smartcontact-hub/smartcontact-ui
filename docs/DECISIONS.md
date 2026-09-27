@@ -152,8 +152,9 @@ tres fichas (#240) y el alta en diálogo (DD-119).
     (`?seccion=distribucion|recursos|agentes`, que en el alta no cuenta: siempre abre en General). Agente y usuario
     ya creaban así, y la de grupo lo hacía hasta el 2026-09-23. Duplicar conserva su diálogo.
 12. **Lo que rodea a la ficha habla como ella.** El listado tiene una columna por estrategia, «Estrategia de
-    teléfono» y «Estrategia de chat», con «—» donde el grupo no tiene el canal (también el teléfono saliente), y
-    buscar, ordenar, editar en bloque y exportar leen lo mismo; el lote de una estrategia escribe SU campo (antes las
+    teléfono» y «Estrategia de chat» (opcional, en el selector: con las dos a la vez la tabla no cabe a 1440 sin
+    recortar, medido), con «—» donde el grupo no tiene el canal (también el teléfono saliente), y buscar,
+    ordenar, editar en bloque y exportar leen lo mismo; el lote de una estrategia escribe SU campo (antes las
     de chat caían en la de teléfono) y solo en los grupos con su canal. Prioridad ordena por rango: `sc-datatable`
     gana `externalSort`, porque `p-table` reordenaba por el valor crudo del campo encima del orden de la página.
     Valores por defecto va en el orden y con las palabras de la ficha, con estrategia y cola por canal y el cierre

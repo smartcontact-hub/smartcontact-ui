@@ -40,8 +40,9 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
 - ⚠️ `p-table` reordena en el cliente por el valor crudo del campo ENCIMA del orden que recibe: el `sortFn` de una
   página no servía en ninguna columna con campo real. Con `externalSort` (que `sc-list-page` enciende si hay
   `sortFn`), toda columna ordenable tiene que estar en ese `sortFn`, o deja de ordenar.
-- ⚠️ El selector de columnas añade una columna nueva AL FINAL de lo guardado: si su sitio importa, sube la versión de
-  la clave (grupos va por `v5`).
+- ⚠️ El selector de columnas añade una columna nueva AL FINAL de lo guardado (solo si sale por defecto; una opcional
+  no se añade). Si su sitio importa, sube la versión de la clave. Y ninguna prueba vigilaba el recorte en las listas:
+  lo hace ahora `listado-grupos.spec.ts` a 1440 (DD-102), que cazó dos cabeceras y una etiqueta cortadas.
 - ⚠️ En una columna flex, el host de `sc-checkbox` se estiraba (271 px) y su `<label>` no (54-93): pulsar fuera del
   rótulo no marcaba. `.checkbox-stack` lleva `align-items: flex-start`, que arregla también la ficha de usuario.
 - ⚠️ Mientras un preflight reconstruye `dist/`, el servidor de desarrollo compila en falso: mira la última
