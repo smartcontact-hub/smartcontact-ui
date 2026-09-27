@@ -43,6 +43,7 @@
     "build:icons": "npm run generate:icons && ng build ui-smartcontact-icons",
     "build:supervisor": "npm run build && ng build supervisor --configuration production && node scripts/stamp-build.mjs supervisor",
     "ci:verdict": "node scripts/ci-verdict.mjs",
+    "correcciones": "node scripts/correcciones-resumen.mjs",
     "sesiones": "node scripts/sesiones.mjs",
     "docs:coherence": "node scripts/docs-coherence.mjs",
     "docs:guard": "node scripts/docs-guard.mjs",
