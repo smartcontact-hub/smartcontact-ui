@@ -4,16 +4,21 @@
  * El mock de conversación, el seed admin y el catálogo Memory son tres universos
  * de nombres distintos (ver condition-eval). Para que "afecta a N conversaciones"
  * cuadre en la demo:
- * - **Servicios**: casan directos (mismo nombre) → no necesitan puente.
+ * - **Servicios**: casan directos (mismo nombre) → no necesitan puente. Con otro juego de datos (DD-124), la regla y
+ *   la conversación los renombran con la misma función (`nombreDeServicio`), así que siguen casando.
  * - **Grupos/colas**: `conversation.group` usa los nombres REALES del seed admin
  *   (mismo origen mock) → el puente devuelve el nombre real del grupo por id.
  * - **Agentes**: `conversation.origin` usa los nombres del catálogo Memory (Ana
  *   Martínez, María García…), que NO corresponden a IDs admin → mapa **fabricado**
  *   id→nombre-de-conversación (ids 1-9 = los 9 agentes que aparecen; el resto no
  *   casa ninguna conversación).
+ * - Grupos y agentes salen con el nombre del juego activo, el mismo que llevan las conversaciones: sin él, en el
+ *   editorial y en tortura ninguna regla por grupo o por agente casaba con nada.
  *
  * En producción esto no existe: el motor de reglas evalúa contra datos reales por id.
  */
+import { nombreDeGrupo, nombreDePersona } from '@core/services/juego-de-datos';
+
 import { GROUPS_SEED } from '../../admin/groups/data/groups-data';
 
 /**
@@ -28,7 +33,8 @@ const groupRealName = new Map<number, string>(GROUPS_SEED.map((g) => [g.id, g.na
 
 /** Nombre del grupo tal y como aparece en `conversation.group` (nombre real admin). */
 export function groupConvName(id: number): string | undefined {
-  return groupRealName.get(id);
+  const nombre = groupRealName.get(id);
+  return nombre === undefined ? undefined : nombreDeGrupo(nombre);
 }
 
 const AGENT_CONV_NAME: Readonly<Record<number, string>> = {
@@ -45,5 +51,6 @@ const AGENT_CONV_NAME: Readonly<Record<number, string>> = {
 
 /** Nombre del agente tal y como aparece en `conversation.origin` (mapa demo). */
 export function agentConvName(id: number): string | undefined {
-  return AGENT_CONV_NAME[id];
+  const nombre = AGENT_CONV_NAME[id];
+  return nombre === undefined ? undefined : nombreDePersona(nombre);
 }
