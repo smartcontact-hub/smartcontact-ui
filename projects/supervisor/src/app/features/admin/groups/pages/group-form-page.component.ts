@@ -256,7 +256,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
       { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books' },
       { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'group' },
-    ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionTree(s.id)) })),
+    ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) })),
   );
 
   /**
@@ -352,11 +352,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       return;
     }
     // En el alta, sin rastro en el historial: Atrás sale del alta (DD-122).
-    void this.sectionLinks.go(this.sectionTree(id), { replace: this.mode() === 'create' });
+    void this.sectionLinks.go(this.sectionUrl(id), { replace: this.mode() === 'create' });
   }
 
   /** La dirección de una sección de esta ficha: General, la de aterrizaje, sin parámetro. */
-  private sectionTree(id: string): UrlTree {
+  private sectionUrl(id: string): UrlTree {
     const slug = this.sectionSlug(id);
     return this.sectionLinks.section(this.route, slug === 'general' ? null : slug);
   }
@@ -367,7 +367,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   private stayInGeneral(): void {
     this.attemptedGeneral.set(true);
-    if (this.seccion()) void this.sectionLinks.go(this.sectionTree('group-section-general'), { replace: true });
+    if (this.seccion()) void this.sectionLinks.go(this.sectionUrl('group-section-general'), { replace: true });
     const nameMissing = this.form().name.trim().length === 0 || this.nameTaken();
     const target = nameMissing ? 'group-name' : 'group-channels-phone';
     afterNextRender(() => document.getElementById(target)?.focus(), { injector: this.injector });
@@ -599,7 +599,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       // parámetro, o en cuanto General estuviera completa la ficha saltaría sola a esa sección.
       this.dirtyState.markPristine();
       if (this.route.snapshot.queryParamMap.has('seccion')) {
-        void this.sectionLinks.go(this.sectionTree('group-section-general'), { replace: true });
+        void this.sectionLinks.go(this.sectionUrl('group-section-general'), { replace: true });
       }
       return;
     }

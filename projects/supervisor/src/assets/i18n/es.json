@@ -990,6 +990,7 @@
     "delete_gate": "Eliminar…",
     "no_changes": "No hay cambios que guardar",
     "unsaved_changes": "Cambios sin guardar",
+    "summary": "Resumen",
     "actions": "Acciones",
     "select_row": "Seleccionar {{name}}",
     "select_all": "Seleccionar todo",
@@ -1387,7 +1388,8 @@
         "permissions_hint": "Acciones avanzadas",
         "services": "Servicios asignados",
         "services_hint": "Servicios VUI bajo supervisión",
-        "access": "Acceso"
+        "access": "Acceso",
+        "access_hint": "Lo que ve y lo que puede hacer"
       },
       "fields": {
         "name": "Nombre completo",
@@ -1806,9 +1808,11 @@
         "permissions": "Permisos",
         "permissions_hint": "Capacidades del agente",
         "advanced": "Avanzado",
-        "advanced_hint": "Etiquetas, comportamiento, idioma",
+        "advanced_hint": "Comportamiento, integración y sesión",
         "resources": "Recursos",
-        "identity": "Identidad"
+        "identity": "Identidad",
+        "groups_hint": "Dónde atiende y por qué canales",
+        "resources_hint": "Lo que se le asigna desde Repositorios"
       },
       "advanced": {
         "labels": {

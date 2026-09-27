@@ -115,7 +115,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `iconPos`, `motionOptions`, `toggleButtonProps`, `toggler`
 
-### `sc-message` · 5 usos · primeng/message
+### `sc-message` · 7 usos · primeng/message
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
 
@@ -155,7 +155,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-form-section-nav` · 3 usos · —
+### `sc-form-section-nav` · 5 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -187,7 +187,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-section-card` · 21 usos · —
+### `sc-section-card` · 29 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

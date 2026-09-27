@@ -19,7 +19,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *     deja entrar por la dirección a otra sección sin completar General;
  *   · un solo «Guardar» por ficha: el índice marca las secciones con cambios sin guardar y la barra
  *     lo dice en palabras.
- * Las fichas de agente y usuario entran en esta red cuando pasan al índice lateral.
+ * Las fichas de agente y usuario entran el mismo día, al pasar de pestañas al índice lateral.
  */
 
 test.beforeEach(async ({ page }) => {
@@ -44,6 +44,22 @@ for (const { pantalla, ruta, hrefs } of [
       '/admin/grupos/editar/1?seccion=recursos',
       '/admin/grupos/editar/1?seccion=agentes',
     ],
+  },
+  {
+    pantalla: 'ficha de agente',
+    ruta: 'admin/agentes/editar/1',
+    hrefs: [
+      '/admin/agentes/editar/1',
+      '/admin/agentes/editar/1?seccion=grupos',
+      '/admin/agentes/editar/1?seccion=permisos',
+      '/admin/agentes/editar/1?seccion=recursos',
+      '/admin/agentes/editar/1?seccion=avanzado',
+    ],
+  },
+  {
+    pantalla: 'ficha de usuario',
+    ruta: 'admin/usuarios/editar/1',
+    hrefs: ['/admin/usuarios/editar/1', '/admin/usuarios/editar/1?seccion=acceso', '/admin/usuarios/editar/1?seccion=servicios'],
   },
   {
     pantalla: 'constructor de reglas',

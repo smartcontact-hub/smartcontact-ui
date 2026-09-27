@@ -190,14 +190,14 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly sectionLinks = inject(SectionLinksService);
 
   /** La dirección de una sección: la de aterrizaje, sin parámetro (es la dirección de la página). */
-  private sectionTree(id: string): UrlTree {
+  private sectionUrl(id: string): UrlTree {
     const slug = Object.entries(RuleBuilderPageComponent.SECTION_SLUGS).find(([, v]) => v === id)?.[0] ?? null;
     return this.sectionLinks.section(this.route, id === this.landing() ? null : slug);
   }
 
   /** Ir a otra sección. Al crear, sin rastro en el historial: Atrás sale del alta (DD-122). */
   protected goTo(id: string): void {
-    void this.sectionLinks.go(this.sectionTree(id), { replace: !this.isEditMode() });
+    void this.sectionLinks.go(this.sectionUrl(id), { replace: !this.isEditMode() });
   }
 
   protected readonly tieneIa = computed(
@@ -218,7 +218,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
     const secciones: FormNavSection[] = this.tieneIa()
       ? [basica, alcance, { id: 'rule-section-ai', labelKey: 'memory.rules.builder.ai_analysis', icon: this.sparklesIcon }]
       : [basica, alcance];
-    return secciones.map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionTree(s.id)) }));
+    return secciones.map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) }));
   });
 
   /** Punto rojo en el índice. Solo tras intentar guardar: un formulario recién

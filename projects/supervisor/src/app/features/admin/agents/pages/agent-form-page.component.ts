@@ -4,19 +4,19 @@ import {
   computed,
   HostListener,
   inject,
+  input,
   OnDestroy,
   OnInit,
   signal,
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { TabsModule } from 'primeng/tabs';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import type {
   ScMatrixColumn,
   ScMatrixColumnToggle,
@@ -27,16 +27,19 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { CrossTabLockService } from '@core/services';
+import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { NameInplaceComponent } from '@shared/components';
-import { createFormDirtyState } from '@shared/utils/form-dirty-state';
+import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDividerComponent as DividerComponent,
+  ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
+  ScMessageComponent as MessageComponent,
+  ScSectionCardComponent as SectionCardComponent,
   ScInputTextComponent as InputTextComponent,
   ScPermissionMatrixComponent as PermissionMatrixComponent,
   ScPhotoUploadComponent as PhotoUploadComponent,
@@ -128,6 +131,34 @@ interface FormState {
   templateIds: ReadonlySet<number>;
 }
 
+/**
+ * De qué sección es cada campo, para marcar en el índice las que tienen cambios sin guardar (DD-122).
+ * `permissions` se reparte por subcampo (ver `sectionsWithChanges`).
+ */
+const AGENT_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
+  name: 'agent-section-identity',
+  extension: 'agent-section-identity',
+  agentType: 'agent-section-identity',
+  status: 'agent-section-identity',
+  presenceStatus: 'agent-section-identity',
+  phone: 'agent-section-identity',
+  email: 'agent-section-identity',
+  pin: 'agent-section-identity',
+  photo: 'agent-section-identity',
+  links: 'agent-section-groups',
+  permissions: 'agent-section-permissions',
+  labelIds: 'agent-section-resources',
+  scheduleIds: 'agent-section-resources',
+  templateIds: 'agent-section-resources',
+  pickupType: 'agent-section-advanced',
+  pickupTypeChat: 'agent-section-advanced',
+  randomOrder: 'agent-section-advanced',
+  maxChats: 'agent-section-advanced',
+  languages: 'agent-section-advanced',
+  iframeUrl: 'agent-section-advanced',
+  loginExtOverride: 'agent-section-advanced',
+};
+
 /** ¿Son la misma selección, sin importar el orden? */
 function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
   if (a.length !== b.length) return false;
@@ -142,14 +173,17 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     NameInplaceComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
+    FormSectionNavComponent,
     GroupAssignmentTableComponent,
+    IconComponent,
     InputTextComponent,
+    MessageComponent,
     PermissionMatrixComponent,
     PhotoUploadComponent,
     RouterLink,
     MultiSelectComponent,
+    SectionCardComponent,
     SelectComponent,
-    TabsModule,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -160,7 +194,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
 export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly location = inject(Location);
+  private readonly sectionLinks = inject(SectionLinksService);
   private readonly agentsStore = inject(AgentsStore);
   private readonly groupsStore = inject(GroupsStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
@@ -318,11 +352,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /**
-   * Section index for the form shell. In `edit` mode, Identity drops to
-   * the end of the list — once the agent exists, you rarely re-edit
-   * identity fields, so the index leads with what gets iterated on.
-   * Delete is *not* in the nav — it lives at the bottom of the Identity
-   * tab (danger zone pattern, GitHub / Stripe).
+   * EL ÍNDICE DE LA FICHA (DD-122): el mismo de la ficha de grupo y de Contact Center, con UN orden en
+   * los dos modos, el de sus dependencias: quién es (Identidad), dónde atiende (Grupos), qué puede hacer
+   * (Permisos), qué se le asigna (Recursos) y lo demás (Avanzado). Hasta el 2026-09-27 fueron pestañas
+   * y, al editar, Identidad bajaba al segundo puesto. Abre en la primera; el listado enlaza directo a
+   * Grupos (`?seccion=grupos`), que es donde se trabaja, así que el clic de siempre sigue llegando ahí.
    */
   protected readonly navSections = computed<readonly FormNavSection[]>(() => {
     const identity: FormNavSection = {
@@ -353,37 +387,95 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'agents.form.section.resources',
       icon: 'library_books',
     };
-    // Mismo orden que las fichas de grupo y usuario: al EDITAR, la pestaña de trabajo, luego
-    // Identidad, y Avanzado la última; al CREAR, Identidad primero, que sin nombre no hay agente.
-    if (this.mode() === 'edit') {
-      return [groups, identity, permissions, resources, advanced];
-    }
-    return [identity, groups, permissions, resources, advanced];
+    return [identity, groups, permissions, resources, advanced].map((sec) => ({
+      ...sec,
+      href: this.sectionLinks.href(this.sectionUrl(sec.id)),
+    }));
   });
 
-  protected readonly activeSection = signal<string>('agent-section-identity');
+  /** Cada sección en la dirección (`?seccion=grupos`). */
+  private static readonly SECTION_SLUGS: Readonly<Record<string, string>> = {
+    identidad: 'agent-section-identity',
+    grupos: 'agent-section-groups',
+    permisos: 'agent-section-permissions',
+    recursos: 'agent-section-resources',
+    avanzado: 'agent-section-advanced',
+  };
 
-  protected onTabChange(value: unknown): void {
-    if (typeof value === 'string' && value) this.activeSection.set(value);
+  /** `?seccion=` de la dirección (`withComponentInputBinding`), también cuando solo cambia la query. */
+  readonly seccion = input<string | undefined>();
+
+  /** La sección a la vista, la de la dirección; sin parámetro, Identidad, la primera. */
+  protected readonly activeSection = computed<string>(
+    () => AgentFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'agent-section-identity',
+  );
+
+  /** La dirección de una sección: la primera, sin parámetro (es la dirección de la ficha). */
+  private sectionUrl(id: string): UrlTree {
+    const slug = Object.entries(AgentFormPageComponent.SECTION_SLUGS).find(([, v]) => v === id)?.[0] ?? null;
+    return this.sectionLinks.section(this.route, id === 'agent-section-identity' ? null : slug);
+  }
+
+  /** Ir a otra sección. En el alta y al duplicar, sin rastro en el historial: Atrás sale (DD-122). */
+  protected goTo(id: string): void {
+    void this.sectionLinks.go(this.sectionUrl(id), { replace: this.mode() !== 'edit' });
   }
 
   /**
-   * Las tres cifras de la franja: en cuántos grupos atiende de verdad (activos sobre asignados, como
-   * «Agentes asignados» en la ficha de grupo), por qué canales le llega trabajo y de qué tipo es.
+   * Lo que falta para poder guardar, en el índice: el nombre y la extensión, en Identidad. Al editar y al
+   * duplicar (que llega con esos campos vacíos a propósito); en un alta recién abierta no acusa, lo dice el
+   * motivo del botón.
    */
-  protected readonly headline = computed(() => {
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
+    const f = this.form();
+    const falta = !f.name.trim() || !f.extension;
+    return new Set(this.mode() !== 'create' && falta ? ['agent-section-identity'] : []);
+  });
+
+  /**
+   * Las secciones con cambios sin guardar (DD-122), al editar. `permissions` se reparte: la grabación está
+   * en Identidad y los dispositivos externos en Avanzado; lo demás, en Permisos.
+   */
+  protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
+    if (this.mode() !== 'edit') return new Set<string>();
+    const out = new Set<string>();
+    for (const key of this.dirtyState.changedKeys()) {
+      if (key !== 'permissions') {
+        out.add(AGENT_SECTION_OF_FIELD[key as keyof FormState]);
+        continue;
+      }
+      for (const sub of changedKeys(this.form().permissions, this.dirtyState.pristineValue().permissions)) {
+        out.add(
+          sub === 'recording'
+            ? 'agent-section-identity'
+            : sub === 'externalDevices'
+              ? 'agent-section-advanced'
+              : 'agent-section-permissions',
+        );
+      }
+    }
+    return out;
+  });
+
+  /**
+   * El resumen de la derecha, las tres cifras de siempre: en cuántos grupos atiende de verdad (activos sobre
+   * asignados, como «Agentes asignados» en la ficha de grupo), por qué canales le llega trabajo y de qué
+   * tipo es. Hasta el 2026-09-27 iban en la franja del nombre.
+   */
+  protected readonly summary = computed(() => {
     this.currentLang();
     const f = this.form();
     const activos = f.links.filter((l) => l.active);
     const canales = canonicalizeChannels(activos.flatMap((l) => l.channels));
     const etiquetas: Readonly<Record<string, string>> = CHANNEL_LABEL_KEYS;
     return [
-      { valor: `${activos.length}/${f.links.length}`, etiqueta: 'agents.form.section.groups' },
+      { icono: 'group', valor: `${activos.length}/${f.links.length}`, etiqueta: 'agents.form.section.groups' },
       {
+        icono: 'forum',
         valor: canales.length ? canales.map((c) => this.translate.instant(etiquetas[c])).join(', ') : '—',
         etiqueta: 'agents.form.section.channels',
       },
-      { valor: this.translate.instant(this.typeLabelKeys[f.agentType]), etiqueta: 'agents.form.fields.type' },
+      { icono: 'badge', valor: this.translate.instant(this.typeLabelKeys[f.agentType]), etiqueta: 'agents.form.fields.type' },
     ];
   });
 
@@ -630,9 +722,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         templateIds: new Set(agent.templates ?? []),
       });
       this.dirtyState.markPristine();
-      // En edición aterriza en Grupos (1ª del orden de edición): identidad va
-      // al fondo porque casi no se toca tras crear; la ficha ya la resume (S60).
-      this.activeSection.set('agent-section-groups');
       this.releaseLock = this.crossTab.acquire('agent', agent.id, () =>
         this.conflictWarning.set(true)
       );
@@ -907,29 +996,38 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
           life: TOAST_LIFE.success,
         });
       } else {
-        const created = this.agentsStore.addAgent(payload);
-        this.linksStore.replaceLinksForAgent(
-          created.id,
-          this.normalizeLinks(f.links, created.id)
-        );
-        this.editingId.set(created.id);
-        this.initial.set(created);
-        this.location.replaceState(`/admin/agentes/editar/${created.id}`);
-        this.releaseLock?.();
-        this.releaseLock = this.crossTab.acquire('agent', created.id, () =>
-          this.conflictWarning.set(true)
-        );
-        this.messages.add({
-          severity: 'success',
-          summary: this.translate.instant('agents.toasts.created', {
-            name: created.name,
-          }),
-          life: TOAST_LIFE.success,
-        });
+        this.createAgent(payload);
+        return;
       }
       this.saving.set(false);
       this.dirtyState.markPristine();
     }, 400);
+  }
+
+  /**
+   * Da de alta el agente y abre su EDICIÓN en la sección en la que se estaba, como la ficha de grupo.
+   * Navegar (y no solo cambiar la dirección con `Location.replaceState`, como hasta el 2026-09-27) pone
+   * al día el router: con la dirección cambiada a mano el router seguía en `crear`, y cada enlace del
+   * índice llevaba a un alta vacía. La nueva ficha coge su candado al cargar. Se marca limpia antes,
+   * para que el guardián de salida no pregunte.
+   */
+  private createAgent(payload: Parameters<AgentsStore['addAgent']>[0]): void {
+    const f = this.form();
+    const slug = Object.entries(AgentFormPageComponent.SECTION_SLUGS).find(([, v]) => v === this.activeSection())?.[0];
+    const created = this.agentsStore.addAgent(payload);
+    this.linksStore.replaceLinksForAgent(created.id, this.normalizeLinks(f.links, created.id));
+    this.messages.add({
+      severity: 'success',
+      summary: this.translate.instant('agents.toasts.created', { name: created.name }),
+      life: TOAST_LIFE.success,
+    });
+    this.dirtyState.markPristine();
+    void this.router
+      .navigate(['/admin/agentes/editar', created.id], {
+        replaceUrl: true,
+        queryParams: slug && slug !== 'identidad' ? { seccion: slug } : {},
+      })
+      .finally(() => this.saving.set(false));
   }
 
   /** Ensure every link points at the right agentId before persistence. */

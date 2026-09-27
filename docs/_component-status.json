@@ -658,7 +658,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 5,
       "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
       "sobreObsoleto": []
     },
@@ -886,7 +886,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5,
+      "usedInSupervisor": 7,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
     },
@@ -1203,7 +1203,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 21,
+      "usedInSupervisor": 29,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },

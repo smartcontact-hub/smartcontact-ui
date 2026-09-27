@@ -4,22 +4,23 @@ import {
   computed,
   HostListener,
   inject,
+  input,
   OnDestroy,
   OnInit,
   signal,
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { TabsModule } from 'primeng/tabs';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { CrossTabLockService } from '@core/services';
+import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { EMAIL_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -27,9 +28,12 @@ import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDividerComponent as DividerComponent,
+  ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
+  ScMessageComponent as MessageComponent,
   ScPhotoUploadComponent as PhotoUploadComponent,
+  ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -62,6 +66,21 @@ interface FormState {
   photo: string | null;
 }
 
+/** De qué sección es cada campo, para marcar en el índice las que tienen cambios sin guardar (DD-122).
+ *  `groups` no se edita en la ficha: se arrastra al guardar. */
+const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
+  name: 'user-section-identity',
+  email: 'user-section-identity',
+  identifier: 'user-section-identity',
+  type: 'user-section-identity',
+  status: 'user-section-identity',
+  photo: 'user-section-identity',
+  sections: 'user-section-access',
+  permissions: 'user-section-access',
+  groups: 'user-section-access',
+  services: 'user-section-services',
+};
+
 @Component({
   selector: 'sc-user-form-page',
   imports: [
@@ -69,10 +88,13 @@ interface FormState {
     ButtonComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
+    FormSectionNavComponent,
+    IconComponent,
     InputTextComponent,
+    MessageComponent,
     PhotoUploadComponent,
+    SectionCardComponent,
     SelectComponent,
-    TabsModule,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -83,6 +105,7 @@ interface FormState {
 export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly sectionLinks = inject(SectionLinksService);
   private readonly usersStore = inject(UsersStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
@@ -174,9 +197,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private releaseLock: (() => void) | null = null;
 
   /**
-   * Las pestañas de la ficha, en orden. Al EDITAR abre por Acceso (lo que se toca) e Identidad va
-   * al final: sus datos ya los dice la franja. Al CREAR, Identidad primero: sin nombre no hay
-   * usuario. Es la forma de la ficha de grupo, «una página + pestañas» (#232).
+   * EL ÍNDICE DE LA FICHA (DD-122): el mismo de la ficha de grupo y de Contact Center, con UN orden en
+   * los dos modos, el de sus dependencias: quién es (Identidad), a qué tiene acceso (Acceso) y qué
+   * supervisa (Servicios). Hasta el 2026-09-27 fueron pestañas y, al editar, Identidad iba en medio.
+   * Abre en la primera; el listado enlaza directo a Acceso (`?seccion=acceso`), que es donde se trabaja.
    */
   protected readonly navSections = computed<readonly FormNavSection[]>(() => {
     const identity: FormNavSection = {
@@ -195,35 +219,69 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'users.form.section.services',
       icon: 'hub',
     };
-    // Mismo orden que las fichas de grupo y agente: al EDITAR, la pestaña de trabajo y luego
-    // Identidad; al CREAR, Identidad primero, que sin nombre no hay usuario.
-    if (this.mode() === 'edit') {
-      return [access, identity, services];
-    }
-    return [identity, access, services];
+    return [identity, access, services].map((sec) => ({
+      ...sec,
+      href: this.sectionLinks.href(this.sectionUrl(sec.id)),
+    }));
   });
 
-  protected readonly activeSection = signal<string>('user-section-identity');
+  /** Cada sección en la dirección (`?seccion=acceso`). */
+  private static readonly SECTION_SLUGS: Readonly<Record<string, string>> = {
+    identidad: 'user-section-identity',
+    acceso: 'user-section-access',
+    servicios: 'user-section-services',
+  };
 
-  protected onTabChange(value: unknown): void {
-    if (typeof value === 'string' && value) this.activeSection.set(value);
+  /** `?seccion=` de la dirección (`withComponentInputBinding`), también cuando solo cambia la query. */
+  readonly seccion = input<string | undefined>();
+
+  /** La sección a la vista, la de la dirección; sin parámetro, Identidad, la primera. */
+  protected readonly activeSection = computed<string>(
+    () => UserFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'user-section-identity',
+  );
+
+  /** La dirección de una sección: la primera, sin parámetro (es la dirección de la ficha). */
+  private sectionUrl(id: string): UrlTree {
+    const slug = Object.entries(UserFormPageComponent.SECTION_SLUGS).find(([, v]) => v === id)?.[0] ?? null;
+    return this.sectionLinks.section(this.route, id === 'user-section-identity' ? null : slug);
+  }
+
+  /** Ir a otra sección. En el alta y al duplicar, sin rastro en el historial: Atrás sale (DD-122). */
+  protected goTo(id: string): void {
+    void this.sectionLinks.go(this.sectionUrl(id), { replace: this.mode() !== 'edit' });
   }
 
   /**
-   * Las tres cifras de la franja: qué es esta persona y a qué llega sin abrir una pestaña. El tipo
-   * es cifra y no va junto al email: en la línea de debajo del nombre, «email · tipo» no cabía en
-   * los 252 de la columna y se cortaba (medido en la de Mario Supervisor, 2026-09-23). Lo mismo
-   * que «Tipo de agente» en la ficha de agente.
+   * Lo que falta para poder guardar, en el índice: el nombre y un email válido, en Identidad. Al editar y
+   * al duplicar (que llega con esos campos vacíos a propósito); en un alta recién abierta no acusa, lo
+   * dice el motivo del botón.
    */
-  protected readonly headline = computed(() => {
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
+    const f = this.form();
+    const falta = !f.name.trim() || !EMAIL_RE.test(f.email.trim());
+    return new Set(this.mode() !== 'create' && falta ? ['user-section-identity'] : []);
+  });
+
+  /** Las secciones con cambios sin guardar (DD-122), al editar. */
+  protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
+    if (this.mode() !== 'edit') return new Set<string>();
+    return new Set([...this.dirtyState.changedKeys()].map((k) => USER_SECTION_OF_FIELD[k as keyof FormState]));
+  });
+
+  /**
+   * El resumen de la derecha, las tres cifras de siempre: qué es esta persona y a qué llega. Hasta el
+   * 2026-09-27 iban en la franja del nombre; el tipo era cifra y no iba junto al email porque en la línea
+   * de debajo del nombre «email · tipo» no cabía (medido el 2026-09-23).
+   */
+  protected readonly summary = computed(() => {
     this.lang(); // el tipo se traduce aquí: al cambiar de idioma, la franja tiene que enterarse
     const f = this.form();
     const secciones = Object.values(f.sections).filter(Boolean).length;
     const permisos = Object.values(f.permissions).filter(Boolean).length;
     return [
-      { valor: this.translate.instant(this.typeLabelKeys[f.type]), etiqueta: 'users.form.headline.type' },
-      { valor: `${secciones}/${Object.keys(f.sections).length}`, etiqueta: 'users.form.section.sections' },
-      { valor: `${permisos}/${Object.keys(f.permissions).length}`, etiqueta: 'users.form.section.permissions' },
+      { icono: 'badge', valor: this.translate.instant(this.typeLabelKeys[f.type]), etiqueta: 'users.form.headline.type' },
+      { icono: 'dashboard', valor: `${secciones}/${Object.keys(f.sections).length}`, etiqueta: 'users.form.section.sections' },
+      { icono: 'verified_user', valor: `${permisos}/${Object.keys(f.permissions).length}`, etiqueta: 'users.form.section.permissions' },
     ];
   });
 
@@ -281,9 +339,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         photo: user.photo ?? null,
       });
       this.dirtyState.markPristine();
-      // En edición aterriza en Secciones (1ª del orden de edición): identidad
-      // va al fondo porque casi no se toca tras crear; la ficha la resume (S60).
-      this.activeSection.set('user-section-access');
       this.releaseLock = this.crossTab.acquire('user', user.id, () =>
         this.conflictWarning.set(true),
       );
