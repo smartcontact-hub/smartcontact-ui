@@ -2215,6 +2215,11 @@
       "data": {
         "title": "Data",
         "hint": "(prototype)",
+        "set_label": "Data set",
+        "set_hint": "The same data with other texts: editorial, with business names to show it; stress, with texts at the limit to see where it breaks. Remembered until you close the tab.",
+        "set_demo": "Demo",
+        "set_editorial": "Editorial",
+        "set_tortura": "Stress",
         "reset_label": "Restore factory data",
         "reset_hint": "Deletes the changes you made to agents, groups, users, labels, templates and repositories, and returns the application to its initial state. Theme and column preferences are kept.",
         "reset_button": "Restore",

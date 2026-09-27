@@ -2215,6 +2215,11 @@
       "data": {
         "title": "Dados",
         "hint": "(protótipo)",
+        "set_label": "Conjunto de dados",
+        "set_hint": "Os mesmos dados com outros textos: editorial, com nomes de negócio para mostrá-lo; tortura, com textos no limite para ver onde quebra. Fica salvo até você fechar a aba.",
+        "set_demo": "Demo",
+        "set_editorial": "Editorial",
+        "set_tortura": "Tortura",
         "reset_label": "Restaurar dados de fábrica",
         "reset_hint": "Apaga as alterações que você fez em agentes, grupos, usuários, etiquetas, modelos e repositórios, e devolve o aplicativo ao seu estado inicial. As preferências de tema e de colunas são mantidas.",
         "reset_button": "Restaurar",

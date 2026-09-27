@@ -78,6 +78,11 @@
     gap: var(--sc-spacing-1);
   }
 
+  /* Con la cifra pulsable, la leyenda va dentro del botón: a la misma distancia del anillo que fuera. */
+  &--ring &__open {
+    gap: var(--sc-spacing-1);
+  }
+
   /* ─── Cifra que abre su detalle ───
      Sin caja: la cifra ES el botón. Al pasar por encima sale un fondo suave y la flecha, que dice
      «esto se abre»; el foco de teclado se ve igual que en el resto de botones. */

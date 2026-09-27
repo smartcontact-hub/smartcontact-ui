@@ -201,7 +201,8 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    el cambio del Kit va a `docs/figma-pendiente.md` (DD-123). Lo mide
    `e2e/supervisor/agrupacion.spec.ts` en el build, pantalla a pantalla. **Densidad:** compacto donde
    se escanea (el monitor, las listas) y más aire donde se lee y se rellena (fichas, formularios), sin
-   aire que no separe nada: el relleno de una caja que ya delimitan su borde y su fondo sobra (DD-125).
+   aire que no separe nada: el relleno de una caja que ya delimitan su borde y su fondo sobra (DD-125). La misma
+   prueba avisa del aire que se suma dentro de una caja (R4): márgenes y rellenos de dentro que llegan a 7.
 
 **Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
 recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas
