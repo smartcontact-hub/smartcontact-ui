@@ -45,10 +45,13 @@
     min-width: 0;
   }
 
-  /* El título cede el último: solo se corta (con elipsis) si ni la alerta compacta deja sitio. */
+  /* El título cede el último: solo se corta (con elipsis) si ni la alerta compacta deja sitio. No encoge
+   * frente a las entidades: con que cediera una fracción de píxel, Chrome ya ponía la elipsis («Tabla de
+   * agent…», medido el 2026-09-27 con `?datos=tortura`). Su tope es el hueco entero (`max-width: 100%`). */
   &__title {
     margin: 0;
-    flex: 0 1 auto;
+    flex: 0 0 auto;
+    max-width: 100%;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;

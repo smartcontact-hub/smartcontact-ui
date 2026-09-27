@@ -11,10 +11,21 @@
 
   /* El nombre en una línea: partido en dos, cada fila dobla su alto y la tabla enseña la mitad. */
   &__agent {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-5);
+    min-width: 0;
     white-space: nowrap;
+  }
+
+  /* Más largo que su hueco, recorta con «…» y lleva el nombre entero en el `title` (DD-124). `contain` hace que
+   * no pida ancho a su columna: la columna se queda lo que dejan las cifras y el nombre se ajusta a ella. */
+  &__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    contain: inline-size;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__num {
@@ -27,6 +38,10 @@
   &__total {
     text-align: end;
     font-variant-numeric: tabular-nums;
+    /* Su raya de ARRIBA. Los totales van fijos al pie y, con la tabla desplazada, las filas pasan por debajo:
+     * sin raya, la última que se ve quedaba pegada a «Totales» (medido el 2026-09-27: 10 agentes a 900 de alto,
+     * u 8 a 800). Va por fuera, justo encima, así que sin desplazar cae sobre la de la última fila y se ve una. */
+    box-shadow: 0 -1px 0 var(--sc-border-default);
 
     &--label {
       text-align: start;

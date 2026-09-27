@@ -32,7 +32,8 @@
       />
     }
     <span class="detail__main">
-      <span class="sc-text-body-semibold">{{ r.agent ?? r.name ?? ('dashboard.detail.customer' | translate: { id: r.customer }) }}</span>
+      @let quien = r.agent ?? r.name ?? ('dashboard.detail.customer' | translate: { id: r.customer });
+      <span class="detail__name sc-text-body-semibold" [title]="quien">{{ quien }}</span>
       <span class="detail__sub sc-text-caption-regular">
         @if (r.presence) {
           {{ 'dashboard.presence.' + r.presence | translate }}

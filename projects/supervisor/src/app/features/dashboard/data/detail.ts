@@ -1,5 +1,5 @@
 import type { AgentPresence, DashboardWidget } from './dashboard.types';
-import { DEMO_ENTITIES } from './demo-entities';
+import { DEMO_AGENT_PRESENCE, DEMO_ENTITIES } from './demo-entities';
 import type { DetailKind } from './widget-catalog';
 
 /** Qué detalle pidió el supervisor al pulsar una cifra. */
@@ -93,13 +93,15 @@ export function detailRows(request: DetailRequest, widget: DashboardWidget): Det
           ? widget.available
           : widget.connected
         : 0;
-  const cycle: AgentPresence[] = ['available', 'paused', 'available', 'available', 'paused'];
+  // Los agentes que ESTÁN en ese estado (o conectados, sin estado pedido), con el estado que les da la tabla.
+  const estado = (name: string): AgentPresence => DEMO_AGENT_PRESENCE[name] ?? 'available';
+  const pool = agents.filter((name) => (presence ? estado(name) === presence : estado(name) !== 'offline'));
   return {
     kind: 'agents',
-    rows: Array.from({ length: Math.min(count, agents.length) }, (_, i) => ({
+    rows: pool.slice(0, count).map((name, i) => ({
       id: `a${i}`,
-      name: agents[i],
-      presence: presence ?? cycle[i % cycle.length],
+      name,
+      presence: estado(name),
       seconds: 30 + ((i * 97) % 1500),
     })),
   };

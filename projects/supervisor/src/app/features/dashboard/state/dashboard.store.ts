@@ -38,7 +38,8 @@ export class DashboardStore {
   private readonly storage = createVersionedStorage<DashboardMonitor>({
     storageKey: 'sc-dashboard-monitors',
     versionKey: 'sc-dashboard-monitors-version',
-    currentVersion: 1,
+    // 2: la tabla de «Monitor x» enseña los 10 agentes de su cabecera, con el estado de todos (DD-127).
+    currentVersion: 2,
     defaults: DASHBOARD_DEMO_MONITORS,
   });
 
