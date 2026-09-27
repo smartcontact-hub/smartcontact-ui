@@ -59,8 +59,31 @@ const OCULTO = `(() => {
   return Math.ceil(extra);
 })()`;
 
+/* Espera a que acaben las animaciones con final (las infinitas, como el punto de «En directo», no), con tope de
+ * 3 s. Por qué (2026-09-27): la entrada escalonada del Dashboard dura hasta un segundo, y la última tarjeta de
+ * «Colas y agentes» salía en la captura a opacidad 0 y desenfocada, como si estuviera rota. Vuelve a mirar hasta
+ * dos comprobaciones seguidas sin ninguna viva: la entrada arranca unos cuadros DESPUÉS del clic, y esperar solo a
+ * las que había al preguntar dejaba fuera el hueco vacío, que acaba de entrar a los ~800 ms (medido). */
+const ANIMACIONES = `(async () => {
+  const hasta = performance.now() + 3000;
+  const vivas = () => document.getAnimations().filter((a) => a.effect && a.effect.getComputedTiming().endTime !== Infinity && a.playState !== 'finished');
+  const pausa = (ms) => new Promise((r) => setTimeout(r, ms));
+  let quietas = 0;
+  while (quietas < 2 && performance.now() < hasta) {
+    const a = vivas();
+    if (a.length) {
+      quietas = 0;
+      await Promise.race([Promise.all(a.map((x) => x.finished.catch(() => null))), pausa(hasta - performance.now())]);
+    } else {
+      quietas++;
+      await pausa(100);
+    }
+  }
+})()`;
+
 async function revisarVista(page, vista) {
   await page.evaluate('document.fonts.ready');
+  await page.evaluate(ANIMACIONES);
   await page.waitForTimeout(500);
   // La medida, a la ventana de siempre (1440×900): las cajas de debajo del pliegue también cuentan.
   const pares = await page.evaluate('window.__medirAgrupacion()');
