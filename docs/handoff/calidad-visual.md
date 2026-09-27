@@ -11,10 +11,8 @@
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-1. **Llevar a verde #258, el PR de seguimiento de #257.** Las fotos de sc-docs ya están regeneradas (`ac6e054e`) y
-   solo cambia `sectioncard`: 34 px más baja (5064 → 5030), la caja del ejemplo y la «Sección plana» con menos aire
-   arriba y abajo, las subsecciones de dentro igual, y el texto de la ficha con las medidas nuevas. Mirada contra la
-   anterior y dada por buena. El pie del diálogo y la tarjeta de Patrones no salen en ninguna foto.
+1. **Llevar a verde el PR del monitor** (el tramo de arriba), que va aparte porque #258 se fusionó antes de que
+   llegara. No cambia ninguna foto de sc-docs: el anillo solo vive en el Supervisor.
 2. **Pasar `npm run revision -- --datos editorial` por las pantallas que se enseñen** en la próxima demo: es el juego
    para juzgar cómo luce. Si algo se ve mal con nombres de negocio, se arregla en la pantalla, no en los datos.
 3. **Lo que la tortura aún no estira** (DD-124, «Consecuencias»): los datos en memoria de Conversaciones y de los
@@ -37,10 +35,23 @@
 - **De gusto, visto en la revisión de Sistema**: dos de sus seis secciones llevan icono delante del título
   («Numeración especial» y «Regeneración de contraseñas») y las otras cuatro no. Ni regla ni prueba lo piden.
 
+## ✅ 2026-09-27 (3) · El monitor del Dashboard, medido con la regla de densidad
+
+**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `a5619a2f` (#258 ya fundido).
+
+**Qué pasó.**
+- **Medido a 1440** (DD-125): su ritmo ya era el compacto y no se suma relleno dentro de las tarjetas. El blanco
+  que se ve es de la rejilla de alto fijo. Sobraba una cosa: la flecha invisible de «ver el detalle» separaba el
+  anillo de «de 9 conectados» 36 px; ahora van a 14, con su prueba (31,5 en rojo contra el build anterior). Sin
+  verificar: la cabecera de la tabla de agentes nombra 10 y la tabla enseña 8.
+- **Verificado en local**: las e2e del Dashboard, la anatomía de página, el contraste en los dos temas, los estilos de
+  texto y la agrupación, 157 en verde; la revisión previa de los dos monitores, en regla; y el lector de pantalla
+  anuncia «Ver el detalle de 5» con la descripción «de 9 conectados».
+
 ## ✅ 2026-09-27 (2) · Las preguntas abiertas, respondidas con medida
 
-**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `dff8dbee` (el PR de seguimiento
-de #257, rehecho desde `main` porque #257 se fusionó antes de que esto llegara).
+**Sello:** fusionado en `main` con #258, HEAD `a5619a2f` (el seguimiento de #257, rehecho desde `main` porque #257
+se fusionó antes de que esto llegara).
 
 **Qué pasó.**
 - **El pie de los diálogos** no era el nativo de PrimeNG, como se escribió en el tramo de abajo, sino el de
@@ -54,10 +65,6 @@ de #257, rehecho desde `main` porque #257 se fusionó antes de que esto llegara)
   Dashboard; `juego-de-datos.spec.ts` lo prueba.
 - **La caja de sección**, 17,5 arriba y abajo (DD-125); «Políticas de contraseñas» de 327 a 260 de alto. Con #256
   alcanza también a las fichas de agente y usuario: revisadas con `npm run revision`, en regla.
-- **El monitor del Dashboard, medido con la regla de densidad** (DD-125): su ritmo ya era el compacto y no se suma
-  relleno dentro de las tarjetas. El blanco que se ve es de la rejilla de alto fijo. Sobraba una cosa: la flecha
-  invisible de «ver el detalle» separaba el anillo de «de 9 conectados» 36 px; ahora van a 14, con su prueba (31,5 en
-  rojo contra el build anterior). Sin verificar: la cabecera de la tabla de agentes nombra 10 y la tabla enseña 8.
 - **La densidad de pantalla**, aceptada en la revisión de producto: compacto donde se escanea (monitor, listas), más
   aire donde se lee y se rellena (fichas, formularios), y ningún aire que no separe nada. Escrita en AGENTS §«UX de
   pantalla» 9 y en su tarjeta de Patrones.
