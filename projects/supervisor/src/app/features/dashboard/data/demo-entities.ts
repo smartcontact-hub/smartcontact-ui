@@ -1,5 +1,6 @@
 import { nombreDeGrupo } from '@core/services/juego-de-datos';
 
+import type { AgentPresence } from './dashboard.types';
 import type { WidgetCategory } from './widget-catalog';
 
 /**
@@ -33,4 +34,23 @@ export const DEMO_ENTITIES: Readonly<Record<WidgetCategory, readonly string[]>> 
   ],
   typifications: ['Venta cerrada', 'Consulta de factura', 'Incidencia técnica', 'Reclamación', 'Cita confirmada', 'Baja'],
   campaigns: ['Renovación 2026', 'Captación fibra', 'Encuesta de satisfacción', 'Recobro'],
+};
+
+/**
+ * En qué estado está cada agente de la demo. Una sola fuente para la tabla de agentes, los anillos y el detalle
+ * que abren, que así cuentan lo mismo: 5 disponibles, 4 en pausa y 1 desconectado, «5 de 9 conectados». Antes
+ * cada pieza iba por su lado (medido el 2026-09-27): la tabla de «Monitor x» enseñaba 8 de los 10 agentes que
+ * nombraba su cabecera, y el detalle del anillo daba por disponibles a Denzel, en pausa, y a Leonardo, desconectado.
+ */
+export const DEMO_AGENT_PRESENCE: Readonly<Record<string, AgentPresence>> = {
+  'Tom Hanks': 'available',
+  'Meryl Streep': 'available',
+  'Denzel Washington': 'paused',
+  'Julia Roberts': 'available',
+  'Leonardo DiCaprio': 'offline',
+  'Scarlett Johansson': 'available',
+  'Morgan Freeman': 'paused',
+  'Natalie Portman': 'available',
+  'Keanu Reeves': 'paused',
+  'Viola Davis': 'paused',
 };

@@ -27,6 +27,10 @@
   &__total {
     text-align: end;
     font-variant-numeric: tabular-nums;
+    /* Su raya de ARRIBA. Los totales van fijos al pie y, con la tabla desplazada, las filas pasan por debajo:
+     * sin raya, la última que se ve quedaba pegada a «Totales» (medido el 2026-09-27: 10 agentes a 900 de alto,
+     * u 8 a 800). Va por fuera, justo encima, así que sin desplazar cae sobre la de la última fila y se ve una. */
+    box-shadow: 0 -1px 0 var(--sc-border-default);
 
     &--label {
       text-align: start;

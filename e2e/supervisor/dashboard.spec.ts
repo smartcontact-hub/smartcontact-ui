@@ -98,3 +98,32 @@ test('la leyenda del anillo va pegada a su cifra, no detrás de la flecha invisi
   });
   expect(hueco, 'del anillo a «de N conectados»').toBeLessThanOrEqual(14.5);
 });
+
+test('en el primer monitor, la tabla, el anillo y su detalle cuentan los mismos agentes', async ({ page }) => {
+  /* Medido el 2026-09-27 (DD-126): la cabecera de la tabla nombraba 10 agentes y la tabla enseñaba 8, y el detalle
+   * del anillo daba por disponibles a Denzel, en pausa en la tabla, y a Leonardo, desconectado. Aquí se mide sobre
+   * lo pintado: una fila por agente de la cabecera, y el anillo y su detalle cuentan los estados de esas filas. */
+  await goto(page, 'dashboard');
+  const tabla = page.locator('sc-dashboard-widget-card').filter({ has: page.locator('sc-dashboard-agents-table') });
+  await expect(tabla.locator('tbody tr').first()).toBeVisible();
+  const { nombrados, filas } = await tabla.evaluate((card) => ({
+    nombrados: (card.querySelector('.widget__entities')?.getAttribute('title') ?? '').split(', ').filter(Boolean),
+    filas: [...card.querySelectorAll('tbody tr')].map((tr) => ({
+      nombre: tr.querySelector('.agents-table__agent')?.textContent?.trim() ?? '',
+      estado: tr.querySelector('sc-badge')?.getAttribute('aria-label') ?? '',
+    })),
+  }));
+  expect(filas.map((f) => f.nombre), 'una fila por agente que nombra la cabecera').toEqual(nombrados);
+
+  const disponibles = filas.filter((f) => f.estado === 'Disponible').map((f) => f.nombre);
+  const conectados = filas.filter((f) => f.estado !== 'Desconectado').length;
+  const anillo = page.locator('.kpi--ring').first();
+  await expect(anillo.locator('.sc-gauge__value'), 'el anillo cuenta los disponibles de la tabla').toHaveText(String(disponibles.length));
+  await expect(anillo.locator('.kpi__caption'), 'y los conectados').toHaveText(`de ${conectados} conectados`);
+
+  await anillo.locator('.kpi__open').click();
+  const quien = page.locator('.p-drawer .detail__who .sc-text-body-semibold');
+  await expect(quien, 'el detalle lista tantos como dice el anillo').toHaveCount(disponibles.length);
+  expect(await quien.allTextContents(), 'y son los disponibles de la tabla').toEqual(disponibles);
+});
+

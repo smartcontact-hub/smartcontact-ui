@@ -1,6 +1,6 @@
 import { buildWidget } from './build-widget';
 import type { DashboardMonitor, DashboardWidget, WidgetFilter } from './dashboard.types';
-import { DEMO_ENTITIES } from './demo-entities';
+import { DEMO_AGENT_PRESENCE, DEMO_ENTITIES } from './demo-entities';
 
 /**
  * Datos de demostración del Dashboard.
@@ -40,16 +40,20 @@ export const DASHBOARD_DEMO_MONITOR: DashboardMonitor = {
           title: null,
           entities: AGENTS,
           filter: ALL_CHANNELS,
+          // Una fila por agente de la cabecera (`entities`), y el estado de `DEMO_AGENT_PRESENCE`, que es el que
+          // cuentan el anillo de al lado y su detalle.
           rows: [
-            { name: 'Tom Hanks', presence: 'available', conversations: 18, attended: 17, rejected: 1, transferred: 2, avgSeconds: 214 },
-            { name: 'Meryl Streep', presence: 'available', conversations: 21, attended: 21, rejected: 0, transferred: 1, avgSeconds: 188 },
-            { name: 'Denzel Washington', presence: 'paused', conversations: 12, attended: 11, rejected: 1, transferred: 0, avgSeconds: 256 },
-            { name: 'Julia Roberts', presence: 'available', conversations: 16, attended: 15, rejected: 1, transferred: 3, avgSeconds: 197 },
-            { name: 'Leonardo DiCaprio', presence: 'offline', conversations: 4, attended: 4, rejected: 0, transferred: 0, avgSeconds: 302 },
-            { name: 'Scarlett Johansson', presence: 'available', conversations: 19, attended: 18, rejected: 1, transferred: 1, avgSeconds: 176 },
-            { name: 'Morgan Freeman', presence: 'paused', conversations: 9, attended: 9, rejected: 0, transferred: 2, avgSeconds: 241 },
-            { name: 'Natalie Portman', presence: 'available', conversations: 14, attended: 13, rejected: 1, transferred: 0, avgSeconds: 205 },
-          ],
+            { name: 'Tom Hanks', conversations: 18, attended: 17, rejected: 1, transferred: 2, avgSeconds: 214 },
+            { name: 'Meryl Streep', conversations: 21, attended: 21, rejected: 0, transferred: 1, avgSeconds: 188 },
+            { name: 'Denzel Washington', conversations: 12, attended: 11, rejected: 1, transferred: 0, avgSeconds: 256 },
+            { name: 'Julia Roberts', conversations: 16, attended: 15, rejected: 1, transferred: 3, avgSeconds: 197 },
+            { name: 'Leonardo DiCaprio', conversations: 4, attended: 4, rejected: 0, transferred: 0, avgSeconds: 302 },
+            { name: 'Scarlett Johansson', conversations: 19, attended: 18, rejected: 1, transferred: 1, avgSeconds: 176 },
+            { name: 'Morgan Freeman', conversations: 9, attended: 9, rejected: 0, transferred: 2, avgSeconds: 241 },
+            { name: 'Natalie Portman', conversations: 14, attended: 13, rejected: 1, transferred: 0, avgSeconds: 205 },
+            { name: 'Keanu Reeves', conversations: 11, attended: 10, rejected: 1, transferred: 1, avgSeconds: 233 },
+            { name: 'Viola Davis', conversations: 15, attended: 15, rejected: 0, transferred: 2, avgSeconds: 219 },
+          ].map((row) => ({ ...row, presence: DEMO_AGENT_PRESENCE[row.name] })),
         },
       ],
     },
@@ -75,8 +79,9 @@ export const DASHBOARD_DEMO_MONITOR: DashboardMonitor = {
           entities: AGENTS,
           filter: null,
           presence: 'available',
-          value: 5,
-          total: 9,
+          // Lo que cuenta la tabla de al lado: los disponibles de los conectados (`DEMO_AGENT_PRESENCE`).
+          value: AGENTS.filter((name) => DEMO_AGENT_PRESENCE[name] === 'available').length,
+          total: AGENTS.filter((name) => DEMO_AGENT_PRESENCE[name] !== 'offline').length,
         },
         {
           id: 'w-typification',
