@@ -113,7 +113,7 @@ test('las tres fichas tienen «Eliminar» en su franja', async ({ page }) => {
 });
 
 /** Dónde arranca el título y cuánto aire hay del último texto de la franja al de la pestaña (o al del
- *  primer item del índice, en la de grupo: `sc-form-section-nav` también lleva `role="tab"`). */
+ *  primer item del índice, en la de grupo: `sc-form-section-nav`, que desde DD-122 son enlaces). */
 const cabecera = (page: Page) =>
   page.evaluate(() => {
     const caja = (el: Element) => {
@@ -123,7 +123,7 @@ const cabecera = (page: Page) =>
     };
     const head = document.querySelector('.headline') as HTMLElement;
     const textos = [...head.querySelectorAll('h1, .headline__meta, dt, dd')].map((e) => caja(e).bottom);
-    const tab = document.querySelector('[role="tab"]') as HTMLElement;
+    const tab = document.querySelector('[role="tab"], .form-nav__item') as HTMLElement;
     return {
       x: Math.round((document.querySelector('h1') as HTMLElement).getBoundingClientRect().left),
       aire: Math.round(caja(tab).top - Math.max(...textos)),

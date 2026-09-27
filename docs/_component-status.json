@@ -646,13 +646,15 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 4,
+      "inputs": 6,
       "api": [
         "activeChange",
         "activeId",
         "flush",
         "labelKey",
-        "sectionsWithErrors"
+        "sectionsWithChanges",
+        "sectionsWithErrors",
+        "titleKey"
       ],
       "nested": [],
       "hasDemo": true,

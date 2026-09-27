@@ -63,7 +63,7 @@
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
 | `sc-field-msg` | CUSTOM | — | 2 inputs | — | — | — |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
-| `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 2 |
+| `sc-form-section-nav` | CUSTOM | — | 6 inputs | — | ✓ | 2 |
 | `sc-gauge` | CUSTOM | — | 9 inputs | — | ✓ | 1 |
 | `sc-group-popover` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 4 |
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
