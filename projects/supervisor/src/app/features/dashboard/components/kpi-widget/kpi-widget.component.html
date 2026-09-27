@@ -21,6 +21,13 @@
   }
 </ng-template>
 
+<!-- La leyenda del anillo («de 9 conectados»): completa la cifra, así que va pegada a ella. -->
+<ng-template #ringLegend>
+  <span class="kpi__caption sc-text-caption-regular" [id]="ringCaptionId">
+    {{ 'dashboard.kpi.of_connected' | translate: { total: total() } }}
+  </span>
+</ng-template>
+
 <div class="kpi" [class.kpi--ring]="presence() !== null">
   <div class="kpi__figure">
     @if (interactive()) {
@@ -28,25 +35,33 @@
         type="button"
         class="kpi__open"
         [attr.aria-label]="'dashboard.detail.open_aria' | translate: { value: value() }"
+        [attr.aria-describedby]="ringCaption() ? ringCaptionId : null"
         (click)="open.emit()"
       >
         <ng-container *ngTemplateOutlet="figure" />
+        <!-- La leyenda del anillo va DENTRO, delante de la flecha. Fuera, la flecha (invisible hasta pasar
+             el ratón, pero ocupando su sitio) quedaba entre el anillo y su leyenda y los separaba 36 px en
+             vez de 14 (DD-125). El botón la anuncia como descripción: su nombre es el `aria-label`. -->
+        @if (ringCaption()) {
+          <ng-container *ngTemplateOutlet="ringLegend" />
+        }
         <sc-icon class="kpi__open-icon" name="chevron_right" [size]="deltaIconSize" aria-hidden="true" />
       </button>
     } @else {
       <ng-container *ngTemplateOutlet="figure" />
+      @if (ringCaption()) {
+        <ng-container *ngTemplateOutlet="ringLegend" />
+      }
     }
-    @if (presence() !== null && total() !== null) {
-      <span class="kpi__caption sc-text-caption-regular">
-        {{ 'dashboard.kpi.of_connected' | translate: { total: total() } }}
-      </span>
-    } @else if (delta(); as d) {
-      <span class="kpi__delta sc-text-caption-regular">
-        <sc-icon [name]="d.icon" [size]="deltaIconSize" aria-hidden="true" />
-        {{ 'dashboard.kpi.delta' | translate: { delta: d.text } }}
-      </span>
-    } @else if (label()) {
-      <span class="kpi__caption sc-text-caption-regular">{{ label() }}</span>
+    @if (!ringCaption()) {
+      @if (delta(); as d) {
+        <span class="kpi__delta sc-text-caption-regular">
+          <sc-icon [name]="d.icon" [size]="deltaIconSize" aria-hidden="true" />
+          {{ 'dashboard.kpi.delta' | translate: { delta: d.text } }}
+        </span>
+      } @else if (label()) {
+        <span class="kpi__caption sc-text-caption-regular">{{ label() }}</span>
+      }
     }
   </div>
 

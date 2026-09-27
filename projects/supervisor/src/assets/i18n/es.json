@@ -2215,6 +2215,11 @@
       "data": {
         "title": "Datos",
         "hint": "(prototipo)",
+        "set_label": "Juego de datos",
+        "set_hint": "Los mismos datos con otros textos: editorial, con nombres de negocio para enseñarla; tortura, con textos al límite para ver dónde se rompe. Se recuerda hasta cerrar la pestaña.",
+        "set_demo": "Demo",
+        "set_editorial": "Editorial",
+        "set_tortura": "Tortura",
         "reset_label": "Restaurar datos de fábrica",
         "reset_hint": "Borra los cambios que hayas hecho en agentes, grupos, usuarios, etiquetas, plantillas y repositorios, y devuelve la aplicación a su estado inicial. Las preferencias de tema y de columnas se mantienen.",
         "reset_button": "Restaurar",

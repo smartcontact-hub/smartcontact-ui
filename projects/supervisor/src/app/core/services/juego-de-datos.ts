@@ -19,10 +19,11 @@
  */
 export type JuegoDeDatos = 'demo' | 'tortura' | 'editorial';
 
-const JUEGOS: readonly string[] = ['demo', 'tortura', 'editorial'];
+/** Los juegos, en el orden en que se ofrecen: el de siempre, el que se enseña y el que estresa. */
+export const JUEGOS_DE_DATOS: readonly JuegoDeDatos[] = ['demo', 'editorial', 'tortura'];
 const CLAVE_SESION = 'sc-datos';
 
-const esJuego = (v: string | null): v is JuegoDeDatos => v !== null && JUEGOS.includes(v);
+const esJuego = (v: string | null): v is JuegoDeDatos => v !== null && (JUEGOS_DE_DATOS as readonly string[]).includes(v);
 
 /** El juego pedido en la URL (y lo recuerda), o el de la sesión, o `demo`. */
 export function juegoDeDatos(): JuegoDeDatos {
@@ -30,7 +31,7 @@ export function juegoDeDatos(): JuegoDeDatos {
   try {
     const pedido = new URLSearchParams(window.location.search).get('datos');
     if (esJuego(pedido)) {
-      window.sessionStorage.setItem(CLAVE_SESION, pedido);
+      recordarJuego(pedido);
       return pedido;
     }
     const guardado = window.sessionStorage.getItem(CLAVE_SESION);
@@ -39,6 +40,26 @@ export function juegoDeDatos(): JuegoDeDatos {
     return 'demo'; // almacenamiento bloqueado: los datos de siempre
   }
 }
+
+/** Lo recuerda la pestaña, como al entrar con `?datos=`. Sin almacenamiento, manda solo la dirección. */
+export function recordarJuego(juego: JuegoDeDatos): void {
+  try {
+    window.sessionStorage.setItem(CLAVE_SESION, juego);
+  } catch {
+    // almacenamiento bloqueado
+  }
+}
+
+/**
+ * La dirección de la página actual con otro juego (`?datos=`). Se cambia NAVEGANDO y no escribiendo en la
+ * sesión: el parámetro manda sobre lo recordado, así que con `?datos=tortura` en la barra, recargar después de
+ * elegir otro juego volvería a tortura. Y al abrir la dirección, los almacenes arrancan con el juego nuevo.
+ */
+export const direccionConJuego = (href: string, juego: JuegoDeDatos): string => {
+  const url = new URL(href);
+  url.searchParams.set('datos', juego);
+  return url.toString();
+};
 
 /** La clave de almacenamiento de un juego: la de siempre para `demo`, con sufijo para los demás. */
 export const claveDelJuego = (clave: string, juego: JuegoDeDatos): string =>

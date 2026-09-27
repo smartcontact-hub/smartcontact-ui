@@ -52,6 +52,13 @@ export class KpiWidgetComponent {
 
   protected readonly deltaIconSize = SC_ICON_SIZE_DEFAULT;
 
+  private static nextId = 0;
+  /** El id de la leyenda del anillo: el botón de la cifra la lee como descripción (`aria-describedby`). */
+  protected readonly ringCaptionId = `dashboard-kpi-ring-caption-${KpiWidgetComponent.nextId++}`;
+
+  /** Anillo con total: la cifra lleva su leyenda («de 9 conectados») pegada, porque son una pieza. */
+  protected readonly ringCaption = computed(() => this.presence() !== null && this.total() !== null);
+
   /** Diferencia entre el último punto de la evolución y el primero (la última hora). */
   protected readonly delta = computed(() => {
     const t = this.trend();

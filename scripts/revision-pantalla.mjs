@@ -117,7 +117,12 @@ async function main() {
         const mal = pares.filter((p) => !p.ok);
         if (mal.length) rojas++;
         console.log(`${mal.length ? '✗' : '✓'} ${vista} · ${pares.length} relaciones medidas · ${archivo}`);
-        for (const p of mal) console.log(`    ${p.regla} · ${p.etiqueta} → ${p.vecino}: dentro ${p.dentro}, entre ${p.entre} (pide ≥ ${2 * p.dentro})`);
+        for (const p of mal)
+          console.log(
+            p.regla === 'R4'
+              ? `    R4 · ${p.etiqueta}: ${p.entre} px de aire que se suma (${p.vecino}); pide menos de 7`
+              : `    ${p.regla} · ${p.etiqueta} → ${p.vecino}: dentro ${p.dentro}, entre ${p.entre} (pide ≥ ${2 * p.dentro})`,
+          );
       }
     }
   } finally {
@@ -125,7 +130,7 @@ async function main() {
   }
   console.log(
     rojas
-      ? `\n${rojas} vista(s) por debajo del doble (DD-123): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO.`
+      ? `\n${rojas} vista(s) en rojo. Por debajo del doble (DD-123): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO. Aire que se suma (R4, DD-125): quita el margen o el relleno de la cadena que imprime.`
       : '\nAgrupación medida: en regla.',
   );
   console.log('Ahora MIRA las capturas con la skill better-layout; arregla lo medible y lista al usuario lo que sea de gusto.');

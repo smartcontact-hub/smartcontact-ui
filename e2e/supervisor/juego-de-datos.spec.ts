@@ -43,3 +43,26 @@ test('editorial da a los grupos su nombre de negocio, también donde el nombre v
   await expect(page.getByText('ACD Demo C2CB', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Atención al cliente', { exact: true })).toHaveCount(0);
 });
+
+test('el juego se elige también en Configuración → Sistema, y manda sobre el de la dirección', async ({ page }) => {
+  // Se entra con tortura en la dirección: elegir otro juego tiene que ganarle, no volver a tortura al recargar.
+  await goto(page, 'config/sistema?datos=tortura');
+  const juego = page.getByRole('group', { name: 'Juego de datos' });
+  await expect(juego.getByRole('button', { name: 'Tortura' })).toHaveAttribute('aria-pressed', 'true');
+
+  await juego.getByRole('button', { name: 'Editorial' }).click();
+  await expect(page).toHaveURL(/datos=editorial/);
+  await expect(juego.getByRole('button', { name: 'Editorial' })).toHaveAttribute('aria-pressed', 'true');
+
+  // Sin parámetro, la pestaña recuerda el juego elegido.
+  await goto(page, 'admin/grupos');
+  await expect(page.getByText('Atención al cliente', { exact: true }).first()).toBeVisible();
+
+  await goto(page, 'config/sistema');
+  const juegoDeNuevo = page.getByRole('group', { name: 'Juego de datos' });
+  await juegoDeNuevo.getByRole('button', { name: 'Demo' }).click();
+  await expect(page).toHaveURL(/datos=demo/);
+  await expect(juegoDeNuevo.getByRole('button', { name: 'Demo' })).toHaveAttribute('aria-pressed', 'true');
+  await goto(page, 'admin/grupos');
+  await expect(page.getByText('ACD Demo C2CB', { exact: true }).first()).toBeVisible();
+});

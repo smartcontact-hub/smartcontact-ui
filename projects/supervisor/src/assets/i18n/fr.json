@@ -2215,6 +2215,11 @@
       "data": {
         "title": "Données",
         "hint": "(prototype)",
+        "set_label": "Jeu de données",
+        "set_hint": "Les mêmes données avec d'autres textes : éditorial, avec des noms métier pour la présenter ; torture, avec des textes à la limite pour voir où elle casse. Mémorisé jusqu'à la fermeture de l'onglet.",
+        "set_demo": "Démo",
+        "set_editorial": "Éditorial",
+        "set_tortura": "Torture",
         "reset_label": "Restaurer les données d'usine",
         "reset_hint": "Efface les modifications que vous avez faites sur agents, groupes, utilisateurs, étiquettes, modèles et référentiels, et remet l'application à son état initial. Les préférences de thème et de colonnes sont conservées.",
         "reset_button": "Restaurer",

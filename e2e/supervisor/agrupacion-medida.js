@@ -11,6 +11,10 @@
  *        el doble que el del control a su propio texto.
  *   R3 · botón que envía: en un formulario o diálogo, el hueco del último campo al botón principal
  *        mide al menos el doble que el hueco más pequeño entre sus campos.
+ *   R4 · aire que se suma: de su borde a lo primero y lo último que tiene dentro, una caja (`sc-section-card`,
+ *        `sc-panel`) mide su relleno y nada más. Lo que apilan los envoltorios de dentro (márgenes, rellenos)
+ *        no llega al peldaño más pequeño, 7 (DD-125). Validado contra el build anterior a DD-125: marcaba los
+ *        12,25 de la última fila de «Políticas de contraseñas», y con el arreglo, nada.
  *
  * Devuelve un par por relación medida: `{ regla, ok, etiqueta, vecino, dentro, entre }` (px).
  *
@@ -193,8 +197,74 @@ window.__medirAgrupacion = () => {
     r3.push({ regla: 'R3', ok: hueco + TOL >= 2 * referencia, etiqueta: ultimo.etiqueta, vecino: texto(boton), dentro: redondo(referencia), entre: redondo(hueco) });
   }
 
+  // ── R4 · aire que se suma: de su borde a lo primero y lo último que tiene dentro, una caja mide su relleno ──
+  // Se recorre el camino de la parte propia de la caja (cabecera, cuerpo) hasta la primera y la última hoja, y se
+  // suma lo que añade cada envoltorio intermedio: su margen (el que de verdad desplaza, no el hueco libre de una
+  // rejilla o de un `justify-content`), su borde y su relleno. El relleno de la caja es suyo y no cuenta.
+  /* Por debajo del peldaño más pequeño de la escalera no hay separación que competir: los 3,5 de `.checkbox-row`
+   * agrandan la zona que se pulsa, no separan nada. De 7 en adelante, sí. */
+  const PELDANO_MIN = 7;
+  const CAJAS = [
+    { sel: 'section.section-card', partes: ['.section-card__head', '.section-card__body'] },
+    { sel: '.p-panel', partes: ['.p-panel-header', '.p-panel-content', '.p-panel-footer'] },
+  ];
+  const px = (v) => parseFloat(v) || 0;
+  /** Lo primero o lo último que se VE por ese lado: un control, una imagen, un texto, un fondo, o un borde EN ESE LADO
+   *  (una fila con raya arriba no tiene límite abajo: su relleno de abajo es aire, y se sigue bajando). */
+  const esHoja = (e, lado) => {
+    if (e.matches(`${CONTROL}, button, a, img, svg, canvas, video, sc-icon, table, tr, hr, [role="img"], [role="progressbar"]`)) return true;
+    const cs = getComputedStyle(e);
+    if (cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && cs.backgroundColor !== 'transparent') return true;
+    const l = lado === 'arriba' ? 'Top' : 'Bottom';
+    if (px(cs[`border${l}Width`]) > 0 && cs[`border${l}Style`] !== 'none') return true;
+    return [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+  };
+  const enFlujo = (e) => !['absolute', 'fixed'].includes(getComputedStyle(e).position) && getComputedStyle(e).opacity !== '0';
+  const apilado = (parte, lado) => {
+    const arriba = lado === 'arriba';
+    let suma = 0;
+    const cadena = [];
+    let e = parte;
+    for (let i = 0; i < 25; i++) {
+      const hijos = hijosVisibles(e).filter(enFlujo);
+      if (!hijos.length) break;
+      const c = arriba
+        ? hijos.reduce((m, x) => (caja(x).top < caja(m).top ? x : m))
+        : hijos.reduce((m, x) => (caja(x).bottom > caja(m).bottom ? x : m));
+      const pcs = getComputedStyle(e);
+      const ccs = getComputedStyle(c);
+      const borde = arriba
+        ? cajaPropia(e).top + px(pcs.borderTopWidth) + px(pcs.paddingTop)
+        : cajaPropia(e).bottom - px(pcs.borderBottomWidth) - px(pcs.paddingBottom);
+      const desplaza = arriba ? caja(c).top - borde : borde - caja(c).bottom;
+      const margen = Math.max(0, Math.min(desplaza, px(arriba ? ccs.marginTop : ccs.marginBottom)));
+      const hoja = esHoja(c, lado);
+      const propio = hoja ? 0 : px(arriba ? ccs.borderTopWidth : ccs.borderBottomWidth) + px(arriba ? ccs.paddingTop : ccs.paddingBottom);
+      if (margen + propio > 0.5) cadena.push(`${c.tagName.toLowerCase()}.${String(c.className).split(' ')[0]}+${redondo(margen + propio)}`);
+      suma += margen + propio;
+      if (hoja) break;
+      e = c;
+    }
+    return { suma: redondo(suma), cadena };
+  };
+  const r4 = [];
+  for (const { sel, partes } of CAJAS) {
+    for (const box of raiz.querySelectorAll(sel)) {
+      if (!visible(box)) continue;
+      const propias = partes.flatMap((p) => [...box.querySelectorAll(p)]).filter((p) => visible(p) && p.closest(sel) === box);
+      if (!propias.length) continue;
+      const primera = propias.reduce((m, x) => (caja(x).top < caja(m).top ? x : m));
+      const ultima = propias.reduce((m, x) => (caja(x).bottom > caja(m).bottom ? x : m));
+      const titulo = texto(box.querySelector('.section-card__title, .p-panel-title, h1, h2, h3') || box);
+      for (const [lado, parte] of [['arriba', primera], ['abajo', ultima]]) {
+        const { suma, cadena } = apilado(parte, lado);
+        r4.push({ regla: 'R4', ok: suma < PELDANO_MIN - TOL, etiqueta: `${titulo} (${lado})`, vecino: cadena.join(' ') || '—', dentro: 0, entre: suma });
+      }
+    }
+  }
+
   const vistos = new Set();
-  return [...r1, ...r2, ...r3].filter((p) => {
+  return [...r1, ...r2, ...r3, ...r4].filter((p) => {
     const k = [p.regla, p.etiqueta, p.vecino, p.dentro, p.entre].join('|');
     if (vistos.has(k)) return false;
     vistos.add(k);

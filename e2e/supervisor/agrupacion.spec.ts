@@ -15,7 +15,9 @@ import { goto } from './helpers';
  * QUÉ MIDE, sobre las cajas renderizadas (`agrupacion-medida.js`):
  *   R1 · un campo está al menos al doble de su vecino de encima que de su etiqueta a su control;
  *   R2 · dos opciones en fila, al menos al doble entre ellas que de cada control a su texto;
- *   R3 · el botón que envía, al menos al doble del último campo que los campos entre sí.
+ *   R3 · el botón que envía, al menos al doble del último campo que los campos entre sí;
+ *   R4 · una caja (`sc-section-card`, `sc-panel`) no suma aire al suyo: lo que apilan los envoltorios de dentro,
+ *        de su borde a lo primero y lo último que tiene, no llega a 7 (DD-125).
  *
  * DÓNDE: cada ruta del Supervisor con cada pestaña o sección de su índice, el acceso, los diálogos
  * de alta que abre la acción «Nuevo…/Crear/Añadir» de cada lista, y «Duplicar» de un grupo. Una
@@ -32,7 +34,7 @@ import { goto } from './helpers';
 const MEDIDA = join(process.cwd(), 'e2e', 'supervisor', 'agrupacion-medida.js');
 
 interface Par {
-  readonly regla: 'R1' | 'R2' | 'R3';
+  readonly regla: 'R1' | 'R2' | 'R3' | 'R4';
   readonly ok: boolean;
   readonly etiqueta: string;
   readonly vecino: string;
@@ -160,7 +162,8 @@ const cuadrar = ({ rojos, vistas }: Medido): void => {
   const curados = esperados.filter((k) => !sinMedida.includes(k));
   expect(
     nuevos,
-    'Por debajo del doble (DD-123): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO.',
+    'En rojo. Por debajo del doble (DD-123): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO. ' +
+      'Aire que se suma (R4, DD-125): quita el margen o el relleno de la cadena que se nombra.',
   ).toEqual([]);
   expect(curados, 'Ya están en verde: borra su línea de CONOCIDOS.').toEqual([]);
 };
