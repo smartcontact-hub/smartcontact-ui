@@ -94,17 +94,11 @@ const ALTAS = [
 ] as const;
 
 /**
- * Clave `vista · regla · etiqueta → vecino`, y su porqué. Los tres son el mismo caso: el pie del
- * diálogo NATIVO de PrimeNG pone los botones a 18 del último campo (el `padding` inferior del
- * contenido de Aura), y el hueco entre campos es 14 o 15,75. Darles aire es un desvío del nativo
- * que va por token del tema y alcanza a todos los diálogos (DD-113 §2): decisión de producto
- * pendiente, en DD-123.
+ * Clave `vista · regla · etiqueta → vecino`, y su porqué. Vacío: los tres que hubo (el pie de
+ * `sc-dialog` a 18 del último campo, contra 14 y 15,75 entre campos) se arreglaron llevando la
+ * botonera a 28 en el propio componente (DD-123). Una entrada nueva necesita su medida y su DD.
  */
-const CONOCIDOS: Record<string, string> = {
-  'conversaciones/entidades · alta · R3 · Tipo → Crear entidad': 'pie nativo del diálogo (18 contra 15,75 entre campos)',
-  'conversaciones/categorias · alta · R3 · Grupo → Crear categoría': 'pie nativo del diálogo (18 contra 15,75 entre campos)',
-  'admin/grupos · duplicar · R3 · Prioridad → Duplicar': 'pie nativo del diálogo (18 contra 14 entre campos)',
-};
+const CONOCIDOS: Record<string, string> = {};
 
 const clave = (vista: string, p: Par): string => `${vista} · ${p.regla} · ${p.etiqueta} → ${p.vecino}`;
 

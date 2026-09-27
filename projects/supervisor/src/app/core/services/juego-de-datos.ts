@@ -3,6 +3,8 @@
  *
  *   ?datos=tortura   los textos al límite: nombres, títulos y correos muy largos, y la mitad de las
  *                    descripciones vacías. Para ver una pantalla donde se rompe, no donde luce.
+ *   ?datos=editorial los grupos con nombres de negocio («Atención al cliente», «Facturación»…) en vez
+ *                    de los de producción y prueba. Para juzgar cómo luce y para enseñarla.
  *   ?datos=demo      vuelve a los de siempre.
  *
  * Por qué: una pantalla se juzga con los datos que tiene delante, y los de la demo miden todos de 7 a
@@ -15,9 +17,9 @@
  * elección se recuerda en `sessionStorage`: sobrevive a recargar y no a cerrar la pestaña, para que nadie
  * se quede en tortura sin saberlo.
  */
-export type JuegoDeDatos = 'demo' | 'tortura';
+export type JuegoDeDatos = 'demo' | 'tortura' | 'editorial';
 
-const JUEGOS: readonly string[] = ['demo', 'tortura'];
+const JUEGOS: readonly string[] = ['demo', 'tortura', 'editorial'];
 const CLAVE_SESION = 'sc-datos';
 
 const esJuego = (v: string | null): v is JuegoDeDatos => v !== null && JUEGOS.includes(v);
@@ -68,3 +70,56 @@ export function torturar<T>(items: readonly T[]): readonly T[] {
     return o as T;
   });
 }
+
+/**
+ * Los grupos del juego editorial, por su nombre de siempre: cada uno toma el nombre de negocio que
+ * encaja con sus servicios y sus canales («Online Support», soporte técnico y web por los cuatro
+ * canales, es «Soporte técnico»). La clave es el NOMBRE y no el id porque el nombre se repite fuera
+ * del almacén de grupos: el grupo saliente del agente, la ficha de usuario, los filtros y las
+ * conversaciones de Conversaciones y las entidades del Dashboard.
+ */
+const GRUPOS_EDITORIALES: Readonly<Record<string, string>> = {
+  'ACD Demo C2CB': 'Atención al cliente',
+  'ACD demo cuscare': 'Bajas',
+  'ACD outbound': 'Campañas salientes',
+  Campaigns: 'Ventas',
+  Exclusivo: 'Clientes VIP',
+  'Grupo de prueba 1': 'Citas y reservas',
+  'Grupo de prueba 2': 'Distribuidores',
+  'Grupo demo': 'Retención',
+  'Grupo pedidos': 'Posventa',
+  'Nodo AED 1': 'Facturación',
+  'Online Support': 'Soporte técnico',
+  Reclamaciones: 'Incidencias',
+  'Soporte Taller': 'Segundo nivel',
+  Telemarketing: 'Cobros',
+};
+
+/** El nombre de un grupo en el juego activo: el editorial si toca, y si no, el mismo. */
+export const nombreDeGrupo = (nombre: string, juego: JuegoDeDatos = juegoDeDatos()): string =>
+  juego === 'editorial' ? (GRUPOS_EDITORIALES[nombre] ?? nombre) : nombre;
+
+/**
+ * Los campos que guardan el NOMBRE de un grupo. Solo esos: «Reclamaciones» también es un servicio
+ * (`services` del grupo 12) y ahí no se toca, que el catálogo de servicios sigue diciéndolo así.
+ */
+const CAMPOS_DE_GRUPO = ['name', 'group', 'defaultOutboundGroup'] as const;
+
+/** Renombra los grupos de cada elemento sin tocar su forma, como `torturar`: ids y referencias, igual. */
+export function editorializar<T>(items: readonly T[]): readonly T[] {
+  return items.map((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return item;
+    const o: Record<string, unknown> = { ...(item as Record<string, unknown>) };
+    for (const campo of CAMPOS_DE_GRUPO) {
+      const v = o[campo];
+      if (typeof v === 'string') o[campo] = nombreDeGrupo(v, 'editorial');
+    }
+    return o as T;
+  });
+}
+
+/**
+ * Lo mismo para los datos que NO pasan por un almacén (viven en memoria: la ficha de usuario, las
+ * conversaciones, el Dashboard) y repiten el nombre de un grupo: fuera del editorial, la misma lista.
+ */
+export const deGrupos = <T>(items: readonly T[]): readonly T[] => (juegoDeDatos() === 'editorial' ? editorializar(items) : items);

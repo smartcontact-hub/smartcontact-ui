@@ -85,7 +85,7 @@ export class SectionCardDemoComponent {
     tag: 'sc-section-card',
     title: 'SectionCard',
     description:
-      'La ÚNICA caja de sección del repo, en dos pieles: `surface="subtle"` es el contenedor gris de formulario (sistema anidado Section → Subsection → Slot, §4.5, 1:1 con el maestro Figma `Section` 691:23956), y `surface="card"` la superficie blanca con borde de una sección que va sola sobre el lienzo (Figma Supervisor `Block` 393:12587). Cada piel trae las medidas de SU nodo: `subtle` va a 22.75 arriba/abajo y 16 a los lados, con 14 entre el título y el contenido; `card` a 24.5 por los cuatro lados, con 16, y su cabecera se sangra 12.25 más para caer en la misma vertical que el contenido de dentro. Ninguna de las dos lleva línea bajo la cabecera: en Figma las separa el aire. Con `[headingLevel]="1"` su título es el de la PÁGINA —el patrón de las pantallas con índice lateral (DD-57)—, y eso cambia la SEMÁNTICA (`<h1>`), no el tamaño: los dos niveles miden 14/20 semibold, como en la maqueta. Retrocompatible: una sección con contenido directo, sin subsecciones, sigue funcionando.',
+      'La ÚNICA caja de sección del repo, en dos pieles: `surface="subtle"` es el contenedor gris de formulario (sistema anidado Section → Subsection → Slot, §4.5, 1:1 con el maestro Figma `Section` 691:23956), y `surface="card"` la superficie blanca con borde de una sección que va sola sobre el lienzo (Figma Supervisor `Block` 393:12587). Cada piel trae los lados y el aire del título de SU nodo: `subtle` va a 16 a los lados, con 14 entre el título y el contenido; `card` a 24.5 a los lados, con 16, y su cabecera se sangra 12.25 más para caer en la misma vertical que el contenido de dentro. Arriba y abajo, las dos a 17.5 (DD-125): el aire vertical de los nodos era de más. Ninguna de las dos lleva línea bajo la cabecera: en Figma las separa el aire. Con `[headingLevel]="1"` su título es el de la PÁGINA —el patrón de las pantallas con índice lateral (DD-57)—, y eso cambia la SEMÁNTICA (`<h1>`), no el tamaño: los dos niveles miden lo mismo: el text style h3, 18/24 semibold. Retrocompatible: una sección con contenido directo, sin subsecciones, sigue funcionando.',
     argTypes: [
       { name: 'titleKey', control: { kind: 'text' } },
       { name: 'hintKey', control: { kind: 'text' } },
@@ -93,7 +93,7 @@ export class SectionCardDemoComponent {
       {
         name: 'surface',
         control: { kind: 'select', options: ['subtle', 'card'] },
-        description: 'Gris de formulario (22.75/16) · blanca con borde sobre el lienzo (24.5)',
+        description: 'Gris de formulario (17.5 arriba/abajo · 16 a los lados) · blanca con borde sobre el lienzo (17.5 · 24.5)',
       },
       { name: 'collapsible', control: { kind: 'boolean' } },
       { name: 'initiallyCollapsed', control: { kind: 'boolean' } },

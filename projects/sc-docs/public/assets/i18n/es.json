@@ -192,7 +192,7 @@
         },
         "grouping": {
           "title": "Agrupación por espacio",
-          "apply": "Lo que va junto, más cerca que lo que no: 7 entre una etiqueta y su control, 14 entre hermanos (campos, opciones, filas) y 28 entre grupos, entre secciones y antes del botón que envía. Es la escalera 7 · 14 · 28: entre grupos, al menos el doble que dentro.",
+          "apply": "Lo que va junto, más cerca que lo que no: 7 entre una etiqueta y su control, 14 entre hermanos (campos, opciones, filas) y 28 entre grupos, entre secciones y antes del botón que envía. Es la escalera 7 · 14 · 28: entre grupos, al menos el doble que dentro. Y la densidad, por lo que se hace en la pantalla: compacto donde se escanea (el monitor, las listas), más aire donde se lee y se rellena (fichas, formularios).",
           "avoid": "Separar dos campos casi lo mismo que una etiqueta de su control (12 contra 7), o dejar el botón a la misma distancia del último campo que los campos entre sí: se lee como un campo más.",
           "have": "Las piezas compartidas del supervisor ya la aplican (.grid y .field en _forms.scss). Si una maqueta trae otro valor, manda la escalera y el cambio del Kit se apunta en figma-pendiente."
         }

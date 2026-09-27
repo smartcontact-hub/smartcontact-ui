@@ -91,7 +91,7 @@
 </ng-template>
 
 <ng-template #bodyTpl let-tpl>
-  <span class="table__body-text sc-text-body-regular">{{ tpl.body }}</span>
+  <span class="table__body-text sc-text-body-regular" [title]="tpl.body">{{ tpl.body }}</span>
 </ng-template>
 
 <ng-template #updatedTpl let-tpl>

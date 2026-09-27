@@ -170,6 +170,12 @@ export class RepoListPageComponent<T extends RepoEntity> {
     return column.accessor(item);
   }
 
+  /** El texto entero al pasar el ratón, solo en las columnas que recortan: con un dato más largo que lo medido, la
+   *  celda corta con «…» (DD-124). */
+  protected cellTitle(item: T, key: string): string | null {
+    return this.isKind(key, 'truncate') ? this.getCellValue(item, key) : null;
+  }
+
   protected getStatusEntry(
     item: T,
     key: string,

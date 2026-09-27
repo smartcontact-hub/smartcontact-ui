@@ -75,7 +75,7 @@
         (cancelled)="onRenameCancel(group.id)"
       />
     } @else {
-      <span class="table__td-name-text">{{ group.name }}</span>
+      <span class="table__td-name-text" [title]="group.name">{{ group.name }}</span>
     }
   </span>
 </ng-template>

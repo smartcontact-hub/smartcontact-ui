@@ -10,6 +10,8 @@
  * Los nombres de agente son los del seed de administración, no los curados del Figma — así la
  * membresía y el match son honestos. (Desde el 2026-09-14 el seed usa nombres de Hollywood.)
  */
+import { juegoDeDatos, nombreDeGrupo } from '@core/services/juego-de-datos';
+
 import { AGENTS_SEED } from '../../admin/agents/data/agents-data';
 import { GROUPS_SEED } from '../../admin/groups/data/groups-data';
 import { SERVICE_OPTIONS } from './conversation-filter-options';
@@ -76,9 +78,10 @@ export const AGENT_ENTITIES: readonly AgentEntity[] = AGENTS_SEED.map((a) => ({
   status: a.status,
 }));
 
+/* Con `?datos=editorial`, el nombre de negocio del grupo, el mismo que en Administración (DD-124). */
 export const GROUP_ENTITIES: readonly EntityRef[] = GROUPS_SEED.map((g) => ({
   id: g.id,
-  name: GROUP_DISPLAY_NAMES[g.id] ?? g.name,
+  name: juegoDeDatos() === 'editorial' ? nombreDeGrupo(g.name, 'editorial') : (GROUP_DISPLAY_NAMES[g.id] ?? g.name),
 }));
 
 /** Tipificación jerárquica — el picker muestra la ruta `path` unida por " / " y

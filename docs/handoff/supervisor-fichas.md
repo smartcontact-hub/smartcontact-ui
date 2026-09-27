@@ -9,7 +9,7 @@
 
 ## ✅ 2026-09-27 · Un solo índice con una sola forma, y agente y usuario al molde de la ficha de grupo (DD-122)
 
-> **Sello: rama `areses/sweet-fermat-r9cxzw` rearrancada desde `main` (`168530c`), PR nuevo, un commit por bloque.**
+> **Sello: rama `areses/sweet-fermat-r9cxzw` rearrancada desde `main`, HEAD `168530c`, PR nuevo, un commit por bloque.**
 > El tramo del 2026-09-20 (el contenido anclado a la izquierda, DD-115) sale de aquí:
 > `git show 168530c:docs/handoff/supervisor-fichas.md`.
 

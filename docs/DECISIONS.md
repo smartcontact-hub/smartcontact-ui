@@ -41,8 +41,9 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · el editorial, pendiente de producto | DD-124 |
-> | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` | DD-123 |
+> | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera | DD-125 |
+> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
+> | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` · `sc-dialog` con cuerpo: la botonera a 28 y 14 entre hermanos | DD-123 |
 > | Un solo índice en toda la app (`sc-form-section-nav`: fichas, constructor y Contact Center) · cada fila es un ENLACE a su sitio (ruta o `?seccion=`), la actual con `aria-current="page"` · clic navega, Cmd+clic abre otra pestaña, Atrás vuelve · en un alta la sección no deja rastro · un solo «Guardar» por ficha, con las secciones con cambios marcadas en el índice · agente y usuario al molde de la ficha de grupo (enmienda DD-121 §2 y DD-113) | DD-122 |
 > | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
 > | Sidebar en producción: abrir una categoría no cierra las demás y nada se cierra al salir · plegado solo la rama de la página · se despliega con el ratón y se ancla con su botón · selección en cyan · subsecciones en 450ms con la curva de Apollo (enmienda DD-112 §3-§5) | DD-118 |
@@ -55,7 +56,7 @@
 > | Un `borderWidth` del tema tiene la FORMA de Aura: si Aura pinta un lado (`0 0 1px 0`), nosotros también; si Aura dice `0`, sin borde · `p-tabs` como Aura 3: pestaña sin borde, tira con raya abajo, marca de la activa en `activeBar` · lo vigila `preset-border-shorthand.test.mjs` | DD-107 |
 > | Un campo que ACUMULA valores de una lista es un `sc-multiselect` con chips, no un `sc-select` que se vacía más pastillas debajo · la casilla de «todos» de `sc-multiselect` marca y desmarca (`[selectAll]="null"` contra PrimeNG 22.1.0) · una sección no se llama ni se dibuja como una página del menú | DD-105 |
 > | Una miga que navega pasa `routerLink`, no un `command` · el tramo pulsable lleva manita y subrayado en hover (lo pone `sc-breadcrumb`) | DD-103 |
-> | Una lista nunca corta texto: columnas cortas con el ancho MEDIDO de su dato y `<sc-list-page tableMinWidth>`; por debajo, la tabla se desplaza de lado | DD-102 |
+> | Una lista nunca corta texto: columnas cortas con el ancho MEDIDO de su dato y `<sc-list-page tableMinWidth>`; por debajo, la tabla se desplaza de lado · un dato más largo que lo medido recorta con «…» y el `title` (DD-124) | DD-102 |
 > | Los editores agente↔grupo: una columna por canal con `sc-checkbox`, elegir varios con la barra en lote, «Añadir» con `sc-select` · una asignación de repositorio es un `sc-multiselect`, no una tabla · se juntan secciones que responden la misma pregunta | DD-101 |
 > | Las fichas de agente, grupo y usuario usan el molde de Contact Center: `.page__inner--rail`, índice sin cajas, tarjeta `surface="card"` con `.sub-section`, interruptor delante con su ayuda visible, «Deshacer» solo con cambios | DD-100 |
 > | Todo suelo de pantalla es `--sc-bg-canvas` (las tarjetas, `--sc-bg-surface`) · el color de pantallas y componentes va por rol, nunca `--sc-color-*`, a pelo ni `.sc-dark` a mano: el oscuro vive en la capa 7 · lo vigilan `tokens:guard` (regla 8) y `theme-contrast` | DD-99 |
@@ -86,6 +87,39 @@
 
 ---
 
+## DD-125 · 2026-09-27 — La caja de sección compacta su aire vertical: 17,5 arriba y abajo en las dos pieles
+
+**Contexto** · Revisión de producto: el relleno superior e inferior de `sc-section-card` sobra, y compactar es quitar
+el aire que es de más, no apretar lo que separa algo. Va con el principio de densidad aceptado el mismo día (AGENTS
+§«UX de pantalla» 9): compacto donde se escanea (el monitor, las listas), más aire donde se lee y se rellena (fichas,
+formularios), y en ninguno aire que no separe nada. Medido en el build a 1440 en las 8 plantillas del Supervisor que
+la usan (todas en `surface="card"`): de la raya de la caja a la primera y a la última tinta hay 26,5 y 25,5 px, o sea
+el propio relleno (24,5) más el interlineado. No hay márgenes que se sumen, salvo en «Políticas de contraseñas»
+(Sistema): 39,8 abajo, porque la última fila conservaba su relleno de 12,25, y la raya entre filas quedaba 10 px más
+cerca de la fila de abajo que de la de arriba por el hueco de 14 de `.sub-section`.
+
+**Decisión** ·
+1. **Arriba y abajo, 17,5** (`scale/1-25`) en las dos pieles; antes, 24,5 en la blanca y 22,75 en la gris. Los lados y
+   el aire del título a su contenido no cambian. Plegada, la cabecera sigue midiendo lo mismo arriba que abajo.
+2. **«Políticas de contraseñas»**: la raya, centrada (12,25 a cada lado, sin el hueco de la sub-sección), y sin
+   relleno fuera de la primera y de la última fila, que ya pone la caja.
+3. El Kit, en `docs/figma-pendiente.md` (ficha 16).
+
+**Razón** · La caja ya la delimitan su borde y su fondo: el relleno vertical no separa nada, solo alarga cada sección
+(14 px por caja, 84 en las seis de Sistema). 17,5 es además el aire con el que arranca la página bajo la barra (DD-94).
+
+**Descartadas** ·
+- **21 (`scale/1-5`)** → 3,5 px por lado no quitan el aire de más que se veía.
+- **14 (`scale/1`)** → el borde quedaría a la misma distancia del título que el título de su contenido (16), y la caja
+  se leería apretada.
+- **Solo la piel blanca** → es el mismo componente; la gris se habría quedado con otro ritmo vertical.
+
+**Consecuencias** · La captura `sectioncard-linux.png` y la línea base de estilos de `sectioncard` se regeneran. La
+demo de sc-docs dice las medidas nuevas (y deja de decir que el título mide 14/20: es el h3, 18/24, desde el
+2026-09-12).
+
+---
+
 ## DD-124 · 2026-09-27 — La demo tiene un segundo juego de datos, `?datos=tortura`, para ver dónde se rompe una pantalla
 
 **Contexto** · Una pantalla se juzga con los datos que tiene delante. Medido en la semilla del Supervisor el
@@ -107,11 +141,16 @@ tortura.
 4. Se mira con `npm run revision -- --datos tortura <ruta>`; lo prueba `e2e/supervisor/juego-de-datos.spec.ts`
    (llega a los almacenes, se recuerda, vuelve, y no comparte claves).
 
-**Pendiente (decisión de producto)** · El juego **editorial**: grupos con nombres de negocio coherentes y agentes
-generados con nombre y grupos creíbles. Es lo que se enseña en una demo, y los nombres de grupo de hoy vienen de
-producción a propósito (`audit-seed-pii`), así que qué se enseña lo decide producto. Propuesta para los 14 grupos:
-Atención al cliente, Soporte técnico, Ventas, Facturación, Retención, Posventa, Clientes VIP, Incidencias, Campañas
-salientes, Citas y reservas, Distribuidores, Cobros, Bajas y Segundo nivel. Con el mecanismo hecho es una tabla por id.
+**El juego editorial (el mismo día)** · `?datos=editorial` da a los 14 grupos un nombre de negocio, elegido por lo que
+hace cada uno (sus servicios y sus canales): Atención al cliente (1), Bajas (2), Campañas salientes (3), Ventas (4),
+Clientes VIP (5), Citas y reservas (6), Distribuidores (7), Retención (8), Posventa (9), Facturación (10), Soporte
+técnico (11), Incidencias (12), Segundo nivel (13) y Cobros (14). La tabla va por el NOMBRE de siempre, no por el id,
+porque el nombre se repite fuera del almacén de grupos: el grupo saliente del agente, la ficha de usuario, los filtros
+y las conversaciones de Conversaciones y las entidades del Dashboard, que lo toman de `deGrupos` y `nombreDeGrupo`
+(`core/services/juego-de-datos.ts`). Solo cambian los campos que guardan un nombre de grupo: «Reclamaciones» también
+es un servicio y ahí sigue. Los agentes conservan sus nombres de Hollywood (decisión de producto del 2026-09-14). Lo
+prueba `e2e/supervisor/juego-de-datos.spec.ts`: el nombre cambia en la lista y en una conversación, y `demo` vuelve.
+Hay decisión de producto pendiente solo si el editorial pasa a ser la demo pública.
 
 **Descartadas** ·
 - **Cambiar la semilla por defecto** → tumba los e2e que leen nombres («ACD Demo C2CB», «Tom Hanks») y cambia la
@@ -128,8 +167,18 @@ un texto; con tortura, las listas cortan con «…» los **14** nombres de grupo
 correo) y **6** correos de usuario: «Tom Hanks Fernández-Villaverde de la Concepción» necesita 345 px y recibe 218. Es
 justo lo que DD-102 prometía que no pasaría («una lista nunca corta texto»), pero sus anchos se midieron con nombres
 de 7 a 18 letras, y un nombre compuesto español real pasa de 40. La cabecera de la ficha de agente también corta el
-nombre, con sitio libre a su derecha. Si DD-102 se revisa (anchos medidos con los datos que haya, o desplazamiento
-lateral), es decisión de producto; queda en el hand-off de calidad visual.
+nombre, con sitio libre a su derecha.
+
+**Decidido con esa medida (el mismo día)** · DD-102 sigue siendo la regla con los datos que se midieron: con los de
+siempre, ninguna lista corta. Con un dato más largo que lo medido, la celda recorta con «…» y lleva el texto entero en
+el `title`. Descartado que el ancho crezca con el dato: la lista virtual y `table-layout: fixed` necesitan anchos
+estables (DD-95). Descartado también desplazar la tabla de lado a 1440: esconde columnas a todos por un nombre largo.
+Medido con tortura, ya fundido DD-122: 56 textos recortados, todos en listas (1 con los datos de siempre, la vista
+previa de Plantillas). Antes, los de Agentes (nombre y correo), Grupos, Plantillas y Tipificaciones no llevaban el
+texto entero; ahora lo llevan los 56.
+La cabecera de las fichas de agente y usuario, que recortaba el nombre a 252 con sitio libre al lado, ya no recorta:
+con DD-122 (el mismo día) las dos van al molde de la ficha de grupo, sin cifras al lado, y el nombre toma el ancho que
+queda. Medido tras fundirlo, a 1440: 1213 px para el nombre, y el de tortura más largo mide 461 y cabe entero.
 
 ---
 
@@ -186,11 +235,15 @@ faltaba era que mandara y que se midiera.
   28 hojas y la mayoría no separa hermanos (icono y texto, celdas, avisos); se cambia lo que la medida señala, no lo
   que se parece.
 
-**Pendiente (decisión de producto)** · Tres diálogos siguen por debajo del doble en el botón: «Nueva entidad», «Nueva
-categoría» y «Duplicar grupo». Su pie lo pone el diálogo NATIVO de PrimeNG: 18 del último campo (el `padding` inferior
-del contenido de Aura), contra 14–15,75 entre campos. Dos salidas: más aire en el pie desde el tema, que alcanza a todos
-los diálogos y es un desvío del nativo por token (DD-113 §2; también al Kit), o dárselo a esos formularios. Hasta que se
-decida, la prueba los lista en `CONOCIDOS` con su medida, y cualquier otro rojo la rompe.
+**El pie de los diálogos (resuelto el mismo día)** · Los tres diálogos que seguían por debajo del doble en el botón
+(«Nueva entidad», «Nueva categoría» y «Duplicar grupo») no llevan el pie nativo de PrimeNG, como se escribió primero,
+sino el de `sc-dialog`: es del DS y pinta su propio marco con los 17,5 de `dialog/content/padding` del Kit. El botón
+quedaba a 18 del último campo, contra 14–15,75 entre campos. No había desvío del nativo que decidir (DD-113 §3 no
+aplica) y rige el punto 2: con cuerpo, la botonera va a 28 del contenido (el pie gana 10,5 arriba) y el hueco por
+defecto entre hermanos del cuerpo baja de 15,75 a 14. Las confirmaciones sin cuerpo y el cuerpo a ras (`flushBody`) no
+cambian: allí no hay campo con el que confundir la botonera. Los dos formularios de Conversaciones pasan de 15,75 a 14
+entre campos. Medido tras el cambio: los tres, 28,5 contra 14; `CONOCIDOS` queda vacío y la prueba, entera en verde.
+En el Kit, ficha 17 de figma-pendiente.
 
 **Consecuencias** · Una maqueta nueva con 12,25 o 24,5 se implementa en el peldaño de la escalera y se apunta en
 figma-pendiente. La prueba corre en el CI con el resto de la suite del Supervisor (DD-60); en local,
@@ -1180,7 +1233,9 @@ solo a 1024 aparece el desplazamiento lateral. El instrumento, probado con el fa
 
 **Consecuencias** · Matiza DD-80 en las listas: «una etiqueta no se parte, recorta» sigue valiendo, pero en una
 lista con `tableMinWidth` ya no llega a recortar. El número de «Agentes» de Grupos abre la lista de sus agentes
-con el mismo `sc-group-popover` que «Grupos» en Agentes (entrada nueva `countAriaLabel`).
+con el mismo `sc-group-popover` que «Grupos» en Agentes (entrada nueva `countAriaLabel`). Matizada por DD-124: con un
+dato más largo que los medidos (un apellido compuesto real), la celda recorta con «…» y el texto entero va en su
+`title`.
 
 ---
 

@@ -465,6 +465,42 @@ comentario de `.grid` en `_forms.scss` deja de decir que se aparta de la maqueta
 
 ---
 
+## 16 · La caja de sección, 17,5 arriba y abajo en las dos pieles (2026-09-27)
+
+**Estado:** pendiente · **Dónde:** Figma, el maestro `Section` del DS (691:23956, padding vertical atado a
+`scale/1-625`) y el `Block` del Supervisor (393:12587, atado a `scale/1-75`) · **Esfuerzo:** revincular el padding
+superior e inferior de los dos a `scale/1-25` · **Sin verificar** contra el fichero del DS: los nodos y sus variables
+son los que cita `sc-section-card.component.scss`.
+
+- **Por qué** (DD-125): el relleno vertical no separaba nada, la caja ya la delimitan su borde y su fondo. En código,
+  17,5 arriba y abajo en las dos pieles; los lados (16 la gris, 24,5 la blanca) y el aire del título a su contenido
+  (14 y 16) no cambian.
+- **Plegada**, la cabecera mide 17,5 arriba y abajo.
+
+**Cómo sabes que está hecho:** el maestro `Section` y el `Block` miden 17,5 arriba y abajo, y el comentario de
+`sc-section-card.component.scss` deja de decir que el vertical se aparta del maestro.
+
+---
+
+## 17 · El diálogo con formulario: la botonera a 28 del último campo, y 14 entre campos (2026-09-27)
+
+**Estado:** pendiente · **Dónde:** Figma, el maestro del diálogo del DS (`dialog/footer/padding/top`, hoy 0) y las
+maquetas que lo usan con un formulario («Nueva entidad», «Nueva categoría», «Duplicar grupo») · **Esfuerzo:** con
+cuerpo, el pie gana 10,5 arriba (`scale/0-75`); sumado a los 17,5 de `dialog/content/padding/bottom`, la botonera queda
+a 28 · **Sin verificar** contra el fichero del DS: el código no cita el nodo del maestro, y el server de Figma no estaba
+autorizado en la sesión que lo cambió.
+
+- **Por qué** (DD-123): a 17,5, la botonera quedaba más cerca del último campo que dos campos entre sí (15,75) y se leía
+  como parte de ese campo.
+- **Entre campos del cuerpo, 14** (`scale/1`), no 15,75: el peldaño del medio de la escalera.
+- **Sin cuerpo** (una confirmación: título, texto y botones) no cambia, porque no hay campo con el que confundir la
+  botonera. Si el maestro es uno solo para los dos casos, el cambio va en la variante con cuerpo.
+
+**Cómo sabes que está hecho:** el diálogo con formulario mide 28 del último campo a la botonera y 14 entre campos, y el
+comentario de `sc-dialog.component.scss` deja de decir que el pie se aparta del Kit.
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

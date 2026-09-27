@@ -4,6 +4,7 @@
  *
  *   npm run revision -- <ruta> [<ruta>…]        p. ej. `npm run revision -- admin/grupos/editar/11 login`
  *   npm run revision -- --datos tortura <ruta>   la misma pantalla con los textos al límite (DD-124)
+ *   npm run revision -- --datos editorial <ruta> con los grupos de nombre de negocio, para juzgar cómo luce
  *
  * Por qué existe: el primer filtro visual de una pantalla no puede ser el usuario. Una lista de
  * consejos de UI que se contrastó con el repo el 2026-09-27 lo decía así: pide a la IA que CRITIQUE

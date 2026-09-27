@@ -5585,7 +5585,7 @@
     "sc-section > section.section-card > div.section-card__body": {
       "padding-top": "0px",
       "padding-right": "16px",
-      "padding-bottom": "22.75px",
+      "padding-bottom": "17.5px",
       "padding-left": "16px",
       "gap": "normal",
       "min-height": "0px",
@@ -5599,7 +5599,7 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-section > section.section-card > header.section-card__head": {
-      "padding-top": "22.75px",
+      "padding-top": "17.5px",
       "padding-right": "16px",
       "padding-bottom": "14px",
       "padding-left": "16px",
@@ -5647,9 +5647,9 @@
       "background-color": "rgb(247, 248, 250)"
     },
     "sc-section-collapsible > section.section-card > button.section-card__head": {
-      "padding-top": "22.75px",
+      "padding-top": "17.5px",
       "padding-right": "16px",
-      "padding-bottom": "22.75px",
+      "padding-bottom": "17.5px",
       "padding-left": "16px",
       "gap": "8.75px",
       "min-height": "0px",
@@ -5697,7 +5697,7 @@
     "sc-section-flat > section.section-card > div.section-card__body": {
       "padding-top": "0px",
       "padding-right": "16px",
-      "padding-bottom": "22.75px",
+      "padding-bottom": "17.5px",
       "padding-left": "16px",
       "gap": "normal",
       "min-height": "0px",
@@ -5711,7 +5711,7 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-section-flat > section.section-card > header.section-card__head": {
-      "padding-top": "22.75px",
+      "padding-top": "17.5px",
       "padding-right": "16px",
       "padding-bottom": "14px",
       "padding-left": "16px",
@@ -5809,7 +5809,7 @@
     "sc-section-page > section.section-card > div.section-card__body": {
       "padding-top": "0px",
       "padding-right": "24.5px",
-      "padding-bottom": "24.5px",
+      "padding-bottom": "17.5px",
       "padding-left": "24.5px",
       "gap": "normal",
       "min-height": "0px",
@@ -5823,7 +5823,7 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-section-page > section.section-card > header.section-card__head": {
-      "padding-top": "24.5px",
+      "padding-top": "17.5px",
       "padding-right": "24.5px",
       "padding-bottom": "16px",
       "padding-left": "24.5px",
