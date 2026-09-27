@@ -44,6 +44,10 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 - **`@smartcontact-hub/components`** — `sc-section-card` mide 17,5 arriba y abajo en las dos pieles (antes, 22,75
   la gris y 24,5 la blanca), también plegada. Los lados y el aire del título a su contenido no cambian. El relleno
   vertical no separaba nada: la caja ya la delimitan su borde y su fondo. ([DD-125](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-dialog` con cuerpo deja la botonera a 28 del contenido (el pie gana 10,5
+  arriba) y separa a los hermanos del cuerpo 14 en vez de 15,75. A 17,5, el botón quedaba más cerca del último
+  campo que dos campos entre sí y se leía como parte de ese campo. Sin cuerpo (una confirmación) y con `flushBody`,
+  como estaba. ([DD-123](docs/DECISIONS.md))
 
 ## [1.0.0] — 2026-09-09
 

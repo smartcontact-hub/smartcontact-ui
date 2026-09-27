@@ -4,7 +4,7 @@
 .entity-form {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-1-125);
+  gap: var(--sc-spacing-1); /* 14 entre campos: la botonera del diálogo va al doble, 28 (DD-123) */
 
   &__row {
     display: flex;
