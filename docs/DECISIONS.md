@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El resumen de las fichas como widget: la cifra con «/total» y el `p-progress-spinner` nativo a 42 (`sc-summary-kpi`), que cuenta y se llena al abrir y al cambiar, y nada con menos movimiento · anillo en toda proporción, oculto al lector (la cifra final va en texto oculto) · la tarjeta en el tinte de marca, con todo su texto en primario (el secundario no llega a AA sobre el tinte) · `theme-contrast` perdona el gris solo sobre sus fondos (enmienda DD-121 §3, DD-122 §8) | DD-126 |
 > | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra · R4: lo que apilan los envoltorios de dentro de una caja no llega a 7 | DD-125 |
 > | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio, y el juego se elige en Configuración → Sistema · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
 > | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` · `sc-dialog` con cuerpo: la botonera a 28 y 14 entre hermanos | DD-123 |
@@ -85,6 +86,79 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-126 · 2026-09-27 — El resumen de las fichas, como widget: la cifra cuenta y el anillo nativo se llena
+
+**Contexto** · Revisión de producto: el resumen de la derecha de las fichas de grupo, agente y usuario (DD-121 §3,
+DD-122 §8) enseñaba cifras sueltas en tarjetas blancas, y se pide que se lea como un widget: la cifra grande, un anillo
+pequeño que se llena con la proporción y una cuenta sutil, como el ejemplo «Preview» de ProgressSpinner en primeng.dev.
+Solo en las tres fichas: el «impacto estimado» del constructor de reglas se queda como está. Se construyó un prototipo
+con dos superficies conmutables por la URL (blanca con borde · tinte de marca), se midió en el build y se eligió sobre
+capturas y vídeo.
+
+**Decisión** ·
+1. **Cada proporción es un widget** (`sc-summary-kpi`, en `shared/components`): el rótulo con su icono, la cifra grande
+   con «/total» y, al lado, el `p-progress-spinner` NATIVO en modo determinado (`value` sobre `max`) a 42, con el arco
+   en `--sc-bg-accent` por `[dt]` y su «N%» oculto por `[pt]`, como en el ejemplo (`customs-catalog` §8). Lo que no es
+   una proporción (reparto, salida, recursos, el tipo) va en una tarjeta de datos, uno por línea.
+2. **Anillo en toda proporción**, la misma pieza en las tres fichas: grupo, agentes activos sobre asignados (el canal
+   sin nadie sigue avisando debajo, con icono y texto); agente, grupos activos sobre asignados (sin grupos, sin anillo
+   y «Sin grupos»); usuario, secciones y permisos.
+3. **Se mueve al abrir y al cambiar** (enmienda DD-121 §3, que animaba solo al cambiar): la cifra cuenta
+   (`CountUpDirective`, ease-out cúbico) y el anillo se llena desde vacío con su transición nativa, en
+   `--sc-transition-slow`. La directiva lee la duración del CSS, así que con menos movimiento y en las e2e la cifra
+   sale ya final. Al lector de pantalla le llega la cifra final en un texto oculto («8 de 11»), no la cuenta.
+4. **El anillo va oculto al lector** (`aria-hidden`): su `progressbar` lleva `aria-busy="true"` y anunciaría «cargando»
+   de un dato que no carga. La proporción ya la dice el texto oculto.
+5. **La tarjeta, en el tinte de marca** (`--sc-bg-primary-subtle`), sin borde a la vista (transparente, para que con
+   colores forzados siga teniendo contorno). En claro es el mismo color que `--sc-bg-selected`; se eligió sabiéndolo,
+   porque estas tarjetas no se pulsan ni se eligen.
+6. **Todo el texto de la tarjeta, en `--sc-text-primary`**, rótulos, «/total», canales y claves incluidos: sobre el
+   tinte, el secundario no llega a AA (ver Razón). La jerarquía la llevan el tamaño y el peso. El aviso ámbar del grupo
+   («Sin agentes», «Sin número») lleva el ámbar en el icono, y el texto en primario.
+7. **`theme-contrast` perdona el gris secundario solo sobre sus dos fondos aceptados** (el lienzo y slate-100), no con
+   cualquier fondo, y suma a sus rutas las fichas de agente y usuario.
+
+**Razón** ·
+- Medido en el build a 1440, con los datos de siempre: 16 anillos en seis fichas y dos temas, todos a 42×42, con el arco
+  en su token, el «N%» sin pintar y `aria-hidden`. El resumen del grupo 11 a 1366×660 mide 554 y cabe sin scroll (lo
+  vigila `ficha-grupo.spec.ts`).
+- Contraste contra la tarjeta: el texto, 6,46:1 en claro y 15,57 en oscuro; el arco, 4,29 y 3,18 (un objeto gráfico
+  pide 3); el icono del aviso, 4,31.
+- El secundario (slate-600) solo llega a AA sobre blanco (4,52:1), y sobre el tinte mide 3,96. `theme-contrast` no lo
+  vio porque perdonaba ese color con cualquier fondo: con el perdón atado a sus fondos, fallan exactamente las tres
+  fichas y ninguna de las otras 18 rutas. El ámbar como texto, sobre el tinte, 4,31 a 12 px.
+- La cifra y el arco, fotograma a fotograma (usuario 3): el arco se llena en 300 ms y la cifra acaba entre 55 y 75 ms
+  después (dos pasadas), con la ficha aún pintándose.
+- Con menos movimiento, ninguna cifra intermedia: la prueba confirma en la página que la preferencia llegó
+  (`matchMedia`) antes de medir, y con la duración sin apagar enrojece (se vieron 1, 4, 6, 7 y 8).
+- En los datos de prueba, el anillo sale a medias en 4 de 6 usuarios, 5 de 14 grupos y 4 de 20 agentes con grupos: dice
+  algo. Un anillo siempre lleno no diría nada.
+
+**Descartadas** ·
+- **La tarjeta blanca con borde y sombra suave** (la otra superficie del prototipo) → con ella el gris secundario
+  cumplía (4,52), pero se eligió el tinte, que se lee como un widget sobre la página blanca.
+- **Una tarjeta navy o en degradado, como la del ejemplo** → no hay token para una superficie así, en oscuro sería una
+  superficie clara, y el degradado es color decorativo (AGENTS «UX de pantalla» 1).
+- **`sc-gauge`** → no se mueve y empieza en 96 px. El anillo del ejemplo es el `p-progress-spinner` nativo.
+- **El porcentaje de la ficha completa** → DD-121 ya lo descartó: siempre marcaba 100.
+- **Canales cubiertos como anillo del grupo** → salía a medias en 3 de 14 grupos, y el canal sin nadie ya avisa en su
+  fila.
+- **Mover solo al cambiar** (lo de DD-121 §3) → al abrir, la cifra y el anillo se leerían parados, que es justo lo que
+  el widget viene a cambiar. Si repetido cansa, es una línea.
+- **Dejar el gris secundario sobre el tinte**, como el límite conocido de `customs-catalog` §1.5 → ese límite es del
+  lienzo, y se acepta porque el texto secundario vive sobre blanco. El tinte sería el primer sitio de la app con el
+  gris bajo AA en reposo.
+- **Oscurecer los rótulos solo en claro** → pediría una regla por tema en la hoja de la app, y el tema oscuro vive en la
+  capa 7 de tokens (se quitó `:host-context(.sc-dark)` el 2026-09-14).
+
+**Consecuencias** · Enmienda DD-121 §3 (las cifras se mueven también al abrir) y DD-122 §8 (el resumen de agente y
+usuario deja las cifras sueltas). `customs-catalog` §8 recoge el «N%» oculto; `figma-pendiente` §18, el widget, que el
+Kit no tiene; la tabla de AGENTS, la pieza. La primera medida del tinte en oscuro, 20,91 la cifra y 4,27 el arco, salió
+de leer mal `color(srgb … / a)`: lo medido son 15,57 y 3,18, y siguen pasando. Queda para el pase de diseño: que la
+cifra acabe con el arco al abrir, y confirmar el tinte con los rótulos en primario frente a la tarjeta blanca.
 
 ---
 
@@ -319,7 +393,8 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
 7. **Un aviso cancelado vuelve a donde estaba**: el router con `canceledNavigationResolution: 'computed'`.
 8. **Agente y usuario, al molde de la ficha de grupo**. Van con la cabecera encima, el índice a la izquierda, una
    sección a la vista en su `sc-section-card` y el resumen a la derecha con sus tres cifras de siempre, que dejan
-   la franja del nombre. Cada ficha tiene un orden, el de sus dependencias, igual en los dos modos:
+   la franja del nombre (desde DD-126, cada proporción es un widget con su anillo). Cada ficha tiene un orden, el
+   de sus dependencias, igual en los dos modos:
    - agente: Identidad · Grupos asignados · Permisos · Recursos · Avanzado;
    - usuario: Identidad · Acceso · Servicios asignados.
    Abren en la primera. Los listados enlazan a la sección de trabajo (`?seccion=grupos`, `?seccion=acceso`), así
@@ -402,7 +477,8 @@ tres fichas (#240) y el alta en diálogo (DD-119).
    Descartadas). Tarjetas de KPI (`sc-group-summary`): agentes, con una barra `p-metergroup` por canal (base: el
    ejemplo «Template» de MeterGroup en primeng.dev) y aviso con icono y texto si un canal activo no tiene quien lo
    atienda; reparto por familia; salida (teléfono saliente y WhatsApp); recursos; y lo que falta para guardar. Cifras
-   animadas al cambiar (`AnimateOnChangeDirective`, en `core/directives`). La columna (`.ficha-summary`) mide 240, la
+   animadas al cambiar (`AnimateOnChangeDirective`, en `core/directives`). **Enmendado por DD-126 (2026-09-27)**: cada
+   proporción es un widget con su anillo, y la cifra cuenta también al abrir. La columna (`.ficha-summary`) mide 240, la
    del panel del constructor de reglas; va fija al hacer scroll, así que no se va mientras se toca lo que la mueve, y
    lo que no quepa hace scroll dentro de ella. El índice se queda solo en el carril de Contact Center, que no tiene
    scroll. El tope de la página sube a 1600 (`.ficha-rail--summary`) y el contenido mide 812 a 1440 y 738 a 1366.

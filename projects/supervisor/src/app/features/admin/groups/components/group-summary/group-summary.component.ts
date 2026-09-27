@@ -6,7 +6,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { AnimateOnChangeDirective } from '@core/directives';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent } from '@shared/components';
+import { ChannelIconComponent, SummaryKpiComponent } from '@shared/components';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 
 import { CHANNEL_LABEL_KEYS, type GroupChannel } from '../../data/groups-data';
@@ -36,22 +36,23 @@ interface ChannelRow {
  * La visión de producto de grupos (2026-09-25) pide ver de un vistazo las estrategias, el teléfono
  * saliente y el WhatsApp; aquí van, con los agentes y los recursos.
  *
- * Habla el idioma del panel de grupo del Dashboard (`group-panel-widget`): cifras que se animan al
- * cambiar (`scAnimateOnChange` + `.animate-sc-bump`, solo `transform`, y nada con movimiento
- * reducido) y barras `p-metergroup` nativas con su etiqueta apagada. El grupo se lee igual en su
- * panel de supervisión y en su ficha.
+ * Los agentes son un widget (`sc-summary-kpi`, DD-126): los que atienden sobre los asignados, con la cifra
+ * que cuenta y el anillo nativo que se llena. Debajo, cada canal con su barra `p-metergroup` nativa, la del
+ * panel de grupo del Dashboard, y sus cifras con `scAnimateOnChange` + `.animate-sc-bump` (solo `transform`,
+ * y nada con movimiento reducido). El grupo se lee igual en su panel de supervisión y en su ficha.
  *
  * Cada cifra contesta una pregunta de verdad, y ninguna es decorativa: una tarjeta que no puede
  * decir nada (Salida en un grupo solo de chat web) no se pinta.
- *   · Agentes: cuántos hay y cuántos atienden cada canal. Un canal activo sin nadie que lo
- *     atienda sale en aviso, con icono y texto (el color solo no basta, WCAG 1.4.1).
+ *   · Agentes activos: cuántos atienden de los asignados (los demás, en pausa), y cuántos cada canal.
+ *     Un canal activo sin nadie que lo atienda sale en aviso, con icono y texto (el color solo no
+ *     basta, WCAG 1.4.1).
  *   · Reparto: la estrategia de cada familia de canales.
  *   · Salida: el teléfono saliente y el número de WhatsApp.
  *   · Recursos: cuántos le llegan desde Repositorios.
  */
 @Component({
   selector: 'sc-group-summary',
-  imports: [TranslateModule, MeterGroupModule, ScIconComponent, ChannelIconComponent, AnimateOnChangeDirective],
+  imports: [TranslateModule, MeterGroupModule, ScIconComponent, ChannelIconComponent, AnimateOnChangeDirective, SummaryKpiComponent],
   templateUrl: './group-summary.component.html',
   styleUrl: './group-summary.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

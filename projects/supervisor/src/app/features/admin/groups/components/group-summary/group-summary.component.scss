@@ -2,10 +2,10 @@
   display: block;
 }
 
-/* LO COMÚN DEL RESUMEN —la columna, la tarjeta de KPI, su rótulo, la cifra, el valor y la fila de la franja
- * ancha— vive en `src/styles/_resumen.scss` desde el 2026-09-27: lo usan también las fichas de agente y
- * usuario (DD-122). Aquí quedan las piezas que solo tiene el de grupo: lo que falta, los canales con su
- * barra, el aviso de canal sin agentes y los pares de datos. */
+/* LO COMÚN DEL RESUMEN —la columna, la tarjeta, su rótulo, la cifra, el valor, el widget con su anillo y la
+ * fila de la franja ancha— vive en `src/styles/_resumen.scss`: lo usan también las fichas de agente y usuario
+ * (DD-122, DD-126). Aquí quedan las piezas que solo tiene el de grupo: lo que falta, los canales con su barra,
+ * el aviso de canal sin agentes y los pares de datos. */
 
 .resumen__missing {
   display: flex;
@@ -15,15 +15,10 @@
   color: var(--sc-text-warning);
 }
 
-.resumen__aside {
-  margin: 0;
-  color: var(--sc-text-secondary);
-}
-
 .resumen__channels {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-1);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -43,7 +38,6 @@
   align-items: center;
   gap: var(--sc-spacing-0-375);
   min-width: 0;
-  color: var(--sc-text-secondary);
   white-space: nowrap;
 }
 
@@ -52,27 +46,49 @@
   grid-column: 1 / -1;
 }
 
+/* El aviso va sobre el tinte de marca (DD-126), y ahí el ámbar como TEXTO se queda en 4,31:1 a 12 px, bajo AA
+ * (medido por `theme-contrast` en claro). El ámbar lo lleva el icono, al que le bastan 3:1, y el texto va en
+ * primario: el aviso sigue siendo icono, color y palabra (AGENTS «UX de pantalla» 6). */
 .resumen__warn {
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
   margin: 0;
-  color: var(--sc-text-warning);
+  color: var(--sc-text-primary);
+
+  sc-icon {
+    color: var(--sc-icon-warning);
+  }
 }
 
 .resumen__pairs {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-375);
+  gap: var(--sc-spacing-1);
   margin: 0;
 }
 
+/* Cada dato en una línea, clave a la izquierda y valor a la derecha, como las filas por canal: la tarjeta se lee
+ * con una sola gramática y, en la columna de 240, ahorra una línea por dato (medido: con la escalera y el dato
+ * en dos líneas, el resumen del grupo 11 no cabía a 1366×660). Si no cabe en la línea, el valor baja. */
 .resumen__pair {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: var(--sc-spacing-0-5);
   min-width: 0;
 }
 
-.resumen__key {
-  color: var(--sc-text-secondary);
+/* Reparto, salida y recursos, juntos en una tarjeta: lo que no es una proporción. Entre los tres, 28: al menos el
+ * doble que entre sus filas (14), o la tarjeta se lee como una lista plana (revisión previa, 2026-09-27). Dentro
+ * de cada uno, 7 del rótulo a sus datos. */
+.resumen__facts {
+  gap: var(--sc-spacing-2);
+}
+
+.resumen__fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
 }
