@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La dirección visual: el oficio de Linear, GitHub y Notion, no un look · lo vistoso entra si ayuda, vive en variables y funciona en los dos temas · explorar es libre, entrar en el producto es por el Kit · una mejora estética del producto se propone, no se prohíbe (`.impeccable.md`, principios 5 a 8) | DD-128 |
 > | El resumen de las fichas como widget: la cifra con «/total» y el `p-progress-spinner` nativo a 42 (`sc-summary-kpi`), que cuenta y se llena al abrir y al cambiar, y nada con menos movimiento · anillo en toda proporción, oculto al lector (la cifra final va en texto oculto) · la tarjeta en el tinte de marca, con todo su texto en primario (el secundario no llega a AA sobre el tinte) · `theme-contrast` perdona el gris solo sobre sus fondos (enmienda DD-121 §3, DD-122 §8) | DD-126 |
 > | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra · R4: lo que apilan los envoltorios de dentro de una caja no llega a 7 | DD-125 |
 > | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio, y el juego se elige en Configuración → Sistema · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
@@ -86,6 +87,55 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-128 · 2026-09-27 — La dirección visual: el oficio de las herramientas de trabajo modernas, y una puerta para lo vistoso
+
+**Contexto** · Las exploraciones en Figma Make salen más vistosas que el producto, y se preguntó si los controles del
+repo dejan sitio para soñar. Medido ese día en el repo: un efecto de cristal ya entra cuando viene de una variable (el
+toast lleva `--sc-toast-backdrop-blur`, 1,5 px desde el Kit); `.impeccable.md`, que los agentes leen antes de pulir,
+no nombraba a Aura y decía que la fuente de verdad visual es Figma y que los componentes no se tocan «por estética»,
+cuando DD-78 y DD-111 ya ponen a Aura delante; el único diseño expresivo que llegó —el Figma de «Reglas de
+transcripción»— conservó su estructura y descartó su estética entera, sin que nada de ella pasara a variable
+(`rule-builder-page.component.scss`); y las cinco exploraciones del Lab de sc-docs responden preguntas de estructura y
+comportamiento (qué se abre, qué forma de ficha, cómo hace scroll).
+
+**Decisión** ·
+1. **Referencias: Linear, GitHub y Notion**, por su oficio y no por un look: tipografía clara, grises bien escalonados
+   y bordes finos antes que sombras, movimiento rápido y discreto, mucha información sin agobio, atajos de teclado a
+   la vista. **Anti-referencia**: el look «vibe-coded» (degradados morado-azul, texto con degradado, cristal y brillos
+   de adorno, rebotes, todo entrando animado).
+2. **Lo vistoso entra con tres condiciones**: que ayude a entender o a actuar, que viva en variables y no a mano, y que
+   funcione en todos los componentes que lo usan y en los dos temas, con contraste AA y quieto para quien pide menos
+   movimiento.
+3. **Explorar es libre; entrar en el producto, no.** En Figma Make o en páginas de exploración no rige nada de esto; lo
+   que convence entra como variables del Kit y con las mismas pruebas que el resto. Una exploración va marcada como tal
+   y no sirve de referencia para desarrollo.
+4. **Una mejora estética del producto se propone, no se prohíbe**: construida en mínimo y mirada (LEARNINGS #18), con
+   su ficha en `docs/figma-pendiente.md`. Sustituye al «NUNCA tocar por estética» de `.impeccable.md`; lo que sigue sin
+   hacerse es meterla a mano en un componente.
+5. **`.impeccable.md` se pone al día**: la base es Aura (DD-78, DD-111), y gana la sección «Contexto de diseño»
+   (usuarios, personalidad, dirección estética y los principios 5 a 8) que lee la skill `impeccable`.
+
+**Razón** · Los controles de coherencia entre Figma y código siguen haciendo falta: desarrollo construye mirando Figma,
+y lo que no vive en variables no le llega igual. Lo que faltaba era una vía para la ambición visual. El toast demuestra
+que un efecto con variable entra sin romper nada; el constructor de reglas, que sin vía lo expresivo se pierde entero.
+Y con «NUNCA tocar», ningún agente proponía nada.
+
+**Descartadas** ·
+- **Dejar «NUNCA tocar por estética»** → el gusto se queda sin camino: lo expresivo muere en Make o se cuela en Figma
+  sin variables, y desarrollo lo copia a mano.
+- **Llevar la estética de Make tal cual al código** → trae las marcas del vibe coding y rompe Figma como referencia de
+  desarrollo.
+- **El cristal como lenguaje general** → sobre un fondo que cambia el contraste no se puede garantizar, cuesta
+  rendimiento en pantallas densas, y el monitor puede pasar el turno entero en pantalla (modo pared). Cabe como el del
+  toast: con variable, en una pieza y porque ayuda.
+
+**Consecuencias** · Lo siguiente es leer el código de una exploración de Make para ver qué movimiento y qué detalle se
+adoptan y por dónde entran; las duraciones van hoy por una convención documentada y no por una escala de tokens
+(`docs/customs-catalog.md`). Lo lleva el frente «Dirección visual» (`docs/handoff/direccion-visual.md`). Numerada 128
+y no 127 a propósito: el PR abierto #263 trae otro DD-126 y tendrá que renumerarlo; el 127 le queda libre.
 
 ---
 

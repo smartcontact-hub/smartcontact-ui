@@ -61,6 +61,7 @@ antes de construir encima.
 | **Sidebar del Supervisor** — plegado a 80px y apertura de categorías (SISMAC-4340) | [`docs/handoff/supervisor-sidebar.md`](docs/handoff/supervisor-sidebar.md) | 2026-09-16 |
 | **Fichas de administración y Configuración del AED** — agente, grupo, usuario (grupo: DD-121; un solo índice y las tres fichas en un molde: DD-122; el resumen como widget: DD-126) | [`docs/handoff/supervisor-fichas.md`](docs/handoff/supervisor-fichas.md) | 2026-09-27 |
 | **Calidad visual** — agrupación medida, revisión previa a enseñar, datos de tortura y editorial, caja de sección compacta, referencias (DD-123 a DD-125) | [`docs/handoff/calidad-visual.md`](docs/handoff/calidad-visual.md) | 2026-09-27 |
+| **Dirección visual** — explorar sin cortar la magia: Aura como base, el oficio de Linear, GitHub y Notion, y lo vistoso con variable; siguiente, el código de una exploración de Make (DD-128) | [`docs/handoff/direccion-visual.md`](docs/handoff/direccion-visual.md) | 2026-09-27 |
 
 **Al cerrar, reescribe SOLO el fichero de tu frente.** Si abres una línea de trabajo nueva, crea
 su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.
