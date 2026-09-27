@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El panel de grupos deja de inventar sus «conectados»: salen de `DEMO_AGENT_PRESENCE`, no de una cifra que escala con el número de colas del panel (enmienda DD-127) | DD-129 |
 > | El botón `danger` de texto (el «Eliminar» de las fichas) sube de red-500 a red-600, mismo escalón que el sólido: cierra los tres últimos botones bajo AA de §1.8 | DD-128 |
 > | Los datos de demostración del Dashboard cuadran: un solo estado por agente (`DEMO_AGENT_PRESENCE`) para la tabla, los anillos y su detalle · los disponibles no derivan en el latido · unos totales fijos al pie llevan raya arriba | DD-127 |
 > | El resumen de las fichas como widget: la cifra con «/total» y el `p-progress-spinner` nativo a 42 (`sc-summary-kpi`), que cuenta y se llena al abrir y al cambiar, y nada con menos movimiento · anillo en toda proporción, oculto al lector (la cifra final va en texto oculto) · la tarjeta en el tinte de marca, con todo su texto en primario (el secundario no llega a AA sobre el tinte) · `theme-contrast` perdona el gris solo sobre sus fondos (enmienda DD-121 §3, DD-122 §8) | DD-126 |
@@ -88,6 +89,36 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-129 · 2026-09-27 — El panel de grupos deja de inventar sus conectados: agentes reales, no una cifra por cola
+
+**Contexto** · DD-127 cerró la tabla y el anillo de «Monitor x», y dejó anotado sin tocar que el panel de grupos
+(`buildWidget`, case `group-panel`) seguía inventando «conectados»: `int(3,4) * n` (n = colas del panel), sin
+relación con los agentes reales de la demo. En «Colas y agentes» (4 colas) esto daba 12 o 16 conectados con solo 10
+agentes reales, y el detalle (`detail.ts`) truncaba en silencio a los 9 que hay de verdad (`pool.slice(0, count)`):
+la cifra de arriba no tenía techo, el detalle sí.
+
+**Decisión** · `connected` y `available` del panel de grupos salen de `DEMO_AGENT_PRESENCE`, la misma fuente que ya
+usa `agents-state` desde DD-127: `connected` = agentes no-offline (9), `available` = agentes disponibles (5). El
+panel agrega sobre todos los agentes de la demo, no sobre los de un grupo concreto — la demo no modela ese reparto
+por grupo —, así que se usa el total real en vez de escalar una cifra con el número de colas del panel.
+
+**Razón** · Medido en «Colas y agentes» tras el cambio: «Conectados» dice 9 y «Disponibles» 5, y abrir el detalle de
+cada cifra lista exactamente 9 y 5 filas, sin truncar. `dashboard.spec.ts` («cuenta agentes reales…») salió en rojo
+contra el build anterior (12 conectados, no 9) y en verde con el arreglo.
+
+**Descartadas** ·
+- **Mantener `int(3,4) * n` y solo subir el techo del detalle** → esconde el síntoma (la cifra de arriba seguiría
+  sin relación con agentes reales) en vez de arreglar la causa.
+- **Derivar `connected` por grupo** (qué agentes atienden cada grupo seleccionado) → la demo no tiene esa relación
+  grupo↔agente; inventarla para este panel sería otro dato fabricado, más difícil de auditar que el actual.
+
+**Consecuencias** · `total`, `attended` y el resto de cifras de conversación del panel siguen siendo pseudoaleatorias
+(son cifras de cola, no de plantilla de agentes) y no se tocan aquí. El mismo `case 'group-panel'` lo usan también
+el asistente de widgets y el panel «Groups» del primer monitor sin pasar por `buildWidget` (va escrito a mano, ya
+correcto); los dos quedan consistentes con el mismo mecanismo.
 
 ---
 
