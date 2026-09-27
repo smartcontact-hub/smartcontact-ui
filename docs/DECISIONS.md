@@ -150,10 +150,11 @@ capturas y vídeo.
 2. **Anillo en toda proporción**, la misma pieza en las tres fichas: grupo, agentes activos sobre asignados (el canal
    sin nadie sigue avisando debajo, con icono y texto); agente, grupos activos sobre asignados (sin grupos, sin anillo
    y «Sin grupos»); usuario, secciones y permisos.
-3. **Se mueve al abrir y al cambiar** (enmienda DD-121 §3, que animaba solo al cambiar): la cifra cuenta
-   (`CountUpDirective`, ease-out cúbico) y el anillo se llena desde vacío con su transición nativa, en
-   `--sc-transition-slow`. La directiva lee la duración del CSS, así que con menos movimiento y en las e2e la cifra
-   sale ya final. Al lector de pantalla le llega la cifra final en un texto oculto («8 de 11»), no la cuenta.
+3. **Se mueve al abrir y al cambiar** (enmienda DD-121 §3, que animaba solo al cambiar): el anillo se llena desde
+   vacío con su transición nativa, y la cifra cuenta a la par (`CountUpDirective`), con la misma curva del arco
+   (`ease`) y redondeada, en `--sc-transition-slow`. La directiva lee la duración del CSS, así que con menos movimiento
+   y en las e2e la cifra sale ya final. Al lector de pantalla le llega la cifra final en un texto oculto («8 de 11»),
+   no la cuenta.
 4. **El anillo va oculto al lector** (`aria-hidden`): su `progressbar` lleva `aria-busy="true"` y anunciaría «cargando»
    de un dato que no carga. La proporción ya la dice el texto oculto.
 5. **La tarjeta, en el tinte de marca** (`--sc-bg-primary-subtle`), sin borde a la vista (transparente, para que con
@@ -176,8 +177,10 @@ capturas y vídeo.
 - El secundario (slate-600) solo llega a AA sobre blanco (4,52:1), y sobre el tinte mide 3,96. `theme-contrast` no lo
   vio porque perdonaba ese color con cualquier fondo: con el perdón atado a sus fondos, fallan exactamente las tres
   fichas y ninguna de las otras 18 rutas. El ámbar como texto, sobre el tinte, 4,31 a 12 px.
-- La cifra y el arco, fotograma a fotograma (usuario 3): el arco se llena en 300 ms y la cifra acaba entre 55 y 75 ms
-  después (dos pasadas), con la ficha aún pintándose.
+- La cifra y el arco (usuario 3, aperturas en frío): arrancan en el mismo fotograma. Con ease-out y truncando, la
+  cifra seguía en 7 con el arco al 99 % y acababa hasta 66 ms después. Con la curva del arco y redondeando, en el
+  instante en que cambia cada cifra el arco va a la par: al pasar a 6 de 8, al 58 %; a 8, entre el 92 y el 95 %. La
+  final llega con el arco o antes (de 0 a 101 ms), nunca después.
 - Con menos movimiento, ninguna cifra intermedia: la prueba confirma en la página que la preferencia llegó
   (`matchMedia`) antes de medir, y con la duración sin apagar enrojece (se vieron 1, 4, 6, 7 y 8).
 - En los datos de prueba, el anillo sale a medias en 4 de 6 usuarios, 5 de 14 grupos y 4 de 20 agentes con grupos: dice
@@ -203,8 +206,7 @@ capturas y vídeo.
 **Consecuencias** · Enmienda DD-121 §3 (las cifras se mueven también al abrir) y DD-122 §8 (el resumen de agente y
 usuario deja las cifras sueltas). `customs-catalog` §8 recoge el «N%» oculto; `figma-pendiente` §18, el widget, que el
 Kit no tiene; la tabla de AGENTS, la pieza. La primera medida del tinte en oscuro, 20,91 la cifra y 4,27 el arco, salió
-de leer mal `color(srgb … / a)`: lo medido son 15,57 y 3,18, y siguen pasando. Queda para el pase de diseño: que la
-cifra acabe con el arco al abrir.
+de leer mal `color(srgb … / a)`: lo medido son 15,57 y 3,18, y siguen pasando.
 
 ---
 

@@ -3,7 +3,8 @@
  * (`projects/supervisor/src/app/shared/utils/count-up.core.mjs`). Puro, node:test, dentro del gate
  * (`test:unit`).
  *
- * Contrato clave: la cuenta acaba EXACTAMENTE en la cifra final a su duración, y sin duración (menos
+ * Contrato clave: la cifra va a la par del arco del anillo, con su misma curva (`ease`, la de la transición
+ * nativa de `p-progress-spinner`) y redondeada; acaba en la final a su duración, y sin duración (menos
  * movimiento, o las e2e con las animaciones apagadas) pinta la final de una vez.
  */
 import assert from 'node:assert/strict';
@@ -44,13 +45,18 @@ test('también cuenta hacia abajo (quitar un permiso)', () => {
   assert.ok(mitad <= 5 && mitad >= 2);
 });
 
-test('sale rápido y frena al llegar (ease-out): a mitad de tiempo ya pasó de la mitad', () => {
-  assert.ok(countUpValue(0, 100, 150, 300) > 50);
+test('sigue la curva del arco: la `ease` de CSS, cubic-bezier(0.25, 0.1, 0.25, 1)', () => {
+  // Valores de la curva de CSS: a un cuarto del tiempo, 0,4085; a la mitad, 0,8024; a tres cuartos, 0,9605.
+  assert.equal(countUpValue(0, 1000, 75, 300), 409);
+  assert.equal(countUpValue(0, 1000, 150, 300), 802);
+  assert.equal(countUpValue(0, 1000, 225, 300), 960);
 });
 
-test('la cifra final llega justo al acabar, a la vez que el arco, y no antes', () => {
-  assert.equal(countUpValue(0, 8, 290, 300), 7);
+test('va a la par del arco: redondea, así que no se queda atrás cuando el arco ya está casi lleno', () => {
+  // Medido en el build (2026-09-27): con ease-out y truncando, la cifra seguía en 7 con el arco al 99 %.
+  assert.equal(countUpValue(0, 8, 150, 300), 6);
+  assert.equal(countUpValue(0, 8, 290, 300), 8);
   assert.equal(countUpValue(0, 8, 300, 300), 8);
-  assert.equal(countUpValue(8, 2, 290, 300), 3);
-  assert.equal(countUpValue(8, 2, 300, 300), 2);
+  assert.equal(countUpValue(8, 2, 150, 300), 3);
+  assert.equal(countUpValue(8, 2, 290, 300), 2);
 });
