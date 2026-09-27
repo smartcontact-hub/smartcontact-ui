@@ -6,6 +6,8 @@
  * de las conversaciones mock referencian estos labels.
  */
 
+import { nombreDeGrupo } from '@core/services/juego-de-datos';
+
 export interface FilterOption {
   readonly value: string;
   readonly label: string;
@@ -19,6 +21,8 @@ export const SERVICE_OPTIONS: readonly FilterOption[] = [
   { value: 'Postventa', label: 'Postventa' },
 ];
 
+/** Con `?datos=editorial`, los grupos que también viven en Administración toman su nombre de negocio,
+ *  en el valor y en la etiqueta, igual que las conversaciones que filtran (DD-124). */
 export const GROUP_OPTIONS: readonly FilterOption[] = [
   { value: 'ACD Demo C2CB', label: 'ACD Demo C2CB' },
   { value: 'ACD demo cuscare', label: 'ACD demo cuscare' },
@@ -29,7 +33,7 @@ export const GROUP_OPTIONS: readonly FilterOption[] = [
   { value: 'Soporte Taller', label: 'Soporte Taller' },
   { value: 'Soporte Nivel 1', label: 'Soporte Nivel 1' },
   { value: 'Soporte Nivel 2', label: 'Soporte Nivel 2' },
-];
+].map((o) => ({ value: nombreDeGrupo(o.value), label: o.label === o.value ? nombreDeGrupo(o.label) : o.label }));
 
 export const AGENT_OPTIONS: readonly FilterOption[] = [
   { value: 'Oscar Fernández', label: 'Oscar Fernández' },

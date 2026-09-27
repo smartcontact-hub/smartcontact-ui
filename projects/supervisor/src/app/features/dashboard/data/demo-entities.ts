@@ -1,3 +1,5 @@
+import { nombreDeGrupo } from '@core/services/juego-de-datos';
+
 import type { WidgetCategory } from './widget-catalog';
 
 /**
@@ -7,7 +9,7 @@ import type { WidgetCategory } from './widget-catalog';
  */
 export const DEMO_ENTITIES: Readonly<Record<WidgetCategory, readonly string[]>> = {
   services: ['Atención al cliente', 'Soporte técnico', 'Ventas', 'Citas', 'Facturación', 'Bajas y retención'],
-  groups: ['ACD Demo C2CB', 'ACD outbound', 'Campaigns', 'Exclusivo', 'Online Support', 'Reclamaciones'],
+  groups: ['ACD Demo C2CB', 'ACD outbound', 'Campaigns', 'Exclusivo', 'Online Support', 'Reclamaciones'].map((g) => nombreDeGrupo(g)),
   agents: [
     'Tom Hanks',
     'Meryl Streep',

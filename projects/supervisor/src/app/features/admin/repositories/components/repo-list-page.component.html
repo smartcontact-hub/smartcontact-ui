@@ -87,6 +87,7 @@
     class="table__cell"
     [class.table__cell--emphasis]="isEmphasis(col.field)"
     [class.table__cell--truncate]="isKind(col.field, 'truncate')"
+    [attr.title]="cellTitle(item, col.field)"
     [class.sc-text-body-semibold]="isEmphasis(col.field)"
     [class.sc-text-body-regular]="!isEmphasis(col.field)"
   >

@@ -1,3 +1,5 @@
+import { deGrupos } from '@core/services/juego-de-datos';
+
 import type { Conversation, TranscriptionLine } from './conversation.types';
 
 /**
@@ -203,7 +205,7 @@ const INTERNA_CONSULTA: readonly TranscriptionLine[] = [
   POSTVENTA_ELOGIO,
 ];
 
-export const MOCK_CONVERSATIONS: readonly Conversation[] = [
+const CONVERSACIONES: readonly Conversation[] = [
   {
     hour: '12:50',
     date: '11/09/2026',
@@ -901,3 +903,6 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
     direction: 'saliente',
   },
 ];
+
+/** Con `?datos=editorial`, el grupo de cada conversación con su nombre de negocio (DD-124). */
+export const MOCK_CONVERSATIONS: readonly Conversation[] = deGrupos(CONVERSACIONES);

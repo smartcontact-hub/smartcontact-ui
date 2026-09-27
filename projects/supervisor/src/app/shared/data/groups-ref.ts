@@ -8,11 +8,13 @@
 // `GroupRef` lo DEFINE el paquete publicado pero NO lo exporta en su public-api;
 // el tipo local (mismo shape) es estructuralmente compatible con el input
 // `groups` de `sc-group-popover` publicado (lo valida strictTemplates).
+import { deGrupos } from '@core/services/juego-de-datos';
 import { type GroupRef } from '@shared/components';
 
 export type { GroupRef };
 
-export const AVAILABLE_GROUPS_REF: readonly GroupRef[] = [
+/** Con `?datos=editorial`, los nombres de negocio del almacén de grupos (DD-124). */
+export const AVAILABLE_GROUPS_REF: readonly GroupRef[] = deGrupos([
   { id: 1, name: 'ACD Demo C2CB', active: true },
   { id: 2, name: 'ACD demo cuscare', active: true },
   { id: 3, name: 'ACD outbound', active: true },
@@ -27,4 +29,4 @@ export const AVAILABLE_GROUPS_REF: readonly GroupRef[] = [
   { id: 12, name: 'Reclamaciones', active: true },
   { id: 13, name: 'Soporte Taller', active: true },
   { id: 14, name: 'Telemarketing', active: true },
-];
+]);
