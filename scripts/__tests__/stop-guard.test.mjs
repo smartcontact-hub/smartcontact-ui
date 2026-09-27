@@ -15,6 +15,7 @@ import {
   motivoParteDeCierre,
   motivoSinEnrutar,
   necesitaVeredicto,
+  pantallasSinRevisar,
   ultimoMensaje,
 } from '../hooks/stop-guard.mjs';
 import { enrutar, pendientes, registrar, rutaRegistro } from '../hooks/correction-capture.mjs';
@@ -282,4 +283,57 @@ test('y no vale cualquier herramienta de GitHub: leer el CI es leer el CI', () =
   assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__add_issue_comment']), true, 'comentar no es leer el CI');
   assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__create_pull_request']), true, 'abrir el PR tampoco');
   assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__search_code']), true);
+});
+
+// ── La revisión previa a enseñar una pantalla · añadido el 2026-09-27 (DD-123) ───────────────
+// El primer filtro visual de una pantalla no puede ser el usuario: si la sesión escribe una
+// plantilla u hoja del Supervisor, el cierre pide antes `npm run revision`.
+
+const evEscribe = (herramienta, ruta) =>
+  JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id: 'x', name: herramienta, input: { file_path: ruta } }] } });
+const HOJA = '/repo/projects/supervisor/src/styles/_forms.scss';
+const PLANTILLA = '/repo/projects/supervisor/src/app/features/auth/pages/login-page.component.html';
+
+test('pantallasSinRevisar: escribir una pantalla sin revisar después la deja pendiente', () => {
+  assert.deepEqual(pantallasSinRevisar(evEscribe('Edit', HOJA)), ['projects/supervisor/src/styles/_forms.scss']);
+  assert.deepEqual(
+    pantallasSinRevisar([evEscribe('Write', PLANTILLA), evEscribe('Edit', PLANTILLA)].join('\n')),
+    ['projects/supervisor/src/app/features/auth/pages/login-page.component.html'],
+    'la misma ruta cuenta una vez',
+  );
+});
+
+test('pantallasSinRevisar: la revisión DESPUÉS la salda; la de ANTES no', () => {
+  assert.deepEqual(pantallasSinRevisar([evEscribe('Edit', HOJA), ev('npm run revision -- login')].join('\n')), []);
+  assert.deepEqual(pantallasSinRevisar([evEscribe('Edit', HOJA), ev('npm run -s revision -- login')].join('\n')), []);
+  assert.deepEqual(
+    pantallasSinRevisar([ev('npm run revision -- login'), evEscribe('Edit', HOJA)].join('\n')),
+    ['projects/supervisor/src/styles/_forms.scss'],
+    'ROJO: se tocó después de revisar',
+  );
+});
+
+test('pantallasSinRevisar: lo que no es pantalla del Supervisor, o nombrar la revisión en un dato, no cuenta', () => {
+  assert.deepEqual(pantallasSinRevisar(evEscribe('Edit', '/repo/docs/DECISIONS.md')), []);
+  assert.deepEqual(pantallasSinRevisar(evEscribe('Edit', '/repo/projects/sc-docs/src/app/pages/patrones/patrones.component.html')), []);
+  assert.deepEqual(pantallasSinRevisar(evEscribe('Edit', '/repo/projects/supervisor/src/app/core/auth.service.ts')), []);
+  assert.deepEqual(
+    pantallasSinRevisar([evEscribe('Edit', HOJA), ev('grep -n "npm run revision" AGENTS.md')].join('\n')),
+    ['projects/supervisor/src/styles/_forms.scss'],
+    'leer sobre la revisión no es revisar',
+  );
+});
+
+test('Stop: una pantalla tocada sin revisión bloquea una vez; revisada, deja cerrar', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-stop-'));
+  const transcript = join(dir, 'sesion.jsonl');
+  const entrada = { transcript_path: transcript, session_id: 'S9', cwd: dir };
+  writeFileSync(transcript, [evEscribe('Edit', HOJA), evTexto('Listo.')].join('\n'));
+  const r = correrHook(entrada, dir);
+  assert.equal(r?.decision, 'block', 'ROJO: la pantalla iba a llegar al usuario sin revisión previa');
+  assert.match(r.reason, /npm run revision/);
+  assert.match(r.reason, /better-layout/);
+  assert.equal(correrHook({ ...entrada, stop_hook_active: true }, dir), null, 'a la segunda deja pasar');
+  writeFileSync(transcript, [evEscribe('Edit', HOJA), ev('npm run revision -- config/aed/servicio'), evTexto('Listo.')].join('\n'));
+  assert.equal(correrHook(entrada, dir), null, 'VERDE: revisada después del último cambio');
 });

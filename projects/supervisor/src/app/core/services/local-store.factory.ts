@@ -1,5 +1,7 @@
 import { InjectionToken, signal, Signal } from '@angular/core';
 
+import { claveDelJuego, juegoDeDatos, torturar } from './juego-de-datos';
+
 export interface LocalStoreConfig<T> {
   /** localStorage key for the items themselves. */
   readonly storageKey: string;
@@ -66,7 +68,13 @@ export interface VersionedStorage<T> {
  * de versión, el `try/catch` del JSON corrupto ni la guarda de SSR.
  */
 export function createVersionedStorage<T>(config: LocalStoreConfig<T>): VersionedStorage<T> {
-  const { storageKey, versionKey, currentVersion, defaults } = config;
+  /* El juego de datos (`?datos=tortura`, DD-124) cambia las claves y los `defaults`; con `demo`, que es
+   * el de siempre, las dos cosas quedan exactamente como estaban. */
+  const juego = juegoDeDatos();
+  const storageKey = claveDelJuego(config.storageKey, juego);
+  const versionKey = claveDelJuego(config.versionKey, juego);
+  const { currentVersion } = config;
+  const defaults = juego === 'tortura' ? torturar(config.defaults) : config.defaults;
 
   return {
     read(): readonly T[] {

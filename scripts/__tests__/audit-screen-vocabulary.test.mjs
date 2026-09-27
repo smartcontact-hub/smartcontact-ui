@@ -126,10 +126,14 @@ test('el vocabulario de formulario vive en la hoja COMPARTIDA, no en una pantall
   }
 });
 
-test('`.grid` compartida usa las dos separaciones de la maqueta, no un `gap` único', () => {
-  const props = vocabularioDe(readFileSync(HOJA_COMPARTIDA, 'utf8')).get('.grid');
+// Entre columnas, el de la maqueta; entre filas, el doble de etiqueta→control (DD-123): la maqueta
+// pone 12.25 y deja cada campo a 1,75× de su vecino, por debajo de la regla de agrupación.
+test('`.grid` compartida separa filas y columnas por separado, y la fila al doble de etiqueta→control', () => {
+  const vocabulario = vocabularioDe(readFileSync(HOJA_COMPARTIDA, 'utf8'));
+  const props = vocabulario.get('.grid');
   assert.equal(props['column-gap'], 'var(--sc-spacing-1-75)');
-  assert.equal(props['row-gap'], 'var(--sc-spacing-0-875)');
+  assert.equal(props['row-gap'], 'var(--sc-spacing-1)');
+  assert.equal(vocabulario.get('.field')['gap'], 'var(--sc-spacing-0-5)', 'si cambia etiqueta→control, revisa la fila');
   assert.equal(props['gap'], undefined, 'un `gap` único vuelve a igualar los dos ejes');
 });
 

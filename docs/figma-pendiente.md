@@ -444,6 +444,27 @@ y la etiqueta «Desconectado» de `/admin/agentes` mide 6,40:1.
 
 ---
 
+## 15 · La escalera de agrupación manda sobre la maqueta: filas de formulario a 14 (2026-09-27)
+
+**Estado:** pendiente · **Dónde:** Figma, las maquetas de formulario de Grupos y Servicio (y las que copien su fila) ·
+**Esfuerzo:** cambiar el hueco vertical de sus contenedores de 12 a 14 (`scale/1`) · **Sin verificar** contra el fichero
+del DS: los nodos son los que cita el código, y el server de Figma no estaba autorizado en la sesión que lo cambió.
+
+- **Filas de formulario de dos columnas:** `row` 2286:5408 y `container` 2286:5407 (Grupos), 2286:5581 y 2286:5558
+  (Servicio) separan las filas 12,25 (`scale/0-875`). En código pasan a 14 (`scale/1`), el doble de los 7 de la etiqueta
+  a su control: con 12,25 un campo quedaba a 1,75× de su vecino y su etiqueta se leía a medio camino entre los dos
+  (DD-123). Entre columnas no cambia: 24,5 (`scale/1-75`).
+- **Radios en fila:** `container radio buttons` 2286:5583 pone 12 suelto entre radios; en código, 14.
+- **El botón que envía un formulario** va a 28 (`scale/2`) del último campo, no a la misma distancia que hay entre
+  campos (acceso del Supervisor y panel «Nueva label»).
+- **Para lo que venga:** la escalera es 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos). Un valor
+  intermedio en una maqueta nueva (12,25 o 24,5) se lee como deriva, no como decisión.
+
+**Cómo sabes que está hecho:** las maquetas de Grupos y Servicio miden 14 entre filas y 14 entre radios, y el
+comentario de `.grid` en `_forms.scss` deja de decir que se aparta de la maqueta.
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

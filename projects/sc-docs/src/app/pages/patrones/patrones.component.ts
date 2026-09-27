@@ -42,5 +42,6 @@ export class PatronesComponent {
     { icon: 'accessibility_new', key: 'a11y' },
     { icon: 'animation', key: 'motion' },
     { icon: 'text_fields', key: 'type' },
+    { icon: 'view_agenda', key: 'grouping' },
   ];
 }

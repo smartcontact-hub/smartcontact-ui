@@ -49,6 +49,12 @@ const PATRONES = [
   // Lo que ya estaba hecho y vuelve deshecho (frases reales del 2026-09-23: «el espacio… que se había
   // hecho ya», «un marco que sobra que se había aprobado ya»). Con el «ya»: sin él es un relato, no un reproche.
   /\b(?:ya se hab[ií]a (?:hecho|aprobado|decidido)|se hab[ií]a (?:hecho|aprobado|decidido) ya)\b/i,
+  // La queja VISUAL, que es la que se quiere contar por tipo (`npm run correcciones`, 2026-09-27): sin
+  // «no», «otra vez» ni «te dije», un «esto se ve torcido» no entraba en el registro. Estrechas a
+  // propósito: el adjetivo del defecto, no el verbo suelto («se ve bien» no dispara).
+  /\bse ven? (?:raro|mal|torcid[oa]s?|descuadrad[oa]s?|apelotonad[oa]s?|apretad[oa]s?|pegad[oa]s?)\b/i,
+  /\b(?:descuadrad|apelotonad)[oa]s?\b/i,
+  /(?<!\bno )\bme chocan?\b/i,
 ];
 
 // Cierre = el verbo ABRE la frase y no lleva más objeto que la sesión. «cerramos el ticket en
