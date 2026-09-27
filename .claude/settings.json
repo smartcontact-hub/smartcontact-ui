@@ -27,6 +27,16 @@
             "timeout": 20
           }
         ]
+      },
+      {
+        "matcher": "startup|resume|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/cloud-node.sh",
+            "timeout": 300
+          }
+        ]
       }
     ],
     "Stop": [

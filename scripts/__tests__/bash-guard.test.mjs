@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { evaluar, escrituras } from '../hooks/bash-guard.mjs';
+import { carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
 // Cada patrón del hook se prueba EN ROJO (el comando que motivó la regla) y EN VERDE (la forma
 // correcta y los vecinos legítimos). Un guardián que solo se ha visto pasar no prueba que sepa
@@ -294,4 +294,39 @@ test('segmentos: una comilla escapada no abre la veda dentro de una cadena', () 
   assert.match(cmd, /\\"a\|b\|git push/, 'el caso debe llevar la comilla ESCAPADA, que es lo que rompía');
   const r = evaluar(cmd, { cwd: process.cwd() });
   assert.notEqual(r.decision, 'deny', 'el patrón entrecomillado es un DATO, no un push');
+});
+
+// 2026-09-27: `cd <worktree> && git push` y `cd <worktree> && npx playwright test` se juzgaban contra
+// el árbol de la SESIÓN, y se denegaron con la marca y el `dist/` del worktree al día.
+test('carpeta del comando: `cd <ruta> &&` manda sobre el cwd de la sesión; con variables, manda la sesión', () => {
+  const soloElWorktree = {
+    ...verde,
+    cwd: '/repo',
+    preflight: (dir) => ({ ok: dir === '/wt', motivo: 'no hay marca' }),
+    distRancio: (dir) => (dir === '/wt' ? null : 'projects/ui-smartcontact/src/lib/x.scss'),
+  };
+  // ROJO de antes, VERDE ahora: los dos comandos de ese día.
+  allow('cd /wt && git push -u origin HEAD:rama', soloElWorktree);
+  allow('export PATH=/opt/node/bin:$PATH; cd /wt && npx playwright test -c x.config.ts', soloElWorktree);
+  // Sin `cd`, o con uno que no se puede resolver, sigue mandando el árbol de la sesión.
+  deny('git push -u origin rama', soloElWorktree, /LEARNINGS #7/);
+  deny('cd $WT && git push', soloElWorktree, /LEARNINGS #7/);
+  deny('npx playwright test', soloElWorktree, /LEARNINGS #5/);
+  assert.equal(carpetaEfectiva('cd sub && ls', '/repo'), '/repo/sub');
+  assert.equal(carpetaEfectiva('ls && cd /otra', '/repo'), '/repo', 'un cd DETRÁS no cambia dónde corre lo de delante');
+});
+
+test('#21 sacar la rama de otra sesión para trabajar en ella → deny; desde main, un fichero suelto o sc:ok → allow', () => {
+  // ROJO: los dos comandos de ese día, sobre ramas cuya sesión seguía viva en la nube.
+  deny('git checkout -q -b pr-256 origin/feat/indice-unico', verde, /LEARNINGS #21/);
+  deny('git worktree add -q -b adapt-257 ../w257 origin/claude/ui-improvement-reddit-iykxgx', verde, /list_sessions/);
+  deny('git switch -c revisar origin/feat/otra', verde, /LEARNINGS #21/);
+  deny('git checkout --track origin/feat/otra', verde, /origin\/feat\/otra/);
+  // VERDE: partir de main es lo normal; leer un fichero de otra rama o fundirla no es trabajar en ella.
+  allow('git checkout -q -B claude/mi-rama origin/main');
+  allow('git switch -c nueva origin/main');
+  allow('git worktree add ../wt origin/main');
+  allow('git checkout origin/feat/otra -- docs/DECISIONS.md');
+  allow('git merge --no-ff origin/feat/otra');
+  allow('git checkout -q -b pr-256 origin/feat/indice-unico # sc:ok');
 });
