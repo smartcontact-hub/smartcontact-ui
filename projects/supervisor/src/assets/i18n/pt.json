@@ -1646,7 +1646,6 @@
         "priority": "Prioridade: {{value}}",
         "no_phone": "Sem telefone de saída",
         "title": "Resumo",
-        "agents": "Agentes",
         "agents_active": "Agentes ativos",
         "paused_count": "{{count}} em pausa",
         "no_agents": "Sem agentes",

@@ -1646,7 +1646,6 @@
         "priority": "Priority: {{value}}",
         "no_phone": "No outbound phone",
         "title": "Summary",
-        "agents": "Agents",
         "agents_active": "Active agents",
         "paused_count": "{{count}} paused",
         "no_agents": "No agents",

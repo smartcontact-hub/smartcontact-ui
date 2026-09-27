@@ -23,21 +23,14 @@ export class CountUpDirective {
 
   /** La cifra final. */
   readonly scCountUp = input.required<number>();
-  /** Si cuenta también al pintarse (desde 0) o solo al cambiar. */
-  readonly scCountUpEntrance = input(true);
 
   private shown = 0;
   private frame = 0;
 
   constructor() {
-    let first = true;
     effect(() => {
       const to = this.scCountUp();
-      untracked(() => {
-        if (first && !this.scCountUpEntrance()) this.paint(to);
-        else this.count(to);
-        first = false;
-      });
+      untracked(() => this.count(to));
     });
     inject(DestroyRef).onDestroy(() => cancelAnimationFrame(this.frame));
   }

@@ -31,6 +31,5 @@ export { LABEL_COLORS } from './label-chip/label-chip.types';
 export type { GroupRef } from '@smartcontact-hub/components';
 export { NameInplaceComponent } from './name-inplace/name-inplace.component';
 
-// PROTOTIPO del resumen como widget (`?resumen=a|b`): se compara antes de fundir.
+// El widget del resumen de las fichas: una cifra con su anillo (DD-126).
 export { SummaryKpiComponent } from './summary-kpi/summary-kpi.component';
-export { ResumenVarianteService, type ResumenVariante } from './summary-kpi/resumen-variante';

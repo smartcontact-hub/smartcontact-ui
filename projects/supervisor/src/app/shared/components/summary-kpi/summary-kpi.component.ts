@@ -1,11 +1,9 @@
-import { ChangeDetectionStrategy, Component, afterNextRender, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, afterNextRender, computed, input, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { CountUpDirective } from '@core/directives';
-
-import { ResumenVarianteService } from './resumen-variante';
 
 /**
  * UNA CIFRA DEL RESUMEN, COMO WIDGET: el rótulo arriba, la cifra grande y, si se mide contra un total, el
@@ -40,9 +38,9 @@ import { ResumenVarianteService } from './resumen-variante';
           <!-- Compacta en el resumen de grupo, el más cargado: con la cifra grande, a 1366×660 la columna necesitaba
                11 px de scroll (medido); la cifra de agente y usuario sí cabe grande. -->
           @if (compact()) {
-            <span class="resumen__count sc-text-h2-semibold" [scCountUp]="value()" [scCountUpEntrance]="entrance"></span>
+            <span class="resumen__count sc-text-h2-semibold" [scCountUp]="value()"></span>
           } @else {
-            <span class="resumen__count sc-text-h1-semibold" [scCountUp]="value()" [scCountUpEntrance]="entrance"></span>
+            <span class="resumen__count sc-text-h1-semibold" [scCountUp]="value()"></span>
           }
           @if (total(); as t) {
             @if (compact()) {
@@ -76,8 +74,6 @@ import { ResumenVarianteService } from './resumen-variante';
   `,
 })
 export class SummaryKpiComponent {
-  private readonly variante = inject(ResumenVarianteService);
-
   /** Icono del rótulo (Material Symbols). */
   readonly icon = input.required<string>();
   /** Clave del rótulo. */
@@ -97,15 +93,13 @@ export class SummaryKpiComponent {
     return t !== null && t > 0 ? t : null;
   });
 
-  /** Cuenta al abrir, o solo al cambiar (el prototipo compara las dos). */
-  protected readonly entrance = this.variante.cuentaAlAbrir();
-
   /**
-   * El arco nace VACÍO y, ya pintado, recibe su valor: así lo llena el movimiento nativo (0,3 s) desde 0,
-   * como en el ejemplo. Un fotograma después del primer render, no en él: dentro del mismo render el
-   * navegador aún no ha pintado el vacío y la transición no tendría de dónde salir.
+   * El arco nace VACÍO y, ya pintado, recibe su valor: así lo llena el movimiento nativo (0,3 s) desde 0 al
+   * abrir la ficha, como en el ejemplo (DD-126: al abrir y al cambiar). Un fotograma después del primer
+   * render, no en él: dentro del mismo render el navegador aún no ha pintado el vacío y la transición no
+   * tendría de dónde salir.
    */
-  private readonly ready = signal(!this.entrance);
+  private readonly ready = signal(false);
   protected readonly ringValue = computed(() => (this.ready() ? this.value() : 0));
 
   protected readonly ringDt = { root: { colorOne: 'var(--sc-bg-accent)' } };

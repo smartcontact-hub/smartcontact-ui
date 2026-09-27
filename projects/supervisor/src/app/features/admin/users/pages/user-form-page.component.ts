@@ -38,7 +38,7 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
-import { ResumenVarianteService, SummaryKpiComponent } from '@shared/components';
+import { SummaryKpiComponent } from '@shared/components';
 import {
   AVAILABLE_SERVICES,
   DEFAULT_PERMISSIONS,
@@ -270,8 +270,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return new Set([...this.dirtyState.changedKeys()].map((k) => USER_SECTION_OF_FIELD[k as keyof FormState]));
   });
 
-  /** PROTOTIPO: secciones y permisos sobre su total, para las cifras con anillo del widget (`?resumen=a|b`). */
-  protected readonly resumenVariante = inject(ResumenVarianteService);
+  /** Secciones y permisos sobre su total: las dos cifras con anillo del resumen (DD-126). */
   protected readonly summaryAccess = computed(() => {
     const f = this.form();
     return {
@@ -283,20 +282,12 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   });
 
   /**
-   * El resumen de la derecha, las tres cifras de siempre: qué es esta persona y a qué llega. Hasta el
-   * 2026-09-27 iban en la franja del nombre; el tipo era cifra y no iba junto al email porque en la línea
-   * de debajo del nombre «email · tipo» no cabía (medido el 2026-09-23).
+   * Lo que el resumen dice sin anillo: de qué tipo es esta persona. El tipo va aquí y no junto al email porque en
+   * la línea de debajo del nombre «email · tipo» no cabía (medido el 2026-09-23).
    */
-  protected readonly summary = computed(() => {
-    this.lang(); // el tipo se traduce aquí: al cambiar de idioma, la franja tiene que enterarse
-    const f = this.form();
-    const secciones = Object.values(f.sections).filter(Boolean).length;
-    const permisos = Object.values(f.permissions).filter(Boolean).length;
-    return [
-      { icono: 'badge', valor: this.translate.instant(this.typeLabelKeys[f.type]), etiqueta: 'users.form.headline.type' },
-      { icono: 'dashboard', valor: `${secciones}/${Object.keys(f.sections).length}`, etiqueta: 'users.form.section.sections' },
-      { icono: 'verified_user', valor: `${permisos}/${Object.keys(f.permissions).length}`, etiqueta: 'users.form.section.permissions' },
-    ];
+  protected readonly summaryFacts = computed(() => {
+    this.lang(); // el tipo se traduce aquí: al cambiar de idioma, el resumen tiene que enterarse
+    return [{ icono: 'badge', valor: this.translate.instant(this.typeLabelKeys[this.form().type]), etiqueta: 'users.form.headline.type' }];
   });
 
   protected readonly mode = computed<'edit' | 'duplicate' | 'create'>(() => {
