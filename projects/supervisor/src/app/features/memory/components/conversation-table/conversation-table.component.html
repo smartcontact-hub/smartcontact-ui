@@ -82,7 +82,7 @@
      `/admin/agendas`, `/admin/usuarios` y `/conversaciones/entidades`.
      La misma trampa la documenta la hoja de la página de entidades. -->
 <ng-template #textTpl let-conv let-col="col">
-  <span class="sc-text-body-regular">{{ $any(conv)[col.field] }}</span>
+  <span class="memory-text-cell sc-text-body-regular" [title]="$any(conv)[col.field]">{{ $any(conv)[col.field] }}</span>
 </ng-template>
 
 <ng-template #numTpl let-conv let-col="col">

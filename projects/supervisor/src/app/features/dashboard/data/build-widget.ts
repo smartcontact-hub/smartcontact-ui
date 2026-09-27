@@ -1,4 +1,5 @@
 import type { AgentPresence, DashboardWidget, WidgetFilter } from './dashboard.types';
+import { DEMO_AGENT_PRESENCE } from './demo-entities';
 import { widgetType } from './widget-catalog';
 
 const ALL: WidgetFilter = { channel: 'all', direction: 'all' };
@@ -52,8 +53,14 @@ export function buildWidget(typeId: string, opts: BuildWidgetOptions): Dashboard
         ? { ...base, kind: 'kpi-simple', value: int(58, 96), unit: 'percent' }
         : { ...base, kind: 'kpi-simple', value: int(4, 30) * n };
     case 'agents-state': {
-      const total = int(Math.max(3, n - 2), Math.max(4, n));
       const presence: AgentPresence = def.presence ?? 'available';
+      // Agentes de la demo: el anillo cuenta su estado, el mismo que enseñan la tabla y el detalle.
+      const estados = opts.entities.map((name) => DEMO_AGENT_PRESENCE[name]);
+      if (estados.length && estados.every(Boolean)) {
+        const total = estados.filter((p) => p !== 'offline').length;
+        return { ...base, kind: 'agents-state', presence, total, value: estados.filter((p) => p === presence).length };
+      }
+      const total = int(Math.max(3, n - 2), Math.max(4, n));
       return { ...base, kind: 'agents-state', presence, total, value: int(1, Math.max(1, Math.round(total * 0.6))) };
     }
     case 'agents-table': {
@@ -66,7 +73,7 @@ export function buildWidget(typeId: string, opts: BuildWidgetOptions): Dashboard
           const attended = conversations - int(0, 1);
           return {
             name,
-            presence: presences[i % presences.length],
+            presence: DEMO_AGENT_PRESENCE[name] ?? presences[i % presences.length],
             conversations,
             attended,
             rejected: conversations - attended,

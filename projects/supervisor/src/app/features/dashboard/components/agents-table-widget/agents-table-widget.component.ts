@@ -33,13 +33,18 @@ export class AgentsTableWidgetComponent {
   protected readonly columns = computed<ScColumnDef<AgentRow>[]>(() => {
     this.lang();
     const t = (k: string) => this.translate.instant(`dashboard.agents_table.${k}`);
+    /* Las cifras miden lo que su dato (`1%`: se ajustan a su contenido) y el nombre se queda el resto, donde
+     * recorta. Sin eso, un nombre largo empujaba las cifras fuera de la tarjeta: medido el 2026-09-27 con
+     * `?datos=tortura`, 183 px, con «Transferidas» y «T. medio» fuera. La cabecera de varias palabras no se
+     * parte porque su texto lleva un espacio que no separa («T.\u00a0medio», en los cuatro idiomas). */
+    const cifra = { align: 'right', width: '1%' } as const;
     return [
       { field: 'name', header: t('agent'), cellTemplate: this.nameTpl() },
-      { field: 'conversations', header: t('conversations'), align: 'right' },
-      { field: 'attended', header: t('attended'), align: 'right' },
-      { field: 'rejected', header: t('rejected'), align: 'right' },
-      { field: 'transferred', header: t('transferred'), align: 'right' },
-      { field: 'avgSeconds', header: t('avg_time'), align: 'right', cellTemplate: this.timeTpl() },
+      { field: 'conversations', header: t('conversations'), ...cifra },
+      { field: 'attended', header: t('attended'), ...cifra },
+      { field: 'rejected', header: t('rejected'), ...cifra },
+      { field: 'transferred', header: t('transferred'), ...cifra },
+      { field: 'avgSeconds', header: t('avg_time'), ...cifra, cellTemplate: this.timeTpl() },
     ];
   });
 

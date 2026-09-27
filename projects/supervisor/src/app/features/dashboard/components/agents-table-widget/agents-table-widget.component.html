@@ -28,7 +28,7 @@
       [attr.aria-label]="'dashboard.presence.' + row.presence | translate"
       [attr.title]="'dashboard.presence.' + row.presence | translate"
     />
-    {{ row.name }}
+    <span class="agents-table__name" [title]="row.name">{{ row.name }}</span>
   </span>
 </ng-template>
 

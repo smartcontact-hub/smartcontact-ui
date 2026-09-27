@@ -17,9 +17,19 @@
 
   &__main {
     display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
     min-width: 0;
     color: var(--sc-text-primary);
+  }
+
+  /* Como la segunda línea: más largo que su hueco, recorta con «…» y lleva el entero en el `title` (DD-124). Con
+   * `?datos=tortura` cada nombre bajaba a tres líneas (medido el 2026-09-27). `contain`: no pide ancho a su columna. */
+  &__name {
+    contain: inline-size;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__sub {

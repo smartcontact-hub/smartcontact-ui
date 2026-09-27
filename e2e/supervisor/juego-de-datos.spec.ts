@@ -34,10 +34,14 @@ test('editorial da a los grupos su nombre de negocio, también donde el nombre v
   await expect(page.getByText('Atención al cliente', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('ACD Demo C2CB', { exact: true })).toHaveCount(0);
 
-  // Las conversaciones viven en memoria y repiten el nombre del grupo: «Soporte Taller» es «Segundo nivel».
+  // Las conversaciones viven en memoria y repiten el nombre del grupo: «Soporte Taller» es «Segundo nivel». Y las
+  // colas que solo viven ahí también tienen el suyo: ninguna de prueba en el juego para enseñar la app.
   await goto(page, 'conversaciones');
   await expect(page.getByText('Segundo nivel', { exact: true }).first()).toBeVisible();
-  await expect(page.getByText('Soporte Taller', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Desbordamiento', { exact: true }).first()).toBeVisible();
+  for (const deSiempre of ['Soporte Taller', 'COLA_PRUEBA', 'Soporte Nivel 1', 'Soporte Nivel 2', 'Clientes vip']) {
+    await expect(page.getByText(deSiempre, { exact: true }), `«${deSiempre}» sin nombre de negocio`).toHaveCount(0);
+  }
 
   await goto(page, 'admin/grupos?datos=demo');
   await expect(page.getByText('ACD Demo C2CB', { exact: true }).first()).toBeVisible();

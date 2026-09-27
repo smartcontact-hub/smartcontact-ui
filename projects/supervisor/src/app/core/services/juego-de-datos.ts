@@ -13,6 +13,8 @@
  *
  * Cómo: lo aplica `createVersionedStorage`, por donde pasan todos los almacenes persistidos (agentes,
  * grupos, usuarios, etiquetas, plantillas, repositorios, monitores), así que ninguna pantalla lo sabe.
+ * Lo que vive en memoria y repite un nombre (las conversaciones, los widgets del Dashboard) lo toma de
+ * `nombreDeGrupo`, `nombreDePersona` y `nombreDeCosa`, que dan el mismo nombre que el almacén.
  * Cada juego guarda en SUS claves (`sc-agents@tortura`): probar uno no pisa lo editado en el otro. La
  * elección se recuerda en `sessionStorage`: sobrevive a recargar y no a cerrar la pestaña, para que nadie
  * se quede en tortura sin saberlo.
@@ -114,11 +116,27 @@ const GRUPOS_EDITORIALES: Readonly<Record<string, string>> = {
   Reclamaciones: 'Incidencias',
   'Soporte Taller': 'Segundo nivel',
   Telemarketing: 'Cobros',
+  // Las colas que solo viven en Conversaciones (no están en el almacén de grupos). Sin nombre de negocio, el juego
+  // para enseñar la app enseñaba «COLA_PRUEBA» (revisión con `--datos editorial`, 2026-09-27). «Clientes vip» es el
+  // grupo VIP, el mismo nombre que toma «Exclusivo».
+  'Soporte Nivel 1': 'Primer nivel',
+  'Soporte Nivel 2': 'Escalados',
+  'Clientes vip': 'Clientes VIP',
+  COLA_PRUEBA: 'Desbordamiento',
 };
 
-/** El nombre de un grupo en el juego activo: el editorial si toca, y si no, el mismo. */
+/** El nombre de una persona en el juego activo: con el apellido compuesto de `torturar` en tortura. */
+export const nombreDePersona = (nombre: string, juego: JuegoDeDatos = juegoDeDatos()): string =>
+  juego === 'tortura' ? `${nombre}${COLA_PERSONA}` : nombre;
+
+/** El nombre de una cosa (un servicio, una intención, una campaña) en el juego activo: estirado en tortura. */
+export const nombreDeCosa = (nombre: string, juego: JuegoDeDatos = juegoDeDatos()): string =>
+  juego === 'tortura' ? `${nombre}${COLA_COSA}` : nombre;
+
+/** El nombre de un grupo en el juego activo: el de negocio en el editorial, el estirado en tortura (el mismo que
+ *  da `torturar` al almacén de grupos), y si no, el mismo. */
 export const nombreDeGrupo = (nombre: string, juego: JuegoDeDatos = juegoDeDatos()): string =>
-  juego === 'editorial' ? (GRUPOS_EDITORIALES[nombre] ?? nombre) : nombre;
+  juego === 'editorial' ? (GRUPOS_EDITORIALES[nombre] ?? nombre) : nombreDeCosa(nombre, juego);
 
 /**
  * Los campos que guardan el NOMBRE de un grupo. Solo esos: «Reclamaciones» también es un servicio
@@ -127,20 +145,27 @@ export const nombreDeGrupo = (nombre: string, juego: JuegoDeDatos = juegoDeDatos
 const CAMPOS_DE_GRUPO = ['name', 'group', 'defaultOutboundGroup'] as const;
 
 /** Renombra los grupos de cada elemento sin tocar su forma, como `torturar`: ids y referencias, igual. */
-export function editorializar<T>(items: readonly T[]): readonly T[] {
+function renombrarGrupos<T>(items: readonly T[], juego: JuegoDeDatos): readonly T[] {
   return items.map((item) => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) return item;
     const o: Record<string, unknown> = { ...(item as Record<string, unknown>) };
     for (const campo of CAMPOS_DE_GRUPO) {
       const v = o[campo];
-      if (typeof v === 'string') o[campo] = nombreDeGrupo(v, 'editorial');
+      if (typeof v === 'string') o[campo] = nombreDeGrupo(v, juego);
     }
     return o as T;
   });
 }
 
+/** Los grupos con su nombre de negocio: lo que aplica `createVersionedStorage` con `?datos=editorial`. */
+export const editorializar = <T>(items: readonly T[]): readonly T[] => renombrarGrupos(items, 'editorial');
+
 /**
  * Lo mismo para los datos que NO pasan por un almacén (viven en memoria: la ficha de usuario, las
- * conversaciones, el Dashboard) y repiten el nombre de un grupo: fuera del editorial, la misma lista.
+ * conversaciones, el Dashboard) y repiten el nombre de un grupo: el de negocio en el editorial, el
+ * estirado en tortura, y la misma lista con los datos de siempre.
  */
-export const deGrupos = <T>(items: readonly T[]): readonly T[] => (juegoDeDatos() === 'editorial' ? editorializar(items) : items);
+export const deGrupos = <T>(items: readonly T[]): readonly T[] => {
+  const juego = juegoDeDatos();
+  return juego === 'demo' ? items : renombrarGrupos(items, juego);
+};

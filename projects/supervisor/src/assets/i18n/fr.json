@@ -47,7 +47,7 @@
       "attended": "Traitées",
       "rejected": "Refusées",
       "transferred": "Transférées",
-      "avg_time": "Temps moyen",
+      "avg_time": "Temps\u00a0moyen",
       "totals": "Totaux"
     },
     "group_panel": {
@@ -219,7 +219,7 @@
       "col_conversation": "Conversation",
       "col_time": "Durée",
       "col_agent": "Agent",
-      "col_in_state": "Dans cet état"
+      "col_in_state": "Dans\u00a0cet\u00a0état"
     },
     "assistant": {
       "title_new": "Créer un widget",
