@@ -43,6 +43,7 @@
 > |---|---|
 > | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · el editorial, pendiente de producto | DD-124 |
 > | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` | DD-123 |
+> | Un solo índice en toda la app (`sc-form-section-nav`: fichas, constructor y Contact Center) · cada fila es un ENLACE a su sitio (ruta o `?seccion=`), la actual con `aria-current="page"` · clic navega, Cmd+clic abre otra pestaña, Atrás vuelve · en un alta la sección no deja rastro · un solo «Guardar» por ficha, con las secciones con cambios marcadas en el índice · agente y usuario al molde de la ficha de grupo (enmienda DD-121 §2 y DD-113) | DD-122 |
 > | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
 > | Sidebar en producción: abrir una categoría no cierra las demás y nada se cierra al salir · plegado solo la rama de la página · se despliega con el ratón y se ancla con su botón · selección en cyan · subsecciones en 450ms con la curva de Apollo (enmienda DD-112 §3-§5) | DD-118 |
 > | La cabecera del Dashboard: pestañas sin fondo con `⋮` y `+ Monitor` pegados; las acciones de la página en `p-toolbar` en tres grupos con `sc-divider` (enmienda DD-113 §6) · en modo pared un monitor sin widgets enseña su vacío y el carrusel se lo salta | DD-114 |
@@ -197,6 +198,100 @@ figma-pendiente. La prueba corre en el CI con el resto de la suite del Superviso
 
 ---
 
+## DD-122 · 2026-09-27 — Un solo índice, y que funcione de una sola forma: cada sección es un enlace
+
+**Contexto** · Respuestas de producto del 2026-09-27 a la visión de grupos: el índice debe ser uno y funcionar de
+una sola forma; las pestañas ya se habían visto y no gustaron (la maqueta de la visión partió de una captura de
+ellas); y el 90 % del trabajo, asignar agentes, lo hace el supervisor. Medido ese día, la app tenía tres formas de
+moverse por las secciones de una pantalla:
+- Contact Center, con una pieza propia (`sc-settings-sidebar`): enlaces a sus tres rutas con `routerLink`.
+- La ficha de grupo y el constructor de reglas, con `sc-form-section-nav`: `<a href="#" role="tab">`, el clic se
+  tragaba siempre y la sección vivía en la memoria de la página. Atrás no volvía a la sección anterior, Cmd+clic
+  abría la misma página con `#`, ningún enlace podía llevar a una sección y el lector oía «pestaña» sin lista de
+  pestañas (el pendiente de DD-113).
+- Las fichas de agente y usuario, con `p-tabs`.
+Las dos primeras medían igual al píxel; se comportaban distinto.
+
+**Decisión** ·
+1. **Un índice**: `sc-form-section-nav` del DS en las cinco pantallas con índice (fichas de agente, grupo y usuario,
+   constructor de reglas y Contact Center). `sc-settings-sidebar` se borra con sus claves que no pintaba nadie.
+2. **Cada fila es un ENLACE a su sitio**: una ruta (Contact Center) o la misma página con `?seccion=` (fichas y
+   constructor). La sección a la vista sale de la dirección: un `input` de página que el router rellena en cada
+   navegación, también cuando solo cambia la query (`withComponentInputBinding`). Sin parámetro, la de aterrizaje.
+   La actual lleva `aria-current="page"` y ninguna, `role="tab"`.
+3. **Una forma de moverse**: clic = navegar dentro de la app. El DS avisa (`activeChange`) y la página decide y
+   navega: el alta de grupo no deja salir de General sin nombre ni canales. `SectionLinksService` hace el `href`
+   de la fila y la navegación con el mismo árbol de URL. Cmd/Ctrl, Mayús, Alt o el clic central los hace el
+   navegador, la regla de `routerLink`: otra pestaña en esa sección. Al editar, Atrás vuelve a la sección anterior.
+4. **En un ALTA la sección no deja rastro** (`replaceUrl`, en grupo, agente, usuario y regla): Atrás sale del alta,
+   y tras crear no se vuelve a un alta vacía. El alta de grupo quita `?seccion=` al abrir.
+5. **Cambiar de sección no funde la página**: la transición de vista se salta cuando solo cambia la query (medido:
+   fundía la página entera en cada clic del índice). Cambiar de ruta funde como siempre, Contact Center incluido.
+6. **Guardar: uno, explícito, por ficha. No se guarda al cambiar de sección.** El índice marca las secciones con
+   cambios sin guardar con un punto en el color de marca, distinto del rojo de lo que falta. Si están las dos
+   cosas, se ve el rojo y se oyen las dos. La barra lo dice en palabras, «Cambios sin guardar». Es la barra de
+   guardado contextual de un registro con secciones que dependen entre sí (Shopify, las fichas de Salesforce).
+   `sectionsWithChanges` y `titleKey` son entradas nuevas del índice; el estado nuevo va a `figma-pendiente` §5.
+7. **Un aviso cancelado vuelve a donde estaba**: el router con `canceledNavigationResolution: 'computed'`.
+8. **Agente y usuario, al molde de la ficha de grupo**. Van con la cabecera encima, el índice a la izquierda, una
+   sección a la vista en su `sc-section-card` y el resumen a la derecha con sus tres cifras de siempre, que dejan
+   la franja del nombre. Cada ficha tiene un orden, el de sus dependencias, igual en los dos modos:
+   - agente: Identidad · Grupos asignados · Permisos · Recursos · Avanzado;
+   - usuario: Identidad · Acceso · Servicios asignados.
+   Abren en la primera. Los listados enlazan a la sección de trabajo (`?seccion=grupos`, `?seccion=acceso`), así
+   que el clic de siempre sigue llegando ahí. Las tarjetas del resumen pasan a `styles/_resumen.scss`, una para
+   las tres fichas. El aviso de «abierta en otra pestaña» se pinta en las tres; en agente y usuario el candado
+   ya se cogía y no se decía.
+9. **Un punto de referencia por índice**: el carril es un `div` y el `nav` se nombra con su rótulo visible
+   (Contact Center) o con `common.form_index_aria` (en los cuatro idiomas).
+
+**Razón** · Medido el 2026-09-27, en este build:
+- **Contact Center no se mueve un píxel**: 0 píxeles distintos contra `main`, en sus tres páginas, en claro y en
+  oscuro, con una sonda que enrojece con medio píxel de relleno de más en el rótulo. Lo mismo en la ficha de
+  grupo (edición y alta) y en el constructor (nueva y edición).
+- **El segundo Atrás se perdía**: con `replace`, un Atrás cancelado desde una ficha con cambios sustituía la
+  entrada del listado por la de la ficha, y el siguiente Atrás salía de la app. `indice-enlaces.spec.ts` lo vio en
+  rojo antes del cambio.
+- **El alta de agente cambiaba la dirección con `Location.replaceState`**: el router seguía en `crear` y cada
+  enlace del índice habría llevado a un alta vacía. Ahora navega a la edición, como el de grupo.
+- **El punto rojo ya se oía en Chrome**: el `aria-label` de un `span` entraba en el nombre del enlace. Pasa a texto
+  oculto dentro del enlace porque ARIA 1.2 lo prohíbe en un elemento sin rol, no porque fallara.
+Rojo primero: 12 de 16 casos de la unitaria del índice contra el componente anterior, 11 de 12 de
+`indice-enlaces.spec.ts` contra `main`; la que pasaba es la de Contact Center, que ya iba por rutas.
+
+**Descartadas** ·
+- **Que el DS pinte `routerLink`**: ataría el DS al router (sc-docs enruta con `#`) y el enlace navegaría antes de
+  que la página decida, así que la puerta de General del alta llegaría tarde.
+- **`<button>` en vez de `<a>`**: cambia píxeles (estilos de botón) y deja de ser enlace: sin Cmd+clic, sin copiar
+  el enlace, sin Atrás.
+- **Guardar al cambiar de sección**: un gesto de mirar se volvería uno de cambiar, y aquí cambiar mueve tráfico en
+  vivo. Hay cambios que cruzan secciones: quitar un canal en General recorta los canales de los agentes, y
+  guardar al salir de General dejaría medio cambio en producción. La validación bloquearía moverse o guardaría
+  datos inválidos, y habría dos formas de guardar. El autoguardado encaja con ajustes independientes y sin
+  riesgo, y ya se usa donde toca: las columnas del listado.
+- **Mantener la tira de pestañas en agente y usuario**: el índice debe ser uno.
+- **Que las fichas abran en su sección de trabajo sin parámetro**: la dirección de la ficha significaría una
+  sección distinta según el modo. Se prefirió que abran en la primera y que el listado enlace a la de trabajo.
+- **Quitar también el fundido de Contact Center**: se deja como estaba; si el movimiento entre secciones debe ser
+  uno solo, lo decide el pase de diseño.
+
+**Consecuencias** ·
+- Enmienda DD-121 §2: la divergencia agente/usuario con pestañas se acaba. También la forma «una página +
+  pestañas» (2026-09-22) y el orden común de #240: al editar, Identidad ya no baja al segundo puesto.
+- Cierra el pendiente de DD-113: el `role="tab"` sin `tablist` de `sc-form-section-nav`.
+- **Enmienda #239 («sin caja»)** en agente y usuario: sus secciones vuelven a `sc-section-card`, como las de grupo.
+  El pase de diseño decide UNA forma para las tres.
+- En agente y usuario el contenido baja de 1.304 a 812 a 1440 (lo mide el antes y después). Acceso y Servicios de
+  usuario pasan de cinco y seis columnas a tres, y crecen de alto. Está en la lista del pase de diseño.
+- CHANGELOG `[Unreleased]`: `Added` (href, titleKey, sectionsWithChanges) y `Changed` (sin `role="tab"`,
+  `aria-current="page"`, el texto del punto). Sin romper: `href` es opcional y, sin él, la fila sigue en `#`.
+- Fuera de alcance: el índice hecho a mano de `comparar/fichas` (laboratorio, `features/lab/`), que sigue siendo
+  un `<button aria-current="true">`.
+- Queda comprobar en Figma el peso del rótulo de Contact Center. El código pinta 14/20 semibold, como pintaba
+  Contact Center; un comentario anterior lo anotaba como 14 regular (`figma-pendiente` §5).
+
+---
+
 ## DD-121 · 2026-09-26 — La ficha de grupo sigue la visión de producto de grupos: índice lateral, canal por canal, y la tabla de agentes solo para composición
 
 **Contexto** · Llega la visión de producto de grupos (2026-09-25): un documento que separa lo DICHO por producto de lo
@@ -217,7 +312,8 @@ tres fichas (#240) y el alta en diálogo (DD-119).
    General · Distribución y colas · Recursos · Agentes. La cabecera (nombre como `h1` editable, línea meta y
    «Eliminar») va ENCIMA de índice y contenido (`.ficha-rail` en `_page.scss` solo parte la fila), en la misma vertical
    que las fichas de agente y usuario, que siguen con pestañas: la divergencia es a propósito, y extender el índice a
-   ellas es el siguiente paso si se valida en grupos.
+   ellas es el siguiente paso si se valida en grupos. **Enmendado por DD-122 (2026-09-27)**: producto pide un solo
+   índice con una sola forma, y agente y usuario pasan a este molde.
 3. **Resumen a la derecha, en su propia columna** (enmendado el 2026-09-27; antes iba bajo el índice, ver
    Descartadas). Tarjetas de KPI (`sc-group-summary`): agentes, con una barra `p-metergroup` por canal (base: el
    ejemplo «Template» de MeterGroup en primeng.dev) y aviso con icono y texto si un canal activo no tiene quien lo
@@ -311,7 +407,7 @@ página + pestañas» del 2026-09-22** y **el orden común de pestañas de #240*
 activas); **DD-100 §3** (la identidad no va sobre el índice: la cabecera va a todo lo ancho). Y una licencia sobre
 **DD-105 §3**: la ficha de cliente entra en «Recursos» sin ser un objeto de Repositorios, porque de las cuatro
 secciones es su casa menos mala y la visión la cuenta entre los recursos. El `role="tab"` de `sc-form-section-nav`
-(un `tab` sin `tablist`) sigue pendiente (DD-113). Preguntas abiertas, para producto y desarrollo: qué hace
+(un `tab` sin `tablist`) quedó pendiente (DD-113) hasta DD-122, que lo quita. Preguntas abiertas, para producto y desarrollo: qué hace
 exactamente el desbordamiento y dónde se configura su destino; si «Desbordar sesión» es lo mismo; si Email tiene
 estrategia o capacidad propias; si la URL del script de Web Chat la pone cada grupo o la plataforma; si el backend
 tendrá un permiso de WhatsApp por agente (el AED en vivo solo tiene Tlf / Chat / Email); qué ve el cliente en cola si
@@ -322,6 +418,16 @@ más de un anuncio periódico en teléfono. Fuera a propósito: la forma de las 
 `listado-grupos.spec.ts`, `admin-forms.spec.ts` y el grupo en `form-section-nav-legibility` y `theme-contrast`. De
 `page-anatomy` sale (su tope ya no es el de Contact Center): el índice lo mide `ficha-grupo.spec.ts` con las mismas
 cifras.
+
+**Respuestas de producto (2026-09-27)** a las preguntas para ir más a fondo:
+- La maqueta de la visión partió de una captura de nuestras pestañas.
+- Producto ya había visto la ficha de pestañas, y el «no pestañas» es informado.
+- Las variantes de `comparar/fichas` siguen de referencia.
+- El 90 % del trabajo, asignar agentes, lo hace el supervisor.
+- Se enseñará en producción, con una vista de antes y después sin sesgo.
+- El índice debe ser uno y funcionar de una sola forma.
+De ahí sale DD-122. **Siguiente paso: el panel rápido de agentes, también en Supervisión**, que es donde trabaja el
+supervisor; hoy solo se abre desde el listado de grupos. Anotado, sin código.
 
 ---
 

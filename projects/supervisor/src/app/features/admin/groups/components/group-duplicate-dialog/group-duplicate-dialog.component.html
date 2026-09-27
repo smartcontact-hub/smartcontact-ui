@@ -1,0 +1,28 @@
+<sc-dialog
+  [visible]="visible()"
+  [title]="'groups.form.duplicate_title' | translate"
+  [subtitle]="'groups.create_dialog.duplicate_subtitle' | translate: { source: source().name }"
+  (shown)="onShown()"
+  (cancelled)="cancelled.emit()"
+>
+  <!-- La misma pieza que la ficha: lo que se rellena aquí es lo que dice la cabecera de la copia.
+       Enter en el nombre duplica. -->
+  <sc-group-identity-fields
+    idPrefix="group-duplicate"
+    [name]="name()"
+    [phone]="phone()"
+    [priority]="priority()"
+    [hasPhone]="hasPhone()"
+    [phoneOptions]="phoneOptions()"
+    [nameError]="nameError()"
+    (nameChange)="name.set($event)"
+    (phoneChange)="phone.set($event)"
+    (priorityChange)="priority.set($event)"
+    (enter)="submit()"
+  />
+
+  <div modal-actions>
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelled.emit()" />
+    <sc-button size="sm" variant="primary" [label]="'common.duplicate' | translate" (clicked)="submit()" />
+  </div>
+</sc-dialog>

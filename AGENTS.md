@@ -230,7 +230,8 @@ el código y el agente no la leía nunca (DD-53).
   `.page__form` 1100) y `.page__heading`. Declararlo es obligatorio y lo vigila
   `audit:page-anatomy`; las excepciones viven en su `EXENTAS` con el motivo escrito.
 - **Formularios**: `projects/supervisor/src/styles/_forms.scss` (`.field`, `.ficha`, `.ipanel`;
-  DD-44) + `sc-form-section-nav` (el índice son PESTAÑAS: una sección en el DOM a la vez) +
+  DD-44) + `sc-form-section-nav` (UN índice en toda la app: cada fila es un enlace a su sección, `?seccion=` o una
+  ruta, y solo la de la dirección está en el DOM; DD-122) +
   `sc-section-card`. Config tiene su propio shell: `features/config/layout/`.
 - **Lienzo**: `--sc-bg-canvas` (DD-45). `--sc-bg-default` es el suelo del shell y el relleno de
   campo, nunca una superficie de contenido (DD-34). El `:host` de una página pinta su lienzo, o

@@ -12,7 +12,25 @@
       [activeId]="active()"
       [sectionsWithErrors]="errors"
       [flush]="args.flush"
+      [titleKey]="args.titleKey || null"
       [labelKey]="args.labelKey"
+      (activeChange)="onActive($event)"
+    />
+  </div>
+</ng-template>
+
+<!-- La forma en la que lo usan las pantallas (DD-122): cada fila un enlace con su `href` (Cmd+clic
+     abre otra pestaña de esta página, en esa sección), el rótulo encima y las dos marcas: «Voz y
+     saludo» con cambios sin guardar y «Horario» con algo obligatorio sin rellenar. -->
+<ng-template #links>
+  <div class="row" style="max-width: 260px">
+    <sc-form-section-nav
+      [sections]="sections"
+      [activeId]="active()"
+      titleKey="Contact Center"
+      [flush]="true"
+      [sectionsWithErrors]="errors"
+      [sectionsWithChanges]="changes"
       (activeChange)="onActive($event)"
     />
   </div>

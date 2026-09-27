@@ -59,7 +59,7 @@ antes de construir encima.
 | **Agent Mini** — dialpad standalone (réplica del mini aed)            | [`docs/handoff/agent-mini.md`](docs/handoff/agent-mini.md)       | 2026-09-01       |
 | **Supervisor Dashboard** — adaptación del Monitor del Supervisor      | [`docs/handoff/supervisor-dashboard.md`](docs/handoff/supervisor-dashboard.md) | 2026-09-14 |
 | **Sidebar del Supervisor** — plegado a 80px y apertura de categorías (SISMAC-4340) | [`docs/handoff/supervisor-sidebar.md`](docs/handoff/supervisor-sidebar.md) | 2026-09-16 |
-| **Fichas de administración y Configuración del AED** — agente, grupo, usuario (grupo: DD-121) | [`docs/handoff/supervisor-fichas.md`](docs/handoff/supervisor-fichas.md) | 2026-09-27 |
+| **Fichas de administración y Configuración del AED** — agente, grupo, usuario (grupo: DD-121; un solo índice y las tres fichas en un molde: DD-122) | [`docs/handoff/supervisor-fichas.md`](docs/handoff/supervisor-fichas.md) | 2026-09-27 |
 | **Calidad visual** — agrupación medida, revisión previa a enseñar, datos de tortura, referencias (DD-123, DD-124) | [`docs/handoff/calidad-visual.md`](docs/handoff/calidad-visual.md) | 2026-09-27 |
 
 **Al cerrar, reescribe SOLO el fichero de tu frente.** Si abres una línea de trabajo nueva, crea

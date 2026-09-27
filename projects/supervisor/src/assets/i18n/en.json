@@ -989,6 +989,8 @@
     },
     "delete_gate": "Delete…",
     "no_changes": "No changes to save",
+    "unsaved_changes": "Unsaved changes",
+    "summary": "Summary",
     "actions": "Actions",
     "select_row": "Select {{name}}",
     "select_all": "Select all",
@@ -1383,7 +1385,8 @@
         "permissions_hint": "Advanced actions",
         "services": "Assigned services",
         "services_hint": "VUI services under supervision",
-        "access": "Access"
+        "access": "Access",
+        "access_hint": "What they can see and do"
       },
       "fields": {
         "name": "Full name",
@@ -1439,7 +1442,6 @@
     "page_title": "Groups",
     "create_button": "New group",
     "create_dialog": {
-      "subtitle": "What the page header will show. Channels and agents come next.",
       "duplicate_subtitle": "Copies the agents, channels and settings of «{{source}}». Not the associated phone.",
       "copy_name": "{{name}} (copy)"
     },
@@ -1803,9 +1805,11 @@
         "permissions": "Permissions",
         "permissions_hint": "Agent capabilities",
         "advanced": "Advanced",
-        "advanced_hint": "Labels, behavior, language",
+        "advanced_hint": "Behavior, integration and session",
         "resources": "Resources",
-        "identity": "Identity"
+        "identity": "Identity",
+        "groups_hint": "Where they work and on which channels",
+        "resources_hint": "What is assigned to them from Repositories"
       },
       "advanced": {
         "labels": {
@@ -1957,11 +1961,8 @@
       "title": "Contact Center",
       "version": "SmartContact · v2.4.0",
       "servicio_label": "General",
-      "servicio_hint": "Service settings",
       "agentes_label": "Agents",
-      "agentes_hint": "Default parameters",
-      "grupos_label": "Groups",
-      "grupos_hint": "Default parameters"
+      "grupos_label": "Groups"
     },
     "aed": {
       "title": "Contact Center",

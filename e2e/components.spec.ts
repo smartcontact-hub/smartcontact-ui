@@ -836,7 +836,7 @@ test.describe('sc-empty-state', () => {
 });
 
 test.describe('sc-form-section-nav', () => {
-  test('chip 28² (icono desnudo en flush), activo aria-current, punto de error, click controla', async ({ page }) => {
+  test('chip 28² (icono desnudo en flush), enlaces con su href, activo aria-current="page", punto de error, click controla', async ({ page }) => {
     await gotoPage(page, 'formsectionnav');
 
     const nav = page.getByTestId('sc-formnav-default');
@@ -848,8 +848,13 @@ test.describe('sc-form-section-nav', () => {
     const chip = nav.locator('.form-nav__icon').first();
     expect(await styleOf(chip, ['width', 'height'])).toEqual({ width: '28px', height: '28px' });
 
-    // activo inicial = general → aria-current
-    await expect(nav.locator('.form-nav__item--active')).toHaveAttribute('aria-current', 'true');
+    // Cada fila es un ENLACE a su sección de esta misma página (DD-122), con el `#` de las rutas de
+    // la doc: sin `prepareExternalUrl`, Cmd+clic saldría de sc-docs.
+    await expect(nav.locator('.form-nav__item').nth(1)).toHaveAttribute('href', '#/components/formsectionnav?seccion=voz');
+    await expect(nav.locator('[role="tab"]')).toHaveCount(0);
+
+    // activo inicial = general → la página actual
+    await expect(nav.locator('.form-nav__item--active')).toHaveAttribute('aria-current', 'page');
 
     // sección 'horario' con punto de error (required vacíos)
     await expect(nav.locator('.form-nav__item--has-error .form-nav__dot')).toHaveCount(1);

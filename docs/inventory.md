@@ -63,7 +63,7 @@
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
 | `sc-field-msg` | CUSTOM | — | 2 inputs | — | — | — |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
-| `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 2 |
+| `sc-form-section-nav` | CUSTOM | — | 6 inputs | — | ✓ | 5 |
 | `sc-gauge` | CUSTOM | — | 9 inputs | — | ✓ | 1 |
 | `sc-group-popover` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 4 |
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
@@ -72,7 +72,7 @@
 | `sc-inputnumber` | EXTENDED | primeng/inputtext | 16 inputs | sc-field-label sc-field-msg | ✓ | 23 |
 | `sc-inputtext` | EXTENDED | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 36 |
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
-| `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 5 |
+| `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 7 |
 | `sc-multiselect` | EXTENDED | primeng/multiselect | 31 inputs | sc-field-label sc-field-msg | ✓ | 21 |
 | `sc-option-cards` | CUSTOM | — | 4 inputs | — | — | 2 |
 | `sc-panel` | EXTENDED | primeng/panel | 6 inputs | — | ✓ | 1 |
@@ -83,7 +83,7 @@
 | `sc-progressspinner` | EXTENDED | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 9 |
-| `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 21 |
+| `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 29 |
 | `sc-select` | EXTENDED | primeng/select | 28 inputs | sc-field-label sc-field-msg | ✓ | 44 |
 | `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 11 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
