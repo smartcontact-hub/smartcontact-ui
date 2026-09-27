@@ -34,7 +34,7 @@ export const GROUP_OPTIONS: readonly FilterOption[] = [
   { value: 'Soporte Taller', label: 'Soporte Taller' },
   { value: 'Soporte Nivel 1', label: 'Soporte Nivel 1' },
   { value: 'Soporte Nivel 2', label: 'Soporte Nivel 2' },
-].map((o) => ({ value: nombreDeGrupo(o.value), label: o.label === o.value ? nombreDeGrupo(o.label) : o.label }));
+].map((o) => ({ value: nombreDeGrupo(o.value), label: o.label.replace(o.value, nombreDeGrupo(o.value)) }));
 
 /** Con `?datos=tortura`, con el apellido compuesto que lleva el origen de las conversaciones (DD-124). */
 export const AGENT_OPTIONS: readonly FilterOption[] = [

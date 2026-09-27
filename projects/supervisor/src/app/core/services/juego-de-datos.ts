@@ -116,6 +116,13 @@ const GRUPOS_EDITORIALES: Readonly<Record<string, string>> = {
   Reclamaciones: 'Incidencias',
   'Soporte Taller': 'Segundo nivel',
   Telemarketing: 'Cobros',
+  // Las colas que solo viven en Conversaciones (no están en el almacén de grupos). Sin nombre de negocio, el juego
+  // para enseñar la app enseñaba «COLA_PRUEBA» (revisión con `--datos editorial`, 2026-09-27). «Clientes vip» es el
+  // grupo VIP, el mismo nombre que toma «Exclusivo».
+  'Soporte Nivel 1': 'Primer nivel',
+  'Soporte Nivel 2': 'Escalados',
+  'Clientes vip': 'Clientes VIP',
+  COLA_PRUEBA: 'Desbordamiento',
 };
 
 /** El nombre de una persona en el juego activo: con el apellido compuesto de `torturar` en tortura. */
