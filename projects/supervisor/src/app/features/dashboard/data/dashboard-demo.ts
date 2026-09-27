@@ -1,3 +1,5 @@
+import { nombreDeCosa, nombreDePersona } from '@core/services/juego-de-datos';
+
 import { buildWidget } from './build-widget';
 import type { DashboardMonitor, DashboardWidget, WidgetFilter } from './dashboard.types';
 import { DEMO_AGENT_PRESENCE, DEMO_ENTITIES } from './demo-entities';
@@ -40,8 +42,8 @@ export const DASHBOARD_DEMO_MONITOR: DashboardMonitor = {
           title: null,
           entities: AGENTS,
           filter: ALL_CHANNELS,
-          // Una fila por agente de la cabecera (`entities`), y el estado de `DEMO_AGENT_PRESENCE`, que es el que
-          // cuentan el anillo de al lado y su detalle.
+          // Una fila por agente de la cabecera (`entities`), con el nombre del juego de datos activo y el estado de
+          // `DEMO_AGENT_PRESENCE`, que es el que cuentan el anillo de al lado y su detalle.
           rows: [
             { name: 'Tom Hanks', conversations: 18, attended: 17, rejected: 1, transferred: 2, avgSeconds: 214 },
             { name: 'Meryl Streep', conversations: 21, attended: 21, rejected: 0, transferred: 1, avgSeconds: 188 },
@@ -53,7 +55,10 @@ export const DASHBOARD_DEMO_MONITOR: DashboardMonitor = {
             { name: 'Natalie Portman', conversations: 14, attended: 13, rejected: 1, transferred: 0, avgSeconds: 205 },
             { name: 'Keanu Reeves', conversations: 11, attended: 10, rejected: 1, transferred: 1, avgSeconds: 233 },
             { name: 'Viola Davis', conversations: 15, attended: 15, rejected: 0, transferred: 2, avgSeconds: 219 },
-          ].map((row) => ({ ...row, presence: DEMO_AGENT_PRESENCE[row.name] })),
+          ].map((row) => {
+            const name = nombreDePersona(row.name);
+            return { ...row, name, presence: DEMO_AGENT_PRESENCE[name] };
+          }),
         },
       ],
     },
@@ -88,7 +93,7 @@ export const DASHBOARD_DEMO_MONITOR: DashboardMonitor = {
           kind: 'kpi-simple',
           type: 'typification',
           title: null,
-          entities: ['Venta cerrada'],
+          entities: [nombreDeCosa('Venta cerrada')],
           filter: ALL_CHANNELS,
           value: 41,
         },
@@ -144,7 +149,7 @@ export const DASHBOARD_DEMO_MONITOR: DashboardMonitor = {
             { label: 'Incidencia técnica', total: 19 },
             { label: 'Cambiar datos de contacto', total: 11 },
             { label: 'Baja del servicio', total: 6 },
-          ],
+          ].map((it) => ({ ...it, label: nombreDeCosa(it.label) })),
         },
       ],
     },
