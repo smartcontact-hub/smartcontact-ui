@@ -55,6 +55,37 @@
   text-underline-offset: var(--sc-spacing-0-125);
 }
 
+/* Los saltos a cada canal de Distribución y colas (DD-128). Es contenido de la caja: la misma sangría que las
+ * sub-secciones (`_forms.scss`), para arrancar en la vertical del título. Los enlaces, con el color de enlace de la
+ * app, y el foco, el anillo del sistema. */
+.channel-jumps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  margin-inline: var(--sc-spacing-0-875);
+  /* 28 hasta las reglas comunes: son otro grupo, y la caja no pone hueco entre sus hijos (medido: se tocaban). */
+  margin-block-end: var(--sc-spacing-2);
+}
+
+.channel-jumps__label {
+  color: var(--sc-text-secondary);
+}
+
+.channel-jumps__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  color: var(--sc-text-link);
+  text-decoration: underline;
+  text-underline-offset: var(--sc-spacing-0-125);
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+}
+
 /* Skills sale apagada con su motivo debajo, a la vista y no en un tooltip. */
 .strategy-option {
   display: flex;

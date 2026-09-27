@@ -92,3 +92,43 @@
   flex-direction: column;
   gap: var(--sc-spacing-0-5);
 }
+
+/* En la franja ancha, cada dato a los dos extremos dejaba 450 px entre la clave y su valor (medido a 1280;
+ * DD-128). Ahí la tarjeta es una rejilla de dos columnas que comparten reparto, salida y recursos (`subgrid`):
+ * los valores empiezan en la misma vertical, a 28 de la clave más larga. */
+@container (min-width: 37.5rem) {
+  .resumen__facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-content: start;
+    column-gap: var(--sc-spacing-2);
+    row-gap: var(--sc-spacing-2);
+  }
+
+  /* `column-gap: normal`: cada subrejilla usa el hueco de la de fuera. Con el suyo propio (14 los pares, 7 la
+   * cabecera, de sus reglas de siempre) el valor se corre la mitad de la diferencia, y no casan (medido: 3 px). */
+  .resumen__fact,
+  .resumen__pairs,
+  .resumen__facts .resumen__head {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    column-gap: normal;
+  }
+
+  .resumen__fact {
+    row-gap: var(--sc-spacing-0-5);
+  }
+
+  .resumen__fact > .resumen__label {
+    grid-column: 1 / -1;
+  }
+
+  .resumen__pairs {
+    row-gap: var(--sc-spacing-1);
+  }
+
+  .resumen__pair {
+    display: contents;
+  }
+}

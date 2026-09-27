@@ -159,6 +159,18 @@
           titleKey="groups.form.section.distribution"
           hintKey="groups.form.section.distribution_hint"
         >
+          <!-- Saltos a cada canal (DD-128): con los cuatro, la sección mide 2.355 px y nada nace plegado (DD-121 §5). -->
+          @if (channelJumps().length > 0) {
+            <nav class="channel-jumps" [attr.aria-label]="'groups.form.distribution.jump_aria' | translate">
+              <span class="channel-jumps__label sc-text-caption-regular">{{ 'groups.form.distribution.jump_label' | translate }}</span>
+              @for (jump of channelJumps(); track jump.id) {
+                <a class="channel-jumps__link sc-text-caption-semibold" [href]="jumpHref(jump.id)" (click)="jumpToChannel($event, jump.id)">
+                  <sc-channel-icon [channel]="jump.channel" [size]="12" />
+                  {{ jump.labelKey | translate }}
+                </a>
+              }
+            </nav>
+          }
           <section class="sub-section" aria-labelledby="group-common-title">
             <header class="sub-section__head">
               <h3 id="group-common-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.distribution.common_title' | translate }}</h3>
@@ -185,7 +197,7 @@
             <sc-divider />
             <section class="sub-section" id="group-channel-phone" aria-labelledby="group-channel-phone-title">
               <header class="sub-section__head">
-                <h3 id="group-channel-phone-title" class="sub-section__title channel-title sc-text-body-semibold">
+                <h3 id="group-channel-phone-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
                   <sc-channel-icon channel="phone" />
                   {{ channelKeys.phone | translate }}
                 </h3>
@@ -280,7 +292,7 @@
                  2026-09-21: con WhatsApp y sin Chat no había dónde ponerlo). -->
             <section class="sub-section" id="group-channel-chat" aria-labelledby="group-channel-chat-title">
               <header class="sub-section__head">
-                <h3 id="group-channel-chat-title" class="sub-section__title channel-title sc-text-body-semibold">
+                <h3 id="group-channel-chat-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
                   <sc-channel-icon channel="chat" />
                   {{ 'groups.channel.chat_family' | translate }}
                 </h3>
@@ -388,7 +400,7 @@
             <sc-divider />
             <section class="sub-section" id="group-channel-email" aria-labelledby="group-channel-email-title">
               <header class="sub-section__head">
-                <h3 id="group-channel-email-title" class="sub-section__title channel-title sc-text-body-semibold">
+                <h3 id="group-channel-email-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
                   <sc-channel-icon channel="email" />
                   {{ channelKeys.email | translate }}
                 </h3>

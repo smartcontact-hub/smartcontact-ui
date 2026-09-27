@@ -91,7 +91,7 @@ import {
   toggleChatFamily,
   toggleGroupChannel,
 } from '@features/admin/services/group-channels.core.mjs';
-import { NgTemplateOutlet } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 
 import {
   AgentChannelTableAgent,
@@ -193,6 +193,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly injector = inject(Injector);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
   private readonly groupsStore = inject(GroupsStore);
   private readonly agentsStore = inject(AgentsStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
@@ -543,6 +544,34 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly chatTemplateValue = computed(() => this.templatesOf('chat').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
   protected readonly emailTemplateValue = computed(() => this.templatesOf('email').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
   protected readonly hasEmail = computed(() => this.form().channels.has('email'));
+
+  /**
+   * Los saltos de Distribución y colas (DD-128): uno por bloque de canal activo, en su orden, y solo con dos o más
+   * (con uno, la sección ya empieza en él). Con los cuatro canales la sección mide 2.355 px y nada nace plegado
+   * (DD-121 §5): el salto lleva al bloque y deja el foco en su título.
+   */
+  protected readonly channelJumps = computed(() => {
+    const saltos: { id: string; channel: 'phone' | 'chat' | 'email'; labelKey: string }[] = [];
+    if (this.hasPhone()) saltos.push({ id: 'group-channel-phone', channel: 'phone', labelKey: this.channelKeys.phone });
+    if (this.hasChatFamily()) saltos.push({ id: 'group-channel-chat', channel: 'chat', labelKey: 'groups.channel.chat_family' });
+    if (this.hasEmail()) saltos.push({ id: 'group-channel-email', channel: 'email', labelKey: this.channelKeys.email });
+    return saltos.length > 1 ? saltos : [];
+  });
+
+  /** El enlace de un salto: la dirección de la ficha con su ancla. Un `#id` suelto se resolvería contra
+   *  `<base href="/">`, y Cmd+clic abriría la raíz de la app. */
+  protected jumpHref(id: string): string {
+    return `${this.router.url.split('#')[0]}#${id}`;
+  }
+
+  /** El clic principal, sin teclas, salta al canal sin navegar y deja el foco en su título; con una tecla o el botón
+   *  central, el enlace hace lo suyo (otra pestaña), la misma regla que el índice. */
+  protected jumpToChannel(event: MouseEvent, id: string): void {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    this.document.getElementById(id)?.scrollIntoView({ block: 'start' });
+    this.document.getElementById(`${id}-title`)?.focus({ preventScroll: true });
+  }
 
   /** El código que se pega en la web para el chat de este grupo (manual de Voice, «Script de chat»). */
   protected readonly chatScript = computed(

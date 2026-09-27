@@ -7,6 +7,51 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
+## ✅ 2026-09-27 · El pase de diseño de las fichas: la franja, las altas, Guardar, el usuario nuevo y los saltos por canal (DD-128)
+
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `ddf711a`), PR nuevo.**
+> El tramo del 2026-09-23 (los grupos pierden la cara) sale de aquí:
+> `git show ddf711a:docs/handoff/supervisor-fichas.md`.
+
+**Qué pasó.** Se revisó el flujo rehecho con `better-layout` y `better-ui`:
+- **Alcance:** 17 vistas, a 1440 y 1280 y en los dos temas.
+- **Método:** capturas y medidas por vista; lo propuesto se ensayó inyectando CSS en la página real.
+- **Resultado:** siete hallazgos, enseñados en una página de decisión privada, y se aplicaron los siete. El detalle y
+  lo descartado, en DD-128.
+
+Antes, dos retoques del widget (DD-126):
+- quedó apuntada la decisión del tinte con el texto en primario;
+- la cifra pasó a contar a la par del arco, con la misma curva (`ease`) y redondeando.
+
+**Qué cambia:**
+- **La franja:** el anillo junto a su cifra, las tarjetas de una fila a la misma altura y los datos del grupo en dos
+  columnas (`subgrid`).
+- **Las altas:** agente y usuario llevan la cabecera a la vista y el botón «Crear agente» / «Crear usuario».
+- **Usuario:** Guardar se queda en la ficha y crear abre la edición. Un usuario nuevo nace sin secciones ni permisos
+  (`EMPTY_SECTIONS` y `EMPTY_PERMISSIONS`, en `users-data.ts`).
+- **Distribución y colas:** «Ir a: Teléfono · Chat · Email», con enlaces que saltan al bloque y dejan el foco en su
+  título.
+- **Iconos y listado:** los avisos del resumen llevan el icono a 600, y el botón de cada fila del listado de grupos
+  dice «Asignar».
+
+**Medido:**
+- **`pase-fichas.spec.ts`:** 10 de 12 en rojo contra el código anterior.
+- **Pruebas viejas que cambian a propósito:** `admin-forms`, `ficha-usuario-agente` y `page-identity`, porque el pase
+  cambia justo lo que fijaban.
+- **La cifra y el arco:** arrancan en el mismo fotograma. Con la curva nueva la cifra ya no acaba después, medido con
+  un `MutationObserver` en el instante de cada cambio.
+- **La suite del Supervisor:** 374 de 374 en local.
+
+**Trampas del tramo:**
+- ⚠️ **Una consulta de contenedor no suma especificidad.** Una regla dentro de `@container` que va antes que la regla
+  base del mismo selector pierde. La franja siguió a 244 px hasta ponerla detrás.
+- ⚠️ **Una `subgrid` con su propio `gap` desplaza sus elementos la mitad de la diferencia con el de fuera.** Con
+  `column-gap: normal` lo hereda; aquí eran 3 px de más.
+- ⚠️ **Un `href="#id"` suelto se resuelve contra `<base href="/">`.** El enlace de un salto lleva la ruta de la ficha y
+  su ancla (`jumpHref`).
+- ⚠️ **Una sonda por `requestAnimationFrame` puede leer la cifra del fotograma anterior**, según el orden de los
+  callbacks. Para comparar cifra y arco hay que usar un `MutationObserver` en el instante del cambio.
+
 ## ✅ 2026-09-27 · El resumen de las fichas, como widget: la cifra cuenta y el anillo nativo se llena (DD-126)
 
 > **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `9241498`), PR nuevo: el prototipo y lo elegido.**
@@ -206,53 +251,17 @@ pieza. e2e de grupo y fichas en verde.
 **Si vuelve a sonar a paso de más:** la alternativa que rima del todo es sin diálogo, «Nuevo grupo» abre la ficha con
 el nombre como campo en el sitio del título. Rafa pidió no quitar el paso.
 
-## ✅ 2026-09-23 · Los grupos pierden la cara y se crean con un diálogo corto (DD-119)
-
-> **Sello: rama `arebury/remove-group-avatar-photos`, worktree `shipworm`, sobre `origin/main` `e1b8f5fd` (#242).**
-
-**Qué pasó.** Del equipo: «las fotos en grupo no deberían existir». Medido en local: la foto se guardaba y no salía en
-ningún otro sitio, y crear un grupo abría la ficha entera (5 pestañas, ~35 campos) cuando solo pide el nombre.
-
-**Qué cambia.**
-- **Sin foto ni avatar de grupo**: ficha, lista (fila de 54 a 44) y tabla de grupos de la ficha de agente (46 a 44).
-- **Alta en diálogo** (`sc-group-create-dialog`): nombre y canales; lo demás, de los valores por defecto
-  (`newGroupDraft` en `groups-data.ts`). Crear deja en «Canales y agentes». `/admin/grupos/crear` abre el diálogo.
-- **Duplicar**, el mismo diálogo: «… (copia)», los canales del original, sus agentes; sin teléfono asociado.
-- **Ficha solo de edición**: Identidad segunda (como #240), sin foto; Recursos, Anuncios y Avanzado sin caja.
-- Nombre repetido avisado en vivo (alta e Identidad); la cabecera dice «918371548 · Prioridad: Media».
-- Un grupo nuevo ya no enseña buscador sobre la tabla vacía, y el vacío nombra el botón que existe.
-
-**Medido** con clics en local a 1440, claro y oscuro: alta, duplicado, avisos, grupo sin Teléfono. La cabecera, las
-pestañas y el contenido caen en el mismo píxel que la ficha de agente (121/128/178/185). e2e tocadas en verde.
-
-**Descartado por Rafa, y por qué** (DD-119): sin pestaña Identidad («no sé si puedo tocarlo como usuario») y un
-«Editar datos» con diálogo (un «Aplicar» que no guardaba, y rompía el orden de las tres fichas).
-
-**Integrado con #242** (la otra caja, fundida a las 21:50 sobre el mismo fichero): «Anuncios y audio» siempre en la
-tira, apagada sin Teléfono; «Habilitado» en vez de «Atiende»; glifos de canal en la cabecera. Todo se queda.
-
-**Trampa del tramo:** `main` se movió CUATRO veces bajo estos ficheros mientras Rafa miraba mi local (#237, #239,
-#240, #242), y vio deshecho «lo que ya se había hecho». Al empezar no había nada que ver: hacía falta mirar a mitad
-de sesión. Nace `scripts/hooks/main-drift-guard.mjs` (en cada mensaje de Rafa, LEARNINGS #21 ⚙️).
-
 ## SIGUIENTE — sin preguntar
 
-0. **Pase de diseño premium sobre todo el flujo rehecho** (`/impeccable` + `/better-ui`, más `better-layout` y
-   `better-typography`): listado y panel de grupos, las tres fichas, valores por defecto y Contact Center, a 1440 y
-   1280, en claro y en oscuro. Se revisa, se enseñan los hallazgos con captura y se aplica lo que se elija, en un PR
-   aparte. Lo que no está claro y hay que mirar sí o sí:
-   - Distribución y colas (2.355 px con cuatro canales, sin plegar).
-   - La tabla de agentes del grupo.
-   - El resumen, ya como widget (DD-126: el tinte con el texto en primario, confirmado, y la cifra a la par del
-     arco). La columna de 240 sigue quitando 492 px de contenido a agente y usuario.
-   - Caja o sin caja: #239 las quitó y DD-122 las devuelve. Hay que elegir UNA forma para las tres fichas.
-   - En el alta, «Siguiente» frente a «Crear grupo», y el título: grupo lo enseña, agente y usuario lo esconden.
-   - Al guardar, grupo y agente se quedan y usuario vuelve al listado.
-   - La fila del listado.
-   - Ayudas bajo casi cada campo, y el peso de los iconos junto al texto semibold.
-   - El oscuro y los estados vacíos.
-   - Si el cambio de sección debe moverse igual en Contact Center, que funde, y en las fichas, que no.
-   - «Eliminar» en rojo de texto mide 3,76:1 (conocido en `theme-contrast`).
+0. **Lo que queda del pase de diseño** (DD-128 aplicó los siete hallazgos de la revisión). Sin revisar aún a fondo:
+   - los estados vacíos: un grupo sin agentes, una búsqueda sin resultados, un alta sin grupos;
+   - las ayudas bajo casi cada campo;
+   - la columna de 240, que sigue quitando 492 px de contenido a agente y usuario.
+
+   Es del DS, no de la app:
+   - el icono a 400 junto a texto semibold en el título de sección y en la fila activa del índice
+     (`figma-pendiente` §29);
+   - «Eliminar» en rojo de texto, a 3,76:1 (conocido en `theme-contrast`).
    Después, el antes y después al día con agente, usuario y Contact Center. Y luego **el panel rápido de agentes,
    también en Supervisión** (respuesta de producto del 2026-09-27): es donde trabaja el supervisor, y hoy solo se abre
    desde el listado de grupos; anotado en DD-121, sin código. Las preguntas abiertas para producto y desarrollo

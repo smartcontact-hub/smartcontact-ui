@@ -29,35 +29,35 @@
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
-    [label]="'common.save' | translate"
+    [label]="(mode() === 'edit' ? 'common.save' : 'users.form.create_submit') | translate"
     [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
     (clicked)="save()"
   />
 </ng-template>
 
 <div class="page">
-  <!-- Único <h1> del documento. Al editar lo pone la franja: el nombre del usuario es el título
-       de la página, como en la ficha de grupo (#232). Al crear aún no hay nombre y va oculto. -->
-  @if (mode() !== 'edit') {
-    <h1 class="visually-hidden">{{ 'users.form.create_breadcrumb' | translate }}</h1>
-  }
-
   <!-- EL MOLDE DE LA FICHA DE GRUPO (DD-122): la cabecera ENCIMA, a todo lo ancho; el índice a la
        izquierda (el de Contact Center); una sección a la vista, en su caja; y el resumen a la derecha
        (`.ficha-rail--summary`, en `_page.scss`). Hasta el 2026-09-27 fue «una página + pestañas». -->
   <div class="page__inner page__inner--rail ficha-rail ficha-rail--summary">
-    @if (mode() === 'edit') {
-      <div class="headline">
-        <div class="headline__who">
-          <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name }}</h1>
-          <span class="headline__meta sc-text-caption-regular" [title]="form().email">{{ form().email }}</span>
-        </div>
-        <!-- Las tres cifras que vivían aquí se fueron al resumen, a la derecha, como en la ficha de grupo. -->
+    <!-- La cabecera, en los tres modos, como la ficha de grupo: su <h1> es el único del documento. En el alta dice
+         «Nuevo usuario» hasta que se escribe el nombre, y al crear la ficha no salta (DD-128). -->
+    <div class="headline">
+      <div class="headline__who">
+        <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">
+          {{ form().name || ((mode() === 'duplicate' ? 'users.form.duplicate_title' : 'users.form.create_title') | translate) }}
+        </h1>
+        <span class="headline__meta sc-text-caption-regular" [title]="form().email">
+          {{ form().email || ('users.form.fields.email_empty' | translate) }}
+        </span>
+      </div>
+      <!-- Las tres cifras que vivían aquí se fueron al resumen, a la derecha, como en la ficha de grupo. -->
+      @if (mode() === 'edit') {
         <div class="headline__actions">
           <sc-button variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
         </div>
-      </div>
-    }
+      }
+    </div>
 
     <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). -->
     <div class="page__rail">

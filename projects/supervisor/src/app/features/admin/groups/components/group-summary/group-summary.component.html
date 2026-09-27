@@ -1,9 +1,10 @@
 <section class="resumen" aria-labelledby="group-summary-title">
   <h2 id="group-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'groups.form.summary.title' | translate }}</h2>
 
+  <!-- Los avisos van en semibold y su icono con el mismo peso, 600: un icono lleva el peso óptico de su texto (DD-128). -->
   @if (missingText(); as text) {
     <p class="resumen__missing sc-text-caption-semibold" role="status">
-      <sc-icon name="error" size="inherit" aria-hidden="true" />
+      <sc-icon name="error" size="inherit" [weight]="600" aria-hidden="true" />
       {{ text }}
     </p>
   }
@@ -35,7 +36,7 @@
                 </p-metergroup>
               } @else {
                 <span class="resumen__warn sc-text-caption-semibold">
-                  <sc-icon name="warning" size="inherit" aria-hidden="true" />
+                  <sc-icon name="warning" size="inherit" [weight]="600" aria-hidden="true" />
                   {{ 'groups.form.summary.no_agents' | translate }}
                 </span>
               }
@@ -77,7 +78,7 @@
                   <dd class="resumen__value sc-text-caption-semibold">{{ o.number }}</dd>
                 } @else {
                   <dd class="resumen__warn sc-text-caption-semibold">
-                    <sc-icon name="warning" size="inherit" aria-hidden="true" />
+                    <sc-icon name="warning" size="inherit" [weight]="600" aria-hidden="true" />
                     {{ 'groups.form.summary.no_number' | translate }}
                   </dd>
                 }

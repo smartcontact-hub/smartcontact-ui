@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-test('usuarios · crear un usuario lo añade al listado', async ({ page }) => {
+test('usuarios · crear un usuario lo deja en su ficha y lo añade al listado', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');
 
   const name = `E2E Usuario ${Date.now()}`;
@@ -27,26 +27,29 @@ test('usuarios · crear un usuario lo añade al listado', async ({ page }) => {
   await page.locator('#user-email').fill('e2e.usuario@smartcontact.test');
   await page.locator('#user-identifier').fill('E2E-001');
 
-  const save = page.getByRole('button', { name: /guardar|save/i });
+  const save = page.getByRole('button', { name: 'Crear usuario' });
   await expect(save).toBeEnabled();
   await save.click();
 
-  // Guardar navega al listado; la fila nueva debe estar ahí.
-  await expect(page).toHaveURL(/admin\/usuarios$/);
+  // Crear deja en la edición del usuario nuevo, como grupo y agente (DD-128; hasta el 2026-09-27 volvía al
+  // listado). Que además salga en el listado se comprueba entrando a la lista.
+  await expect(page).toHaveURL(/admin\/usuarios\/editar\/\d+$/);
+  await expect(page.locator('.headline__name')).toHaveText(name);
+  await goto(page, 'admin/usuarios');
   await expect(page.locator('tbody tr', { hasText: name })).toHaveCount(1);
 });
 
 test('usuarios · el botón de guardar exige los campos obligatorios', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');
 
-  // Formulario vacío: Guardar no debe estar disponible.
-  await expect(page.getByRole('button', { name: /guardar|save/i })).toBeDisabled();
+  // Formulario vacío: «Crear usuario» no debe estar disponible.
+  await expect(page.getByRole('button', { name: 'Crear usuario' })).toBeDisabled();
 
   await page.locator('#user-name').fill('Solo nombre');
   await page.locator('#user-email').fill('sin-arroba');
 
   // Email inválido → sigue bloqueado (validación real, no solo "hay texto").
-  await expect(page.getByRole('button', { name: /guardar|save/i })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Crear usuario' })).toBeDisabled();
 });
 
 /*
