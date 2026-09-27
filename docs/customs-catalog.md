@@ -407,8 +407,7 @@ leer todavía: `cmp-color-rewire` espera que el slot `root.color` del preset lea
 `root` en el nombre, y el Kit no tiene ese nivel, así que cablearlos rompe el guard. Hasta que se arregle ese mapeo, va por
 referencia de paleta en `sc-preset/togglebutton.ts`, como el `danger` sólido de §1.8.
 
-**Cómo se cierra**: que el Kit suba `togglebutton.color` en claro (pregunta abierta en
-`docs/figma-pendiente.md` §10). El guard ya acepta los slots de `root` (#177), así que entonces el
+**Cómo se cierra**: que el Kit suba `togglebutton.color` en claro (`docs/figma-pendiente.md` §8). El guard ya acepta los slots de `root` (#177), así que entonces el
 preset lee `var(--sc-cmp-togglebutton-*)` y el bloque a mano se borra.
 
 ## 2. Component extensions (el DS añade lo que Figma no modela)

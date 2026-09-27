@@ -1,8 +1,9 @@
 # Frente · Calidad visual — agrupación, revisión previa, datos de prueba y referencias — hand-off
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**. Lo durable vive en `docs/`:
-> las decisiones en DD-123, DD-124, DD-125 y DD-127, la regla en AGENTS §«UX de pantalla» 9, el Kit en
-> `docs/figma-pendiente.md` (fichas 15 a 17) y las referencias en `docs/referencias-contact-center.md`.
+> las decisiones en DD-123, DD-124, DD-125 y DD-127, la regla en AGENTS §«UX de pantalla» 9, todo lo pendiente en
+> Figma en `docs/figma-pendiente.md` (con el plan de la sesión en Figma) y las referencias en
+> `docs/referencias-contact-center.md`.
 >
 > **Por qué existe este frente.** Nace el 2026-09-27 de contrastar el repo con una lista de consejos de UI (espacio,
 > agrupación, referencias, fotografía, iterar hasta estar contento, IA que critica en vez de diseñar). El repo era
@@ -11,34 +12,61 @@
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-1. **Llevar a verde el PR de este tramo** (el (4)), que va aparte porque #260 se fusionó antes de que llegara. No cambia
-   ninguna foto de sc-docs: todo vive en el Supervisor.
+1. **Llevar a verde el PR de este tramo** (el (5)). No cambia ninguna foto de sc-docs: todo vive en el Supervisor.
 2. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).
 
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
-- **Las fichas 15, 16 y 17 de figma-pendiente**: filas de formulario y radios a 14; la caja de sección a 17,5 arriba y
-  abajo; el diálogo con formulario, botonera a 28 y 14 entre campos.
+- **La sesión en Figma** (`docs/figma-pendiente.md`, entero): seis decisiones con recomendación arriba del todo, y el
+  plan por pasos. Lo que el código hace después (quitar filas de `PENDIENTE_FIGMA` y de `EXCLUDE`, el marco de
+  `sc-dialog`, la etiqueta IFTA de `sc-inputtext`…) está en su paso 6: lo coge la sesión que llegue después.
 - **Los análisis de Telegram y WhatsApp** viven en `~/Documents/Claude/2026-09 teardown admin usuarios-grupos/`, fuera
   del repo: traerlos a `docs/` para que otra sesión (o la nube) los pueda leer.
 - **`npm run correcciones` en su máquina**: el registro de correcciones vive allí; en una sesión en la nube se pierde
   al cerrar el contenedor.
-- **Los agentes en el juego editorial** (decisión de producto: DD-124 los dejó con sus nombres de Hollywood). La lista
-  de Agentes enseña 25 seguidos apellidados «Kidman»: son los 480 del cruce de 25 nombres con 25 apellidos, en orden.
-  En una demo se lee como generado. Propuesta: en el editorial, barajar el cruce («Nicole Kidman», «Harrison Ford»…).
-- **Los servicios en el juego editorial**: Conversaciones enseña «DV: Smart Contact», con un prefijo de producción, y
-  «Atención al Cliente» (servicio) al lado de «Atención al cliente» (grupo). El editorial solo renombra grupos.
 - **De gusto, visto en la revisión editorial**: «Web Chat» baja a dos líneas en la cabecera de la tabla de grupos del
   agente, y «Grupos / Agentes / Tipificaciones» en el acceso del usuario. Ya pasaba con los datos de siempre.
 - **De gusto, visto en la revisión de Sistema**: dos de sus seis secciones llevan icono delante del título
   («Numeración especial» y «Regeneración de contraseñas») y las otras cuatro no. Ni regla ni prueba lo piden.
 
+## ✅ 2026-09-27 (5) · El editorial, sin rastro de generado; las reglas casan con cualquier juego; y Figma, a punto
+
+**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `4f4f2018` (#263 fundido; la rama se
+rehízo desde `main` con los commits de este tramo encima).
+
+**Qué pasó.**
+- **Las dos cosas del editorial que esperaban decisión, hechas** (DD-124), solo en el editorial:
+  - los 480 agentes generados cruzan nombre y apellido en diagonal: la lista ya no enseña 25 «Kidman» seguidos, y los
+    primeros salen como los de verdad («Nicole Kidman», «Harrison Ford»…);
+  - los cinco servicios de Conversaciones dicen el motivo de la llamada («Información general», «Consultas»,
+    «Averías», «Contratación», «Instalaciones»), distinto de los grupos.
+- **Al hacerlo salió un fallo:** la previsión de impacto de Reglas casa por nombre, y con otro juego no casaba nada.
+  Medido: la regla #1 prevé 6 conversaciones con la demo y ninguna con el editorial; sin el puente, la #2 prevé 5 con la
+  demo y ninguna con tortura. Ahora las reglas nombran servicios y grupos con el juego activo, y el puente
+  (`demo-impact-bridge.ts`) devuelve grupos y agentes como las conversaciones. `juego-de-datos.spec.ts` lo prueba con
+  las cuatro reglas y los tres juegos; salió en rojo sin cada una de las dos mitades del arreglo.
+- **`docs/figma-pendiente.md`, repasado entero** contra el código y el export de `main`, con dos agentes en paralelo
+  (uno ficha a ficha, otro buscando lo que faltaba) y cada hallazgo comprobado a mano antes de escribirlo:
+  - ninguna ficha estaba hecha en el Kit;
+  - cinco tenían un dato mal. La 14 apuntaba a `slate/600` y es `surface/600`; la 17 daba por hecho un marco de 17,5 y
+    el Kit, como Aura, dice 15,75; la 11 ataba a variables que no existen; la 12 cambiaba también el blanco del texto; la
+    8 no decía que hay que sacar dos filas de `EXCLUDE`;
+  - entran 10 fichas nuevas (19 a 28), entre ellas cuatro grises bajo AA que el código ya subía sin ficha, el botón
+    rojo de texto (3,76:1), la barra lateral y los iconos huérfanos;
+  - arriba del todo, un plan en seis pasos y seis decisiones con recomendación.
+
+  DD-123 lleva la corrección de los 17,5.
+- **Revisión** con `--datos editorial` y `--datos tortura` de Conversaciones, Reglas (lista y constructor) y Agentes:
+  agrupación en regla, y las capturas se leen bien con los nombres nuevos.
+- **Visto y no tocado:** en el editorial, la regla «Transcribir Ventas: venta o incidencia» apunta al grupo 6, que allí
+  se llama «Citas y reservas»: el nombre dice ventas y el grupo, citas. Viene de que el catálogo de Memoria llama
+  «Ventas» a ese grupo con los datos de siempre y el editorial usa el nombre de Administración.
+
 ## ✅ 2026-09-27 (4) · El monitor deja de contradecirse, la tortura llega a lo que vive en memoria, y revisión editorial
 
-**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `9241498a` (#260 y #261 fundidos; la
-rama se rehízo desde `main` con los commits de este tramo encima).
+**Sello:** fusionado en `main` con #263, HEAD `4f4f2018`.
 
 **Qué pasó.**
 - **El «sin verificar» del tramo (3) era un fallo** (DD-127). La tabla de «Monitor x» enseñaba 8 de los 10 agentes de su
