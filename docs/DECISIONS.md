@@ -7,7 +7,8 @@
 > [`migration-safety.md`](./migration-safety.md).
 >
 > Formato DD-N, **newest first** (lo vigila `docs:coherence`; hasta el 2026-08-13 lo prometía y
-> no lo cumplía). Plantilla:
+> no lo cumplía), y cada número una sola vez: dos sesiones a la vez pueden coger el mismo, y la que
+> funde después renumera la suya con todas sus citas (también lo vigila, desde el 2026-09-27). Plantilla:
 >
 > **`Descartadas` es obligatorio SI hubo alternativas que se consideraron y se rechazaron** —
 > que es donde está el valor de este log: saber *qué se probó y por qué no*. No lo es cuando la
