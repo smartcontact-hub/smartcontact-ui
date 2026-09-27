@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El botón `danger` de texto (el «Eliminar» de las fichas) sube de red-500 a red-600, mismo escalón que el sólido: cierra los tres últimos botones bajo AA de §1.8 | DD-128 |
 > | Los datos de demostración del Dashboard cuadran: un solo estado por agente (`DEMO_AGENT_PRESENCE`) para la tabla, los anillos y su detalle · los disponibles no derivan en el latido · unos totales fijos al pie llevan raya arriba | DD-127 |
 > | El resumen de las fichas como widget: la cifra con «/total» y el `p-progress-spinner` nativo a 42 (`sc-summary-kpi`), que cuenta y se llena al abrir y al cambiar, y nada con menos movimiento · anillo en toda proporción, oculto al lector (la cifra final va en texto oculto) · la tarjeta en el tinte de marca, con todo su texto en primario (el secundario no llega a AA sobre el tinte) · `theme-contrast` perdona el gris solo sobre sus fondos (enmienda DD-121 §3, DD-122 §8) | DD-126 |
 > | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra · R4: lo que apilan los envoltorios de dentro de una caja no llega a 7 | DD-125 |
@@ -87,6 +88,39 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-128 · 2026-09-27 — El botón `danger` de TEXTO sube a red-600: cierra los tres últimos botones bajo AA
+
+**Contexto** · `theme-contrast` tenía fichado desde el 2026-09-26, el día que la ficha de grupo entró en su barrido,
+que el «Eliminar» de la cabecera de las fichas de grupo, agente y usuario (`sc-button variant="danger"
+appearance="text"`) pinta su etiqueta en `red-500`: 3.76:1 sobre blanco, bajo el 4.5:1 de WCAG AA. El `danger`
+SÓLIDO ya se había arreglado así (§1.8, 2026-07-19); el de texto quedó fuera porque tocaba un token de un componente
+compartido, no una ficha, y customs-catalog §1.8 lo dejó anotado con el arreglo exacto sin aplicarlo.
+
+**Decisión** · `--sc-cmp-button-text-danger-color` (claro) sube de `red-500` a `red-600` — el mismo par de colores
+que el sólido, mismo 4.83:1. A diferencia del sólido (cuyo token no lo consume nadie), este SÍ lo lee el preset por
+`var(...)`, así que va por el mecanismo de `outlined.secondary` (§1.8, ya declarado): el slot sale de la zona
+`@sc-gen` y se fija a mano en `04-component.css`, con `light:button.text.danger.color` en el `EXCLUDE` de
+`cmp-color-map.mjs` para que el generador no lo reescriba.
+
+**Razón** · Medido tras el cambio: `admin/grupos/editar/11` en claro pasa de 3.76:1 a 4.83:1 en el botón «Eliminar»
+de la cabecera; oscuro no cambia (ya usaba `red-400`, sin fallo). `theme-contrast.spec.ts` perdía su caso conocido
+(la línea del array `CONOCIDOS_CLARO`) y salía en rojo contra el `red-500` anterior; en verde con el token a
+`red-600`. `tokens:parity`, `tokens:guard` y `tokens:cmp-rewire` limpios; la suite entera de `theme-contrast`
+(91 tests) en verde.
+
+**Descartadas** ·
+- **Arreglarlo por ficha** (una clase local en las tres páginas de ficha) → el botón es del DS y sus otros
+  consumidores (fuera de las fichas) seguirían bajo AA; es una decisión del componente, no de la pantalla.
+- **Hardcodear `{red.600}` en el preset**, como el sólido → innecesario: a diferencia del sólido, el token de este
+  slot SÍ lo consume el preset, así que puede ir por el mecanismo de token + `EXCLUDE`, más simple de cerrar cuando
+  Figma suba el valor.
+
+**Consecuencias** · Cierra la lista de §1.8: no queda ningún botón del DS bajo AA. Todo uso de `appearance="text"` +
+`variant="danger"` de la app (no solo las fichas) hereda el cambio. Se cierra cuando el Kit suba
+`button.text.danger.color` a `red-600` (customs-catalog §1.8).
 
 ---
 
