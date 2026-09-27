@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Los datos de demostración del Dashboard cuadran: un solo estado por agente (`DEMO_AGENT_PRESENCE`) para la tabla, los anillos y su detalle · los disponibles no derivan en el latido · unos totales fijos al pie llevan raya arriba | DD-126 |
 > | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra · R4: lo que apilan los envoltorios de dentro de una caja no llega a 7 | DD-125 |
 > | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio, y el juego se elige en Configuración → Sistema · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
 > | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` · `sc-dialog` con cuerpo: la botonera a 28 y 14 entre hermanos | DD-123 |
@@ -85,6 +86,49 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-126 · 2026-09-27 — Los datos de demostración del Dashboard cuadran entre widgets: un solo estado por agente
+
+**Contexto** · Al medir el monitor (DD-125) quedó sin verificar que la cabecera de la tabla de agentes de «Monitor x»
+nombraba 10 agentes y la tabla enseñaba 8. Medido el 2026-09-27 en el build de producción: las filas estaban escritas a
+mano y faltaban Keanu Reeves y Viola Davis. La misma pantalla se contradecía en dos cosas más:
+- el detalle del anillo «Agentes disponibles · 5» listaba como disponibles a los cinco primeros de la lista, entre ellos
+  Denzel, en pausa en la tabla, y Leonardo, desconectado;
+- el latido de 8 s movía por separado los disponibles del anillo y los del panel de grupos. A los 24 s el panel decía 4
+  y el anillo 6, con 5 puntos verdes en la tabla, y el detalle de un «6» no podía listar un sexto disponible.
+
+**Decisión** ·
+1. **Un solo estado por agente de la demo**, `DEMO_AGENT_PRESENCE` (`dashboard/data/demo-entities.ts`): 5 disponibles,
+   4 en pausa y 1 desconectado. Lo leen las tablas de agentes (la de «Monitor x» y las que crea el asistente), los
+   anillos (los de las demos y los que crea el asistente con agentes de la demo) y su detalle, que lista a los que están
+   en ese estado y no a los primeros de la lista.
+2. **La tabla de «Monitor x» enseña los 10 agentes que nombra su cabecera.** El almacén de monitores sube a la versión 2,
+   para que un navegador que ya guardó la demo vea la nueva.
+3. **Los disponibles no derivan en el latido**, ni los del anillo ni los del panel de grupos: son el estado de cada
+   agente. Lo demás (en curso, en espera, tendencias, totales del día) sigue moviéndose.
+4. **Los totales de la tabla llevan raya arriba.** Con 10 filas a 900 de alto la tabla se desplaza 8 px por dentro (a
+   800 de alto ya pasaba con 8 filas), y la última fila quedaba pegada a «Totales», que van fijos al pie. La raya va por
+   fuera, justo encima: sin desplazar cae sobre la de la última fila y se ve una sola.
+
+**Razón** · En una demo, una pantalla que se contradice (6 disponibles en el anillo, 4 en el panel de al lado y 5
+puntos verdes en la tabla) se lee como un fallo del producto, no de los datos. Medido con el cambio, a 1440:
+- la tabla enseña 10 filas;
+- el anillo dice «5 de 9 conectados» y el panel de grupos, 5 de 9, durante cuatro latidos;
+- el detalle del «5» lista a los 5 disponibles de la tabla;
+- en «Colas y agentes», «5 de 9» y «4 de 9», con sus 5 disponibles y sus 4 en pausa.
+Lo prueba `dashboard.spec.ts`, que salió en rojo contra el build anterior porque faltaban 2 de los 10 agentes.
+
+**Descartadas** ·
+- **Dejar la tabla y su cabecera en 8** → el anillo de al lado vigila a los mismos 10 («5 de 9»), y el de «Colas y
+  agentes» también: los dos monitores se habrían contradicho entre sí.
+- **Que el latido cambie también el estado de los agentes** → la tabla, los anillos y el panel tendrían que cambiar a la
+  vez. Para una demo bastan los disponibles fijos, y lo demás sigue vivo.
+
+**Consecuencias** · Un panel de grupos que crea el asistente sigue inventando sus conectados («12 conectados» con 10
+agentes en la demo), y su detalle lista a los 9 conectados que hay. Es una cifra de colas, no de estos agentes, y no se
+toca aquí.
 
 ---
 
