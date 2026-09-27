@@ -989,6 +989,8 @@
     },
     "delete_gate": "Eliminar…",
     "no_changes": "Não há alterações para guardar",
+    "unsaved_changes": "Alterações não salvas",
+    "summary": "Resumo",
     "actions": "Ações",
     "select_row": "Selecionar {{name}}",
     "select_all": "Selecionar tudo",
@@ -1383,7 +1385,8 @@
         "permissions_hint": "Ações avançadas",
         "services": "Serviços atribuídos",
         "services_hint": "Serviços VUI sob supervisão",
-        "access": "Acesso"
+        "access": "Acesso",
+        "access_hint": "O que vê e o que pode fazer"
       },
       "fields": {
         "name": "Nome completo",
@@ -1439,7 +1442,6 @@
     "page_title": "Grupos",
     "create_button": "Novo grupo",
     "create_dialog": {
-      "subtitle": "O que o cabeçalho da ficha vai mostrar. Canais e agentes, no passo seguinte.",
       "duplicate_subtitle": "Copia os agentes, os canais e as definições de «{{source}}». O telefone associado, não.",
       "copy_name": "{{name}} (cópia)"
     },
@@ -1803,9 +1805,11 @@
         "permissions": "Permissões",
         "permissions_hint": "Capacidades do agente",
         "advanced": "Avançado",
-        "advanced_hint": "Etiquetas, comportamento, idioma",
+        "advanced_hint": "Comportamento, integração e sessão",
         "resources": "Recursos",
-        "identity": "Identidade"
+        "identity": "Identidade",
+        "groups_hint": "Onde atende e por que canais",
+        "resources_hint": "O que lhe é atribuído a partir de Repositórios"
       },
       "advanced": {
         "labels": {
@@ -1957,11 +1961,8 @@
       "title": "Contact Center",
       "version": "SmartContact · v2.4.0",
       "servicio_label": "Geral",
-      "servicio_hint": "Definições do serviço",
       "agentes_label": "Agentes",
-      "agentes_hint": "Parâmetros padrão",
-      "grupos_label": "Grupos",
-      "grupos_hint": "Parâmetros padrão"
+      "grupos_label": "Grupos"
     },
     "aed": {
       "title": "Contact Center",

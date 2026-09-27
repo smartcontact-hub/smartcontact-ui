@@ -597,7 +597,7 @@
     },
     {
       "selector": "sc-message",
-      "usedInSupervisor": 5
+      "usedInSupervisor": 7
     },
     {
       "selector": "sc-panel",

@@ -33,7 +33,7 @@ test('el índice lateral gobierna la ficha, y abre por General', async ({ page }
   await goto(page, 'admin/grupos/editar/1');
 
   await expect(indice(page).locator('.form-nav__item')).toHaveCount(4);
-  await expect(indice(page).locator('.form-nav__item[aria-current="true"] .form-nav__label')).toHaveText('General');
+  await expect(indice(page).locator('.form-nav__item[aria-current="page"] .form-nav__label')).toHaveText('General');
 
   // UNA sola sección pintada a la vez: el índice gobierna el contenido, no lo decora.
   await expect(page.locator('[id^="group-section-"]')).toHaveCount(1);
@@ -53,7 +53,7 @@ test('crear es la misma ficha: abre en General con Teléfono, no deja pasar sin 
   // Aunque la dirección pida otra sección: General es la puerta del alta.
   await goto(page, 'admin/grupos/crear?seccion=agentes');
   const general = page.locator('#group-section-general');
-  await expect(indice(page).locator('.form-nav__item[aria-current="true"] .form-nav__label')).toHaveText('General');
+  await expect(indice(page).locator('.form-nav__item[aria-current="page"] .form-nav__label')).toHaveText('General');
   await expect(page.locator('h1')).toHaveText('Nuevo grupo');
   // Nace con Teléfono marcado, y nada acusa al abrir.
   const telefono = general.locator('sc-checkbox').filter({ hasText: /^\s*Teléfono\s*$/ });
@@ -102,7 +102,7 @@ test('duplicar sigue siendo un diálogo corto y se lleva los agentes del origina
   await page.getByRole('menuitem', { name: 'Duplicar' }).click();
 
   const dialogo = page.getByRole('dialog', { name: 'Duplicar grupo' });
-  await expect(page.locator('#group-create-name')).toHaveValue('Reclamaciones (copia)');
+  await expect(page.locator('#group-duplicate-name')).toHaveValue('Reclamaciones (copia)');
   await dialogo.getByRole('button', { name: 'Duplicar' }).click();
 
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);

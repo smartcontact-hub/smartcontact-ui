@@ -4,6 +4,7 @@ import {
   provideRouter,
   withComponentInputBinding,
   withPreloading,
+  withRouterConfig,
   withViewTransitions,
 } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -17,7 +18,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { appRoutes } from './app.routes';
-import { ViewTransitionTracker } from './core/services/view-transition-tracker.service';
+import { ViewTransitionTracker, onlyQueryChanged } from './core/services/view-transition-tracker.service';
 
 /**
  * Clave de licencia de PrimeUI (tier community, caduca 2027-08-05).
@@ -37,8 +38,18 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       appRoutes,
       withComponentInputBinding(),
+      // Si una navegación se cancela (el aviso de cambios sin guardar, «Seguir editando»), el router vuelve a
+      // la entrada del historial en la que estaba, en vez de reescribir aquella a la que se iba. Con el de
+      // fábrica (`replace`), un Atrás cancelado desde una ficha sustituía la entrada del listado por la de la
+      // ficha, y el siguiente Atrás salía de la app (medido el 2026-09-27). Con secciones que son enlaces,
+      // Atrás es un gesto de todos los días (DD-122).
+      withRouterConfig({ canceledNavigationResolution: 'computed' }),
       withViewTransitions({
-        onViewTransitionCreated: ({ transition }) => inject(ViewTransitionTracker).track(transition),
+        onViewTransitionCreated: ({ transition, from, to }) => {
+          // Cambiar de sección (solo cambia `?seccion=`) no es cambiar de página: sin fundido (DD-122).
+          if (onlyQueryChanged(from, to)) transition.skipTransition();
+          inject(ViewTransitionTracker).track(transition);
+        },
       }),
       // Preload every lazy-loaded chunk in the background once the app
       // shell is interactive. Initial paint stays fast (only the shell

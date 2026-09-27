@@ -36,3 +36,24 @@ export function stableStringify(value) {
   }
   return JSON.stringify(value) ?? 'null';
 }
+
+/**
+ * Qué claves de primer nivel difieren entre dos estados de un formulario, con la misma comparación
+ * que `stableStringify` (deshacer un cambio devuelve el conjunto vacío; el orden de un Set no cuenta).
+ * Lo usan las fichas para marcar en el índice las secciones con cambios sin guardar (DD-122): cada
+ * página sabe qué campo es de qué sección.
+ *
+ * @param {Record<string, unknown>} current
+ * @param {Record<string, unknown>} pristine
+ * @returns {Set<string>}
+ */
+export function changedKeys(current, pristine) {
+  const keys = new Set([...Object.keys(current), ...Object.keys(pristine)]);
+  const changed = new Set();
+  for (const key of keys) {
+    const now = Object.hasOwn(current, key) ? stableStringify(current[key]) : undefined;
+    const before = Object.hasOwn(pristine, key) ? stableStringify(pristine[key]) : undefined;
+    if (now !== before) changed.add(key);
+  }
+  return changed;
+}

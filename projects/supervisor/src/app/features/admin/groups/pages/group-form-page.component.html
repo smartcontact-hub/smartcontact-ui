@@ -6,9 +6,13 @@
      lista; para salir ya están la miga y el menú, y el guardián de cambios avisa si dejas
      algo sin guardar. -->
 <ng-template #topbarActions>
-  <!-- El motivo va VISIBLE, y solo cuando FALTA algo (ver `saveBlockedReason`). -->
+  <!-- El motivo va VISIBLE, y solo cuando FALTA algo (ver `saveBlockedReason`). Si no falta nada y hay
+       cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están
+       (DD-122). `role="status"`: se anuncia una vez, al aparecer. -->
   @if (saveBlockedReason(); as reason) {
     <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
+  } @else if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
     <sc-button
@@ -68,16 +72,20 @@
       }
     </div>
 
-    <!-- El índice, solo: la navegación no comparte carril con nada, así que no se va de la pantalla. -->
-    <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
+    <!-- El índice, solo: la navegación no comparte carril con nada, así que no se va de la pantalla. Cada
+         fila es un enlace a su sección (`?seccion=`, DD-122), y el `nav` es el único punto de referencia:
+         el carril es un `div`, no un `aside` con el mismo nombre. -->
+    <div class="page__rail">
       <sc-form-section-nav
         [sections]="navSections()"
         [activeId]="activeSection()"
+        [labelKey]="'common.form_index_aria'"
         [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionsWithChanges]="sectionsWithChanges()"
         [flush]="true"
         (activeChange)="goTo($event)"
       />
-    </aside>
+    </div>
 
     <div class="page__main">
       <!-- El mismo grupo abierto en otra pestaña (DD#169). Se calculaba y no se pintaba; se pinta desde que

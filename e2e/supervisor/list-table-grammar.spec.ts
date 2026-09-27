@@ -265,11 +265,11 @@ for (const caso of PAGINAS_EN_FORMULARIO) {
   }) => {
     await goto(page, caso.ruta);
 
-    /* El mando de sección es el índice del rail en unas fichas (la de grupo) y la tira de `p-tabs`
-     * en otras (agente). Se buscan los dos, el índice por su clase y no por su rol: lo que este
-     * spec mide es la TABLA, no cómo se llega a ella. */
+    /* El mando de sección es el índice del rail, el mismo en las tres fichas desde el 2026-09-27
+     * (DD-122). Se busca por su clase y no por su rol: lo que este spec mide es la TABLA, no cómo se
+     * llega a ella. */
     await page
-      .locator('sc-form-section-nav .form-nav__item, p-tabs [role=tab]')
+      .locator('sc-form-section-nav .form-nav__item')
       .filter({ hasText: caso.seccion })
       .first()
       .click();
