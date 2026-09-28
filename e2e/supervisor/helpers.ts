@@ -196,13 +196,19 @@ export const fillFieldByLabel = async (
   await field.locator('input').fill(value);
 };
 
-/** Elige una opción de un `sc-select` dado su locator (abre el overlay y clica). */
+/** Elige una opción de un `sc-select` dado su locator (abre el overlay y clica).
+ *
+ *  Pulsa el CONTROL, no el centro de la caja que le pasen: el `sc-select` entero incluye la ayuda y el
+ *  error de debajo, y con una ayuda de dos líneas su centro cae en el hueco entre el control y el texto
+ *  (medido en la extensión del agente, DD-133: 33 px de control, 7 de hueco y 35 de ayuda), donde el
+ *  clic no abre nada. Si el locator ya es el control (un `combobox`), se pulsa tal cual. */
 export const pickSelectOption = async (
   page: Page,
   select: ReturnType<Page['locator']>,
   optionText: string | RegExp,
 ): Promise<void> => {
-  await select.click();
+  const control = select.locator('.p-select');
+  await ((await control.count()) > 0 ? control.first() : select).click();
   const option = page.locator('.p-select-overlay .p-select-option', { hasText: optionText }).first();
   await expect(option).toBeVisible();
   await option.click();

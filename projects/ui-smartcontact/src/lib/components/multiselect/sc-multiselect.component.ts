@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   model,
   output,
@@ -12,6 +13,8 @@ import {
 // INTERNO hacia `<p-multiselect>` (no es el CVA exterior, que se retiró).
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SC_SELECT_TRANSLATIONS } from '../select/i18n/sc-select.translations';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
@@ -42,7 +45,7 @@ export type ScMultiSelectDisplay = 'chip' | 'comma';
 @Component({
   selector: 'sc-multiselect',
   standalone: true,
-  imports: [MultiSelectModule, FormsModule, ScFieldLabelComponent, ScFieldMsgComponent, ScIconComponent],
+  imports: [MultiSelectModule, FormsModule, ScFieldLabelComponent, ScFieldMsgComponent, ScIconComponent, TranslateModule],
   templateUrl: './sc-multiselect.component.html',
   styleUrl: './sc-multiselect.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +61,14 @@ export type ScMultiSelectDisplay = 'chip' | 'comma';
   },
 })
 export class ScMultiSelectComponent {
+  constructor() {
+    // El mismo diccionario que `sc-select`: lista vacía, filtro sin resultados, buscador y «N seleccionados».
+    const translate = inject(TranslateService);
+    for (const [language, dict] of Object.entries(SC_SELECT_TRANSLATIONS)) {
+      translate.setTranslation(language, dict, true);
+    }
+  }
+
   // ─── Chrome (mirrors sc-select) ─────────────────────────────────────
   readonly size = input<ScFieldSize>('md');
   /**
@@ -101,14 +112,17 @@ export class ScMultiSelectComponent {
   readonly selectionLimit = input<number>();
   /** When `display='comma'`, fold to "N items selected" after this many. */
   readonly maxSelectedLabels = input<number>(3);
-  /** Label template for fold state, e.g. "{0} elementos seleccionados". */
-  readonly selectedItemsLabel = input<string>('{0} seleccionados');
+  /** Lo que dice el campo plegado con varias marcadas: «{0} seleccionados» en el idioma de la app
+   *  (`sc.select.selected`), salvo que se pase. */
+  readonly selectedItemsLabel = input<string>();
   /** Show the "×" clear button. */
   readonly showClear = input(false, { transform: booleanAttribute });
-  /** Texto de ayuda del buscador del panel. Sin él, el campo salía vacío junto a una lupa. */
-  readonly filterPlaceholder = input<string>('Buscar');
-  readonly emptyFilterMessage = input<string>('Sin resultados');
-  readonly emptyMessage = input<string>('Sin opciones');
+  /** Texto de ayuda del buscador del panel. Sin él, «Buscar» en el idioma de la app (`sc.select.search`). */
+  readonly filterPlaceholder = input<string>();
+  /** El filtro no deja ninguna opción. Sin él, «Sin resultados» en el idioma de la app. */
+  readonly emptyFilterMessage = input<string>();
+  /** La lista no tiene opciones. Sin él, «Sin opciones» en el idioma de la app. */
+  readonly emptyMessage = input<string>();
   /** Background "filled" variant (Figma node 6220:7054): bg slate-50. */
   readonly filled = input(false, { transform: booleanAttribute });
   /**

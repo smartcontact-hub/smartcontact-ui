@@ -56,8 +56,17 @@ const mostrarColumna = async (page: Page, nombre: string): Promise<void> => {
 
 /** Lo que sale recortado en la tabla: celdas (la tabla ajustable pone `overflow: hidden` en cada una) y su
  *  contenido, con el texto más ancho que su caja. */
-const recortes = (page: Page) =>
-  page.getByTestId('groups-table').evaluate((tabla) => {
+const recortes = async (page: Page) => {
+  const tablaGrupos = page.getByTestId('groups-table');
+  await tablaGrupos.waitFor();
+  /* Se mide con las fuentes cargadas. Mientras carga la de iconos (`font-display: block`), el glifo de «Asignar»
+   * ocupa el ancho de su nombre, «group_add», con la letra de reserva: el botón mide 146 px en su celda de 120 y el
+   * recorte es de la carga, no del diseño (medido el 2026-09-28, 1 de 3 vueltas con la máquina cargada). */
+  await page.evaluate(async () => {
+    await document.fonts.load('14px "Material Symbols Outlined Variable"');
+    await document.fonts.ready;
+  });
+  return tablaGrupos.evaluate((tabla) => {
     const fuera: string[] = [];
     for (const el of tabla.querySelectorAll<HTMLElement>('th, td, th *, td *')) {
       const cs = getComputedStyle(el);
@@ -67,6 +76,7 @@ const recortes = (page: Page) =>
     }
     return [...new Set(fuera)];
   });
+};
 
 test('cada familia de canales enseña su estrategia en su columna, y «—» donde el grupo no tiene el canal', async ({
   page,

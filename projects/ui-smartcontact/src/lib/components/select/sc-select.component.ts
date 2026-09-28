@@ -5,6 +5,7 @@ import {
   Component,
   computed,
   contentChild,
+  inject,
   type TemplateRef,
   input,
   model,
@@ -17,6 +18,9 @@ import { FormsModule } from '@angular/forms';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import { SelectModule } from 'primeng/select';
+import type { SelectPassThrough } from 'primeng/types/select';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SC_SELECT_TRANSLATIONS } from './i18n/sc-select.translations';
 import {
   createScFieldState,
   createScOptionState,
@@ -44,7 +48,7 @@ export type ScSelectSize = ScFieldSize;
 @Component({
   selector: 'sc-select',
   standalone: true,
-  imports: [SelectModule, FormsModule, NgTemplateOutlet, ScFieldLabelComponent, ScFieldMsgComponent],
+  imports: [SelectModule, FormsModule, NgTemplateOutlet, ScFieldLabelComponent, ScFieldMsgComponent, TranslateModule],
   templateUrl: './sc-select.component.html',
   styleUrl: './sc-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,6 +64,14 @@ export type ScSelectSize = ScFieldSize;
   },
 })
 export class ScSelectComponent {
+  constructor() {
+    // Copy fijo colocado: registra solo el diccionario del componente (los textos de lista vacía y del buscador).
+    const translate = inject(TranslateService);
+    for (const [language, dict] of Object.entries(SC_SELECT_TRANSLATIONS)) {
+      translate.setTranslation(language, dict, true);
+    }
+  }
+
   // ─── Chrome (mirrors sc-inputtext) ─────────────────────────────────────
   readonly size = input<ScFieldSize>('md');
   /**
@@ -110,13 +122,13 @@ export class ScSelectComponent {
   /** Enable search/filter inside the dropdown. */
   readonly filter = input(false, { transform: booleanAttribute });
   /** Field(s) used for filtering when `filter` is true. */
-  /** Texto de ayuda del buscador del panel. Sin él, el campo salía vacío junto a una lupa. */
-  readonly filterPlaceholder = input<string>('Buscar');
+  /** Texto de ayuda del buscador del panel. Sin él, «Buscar» en el idioma de la app (`sc.select.search`). */
+  readonly filterPlaceholder = input<string>();
   readonly filterBy = input<string>();
-  /** Empty-state copy when filter returns no rows. */
-  readonly emptyFilterMessage = input<string>('Sin resultados');
-  /** Empty-state copy when `options` is empty. */
-  readonly emptyMessage = input<string>('Sin opciones');
+  /** El filtro no deja ninguna opción. Sin él, «Sin resultados» en el idioma de la app (`sc.select.empty_filter`). */
+  readonly emptyFilterMessage = input<string>();
+  /** La lista no tiene opciones. Sin él, «Sin opciones» en el idioma de la app (`sc.select.empty`). */
+  readonly emptyMessage = input<string>();
   /**
    * Label dentro del campo (IftaLabel — *In-Field Top Aligned*, Figma node
    * `7462:106725`). El `label` se fija arriba-dentro del campo y el valor baja.
@@ -217,6 +229,18 @@ export class ScSelectComponent {
   );
   protected readonly isInvalid = this.field.isInvalid;
   protected readonly footerText = this.field.footerText;
+  /**
+   * Los `aria-*` del campo van al elemento que recibe el foco (el `span[role=combobox]`, o el `<input>` si es
+   * editable), por passthrough (`pt.label`), como en `sc-password`. Hasta el 2026-09-28 iban en la envoltura
+   * `<p-select>`, y un lector de pantalla no anunciaba la ayuda ni sabía que el campo era obligatorio (DD-133).
+   */
+  protected readonly pt = computed<SelectPassThrough>(() => ({
+    label: {
+      'aria-describedby': this.footerText() ? this.msgId() : null,
+      'aria-required': this.required() ? 'true' : null,
+      'aria-invalid': this.isInvalid() ? 'true' : null,
+    },
+  }));
 
   private readonly panel = createScPanelSizing('sc-select', this.size);
   protected readonly pSize = this.panel.pSize;
