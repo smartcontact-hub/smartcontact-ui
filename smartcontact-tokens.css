@@ -1663,7 +1663,6 @@
   --sc-cmp-button-text-help-color: var(--sc-color-purple-500);
   --sc-cmp-button-text-help-hover-background: var(--sc-color-purple-50);
   --sc-cmp-button-text-help-active-background: var(--sc-color-purple-100);
-  --sc-cmp-button-text-danger-color: var(--sc-color-red-500);
   --sc-cmp-button-text-danger-hover-background: var(--sc-color-red-50);
   --sc-cmp-button-text-danger-active-background: var(--sc-color-red-100);
   --sc-cmp-button-text-plain-color: var(--sc-color-slate-700);
@@ -1845,6 +1844,19 @@
    *
    * Se cierra cuando el Kit suba `button.outlined.secondary.color`. */
   --sc-cmp-button-outlined-secondary-color: var(--sc-color-slate-600);
+
+  /* ---------- Botón `danger` de TEXTO: su etiqueta estaba bajo AA ----------
+   *
+   * Fuera de la zona `@sc-gen` y con su slot en `EXCLUDE` (cmp-color-map), mismo mecanismo que
+   * `outlined secondary` arriba. El Kit da `red-500` para la etiqueta: **3.76:1** sobre blanco
+   * — el «Eliminar» de la cabecera de las fichas de grupo, agente y usuario. El sólido ya subió
+   * a `red-600` (§1.8, 2026-09-15); este es el mismo par de colores, así que da el mismo
+   * **4.83:1**. A diferencia del sólido, este slot SÍ lo consume el preset por token
+   * (comprobado: `sc-preset/button.ts` lee `var(--sc-cmp-button-text-danger-color)`), así que
+   * va por token en vez de por referencia de paleta. Ver customs-catalog §1.8.
+   *
+   * Se cierra cuando el Kit suba `button.text.danger.color`. */
+  --sc-cmp-button-text-danger-color: var(--sc-color-red-600);
 }
 
 /* ── 05-extensions.css ── */
