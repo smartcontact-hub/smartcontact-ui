@@ -1,3 +1,5 @@
+import { juegoDeDatos } from '@core/services/juego-de-datos';
+
 /**
  * «Desconectado» es no tener la sesión abierta: sustituye a la columna «Activación», que no existía en el producto
  * (definición de producto, 2026-09-16). Postconversando y Administrativo los pone la conversación o el propio
@@ -458,6 +460,17 @@ const NOMBRES = ['Nicole', 'Harrison', 'Sandra', 'Will', 'Anne', 'Matt', 'Charli
 const APELLIDOS = ['Kidman', 'Ford', 'Bullock', 'Smith', 'Hathaway', 'Damon', 'Theron', 'Gosling', 'Foster', 'Jackman', 'Moore', 'Pacino', 'Berry', 'Depp', 'Winslet', 'Elba', 'Cruz', 'Bardem', 'Hayek', 'Banderas', 'Coleman', 'Chalamet', 'Robbie', 'Pascal', 'Pugh'];
 const TOTAL_AGENTES_DEMO = 500;
 
+/*
+ * Con `?datos=editorial` (DD-124), el cruce va en diagonal: cada agente cambia de apellido respecto al anterior. En
+ * orden, la lista enseñaba 25 seguidos apellidados «Kidman», y en una demo se lee como generado (revisión editorial,
+ * 2026-09-27). Cada nombre sigue saliendo con apellidos distintos, así que no se repite ninguna combinación.
+ */
+const EN_DIAGONAL = juegoDeDatos() === 'editorial';
+const apellidoDe = (i: number): string => {
+  const bloque = Math.floor(i / NOMBRES.length);
+  return APELLIDOS[(EN_DIAGONAL ? (i % NOMBRES.length) + bloque : bloque) % APELLIDOS.length];
+};
+
 const GENERATED_AGENTS: readonly Agent[] = Array.from({ length: TOTAL_AGENTES_DEMO - BASE_AGENTS.length }, (_, i) => {
   const base = BASE_AGENTS[i % BASE_AGENTS.length];
   const id = BASE_AGENTS.length + i + 1;
@@ -465,7 +478,7 @@ const GENERATED_AGENTS: readonly Agent[] = Array.from({ length: TOTAL_AGENTES_DE
     ...base,
     id,
     code: String(10000 + id),
-    name: `${NOMBRES[i % NOMBRES.length]} ${APELLIDOS[Math.floor(i / NOMBRES.length) % APELLIDOS.length]}`,
+    name: `${NOMBRES[i % NOMBRES.length]} ${apellidoDe(i)}`,
     extension: String(200 + id),
     pin: String(100 + ((id * 37) % 900)),
     // Solo los que ya lo tenían en su molde, y cada uno el suyo: copiado, el mismo móvil salía en 30 agentes.

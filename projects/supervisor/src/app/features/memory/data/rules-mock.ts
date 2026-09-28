@@ -1,3 +1,6 @@
+import { juegoDeDatos, nombreDeGrupo, nombreDeServicio } from '@core/services/juego-de-datos';
+
+import type { ConditionTree } from './condition.types';
 import type { Rule } from './rule.types';
 
 /**
@@ -9,7 +12,7 @@ import type { Rule } from './rule.types';
  * activa y el resto inactivas. La #4 es un ejemplo compuesto (grupo + tipificación
  * + duración): se edita para ver el árbol de condiciones completo.
  */
-export const MOCK_RULES: readonly Rule[] = [
+const REGLAS: readonly Rule[] = [
   {
     id: 1,
     type: 'transcription',
@@ -158,3 +161,43 @@ export const MOCK_RULES: readonly Rule[] = [
     lastModified: '2026-05-18T12:00:00Z',
   },
 ];
+
+/** El árbol con cada servicio nombrado como en el juego activo; lo demás se refiere por id y ya casa. */
+const conServiciosDelJuego = (arbol: ConditionTree): ConditionTree => ({
+  ...arbol,
+  groups: arbol.groups.map((g) => ({
+    ...g,
+    conditions: g.conditions.map((c) =>
+      c.value.mode === 'refs'
+        ? {
+            ...c,
+            value: {
+              ...c.value,
+              refs: c.value.refs.map((ref) => (ref.kind === 'service' ? { ...ref, name: nombreDeServicio(ref.name) } : ref)),
+            },
+          }
+        : c,
+    ),
+  })),
+});
+
+/*
+ * Con otro juego de datos (DD-124), la regla nombra servicios y grupos como las conversaciones que filtra: la
+ * previsión de impacto casa por nombre, y en el editorial la regla de «Ventas Comercial» no encontraba ninguna
+ * conversación, que allí es «Contratación». En el editorial el nombre y la descripción dicen también el servicio de
+ * negocio, como los habría escrito quien creó la regla; en tortura no se tocan, que son texto escrito a mano.
+ */
+const reglaDelJuego = (r: Rule): Rule => {
+  const conNegocio = (texto: string): string =>
+    juegoDeDatos() === 'editorial' ? r.servicios.reduce((t, s) => t.replace(s, nombreDeServicio(s)), texto) : texto;
+  return {
+    ...r,
+    name: conNegocio(r.name),
+    description: r.description === undefined ? undefined : conNegocio(r.description),
+    servicios: r.servicios.map((s) => nombreDeServicio(s)),
+    grupos: r.grupos.map((g) => nombreDeGrupo(g)),
+    conditionTree: r.conditionTree && conServiciosDelJuego(r.conditionTree),
+  };
+};
+
+export const MOCK_RULES: readonly Rule[] = juegoDeDatos() === 'demo' ? REGLAS : REGLAS.map(reglaDelJuego);
