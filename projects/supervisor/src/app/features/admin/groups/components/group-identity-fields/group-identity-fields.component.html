@@ -32,10 +32,19 @@
   }
 
   <div class="field">
-    <label class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-priority'">
+    <!-- `for` no nombra un `span[role=combobox]`: sin `ariaLabelledBy`, el lector leía el valor («Baja») como nombre del
+         campo. La ayuda sale del manual de usuario de Voice (DD-133). -->
+    <label [id]="idPrefix() + '-priority-label'" class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-priority'">
       {{ 'groups.form.fields.priority' | translate }}
     </label>
-    <sc-select [inputId]="idPrefix() + '-priority'" [options]="priorities" [value]="priority()" (valueChange)="onPriority($event)">
+    <sc-select
+      [inputId]="idPrefix() + '-priority'"
+      [ariaLabelledBy]="idPrefix() + '-priority-label'"
+      [options]="priorities"
+      [value]="priority()"
+      [helperText]="'groups.form.fields.priority_hint' | translate"
+      (valueChange)="onPriority($event)"
+    >
       <ng-template #item let-p>{{ priorityKeys[p] | translate }}</ng-template>
       <ng-template #selectedItem let-p>{{ priorityKeys[p] | translate }}</ng-template>
     </sc-select>

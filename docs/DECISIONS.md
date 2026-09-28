@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una ayuda bajo un campo dice lo que dicen las fuentes (manual de Voice, documento de producto) o no existe · va en el `helperText`, que la anuncia · `sc-select` pone sus `aria-*` en el elemento con foco · los desplegables del DS hablan el idioma de la app · fuera las ⓘ de la ficha de grupo | DD-133 |
 > | Cuatro tipos de usuario (Superadmin, Administrador, Supervisor Online y Offline), cada uno con su plantilla de acceso · el alta nace Offline · al editar, cambiar el tipo pregunta · «Plantilla: X · N cambios» con «Volver a la plantilla» | DD-132 |
 > | El panel rápido de agentes mide lo que lleva dentro (28rem mínimo, 5rem por canal) · sin columna de canal en un grupo de un canal, salvo que una fila llegue sin canal · la papelera dice «Quitar del grupo» · `sc-checkbox` desactivado, una sola opacidad (60 %) | DD-131 |
 > | El pase de diseño de las fichas: en la franja el anillo junto a su cifra y los datos en dos columnas · las tres altas con su cabecera a la vista y «Crear …» · Guardar deja en la ficha · un usuario nuevo nace sin permisos · saltos por canal en Distribución y colas · el icono de un aviso con el peso de su texto · «Asignar» en el listado de grupos (enmienda DD-122 §8) | DD-130 |
@@ -92,6 +93,74 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-133 · 2026-09-28 — Las ayudas bajo los campos salen de las fuentes y se anuncian con su campo
+
+**Contexto** · Revisión de las ayudas de las fichas de administración con dos fuentes:
+- **el manual de usuario de Voice**, que explica campo a campo el nodo AED y el agente;
+- **el documento de producto de usuarios y grupos**, con los parámetros, sus valores habituales y lo que se usa.
+
+Lo que había:
+- **La estrategia de teléfono** solo explicaba Niveles, con «la tabla de abajo» (ya no está debajo), y Agente exclusivo.
+  Las otras cinco, nada.
+- **Prioridad** no decía en qué llamadas cuenta. **El % de servicio** se explicaba con sus propias palabras («cuentan
+  como atendidas a tiempo las que se atienden antes de este tiempo»).
+- **Cuatro ⓘ en la ficha de grupo**, puestas «mientras se decide el copy final» (2026-09-18). Dos repetían el rótulo
+  (música de espera, número de WhatsApp) y dos, la ayuda visible de su campo (Voz, dominios).
+- **«Desbordar sesión»** decía «al superar su límite», sin límite a la vista.
+- **La ayuda de un `sc-select` no se anunciaba.** El DS ponía `aria-describedby` (y `aria-required`, `aria-invalid`) en
+  la envoltura `<p-select>`, no en el elemento que recibe el foco. Y un select rotulado con `<label for>` no tenía
+  nombre: el lector leía el valor.
+- **Los desplegables del DS** decían «Sin opciones», «Sin resultados», «Buscar» y «{0} seleccionados» en español en
+  los cuatro idiomas: eran literales en sus `input()`.
+
+**Decisión** ·
+1. **Ayudas nuevas, del manual:**
+   - Prioridad: cuenta en las llamadas entrantes y en las salientes, telemarketing incluido;
+   - Estrategia de teléfono: una línea por cada una de las seis que describe el manual, que cambia con la elegida.
+     Skills sale apagada con su motivo y no lleva;
+   - Extensión del agente: Tel atiende en el móvil; WebRTC, en el navegador, con Smart Contact Agent.
+2. **Reescritas:**
+   - % de servicio: cuenta las atendidas en ese tiempo o menos;
+   - Niveles, sin «la tabla de abajo»;
+   - Voz: la voz sintética de los anuncios;
+   - dominios: una sola ayuda, con lo que decía la ⓘ;
+   - «Desbordar sesión»: tras un minuto sin actividad, como dice el documento de producto.
+3. **Fuera las cuatro ⓘ de la ficha de grupo.** Su texto pasa a la ayuda visible, o sale si repetía el rótulo.
+4. **La ayuda va en el `helperText` del campo, que la anuncia.** En el DS, `sc-select` pasa sus `aria-*` al elemento
+   que recibe el foco por passthrough (`pt.label`), como ya hacía `sc-password`. Los selects que se tocan se nombran por
+   su etiqueta (`ariaLabelledBy`).
+5. **En el DS, los textos fijos de `sc-select` y `sc-multiselect` salen de su diccionario** (`sc.select.*`, cuatro
+   idiomas), como `sc-drawer`. Quien los pase por entrada, manda.
+6. **Fuera las claves `*_filtered`** de usuarios, grupos y agentes, que nada usaba.
+
+**Razón** ·
+- **Nada inventado:** cada ayuda dice lo que dice una de las dos fuentes. Lo que ninguna explica se queda sin ayuda
+  antes que con relleno (AGENTS «UX de pantalla» 3).
+- **Una ayuda que el lector no anuncia no ayuda a quien más la necesita.** Medido antes del cambio: la estrategia, la
+  prioridad y la extensión no tenían ni nombre accesible; los dominios, descripción vacía.
+
+**Descartadas** ·
+- **Ayuda para «Tiempo máximo de espera en cola»** → el manual lo define con sus mismas palabras, y ninguna fuente dice
+  qué pasa al agotarse. Queda como pregunta para desarrollo.
+- **Ayuda para «Tipo de agente»** (Normal, CusCare…) → ninguna fuente explica esos tipos. El manual explica la
+  extensión, y ahí va.
+- **Ayudas para las estrategias de chat** → el manual es de Voice.
+- **Quitar los literales del DS y dejar que traduzca PrimeNG** (su `setTranslation`) → una app que no configure PrimeNG
+  pasaría a inglés.
+
+**Consecuencias** ·
+- **Pruebas:** `ayudas-campos.spec.ts` gana cinco, las cinco en rojo contra el código anterior. La línea base de
+  estructura de sc-docs cambia en los dos selects con error: sus `aria-*` bajan al combobox.
+- **CHANGELOG:** `[Unreleased]` › Changed y Fixed.
+- **Queda abierto:**
+  - qué pasa al agotarse el tiempo máximo de espera en cola;
+  - los subtítulos de sección, que no se tocan aquí;
+  - los selects de la app rotulados con `<label for>` y sin `ariaLabelledBy` que esta tanda no toca: en la ficha de
+    agente, «Tipo de agente» y «Presencia inicial» se anuncian como «normal» y «disponible» (medido el 2026-09-28).
+    Un gate que los cace evitaría el siguiente.
 
 ---
 

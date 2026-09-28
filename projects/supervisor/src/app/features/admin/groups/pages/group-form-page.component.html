@@ -206,8 +206,10 @@
               <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.routing' | translate }}</h4>
               <div class="grid grid--2">
                 <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-                  <sc-select inputId="group-strategy" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" (valueChange)="onStrategyValueChange($event)">
+                  <label id="group-strategy-label" class="field__label sc-text-caption-semibold" for="group-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+                  <!-- Qué hace la estrategia elegida, del manual de usuario de Voice (DD-133), en el `helperText`: el lector la
+                       anuncia con el campo. Sustituye a las dos ayudas sueltas de Niveles y Agente exclusivo. -->
+                  <sc-select inputId="group-strategy" ariaLabelledBy="group-strategy-label" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" [helperText]="strategyHelpKey() ? (strategyHelpKey()! | translate) : undefined" (valueChange)="onStrategyValueChange($event)">
                     <ng-template #item let-o>
                       <span class="strategy-option">
                         <span>{{ o.label }}</span>
@@ -217,12 +219,6 @@
                       </span>
                     </ng-template>
                   </sc-select>
-                  @if (isNiveles()) {
-                    <p class="field__help sc-text-caption-regular">{{ 'groups.form.fields.levels_hint' | translate }}</p>
-                  }
-                  @if (isExclusive()) {
-                    <p class="field__help sc-text-caption-regular">{{ 'groups.form.fields.exclusive_hint' | translate }}</p>
-                  }
                 </div>
                 <!-- El número que ve el cliente cuando le llama un agente del grupo: un campo principal del canal, no
                      un dato de identidad (visión de producto de grupos, 2026-09-25). -->
@@ -256,11 +252,8 @@
               <div class="grid grid--2">
                 <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'phone', queue: form().phoneQueue }" />
                 <div class="field">
-                  <span class="field__label-row">
-                    <label class="field__label sc-text-caption-semibold" for="group-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
-                    <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.voice_info' }" />
-                  </span>
-                  <sc-select inputId="group-voice" [options]="voiceOptions" [value]="form().announcements.voice" [helperText]="'groups.form.announcements.voice_hint' | translate" (valueChange)="setAnnouncement('voice', $any($event))" />
+                  <label id="group-voice-label" class="field__label sc-text-caption-semibold" for="group-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
+                  <sc-select inputId="group-voice" ariaLabelledBy="group-voice-label" [options]="voiceOptions" [value]="form().announcements.voice" [helperText]="'groups.form.announcements.voice_hint' | translate" (valueChange)="setAnnouncement('voice', $any($event))" />
                 </div>
               </div>
 
@@ -270,10 +263,7 @@
                    entero al guardar), así que volver a enseñarlos no pierde nada. -->
               <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue_messages' | translate }}</h4>
               <div class="field">
-                <span class="field__label-row">
-                  <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
-                  <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.announcements.hold_music_info' }" />
-                </span>
+                <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
                 <span class="inline-control" role="group" aria-labelledby="group-hold-music-label">
                   <span class="inline-control__value sc-text-body-regular">{{ form().announcements.holdMusicFile ?? ('groups.form.announcements.default_music' | translate) }}</span>
                   <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
@@ -333,12 +323,9 @@
               @if (hasWebChat()) {
                 <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.webchat_access' | translate }}</h4>
                 <div class="field">
-                  <span class="field__label-row">
-                    <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
-                    <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.allowed_domains_info' }" />
-                  </span>
+                  <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
                   <span class="domain-add">
-                    <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
+                    <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [helperText]="'groups.form.advanced.allowed_domains_hint' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
                     <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
                   </span>
                   @if (form().advanced.allowedDomains.length > 0) {
@@ -348,7 +335,6 @@
                       }
                     </div>
                   }
-                  <p class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.allowed_domains_hint' | translate }}</p>
                 </div>
                 <div class="field">
                   <label class="field__label sc-text-caption-semibold" for="group-chat-script">{{ 'groups.form.advanced.script_title' | translate }}</label>
@@ -362,10 +348,7 @@
                 <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.whatsapp_number' | translate }}</h4>
                 <div class="grid grid--2">
                   <div class="field">
-                    <span class="field__label-row">
-                      <label class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">{{ 'groups.form.advanced.whatsapp_number' | translate }}</label>
-                      <ng-container *ngTemplateOutlet="infoTip; context: { key: 'groups.form.advanced.whatsapp_number_info' }" />
-                    </span>
+                    <label class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">{{ 'groups.form.advanced.whatsapp_number' | translate }}</label>
                     <sc-inputtext inputId="group-chat-whatsapp" type="tel" placeholder="+34 900 100 200" [value]="form().advanced.whatsappNumber" (valueChange)="setAdvanced('whatsappNumber', $event)" />
                   </div>
                 </div>
@@ -785,19 +768,4 @@
 <ng-template #filePicker let-key="key" let-id="id">
   <input #fileInput class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".wav,audio/wav" [id]="id + '-file'" (change)="onAudioFile(key, $event)" />
   <sc-button size="sm" variant="secondary" appearance="outlined" icon="upload" [label]="'groups.form.announcements.choose_file' | translate" (clicked)="fileInput.click()" />
-</ng-template>
-
-<!-- Qué hace cada campo de Anuncios y audio, para nosotros mientras se decide el copy final (2026-09-18).
-     `pTooltip` nativo, mismo patrón que `category-form-modal`: icono solo, con su aria-label. -->
-<ng-template #infoTip let-key="key">
-  <sc-button
-    size="sm"
-    variant="secondary"
-    appearance="text"
-    [icon]="infoIcon"
-    [ariaLabel]="key | translate"
-    [pTooltip]="key | translate"
-    tooltipPosition="top"
-    tabindex="0"
-  />
 </ng-template>

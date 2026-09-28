@@ -1443,9 +1443,7 @@
     },
     "empty": {
       "title": "Aún no hay usuarios",
-      "body": "Crea tu primer usuario para dar acceso al panel.",
-      "title_filtered": "No se encontraron usuarios",
-      "body_filtered": "Ajusta el buscador o limpia los filtros para ver más resultados."
+      "body": "Crea tu primer usuario para dar acceso al panel."
     },
     "entity_plural": "usuarios",
     "export": {
@@ -1550,6 +1548,7 @@
         "name": "Nombre",
         "phone": "Teléfono saliente",
         "priority": "Prioridad",
+        "priority_hint": "La prioridad con que entran sus llamadas. Cuenta en las entrantes y en las salientes, telemarketing incluido.",
         "phone_strategy": "Estrategia (teléfono)",
         "chat_strategy": "Estrategia (chat)",
         "phone_hint": "El número que ven los clientes cuando un agente del grupo llama. Elige uno o escríbelo.",
@@ -1558,8 +1557,6 @@
         "ring_all_suffix": "agentes a la vez",
         "ring_all_summary": "{{count}} a la vez",
         "sub_strategy": "Dentro de cada nivel",
-        "levels_hint": "Elige el nivel de cada agente en la tabla de abajo. Reciben primero los del nivel 1.",
-        "exclusive_hint": "Se configura en el árbol del IVR.",
         "skills_unavailable": "Necesita skills en los agentes",
         "typification": "Tipificación",
         "typification_new": "Nueva tipificación",
@@ -1569,6 +1566,14 @@
         "agenda_new": "Nueva agenda",
         "template_new": "Nueva plantilla",
         "label_new": "Nueva etiqueta"
+      },
+      "strategy_help": {
+        "balanced": "Por turnos: cada llamada va al siguiente agente y, si no la coge, al de después.",
+        "fewest_calls": "Va al agente que menos llamadas ha atendido.",
+        "longest_idle": "Va al agente disponible que lleva más tiempo sin actividad.",
+        "levels": "Primero, los del nivel 1 que estén disponibles y libres. El nivel de cada agente se elige en Agentes.",
+        "ring_all": "Suena a la vez en varios agentes.",
+        "exclusive": "Va al agente que el cliente marca en el IVR. Se configura en el árbol del IVR, después de crear el grupo."
       },
       "assigned_count": "Asignados ({{count}})",
       "available_agents": "Disponibles",
@@ -1586,7 +1591,6 @@
       "announcements": {
         "audio_title": "Locuciones",
         "hold_music": "Música de espera",
-        "hold_music_info": "La música de fondo mientras la persona espera en la cola. Sin archivo, suena la del sistema.",
         "default_music": "Música por defecto",
         "use_default": "Usar la de por defecto",
         "queue_id": "Identificador del grupo",
@@ -1609,8 +1613,7 @@
         "outbound_audio": "Audio saliente",
         "outbound_audio_info": "Audio para las llamadas que hace el grupo hacia fuera, no las que recibe. Qué se oye y cuándo, pendiente de confirmar con desarrollo.",
         "voice": "Voz de los anuncios",
-        "voice_info": "La voz que lee los textos que hayas puesto en «Texto a voz». Si no usas esa opción en ningún sitio, no hace nada.",
-        "voice_hint": "La que lee las locuciones de texto a voz.",
+        "voice_hint": "La voz sintética que lee los anuncios del grupo.",
         "notices_title": "Avisos",
         "avg_wait": "Anunciar el tiempo medio de espera",
         "avg_wait_info": "Le dice al cliente cuánto suele durar la espera. El número lo escribes tú, no lo calcula el sistema.",
@@ -1633,13 +1636,13 @@
         "transfer": "Tiempo de transferencia",
         "transfer_hint": "Tiempo máximo para entregar la conversación a su destino.",
         "service_level": "Tiempo del % de servicio",
-        "service_level_hint": "Cuentan como atendidas a tiempo las que se atienden antes de este tiempo.",
+        "service_level_hint": "El % de servicio cuenta las conversaciones atendidas en este tiempo o menos.",
         "wrap_up": "Tiempo entre llamadas",
         "wrap_up_hint": "Lo que espera el agente antes de recibir la siguiente llamada.",
         "overflow": "Desbordar si todos los agentes están inactivos",
         "overflow_hint": "Los contactos pasan al siguiente destino, que no se elige aquí.",
         "overflow_session": "Desbordar sesión",
-        "overflow_session_hint": "Redirige las sesiones activas al superar su límite.",
+        "overflow_session_hint": "Tras un minuto sin actividad, la sesión pasa al destino siguiente.",
         "card_opening": "Apertura de ficha",
         "card_embedded": "Embebida",
         "card_new_window": "Nueva ventana",
@@ -1648,15 +1651,13 @@
         "card_height": "Alto",
         "chat_config_title": "Configuración de chat",
         "whatsapp_number": "Número de WhatsApp",
-        "whatsapp_number_info": "El número al que llegan los mensajes de WhatsApp de este grupo.",
         "chat_rating": "Pedir valoración al cerrar el chat",
         "chat_rating_info": "Al terminar la conversación, se le pregunta al cliente si quedó satisfecho con la atención.",
         "chat_rating_hint": "El cliente ve una pregunta corta de valoración justo después de despedirse.",
         "allowed_domains": "Dominios permitidos",
         "allowed_domains_placeholder": "ejemplo.com",
-        "allowed_domains_info": "En qué webs se puede insertar el script del chat de este grupo. Sin ninguno añadido, funciona en cualquier web.",
         "allowed_domains_add": "Añadir",
-        "allowed_domains_hint": "Evita que otra web use tu widget de chat sin permiso. Escribe el dominio y pulsa Añadir.",
+        "allowed_domains_hint": "Las webs en las que se puede insertar el chat de este grupo; sin ninguna, en cualquiera. Escribe el dominio y pulsa Añadir.",
         "script_title": "Script de chat",
         "script_hint": "Pega este código en la cabecera de la web donde quieras el chat.",
         "script_copy": "Copiar código",
@@ -1737,9 +1738,7 @@
     },
     "empty": {
       "title": "Aún no hay grupos",
-      "body": "Crea tu primer grupo para empezar a enrutar interacciones.",
-      "title_filtered": "No se encontraron grupos",
-      "body_filtered": "Ajusta el buscador o limpia los filtros para ver más resultados."
+      "body": "Crea tu primer grupo para empezar a enrutar interacciones."
     },
     "entity_plural": "grupos",
     "export": {
@@ -1885,6 +1884,7 @@
         "name": "Nombre",
         "type": "Tipo de agente",
         "extension": "Extensión",
+        "extension_hint": "Tel: el agente atiende las llamadas en su móvil. WebRTC: en el navegador, con Smart Contact Agent.",
         "extension_placeholder": "Selecciona una extensión disponible",
         "extension_empty": "Sin extensión",
         "email_empty": "Sin email",
@@ -1965,9 +1965,7 @@
     },
     "empty": {
       "title": "Aún no hay agentes",
-      "body": "Crea tu primer agente para empezar a recibir llamadas y conversaciones.",
-      "title_filtered": "No se encontraron agentes",
-      "body_filtered": "Ajusta el buscador o limpia los filtros para ver más resultados."
+      "body": "Crea tu primer agente para empezar a recibir llamadas y conversaciones."
     },
     "entity_plural": "agentes",
     "export": {
