@@ -2,7 +2,7 @@
 
 > **Autogenerado** por la rutina cloud "Auditoría semanal"
 > (`.claude/skills/auditoria-semanal/SKILL.md`). Es la versión de **juicio**, en
-> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los 42 gates de `verify` no
+> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los 43 gates de `verify` no
 > pueden ver (deuda de diseño + deriva semántica de docs). Cada run añade una
 > sección fechada **arriba**; `[x]` = cerrado. Semana sin hallazgos reales → no
 > hay sección nueva (la rutina no abre PR).
