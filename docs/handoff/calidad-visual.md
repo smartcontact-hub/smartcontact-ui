@@ -18,9 +18,10 @@
 
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
-- **La sesión en Figma** (`docs/figma-pendiente.md`, entero): seis decisiones con recomendación arriba del todo, y el
-  plan por pasos. Lo que el código hace después (quitar filas de `PENDIENTE_FIGMA` y de `EXCLUDE`, el marco de
-  `sc-dialog`, la etiqueta IFTA de `sc-inputtext`…) está en su paso 6: lo coge la sesión que llegue después.
+- **La sesión en Figma** (`docs/figma-pendiente.md`, entero), en marcha desde el 2026-09-28 con el bridge en su máquina.
+  Seis decisiones tomadas y una pendiente: los dos buscadores (ficha 10). Lo que el código hace después (quitar filas de
+  `PENDIENTE_FIGMA` y de `EXCLUDE`, `sc-dialog` a 15,75, la etiqueta IFTA de select y multiselect a 400, el título a
+  slate-900…) está en su paso 6: lo coge la sesión que llegue después.
 - **Los análisis de Telegram y WhatsApp** viven en `~/Documents/Claude/2026-09 teardown admin usuarios-grupos/`, fuera
   del repo: traerlos a `docs/` para que otra sesión (o la nube) los pueda leer.
 - **`npm run correcciones` en su máquina**: el registro de correcciones vive allí; en una sesión en la nube se pierde
@@ -30,9 +31,44 @@
 - **De gusto, visto en la revisión de Sistema**: dos de sus seis secciones llevan icono delante del título
   («Numeración especial» y «Regeneración de contraseñas») y las otras cuatro no. Ni regla ni prueba lo piden.
 
+## ⚠️ Trampas de este frente
+
+- **En una sesión en la nube**, `ng` necesita Node ≥ 22.22.3, y el Chromium del contenedor es de otra versión:
+  `SC_CHROMIUM=/opt/pw-browsers/chromium` para `npm run revision`, y una config de Playwright FUERA del árbol para las
+  suites (un `.ts` dentro lo caza `typecheck-coverage`, y bajo `node_modules` Node no lo carga).
+- **Sin `git fetch --tags`**, `docs:coherence` da por fantasmas los sellos de los hand-offs que viven en etiquetas.
+- **El bridge de Figma vive en la máquina de quien lo abre.** Una sesión en la nube no llega a él: genera el
+  JavaScript (`tools/figma-pendiente.mjs`, `tools/figma-export-parity.mjs`) y lo ejecuta la sesión local.
+- **Tras fundir un PR, GitHub borra la rama y la ref local `origin/<rama>` se queda colgando.** El aviso de «N commits
+  sin subir» que da entonces es falso: `git remote prune origin` lo quita. Compruébalo antes con
+  `git rev-list HEAD --not --remotes --count`.
+
+## ✅ 2026-09-28 (7) · Las decisiones de Figma, tomadas, y un script que aplica las variables verificando cada una
+
+**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `ac02acc6` (#264 a #269 fundidos).
+
+**Qué pasó.**
+- **Seis de las siete decisiones de `figma-pendiente`, tomadas:**
+  - el diálogo a 15,75, y el código se alinea;
+  - la etiqueta IFTA a 400 en todas (contra la recomendación, y válida: el Kit ya lo dice);
+  - el hover y el título a 900;
+  - el glifo de los iconos, solo si el `IconSet` ata la caja;
+  - el seleccionado de la barra lateral al 15 %;
+  - el rojo contorneado sube con el de texto.
+
+  Pendiente: los dos buscadores. Se explicó; falta la respuesta.
+- **`tools/figma-pendiente.mjs`:** genera el JavaScript del bridge para las tres tandas de variables (53 medidas,
+  21 colores más la variable nueva del título, 6 de componentes).
+  - Antes de generar, comprueba cada valor de partida contra el export; con un «hoy» falso puesto, para.
+  - En Figma solo cambia lo que vale lo de partida.
+  - Probado sobre un Figma simulado con las variables del export: mira, aplica, repasa «ya estaba», y respeta una
+    variable con un valor inesperado. **Sin probar contra el fichero real**, y los nombres de las dos colecciones
+    «common» no están comprobados.
+- **Esta sesión no llega al bridge**, que vive en la máquina de Rafa: lo ejecuta su sesión local.
+
 ## ✅ 2026-09-27 (6) · El panel de grupos deja de inventar sus conectados (DD-129)
 
-> **Sello:** rama `claude/resumen-cambios-recientes-14kfjb`, sobre `origin/main` HEAD `4f4f2018` (#263 fundido).
+> **Sello:** fusionado en `main` con #267, HEAD `16ff7930`.
 > Numerado (6) al fundir: el tramo (5) de abajo (#264) llegó antes a `main` con el mismo número.
 
 **Qué pasó.** La «Consecuencia» que el tramo (4) dejó sin tocar: el panel de grupos (`buildWidget`, case
@@ -48,8 +84,7 @@ el resto de pendientes de ESPERANDO A RAFA de arriba.
 
 ## ✅ 2026-09-27 (5) · El editorial, sin rastro de generado; las reglas casan con cualquier juego; y Figma, a punto
 
-**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `4f4f2018` (#263 fundido; la rama se
-rehízo desde `main` con los commits de este tramo encima).
+**Sello:** fusionado en `main` con #264, HEAD `e4e18564`.
 
 **Qué pasó.**
 - **Las dos cosas del editorial que esperaban decisión, hechas** (DD-124), solo en el editorial:
@@ -165,29 +200,3 @@ se fusionó antes de que esto llegara).
   verde y 1 en rojo que no es de esta rama (`listado-grupos.spec.ts:137`, «Agentes» 150>120: igual con el código
   anterior, y verde en el CI, que usa otro Chromium). La revisión previa de las 10 pantallas tocadas o alcanzadas, en
   regla. La foto de estilos del DS casa con el build fundido.
-
-## ✅ 2026-09-27 · La agrupación por espacio manda y se mide; revisión previa; juego de tortura; referencias
-
-**Sello:** fusionado en `main` con #257, HEAD `dff8dbee`. La rama se fusionó aplastada y sus commits no sobreviven:
-el que citaba este sello (`9339e35f`, los tres cambios de código) ya no está en la historia de `main`.
-
-**Qué pasó.**
-- **Recuento** (build de producción a 1440, 34 rutas con sus pestañas = 56 vistas, 12 diálogos de alta y «Duplicar»):
-  antes, 10 vistas en 5 pantallas y 4 diálogos por debajo del doble; después, 0 vistas y 3 diálogos, los tres por el
-  pie nativo (arriba).
-- **Arreglo en las piezas compartidas**: `.grid` y `sc-group-identity-fields` (fila 12,25 → 14), `.radio-row`
-  (12,25 → 14), botón del acceso y del panel «Nueva label» a 28 del último campo.
-- **`e2e/supervisor/agrupacion.spec.ts`** + `agrupacion-medida.js`: 7 tests en rojo contra el build anterior, 48 en
-  verde con el arreglo. La primera sonda dio rojos falsos: la etiqueta del DS vive en un `sc-field-label` con
-  `display: contents` y `sc-textarea` es en línea (su caja no es lo que se ve). Está escrito en la cabecera de la medida.
-- **`npm run revision`** (captura + medida) y el recordatorio en `stop-guard.mjs`; **`npm run correcciones`** y tres
-  patrones visuales nuevos en `correction-capture`; **`?datos=tortura`** en `createVersionedStorage`.
-- **Suite e2e del Supervisor entera** contra el build: 326 en verde y 2 en rojo que NO son de este cambio, medido
-  contra el build anterior: `dashboard.spec.ts:62` a 768 px (scroll lateral de 45, igual antes y después) y
-  `listado-grupos.spec.ts:137` («Agentes» 150>120, inestable: 2 de 3 rojos también antes). Corrieron con el Chromium
-  del contenedor, de otra versión que el Playwright del repo.
-
-**Trampas de esta sesión.** Una sesión en la nube necesita Node ≥ 22.22.3 para `ng` y trae un Chromium de otra versión:
-`SC_CHROMIUM=/opt/pw-browsers/chromium` para `npm run revision`, y una config de Playwright FUERA del árbol para las
-suites (un `.ts` dentro lo caza `typecheck-coverage`, y bajo `node_modules` Node no lo carga). Sin `git fetch --tags`,
-`docs:coherence` da por fantasmas los sellos de dos hand-offs que viven en etiquetas.
