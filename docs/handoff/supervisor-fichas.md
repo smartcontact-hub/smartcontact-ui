@@ -18,6 +18,8 @@
 - **Método:** capturas y medidas por vista; lo propuesto se ensayó inyectando CSS en la página real.
 - **Resultado:** siete hallazgos, enseñados en una página de decisión privada, y se aplicaron los siete. El detalle y
   lo descartado, en DD-128.
+- **El antes y después** (página privada) cubre ya las tres fichas y Contact Center, con capturas «después» de este
+  árbol: agente y usuario conservan sus controles (34 y 16 al abrir) y bajan de 1.304 a 812 de ancho.
 
 Antes, dos retoques del widget (DD-126):
 - quedó apuntada la decisión del tinte con el texto en primario;
@@ -262,9 +264,8 @@ el nombre como campo en el sitio del título. Rafa pidió no quitar el paso.
    - el icono a 400 junto a texto semibold en el título de sección y en la fila activa del índice
      (`figma-pendiente` §29);
    - «Eliminar» en rojo de texto, a 3,76:1 (conocido en `theme-contrast`).
-   Después, el antes y después al día con agente, usuario y Contact Center. Y luego **el panel rápido de agentes,
-   también en Supervisión** (respuesta de producto del 2026-09-27): es donde trabaja el supervisor, y hoy solo se abre
-   desde el listado de grupos; anotado en DD-121, sin código. Las preguntas abiertas para producto y desarrollo
+   Después, **el panel rápido de agentes, también en Supervisión** (respuesta de producto del 2026-09-27): es donde
+   trabaja el supervisor, y hoy solo se abre desde el listado de grupos; anotado en DD-121, sin código. Las preguntas abiertas para producto y desarrollo
    siguen en DD-121 («Consecuencias»).
 1. **Decidir sobre el laboratorio de administración** (`/lab/admin/grupos`, `/lab/admin/usuarios`).
    Lo primero que hay que discutir con Rafa y con producto son **los paquetes por tipo**
