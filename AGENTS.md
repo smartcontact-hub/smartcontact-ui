@@ -324,6 +324,10 @@ proyecto, y los lee cualquiera:
   (y en el `~/.claude/settings.json` de Rafa), y `bash-guard` deniega un `git commit` o
   `gh pr create|edit` que los lleve escritos a mano. En una sesión cloud el PR se crea por MCP y el
   servidor añade el pie igual (#256, #262, #265): `pr-footer-guard` pide quitarlo en cuanto se crea.
+- **Al fundir, el mensaje del squash se escribe, no se acepta el de GitHub.** GitHub añade como coautor al autor
+  de los commits cuando no es quien funde, y en la nube ese autor es «Claude»: los commits de #267 no llevaban la
+  línea y el squash la añadió. Desde la web, borra esa línea antes de confirmar; por MCP, pasa título y cuerpo
+  escritos (así salieron limpios #262 y #265). La autofusión no deja escribir el mensaje, así que no se usa (#268).
 - **Cada commit lleva su «Por qué»**, no solo su qué. El título dice el cambio; el cuerpo dice qué
   problema resuelve y qué se descartó. Norma de Rafa del 2026-09-16: el título envejece bien, pero
   el motivo solo lo sabe quien estuvo ahí, y dentro de un mes el `git log` es lo único que queda.

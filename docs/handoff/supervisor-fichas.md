@@ -9,7 +9,33 @@
 > El tramo del 2026-09-23 (grupos sin foto, alta en diálogo) sale de aquí por el tope de 6: `git show
 > 4f4f2018:docs/handoff/supervisor-fichas.md` o el tag `archive/handoff-fichas-2026-09-27`. Su trampa (`main`
 > se mueve bajo un worktree local) ya vive en LEARNINGS #21. El del 2026-09-24 (el alta de grupo rima con
-> Identidad, DD-119) sale por el mismo tope: `git show 16ff7930:docs/handoff/supervisor-fichas.md`.
+> Identidad, DD-119) sale por el mismo tope: `git show 16ff7930:docs/handoff/supervisor-fichas.md`. Y el de las
+tablas tras la revisión del equipo (2026-09-24, cinco PRs): `git show 197c5579:docs/handoff/supervisor-fichas.md`;
+sus dos trampas suben a «Trampas del frente».
+
+## ✅ 2026-09-28 · El panel rápido de agentes, compacto: mide lo que lleva dentro (DD-131)
+
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `197c557`).**
+
+**Qué pasó.** Revisión de producto, con captura: el panel «Agentes · <grupo>» del listado era demasiado ancho y dejaba
+mucho aire entre el nombre y las columnas. Pase con `/better-ui`, medido antes y después con una sonda de Playwright
+a 1440: 832 → 476 px con dos canales y 448 con uno; del nombre a su primera casilla, 450 → 154; filas, 46 → 34.
+Detalle, tabla y descartadas en **DD-131**.
+
+**Qué cambia:**
+- el ancho sale de las columnas (mínimo 28rem, nunca más que la pantalla);
+- un grupo de un canal (9 de 14) no pinta columna de canal, salvo que una fila llegue sin canal al abrir;
+- `sc-agent-channel-table` gana `compact` y `channelColumns` (la ficha no cambia de medidas);
+- fuera la línea «Canales: …» y el aire pasa a 14 y 7;
+- la papelera dice «Quitar del grupo» al pasar por encima (también en la ficha), y la ayuda del candado dice dónde
+  está, en los cuatro idiomas;
+- DS: `sc-checkbox` desactivado con una sola opacidad (0,36 → 0,6), con su ejemplo en sc-docs.
+
+**Medido:** las cinco pruebas nuevas de `panel-agentes-grupo.spec.ts` fallan las cinco contra el código anterior,
+cada una por su motivo, y la de la columna que se queda falla también con la regla de «las filas de ahora».
+
+**Orden del PR, por la captura del checkbox en sc-docs:** rama → workflow `visual-baselines` sobre ella → PR. Con el
+PR ya abierto, el commit del robot dejaba el CI en «action_required» (ver trampas).
 
 ## ✅ 2026-09-27 · El «Eliminar» de las fichas sube a AA: red-500 → red-600 (DD-128)
 
@@ -217,57 +243,39 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
   20 px a 1366×768 y escondía el índice 99 px a 1280×720). Por eso el resumen vive en su columna, con scroll propio;
   `ficha-grupo.spec.ts` lo vigila a 1366×660.
 
-## ✅ 2026-09-24 · Las tablas de agentes y grupos tras la revisión del equipo, en cinco PRs
-
-> **Sello: rama `arebury/tablas-6-docs` sobre `origin/main` (con #247 y #252 fundidos). Rama de trabajo, ya sin uso:
-> `arebury/actualizar-tabla-grupos`.**
-
-**Qué pasó.** Revisión con el equipo de las tablas de `/admin/agentes` y `/admin/grupos` para entregarlas a
-desarrollo mientras se decide el layout de la ficha. Se cerró tabla a tabla y se partió en PRs por tema.
-
-**Qué cambia, por PR:**
-- **#247 (fundido) · DS.** `sc-group-popover` enseña todos los nombres (scroll desde 50vh). `sc-delete-entity-dialog`:
-  borrar varios pide lo mismo que uno (teclear «N agentes»), sin la lista de nombres quitables. `sc-datatable`: ancho
-  ajustable y orden arrastrando, los nativos de `p-table`, con `(columnOrderChange)` y `(columnWidthsChange)`.
-  `sc-multiselect`: `optionDisabled`, `ariaLabel` y la flecha en Material Symbols.
-- **#249 · Listas + selector de columnas nativo** (#251 se fundió dentro). Agentes: ID opcional detrás del nombre,
-  Email, Teléfono y Tipo opcionales, fuera Activación, Estado en etiqueta de solo lectura con los colores de Contact
-  Center, Grabación con el REC rojo, extensión con icono, búsqueda por todos los campos de texto. Grupos: ID con
-  ancho medido, Estrategia sin corte. Datos de demo nuevos. El dashboard usa check en sus menús de elección. El
-  selector es el «Column Toggle» de primeng.dev/table y la lista recuerda visibles, orden y anchos en `localStorage`
-  (NO con `stateKey`: restaura también la selección).
-- **#252 (fundido) · Coherencia.** Contact Center › Servicio con los colores de la tabla; canales alineados ópticamente.
-- **#253 · Inplace** en el título de la ficha de agente y de grupo (`sc-name-inplace`): el mismo campo que Identidad.
-- **Este · Docs:** `figma-pendiente.md` §14 (la etiqueta «Draft» a `slate/700`) y `ROADMAP.md` (el avatar que se
-  vuelve check).
-
-**Medido** con clics y arrastres reales a 1440 en local: 500 filas sin texto cortado, orden y anchos que vuelven al
-recargar, Inplace sin mover la cabecera (texto en x=108, pestañas en y=127,8). `verify` verde; suite del Supervisor
-240/243 con los tres rojos entendidos y arreglados (ver trampas); sc-docs entera en verde (92), y las pruebas nuevas
-vistas fallar contra `main`.
-
-**Trampa del tramo:** la pila de PRs choca con `main` en movimiento. El preflight exige al EMPEZAR que la rama lleve el
-`main` del momento, y ese día entraron cuatro commits ajenos en dos horas: cada uno obligaba a rebasar la pila entera.
-Solo se apila lo que depende de lo anterior; lo independiente va contra `main`. Y un commit del bot (`visual-baselines`)
-deja el CI del PR en «action_required»: hay que aprobarlo.
-
 ## SIGUIENTE — sin preguntar
 
-0. **Lo que queda del pase de diseño** (DD-130 aplicó los siete hallazgos de la revisión). Sin revisar aún a fondo:
-   - los estados vacíos: un grupo sin agentes, una búsqueda sin resultados, un alta sin grupos;
-   - las ayudas bajo casi cada campo;
-   - la columna de 240, que sigue quitando 492 px de contenido a agente y usuario.
+0. **PR 2 · Qué trae cada tipo de usuario** (plan aprobado el 2026-09-28; fuentes: el documento de producto de
+   usuarios y grupos, los perfiles del manual de usuario de Voice y las respuestas de producto). Cierra la pregunta
+   abierta de DD-121 y lleva su propia DD.
+   - **Tipos:** Superadmin, Administrador, Supervisor Online y Supervisor Offline (`superadmin | administrator |
+     supervisorOnline | supervisorOffline`). Lo guardado como `supervisor`, `viewer` o `agent` se lee como Offline;
+     «Agente» sale del selector (los agentes tienen su ficha).
+   - **Claves nuevas**, con un resolvedor aditivo como `resolveGroup` (lo guardado sin ellas, apagado; `sc-users` v1 no
+     se versiona, que borraría la demo): secciones Grupos, Agentes, Repositorios, AED y Sistema; permisos «Gestión de»
+     Grupos, Agentes, Repositorios y AED. `groupsAgentsTypifications` sale de la vista. Los contadores del resumen
+     salen de las definiciones visibles.
+   - **Plantillas:** supervisión, los cuatro; VUI Designer y Usuarios (y su gestión), Superadmin y Administrador;
+     Grupos, Agentes y Repositorios (y su gestión), todos menos Offline; AED (y su gestión), Superadmin y
+     Administrador; Sistema, solo Superadmin; grabaciones, transcripciones y espiar, solo Superadmin (el resto, a mano).
+   - **Ficha:** el alta nace Offline (enmienda DD-130 §4: ya no vacía, lo sensible sigue apagado). Elegir el tipo
+     aplica su plantilla; si se tocaron las casillas pregunta, y en edición pregunta siempre («Cambia N casillas»).
+     Desvío: «Plantilla: X · N cambios» con «Volver a la plantilla» (`driftFromPackage` del laboratorio, adaptado).
+   - **Ejemplo:** U001 Superadmin, U005 Administrador, U002 y U006 Online, U003 y U004 Offline. Cambian a propósito
+     las cifras fijadas de `pase-fichas` (16 casillas, 0 marcadas) y `resumen-widget` (8 de 11, 2 de 5).
+1. **PR 3 · Ayudas bajo los campos y estados vacíos**, con las mismas fuentes y nada inventado:
+   - nuevas: Prioridad, Estrategia (qué hace cada una), Tiempo máximo de espera en cola y Tipo de agente; reescritas:
+     % de servicio (sin círculo), niveles (sin «la tabla de abajo») y Voz (sin «Texto a voz»);
+   - fuera las que repiten el rótulo, mirando antes en DECISIONS que ninguna se puso a propósito (LEARNINGS #10); los
+     cuatro ⓘ de la ficha de grupo, a texto visible o fuera si duplican (DD-100);
+   - la ayuda, enlazada al campo con `aria-describedby` en lo que se toque; «Sin opciones» y «Sin resultados» en el
+     idioma del usuario si el DS lo deja; fuera las claves `*_filtered` sin uso; Contact Center › Grupos y Agentes
+     con las mismas ayudas.
 
-   Es del DS, no de la app: el icono a 400 junto a texto semibold en el título de sección y en la fila activa del
-   índice (`figma-pendiente` §29).
-   Después, **el panel rápido de agentes, también en Supervisión** (respuesta de producto del 2026-09-27): es donde
-   trabaja el supervisor, y hoy solo se abre desde el listado de grupos; anotado en DD-121, sin código. Las preguntas abiertas para producto y desarrollo
-   siguen en DD-121 («Consecuencias»).
-1. **Decidir sobre el laboratorio de administración** (`/lab/admin/grupos`, `/lab/admin/usuarios`).
-   Lo primero que hay que discutir con Rafa y con producto son **los paquetes por tipo**
-   (`TYPE_PACKAGES` en `admin-lab.model.ts`): hoy no existe ninguno porque el tipo no significa
-   nada, así que los propuse yo y **no están validados con nadie**. Lo demás sale del teardown y
-   está medido. Sin esa decisión, A1 no puede aterrizar en el formulario real.
+   Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
+   código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el
+   icono a 400 junto a texto semibold en el título de sección y en la fila activa del índice (`figma-pendiente` §29).
+   El laboratorio de administración (`/lab/admin/*`) se decide tras PR 2: sus paquetes quedan superados.
 2. **Pendiente de Rafa:** dijo «tanto para Agents como groups»; se hicieron grupos y usuarios (las
    dos entidades del teardown). Si se refería a la lista real de `/admin/agentes`, es una tercera
    con el mismo molde.
@@ -302,6 +310,11 @@ deja el CI del PR en «action_required»: hay que aprobarlo.
 - **Rafa:** revisar usuarios contra el Supervisor real.
 
 **Trampas del frente:**
+- ⚠️ Un commit del robot `visual-baselines` sobre un PR ya abierto deja su CI en «action_required», y hay que
+  aprobarlo a mano (2026-09-24). Si un cambio mueve una captura de sc-docs, lanza el workflow sobre la rama ANTES de
+  abrir el PR.
+- ⚠️ Una pila de PRs choca con `main` en movimiento: el preflight exige llevar el `main` del momento, y cada commit
+  ajeno obliga a rebasar la pila entera. Solo se apila lo que depende de lo anterior; lo independiente va contra `main`.
 - ⚠️ `p-table` con ajustar Y reordenar columnas: si el texto de la cabecera va suelto en el `th`, nunca arrastra
   (la directiva ve el tirador de ancho dentro de lo pulsado). Por eso `sc-datatable` envuelve el texto.
 - ⚠️ La tabla ajustable nativa pone `overflow: hidden` en cada celda: rompe un panel anclado DENTRO de la celda

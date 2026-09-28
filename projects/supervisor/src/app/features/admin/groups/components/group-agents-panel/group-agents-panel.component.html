@@ -1,9 +1,9 @@
-<!-- Bajo la barra de la app (que es donde vive Guardar en las fichas) y con el ancho de la tabla de la ficha.
-     La X, el clic fuera y Escape de `p-drawer` van apagados: su cierre no se puede vetar, y aquí puede haber
-     cambios sin guardar. Cierra el propio panel (ver el .ts). -->
+<!-- Bajo la barra de la app (que es donde vive Guardar en las fichas) y con el ancho de lo que lleva dentro: el
+     nombre, sus columnas de canal y la papelera (DD-131). La X, el clic fuera y Escape de `p-drawer` van apagados:
+     su cierre no se puede vetar, y aquí puede haber cambios sin guardar. Cierra el propio panel (ver el .ts). -->
 <sc-drawer
   position="right"
-  width="52rem"
+  [width]="width()"
   topOffset="var(--sc-spacing-4)"
   [visible]="!!group()"
   [header]="group() ? ('groups.agents_panel.title' | translate: { name: group()!.name }) : null"
@@ -13,16 +13,7 @@
 >
   @if (group(); as g) {
     <div class="agents-panel" (keydown)="onKeydown($event)">
-      <!-- Por dónde trabaja el grupo: son las columnas de la tabla. -->
-      <p class="agents-panel__channels sc-text-caption-regular">
-        @for (c of channels(); track c) {
-          <span class="agents-panel__channel">
-            <sc-channel-icon [channel]="c" [size]="12" />
-            {{ channelKeys[c] | translate }}
-          </span>
-        }
-      </p>
-
+      <!-- Sin la línea de canales bajo el título: repetía, uno a uno, las cabeceras de las columnas (DD-131). -->
       @if (conflict()) {
         <sc-message severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
       }
@@ -34,6 +25,8 @@
         [groupId]="g.id"
         [showLevel]="showLevel()"
         [selectable]="false"
+        [compact]="true"
+        [channelColumns]="channelColumns()"
         (linksChange)="onLinksChange($event)"
       />
 

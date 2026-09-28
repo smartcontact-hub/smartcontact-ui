@@ -53,6 +53,13 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   había corregido en julio. Sin cambio en oscuro (ya usaba `red-400`). Todo consumidor de esa combinación,
   no solo el «Eliminar» de las fichas, hereda el color. ([DD-128](docs/DECISIONS.md))
 
+### Fixed
+
+- **`@smartcontact-hub/components`** — `sc-checkbox` desactivado aplica la opacidad UNA vez, el 60 % de Figma
+  (`disabled/opacity`). La caja llevaba además la suya y las dos se multiplicaban (0,36), así que una casilla
+  marcada y desactivada, un valor fijo que no se quita desde ahí, se leía como apagada y no como marcada. Todo
+  consumidor hereda el arreglo: las casillas desactivadas se ven algo más oscuras. ([DD-131](docs/DECISIONS.md))
+
 ## [1.0.0] — 2026-09-09
 
 Primera versión **estable**. El corte no es de calendario: es que el sistema ya tiene

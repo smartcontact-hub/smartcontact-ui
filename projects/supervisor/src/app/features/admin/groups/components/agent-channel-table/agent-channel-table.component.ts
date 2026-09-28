@@ -55,6 +55,10 @@ interface VisibleRow {
   readonly agent: AgentChannelTableAgent;
 }
 
+/** Anchos de la tabla compacta (el panel rápido). Los usa también el panel para medirse (DD-131). */
+export const CHANNEL_COL_COMPACT = '5rem';
+export const ACTIONS_COL_COMPACT = '2.5rem';
+
 /**
  * Editor de los agentes de un grupo, dentro de su ficha — el gemelo de
  * `GroupAssignmentTableComponent` (los grupos de un agente), con su misma barra y su
@@ -107,6 +111,7 @@ interface VisibleRow {
   templateUrl: './agent-channel-table.component.html',
   styleUrl: './agent-channel-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.agent-channel-table--compact]': 'compact()' },
 })
 export class AgentChannelTableComponent {
   private readonly translate = inject(TranslateService);
@@ -153,11 +158,12 @@ export class AgentChannelTableComponent {
             ]
           : []),
         /* 6.5rem: «Web Chat» es el rótulo más largo con espacio, y a 5.5 partía en dos líneas y
-         * subía la cabecera entera (visto a 1440 el 2026-09-26). */
-        ...this.groupChannels().map((ch) => ({
+         * subía la cabecera entera (visto a 1440 el 2026-09-26). Compacta, 5rem: con el relleno de
+         * celda de la tabla pequeña (8 a cada lado, no 14) le quedan 64 px, y cabe en una línea. */
+        ...(this.channelColumns() ? this.groupChannels() : []).map((ch) => ({
           field: ch,
           header: this.translate.instant(CHANNEL_LABEL_KEYS[ch]),
-          width: '6.5rem',
+          width: this.compact() ? CHANNEL_COL_COMPACT : '6.5rem',
           align: 'center' as const,
           cellTemplate: this.channelTpl(),
           stopRowClick: true,
@@ -166,7 +172,7 @@ export class AgentChannelTableComponent {
           field: 'actions',
           header: '',
           headerAriaLabel: this.translate.instant('common.actions'),
-          width: '3.5rem',
+          width: this.compact() ? ACTIONS_COL_COMPACT : '3.5rem',
           align: 'center',
           cellTemplate: this.actionsTpl(),
           stopRowClick: true,
@@ -187,6 +193,16 @@ export class AgentChannelTableComponent {
    * `position: fixed` y quedaría DEBAJO de la máscara del panel (z-index 1050 frente a 1060).
    */
   readonly selectable = input(true);
+  /**
+   * La tabla del panel rápido: la pequeña del DS (`size="sm"`), columnas de canal y papelera más estrechas y la
+   * barra en una línea. La ficha sigue en la de siempre (DD-131).
+   */
+  readonly compact = input(false);
+  /**
+   * Una columna por canal del grupo. El panel la apaga en un grupo de un solo canal: todo agente asignado lo
+   * atiende, y la columna solo eran casillas bloqueadas (DD-131).
+   */
+  readonly channelColumns = input(true);
 
   readonly linksChange = output<readonly GroupAgentLink[]>();
 
