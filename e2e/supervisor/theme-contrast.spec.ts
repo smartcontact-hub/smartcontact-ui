@@ -7,6 +7,7 @@ import {
   forceLightTheme,
   goto,
 } from './helpers';
+import { enNavegador } from '../shared/color';
 import { L_CLARO, medir } from '../shared/contrast-probe';
 
 /**
@@ -41,9 +42,8 @@ import { L_CLARO, medir } from '../shared/contrast-probe';
  *   2. ¿Se lee el texto que va encima? (el defecto DEL REVÉS: al oscurecer un
  *      fondo puedes dejar texto oscuro encima; ya pasó con `sc-label[info]`)
  *
- * Los colores los normaliza el CANVAS, no un regex. Una primera versión de
- * esta medición parseaba `color(srgb 0.99 0.88 0.88 / .5)` con `/\d+/g`,
- * sacaba `[0, 996078, 0]` y reportaba un defecto que no existía.
+ * Los colores los normaliza el CANVAS, no un regex, y las capas translúcidas se
+ * componen: todo eso vive en `../shared/color.ts`, con su historia y su test.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -222,13 +222,11 @@ for (const { nombre, aplicar, claseRaiz } of TEMAS) {
           await goto(page, ruta);
           await asegurarTema(page, claseRaiz);
           await asegurarBuildFresco(page);
-          const { lienzo, ajenos } = await page.evaluate(() => {
-            const cv = document.createElement('canvas').getContext('2d')!;
-            const norm = (c: string): string => {
-              cv.fillStyle = '#000';
-              cv.fillStyle = c;
-              return String(cv.fillStyle);
-            };
+          /* Se comparan PÍXELES, no cadenas: el `fillStyle` del canvas solo pasa a hex
+           * los `rgb()`, y un `color(srgb …)` o un `oklch()` los devuelve tal cual
+           * (Chromium 151). Un suelo pintado con `color-mix` del lienzo no casaría. */
+          const { lienzo, ajenos } = await page.evaluate(enNavegador((kit) => {
+            const norm = (c: string): string => `rgba(${kit.rgba(c)})`;
             const muestra = document.createElement('span');
             muestra.style.backgroundColor = 'var(--sc-bg-canvas)';
             document.body.append(muestra);
@@ -243,13 +241,13 @@ for (const { nombre, aplicar, claseRaiz } of TEMAS) {
               const alto = Math.min(r.bottom, innerHeight) - Math.max(r.top, m.top);
               if (r.width < m.width * 0.99 || alto < altoVisible * 0.99) continue;
               const fondo = getComputedStyle(el).backgroundColor;
-              if (fondo === 'rgba(0, 0, 0, 0)') continue;
+              if (kit.rgba(fondo)[3] === 0) continue;
               if (norm(fondo) !== lienzo) {
                 ajenos.push(`${el.tagName.toLowerCase()}${[...el.classList].map((c) => `.${c}`).join('')} → ${norm(fondo)}`);
               }
             }
             return { lienzo, ajenos };
-          });
+          }));
           expect(ajenos, `suelos que no son el lienzo (${lienzo}):\n${ajenos.join('\n')}`).toEqual([]);
         });
       }

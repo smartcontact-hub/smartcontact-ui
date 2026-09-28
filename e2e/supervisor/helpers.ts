@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs';
 
 import { expect, type Page } from '@playwright/test';
 
+import { enNavegador } from '../shared/color';
+
 /**
  * Helpers compartidos de los journeys del Supervisor.
  *
@@ -81,26 +83,25 @@ export const asegurarBuildFresco = async (page: Page): Promise<void> => {
   const oscuro = await page.evaluate(() => document.documentElement.classList.contains('sc-dark'));
   const tema = oscuro ? 'oscuro' : 'claro';
   const esperado = hexDelFuente(tema);
-  const servido = await page.evaluate((token) => {
-    // Resolver la var a un color computado: el canvas normaliza cualquier sintaxis.
-    const s = document.createElement('span');
-    s.style.color = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-    document.body.append(s);
-    const v = getComputedStyle(s).color;
-    s.remove();
-    return v;
-  }, TOKEN_CANARIO);
-
-  const aHex = (rgb: string): string => {
-    const n = (rgb.match(/\d+/g) ?? []).slice(0, 3).map(Number);
-    return n.length === 3 ? `#${n.map((x) => x.toString(16).padStart(2, '0')).join('')}` : rgb;
-  };
+  const { servido, rgb } = await page.evaluate(
+    enNavegador((kit, token: string) => {
+      // Resolver la var a un color computado; el canvas lo normaliza, sea cual sea su sintaxis.
+      const s = document.createElement('span');
+      s.style.color = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+      document.body.append(s);
+      const servido = getComputedStyle(s).color;
+      s.remove();
+      return { servido, rgb: kit.rgba(servido).slice(0, 3) };
+    }),
+    TOKEN_CANARIO,
+  );
+  const hex = `#${rgb.map((x) => x.toString(16).padStart(2, '0')).join('')}`;
 
   expect(
-    aHex(servido),
+    hex,
     `ESTÁS MIDIENDO UN BUILD ANTERIOR A TU EDICIÓN.\n` +
       `  ${TOKEN_CANARIO} en el fuente (tema ${tema}): ${esperado}\n` +
-      `  lo que sirve el navegador:              ${aHex(servido)} (${servido})\n` +
+      `  lo que sirve el navegador:              ${hex} (${servido})\n` +
       `Reinicia el dev server. Suele pasar tras un "npm run verify": reescribe dist/ ` +
       `por debajo del "ng serve", que se queda muerto pero sigue sirviendo el bundle viejo.`,
   ).toBe(esperado);
