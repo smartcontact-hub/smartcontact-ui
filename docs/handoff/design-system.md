@@ -170,6 +170,16 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-28 · Un `@media` o `@container` que el orden deja sin efecto pone rojo (`audit:query-order`)
+
+**Sello:** rama `areses/loving-bouman-df8ab6`, sobre `ac02acc6`, PR nuevo. El tramo de DD-113 sale por el tope (`git show ac02acc6:docs/handoff/design-system.md`); su ⚠️ ya lo dicen AGENTS §«Componentes de primeng.dev» y `audit:primeng-coupling` §F.
+
+**Lo que cambia.** Gate 43: una regla en `@media`/`@container`/`@supports` ANTES de otra con el mismo selector y capa no gana nunca
+en lo que declaran las dos (la franja del resumen, DD-130). Lee el CSS compilado con el `sass` de Angular (~2 s). Cazó además el
+«reducir movimiento» de las filas de `aed-servicio-page` (en la app, `color` antes y `none` después; lo tapaba el reset global).
+
+- ⚠️ **Leer el fuente no basta**: con este `sass`, una declaración tras un `@media` anidado sale DETRÁS y lo mata.
+
 ## ✅ 2026-09-24 · El código deja de nombrar personas (DD-120)
 
 **Sello:** rama `arebury/clean-code-comments-publicity`, sobre `d20ee0f9` (#244). Archivado: `archive/handoff-ds-2026-09-15-tokens-sin-uso`.
@@ -198,16 +208,6 @@ con las casillas como addons (solo le convenció el campo de la dirección a lo 
 mover la ficha) y Pestañas. Quitadas: recuadro de cambios (ruido) y editor fijo (391 px a 900). Archivo: `…-lo-que-se-nota`.
 
 - ⚠️ **Un `sc-drawer` lateral pinta tres bordes de 3 px, sombra hacia abajo y una X sin nombre**: arreglado en la rama, no en `main`.
-
-## ✅ 2026-09-15 · Tabs, Toolbar, InputGroup, Divider y SelectButton de primeng.dev, bien puestos (DD-113)
-
-**Sello:** rama `arebury/fix-tabs-toolbar-inputgroup`, HEAD `7551099` (#197) más este cambio. Rafa eligió pestañas, separadores
-y pulsación con capturas delante. DD-107 vive en `archive/handoff-ds-2026-09-15-tabs`; «Conversaciones hace scroll», en `…-conversaciones-scroll`.
-
-**Lo que cambia.** DS: `sc-selectbutton`, tallas de `sc-inputgroup`. Supervisor: `p-tabs` nativas de texto, `sc-selectbutton`,
-`sc-divider`, modo pared y tira del Dashboard con nombre (avisar), sin `ripple`, botón que se encoge (better-ui, §8.1). Regla «primeng.dev tal cual»: hook, `tools/primeng-doc.mjs`, §F.
-
-- ⚠️ **Lo nativo manda**: apagué la raya de `p-tabs` por una marca fija y Rafa vio que no se deslizaba. Doc entera y medir.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
