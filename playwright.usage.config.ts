@@ -1,5 +1,6 @@
 import { defineConfig } from '@playwright/test';
 
+import { chromiumLaunchOptions } from './scripts/playwright-chromium-override.mjs';
 import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
 
 /**
@@ -23,6 +24,9 @@ export default defineConfig({
     baseURL: 'http://localhost:4290',
     viewport: { width: 1440, height: 900 },
     colorScheme: 'light',
+    // `SC_CHROMIUM`: el Chromium preinstalado de una sesión cloud, cuando su revisión no casa con
+    // la que este `@playwright/test` espera. Sin la variable, no cambia nada (ver el fichero).
+    launchOptions: chromiumLaunchOptions(),
   },
   webServer: {
     command: 'npm run ng -- serve supervisor --port 4290',

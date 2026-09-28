@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { chromiumLaunchOptions } from './scripts/playwright-chromium-override.mjs';
+
 /**
  * Config de las CAPTURAS DE ANTES Y DESPUÉS del robot de tokens (`tokens-sync.yml`).
  *
@@ -18,5 +20,8 @@ export default defineConfig({
   use: {
     viewport: { width: 1440, height: 900 },
     colorScheme: 'light',
+    // `SC_CHROMIUM`: el Chromium preinstalado de una sesión cloud, cuando su revisión no casa con
+    // la que este `@playwright/test` espera. Sin la variable, no cambia nada (ver el fichero).
+    launchOptions: chromiumLaunchOptions(),
   },
 });

@@ -1,5 +1,6 @@
 import { defineConfig } from '@playwright/test';
 
+import { chromiumLaunchOptions } from './scripts/playwright-chromium-override.mjs';
 import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
 
 function shardDesdeEntorno(valor: string | undefined): { current: number; total: number } | null {
@@ -55,6 +56,9 @@ export default defineConfig({
     trace: 'retain-on-failure',
     // Lo mismo que la traza: solo al fallar, y el CI la sube como artifact.
     screenshot: 'only-on-failure',
+    // `SC_CHROMIUM`: el Chromium preinstalado de una sesión cloud, cuando su revisión no casa con
+    // la que este `@playwright/test` espera. Sin la variable, no cambia nada (ver el fichero).
+    launchOptions: chromiumLaunchOptions(),
   },
   // Playwright levanta y espera el dev server. `ng serve` en vez de un estático
   // sobre `dist`: no añade dependencias nuevas (http-server/wait-on no están en

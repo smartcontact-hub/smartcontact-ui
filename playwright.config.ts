@@ -1,5 +1,6 @@
 import { defineConfig } from '@playwright/test';
 
+import { chromiumLaunchOptions } from './scripts/playwright-chromium-override.mjs';
 import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
 
 export default defineConfig({
@@ -51,6 +52,9 @@ export default defineConfig({
      * artifact (ver `ci.yml`). Solo al fallar, así que no cuesta nada cuando va verde. */
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    // `SC_CHROMIUM`: el Chromium preinstalado de una sesión cloud, cuando su revisión no casa con
+    // la que este `@playwright/test` espera. Sin la variable, no cambia nada (ver el fichero).
+    launchOptions: chromiumLaunchOptions(),
   },
   webServer: process.env['SC_DOCS_URL']
     ? undefined
