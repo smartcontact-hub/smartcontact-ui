@@ -170,6 +170,14 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-28 · `CI=1 npm run e2e` vuelve a correr en local: los workers no esperan a su propio servidor
+
+**Sello:** rama `areses/priceless-leavitt-55356e`, sobre HEAD `6dfe9ba5` (#272), PR nuevo. Hace sitio con las trampas que DD-60 dejó viejas.
+
+**Lo que cambia.** Con `CI` y fuera de GitHub Actions, `reuseOnlyOwnServer` esperaba el puerto libre también en cada worker, que
+evalúa el config con el `ng serve` de su propia ejecución ya escuchando: 5 workers en «Espero a que se libere», techo de 25 min.
+Ahora espera solo el principal (`esWorker()`), y sin `lsof` no espera. Lo prueban cuatro escenarios con Playwright de verdad.
+
 ## ✅ 2026-09-28 · Un `@media` o `@container` que el orden deja sin efecto pone rojo (`audit:query-order`)
 
 **Sello:** rama `areses/loving-bouman-df8ab6`, sobre `ac02acc6`, PR nuevo. El tramo de DD-113 sale por el tope (`git show ac02acc6:docs/handoff/design-system.md`); su ⚠️ ya lo dicen AGENTS §«Componentes de primeng.dev» y `audit:primeng-coupling` §F.
@@ -333,25 +341,17 @@ variables, 30 comentarios activos.
     runner lento lo destapa. Ya lo cubre `goto()` en `e2e/supervisor/helpers.ts`, que lleva el
     puntero a un punto inerte de la barra superior. **Si lo ves otra vez, no lo tapes con
     `{ force: true }`**: eso se salta el hit-testing y cambia un rojo verdadero por un verde falso.
-
-
-
-- **Los dos e2e que "fallan siempre en macOS" se desactivan con `CI=1`**: los screenshots de
-  `sc-card` y `sc-message` (`components.spec.ts`) son llamadas a `screenshotBaseline()`, que
-  **hace no-op cuando `CI` está puesta**. Medido el 2026-08-24: `CI=1 npm run e2e` → **68/68 en
-  verde** en este Mac, dos veces. O sea que el smoke completo SÍ es corrible en local; lo que no
-  lo es son sus baselines por plataforma. Sin `CI=1` siguen rojos y **no son tuyos** (el de
-  `sc-card` espera una página de 1049px y recibe 1453 — no lo leas como regresión de métrica).
-- **El CI son 9 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J). Los e2e de app solo corren allí (DD-60); las baselines visuales de sc-docs, a mano.
+- **`CI=1 npm run e2e` corre en local el smoke ENTERO con su propio `ng serve`** (96/96 en 9 min, 2026-09-28); las capturas
+  `-linux.png` se saltan fuera de Linux. Si se queda en «Espero a que se libere», mira quién tiene el puerto.
+- **El CI son 9 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J). Los e2e de app solo corren allí (DD-60); las baselines visuales de sc-docs también, en `e2e-smoke` (DD-116).
 - **`npm run verify` (31 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
   del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
   alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede
   pasar los 26 gates y aun así romper el baseline en CI: en s29, `line-height` md 21→20 movió ese
-  alto (77→74) y tumbó el CI en dos push seguidos mientras el verify local iba verde. **Quien lo
-  cubre es `npm run preflight`**, que desde s30 corre el smoke ENTERO (`CI=1 npm run e2e`, 68
-  tests) y no un subconjunto. `npm run e2e:structure` sigue valiendo como bucle corto mientras
-  iteras (`:update` si el cambio es deliberado, y revisa el diff del JSON), pero el gate de
-  pre-push es preflight.
+  alto (77→74) y tumbó el CI en dos push seguidos mientras el verify local iba verde. **Desde DD-60
+  no lo cubre ningún gate local**: lo ve el CI (`e2e-smoke`), o tú antes con `CI=1 npm run e2e`.
+  `npm run e2e:structure` sigue valiendo como bucle corto mientras iteras (`:update` si el cambio
+  es deliberado, y revisa el diff del JSON).
 - **La cifra de gates de `verify` YA se gatea** (check M de `docs:coherence`, desde el
   2026-09-06). Esta trampa decía que vivía en 4 sitios sin vigilar; al escribir el check se
   midió y eran **once**, con tres cifras distintas conviviendo (34, 29 y 26 cuando eran 29).
