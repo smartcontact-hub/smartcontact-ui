@@ -197,3 +197,41 @@ test('con textos largos (`?datos=tortura`), la tabla cabe en su tarjeta, los tí
   expect(filas.nombres.filter((n) => n.entero !== n.texto).map((n) => n.texto), 'y con el entero en el title').toEqual([]);
 });
 
+
+for (const datos of ['demo', 'tortura'] as const) {
+  test(`el detalle de «Conversaciones en curso» cabe en su panel sin cortar el tiempo (datos ${datos})`, async ({ page }) => {
+    /* Medido en producción el 2026-09-28 a 1440: el panel medía los 20rem de PrimeNG y la segunda línea de cada
+     * conversación («Cliente #56705 · Atención al cliente») no cedía ancho, así que la tabla medía 300 px en una caja
+     * de 287,5 y el tiempo salía cortado («9:1»). La prueba de tortura de arriba abre el detalle del anillo, cuya
+     * segunda línea es un estado corto, y no lo veía. Con los datos de siempre no se recorta nada; con tortura, las
+     * dos líneas recortan con «…» y llevan el entero en el `title` (DD-124). */
+    await goto(page, `dashboard?datos=${datos}`);
+    const tarjeta = page
+      .locator('sc-dashboard-widget-card')
+      .filter({ has: page.getByRole('heading', { name: 'Conversaciones en curso' }) });
+    await tarjeta.locator('.kpi__open').click();
+    const detalle = page.locator('.p-drawer');
+    await expect(detalle.locator('tbody tr').first()).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+
+    const medida = await detalle.evaluate((d) => {
+      const scroller = d.querySelector('.p-datatable-table-container')!;
+      const borde = scroller.getBoundingClientRect().right;
+      const lineas = [...d.querySelectorAll('.detail__name, .detail__sub')];
+      return {
+        fuera: scroller.scrollWidth - scroller.clientWidth,
+        // `.detail__time` es un span en línea: su `scrollWidth` es 0. Se mide su borde contra el del contenedor.
+        tiemposCortados: [...d.querySelectorAll('.detail__time')]
+          .filter((t) => t.getBoundingClientRect().right > borde + 0.5)
+          .map((t) => t.textContent?.trim()),
+        recortadas: lineas.filter((l) => l.scrollWidth > l.clientWidth).map((l) => l.textContent?.trim()),
+        sinEntero: lineas.filter((l) => l.getAttribute('title') !== l.textContent?.trim()).map((l) => l.textContent?.trim()),
+      };
+    });
+    expect(medida.fuera, 'la tabla no se sale del panel').toBe(0);
+    expect(medida.tiemposCortados, 'ningún tiempo cortado por el borde').toEqual([]);
+    expect(medida.sinEntero, 'cada línea lleva el entero en el title').toEqual([]);
+    if (datos === 'demo') expect(medida.recortadas, 'con los datos de siempre no se recorta nada').toEqual([]);
+    else expect(medida.recortadas.length, 'los textos de tortura no caben: si nada recorta, la prueba no prueba').toBeGreaterThan(0);
+  });
+}
