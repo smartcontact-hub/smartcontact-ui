@@ -30,6 +30,7 @@ Variables: `SC_ORIGINAL_URL` y `SC_REPLICA_URL` (por defecto, el dev de la app r
 | `phase0-resolve-probe.ts` | qué familias existen DE VERDAD en la réplica.                                                                                                                                                                |
 | `text-census.mjs`         | **la red antes de tocar tipografía** (LEARNINGS #16): recorre una app servida y anota tamaño, interlineado, peso, familia, tracking, márgenes y caja de cada texto. Se había reescrito tres veces desde cero; ahora vive aquí con sus cuatro trampas dentro. `--diff a.json b.json` compara las dos pasadas. |
 | `figma-export-parity.mjs` | **el eslabón que faltaba**: el fichero de Figma contra el export del Kit. `tokens:parity` compara *export ↔ CSS*, y por el tramo *Figma ↔ export* se coló el desfase de julio. Imprime el JavaScript que se le pega a `figma_execute_across_files` (fileKey del DS), con los valores del Kit ya resueltos. No es gate: necesita el bridge abierto. |
+| `figma-pendiente.mjs`     | **los cambios de variables de `docs/figma-pendiente.md`, con el bridge**: imprime el JavaScript para `figma_execute` que verifica cada variable contra su valor de partida y solo entonces la cambia (`--aplicar`). Antes de generar nada, comprueba cada valor de partida contra el export de `main`. Tandas: `medidas`, `color`, `componentes`. |
 
 ## Paridad Figma ↔ export, en dos minutos
 
