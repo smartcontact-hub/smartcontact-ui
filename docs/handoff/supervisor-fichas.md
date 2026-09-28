@@ -325,9 +325,6 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
   veces en el CI el 2026-09-28 (parte 2/4), y ninguna en local. Playwright solo emite `page` cuando la pestaña nueva
   confirma su primera navegación; la traza del CI no se pudo abrir desde aquí. `indice-enlaces` comprueba ahora la
   parte de la app (el clic llega al enlace sin cancelar) y abre la otra con `context.newPage()`.
-- ⚠️ `CI=1 npm run e2e` en local se cuelga 25 minutos: con `CI` fuera de GitHub, el guardián de puertos espera a que
-  se libere el 4280, y lo esperan también los workers, al servidor de su propia ejecución (2026-09-28; tarea
-  sugerida). Mientras, `npm run e2e` sin `CI`.
 - ⚠️ Un commit del robot `visual-baselines` sobre un PR ya abierto deja su CI en «action_required», y hay que
   aprobarlo a mano (2026-09-24). Si un cambio mueve una captura de sc-docs, lanza el workflow sobre la rama ANTES de
   abrir el PR.
