@@ -5,6 +5,22 @@
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
+## ✅ 2026-09-28 · El detalle de una cifra ya no corta el tiempo por la derecha
+
+> **Sello: rama `areses/magical-vaughan-5cf689`, sobre `origin/main` HEAD `212debe8`.**
+
+**Qué pasaba** (medido en producción a 1440, claro y oscuro): el panel «En curso (23)» medía los 20rem de PrimeNG y
+la tabla 300 px en una caja de 287,5; el contenedor recortaba los 12,5 de más y el tiempo se leía «9:1». Lo empujaba
+la segunda línea de cada conversación («Cliente #56705 · Atención al cliente», 200 px sin partir): el nombre ya
+llevaba `contain: inline-size` (#263), esa línea no.
+
+**Qué hay.** `contain: inline-size` sube a `.detail__main` (ninguna de las dos líneas pide ancho), la segunda línea
+lleva el entero en el `title` (DD-124) y el panel mide `var(--sc-spacing-25)` (350 px). Hacen falta las dos piezas,
+medido quitando cada una: solo el `contain` recorta 7 líneas con los datos de siempre; solo el ancho deja la tabla en
+673 px con `?datos=tortura`. Con las dos, los seis detalles del primer monitor caben a 1440 sin recortar nada (y «En
+curso», también a 375), y con tortura recortan con «…» las 46 líneas, todas con su `title`. Lo vigila un caso nuevo de
+`e2e/supervisor/dashboard.spec.ts` (demo y tortura), visto en rojo contra producción (12 y 386 px de más).
+
 ## ✅ 2026-09-15 · Rafa acepta los cambios del DS y la raya de las pestañas cruza la cabecera
 
 Aceptados por Rafa: pie de tabla, `sc-gauge max` y las barras de `metergroup` a 7 (medido: las 8 a 7 px). La cabecera
@@ -69,6 +85,8 @@ Persiste en `localStorage` (`sc-dashboard-monitors`, versión 1).
 - ⚠️ Una prueba de scroll lateral mide `main#main-content`, no `documentElement` (el scroll de la app vive ahí).
 - ⚠️ `lint` y `usage:check` a mano antes del `preflight`: a #184 le costó tres vueltas.
 - ⚠️ Un `output` llamado `select` choca con el evento nativo; por eso las pestañas avisan con `activate`.
+- ⚠️ En una celda de `sc-datatable` (tabla automática), `min-width: 0` y `overflow: hidden` no bastan: un texto
+  `nowrap` sigue pidiendo su ancho entero a la columna. Lo corta `contain: inline-size` en el bloque del texto.
 - ⚠️ Las sondas de `~/Documents/Claude/2026-09 dashboard monitor/sondas/` hasta la `v3` escriben con
   `new URL('.', import.meta.url).pathname`, que deja `%20` y guarda en una carpeta hermana
   `2026-09%20dashboard%20monitor`. La `v4` usa `fileURLToPath`.
