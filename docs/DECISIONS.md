@@ -47,7 +47,7 @@
 > | Los datos de demostración del Dashboard cuadran: un solo estado por agente (`DEMO_AGENT_PRESENCE`) para la tabla, los anillos y su detalle · los disponibles no derivan en el latido · unos totales fijos al pie llevan raya arriba | DD-127 |
 > | El resumen de las fichas como widget: la cifra con «/total» y el `p-progress-spinner` nativo a 42 (`sc-summary-kpi`), que cuenta y se llena al abrir y al cambiar, y nada con menos movimiento · anillo en toda proporción, oculto al lector (la cifra final va en texto oculto) · la tarjeta en el tinte de marca, con todo su texto en primario (el secundario no llega a AA sobre el tinte) · `theme-contrast` perdona el gris solo sobre sus fondos (enmienda DD-121 §3, DD-122 §8) | DD-126 |
 > | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra · R4: lo que apilan los envoltorios de dentro de una caja no llega a 7 | DD-125 |
-> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos nombres de negocio, y el juego se elige en Configuración → Sistema · la tortura llega también a Conversaciones y a los widgets del Dashboard · en una tabla que se ajusta, las cifras miden su dato y el nombre recorta con «…» y el `title` · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
+> | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos y a los servicios nombres de negocio y baraja los agentes generados, y el juego se elige en Configuración → Sistema · la tortura llega también a Conversaciones y a los widgets del Dashboard · en una tabla que se ajusta, las cifras miden su dato y el nombre recorta con «…» y el `title` · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
 > | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` · `sc-dialog` con cuerpo: la botonera a 28 y 14 entre hermanos | DD-123 |
 > | Un solo índice en toda la app (`sc-form-section-nav`: fichas, constructor y Contact Center) · cada fila es un ENLACE a su sitio (ruta o `?seccion=`), la actual con `aria-current="page"` · clic navega, Cmd+clic abre otra pestaña, Atrás vuelve · en un alta la sección no deja rastro · un solo «Guardar» por ficha, con las secciones con cambios marcadas en el índice · agente y usuario al molde de la ficha de grupo (enmienda DD-121 §2 y DD-113) | DD-122 |
 > | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
@@ -426,6 +426,26 @@ punto salió en rojo contra un build con la tortura y sin el arreglo, y en verde
 
 Lo prueban `dashboard.spec.ts` y `conversations-table-scroll.spec.ts`.
 
+**Lo que la revisión editorial dejó por decidir, decidido (el mismo día)** · Las dos cosas, solo en el editorial: la
+demo pública sigue con los datos de siempre.
+- **Los agentes generados, sin bloques de un apellido.** Los 480 cruzaban en orden 25 nombres con 25 apellidos, y la
+  lista enseñaba 25 seguidos apellidados «Kidman»: en una demo se lee como generado. En el editorial el cruce va en
+  diagonal, así que cada agente cambia de apellido respecto al anterior, y con 480 no se repite ninguna combinación.
+  Los nombres siguen siendo de Hollywood (decisión de producto del 2026-09-14).
+- **Los servicios de Conversaciones, con nombre de negocio** (`nombreDeServicio`). Dicen el motivo de la llamada,
+  distinto del equipo que la atiende, para que las columnas Servicio y Grupo no repitan lo mismo: DV: Smart Contact →
+  Información general, Atención al Cliente → Consultas, Soporte Técnico → Averías, Ventas Comercial → Contratación y
+  Postventa → Instalaciones. Ninguno coincide con un nombre de grupo.
+
+Al hacerlo salió un fallo: **la previsión de impacto de Reglas casa la regla con las conversaciones por nombre**, y con
+otro juego dejaba de casar. Medido en el build: la regla #1 prevé 6 conversaciones con la demo y ninguna con el
+editorial, y sin el puente, la #2 prevé 5 con la demo y ninguna con tortura. Ahora las reglas de la demo nombran sus
+servicios y grupos con el juego activo, y el puente de la previsión (`demo-impact-bridge.ts`) devuelve grupos y agentes
+con el nombre que llevan las conversaciones. En el editorial, el nombre y la descripción de la regla dicen además el
+servicio de negocio («Transcribir Contratación >60s»), como los habría escrito quien la creó; en tortura no se tocan,
+que son texto escrito a mano. Lo prueba `juego-de-datos.spec.ts`: cada regla prevé el mismo impacto con los tres
+juegos (en rojo sin el arreglo de las reglas y sin el del puente), y los 25 primeros generados llevan 25 apellidos.
+
 ---
 
 ## DD-123 · 2026-09-27 — Lo que va junto se separa menos: la escalera 7 · 14 · 28 manda sobre la maqueta, y se mide en el build
@@ -489,7 +509,10 @@ aplica) y rige el punto 2: con cuerpo, la botonera va a 28 del contenido (el pie
 defecto entre hermanos del cuerpo baja de 15,75 a 14. Las confirmaciones sin cuerpo y el cuerpo a ras (`flushBody`) no
 cambian: allí no hay campo con el que confundir la botonera. Los dos formularios de Conversaciones pasan de 15,75 a 14
 entre campos. Medido tras el cambio: los tres, 28,5 contra 14; `CONOCIDOS` queda vacío y la prueba, entera en verde.
-En el Kit, ficha 17 de figma-pendiente.
+En el Kit, ficha 17 de figma-pendiente. *Corregido el mismo día, al repasar figma-pendiente contra el export:* los 17,5
+son de `sc-dialog` (`--sc-dialog-padding`), no del Kit. El Kit, como Aura, ata el relleno del diálogo a
+`overlay/modal/padding` = `scale/1-125` (15,75), y el `p-dialog` nativo ya pinta eso. Qué hacer con la diferencia, en
+la ficha 17.
 
 **Consecuencias** · Una maqueta nueva con 12,25 o 24,5 se implementa en el peldaño de la escalera y se apunta en
 figma-pendiente. La prueba corre en el CI con el resto de la suite del Supervisor (DD-60); en local,

@@ -43,9 +43,45 @@ test('editorial da a los grupos su nombre de negocio, también donde el nombre v
     await expect(page.getByText(deSiempre, { exact: true }), `«${deSiempre}» sin nombre de negocio`).toHaveCount(0);
   }
 
+  // Los servicios, también: el motivo de la llamada, no un nombre de producción.
+  await expect(page.getByText('Información general', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('DV: Smart Contact', { exact: true })).toHaveCount(0);
+
   await goto(page, 'admin/grupos?datos=demo');
   await expect(page.getByText('ACD Demo C2CB', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Atención al cliente', { exact: true })).toHaveCount(0);
+});
+
+test('editorial: los agentes generados no salen en bloques de un mismo apellido', async ({ page }) => {
+  /* Medido el 2026-09-27: los 480 generados cruzan 25 nombres con 25 apellidos, y en orden la lista enseñaba 25 seguidos
+   * apellidados «Kidman». En el editorial el cruce va en diagonal. Se miran los 25 primeros generados (tras los 20 de
+   * siempre), con la ventana alta para que la lista virtual los pinte. */
+  await page.setViewportSize({ width: 1440, height: 2400 });
+  await goto(page, 'admin/agentes?datos=editorial');
+  const nombres = page.locator('main tbody tr .cell-name__text');
+  await expect(nombres.nth(45)).toBeVisible();
+  const generados = (await nombres.allTextContents()).slice(20, 45).map((n) => n.trim());
+  const apellidos = new Set(generados.map((n) => n.split(' ').pop()));
+  expect(apellidos.size, `apellidos distintos en ${generados.join(', ')}`).toBe(25);
+});
+
+test('el juego solo cambia nombres: cada regla prevé el mismo impacto con los tres', async ({ page }) => {
+  /* La previsión de impacto casa la regla con las conversaciones POR NOMBRE de servicio, grupo y agente. Medido el
+   * 2026-09-27: con el editorial y con tortura, las reglas no casaban con ninguna conversación. Se miran las cuatro de
+   * la demo: por servicio (1 y 3), por miembros de un grupo (2) y por grupo (4). */
+  const impacto = async (juego: string, id: number): Promise<string> => {
+    await goto(page, `conversaciones/reglas/${id}?datos=${juego}`);
+    const cifra = page.locator('.impact--rail').locator('.impact__hero, .impact__empty');
+    await expect(cifra).toBeVisible();
+    return (await cifra.innerText()).trim();
+  };
+  for (const id of [1, 2, 3, 4]) {
+    const conDemo = await impacto('demo', id);
+    expect(conDemo, `la regla ${id} casa con alguna conversación de la demo`).toMatch(/^\d/);
+    for (const juego of ['editorial', 'tortura']) {
+      expect(await impacto(juego, id), `la regla ${id} con ${juego}`).toBe(conDemo);
+    }
+  }
 });
 
 test('el juego se elige también en Configuración → Sistema, y manda sobre el de la dirección', async ({ page }) => {

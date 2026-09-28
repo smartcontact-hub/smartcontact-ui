@@ -139,6 +139,24 @@ export const nombreDeGrupo = (nombre: string, juego: JuegoDeDatos = juegoDeDatos
   juego === 'editorial' ? (GRUPOS_EDITORIALES[nombre] ?? nombre) : nombreDeCosa(nombre, juego);
 
 /**
+ * Los servicios de Conversaciones en el juego editorial: el MOTIVO por el que se llama, distinto del equipo que
+ * atiende (los grupos), para que las columnas Servicio y Grupo no digan lo mismo. Sin ellos, la demo para enseñar
+ * la app enseñaba «DV: Smart Contact», con prefijo de producción (revisión editorial, 2026-09-27). Ninguno coincide
+ * con un nombre de grupo del editorial.
+ */
+const SERVICIOS_EDITORIALES: Readonly<Record<string, string>> = {
+  'DV: Smart Contact': 'Información general',
+  'Atención al Cliente': 'Consultas',
+  'Soporte Técnico': 'Averías',
+  'Ventas Comercial': 'Contratación',
+  Postventa: 'Instalaciones',
+};
+
+/** El nombre de un servicio en el juego activo: el editorial si toca, el estirado en tortura, y si no, el mismo. */
+export const nombreDeServicio = (nombre: string, juego: JuegoDeDatos = juegoDeDatos()): string =>
+  juego === 'editorial' ? (SERVICIOS_EDITORIALES[nombre] ?? nombre) : nombreDeCosa(nombre, juego);
+
+/**
  * Los campos que guardan el NOMBRE de un grupo. Solo esos: «Reclamaciones» también es un servicio
  * (`services` del grupo 12) y ahí no se toca, que el catálogo de servicios sigue diciéndolo así.
  */
