@@ -6,12 +6,28 @@
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
+> El tramo del 2026-09-23 (grupos sin foto, alta en diálogo) sale de aquí por el tope de 6: `git show
+> 4f4f2018:docs/handoff/supervisor-fichas.md` o el tag `archive/handoff-fichas-2026-09-27`. Su trampa (`main`
+> se mueve bajo un worktree local) ya vive en LEARNINGS #21. El del 2026-09-24 (el alta de grupo rima con
+> Identidad, DD-119) sale por el mismo tope: `git show 16ff7930:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-09-27 · El «Eliminar» de las fichas sube a AA: red-500 → red-600 (DD-128)
+
+> **Sello: rama `claude/resumen-cambios-recientes-14kfjb` sobre `main` (HEAD `4f4f2018`).**
+
+**Qué pasó.** El botón de texto «Eliminar» de la cabecera de las tres fichas medía 3,76:1 en claro (`red-500`
+sobre blanco), fichado como conocido en `theme-contrast` desde el 2026-09-26 y anotado aquí mismo como pendiente
+del pase de diseño. Es un token del DS (`--sc-cmp-button-text-danger-color`), no algo local a la ficha, así que se
+cierra ahí: sube a `red-600` (4,83:1), el mismo escalón que ya llevaba el `danger` sólido desde julio. Detalle,
+medición y descartadas en **DD-128**; customs-catalog §1.8 cierra su lista de botones bajo AA.
+
+**Qué NO se toca de la lista de abajo:** el resto del pase de diseño (caja o sin caja para las tres fichas, el
+fundido al cambiar de sección, distribución y colas, etc.) sigue igual de pendiente — esto solo cierra el punto de
+contraste, que era un bug medible y no una decisión de producto.
 
 ## ✅ 2026-09-27 · El pase de diseño de las fichas: la franja, las altas, Guardar, el usuario nuevo y los saltos por canal (DD-130)
 
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `ddf711a`), PR nuevo.**
-> El tramo del 2026-09-23 (los grupos pierden la cara) sale de aquí:
-> `git show ddf711a:docs/handoff/supervisor-fichas.md`.
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `16ff793`), #265.**
 
 **Qué pasó.** Se revisó el flujo rehecho con `better-layout` y `better-ui`:
 - **Alcance:** 17 vistas, a 1440 y 1280 y en los dos temas.
@@ -235,24 +251,6 @@ vistas fallar contra `main`.
 Solo se apila lo que depende de lo anterior; lo independiente va contra `main`. Y un commit del bot (`visual-baselines`)
 deja el CI del PR en «action_required»: hay que aprobarlo.
 
-## ✅ 2026-09-24 · El alta de grupo rima con Identidad: pide lo de la cabecera, no los canales (DD-119)
-
-> **Sello: rama `arebury/alta-grupo-rima`, worktree `shipworm`, sobre `origin/main` `9f0cfd88` (#243).**
-
-**Qué pasó.** Rafa, del alta de #243: «es un paso extra; al entrar tengo lo mismo que acabo de configurar; tiene que
-rimar». El diálogo pedía nombre y canales, y la ficha abría por la fila de canales.
-
-**Qué cambia.** El diálogo pide nombre, teléfono asociado y prioridad con `sc-group-identity-fields`, la MISMA pieza
-que la pestaña Identidad (en columna en el diálogo, en fila en la pestaña, por `@container`). Nace con Teléfono y la
-ficha abre en «Canales y agentes». Duplicar: «… (copia)», la prioridad del original, sin teléfono; se lleva canales,
-agentes y ajustes. Enter crea solo desde el nombre (en un desplegable, Enter elige opción).
-
-**Medido** con clics en local a 1440: alta, aterrizaje (la cabecera dice lo rellenado) e Identidad con la misma
-pieza. e2e de grupo y fichas en verde.
-
-**Si vuelve a sonar a paso de más:** la alternativa que rima del todo es sin diálogo, «Nuevo grupo» abre la ficha con
-el nombre como campo en el sitio del título. Rafa pidió no quitar el paso.
-
 ## SIGUIENTE — sin preguntar
 
 0. **Lo que queda del pase de diseño** (DD-130 aplicó los siete hallazgos de la revisión). Sin revisar aún a fondo:
@@ -260,10 +258,8 @@ el nombre como campo en el sitio del título. Rafa pidió no quitar el paso.
    - las ayudas bajo casi cada campo;
    - la columna de 240, que sigue quitando 492 px de contenido a agente y usuario.
 
-   Es del DS, no de la app:
-   - el icono a 400 junto a texto semibold en el título de sección y en la fila activa del índice
-     (`figma-pendiente` §29);
-   - «Eliminar» en rojo de texto, a 3,76:1 (conocido en `theme-contrast`).
+   Es del DS, no de la app: el icono a 400 junto a texto semibold en el título de sección y en la fila activa del
+   índice (`figma-pendiente` §29).
    Después, **el panel rápido de agentes, también en Supervisión** (respuesta de producto del 2026-09-27): es donde
    trabaja el supervisor, y hoy solo se abre desde el listado de grupos; anotado en DD-121, sin código. Las preguntas abiertas para producto y desarrollo
    siguen en DD-121 («Consecuencias»).

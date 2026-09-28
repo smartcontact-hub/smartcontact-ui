@@ -127,6 +127,26 @@ test('en el primer monitor, la tabla, el anillo y su detalle cuentan los mismos 
   expect(await quien.allTextContents(), 'y son los disponibles de la tabla').toEqual(disponibles);
 });
 
+test('en «Colas y agentes», el panel de grupos cuenta agentes reales, no una cifra que escale con las colas', async ({ page }) => {
+  /* DD-127 dejaba esto anotado como "no cubierto": `buildWidget`, case `group-panel`, sacaba «conectados» de
+   * `int(3,4) * n` (n = colas del panel, 4 aquí) — 12 o 16, sin relación con los 10 agentes reales de la demo
+   * (9 conectados, 5 disponibles, medido en `DEMO_AGENT_PRESENCE`). El detalle truncaba en silencio a los 9
+   * que hay de verdad: la cifra de arriba no tenía techo, el detalle sí. */
+  await goto(page, 'dashboard');
+  await page.getByRole('tab').nth(1).click();
+
+  const panel = page.locator('sc-dashboard-widget-card').filter({ has: page.locator('sc-dashboard-group-panel') });
+  await expect(panel).toBeVisible();
+
+  const stat = (etiqueta: string) => panel.locator('.panel__stat', { hasText: etiqueta });
+  await expect(stat('Conectados').locator('.panel__digits'), 'los agentes reales no-offline de la demo son 9').toHaveText('9');
+  await expect(stat('Disponibles').locator('.panel__digits'), 'los agentes reales disponibles de la demo son 5').toHaveText('5');
+
+  await stat('Conectados').locator('.panel__open').click();
+  const quien = page.locator('.p-drawer .detail__who .sc-text-body-semibold');
+  await expect(quien, 'el detalle lista tantos como dice la cifra de arriba, sin truncar en silencio').toHaveCount(9);
+});
+
 test('con textos largos (`?datos=tortura`), la tabla cabe en su tarjeta, los títulos no se recortan y el detalle es de una línea', async ({ page }) => {
   /* Medido el 2026-09-27 con los nombres estirados (DD-124): el nombre de agente empujaba las cifras 183 px fuera de
    * la tarjeta, sin «Transferidas» ni «T. medio»; «Tabla de agentes» se recortaba antes que la lista de a quién

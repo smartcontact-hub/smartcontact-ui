@@ -1,8 +1,8 @@
 # Frente · Calidad visual — agrupación, revisión previa, datos de prueba y referencias — hand-off
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**. Lo durable vive en `docs/`:
-> las decisiones en DD-123, DD-124, DD-125 y DD-127, la regla en AGENTS §«UX de pantalla» 9, todo lo pendiente en
-> Figma en `docs/figma-pendiente.md` (con el plan de la sesión en Figma) y las referencias en
+> las decisiones en DD-123, DD-124, DD-125, DD-127 y DD-129, la regla en AGENTS §«UX de pantalla» 9, todo lo pendiente
+> en Figma en `docs/figma-pendiente.md` (con el plan de la sesión en Figma) y las referencias en
 > `docs/referencias-contact-center.md`.
 >
 > **Por qué existe este frente.** Nace el 2026-09-27 de contrastar el repo con una lista de consejos de UI (espacio,
@@ -12,8 +12,7 @@
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-1. **Llevar a verde el PR de este tramo** (el (5)). No cambia ninguna foto de sc-docs: todo vive en el Supervisor.
-2. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
+1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).
 
@@ -30,6 +29,22 @@
   agente, y «Grupos / Agentes / Tipificaciones» en el acceso del usuario. Ya pasaba con los datos de siempre.
 - **De gusto, visto en la revisión de Sistema**: dos de sus seis secciones llevan icono delante del título
   («Numeración especial» y «Regeneración de contraseñas») y las otras cuatro no. Ni regla ni prueba lo piden.
+
+## ✅ 2026-09-27 (6) · El panel de grupos deja de inventar sus conectados (DD-129)
+
+> **Sello:** rama `claude/resumen-cambios-recientes-14kfjb`, sobre `origin/main` HEAD `4f4f2018` (#263 fundido).
+> Numerado (6) al fundir: el tramo (5) de abajo (#264) llegó antes a `main` con el mismo número.
+
+**Qué pasó.** La «Consecuencia» que el tramo (4) dejó sin tocar: el panel de grupos (`buildWidget`, case
+`group-panel`) sacaba «conectados» de `int(3,4) * n` (n = colas del panel) — en «Colas y agentes» (4 colas), 12 o 16,
+sin relación con los 10 agentes reales de la demo, y el detalle truncaba en silencio a los 9 que hay de verdad.
+Ahora `connected` y `available` salen de `DEMO_AGENT_PRESENCE` (la fuente que ya usa `agents-state` desde DD-127):
+9 conectados, 5 disponibles, consistentes con lo que lista el detalle al abrirlo. `dashboard.spec.ts` («cuenta
+agentes reales…») en rojo contra el build anterior (12, no 9) y en verde con el arreglo; la suite entera del
+Supervisor (`dashboard`, `agrupacion`, `juego-de-datos`) sigue en verde. Detalle y descartadas en **DD-129**.
+
+**Qué NO se toca:** `total`, `attended` y el resto de cifras de conversación del panel (son de cola, no de agentes) y
+el resto de pendientes de ESPERANDO A RAFA de arriba.
 
 ## ✅ 2026-09-27 (5) · El editorial, sin rastro de generado; las reglas casan con cualquier juego; y Figma, a punto
 

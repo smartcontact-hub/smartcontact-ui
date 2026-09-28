@@ -43,6 +43,8 @@
 > | Tema | DD |
 > |---|---|
 > | El pase de diseño de las fichas: en la franja el anillo junto a su cifra y los datos en dos columnas · las tres altas con su cabecera a la vista y «Crear …» · Guardar deja en la ficha · un usuario nuevo nace sin permisos · saltos por canal en Distribución y colas · el icono de un aviso con el peso de su texto · «Asignar» en el listado de grupos (enmienda DD-122 §8) | DD-130 |
+> | El panel de grupos deja de inventar sus «conectados»: salen de `DEMO_AGENT_PRESENCE`, no de una cifra que escala con el número de colas del panel (enmienda DD-127) | DD-129 |
+> | El botón `danger` de texto (el «Eliminar» de las fichas) sube de red-500 a red-600, mismo escalón que el sólido: cierra los tres últimos botones bajo AA de §1.8 | DD-128 |
 > | Los datos de demostración del Dashboard cuadran: un solo estado por agente (`DEMO_AGENT_PRESENCE`) para la tabla, los anillos y su detalle · los disponibles no derivan en el latido · unos totales fijos al pie llevan raya arriba | DD-127 |
 > | El resumen de las fichas como widget: la cifra con «/total» y el `p-progress-spinner` nativo a 42 (`sc-summary-kpi`), que cuenta y se llena al abrir y al cambiar, y nada con menos movimiento · anillo en toda proporción, oculto al lector (la cifra final va en texto oculto) · la tarjeta en el tinte de marca, con todo su texto en primario (el secundario no llega a AA sobre el tinte) · `theme-contrast` perdona el gris solo sobre sus fondos (enmienda DD-121 §3, DD-122 §8) | DD-126 |
 > | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra · R4: lo que apilan los envoltorios de dentro de una caja no llega a 7 | DD-125 |
@@ -154,6 +156,69 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
   la fila activa del índice) va a `figma-pendiente` §29.
 - **Pruebas:** lo vigila `e2e/supervisor/pase-fichas.spec.ts`, que contra el código anterior daba 10 de 12 en rojo.
   Las otras dos son el patrón del grupo y la guarda de «un solo canal, sin saltos».
+
+---
+
+## DD-129 · 2026-09-27 — El panel de grupos deja de inventar sus conectados: agentes reales, no una cifra por cola
+
+**Contexto** · DD-127 cerró la tabla y el anillo de «Monitor x», y dejó anotado sin tocar que el panel de grupos
+(`buildWidget`, case `group-panel`) seguía inventando «conectados»: `int(3,4) * n` (n = colas del panel), sin
+relación con los agentes reales de la demo. En «Colas y agentes» (4 colas) esto daba 12 o 16 conectados con solo 10
+agentes reales, y el detalle (`detail.ts`) truncaba en silencio a los 9 que hay de verdad (`pool.slice(0, count)`):
+la cifra de arriba no tenía techo, el detalle sí.
+
+**Decisión** · `connected` y `available` del panel de grupos salen de `DEMO_AGENT_PRESENCE`, la misma fuente que ya
+usa `agents-state` desde DD-127: `connected` = agentes no-offline (9), `available` = agentes disponibles (5). El
+panel agrega sobre todos los agentes de la demo, no sobre los de un grupo concreto — la demo no modela ese reparto
+por grupo —, así que se usa el total real en vez de escalar una cifra con el número de colas del panel.
+
+**Razón** · Medido en «Colas y agentes» tras el cambio: «Conectados» dice 9 y «Disponibles» 5, y abrir el detalle de
+cada cifra lista exactamente 9 y 5 filas, sin truncar. `dashboard.spec.ts` («cuenta agentes reales…») salió en rojo
+contra el build anterior (12 conectados, no 9) y en verde con el arreglo.
+
+**Descartadas** ·
+- **Mantener `int(3,4) * n` y solo subir el techo del detalle** → esconde el síntoma (la cifra de arriba seguiría
+  sin relación con agentes reales) en vez de arreglar la causa.
+- **Derivar `connected` por grupo** (qué agentes atienden cada grupo seleccionado) → la demo no tiene esa relación
+  grupo↔agente; inventarla para este panel sería otro dato fabricado, más difícil de auditar que el actual.
+
+**Consecuencias** · `total`, `attended` y el resto de cifras de conversación del panel siguen siendo pseudoaleatorias
+(son cifras de cola, no de plantilla de agentes) y no se tocan aquí. El mismo `case 'group-panel'` lo usan también
+el asistente de widgets y el panel «Groups» del primer monitor sin pasar por `buildWidget` (va escrito a mano, ya
+correcto); los dos quedan consistentes con el mismo mecanismo.
+
+---
+
+## DD-128 · 2026-09-27 — El botón `danger` de TEXTO sube a red-600: cierra los tres últimos botones bajo AA
+
+**Contexto** · `theme-contrast` tenía fichado desde el 2026-09-26, el día que la ficha de grupo entró en su barrido,
+que el «Eliminar» de la cabecera de las fichas de grupo, agente y usuario (`sc-button variant="danger"
+appearance="text"`) pinta su etiqueta en `red-500`: 3.76:1 sobre blanco, bajo el 4.5:1 de WCAG AA. El `danger`
+SÓLIDO ya se había arreglado así (§1.8, 2026-07-19); el de texto quedó fuera porque tocaba un token de un componente
+compartido, no una ficha, y customs-catalog §1.8 lo dejó anotado con el arreglo exacto sin aplicarlo.
+
+**Decisión** · `--sc-cmp-button-text-danger-color` (claro) sube de `red-500` a `red-600` — el mismo par de colores
+que el sólido, mismo 4.83:1. A diferencia del sólido (cuyo token no lo consume nadie), este SÍ lo lee el preset por
+`var(...)`, así que va por el mecanismo de `outlined.secondary` (§1.8, ya declarado): el slot sale de la zona
+`@sc-gen` y se fija a mano en `04-component.css`, con `light:button.text.danger.color` en el `EXCLUDE` de
+`cmp-color-map.mjs` para que el generador no lo reescriba.
+
+**Razón** · Medido tras el cambio: `admin/grupos/editar/11` en claro pasa de 3.76:1 a 4.83:1 en el botón «Eliminar»
+de la cabecera; oscuro no cambia (ya usaba `red-400`, sin fallo). `theme-contrast.spec.ts` perdía su caso conocido
+(la línea del array `CONOCIDOS_CLARO`) y salía en rojo contra el `red-500` anterior; en verde con el token a
+`red-600`. `tokens:parity`, `tokens:guard` y `tokens:cmp-rewire` limpios; la suite entera de `theme-contrast`
+(91 tests) en verde.
+
+**Descartadas** ·
+- **Arreglarlo por ficha** (una clase local en las tres páginas de ficha) → el botón es del DS y sus otros
+  consumidores (fuera de las fichas) seguirían bajo AA; es una decisión del componente, no de la pantalla.
+- **Hardcodear `{red.600}` en el preset**, como el sólido → innecesario: a diferencia del sólido, el token de este
+  slot SÍ lo consume el preset, así que puede ir por el mecanismo de token + `EXCLUDE`, más simple de cerrar cuando
+  Figma suba el valor.
+
+**Consecuencias** · Cierra la lista de §1.8: no queda ningún botón del DS bajo AA. Todo uso de `appearance="text"` +
+`variant="danger"` de la app (no solo las fichas) hereda el cambio. Se cierra cuando el Kit suba
+`button.text.danger.color` a `red-600` (customs-catalog §1.8).
 
 ---
 
