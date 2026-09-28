@@ -322,7 +322,8 @@ proyecto, y los lee cualquiera:
 - **Sin atribución de la herramienta**: ni «Generated with Claude Code», ni `Co-Authored-By: Claude`,
   ni el enlace `claude.ai/code/session_…`. Los apaga `attribution` en `.claude/settings.json`
   (y en el `~/.claude/settings.json` de Rafa), y `bash-guard` deniega un `git commit` o
-  `gh pr create|edit` que los lleve escritos a mano.
+  `gh pr create|edit` que los lleve escritos a mano. En una sesión cloud el PR se crea por MCP y el
+  servidor añade el pie igual (#256, #262, #265): `pr-footer-guard` pide quitarlo en cuanto se crea.
 - **Cada commit lleva su «Por qué»**, no solo su qué. El título dice el cambio; el cuerpo dice qué
   problema resuelve y qué se descartó. Norma de Rafa del 2026-09-16: el título envejece bien, pero
   el motivo solo lo sabe quien estuvo ahí, y dentro de un mes el `git log` es lo único que queda.

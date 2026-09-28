@@ -5,6 +5,7 @@ import {
   esDominioDeFiccion,
   extraerCorreos,
   extraerTelefonos,
+  fuentesDeApp,
   normalizarTelefono,
   TELEFONOS_PERMITIDOS,
 } from '../audit-seed-pii.mjs';
@@ -91,4 +92,20 @@ test('la lista de permitidos no tiene entradas sin motivo escrito', () => {
   for (const [tel, motivo] of TELEFONOS_PERMITIDOS) {
     assert.ok(motivo && motivo.trim().length > 3, `${tel} está permitido sin motivo`);
   }
+});
+
+test('fuentes: las de app que siguen en disco; un borrado sin añadir no tumba el gate', () => {
+  const listado = [
+    'projects/supervisor/src/app/a.ts',
+    'projects/supervisor/src/app/borrado.ts', // borrado sin `git add`: `git ls-files` aún lo lista
+    'projects/supervisor/src/assets/i18n/es.json',
+    'projects/supervisor/src/styles/_page.scss',
+    'projects/supervisor/README.md',
+    '',
+  ];
+  const enDisco = new Set(listado.filter((f) => !f.includes('borrado')));
+  assert.deepEqual(fuentesDeApp(listado, (f) => enDisco.has(f)), [
+    'projects/supervisor/src/app/a.ts',
+    'projects/supervisor/src/assets/i18n/es.json',
+  ]);
 });

@@ -44,7 +44,7 @@
  * ES ESTÁTICO y PURO respecto al texto (funciones exportadas → testeable sin tocar el disco).
  */
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 const log = (s = '') => process.stdout.write(s + '\n');
 
@@ -209,13 +209,22 @@ export function chequear(encontrados, permitidos, etiqueta) {
   return problemas;
 }
 
+/**
+ * Las fuentes de app que se leen: `.ts`, `.html` y `.json` bajo un `src/`, de la lista de `git ls-files`, y
+ * solo las que siguen en disco. Un fichero borrado sin añadir al índice sigue en esa lista, y leerlo tumbaba el
+ * gate con ENOENT en vez de auditar (2026-09-27). Lo que ya no está no tiene nada que leer: lo versionado pasó por
+ * aquí al entrar. Es la misma guarda que lleva `audit:personal-names`; `existe` se inyecta para probarlo sin
+ * tocar el disco.
+ */
+export function fuentesDeApp(listado, existe = existsSync) {
+  return listado.filter((f) => /\/src\/.*\.(ts|html|json)$/.test(f) && existe(f));
+}
+
 /* ── main ──────────────────────────────────────────────────────────────────── */
 if (process.argv[1] && process.argv[1].endsWith('audit-seed-pii.mjs')) {
   // Solo ficheros VERSIONADOS: lo que no está en git no se publica, y así no barremos `dist/`
   // ni `node_modules/` por accidente.
-  const ficheros = execSync('git ls-files projects', { encoding: 'utf8' })
-    .split('\n')
-    .filter((f) => /\/src\/.*\.(ts|html|json)$/.test(f));
+  const ficheros = fuentesDeApp(execSync('git ls-files projects', { encoding: 'utf8' }).split('\n'));
 
   if (!ficheros.length) {
     log('✗ audit:seed-pii: no encuentro fuentes de app — ¿estás en la raíz del repo?');
