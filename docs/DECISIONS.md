@@ -96,6 +96,59 @@
 
 ---
 
+## DD-134 · 2026-09-28 — Los commits firman con la cuenta del mantenedor, y ningún squash deja el mensaje a GitHub
+
+**Contexto** · El repo es público y un commit fundido es un documento del proyecto (AGENTS.md §«Pull
+requests y commits»). Al fundir por squash con el mensaje por defecto, desde la web o con
+`gh pr merge --squash` sin `--body`, GitHub añade una línea `Co-authored-by:` por cada autor de commit
+que no es quien funde. Las sesiones cloud firmaban con la identidad del contenedor, que es la de la
+herramienta (`/root/.gitconfig`, medido el 2026-09-28), y así entraron en `main` cinco fusiones con la
+herramienta de coautora entre el 2026-09-21 y el 2026-09-28 (#223, #224, #266, #267 y #270) sin que
+ningún commit de sus ramas llevara la línea; dos (#223 y #266) las fundió el robot de la auditoría. Las
+sesiones locales firmaban con una identidad de relleno, `x <x@y.z>`, que ha dejado su coautor en 121
+commits de `main`. Ni `bash-guard` ni `pr-footer-guard` lo veían: ese mensaje no lo escribe ninguna sesión.
+
+**Decisión** · (decisión de producto, 2026-09-28)
+1. Los commits de las sesiones, en la nube y en local, firman con la cuenta de GitHub del mantenedor. En
+   la nube la fija `scripts/hooks/cloud-identity.mjs` al arrancar (SessionStart): actúa si el clon
+   firmaría como la herramienta y `origin` es este repo (un fork no firma con ella), sin depender de
+   `CLAUDE_CODE_REMOTE`: en una sesión programada de ese día, `cloud-node.sh`, que sí depende de ella, no
+   puso su Node ni `node_modules`, y no quedó medido por qué. En local, la config de git del repo en la
+   máquina del mantenedor.
+2. La autofusión de la auditoría escribe el mensaje del squash: título y cuerpo del PR, sin trailers ni
+   el pie de la herramienta (`scripts/mensaje-squash.mjs`, desde `audit-automerge.yml`). Un test impide
+   que un workflow vuelva a fundir por squash sin `--subject` y `--body`.
+3. `audit:commit-attribution` (gate 44 de `verify`) pone rojo un commit de la rama que tenga el correo
+   de la herramienta de autor o de committer, o una línea de atribución al principio de una línea del
+   mensaje. Mira `origin/main..HEAD`; el job `verify` del CI hace el checkout con la historia entera.
+4. Lo que ya está en `main` se queda. 820 commits llevan el coautor de la herramienta, casi todos con la
+   línea escrita en el propio commit (la atribución del CLI estuvo encendida hasta el 2026-09-14), y 121
+   el de relleno. Reescribir `main` cambiaría los SHA que citan este log, los hand-offs y los PR.
+
+**Razón** · Con autor y quien funde en la misma cuenta, GitHub no añade coautor: medido en el #249,
+que mezclaba commits de las dos identidades y solo sacó de coautora a la de relleno. Con el mensaje
+escrito, GitHub lo usa tal cual: medido el mismo día en el #279, de una rama `prueba/*` desechable a
+otra, un commit firmado con el correo de la herramienta fundido con los comandos del robot entró con
+cero líneas de coautor; con el mismo `gh pr merge --squash` sin `--body`, el #266 la llevaba.
+
+**Descartadas** ·
+- Una identidad neutra: no nombra a la herramienta, pero cada fusión seguiría sumando su línea de
+  coautor, que es lo que ya hacía `x <x@y.z>`.
+- El correo privado de GitHub (`…@users.noreply.github.com`) en vez del de la cuenta: no deja el correo
+  escrito en el repo, pero no está medido que GitHub lo trate como la misma cuenta al fundir, y el
+  correo de la cuenta ya sale como autor de cada fusión de `main`.
+- Borrar la línea a mano al fundir desde la web: era la regla de AGENTS.md, y aun así entraron cinco.
+- Reescribir la historia de `main` para quitar las líneas (punto 4).
+
+**Consecuencias** · Un PR fundido desde la web con el mensaje por defecto entra sin coautor si sus
+commits son de la cuenta de quien funde; la auditoría del 2026-10-05 será la primera que el robot funda
+con el mensaje escrito. El proxy de git de la nube acepta el push con la cuenta del mantenedor: medido
+el mismo día desde una sesión cloud (0dcfe28, en una rama de prueba ya borrada), y GitHub atribuye ese
+commit a su cuenta. El contenedor lo firma con su clave SSH, que GitHub da por buena solo para la cuenta
+de la herramienta (`verified: true` en 1f7abca1, d9783902 y 8d34a82c): con el correo del mantenedor, el
+PR enseña esos commits sin verificar (`unknown_key`, medido en 0dcfe28). La fusión de `main` la firma
+GitHub en cualquier caso.
+
 ## DD-133 · 2026-09-28 — Las ayudas bajo los campos salen de las fuentes y se anuncian con su campo
 
 **Contexto** · Revisión de las ayudas de las fichas de administración con dos fuentes:
