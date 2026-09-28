@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 153,
+      "usedInSupervisor": 156,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -502,7 +502,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 17,
+      "usedInSupervisor": 18,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -521,7 +521,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 36,
+      "usedInSupervisor": 37,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },

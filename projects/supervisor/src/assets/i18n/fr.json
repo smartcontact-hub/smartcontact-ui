@@ -1343,10 +1343,10 @@
       "status": "État"
     },
     "type": {
+      "superadmin": "Superadmin",
       "administrator": "Administrateur",
-      "supervisor": "Superviseur",
-      "agent": "Agent",
-      "viewer": "Lecteur"
+      "supervisor_online": "Superviseur en ligne",
+      "supervisor_offline": "Superviseur hors ligne"
     },
     "status": {
       "active": "Actif",
@@ -1356,18 +1356,27 @@
       "dashboard": "Tableau de bord",
       "services": "Services",
       "ai_node": "Nœud IA",
-      "groups_agents_typifications": "Groupes / Agents / Typifications",
+      "typifications": "Typifications",
       "campaigns": "Campagnes",
       "conversations": "Conversations",
       "stats": "Statistiques",
       "stats_data_reports": "Rapports de données",
       "stats_flow_analyzer": "Analyseur de flux",
       "vui_designer": "VUI Designer",
-      "users": "Utilisateurs"
+      "users": "Utilisateurs",
+      "groups": "Groupes",
+      "agents": "Agents",
+      "repositories": "Référentiels",
+      "aed": "Contact Center",
+      "system": "Système"
     },
     "permission": {
       "vui_designer_management": "Gestion VUI Designer",
       "users_management": "Gestion des utilisateurs",
+      "groups_management": "Gestion des groupes",
+      "agents_management": "Gestion des agents",
+      "repositories_management": "Gestion des référentiels",
+      "aed_management": "Gestion du Contact Center",
       "recording_management": "Gestion des enregistrements",
       "transcriptions_management": "Gestion des transcriptions",
       "spy_on_conversations": "Espionner les conversations"
@@ -1395,6 +1404,7 @@
         "identifier": "Identifiant interne",
         "identifier_hint": "Si vous le laissez vide, il sera généré automatiquement lors de la sauvegarde.",
         "type": "Type d'utilisateur",
+        "type_hint": "Chaque type apporte son modèle d'accès : le choisir coche ses cases dans Accès.",
         "status": "État",
         "active": "Actif",
         "active_hint": "Peut se connecter et opérer",
@@ -1407,7 +1417,18 @@
       "headline": {
         "type": "Type"
       },
-      "create_submit": "Créer l'utilisateur"
+      "create_submit": "Créer l'utilisateur",
+      "template": {
+        "label": "Modèle : {{type}}",
+        "changes_one": "{{count}} modification",
+        "changes_other": "{{count}} modifications",
+        "reset": "Revenir au modèle",
+        "apply_title": "Appliquer le modèle {{type}} ?",
+        "apply_body_one": "Cela change {{count}} case dans Accès. Si vous la gardez, le type change quand même et Accès reste tel quel.",
+        "apply_body_other": "Cela change {{count}} cases dans Accès. Si vous les gardez, le type change quand même et Accès reste tel quel.",
+        "apply": "Appliquer le modèle",
+        "keep": "Garder les cases"
+      }
     },
     "errors": {
       "name_required": "Le nom est obligatoire",

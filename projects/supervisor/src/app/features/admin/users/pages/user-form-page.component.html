@@ -144,13 +144,18 @@
                 </div>
 
                 <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="user-type">
+                  <!-- `for` no nombra un `span[role=combobox]`: sin `ariaLabelledBy`, el lector leía el valor en crudo
+                       («supervisorOffline») como nombre del campo. -->
+                  <label id="user-type-label" class="field__label sc-text-caption-semibold" for="user-type">
                     {{ 'users.form.fields.type' | translate }}
                   </label>
+                  <!-- Elegir el tipo marca su plantilla en Acceso, que es OTRA sección: la ayuda lo dice aquí (DD-132). -->
                   <sc-select
                     inputId="user-type"
+                    ariaLabelledBy="user-type-label"
                     [options]="userTypes"
                     [value]="form().type"
+                    [helperText]="'users.form.fields.type_hint' | translate"
                     (valueChange)="onTypeValueChange($event)"
                   >
                     <ng-template #item let-t>
@@ -195,6 +200,23 @@
             titleKey="users.form.section.access"
             hintKey="users.form.section.access_hint"
           >
+            <!-- El tipo ES una plantilla (DD-132): cuál sigue y, si alguien se apartó de ella, cuánto y cómo volver. Vale
+                 para las dos listas, así que va en su propio tramo, con la misma sangría y su divisor. -->
+            <div class="sub-section">
+              <p class="access-template sc-text-body-regular">
+                <span>{{ 'users.form.template.label' | translate: { type: (typeLabelKeys[form().type] | translate) } }}</span>
+                @if (templateDrift() > 0) {
+                  <span aria-hidden="true">·</span>
+                  <span class="access-template__drift">{{ templateChangesKey(templateDrift()) | translate: { count: templateDrift() } }}</span>
+                  <sc-button type="button" size="sm" variant="contrast" appearance="text" (clicked)="resetToTemplate()">
+                    <span>{{ 'users.form.template.reset' | translate }}</span>
+                  </sc-button>
+                }
+              </p>
+            </div>
+
+            <sc-divider />
+
             <section class="sub-section" aria-labelledby="user-access-sections-title">
               <header class="sub-section__head">
                 <h3 id="user-access-sections-title" class="sub-section__title sc-text-body-semibold">{{ 'users.form.section.sections' | translate }}</h3>
@@ -284,6 +306,26 @@
     </div>
   </div>
 </div>
+
+<!-- Cambiar el tipo pisaría casillas que alguien tocó (o es una edición): se pregunta antes de aplicar su plantilla.
+     El tipo ya cambió; cerrar el aviso es mantener las casillas (DD-132). -->
+@if (pendingTemplate(); as pending) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'users.form.template.apply_title' | translate: { type: (typeLabelKeys[pending.type] | translate) }"
+    [subtitle]="(pending.changes === 1 ? 'users.form.template.apply_body_one' : 'users.form.template.apply_body_other') | translate: { count: pending.changes }"
+    (cancelled)="keepAccess()"
+  >
+    <div modal-actions>
+      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="keepAccess()">
+        <span>{{ 'users.form.template.keep' | translate }}</span>
+      </sc-button>
+      <sc-button type="button" size="sm" (clicked)="confirmTemplate()">
+        <span>{{ 'users.form.template.apply' | translate }}</span>
+      </sc-button>
+    </div>
+  </sc-dialog>
+}
 
 <sc-delete-entity-dialog
   [visible]="deleteVisible()"

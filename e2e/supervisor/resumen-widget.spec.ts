@@ -15,7 +15,7 @@ import { disableAnimations, forceDarkTheme, forceLightTheme, goto } from './help
  *     `progressbar` con `aria-busy` diría «cargando» de un dato que no carga) y no pinta su «N%» (como el
  *     ejemplo: a 42 px no se lee y la cifra grande ya lo dice);
  *   · el arco va en el acento y la tarjeta en el tinte de marca, en los dos temas;
- *   · al lector le llega la cifra final («8 de 11»), no la cuenta;
+ *   · al lector le llega la cifra final («8 de 16»), no la cuenta;
  *   · con menos movimiento no hay cifras intermedias;
  *   · sin total no hay anillo (el alta de un agente sin grupos).
  */
@@ -53,9 +53,10 @@ for (const { tema, forzar } of [
 
       const [secciones, permisos] = [anillos(page).nth(0), anillos(page).nth(1)];
       await expect(secciones).toHaveAttribute('aria-valuenow', '8');
-      await expect(secciones).toHaveAttribute('aria-valuemax', '11');
+      // Sobre las casillas que la ficha enseña: 16 secciones y 9 permisos desde DD-132 (antes, 11 y 5).
+      await expect(secciones).toHaveAttribute('aria-valuemax', '16');
       await expect(permisos).toHaveAttribute('aria-valuenow', '2');
-      await expect(permisos).toHaveAttribute('aria-valuemax', '5');
+      await expect(permisos).toHaveAttribute('aria-valuemax', '9');
       await expect(secciones).toHaveAttribute('aria-hidden', 'true');
       await expect(secciones.locator('.p-progressspinner-value')).toBeHidden();
 
@@ -71,7 +72,7 @@ for (const { tema, forzar } of [
       expect(fondo, 'la tarjeta va en el tinte de marca').toBe(await colorDeToken(page, '--sc-bg-primary-subtle'));
 
       await expect(cifra(page, 0)).toHaveText('8');
-      await expect(widgets(page).first().locator('.visually-hidden')).toHaveText('8 de 11');
+      await expect(widgets(page).first().locator('.visually-hidden')).toHaveText('8 de 16');
     });
   });
 }
@@ -111,7 +112,7 @@ test.describe('con los datos de siempre', () => {
     await page.locator('#user-section-access sc-checkbox', { hasText: 'Espiar conversaciones' }).click();
     await expect(cifra(page, 1)).toHaveText('1');
     await expect(anillos(page).nth(1)).toHaveAttribute('aria-valuenow', '1');
-    await expect(widgets(page).nth(1).locator('.visually-hidden')).toHaveText('1 de 5');
+    await expect(widgets(page).nth(1).locator('.visually-hidden')).toHaveText('1 de 9');
   });
 });
 
