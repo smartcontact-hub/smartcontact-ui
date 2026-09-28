@@ -1,21 +1,22 @@
 {
-  "commit": "2b19abc5",
+  "commit": "16ff7930",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-24T19:42:11.517Z",
+  "generado": "2026-09-28T06:22:07.622Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "sc-preset.mjs",
         "smartcontact-tokens.css"
       ],
-      "variables": [],
+      "variables": [
+        "claro|--sc-cmp-button-text-danger-color"
+      ],
       "retirados": [],
       "semanticaComun": false,
-      "reglasCss": true,
+      "reglasCss": false,
       "componentes": []
     },
     "cambia": true,
@@ -24,5 +25,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260924.1942"
+  "version": "0.20260928.622"
 }
