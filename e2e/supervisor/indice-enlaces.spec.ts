@@ -113,13 +113,31 @@ test('ficha de grupo · Cmd/Ctrl+clic abre la sección en otra pestaña, y las d
   page,
   context,
 }) => {
+  /* Lo que es de la app: que el Ctrl+clic llegue al enlace de la sección SIN cancelar (entonces el navegador lo abre en
+   * otra pestaña) y que la ficha no se mueva. El último oyente del clic —en `window`, en burbuja, detrás de los de la
+   * app— lo apunta y corta la acción por defecto; la otra pestaña se abre con ese enlace, como en `ficha-grupo`.
+   * Hasta el 2026-09-28 el test esperaba a que el navegador creara la pestaña en segundo plano
+   * (`context.waitForEvent('page')`), y en el CI esa espera agotó los 90 s tres veces ese día, con árboles que en local
+   * pasaban siempre (24 de 24 vueltas, también con la CPU frenada ×4): la pestaña no es de la app. Que el manejador del
+   * índice no cancele el clic con tecla lo fija además la prueba unitaria del DS. */
+  await page.addInitScript(() => {
+    window.addEventListener('click', (e) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      const enlace = e.target instanceof Element ? e.target.closest('a') : null;
+      const apunte = { href: enlace?.getAttribute('href') ?? null, cancelado: e.defaultPrevented };
+      (window as unknown as { __ctrlClic: unknown }).__ctrlClic = apunte;
+      e.preventDefault();
+    });
+  });
   await goto(page, 'admin/grupos/editar/1');
-  const [otra] = await Promise.all([
-    context.waitForEvent('page'),
-    fila(page, 'Agentes').click({ modifiers: ['ControlOrMeta'] }),
-  ]);
-  // La pestaña nace en blanco y luego carga el enlace: se espera a su dirección, no al primer `load`.
-  await otra.waitForURL(/\/admin\/grupos\/editar\/1\?seccion=agentes$/);
+  await fila(page, 'Agentes').click({ modifiers: ['ControlOrMeta'] });
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { __ctrlClic?: unknown }).__ctrlClic))
+    .toEqual({ href: '/admin/grupos/editar/1?seccion=agentes', cancelado: false });
+  expect(seccion(page)).toBeNull();
+
+  const otra = await context.newPage();
+  await goto(otra, 'admin/grupos/editar/1?seccion=agentes');
   await expect(otra.locator('#group-section-agents')).toBeVisible();
   // La original no se ha movido.
   await expect(page.locator('#group-section-general')).toBeVisible();

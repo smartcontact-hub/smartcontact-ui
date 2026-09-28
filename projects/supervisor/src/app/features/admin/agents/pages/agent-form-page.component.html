@@ -155,7 +155,7 @@
                 </div>
 
                 <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-ext">
+                  <label id="agent-ext-label" class="field__label sc-text-caption-semibold" for="agent-ext">
                     {{ 'agents.form.fields.extension' | translate }}
                     <span class="field__required" aria-hidden="true">*</span>
                   </label>
@@ -163,6 +163,7 @@
                        añade el aria-required que el `*` visible no da. -->
                   <sc-select
                     inputId="agent-ext"
+                    ariaLabelledBy="agent-ext-label"
                     optionLabel="number"
                     optionValue="number"
                     [filter]="true"
@@ -170,6 +171,7 @@
                     [required]="true"
                     [options]="availableExtensions"
                     [placeholder]="'agents.form.fields.extension_placeholder' | translate"
+                    [helperText]="'agents.form.fields.extension_hint' | translate"
                     [value]="form().extension"
                     (valueChange)="onExtensionValueChange($event)"
                   >

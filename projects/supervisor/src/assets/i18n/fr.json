@@ -1443,9 +1443,7 @@
     },
     "empty": {
       "title": "Pas encore d'utilisateurs",
-      "body": "Créez votre premier utilisateur pour donner accès au panneau.",
-      "title_filtered": "Aucun utilisateur trouvé",
-      "body_filtered": "Ajustez la recherche ou effacez les filtres pour voir plus de résultats."
+      "body": "Créez votre premier utilisateur pour donner accès au panneau."
     },
     "entity_plural": "utilisateurs",
     "export": {
@@ -1547,6 +1545,7 @@
         "name": "Nom",
         "phone": "Téléphone sortant",
         "priority": "Priorité",
+        "priority_hint": "La priorité de ses appels. Elle s’applique aux appels entrants et sortants, télémarketing compris.",
         "phone_strategy": "Stratégie (téléphone)",
         "chat_strategy": "Stratégie (chat)",
         "phone_hint": "Le numéro que voient les clients quand un agent du groupe appelle. Choisissez-en un ou saisissez-le.",
@@ -1555,8 +1554,6 @@
         "ring_all_suffix": "agents à la fois",
         "ring_all_summary": "{{count}} à la fois",
         "sub_strategy": "Dans chaque niveau",
-        "levels_hint": "Choisissez le niveau de chaque agent dans le tableau ci-dessous. Le niveau 1 reçoit en premier.",
-        "exclusive_hint": "Se configure dans l’arbre de l’IVR.",
         "skills_unavailable": "Nécessite des compétences par agent",
         "typification": "Typification",
         "typification_new": "Nouvelle typification",
@@ -1566,6 +1563,14 @@
         "agenda_new": "Nouvel agenda",
         "template_new": "Nouveau modèle",
         "label_new": "Nouvelle étiquette"
+      },
+      "strategy_help": {
+        "balanced": "À tour de rôle : chaque appel va à l’agent suivant et, s’il ne décroche pas, au suivant.",
+        "fewest_calls": "Va à l’agent qui a pris le moins d’appels.",
+        "longest_idle": "Va à l’agent disponible inactif depuis le plus longtemps.",
+        "levels": "D’abord les agents du niveau 1 disponibles et libres. Le niveau de chaque agent se choisit dans Agents.",
+        "ring_all": "Sonne en même temps chez plusieurs agents.",
+        "exclusive": "Va à l’agent que le client compose dans l’IVR. Se configure dans l’arbre de l’IVR, après avoir créé le groupe."
       },
       "assigned_count": "Assignés ({{count}})",
       "available_agents": "Disponibles",
@@ -1586,7 +1591,6 @@
       "announcements": {
         "audio_title": "Messages vocaux",
         "hold_music": "Musique d’attente",
-        "hold_music_info": "La musique de fond pendant que l'appelant patiente en file. Sans fichier, celle par défaut du système joue.",
         "default_music": "Musique par défaut",
         "use_default": "Utiliser celle par défaut",
         "queue_id": "Identifiant du groupe",
@@ -1609,8 +1613,7 @@
         "outbound_audio": "Audio sortant",
         "outbound_audio_info": "Audio pour les appels sortants du groupe, pas ceux qu'il reçoit. Ce qui se joue et quand reste à confirmer avec le développement.",
         "voice": "Voix des annonces",
-        "voice_info": "La voix qui lit les textes saisis dans « Texte à voix ». Si vous ne l'utilisez nulle part, ce champ ne fait rien.",
-        "voice_hint": "Celle qui lit les messages en synthèse vocale.",
+        "voice_hint": "La voix de synthèse qui lit les annonces du groupe.",
         "notices_title": "Avis",
         "avg_wait": "Annoncer le temps d’attente moyen",
         "avg_wait_info": "Indique à l'appelant la durée habituelle de l'attente. Vous saisissez ce chiffre, le système ne le calcule pas.",
@@ -1633,13 +1636,13 @@
         "transfer": "Temps de transfert",
         "transfer_hint": "Temps maximal pour remettre la conversation à sa destination.",
         "service_level": "Temps du % de service",
-        "service_level_hint": "Les conversations prises avant ce temps comptent comme à temps.",
+        "service_level_hint": "Le % de service compte les conversations prises dans ce délai ou moins.",
         "wrap_up": "Temps entre appels",
         "wrap_up_hint": "Ce que l’agent attend avant de recevoir l’appel suivant.",
         "overflow": "Déborder si tous les agents sont inactifs",
         "overflow_hint": "Les contacts passent à la destination suivante, qui ne se choisit pas ici.",
         "overflow_session": "Débordement de session",
-        "overflow_session_hint": "Redirige les sessions actives au-delà de leur limite.",
+        "overflow_session_hint": "Après une minute sans activité, la session passe à la destination suivante.",
         "card_opening": "Ouverture de la fiche",
         "card_embedded": "Intégrée",
         "card_new_window": "Nouvelle fenêtre",
@@ -1648,15 +1651,13 @@
         "card_height": "Hauteur",
         "chat_config_title": "Paramètres du chat",
         "whatsapp_number": "Numéro WhatsApp",
-        "whatsapp_number_info": "Le numéro qui reçoit les messages WhatsApp de ce groupe.",
         "chat_rating": "Demander une évaluation à la fermeture du chat",
         "chat_rating_info": "À la fin de la conversation, on demande au client s’il est satisfait du service.",
         "chat_rating_hint": "Le client voit une courte question d’évaluation juste après la fin de l’échange.",
         "allowed_domains": "Domaines autorisés",
         "allowed_domains_placeholder": "exemple.com",
-        "allowed_domains_info": "Sur quels sites le script du chat de ce groupe peut s’intégrer. Sans aucun domaine ajouté, il fonctionne sur n’importe quel site.",
         "allowed_domains_add": "Ajouter",
-        "allowed_domains_hint": "Empêche un autre site d’utiliser votre widget de chat sans autorisation. Saisissez le domaine et cliquez sur Ajouter.",
+        "allowed_domains_hint": "Les sites où le chat de ce groupe peut s’intégrer ; sans aucun, n’importe quel site. Saisissez le domaine et cliquez sur Ajouter.",
         "script_title": "Script de chat",
         "script_hint": "Collez ce code dans l’en-tête du site où vous voulez le chat.",
         "script_copy": "Copier le code",
@@ -1737,9 +1738,7 @@
     },
     "empty": {
       "title": "Pas encore de groupes",
-      "body": "Créez votre premier groupe pour commencer à router les interactions.",
-      "title_filtered": "Aucun groupe trouvé",
-      "body_filtered": "Ajustez la recherche ou effacez les filtres pour voir plus de résultats."
+      "body": "Créez votre premier groupe pour commencer à router les interactions."
     },
     "entity_plural": "groupes",
     "export": {
@@ -1882,6 +1881,7 @@
         "name": "Nom",
         "type": "Type d'agent",
         "extension": "Extension",
+        "extension_hint": "Tél : l’agent prend les appels sur son mobile. WebRTC : dans le navigateur, avec Smart Contact Agent.",
         "extension_placeholder": "Sélectionnez une extension disponible",
         "extension_empty": "Sans extension",
         "email_empty": "Sans email",
@@ -1965,9 +1965,7 @@
     },
     "empty": {
       "title": "Pas encore d'agents",
-      "body": "Créez votre premier agent pour commencer à recevoir appels et conversations.",
-      "title_filtered": "Aucun agent trouvé",
-      "body_filtered": "Ajustez la recherche ou effacez les filtres pour voir plus de résultats."
+      "body": "Créez votre premier agent pour commencer à recevoir appels et conversations."
     },
     "entity_plural": "agents",
     "export": {

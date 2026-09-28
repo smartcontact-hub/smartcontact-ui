@@ -386,8 +386,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (id) this.goTo(id);
   }
 
-  protected readonly infoIcon = 'info';
-
   protected readonly editingId = signal<number | null>(null);
   protected readonly initial = signal<Group | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
@@ -509,7 +507,22 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   );
   protected readonly isNiveles = computed(() => this.hasPhone() && this.form().strategy === 'Niveles');
   protected readonly isRingAll = computed(() => this.hasPhone() && this.form().strategy === 'Ring All');
-  protected readonly isExclusive = computed(() => this.hasPhone() && this.form().strategy === 'Agente exclusivo');
+
+  /**
+   * Qué hace la estrategia de teléfono elegida, en una línea bajo el campo (DD-133). El texto sale del manual de usuario
+   * de Voice, que describe seis; Skills sale apagada con su motivo y no lleva ayuda.
+   */
+  private static readonly STRATEGY_HELP: Readonly<Record<string, string>> = {
+    Balanceada: 'groups.form.strategy_help.balanced',
+    'Menos llamadas atendidas': 'groups.form.strategy_help.fewest_calls',
+    'Más tiempo inactivo': 'groups.form.strategy_help.longest_idle',
+    Niveles: 'groups.form.strategy_help.levels',
+    'Ring All': 'groups.form.strategy_help.ring_all',
+    'Agente exclusivo': 'groups.form.strategy_help.exclusive',
+  };
+  protected readonly strategyHelpKey = computed<string | null>(
+    () => GroupFormPageComponent.STRATEGY_HELP[this.form().strategy] ?? null,
+  );
 
   /** Los números que ya usan los grupos; también se puede escribir uno nuevo (Voice lo deja libre). */
   protected readonly phoneOptions = computed<readonly string[]>(() => {

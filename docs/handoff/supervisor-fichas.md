@@ -13,9 +13,10 @@
 tablas tras la revisión del equipo (2026-09-24, cinco PRs): `git show 197c5579:docs/handoff/supervisor-fichas.md`;
 sus dos trampas suben a «Trampas del frente».
 
-## ✅ 2026-09-28 · El panel rápido de agentes, compacto (DD-131), y qué trae cada tipo de usuario (DD-132)
+## ✅ 2026-09-28 · Panel rápido compacto (DD-131), qué trae cada tipo de usuario (DD-132) y las ayudas (DD-133)
 
-> **Sello: #273 fundido en `main` (`7730619`); los tipos, en la rama `areses/sweet-fermat-r9cxzw` sobre él.**
+> **Sello: #273 (`7730619`) y #274 (`212debe`) fundidos en `main`; las ayudas, en la rama `areses/sweet-fermat-r9cxzw`
+> sobre `212debe`.**
 
 **Qué pasó.** Revisión de producto, con captura: el panel «Agentes · <grupo>» del listado era demasiado ancho y dejaba
 mucho aire entre el nombre y las columnas. Pase con `/better-ui`, medido antes y después con una sonda de Playwright
@@ -50,6 +51,15 @@ grupos y el manual de usuario de Voice:
   la plantilla».
 
 `usuario-plantillas.spec.ts`: cinco pruebas, las cinco en rojo contra el código anterior.
+
+**Las ayudas (DD-133)**, del manual de usuario de Voice y del documento de producto, sin inventar nada:
+- nuevas: Prioridad, la estrategia de teléfono (una línea por cada una, que cambia con la elegida) y la extensión del
+  agente;
+- reescritas: % de servicio, Voz, dominios y «Desbordar sesión»; fuera las cuatro ⓘ de la ficha de grupo;
+- en el DS, `sc-select` pone sus `aria-*` en el elemento con foco (antes el lector no anunciaba ninguna ayuda de un
+  select), y los textos fijos de los desplegables hablan los cuatro idiomas.
+
+`ayudas-campos.spec.ts`: cinco pruebas, las cinco en rojo contra el código anterior.
 
 ## ✅ 2026-09-27 · El «Eliminar» de las fichas sube a AA: red-500 → red-600 (DD-128)
 
@@ -259,21 +269,18 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
 
 ## SIGUIENTE — sin preguntar
 
-0. **Ayudas bajo los campos y estados vacíos**, con las mismas fuentes y nada inventado:
-   - nuevas: Prioridad, Estrategia (qué hace cada una), Tiempo máximo de espera en cola y Tipo de agente; reescritas:
-     % de servicio (sin círculo), niveles (sin «la tabla de abajo») y Voz (sin «Texto a voz»);
-   - fuera las que repiten el rótulo, mirando antes en DECISIONS que ninguna se puso a propósito (LEARNINGS #10); los
-     cuatro ⓘ de la ficha de grupo, a texto visible o fuera si duplican (DD-100);
-   - la ayuda, enlazada al campo con `aria-describedby` en lo que se toque; «Sin opciones» y «Sin resultados» en el
-     idioma del usuario si el DS lo deja; fuera las claves `*_filtered` sin uso; Contact Center › Grupos y Agentes
-     con las mismas ayudas.
+0. **Lo que dejan abierto DD-132 y DD-133:**
+   - que las casillas de Acceso restrinjan de verdad (guardas de ruta y de acción);
+   - confirmar con producto que Tipificaciones va con la supervisión;
+   - qué pasa al agotarse el tiempo máximo de espera en cola (pregunta para desarrollo; sin eso, el campo va sin
+     ayuda);
+   - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
+   - los subtítulos de sección, sin revisar.
 
    Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
    código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el
    icono a 400 junto a texto semibold en el título de sección y en la fila activa del índice (`figma-pendiente` §29).
    El laboratorio de administración (`/lab/admin/*`): sus paquetes quedan superados por los de DD-132.
-   Pendiente de DD-132: que las casillas restrinjan de verdad (guardas de ruta y de acción), y confirmar con producto
-   que Tipificaciones va con la supervisión.
 1. **Pendiente de Rafa:** dijo «tanto para Agents como groups»; se hicieron grupos y usuarios (las
    dos entidades del teardown). Si se refería a la lista real de `/admin/agentes`, es una tercera
    con el mismo molde.
@@ -308,9 +315,16 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
 - **Rafa:** revisar usuarios contra el Supervisor real.
 
 **Trampas del frente:**
-- ⚠️ `CI=1 npm run e2e` en local se cuelga 25 minutos: con `CI` fuera de GitHub, el guardián de puertos espera a que
-  se libere el 4280, y lo esperan también los workers, al servidor de su propia ejecución (2026-09-28; tarea
-  sugerida). Mientras, `npm run e2e` sin `CI`.
+- ⚠️ Pulsar un `sc-select` por el centro de su caja: con ayuda o error debajo, el centro cae en el hueco entre el
+  control y el texto, y no abre nada (extensión del agente: 33 px de control, 7 de hueco y 35 de ayuda). Desde el
+  2026-09-28 `pickSelectOption` pulsa el control.
+- ⚠️ Medir anchos antes de que cargue la fuente de iconos: con `font-display: block` el glifo no se ve pero ocupa el
+  ancho de su nombre («group_add») con la letra de reserva, y «Asignar» mide 146 px en su celda de 120. Antes de medir,
+  `document.fonts.load(…)` y `document.fonts.ready`.
+- ⚠️ Un Ctrl+clic que espera a que el navegador cree la pestaña (`context.waitForEvent('page')`) agotó los 90 s tres
+  veces en el CI el 2026-09-28 (parte 2/4), y ninguna en local. Playwright solo emite `page` cuando la pestaña nueva
+  confirma su primera navegación; la traza del CI no se pudo abrir desde aquí. `indice-enlaces` comprueba ahora la
+  parte de la app (el clic llega al enlace sin cancelar) y abre la otra con `context.newPage()`.
 - ⚠️ Un commit del robot `visual-baselines` sobre un PR ya abierto deja su CI en «action_required», y hay que
   aprobarlo a mano (2026-09-24). Si un cambio mueve una captura de sc-docs, lanza el workflow sobre la rama ANTES de
   abrir el PR.

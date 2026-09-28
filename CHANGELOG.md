@@ -52,6 +52,10 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   `red-600`: 3.76:1 sobre blanco no llegaba al 4.5:1 de WCAG AA, el mismo fallo que el `danger` sólido ya
   había corregido en julio. Sin cambio en oscuro (ya usaba `red-400`). Todo consumidor de esa combinación,
   no solo el «Eliminar» de las fichas, hereda el color. ([DD-128](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-select` y `sc-multiselect` sacan sus textos fijos de su diccionario
+  (`sc.select.*`, en español, inglés, francés y portugués), como `sc-drawer`: «Sin opciones», «Sin resultados»,
+  «Buscar» y «{0} seleccionados». Eran literales en español en sus `input()`, y un desplegable en otro idioma los
+  seguía diciendo en español. Sin cambio en español; quien los pase por entrada, manda. ([DD-133](docs/DECISIONS.md))
 
 ### Fixed
 
@@ -59,6 +63,10 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   (`disabled/opacity`). La caja llevaba además la suya y las dos se multiplicaban (0,36), así que una casilla
   marcada y desactivada, un valor fijo que no se quita desde ahí, se leía como apagada y no como marcada. Todo
   consumidor hereda el arreglo: las casillas desactivadas se ven algo más oscuras. ([DD-131](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-select` pone `aria-describedby`, `aria-required` y `aria-invalid` en el
+  elemento que recibe el foco (el `span[role=combobox]`, o el `<input>` si es editable), por passthrough, como
+  `sc-password`. Iban en la envoltura `<p-select>`, y un lector de pantalla no anunciaba la ayuda ni el error, ni
+  sabía que el campo era obligatorio. ([DD-133](docs/DECISIONS.md))
 
 ## [1.0.0] — 2026-09-09
 

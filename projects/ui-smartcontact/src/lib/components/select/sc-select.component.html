@@ -24,9 +24,9 @@
     [editable]="editable()"
     [filter]="filter()"
     [filterBy]="filterBy() ?? optionLabel()"
-    [filterPlaceholder]="filterPlaceholder()"
-    [emptyFilterMessage]="emptyFilterMessage()"
-    [emptyMessage]="emptyMessage()"
+    [filterPlaceholder]="filterPlaceholder() ?? ('sc.select.search' | translate)"
+    [emptyFilterMessage]="emptyFilterMessage() ?? ('sc.select.empty_filter' | translate)"
+    [emptyMessage]="emptyMessage() ?? ('sc.select.empty' | translate)"
     [size]="pSize()"
     [panelStyleClass]="panelStyleClass()"
     [appendTo]="appendTo()"
@@ -36,10 +36,8 @@
     (onBlur)="onBlur($event)"
     [ariaLabelledBy]="resolvedLabelledBy()"
     [attr.name]="name() ?? null"
-    [attr.aria-describedby]="footerText() ? msgId() : null"
-    [attr.aria-required]="required() ? true : null"
+    [pt]="pt()"
     [invalid]="isInvalid()"
-    [attr.aria-invalid]="isInvalid() ? true : null"
   >
     <!--
     Re-proyección de templates: el consumer escribe
