@@ -20,7 +20,8 @@ const SIZES_SNIPPET = `<sc-checkbox [state]="'all'" size="sm" />
 <sc-checkbox [state]="'all'" size="lg" />
 <sc-checkbox [state]="'some'" />
 <sc-checkbox [state]="'all'" [filled]="true" />
-<sc-checkbox [state]="'none'" [disabled]="true" />`;
+<sc-checkbox [state]="'none'" [disabled]="true" />
+<sc-checkbox [state]="'all'" [disabled]="true" />`;
 
 /** Demo de `sc-checkbox` en formato story (motor «Storybook-like»). */
 @Component({

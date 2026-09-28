@@ -786,6 +786,21 @@ test.describe('sc-checkbox', () => {
     await expect(header).toHaveJSProperty('type', 'checkbox');
     await screenshotBaseline(page, 'checkbox');
   });
+
+  test('desactivada, la opacidad va una vez: el 60 % de Figma, no 0,6 × 0,6', async ({ page }) => {
+    await gotoPage(page, 'checkbox');
+    const casilla = page.getByTestId('sc-checkbox-disabled-all');
+    await expect(casilla.locator('input')).toBeChecked();
+    await expect(casilla.locator('input')).toBeDisabled();
+    // La EFECTIVA: la de la caja por la de cada antepasado. Hasta DD-131 la caja llevaba la suya encima de la de
+    // la casilla entera, y una marcada y fija se leía como apagada (0,36).
+    const opacidad = await casilla.locator('.tri-checkbox__box').evaluate((caja) => {
+      let o = 1;
+      for (let n: Element | null = caja; n; n = n.parentElement) o *= parseFloat(getComputedStyle(n).opacity || '1');
+      return o;
+    });
+    expect(opacidad).toBeCloseTo(0.6, 2);
+  });
 });
 
 test.describe('sc-empty-state', () => {

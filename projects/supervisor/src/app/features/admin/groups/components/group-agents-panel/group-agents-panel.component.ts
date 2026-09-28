@@ -21,17 +21,30 @@ import {
 
 import { CrossTabLockService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { ChannelIconComponent } from '@shared/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import { clampLinksToChannels, diffLinks } from '@features/admin/services/group-channels.core.mjs';
 
-import { CHANNEL_LABEL_KEYS, GROUP_CHANNELS, type Group, type GroupChannel } from '../../data/groups-data';
+import { GROUP_CHANNELS, type Group, type GroupChannel } from '../../data/groups-data';
 import {
+  ACTIONS_COL_COMPACT,
   type AgentChannelTableAgent,
   AgentChannelTableComponent,
+  CHANNEL_COL_COMPACT,
 } from '../agent-channel-table/agent-channel-table.component';
+
+/**
+ * El ancho del panel sale de lo que lleva dentro (DD-131), en rem. Hasta el 2026-09-28 era un `52rem` fijo, el
+ * ancho de la tabla de la ficha: con dos canales dejaba 450 px entre el nombre y su primera casilla (medido a 1440).
+ *   · NOMBRE: 15rem, que caben el avatar, un nombre largo y «En pausa»; más largo, se recorta con su `title`.
+ *   · MARCO: el relleno del cajón (15,75 a cada lado) y el borde de la tabla.
+ *   · MÍNIMO: 28rem, lo que piden el título y la barra (buscar + «Añadir agentes…») en una línea.
+ */
+const PANEL_NAME_REM = 15;
+const PANEL_CHROME_REM = 2.25;
+const PANEL_MIN_REM = 28;
+const LEVEL_COL_REM = 6.5;
 
 /**
  * EL PANEL RÁPIDO DE AGENTES, desde el listado de grupos. Asignar y desasignar agentes y sus canales
@@ -57,7 +70,6 @@ import {
   imports: [
     AgentChannelTableComponent,
     ButtonComponent,
-    ChannelIconComponent,
     DialogComponent,
     DrawerComponent,
     MessageComponent,
@@ -79,7 +91,6 @@ export class GroupAgentsPanelComponent implements OnDestroy {
   /** El panel se ha cerrado (guardando o no). */
   readonly closed = output<void>();
 
-  protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly links = signal<readonly GroupAgentLink[]>([]);
   private readonly initialLinks = signal<readonly GroupAgentLink[]>([]);
   protected readonly conflict = signal(false);
@@ -108,6 +119,29 @@ export class GroupAgentsPanelComponent implements OnDestroy {
   protected readonly showLevel = computed(() => {
     const group = this.group();
     return !!group && group.channels.includes('phone') && group.strategy === 'Niveles';
+  });
+
+  /**
+   * Columnas de canal solo si hay algo que elegir (DD-131). En un grupo de un solo canal todo agente asignado lo
+   * atiende y la columna eran casillas bloqueadas, una por fila. Vuelve si alguna fila LLEGÓ sin canal (datos de
+   * antes, o recortada al abrir): es la única forma de dárselo desde aquí. Se mira lo que llegó, no lo de ahora:
+   * con lo de ahora, marcar esa casilla quitaba la columna y el panel encogía bajo el puntero. Un agente añadido
+   * aquí nunca llega sin canal (entra con todos los del grupo).
+   */
+  protected readonly channelColumns = computed(
+    () => this.channels().length > 1 || this.initialLinks().some((l) => l.channels.length === 0),
+  );
+
+  /** El ancho del cajón, en función de sus columnas; nunca más que la pantalla. */
+  protected readonly width = computed(() => {
+    const channelCols = this.channelColumns() ? this.channels().length : 0;
+    const rem =
+      PANEL_NAME_REM +
+      channelCols * parseFloat(CHANNEL_COL_COMPACT) +
+      (this.showLevel() ? LEVEL_COL_REM : 0) +
+      parseFloat(ACTIONS_COL_COMPACT) +
+      PANEL_CHROME_REM;
+    return `min(${Math.max(PANEL_MIN_REM, rem)}rem, 100vw)`;
   });
 
   protected readonly availableAgents = computed<readonly AgentChannelTableAgent[]>(() =>

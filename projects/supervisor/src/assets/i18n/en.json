@@ -1519,8 +1519,8 @@
         "col_level": "Level",
         "level_aria": "Level for {{name}}",
         "paused": "Paused",
-        "last_channel_hint": "They must handle at least one channel. To take them out of the group, use «Remove from group».",
-        "last_channel_aria": "{{name}} — {{channel}}: only channel; to take them out of the group, «Remove from group»"
+        "last_channel_hint": "They must handle at least one channel. To take them out of the group, click the bin in their row.",
+        "last_channel_aria": "{{name}} — {{channel}}: only channel; to take them out of the group, click the bin in their row"
       },
       "fields": {
         "name": "Name",

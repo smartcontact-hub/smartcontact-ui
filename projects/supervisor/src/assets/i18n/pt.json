@@ -1519,8 +1519,8 @@
         "col_level": "Nível",
         "level_aria": "Nível de {{name}}",
         "paused": "Em pausa",
-        "last_channel_hint": "Tem de atender pelo menos um canal. Para o tirar do grupo, «Remover do grupo».",
-        "last_channel_aria": "{{name}} — {{channel}}: único canal; para o tirar do grupo, «Remover do grupo»"
+        "last_channel_hint": "Tem de atender pelo menos um canal. Para o tirar do grupo, clique no caixote do lixo da sua linha.",
+        "last_channel_aria": "{{name}} — {{channel}}: único canal; para o tirar do grupo, clique no caixote do lixo da sua linha"
       },
       "fields": {
         "name": "Nome",
