@@ -170,6 +170,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-28 · El color que miden las e2e sale de un instrumento compartido (#269)
+
+**Sello:** HEAD `ac02acc6` (#269 fundido), CI verde en `main`. Archivados: `archive/handoff-ds-2026-09-15-primeng-nativo`
+y `…-comparar-fichas`.
+
+**Lo que cambia.** `e2e/shared/color.ts` es el sitio donde se lee un color del DOM: el canvas en vez de un regex, las
+capas translúcidas compuestas de la raíz a la hoja y el ratio WCAG. `colorEfectivo` para una sonda (`'stroke'` para un
+anillo SVG), `enNavegador` para meter el kit en un `page.evaluate`. Lo usan `medir()`, `theme-contrast`,
+`asegurarBuildFresco` y `list-table-grammar`: no queda ningún `/\d+/g` de color en `e2e/`, y `color.spec.ts` enrojece
+si alguien cambia el canvas por un regex. Reproduce las cifras corregidas de DD-126 (3,18 el arco en oscuro). LEARNINGS
+#2 y AGENTS apuntan ahí. Al cerrar, `bash-guard` deja de tomar la rama `areses/…` por el nombre del autor.
+
 ## ✅ 2026-09-24 · El código deja de nombrar personas (DD-120)
 
 **Sello:** rama `arebury/clean-code-comments-publicity`, sobre `d20ee0f9` (#244). Archivado: `archive/handoff-ds-2026-09-15-tokens-sin-uso`.
@@ -188,26 +200,6 @@ con las casillas como addons (solo le convenció el campo de la dirección a lo 
 
 **Lo que cambia.** Las tres columnas de casillas miden su rótulo y la dirección se queda el resto: a 1440 el campo pasa de
 121 a 452 px. Test en `servicio-notificaciones.spec.ts`, rojo con la hoja de antes.
-
-## ✅ 2026-09-15 · Las fichas de agente, grupo y usuario se comparan en tres formas, y decide producto
-
-**Sello:** rama `comparar/fichas` (no se funde), HEAD `4b0aa6b`. Enlace del PM: https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e
-
-**El encargo.** El PM quería verlo todo («tocas algo y afecta a otras cosas»); Rafa, el índice. Tres formas con
-`?variante=`: Una página (mayo, antes de DD#59 de la plataforma), Resumen + panel lateral (`sc-drawer` encima, sin
-mover la ficha) y Pestañas. Quitadas: recuadro de cambios (ruido) y editor fijo (391 px a 900). Archivo: `…-lo-que-se-nota`.
-
-- ⚠️ **Un `sc-drawer` lateral pinta tres bordes de 3 px, sombra hacia abajo y una X sin nombre**: arreglado en la rama, no en `main`.
-
-## ✅ 2026-09-15 · Tabs, Toolbar, InputGroup, Divider y SelectButton de primeng.dev, bien puestos (DD-113)
-
-**Sello:** rama `arebury/fix-tabs-toolbar-inputgroup`, HEAD `7551099` (#197) más este cambio. Rafa eligió pestañas, separadores
-y pulsación con capturas delante. DD-107 vive en `archive/handoff-ds-2026-09-15-tabs`; «Conversaciones hace scroll», en `…-conversaciones-scroll`.
-
-**Lo que cambia.** DS: `sc-selectbutton`, tallas de `sc-inputgroup`. Supervisor: `p-tabs` nativas de texto, `sc-selectbutton`,
-`sc-divider`, modo pared y tira del Dashboard con nombre (avisar), sin `ripple`, botón que se encoge (better-ui, §8.1). Regla «primeng.dev tal cual»: hook, `tools/primeng-doc.mjs`, §F.
-
-- ⚠️ **Lo nativo manda**: apagué la raya de `p-tabs` por una marca fija y Rafa vio que no se deslizaba. Doc entera y medir.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -284,6 +276,7 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Un `sc-drawer` lateral pinta tres bordes de 3 px, sombra hacia abajo y una X sin nombre**: arreglado en `comparar/fichas`, no en `main`.
 - 🪤 **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias (DD-111).
 - 🪤 **Las capturas de sc-docs no ven el botón de aviso con contorno ni el modo oscuro**: esos colores se miden a mano (#193).
 - 🪤 **El host de una tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta vive dentro

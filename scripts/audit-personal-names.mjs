@@ -82,6 +82,11 @@ export const DATO_PERMITIDO = [
     texto: 'Esto lo pidió Rafa',
     motivo: 'el «Por qué» de commit que `bash-guard` debe denegar',
   },
+  {
+    fichero: 'scripts/__tests__/bash-guard.test.mjs',
+    texto: "const RAMA = 'areses/",
+    motivo: 'una rama como las que crea la app, con el alias como prefijo: `bash-guard` debe dejarla pasar',
+  },
 ];
 
 /** Líneas de un texto que nombran al autor, con su número (desde 1). */
