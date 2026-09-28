@@ -187,7 +187,10 @@ export class UsersListPageComponent {
         header: this.translate.instant('users.table.type'),
         sortable: true,
         cellTemplate: this.typeTpl(),
-        width: '8.5rem',
+        /* El tipo más largo de los cuatro idiomas es «Superviseur hors ligne» (DD-132): 131 de texto, 11 del marco
+         * de la etiqueta y 28 de la celda, 170 px (medido el 2026-09-28). A 8,5rem se cortaban los dos Supervisor
+         * ya en español (DD-102: el dato más largo en los cuatro idiomas). */
+        width: '10.75rem',
       },
       {
         field: 'status',

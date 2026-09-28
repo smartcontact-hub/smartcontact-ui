@@ -1,53 +1,51 @@
-export type UserType = 'administrator' | 'supervisor' | 'agent' | 'viewer';
+import {
+  applyPackage,
+  type PermissionKey,
+  type PermissionRecord,
+  type SectionKey,
+  type SectionRecord,
+  USER_TYPES as PACKAGE_USER_TYPES,
+  type UserType as PackageUserType,
+} from './user-packages.core.mjs';
 
-export const USER_TYPES: readonly UserType[] = ['administrator', 'supervisor', 'agent', 'viewer'];
+/**
+ * Los cuatro tipos del documento de producto de usuarios y grupos, del que más puede al que menos (DD-132). Cada
+ * uno trae su plantilla de acceso (`user-packages.core.mjs`); lo guardado con los tipos de antes se lee con
+ * `resolveUserAccess` (Supervisor, Visor y Agente pasan a Supervisor Offline).
+ */
+export type UserType = PackageUserType;
+
+export const USER_TYPES: readonly UserType[] = PACKAGE_USER_TYPES;
 
 export const USER_TYPE_LABEL_KEYS: Readonly<Record<UserType, string>> = {
+  superadmin: 'users.type.superadmin',
   administrator: 'users.type.administrator',
-  supervisor: 'users.type.supervisor',
-  agent: 'users.type.agent',
-  viewer: 'users.type.viewer',
+  supervisorOnline: 'users.type.supervisor_online',
+  supervisorOffline: 'users.type.supervisor_offline',
 };
 
-export interface UserSections {
-  readonly dashboard: boolean;
-  readonly services: boolean;
-  readonly aiNode: boolean;
-  readonly groupsAgentsTypifications: boolean;
-  readonly campaigns: boolean;
-  readonly conversations: boolean;
-  readonly stats: boolean;
-  readonly statsDataReports: boolean;
-  readonly statsFlowAnalyzer: boolean;
-  readonly vuiDesigner: boolean;
-  readonly users: boolean;
-}
+/** Lo que VE: una casilla por destino del menú, más la de antes que ya no se enseña (`groupsAgentsTypifications`). */
+export type UserSections = SectionRecord;
 
-export const DEFAULT_SECTIONS: UserSections = {
-  dashboard: true,
-  services: true,
-  aiNode: true,
-  groupsAgentsTypifications: true,
-  campaigns: true,
-  conversations: true,
-  stats: true,
-  statsDataReports: true,
-  statsFlowAnalyzer: true,
-  vuiDesigner: true,
-  users: true,
-};
+/** Lo que puede HACER. */
+export type UserPermissions = PermissionRecord;
 
 export interface SectionDef {
-  readonly key: keyof UserSections;
+  readonly key: SectionKey;
   readonly labelKey: string;
-  readonly parent?: keyof UserSections;
+  readonly parent?: SectionKey;
 }
 
+/**
+ * Las secciones de la ficha, en el orden del menú: Supervisión, VUI Designer, Administración y Configuración.
+ * «Grupos / Agentes / Tipificaciones» era UNA casilla para tres destinos que el menú de hoy separa; cada uno tiene
+ * la suya y la vieja sigue en el modelo, sin enseñarse (DD-132).
+ */
 export const SECTION_DEFS: readonly SectionDef[] = [
   { key: 'dashboard', labelKey: 'users.section.dashboard' },
   { key: 'services', labelKey: 'users.section.services' },
   { key: 'aiNode', labelKey: 'users.section.ai_node' },
-  { key: 'groupsAgentsTypifications', labelKey: 'users.section.groups_agents_typifications' },
+  { key: 'typifications', labelKey: 'users.section.typifications' },
   { key: 'campaigns', labelKey: 'users.section.campaigns' },
   { key: 'conversations', labelKey: 'users.section.conversations' },
   { key: 'stats', labelKey: 'users.section.stats' },
@@ -55,50 +53,79 @@ export const SECTION_DEFS: readonly SectionDef[] = [
   { key: 'statsFlowAnalyzer', labelKey: 'users.section.stats_flow_analyzer', parent: 'stats' },
   { key: 'vuiDesigner', labelKey: 'users.section.vui_designer' },
   { key: 'users', labelKey: 'users.section.users' },
+  { key: 'groups', labelKey: 'users.section.groups' },
+  { key: 'agents', labelKey: 'users.section.agents' },
+  { key: 'repositories', labelKey: 'users.section.repositories' },
+  { key: 'aed', labelKey: 'users.section.aed' },
+  { key: 'system', labelKey: 'users.section.system' },
 ];
 
-export interface UserPermissions {
-  readonly vuiDesignerManagement: boolean;
-  readonly usersManagement: boolean;
-  readonly recordingManagement: boolean;
-  readonly transcriptionsManagement: boolean;
-  readonly spyOnConversations: boolean;
-}
-
-export const DEFAULT_PERMISSIONS: UserPermissions = {
-  vuiDesignerManagement: true,
-  usersManagement: true,
-  recordingManagement: true,
-  transcriptionsManagement: true,
-  spyOnConversations: true,
-};
-
-/**
- * Lo que trae un usuario NUEVO: nada. Mínimo privilegio (DD-130): hasta el 2026-09-27 el alta nacía con las 11
- * secciones y los 5 permisos marcados, «Gestión de usuarios» y «Espiar conversaciones» incluidos, fuera cual fuera
- * su tipo. Qué paquete trae cada tipo es una pregunta abierta para producto (DD-121). Los usuarios de ejemplo
- * siguen saliendo de `DEFAULT_*`.
- */
-export const EMPTY_SECTIONS: UserSections = Object.fromEntries(
-  Object.keys(DEFAULT_SECTIONS).map((k) => [k, false])
-) as unknown as UserSections;
-
-export const EMPTY_PERMISSIONS: UserPermissions = Object.fromEntries(
-  Object.keys(DEFAULT_PERMISSIONS).map((k) => [k, false])
-) as unknown as UserPermissions;
-
 export interface PermissionDef {
-  readonly key: keyof UserPermissions;
+  readonly key: PermissionKey;
   readonly labelKey: string;
 }
 
+/** En el orden de las secciones que gestionan; lo sensible (grabaciones, transcripciones, espiar), al final. */
 export const PERMISSION_DEFS: readonly PermissionDef[] = [
   { key: 'vuiDesignerManagement', labelKey: 'users.permission.vui_designer_management' },
   { key: 'usersManagement', labelKey: 'users.permission.users_management' },
+  { key: 'groupsManagement', labelKey: 'users.permission.groups_management' },
+  { key: 'agentsManagement', labelKey: 'users.permission.agents_management' },
+  { key: 'repositoriesManagement', labelKey: 'users.permission.repositories_management' },
+  { key: 'aedManagement', labelKey: 'users.permission.aed_management' },
   { key: 'recordingManagement', labelKey: 'users.permission.recording_management' },
   { key: 'transcriptionsManagement', labelKey: 'users.permission.transcriptions_management' },
   { key: 'spyOnConversations', labelKey: 'users.permission.spy_on_conversations' },
 ];
+
+/** Todo apagado, también la casilla que ya no se enseña. Es la base sobre la que se aplica una plantilla. */
+export const EMPTY_SECTIONS: UserSections = {
+  dashboard: false,
+  services: false,
+  aiNode: false,
+  typifications: false,
+  campaigns: false,
+  conversations: false,
+  stats: false,
+  statsDataReports: false,
+  statsFlowAnalyzer: false,
+  vuiDesigner: false,
+  users: false,
+  groups: false,
+  agents: false,
+  repositories: false,
+  aed: false,
+  system: false,
+  groupsAgentsTypifications: false,
+};
+
+export const EMPTY_PERMISSIONS: UserPermissions = {
+  vuiDesignerManagement: false,
+  usersManagement: false,
+  groupsManagement: false,
+  agentsManagement: false,
+  repositoriesManagement: false,
+  aedManagement: false,
+  recordingManagement: false,
+  transcriptionsManagement: false,
+  spyOnConversations: false,
+};
+
+/** Un usuario NUEVO nace Supervisor Offline, el tipo de menos privilegio, con su plantilla (DD-132, enmienda
+ *  DD-130 §4): ve la supervisión y nada de lo sensible. */
+export const NEW_USER_TYPE: UserType = 'supervisorOffline';
+
+/** Las casillas de un tipo: su plantilla sobre todo apagado, y los cambios a mano que se le pidan encima. */
+export function accessFor(
+  type: UserType,
+  changes: { readonly sections?: Partial<Record<SectionKey, boolean>>; readonly permissions?: Partial<Record<PermissionKey, boolean>> } = {},
+): { sections: UserSections; permissions: UserPermissions } {
+  const base = applyPackage(type, EMPTY_SECTIONS, EMPTY_PERMISSIONS);
+  return {
+    sections: { ...base.sections, ...changes.sections },
+    permissions: { ...base.permissions, ...changes.permissions },
+  };
+}
 
 export interface User {
   readonly id: number;
@@ -128,6 +155,10 @@ export const AVAILABLE_SERVICES: readonly string[] = [
   'Help desk',
 ];
 
+/**
+ * Los usuarios de ejemplo, cada uno con su tipo y su plantilla (DD-132). U001, el de la barra de arriba, es
+ * Superadmin. Tres siguen su plantilla tal cual y tres llevan cambios a mano, para que el desvío se vea.
+ */
 export const USERS_SEED: readonly User[] = [
   {
     id: 1,
@@ -135,9 +166,8 @@ export const USERS_SEED: readonly User[] = [
     name: 'Mario Supervisor',
     email: 'mario.supervisor@empresa.com',
     identifier: 'MSUP001',
-    type: 'administrator',
-    sections: { ...DEFAULT_SECTIONS },
-    permissions: { ...DEFAULT_PERMISSIONS },
+    type: 'superadmin',
+    ...accessFor('superadmin'),
     assignedGroups: [1, 2, 3],
     assignedServices: ['Atención general', 'Soporte técnico'],
     status: 'active',
@@ -149,9 +179,9 @@ export const USERS_SEED: readonly User[] = [
     name: 'Laura Martínez',
     email: 'laura.martinez@empresa.com',
     identifier: 'LMAR002',
-    type: 'supervisor',
-    sections: { ...DEFAULT_SECTIONS, vuiDesigner: false, users: false },
-    permissions: { ...DEFAULT_PERMISSIONS, vuiDesignerManagement: false, usersManagement: false },
+    type: 'supervisorOnline',
+    // Un cambio a mano sobre la plantilla: gestiona grabaciones.
+    ...accessFor('supervisorOnline', { permissions: { recordingManagement: true } }),
     assignedGroups: [1, 4],
     assignedServices: ['Atención general', 'Ventas'],
     status: 'active',
@@ -163,15 +193,12 @@ export const USERS_SEED: readonly User[] = [
     name: 'Carlos García',
     email: 'carlos.garcia@empresa.com',
     identifier: 'CGAR003',
-    type: 'supervisor',
-    sections: { ...DEFAULT_SECTIONS, aiNode: false, vuiDesigner: false, users: false },
-    permissions: {
-      vuiDesignerManagement: false,
-      usersManagement: false,
-      recordingManagement: true,
-      transcriptionsManagement: false,
-      spyOnConversations: true,
-    },
+    type: 'supervisorOffline',
+    // Tres cambios a mano: sin Nodo IA, y con grabaciones y espiar.
+    ...accessFor('supervisorOffline', {
+      sections: { aiNode: false },
+      permissions: { recordingManagement: true, spyOnConversations: true },
+    }),
     assignedGroups: [2, 3, 5],
     assignedServices: ['Soporte técnico', 'Incidencias'],
     status: 'active',
@@ -183,22 +210,9 @@ export const USERS_SEED: readonly User[] = [
     name: 'Ana López',
     email: 'ana.lopez@empresa.com',
     identifier: 'ALOP004',
-    type: 'viewer',
-    sections: {
-      ...DEFAULT_SECTIONS,
-      aiNode: false,
-      campaigns: false,
-      vuiDesigner: false,
-      users: false,
-      groupsAgentsTypifications: false,
-    },
-    permissions: {
-      vuiDesignerManagement: false,
-      usersManagement: false,
-      recordingManagement: false,
-      transcriptionsManagement: false,
-      spyOnConversations: false,
-    },
+    type: 'supervisorOffline',
+    // Dos cambios a mano: sin Nodo IA ni Campañas.
+    ...accessFor('supervisorOffline', { sections: { aiNode: false, campaigns: false } }),
     assignedGroups: [1],
     assignedServices: ['Atención general'],
     status: 'active',
@@ -211,8 +225,7 @@ export const USERS_SEED: readonly User[] = [
     email: 'roberto.sanchez@empresa.com',
     identifier: 'RSAN005',
     type: 'administrator',
-    sections: { ...DEFAULT_SECTIONS },
-    permissions: { ...DEFAULT_PERMISSIONS },
+    ...accessFor('administrator'),
     assignedGroups: [1, 2, 3, 4, 5],
     assignedServices: ['Atención general', 'Soporte técnico', 'Ventas', 'Facturación'],
     status: 'inactive',
@@ -224,9 +237,8 @@ export const USERS_SEED: readonly User[] = [
     name: 'Elena Torres',
     email: 'elena.torres@empresa.com',
     identifier: 'ETOR006',
-    type: 'supervisor',
-    sections: { ...DEFAULT_SECTIONS, vuiDesigner: false },
-    permissions: { ...DEFAULT_PERMISSIONS, vuiDesignerManagement: false },
+    type: 'supervisorOnline',
+    ...accessFor('supervisorOnline'),
     assignedGroups: [3, 4],
     assignedServices: ['Campañas outbound', 'Ventas'],
     status: 'active',

@@ -10,3 +10,18 @@
  * `.form-identity`, `.switch-field` y `.checkbox-*` en `src/styles/_forms.scss`. No los re-declares aquí: una regla encapsulada de
  * componente le gana siempre a la global, y el molde se desviaría en una sola
  * página sin avisar. Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`. */
+
+/* La plantilla del tipo, arriba de Acceso (DD-132): cuál sigue y, si alguien se apartó, cuánto y cómo volver. Una
+ * línea de texto con su botón de texto al lado: informa, no alarma, porque apartarse de la plantilla es legítimo. */
+.access-template {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.access-template__drift {
+  color: var(--sc-text-primary);
+}

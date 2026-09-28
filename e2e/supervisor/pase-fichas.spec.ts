@@ -11,7 +11,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   · las tres altas se parecen: la cabecera de la ficha a la vista desde el alta («Nuevo agente» hasta que
  *     se escribe el nombre) y el botón que dice lo que hace («Crear agente»);
  *   · Guardar deja en la ficha también en usuario;
- *   · un usuario nuevo nace sin secciones ni permisos (mínimo privilegio);
+ *   · un usuario nuevo nace con lo mínimo: desde DD-132, la plantilla de Supervisor Offline (la supervisión, nada
+ *     sensible); con DD-130 nacía sin ninguna casilla;
  *   · Distribución y colas lleva saltos a cada canal;
  *   · el icono de un aviso pesa lo que su texto;
  *   · en el listado de grupos, el botón de cada fila dice «Asignar».
@@ -103,12 +104,14 @@ test('usuario · guardar deja en la ficha, como en grupo y agente', async ({ pag
   await expect(page.locator('#user-identifier')).toHaveValue('E2E-QUEDA');
 });
 
-test('usuario nuevo · nace sin secciones ni permisos', async ({ page }) => {
+// Enmendado por DD-132: ya no nace vacío, sino con la plantilla del tipo de menos privilegio. Lo sensible sigue
+// apagado, que es lo que DD-130 protegía. Las 16 casillas de entonces son 25 (16 secciones y 9 permisos).
+test('usuario nuevo · nace Supervisor Offline: la supervisión marcada y ningún permiso', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear?seccion=acceso');
   const casillas = page.locator('#user-section-access sc-checkbox input[type=checkbox]');
-  await expect(casillas).toHaveCount(16);
-  await expect(page.locator('#user-section-access sc-checkbox input[type=checkbox]:checked')).toHaveCount(0);
-  await expect(page.locator('.ficha-summary .resumen__count').nth(0)).toHaveText('0');
+  await expect(casillas).toHaveCount(25);
+  await expect(page.locator('#user-section-access sc-checkbox input[type=checkbox]:checked')).toHaveCount(9);
+  await expect(page.locator('.ficha-summary .resumen__count').nth(0)).toHaveText('9');
   await expect(page.locator('.ficha-summary .resumen__count').nth(1)).toHaveText('0');
 });
 

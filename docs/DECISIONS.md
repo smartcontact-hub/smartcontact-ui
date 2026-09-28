@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Cuatro tipos de usuario (Superadmin, Administrador, Supervisor Online y Offline), cada uno con su plantilla de acceso · el alta nace Offline · al editar, cambiar el tipo pregunta · «Plantilla: X · N cambios» con «Volver a la plantilla» | DD-132 |
 > | El panel rápido de agentes mide lo que lleva dentro (28rem mínimo, 5rem por canal) · sin columna de canal en un grupo de un canal, salvo que una fila llegue sin canal · la papelera dice «Quitar del grupo» · `sc-checkbox` desactivado, una sola opacidad (60 %) | DD-131 |
 > | El pase de diseño de las fichas: en la franja el anillo junto a su cifra y los datos en dos columnas · las tres altas con su cabecera a la vista y «Crear …» · Guardar deja en la ficha · un usuario nuevo nace sin permisos · saltos por canal en Distribución y colas · el icono de un aviso con el peso de su texto · «Asignar» en el listado de grupos (enmienda DD-122 §8) | DD-130 |
 > | El panel de grupos deja de inventar sus «conectados»: salen de `DEMO_AGENT_PRESENCE`, no de una cifra que escala con el número de colas del panel (enmienda DD-127) | DD-129 |
@@ -91,6 +92,84 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-132 · 2026-09-28 — Qué trae cada tipo de usuario: cuatro tipos, cada uno con su plantilla de acceso
+
+**Contexto** · El tipo de usuario no significaba nada: elegirlo no marcaba ni una casilla, y DD-130 §4 dejó el alta sin
+ninguna, con la pregunta de qué trae cada tipo abierta en DD-121. Producto la respondió con dos fuentes y dos
+respuestas:
+- **el documento de producto de usuarios y grupos**, con una matriz de permisos por rol (configuración del sistema,
+  configuración del AED, y alta, edición y borrado de grupos, agentes y repositorios) para Superadmin, Administrador,
+  Supervisor Online y Supervisor Offline;
+- **los perfiles del manual de usuario de Voice**;
+- **las respuestas (2026-09-28):** los cuatro tipos del documento, y la supervisión para todos con lo sensible a mano.
+
+Lo que había: cuatro tipos (administrador, supervisor, agente y visor), 11 secciones y 5 permisos. Ninguna de las
+áreas del documento (Grupos, Agentes, Repositorios, Contact Center, Sistema) tenía casilla.
+
+**Decisión** ·
+1. **Cuatro tipos**, del que más puede al que menos: Superadmin, Administrador, Supervisor Online y Supervisor Offline.
+   «Agente» deja de ser un tipo de usuario: los agentes tienen su ficha. Lo guardado con los tipos de antes
+   (`supervisor`, `viewer`, `agent`) se lee como Supervisor Offline, el que según el documento «se queda igual».
+2. **Una casilla por destino del menú.** Secciones nuevas: Tipificaciones, Grupos, Agentes, Repositorios, Contact
+   Center y Sistema. Permisos nuevos: gestión de grupos, de agentes, de repositorios y de Contact Center.
+   «Grupos / Agentes / Tipificaciones» juntaba tres destinos que el menú separa: sale de la vista y sigue en el modelo,
+   y lo guardado en ella no concede nada nuevo.
+3. **La plantilla de cada tipo** (`user-packages.core.mjs`):
+
+   | | Superadmin | Administrador | Sup. Online | Sup. Offline |
+   |---|---|---|---|---|
+   | Supervisión (Dashboard, Servicios, Nodo IA, Tipificaciones, Campañas, Conversaciones, Estadísticas y sus dos hijas) | ✓ | ✓ | ✓ | ✓ |
+   | VUI Designer y Usuarios, y su gestión | ✓ | ✓ | — | — |
+   | Grupos, Agentes y Repositorios, y su gestión | ✓ | ✓ | ✓ | — |
+   | Contact Center, y su gestión | ✓ | ✓ | — | — |
+   | Sistema | ✓ | — | — | — |
+   | Grabaciones, transcripciones y espiar | ✓ | a mano | a mano | a mano |
+4. **Lectura aditiva** (`resolveUserAccess`, como `resolveGroup`): una casilla que un usuario guardado no tenía se lee
+   apagada. `sc-users` no sube de versión, que borraría lo creado en la demo.
+5. **En la ficha:**
+   - el alta nace Supervisor Offline con su plantilla (enmienda DD-130 §4: ya no nace vacía, y lo sensible sigue
+     apagado);
+   - elegir el tipo marca su plantilla: en un alta que nadie tocó, sin preguntar; al editar, o con casillas tocadas,
+     pregunta cuántas cambian, con «Aplicar la plantilla» o «Mantener las casillas». El tipo cambia en los dos casos;
+   - Acceso dice «Plantilla: X» y, si alguien se apartó, «· N cambios» con «Volver a la plantilla»;
+   - los anillos del resumen cuentan las casillas que se ven: 16 secciones y 9 permisos;
+   - el desplegable de tipo se nombra por su etiqueta (`ariaLabelledBy`): el lector leía el valor en crudo.
+6. **Los usuarios de ejemplo:** U001 (el de la barra) es Superadmin; U005, Administrador; U002 y U006, Supervisor
+   Online; U003 y U004, Supervisor Offline. Tres siguen su plantilla y tres llevan cambios a mano, para que el desvío
+   se vea.
+7. **En el listado**, la columna Tipo mide 10,75rem, lo que pide el más largo de los cuatro idiomas, «Superviseur hors
+   ligne» (DD-102). A 8,5rem se cortaban los dos Supervisor ya en español.
+
+**Razón** ·
+- **El reparto es el del documento.** Lo que no reparte lo respondió producto: la supervisión, para los cuatro; lo
+  sensible, a mano salvo en Superadmin.
+- **Tipificaciones va con la supervisión**, porque el menú la pone ahí.
+- **Al editar se pregunta.** El laboratorio aplicaba el paquete sin preguntar y pisaba casillas elegidas a mano; eso
+  no se copia.
+- **El tipo cambia antes de preguntar**, así el desplegable nunca enseña un valor que el formulario no tiene.
+
+**Descartadas** ·
+- **Que el tipo bloquee casillas** → el documento reparte plantillas, no bloqueos, y la app aún no tiene guardas de
+  acceso: una casilla que no se puede tocar prometería una restricción que nadie aplica.
+- **Deducir las casillas nuevas de «Grupos / Agentes / Tipificaciones»** → concedería gestión sin que nadie lo
+  decidiera. Mínimo privilegio.
+- **Subir la versión de `sc-users`** → borraría los usuarios creados en la demo.
+- **Un aviso de color para el desvío, como en el laboratorio** → apartarse de la plantilla es legítimo, y una línea de
+  texto informa sin alarmar.
+- **Agrupar las casillas de Acceso por área del menú** → con 25 casillas se leería mejor, pero cambia la forma de la
+  sección entera. Queda para cuando se revise Acceso.
+
+**Consecuencias** ·
+- **Enmiendas:** DD-130 §4 (el alta). Cierra la pregunta abierta de DD-121.
+- **Pruebas:**
+  - `usuario-plantillas.spec.ts` gana cinco, las cinco en rojo contra el código anterior;
+  - `user-packages.test.mjs` gana siete, en `test:unit`;
+  - cambian a propósito `pase-fichas` (25 casillas, 9 marcadas) y `resumen-widget` (8 de 16, 2 de 9).
+- **Queda abierto:** que las casillas restrinjan de verdad (guardas de ruta y de acción), y confirmar con producto que
+  Tipificaciones va con la supervisión.
 
 ---
 
@@ -872,8 +951,8 @@ exactamente el desbordamiento y dónde se configura su destino; si «Desbordar s
 estrategia o capacidad propias; si la URL del script de Web Chat la pone cada grupo o la plataforma; si el backend
 tendrá un permiso de WhatsApp por agente (el AED en vivo solo tiene Tlf / Chat / Email); qué ve el cliente en cola si
 se quita un canal o se cambia la estrategia de un grupo activo; el choque con postventa (2026-09-18), que pidió
-más de un anuncio periódico en teléfono; y, desde DD-130, qué secciones y permisos trae cada tipo de usuario (el alta
-nace sin ninguno). Fuera a propósito: la forma de las fichas de agente y usuario, y
+más de un anuncio periódico en teléfono; y, desde DD-130, qué secciones y permisos trae cada tipo de usuario
+(respondida en DD-132). Fuera a propósito: la forma de las fichas de agente y usuario, y
 `/config/aed/grupos`, la página vieja de Configuración, que no está conectada con la ficha. Vigilan esto
 `grupo-vision.spec.ts`, `ficha-grupo.spec.ts`, `ficha-grupo-canales.spec.ts`, `panel-agentes-grupo.spec.ts`,
 `listado-grupos.spec.ts`, `admin-forms.spec.ts` y el grupo en `form-section-nav-legibility` y `theme-contrast`. De

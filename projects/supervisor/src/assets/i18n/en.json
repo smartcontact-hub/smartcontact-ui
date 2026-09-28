@@ -1343,10 +1343,10 @@
       "status": "Status"
     },
     "type": {
+      "superadmin": "Superadmin",
       "administrator": "Administrator",
-      "supervisor": "Supervisor",
-      "agent": "Agent",
-      "viewer": "Viewer"
+      "supervisor_online": "Online supervisor",
+      "supervisor_offline": "Offline supervisor"
     },
     "status": {
       "active": "Active",
@@ -1356,18 +1356,27 @@
       "dashboard": "Dashboard",
       "services": "Services",
       "ai_node": "AI Node",
-      "groups_agents_typifications": "Groups / Agents / Typifications",
+      "typifications": "Typifications",
       "campaigns": "Campaigns",
       "conversations": "Conversations",
       "stats": "Statistics",
       "stats_data_reports": "Data Reports",
       "stats_flow_analyzer": "Flow Analyzer",
       "vui_designer": "VUI Designer",
-      "users": "Users"
+      "users": "Users",
+      "groups": "Groups",
+      "agents": "Agents",
+      "repositories": "Repositories",
+      "aed": "Contact Center",
+      "system": "System"
     },
     "permission": {
       "vui_designer_management": "VUI Designer management",
       "users_management": "User management",
+      "groups_management": "Group management",
+      "agents_management": "Agent management",
+      "repositories_management": "Repository management",
+      "aed_management": "Contact Center management",
       "recording_management": "Recording management",
       "transcriptions_management": "Transcription management",
       "spy_on_conversations": "Spy on conversations"
@@ -1395,6 +1404,7 @@
         "identifier": "Internal identifier",
         "identifier_hint": "If left empty it will be generated automatically on save.",
         "type": "User type",
+        "type_hint": "Each type comes with its access template: picking it ticks its boxes in Access.",
         "status": "Status",
         "active": "Active",
         "active_hint": "Can sign in and operate",
@@ -1407,7 +1417,18 @@
       "headline": {
         "type": "Type"
       },
-      "create_submit": "Create user"
+      "create_submit": "Create user",
+      "template": {
+        "label": "Template: {{type}}",
+        "changes_one": "{{count}} change",
+        "changes_other": "{{count}} changes",
+        "reset": "Back to template",
+        "apply_title": "Apply the {{type}} template?",
+        "apply_body_one": "It changes {{count}} box in Access. If you keep it, the type changes anyway and Access stays as it is.",
+        "apply_body_other": "It changes {{count}} boxes in Access. If you keep them, the type changes anyway and Access stays as it is.",
+        "apply": "Apply the template",
+        "keep": "Keep the boxes"
+      }
     },
     "errors": {
       "name_required": "Name is required",

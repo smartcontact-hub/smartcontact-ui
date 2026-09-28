@@ -13,9 +13,9 @@
 tablas tras la revisión del equipo (2026-09-24, cinco PRs): `git show 197c5579:docs/handoff/supervisor-fichas.md`;
 sus dos trampas suben a «Trampas del frente».
 
-## ✅ 2026-09-28 · El panel rápido de agentes, compacto: mide lo que lleva dentro (DD-131)
+## ✅ 2026-09-28 · El panel rápido de agentes, compacto (DD-131), y qué trae cada tipo de usuario (DD-132)
 
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `197c557`).**
+> **Sello: #273 fundido en `main` (`7730619`); los tipos, en la rama `areses/sweet-fermat-r9cxzw` sobre él.**
 
 **Qué pasó.** Revisión de producto, con captura: el panel «Agentes · <grupo>» del listado era demasiado ancho y dejaba
 mucho aire entre el nombre y las columnas. Pase con `/better-ui`, medido antes y después con una sonda de Playwright
@@ -35,7 +35,21 @@ Detalle, tabla y descartadas en **DD-131**.
 cada una por su motivo, y la de la columna que se queda falla también con la regla de «las filas de ahora».
 
 **Orden del PR, por la captura del checkbox en sc-docs:** rama → workflow `visual-baselines` sobre ella → PR. Con el
-PR ya abierto, el commit del robot dejaba el CI en «action_required» (ver trampas).
+PR ya abierto, el commit del robot dejaba el CI en «action_required» (ver trampas). Así, #273 corrió su CI entero sin
+aprobar nada. Pero la captura no es la única línea base de sc-docs: `component-structure` y `component-styles`
+cuentan lo que pinta cada demo, y un ejemplo más las puso rojas en el CI. Se regeneran en local (`SC_UPDATE_*`);
+antes de pushear un cambio de sc-docs, corre `npm run e2e` entero.
+
+**Los tipos de usuario (DD-132).** Producto respondió la pregunta de DD-121 con el documento de producto de usuarios y
+grupos y el manual de usuario de Voice:
+- cuatro tipos (Superadmin, Administrador, Supervisor Online y Offline), cada uno con su plantilla de acceso
+  (`user-packages.core.mjs`, con sus pruebas en `test:unit`);
+- seis secciones y cuatro gestiones nuevas, una por destino del menú, leídas con `resolveUserAccess` sin versionar
+  `sc-users`;
+- el alta nace Offline; al editar, cambiar el tipo pregunta; y Acceso dice «Plantilla: X · N cambios» con «Volver a
+  la plantilla».
+
+`usuario-plantillas.spec.ts`: cinco pruebas, las cinco en rojo contra el código anterior.
 
 ## ✅ 2026-09-27 · El «Eliminar» de las fichas sube a AA: red-500 → red-600 (DD-128)
 
@@ -245,25 +259,7 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
 
 ## SIGUIENTE — sin preguntar
 
-0. **PR 2 · Qué trae cada tipo de usuario** (plan aprobado el 2026-09-28; fuentes: el documento de producto de
-   usuarios y grupos, los perfiles del manual de usuario de Voice y las respuestas de producto). Cierra la pregunta
-   abierta de DD-121 y lleva su propia DD.
-   - **Tipos:** Superadmin, Administrador, Supervisor Online y Supervisor Offline (`superadmin | administrator |
-     supervisorOnline | supervisorOffline`). Lo guardado como `supervisor`, `viewer` o `agent` se lee como Offline;
-     «Agente» sale del selector (los agentes tienen su ficha).
-   - **Claves nuevas**, con un resolvedor aditivo como `resolveGroup` (lo guardado sin ellas, apagado; `sc-users` v1 no
-     se versiona, que borraría la demo): secciones Grupos, Agentes, Repositorios, AED y Sistema; permisos «Gestión de»
-     Grupos, Agentes, Repositorios y AED. `groupsAgentsTypifications` sale de la vista. Los contadores del resumen
-     salen de las definiciones visibles.
-   - **Plantillas:** supervisión, los cuatro; VUI Designer y Usuarios (y su gestión), Superadmin y Administrador;
-     Grupos, Agentes y Repositorios (y su gestión), todos menos Offline; AED (y su gestión), Superadmin y
-     Administrador; Sistema, solo Superadmin; grabaciones, transcripciones y espiar, solo Superadmin (el resto, a mano).
-   - **Ficha:** el alta nace Offline (enmienda DD-130 §4: ya no vacía, lo sensible sigue apagado). Elegir el tipo
-     aplica su plantilla; si se tocaron las casillas pregunta, y en edición pregunta siempre («Cambia N casillas»).
-     Desvío: «Plantilla: X · N cambios» con «Volver a la plantilla» (`driftFromPackage` del laboratorio, adaptado).
-   - **Ejemplo:** U001 Superadmin, U005 Administrador, U002 y U006 Online, U003 y U004 Offline. Cambian a propósito
-     las cifras fijadas de `pase-fichas` (16 casillas, 0 marcadas) y `resumen-widget` (8 de 11, 2 de 5).
-1. **PR 3 · Ayudas bajo los campos y estados vacíos**, con las mismas fuentes y nada inventado:
+0. **Ayudas bajo los campos y estados vacíos**, con las mismas fuentes y nada inventado:
    - nuevas: Prioridad, Estrategia (qué hace cada una), Tiempo máximo de espera en cola y Tipo de agente; reescritas:
      % de servicio (sin círculo), niveles (sin «la tabla de abajo») y Voz (sin «Texto a voz»);
    - fuera las que repiten el rótulo, mirando antes en DECISIONS que ninguna se puso a propósito (LEARNINGS #10); los
@@ -275,16 +271,18 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
    Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
    código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el
    icono a 400 junto a texto semibold en el título de sección y en la fila activa del índice (`figma-pendiente` §29).
-   El laboratorio de administración (`/lab/admin/*`) se decide tras PR 2: sus paquetes quedan superados.
-2. **Pendiente de Rafa:** dijo «tanto para Agents como groups»; se hicieron grupos y usuarios (las
+   El laboratorio de administración (`/lab/admin/*`): sus paquetes quedan superados por los de DD-132.
+   Pendiente de DD-132: que las casillas restrinjan de verdad (guardas de ruta y de acción), y confirmar con producto
+   que Tipificaciones va con la supervisión.
+1. **Pendiente de Rafa:** dijo «tanto para Agents como groups»; se hicieron grupos y usuarios (las
    dos entidades del teardown). Si se refería a la lista real de `/admin/agentes`, es una tercera
    con el mismo molde.
-3. **Cuando Rafa diga «lanza el script de huérfanos»**, ya habrá hecho tres cosas: publicar Smart-Contact-Icons
+2. **Cuando Rafa diga «lanza el script de huérfanos»**, ya habrá hecho tres cosas: publicar Smart-Contact-Icons
    desmarcando los 21 sets `Icon…` de Playground (son de otra sesión), aceptar la actualización en el Design System y
    arrastrar `dashboard` y `neurology` a Playground. Entonces sigue el `LEEME.md` de
    `~/Documents/Claude/2026-09 iconos-material/huerfanos/`: 13 `dashboard`, 8 `brain` → `neurology`, y `query_stats`
    y `graph_5` a 14 × 14. El script para solo si la actualización no está aceptada.
-4. **Rescatar a `main` por PRs separados** (la rama no se funde). Medido el 2026-09-20 contra
+3. **Rescatar a `main` por PRs separados** (la rama no se funde). Medido el 2026-09-20 contra
    `origin/main`, de los cinco puntos **solo queda uno**:
    - ~~iconos opsz 24 con su spec~~ · ya estaban en `main` antes de mirarlo;
    - `list-page`: el ancho mínimo con columnas ocultas NO estaba en `main` (medido el 2026-09-24; entra con el PR
@@ -297,7 +295,7 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
      la guía «Qué mirar», el scroll-spy) **no se funde: se tira** cuando haya decisión.
    ⚠️ Antes de rescatar nada más, compruébalo contra `origin/main`: dos de los cinco puntos ya
    estaban hechos y el hand-off no se había enterado.
-3. Probar con scroll real el scroll-spy de «Una página»: al hacer scroll por código no cambiaba la sección activa.
+4. Probar con scroll real el scroll-spy de «Una página»: al hacer scroll por código no cambiaba la sección activa.
 
 ## ⏸️ ESPERANDO — no preguntar
 
@@ -310,6 +308,9 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
 - **Rafa:** revisar usuarios contra el Supervisor real.
 
 **Trampas del frente:**
+- ⚠️ `CI=1 npm run e2e` en local se cuelga 25 minutos: con `CI` fuera de GitHub, el guardián de puertos espera a que
+  se libere el 4280, y lo esperan también los workers, al servidor de su propia ejecución (2026-09-28; tarea
+  sugerida). Mientras, `npm run e2e` sin `CI`.
 - ⚠️ Un commit del robot `visual-baselines` sobre un PR ya abierto deja su CI en «action_required», y hay que
   aprobarlo a mano (2026-09-24). Si un cambio mueve una captura de sc-docs, lanza el workflow sobre la rama ANTES de
   abrir el PR.

@@ -27,6 +27,7 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
+  ScDialogComponent as DialogComponent,
   ScDividerComponent as DividerComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
@@ -40,9 +41,9 @@ import {
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
 import { SummaryKpiComponent } from '@shared/components';
 import {
+  accessFor,
   AVAILABLE_SERVICES,
-  EMPTY_PERMISSIONS,
-  EMPTY_SECTIONS,
+  NEW_USER_TYPE,
   PERMISSION_DEFS,
   SECTION_DEFS,
   USER_TYPES,
@@ -52,6 +53,7 @@ import {
   UserSections,
   UserType,
 } from '../data/users-data';
+import { applyPackage, driftFromPackage } from '../data/user-packages.core.mjs';
 import { UsersStore } from '../state/users.store';
 
 interface FormState {
@@ -88,6 +90,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     CheckboxComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
+    DialogComponent,
     DividerComponent,
     FormSectionNavComponent,
     IconComponent,
@@ -270,16 +273,32 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return new Set([...this.dirtyState.changedKeys()].map((k) => USER_SECTION_OF_FIELD[k as keyof FormState]));
   });
 
-  /** Secciones y permisos sobre su total: las dos cifras con anillo del resumen (DD-126). */
+  /**
+   * Secciones y permisos sobre su total: las dos cifras con anillo del resumen (DD-126). Cuentan las casillas que la
+   * ficha ENSEÑA, no las claves del modelo: la de «Grupos / Agentes / Tipificaciones» sigue guardada y no se ve
+   * (DD-132).
+   */
   protected readonly summaryAccess = computed(() => {
     const f = this.form();
     return {
-      secciones: Object.values(f.sections).filter(Boolean).length,
-      totalSecciones: Object.keys(f.sections).length,
-      permisos: Object.values(f.permissions).filter(Boolean).length,
-      totalPermisos: Object.keys(f.permissions).length,
+      secciones: SECTION_DEFS.filter((d) => f.sections[d.key]).length,
+      totalSecciones: SECTION_DEFS.length,
+      permisos: PERMISSION_DEFS.filter((d) => f.permissions[d.key]).length,
+      totalPermisos: PERMISSION_DEFS.length,
     };
   });
+
+  /** Cuántas casillas de Acceso se apartan de la plantilla del tipo (DD-132). Con 0, sigue la plantilla. */
+  protected readonly templateDrift = computed(() => {
+    const f = this.form();
+    return driftFromPackage(f.type, f.sections, f.permissions);
+  });
+
+  /**
+   * El tipo que se acaba de elegir cuando cambiarlo pisaría casillas que alguien tocó: la ficha pregunta si aplicar su
+   * plantilla. `null`, nada que preguntar.
+   */
+  protected readonly pendingTemplate = signal<{ readonly type: UserType; readonly changes: number } | null>(null);
 
   /**
    * Lo que el resumen dice sin anillo: de qué tipo es esta persona. El tipo va aquí y no junto al email porque en
@@ -407,8 +426,51 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.updateField(key, value);
   }
 
+  /**
+   * Elegir el tipo es elegir su plantilla (DD-132). El tipo cambia siempre; las casillas, según lo que haya:
+   *   · si ya son las de la nueva plantilla, no hay nada que aplicar;
+   *   · en un alta que sigue la plantilla del tipo anterior (nadie las tocó), se aplica sin preguntar;
+   *   · al editar, o si alguien las tocó, se pregunta cuántas cambiarían. Mantenerlas deja el desvío a la vista,
+   *     con «Volver a la plantilla» para cuando se quiera.
+   * El tipo cambia antes de preguntar, así el desplegable nunca enseña un valor que el formulario no tiene.
+   */
   protected onTypeValueChange(value: unknown): void {
-    if (typeof value === 'string') this.updateField('type', value as UserType);
+    if (typeof value !== 'string' || !(USER_TYPES as readonly string[]).includes(value)) return;
+    const type = value as UserType;
+    const f = this.form();
+    if (type === f.type) return;
+    const changes = driftFromPackage(type, f.sections, f.permissions);
+    const untouched = driftFromPackage(f.type, f.sections, f.permissions) === 0;
+    this.updateField('type', type);
+    if (changes === 0) return;
+    if (this.mode() !== 'edit' && untouched) this.applyTemplate(type);
+    else this.pendingTemplate.set({ type, changes });
+  }
+
+  /** «Aplicar la plantilla» del aviso. */
+  protected confirmTemplate(): void {
+    const pending = this.pendingTemplate();
+    this.pendingTemplate.set(null);
+    if (pending) this.applyTemplate(pending.type);
+  }
+
+  /** «Mantener las casillas», o cerrar el aviso: el tipo ya cambió y Acceso se queda como estaba. */
+  protected keepAccess(): void {
+    this.pendingTemplate.set(null);
+  }
+
+  /** «Volver a la plantilla», en Acceso: las casillas del tipo actual, sin los cambios a mano. */
+  protected resetToTemplate(): void {
+    this.applyTemplate(this.form().type);
+  }
+
+  private applyTemplate(type: UserType): void {
+    this.form.update((f) => ({ ...f, ...applyPackage(type, f.sections, f.permissions) }));
+  }
+
+  /** «1 cambio» o «N cambios»: el número va dentro de la clave. */
+  protected templateChangesKey(count: number): string {
+    return count === 1 ? 'users.form.template.changes_one' : 'users.form.template.changes_other';
   }
 
   protected onStatusChange(checked: boolean): void {
@@ -543,15 +605,15 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.router.navigateByUrl('/admin/usuarios');
   }
 
+  /** El alta nace Supervisor Offline con su plantilla: la supervisión, y nada de lo sensible (DD-132). */
   private emptyForm(): FormState {
     return {
       name: '',
       email: '',
       identifier: '',
-      type: 'agent',
+      type: NEW_USER_TYPE,
       status: 'active',
-      sections: { ...EMPTY_SECTIONS },
-      permissions: { ...EMPTY_PERMISSIONS },
+      ...accessFor(NEW_USER_TYPE),
       groups: new Set(),
       services: new Set(),
       photo: null,

@@ -1343,10 +1343,10 @@
       "status": "Estado"
     },
     "type": {
+      "superadmin": "Superadmin",
       "administrator": "Administrador",
-      "supervisor": "Supervisor",
-      "agent": "Agente",
-      "viewer": "Visualizador"
+      "supervisor_online": "Supervisor online",
+      "supervisor_offline": "Supervisor offline"
     },
     "status": {
       "active": "Ativo",
@@ -1356,18 +1356,27 @@
       "dashboard": "Dashboard",
       "services": "Serviços",
       "ai_node": "Nó IA",
-      "groups_agents_typifications": "Grupos / Agentes / Tipificações",
+      "typifications": "Tipificações",
       "campaigns": "Campanhas",
       "conversations": "Conversas",
       "stats": "Estatísticas",
       "stats_data_reports": "Relatórios de Dados",
       "stats_flow_analyzer": "Analisador de Fluxo",
       "vui_designer": "VUI Designer",
-      "users": "Usuários"
+      "users": "Usuários",
+      "groups": "Grupos",
+      "agents": "Agentes",
+      "repositories": "Repositórios",
+      "aed": "Contact Center",
+      "system": "Sistema"
     },
     "permission": {
       "vui_designer_management": "Gestão VUI Designer",
       "users_management": "Gestão de usuários",
+      "groups_management": "Gestão de grupos",
+      "agents_management": "Gestão de agentes",
+      "repositories_management": "Gestão de repositórios",
+      "aed_management": "Gestão do Contact Center",
       "recording_management": "Gestão de gravações",
       "transcriptions_management": "Gestão de transcrições",
       "spy_on_conversations": "Espionar conversas"
@@ -1395,6 +1404,7 @@
         "identifier": "Identificador interno",
         "identifier_hint": "Se deixar vazio será gerado automaticamente ao salvar.",
         "type": "Tipo de usuário",
+        "type_hint": "Cada tipo traz o seu modelo de acesso: ao escolhê-lo, as suas caixas são marcadas em Acesso.",
         "status": "Estado",
         "active": "Ativo",
         "active_hint": "Pode iniciar sessão e operar",
@@ -1407,7 +1417,18 @@
       "headline": {
         "type": "Tipo"
       },
-      "create_submit": "Criar usuário"
+      "create_submit": "Criar usuário",
+      "template": {
+        "label": "Modelo: {{type}}",
+        "changes_one": "{{count}} alteração",
+        "changes_other": "{{count}} alterações",
+        "reset": "Voltar ao modelo",
+        "apply_title": "Aplicar o modelo {{type}}?",
+        "apply_body_one": "Altera {{count}} caixa em Acesso. Se a mantiver, o tipo muda na mesma e Acesso fica como está.",
+        "apply_body_other": "Altera {{count}} caixas em Acesso. Se as mantiver, o tipo muda na mesma e Acesso fica como está.",
+        "apply": "Aplicar o modelo",
+        "keep": "Manter as caixas"
+      }
     },
     "errors": {
       "name_required": "O nome é obrigatório",
