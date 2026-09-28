@@ -6,6 +6,23 @@
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
+> El tramo del 2026-09-23 (grupos sin foto, alta en diálogo) sale de aquí por el tope de 6: `git show
+> 4f4f2018:docs/handoff/supervisor-fichas.md` o el tag `archive/handoff-fichas-2026-09-27`. Su trampa (`main`
+> se mueve bajo un worktree local) ya vive en LEARNINGS #21.
+
+## ✅ 2026-09-27 · El «Eliminar» de las fichas sube a AA: red-500 → red-600 (DD-128)
+
+> **Sello: rama `claude/resumen-cambios-recientes-14kfjb` sobre `main` (HEAD `4f4f2018`).**
+
+**Qué pasó.** El botón de texto «Eliminar» de la cabecera de las tres fichas medía 3,76:1 en claro (`red-500`
+sobre blanco), fichado como conocido en `theme-contrast` desde el 2026-09-26 y anotado aquí mismo como pendiente
+del pase de diseño. Es un token del DS (`--sc-cmp-button-text-danger-color`), no algo local a la ficha, así que se
+cierra ahí: sube a `red-600` (4,83:1), el mismo escalón que ya llevaba el `danger` sólido desde julio. Detalle,
+medición y descartadas en **DD-128**; customs-catalog §1.8 cierra su lista de botones bajo AA.
+
+**Qué NO se toca de la lista de abajo:** el resto del pase de diseño (caja o sin caja para las tres fichas, el
+fundido al cambiar de sección, distribución y colas, etc.) sigue igual de pendiente — esto solo cierra el punto de
+contraste, que era un bug medible y no una decisión de producto.
 
 ## ✅ 2026-09-27 · El resumen de las fichas, como widget: la cifra cuenta y el anillo nativo se llena (DD-126)
 
@@ -205,35 +222,6 @@ pieza. e2e de grupo y fichas en verde.
 **Si vuelve a sonar a paso de más:** la alternativa que rima del todo es sin diálogo, «Nuevo grupo» abre la ficha con
 el nombre como campo en el sitio del título. Rafa pidió no quitar el paso.
 
-## ✅ 2026-09-23 · Los grupos pierden la cara y se crean con un diálogo corto (DD-119)
-
-> **Sello: rama `arebury/remove-group-avatar-photos`, worktree `shipworm`, sobre `origin/main` `e1b8f5fd` (#242).**
-
-**Qué pasó.** Del equipo: «las fotos en grupo no deberían existir». Medido en local: la foto se guardaba y no salía en
-ningún otro sitio, y crear un grupo abría la ficha entera (5 pestañas, ~35 campos) cuando solo pide el nombre.
-
-**Qué cambia.**
-- **Sin foto ni avatar de grupo**: ficha, lista (fila de 54 a 44) y tabla de grupos de la ficha de agente (46 a 44).
-- **Alta en diálogo** (`sc-group-create-dialog`): nombre y canales; lo demás, de los valores por defecto
-  (`newGroupDraft` en `groups-data.ts`). Crear deja en «Canales y agentes». `/admin/grupos/crear` abre el diálogo.
-- **Duplicar**, el mismo diálogo: «… (copia)», los canales del original, sus agentes; sin teléfono asociado.
-- **Ficha solo de edición**: Identidad segunda (como #240), sin foto; Recursos, Anuncios y Avanzado sin caja.
-- Nombre repetido avisado en vivo (alta e Identidad); la cabecera dice «918371548 · Prioridad: Media».
-- Un grupo nuevo ya no enseña buscador sobre la tabla vacía, y el vacío nombra el botón que existe.
-
-**Medido** con clics en local a 1440, claro y oscuro: alta, duplicado, avisos, grupo sin Teléfono. La cabecera, las
-pestañas y el contenido caen en el mismo píxel que la ficha de agente (121/128/178/185). e2e tocadas en verde.
-
-**Descartado por Rafa, y por qué** (DD-119): sin pestaña Identidad («no sé si puedo tocarlo como usuario») y un
-«Editar datos» con diálogo (un «Aplicar» que no guardaba, y rompía el orden de las tres fichas).
-
-**Integrado con #242** (la otra caja, fundida a las 21:50 sobre el mismo fichero): «Anuncios y audio» siempre en la
-tira, apagada sin Teléfono; «Habilitado» en vez de «Atiende»; glifos de canal en la cabecera. Todo se queda.
-
-**Trampa del tramo:** `main` se movió CUATRO veces bajo estos ficheros mientras Rafa miraba mi local (#237, #239,
-#240, #242), y vio deshecho «lo que ya se había hecho». Al empezar no había nada que ver: hacía falta mirar a mitad
-de sesión. Nace `scripts/hooks/main-drift-guard.mjs` (en cada mensaje de Rafa, LEARNINGS #21 ⚙️).
-
 ## SIGUIENTE — sin preguntar
 
 0. **Pase de diseño premium sobre todo el flujo rehecho** (`/impeccable` + `/better-ui`, más `better-layout` y
@@ -252,7 +240,6 @@ de sesión. Nace `scripts/hooks/main-drift-guard.mjs` (en cada mensaje de Rafa, 
    - Ayudas bajo casi cada campo, y el peso de los iconos junto al texto semibold.
    - El oscuro y los estados vacíos.
    - Si el cambio de sección debe moverse igual en Contact Center, que funde, y en las fichas, que no.
-   - «Eliminar» en rojo de texto mide 3,76:1 (conocido en `theme-contrast`).
    Después, el antes y después al día con agente, usuario y Contact Center. Y luego **el panel rápido de agentes,
    también en Supervisión** (respuesta de producto del 2026-09-27): es donde trabaja el supervisor, y hoy solo se abre
    desde el listado de grupos; anotado en DD-121, sin código. Las preguntas abiertas para producto y desarrollo
