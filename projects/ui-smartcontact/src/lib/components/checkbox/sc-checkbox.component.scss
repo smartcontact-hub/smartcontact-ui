@@ -189,9 +189,10 @@
     width: 12px;
   }
 
-  &__input:disabled + .tri-checkbox__box {
-    opacity: 0.6;
-  }
+  /* La caja desactivada NO lleva opacidad propia: ya la tiene la casilla entera (`&--disabled`, el 60 % de Figma).
+   * Con las dos, la caja se multiplicaba a 0,36 y una casilla marcada y fija se leía como gris apagado, no como
+   * marcada (medido en el panel de agentes, 2026-09-28; DD-131). La clase y el `disabled` del input salen de la
+   * misma entrada, así que no hay casilla desactivada sin la opacidad de fuera. */
 
   @media (prefers-reduced-motion: reduce) {
     &__box,

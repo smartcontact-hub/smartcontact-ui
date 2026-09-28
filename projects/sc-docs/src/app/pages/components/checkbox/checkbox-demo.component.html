@@ -38,5 +38,8 @@
     <label><sc-checkbox [state]="'some'" data-testid="sc-checkbox-some" /> Indeterminado</label>
     <label><sc-checkbox [state]="'all'" [filled]="true" /> Filled</label>
     <label><sc-checkbox [state]="'none'" [disabled]="true" /> Deshabilitado</label>
+    <!-- Marcado y fijo (un valor que no se puede quitar desde ahí): la opacidad de desactivado va UNA vez, el 60 % de
+         Figma, y el ✓ se sigue leyendo. Con dos (0,36) se leía como apagado, no como marcado (DD-131). -->
+    <label><sc-checkbox [state]="'all'" [disabled]="true" data-testid="sc-checkbox-disabled-all" /> Deshabilitado y marcado</label>
   </div>
 </ng-template>

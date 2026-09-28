@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El panel rápido de agentes mide lo que lleva dentro (28rem mínimo, 5rem por canal) · sin columna de canal en un grupo de un canal, salvo que una fila llegue sin canal · la papelera dice «Quitar del grupo» · `sc-checkbox` desactivado, una sola opacidad (60 %) | DD-131 |
 > | El pase de diseño de las fichas: en la franja el anillo junto a su cifra y los datos en dos columnas · las tres altas con su cabecera a la vista y «Crear …» · Guardar deja en la ficha · un usuario nuevo nace sin permisos · saltos por canal en Distribución y colas · el icono de un aviso con el peso de su texto · «Asignar» en el listado de grupos (enmienda DD-122 §8) | DD-130 |
 > | El panel de grupos deja de inventar sus «conectados»: salen de `DEMO_AGENT_PRESENCE`, no de una cifra que escala con el número de colas del panel (enmienda DD-127) | DD-129 |
 > | El botón `danger` de texto (el «Eliminar» de las fichas) sube de red-500 a red-600, mismo escalón que el sólido: cierra los tres últimos botones bajo AA de §1.8 | DD-128 |
@@ -90,6 +91,70 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-131 · 2026-09-28 — El panel rápido de agentes mide lo que lleva dentro, y una casilla fija se lee marcada
+
+**Contexto** · Revisión de producto del panel «Agentes · <grupo>» del listado de grupos (DD-121 §10): demasiado
+ancho, con mucho aire entre el nombre y las columnas; se pidió compactarlo y quitarle ruido con la guía de pulido.
+Medido a 1440 en claro, antes del cambio:
+- **El ancho era un `52rem` fijo**, el de la tabla de la ficha: 832 px, con 450 px del final de un nombre a su
+  primera casilla en un grupo de dos canales, y filas de 46.
+- **En los grupos de un solo canal**, 9 de los 14 del ejemplo, la única columna eran casillas grises: 13 de 13
+  bloqueadas en «ACD Demo C2CB», porque el último canal de un agente no se quita (DD-121 §8).
+- **Una línea «Canales: …» bajo el título** repetía las cabeceras.
+- **La casilla del último canal**, marcada y desactivada, se leía como apagada. El DS aplicaba la opacidad de
+  desactivado dos veces, en la casilla y en su caja: 0,6 × 0,6 = 0,36, contra el 60 % de Figma.
+- **La ayuda del candado mandaba a «Quitar del grupo»**, un rótulo que el panel no enseñaba: la papelera no decía
+  nada al pasar por encima.
+
+**Decisión** ·
+1. **El ancho sale de las columnas**: 15rem de nombre, 5rem por canal, 6,5rem de nivel con la estrategia Niveles,
+   2,5rem de papelera y el marco del cajón. Nunca menos de 28rem, lo que piden el título y la barra en una línea, y
+   nunca más que la pantalla (`min(…, 100vw)`).
+2. **Un grupo de un solo canal no pinta columna de canal**: todo agente asignado lo atiende. La columna vuelve si
+   alguna fila LLEGÓ sin canal al abrir (datos de antes, o recortada), porque es la única forma de dárselo desde
+   ahí, y se queda hasta cerrar el panel.
+3. **La tabla gana una densidad compacta solo para el panel** (`compact` en `sc-agent-channel-table`): filas `sm`,
+   5rem por canal y 2,5rem de papelera. La ficha no cambia. Enmienda DD-121 §10, que pedía la MISMA tabla: lo sigue
+   siendo en reglas y palabras, no en medidas.
+4. **Fuera la línea de canales** bajo el título.
+5. **El aire, a la escalera de DD-123**: 14 entre el aviso, la tabla y el pie, y 7 entre los controles de la barra.
+   Antes, 12,25 en todo.
+6. **La papelera dice «Quitar del grupo» al pasar por encima**, lo mismo que nombra la ayuda del candado. Esa ayuda
+   dice ahora dónde está: «Para sacarle del grupo, pulsa la papelera de su fila», en los cuatro idiomas.
+7. **En el DS, `sc-checkbox` desactivado lleva la opacidad una vez**, el 60 % de Figma. Es un fallo contra la
+   especificación, no un cambio de estética; sc-docs enseña el caso «Deshabilitado y marcado».
+
+**Razón** · Medido después, en el mismo build:
+
+| | Antes | Después |
+|---|---|---|
+| Ancho con dos canales | 832 px | 476 px |
+| Ancho con un canal | 832 px | 448 px |
+| Del nombre a su primera casilla (dos canales) | 450 px | 154 px |
+| Alto de fila | 46 px | 34 px |
+| Casillas en un grupo de un canal | 13, todas bloqueadas | ninguna |
+| Opacidad efectiva de la casilla fija | 0,36 | 0,6 |
+
+Con cuatro canales, 636 px y todas las cabeceras en una línea, en los dos temas.
+
+**Descartadas** ·
+- **Un ancho fijo menor, p. ej. 36rem** → con un canal seguía el hueco y con cuatro canales y Niveles no cabía.
+- **Estrechar el nombre por debajo de 15rem** → con uno o dos canales manda el mínimo de 28rem y no gana nada, y un
+  nombre largo con «En pausa» dejaría de caber.
+- **Mantener la columna en los grupos de un canal con la casilla sin bloquear** → dejaría a un agente sin canales,
+  contra DD-121 §8.
+- **Decidir la columna por las filas de AHORA** → al marcar la casilla de la fila sin canal, la columna desaparecía
+  y el panel encogía bajo el puntero. Lo cazó su prueba, que falla con esa regla.
+- **Arreglar la opacidad solo en la app** → el fallo es del DS y lo hereda cualquier casilla desactivada.
+
+**Consecuencias** ·
+- **Pruebas:** `panel-agentes-grupo.spec.ts` gana cinco, que contra el código anterior daban cinco de cinco en rojo.
+  `components.spec.ts` vigila la opacidad en sc-docs.
+- **La captura de referencia del checkbox** de sc-docs se regenera con el workflow `visual-baselines`.
+- **CHANGELOG** `[Unreleased]` › Fixed.
 
 ---
 

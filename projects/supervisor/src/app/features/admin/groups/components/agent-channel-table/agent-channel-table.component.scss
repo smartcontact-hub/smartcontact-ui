@@ -79,6 +79,27 @@
   }
 }
 
+/* La tabla del panel rápido (DD-131). La barra cabe en una línea en un panel de ~30rem: el buscador y «Añadir
+ * agentes» parten de una base más corta que en la ficha (con flex-wrap, lo que decide el salto de línea es la base,
+ * no el mínimo). Y los huecos van a la escalera: 14 entre la barra y la tabla, que son dos grupos, y 7 dentro de la
+ * barra, que es uno. */
+:host(.agent-channel-table--compact) .assign {
+  gap: var(--sc-spacing-1);
+
+  &__bar {
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__search {
+    flex: 1 1 10rem;
+  }
+
+  &__add {
+    flex: 0 1 12rem;
+    min-width: 11rem;
+  }
+}
+
 /* La tabla hace scroll DENTRO, con la cabecera de columnas fija, como las listas (DD-95): así la ficha entera cabe en
  * la pantalla aunque el grupo tenga veinte agentes. Mide lo que sus filas y solo se recorta cuando no caben; el tope
  * es lo que deja la pantalla descontando el marco (barra de arriba, miga, tarjeta y lo que va sobre la tabla), y
