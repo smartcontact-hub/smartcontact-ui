@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { colorEfectivo } from '../shared/color';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
@@ -327,36 +328,17 @@ test('en oscuro el separador de fila SE VE (no puede volver a 1.00:1)', async ({
   });
   await goto(page, 'admin/labels');
 
-  const medido = await page
-    .locator('sc-datatable.sc-datatable--list')
+  /* El borde, compuesto sobre el fondo EFECTIVO de su celda. Hoy es opaco y un regex acertaba, pero
+   * uno con alfa o un `color-mix` se habría leído como opaco: el color lo lee `../shared/color.ts`. */
+  const { fondo, ratio } = await page
+    .locator('sc-datatable.sc-datatable--list .p-datatable-tbody > tr > td')
     .first()
-    .evaluate((host: HTMLElement) => {
-      const bg = getComputedStyle(
-        host.closest('.table-card') ?? host
-      ).backgroundColor;
-      const td = host.querySelector('.p-datatable-tbody > tr > td')!;
-      const borde = getComputedStyle(td).borderBottomColor;
-      const rgb = (s: string) => s.match(/\d+/g)!.slice(0, 3).map(Number);
-      const lum = ([r, g, b]: number[]) => {
-        const f = (v: number) => {
-          const x = v / 255;
-          return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
-        };
-        return 0.2126 * f(r!) + 0.7152 * f(g!) + 0.0722 * f(b!);
-      };
-      const l1 = lum(rgb(borde));
-      const l2 = lum(rgb(bg));
-      const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1];
-      return {
-        temaOscuro: bg !== 'rgb(255, 255, 255)',
-        ratio: (hi + 0.05) / (lo + 0.05),
-      };
-    });
+    .evaluate(colorEfectivo, 'border-bottom-color');
 
   // VALIDAR EL VALIDADOR: si el tema no se aplicó, esto no mide nada.
-  expect(medido.temaOscuro).toBe(true);
+  expect(fondo).not.toEqual([255, 255, 255]);
   // Antes de arreglarlo daba exactamente 1.00 — el separador no existía.
-  expect(medido.ratio).toBeGreaterThan(1.1);
+  expect(ratio).toBeGreaterThan(1.1);
 });
 
 for (const { ruta, nombre } of ABREN_FILA) {

@@ -696,8 +696,8 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   Para «¿qué ve el usuario ahí?»: `elementFromPoint` + subir al primer ancestro con alfa 1.
   ↔ `LEARNINGS.md` **#2** (corolario A).*
 - **`color-mix` computa a `color(srgb …)`, no a `rgb()`.** Cualquier parser de `rgb()`/hex
-  devuelve basura ahí. Que convierta el navegador (1px en canvas + `getImageData`), y valida
-  el control: `ctx.fillStyle = 'var(--x)'` NO resuelve la variable (se queda en negro).
+  devuelve basura ahí. No lo escribas: `e2e/shared/color.ts` convierte en el canvas, compone
+  las capas translúcidas y se niega a una `var()`, que el canvas no resuelve.
   ↔ `LEARNINGS.md` **#2** (+ corolario B).*
 - **Una regla encapsulada de componente le gana a una global.** Antes de bautizar una clase
   compartida, `grep` el nombre en los `.scss` de componente (hubo `.page__title` muerto en

@@ -57,9 +57,9 @@
    ENUMERA: `git ls-files` no ve lo que no has añadido.** Dos olores de que el que lee de menos
    es TU contador: un trinquete que no baja aunque arregles, y un rojo demasiado REDONDO — mira
    UN caso a mano. ⚙️ CHECK O de `docs:coherence`; el hook deniega la cadena con fuentes sin indexar.
-   Evidencia: s18 regex `/\d+/g` sobre `color(srgb …)` = verde imposible · s34 `closest: () => ({})`
-   dejó 8 verdes con el gesto muerto · s31 verdes contra el `ng serve` de otro worktree ·
-   2026-09-22 `verify` verde sobre 908 ficheros sin ver mis 35 nuevos; al commitear, 932 y 2 fallos.
+   ⚙️ ¿Lees un color del DOM? `e2e/shared/color.ts`: lo normaliza el canvas y compone las capas.
+   Evidencia: s34 `closest: () => ({})` dejó 8 verdes con el gesto muerto · s31 verdes contra el `ng serve` de otro
+   worktree · 2026-09-22 `verify` verde sobre 908 ficheros sin ver mis 35 nuevos; al commitear, 932 y 2 fallos.
 
 4. **Vas a arreglar un valor sustituyéndolo por otro token → MIDE el token de destino antes.**
    Fondo y texto van de la misma familia: mezclar uno que voltea de tema con uno que no es el
