@@ -504,7 +504,10 @@ function evaluarBase(cmd, ctx = {}) {
     [/claude\.ai\/code\/session_/i, 'el enlace a la sesión de claude.ai'],
   ];
   if (segs.some((s) => empiezaPor(s, PUBLICA))) {
-    const hallado = NO_EN_PUBLICO.find(([re]) => re.test(cmd));
+    // La rama lleva el alias del autor como prefijo (lo pone la app al crear la caja): es un ref,
+    // no una firma, y denegarlo tumbó el `gh pr create --head` del #269 (2026-09-28).
+    const sinRamas = cmd.replace(new RegExp(`${NOMBRE_RE.source}\\/[\\w.-]+`, 'gi'), 'RAMA');
+    const hallado = NO_EN_PUBLICO.find(([re]) => re.test(re === NOMBRE_RE ? sinRamas : cmd));
     if (hallado)
       return {
         decision: 'deny',

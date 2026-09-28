@@ -196,6 +196,13 @@ test('portada pública: un nombre o atribución en un PR o commit → deny; resu
   deny("git commit -m \"$(cat <<'EOF'\nfix: x\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>\nEOF\n)\"", verde, /co-autor/);
   deny('gh pr edit 167 --body "Para Rafa en llano: algo"', verde, /Portada pública/);
   allow(pr('**En resumen:** en Agentes la página ya no hace scroll.'));
+  // La rama lleva el alias del autor como prefijo (lo pone la app al crear la caja): es un ref, no
+  // una firma. Denegarlo tumbó el `gh pr create --head` del #269. En la prosa, sigue cayendo.
+  const RAMA = 'areses/frosty-lichterman-93fcb6';
+  const alias = RAMA.split('/')[0];
+  allow(`gh pr create --base main --head ${RAMA} --title "x" --body-file c.md`);
+  deny(`gh pr create --head ${RAMA} --title "fix: lo revisó ${alias}"`, verde, /nombre de una persona/);
+  deny(pr(`Rama ${RAMA}.\n\n**Para Rafa:** algo`), verde, /nombre de una persona/);
   allow("git commit -m \"$(cat <<'EOF'\nfix: x\n\nCo-authored-by: x <x@y.z>\nEOF\n)\""); // un co-autor humano no es atribución
   // Vecinos legítimos: leer o buscar el texto no es publicarlo, y citarlo a propósito tiene salida.
   allow('gh pr view 167 --json body | grep -c "Para Rafa, en llano"');
