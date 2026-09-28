@@ -65,9 +65,9 @@ const screenshotBaseline = async (page: Page, name: string) => {
    * Esto era `if (process.env['CI']) return`, y esa variable decidía dos cosas a la
    * vez: «estoy en un runner de GitHub» —donde un snapshot `-darwin` no puede casar
    * contra `ubuntu-latest`— y, sin que nadie lo quisiera, «no corras la red» en el
-   * PREFLIGHT, cuyo paso es `CI=1 npm run e2e`; ahí el `CI=1` está para que Playwright
-   * levante SU servidor (ver `scripts/playwright-reuse-guard.mjs`), no para apagar
-   * nada.
+   * PREFLIGHT, cuyo paso era entonces `CI=1 npm run e2e` (DD-60 sacó los e2e de allí);
+   * ese `CI=1` está para que Playwright levante SU servidor (ver
+   * `scripts/playwright-reuse-guard.mjs`), no para apagar nada.
    *
    * El precio, medido el 2026-09-07: esta red no la ejecutaba NADIE por defecto. Solo
    * la veía quien lanzase `npm run e2e` a mano. Así pudieron pudrirse las 38 baselines
