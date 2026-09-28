@@ -337,3 +337,70 @@ test('Stop: una pantalla tocada sin revisión bloquea una vez; revisada, deja ce
   writeFileSync(transcript, [evEscribe('Edit', HOJA), ev('npm run revision -- config/aed/servicio'), evTexto('Listo.')].join('\n'));
   assert.equal(correrHook(entrada, dir), null, 'VERDE: revisada después del último cambio');
 });
+
+// ── El idioma del parte · añadido el 2026-09-28 ─────────────────────────────────────────────────
+// ROJO que motivó la pieza: tras un tramo largo de herramientas, una sesión cerró con las etiquetas
+// del parte en castellano y el contenido en inglés. Las líneas se reconocen por su etiqueta, así que
+// el parte pasaba entero, y el usuario lee en castellano. Hasta aquí, un parte así solo caía si decía
+// «yes» en vez de «sí», y el aviso pedía cambiar esa palabra: con «sí», el resto en inglés pasaba.
+
+const PARTE_EN_INGLES = [
+  '**Cierre**',
+  '- Qué cambia: six of the seven Figma decisions are taken, and a script applies the eighty variables and checks each one before it writes it.',
+  '- En qué te ayuda: nobody has to copy the values from the cards by hand, so a typo can no longer break a file that is healthy today.',
+  '- Rastro: PR #270 · CI green, read with `ci:verdict` · docs/handoff/calidad-visual.md',
+  '- Seguro cerrar: sí, everything is pushed and the PR is merged; the question about the two search boxes is in the hand-off.',
+].join('\n');
+
+test('ROJO: un parte con las etiquetas en castellano y el contenido en inglés no pasa', () => {
+  const fallos = fallosDelParte(PARTE_EN_INGLES, LIMPIO);
+  assert.equal(fallos.length, 1, `el resto del parte cumple: solo falla el idioma. Salió: ${fallos.join(' | ')}`);
+  assert.match(fallos[0], /va en inglés/);
+  assert.match(fallos[0], /reescríbelo entero en castellano/);
+});
+
+// El VERDE tiene que poder enrojecer: el bloque de código y los nombres técnicos llevan inglés de sobra
+// para volcar el recuento si contaran como prosa. El control lo demuestra con el MISMO mensaje, sin las
+// marcas de código y con los nombres partidos en palabras.
+const PARTE_CON_CODIGO = [
+  'Si una variable no casa, sale `Error: the node is not attached to the page`. Lo que imprime el script:',
+  '',
+  '```js',
+  '// Apply the sizing batch to the file, and check each variable before it is written.',
+  '// If the value in the file is not the one in the export, it is left for review.',
+  '// The export is the source of truth: this script never invents a value.',
+  'for (const variable of batch) {',
+  '  // The node has to be bound to the token, or the theme will not follow it.',
+  '  if (variable.valuesByMode[mode] !== expected) continue; // this is the one to review',
+  '  variable.setValueForMode(mode, target); // and this is the one that is written',
+  '}',
+  '```',
+  '',
+  '**Cierre**',
+  '- Qué cambia: `figma_execute` aplica ochenta variables y comprueba cada una antes de escribirla.',
+  '- En qué te ayuda: un dato mal copiado ya no estropea un fichero sano, y un glifo como back_to_tab crece con su caja.',
+  '- Rastro: PR #270 · `tokens:parity` y CI verdes tras el `git push` · docs/handoff/calidad-visual.md',
+  '- Seguro cerrar: sí, todo subido; lo pendiente está en el hand-off.',
+].join('\n');
+
+test('VERDE: un parte en castellano con código y nombres técnicos en inglés pasa', () => {
+  assert.deepEqual(fallosDelParte(PARTE_CON_CODIGO, LIMPIO), []);
+});
+
+test('el control del verde: el mismo mensaje, con el código y los nombres como prosa, no pasa', () => {
+  const comoProsa = PARTE_CON_CODIGO.replace(/```\w*|`/g, '').replace(/(?<=\p{L})[_.:/-](?=\p{L})/gu, ' ');
+  assert.match(fallosDelParte(comoProsa, LIMPIO).join(' '), /va en inglés/, 'si esto no enrojece, el verde de arriba no prueba nada');
+});
+
+test('Stop: tras reflect, el parte en inglés bloquea; el de castellano con su código en inglés deja cerrar', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-stop-'));
+  const transcript = join(dir, 'sesion.jsonl');
+  const entrada = { transcript_path: transcript, session_id: 'S-idioma', cwd: dir };
+  writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_EN_INGLES)].join('\n'));
+  const r = correrHook(entrada, dir);
+  assert.equal(r?.decision, 'block', 'ROJO: el cierre iba a llegarle al usuario en inglés');
+  assert.match(r.reason, /va en inglés/);
+  assert.match(r.reason, /- Qué cambia: <una frase/, 'y lleva la plantilla para rehacerlo');
+  writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_CON_CODIGO)].join('\n'));
+  assert.equal(correrHook(entrada, dir), null, 'VERDE: en castellano deja cerrar');
+});

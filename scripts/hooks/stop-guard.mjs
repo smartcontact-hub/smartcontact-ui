@@ -16,7 +16,8 @@
  *      que decide algo — qué cambia en su día a día, por qué le conviene, y qué le toca a él.
  *      Así que el cierre lleva tres líneas fijas, cortas y en su idioma, y la del PORQUÉ no puede
  *      llevar jerga: si el beneficio solo se sabe decir con «hook» o «gate», no está entendido.
- *      (Norma de proceso, 2026-09-10.)
+ *      (Norma de proceso, 2026-09-10.) Y en castellano, el contenido y no solo las etiquetas: lo
+ *      mide `fallosDeIdioma`, fuera del código y de los nombres técnicos (2026-09-28).
  *   4. dentro del parte, «¿es seguro cerrar?»: si la caja está vacía o queda algo solo aquí
  *      dentro. Y esta NO se cree lo que yo escribo: el hook MIDE el árbol (sin commitear, sin
  *      pushear, sin upstream) y me desmiente si pongo «sí» con trabajo colgando. Un «todo subido»
@@ -305,6 +306,66 @@ export function fallosDeSeguridad(mensaje, estado) {
   return [];
 }
 
+// ── El idioma del parte ──────────────────────────────────────────────────────────────────
+// Las líneas del parte se reconocen por su etiqueta, así que unas etiquetas en castellano con el
+// contenido en inglés pasaban por parte bueno (2026-09-28: una sesión cerró así tras un tramo largo
+// de herramientas). Lo que se cuenta son palabras vacías, las más frecuentes de cada lengua: ninguna
+// de estas es palabra de la otra («a» y «no» son de las dos, y se quedan fuera).
+//
+// Los umbrales se midieron sobre los textos reales del asistente en los transcripts locales del repo
+// (2026-09-28): con 8 y el triple no marcan ninguno en castellano y sí los cuatro partes en inglés que
+// había; con 5 ya marcan alguno en castellano, como uno que citaba una frase inglesa de la interfaz.
+// Es estrecha a propósito: una entradilla en inglés delante de un parte en castellano no la marca.
+
+const VACIAS_EN = new Set(['the', 'and', 'you', 'is', 'are', 'it', 'to', 'of', 'with', 'that', 'this']);
+const VACIAS_ES = new Set(['el', 'la', 'de', 'que', 'y', 'en', 'los', 'las', 'con', 'para', 'es']);
+
+/**
+ * La prosa del mensaje: fuera los bloques de código, el `inline code` y las palabras que llevan
+ * `/`, `\`, `_`, `@` o un `.`, `:` o `-` entre letras (URLs, rutas, ficheros, `figma_execute`,
+ * `tokens:parity`, `--sc-text-subtle`). Todo eso va en inglés en un parte bien escrito, y no dice
+ * nada de la lengua en que se le habla al usuario.
+ */
+function prosaDe(mensaje) {
+  const lineas = [];
+  let valla = null;
+  for (const linea of String(mensaje).split('\n')) {
+    const marca = /^\s*(`{3,}|~{3,})/.exec(linea)?.[1];
+    if (valla) {
+      if (marca?.[0] === valla[0] && marca.length >= valla.length) valla = null;
+    } else if (marca) valla = marca;
+    else lineas.push(linea);
+  }
+  return lineas
+    .join('\n')
+    .replace(/(`+)[^\n]*?\1/g, ' ')
+    .split(/\s+/)
+    .filter((palabra) => !/[/\\_@]|[\p{L}\d][.:-][\p{L}\d]/u.test(palabra))
+    .join(' ');
+}
+
+/** Cuántas palabras vacías de cada lengua lleva la prosa del mensaje. */
+export function vaciasPorLengua(mensaje) {
+  const cuenta = { en: 0, es: 0 };
+  for (const [palabra] of prosaDe(mensaje).toLowerCase().matchAll(/\p{L}+/gu)) {
+    if (VACIAS_EN.has(palabra)) cuenta.en++;
+    else if (VACIAS_ES.has(palabra)) cuenta.es++;
+  }
+  return cuenta;
+}
+
+const MIN_VACIAS_EN = 8;
+const MARGEN_EN = 3;
+
+/** El parte va en castellano: falla solo si el inglés domina con margen y hay texto para decidirlo. */
+export function fallosDeIdioma(mensaje) {
+  const { en, es } = vaciasPorLengua(mensaje);
+  if (en < MIN_VACIAS_EN || en < MARGEN_EN * es) return [];
+  return [
+    `el mensaje va en inglés: ${en} palabras como «the», «and» o «you» frente a ${es} como «el», «de» o «que», sin contar el código ni los nombres técnicos. El usuario lee en castellano: reescríbelo entero en castellano, el contenido y no solo las etiquetas; lo que sea código o un nombre técnico, entre comillas invertidas.`,
+  ];
+}
+
 /** Qué le falta al parte de cierre. Lista vacía = está bien. */
 export function fallosDelParte(mensaje, estado) {
   const fallos = [];
@@ -323,7 +384,7 @@ export function fallosDelParte(mensaje, estado) {
     const jerga = llano ? JERGA.exec(texto) : null;
     if (jerga) fallos.push(`«${nombre}:» dice «${jerga[0]}». Esa línea es para el usuario, que no programa: cuéntale el efecto, no la pieza.`);
   }
-  return [...fallos, ...fallosDeSeguridad(mensaje, estado)];
+  return [...fallosDeIdioma(mensaje), ...fallos, ...fallosDeSeguridad(mensaje, estado)];
 }
 
 export function motivoParteDeCierre(fallos) {
