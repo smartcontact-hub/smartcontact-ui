@@ -122,6 +122,66 @@ test('#12 secretos: volcar config con credenciales → deny; proyectar claves �
   allow('cat package.json');
 });
 
+// Medido el 2026-09-28 en macOS con un proceso de usar y tirar que fija `process.title` y lleva una
+// variable ficticia: `pgrep -l -f` sacaba su ENTORNO detrás del título (en un `ng serve` real, con un
+// token de sesión), `ps` no, pero su columna de comando enseña los argumentos de todos, y un proceso
+// auxiliar de la máquina lleva un `--token` en los suyos. La plataforma se inyecta porque `-a` y `-l`
+// cambian de sentido entre macOS y Linux.
+test('#12 procesos: la línea de comandos entera a pantalla → deny; PIDs, ejecutable, contar o sc:ok → allow', () => {
+  const mac = { ...verde, plataforma: 'darwin' };
+  const linux = { ...verde, plataforma: 'linux' };
+  // ROJO: el comando que imprimió el entorno, y sus variantes.
+  deny('pgrep -fl "ng serve"', mac, /LEARNINGS #12/);
+  deny('pgrep -lf ng', mac, /ENTORNO/);
+  deny('pgrep -f -l "ng serve" | head -5', mac, /LEARNINGS #12/);
+  deny("pgrep -ilf 'ng serve' | grep 4413", mac, /LEARNINGS #12/); // grep a secas deja pasar la línea entera
+  deny('pgrep -lf ng 2>/dev/null', mac, /LEARNINGS #12/); // tira los errores, no la lista
+  // En Linux, `-a` es `--list-full`.
+  deny('pgrep -af "ng serve"', linux, /LEARNINGS #12/);
+  deny('pgrep -a -f ng', linux, /LEARNINGS #12/);
+  deny('pgrep --list-full node', linux, /LEARNINGS #12/);
+  // `ps` con la columna de comando: pedida, o la que traen las columnas por defecto.
+  deny('ps aux | grep "[n]g serve"', mac, /LEARNINGS #12/);
+  deny('ps -ef | grep node', linux, /LEARNINGS #12/);
+  deny('ps -o pid=,command= -p 89041', mac, /LEARNINGS #12/);
+  deny('ps -eo pid,args | grep ng', linux, /LEARNINGS #12/);
+  deny('ps axo pid,command', mac, /LEARNINGS #12/);
+  deny('ps -p 89041', mac, /LEARNINGS #12/); // en macOS la columna por defecto es el comando CON argumentos
+  deny('ps -O rss -p 89041', mac, /LEARNINGS #12/); // -O suma columnas a las de por defecto
+  deny('pgrep -f ng | xargs ps -o command= -p', mac, /LEARNINGS #12/);
+  deny('for p in $(pgrep -f ng); do ps -o args= -p $p; done', mac, /LEARNINGS #12/);
+  deny('ps aux > procesos.txt', mac, /LEARNINGS #12/); // un fichero lo imprime el siguiente `cat`, y el repo es público
+  // El motivo enseña la forma que sí sirve.
+  deny('pgrep -fl ng', mac, /ps -o pid=,ppid=,comm=/);
+  deny('ps aux', mac, /sin `-l` ni `-a`/);
+
+  // VERDE: solo PIDs, solo el ejecutable, o la lista reducida a un número o a un sí/no.
+  allow('pgrep -f "ng serve"', mac);
+  allow('pgrep -f "ng serve"', linux);
+  allow('pgrep -l node', mac); // -l sin -f: el PID y el nombre del ejecutable
+  allow('pgrep -af "ng serve"', mac); // en macOS -a solo suma los ancestros: siguen siendo PIDs
+  allow('pgrep -lf "ng serve"', linux); // en Linux -l es el nombre, con -f o sin él
+  allow("pgrep -f 'node -l -a'", mac); // eso es el patrón, no opciones
+  allow('ps -o pid=,ppid=,comm=', mac);
+  allow('ps -p 89041 -o pid=,etime=,comm=', mac);
+  allow('ps -o pid= -o comm= -p 89041', linux);
+  allow('ps -p 89041', linux); // en Linux la columna por defecto es el nombre
+  allow('ps -c -p 89041', mac); // -c: solo el ejecutable
+  allow('pgrep -fl "ng serve" | wc -l', mac);
+  allow('ps aux | grep -c node', mac);
+  allow('ps aux | grep node | wc -l', mac);
+  allow('pgrep -fl ng >/dev/null && echo vivo', mac);
+  allow('ps -p 89041 > /dev/null 2>&1 || echo muerto', mac);
+  allow('pgrep -f ng | xargs ps -o pid=,comm= -p', mac);
+  allow('pgrep -fl "ng serve" # sc:ok', mac);
+  // Vecinos que nombran `ps` o `pgrep` sin ejecutarlos, o que miran otra cosa.
+  allow('man ps', mac);
+  allow('echo "ps aux" > nota.txt', mac);
+  allow("cat > nota.md <<'EOF'\npgrep -fl ng\nEOF", mac);
+  allow('pkill -f "ng serve"', mac);
+  allow('lsof -nP -iTCP -sTCP:LISTEN', mac);
+});
+
 test('#12 base de diff: `main...rama` → deny; `main..rama` → allow', () => {
   deny('git diff main...feat/x --stat', verde, /base de fusión/);
   deny('git diff origin/main...HEAD', verde, /base de fusión/);

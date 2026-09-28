@@ -73,7 +73,8 @@ export function escrituras(cmd) {
 }
 
 /**
- * Parte un comando compuesto en segmentos por `;`, `&&`, `|` (no `||`). Lo entrecomillado no se
+ * Parte un comando compuesto en segmentos por `;`, `&&`, `||`, `|` y saltos de línea, y apunta tras
+ * cada uno qué lo separa del siguiente: solo un `|` le pasa su salida. Lo entrecomillado no se
  * parte: ahí dentro un `|` o un `;` son texto.
  *
  * La barra invertida cuenta (2026-09-20). Antes no, y una comilla doble ESCAPADA cerraba el
@@ -81,11 +82,15 @@ export function escrituras(cmd) {
  * se denegó como si fuera un push de verdad y mandó a repetir un preflight que no hacía falta.
  * Dentro de comillas SIMPLES la barra no escapa nada, y aquí tampoco.
  */
-function segmentos(cmdCrudo) {
+function partes(cmdCrudo) {
   const cmd = sinHeredocs(cmdCrudo);
   const out = [];
   let cur = '';
   let q = null;
+  const cierra = (sep) => {
+    out.push({ texto: cur.trim(), sep });
+    cur = '';
+  };
   for (let i = 0; i < cmd.length; i++) {
     const c = cmd[i];
     if (q) {
@@ -105,26 +110,189 @@ function segmentos(cmdCrudo) {
       continue;
     }
     if (c === '|' && cmd[i + 1] === '|') {
-      out.push(cur);
-      cur = '';
+      cierra('||');
       i++;
       continue;
     }
     if (c === '|' || c === ';' || (c === '&' && cmd[i + 1] === '&')) {
-      out.push(cur);
-      cur = '';
+      cierra(c === '&' ? '&&' : c);
       if (c === '&') i++;
       continue;
     }
     if (c === '\n') {
-      out.push(cur);
-      cur = '';
+      cierra('\n');
       continue;
     }
     cur += c;
   }
-  out.push(cur);
-  return out.map((s) => s.trim()).filter(Boolean);
+  cierra('');
+  return out.filter((p) => p.texto);
+}
+
+const segmentos = (cmd) => partes(cmd).map((p) => p.texto);
+
+/** Las tuberías del comando: cada una, sus etapas en orden (las que se pasan la salida con `|`). */
+function tuberias(cmd) {
+  const out = [];
+  let etapas = [];
+  for (const p of partes(cmd)) {
+    etapas.push(p.texto);
+    if (p.sep !== '|') {
+      out.push(etapas);
+      etapas = [];
+    }
+  }
+  if (etapas.length) out.push(etapas);
+  return out;
+}
+
+/**
+ * Las palabras de una etapa como las recibe el programa: con las comillas resueltas (`-o "pid=,comm="`
+ * da `-o` y `pid=,comm=`, y `'node -l'` es UNA palabra, un patrón y no una opción). Un `$(…)` o un
+ * `` `…` `` cuenta como una palabra opaca: sus opciones son de otro comando.
+ */
+function palabras(etapa) {
+  const s = etapa.replace(/\$\([^()]*\)|`[^`]*`/g, 'SUB');
+  const out = [];
+  let cur = '';
+  let q = null;
+  let hay = false; // `''` también es una palabra
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (q) {
+      if (c === q) q = null;
+      else if (c === '\\' && q === '"' && i + 1 < s.length) cur += s[++i];
+      else cur += c;
+      continue;
+    }
+    if (c === "'" || c === '"') {
+      q = c;
+      hay = true;
+      continue;
+    }
+    if (/\s/.test(c)) {
+      if (cur || hay) out.push(cur);
+      cur = '';
+      hay = false;
+      continue;
+    }
+    cur += c;
+  }
+  if (cur || hay) out.push(cur);
+  return out;
+}
+
+/** El programa que corre una etapa y sus argumentos, saltando lo que va delante y lanza OTRO comando:
+ *  asignaciones de entorno, `(`, `do`, `then`, `time`, `xargs` con sus opciones… */
+function programa(etapa) {
+  const w = palabras(etapa.replace(/^[({]\s*/, ''));
+  let i = 0;
+  for (;;) {
+    if (/^[A-Za-z_][A-Za-z_0-9]*=/.test(w[i] ?? '')) i++;
+    else if (['do', 'then', 'else', '!', 'time', 'nohup', 'command', 'exec', 'sudo'].includes(w[i])) i++;
+    else if (w[i] === 'xargs') {
+      i++;
+      while ((w[i] ?? '').startsWith('-')) i += /^-[IJLnPsEd]$/.test(w[i]) ? 2 : 1;
+    } else break;
+  }
+  return { nombre: (w[i] ?? '').split('/').pop(), args: w.slice(i + 1) };
+}
+
+/**
+ * ¿Este `pgrep` imprime la línea de comandos entera? Las opciones cambian de sentido según el sistema:
+ * en macOS la saca `-l` junto a `-f`, y `-a` solo suma los ancestros a la búsqueda (sigue dando PIDs);
+ * en Linux la saca `-a` (`--list-full`), y `-l` es el nombre del ejecutable, con `-f` o sin él.
+ * `-q` calla y `-c` cuenta (en macOS no existe y sale con el uso): ninguno lista.
+ */
+function pgrepListaComandos(args, plataforma) {
+  const fin = args.indexOf('--');
+  const opciones = (fin < 0 ? args : args.slice(0, fin)).filter((a) => a.startsWith('-'));
+  const cortas = opciones.filter((a) => /^-[A-Za-z]+$/.test(a)).join('');
+  if (/[qc]/.test(cortas) || opciones.includes('--count')) return false;
+  const mac = cortas.includes('l') && cortas.includes('f');
+  const linux = cortas.includes('a') || opciones.includes('--list-full');
+  if (plataforma === 'darwin') return mac;
+  if (plataforma === 'linux') return linux;
+  return mac || linux;
+}
+
+/**
+ * ¿Este `ps` imprime la columna de comando (`command`/`args`: el programa CON sus argumentos)? Con
+ * `-o` solo si se pide; sin `-o`, la traen las columnas por defecto: en macOS todas (salvo con `-c`,
+ * que la deja en el ejecutable), en Linux las de estilo BSD (`ps aux`) y las de `-f`. `-O` suma
+ * columnas a las de por defecto, así que la trae siempre.
+ */
+function psListaComandos(args, plataforma) {
+  const formatos = [];
+  let porDefecto = true;
+  let masPorDefecto = false;
+  let letras = '';
+  const bsd = /^[A-Za-z]+$/.test(args[0] ?? ''); // `ps aux`: las opciones sin guion
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    const largo = a.match(/^--format(?:=(.*))?$/);
+    if (largo) {
+      formatos.push(largo[1] ?? args[++i] ?? '');
+      porDefecto = false;
+      continue;
+    }
+    const conGuion = /^-[^-]/.test(a);
+    const grupo = conGuion ? a.slice(1) : i === 0 && bsd ? a : null;
+    if (!grupo) continue;
+    for (let j = 0; j < grupo.length; j++) {
+      const c = grupo[j];
+      if (c === 'o' || c === 'O') {
+        if (c === 'o') porDefecto = false;
+        else masPorDefecto = true;
+        formatos.push(grupo.slice(j + 1) || args[++i] || '');
+        break;
+      }
+      if (conGuion && /[pUuGgtMN]/.test(c)) break; // lo que sigue es su argumento (`-p89041`, `-U usuario`)
+      letras += c;
+    }
+  }
+  const campos = formatos.flatMap((f) => f.split(/[\s,]+/)).map((c) => c.split(/[=:]/)[0].toLowerCase());
+  if (campos.some((c) => ['command', 'args', 'cmd'].includes(c))) return true;
+  if (!porDefecto) return false;
+  if (plataforma === 'darwin') return !letras.includes('c');
+  if (plataforma === 'linux') return bsd || /[fF]/.test(letras) || masPorDefecto;
+  return true;
+}
+
+/** Etapas que reducen lo que les entra a un número o a un sí/no: nada de la lista llega a pantalla. */
+function cuentaOCalla(etapa) {
+  const { nombre, args } = programa(etapa);
+  if (nombre === 'wc') return true;
+  if (!['grep', 'egrep', 'fgrep', 'rg'].includes(nombre)) return false;
+  const fin = args.indexOf('--');
+  return (fin < 0 ? args : args.slice(0, fin)).some(
+    (a) => (/^-[A-Za-z]+$/.test(a) && /[cq]/.test(a)) || ['--count', '--quiet', '--silent'].includes(a),
+  );
+}
+
+/** La salida estándar va a `/dev/null` (`2>/dev/null` son solo los errores y no cuenta). */
+const A_DEV_NULL = /(?:^|\s)(?:1|&)?>>?&?\s*\/dev\/null\b/;
+const sinComillas = (s) => s.replace(/'[^']*'|"(?:\\.|[^"\\])*"/g, '');
+
+/**
+ * La etapa que lista procesos con su línea de comandos entera Y cuya lista llega a pantalla, o null.
+ * No llega si una etapa de detrás la cuenta o la calla (`| wc -l`, `| grep -c`, `| grep -q`) o si
+ * acaba en `/dev/null`. A un fichero sí cuenta: lo imprime el siguiente `cat`, y el repo es público.
+ */
+function listadoAPantalla(cmd, plataforma) {
+  for (const etapas of tuberias(cmd)) {
+    for (let i = 0; i < etapas.length; i++) {
+      const { nombre, args } = programa(etapas[i]);
+      const lista =
+        (nombre === 'pgrep' && pgrepListaComandos(args, plataforma)) ||
+        (nombre === 'ps' && psListaComandos(args, plataforma));
+      if (!lista) continue;
+      const tirada = [etapas[i], etapas[etapas.length - 1]].some((e) => A_DEV_NULL.test(sinComillas(e)));
+      if (tirada || etapas.slice(i + 1).some(cuentaOCalla)) continue;
+      return etapas[i];
+    }
+  }
+  return null;
 }
 
 // Un segmento es un COMANDO si empieza por él (tras asignaciones de entorno, `cd x &&` ya está
@@ -394,6 +562,28 @@ function evaluarBase(cmd, ctx = {}) {
       reason:
         'LEARNINGS #12 — ese fichero lleva credenciales y volcarlo entero las imprime (pasó con el token de Figma; hubo que rotarlo). ' +
         "Proyecta solo las claves: `jq 'keys'`, `jq '.mcpServers | keys'`, `node -e \"console.log(Object.keys(require(...)))\"`, o `grep -c`.",
+    };
+
+  // #12 (c) — listar procesos con su línea de comandos ENTERA imprime lo que lleve dentro.
+  //
+  // Medido el 2026-09-28 en macOS con un proceso de usar y tirar que fija `process.title`, como
+  // `ng serve`, y lleva una variable ficticia en el entorno. El título rellena con ceros el hueco de
+  // los argumentos; `pgrep -l -f` se los salta y sigue leyendo, así que detrás del título imprime el
+  // ENTORNO del proceso (en un `ng serve` real, un token de sesión entre otras variables). `ps` cuenta
+  // esos ceros y no llega al entorno, pero su columna de comando enseña los ARGUMENTOS de todos, y en
+  // la misma máquina un proceso auxiliar lleva un `--token` en los suyos. Solo cuenta lo que llega a
+  // pantalla: el `pgrep -af` de `preflightVivo` lo lee este hook y no lo imprime.
+  const listado = listadoAPantalla(cmd, ctx.plataforma || process.platform);
+  if (listado)
+    return {
+      decision: 'deny',
+      reason:
+        `LEARNINGS #12 — «${listado}» imprime la línea de comandos ENTERA de otros procesos, y ahí viajan secretos: ` +
+        'en macOS, `pgrep -l -f` sigue leyendo detrás del título de un proceso que se retitula (`ng serve`) y saca su ENTORNO, ' +
+        'token de sesión incluido (2026-09-28); `ps` con la columna de comando enseña los argumentos de todos, y alguno lleva un `--token`. ' +
+        'Para ver qué corre: `pgrep -f patrón` sin `-l` ni `-a` (solo PIDs) o `ps -o pid=,ppid=,comm=` (solo el ejecutable); ' +
+        'para contar, `| wc -l` o `| grep -c`; qué escucha en cada puerto, `lsof -nP -iTCP -sTCP:LISTEN`. ' +
+        'Si de verdad necesitas un argumento, proyecta solo ese y añade `# sc:ok`.',
     };
 
   // #1 — `claude mcp list` NO contesta «¿puedo llamar a esa herramienta?».
