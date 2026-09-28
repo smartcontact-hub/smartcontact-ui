@@ -126,7 +126,8 @@ Lo que había:
    - % de servicio: cuenta las atendidas en ese tiempo o menos;
    - Niveles, sin «la tabla de abajo»;
    - Voz: la voz sintética de los anuncios;
-   - dominios: una sola ayuda, con lo que decía la ⓘ;
+   - dominios: una sola ayuda, con lo que decía la ⓘ. Va dentro del campo, así que la fila se alinea arriba y
+     «Añadir» pasa a `md`, la altura del campo (centrado, caía 21 px, contra campo y ayuda);
    - «Desbordar sesión»: tras un minuto sin actividad, como dice el documento de producto.
 3. **Fuera las cuatro ⓘ de la ficha de grupo.** Su texto pasa a la ayuda visible, o sale si repetía el rótulo.
 4. **La ayuda va en el `helperText` del campo, que la anuncia.** En el DS, `sc-select` pasa sus `aria-*` al elemento

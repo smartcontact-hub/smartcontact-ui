@@ -326,7 +326,7 @@
                   <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
                   <span class="domain-add">
                     <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [helperText]="'groups.form.advanced.allowed_domains_hint' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
-                    <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
+                    <sc-button variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
                   </span>
                   @if (form().advanced.allowedDomains.length > 0) {
                     <div class="domain-chips">

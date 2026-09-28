@@ -117,10 +117,12 @@
   inset-inline-end: calc(var(--sc-spacing-0-5) * -1);
 }
 
-/* Añadir un dominio permitido: campo + botón en una fila, chips debajo. */
+/* Añadir un dominio permitido: campo + botón en una fila, chips debajo. La ayuda va dentro del campo (DD-133), así
+ * que la fila se alinea ARRIBA y el botón es del tamaño del campo (los dos `md`, 32,5 px): centrado, caía contra
+ * campo + ayuda, 21 px por debajo del campo. */
 .domain-add {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--sc-spacing-0-5);
 }
 
