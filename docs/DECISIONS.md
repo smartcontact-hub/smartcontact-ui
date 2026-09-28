@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | El pase de diseño de las fichas: en la franja el anillo junto a su cifra y los datos en dos columnas · las tres altas con su cabecera a la vista y «Crear …» · Guardar deja en la ficha · un usuario nuevo nace sin permisos · saltos por canal en Distribución y colas · el icono de un aviso con el peso de su texto · «Asignar» en el listado de grupos (enmienda DD-122 §8) | DD-128 |
+> | El pase de diseño de las fichas: en la franja el anillo junto a su cifra y los datos en dos columnas · las tres altas con su cabecera a la vista y «Crear …» · Guardar deja en la ficha · un usuario nuevo nace sin permisos · saltos por canal en Distribución y colas · el icono de un aviso con el peso de su texto · «Asignar» en el listado de grupos (enmienda DD-122 §8) | DD-130 |
 > | Los datos de demostración del Dashboard cuadran: un solo estado por agente (`DEMO_AGENT_PRESENCE`) para la tabla, los anillos y su detalle · los disponibles no derivan en el latido · unos totales fijos al pie llevan raya arriba | DD-127 |
 > | El resumen de las fichas como widget: la cifra con «/total» y el `p-progress-spinner` nativo a 42 (`sc-summary-kpi`), que cuenta y se llena al abrir y al cambiar, y nada con menos movimiento · anillo en toda proporción, oculto al lector (la cifra final va en texto oculto) · la tarjeta en el tinte de marca, con todo su texto en primario (el secundario no llega a AA sobre el tinte) · `theme-contrast` perdona el gris solo sobre sus fondos (enmienda DD-121 §3, DD-122 §8) | DD-126 |
 > | La caja de sección: 17,5 arriba y abajo en las dos pieles (el aire vertical de los nodos era de más) · una lista con rayas las centra y no suma relleno fuera · en el monitor, la leyenda del anillo pegada a su cifra · R4: lo que apilan los envoltorios de dentro de una caja no llega a 7 | DD-125 |
@@ -91,7 +91,7 @@
 
 ---
 
-## DD-128 · 2026-09-27 — El pase de diseño de las fichas: la franja, las altas, Guardar, el usuario nuevo y los saltos por canal
+## DD-130 · 2026-09-27 — El pase de diseño de las fichas: la franja, las altas, Guardar, el usuario nuevo y los saltos por canal
 
 **Contexto** · Con el resumen ya como widget (DD-126), se revisó el flujo rehecho de administración con las guías de
 maquetación y de pulido: listados, panel rápido, las tres fichas por sección, las altas, los valores por defecto y
@@ -563,7 +563,7 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
 7. **Un aviso cancelado vuelve a donde estaba**: el router con `canceledNavigationResolution: 'computed'`.
 8. **Agente y usuario, al molde de la ficha de grupo**. Van con la cabecera encima, el índice a la izquierda, una
    sección a la vista en su `sc-section-card` y el resumen a la derecha con sus tres cifras de siempre, que dejan
-   la franja del nombre (desde DD-126, cada proporción es un widget con su anillo; desde DD-128, la cabecera va
+   la franja del nombre (desde DD-126, cada proporción es un widget con su anillo; desde DD-130, la cabecera va
    también en el alta). Cada ficha tiene un orden, el de sus dependencias, igual en los dos modos:
    - agente: Identidad · Grupos asignados · Permisos · Recursos · Avanzado;
    - usuario: Identidad · Acceso · Servicios asignados.
@@ -742,7 +742,7 @@ exactamente el desbordamiento y dónde se configura su destino; si «Desbordar s
 estrategia o capacidad propias; si la URL del script de Web Chat la pone cada grupo o la plataforma; si el backend
 tendrá un permiso de WhatsApp por agente (el AED en vivo solo tiene Tlf / Chat / Email); qué ve el cliente en cola si
 se quita un canal o se cambia la estrategia de un grupo activo; el choque con postventa (2026-09-18), que pidió
-más de un anuncio periódico en teléfono; y, desde DD-128, qué secciones y permisos trae cada tipo de usuario (el alta
+más de un anuncio periódico en teléfono; y, desde DD-130, qué secciones y permisos trae cada tipo de usuario (el alta
 nace sin ninguno). Fuera a propósito: la forma de las fichas de agente y usuario, y
 `/config/aed/grupos`, la página vieja de Configuración, que no está conectada con la ficha. Vigilan esto
 `grupo-vision.spec.ts`, `ficha-grupo.spec.ts`, `ficha-grupo-canales.spec.ts`, `panel-agentes-grupo.spec.ts`,

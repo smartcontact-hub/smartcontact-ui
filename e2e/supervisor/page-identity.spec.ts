@@ -34,7 +34,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *
  * Las FICHAS (grupo, agente, usuario) no están en ninguna de las dos listas: su `<h1>` es el de su
  * cabecera, en los dos modos. En el alta dice «Nuevo …» hasta que se escribe el nombre, como el grupo
- * desde DD-121; agente y usuario lo escondían hasta el 2026-09-27, y al crear la ficha saltaba (DD-128).
+ * desde DD-121; agente y usuario lo escondían hasta el 2026-09-27, y al crear la ficha saltaba (DD-130).
  * Lo prueba `pase-fichas.spec.ts`.
  */
 

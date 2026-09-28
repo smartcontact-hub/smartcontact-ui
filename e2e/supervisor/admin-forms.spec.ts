@@ -31,7 +31,7 @@ test('usuarios · crear un usuario lo deja en su ficha y lo añade al listado', 
   await expect(save).toBeEnabled();
   await save.click();
 
-  // Crear deja en la edición del usuario nuevo, como grupo y agente (DD-128; hasta el 2026-09-27 volvía al
+  // Crear deja en la edición del usuario nuevo, como grupo y agente (DD-130; hasta el 2026-09-27 volvía al
   // listado). Que además salga en el listado se comprueba entrando a la lista.
   await expect(page).toHaveURL(/admin\/usuarios\/editar\/\d+$/);
   await expect(page.locator('.headline__name')).toHaveText(name);

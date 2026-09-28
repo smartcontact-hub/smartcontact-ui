@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * EL PASE DE DISEÑO DE LAS FICHAS (DD-128).
+ * EL PASE DE DISEÑO DE LAS FICHAS (DD-130).
  *
  * Lo que se decidió tras revisar el flujo rehecho de administración a 1440 y 1280, en los dos temas:
  *   · en la franja (por debajo de 1340) la cifra va junto a su anillo, las tarjetas de una fila miden lo

@@ -7,7 +7,7 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 
-## ✅ 2026-09-27 · El pase de diseño de las fichas: la franja, las altas, Guardar, el usuario nuevo y los saltos por canal (DD-128)
+## ✅ 2026-09-27 · El pase de diseño de las fichas: la franja, las altas, Guardar, el usuario nuevo y los saltos por canal (DD-130)
 
 > **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `ddf711a`), PR nuevo.**
 > El tramo del 2026-09-23 (los grupos pierden la cara) sale de aquí:
@@ -17,7 +17,7 @@
 - **Alcance:** 17 vistas, a 1440 y 1280 y en los dos temas.
 - **Método:** capturas y medidas por vista; lo propuesto se ensayó inyectando CSS en la página real.
 - **Resultado:** siete hallazgos, enseñados en una página de decisión privada, y se aplicaron los siete. El detalle y
-  lo descartado, en DD-128.
+  lo descartado, en DD-130.
 - **El antes y después** (página privada) cubre ya las tres fichas y Contact Center, con capturas «después» de este
   árbol: agente y usuario conservan sus controles (34 y 16 al abrir) y bajan de 1.304 a 812 de ancho.
 
@@ -255,7 +255,7 @@ el nombre como campo en el sitio del título. Rafa pidió no quitar el paso.
 
 ## SIGUIENTE — sin preguntar
 
-0. **Lo que queda del pase de diseño** (DD-128 aplicó los siete hallazgos de la revisión). Sin revisar aún a fondo:
+0. **Lo que queda del pase de diseño** (DD-130 aplicó los siete hallazgos de la revisión). Sin revisar aún a fondo:
    - los estados vacíos: un grupo sin agentes, una búsqueda sin resultados, un alta sin grupos;
    - las ayudas bajo casi cada campo;
    - la columna de 240, que sigue quitando 492 px de contenido a agente y usuario.

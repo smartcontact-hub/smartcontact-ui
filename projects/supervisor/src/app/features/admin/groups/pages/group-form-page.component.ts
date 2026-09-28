@@ -546,7 +546,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly hasEmail = computed(() => this.form().channels.has('email'));
 
   /**
-   * Los saltos de Distribución y colas (DD-128): uno por bloque de canal activo, en su orden, y solo con dos o más
+   * Los saltos de Distribución y colas (DD-130): uno por bloque de canal activo, en su orden, y solo con dos o más
    * (con uno, la sección ya empieza en él). Con los cuatro canales la sección mide 2.355 px y nada nace plegado
    * (DD-121 §5): el salto lleva al bloque y deja el foco en su título.
    */

@@ -94,7 +94,7 @@
 }
 
 /* En la franja ancha, cada dato a los dos extremos dejaba 450 px entre la clave y su valor (medido a 1280;
- * DD-128). Ahí la tarjeta es una rejilla de dos columnas que comparten reparto, salida y recursos (`subgrid`):
+ * DD-130). Ahí la tarjeta es una rejilla de dos columnas que comparten reparto, salida y recursos (`subgrid`):
  * los valores empiezan en la misma vertical, a 28 de la clave más larga. */
 @container (min-width: 37.5rem) {
   .resumen__facts {

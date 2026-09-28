@@ -478,7 +478,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         photo: f.photo ?? undefined,
       };
 
-      // Guardar deja en la ficha, como en grupo y agente (DD-128): al editar se queda; al crear, abre la edición
+      // Guardar deja en la ficha, como en grupo y agente (DD-130): al editar se queda; al crear, abre la edición
       // del usuario nuevo en la sección en la que se estaba. Hasta el 2026-09-27 volvía siempre al listado.
       const editingId = this.editingId();
       if (editingId) {

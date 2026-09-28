@@ -840,7 +840,7 @@ diferencias de entonces eran el mismo componente en otro estado.
 fila activa) y las maquetas de las fichas de grupo, agente y usuario · **Esfuerzo:** revincular el peso de dos iconos
 y retocar tres maquetas · **Sin verificar** contra el fichero: el código no cita los nodos.
 
-- **Por qué** (DD-128): un icono junto a un texto lleva su peso óptico. En la app, los avisos en semibold ya llevan el
+- **Por qué** (DD-130): un icono junto a un texto lleva su peso óptico. En la app, los avisos en semibold ya llevan el
   icono a 600 (`sc-icon [weight]="600"`). Dentro de piezas del DS siguen a 400 junto a un título en semibold: el
   icono del título de cada sección (`sc-section-card`) y el de la fila activa del índice (`sc-form-section-nav`).
 - **Las altas:** agente y usuario enseñan su cabecera al crear («Nuevo agente» hasta que se escribe el nombre), y el

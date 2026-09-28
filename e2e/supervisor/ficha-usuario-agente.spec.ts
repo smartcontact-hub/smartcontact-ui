@@ -81,7 +81,7 @@ for (const f of FICHAS) {
     await goto(page, f.crear);
     expect(await rotulos(page)).toEqual([...f.orden]);
     await expect(actual(page)).toHaveText('Identidad');
-    // La cabecera, también en el alta (DD-128): «Nuevo …» hasta que se escribe el nombre, y sin «Eliminar».
+    // La cabecera, también en el alta (DD-130): «Nuevo …» hasta que se escribe el nombre, y sin «Eliminar».
     await expect(page.locator('.headline__name')).toHaveText(f.alta);
     await expect(page.locator('.headline__actions')).toHaveCount(0);
   });

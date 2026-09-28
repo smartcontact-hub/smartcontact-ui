@@ -74,7 +74,7 @@ export const DEFAULT_PERMISSIONS: UserPermissions = {
 };
 
 /**
- * Lo que trae un usuario NUEVO: nada. Mínimo privilegio (DD-128): hasta el 2026-09-27 el alta nacía con las 11
+ * Lo que trae un usuario NUEVO: nada. Mínimo privilegio (DD-130): hasta el 2026-09-27 el alta nacía con las 11
  * secciones y los 5 permisos marcados, «Gestión de usuarios» y «Espiar conversaciones» incluidos, fuera cual fuera
  * su tipo. Qué paquete trae cada tipo es una pregunta abierta para producto (DD-121). Los usuarios de ejemplo
  * siguen saliendo de `DEFAULT_*`.
