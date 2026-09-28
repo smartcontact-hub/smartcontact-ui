@@ -48,6 +48,10 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   arriba) y separa a los hermanos del cuerpo 14 en vez de 15,75. A 17,5, el botón quedaba más cerca del último
   campo que dos campos entre sí y se leía como parte de ese campo. Sin cuerpo (una confirmación) y con `flushBody`,
   como estaba. ([DD-123](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — el botón `variant="danger" appearance="text"` sube de `red-500` a
+  `red-600`: 3.76:1 sobre blanco no llegaba al 4.5:1 de WCAG AA, el mismo fallo que el `danger` sólido ya
+  había corregido en julio. Sin cambio en oscuro (ya usaba `red-400`). Todo consumidor de esa combinación,
+  no solo el «Eliminar» de las fichas, hereda el color. ([DD-128](docs/DECISIONS.md))
 
 ## [1.0.0] — 2026-09-09
 

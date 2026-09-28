@@ -38,6 +38,14 @@ export const EXCLUDE = new Set([
   'light:button.danger.hover.border.color',
   'light:button.danger.active.background',
   'light:button.danger.active.border.color',
+  // ── etiqueta del botón `danger` de TEXTO (light) · 2026-09-27 (DD-128) ──────────
+  //    El sólido subió a red-600 arriba (2026-09-15); el de texto (`appearance="text"`, el
+  //    «Eliminar» de las fichas) se quedó en red-500 = 3,76:1 sobre blanco. A diferencia del
+  //    sólido, este SÍ lo consume el preset por token (`--sc-cmp-button-text-danger-color`,
+  //    `sc-preset/button.ts`), así que va por el mismo mecanismo que `outlined.secondary` arriba:
+  //    fuera de la zona `@sc-gen`, valor a mano en `04-component.css`. Se borra cuando Figma suba
+  //    `button.text.danger.color`. Ver customs-catalog §1.8.
+  'light:button.text.danger.color',
   // ── opción no elegida de SelectButton (light) · 2026-09-14 ──────────────────────
   //    El Kit da surface-500 sobre su carril: 2,56:1. El código va a surface-700 (6,40:1) y el hover a
   //    surface-900 (customs-catalog §1.10). Se borra cuando Figma haga `figma-pendiente.md` §8.

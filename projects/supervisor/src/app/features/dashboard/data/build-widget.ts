@@ -84,7 +84,14 @@ export function buildWidget(typeId: string, opts: BuildWidgetOptions): Dashboard
       };
     }
     case 'group-panel': {
-      const connected = int(3, 4) * n;
+      /* Conectados y disponibles son AGENTES reales de la demo (DD-129), no una cifra que escale
+       * con `n` (colas del panel): con QUEUES=4, `int(3,4)*n` daba 12 o 16 conectados sin relación
+       * con los 10 agentes reales, y el detalle (`detail.ts`) truncaba en silencio a los que hay de
+       * verdad. El panel agrega sobre todos los agentes, igual que `agents-state`; no hay reparto
+       * por grupo en la demo, así que se usa el total real en vez de inventar uno por panel. */
+      const presencias = Object.values(DEMO_AGENT_PRESENCE);
+      const connected = presencias.filter((p) => p !== 'offline').length;
+      const available = presencias.filter((p) => p === 'available').length;
       const total = int(20, 34) * n;
       const attended = total - int(1, 3) * n;
       return {
@@ -92,7 +99,7 @@ export function buildWidget(typeId: string, opts: BuildWidgetOptions): Dashboard
         kind: 'group-panel',
         onHold: int(0, 4),
         inProgress: int(2, 5) * n,
-        available: int(1, Math.max(1, Math.round(connected * 0.6))),
+        available,
         connected,
         total,
         attended,

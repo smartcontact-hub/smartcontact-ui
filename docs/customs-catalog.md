@@ -313,23 +313,20 @@ se borra.
 
 ---
 
-### 1.8 Los dos últimos botones bajo AA · 2026-07-19
+### 1.8 Los tres últimos botones bajo AA · 2026-07-19, cerrada el 2026-09-27
 
 > Cierra la lista. **Después de esto no queda ningún fallo de contraste en la app**
 > salvo el límite conocido de §1.5.
->
-> **Queda uno, medido el 2026-09-26:** el `danger` de TEXTO (`appearance="text"`, sin fondo) pinta su
-> etiqueta en `red-500`, 3,76:1 sobre blanco. Es el «Eliminar» de la cabecera de las fichas, y
-> `theme-contrast` lo tiene registrado como conocido desde que barre la ficha de grupo (DD-121). Se
-> arreglaría como el sólido de abajo: su color de texto a `red-600` en `sc-preset/button.ts`.
 
-Los dos venían del **preset**, no de CSS de página — que es la razón de que sobrevivieran
-a toda la limpieza anterior: ninguna hoja de página los mencionaba.
+Los tres venían del **preset o de un token de componente**, no de CSS de página — que es
+la razón de que sobrevivieran a toda la limpieza anterior: ninguna hoja de página los
+mencionaba.
 
 | Slot | Kit | Ahora | Medido |
 |---|---|---|---|
 | `button.danger` sólido (fondo) | `red-500` | **`red-600`** | 3.76:1 → **4.83:1** con su texto blanco |
 | `button.outlined.secondary` (etiqueta) | `slate-500` | **`slate-600`** | 2.95:1 → **4.52:1** |
+| `button.text.danger` (etiqueta) | `red-500` | **`red-600`** | 3.76:1 → **4.83:1** — DD-128, medido el 2026-09-26 |
 
 **`danger` desplaza la rampa entera**, de 500/600/700 a 600/700/800, para conservar el
 recorrido reposo → hover → pulsado. Si solo subiera el reposo, reposo y hover
@@ -337,13 +334,15 @@ coincidirían y el botón dejaría de responder al ratón. El `focusRing` se que
 `red-500`: es un anillo, no lleva texto encima, y moverlo cambiaría una señal de foco sin
 motivo.
 
-**Se arreglan en sitios distintos, y esa asimetría importa.** `outlined secondary` va por
-token (`--sc-cmp-button-outlined-secondary-color`, fuera de la zona `@sc-gen` + `EXCLUDE`,
-igual que §1.5 y §1.7). El `danger` sólido **no puede**: sus `--sc-cmp-button-danger-*`
-existen pero corresponden a otro slot y **no los lee nadie** — lo comprobé cambiándolos y
-midiendo el píxel, que seguía en `#ef4444`. Cablear el preset a ellos rompe
-`cmp-color-rewire`, que exige que cada `var(--sc-cmp-*)` case con SU slot (`root.danger`
-pediría `--sc-cmp-button-root-danger-*`, que no existe en el export). Así que va por
+**Se arreglan en sitios distintos, y esa asimetría importa.** `outlined secondary` y
+`text danger` van por token (`--sc-cmp-button-outlined-secondary-color` y
+`--sc-cmp-button-text-danger-color`, fuera de la zona `@sc-gen` + `EXCLUDE`, igual que
+§1.5 y §1.7): los dos SÍ los consume el preset por `var(...)`, comprobado. El `danger`
+sólido **no puede** ir por ahí: sus `--sc-cmp-button-danger-*` existen pero corresponden
+a otro slot y **no los lee nadie** — lo comprobé cambiándolos y midiendo el píxel, que
+seguía en `#ef4444`. Cablear el preset a ellos rompe `cmp-color-rewire`, que exige que
+cada `var(--sc-cmp-*)` case con SU slot (`root.danger` pediría
+`--sc-cmp-button-root-danger-*`, que no existe en el export). Así que ese va por
 referencia de paleta en `sc-preset/button.ts`, documentado ahí.
 
 Esa asimetría es una **deuda del puente Kit↔preset**, no del arreglo: hay tokens de
@@ -351,9 +350,9 @@ componente emitidos que ningún preset consume. `cmp-color-rewire` ya vigila el 
 contrario (hex hardcodeado donde hay token); el sentido "token emitido y mudo" no lo
 vigila nadie.
 
-**Cómo se cierra**: que el Kit suba `button.danger.background` y
-`button.outlined.secondary.color`. Entonces la fila de `EXCLUDE` y el bloque del preset se
-borran.
+**Cómo se cierra**: que el Kit suba `button.danger.background`,
+`button.outlined.secondary.color` y `button.text.danger.color`. Entonces las filas de
+`EXCLUDE` y el bloque del preset se borran.
 
 ### 1.9 `--sc-border-subtle` existía solo en claro · 2026-07-22
 
