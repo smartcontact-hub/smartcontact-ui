@@ -1397,7 +1397,8 @@
         "type": "User type",
         "status": "Status",
         "active": "Active",
-        "active_hint": "Can sign in and operate"
+        "active_hint": "Can sign in and operate",
+        "email_empty": "No email"
       },
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
       "duplicate_title": "Duplicate user",
@@ -1405,7 +1406,8 @@
       "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
       "headline": {
         "type": "Type"
-      }
+      },
+      "create_submit": "Create user"
     },
     "errors": {
       "name_required": "Name is required",
@@ -1460,7 +1462,7 @@
       "agents_count": "{{count}} agents",
       "services_count": "{{count}} services",
       "services_count_one": "1 service",
-      "assign": "Agents",
+      "assign": "Assign",
       "assign_aria": "Assign agents to {{name}}",
       "assign_column": "Assign agents",
       "strategy_phone": "Phone strategy",
@@ -1670,7 +1672,9 @@
         "webchat_access": "Web Chat · access",
         "whatsapp_number": "WhatsApp · number",
         "email_note": "Email has no strategy or queue of its own: messages arrive in the group's inbox.",
-        "inactive": "{{channel}} is not active · turn it on in General"
+        "inactive": "{{channel}} is not active · turn it on in General",
+        "jump_label": "Go to",
+        "jump_aria": "Channels in this section"
       },
       "chat": {
         "close_on_inactivity": "Close chat on inactivity",
@@ -1921,7 +1925,8 @@
       "summary": {
         "no_groups": "No groups",
         "groups_active": "Active groups"
-      }
+      },
+      "create_submit": "Create agent"
     },
     "toasts": {
       "created": "Agent \"{{name}}\" created",

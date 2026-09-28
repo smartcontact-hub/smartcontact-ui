@@ -33,12 +33,13 @@
   gap: var(--sc-spacing-1);
 }
 
-/* En la franja ancha, las tarjetas van en fila. */
+/* En la franja ancha, las tarjetas van en fila y miden lo mismo: una fila de tarjetas de alturas distintas se
+ * lee a medio hacer (medido a 1280: «Tipo» a 65 junto a dos de 105; DD-130). */
 @container (min-width: 37.5rem) {
   .resumen__cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-    align-items: start;
+    align-items: stretch;
   }
 }
 
@@ -113,6 +114,16 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--sc-spacing-0-75);
+}
+
+/* La cifra y su anillo son una pieza: en una tarjeta ancha, el anillo va junto a la cifra, a 28, y no en el otro
+ * borde (medido a 1280: a 290 en el usuario y a 440 en el grupo; DD-130). Va DESPUÉS de la regla de arriba: una
+ * consulta de contenedor no suma especificidad, y la que va detrás gana. */
+@container (min-width: 37.5rem) {
+  .resumen__widget {
+    justify-content: flex-start;
+    gap: var(--sc-spacing-2);
+  }
 }
 
 .resumen__figure {

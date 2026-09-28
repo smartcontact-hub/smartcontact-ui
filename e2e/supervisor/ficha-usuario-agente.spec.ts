@@ -34,6 +34,7 @@ const FICHAS = [
     orden: ['Identidad', 'Acceso', 'Servicios asignados'],
     trabajo: { rotulo: 'Acceso', seccion: 'acceso' },
     campoNombre: '#user-name',
+    alta: 'Nuevo usuario',
   },
   {
     nombre: 'agente',
@@ -44,6 +45,7 @@ const FICHAS = [
     orden: ['Identidad', 'Grupos asignados', 'Permisos', 'Recursos', 'Avanzado'],
     trabajo: { rotulo: 'Grupos asignados', seccion: 'grupos' },
     campoNombre: '#agent-name',
+    alta: 'Nuevo agente',
   },
 ] as const;
 
@@ -79,7 +81,9 @@ for (const f of FICHAS) {
     await goto(page, f.crear);
     expect(await rotulos(page)).toEqual([...f.orden]);
     await expect(actual(page)).toHaveText('Identidad');
-    await expect(page.locator('.headline')).toHaveCount(0);
+    // La cabecera, también en el alta (DD-130): «Nuevo …» hasta que se escribe el nombre, y sin «Eliminar».
+    await expect(page.locator('.headline__name')).toHaveText(f.alta);
+    await expect(page.locator('.headline__actions')).toHaveCount(0);
   });
 
   test(`${f.nombre} · el listado abre la ficha en su sección de trabajo`, async ({ page }) => {
@@ -116,7 +120,7 @@ test('agente · crear deja en su edición de verdad: el índice ya enlaza a la e
   await page.locator('#agent-name').fill(nombre);
   await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#agent-ext') }), /./);
 
-  await page.getByRole('button', { name: 'Guardar' }).click();
+  await page.getByRole('button', { name: 'Crear agente' }).click();
   await expect(page).toHaveURL(/\/admin\/agentes\/editar\/\d+$/);
   await expect(page.locator('.headline__name')).toContainText(nombre);
   // Con `Location.replaceState` (hasta el 2026-09-27) la barra decía `editar/N`, pero el router seguía

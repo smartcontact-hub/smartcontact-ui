@@ -1397,7 +1397,8 @@
         "type": "Type d'utilisateur",
         "status": "État",
         "active": "Actif",
-        "active_hint": "Peut se connecter et opérer"
+        "active_hint": "Peut se connecter et opérer",
+        "email_empty": "Sans email"
       },
       "danger_zone_description": "Supprimer cet utilisateur révoque son accès au panneau et efface ses permissions. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer l'utilisateur",
@@ -1405,7 +1406,8 @@
       "duplicate_hint": "Duplication de «{{source}}» · remplissez les champs obligatoires et sauvegardez",
       "headline": {
         "type": "Type"
-      }
+      },
+      "create_submit": "Créer l'utilisateur"
     },
     "errors": {
       "name_required": "Le nom est obligatoire",
@@ -1460,7 +1462,7 @@
       "agents_count": "{{count}} agents",
       "services_count": "{{count}} services",
       "services_count_one": "1 service",
-      "assign": "Agents",
+      "assign": "Attribuer",
       "assign_aria": "Attribuer des agents à {{name}}",
       "assign_column": "Attribuer des agents",
       "strategy_phone": "Stratégie téléphone",
@@ -1670,7 +1672,9 @@
         "webchat_access": "Chat web · accès",
         "whatsapp_number": "WhatsApp · numéro",
         "email_note": "L'email n'a ni stratégie ni file d'attente propres : les messages arrivent dans la boîte du groupe.",
-        "inactive": "{{channel}} n'est pas actif · activez-le dans Général"
+        "inactive": "{{channel}} n'est pas actif · activez-le dans Général",
+        "jump_label": "Aller à",
+        "jump_aria": "Canaux de cette section"
       },
       "chat": {
         "close_on_inactivity": "Fermer le chat en cas d'inactivité",
@@ -1921,7 +1925,8 @@
       "summary": {
         "no_groups": "Sans groupes",
         "groups_active": "Groupes actifs"
-      }
+      },
+      "create_submit": "Créer l'agent"
     },
     "toasts": {
       "created": "Agent \"{{name}}\" créé",

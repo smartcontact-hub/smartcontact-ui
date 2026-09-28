@@ -72,6 +72,7 @@ Por orden, de lo que más se usa a lo que menos:
 - [ ] **11** · Panel con `Severity`.
 - [ ] **13** · El botón pulsado, al 96 %.
 - [ ] **5** · El índice lateral, como componente.
+- [ ] **29** · El icono a 600 junto a su texto semibold: el del título de `Section` y el de la fila activa del índice.
 - [ ] **2** · La pastilla sin punto y a 600, y la etiqueta IFTA (pregunta 2).
 - [ ] **24** · El icono de `button-default` y el texto de `inputtext`, atados al tamaño de letra.
 - [ ] **21 y 20** · Los iconos huérfanos (se publica Smart-Contact-Icons), y después el tablero de la barra lateral de
@@ -91,6 +92,7 @@ Por orden, de lo que más se usa a lo que menos:
 - [ ] **16** · `Block` (393:12587), a 17,5.
 - [ ] **5** · Contact Center, con una instancia del índice en lugar del marco.
 - [ ] **18** · El resumen de las fichas.
+- [ ] **29** · Las altas de agente y usuario, con su cabecera y «Crear …», y los saltos por canal de Distribución y colas.
 - [ ] **2** · Tarjetas de opción en Servicio; el interruptor a la derecha en los ajustes de Grupos.
 - [ ] **22 y 23** · Los números sueltos y la presencia de Contact Center.
 - [ ] **24** · Los tres textos de General.
@@ -829,6 +831,24 @@ diferencias de entonces eran el mismo componente en otro estado.
 - **`azure`** vive a mano en `01-primitive.css`: no tiene familia en el Kit (DD-83).
 - **Code Connect:** el maestro `card` necesita la propiedad booleana «Show Icon» para que `figma:connect:publish` pase
   (`docs/code-connect.md`).
+
+---
+
+## 29 · El pase de diseño de las fichas: icono a 600 junto a semibold, altas con «Crear …» y saltos por canal (2026-09-27)
+
+**Estado:** pendiente · **Dónde:** Figma, el maestro `Section` del DS (el icono de su título), el índice lateral (la
+fila activa) y las maquetas de las fichas de grupo, agente y usuario · **Esfuerzo:** revincular el peso de dos iconos
+y retocar tres maquetas · **Sin verificar** contra el fichero: el código no cita los nodos.
+
+- **Por qué** (DD-130): un icono junto a un texto lleva su peso óptico. En la app, los avisos en semibold ya llevan el
+  icono a 600 (`sc-icon [weight]="600"`). Dentro de piezas del DS siguen a 400 junto a un título en semibold: el
+  icono del título de cada sección (`sc-section-card`) y el de la fila activa del índice (`sc-form-section-nav`).
+- **Las altas:** agente y usuario enseñan su cabecera al crear («Nuevo agente» hasta que se escribe el nombre), y el
+  botón principal dice «Crear agente» / «Crear usuario», como «Crear grupo».
+- **Distribución y colas:** una línea «Ir a: Teléfono · Chat · Email» arriba de la sección, con dos o más canales.
+
+**Cómo sabes que está hecho:** el icono del título de sección y el de la fila activa del índice van a 600 en el Kit, y
+las maquetas de las fichas enseñan las altas y los saltos como el código.
 
 ---
 

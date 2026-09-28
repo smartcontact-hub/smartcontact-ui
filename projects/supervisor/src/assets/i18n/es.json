@@ -1400,12 +1400,14 @@
         "type": "Tipo de usuario",
         "status": "Estado",
         "active": "Activo",
-        "active_hint": "Puede iniciar sesión y operar"
+        "active_hint": "Puede iniciar sesión y operar",
+        "email_empty": "Sin email"
       },
       "danger_zone_description": "Eliminar este usuario revoca su acceso al panel y borra sus permisos. La acción no se puede deshacer.",
       "headline": {
         "type": "Tipo"
-      }
+      },
+      "create_submit": "Crear usuario"
     },
     "errors": {
       "name_required": "El nombre es obligatorio",
@@ -1460,7 +1462,7 @@
       "agents_count": "{{count}} agentes",
       "services_count": "{{count}} servicios",
       "services_count_one": "1 servicio",
-      "assign": "Agentes",
+      "assign": "Asignar",
       "assign_aria": "Asignar agentes de {{name}}",
       "assign_column": "Asignar agentes",
       "strategy_phone": "Estrategia de teléfono",
@@ -1670,7 +1672,9 @@
         "webchat_access": "Web Chat · acceso",
         "whatsapp_number": "WhatsApp · número",
         "email_note": "Email no tiene estrategia ni cola propias: los correos llegan a la bandeja del grupo.",
-        "inactive": "{{channel}} no está activo · actívalo en General"
+        "inactive": "{{channel}} no está activo · actívalo en General",
+        "jump_label": "Ir a",
+        "jump_aria": "Canales de esta sección"
       },
       "chat": {
         "close_on_inactivity": "Cerrar chat por inactividad",
@@ -1921,7 +1925,8 @@
       "summary": {
         "no_groups": "Sin grupos",
         "groups_active": "Grupos activos"
-      }
+      },
+      "create_submit": "Crear agente"
     },
     "toasts": {
       "created": "Agente \"{{name}}\" creado",
