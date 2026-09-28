@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable } from '@angular/core';
 
 import { createLocalStore, LocalStore } from '@core/services';
 import { User, USERS_SEED, type UserType } from '../data/users-data';
+import { resolveUserAccess } from '../data/user-packages.core.mjs';
 import { bulkUpdatePatch } from '@core/utils/store-helpers';
 
 /** Campos que admiten edición masiva. Ver `bulkUpdate`. */
@@ -28,7 +29,12 @@ export class UsersStore {
     defaults: USERS_SEED,
   });
 
-  readonly users = this.store.items;
+  /**
+   * Cada usuario pasa por `resolveUserAccess` al leerse: lo guardado con los tipos de antes o sin las casillas
+   * nuevas sale con su tipo entre los cuatro y las que le faltan apagadas (DD-132). `sc-users` no sube de versión,
+   * que borraría lo creado en la demo.
+   */
+  readonly users = computed<readonly User[]>(() => this.store.items().map((u) => resolveUserAccess(u)));
 
   addUser(data: Omit<User, 'id' | 'code' | 'createdAt'>): User {
     const code = nextCode(this.users());
@@ -48,7 +54,8 @@ export class UsersStore {
   }
 
   getUser(id: number): User | undefined {
-    return this.store.getItem(id);
+    const user = this.store.getItem(id);
+    return user ? resolveUserAccess(user) : undefined;
   }
 
   /**

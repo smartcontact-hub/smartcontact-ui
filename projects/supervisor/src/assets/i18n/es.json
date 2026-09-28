@@ -1343,10 +1343,10 @@
       "status": "Estado"
     },
     "type": {
+      "superadmin": "Superadmin",
       "administrator": "Administrador",
-      "supervisor": "Supervisor",
-      "agent": "Agente",
-      "viewer": "Visor"
+      "supervisor_online": "Supervisor Online",
+      "supervisor_offline": "Supervisor Offline"
     },
     "status": {
       "active": "Activo",
@@ -1356,18 +1356,27 @@
       "dashboard": "Dashboard",
       "services": "Servicios",
       "ai_node": "Nodo IA",
-      "groups_agents_typifications": "Grupos / Agentes / Tipificaciones",
+      "typifications": "Tipificaciones",
       "campaigns": "Campañas",
       "conversations": "Conversaciones",
       "stats": "Estadísticas",
       "stats_data_reports": "Informes de Datos",
       "stats_flow_analyzer": "Analizador de Flujo",
       "vui_designer": "VUI Designer",
-      "users": "Usuarios"
+      "users": "Usuarios",
+      "groups": "Grupos",
+      "agents": "Agentes",
+      "repositories": "Repositorios",
+      "aed": "Contact Center",
+      "system": "Sistema"
     },
     "permission": {
       "vui_designer_management": "Gestión VUI Designer",
       "users_management": "Gestión de usuarios",
+      "groups_management": "Gestión de grupos",
+      "agents_management": "Gestión de agentes",
+      "repositories_management": "Gestión de repositorios",
+      "aed_management": "Gestión de Contact Center",
       "recording_management": "Gestión de grabaciones",
       "transcriptions_management": "Gestión de transcripciones",
       "spy_on_conversations": "Espiar conversaciones"
@@ -1398,6 +1407,7 @@
         "identifier": "Identificador interno",
         "identifier_hint": "Si lo dejas vacío se generará automáticamente al guardar.",
         "type": "Tipo de usuario",
+        "type_hint": "Cada tipo trae su plantilla de acceso: al elegirlo se marcan sus casillas en Acceso.",
         "status": "Estado",
         "active": "Activo",
         "active_hint": "Puede iniciar sesión y operar",
@@ -1407,7 +1417,18 @@
       "headline": {
         "type": "Tipo"
       },
-      "create_submit": "Crear usuario"
+      "create_submit": "Crear usuario",
+      "template": {
+        "label": "Plantilla: {{type}}",
+        "changes_one": "{{count}} cambio",
+        "changes_other": "{{count}} cambios",
+        "reset": "Volver a la plantilla",
+        "apply_title": "¿Aplicar la plantilla de {{type}}?",
+        "apply_body_one": "Cambia {{count}} casilla de Acceso. Si la mantienes, el tipo cambia igual y Acceso sigue como está.",
+        "apply_body_other": "Cambia {{count}} casillas de Acceso. Si las mantienes, el tipo cambia igual y Acceso sigue como está.",
+        "apply": "Aplicar la plantilla",
+        "keep": "Mantener las casillas"
+      }
     },
     "errors": {
       "name_required": "El nombre es obligatorio",
