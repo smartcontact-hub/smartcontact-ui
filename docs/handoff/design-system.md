@@ -170,17 +170,24 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-28 · Un `@media` o `@container` que el orden deja sin efecto pone rojo (`audit:query-order`)
+
+**Sello:** rama `areses/loving-bouman-df8ab6`, sobre `ac02acc6`, PR nuevo. El tramo de DD-113 sale por el tope (`git show ac02acc6:docs/handoff/design-system.md`); su ⚠️ ya lo dicen AGENTS §«Componentes de primeng.dev» y `audit:primeng-coupling` §F.
+
+**Lo que cambia.** Gate 43: una regla en `@media`/`@container`/`@supports` ANTES de otra con el mismo selector y capa no gana nunca
+en lo que declaran las dos (la franja del resumen, DD-130). Lee el CSS compilado con el `sass` de Angular (~2 s). Cazó además el
+«reducir movimiento» de las filas de `aed-servicio-page` (en la app, `color` antes y `none` después; lo tapaba el reset global).
+
+- ⚠️ **Leer el fuente no basta**: con este `sass`, una declaración tras un `@media` anidado sale DETRÁS y lo mata.
+
 ## ✅ 2026-09-28 · El color que miden las e2e sale de un instrumento compartido (#269)
 
-**Sello:** HEAD `ac02acc6` (#269 fundido), CI verde en `main`. Archivados: `archive/handoff-ds-2026-09-15-primeng-nativo`
-y `…-comparar-fichas`.
+**Sello:** HEAD `ac02acc6` (#269 fundido), CI verde en `main`. Archivados: `archive/handoff-ds-2026-09-15-primeng-nativo` y `…-comparar-fichas`.
 
-**Lo que cambia.** `e2e/shared/color.ts` es el sitio donde se lee un color del DOM: el canvas en vez de un regex, las
-capas translúcidas compuestas de la raíz a la hoja y el ratio WCAG. `colorEfectivo` para una sonda (`'stroke'` para un
-anillo SVG), `enNavegador` para meter el kit en un `page.evaluate`. Lo usan `medir()`, `theme-contrast`,
-`asegurarBuildFresco` y `list-table-grammar`: no queda ningún `/\d+/g` de color en `e2e/`, y `color.spec.ts` enrojece
-si alguien cambia el canvas por un regex. Reproduce las cifras corregidas de DD-126 (3,18 el arco en oscuro). LEARNINGS
-#2 y AGENTS apuntan ahí. Al cerrar, `bash-guard` deja de tomar la rama `areses/…` por el nombre del autor.
+**Lo que cambia.** `e2e/shared/color.ts` es el sitio donde se lee un color del DOM: el canvas en vez de un regex, las capas translúcidas compuestas de la raíz a la hoja y el
+ratio WCAG. `colorEfectivo` para una sonda (`'stroke'` para un anillo SVG), `enNavegador` para meter el kit en un `page.evaluate`. Lo usan `medir()`, `theme-contrast`,
+`asegurarBuildFresco` y `list-table-grammar`: no queda ningún `/\d+/g` de color en `e2e/`, y `color.spec.ts` enrojece si alguien cambia el canvas por un regex. Reproduce las
+cifras corregidas de DD-126 (3,18 el arco en oscuro). LEARNINGS #2 y AGENTS apuntan ahí. Al cerrar, `bash-guard` deja de tomar la rama `areses/…` por el nombre del autor.
 
 ## ✅ 2026-09-24 · El código deja de nombrar personas (DD-120)
 

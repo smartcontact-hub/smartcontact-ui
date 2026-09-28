@@ -170,9 +170,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .state-tag,
-  .add-chip,
-  .switch-row__name,
-  .switch-row__text {
+  .add-chip {
     transition: none;
   }
 
@@ -404,6 +402,18 @@
     &[data-tone='gray'] {
       background: var(--sc-label-gray-dot);
     }
+  }
+}
+
+/*
+ * Sin el cambio de color al pasar por encima si se pide reducir movimiento. Va DESPUÉS de
+ * `.switch-row`, y no en el bloque de arriba con la pastilla: una consulta no suma
+ * especificidad, y a igual selector gana la regla que va detrás (lo vigila `audit:query-order`).
+ */
+@media (prefers-reduced-motion: reduce) {
+  .switch-row__name,
+  .switch-row__text {
+    transition: none;
   }
 }
 

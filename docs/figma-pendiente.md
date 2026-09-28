@@ -30,7 +30,7 @@ se corta a medias, se retoma en el siguiente.
 
 - [ ] Guarda una versión del fichero del DS (*File → Save to version history*), con un nombre como «antes de
       figma-pendiente». Guarda otra al acabar cada paso.
-- [ ] Decide las preguntas de **«Decisiones antes de tocar»**, justo debajo. Cada una dice qué ficha frena. Si no
+- [ ] Repasa **«Decisiones»**, justo debajo: seis tomadas el 2026-09-28 y una pendiente (los buscadores). Si no
       decides una, sáltate esa ficha: las demás no dependen de ella.
 - [ ] Plugin `primeui-figma-plugin-v4`, panel *GitHub Settings*: owner `smartcontact-hub`, repositorio
       `smartcontact-ui`, rama `design-tokens-sync`, fichero `projects/design-tokens/scripts/kit-export-dtcg.json`,
@@ -40,9 +40,8 @@ se corta a medias, se retoma en el siguiente.
 
 ### Paso 1 · Variables de medida, push y PR del robot (~45 min)
 
-- [ ] **Ficha 4:** 52 alias, 3 variables que se separan en dos y `toast/blur` en claro.
-- [ ] Opcional, con el bridge: `tools/figma-export-parity.mjs` compara el fichero con el export de `main` (capas y uso en
-      `tools/README.md`). Solo deben salir distintas las variables que acabas de tocar.
+- [ ] **Ficha 4:** 52 alias, 3 variables que se separan en dos y `toast/blur` en claro. Con el bridge, las 53 que no
+      hay que separar las hace `tools/figma-pendiente.mjs` (ver «El script», debajo). Las 3 que se separan, a mano.
 - [ ] *Push* en el plugin. En segundos sale un run de `tokens-sync`; si no sale ninguno, el push no llevaba
       cambios. Si el plugin dice «does not match», ciérralo y vuelve a abrirlo.
 - [ ] El robot abre el PR «chore(tokens): sync del Theme Designer». **Qué esperar:** ningún cambio visual, porque
@@ -50,13 +49,14 @@ se corta a medias, se retoma en el siguiente.
 
 ### Paso 2 · Variables de color, push y PR del robot (~30 min)
 
-- [ ] **Fichas 8, 12, 14 y 19.** Si creas `text/heading/color` (ficha 2), hazlo aquí: su valor sale de la pregunta 3.
+- [ ] **Fichas 8, 12, 14 y 19, y la variable nueva `text/heading/color` (ficha 2):** `node tools/figma-pendiente.mjs color`.
 - [ ] Empuja cuando el PR del paso 1 esté **fundido**. El robot reescribe la misma rama: si empujas antes, actualiza
       aquel PR en vez de abrir otro, y los dos cambios quedan mezclados.
 - [ ] **Qué esperar:**
       - el texto principal y el secundario, un paso más oscuros (ficha 8);
-      - más oscuros también la etiqueta «Desconectado» (ficha 14) y el «Eliminar» de las fichas (ficha 12);
-      - el botón rojo sólido y los grises de la ficha 19, sin cambios: el código ya los pintaba así.
+      - más oscura también la etiqueta «Desconectado» (ficha 14);
+      - los botones rojos y los grises de la ficha 19, sin cambios: el código ya los pintaba así (el «Eliminar» de
+        texto, desde DD-128).
 
       Puede salir rojo en pruebas que fijan el gris de antes (`theme-contrast`, las fotos de sc-docs). No lo fundas
       en rojo: pásalo a la sesión de código del paso 6, que lo lleva a verde.
@@ -66,21 +66,42 @@ se corta a medias, se retoma en el siguiente.
 Por orden, de lo que más se usa a lo que menos:
 
 - [ ] **16** · `Section`, a 17,5 arriba y abajo.
-- [ ] **17** · El diálogo: la botonera a 28 del último campo, 14 entre campos y 10,5 entre botones. Antes, la pregunta 1.
+- [ ] **17** · El diálogo: la botonera a 28 del último campo, 14 entre campos y 10,5 entre botones (marco a 15,75, decidido).
 - [ ] **6** · La miga, subrayada al pasar el ratón.
 - [ ] **9** · Tabs (peso, bordes y flechas), el punto del Badge y el hueco de «Añadir widget».
 - [ ] **11** · Panel con `Severity`.
 - [ ] **13** · El botón pulsado, al 96 %.
 - [ ] **5** · El índice lateral, como componente.
 - [ ] **29** · El icono a 600 junto a su texto semibold: el del título de `Section` y el de la fila activa del índice.
-- [ ] **2** · La pastilla sin punto y a 600, y la etiqueta IFTA (pregunta 2).
+- [ ] **2** · La pastilla sin punto y a 600. La etiqueta IFTA se queda en 400 (decidido): en Figma no hay que tocarla.
 - [ ] **24** · El icono de `button-default` y el texto de `inputtext`, atados al tamaño de letra.
 - [ ] **21 y 20** · Los iconos huérfanos (se publica Smart-Contact-Icons), y después el tablero de la barra lateral de
       la página Testing, que necesita `neurology`.
-- [ ] **7** · El glifo de los iconos (pregunta 4). Va el último porque cambia cómo se ven todas las maquetas.
-- [ ] **Otro push:** las fichas 9 (los bordes de Tabs) y 17 (`dialog/footer/gap`) también cambian variables. Qué
+- [ ] **7** · El glifo de los iconos, si el `IconSet` ata la caja (decidido). Va el último porque cambia cómo se ven todas las
+      maquetas.
+- [ ] **Otro push:** las fichas 9 (los bordes de Tabs) y 17 (`dialog/footer/gap`) también cambian variables
+      (`node tools/figma-pendiente.mjs componentes`). Qué
       esperar del PR del robot: nada visual en las pestañas, porque el código ya las pinta así (DD-107); en los
       diálogos nativos de PrimeNG, 10,5 entre botones, como ya tiene `sc-dialog`.
+
+### El script de las variables: `tools/figma-pendiente.mjs`
+
+Hace los cambios de variables de los pasos 1 a 3 con el bridge, y los comprueba dos veces:
+
+- **al generarlo, contra el export de `main`:** cada valor de partida tiene que ser el que dice el Kit, y cada destino
+  tiene que existir. Si una ficha trae un dato falso, para y no genera nada;
+- **dentro de Figma:** una variable solo cambia si vale lo de partida. Si ya vale lo nuevo, la salta. Si vale otra cosa,
+  no la toca y la pone en `revisar`.
+
+Probado el 2026-09-28 sobre un Figma simulado con las variables del export: las tres tandas miran, aplican, salen «ya
+estaba» al repasar y no tocan una variable con un valor inesperado. **No probado todavía contra el fichero real.** Los
+nombres de las colecciones «Semantic Common» y «Component Common» no están comprobados. Si no casan, el script usa la
+variable cuando su nombre es único y avisa.
+
+1. `node tools/figma-pendiente.mjs medidas` (o `color`, o `componentes`) y la salida, a `figma_execute`. Solo mira.
+2. Lee `cuenta` y `revisar`. Si `revisar` está vacío, repite con `--aplicar`.
+3. Vuelve a pasarlo sin `--aplicar`: todo tiene que salir «ya estaba».
+4. Guarda versión en Figma y haz el push del plugin.
 
 ### Paso 4 · Publicar la librería (ficha 1, 1 min)
 
@@ -102,18 +123,19 @@ Por orden, de lo que más se usa a lo que menos:
 - **Tras el PR del paso 1:** quitar de `PENDIENTE_FIGMA` (`scripts/sizing-map.mjs`) las filas que señale
   `token-parity`. En las tres separadas, la fila pasa a leer `…padding.y` y `…padding.x`.
 - **Tras el PR del paso 2**, cada divergencia que el Kit ya dice igual:
-  - de `EXCLUDE` (`scripts/cmp-color-map.mjs`) salen las 6 de `button.danger`, `light:togglebutton.color`,
-    `light:togglebutton.hover.color` y `light:button.outlined.secondary.color`;
+  - de `EXCLUDE` (`scripts/cmp-color-map.mjs`) salen las 6 de `button.danger`, `light:button.text.danger.color`
+    (DD-128), `light:togglebutton.color`, `light:togglebutton.hover.color` y `light:button.outlined.secondary.color`;
   - en `scripts/color-map.mjs`, las filas `diverge` de `form.field.icon.color`, `navigation.item.icon.color` y
     `form.field.placeholder.color` pasan a `enforce`;
   - en `togglebutton.ts`, los 2 slots aún escritos a mano pasan a `var(--sc-cmp-togglebutton-*)`;
   - `--sc-text-subtle` sube a slate-700 a mano: vive fuera de la zona generada;
-  - `e2e/supervisor/theme-contrast.spec.ts` pierde las 2 excepciones del secundario en slate-600 y la del `danger` de
-    texto;
+  - `e2e/supervisor/theme-contrast.spec.ts` pierde las 2 excepciones del secundario en slate-600;
   - la fila de `text/heading/color` en `color-map.mjs`, si se creó la variable;
   - se regeneran las fotos de sc-docs.
-- **Con las preguntas 1 y 2 decididas como se recomienda:** `sc-dialog` pasa a 15,75 con el pie con cuerpo a 12,25
-  (sigue a 28), y la etiqueta IFTA de `sc-inputtext` sube a 600. Los dos son del DS: llevan su DD y sus fotos.
+- **Lo decidido el 2026-09-28, en el DS** (con su DD y sus fotos):
+  - `sc-dialog` pasa a 15,75, con el pie con cuerpo a 12,25 (sigue a 28);
+  - la etiqueta IFTA de `sc-select` y `sc-multiselect` baja a 400, como `sc-inputtext` y el Kit;
+  - `--sc-text-heading` sube a slate-900.
 - **Tras los pasos 3 y 5:** se borran los comentarios que dicen que el código se aparta de la maqueta (`.grid` en
   `_forms.scss`, `sc-section-card.component.scss`, `sc-dialog.component.scss`, `sc-form-section-nav.component.scss`) y
   se citan los nodos nuevos (el índice, el resumen).
@@ -121,30 +143,27 @@ Por orden, de lo que más se usa a lo que menos:
 
 ---
 
-## Decisiones antes de tocar, con recomendación
+## Decisiones, tomadas el 2026-09-28
 
-1. **El marco del diálogo: ¿15,75 o 17,5?** Frena la ficha 17. **Recomiendo 15,75, y que el código se alinee.**
-   El Kit ata todo el relleno del diálogo a `overlay/modal/padding` = `scale/1-125` (15,75), igual que Aura (1,125 rem)
-   y que el `p-dialog` nativo de la app. Solo `sc-dialog` pinta 17,5 (`--sc-dialog-padding`), y sin fila de
-   divergencia: su comentario da por hecho un Figma de 17,5 que el export no dice. Con DD-78, en lo que dude el código
-   sigue a Aura.
-2. **La etiqueta dentro del campo (IFTA): ¿600 en todos, o 400?** Frena la ficha 2. **Recomiendo 600 en todos.**
-   `sc-select` y `sc-multiselect` ya van a 600, como el resto de etiquetas de campo de la app (12/600). La única
-   pantalla con IFTA (Configuración → AED → Grupos) escribía dos pesos en el mismo formulario. `sc-inputtext` y el
-   preset nativo se quedaron en 400.
-3. **Al subir los grises (ficha 8): ¿`text/hover/color` a `surface/900`? ¿El título a slate-900?** **Recomiendo sí a
-   las dos.** Con el principal en 800, el texto dejaría de cambiar al pasar el ratón y el título mediría igual que el
-   texto. Subir un paso conserva la relación de Aura: el hover, un paso por encima del texto.
-4. **El glifo de los iconos (ficha 7): ¿se agranda en Figma como en código?** **Recomiendo agrandarlo dentro de su
-   caja (24/18) si el `IconSet` ata el ancho y el alto a la caja. Si no los ata, dejarlo y anotarlo.** Es lo que hace el
-   código, y la caja, que es lo que ocupa sitio, no cambia.
-5. **Los dos buscadores (ficha 10): ¿qué lupa y en qué lado?** **Recomiendo la de Material, a la izquierda, en los
-   dos.** El icono de la app es Material (DD-104) y `sc-search` es el buscador que más se ve (el de todas las listas).
-   En código, pasar a la izquierda la lupa de los paneles son cinco clases `.p-*` (medido); cambiar su glifo no se ha
-   medido.
-6. **El fondo del item seleccionado de la barra lateral (ficha 20): ¿15 % o 12 %?** **Recomiendo 15 %.** Dos fondos de
-   grupo del 6 % superpuestos suman 11,6 % (DD-112): a 12 %, lo seleccionado se confunde con ellos.
-7. **Aparcadas, no para esta sesión:**
+1. **El marco del diálogo, a 15,75, y el código se alinea** (la recomendada). El Kit ata todo el relleno del diálogo a
+   `overlay/modal/padding` = `scale/1-125` (15,75), igual que Aura (1,125 rem) y que el `p-dialog` nativo. Solo
+   `sc-dialog` pintaba 17,5, sin divergencia declarada. En Figma, el pie con cuerpo gana 12,25 arriba (ficha 17). En
+   código, `sc-dialog` baja a 15,75 (paso 6).
+2. **La etiqueta dentro del campo (IFTA), a 400 en todas.** Aquí se fue en contra de la recomendación (600), y vale: el
+   Kit y Aura ya dicen 400, así que Figma no cambia. En código, `sc-select` y `sc-multiselect` bajan de 600 a 400 (paso 6).
+3. **El texto al pasar el ratón y el título de sección suben a 900** (la recomendada). El script cambia
+   `text/hover/color` y crea `text/heading/color` en `surface/900`. En código, `--sc-text-heading` sube a slate-900 (paso 6).
+4. **El glifo de los iconos se agranda en Figma si el `IconSet` ata la caja** (la recomendada). Se mira antes. Si ata
+   el ancho y el alto a la variable de tamaño, el glifo crece un 33 % (24/18) sin tocar la caja, y el índice lateral baja
+   de 20 a 14. Si no los ata, no se toca y se anota aquí.
+5. **Los dos buscadores: pendiente.** Explicada el 2026-09-28; falta la respuesta. Se recomienda la lupa de Material a
+   la izquierda en los dos: el icono de la app es Material (DD-104) y `sc-search` es el buscador de todas las listas. En
+   código, pasar a la izquierda la lupa de los paneles son cinco clases `.p-*` (medido); cambiar su glifo no está medido.
+6. **El fondo del item seleccionado de la barra lateral, al 15 %, y Figma se alinea** (la recomendada). Dos fondos de
+   grupo del 6 % superpuestos suman 11,6 % (DD-112): a 12 %, lo seleccionado se confundía con ellos.
+7. **El rojo contorneado sube con el de texto** (la recomendada): `button/outlined/danger/color` a `red/600`. Va en el
+   script.
+8. **Aparcadas, no para esta sesión:**
    - el color del botón principal (ROADMAP, «Decisiones de marca pendientes»: decisión de marca);
    - borrar la colección «App» (ficha 26);
    - el botón de solo icono, que no es cuadrado, y la hora del datepicker (ficha 25).
@@ -179,14 +198,14 @@ Se suma lo que se haga en los pasos 1 a 3 del plan.
   **En Figma:** la pastilla de etiqueta sin punto y con el texto a semibold. **Mídelo antes:** qué peso dibuja hoy el
   maestro. Esta ficha decía 500; la variable dice 700.
 - **`--sc-text-heading`** (slate-800 en claro, blanco en oscuro) para los títulos de sección: existe solo en código.
-  **En Figma:** crear `text/heading/color` junto a las demás `text/*`, con claro `surface/800` (o `surface/900` con la
-  pregunta 3) y oscuro `surface/0`, y atarle el título de `Section`. El generador no la lee hasta que
-  `color-map.mjs` tenga su fila (paso 6).
+  **En Figma:** la crea el script (`color`): `text/heading/color`, con claro `surface/900` (decidido el 2026-09-28) y
+  oscuro `surface/0`. A mano, atarle el título de `Section`. El generador no la lee hasta que `color-map.mjs` tenga su
+  fila (paso 6).
 - **Tarjetas de opción (`sc-option-cards`)** en Servicio, en lugar del modal `103:2718`: es una maqueta del
   Supervisor.
-- **La etiqueta IFTA (dentro del campo).** En código va a 600 en `sc-select` y `sc-multiselect`, y a 400 en
-  `sc-inputtext` y en el `p-iftalabel` nativo (`iftalabel/font/weight` es regular). Pregunta 2. Con 600: en Figma, la
-  etiqueta IFTA a semibold, y en código `sc-inputtext` sube a 600 (paso 6).
+- **La etiqueta IFTA (dentro del campo): decidido el 2026-09-28, a 400 en todas.** En código iba a 600 en `sc-select` y
+  `sc-multiselect` y a 400 en `sc-inputtext` y en el `p-iftalabel` nativo (`iftalabel/font/weight` es regular). Figma
+  ya dice 400 y no se toca. En código, `sc-select` y `sc-multiselect` bajan a 400 (paso 6).
 - **El interruptor, a la derecha** en la lista de ajustes de Grupos, y a la izquierda en General y Agentes: va donde
   van los controles de su patrón. Es una maqueta del Supervisor.
 
@@ -379,7 +398,7 @@ de encima (avatar 36, nombre en `Body/body-semibold` y dato en `Caption/caption-
 
 ## 7 · Los iconos pintan un tercio más grande en código que en Figma (2026-09-14)
 
-**Estado:** pendiente de decidir (pregunta 4) · **Evidencia:** medido en código (DD-104); **mídelo antes** en el
+**Estado:** decidido el 2026-09-28: se agranda si el `IconSet` ata la caja · **Evidencia:** medido en código (DD-104); **mídelo antes** en el
 fichero.
 
 El código calibra el glifo de Material Symbols con `scale: calc(24 / 18)`. La caja del icono mide lo mismo, pero el
@@ -416,13 +435,14 @@ oscuro no se toca.
 | `aura/semantic/light` | `text/color` | `surface/700` | **`surface/800`** | texto principal 7,38 → 12,16:1 |
 | `aura/semantic/light` | `form/field/color` | `surface/700` | **`surface/800`** | alimenta el mismo `--sc-text-primary`: se mueven juntas |
 | `aura/semantic/light` | `text/muted/color` | `slate/600` | **`slate/700`** | texto secundario 4,52 → 7,38:1 |
-| `aura/semantic/light` | `text/hover/color` | `surface/800` | **`surface/900`** (pregunta 3) | que el texto siga cambiando al pasar el ratón |
+| `aura/semantic/light` | `text/hover/color` | `surface/800` | **`surface/900`** (decidido) | que el texto siga cambiando al pasar el ratón |
 | `aura/component/light` | `togglebutton/color` | `surface/500` | **`surface/700`** | opción no elegida de SelectButton 2,56 → 6,40:1 |
 | `aura/component/light` | `togglebutton/hover/color` | `surface/700` | **`surface/900`** | que el ratón encima se siga notando |
 | `aura/component/light` | `togglebutton/icon/color` | `surface/500` | **`surface/700`** | el icono, igual que su texto |
 | `aura/component/light` | `togglebutton/icon/hover/color` | `surface/700` | **`surface/900`** | ídem |
 
-El título de sección (`--sc-text-heading`, slate-800) mediría igual que el texto principal nuevo: pregunta 3 y ficha 2.
+El título de sección (`--sc-text-heading`, slate-800) mediría igual que el texto principal nuevo: sube a slate-900
+(decidido), con su variable nueva `text/heading/color` (ficha 2).
 
 **Lo que cierra el código cuando llegue el export** (paso 6):
 
@@ -491,7 +511,7 @@ componentes de [primeng.dev](https://primeng.dev) con los valores y las variable
 
 ## 10 · Dos buscadores que no se parecen: decisión de Figma, no de código (2026-09-14)
 
-**Estado:** pendiente de decidir (pregunta 5) · **Evidencia:** medido en la barra de Conversaciones del Supervisor, en
+**Estado:** pendiente de decidir (decisión 5) · **Evidencia:** medido en la barra de Conversaciones del Supervisor, en
 local, con capturas a 3x.
 
 En la misma barra conviven dos buscadores del DS que se leen como piezas distintas. Se probó a igualarlos en código y
@@ -540,10 +560,10 @@ hace falta crear variables.
   un paso más (`red/600`, 4,83:1; ratón encima `red/700`, pulsado `red/800`) y lo declara en `EXCLUDE`
   (`scripts/cmp-color-map.mjs`), así que el generador no emite esos seis `--sc-cmp-button-danger-*`.
 - **El de texto** («Eliminar» en la cabecera de las fichas). `button/text/danger/color` es `red/500` sobre blanco:
-  **3,76:1**. Aquí el código sigue al Kit, sin divergencia, y `theme-contrast` lo tiene como fallo conocido. Cambiarlo
-  en Figma lo arregla en código sin más.
-- **El contorneado** (`button/outlined/danger/color`, `red/500`) es el mismo caso. No se ha medido que la app lo use:
-  si lo cambias, cámbialo con el de texto.
+  **3,76:1**. Desde DD-128 (2026-09-28), el código ya pinta `red/600` con una divergencia declarada
+  (`light:button.text.danger.color` en `EXCLUDE`). Con el Kit en `red/600`, esa fila sobra.
+- **El contorneado** (`button/outlined/danger/color`, `red/500`) es el mismo caso. No se ha medido que la app lo use.
+  Decidido el 2026-09-28: sube con el de texto.
 
 **Cómo se hace, en `aura/component/light`:**
 
@@ -553,13 +573,13 @@ hace falta crear variables.
 | `button/danger/hover/background` y `button/danger/hover/border/color` | `red/600` | **`red/700`** |
 | `button/danger/active/background` y `button/danger/active/border/color` | `red/700` | **`red/800`** |
 | `button/text/danger/color` | `red/500` | **`red/600`** |
-| `button/outlined/danger/color` (opcional) | `red/500` | **`red/600`** |
+| `button/outlined/danger/color` (decidido el 2026-09-28) | `red/500` | **`red/600`** |
 
 `hover/color` y `active/color` (el blanco del texto) **no cambian**: solo el fondo y el borde.
 
 **Cómo sabes que está hecho:** tras el push, se quitan las seis filas de `EXCLUDE`, el preset lee
-`var(--sc-cmp-button-danger-*)` y `tokens:cmp-rewire` sigue en verde. La excepción del `danger` de texto en
-`theme-contrast.spec.ts` se borra (paso 6).
+`var(--sc-cmp-button-danger-*)` y `tokens:cmp-rewire` sigue en verde. Sale también la fila de
+`light:button.text.danger.color` (DD-128), en el paso 6.
 
 ---
 
@@ -639,7 +659,7 @@ los dos a **`scale/1-25`** · **Evidencia:** los nodos y sus variables son los q
 
 ## 17 · El diálogo con formulario: la botonera a 28 del último campo, 14 entre campos y 10,5 entre botones (2026-09-27)
 
-**Estado:** pendiente · **decide antes la pregunta 1** · **Dónde:** el maestro del diálogo del DS y las maquetas que lo
+**Estado:** pendiente · marco a 15,75, decidido el 2026-09-28 · **Dónde:** el maestro del diálogo del DS y las maquetas que lo
 usan con un formulario («Nueva entidad», «Nueva categoría», «Duplicar grupo») · **Evidencia:** export del 2026-09-27 y
 código; **mídelo antes** en el maestro: el código no cita su nodo.
 
@@ -656,7 +676,7 @@ código; **mídelo antes** en el maestro: el código no cita su nodo.
   - entre botones, **10,5**: una divergencia anotada en el código («con botones pequeños, 7 se leía apelotonado;
     propagar a Figma»). Su comentario dice que el Kit pone 7, pero el export dice 5,25.
 
-**Cómo se hace, con la recomendación de la pregunta 1** (marco a 15,75):
+**Cómo se hace** (marco a 15,75, decidido):
 
 - **En la variante con cuerpo**, el relleno superior del pie atado a **`scale/0-875`** (12,25): 15,75 + 12,25 = 28. Átalo
   en la capa, no cambies `dialog/footer/padding/top`: esa variable sigue en 0 para las confirmaciones.
@@ -722,7 +742,7 @@ cuatro en slate-600 (4,52:1 sobre blanco).
 `14912-6324`, versiones anteriores en `14930-1011` · **Evidencia:** DD-112 y DD-118, y el hand-off
 `supervisor-sidebar.md`; **mídelo antes** en el fichero.
 
-- **El fondo del item seleccionado:** 15 % en código, 12 % en Figma. Pregunta 6.
+- **El fondo del item seleccionado:** 15 % en código, 12 % en Figma. Decidido el 2026-09-28: 15 %, Figma se alinea.
 - **Nodo IA:** en código, el icono `neurology`; en Figma, el componente `brain` de la librería antigua, que la fuente
   de iconos no trae. Cambiarlo cuando `neurology` esté publicado (ficha 21).
 - **El drawer en oscuro:** en Figma va atado a `primary/color`, y en oscuro queda azul claro con el texto blanco a
