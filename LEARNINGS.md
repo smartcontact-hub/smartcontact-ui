@@ -142,10 +142,10 @@
     frente a cosas (un recorrido que repite pantallas cuenta mediciones, no textos); si hay un
     ejecutor que sabe el número, el número es el suyo. Al reemplazar: acota y verifica cada match.
     Al imprimir: proyecta las claves. Y una cifra sin comprobar no se publica en tres documentos:
-    cada corrección después costó un preflight de 8 min. ⚙️ El hook deniega volcar configs, listar procesos con su línea de comandos entera y `main...rama`.
+    cada corrección después costó un preflight de 8 min. ⚙️ El hook deniega volcar configs o el entorno, listar procesos con su línea de comandos entera y `main...rama`.
     Evidencia: s18 39 en grep, 108 en el runner · s27 token impreso y rotado · s31 "2.820" = 271 ·
     2026-09-11 "410 con nombre" eran 341 + 69 que solo heredaban, y "4.517 textos" eran mediciones
-    sobre 56 estados (las 38 rutas son 2.503) · 2026-09-28 `pgrep -fl` imprimió el entorno de un `ng serve`, token incluido.
+    sobre 56 estados (las 38 rutas son 2.503) · 2026-09-28 `pgrep -fl` imprimió el entorno de un `ng serve`, token incluido · y el historial de sesiones tenía tres `env | grep` sin proyectar.
 
 21. **Vas a escribir en un fichero COMPARTIDO (ledgers: `DECISIONS.md`, `LEARNINGS.md`, `inventory.md`,
     `docs/handoff/`, `AGENTS.md`), a aterrizar en una rama que otro worktree tiene checkouteada, o a

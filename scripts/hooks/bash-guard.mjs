@@ -295,6 +295,102 @@ function listadoAPantalla(cmd, plataforma) {
   return null;
 }
 
+/** Las palabras sin las redirecciones (`> f`, `2>&1`, `</proc/…`): son del shell, no del programa. */
+function sinRedirecciones(ws) {
+  const out = [];
+  for (let i = 0; i < ws.length; i++) {
+    const m = ws[i].match(/^(?:\d+|&)?(?:>>?|<)(&?)(.*)$/);
+    if (!m) out.push(ws[i]);
+    else if (!m[1] && !m[2]) i++; // `> f`: el destino es la palabra siguiente
+  }
+  return out;
+}
+
+/** El valor de una opción, pegado (`-d=`), aparte (`-d =`) o largo (`--delimiter==`). */
+function valorDe(args, corta, larga) {
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a === corta) return args[i + 1];
+    if (a.startsWith(corta)) return a.slice(corta.length);
+    if (larga && a.startsWith(`${larga}=`)) return a.slice(larga.length + 1);
+  }
+  return undefined;
+}
+
+// Etapas que tiran el VALOR de cada variable o lo tapan: `cut -d= -f1`, `awk -F= '{print $1}'`,
+// `sed 's/=.*//'` o `sed 's/=.*/=<set>/'` (la máscara con que ya se miraba el entorno en sesiones
+// anteriores; sin `&` ni `\1`, que devolverían el valor). En línea y no en bloque: ese `*/` lo cerraría.
+// Todas dejan pasar enteras las líneas de más de un valor multilínea (no llevan `=`, medido con uno
+// falso); hoy no hay ninguno: 57 líneas de `env` para 57 variables (2026-09-28). Por eso el motivo
+// ofrece también `awk` sobre `ENVIRON`, que no depende de eso.
+function sinValores(etapa) {
+  const { nombre, args } = programa(etapa);
+  if (nombre === 'cut') return valorDe(args, '-d', '--delimiter') === '=' && valorDe(args, '-f', '--fields') === '1';
+  if (nombre === 'awk') return valorDe(args, '-F') === '=' && args.some((a) => /^\{\s*print\s+\$1\s*;?\s*\}$/.test(a));
+  if (nombre === 'sed') return args.some((a) => /^s(.)=\.\*\$?\1(?:(?!\1)[^&\\]|\\[^0-9])*\1[gpI]*$/.test(a));
+  return false;
+}
+
+/** El entorno de un proceso en Linux, y los programas que lo nombran sin imprimirlo. */
+const ENVIRON = /(?:^|<)\/proc\/[^/]+\/environ$/;
+const NO_LEEN = new Set(['ls', 'stat', 'file', 'test', '[', 'echo', 'printf', 'realpath', 'readlink', 'wc', 'grep', 'egrep', 'fgrep', 'rg', 'man']);
+
+/**
+ * ¿Este programa, con estos argumentos, escribe el entorno ENTERO en su salida? `env` y `printenv` sin
+ * nombres, `export`/`export -p`, `declare` y `typeset` sin nombres (a secas, `-x` o `-p`), `set` a secas,
+ * leer `/proc/<pid>/environ`… y un `sh -c` o un `env` que lancen uno de ellos. `env -i` (o `-`) nunca:
+ * vacía el entorno, así que solo sale lo que ya va escrito en la línea.
+ */
+function vuelcaEntorno(nombre, todas) {
+  const args = sinRedirecciones(todas);
+  const nombres = args.filter((a) => !/^[-+]/.test(a));
+  const letras = args.filter((a) => /^[-+][A-Za-z]+$/.test(a)).join('');
+  if (nombre === 'printenv') return nombres.length === 0;
+  if (nombre === 'set') return args.length === 0;
+  if (nombre === 'export') return nombres.length === 0 && !/[fn]/.test(letras);
+  if (nombre === 'declare' || nombre === 'typeset')
+    return nombres.length === 0 && !/[fF]/.test(letras) && (letras === '' || /[xp]/.test(letras));
+  if (['sh', 'bash', 'zsh', 'dash', 'ksh'].includes(nombre)) {
+    const c = args.findIndex((a) => /^-[A-Za-z]*c[A-Za-z]*$/.test(a));
+    return c >= 0 && c + 1 < args.length && entornoAPantalla(args[c + 1]) !== null;
+  }
+  if (nombre === 'env') {
+    let i = 0;
+    for (; i < args.length && args[i].startsWith('-'); i++) {
+      const a = args[i];
+      if (a === '--') {
+        i++;
+        break;
+      }
+      if (a === '-' || a === '--ignore-environment' || /^-[0v]*i[0v]*$/.test(a)) return false;
+      if (/^-S|^--split-string/.test(a)) return false; // el programa va dentro de la cadena
+      if (/^-[uCPLU]$|^--(unset|chdir)$/.test(a)) i++; // su argumento va aparte
+    }
+    while (i < args.length && /^[A-Za-z_][A-Za-z_0-9]*=/.test(args[i])) i++;
+    if (i >= args.length) return true;
+    return vuelcaEntorno(args[i].split('/').pop(), args.slice(i + 1)); // lanza otro, que hereda el entorno
+  }
+  return todas.some((a) => ENVIRON.test(a)) && !NO_LEEN.has(nombre);
+}
+
+/**
+ * La etapa que vuelca el entorno ENTERO y cuya salida llega a pantalla, o null. No llega si una etapa de
+ * detrás la cuenta, la calla o le quita los valores, o si acaba en `/dev/null`; a un fichero sí.
+ */
+function entornoAPantalla(cmd) {
+  for (const tuberia of tuberias(cmd)) {
+    const etapas = tuberia.map((e) => e.replace(/\)+\s*$/, '')); // el cierre de `(cd x && env)`
+    for (let i = 0; i < etapas.length; i++) {
+      const { nombre, args } = programa(etapas[i]);
+      if (!vuelcaEntorno(nombre, args)) continue;
+      const tirada = [etapas[i], etapas[etapas.length - 1]].some((e) => A_DEV_NULL.test(sinComillas(e)));
+      if (tirada || etapas.slice(i + 1).some((e) => cuentaOCalla(e) || sinValores(e))) continue;
+      return etapas[i];
+    }
+  }
+  return null;
+}
+
 // Un segmento es un COMANDO si empieza por él (tras asignaciones de entorno, `cd x &&` ya está
 // partido). Casar por substring dispararía sobre prosa: el primer falso positivo del hook fue un
 // `printf '... el hook de git push'`, denegado en su primer minuto de vida.
@@ -584,6 +680,27 @@ function evaluarBase(cmd, ctx = {}) {
         'Para ver qué corre: `pgrep -f patrón` sin `-l` ni `-a` (solo PIDs) o `ps -o pid=,ppid=,comm=` (solo el ejecutable); ' +
         'para contar, `| wc -l` o `| grep -c`; qué escucha en cada puerto, `lsof -nP -iTCP -sTCP:LISTEN`. ' +
         'Si de verdad necesitas un argumento, proyecta solo ese y añade `# sc:ok`.',
+    };
+
+  // #12 (c) — volcar el entorno ENTERO lo imprime en el transcript, token de sesión incluido.
+  //
+  // Medido el 2026-09-28 con un recuento que no imprime ningún valor (`printenv | grep -c
+  // '^CLAUDE_CODE_MESSAGING_TOKEN='` dio 1): el entorno de la herramienta Bash lleva un token de sesión.
+  // Un `env` a secas, `printenv`, `export -p`, `declare -x` o `set` lo imprimen (bash y zsh, medidos con
+  // `env -i` y una variable falsa), y `env | grep TOKEN` también: `grep` deja pasar la línea entera. En
+  // Linux (sesiones cloud), `/proc/<pid>/environ` es ese mismo entorno. No cuentan `env` como lanzador de
+  // otro programa, una variable pedida por su nombre, ni lo que se queda en nombres o en un número.
+  // Fuera a propósito: los intérpretes (`node -p process.env`, `print(os.environ)` también vuelcan).
+  const volcado = entornoAPantalla(cmd);
+  if (volcado)
+    return {
+      decision: 'deny',
+      reason:
+        `LEARNINGS #12 — «${volcado}» vuelca el entorno ENTERO al transcript, y en él viaja un token de sesión (medido el 2026-09-28); ` +
+        'en Linux, `/proc/<pid>/environ` es ese mismo entorno. Proyecta o enmascara antes de imprimir: una variable, `printenv HOME`; ' +
+        "solo los nombres, `env | cut -d= -f1` (o `awk 'BEGIN{for (k in ENVIRON) print k}'`, que no suelta las líneas de más " +
+        "de un valor multilínea); si está o cuántas hay, `printenv | grep -c NOMBRE`; con el valor tapado, `| sed 's/=.*/=<set>/'`. " +
+        'Para probar con valores, `env -i FALSA=x …` vacía el entorno. Si de verdad necesitas el volcado, añade `# sc:ok`.',
     };
 
   // #1 — `claude mcp list` NO contesta «¿puedo llamar a esa herramienta?».
