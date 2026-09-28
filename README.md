@@ -82,7 +82,7 @@ npm run export:all     # tarballs npm en dist/archives/
 <!--sc:sec=verify-->
 
 ```bash
-npm run verify         # los 43 checks estáticos encadenados (~40s)
+npm run verify         # los 44 checks estáticos encadenados (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run preflight      # gates + builds AOT + baselines visuales (~5 min), antes de pushear
 ```
@@ -98,7 +98,7 @@ y los otros workflows.
 | Pantalla | `audit:theme-scale` · `audit:border-surfaces` · `audit:screen-hygiene` · `audit:page-anatomy` · `audit:screen-vocabulary` · `audit:text-styles` · `audit:titulo-contenido` · `audit:query-order` · `audit:base-href` | Las pantallas miden por token, con un solo vocabulario, sin saltos de layout y sin un `@media` o `@container` que el orden deja sin efecto |
 | Componentes | `audit:components` · `audit:api-era` · `audit:datatables` · `audit:datatable-slots` · `audit:primeng-coupling` · `audit:doc-snippets` · `test:components` | La API pública, el acoplamiento a PrimeNG y lo que la doc enseña cuadran con el código |
 | Contenido y docs | `i18n:check` · `novedades:check` · `usage:check` · `variables:check` · `audit:seed-pii` · `audit:personal-names` · `docs:guard` · `docs:coherence` · `docs:readme-parity` | Multiidioma de verdad, cero datos de contacto reales en demos, ningún nombre de persona en el código, y ninguna doc que mienta |
-| Repo | `proto:check` · `explorations:check` · `guard:backticks` · `test:unit` · `typecheck` · `lint` · `build` | Versiones congeladas localizables, tipos limpios y las libs construyendo |
+| Repo | `proto:check` · `explorations:check` · `audit:commit-attribution` · `guard:backticks` · `test:unit` · `typecheck` · `lint` · `build` | Versiones congeladas localizables, ningún commit con la firma de la herramienta, tipos limpios y las libs construyendo |
 
 El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)), que son
 **nueve pasos**: `verify` por sí solo no construye las apps ni corre los e2e.
