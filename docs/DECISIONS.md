@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El pase de diseño de las fichas: en la franja el anillo junto a su cifra y los datos en dos columnas · las tres altas con su cabecera a la vista y «Crear …» · Guardar deja en la ficha · un usuario nuevo nace sin permisos · saltos por canal en Distribución y colas · el icono de un aviso con el peso de su texto · «Asignar» en el listado de grupos (enmienda DD-122 §8) | DD-130 |
 > | El panel de grupos deja de inventar sus «conectados»: salen de `DEMO_AGENT_PRESENCE`, no de una cifra que escala con el número de colas del panel (enmienda DD-127) | DD-129 |
 > | El botón `danger` de texto (el «Eliminar» de las fichas) sube de red-500 a red-600, mismo escalón que el sólido: cierra los tres últimos botones bajo AA de §1.8 | DD-128 |
 > | Los datos de demostración del Dashboard cuadran: un solo estado por agente (`DEMO_AGENT_PRESENCE`) para la tabla, los anillos y su detalle · los disponibles no derivan en el latido · unos totales fijos al pie llevan raya arriba | DD-127 |
@@ -89,6 +90,72 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-130 · 2026-09-27 — El pase de diseño de las fichas: la franja, las altas, Guardar, el usuario nuevo y los saltos por canal
+
+**Contexto** · Con el resumen ya como widget (DD-126), se revisó el flujo rehecho de administración con las guías de
+maquetación y de pulido: listados, panel rápido, las tres fichas por sección, las altas, los valores por defecto y
+Contact Center, a 1440 y 1280 y en los dos temas. Salieron siete hallazgos, que se enseñaron con capturas y con lo
+propuesto ensayado en la página real (inyectando el CSS, sin tocar el código). Se aplicaron los siete.
+
+**Decisión** ·
+1. **La franja (por debajo de 1340)**: el anillo va junto a su cifra, a 28; las tarjetas de una fila miden lo mismo;
+   y en la tarjeta de datos del grupo, clave y valor van en dos columnas que comparten reparto, salida y recursos
+   (`subgrid`). La columna de 1440 no cambia.
+2. **Las tres altas, iguales.** La cabecera de la ficha se pinta también al crear: «Nuevo agente» o «Nuevo usuario»
+   («Duplicar …» al duplicar) hasta que se escribe el nombre, como en el grupo. El botón principal dice lo que hace:
+   «Crear agente» y «Crear usuario», como «Crear grupo». «Siguiente» sigue solo en el grupo, donde General es la
+   puerta (DD-121).
+3. **Guardar deja en la ficha, también en la de usuario.** Al editar se queda; al crear, abre la edición del usuario
+   nuevo en la sección en la que se estaba. Hasta hoy, la de usuario volvía siempre al listado.
+4. **Un usuario nuevo nace sin secciones ni permisos**, por mínimo privilegio. Qué paquete trae cada tipo pasa a las
+   preguntas abiertas de DD-121. Los usuarios de ejemplo no cambian.
+5. **Distribución y colas lleva saltos a cada canal**: una línea arriba de la sección («Ir a: Teléfono · Chat ·
+   Email»), solo con dos o más canales. El salto lleva al bloque y deja el foco en su título, sin navegar. Respeta
+   DD-121 §5: nada nace plegado.
+6. **El icono de un aviso pesa lo que su texto**: 600 junto a semibold, en «Sin agentes», «Sin número» y «Falta:
+   nombre».
+7. **En el listado de grupos, el botón de cada fila dice «Asignar»**. Antes decía «Agentes», pegado a la columna
+   «Agentes». Su nombre accesible ya era «Asignar agentes de …».
+
+**Razón** ·
+- **La franja**, medida a 1280:
+  - de la cifra a su anillo había 290 px en el usuario 3 y 440 en el grupo 11;
+  - entre clave y valor de la tarjeta de datos, unos 450;
+  - la tarjeta «Tipo» medía 65 de alto junto a dos de 105.
+
+  Ahora el anillo va a 28, los cinco valores caen en una sola vertical y la fila tiene una sola altura.
+- **Las altas.** El título de agente y usuario medía 1 px (estaba oculto), y al crear aparecía la cabecera y la ficha
+  saltaba hacia abajo, contra AGENTS «UX de pantalla» 7. Con la cabecera en los dos modos, el índice queda a la misma
+  altura al pasar del alta a la edición (medido).
+- **El usuario nuevo** abría con las 16 casillas marcadas, «Gestión de usuarios» y «Espiar conversaciones»
+  incluidas, fuera cual fuera su tipo. El anillo del resumen lo puso a la vista: 11 de 11 y 5 de 5 nada más abrir.
+- **Distribución y colas** mide 2.355 px con los cuatro canales: quedan 1.816 bajo el pliegue a 1440 y 2.148 a 1280.
+- **Guardar** hacía dos cosas distintas, desde el mismo botón y el mismo sitio, según la ficha.
+- **El peso del icono** se arregla en la app, porque `sc-icon` ya acepta `weight`.
+
+**Descartadas** ·
+- **En la franja, tarjetas de ancho fijo como los widgets de iOS** → conservaba la composición de la columna, pero
+  dejaba hueco a la derecha de la fila, y en el grupo las barras por canal perdían ancho.
+- **Esconder también el título del alta de grupo**, la otra forma de igualar → la ficha saltaría al crear, que es
+  justo lo que se arregla.
+- **«Siguiente» en agente y usuario** → sería una puerta que esas fichas no piden, porque se rellenan en cualquier
+  orden.
+- **Que las tres vuelvan al listado al guardar** → obliga a reabrir la ficha para tocar otra sección.
+- **El paquete por tipo del laboratorio para el usuario nuevo** → no está validado con producto.
+- **Plegar cada canal de Distribución y colas** → esconde lo configurado y enmienda DD-121 §5.
+- **Una fila por canal en el índice lateral** → pediría cambiar `sc-form-section-nav` (DS); los saltos son solo de
+  la app.
+
+**Consecuencias** ·
+- **Enmiendas:** enmienda DD-122 §8 (agente y usuario llevan la cabecera también en el alta) y la regla 4 de
+  `page-identity.spec.ts` para las fichas.
+- **Para el Kit:** el peso de los iconos junto a texto semibold dentro de piezas del DS (el título de cada sección y
+  la fila activa del índice) va a `figma-pendiente` §29.
+- **Pruebas:** lo vigila `e2e/supervisor/pase-fichas.spec.ts`, que contra el código anterior daba 10 de 12 en rojo.
+  Las otras dos son el patrón del grupo y la guarda de «un solo canal, sin saltos».
 
 ---
 
@@ -215,10 +282,11 @@ capturas y vídeo.
 2. **Anillo en toda proporción**, la misma pieza en las tres fichas: grupo, agentes activos sobre asignados (el canal
    sin nadie sigue avisando debajo, con icono y texto); agente, grupos activos sobre asignados (sin grupos, sin anillo
    y «Sin grupos»); usuario, secciones y permisos.
-3. **Se mueve al abrir y al cambiar** (enmienda DD-121 §3, que animaba solo al cambiar): la cifra cuenta
-   (`CountUpDirective`, ease-out cúbico) y el anillo se llena desde vacío con su transición nativa, en
-   `--sc-transition-slow`. La directiva lee la duración del CSS, así que con menos movimiento y en las e2e la cifra
-   sale ya final. Al lector de pantalla le llega la cifra final en un texto oculto («8 de 11»), no la cuenta.
+3. **Se mueve al abrir y al cambiar** (enmienda DD-121 §3, que animaba solo al cambiar): el anillo se llena desde
+   vacío con su transición nativa, y la cifra cuenta a la par (`CountUpDirective`), con la misma curva del arco
+   (`ease`) y redondeada, en `--sc-transition-slow`. La directiva lee la duración del CSS, así que con menos movimiento
+   y en las e2e la cifra sale ya final. Al lector de pantalla le llega la cifra final en un texto oculto («8 de 11»),
+   no la cuenta.
 4. **El anillo va oculto al lector** (`aria-hidden`): su `progressbar` lleva `aria-busy="true"` y anunciaría «cargando»
    de un dato que no carga. La proporción ya la dice el texto oculto.
 5. **La tarjeta, en el tinte de marca** (`--sc-bg-primary-subtle`), sin borde a la vista (transparente, para que con
@@ -226,7 +294,9 @@ capturas y vídeo.
    porque estas tarjetas no se pulsan ni se eligen.
 6. **Todo el texto de la tarjeta, en `--sc-text-primary`**, rótulos, «/total», canales y claves incluidos: sobre el
    tinte, el secundario no llega a AA (ver Razón). La jerarquía la llevan el tamaño y el peso. El aviso ámbar del grupo
-   («Sin agentes», «Sin número») lleva el ámbar en el icono, y el texto en primario.
+   («Sin agentes», «Sin número») lleva el ámbar en el icono, y el texto en primario. Confirmado el mismo día frente a
+   la tarjeta blanca, que dejaba el gris en 4,52: en claro, los rótulos solo suben de slate-600 a slate-700; en
+   oscuro, de gris a blanco.
 7. **`theme-contrast` perdona el gris secundario solo sobre sus dos fondos aceptados** (el lienzo y slate-100), no con
    cualquier fondo, y suma a sus rutas las fichas de agente y usuario.
 
@@ -239,8 +309,10 @@ capturas y vídeo.
 - El secundario (slate-600) solo llega a AA sobre blanco (4,52:1), y sobre el tinte mide 3,96. `theme-contrast` no lo
   vio porque perdonaba ese color con cualquier fondo: con el perdón atado a sus fondos, fallan exactamente las tres
   fichas y ninguna de las otras 18 rutas. El ámbar como texto, sobre el tinte, 4,31 a 12 px.
-- La cifra y el arco, fotograma a fotograma (usuario 3): el arco se llena en 300 ms y la cifra acaba entre 55 y 75 ms
-  después (dos pasadas), con la ficha aún pintándose.
+- La cifra y el arco (usuario 3, aperturas en frío): arrancan en el mismo fotograma. Con ease-out y truncando, la
+  cifra seguía en 7 con el arco al 99 % y acababa hasta 66 ms después. Con la curva del arco y redondeando, en el
+  instante en que cambia cada cifra el arco va a la par: al pasar a 6 de 8, al 58 %; a 8, entre el 92 y el 95 %. La
+  final llega con el arco o antes (de 0 a 101 ms), nunca después.
 - Con menos movimiento, ninguna cifra intermedia: la prueba confirma en la página que la preferencia llegó
   (`matchMedia`) antes de medir, y con la duración sin apagar enrojece (se vieron 1, 4, 6, 7 y 8).
 - En los datos de prueba, el anillo sale a medias en 4 de 6 usuarios, 5 de 14 grupos y 4 de 20 agentes con grupos: dice
@@ -266,8 +338,7 @@ capturas y vídeo.
 **Consecuencias** · Enmienda DD-121 §3 (las cifras se mueven también al abrir) y DD-122 §8 (el resumen de agente y
 usuario deja las cifras sueltas). `customs-catalog` §8 recoge el «N%» oculto; `figma-pendiente` §18, el widget, que el
 Kit no tiene; la tabla de AGENTS, la pieza. La primera medida del tinte en oscuro, 20,91 la cifra y 4,27 el arco, salió
-de leer mal `color(srgb … / a)`: lo medido son 15,57 y 3,18, y siguen pasando. Queda para el pase de diseño: que la
-cifra acabe con el arco al abrir, y confirmar el tinte con los rótulos en primario frente a la tarjeta blanca.
+de leer mal `color(srgb … / a)`: lo medido son 15,57 y 3,18, y siguen pasando.
 
 ---
 
@@ -557,8 +628,8 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
 7. **Un aviso cancelado vuelve a donde estaba**: el router con `canceledNavigationResolution: 'computed'`.
 8. **Agente y usuario, al molde de la ficha de grupo**. Van con la cabecera encima, el índice a la izquierda, una
    sección a la vista en su `sc-section-card` y el resumen a la derecha con sus tres cifras de siempre, que dejan
-   la franja del nombre (desde DD-126, cada proporción es un widget con su anillo). Cada ficha tiene un orden, el
-   de sus dependencias, igual en los dos modos:
+   la franja del nombre (desde DD-126, cada proporción es un widget con su anillo; desde DD-130, la cabecera va
+   también en el alta). Cada ficha tiene un orden, el de sus dependencias, igual en los dos modos:
    - agente: Identidad · Grupos asignados · Permisos · Recursos · Avanzado;
    - usuario: Identidad · Acceso · Servicios asignados.
    Abren en la primera. Los listados enlazan a la sección de trabajo (`?seccion=grupos`, `?seccion=acceso`), así
@@ -735,8 +806,9 @@ secciones es su casa menos mala y la visión la cuenta entre los recursos. El `r
 exactamente el desbordamiento y dónde se configura su destino; si «Desbordar sesión» es lo mismo; si Email tiene
 estrategia o capacidad propias; si la URL del script de Web Chat la pone cada grupo o la plataforma; si el backend
 tendrá un permiso de WhatsApp por agente (el AED en vivo solo tiene Tlf / Chat / Email); qué ve el cliente en cola si
-se quita un canal o se cambia la estrategia de un grupo activo; y el choque con postventa (2026-09-18), que pidió
-más de un anuncio periódico en teléfono. Fuera a propósito: la forma de las fichas de agente y usuario, y
+se quita un canal o se cambia la estrategia de un grupo activo; el choque con postventa (2026-09-18), que pidió
+más de un anuncio periódico en teléfono; y, desde DD-130, qué secciones y permisos trae cada tipo de usuario (el alta
+nace sin ninguno). Fuera a propósito: la forma de las fichas de agente y usuario, y
 `/config/aed/grupos`, la página vieja de Configuración, que no está conectada con la ficha. Vigilan esto
 `grupo-vision.spec.ts`, `ficha-grupo.spec.ts`, `ficha-grupo-canales.spec.ts`, `panel-agentes-grupo.spec.ts`,
 `listado-grupos.spec.ts`, `admin-forms.spec.ts` y el grupo en `form-section-nav-legibility` y `theme-contrast`. De

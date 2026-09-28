@@ -1397,7 +1397,8 @@
         "type": "Tipo de usuário",
         "status": "Estado",
         "active": "Ativo",
-        "active_hint": "Pode iniciar sessão e operar"
+        "active_hint": "Pode iniciar sessão e operar",
+        "email_empty": "Sem email"
       },
       "danger_zone_description": "Eliminar este usuário revoga seu acesso ao painel e apaga suas permissões. A ação não pode ser desfeita.",
       "duplicate_title": "Duplicar usuário",
@@ -1405,7 +1406,8 @@
       "duplicate_hint": "Duplicando «{{source}}» · preencha os campos obrigatórios e salve",
       "headline": {
         "type": "Tipo"
-      }
+      },
+      "create_submit": "Criar usuário"
     },
     "errors": {
       "name_required": "O nome é obrigatório",
@@ -1460,7 +1462,7 @@
       "agents_count": "{{count}} agentes",
       "services_count": "{{count}} serviços",
       "services_count_one": "1 serviço",
-      "assign": "Agentes",
+      "assign": "Atribuir",
       "assign_aria": "Atribuir agentes a {{name}}",
       "assign_column": "Atribuir agentes",
       "strategy_phone": "Estratégia de telefone",
@@ -1670,7 +1672,9 @@
         "webchat_access": "Chat web · acesso",
         "whatsapp_number": "WhatsApp · número",
         "email_note": "O email não tem estratégia nem fila próprias: as mensagens chegam à caixa do grupo.",
-        "inactive": "{{channel}} não está ativo · ative-o em Geral"
+        "inactive": "{{channel}} não está ativo · ative-o em Geral",
+        "jump_label": "Ir para",
+        "jump_aria": "Canais desta seção"
       },
       "chat": {
         "close_on_inactivity": "Fechar o chat por inatividade",
@@ -1921,7 +1925,8 @@
       "summary": {
         "no_groups": "Sem grupos",
         "groups_active": "Grupos ativos"
-      }
+      },
+      "create_submit": "Criar agente"
     },
     "toasts": {
       "created": "Agente \"{{name}}\" criado",

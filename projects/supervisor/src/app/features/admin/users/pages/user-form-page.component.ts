@@ -41,8 +41,8 @@ import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
 import { SummaryKpiComponent } from '@shared/components';
 import {
   AVAILABLE_SERVICES,
-  DEFAULT_PERMISSIONS,
-  DEFAULT_SECTIONS,
+  EMPTY_PERMISSIONS,
+  EMPTY_SECTIONS,
   PERMISSION_DEFS,
   SECTION_DEFS,
   USER_TYPES,
@@ -478,26 +478,37 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         photo: f.photo ?? undefined,
       };
 
+      // Guardar deja en la ficha, como en grupo y agente (DD-130): al editar se queda; al crear, abre la edición
+      // del usuario nuevo en la sección en la que se estaba. Hasta el 2026-09-27 volvía siempre al listado.
       const editingId = this.editingId();
       if (editingId) {
         this.usersStore.updateUser(editingId, { ...payload });
+        const refreshed = this.usersStore.getUser(editingId);
+        if (refreshed) this.initial.set(refreshed);
         this.messages.add({
           severity: 'success',
           summary: this.translate.instant('users.toasts.updated', { name: payload.name }),
           life: TOAST_LIFE.success,
         });
-      } else {
-        const created = this.usersStore.addUser(payload);
-        this.messages.add({
-          severity: 'success',
-          summary: this.translate.instant('users.toasts.created', { name: created.name }),
-          life: TOAST_LIFE.success,
-        });
+        this.saving.set(false);
+        this.dirtyState.markPristine();
+        return;
       }
 
-      this.saving.set(false);
+      const created = this.usersStore.addUser(payload);
+      this.messages.add({
+        severity: 'success',
+        summary: this.translate.instant('users.toasts.created', { name: created.name }),
+        life: TOAST_LIFE.success,
+      });
       this.dirtyState.markPristine();
-      void this.router.navigateByUrl('/admin/usuarios');
+      const slug = Object.entries(UserFormPageComponent.SECTION_SLUGS).find(([, v]) => v === this.activeSection())?.[0];
+      void this.router
+        .navigate(['/admin/usuarios/editar', created.id], {
+          replaceUrl: true,
+          queryParams: slug && slug !== 'identidad' ? { seccion: slug } : {},
+        })
+        .finally(() => this.saving.set(false));
     }, 400);
   }
 
@@ -539,8 +550,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       identifier: '',
       type: 'agent',
       status: 'active',
-      sections: { ...DEFAULT_SECTIONS },
-      permissions: { ...DEFAULT_PERMISSIONS },
+      sections: { ...EMPTY_SECTIONS },
+      permissions: { ...EMPTY_PERMISSIONS },
       groups: new Set(),
       services: new Set(),
       photo: null,

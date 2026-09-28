@@ -16,17 +16,34 @@ export function cssDurationMs(value) {
   return primera.endsWith('ms') ? n : n * 1000;
 }
 
-/** Sale rápido y frena al llegar: la cifra se asienta, no se para en seco. */
-export const easeOutCubic = (t) => 1 - (1 - t) ** 3;
+/** Un punto de una curva de Bézier cúbica de extremos (0,0) y (1,1), con puntos de control `a` y `b`. */
+const bezier = (a, b, u) => 3 * (1 - u) ** 2 * u * a + 3 * (1 - u) * u ** 2 * b + u ** 3;
 
 /**
- * La cifra a pintar a los `elapsed` ms de una cuenta de `from` a `to` que dura `duration` ms. Entera, entre las
- * dos, y `to` justo al acabar, no antes: redondea HACIA la de partida, así la última cifra llega a la vez que
- * el arco del anillo (que tarda lo mismo). Por debajo de 1 ms de duración, `to` de una vez.
+ * La curva `ease` de CSS, cubic-bezier(0.25, 0.1, 0.25, 1): la de la transición nativa del arco
+ * (`stroke-dashoffset 0.3s`, sin curva escrita). Se busca el parámetro que da la `x` pedida (la curva en `x`
+ * crece siempre, así que la bisección converge) y se devuelve su `y`.
+ */
+export function cssEase(x) {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 30; i++) {
+    const u = (lo + hi) / 2;
+    if (bezier(0.25, 0.25, u) < x) lo = u;
+    else hi = u;
+  }
+  return bezier(0.1, 1, (lo + hi) / 2);
+}
+
+/**
+ * La cifra a pintar a los `elapsed` ms de una cuenta de `from` a `to` que dura `duration` ms: va a la par del arco
+ * del anillo, con su misma curva y redondeada, así que en cada fotograma dice lo que el arco enseña. Entera, entre
+ * las dos, y `to` al acabar. Por debajo de 1 ms de duración, `to` de una vez.
  */
 export function countUpValue(from, to, elapsed, duration) {
   if (!(duration >= 1) || elapsed >= duration) return to;
   const t = Math.max(0, elapsed) / duration;
-  const v = from + (to - from) * easeOutCubic(t);
-  return to >= from ? Math.floor(v) : Math.ceil(v);
+  return Math.round(from + (to - from) * cssEase(t));
 }

@@ -73,6 +73,20 @@ export const DEFAULT_PERMISSIONS: UserPermissions = {
   spyOnConversations: true,
 };
 
+/**
+ * Lo que trae un usuario NUEVO: nada. Mínimo privilegio (DD-130): hasta el 2026-09-27 el alta nacía con las 11
+ * secciones y los 5 permisos marcados, «Gestión de usuarios» y «Espiar conversaciones» incluidos, fuera cual fuera
+ * su tipo. Qué paquete trae cada tipo es una pregunta abierta para producto (DD-121). Los usuarios de ejemplo
+ * siguen saliendo de `DEFAULT_*`.
+ */
+export const EMPTY_SECTIONS: UserSections = Object.fromEntries(
+  Object.keys(DEFAULT_SECTIONS).map((k) => [k, false])
+) as unknown as UserSections;
+
+export const EMPTY_PERMISSIONS: UserPermissions = Object.fromEntries(
+  Object.keys(DEFAULT_PERMISSIONS).map((k) => [k, false])
+) as unknown as UserPermissions;
+
 export interface PermissionDef {
   readonly key: keyof UserPermissions;
   readonly labelKey: string;
