@@ -262,6 +262,35 @@ export function fuentesSinIndexar(cwd) {
   }
 }
 
+/** `pgrep` con sus flags y su patrón, entrecomillado o no. */
+const PGREP = /\bpgrep((?:\s+-{1,2}[A-Za-z-]*)*)\s+("(?:[^"\\]|\\.)*"|'[^']*'|[^\s"'|;&()<>]+)/g;
+
+/**
+ * El primer patrón de `pgrep -f` SIN ANCLAR que corre dentro de un bucle `until`/`while`, o null.
+ *
+ * Recorre segmentos y no texto: un `pgrep` suelto antes del bucle, o un `grep` que busca la frase,
+ * no esperan a nada. `-f` cuenta también dentro de un racimo (`-fl`). Un patrón en una variable no
+ * se puede leer desde aquí, y no se opina.
+ */
+function esperaSinAncla(segs) {
+  const bucles = []; // true: `until`/`while`, los que esperan; false: `for`/`select`, que también cierran con `done`
+  for (const seg of segs) {
+    const s = seg.replace(/^(?:(?:do|then|else|if|elif|!)\s+|[({]\s*)+/, '');
+    if (/^(until|while)\b/.test(s)) bucles.push(true);
+    else if (/^(for|select)\b/.test(s)) bucles.push(false);
+    if (bucles.includes(true))
+      for (const [, flags, crudo] of s.matchAll(PGREP)) {
+        if (!/(^|\s)(-[A-Za-z]*f[A-Za-z]*|--full)(?=\s|$)/.test(flags)) continue;
+        if (/(^|\s)(-[A-Za-z]*x[A-Za-z]*|--exact)(?=\s|$)/.test(flags)) continue; // la línea EXACTA no casa con un shell
+        if (!crudo.startsWith("'") && /\$[\w{(]|`/.test(crudo)) continue;
+        const patron = /^["']/.test(crudo) ? crudo.slice(1, -1) : crudo;
+        if (!patron.startsWith('^')) return patron;
+      }
+    if (/^done\b/.test(s)) bucles.pop();
+  }
+  return null;
+}
+
 /**
  * Evalúa un comando. `ctx.preflight(cwd)` se inyecta para poder testear sin git.
  * Devuelve { decision: 'allow' | 'deny', reason }.
@@ -518,40 +547,38 @@ function evaluarBase(cmd, ctx = {}) {
       };
   }
 
-  // #5 — un bucle de espera cuyo patrón SE CASA A SÍ MISMO no termina nunca.
+  // #5 — un bucle de espera con `pgrep -f` SIN ANCLAR no termina nunca.
   //
-  // `until ! pgrep -f "preflight-scope"; do sleep; done` corre dentro de un shell cuya propia
-  // línea de comandos contiene «preflight-scope», así que `pgrep -f` se encuentra a sí mismo y la
-  // condición nunca se cumple. El 2026-09-12 costó tres esperas muertas (una de ellas la mató el
-  // sistema por memoria) antes de ver que la máquina llevaba rato libre: el síntoma es «la otra
-  // sesión no acaba nunca», y la causa es tu propio `pgrep`.
+  // `pgrep -f` casa contra la línea de comandos ENTERA de cada proceso, y la herramienta Bash corre
+  // cada comando como `/bin/zsh -c -l '… eval '<comando>''`: el shell que espera lleva el patrón en
+  // su propia línea. En Linux (procps) pgrep no se salta a sus antepasados y el bucle se encuentra a
+  // SÍ MISMO; en macOS sí (`man pgrep`, `-a`), pero dos esperas a la vez se ven la UNA a la OTRA. El
+  // síntoma engaña igual: «la otra sesión no acaba», con la máquina libre. El 2026-09-12 costó tres
+  // esperas muertas, y el 2026-09-28 dos bucles de fondo siguieron vivos tras morir su preflight.
+  // Medido ese día en macOS: cada bucle veía el shell del otro; anclados, los dos salieron a la
+  // primera, y uno solo esperó a su proceso justo lo que este vivió.
   //
-  // El arreglo es apuntar al PROCESO, no a la cadena: `pgrep -f "node scripts/preflight-scope.mjs"`
-  // no casa con el shell que espera, o `pgrep -f pat | grep -v $$`.
-  const esperaQueSeCasaSolaMisma = (cmd) => {
-    const m = cmd.match(/pgrep\s+(?:-[a-zA-Z]+\s+)*-f\s+["']?([^"'|;)\s]+)["']?/);
-    if (!m) return null;
-    const patron = m[1];
-    if (patron.length < 4) return null;
-    // ¿El patrón aparece FUERA del propio `pgrep`? Entonces el comando se encuentra a sí mismo.
-    const sinPgrep = cmd.replace(/pgrep[^;|&\n]*/g, '');
-    return sinPgrep.includes(patron) ? patron : null;
-  };
-  /* Sobre el texto SIN heredocs: escribir un fichero que HABLA de este bucle no es ejecutarlo, y
-   * la primera versión se denegó a sí misma tres veces al crear su propio test. */
-  const sinDocs = sinHeredocs(cmd);
-  if (/\b(until|while)\b/.test(sinDocs)) {
-    const patron = esperaQueSeCasaSolaMisma(sinDocs);
-    if (patron)
-      return {
-        decision: 'deny',
-        reason:
-          `LEARNINGS #5 — este bucle espera a que muera «${patron}», y su propia línea de comandos contiene ese texto: ` +
-          '`pgrep -f` se encuentra a SÍ MISMO y la condición no se cumple nunca. El síntoma es «la otra sesión no acaba», ' +
-          'y la causa eres tú (2026-09-12: tres esperas muertas con la máquina libre). ' +
-          'Apunta al proceso y no a la cadena —`pgrep -f "node scripts/preflight-scope.mjs"`— o filtra tu propio PID (`| grep -v $$`).',
-      };
-  }
+  // Hasta entonces solo se denegaba si el patrón salía TAMBIÉN fuera del `pgrep`, y el consejo del
+  // propio motivo (`node scripts/preflight-scope.mjs`, sin anclar) era una de esas esperas. Lo que
+  // sirve es ANCLAR al principio del proceso: la línea de un shell empieza por `/bin/zsh`, nunca por
+  // `node`. Estricto a propósito: `[n]ode` o un `\.` esquivan su propio texto, pero no el de otro
+  // shell que lo lleve literal; el ancla, sí. Con `-x` (la línea exacta) tampoco casa ningún shell.
+  //
+  // Sobre el texto SIN heredocs (`segmentos` los quita): escribir un fichero que HABLA de este bucle
+  // no es ejecutarlo, y la primera versión se denegó a sí misma tres veces al crear su propio test.
+  const sinAncla = esperaSinAncla(segs);
+  if (sinAncla)
+    return {
+      decision: 'deny',
+      reason:
+        `LEARNINGS #5 — este bucle espera con \`pgrep -f\` a «${sinAncla}» SIN ANCLAR, y \`pgrep -f\` casa contra la línea ` +
+        'de comandos ENTERA: la del shell que corre el bucle también lo lleva dentro. En Linux se encuentra a SÍ MISMO; en ' +
+        'macOS, dos esperas a la vez se ven la una a la otra. La condición no se cumple nunca y el síntoma es «la otra sesión ' +
+        'no acaba» (2026-09-12: tres esperas muertas; 2026-09-28: dos vivas tras morir su preflight). Ancla el patrón al ' +
+        'principio del PROCESO, con su ejecutable: `pgrep -f "^node scripts/preflight-scope.mjs"` (la línea de un shell ' +
+        'empieza por `/bin/zsh`). Y antes de fiarte, `pgrep -fl` con el patrón anclado mientras el proceso vive: un ancla que ' +
+        'no casa con nada sale del bucle al instante, que es el fallo contrario. Si de verdad lo quieres sin anclar, añade `# sc:ok`.',
+    };
 
   return { decision: 'allow', reason: '' };
 }
