@@ -32,7 +32,7 @@
 | **17** | construir sobre una descripción que no verificaste tú, **o reescribir en masa una que registra decisiones** | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
 | **18** | zanjar una decisión VISUAL discutiendo | constrúyela en su versión mínima y MÍRALA |
 | **19** | elegir cómo validar algo | por la PREGUNTA: gesto→Playwright · aspecto→captura · ¿sabrán usarlo?→recorrido cognitivo |
-| **21** | escribir en un LEDGER compartido (`DECISIONS`, `LEARNINGS`, `inventory`, `handoff`, `AGENTS`), aterrizar en una rama que otro worktree tiene abierta, **o enseñarle a Rafa ficheros que otra sesión también toca** | mira su `status` y el tip ANTES, no solo al aterrizar; una rama, una sesión; y compara contra `origin/main` tras `fetch`, no contra tu `main` local ⚙️ |
+| **21** | **empezar una tarea (o lanzársela a otra sesión)**, escribir en un LEDGER compartido (`DECISIONS`, `LEARNINGS`, `inventory`, `handoff`, `AGENTS`), aterrizar en una rama que otro worktree tiene abierta, **o enseñarle a Rafa ficheros que otra sesión también toca** | al empezar, `list_sessions`: una hermana que aún no editó nada no sale en ningún árbol; mira su `status` y el tip ANTES, no solo al aterrizar; una rama, una sesión; y compara contra `origin/main` tras `fetch`, no contra tu `main` local ⚙️ |
 
 ---
 
@@ -147,16 +147,16 @@
     2026-09-11 "410 con nombre" eran 341 + 69 que solo heredaban, y "4.517 textos" eran mediciones
     sobre 56 estados (las 38 rutas son 2.503).
 
-21. **Vas a escribir en un fichero COMPARTIDO (ledgers: `DECISIONS.md`, `LEARNINGS.md`, `inventory.md`,
-    `docs/handoff/`, `AGENTS.md`), a aterrizar en una rama que otro worktree tiene checkouteada, o a
-    enseñarle a Rafa ficheros que otra sesión también toca → mide su árbol y su tip ANTES, no solo al
-    aterrizar.** `git worktree list`, su `status --porcelain`, el `rev-parse` de la rama; si el fichero
-    está sucio en su árbol, no lo toques. Una rama, una sesión: si necesitas su trabajo sin fundir,
-    rama propia y PR. Compara contra `origin/main` tras un `fetch`, no contra tu `main` local, que
-    miente sobre los conflictos. ⚙️ `main-drift-guard` (cada mensaje) y `bash-guard` (al sacar su rama).
-    Evidencia: 2026-09-06 cuatro choques en ledgers con la hermana (el PR #50 nació CONFLICTING) ·
-    2026-09-23 #237, #239 y #240 entraron sobre las fichas mientras Rafa miraba mi local, y vio deshecho
-    «lo que ya se había hecho».
+21. **Vas a EMPEZAR una tarea (o lanzársela a otra sesión), escribir en un ledger COMPARTIDO (`DECISIONS`,
+    `LEARNINGS`, `inventory`, `handoff`, `AGENTS`), aterrizar en una rama que otro worktree tiene checkouteada,
+    o enseñarle a Rafa ficheros que otra sesión también toca → mide su árbol y su tip ANTES, no solo al
+    aterrizar.** Al empezar, `list_sessions`: una hermana con tu misma tarea que aún no editó nada no sale
+    en ningún árbol. `git worktree list`, su `status --porcelain`, el `rev-parse` de la rama; si el fichero
+    está sucio en su árbol, no lo toques. Una rama, una sesión: si necesitas su trabajo sin fundir, rama
+    propia y PR. Compara contra `origin/main` tras un `fetch`, no contra tu `main` local, que miente sobre
+    los conflictos. ⚙️ `main-drift-guard` (cada mensaje) y `bash-guard` (al sacar su rama).
+    Evidencia: 2026-09-23 #237, #239 y #240 entraron sobre las fichas que Rafa miraba en local · 2026-09-28
+    una hermana con mi misma tarea salió a los 15 min, por sus procesos en mi medición y no por su árbol.
 
 ## Entrega
 
