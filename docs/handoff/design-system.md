@@ -41,10 +41,11 @@
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
 - **Rescatar a `main` el DS de `comparar/fichas`**, decida lo que decida producto: `sc-drawer` (`width`, `topOffset`, X accesible, bordes, sombra) y `sc-section-card showHeader`.
 - **La puerta barata del preflight, contra un ledger en PR ajeno** (LEARNINGS #21, roto el 2026-09-15 con #196): avisar si un PR abierto toca el mismo `docs/handoff/` o `DECISIONS`.
-- **Guardianes que miden un PROXY, no la condición** (tanda 2026-09-19: seis hallados, cuatro ya arreglados; el patrón lo caza LEARNINGS #2, «ante un trinquete que NO baja, mira un caso a mano»). Quedan cuatro, en orden de valor: (a) **2º punto ciego de `audit-text-styles`** — la comprobación de ROLES usa el mismo `aplanar()` que no ve `code`/`pre`/descendientes ni `@media`; antes de tocarla hay que DECIDIR si un `html { font-size: 100% }` debe cumplir un rol (probablemente no): primero la regla, luego el gate.
+- **Guardianes que miden un PROXY, no la condición** (tanda 2026-09-19: seis hallados, cuatro ya arreglados; el patrón lo caza LEARNINGS #2, «ante un trinquete que NO baja, mira un caso a mano»). Quedan cinco, en orden de valor: (a) **2º punto ciego de `audit-text-styles`** — la comprobación de ROLES usa el mismo `aplanar()` que no ve `code`/`pre`/descendientes ni `@media`; antes de tocarla hay que DECIDIR si un `html { font-size: 100% }` debe cumplir un rol (probablemente no): primero la regla, luego el gate.
   (b) **El hook de cierre casa la cadena `git push`**, no el acto: un workflow o un `.md` que la CONTENGA dispara el aviso de «has pusheado». Mismo fallo que ya se le arregló una vez.
   (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 8): `sc-password` y `sc-multiselect` son uno cada uno y lo bajan a 6; `p-button → [pButton]` el último —mueve el DOM, `component-structure.json` y las capturas, y toca SEIS componentes—, y es de las que se proponen.
   (d) **La plantilla de PR promete lo que no sabe**: medido, ningún gate lee el checklist y solo 2 de sus 6 casillas están respaldadas (`verify` y tokens). Barato: que cada línea diga si la vigila un gate y que «no aplica» no se escriba con un tick. Gateables de verdad, si Rafa quiere: bump de versión y CHANGELOG.
+  (e) **`preflightVivo` de `bash-guard` cuenta el preflight de CUALQUIER caja**: busca la carpeta en la línea de comandos, que es relativa (y en macOS `pgrep -af` da solo PIDs). Medido el 2026-09-28: el preflight de otra caja denegó `npm run build:supervisor` en esta. Arreglo: el `cwd` de cada PID (`lsof -a -p PID -d cwd`, `/proc/PID/cwd`), con su test en rojo.
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
@@ -170,6 +171,13 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-28 · Una espera con `pgrep -f` sin anclar no pasa: `bash-guard` da la forma anclada
+
+**Sello:** rama `areses/wonderful-moser-974a04`, sobre HEAD `b0fcfa4c` (#281), PR nuevo. Archivado: `archive/handoff-ds-2026-09-15-notificaciones`.
+
+**Lo que cambia.** En macOS, dos esperas `until ! pgrep -f "node scripts/…"` a la vez se veían la una a la otra (el shell de la herramienta Bash lleva el comando
+en su línea) y ninguna acababa, y el motivo del hook recomendaba ese patrón. Ahora lo deniega en `until`/`while` y enseña `^node scripts/…`; medido con esperas reales.
+
 ## ✅ 2026-09-28 · `CI=1 npm run e2e` vuelve a correr en local: los workers no esperan a su propio servidor
 
 **Sello:** rama `areses/priceless-leavitt-55356e`, sobre HEAD `6dfe9ba5` (#272), PR nuevo. Hace sitio con las trampas que DD-60 dejó viejas.
@@ -206,15 +214,6 @@ la procedencia pasa a su DD, ticket o nodo de Figma, y cada cita al criterio que
 Lo vigilan `audit:personal-names` en `verify` y `bash-guard` en commits y PRs. Los `.md`, sin citas literales (DD-120).
 
 - ⚠️ **Una rama que rebase encima** puede chocar en comentarios, y el gate le hará reescribir los suyos (`gulper`: `channel-icon`).
-
-## ✅ 2026-09-15 · En Servicio, la dirección de las notificaciones se lee entera
-
-**Sello:** rama `arebury/notificaciones-direccion-ancha`, sobre `fa21f53` (#198). Rafa probó en local el InputGroup
-con las casillas como addons (solo le convenció el campo de la dirección a lo ancho, con su `https://`; las casillas como addons, no) y eligió volver a las columnas. Archivado:
-`archive/handoff-ds-2026-09-15-tema` («El tema lee los colores», #193).
-
-**Lo que cambia.** Las tres columnas de casillas miden su rótulo y la dirección se queda el resto: a 1440 el campo pasa de
-121 a 452 px. Test en `servicio-notificaciones.spec.ts`, rojo con la hoja de antes.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -317,8 +316,8 @@ variables, 30 comentarios activos.
   está en el componente, el arreglo en la ficha solo lo tapa ahí (DD-105, `sc-multiselect`).
 - 🪤 **Una carpeta de `public/` con el nombre de una ruta la tapa**: `public/login/` hacía que `/login` diera 301 a la
   carpeta en vez de la app. Las imágenes del acceso viven en `public/illustrations/`.
-- 🪤 **`pgrep -f 'texto'` dentro de un bucle de espera casa con el propio bucle** y no termina nunca: ancla el patrón
-  al proceso (`'^node scripts/preflight-scope.mjs'`) y compruébalo con `pgrep -fl` antes de fiarte.
+- 🪤 **`pgrep -f 'texto'` dentro de un bucle de espera casa con el propio bucle** (en macOS, con otra espera igual) y no termina
+  nunca: ancla el patrón al proceso (`'^node scripts/preflight-scope.mjs'`) y compruébalo con `pgrep -fl`. ⚙️ `bash-guard` lo deniega.
 - 🪤 **Un `sc-multiselect` con `[value]` que sale de un método se cuelga**: cada ciclo devuelve un array nuevo, que
   cuenta como cambio. Dale un `computed` y compara antes de escribir (`labelValue` y `sameValues` en la ficha de agente).
 - 🪤 **El verde LOCAL no cubre los dos primeros metros del CI**, y en s34 mordió dos veces:

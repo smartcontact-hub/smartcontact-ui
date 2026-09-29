@@ -243,7 +243,7 @@ test('sin escrituras, el motivo no gana ruido', () => {
 });
 
 /*
- * #5 — un bucle de espera cuyo `pgrep -f` se casa con SU PROPIA línea de comandos no termina
+ * #5 — un bucle de espera cuyo `pgrep -f` casa con la línea de comandos de un SHELL no termina
  * nunca, y el síntoma miente del todo: parece que la otra sesión no acaba, y la máquina lleva
  * rato libre. El 2026-09-12 costó tres esperas muertas seguidas (una la mató el sistema por
  * memoria) con varias cajas trabajando a la vez.
@@ -262,21 +262,41 @@ test('#5 espera que se casa sola: el patrón también fuera del `pgrep` → deny
   assert.match(r.reason, /se encuentra a SÍ MISMO/);
 });
 
-test('#5 y sus tres vecinos legítimos pasan: proceso, `pgrep` suelto y heredoc que lo menciona', () => {
-  // Apuntar al PROCESO no se casa con el shell que espera.
-  assert.equal(
-    evaluar(`until ! pgrep -f "node scripts/${PATRON_ESPERA}.mjs" >/dev/null; do sleep 20; done`, { cwd: '/tmp' })
-      .decision,
-    'allow',
-  );
-  // Sin bucle no se espera a nada.
-  assert.equal(evaluar(`pgrep -f ${PATRON_ESPERA} && echo ${PATRON_ESPERA}`, { cwd: '/tmp' }).decision, 'allow');
+// ROJO que motivó el arreglo (2026-09-28, macOS): pgrep se salta a sí mismo y a sus antepasados, así
+// que un bucle solo no se ve; pero DOS a la vez ven cada uno el shell del otro y ninguno acaba. El
+// patrón era el que el motivo de este mismo hook recomendaba, «apunta al proceso», sin anclar.
+test('#5 espera con `pgrep -f` sin anclar → deny, y el motivo enseña a anclar con `^`', () => {
+  const bucle = 'until ! pgrep -f "node scripts/x.mjs"; do sleep 5; done';
+  deny(bucle, verde, /LEARNINGS #5/);
+  const r = evaluar(bucle, verde);
+  assert.match(r.reason, /pgrep -f "\^node scripts\/preflight-scope\.mjs"/, 'el motivo tiene que dar la forma ANCLADA');
+  assert.doesNotMatch(r.reason, /pgrep -f "node /, 'ni recomendar la forma sin anclar, que era una de estas esperas');
+  assert.doesNotMatch(r.reason, /grep -v \$\$/, 'ni `grep -v $$`: quita tu shell, no el de la espera hermana');
+  // El comando de ese día, tal cual lo daba el motivo del hook.
+  deny(`until ! pgrep -f "node scripts/${PATRON_ESPERA}.mjs" >/dev/null; do sleep 15; done; echo listo`, verde, /SIN ANCLAR/);
+  // `-f` dentro de un racimo de flags, y el `pgrep` en el cuerpo del bucle en vez de en la condición.
+  deny('while pgrep -fl "node scripts/x.mjs" >/dev/null; do sleep 5; done', verde, /LEARNINGS #5/);
+  deny('while true; do pgrep -f node >/dev/null || break; sleep 5; done', verde, /«node»/);
+});
+
+test('#5 y sus vecinos legítimos pasan: ancla, `-x`, `pgrep` suelto, texto que lo nombra y heredoc', () => {
+  // El ancla: la línea de un shell empieza por `/bin/zsh`, nunca por `node`.
+  allow('until ! pgrep -f "^node scripts/x.mjs"; do sleep 5; done');
+  allow(`until ! pgrep -f '^node scripts/${PATRON_ESPERA}.mjs' >/dev/null; do sleep 20; done`);
+  // `-x` exige la línea EXACTA: tampoco casa con un shell.
+  allow('until ! pgrep -xf "node scripts/x.mjs --run"; do sleep 5; done');
+  // Sin bucle no se espera a nada, aunque el patrón vaya sin anclar.
+  allow('pgrep -f "node scripts/x.mjs"');
+  allow(`pgrep -f ${PATRON_ESPERA} && echo ${PATRON_ESPERA}`);
+  // Mirar qué casa ANTES del bucle es lo que pide el motivo: ese `pgrep` no espera a nada.
+  allow('pgrep -fl "node scripts/x.mjs"; until ! pgrep -f "^node scripts/x.mjs"; do sleep 5; done');
+  // Buscar la frase no es ejecutarla.
+  allow(`grep -rn 'until ! pgrep -f "node scripts' docs/`);
+  // Un patrón en una variable no se lee desde aquí: no se opina.
+  allow('until ! pgrep -f "$PATRON"; do sleep 5; done');
   // Escribir un fichero que HABLA del bucle no es ejecutarlo — el falso positivo que se cazó solo.
-  assert.equal(
-    evaluar(`cat > t.mjs <<'EOF'\nuntil ! pgrep -f "${PATRON_ESPERA}"; do sleep 1; done\nEOF`, { cwd: '/tmp' })
-      .decision,
-    'allow',
-  );
+  allow(`cat > t.mjs <<'EOF'\nuntil ! pgrep -f "${PATRON_ESPERA}"; do sleep 1; done\nEOF`);
+  allow('until ! pgrep -f "node scripts/x.mjs"; do sleep 5; done # sc:ok');
 });
 
 test('escrituras(): cuenta las de verdad e ignora /dev, /tmp y los descriptores', () => {
