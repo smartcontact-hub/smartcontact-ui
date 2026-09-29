@@ -13,10 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { variante: vieja-a, traza: retain-on-failure }
-          - { variante: vieja-b, traza: retain-on-failure }
-          - { variante: vieja-c, traza: retain-on-failure }
-          - { variante: vieja-sin-traza, traza: 'off' }
+          - { variante: nueva-con-fallo, traza: retain-on-failure }
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -24,16 +21,17 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: fallo a propósito
+        run: |
+          # El índice cancela también el clic con tecla: la otra pestaña ya no se abriría.
+          f=projects/ui-smartcontact/src/lib/components/form-section-nav/sc-form-section-nav.component.ts
+          sed -i 's/    if (section.href \&\& gestoDeEnlace) return;/    void gestoDeEnlace;/' $f
+          grep -n "gestoDeEnlace" $f
+          ! grep -q "if (section.href && gestoDeEnlace) return;" $f
       - run: npm run build
       - run: |
           sudo rm -f /etc/apt/sources.list.d/google-chrome.list
           npx playwright install --with-deps chromium
-      - name: prueba vieja
-        run: |
-          # La prueba tal como estaba en el commit del fallo (d2b0bb62): espera la pestaña con `context.waitForEvent('page')`.
-          git fetch --depth=1 origin d2b0bb62f8c0315fe431d711afd0a6368990f34e
-          git show d2b0bb62f8c0315fe431d711afd0a6368990f34e:e2e/supervisor/indice-enlaces.spec.ts > e2e/supervisor/indice-enlaces.spec.ts
-          grep -n "waitForEvent('page')" e2e/supervisor/indice-enlaces.spec.ts
       - name: repetir
         env:
           DEBUG: pw:protocol
@@ -48,7 +46,7 @@ jobs:
           (grep -a -v -E '"method":"(Network\.|Page\.screencastFrame)|Page\.screencastFrameAck' < proto.fifo > diag/proto.log) &
           set +e
           DEBUG_FILE=proto.fifo npx playwright test -c playwright.supervisor.config.ts e2e/supervisor/indice-enlaces.spec.ts \
-            -g "Cmd/Ctrl" --repeat-each=80 --max-failures=2 --trace=${{ matrix.traza }} --reporter=list --output=diag/results > diag/run.log 2>&1
+            -g "Cmd/Ctrl" --repeat-each=3 --trace=${{ matrix.traza }} --reporter=list --output=diag/results > diag/run.log 2>&1
           code=$?
           sleep 2
           pasadas=$(grep -c '✓' diag/run.log)
