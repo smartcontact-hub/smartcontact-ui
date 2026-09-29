@@ -327,10 +327,12 @@ usuario con `p-tabs`.
 - ⚠️ Medir anchos antes de que cargue la fuente de iconos: con `font-display: block` el glifo no se ve pero ocupa el
   ancho de su nombre («group_add») con la letra de reserva, y «Asignar» mide 146 px en su celda de 120. Antes de medir,
   `document.fonts.load(…)` y `document.fonts.ready`.
-- ⚠️ Un Ctrl+clic que espera a que el navegador cree la pestaña (`context.waitForEvent('page')`) agotó los 90 s tres
-  veces en el CI el 2026-09-28 (parte 2/4), y ninguna en local. Playwright solo emite `page` cuando la pestaña nueva
-  confirma su primera navegación; la traza del CI no se pudo abrir desde aquí. `indice-enlaces` comprueba ahora la
-  parte de la app (el clic llega al enlace sin cancelar) y abre la otra con `context.newPage()`.
+- ⚠️ Un Ctrl+clic que espera a que el navegador cree la pestaña (`context.waitForEvent('page')`) no es fiable en el
+  runner del CI: 6 fallos en 203 vueltas (medido el 2026-09-29), ninguno en local. Es una carrera entre Playwright y
+  Chromium, vista en el protocolo: si la pestaña empieza a cargar antes de que Playwright active `Page` en ella, no
+  llega el `Page.frameNavigated` de su primera navegación, y Playwright no entrega la pestaña o la entrega en
+  `about:blank`. La app sí la abría. `indice-enlaces` comprueba la parte de la app (el clic llega al enlace sin
+  cancelar; rojo 3 de 3 con el índice cancelándolo) y abre la otra con `context.newPage()`: 0 de 240 en el CI.
 - ⚠️ Un commit del robot `visual-baselines` sobre un PR ya abierto deja su CI en «action_required», y hay que
   aprobarlo a mano (2026-09-24). Si un cambio mueve una captura de sc-docs, lanza el workflow sobre la rama ANTES de
   abrir el PR.

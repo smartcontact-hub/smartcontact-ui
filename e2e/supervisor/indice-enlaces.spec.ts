@@ -117,9 +117,14 @@ test('ficha de grupo · Cmd/Ctrl+clic abre la sección en otra pestaña, y las d
    * otra pestaña) y que la ficha no se mueva. El último oyente del clic —en `window`, en burbuja, detrás de los de la
    * app— lo apunta y corta la acción por defecto; la otra pestaña se abre con ese enlace, como en `ficha-grupo`.
    * Hasta el 2026-09-28 el test esperaba a que el navegador creara la pestaña en segundo plano
-   * (`context.waitForEvent('page')`), y en el CI esa espera agotó los 90 s tres veces ese día, con árboles que en local
-   * pasaban siempre (24 de 24 vueltas, también con la CPU frenada ×4): la pestaña no es de la app. Que el manejador del
-   * índice no cancele el clic con tecla lo fija además la prueba unitaria del DS. */
+   * (`context.waitForEvent('page')`). En local pasaba siempre; en el runner del CI (medido el 2026-09-29, un worker y
+   * `--repeat-each`) esa espera falla 6 de 203 veces y la forma de ahora 0 de 240. No es de la app, es una carrera
+   * entre Playwright y Chromium, vista en el protocolo: cuando la carga de la pestaña empieza antes de que Playwright
+   * active `Page` en ella, Chromium no le manda el `Page.frameNavigated` de esa primera navegación, y Playwright o no
+   * entrega la pestaña (espera esa navegación: los 90 s del CI) o la entrega con el marco aún en `about:blank` (los
+   * localizadores no encuentran la sección). La pestaña sí se abría y cargaba la ficha: la original mostraba el aviso.
+   * Una pestaña de `context.newPage()` la sigue Playwright desde que nace. No vuelvas a la espera subiendo el timeout.
+   * Que el manejador del índice no cancele el clic con tecla lo fija además la prueba unitaria del DS. */
   await page.addInitScript(() => {
     window.addEventListener('click', (e) => {
       if (!(e.ctrlKey || e.metaKey)) return;
