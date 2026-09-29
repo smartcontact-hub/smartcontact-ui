@@ -55,6 +55,21 @@ export const prDe = (rama, lista) =>
   // La rama EXACTA primero: `feat/dd-30` es una rama, no la caja `-30` de `feat/dd`.
   (lista ?? []).find((p) => p.headRefName === rama) ?? (lista ?? []).find((p) => p.headRefName === enOrigin(rama));
 
+/**
+ * Cuando el PR fundido ya no cabe en los últimos 40 (`gh pr list --state merged --limit 40`),
+ * `prDe` no lo encuentra y la caja sale «SIN SUBIR» aunque esté fundida desde hace días. Medido el
+ * 2026-09-29: PR #232, fundido el 2026-09-23, ya no aparecía con main en el #283.
+ *
+ * Solo se busca aparte cuando hace falta —`sinFundir > 0` y no está en la lista corta—: el coste
+ * no crece con cada caja, solo con las que de verdad lo necesitan.
+ */
+export function hallaFundido({ rama, fundidos, sinFundir = 0, buscaTardio } = {}) {
+  const enLista = prDe(rama, fundidos);
+  if (enLista) return enLista;
+  if (sinFundir > 0 && buscaTardio) return buscaTardio(enOrigin(rama)) ?? null;
+  return null;
+}
+
 export const checksDe = (pr) => {
   const cs = pr?.statusCheckRollup ?? [];
   if (!cs.length) return { estado: 'sin-checks', pendientes: [], rojos: [] };
@@ -293,6 +308,13 @@ export function noFundidosDe(rama, { cwd, env, main = 'origin/main', squash = nu
 
 // ── El comando ─────────────────────────────────────────────────────────────────
 
+const CAMPOS_TARDIO = 'number,headRefName,mergedAt,mergeCommit';
+/** La búsqueda aparte que dispara `hallaFundido` cuando el PR no está en los últimos 40. */
+function buscaFundidoTardio(rama) {
+  const lista = JSON.parse(shSafe('gh', ['pr', 'list', '--head', rama, '--state', 'merged', '--json', CAMPOS_TARDIO], '[]'));
+  return lista[0] ?? null;
+}
+
 function main() {
   // Sin esto el veredicto es rancio y miente en la dirección peor: con un `origin/main` viejo una
   // rama ya fundida sale «SIN SUBIR» y te manda a abrir un PR de trabajo que ya está dentro. Pasó
@@ -315,10 +337,11 @@ function main() {
     //  · `status --porcelain` en SU ruta (no en la mía): ficheros a medio editar.
     //  · `noFundidosDe`: cuántos commits de la rama NO están en main, medido por contenido.
     const sucio = shSafe('git', ['-C', w.ruta, 'status', '--porcelain']) !== '';
-    const fundido = abierto ? null : (prDe(w.rama, fundidos) ?? null);
+    const sinFundir = Number(shSafe('git', ['rev-list', '--count', `origin/main..${w.rama}`], '0')) || 0;
+    const fundido = abierto ? null : hallaFundido({ rama: w.rama, fundidos, sinFundir, buscaTardio: buscaFundidoTardio });
     const noFundidos = noFundidosDe(w.rama, { squash: fundido?.mergeCommit?.oid });
     const v = veredictoDe({
-      sinFundir: Number(shSafe('git', ['rev-list', '--count', `origin/main..${w.rama}`], '0')) || 0,
+      sinFundir,
       abierto,
       fundido,
       ultimoCommitISO: shSafe('git', ['log', '-1', '--format=%cI', w.rama]),
