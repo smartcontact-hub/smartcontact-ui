@@ -117,6 +117,7 @@ variable cuando su nombre es único y avisa.
 - [ ] **2** · Tarjetas de opción en Servicio; el interruptor a la derecha en los ajustes de Grupos.
 - [ ] **22 y 23** · Los números sueltos y la presencia de Contact Center.
 - [ ] **24** · Los tres textos de General.
+- [ ] **30** · Contact Center › Grupos y › Agentes, con los bloques y las palabras de sus fichas.
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
@@ -869,6 +870,27 @@ y retocar tres maquetas · **Sin verificar** contra el fichero: el código no ci
 
 **Cómo sabes que está hecho:** el icono del título de sección y el de la fila activa del índice van a 600 en el Kit, y
 las maquetas de las fichas enseñan las altas y los saltos como el código.
+
+---
+
+## 30 · Contact Center › Grupos y › Agentes hablan como sus fichas, y guardan (2026-09-29)
+
+**Estado:** pendiente · **Dónde:** Figma, las maquetas `1:12676` (Contact Center · Grupos) y `393:12562` (Contact
+Center · Agentes) del fichero del Supervisor · **Esfuerzo:** redibujar el contenido de dos tarjetas con piezas que ya
+existen en las fichas · **Sin verificar** contra el fichero: se da por hecho que las maquetas siguen dibujando la
+réplica que el código acaba de quitar.
+
+- **Por qué** (DD-135): con esas dos páginas se fija con qué nace un grupo o un agente, así que dicen lo mismo que sus
+  fichas. Salen las multiselecciones de estrategia, prioridad y voz (códecs), el tipo de cola FIFO/LIFO, la fila
+  «Llamadas internas», la columna «Permisos» y el título de la URL.
+- **Grupos:** la lista de ajustes con los bloques de la ficha de grupo (General, reglas comunes, Teléfono, Chat, Ficha
+  de cliente), cada fila con su ayuda bajo el nombre, y la ayuda de la tarjeta bajo el título («Con esto nace cada
+  grupo nuevo…»).
+- **Agentes:** la matriz de la ficha de agente (Fijos, Móviles, Internacionales y Numeración especial × Llamadas y
+  Transferencias, con casilla de columna), Configuración con sus dos interruptores y su ayuda, e Integración con la URL
+  del iframe y Dispositivos externos.
+
+**Cómo sabes que está hecho:** las dos maquetas enseñan lo que la app en `/config/aed/grupos` y `/config/aed/agentes`.
 
 ---
 

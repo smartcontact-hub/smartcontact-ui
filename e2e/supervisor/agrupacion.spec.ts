@@ -53,7 +53,6 @@ const RUTAS = [
   'admin/usuarios/crear',
   'admin/usuarios/editar/1',
   'admin/grupos',
-  'admin/grupos/valores-por-defecto',
   'admin/grupos/crear',
   'admin/grupos/editar/11',
   'admin/agentes',

@@ -71,41 +71,21 @@ import {
   AgentType,
   AVAILABLE_EXTENSIONS,
   AVAILABLE_LANGUAGES,
-  DEFAULT_AGENT_PERMISSIONS,
+  DESTINO_KEYS,
+  DestinoCol,
+  DestinoKey,
   ExtensionType,
+  PERMISSION_MATRIX_KEYS,
   PRESENCE_LABEL_KEYS,
   PickupType,
   PresenceStatus,
 } from '../data/agents-data';
+import { AgentDefaultsStore } from '../state/agent-defaults.store';
 import { AgentsStore } from '../state/agents.store';
 import {
   AgentGroupAssignmentRef,
   GroupAssignmentTableComponent,
 } from '../components/group-assignment-table/group-assignment-table.component';
-
-type DestinoKey = 'fijos' | 'moviles' | 'internacionales' | 'especial';
-type DestinoCol = 'llamada' | 'transferencia';
-
-/**
- * Maps the (destino × call/transfer) matrix cells to the flat
- * `AgentPermissions` keys. Mirrors the destino taxonomy used by the
- * canonical `/admin/aed/agentes` defaults page so both forms share the
- * same mental model.
- */
-const PERMISSION_MATRIX_KEYS: Readonly<
-  Record<DestinoKey, Record<DestinoCol, keyof AgentPermissions>>
-> = {
-  fijos: { llamada: 'callsDestFixed', transferencia: 'transfersDestFixed' },
-  moviles: { llamada: 'callsDestMobile', transferencia: 'transfersDestMobile' },
-  internacionales: {
-    llamada: 'callsDestInternational',
-    transferencia: 'transfersDestInternational',
-  },
-  especial: {
-    llamada: 'callsDestSpecial',
-    transferencia: 'transfersDestSpecial',
-  },
-};
 
 interface FormState {
   name: string;
@@ -197,6 +177,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly sectionLinks = inject(SectionLinksService);
   private readonly agentsStore = inject(AgentsStore);
+  private readonly agentDefaults = inject(AgentDefaultsStore);
   private readonly groupsStore = inject(GroupsStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly messages = inject(MessageService);
@@ -484,17 +465,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   });
 
   /**
-   * Matrix layout for the calls/transfers permissions, matching the
-   * canonical `sc-agentes` defaults page. Rows are destination categories,
+   * Matrix layout for the calls/transfers permissions, the same one as
+   * Contact Center › Agentes (DD-135). Rows are destination categories,
    * columns are llamada/transferencia. Each (row, col) maps to one flat
-   * `AgentPermissions` key.
+   * `AgentPermissions` key (`PERMISSION_MATRIX_KEYS`).
    */
-  protected readonly destinoKeys: readonly DestinoKey[] = [
-    'fijos',
-    'moviles',
-    'internacionales',
-    'especial',
-  ];
+  protected readonly destinoKeys = DESTINO_KEYS;
 
   protected readonly columnState = computed<Record<DestinoCol, TriState>>(
     () => {
@@ -1074,7 +1050,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.router.navigateByUrl('/admin/agentes');
   }
 
+  /** El alta nace con lo que fija Contact Center › Agentes (DD-135): permisos y URL del iframe. */
   private emptyForm(): FormState {
+    const defaults = this.agentDefaults.defaults();
     return {
       name: '',
       extension: '',
@@ -1088,10 +1066,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       pickupTypeChat: 'auto',
       randomOrder: false,
       maxChats: 4,
-      iframeUrl: '',
+      iframeUrl: defaults.iframeUrl,
       loginExtOverride: false,
       links: [],
-      permissions: { ...DEFAULT_AGENT_PERMISSIONS },
+      permissions: { ...defaults.permissions },
       photo: null,
       languages: [],
       labelIds: new Set(),

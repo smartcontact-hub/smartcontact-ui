@@ -72,9 +72,6 @@ const RUTAS = [
    * a medias (8/11, 2/5). */
   'admin/agentes/editar/1',
   'admin/usuarios/editar/3',
-  /* Valores por defecto de Grupos: desde el 2026-09-26 va en el orden de la ficha, con el glifo de cada canal
-   * en su título. */
-  'admin/grupos/valores-por-defecto',
   'admin/agentes',
   'admin/labels',
   'admin/plantillas',
@@ -83,6 +80,8 @@ const RUTAS = [
   'admin/reglas-ia',
   'config/aed/servicio',
   'config/aed/agentes',
+  /* Contact Center › Grupos: desde el 2026-09-29 es donde se fija con qué nace un grupo (DD-135), en el orden de la
+   * ficha y con el glifo de cada canal en su título. */
   'config/aed/grupos',
   'config/seguridad',
   'config/sistema',

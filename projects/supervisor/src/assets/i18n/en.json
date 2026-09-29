@@ -1633,6 +1633,7 @@
         "queue_fixed_hint": "At most {{count}} conversations in queue.",
         "queue_per_agent_hint": "At most {{count}} conversations in queue per connected agent.",
         "max_queue_wait": "Maximum queue wait time",
+        "max_queue_wait_hint": "If no one answers it within this time, the conversation leaves the group and moves on to the next destination, which is chosen in VUI Designer.",
         "transfer": "Transfer time",
         "transfer_hint": "Maximum time to deliver the conversation to its destination.",
         "service_level": "Service level time",
@@ -1715,14 +1716,6 @@
         "client_card_hint": "What the agent sees on receiving a contact from this group."
       },
       "create_submit": "Create group"
-    },
-    "defaults": {
-      "heading": "Defaults",
-      "breadcrumb": "Defaults",
-      "button": "Defaults",
-      "hint": "Every new group starts with these. You can change them later in the group.",
-      "strategy_hint": "Levels, Ring All, Skills and Exclusive agent are chosen in each group, where they are set up.",
-      "toast_saved": "Defaults saved"
     },
     "errors": {
       "name_required": "Name is required",
@@ -2103,29 +2096,7 @@
         },
         "agentes": {
           "heading": "Agents",
-          "comunicaciones": {
-            "title": "Communications",
-            "col_transferencias": "Transfers",
-            "col_permisos": "Permissions",
-            "row_fijos": "Landlines",
-            "row_moviles": "Mobiles",
-            "row_internacionales": "International",
-            "row_numeracionEspecial": "Special numbering",
-            "row_llamadasInternas": "Internal calls"
-          },
-          "config": {
-            "title": "Configuration",
-            "activacion_label": "Activation/Deactivation by Contact Center service group",
-            "gestion_label": "Management of work devices in WebRTC",
-            "externos_label": "Use of external devices"
-          },
-          "url": {
-            "title": "URL embedded in the agent workstation",
-            "url_label": "URL",
-            "url_placeholder": "URL",
-            "titulo_label": "Title (optional)",
-            "titulo_placeholder": "My tool"
-          },
+          "hint": "Every new agent starts with these. You can change them later in the agent.",
           "toast": {
             "saved": "Agent settings saved"
           },
@@ -2133,26 +2104,8 @@
         },
         "grupos": {
           "heading": "Groups",
-          "params": {
-            "title": "Parameters",
-            "estrategia": "Conversation distribution strategy",
-            "prioridad": "Group priority",
-            "voz": "Voice",
-            "desbordar": "Overflow conversations when no agents are available",
-            "tipo_cola": "Queue type",
-            "capacidad_cola": "Maximum conversations in queue",
-            "tiempo_max": "Maximum queue wait time",
-            "tiempo_transfer": "Maximum transfer time",
-            "placeholder": "Select",
-            "input_placeholder": "Type",
-            "segundos": "seconds"
-          },
-          "apertura": {
-            "title": "Contact card opening",
-            "tipo_label": "Type",
-            "tamano_label": "Size",
-            "tamano_suffix": "pixels"
-          },
+          "hint": "Every new group starts with these. You can change them later in the group.",
+          "strategy_hint": "Levels, Ring All, Skills and Exclusive agent are chosen in each group, where they are set up.",
           "toast": {
             "saved": "Group settings saved"
           },

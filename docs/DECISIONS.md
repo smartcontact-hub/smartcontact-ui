@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Con qué nace un grupo o un agente se fija en Contact Center (› Grupos, › Agentes), con las palabras de su ficha, y el alta lo lee · de fábrica, los valores del documento de producto (10 · 15 · 60 s, Baja, Balanceada, desbordar; el agente, todo menos la numeración especial) · la cola agotada sigue por el VUI | DD-135 |
 > | Una ayuda bajo un campo dice lo que dicen las fuentes (manual de Voice, documento de producto) o no existe · va en el `helperText`, que la anuncia · `sc-select` pone sus `aria-*` en el elemento con foco · los desplegables del DS hablan el idioma de la app · fuera las ⓘ de la ficha de grupo | DD-133 |
 > | Cuatro tipos de usuario (Superadmin, Administrador, Supervisor Online y Offline), cada uno con su plantilla de acceso · el alta nace Offline · al editar, cambiar el tipo pregunta · «Plantilla: X · N cambios» con «Volver a la plantilla» | DD-132 |
 > | El panel rápido de agentes mide lo que lleva dentro (28rem mínimo, 5rem por canal) · sin columna de canal en un grupo de un canal, salvo que una fila llegue sin canal · la papelera dice «Quitar del grupo» · `sc-checkbox` desactivado, una sola opacidad (60 %) | DD-131 |
@@ -93,6 +94,85 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-135 · 2026-09-29 — Contact Center fija con qué nace un grupo o un agente, con los valores del documento de producto
+
+**Contexto** · Con qué nacía un grupo se fijaba en «Valores por defecto», un botón del listado de grupos
+(`/admin/grupos/valores-por-defecto`, decisión de producto del 2026-09-18). Contact Center › Grupos y › Agentes eran
+réplicas de sus maquetas (Figma Supervisor 1:12676 y 393:12562) que guardaban en memoria y nadie leía: multiselecciones
+de estrategia, prioridad y voz (códecs), cola FIFO/LIFO, una fila «Llamadas internas», una columna «Permisos» y un título
+de la URL que ninguna ficha tiene. El alta de agente nacía con permisos escritos en el código. De fábrica, un grupo nacía
+con 30 s de transferencia, 120 s de espera en cola y 20 s de % de servicio. El documento de producto de usuarios y
+grupos trae otros «parámetros por defecto»: transferencia 10 s, espera en cola 15 s, % de servicio 60 s, prioridad baja,
+estrategia balanceada, tiempo administrativo casi nulo y desbordar si los agentes están inactivos; y, para agentes,
+permisos a todo menos la numeración especial, gestión de dispositivos, activación por grupo y dispositivos externos.
+
+**Decisión** · (decisión de producto, 2026-09-29)
+1. **Contact Center es la única fuente.** Contact Center › Grupos (`/config/aed/grupos`) fija con qué nace un grupo, y
+   Contact Center › Agentes (`/config/aed/agentes`), con qué nace un agente. Las dos guardan (`GroupDefaultsStore`,
+   `AgentDefaultsStore`) y las altas leen lo guardado. Duplicar sigue copiando del original.
+2. **Con las palabras de cada ficha.**
+   - Grupos: lo que era la página del listado (General, reglas comunes, Teléfono, Chat y Ficha de cliente), en la
+     tarjeta de Contact Center con su `h1`.
+   - Agentes: la matriz de la ficha de agente (cuatro destinos por Llamadas y Transferencias, con casilla de columna),
+     su Configuración (gestión de dispositivos y activación por grupo) y su Integración (URL del iframe y dispositivos
+     externos).
+   - Fuera: las multiselecciones, FIFO/LIFO, los códecs, «Llamadas internas» y el título de la URL.
+3. **De fábrica, los valores del documento de producto.**
+   - Grupo: transferencia 10 s, espera en cola 15 s y % de servicio 60 s, en Teléfono y en Chat; tiempo administrativo
+     5 s; prioridad Baja; Balanceada en los dos canales; desbordar si todos los agentes están inactivos, encendido.
+     «Desbordar sesión», apagado: el documento no le da valor.
+   - Agente: llamadas y transferencias a fijos, móviles e internacionales, y no a la numeración especial; gestión de
+     dispositivos, activación por grupo y dispositivos externos, encendidos; grabación apagada; sin URL de iframe.
+   - Los grupos y agentes de ejemplo no cambian (`DEFAULT_ADVANCED`, `SEED_AGENT_PERMISSIONS`).
+4. **Fuera «Valores por defecto» del listado de grupos**, el botón y la página. Su dirección lleva a Contact Center ›
+   Grupos. `GroupDefaultsStore` conserva su clave y su versión: lo guardado allí sigue valiendo, y la cola única de antes
+   cae en los dos canales.
+5. **«Tiempo máximo de espera en cola» dice qué pasa al agotarse**, en la ficha (Teléfono y Chat) y en Contact Center:
+   «Si nadie la atiende en este tiempo, la conversación sale del grupo y pasa al siguiente destino, que se elige en el
+   VUI Designer.» El grupo es un nodo AED del árbol del VUI, y quien lo diseña elige qué pasa al salir de él (respuesta
+   de producto, 2026-09-29). Chat usa el mismo texto: el nodo es el mismo.
+
+**Razón** ·
+- **Un valor por defecto vive en un sitio, y ese sitio guarda.** Había dos páginas para lo mismo, y la de Contact
+  Center no guardaba. Contact Center es donde el superadmin lo tiene todo; producto recorta después qué ve cada rol.
+- **Un alta que nace con lo habitual solo pide lo propio.** Es el efecto de gradiente de meta: cuanto menos le falta a
+  un formulario, antes se termina. Con los valores de fábrica, a un alta de grupo le falta el nombre (Teléfono ya viene
+  marcado); lo demás se cambia si hace falta.
+- **La ayuda de la cola sale de quien lo sabe.** Ninguna fuente escrita decía qué pasa al agotarse (DD-133); la
+  respuesta vino de producto.
+
+**Descartadas** ·
+- **Dejar los valores junto al listado de grupos** (decisión del 2026-09-18) → eran dos sitios para lo mismo. Producto
+  la retira.
+- **Conservar la réplica con sus multiselecciones** → un valor por defecto es uno: una multiselección de estrategias no
+  dice con cuál nace un grupo. Sus códecs, FIFO/LIFO y «Urgente» no existen en la ficha.
+- **«Rotativa (por turnos)» en Chat, como equivalente de balanceada** → «Balanceada» ya es estrategia de chat
+  (`CHAT_STRATEGIES`), y el documento pide balanceada.
+- **Cambiar también los grupos de ejemplo** → movería pantallas y pruebas que los miran sin ganar nada: el documento
+  habla de con qué nace un grupo.
+- **Subir la versión de `GroupDefaultsStore`** → borraría lo guardado.
+- **Guardas de acceso para las casillas de Acceso** (abierto en DD-132) → el prototipo es el superadmin y lo contiene
+  todo; producto recorta qué ve cada rol.
+
+**Consecuencias** ·
+- **Enmiendas:**
+  - DD-121 §11 (el alta nace con lo de Contact Center) y §12 (Valores por defecto sale del listado); su «Fuera a
+    propósito» ya no incluye `/config/aed/grupos`;
+  - DD-132: se cierran sus dos «Queda abierto». Tipificaciones va con la supervisión (confirmado) y no hay guardas;
+  - DD-133: la ayuda de la cola sale de Descartadas y de «Queda abierto».
+- **Pruebas:**
+  - `contact-center-valores.spec.ts`, seis, las seis en rojo contra el código anterior;
+  - `ayudas-campos.spec.ts` gana una, en rojo sin la ayuda en la ficha y, aparte, sin la de Contact Center;
+  - se retiran las dos de valores por defecto de `grupo-vision`, la del `h1` de `ficha-usuario-agente` y la dirección
+    vieja en `theme-contrast` y `agrupacion`;
+  - en `listado-grupos`, un grupo nuevo solo de Chat nace con Balanceada.
+- **Figma:** las maquetas 1:12676 y 393:12562 siguen dibujando la réplica (`figma-pendiente`, 30).
+- **Queda abierto:** las ayudas de la lista de ajustes de Contact Center van bajo el nombre y el lector no las anuncia
+  con su control, porque los campos del DS no dejan pasar `aria-describedby`. En las fichas sí se anuncian: van en el
+  `helperText`.
 
 ---
 
@@ -198,7 +278,7 @@ Lo que había:
 
 **Descartadas** ·
 - **Ayuda para «Tiempo máximo de espera en cola»** → el manual lo define con sus mismas palabras, y ninguna fuente dice
-  qué pasa al agotarse. Queda como pregunta para desarrollo.
+  qué pasa al agotarse. Queda como pregunta para desarrollo. Respondida en DD-135, que añade la ayuda.
 - **Ayuda para «Tipo de agente»** (Normal, CusCare…) → ninguna fuente explica esos tipos. El manual explica la
   extensión, y ahí va.
 - **Ayudas para las estrategias de chat** → el manual es de Voice.
@@ -210,7 +290,7 @@ Lo que había:
   estructura de sc-docs cambia en los dos selects con error: sus `aria-*` bajan al combobox.
 - **CHANGELOG:** `[Unreleased]` › Changed y Fixed.
 - **Queda abierto:**
-  - qué pasa al agotarse el tiempo máximo de espera en cola;
+  - qué pasa al agotarse el tiempo máximo de espera en cola (respondido en DD-135);
   - los subtítulos de sección, que no se tocan aquí;
   - los selects de la app rotulados con `<label for>` y sin `ariaLabelledBy` que esta tanda no toca: en la ficha de
     agente, «Tipo de agente» y «Presencia inicial» se anuncian como «normal» y «disponible» (medido el 2026-09-28).
@@ -292,7 +372,8 @@ Lo que había: cuatro tipos (administrador, supervisor, agente y visor), 11 secc
   - `user-packages.test.mjs` gana siete, en `test:unit`;
   - cambian a propósito `pase-fichas` (25 casillas, 9 marcadas) y `resumen-widget` (8 de 16, 2 de 9).
 - **Queda abierto:** que las casillas restrinjan de verdad (guardas de ruta y de acción), y confirmar con producto que
-  Tipificaciones va con la supervisión.
+  Tipificaciones va con la supervisión. Las dos, respondidas en DD-135: Tipificaciones va con la supervisión, y no hay
+  guardas, porque el prototipo es el superadmin y producto recorta qué ve cada rol.
 
 ---
 
@@ -1022,7 +1103,7 @@ tres fichas (#240) y el alta en diálogo (DD-119).
     no sube, porque el contenedor de `p-drawer` lo escucha y, aun con `closeOnEscape` apagado, llama a `hide(false)`,
     que quita la máscara y deja el panel abierto (medido con PrimeNG 22.1.2). Coge el mismo candado que la ficha.
 11. **El alta es la propia ficha, en modo alta**: `/admin/grupos/crear` la abre vacía, con los valores por defecto
-    de Grupos y Teléfono marcado. General es la puerta: sin nombre (o repetido) o sin canales no se sale de ella, ni
+    de Grupos (desde DD-135, los de Contact Center › Grupos) y Teléfono marcado. General es la puerta: sin nombre (o repetido) o sin canales no se sale de ella, ni
     por el índice ni con «Siguiente»; cada campo dice lo que le falta y el foco va al primero. «Siguiente», al pie de
     cada sección, solo en el alta. «Crear grupo», en la barra, se enciende con General completa (lo demás nace con
     valores por defecto). Crear guarda también los agentes y abre su edición en la sección en la que se estaba
@@ -1035,7 +1116,8 @@ tres fichas (#240) y el alta en diálogo (DD-119).
     de chat caían en la de teléfono) y solo en los grupos con su canal. Prioridad ordena por rango: `sc-datatable`
     gana `externalSort`, porque `p-table` reordenaba por el valor crudo del campo encima del orden de la página.
     Valores por defecto va en el orden y con las palabras de la ficha, con estrategia y cola por canal y el cierre
-    por inactividad de Chat (aditivo, como el grupo: lo guardado con la cola única cae en las dos). La lista de
+    por inactividad de Chat (aditivo, como el grupo: lo guardado con la cola única cae en las dos). DD-135 lo lleva a
+    Contact Center › Grupos y quita la página del listado. La lista de
     agentes recorta los canales de cada enlace a los que ofrece su grupo y los nombra como las fichas.
 
 **Razón** · Lo dicho por producto es la vara; las piezas salen del vocabulario de la app (índice del DS, molde de
@@ -1076,7 +1158,8 @@ tendrá un permiso de WhatsApp por agente (el AED en vivo solo tiene Tlf / Chat 
 se quita un canal o se cambia la estrategia de un grupo activo; el choque con postventa (2026-09-18), que pidió
 más de un anuncio periódico en teléfono; y, desde DD-130, qué secciones y permisos trae cada tipo de usuario
 (respondida en DD-132). Fuera a propósito: la forma de las fichas de agente y usuario, y
-`/config/aed/grupos`, la página vieja de Configuración, que no está conectada con la ficha. Vigilan esto
+`/config/aed/grupos`, la página vieja de Configuración, que no está conectada con la ficha (DD-135 la conecta: es donde
+se fija con qué nace un grupo). Vigilan esto
 `grupo-vision.spec.ts`, `ficha-grupo.spec.ts`, `ficha-grupo-canales.spec.ts`, `panel-agentes-grupo.spec.ts`,
 `listado-grupos.spec.ts`, `admin-forms.spec.ts` y el grupo en `form-section-nav-legibility` y `theme-contrast`. De
 `page-anatomy` sale (su tope ya no es el de Contact Center): el índice lo mide `ficha-grupo.spec.ts` con las mismas

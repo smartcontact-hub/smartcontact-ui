@@ -36,7 +36,7 @@ export const PHONE_STRATEGIES: readonly string[] = [
 /** Las que aún no se pueden elegir (ver arriba). */
 export const UNAVAILABLE_STRATEGIES: ReadonlySet<string> = new Set(['Skills']);
 
-/** Las que sirven de valor por defecto en Configuración del AED: las que no piden nada más en cada grupo. Niveles,
+/** Las que sirven de valor por defecto en Contact Center › Grupos: las que no piden nada más en cada grupo. Niveles,
  *  Ring All, Skills y Agente exclusivo necesitan niveles, un número de agentes, skills o el IVR (SISMAC-1975). */
 export const DEFAULT_STRATEGY_OPTIONS: readonly string[] = ['Balanceada', 'Menos llamadas atendidas', 'Más tiempo inactivo'];
 
@@ -123,8 +123,8 @@ export interface GroupAdvanced {
   readonly allowedDomains: readonly string[];
 }
 
-/** Los valores de fábrica. Un grupo nuevo nace con lo guardado en Valores por defecto de Grupos (`GroupDefaultsStore`),
- *  que arranca con estos. */
+/** Los anuncios de fábrica. Un grupo nuevo nace con la voz guardada en Contact Center › Grupos (`GroupDefaultsStore`),
+ *  que arranca con esta. */
 export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
   holdMusicFile: null,
   queueIdSource: 'none',
@@ -142,6 +142,8 @@ export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
   announceWaitToAgent: false,
 };
 
+/** Lo que no guardó un grupo de EJEMPLO: `resolveGroup` rellena con esto los 14 del seed. Un grupo NUEVO nace con
+ *  lo de Contact Center › Grupos (`GroupDefaultsStore`), y de fábrica con `NEW_GROUP_ADVANCED` (DD-135). */
 export const DEFAULT_ADVANCED: GroupAdvanced = {
   queueSizeType: 'fixed',
   queueSize: 50,
@@ -165,8 +167,21 @@ export const CHAT_STRATEGIES: readonly string[] = [
   'Balanceada',
 ];
 
-/** Con la que reparte un grupo con Chat que no ha elegido otra. */
+/** Con la que reparte un grupo de ejemplo con Chat que no ha elegido otra. Uno nuevo nace con la de Contact Center. */
 export const DEFAULT_CHAT_STRATEGY = CHAT_STRATEGIES[0]!;
+
+/** Con lo que nace un grupo nuevo mientras nadie cambie Contact Center › Grupos: los parámetros por defecto del
+ *  documento de producto de usuarios y grupos (DD-135). Transferencia 10 s, espera en cola 15 s, % de servicio 60 s,
+ *  tiempo administrativo casi nulo y desbordar si todos los agentes están inactivos. «Desbordar sesión» se queda
+ *  apagado: el documento no le da valor. */
+export const NEW_GROUP_ADVANCED: GroupAdvanced = {
+  ...DEFAULT_ADVANCED,
+  transferSec: 10,
+  maxQueueWaitSec: 15,
+  serviceLevelSec: 60,
+  wrapUpSec: 5,
+  overflowWhenNoAgents: true,
+};
 
 /* ── Por canal: la cola, los tiempos y lo propio de Chat (visión de producto de grupos, 2026-09-25) ──
  *
@@ -464,8 +479,9 @@ export const GROUPS_SEED: readonly Group[] = [
   },
 ];
 
-/** Lo que Valores por defecto de Grupos fija para los grupos nuevos. Mismos campos y mismas palabras que la ficha de
- *  grupo: antes esa página tenía sus propias listas (códecs como «voz», FIFO/LIFO, «Urgente») que no casaban con nada. */
+/** Lo que Contact Center › Grupos fija para los grupos nuevos (DD-135). Mismos campos y mismas palabras que la ficha
+ *  de grupo: la réplica de la maqueta tenía sus propias listas (códecs como «voz», FIFO/LIFO, «Urgente») que no
+ *  casaban con nada. */
 export interface GroupDefaults {
   /** La de Teléfono. */
   readonly strategy: string;
@@ -480,14 +496,15 @@ export interface GroupDefaults {
   readonly chat: Pick<ChatSettings, 'closeOnInactivity' | 'inactivityMinutes'>;
 }
 
+/** Prioridad baja y estrategia balanceada en los dos canales, como pide el documento de producto de usuarios y grupos. */
 export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
   strategy: 'Balanceada',
   priority: 'Baja',
   voice: DEFAULT_ANNOUNCEMENTS.voice,
-  advanced: DEFAULT_ADVANCED,
-  chatStrategy: DEFAULT_CHAT_STRATEGY,
-  phoneQueue: queueFrom(DEFAULT_ADVANCED),
-  chatQueue: queueFrom(DEFAULT_ADVANCED),
+  advanced: NEW_GROUP_ADVANCED,
+  chatStrategy: 'Balanceada',
+  phoneQueue: queueFrom(NEW_GROUP_ADVANCED),
+  chatQueue: queueFrom(NEW_GROUP_ADVANCED),
   chat: {
     closeOnInactivity: DEFAULT_CHAT_SETTINGS.closeOnInactivity,
     inactivityMinutes: DEFAULT_CHAT_SETTINGS.inactivityMinutes,
@@ -495,7 +512,7 @@ export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
 };
 
 /** Lo que pide el diálogo de duplicar: lo que identifica al duplicado. Un grupo NUEVO nace en su propia ficha,
- *  en modo alta, con los valores por defecto de Grupos (DD-121). */
+ *  en modo alta, con los valores de Contact Center › Grupos (DD-121, DD-135). */
 export interface GroupIdentityDraft {
   readonly name: string;
   readonly phone: string;

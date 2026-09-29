@@ -32,20 +32,28 @@
 
          Y lo pinta `sc-section-card`, el componente del DS, no una copia local:
          el patrón ya existía ahí para los formularios de admin, y tener dos
-         implementaciones de la misma caja es tener dos que derivan. -->
+         implementaciones de la misma caja es tener dos que derivan.
+
+         Todo lo de dentro, con las palabras y en el orden de la ficha de agente
+         (DD-135): la matriz de su sección Permisos con la Configuración debajo, y
+         la Integración de su sección Avanzado. Quien fija aquí un valor lo
+         encuentra luego en el mismo sitio de la ficha. -->
     <sc-section-card
       icon="person"
       [headingLevel]="1"
       surface="card"
       titleKey="config.aed.subpages.agentes.heading"
+      hintKey="config.aed.subpages.agentes.hint"
     >
       <sc-permission-matrix
         [rows]="matrixRows()"
         [columns]="matrixColumns()"
         [checked]="matrixChecked()"
-        [rowHeader]="'config.aed.subpages.agentes.comunicaciones.title' | translate"
-        [ariaLabel]="'config.aed.subpages.agentes.comunicaciones.title' | translate"
+        [rowHeader]="'agents.form.permissions.destino' | translate"
+        [ariaLabel]="'agents.form.permissions.calls_section' | translate"
+        selectableColumns
         (cellToggle)="onMatrixToggle($event)"
+        (columnToggle)="onMatrixColumnToggle($event)"
       />
 
       <sc-divider />
@@ -53,46 +61,31 @@
       <section class="sub-section" aria-labelledby="agentes-config-title">
         <header class="sub-section__head">
           <h2 id="agentes-config-title" class="sub-section__title sc-text-body-semibold">
-            {{ 'config.aed.subpages.agentes.config.title' | translate }}
+            {{ 'agents.form.permissions.config_title' | translate }}
           </h2>
         </header>
 
-        <div class="switch-field">
+        <div class="switch-field switch-field--top">
           <sc-toggleswitch
-            [checked]="form().activacionGrupo"
-            [ariaLabel]="'config.aed.subpages.agentes.config.activacion_label' | translate"
-            (checkedChange)="update('activacionGrupo', $event)"
+            [checked]="form().permissions.manageDevices"
+            [ariaLabel]="'agents.form.permissions.manage_devices' | translate"
+            (checkedChange)="setPermission('manageDevices', $event)"
           />
           <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">
-              {{ 'config.aed.subpages.agentes.config.activacion_label' | translate }}
-            </span>
+            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.manage_devices' | translate }}</span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.manage_devices_hint' | translate }}</p>
           </div>
         </div>
 
-        <div class="switch-field">
+        <div class="switch-field switch-field--top">
           <sc-toggleswitch
-            [checked]="form().gestionDispositivos"
-            [ariaLabel]="'config.aed.subpages.agentes.config.gestion_label' | translate"
-            (checkedChange)="update('gestionDispositivos', $event)"
+            [checked]="form().permissions.selfActivate"
+            [ariaLabel]="'agents.form.permissions.self_activate' | translate"
+            (checkedChange)="setPermission('selfActivate', $event)"
           />
           <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">
-              {{ 'config.aed.subpages.agentes.config.gestion_label' | translate }}
-            </span>
-          </div>
-        </div>
-
-        <div class="switch-field">
-          <sc-toggleswitch
-            [checked]="form().dispositivosExternos"
-            [ariaLabel]="'config.aed.subpages.agentes.config.externos_label' | translate"
-            (checkedChange)="update('dispositivosExternos', $event)"
-          />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">
-              {{ 'config.aed.subpages.agentes.config.externos_label' | translate }}
-            </span>
+            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
           </div>
         </div>
       </section>
@@ -103,39 +96,36 @@
            (Figma 393:12587) todo lo de Agentes vive en UN solo bloque, con
            divisores entre secciones. Dos tarjetas sugerían dos ámbitos
            distintos bajo un título que solo cubría la primera. -->
-      <section class="sub-section" aria-labelledby="agentes-url-title">
+      <section class="sub-section" aria-labelledby="agentes-integration-title">
         <header class="sub-section__head">
-          <h2 id="agentes-url-title" class="sub-section__title sc-text-body-semibold">
-            {{ 'config.aed.subpages.agentes.url.title' | translate }}
+          <h2 id="agentes-integration-title" class="sub-section__title sc-text-body-semibold">
+            {{ 'agents.form.advanced.integracion.title' | translate }}
           </h2>
         </header>
-        <!-- Dos columnas, como en Figma 393:12647: la URL y su título son un
-             solo dato en dos partes, y apilados a 815px cada uno ni se leían
-             como pareja ni necesitaban ese ancho. -->
-        <div class="grid grid--2">
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="agentes-url">
-              {{ 'config.aed.subpages.agentes.url.url_label' | translate }}
-            </label>
-            <sc-inputtext
-              inputId="agentes-url"
-              type="url"
-              [placeholder]="'config.aed.subpages.agentes.url.url_placeholder' | translate"
-              [value]="form().iframeUrl"
-              (valueChange)="update('iframeUrl', $event)"
-            />
-          </div>
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="agentes-url-titulo">
-              {{ 'config.aed.subpages.agentes.url.titulo_label' | translate }}
-            </label>
-            <sc-inputtext
-              inputId="agentes-url-titulo"
-              type="text"
-              [placeholder]="'config.aed.subpages.agentes.url.titulo_placeholder' | translate"
-              [value]="form().iframeTitulo"
-              (valueChange)="update('iframeTitulo', $event)"
-            />
+
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agentes-iframe-url">
+            {{ 'agents.form.advanced.integracion.url_iframe' | translate }}
+          </label>
+          <sc-inputtext
+            inputId="agentes-iframe-url"
+            type="url"
+            autocomplete="url"
+            [placeholder]="'agents.form.advanced.integracion.url_iframe_placeholder' | translate"
+            [value]="form().iframeUrl"
+            (valueChange)="setIframeUrl($event)"
+          />
+        </div>
+
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch
+            [checked]="form().permissions.externalDevices"
+            [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
+            (checkedChange)="setPermission('externalDevices', $event)"
+          />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
           </div>
         </div>
       </section>
