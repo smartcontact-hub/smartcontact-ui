@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { chmodSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -94,14 +94,16 @@ test('con otro origin (un fork): no firma con la cuenta del mantenedor', () => {
 
 test('si no puede escribir la config, lo dice y no revienta la sesión', () => {
   const { repo, env } = clon();
-  const dotGit = join(repo, '.git');
-  chmodSync(dotGit, 0o555);
+  /* Un cerrojo ajeno sobre `.git/config`: `git config` no puede escribir, corra quien corra la prueba. Quitar la
+   * escritura de `.git` con `chmod` no bastaba: root escribe igual, y en el contenedor de la nube la prueba caía. */
+  const cerrojo = join(repo, '.git', 'config.lock');
+  writeFileSync(cerrojo, '');
   try {
     let salida = '';
     assert.doesNotThrow(() => (salida = correr(repo, env)));
     assert.match(salida, /no pude fijar la identidad de git/);
   } finally {
-    chmodSync(dotGit, 0o755);
+    rmSync(cerrojo);
   }
 });
 
