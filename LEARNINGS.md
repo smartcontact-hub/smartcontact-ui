@@ -189,7 +189,8 @@
     el diff real contra el original: ¿un agente haría lo mismo con el texto nuevo? ⚙️ no mecanizable
     (es juicio; sus síntomas los vigilan los checks D, E, J y M de `docs:coherence`).
     Evidencia: s27 DD nuevo con una claim de un doc muerto · s36 154 falsos por no aplicar el aviso ·
-    s45 heredé el sujeto de un comentario · 2026-09-24 una fork reescribió DD-80 firmando lo descartado.
+    s45 heredé el sujeto de un comentario · 2026-09-24 una fork reescribió DD-80 firmando lo descartado ·
+    2026-09-28 negué una petición citando `bash-guard.mjs` de memoria (vía el resumen de CLAUDE.md); el fichero real solo mira el TEXTO del commit/PR (nombres, atribución), no `git config user.*` — la pausa aguantó por la falta de aprobación en vivo, la cita no.
 
 18. **Vas a zanjar una decisión VISUAL discutiendo (con el usuario o contigo mismo) → constrúyela
     en su versión mínima y MÍRALA.** Un principio bien enunciado puede defender algo que ya no
