@@ -95,492 +95,19 @@
       }
 
       @if (showSection('group-section-general')) {
-        <sc-section-card
-          anchorId="group-section-general"
-          surface="card"
-          icon="tune"
-          titleKey="groups.form.section.general"
-          hintKey="groups.form.section.general_hint"
-        >
-          <section class="sub-section">
-            <!-- La MISMA pieza que el diálogo de duplicar: mismos campos, mismo orden y mismos avisos. Aquí sin
-                 el teléfono: el saliente vive en el bloque de Teléfono de Distribución y colas. -->
-            <sc-group-identity-fields
-              [name]="form().name"
-              [priority]="form().priority"
-              [hasPhone]="false"
-              [nameError]="nameError()"
-              (nameChange)="onNameChange($event)"
-              (priorityChange)="onPriorityValueChange($event)"
-            />
-          </section>
-
-          <sc-divider />
-
-          <!-- Que falte marcar un canal no es contenido equivocado: lo dicen el punto del índice, el resumen y el
-               motivo junto a Guardar. -->
-          <section class="sub-section" aria-labelledby="group-channels-title">
-            <header class="sub-section__head">
-              <h3 id="group-channels-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.channels.title' | translate }}</h3>
-              <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.channels.hint' | translate }}</p>
-            </header>
-            <div class="checkbox-grid">
-              <!-- Cada canal en su pila, aunque no tenga hijas: así los tres arrancan en la misma línea. -->
-              <div class="checkbox-stack">
-                <sc-checkbox class="checkbox-row" inputId="group-channels-phone" [state]="hasPhone() ? 'all' : 'none'" (cycle)="toggleChannel('phone')">{{ channelKeys.phone | translate }}</sc-checkbox>
-              </div>
-              <!-- Chat es la MADRE de Web Chat y WhatsApp (patrón B12 del laboratorio): marcarla enciende las dos, y
-                   desmarcarla las apaga; con una sola, queda a medias. -->
-              <div class="checkbox-stack">
-                <sc-checkbox class="checkbox-row" [state]="chatFamilyState()" (cycle)="toggleChatFamily()">{{ 'groups.channel.chat_family' | translate }}</sc-checkbox>
-                <sc-checkbox class="checkbox-row checkbox-row--child" [state]="hasWebChat() ? 'all' : 'none'" (cycle)="toggleChannel('chat')">{{ channelKeys.chat | translate }}</sc-checkbox>
-                <sc-checkbox class="checkbox-row checkbox-row--child" [state]="hasWhatsApp() ? 'all' : 'none'" (cycle)="toggleChannel('whatsapp')">{{ channelKeys.whatsapp | translate }}</sc-checkbox>
-              </div>
-              <div class="checkbox-stack">
-                <sc-checkbox class="checkbox-row" [state]="hasEmail() ? 'all' : 'none'" (cycle)="toggleChannel('email')">{{ channelKeys.email | translate }}</sc-checkbox>
-              </div>
-            </div>
-            @if (channelsError()) {
-              <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.channels_required' | translate }}</p>
-            }
-          </section>
-          <ng-container *ngTemplateOutlet="nextStep" />
-        </sc-section-card>
+        <ng-container *ngTemplateOutlet="seccionGeneral" />
       }
 
       @if (showSection('group-section-distribution')) {
-        <!-- DENTRO DE CADA CANAL, SU DISTRIBUCIÓN Y SU COLA (visión de producto de grupos, 2026-09-25): un bloque
-             por canal activo, y arriba lo que vale para todos. Un canal apagado no pinta su bloque (solo se ve lo
-             que aplica), pero deja una línea que dice que existe y dónde se enciende. -->
-        <sc-section-card
-          anchorId="group-section-distribution"
-          surface="card"
-          icon="alt_route"
-          titleKey="groups.form.section.distribution"
-          hintKey="groups.form.section.distribution_hint"
-        >
-          <!-- Saltos a cada canal (DD-130): con los cuatro, la sección mide 2.355 px y nada nace plegado (DD-121 §5). -->
-          @if (channelJumps().length > 0) {
-            <nav class="channel-jumps" [attr.aria-label]="'groups.form.distribution.jump_aria' | translate">
-              <span class="channel-jumps__label sc-text-caption-regular">{{ 'groups.form.distribution.jump_label' | translate }}</span>
-              @for (jump of channelJumps(); track jump.id) {
-                <a class="channel-jumps__link sc-text-caption-semibold" [href]="jumpHref(jump.id)" (click)="jumpToChannel($event, jump.id)">
-                  <sc-channel-icon [channel]="jump.channel" [size]="12" />
-                  {{ jump.labelKey | translate }}
-                </a>
-              }
-            </nav>
-          }
-          <section class="sub-section" aria-labelledby="group-common-title">
-            <header class="sub-section__head">
-              <h3 id="group-common-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.distribution.common_title' | translate }}</h3>
-              <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.distribution.common_hint' | translate }}</p>
-            </header>
-            <div class="switch-field switch-field--top">
-              <sc-toggleswitch [checked]="form().advanced.overflowWhenNoAgents" [ariaLabel]="'groups.form.advanced.overflow' | translate" (checkedChange)="setAdvanced('overflowWhenNoAgents', $event)" />
-              <div class="switch-field__copy">
-                <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.overflow' | translate }}</span>
-                <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_hint' | translate }}</p>
-              </div>
-            </div>
-            <!-- «Desbordar sesión» del Figma de la migración; el manual no lo trae (a qué canal aplica, por confirmar). -->
-            <div class="switch-field switch-field--top">
-              <sc-toggleswitch [checked]="form().advanced.overflowSession" [ariaLabel]="'groups.form.advanced.overflow_session' | translate" (checkedChange)="setAdvanced('overflowSession', $event)" />
-              <div class="switch-field__copy">
-                <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.overflow_session' | translate }}</span>
-                <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_session_hint' | translate }}</p>
-              </div>
-            </div>
-          </section>
-
-          @if (hasPhone()) {
-            <sc-divider />
-            <section class="sub-section" id="group-channel-phone" aria-labelledby="group-channel-phone-title">
-              <header class="sub-section__head">
-                <h3 id="group-channel-phone-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
-                  <sc-channel-icon channel="phone" />
-                  {{ channelKeys.phone | translate }}
-                </h3>
-              </header>
-
-              <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.routing' | translate }}</h4>
-              <div class="grid grid--2">
-                <div class="field">
-                  <label id="group-strategy-label" class="field__label sc-text-caption-semibold" for="group-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-                  <!-- Qué hace la estrategia elegida, del manual de usuario de Voice (DD-133), en el `helperText`: el lector la
-                       anuncia con el campo. Sustituye a las dos ayudas sueltas de Niveles y Agente exclusivo. -->
-                  <sc-select inputId="group-strategy" ariaLabelledBy="group-strategy-label" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" [helperText]="strategyHelpKey() ? (strategyHelpKey()! | translate) : undefined" (valueChange)="onStrategyValueChange($event)">
-                    <ng-template #item let-o>
-                      <span class="strategy-option">
-                        <span>{{ o.label }}</span>
-                        @if (o.note) {
-                          <span class="strategy-option__note sc-text-caption-regular">{{ o.note }}</span>
-                        }
-                      </span>
-                    </ng-template>
-                  </sc-select>
-                </div>
-                <!-- El número que ve el cliente cuando le llama un agente del grupo: un campo principal del canal, no
-                     un dato de identidad (visión de producto de grupos, 2026-09-25). -->
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-phone">{{ 'groups.form.fields.phone' | translate }}</label>
-                  <sc-select inputId="group-phone" editable [options]="phoneOptions()" [value]="form().phone" [helperText]="'groups.form.fields.phone_hint' | translate" (valueChange)="onPhoneValueChange($event)" />
-                </div>
-                @if (isRingAll()) {
-                  <div class="field">
-                    <label class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
-                    <span class="inline-control">
-                      <sc-select inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
-                      <span class="inline-control__suffix sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
-                    </span>
-                  </div>
-                }
-                @if (isNiveles()) {
-                  <div class="field">
-                    <label class="field__label sc-text-caption-semibold" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
-                    <sc-select inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
-                  </div>
-                }
-                <ng-container *ngTemplateOutlet="transferField; context: { channel: 'phone', queue: form().phoneQueue }" />
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-wrap-up">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
-                  <sc-inputnumber class="field__number" inputId="group-wrap-up" [min]="0" suffix="s" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" />
-                </div>
-              </div>
-
-              <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue' | translate }}</h4>
-              <div class="grid grid--2">
-                <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'phone', queue: form().phoneQueue }" />
-                <div class="field">
-                  <label id="group-voice-label" class="field__label sc-text-caption-semibold" for="group-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
-                  <sc-select inputId="group-voice" ariaLabelledBy="group-voice-label" [options]="voiceOptions" [value]="form().announcements.voice" [helperText]="'groups.form.announcements.voice_hint' | translate" (valueChange)="setAnnouncement('voice', $any($event))" />
-                </div>
-              </div>
-
-              <!-- MENSAJES EN COLA: la música es «lo principal y lo único necesario» (visión de producto de grupos,
-                   2026-09-25) y no es un recurso. El identificador, «eres el siguiente», los anuncios periódicos, el
-                   audio saliente y los avisos salen de la VISTA y se quedan en el modelo (`announcements` viaja
-                   entero al guardar), así que volver a enseñarlos no pierde nada. -->
-              <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue_messages' | translate }}</h4>
-              <div class="field">
-                <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
-                <span class="inline-control" role="group" aria-labelledby="group-hold-music-label">
-                  <span class="inline-control__value sc-text-body-regular">{{ form().announcements.holdMusicFile ?? ('groups.form.announcements.default_music' | translate) }}</span>
-                  <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
-                  @if (form().announcements.holdMusicFile) {
-                    <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.use_default' | translate" (clicked)="setAnnouncement('holdMusicFile', null)" />
-                  }
-                </span>
-              </div>
-            </section>
-          }
-
-          @if (hasChatFamily()) {
-            <sc-divider />
-            <!-- Chat reúne Web Chat y WhatsApp: una estrategia y un bloque para los dos, y dentro, lo propio de cada
-                 subcanal solo si está marcado. El número de WhatsApp ya no depende de Web Chat (se medía el
-                 2026-09-21: con WhatsApp y sin Chat no había dónde ponerlo). -->
-            <section class="sub-section" id="group-channel-chat" aria-labelledby="group-channel-chat-title">
-              <header class="sub-section__head">
-                <h3 id="group-channel-chat-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
-                  <sc-channel-icon channel="chat" />
-                  {{ 'groups.channel.chat_family' | translate }}
-                </h3>
-                <p class="sub-section__hint sc-text-caption-regular">{{ chatSubchannelLabels() }}</p>
-              </header>
-
-              <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.routing' | translate }}</h4>
-              <div class="grid grid--2">
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-                  <sc-select inputId="group-chat-strategy" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
-                </div>
-                <ng-container *ngTemplateOutlet="transferField; context: { channel: 'chat', queue: form().chatQueue }" />
-              </div>
-              <!-- A la vista, no en un «avanzado» (visión de producto de grupos, 2026-09-25). Los minutos aparecen con el
-                   interruptor: un tiempo que no se aplica es un campo muerto. -->
-              <div class="switch-field switch-field--top">
-                <sc-toggleswitch [checked]="form().chat.closeOnInactivity" [ariaLabel]="'groups.form.chat.close_on_inactivity' | translate" (checkedChange)="setChat('closeOnInactivity', $event)" />
-                <div class="switch-field__copy">
-                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.chat.close_on_inactivity' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.chat.close_on_inactivity_hint' | translate }}</p>
-                  @if (form().chat.closeOnInactivity) {
-                    <span class="inline-control">
-                      <label class="inline-control__suffix sc-text-caption-regular" for="group-chat-inactivity">{{ 'groups.form.chat.inactivity_minutes' | translate }}</label>
-                      <sc-inputnumber class="field__number" size="sm" inputId="group-chat-inactivity" [min]="1" suffix=" min" [value]="form().chat.inactivityMinutes" (valueChange)="setInactivityMinutes($event)" />
-                    </span>
-                  }
-                </div>
-              </div>
-              <div class="switch-field switch-field--top">
-                <sc-toggleswitch [checked]="form().advanced.chatRatingEnabled" [ariaLabel]="'groups.form.advanced.chat_rating' | translate" (checkedChange)="setAdvanced('chatRatingEnabled', $event)" />
-                <div class="switch-field__copy">
-                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.chat_rating' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.chat_rating_hint' | translate }}</p>
-                </div>
-              </div>
-
-              @if (hasWebChat()) {
-                <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.webchat_access' | translate }}</h4>
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
-                  <span class="domain-add">
-                    <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [helperText]="'groups.form.advanced.allowed_domains_hint' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
-                    <sc-button variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
-                  </span>
-                  @if (form().advanced.allowedDomains.length > 0) {
-                    <div class="domain-chips">
-                      @for (domain of form().advanced.allowedDomains; track domain) {
-                        <sc-chip [label]="domain" removable [removeAriaLabel]="'common.delete' | translate" (removed)="removeDomain(domain)" />
-                      }
-                    </div>
-                  }
-                </div>
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-chat-script">{{ 'groups.form.advanced.script_title' | translate }}</label>
-                  <p class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.script_hint' | translate }}</p>
-                  <sc-textarea inputId="group-chat-script" [rows]="2" fluid readonly [value]="chatScript()" />
-                  <sc-button class="script-copy" size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'groups.form.advanced.script_copy' | translate" (clicked)="copyChatScript()" />
-                </div>
-              }
-
-              @if (hasWhatsApp()) {
-                <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.whatsapp_number' | translate }}</h4>
-                <div class="grid grid--2">
-                  <div class="field">
-                    <label class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">{{ 'groups.form.advanced.whatsapp_number' | translate }}</label>
-                    <sc-inputtext inputId="group-chat-whatsapp" type="tel" placeholder="+34 900 100 200" [value]="form().advanced.whatsappNumber" (valueChange)="setAdvanced('whatsappNumber', $event)" />
-                  </div>
-                </div>
-              }
-
-              <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue' | translate }}</h4>
-              <div class="grid grid--2">
-                <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'chat', queue: form().chatQueue }" />
-              </div>
-
-              <!-- Lo que se le escribe al cliente mientras espera, POR SUBCANAL y solo de los marcados: Web Chat y
-                   WhatsApp comparten cola, pero no hablan igual. Vacío = no se envía nada. -->
-              <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue_messages' | translate }}</h4>
-              <p class="field__help sc-text-caption-regular">{{ 'groups.form.chat.messages_hint' | translate }}</p>
-              @for (sub of activeChatSubchannels(); track sub) {
-                <div class="chat-messages" role="group" [attr.aria-labelledby]="'group-chat-messages-' + sub">
-                  <span class="chat-messages__title sc-text-caption-semibold" [id]="'group-chat-messages-' + sub">{{ channelKeys[sub] | translate }}</span>
-                  <div class="grid grid--2">
-                    @for (m of chatMessageKeys; track m.key) {
-                      <div class="field">
-                        <label class="field__label sc-text-caption-semibold" [for]="'group-chat-msg-' + sub + '-' + m.key">{{ m.labelKey | translate }}</label>
-                        <sc-textarea [inputId]="'group-chat-msg-' + sub + '-' + m.key" [rows]="2" fluid [placeholder]="m.placeholderKey | translate" [value]="form().chat.queueMessages[sub][m.key]" (valueChange)="setChatMessage(sub, m.key, $event)" />
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-            </section>
-          }
-
-          @if (hasEmail()) {
-            <sc-divider />
-            <section class="sub-section" id="group-channel-email" aria-labelledby="group-channel-email-title">
-              <header class="sub-section__head">
-                <h3 id="group-channel-email-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
-                  <sc-channel-icon channel="email" />
-                  {{ channelKeys.email | translate }}
-                </h3>
-                <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.distribution.email_note' | translate }}</p>
-              </header>
-            </section>
-          }
-
-          @if (inactiveFamilies().length > 0) {
-            <sc-divider />
-            <section class="sub-section">
-              @for (family of inactiveFamilies(); track family) {
-                <p class="channel-off sc-text-caption-regular">{{ 'groups.form.distribution.inactive' | translate: { channel: (familyLabelKeys[family] | translate) } }}</p>
-              }
-            </section>
-          }
-          <ng-container *ngTemplateOutlet="nextStep" />
-        </sc-section-card>
+        <ng-container *ngTemplateOutlet="seccionDistribucion" />
       }
 
       @if (showSection('group-section-resources')) {
-        <sc-section-card
-          anchorId="group-section-resources"
-          surface="card"
-          icon="library_books"
-          titleKey="groups.form.section.resources"
-          hintKey="groups.form.section.resources_hint"
-        >
-          <section class="sub-section">
-            <div class="grid grid--2">
-              <!-- UNA tipificación: el agente recorre un solo árbol al cerrar (manual de Voice, p. 14). -->
-              <div class="field">
-                <span class="field__label-row">
-                  <label class="field__label sc-text-caption-semibold" for="group-typification">
-                    {{ 'groups.form.fields.typification' | translate }}
-                  </label>
-                  <!-- Crear una sin salir de la ficha (decisión de producto, 2026-09-18), con el mismo botón «solo icono»
-                       en los cuatro campos de la sección, fuera del flujo del texto (`field__label-row__action`) para
-                       que la fila mida lo que la etiqueta. -->
-                  <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.typification_new' | translate" [pTooltip]="'groups.form.fields.typification_new' | translate" tooltipPosition="top" (clicked)="creatingTipificacion.set(true)" />
-                </span>
-                <sc-select
-                  inputId="group-typification"
-                  optionLabel="label"
-                  optionValue="value"
-                  [options]="typificationOptions()"
-                  [value]="form().typification"
-                  [helperText]="'groups.form.fields.typification_hint' | translate"
-                  (valueChange)="onTypificationChange($event)"
-                />
-              </div>
-
-              <div class="field">
-                <span class="field__label-row">
-                  <label class="field__label sc-text-caption-semibold" for="group-agendas">
-                    {{ 'agents.form.advanced.agendas.title' | translate }}
-                  </label>
-                  <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="creatingAgenda.set(true)" />
-                </span>
-                <sc-multiselect
-                  inputId="group-agendas"
-                  display="chip"
-                  optionLabel="label"
-                  optionValue="value"
-                  [filter]="true"
-                  [maxSelectedLabels]="4"
-                  [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-                  [placeholder]="'agents.form.resources.none' | translate"
-                  [options]="scheduleOptions()"
-                  [value]="scheduleValue()"
-                  (valueChange)="onIdsChange('scheduleIds', $event)"
-                />
-              </div>
-
-              @if (hasChatFamily()) {
-                <div class="field">
-                  <span class="field__label-row">
-                    <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
-                      {{ 'agents.form.resources.templates_chat' | translate }}
-                    </label>
-                    <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingChatTemplate.set(true)" />
-                  </span>
-                  <sc-multiselect
-                    inputId="group-templates-chat"
-                    display="chip"
-                    optionLabel="label"
-                    optionValue="value"
-                    [filter]="true"
-                    [maxSelectedLabels]="4"
-                    [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-                    [placeholder]="'agents.form.resources.none' | translate"
-                    [options]="chatTemplateOptions()"
-                    [value]="chatTemplateValue()"
-                    (valueChange)="onTemplatesChange('chat', $event)"
-                  />
-                </div>
-              }
-
-              @if (hasEmail()) {
-                <div class="field">
-                  <span class="field__label-row">
-                    <label class="field__label sc-text-caption-semibold" for="group-templates-email">
-                      {{ 'agents.form.resources.templates_email' | translate }}
-                    </label>
-                    <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingEmailTemplate.set(true)" />
-                  </span>
-                  <sc-multiselect
-                    inputId="group-templates-email"
-                    display="chip"
-                    optionLabel="label"
-                    optionValue="value"
-                    [filter]="true"
-                    [maxSelectedLabels]="4"
-                    [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-                    [placeholder]="'agents.form.resources.none' | translate"
-                    [options]="emailTemplateOptions()"
-                    [value]="emailTemplateValue()"
-                    (valueChange)="onTemplatesChange('email', $event)"
-                  />
-                </div>
-              }
-
-              <div class="field">
-                <span class="field__label-row">
-                  <label class="field__label sc-text-caption-semibold" for="group-labels">
-                    {{ 'agents.form.advanced.labels.title' | translate }}
-                  </label>
-                  <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
-                </span>
-                <sc-multiselect
-                  inputId="group-labels"
-                  display="chip"
-                  optionLabel="label"
-                  optionValue="value"
-                  [filter]="true"
-                  [maxSelectedLabels]="4"
-                  [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-                  [placeholder]="'agents.form.resources.none' | translate"
-                  [options]="labelOptions()"
-                  [value]="labelValue()"
-                  (valueChange)="onIdsChange('labelIds', $event)"
-                />
-              </div>
-            </div>
-
-            <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
-            <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
-          </section>
-
-          <sc-divider />
-
-          <!-- La ficha de cliente que se le abre al agente (vivía en Avanzado). No es un objeto de Repositorios, pero de
-               las cuatro secciones es su casa menos mala, y la visión la cuenta entre los recursos (DD-121). -->
-          <section class="sub-section" aria-labelledby="group-card-title">
-            <header class="sub-section__head">
-              <h3 id="group-card-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.resources.client_card' | translate }}</h3>
-              <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.resources.client_card_hint' | translate }}</p>
-            </header>
-            <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
-            <div class="grid grid--2">
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-card-url">{{ 'groups.form.advanced.card_url' | translate }}</label>
-                <sc-inputtext inputId="group-card-url" type="url" [value]="form().advanced.cardUrl" [helperText]="'groups.form.advanced.card_url_hint' | translate" (valueChange)="setAdvanced('cardUrl', $event)" />
-              </div>
-              @if (form().advanced.cardOpening === 'embedded') {
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="group-card-height">{{ 'groups.form.advanced.card_height' | translate }}</label>
-                  <sc-inputnumber class="field__number" inputId="group-card-height" [min]="100" suffix="px" [value]="form().advanced.cardHeight" (valueChange)="setAdvancedNumber('cardHeight', $event)" />
-                </div>
-              }
-            </div>
-          </section>
-          <ng-container *ngTemplateOutlet="nextStep" />
-        </sc-section-card>
+        <ng-container *ngTemplateOutlet="seccionRecursos" />
       }
 
       @if (showSection('group-section-agents')) {
-        <!-- Quién atiende y por qué canales: la tabla de siempre, que solo lista los asignados y añade con buscador
-             (escala). La CAJA la pone esta `sc-section-card`, como antes de las pestañas. -->
-        <sc-section-card
-          anchorId="group-section-agents"
-          surface="card"
-          icon="group"
-          titleKey="groups.form.section.agents"
-          hintKey="groups.form.section.agents_hint"
-        >
-          <section class="sub-section">
-            <sc-agent-channel-table
-              [groupChannels]="formGroupChannels()"
-              [links]="form().links"
-              [availableAgents]="availableAgents()"
-              [groupId]="editingId() ?? 0"
-              [showLevel]="isNiveles()"
-              (linksChange)="onLinksChange($event)"
-            />
-          </section>
-        </sc-section-card>
+        <ng-container *ngTemplateOutlet="seccionAgentes" />
       }
     </div>
 
@@ -725,6 +252,497 @@
     />
   </sc-dialog>
 }
+
+<!-- LAS CUATRO SECCIONES, cada una en su plantilla: la edición las pinta de una en una junto al índice, y el alta,
+     cada una en su paso (DD-137). Un solo cuerpo para los dos, así no pueden decir cosas distintas. -->
+<ng-template #seccionGeneral>
+  <sc-section-card
+    anchorId="group-section-general"
+    surface="card"
+    icon="tune"
+    titleKey="groups.form.section.general"
+    hintKey="groups.form.section.general_hint"
+  >
+    <section class="sub-section">
+      <!-- La MISMA pieza que el diálogo de duplicar: mismos campos, mismo orden y mismos avisos. Aquí sin
+           el teléfono: el saliente vive en el bloque de Teléfono de Distribución y colas. -->
+      <sc-group-identity-fields
+        [name]="form().name"
+        [priority]="form().priority"
+        [hasPhone]="false"
+        [nameError]="nameError()"
+        (nameChange)="onNameChange($event)"
+        (priorityChange)="onPriorityValueChange($event)"
+      />
+    </section>
+
+    <sc-divider />
+
+    <!-- Que falte marcar un canal no es contenido equivocado: lo dicen el punto del índice, el resumen y el
+         motivo junto a Guardar. -->
+    <section class="sub-section" aria-labelledby="group-channels-title">
+      <header class="sub-section__head">
+        <h3 id="group-channels-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.channels.title' | translate }}</h3>
+        <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.channels.hint' | translate }}</p>
+      </header>
+      <div class="checkbox-grid">
+        <!-- Cada canal en su pila, aunque no tenga hijas: así los tres arrancan en la misma línea. -->
+        <div class="checkbox-stack">
+          <sc-checkbox class="checkbox-row" inputId="group-channels-phone" [state]="hasPhone() ? 'all' : 'none'" (cycle)="toggleChannel('phone')">{{ channelKeys.phone | translate }}</sc-checkbox>
+        </div>
+        <!-- Chat es la MADRE de Web Chat y WhatsApp (patrón B12 del laboratorio): marcarla enciende las dos, y
+             desmarcarla las apaga; con una sola, queda a medias. -->
+        <div class="checkbox-stack">
+          <sc-checkbox class="checkbox-row" [state]="chatFamilyState()" (cycle)="toggleChatFamily()">{{ 'groups.channel.chat_family' | translate }}</sc-checkbox>
+          <sc-checkbox class="checkbox-row checkbox-row--child" [state]="hasWebChat() ? 'all' : 'none'" (cycle)="toggleChannel('chat')">{{ channelKeys.chat | translate }}</sc-checkbox>
+          <sc-checkbox class="checkbox-row checkbox-row--child" [state]="hasWhatsApp() ? 'all' : 'none'" (cycle)="toggleChannel('whatsapp')">{{ channelKeys.whatsapp | translate }}</sc-checkbox>
+        </div>
+        <div class="checkbox-stack">
+          <sc-checkbox class="checkbox-row" [state]="hasEmail() ? 'all' : 'none'" (cycle)="toggleChannel('email')">{{ channelKeys.email | translate }}</sc-checkbox>
+        </div>
+      </div>
+      @if (channelsError()) {
+        <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.channels_required' | translate }}</p>
+      }
+    </section>
+    <ng-container *ngTemplateOutlet="nextStep" />
+  </sc-section-card>
+</ng-template>
+
+<ng-template #seccionDistribucion>
+  <!-- DENTRO DE CADA CANAL, SU DISTRIBUCIÓN Y SU COLA (visión de producto de grupos, 2026-09-25): un bloque
+       por canal activo, y arriba lo que vale para todos. Un canal apagado no pinta su bloque (solo se ve lo
+       que aplica), pero deja una línea que dice que existe y dónde se enciende. -->
+  <sc-section-card
+    anchorId="group-section-distribution"
+    surface="card"
+    icon="alt_route"
+    titleKey="groups.form.section.distribution"
+    hintKey="groups.form.section.distribution_hint"
+  >
+    <!-- Saltos a cada canal (DD-130): con los cuatro, la sección mide 2.355 px y nada nace plegado (DD-121 §5). -->
+    @if (channelJumps().length > 0) {
+      <nav class="channel-jumps" [attr.aria-label]="'groups.form.distribution.jump_aria' | translate">
+        <span class="channel-jumps__label sc-text-caption-regular">{{ 'groups.form.distribution.jump_label' | translate }}</span>
+        @for (jump of channelJumps(); track jump.id) {
+          <a class="channel-jumps__link sc-text-caption-semibold" [href]="jumpHref(jump.id)" (click)="jumpToChannel($event, jump.id)">
+            <sc-channel-icon [channel]="jump.channel" [size]="12" />
+            {{ jump.labelKey | translate }}
+          </a>
+        }
+      </nav>
+    }
+    <section class="sub-section" aria-labelledby="group-common-title">
+      <header class="sub-section__head">
+        <h3 id="group-common-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.distribution.common_title' | translate }}</h3>
+        <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.distribution.common_hint' | translate }}</p>
+      </header>
+      <div class="switch-field switch-field--top">
+        <sc-toggleswitch [checked]="form().advanced.overflowWhenNoAgents" [ariaLabel]="'groups.form.advanced.overflow' | translate" (checkedChange)="setAdvanced('overflowWhenNoAgents', $event)" />
+        <div class="switch-field__copy">
+          <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.overflow' | translate }}</span>
+          <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_hint' | translate }}</p>
+        </div>
+      </div>
+      <!-- «Desbordar sesión» del Figma de la migración; el manual no lo trae (a qué canal aplica, por confirmar). -->
+      <div class="switch-field switch-field--top">
+        <sc-toggleswitch [checked]="form().advanced.overflowSession" [ariaLabel]="'groups.form.advanced.overflow_session' | translate" (checkedChange)="setAdvanced('overflowSession', $event)" />
+        <div class="switch-field__copy">
+          <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.overflow_session' | translate }}</span>
+          <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_session_hint' | translate }}</p>
+        </div>
+      </div>
+    </section>
+
+    @if (hasPhone()) {
+      <sc-divider />
+      <section class="sub-section" id="group-channel-phone" aria-labelledby="group-channel-phone-title">
+        <header class="sub-section__head">
+          <h3 id="group-channel-phone-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
+            <sc-channel-icon channel="phone" />
+            {{ channelKeys.phone | translate }}
+          </h3>
+        </header>
+
+        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.routing' | translate }}</h4>
+        <div class="grid grid--2">
+          <div class="field">
+            <label id="group-strategy-label" class="field__label sc-text-caption-semibold" for="group-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+            <!-- Qué hace la estrategia elegida, del manual de usuario de Voice (DD-133), en el `helperText`: el lector la
+                 anuncia con el campo. Sustituye a las dos ayudas sueltas de Niveles y Agente exclusivo. -->
+            <sc-select inputId="group-strategy" ariaLabelledBy="group-strategy-label" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" [helperText]="strategyHelpKey() ? (strategyHelpKey()! | translate) : undefined" (valueChange)="onStrategyValueChange($event)">
+              <ng-template #item let-o>
+                <span class="strategy-option">
+                  <span>{{ o.label }}</span>
+                  @if (o.note) {
+                    <span class="strategy-option__note sc-text-caption-regular">{{ o.note }}</span>
+                  }
+                </span>
+              </ng-template>
+            </sc-select>
+          </div>
+          <!-- El número que ve el cliente cuando le llama un agente del grupo: un campo principal del canal, no
+               un dato de identidad (visión de producto de grupos, 2026-09-25). -->
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-phone">{{ 'groups.form.fields.phone' | translate }}</label>
+            <sc-select inputId="group-phone" editable [options]="phoneOptions()" [value]="form().phone" [helperText]="'groups.form.fields.phone_hint' | translate" (valueChange)="onPhoneValueChange($event)" />
+          </div>
+          @if (isRingAll()) {
+            <div class="field">
+              <label class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
+              <span class="inline-control">
+                <sc-select inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
+                <span class="inline-control__suffix sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
+              </span>
+            </div>
+          }
+          @if (isNiveles()) {
+            <div class="field">
+              <label class="field__label sc-text-caption-semibold" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+              <sc-select inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
+            </div>
+          }
+          <ng-container *ngTemplateOutlet="transferField; context: { channel: 'phone', queue: form().phoneQueue }" />
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-wrap-up">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
+            <sc-inputnumber class="field__number" inputId="group-wrap-up" [min]="0" suffix="s" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" />
+          </div>
+        </div>
+
+        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue' | translate }}</h4>
+        <div class="grid grid--2">
+          <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'phone', queue: form().phoneQueue }" />
+          <div class="field">
+            <label id="group-voice-label" class="field__label sc-text-caption-semibold" for="group-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
+            <sc-select inputId="group-voice" ariaLabelledBy="group-voice-label" [options]="voiceOptions" [value]="form().announcements.voice" [helperText]="'groups.form.announcements.voice_hint' | translate" (valueChange)="setAnnouncement('voice', $any($event))" />
+          </div>
+        </div>
+
+        <!-- MENSAJES EN COLA: la música es «lo principal y lo único necesario» (visión de producto de grupos,
+             2026-09-25) y no es un recurso. El identificador, «eres el siguiente», los anuncios periódicos, el
+             audio saliente y los avisos salen de la VISTA y se quedan en el modelo (`announcements` viaja
+             entero al guardar), así que volver a enseñarlos no pierde nada. -->
+        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue_messages' | translate }}</h4>
+        <div class="field">
+          <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
+          <span class="inline-control" role="group" aria-labelledby="group-hold-music-label">
+            <span class="inline-control__value sc-text-body-regular">{{ form().announcements.holdMusicFile ?? ('groups.form.announcements.default_music' | translate) }}</span>
+            <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
+            @if (form().announcements.holdMusicFile) {
+              <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.use_default' | translate" (clicked)="setAnnouncement('holdMusicFile', null)" />
+            }
+          </span>
+        </div>
+      </section>
+    }
+
+    @if (hasChatFamily()) {
+      <sc-divider />
+      <!-- Chat reúne Web Chat y WhatsApp: una estrategia y un bloque para los dos, y dentro, lo propio de cada
+           subcanal solo si está marcado. El número de WhatsApp ya no depende de Web Chat (se medía el
+           2026-09-21: con WhatsApp y sin Chat no había dónde ponerlo). -->
+      <section class="sub-section" id="group-channel-chat" aria-labelledby="group-channel-chat-title">
+        <header class="sub-section__head">
+          <h3 id="group-channel-chat-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
+            <sc-channel-icon channel="chat" />
+            {{ 'groups.channel.chat_family' | translate }}
+          </h3>
+          <p class="sub-section__hint sc-text-caption-regular">{{ chatSubchannelLabels() }}</p>
+        </header>
+
+        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.routing' | translate }}</h4>
+        <div class="grid grid--2">
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+            <sc-select inputId="group-chat-strategy" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
+          </div>
+          <ng-container *ngTemplateOutlet="transferField; context: { channel: 'chat', queue: form().chatQueue }" />
+        </div>
+        <!-- A la vista, no en un «avanzado» (visión de producto de grupos, 2026-09-25). Los minutos aparecen con el
+             interruptor: un tiempo que no se aplica es un campo muerto. -->
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch [checked]="form().chat.closeOnInactivity" [ariaLabel]="'groups.form.chat.close_on_inactivity' | translate" (checkedChange)="setChat('closeOnInactivity', $event)" />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.chat.close_on_inactivity' | translate }}</span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.chat.close_on_inactivity_hint' | translate }}</p>
+            @if (form().chat.closeOnInactivity) {
+              <span class="inline-control">
+                <label class="inline-control__suffix sc-text-caption-regular" for="group-chat-inactivity">{{ 'groups.form.chat.inactivity_minutes' | translate }}</label>
+                <sc-inputnumber class="field__number" size="sm" inputId="group-chat-inactivity" [min]="1" suffix=" min" [value]="form().chat.inactivityMinutes" (valueChange)="setInactivityMinutes($event)" />
+              </span>
+            }
+          </div>
+        </div>
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch [checked]="form().advanced.chatRatingEnabled" [ariaLabel]="'groups.form.advanced.chat_rating' | translate" (checkedChange)="setAdvanced('chatRatingEnabled', $event)" />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.chat_rating' | translate }}</span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.chat_rating_hint' | translate }}</p>
+          </div>
+        </div>
+
+        @if (hasWebChat()) {
+          <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.webchat_access' | translate }}</h4>
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
+            <span class="domain-add">
+              <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [helperText]="'groups.form.advanced.allowed_domains_hint' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
+              <sc-button variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
+            </span>
+            @if (form().advanced.allowedDomains.length > 0) {
+              <div class="domain-chips">
+                @for (domain of form().advanced.allowedDomains; track domain) {
+                  <sc-chip [label]="domain" removable [removeAriaLabel]="'common.delete' | translate" (removed)="removeDomain(domain)" />
+                }
+              </div>
+            }
+          </div>
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-chat-script">{{ 'groups.form.advanced.script_title' | translate }}</label>
+            <p class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.script_hint' | translate }}</p>
+            <sc-textarea inputId="group-chat-script" [rows]="2" fluid readonly [value]="chatScript()" />
+            <sc-button class="script-copy" size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'groups.form.advanced.script_copy' | translate" (clicked)="copyChatScript()" />
+          </div>
+        }
+
+        @if (hasWhatsApp()) {
+          <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.whatsapp_number' | translate }}</h4>
+          <div class="grid grid--2">
+            <div class="field">
+              <label class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">{{ 'groups.form.advanced.whatsapp_number' | translate }}</label>
+              <sc-inputtext inputId="group-chat-whatsapp" type="tel" placeholder="+34 900 100 200" [value]="form().advanced.whatsappNumber" (valueChange)="setAdvanced('whatsappNumber', $event)" />
+            </div>
+          </div>
+        }
+
+        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue' | translate }}</h4>
+        <div class="grid grid--2">
+          <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'chat', queue: form().chatQueue }" />
+        </div>
+
+        <!-- Lo que se le escribe al cliente mientras espera, POR SUBCANAL y solo de los marcados: Web Chat y
+             WhatsApp comparten cola, pero no hablan igual. Vacío = no se envía nada. -->
+        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue_messages' | translate }}</h4>
+        <p class="field__help sc-text-caption-regular">{{ 'groups.form.chat.messages_hint' | translate }}</p>
+        @for (sub of activeChatSubchannels(); track sub) {
+          <div class="chat-messages" role="group" [attr.aria-labelledby]="'group-chat-messages-' + sub">
+            <span class="chat-messages__title sc-text-caption-semibold" [id]="'group-chat-messages-' + sub">{{ channelKeys[sub] | translate }}</span>
+            <div class="grid grid--2">
+              @for (m of chatMessageKeys; track m.key) {
+                <div class="field">
+                  <label class="field__label sc-text-caption-semibold" [for]="'group-chat-msg-' + sub + '-' + m.key">{{ m.labelKey | translate }}</label>
+                  <sc-textarea [inputId]="'group-chat-msg-' + sub + '-' + m.key" [rows]="2" fluid [placeholder]="m.placeholderKey | translate" [value]="form().chat.queueMessages[sub][m.key]" (valueChange)="setChatMessage(sub, m.key, $event)" />
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    @if (hasEmail()) {
+      <sc-divider />
+      <section class="sub-section" id="group-channel-email" aria-labelledby="group-channel-email-title">
+        <header class="sub-section__head">
+          <h3 id="group-channel-email-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
+            <sc-channel-icon channel="email" />
+            {{ channelKeys.email | translate }}
+          </h3>
+          <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.distribution.email_note' | translate }}</p>
+        </header>
+      </section>
+    }
+
+    @if (inactiveFamilies().length > 0) {
+      <sc-divider />
+      <section class="sub-section">
+        @for (family of inactiveFamilies(); track family) {
+          <p class="channel-off sc-text-caption-regular">{{ 'groups.form.distribution.inactive' | translate: { channel: (familyLabelKeys[family] | translate) } }}</p>
+        }
+      </section>
+    }
+    <ng-container *ngTemplateOutlet="nextStep" />
+  </sc-section-card>
+</ng-template>
+
+<ng-template #seccionRecursos>
+  <sc-section-card
+    anchorId="group-section-resources"
+    surface="card"
+    icon="library_books"
+    titleKey="groups.form.section.resources"
+    hintKey="groups.form.section.resources_hint"
+  >
+    <section class="sub-section">
+      <div class="grid grid--2">
+        <!-- UNA tipificación: el agente recorre un solo árbol al cerrar (manual de Voice, p. 14). -->
+        <div class="field">
+          <span class="field__label-row">
+            <label class="field__label sc-text-caption-semibold" for="group-typification">
+              {{ 'groups.form.fields.typification' | translate }}
+            </label>
+            <!-- Crear una sin salir de la ficha (decisión de producto, 2026-09-18), con el mismo botón «solo icono»
+                 en los cuatro campos de la sección, fuera del flujo del texto (`field__label-row__action`) para
+                 que la fila mida lo que la etiqueta. -->
+            <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.typification_new' | translate" [pTooltip]="'groups.form.fields.typification_new' | translate" tooltipPosition="top" (clicked)="creatingTipificacion.set(true)" />
+          </span>
+          <sc-select
+            inputId="group-typification"
+            optionLabel="label"
+            optionValue="value"
+            [options]="typificationOptions()"
+            [value]="form().typification"
+            [helperText]="'groups.form.fields.typification_hint' | translate"
+            (valueChange)="onTypificationChange($event)"
+          />
+        </div>
+
+        <div class="field">
+          <span class="field__label-row">
+            <label class="field__label sc-text-caption-semibold" for="group-agendas">
+              {{ 'agents.form.advanced.agendas.title' | translate }}
+            </label>
+            <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="creatingAgenda.set(true)" />
+          </span>
+          <sc-multiselect
+            inputId="group-agendas"
+            display="chip"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            [maxSelectedLabels]="4"
+            [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+            [placeholder]="'agents.form.resources.none' | translate"
+            [options]="scheduleOptions()"
+            [value]="scheduleValue()"
+            (valueChange)="onIdsChange('scheduleIds', $event)"
+          />
+        </div>
+
+        @if (hasChatFamily()) {
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
+                {{ 'agents.form.resources.templates_chat' | translate }}
+              </label>
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingChatTemplate.set(true)" />
+            </span>
+            <sc-multiselect
+              inputId="group-templates-chat"
+              display="chip"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [maxSelectedLabels]="4"
+              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+              [placeholder]="'agents.form.resources.none' | translate"
+              [options]="chatTemplateOptions()"
+              [value]="chatTemplateValue()"
+              (valueChange)="onTemplatesChange('chat', $event)"
+            />
+          </div>
+        }
+
+        @if (hasEmail()) {
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-templates-email">
+                {{ 'agents.form.resources.templates_email' | translate }}
+              </label>
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingEmailTemplate.set(true)" />
+            </span>
+            <sc-multiselect
+              inputId="group-templates-email"
+              display="chip"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [maxSelectedLabels]="4"
+              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+              [placeholder]="'agents.form.resources.none' | translate"
+              [options]="emailTemplateOptions()"
+              [value]="emailTemplateValue()"
+              (valueChange)="onTemplatesChange('email', $event)"
+            />
+          </div>
+        }
+
+        <div class="field">
+          <span class="field__label-row">
+            <label class="field__label sc-text-caption-semibold" for="group-labels">
+              {{ 'agents.form.advanced.labels.title' | translate }}
+            </label>
+            <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
+          </span>
+          <sc-multiselect
+            inputId="group-labels"
+            display="chip"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            [maxSelectedLabels]="4"
+            [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+            [placeholder]="'agents.form.resources.none' | translate"
+            [options]="labelOptions()"
+            [value]="labelValue()"
+            (valueChange)="onIdsChange('labelIds', $event)"
+          />
+        </div>
+      </div>
+
+      <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
+      <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
+    </section>
+
+    <sc-divider />
+
+    <!-- La ficha de cliente que se le abre al agente (vivía en Avanzado). No es un objeto de Repositorios, pero de
+         las cuatro secciones es su casa menos mala, y la visión la cuenta entre los recursos (DD-121). -->
+    <section class="sub-section" aria-labelledby="group-card-title">
+      <header class="sub-section__head">
+        <h3 id="group-card-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.resources.client_card' | translate }}</h3>
+        <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.resources.client_card_hint' | translate }}</p>
+      </header>
+      <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
+      <div class="grid grid--2">
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="group-card-url">{{ 'groups.form.advanced.card_url' | translate }}</label>
+          <sc-inputtext inputId="group-card-url" type="url" [value]="form().advanced.cardUrl" [helperText]="'groups.form.advanced.card_url_hint' | translate" (valueChange)="setAdvanced('cardUrl', $event)" />
+        </div>
+        @if (form().advanced.cardOpening === 'embedded') {
+          <div class="field">
+            <label class="field__label sc-text-caption-semibold" for="group-card-height">{{ 'groups.form.advanced.card_height' | translate }}</label>
+            <sc-inputnumber class="field__number" inputId="group-card-height" [min]="100" suffix="px" [value]="form().advanced.cardHeight" (valueChange)="setAdvancedNumber('cardHeight', $event)" />
+          </div>
+        }
+      </div>
+    </section>
+    <ng-container *ngTemplateOutlet="nextStep" />
+  </sc-section-card>
+</ng-template>
+
+<ng-template #seccionAgentes>
+  <!-- Quién atiende y por qué canales: la tabla de siempre, que solo lista los asignados y añade con buscador
+       (escala). La CAJA la pone esta `sc-section-card`, como antes de las pestañas. -->
+  <sc-section-card
+    anchorId="group-section-agents"
+    surface="card"
+    icon="group"
+    titleKey="groups.form.section.agents"
+    hintKey="groups.form.section.agents_hint"
+  >
+    <section class="sub-section">
+      <sc-agent-channel-table
+        [groupChannels]="formGroupChannels()"
+        [links]="form().links"
+        [availableAgents]="availableAgents()"
+        [groupId]="editingId() ?? 0"
+        [showLevel]="isNiveles()"
+        (linksChange)="onLinksChange($event)"
+      />
+    </section>
+  </sc-section-card>
+</ng-template>
 
 <!-- «Siguiente», al pie de cada sección y SOLO en el alta: guía por las cuatro en el orden de sus
      dependencias. Al editar se salta de sección con el índice, y no hay pasos que seguir. -->

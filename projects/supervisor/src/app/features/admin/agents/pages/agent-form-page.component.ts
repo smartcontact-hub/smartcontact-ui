@@ -11,6 +11,7 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
@@ -149,6 +150,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
 @Component({
   selector: 'sc-agent-form-page',
   imports: [
+    NgTemplateOutlet,
     ButtonComponent,
     NameInplaceComponent,
     SummaryKpiComponent,

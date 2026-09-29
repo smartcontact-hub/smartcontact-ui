@@ -11,6 +11,7 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
@@ -87,6 +88,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
 @Component({
   selector: 'sc-user-form-page',
   imports: [
+    NgTemplateOutlet,
     CheckboxComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
