@@ -1,7 +1,20 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
-import { checksDe, duplicadosDe, enOrigin, gemelasDe, parseaWorktrees, prDe, veredictoDe } from '../sesiones.mjs';
+import {
+  checksDe,
+  duplicadosDe,
+  enOrigin,
+  gemelasDe,
+  noFundidosDe,
+  parseaWorktrees,
+  prDe,
+  veredictoDe,
+} from '../sesiones.mjs';
 
 // `npm run sesiones` contesta «¿puedo cerrar este chat?» para todas las cajas a la vez, y su
 // respuesta se obedece sin comprobarla: si dice CERRADA se borra un worktree, y si dice SIN SUBIR
@@ -205,4 +218,111 @@ test('la red de seguridad no se dispara con `null`, solo con un número mayor qu
   const v = veredictoDe({ sinFundir: 0, noFundidos: null });
   assert.equal(v.veredicto, 'VACÍA', 'null no es «hay trabajo fuera»: es «no lo sé»');
   assert.equal(veredictoDe({ sinFundir: 0, noFundidos: 2 }).veredicto, 'SIN SUBIR');
+});
+
+// ── Medido con git de verdad: un squash de VARIOS commits ──────────────────────
+
+// Sin las `GIT_*` heredadas: dentro de un hook de git (el pre-push corre `verify`), GIT_DIR apunta
+// al repositorio de verdad y estos git escribirían EN ÉL (lo vigila `pre-push-hook.test.mjs`).
+const SIN_GIT = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')));
+const git = (cwd, ...args) =>
+  execFileSync('git', args, { cwd, env: SIN_GIT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+const commitea = (dir, fichero, texto) => {
+  writeFileSync(join(dir, fichero), `${texto}\n`);
+  git(dir, 'add', fichero);
+  git(dir, 'commit', '-qm', texto);
+};
+
+/**
+ * Un `origin` desnudo, mi clon con `rama` (dos commits, pusheada) y un segundo clon que hace de
+ * GitHub: funde la rama con SQUASH y después entra otro PR en main (`recien` apunta ahí). Luego un
+ * tercer PR reescribe `a.txt`, el fichero de la rama: es `origin/main` una semana después.
+ * Antes del merge nace `rama-con-c`: la misma rama más un commit local sin pushear, que por tanto
+ * no va en el squash. Se monta UNA vez para todos los casos: cada git cuesta medio segundo aquí.
+ */
+let escenario;
+function squashDeDosCommits() {
+  if (escenario) return escenario;
+  const raiz = mkdtempSync(join(tmpdir(), 'sesiones-'));
+  const origen = join(raiz, 'origen.git');
+  const yo = join(raiz, 'yo');
+  const github = join(raiz, 'github');
+  execFileSync('git', ['init', '-q', '--bare', '-b', 'main', origen], { env: SIN_GIT });
+  for (const dir of [yo, github]) {
+    execFileSync('git', ['clone', '-q', origen, dir], { env: SIN_GIT, stdio: 'ignore' });
+    git(dir, 'config', 'user.email', 't@t');
+    git(dir, 'config', 'user.name', 't');
+  }
+  commitea(github, 'base.txt', 'base');
+  git(github, 'push', '-q', 'origin', 'HEAD:main');
+  git(yo, 'pull', '-q', 'origin', 'main');
+  git(yo, 'checkout', '-q', '-b', 'rama');
+  commitea(yo, 'a.txt', 'primero');
+  commitea(yo, 'b.txt', 'segundo');
+  git(yo, 'push', '-q', 'origin', 'rama');
+  git(yo, 'checkout', '-q', '-b', 'rama-con-c');
+  commitea(yo, 'c.txt', 'tercero, sin pushear');
+  git(yo, 'checkout', '-q', 'rama');
+  git(github, 'fetch', '-q', 'origin', 'rama');
+  git(github, 'merge', '-q', '--squash', 'origin/rama');
+  git(github, 'commit', '-qm', 'el PR (#1)');
+  const squash = git(github, 'rev-parse', 'HEAD');
+  commitea(github, 'otro.txt', 'otro PR (#2)');
+  git(github, 'push', '-q', 'origin', 'HEAD:main');
+  git(yo, 'fetch', '-q', 'origin', 'main');
+  git(yo, 'tag', 'recien', 'origin/main');
+  commitea(github, 'a.txt', 'un PR posterior reescribe a.txt (#3)');
+  git(github, 'push', '-q', 'origin', 'HEAD:main');
+  git(yo, 'fetch', '-q', 'origin', 'main');
+  escenario = { yo, squash };
+  return escenario;
+}
+
+const fundidoUno = { number: 1, mergedAt: '2026-09-29T10:00:00Z' };
+const cuenta = (rama, opciones) => noFundidosDe(rama, { cwd: escenario.yo, env: SIN_GIT, ...opciones });
+
+test('SQUASH de VARIOS commits recién fundido: su trabajo ya está en main → 0 fuera y CERRADA', () => {
+  // Medido el 2026-09-29: `git cherry` compara parche a parche y el squash de dos commits no casa
+  // con ninguno, así que los dos salían `+` y la caja decía «SIN SUBIR · commits NUEVOS encima».
+  const { yo } = squashDeDosCommits();
+  // La premisa, para que el caso no mienta: `git cherry` sola no reconoce ninguno de los dos.
+  const cherry = git(yo, 'cherry', 'recien', 'rama').split('\n');
+  assert.equal(cherry.filter((l) => l.startsWith('+')).length, 2, 'git cherry marca los dos como fuera de main');
+  const noFundidos = cuenta('rama', { main: 'recien' });
+  assert.equal(noFundidos, 0);
+  assert.equal(veredictoDe({ fundido: fundidoUno, ultimoCommitISO: '2026-09-29T09:00:00Z', noFundidos }).veredicto, 'CERRADA');
+});
+
+test('SQUASH de VARIOS commits y main ya reescribió sus ficheros → lo reconoce el commit de squash', () => {
+  // El #232 el 2026-09-29: seis commits, fundido una semana antes, y main había vuelto a tocar
+  // sus ficheros. Fundir la rama vieja en main CHOCA, así que main sola no puede decir «dentro».
+  const { squash } = squashDeDosCommits();
+  assert.equal(cuenta('rama'), 2, 'sin el commit de squash, la cuenta sale entera');
+  assert.equal(cuenta('rama', { squash }), 0);
+});
+
+test('SQUASH de VARIOS commits + un commit local anterior al merge que no entró → sigue fuera', () => {
+  // La protección por la que existe la medida por contenido (#109): un commit hecho ANTES del merge
+  // que no iba en él no sale como fundido, aunque el resto de la rama sí lo esté. Con las dos bases.
+  const { squash } = squashDeDosCommits();
+  for (const opciones of [{ main: 'recien' }, { squash }]) {
+    const noFundidos = cuenta('rama-con-c', opciones);
+    assert.ok(noFundidos > 0, `debe verse trabajo fuera de main con ${JSON.stringify(opciones)}; salió ${noFundidos}`);
+    const v = veredictoDe({ fundido: fundidoUno, ultimoCommitISO: '2026-09-29T09:00:00Z', noFundidos });
+    assert.equal(v.veredicto, 'SIN SUBIR');
+    assert.doesNotMatch(v.accion, /borra/);
+  }
+});
+
+test('un «squash» que no está en la historia de main no cuenta como base', () => {
+  // Fundir una rama en su propia punta no cambia nada: sin exigir que sea ancestro de main, un sha
+  // equivocado daría «ya está dentro» sobre trabajo que main no ha visto nunca.
+  squashDeDosCommits();
+  const punta = git(escenario.yo, 'rev-parse', 'rama-con-c');
+  assert.ok(cuenta('rama-con-c', { squash: punta }) > 0);
+});
+
+test('noFundidosDe devuelve null si git no puede medir, nunca 0', () => {
+  squashDeDosCommits();
+  assert.equal(cuenta('no-existe'), null);
 });
