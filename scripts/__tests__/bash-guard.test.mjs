@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
+import { PREFLIGHT, carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
 // Cada patrón del hook se prueba EN ROJO (el comando que motivó la regla) y EN VERDE (la forma
 // correcta y los vecinos legítimos). Un guardián que solo se ha visto pasar no prueba que sepa
@@ -357,6 +357,43 @@ test('#5 preflight de ESTE árbol → deny con su pid; y el `cd <ruta> &&` manda
   deny(`cd ${OTRO} && npm run build`, procesos(['17655'], () => OTRO), /LEARNINGS #5/);
 });
 
+/*
+ * #5 — el preflight COMPLETO lanzado a mano (`npm run preflight`) no pasa nunca por
+ * `preflight-scope.mjs`, así que el patrón del `node` no lo veía y un build a la vez salía permitido.
+ * Medido el 2026-09-29 en macOS, en la cadena viva y en una réplica lanzada a mano: lo único que vive
+ * de principio a fin es el `npm`, cuyo título es `npm run preflight` con el hueco del argv relleno de
+ * espacios (con `$` solo no casa), y su `sh -c` hijo. El `npm` se queda en la carpeta desde la que se
+ * lanzó (una subcarpeta, si fue desde ahí); el `sh -c` va a la raíz. `verify` ya reconstruye `dist/`,
+ * así que la ventana es la cadena entera, no solo los builds de `en-paralelo.mjs`.
+ *
+ * Aquí `pgrep` se simula con el patrón del propio hook sobre líneas medidas: qué líneas cuentan. Con
+ * qué casa el `pgrep` de verdad lo contesta la prueba con procesos de abajo.
+ */
+const tabla = (filas, cwd = ESTE) => ({
+  ...verde,
+  cwd,
+  listarPreflights: () => filas.filter(([, linea]) => new RegExp(PREFLIGHT).test(linea)).map(([pid]) => String(pid)),
+  cwdsDe: (pids) => new Map(filas.filter(([pid]) => pids.includes(pid)).map(([pid, , dir]) => [pid, dir])),
+});
+/** El envoltorio con el que la herramienta Bash corre un comando (medido): lo lleva en medio. */
+const envoltorio = (cmd) =>
+  `/bin/zsh -c -l setopt NO_EXTENDED_GLOB NO_BARE_GLOB_QUAL 2>/dev/null || true && eval '${cmd}' < /dev/null && pwd -P >| /tmp/claude-85dc-cwd`;
+
+test('#5 `npm run preflight` a mano en ESTE árbol → deny, con el título tal cual lo da cada forma de lanzarlo', () => {
+  deny('npm run build:supervisor', tabla([[19939, 'npm run preflight   ', ESTE]]), /pid 19939/); // macOS: relleno de espacios
+  deny('npm run build:supervisor', tabla([[19939, 'npm run preflight', ESTE]]), /LEARNINGS #5/); // sin relleno
+  deny('ng build supervisor', tabla([[19939, 'npm run preflight --foo     ', ESTE]]), /LEARNINGS #5/); // `npm run preflight -- --foo`
+});
+
+test('#5 `npm run preflight` de OTRO árbol, o un shell que solo lo NOMBRA → allow', () => {
+  allow('npm run build:supervisor', tabla([[19939, 'npm run preflight   ', OTRO]]));
+  // El envoltorio de la herramienta Bash y un bucle de espera llevan el texto, pero no empiezan por `npm`.
+  allow('npm run build:supervisor', tabla([[31200, envoltorio('npm run preflight > /tmp/p.log 2>&1'), ESTE]]));
+  allow('npm run build:supervisor', tabla([[31201, '/bin/sh -c while sleep 15; do :; done # espera a npm run preflight', ESTE]]));
+  // Otro script que empieza igual no es la cadena completa.
+  allow('npm run build:supervisor', tabla([[31202, 'npm run preflight-foo   ', ESTE]]));
+});
+
 // Con procesos PROPIOS de verdad, porque dos cosas solo las contesta el sistema: con qué casa el
 // `pgrep` real (el de macOS no entiende `\S`: el patrón que lo usaba perdía el `node` con ruta
 // absoluta) y qué cwd devuelven `lsof` y `/proc`. Cada árbol es una carpeta temporal: los
@@ -370,6 +407,41 @@ console.log('listo');
 `;
 const ESPERA_QUE_LO_NOMBRA =
   'echo listo; n=0; while [ $n -lt 60 ] && kill -0 $PPID 2>/dev/null; do sleep 1; n=$((n+1)); done # espera a node scripts/preflight-scope.mjs --run';
+/** El `npm` de un `npm run preflight` lanzado a mano: npm pone su título por el mismo `process.title`. */
+const FALSO_NPM = `process.title = 'npm run preflight';\n${FALSO}`;
+const ESPERA_QUE_NOMBRA_NPM = ESPERA_QUE_LO_NOMBRA.replace(/# espera a .*/, '# espera a npm run preflight');
+
+test('#5 con procesos de verdad: `npm run preflight` cuenta por el título del `npm` y su cwd, no el shell que lo nombra', { timeout: 30_000 }, async (t) => {
+  if (spawnSync('pgrep', ['-f', 'x^']).error) return t.skip('sin `pgrep` en esta máquina');
+  const base = mkdtempSync(join(tmpdir(), 'bash-guard-npm-'));
+  const arbol = (nombre) => {
+    const dir = join(base, nombre);
+    mkdirSync(join(dir, 'projects', 'supervisor'), { recursive: true });
+    writeFileSync(join(dir, '.git'), 'gitdir: x\n');
+    writeFileSync(join(dir, 'falso-npm.mjs'), FALSO_NPM);
+    return dir;
+  };
+  const [conNpm, conEspera, vacio] = ['npm', 'espera', 'vacio'].map(arbol);
+  const lanza = (cmd, args, opciones) => spawn(cmd, args, { ...opciones, stdio: ['ignore', 'pipe', 'ignore'] });
+  const hijos = [
+    // Lanzado desde una subcarpeta (medido): el `npm` se queda en ella, no sube a la raíz.
+    lanza(process.execPath, [join(conNpm, 'falso-npm.mjs')], { cwd: join(conNpm, 'projects', 'supervisor') }),
+    lanza('/bin/sh', ['-c', ESPERA_QUE_NOMBRA_NPM], { cwd: conEspera }),
+  ];
+  try {
+    await Promise.all(hijos.map((h) => new Promise((listo, fallo) => (h.stdout.once('data', listo), h.once('error', fallo)))));
+    const decide = (cwd) => evaluar('npm run build:supervisor', { ...verde, cwd, listarPreflights: undefined });
+    const r = decide(conNpm);
+    assert.equal(r.decision, 'deny', 'el `npm run preflight` de este árbol');
+    assert.match(r.reason, new RegExp(`pid ${hijos[0].pid}\\b`), 'y el pid es el del `npm`');
+    assert.equal(decide(join(conNpm, 'projects', 'supervisor')).decision, 'deny', 'desde la subcarpeta donde vive');
+    assert.equal(decide(conEspera).decision, 'allow', 'un shell que solo nombra `npm run preflight`');
+    assert.equal(decide(vacio).decision, 'allow', 'un árbol sin preflight');
+  } finally {
+    for (const h of hijos) h.kill();
+    rmSync(base, { recursive: true, force: true });
+  }
+});
 
 test('#5 con procesos de verdad: cuenta el `node` del preflight por su cwd, no el shell que lo nombra', { timeout: 30_000 }, async (t) => {
   if (spawnSync('pgrep', ['-f', 'x^']).error) return t.skip('sin `pgrep` en esta máquina');
