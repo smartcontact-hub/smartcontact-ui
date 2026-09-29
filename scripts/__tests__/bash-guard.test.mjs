@@ -127,6 +127,164 @@ test('#12 secretos: volcar config con credenciales → deny; proyectar claves �
   allow('cat package.json');
 });
 
+// Medido el 2026-09-28 en macOS con un proceso de usar y tirar que fija `process.title` y lleva una
+// variable ficticia: `pgrep -l -f` sacaba su ENTORNO detrás del título (en un `ng serve` real, con un
+// token de sesión), `ps` no, pero su columna de comando enseña los argumentos de todos, y un proceso
+// auxiliar de la máquina lleva un `--token` en los suyos. La plataforma se inyecta porque `-a` y `-l`
+// cambian de sentido entre macOS y Linux.
+test('#12 procesos: la línea de comandos entera a pantalla → deny; PIDs, ejecutable, contar o sc:ok → allow', () => {
+  const mac = { ...verde, plataforma: 'darwin' };
+  const linux = { ...verde, plataforma: 'linux' };
+  // ROJO: el comando que imprimió el entorno, y sus variantes.
+  deny('pgrep -fl "ng serve"', mac, /LEARNINGS #12/);
+  deny('pgrep -lf ng', mac, /ENTORNO/);
+  deny('pgrep -f -l "ng serve" | head -5', mac, /LEARNINGS #12/);
+  deny("pgrep -ilf 'ng serve' | grep 4413", mac, /LEARNINGS #12/); // grep a secas deja pasar la línea entera
+  deny('pgrep -lf ng 2>/dev/null', mac, /LEARNINGS #12/); // tira los errores, no la lista
+  // En Linux, `-a` es `--list-full`.
+  deny('pgrep -af "ng serve"', linux, /LEARNINGS #12/);
+  deny('pgrep -a -f ng', linux, /LEARNINGS #12/);
+  deny('pgrep --list-full node', linux, /LEARNINGS #12/);
+  // `ps` con la columna de comando: pedida, o la que traen las columnas por defecto.
+  deny('ps aux | grep "[n]g serve"', mac, /LEARNINGS #12/);
+  deny('ps -ef | grep node', linux, /LEARNINGS #12/);
+  deny('ps -o pid=,command= -p 89041', mac, /LEARNINGS #12/);
+  deny('ps -eo pid,args | grep ng', linux, /LEARNINGS #12/);
+  deny('ps axo pid,command', mac, /LEARNINGS #12/);
+  deny('ps -p 89041', mac, /LEARNINGS #12/); // en macOS la columna por defecto es el comando CON argumentos
+  deny('ps -O rss -p 89041', mac, /LEARNINGS #12/); // -O suma columnas a las de por defecto
+  deny('pgrep -f ng | xargs ps -o command= -p', mac, /LEARNINGS #12/);
+  deny('for p in $(pgrep -f ng); do ps -o args= -p $p; done', mac, /LEARNINGS #12/);
+  deny('ps aux > procesos.txt', mac, /LEARNINGS #12/); // un fichero lo imprime el siguiente `cat`, y el repo es público
+  // El motivo enseña la forma que sí sirve.
+  deny('pgrep -fl ng', mac, /ps -o pid=,ppid=,comm=/);
+  deny('ps aux', mac, /sin `-l` ni `-a`/);
+
+  // VERDE: solo PIDs, solo el ejecutable, o la lista reducida a un número o a un sí/no.
+  allow('pgrep -f "ng serve"', mac);
+  allow('pgrep -f "ng serve"', linux);
+  allow('pgrep -l node', mac); // -l sin -f: el PID y el nombre del ejecutable
+  allow('pgrep -af "ng serve"', mac); // en macOS -a solo suma los ancestros: siguen siendo PIDs
+  allow('pgrep -lf "ng serve"', linux); // en Linux -l es el nombre, con -f o sin él
+  allow("pgrep -f 'node -l -a'", mac); // eso es el patrón, no opciones
+  allow('ps -o pid=,ppid=,comm=', mac);
+  allow('ps -p 89041 -o pid=,etime=,comm=', mac);
+  allow('ps -o pid= -o comm= -p 89041', linux);
+  allow('ps -p 89041', linux); // en Linux la columna por defecto es el nombre
+  allow('ps -c -p 89041', mac); // -c: solo el ejecutable
+  allow('pgrep -fl "ng serve" | wc -l', mac);
+  allow('ps aux | grep -c node', mac);
+  allow('ps aux | grep node | wc -l', mac);
+  allow('pgrep -fl ng >/dev/null && echo vivo', mac);
+  allow('ps -p 89041 > /dev/null 2>&1 || echo muerto', mac);
+  allow('pgrep -f ng | xargs ps -o pid=,comm= -p', mac);
+  allow('pgrep -fl "ng serve" # sc:ok', mac);
+  // Vecinos que nombran `ps` o `pgrep` sin ejecutarlos, o que miran otra cosa.
+  allow('man ps', mac);
+  allow('echo "ps aux" > nota.txt', mac);
+  allow("cat > nota.md <<'EOF'\npgrep -fl ng\nEOF", mac);
+  allow('pkill -f "ng serve"', mac);
+  allow('lsof -nP -iTCP -sTCP:LISTEN', mac);
+});
+
+// Medido el 2026-09-28 con un recuento que no imprime ningún valor (`printenv | grep -c
+// '^CLAUDE_CODE_MESSAGING_TOKEN='` dio 1): el entorno de la herramienta Bash lleva un token de sesión,
+// así que volcar el entorno ENTERO lo imprime en el transcript. En Linux (sesiones cloud),
+// `/proc/<pid>/environ` es ese mismo entorno. Los volcados de bash y zsh se midieron con
+// `env -i SC_FAKE_SECRET=xyz`. Las aserciones buscan la frase de ESTA regla: `#12` también es la de
+// los ficheros de config y la de los procesos, y un rojo de otra no prueba nada de esta.
+test('#12 entorno: el entorno entero a pantalla → deny; lanzar con env, una variable con nombre, solo nombres, contar o sc:ok → allow', () => {
+  const ENTORNO = /LEARNINGS #12 — «.+» vuelca el entorno ENTERO/;
+  // ROJO: los volcados de bash y zsh, con o sin ruta y detrás de lo que lanza otro comando.
+  deny('env', verde, ENTORNO);
+  deny('printenv', verde, ENTORNO);
+  deny('export -p', verde, ENTORNO);
+  deny('export', verde, ENTORNO);
+  deny('declare -x', verde, ENTORNO);
+  deny('declare -p', verde, ENTORNO);
+  deny('typeset -x', verde, ENTORNO);
+  deny('typeset', verde, ENTORNO);
+  deny('set', verde, ENTORNO);
+  deny('/usr/bin/env', verde, ENTORNO);
+  deny('sudo env', verde, ENTORNO);
+  deny('cd /tmp && env', verde, ENTORNO);
+  deny('(cd /tmp && printenv)', verde, ENTORNO);
+  deny('env -0', verde, ENTORNO);
+  deny('env -u CLAUDE_CODE_MESSAGING_TOKEN', verde, ENTORNO); // quitar una no protege las demás
+  // Un filtro que deja pasar la línea entera, o un trozo del valor, sigue imprimiéndolo. Los dos
+  // primeros son reales: salieron al pasar por el hook los comandos de las sesiones anteriores.
+  deny('env | grep -i cloudflare', verde, ENTORNO);
+  deny('env | grep -i "^GIT" || echo "(sin variables GIT)"', verde, ENTORNO);
+  deny('env | grep TOKEN', verde, ENTORNO);
+  deny('printenv | sort | head -20', verde, ENTORNO);
+  deny('set | grep -i token', verde, ENTORNO);
+  deny('env | cut -d= -f2', verde, ENTORNO); // el campo 2 es el valor
+  deny('env | cut -c1-40', verde, ENTORNO);
+  deny("env | sed 's/=.*/=&/'", verde, ENTORNO); // `&` devuelve lo casado: el valor entero
+  deny('env 2>/dev/null', verde, ENTORNO); // tira los errores, no la lista
+  deny('env > entorno.txt', verde, ENTORNO); // un fichero lo imprime el siguiente `cat`, y el repo es público
+  // `env` que lanza un volcado le pasa el entorno entero; `sh -c` lleva el comando dentro.
+  deny('env FOO=1 printenv', verde, ENTORNO);
+  deny("bash -c 'env | grep TOKEN'", verde, ENTORNO);
+  deny("zsh -lc 'printenv'", verde, ENTORNO);
+  // Linux: el entorno de un proceso, leído de /proc.
+  deny('cat /proc/*/environ', verde, ENTORNO);
+  deny("tr '\\0' '\\n' < /proc/1234/environ", verde, ENTORNO);
+  deny('strings /proc/self/environ | grep KEY', verde, ENTORNO);
+  // El motivo enseña las proyecciones que sí sirven.
+  deny('env', verde, /printenv HOME/);
+  deny('printenv', verde, /env \| cut -d= -f1/);
+  deny('set', verde, /printenv \| grep -c/);
+
+  // VERDE: `env` como lanzador de otro programa.
+  allow('env VAR=x cmd');
+  allow('env -i PATH=/usr/bin:/bin node scripts/x.mjs');
+  allow('env NODE_OPTIONS=--max-old-space-size=4096 npx ng build');
+  allow('env -u NODE_OPTIONS node scripts/x.mjs');
+  // Con el entorno vaciado (`-i`) solo sale lo que ya va escrito en la línea: así se prueba con valores falsos.
+  allow("env -i SC_FAKE_SECRET=xyz sh -c 'env'");
+  allow('env -i SC_FAKE_SECRET=xyz /usr/bin/env');
+  // Una variable por su nombre, solo los nombres, o un número.
+  allow('printenv HOME');
+  allow('printenv HOME PATH');
+  allow('echo $HOME');
+  allow('env | cut -d= -f1');
+  allow('env | cut -f1 -d= | sort');
+  allow("env | awk -F= '{print $1}'");
+  allow("env | sed 's/=.*//'");
+  allow('env | grep TOKEN | cut -d= -f1');
+  // Enmascarar también vale: así miraban el entorno dos sesiones anteriores, y la primera versión de
+  // la regla las denegaba.
+  allow("env | grep -iE 'cloudflare|^CF_' | sed 's/=.*/=<set>/' || echo \"ninguna\"");
+  allow('env | grep -iE "CLOUDFLARE|CF_API|WRANGLER" | sed -E \'s/=.*/=<set>/\' 2>&1');
+  allow('env | wc -l');
+  allow('printenv | grep -c CLAUDE_CODE_MESSAGING_TOKEN');
+  allow('env | grep -q TOKEN && echo hay');
+  allow('env > /dev/null 2>&1');
+  allow("tr '\\0' '\\n' < /proc/1/environ | cut -d= -f1");
+  // Asignar, pedir una con nombre o fijar opciones del shell no vuelca nada.
+  allow('export FOO=bar');
+  allow('export PATH=/opt/node/bin:$PATH; npm run lint');
+  allow('export -p FOO');
+  allow('declare -x FOO=1');
+  allow('declare -p FOO');
+  allow('declare -f');
+  allow('typeset -x FOO=1');
+  allow('set -o pipefail');
+  allow('set -e');
+  allow('set -- a b');
+  allow('env # sc:ok');
+  // Vecinos que nombran el entorno sin volcarlo.
+  allow("cat > nota.md <<'EOF'\nenv | grep TOKEN\nprintenv\nEOF");
+  allow('grep -rn "printenv" scripts/');
+  allow('grep -rn "/proc/self/environ" scripts/');
+  allow('ls -la /proc/1/environ');
+  allow('npm run env');
+  allow('which env');
+  allow('man printenv');
+  allow('compgen -e');
+});
+
 test('#12 base de diff: `main...rama` → deny; `main..rama` → allow', () => {
   deny('git diff main...feat/x --stat', verde, /base de fusión/);
   deny('git diff origin/main...HEAD', verde, /base de fusión/);
@@ -369,6 +527,7 @@ test('#5 espera con `pgrep -f` sin anclar → deny, y el motivo enseña a anclar
   assert.match(r.reason, /pgrep -f "\^node scripts\/preflight-scope\.mjs"/, 'el motivo tiene que dar la forma ANCLADA');
   assert.doesNotMatch(r.reason, /pgrep -f "node /, 'ni recomendar la forma sin anclar, que era una de estas esperas');
   assert.doesNotMatch(r.reason, /grep -v \$\$/, 'ni `grep -v $$`: quita tu shell, no el de la espera hermana');
+  assert.doesNotMatch(r.reason, /pgrep -(fl|lf)\b/, 'ni `pgrep -fl`, que la regla #12 de procesos deniega en macOS');
   // El comando de ese día, tal cual lo daba el motivo del hook.
   deny(`until ! pgrep -f "node scripts/${PATRON_ESPERA}.mjs" >/dev/null; do sleep 15; done; echo listo`, verde, /SIN ANCLAR/);
   // `-f` dentro de un racimo de flags, y el `pgrep` en el cuerpo del bucle en vez de en la condición.
@@ -386,7 +545,7 @@ test('#5 y sus vecinos legítimos pasan: ancla, `-x`, `pgrep` suelto, texto que 
   allow('pgrep -f "node scripts/x.mjs"');
   allow(`pgrep -f ${PATRON_ESPERA} && echo ${PATRON_ESPERA}`);
   // Mirar qué casa ANTES del bucle es lo que pide el motivo: ese `pgrep` no espera a nada.
-  allow('pgrep -fl "node scripts/x.mjs"; until ! pgrep -f "^node scripts/x.mjs"; do sleep 5; done');
+  allow('pgrep -f "^node scripts/x.mjs"; until ! pgrep -f "^node scripts/x.mjs"; do sleep 5; done');
   // Buscar la frase no es ejecutarla.
   allow(`grep -rn 'until ! pgrep -f "node scripts' docs/`);
   // Un patrón en una variable no se lee desde aquí: no se opina.
