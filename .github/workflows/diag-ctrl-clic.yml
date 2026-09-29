@@ -13,11 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { variante: ctrl-a, gesto: ctrl, traza: retain-on-failure }
-          - { variante: ctrl-b, gesto: ctrl, traza: retain-on-failure }
-          - { variante: ctrl-sin-traza, gesto: ctrl, traza: 'off' }
-          - { variante: mayus, gesto: shift, traza: retain-on-failure }
-          - { variante: central, gesto: middle, traza: retain-on-failure }
+          - { variante: vieja-a, traza: retain-on-failure }
+          - { variante: vieja-b, traza: retain-on-failure }
+          - { variante: vieja-c, traza: retain-on-failure }
+          - { variante: vieja-sin-traza, traza: 'off' }
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -29,14 +28,12 @@ jobs:
       - run: |
           sudo rm -f /etc/apt/sources.list.d/google-chrome.list
           npx playwright install --with-deps chromium
-      - name: gesto
+      - name: prueba vieja
         run: |
-          f=e2e/supervisor/indice-enlaces.spec.ts
-          case "${{ matrix.gesto }}" in
-            shift)  sed -i "s/click({ modifiers: \['ControlOrMeta'\] })/click({ modifiers: ['Shift'] })/" $f ;;
-            middle) sed -i "s/click({ modifiers: \['ControlOrMeta'\] })/click({ button: 'middle' })/" $f ;;
-          esac
-          grep -n "fila(page, 'Agentes').click" $f
+          # La prueba tal como estaba en el commit del fallo (d2b0bb62): espera la pestaña con `context.waitForEvent('page')`.
+          git fetch --depth=1 origin d2b0bb62f8c0315fe431d711afd0a6368990f34e
+          git show d2b0bb62f8c0315fe431d711afd0a6368990f34e:e2e/supervisor/indice-enlaces.spec.ts > e2e/supervisor/indice-enlaces.spec.ts
+          grep -n "waitForEvent('page')" e2e/supervisor/indice-enlaces.spec.ts
       - name: repetir
         env:
           DEBUG: pw:protocol
