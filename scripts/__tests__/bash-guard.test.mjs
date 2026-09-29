@@ -430,6 +430,7 @@ test('#5 espera con `pgrep -f` sin anclar → deny, y el motivo enseña a anclar
   assert.match(r.reason, /pgrep -f "\^node scripts\/preflight-scope\.mjs"/, 'el motivo tiene que dar la forma ANCLADA');
   assert.doesNotMatch(r.reason, /pgrep -f "node /, 'ni recomendar la forma sin anclar, que era una de estas esperas');
   assert.doesNotMatch(r.reason, /grep -v \$\$/, 'ni `grep -v $$`: quita tu shell, no el de la espera hermana');
+  assert.doesNotMatch(r.reason, /pgrep -(fl|lf)\b/, 'ni `pgrep -fl`, que la regla #12 de procesos deniega en macOS');
   // El comando de ese día, tal cual lo daba el motivo del hook.
   deny(`until ! pgrep -f "node scripts/${PATRON_ESPERA}.mjs" >/dev/null; do sleep 15; done; echo listo`, verde, /SIN ANCLAR/);
   // `-f` dentro de un racimo de flags, y el `pgrep` en el cuerpo del bucle en vez de en la condición.
@@ -447,7 +448,7 @@ test('#5 y sus vecinos legítimos pasan: ancla, `-x`, `pgrep` suelto, texto que 
   allow('pgrep -f "node scripts/x.mjs"');
   allow(`pgrep -f ${PATRON_ESPERA} && echo ${PATRON_ESPERA}`);
   // Mirar qué casa ANTES del bucle es lo que pide el motivo: ese `pgrep` no espera a nada.
-  allow('pgrep -fl "node scripts/x.mjs"; until ! pgrep -f "^node scripts/x.mjs"; do sleep 5; done');
+  allow('pgrep -f "^node scripts/x.mjs"; until ! pgrep -f "^node scripts/x.mjs"; do sleep 5; done');
   // Buscar la frase no es ejecutarla.
   allow(`grep -rn 'until ! pgrep -f "node scripts' docs/`);
   // Un patrón en una variable no se lee desde aquí: no se opina.

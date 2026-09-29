@@ -883,7 +883,8 @@ function evaluarBase(cmd, ctx = {}) {
         'macOS, dos esperas a la vez se ven la una a la otra. La condición no se cumple nunca y el síntoma es «la otra sesión ' +
         'no acaba» (2026-09-12: tres esperas muertas; 2026-09-28: dos vivas tras morir su preflight). Ancla el patrón al ' +
         'principio del PROCESO, con su ejecutable: `pgrep -f "^node scripts/preflight-scope.mjs"` (la línea de un shell ' +
-        'empieza por `/bin/zsh`). Y antes de fiarte, `pgrep -fl` con el patrón anclado mientras el proceso vive: un ancla que ' +
+        'empieza por `/bin/zsh`). Y antes de fiarte, `pgrep -f` con el patrón anclado mientras el proceso vive (solo PIDs: ' +
+        'con `-l`, en macOS, saca la línea entera y con ella el entorno): un ancla que ' +
         'no casa con nada sale del bucle al instante, que es el fallo contrario. Si de verdad lo quieres sin anclar, añade `# sc:ok`.',
     };
 
