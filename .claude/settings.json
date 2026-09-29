@@ -47,6 +47,11 @@
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/cloud-node.sh",
             "timeout": 300
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/cloud-identity.mjs",
+            "timeout": 10
           }
         ]
       }
