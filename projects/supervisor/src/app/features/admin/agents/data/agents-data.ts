@@ -68,7 +68,9 @@ export interface AgentPermissions {
   readonly recording: boolean;
 }
 
-export const DEFAULT_AGENT_PERMISSIONS: AgentPermissions = {
+/** La base de los permisos de los agentes de EJEMPLO. Uno nuevo nace con lo de Contact Center › Agentes
+ *  (`AgentDefaultsStore`), y de fábrica con `FACTORY_AGENT_DEFAULTS` (DD-135). */
+export const SEED_AGENT_PERMISSIONS: AgentPermissions = {
   manageDevices: false,
   selfActivate: false,
   externalDevices: false,
@@ -83,6 +85,52 @@ export const DEFAULT_AGENT_PERMISSIONS: AgentPermissions = {
   transfersDestInternational: false,
   transfersDestSpecial: false,
   recording: false,
+};
+
+/** Las filas de la matriz de permisos: a qué numeración llama o transfiere el agente. */
+export type DestinoKey = 'fijos' | 'moviles' | 'internacionales' | 'especial';
+/** Sus columnas. */
+export type DestinoCol = 'llamada' | 'transferencia';
+
+export const DESTINO_KEYS: readonly DestinoKey[] = ['fijos', 'moviles', 'internacionales', 'especial'];
+
+/** Cada casilla de la matriz (destino × llamada o transferencia) es una clave de `AgentPermissions`. La misma matriz
+ *  en la ficha de agente y en Contact Center › Agentes. */
+export const PERMISSION_MATRIX_KEYS: Readonly<Record<DestinoKey, Record<DestinoCol, keyof AgentPermissions>>> = {
+  fijos: { llamada: 'callsDestFixed', transferencia: 'transfersDestFixed' },
+  moviles: { llamada: 'callsDestMobile', transferencia: 'transfersDestMobile' },
+  internacionales: { llamada: 'callsDestInternational', transferencia: 'transfersDestInternational' },
+  especial: { llamada: 'callsDestSpecial', transferencia: 'transfersDestSpecial' },
+};
+
+/** Con lo que nace un agente nuevo, y lo que fija Contact Center › Agentes (DD-135): sus permisos y la URL de su
+ *  iframe. Lo demás (nombre, extensión, grupos…) es de cada agente. */
+export interface AgentDefaults {
+  readonly permissions: AgentPermissions;
+  readonly iframeUrl: string;
+}
+
+/** De fábrica, los parámetros por defecto del documento de producto de usuarios y grupos: llamadas y transferencias a
+ *  todo menos la numeración especial, gestión de dispositivos, activación por grupo y dispositivos externos. La
+ *  grabación, apagada: el documento no la cuenta entre ellos. */
+export const FACTORY_AGENT_DEFAULTS: AgentDefaults = {
+  permissions: {
+    manageDevices: true,
+    selfActivate: true,
+    externalDevices: true,
+    callsEnabled: true,
+    transfersEnabled: true,
+    callsDestFixed: true,
+    callsDestMobile: true,
+    callsDestInternational: true,
+    callsDestSpecial: false,
+    transfersDestFixed: true,
+    transfersDestMobile: true,
+    transfersDestInternational: true,
+    transfersDestSpecial: false,
+    recording: false,
+  },
+  iframeUrl: '',
 };
 
 /**
@@ -166,7 +214,7 @@ export const AVAILABLE_EXTENSIONS: readonly ExtensionOption[] = [
   { number: '140', type: 'webrtc' },
 ];
 
-const DP = DEFAULT_AGENT_PERMISSIONS;
+const DP = SEED_AGENT_PERMISSIONS;
 
 const BASE_AGENTS: readonly Agent[] = [
   {

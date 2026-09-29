@@ -4,9 +4,12 @@ import { createVersionedStorage } from '@core/services/local-store.factory';
 import { FACTORY_GROUP_DEFAULTS, GroupDefaults, queueFrom } from '../data/groups-data';
 
 /**
- * Los valores con los que nace un grupo. Los escribe Valores por defecto de Grupos (`/admin/grupos/valores-por-defecto`)
- * y los lee la ficha de grupo en su modo alta, así que las dos pantallas hablan de lo mismo con las mismas palabras. Un
- * solo objeto, guardado como lista de uno para reutilizar la persistencia versionada.
+ * Los valores con los que nace un grupo. Los escribe Contact Center › Grupos (`/config/aed/grupos`, DD-135) y los lee
+ * la ficha de grupo en su modo alta, así que las dos pantallas hablan de lo mismo con las mismas palabras. Un solo
+ * objeto, guardado como lista de uno para reutilizar la persistencia versionada.
+ *
+ * Misma clave y misma versión que cuando los escribía la página de valores por defecto del listado de grupos: lo que
+ * alguien guardó allí sigue valiendo aquí.
  */
 @Injectable({ providedIn: 'root' })
 export class GroupDefaultsStore {

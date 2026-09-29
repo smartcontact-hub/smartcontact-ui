@@ -180,12 +180,3 @@ test('las tres fichas comparten molde: título, índice, contenido y resumen en 
   expect(usuario, JSON.stringify(medidas)).toEqual(grupo);
   expect(agente, JSON.stringify(medidas)).toEqual(grupo);
 });
-
-test('valores por defecto va sin caja, con su título como h1 visible', async ({ page }) => {
-  await goto(page, 'admin/grupos/valores-por-defecto');
-  await expect(page.locator('sc-section-card')).toHaveCount(0);
-  const h1 = page.locator('h1');
-  await expect(h1).toHaveCount(1);
-  await expect(h1).toBeVisible();
-  await expect(h1).toHaveText('Valores por defecto');
-});

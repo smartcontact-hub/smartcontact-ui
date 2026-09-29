@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
+import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
  * LA FICHA DE GRUPO QUE PIDE LA VISIÓN DE PRODUCTO (2026-09-25, DD-121), escrita como la matriz de
@@ -182,44 +182,4 @@ test('cada canal guarda su cola: tocar la de Chat no mueve la de Teléfono', asy
   await irA(page, 'Distribución y colas');
   await expect(page.locator('#group-chat-max-wait')).toHaveValue(/^45/);
   await expect(page.locator('#group-phone-max-wait')).toHaveValue(/^99/);
-});
-
-/* Valores por defecto de Grupos habla como la ficha (DD-121): lo que fija POR CANAL es con lo que nace un grupo
- * nuevo, que abre en su propia ficha. Hasta el 2026-09-26 la página tenía una sola cola y ni estrategia ni cierre
- * por inactividad de Chat: el alta los sacaba de valores clavados en el código. */
-test('valores por defecto fija cada canal por separado, y un grupo nuevo nace con ellos', async ({ page }) => {
-  await goto(page, 'admin/grupos/valores-por-defecto');
-  await pickSelectOption(page, page.locator('#grupos-chat-strategy'), 'Menos chats activos');
-  const esperaChat = page.locator('#grupos-chat-max-wait');
-  await esperaChat.fill('90');
-  await esperaChat.press('Tab');
-  await page.locator('#grupos-chat-inactivity-on').click();
-  await page.getByRole('button', { name: 'Guardar' }).click();
-  await expect(page.getByText('Valores por defecto guardados')).toBeVisible();
-
-  await goto(page, 'admin/grupos/crear');
-  await page.locator('#group-name').fill(`E2E Por defecto ${Date.now()}`);
-  await canal(page, 'Chat').click();
-  await page.getByRole('button', { name: 'Siguiente' }).click();
-  await expect(page.locator('#group-chat-strategy')).toHaveText('Menos chats activos');
-  await expect(page.locator('#group-chat-max-wait')).toHaveValue(/^90/);
-  await expect(page.locator('#group-phone-max-wait')).toHaveValue(/^120/);
-  await expect(page.locator('#group-chat-inactivity')).toBeVisible();
-});
-
-test('unos valores por defecto guardados con la cola única de antes la ponen en Teléfono y en Chat', async ({ page }) => {
-  await page.addInitScript(() => {
-    localStorage.setItem('sc-group-defaults-v', '1');
-    localStorage.setItem(
-      'sc-group-defaults',
-      JSON.stringify([{ strategy: 'Balanceada', priority: 'Media', voice: 'Femenina · español', advanced: { maxQueueWaitSec: 99, queueSize: 7 } }]),
-    );
-  });
-  await goto(page, 'admin/grupos/valores-por-defecto');
-  for (const c of ['phone', 'chat']) {
-    await expect(page.locator(`#grupos-${c}-max-wait`), c).toHaveValue(/^99/);
-    await expect(page.locator(`#grupos-${c}-queue-size`), c).toHaveValue(/^7/);
-  }
-  // Leer lo de antes con la forma nueva no es un cambio.
-  await expect(page.getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });

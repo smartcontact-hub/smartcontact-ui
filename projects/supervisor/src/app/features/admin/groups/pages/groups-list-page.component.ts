@@ -449,10 +449,6 @@ export class GroupsListPageComponent {
     this.agentsPanelGroup.set(null);
   }
 
-  protected onDefaultsClick(): void {
-    void this.router.navigateByUrl('/admin/grupos/valores-por-defecto');
-  }
-
   /** El diálogo de duplicar: `duplicateSource` es el original (el alta es la ficha, DD-121 §11). */
   protected readonly duplicateOpen = signal(false);
   protected readonly duplicateSource = signal<Group | null>(null);

@@ -1,8 +1,7 @@
 /*
- * Agentes page — Figma Supervisor 393:12562 (Contact Center · Agentes).
- * Matriz de comunicaciones (filas × Transferencias / Permisos) + toggles
- * de configuración + card de URL embebida. Primitivas compartidas en
- * aed-defaults-page.component.scss.
+ * Contact Center › Agentes (DD-135). La matriz de permisos de la ficha de agente
+ * (destinos × Llamadas / Transferencias), su Configuración y su Integración.
+ * Primitivas compartidas en aed-defaults-page.component.scss.
  *
  * La TIPOGRAFÍA de esta tabla ya no vive aquí: la ponen las clases
  * `.sc-text-*` en la plantilla (los 12 text styles del Figma del DS). El

@@ -13,6 +13,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   3. La ayuda de un `sc-select` se anuncia con el campo: va en el elemento que recibe el foco, no en su envoltura.
  *   4. La ficha de grupo no tiene ⓘ: las cuatro pasaron a su ayuda visible o salieron porque repetían el rótulo.
  *   5. Los desplegables del DS hablan el idioma de la app: «No results», no «Sin resultados», en inglés.
+ *   6. El tiempo máximo de espera en cola dice qué pasa al agotarse (DD-135): el grupo es un nodo del VUI y la salida
+ *      la elige quien lo diseña. El mismo texto en Teléfono, en Chat y en Contact Center.
  *
  * Storage limpio por test → cada store de admin re-siembra su seed.
  */
@@ -82,4 +84,23 @@ test('los desplegables del DS hablan el idioma de la app: en inglés, «No resul
   await expect(filtro).toHaveAttribute('placeholder', 'Search');
   await filtro.fill('zzzz');
   await expect(page.locator('.p-multiselect-overlay .p-multiselect-empty-message')).toHaveText('No results');
+});
+
+test('el tiempo máximo de espera en cola dice qué pasa al agotarse, en los dos canales y en Contact Center', async ({ page }) => {
+  const AYUDA =
+    'Si nadie la atiende en este tiempo, la conversación sale del grupo y pasa al siguiente destino, que se elige en el VUI Designer.';
+  // El campo se describe con su sufijo delante («s Si nadie…»): se casa el final, que es la ayuda.
+  const anunciada = new RegExp(`${AYUDA.replaceAll('.', '\\.')}$`);
+  // Grupo 1: solo Teléfono. Grupo 11: también Chat.
+  await goto(page, 'admin/grupos/editar/1?seccion=distribucion');
+  await expect(page.locator('#group-phone-max-wait')).toHaveAccessibleDescription(anunciada);
+  await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
+  await expect(page.locator('#group-chat-max-wait')).toHaveAccessibleDescription(anunciada);
+
+  // En la lista de ajustes de Contact Center la ayuda va en la fila, bajo el nombre.
+  await goto(page, 'config/aed/grupos');
+  for (const c of ['phone', 'chat']) {
+    const fila = page.locator('.setting-row').filter({ has: page.locator(`#grupos-${c}-max-wait`) });
+    await expect(fila, c).toContainText(AYUDA);
+  }
 });

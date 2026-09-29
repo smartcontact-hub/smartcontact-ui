@@ -11,7 +11,39 @@
 > se mueve bajo un worktree local) ya vive en LEARNINGS #21. El del 2026-09-24 (el alta de grupo rima con
 > Identidad, DD-119) sale por el mismo tope: `git show 16ff7930:docs/handoff/supervisor-fichas.md`. Y el de las
 tablas tras la revisión del equipo (2026-09-24, cinco PRs): `git show 197c5579:docs/handoff/supervisor-fichas.md`;
-sus dos trampas suben a «Trampas del frente».
+sus dos trampas suben a «Trampas del frente». El de la visión de producto de grupos (2026-09-26, DD-121) sale por el
+mismo tope: `git show f63d13aa:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
+Contact Center suben a «Trampas del frente».
+
+## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135)
+
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `f63d13aa`, PR por abrir.**
+
+**Qué pasó.** Producto respondió al cierre del 2026-09-28:
+- los valores de fábrica son los del documento de producto de usuarios y grupos;
+- la página de valores por defecto del listado de grupos se quita, y se fijan en Contact Center;
+- Contact Center es el superadmin y lo contiene todo: sin guardas de acceso, producto recorta qué ve cada rol;
+- Tipificaciones va con la supervisión;
+- la cola agotada sigue por el VUI: el grupo es un nodo AED del árbol, y quien diseña el VUI elige la salida.
+
+**Qué cambia** (el detalle y lo descartado, en DD-135):
+- Contact Center › Grupos es la página que vivía junto al listado, dentro de su tarjeta; › Agentes, la matriz, la
+  Configuración y la Integración de la ficha de agente. Las dos guardan y las altas lo leen (`GroupDefaultsStore`, y
+  `AgentDefaultsStore`, nuevo).
+- De fábrica: 10 · 15 · 60 s, administrativo 5 s, Baja, Balanceada en Teléfono y en Chat, y desbordar encendido; el
+  agente, todo menos la numeración especial, con sus tres interruptores encendidos.
+- `/admin/grupos/valores-por-defecto` redirige a Contact Center › Grupos, y el listado pierde su botón.
+- «Tiempo máximo de espera en cola» dice qué pasa al agotarse, en la ficha y en Contact Center.
+- `cloud-identity.test.mjs` deja de depender de no ser root: un `.git/config.lock` en vez de `chmod`.
+
+**Medido:** `contact-center-valores.spec.ts`, seis de seis en rojo contra el código anterior; la prueba nueva de
+`ayudas-campos`, en rojo sin la ayuda de la ficha y, aparte, sin la de Contact Center.
+
+**Trampas del tramo:**
+- ⚠️ Un `sc-inputnumber` con sufijo se describe con el sufijo delante: la espera en cola se anuncia «s Si nadie…».
+  Casa el final de la descripción, no el texto exacto.
+- ⚠️ En la nube se corre como root, y `chmod` no le quita la escritura. Para simular que la config de git no se puede
+  escribir, un `.git/config.lock` ajeno.
 
 ## ✅ 2026-09-28 · Panel rápido compacto (DD-131), qué trae cada tipo de usuario (DD-132) y las ayudas (DD-133)
 
@@ -218,64 +250,18 @@ usuario con `p-tabs`.
 - ⚠️ La ficha de usuario ya tenía un `sectionTree` (el árbol de Acceso): el ayudante de enlaces se llama
   `sectionUrl` en las cuatro páginas.
 
-## ✅ 2026-09-26 · La ficha de grupo sigue la visión de producto: índice lateral, canal por canal, panel rápido y alta en la ficha (DD-121)
-
-> **Sello: rama `areses/sweet-fermat-r9cxzw`, PR #255, un commit por bloque.** El tramo del 2026-09-16 (la ficha que
-> seguía a Voice, rama `comparar/fichas`) sale de aquí: `git show 9e25c83:docs/handoff/supervisor-fichas.md` (y el tag
-> `archive/handoff-fichas-2026-09-16`, que apunta ahí).
-
-**Qué pasó.** Llegó la visión de producto de grupos (2026-09-25): un documento que separa lo DICHO de lo que una IA
-rellenó en una maqueta HTML y de lo inferido. Ni el documento ni la maqueta entran en el repo (es público): se citan
-como «visión de producto de grupos (2026-09-25)». Se leyó con una regla de triaje (DD-121 §1) y se construyó en nueve
-bloques con el vocabulario de la app, no con el de la maqueta.
-
-**Qué cambia** (el detalle y lo descartado, en DD-121):
-- Ficha de grupo con índice lateral (General · Distribución y colas · Recursos · Agentes), el de Contact Center, y
-  resumen en tarjetas en una columna fija a la derecha (una franja arriba por debajo de 1340). Agente y usuario siguen
-  con pestañas, a propósito.
-- Chat, madre de Web Chat y WhatsApp; distribución y cola por canal (`phoneQueue`, `chatQueue`, `chat`, aditivos, se
-  leen con `resolveGroup`); en la cola de teléfono, solo la música y la voz a la vista.
-- La tabla de agentes del grupo gestiona composición: sin «Habilitado», al menos un canal, «Quitar» con un sentido.
-- Panel rápido de agentes desde el listado y alta en la propia ficha, con General de puerta.
-- Listado con una columna por estrategia y prioridad por rango (`sc-datatable` gana `externalSort`); valores por
-  defecto por canal; la lista de agentes recorta los canales a los de su grupo.
-- `CrossTabLockService` suelta el candado en `pagehide`: la ficha de grupo ya pinta el aviso de otra pestaña.
-- Vuelta del 2026-09-27: el resumen pasa a la derecha (bajo el índice se cortaba en portátiles, ver trampas); lo que
-  no es componente lleva su `.sc-text-*` (barrido en navegador: error de canales y celdas de la lista de agentes); y
-  el índice, medido lado a lado con el de Contact Center, da las mismas cifras.
-
-**Medido:** cada prueba nueva se vio en rojo (contra el código anterior o con el arreglo saboteado) antes que en
-verde: `grupo-vision`, `ficha-grupo`, `ficha-grupo-canales`, `panel-agentes-grupo`, `listado-grupos`, y las reglas de
-`group-channels.core.mjs` con `node:test`. Contraste en los dos temas. `datatable-linux.png` de sc-docs regenerada en
-este entorno (Linux) después de comprobar que la anterior casaba aquí.
-
-**Trampas del tramo:**
-- ⚠️ `p-drawer` escucha Escape en su contenedor y llama a `hide(false)` aunque `closeOnEscape` esté apagado: quita la
-  máscara y deja el panel abierto. El panel corta Escape en su propio `(keydown)` (`(keydown.escape)` no se ejecutaba).
-- ⚠️ `p-table` reordena en el cliente por el valor crudo del campo ENCIMA del orden que recibe: el `sortFn` de una
-  página no servía en ninguna columna con campo real. Con `externalSort` (que `sc-list-page` enciende si hay
-  `sortFn`), toda columna ordenable tiene que estar en ese `sortFn`, o deja de ordenar.
-- ⚠️ El selector de columnas añade una columna nueva AL FINAL de lo guardado (solo si sale por defecto; una opcional
-  no se añade). Si su sitio importa, sube la versión de la clave. Y ninguna prueba vigilaba el recorte en las listas:
-  lo hace ahora `listado-grupos.spec.ts` a 1440 (DD-102), que cazó dos cabeceras y una etiqueta cortadas.
-- ⚠️ En una columna flex, el host de `sc-checkbox` se estiraba (271 px) y su `<label>` no (54-93): pulsar fuera del
-  rótulo no marcaba. `.checkbox-stack` lleva `align-items: flex-start`, que arregla también la ficha de usuario.
-- ⚠️ Mientras un preflight reconstruye `dist/`, el servidor de desarrollo compila en falso: mira la última
-  «Application bundle generation complete», no el primer error.
-- ⚠️ El carril de Contact Center (`.page__rail`) es fijo y NO tiene scroll: lo que se le cuelgue debajo del índice
-  se corta en un portátil y, al bajar, se lleva el índice por arriba (el resumen del grupo, bajo el índice, se cortaba
-  20 px a 1366×768 y escondía el índice 99 px a 1280×720). Por eso el resumen vive en su columna, con scroll propio;
-  `ficha-grupo.spec.ts` lo vigila a 1366×660.
-
 ## SIGUIENTE — sin preguntar
 
-0. **Lo que dejan abierto DD-132 y DD-133:**
-   - que las casillas de Acceso restrinjan de verdad (guardas de ruta y de acción);
-   - confirmar con producto que Tipificaciones va con la supervisión;
-   - qué pasa al agotarse el tiempo máximo de espera en cola (pregunta para desarrollo; sin eso, el campo va sin
-     ayuda);
+0. **Las altas, con el efecto de gradiente de meta** (plan aprobado el 2026-09-29):
+   - cada alta dice «Falta: …» hasta «Listo para crear», sin porcentaje ni barra (DD-121, DD-126);
+   - después, el Stepper vertical nativo de PrimeNG en las tres altas, que revisa el descarte de DD-121 y el de DD-130;
+     la edición sigue con el índice.
+
+   **Lo que queda abierto de DD-133 y DD-135:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
-   - los subtítulos de sección, sin revisar.
+   - los subtítulos de sección, sin revisar;
+   - las ayudas de la lista de ajustes de Contact Center no se anuncian con su control (el DS no deja pasar
+     `aria-describedby`).
 
    Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
    código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el
@@ -315,6 +301,12 @@ este entorno (Linux) después de comprobar que la anterior casaba aquí.
 - **Rafa:** revisar usuarios contra el Supervisor real.
 
 **Trampas del frente:**
+- ⚠️ `p-drawer` escucha Escape en su contenedor y llama a `hide(false)` aunque `closeOnEscape` esté apagado: quita la
+  máscara y deja el panel abierto. El panel rápido corta Escape en su propio `(keydown)`.
+- ⚠️ `p-table` reordena en el cliente por el valor crudo del campo ENCIMA del orden que recibe. Con `externalSort`
+  (que `sc-list-page` enciende si hay `sortFn`), toda columna ordenable tiene que estar en ese `sortFn`.
+- ⚠️ El carril de Contact Center (`.page__rail`) es fijo y NO tiene scroll: lo que se le cuelgue bajo el índice se corta
+  en un portátil. Por eso el resumen de las fichas vive en su columna; `ficha-grupo.spec.ts` lo vigila a 1366×660.
 - ⚠️ Pulsar un `sc-select` por el centro de su caja: con ayuda o error debajo, el centro cae en el hueco entre el
   control y el texto, y no abre nada (extensión del agente: 33 px de control, 7 de hueco y 35 de ayuda). Desde el
   2026-09-28 `pickSelectOption` pulsa el control.

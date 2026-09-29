@@ -100,7 +100,8 @@ test('cada familia de canales enseña su estrategia en su columna, y «—» don
   await mostrarColumna(page, 'Estrategia de chat');
   await expect(await celda(page, 'Solo chat E2E', 'Estrategia de teléfono')).toHaveText('—');
   await expect(await celda(page, 'Solo chat E2E', 'Teléfono')).toHaveText('—');
-  await expect(await celda(page, 'Solo chat E2E', 'Estrategia de chat')).toHaveText('Rotativa (por turnos)');
+  // Nace con la de Contact Center › Grupos, que de fábrica es Balanceada (DD-135).
+  await expect(await celda(page, 'Solo chat E2E', 'Estrategia de chat')).toHaveText('Balanceada');
 });
 
 test('cambiar en bloque la estrategia de chat escribe la de chat, y solo en los grupos con Chat', async ({ page }) => {
