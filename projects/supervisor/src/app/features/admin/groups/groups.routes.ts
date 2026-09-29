@@ -10,12 +10,10 @@ export const GROUPS_ROUTES: Routes = [
       import('./pages/groups-list-page.component').then((m) => m.GroupsListPageComponent),
   },
   {
-    /* Con qué nace un grupo nuevo. Vive con Grupos y no en Configuración del AED (decisión de producto, 2026-09-18). */
+    /* Con qué nace un grupo nuevo se fija en Contact Center › Grupos desde el 2026-09-29 (DD-135). La página que
+     * vivía aquí, junto al listado, la sustituye; su dirección sigue llevando a donde se fija ahora. */
     path: 'valores-por-defecto',
-    data: { breadcrumb: { labelKey: 'groups.defaults.breadcrumb' } },
-    loadComponent: () =>
-      import('./pages/group-defaults-page.component').then((m) => m.GroupDefaultsPageComponent),
-    canDeactivate: [formDirtyGuard],
+    redirectTo: '/config/aed/grupos',
   },
   {
     /* El alta es la MISMA ficha en modo alta (visión de producto de grupos, 2026-09-25; DD-121): durante

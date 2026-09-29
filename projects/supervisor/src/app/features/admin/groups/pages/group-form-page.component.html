@@ -739,7 +739,7 @@
 <ng-template #queueFields let-channel="channel" let-queue="queue">
   <div class="field">
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-max-wait'">{{ 'groups.form.advanced.max_queue_wait' | translate }}</label>
-    <sc-inputnumber class="field__number" [inputId]="'group-' + channel + '-max-wait'" [min]="0" suffix="s" [value]="queue.maxQueueWaitSec" (valueChange)="setQueueNumber(channel, 'maxQueueWaitSec', $event)" />
+    <sc-inputnumber class="field__number" [inputId]="'group-' + channel + '-max-wait'" [min]="0" suffix="s" [value]="queue.maxQueueWaitSec" [helperText]="'groups.form.advanced.max_queue_wait_hint' | translate" (valueChange)="setQueueNumber(channel, 'maxQueueWaitSec', $event)" />
   </div>
   <div class="field">
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-service-level'">{{ 'groups.form.advanced.service_level' | translate }}</label>

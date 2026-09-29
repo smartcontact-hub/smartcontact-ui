@@ -1633,6 +1633,7 @@
         "queue_fixed_hint": "Au plus {{count}} conversations en file.",
         "queue_per_agent_hint": "Au plus {{count}} conversations en file par agent connecté.",
         "max_queue_wait": "Temps d'attente maximal en file",
+        "max_queue_wait_hint": "Si personne ne la prend dans ce délai, la conversation quitte le groupe et passe à la destination suivante, choisie dans le VUI Designer.",
         "transfer": "Temps de transfert",
         "transfer_hint": "Temps maximal pour remettre la conversation à sa destination.",
         "service_level": "Temps du % de service",
@@ -1715,14 +1716,6 @@
         "client_card_hint": "Celle que l'agent voit en recevant un contact de ce groupe."
       },
       "create_submit": "Créer le groupe"
-    },
-    "defaults": {
-      "heading": "Valeurs par défaut",
-      "breadcrumb": "Valeurs par défaut",
-      "button": "Valeurs par défaut",
-      "hint": "Chaque nouveau groupe démarre avec ces valeurs. Elles se modifient ensuite dans sa fiche.",
-      "strategy_hint": "Niveaux, Ring All, Skills et Agent exclusif se choisissent dans la fiche de chaque groupe, où ils se configurent.",
-      "toast_saved": "Valeurs par défaut enregistrées"
     },
     "errors": {
       "name_required": "Le nom est obligatoire",
@@ -2103,29 +2096,7 @@
         },
         "agentes": {
           "heading": "Agents",
-          "comunicaciones": {
-            "title": "Communications",
-            "col_transferencias": "Transferts",
-            "col_permisos": "Permissions",
-            "row_fijos": "Fixes",
-            "row_moviles": "Mobiles",
-            "row_internacionales": "Internationaux",
-            "row_numeracionEspecial": "Numérotation spéciale",
-            "row_llamadasInternas": "Appels internes"
-          },
-          "config": {
-            "title": "Configuration",
-            "activacion_label": "Activation/Désactivation par groupe de service Contact Center",
-            "gestion_label": "Gestion des appareils de travail en WebRTC",
-            "externos_label": "Utilisation d'appareils externes"
-          },
-          "url": {
-            "title": "URL intégrée dans le poste de l'agent",
-            "url_label": "URL",
-            "url_placeholder": "URL",
-            "titulo_label": "Titre (facultatif)",
-            "titulo_placeholder": "Mon outil"
-          },
+          "hint": "Chaque nouvel agent démarre avec ces valeurs. Elles se modifient ensuite dans sa fiche.",
           "toast": {
             "saved": "Paramètres des agents enregistrés"
           },
@@ -2133,26 +2104,8 @@
         },
         "grupos": {
           "heading": "Groupes",
-          "params": {
-            "title": "Paramètres",
-            "estrategia": "Stratégie de répartition des conversations",
-            "prioridad": "Priorité du groupe",
-            "voz": "Voix",
-            "desbordar": "Débordement des conversations quand aucun agent n'est disponible",
-            "tipo_cola": "Type de file d'attente",
-            "capacidad_cola": "Nombre maximal de conversations en file",
-            "tiempo_max": "Temps d'attente maximal en file",
-            "tiempo_transfer": "Temps de transfert maximal",
-            "placeholder": "Sélectionner",
-            "input_placeholder": "Saisir",
-            "segundos": "secondes"
-          },
-          "apertura": {
-            "title": "Ouverture de la fiche",
-            "tipo_label": "Type",
-            "tamano_label": "Taille",
-            "tamano_suffix": "pixels"
-          },
+          "hint": "Chaque nouveau groupe démarre avec ces valeurs. Elles se modifient ensuite dans sa fiche.",
+          "strategy_hint": "Niveaux, Ring All, Skills et Agent exclusif se choisissent dans la fiche de chaque groupe, où ils se configurent.",
           "toast": {
             "saved": "Paramètres des groupes enregistrés"
           },

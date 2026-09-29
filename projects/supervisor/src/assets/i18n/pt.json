@@ -1633,6 +1633,7 @@
         "queue_fixed_hint": "No máximo {{count}} conversas em fila.",
         "queue_per_agent_hint": "No máximo {{count}} conversas em fila por cada agente ligado.",
         "max_queue_wait": "Tempo máximo de espera na fila",
+        "max_queue_wait_hint": "Se ninguém a atender neste tempo, a conversa sai do grupo e passa para o destino seguinte, que se escolhe no VUI Designer.",
         "transfer": "Tempo de transferência",
         "transfer_hint": "Tempo máximo para entregar a conversa ao destino.",
         "service_level": "Tempo da % de serviço",
@@ -1715,14 +1716,6 @@
         "client_card_hint": "A que o agente vê ao receber um contacto deste grupo."
       },
       "create_submit": "Criar grupo"
-    },
-    "defaults": {
-      "heading": "Valores predefinidos",
-      "breadcrumb": "Valores predefinidos",
-      "button": "Valores predefinidos",
-      "hint": "Cada grupo novo começa com estes valores. Depois mudam-se na ficha do grupo.",
-      "strategy_hint": "Níveis, Ring All, Skills e Agente exclusivo escolhem-se na ficha de cada grupo, onde se configuram.",
-      "toast_saved": "Valores predefinidos guardados"
     },
     "errors": {
       "name_required": "O nome é obrigatório",
@@ -2103,29 +2096,7 @@
         },
         "agentes": {
           "heading": "Agentes",
-          "comunicaciones": {
-            "title": "Comunicações",
-            "col_transferencias": "Transferências",
-            "col_permisos": "Permissões",
-            "row_fijos": "Fixos",
-            "row_moviles": "Móveis",
-            "row_internacionales": "Internacionais",
-            "row_numeracionEspecial": "Numeração especial",
-            "row_llamadasInternas": "Chamadas internas"
-          },
-          "config": {
-            "title": "Configuração",
-            "activacion_label": "Ativação/Desativação por grupo de serviço Contact Center",
-            "gestion_label": "Gestão de dispositivos de trabalho em WebRTC",
-            "externos_label": "Utilização de dispositivos externos"
-          },
-          "url": {
-            "title": "URL incorporado no posto do agente",
-            "url_label": "URL",
-            "url_placeholder": "URL",
-            "titulo_label": "Título (opcional)",
-            "titulo_placeholder": "A minha ferramenta"
-          },
+          "hint": "Cada agente novo começa com estes valores. Depois mudam-se na ficha do agente.",
           "toast": {
             "saved": "Parâmetros dos agentes guardados"
           },
@@ -2133,26 +2104,8 @@
         },
         "grupos": {
           "heading": "Grupos",
-          "params": {
-            "title": "Parâmetros",
-            "estrategia": "Estratégia de distribuição de conversas",
-            "prioridad": "Prioridade do grupo",
-            "voz": "Voz",
-            "desbordar": "Transbordar conversas quando não há agentes disponíveis",
-            "tipo_cola": "Tipo de fila de espera",
-            "capacidad_cola": "Máximo de conversas na fila",
-            "tiempo_max": "Tempo máximo de espera na fila",
-            "tiempo_transfer": "Tempo máximo de transferência",
-            "placeholder": "Selecionar",
-            "input_placeholder": "Escrever",
-            "segundos": "segundos"
-          },
-          "apertura": {
-            "title": "Abertura da ficha",
-            "tipo_label": "Tipo",
-            "tamano_label": "Tamanho",
-            "tamano_suffix": "píxeis"
-          },
+          "hint": "Cada grupo novo começa com estes valores. Depois mudam-se na ficha do grupo.",
+          "strategy_hint": "Níveis, Ring All, Skills e Agente exclusivo escolhem-se na ficha de cada grupo, onde se configuram.",
           "toast": {
             "saved": "Parâmetros dos grupos guardados"
           },
