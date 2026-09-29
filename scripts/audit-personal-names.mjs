@@ -87,6 +87,11 @@ export const DATO_PERMITIDO = [
     texto: "const RAMA = 'areses/",
     motivo: 'una rama como las que crea la app, con el alias como prefijo: `bash-guard` debe dejarla pasar',
   },
+  {
+    fichero: 'scripts/hooks/cloud-identity.mjs',
+    texto: "nombre: 'Rafa Areses Brackenbury'",
+    motivo: 'la identidad de git de las sesiones cloud (DD-134): el nombre de la cuenta que firma los commits, un dato de configuración',
+  },
 ];
 
 /** Líneas de un texto que nombran al autor, con su número (desde 1). */

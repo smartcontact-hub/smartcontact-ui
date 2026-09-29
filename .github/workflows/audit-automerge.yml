@@ -34,6 +34,12 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
+      # Solo el script que escribe el mensaje del squash, y de `main` (lo que corre un `workflow_run`
+      # por defecto), nunca el código del PR.
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: scripts/mensaje-squash.mjs
+          sparse-checkout-cone-mode: false
       - name: Buscar el PR de auditoría de este commit y mergearlo si solo toca su doc
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,5 +67,13 @@ jobs:
             echo "No se auto-mergea. Revisión humana."; exit 0
           fi
 
-          echo "PR #$PR — CI verde y solo toca docs/AUDIT-SEMANAL.md. Mergeando."
-          gh pr merge "$PR" --repo "$REPO" --squash --delete-branch
+          # El mensaje del squash se ESCRIBE: título y cuerpo del PR, sin trailers ni el pie de la
+          # herramienta. Sin `--subject` ni `--body`, GitHub compone el suyo y añade un
+          # `Co-authored-by:` por cada autor de la rama que no es quien funde, y aquí funde este robot:
+          # así entró el #266 con la herramienta de coautora. AGENTS.md §«Pull requests y commits».
+          PR_JSON=$(gh pr view "$PR" --repo "$REPO" --json number,title,body)
+          ASUNTO=$(printf '%s' "$PR_JSON" | node scripts/mensaje-squash.mjs asunto)
+          CUERPO=$(printf '%s' "$PR_JSON" | node scripts/mensaje-squash.mjs cuerpo)
+
+          echo "PR #$PR — CI verde y solo toca docs/AUDIT-SEMANAL.md. Mergeando como: $ASUNTO"
+          gh pr merge "$PR" --repo "$REPO" --squash --delete-branch --subject "$ASUNTO" --body "$CUERPO"
