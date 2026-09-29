@@ -991,6 +991,9 @@
     "no_changes": "No hay cambios que guardar",
     "unsaved_changes": "Cambios sin guardar",
     "summary": "Resumen",
+    "summary_missing": "Falta: {{items}}",
+    "summary_missing_name": "nombre",
+    "summary_ready": "Listo para crear",
     "summary_of": "{{value}} de {{total}}",
     "actions": "Acciones",
     "select_row": "Seleccionar {{name}}",
@@ -1428,6 +1431,9 @@
         "apply_body_other": "Cambia {{count}} casillas de Acceso. Si las mantienes, el tipo cambia igual y Acceso sigue como está.",
         "apply": "Aplicar la plantilla",
         "keep": "Mantener las casillas"
+      },
+      "summary": {
+        "missing_email": "email"
       }
     },
     "errors": {
@@ -1678,8 +1684,6 @@
         "outbound": "Salida",
         "no_number": "Sin número",
         "resources": "Recursos",
-        "missing": "Falta: {{items}}",
-        "missing_name": "nombre",
         "missing_channels": "canales"
       },
       "channels": {
@@ -1938,7 +1942,8 @@
       },
       "summary": {
         "no_groups": "Sin grupos",
-        "groups_active": "Grupos activos"
+        "groups_active": "Grupos activos",
+        "missing_extension": "extensión"
       },
       "create_submit": "Crear agente"
     },

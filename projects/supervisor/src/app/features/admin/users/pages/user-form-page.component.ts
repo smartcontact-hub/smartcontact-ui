@@ -39,7 +39,7 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
-import { SummaryKpiComponent } from '@shared/components';
+import { SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
 import {
   accessFor,
   AVAILABLE_SERVICES,
@@ -100,6 +100,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     SectionCardComponent,
     SelectComponent,
     SummaryKpiComponent,
+    SummaryStatusComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -183,6 +184,15 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (!EMAIL_RE.test(f.email.trim())) return 'users.errors.email_invalid';
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
+  });
+  /** Lo que falta para poder crear, en el orden de Identidad, para el resumen (DD-136). Un email mal escrito no
+   *  falta: se dice en su campo. */
+  protected readonly summaryMissing = computed<readonly string[]>(() => {
+    const f = this.form();
+    const missing: string[] = [];
+    if (f.name.trim().length === 0) missing.push('common.summary_missing_name');
+    if (f.email.trim().length === 0) missing.push('users.form.summary.missing_email');
+    return missing;
   });
   /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
    *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */

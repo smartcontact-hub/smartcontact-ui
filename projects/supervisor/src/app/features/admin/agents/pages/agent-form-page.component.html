@@ -650,6 +650,11 @@
     <div class="ficha-summary">
       <section class="resumen" aria-labelledby="agent-summary-title">
         <h2 id="agent-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'common.summary' | translate }}</h2>
+        <!-- Lo que le falta al alta, hasta «Listo para crear» (DD-136). En el alta y al duplicar está siempre, y
+             cambia en su sitio; al editar, solo si falta algo. -->
+        @if (mode() !== 'edit' || summaryMissing().length > 0) {
+          <sc-summary-status [missing]="summaryMissing()" [ready]="mode() !== 'edit' && canSave()" />
+        }
         <!-- Las tarjetas son hermanas: 14 entre ellas; el título, a 7 de la primera (AGENTS «UX de pantalla» 9). -->
         <div class="resumen__cards">
           <sc-summary-kpi

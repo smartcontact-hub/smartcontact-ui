@@ -4,16 +4,8 @@
 
 /* LO COMÚN DEL RESUMEN —la columna, la tarjeta, su rótulo, la cifra, el valor, el widget con su anillo y la
  * fila de la franja ancha— vive en `src/styles/_resumen.scss`: lo usan también las fichas de agente y usuario
- * (DD-122, DD-126). Aquí quedan las piezas que solo tiene el de grupo: lo que falta, los canales con su barra,
- * el aviso de canal sin agentes y los pares de datos. */
-
-.resumen__missing {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-375);
-  margin: 0;
-  color: var(--sc-text-warning);
-}
+ * (DD-122, DD-126), y lo que le falta a un alta (`sc-summary-status`, DD-136). Aquí quedan las piezas que solo
+ * tiene el de grupo: los canales con su barra, el aviso de canal sin agentes y los pares de datos. */
 
 .resumen__channels {
   display: flex;

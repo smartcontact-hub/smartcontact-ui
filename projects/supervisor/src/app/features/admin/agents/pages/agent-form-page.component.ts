@@ -31,7 +31,7 @@ import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { NameInplaceComponent, SummaryKpiComponent } from '@shared/components';
+import { NameInplaceComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -152,6 +152,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     ButtonComponent,
     NameInplaceComponent,
     SummaryKpiComponent,
+    SummaryStatusComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
     FormSectionNavComponent,
@@ -620,6 +621,15 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (this.mode() === 'edit' && !this.dirtyState.dirty())
       return 'common.no_changes';
     return null;
+  });
+  /** Lo que falta para poder crear, en el orden de Identidad, para el resumen (DD-136). Los errores de
+   *  formato (email, PIN) no faltan: se dicen en su campo. */
+  protected readonly summaryMissing = computed<readonly string[]>(() => {
+    const f = this.form();
+    const missing: string[] = [];
+    if (!f.name.trim()) missing.push('common.summary_missing_name');
+    if (!f.extension) missing.push('agents.form.summary.missing_extension');
+    return missing;
   });
   /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
    *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */
