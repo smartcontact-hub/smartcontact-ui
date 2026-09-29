@@ -1,5 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { spawn, spawnSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import { carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
@@ -9,9 +13,10 @@ import { carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
 // `distRancio: () => null` en los tres: sin él, el test lee el `dist/` REAL de la máquina, y basta con
 // editar una fuente del DS sin reconstruir para que `npm run e2e` salga denegado y el test rojo
-// (2026-09-24, en mitad de un preflight). El caso rancio se prueba aparte, inyectado.
-const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null };
-const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null };
+// (2026-09-24, en mitad de un preflight). El caso rancio se prueba aparte, inyectado. Por lo mismo,
+// `listarPreflights: () => []`: sin él, un build en un test lee los procesos vivos de la máquina.
+const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [] };
+const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [] };
 /** Árbol con fuentes nuevas todavía fuera del índice. */
 const sinAdd = {
   distRancio: () => null,
@@ -141,8 +146,8 @@ test('#11 zsh: `for f in $VAR` → deny; enumerado, $(…) o ${=VAR} → allow',
 });
 
 test('#5 build durante un preflight → deny; sin preflight vivo, o con sc:ok → allow', () => {
-  const corriendo = { ...verde, preflightVivo: () => true };
-  const parado = { ...verde, preflightVivo: () => false };
+  const corriendo = { ...verde, preflightVivo: () => 43948 };
+  const parado = { ...verde, preflightVivo: () => null };
   deny('npm run build:supervisor', corriendo, /LEARNINGS #5/);
   deny('npm run build', corriendo, /LEARNINGS #5/);
   deny('ng build sc-docs --configuration production', corriendo, /LEARNINGS #5/);
@@ -151,6 +156,98 @@ test('#5 build durante un preflight → deny; sin preflight vivo, o con sc:ok �
   // Vecinos legítimos: leer o servir no reescribe `dist/`.
   allow('node scripts/spa-server.mjs dist/supervisor/browser 4322', corriendo);
   allow('ls -d dist/*', corriendo);
+});
+
+/*
+ * #5 — ¿de QUÉ árbol es el preflight vivo? Medido el 2026-09-28 en macOS: con el único preflight
+ * vivo en OTRO worktree, `npm run build:supervisor` salía denegado en este. Tres fallos juntos:
+ * `pgrep -af` no lista la línea de comandos en macOS (allí `-a` es «incluye a los antepasados») y
+ * solo imprime PIDs; aun con ella, npm lo lanza con ruta RELATIVA y el árbol no sale en el texto; y
+ * el patrón sin anclar casaba con cualquier shell que lo NOMBRARA. En los cuatro primeros, el
+ * listado y el cwd de cada PID van inyectados: no dependen de lo que corra en la máquina.
+ */
+const ESTE = '/u/dev/smartcontact-ui/.claude/worktrees/magical-vaughan-5cf689';
+const OTRO = '/u/dev/smartcontact-ui/.claude/worktrees/goofy-matsumoto-803f2a';
+/** Las líneas que imprime `pgrep` y el cwd de cada PID, inyectados; un PID sin cwd legible no sale. */
+const procesos = (lineas, cwdDe, cwd = ESTE) => ({
+  ...verde,
+  cwd,
+  listarPreflights: () => lineas,
+  cwdsDe: (pids) => new Map(pids.map((pid) => [pid, cwdDe(pid)]).filter(([, dir]) => dir)),
+});
+
+test('#5 preflight de OTRO árbol, tal cual lo lista `pgrep` en macOS (PIDs pelados) → allow', () => {
+  allow('npm run build:supervisor', procesos(['43948'], (pid) => (pid === 43948 ? OTRO : null)));
+});
+
+test('#5 preflight de OTRO árbol con su línea de comandos: npm lo lanza con ruta relativa y el árbol no sale → allow', () => {
+  allow('npm run build:supervisor', procesos(['43948 node scripts/preflight-scope.mjs --run'], () => OTRO));
+});
+
+test('#5 un cwd que no se puede leer (el proceso ya murió, o no es tuyo) no cuenta → allow', () => {
+  allow('npm run build:supervisor', procesos(['43948'], () => null));
+});
+
+test('#5 preflight de ESTE árbol → deny con su pid; y el `cd <ruta> &&` manda sobre la sesión', () => {
+  deny('npm run build:supervisor', procesos(['43948'], () => ESTE), /LEARNINGS #5/);
+  // Con varios vivos, el motivo nombra el de este árbol: el pid es lo que deja comprobarlo.
+  deny('ng build supervisor', procesos(['17655', '43948'], (pid) => (pid === 43948 ? ESTE : OTRO)), /pid 43948/);
+  deny(`cd ${OTRO} && npm run build`, procesos(['17655'], () => OTRO), /LEARNINGS #5/);
+});
+
+// Con procesos PROPIOS de verdad, porque dos cosas solo las contesta el sistema: con qué casa el
+// `pgrep` real (el de macOS no entiende `\S`: el patrón que lo usaba perdía el `node` con ruta
+// absoluta) y qué cwd devuelven `lsof` y `/proc`. Cada árbol es una carpeta temporal: los
+// preflights de otros worktrees de la máquina tienen otro cwd y no cambian nada. Y los falsos
+// viven lo justo, porque las esperas de otras sesiones SÍ los ven como preflights.
+const FALSO = `// Se va solo si quien lo lanzó muere (un test cortado), y al minuto pase lo que pase.
+const padre = process.ppid;
+setInterval(() => process.ppid !== padre && process.exit(0), 250);
+setTimeout(() => process.exit(0), 60_000);
+console.log('listo');
+`;
+const ESPERA_QUE_LO_NOMBRA =
+  'echo listo; n=0; while [ $n -lt 60 ] && kill -0 $PPID 2>/dev/null; do sleep 1; n=$((n+1)); done # espera a node scripts/preflight-scope.mjs --run';
+
+test('#5 con procesos de verdad: cuenta el `node` del preflight por su cwd, no el shell que lo nombra', { timeout: 30_000 }, async (t) => {
+  if (spawnSync('pgrep', ['-f', 'x^']).error) return t.skip('sin `pgrep` en esta máquina');
+  const base = mkdtempSync(join(tmpdir(), 'bash-guard-'));
+  const arbol = (nombre) => {
+    const dir = join(base, nombre);
+    mkdirSync(join(dir, 'scripts'), { recursive: true });
+    mkdirSync(join(dir, 'projects', 'supervisor'), { recursive: true });
+    writeFileSync(join(dir, '.git'), 'gitdir: x\n'); // un worktree lleva `.git` como FICHERO
+    writeFileSync(join(dir, 'scripts', 'preflight-scope.mjs'), FALSO);
+    return dir;
+  };
+  const [conNpm, conRuta, conEspera, vacio] = ['npm', 'ruta', 'espera', 'vacio'].map(arbol);
+  const lanza = (cmd, args, opciones) => spawn(cmd, args, { ...opciones, stdio: ['ignore', 'pipe', 'ignore'] });
+  const hijos = [
+    // Como lo deja npm (medido): `node` suelto, el script con ruta RELATIVA y el cwd en el árbol.
+    lanza(process.execPath, ['scripts/preflight-scope.mjs', '--run'], { cwd: conNpm, argv0: 'node' }),
+    lanza(process.execPath, ['scripts/preflight-scope.mjs', '--run'], { cwd: conRuta }),
+    // Un shell que solo NOMBRA al preflight, como el bucle que espera a que acabe.
+    lanza('/bin/sh', ['-c', ESPERA_QUE_LO_NOMBRA], { cwd: conEspera }),
+  ];
+  try {
+    await Promise.all(hijos.map((h) => new Promise((listo, fallo) => (h.stdout.once('data', listo), h.once('error', fallo)))));
+    const decide = (cwd) => evaluar('npm run build:supervisor', { ...verde, cwd, listarPreflights: undefined }).decision;
+    assert.equal(decide(conNpm), 'deny', 'el preflight tal cual lo lanza npm');
+    assert.equal(decide(conRuta), 'deny', '`node` con ruta absoluta');
+    // Desde una subcarpeta, npm sube hasta su `package.json` y reescribe el mismo `dist/`.
+    assert.equal(decide(join(conNpm, 'projects', 'supervisor')), 'deny', 'desde una subcarpeta de su árbol');
+    assert.equal(decide(conEspera), 'allow', 'un shell que solo nombra al preflight');
+    assert.equal(decide(vacio), 'allow', 'un árbol sin preflight');
+    // La carrera corriente: uno acabó entre el `pgrep` y el `lsof`. `lsof` sale con 1 e imprime
+    // solo el vivo, y ese sigue contando.
+    const muerto = spawnSync(process.execPath, ['-e', '']).pid;
+    const lista = () => [String(muerto), String(hijos[0].pid)];
+    const r = evaluar('npm run build:supervisor', { ...verde, cwd: conNpm, listarPreflights: lista });
+    assert.match(r.reason, new RegExp(`pid ${hijos[0].pid}\\b`), 'un PID muerto en el lote no tapa al vivo');
+  } finally {
+    for (const h of hijos) h.kill();
+    rmSync(base, { recursive: true, force: true });
+  }
 });
 
 test('#5 Playwright con el DS editado después del último `dist/` → deny; con dist al día, sin e2e o sc:ok → allow', () => {

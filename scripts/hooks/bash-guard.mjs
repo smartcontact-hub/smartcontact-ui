@@ -18,7 +18,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import * as fsSync from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 
@@ -192,15 +192,6 @@ function distRancio(cwd) {
   return null;
 }
 
-/**
- * ¿Hay un preflight vivo AHORA sobre ESTE árbol?
- *
- * El patrón está acotado a base de falsos positivos medidos:
- *   · `node …/preflight-*.mjs`, no cualquier línea que MENCIONE «preflight-scope» — si no, un
- *     `until ! pgrep -f "preflight-scope"` esperando a que termine se detecta a sí mismo.
- *   · y la ruta tiene que ser la de este cwd: en esta máquina conviven ocho worktrees, y el
- *     Playwright de otro no toca mi `dist/`.
- */
 /** ¿Este repo ADOPTA prettier? (config propia, o la clave `prettier` del package.json)
  *
  *  Se mira en vez de asumir: el día que el repo adopte prettier, el guardián deja de
@@ -220,19 +211,107 @@ function usaPrettier(cwd) {
   }
 }
 
-function preflightVivo(cwd) {
+/** El proceso de un preflight: `node`, con o sin ruta, AL PRINCIPIO de su línea de comandos. */
+const PREFLIGHT = '^([^ ]*/)?node .*preflight-scope\\.mjs';
+
+/** `pgrep -f` a secas: un PID por línea, de los preflights de TODA la máquina. */
+function listarPreflights() {
   try {
-    const salida = execFileSync('pgrep', ['-af', 'node .*(preflight-scope|preflight-fast)\\.mjs'], {
+    return execFileSync('pgrep', ['-f', PREFLIGHT], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).split('\n');
+  } catch {
+    return []; // `pgrep` sin coincidencias sale 1: no hay nada corriendo.
+  }
+}
+
+/**
+ * El directorio de trabajo de cada PID; el que no se puede leer no sale. En macOS, UNA llamada a
+ * `lsof` para todos: cada una cuesta de 0,4 a 1,3 s (medido el 2026-09-28), y con varios PIDs
+ * cuesta lo mismo que con uno. Si alguno ya murió, `lsof` sale con 1 pero imprime el resto.
+ */
+function cwdsDe(pids) {
+  const cwds = new Map();
+  if (process.platform === 'linux') {
+    for (const pid of pids) {
+      try {
+        cwds.set(pid, fsSync.readlinkSync(`/proc/${pid}/cwd`));
+      } catch {
+        /* ya murió, o no es nuestro */
+      }
+    }
+    return cwds;
+  }
+  let salida;
+  try {
+    salida = execFileSync('lsof', ['-a', '-p', pids.join(','), '-d', 'cwd', '-Fn'], {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     });
-    return salida
-      .split('\n')
-      .filter(Boolean)
-      .some((linea) => linea.includes(cwd) || !linea.includes('/worktrees/'));
-  } catch {
-    return false; // `pgrep` sin coincidencias sale 1: no hay nada corriendo.
+  } catch (e) {
+    salida = typeof e?.stdout === 'string' ? e.stdout : '';
   }
+  let pid = null;
+  for (const linea of salida.split('\n')) {
+    if (linea.startsWith('p')) pid = Number(linea.slice(1));
+    else if (linea.startsWith('n') && pid !== null) cwds.set(pid, linea.slice(1));
+  }
+  return cwds;
+}
+
+/**
+ * La raíz del árbol que contiene `dir`: la carpeta más cercana con `.git` (fichero en un worktree,
+ * carpeta en el principal), con los enlaces resueltos. Sube por el TEXTO de la ruta y resuelve al
+ * final: una subcarpeta que no existe no se puede resolver, y una enlazada llevaría al árbol del
+ * enlace. Y se comparan raíces enteras, no prefijos, porque el principal CONTIENE a los de
+ * `.claude/worktrees/`.
+ */
+function raizDelArbol(dir) {
+  let raiz = dir;
+  for (let d = dir; ; d = dirname(d)) {
+    if (fsSync.existsSync(resolve(d, '.git'))) {
+      raiz = d;
+      break;
+    }
+    if (dirname(d) === d) break;
+  }
+  try {
+    return fsSync.realpathSync(raiz);
+  } catch {
+    return raiz;
+  }
+}
+
+/**
+ * ¿Hay un preflight vivo AHORA sobre ESTE árbol? Devuelve su PID, o null.
+ *
+ * Hasta el 2026-09-28 contaba el de CUALQUIER worktree (medido en macOS: con el único vivo en otro,
+ * un build en este salía denegado). Tres fallos, y un filtro para cada uno:
+ *   · el patrón va anclado al PROCESO: `node`, con o sin ruta, al principio de la línea. Sin ancla
+ *     contaba cualquier shell que NOMBRARA «node scripts/preflight-scope.mjs», incluido el bucle de
+ *     espera que recomienda este hook (la herramienta Bash corre cada comando dentro de un
+ *     `/bin/zsh -c -l '… eval <comando>'`). La ruta va con `[^ ]` y no con `\S`: el `pgrep` de
+ *     macOS no entiende `\S`, y con él se perdía el `node` con ruta absoluta.
+ *   · `pgrep -f` a secas, que imprime PIDs igual en macOS y en Linux. Era `-af`: en Linux añade la
+ *     línea de comandos, pero en macOS `-a` es «incluye a los antepasados», así que salían PIDs
+ *     pelados y el filtro por ruta los dejaba pasar todos.
+ *   · el árbol sale del DIRECTORIO de trabajo de cada PID, no de su texto: npm lo lanza como
+ *     `node scripts/preflight-scope.mjs`, con ruta relativa, y el árbol no sale nunca en la línea.
+ *     Cuenta solo si es el del comando (`carpetaEfectiva`): en esta máquina conviven decenas de
+ *     worktrees (35 el 2026-09-28), y el preflight de otro no toca este `dist/`.
+ *
+ * Un cwd que no se puede leer NO cuenta. `lsof` no devuelve nada ni para un PID que ya murió ni
+ * para uno de otro usuario, y lo corriente es lo primero: el preflight acabó entre el `pgrep` y el
+ * `lsof`. Contarlo traería de vuelta el falso positivo que esto arregla, con un motivo que manda
+ * esperar a un preflight que no es de aquí, o pararlo. No contarlo solo deja pasar el build en el
+ * caso raro de un preflight de este árbol cuyo cwd no se deja leer.
+ */
+function preflightVivo(dir, ctx = {}) {
+  const pids = (ctx.listarPreflights || listarPreflights)()
+    .map((linea) => Number.parseInt(linea, 10))
+    .filter(Number.isInteger);
+  if (pids.length === 0) return null;
+  const cwds = (ctx.cwdsDe || cwdsDe)(pids);
+  const arbol = raizDelArbol(dir);
+  return pids.find((pid) => cwds.has(pid) && raizDelArbol(cwds.get(pid)) === arbol) ?? null;
 }
 
 /**
@@ -456,14 +535,17 @@ function evaluarBase(cmd, ctx = {}) {
   // que parece una dependencia rota y no lo es — los paths del tsconfig apuntan a `dist/`, y esa
   // carpeta se está reescribiendo mientras el runner la lee. Cuesta la pasada entera (10-25 min)
   // y manda a buscar el fallo al sitio equivocado.
-  if (segs.some((seg) => empiezaPor(seg, BUILDS)) && (ctx.preflightVivo || preflightVivo)(cwd))
-    return {
-      decision: 'deny',
-      reason:
-        'LEARNINGS #5 — hay un preflight corriendo y esto reescribe `dist/` bajo sus pies: sus e2e caerán con ' +
-        "`Cannot find module '@smartcontact-hub/icons'`, que parece una dependencia rota y es tu build. " +
-        'Espera a que termine (o párala) y construye después. Si sabes que ese preflight ya no importa, añade `# sc:ok`.',
-    };
+  if (segs.some((seg) => empiezaPor(seg, BUILDS))) {
+    const pid = (ctx.preflightVivo || preflightVivo)(cwd, ctx);
+    if (pid)
+      return {
+        decision: 'deny',
+        reason:
+          `LEARNINGS #5 — hay un preflight corriendo en este árbol (pid ${pid}) y esto reescribe \`dist/\` bajo sus pies: sus e2e caerán con ` +
+          "`Cannot find module '@smartcontact-hub/icons'`, que parece una dependencia rota y es tu build. " +
+          'Espera a que termine (o párala) y construye después. Si sabes que ese preflight ya no importa, añade `# sc:ok`.',
+      };
+  }
 
   // #5 — medir el DS con un `dist/` más viejo que tu edición.
   //
