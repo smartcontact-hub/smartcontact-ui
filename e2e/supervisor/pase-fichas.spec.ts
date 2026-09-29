@@ -149,8 +149,13 @@ test('el icono de un aviso pesa lo que su texto semibold', async ({ page }) => {
   const avisos = page.locator('.ficha-summary .resumen__warn sc-icon .sc-icon');
   await expect(avisos).toHaveCount(2);
   for (const icono of await avisos.all()) await expect(icono).toHaveClass(/sc-icon--weight-600/);
+  // «Falta» y «Listo para crear» (DD-136), los dos en semibold con su icono a 600.
   await goto(page, 'admin/grupos/crear');
-  await expect(page.locator('.resumen__missing sc-icon .sc-icon')).toHaveClass(/sc-icon--weight-600/);
+  const estado = page.locator('.resumen__status sc-icon .sc-icon');
+  await expect(estado).toHaveClass(/sc-icon--weight-600/);
+  await page.locator('#group-name').fill(`E2E Peso ${Date.now()}`);
+  await expect(page.locator('.resumen__status--ready')).toBeVisible();
+  await expect(estado).toHaveClass(/sc-icon--weight-600/);
 });
 
 test('listado de grupos · el botón de cada fila dice «Asignar»', async ({ page }) => {

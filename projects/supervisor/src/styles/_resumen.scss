@@ -27,6 +27,23 @@
   color: var(--sc-text-secondary);
 }
 
+/* Lo que le falta a un alta, y «Listo para crear» cuando ya no falta nada (`sc-summary-status`, DD-136). Una
+ * línea que no aparece ni desaparece: reserva su alto aunque esté vacía, así el resumen no salta al pasar de
+ * «Falta» a vacío (un error de formato, que se dice en su campo) y de vacío a «Listo». El aviso en el ámbar de
+ * los avisos; «Listo», en el verde de éxito. El color no va solo: cada uno lleva su icono y su texto. */
+.resumen__status {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  min-block-size: var(--sc-line-height-caption);
+  margin: 0;
+  color: var(--sc-text-warning);
+}
+
+.resumen__status--ready {
+  color: var(--sc-text-success);
+}
+
 .resumen__cards {
   display: flex;
   flex-direction: column;

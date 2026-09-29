@@ -33,3 +33,6 @@ export { NameInplaceComponent } from './name-inplace/name-inplace.component';
 
 // El widget del resumen de las fichas: una cifra con su anillo (DD-126).
 export { SummaryKpiComponent } from './summary-kpi/summary-kpi.component';
+
+// Lo que le falta a un alta, hasta «Listo para crear» (DD-136).
+export { SummaryStatusComponent } from './summary-status/summary-status.component';

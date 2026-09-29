@@ -118,6 +118,7 @@ variable cuando su nombre es único y avisa.
 - [ ] **22 y 23** · Los números sueltos y la presencia de Contact Center.
 - [ ] **24** · Los tres textos de General.
 - [ ] **30** · Contact Center › Grupos y › Agentes, con los bloques y las palabras de sus fichas.
+- [ ] **31** · El resumen de las tres altas, con «Falta: …» y «Listo para crear».
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
@@ -891,6 +892,21 @@ réplica que el código acaba de quitar.
   del iframe y Dispositivos externos.
 
 **Cómo sabes que está hecho:** las dos maquetas enseñan lo que la app en `/config/aed/grupos` y `/config/aed/agentes`.
+
+---
+
+## 31 · Las altas dicen lo que falta, hasta «Listo para crear» (2026-09-29)
+
+**Estado:** pendiente · **Dónde:** Figma, las maquetas de las altas de grupo, agente y usuario (el resumen de la
+derecha) · **Esfuerzo:** una línea de texto con icono, en dos estados · **Sin verificar** contra el fichero: el código
+no cita los nodos.
+
+- **Por qué** (DD-136): el resumen de cada alta dice lo que le falta y, cuando se puede crear, lo confirma.
+- **Qué dibujar:** bajo el título «Resumen», una línea en caption semibold con su icono a 600: «Falta: nombre ·
+  extensión» en el ámbar de los avisos, con `error`; y «Listo para crear» en el verde de éxito, con `check_circle`.
+  Sin porcentaje ni barra.
+
+**Cómo sabes que está hecho:** las tres altas del fichero enseñan los dos estados como el código.
 
 ---
 

@@ -935,11 +935,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return (f.typification ? 1 : 0) + f.scheduleIds.size + templates + f.labelIds.size;
   });
 
-  /** Lo que falta para poder guardar, en el orden de General. */
+  /** Lo que falta para poder crear, en el orden de General. Un nombre repetido no falta: se dice en su campo. */
   protected readonly summaryMissing = computed<readonly string[]>(() => {
     const f = this.form();
     const missing: string[] = [];
-    if (f.name.trim().length === 0) missing.push('groups.form.summary.missing_name');
+    if (f.name.trim().length === 0) missing.push('common.summary_missing_name');
     if (f.channels.size === 0) missing.push('groups.form.summary.missing_channels');
     return missing;
   });
