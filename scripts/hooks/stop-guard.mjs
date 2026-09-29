@@ -22,7 +22,8 @@
  *      dentro. Y esta NO se cree lo que yo escribo: el hook MIDE el árbol (sin commitear, sin
  *      pushear, sin upstream) y me desmiente si pongo «sí» con trabajo colgando. Un «todo subido»
  *      afirmado sin mirar es exactamente la regla #17 en su versión más cara: el usuario cierra la
- *      ventana y el contexto no vuelve. (Norma de proceso, 2026-09-10.)
+ *      ventana y el contexto no vuelve. (Norma de proceso, 2026-09-10.) Lo que main ya lleva no
+ *      cuelga: una rama fundida por squash y borrada no desmiente un «sí» (2026-09-28).
  *
  *   5. la REVISIÓN PREVIA de una pantalla (DD-123, 2026-09-27): si la sesión escribió plantillas u
  *      hojas del Supervisor con Edit/Write y no corrió `npm run revision` DESPUÉS, bloquea una vez.
@@ -262,12 +263,45 @@ export const PLANTILLA = [
   '- Seguro cerrar: <«sí» o «no» y por qué, en una frase: qué queda colgando o quién lo recoge>',
 ].join('\n');
 
-/** Lo que la máquina SÍ puede ver de «¿se pierde algo si cierro?». `seguro: null` = no lo sé. */
+/**
+ * ¿Main ya lleva todo lo de la rama? Devuelve el sha corto del `origin/main` con que se comparó, o
+ * '' si no lo lleva o no se pudo medir.
+ *
+ * Es para la rama fundida por squash (2026-09-28): GitHub la borra al fundir y, desde ahí, parece
+ * trabajo sin subir con todo ya en main. Podada, se queda sin upstream; sin podar, el upstream viejo
+ * cuenta como «sin pushear» lo que la rama recogió de main al ponerse al día. La ascendencia no lo
+ * ve, porque el squash es un commit nuevo, y `git cherry` tampoco: compara commit a commit, y el
+ * squash de dos commits no es ninguno de los dos. El contenido sí: si fundir HEAD en `origin/main`
+ * deja el árbol de main igual, main ya lo tiene todo. Si main retocó después las mismas líneas sale
+ * conflicto o un árbol distinto, y eso es «no»: el error posible es un «no» de más, nunca un «sí» falso.
+ *
+ * Sin `fetch`, que no cabe en los 4 s de cada llamada: se compara con el `origin/main` que haya, y
+ * por eso la nota lleva su sha. `--write-tree` pide git ≥ 2.38. Si git falla (sin `origin/main`,
+ * con conflicto, que sale 1, o un git más viejo) o la primera línea no es el árbol de main, queda
+ * el veredicto de siempre.
+ */
+function mainYaLaLleva(git) {
+  try {
+    const fundido = git('merge-tree', '--write-tree', 'origin/main', 'HEAD').split('\n')[0];
+    // `--short` vale para lo que va detrás: el árbol sale entero y el commit, abreviado.
+    const [arbolMain, shaMain] = git('rev-parse', 'origin/main^{tree}', '--short', 'origin/main').split('\n');
+    return fundido === arbolMain ? shaMain : '';
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Lo que la máquina SÍ puede ver de «¿se pierde algo si cierro?». `seguro: null` = no lo sé.
+ * `motivos` lleva lo que cuelga y, si la rama ya está en main, la nota que lo dice: esa no cuelga
+ * nada y no cuenta para `seguro`, pero explica un «sí» que sin ella sorprendería.
+ */
 export function estadoDelArbol(cwd = process.cwd()) {
   // `trimEnd`, no `trim`: el porcelain abre cada línea con dos huecos de estado (« M ruta»), y un
   // trim por delante se come la primera letra del fichero. Lo cazó la sonda sobre el árbol real.
   const git = (...args) => execFileSync('git', args, { cwd, encoding: 'utf8', timeout: 4000, stdio: ['ignore', 'pipe', 'ignore'] }).trimEnd();
   const motivos = [];
+  let enMain = '';
   try {
     const sucio = git('status', '--porcelain').split('\n').filter(Boolean);
     const rutaDe = (l) => l.slice(3); // 2 de estado + 1 hueco, siempre
@@ -276,16 +310,18 @@ export function estadoDelArbol(cwd = process.cwd()) {
     try {
       upstream = git('rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}').trim();
     } catch {
+      /* sin upstream: si no está en el remoto, puede que ya esté en main */
+    }
+    const sinPushear = upstream ? Number(git('rev-list', '--count', '@{u}..HEAD')) : 0;
+    if (!upstream || sinPushear) enMain = mainYaLaLleva(git);
+    if (!enMain && !upstream)
       motivos.push(`la rama ${git('rev-parse', '--abbrev-ref', 'HEAD').trim()} no está en el remoto: si se pierde el disco, se pierde el trabajo`);
-    }
-    if (upstream) {
-      const sinPushear = Number(git('rev-list', '--count', '@{u}..HEAD'));
-      if (sinPushear) motivos.push(`${sinPushear} commit(s) sin pushear a ${upstream}`);
-    }
+    if (!enMain && sinPushear) motivos.push(`${sinPushear} commit(s) sin pushear a ${upstream}`);
   } catch {
     return { seguro: null, motivos: [] }; // sin git (otra máquina, CI): el hook falla ABIERTO.
   }
-  return { seguro: !motivos.length, motivos };
+  const nota = enMain ? [`ya fundida en main, comparado con ${enMain}`] : [];
+  return { seguro: !motivos.length, motivos: [...motivos, ...nota] };
 }
 
 const SEGURO = /seguro\s+cerrar\s*\**\s*:\s*\**\s*(.*)$/im;
