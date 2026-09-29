@@ -195,12 +195,13 @@ test('estadoDelArbol: la ruta del fichero modificado sale entera, sin comerse la
   assert.match(estadoDelArbol(dir).motivos.join(' '), /sin commitear \(seguido.txt\)/);
 });
 
-// De punta a punta por el proceso: es lo que Claude Code ejecuta de verdad.
+// De punta a punta por el proceso: es lo que Claude Code ejecuta de verdad. Sin `GIT_*`, porque el
+// hook mide con git el `cwd` de la entrada y, heredándolas, mediría el repositorio de verdad.
 function correrHook(entrada, projectDir) {
   const r = spawnSync(process.execPath, ['scripts/hooks/stop-guard.mjs'], {
     input: JSON.stringify(entrada),
     encoding: 'utf8',
-    env: { ...process.env, SC_CLAUDE_PROJECT_DIR: projectDir },
+    env: { ...SIN_GIT, SC_CLAUDE_PROJECT_DIR: projectDir },
   });
   assert.equal(r.status, 0, `el hook no puede petar: ${r.stderr}`);
   return r.stdout.trim() ? JSON.parse(r.stdout) : null;
@@ -403,4 +404,127 @@ test('Stop: tras reflect, el parte en inglés bloquea; el de castellano con su c
   assert.match(r.reason, /- Qué cambia: <una frase/, 'y lleva la plantilla para rehacerlo');
   writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_CON_CODIGO)].join('\n'));
   assert.equal(correrHook(entrada, dir), null, 'VERDE: en castellano deja cerrar');
+});
+
+// ── La rama ya fundida por squash · añadido el 2026-09-29 ───────────────────────────────────────
+// ROJO que motivó la pieza (2026-09-28, sesión cloud): GitHub borra la rama al fundir por squash, y
+// desde ahí el árbol decía «no» con todo ya en main. Tras #270, con el upstream podado: «no está en
+// el remoto». Tras #264, sin podar: el upstream viejo contaba como «2 commits sin pushear» lo que la
+// rama había recogido de main. El parte tuvo que decir que no aunque no se perdía nada, y el
+// usuario tuvo que preguntar si podía cerrar.
+//
+// Se monta con un remoto de verdad (un repo desnudo) y un segundo clon que hace de GitHub: funde la
+// rama por squash, sube otro PR encima y borra la rama. La rama lleva DOS commits a propósito: el
+// squash no es ninguno de los dos, así que ni la ascendencia ni `git cherry` lo reconocen.
+
+function montarSquash() {
+  const raiz = mkdtempSync(join(tmpdir(), 'sc-squash-'));
+  const remoto = join(raiz, 'remoto.git');
+  const sesion = join(raiz, 'sesion');
+  const github = join(raiz, 'github');
+  const git = (cwd, ...args) => {
+    const r = spawnSync('git', args, { cwd, encoding: 'utf8', env: SIN_GIT });
+    assert.equal(r.status, 0, `git ${args.join(' ')}: ${r.stderr}`);
+    return r.stdout.trim();
+  };
+  const commit = (cwd, fichero, texto, mensaje) => {
+    writeFileSync(join(cwd, fichero), texto);
+    git(cwd, 'add', '-A');
+    git(cwd, 'commit', '-q', '-m', mensaje);
+  };
+  const identidad = (cwd) => {
+    git(cwd, 'config', 'user.email', 'x@y.z');
+    git(cwd, 'config', 'user.name', 'x');
+  };
+
+  git(raiz, 'init', '-q', '--bare', '-b', 'main', remoto);
+  git(raiz, 'init', '-q', '-b', 'main', sesion);
+  identidad(sesion);
+  git(sesion, 'remote', 'add', 'origin', remoto);
+  commit(sesion, 'a.txt', 'uno\n', 'base');
+  git(sesion, 'push', '-q', '--no-verify', 'origin', 'main');
+  git(sesion, 'switch', '-q', '-c', 'rama');
+  commit(sesion, 'b.txt', 'dos\n', 'primer commit de la rama');
+  commit(sesion, 'a.txt', 'uno\ncambio\n', 'segundo commit de la rama');
+  git(sesion, 'push', '-q', '--no-verify', '-u', 'origin', 'rama');
+
+  git(raiz, 'clone', '-q', remoto, github);
+  identidad(github);
+  git(github, 'merge', '-q', '--squash', 'origin/rama');
+  git(github, 'commit', '-q', '-m', 'rama (#1)');
+  commit(github, 'c.txt', 'otro\n', 'otro PR (#2)');
+  git(github, 'push', '-q', '--no-verify', 'origin', 'main');
+  git(github, 'push', '-q', '--no-verify', 'origin', '--delete', 'rama');
+  return { raiz, sesion, github, git, commit };
+}
+
+const NOTA_FUNDIDA = /^ya fundida en main, comparado con [0-9a-f]{7,}$/;
+
+test('estadoDelArbol: rama fundida por squash, con otro PR encima en main y el upstream podado → seguro', () => {
+  const { sesion, git } = montarSquash();
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  assert.match(git(sesion, 'status', '-sb'), /\[gone\]/, 'el estímulo: el upstream ya no existe, como tras `git remote prune`');
+  assert.notEqual(
+    git(sesion, 'rev-parse', 'HEAD^{tree}'),
+    git(sesion, 'rev-parse', 'origin/main^{tree}'),
+    'main lleva otro PR encima: comparar los dos árboles a pelo no bastaría',
+  );
+  const estado = estadoDelArbol(sesion);
+  assert.equal(estado.seguro, true, `todo está en main y el árbol dice que no: ${estado.motivos.join('; ')}`);
+  assert.deepEqual(estado.motivos, [`ya fundida en main, comparado con ${git(sesion, 'rev-parse', '--short', 'origin/main')}`]);
+});
+
+test('estadoDelArbol: la misma rama puesta al día con main, con el upstream viejo y sin él → seguro las dos', () => {
+  const { sesion, git } = montarSquash();
+  git(sesion, 'fetch', '-q', '--no-prune', 'origin');
+  git(sesion, 'merge', '-q', '--no-edit', 'origin/main');
+  assert.equal(git(sesion, 'rev-list', '--count', '@{u}..HEAD'), '3', 'el estímulo: el upstream viejo cuenta como sin subir lo que la rama recogió de main');
+  const viejo = estadoDelArbol(sesion);
+  assert.equal(viejo.seguro, true, `con el upstream viejo, el árbol dice que no: ${viejo.motivos.join('; ')}`);
+  assert.match(viejo.motivos.join(' '), NOTA_FUNDIDA);
+
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  const podado = estadoDelArbol(sesion);
+  assert.equal(podado.seguro, true, `sin upstream, el árbol dice que no: ${podado.motivos.join('; ')}`);
+  assert.match(podado.motivos.join(' '), NOTA_FUNDIDA);
+});
+
+test('estadoDelArbol: un cambio que main no tiene → no seguro, con el upstream viejo y sin él', () => {
+  const { sesion, git, commit } = montarSquash();
+  commit(sesion, 'd.txt', 'después de fundir\n', 'trabajo nuevo');
+  git(sesion, 'fetch', '-q', '--no-prune', 'origin');
+  const viejo = estadoDelArbol(sesion);
+  assert.equal(viejo.seguro, false, 'ROJO: el commit nuevo solo existe aquí');
+  assert.deepEqual(viejo.motivos, ['1 commit(s) sin pushear a origin/rama']);
+
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  const podado = estadoDelArbol(sesion);
+  assert.equal(podado.seguro, false, 'ROJO: el commit nuevo solo existe aquí');
+  assert.deepEqual(podado.motivos, ['la rama rama no está en el remoto: si se pierde el disco, se pierde el trabajo']);
+});
+
+// El error posible de la comprobación es un «no» de más, nunca un «sí» falso: si main retocó después
+// las mismas líneas, fundir la rama da conflicto aunque su trabajo ya pasara por main.
+test('estadoDelArbol: si main tocó después las mismas líneas, sale conflicto y dice que no', () => {
+  const { sesion, github, git, commit } = montarSquash();
+  commit(github, 'a.txt', 'uno\ncambio de otro\n', 'retoque (#3)');
+  git(github, 'push', '-q', '--no-verify', 'origin', 'main');
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  const estado = estadoDelArbol(sesion);
+  assert.equal(estado.seguro, false);
+  assert.deepEqual(estado.motivos, ['la rama rama no está en el remoto: si se pierde el disco, se pierde el trabajo']);
+});
+
+test('Stop: tras fundir por squash, «Seguro cerrar: sí» deja cerrar; con un commit encima, el árbol lo desmiente', () => {
+  const { raiz, sesion, git, commit } = montarSquash();
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  const transcript = join(raiz, 'sesion.jsonl');
+  const entrada = { transcript_path: transcript, session_id: 'S-squash', cwd: sesion };
+  writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_OK)].join('\n'));
+  assert.equal(correrHook(entrada, raiz), null, 'todo está en main: el «sí» es verdad y el cierre pasa');
+
+  commit(sesion, 'd.txt', 'después de fundir\n', 'trabajo nuevo');
+  const r = correrHook(entrada, raiz);
+  assert.equal(r?.decision, 'block', 'ROJO: hay un commit que main no tiene y el parte dice «sí»');
+  assert.match(r.reason, /el árbol dice que no: la rama rama no está en el remoto/);
 });

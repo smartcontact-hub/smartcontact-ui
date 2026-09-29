@@ -582,7 +582,10 @@ this wrap-up routine **without asking permission first**:
    de verdad al cerrar la ventana: *¿se pierde algo, o está todo donde otro agente pueda
    recogerlo?* Un «todo subido» afirmado sin mirar es la regla #17 en su versión más cara, porque
    el contexto de la sesión no vuelve. Si es «no», la frase dice qué falta y quién lo recoge (el
-   hand-off del frente, el PR abierto).
+   hand-off del frente, el PR abierto). Lo que main ya lleva no cuelga: tras fundir por squash
+   GitHub borra la rama, y antes de contarla como «sin subir» el hook mira si fundirla en
+   `origin/main` cambiaría algo (sin `fetch`: con el `origin/main` que tengas). Si no cambia nada,
+   es «sí».
    *Por qué existe:* el coste de Rafa no son mis vueltas, son los defectos que le llegan. Un cierre
    de trámite («pusheado, CI verde») cuenta el trámite y esconde lo único que decide algo: si esto
    le sirve, si le va a estorbar y si le toca hacer algo a él. (Petición suya, 2026-09-10.)
