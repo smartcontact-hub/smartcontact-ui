@@ -1,0 +1,68 @@
+# DIAGNÓSTICO DESECHABLE — vive solo en la rama `diag/ctrl-clic-flake`, no se funde.
+# Repite `indice-enlaces.spec.ts:112` (Cmd/Ctrl+clic abre otra pestaña) en el runner del CI,
+# con el protocolo de Playwright grabado, para ver qué deja colgado el evento `page`.
+name: diag-ctrl-clic
+on:
+  push:
+    branches: [diag/ctrl-clic-flake]
+jobs:
+  repetir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { variante: ctrl-a, gesto: ctrl, traza: retain-on-failure }
+          - { variante: ctrl-b, gesto: ctrl, traza: retain-on-failure }
+          - { variante: ctrl-sin-traza, gesto: ctrl, traza: 'off' }
+          - { variante: mayus, gesto: shift, traza: retain-on-failure }
+          - { variante: central, gesto: middle, traza: retain-on-failure }
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          npx playwright install --with-deps chromium
+      - name: gesto
+        run: |
+          f=e2e/supervisor/indice-enlaces.spec.ts
+          case "${{ matrix.gesto }}" in
+            shift)  sed -i "s/click({ modifiers: \['ControlOrMeta'\] })/click({ modifiers: ['Shift'] })/" $f ;;
+            middle) sed -i "s/click({ modifiers: \['ControlOrMeta'\] })/click({ button: 'middle' })/" $f ;;
+          esac
+          grep -n "fila(page, 'Agentes').click" $f
+      - name: repetir
+        env:
+          DEBUG: pw:protocol
+          SC_SUPERVISOR_URL: http://localhost:4405
+        run: |
+          npx ng serve supervisor --port 4405 > ngserve.log 2>&1 &
+          until curl -sf -o /dev/null http://localhost:4405/admin/grupos/editar/1; do sleep 2; done
+          curl -sf -o /dev/null http://localhost:4405/admin/grupos/editar/1?seccion=agentes
+          mkdir -p diag
+          # El protocolo sin Network.* ni fotogramas: lo que queda son las órdenes y sus respuestas.
+          mkfifo proto.fifo
+          (grep -a -v -E '"method":"(Network\.|Page\.screencastFrame)|Page\.screencastFrameAck' < proto.fifo > diag/proto.log) &
+          set +e
+          DEBUG_FILE=proto.fifo npx playwright test -c playwright.supervisor.config.ts e2e/supervisor/indice-enlaces.spec.ts \
+            -g "Cmd/Ctrl" --repeat-each=80 --max-failures=2 --trace=${{ matrix.traza }} --reporter=list --output=diag/results > diag/run.log 2>&1
+          code=$?
+          sleep 2
+          pasadas=$(grep -c '✓' diag/run.log)
+          fallos=$(grep -c '✘' diag/run.log)
+          echo "${{ matrix.variante }}: exit=$code pasadas=$pasadas fallos=$fallos" | tee -a $GITHUB_STEP_SUMMARY
+          tail -40 diag/run.log
+          gzip -f diag/proto.log
+          exit 0
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diag-${{ matrix.variante }}
+          path: diag/
+          retention-days: 5
