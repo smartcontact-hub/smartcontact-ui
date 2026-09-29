@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { MeterGroupModule } from 'primeng/metergroup';
 import type { MeterItem } from 'primeng/types/metergroup';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { AnimateOnChangeDirective } from '@core/directives';
-import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent, SummaryKpiComponent } from '@shared/components';
+import { ChannelIconComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 
 import { CHANNEL_LABEL_KEYS, type GroupChannel } from '../../data/groups-data';
@@ -52,23 +51,32 @@ interface ChannelRow {
  */
 @Component({
   selector: 'sc-group-summary',
-  imports: [TranslateModule, MeterGroupModule, ScIconComponent, ChannelIconComponent, AnimateOnChangeDirective, SummaryKpiComponent],
+  imports: [
+    TranslateModule,
+    MeterGroupModule,
+    ScIconComponent,
+    ChannelIconComponent,
+    AnimateOnChangeDirective,
+    SummaryKpiComponent,
+    SummaryStatusComponent,
+  ],
   templateUrl: './group-summary.component.html',
   styleUrl: './group-summary.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupSummaryComponent {
-  private readonly translate = inject(TranslateService);
-  private readonly lang = injectLangChange();
-
   /** Los canales del grupo, en el orden canónico. */
   readonly channels = input.required<readonly GroupChannel[]>();
   readonly links = input.required<readonly GroupAgentLink[]>();
   readonly routing = input<readonly GroupSummaryRouting[]>([]);
   readonly outbound = input<readonly GroupSummaryOutbound[]>([]);
   readonly resourceCount = input(0);
-  /** Claves de lo que falta para poder guardar (nombre, canales). Vacío = nada. */
+  /** Claves de lo que falta para poder crear (nombre, canales). Vacío = nada. */
   readonly missing = input<readonly string[]>([]);
+  /** Es un alta: el estado está siempre, y dice «Listo para crear» cuando `ready`. */
+  readonly creating = input(false);
+  /** El botón «Crear grupo» está encendido. */
+  readonly ready = input(false);
 
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
 
@@ -90,12 +98,6 @@ export class GroupSummaryComponent {
       const value = total > 0 ? Math.round((count / total) * 100) : 0;
       return { channel, count, meter: [{ label: channel, value, color: 'var(--sc-bg-accent)' }] };
     });
-  });
-
-  protected readonly missingText = computed(() => {
-    this.lang();
-    const items = this.missing().map((key) => this.translate.instant(key));
-    return items.length > 0 ? this.translate.instant('groups.form.summary.missing', { items: items.join(' · ') }) : '';
   });
 
   protected familyKey(family: GroupSummaryRouting['family']): string {

@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
+import { colorEfectivo } from '../shared/color';
+import { asegurarBuildFresco, disableAnimations, forceDarkTheme, forceLightTheme, goto, pickSelectOption } from './helpers';
 
 /**
  * LAS ALTAS DICEN LO QUE FALTA, HASTA «LISTO PARA CREAR» (DD-136).
@@ -94,3 +95,20 @@ test('al editar no dice «Listo»: la ficha ya existe', async ({ page }) => {
     await expect(page.locator('.ficha-summary'), ruta).not.toContainText('Listo para crear');
   }
 });
+
+/* «Listo» solo sale al rellenar, así que `theme-contrast`, que abre las altas vacías, mide «Falta» y no a él. Texto de
+ * 12 en semibold: AA pide 4,5:1, en los dos temas. */
+for (const [tema, aplicar] of [
+  ['claro', forceLightTheme],
+  ['oscuro', forceDarkTheme],
+] as const) {
+  test(`«Listo para crear» se lee sobre su fondo en tema ${tema}`, async ({ page }) => {
+    await aplicar(page);
+    await goto(page, 'admin/grupos/crear');
+    await asegurarBuildFresco(page);
+    await page.locator('#group-name').fill(`E2E Meta ${Date.now()}`);
+    await expect(estado(page)).toHaveText(dice('Listo para crear'));
+    const { ratio } = await estado(page).evaluate(colorEfectivo);
+    expect(ratio, `«Listo para crear» en tema ${tema}`).toBeGreaterThanOrEqual(4.5);
+  });
+}

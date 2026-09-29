@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Un alta dice en su resumen lo que falta («Falta: nombre · extensión») y, cuando «Crear …» se enciende, «Listo para crear»: `sc-summary-status`, un solo `role="status"` que cambia en su sitio · sin porcentaje ni barra · un error de formato va en su campo · al editar, nunca «Listo» | DD-136 |
 > | Con qué nace un grupo o un agente se fija en Contact Center (› Grupos, › Agentes), con las palabras de su ficha, y el alta lo lee · de fábrica, los valores del documento de producto (10 · 15 · 60 s, Baja, Balanceada, desbordar; el agente, todo menos la numeración especial) · la cola agotada sigue por el VUI | DD-135 |
 > | Una ayuda bajo un campo dice lo que dicen las fuentes (manual de Voice, documento de producto) o no existe · va en el `helperText`, que la anuncia · `sc-select` pone sus `aria-*` en el elemento con foco · los desplegables del DS hablan el idioma de la app · fuera las ⓘ de la ficha de grupo | DD-133 |
 > | Cuatro tipos de usuario (Superadmin, Administrador, Supervisor Online y Offline), cada uno con su plantilla de acceso · el alta nace Offline · al editar, cambiar el tipo pregunta · «Plantilla: X · N cambios» con «Volver a la plantilla» | DD-132 |
@@ -94,6 +95,59 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-136 · 2026-09-29 — Las altas dicen lo que falta, hasta «Listo para crear»
+
+**Contexto** · Producto pidió (2026-09-29) llevar a los formularios el efecto de gradiente de meta: que nazcan con
+valores por defecto y el usuario solo cambie lo que necesite. DD-135 hizo que las altas nazcan con los de Contact
+Center; faltaba que dijeran cuánto queda. El resumen de la ficha de grupo decía «Falta: nombre · canales» (DD-121),
+pero al completarse desaparecía sin confirmar nada. Los de agente y usuario no decían nada: solo el motivo del botón,
+en la barra de arriba y de uno en uno.
+
+**Decisión** · (decisión de producto, 2026-09-29)
+1. **Las tres altas dicen en su resumen lo que falta**, «Falta: nombre · extensión», y en cuanto el botón «Crear …» se
+   enciende, «Listo para crear». Sin porcentaje ni barra (DD-121, DD-126).
+2. **Qué falta:** en el grupo, nombre y canales; en el agente, nombre y extensión; en el usuario, nombre y email. Un
+   error de formato (un nombre repetido, un email o un PIN mal escritos) se dice en su campo, y mientras lo haya el
+   resumen no dice «Listo».
+3. **Una pieza compartida, `sc-summary-status`** (de la app, no del DS), arriba del resumen:
+   - un solo `role="status"`, que existe desde que se abre el alta y cambia en su sitio;
+   - reserva su línea aunque esté vacía, así el resumen no salta;
+   - «Falta» en el ámbar de los avisos (`--sc-text-warning`), con su icono; «Listo» en el verde de éxito
+     (`--sc-text-success`), con `check_circle`; los dos iconos a 600, como su texto semibold (DD-130).
+4. **Al editar, nunca «Listo».** «Falta» sale solo si se vacía un obligatorio, como ya hacía la ficha de grupo.
+5. **Textos:** lo común pasa a `common` (`summary_missing`, `summary_missing_name`, `summary_ready`); lo de cada
+   entidad se queda en ella (canales, extensión, email).
+
+**Razón** ·
+- **Cuanto más cerca se ve la meta, antes se termina.** Con los valores de Contact Center, al alta de grupo solo le
+  falta el nombre, y decirlo en palabras lo hace visible.
+- **«Listo para crear» confirma** lo que antes solo decía un botón al pasar de gris a azul.
+- **Palabras, no un número.** Un porcentaje cuenta campos, no lo que importa: DD-121 descartó el de la maqueta, que
+  arrancaba en 33 % con el alta vacía y marcaba siempre 100 % al editar.
+- **El lector anuncia el cambio porque la región ya existe.** Un `role="status"` que se inserta con su texto no se
+  anuncia de forma fiable; por eso la pieza está desde el principio, aunque vacía.
+
+**Descartadas** ·
+- **Porcentaje o barra de progreso** → DD-121 y DD-126.
+- **Decir en el resumen los errores de formato** → ya están en su campo, en rojo; repetirlos sería ruido.
+- **«Listo» también al editar con cambios** → la barra ya dice «Cambios sin guardar» (DD-122).
+- **Quitar el motivo de la barra ahora que lo dice el resumen** → va junto al botón apagado y dice por qué no se
+  puede. Y por debajo de 1340 el resumen es una franja encima del contenido que se va al bajar; la barra de arriba
+  se queda.
+
+**Consecuencias** ·
+- **Pruebas:** `altas-meta.spec.ts`, siete:
+  - cinco de comportamiento, cuatro en rojo contra el código anterior (la quinta, de guarda, «al editar nunca
+    Listo», ya pasaba);
+  - dos del contraste de «Listo» en claro y en oscuro, que `theme-contrast` no ve porque abre las altas vacías; la
+    de claro, en rojo con el color cambiado a propósito (2,95:1).
+- **`theme-contrast`** mide entera el alta de grupo.
+- **Queda abierto:** las altas de agente y usuario aún no entran en la medida completa de `theme-contrast`. El
+  marcador de la foto (`sc-photo-upload`, del DS) mide 2,58:1 y un icono pide 3:1: usa el color de «deshabilitado»
+  sin estarlo. Es un arreglo del DS, con su captura de sc-docs, para su propio cambio.
 
 ---
 

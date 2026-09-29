@@ -991,6 +991,9 @@
     "no_changes": "Não há alterações para guardar",
     "unsaved_changes": "Alterações não salvas",
     "summary": "Resumo",
+    "summary_missing": "Em falta: {{items}}",
+    "summary_missing_name": "nome",
+    "summary_ready": "Pronto para criar",
     "summary_of": "{{value}} de {{total}}",
     "actions": "Ações",
     "select_row": "Selecionar {{name}}",
@@ -1428,6 +1431,9 @@
         "apply_body_other": "Altera {{count}} caixas em Acesso. Se as mantiver, o tipo muda na mesma e Acesso fica como está.",
         "apply": "Aplicar o modelo",
         "keep": "Manter as caixas"
+      },
+      "summary": {
+        "missing_email": "email"
       }
     },
     "errors": {
@@ -1678,8 +1684,6 @@
         "outbound": "Saída",
         "no_number": "Sem número",
         "resources": "Recursos",
-        "missing": "Em falta: {{items}}",
-        "missing_name": "nome",
         "missing_channels": "canais"
       },
       "channels": {
@@ -1938,7 +1942,8 @@
       },
       "summary": {
         "no_groups": "Sem grupos",
-        "groups_active": "Grupos ativos"
+        "groups_active": "Grupos ativos",
+        "missing_extension": "ramal"
       },
       "create_submit": "Criar agente"
     },

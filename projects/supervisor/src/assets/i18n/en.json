@@ -991,6 +991,9 @@
     "no_changes": "No changes to save",
     "unsaved_changes": "Unsaved changes",
     "summary": "Summary",
+    "summary_missing": "Missing: {{items}}",
+    "summary_missing_name": "name",
+    "summary_ready": "Ready to create",
     "summary_of": "{{value}} of {{total}}",
     "actions": "Actions",
     "select_row": "Select {{name}}",
@@ -1428,6 +1431,9 @@
         "apply_body_other": "It changes {{count}} boxes in Access. If you keep them, the type changes anyway and Access stays as it is.",
         "apply": "Apply the template",
         "keep": "Keep the boxes"
+      },
+      "summary": {
+        "missing_email": "email"
       }
     },
     "errors": {
@@ -1678,8 +1684,6 @@
         "outbound": "Outbound",
         "no_number": "No number",
         "resources": "Resources",
-        "missing": "Missing: {{items}}",
-        "missing_name": "name",
         "missing_channels": "channels"
       },
       "channels": {
@@ -1938,7 +1942,8 @@
       },
       "summary": {
         "no_groups": "No groups",
-        "groups_active": "Active groups"
+        "groups_active": "Active groups",
+        "missing_extension": "extension"
       },
       "create_submit": "Create agent"
     },

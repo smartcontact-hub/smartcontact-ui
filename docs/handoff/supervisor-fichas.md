@@ -15,9 +15,10 @@ sus dos trampas suben a «Trampas del frente». El de la visión de producto de 
 mismo tope: `git show f63d13aa:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
 Contact Center suben a «Trampas del frente».
 
-## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135)
+## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136)
 
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `f63d13aa`, PR por abrir.**
+> **Sello: #290 (`e490faf`) fundido en `main`, con su CI de `main` en verde; lo que falta de las altas, en la rama
+> `areses/sweet-fermat-r9cxzw` sobre `e490faf`.**
 
 **Qué pasó.** Producto respondió al cierre del 2026-09-28:
 - los valores de fábrica son los del documento de producto de usuarios y grupos;
@@ -39,7 +40,20 @@ Contact Center suben a «Trampas del frente».
 **Medido:** `contact-center-valores.spec.ts`, seis de seis en rojo contra el código anterior; la prueba nueva de
 `ayudas-campos`, en rojo sin la ayuda de la ficha y, aparte, sin la de Contact Center.
 
+**Las altas dicen lo que falta (DD-136)**, el efecto de gradiente de meta que pidió producto:
+- el resumen de cada alta dice «Falta: nombre · extensión» y, en cuanto «Crear …» se enciende, «Listo para crear»;
+- una pieza compartida de la app, `sc-summary-status`: un solo `role="status"` que cambia en su sitio y reserva su
+  línea, en ámbar o en verde con su icono;
+- un error de formato va en su campo, y al editar nunca dice «Listo».
+
+`altas-meta.spec.ts`: cuatro de cinco en rojo contra el código anterior (la quinta, de guarda), y el contraste de
+«Listo» en los dos temas, en rojo con el color cambiado a propósito.
+
 **Trampas del tramo:**
+- ⚠️ `toHaveText` lee el `textContent`, y un `sc-icon` pone ahí el nombre de su glifo («error Falta: nombre»). El
+  lector no lo oye (va `aria-hidden`): casa el final del texto.
+- ⚠️ Las altas de agente y usuario no pasan la medida completa de `theme-contrast`: el marcador de la foto
+  (`sc-photo-upload`, del DS) mide 2,58:1. Por eso siguen en `RUTAS_SUELO` (abierto en DD-136).
 - ⚠️ Un `sc-inputnumber` con sufijo se describe con el sufijo delante: la espera en cola se anuncia «s Si nadie…».
   Casa el final de la descripción, no el texto exacto.
 - ⚠️ En la nube se corre como root, y `chmod` no le quita la escritura. Para simular que la config de git no se puede
@@ -252,16 +266,16 @@ usuario con `p-tabs`.
 
 ## SIGUIENTE — sin preguntar
 
-0. **Las altas, con el efecto de gradiente de meta** (plan aprobado el 2026-09-29):
-   - cada alta dice «Falta: …» hasta «Listo para crear», sin porcentaje ni barra (DD-121, DD-126);
-   - después, el Stepper vertical nativo de PrimeNG en las tres altas, que revisa el descarte de DD-121 y el de DD-130;
-     la edición sigue con el índice.
+0. **El Stepper vertical nativo de PrimeNG en las tres altas** (plan aprobado el 2026-09-29), que revisa el descarte
+   de DD-121 y el de DD-130; la edición sigue con el índice. «Falta» y «Listo» (DD-136) siguen en el resumen.
 
-   **Lo que queda abierto de DD-133 y DD-135:**
+   **Lo que queda abierto de DD-133, DD-135 y DD-136:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
    - los subtítulos de sección, sin revisar;
    - las ayudas de la lista de ajustes de Contact Center no se anuncian con su control (el DS no deja pasar
-     `aria-describedby`).
+     `aria-describedby`);
+   - el marcador de la foto de `sc-photo-upload` (DS), a 2,58:1: al arreglarlo, las altas de agente y usuario entran
+     en `RUTAS` de `theme-contrast`.
 
    Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
    código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el

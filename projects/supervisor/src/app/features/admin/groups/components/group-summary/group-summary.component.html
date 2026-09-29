@@ -1,12 +1,10 @@
 <section class="resumen" aria-labelledby="group-summary-title">
   <h2 id="group-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'groups.form.summary.title' | translate }}</h2>
 
-  <!-- Los avisos van en semibold y su icono con el mismo peso, 600: un icono lleva el peso óptico de su texto (DD-130). -->
-  @if (missingText(); as text) {
-    <p class="resumen__missing sc-text-caption-semibold" role="status">
-      <sc-icon name="error" size="inherit" [weight]="600" aria-hidden="true" />
-      {{ text }}
-    </p>
+  <!-- Lo que le falta al alta, hasta «Listo para crear» (DD-136). En el alta está siempre, y cambia en su sitio;
+       al editar, solo si falta algo (un nombre borrado). -->
+  @if (creating() || missing().length > 0) {
+    <sc-summary-status [missing]="missing()" [ready]="ready()" />
   }
 
   <!-- Las tarjetas son hermanas: 14 entre ellas; el título, a 7 de la primera (AGENTS «UX de pantalla» 9). -->

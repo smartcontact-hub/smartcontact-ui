@@ -596,6 +596,8 @@
         [outbound]="summaryOutbound()"
         [resourceCount]="resourceCount()"
         [missing]="summaryMissing()"
+        [creating]="mode() === 'create'"
+        [ready]="mode() === 'create' && canSave()"
       />
     </div>
   </div>

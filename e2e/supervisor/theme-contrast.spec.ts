@@ -72,6 +72,10 @@ const RUTAS = [
    * a medias (8/11, 2/5). */
   'admin/agentes/editar/1',
   'admin/usuarios/editar/3',
+  /* El alta de grupo, desde que su resumen dice lo que falta (DD-136): «Falta: …» en ámbar, a la vista al abrir. Las de
+   * agente y usuario llevan la misma pieza, pero aún no entran aquí: el marcador de la foto (`sc-photo-upload`, del DS)
+   * mide 2,58:1 y un icono pide 3:1. Es un arreglo del DS, abierto en DD-136; hasta entonces van en `RUTAS_SUELO`. */
+  'admin/grupos/crear',
   'admin/agentes',
   'admin/labels',
   'admin/plantillas',
@@ -105,7 +109,6 @@ const RUTAS_SUELO = [
   ...RUTAS,
   'supervision',
   'admin/usuarios/crear',
-  'admin/grupos/crear',
   'admin/agentes/crear',
   'conversaciones/reglas/nueva',
 ] as const;
