@@ -39,6 +39,14 @@
   &__content {
     flex: 1;
     overflow: auto;
+    /* La página se desplaza aquí, nunca el documento. Sin un antepasado posicionado, lo que va
+     * `position: absolute` dentro (un `.visually-hidden`, como el input de fichero de «Música de
+     * espera») se colgaba del documento y lo alargaba: 160 px en el grupo 1, 206 en el 11 y 147 en
+     * el alta. Al llegar al final, la rueda seguía con el documento y se llevaba la barra de arriba,
+     * el índice y el resumen. Con `relative`, esta zona es su caja y lo desplaza con lo demás. No
+     * vale `contain` ni `transform`: harían de caja también a lo `fixed` (la barra de lote).
+     * Medido el 2026-10-01 a 1490×860 (`documento-quieto.spec.ts`). */
+    position: relative;
     /* `tabindex="-1"` makes this focusable programmatically (skip-link
      * targets it) without inserting it into the natural Tab order. Drop
      * the focus ring so it doesn't render when the user lands here via

@@ -13,12 +13,41 @@
 tablas tras la revisión del equipo (2026-09-24, cinco PRs): `git show 197c5579:docs/handoff/supervisor-fichas.md`;
 sus dos trampas suben a «Trampas del frente». El de la visión de producto de grupos (2026-09-26, DD-121) sale por el
 mismo tope: `git show f63d13aa:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
-Contact Center suben a «Trampas del frente».
+Contact Center suben a «Trampas del frente». El de un solo índice (2026-09-27, DD-122), igual: `git show
+7458351:docs/handoff/supervisor-fichas.md`; sus trampas también suben.
+
+## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H)
+
+> **Sello: rama `areses/sweet-fermat-r9cxzw` rearrancada desde `main` (`7458351`, con #295 fundido), PR de H.**
+
+**Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
+ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
+prueba en rojo y, si decide algo, su DD: H (lo que se corta) → D1 (estrategias y textos) → D2 (teléfono saliente) →
+D3 (tiempos, horarios y música) → E1 (canales por familia y niveles) → E2 («Habilitado» y presencia) → E3 (canales
+del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen enlazado) → F (listado).
+
+**H · lo que se corta al bajar del todo** (sin DD: solo arregla):
+- en Distribución y colas, al llegar al final, la rueda seguía con el documento: se iba la barra de arriba, el índice y
+  el resumen se cortaban por arriba y quedaba una franja gris;
+- la causa: el input de fichero oculto de «Música de espera» (`.visually-hidden`, `position: absolute`) no tenía
+  antepasado posicionado, así que se colgaba del documento y lo alargaba: 160 px en el grupo 1, 206 en el 11 y 147 en
+  el alta;
+- `main.app-shell__content` pasa a `position: relative`. Medido en las 36 pantallas de `agrupacion`: el documento no
+  sobra en ninguna, y lo único que toma esa zona por caja son textos ocultos;
+- `documento-quieto.spec.ts`: tres en rojo contra el código anterior (206, 147 y 160) y seis pantallas largas de
+  guarda.
+
+**Trampas del tramo:**
+- ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
+  `@smartcontact-hub/components` (sale el `vite-error-overlay`). No midas con el servidor mientras corre el preflight,
+  y reinícialo al acabar.
+- ⚠️ `pages.dev` no responde desde el contenedor (el proxy no deja llegar): el despliegue de un PR se comprueba por su
+  check de Cloudflare y por el comentario del bot, que da la URL fija de cada commit.
 
 ## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-138)
 
-> **Sello: #290 (`e490faf`) y #291 (`4be46a5`) fundidos en `main`, con su CI de `main` en verde; los pasos, en la
-> rama `areses/sweet-fermat-r9cxzw` sobre `0ec229c`.**
+> **Sello: #290 (`e490faf`), #291 (`4be46a5`) y los pasos, #295 (`7458351`), fundidos en `main`, con su CI de
+> `main` en verde.**
 
 **Qué pasó.** Producto respondió al cierre del 2026-09-28:
 - los valores de fábrica son los del documento de producto de usuarios y grupos;
@@ -243,61 +272,12 @@ queda lo elegido.
 - ⚠️ En claro, el tinte de marca y «seleccionado» son el mismo color: una tarjeta del resumen no puede hacerse pulsable
   sin cambiar de superficie.
 
-## ✅ 2026-09-27 · Un solo índice con una sola forma, y agente y usuario al molde de la ficha de grupo (DD-122)
-
-> **Sello: rama `areses/sweet-fermat-r9cxzw` rearrancada desde `main`, HEAD `168530c`, PR nuevo, un commit por bloque.**
-> El tramo del 2026-09-20 (el contenido anclado a la izquierda, DD-115) sale de aquí:
-> `git show 168530c:docs/handoff/supervisor-fichas.md`.
-
-**Qué pasó.** Producto respondió a las preguntas para ir a fondo (DD-121, «Respuestas de producto»): el índice debe
-ser uno y funcionar de una sola forma. Medido, había tres: Contact Center con su pieza propia (`routerLink`), la ficha
-de grupo y el constructor con `sc-form-section-nav` (`href="#"`, `role="tab"`, la sección en memoria), y agente y
-usuario con `p-tabs`.
-
-**Qué cambia** (el detalle y lo descartado, en DD-122):
-- **DS**: cada fila de `sc-form-section-nav` es un enlace (`href` opcional por sección). El clic principal sin teclas
-  avisa (`activeChange`) y la página navega; los gestos de enlace los hace el navegador. `aria-current="page"`, sin
-  `role="tab"`. Gana `titleKey` (rótulo) y `sectionsWithChanges` (punto de marca). CHANGELOG `Added` y `Changed`.
-- **App**: la sección sale de `?seccion=` (input de página); `SectionLinksService` hace el `href` y la navegación. En
-  un alta, `replaceUrl`. La transición de vista se salta si solo cambia la query, y el router cancela volviendo a
-  donde estaba (`canceledNavigationResolution: 'computed'`).
-- **Contact Center** usa el índice del DS con su rótulo; `sc-settings-sidebar` fuera.
-- **Agente y usuario**, al molde de la ficha de grupo: cabecera encima, índice, sección en `sc-section-card` y
-  resumen a la derecha con sus tres cifras (tarjetas en `styles/_resumen.scss`, una para las tres fichas). Un orden
-  fijo; abren en Identidad; los listados enlazan a su sección de trabajo. El alta de agente navega a la edición (antes
-  `Location.replaceState`). El aviso de otra pestaña, en las tres.
-- **Un solo «Guardar» por ficha**: el índice marca las secciones con cambios y la barra dice «Cambios sin guardar».
-- **Pendientes pequeños de DD-121**: el diálogo corto solo duplica (`sc-group-duplicate-dialog`), y sale el banner
-  `.cross-tab-warning` que no pintaba nadie (tipografía suelta de 81 a 80).
-
-**Medido:**
-- **Rojo primero.** Unitaria del índice: 12 de 16 contra el componente anterior. `indice-enlaces.spec.ts`: 11 de 12
-  contra `main`; la que pasaba es Contact Center, que ya iba por rutas. Su prueba de Atrás con «Seguir editando» se
-  vio en rojo antes de `computed`. `ficha-usuario-agente.spec.ts`: 12 de 15 contra `main`, más la del alta de agente
-  con el `replaceState` de antes puesto a propósito.
-- **Sin píxeles de más.** Contact Center, la ficha de grupo y el constructor: 0 píxeles distintos contra `main` a
-  1440, en claro y en oscuro. La sonda enrojece con medio píxel de relleno.
-
-**Trampas del tramo:**
-- ⚠️ `withViewTransitions` abre una transición en TODA navegación, también si solo cambia la query: sin saltarla
-  (`onlyQueryChanged`, en `app.config.ts`), cada clic del índice fundía la página. En e2e no se ve,
-  porque `disableAnimations` apaga los pseudo-elementos: la prueba envuelve `document.startViewTransition`.
-- ⚠️ En el alta de grupo, en cuanto el grupo existe su nombre ya está cogido (por él mismo) y la puerta de General se
-  cierra: lo que dependa de `activeSection()` al crear se lee ANTES de `addGroup`, y la puerta no se aplica mientras
-  se guarda.
-- ⚠️ Con dos `page.goto`, Atrás cruza de documento y el router no se entera: una prueba de un guardián con Atrás
-  tiene que llegar a la ficha navegando dentro de la app. Y el aviso de descartar es un `alertdialog`.
-- ⚠️ Un `input()` de página enlazado a la query recibe el valor nuevo un microtask después de navegar, y un
-  parámetro que falta llega como `undefined`. No lo leas en un efecto que recarga el formulario (el constructor
-  recarga la regla con cada cambio del store): cada clic del índice borraría lo editado.
-- ⚠️ «Todos cumplen» sobre una lista vacía da verde: la prueba del alta de agente pasaba en `main`, sin índice.
-  Cuenta antes de comprobar.
-- ⚠️ La ficha de usuario ya tenía un `sectionTree` (el árbol de Acceso): el ayudante de enlaces se llama
-  `sectionUrl` en las cuatro páginas.
-
 ## SIGUIENTE — sin preguntar
 
-0. **Lo que queda abierto de DD-133, DD-135, DD-136 y DD-138:**
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba): D1 → D2 → D3 → E1 → E2 → E3 → E4 → G → F. Cada uno
+   con su prueba en rojo; la numeración de DD se mira en `origin/main` al empezar.
+
+   **Lo que queda abierto de DD-133, DD-135, DD-136 y DD-138:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
    - los subtítulos de sección, sin revisar;
    - las ayudas de la lista de ajustes de Contact Center no se anuncian con su control (el DS no deja pasar
@@ -385,3 +365,14 @@ usuario con `p-tabs`.
 - ⚠️ El preflight no arranca si la memoria compartida pasa de tope (ficha >250 palabras o índice >1.000); lo mide
   `scripts/memory-shape.mjs`.
 - ⚠️ En Figma, `importComponentByKeyAsync` se cuelga más de 200 s: usa un nodo remoto que ya esté en el fichero.
+- ⚠️ `withViewTransitions` abre una transición en TODA navegación, también si solo cambia la query: sin saltarla
+  (`onlyQueryChanged`, en `app.config.ts`) cada clic del índice fundía la página. En e2e no se ve porque
+  `disableAnimations` apaga los pseudo-elementos: la prueba envuelve `document.startViewTransition`.
+- ⚠️ En el alta de grupo, en cuanto el grupo existe su nombre ya está cogido (por él mismo) y la puerta de General se
+  cierra: lo que dependa de la sección abierta al crear se lee ANTES de `addGroup`.
+- ⚠️ Con dos `page.goto`, Atrás cruza de documento y el router no se entera: la prueba de un guardián con Atrás llega
+  a la ficha navegando dentro de la app. El aviso de descartar es un `alertdialog`.
+- ⚠️ Un `input()` de página enlazado a la query recibe el valor nuevo un microtask después de navegar, y lo que falta
+  llega como `undefined`: no lo leas en un efecto que recarga el formulario, o cada clic del índice borra lo editado.
+- ⚠️ La ficha de usuario ya tenía un `sectionTree` (el árbol de Acceso): el ayudante de enlaces se llama `sectionUrl`
+  en las cuatro páginas.
