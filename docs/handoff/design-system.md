@@ -176,6 +176,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-01 · Un `sc-dialog` se anuncia como UN diálogo, con su título de nombre (DD-140)
+
+**Sello:** rama `areses/cranky-tharp-bf0e3e`, sobre `5cf3f5e1` (#300), PR nuevo. Sale por el tope el tramo de `audit:query-order`
+(`git show 57f03a0d:docs/handoff/design-system.md`); su ⚠️ lo dice la cabecera de `scripts/audit-query-order.mjs`.
+
+**Lo que cambia.** Cada `sc-dialog` exponía dos `role="dialog"` modales anidados, el de PrimeNG sin nombre. Ahora el rol es solo el
+del `div.p-dialog`, el que atrapa el foco, nombrado con el título y descrito con el subtítulo por `pt.root`; la card no lo repite.
+Medido en Chromium: foco, Tab y Escape, iguales. Prueba nueva en `components.spec.ts`, en rojo contra el código anterior.
+
+- ⚠️ **Sin cortar versión**: la nota va en `[Unreleased]`, como desde 1.0.0. Cortar la 1.1.0 lleva todo lo pendiente y una release (DD-58).
+- **La pantalla donde se vio** (Recursos del grupo 11): `ficha-recursos-dialogos.spec.ts` pide UN diálogo en la página; con el de antes, 2.
+
 ## ✅ 2026-09-28 · Los commits firman con la cuenta del mantenedor, y el squash no suma coautores (DD-134)
 
 **Sello:** rama `areses/goofy-matsumoto-803f2a`, sobre `9551ed2a` (#282), PR nuevo. Salen por el tope el tramo del 2026-09-24 (DD-120) y el del color (#269): `git show 9551ed2a:docs/handoff/design-system.md`.
@@ -202,16 +214,6 @@ en su línea) y ninguna acababa, y el motivo del hook recomendaba ese patrón. A
 **Lo que cambia.** Con `CI` y fuera de GitHub Actions, `reuseOnlyOwnServer` esperaba el puerto libre también en cada worker, que
 evalúa el config con el `ng serve` de su propia ejecución ya escuchando: 5 workers en «Espero a que se libere», techo de 25 min.
 Ahora espera solo el principal (`esWorker()`), y sin `lsof` no espera. Lo prueban cuatro escenarios con Playwright de verdad.
-
-## ✅ 2026-09-28 · Un `@media` o `@container` que el orden deja sin efecto pone rojo (`audit:query-order`)
-
-**Sello:** rama `areses/loving-bouman-df8ab6`, sobre `ac02acc6`, PR nuevo. El tramo de DD-113 sale por el tope (`git show ac02acc6:docs/handoff/design-system.md`); su ⚠️ ya lo dicen AGENTS §«Componentes de primeng.dev» y `audit:primeng-coupling` §F.
-
-**Lo que cambia.** Gate 43: una regla en `@media`/`@container`/`@supports` ANTES de otra con el mismo selector y capa no gana nunca
-en lo que declaran las dos (la franja del resumen, DD-130). Lee el CSS compilado con el `sass` de Angular (~2 s). Cazó además el
-«reducir movimiento» de las filas de `aed-servicio-page` (en la app, `color` antes y `none` después; lo tapaba el reset global).
-
-- ⚠️ **Leer el fuente no basta**: con este `sass`, una declaración tras un `@media` anidado sale DETRÁS y lo mata.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
