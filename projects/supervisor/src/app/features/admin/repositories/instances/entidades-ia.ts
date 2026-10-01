@@ -165,6 +165,7 @@ export class EntidadesIAPageComponent {
   protected readonly config: RepoPageConfig<EntidadIA> = {
     titleKey: 'repositories.entidades_ia.title',
     entitySingularKey: 'repositories.entidades_ia.singular',
+    createTitleKey: 'repositories.entidades_ia.create_title',
     entityPluralKey: 'repositories.entidades_ia.plural',
     icon: 'inventory_2',
     breadcrumbExtraKey: 'repositories.entidades_ia.title',

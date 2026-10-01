@@ -18,11 +18,12 @@ Contact Center suben a «Trampas del frente». El de un solo índice (2026-09-27
 
 ## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H)
 
-> **Sello: rama `areses/sweet-fermat-r9cxzw` rearrancada desde `main` (`7458351`, con #295 fundido), PR de H.**
+> **Sello: H fundido (#298, `57f03a0`) con su CI en verde; la rama sigue desde ahí con los diálogos de Recursos.**
 
 **Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
 ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
-prueba en rojo y, si decide algo, su DD: H (lo que se corta) → D1 (estrategias y textos) → D2 (teléfono saliente) →
+prueba en rojo y, si decide algo, su DD: H (lo que se corta) → los diálogos de Recursos (la parte de D1 que pidió
+el usuario aparte) → D1 (estrategias y textos) → D2 (teléfono saliente) →
 D3 (tiempos, horarios y música) → E1 (canales por familia y niveles) → E2 («Habilitado» y presencia) → E3 (canales
 del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen enlazado) → F (listado).
 
@@ -36,6 +37,18 @@ del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen 
   sobra en ninguna, y lo único que toma esa zona por caja son textos ocultos;
 - `documento-quieto.spec.ts`: tres en rojo contra el código anterior (206, 147 y 160) y seis pantallas largas de
   guarda.
+
+**Los diálogos de Recursos** (sin DD: solo arregla):
+- cada «+» de Recursos de la ficha abre un `sc-dialog` con el formulario de su pantalla, que seguía pintando su tarjeta
+  (320 px con borde, sombra y radio), su título repetido y su propio `role="dialog"`. La ficha le pasaba `flush`, pero
+  la entrada no existía;
+- los tres formularios (repositorios, plantillas y etiquetas) ganan `flush`: sin caja, sin título y sin rol propio;
+- cada diálogo se llama como su «+» («Nueva tipificación», no «Nuevo/a tipificación»; «Nueva etiqueta», no «Nueva
+  label»), y cada repositorio, su título de alta con género (`createTitleKey`; sin él, el genérico);
+- `ficha-recursos-dialogos.spec.ts`: dos en rojo y una de guarda. Al arreglar los títulos, la de los «+» siguió en
+  rojo por el `role` propio del formulario: cada parte de la prueba enrojece con su fallo;
+- fuera: `sc-dialog` trae dos `role="dialog"` modales anidados (el `p-dialog` y su `section`), del DS, en tarea
+  aparte; y el ejemplo del campo de etiqueta dice «Nombre de la label», el vocabulario de la pantalla de Labels.
 
 **Trampas del tramo:**
 - ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde

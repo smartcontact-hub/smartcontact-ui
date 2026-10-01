@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
@@ -58,6 +59,10 @@ export class LabelFormPanelComponent implements OnInit, AfterViewInit {
 
   readonly initial = input<Label | null>(null);
   readonly existingNames = input.required<readonly string[]>();
+
+  /** Dentro de un diálogo (la ficha de grupo crea así desde Recursos): sin caja, sin título y sin `role="dialog"`,
+   *  porque el diálogo ya pone los tres; el formulario ocupa su cuerpo. */
+  readonly flush = input(false, { transform: booleanAttribute });
 
   readonly save = output<LabelFormSubmission>();
   readonly cancelled = output<void>();

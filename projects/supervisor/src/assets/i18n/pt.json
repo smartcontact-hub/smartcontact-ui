@@ -1227,6 +1227,7 @@
     "agendas": {
       "title": "Agendas",
       "singular": "agenda",
+      "create_title": "Nova agenda",
       "plural": "agendas",
       "numbers": "Números",
       "name_placeholder": "Ex: Vendas Nacional",
@@ -1235,6 +1236,7 @@
     "horarios": {
       "title": "Horários",
       "singular": "horário",
+      "create_title": "Novo horário",
       "plural": "horários",
       "schedule": "Horário",
       "timezone": "Fuso horário",
@@ -1245,6 +1247,7 @@
     "tipificaciones": {
       "title": "Tipificações",
       "singular": "tipificação",
+      "create_title": "Nova tipificação",
       "plural": "tipificações",
       "code": "Código",
       "category": "Categoria",
@@ -1255,6 +1258,7 @@
     "variables": {
       "title": "Variáveis",
       "singular": "variável",
+      "create_title": "Nova variável",
       "plural": "variáveis",
       "key": "Chave",
       "default": "Valor padrão",
@@ -1271,6 +1275,7 @@
     "entidades": {
       "title": "Entidades",
       "singular": "entidade",
+      "create_title": "Nova entidade",
       "plural": "entidades",
       "type": "Tipo",
       "values": "Valores",
@@ -1287,6 +1292,7 @@
     "intenciones": {
       "title": "Intenções",
       "singular": "intenção",
+      "create_title": "Nova intenção",
       "plural": "intenções",
       "category": "Categoria",
       "examples": "Exemplos",
@@ -1297,6 +1303,7 @@
     "reglas_ia": {
       "title": "Regras IA",
       "singular": "regra IA",
+      "create_title": "Nova regra IA",
       "plural": "regras IA",
       "condition": "Condição",
       "action": "Ação",
@@ -1313,6 +1320,7 @@
     "entidades_ia": {
       "title": "Entidades IA",
       "singular": "entidade IA",
+      "create_title": "Nova entidade IA",
       "plural": "entidades IA",
       "type": "Tipo",
       "model": "Modelo",
@@ -1323,6 +1331,7 @@
     "clasificacion_ia": {
       "title": "Classificação IA",
       "singular": "classificação IA",
+      "create_title": "Nova classificação IA",
       "plural": "classificações IA",
       "model": "Modelo",
       "categories": "Categorias",

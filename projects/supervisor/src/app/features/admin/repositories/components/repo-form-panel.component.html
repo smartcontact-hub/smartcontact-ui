@@ -1,17 +1,12 @@
 <div
   class="panel"
-  role="dialog"
-  [attr.aria-label]="
-    (initial() ? 'repositories.form.edit_title' : 'repositories.form.create_title')
-      | translate: { entity: entitySingular() }
-  "
+  [class.panel--flush]="flush()"
+  [attr.role]="flush() ? null : 'dialog'"
+  [attr.aria-label]="flush() ? null : (tituloKey() | translate: { entity: entitySingular() })"
 >
-  <h3 class="panel__title sc-text-body-semibold">
-    {{
-      (initial() ? 'repositories.form.edit_title' : 'repositories.form.create_title')
-        | translate: { entity: entitySingular() }
-    }}
-  </h3>
+  @if (!flush()) {
+    <h3 class="panel__title sc-text-body-semibold">{{ tituloKey() | translate: { entity: entitySingular() } }}</h3>
+  }
 
   @for (field of fields(); track field.key; let i = $index) {
     <div class="panel__field">

@@ -1227,6 +1227,7 @@
     "agendas": {
       "title": "Carnets",
       "singular": "carnet",
+      "create_title": "Nouveau carnet",
       "plural": "carnets",
       "numbers": "Numéros",
       "name_placeholder": "Ex : Ventes nationales",
@@ -1235,6 +1236,7 @@
     "horarios": {
       "title": "Horaires",
       "singular": "horaire",
+      "create_title": "Nouvel horaire",
       "plural": "horaires",
       "schedule": "Horaire",
       "timezone": "Fuseau horaire",
@@ -1245,6 +1247,7 @@
     "tipificaciones": {
       "title": "Typifications",
       "singular": "typification",
+      "create_title": "Nouvelle typification",
       "plural": "typifications",
       "code": "Code",
       "category": "Catégorie",
@@ -1255,6 +1258,7 @@
     "variables": {
       "title": "Variables",
       "singular": "variable",
+      "create_title": "Nouvelle variable",
       "plural": "variables",
       "key": "Clé",
       "default": "Valeur par défaut",
@@ -1271,6 +1275,7 @@
     "entidades": {
       "title": "Entités",
       "singular": "entité",
+      "create_title": "Nouvelle entité",
       "plural": "entités",
       "type": "Type",
       "values": "Valeurs",
@@ -1287,6 +1292,7 @@
     "intenciones": {
       "title": "Intentions",
       "singular": "intention",
+      "create_title": "Nouvelle intention",
       "plural": "intentions",
       "category": "Catégorie",
       "examples": "Exemples",
@@ -1297,6 +1303,7 @@
     "reglas_ia": {
       "title": "Règles IA",
       "singular": "règle IA",
+      "create_title": "Nouvelle règle IA",
       "plural": "règles IA",
       "condition": "Condition",
       "action": "Action",
@@ -1313,6 +1320,7 @@
     "entidades_ia": {
       "title": "Entités IA",
       "singular": "entité IA",
+      "create_title": "Nouvelle entité IA",
       "plural": "entités IA",
       "type": "Type",
       "model": "Modèle",
@@ -1323,6 +1331,7 @@
     "clasificacion_ia": {
       "title": "Classification IA",
       "singular": "classification IA",
+      "create_title": "Nouvelle classification IA",
       "plural": "classifications IA",
       "model": "Modèle",
       "categories": "Catégories",
@@ -1567,7 +1576,7 @@
         "typification_none": "Aucune typification",
         "typification_option": "{{name}} ({{count}})",
         "typification_hint": "Avec une typification, l’agent doit typifier avant de fermer la conversation. Elles se créent dans Référentiels.",
-        "agenda_new": "Nouvel agenda",
+        "agenda_new": "Nouveau carnet",
         "template_new": "Nouveau modèle",
         "label_new": "Nouvelle étiquette"
       },

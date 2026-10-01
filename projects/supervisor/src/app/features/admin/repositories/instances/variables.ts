@@ -185,6 +185,7 @@ export class VariablesPageComponent {
   protected readonly config: RepoPageConfig<RepoVariable> = {
     titleKey: 'repositories.variables.title',
     entitySingularKey: 'repositories.variables.singular',
+    createTitleKey: 'repositories.variables.create_title',
     entityPluralKey: 'repositories.variables.plural',
     icon: 'data_object',
     breadcrumbExtraKey: 'repositories.variables.title',
