@@ -65,11 +65,6 @@
              el grupo ofrece teléfono: a un grupo de chat no se le pide. -->
         <span class="headline__meta sc-text-caption-regular" [title]="identitySummary()">{{ identitySummary() }}</span>
       </div>
-      @if (mode() === 'edit') {
-        <div class="headline__actions">
-          <sc-button variant="danger" appearance="text" size="sm" icon="delete" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
-        </div>
-      }
     </div>
 
     <!-- El índice, solo: la navegación no comparte carril con nada, así que no se va de la pantalla. Cada
@@ -87,6 +82,13 @@
         [flush]="true"
         (activeChange)="goTo($event)"
       />
+      <!-- «Eliminar», bajo el índice (DD-144): con el nombre dentro del contenido, la cabecera ya no tiene sitio a
+           su derecha. Solo al editar. -->
+      @if (mode() === 'edit') {
+        <div class="ficha-eliminar">
+          <sc-button variant="danger" appearance="text" size="sm" icon="delete" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
+        </div>
+      }
     </div>
 
     <div class="page__main">

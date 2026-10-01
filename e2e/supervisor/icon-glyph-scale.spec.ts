@@ -111,6 +111,10 @@ for (const ruta of RUTAS) {
             const padre = t.parentElement;
             if (!t.textContent?.trim() || !padre || padre.closest('.sc-icon, .sc-icon-font, sc-icon')) continue;
             if (!padre.checkVisibility({ opacityProperty: true, visibilityProperty: true })) continue;
+            /* Lo oculto a la vista no se pinta, así que nada lo roza: `checkVisibility` lo da por visible, y su
+             * texto, sin saltos de línea en una caja de 1px, cae sobre lo que tenga al lado. Desde DD-144 el
+             * rótulo del resumen va así, sobre el icono de «Falta: …». */
+            if (padre.closest('.visually-hidden')) continue;
             const rango = document.createRange();
             rango.selectNodeContents(t);
             for (const r of rango.getClientRects()) {

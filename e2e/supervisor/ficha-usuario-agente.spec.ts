@@ -142,10 +142,12 @@ test('usuario · la línea bajo el nombre se lee entera', async ({ page }) => {
   await expect(page.locator('.ficha-summary')).toContainText('Tipo');
 });
 
-test('las tres fichas tienen «Eliminar» en su franja', async ({ page }) => {
+// Desde DD-144, «Eliminar» va bajo el índice: con el título dentro del contenido, la franja ya no tiene sitio a su
+// derecha.
+test('las tres fichas tienen «Eliminar» bajo el índice', async ({ page }) => {
   for (const ruta of ['admin/grupos/editar/1', 'admin/usuarios/editar/1', 'admin/agentes/editar/1']) {
     await goto(page, ruta);
-    await expect(page.locator('.headline__actions').getByRole('button', { name: 'Eliminar' }), ruta).toBeVisible();
+    await expect(page.locator('.page__rail').getByRole('button', { name: 'Eliminar' }), ruta).toBeVisible();
   }
 });
 

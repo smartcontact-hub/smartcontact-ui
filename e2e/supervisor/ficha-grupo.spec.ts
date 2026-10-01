@@ -12,8 +12,8 @@ import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from
  *
  *   1. UN índice lateral gobierna TODO el contenido: una sección a la vista, y abre en General,
  *      que es la que decide las demás (sus canales).
- *   2. El molde es el de Contact Center (`--rail`, índice de 196 y contenido de 920 a 1440), con
- *      la cabecera ENCIMA de los dos: el título arranca en la misma vertical que el índice.
+ *   2. El molde es el de Contact Center (`--rail`, índice de 196), con el resumen a la derecha y las tres
+ *      columnas arrancando a la misma altura: el título va en la del contenido, encima de la sección (DD-144).
  *   3. El índice y el resumen siguen enteros a la vista al bajar, también en un portátil; por debajo de 1340,
  *      el resumen es una franja encima del contenido.
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas.
@@ -128,7 +128,9 @@ test('los grupos no llevan cara: ni avatar en las listas ni foto en la ficha', a
   await expect(page.locator('.page__inner sc-illustrated-avatar')).toHaveCount(0);
 });
 
-test('el índice es el de Contact Center, la cabecera va encima y el resumen a la derecha', async ({ page }) => {
+test('el índice es el de Contact Center, y las tres columnas arrancan a la misma altura, con el título en el contenido', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await goto(page, 'admin/grupos/editar/1');
 
@@ -147,7 +149,7 @@ test('el índice es el de Contact Center, la cabecera va encima y el resumen a l
       rail: { x: Math.round(rail.left), arriba: rail.top, ancho: Math.round(rail.width), derecha: rail.right, pos: r.position, top: r.top },
       main: { x: main.left, ancho: Math.round(main.width), arriba: main.top, derecha: main.right },
       resumen: { x: resumen.left, ancho: Math.round(resumen.width), arriba: resumen.top },
-      h1: { x: Math.round(h1.left), abajo: h1.bottom },
+      h1: { x: Math.round(h1.left), arriba: h1.top, abajo: h1.bottom },
     };
   });
 
@@ -166,11 +168,12 @@ test('el índice es el de Contact Center, la cabecera va encima y el resumen a l
   expect(Math.round(m.main.x - m.rail.derecha)).toBe(28);
   expect(Math.round(m.resumen.x - m.main.derecha)).toBe(28);
   expect(m.main.ancho).toBe(812);
-  // La cabecera va ENCIMA de las tres, y el título arranca en la vertical del índice.
-  expect(m.h1.abajo).toBeLessThan(m.rail.arriba);
-  expect(m.rail.arriba).toBe(m.main.arriba);
-  expect(m.resumen.arriba).toBe(m.main.arriba);
-  expect(m.h1.x).toBe(m.rail.x);
+  // Desde DD-144, el título va en la columna del contenido, encima de la sección, y el índice, el título y el
+  // resumen arrancan a la misma altura. Hasta entonces la cabecera iba encima de las tres, en la vertical del índice.
+  expect(m.h1.arriba).toBe(m.rail.arriba);
+  expect(m.resumen.arriba).toBe(m.rail.arriba);
+  expect(m.h1.x).toBe(Math.round(m.main.x));
+  expect(m.main.arriba).toBeGreaterThan(m.h1.abajo);
 });
 
 test('en un portátil, al bajar hasta el final de la sección más larga, el índice y el resumen siguen enteros', async ({
