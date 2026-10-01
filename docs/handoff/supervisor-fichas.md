@@ -73,7 +73,7 @@ del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen 
 - los tiempos, en desplegable con los valores del Contact Center validado (D3);
 - la cola por agente, de 1 a 10 enteros y 2 por defecto;
 - el nombre del grupo, fijo al bajar;
-- «Eliminar», bajo el índice, y escribiendo el nombre para confirmar (G);
+- «Eliminar», bajo el índice (G1), y escribiendo el nombre para confirmar, que ya pedía `sc-delete-entity-dialog`;
 - los agentes del grupo, todos a la vista y sin marcar (E4, con la referencia del usuario «4. Agentes y revisión»).
 
 Respuestas del usuario: Etiquetas fuera, guardada; «Caducar sesión»; los valores del Contact Center validado; borrar
@@ -256,8 +256,9 @@ grupos y el manual de usuario de Voice:
 ## SIGUIENTE — sin preguntar
 
 0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: G2 → E1 → E2 → E3 → E4 →
-   D3 → F. G2 termina la maqueta que pidió el usuario: el nombre fijo al bajar, borrar escribiendo el nombre (el
-   `sc-delete-entity-dialog` del DS no lo trae) y el resumen que lleva a su sección. Cada uno con su prueba en rojo;
+   D3 → F. G2 termina la maqueta que pidió el usuario: el nombre fijo al bajar y el resumen que lleva a su sección.
+   Borrar ya pide escribir el nombre (`sc-delete-entity-dialog` en modo `single`, en las tres fichas): G2 solo le pone
+   una prueba. Cada uno con su prueba en rojo;
    la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center
    validado: pídeselos al usuario si no están en el repo.
 

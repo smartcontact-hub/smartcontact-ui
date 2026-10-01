@@ -166,7 +166,8 @@ a 1440:
     `ficha-usuario-agente` («Eliminar» bajo el índice).
 - **Queda para G2:**
   - el nombre fijo al bajar;
-  - borrar escribiendo el nombre (`sc-delete-entity-dialog` no lo trae: es un cambio del DS);
+  - una prueba que fije que borrar pide escribir el nombre, que ya pide `sc-delete-entity-dialog` en modo `single` en
+    las tres fichas;
   - el resumen que lleva a su sección.
 - **Para el Kit:** `figma-pendiente` §35.
 
