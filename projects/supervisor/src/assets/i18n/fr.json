@@ -1576,7 +1576,7 @@
         "typification_none": "Aucune typification",
         "typification_option": "{{name}} ({{count}})",
         "typification_hint": "Avec une typification, l’agent doit typifier avant de fermer la conversation. Elles se créent dans Référentiels.",
-        "agenda_new": "Nouvel agenda",
+        "agenda_new": "Nouveau carnet",
         "template_new": "Nouveau modèle",
         "label_new": "Nouvelle étiquette"
       },

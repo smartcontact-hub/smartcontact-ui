@@ -1576,7 +1576,7 @@
         "typification_none": "No typification",
         "typification_option": "{{name}} ({{count}})",
         "typification_hint": "With a typification, the agent must typify before closing the conversation. They are created in Repositories.",
-        "agenda_new": "New schedule",
+        "agenda_new": "New address book",
         "template_new": "New template",
         "label_new": "New label"
       },
