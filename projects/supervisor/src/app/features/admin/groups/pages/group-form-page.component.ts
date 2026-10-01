@@ -53,6 +53,7 @@ import {
   Group,
   GroupChannel,
   GroupPriority,
+  OUTBOUND_NUMBERS,
   PHONE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
   RING_ALL_OPTIONS,
@@ -269,7 +270,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly alta = pasosDeAlta({
     secciones: this.navSections,
     bloqueado: (id) => id !== 'group-section-general' && !this.generalValid(),
-    completo: (id) => id !== 'group-section-general' || this.generalValid(),
+    // Distribución, sin su ✓ mientras falte el teléfono saliente; pero no es puerta: los pasos siguen libres (DD-142).
+    completo: (id) =>
+      id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || !this.phoneMissing(),
   });
 
   /** El número del paso a la vista: el de la sección abierta, con la puerta de General ya aplicada. */
@@ -322,13 +325,29 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly attemptedGeneral = signal(false);
 
   /**
-   * Las secciones con algo obligatorio sin rellenar: su punto rojo en el índice. Solo General tiene
-   * obligatorios (el nombre, y al menos un canal), y un nombre repetido tampoco deja guardar. En el alta,
-   * solo después de intentar salir: el resumen ya dice qué falta sin acusar.
+   * Con Teléfono, el teléfono saliente es obligatorio, como el nombre (DD-142): es el número que ven los clientes
+   * cuando llama un agente del grupo. Sin Teléfono no se pide.
+   */
+  protected readonly phoneMissing = computed(() => this.hasPhone() && this.form().phone.trim().length === 0);
+
+  /** En el alta se ha salido de Distribución y colas sin él: desde entonces lo dice su campo, como el nombre. */
+  private readonly attemptedDistribution = signal(false);
+
+  /** El aviso bajo el teléfono saliente: al editar, siempre que falte; en el alta, tras salir de su sección sin él. */
+  protected readonly phoneError = computed<string | null>(() =>
+    this.phoneMissing() && (this.mode() === 'edit' || this.attemptedDistribution()) ? 'groups.errors.phone_required' : null,
+  );
+
+  /**
+   * Las secciones con algo obligatorio sin rellenar: su punto rojo en el índice. General (el nombre, y al menos un
+   * canal; un nombre repetido tampoco deja guardar) y, con Teléfono, Distribución y colas (su teléfono saliente). En
+   * el alta, solo después de intentar salir: el resumen ya dice qué falta sin acusar.
    */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const show = !this.generalValid() && (this.mode() === 'edit' || this.attemptedGeneral());
-    return new Set(show ? ['group-section-general'] : []);
+    const out = new Set<string>();
+    if (!this.generalValid() && (this.mode() === 'edit' || this.attemptedGeneral())) out.add('group-section-general');
+    if (this.phoneError()) out.add('group-section-distribution');
+    return out;
   });
 
   /**
@@ -370,6 +389,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (this.mode() === 'create' && id !== 'group-section-general' && !this.generalValid()) {
       this.stayInGeneral();
       return;
+    }
+    // Salir de Distribución sin el teléfono saliente se deja, pero desde ahí su campo dice que falta.
+    if (this.activeSection() === 'group-section-distribution' && id !== 'group-section-distribution' && this.phoneMissing()) {
+      this.attemptedDistribution.set(true);
     }
     // En el alta, el paso se abre sin tocar la dirección: Atrás sale del alta (DD-122, DD-138).
     if (this.mode() === 'create') {
@@ -445,6 +468,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (f.name.trim().length === 0) return 'groups.errors.name_required';
     if (this.nameTaken()) return 'groups.errors.name_taken';
     if (f.channels.size === 0) return 'groups.errors.channels_required';
+    if (this.phoneMissing()) return 'groups.errors.phone_required';
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
   });
@@ -480,7 +504,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private releaseLock: (() => void) | null = null;
 
   protected readonly canSave = computed(() => {
-    if (!this.generalValid()) return false;
+    if (!this.generalValid() || this.phoneMissing()) return false;
     // Al editar exige cambio neto (Guardar se apaga otra vez si deshaces); en el alta basta con General.
     return this.mode() === 'create' || this.dirtyState.dirty();
   });
@@ -547,12 +571,19 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     () => GroupFormPageComponent.STRATEGY_HELP[this.form().strategy] ?? null,
   );
 
-  /** Los números que ya usan los grupos; también se puede escribir uno nuevo (Voice lo deja libre). */
+  /** Los números asignados a la cuenta, sin escribir uno nuevo (DD-142). Y el que ya tuviera guardado el grupo, aunque
+   *  no esté entre ellos: abrir la ficha no lo borra. */
   protected readonly phoneOptions = computed<readonly string[]>(() => {
-    const phones = new Set(this.groupsStore.groups().map((g) => g.phone).filter(Boolean));
+    const phones = new Set(OUTBOUND_NUMBERS);
     if (this.form().phone) phones.add(this.form().phone);
     return [...phones].sort();
   });
+
+  /**
+   * Recursos sin Etiquetas (DD-142): el campo se queda hecho y apagado por si vuelve, y el grupo conserva las que
+   * tenía (se leen y se guardan tal cual). Encenderlo es poner esto a `true`.
+   */
+  protected readonly conEtiquetas: boolean = false;
 
   /** Una tipificación por grupo: cada categoría del repositorio es un conjunto (el agente elige dentro al cerrar). Va
    *  por su nombre (DD-141): llevaba al lado cuántas tipificaciones tiene, y se leía como niveles o como grupos. */
@@ -952,15 +983,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly resourceCount = computed(() => {
     const f = this.form();
     const templates = (this.hasChatFamily() ? this.chatTemplateValue().length : 0) + (this.hasEmail() ? this.emailTemplateValue().length : 0);
-    return (f.typification ? 1 : 0) + f.scheduleIds.size + templates + f.labelIds.size;
+    // Las etiquetas cuentan solo si se ven (DD-142).
+    return (f.typification ? 1 : 0) + f.scheduleIds.size + templates + (this.conEtiquetas ? f.labelIds.size : 0);
   });
 
-  /** Lo que falta para poder crear, en el orden de General. Un nombre repetido no falta: se dice en su campo. */
+  /** Lo que falta para poder crear, en el orden de la ficha. Un nombre repetido no falta: se dice en su campo. */
   protected readonly summaryMissing = computed<readonly string[]>(() => {
     const f = this.form();
     const missing: string[] = [];
     if (f.name.trim().length === 0) missing.push('common.summary_missing_name');
     if (f.channels.size === 0) missing.push('groups.form.summary.missing_channels');
+    if (this.phoneMissing()) missing.push('groups.form.summary.missing_phone');
     return missing;
   });
 

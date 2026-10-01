@@ -165,7 +165,7 @@
     [source]="origen"
     [suggestedName]="suggestedCopyName()"
     [existingNames]="groupNames()"
-    [phoneOptions]="groupPhones()"
+    [phoneOptions]="outboundNumbers"
     (cancelled)="onDuplicateCancel()"
     (confirm)="onDuplicateConfirm($event)"
   />

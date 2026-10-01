@@ -1,7 +1,16 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { colorEfectivo } from '../shared/color';
-import { asegurarBuildFresco, disableAnimations, forceDarkTheme, forceLightTheme, goto, pickSelectOption } from './helpers';
+import {
+  asegurarBuildFresco,
+  disableAnimations,
+  elegirTelefonoSaliente,
+  forceDarkTheme,
+  forceLightTheme,
+  goto,
+  irAPaso,
+  pickSelectOption,
+} from './helpers';
 
 /**
  * LAS ALTAS DICEN LO QUE FALTA, HASTA «LISTO PARA CREAR» (DD-136).
@@ -32,16 +41,20 @@ const boton = (page: Page, nombre: string) => page.getByRole('button', { name: n
 const canal = (page: Page, nombre: string) =>
   page.locator('#group-section-general sc-checkbox').filter({ hasText: new RegExp(`^\\s*${nombre}\\s*$`) });
 
-test('grupo · dice qué falta de General y, con nombre y un canal, «Listo para crear»', async ({ page }) => {
+test('grupo · dice qué falta y, con nombre, un canal y su teléfono saliente, «Listo para crear»', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
-  // Teléfono ya viene marcado: solo falta el nombre.
+  // Teléfono ya viene marcado, y con él el teléfono saliente es obligatorio (DD-142): faltan los dos.
   await expect(estado(page)).toHaveCount(1);
-  await expect(estado(page)).toHaveText(dice('Falta: nombre'));
+  await expect(estado(page)).toHaveText(dice('Falta: nombre · teléfono saliente'));
   await expect(boton(page, 'Crear grupo')).toBeDisabled();
 
   await page.locator('#group-name').fill(`E2E Meta ${Date.now()}`);
+  await expect(estado(page)).toHaveText(dice('Falta: teléfono saliente'));
+  await elegirTelefonoSaliente(page);
   await expect(estado(page)).toHaveText(dice('Listo para crear'));
   await expect(boton(page, 'Crear grupo')).toBeEnabled();
+
+  await irAPaso(page, 'General');
 
   await canal(page, 'Teléfono').click();
   await expect(estado(page)).toHaveText(dice('Falta: canales'));
@@ -107,6 +120,7 @@ for (const [tema, aplicar] of [
     await goto(page, 'admin/grupos/crear');
     await asegurarBuildFresco(page);
     await page.locator('#group-name').fill(`E2E Meta ${Date.now()}`);
+    await elegirTelefonoSaliente(page);
     await expect(estado(page)).toHaveText(dice('Listo para crear'));
     const { ratio } = await estado(page).evaluate(colorEfectivo);
     expect(ratio, `«Listo para crear» en tema ${tema}`).toBeGreaterThanOrEqual(4.5);

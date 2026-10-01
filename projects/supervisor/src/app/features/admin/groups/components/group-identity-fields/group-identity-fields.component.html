@@ -17,15 +17,20 @@
 
   @if (hasPhone()) {
     <div class="field">
-      <label class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-phone'">
+      <!-- Obligatorio con Teléfono y de los números asignados, como en la ficha (DD-142). -->
+      <label [id]="idPrefix() + '-phone-label'" class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-phone'">
         {{ 'groups.form.fields.phone' | translate }}
+        <span class="field__required" aria-hidden="true">*</span>
       </label>
       <sc-select
         [inputId]="idPrefix() + '-phone'"
-        editable
+        [ariaLabelledBy]="idPrefix() + '-phone-label'"
+        required
         [options]="phoneOptions()"
-        [value]="phone()"
+        [value]="phone() || null"
+        [placeholder]="'groups.form.fields.phone_placeholder' | translate"
         [helperText]="'groups.form.fields.phone_hint' | translate"
+        [error]="phoneError() ? (phoneError()! | translate) : undefined"
         (valueChange)="onPhone($event)"
       />
     </div>

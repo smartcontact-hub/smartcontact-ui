@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from './helpers';
 
 /**
  * LA FICHA DE GRUPO — índice lateral con cuatro secciones y el resumen a la derecha; el alta es la misma
@@ -85,9 +85,12 @@ test('crear es la misma ficha: abre en General con Teléfono, no deja pasar sin 
   await expect(page.locator('#group-channels-phone')).toBeFocused();
   await telefono.click();
 
-  // Completa, «Siguiente» lleva a la sección siguiente, y crear deja en su edición EN esa sección.
+  // Completa, «Siguiente» lleva a la sección siguiente, y crear deja en su edición EN esa sección. Con Teléfono, crear
+  // espera también a su número (DD-142), que se elige allí.
   await page.getByRole('button', { name: 'Siguiente' }).click();
   await expect(page.locator('#group-section-distribution')).toBeVisible();
+  await expect(crear).toBeDisabled();
+  await elegirTelefonoSaliente(page);
   await expect(crear).toBeEnabled();
   await crear.click();
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+\?seccion=distribucion$/);
@@ -104,6 +107,8 @@ test('duplicar sigue siendo un diálogo corto y se lleva los agentes del origina
 
   const dialogo = page.getByRole('dialog', { name: 'Duplicar grupo' });
   await expect(page.locator('#group-duplicate-name')).toHaveValue('Reclamaciones (copia)');
+  // La copia no se lleva el teléfono del original, y con Teléfono hay que elegirlo (DD-142).
+  await elegirTelefonoSaliente(page, '917945449', 'group-duplicate-phone');
   await dialogo.getByRole('button', { name: 'Duplicar' }).click();
 
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
