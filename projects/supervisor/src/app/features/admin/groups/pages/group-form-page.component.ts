@@ -537,7 +537,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   private static readonly STRATEGY_HELP: Readonly<Record<string, string>> = {
     Balanceada: 'groups.form.strategy_help.balanced',
-    'Menos llamadas atendidas': 'groups.form.strategy_help.fewest_calls',
+    'Menos conversaciones atendidas': 'groups.form.strategy_help.fewest_conversations',
     'Más tiempo inactivo': 'groups.form.strategy_help.longest_idle',
     Niveles: 'groups.form.strategy_help.levels',
     'Ring All': 'groups.form.strategy_help.ring_all',
@@ -554,17 +554,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return [...phones].sort();
   });
 
-  /** Una tipificación por grupo: cada categoría del repositorio es un conjunto (el agente elige dentro al cerrar). */
+  /** Una tipificación por grupo: cada categoría del repositorio es un conjunto (el agente elige dentro al cerrar). Va
+   *  por su nombre (DD-141): llevaba al lado cuántas tipificaciones tiene, y se leía como niveles o como grupos. */
   protected readonly typificationOptions = computed(() => {
     this.lang();
-    const counts = new Map<string, number>();
-    for (const t of this.tipificacionesStore.items()) counts.set(t.category, (counts.get(t.category) ?? 0) + 1);
+    const categories = [...new Set(this.tipificacionesStore.items().map((t) => t.category))];
     return [
       { label: this.translate.instant('groups.form.fields.typification_none'), value: null },
-      ...[...counts].sort(([a], [b]) => a.localeCompare(b, 'es')).map(([category, count]) => ({
-        label: this.translate.instant('groups.form.fields.typification_option', { name: category, count }),
-        value: category,
-      })),
+      ...categories.sort((a, b) => a.localeCompare(b, 'es')).map((category) => ({ label: category, value: category })),
     ];
   });
 

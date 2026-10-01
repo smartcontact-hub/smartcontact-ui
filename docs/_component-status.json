@@ -1472,7 +1472,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 31,
+      "usedInSupervisor": 29,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

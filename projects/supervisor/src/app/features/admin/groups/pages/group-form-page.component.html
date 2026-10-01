@@ -366,14 +366,7 @@
           <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_hint' | translate }}</p>
         </div>
       </div>
-      <!-- «Desbordar sesión» del Figma de la migración; el manual no lo trae (a qué canal aplica, por confirmar). -->
-      <div class="switch-field switch-field--top">
-        <sc-toggleswitch [checked]="form().advanced.overflowSession" [ariaLabel]="'groups.form.advanced.overflow_session' | translate" (checkedChange)="setAdvanced('overflowSession', $event)" />
-        <div class="switch-field__copy">
-          <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.overflow_session' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_session_hint' | translate }}</p>
-        </div>
-      </div>
+      <!-- Sin «Desbordar sesión» desde DD-141: era de Chat, y lo cubre «Cerrar chat por inactividad». -->
     </section>
 
     @if (hasPhone()) {
