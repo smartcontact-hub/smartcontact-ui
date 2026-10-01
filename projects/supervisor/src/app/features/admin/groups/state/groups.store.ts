@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { createLocalStore, LocalStore } from '@core/services';
-import { Group, GROUPS_SEED, GroupChannel, GroupPriority } from '../data/groups-data';
+import { Group, GROUPS_SEED, GroupChannel, GroupPriority, groupWithCurrentStrategies } from '../data/groups-data';
 import { bulkUpdatePatch } from '@core/utils/store-helpers';
 
 /** Fields exposed to bulk edit on the Groups list. `strategy` es la de Teléfono y `chatStrategy` la de Chat
@@ -23,6 +23,8 @@ export class GroupsStore {
     versionKey: 'sc-groups-v',
     currentVersion: 4,
     defaults: GROUPS_SEED,
+    // Lo guardado con los nombres de estrategia de antes de DD-141 se lee con los de ahora: la lista y cada ficha.
+    normalize: groupWithCurrentStrategies,
   });
 
   readonly groups = this.store.items;

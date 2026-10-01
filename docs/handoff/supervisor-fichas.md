@@ -14,11 +14,13 @@ tablas tras la revisión del equipo (2026-09-24, cinco PRs): `git show 197c5579:
 sus dos trampas suben a «Trampas del frente». El de la visión de producto de grupos (2026-09-26, DD-121) sale por el
 mismo tope: `git show f63d13aa:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
 Contact Center suben a «Trampas del frente». El de un solo índice (2026-09-27, DD-122), igual: `git show
-7458351:docs/handoff/supervisor-fichas.md`; sus trampas también suben.
+7458351:docs/handoff/supervisor-fichas.md`; sus trampas también suben. Y el del resumen como widget (2026-09-27,
+DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas arriba.
 
-## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H)
+## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos y las palabras de la ficha (D1, DD-141)
 
-> **Sello: H fundido (#298, `57f03a0`) con su CI en verde; la rama sigue desde ahí con los diálogos de Recursos.**
+> **Sello: H (#298, `57f03a0`) y los diálogos de Recursos (#300, `5cf3f5e1`), fundidos con su CI de `main` en verde;
+> D1 (DD-141), en su PR.**
 
 **Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
 ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
@@ -47,8 +49,21 @@ del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen 
   label»), y cada repositorio, su título de alta con género (`createTitleKey`; sin él, el genérico);
 - `ficha-recursos-dialogos.spec.ts`: dos en rojo y una de guarda. Al arreglar los títulos, la de los «+» siguió en
   rojo por el `role` propio del formulario: cada parte de la prueba enrojece con su fallo;
-- fuera: `sc-dialog` trae dos `role="dialog"` modales anidados (el `p-dialog` y su `section`), del DS, en tarea
-  aparte; y el ejemplo del campo de etiqueta dice «Nombre de la label», el vocabulario de la pantalla de Labels.
+- fuera: `sc-dialog` traía dos `role="dialog"` modales anidados (el `p-dialog` y su `section`), del DS: lo arregló
+  DD-140 (#302). Y el ejemplo del campo de etiqueta dice «Nombre de la label», el vocabulario de la pantalla de Labels.
+
+**D1 · las palabras de la ficha** (DD-141; el detalle y lo descartado, allí):
+- las estrategias reparten conversaciones: «Menos conversaciones atendidas» (Teléfono y «Dentro de cada nivel») y
+  «Menos conversaciones activas» (Chat);
+- lo guardado con el nombre de antes se lee con el de ahora, sin subir versión: `createVersionedStorage` gana
+  `normalize` (opcional), que usa `GroupsStore`; `GroupDefaultsStore` pone al día sus dos estrategias al leer. Sirve
+  igual para los enlaces de E1 (WhatsApp → Chat);
+- la prioridad solo cuenta en las entrantes; sale «Desbordar sesión» de la ficha y de Contact Center, y
+  `overflowSession` se sigue guardando; cerrar el chat por inactividad nace con 5 minutos (las semillas, con sus 10);
+- el tamaño de cola, un texto por modo; la tipificación, sin «(3)»;
+- anchos medidos de nuevo: estrategia de teléfono 14.5rem y de chat 13.5rem, `tableMinWidth` 95.75rem; los
+  desplegables de Contact Center, a 350 (`scale/25`): la escala no tiene peldaño entre 252 y 350;
+- `ficha-grupo-textos.spec.ts` (8) y las reescritas: 13 en rojo contra el código anterior, cada una por lo que mide.
 
 **Trampas del tramo:**
 - ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
@@ -56,6 +71,10 @@ del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen 
   y reinícialo al acabar.
 - ⚠️ `pages.dev` no responde desde el contenedor (el proxy no deja llegar): el despliegue de un PR se comprueba por su
   check de Cloudflare y por el comentario del bot, que da la URL fija de cada commit.
+- ⚠️ Los JSON de i18n guardan escapes ` `, y un `JSON.parse` + `JSON.stringify` los cambia por el carácter en
+  todo el fichero: se editan línea a línea.
+- ⚠️ La sonda de recorte de un desplegable solo vale si la has visto enrojecer: el rojo de la prueba nueva venía de la
+  opción que no existía. Con el ancho de antes puesto, enrojece en el de Teléfono de Contact Center.
 
 ## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-138)
 
@@ -239,56 +258,11 @@ Antes, dos retoques del widget (DD-126):
 - ⚠️ **Una sonda por `requestAnimationFrame` puede leer la cifra del fotograma anterior**, según el orden de los
   callbacks. Para comparar cifra y arco hay que usar un `MutationObserver` en el instante del cambio.
 
-## ✅ 2026-09-27 · El resumen de las fichas, como widget: la cifra cuenta y el anillo nativo se llena (DD-126)
-
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `9241498`), PR nuevo: el prototipo y lo elegido.**
-> El tramo del 2026-09-22 (el laboratorio de administración) sale de aquí:
-> `git show 2b8c122:docs/handoff/supervisor-fichas.md`.
-
-**Qué pasó.** Revisión de producto: el resumen de las fichas, como el ejemplo «Preview» de ProgressSpinner en
-primeng.dev (cifra grande, anillo que se llena, una cuenta sutil). Se hizo un prototipo con dos superficies
-(`?resumen=a|b`), se midió, se enseñó en una página de decisión privada y se eligió: el tinte de marca, movimiento al
-abrir y al cambiar, anillo en toda proporción y, en el grupo, agentes activos sobre asignados. El conmutador se fue y
-queda lo elegido.
-
-**Qué cambia** (el detalle y lo descartado, en DD-126):
-- `sc-summary-kpi` (`shared/components/summary-kpi/`): rótulo, cifra con «/total» y el `p-progress-spinner` nativo a
-  42 (`[dt]` pone el arco en el acento, `[pt]` oculta su «N%»). Sin total, sin anillo.
-- `CountUpDirective` (`core/directives/`), con su núcleo en `shared/utils/count-up.core.mjs` (6 pruebas de node):
-  cuenta desde la cifra de antes a la par del arco (su misma curva, `ease`, y redondeada), y la duración la lee del
-  `transition-duration` de su elemento.
-- `styles/_resumen.scss`: la tarjeta en el tinte, sin borde a la vista y con todo su texto en primario; la escalera
-  7 · 14 · 28. Grupo: agentes activos, con las filas por canal debajo, y reparto, salida y recursos en una tarjeta de
-  datos. Agente: grupos activos. Usuario: secciones y permisos. Los datos sueltos salen de `summaryFacts`.
-- El aviso ámbar del grupo lleva el ámbar en el icono y el texto en primario.
-- i18n: `common.summary_of`, `groups.form.summary.agents_active`, `agents.form.summary.groups_active` y
-  `agents.form.summary.no_groups`; fuera `groups.form.summary.agents`.
-- `theme-contrast`: el gris secundario se perdona solo sobre sus dos fondos, y entran las fichas de agente y usuario.
-
-**Medido:**
-- **Rojo primero.** `resumen-widget.spec.ts`, 6 de 6 contra `main`. Con la duración sin apagar, la de menos movimiento
-  enrojece por las cifras intermedias (1, 4, 6, 7, 8); sin su regla, la del ámbar en el icono enrojece por el gris.
-  `theme-contrast` con el perdón atado a su fondo: rojo en las tres fichas (44 textos a 3,96:1) antes de pasar el
-  texto a primario, y verde en las otras 18 rutas.
-- 16 anillos en seis fichas y dos temas: 42×42, arco en su token, «N%» sin pintar, `aria-hidden`. El grupo 11 a
-  1366×660 mide 554 y cabe.
-- `npm run revision`: en regla las 17 vistas de las tres fichas y el alta de agente con los datos de siempre, y las 12
-  de las fichas con `--datos tortura`.
-
-**Trampas del tramo:**
-- ⚠️ Leer un estilo computado dentro de la detección de cambios hacía nacer lleno el anillo de al lado. La directiva lee
-  su duración en el primer fotograma, y el anillo arranca vacío con una señal que cambia un fotograma después de pintar.
-- ⚠️ Chrome serializa un color con alfa como `color(srgb r g b / a)`, de 0 a 1, y una sonda que lo lee con `/\d+/` saca
-  negro. Así salieron 20,91 y 4,27 para el tinte en oscuro, que miden 15,57 y 3,18: compón las capas translúcidas.
-- ⚠️ `--sc-text-secondary` llega a AA solo sobre blanco (4,52:1), y sobre cualquier fondo teñido baja. Hasta este tramo,
-  `theme-contrast` lo perdonaba con cualquier fondo.
-- ⚠️ En claro, el tinte de marca y «seleccionado» son el mismo color: una tarjeta del resumen no puede hacerse pulsable
-  sin cambiar de superficie.
-
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba): D1 → D2 → D3 → E1 → E2 → E3 → E4 → G → F. Cada uno
-   con su prueba en rojo; la numeración de DD se mira en `origin/main` al empezar.
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba): D2 → D3 → E1 → E2 → E3 → E4 → G → F. Cada uno con
+   su prueba en rojo; la numeración de DD se mira en `origin/main` al empezar. El plan, con los ficheros y las
+   pruebas de cada uno, está en el tramo y en las DD: lo que falta lo dicen D2 a F.
 
    **Lo que queda abierto de DD-133, DD-135, DD-136 y DD-138:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
@@ -332,8 +306,8 @@ queda lo elegido.
 - **Producto:** validar en producción el índice único y las tres fichas en su molde (DD-122), con el antes y después.
   La forma de agente y usuario ya está decidida: el índice lateral (las variantes de `comparar/fichas` quedan de
   referencia).
-- **Devs:** qué son «Audio saliente» y «Desbordar sesión» (solo salen en el Figma; anotados en `groups-data.ts`), y el
-  resto de preguntas abiertas de DD-121: el destino del desbordamiento, Email, el script de Web Chat, WhatsApp por
+- **Devs:** qué es «Audio saliente» (solo sale en el Figma; anotado en `groups-data.ts`; «Desbordar sesión» lo
+  respondió la revisión de producto, DD-141), y el resto de preguntas abiertas de DD-121: el destino del desbordamiento, Email, el script de Web Chat, WhatsApp por
   agente y qué ve el cliente en cola si se toca un grupo activo.
 - **Rafa:** revisar usuarios contra el Supervisor real.
 
@@ -393,3 +367,11 @@ queda lo elegido.
   llega como `undefined`: no lo leas en un efecto que recarga el formulario, o cada clic del índice borra lo editado.
 - ⚠️ La ficha de usuario ya tenía un `sectionTree` (el árbol de Acceso): el ayudante de enlaces se llama `sectionUrl`
   en las cuatro páginas.
+- ⚠️ En claro, el tinte de marca del resumen y «seleccionado» son el mismo color: una tarjeta del resumen no se puede
+  hacer pulsable sin cambiar de superficie (cuenta para G, el resumen enlazado).
+- ⚠️ `--sc-text-secondary` llega a AA solo sobre blanco (4,52:1); sobre cualquier fondo teñido baja, y
+  `theme-contrast` lo perdona solo sobre sus dos fondos.
+- ⚠️ Chrome serializa un color con alfa como `color(srgb r g b / a)`, de 0 a 1: una sonda que lo lea con `/\d+/` saca
+  negro. Usa `e2e/shared/color.ts`, que compone las capas.
+- ⚠️ Leer un estilo computado dentro de la detección de cambios hacía nacer lleno el anillo del resumen: la directiva
+  de la cifra lee su duración en el primer fotograma.

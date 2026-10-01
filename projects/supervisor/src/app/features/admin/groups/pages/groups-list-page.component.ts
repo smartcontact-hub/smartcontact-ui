@@ -320,17 +320,18 @@ export class GroupsListPageComponent {
         header: this.translate.instant('groups.table.strategy_phone'),
         sortable: true,
         cellTemplate: this.strategyTpl(),
-        /* Medido a 1440 (2026-09-26): la cabecera con su flecha pide 198 px y la etiqueta más ancha del
-         * catálogo, «Menos llamadas atendidas», 167 más los 28 de la celda. Con 9.75rem se cortaban las dos. */
-        width: '12.5rem',
+        /* Medido a 1440 (2026-10-01): la etiqueta más ancha del catálogo, «Menos conversaciones atendidas»
+         * (DD-141), pide 201 px más los 28 de la celda. La cabecera con su flecha pedía 198 (2026-09-26). */
+        width: '14.5rem',
       },
       {
         field: 'chatStrategy',
         header: this.translate.instant('groups.table.strategy_chat'),
         sortable: true,
         cellTemplate: this.chatStrategyTpl(),
-        /* La cabecera pide 171 px; la etiqueta más ancha, «Rotativa (por turnos)», 131 más los 28 de la celda. */
-        width: '11rem',
+        /* La etiqueta más ancha, «Menos conversaciones activas» (DD-141), pide 185 px más los 28 de la celda (medido a
+         * 1440, 2026-10-01). La cabecera pedía 171 (2026-09-26). */
+        width: '13.5rem',
       },
       {
         field: 'services',
