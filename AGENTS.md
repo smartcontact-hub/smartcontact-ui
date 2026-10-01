@@ -153,7 +153,8 @@ componente de primeng.dev (lo pase con enlace o no):
 
 Lo que la documentación NO dice y se ha medido aquí vive en DD-113 (el `aria-label` de la tira de `p-tabs` va
 por `[pt]`, el `aria-labelledby` de `p-selectbutton` por su entrada, un icono de fuente dentro de `p-tab`
-descoloca la raya, la línea del Stepper vertical se despega al plegar si su envoltura se estira).
+descoloca la raya, la línea del Stepper vertical se despega al plegar si su envoltura se estira, y el nombre de un
+`p-dialog` sin cabecera va por `pt.root`, porque un atributo en su host no llega a su raíz: DD-140).
 
 ---
 
@@ -276,6 +277,7 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Una cifra con su proporción en un resumen («8 de 11») | `sc-summary-kpi` del Supervisor: la cifra con «/total» y el `p-progress-spinner` nativo, que cuenta y se llena al abrir y al cambiar | `sc-gauge` (no se mueve y empieza en 96 px); un porcentaje; un anillo SVG a mano | DD-126 |
 | Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco | Spinner centrado; datos que recolocan la página al llegar | UX 2 |
 | Un icono | `<sc-icon>` (Material Symbols) | Emojis; una segunda librería | UX 4 |
+| Un diálogo modal con contenido propio (un alta sin salir de la ficha, un aviso con su detalle) | `sc-dialog` con su `title`, que es su nombre para el lector; lo de dentro, sin rol propio | Un `role="dialog"` en lo que va dentro (sale un diálogo dentro de otro); un `p-dialog` a pelo sin nombre | DD-140 |
 | Borrar una entidad desde su ficha | `sc-form-danger-zone` + `sc-delete-entity-dialog` (el patrón de las nueve fichas que ya lo usan, ver `docs/inventory.md`) | `sc-confirmdialog` genérico; borrar sin confirmar | `docs/inventory.md` |
 | Dos flujos que se ven distintos y parece un bug | Mira DD-36 y DD-53 antes de uniformar | Igualarlos «para que cuadren» | DD-36, DD-53 |
 

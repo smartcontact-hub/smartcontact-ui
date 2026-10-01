@@ -1,5 +1,6 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, input, model, output } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
+import type { DialogPassThrough } from 'primeng/types/dialog';
 
 import { ScIconComponent, SC_ICON_SIZE_LG } from '@smartcontact-hub/icons';
 
@@ -18,6 +19,11 @@ let modalIdCounter = 0;
  *
  * Wraps PrimeNG `<p-dialog showHeader=false>` for focus trap, ESC, mask and
  * animation, but renders the whole card so the visual matches el DS 1:1.
+ *
+ * Un solo diálogo para el lector de pantalla (DD-140): el `role="dialog"` modal es el
+ * `div.p-dialog` de PrimeNG, que es el que atrapa el foco, y su nombre y su descripción son el
+ * título y el subtítulo de la card (`pt` más abajo). La card no repite el rol: hasta el
+ * 2026-10-01 lo hacía, y se anunciaban dos diálogos, el de fuera sin nombre.
  *
  * §4.3 (fusión Mitad B): UNA sola `sc-dialog` = la card canónica del catálogo
  * de diseño. Las props útiles del wrapper fino del catálogo de desarrollo
@@ -112,6 +118,18 @@ export class ScDialogComponent {
   protected readonly id = ++modalIdCounter;
   protected readonly titleId = computed(() => `sc-dialog-${this.id}-title`);
   protected readonly subtitleId = computed(() => `sc-dialog-${this.id}-subtitle`);
+
+  /** Nombre y descripción del `role="dialog"` de PrimeNG. Con `showHeader=false` su
+   * `aria-labelledby` apunta a una cabecera que no se pinta, y `p-dialog` no tiene entrada para
+   * cambiarlo: un atributo en su host se queda en el host. Por `pt.root` sí llega, y pisa al que
+   * pone su plantilla (medido en Chromium, DD-140), como el `aria-label` de `p-tabs` en DD-113.
+   * `null` QUITA el atributo. */
+  protected readonly pt = computed<DialogPassThrough>(() => ({
+    root: {
+      'aria-labelledby': this.titleId(),
+      'aria-describedby': this.subtitle() ? this.subtitleId() : null,
+    },
+  }));
 
   /** Element focused right before the dialog opened — focus returns here on close. */
   private triggerEl: HTMLElement | null = null;

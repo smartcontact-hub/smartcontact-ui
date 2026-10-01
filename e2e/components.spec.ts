@@ -757,6 +757,26 @@ test.describe('sc-dialog', () => {
     await expect(dialog).toBeHidden();
   });
 
+  /* Un lector de pantalla anunciaba DOS diálogos modales: el `div.p-dialog` de PrimeNG, sin nombre
+   * (su `aria-labelledby` apunta a una cabecera que no se pinta con `showHeader=false`), y dentro la
+   * `section` del DS, con su título. Medido en el árbol de accesibilidad de Chromium el 2026-10-01.
+   * Ahora es uno solo: el de PrimeNG, que es el que atrapa el foco, con el título de nombre. */
+  test('se anuncia UN diálogo modal, con el título de nombre y el subtítulo de descripción', async ({ page }) => {
+    await gotoPage(page, 'dialog');
+    await page.getByTestId('open-dialog').locator('button').click();
+    await expect(page.locator('.sc-dialog')).toBeVisible();
+    const dialogo = page.getByRole('dialog');
+    await expect(dialogo).toHaveCount(1);
+    await expect(dialogo).toHaveAccessibleName('¿Eliminar el agente?');
+    await expect(dialogo).toHaveAccessibleDescription('Esta acción no se puede deshacer.');
+    await expect(dialogo).toHaveAttribute('aria-modal', 'true');
+    // El foco sigue atrapado en el diálogo que se anuncia.
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press('Tab');
+      await expect(dialogo.locator(':focus')).toHaveCount(1);
+    }
+  });
+
   test('dynamic dialog: abre componente al vuelo y resuelve onClose', async ({ page }) => {
     await gotoPage(page, 'dialog');
     await page.getByTestId('open-dynamic').locator('button').click();

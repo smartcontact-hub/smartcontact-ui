@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Un `sc-dialog` es UN diálogo para el lector: el `role="dialog"` modal es el `p-dialog` de PrimeNG, el que atrapa el foco, con el título de nombre y el subtítulo de descripción por `pt.root` · la card no repite el rol, ni lo que va dentro · un atributo en el host de `p-dialog` no llega a su raíz (enmienda DD-113) | DD-140 |
 > | El estado de un agente es uno, el de Administración › Agentes, y el Dashboard lo lee por id con `PRESENCIA_EN_DASHBOARD` (Disponible · No disponible, sus motivos, Administrativo y Post-conversando son En pausa · Desconectado) · lo guardado del Dashboard se relee al pintar, sin subir la versión · fuera `DEMO_AGENT_PRESENCE` (enmienda DD-127 §1 y DD-129) | DD-139 |
 > | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue · el plegado es el de PrimeNG, y la línea entre pasos no se despega al plegar (`pt`) | DD-138 |
 > | El sidebar sigue a su tablero de Figma (14912:6324): sin botón de anclar · plegado sigue abierto lo que estaba abierto · texto e icono en blanco y la flecha al 60% · todos los iconos a 14, los que nombra el catálogo del tablero (14912:6774) · «Diseñador VUI» y «Análisis de Flujo» · SCC (CusCare) lleva el logo de CusCare (enmienda DD-118 §2 y §5) | DD-137 |
@@ -98,6 +99,55 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-140 · 2026-10-01 — Un `sc-dialog` es un solo diálogo para el lector: el de PrimeNG, con el título de nombre
+
+**Contexto** · Al revisar los diálogos de Recursos de la ficha de grupo (2026-10-01) se midió que cada `sc-dialog`
+abierto expone dos `role="dialog"` modales, uno dentro de otro: el `div.p-dialog` de PrimeNG y la `section` de la
+card. El de fuera no tiene nombre: su `aria-labelledby` apunta a la cabecera de PrimeNG (`pn_id_…_header`), que con
+`showHeader=false` no se pinta. En el árbol de accesibilidad de Chromium sale un diálogo modal sin nombre y, dentro,
+otro con el título: un lector de pantalla anuncia dos diálogos, o uno sin nombre.
+
+**Decisión** ·
+1. **El diálogo es el de PrimeNG.** El `div.p-dialog` se queda con su `role="dialog"`, su `aria-modal` y su trampa
+   de foco. La card (`section.sc-dialog`) deja de llevar rol, `aria-modal`, `aria-labelledby` y `aria-describedby`.
+2. **Su nombre es el título y su descripción, el subtítulo**, por `pt.root`: `aria-labelledby` al `h2` y
+   `aria-describedby` al subtítulo, que sin subtítulo no se pone. Es la API del propio nativo (DD-113 §4), como el
+   `aria-label` de `p-tabs`.
+
+**Razón** ·
+- **El rol va donde está el foco.** Un diálogo modal es el que retiene el foco, y el de PrimeNG es el que lo atrapa
+  y el que cierra con Escape: nombrarlo no toca su comportamiento.
+- **Medido el 2026-10-01 en sc-docs** (build estático, Chromium a 1440, árbol de accesibilidad leído por CDP), antes
+  y después del cambio:
+  - antes, dos diálogos modales: el de fuera sin nombre, y el de dentro «¿Eliminar el agente?», con su descripción;
+  - después, uno: «¿Eliminar el agente?», con la descripción «Esta acción no se puede deshacer.» y modal;
+  - igual antes y después: el foco al abrir (la X), Tab y Mayús+Tab sin salir del diálogo, y Escape, que cierra y
+    devuelve el foco al botón que lo abrió.
+
+**Descartadas** ·
+- **El atributo en el host (`<p-dialog aria-labelledby>`)**, que es lo que propone la sección de accesibilidad de
+  primeng.dev (que todo atributo pasa a la raíz) → medido con PrimeNG 22.1.2 en el arnés unitario del DS: se queda
+  en el host, y la raíz sigue apuntando a la cabecera que no existe. `ariaLabelledBy` tampoco es una entrada en esta
+  versión: es un `computed` que sale de `header`.
+- **Dejar el diálogo en la card y quitárselo a PrimeNG** (su entrada `role`, y `pt` para el resto) → serían tres
+  cambios contra el nativo (rol, `aria-modal` y `aria-labelledby`) para llevar el diálogo a un nodo que no atrapa el
+  foco, en vez de uno a su favor.
+- **La cabecera de PrimeNG (`header`)** → pinta la suya, y la card del DS lleva la propia (icono, subtítulo y X) a la
+  medida del Kit.
+
+**Consecuencias** ·
+- **Prueba:** `e2e/components.spec.ts`, «se anuncia UN diálogo modal…»: un solo `role="dialog"`, con el título de
+  nombre, el subtítulo de descripción y `aria-modal`, y el foco dentro al tabular. En rojo contra el código anterior
+  (dos diálogos), en verde con el cambio. Y en la pantalla donde se vio, `ficha-recursos-dialogos.spec.ts` pide UN
+  diálogo en la página con cada «+» de Recursos abierto: con el `sc-dialog` de antes, 2.
+- **Las pruebas del Supervisor que buscan un diálogo por su nombre no cambian:** antes casaban con la `section` y
+  ahora con el `div.p-dialog`, que la contiene. La que lo busca sin nombre (el asistente de widgets del Dashboard)
+  pasa de dos coincidencias a una.
+- **Lo que va dentro de un `sc-dialog` no lleva su propio `role="dialog"`**: el diálogo ya lo pone.
+- **Enmienda DD-113** (lo medido que la documentación no dice): un `p-dialog` sin cabecera se nombra por `pt.root`.
 
 ---
 
@@ -1816,6 +1866,8 @@ El botón que se encoge al pulsarlo se queda, con la receta de better-ui (punto 
 Desde DD-138: en el Stepper vertical, el plegado nativo despegaba la línea entre pasos, porque PrimeNG aplica la
 fracción dos veces en la rejilla del `p-motion`. Se arregla por `[pt]` (`contentWrapper`), como el `aria-label` de
 `p-tabs`, sin tocar su movimiento.
+Desde DD-140: un `p-dialog` sin cabecera (`showHeader=false`) se nombra por `pt.root`. Un atributo en su host se queda
+en el host, aunque la sección de accesibilidad de primeng.dev diga que pasa a la raíz.
 
 ---
 

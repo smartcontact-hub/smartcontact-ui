@@ -67,6 +67,12 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   elemento que recibe el foco (el `span[role=combobox]`, o el `<input>` si es editable), por passthrough, como
   `sc-password`. Iban en la envoltura `<p-select>`, y un lector de pantalla no anunciaba la ayuda ni el error, ni
   sabía que el campo era obligatorio. ([DD-133](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-dialog` se anuncia como UN diálogo modal, con el título de nombre y el
+  subtítulo de descripción. Exponía dos `role="dialog"` modales, uno dentro de otro: el `p-dialog` de PrimeNG, sin
+  nombre (su `aria-labelledby` apuntaba a una cabecera que no se pinta), y la card del DS. El rol se queda en el de
+  PrimeNG, que es el que atrapa el foco, nombrado por `pt`, y la card deja de llevarlo. El foco al abrir, Tab y
+  Escape no cambian. Quien buscara la card por `[role="dialog"]` la encuentra por `.sc-dialog`.
+  ([DD-140](docs/DECISIONS.md))
 
 ## [1.0.0] — 2026-09-09
 

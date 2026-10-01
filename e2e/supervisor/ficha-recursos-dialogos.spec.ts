@@ -12,8 +12,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * tenía esa entrada y el atributo no hacía nada. Y el diálogo decía «Nuevo/a tipificación» bajo un botón que dice
  * «Nueva tipificación» (la etiqueta, «Nueva label» bajo «Nueva etiqueta»).
  *
- * `sc-dialog` trae ya dos `role="dialog"` anidados (el `p-dialog` y su `section`): es del DS, va aparte. Aquí se
- * mide lo de este formulario: que no añada un tercero.
+ * `sc-dialog` traía además dos `role="dialog"` anidados, el `p-dialog` sin nombre y su `section`. Desde DD-140 es uno,
+ * el de PrimeNG, con su título de nombre: con un «+» abierto, la página tiene UN diálogo, y el formulario no añade otro.
  *
  * Lo que fija:
  *   1. Cada «+» abre su diálogo, que se llama como su botón; dentro, el formulario no abre otro, va a sangre (sin
@@ -60,6 +60,7 @@ test('grupo 11 · cada «+» de Recursos abre su diálogo con el nombre de su bo
 
     const dialogo = page.getByRole('dialog', { name: nombre, exact: true });
     await expect(dialogo, `${nombre}: el diálogo se llama como su botón`).toHaveCount(1);
+    await expect(page.getByRole('dialog'), `${nombre}: un solo diálogo en la página`).toHaveCount(1);
     await expect(
       page.locator(':is(sc-repo-form-panel, sc-template-form-panel, sc-label-form-panel) [role="dialog"]'),
       `${nombre}: el formulario no abre un diálogo propio`,
