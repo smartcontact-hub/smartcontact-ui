@@ -4,8 +4,6 @@ export interface NavItem {
   /** i18n key resolved by the TranslateModule. */
   readonly labelKey: string;
   readonly icon: NavIconKey;
-  /** Pixel size for the icon. Sidebar uses 16 for level 0, 14 for level 1, 13 for level 2+. */
-  readonly iconSize?: number;
   readonly path?: string;
   readonly children?: readonly NavItem[];
 }
@@ -29,41 +27,34 @@ export const NAV_SECTIONS: readonly NavSection[] = [
       {
         labelKey: 'sidebar.supervision',
         icon: 'activity',
-        iconSize: 16,
         children: [
           {
             labelKey: 'sidebar.dashboard',
             icon: 'layout-dashboard',
-            iconSize: 14,
             path: '/dashboard',
           },
           {
             labelKey: 'sidebar.servicios',
             icon: 'radio',
-            iconSize: 14,
             path: '/servicios',
           },
           {
             labelKey: 'sidebar.nodo_ia',
             icon: 'brain-circuit',
-            iconSize: 14,
             children: [
               {
                 labelKey: 'sidebar.intenciones',
                 icon: 'data-object',
-                iconSize: 13,
                 path: '/nodo-ia/intenciones',
               },
               {
                 labelKey: 'sidebar.monitor_ia',
                 icon: 'table-eye',
-                iconSize: 13,
                 path: '/nodo-ia/monitor',
               },
               {
                 labelKey: 'sidebar.agentic_ai',
                 icon: 'robot',
-                iconSize: 13,
                 path: '/nodo-ia/agentic-ai',
               },
             ],
@@ -71,36 +62,30 @@ export const NAV_SECTIONS: readonly NavSection[] = [
           {
             labelKey: 'sidebar.tipificaciones',
             icon: 'check-check',
-            iconSize: 14,
             path: '/tipificaciones',
           },
           {
             labelKey: 'sidebar.campanas',
             icon: 'megaphone',
-            iconSize: 14,
             path: '/campanas',
           },
           {
             labelKey: 'sidebar.conversaciones',
             icon: 'messages-square',
-            iconSize: 14,
             path: '/conversaciones',
           },
           {
             labelKey: 'sidebar.estadisticas',
             icon: 'chart-no-axes-combined',
-            iconSize: 14,
             children: [
               {
                 labelKey: 'sidebar.informes',
                 icon: 'file-text',
-                iconSize: 13,
                 path: '/informes',
               },
               {
                 labelKey: 'sidebar.analizador',
                 icon: 'route',
-                iconSize: 13,
                 path: '/analizador',
               },
             ],
@@ -108,7 +93,6 @@ export const NAV_SECTIONS: readonly NavSection[] = [
           {
             labelKey: 'sidebar.scc',
             icon: 'table-2',
-            iconSize: 14,
             path: '/scc',
           },
         ],
@@ -116,19 +100,16 @@ export const NAV_SECTIONS: readonly NavSection[] = [
       {
         labelKey: 'sidebar.vui_designer',
         icon: 'workflow',
-        iconSize: 16,
         path: '/vui-designer',
       },
       {
         labelKey: 'sidebar.centro_control',
         icon: 'monitor-heart',
-        iconSize: 16,
         path: '/centro-control',
       },
       {
         labelKey: 'sidebar.mask_manager',
         icon: 'theater-comedy',
-        iconSize: 16,
         path: '/mask-manager',
       },
     ],
@@ -138,31 +119,26 @@ export const NAV_SECTIONS: readonly NavSection[] = [
     items: [
       {
         labelKey: 'sidebar.administration',
-        icon: 'users',
-        iconSize: 16,
+        icon: 'users-round',
         children: [
           {
             labelKey: 'sidebar.users',
             icon: 'user-round',
-            iconSize: 14,
             path: '/admin/usuarios',
           },
           {
             labelKey: 'sidebar.groups',
-            icon: 'users-round',
-            iconSize: 14,
+            icon: 'users',
             path: '/admin/grupos',
           },
           {
             labelKey: 'sidebar.agents',
             icon: 'headphones',
-            iconSize: 14,
             path: '/admin/agentes',
           },
           {
             labelKey: 'sidebar.repositories',
             icon: 'folder-open',
-            iconSize: 14,
             path: '/admin/repositorios',
           },
         ],
@@ -170,36 +146,30 @@ export const NAV_SECTIONS: readonly NavSection[] = [
       {
         labelKey: 'sidebar.configuration',
         icon: 'settings',
-        iconSize: 16,
         children: [
           {
             labelKey: 'sidebar.security',
             icon: 'shield',
-            iconSize: 14,
             path: '/config/seguridad',
           },
           {
             labelKey: 'sidebar.personalization',
             icon: 'paintbrush',
-            iconSize: 14,
             path: '/config/personalizacion',
           },
           {
             labelKey: 'sidebar.aed',
             icon: 'database',
-            iconSize: 14,
             path: '/config/aed',
           },
           {
             labelKey: 'sidebar.integrations',
             icon: 'plug',
-            iconSize: 14,
             path: '/config/integraciones',
           },
           {
             labelKey: 'sidebar.system',
             icon: 'settings',
-            iconSize: 14,
             path: '/config/sistema',
           },
         ],

@@ -12,7 +12,6 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ScIconComponent } from '@smartcontact-hub/icons';
 import { filter, map, startWith } from 'rxjs/operators';
 
 import { ViewTransitionTracker } from '../../services/view-transition-tracker.service';
@@ -46,37 +45,19 @@ function keyOf(items: readonly NavItem[], path: string): string | null {
   return null;
 }
 
-/** Anclado se recuerda en el navegador; sin almacenamiento (ventana privada) dura lo que la pestaña. */
-const ANCHORED_KEY = 'sc-sidebar-anclado';
-
-function readAnchored(): boolean {
-  try {
-    return localStorage.getItem(ANCHORED_KEY) === '1';
-  } catch {
-    return false;
-  }
-}
-
-function storeAnchored(anchored: boolean): void {
-  try {
-    localStorage.setItem(ANCHORED_KEY, anchored ? '1' : '0');
-  } catch {
-    /* Sin almacenamiento: la elección dura lo que la pestaña. */
-  }
-}
-
 /**
  * Application sidebar — logo header and two-section nav tree. Reads the
  * active URL from the Router and feeds it to the recursive
  * `<sc-sidebar-nav-item>` so each row can decide its own active state.
  *
  * Es el de `archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16` (SISMAC-4340), el que se
- * eligió para producción el 2026-09-23: selección en cyan, plegado a 80 que se despliega con el
- * ratón (Drawer de Apollo) y se puede anclar desplegado.
+ * eligió para producción el 2026-09-23: selección en cyan y plegado a 80 que se despliega con el
+ * ratón (Drawer de Apollo). Sin botón de anclar, y plegado sigue abierto lo que estaba abierto
+ * (DD-137).
  */
 @Component({
   selector: 'sc-sidebar',
-  imports: [RouterLink, ScIconComponent, SidebarNavItemComponent, TranslateModule],
+  imports: [RouterLink, SidebarNavItemComponent, TranslateModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -100,14 +81,11 @@ export class SidebarComponent {
   );
 
   /**
-   * Las categorías abiertas. Desplegado, cada padre se abre y se cierra con su clic y abrir uno no
-   * cierra los demás; entrar en una página abre su rama sin tocar el resto, y lo que no cabe se
-   * recorre con el scroll del sidebar.
+   * Las categorías abiertas. Cada padre se abre y se cierra con su clic y abrir uno no cierra los
+   * demás; entrar en una página abre su rama sin tocar el resto. Plegado a 80 se pinta lo mismo que
+   * desplegado, y lo que no cabe se recorre con el scroll del sidebar.
    */
   protected readonly openKeys = signal<readonly string[]>([]);
-
-  /** Anclado: desplegado a 240 y la página le deja su hueco. */
-  protected readonly anchored = signal(readAnchored());
 
   /** Holds the sidebar open while a navigation it started cross-fades. */
   protected readonly pinned = signal(false);
@@ -121,26 +99,6 @@ export class SidebarComponent {
   private leaveTimer: ReturnType<typeof setTimeout> | undefined;
   private revealTimer: ReturnType<typeof setTimeout> | undefined;
 
-  /** Desplegado a 240: con el ratón encima, anclado, sujeto durante una navegación o con el foco dentro. */
-  private readonly expanded = computed(
-    () => this.hovered() || this.pinned() || this.anchored() || this.focusWithin(),
-  );
-
-  /**
-   * Lo que se pinta abierto. Plegado a 80 no hay sitio para acumular: solo la rama de la página
-   * actual (lo que de ella siga abierto). Desplegado, todas las que haya abierto.
-   */
-  protected readonly shownOpenKeys = computed<readonly string[]>(() => {
-    const open = this.openKeys();
-    if (this.expanded()) return open;
-    const shown: string[] = [];
-    for (const key of branchTo(this.allItems, this.currentPath())) {
-      if (!open.includes(key)) break;
-      shown.push(key);
-    }
-    return shown;
-  });
-
   /**
    * The one parent that wears the accent: the nearest ancestor of the current
    * page that is on screen. With every ancestor open that is the direct parent;
@@ -149,7 +107,7 @@ export class SidebarComponent {
    */
   protected readonly accentKey = computed(() => {
     const branch = branchTo(this.allItems, this.currentPath());
-    const open = this.shownOpenKeys();
+    const open = this.openKeys();
     return branch.find((key) => !open.includes(key)) ?? branch.at(-1) ?? null;
   });
 
@@ -177,15 +135,6 @@ export class SidebarComponent {
       if (active instanceof HTMLElement && this.host.nativeElement.contains(active)) {
         active.blur();
       }
-    });
-
-    /* Anclado, el hueco de la página es el ancho desplegado: el sidebar deja de tapar el contenido. */
-    effect(() => {
-      const anchored = this.anchored();
-      storeAnchored(anchored);
-      const root = document.documentElement.style;
-      if (anchored) root.setProperty('--sc-sidebar-width', 'var(--sc-sidebar-width-expanded)');
-      else root.removeProperty('--sc-sidebar-width');
     });
 
     inject(DestroyRef).onDestroy(() => {

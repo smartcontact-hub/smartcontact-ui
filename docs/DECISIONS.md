@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El sidebar sigue a su tablero de Figma (14912:6324): sin botón de anclar · plegado sigue abierto lo que estaba abierto · texto e icono en blanco y la flecha al 60% · todos los iconos a 14, los que nombra el catálogo del tablero (14912:6774) · «Diseñador VUI» y «Análisis de Flujo» (enmienda DD-118 §2 y §5) | DD-137 |
 > | Un alta dice en su resumen lo que falta («Falta: nombre · extensión») y, cuando «Crear …» se enciende, «Listo para crear»: `sc-summary-status`, un solo `role="status"` que cambia en su sitio · sin porcentaje ni barra · un error de formato va en su campo · al editar, nunca «Listo» | DD-136 |
 > | Con qué nace un grupo o un agente se fija en Contact Center (› Grupos, › Agentes), con las palabras de su ficha, y el alta lo lee · de fábrica, los valores del documento de producto (10 · 15 · 60 s, Baja, Balanceada, desbordar; el agente, todo menos la numeración especial) · la cola agotada sigue por el VUI | DD-135 |
 > | Una ayuda bajo un campo dice lo que dicen las fuentes (manual de Voice, documento de producto) o no existe · va en el `helperText`, que la anuncia · `sc-select` pone sus `aria-*` en el elemento con foco · los desplegables del DS hablan el idioma de la app · fuera las ⓘ de la ficha de grupo | DD-133 |
@@ -95,6 +96,61 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-137 · 2026-10-01 — El sidebar sigue a su tablero de Figma: sin anclar, plegado guarda lo abierto, blanco al 100% e iconos de 14
+
+**Contexto** · SISMAC-4340. Producto revisó el tablero del sidebar en Figma (`khNq9dJKNi13pNllrqm6dx`, nodo `14912:6324`):
+iconos grises que no tocaban y padres sin su cyan. Al medirlo salieron más diferencias, entre el propio tablero y
+contra el código:
+- **En el código**, el icono iba al 50% de blanco y el texto al 60%; en el tablero, los dos al 100%.
+- **Los tamaños**: 16 en el primer nivel, 14 en los hijos y 13 en los nietos; en el tablero, 14 en todos.
+- **Plegado a 80**, el código solo pintaba abierta la rama de la página; el tablero dice que lo abierto sigue abierto.
+- **Producción tenía un botón de anclar** que el tablero no tiene.
+
+**Decisión** · (decisión de producto, 2026-10-01; enmienda DD-118 §2 y §5)
+1. **Sin botón de anclar.** Fuera el botón, su clase y el recuerdo en el navegador (`sc-sidebar-anclado`). Si vuelve,
+   será con el Sidebar de primeng.dev de la rama experimental, cuando los devs pasen a PrimeNG 22.
+2. **Plegado a 80 se pinta abierto lo mismo que desplegado.** Ninguna categoría se repliega por no ser la de la página.
+3. **Texto e icono de cada fila en blanco al 100%** (`--sc-sidebar-fg`); con el ratón encima solo cambia el fondo. La
+   flecha, al 60% (`--sc-sidebar-fg-muted`). Los títulos de sección, en caption regular, blancos y sin espaciado extra.
+4. **Todos los iconos a 14.**
+5. **Los iconos los manda el catálogo del tablero** (sección «Iconos del menú», nodo `14912:6774`): cada sidebar del
+   tablero y el código toman de ahí el suyo. En el código solo cambia que Administración lleva `groups` y Grupos
+   `group`, que estaban cruzados; la paleta de comandos copia el icono del menú.
+6. **«Diseñador VUI» y «Análisis de Flujo»** en todo el Supervisor en español. «Análisis» también en inglés, francés y
+   portugués; «VUI Designer» se queda como nombre de producto en esos tres.
+
+**Razón** ·
+- **Medido en Figma** (exportando a SVG los 199 iconos del tablero): todas las filas con texto e icono en `#FFFFFF`,
+  flechas al 60% y un solo cyan por sidebar.
+- **Medido en el código**, a 1440×900 contra `ng serve`: `e2e/supervisor/sidebar-tablero.spec.ts`. Son cuatro
+  pruebas, verdes en local y las cuatro en rojo contra producción, que aún lleva lo anterior. Fallan por lo que deben:
+  - plegado se repliega Supervisión;
+  - el botón de anclar existe;
+  - el texto va al 60%;
+  - el icono de Supervisión mide 16.
+- **La flecha al 60% pasa el 3:1 que pide un indicador.** Los suelos medidos son 0,338 sobre una fila con el ratón
+  encima y 0,5 dentro del bloque de hijos (DD-118).
+
+**Descartadas** ·
+- **Arreglar el gris en la librería Smart-Contact Icons** (quitar el color de dentro del dibujo, publicar y aceptar la
+  actualización) → se eligió arreglarlo solo en el tablero. Ahí los iconos van desligados de la librería y pintados
+  a mano. El gris de los botones del DS sigue pendiente aparte.
+- **Los iconos de los plegados** (`query_stats`, `dashboard`, `build`, `finance_mode`, `support_agent`, `folder`) → se
+  llegaron a poner en todo el tablero y en el código, y se quitaron: manda el catálogo.
+- **Atar a variable el icono del seleccionado en Figma** (`primary/color`) → «No hace falta que usemos variables».
+  Sigue en negro en el tablero; en el código va en el navy de la barra.
+
+**Consecuencias** ·
+- **Figma:** el plegado antiguo del tablero (`14912:6420`) pasa a 16 de margen interior y esquinas a 12, sin la fila
+  «Monitor Selected» escondida. Los iconos de los sidebars son copias desligadas de Smart-Contact Icons: si cambia el
+  catálogo, hay que volver a pasarlos.
+- **Sin seguir del tablero todavía:**
+  - «Lo abierto se recuerda al recargar»: el código empieza vacío en cada carga.
+  - «Ir a otra página no abre ni cierra nada»: el código abre la rama de la página al entrar.
+  - El texto de la fila: el código lo pinta en body 14 regular y el tablero en 13 Medium, que no está en la escala.
 
 ---
 
