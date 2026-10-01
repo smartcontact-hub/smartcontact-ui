@@ -15,6 +15,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { buildWidget } from '../../data/build-widget';
 import { MONITOR_NAME_MAX, type DashboardWidget } from '../../data/dashboard.types';
 import { DEMO_ENTITIES } from '../../data/demo-entities';
+import type { EstadoDeAgente } from '../../data/presencia';
 import {
   CATEGORY_ICON,
   categoryKey,
@@ -65,6 +66,8 @@ export class WidgetAssistantComponent {
   readonly size = input.required<WidgetSize>();
   /** Widget a editar; `null` = crear uno nuevo. */
   readonly editing = input<DashboardWidget | null>(null);
+  /** El estado de los agentes en Administración, el que cuenta la vista previa (DD-139). */
+  readonly estadoDe = input.required<EstadoDeAgente>();
 
   readonly saved = output<DashboardWidget>();
 
@@ -118,6 +121,7 @@ export class WidgetAssistantComponent {
       entities,
       title: this.name().trim() || null,
       filter: edit?.type === id ? edit.filter : null,
+      estadoDe: this.estadoDe(),
     });
   });
 
