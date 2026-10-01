@@ -84,7 +84,7 @@ export class CommandPaletteService {
       readonly key: string;
       readonly icon: NavIconKey;
     }> = [
-      { path: '/admin/grupos/crear', key: 'groups.create_button', icon: 'users-round' },
+      { path: '/admin/grupos/crear', key: 'groups.create_button', icon: 'users' },
       { path: '/admin/agentes/crear', key: 'agents.create_button', icon: 'headphones' },
       { path: '/admin/usuarios/crear', key: 'users.create_button', icon: 'user-round' },
     ];
