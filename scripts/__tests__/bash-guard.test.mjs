@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -597,6 +597,54 @@ test('carpeta del comando: `cd <ruta> &&` manda sobre el cwd de la sesión; con 
   deny('npx playwright test', soloElWorktree, /LEARNINGS #5/);
   assert.equal(carpetaEfectiva('cd sub && ls', '/repo'), '/repo/sub');
   assert.equal(carpetaEfectiva('ls && cd /otra', '/repo'), '/repo', 'un cd DETRÁS no cambia dónde corre lo de delante');
+});
+
+// 2026-10-01: `false && cd <otro repo> && git push` se denegó con el motivo de #7 aunque el push era de OTRO
+// repositorio (el cuaderno privado del autor), y un subagente que barría el cuaderno se quedó con sus commits
+// sin subir. Dos causas: `carpetaEfectiva` solo seguía los `cd` que ABREN el comando, y aun siguiéndolo, la
+// marca de preflight se exigía sobre cualquier carpeta. Con repos git de verdad: lo que decide es el repo
+// (su `--git-common-dir`), y un worktree de este comparte el de este.
+test('#7 push de OTRO repositorio: la marca de preflight solo se exige a este repo y a sus worktrees', (t) => {
+  const raiz = realpathSync(mkdtempSync(join(tmpdir(), 'sc-guard-repos-')));
+  t.after(() => rmSync(raiz, { recursive: true, force: true }));
+  const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')));
+  const git = (cwd, ...args) =>
+    spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false', ...args], { cwd, env, encoding: 'utf8' });
+  const propio = join(raiz, 'propio');
+  const otro = join(raiz, 'otro');
+  const wt = join(raiz, 'wt');
+  for (const d of [propio, otro]) {
+    mkdirSync(join(d, 'sub'), { recursive: true });
+    git(d, 'init', '-q');
+  }
+  git(propio, 'commit', '-q', '--allow-empty', '-m', 'x');
+  assert.equal(git(propio, 'worktree', 'add', '-q', wt, '-b', 'rama').status, 0, 'el worktree de este repo debe existir');
+
+  const ctx = { ...rojo, cwd: propio, esteRepo: propio };
+  // ROJO de antes, VERDE ahora: el comando que se denegó, y el que de verdad corría el subagente.
+  allow(`false && cd ${otro} && git push`, ctx);
+  allow(`cd ${otro} && git add -A && git commit -qm x && git push`, ctx);
+  allow(`git status; cd ${otro}/sub; git push origin main`, ctx);
+  allow(`(cd ${otro} && git push) && echo hecho`, ctx);
+  // Con la sesión DENTRO del otro repo (el cwd persiste entre llamadas), un push a secas tampoco es de este.
+  allow('git push', { ...ctx, cwd: otro });
+  // Lo de este repo sigue exigiendo marca: el propio, un worktree suyo, subcarpetas y el cwd de la sesión.
+  deny('git push', ctx, /LEARNINGS #7/);
+  deny(`cd ${propio} && git push`, ctx, /LEARNINGS #7/);
+  deny(`false && cd ${wt} && git push`, ctx, /LEARNINGS #7/);
+  deny(`cd ${propio}/sub && git push`, ctx, /LEARNINGS #7/);
+  deny(`git fetch && cd ${wt} && git push`, ctx, /LEARNINGS #7/);
+  // Cada push se juzga en SU carpeta: el segundo, que vuelve a este repo, cuenta aunque el primero no.
+  deny(`cd ${otro} && git push && cd ${propio} && git push`, ctx, /LEARNINGS #7/);
+  // El `cd` de un subshell no sale de él: el push de después corre aquí.
+  deny(`(cd ${otro} && git push); git push`, ctx, /LEARNINGS #7/);
+  // Si no se sabe adónde va (variable, carpeta inexistente), manda lo estricto.
+  deny('cd $CUADERNO && git push', ctx, /LEARNINGS #7/);
+  deny(`cd ${otro} && cd $DESTINO && git push`, ctx, /LEARNINGS #7/); // venir de otro repo no vale: el destino opaco puede ser este
+  deny(`cd ${raiz}/no-existe && git push`, ctx, /LEARNINGS #7/);
+  // Salida explícita, y con marca en verde no cambia nada.
+  allow(`cd ${propio} && git push # sc:ok`, ctx);
+  allow(`cd ${propio} && git push`, { ...ctx, preflight: () => ({ ok: true, motivo: 'ok' }) });
 });
 
 test('#21 sacar la rama de otra sesión para trabajar en ella → deny; desde main, un fichero suelto o sc:ok → allow', () => {

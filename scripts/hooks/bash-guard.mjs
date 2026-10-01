@@ -398,6 +398,17 @@ const empiezaPor = (seg, re) => re.test(seg.replace(/^(\s*[A-Za-z_][A-Za-z_0-9]*
 const esPushDeCommits = (seg) =>
   empiezaPor(seg, /^git\s+push\b/) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
 
+/** El destino de un segmento que es un `cd`: su ruta si es LITERAL; `null` si es un `cd` pero no se sabe
+ *  adónde va (variable, `-`, sin argumento); `undefined` si el segmento no es un `cd`. */
+function destinoDeCd(seg) {
+  if (!/^cd(\s|$)/.test(seg)) return undefined;
+  const m = seg.match(/^cd\s+(?:"([^"$`]+)"|'([^']+)'|([^\s"'$`]+))$/);
+  const ruta = m ? (m[1] ?? m[2] ?? m[3]) : null;
+  return ruta && ruta !== '-' ? ruta : null;
+}
+
+const irA = (dir, ruta) => (ruta === '~' || ruta.startsWith('~/') ? resolve(process.env['HOME'] ?? '/', ruta.slice(2)) : resolve(dir, ruta));
+
 /**
  * La carpeta donde de verdad corre el comando: la de la sesión, salvo que empiece por `cd <ruta>`.
  *
@@ -410,13 +421,65 @@ export function carpetaEfectiva(cmd, cwd) {
   let dir = cwd;
   for (const seg of segmentos(cmd)) {
     if (/^(export\s+)?[A-Za-z_][A-Za-z_0-9]*=\S*$/.test(seg)) continue; // asignaciones delante del cd
-    const m = seg.match(/^cd\s+(?:"([^"$`]+)"|'([^']+)'|([^\s"'$`]+))$/);
-    if (!m) break;
-    const ruta = m[1] ?? m[2] ?? m[3];
-    if (ruta === '-') break;
-    dir = ruta === '~' || ruta.startsWith('~/') ? resolve(process.env['HOME'] ?? '/', ruta.slice(2)) : resolve(dir, ruta);
+    const ruta = destinoDeCd(seg);
+    if (!ruta) break;
+    dir = irA(dir, ruta);
   }
   return dir;
+}
+
+/**
+ * La carpeta en que corre CADA segmento (alineada con `segmentos(cmd)`): la que dejan los `cd` literales
+ * anteriores, estén donde estén. `carpetaEfectiva` solo sigue los que ABREN el comando, y para decidir de
+ * qué repo es un `git push` no basta: `false && cd <otro> && git push` o `git add -A && cd <otro> && git push`
+ * lo juzgaban contra la sesión (2026-10-01). Un `( … )` es un subshell: su `cd` no sale de él, así que
+ * `(cd <otro> && git push); git push` deja el segundo push en la carpeta de la sesión. Un `cd` que no se
+ * sabe adónde va (variable, `-`) vuelve a la sesión, que es lo estricto. No se modela el `cd` condicionado
+ * a otro test (`[ -d x ] && cd x; git push`): el repo no lo usa y complicaría lo que se lee aquí.
+ */
+export function carpetasPorSegmento(cmd, cwd) {
+  const pila = [];
+  let dir = cwd;
+  return segmentos(cmd).map((seg) => {
+    let s = seg;
+    while (s.startsWith('(')) {
+      pila.push(dir);
+      s = s.slice(1).trimStart();
+    }
+    const cierres = sinComillas(s).match(/\)+$/)?.[0].length ?? 0;
+    const enSuCarpeta = dir;
+    const ruta = destinoDeCd(s.slice(0, s.length - cierres).trimEnd());
+    if (ruta !== undefined) dir = ruta === null ? cwd : irA(dir, ruta);
+    for (let i = 0; i < cierres && pila.length; i++) dir = pila.pop();
+    return enSuCarpeta;
+  });
+}
+
+/** El `.git` común del repo que contiene `dir`: el mismo para el árbol principal y para todos sus worktrees
+ *  (que cada uno tenga su raíz no los hace otro repo). `null` si `dir` no existe o no está en un repo. */
+function repoDe(dir) {
+  try {
+    const entorno = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_'))); // un `GIT_DIR` heredado manda sobre `-C`
+    const salida = execFileSync('git', ['-C', dir, 'rev-parse', '--git-common-dir'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      env: entorno,
+    }).trim();
+    return fsSync.realpathSync(resolve(dir, salida)); // sale relativo a `dir` en el árbol principal
+  } catch {
+    return null;
+  }
+}
+
+/** El repo que lleva este hook: el hook cuelga de `scripts/hooks/` y lo lanza `$CLAUDE_PROJECT_DIR`. */
+const RAIZ_DEL_HOOK = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+
+/** ¿Es `dir` de ESTE repo (su árbol o un worktree suyo)? Lo que no se puede resolver cuenta como que sí:
+ *  fallar hacia lo estricto deja un push propio sin marca como mucho denegado de más, nunca colado. */
+function esDeEsteRepo(dir, esteRepo = RAIZ_DEL_HOOK) {
+  const otro = repoDe(dir);
+  const propio = repoDe(esteRepo);
+  return otro === null || propio === null || otro === propio;
 }
 
 /** Una rama remota que no es la principal: casi siempre, la de otra sesión. */
@@ -658,9 +721,13 @@ function evaluarBase(cmd, ctx = {}) {
   const sinIndexar = ctx.sinIndexar || fuentesSinIndexar;
   const segs = segmentos(cmd);
 
-  // #7 (a) — push sin preflight fresco sobre el árbol FINAL.
-  if (segs.some(esPushDeCommits)) {
-    const st = preflight(cwd);
+  // #7 (a) — push sin preflight fresco sobre el árbol FINAL. Solo de ESTE repo: la marca la escribe su
+  // preflight y no existe en otro (el push de otro repositorio, p. ej. el cuaderno de notas del autor, no
+  // la lleva, y exigirla dejó a un subagente con sus commits sin subir, 2026-10-01).
+  const carpetas = carpetasPorSegmento(cmd, ctx.cwd || process.cwd());
+  for (const [i, seg] of segs.entries()) {
+    if (!esPushDeCommits(seg) || !esDeEsteRepo(carpetas[i], ctx.esteRepo)) continue;
+    const st = preflight(carpetas[i]);
     if (!st.ok)
       return {
         decision: 'deny',
