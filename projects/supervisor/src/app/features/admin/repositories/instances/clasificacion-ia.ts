@@ -176,6 +176,7 @@ export class ClasificacionIAPageComponent {
   protected readonly config: RepoPageConfig<ClasificacionIA> = {
     titleKey: 'repositories.clasificacion_ia.title',
     entitySingularKey: 'repositories.clasificacion_ia.singular',
+    createTitleKey: 'repositories.clasificacion_ia.create_title',
     entityPluralKey: 'repositories.clasificacion_ia.plural',
     icon: 'label',
     breadcrumbExtraKey: 'repositories.clasificacion_ia.title',

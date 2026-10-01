@@ -1227,6 +1227,7 @@
     "agendas": {
       "title": "Address books",
       "singular": "address book",
+      "create_title": "New address book",
       "plural": "address books",
       "numbers": "Numbers",
       "name_placeholder": "E.g. National Sales",
@@ -1235,6 +1236,7 @@
     "horarios": {
       "title": "Schedules",
       "singular": "schedule",
+      "create_title": "New schedule",
       "plural": "schedules",
       "schedule": "Schedule",
       "timezone": "Timezone",
@@ -1245,6 +1247,7 @@
     "tipificaciones": {
       "title": "Typifications",
       "singular": "typification",
+      "create_title": "New typification",
       "plural": "typifications",
       "code": "Code",
       "category": "Category",
@@ -1255,6 +1258,7 @@
     "variables": {
       "title": "Variables",
       "singular": "variable",
+      "create_title": "New variable",
       "plural": "variables",
       "key": "Key",
       "default": "Default value",
@@ -1271,6 +1275,7 @@
     "entidades": {
       "title": "Entities",
       "singular": "entity",
+      "create_title": "New entity",
       "plural": "entities",
       "type": "Type",
       "values": "Values",
@@ -1287,6 +1292,7 @@
     "intenciones": {
       "title": "Intents",
       "singular": "intent",
+      "create_title": "New intent",
       "plural": "intents",
       "category": "Category",
       "examples": "Examples",
@@ -1297,6 +1303,7 @@
     "reglas_ia": {
       "title": "AI Rules",
       "singular": "AI rule",
+      "create_title": "New AI rule",
       "plural": "AI rules",
       "condition": "Condition",
       "action": "Action",
@@ -1313,6 +1320,7 @@
     "entidades_ia": {
       "title": "AI Entities",
       "singular": "AI entity",
+      "create_title": "New AI entity",
       "plural": "AI entities",
       "type": "Type",
       "model": "Model",
@@ -1323,6 +1331,7 @@
     "clasificacion_ia": {
       "title": "AI Classification",
       "singular": "AI classification",
+      "create_title": "New AI classification",
       "plural": "AI classifications",
       "model": "Model",
       "categories": "Categories",

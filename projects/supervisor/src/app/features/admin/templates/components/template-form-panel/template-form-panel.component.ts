@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
@@ -49,6 +50,10 @@ export class TemplateFormPanelComponent implements OnInit, AfterViewInit {
   /** Currently selected tab; used as the default channel for new templates. */
   readonly defaultType = input<TemplateType>('chat');
   readonly existingTitles = input.required<readonly string[]>();
+
+  /** Dentro de un diálogo (la ficha de grupo crea así desde Recursos): sin caja, sin título y sin `role="dialog"`,
+   *  porque el diálogo ya pone los tres; el formulario ocupa su cuerpo. */
+  readonly flush = input(false, { transform: booleanAttribute });
 
   readonly save = output<TemplateFormSubmission>();
   readonly cancelled = output<void>();

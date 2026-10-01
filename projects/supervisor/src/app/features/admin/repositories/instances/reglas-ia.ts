@@ -187,6 +187,7 @@ export class ReglasIAPageComponent {
   protected readonly config: RepoPageConfig<ReglaIA> = {
     titleKey: 'repositories.reglas_ia.title',
     entitySingularKey: 'repositories.reglas_ia.singular',
+    createTitleKey: 'repositories.reglas_ia.create_title',
     entityPluralKey: 'repositories.reglas_ia.plural',
     icon: 'auto_awesome',
     breadcrumbExtraKey: 'repositories.reglas_ia.title',
