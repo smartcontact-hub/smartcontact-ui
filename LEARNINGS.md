@@ -74,7 +74,7 @@
    test afirmaba sobre algo TRANSITORIO, la carga es el cuándo y no el porqué: arregla la aserción
    (`watchTransient()` en `e2e/cuscare/helpers.ts`). ¿Warning mío o preexistente? Stash y
    reproduce, no opines. ⚙️ Compactación avisa si la guía cambió en `origin/main`; `bash-guard`
-   deniega Playwright con el DS más nuevo que `dist/`.
+   deniega Playwright con el DS más nuevo que `dist/`; `verify` y `preflight:scope` avisan si la carga pasa de 4/CPU.
    Evidencia: s12 icono en 24 con el fuente en 14 · s18 tres rondas contra un bundle viejo · s30
    overlay de 380 ms con load 51 · 2026-09-14 «falla 4/4 con la clave» era el MISMO `dist/`.
 

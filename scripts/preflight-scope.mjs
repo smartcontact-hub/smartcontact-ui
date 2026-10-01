@@ -19,7 +19,7 @@
  */
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
-import { puertaBarata } from "./preflight-puerta-barata.mjs";
+import { avisarCarga, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 
 // Antes de mirar qué cambió, y antes de gastar un minuto: ¿la rama lleva `origin/main`? Un
@@ -105,6 +105,10 @@ if (appsTocadas.length) {
 /* La PUERTA BARATA va antes de cualquier cadena: lo que se puede comprobar en milisegundos no
  * se descubre en el minuto cuatro. Ver `preflight-puerta-barata.mjs`. */
 if (process.argv.includes("--run")) {
+  // Primero el aviso de máquina saturada, y sin bloquear: la carga alta no es un fallo de la cadena (una
+  // pasada verde bajo carga sigue valiendo), pero quien la lanza tiene que saberlo ya y no horas después.
+  // Deja una marca en el entorno para que el `preverify` de `verify`, que corre dentro, no lo repita.
+  avisarCarga();
   const problemas = puertaBarata(process.cwd());
   if (problemas.length) {
     console.log("\n✘ La cadena NO arranca: hay algo que se comprueba en 2 s y falla.\n");
