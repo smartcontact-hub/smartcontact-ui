@@ -1480,7 +1480,7 @@
     "page_title": "Groups",
     "create_button": "New group",
     "create_dialog": {
-      "duplicate_subtitle": "Copies the agents, channels and settings of «{{source}}». Not the associated phone.",
+      "duplicate_subtitle": "Copies the agents, channels and settings of «{{source}}». Not the outbound phone.",
       "copy_name": "{{name}} (copy)"
     },
     "search_placeholder": "Search group by name, ID, phone, priority or strategy...",
@@ -1564,7 +1564,8 @@
         "priority_hint": "The priority its calls get. It only applies to incoming calls.",
         "phone_strategy": "Strategy (phone)",
         "chat_strategy": "Strategy (chat)",
-        "phone_hint": "The number customers see when an agent in the group calls. Pick one or type it.",
+        "phone_hint": "The number customers see when an agent in the group calls.",
+        "phone_placeholder": "Choose a number",
         "strategy": "Strategy",
         "ring_all": "Rings",
         "ring_all_suffix": "agents at once",
@@ -1580,7 +1581,7 @@
         "label_new": "New label"
       },
       "strategy_help": {
-        "balanced": "In turns: each call goes to the next agent and, if they don't pick up, to the one after.",
+        "balanced": "Spreads conversations evenly across the agents.",
         "fewest_conversations": "Goes to the agent who has handled the fewest conversations.",
         "longest_idle": "Goes to the available agent who has been idle the longest.",
         "levels": "Level 1 agents who are available and free come first. Each agent's level is set in Agents.",
@@ -1691,7 +1692,8 @@
         "outbound": "Outbound",
         "no_number": "No number",
         "resources": "Resources",
-        "missing_channels": "channels"
+        "missing_channels": "channels",
+        "missing_phone": "outbound phone"
       },
       "channels": {
         "title": "Channels",
@@ -1711,8 +1713,8 @@
         "jump_aria": "Channels in this section"
       },
       "chat": {
-        "close_on_inactivity": "Close chat on inactivity",
-        "close_on_inactivity_hint": "If the customer stops writing, the conversation closes by itself after this time.",
+        "close_on_inactivity": "Expire session",
+        "close_on_inactivity_hint": "If the customer stops writing, the session expires and the conversation closes after this time.",
         "inactivity_minutes": "Minutes without activity",
         "messages_hint": "What the customer is sent while waiting. If you leave one empty, it is not sent.",
         "message_on_enter": "On entering the queue",
@@ -1731,7 +1733,8 @@
     "errors": {
       "name_required": "Name is required",
       "channels_required": "Select at least one channel",
-      "name_taken": "A group with this name already exists"
+      "name_taken": "A group with this name already exists",
+      "phone_required": "The outbound phone is required"
     },
     "toasts": {
       "created": "Group \"{{name}}\" created",

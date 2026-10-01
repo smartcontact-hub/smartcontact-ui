@@ -1480,7 +1480,7 @@
     "page_title": "Groupes",
     "create_button": "Nouveau groupe",
     "create_dialog": {
-      "duplicate_subtitle": "Copie les agents, les canaux et les réglages de «{{source}}». Pas le téléphone associé.",
+      "duplicate_subtitle": "Copie les agents, les canaux et les réglages de «{{source}}». Pas le téléphone sortant.",
       "copy_name": "{{name}} (copie)"
     },
     "search_placeholder": "Rechercher un groupe par nom, ID, téléphone, priorité ou stratégie...",
@@ -1564,7 +1564,8 @@
         "priority_hint": "La priorité de ses appels. Elle ne s’applique qu’aux appels entrants.",
         "phone_strategy": "Stratégie (téléphone)",
         "chat_strategy": "Stratégie (chat)",
-        "phone_hint": "Le numéro que voient les clients quand un agent du groupe appelle. Choisissez-en un ou saisissez-le.",
+        "phone_hint": "Le numéro que voient les clients quand un agent du groupe appelle.",
+        "phone_placeholder": "Choisissez un numéro",
         "strategy": "Stratégie",
         "ring_all": "Sonne chez",
         "ring_all_suffix": "agents à la fois",
@@ -1580,7 +1581,7 @@
         "label_new": "Nouvelle étiquette"
       },
       "strategy_help": {
-        "balanced": "À tour de rôle : chaque appel va à l’agent suivant et, s’il ne décroche pas, au suivant.",
+        "balanced": "Répartit les conversations de manière équilibrée entre les agents.",
         "fewest_conversations": "Va à l’agent qui a traité le moins de conversations.",
         "longest_idle": "Va à l’agent disponible inactif depuis le plus longtemps.",
         "levels": "D’abord les agents du niveau 1 disponibles et libres. Le niveau de chaque agent se choisit dans Agents.",
@@ -1691,7 +1692,8 @@
         "outbound": "Sortant",
         "no_number": "Aucun numéro",
         "resources": "Ressources",
-        "missing_channels": "canaux"
+        "missing_channels": "canaux",
+        "missing_phone": "téléphone sortant"
       },
       "channels": {
         "title": "Canaux",
@@ -1711,8 +1713,8 @@
         "jump_aria": "Canaux de cette section"
       },
       "chat": {
-        "close_on_inactivity": "Fermer le chat en cas d'inactivité",
-        "close_on_inactivity_hint": "Si le client cesse d'écrire, la conversation se ferme d'elle-même après ce délai.",
+        "close_on_inactivity": "Expiration de la session",
+        "close_on_inactivity_hint": "Si le client cesse d’écrire, la session expire et la conversation se ferme après ce délai.",
         "inactivity_minutes": "Minutes sans activité",
         "messages_hint": "Ce que le client reçoit pendant l'attente. Si vous en laissez un vide, il n'est pas envoyé.",
         "message_on_enter": "À l'entrée dans la file",
@@ -1731,7 +1733,8 @@
     "errors": {
       "name_required": "Le nom est obligatoire",
       "channels_required": "Sélectionnez au moins un canal",
-      "name_taken": "Un groupe porte déjà ce nom"
+      "name_taken": "Un groupe porte déjà ce nom",
+      "phone_required": "Le téléphone sortant est obligatoire"
     },
     "toasts": {
       "created": "Groupe \"{{name}}\" créé",

@@ -121,6 +121,7 @@ variable cuando su nombre es único y avisa.
 - [ ] **31** · El resumen de las tres altas, con «Falta: …» y «Listo para crear».
 - [ ] **32** · Las tres altas en pasos: el Stepper vertical en el sitio del índice, con el ✓ y «Atrás» / «Siguiente».
 - [ ] **33** · La ficha de grupo y Contact Center › Grupos: estrategias con «conversaciones», sin «Desbordar sesión».
+- [ ] **34** · El teléfono saliente obligatorio y cerrado, «Caducar sesión» y Recursos sin Etiquetas.
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
@@ -955,6 +956,28 @@ nuevas · **Sin verificar** contra el fichero: el código no cita los nodos de l
 
 **Cómo sabes que está hecho:** las maquetas dicen lo mismo que `/admin/grupos/editar/11?seccion=distribucion` y
 `/config/aed/grupos`, y ninguna dice «Desbordar sesión».
+
+---
+
+## 34 · El teléfono saliente, obligatorio y de una lista; «Caducar sesión», y Recursos sin Etiquetas (2026-10-01)
+
+**Estado:** pendiente · **Dónde:** Figma, las maquetas de la ficha de grupo (Distribución y colas, Recursos), del
+diálogo de duplicar y `1:12676` (Contact Center · Grupos) del fichero del Supervisor · **Esfuerzo:** un campo en dos
+estados, textos y un campo menos · **Sin verificar** contra el fichero: el código no cita los nodos de la ficha.
+
+- **Por qué** (DD-142): la segunda revisión con el equipo fija el teléfono saliente como obligatorio con Teléfono, y
+  de los números asignados.
+- **Qué cambiar:**
+  - «Teléfono saliente *», un desplegable cerrado, sin escritura, con el marcador «Elige un número» y la ayuda «El número
+    que ven los clientes cuando un agente del grupo llama.»; y su estado de error: «El teléfono saliente es
+    obligatorio», con el punto en «Distribución y colas» del índice;
+  - lo mismo en el diálogo de duplicar, cuyo subtítulo dice «El teléfono saliente, no.»;
+  - «Caducar sesión» en vez de «Cerrar chat por inactividad», en la ficha y en Contact Center;
+  - la ayuda de «Balanceada»: «Reparte las conversaciones de forma equilibrada entre los agentes.»;
+  - Recursos sin el campo Etiquetas.
+
+**Cómo sabes que está hecho:** las maquetas dicen lo mismo que `/admin/grupos/editar/1?seccion=distribucion`, el
+diálogo de duplicar de un grupo con Teléfono y `/config/aed/grupos`.
 
 ---
 

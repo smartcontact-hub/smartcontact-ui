@@ -99,8 +99,10 @@ test('Teléfono: saliente y voz a la vista; en la cola, solo la música', async 
   await irA(page, 'Distribución y colas');
   const telefono = page.locator('#group-channel-phone');
 
+  // El rótulo del teléfono saliente lleva su «*» de obligatorio desde DD-142, y el texto de un rótulo empieza por un
+  // espacio que el casado por expresión regular no recorta (medido).
   for (const visible of ['Teléfono saliente', 'Voz de los anuncios', 'Música de espera']) {
-    await expect(telefono.getByText(visible, { exact: true }), visible).toBeVisible();
+    await expect(telefono.getByText(new RegExp(`^\\s*${visible}(\\s*\\*)?\\s*$`)), visible).toBeVisible();
   }
   for (const fuera of ['Identificador del grupo', 'Anuncio periódico', 'Audio saliente', '«Eres el siguiente»']) {
     await expect(page.getByText(fuera, { exact: true }), fuera).toHaveCount(0);

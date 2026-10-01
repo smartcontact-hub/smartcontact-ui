@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto, irAPaso } from './helpers';
+import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto, irAPaso } from './helpers';
 
 /**
  * EL PASE DE DISEÑO DE LAS FICHAS (DD-130).
@@ -158,6 +158,8 @@ test('el icono de un aviso pesa lo que su texto semibold', async ({ page }) => {
   const estado = page.locator('.resumen__status sc-icon .sc-icon');
   await expect(estado).toHaveClass(/sc-icon--weight-600/);
   await page.locator('#group-name').fill(`E2E Peso ${Date.now()}`);
+  // Con Teléfono, «Listo» espera también al teléfono saliente (DD-142).
+  await elegirTelefonoSaliente(page);
   await expect(page.locator('.resumen__status--ready')).toBeVisible();
   await expect(estado).toHaveClass(/sc-icon--weight-600/);
 });

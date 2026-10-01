@@ -366,7 +366,7 @@
           <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_hint' | translate }}</p>
         </div>
       </div>
-      <!-- Sin «Desbordar sesión» desde DD-141: era de Chat, y lo cubre «Cerrar chat por inactividad». -->
+      <!-- Sin «Desbordar sesión» desde DD-141: era de Chat, y lo cubre «Caducar sesión». -->
     </section>
 
     @if (hasPhone()) {
@@ -399,8 +399,23 @@
           <!-- El número que ve el cliente cuando le llama un agente del grupo: un campo principal del canal, no
                un dato de identidad (visión de producto de grupos, 2026-09-25). -->
           <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-phone">{{ 'groups.form.fields.phone' | translate }}</label>
-            <sc-select inputId="group-phone" editable [options]="phoneOptions()" [value]="form().phone" [helperText]="'groups.form.fields.phone_hint' | translate" (valueChange)="onPhoneValueChange($event)" />
+            <!-- Obligatorio con Teléfono, como el nombre, y de los números asignados: no se escribe (DD-142). -->
+            <label id="group-phone-label" class="field__label sc-text-caption-semibold" for="group-phone">
+              {{ 'groups.form.fields.phone' | translate }}
+              <span class="field__required" aria-hidden="true">*</span>
+            </label>
+            <!-- `for` no nombra un `span[role=combobox]`: sin `ariaLabelledBy`, el lector leía el número como nombre (DD-133). -->
+            <sc-select
+              inputId="group-phone"
+              ariaLabelledBy="group-phone-label"
+              required
+              [options]="phoneOptions()"
+              [value]="form().phone || null"
+              [placeholder]="'groups.form.fields.phone_placeholder' | translate"
+              [helperText]="'groups.form.fields.phone_hint' | translate"
+              [error]="phoneError() ? (phoneError()! | translate) : undefined"
+              (valueChange)="onPhoneValueChange($event)"
+            />
           </div>
           @if (isRingAll()) {
             <div class="field">
@@ -683,27 +698,31 @@
           </div>
         }
 
-        <div class="field">
-          <span class="field__label-row">
-            <label class="field__label sc-text-caption-semibold" for="group-labels">
-              {{ 'agents.form.advanced.labels.title' | translate }}
-            </label>
-            <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
-          </span>
-          <sc-multiselect
-            inputId="group-labels"
-            display="chip"
-            optionLabel="label"
-            optionValue="value"
-            [filter]="true"
-            [maxSelectedLabels]="4"
-            [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-            [placeholder]="'agents.form.resources.none' | translate"
-            [options]="labelOptions()"
-            [value]="labelValue()"
-            (valueChange)="onIdsChange('labelIds', $event)"
-          />
-        </div>
+        <!-- Etiquetas, apagado y guardado por si vuelve (DD-142): el grupo conserva las suyas. Se enciende con
+             `conEtiquetas`. -->
+        @if (conEtiquetas) {
+          <div class="field">
+            <span class="field__label-row">
+              <label class="field__label sc-text-caption-semibold" for="group-labels">
+                {{ 'agents.form.advanced.labels.title' | translate }}
+              </label>
+              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
+            </span>
+            <sc-multiselect
+              inputId="group-labels"
+              display="chip"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [maxSelectedLabels]="4"
+              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+              [placeholder]="'agents.form.resources.none' | translate"
+              [options]="labelOptions()"
+              [value]="labelValue()"
+              (valueChange)="onIdsChange('labelIds', $event)"
+            />
+          </div>
+        }
       </div>
 
       <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
