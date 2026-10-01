@@ -8,7 +8,7 @@ import {
   forceDarkTheme,
   forceLightTheme,
   goto,
-  irAPaso,
+  irASeccion,
   pickSelectOption,
 } from './helpers';
 
@@ -54,7 +54,7 @@ test('grupo · dice qué falta y, con nombre, un canal y su teléfono saliente, 
   await expect(estado(page)).toHaveText(dice('Listo para crear'));
   await expect(boton(page, 'Crear grupo')).toBeEnabled();
 
-  await irAPaso(page, 'General');
+  await irASeccion(page, 'General');
 
   await canal(page, 'Teléfono').click();
   await expect(estado(page)).toHaveText(dice('Falta: canales'));

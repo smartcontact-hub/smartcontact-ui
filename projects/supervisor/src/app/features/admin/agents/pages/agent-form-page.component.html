@@ -71,21 +71,20 @@
       }
     </div>
 
-    <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). Solo al editar: el
-         alta y el duplicado van en pasos (DD-138), y su contenido ocupa también este sitio. -->
-    @if (mode() === 'edit') {
-      <div class="page__rail">
-        <sc-form-section-nav
-          [sections]="navSections()"
-          [activeId]="activeSection()"
-          [labelKey]="'common.form_index_aria'"
-          [sectionsWithErrors]="sectionsWithErrors()"
-          [sectionsWithChanges]="sectionsWithChanges()"
-          [flush]="true"
-          (activeChange)="goTo($event)"
-        />
-      </div>
-    }
+    <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). El mismo al crear, al
+         duplicar y al editar (DD-143): en el alta, la sección que se deja completa lleva ✓. -->
+    <div class="page__rail">
+      <sc-form-section-nav
+        [sections]="navSections()"
+        [activeId]="activeSection()"
+        [labelKey]="'common.form_index_aria'"
+        [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionsWithChanges]="sectionsWithChanges()"
+        [sectionsDone]="alta.hechas()"
+        [flush]="true"
+        (activeChange)="goTo($event)"
+      />
+    </div>
 
     <div class="page__main">
       <!-- El mismo agente abierto en otra pestaña (DD#169): el candado ya se cogía; ahora se dice. -->
@@ -93,23 +92,6 @@
         <sc-message class="ficha-conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
       }
 
-      @if (mode() !== 'edit') {
-        <!-- EL ALTA, EN PASOS (DD-138): las cinco secciones en el Stepper vertical nativo, en cualquier orden. -->
-        <sc-alta-pasos
-          [pasos]="alta.pasos()"
-          [abierto]="pasoAbierto()"
-          [secciones]="{
-            'agent-section-identity': seccionIdentidad,
-            'agent-section-groups': seccionGrupos,
-            'agent-section-permissions': seccionPermisos,
-            'agent-section-resources': seccionRecursos,
-            'agent-section-advanced': seccionAvanzado
-          }"
-          (paso)="goTo($event)"
-          (siguiente)="siguiente()"
-          (anterior)="anterior()"
-        />
-      } @else {
       @switch (activeSection()) {
         @case ('agent-section-identity') {
           <ng-container *ngTemplateOutlet="seccionIdentidad" />
@@ -131,6 +113,14 @@
           <ng-container *ngTemplateOutlet="seccionRecursos" />
         }
       }
+      <!-- En el alta y al duplicar, «Atrás» y «Siguiente» al pie (DD-143). «Crear agente» sigue arriba. -->
+      @if (mode() !== 'edit') {
+        <sc-alta-pie
+          [conAnterior]="alta.anterior() !== null"
+          [conSiguiente]="alta.siguiente() !== null"
+          (anterior)="anterior()"
+          (siguiente)="siguiente()"
+        />
       }
     </div>
 
@@ -179,14 +169,12 @@
   (confirm)="confirmDelete()"
 />
 
-<!-- LAS SECCIONES, cada una en su plantilla: la edición las pinta de una en una junto al índice, y el alta, cada
-     una en su paso (DD-138). Un solo cuerpo para los dos, así no pueden decir cosas distintas. -->
+<!-- LAS SECCIONES, cada una en su plantilla, que se pinta de una en una junto al índice al crear y al editar
+     (DD-143). Un solo cuerpo para los dos, así no pueden decir cosas distintas. -->
 <ng-template #seccionIdentidad>
   <sc-section-card
     anchorId="agent-section-identity"
     surface="card"
-    [flush]="mode() !== 'edit'"
-    [showHeader]="mode() === 'edit'"
     icon="badge"
     titleKey="agents.form.section.identity"
     hintKey="agents.form.section.identification_hint"
@@ -379,8 +367,6 @@
   <sc-section-card
     anchorId="agent-section-groups"
     surface="card"
-    [flush]="mode() !== 'edit'"
-    [showHeader]="mode() === 'edit'"
     icon="group"
     titleKey="agents.form.section.groups"
     hintKey="agents.form.section.groups_hint"
@@ -400,8 +386,6 @@
   <sc-section-card
     anchorId="agent-section-permissions"
     surface="card"
-    [flush]="mode() !== 'edit'"
-    [showHeader]="mode() === 'edit'"
     icon="verified_user"
     titleKey="agents.form.section.permissions"
     hintKey="agents.form.section.permissions_hint"
@@ -460,8 +444,6 @@
   <sc-section-card
     anchorId="agent-section-advanced"
     surface="card"
-    [flush]="mode() !== 'edit'"
-    [showHeader]="mode() === 'edit'"
     icon="tune"
     titleKey="agents.form.section.advanced"
     hintKey="agents.form.section.advanced_hint"
@@ -642,8 +624,6 @@
   <sc-section-card
     anchorId="agent-section-resources"
     surface="card"
-    [flush]="mode() !== 'edit'"
-    [showHeader]="mode() === 'edit'"
     icon="library_books"
     titleKey="agents.form.section.resources"
     hintKey="agents.form.section.resources_hint"

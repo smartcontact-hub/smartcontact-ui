@@ -35,6 +35,17 @@ const LINKS_SNIPPET = `<sc-form-section-nav
   (activeChange)="onActive($event)"
 />`;
 
+/* En un alta (DD-143): la página marca con ✓ las secciones que se dejaron completas; la abierta no lo
+ * lleva. Lo que falta y los cambios sin guardar ganan al ✓. */
+const ALTA_SNIPPET = `<sc-form-section-nav
+  [sections]="sections"
+  [activeId]="active()"
+  [flush]="true"
+  [sectionsWithErrors]="errors"
+  [sectionsDone]="done"
+  (activeChange)="onActive($event)"
+/>`;
+
 const FLUSH_SNIPPET = `<sc-form-section-nav
   [sections]="sections"
   [activeId]="active()"
@@ -56,6 +67,7 @@ export class FormSectionNavDemoComponent {
   protected readonly flushTpl = viewChild<TemplateRef<StoryContext>>('flush');
   protected readonly longTpl = viewChild<TemplateRef<StoryContext>>('long');
   protected readonly linksTpl = viewChild<TemplateRef<StoryContext>>('links');
+  protected readonly altaTpl = viewChild<TemplateRef<StoryContext>>('alta');
 
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -80,6 +92,16 @@ export class FormSectionNavDemoComponent {
   readonly errors = new Set(['horario']);
   readonly changes = new Set(['voz']);
 
+  /* El alta (DD-143): General y «Voz y saludo» se dejaron completas; Horario, sin lo obligatorio. Avanzado
+   * está abierta: aún no lleva marca. */
+  readonly altaActive = signal('avanzado');
+  readonly altaErrors = new Set(['horario']);
+  readonly done = new Set(['general', 'voz']);
+
+  onAltaActive(id: string): void {
+    this.altaActive.set(id);
+  }
+
   /* Rótulos largos de verdad, tomados de los formularios del Supervisor: son
    * los que con la elipsis anterior se leían «Servicios asign…» (DD-52). */
   readonly longSections: FormNavSection[] = [
@@ -103,7 +125,7 @@ export class FormSectionNavDemoComponent {
     tag: 'sc-form-section-nav',
     title: 'FormSectionNav',
     description:
-      'El índice de secciones de la app (DD-122): cada fila es un ENLACE a su sitio (`href` de cada sección, una ruta o la misma página con `?seccion=`) y la actual lleva aria-current="page". Controlado: el padre posee activeId; un clic principal sin teclas emite activeChange y la página navega, y Cmd/Ctrl/clic central lo hace el navegador (otra pestaña), como routerLink. Punto rojo en las secciones con required vacíos (sectionsWithErrors) y punto de marca en las que tienen cambios sin guardar (sectionsWithChanges); los dos se oyen. Rótulo visible opcional encima (titleKey), que nombra el índice. Variante flush (el carril de fichas y Contact Center) opt-in. El label ENVUELVE: una etiqueta que no cabe en el rail parte de línea y la fila crece, nunca se recorta con elipsis (DD-52).',
+      'El índice de secciones de la app (DD-122): cada fila es un ENLACE a su sitio (`href` de cada sección, una ruta o la misma página con `?seccion=`) y la actual lleva aria-current="page". Controlado: el padre posee activeId; un clic principal sin teclas emite activeChange y la página navega, y Cmd/Ctrl/clic central lo hace el navegador (otra pestaña), como routerLink. Punto rojo en las secciones con required vacíos (sectionsWithErrors) y punto de marca en las que tienen cambios sin guardar (sectionsWithChanges); en un alta, ✓ en las que se dejaron completas (sectionsDone, DD-143). Se ve una marca y se oyen todas. Rótulo visible opcional encima (titleKey), que nombra el índice. Variante flush (el carril de fichas y Contact Center) opt-in. El label ENVUELVE: una etiqueta que no cabe en el rail parte de línea y la fila crece, nunca se recorta con elipsis (DD-52).',
     argTypes: [
       { name: 'flush', control: { kind: 'boolean' } },
       { name: 'titleKey', control: { kind: 'text' }, description: 'Rótulo visible encima de las filas; nombra el índice (aria-labelledby).' },
@@ -122,12 +144,14 @@ export class FormSectionNavDemoComponent {
     const fl = this.flushTpl();
     const lo = this.longTpl();
     const li = this.linksTpl();
-    if (!pg || !de || !fl || !lo || !li) return [];
+    const al = this.altaTpl();
+    if (!pg || !de || !fl || !lo || !li || !al) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Default', template: de, snippet: DEFAULT_SNIPPET },
       { name: 'Flush (panel embebido)', template: fl, snippet: FLUSH_SNIPPET },
       { name: 'Enlaces, rótulo y cambios sin guardar', template: li, snippet: LINKS_SNIPPET },
+      { name: 'En un alta: ✓ en las secciones que se dejan completas', template: al, snippet: ALTA_SNIPPET },
       { name: 'Rótulos largos (envuelven, no se recortan)', template: lo },
     ];
   });

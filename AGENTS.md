@@ -153,7 +153,8 @@ componente de primeng.dev (lo pase con enlace o no):
 
 Lo que la documentación NO dice y se ha medido aquí vive en DD-113 (el `aria-label` de la tira de `p-tabs` va
 por `[pt]`, el `aria-labelledby` de `p-selectbutton` por su entrada, un icono de fuente dentro de `p-tab`
-descoloca la raya, la línea del Stepper vertical se despega al plegar si su envoltura se estira, y el nombre de un
+descoloca la raya, la línea del Stepper vertical se despegaba al plegar si su envoltura se estiraba (las altas ya no
+lo usan, DD-143), y el nombre de un
 `p-dialog` sin cabecera va por `pt.root`, porque un atributo en su host no llega a su raíz: DD-140).
 
 ---
@@ -270,7 +271,7 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Cambiar de colección en la misma pantalla (se vacían búsqueda y selección) | Pestañas `p-tabs` de primeng.dev con texto, como su ejemplo básico; el nombre de la tira por `[pt]="{ content: { 'aria-label': … } }"` | Botones con `role="tab"` a mano; `sc-selectbutton`; contador o icono que repiten lo que ya se ve | DD-113 |
 | Filtrar la misma lista o elegir un valor de un grupo corto que se ve entero | `sc-selectbutton` con `ariaLabelledBy` y opciones traducidas | Un `radiogroup` o botones con estado a mano; `p-tabs` | DD-113 |
 | Separar dos bloques con una línea | `sc-divider` | `<hr>`, un `div` de 1 px o un `border-top` entre hermanos | DD-113 |
-| El alta de una ficha con secciones | `sc-alta-pasos` con `pasosDeAlta()`: el Stepper vertical nativo con las secciones del índice, en su orden; la edición sigue con `sc-form-section-nav` | Un índice en el alta; el paso en la dirección; `linear` como puerta (apaga los pasos hechos); una cabecera de paso a mano | DD-138 |
+| El alta de una ficha con secciones | El índice de la edición (`sc-form-section-nav`) con `sectionsDone` de `seccionesDeAlta()`: ✓ en la sección que se deja completa y el punto rojo en la que se deja sin lo obligatorio; al pie, `sc-alta-pie` («Atrás» / «Siguiente»), que lleva al principio de la sección nueva con `llegarASeccion` | Un Stepper o un asistente (DD-138, revertida); la sección del alta en la dirección; «Siguiente» como puerta fuera de General del grupo | DD-143 |
 | Decir cuánto le falta a un alta | `sc-summary-status` arriba de su resumen: «Falta: …» y, cuando «Crear …» se enciende, «Listo para crear» | Un porcentaje o una barra de progreso; repetir en el resumen los errores de formato de los campos | DD-136 |
 | Con qué nace un grupo o un agente nuevo | Contact Center › Grupos o › Agentes, que guardan en `GroupDefaultsStore` o `AgentDefaultsStore`, y el alta los lee | Valores fijos en el alta, una página de valores junto al listado o una réplica de maqueta que no guarda | DD-135 |
 | Cambiar el nombre o la forma de un valor que ya se guarda (una estrategia, un canal) | `normalize` en la configuración del almacén (`createVersionedStorage`): lo pone al día al leerlo, y lo siguiente que se guarde ya va al día | Subir `currentVersion`, que borra lo guardado y re-siembra; traducir el nombre al pintarlo en cada pantalla | DD-141 |

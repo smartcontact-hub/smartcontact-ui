@@ -646,12 +646,13 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 6,
+      "inputs": 7,
       "api": [
         "activeChange",
         "activeId",
         "flush",
         "labelKey",
+        "sectionsDone",
         "sectionsWithChanges",
         "sectionsWithErrors",
         "titleKey"

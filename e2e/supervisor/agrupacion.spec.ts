@@ -19,7 +19,7 @@ import { goto } from './helpers';
  *   R4 · una caja (`sc-section-card`, `sc-panel`) no suma aire al suyo: lo que apilan los envoltorios de dentro,
  *        de su borde a lo primero y lo último que tiene, no llega a 7 (DD-125).
  *
- * DÓNDE: cada ruta del Supervisor con cada pestaña, sección de su índice o paso de su alta, el acceso, los diálogos
+ * DÓNDE: cada ruta del Supervisor con cada pestaña o sección de su índice (también en las altas), el acceso, los diálogos
  * de alta que abre la acción «Nuevo…/Crear/Añadir» de cada lista, y «Duplicar» de un grupo. Una
  * pantalla o un diálogo nuevos entran solos si cuelgan de esas rutas o de esa acción.
  *
@@ -122,14 +122,14 @@ const medir = async (page: Page, vista: string): Promise<string[]> => {
   return rojos;
 };
 
-/** Quita lo que va delante del texto de una pestaña o sección: la ligadura de su icono de Material, o el número de
- *  un paso del alta (DD-138). La misma que `nombreDe` de `scripts/revision-pantalla.mjs`, que tiene su prueba. */
-const nombreDe = (txt: string): string => txt.replace(/^\s*(?:[a-z_]+|\d+)\s*\n/, '').replace(/\s+/g, ' ').trim();
+/** Quita lo que va delante del texto de una pestaña o sección: la ligadura de su icono de Material. La misma que
+ *  `nombreDe` de `scripts/revision-pantalla.mjs`, que tiene su prueba. */
+const nombreDe = (txt: string): string => txt.replace(/^\s*[a-z_]+\s*\n/, '').replace(/\s+/g, ' ').trim();
 
 /**
- * Lo mínimo que abre los pasos apagados de un alta (DD-138): la de grupo no deja pasar de General sin nombre
- * (DD-121). Se rellena al llegar al primer paso apagado, así que General se mide como la ve quien llega. Un alta
- * nueva con puerta entra aquí: si un paso sigue apagado, la prueba lo dice en vez de dejarlo sin medir.
+ * Lo mínimo que abre la puerta de un alta: la de grupo no deja salir de General sin nombre (DD-121), y el índice se
+ * queda en General. Se rellena al encontrarla cerrada, así que General se mide como la ve quien llega. Un alta nueva
+ * con puerta entra aquí: si una sección sigue cerrada, la prueba lo dice en vez de medir otra con su nombre.
  */
 const PREPARAR: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   'admin/grupos/crear': { '#group-name': 'Agrupación' },
@@ -143,7 +143,7 @@ interface Medido {
 
 const medirVista = async (page: Page, vista: string): Promise<Medido> => ({ rojos: await medir(page, vista), vistas: [vista] });
 
-/** Recorre la ruta y, si tiene pestañas, índice de secciones o pasos de alta, cada una. */
+/** Recorre la ruta y, si tiene pestañas o índice de secciones, cada una. */
 const medirRuta = async (page: Page, ruta: string): Promise<Medido> => {
   const pestanas = page.locator('main [role="tab"]');
   const secciones = page.locator('sc-form-section-nav .form-nav__item');
@@ -153,13 +153,22 @@ const medirRuta = async (page: Page, ruta: string): Promise<Medido> => {
   if (!tira) return medirVista(page, ruta);
   const rojos: string[] = [];
   const vistas: string[] = [];
+  // La que está a la vista: la pestaña elegida, o la sección que el índice marca como la página actual.
+  const [marca, valor] = nP > 1 ? ['aria-selected', 'true'] : ['aria-current', 'page'];
   for (let i = 0; i < (nP > 1 ? nP : nS); i++) {
     const item = tira.nth(i);
-    if (!(await item.isEnabled())) {
-      for (const [campo, valor] of Object.entries(PREPARAR[ruta] ?? {})) await page.locator(campo).fill(valor);
-      await expect(item, `${ruta}: un paso apagado se quedaría sin medir; lo que lo abre va en PREPARAR`).toBeEnabled();
-    }
     await item.click();
+    const abierta = await expect(item)
+      .toHaveAttribute(marca, valor, { timeout: 1500 })
+      .then(() => true, () => false);
+    if (!abierta) {
+      for (const [campo, texto] of Object.entries(PREPARAR[ruta] ?? {})) await page.locator(campo).fill(texto);
+      await item.click();
+      await expect(
+        item,
+        `${ruta}: una sección cerrada se mediría con el nombre de otra; lo que la abre va en PREPARAR`,
+      ).toHaveAttribute(marca, valor);
+    }
     const vista = `${ruta} · ${nombreDe(await item.innerText())}`;
     vistas.push(vista);
     rojos.push(...(await medir(page, vista)));

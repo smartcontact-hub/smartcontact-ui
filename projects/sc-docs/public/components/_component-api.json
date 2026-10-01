@@ -3714,6 +3714,16 @@
           "nativo": null
         },
         {
+          "nombre": "sectionsDone",
+          "clase": "input",
+          "tipo": "ReadonlySet<string>",
+          "porDefecto": "new Set()",
+          "requerido": false,
+          "descripcion": "Las secciones que se dejaron completas, en un alta (DD-143): un ✓ en el verde de éxito detrás de la etiqueta, donde va el punto, para que el índice diga lo que ya está y lo que queda. Lo decide la página (las fichas, cuando se sale de una sección con lo suyo hecho; la abierta no lo lleva). Se ve si la sección no tiene también algo que falta o cambios sin guardar, que ganan; se oye siempre, con `sc.formSectionNav.sectionDone`. Entra con movimiento, el de un icono que cambia de estado (escala, opacidad y desenfoque), solo si llega después de pintar el índice: el que ya estaba al abrir la página no es un cambio que se vea.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "activeChange",
           "clase": "output",
           "tipo": "string",

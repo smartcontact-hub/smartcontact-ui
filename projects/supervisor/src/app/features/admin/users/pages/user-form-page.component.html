@@ -59,20 +59,20 @@
       }
     </div>
 
-    <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). -->
-    @if (mode() === 'edit') {
-      <div class="page__rail">
-        <sc-form-section-nav
-          [sections]="navSections()"
-          [activeId]="activeSection()"
-          [labelKey]="'common.form_index_aria'"
-          [sectionsWithErrors]="sectionsWithErrors()"
-          [sectionsWithChanges]="sectionsWithChanges()"
-          [flush]="true"
-          (activeChange)="goTo($event)"
-        />
-      </div>
-    }
+    <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). El mismo al crear, al
+         duplicar y al editar (DD-143): en el alta, la sección que se deja completa lleva ✓. -->
+    <div class="page__rail">
+      <sc-form-section-nav
+        [sections]="navSections()"
+        [activeId]="activeSection()"
+        [labelKey]="'common.form_index_aria'"
+        [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionsWithChanges]="sectionsWithChanges()"
+        [sectionsDone]="alta.hechas()"
+        [flush]="true"
+        (activeChange)="goTo($event)"
+      />
+    </div>
 
     <div class="page__main">
       <!-- El mismo usuario abierto en otra pestaña (DD#169): el candado ya se cogía; ahora se dice. -->
@@ -80,21 +80,6 @@
         <sc-message class="ficha-conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
       }
 
-      @if (mode() !== 'edit') {
-        <!-- EL ALTA, EN PASOS (DD-138): las tres secciones en el Stepper vertical nativo, en cualquier orden. -->
-        <sc-alta-pasos
-          [pasos]="alta.pasos()"
-          [abierto]="pasoAbierto()"
-          [secciones]="{
-            'user-section-identity': seccionIdentidad,
-            'user-section-access': seccionAcceso,
-            'user-section-services': seccionServicios
-          }"
-          (paso)="goTo($event)"
-          (siguiente)="siguiente()"
-          (anterior)="anterior()"
-        />
-      } @else {
       @switch (activeSection()) {
         @case ('user-section-identity') {
           <ng-container *ngTemplateOutlet="seccionIdentidad" />
@@ -108,6 +93,14 @@
           <ng-container *ngTemplateOutlet="seccionServicios" />
         }
       }
+      <!-- En el alta y al duplicar, «Atrás» y «Siguiente» al pie (DD-143). «Crear usuario» sigue arriba. -->
+      @if (mode() !== 'edit') {
+        <sc-alta-pie
+          [conAnterior]="alta.anterior() !== null"
+          [conSiguiente]="alta.siguiente() !== null"
+          (anterior)="anterior()"
+          (siguiente)="siguiente()"
+        />
       }
     </div>
 
@@ -181,14 +174,12 @@
   (confirm)="confirmDelete()"
 />
 
-<!-- LAS SECCIONES, cada una en su plantilla: la edición las pinta de una en una junto al índice, y el alta, cada
-     una en su paso (DD-138). Un solo cuerpo para los dos, así no pueden decir cosas distintas. -->
+<!-- LAS SECCIONES, cada una en su plantilla, que se pinta de una en una junto al índice al crear y al editar
+     (DD-143). Un solo cuerpo para los dos, así no pueden decir cosas distintas. -->
 <ng-template #seccionIdentidad>
   <sc-section-card
     anchorId="user-section-identity"
     surface="card"
-    [flush]="mode() !== 'edit'"
-    [showHeader]="mode() === 'edit'"
     icon="badge"
     titleKey="users.form.section.identity"
     hintKey="users.form.section.identity_hint"
@@ -302,8 +293,6 @@
   <sc-section-card
     anchorId="user-section-access"
     surface="card"
-    [flush]="mode() !== 'edit'"
-    [showHeader]="mode() === 'edit'"
     icon="verified_user"
     titleKey="users.form.section.access"
     hintKey="users.form.section.access_hint"
@@ -364,8 +353,6 @@
   <sc-section-card
     anchorId="user-section-services"
     surface="card"
-    [flush]="mode() !== 'edit'"
-    [showHeader]="mode() === 'edit'"
     icon="hub"
     titleKey="users.form.section.services"
     hintKey="users.form.section.services_hint"

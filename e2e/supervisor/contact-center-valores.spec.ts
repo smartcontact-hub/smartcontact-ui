@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto, irAPaso, pickSelectOption } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
 
 /**
  * CONTACT CENTER ES DONDE SE FIJA CON QUÉ NACE UN GRUPO O UN AGENTE (DD-135).
@@ -132,11 +132,11 @@ test('Contact Center › Agentes habla como la ficha de agente y trae los valore
 
   // Y el alta de agente nace con lo mismo.
   await goto(page, 'admin/agentes/crear');
-  await irAPaso(page, 'Permisos');
+  await irASeccion(page, 'Permisos');
   await esperaMatrizDeFabrica(page);
   await expect(interruptor(page, 'Gestión de dispositivos')).toBeChecked();
   await expect(interruptor(page, 'Activación por grupo')).toBeChecked();
-  await irAPaso(page, 'Avanzado');
+  await irASeccion(page, 'Avanzado');
   await expect(interruptor(page, 'Dispositivos externos')).toBeChecked();
 });
 
@@ -149,10 +149,10 @@ test('lo que se guarda en Contact Center › Agentes es con lo que nace un agent
   await expect(page.getByText('Parámetros de agentes guardados')).toBeVisible();
 
   await goto(page, 'admin/agentes/crear');
-  await irAPaso(page, 'Permisos');
+  await irASeccion(page, 'Permisos');
   await expect(casilla(page, 'Móviles', 'Llamadas')).not.toBeChecked();
   await expect(casilla(page, 'Móviles', 'Transferencias')).toBeChecked();
-  await irAPaso(page, 'Avanzado');
+  await irASeccion(page, 'Avanzado');
   await expect(page.locator('#agent-iframe-url')).toHaveValue('https://crm.ejemplo.com/ficha');
   await expect(interruptor(page, 'Dispositivos externos')).not.toBeChecked();
 });

@@ -32,6 +32,13 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   como hasta ahora. Gana además `titleKey` (un rótulo visible encima de las filas, que nombra el índice)
   y `sectionsWithChanges` (un punto en el color de marca en las secciones con cambios sin guardar,
   distinto del rojo de lo que falta). ([DD-122](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-form-section-nav` gana `sectionsDone`: un ✓ en el verde de éxito detrás
+  de la etiqueta de las secciones que la página da por hechas (en las altas del Supervisor, las que se dejaron
+  completas), que el enlace dice («Esta sección está completa»). Se ve una sola marca: lo que falta y los cambios
+  sin guardar ganan al ✓, y se oyen todas. Entra con escala, opacidad y desenfoque si llega con el índice ya a la
+  vista, y quieto con `prefers-reduced-motion`. Su diccionario (`sc.formSectionNav.*`) pasa a los cuatro idiomas:
+  en francés y en portugués se decía en español. Por defecto vacío: ningún índice cambia sin pedirlo.
+  ([DD-143](docs/DECISIONS.md))
 
 ### Changed
 

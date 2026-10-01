@@ -15,12 +15,15 @@ sus dos trampas suben a «Trampas del frente». El de la visión de producto de 
 mismo tope: `git show f63d13aa:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
 Contact Center suben a «Trampas del frente». El de un solo índice (2026-09-27, DD-122), igual: `git show
 7458351:docs/handoff/supervisor-fichas.md`; sus trampas también suben. Y el del resumen como widget (2026-09-27,
-DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas arriba.
+DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas arriba. Y los dos del 2026-09-27
+(el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
+cuatro trampas del pase suben a «Trampas del frente».
 
-## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141) y el teléfono saliente (D2, DD-142)
+## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142) y el alta al índice (R, DD-143)
 
-> **Sello: H (#298, `57f03a0`), los diálogos de Recursos (#300, `5cf3f5e1`) y D1 (#303, `78b2efb9`), fundidos con su
-> CI en verde; D2 (DD-142), en su PR.**
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `004498dc`). H (#298, `57f03a0`), los diálogos de
+> Recursos (#300, `5cf3f5e1`), D1 (#303, `78b2efb9`) y D2 (#304, `004498dc`), fundidos con su CI en verde; R
+> (DD-143), en su PR.**
 
 **Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
 ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
@@ -84,6 +87,16 @@ escribiendo el nombre.
   conserva las suyas); el teléfono, nombrado por su rótulo (`ariaLabelledBy`);
 - `telefono-saliente.spec.ts` (4) y las reescritas: 11 en rojo contra el código anterior.
 
+**R · el alta vuelve al índice** (DD-143, que revierte DD-138):
+- las tres altas, con la maqueta de la edición: índice, una sección en su caja con su cabecera, y el resumen;
+- el índice dice lo que ya está y lo que falta: ✓ en la sección que se deja completa (`sectionsDone`, nuevo en
+  `sc-form-section-nav`) y el punto rojo en la que se deja sin lo obligatorio; antes de abrirla, ninguna marca;
+- «Atrás» y «Siguiente» al pie (`sc-alta-pie`): llevan al principio de la sección nueva, con el foco en su título
+  (`llegarASeccion`). General sigue siendo la puerta del grupo, y la sección no va en la dirección;
+- `seccionesDeAlta` (antes `pasosDeAlta`) guarda la sección abierta y las que se dejaron;
+- `altas-indice.spec.ts` (12): nueve en rojo contra los pasos, dos de guarda, y la del punto rojo vista en rojo sin
+  su regla; las que DD-138 pasó a los pasos vuelven al índice, y `revision` y `agrupacion` recorren el del alta.
+
 **Trampas del tramo:**
 - ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
   `@smartcontact-hub/components` (sale el `vite-error-overlay`). No midas con el servidor mientras corre el preflight,
@@ -96,6 +109,12 @@ escribiendo el nombre.
   opción que no existía. Con el ancho de antes puesto, enrojece en el de Teléfono de Contact Center.
 - ⚠️ El texto de un rótulo con su «*» empieza por un espacio («␠Teléfono saliente *»): `getByText` con una expresión
   regular no lo recorta, así que `^Teléfono` no casa. Mídelo antes de anclar.
+- ⚠️ La prueba de «Siguiente lleva arriba» solo vale donde la sección nueva no cabe: si cabe, el navegador sube solo
+  y la prueba pasa sin el `scrollTo`. A 1280×720, de General a Distribución y colas del grupo, sí enrojece (88).
+- ⚠️ En una sonda, el menú lateral se despliega al pasar el ratón y tapa el índice: aparta el ratón (`mouse.move`)
+  antes de pulsar, y espera a que se pliegue antes de ralentizar las animaciones.
+- ⚠️ Las unitarias del DS corren en jsdom, sin `getAnimations`: ahí no se ve un movimiento, solo la clase que lo
+  enciende. El movimiento se mide en el navegador, con la reproducción al 10 % (CDP `Animation.setPlaybackRate`).
 
 ## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-138)
 
@@ -220,81 +239,22 @@ grupos y el manual de usuario de Voice:
 
 `ayudas-campos.spec.ts`: cinco pruebas, las cinco en rojo contra el código anterior.
 
-## ✅ 2026-09-27 · El «Eliminar» de las fichas sube a AA: red-500 → red-600 (DD-128)
-
-> **Sello: rama `claude/resumen-cambios-recientes-14kfjb` sobre `main` (HEAD `4f4f2018`).**
-
-**Qué pasó.** El botón de texto «Eliminar» de la cabecera de las tres fichas medía 3,76:1 en claro (`red-500`
-sobre blanco), fichado como conocido en `theme-contrast` desde el 2026-09-26 y anotado aquí mismo como pendiente
-del pase de diseño. Es un token del DS (`--sc-cmp-button-text-danger-color`), no algo local a la ficha, así que se
-cierra ahí: sube a `red-600` (4,83:1), el mismo escalón que ya llevaba el `danger` sólido desde julio. Detalle,
-medición y descartadas en **DD-128**; customs-catalog §1.8 cierra su lista de botones bajo AA.
-
-**Qué NO se toca de la lista de abajo:** el resto del pase de diseño (caja o sin caja para las tres fichas, el
-fundido al cambiar de sección, distribución y colas, etc.) sigue igual de pendiente — esto solo cierra el punto de
-contraste, que era un bug medible y no una decisión de producto.
-
-## ✅ 2026-09-27 · El pase de diseño de las fichas: la franja, las altas, Guardar, el usuario nuevo y los saltos por canal (DD-130)
-
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `16ff793`), #265.**
-
-**Qué pasó.** Se revisó el flujo rehecho con `better-layout` y `better-ui`:
-- **Alcance:** 17 vistas, a 1440 y 1280 y en los dos temas.
-- **Método:** capturas y medidas por vista; lo propuesto se ensayó inyectando CSS en la página real.
-- **Resultado:** siete hallazgos, enseñados en una página de decisión privada, y se aplicaron los siete. El detalle y
-  lo descartado, en DD-130.
-- **El antes y después** (página privada) cubre ya las tres fichas y Contact Center, con capturas «después» de este
-  árbol: agente y usuario conservan sus controles (34 y 16 al abrir) y bajan de 1.304 a 812 de ancho.
-
-Antes, dos retoques del widget (DD-126):
-- quedó apuntada la decisión del tinte con el texto en primario;
-- la cifra pasó a contar a la par del arco, con la misma curva (`ease`) y redondeando.
-
-**Qué cambia:**
-- **La franja:** el anillo junto a su cifra, las tarjetas de una fila a la misma altura y los datos del grupo en dos
-  columnas (`subgrid`).
-- **Las altas:** agente y usuario llevan la cabecera a la vista y el botón «Crear agente» / «Crear usuario».
-- **Usuario:** Guardar se queda en la ficha y crear abre la edición. Un usuario nuevo nace sin secciones ni permisos
-  (`EMPTY_SECTIONS` y `EMPTY_PERMISSIONS`, en `users-data.ts`).
-- **Distribución y colas:** «Ir a: Teléfono · Chat · Email», con enlaces que saltan al bloque y dejan el foco en su
-  título.
-- **Iconos y listado:** los avisos del resumen llevan el icono a 600, y el botón de cada fila del listado de grupos
-  dice «Asignar».
-
-**Medido:**
-- **`pase-fichas.spec.ts`:** 10 de 12 en rojo contra el código anterior.
-- **Pruebas viejas que cambian a propósito:** `admin-forms`, `ficha-usuario-agente` y `page-identity`, porque el pase
-  cambia justo lo que fijaban.
-- **La cifra y el arco:** arrancan en el mismo fotograma. Con la curva nueva la cifra ya no acaba después, medido con
-  un `MutationObserver` en el instante de cada cambio.
-- **La suite del Supervisor:** 374 de 374 en local.
-
-**Trampas del tramo:**
-- ⚠️ **Una consulta de contenedor no suma especificidad.** Una regla dentro de `@container` que va antes que la regla
-  base del mismo selector pierde. La franja siguió a 244 px hasta ponerla detrás.
-- ⚠️ **Una `subgrid` con su propio `gap` desplaza sus elementos la mitad de la diferencia con el de fuera.** Con
-  `column-gap: normal` lo hereda; aquí eran 3 px de más.
-- ⚠️ **Un `href="#id"` suelto se resuelve contra `<base href="/">`.** El enlace de un salto lleva la ruta de la ficha y
-  su ancla (`jumpHref`).
-- ⚠️ **Una sonda por `requestAnimationFrame` puede leer la cifra del fotograma anterior**, según el orden de los
-  callbacks. Para comparar cifra y arco hay que usar un `MutationObserver` en el instante del cambio.
-
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: R (el alta al índice, con ✓
-   y «Siguiente») → E1 → E2 → E3 → E4 → G → D3 → F. Cada uno con su prueba en rojo; la numeración de DD se mira en
-   `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center validado: pídeselos al usuario si no
-   están en el repo.
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: G → E1 → E2 → E3 → E4 →
+   D3 → F. G va primero porque el usuario lo pidió el 2026-10-01: índice, contenido y resumen en tres columnas que
+   arrancan a la misma altura, el título dentro del contenido y sin el rótulo «Resumen»; con «Eliminar» bajo el
+   índice (escribiendo el nombre para confirmar), el nombre fijo al bajar y el resumen que lleva a su sección. Cada
+   uno con su prueba en rojo; la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo
+   del Contact Center validado: pídeselos al usuario si no están en el repo.
 
-   **Lo que queda abierto de DD-133, DD-135, DD-136 y DD-138:**
+   **Lo que queda abierto de DD-133, DD-135 y DD-136:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
    - los subtítulos de sección, sin revisar;
    - las ayudas de la lista de ajustes de Contact Center no se anuncian con su control (el DS no deja pasar
      `aria-describedby`);
    - el marcador de la foto de `sc-photo-upload` (DS), a 2,58:1: al arreglarlo, las altas de agente y usuario entran
-     en `RUTAS` de `theme-contrast`;
-   - el cuerpo de `sc-section-card` `flush` sin cabecera guarda los 15,75 que lo separan de la cabecera oculta: en el
-     paso quedan 23 de su título al contenido. Es un cambio del DS, con sus capturas (DD-138).
+     en `RUTAS` de `theme-contrast`.
 
    Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
    código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el
@@ -334,6 +294,14 @@ Antes, dos retoques del widget (DD-126):
 - **Rafa:** revisar usuarios contra el Supervisor real.
 
 **Trampas del frente:**
+- ⚠️ **Una consulta de contenedor no suma especificidad.** Una regla dentro de `@container` que va antes que la regla
+  base del mismo selector pierde. La franja siguió a 244 px hasta ponerla detrás.
+- ⚠️ **Una `subgrid` con su propio `gap` desplaza sus elementos la mitad de la diferencia con el de fuera.** Con
+  `column-gap: normal` lo hereda; aquí eran 3 px de más.
+- ⚠️ **Un `href="#id"` suelto se resuelve contra `<base href="/">`.** El enlace de un salto lleva la ruta de la ficha y
+  su ancla (`jumpHref`).
+- ⚠️ **Una sonda por `requestAnimationFrame` puede leer la cifra del fotograma anterior**, según el orden de los
+  callbacks. Para comparar cifra y arco hay que usar un `MutationObserver` en el instante del cambio.
 - ⚠️ `p-drawer` escucha Escape en su contenedor y llama a `hide(false)` aunque `closeOnEscape` esté apagado: quita la
   máscara y deja el panel abierto. El panel rápido corta Escape en su propio `(keydown)`.
 - ⚠️ `p-table` reordena en el cliente por el valor crudo del campo ENCIMA del orden que recibe. Con `externalSort`

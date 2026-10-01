@@ -905,6 +905,13 @@ test.describe('sc-form-section-nav', () => {
     const flushLabel = page.getByTestId('sc-formnav-flush').locator('.form-nav__label').first();
     expect(await styleOf(flushLabel, ['font-size'])).toEqual({ 'font-size': '14px' });
 
+    // En un alta (DD-143): ✓ en las secciones que se dejaron completas, que el enlace dice; la que se
+    // dejó sin lo obligatorio lleva el punto rojo, que gana al ✓.
+    const alta = page.getByTestId('sc-formnav-alta');
+    await expect(alta.locator('.form-nav__done')).toHaveCount(2);
+    await expect(alta.locator('.form-nav__item').first()).toHaveAccessibleName(/General.*(completa|complete)/);
+    await expect(alta.locator('.form-nav__item--has-error .form-nav__done')).toHaveCount(0);
+
     await screenshotBaseline(page, 'formsectionnav');
   });
 });
