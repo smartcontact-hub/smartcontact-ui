@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irAPaso } from './helpers';
 
 /**
  * EL PASE DE DISEÑO DE LAS FICHAS (DD-130).
@@ -81,18 +81,21 @@ for (const alta of [
   });
 }
 
-test('usuario · crear deja en su edición, sin salto: el índice no se mueve', async ({ page }) => {
+// Desde DD-138 el alta va en pasos y el índice llega con la edición: lo que no se mueve es el contenido, que
+// empieza a la misma altura con los pasos que con el índice.
+test('usuario · crear deja en su edición, sin salto: el contenido no se mueve', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');
-  const indice = page.locator('.page__rail').first();
-  const antes = await indice.evaluate((e) => Math.round(e.getBoundingClientRect().top));
+  const contenido = page.locator('.page__main').first();
+  const antes = await contenido.evaluate((e) => Math.round(e.getBoundingClientRect().top));
   const nombre = `E2E Usuario ${Date.now()}`;
   await page.locator('#user-name').fill(nombre);
   await page.locator('#user-email').fill('e2e.pase@smartcontact.test');
   await barra(page).getByRole('button', { name: 'Crear usuario' }).click();
   await expect(page).toHaveURL(/\/admin\/usuarios\/editar\/\d+$/);
   await expect(page.locator('main#main-content h1')).toHaveText(nombre);
-  const despues = await indice.evaluate((e) => Math.round(e.getBoundingClientRect().top));
-  expect(despues, 'el índice, en la misma altura al pasar del alta a la edición').toBe(antes);
+  await expect(page.locator('sc-form-section-nav')).toBeVisible();
+  const despues = await contenido.evaluate((e) => Math.round(e.getBoundingClientRect().top));
+  expect(despues, 'el contenido, a la misma altura al pasar del alta a la edición').toBe(antes);
 });
 
 test('usuario · guardar deja en la ficha, como en grupo y agente', async ({ page }) => {
@@ -107,7 +110,8 @@ test('usuario · guardar deja en la ficha, como en grupo y agente', async ({ pag
 // Enmendado por DD-132: ya no nace vacío, sino con la plantilla del tipo de menos privilegio. Lo sensible sigue
 // apagado, que es lo que DD-130 protegía. Las 16 casillas de entonces son 25 (16 secciones y 9 permisos).
 test('usuario nuevo · nace Supervisor Offline: la supervisión marcada y ningún permiso', async ({ page }) => {
-  await goto(page, 'admin/usuarios/crear?seccion=acceso');
+  await goto(page, 'admin/usuarios/crear');
+  await irAPaso(page, 'Acceso');
   const casillas = page.locator('#user-section-access sc-checkbox input[type=checkbox]');
   await expect(casillas).toHaveCount(25);
   await expect(page.locator('#user-section-access sc-checkbox input[type=checkbox]:checked')).toHaveCount(9);

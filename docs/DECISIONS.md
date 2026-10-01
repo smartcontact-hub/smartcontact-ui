@@ -43,6 +43,7 @@
 > | Tema | DD |
 > |---|---|
 > | El estado de un agente es uno, el de Administración › Agentes, y el Dashboard lo lee por id con `PRESENCIA_EN_DASHBOARD` (Disponible · No disponible, sus motivos, Administrativo y Post-conversando son En pausa · Desconectado) · lo guardado del Dashboard se relee al pintar, sin subir la versión · fuera `DEMO_AGENT_PRESENCE` (enmienda DD-127 §1 y DD-129) | DD-139 |
+> | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue · el plegado es el de PrimeNG, y la línea entre pasos no se despega al plegar (`pt`) | DD-138 |
 > | El sidebar sigue a su tablero de Figma (14912:6324): sin botón de anclar · plegado sigue abierto lo que estaba abierto · texto e icono en blanco y la flecha al 60% · todos los iconos a 14, los que nombra el catálogo del tablero (14912:6774) · «Diseñador VUI» y «Análisis de Flujo» · SCC (CusCare) lleva el logo de CusCare (enmienda DD-118 §2 y §5) | DD-137 |
 > | Un alta dice en su resumen lo que falta («Falta: nombre · extensión») y, cuando «Crear …» se enciende, «Listo para crear»: `sc-summary-status`, un solo `role="status"` que cambia en su sitio · sin porcentaje ni barra · un error de formato va en su campo · al editar, nunca «Listo» | DD-136 |
 > | Con qué nace un grupo o un agente se fija en Contact Center (› Grupos, › Agentes), con las palabras de su ficha, y el alta lo lee · de fábrica, los valores del documento de producto (10 · 15 · 60 s, Baja, Balanceada, desbordar; el agente, todo menos la numeración especial) · la cola agotada sigue por el VUI | DD-135 |
@@ -163,6 +164,115 @@ deja de fijar 9 y 5 y lee las cifras de la tabla del primer monitor. La tabla de
 enseñe el estado, lee el mismo `presenceStatus` y cuadra con el Dashboard sin nada más. Queda dicho y sin tocar: la ficha
 llama al campo «Presencia inicial» y el listado lo enseña como el estado de ahora; la demo usa un solo dato para las dos
 cosas.
+
+---
+
+## DD-138 · 2026-10-01 — Las altas van en pasos: el Stepper vertical nativo de PrimeNG
+
+**Contexto** · Producto (2026-09-29), con el gradiente de meta en los formularios: en el alta, los pasos en columna;
+cada uno abre su contenido debajo y se pliega con ✓ al acabarlo; la edición sigue con el índice lateral. Señaló el
+Stepper de primeng.dev y pidió revisar DD-121, que lo había descartado. Hasta hoy las tres altas eran su ficha con el
+índice (DD-121 §11, DD-122).
+
+**Decisión** · (decisión de producto, 2026-09-29)
+1. **El alta va en pasos; la edición, con el índice.** Al crear, y al duplicar un agente o un usuario, el `p-stepper`
+   vertical ocupa el sitio del índice y del contenido; el resumen sigue a la derecha. Es el nativo tal cual (DD-113):
+   `p-stepper` › `p-step-item` › `p-step` + `p-step-panel`, sin envoltura del DS y sin CSS `.p-*`. Se le ajustan dos
+   cosas, con su propia API: el fondo del panel, transparente por `dt` de la instancia (el del preset pintaba una
+   franja gris en oscuro), y la envoltura del panel, por `pt` (§9).
+2. **Un formulario, dos maquetas.** El cuerpo de cada sección vive en su `ng-template`: la edición lo pinta junto al
+   índice, y el alta dentro de su paso (`sc-alta-pasos`, de la app). Los pasos salen de las secciones del índice
+   (`pasosDeAlta`), así que tienen sus nombres y su orden.
+3. **La puerta del grupo sigue (DD-121 §11).** Sin nombre o sin canales, los pasos 2 a 4 van apagados (`disabled` del
+   nativo), y «Siguiente» en General dice lo que falta y lleva el foco al campo. En agente y usuario, los pasos van en
+   cualquier orden.
+4. **✓ en el paso que se deja completo**, dentro del título nativo, con el texto oculto «completado» en el nombre de
+   su pestaña. El abierto no lo lleva aunque esté bien. El número lo sigue pintando el nativo.
+5. **«Atrás» y «Siguiente» al pie de cada paso, en las tres altas**: atajos al paso de al lado, que llevan el foco a
+   su pestaña. En agente y usuario no son una puerta. «Crear …» sigue siendo la única acción que crea, arriba (DD-122
+   §6), y se enciende desde cualquier paso. El último paso solo lleva «Atrás».
+6. **Cambiar de paso no toca la dirección** ni el historial: Atrás del navegador sale del alta. Las tres altas quitan
+   `?seccion=` al abrir, y crear abre la edición en la sección del paso abierto, ya con su índice.
+7. **Cada paso abierto lleva su título de nivel 2**, oculto porque lo dice su pestaña, y su panel se llama así. La
+   sección va sin su cabecera, a sangre (`sc-section-card` con `flush` y sin `showHeader`), y sin el margen con el
+   que se separa de otra tarjeta.
+8. **El aire, en la escalera 7 · 14 · 28**: 28 de la sección a «Atrás / Siguiente», y 28 de ahí al paso siguiente.
+9. **El movimiento es el de PrimeNG tal cual** (2026-10-01): al cambiar de paso, el que se deja se pliega y el nuevo
+   se abre a la vez, con su `p-collapsible` (0,2 s, `ease-out`). La envoltura del panel no se estira a la fila que
+   anima (`pt` `contentWrapper`, `align-self: start`), para que la línea entre pasos siga al plegado.
+
+**Razón** ·
+- **El gradiente de meta, a la vista.** Los pasos dicen cuánto queda y el ✓ lo que ya está, sin porcentaje (DD-121,
+  DD-126, DD-136).
+- **DD-121 lo descartó porque serían dos formularios**, pasos para crear e índice para editar. Con una plantilla por
+  sección y los pasos sacados del índice es un formulario con dos maquetas: lo que cambia en una sección cambia en
+  las dos.
+- **Nativo, porque es el componente que se señaló**: su teclado, sus pestañas y su plegado vienen hechos (DD-113).
+- **Medido el 2026-09-29, en este build:**
+  - con el margen de la tarjeta dentro del paso había 49 del último campo a los botones y 21 de ahí al paso
+    siguiente; ahora, 28 y 28;
+  - sin el título oculto, el alta de grupo saltaba de h1 a h3 («Canales»), y el panel nativo no tenía nombre: le pone
+    `aria-controls`, no `aria-labelledby`;
+  - con las altas de agente y usuario en la medida completa de `theme-contrast`, lo único en rojo es el marcador de
+    la foto (2,58:1, abierto en DD-136): los colores del Stepper pasan en claro y en oscuro.
+- **El plegado, medido el 2026-10-01, fotograma a fotograma y a cámara lenta al 10 %:**
+  - anima de verdad: el paso que se deja y el nuevo, en unos 175 ms de fotogramas, sin fotogramas perdidos;
+  - pero la línea que une los números se despegaba del paso siguiente. A mitad (100 ms), en General, la caja medía
+    114 y la línea 36. Al abrir Distribución y colas, 666 y 456. El hueco llegaba a 90 px;
+  - la causa es de PrimeNG: aplica la fracción dos veces en la misma rejilla del `p-motion`. Su alto sale de
+    X·contenido, y luego reparte ese alto con la misma X, así que su fila mide X·caja. El contenido no se nota, porque
+    lo recorta la caja; la línea sí, porque sigue a la fila. Se reproduce con sus reglas tal cual, sin nuestra capa;
+  - con la envoltura sin estirar, la línea mide lo que el contenido y la caja la recorta igual que a él: llega al
+    borde de la caja en cada fotograma, al plegar y al abrir. Quieto no cambia nada: fila, envoltura y contenido
+    miden lo mismo.
+
+**Descartadas** ·
+- **`linear` del nativo para la puerta del grupo** → apaga también los pasos terminados: para volver a General no
+  bastaría su pestaña.
+- **Una cabecera de paso propia, con el título y el ✓** → perdería la pestaña, el teclado y el `aria-current` del
+  nativo.
+- **El paso en la dirección** (`?seccion=` con `replaceUrl`, como hacía el índice del alta) → cambiar de paso no es
+  navegar, y una dirección que abre un paso invita a saltarse la puerta.
+- **Envolverlo en el DS** → lo usa una pantalla, las tres altas, y el nativo sirve tal cual, como `p-tabs` (DD-113).
+- **La sección con su caja dentro del paso** → caja dentro de caja: a sangre, el paso hace de caja.
+- **Pasos también al editar** → producto lo pidió para el alta. Al editar se va a una sección concreta, y el índice
+  lleva a ella con un enlace (DD-122).
+- **El panel en bloque, para quitar la rejilla de fuera** → la medida no cambia: la fracción se aplica dos veces
+  dentro de la misma rejilla, la del `p-motion`.
+- **Otra duración u otra curva para el plegado** (300 ms con la curva enfática del Kit) → el plegado de PrimeNG no
+  tiene token; cambiarlo sería CSS sobre `.p-collapsible-*`, un desvío que caza `audit:primeng-coupling` §F, y
+  movería a la vez todos los plegables (acordeón, panel, menús).
+
+**Consecuencias** ·
+- **Enmiendas:**
+  - DD-121: §11, el alta va en pasos con la misma puerta; y su descarte del Stepper;
+  - DD-122: §1, §3 y §4, que en las altas dejan de aplicarse: no hay índice y el paso no va en la dirección;
+  - DD-130: §2 y su descarte de «Siguiente» en agente y usuario, que ahora es un atajo en las tres.
+- **Límites del nativo que se aceptan (DD-113):**
+  - los paneles viven dentro del `tablist`, y el paso abierto se marca con `aria-current="step"` en su envoltura, no
+    con `aria-selected`;
+  - el plegado anima la altura (`grid-template-rows`), con la duración y la curva de PrimeNG, que no tienen token.
+    Con menos movimiento, el paso cambia de golpe;
+  - el título del paso pesa 500; en oscuro, el del paso abierto va en el color primario;
+  - en el alta el contenido mide 995 a 1440 (812 al editar);
+  - de la cabecera del paso a su contenido hay 23: los 15,75 con los que el cuerpo de `sc-section-card` `flush` se
+    separa de su cabecera, que aquí está oculta, más los 7 del nativo. Quitarlos es un cambio del DS, con sus
+    capturas.
+- **Pruebas:**
+  - `altas-pasos.spec.ts`, diez. Ocho se escribieron antes que el código: siete en rojo contra él, y la octava, «al
+    editar, el índice», es de guarda. La del aire y la de los títulos, en rojo con el margen (49) y sin el título;
+  - se reescriben para los pasos la puerta de `ficha-grupo` y las altas de `indice-enlaces`, `pase-fichas`,
+    `ficha-usuario-agente`, `usuario-plantillas` y `contact-center-valores`. «Atrás del navegador sale del alta» se
+    pone en rojo si el paso cambia la dirección, y también si deja una entrada de historial;
+  - el alta de grupo entra en `focus-ring`; `irAPaso()` en `helpers.ts`;
+  - `altas-pasos-movimiento.spec.ts`, tres, sin `disableAnimations`, con el plegado congelado a mitad. La de la línea,
+    en rojo primero (36 de 114). La del movimiento nativo y la de menos movimiento son de guarda: esta última se pone
+    en rojo sin la preferencia, con 13 alturas a medias.
+- **Para el Kit:** el marco del Stepper vertical en las tres altas, con el ✓, «Atrás» y «Siguiente» y su aire, va a
+  `figma-pendiente` §32.
+- **Herramientas:** `revision` y `agrupacion` recorren los pasos. Al llegar al primer paso apagado rellenan lo que lo
+  abre (`PREPARAR`), y `agrupacion` falla si alguno sigue apagado. El nombre de la vista va sin el número del paso
+  (prueba unitaria, en rojo primero).
 
 ---
 
@@ -636,7 +746,8 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
 2. **Las tres altas, iguales.** La cabecera de la ficha se pinta también al crear: «Nuevo agente» o «Nuevo usuario»
    («Duplicar …» al duplicar) hasta que se escribe el nombre, como en el grupo. El botón principal dice lo que hace:
    «Crear agente» y «Crear usuario», como «Crear grupo». «Siguiente» sigue solo en el grupo, donde General es la
-   puerta (DD-121).
+   puerta (DD-121). Desde DD-138, «Atrás» y «Siguiente» van en las tres altas, como atajos entre pasos; puerta,
+   solo la del grupo.
 3. **Guardar deja en la ficha, también en la de usuario.** Al editar se queda; al crear, abre la edición del usuario
    nuevo en la sección en la que se estaba. Hasta hoy, la de usuario volvía siempre al listado.
 4. **Un usuario nuevo nace sin secciones ni permisos**, por mínimo privilegio. Qué paquete trae cada tipo pasa a las
@@ -658,7 +769,8 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
   Ahora el anillo va a 28, los cinco valores caen en una sola vertical y la fila tiene una sola altura.
 - **Las altas.** El título de agente y usuario medía 1 px (estaba oculto), y al crear aparecía la cabecera y la ficha
   saltaba hacia abajo, contra AGENTS «UX de pantalla» 7. Con la cabecera en los dos modos, el índice queda a la misma
-  altura al pasar del alta a la edición (medido).
+  altura al pasar del alta a la edición (medido). Desde DD-138 el alta no tiene índice: lo que queda a la misma
+  altura es el contenido.
 - **El usuario nuevo** abría con las 16 casillas marcadas, «Gestión de usuarios» y «Espiar conversaciones»
   incluidas, fuera cual fuera su tipo. El anillo del resumen lo puso a la vista: 11 de 11 y 5 de 5 nada más abrir.
 - **Distribución y colas** mide 2.355 px con los cuatro canales: quedan 1.816 bajo el pliegue a 1440 y 2.148 a 1280.
@@ -671,7 +783,7 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
 - **Esconder también el título del alta de grupo**, la otra forma de igualar → la ficha saltaría al crear, que es
   justo lo que se arregla.
 - **«Siguiente» en agente y usuario** → sería una puerta que esas fichas no piden, porque se rellenan en cualquier
-  orden.
+  orden. Con los pasos (DD-138) va como atajo, no como puerta: se siguen rellenando en cualquier orden.
 - **Que las tres vuelvan al listado al guardar** → obliga a reabrir la ficha para tocar otra sección.
 - **El paquete por tipo del laboratorio para el usuario nuevo** → no está validado con producto.
 - **Plegar cada canal de Distribución y colas** → esconde lo configurado y enmienda DD-121 §5.
@@ -1136,7 +1248,8 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
 
 **Decisión** ·
 1. **Un índice**: `sc-form-section-nav` del DS en las cinco pantallas con índice (fichas de agente, grupo y usuario,
-   constructor de reglas y Contact Center). `sc-settings-sidebar` se borra con sus claves que no pintaba nadie.
+   constructor de reglas y Contact Center). `sc-settings-sidebar` se borra con sus claves que no pintaba nadie. En
+   las altas de las fichas, desde DD-138, van los pasos del Stepper en vez del índice.
 2. **Cada fila es un ENLACE a su sitio**: una ruta (Contact Center) o la misma página con `?seccion=` (fichas y
    constructor). La sección a la vista sale de la dirección: un `input` de página que el router rellena en cada
    navegación, también cuando solo cambia la query (`withComponentInputBinding`). Sin parámetro, la de aterrizaje.
@@ -1146,7 +1259,9 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
    de la fila y la navegación con el mismo árbol de URL. Cmd/Ctrl, Mayús, Alt o el clic central los hace el
    navegador, la regla de `routerLink`: otra pestaña en esa sección. Al editar, Atrás vuelve a la sección anterior.
 4. **En un ALTA la sección no deja rastro** (`replaceUrl`, en grupo, agente, usuario y regla): Atrás sale del alta,
-   y tras crear no se vuelve a un alta vacía. El alta de grupo quita `?seccion=` al abrir.
+   y tras crear no se vuelve a un alta vacía. El alta de grupo quita `?seccion=` al abrir. Desde DD-138, las altas de
+   grupo, agente y usuario van en pasos, que no tocan la dirección, y las tres quitan `?seccion=` al abrir; la
+   regla sigue así.
 5. **Cambiar de sección no funde la página**: la transición de vista se salta cuando solo cambia la query (medido:
    fundía la página entera en cada clic del índice). Cambiar de ruta funde como siempre, Contact Center incluido.
 6. **Guardar: uno, explícito, por ficha. No se guarda al cambiar de sección.** El índice marca las secciones con
@@ -1283,7 +1398,8 @@ tres fichas (#240) y el alta en diálogo (DD-119).
     Escape van apagados y cierra el panel, que pregunta antes si hay cambios; Escape se atiende en el propio panel y
     no sube, porque el contenedor de `p-drawer` lo escucha y, aun con `closeOnEscape` apagado, llama a `hide(false)`,
     que quita la máscara y deja el panel abierto (medido con PrimeNG 22.1.2). Coge el mismo candado que la ficha.
-11. **El alta es la propia ficha, en modo alta**: `/admin/grupos/crear` la abre vacía, con los valores por defecto
+11. **El alta es la propia ficha, en modo alta** (desde DD-138, en pasos: el Stepper vertical nativo en el sitio del
+    índice, con la misma puerta, y el paso no va en la dirección): `/admin/grupos/crear` la abre vacía, con los valores por defecto
     de Grupos (desde DD-135, los de Contact Center › Grupos) y Teléfono marcado. General es la puerta: sin nombre (o repetido) o sin canales no se sale de ella, ni
     por el índice ni con «Siguiente»; cada campo dice lo que le falta y el foco va al primero. «Siguiente», al pie de
     cada sección, solo en el alta. «Crear grupo», en la barra, se enciende con General completa (lo demás nace con
@@ -1308,7 +1424,9 @@ y marca siempre 100 % al editar, y la sección de distribución con Teléfono y 
 
 **Descartadas** ·
 - **Stepper de PrimeNG** → el horizontal es lo que la visión rechaza; el vertical mete el contenido entre los pasos
-  (no hay menú + contenido), y usarlo para crear e índice para editar serían dos formularios.
+  (no hay menú + contenido), y usarlo para crear e índice para editar serían dos formularios. Revisado en DD-138:
+  producto lo pidió para el alta, y con una plantilla por sección y los pasos sacados del índice es un formulario con
+  dos maquetas.
 - **Resumen bajo el índice, en el mismo carril** (la primera versión, del 2026-09-26, con el patrón del constructor
   de reglas) → el carril es el de Contact Center y no tiene scroll, y el resumen lo alargaba hasta 844 px. Medido: a
   1366×768 se cortaba 20 px al abrir y, a 1280×720, al bajar al final de una sección larga el índice se escondía 99
@@ -1695,6 +1813,9 @@ primeng.dev» y tres filas en la tabla de bifurcaciones. `e2e/supervisor/admin-d
 pestaña por rol. `docs/customs-catalog.md` §5.1 y §5.2 al día. Pendiente en Figma: nada nuevo (la marca de la activa
 ya estaba en `figma-pendiente.md` §9). Cada desvío permitido tiene su fila en `customs-catalog.md` §8 (el gate lo exige).
 El botón que se encoge al pulsarlo se queda, con la receta de better-ui (punto 9, §8.1): primeng.dev no lo hace, y es a propósito.
+Desde DD-138: en el Stepper vertical, el plegado nativo despegaba la línea entre pasos, porque PrimeNG aplica la
+fracción dos veces en la rejilla del `p-motion`. Se arregla por `[pt]` (`contentWrapper`), como el `aria-label` de
+`p-tabs`, sin tocar su movimiento.
 
 ---
 

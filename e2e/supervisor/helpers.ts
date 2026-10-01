@@ -233,3 +233,23 @@ export const irASeccion = async (page: Page, etiqueta: string | RegExp): Promise
   await item.click();
   await expect(item).toHaveClass(/form-nav__item--active/);
 };
+
+/**
+ * Cambia de paso en un alta: el Stepper vertical nativo de PrimeNG ocupa el sitio
+ * del índice (DD-138). La edición sigue con `irASeccion`.
+ *
+ * Un paso abierto a la vez: el nativo desmonta el contenido del que se deja al
+ * acabar de plegarlo, así que aquí se espera a que quede un solo panel. Como con el
+ * índice, un journey que toque dos pasos tiene que pasar por aquí en medio.
+ *
+ * Se casa por subcadena: la pestaña lleva delante su número y, si se dejó
+ * completa, detrás el ✓ y su texto oculto «completado».
+ */
+export const irAPaso = async (page: Page, etiqueta: string | RegExp): Promise<void> => {
+  const pasos = page.getByRole('tablist', { name: 'Pasos del alta' });
+  const pestana = pasos.getByRole('tab').filter({ hasText: etiqueta });
+  await expect(pestana).toHaveCount(1);
+  await pestana.click();
+  await expect(pasos.locator('p-step[aria-current="step"]')).toContainText(etiqueta);
+  await expect(pasos.locator('.p-steppanel-content')).toHaveCount(1);
+};
