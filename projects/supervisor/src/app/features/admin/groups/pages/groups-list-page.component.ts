@@ -52,6 +52,7 @@ import {
   type GroupIdentityDraft,
   phoneStrategyOf,
   priorityRank,
+  OUTBOUND_NUMBERS,
 } from '../data/groups-data';
 import { GroupBulkField, GroupsStore } from '../state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
@@ -455,7 +456,8 @@ export class GroupsListPageComponent {
   protected readonly duplicateSource = signal<Group | null>(null);
   protected readonly groupNames = computed(() => this.groups().map((g) => g.name));
   /** Los números que ya usan los grupos: el desplegable del teléfono asociado, igual que en la ficha. */
-  protected readonly groupPhones = computed(() => [...new Set(this.groups().map((g) => g.phone).filter(Boolean))].sort());
+  /** Los números asignados a la cuenta: el duplicado elige uno de ellos (DD-142). */
+  protected readonly outboundNumbers = OUTBOUND_NUMBERS;
   protected readonly suggestedCopyName = computed(() => {
     this.lang();
     const source = this.duplicateSource();

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from './helpers';
 
 /**
  * Journeys de los formularios admin: rellenar → guardar → verlo en el listado.
@@ -65,10 +65,12 @@ test('grupos · crear un grupo lo deja en su ficha y lo añade al listado', asyn
 
   const name = `E2E Grupo ${Date.now()}`;
   await page.locator('#group-name').fill(name);
+  // Con Teléfono, sin su número no se crea (DD-142).
+  await elegirTelefonoSaliente(page);
   await page.getByRole('button', { name: 'Crear grupo' }).click();
 
-  // El alta navega a la edición del grupo recién creado.
-  await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
+  // El alta navega a la edición del grupo recién creado, en la sección desde la que se creó (DD-121 §11).
+  await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+(\?seccion=distribucion)?$/);
   await expect(page.locator('.headline__name')).toHaveText(name);
 
   await goto(page, 'admin/grupos');

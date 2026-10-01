@@ -4,6 +4,10 @@ export type GroupChannel = 'phone' | 'chat' | 'whatsapp' | 'email';
 export const GROUP_PRIORITIES: readonly GroupPriority[] = ['Baja', 'Media', 'Alta', 'Máxima'];
 export const GROUP_CHANNELS: readonly GroupChannel[] = ['phone', 'chat', 'whatsapp', 'email'];
 
+/** Los números asignados a la cuenta con call blending: los únicos que un grupo puede enseñar a sus clientes como
+ *  teléfono saliente, que con Teléfono es obligatorio (DD-142). En la demo, los de los grupos de ejemplo. */
+export const OUTBOUND_NUMBERS: readonly string[] = ['917945449', '918371548'];
+
 export const PRIORITY_LABEL_KEYS: Readonly<Record<GroupPriority, string>> = {
   Baja: 'groups.priority.low',
   Media: 'groups.priority.medium',
@@ -98,7 +102,7 @@ export interface GroupAdvanced {
   /** Desbordar llamadas al siguiente nodo si no hay agentes activos (solo teléfono). */
   readonly overflowWhenNoAgents: boolean;
   /** «Desbordar sesión» del Figma de la migración («Redirige sesiones activas al superar el límite de…»). Sin pantalla
-   *  desde DD-141: era de Chat, y lo cubre «Cerrar chat por inactividad». Se sigue leyendo y guardando tal cual, para
+   *  desde DD-141: era de Chat, y lo cubre «Caducar sesión». Se sigue leyendo y guardando tal cual, para
    *  no perder lo que alguien guardó. */
   readonly overflowSession: boolean;
   readonly cardOpening: CardOpening;

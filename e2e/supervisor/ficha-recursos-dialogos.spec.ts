@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
 
 /**
  * CREAR DESDE LA FICHA ES UN DIÁLOGO, NO UNA CAJA DENTRO DE OTRA.
@@ -20,6 +20,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *      borde ni sombra) y a todo el ancho, y el título sale una vez.
  *   2. Crear una tipificación desde la ficha sigue funcionando: se cierra el diálogo y su categoría queda elegida.
  *   3. En Repositorios, el alta de cada repositorio lleva su título con género: «Nueva tipificación», no «Nuevo/a».
+ *   4. Recursos ya no enseña Etiquetas (DD-142), y el grupo conserva las suyas al guardar: el campo se queda hecho y
+ *      apagado, por si vuelve.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -50,8 +52,9 @@ test('grupo 11 · cada «+» de Recursos abre su diálogo con el nombre de su bo
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
   const botones = masDeRecursos(page);
   const n = await botones.count();
-  // Tipificación, agenda, plantillas de chat y de email, y etiqueta: si faltan, la prueba no recorre lo que dice.
-  expect(n, 'los «+» de Recursos').toBeGreaterThanOrEqual(5);
+  // Tipificación, agenda y plantillas de chat y de email (la etiqueta salió con DD-142): si faltan, la prueba no
+  // recorre lo que dice.
+  expect(n, 'los «+» de Recursos').toBeGreaterThanOrEqual(4);
 
   for (let i = 0; i < n; i++) {
     const boton = botones.nth(i);
@@ -97,4 +100,24 @@ test('Repositorios › Tipificaciones · el alta lleva su título con género', 
   const panel = page.locator('sc-repo-form-panel');
   await expect(panel.locator('.panel__title')).toHaveText('Nueva tipificación');
   await expect(panel).not.toContainText('Nuevo/a');
+});
+
+test('grupo 11 · Recursos no enseña Etiquetas, y el grupo conserva las suyas al guardar', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
+  const recursos = page.locator('#group-section-resources');
+  // La tipificación a la vista: así el cero de abajo no es de una sección sin pintar.
+  await expect(recursos.locator('#group-typification')).toBeVisible();
+  await expect(recursos.locator('#group-labels')).toHaveCount(0);
+  await expect(recursos.getByText('Etiquetas', { exact: true })).toHaveCount(0);
+  // El resumen cuenta lo que se ve: tres agendas y seis plantillas, sin las dos etiquetas del grupo.
+  await expect(page.locator('.ficha-summary')).toContainText(/Recursos\s*9(?!\d)/);
+
+  // Guardar no las tira: el grupo 11 sigue con las suyas, por si Etiquetas vuelve.
+  await pickSelectOption(page, page.locator('#group-typification'), 'Consulta');
+  await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(page.getByText('Grupo "Online Support" actualizado')).toBeVisible();
+  const etiquetas = await page.evaluate(
+    () => (JSON.parse(localStorage.getItem('sc-groups') ?? '[]') as { id: number; labels?: number[] }[]).find((g) => g.id === 11)?.labels,
+  );
+  expect(etiquetas).toEqual([3, 6]);
 });

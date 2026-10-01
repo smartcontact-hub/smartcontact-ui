@@ -17,10 +17,10 @@ Contact Center suben a «Trampas del frente». El de un solo índice (2026-09-27
 7458351:docs/handoff/supervisor-fichas.md`; sus trampas también suben. Y el del resumen como widget (2026-09-27,
 DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas arriba.
 
-## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos y las palabras de la ficha (D1, DD-141)
+## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141) y el teléfono saliente (D2, DD-142)
 
-> **Sello: H (#298, `57f03a0`) y los diálogos de Recursos (#300, `5cf3f5e1`), fundidos con su CI de `main` en verde;
-> D1 (DD-141), en su PR.**
+> **Sello: H (#298, `57f03a0`), los diálogos de Recursos (#300, `5cf3f5e1`) y D1 (#303, `78b2efb9`), fundidos con su
+> CI en verde; D2 (DD-142), en su PR.**
 
 **Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
 ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
@@ -65,6 +65,25 @@ del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen 
   desplegables de Contact Center, a 350 (`scale/25`): la escala no tiene peldaño entre 252 y 350;
 - `ficha-grupo-textos.spec.ts` (8) y las reescritas: 13 en rojo contra el código anterior, cada una por lo que mide.
 
+**La segunda revisión con el equipo** (2026-10-01, tarde) cambia el plan, que va en el plan de trabajo:
+- el alta vuelve al índice con ✓ por sección y «Siguiente» (R, revierte DD-138);
+- los tiempos, en desplegable con los valores del Contact Center validado (D3);
+- la cola por agente, de 1 a 10 enteros y 2 por defecto;
+- el nombre del grupo, fijo al bajar;
+- «Eliminar», bajo el índice, y escribiendo el nombre para confirmar (G);
+- los agentes del grupo, todos a la vista y sin marcar (E4, con la referencia del usuario «4. Agentes y revisión»).
+
+Respuestas del usuario: Etiquetas fuera, guardada; «Caducar sesión»; los valores del Contact Center validado; borrar
+escribiendo el nombre.
+
+**D2 · el teléfono saliente** (DD-142):
+- con Teléfono es obligatorio. Lo dicen el resumen, la barra («Crear grupo» y «Guardar» esperan), su campo y el
+  punto de Distribución. En el alta, tras salir de su sección sin él; duplicar lo pide al enviar;
+- se elige de `OUTBOUND_NUMBERS` (los asignados), sin escribir; el que ya tuviera un grupo sigue entre las opciones;
+- «Caducar sesión»; la ayuda de Balanceada, corregida; Recursos sin Etiquetas tras `conEtiquetas` (el grupo
+  conserva las suyas); el teléfono, nombrado por su rótulo (`ariaLabelledBy`);
+- `telefono-saliente.spec.ts` (4) y las reescritas: 11 en rojo contra el código anterior.
+
 **Trampas del tramo:**
 - ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
   `@smartcontact-hub/components` (sale el `vite-error-overlay`). No midas con el servidor mientras corre el preflight,
@@ -75,6 +94,8 @@ del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen 
   todo el fichero: se editan línea a línea.
 - ⚠️ La sonda de recorte de un desplegable solo vale si la has visto enrojecer: el rojo de la prueba nueva venía de la
   opción que no existía. Con el ancho de antes puesto, enrojece en el de Teléfono de Contact Center.
+- ⚠️ El texto de un rótulo con su «*» empieza por un espacio («␠Teléfono saliente *»): `getByText` con una expresión
+  regular no lo recorta, así que `^Teléfono` no casa. Mídelo antes de anclar.
 
 ## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-138)
 
@@ -260,9 +281,10 @@ Antes, dos retoques del widget (DD-126):
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba): D2 → D3 → E1 → E2 → E3 → E4 → G → F. Cada uno con
-   su prueba en rojo; la numeración de DD se mira en `origin/main` al empezar. El plan, con los ficheros y las
-   pruebas de cada uno, está en el tramo y en las DD: lo que falta lo dicen D2 a F.
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: R (el alta al índice, con ✓
+   y «Siguiente») → E1 → E2 → E3 → E4 → G → D3 → F. Cada uno con su prueba en rojo; la numeración de DD se mira en
+   `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center validado: pídeselos al usuario si no
+   están en el repo.
 
    **Lo que queda abierto de DD-133, DD-135, DD-136 y DD-138:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;

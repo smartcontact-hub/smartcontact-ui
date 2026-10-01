@@ -10,9 +10,9 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *      «Dentro de cada nivel», y «Menos conversaciones activas» en Chat, con su ayuda.
  *   2. Un grupo o unos valores de Contact Center guardados con los nombres de antes abren con los de ahora y sin cambios
  *      pendientes: el nombre ES el valor guardado, y subir la versión del almacén borraría lo que hay.
- *   3. «Desbordar sesión» sale de la ficha y de Contact Center: lo cubre «Cerrar chat por inactividad». Lo guardado no se
- *      pierde al guardar.
- *   4. «Cerrar chat por inactividad» nace con 5 minutos.
+ *   3. «Desbordar sesión» sale de la ficha y de Contact Center: lo cubre «Caducar sesión», que se llamaba «Cerrar chat
+ *      por inactividad» hasta DD-142. Lo guardado no se pierde al guardar.
+ *   4. «Caducar sesión» nace con 5 minutos.
  *   5. El tamaño de cola dice qué cuenta cada modo: Fijo, el total; por agente conectado, que varía con ellos.
  *   6. La tipificación se elige por su categoría: el número que llevaba al lado eran sus tipificaciones, y se leía como
  *      niveles o como grupos.
@@ -181,18 +181,18 @@ test('«Desbordar sesión» sale de la ficha y de Contact Center, y lo que tení
   expect(enContactCenter, 'Contact Center lo conserva').toBe(true);
 });
 
-test('«Cerrar chat por inactividad» nace con 5 minutos en Contact Center', async ({ page }) => {
+test('«Caducar sesión» nace con 5 minutos en Contact Center', async ({ page }) => {
   await goto(page, 'config/aed/grupos');
   await page.locator('#grupos-chat-inactivity-on').click();
   await expect(page.locator('#grupos-chat-inactivity')).toHaveValue(numero(5));
 });
 
-test('un grupo nuevo cierra el chat por inactividad a los 5 minutos si se enciende', async ({ page }) => {
+test('un grupo nuevo caduca la sesión de chat a los 5 minutos si se enciende', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
   await page.locator('#group-name').fill(`E2E Inactividad ${Date.now()}`);
   await canal(page, 'Chat').click();
   await page.getByRole('button', { name: 'Siguiente', exact: true }).click();
-  await page.getByRole('switch', { name: 'Cerrar chat por inactividad', exact: true }).click();
+  await page.getByRole('switch', { name: 'Caducar sesión', exact: true }).click();
   await expect(page.locator('#group-chat-inactivity')).toHaveValue(numero(5));
 });
 

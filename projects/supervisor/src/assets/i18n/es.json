@@ -1480,7 +1480,7 @@
     "page_title": "Grupos",
     "create_button": "Nuevo grupo",
     "create_dialog": {
-      "duplicate_subtitle": "Se copian los agentes, los canales y los ajustes de «{{source}}». El teléfono asociado, no.",
+      "duplicate_subtitle": "Se copian los agentes, los canales y los ajustes de «{{source}}». El teléfono saliente, no.",
       "copy_name": "{{name}} (copia)"
     },
     "search_placeholder": "Buscar grupo por nombre, ID, teléfono, prioridad o estrategia...",
@@ -1567,7 +1567,8 @@
         "priority_hint": "La prioridad con que entran sus llamadas. Solo cuenta en las entrantes.",
         "phone_strategy": "Estrategia (teléfono)",
         "chat_strategy": "Estrategia (chat)",
-        "phone_hint": "El número que ven los clientes cuando un agente del grupo llama. Elige uno o escríbelo.",
+        "phone_hint": "El número que ven los clientes cuando un agente del grupo llama.",
+        "phone_placeholder": "Elige un número",
         "strategy": "Estrategia",
         "ring_all": "Suena en",
         "ring_all_suffix": "agentes a la vez",
@@ -1583,7 +1584,7 @@
         "label_new": "Nueva etiqueta"
       },
       "strategy_help": {
-        "balanced": "Por turnos: cada llamada va al siguiente agente y, si no la coge, al de después.",
+        "balanced": "Reparte las conversaciones de forma equilibrada entre los agentes.",
         "fewest_conversations": "Va al agente que menos conversaciones ha atendido.",
         "longest_idle": "Va al agente disponible que lleva más tiempo sin actividad.",
         "levels": "Primero, los del nivel 1 que estén disponibles y libres. El nivel de cada agente se elige en Agentes.",
@@ -1691,7 +1692,8 @@
         "outbound": "Salida",
         "no_number": "Sin número",
         "resources": "Recursos",
-        "missing_channels": "canales"
+        "missing_channels": "canales",
+        "missing_phone": "teléfono saliente"
       },
       "channels": {
         "title": "Canales",
@@ -1711,8 +1713,8 @@
         "jump_aria": "Canales de esta sección"
       },
       "chat": {
-        "close_on_inactivity": "Cerrar chat por inactividad",
-        "close_on_inactivity_hint": "Si el cliente deja de escribir, la conversación se cierra sola pasado este tiempo.",
+        "close_on_inactivity": "Caducar sesión",
+        "close_on_inactivity_hint": "Si el cliente deja de escribir, la sesión caduca y la conversación se cierra pasado este tiempo.",
         "inactivity_minutes": "Minutos sin actividad",
         "messages_hint": "Lo que se le escribe al cliente mientras espera. Si dejas uno vacío, no se envía.",
         "message_on_enter": "Al entrar en cola",
@@ -1731,7 +1733,8 @@
     "errors": {
       "name_required": "El nombre es obligatorio",
       "channels_required": "Selecciona al menos un canal",
-      "name_taken": "Ya hay un grupo con este nombre"
+      "name_taken": "Ya hay un grupo con este nombre",
+      "phone_required": "El teléfono saliente es obligatorio"
     },
     "toasts": {
       "created": "Grupo \"{{name}}\" creado",

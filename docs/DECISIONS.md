@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Con Teléfono, el teléfono saliente es obligatorio (en el alta, al editar y al duplicar) y se elige de los números asignados (`OUTBOUND_NUMBERS`), sin escribir uno nuevo · «Caducar sesión» · la ayuda de Balanceada, corregida · Recursos sin Etiquetas, apagado y guardado (`conEtiquetas`) · el teléfono se nombra por su rótulo (enmienda DD-121 §11, DD-136 §2, DD-141 §4-5 y DD-133 §1) | DD-142 |
 > | Las estrategias reparten conversaciones: «Menos conversaciones atendidas» (Teléfono) y «Menos conversaciones activas» (Chat) · lo guardado con un nombre de antes se lee con el de ahora (`normalize` de `createVersionedStorage`), sin subir la versión · la prioridad solo cuenta en las entrantes · fuera «Desbordar sesión», que se sigue guardando sin pantalla · cerrar el chat por inactividad nace con 5 min · el tamaño de cola, un texto por modo · la tipificación, sin su cuenta (enmienda DD-133 §1, DD-121 §5 y DD-135 §3) | DD-141 |
 > | Un `sc-dialog` es UN diálogo para el lector: el `role="dialog"` modal es el `p-dialog` de PrimeNG, el que atrapa el foco, con el título de nombre y el subtítulo de descripción por `pt.root` · la card no repite el rol, ni lo que va dentro · un atributo en el host de `p-dialog` no llega a su raíz (enmienda DD-113) | DD-140 |
 > | El estado de un agente es uno, el de Administración › Agentes, y el Dashboard lo lee por id con `PRESENCIA_EN_DASHBOARD` (Disponible · No disponible, sus motivos, Administrativo y Post-conversando son En pausa · Desconectado) · lo guardado del Dashboard se relee al pintar, sin subir la versión · fuera `DEMO_AGENT_PRESENCE` (enmienda DD-127 §1 y DD-129) | DD-139 |
@@ -103,6 +104,74 @@
 
 ---
 
+## DD-142 · 2026-10-01 — Con Teléfono, el teléfono saliente es obligatorio y de los números asignados; «Caducar sesión», y Recursos sin Etiquetas
+
+**Contexto** · La segunda revisión con el equipo (2026-10-01), sobre la ficha de grupo ya con DD-141:
+- un grupo tiene dos campos obligatorios: el nombre y, con Teléfono, el teléfono saliente, con el mismo aviso que el
+  nombre. Hasta hoy se podía crear y guardar sin él, y el duplicado lo vaciaba;
+- el número no se inventa: es uno de los asignados a la cuenta, los que tienen call blending. El desplegable dejaba
+  escribir cualquiera, y su ayuda lo decía («Elige uno o escríbelo»);
+- la ayuda de «Balanceada» decía «Por turnos…», que es lo que hace Rotativa;
+- el cierre del chat por inactividad se llama «Caducar sesión», como en el Contact Center validado;
+- Etiquetas sale de Recursos, con el trabajo guardado por si vuelve (respuesta del usuario, 2026-10-01).
+
+**Decisión** ·
+1. **Con Teléfono, el teléfono saliente es obligatorio**, como el nombre:
+   - su rótulo lleva el «*» y el desplegable, `required`;
+   - el resumen dice «Falta: … · teléfono saliente», y «Crear grupo» y «Guardar» esperan, con el motivo en la barra;
+   - al editar, el aviso va bajo el campo y Distribución y colas lleva el punto del índice; en el alta, después de
+     salir de su sección sin él, como el nombre al salir de General;
+   - en el alta, Distribución no lleva su ✓ sin él, pero no es puerta: los pasos siguen libres;
+   - duplicar lo pide al enviar, como el resto de sus campos, y lleva el foco a él.
+2. **Se elige de los números asignados** (`OUTBOUND_NUMBERS`, en la demo los de los grupos de ejemplo), en la ficha y
+   al duplicar: el desplegable ya no deja escribir. El número que un grupo ya tuviera guardado sigue entre las
+   opciones, aunque no esté en la lista: abrir la ficha no lo borra.
+3. **Textos:** la ayuda del teléfono pierde «Elige uno o escríbelo», y el diálogo de duplicar dice «el teléfono saliente»,
+   no «el asociado». «Balanceada»: «Reparte las conversaciones de forma equilibrada entre los agentes».
+   «Cerrar chat por inactividad» pasa a «Caducar sesión», y su ayuda dice que la sesión caduca.
+4. **Recursos sin Etiquetas, apagado y guardado:** el campo y su «+» quedan en la plantilla tras `conEtiquetas`
+   (`false`). El grupo conserva las suyas (`labels` se lee y se guarda tal cual), y el resumen deja de contarlas
+   mientras no se vean. Volver es poner `conEtiquetas` a `true`.
+5. **El teléfono se nombra por su rótulo** (`ariaLabelledBy`), en la ficha y al duplicar: con `<label for>` solo, el
+   lector leía el número como nombre (lo que DD-133 dejó abierto para otros selects).
+
+**Razón** ·
+- **El número sale a la calle:** es lo que ve el cliente cuando le llama un agente. Un grupo con Teléfono y sin él no
+  puede llamar con su identidad, y uno inventado no está dado de alta para salir.
+- **El aviso, como el del nombre:** la revisión pidió el mismo control. No acusa en un alta recién abierta; sí en un
+  grupo ya guardado que no lo tiene, porque ahí falta de verdad.
+- **Medido:** contra el código anterior, 11 pruebas en rojo, cada una por lo que mide:
+  - el resumen sin «teléfono saliente»;
+  - «Crear grupo» encendido sin número;
+  - el texto de Rotativa en Balanceada;
+  - «Cerrar chat por inactividad»;
+  - Etiquetas a la vista;
+  - un desplegable con campo para escribir;
+  - un duplicado sin número.
+
+  Con el cambio, en verde. El rótulo del teléfono se midió: su texto empieza por un espacio, y la prueba que lo busca
+  por expresión regular lo tiene en cuenta.
+
+**Descartadas** ·
+- **Que Distribución sea puerta del alta, como General** → la revisión lo pide obligatorio, no que bloquee los pasos.
+  El ✓ y el resumen dicen que falta.
+- **Borrar Etiquetas de la ficha y del modelo** → el usuario pidió guardar el trabajo. Apagado, vuelve con una línea,
+  y los grupos no pierden lo que tenían.
+- **Dejar escribir un número y validarlo** → el producto solo permite los asignados (call blending), así que una lista
+  cerrada no deja equivocarse.
+
+**Consecuencias** ·
+- **Pruebas:** `telefono-saliente.spec.ts` (nueva, cuatro): alta, edición sin número, lista cerrada y duplicar.
+  `ficha-recursos-dialogos` gana Recursos sin Etiquetas, con sus etiquetas conservadas al guardar. Pasan al
+  comportamiento nuevo las altas de grupo (`altas-meta`, `admin-forms`, `ficha-grupo`, `pase-fichas`), la ayuda de Balanceada
+  (`ayudas-campos`) y «Caducar sesión» (`grupo-vision`, `ficha-grupo-textos`). `e2e/supervisor/helpers.ts` gana
+  `elegirTelefonoSaliente`.
+- **Un grupo guardado con Teléfono y sin número** (el duplicado de antes lo vaciaba) pide el número para guardar.
+- **Enmienda** DD-121 §11 (crear espera también al teléfono saliente), DD-136 §2 (qué falta en el grupo), DD-141 §4-5
+  (el nombre del cierre por inactividad) y DD-133 §1 (la ayuda de Balanceada).
+
+---
+
 ## DD-141 · 2026-10-01 — La ficha de grupo con las palabras de la revisión de producto: las estrategias reparten conversaciones, y sale «Desbordar sesión»
 
 **Contexto** · La revisión de producto del 2026-10-01 dio el flujo de grupos por bueno para que desarrollo empiece,
@@ -131,7 +200,7 @@ con ajustes. Estos son los de texto y de campos de la ficha de grupo, que se rep
    `advanced.overflowSession` se sigue leyendo y guardando tal cual, y lo que alguien guardó no se pierde. Enmienda
    DD-121 §5 y DD-135 §3.
 5. **«Cerrar chat por inactividad» nace con 5 minutos** (`FACTORY_GROUP_DEFAULTS.chat`): en un grupo nuevo, y en
-   Contact Center mientras nadie guarde otro valor. El interruptor sigue apagado de fábrica. Los grupos de ejemplo
+   Contact Center mientras nadie guarde otro valor. Desde DD-142 se llama «Caducar sesión». El interruptor sigue apagado de fábrica. Los grupos de ejemplo
    guardan los 10 de siempre (`DEFAULT_CHAT_SETTINGS`).
 6. **El tamaño de cola, un texto por modo.** Fijo: «Como mucho 50 conversaciones esperando en total, haya los agentes
    que haya». Por agente conectado: «Varía con los agentes conectados: 50 conversaciones en cola por cada uno».
@@ -476,7 +545,8 @@ en la barra de arriba y de uno en uno.
 **Decisión** · (decisión de producto, 2026-09-29)
 1. **Las tres altas dicen en su resumen lo que falta**, «Falta: nombre · extensión», y en cuanto el botón «Crear …» se
    enciende, «Listo para crear». Sin porcentaje ni barra (DD-121, DD-126).
-2. **Qué falta:** en el grupo, nombre y canales; en el agente, nombre y extensión; en el usuario, nombre y email. Un
+2. **Qué falta:** en el grupo, nombre y canales (y, desde DD-142, con Teléfono, el teléfono saliente); en el agente,
+   nombre y extensión; en el usuario, nombre y email. Un
    error de formato (un nombre repetido, un email o un PIN mal escritos) se dice en su campo, y mientras lo haya el
    resumen no dice «Listo».
 3. **Una pieza compartida, `sc-summary-status`** (de la app, no del DS), arriba del resumen:
@@ -676,7 +746,8 @@ Lo que había:
    - Prioridad: cuenta en las llamadas entrantes y en las salientes, telemarketing incluido. **Enmendado por DD-141
      (2026-10-01)**: la revisión de producto lo corrige, y solo cuenta en las entrantes;
    - Estrategia de teléfono: una línea por cada una de las seis que describe el manual, que cambia con la elegida.
-     Skills sale apagada con su motivo y no lleva;
+     Skills sale apagada con su motivo y no lleva. **Enmendado por DD-142**: la de Balanceada decía «Por turnos…»,
+     que es Rotativa; ahora, que reparte de forma equilibrada;
    - Extensión del agente: Tel atiende en el móvil; WebRTC, en el navegador, con Smart Contact Agent.
 2. **Reescritas:**
    - % de servicio: cuenta las atendidas en ese tiempo o menos;
@@ -1537,7 +1608,8 @@ tres fichas (#240) y el alta en diálogo (DD-119).
     de Grupos (desde DD-135, los de Contact Center › Grupos) y Teléfono marcado. General es la puerta: sin nombre (o repetido) o sin canales no se sale de ella, ni
     por el índice ni con «Siguiente»; cada campo dice lo que le falta y el foco va al primero. «Siguiente», al pie de
     cada sección, solo en el alta. «Crear grupo», en la barra, se enciende con General completa (lo demás nace con
-    valores por defecto). Crear guarda también los agentes y abre su edición en la sección en la que se estaba
+    valores por defecto). **Enmendado por DD-142 (2026-10-01)**: con Teléfono, también espera al teléfono saliente,
+    que es obligatorio y se elige de los números asignados. Crear guarda también los agentes y abre su edición en la sección en la que se estaba
     (`?seccion=distribucion|recursos|agentes`, que en el alta no cuenta: siempre abre en General). Agente y usuario
     ya creaban así, y la de grupo lo hacía hasta el 2026-09-23. Duplicar conserva su diálogo.
 12. **Lo que rodea a la ficha habla como ella.** El listado tiene una columna por estrategia, «Estrategia de

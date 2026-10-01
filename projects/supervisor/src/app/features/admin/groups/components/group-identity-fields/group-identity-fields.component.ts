@@ -17,8 +17,9 @@ import { GROUP_PRIORITIES, GroupPriority, PRIORITY_LABEL_KEYS } from '../../data
  * Cuántas columnas lo decide su CONTENEDOR, no la ventana: en el diálogo, una debajo de otra; en la
  * ficha, en fila. Por eso una `@container` y no una `@media`.
  *
- * El teléfono asociado solo con el canal Teléfono: es el número que ve el cliente cuando llama un
- * agente del grupo, y a un grupo de chat no hay que pedírselo.
+ * El teléfono saliente solo con el canal Teléfono: es el número que ve el cliente cuando llama un
+ * agente del grupo, y a un grupo de chat no hay que pedírselo. Con Teléfono es obligatorio y sale de los
+ * números asignados, sin escribir uno nuevo (DD-142).
  */
 @Component({
   selector: 'sc-group-identity-fields',
@@ -34,10 +35,12 @@ export class GroupIdentityFieldsComponent {
   readonly phone = input('');
   readonly priority = input<GroupPriority>('Baja');
   readonly hasPhone = input(true);
-  /** Los números que ya usan los grupos; también se puede escribir uno nuevo. */
+  /** Los números asignados a la cuenta: no se escribe uno nuevo (DD-142). */
   readonly phoneOptions = input<readonly string[]>([]);
   /** Clave del aviso bajo el nombre, ya decidido por quien la usa (vacío, repetido…). */
   readonly nameError = input<string | null>(null);
+  /** Clave del aviso bajo el teléfono saliente, ya decidido por quien la usa (falta, con Teléfono). */
+  readonly phoneError = input<string | null>(null);
 
   readonly nameChange = output<string>();
   readonly phoneChange = output<string>();
