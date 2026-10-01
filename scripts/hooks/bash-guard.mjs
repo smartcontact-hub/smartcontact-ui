@@ -419,6 +419,18 @@ export function carpetaEfectiva(cmd, cwd) {
   return dir;
 }
 
+/**
+ * ¿El árbol de `dir` es de ESTE repo, el que lleva la marca de preflight? Lo dice su raíz: la marca
+ * la escribe y la lee `scripts/preflight-mark.mjs`, y sin ese script no hay cadena que la deje.
+ *
+ * Por qué (2026-10-01): una sesión de este repo también empuja OTROS repositorios (`cd <otro> &&
+ * git push`), y la regla de push les pedía una marca que allí no puede escribir nadie: no se podía
+ * cumplir nunca, y la única salida era `# sc:ok`. Se mira en vez de asumir, como `usaPrettier`.
+ */
+function usaPreflight(dir) {
+  return fsSync.existsSync(resolve(raizDelArbol(dir), 'scripts', 'preflight-mark.mjs'));
+}
+
 /** Una rama remota que no es la principal: casi siempre, la de otra sesión. */
 const RAMA_AJENA = /(?:^|\s)origin\/(?!(?:main|master|HEAD)(?:\s|$))[\w./-]+/;
 /** Sacarla para TRABAJAR en ella: rama local nueva o con seguimiento, o un worktree. Leer un fichero
@@ -658,8 +670,9 @@ function evaluarBase(cmd, ctx = {}) {
   const sinIndexar = ctx.sinIndexar || fuentesSinIndexar;
   const segs = segmentos(cmd);
 
-  // #7 (a) — push sin preflight fresco sobre el árbol FINAL.
-  if (segs.some(esPushDeCommits)) {
+  // #7 (a) — push sin preflight fresco sobre el árbol FINAL. Solo en un árbol de este repo: en otro
+  // no hay cadena que escriba la marca (`usaPreflight`).
+  if (segs.some(esPushDeCommits) && (ctx.usaPreflight || usaPreflight)(cwd)) {
     const st = preflight(cwd);
     if (!st.ok)
       return {
