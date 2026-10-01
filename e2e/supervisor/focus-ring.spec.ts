@@ -42,6 +42,8 @@ const RUTAS = [
   'conversaciones',
   'conversaciones/reglas',
   'admin/usuarios',
+  // El alta en pasos (DD-138): las pestañas de los pasos son del Stepper nativo, y su anillo tiene que ser el de todos.
+  'admin/grupos/crear',
   'admin/labels',
   'admin/repositorios',
   'config/aed/servicio',

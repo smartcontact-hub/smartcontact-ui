@@ -15,10 +15,10 @@ sus dos trampas suben a «Trampas del frente». El de la visión de producto de 
 mismo tope: `git show f63d13aa:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
 Contact Center suben a «Trampas del frente».
 
-## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136)
+## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-138)
 
-> **Sello: #290 (`e490faf`) fundido en `main`, con su CI de `main` en verde; lo que falta de las altas, en la rama
-> `areses/sweet-fermat-r9cxzw` sobre `e490faf`.**
+> **Sello: #290 (`e490faf`) y #291 (`4be46a5`) fundidos en `main`, con su CI de `main` en verde; los pasos, en la
+> rama `areses/sweet-fermat-r9cxzw` sobre `0ec229c`.**
 
 **Qué pasó.** Producto respondió al cierre del 2026-09-28:
 - los valores de fábrica son los del documento de producto de usuarios y grupos;
@@ -49,13 +49,44 @@ Contact Center suben a «Trampas del frente».
 `altas-meta.spec.ts`: cuatro de cinco en rojo contra el código anterior (la quinta, de guarda), y el contraste de
 «Listo» en los dos temas, en rojo con el color cambiado a propósito.
 
+**Las altas van en pasos (DD-138)**, lo que eligió producto para el mismo gradiente de meta:
+- en el alta (y al duplicar agente o usuario), el Stepper vertical nativo de PrimeNG en el sitio del índice y del
+  contenido; la edición sigue con el índice. Pieza de la app: `sc-alta-pasos`, con `pasosDeAlta()`, que saca los
+  pasos de las secciones del índice;
+- cada sección vive en su `ng-template`: la misma en los dos modos;
+- la puerta de General del grupo sigue (pasos apagados); agente y usuario, en cualquier orden;
+- ✓ al dejar un paso completo, «Atrás» y «Siguiente» como atajos, y el paso no toca la dirección;
+- el plegado es el de PrimeNG tal cual (0,2 s, `ease-out`). La línea entre pasos se despegaba al plegar, por un fallo
+  de PrimeNG, y se arregla con `pt` en la envoltura del panel (`panelPt`).
+
+`altas-pasos.spec.ts`: siete de ocho en rojo contra el código anterior (la octava, de guarda), y dos más en rojo con
+el fallo puesto: el aire (49 con el margen de la tarjeta) y los títulos (h1 → h3 sin el h2 oculto). Las altas de otras
+seis pruebas se reescriben para los pasos con `irAPaso()`. `altas-pasos-movimiento.spec.ts`, tres, con el movimiento
+real: la línea a mitad del plegado (en rojo primero, 36 de 114), el plegado nativo y menos movimiento.
+
 **Trampas del tramo:**
+- ⚠️ El Stepper nativo desmonta el panel que se deja cuando acaba de plegarse, no al pulsar: un momento hay dos
+  paneles en el DOM y `querySelector('.p-steppanel-content')` coge el que se va (medido: 0 y 747). Espera a que quede
+  uno (`irAPaso()` lo hace) o busca el del paso con `aria-current="step"`.
+- ⚠️ Un clic de Playwright en un paso apagado espera 30 s a que se encienda. Los recorridos (`revision`,
+  `agrupacion`) rellenan antes lo que lo abre (`PREPARAR`).
+- ⚠️ El texto de una pestaña de paso es «1\nGeneral»: el número va delante. `nombreDe` lo quita.
+- ⚠️ Un error de sintaxis en el decorador de un componente (unas comillas invertidas dentro de `styles`) deja a
+  `ng serve` con NG2012 en quien lo importa aunque el fichero ya esté bien: reinicia el servidor.
+- ⚠️ La sección dentro del paso la pinta la plantilla de la ficha, no `sc-alta-pasos`: sus estilos encapsulados
+  no la alcanzan. El margen de la tarjeta se quita en `_forms.scss` (`.alta-pasos sc-section-card`).
 - ⚠️ `toHaveText` lee el `textContent`, y un `sc-icon` pone ahí el nombre de su glifo («error Falta: nombre»). El
   lector no lo oye (va `aria-hidden`): casa el final del texto.
 - ⚠️ Las altas de agente y usuario no pasan la medida completa de `theme-contrast`: el marcador de la foto
   (`sc-photo-upload`, del DS) mide 2,58:1. Por eso siguen en `RUTAS_SUELO` (abierto en DD-136).
 - ⚠️ Un `sc-inputnumber` con sufijo se describe con el sufijo delante: la espera en cola se anuncia «s Si nadie…».
   Casa el final de la descripción, no el texto exacto.
+- ⚠️ El fin del plegado lo pone un temporizador de respaldo de p-motion (201 ms), no solo `animationend`. Para verlo
+  a cámara lenta hay que retrasar ese temporizador además de las animaciones: si no, corta el plegado a mitad. Para
+  medirlo a mitad, congélalo en el mismo fotograma en que empieza (`altas-pasos-movimiento.spec.ts`).
+- ⚠️ En el plegado del Stepper, la caja mide X·contenido y su fila X·caja: lo que se estire a la fila (la línea entre
+  pasos) se queda corto, y lo que mide su contenido no. Poner el panel en bloque no cambia nada: las dos X están
+  dentro del `p-motion`.
 - ⚠️ En la nube se corre como root, y `chmod` no le quita la escritura. Para simular que la config de git no se puede
   escribir, un `.git/config.lock` ajeno.
 
@@ -266,16 +297,15 @@ usuario con `p-tabs`.
 
 ## SIGUIENTE — sin preguntar
 
-0. **El Stepper vertical nativo de PrimeNG en las tres altas** (plan aprobado el 2026-09-29), que revisa el descarte
-   de DD-121 y el de DD-130; la edición sigue con el índice. «Falta» y «Listo» (DD-136) siguen en el resumen.
-
-   **Lo que queda abierto de DD-133, DD-135 y DD-136:**
+0. **Lo que queda abierto de DD-133, DD-135, DD-136 y DD-138:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
    - los subtítulos de sección, sin revisar;
    - las ayudas de la lista de ajustes de Contact Center no se anuncian con su control (el DS no deja pasar
      `aria-describedby`);
    - el marcador de la foto de `sc-photo-upload` (DS), a 2,58:1: al arreglarlo, las altas de agente y usuario entran
-     en `RUTAS` de `theme-contrast`.
+     en `RUTAS` de `theme-contrast`;
+   - el cuerpo de `sc-section-card` `flush` sin cabecera guarda los 15,75 que lo separan de la cabecera oculta: en el
+     paso quedan 23 de su título al contenido. Es un cambio del DS, con sus capturas (DD-138).
 
    Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
    código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el

@@ -11,6 +11,7 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
@@ -31,7 +32,8 @@ import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { NameInplaceComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
+import { AltaPasosComponent, NameInplaceComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
+import { pasosDeAlta } from '@shared/utils/alta-pasos';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -149,10 +151,12 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
 @Component({
   selector: 'sc-agent-form-page',
   imports: [
+    NgTemplateOutlet,
     ButtonComponent,
     NameInplaceComponent,
     SummaryKpiComponent,
     SummaryStatusComponent,
+    AltaPasosComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
     FormSectionNavComponent,
@@ -388,10 +392,26 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** `?seccion=` de la dirección (`withComponentInputBinding`), también cuando solo cambia la query. */
   readonly seccion = input<string | undefined>();
 
-  /** La sección a la vista, la de la dirección; sin parámetro, Identidad, la primera. */
-  protected readonly activeSection = computed<string>(
-    () => AgentFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'agent-section-identity',
+  /**
+   * EL ALTA VA EN PASOS (DD-138), también al duplicar: las mismas cinco secciones, en el Stepper vertical nativo, y en
+   * cualquier orden (DD-130: aquí no hay puerta). Identidad está completa con nombre, extensión y, si se escriben,
+   * email y PIN bien escritos; las demás no piden nada.
+   */
+  protected readonly alta = pasosDeAlta({
+    secciones: this.navSections,
+    bloqueado: () => false,
+    completo: (id) => id !== 'agent-section-identity' || this.identidadCompleta(),
+  });
+
+  /** La sección a la vista: en el alta y al duplicar, el paso abierto; al editar, la de la dirección (Identidad sin parámetro). */
+  protected readonly activeSection = computed<string>(() =>
+    this.mode() === 'edit'
+      ? (AgentFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'agent-section-identity')
+      : this.alta.abierta(),
   );
+
+  /** El número del paso a la vista, para el Stepper. */
+  protected readonly pasoAbierto = computed(() => this.navSections().findIndex((s) => s.id === this.activeSection()) + 1);
 
   /** La dirección de una sección: la primera, sin parámetro (es la dirección de la ficha). */
   private sectionUrl(id: string): UrlTree {
@@ -399,15 +419,37 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return this.sectionLinks.section(this.route, id === 'agent-section-identity' ? null : slug);
   }
 
-  /** Ir a otra sección. En el alta y al duplicar, sin rastro en el historial: Atrás sale (DD-122). */
+  /** Ir a otra sección. En el alta y al duplicar, el paso se abre sin tocar la dirección: Atrás sale (DD-122, DD-138). */
   protected goTo(id: string): void {
-    void this.sectionLinks.go(this.sectionUrl(id), { replace: this.mode() !== 'edit' });
+    if (this.mode() !== 'edit') {
+      this.alta.abrir(id);
+      return;
+    }
+    void this.sectionLinks.go(this.sectionUrl(id));
+  }
+
+  /** «Siguiente» y «Atrás» de cada paso: atajos al de al lado, no puertas (DD-138; la puerta es solo del grupo). */
+  protected siguiente(): void {
+    const id = this.alta.siguiente();
+    if (id) this.goTo(id);
+  }
+
+  protected anterior(): void {
+    const id = this.alta.anterior();
+    if (id) this.goTo(id);
+  }
+
+  /** Identidad completa: lo que pide «Crear agente» de esa sección. */
+  private identidadCompleta(): boolean {
+    const f = this.form();
+    if (!f.name.trim() || !f.extension) return false;
+    if (f.email && !EMAIL_RE.test(f.email.trim())) return false;
+    return !(f.pin && !PIN_RE.test(f.pin.trim()));
   }
 
   /**
-   * Lo que falta para poder guardar, en el índice: el nombre y la extensión, en Identidad. Al editar y al
-   * duplicar (que llega con esos campos vacíos a propósito); en un alta recién abierta no acusa, lo dice el
-   * motivo del botón.
+   * Lo que falta para poder guardar, en el índice: el nombre y la extensión, en Identidad. El índice es de la
+   * edición; en el alta y al duplicar van los pasos (DD-138), y lo que falta lo dice el resumen (DD-136).
    */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
     const f = this.form();
@@ -716,6 +758,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         this.conflictWarning.set(true)
       );
       return;
+    }
+
+    // El alta va en pasos (DD-138): la dirección no dice sección, y se quita la que traiga (el duplicado
+    // conserva su `seedFromId`).
+    if (this.route.snapshot.queryParamMap.has('seccion')) {
+      void this.sectionLinks.go(this.sectionLinks.section(this.route, null), { replace: true });
     }
 
     // Modo "Duplicar": detecta ?seedFromId en query params y precarga el

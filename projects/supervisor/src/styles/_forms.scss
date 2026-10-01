@@ -543,3 +543,12 @@
   gap: var(--sc-spacing-1);
   min-inline-size: 0;
 }
+
+/* LA SECCIÓN DENTRO DE SU PASO, en las altas (DD-138): `sc-section-card` a sangre y sin cabecera, porque la dice el
+ * paso. La tarjeta trae su margen de abajo (21) para separarse de la siguiente de la página; dentro de un paso no hay
+ * siguiente, y sumado a los 28 de «Atrás» y «Siguiente» dejaba 49 del último campo a los botones (medido el
+ * 2026-09-29). Vive aquí y no en `sc-alta-pasos` porque la tarjeta la pinta la plantilla de cada ficha, y la
+ * encapsulación es por componente. */
+.alta-pasos sc-section-card {
+  margin-block-end: 0;
+}

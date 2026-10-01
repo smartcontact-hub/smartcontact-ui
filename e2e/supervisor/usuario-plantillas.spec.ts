@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { colorEfectivo } from '../shared/color';
-import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irAPaso, irASeccion, pickSelectOption } from './helpers';
 
 /**
  * QUÉ TRAE CADA TIPO DE USUARIO (DD-132): los cuatro tipos del documento de producto de usuarios y grupos, y cada
@@ -47,7 +47,7 @@ test('cuatro tipos, y el alta nace Supervisor Offline con su plantilla: la super
   ]);
   await page.keyboard.press('Escape');
 
-  await irASeccion(page, 'Acceso');
+  await irAPaso(page, 'Acceso');
   await expect(plantilla(page)).toHaveText('Plantilla: Supervisor Offline');
   await expect(resumen(page)).toHaveText(['9 de 16', '0 de 9']);
   await expect(casilla(page, 'Tipificaciones')).toBeChecked();
@@ -60,7 +60,7 @@ test('en un alta sin tocar, elegir otro tipo marca su plantilla sin preguntar', 
   await pickSelectOption(page, tipo(page), 'Administrador');
   await expect(page.getByRole('dialog', { name: /¿Aplicar la plantilla/ })).toHaveCount(0);
 
-  await irASeccion(page, 'Acceso');
+  await irAPaso(page, 'Acceso');
   await expect(plantilla(page)).toHaveText('Plantilla: Administrador');
   await expect(resumen(page)).toHaveText(['15 de 16', '6 de 9']);
   await expect(casilla(page, 'Contact Center')).toBeChecked();

@@ -25,8 +25,9 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent, NameInplaceComponent } from '@shared/components';
+import { AltaPasosComponent, ChannelIconComponent, NameInplaceComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
+import { pasosDeAlta } from '@shared/utils/alta-pasos';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDividerComponent as DividerComponent,
@@ -182,6 +183,7 @@ const CLIENT_CARD_KEYS: ReadonlySet<string> = new Set(['cardOpening', 'cardUrl',
     LabelFormPanelComponent,
     ChipComponent,
     TooltipModule,
+    AltaPasosComponent,
     SelectComponent,
     TranslateModule,
   ],
@@ -261,6 +263,19 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   );
 
   /**
+   * EL ALTA VA EN PASOS (DD-138): las mismas cuatro secciones, en el Stepper vertical nativo. General es la
+   * puerta (DD-121): sin nombre y sin canales los demás pasos están apagados. El paso abierto no toca la dirección.
+   */
+  protected readonly alta = pasosDeAlta({
+    secciones: this.navSections,
+    bloqueado: (id) => id !== 'group-section-general' && !this.generalValid(),
+    completo: (id) => id !== 'group-section-general' || this.generalValid(),
+  });
+
+  /** El número del paso a la vista: el de la sección abierta, con la puerta de General ya aplicada. */
+  protected readonly pasoAbierto = computed(() => this.navSections().findIndex((s) => s.id === this.activeSection()) + 1);
+
+  /**
    * `?seccion=` de la dirección, que el router pasa a este input (`withComponentInputBinding`) en cada
    * navegación, también cuando solo cambia la query: cada fila del índice es un ENLACE (DD-122), y
    * Atrás o un enlace compartido llevan a su sección.
@@ -273,7 +288,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * en General aunque la dirección pida otra (el enlace de otra pestaña, o un `crear?seccion=` escrito).
    */
   protected readonly activeSection = computed<string>(() => {
-    const id = GroupFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'group-section-general';
+    // En el alta, el paso abierto (DD-138); al editar, la dirección.
+    const id =
+      this.mode() === 'create'
+        ? this.alta.abierta()
+        : (GroupFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'group-section-general');
     // Mientras se crea no: en cuanto el grupo existe, su nombre ya está cogido (por él mismo) y la ficha
     // pintaría General un instante antes de irse a la edición.
     if (this.mode() === 'create' && !this.saving() && id !== 'group-section-general' && !this.generalValid()) {
@@ -352,8 +371,23 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.stayInGeneral();
       return;
     }
-    // En el alta, sin rastro en el historial: Atrás sale del alta (DD-122).
-    void this.sectionLinks.go(this.sectionUrl(id), { replace: this.mode() === 'create' });
+    // En el alta, el paso se abre sin tocar la dirección: Atrás sale del alta (DD-122, DD-138).
+    if (this.mode() === 'create') {
+      this.alta.abrir(id);
+      return;
+    }
+    void this.sectionLinks.go(this.sectionUrl(id));
+  }
+
+  /** «Siguiente» y «Atrás» de cada paso. Sin General completa, «Siguiente» se queda en ella y dice lo que falta. */
+  protected siguiente(): void {
+    const id = this.alta.siguiente();
+    if (id) this.goTo(id);
+  }
+
+  protected anterior(): void {
+    const id = this.alta.anterior();
+    if (id) this.goTo(id);
   }
 
   /** La dirección de una sección de esta ficha: General, la de aterrizaje, sin parámetro. */
@@ -368,22 +402,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   private stayInGeneral(): void {
     this.attemptedGeneral.set(true);
-    if (this.seccion()) void this.sectionLinks.go(this.sectionUrl('group-section-general'), { replace: true });
+    // El paso de General, abierto: es donde se dice lo que falta.
+    this.alta.abrir('group-section-general');
     const nameMissing = this.form().name.trim().length === 0 || this.nameTaken();
     const target = nameMissing ? 'group-name' : 'group-channels-phone';
     afterNextRender(() => document.getElementById(target)?.focus(), { injector: this.injector });
-  }
-
-  /** La sección siguiente en el índice, para «Siguiente» (solo en el alta); `null` en la última. */
-  protected readonly nextSectionId = computed<string | null>(() => {
-    const ids = this.navSections().map((s) => s.id);
-    const i = ids.indexOf(this.activeSection());
-    return i >= 0 && i < ids.length - 1 ? ids[i + 1]! : null;
-  });
-
-  protected next(): void {
-    const id = this.nextSectionId();
-    if (id) this.goTo(id);
   }
 
   protected readonly editingId = signal<number | null>(null);
@@ -638,7 +661,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (!idParam) {
       // ALTA: la ficha vacía, con los valores por defecto de Grupos y Teléfono marcado (`emptyForm`). Abre en
       // General aunque la dirección pida otra sección: General es la puerta del alta (`goTo`). Se quita el
-      // parámetro, o en cuanto General estuviera completa la ficha saltaría sola a esa sección.
+      // parámetro: en el alta el paso abierto no vive en la dirección (DD-138).
       this.dirtyState.markPristine();
       if (this.route.snapshot.queryParamMap.has('seccion')) {
         void this.sectionLinks.go(this.sectionUrl('group-section-general'), { replace: true });
@@ -687,8 +710,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     );
   }
 
-  /** Cada sección en la dirección (`?seccion=agentes`): el índice enlaza a ellas y el alta, al crear,
-   *  sigue en la sección en la que estaba. */
+  /** Cada sección en la dirección (`?seccion=agentes`): el índice enlaza a ellas, y al crear se abre la edición en
+   *  la del paso abierto (DD-138). */
   private static readonly SECTION_SLUGS: Readonly<Record<string, string>> = {
     general: 'group-section-general',
     distribucion: 'group-section-distribution',

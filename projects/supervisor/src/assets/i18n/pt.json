@@ -1000,7 +1000,9 @@
     "select_all": "Selecionar tudo",
     "form_index_aria": "Índice do formulário",
     "filter_count": "{{shown}} de {{total}}",
-    "next": "Seguinte"
+    "next": "Seguinte",
+    "steps_aria": "Passos da criação",
+    "step_done": "concluído"
   },
   "topbar": {
     "go_to_dashboard": "Ir ao dashboard",
