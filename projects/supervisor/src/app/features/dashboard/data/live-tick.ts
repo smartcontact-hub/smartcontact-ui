@@ -6,7 +6,7 @@ import type { DashboardMonitor, DashboardWidget } from './dashboard.types';
  * sube o baja un poco. El original refresca intenciones y tipificaciones cada 60 s (medido el
  * 2026-09-14); aquí el latido es más corto para que la demo se vea viva.
  *
- * Los DISPONIBLES no se mueven solos: son el estado de cada agente (`DEMO_AGENT_PRESENCE`), el que
+ * Los DISPONIBLES no se mueven solos: son el estado de cada agente en Administración (DD-139), el que
  * enseñan la tabla y el detalle. Derivando por su cuenta, a los 8 s el anillo decía 6 con 5 agentes
  * disponibles en la tabla, y su detalle no podía listar el sexto (DD-127).
  */

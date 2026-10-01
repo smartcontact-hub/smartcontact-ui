@@ -130,21 +130,29 @@ test('en el primer monitor, la tabla, el anillo y su detalle cuentan los mismos 
 test('en «Colas y agentes», el panel de grupos cuenta agentes reales, no una cifra que escale con las colas', async ({ page }) => {
   /* DD-127 dejaba esto anotado como "no cubierto": `buildWidget`, case `group-panel`, sacaba «conectados» de
    * `int(3,4) * n` (n = colas del panel, 4 aquí) — 12 o 16, sin relación con los 10 agentes reales de la demo
-   * (9 conectados, 5 disponibles, medido en `DEMO_AGENT_PRESENCE`). El detalle truncaba en silencio a los 9
-   * que hay de verdad: la cifra de arriba no tenía techo, el detalle sí. */
+   * (entonces 9 conectados y 5 disponibles). El detalle truncaba en silencio a los 9 que hay de verdad: la cifra
+   * de arriba no tenía techo, el detalle sí. Las cifras esperadas son las de la tabla del primer monitor, que
+   * enseña a esos 10 agentes con su estado de Administración (DD-139): la prueba no depende de cuántos hay en
+   * cada estado, y una cifra que escale con las colas la sigue tumbando. */
   await goto(page, 'dashboard');
-  await page.getByRole('tab').nth(1).click();
+  const tabla = page.locator('sc-dashboard-widget-card').filter({ has: page.locator('sc-dashboard-agents-table') });
+  await expect(tabla.locator('tbody tr').first()).toBeVisible();
+  const estados = await tabla.locator('tbody tr sc-badge').evaluateAll((badges) => badges.map((b) => b.getAttribute('aria-label')));
+  expect(estados.length, 'la tabla del primer monitor enseña a los 10 agentes de la demo').toBe(10);
+  const conectados = estados.filter((e) => e !== 'Desconectado').length;
+  const disponibles = estados.filter((e) => e === 'Disponible').length;
 
+  await page.getByRole('tab').nth(1).click();
   const panel = page.locator('sc-dashboard-widget-card').filter({ has: page.locator('sc-dashboard-group-panel') });
   await expect(panel).toBeVisible();
 
   const stat = (etiqueta: string) => panel.locator('.panel__stat', { hasText: etiqueta });
-  await expect(stat('Conectados').locator('.panel__digits'), 'los agentes reales no-offline de la demo son 9').toHaveText('9');
-  await expect(stat('Disponibles').locator('.panel__digits'), 'los agentes reales disponibles de la demo son 5').toHaveText('5');
+  await expect(stat('Conectados').locator('.panel__digits'), 'los agentes de la demo que no están desconectados').toHaveText(String(conectados));
+  await expect(stat('Disponibles').locator('.panel__digits'), 'los agentes de la demo disponibles').toHaveText(String(disponibles));
 
   await stat('Conectados').locator('.panel__open').click();
   const quien = page.locator('.p-drawer .detail__who .sc-text-body-semibold');
-  await expect(quien, 'el detalle lista tantos como dice la cifra de arriba, sin truncar en silencio').toHaveCount(9);
+  await expect(quien, 'el detalle lista tantos como dice la cifra de arriba, sin truncar en silencio').toHaveCount(conectados);
 });
 
 test('con textos largos (`?datos=tortura`), la tabla cabe en su tarjeta, los títulos no se recortan y el detalle es de una línea', async ({ page }) => {

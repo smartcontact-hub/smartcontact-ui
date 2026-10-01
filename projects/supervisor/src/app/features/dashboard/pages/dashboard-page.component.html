@@ -282,7 +282,13 @@
   (visibleChange)="assistantOpen.set($event)"
   [size]="assistantSize()"
   [editing]="assistantEditing()"
+  [estadoDe]="store.estadoDeAgente()"
   (saved)="saveWidget($event)"
 />
 
-<sc-dashboard-detail-drawer [request]="detail()" [widget]="detailWidget()" (closed)="detail.set(null)" />
+<sc-dashboard-detail-drawer
+  [request]="detail()"
+  [widget]="detailWidget()"
+  [estadoDe]="store.estadoDeAgente()"
+  (closed)="detail.set(null)"
+/>
