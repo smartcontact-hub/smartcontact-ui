@@ -24,6 +24,7 @@ import { SC_ICON_SIZE_DEFAULT, ScIconComponent as IconComponent } from '@smartco
 import { injectLangChange } from '@core/utils/lang-change';
 
 import type { DashboardWidget } from '../../data/dashboard.types';
+import type { EstadoDeAgente } from '../../data/presencia';
 import {
   detailRows,
   type AgentStateRow,
@@ -57,6 +58,8 @@ const CHANNEL_ICON: Readonly<Record<DetailChannel, string>> = { calls: 'call', c
 export class DetailDrawerComponent {
   readonly request = input<DetailRequest | null>(null);
   readonly widget = input<DashboardWidget | null>(null);
+  /** El estado de los agentes en Administración: el detalle lista a los que están en el estado pulsado (DD-139). */
+  readonly estadoDe = input.required<EstadoDeAgente>();
 
   readonly closed = output<void>();
 
@@ -109,7 +112,7 @@ export class DetailDrawerComponent {
       untracked(() => {
         const w = this.widget();
         this.elapsed.set(0);
-        this.snapshot.set(r && w ? detailRows(r, w) : null);
+        this.snapshot.set(r && w ? detailRows(r, w, this.estadoDe()) : null);
       });
     });
     const clock = setInterval(() => {

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El estado de un agente es uno, el de Administración › Agentes, y el Dashboard lo lee por id con `PRESENCIA_EN_DASHBOARD` (Disponible · No disponible, sus motivos, Administrativo y Post-conversando son En pausa · Desconectado) · lo guardado del Dashboard se relee al pintar, sin subir la versión · fuera `DEMO_AGENT_PRESENCE` (enmienda DD-127 §1 y DD-129) | DD-139 |
 > | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue · el plegado es el de PrimeNG, y la línea entre pasos no se despega al plegar (`pt`) | DD-138 |
 > | El sidebar sigue a su tablero de Figma (14912:6324): sin botón de anclar · plegado sigue abierto lo que estaba abierto · texto e icono en blanco y la flecha al 60% · todos los iconos a 14, los que nombra el catálogo del tablero (14912:6774) · «Diseñador VUI» y «Análisis de Flujo» · SCC (CusCare) lleva el logo de CusCare (enmienda DD-118 §2 y §5) | DD-137 |
 > | Un alta dice en su resumen lo que falta («Falta: nombre · extensión») y, cuando «Crear …» se enciende, «Listo para crear»: `sc-summary-status`, un solo `role="status"` que cambia en su sitio · sin porcentaje ni barra · un error de formato va en su campo · al editar, nunca «Listo» | DD-136 |
@@ -97,6 +98,72 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-139 · 2026-10-01 — Un agente enseña el mismo estado en el Dashboard y en Administración › Agentes: la fuente es Administración
+
+**Contexto** · DD-127 dejó un solo estado por agente DENTRO del Dashboard, `DEMO_AGENT_PRESENCE`, escrito a mano (5
+disponibles, 4 en pausa y 1 desconectado). Administración › Agentes tiene el suyo en las semillas, `presenceStatus`, con
+otro vocabulario: Disponible, No disponible, Baño, Comida, Formación, Administrativo, Post-conversando y Desconectado.
+Medido el 2026-10-01 por id, ejecutando los dos ficheros: de los 10 agentes de la demo del Dashboard (ids 1 a 10), 6 no
+casaban, los ids 5, 6, 7, 8, 9 y 10 (el 6, disponible en el Dashboard y desconectado en el listado). En esos seis el
+desajuste sale con cualquier reparto de los estados intermedios. La ficha de grupo va a enseñar el estado de cada agente
+en su tabla de agentes: con dos verdades, contradiría al Dashboard. Y copiar los valores a mano no lo cerraba, porque hay
+dos caminos más para separarse: la ficha de un agente cambia su estado («Presencia inicial»), y el navegador guarda los
+monitores del Dashboard con el estado que tenía cada fila (el latido los escribe cada 8 s).
+
+**Decisión** ·
+1. **La única fuente es Administración**: el `presenceStatus` de cada agente en el almacén de agentes (`AgentsStore`, que
+   nace de `AGENTS_SEED`), el que pinta el listado. El Dashboard no guarda estados propios: `DEMO_AGENT_PRESENCE` se va.
+2. **Los agentes de la demo del Dashboard son los ids 1 a 10 de Administración** (`DEMO_AGENTS`, `demo-entities.ts`), con
+   su nombre de allí. El estado se busca por id: un agente renombrado en Administración se sigue encontrando.
+3. **La correspondencia es una tabla fija**, `PRESENCIA_EN_DASHBOARD` (`dashboard/data/presencia.ts`), y cubre todos los
+   estados del listado: uno nuevo no compila hasta que se decida qué es en el Dashboard.
+   - Disponible → Disponible.
+   - No disponible, Baño, Comida, Formación, Administrativo y Post-conversando → En pausa.
+   - Desconectado → Desconectado.
+
+   «En pausa» es todo lo conectado que no está disponible, para que disponibles y en pausa sumen los conectados de los
+   anillos y del panel de grupos.
+4. **El Dashboard lee el estado al pintar** (`DashboardStore.monitors`, un `computed` sobre lo guardado y el almacén de
+   agentes). Cambiarlo en la ficha de un agente lo cambia en la tabla, los anillos, el panel de grupos, el detalle que
+   abren y la vista previa del asistente.
+5. **Lo guardado se lee de forma aditiva** (`conPresencia`): se queda todo (disposición, nombres, cifras de
+   conversaciones) menos el estado y lo que se cuenta con él. `sc-dashboard-monitors` sigue en la versión 2 y
+   `sc-agents` en la 3: subirlas borraría los monitores y los agentes de cada usuario.
+6. Un agente de la demo que Administración ya no tiene, o que no tiene estado, cuenta como Desconectado en todas las piezas.
+
+**Razón** · Del vocabulario corto no se saca el largo (de «En pausa» no sale si es Comida o Formación), así que la fuente
+tiene que ser Administración y el Dashboard, derivar. Se lee del almacén y no de las semillas porque la ficha cambia el
+estado y el listado lo enseña al momento. Lo prueba `e2e/supervisor/estado-agentes.spec.ts` sobre lo pintado en las dos
+pantallas, con un caso por cada manera de volver a tener dos verdades. Los tres salieron en rojo contra `main` y en verde
+con el cambio:
+- los 10 agentes del Dashboard tienen el estado que les toca por el listado (en rojo, los seis de arriba);
+- un monitor guardado con todos sus agentes desconectados y el anillo a 0 enseña el estado de Administración (en rojo,
+  mandaba lo guardado);
+- un agente en pausa puesto Disponible en su ficha sale disponible en el Dashboard y el anillo suma uno (en rojo, el
+  listado lo enseñaba y el Dashboard no).
+
+**Descartadas** ·
+- **Copiar a mano los estados de un lado al otro** → arregla los 10 de hoy y deja dos listas, que se separan en cuanto
+  alguien edita una. Tampoco cubre la ficha ni lo guardado.
+- **Que la fuente sea el Dashboard** (cambiar las semillas para que cuadren con sus 5, 4 y 1) → del estado del Dashboard
+  no sale el del listado: habría que inventar a mano un motivo de pausa por agente, y cambiarían también las 144 copias
+  de esos seis entre los agentes generados.
+- **Subir la versión de los monitores** para que se regeneren con el estado nuevo → borra los monitores que haya montado
+  cada usuario, y el siguiente cambio de estado pediría otra subida.
+- **Un cuarto estado, «En conversación»**, como el monitor del Supervisor, que cuenta aparte a quien está en una
+  conversación o acaba de salir de ella → cambia la tabla, los anillos, el asistente y el catálogo, y no hace falta para
+  que las dos vistas cuadren. Si llega, Post-conversando pasa ahí: una línea de la tabla.
+
+**Consecuencias** · El Dashboard enseña las cifras de Administración: 5 disponibles, 3 en pausa y 2 desconectados («5 de 8
+conectados» y «3 de 8» en pausa; el panel de grupos, 8 conectados y 5 disponibles). Enmienda DD-127 §1 (de dónde sale el
+estado, y sus cifras) y DD-129 (el panel cuenta los mismos agentes, con el estado de Administración); la prueba de DD-129
+deja de fijar 9 y 5 y lee las cifras de la tabla del primer monitor. La tabla de agentes de la ficha de grupo, cuando
+enseñe el estado, lee el mismo `presenceStatus` y cuadra con el Dashboard sin nada más. Queda dicho y sin tocar: la ficha
+llama al campo «Presencia inicial» y el listado lo enseña como el estado de ahora; la demo usa un solo dato para las dos
+cosas.
 
 ---
 
