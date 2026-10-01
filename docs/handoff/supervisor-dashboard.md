@@ -5,6 +5,32 @@
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
+## ✅ 2026-10-01 · Cada agente enseña en el Dashboard el estado que tiene en Administración
+
+> **Sello: rama `areses/kind-liskov-9cae8c`, sobre `origin/main` HEAD `74583514` (con #295 fundido encima: su DD-138
+> llegó antes, así que esta es la DD-139).**
+
+**Qué pasaba** (medido por id, ejecutando los dos ficheros): de los 10 agentes de la demo, 6 (ids 5 a 10) salían en un
+estado en el Dashboard y en otro en Administración › Agentes. El Dashboard llevaba su propia lista a mano
+(`DEMO_AGENT_PRESENCE`, DD-127) y Administración la suya en las semillas, con un vocabulario más rico.
+
+**Qué hay** (DD-139). La fuente es el almacén de agentes, el que pinta el listado. El Dashboard lo lee por id con una
+correspondencia fija, `PRESENCIA_EN_DASHBOARD` (`data/presencia.ts`): Disponible; todo lo conectado que no lo está
+(No disponible, sus motivos, Administrativo y Post-conversando) es En pausa; Desconectado. Lo lee al pintar
+(`DashboardStore.monitors`), también sobre lo que el navegador ya guardó (`conPresencia`), sin subir la versión de
+ningún almacén. Los agentes de la demo son los ids 1 a 10 (`DEMO_AGENTS`). `buildWidget` y `detailRows` piden el estado
+como parámetro obligatorio, y el asistente y el detalle lo reciben de la página (`[estadoDe]`). Las cifras pasan a las de
+Administración: 5 disponibles, 3 en pausa y 2 desconectados («5 de 8 conectados»).
+
+**Medido.** `e2e/supervisor/estado-agentes.spec.ts`, con tres casos sobre lo pintado en las dos pantallas (los datos de
+fábrica, un monitor guardado con todos desconectados y un cambio en la ficha), en rojo contra `main` y en verde con el
+cambio. ⚠️ La primera versión del caso de la ficha salía en rojo sin probar nada: el guardado llega 400 ms después del
+clic y la prueba se iba antes, con el botón ya apagado (cargando). Ahora espera al aviso de guardado y comprueba que el
+listado ya enseña el estado nuevo. La prueba de DD-129 lee sus cifras de la tabla del primer monitor en vez de fijar 9 y 5.
+La suite entera del Supervisor, 413 de 414: el que cayó es el selector de columnas del listado de agentes
+(`column-selector-order.spec.ts:49`, «Element is not visible» al pulsar con el desplegable abriéndose), que este cambio
+no toca y que pasó 9 de 9 corrido solo; queda propuesto como tarea aparte.
+
 ## ✅ 2026-09-28 · El detalle de una cifra ya no corta el tiempo por la derecha
 
 > **Sello: rama `areses/magical-vaughan-5cf689`, sobre `origin/main` HEAD `212debe8`.**
@@ -82,6 +108,9 @@ Persiste en `localStorage` (`sc-dashboard-monitors`, versión 1).
    - Plantillas + «Restablecer» por monitor (en vez de «volver a la demo»).
 
 **Trampas del frente:**
+- ⚠️ El estado de un agente no se escribe en el Dashboard: sale del almacén de agentes (DD-139). Un widget nuevo que
+  cuente agentes recibe `estadoDe` y se relee en `conPresencia`; una cifra de agentes escrita a mano vuelve a separar
+  las dos pantallas.
 - ⚠️ Una prueba de scroll lateral mide `main#main-content`, no `documentElement` (el scroll de la app vive ahí).
 - ⚠️ `lint` y `usage:check` a mano antes del `preflight`: a #184 le costó tres vueltas.
 - ⚠️ Un `output` llamado `select` choca con el evento nativo; por eso las pestañas avisan con `activate`.

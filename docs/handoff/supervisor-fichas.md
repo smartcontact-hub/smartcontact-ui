@@ -356,6 +356,10 @@ queda lo elegido.
   llega el `Page.frameNavigated` de su primera navegación, y Playwright no entrega la pestaña o la entrega en
   `about:blank`. La app sí la abría. `indice-enlaces` comprueba la parte de la app (el clic llega al enlace sin
   cancelar; rojo 3 de 3 con el índice cancelándolo) y abre la otra con `context.newPage()`: 0 de 240 en el CI.
+- ⚠️ Las opciones de un overlay nativo están en el DOM, con sus atributos, antes de tener caja: `p-motion` las monta con
+  `display: none` y no lo quita hasta dos fotogramas después (`nextFrame()`), y `disableAnimations` no lo tapa porque
+  no es una animación. Un clic con `force` no espera a la caja y falla en el acto («Element is not visible»; con los
+  fotogramas retrasados, 5 de 5). Antes de un clic forzado, `toBeVisible()` (`column-selector-order.spec.ts`).
 - ⚠️ Un commit del robot `visual-baselines` sobre un PR ya abierto deja su CI en «action_required», y hay que
   aprobarlo a mano (2026-09-24). Si un cambio mueve una captura de sc-docs, lanza el workflow sobre la rama ANTES de
   abrir el PR.
