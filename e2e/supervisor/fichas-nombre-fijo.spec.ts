@@ -11,7 +11,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. Al bajar, el nombre y su línea de datos siguen donde estaban, encima del contenido, y lo que pasa por debajo
  *      no se ve a través.
  *   2. En reposo lo que se ve y se pulsa es la cabecera de verdad (el nombre se edita en su sitio), y la copia de
- *      arriba no se oye: un solo `h1`.
+ *      arriba no se oye ni se encuentra por su texto: un solo `h1`, y el nombre escrito una sola vez.
  *   3. Por debajo de 1340 la cabecera va a todo lo ancho, encima del resumen: la copia sale solo cuando queda fija en
  *      la columna del contenido, sin tapar la franja del resumen.
  *   4. Un salto de canal («Ir a») deja el título del canal debajo del nombre fijo, no tapado por él.
@@ -57,8 +57,11 @@ const enElPunto = (page: Page, x: number, y: number) =>
   page.evaluate(
     ([x, y]) => {
       const el = document.elementFromPoint(x, y);
+      // Lo pintado: el texto del elemento o, si no lleva (la copia lo pinta con `::before`), el de su `::before`.
+      const antes = el ? getComputedStyle(el, '::before').content : 'none';
+      const pintado = el?.textContent?.trim() || (/^".*"$/.test(antes) ? antes.slice(1, -1) : '');
       return {
-        texto: el?.textContent?.trim() ?? '',
+        texto: pintado,
         cabecera: !!el?.closest('.ficha-rail > .headline'),
         muda: !!el?.closest('[aria-hidden="true"]'),
         resumen: !!el?.closest('.ficha-summary'),
@@ -105,6 +108,8 @@ test('en reposo, lo que se ve y se pulsa es la cabecera de verdad, y hay un solo
   expect(visto.muda).toBe(false);
   await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(reposo.nombre.texto);
+  // Buscarlo por su texto da con la cabecera y nada más: la copia lo pinta, no lo escribe.
+  await expect(page.getByText(reposo.nombre.texto, { exact: true })).toHaveCount(1);
 });
 
 test('por debajo de 1340 la copia sale solo al quedar fija, en la columna del contenido, sin tapar el resumen', async ({ page }) => {
