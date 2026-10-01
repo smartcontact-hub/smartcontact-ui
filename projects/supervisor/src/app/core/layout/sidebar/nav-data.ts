@@ -4,6 +4,11 @@ export interface NavItem {
   /** i18n key resolved by the TranslateModule. */
   readonly labelKey: string;
   readonly icon: NavIconKey;
+  /**
+   * Logo de producto en lugar del icono, de `public/logos/<logo>.svg`: la fila lo pinta como máscara
+   * con el color de la fila. `icon` sigue sirviendo a la paleta de comandos.
+   */
+  readonly logo?: string;
   readonly path?: string;
   readonly children?: readonly NavItem[];
 }
@@ -93,6 +98,8 @@ export const NAV_SECTIONS: readonly NavSection[] = [
           {
             labelKey: 'sidebar.scc',
             icon: 'table-2',
+            /* SCC es CusCare: lleva su logo del DS (Figma 13775:62831), no un icono (DD-137). */
+            logo: 'cuscare-isotype',
             path: '/scc',
           },
         ],

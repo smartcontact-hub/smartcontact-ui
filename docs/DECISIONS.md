@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | El sidebar sigue a su tablero de Figma (14912:6324): sin botón de anclar · plegado sigue abierto lo que estaba abierto · texto e icono en blanco y la flecha al 60% · todos los iconos a 14, los que nombra el catálogo del tablero (14912:6774) · «Diseñador VUI» y «Análisis de Flujo» (enmienda DD-118 §2 y §5) | DD-137 |
+> | El sidebar sigue a su tablero de Figma (14912:6324): sin botón de anclar · plegado sigue abierto lo que estaba abierto · texto e icono en blanco y la flecha al 60% · todos los iconos a 14, los que nombra el catálogo del tablero (14912:6774) · «Diseñador VUI» y «Análisis de Flujo» · SCC (CusCare) lleva el logo de CusCare (enmienda DD-118 §2 y §5) | DD-137 |
 > | Un alta dice en su resumen lo que falta («Falta: nombre · extensión») y, cuando «Crear …» se enciende, «Listo para crear»: `sc-summary-status`, un solo `role="status"` que cambia en su sitio · sin porcentaje ni barra · un error de formato va en su campo · al editar, nunca «Listo» | DD-136 |
 > | Con qué nace un grupo o un agente se fija en Contact Center (› Grupos, › Agentes), con las palabras de su ficha, y el alta lo lee · de fábrica, los valores del documento de producto (10 · 15 · 60 s, Baja, Balanceada, desbordar; el agente, todo menos la numeración especial) · la cola agotada sigue por el VUI | DD-135 |
 > | Una ayuda bajo un campo dice lo que dicen las fuentes (manual de Voice, documento de producto) o no existe · va en el `helperText`, que la anuncia · `sc-select` pone sus `aria-*` en el elemento con foco · los desplegables del DS hablan el idioma de la app · fuera las ⓘ de la ficha de grupo | DD-133 |
@@ -121,6 +121,10 @@ contra el código:
    `group`, que estaban cruzados; la paleta de comandos copia el icono del menú.
 6. **«Diseñador VUI» y «Análisis de Flujo»** en todo el Supervisor en español. «Análisis» también en inglés, francés y
    portugués; «VUI Designer» se queda como nombre de producto en esos tres.
+7. **La fila SCC es CusCare (`SCC-*` es su clave de Jira) y lleva el logo de CusCare del DS** (Figma `13775:62831`) en
+   vez de un icono. En el código, `public/logos/cuscare-isotype.svg` como máscara con el color de la fila (blanco en
+   reposo, navy seleccionada), en la caja de `--sc-icon-size-default`. En el tablero, una instancia del logo en cada
+   sidebar; la tarjeta del catálogo («SCC (ignorar)») no cambia.
 
 **Razón** ·
 - **Medido en Figma** (exportando a SVG los 199 iconos del tablero): todas las filas con texto e icono en `#FFFFFF`,
