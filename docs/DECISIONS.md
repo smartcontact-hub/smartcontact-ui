@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Las fichas en tres columnas que arrancan a la misma altura (índice, contenido y resumen): el título va en la columna del contenido · el resumen, sin rótulo a la vista (la región conserva su nombre) · «Eliminar», bajo el índice · por debajo de 1340, como estaba · una rejilla con áreas, sin mover nada en el DOM (enmienda DD-121 §2 y DD-122 §8) | DD-144 |
 > | Las altas vuelven al índice de la edición (revierte DD-138): ✓ en la sección que se deja completa (`sectionsDone` de `sc-form-section-nav`) y el punto rojo en la que se deja sin lo obligatorio · «Atrás» y «Siguiente» al pie (`sc-alta-pie`), que llevan al principio de la sección nueva con el foco en su título · General sigue siendo la puerta del grupo · la sección no va en la dirección (enmienda DD-121 §11, DD-122 §1 y §4, DD-130 §2 y DD-136) | DD-143 |
 > | Con Teléfono, el teléfono saliente es obligatorio (en el alta, al editar y al duplicar) y se elige de los números asignados (`OUTBOUND_NUMBERS`), sin escribir uno nuevo · «Caducar sesión» · la ayuda de Balanceada, corregida · Recursos sin Etiquetas, apagado y guardado (`conEtiquetas`) · el teléfono se nombra por su rótulo (enmienda DD-121 §11, DD-136 §2, DD-141 §4-5 y DD-133 §1) | DD-142 |
 > | Las estrategias reparten conversaciones: «Menos conversaciones atendidas» (Teléfono) y «Menos conversaciones activas» (Chat) · lo guardado con un nombre de antes se lee con el de ahora (`normalize` de `createVersionedStorage`), sin subir la versión · la prioridad solo cuenta en las entrantes · fuera «Desbordar sesión», que se sigue guardando sin pantalla · cerrar el chat por inactividad nace con 5 min · el tamaño de cola, un texto por modo · la tipificación, sin su cuenta (enmienda DD-133 §1, DD-121 §5 y DD-135 §3) | DD-141 |
@@ -63,7 +64,7 @@
 > | Otro juego de datos para juzgar una pantalla: `?datos=tortura` estira textos y vacía la mitad de las descripciones, en sus propias claves y sin tocar los de siempre · `?datos=editorial` da a los grupos y a los servicios nombres de negocio y baraja los agentes generados, y el juego se elige en Configuración → Sistema · la tortura llega también a Conversaciones y a los widgets del Dashboard · en una tabla que se ajusta, las cifras miden su dato y el nombre recorta con «…» y el `title` · con un dato más largo que lo medido, la celda recorta con «…» y el texto entero en el `title` (matiza DD-102) | DD-124 |
 > | Agrupar por espacio: escalera 7 · 14 · 28 (etiqueta→control · entre hermanos · entre grupos y antes del botón que envía), entre grupos al menos el doble que dentro · manda sobre la maqueta, y el Kit se apunta en figma-pendiente · lo mide `e2e/supervisor/agrupacion.spec.ts` · `sc-dialog` con cuerpo: la botonera a 28 y 14 entre hermanos | DD-123 |
 > | Un solo índice en toda la app (`sc-form-section-nav`: fichas, constructor y Contact Center) · cada fila es un ENLACE a su sitio (ruta o `?seccion=`), la actual con `aria-current="page"` · clic navega, Cmd+clic abre otra pestaña, Atrás vuelve · en un alta la sección no deja rastro · un solo «Guardar» por ficha, con las secciones con cambios marcadas en el índice · agente y usuario al molde de la ficha de grupo (enmienda DD-121 §2 y DD-113) | DD-122 |
-> | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
+> | La ficha de grupo: índice lateral con 4 secciones (General · Distribución y colas · Recursos · Agentes) y resumen en tarjetas en una columna fija a la derecha (franja arriba por debajo de 1340) · la cabecera de la ficha va ENCIMA de índice y contenido (`.ficha-rail`; desde DD-144, en la columna del contenido) · Chat, casilla madre de Web Chat y WhatsApp · distribución y cola dentro de cada canal (`resolveGroup`) · la tabla de agentes del grupo gestiona composición: sin pausa, ≥1 canal, «Quitar» con un sentido · panel rápido de agentes desde el listado · el alta es la ficha en modo alta, con General de puerta · listado y valores por defecto por canal (enmienda DD-119 §2 §4, DD-101 §1 §2, DD-100 §3) | DD-121 |
 > | Sidebar en producción: abrir una categoría no cierra las demás y nada se cierra al salir · plegado solo la rama de la página · se despliega con el ratón y se ancla con su botón · selección en cyan · subsecciones en 450ms con la curva de Apollo (enmienda DD-112 §3-§5) | DD-118 |
 > | La cabecera del Dashboard: pestañas sin fondo con `⋮` y `+ Monitor` pegados; las acciones de la página en `p-toolbar` en tres grupos con `sc-divider` (enmienda DD-113 §6) · en modo pared un monitor sin widgets enseña su vacío y el carrusel se lo salta | DD-114 |
 > | Cambiar de COLECCIÓN (se vacían búsqueda y selección) son pestañas `p-tabs`; filtrar la misma lista o elegir un valor son botones segmentados `sc-selectbutton` · un componente de primeng.dev entra NATIVO tal cual (doc entera con `tools/primeng-doc.mjs`, sin contador ni icono que el ejemplo no tenga) y un desvío de comportamiento lo para `audit:primeng-coupling` §F · un separador entre bloques es `sc-divider` salvo que su línea deba alinearse con el contenido · el Supervisor sin `ripple`, como primeng.dev | DD-113 |
@@ -102,6 +103,73 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-144 · 2026-10-01 — Las fichas en tres columnas: índice, contenido y resumen arrancan a la misma altura
+
+**Contexto** · Pedido el 2026-10-01, tras la segunda revisión con el equipo: que el contenido suba arriba y el resumen
+se alinee con el índice, en una rejilla de tres columnas, sin el rótulo «Resumen». Hasta hoy la cabecera de la ficha
+(el nombre, su línea y «Eliminar») iba en una fila propia, encima de las tres columnas (DD-121 §2, DD-122 §8). Medido
+a 1440:
+- el título, en y=79, y el índice, el contenido y el resumen, en y≈135;
+- el resumen gastaba 25 px en su rótulo;
+- «Eliminar» iba arriba a la derecha.
+
+**Decisión** ·
+1. **Tres columnas que arrancan a la misma altura**, en las tres fichas, al crear y al editar: el índice (196), el
+   contenido y el resumen (240). `.ficha-rail` pasa de una fila partida (flex) a una rejilla con áreas.
+2. **El título va en la columna del contenido**, encima de la sección: su borde izquierdo es el de la tarjeta, y 14
+   lo separan de ella.
+3. **El resumen, sin rótulo a la vista**: su `h2` queda oculto (`visually-hidden`) y sigue nombrando la región
+   («Resumen»).
+4. **«Eliminar», bajo el índice**, al editar: a 28 de su última fila, el aire entre grupos, y con su icono en la
+   vertical de los del índice.
+5. **Por debajo de 1340, como estaba**: el título arriba a todo lo ancho, el resumen en su franja, y luego el índice y
+   el contenido. Las áreas de la rejilla mueven lo que se ve; el orden del DOM, y el del tabulador, es el mismo en las
+   dos maquetas.
+
+**Razón** ·
+- **Lo que se lee primero, arriba:** el nombre de la ficha, el índice y el resumen empiezan en la misma línea. Antes,
+  el índice, el contenido y el resumen arrancaban 56 px por debajo del título.
+- **El rótulo no decía nada que no dijeran sus tarjetas**, y empujaba la primera 25 px.
+- **Una rejilla con áreas, sin mover el título en el DOM:** el título cambia de sitio según el ancho sin pintarse dos
+  veces, y el lector y el tabulador lo encuentran siempre en el mismo orden.
+- **Medido el 2026-10-01, en este build:**
+  - a 1440, el índice, el título y el resumen arrancan en y=79, y el título en x=332, la de la tarjeta;
+  - el rótulo del resumen mide 1 px (oculto);
+  - «Eliminar» queda a 28 de la última fila del índice, y su icono a 0,75 de la vertical de los del índice;
+  - por debajo de 1340, igual que antes;
+  - `revision`, en regla en las 24 vistas de las tres fichas.
+- **Rojo primero:** `fichas-tres-columnas`, ocho de nueve en rojo contra la maqueta anterior:
+  - seis por el título en y=79 con el índice en y=135;
+  - una por el rótulo, a 18 px;
+  - una por «Eliminar» fuera del índice.
+
+  La de por debajo de 1340 es de guarda.
+
+**Descartadas** ·
+- **Mover el título dentro de la columna del contenido, en el DOM** → por debajo de 1340 tendría que volver encima del
+  resumen, y habría que pintarlo dos veces o moverlo con código.
+- **Quitar el `h2` del resumen** → la región se quedaría sin nombre para el lector.
+- **«Eliminar» a la derecha del título, como antes** → la revisión lo pidió bajo el índice.
+- **Subir la primera fila del índice (y=88) a la altura del título y el resumen (y=79)** → es el relleno del índice de
+  Contact Center (8,75), el mismo desfase que tiene allí con su contenido (DD-122: Contact Center no se mueve un
+  píxel).
+
+**Consecuencias** ·
+- **Enmienda** DD-121 §2 (la cabecera ya no va encima de índice y contenido) y DD-122 §8 (agente y usuario, con el
+  mismo molde).
+- **Pruebas:**
+  - `fichas-tres-columnas.spec.ts`, nueva, con nueve;
+  - se reescriben, cada una con su porqué, `ficha-grupo` (el molde, con el título en el contenido) y
+    `ficha-usuario-agente` («Eliminar» bajo el índice).
+- **Queda para G2:**
+  - el nombre fijo al bajar;
+  - una prueba que fije que borrar pide escribir el nombre, que ya pide `sc-delete-entity-dialog` en modo `single` en
+    las tres fichas;
+  - el resumen que lleva a su sección.
+- **Para el Kit:** `figma-pendiente` §35.
 
 ---
 
@@ -1566,7 +1634,8 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
    guardado contextual de un registro con secciones que dependen entre sí (Shopify, las fichas de Salesforce).
    `sectionsWithChanges` y `titleKey` son entradas nuevas del índice; el estado nuevo va a `figma-pendiente` §5.
 7. **Un aviso cancelado vuelve a donde estaba**: el router con `canceledNavigationResolution: 'computed'`.
-8. **Agente y usuario, al molde de la ficha de grupo**. Van con la cabecera encima, el índice a la izquierda, una
+8. **Agente y usuario, al molde de la ficha de grupo** (desde DD-144, el título en la columna del contenido y las tres
+   columnas a la misma altura). Van con la cabecera encima, el índice a la izquierda, una
    sección a la vista en su `sc-section-card` y el resumen a la derecha con sus tres cifras de siempre, que dejan
    la franja del nombre (desde DD-126, cada proporción es un widget con su anillo; desde DD-130, la cabecera va
    también en el alta). Cada ficha tiene un orden, el de sus dependencias, igual en los dos modos:
@@ -1647,7 +1716,9 @@ tres fichas (#240) y el alta en diálogo (DD-119).
    «Eliminar») va ENCIMA de índice y contenido (`.ficha-rail` en `_page.scss` solo parte la fila), en la misma vertical
    que las fichas de agente y usuario, que siguen con pestañas: la divergencia es a propósito, y extender el índice a
    ellas es el siguiente paso si se valida en grupos. **Enmendado por DD-122 (2026-09-27)**: producto pide un solo
-   índice con una sola forma, y agente y usuario pasan a este molde.
+   índice con una sola forma, y agente y usuario pasan a este molde. **Enmendado por DD-144 (2026-10-01)**: el
+   nombre va en la columna del contenido, las tres columnas arrancan a la misma altura y «Eliminar» va bajo el
+   índice.
 3. **Resumen a la derecha, en su propia columna** (enmendado el 2026-09-27; antes iba bajo el índice, ver
    Descartadas). Tarjetas de KPI (`sc-group-summary`): agentes, con una barra `p-metergroup` por canal (base: el
    ejemplo «Template» de MeterGroup en primeng.dev) y aviso con icono y texto si un canal activo no tiene quien lo

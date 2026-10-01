@@ -8,9 +8,10 @@
  * nativo a su lado, como el ejemplo «Preview» de ProgressSpinner de primeng.dev. Lo que solo tiene el resumen
  * de grupo (canales con su barra, avisos, pares) sigue en su componente.
  *
- * La escalera 7 · 14 · 28 (AGENTS «UX de pantalla» 9, DD-123): el título, a 7 de la primera tarjeta; 14 entre
- * tarjetas, que son hermanas; dentro de un widget, el rótulo, la cifra y su nota son una pieza (7) y lo que
- * cuelga debajo (las filas por canal del grupo) va a 28, el doble que entre esas filas.
+ * La escalera 7 · 14 · 28 (AGENTS «UX de pantalla» 9, DD-123): 14 entre tarjetas, que son hermanas (el título no
+ * se ve desde DD-144: nombra la región, y el resumen arranca a la altura del índice); dentro de un widget, el
+ * rótulo, la cifra y su nota son una pieza (7) y lo que cuelga debajo (las filas por canal del grupo) va a 28, el
+ * doble que entre esas filas.
  *
  * La tipografía la ponen las clases `.sc-text-*` de la plantilla; aquí solo viven el sitio, el color y
  * el aire.

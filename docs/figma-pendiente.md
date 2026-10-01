@@ -122,6 +122,7 @@ variable cuando su nombre es único y avisa.
 - [ ] **32** · Las tres altas con el índice de la edición: el ✓ de la sección hecha y «Atrás» / «Siguiente» al pie.
 - [ ] **33** · La ficha de grupo y Contact Center › Grupos: estrategias con «conversaciones», sin «Desbordar sesión».
 - [ ] **34** · El teléfono saliente obligatorio y cerrado, «Caducar sesión» y Recursos sin Etiquetas.
+- [ ] **35** · Las fichas en tres columnas: el título en el contenido, el resumen sin rótulo y «Eliminar» bajo el índice.
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
@@ -975,6 +976,24 @@ estados, textos y un campo menos · **Sin verificar** contra el fichero: el cód
 
 **Cómo sabes que está hecho:** las maquetas dicen lo mismo que `/admin/grupos/editar/1?seccion=distribucion`, el
 diálogo de duplicar de un grupo con Teléfono y `/config/aed/grupos`.
+
+---
+
+## 35 · Las fichas en tres columnas: el título en el contenido y el resumen sin rótulo (2026-10-01)
+
+**Estado:** pendiente · **Dónde:** Figma, las maquetas de las fichas de grupo, agente y usuario, al crear y al editar
+· **Esfuerzo:** recolocar la cabecera y «Eliminar», y quitar un rótulo, sin piezas nuevas · **Sin verificar** contra el
+fichero: el código no cita los nodos de las fichas.
+
+- **Por qué** (DD-144): el índice, el contenido y el resumen arrancan a la misma altura.
+- **Qué cambiar:**
+  - el nombre de la ficha y su línea, en la columna del contenido, encima de la sección y a 14 de ella;
+  - el resumen, sin su rótulo «Resumen», arriba de su columna;
+  - «Eliminar», bajo el índice, a 28 de su última fila;
+  - por debajo de 1340, como estaba: el título arriba, a todo lo ancho, y el resumen en su franja.
+
+**Cómo sabes que está hecho:** las maquetas se ven como `/admin/grupos/editar/11`, `/admin/agentes/editar/1` y
+`/admin/usuarios/crear` a 1440.
 
 ---
 
