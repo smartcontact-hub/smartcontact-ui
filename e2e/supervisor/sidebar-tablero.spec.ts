@@ -79,6 +79,21 @@ test('sidebar · texto e icono en blanco, flecha al 60% y el padre de la página
   expect(acento, 'el padre de Grupos no lleva el cyan').toEqual(cyan);
 });
 
+test('sidebar · SCC (CusCare) lleva el logo de CusCare en el color de su fila', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  await page.locator('.sidebar').hover();
+  await fila(page, 'sidebar.supervision').click();
+
+  const logo = fila(page, 'sidebar.scc').locator('.nav-item__logo');
+  await expect(logo).toHaveCount(1);
+  await expect(fila(page, 'sidebar.scc').locator('sc-icon.nav-item__icon')).toHaveCount(0);
+  await expect(logo).toHaveCSS('mask-image', /cuscare-isotype\.svg/);
+  await expect(logo).toHaveCSS('width', '14px');
+  expect(await rgba(page, '.nav-item[data-nav-key="sidebar.scc"] .nav-item__logo', 'background-color')).toEqual([
+    255, 255, 255, 1,
+  ]);
+});
+
 test('sidebar · los iconos del catálogo del tablero, todos a 14', async ({ page }) => {
   await goto(page, 'nodo-ia/monitor');
   await page.locator('.sidebar').hover();
