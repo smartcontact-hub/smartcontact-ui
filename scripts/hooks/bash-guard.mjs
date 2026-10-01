@@ -398,6 +398,17 @@ const empiezaPor = (seg, re) => re.test(seg.replace(/^(\s*[A-Za-z_][A-Za-z_0-9]*
 const esPushDeCommits = (seg) =>
   empiezaPor(seg, /^git\s+push\b/) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
 
+/** El destino de un segmento que es un `cd`: su ruta si es LITERAL; `null` si es un `cd` pero no se sabe
+ *  adónde va (variable, `-`, sin argumento); `undefined` si el segmento no es un `cd`. */
+function destinoDeCd(seg) {
+  if (!/^cd(\s|$)/.test(seg)) return undefined;
+  const m = seg.match(/^cd\s+(?:"([^"$`]+)"|'([^']+)'|([^\s"'$`]+))$/);
+  const ruta = m ? (m[1] ?? m[2] ?? m[3]) : null;
+  return ruta && ruta !== '-' ? ruta : null;
+}
+
+const irA = (dir, ruta) => (ruta === '~' || ruta.startsWith('~/') ? resolve(process.env['HOME'] ?? '/', ruta.slice(2)) : resolve(dir, ruta));
+
 /**
  * La carpeta donde de verdad corre el comando: la de la sesión, salvo que empiece por `cd <ruta>`.
  *
@@ -410,13 +421,38 @@ export function carpetaEfectiva(cmd, cwd) {
   let dir = cwd;
   for (const seg of segmentos(cmd)) {
     if (/^(export\s+)?[A-Za-z_][A-Za-z_0-9]*=\S*$/.test(seg)) continue; // asignaciones delante del cd
-    const m = seg.match(/^cd\s+(?:"([^"$`]+)"|'([^']+)'|([^\s"'$`]+))$/);
-    if (!m) break;
-    const ruta = m[1] ?? m[2] ?? m[3];
-    if (ruta === '-') break;
-    dir = ruta === '~' || ruta.startsWith('~/') ? resolve(process.env['HOME'] ?? '/', ruta.slice(2)) : resolve(dir, ruta);
+    const ruta = destinoDeCd(seg);
+    if (!ruta) break;
+    dir = irA(dir, ruta);
   }
   return dir;
+}
+
+/**
+ * La carpeta en que corre CADA segmento (alineada con `segmentos(cmd)`): la que dejan los `cd` literales
+ * anteriores, estén donde estén. `carpetaEfectiva` solo sigue los que ABREN el comando, y para decidir de
+ * qué repo es un `git push` no basta: `false && cd <otro> && git push` o `git add -A && cd <otro> && git push`
+ * lo juzgaban contra la sesión (2026-10-01). Un `( … )` es un subshell: su `cd` no sale de él, así que
+ * `(cd <otro> && git push); git push` deja el segundo push en la carpeta de la sesión. Un `cd` que no se
+ * sabe adónde va (variable, `-`) vuelve a la sesión, que es lo estricto. No se modela el `cd` condicionado
+ * a otro test (`[ -d x ] && cd x; git push`): el repo no lo usa y complicaría lo que se lee aquí.
+ */
+export function carpetasPorSegmento(cmd, cwd) {
+  const pila = [];
+  let dir = cwd;
+  return segmentos(cmd).map((seg) => {
+    let s = seg;
+    while (s.startsWith('(')) {
+      pila.push(dir);
+      s = s.slice(1).trimStart();
+    }
+    const cierres = sinComillas(s).match(/\)+$/)?.[0].length ?? 0;
+    const enSuCarpeta = dir;
+    const ruta = destinoDeCd(s.slice(0, s.length - cierres).trimEnd());
+    if (ruta !== undefined) dir = ruta === null ? cwd : irA(dir, ruta);
+    for (let i = 0; i < cierres && pila.length; i++) dir = pila.pop();
+    return enSuCarpeta;
+  });
 }
 
 /**
@@ -682,9 +718,12 @@ function evaluarBase(cmd, ctx = {}) {
   const segs = segmentos(cmd);
 
   // #7 (a) — push sin preflight fresco sobre el árbol FINAL. Solo en un árbol de este repo: en otro
-  // no hay cadena que escriba la marca (`usaPreflight`).
-  if (segs.some(esPushDeCommits) && (ctx.usaPreflight || usaPreflight)(cwd)) {
-    const st = preflight(cwd);
+  // no hay cadena que escriba la marca (`usaPreflight`), y exigirla dejó a un subagente con sus commits
+  // sin subir (2026-10-01). Cada push se juzga en la carpeta de SU segmento (`carpetasPorSegmento`).
+  const carpetas = carpetasPorSegmento(cmd, ctx.cwd || process.cwd());
+  for (const [i, seg] of segs.entries()) {
+    if (!esPushDeCommits(seg) || !(ctx.usaPreflight || usaPreflight)(carpetas[i])) continue;
+    const st = preflight(carpetas[i]);
     if (!st.ok)
       return {
         decision: 'deny',

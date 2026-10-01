@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -712,6 +712,51 @@ test('#7 push en un repositorio sin la cadena de preflight → allow; en un árb
   } finally {
     rmSync(base, { recursive: true, force: true });
   }
+});
+
+// 2026-10-01: `false && cd <otro repo> && git push` se denegó con el motivo de #7 aunque el push era de OTRO
+// repositorio, y un subagente que barría el cuaderno privado del autor se quedó con sus commits sin subir.
+// #301 arregló el cierre que corría de verdad (`cd <otro> && … && git push`), pero `carpetaEfectiva` solo
+// sigue los `cd` que ABREN el comando: con algo delante (`false &&`, `git add -A &&`), dentro de un `( … )`,
+// o tras empujar al otro repo, el push se juzgaba en la carpeta de la sesión. Con repos de verdad: este (con
+// el script de la marca, que es lo que mira `usaPreflight`), un worktree suyo y otro ajeno.
+test('#7 cada push se juzga en la carpeta de SU segmento: un `cd` que no abre el comando, un subshell o la vuelta a este repo', (t) => {
+  const raiz = realpathSync(mkdtempSync(join(tmpdir(), 'bash-guard-segmentos-')));
+  t.after(() => rmSync(raiz, { recursive: true, force: true }));
+  const git = (cwd, ...args) =>
+    spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false', ...args], { cwd, env: SIN_GIT, encoding: 'utf8' });
+  const propio = join(raiz, 'propio');
+  const otro = join(raiz, 'otro');
+  const wt = join(raiz, 'wt');
+  for (const d of [propio, otro]) {
+    mkdirSync(join(d, 'sub'), { recursive: true });
+    git(d, 'init', '-q');
+  }
+  mkdirSync(join(propio, 'scripts'));
+  writeFileSync(join(propio, 'scripts', 'preflight-mark.mjs'), '');
+  git(propio, 'add', '-A');
+  git(propio, 'commit', '-q', '-m', 'x');
+  assert.equal(git(propio, 'worktree', 'add', '-q', wt, '-b', 'rama').status, 0, 'el worktree de este repo debe existir');
+
+  const ctx = { sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], preflight: rojo.preflight, cwd: propio };
+  // ROJO de antes, VERDE ahora: el comando del informe y sus parientes (algo delante del `cd`, o un subshell).
+  allow(`false && cd ${otro} && git push`, ctx);
+  allow(`git add -A && cd ${otro} && git push`, ctx);
+  allow(`git status; cd ${otro}/sub; git push origin main`, ctx);
+  allow(`(cd ${otro} && git push) && echo hecho`, ctx);
+  // Lo de este repo sigue exigiendo marca: su worktree, con o sin algo delante del `cd`.
+  deny(`false && cd ${wt} && git push`, ctx, /LEARNINGS #7/);
+  deny(`git fetch && cd ${wt} && git push`, ctx, /LEARNINGS #7/);
+  // ROJO de antes, y era un hueco: cada push cuenta en SU carpeta, y el que vuelve a este repo no se cuela.
+  deny(`cd ${otro} && git push && cd ${propio} && git push`, ctx, /LEARNINGS #7/);
+  // Un `cd` que no se sabe adónde va (variable) puede ser este repo, venga uno de donde venga.
+  deny('cd $CUADERNO && git push', ctx, /LEARNINGS #7/);
+  deny(`cd ${otro} && cd $DESTINO && git push`, ctx, /LEARNINGS #7/);
+  // El `cd` de un subshell no sale de él: el push de después corre aquí.
+  deny(`(cd ${otro} && git push); git push`, ctx, /LEARNINGS #7/);
+  // Salida explícita; y con la marca en verde, tampoco se deniega.
+  allow(`cd ${propio} && git push # sc:ok`, ctx);
+  allow(`cd ${propio} && git push`, { ...ctx, preflight: verde.preflight });
 });
 
 test('#21 sacar la rama de otra sesión para trabajar en ella → deny; desde main, un fichero suelto o sc:ok → allow', () => {

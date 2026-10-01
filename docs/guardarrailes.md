@@ -107,7 +107,10 @@ rama, que es lo que toca en cuanto un PR se funde (`scripts/__tests__/pre-push-h
 `scripts/hooks/bash-guard.mjs`) deniega el `git push` antes de llegar aquí si la marca no cuadra
 con el árbol, junto con los otros comandos que LEARNINGS #7, #11 y #12 prohíben. Solo en un árbol de
 este repo (el que tiene `scripts/preflight-mark.mjs`): el push de otro repositorio desde una sesión de
-aquí pasa, porque allí no hay cadena que escriba la marca. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
+aquí pasa, porque allí no hay cadena que escriba la marca. Cada `git push` se juzga en la carpeta de SU
+segmento del comando: la que dejan los `cd` literales anteriores, también los que no abren el comando
+(`git add -A && cd <otro> && git push`), sin salir de un `( … )`; y con un `cd` que no se sabe adónde va
+(una variable) manda la de la sesión. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
 pantalla de que te la has saltado. Existe porque esta regla era la más incumplida del repo:
 se lee al empezar la tarea y el disparador salta horas después.
 
