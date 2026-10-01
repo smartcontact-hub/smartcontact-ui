@@ -12,7 +12,9 @@
  *     navegador, la misma regla que `routerLink`;
  *   · el rótulo visible de encima, si lo hay, es el nombre del índice;
  *   · una sección con cambios sin guardar se marca, distinto del punto rojo de lo que falta, y los
- *     dos estados se oyen.
+ *     dos estados se oyen;
+ *   · en un alta, la sección que se deja completa lleva ✓, que se oye y entra con movimiento solo si
+ *     llega después de pintar el índice (DD-143).
  */
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -36,6 +38,7 @@ const SECCIONES: readonly FormNavSection[] = [
     [titleKey]="titulo()"
     [sectionsWithErrors]="errores()"
     [sectionsWithChanges]="cambios()"
+    [sectionsDone]="hechas()"
     [flush]="true"
     (activeChange)="elegidas.push($event)"
   />`,
@@ -46,6 +49,7 @@ class Host {
   readonly titulo = signal<string | null>(null);
   readonly errores = signal<ReadonlySet<string>>(new Set());
   readonly cambios = signal<ReadonlySet<string>>(new Set());
+  readonly hechas = signal<ReadonlySet<string>>(new Set());
   readonly elegidas: string[] = [];
 }
 
@@ -187,5 +191,44 @@ describe('sc-form-section-nav · lo que está sin guardar y lo que falta se ven 
     const puntos = [...filas[0]!.querySelectorAll('.form-nav__dot')];
     expect(puntos.map((p) => p.classList.contains('form-nav__dot--changes'))).toEqual([false]);
     expect(filas[0]!.querySelectorAll('.form-nav__sr').length).toBe(2);
+  });
+});
+
+describe('sc-form-section-nav · la sección que se deja completa lleva ✓ (DD-143)', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [Host], providers: [provideTranslateService()] });
+  });
+
+  const oculto = (a: HTMLElement) => [...a.querySelectorAll('.form-nav__sr')].map((s) => s.textContent?.trim());
+
+  it('lleva ✓ y se oye como texto del enlace; las demás, no', () => {
+    const { filas } = montar((h) => h.hechas.set(new Set(['general'])));
+    expect(filas.map((a) => a.querySelector('.form-nav__done') !== null)).toEqual([true, false, false]);
+    expect(oculto(filas[0]!)).toEqual(['sc.formSectionNav.sectionDone']);
+    expect(oculto(filas[1]!)).toEqual([]);
+    // El ✓ es un dibujo: lo que dice, lo dice el texto oculto.
+    expect(filas[0]!.querySelector('.form-nav__done')?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('lo que falta y los cambios ganan al ✓: se ve un solo marcador, y se oyen todos', () => {
+    const { filas } = montar((h) => {
+      h.hechas.set(new Set(['general', 'distribucion']));
+      h.errores.set(new Set(['general']));
+      h.cambios.set(new Set(['distribucion']));
+    });
+    expect(filas[0]!.querySelector('.form-nav__done')).toBeNull();
+    expect(filas[0]!.querySelector('.form-nav__dot:not(.form-nav__dot--changes)')).not.toBeNull();
+    expect(filas[1]!.querySelector('.form-nav__done')).toBeNull();
+    expect(filas[1]!.querySelector('.form-nav__dot--changes')).not.toBeNull();
+    expect(oculto(filas[0]!)).toEqual(['sc.formSectionNav.sectionHasErrors', 'sc.formSectionNav.sectionDone']);
+  });
+
+  it('el ✓ que ya estaba al pintar el índice no entra con movimiento; el que llega después, sí', () => {
+    const { fixture, raiz, host } = montar((h) => h.hechas.set(new Set(['general'])));
+    host.hechas.set(new Set(['general', 'distribucion']));
+    fixture.detectChanges();
+    const filas = [...raiz.querySelectorAll<HTMLAnchorElement>('a.form-nav__item')];
+    expect(filas[0]!.querySelector('.form-nav__done')?.classList.contains('form-nav__done--entra')).toBe(false);
+    expect(filas[1]!.querySelector('.form-nav__done')?.classList.contains('form-nav__done--entra')).toBe(true);
   });
 });

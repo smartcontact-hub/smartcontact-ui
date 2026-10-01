@@ -43,24 +43,23 @@ export const nombreCaptura = (vista) =>
     .replace(/[^a-z0-9-]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-/** Quita lo que va delante del texto de una pestaña o sección: la ligadura de su icono de Material, o el número de
- *  un paso del alta (DD-138: el nativo lo pinta delante del título). */
-export const nombreDe = (txt) => txt.replace(/^\s*(?:[a-z_]+|\d+)\s*\n/, '').replace(/\s+/g, ' ').trim();
+/** Quita lo que va delante del texto de una pestaña o sección: la ligadura de su icono de Material. */
+export const nombreDe = (txt) => txt.replace(/^\s*[a-z_]+\s*\n/, '').replace(/\s+/g, ' ').trim();
 
 /**
- * Lo mínimo que abre los pasos apagados de un alta: la de grupo no deja pasar de General sin nombre (DD-121). Se
- * rellena al encontrar el primer paso apagado, así que la primera vista se captura como la ve quien llega. Un alta
- * nueva con puerta entra aquí; si no, sus pasos se saltan con un aviso en vez de esperar 30 s a un clic imposible.
+ * Lo mínimo que abre la puerta de un alta: la de grupo no deja salir de General sin nombre (DD-121), y el índice se
+ * queda en General. Se rellena al encontrarla cerrada, así que la primera vista se captura como la ve quien llega. Un
+ * alta nueva con puerta entra aquí; si no, su sección se salta con un aviso en vez de capturar otra con su nombre.
  */
 export const PREPARAR = { 'admin/grupos/crear': { '#group-name': 'Revisión' } };
 
-/** Espera hasta `ms` a que la pestaña se encienda: el paso se abre en el siguiente ciclo de la app, no al teclear. */
-const encendida = async (item, ms = 3000) => {
+/** Espera hasta `ms` a que la pestaña o la sección quede a la vista: la app la abre en su siguiente ciclo. */
+const aLaVista = async (item, [marca, valor], ms = 3000) => {
   for (const hasta = Date.now() + ms; Date.now() < hasta; ) {
-    if (await item.isEnabled()) return true;
+    if ((await item.getAttribute(marca)) === valor) return true;
     await new Promise((r) => setTimeout(r, 100));
   }
-  return item.isEnabled();
+  return (await item.getAttribute(marca)) === valor;
 };
 
 /**
@@ -128,17 +127,20 @@ async function revisarRuta(page, ruta, datos) {
   const tira = nP > 1 ? pestanas : nS > 1 ? secciones : null;
   if (!tira) return [await revisarVista(page, ruta)];
   const vistas = [];
+  // La que está a la vista: la pestaña elegida, o la sección que el índice marca como la página actual.
+  const marca = nP > 1 ? ['aria-selected', 'true'] : ['aria-current', 'page'];
   for (let i = 0; i < (nP > 1 ? nP : nS); i++) {
     const item = tira.nth(i);
     const nombre = nombreDe(await item.innerText());
-    if (!(await item.isEnabled())) {
+    await item.click();
+    if (!(await aLaVista(item, marca, 1500))) {
       for (const [campo, valor] of Object.entries(PREPARAR[ruta.split('?')[0]] ?? {})) await page.locator(campo).fill(valor);
-      if (!(await encendida(item))) {
-        console.warn(`⚠ ${ruta} · ${nombre}: el paso está apagado y no se revisa. Lo que lo abre va en PREPARAR.`);
+      await item.click();
+      if (!(await aLaVista(item, marca))) {
+        console.warn(`⚠ ${ruta} · ${nombre}: la sección no se abre y no se revisa. Lo que la abre va en PREPARAR.`);
         continue;
       }
     }
-    await item.click();
     vistas.push(await revisarVista(page, `${ruta} · ${nombre}`));
   }
   return vistas;

@@ -4,6 +4,7 @@ import {
   computed,
   HostListener,
   inject,
+  Injector,
   input,
   OnDestroy,
   OnInit,
@@ -32,8 +33,8 @@ import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { AltaPasosComponent, NameInplaceComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
-import { pasosDeAlta } from '@shared/utils/alta-pasos';
+import { AltaPieComponent, NameInplaceComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
+import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -156,7 +157,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     NameInplaceComponent,
     SummaryKpiComponent,
     SummaryStatusComponent,
-    AltaPasosComponent,
+    AltaPieComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
     FormSectionNavComponent,
@@ -181,6 +182,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sectionLinks = inject(SectionLinksService);
+  private readonly injector = inject(Injector);
   private readonly agentsStore = inject(AgentsStore);
   private readonly agentDefaults = inject(AgentDefaultsStore);
   private readonly groupsStore = inject(GroupsStore);
@@ -393,25 +395,21 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   readonly seccion = input<string | undefined>();
 
   /**
-   * EL ALTA VA EN PASOS (DD-138), también al duplicar: las mismas cinco secciones, en el Stepper vertical nativo, y en
-   * cualquier orden (DD-130: aquí no hay puerta). Identidad está completa con nombre, extensión y, si se escriben,
-   * email y PIN bien escritos; las demás no piden nada.
+   * EL ALTA, CON EL ÍNDICE DE LA EDICIÓN (DD-143), también al duplicar: las mismas cinco secciones, en cualquier orden
+   * (DD-130: aquí no hay puerta), con ✓ en las que se dejan completas y «Atrás / Siguiente» al pie. Identidad está
+   * completa con nombre, extensión y, si se escriben, email y PIN bien escritos; las demás no piden nada.
    */
-  protected readonly alta = pasosDeAlta({
+  protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
-    bloqueado: () => false,
-    completo: (id) => id !== 'agent-section-identity' || this.identidadCompleta(),
+    completa: (id) => id !== 'agent-section-identity' || this.identidadCompleta(),
   });
 
-  /** La sección a la vista: en el alta y al duplicar, el paso abierto; al editar, la de la dirección (Identidad sin parámetro). */
+  /** La sección a la vista: en el alta y al duplicar, la abierta; al editar, la de la dirección (Identidad sin parámetro). */
   protected readonly activeSection = computed<string>(() =>
     this.mode() === 'edit'
       ? (AgentFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'agent-section-identity')
       : this.alta.abierta(),
   );
-
-  /** El número del paso a la vista, para el Stepper. */
-  protected readonly pasoAbierto = computed(() => this.navSections().findIndex((s) => s.id === this.activeSection()) + 1);
 
   /** La dirección de una sección: la primera, sin parámetro (es la dirección de la ficha). */
   private sectionUrl(id: string): UrlTree {
@@ -419,7 +417,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return this.sectionLinks.section(this.route, id === 'agent-section-identity' ? null : slug);
   }
 
-  /** Ir a otra sección. En el alta y al duplicar, el paso se abre sin tocar la dirección: Atrás sale (DD-122, DD-138). */
+  /** Ir a otra sección. En el alta y al duplicar, la sección se abre sin tocar la dirección: Atrás sale (DD-122, DD-143). */
   protected goTo(id: string): void {
     if (this.mode() !== 'edit') {
       this.alta.abrir(id);
@@ -428,15 +426,20 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.sectionLinks.go(this.sectionUrl(id));
   }
 
-  /** «Siguiente» y «Atrás» de cada paso: atajos al de al lado, no puertas (DD-138; la puerta es solo del grupo). */
+  /** «Siguiente» y «Atrás» del alta: atajos a la sección de al lado, no puertas (la puerta es solo del grupo). Llegan
+   *  arriba, con el foco en su título (DD-143). */
   protected siguiente(): void {
-    const id = this.alta.siguiente();
-    if (id) this.goTo(id);
+    this.irAlLado(this.alta.siguiente());
   }
 
   protected anterior(): void {
-    const id = this.alta.anterior();
-    if (id) this.goTo(id);
+    this.irAlLado(this.alta.anterior());
+  }
+
+  private irAlLado(id: string | null): void {
+    if (!id) return;
+    this.goTo(id);
+    llegarASeccion(id, this.injector);
   }
 
   /** Identidad completa: lo que pide «Crear agente» de esa sección. */
@@ -448,13 +451,15 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /**
-   * Lo que falta para poder guardar, en el índice: el nombre y la extensión, en Identidad. El índice es de la
-   * edición; en el alta y al duplicar van los pasos (DD-138), y lo que falta lo dice el resumen (DD-136).
+   * Lo que falta para poder guardar, en el índice: el nombre y la extensión, en Identidad. Al editar y al
+   * duplicar (que llega con esos campos vacíos a propósito). En un alta recién abierta no acusa, lo dice el
+   * resumen (DD-136); desde que se deja Identidad sin ellos, sí, como la ✓ de la que se deja completa (DD-143).
    */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
     const f = this.form();
     const falta = !f.name.trim() || !f.extension;
-    return new Set(this.mode() !== 'create' && falta ? ['agent-section-identity'] : []);
+    const acusa = this.mode() !== 'create' || this.alta.dejadas().has('agent-section-identity');
+    return new Set(acusa && falta ? ['agent-section-identity'] : []);
   });
 
   /**
@@ -760,8 +765,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       return;
     }
 
-    // El alta va en pasos (DD-138): la dirección no dice sección, y se quita la que traiga (el duplicado
-    // conserva su `seedFromId`).
+    // En el alta la dirección no dice sección (DD-143), y se quita la que traiga (el duplicado conserva su
+    // `seedFromId`).
     if (this.route.snapshot.queryParamMap.has('seccion')) {
       void this.sectionLinks.go(this.sectionLinks.section(this.route, null), { replace: true });
     }

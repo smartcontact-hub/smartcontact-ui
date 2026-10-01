@@ -216,10 +216,11 @@ export const pickSelectOption = async (
 
 /**
  * Cambia de sección en un formulario con `<sc-form-section-nav>` (constructor de
- * reglas, fichas).
+ * reglas, fichas y sus altas).
  *
- * Una sección a la vista: la de la dirección (`?seccion=`, DD-122); las demás no
- * están en el DOM. Un journey que toque dos secciones tiene que pasar por aquí en
+ * Una sección a la vista: al editar, la de la dirección (`?seccion=`, DD-122); en
+ * un alta, la abierta, que no toca la dirección (DD-143). Las demás no están en el
+ * DOM. Un journey que toque dos secciones tiene que pasar por aquí en
  * medio, o el locator de la segunda no existe y el fallo parece un bug de la
  * sección, no de navegación.
  *
@@ -240,29 +241,11 @@ export const irASeccion = async (page: Page, etiqueta: string | RegExp): Promise
  * que abre la lista se pueda escribir en el campo o no.
  */
 export const elegirTelefonoSaliente = async (page: Page, numero = '917945449', id = 'group-phone'): Promise<void> => {
-  if (id === 'group-phone' && (await page.locator(`#${id}`).count()) === 0) await irAPaso(page, 'Distribución y colas');
+  const enOtraSeccion = id === 'group-phone' && (await page.locator(`#${id}`).count()) === 0;
+  if (enOtraSeccion) await irASeccion(page, 'Distribución y colas');
   await page.locator(`sc-select:has(#${id}) .p-select-dropdown`).click();
   const opcion = page.locator('.p-select-overlay .p-select-option', { hasText: numero }).first();
   await expect(opcion).toBeVisible();
   await opcion.click();
 };
 
-/**
- * Cambia de paso en un alta: el Stepper vertical nativo de PrimeNG ocupa el sitio
- * del índice (DD-138). La edición sigue con `irASeccion`.
- *
- * Un paso abierto a la vez: el nativo desmonta el contenido del que se deja al
- * acabar de plegarlo, así que aquí se espera a que quede un solo panel. Como con el
- * índice, un journey que toque dos pasos tiene que pasar por aquí en medio.
- *
- * Se casa por subcadena: la pestaña lleva delante su número y, si se dejó
- * completa, detrás el ✓ y su texto oculto «completado».
- */
-export const irAPaso = async (page: Page, etiqueta: string | RegExp): Promise<void> => {
-  const pasos = page.getByRole('tablist', { name: 'Pasos del alta' });
-  const pestana = pasos.getByRole('tab').filter({ hasText: etiqueta });
-  await expect(pestana).toHaveCount(1);
-  await pestana.click();
-  await expect(pasos.locator('p-step[aria-current="step"]')).toContainText(etiqueta);
-  await expect(pasos.locator('.p-steppanel-content')).toHaveCount(1);
-};

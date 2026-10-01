@@ -119,7 +119,7 @@ variable cuando su nombre es único y avisa.
 - [ ] **24** · Los tres textos de General.
 - [ ] **30** · Contact Center › Grupos y › Agentes, con los bloques y las palabras de sus fichas.
 - [ ] **31** · El resumen de las tres altas, con «Falta: …» y «Listo para crear».
-- [ ] **32** · Las tres altas en pasos: el Stepper vertical en el sitio del índice, con el ✓ y «Atrás» / «Siguiente».
+- [ ] **32** · Las tres altas con el índice de la edición: el ✓ de la sección hecha y «Atrás» / «Siguiente» al pie.
 - [ ] **33** · La ficha de grupo y Contact Center › Grupos: estrategias con «conversaciones», sin «Desbordar sesión».
 - [ ] **34** · El teléfono saliente obligatorio y cerrado, «Caducar sesión» y Recursos sin Etiquetas.
 
@@ -913,26 +913,23 @@ no cita los nodos.
 
 ---
 
-## 32 · Las altas van en pasos: el Stepper vertical (2026-09-29)
+## 32 · Las altas, con el índice de la edición: el ✓ y «Atrás / Siguiente» (2026-10-01)
 
-**Estado:** pendiente · **Dónde:** Figma, las maquetas de las altas de grupo, agente y usuario · **Esfuerzo:** un
-marco por alta con el Stepper vertical de la librería de PrimeNG (Aura), sin piezas nuevas · **Sin verificar** contra
-el fichero: el código no cita los nodos.
+**Estado:** pendiente · **Dónde:** Figma, las maquetas de las altas de grupo, agente y usuario, y el índice
+(`393:12565`, el `sc-form-section-nav` de la maqueta) · **Esfuerzo:** una marca nueva en el índice y un pie por alta,
+sin piezas nuevas · **Sin verificar** contra el fichero: el código no cita los nodos de las altas.
 
-- **Por qué** (DD-138): en el alta, los pasos en columna; la edición sigue con el índice.
+- **Por qué** (DD-143, que revierte los pasos de DD-138): el alta tiene la maqueta de la edición, con el índice.
 - **Qué dibujar:**
-  - en el sitio del índice y del contenido, el Stepper vertical: el número en su círculo y el nombre de la sección. El
-    paso abierto enseña su contenido debajo, a sangre, sin cabecera (la dice el paso) y con el panel transparente;
-  - el ✓ (`check_circle`, en el verde de éxito, a 500 como el título del paso) tras el nombre del paso que se dejó
-    completo;
-  - al pie de cada paso, «Atrás» a la izquierda y «Siguiente» a la derecha, botones pequeños secundarios con
-    contorno; el último paso, solo «Atrás»;
-  - el aire: 28 del contenido a los botones y 28 de ahí al paso siguiente;
-  - en el grupo sin nombre, los pasos 2 a 4 apagados.
+  - en el índice, el ✓ (`check_circle`, en el verde de éxito, con el peso de la etiqueta) detrás de la etiqueta de la
+    sección que se dejó completa, en el sitio del punto; la que se dejó sin lo obligatorio, con el punto rojo;
+  - la sección abierta, en su caja con su cabecera, como al editar;
+  - al pie, fuera de la caja, «Atrás» a la izquierda y «Siguiente» a la derecha, botones pequeños secundarios con
+    contorno, a 28 de la caja; la primera sección, solo «Siguiente», y la última, solo «Atrás».
 - «Crear …» sigue arriba, en la barra.
 
-**Cómo sabes que está hecho:** las tres altas del fichero enseñan los pasos como `/admin/grupos/crear`,
-`/admin/agentes/crear` y `/admin/usuarios/crear`.
+**Cómo sabes que está hecho:** las tres altas del fichero enseñan el índice, el ✓ y el pie como
+`/admin/grupos/crear`, `/admin/agentes/crear` y `/admin/usuarios/crear`.
 
 ---
 

@@ -31,8 +31,9 @@
                comía 25 de los 99px de la caja de texto y dejaba 74, con lo que
                «Identificación» (79px) no cabía ni en una línea entera. Aquí
                fluye detrás del texto, la caja conserva su ancho completo y el
-               punto acompaña a la última palabra. Se ve UN punto: el rojo de lo
-               que falta gana al de cambios, porque es lo que no deja guardar. -->
+               punto acompaña a la última palabra. Se ve UNA marca: el rojo de lo
+               que falta gana al de cambios, porque es lo que no deja guardar, y
+               los dos ganan al ✓ de la sección hecha (DD-143), que va en su sitio. -->
           <span class="form-nav__label">
             {{ section.labelKey | translate }}@if (hasError(section.id)) {<span
                 class="form-nav__dot"
@@ -40,7 +41,14 @@
               ></span>} @else if (hasChanges(section.id)) {<span
                 class="form-nav__dot form-nav__dot--changes"
                 aria-hidden="true"
-              ></span>}
+              ></span>} @else if (isDone(section.id)) {<sc-icon
+                class="form-nav__done"
+                [class.form-nav__done--entra]="doneEnters(section.id)"
+                name="check_circle"
+                size="inherit"
+                [weight]="activeId() === section.id ? 600 : 400"
+                aria-hidden="true"
+              />}
           </span>
           <!-- Lo que el punto dice, como texto del enlace, que es de lo que sale su nombre. Hasta el
                2026-09-27 era un `aria-label` en el `span` del punto: Chrome lo leía (medido), pero
@@ -50,6 +58,9 @@
           }
           @if (hasChanges(section.id)) {
             <span class="form-nav__sr">{{ 'sc.formSectionNav.sectionHasChanges' | translate }}</span>
+          }
+          @if (isDone(section.id)) {
+            <span class="form-nav__sr">{{ 'sc.formSectionNav.sectionDone' | translate }}</span>
           }
         </a>
       </li>
