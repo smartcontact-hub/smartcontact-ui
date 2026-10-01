@@ -16,6 +16,7 @@
 - Manda el catálogo de la sección 6 (`14912:6774`): los 198 iconos de los sidebars son el que nombra su tarjeta.
   Se llegaron a poner los de los plegados y se quitaron.
 - Textos: «Diseñador VUI», «Análisis de Flujo» y «solicitado en SISMAC-4340».
+- La fila SCC (CusCare) lleva el logo de CusCare (`13775:62831`, instancia) en sus 8 sidebars; el catálogo no.
 - El plegado antiguo (`14912:6420`) va con 16 de margen interior y esquinas a 12, sin la fila escondida.
 - Los componentes locales del catálogo tienen instancias en la página de archivo del sidebar y en Testing: no se
   mueven ni se tocan.
@@ -28,7 +29,8 @@
 - Lo vigila `e2e/supervisor/sidebar-tablero.spec.ts`: 4 pruebas, verdes en local y rojas contra producción.
 
 **Siguiente:**
-1. Visto bueno en local dado: PR de esta rama y leer el CI.
+1. Hecho y en `main`: #293 (el sidebar sigue al tablero), #294 (el logo vectorial del sidebar de la app CusCare) y el
+   logo de CusCare en la fila SCC.
 2. Lo que el tablero dice y el código aún no hace (no está pedido; preguntar):
    - recordar lo abierto al recargar;
    - no abrir nada al navegar;
