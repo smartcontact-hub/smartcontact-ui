@@ -72,6 +72,17 @@
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
   }
 
+  /* Un logo de producto en el hueco del icono: su forma como máscara y el color de la fila, así va en
+   * blanco en reposo y en el navy del seleccionado sobre el cyan. */
+  &__logo {
+    inline-size: var(--sc-icon-size-default);
+    block-size: var(--sc-icon-size-default);
+    background-color: currentColor;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+  }
+
   /*
    * One parent gets the brand cyan accent (`cyan-300`) on its icon: the
    * nearest ancestor of the current page that is on screen (the sidebar
