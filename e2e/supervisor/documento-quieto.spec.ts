@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers';
 
 /**
  * LA PÁGINA SE DESPLAZA DENTRO DE LA APP, NUNCA EL DOCUMENTO.
@@ -15,7 +15,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * Lo que fija:
  *   1. Bajando con la rueda hasta el final de la sección más larga, el documento no se mueve: la barra se ve, y el
  *      índice y el resumen están enteros.
- *   2. Lo mismo en el alta, en su paso de Distribución y colas.
+ *   2. Lo mismo en el alta, en su Distribución y colas.
  *   3. En las pantallas largas, el documento mide lo que la ventana: nada se cuelga de él por debajo.
  */
 
@@ -66,16 +66,18 @@ test('grupo 11 · al bajar del todo en Distribución y colas, el documento no se
   expect(m.resumen!, 'el resumen, entero').toBeGreaterThanOrEqual(0);
 });
 
-test('alta de grupo · en su paso de Distribución y colas, tampoco', async ({ page }) => {
+test('alta de grupo · en su Distribución y colas, tampoco', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
   await page.locator('#group-name').fill(`E2E Documento ${Date.now()}`);
-  await page.getByRole('tablist', { name: 'Pasos del alta' }).getByRole('tab', { name: /Distribución/ }).click();
+  await irASeccion(page, 'Distribución y colas');
   await expect(page.locator('#group-section-distribution')).toBeVisible();
   await bajarDelTodo(page);
 
   const m = await cajas(page);
   expect(m.documento, 'el documento se desplazó').toBe(0);
   expect(m.barra, 'la barra de arriba').toBe(0);
+  // Desde DD-143 el alta lleva el índice, como al editar.
+  expect(m.indice!, 'el índice, entero').toBeGreaterThanOrEqual(0);
   expect(m.resumen!, 'el resumen, entero').toBeGreaterThanOrEqual(0);
 });
 

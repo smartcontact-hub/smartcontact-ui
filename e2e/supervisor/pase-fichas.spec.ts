@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto, irAPaso } from './helpers';
+import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto, irASeccion } from './helpers';
 
 /**
  * EL PASE DE DISEÑO DE LAS FICHAS (DD-130).
@@ -81,12 +81,14 @@ for (const alta of [
   });
 }
 
-// Desde DD-138 el alta va en pasos y el índice llega con la edición: lo que no se mueve es el contenido, que
-// empieza a la misma altura con los pasos que con el índice.
-test('usuario · crear deja en su edición, sin salto: el contenido no se mueve', async ({ page }) => {
+// Desde DD-143 el alta lleva el índice, como la edición: al crear no se mueven ni el índice ni el contenido.
+test('usuario · crear deja en su edición, sin salto: ni el índice ni el contenido se mueven', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');
-  const contenido = page.locator('.page__main').first();
-  const antes = await contenido.evaluate((e) => Math.round(e.getBoundingClientRect().top));
+  const alturas = () =>
+    page.evaluate(() =>
+      ['.page__rail', '.page__main'].map((sel) => Math.round(document.querySelector(sel)!.getBoundingClientRect().top)),
+    );
+  const antes = await alturas();
   const nombre = `E2E Usuario ${Date.now()}`;
   await page.locator('#user-name').fill(nombre);
   await page.locator('#user-email').fill('e2e.pase@smartcontact.test');
@@ -94,8 +96,7 @@ test('usuario · crear deja en su edición, sin salto: el contenido no se mueve'
   await expect(page).toHaveURL(/\/admin\/usuarios\/editar\/\d+$/);
   await expect(page.locator('main#main-content h1')).toHaveText(nombre);
   await expect(page.locator('sc-form-section-nav')).toBeVisible();
-  const despues = await contenido.evaluate((e) => Math.round(e.getBoundingClientRect().top));
-  expect(despues, 'el contenido, a la misma altura al pasar del alta a la edición').toBe(antes);
+  expect(await alturas(), 'el índice y el contenido, a la misma altura al pasar del alta a la edición').toEqual(antes);
 });
 
 test('usuario · guardar deja en la ficha, como en grupo y agente', async ({ page }) => {
@@ -111,7 +112,7 @@ test('usuario · guardar deja en la ficha, como en grupo y agente', async ({ pag
 // apagado, que es lo que DD-130 protegía. Las 16 casillas de entonces son 25 (16 secciones y 9 permisos).
 test('usuario nuevo · nace Supervisor Offline: la supervisión marcada y ningún permiso', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');
-  await irAPaso(page, 'Acceso');
+  await irASeccion(page, 'Acceso');
   const casillas = page.locator('#user-section-access sc-checkbox input[type=checkbox]');
   await expect(casillas).toHaveCount(25);
   await expect(page.locator('#user-section-access sc-checkbox input[type=checkbox]:checked')).toHaveCount(9);
