@@ -66,12 +66,12 @@
 
   /*
    * Cada control mide lo que pide su contenido, con peldaños que ya existen:
-   * desplegables 252 (`scale/18`), para que quepa «Menos llamadas atendidas» o
-   * «Rotativa (por turnos)» sin cortar; números 175 (`scale/12-5`), sitio de sobra
-   * para «400px».
+   * desplegables 350 (`scale/25`), porque «Menos conversaciones atendidas» (DD-141)
+   * pide 270 con su flecha y el peldaño de abajo, 252 (`scale/18`), la cortaba;
+   * números 175 (`scale/12-5`), sitio de sobra para «400px».
    */
   &__control--select {
-    width: var(--sc-spacing-18);
+    width: var(--sc-spacing-25);
   }
 
   &__control--number {

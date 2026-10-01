@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Las estrategias reparten conversaciones: «Menos conversaciones atendidas» (Teléfono) y «Menos conversaciones activas» (Chat) · lo guardado con un nombre de antes se lee con el de ahora (`normalize` de `createVersionedStorage`), sin subir la versión · la prioridad solo cuenta en las entrantes · fuera «Desbordar sesión», que se sigue guardando sin pantalla · cerrar el chat por inactividad nace con 5 min · el tamaño de cola, un texto por modo · la tipificación, sin su cuenta (enmienda DD-133 §1, DD-121 §5 y DD-135 §3) | DD-141 |
 > | Un `sc-dialog` es UN diálogo para el lector: el `role="dialog"` modal es el `p-dialog` de PrimeNG, el que atrapa el foco, con el título de nombre y el subtítulo de descripción por `pt.root` · la card no repite el rol, ni lo que va dentro · un atributo en el host de `p-dialog` no llega a su raíz (enmienda DD-113) | DD-140 |
 > | El estado de un agente es uno, el de Administración › Agentes, y el Dashboard lo lee por id con `PRESENCIA_EN_DASHBOARD` (Disponible · No disponible, sus motivos, Administrativo y Post-conversando son En pausa · Desconectado) · lo guardado del Dashboard se relee al pintar, sin subir la versión · fuera `DEMO_AGENT_PRESENCE` (enmienda DD-127 §1 y DD-129) | DD-139 |
 > | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue · el plegado es el de PrimeNG, y la línea entre pasos no se despega al plegar (`pt`) | DD-138 |
@@ -99,6 +100,85 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-141 · 2026-10-01 — La ficha de grupo con las palabras de la revisión de producto: las estrategias reparten conversaciones, y sale «Desbordar sesión»
+
+**Contexto** · La revisión de producto del 2026-10-01 dio el flujo de grupos por bueno para que desarrollo empiece,
+con ajustes. Estos son los de texto y de campos de la ficha de grupo, que se repiten en Contact Center › Grupos:
+- dos estrategias hablaban de llamadas o de chats: «Menos llamadas atendidas» (Teléfono y «Dentro de cada nivel») y
+  «Menos chats activos» (Chat);
+- la ayuda de la prioridad decía, con el manual de Voice, que contaba también en las salientes (DD-133 §1), y solo
+  cuenta en las entrantes;
+- «Desbordar sesión» es de Chat y caduca la sesión, que es lo que ya hace «Cerrar chat por inactividad»;
+- el tiempo de inactividad se da en minutos, y de fábrica son 5;
+- el tamaño de cola no decía qué cuenta cada modo: Fijo es el total que espera; por agente conectado, varía;
+- la tipificación llevaba al lado cuántas tiene su categoría («Consulta (3)»), y se leía como niveles o como grupos.
+
+**Decisión** ·
+1. **Las estrategias reparten conversaciones.** «Menos llamadas atendidas» pasa a «Menos conversaciones atendidas»
+   (Teléfono, «Dentro de cada nivel» y Contact Center), y «Menos chats activos», a «Menos conversaciones activas»
+   (Chat). Su ayuda dice conversaciones en los cuatro idiomas (`strategy_help.fewest_conversations`).
+2. **Lo guardado con el nombre de antes se lee con el de ahora, sin subir la versión de ningún almacén.** El nombre
+   ES el valor guardado:
+   - `createVersionedStorage` gana `normalize`, que pone al día cada elemento leído de `localStorage`;
+   - `GroupsStore` lo usa con `groupWithCurrentStrategies` (la lista y cada ficha), y `GroupDefaultsStore` pone al día
+     sus dos estrategias al leer;
+   - lo siguiente que se guarde ya va con el nombre nuevo.
+3. **La prioridad solo cuenta en las entrantes.** Enmienda DD-133 §1.
+4. **Sale «Desbordar sesión»** de la ficha y de Contact Center: lo cubre «Cerrar chat por inactividad», en Chat.
+   `advanced.overflowSession` se sigue leyendo y guardando tal cual, y lo que alguien guardó no se pierde. Enmienda
+   DD-121 §5 y DD-135 §3.
+5. **«Cerrar chat por inactividad» nace con 5 minutos** (`FACTORY_GROUP_DEFAULTS.chat`): en un grupo nuevo, y en
+   Contact Center mientras nadie guarde otro valor. El interruptor sigue apagado de fábrica. Los grupos de ejemplo
+   guardan los 10 de siempre (`DEFAULT_CHAT_SETTINGS`).
+6. **El tamaño de cola, un texto por modo.** Fijo: «Como mucho 50 conversaciones esperando en total, haya los agentes
+   que haya». Por agente conectado: «Varía con los agentes conectados: 50 conversaciones en cola por cada uno».
+7. **La tipificación se elige por su categoría**, sin la cuenta al lado.
+8. **Los anchos, medidos de nuevo (DD-102), a 1440:**
+   - en el listado, «Estrategia de teléfono» pasa de 12.5 a 14.5rem, porque su etiqueta pide 229 px con la celda;
+   - «Estrategia de chat» pasa de 11 a 13.5rem, porque pide 213;
+   - `tableMinWidth` pasa de 91.25 a 95.75rem: sube lo mismo que suman las dos;
+   - en Contact Center, los cuatro desplegables pasan de 252 (`scale/18`) a 350 (`scale/25`).
+     «Menos conversaciones atendidas» pide 270 con su flecha, y la escala no tiene peldaño entre los dos.
+
+**Razón** ·
+- **Una palabra para lo que se reparte.** La cola, el % de servicio y el tiempo máximo de espera ya decían
+  conversaciones. Dos estrategias decían llamadas o chats, y la de Teléfono es también la de «Dentro de cada nivel».
+- **La vía que no borra (LEARNINGS #15).** Si se renombra un valor guardado y no se pone al día, el grupo se queda con
+  una estrategia que no está en su desplegable. Si se sube la versión del almacén, se borra lo que cada uno guardó en
+  la demo. El normalizador al leer cuesta una función, y con él lo guardado sigue como estaba. Medido con un grupo y
+  unos valores sembrados con los nombres de antes: abren con los de ahora y sin cambios pendientes.
+- **Medido:** contra el código anterior, 13 pruebas en rojo, cada una por lo que mide:
+  - la opción que no existe;
+  - el texto viejo;
+  - 10 minutos en vez de 5;
+  - «Consulta (3)»;
+  - 195 px de texto en una celda de 162.
+
+  Con el cambio, en verde. La sonda de recorte de los desplegables, con el ancho de antes puesto, se pone en rojo
+  en el de Teléfono de Contact Center.
+
+**Descartadas** ·
+- **Subir la versión de `sc-groups` y de `sc-group-defaults`** → borra lo guardado y re-siembra.
+- **Traducir el nombre al pintarlo, en cada pantalla** → el valor guardado seguiría siendo el viejo. Cada consumidor
+  tendría que acordarse de traducirlo: la lista, el orden, la búsqueda, el lote, la exportación y la ficha.
+- **Quitar `overflowSession` del modelo** → borraría lo guardado. Sin pantalla no estorba.
+- **Encender «Cerrar chat por inactividad» de fábrica** → la revisión fija los minutos, no que nazca encendido. Y
+  «Desbordar sesión», al que sustituye, nacía apagado (DD-135 §3).
+- **En Contact Center, 350 solo para los dos de estrategia** → saldrían tres anchos de control en la misma lista de
+  ajustes. Con el cambio quedan dos: desplegables y números.
+
+**Consecuencias** ·
+- **Pruebas:**
+  - `ficha-grupo-textos.spec.ts` (nueva, 8) fija lo de arriba, con lo guardado de antes sembrado en `localStorage`;
+  - `listado-grupos.spec.ts` gana las estrategias más largas de cada catálogo a 1440, aunque ninguna semilla las use;
+  - `contact-center-valores`, `listado-grupos` y `ayudas-campos` pasan a los nombres y al texto nuevos.
+- **`normalize` vale para el siguiente cambio de forma**, por ejemplo el de los enlaces de agente y grupo, sin subir
+  versión.
+- **Fuera las claves** `overflow_session`, `overflow_session_hint` y `typification_option`; `fewest_calls` pasa a
+  `fewest_conversations`.
 
 ---
 
@@ -464,7 +544,8 @@ permisos a todo menos la numeración especial, gestión de dispositivos, activac
 3. **De fábrica, los valores del documento de producto.**
    - Grupo: transferencia 10 s, espera en cola 15 s y % de servicio 60 s, en Teléfono y en Chat; tiempo administrativo
      5 s; prioridad Baja; Balanceada en los dos canales; desbordar si todos los agentes están inactivos, encendido.
-     «Desbordar sesión», apagado: el documento no le da valor.
+     «Desbordar sesión», apagado: el documento no le da valor. **Enmendado por DD-141 (2026-10-01)**: «Desbordar
+     sesión» sale de la pantalla, y «Cerrar chat por inactividad» nace con 5 minutos.
    - Agente: llamadas y transferencias a fijos, móviles e internacionales, y no a la numeración especial; gestión de
      dispositivos, activación por grupo y dispositivos externos, encendidos; grabación apagada; sin URL de iframe.
    - Los grupos y agentes de ejemplo no cambian (`DEFAULT_ADVANCED`, `SEED_AGENT_PERMISSIONS`).
@@ -592,7 +673,8 @@ Lo que había:
 
 **Decisión** ·
 1. **Ayudas nuevas, del manual:**
-   - Prioridad: cuenta en las llamadas entrantes y en las salientes, telemarketing incluido;
+   - Prioridad: cuenta en las llamadas entrantes y en las salientes, telemarketing incluido. **Enmendado por DD-141
+     (2026-10-01)**: la revisión de producto lo corrige, y solo cuenta en las entrantes;
    - Estrategia de teléfono: una línea por cada una de las seis que describe el manual, que cambia con la elegida.
      Skills sale apagada con su motivo y no lleva;
    - Extensión del agente: Tel atiende en el móvil; WebRTC, en el navegador, con Smart Contact Agent.
@@ -602,7 +684,7 @@ Lo que había:
    - Voz: la voz sintética de los anuncios;
    - dominios: una sola ayuda, con lo que decía la ⓘ. Va dentro del campo, así que la fila se alinea arriba y
      «Añadir» pasa a `md`, la altura del campo (centrado, caía 21 px, contra campo y ayuda);
-   - «Desbordar sesión»: tras un minuto sin actividad, como dice el documento de producto.
+   - «Desbordar sesión»: tras un minuto sin actividad, como dice el documento de producto. Sin pantalla desde DD-141.
 3. **Fuera las cuatro ⓘ de la ficha de grupo.** Su texto pasa a la ayuda visible, o sale si repetía el rótulo.
 4. **La ayuda va en el `helperText` del campo, que la anuncia.** En el DS, `sc-select` pasa sus `aria-*` al elemento
    que recibe el foco por passthrough (`pt.label`), como ya hacía `sc-password`. Los selects que se tocan se nombran por
@@ -1418,7 +1500,9 @@ tres fichas (#240) y el alta en diálogo (DD-119).
    (`chat` sigue siendo Web Chat), así que no hay datos que migrar. Las reglas viven en `group-channels.core.mjs`.
 5. **Distribución y colas, canal por canal.** Arriba, las reglas comunes: «Desbordar si todos los agentes están
    inactivos», que pasa a valer para TODOS los canales (un `true` ya guardado desborda también chat y email), y
-   «Desbordar sesión». Debajo, un bloque por canal activo con su distribución y su cola:
+   «Desbordar sesión». **Enmendado por DD-141 (2026-10-01)**: sale «Desbordar sesión», que era de Chat; lo cubre
+   «Cerrar chat por inactividad», y lo guardado se conserva. Debajo, un bloque por canal activo con su distribución
+   y su cola:
    - Teléfono: estrategia del COA, teléfono saliente (antes «teléfono asociado», en Identidad), transferencia, tiempo
      entre llamadas, su cola, la voz de los anuncios y la música de espera.
    - Chat: estrategia, transferencia, cierre por inactividad con sus minutos, valoración; el acceso de Web Chat

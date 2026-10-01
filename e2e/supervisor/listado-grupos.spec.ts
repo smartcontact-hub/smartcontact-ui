@@ -14,7 +14,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *      grupos elegidos que tienen Chat.
  *   3. Prioridad ordena por rango, de Baja a Máxima (antes, alfabético: Alta < Baja < Máxima < Media).
  *   4. Nada se recorta a 1440 (DD-102: una lista no recorta): ni una cabecera ni una etiqueta. Con la columna
- *      de chat encendida, la tabla se desplaza de lado en vez de cortar.
+ *      de chat encendida, la tabla se desplaza de lado en vez de cortar. Tampoco las estrategias más largas de
+ *      cada catálogo (DD-141), aunque ningún grupo de la semilla las use.
  *
  * Storage limpio por test → cada store de admin re-siembra su seed.
  */
@@ -84,7 +85,7 @@ test('cada familia de canales enseña su estrategia en su columna, y «—» don
   await goto(page, 'admin/grupos');
   await mostrarColumna(page, 'Estrategia de chat');
   await expect(await celda(page, 'Online Support', 'Estrategia de teléfono')).toHaveText('Balanceada');
-  await expect(await celda(page, 'Online Support', 'Estrategia de chat')).toHaveText('Menos chats activos');
+  await expect(await celda(page, 'Online Support', 'Estrategia de chat')).toHaveText('Menos conversaciones activas');
   await expect(await celda(page, 'ACD Demo C2CB', 'Estrategia de chat')).toHaveText('—');
 
   // Un grupo solo de Chat: ni estrategia ni número de teléfono, aunque los guarde.
@@ -114,7 +115,7 @@ test('cambiar en bloque la estrategia de chat escribe la de chat, y solo en los 
   await lote.locator('sc-select').first().click();
   await page.getByRole('option', { name: 'Estrategia de chat', exact: true }).click();
   await lote.locator('sc-select').last().click();
-  await page.getByRole('option', { name: 'Menos chats activos', exact: true }).click();
+  await page.getByRole('option', { name: 'Menos conversaciones activas', exact: true }).click();
   await lote.getByRole('button', { name: 'Aplicar' }).click();
 
   // La vista previa solo trae al que tiene Chat: a Telemarketing (solo Teléfono) no le aplica.
@@ -123,7 +124,7 @@ test('cambiar en bloque la estrategia de chat escribe la de chat, y solo en los 
   await expect(vista).not.toContainText('Telemarketing');
   await vista.getByRole('button', { name: 'Aplicar' }).click();
 
-  await expect(await celda(page, 'Reclamaciones', 'Estrategia de chat')).toHaveText('Menos chats activos');
+  await expect(await celda(page, 'Reclamaciones', 'Estrategia de chat')).toHaveText('Menos conversaciones activas');
   await expect(await celda(page, 'Reclamaciones', 'Estrategia de teléfono')).toHaveText('Balanceada');
   await expect(await celda(page, 'Telemarketing', 'Estrategia de chat')).toHaveText('—');
 });
@@ -153,5 +154,36 @@ test('a 1440 no se recorta nada: ni cabeceras ni etiquetas, con la columna de ch
   expect(await recortes(page)).toEqual([]);
 
   await mostrarColumna(page, 'Estrategia de chat');
+  expect(await recortes(page)).toEqual([]);
+});
+
+/* Las más largas de cada catálogo desde DD-141, que no trae ningún grupo de la semilla: el ancho de cada columna es el
+ * de su dato más largo (DD-102), no el del más largo que haya hoy en la tabla. */
+const grupoConLasEstrategiasMasLargas = {
+  id: 1,
+  code: '20001',
+  name: 'Online Support',
+  phone: '918371548',
+  priority: 'Máxima',
+  channels: ['phone', 'chat', 'whatsapp', 'email'],
+  strategy: 'Menos conversaciones atendidas',
+  chatStrategy: 'Menos conversaciones activas',
+  services: ['Soporte técnico'],
+};
+
+test('a 1440 caben también las estrategias más largas del catálogo, con la columna de chat encendida o no', async ({
+  page,
+}) => {
+  await page.addInitScript((grupo) => {
+    localStorage.setItem('sc-groups-v', '4');
+    localStorage.setItem('sc-groups', JSON.stringify([grupo]));
+  }, grupoConLasEstrategiasMasLargas);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await goto(page, 'admin/grupos');
+  await expect(await celda(page, 'Online Support', 'Estrategia de teléfono')).toHaveText('Menos conversaciones atendidas');
+  expect(await recortes(page)).toEqual([]);
+
+  await mostrarColumna(page, 'Estrategia de chat');
+  await expect(await celda(page, 'Online Support', 'Estrategia de chat')).toHaveText('Menos conversaciones activas');
   expect(await recortes(page)).toEqual([]);
 });

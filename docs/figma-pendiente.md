@@ -120,6 +120,7 @@ variable cuando su nombre es único y avisa.
 - [ ] **30** · Contact Center › Grupos y › Agentes, con los bloques y las palabras de sus fichas.
 - [ ] **31** · El resumen de las tres altas, con «Falta: …» y «Listo para crear».
 - [ ] **32** · Las tres altas en pasos: el Stepper vertical en el sitio del índice, con el ✓ y «Atrás» / «Siguiente».
+- [ ] **33** · La ficha de grupo y Contact Center › Grupos: estrategias con «conversaciones», sin «Desbordar sesión».
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
@@ -931,6 +932,29 @@ el fichero: el código no cita los nodos.
 
 **Cómo sabes que está hecho:** las tres altas del fichero enseñan los pasos como `/admin/grupos/crear`,
 `/admin/agentes/crear` y `/admin/usuarios/crear`.
+
+---
+
+## 33 · La ficha de grupo con las palabras de la revisión de producto (2026-10-01)
+
+**Estado:** pendiente · **Dónde:** Figma, las maquetas de la ficha de grupo (Distribución y colas, Recursos) y
+`1:12676` (Contact Center · Grupos) del fichero del Supervisor · **Esfuerzo:** textos y una fila menos, sin piezas
+nuevas · **Sin verificar** contra el fichero: el código no cita los nodos de la ficha.
+
+- **Por qué** (DD-141): la revisión de producto del 2026-10-01 cambia palabras y quita un campo.
+- **Qué cambiar:**
+  - las estrategias: «Menos conversaciones atendidas» (Teléfono y «Dentro de cada nivel») y «Menos conversaciones
+    activas» (Chat), en los desplegables y en el listado de grupos;
+  - fuera la fila «Desbordar sesión» de las reglas comunes, en la ficha y en Contact Center;
+  - la ayuda de Prioridad: «La prioridad con que entran sus llamadas. Solo cuenta en las entrantes.»;
+  - la ayuda del tamaño de cola, una por modo: «Como mucho 50 conversaciones esperando en total, haya los agentes que
+    haya» (Fijo) y «Varía con los agentes conectados: 50 conversaciones en cola por cada uno» (por agente conectado);
+  - los minutos de «Cerrar chat por inactividad», 5;
+  - la tipificación, por su categoría: «Consulta», sin «(3)»;
+  - en Contact Center, los desplegables a 350 (`scale/25`).
+
+**Cómo sabes que está hecho:** las maquetas dicen lo mismo que `/admin/grupos/editar/11?seccion=distribucion` y
+`/config/aed/grupos`, y ninguna dice «Desbordar sesión».
 
 ---
 

@@ -93,7 +93,7 @@
 | `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 33 |
 | `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | 8 |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
-| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 31 |
+| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 29 |
 <!-- @audit:components:end -->
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)

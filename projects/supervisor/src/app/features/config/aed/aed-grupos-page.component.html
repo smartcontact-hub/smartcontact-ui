@@ -100,13 +100,7 @@
             </div>
             <sc-toggleswitch class="setting-row__control" inputId="grupos-overflow" [checked]="form().advanced.overflowWhenNoAgents" (checkedChange)="setAdvanced('overflowWhenNoAgents', $event)" />
           </div>
-          <div class="setting-row">
-            <div class="setting-row__text">
-              <label class="setting-row__label sc-text-body-regular" for="grupos-overflow-session">{{ 'groups.form.advanced.overflow_session' | translate }}</label>
-              <p class="setting-row__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_session_hint' | translate }}</p>
-            </div>
-            <sc-toggleswitch class="setting-row__control" inputId="grupos-overflow-session" [checked]="form().advanced.overflowSession" (checkedChange)="setAdvanced('overflowSession', $event)" />
-          </div>
+          <!-- Sin «Desbordar sesión» desde DD-141, como la ficha: lo cubre «Cerrar chat por inactividad», en Chat. -->
         </div>
       </section>
 

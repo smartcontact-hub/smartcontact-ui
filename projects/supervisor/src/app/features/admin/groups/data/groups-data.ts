@@ -25,7 +25,7 @@ export const CHANNEL_LABEL_KEYS: Readonly<Record<GroupChannel, string>> = {
  * Niveles y Ring All ya se configuran en la ficha, pero las skills de cada agente todavía no existen. */
 export const PHONE_STRATEGIES: readonly string[] = [
   'Balanceada',
-  'Menos llamadas atendidas',
+  'Menos conversaciones atendidas',
   'Más tiempo inactivo',
   'Niveles',
   'Ring All',
@@ -38,10 +38,10 @@ export const UNAVAILABLE_STRATEGIES: ReadonlySet<string> = new Set(['Skills']);
 
 /** Las que sirven de valor por defecto en Contact Center › Grupos: las que no piden nada más en cada grupo. Niveles,
  *  Ring All, Skills y Agente exclusivo necesitan niveles, un número de agentes, skills o el IVR (SISMAC-1975). */
-export const DEFAULT_STRATEGY_OPTIONS: readonly string[] = ['Balanceada', 'Menos llamadas atendidas', 'Más tiempo inactivo'];
+export const DEFAULT_STRATEGY_OPTIONS: readonly string[] = ['Balanceada', 'Menos conversaciones atendidas', 'Más tiempo inactivo'];
 
 /** Desempata entre agentes del mismo nivel. No puede ser Niveles (manual de Voice, p. 12). */
-export const SUB_STRATEGIES: readonly string[] = ['Balanceada', 'Más tiempo inactivo', 'Menos llamadas atendidas'];
+export const SUB_STRATEGIES: readonly string[] = ['Balanceada', 'Más tiempo inactivo', 'Menos conversaciones atendidas'];
 
 /** Ring All suena a la vez en 2 a 10 agentes; por defecto 2 (SISMAC-1975). */
 export const RING_ALL_OPTIONS: readonly number[] = [2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -97,8 +97,9 @@ export interface GroupAdvanced {
   readonly serviceLevelSec: number;
   /** Desbordar llamadas al siguiente nodo si no hay agentes activos (solo teléfono). */
   readonly overflowWhenNoAgents: boolean;
-  /** «Desbordar sesión» del Figma de la migración («Redirige sesiones activas al superar el límite de…»). No está en el
-   *  manual: a qué canal aplica y adónde van, por confirmar con desarrollo. */
+  /** «Desbordar sesión» del Figma de la migración («Redirige sesiones activas al superar el límite de…»). Sin pantalla
+   *  desde DD-141: era de Chat, y lo cubre «Cerrar chat por inactividad». Se sigue leyendo y guardando tal cual, para
+   *  no perder lo que alguien guardó. */
   readonly overflowSession: boolean;
   readonly cardOpening: CardOpening;
   readonly cardUrl: string;
@@ -163,17 +164,43 @@ export const DEFAULT_ADVANCED: GroupAdvanced = {
 
 export const CHAT_STRATEGIES: readonly string[] = [
   'Rotativa (por turnos)',
-  'Menos chats activos',
+  'Menos conversaciones activas',
   'Balanceada',
 ];
 
 /** Con la que reparte un grupo de ejemplo con Chat que no ha elegido otra. Uno nuevo nace con la de Contact Center. */
 export const DEFAULT_CHAT_STRATEGY = CHAT_STRATEGIES[0]!;
 
+/** Las estrategias que cambiaron de nombre, con el de ahora: reparten conversaciones, no llamadas ni chats (DD-141). */
+const RENAMED_STRATEGIES: Readonly<Record<string, string>> = {
+  'Menos llamadas atendidas': 'Menos conversaciones atendidas',
+  'Menos chats activos': 'Menos conversaciones activas',
+};
+
+/** El nombre de ahora de una estrategia guardada. El nombre ES el valor que se guarda: lo guardado con el de antes se
+ *  lee con el de ahora (en `GroupsStore` y en `GroupDefaultsStore`), sin subir la versión de ningún almacén. */
+export function currentStrategyName(name: string): string {
+  return RENAMED_STRATEGIES[name] ?? name;
+}
+
+/** Un grupo guardado, con sus tres estrategias por su nombre de ahora; el mismo objeto si no había nada que cambiar. */
+export function groupWithCurrentStrategies(group: Group): Group {
+  const strategy = currentStrategyName(group.strategy);
+  const subStrategy = group.subStrategy === undefined ? undefined : currentStrategyName(group.subStrategy);
+  const chatStrategy = group.chatStrategy === undefined ? undefined : currentStrategyName(group.chatStrategy);
+  if (strategy === group.strategy && subStrategy === group.subStrategy && chatStrategy === group.chatStrategy) return group;
+  return {
+    ...group,
+    strategy,
+    ...(subStrategy === undefined ? {} : { subStrategy }),
+    ...(chatStrategy === undefined ? {} : { chatStrategy }),
+  };
+}
+
 /** Con lo que nace un grupo nuevo mientras nadie cambie Contact Center › Grupos: los parámetros por defecto del
  *  documento de producto de usuarios y grupos (DD-135). Transferencia 10 s, espera en cola 15 s, % de servicio 60 s,
  *  tiempo administrativo casi nulo y desbordar si todos los agentes están inactivos. «Desbordar sesión» se queda
- *  apagado: el documento no le da valor. */
+ *  apagado, y sin pantalla desde DD-141. */
 export const NEW_GROUP_ADVANCED: GroupAdvanced = {
   ...DEFAULT_ADVANCED,
   transferSec: 10,
@@ -435,7 +462,7 @@ export const GROUPS_SEED: readonly Group[] = [
     priority: 'Máxima',
     channels: ['phone', 'chat', 'whatsapp', 'email'],
     strategy: 'Balanceada',
-    chatStrategy: 'Menos chats activos',
+    chatStrategy: 'Menos conversaciones activas',
     labels: [3, 6],
     templates: [1, 2, 3, 4, 5, 11],
     services: ['Soporte técnico', 'Soporte web'],
@@ -464,7 +491,7 @@ export const GROUPS_SEED: readonly Group[] = [
     priority: 'Máxima',
     channels: ['phone', 'chat', 'whatsapp'],
     strategy: 'Más tiempo inactivo',
-    chatStrategy: 'Menos chats activos',
+    chatStrategy: 'Menos conversaciones activas',
     services: ['Soporte taller', 'Averías'],
   },
   {
@@ -505,9 +532,11 @@ export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
   chatStrategy: 'Balanceada',
   phoneQueue: queueFrom(NEW_GROUP_ADVANCED),
   chatQueue: queueFrom(NEW_GROUP_ADVANCED),
+  /* Cerrar por inactividad, a los 5 minutos si se enciende (DD-141). Las semillas guardan los 10 de
+   * `DEFAULT_CHAT_SETTINGS`: es lo que ya tenían, y un grupo de ejemplo no cambia al abrirlo. */
   chat: {
     closeOnInactivity: DEFAULT_CHAT_SETTINGS.closeOnInactivity,
-    inactivityMinutes: DEFAULT_CHAT_SETTINGS.inactivityMinutes,
+    inactivityMinutes: 5,
   },
 };
 

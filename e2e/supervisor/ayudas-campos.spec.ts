@@ -9,7 +9,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  * Lo que fija:
  *   1. La estrategia de teléfono dice qué hace la elegida, y cambia con ella. Antes solo Niveles y Agente exclusivo
  *      tenían una línea, y ninguna se anunciaba.
- *   2. Prioridad se nombra por su etiqueta y dice en qué llamadas cuenta. Antes el lector leía «Baja» como nombre.
+ *   2. Prioridad se nombra por su etiqueta y dice en qué llamadas cuenta: solo en las entrantes (DD-141). Antes el
+ *      lector leía «Baja» como nombre.
  *   3. La ayuda de un `sc-select` se anuncia con el campo: va en el elemento que recibe el foco, no en su envoltura.
  *   4. La ficha de grupo no tiene ⓘ: las cuatro pasaron a su ayuda visible o salieron porque repetían el rótulo.
  *   5. Los desplegables del DS hablan el idioma de la app: «No results», no «Sin resultados», en inglés.
@@ -39,11 +40,13 @@ test('la estrategia de teléfono dice qué hace la elegida, se anuncia con el ca
   await expect(estrategia(page)).toHaveAccessibleDescription(/^Primero, los del nivel 1 que estén disponibles y libres/);
 });
 
-test('prioridad se nombra por su etiqueta y dice en qué llamadas cuenta', async ({ page }) => {
+test('prioridad se nombra por su etiqueta y dice que solo cuenta en las entrantes', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/2');
   const prioridad = page.getByRole('combobox', { name: 'Prioridad' });
   await expect(prioridad).toHaveCount(1);
-  await expect(prioridad).toHaveAccessibleDescription(/Cuenta en las entrantes y en las salientes, telemarketing incluido\.$/);
+  // Hasta DD-141 decía, con el manual de Voice, que contaba también en las salientes: la revisión de producto lo corrige.
+  await expect(prioridad).toHaveAccessibleDescription(/Solo cuenta en las entrantes\.$/);
+  await expect(prioridad).not.toHaveAccessibleDescription(/salientes/);
 });
 
 test('la ayuda de un desplegable se anuncia con él: la extensión del agente dice qué es Tel y qué WebRTC', async ({ page }) => {
