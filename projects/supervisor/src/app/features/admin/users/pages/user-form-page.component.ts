@@ -4,6 +4,7 @@ import {
   computed,
   HostListener,
   inject,
+  Injector,
   input,
   OnDestroy,
   OnInit,
@@ -40,8 +41,8 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
-import { AltaPasosComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
-import { pasosDeAlta } from '@shared/utils/alta-pasos';
+import { AltaPieComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
+import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
   accessFor,
   AVAILABLE_SERVICES,
@@ -104,7 +105,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     SelectComponent,
     SummaryKpiComponent,
     SummaryStatusComponent,
-    AltaPasosComponent,
+    AltaPieComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -116,6 +117,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sectionLinks = inject(SectionLinksService);
+  private readonly injector = inject(Injector);
   private readonly usersStore = inject(UsersStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
@@ -255,25 +257,22 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   readonly seccion = input<string | undefined>();
 
   /**
-   * EL ALTA VA EN PASOS (DD-138), también al duplicar: las mismas tres secciones, en el Stepper vertical nativo, y en
-   * cualquier orden (DD-130: aquí no hay puerta). Identidad está completa con nombre y un email bien escrito.
+   * EL ALTA, CON EL ÍNDICE DE LA EDICIÓN (DD-143), también al duplicar: las mismas tres secciones, en cualquier orden
+   * (DD-130: aquí no hay puerta), con ✓ en las que se dejan completas y «Atrás / Siguiente» al pie. Identidad está
+   * completa con nombre y un email bien escrito.
    */
-  protected readonly alta = pasosDeAlta({
+  protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
-    bloqueado: () => false,
-    completo: (id) =>
+    completa: (id) =>
       id !== 'user-section-identity' || (this.form().name.trim().length > 0 && EMAIL_RE.test(this.form().email.trim())),
   });
 
-  /** La sección a la vista: en el alta y al duplicar, el paso abierto; al editar, la de la dirección (Identidad sin parámetro). */
+  /** La sección a la vista: en el alta y al duplicar, la abierta; al editar, la de la dirección (Identidad sin parámetro). */
   protected readonly activeSection = computed<string>(() =>
     this.mode() === 'edit'
       ? (UserFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'user-section-identity')
       : this.alta.abierta(),
   );
-
-  /** El número del paso a la vista, para el Stepper. */
-  protected readonly pasoAbierto = computed(() => this.navSections().findIndex((s) => s.id === this.activeSection()) + 1);
 
   /** La dirección de una sección: la primera, sin parámetro (es la dirección de la ficha). */
   private sectionUrl(id: string): UrlTree {
@@ -281,7 +280,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return this.sectionLinks.section(this.route, id === 'user-section-identity' ? null : slug);
   }
 
-  /** Ir a otra sección. En el alta y al duplicar, el paso se abre sin tocar la dirección: Atrás sale (DD-122, DD-138). */
+  /** Ir a otra sección. En el alta y al duplicar, la sección se abre sin tocar la dirección: Atrás sale (DD-122, DD-143). */
   protected goTo(id: string): void {
     if (this.mode() !== 'edit') {
       this.alta.abrir(id);
@@ -290,25 +289,32 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.sectionLinks.go(this.sectionUrl(id));
   }
 
-  /** «Siguiente» y «Atrás» de cada paso: atajos al de al lado, no puertas (DD-138; la puerta es solo del grupo). */
+  /** «Siguiente» y «Atrás» del alta: atajos a la sección de al lado, no puertas (la puerta es solo del grupo). Llegan
+   *  arriba, con el foco en su título (DD-143). */
   protected siguiente(): void {
-    const id = this.alta.siguiente();
-    if (id) this.goTo(id);
+    this.irAlLado(this.alta.siguiente());
   }
 
   protected anterior(): void {
-    const id = this.alta.anterior();
-    if (id) this.goTo(id);
+    this.irAlLado(this.alta.anterior());
+  }
+
+  private irAlLado(id: string | null): void {
+    if (!id) return;
+    this.goTo(id);
+    llegarASeccion(id, this.injector);
   }
 
   /**
-   * Lo que falta para poder guardar, en el índice: el nombre y un email válido, en Identidad. El índice es
-   * de la edición; en el alta y al duplicar van los pasos (DD-138), y lo que falta lo dice el resumen (DD-136).
+   * Lo que falta para poder guardar, en el índice: el nombre y un email válido, en Identidad. Al editar y al
+   * duplicar (que llega con esos campos vacíos a propósito). En un alta recién abierta no acusa, lo dice el
+   * resumen (DD-136); desde que se deja Identidad sin ellos, sí, como la ✓ de la que se deja completa (DD-143).
    */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
     const f = this.form();
     const falta = !f.name.trim() || !EMAIL_RE.test(f.email.trim());
-    return new Set(this.mode() !== 'create' && falta ? ['user-section-identity'] : []);
+    const acusa = this.mode() !== 'create' || this.alta.dejadas().has('user-section-identity');
+    return new Set(acusa && falta ? ['user-section-identity'] : []);
   });
 
   /** Las secciones con cambios sin guardar (DD-122), al editar. */
@@ -413,8 +419,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       return;
     }
 
-    // El alta va en pasos (DD-138): la dirección no dice sección, y se quita la que traiga (el duplicado
-    // conserva su `seedFromId`).
+    // En el alta la dirección no dice sección (DD-143), y se quita la que traiga (el duplicado conserva su
+    // `seedFromId`).
     if (this.route.snapshot.queryParamMap.has('seccion')) {
       void this.sectionLinks.go(this.sectionLinks.section(this.route, null), { replace: true });
     }

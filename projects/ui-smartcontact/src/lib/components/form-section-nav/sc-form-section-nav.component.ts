@@ -1,4 +1,4 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, type OnInit, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
@@ -33,6 +33,9 @@ let siguienteId = 0;
  * nombre ni canales) y navega ella. Cualquier otro gesto de enlace —Cmd/Ctrl, Mayús, Alt o el clic
  * central— lo hace el navegador con el `href` de la fila, la misma regla que `routerLink`.
  *
+ * Las marcas de cada fila: lo que falta (punto rojo), los cambios sin guardar (punto de marca) y, en un
+ * alta, la sección que se dejó completa (✓, DD-143). Se ve una sola, en ese orden, y se oyen todas.
+ *
  * i18n: las etiquetas de cada `FormNavSection.labelKey` y el rótulo `titleKey` los resuelve el
  * consumidor. El nav registra SOLO su copy propio (`sc.formSectionNav.*`: el nombre accesible del
  * `<nav>` y los textos que se oyen con cada marca) — desacoplado de las claves `common.*` de la app
@@ -46,7 +49,7 @@ let siguienteId = 0;
   styleUrl: './sc-form-section-nav.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ScFormSectionNavComponent {
+export class ScFormSectionNavComponent implements OnInit {
   /** Las secciones, en orden, tal como se listan en el índice. */
   readonly sections = input.required<readonly FormNavSection[]>();
   /** Qué sección está a la vista. La manda la página (en las del Supervisor, la URL). */
@@ -93,11 +96,26 @@ export class ScFormSectionNavComponent {
    */
   readonly sectionsWithChanges = input<ReadonlySet<string>>(new Set());
 
+  /**
+   * Las secciones que se dejaron completas, en un alta (DD-143): un ✓ en el verde de éxito detrás de la
+   * etiqueta, donde va el punto, para que el índice diga lo que ya está y lo que queda. Lo decide la
+   * página (las fichas, cuando se sale de una sección con lo suyo hecho; la abierta no lo lleva). Se ve
+   * si la sección no tiene también algo que falta o cambios sin guardar, que ganan; se oye siempre, con
+   * `sc.formSectionNav.sectionDone`.
+   *
+   * Entra con movimiento, el de un icono que cambia de estado (escala, opacidad y desenfoque), solo si
+   * llega después de pintar el índice: el que ya estaba al abrir la página no es un cambio que se vea.
+   */
+  readonly sectionsDone = input<ReadonlySet<string>>(new Set());
+
   /** El usuario ha pulsado otra sección del índice (clic principal, sin teclas). */
   readonly activeChange = output<string>();
 
   /** El id del rótulo, para nombrar el `<nav>` con él. */
   protected readonly titleId = `sc-form-nav-title-${siguienteId++}`;
+
+  /** Las que ya estaban hechas al pintar el índice: su ✓ aparece quieto. */
+  private hechasAlPintar: ReadonlySet<string> = new Set();
 
   constructor() {
     // Copy fijo colocado: registra solo el diccionario del componente.
@@ -111,8 +129,21 @@ export class ScFormSectionNavComponent {
     return this.sectionsWithErrors().has(id);
   }
 
+  ngOnInit(): void {
+    this.hechasAlPintar = new Set(this.sectionsDone());
+  }
+
   protected hasChanges(id: string): boolean {
     return this.sectionsWithChanges().has(id);
+  }
+
+  protected isDone(id: string): boolean {
+    return this.sectionsDone().has(id);
+  }
+
+  /** El ✓ entra con movimiento si la sección se completó con el índice ya a la vista. */
+  protected doneEnters(id: string): boolean {
+    return !this.hechasAlPintar.has(id);
   }
 
   protected onJump(event: MouseEvent, section: FormNavSection): void {

@@ -17,7 +17,8 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *   3. «Siguiente» sube al principio de la sección nueva: sin eso, desde el pie de una sección larga se llega a media
  *      altura de la siguiente.
  *   4. La sección que se deja completa lleva ✓ en el índice, y su enlace lo dice; el ✓ se ve (3:1). La abierta no
- *      lo lleva aunque esté bien.
+ *      lo lleva aunque esté bien. La que se deja sin lo obligatorio lleva el punto rojo, como Distribución y colas sin
+ *      teléfono saliente (DD-142); antes de abrirla, ninguna marca.
  *   5. Cambiar de sección en el alta no toca la dirección ni el historial: Atrás del navegador sale del alta. La
  *      primera sección no lleva «Atrás», y la última no lleva «Siguiente».
  *   6. Agente y usuario: las secciones, en cualquier orden.
@@ -75,16 +76,19 @@ test('grupo · sin nombre no se sale de General; con él, «Siguiente» y «Atr�
 });
 
 test('«Siguiente» sube al principio de la sección nueva', async ({ page }) => {
-  // A 1280×720 Identidad y Grupos asignados no caben: «Siguiente» se pulsa desde el final de la primera.
+  // A 1280×720 no caben ni General (88 de más) ni Distribución y colas (647): «Siguiente» se pulsa desde el final de
+  // la primera, y la segunda da para quedarse a media altura. Donde la sección nueva cabe entera (Grupos asignados del
+  // agente), el navegador sube solo y la prueba no vería el fallo.
   await page.setViewportSize({ width: 1280, height: 720 });
-  await goto(page, 'admin/agentes/crear');
+  await goto(page, 'admin/grupos/crear');
+  await page.locator('#group-name').fill(`E2E Índice ${Date.now()}`);
   const zona = page.locator('main#main-content');
   await siguiente(page).scrollIntoViewIfNeeded();
   expect(await zona.evaluate((m) => m.scrollTop), 'se ha bajado para llegar a «Siguiente»').toBeGreaterThan(0);
 
   await siguiente(page).click();
-  await expect(actual(page)).toContainText('Grupos asignados');
-  await expect(titulo(page, 'Grupos asignados')).toBeFocused();
+  await expect(actual(page)).toContainText('Distribución y colas');
+  await expect(titulo(page, 'Distribución y colas')).toBeFocused();
   // Arriba del todo, con el nombre de la ficha a la vista: como al llegar a una página.
   await expect.poll(() => zona.evaluate((m) => m.scrollTop)).toBe(0);
 });
@@ -107,6 +111,22 @@ test('grupo · la sección que se deja completa lleva ✓ en el índice, su enla
   await expect(actual(page)).toContainText('Recursos');
   await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa/);
   await expect(fila(page, 'Distribución y colas').locator('.form-nav__done')).toHaveCount(0);
+});
+
+test('agente · Identidad que se deja sin lo obligatorio lleva el punto rojo; al completarla, ✓', async ({ page }) => {
+  await goto(page, 'admin/agentes/crear');
+  // Recién abierta no acusa: lo dice el resumen (DD-136).
+  await expect(fila(page, 'Identidad')).not.toHaveAccessibleName(/obligatorios/);
+  await siguiente(page).click();
+  await expect(fila(page, 'Identidad')).toHaveAccessibleName(/Identidad.*campos obligatorios sin rellenar/);
+  await expect(fila(page, 'Identidad').locator('.form-nav__dot')).toBeVisible();
+
+  await irASeccion(page, 'Identidad');
+  await page.locator('#agent-name').fill(`E2E Índice ${Date.now()}`);
+  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#agent-ext') }), /./);
+  await siguiente(page).click();
+  await expect(fila(page, 'Identidad')).toHaveAccessibleName(/Identidad.*Esta sección está completa/);
+  await expect(fila(page, 'Identidad').locator('.form-nav__dot')).toHaveCount(0);
 });
 
 test('grupo · cambiar de sección no toca la dirección ni el historial; la primera no lleva «Atrás», la última no lleva «Siguiente»', async ({

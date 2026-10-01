@@ -42,11 +42,12 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Las altas vuelven al índice de la edición (revierte DD-138): ✓ en la sección que se deja completa (`sectionsDone` de `sc-form-section-nav`) y el punto rojo en la que se deja sin lo obligatorio · «Atrás» y «Siguiente» al pie (`sc-alta-pie`), que llevan al principio de la sección nueva con el foco en su título · General sigue siendo la puerta del grupo · la sección no va en la dirección (enmienda DD-121 §11, DD-122 §1 y §4, DD-130 §2 y DD-136) | DD-143 |
 > | Con Teléfono, el teléfono saliente es obligatorio (en el alta, al editar y al duplicar) y se elige de los números asignados (`OUTBOUND_NUMBERS`), sin escribir uno nuevo · «Caducar sesión» · la ayuda de Balanceada, corregida · Recursos sin Etiquetas, apagado y guardado (`conEtiquetas`) · el teléfono se nombra por su rótulo (enmienda DD-121 §11, DD-136 §2, DD-141 §4-5 y DD-133 §1) | DD-142 |
 > | Las estrategias reparten conversaciones: «Menos conversaciones atendidas» (Teléfono) y «Menos conversaciones activas» (Chat) · lo guardado con un nombre de antes se lee con el de ahora (`normalize` de `createVersionedStorage`), sin subir la versión · la prioridad solo cuenta en las entrantes · fuera «Desbordar sesión», que se sigue guardando sin pantalla · cerrar el chat por inactividad nace con 5 min · el tamaño de cola, un texto por modo · la tipificación, sin su cuenta (enmienda DD-133 §1, DD-121 §5 y DD-135 §3) | DD-141 |
 > | Un `sc-dialog` es UN diálogo para el lector: el `role="dialog"` modal es el `p-dialog` de PrimeNG, el que atrapa el foco, con el título de nombre y el subtítulo de descripción por `pt.root` · la card no repite el rol, ni lo que va dentro · un atributo en el host de `p-dialog` no llega a su raíz (enmienda DD-113) | DD-140 |
 > | El estado de un agente es uno, el de Administración › Agentes, y el Dashboard lo lee por id con `PRESENCIA_EN_DASHBOARD` (Disponible · No disponible, sus motivos, Administrativo y Post-conversando son En pausa · Desconectado) · lo guardado del Dashboard se relee al pintar, sin subir la versión · fuera `DEMO_AGENT_PRESENCE` (enmienda DD-127 §1 y DD-129) | DD-139 |
-> | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue · el plegado es el de PrimeNG, y la línea entre pasos no se despega al plegar (`pt`) | DD-138 |
+> | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue · el plegado es el de PrimeNG, y la línea entre pasos no se despega al plegar (`pt`) · **revertida por DD-143** | DD-138 |
 > | El sidebar sigue a su tablero de Figma (14912:6324): sin botón de anclar · plegado sigue abierto lo que estaba abierto · texto e icono en blanco y la flecha al 60% · todos los iconos a 14, los que nombra el catálogo del tablero (14912:6774) · «Diseñador VUI» y «Análisis de Flujo» · SCC (CusCare) lleva el logo de CusCare (enmienda DD-118 §2 y §5) | DD-137 |
 > | Un alta dice en su resumen lo que falta («Falta: nombre · extensión») y, cuando «Crear …» se enciende, «Listo para crear»: `sc-summary-status`, un solo `role="status"` que cambia en su sitio · sin porcentaje ni barra · un error de formato va en su campo · al editar, nunca «Listo» | DD-136 |
 > | Con qué nace un grupo o un agente se fija en Contact Center (› Grupos, › Agentes), con las palabras de su ficha, y el alta lo lee · de fábrica, los valores del documento de producto (10 · 15 · 60 s, Baja, Balanceada, desbordar; el agente, todo menos la numeración especial) · la cola agotada sigue por el VUI | DD-135 |
@@ -101,6 +102,91 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-143 · 2026-10-01 — Las altas vuelven al índice, con ✓ en las secciones que se dejan completas y «Atrás / Siguiente» al pie
+
+**Contexto** · La segunda revisión con el equipo (2026-10-01) no quiso el Stepper de las altas (DD-138): un asistente
+para un formulario tan largo, y una ficha que cambia de forma entre crear y editar. Pidió volver a como estaba, con el
+índice, un botón «Siguiente» y un ✓ en lo que ya está.
+
+**Decisión** ·
+1. **El alta tiene la maqueta de la edición**, en las tres fichas (grupo, agente y usuario) y al duplicar un agente o
+   un usuario: el índice a la izquierda (`sc-form-section-nav`), una sección a la vista en su `sc-section-card`, con su
+   cabecera, y el resumen a la derecha. Salen `sc-alta-pasos` y, con él, el `p-stepper`.
+2. **✓ en la sección que se deja completa**: `sc-form-section-nav` gana `sectionsDone` (DS). El ✓ va detrás de la
+   etiqueta, en el verde de éxito y con el peso de la etiqueta, y el enlace lo dice («Esta sección está completa»). La
+   abierta no lo lleva aunque esté bien. Lo que falta y los cambios sin guardar ganan al ✓: se ve una marca y se oyen
+   todas.
+3. **La sección que se deja sin lo obligatorio lleva el punto rojo**: Identidad, en agente y usuario, y Distribución
+   y colas sin teléfono saliente, en el grupo (DD-142). Antes de abrirla, ninguna marca: un alta recién abierta no
+   acusa (DD-136).
+4. **«Atrás» y «Siguiente» al pie de la sección, en las tres altas** (`sc-alta-pie`, de la app): atajos a la sección de
+   al lado, en el orden del índice. La primera no lleva «Atrás» y la última no lleva «Siguiente». «Crear …» sigue
+   arriba, la única acción que crea (DD-122 §6). Llevan al principio de la sección nueva, con el foco en su título
+   (`llegarASeccion`).
+5. **General sigue siendo la puerta del grupo** (DD-121): sin nombre o sin canales, ni el índice ni «Siguiente» sacan
+   de ella; cada campo dice lo que falta y el foco va al primero.
+6. **Cambiar de sección en el alta no toca la dirección ni el historial**, como con los pasos: Atrás del navegador
+   sale del alta, y crear abre la edición en la sección abierta. El estado del alta (la sección abierta y las que se
+   dejaron) vive en `seccionesDeAlta`, que era `pasosDeAlta`.
+7. **El ✓ entra como un icono que cambia de estado** (better-ui): escala de 0,25 a 1, opacidad y 4 px de desenfoque,
+   en 300 ms (`--sc-transition-slow`) con la curva enfática. Solo si llega con el índice a la vista; con menos
+   movimiento, quieto.
+
+**Razón** ·
+- **Un formulario, una forma:** al crear y al editar se ve lo mismo. El índice dice lo que falta (el punto), lo que ya
+  está (el ✓) y lo que queda (sin marca), que era lo que aportaba el Stepper.
+- **De DD-138 se queda lo que funcionaba:** una plantilla por sección, la puerta, el ✓ al dejar una sección completa,
+  los atajos y que la sección no vaya en la dirección.
+- **Medido el 2026-10-01, en este build:**
+  - el ✓ entra en 300 ms, con `cubic-bezier(0.2, 0, 0, 1)` en sus fotogramas, desde escala 0,25, opacidad 0 y 4 px de
+    desenfoque. Con menos movimiento, sin animación. Su centro queda a 0,25 px del centro del texto. Verde 700 en claro
+    y 600 en oscuro, con el peso 400 de la etiqueta;
+  - a 1280×720, «Siguiente» desde el final de General dejaba Distribución y colas a 88 px de su principio. Ahora llega
+    arriba, con el foco en su título. Donde la sección nueva cabe entera, el navegador ya subía solo;
+  - de la tarjeta de la sección a «Atrás / Siguiente», 28: el margen de abajo de la tarjeta (21) se funde con el del
+    pie;
+  - `revision`, en regla en las 24 vistas de las tres altas y sus ediciones; `agrupacion`, en verde.
+- **Rojo primero:**
+  - `altas-indice`: nueve de once en rojo contra los pasos, y dos de guarda;
+  - la duodécima, la del punto rojo de Identidad, en rojo sin su regla;
+  - la de «llega arriba», en rojo sin el `scrollTo` (88 en vez de 0), y la del foco, sin el foco;
+  - la unitaria del ✓ que ya estaba al pintar, en rojo con el ✓ siempre animado.
+
+**Descartadas** ·
+- **Quedarse con el Stepper y añadirle «Siguiente»** → era justo lo que la revisión no quería: un asistente y dos
+  formas de ficha.
+- **La sección en la dirección (`?seccion=` con `replaceUrl`), como antes de DD-138** → una dirección que abre una
+  sección del alta invita a saltarse la puerta, y Atrás ya sale del alta sin ella.
+- **El ✓ en el sitio del icono de la sección, o al final de la fila** → el icono identifica la sección, y una columna a
+  la derecha le quita ancho a la etiqueta, que envuelve (DD-52). Va detrás de la etiqueta, como el punto.
+- **El pie dentro de la tarjeta de cada sección** → cada plantilla tendría que pintarlo, y es la misma al editar. Fuera
+  de la tarjeta hay uno por ficha.
+
+**Consecuencias** ·
+- **Revierte DD-138** (las altas en pasos). **Enmienda**:
+  - DD-121 §11: el alta, con el índice;
+  - DD-122 §1 y §4: el índice también en el alta, y la sección sigue sin ir en la dirección;
+  - DD-130 §2: los atajos, al pie;
+  - DD-136: la sección que se deja sin lo obligatorio lleva el punto.
+
+  La nota del plegado del Stepper en DD-113 se queda como historia.
+- **DS:** `sectionsDone` en `sc-form-section-nav`, con su entrada en el CHANGELOG `[Unreleased]`, su ejemplo en
+  sc-docs, su unitaria y su e2e. Su diccionario pasa a los cuatro idiomas: en francés y en portugués se decía en
+  español.
+- **App:**
+  - `sc-alta-pie` sustituye a `sc-alta-pasos`, y `seccionesDeAlta` a `pasosDeAlta`;
+  - salen las claves `common.steps_aria` y `common.step_done`;
+  - en `audit:components`, `stepper` vuelve a la lista de lo no usado.
+- **Pruebas:**
+  - `altas-indice` (antes `altas-pasos`), con doce pruebas; sale `altas-pasos-movimiento`;
+  - vuelven al índice las que DD-138 pasó a los pasos;
+  - `revision` y `agrupacion` recorren el índice del alta y abren su puerta con `PREPARAR`;
+  - `irAPaso` sale de `helpers`.
+- **Para el Kit:** en `figma-pendiente` §32, el ✓ del índice y el pie «Atrás / Siguiente» sustituyen al marco del
+  Stepper.
 
 ---
 
@@ -368,6 +454,10 @@ cosas.
 
 ## DD-138 · 2026-10-01 — Las altas van en pasos: el Stepper vertical nativo de PrimeNG
 
+> **Revertida por DD-143** (2026-10-01): la segunda revisión con el equipo no quiso el Stepper. Las altas vuelven al
+> índice de la edición, y se quedan la plantilla por sección, la puerta del grupo, el ✓ al dejar una sección completa
+> (ahora en el índice), «Atrás» y «Siguiente» (al pie) y que la sección no vaya en la dirección.
+
 **Contexto** · Producto (2026-09-29), con el gradiente de meta en los formularios: en el alta, los pasos en columna;
 cada uno abre su contenido debajo y se pliega con ✓ al acabarlo; la edición sigue con el índice lateral. Señaló el
 Stepper de primeng.dev y pidió revisar DD-121, que lo había descartado. Hasta hoy las tres altas eran su ficha con el
@@ -544,7 +634,9 @@ en la barra de arriba y de uno en uno.
 
 **Decisión** · (decisión de producto, 2026-09-29)
 1. **Las tres altas dicen en su resumen lo que falta**, «Falta: nombre · extensión», y en cuanto el botón «Crear …» se
-   enciende, «Listo para crear». Sin porcentaje ni barra (DD-121, DD-126).
+   enciende, «Listo para crear». Sin porcentaje ni barra (DD-121, DD-126). **Enmendado por DD-143 (2026-10-01)**:
+   además, la sección que se deja sin lo obligatorio lleva el punto rojo del índice, y la que se deja completa, ✓; un
+   alta recién abierta sigue sin acusar.
 2. **Qué falta:** en el grupo, nombre y canales (y, desde DD-142, con Teléfono, el teléfono saliente); en el agente,
    nombre y extensión; en el usuario, nombre y email. Un
    error de formato (un nombre repetido, un email o un PIN mal escritos) se dice en su campo, y mientras lo haya el
@@ -949,8 +1041,8 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
 2. **Las tres altas, iguales.** La cabecera de la ficha se pinta también al crear: «Nuevo agente» o «Nuevo usuario»
    («Duplicar …» al duplicar) hasta que se escribe el nombre, como en el grupo. El botón principal dice lo que hace:
    «Crear agente» y «Crear usuario», como «Crear grupo». «Siguiente» sigue solo en el grupo, donde General es la
-   puerta (DD-121). Desde DD-138, «Atrás» y «Siguiente» van en las tres altas, como atajos entre pasos; puerta,
-   solo la del grupo.
+   puerta (DD-121). Desde DD-138, «Atrás» y «Siguiente» van en las tres altas, como atajos entre pasos, y desde DD-143
+   al pie de cada sección; puerta, solo la del grupo.
 3. **Guardar deja en la ficha, también en la de usuario.** Al editar se queda; al crear, abre la edición del usuario
    nuevo en la sección en la que se estaba. Hasta hoy, la de usuario volvía siempre al listado.
 4. **Un usuario nuevo nace sin secciones ni permisos**, por mínimo privilegio. Qué paquete trae cada tipo pasa a las
@@ -972,8 +1064,8 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
   Ahora el anillo va a 28, los cinco valores caen en una sola vertical y la fila tiene una sola altura.
 - **Las altas.** El título de agente y usuario medía 1 px (estaba oculto), y al crear aparecía la cabecera y la ficha
   saltaba hacia abajo, contra AGENTS «UX de pantalla» 7. Con la cabecera en los dos modos, el índice queda a la misma
-  altura al pasar del alta a la edición (medido). Desde DD-138 el alta no tiene índice: lo que queda a la misma
-  altura es el contenido.
+  altura al pasar del alta a la edición (medido). De DD-138 a DD-143 el alta no tuvo índice; desde DD-143 lo tiene,
+  y quedan a la misma altura el índice y el contenido.
 - **El usuario nuevo** abría con las 16 casillas marcadas, «Gestión de usuarios» y «Espiar conversaciones»
   incluidas, fuera cual fuera su tipo. El anillo del resumen lo puso a la vista: 11 de 11 y 5 de 5 nada más abrir.
 - **Distribución y colas** mide 2.355 px con los cuatro canales: quedan 1.816 bajo el pliegue a 1440 y 2.148 a 1280.
@@ -986,7 +1078,8 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
 - **Esconder también el título del alta de grupo**, la otra forma de igualar → la ficha saltaría al crear, que es
   justo lo que se arregla.
 - **«Siguiente» en agente y usuario** → sería una puerta que esas fichas no piden, porque se rellenan en cualquier
-  orden. Con los pasos (DD-138) va como atajo, no como puerta: se siguen rellenando en cualquier orden.
+  orden. Con los pasos (DD-138), y al pie de cada sección desde DD-143, va como atajo, no como puerta: se siguen
+  rellenando en cualquier orden.
 - **Que las tres vuelvan al listado al guardar** → obliga a reabrir la ficha para tocar otra sección.
 - **El paquete por tipo del laboratorio para el usuario nuevo** → no está validado con producto.
 - **Plegar cada canal de Distribución y colas** → esconde lo configurado y enmienda DD-121 §5.
@@ -1452,7 +1545,7 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
 **Decisión** ·
 1. **Un índice**: `sc-form-section-nav` del DS en las cinco pantallas con índice (fichas de agente, grupo y usuario,
    constructor de reglas y Contact Center). `sc-settings-sidebar` se borra con sus claves que no pintaba nadie. En
-   las altas de las fichas, desde DD-138, van los pasos del Stepper en vez del índice.
+   las altas de las fichas fueron los pasos del Stepper de DD-138 a DD-143, que las devuelve al índice.
 2. **Cada fila es un ENLACE a su sitio**: una ruta (Contact Center) o la misma página con `?seccion=` (fichas y
    constructor). La sección a la vista sale de la dirección: un `input` de página que el router rellena en cada
    navegación, también cuando solo cambia la query (`withComponentInputBinding`). Sin parámetro, la de aterrizaje.
@@ -1462,9 +1555,9 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
    de la fila y la navegación con el mismo árbol de URL. Cmd/Ctrl, Mayús, Alt o el clic central los hace el
    navegador, la regla de `routerLink`: otra pestaña en esa sección. Al editar, Atrás vuelve a la sección anterior.
 4. **En un ALTA la sección no deja rastro** (`replaceUrl`, en grupo, agente, usuario y regla): Atrás sale del alta,
-   y tras crear no se vuelve a un alta vacía. El alta de grupo quita `?seccion=` al abrir. Desde DD-138, las altas de
-   grupo, agente y usuario van en pasos, que no tocan la dirección, y las tres quitan `?seccion=` al abrir; la
-   regla sigue así.
+   y tras crear no se vuelve a un alta vacía. El alta de grupo quita `?seccion=` al abrir. Desde DD-138, en las altas
+   de grupo, agente y usuario cambiar de sección no toca la dirección (con los pasos y, desde DD-143, con el índice),
+   y las tres quitan `?seccion=` al abrir; la regla sigue así.
 5. **Cambiar de sección no funde la página**: la transición de vista se salta cuando solo cambia la query (medido:
    fundía la página entera en cada clic del índice). Cambiar de ruta funde como siempre, Contact Center incluido.
 6. **Guardar: uno, explícito, por ficha. No se guarda al cambiar de sección.** El índice marca las secciones con
@@ -1603,8 +1696,9 @@ tres fichas (#240) y el alta en diálogo (DD-119).
     Escape van apagados y cierra el panel, que pregunta antes si hay cambios; Escape se atiende en el propio panel y
     no sube, porque el contenedor de `p-drawer` lo escucha y, aun con `closeOnEscape` apagado, llama a `hide(false)`,
     que quita la máscara y deja el panel abierto (medido con PrimeNG 22.1.2). Coge el mismo candado que la ficha.
-11. **El alta es la propia ficha, en modo alta** (desde DD-138, en pasos: el Stepper vertical nativo en el sitio del
-    índice, con la misma puerta, y el paso no va en la dirección): `/admin/grupos/crear` la abre vacía, con los valores por defecto
+11. **El alta es la propia ficha, en modo alta** (de DD-138 a DD-143, en pasos; desde DD-143, con el índice de la
+    edición, ✓ en las secciones que se dejan completas y «Atrás / Siguiente» al pie, y la sección no va en la
+    dirección): `/admin/grupos/crear` la abre vacía, con los valores por defecto
     de Grupos (desde DD-135, los de Contact Center › Grupos) y Teléfono marcado. General es la puerta: sin nombre (o repetido) o sin canales no se sale de ella, ni
     por el índice ni con «Siguiente»; cada campo dice lo que le falta y el foco va al primero. «Siguiente», al pie de
     cada sección, solo en el alta. «Crear grupo», en la barra, se enciende con General completa (lo demás nace con
@@ -1632,7 +1726,8 @@ y marca siempre 100 % al editar, y la sección de distribución con Teléfono y 
 - **Stepper de PrimeNG** → el horizontal es lo que la visión rechaza; el vertical mete el contenido entre los pasos
   (no hay menú + contenido), y usarlo para crear e índice para editar serían dos formularios. Revisado en DD-138:
   producto lo pidió para el alta, y con una plantilla por sección y los pasos sacados del índice es un formulario con
-  dos maquetas.
+  dos maquetas. Revertido en DD-143: la segunda revisión con el equipo no lo quiso, por ser un asistente para un
+  formulario tan largo y una forma distinta al crear y al editar.
 - **Resumen bajo el índice, en el mismo carril** (la primera versión, del 2026-09-26, con el patrón del constructor
   de reglas) → el carril es el de Contact Center y no tiene scroll, y el resumen lo alargaba hasta 844 px. Medido: a
   1366×768 se cortaba 20 px al abrir y, a 1280×720, al bajar al final de una sección larga el índice se escondía 99
@@ -2021,7 +2116,7 @@ ya estaba en `figma-pendiente.md` §9). Cada desvío permitido tiene su fila en 
 El botón que se encoge al pulsarlo se queda, con la receta de better-ui (punto 9, §8.1): primeng.dev no lo hace, y es a propósito.
 Desde DD-138: en el Stepper vertical, el plegado nativo despegaba la línea entre pasos, porque PrimeNG aplica la
 fracción dos veces en la rejilla del `p-motion`. Se arregla por `[pt]` (`contentWrapper`), como el `aria-label` de
-`p-tabs`, sin tocar su movimiento.
+`p-tabs`, sin tocar su movimiento. El Stepper salió de las altas con DD-143, y el arreglo con él.
 Desde DD-140: un `p-dialog` sin cabecera (`showHeader=false`) se nombra por `pt.root`. Un atributo en su host se queda
 en el host, aunque la sección de accesibilidad de primeng.dev diga que pasa a la raíz.
 

@@ -249,7 +249,40 @@
   background: var(--sc-bg-primary);
 }
 
-/* Lo que dice cada punto, para el lector de pantalla: dentro del enlace, fuera de la vista. */
+/*
+ * La sección hecha (`sectionsDone`, DD-143) — un ✓ detrás de la etiqueta, en el sitio del punto: en el verde de éxito,
+ * a la altura del texto (`size="inherit"`) y con el peso de la etiqueta. Se ve solo si la sección no tiene también
+ * algo que falta o cambios sin guardar.
+ *
+ * Entra como un icono que cambia de estado: escala de 0,25 a 1, opacidad y 4 px de desenfoque, con la curva enfática
+ * del Kit. Solo si llega con el índice a la vista (`--entra`), y nunca con menos movimiento: el ✓ se queda, y el texto
+ * oculto dice lo mismo.
+ */
+.form-nav__done {
+  margin-inline-start: var(--sc-spacing-0-375);
+  color: var(--sc-text-success);
+  vertical-align: -0.125em;
+}
+
+.form-nav__done--entra {
+  animation: form-nav-done-entra var(--sc-transition-slow) var(--sc-easing-emphasized);
+}
+
+@keyframes form-nav-done-entra {
+  from {
+    opacity: 0;
+    transform: scale(0.25);
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-nav__done--entra {
+    animation: none;
+  }
+}
+
+/* Lo que dice cada marca, para el lector de pantalla: dentro del enlace, fuera de la vista. */
 .form-nav__sr {
   position: absolute;
   width: 1px;
