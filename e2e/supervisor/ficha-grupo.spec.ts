@@ -18,8 +18,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *      el resumen es una franja encima del contenido.
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas.
  *   5. Recargar la ficha no es «otra pestaña»; abrirla en otra de verdad, sí.
- *   6. El alta es la MISMA ficha: General es la puerta (nombre y canales antes de seguir),
- *      «Siguiente» guía por las secciones y crear deja en la edición, en la sección en la que se estaba.
+ *   6. El alta es la MISMA ficha, en pasos (DD-137): General es la puerta (nombre y canales antes de seguir),
+ *      «Siguiente» guía por los pasos y crear deja en la edición, en la sección del paso abierto.
  */
 
 test.beforeEach(async ({ page }) => {
@@ -28,6 +28,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 const indice = (page: Page) => page.locator('sc-form-section-nav');
+/** En el alta, los pasos del Stepper en vez del índice (DD-137). */
+const pasos = (page: Page) => page.getByRole('tablist', { name: 'Pasos del alta' });
 
 test('el índice lateral gobierna la ficha, y abre por General', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1');
@@ -53,7 +55,7 @@ test('crear es la misma ficha: abre en General con Teléfono, no deja pasar sin 
   // Aunque la dirección pida otra sección: General es la puerta del alta.
   await goto(page, 'admin/grupos/crear?seccion=agentes');
   const general = page.locator('#group-section-general');
-  await expect(indice(page).locator('.form-nav__item[aria-current="page"] .form-nav__label')).toHaveText('General');
+  await expect(pasos(page).locator('p-step[aria-current="step"]')).toContainText('General');
   await expect(page.locator('h1')).toHaveText('Nuevo grupo');
   // Nace con Teléfono marcado, y nada acusa al abrir.
   const telefono = general.locator('sc-checkbox').filter({ hasText: /^\s*Teléfono\s*$/ });
@@ -64,13 +66,12 @@ test('crear es la misma ficha: abre en General con Teléfono, no deja pasar sin 
   const crear = page.getByRole('button', { name: 'Crear grupo' });
   await expect(crear).toBeDisabled();
 
-  // Sin nombre no se sale de General, ni con «Siguiente» ni con el índice: lo dice en su campo, y el foco
+  // Sin nombre no se sale de General, ni con «Siguiente» ni con los pasos: lo dice en su campo, y el foco
   // va a ese campo (con teclado, si no, «Siguiente» no haría nada visible).
   await page.getByRole('button', { name: 'Siguiente' }).click();
   await expect(general).toContainText('El nombre es obligatorio');
   await expect(page.locator('#group-name')).toBeFocused();
-  await indice(page).getByText('Agentes', { exact: true }).click();
-  await expect(general).toBeVisible();
+  await expect(pasos(page).getByRole('tab', { name: /Agentes/ })).toBeDisabled();
 
   // Un nombre que ya existe se dice en vivo.
   await page.locator('#group-name').fill('campaigns');

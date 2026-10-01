@@ -10,8 +10,9 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  * forma) y esta red pasa con ellas. Fija lo que define la forma, no el adorno:
  *   1. El nombre es el único `h1` de la página, y es el mismo que el del campo de Identidad.
  *   2. UN índice lateral gobierna el contenido: una sección a la vista, en su caja; sin pestañas.
- *   3. Un solo orden por ficha en los dos modos, el de sus dependencias. La ficha abre en la primera
- *      (Identidad) y el listado la abre en su sección de trabajo (`?seccion=`).
+ *   3. Un solo orden por ficha en los dos modos, el de sus dependencias: el del índice al editar y el de los
+ *      pasos en el alta (DD-137). La ficha abre en la primera (Identidad) y el listado la abre en su sección de
+ *      trabajo (`?seccion=`).
  *   4. Las tres fichas comparten molde: la cabecera en la misma vertical, el índice de Contact
  *      Center (196, fijo) y el contenido de 812 a 1440 con el resumen a la derecha.
  *   5. Abierta en otra pestaña, lo dice (el candado ya se cogía; hasta el 2026-09-27 no se pintaba).
@@ -53,6 +54,8 @@ const indice = (page: Page) => page.locator('sc-form-section-nav');
 const rotulos = async (page: Page) =>
   (await indice(page).locator('.form-nav__label').allTextContents()).map((t) => t.trim());
 const actual = (page: Page) => indice(page).locator('.form-nav__item[aria-current="page"] .form-nav__label');
+/** En el alta, los pasos del Stepper en vez del índice (DD-137). */
+const pasos = (page: Page) => page.getByRole('tablist', { name: 'Pasos del alta' });
 
 for (const f of FICHAS) {
   test(`${f.nombre} · el nombre es el único h1 y el índice gobierna la ficha, sin pestañas`, async ({ page }) => {
@@ -77,10 +80,11 @@ for (const f of FICHAS) {
     await expect(page.locator(`${f.campoNombre} input, input${f.campoNombre}`).first()).toHaveValue(nombre);
   });
 
-  test(`${f.nombre} · al crear, el mismo orden y abre por Identidad`, async ({ page }) => {
+  test(`${f.nombre} · al crear, los pasos en el mismo orden y abre por Identidad`, async ({ page }) => {
     await goto(page, f.crear);
-    expect(await rotulos(page)).toEqual([...f.orden]);
-    await expect(actual(page)).toHaveText('Identidad');
+    await expect(pasos(page).getByRole('tab')).toHaveText(f.orden.map((r) => new RegExp(r)));
+    await expect(pasos(page).locator('p-step[aria-current="step"]')).toContainText('Identidad');
+    await expect(indice(page)).toHaveCount(0);
     // La cabecera, también en el alta (DD-130): «Nuevo …» hasta que se escribe el nombre, y sin «Eliminar».
     await expect(page.locator('.headline__name')).toHaveText(f.alta);
     await expect(page.locator('.headline__actions')).toHaveCount(0);

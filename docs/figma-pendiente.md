@@ -119,6 +119,7 @@ variable cuando su nombre es único y avisa.
 - [ ] **24** · Los tres textos de General.
 - [ ] **30** · Contact Center › Grupos y › Agentes, con los bloques y las palabras de sus fichas.
 - [ ] **31** · El resumen de las tres altas, con «Falta: …» y «Listo para crear».
+- [ ] **32** · Las tres altas en pasos: el Stepper vertical en el sitio del índice, con el ✓ y «Atrás» / «Siguiente».
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
@@ -907,6 +908,29 @@ no cita los nodos.
   Sin porcentaje ni barra.
 
 **Cómo sabes que está hecho:** las tres altas del fichero enseñan los dos estados como el código.
+
+---
+
+## 32 · Las altas van en pasos: el Stepper vertical (2026-09-29)
+
+**Estado:** pendiente · **Dónde:** Figma, las maquetas de las altas de grupo, agente y usuario · **Esfuerzo:** un
+marco por alta con el Stepper vertical de la librería de PrimeNG (Aura), sin piezas nuevas · **Sin verificar** contra
+el fichero: el código no cita los nodos.
+
+- **Por qué** (DD-137): en el alta, los pasos en columna; la edición sigue con el índice.
+- **Qué dibujar:**
+  - en el sitio del índice y del contenido, el Stepper vertical: el número en su círculo y el nombre de la sección. El
+    paso abierto enseña su contenido debajo, a sangre, sin cabecera (la dice el paso) y con el panel transparente;
+  - el ✓ (`check_circle`, en el verde de éxito, a 500 como el título del paso) tras el nombre del paso que se dejó
+    completo;
+  - al pie de cada paso, «Atrás» a la izquierda y «Siguiente» a la derecha, botones pequeños secundarios con
+    contorno; el último paso, solo «Atrás»;
+  - el aire: 28 del contenido a los botones y 28 de ahí al paso siguiente;
+  - en el grupo sin nombre, los pasos 2 a 4 apagados.
+- «Crear …» sigue arriba, en la barra.
+
+**Cómo sabes que está hecho:** las tres altas del fichero enseñan los pasos como `/admin/grupos/crear`,
+`/admin/agentes/crear` y `/admin/usuarios/crear`.
 
 ---
 

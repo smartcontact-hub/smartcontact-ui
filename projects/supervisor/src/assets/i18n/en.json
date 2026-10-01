@@ -1000,7 +1000,9 @@
     "select_all": "Select all",
     "form_index_aria": "Form index",
     "filter_count": "{{shown}} of {{total}}",
-    "next": "Next"
+    "next": "Next",
+    "steps_aria": "Creation steps",
+    "step_done": "completed"
   },
   "topbar": {
     "go_to_dashboard": "Go to dashboard",

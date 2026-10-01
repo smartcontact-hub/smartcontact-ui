@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { colorEfectivo } from '../shared/color';
-import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irAPaso, pickSelectOption } from './helpers';
 
 /**
  * LAS ALTAS VAN EN PASOS: EL STEPPER VERTICAL NATIVO DE PRIMENG (DD-137).
@@ -18,6 +18,10 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   5. Agente y usuario: los pasos, en cualquier orden.
  *   6. Crear desde un paso lleva a la edición en esa sección, con su índice.
  *   7. Al editar, el índice de siempre y ningún Stepper.
+ *   8. El aire del paso sigue la escalera 7 · 14 · 28: 28 de la sección a «Atrás / Siguiente», y 28 de ahí al paso
+ *      siguiente. Con el margen de la tarjeta dentro del paso eran 49 y 21 (medido el 2026-09-29).
+ *   9. El paso abierto se titula como la sección al editar: un h2 con su nombre (oculto: lo dice su pestaña), así que
+ *      los títulos van h1 → h2 → h3 sin saltos, y su panel se llama así. Sin él, el alta de grupo saltaba de h1 a h3.
  *
  * Storage limpio por test → cada store vuelve a su seed.
  */
@@ -47,7 +51,8 @@ test('grupo · sin nombre los demás pasos están apagados, y «Siguiente» dice
   for (const i of [1, 2, 3]) await expect(pestanas(page).nth(i), `paso ${i + 1}`).toBeDisabled();
 
   await page.getByRole('button', { name: 'Siguiente', exact: true }).click();
-  await expect(page.getByText('El nombre es obligatorio')).toBeVisible();
+  // Lo dice el campo (la barra de arriba lo decía ya antes de pulsar).
+  await expect(page.locator('#group-name-msg')).toHaveText('El nombre es obligatorio');
   await expect(page.locator('#group-name')).toBeFocused();
   await expect(pasoActual(page)).toContainText('General');
 
@@ -129,4 +134,30 @@ test('al editar, el índice de siempre y ningún Stepper', async ({ page }) => {
     await expect(page.locator('sc-form-section-nav'), ruta).toBeVisible();
     await expect(page.locator('p-stepper'), ruta).toHaveCount(0);
   }
+});
+
+test('el aire del paso: 28 de la sección a «Atrás / Siguiente», y 28 de ahí al paso siguiente', async ({ page }) => {
+  await goto(page, 'admin/agentes/crear');
+  await irAPaso(page, 'Permisos');
+  const m = await page.evaluate(() => {
+    // El panel del paso abierto: el que se deja sigue en el DOM mientras se pliega.
+    const panel = document.querySelector('p-step-item:has(p-step[aria-current="step"]) .p-steppanel-content')!;
+    const seccion = panel.querySelector('sc-section-card')!.getBoundingClientRect();
+    const boton = panel.querySelector('.alta-pasos__acciones sc-button')!.getBoundingClientRect();
+    const siguiente = document.querySelectorAll('p-step-item [role="tab"]')[3]!.getBoundingClientRect();
+    return { arriba: Math.round(boton.top - seccion.bottom), abajo: Math.round(siguiente.top - boton.bottom) };
+  });
+  // Los botones son otro grupo que la sección, y el paso siguiente otro más: el doble de los 14 de dentro.
+  expect(m).toEqual({ arriba: 28, abajo: 28 });
+});
+
+test('el paso abierto se titula como la sección al editar: h1 → h2 → h3 sin saltos, y su panel se llama así', async ({ page }) => {
+  await goto(page, 'admin/grupos/crear');
+  await expect(page.getByRole('heading', { level: 2, name: 'General', exact: true })).toHaveCount(1);
+  await expect(page.getByRole('tabpanel', { name: 'General', exact: true })).toBeVisible();
+  const niveles = await page
+    .locator('main#main-content')
+    .evaluate((m) => [...m.querySelectorAll('h1, h2, h3, h4')].map((h) => `${h.tagName} ${(h.textContent ?? '').trim()}`));
+  const saltos = niveles.filter((t, i) => i > 0 && Number(t[1]) - Number(niveles[i - 1]![1]) > 1);
+  expect(saltos, niveles.join(' · ')).toEqual([]);
 });

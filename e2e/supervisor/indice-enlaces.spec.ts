@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irAPaso } from './helpers';
 
 /**
  * UN SOLO ÍNDICE, Y QUE FUNCIONE DE UNA SOLA FORMA (DD-122).
@@ -15,8 +15,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *     constructor)— y la actual se anuncia como la página actual;
  *   · clic = navegar dentro de la app, sin fundir la página; Cmd/Ctrl+clic = otra pestaña, en esa
  *     sección; Atrás = la sección anterior (al editar);
- *   · en un ALTA la sección no deja rastro en el historial (Atrás sale del alta), y la de grupo no
- *     deja entrar por la dirección a otra sección sin completar General;
+ *   · en un ALTA no hay índice: van los pasos del Stepper (DD-137, su red es `altas-pasos`), que no
+ *     tocan la dirección ni el historial (Atrás sale del alta), y la de grupo no deja entrar por la
+ *     dirección a otra sección sin completar General;
  *   · un solo «Guardar» por ficha: el índice marca las secciones con cambios sin guardar y la barra
  *     lo dice en palabras.
  * Las fichas de agente y usuario entran el mismo día, al pasar de pestañas al índice lateral.
@@ -151,19 +152,18 @@ test('ficha de grupo · Cmd/Ctrl+clic abre la sección en otra pestaña, y las d
   await expect(page.locator('.ficha-conflict')).toBeVisible();
 });
 
-test('alta de grupo · cambiar de sección no deja rastro en el historial: Atrás sale del alta', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  await goto(page, 'admin/grupos/crear');
-  const antes = await largoHistorial(page);
+test('alta · cambiar de paso no deja rastro: Atrás del navegador sale del alta', async ({ page }) => {
+  await goto(page, 'admin/agentes');
+  await page.getByRole('button', { name: 'Nuevo agente', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/agentes\/crear$/);
 
-  await page.locator('#group-name').fill('Grupo de la prueba de enlaces');
-  await fila(page, 'Distribución').click();
-  await expect(page.locator('#group-section-distribution')).toBeVisible();
-  expect(seccion(page)).toBe('distribucion');
-  await fila(page, 'Agentes').click();
-  await expect(page.locator('#group-section-agents')).toBeVisible();
+  await irAPaso(page, 'Permisos');
+  await irAPaso(page, 'Avanzado');
+  expect(seccion(page)).toBeNull();
 
-  expect(await largoHistorial(page)).toBe(antes);
+  // Sin cambios que guardar, Atrás sale sin preguntar: si cada paso hubiera dejado su entrada, volvería al anterior.
+  await page.goBack();
+  await expect(page).toHaveURL(/\/admin\/agentes$/);
 });
 
 test('alta de grupo · la dirección no se salta General: sin nombre ni canales, abre en General y sin parámetro', async ({
@@ -171,7 +171,7 @@ test('alta de grupo · la dirección no se salta General: sin nombre ni canales,
 }) => {
   await goto(page, 'admin/grupos/crear?seccion=agentes');
   await expect(page.locator('#group-section-general')).toBeVisible();
-  await expect(actual(page)).toHaveText('General');
+  await expect(page.locator('p-step[aria-current="step"]')).toContainText('General');
   await expect.poll(() => seccion(page)).toBeNull();
   // Y al completar General no salta sola a la sección que pedía la dirección.
   await page.locator('#group-name').fill('Grupo que no salta');

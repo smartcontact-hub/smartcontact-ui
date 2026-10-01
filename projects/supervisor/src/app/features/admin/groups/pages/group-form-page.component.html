@@ -74,18 +74,21 @@
 
     <!-- El índice, solo: la navegación no comparte carril con nada, así que no se va de la pantalla. Cada
          fila es un enlace a su sección (`?seccion=`, DD-122), y el `nav` es el único punto de referencia:
-         el carril es un `div`, no un `aside` con el mismo nombre. -->
-    <div class="page__rail">
-      <sc-form-section-nav
-        [sections]="navSections()"
-        [activeId]="activeSection()"
-        [labelKey]="'common.form_index_aria'"
-        [sectionsWithErrors]="sectionsWithErrors()"
-        [sectionsWithChanges]="sectionsWithChanges()"
-        [flush]="true"
-        (activeChange)="goTo($event)"
-      />
-    </div>
+         el carril es un `div`, no un `aside` con el mismo nombre. Solo al editar: el alta va en pasos (DD-137),
+         y su contenido ocupa también este sitio. -->
+    @if (mode() === 'edit') {
+      <div class="page__rail">
+        <sc-form-section-nav
+          [sections]="navSections()"
+          [activeId]="activeSection()"
+          [labelKey]="'common.form_index_aria'"
+          [sectionsWithErrors]="sectionsWithErrors()"
+          [sectionsWithChanges]="sectionsWithChanges()"
+          [flush]="true"
+          (activeChange)="goTo($event)"
+        />
+      </div>
+    }
 
     <div class="page__main">
       <!-- El mismo grupo abierto en otra pestaña (DD#169). Se calculaba y no se pintaba; se pinta desde que
@@ -94,20 +97,35 @@
         <sc-message class="ficha-conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
       }
 
-      @if (showSection('group-section-general')) {
-        <ng-container *ngTemplateOutlet="seccionGeneral" />
-      }
-
-      @if (showSection('group-section-distribution')) {
-        <ng-container *ngTemplateOutlet="seccionDistribucion" />
-      }
-
-      @if (showSection('group-section-resources')) {
-        <ng-container *ngTemplateOutlet="seccionRecursos" />
-      }
-
-      @if (showSection('group-section-agents')) {
-        <ng-container *ngTemplateOutlet="seccionAgentes" />
+      @if (mode() === 'edit') {
+        @if (showSection('group-section-general')) {
+          <ng-container *ngTemplateOutlet="seccionGeneral" />
+        }
+        @if (showSection('group-section-distribution')) {
+          <ng-container *ngTemplateOutlet="seccionDistribucion" />
+        }
+        @if (showSection('group-section-resources')) {
+          <ng-container *ngTemplateOutlet="seccionRecursos" />
+        }
+        @if (showSection('group-section-agents')) {
+          <ng-container *ngTemplateOutlet="seccionAgentes" />
+        }
+      } @else {
+        <!-- EL ALTA, EN PASOS (DD-137): las cuatro secciones en el Stepper vertical nativo. General es la puerta
+             (DD-121): sin nombre ni canales, los demás pasos están apagados. «Crear grupo» sigue arriba. -->
+        <sc-alta-pasos
+          [pasos]="alta.pasos()"
+          [abierto]="pasoAbierto()"
+          [secciones]="{
+            'group-section-general': seccionGeneral,
+            'group-section-distribution': seccionDistribucion,
+            'group-section-resources': seccionRecursos,
+            'group-section-agents': seccionAgentes
+          }"
+          (paso)="goTo($event)"
+          (siguiente)="siguiente()"
+          (anterior)="anterior()"
+        />
       }
     </div>
 
@@ -259,6 +277,8 @@
   <sc-section-card
     anchorId="group-section-general"
     surface="card"
+    [flush]="mode() === 'create'"
+    [showHeader]="mode() !== 'create'"
     icon="tune"
     titleKey="groups.form.section.general"
     hintKey="groups.form.section.general_hint"
@@ -305,7 +325,6 @@
         <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.channels_required' | translate }}</p>
       }
     </section>
-    <ng-container *ngTemplateOutlet="nextStep" />
   </sc-section-card>
 </ng-template>
 
@@ -316,6 +335,8 @@
   <sc-section-card
     anchorId="group-section-distribution"
     surface="card"
+    [flush]="mode() === 'create'"
+    [showHeader]="mode() !== 'create'"
     icon="alt_route"
     titleKey="groups.form.section.distribution"
     hintKey="groups.form.section.distribution_hint"
@@ -561,7 +582,6 @@
         }
       </section>
     }
-    <ng-container *ngTemplateOutlet="nextStep" />
   </sc-section-card>
 </ng-template>
 
@@ -569,6 +589,8 @@
   <sc-section-card
     anchorId="group-section-resources"
     surface="card"
+    [flush]="mode() === 'create'"
+    [showHeader]="mode() !== 'create'"
     icon="library_books"
     titleKey="groups.form.section.resources"
     hintKey="groups.form.section.resources_hint"
@@ -717,7 +739,6 @@
         }
       </div>
     </section>
-    <ng-container *ngTemplateOutlet="nextStep" />
   </sc-section-card>
 </ng-template>
 
@@ -727,6 +748,8 @@
   <sc-section-card
     anchorId="group-section-agents"
     surface="card"
+    [flush]="mode() === 'create'"
+    [showHeader]="mode() !== 'create'"
     icon="group"
     titleKey="groups.form.section.agents"
     hintKey="groups.form.section.agents_hint"
@@ -742,16 +765,6 @@
       />
     </section>
   </sc-section-card>
-</ng-template>
-
-<!-- «Siguiente», al pie de cada sección y SOLO en el alta: guía por las cuatro en el orden de sus
-     dependencias. Al editar se salta de sección con el índice, y no hay pasos que seguir. -->
-<ng-template #nextStep>
-  @if (mode() === 'create' && nextSectionId()) {
-    <div class="section-next">
-      <sc-button size="sm" variant="secondary" appearance="outlined" icon="arrow_forward" iconPosition="right" [label]="'common.next' | translate" (clicked)="next()" />
-    </div>
-  }
 </ng-template>
 
 <!-- La cola de UN canal: Teléfono y Chat tienen cada uno la suya (visión de producto de grupos, 2026-09-25), con

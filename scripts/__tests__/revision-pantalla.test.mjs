@@ -13,4 +13,7 @@ test('nombreDe: quita la ligadura del icono que va delante del texto de una pest
   assert.equal(nombreDe('alt_route\nDistribución y colas'), 'Distribución y colas');
   assert.equal(nombreDe('  library_books\n Recursos '), 'Recursos');
   assert.equal(nombreDe('Identidad'), 'Identidad', 'sin icono, el texto queda igual');
+  // Los pasos de un alta (DD-137): el nativo pinta su número delante del título.
+  assert.equal(nombreDe('1\nGeneral'), 'General', 'el número del paso no es parte del nombre');
+  assert.equal(nombreDe('12\nGrupos asignados'), 'Grupos asignados');
 });
