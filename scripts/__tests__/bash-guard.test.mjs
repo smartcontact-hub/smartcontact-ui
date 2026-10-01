@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
@@ -14,9 +15,12 @@ import { carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
 // `distRancio: () => null` en los tres: sin él, el test lee el `dist/` REAL de la máquina, y basta con
 // editar una fuente del DS sin reconstruir para que `npm run e2e` salga denegado y el test rojo
 // (2026-09-24, en mitad de un preflight). El caso rancio se prueba aparte, inyectado. Por lo mismo,
-// `listarPreflights: () => []`: sin él, un build en un test lee los procesos vivos de la máquina.
-const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [] };
-const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [] };
+// `listarPreflights: () => []`: sin él, un build en un test lee los procesos vivos de la máquina. Y
+// `usaPreflight: () => true` en `verde` y `rojo`: las carpetas de mentira (`/repo`, `/wt`) no están en
+// el disco, y sin él ningún push de un test se juzgaría como de este repo. Cómo reconoce el hook un
+// árbol de este repo se prueba aparte, en el disco.
+const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], usaPreflight: () => true };
+const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], usaPreflight: () => true };
 /** Árbol con fuentes nuevas todavía fuera del índice. */
 const sinAdd = {
   distRancio: () => null,
@@ -597,6 +601,45 @@ test('carpeta del comando: `cd <ruta> &&` manda sobre el cwd de la sesión; con 
   deny('npx playwright test', soloElWorktree, /LEARNINGS #5/);
   assert.equal(carpetaEfectiva('cd sub && ls', '/repo'), '/repo/sub');
   assert.equal(carpetaEfectiva('ls && cd /otra', '/repo'), '/repo', 'un cd DETRÁS no cambia dónde corre lo de delante');
+});
+
+// 2026-10-01: una sesión de este repo también empuja OTROS repositorios (`cd <otro> && git push`), y
+// ahí la regla pedía una marca que solo escribe la cadena de ESTE: no se podía cumplir nunca, y la
+// única salida era `# sc:ok`. Va sin `usaPreflight` inyectado, porque lo que se prueba es cómo
+// reconoce el hook, en el DISCO, un árbol de este repo. `RAIZ` es el checkout que corre el test.
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+// Dentro de un hook de git, `GIT_DIR` apunta al repositorio de verdad: el `git init` va sin él.
+const SIN_GIT = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')));
+
+test('#7 push en un repositorio sin la cadena de preflight → allow; en un árbol de este repo sin marca → deny', () => {
+  const base = mkdtempSync(join(tmpdir(), 'bash-guard-push-'));
+  const enDisco = { sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [] };
+  try {
+    // Un repositorio recién creado: ni `scripts/preflight-mark.mjs` ni marca.
+    const otro = join(base, 'otro');
+    mkdirSync(otro);
+    spawnSync('git', ['init', '-q'], { cwd: otro, env: SIN_GIT });
+    // VERDE, y rojo hasta este cambio: el push de ese día desde una sesión de este repo, el cierre
+    // entero (añadir, commitear y empujar) y una sesión abierta en el otro repositorio.
+    allow(`cd "${otro}" && git push`, { ...enDisco, cwd: RAIZ });
+    allow(`cd "${otro}" && git add notas.md && git commit -m "notas" -- notas.md && git push`, { ...enDisco, cwd: RAIZ });
+    allow('git push', { ...enDisco, cwd: otro });
+
+    // ROJO: un árbol de este repo sin marca. El checkout de verdad, desde su raíz y desde una
+    // subcarpeta, con la marca contestada «no» (la suya depende de la última cadena)…
+    const sinMarca = { ...enDisco, cwd: otro, preflight: rojo.preflight };
+    deny(`cd "${RAIZ}" && git push`, sinMarca, /LEARNINGS #7/);
+    deny(`cd "${join(RAIZ, 'projects', 'supervisor')}" && git push -u origin HEAD`, sinMarca, /LEARNINGS #7/);
+    // …y uno montado como un worktree (`.git` FICHERO y el script de la marca), sin marca y con la
+    // lectura de la marca de verdad.
+    const arbol = join(base, 'worktree');
+    mkdirSync(join(arbol, 'scripts'), { recursive: true });
+    writeFileSync(join(arbol, '.git'), 'gitdir: x\n');
+    writeFileSync(join(arbol, 'scripts', 'preflight-mark.mjs'), '');
+    deny(`cd "${arbol}" && git push`, { ...enDisco, cwd: otro }, /LEARNINGS #7 — .*no hay marca de preflight/);
+  } finally {
+    rmSync(base, { recursive: true, force: true });
+  }
 });
 
 test('#21 sacar la rama de otra sesión para trabajar en ella → deny; desde main, un fichero suelto o sc:ok → allow', () => {
