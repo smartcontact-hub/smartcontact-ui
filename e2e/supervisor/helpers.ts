@@ -236,7 +236,7 @@ export const irASeccion = async (page: Page, etiqueta: string | RegExp): Promise
 
 /**
  * Cambia de paso en un alta: el Stepper vertical nativo de PrimeNG ocupa el sitio
- * del índice (DD-137). La edición sigue con `irASeccion`.
+ * del índice (DD-138). La edición sigue con `irASeccion`.
  *
  * Un paso abierto a la vez: el nativo desmonta el contenido del que se deja al
  * acabar de plegarlo, así que aquí se espera a que quede un solo panel. Como con el

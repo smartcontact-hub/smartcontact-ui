@@ -42,7 +42,8 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue | DD-137 |
+> | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue | DD-138 |
+> | El sidebar sigue a su tablero de Figma (14912:6324): sin botón de anclar · plegado sigue abierto lo que estaba abierto · texto e icono en blanco y la flecha al 60% · todos los iconos a 14, los que nombra el catálogo del tablero (14912:6774) · «Diseñador VUI» y «Análisis de Flujo» (enmienda DD-118 §2 y §5) | DD-137 |
 > | Un alta dice en su resumen lo que falta («Falta: nombre · extensión») y, cuando «Crear …» se enciende, «Listo para crear»: `sc-summary-status`, un solo `role="status"` que cambia en su sitio · sin porcentaje ni barra · un error de formato va en su campo · al editar, nunca «Listo» | DD-136 |
 > | Con qué nace un grupo o un agente se fija en Contact Center (› Grupos, › Agentes), con las palabras de su ficha, y el alta lo lee · de fábrica, los valores del documento de producto (10 · 15 · 60 s, Baja, Balanceada, desbordar; el agente, todo menos la numeración especial) · la cola agotada sigue por el VUI | DD-135 |
 > | Una ayuda bajo un campo dice lo que dicen las fuentes (manual de Voice, documento de producto) o no existe · va en el `helperText`, que la anuncia · `sc-select` pone sus `aria-*` en el elemento con foco · los desplegables del DS hablan el idioma de la app · fuera las ⓘ de la ficha de grupo | DD-133 |
@@ -99,7 +100,7 @@
 
 ---
 
-## DD-137 · 2026-09-29 — Las altas van en pasos: el Stepper vertical nativo de PrimeNG
+## DD-138 · 2026-10-01 — Las altas van en pasos: el Stepper vertical nativo de PrimeNG
 
 **Contexto** · Producto (2026-09-29), con el gradiente de meta en los formularios: en el alta, los pasos en columna;
 cada uno abre su contenido debajo y se pliega con ✓ al acabarlo; la edición sigue con el índice lateral. Señaló el
@@ -182,6 +183,61 @@ Stepper de primeng.dev y pidió revisar DD-121, que lo había descartado. Hasta 
 - **Herramientas:** `revision` y `agrupacion` recorren los pasos. Al llegar al primer paso apagado rellenan lo que lo
   abre (`PREPARAR`), y `agrupacion` falla si alguno sigue apagado. El nombre de la vista va sin el número del paso
   (prueba unitaria, en rojo primero).
+
+---
+
+## DD-137 · 2026-10-01 — El sidebar sigue a su tablero de Figma: sin anclar, plegado guarda lo abierto, blanco al 100% e iconos de 14
+
+**Contexto** · SISMAC-4340. Producto revisó el tablero del sidebar en Figma (`khNq9dJKNi13pNllrqm6dx`, nodo `14912:6324`):
+iconos grises que no tocaban y padres sin su cyan. Al medirlo salieron más diferencias, entre el propio tablero y
+contra el código:
+- **En el código**, el icono iba al 50% de blanco y el texto al 60%; en el tablero, los dos al 100%.
+- **Los tamaños**: 16 en el primer nivel, 14 en los hijos y 13 en los nietos; en el tablero, 14 en todos.
+- **Plegado a 80**, el código solo pintaba abierta la rama de la página; el tablero dice que lo abierto sigue abierto.
+- **Producción tenía un botón de anclar** que el tablero no tiene.
+
+**Decisión** · (decisión de producto, 2026-10-01; enmienda DD-118 §2 y §5)
+1. **Sin botón de anclar.** Fuera el botón, su clase y el recuerdo en el navegador (`sc-sidebar-anclado`). Si vuelve,
+   será con el Sidebar de primeng.dev de la rama experimental, cuando los devs pasen a PrimeNG 22.
+2. **Plegado a 80 se pinta abierto lo mismo que desplegado.** Ninguna categoría se repliega por no ser la de la página.
+3. **Texto e icono de cada fila en blanco al 100%** (`--sc-sidebar-fg`); con el ratón encima solo cambia el fondo. La
+   flecha, al 60% (`--sc-sidebar-fg-muted`). Los títulos de sección, en caption regular, blancos y sin espaciado extra.
+4. **Todos los iconos a 14.**
+5. **Los iconos los manda el catálogo del tablero** (sección «Iconos del menú», nodo `14912:6774`): cada sidebar del
+   tablero y el código toman de ahí el suyo. En el código solo cambia que Administración lleva `groups` y Grupos
+   `group`, que estaban cruzados; la paleta de comandos copia el icono del menú.
+6. **«Diseñador VUI» y «Análisis de Flujo»** en todo el Supervisor en español. «Análisis» también en inglés, francés y
+   portugués; «VUI Designer» se queda como nombre de producto en esos tres.
+
+**Razón** ·
+- **Medido en Figma** (exportando a SVG los 199 iconos del tablero): todas las filas con texto e icono en `#FFFFFF`,
+  flechas al 60% y un solo cyan por sidebar.
+- **Medido en el código**, a 1440×900 contra `ng serve`: `e2e/supervisor/sidebar-tablero.spec.ts`. Son cuatro
+  pruebas, verdes en local y las cuatro en rojo contra producción, que aún lleva lo anterior. Fallan por lo que deben:
+  - plegado se repliega Supervisión;
+  - el botón de anclar existe;
+  - el texto va al 60%;
+  - el icono de Supervisión mide 16.
+- **La flecha al 60% pasa el 3:1 que pide un indicador.** Los suelos medidos son 0,338 sobre una fila con el ratón
+  encima y 0,5 dentro del bloque de hijos (DD-118).
+
+**Descartadas** ·
+- **Arreglar el gris en la librería Smart-Contact Icons** (quitar el color de dentro del dibujo, publicar y aceptar la
+  actualización) → se eligió arreglarlo solo en el tablero. Ahí los iconos van desligados de la librería y pintados
+  a mano. El gris de los botones del DS sigue pendiente aparte.
+- **Los iconos de los plegados** (`query_stats`, `dashboard`, `build`, `finance_mode`, `support_agent`, `folder`) → se
+  llegaron a poner en todo el tablero y en el código, y se quitaron: manda el catálogo.
+- **Atar a variable el icono del seleccionado en Figma** (`primary/color`) → «No hace falta que usemos variables».
+  Sigue en negro en el tablero; en el código va en el navy de la barra.
+
+**Consecuencias** ·
+- **Figma:** el plegado antiguo del tablero (`14912:6420`) pasa a 16 de margen interior y esquinas a 12, sin la fila
+  «Monitor Selected» escondida. Los iconos de los sidebars son copias desligadas de Smart-Contact Icons: si cambia el
+  catálogo, hay que volver a pasarlos.
+- **Sin seguir del tablero todavía:**
+  - «Lo abierto se recuerda al recargar»: el código empieza vacío en cada carga.
+  - «Ir a otra página no abre ni cierra nada»: el código abre la rama de la página al entrar.
+  - El texto de la fila: el código lo pinta en body 14 regular y el tablero en 13 Medium, que no está en la escala.
 
 ---
 
@@ -596,7 +652,7 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
 2. **Las tres altas, iguales.** La cabecera de la ficha se pinta también al crear: «Nuevo agente» o «Nuevo usuario»
    («Duplicar …» al duplicar) hasta que se escribe el nombre, como en el grupo. El botón principal dice lo que hace:
    «Crear agente» y «Crear usuario», como «Crear grupo». «Siguiente» sigue solo en el grupo, donde General es la
-   puerta (DD-121). Desde DD-137, «Atrás» y «Siguiente» van en las tres altas, como atajos entre pasos; puerta,
+   puerta (DD-121). Desde DD-138, «Atrás» y «Siguiente» van en las tres altas, como atajos entre pasos; puerta,
    solo la del grupo.
 3. **Guardar deja en la ficha, también en la de usuario.** Al editar se queda; al crear, abre la edición del usuario
    nuevo en la sección en la que se estaba. Hasta hoy, la de usuario volvía siempre al listado.
@@ -619,7 +675,7 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
   Ahora el anillo va a 28, los cinco valores caen en una sola vertical y la fila tiene una sola altura.
 - **Las altas.** El título de agente y usuario medía 1 px (estaba oculto), y al crear aparecía la cabecera y la ficha
   saltaba hacia abajo, contra AGENTS «UX de pantalla» 7. Con la cabecera en los dos modos, el índice queda a la misma
-  altura al pasar del alta a la edición (medido). Desde DD-137 el alta no tiene índice: lo que queda a la misma
+  altura al pasar del alta a la edición (medido). Desde DD-138 el alta no tiene índice: lo que queda a la misma
   altura es el contenido.
 - **El usuario nuevo** abría con las 16 casillas marcadas, «Gestión de usuarios» y «Espiar conversaciones»
   incluidas, fuera cual fuera su tipo. El anillo del resumen lo puso a la vista: 11 de 11 y 5 de 5 nada más abrir.
@@ -633,7 +689,7 @@ propuesto ensayado en la página real (inyectando el CSS, sin tocar el código).
 - **Esconder también el título del alta de grupo**, la otra forma de igualar → la ficha saltaría al crear, que es
   justo lo que se arregla.
 - **«Siguiente» en agente y usuario** → sería una puerta que esas fichas no piden, porque se rellenan en cualquier
-  orden. Con los pasos (DD-137) va como atajo, no como puerta: se siguen rellenando en cualquier orden.
+  orden. Con los pasos (DD-138) va como atajo, no como puerta: se siguen rellenando en cualquier orden.
 - **Que las tres vuelvan al listado al guardar** → obliga a reabrir la ficha para tocar otra sección.
 - **El paquete por tipo del laboratorio para el usuario nuevo** → no está validado con producto.
 - **Plegar cada canal de Distribución y colas** → esconde lo configurado y enmienda DD-121 §5.
@@ -1099,7 +1155,7 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
 **Decisión** ·
 1. **Un índice**: `sc-form-section-nav` del DS en las cinco pantallas con índice (fichas de agente, grupo y usuario,
    constructor de reglas y Contact Center). `sc-settings-sidebar` se borra con sus claves que no pintaba nadie. En
-   las altas de las fichas, desde DD-137, van los pasos del Stepper en vez del índice.
+   las altas de las fichas, desde DD-138, van los pasos del Stepper en vez del índice.
 2. **Cada fila es un ENLACE a su sitio**: una ruta (Contact Center) o la misma página con `?seccion=` (fichas y
    constructor). La sección a la vista sale de la dirección: un `input` de página que el router rellena en cada
    navegación, también cuando solo cambia la query (`withComponentInputBinding`). Sin parámetro, la de aterrizaje.
@@ -1109,7 +1165,7 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
    de la fila y la navegación con el mismo árbol de URL. Cmd/Ctrl, Mayús, Alt o el clic central los hace el
    navegador, la regla de `routerLink`: otra pestaña en esa sección. Al editar, Atrás vuelve a la sección anterior.
 4. **En un ALTA la sección no deja rastro** (`replaceUrl`, en grupo, agente, usuario y regla): Atrás sale del alta,
-   y tras crear no se vuelve a un alta vacía. El alta de grupo quita `?seccion=` al abrir. Desde DD-137, las altas de
+   y tras crear no se vuelve a un alta vacía. El alta de grupo quita `?seccion=` al abrir. Desde DD-138, las altas de
    grupo, agente y usuario van en pasos, que no tocan la dirección, y las tres quitan `?seccion=` al abrir; la
    regla sigue así.
 5. **Cambiar de sección no funde la página**: la transición de vista se salta cuando solo cambia la query (medido:
@@ -1248,7 +1304,7 @@ tres fichas (#240) y el alta en diálogo (DD-119).
     Escape van apagados y cierra el panel, que pregunta antes si hay cambios; Escape se atiende en el propio panel y
     no sube, porque el contenedor de `p-drawer` lo escucha y, aun con `closeOnEscape` apagado, llama a `hide(false)`,
     que quita la máscara y deja el panel abierto (medido con PrimeNG 22.1.2). Coge el mismo candado que la ficha.
-11. **El alta es la propia ficha, en modo alta** (desde DD-137, en pasos: el Stepper vertical nativo en el sitio del
+11. **El alta es la propia ficha, en modo alta** (desde DD-138, en pasos: el Stepper vertical nativo en el sitio del
     índice, con la misma puerta, y el paso no va en la dirección): `/admin/grupos/crear` la abre vacía, con los valores por defecto
     de Grupos (desde DD-135, los de Contact Center › Grupos) y Teléfono marcado. General es la puerta: sin nombre (o repetido) o sin canales no se sale de ella, ni
     por el índice ni con «Siguiente»; cada campo dice lo que le falta y el foco va al primero. «Siguiente», al pie de
@@ -1274,7 +1330,7 @@ y marca siempre 100 % al editar, y la sección de distribución con Teléfono y 
 
 **Descartadas** ·
 - **Stepper de PrimeNG** → el horizontal es lo que la visión rechaza; el vertical mete el contenido entre los pasos
-  (no hay menú + contenido), y usarlo para crear e índice para editar serían dos formularios. Revisado en DD-137:
+  (no hay menú + contenido), y usarlo para crear e índice para editar serían dos formularios. Revisado en DD-138:
   producto lo pidió para el alta, y con una plantilla por sección y los pasos sacados del índice es un formulario con
   dos maquetas.
 - **Resumen bajo el índice, en el mismo carril** (la primera versión, del 2026-09-26, con el patrón del constructor

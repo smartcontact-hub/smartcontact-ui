@@ -72,7 +72,7 @@
     </div>
 
     <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). Solo al editar: el
-         alta y el duplicado van en pasos (DD-137), y su contenido ocupa también este sitio. -->
+         alta y el duplicado van en pasos (DD-138), y su contenido ocupa también este sitio. -->
     @if (mode() === 'edit') {
       <div class="page__rail">
         <sc-form-section-nav
@@ -94,7 +94,7 @@
       }
 
       @if (mode() !== 'edit') {
-        <!-- EL ALTA, EN PASOS (DD-137): las cinco secciones en el Stepper vertical nativo, en cualquier orden. -->
+        <!-- EL ALTA, EN PASOS (DD-138): las cinco secciones en el Stepper vertical nativo, en cualquier orden. -->
         <sc-alta-pasos
           [pasos]="alta.pasos()"
           [abierto]="pasoAbierto()"
@@ -180,7 +180,7 @@
 />
 
 <!-- LAS SECCIONES, cada una en su plantilla: la edición las pinta de una en una junto al índice, y el alta, cada
-     una en su paso (DD-137). Un solo cuerpo para los dos, así no pueden decir cosas distintas. -->
+     una en su paso (DD-138). Un solo cuerpo para los dos, así no pueden decir cosas distintas. -->
 <ng-template #seccionIdentidad>
   <sc-section-card
     anchorId="agent-section-identity"

@@ -1,5 +1,5 @@
 /**
- * LOS PASOS DE UN ALTA (DD-137): las secciones del índice de la ficha, en su orden, como pasos del Stepper vertical
+ * LOS PASOS DE UN ALTA (DD-138): las secciones del índice de la ficha, en su orden, como pasos del Stepper vertical
  * nativo de PrimeNG. Una sola fuente: los pasos salen de `navSections`, así que pasos e índice no pueden discrepar.
  *
  * El paso abierto vive aquí y no en la dirección: cambiar de paso no toca la URL ni el historial, y Atrás del

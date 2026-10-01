@@ -15,7 +15,7 @@ import { disableAnimations, forceLightTheme, goto, irAPaso } from './helpers';
  *     constructor)— y la actual se anuncia como la página actual;
  *   · clic = navegar dentro de la app, sin fundir la página; Cmd/Ctrl+clic = otra pestaña, en esa
  *     sección; Atrás = la sección anterior (al editar);
- *   · en un ALTA no hay índice: van los pasos del Stepper (DD-137, su red es `altas-pasos`), que no
+ *   · en un ALTA no hay índice: van los pasos del Stepper (DD-138, su red es `altas-pasos`), que no
  *     tocan la dirección ni el historial (Atrás sale del alta), y la de grupo no deja entrar por la
  *     dirección a otra sección sin completar General;
  *   · un solo «Guardar» por ficha: el índice marca las secciones con cambios sin guardar y la barra

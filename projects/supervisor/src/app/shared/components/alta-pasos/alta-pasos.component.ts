@@ -19,7 +19,7 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
 import type { PasoAlta } from '@shared/utils/alta-pasos';
 
 /**
- * EL ALTA, EN PASOS (DD-137): el Stepper vertical de primeng.dev tal cual (DD-113), con las secciones del índice de
+ * EL ALTA, EN PASOS (DD-138): el Stepper vertical de primeng.dev tal cual (DD-113), con las secciones del índice de
  * la ficha. Cada paso abre su sección debajo y, al dejarlo completo, lleva ✓. La edición sigue con el índice (DD-122).
  *
  * Lo nativo, sin tocar: `p-stepper` › `p-step-item` › `p-step` + `p-step-panel`, con el contenido en `#content`;

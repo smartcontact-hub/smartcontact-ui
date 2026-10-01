@@ -44,7 +44,7 @@ export const nombreCaptura = (vista) =>
     .replace(/^-+|-+$/g, '');
 
 /** Quita lo que va delante del texto de una pestaña o sección: la ligadura de su icono de Material, o el número de
- *  un paso del alta (DD-137: el nativo lo pinta delante del título). */
+ *  un paso del alta (DD-138: el nativo lo pinta delante del título). */
 export const nombreDe = (txt) => txt.replace(/^\s*(?:[a-z_]+|\d+)\s*\n/, '').replace(/\s+/g, ' ').trim();
 
 /**

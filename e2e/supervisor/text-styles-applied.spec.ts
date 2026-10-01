@@ -75,7 +75,7 @@ const ETIQUETAS: ReadonlyArray<{
     rol: 'Body/body-regular',
   },
   { ruta: 'admin/usuarios/crear', nombre: 'admin · alta de usuario', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
-  // El alta de grupo es su ficha, en pasos (DD-137): la etiqueta que se mide es la de General, el paso que abre.
+  // El alta de grupo es su ficha, en pasos (DD-138): la etiqueta que se mide es la de General, el paso que abre.
   { ruta: 'admin/grupos/crear', nombre: 'admin · alta de grupo', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
 ];
 

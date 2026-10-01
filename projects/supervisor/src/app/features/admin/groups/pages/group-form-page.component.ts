@@ -263,7 +263,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   );
 
   /**
-   * EL ALTA VA EN PASOS (DD-137): las mismas cuatro secciones, en el Stepper vertical nativo. General es la
+   * EL ALTA VA EN PASOS (DD-138): las mismas cuatro secciones, en el Stepper vertical nativo. General es la
    * puerta (DD-121): sin nombre y sin canales los demás pasos están apagados. El paso abierto no toca la dirección.
    */
   protected readonly alta = pasosDeAlta({
@@ -288,7 +288,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * en General aunque la dirección pida otra (el enlace de otra pestaña, o un `crear?seccion=` escrito).
    */
   protected readonly activeSection = computed<string>(() => {
-    // En el alta, el paso abierto (DD-137); al editar, la dirección.
+    // En el alta, el paso abierto (DD-138); al editar, la dirección.
     const id =
       this.mode() === 'create'
         ? this.alta.abierta()
@@ -371,7 +371,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.stayInGeneral();
       return;
     }
-    // En el alta, el paso se abre sin tocar la dirección: Atrás sale del alta (DD-122, DD-137).
+    // En el alta, el paso se abre sin tocar la dirección: Atrás sale del alta (DD-122, DD-138).
     if (this.mode() === 'create') {
       this.alta.abrir(id);
       return;
@@ -661,7 +661,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (!idParam) {
       // ALTA: la ficha vacía, con los valores por defecto de Grupos y Teléfono marcado (`emptyForm`). Abre en
       // General aunque la dirección pida otra sección: General es la puerta del alta (`goTo`). Se quita el
-      // parámetro: en el alta el paso abierto no vive en la dirección (DD-137).
+      // parámetro: en el alta el paso abierto no vive en la dirección (DD-138).
       this.dirtyState.markPristine();
       if (this.route.snapshot.queryParamMap.has('seccion')) {
         void this.sectionLinks.go(this.sectionUrl('group-section-general'), { replace: true });
@@ -711,7 +711,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /** Cada sección en la dirección (`?seccion=agentes`): el índice enlaza a ellas, y al crear se abre la edición en
-   *  la del paso abierto (DD-137). */
+   *  la del paso abierto (DD-138). */
   private static readonly SECTION_SLUGS: Readonly<Record<string, string>> = {
     general: 'group-section-general',
     distribucion: 'group-section-distribution',

@@ -11,7 +11,7 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   1. El nombre es el único `h1` de la página, y es el mismo que el del campo de Identidad.
  *   2. UN índice lateral gobierna el contenido: una sección a la vista, en su caja; sin pestañas.
  *   3. Un solo orden por ficha en los dos modos, el de sus dependencias: el del índice al editar y el de los
- *      pasos en el alta (DD-137). La ficha abre en la primera (Identidad) y el listado la abre en su sección de
+ *      pasos en el alta (DD-138). La ficha abre en la primera (Identidad) y el listado la abre en su sección de
  *      trabajo (`?seccion=`).
  *   4. Las tres fichas comparten molde: la cabecera en la misma vertical, el índice de Contact
  *      Center (196, fijo) y el contenido de 812 a 1440 con el resumen a la derecha.
@@ -54,7 +54,7 @@ const indice = (page: Page) => page.locator('sc-form-section-nav');
 const rotulos = async (page: Page) =>
   (await indice(page).locator('.form-nav__label').allTextContents()).map((t) => t.trim());
 const actual = (page: Page) => indice(page).locator('.form-nav__item[aria-current="page"] .form-nav__label');
-/** En el alta, los pasos del Stepper en vez del índice (DD-137). */
+/** En el alta, los pasos del Stepper en vez del índice (DD-138). */
 const pasos = (page: Page) => page.getByRole('tablist', { name: 'Pasos del alta' });
 
 for (const f of FICHAS) {

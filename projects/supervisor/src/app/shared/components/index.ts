@@ -37,5 +37,5 @@ export { SummaryKpiComponent } from './summary-kpi/summary-kpi.component';
 // Lo que le falta a un alta, hasta «Listo para crear» (DD-136).
 export { SummaryStatusComponent } from './summary-status/summary-status.component';
 
-// El alta en pasos: el Stepper vertical nativo con las secciones de la ficha (DD-137).
+// El alta en pasos: el Stepper vertical nativo con las secciones de la ficha (DD-138).
 export { AltaPasosComponent } from './alta-pasos/alta-pasos.component';

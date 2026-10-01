@@ -1029,9 +1029,9 @@
     "conversaciones": "Conversaciones",
     "estadisticas": "Estadísticas",
     "informes": "Informes de Datos",
-    "analizador": "Analizador de Flujo",
+    "analizador": "Análisis de Flujo",
     "scc": "SCC",
-    "vui_designer": "VUI Designer",
+    "vui_designer": "Diseñador VUI",
     "centro_control": "Centro de control",
     "mask_manager": "Mask Manager",
     "administration": "Administración",
@@ -1045,8 +1045,7 @@
     "aed": "Contact Center",
     "integrations": "Integraciones",
     "system": "Sistema",
-    "nav_aria": "Navegación principal",
-    "anchor_aria": "Anclar el menú"
+    "nav_aria": "Navegación principal"
   },
   "labels": {
     "breadcrumb": "Labels",
@@ -1366,8 +1365,8 @@
       "conversations": "Conversaciones",
       "stats": "Estadísticas",
       "stats_data_reports": "Informes de Datos",
-      "stats_flow_analyzer": "Analizador de Flujo",
-      "vui_designer": "VUI Designer",
+      "stats_flow_analyzer": "Análisis de Flujo",
+      "vui_designer": "Diseñador VUI",
       "users": "Usuarios",
       "groups": "Grupos",
       "agents": "Agentes",
@@ -1376,7 +1375,7 @@
       "system": "Sistema"
     },
     "permission": {
-      "vui_designer_management": "Gestión VUI Designer",
+      "vui_designer_management": "Gestión del Diseñador VUI",
       "users_management": "Gestión de usuarios",
       "groups_management": "Gestión de grupos",
       "agents_management": "Gestión de agentes",
@@ -1641,7 +1640,7 @@
         "queue_fixed_hint": "Como mucho {{count}} conversaciones en cola.",
         "queue_per_agent_hint": "Como mucho {{count}} conversaciones en cola por cada agente conectado.",
         "max_queue_wait": "Tiempo máximo de espera en cola",
-        "max_queue_wait_hint": "Si nadie la atiende en este tiempo, la conversación sale del grupo y pasa al siguiente destino, que se elige en el VUI Designer.",
+        "max_queue_wait_hint": "Si nadie la atiende en este tiempo, la conversación sale del grupo y pasa al siguiente destino, que se elige en el Diseñador VUI.",
         "transfer": "Tiempo de transferencia",
         "transfer_hint": "Tiempo máximo para entregar la conversación a su destino.",
         "service_level": "Tiempo del % de servicio",

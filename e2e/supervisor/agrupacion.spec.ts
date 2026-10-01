@@ -123,11 +123,11 @@ const medir = async (page: Page, vista: string): Promise<string[]> => {
 };
 
 /** Quita lo que va delante del texto de una pestaña o sección: la ligadura de su icono de Material, o el número de
- *  un paso del alta (DD-137). La misma que `nombreDe` de `scripts/revision-pantalla.mjs`, que tiene su prueba. */
+ *  un paso del alta (DD-138). La misma que `nombreDe` de `scripts/revision-pantalla.mjs`, que tiene su prueba. */
 const nombreDe = (txt: string): string => txt.replace(/^\s*(?:[a-z_]+|\d+)\s*\n/, '').replace(/\s+/g, ' ').trim();
 
 /**
- * Lo mínimo que abre los pasos apagados de un alta (DD-137): la de grupo no deja pasar de General sin nombre
+ * Lo mínimo que abre los pasos apagados de un alta (DD-138): la de grupo no deja pasar de General sin nombre
  * (DD-121). Se rellena al llegar al primer paso apagado, así que General se mide como la ve quien llega. Un alta
  * nueva con puerta entra aquí: si un paso sigue apagado, la prueba lo dice en vez de dejarlo sin medir.
  */

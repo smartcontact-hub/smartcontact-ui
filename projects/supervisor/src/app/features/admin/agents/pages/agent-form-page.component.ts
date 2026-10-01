@@ -393,7 +393,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   readonly seccion = input<string | undefined>();
 
   /**
-   * EL ALTA VA EN PASOS (DD-137), también al duplicar: las mismas cinco secciones, en el Stepper vertical nativo, y en
+   * EL ALTA VA EN PASOS (DD-138), también al duplicar: las mismas cinco secciones, en el Stepper vertical nativo, y en
    * cualquier orden (DD-130: aquí no hay puerta). Identidad está completa con nombre, extensión y, si se escriben,
    * email y PIN bien escritos; las demás no piden nada.
    */
@@ -419,7 +419,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return this.sectionLinks.section(this.route, id === 'agent-section-identity' ? null : slug);
   }
 
-  /** Ir a otra sección. En el alta y al duplicar, el paso se abre sin tocar la dirección: Atrás sale (DD-122, DD-137). */
+  /** Ir a otra sección. En el alta y al duplicar, el paso se abre sin tocar la dirección: Atrás sale (DD-122, DD-138). */
   protected goTo(id: string): void {
     if (this.mode() !== 'edit') {
       this.alta.abrir(id);
@@ -428,7 +428,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.sectionLinks.go(this.sectionUrl(id));
   }
 
-  /** «Siguiente» y «Atrás» de cada paso: atajos al de al lado, no puertas (DD-137; la puerta es solo del grupo). */
+  /** «Siguiente» y «Atrás» de cada paso: atajos al de al lado, no puertas (DD-138; la puerta es solo del grupo). */
   protected siguiente(): void {
     const id = this.alta.siguiente();
     if (id) this.goTo(id);
@@ -449,7 +449,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   /**
    * Lo que falta para poder guardar, en el índice: el nombre y la extensión, en Identidad. El índice es de la
-   * edición; en el alta y al duplicar van los pasos (DD-137), y lo que falta lo dice el resumen (DD-136).
+   * edición; en el alta y al duplicar van los pasos (DD-138), y lo que falta lo dice el resumen (DD-136).
    */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
     const f = this.form();
@@ -760,7 +760,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       return;
     }
 
-    // El alta va en pasos (DD-137): la dirección no dice sección, y se quita la que traiga (el duplicado
+    // El alta va en pasos (DD-138): la dirección no dice sección, y se quita la que traiga (el duplicado
     // conserva su `seedFromId`).
     if (this.route.snapshot.queryParamMap.has('seccion')) {
       void this.sectionLinks.go(this.sectionLinks.section(this.route, null), { replace: true });

@@ -15,7 +15,7 @@ sus dos trampas suben a «Trampas del frente». El de la visión de producto de 
 mismo tope: `git show f63d13aa:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
 Contact Center suben a «Trampas del frente».
 
-## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-137)
+## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-138)
 
 > **Sello: #290 (`e490faf`) y #291 (`4be46a5`) fundidos en `main`, con su CI de `main` en verde; los pasos, en la
 > rama `areses/sweet-fermat-r9cxzw` sobre `0ec229c`.**
@@ -49,7 +49,7 @@ Contact Center suben a «Trampas del frente».
 `altas-meta.spec.ts`: cuatro de cinco en rojo contra el código anterior (la quinta, de guarda), y el contraste de
 «Listo» en los dos temas, en rojo con el color cambiado a propósito.
 
-**Las altas van en pasos (DD-137)**, lo que eligió producto para el mismo gradiente de meta:
+**Las altas van en pasos (DD-138)**, lo que eligió producto para el mismo gradiente de meta:
 - en el alta (y al duplicar agente o usuario), el Stepper vertical nativo de PrimeNG en el sitio del índice y del
   contenido; la edición sigue con el índice. Pieza de la app: `sc-alta-pasos`, con `pasosDeAlta()`, que saca los
   pasos de las secciones del índice;
@@ -288,7 +288,7 @@ usuario con `p-tabs`.
 
 ## SIGUIENTE — sin preguntar
 
-0. **Lo que queda abierto de DD-133, DD-135, DD-136 y DD-137:**
+0. **Lo que queda abierto de DD-133, DD-135, DD-136 y DD-138:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
    - los subtítulos de sección, sin revisar;
    - las ayudas de la lista de ajustes de Contact Center no se anuncian con su control (el DS no deja pasar
@@ -296,7 +296,7 @@ usuario con `p-tabs`.
    - el marcador de la foto de `sc-photo-upload` (DS), a 2,58:1: al arreglarlo, las altas de agente y usuario entran
      en `RUTAS` de `theme-contrast`;
    - el cuerpo de `sc-section-card` `flush` sin cabecera guarda los 15,75 que lo separan de la cabecera oculta: en el
-     paso quedan 23 de su título al contenido. Es un cambio del DS, con sus capturas (DD-137).
+     paso quedan 23 de su título al contenido. Es un cambio del DS, con sus capturas (DD-138).
 
    Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
    código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el

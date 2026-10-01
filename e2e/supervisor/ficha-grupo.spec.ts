@@ -18,7 +18,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *      el resumen es una franja encima del contenido.
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas.
  *   5. Recargar la ficha no es «otra pestaña»; abrirla en otra de verdad, sí.
- *   6. El alta es la MISMA ficha, en pasos (DD-137): General es la puerta (nombre y canales antes de seguir),
+ *   6. El alta es la MISMA ficha, en pasos (DD-138): General es la puerta (nombre y canales antes de seguir),
  *      «Siguiente» guía por los pasos y crear deja en la edición, en la sección del paso abierto.
  */
 
@@ -28,7 +28,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 const indice = (page: Page) => page.locator('sc-form-section-nav');
-/** En el alta, los pasos del Stepper en vez del índice (DD-137). */
+/** En el alta, los pasos del Stepper en vez del índice (DD-138). */
 const pasos = (page: Page) => page.getByRole('tablist', { name: 'Pasos del alta' });
 
 test('el índice lateral gobierna la ficha, y abre por General', async ({ page }) => {

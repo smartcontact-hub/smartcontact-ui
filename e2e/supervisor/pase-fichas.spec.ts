@@ -81,7 +81,7 @@ for (const alta of [
   });
 }
 
-// Desde DD-137 el alta va en pasos y el índice llega con la edición: lo que no se mueve es el contenido, que
+// Desde DD-138 el alta va en pasos y el índice llega con la edición: lo que no se mueve es el contenido, que
 // empieza a la misma altura con los pasos que con el índice.
 test('usuario · crear deja en su edición, sin salto: el contenido no se mueve', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');

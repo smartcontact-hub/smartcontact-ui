@@ -917,7 +917,7 @@ no cita los nodos.
 marco por alta con el Stepper vertical de la librería de PrimeNG (Aura), sin piezas nuevas · **Sin verificar** contra
 el fichero: el código no cita los nodos.
 
-- **Por qué** (DD-137): en el alta, los pasos en columna; la edición sigue con el índice.
+- **Por qué** (DD-138): en el alta, los pasos en columna; la edición sigue con el índice.
 - **Qué dibujar:**
   - en el sitio del índice y del contenido, el Stepper vertical: el número en su círculo y el nombre de la sección. El
     paso abierto enseña su contenido debajo, a sangre, sin cabecera (la dice el paso) y con el panel transparente;

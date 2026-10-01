@@ -4,7 +4,7 @@ import { colorEfectivo } from '../shared/color';
 import { disableAnimations, forceLightTheme, goto, irAPaso, pickSelectOption } from './helpers';
 
 /**
- * LAS ALTAS VAN EN PASOS: EL STEPPER VERTICAL NATIVO DE PRIMENG (DD-137).
+ * LAS ALTAS VAN EN PASOS: EL STEPPER VERTICAL NATIVO DE PRIMENG (DD-138).
  *
  * En el alta, los pasos en columna: cada uno abre su contenido debajo y, al dejarlo completo, lleva ✓. La edición
  * sigue con el índice lateral (DD-122). Los pasos salen de las mismas secciones que el índice, en el mismo orden.
