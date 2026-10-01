@@ -2,7 +2,6 @@
   class="sidebar"
   [class.sidebar--pinned]="pinned()"
   [class.sidebar--expanded]="hovered()"
-  [class.sidebar--anchored]="anchored()"
   [attr.aria-label]="'sidebar.nav_aria' | translate"
   (mouseenter)="onEnter()"
   (mouseleave)="onLeave()"
@@ -26,31 +25,19 @@
     />
   </a>
 
-  <!-- Anclar, como el Drawer de Apollo: deja el sidebar desplegado y la página le deja su hueco. -->
-  <button
-    type="button"
-    class="sidebar__anchor"
-    [class.sidebar__anchor--on]="anchored()"
-    [attr.aria-pressed]="anchored()"
-    [attr.aria-label]="'sidebar.anchor_aria' | translate"
-    (click)="anchored.set(!anchored())"
-  >
-    <sc-icon name="keep" [size]="14" [filled]="anchored()" />
-  </button>
-
   <nav class="sidebar__nav">
     @for (section of sections; track trackBySectionTitle($index, section)) {
       <div class="sidebar__section">
         <div class="sidebar__section-slot">
           <span class="sidebar__section-divider" aria-hidden="true"></span>
-          <span class="sidebar__section-title sc-text-caption-semibold">{{ section.titleKey | translate }}</span>
+          <span class="sidebar__section-title sc-text-caption-regular">{{ section.titleKey | translate }}</span>
         </div>
         <div class="sidebar__section-items">
           @for (item of section.items; track trackByItemKey($index, item)) {
             <sc-sidebar-nav-item
               [item]="item"
               [currentPath]="currentPath()"
-              [openKeys]="shownOpenKeys()"
+              [openKeys]="openKeys()"
               [accentKey]="accentKey()"
               (navigate)="onNavigate($event)"
               (toggleOpen)="onToggle($event)"

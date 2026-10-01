@@ -1027,7 +1027,7 @@
     "conversaciones": "Conversations",
     "estadisticas": "Statistiques",
     "informes": "Rapports de données",
-    "analizador": "Analyseur de flux",
+    "analizador": "Analyse de flux",
     "scc": "SCC",
     "vui_designer": "VUI Designer",
     "centro_control": "Centre de contrôle",
@@ -1043,8 +1043,7 @@
     "aed": "Contact Center",
     "integrations": "Intégrations",
     "system": "Système",
-    "nav_aria": "Navigation principale",
-    "anchor_aria": "Épingler le menu"
+    "nav_aria": "Navigation principale"
   },
   "labels": {
     "breadcrumb": "Étiquettes",
@@ -1364,7 +1363,7 @@
       "conversations": "Conversations",
       "stats": "Statistiques",
       "stats_data_reports": "Rapports de données",
-      "stats_flow_analyzer": "Analyseur de flux",
+      "stats_flow_analyzer": "Analyse de flux",
       "vui_designer": "VUI Designer",
       "users": "Utilisateurs",
       "groups": "Groupes",
