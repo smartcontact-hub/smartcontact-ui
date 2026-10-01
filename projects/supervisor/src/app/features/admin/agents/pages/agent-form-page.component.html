@@ -64,11 +64,6 @@
         </span>
       </div>
       <!-- Las tres cifras que vivían aquí se fueron al resumen, a la derecha, como en la ficha de grupo. -->
-      @if (mode() === 'edit') {
-        <div class="headline__actions">
-          <sc-button variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
-        </div>
-      }
     </div>
 
     <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). El mismo al crear, al
@@ -84,6 +79,13 @@
         [flush]="true"
         (activeChange)="goTo($event)"
       />
+      <!-- «Eliminar», bajo el índice (DD-144): con el nombre dentro del contenido, la cabecera ya no tiene sitio a
+           su derecha. Solo al editar. -->
+      @if (mode() === 'edit') {
+        <div class="ficha-eliminar">
+          <sc-button variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
+        </div>
+      }
     </div>
 
     <div class="page__main">
@@ -129,13 +131,14 @@
          qué tipo es. -->
     <div class="ficha-summary">
       <section class="resumen" aria-labelledby="agent-summary-title">
-        <h2 id="agent-summary-title" class="resumen__title sc-text-caption-semibold">{{ 'common.summary' | translate }}</h2>
+        <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
+        <h2 id="agent-summary-title" class="resumen__title visually-hidden">{{ 'common.summary' | translate }}</h2>
         <!-- Lo que le falta al alta, hasta «Listo para crear» (DD-136). En el alta y al duplicar está siempre, y
              cambia en su sitio; al editar, solo si falta algo. -->
         @if (mode() !== 'edit' || summaryMissing().length > 0) {
           <sc-summary-status [missing]="summaryMissing()" [ready]="mode() !== 'edit' && canSave()" />
         }
-        <!-- Las tarjetas son hermanas: 14 entre ellas; el título, a 7 de la primera (AGENTS «UX de pantalla» 9). -->
+        <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
         <div class="resumen__cards">
           <sc-summary-kpi
             icon="group"

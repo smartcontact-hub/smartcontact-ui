@@ -14,7 +14,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. A 1440, el índice, el título y el resumen arrancan a la misma altura, y el título va en la columna del
  *      contenido: su borde izquierdo es el de la tarjeta de la sección.
  *   2. El resumen no enseña su rótulo, y la región conserva su nombre («Resumen»).
- *   3. «Eliminar» va bajo el índice, al editar; en el alta no hay.
+ *   3. «Eliminar» va bajo el índice al editar, a 28 de su última fila (el aire entre grupos); en el alta no hay.
  *   4. Por debajo de 1340: el título arriba, a todo lo ancho; luego el resumen, en su franja; y después, índice y
  *      contenido.
  */
@@ -35,8 +35,12 @@ const FICHAS = [
   { ruta: 'admin/usuarios/crear', edita: false },
 ] as const;
 
-const cajas = (page: Page) =>
-  page.evaluate(() => {
+/** Mide con las fuentes cargadas: antes, la de iconos ocupa el ancho de su ligadura y las filas miden otra cosa. */
+const fuentes = (page: Page) => page.evaluate(() => document.fonts.ready.then(() => undefined));
+
+const cajas = async (page: Page) => {
+  await fuentes(page);
+  return page.evaluate(() => {
     const caja = (sel: string) => {
       const r = document.querySelector(sel)?.getBoundingClientRect();
       return r ? { top: Math.round(r.top), left: Math.round(r.left), bottom: Math.round(r.bottom) } : null;
@@ -48,6 +52,7 @@ const cajas = (page: Page) =>
       resumen: caja('.ficha-summary'),
     };
   });
+};
 
 for (const f of FICHAS) {
   test(`${f.ruta} · índice, título y resumen arrancan a la misma altura, y el título va con el contenido`, async ({ page }) => {
@@ -77,9 +82,14 @@ test('«Eliminar» va bajo el índice al editar, y en el alta no hay', async ({ 
       continue;
     }
     await expect(eliminar, ruta).toBeVisible();
-    const indice = await page.locator('.page__rail sc-form-section-nav').boundingBox();
-    const boton = await eliminar.boundingBox();
-    expect(boton!.y, `${ruta}: «Eliminar», debajo del índice`).toBeGreaterThan(indice!.y + indice!.height);
+    await fuentes(page);
+    const aire = await page.evaluate(() => {
+      const filas = document.querySelectorAll('.page__rail .form-nav__item');
+      const ultima = filas[filas.length - 1]!.getBoundingClientRect();
+      const boton = document.querySelector('.page__rail .ficha-eliminar .p-button')!.getBoundingClientRect();
+      return Math.round(boton.top - ultima.bottom);
+    });
+    expect(aire, `${ruta}: de la última fila del índice a «Eliminar»`).toBe(28);
   }
 });
 

@@ -162,22 +162,49 @@
 }
 
 /* LAS FICHAS CON ÍNDICE (grupo desde el 2026-09-26, DD-121; agente y usuario desde el 2026-09-27,
- * DD-122, que hasta entonces iban con pestañas): el molde de Contact Center tal cual —índice de 196 y
- * contenido de 920 a 1440— y, encima de los dos y a todo lo ancho, la cabecera de la ficha. Dentro de
- * `.page__main` el `h1` se correría 224px (índice + hueco) respecto al índice; aquí arranca en su
- * misma vertical.
+ * DD-122, que hasta entonces iban con pestañas): TRES COLUMNAS QUE ARRANCAN A LA MISMA ALTURA (DD-144).
+ * El índice de Contact Center (196), el contenido con la cabecera de la ficha encima (su nombre) y el
+ * resumen (240). Hasta DD-144 la cabecera iba en una fila propia, encima de las tres y a todo lo ancho,
+ * y las tres columnas arrancaban 56 px más abajo (medido a 1440).
  *
- * La fila se parte: la cabecera ocupa la primera línea entera y el índice y el contenido van en
- * la segunda con su hueco de siempre (el `gap` de `--rail`, que no se toca). Entre la cabecera y
- * esa segunda línea, 14: la cabecera es de lo que viene debajo, como la tira de pestañas de las
- * otras fichas, y a 28 se leía como un bloque suelto. */
+ * Una rejilla con áreas, para que por debajo de 1340 la cabecera vuelva arriba a todo lo ancho sin
+ * moverla en el DOM: el orden de lectura y del tabulador es el mismo en las dos maquetas. El índice y el
+ * resumen ocupan las dos filas, así que siguen fijos al bajar. Entre la cabecera y el contenido, 14: la
+ * cabecera es de lo que viene debajo, y a 28 se leía como un bloque suelto. */
 .page__inner--rail.ficha-rail {
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 196px minmax(0, 1fr) 240px;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'rail head summary'
+    'rail main summary';
+  column-gap: var(--sc-spacing-2);
   row-gap: var(--sc-spacing-1);
+  align-items: start;
 }
 
 .ficha-rail > .headline {
-  flex: 0 0 100%;
+  grid-area: head;
+}
+
+.ficha-rail > .page__rail {
+  grid-area: rail;
+}
+
+.ficha-rail > .page__main {
+  grid-area: main;
+}
+
+.ficha-rail > .ficha-summary {
+  grid-area: summary;
+}
+
+/* «Eliminar», bajo el índice (DD-144): es una acción sobre la ficha entera, y con el nombre dentro del
+ * contenido la cabecera ya no tiene sitio a su derecha. De la última fila del índice al botón, 28, el aire
+ * entre grupos (el índice navega y esto borra): el hueco del carril (14) y el relleno de abajo del índice
+ * (8,75) ponen 22,75, y esto los completa. Su icono cae en la vertical de los del índice (medido a 0,75). */
+.ficha-rail .ficha-eliminar {
+  margin-block-start: var(--sc-spacing-0-375);
 }
 
 /* EL RESUMEN DE LA FICHA, a la derecha (DD-121 §3, 2026-09-27; en las tres fichas desde DD-122). En la de
@@ -210,30 +237,38 @@
   container-type: inline-size;
 }
 
-/* Por debajo de 1340 no caben tres columnas sin estrangular el contenido: el resumen pasa a una franja
- * encima de índice y contenido, que vuelven a medir lo de Contact Center (tope 1200, contenido 920 a
- * 1280). `order` solo mueve lo que se ve: el resumen no tiene nada que enfocar, así que el tabulador no
- * salta. */
+/* Por debajo de 1340 no caben tres columnas sin estrangular el contenido: la cabecera vuelve arriba a todo
+ * lo ancho, el resumen pasa a una franja debajo de ella, y el índice y el contenido miden lo de Contact
+ * Center (tope 1200, contenido 920 a 1280). Las áreas solo mueven lo que se ve: el orden del tabulador es
+ * el del DOM. */
 @media (max-width: 1339px) {
   .page__inner--rail.ficha-rail--summary {
     max-width: 1200px;
-  }
-
-  .ficha-rail--summary > .page__rail {
-    order: 2;
-  }
-
-  .ficha-rail--summary > .page__main {
-    order: 3;
+    grid-template-columns: 196px minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas:
+      'head head'
+      'summary summary'
+      'rail main';
   }
 
   .ficha-summary {
-    order: 1;
-    flex: 0 0 100%;
     width: auto;
     position: static;
     max-block-size: none;
     overflow-y: visible;
+  }
+}
+
+/* Por debajo del mínimo soportado (1024, DD-53), una sola columna, en el mismo orden. */
+@media (max-width: 1023px) {
+  .page__inner--rail.ficha-rail--summary {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'head'
+      'summary'
+      'rail'
+      'main';
   }
 }
 
@@ -252,12 +287,6 @@
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-75);
-}
-
-/* «Eliminar», al final de la franja: es una acción sobre el sujeto de la ficha, y la franja es su
- * cabecera. */
-.ficha-rail .headline__actions {
-  margin-inline-start: auto;
 }
 
 /* Sin cifras al lado (las dice el resumen de la derecha, desde el 2026-09-27 en las tres fichas) no hay

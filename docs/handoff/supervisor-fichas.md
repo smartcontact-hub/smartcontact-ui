@@ -19,11 +19,11 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142) y el alta al índice (R, DD-143)
+## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143) y las tres columnas (G1, DD-144)
 
 > **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `004498dc`). H (#298, `57f03a0`), los diálogos de
 > Recursos (#300, `5cf3f5e1`), D1 (#303, `78b2efb9`) y D2 (#304, `004498dc`), fundidos con su CI en verde; R
-> (DD-143), en su PR.**
+> (DD-143) y G1 (DD-144), en sus PRs.**
 
 **Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
 ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
@@ -97,6 +97,13 @@ escribiendo el nombre.
 - `altas-indice.spec.ts` (12): nueve en rojo contra los pasos, dos de guarda, y la del punto rojo vista en rojo sin
   su regla; las que DD-138 pasó a los pasos vuelven al índice, y `revision` y `agrupacion` recorren el del alta.
 
+**G1 · las fichas en tres columnas** (DD-144), pedido por el usuario el 2026-10-01:
+- el índice, el contenido y el resumen arrancan a la misma altura; `.ficha-rail` es una rejilla con áreas;
+- el título va en la columna del contenido, encima de la sección; el resumen, sin rótulo a la vista (su `h2`,
+  `visually-hidden`, sigue nombrando la región); «Eliminar», bajo el índice, a 28 de su última fila;
+- por debajo de 1340, como estaba;
+- `fichas-tres-columnas.spec.ts` (9): ocho en rojo contra la maqueta anterior y una de guarda.
+
 **Trampas del tramo:**
 - ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
   `@smartcontact-hub/components` (sale el `vite-error-overlay`). No midas con el servidor mientras corre el preflight,
@@ -115,6 +122,10 @@ escribiendo el nombre.
   antes de pulsar, y espera a que se pliegue antes de ralentizar las animaciones.
 - ⚠️ Las unitarias del DS corren en jsdom, sin `getAnimations`: ahí no se ve un movimiento, solo la clase que lo
   enciende. El movimiento se mide en el navegador, con la reproducción al 10 % (CDP `Animation.setPlaybackRate`).
+- ⚠️ Un elemento `sticky` no sale del área de su rejilla: para que el nombre se quede fijo al bajar (G2), la cabecera
+  tiene que ocupar las dos filas o vivir con el contenido en una columna propia.
+- ⚠️ Una medida de la rejilla sin `document.fonts.ready` sale con un píxel de más: la fuente de iconos aún no ha
+  cargado y las filas del índice miden otra cosa.
 
 ## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-138)
 
@@ -241,12 +252,11 @@ grupos y el manual de usuario de Voice:
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: G → E1 → E2 → E3 → E4 →
-   D3 → F. G va primero porque el usuario lo pidió el 2026-10-01: índice, contenido y resumen en tres columnas que
-   arrancan a la misma altura, el título dentro del contenido y sin el rótulo «Resumen»; con «Eliminar» bajo el
-   índice (escribiendo el nombre para confirmar), el nombre fijo al bajar y el resumen que lleva a su sección. Cada
-   uno con su prueba en rojo; la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo
-   del Contact Center validado: pídeselos al usuario si no están en el repo.
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: G2 → E1 → E2 → E3 → E4 →
+   D3 → F. G2 termina la maqueta que pidió el usuario: el nombre fijo al bajar, borrar escribiendo el nombre (el
+   `sc-delete-entity-dialog` del DS no lo trae) y el resumen que lleva a su sección. Cada uno con su prueba en rojo;
+   la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center
+   validado: pídeselos al usuario si no están en el repo.
 
    **Lo que queda abierto de DD-133, DD-135 y DD-136:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
