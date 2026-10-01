@@ -109,12 +109,13 @@ test('Teléfono: saliente y voz a la vista; en la cola, solo la música', async 
   await expect(telefono.locator('sc-selectbutton').filter({ hasText: 'Fijo' }).getByRole('button')).toHaveCount(2);
 });
 
-test('Chat: cierre por inactividad a la vista; Web Chat con dominios y script; WhatsApp con su número', async ({ page }) => {
+test('Chat: «Caducar sesión» a la vista; Web Chat con dominios y script; WhatsApp con su número', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11');
   await irA(page, 'Distribución y colas');
   const chat = page.locator('#group-channel-chat');
 
-  await expect(chat.getByText('Cerrar chat por inactividad')).toBeVisible();
+  // «Caducar sesión», como en el Contact Center validado (DD-142); antes, «Cerrar chat por inactividad».
+  await expect(chat.getByText('Caducar sesión', { exact: true })).toBeVisible();
   await expect(chat.getByText('Dominios permitidos')).toBeVisible();
   await expect(chat.getByRole('button', { name: 'Copiar código' })).toBeVisible();
   await expect(chat.getByText('Número de WhatsApp')).toBeVisible();

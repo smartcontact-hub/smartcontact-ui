@@ -235,6 +235,19 @@ export const irASeccion = async (page: Page, etiqueta: string | RegExp): Promise
 };
 
 /**
+ * Elige el teléfono saliente de un grupo (DD-142): con Teléfono es obligatorio y sale de los números asignados, así
+ * que un alta de grupo no se crea sin él. En el alta vive en Distribución y colas. Pulsa la flecha del desplegable,
+ * que abre la lista se pueda escribir en el campo o no.
+ */
+export const elegirTelefonoSaliente = async (page: Page, numero = '917945449', id = 'group-phone'): Promise<void> => {
+  if (id === 'group-phone' && (await page.locator(`#${id}`).count()) === 0) await irAPaso(page, 'Distribución y colas');
+  await page.locator(`sc-select:has(#${id}) .p-select-dropdown`).click();
+  const opcion = page.locator('.p-select-overlay .p-select-option', { hasText: numero }).first();
+  await expect(opcion).toBeVisible();
+  await opcion.click();
+};
+
+/**
  * Cambia de paso en un alta: el Stepper vertical nativo de PrimeNG ocupa el sitio
  * del índice (DD-138). La edición sigue con `irASeccion`.
  *

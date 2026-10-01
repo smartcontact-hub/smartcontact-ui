@@ -32,7 +32,8 @@ const estrategia = (page: Page) => page.getByRole('combobox', { name: 'Estrategi
 test('la estrategia de teléfono dice qué hace la elegida, se anuncia con el campo y cambia con ella', async ({ page }) => {
   // El grupo 2 reparte por teléfono con Balanceada.
   await goto(page, 'admin/grupos/editar/2?seccion=distribucion');
-  await expect(estrategia(page)).toHaveAccessibleDescription(/^Por turnos: cada llamada va al siguiente agente/);
+  // Hasta DD-142 decía «Por turnos…», que es lo que hace Rotativa: Balanceada reparte de forma equilibrada.
+  await expect(estrategia(page)).toHaveAccessibleDescription('Reparte las conversaciones de forma equilibrada entre los agentes.');
 
   await pickSelectOption(page, estrategia(page), 'Más tiempo inactivo');
   await expect(estrategia(page)).toHaveAccessibleDescription('Va al agente disponible que lleva más tiempo sin actividad.');
