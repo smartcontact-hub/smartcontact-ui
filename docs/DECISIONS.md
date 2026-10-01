@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue | DD-138 |
+> | Las altas van en pasos: el Stepper vertical nativo (`sc-alta-pasos`, de la app) con las secciones del índice, en su orden · la edición sigue con el índice · ✓ al dejar un paso completo · «Atrás» y «Siguiente», atajos · el paso no va en la dirección · la puerta de General del grupo sigue · el plegado es el de PrimeNG, y la línea entre pasos no se despega al plegar (`pt`) | DD-138 |
 > | El sidebar sigue a su tablero de Figma (14912:6324): sin botón de anclar · plegado sigue abierto lo que estaba abierto · texto e icono en blanco y la flecha al 60% · todos los iconos a 14, los que nombra el catálogo del tablero (14912:6774) · «Diseñador VUI» y «Análisis de Flujo» · SCC (CusCare) lleva el logo de CusCare (enmienda DD-118 §2 y §5) | DD-137 |
 > | Un alta dice en su resumen lo que falta («Falta: nombre · extensión») y, cuando «Crear …» se enciende, «Listo para crear»: `sc-summary-status`, un solo `role="status"` que cambia en su sitio · sin porcentaje ni barra · un error de formato va en su campo · al editar, nunca «Listo» | DD-136 |
 > | Con qué nace un grupo o un agente se fija en Contact Center (› Grupos, › Agentes), con las palabras de su ficha, y el alta lo lee · de fábrica, los valores del documento de producto (10 · 15 · 60 s, Baja, Balanceada, desbordar; el agente, todo menos la numeración especial) · la cola agotada sigue por el VUI | DD-135 |
@@ -110,8 +110,9 @@ Stepper de primeng.dev y pidió revisar DD-121, que lo había descartado. Hasta 
 **Decisión** · (decisión de producto, 2026-09-29)
 1. **El alta va en pasos; la edición, con el índice.** Al crear, y al duplicar un agente o un usuario, el `p-stepper`
    vertical ocupa el sitio del índice y del contenido; el resumen sigue a la derecha. Es el nativo tal cual (DD-113):
-   `p-stepper` › `p-step-item` › `p-step` + `p-step-panel`, sin envoltura del DS, sin CSS `.p-*` y sin `pt`. Solo se
-   le ajusta el fondo del panel, transparente por `dt` de la instancia: el del preset pintaba una franja gris en oscuro.
+   `p-stepper` › `p-step-item` › `p-step` + `p-step-panel`, sin envoltura del DS y sin CSS `.p-*`. Se le ajustan dos
+   cosas, con su propia API: el fondo del panel, transparente por `dt` de la instancia (el del preset pintaba una
+   franja gris en oscuro), y la envoltura del panel, por `pt` (§9).
 2. **Un formulario, dos maquetas.** El cuerpo de cada sección vive en su `ng-template`: la edición lo pinta junto al
    índice, y el alta dentro de su paso (`sc-alta-pasos`, de la app). Los pasos salen de las secciones del índice
    (`pasosDeAlta`), así que tienen sus nombres y su orden.
@@ -129,6 +130,9 @@ Stepper de primeng.dev y pidió revisar DD-121, que lo había descartado. Hasta 
    sección va sin su cabecera, a sangre (`sc-section-card` con `flush` y sin `showHeader`), y sin el margen con el
    que se separa de otra tarjeta.
 8. **El aire, en la escalera 7 · 14 · 28**: 28 de la sección a «Atrás / Siguiente», y 28 de ahí al paso siguiente.
+9. **El movimiento es el de PrimeNG tal cual** (2026-10-01): al cambiar de paso, el que se deja se pliega y el nuevo
+   se abre a la vez, con su `p-collapsible` (0,2 s, `ease-out`). La envoltura del panel no se estira a la fila que
+   anima (`pt` `contentWrapper`, `align-self: start`), para que la línea entre pasos siga al plegado.
 
 **Razón** ·
 - **El gradiente de meta, a la vista.** Los pasos dicen cuánto queda y el ✓ lo que ya está, sin porcentaje (DD-121,
@@ -144,6 +148,16 @@ Stepper de primeng.dev y pidió revisar DD-121, que lo había descartado. Hasta 
     `aria-controls`, no `aria-labelledby`;
   - con las altas de agente y usuario en la medida completa de `theme-contrast`, lo único en rojo es el marcador de
     la foto (2,58:1, abierto en DD-136): los colores del Stepper pasan en claro y en oscuro.
+- **El plegado, medido el 2026-10-01, fotograma a fotograma y a cámara lenta al 10 %:**
+  - anima de verdad: el paso que se deja y el nuevo, en unos 175 ms de fotogramas, sin fotogramas perdidos;
+  - pero la línea que une los números se despegaba del paso siguiente. A mitad (100 ms), en General, la caja medía
+    114 y la línea 36. Al abrir Distribución y colas, 666 y 456. El hueco llegaba a 90 px;
+  - la causa es de PrimeNG: aplica la fracción dos veces en la misma rejilla del `p-motion`. Su alto sale de
+    X·contenido, y luego reparte ese alto con la misma X, así que su fila mide X·caja. El contenido no se nota, porque
+    lo recorta la caja; la línea sí, porque sigue a la fila. Se reproduce con sus reglas tal cual, sin nuestra capa;
+  - con la envoltura sin estirar, la línea mide lo que el contenido y la caja la recorta igual que a él: llega al
+    borde de la caja en cada fotograma, al plegar y al abrir. Quieto no cambia nada: fila, envoltura y contenido
+    miden lo mismo.
 
 **Descartadas** ·
 - **`linear` del nativo para la puerta del grupo** → apaga también los pasos terminados: para volver a General no
@@ -156,6 +170,11 @@ Stepper de primeng.dev y pidió revisar DD-121, que lo había descartado. Hasta 
 - **La sección con su caja dentro del paso** → caja dentro de caja: a sangre, el paso hace de caja.
 - **Pasos también al editar** → producto lo pidió para el alta. Al editar se va a una sección concreta, y el índice
   lleva a ella con un enlace (DD-122).
+- **El panel en bloque, para quitar la rejilla de fuera** → la medida no cambia: la fracción se aplica dos veces
+  dentro de la misma rejilla, la del `p-motion`.
+- **Otra duración u otra curva para el plegado** (300 ms con la curva enfática del Kit) → el plegado de PrimeNG no
+  tiene token; cambiarlo sería CSS sobre `.p-collapsible-*`, un desvío que caza `audit:primeng-coupling` §F, y
+  movería a la vez todos los plegables (acordeón, panel, menús).
 
 **Consecuencias** ·
 - **Enmiendas:**
@@ -165,7 +184,8 @@ Stepper de primeng.dev y pidió revisar DD-121, que lo había descartado. Hasta 
 - **Límites del nativo que se aceptan (DD-113):**
   - los paneles viven dentro del `tablist`, y el paso abierto se marca con `aria-current="step"` en su envoltura, no
     con `aria-selected`;
-  - el plegado anima la altura, aunque respeta reducir movimiento;
+  - el plegado anima la altura (`grid-template-rows`), con la duración y la curva de PrimeNG, que no tienen token.
+    Con menos movimiento, el paso cambia de golpe;
   - el título del paso pesa 500; en oscuro, el del paso abierto va en el color primario;
   - en el alta el contenido mide 995 a 1440 (812 al editar);
   - de la cabecera del paso a su contenido hay 23: los 15,75 con los que el cuerpo de `sc-section-card` `flush` se
@@ -177,7 +197,10 @@ Stepper de primeng.dev y pidió revisar DD-121, que lo había descartado. Hasta 
   - se reescriben para los pasos la puerta de `ficha-grupo` y las altas de `indice-enlaces`, `pase-fichas`,
     `ficha-usuario-agente`, `usuario-plantillas` y `contact-center-valores`. «Atrás del navegador sale del alta» se
     pone en rojo si el paso cambia la dirección, y también si deja una entrada de historial;
-  - el alta de grupo entra en `focus-ring`; `irAPaso()` en `helpers.ts`.
+  - el alta de grupo entra en `focus-ring`; `irAPaso()` en `helpers.ts`;
+  - `altas-pasos-movimiento.spec.ts`, tres, sin `disableAnimations`, con el plegado congelado a mitad. La de la línea,
+    en rojo primero (36 de 114). La del movimiento nativo y la de menos movimiento son de guarda: esta última se pone
+    en rojo sin la preferencia, con 13 alturas a medias.
 - **Para el Kit:** el marco del Stepper vertical en las tres altas, con el ✓, «Atrás» y «Siguiente» y su aire, va a
   `figma-pendiente` §32.
 - **Herramientas:** `revision` y `agrupacion` recorren los pasos. Al llegar al primer paso apagado rellenan lo que lo
@@ -1723,6 +1746,9 @@ primeng.dev» y tres filas en la tabla de bifurcaciones. `e2e/supervisor/admin-d
 pestaña por rol. `docs/customs-catalog.md` §5.1 y §5.2 al día. Pendiente en Figma: nada nuevo (la marca de la activa
 ya estaba en `figma-pendiente.md` §9). Cada desvío permitido tiene su fila en `customs-catalog.md` §8 (el gate lo exige).
 El botón que se encoge al pulsarlo se queda, con la receta de better-ui (punto 9, §8.1): primeng.dev no lo hace, y es a propósito.
+Desde DD-138: en el Stepper vertical, el plegado nativo despegaba la línea entre pasos, porque PrimeNG aplica la
+fracción dos veces en la rejilla del `p-motion`. Se arregla por `[pt]` (`contentWrapper`), como el `aria-label` de
+`p-tabs`, sin tocar su movimiento.
 
 ---
 

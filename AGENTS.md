@@ -153,7 +153,7 @@ componente de primeng.dev (lo pase con enlace o no):
 
 Lo que la documentación NO dice y se ha medido aquí vive en DD-113 (el `aria-label` de la tira de `p-tabs` va
 por `[pt]`, el `aria-labelledby` de `p-selectbutton` por su entrada, un icono de fuente dentro de `p-tab`
-descoloca la raya).
+descoloca la raya, la línea del Stepper vertical se despega al plegar si su envoltura se estira).
 
 ---
 

@@ -55,11 +55,14 @@ Contact Center suben a «Trampas del frente».
   pasos de las secciones del índice;
 - cada sección vive en su `ng-template`: la misma en los dos modos;
 - la puerta de General del grupo sigue (pasos apagados); agente y usuario, en cualquier orden;
-- ✓ al dejar un paso completo, «Atrás» y «Siguiente» como atajos, y el paso no toca la dirección.
+- ✓ al dejar un paso completo, «Atrás» y «Siguiente» como atajos, y el paso no toca la dirección;
+- el plegado es el de PrimeNG tal cual (0,2 s, `ease-out`). La línea entre pasos se despegaba al plegar, por un fallo
+  de PrimeNG, y se arregla con `pt` en la envoltura del panel (`panelPt`).
 
 `altas-pasos.spec.ts`: siete de ocho en rojo contra el código anterior (la octava, de guarda), y dos más en rojo con
 el fallo puesto: el aire (49 con el margen de la tarjeta) y los títulos (h1 → h3 sin el h2 oculto). Las altas de otras
-seis pruebas se reescriben para los pasos con `irAPaso()`.
+seis pruebas se reescriben para los pasos con `irAPaso()`. `altas-pasos-movimiento.spec.ts`, tres, con el movimiento
+real: la línea a mitad del plegado (en rojo primero, 36 de 114), el plegado nativo y menos movimiento.
 
 **Trampas del tramo:**
 - ⚠️ El Stepper nativo desmonta el panel que se deja cuando acaba de plegarse, no al pulsar: un momento hay dos
@@ -78,6 +81,12 @@ seis pruebas se reescriben para los pasos con `irAPaso()`.
   (`sc-photo-upload`, del DS) mide 2,58:1. Por eso siguen en `RUTAS_SUELO` (abierto en DD-136).
 - ⚠️ Un `sc-inputnumber` con sufijo se describe con el sufijo delante: la espera en cola se anuncia «s Si nadie…».
   Casa el final de la descripción, no el texto exacto.
+- ⚠️ El fin del plegado lo pone un temporizador de respaldo de p-motion (201 ms), no solo `animationend`. Para verlo
+  a cámara lenta hay que retrasar ese temporizador además de las animaciones: si no, corta el plegado a mitad. Para
+  medirlo a mitad, congélalo en el mismo fotograma en que empieza (`altas-pasos-movimiento.spec.ts`).
+- ⚠️ En el plegado del Stepper, la caja mide X·contenido y su fila X·caja: lo que se estire a la fila (la línea entre
+  pasos) se queda corto, y lo que mide su contenido no. Poner el panel en bloque no cambia nada: las dos X están
+  dentro del `p-motion`.
 - ⚠️ En la nube se corre como root, y `chmod` no le quita la escritura. Para simular que la config de git no se puede
   escribir, un `.git/config.lock` ajeno.
 
