@@ -23,8 +23,10 @@ import type { PasoAlta } from '@shared/utils/alta-pasos';
  * la ficha. Cada paso abre su sección debajo y, al dejarlo completo, lleva ✓. La edición sigue con el índice (DD-122).
  *
  * Lo nativo, sin tocar: `p-stepper` › `p-step-item` › `p-step` + `p-step-panel`, con el contenido en `#content`;
- * sus pestañas (`role="tab"`), su teclado y su plegado. Lo único que se le ajusta es el fondo del panel, por `dt`
- * de esta instancia: el del preset es el de una caja, y en oscuro pintaba una franja sobre el lienzo.
+ * sus pestañas (`role="tab"`), su teclado y su plegado, con su movimiento (`p-collapsible`, 0,2 s). Se le ajustan dos
+ * cosas, con su propia API: el fondo del panel, por `dt` de esta instancia (el del preset es el de una caja, y en
+ * oscuro pintaba una franja sobre el lienzo), y la envoltura del panel, por `pt`, para que la línea entre pasos no se
+ * despegue mientras se pliega (`panelPt`).
  *
  * El ✓ va en el título nativo del paso, proyectado, con su texto oculto «completado»: una cabecera propia perdería
  * la pestaña y el teclado del nativo. El número lo sigue pintando el nativo.
@@ -58,7 +60,7 @@ import type { PasoAlta } from '@shared/utils/alta-pasos';
               <span class="visually-hidden">{{ 'common.step_done' | translate }}</span>
             }
           </p-step>
-          <p-step-panel [attr.aria-labelledby]="idTitulo(paso.value)">
+          <p-step-panel [attr.aria-labelledby]="idTitulo(paso.value)" [pt]="panelPt">
             <ng-template #content>
               <h2 class="visually-hidden" [id]="idTitulo(paso.value)">{{ paso.labelKey | translate }}</h2>
               <ng-container *ngTemplateOutlet="secciones()[paso.id] ?? null" />
@@ -151,6 +153,13 @@ export class AltaPasosComponent {
 
   /** El panel es transparente: el lienzo de la página es su fondo. */
   protected readonly pasosDt = { steppanel: { background: 'transparent' } };
+
+  /** La envoltura del panel no se estira a la fila que anima: mide lo que su contenido, y la caja la recorta. En el
+   *  nativo, el plegado aplica su fracción dos veces en la misma rejilla (la caja mide X·contenido, y su fila,
+   *  X·caja). La línea que une los números sigue a esa fila, así que se despegaba hasta 90 px del número del paso
+   *  siguiente, al plegar y al abrir. Así llega siempre al borde de la caja, que es donde empieza el paso siguiente.
+   *  Quieto, no cambia nada: fila, envoltura y contenido miden lo mismo. Medido el 2026-10-01. */
+  protected readonly panelPt = { contentWrapper: { style: { 'align-self': 'start' } } };
 
   /** El paso desde el que se pidió «Siguiente» o «Atrás». Si el abierto cambia, el foco va a su pestaña; si la
    *  ficha no deja pasar, no cambia y no se toca el foco. */
