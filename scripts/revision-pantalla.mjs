@@ -43,8 +43,25 @@ export const nombreCaptura = (vista) =>
     .replace(/[^a-z0-9-]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-/** Quita la ligadura del icono de Material que va delante del texto de una pestaña o sección. */
-export const nombreDe = (txt) => txt.replace(/^\s*[a-z_]+\s*\n/, '').replace(/\s+/g, ' ').trim();
+/** Quita lo que va delante del texto de una pestaña o sección: la ligadura de su icono de Material, o el número de
+ *  un paso del alta (DD-138: el nativo lo pinta delante del título). */
+export const nombreDe = (txt) => txt.replace(/^\s*(?:[a-z_]+|\d+)\s*\n/, '').replace(/\s+/g, ' ').trim();
+
+/**
+ * Lo mínimo que abre los pasos apagados de un alta: la de grupo no deja pasar de General sin nombre (DD-121). Se
+ * rellena al encontrar el primer paso apagado, así que la primera vista se captura como la ve quien llega. Un alta
+ * nueva con puerta entra aquí; si no, sus pasos se saltan con un aviso en vez de esperar 30 s a un clic imposible.
+ */
+export const PREPARAR = { 'admin/grupos/crear': { '#group-name': 'Revisión' } };
+
+/** Espera hasta `ms` a que la pestaña se encienda: el paso se abre en el siguiente ciclo de la app, no al teclear. */
+const encendida = async (item, ms = 3000) => {
+  for (const hasta = Date.now() + ms; Date.now() < hasta; ) {
+    if (await item.isEnabled()) return true;
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  return item.isEnabled();
+};
 
 /**
  * Lo que queda por debajo del pliegue. La app no se desplaza en la ventana sino dentro de su zona de
@@ -113,8 +130,16 @@ async function revisarRuta(page, ruta, datos) {
   const vistas = [];
   for (let i = 0; i < (nP > 1 ? nP : nS); i++) {
     const item = tira.nth(i);
+    const nombre = nombreDe(await item.innerText());
+    if (!(await item.isEnabled())) {
+      for (const [campo, valor] of Object.entries(PREPARAR[ruta.split('?')[0]] ?? {})) await page.locator(campo).fill(valor);
+      if (!(await encendida(item))) {
+        console.warn(`⚠ ${ruta} · ${nombre}: el paso está apagado y no se revisa. Lo que lo abre va en PREPARAR.`);
+        continue;
+      }
+    }
     await item.click();
-    vistas.push(await revisarVista(page, `${ruta} · ${nombreDe(await item.innerText())}`));
+    vistas.push(await revisarVista(page, `${ruta} · ${nombre}`));
   }
   return vistas;
 }

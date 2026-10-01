@@ -75,7 +75,7 @@ const ETIQUETAS: ReadonlyArray<{
     rol: 'Body/body-regular',
   },
   { ruta: 'admin/usuarios/crear', nombre: 'admin · alta de usuario', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
-  // Desde el 2026-09-23 el alta de grupo es un diálogo sobre la lista; la ruta lo abre.
+  // El alta de grupo es su ficha, en pasos (DD-138): la etiqueta que se mide es la de General, el paso que abre.
   { ruta: 'admin/grupos/crear', nombre: 'admin · alta de grupo', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
 ];
 
