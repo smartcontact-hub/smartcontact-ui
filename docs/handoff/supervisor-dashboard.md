@@ -7,7 +7,8 @@
 
 ## ✅ 2026-10-01 · Cada agente enseña en el Dashboard el estado que tiene en Administración
 
-> **Sello: rama `areses/kind-liskov-9cae8c`, sobre `origin/main` HEAD `0b748e75`.**
+> **Sello: rama `areses/kind-liskov-9cae8c`, sobre `origin/main` HEAD `74583514` (con #295 fundido encima: su DD-138
+> llegó antes, así que esta es la DD-139).**
 
 **Qué pasaba** (medido por id, ejecutando los dos ficheros): de los 10 agentes de la demo, 6 (ids 5 a 10) salían en un
 estado en el Dashboard y en otro en Administración › Agentes. El Dashboard llevaba su propia lista a mano
@@ -26,6 +27,9 @@ fábrica, un monitor guardado con todos desconectados y un cambio en la ficha), 
 cambio. ⚠️ La primera versión del caso de la ficha salía en rojo sin probar nada: el guardado llega 400 ms después del
 clic y la prueba se iba antes, con el botón ya apagado (cargando). Ahora espera al aviso de guardado y comprueba que el
 listado ya enseña el estado nuevo. La prueba de DD-129 lee sus cifras de la tabla del primer monitor en vez de fijar 9 y 5.
+La suite entera del Supervisor, 413 de 414: el que cayó es el selector de columnas del listado de agentes
+(`column-selector-order.spec.ts:49`, «Element is not visible» al pulsar con el desplegable abriéndose), que este cambio
+no toca y que pasó 9 de 9 corrido solo; queda propuesto como tarea aparte.
 
 ## ✅ 2026-09-28 · El detalle de una cifra ya no corta el tiempo por la derecha
 
