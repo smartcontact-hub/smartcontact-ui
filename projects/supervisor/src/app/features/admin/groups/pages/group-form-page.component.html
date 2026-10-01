@@ -185,10 +185,11 @@
 }
 
 @if (creatingTipificacion()) {
-  <!-- El mismo formulario que Repositorios (`sc-repo-form-panel`), en un diálogo: crear no saca de la ficha. -->
+  <!-- El mismo formulario que Repositorios (`sc-repo-form-panel`), en un diálogo: crear no saca de la ficha. Cada
+       diálogo se llama como el «+» que lo abre, y el formulario va a sangre (`flush`): el diálogo es su caja. -->
   <sc-dialog
     [visible]="true"
-    [title]="'repositories.form.create_title' | translate: { entity: ('repositories.tipificaciones.singular' | translate) }"
+    [title]="'groups.form.fields.typification_new' | translate"
     [hasFooter]="false"
     (cancelled)="creatingTipificacion.set(false)"
   >
@@ -206,7 +207,7 @@
 @if (creatingAgenda()) {
   <sc-dialog
     [visible]="true"
-    [title]="'repositories.form.create_title' | translate: { entity: ('repositories.agendas.singular' | translate) }"
+    [title]="'groups.form.fields.agenda_new' | translate"
     [hasFooter]="false"
     (cancelled)="creatingAgenda.set(false)"
   >
@@ -224,7 +225,7 @@
 @if (creatingChatTemplate()) {
   <sc-dialog
     [visible]="true"
-    [title]="'templates.form.create_title' | translate"
+    [title]="'groups.form.fields.template_new' | translate"
     [hasFooter]="false"
     (cancelled)="creatingChatTemplate.set(false)"
   >
@@ -241,7 +242,7 @@
 @if (creatingEmailTemplate()) {
   <sc-dialog
     [visible]="true"
-    [title]="'templates.form.create_title' | translate"
+    [title]="'groups.form.fields.template_new' | translate"
     [hasFooter]="false"
     (cancelled)="creatingEmailTemplate.set(false)"
   >
@@ -258,7 +259,7 @@
 @if (creatingLabel()) {
   <sc-dialog
     [visible]="true"
-    [title]="'labels.form.create_title' | translate"
+    [title]="'groups.form.fields.label_new' | translate"
     [hasFooter]="false"
     (cancelled)="creatingLabel.set(false)"
   >

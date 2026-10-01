@@ -1227,6 +1227,7 @@
     "agendas": {
       "title": "Agendas",
       "singular": "agenda",
+      "create_title": "Nueva agenda",
       "plural": "agendas",
       "numbers": "Números",
       "name_placeholder": "Ej: Ventas Nacional",
@@ -1235,6 +1236,7 @@
     "horarios": {
       "title": "Horarios",
       "singular": "horario",
+      "create_title": "Nuevo horario",
       "plural": "horarios",
       "schedule": "Horario",
       "timezone": "Zona horaria",
@@ -1245,6 +1247,7 @@
     "tipificaciones": {
       "title": "Tipificaciones",
       "singular": "tipificación",
+      "create_title": "Nueva tipificación",
       "plural": "tipificaciones",
       "code": "Código",
       "category": "Categoría",
@@ -1255,6 +1258,7 @@
     "variables": {
       "title": "Variables",
       "singular": "variable",
+      "create_title": "Nueva variable",
       "plural": "variables",
       "key": "Clave",
       "default": "Valor por defecto",
@@ -1271,6 +1275,7 @@
     "entidades": {
       "title": "Entidades",
       "singular": "entidad",
+      "create_title": "Nueva entidad",
       "plural": "entidades",
       "type": "Tipo",
       "values": "Valores",
@@ -1287,6 +1292,7 @@
     "intenciones": {
       "title": "Intenciones",
       "singular": "intención",
+      "create_title": "Nueva intención",
       "plural": "intenciones",
       "category": "Categoría",
       "examples": "Ejemplos",
@@ -1297,6 +1303,7 @@
     "reglas_ia": {
       "title": "Reglas IA",
       "singular": "regla IA",
+      "create_title": "Nueva regla IA",
       "plural": "reglas IA",
       "condition": "Condición",
       "action": "Acción",
@@ -1313,6 +1320,7 @@
     "entidades_ia": {
       "title": "Entidades IA",
       "singular": "entidad IA",
+      "create_title": "Nueva entidad IA",
       "plural": "entidades IA",
       "type": "Tipo",
       "model": "Modelo",
@@ -1323,6 +1331,7 @@
     "clasificacion_ia": {
       "title": "Clasificación IA",
       "singular": "clasificación IA",
+      "create_title": "Nueva clasificación IA",
       "plural": "clasificaciones IA",
       "model": "Modelo",
       "categories": "Categorías",

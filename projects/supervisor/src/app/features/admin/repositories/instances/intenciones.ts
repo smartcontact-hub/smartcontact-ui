@@ -157,6 +157,7 @@ export class IntencionesPageComponent {
   protected readonly config: RepoPageConfig<Intencion> = {
     titleKey: 'repositories.intenciones.title',
     entitySingularKey: 'repositories.intenciones.singular',
+    createTitleKey: 'repositories.intenciones.create_title',
     entityPluralKey: 'repositories.intenciones.plural',
     icon: 'chat_bubble',
     breadcrumbExtraKey: 'repositories.intenciones.title',

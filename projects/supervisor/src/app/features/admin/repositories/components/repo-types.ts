@@ -48,6 +48,8 @@ export interface RepoFieldDef {
 export interface RepoPageConfig<T extends RepoEntity> {
   readonly titleKey: string;
   readonly entitySingularKey: string;
+  /** El título del alta, con su género («Nueva tipificación»). Sin él, el genérico «Nuevo/a {{entity}}». */
+  readonly createTitleKey?: string;
   readonly entityPluralKey: string;
   readonly icon: LucideIconData;
   readonly breadcrumbExtraKey: string;

@@ -179,6 +179,7 @@ export class TipificacionesPageComponent {
   protected readonly config: RepoPageConfig<Tipificacion> = {
     titleKey: 'repositories.tipificaciones.title',
     entitySingularKey: 'repositories.tipificaciones.singular',
+    createTitleKey: 'repositories.tipificaciones.create_title',
     entityPluralKey: 'repositories.tipificaciones.plural',
     icon: 'label',
     breadcrumbExtraKey: 'repositories.tipificaciones.title',

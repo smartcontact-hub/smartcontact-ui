@@ -1,8 +1,10 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
+  booleanAttribute,
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   inject,
   input,
@@ -54,9 +56,20 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
   /** Nombre singular de la entidad ya traducido (resuelto en el caller via
    *  `translate.instant(config().entitySingularKey)`). S51 sweep AED i18n. */
   readonly entitySingular = input.required<string>();
+  /** El título del alta de este repositorio, con su género («Nueva tipificación»). Sin él, el genérico. */
+  readonly createTitleKey = input<string | undefined>(undefined);
+
+  /** Dentro de un diálogo (la ficha de grupo crea así desde Recursos): sin caja, sin título y sin `role="dialog"`,
+   *  porque el diálogo ya pone los tres; el formulario ocupa su cuerpo. */
+  readonly flush = input(false, { transform: booleanAttribute });
 
   readonly save = output<RepoFormSubmission>();
   readonly cancelled = output<void>();
+
+  /** La clave del título: editar, el alta de este repositorio o, si no la tiene, el genérico «Nuevo/a {{entity}}». */
+  protected readonly tituloKey = computed(() =>
+    this.initial() ? 'repositories.form.edit_title' : (this.createTitleKey() ?? 'repositories.form.create_title'),
+  );
 
   protected readonly alertIcon = 'warning';
   protected readonly values = signal<Record<string, string>>({});

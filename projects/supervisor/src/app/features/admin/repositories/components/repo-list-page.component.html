@@ -18,6 +18,7 @@
           [fields]="config().fields"
           [existingNames]="existingNames()"
           [entitySingular]="entitySingular()"
+          [createTitleKey]="config().createTitleKey"
           (save)="onCreateSubmit($event)"
           (cancelled)="closeCreatePanel()"
         />

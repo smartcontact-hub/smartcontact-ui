@@ -1,13 +1,14 @@
 <div
   class="panel"
-  role="dialog"
-  [attr.aria-label]="
-    (initial() ? 'templates.form.edit_title' : 'templates.form.create_title') | translate
-  "
+  [class.panel--flush]="flush()"
+  [attr.role]="flush() ? null : 'dialog'"
+  [attr.aria-label]="flush() ? null : ((initial() ? 'templates.form.edit_title' : 'templates.form.create_title') | translate)"
 >
-  <h3 class="panel__title sc-text-body-semibold">
-    {{ (initial() ? 'templates.form.edit_title' : 'templates.form.create_title') | translate }}
-  </h3>
+  @if (!flush()) {
+    <h3 class="panel__title sc-text-body-semibold">
+      {{ (initial() ? 'templates.form.edit_title' : 'templates.form.create_title') | translate }}
+    </h3>
+  }
 
   <div class="panel__field">
     <sc-inputtext

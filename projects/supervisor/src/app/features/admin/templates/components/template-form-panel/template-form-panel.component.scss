@@ -10,6 +10,16 @@
   padding: var(--sc-spacing-1-125);
   box-shadow: var(--sc-shadow-popover);
 
+  /* Dentro de un diálogo (`flush`): el diálogo es la caja y pone el título; aquí, solo el formulario, a su ancho. */
+  &--flush {
+    width: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
   &__title {
     margin: 0 0 var(--sc-spacing-0-875);
     color: var(--sc-text-primary);
