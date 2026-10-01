@@ -104,7 +104,9 @@ merge igualmente. Dos cosas no pasan por la cadena, porque no suben código y
 se comprueban una a una: los punteros `proto/*` que ya están en `main` (DD-56) y los BORRADOS de
 rama, que es lo que toca en cuanto un PR se funde (`scripts/__tests__/pre-push-hook.test.mjs`). Y el hook de Claude (`.claude/settings.json` →
 `scripts/hooks/bash-guard.mjs`) deniega el `git push` antes de llegar aquí si la marca no cuadra
-con el árbol, junto con los otros comandos que LEARNINGS #7, #11 y #12 prohíben. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
+con el árbol, junto con los otros comandos que LEARNINGS #7, #11 y #12 prohíben. Solo en un árbol de
+este repo (el que tiene `scripts/preflight-mark.mjs`): el push de otro repositorio desde una sesión de
+aquí pasa, porque allí no hay cadena que escriba la marca. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
 pantalla de que te la has saltado. Existe porque esta regla era la más incumplida del repo:
 se lee al empezar la tarea y el disparador salta horas después.
 
