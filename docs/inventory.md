@@ -90,10 +90,10 @@
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 2 |
 | `sc-subsection` | CUSTOM | — | 4 inputs | — | ✓ | — |
-| `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 33 |
+| `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 34 |
 | `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | 8 |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
-| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 29 |
+| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 30 |
 <!-- @audit:components:end -->
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)

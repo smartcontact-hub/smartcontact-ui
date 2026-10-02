@@ -86,11 +86,11 @@ test('cerrar con cambios pregunta antes, con Cancelar y con Escape, y descartar 
 /** El cajón que envuelve el panel: su caja es la que el usuario ve. */
 const cajon = (page: Page) => page.locator('.p-drawer', { has: panel(page) });
 
-/** Ancho del cajón, alto de la primera fila y el hueco del final de su NOMBRE (el texto) a su primera casilla. */
+/** Ancho del cajón, alto de la primera fila y el hueco del final de su identidad (nombre y presencia) a su primera casilla. */
 const medidas = (page: Page) =>
   cajon(page).evaluate((drawer) => {
     const fila = drawer.querySelector('tbody tr');
-    const nombre = fila?.querySelector('.assign__name-label');
+    const nombre = fila?.querySelector('.assign__name');
     const casilla = fila?.querySelector('sc-checkbox');
     return {
       ancho: drawer.getBoundingClientRect().width,
@@ -99,7 +99,7 @@ const medidas = (page: Page) =>
     };
   });
 
-test('un grupo de un solo canal no pinta columna de canal: el panel cabe en 28rem y no tiene casillas', async ({ page }) => {
+test('un grupo de un solo canal no pinta columna de canal: el panel cabe en 33rem y no tiene casillas', async ({ page }) => {
   await goto(page, 'admin/grupos');
   await abrirPanel(page, 'ACD Demo C2CB');
 
@@ -107,8 +107,8 @@ test('un grupo de un solo canal no pinta columna de canal: el panel cabe en 28re
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(0);
   await expect(panel(page).locator('tbody sc-checkbox')).toHaveCount(0);
   await expect(panel(page).locator('tbody tr')).toHaveCount(13);
-  // 28rem es lo que piden el título y la barra en una línea; antes, 832 px.
-  expect((await medidas(page)).ancho).toBeLessThanOrEqual(28 * 16);
+  // Nombre, presencia y habilitación caben sin una columna redundante de canal.
+  expect((await medidas(page)).ancho).toBeLessThanOrEqual(33 * 16);
 });
 
 test('con dos canales, el panel se ajusta a sus columnas: nombre cerca de sus casillas, filas compactas, sin repetir los canales', async ({ page }) => {
@@ -121,9 +121,9 @@ test('con dos canales, el panel se ajusta a sus columnas: nombre cerca de sus ca
   await expect(panel(page).locator('.agents-panel__channels')).toHaveCount(0);
 
   const { ancho, altoFila, hueco } = await medidas(page);
-  expect(ancho, 'ancho del cajón (476 medido; antes 832)').toBeLessThanOrEqual(30 * 16);
-  expect(hueco, 'del nombre a su primera casilla (154 medido; antes 450)').not.toBeNull();
-  expect(hueco!, 'del nombre a su primera casilla (154 medido; antes 450)').toBeLessThanOrEqual(12 * 16);
+  expect(ancho, 'nombre, canales y nueva columna Habilitado (DD-149)').toBeLessThanOrEqual(43 * 16);
+  expect(hueco, 'de nombre y presencia a la primera casilla').not.toBeNull();
+  expect(hueco!, 'de nombre y presencia a la primera casilla').toBeLessThanOrEqual(12 * 16);
   expect(altoFila, 'alto de fila (34 medido; antes 46)').toBeLessThanOrEqual(36);
 });
 
@@ -164,7 +164,7 @@ test('una fila que llega sin canal devuelve la columna en un grupo de uno, y mar
 
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(1);
   const ancho = (await medidas(page)).ancho;
-  expect(ancho).toBeLessThanOrEqual(28 * 16);
+  expect(ancho).toBeLessThanOrEqual(38 * 16);
 
   // Es la única forma de darle canal desde aquí; al marcarla pasa a ser su último canal, y la columna se queda.
   await panel(page).getByRole('checkbox', { name: 'Tom Hanks — Teléfono' }).click();

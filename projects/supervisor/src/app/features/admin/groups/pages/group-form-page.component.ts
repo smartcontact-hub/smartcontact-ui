@@ -700,6 +700,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       id: a.id,
       name: a.name,
       photo: a.photo,
+      presenceStatus: a.presenceStatus,
     })),
   );
 

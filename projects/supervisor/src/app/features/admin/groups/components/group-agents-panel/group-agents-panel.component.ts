@@ -33,16 +33,17 @@ import {
   AgentChannelTableComponent,
   CHANNEL_COL_COMPACT,
   LEVEL_COL_REM,
+  ENABLED_COL_REM,
+  AGENT_NAME_COL_REM,
 } from '../agent-channel-table/agent-channel-table.component';
 
 /**
  * El ancho del panel sale de lo que lleva dentro (DD-131), en rem. Hasta el 2026-09-28 era un `52rem` fijo, el
  * ancho de la tabla de la ficha: con dos canales dejaba 450 px entre el nombre y su primera casilla (medido a 1440).
- *   · NOMBRE: 15rem, que caben el avatar, un nombre largo y «En pausa»; más largo, se recorta con su `title`.
+ *   · NOMBRE: 21rem, que caben el avatar, un nombre y su presencia; más largo, se recorta con su `title`.
  *   · MARCO: el relleno del cajón (15,75 a cada lado) y el borde de la tabla.
  *   · MÍNIMO: 28rem, lo que piden el título y la barra (buscar + «Añadir agentes…») en una línea.
  */
-const PANEL_NAME_REM = 15;
 const PANEL_CHROME_REM = 2.25;
 const PANEL_MIN_REM = 28;
 
@@ -142,7 +143,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
   protected readonly width = computed(() => {
     const channelCols = this.channelColumns() ? this.families().length : 0;
     const rem =
-      PANEL_NAME_REM +
+      AGENT_NAME_COL_REM + ENABLED_COL_REM +
       channelCols * parseFloat(CHANNEL_COL_COMPACT) +
       this.levelFamilies().length * LEVEL_COL_REM +
       parseFloat(ACTIONS_COL_COMPACT) +
@@ -151,7 +152,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
   });
 
   protected readonly availableAgents = computed<readonly AgentChannelTableAgent[]>(() =>
-    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, photo: a.photo })),
+    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, photo: a.photo, presenceStatus: a.presenceStatus })),
   );
 
   /** Cuántos AGENTES cambian (entran, salen o cambian de canales o de nivel): la N de «Guardar (N)». */

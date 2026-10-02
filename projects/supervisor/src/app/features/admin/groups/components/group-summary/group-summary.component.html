@@ -15,10 +15,10 @@
       icon="group"
       labelKey="groups.form.summary.agents_active"
       [compact]="true"
-      [value]="total() - paused()"
+      [value]="total() - disabled()"
       [of]="total()"
-      [noteKey]="paused() > 0 ? 'groups.form.summary.paused_count' : null"
-      [noteParams]="{ count: paused() }"
+      [noteKey]="disabled() > 0 ? 'groups.form.summary.paused_count' : null"
+      [noteParams]="{ count: disabled() }"
       [href]="hrefs().agentes"
       (abrir)="ir.emit({ seccion: 'agentes' })"
     >

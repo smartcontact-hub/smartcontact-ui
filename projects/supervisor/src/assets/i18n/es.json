@@ -692,6 +692,7 @@
           "pick_all_row": "Todos · se aplica a cualquiera, incluidos los nuevos.",
           "pick_manual": "Elegir manualmente",
           "pick_groups": "Grupos (sus miembros)",
+          "enabled_members": "{{count}} agentes habilitados",
           "pick_individuals": "Individuales",
           "pick_empty": "Sin resultados.",
           "select_all": "Seleccionar todo (cualquiera)",
@@ -1545,6 +1546,8 @@
         "empty": "Elígelos en «Añadir agentes», arriba a la derecha.",
         "no_results": "Ningún agente asignado coincide con el filtro.",
         "col_agent": "Agente",
+        "col_active": "Habilitado",
+        "active_aria": "Habilitado en este grupo: {{name}}",
         "toggle_all_channel": "Activar/desactivar {{channel}} en todos los visibles",
         "remove_aria": "Quitar a {{name}} del grupo",
         "warn_no_channels": "Habilitado, pero sin canales asignados",
@@ -1554,7 +1557,7 @@
         "bulk_unassign": "Quitar del grupo",
         "col_level": "Nivel · {{channel}}",
         "level_aria": "Nivel de {{name}} — {{channel}}",
-        "paused": "En pausa",
+        "paused": "Deshabilitado",
         "last_channel_hint": "Tiene que atender al menos un canal. Para sacarle del grupo, pulsa la papelera de su fila.",
         "last_channel_aria": "{{name}} — {{channel}}: único canal; para sacarle del grupo, pulsa la papelera de su fila"
       },
@@ -1683,8 +1686,8 @@
         "priority": "Prioridad: {{value}}",
         "no_phone": "Sin teléfono saliente",
         "title": "Resumen",
-        "agents_active": "Agentes activos",
-        "paused_count": "{{count}} en pausa",
+        "agents_active": "Agentes habilitados",
+        "paused_count": "{{count}} deshabilitados",
         "no_agents": "Sin agentes",
         "routing": "Reparto",
         "outbound": "Salida",
@@ -1813,8 +1816,8 @@
       "offline": "Desconectado"
     },
     "status": {
-      "active": "Activo",
-      "inactive": "Inactivo"
+      "active": "Cuenta activa",
+      "inactive": "Cuenta inactiva"
     },
     "permission": {
       "recording": "Grabación habilitada"
@@ -1897,14 +1900,14 @@
         "pickup_auto": "Automático",
         "pickup_manual": "Manual",
         "presence": "Presencia inicial",
-        "status": "Estado",
+        "status": "Estado de la cuenta",
         "phone": "Teléfono móvil",
         "email": "Email",
         "pin": "PIN",
         "pin_hint": "3-6 dígitos. Se usa para auto-activación desde el teléfono.",
         "labels": "Etiquetas asignadas",
-        "active": "Activo",
-        "active_hint": "Puede recibir llamadas y chats",
+        "active": "Cuenta activa",
+        "active_hint": "Activa la cuenta del agente. La presencia y la habilitación en cada grupo se gestionan por separado.",
         "recording": "Grabar llamadas"
       },
       "labels_empty": "Aún no hay etiquetas. Crea una desde la sección Etiquetas.",
@@ -1950,7 +1953,7 @@
       },
       "summary": {
         "no_groups": "Sin grupos",
-        "groups_active": "Grupos activos",
+        "groups_active": "Habilitado en grupos",
         "missing_extension": "extensión"
       },
       "create_submit": "Crear agente"

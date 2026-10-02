@@ -56,7 +56,7 @@ interface ChannelRow {
  *
  * Cada cifra contesta una pregunta de verdad, y ninguna es decorativa: una tarjeta que no puede
  * decir nada (Salida en un grupo solo de chat web) no se pinta.
- *   · Agentes activos: cuántos atienden de los asignados (los demás, en pausa), y cuántos cada canal.
+ *   · Agentes habilitados: cuántos atienden de los asignados (los demás, deshabilitados), y cuántos cada canal.
  *     Un canal activo sin nadie que lo atienda sale en aviso, con icono y texto (el color solo no
  *     basta, WCAG 1.4.1).
  *   · Reparto: la estrategia de cada familia de canales.
@@ -104,11 +104,11 @@ export class GroupSummaryComponent {
   protected readonly familyKeys = FAMILY_LABEL_KEYS;
 
   protected readonly total = computed(() => this.links().length);
-  protected readonly paused = computed(() => this.links().filter((l) => !l.active).length);
+  protected readonly disabled = computed(() => this.links().filter((l) => !l.active).length);
 
   /**
    * Quién atiende cada familia (Teléfono, Chat y Email, DD-147): los agentes HABILITADOS que la tienen
-   * marcada. Uno en pausa no atiende, así que no cuenta; la línea «N en pausa» de arriba dice por qué
+   * marcada. Uno deshabilitado no atiende, así que no cuenta; la línea «N deshabilitados» de arriba dice por qué
    * las cifras no suman. La barra es esa cifra sobre el total del grupo, del mismo color para las tres,
    * como sus glifos en las listas (decisión de producto, 2026-09-16: el canal lo dice la forma). El de
    * acento y no el primario: el azul de los botones pesaba más que las cifras que acompaña.

@@ -95,7 +95,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
-### `sc-toggleswitch` · 29 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 30 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
@@ -191,7 +191,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-tag` · 33 usos · primeng/tag
+### `sc-tag` · 34 usos · primeng/tag
 
 Expone todo lo que PrimeNG documenta.
 
