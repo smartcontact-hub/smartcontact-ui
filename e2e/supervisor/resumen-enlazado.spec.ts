@@ -34,7 +34,7 @@ const finDelNombre = (page: Page) =>
 test('el rótulo de cada tarjeta es un enlace a su sección, y llega arriba con el foco en su título', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11');
   const destinos = [
-    { rotulo: 'Agentes activos', slug: 'agentes', titulo: 'Agentes' },
+    { rotulo: 'Agentes habilitados', slug: 'agentes', titulo: 'Agentes' },
     { rotulo: 'Reparto', slug: 'distribucion', titulo: 'Distribución y colas' },
     { rotulo: 'Salida', slug: 'distribucion', titulo: 'Distribución y colas' },
     { rotulo: 'Recursos', slug: 'recursos', titulo: 'Recursos' },

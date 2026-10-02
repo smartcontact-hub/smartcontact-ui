@@ -68,7 +68,7 @@ test('el panel rápido y la ficha del agente, con las mismas columnas', async ({
   await goto(page, 'admin/grupos');
   await page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' }).click();
   await columnas(page.locator('.agents-panel'));
-  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(476);
+  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(684);
 
   await goto(page, 'admin/agentes/editar/3?seccion=grupos');
   const tabla = page.locator('.assign');
@@ -145,7 +145,7 @@ test('solo WhatsApp conserva Chat al guardar y el panel no añade una columna re
   const panel = page.locator('.agents-panel');
   await expect(panel.locator('tbody tr')).toHaveCount(1);
   await expect(panel.getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(0);
-  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(448);
+  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(524);
 
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
   await expect(page.locator('.assign').getByRole('checkbox', { name: /Chat/ })).toBeChecked();

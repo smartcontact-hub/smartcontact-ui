@@ -57,7 +57,7 @@ export class ConditionResolverService {
     }
   }
 
-  /** IDs de agentes miembros (activos) de un grupo, en vivo. */
+  /** IDs de agentes habilitados en un grupo, en vivo. */
   memberAgentIds(groupId: number): readonly number[] {
     return this.links
       .linksForGroup(groupId)
@@ -65,7 +65,7 @@ export class ConditionResolverService {
       .map((l) => l.agentId);
   }
 
-  /** Nº de agentes miembros (vivo) de un grupo. */
+  /** Nº de agentes habilitados en un grupo, en vivo. */
   memberCount(groupId: number): number {
     return this.memberAgentIds(groupId).length;
   }

@@ -41,6 +41,7 @@ import {
   Agent,
   ExtensionType,
   PRESENCE_LABEL_KEYS,
+  PRESENCE_TAGS,
   PresenceStatus,
 } from '../data/agents-data';
 import { AgentBulkField, AgentsStore } from '../state/agents.store';
@@ -68,27 +69,6 @@ const COLUMN_PREF_KEY = 'sc-agents-columns-v5';
 const EXTENSION_ICONS: Readonly<Record<ExtensionType, string>> = {
   phone: 'smartphone',
   webrtc: 'language',
-};
-
-/** Cómo se pinta la etiqueta de un estado: un color de etiqueta, o una severidad nativa de `p-tag`. */
-type PresenceTag = { readonly labelColor: LabelColor } | { readonly severity: 'warn' | 'secondary' };
-
-/**
- * La etiqueta de cada estado, la MISMA que en Contact Center › Servicio, donde se configuran:
- * Disponible verde; No disponible rojo, y en rojo también sus motivos (Baño, Comida, Formación), porque son maneras de
- * no estar disponible; Administrativo, la etiqueta nativa de aviso (`warn`), que en oscuro sigue amarilla (el ámbar
- * salía marrón). Los dos que allí no salen, porque no se eligen: Post-conversando en azul y Desconectado con la
- * etiqueta «Draft» de PrimeNG (`secondary`).
- */
-const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
-  disponible: { labelColor: 'green' },
-  no_disponible: { labelColor: 'red' },
-  bano: { labelColor: 'red' },
-  comida: { labelColor: 'red' },
-  formacion: { labelColor: 'red' },
-  administrativo: { severity: 'warn' },
-  post_conversando: { labelColor: 'blue' },
-  desconectado: { severity: 'secondary' },
 };
 
 @Component({

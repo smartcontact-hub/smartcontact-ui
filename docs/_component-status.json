@@ -1394,7 +1394,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 33,
+      "usedInSupervisor": 34,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
@@ -1473,7 +1473,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 29,
+      "usedInSupervisor": 30,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

@@ -25,6 +25,7 @@ interface PickerOption {
   readonly label: string;
   /** Subtexto (p.ej. "12 agentes" en un grupo, o el rol del agente). */
   readonly sub?: string;
+  readonly memberCount?: number;
   /** Categoría padre para agrupar (tipificación); ausente → lista plana. */
   readonly group?: string;
   /** Profundidad en el árbol (tipificación): 1 = categoría padre, ≥2 = hoja. */
@@ -127,7 +128,7 @@ export class RuleConditionValuePickerComponent {
       ? this.resolver.groups.map((g) => ({
           ref: { kind: 'agentGroup', id: g.id },
           label: g.name,
-          sub: `${this.resolver.memberCount(g.id)} agentes`,
+          memberCount: this.resolver.memberCount(g.id),
         }))
       : [],
   );

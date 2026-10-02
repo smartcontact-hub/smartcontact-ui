@@ -19,26 +19,33 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ▶ 2026-10-02 · E1b: niveles por familia (DD-148)
+## ▶ 2026-10-02 · E2: Habilitado, palabras y presencia (DD-149)
 
-> **Sello: rama `codex/supervisor-e1b-niveles`, base `83e371e7` (#309); pruebas iniciales `7692a3ca`.**
+> **Sello: `codex/supervisor-e2-habilitado`, base `3c6d13e9` (#310, CI de main leída en verde).**
 
-**Implementado:** niveles 1–10 independientes, migración del nivel antiguo con precedencia del nuevo, comparación
-por ambas familias, Niveles y subestrategia de Chat, defaults sin Niveles, columnas identificadas en ficha y panel.
-La tabla reserva el ancho del nombre y desplaza horizontalmente si no cabe. Detalle y alternativas: DD-148.
+**Implementado:** interruptor por enlace en tabla y panel; presencia con las etiquetas del listado y catálogo
+compartido; cuenta, presencia y habilitación separadas en cuatro idiomas. Resumen y reglas nombran habilitados.
+El panel suma la columna nueva; se conserva la asignación, sus canales y niveles al deshabilitar. Detalle: DD-149.
 
-**Ejecutado aquí:** 4 unitarias nuevas y 7 e2e en rojo primero; 19 unitarias de canales/familias/niveles en verde;
-44 e2e afectados en verde; 27 tras completar ayudas y medidas; 12 de E1b tras arreglar el ancho. La sonda del nombre
-se vio roja con la celda a 0 px. `revision` pasó las rutas de edición, alta, listado y Contact Center. Capturas de
-ficha y panel con ambos niveles, claro/oscuro, 1024/1440, inspeccionadas con `better-layout`.
+**Ejecutado aquí:** dos pruebas nuevas en rojo contra E1b; 54/58 afectadas, con cuatro fallos de expectativas
+(ancho antiguo y nombre del catálogo), corregidas y repetidas: 22/22. Capturas de ficha/panel en claro/oscuro,
+1024/1440 con ambos niveles; acceso por teclado al interruptor dentro del desplazamiento horizontal.
+`revision` pasó las seis rutas afectadas. La sonda de nombres falló con 15rem; se reservan 21rem para compartir
+celda con presencias largas, y se actualizan las medidas de panel (DD-149). Zoom 200 % y RTL no verificados.
+**Validación final:** 27/29 afectadas y 2/2 repetidas tras corregir medidas antiguas; suite completa 502/504
+(22,4 min): solo los dos recortes conocidos del listado, con las mismas medidas de E1b. Contraste claro/oscuro
+incluido. `revision` repetida en las tres rutas modificadas tras el ajuste de ancho, sin incidencias.
+**`verify` verde. Pendiente:** preflight final, PR/CI, squash/CI de main y limpieza propia.
 
-**Verificación:** `verify` completo en verde. Suite Supervisor: 496/498; las dos sondas de recorte del listado
-fallan también sobre una copia limpia de `83e371e7` (3 px, mismas etiquetas). Evidencia local, no regresión de E1b;
-se conserva para F sin anticipar su cambio. Zoom 200 % y RTL no verificados.
+## ✅ 2026-10-02 · E1b: niveles por familia (DD-148)
 
-**Pendiente de entrega:** preflight final, PR y CI, squash y CI de main; después conservar
-las evidencias fuera de su worktree y limpiar solo E1b. Continuar E2 → E3 → E4 → D3 → F, cada uno tras el merge verde.
-No se reaplicó E1a ni se modificó su recuperación. Los registros de E1a son históricos; estas tandas son de E1b.
+**Entregado:** #310 → `3c6d13e9`; CI del PR `36995125759` y de main `36996276443`, leídas en verde. Rama y worktree
+propios eliminados; evidencias fuera del worktree. Niveles independientes 1–10, migración con precedencia del
+formato nuevo, subestrategia de Chat, defaults sin Niveles y columnas por familia. E1a y su recuperación intactos.
+**Ejecutado en E1b:** 4 unitarias y 7 e2e rojas primero; 19 unitarias, 44/27/12 e2e afectados, revision, verify y
+preflight verdes. Suite local 496/498: dos recortes de 3 px del listado reproducidos también sobre la base limpia
+`83e371e7`; registrados para F. Zoom 200 % y RTL no verificados. Estos resultados no validan E2 ni los siguientes.
+**Continuidad:** E2 → E3 → E4 → D3 → F, un bloque/PR tras el merge verde del anterior.
 
 ## ✅ 2026-10-02 · E1a: asignaciones por familia (DD-147)
 
