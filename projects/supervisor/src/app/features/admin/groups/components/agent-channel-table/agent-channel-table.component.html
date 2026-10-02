@@ -79,7 +79,7 @@
 <!-- Elegir varios agentes y actuar en lote: la barra de las listas, no una a mano (la de antes
      pintaba su fondo con un color de PALETA que no voltea en oscuro). Decisión de producto (2026-09-14): en
      grupos también se seleccionan varios agentes a la vez, como en el resto de listas. -->
-<!-- Solo «Quitar del grupo»: la pausa es de la persona y se cambia en su ficha (DD-121). -->
+<!-- La habilitación se cambia por fila; el lote sigue siendo solo quitar del grupo (DD-149). -->
 @if (selectable()) {
   <sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
     <sc-button type="button" variant="danger" [label]="'groups.form.assigned.bulk_unassign' | translate" (clicked)="bulkUnassign()" />
@@ -91,9 +91,12 @@
   <span class="assign__name">
     <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
     <span class="assign__name-label sc-text-body-semibold" [title]="row.agent.name">{{ row.agent.name }}</span>
-    <!-- La pausa se VE aquí y se cambia en la ficha del agente: es estado de la persona, no composición del grupo. -->
-    @if (!row.link.active) {
-      <sc-tag severity="secondary" [value]="'groups.form.assigned.paused' | translate" />
+    @if (row.agent.presenceStatus; as presence) {
+      @if (presenceLabelColor(presence); as color) {
+        <sc-tag class="assign__presence" variant="label" [labelColor]="color" [value]="presenceLabelKey(presence) | translate" />
+      } @else {
+        <sc-tag class="assign__presence" [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
+      }
     }
     @if (row.link.channels.length === 0) {
       <sc-tag severity="warn" icon="warning" [value]="'groups.form.summary.no_channels' | translate" />
@@ -146,5 +149,14 @@
     [pTooltip]="'groups.form.assigned.bulk_unassign' | translate"
     tooltipPosition="left"
     (clicked)="removeRow(row.agent.id)"
+  />
+</ng-template>
+
+<ng-template #activeTpl let-row>
+  <sc-toggleswitch
+    [checked]="row.link.active"
+    [size]="compact() ? 'sm' : 'md'"
+    [ariaLabel]="'groups.form.assigned.active_aria' | translate: { name: row.agent.name }"
+    (checkedChange)="toggleActive(row.agent.id, $event)"
   />
 </ng-template>

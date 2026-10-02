@@ -19,6 +19,7 @@ import {
   ScMultiSelectComponent as MultiSelectComponent,
   ScSelectComponent as SelectComponent,
   ScTagComponent as TagComponent,
+  ScToggleSwitchComponent as ToggleSwitchComponent,
   useBulkEntityI18n,
 } from '@smartcontact-hub/components';
 import {
@@ -27,9 +28,11 @@ import {
   type ScColumnDef,
 } from '@smartcontact-hub/components';
 
+import { PRESENCE_LABEL_KEYS, PRESENCE_TAGS, type PresenceStatus } from '@features/admin/agents/data/agents-data';
+
 import { TooltipModule } from 'primeng/tooltip';
 
-import { IllustratedAvatarComponent } from '@shared/components';
+import { IllustratedAvatarComponent, type LabelColor } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -48,6 +51,7 @@ export interface AgentChannelTableAgent {
   readonly id: number;
   readonly name: string;
   readonly photo?: string;
+  readonly presenceStatus?: PresenceStatus;
 }
 
 interface VisibleRow {
@@ -59,6 +63,8 @@ interface VisibleRow {
 export const CHANNEL_COL_COMPACT = '5rem';
 export const ACTIONS_COL_COMPACT = '2.5rem';
 export const LEVEL_COL_REM = 9;
+export const ENABLED_COL_REM = 7;
+export const AGENT_NAME_COL_REM = 21;
 
 /**
  * Editor de los agentes de un grupo, dentro de su ficha — el gemelo de
@@ -67,17 +73,14 @@ export const LEVEL_COL_REM = 9;
  *
  *   [ Buscar agente…     ]  ⚠ 2 sin canal                  [ Añadir agente… ▾ ]
  *   ☐  Agente                     Teléfono     Chat      Email
- *   ☐  A. López  [En pausa]          ☑          ☑          ☐       🗑
+ *   ☐  A. López  [Disponible]          ☑          ☑          ☐       🗑
  *
  * Una columna por FAMILIA que ofrece el grupo (un grupo solo de teléfono enseña solo esa), como
  * la matriz de Contact Center. Chat es Web Chat y WhatsApp juntos: el agente atiende los dos o
  * ninguno, como en el AED en vivo (DD-147).
  *
- * LA VISTA DEL GRUPO GESTIONA COMPOSICIÓN: quién está y por qué canales (visión de producto de
- * grupos, 2026-09-25; DD-121). Por eso, desde el 2026-09-26:
- *   · Fuera «Habilitado» y su lote Habilitar/Deshabilitar. La pausa es estado de la PERSONA (en
- *     Voice puede delegarse al agente) y se cambia en su ficha; aquí se VE, con una etiqueta de
- *     solo lectura, y sus canales se siguen pudiendo tocar.
+ * Habilitado modifica solo el enlace con este grupo; la presencia se muestra junto al nombre
+ * con el mismo contrato que el listado de agentes (DD-149, enmienda DD-121).
  *   · Un agente asignado tiene siempre al menos un canal: la casilla del último se apaga, con su
  *     porqué. No se desasigna solo al quitárselo: pasar a alguien de Teléfono a Chat son 2 clics
  *     (marcar Chat, desmarcar Teléfono), y la fila no desaparece a mitad del gesto.
@@ -107,6 +110,7 @@ export const LEVEL_COL_REM = 9;
     MultiSelectComponent,
     SelectComponent,
     TagComponent,
+    ToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
   ],
@@ -135,6 +139,8 @@ export class AgentChannelTableComponent {
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
   private readonly levelTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('levelTpl');
+  private readonly activeTpl =
+    viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('activeTpl');
   private readonly actionsTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('actionsTpl');
 
@@ -167,6 +173,14 @@ export class AgentChannelTableComponent {
           cellTemplate: this.channelTpl(),
           stopRowClick: true,
         })),
+        {
+          field: 'active',
+          header: this.translate.instant('groups.form.assigned.col_active'),
+          width: `${ENABLED_COL_REM}rem`,
+          align: 'center',
+          cellTemplate: this.activeTpl(),
+          stopRowClick: true,
+        },
         {
           field: 'actions',
           header: '',
@@ -208,9 +222,8 @@ export class AgentChannelTableComponent {
   /** Reserva el nombre antes de sumar niveles y canales: la tabla desplaza dentro de su caja,
    * sin colapsar la identidad del agente cuando el rail estrecha la ficha. */
   protected readonly tableMinWidth = computed(() => {
-    if (this.levelFamilies().length === 0) return undefined;
     const channels = this.channelColumns() ? this.families().length : 0;
-    return `${15 + this.levelFamilies().length * LEVEL_COL_REM + channels * (this.compact() ? 5 : 6.5) + (this.compact() ? 2.5 : 3.5) + (this.selectable() ? 3 : 0)}rem`;
+    return `${AGENT_NAME_COL_REM + ENABLED_COL_REM + this.levelFamilies().length * LEVEL_COL_REM + channels * (this.compact() ? 5 : 6.5) + (this.compact() ? 2.5 : 3.5) + (this.selectable() ? 3 : 0)}rem`;
   });
 
   readonly linksChange = output<readonly GroupAgentLink[]>();
@@ -295,8 +308,8 @@ export class AgentChannelTableComponent {
   /** Lo marcado en «Añadir agentes»: los que ya están en el grupo. */
   protected readonly assignedIds = computed<number[]>(() => this.links().map((l) => l.agentId));
 
-  /** Cuántas filas no tienen ningún canal (el aviso suave de la barra). Todas, en pausa o no:
-   *  desde que la pausa no se toca aquí, una fila sin canales es igual de rara en los dos casos. */
+  /** Cuántas filas no tienen ningún canal (el aviso suave de la barra). Habilitadas o no:
+   *  deshabilitar conserva la asignación, y una fila sin canales requiere atención en ambos casos. */
   protected readonly zeroChannelCount = computed(
     () => this.assignedRows().filter((r) => r.link.channels.length === 0).length,
   );
@@ -340,6 +353,24 @@ export class AgentChannelTableComponent {
     this.linksChange.emit(
       this.links().map((l) => (l.agentId === agentId ? toggleLinkChannel(l, channel, { minOne: true }) : l)),
     );
+  }
+
+  protected presenceLabelColor(presence: PresenceStatus): LabelColor | null {
+    const tag = PRESENCE_TAGS[presence];
+    return 'labelColor' in tag ? tag.labelColor : null;
+  }
+
+  protected presenceSeverity(presence: PresenceStatus): 'warn' | 'secondary' {
+    const tag = PRESENCE_TAGS[presence];
+    return 'severity' in tag ? tag.severity : 'secondary';
+  }
+
+  protected presenceLabelKey(presence: PresenceStatus): string {
+    return PRESENCE_LABEL_KEYS[presence];
+  }
+
+  protected toggleActive(agentId: number, active: boolean): void {
+    this.linksChange.emit(this.links().map(link => link.agentId === agentId ? { ...link, active } : link));
   }
 
   protected readonly levelOptions = LEVEL_OPTIONS;

@@ -489,7 +489,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return out;
   });
 
-  /** Grupos activos sobre asignados, la cifra con anillo del resumen (DD-126). */
+  /** Grupos donde está habilitado sobre asignados, la cifra con anillo del resumen (DD-126). */
   protected readonly summaryGroups = computed(() => {
     const links = this.form().links;
     return { activos: links.filter((l) => l.active).length, total: links.length };

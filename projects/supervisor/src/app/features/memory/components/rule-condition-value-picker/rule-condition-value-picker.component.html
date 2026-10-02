@@ -57,8 +57,8 @@
                 <sc-icon class="vpick__opt-ic" name="groups" size="inherit" />
                 <span class="vpick__opt-main">
                   {{ o.label }}
-                  @if (o.sub) {
-                    <span class="vpick__opt-sub sc-text-caption-regular">{{ o.sub }}</span>
+                  @if (o.memberCount !== undefined) {
+                    <span class="vpick__opt-sub sc-text-caption-regular">{{ 'memory.rules.builder.cond.enabled_members' | translate: { count: o.memberCount } }}</span>
                   }
                 </span>
               </button>

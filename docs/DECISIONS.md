@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Habilitación por grupo separada de la presencia y de la cuenta; etiqueta compartida y recuento de habilitados en reglas | DD-149 |
 > | Niveles 1–10 independientes de Teléfono y Chat; migración sin subir versión, prevalece el nivel nuevo; subestrategia de Chat y columnas por familia | DD-148 |
 > | Asignación de agentes por tres familias; Chat engloba Web Chat y WhatsApp, con normalización sin borrar datos | DD-147 |
 > | El resumen de la ficha de grupo lleva a su sección: el rótulo de cada tarjeta, a su sección, y cada fila, a su sitio en ella (el bloque del canal, el campo del número) · enlaces de verdad, en el primario, con manita y subrayado al pasar · la tarjeta no se pulsa entera · en el alta, como el índice (enmienda DD-126 §5) | DD-146 |
@@ -109,6 +110,31 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-149 · 2026-10-02 — Habilitación por grupo y presencia del agente (E2)
+
+**Decisión.** La tabla de agentes de la ficha y el panel rápido recuperan «Habilitado»: el interruptor edita
+`GroupAgentLink.active`, igual que la ficha del agente. Enmienda DD-121: deshabilitar una asignación no es poner
+a la persona en pausa. No elimina la relación, sus canales ni sus niveles, ni cambia las otras asignaciones.
+
+La presencia se muestra junto al nombre con la misma etiqueta de color y texto del listado. `PRESENCE_TAGS`
+pasa a los datos compartidos de agentes; ficha, panel y listado leen `AgentsStore`. Un estado ausente no se
+inventa. La presencia, la cuenta activa (`Agent.status`) y la habilitación del enlace son conceptos distintos;
+los textos de los cuatro idiomas explicitan esa diferencia.
+
+El resumen dice «Agentes habilitados» y cuántos están deshabilitados. El constructor de reglas ya filtraba
+`link.active`: su cuenta ahora se rotula como agentes habilitados, por lo que cambiar el interruptor modifica
+los miembros que una condición de grupo incluye. No se cambia el evaluador ni la presencia de la persona.
+
+**Composición.** Se reutilizan `sc-toggleswitch` y las dos variantes de `sc-tag` del listado. La columna de
+habilitación mide 7rem y se suma al ancho del panel y al mínimo de tabla, incluidos ambos niveles. El nombre
+reserva 21rem para compartir celda con las presencias largas sin ocultar los nombres de prueba (la sonda
+falló con 15rem). La tabla desplaza horizontalmente cuando no cabe. El lote sigue siendo solo quitar del
+grupo; la asignación desde la lista completa pertenece a E4.
+
+**Alternativas descartadas.** Reutilizar «En pausa» confundiría una relación con la presencia. Cambiar
+`Agent.status` desde una fila afectaría a la cuenta, no al grupo. Duplicar el catálogo de colores haría divergir
+el listado y las fichas. No se añade un lote de habilitación no solicitado.
 
 ## DD-148 · 2026-10-02 — Niveles independientes de Teléfono y Chat (E1b)
 

@@ -44,6 +44,10 @@
     max-width: 100%;
   }
 
+  &__presence {
+    flex-shrink: 0;
+  }
+
   &__name-label {
     color: var(--sc-text-primary);
     overflow: hidden;

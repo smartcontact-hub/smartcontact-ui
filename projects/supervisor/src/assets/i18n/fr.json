@@ -692,6 +692,7 @@
           "pick_all_row": "Tous · s'applique à n'importe qui, y compris les nouveaux.",
           "pick_manual": "Choisir manuellement",
           "pick_groups": "Groupes (leurs membres)",
+          "enabled_members": "{{count}} agents activés",
           "pick_individuals": "Individuels",
           "pick_empty": "Aucun résultat.",
           "select_all": "Tout sélectionner (au moins un)",
@@ -1542,6 +1543,8 @@
         "empty": "Choisissez-les dans « Ajouter des agents », en haut à droite.",
         "no_results": "Aucun agent assigné ne correspond au filtre.",
         "col_agent": "Agent",
+        "col_active": "Activé",
+        "active_aria": "Activé dans ce groupe : {{name}}",
         "toggle_all_channel": "Activer/désactiver {{channel}} sur tous les visibles",
         "remove_aria": "Retirer {{name}} du groupe",
         "warn_no_channels": "Activé, mais sans canal assigné",
@@ -1551,7 +1554,7 @@
         "bulk_unassign": "Retirer du groupe",
         "col_level": "Niveau · {{channel}}",
         "level_aria": "Niveau de {{name}} — {{channel}}",
-        "paused": "En pause",
+        "paused": "Désactivé",
         "last_channel_hint": "Il doit traiter au moins un canal. Pour le sortir du groupe, cliquez sur la corbeille de sa ligne.",
         "last_channel_aria": "{{name}} — {{channel}} : seul canal ; pour le sortir du groupe, cliquez sur la corbeille de sa ligne"
       },
@@ -1683,8 +1686,8 @@
         "priority": "Priorité : {{value}}",
         "no_phone": "Aucun téléphone sortant",
         "title": "Résumé",
-        "agents_active": "Agents actifs",
-        "paused_count": "{{count}} en pause",
+        "agents_active": "Agents activés",
+        "paused_count": "{{count}} désactivés",
         "no_agents": "Aucun agent",
         "routing": "Distribution",
         "outbound": "Sortant",
@@ -1813,8 +1816,8 @@
       "offline": "Déconnecté"
     },
     "status": {
-      "active": "Actif",
-      "inactive": "Inactif"
+      "active": "Compte actif",
+      "inactive": "Compte inactif"
     },
     "permission": {
       "recording": "Enregistrement activé"
@@ -1894,14 +1897,14 @@
         "pickup_auto": "Automatique",
         "pickup_manual": "Manuel",
         "presence": "Présence initiale",
-        "status": "État",
+        "status": "État du compte",
         "phone": "Téléphone mobile",
         "email": "Email",
         "pin": "PIN",
         "pin_hint": "3-6 chiffres. Utilisé pour l'auto-activation depuis le téléphone.",
         "labels": "Étiquettes assignées",
-        "active": "Actif",
-        "active_hint": "Peut recevoir des appels et des chats",
+        "active": "Compte actif",
+        "active_hint": "Active le compte de l’agent. La présence et l’activation dans chaque groupe se gèrent séparément.",
         "recording": "Enregistrer les appels"
       },
       "labels_empty": "Pas encore d'étiquettes. Créez-en une depuis la section Étiquettes.",
@@ -1950,7 +1953,7 @@
       },
       "summary": {
         "no_groups": "Sans groupes",
-        "groups_active": "Groupes actifs",
+        "groups_active": "Activé dans les groupes",
         "missing_extension": "extension"
       },
       "create_submit": "Créer l'agent"
