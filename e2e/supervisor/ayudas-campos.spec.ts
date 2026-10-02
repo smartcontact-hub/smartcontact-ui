@@ -27,7 +27,7 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-const estrategia = (page: Page) => page.getByRole('combobox', { name: 'Estrategia', exact: true });
+const estrategia = (page: Page) => page.locator('#group-channel-phone').getByRole('combobox', { name: 'Estrategia', exact: true });
 
 test('la estrategia de teléfono dice qué hace la elegida, se anuncia con el campo y cambia con ella', async ({ page }) => {
   // El grupo 2 reparte por teléfono con Balanceada.
@@ -107,4 +107,14 @@ test('el tiempo máximo de espera en cola dice qué pasa al agotarse, en los dos
     const fila = page.locator('.setting-row').filter({ has: page.locator(`#grupos-${c}-max-wait`) });
     await expect(fila, c).toContainText(AYUDA);
   }
+});
+
+// E1b: Chat comparte el criterio de niveles y anuncia la ayuda con su propio control.
+test('Niveles de Chat anuncia su ayuda y nombra Dentro de cada nivel', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
+  const chat = page.locator('#group-channel-chat');
+  const estrategiaChat = chat.getByRole('combobox', { name: 'Estrategia', exact: true });
+  await pickSelectOption(page, estrategiaChat, 'Niveles');
+  await expect(estrategiaChat).toHaveAccessibleDescription(/^Primero, los del nivel 1/);
+  await expect(chat.getByRole('combobox', { name: 'Dentro de cada nivel', exact: true })).toBeVisible();
 });

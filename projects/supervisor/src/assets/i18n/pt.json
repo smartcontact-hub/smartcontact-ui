@@ -1549,8 +1549,8 @@
         "add_aria": "Adicionar agente ao grupo",
         "no_channels_warn": "{{count}} sem canal",
         "bulk_unassign": "Remover do grupo",
-        "col_level": "Nível",
-        "level_aria": "Nível de {{name}}",
+        "col_level": "Nível · {{channel}}",
+        "level_aria": "Nível de {{name}} — {{channel}}",
         "paused": "Em pausa",
         "last_channel_hint": "Tem de atender pelo menos um canal. Para o tirar do grupo, clique no caixote do lixo da sua linha.",
         "last_channel_aria": "{{name}} — {{channel}}: único canal; para o tirar do grupo, clique no caixote do lixo da sua linha"

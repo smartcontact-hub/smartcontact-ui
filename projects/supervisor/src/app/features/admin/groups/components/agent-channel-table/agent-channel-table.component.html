@@ -56,6 +56,7 @@
       scrollHeight="flex"
       [value]="visibleRows()"
       [columns]="columns()"
+      [tableMinWidth]="tableMinWidth()"
       dataKey="agent.id"
       [selectionMode]="selectable() ? 'multiple' : null"
       [selection]="selectedRows()"
@@ -121,15 +122,15 @@
   }
 </ng-template>
 
-<ng-template #levelTpl let-row>
-  <span [id]="'group-level-label-' + row.agent.id" class="visually-hidden">{{ 'groups.form.assigned.level_aria' | translate: { name: row.agent.name } }}</span>
+<ng-template #levelTpl let-row let-col="col">
+  <span [id]="'group-' + col.field + '-label-' + row.agent.id" class="visually-hidden">{{ 'groups.form.assigned.level_aria' | translate: { name: row.agent.name, channel: (familyLabelKeys[levelFamily(col.field)] | translate) } }}</span>
   <sc-select
     size="sm"
-    [inputId]="'group-level-' + row.agent.id"
-    [ariaLabelledBy]="'group-level-label-' + row.agent.id"
+    [inputId]="'group-' + col.field + '-' + row.agent.id"
+    [ariaLabelledBy]="'group-' + col.field + '-label-' + row.agent.id"
     [options]="levelOptions"
-    [value]="row.link.level ?? 1"
-    (valueChange)="setLevel(row.agent.id, $event)"
+    [value]="row.link.levels?.[levelFamily(col.field)] ?? 1"
+    (valueChange)="setLevel(row.agent.id, col.field, $event)"
   />
 </ng-template>
 

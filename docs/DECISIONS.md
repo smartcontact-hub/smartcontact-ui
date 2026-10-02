@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Niveles 1–10 independientes de Teléfono y Chat; migración sin subir versión, prevalece el nivel nuevo; subestrategia de Chat y columnas por familia | DD-148 |
 > | Asignación de agentes por tres familias; Chat engloba Web Chat y WhatsApp, con normalización sin borrar datos | DD-147 |
 > | El resumen de la ficha de grupo lleva a su sección: el rótulo de cada tarjeta, a su sección, y cada fila, a su sitio en ella (el bloque del canal, el campo del número) · enlaces de verdad, en el primario, con manita y subrayado al pasar · la tarjeta no se pulsa entera · en el alta, como el índice (enmienda DD-126 §5) | DD-146 |
 > | El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (`sc-nombre-fijo`), en su sitio a partir de 1340 y al quedar fija por debajo · la cabecera sigue siendo el `h1` y el sitio donde se edita el nombre · las anclas, apartadas `--sc-form-anchor-offset` · borrar pide escribir el nombre, con su prueba (enmienda DD-144) | DD-145 |
@@ -106,6 +107,38 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-148 · 2026-10-02 — Niveles independientes de Teléfono y Chat (E1b)
+
+**Por qué.** La prioridad de un agente para llamadas puede ser distinta de la que tiene para Chat. Un nivel único
+no representaba esa diferencia y la comparación de enlaces ignoraba cualquier cambio de nivel de Chat.
+
+**Decisión.**
+- `GroupAgentLink.levels` conserva `phone` y `chat` independientemente; sin nivel explícito, cada familia usa 1.
+  Los selectores ofrecen los enteros de 1 a 10. Cambiar de estrategia o de canales no borra los niveles.
+- Al leer el almacén, `linkWithFamilies` mantiene el contrato de DD-147 y `linkWithLevels` convierte `level` en
+  `levels.phone`. Si coexisten ambos formatos, prevalece el nivel nuevo de Teléfono; el antiguo solo rellena su
+  ausencia. Chat y las demás propiedades se conservan. Se retira `level` del resultado y se mantiene la identidad
+  del objeto que ya estaba normalizado. La versión sigue en 1; la siguiente escritura persiste la migración.
+- `sameLink` compara los dos niveles, con 1 como valor implícito. Dos cambios en el mismo agente cuentan como un
+  agente pendiente en el panel.
+- Chat ofrece Niveles y `chatSubStrategy` elige el reparto dentro de cada nivel entre las estrategias de Chat sin
+  Niveles. Se normalizan los nombres antiguos al leer, como en DD-141. Contact Center excluye Niveles de sus valores
+  por defecto de Chat, siguiendo el criterio ya existente en Teléfono.
+- Ficha y panel comparten una columna por familia configurada con Niveles. Cada cabecera y cada control identifican
+  Teléfono o Chat. El panel suma el ancho de cada columna a su cálculo existente; el `colspan` lo resuelve la tabla
+  del DS a partir de sus columnas y de la selección.
+
+**Comprobación.** Pruebas del núcleo de migración, precedencia, identidad, límites y comparación; recorridos de
+persistencia en ficha y panel con una y ambas familias; subestrategia y defaults; regresiones de E1a. Medidas de
+columnas, `colspan` y capturas a 1024/1440 en claro y oscuro. Las evidencias ejecutadas y su estado constan en el
+hand-off del frente.
+
+**Descartadas.** Subir la versión borraría asignaciones. Dar preferencia al nivel antiguo sobrescribiría decisiones
+nuevas. Compartir el nivel entre familias impediría priorizarlas por separado. Niveles dentro de Niveles no es una
+subestrategia de reparto. TreeTable y el flujo de asignación completo quedan fuera de E1b.
 
 ---
 

@@ -19,7 +19,7 @@ import { ChannelIconComponent } from '@shared/components';
 import { stableStringify } from '@shared/utils/form-dirty-state';
 import {
   CHANNEL_LABEL_KEYS,
-  CHAT_STRATEGIES,
+  DEFAULT_CHAT_STRATEGY_OPTIONS,
   DEFAULT_STRATEGY_OPTIONS,
   GROUP_PRIORITIES,
   GroupAdvanced,
@@ -80,7 +80,7 @@ export class AedGruposPageComponent implements DirtyAware {
   private readonly store = inject(GroupDefaultsStore);
 
   protected readonly strategyOptions = DEFAULT_STRATEGY_OPTIONS;
-  protected readonly chatStrategyOptions = CHAT_STRATEGIES;
+  protected readonly chatStrategyOptions = DEFAULT_CHAT_STRATEGY_OPTIONS;
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly priorities = GROUP_PRIORITIES;
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;

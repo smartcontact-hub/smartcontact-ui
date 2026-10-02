@@ -19,6 +19,27 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
+## ▶ 2026-10-02 · E1b: niveles por familia (DD-148)
+
+> **Sello: rama `codex/supervisor-e1b-niveles`, base `83e371e7` (#309); pruebas iniciales `7692a3ca`.**
+
+**Implementado:** niveles 1–10 independientes, migración del nivel antiguo con precedencia del nuevo, comparación
+por ambas familias, Niveles y subestrategia de Chat, defaults sin Niveles, columnas identificadas en ficha y panel.
+La tabla reserva el ancho del nombre y desplaza horizontalmente si no cabe. Detalle y alternativas: DD-148.
+
+**Ejecutado aquí:** 4 unitarias nuevas y 7 e2e en rojo primero; 19 unitarias de canales/familias/niveles en verde;
+44 e2e afectados en verde; 27 tras completar ayudas y medidas; 12 de E1b tras arreglar el ancho. La sonda del nombre
+se vio roja con la celda a 0 px. `revision` pasó las rutas de edición, alta, listado y Contact Center. Capturas de
+ficha y panel con ambos niveles, claro/oscuro, 1024/1440, inspeccionadas con `better-layout`.
+
+**Verificación:** `verify` completo en verde. Suite Supervisor: 496/498; las dos sondas de recorte del listado
+fallan también sobre una copia limpia de `83e371e7` (3 px, mismas etiquetas). Evidencia local, no regresión de E1b;
+se conserva para F sin anticipar su cambio. Zoom 200 % y RTL no verificados.
+
+**Pendiente de entrega:** preflight final, PR y CI, squash y CI de main; después conservar
+las evidencias fuera de su worktree y limpiar solo E1b. Continuar E2 → E3 → E4 → D3 → F, cada uno tras el merge verde.
+No se reaplicó E1a ni se modificó su recuperación. Los registros de E1a son históricos; estas tandas son de E1b.
+
 ## ✅ 2026-10-02 · E1a: asignaciones por familia (DD-147)
 
 > **Sello: rama `codex/supervisor-e1a-familias`, base `c6a9cd59` (G2b, #308 fundido; CI del merge leído en verde).**

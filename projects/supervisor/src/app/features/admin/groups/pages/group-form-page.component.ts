@@ -49,6 +49,7 @@ import {
 import {
   CHANNEL_LABEL_KEYS,
   CHAT_STRATEGIES,
+  CHAT_SUB_STRATEGIES,
   GROUP_CHANNELS,
   Group,
   GroupChannel,
@@ -130,6 +131,7 @@ interface FormState {
   subStrategy: string;
   ringAllAgents: number;
   chatStrategy: string;
+  chatSubStrategy: string;
   links: readonly GroupAgentLink[];
 }
 
@@ -147,6 +149,7 @@ const SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
   subStrategy: 'group-section-distribution',
   ringAllAgents: 'group-section-distribution',
   chatStrategy: 'group-section-distribution',
+  chatSubStrategy: 'group-section-distribution',
   phoneQueue: 'group-section-distribution',
   chatQueue: 'group-section-distribution',
   chat: 'group-section-distribution',
@@ -252,6 +255,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     }));
   });
   protected readonly chatStrategies = CHAT_STRATEGIES;
+  protected readonly chatSubStrategies = CHAT_SUB_STRATEGIES;
+  protected readonly levelFamilies = computed<readonly ('phone' | 'chat')[]>(() => [
+    ...(this.isNiveles() ? ['phone' as const] : []),
+    ...(this.hasChatFamily() && this.form().chatStrategy === 'Niveles' ? ['chat' as const] : []),
+  ]);
   protected readonly subStrategies = SUB_STRATEGIES;
   protected readonly ringAllOptions = RING_ALL_OPTIONS;
   protected readonly voiceOptions = VOICE_OPTIONS;
@@ -749,6 +757,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,
       ringAllAgents: group.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
       chatStrategy: group.chatStrategy ?? DEFAULT_CHAT_STRATEGY,
+      chatSubStrategy: group.chatSubStrategy ?? CHAT_SUB_STRATEGIES[0]!,
       links: seedLinks,
     });
     this.initialChannels.set(new Set(group.channels));
@@ -797,6 +806,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected onStrategyValueChange(value: unknown): void {
     if (typeof value === 'string') this.updateField('strategy', value);
+  }
+
+  protected onChatSubStrategyChange(value: unknown): void {
+    if (typeof value === 'string') this.updateField('chatSubStrategy', value);
   }
 
   protected onChatStrategyValueChange(value: unknown): void {
@@ -1133,6 +1146,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         ringAllAgents: this.isRingAll() ? f.ringAllAgents : undefined,
         // La de Chat vale para sus dos subcanales: un grupo solo de WhatsApp también la guarda.
         chatStrategy: hasChatFamily(f.channels) ? f.chatStrategy : undefined,
+        chatSubStrategy: f.chatSubStrategy,
       };
 
       if (this.mode() === 'create') {
@@ -1254,6 +1268,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       subStrategy: SUB_STRATEGIES[0]!,
       ringAllAgents: RING_ALL_OPTIONS[0]!,
       chatStrategy: defaults.chatStrategy,
+      chatSubStrategy: CHAT_SUB_STRATEGIES[0]!,
       links: [],
     };
   }
