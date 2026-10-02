@@ -2,8 +2,8 @@
   <!-- Fila de búsqueda. Métrica medida: selects 238×35 (gap 11), input 198×27,
        botón 36×27. Los desplegables del original son mat-select. -->
   <div class="search__row">
-    <select class="field" [ngModel]="country()" (ngModelChange)="country.set($event)" aria-label="Country">
-      <option value="">Select country</option>
+    <select class="field" [ngModel]="country()" (ngModelChange)="country.set($event)" [attr.aria-label]="'Country' | tr">
+      <option value="">{{ 'Select country' | tr }}</option>
       @for (c of countries; track c) {
         <option [value]="c">{{ c }}</option>
       }
@@ -13,10 +13,10 @@
       class="field"
       [ngModel]="criterion()"
       (ngModelChange)="criterion.set($event)"
-      aria-label="Search criteria"
+      [attr.aria-label]="'Search criteria' | tr"
     >
       @for (c of criteria; track c) {
-        <option [value]="c">{{ c }}</option>
+        <option [value]="c">{{ c | tr }}</option>
       }
     </select>
 
@@ -24,13 +24,13 @@
       <input
         class="search__ph"
         type="text"
-        placeholder="Search"
-        aria-label="Search term"
+        [placeholder]="'action::Search' | tr"
+        [attr.aria-label]="'Search term' | tr"
         [ngModel]="term()"
         (ngModelChange)="term.set($event)"
         (keydown.enter)="search()"
       />
-      <button class="search__btn" type="button" aria-label="Search" [disabled]="!hasTerm()" (click)="search()">
+      <button class="search__btn" type="button" [attr.aria-label]="'action::Search' | tr" [disabled]="!hasTerm()" (click)="search()">
         <img src="icons/general/search.svg" width="15" height="15" alt="" aria-hidden="true" />
       </button>
     </span>
@@ -38,8 +38,8 @@
 
   @if (searching()) {
     <div class="search__loading">
-      <span class="spinner" role="status" aria-label="Searching"></span>
-      <p class="search__msg">Loading data...</p>
+      <span class="spinner" role="status" [attr.aria-label]="'Searching' | tr"></span>
+      <p class="search__msg">{{ 'Loading data...' | tr }}</p>
     </div>
   } @else if (results() === null) {
     <!-- Estado inicial: la ilustración REAL de la app (903×401). -->
@@ -48,31 +48,31 @@
     </div>
   } @else if (results()!.length === 0) {
     <div class="search__empty">
-      <p class="search__emptytitle">{{ emptyTitle }}</p>
+      <p class="search__emptytitle">{{ emptyTitle | tr }}</p>
       <p class="search__emptymsg">
-        {{ emptyMessage() }}
+        {{ emptyMessage() | tr }}
       </p>
       <button class="btn btn--ghost" type="button" (click)="reset()">Limpiar búsqueda</button>
     </div>
   } @else {
     <section class="cc-card search__results">
       <header class="search__resultshead">
-        <h2 class="cc-page-title">{{ results()!.length }} results</h2>
+        <h2 class="cc-page-title">{{ results()!.length }} {{ 'results' | tr }}</h2>
         <button class="btn btn--ghost" type="button" (click)="reset()">Limpiar búsqueda</button>
       </header>
 
       <table class="resulttable">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Status</th>
-            <th>Assigned to</th>
-            <th>Group</th>
-            <th>Channel</th>
-            <th>Source</th>
-            <th>Email</th>
-            <th>Country</th>
-            <th>Created</th>
+            <th>{{ 'ID' | tr }}</th>
+            <th>{{ 'Status' | tr }}</th>
+            <th>{{ 'Assigned to' | tr }}</th>
+            <th>{{ 'Group' | tr }}</th>
+            <th>{{ 'Channel' | tr }}</th>
+            <th>{{ 'Source' | tr }}</th>
+            <th>{{ 'Email' | tr }}</th>
+            <th>{{ 'Country' | tr }}</th>
+            <th>{{ 'Created' | tr }}</th>
           </tr>
         </thead>
         <tbody>

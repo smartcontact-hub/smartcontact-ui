@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
 import { TOOLTIPS } from '../../data/tooltips';
 
 /**
@@ -25,12 +26,13 @@ import { TOOLTIPS } from '../../data/tooltips';
 @Component({
   selector: 'app-refund-modal',
   standalone: true,
+  imports: [TrPipe],
   template: `
     <div class="rfd" (click)="onBackdrop($event)">
-      <div class="rfd__dialog" role="dialog" aria-modal="true" aria-label="Refunds">
+      <div class="rfd__dialog" role="dialog" aria-modal="true" [attr.aria-label]="'Refunds' | tr">
         <div class="rfd__content">
           <header class="rfd__head">
-            <button class="rfd__x" type="button" aria-label="Close" (click)="closed.emit()">
+            <button class="rfd__x" type="button" [attr.aria-label]="'Close' | tr" (click)="closed.emit()">
               ✕
             </button>
             <span class="rfd__who">
@@ -39,9 +41,9 @@ import { TOOLTIPS } from '../../data/tooltips';
             </span>
             <span class="rfd__totals">
               <span class="rfd__refunded">
-                Refunded <strong class="rfd__amount">{{ refunded() }}</strong>
+                {{ 'Refunded' | tr }} <strong class="rfd__amount">{{ refunded() }}</strong>
               </span>
-              <span class="rfd__charges">{{ charges().length }} Charge(s)</span>
+              <span class="rfd__charges">{{ charges().length }} {{ 'Charge(s)' | tr }}</span>
             </span>
           </header>
 
@@ -50,9 +52,9 @@ import { TOOLTIPS } from '../../data/tooltips';
               <thead>
                 <tr>
                   <th class="rfd__count"><span class="rfd__badge">{{ charges().length }}</span></th>
-                  <th>Product</th>
-                  <th>Date</th>
-                  <th>Amount</th>
+                  <th>{{ 'Product' | tr }}</th>
+                  <th>{{ 'Date' | tr }}</th>
+                  <th>{{ 'Amount' | tr }}</th>
                   <th>API</th>
                   <th>BNK</th>
                 </tr>
@@ -72,7 +74,7 @@ import { TOOLTIPS } from '../../data/tooltips';
                       <span class="rfd__waywrap">
                         <button class="rfd__way" type="button" [disabled]="!allowed()">API</button>
                         @if (!allowed()) {
-                          <span class="rfd__tip" role="tooltip">{{ notAllowed }}</span>
+                          <span class="rfd__tip" role="tooltip">{{ notAllowed | tr }}</span>
                         }
                       </span>
                     </td>
@@ -80,7 +82,7 @@ import { TOOLTIPS } from '../../data/tooltips';
                       <span class="rfd__waywrap">
                         <button class="rfd__way" type="button" [disabled]="!allowed()">BNK</button>
                         @if (!allowed()) {
-                          <span class="rfd__tip" role="tooltip">{{ notAllowed }}</span>
+                          <span class="rfd__tip" role="tooltip">{{ notAllowed | tr }}</span>
                         }
                       </span>
                     </td>

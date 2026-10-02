@@ -5,7 +5,7 @@ import { expect, test, type Page } from '@playwright/test';
  *
  * Los dos se capturaron abriéndolos en la app real, y los dos resultaron ser
  * más de lo que aparentaban:
- *   · el icono de la izquierda abre un panel con las 18 columnas, cada una con
+ *   · el icono de la izquierda abre un panel con las 19 columnas, cada una con
  *     casilla y asa de arrastre, más "Reset to default"
  *   · el botón "Filter" NO abre un simple campo: trae tres modos apilados
  *     (All / New / Update) y debajo el input
@@ -19,14 +19,14 @@ async function goto(page: Page) {
 }
 
 test.describe('Manage columns', () => {
-  test('abre con las 18 columnas, todas marcadas', async ({ page }) => {
+  test('abre con las 19 columnas, todas marcadas', async ({ page }) => {
     await goto(page);
 
     await page.getByRole('button', { name: 'Manage columns' }).click();
     const panel = page.getByRole('dialog', { name: 'Manage columns' });
 
     await expect(panel).toBeVisible();
-    await expect(panel.getByRole('checkbox')).toHaveCount(18);
+    await expect(panel.getByRole('checkbox')).toHaveCount(19);
     for (const cb of await panel.getByRole('checkbox').all()) {
       await expect(cb).toBeChecked();
     }
@@ -64,7 +64,7 @@ test.describe('Manage columns', () => {
     await page.getByRole('button', { name: 'Manage columns' }).click();
 
     const panel = page.getByRole('dialog', { name: 'Manage columns' });
-    await expect(panel.locator('.colitem__drag')).toHaveCount(18);
+    await expect(panel.locator('.colitem__drag')).toHaveCount(19);
   });
 
   test('arrastrar una columna reordena la TABLA, no solo el panel', async ({ page }) => {
@@ -98,7 +98,7 @@ test.describe('Manage columns', () => {
     // La tabla refleja el nuevo orden: ID ya no es la primera.
     const th = page.locator('.cc-table thead tr').first().locator('th');
     await expect(th.nth(1)).not.toHaveText('ID');
-    // Y sigue habiendo 18 columnas: reordenar no pierde ninguna.
+    // Y sigue habiendo 19 columnas: reordenar no pierde ninguna.
     await expect(th).toHaveCount(headersAntes.length);
   });
 

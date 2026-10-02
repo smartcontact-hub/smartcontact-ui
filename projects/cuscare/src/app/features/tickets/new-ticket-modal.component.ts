@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { TrPipe } from '../../core/i18n/i18n';
 import { ENTITIES } from '../../data/seed';
 
 /**
@@ -25,24 +26,24 @@ import { ENTITIES } from '../../data/seed';
 @Component({
   selector: 'app-new-ticket-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TrPipe],
   template: `
     <div class="modal" (click)="onBackdrop($event)">
-      <div class="dialog" role="dialog" aria-modal="true" aria-label="Select a group for this ticket">
+      <div class="dialog" role="dialog" aria-modal="true" [attr.aria-label]="'Select a group for this ticket' | tr">
         <div class="panel">
           <header class="panel__head">
-            <h2 class="panel__title">Select a group for this ticket</h2>
+            <h2 class="panel__title">{{ 'Select a group for this ticket' | tr }}</h2>
             <input
               class="panel__search"
               type="text"
-              placeholder="Search..."
-              aria-label="Search group"
+              [placeholder]="'Search...' | tr"
+              [attr.aria-label]="'Search group' | tr"
               [ngModel]="query()"
               (ngModelChange)="query.set($event)"
             />
           </header>
 
-          <ul class="grouplist" role="radiogroup" aria-label="Groups">
+          <ul class="grouplist" role="radiogroup" [attr.aria-label]="'Groups' | tr">
             @for (g of visible(); track g.groupName) {
               <li class="grouprow">
                 <label class="grouprow__label">
@@ -64,9 +65,9 @@ import { ENTITIES } from '../../data/seed';
         </div>
 
         <footer class="dialog__foot">
-          <button class="btn btn--cancel" type="button" (click)="cancelled.emit()">Cancel</button>
+          <button class="btn btn--cancel" type="button" (click)="cancelled.emit()">{{ 'Cancel' | tr }}</button>
           <button class="btn btn--save" type="button" [disabled]="!selected()" (click)="save()">
-            Save
+            {{ 'Save' | tr }}
           </button>
         </footer>
       </div>

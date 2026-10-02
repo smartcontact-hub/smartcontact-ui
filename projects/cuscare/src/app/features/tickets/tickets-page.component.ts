@@ -1,15 +1,27 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PopoverModule } from 'primeng/popover';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 
-import { TICKETS_ALL, TICKETS_TOTAL, TicketRow } from '../../data/seed';
+import { I18n, TrPipe } from '../../core/i18n/i18n';
+import { REQUEST_TYPES, TICKETS_ALL, TICKETS_TOTAL, TicketRow } from '../../data/seed';
 import { BulkActionsComponent } from './bulk-actions.component';
 import { ColumnManagerComponent, ManagedColumn } from './column-manager.component';
 import { NewTicketModalComponent } from './new-ticket-modal.component';
+import {
+  cellItems,
+  DEFAULT_REQUEST_TYPE_FILTER,
+  EMPTY_TYPE,
+  isRequestTypeActive,
+  matchesRequestType,
+  ORIGIN_LABEL,
+  RequestTypeFilter,
+} from './request-type';
+import { RequestTypeFilterComponent } from './request-type-filter.component';
 
 /**
  * Tipo de filtro por columna. **Medido uno a uno en la app real** inspeccionando
@@ -23,8 +35,11 @@ import { NewTicketModalComponent } from './new-ticket-modal.component';
  *                 MO Error Content
  *
  * Son CUATRO tipos, no dos. El placeholder de select/multiselect es "—".
+ *
+ * El quinto, `requestType`, NO es del original: es la columna «Request type» de la V3
+ * (SCC 2081), montada aquí para enseñar su comportamiento (origen IA / Agente y tipos).
  */
-type FilterKind = 'popover' | 'multiselect' | 'select' | 'input' | 'none';
+type FilterKind = 'popover' | 'multiselect' | 'select' | 'input' | 'requestType' | 'none';
 
 interface Col {
   readonly key: keyof TicketRow;
@@ -60,12 +75,50 @@ type SortDir = 'asc' | 'desc';
     NewTicketModalComponent,
     ColumnManagerComponent,
     BulkActionsComponent,
+    RequestTypeFilterComponent,
+    TagModule,
+    TrPipe,
   ],
   templateUrl: './tickets-page.component.html',
   styleUrl: './tickets-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TicketsPageComponent {
+  private readonly i18n = inject(I18n);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly tableViewport = viewChild.required<ElementRef<HTMLElement>>('tableViewport');
+  private readonly viewportWidth = signal(0);
+
+  constructor() {
+    afterNextRender(() => {
+      const observer = new ResizeObserver(([entry]) => this.viewportWidth.set(entry.contentRect.width));
+      observer.observe(this.tableViewport().nativeElement);
+      this.destroyRef.onDestroy(() => observer.disconnect());
+    });
+  }
+
+  /** Medidas locales del prototipo: contrato en docs/cuscare-filters-table-handoff.md. */
+  protected columnWidth(col: Col): number {
+    return col.key === 'requestTypes'
+      ? Math.round(Math.min(320, Math.max(260, this.viewportWidth() / 4)))
+      : parseInt(col.width, 10);
+  }
+
+  protected readonly tableWidth = computed(() =>
+    40 + this.cols().reduce((sum, col) => sum + this.columnWidth(col), 0),
+  );
+  protected readonly hasHorizontalOverflow = computed(() =>
+    this.viewportWidth() > 0 && this.tableWidth() > this.viewportWidth(),
+  );
+  protected readonly tablePt = computed(() => ({
+    tableContainer: {
+      tabindex: this.hasHorizontalOverflow() ? '0' : '-1',
+      role: 'region',
+      'aria-label': this.i18n.t('Tickets table'),
+      'aria-describedby': this.hasHorizontalOverflow() ? 'tickets-scroll-hint' : undefined,
+    },
+  }));
+
   private readonly all: TicketRow[] = [...TICKETS_ALL];
   protected readonly total = TICKETS_TOTAL;
 
@@ -156,6 +209,7 @@ export class TicketsPageComponent {
   private readonly allCols: readonly Col[] = [
     { key: 'id', header: 'ID', width: '80px', filter: 'popover', sortable: true },
     { key: 'status', header: 'Status', width: '120px', filter: 'multiselect', sortable: true },
+    { key: 'requestTypes', header: 'Request type', width: '260px', filter: 'requestType' },
     { key: 'assignedTo', header: 'Assigned to', width: '186px', filter: 'popover', sortable: true },
     { key: 'group', header: 'Group', width: '130px', filter: 'multiselect', sortable: true },
     { key: 'channel', header: 'Channel', width: '110px', filter: 'select' },
@@ -329,6 +383,18 @@ export class TicketsPageComponent {
   protected readonly single = signal<Record<string, string | null | undefined>>({});
   protected readonly text = signal<Record<string, string | undefined>>({});
 
+  /* ── «Request type» (V3): origen IA / Agente y una lista de tipos ──────── */
+  protected readonly requestType = signal<RequestTypeFilter>(DEFAULT_REQUEST_TYPE_FILTER);
+  protected readonly requestTypeOptions = [...REQUEST_TYPES, EMPTY_TYPE];
+  protected readonly cellItems = cellItems;
+  protected readonly originLabel = ORIGIN_LABEL;
+
+  protected setRequestType(f: RequestTypeFilter): void {
+    const changesResults = isRequestTypeActive(this.requestType()) || isRequestTypeActive(f);
+    this.requestType.set(f);
+    if (changesResults) this.page.set(1);
+  }
+
   /** Opciones derivadas de los datos: así nunca ofrecen algo que no existe. */
   private optionsOf(key: keyof TicketRow): { label: string; value: string }[] {
     const seen = new Set<string>();
@@ -352,7 +418,9 @@ export class TicketsPageComponent {
     const m = this.multi();
     const s = this.single();
     const t = this.text();
+    const rt = this.requestType();
     return this.all.filter((row) => {
+      if (!matchesRequestType(row.requestTypes, rt)) return false;
       for (const [key, vals] of Object.entries(m)) {
         if (vals?.length && !vals.includes(String(row[key as keyof TicketRow]))) return false;
       }
@@ -461,7 +529,8 @@ export class TicketsPageComponent {
     () =>
       Object.values(this.multi()).some((v) => v?.length) ||
       Object.values(this.single()).some(Boolean) ||
-      Object.values(this.text()).some(Boolean),
+      Object.values(this.text()).some(Boolean) ||
+      isRequestTypeActive(this.requestType()),
   );
 
   /* Al cambiar cualquier filtro se vuelve a la página 1: si no, se puede quedar
@@ -485,6 +554,7 @@ export class TicketsPageComponent {
     this.multi.set({});
     this.single.set({});
     this.text.set({});
+    this.requestType.set(DEFAULT_REQUEST_TYPE_FILTER);
     this.page.set(1);
   }
 

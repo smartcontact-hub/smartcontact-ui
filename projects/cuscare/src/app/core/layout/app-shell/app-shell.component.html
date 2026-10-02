@@ -8,7 +8,7 @@
       <span class="nav__env">development</span>
     </div>
 
-    <nav class="nav__body" aria-label="Main">
+    <nav class="nav__body" [attr.aria-label]="'Main' | tr">
       @for (item of navItems; track item.path) {
         <a
           class="nav__item"
@@ -17,7 +17,7 @@
           [attr.aria-current]="isActive()(item.path) ? 'page' : null"
         >
           <app-nav-icon [name]="item.icon" />
-          <span class="nav__label">{{ item.label }}</span>
+          <span class="nav__label">{{ item.label | tr }}</span>
         </a>
       }
     </nav>
@@ -32,8 +32,24 @@
                 role="menuitem"
                 [routerLink]="s.path"
                 (click)="settingsOpen.set(false)"
-                >{{ s.label }}</a
+                >{{ s.label | tr }}</a
               >
+            </li>
+          }
+          <!-- Idioma de la réplica (propio, no está en el original): se aplica al momento. -->
+          <li class="settingsmenu__sep" role="separator"></li>
+          <li class="settingsmenu__group" role="none">{{ 'Language' | tr }}</li>
+          @for (l of langs; track l.value) {
+            <li role="none">
+              <button
+                class="settingsmenu__item settingsmenu__item--lang"
+                type="button"
+                role="menuitemradio"
+                [attr.aria-checked]="i18n.lang() === l.value"
+                (click)="i18n.set(l.value)"
+              >
+                <span class="settingsmenu__check" aria-hidden="true">{{ i18n.lang() === l.value ? '✓' : '' }}</span>{{ l.label }}
+              </button>
             </li>
           }
         </ul>
@@ -43,7 +59,7 @@
         type="button"
         (click)="settingsOpen.set(!settingsOpen())"
         [attr.aria-expanded]="settingsOpen()"
-        aria-label="Settings"
+        [attr.aria-label]="'Settings' | tr"
       >
         <app-nav-icon name="gear" />
         <span class="nav__gear-caret">{{ settingsOpen() ? '<' : '>' }}</span>
@@ -68,7 +84,7 @@
     (click)="available.set(!available())"
     [attr.aria-pressed]="available()"
   >
-    {{ managingTicket() ? 'Managed ticket' : available() ? 'Available' : 'No available' }}
+    {{ (managingTicket() ? 'Managed ticket' : available() ? 'Available' : 'No available') | tr }}
   </button>
   <span class="statusbar__avatar" aria-hidden="true">RA</span>
 </footer>

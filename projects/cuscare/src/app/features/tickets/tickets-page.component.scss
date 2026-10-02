@@ -125,7 +125,7 @@
   position: relative; /* ancla del overlay de carga */
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  min-width: 0;
 }
 
 /* ── Loader (medido del original) ───────────────────────────────────────────
@@ -179,9 +179,7 @@
 
 :host ::ng-deep .cc-table table {
   border-collapse: collapse;
-  table-layout: auto;
-  width: max-content;
-  min-width: 100%;
+  table-layout: fixed;
 }
 
 /* th: 12px/600 #4f5663 Open Sans sobre #f7f8fa, padding 12px 8px, alto 41.5 */
@@ -378,9 +376,9 @@
   font-size: 11.68px;
   font-weight: 400;
   color: var(--cc-text-body);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  vertical-align: top;
 }
 
 :host ::ng-deep .cc-table tbody tr {
@@ -444,8 +442,68 @@
 /* Chips de producto: pill gris claro */
 .chips {
   display: inline-flex;
+  max-width: 100%;
+  flex-wrap: wrap;
   align-items: center;
   gap: 4px;
+}
+
+/* Etiquetas de «Request type» (V3): las medidas de la etiqueta del DS de ui.smart-contact.com
+   (radio 6, relleno 1.75 / 7, 12px en 700, interlineado 18: 21.5 de alto). */
+:host ::ng-deep .cc-table .chips .p-tag {
+  padding: 1.75px 7px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+/* Colores locales de fase 1 (docs/cuscare-request-type-match.md): IA gris, agente azul. */
+:host ::ng-deep .cc-table .rt-tag--ai {
+  background: #d2d9e3;
+  color: #1b273d;
+}
+
+:host ::ng-deep .cc-table .rt-tag--agent {
+  background: #d5e6ff;
+  color: #0a3ba0;
+}
+
+/* Coincidencia: la pareja IA + agente del mismo tipo, junta dentro de un contorno verde suave y
+   con su check. Radio concéntrico: 6 de la etiqueta + 1 de relleno = 7. */
+.rt-match {
+  display: inline-flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 4px 1px 1px;
+  border: 1px solid var(--sc-color-green-200);
+  border-radius: 7px;
+}
+
+/* El mismo check a trazo que el filtro; 2px porque va junto a etiquetas en negrita. */
+.rt-match__icon {
+  flex: none;
+  fill: none;
+  stroke: var(--sc-icon-success);
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* En castellano los tipos son más largos («GDPR - Derecho de acceso»): que bajen de línea. */
+.rt-chips {
+  flex-wrap: wrap;
+}
+
+/* En una fila bloqueada por otro agente el texto va atenuado; las etiquetas, también. */
+:host ::ng-deep .cc-table .cell--dim .rt-tag {
+  opacity: 0.5;
 }
 
 .chip {
@@ -526,4 +584,35 @@
 
 .tickets__filtered {
   color: #9aa1ac;
+}
+
+/* Un solo viewport de scroll: el contenedor nativo de p-table. */
+.tickets__scroll-hint {
+  min-height: 21px;
+  font-size: 12px; /* Escala local de la réplica: la raíz fluida reduce los rem a 1024. */
+  color: var(--sc-text-secondary);
+}
+:host ::ng-deep .cc-table .p-datatable-table-container:focus-visible,
+:host ::ng-deep .cc-table th:focus-visible {
+  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+  outline-offset: var(--sc-focus-ring-offset);
+}
+.tickets__empty {
+  position: sticky;
+  left: 0;
+  width: min(100%, 40rem);
+  text-align: start;
+  padding: var(--sc-spacing-1);
+}
+.tickets__empty p { margin: 0 0 var(--sc-spacing-1); }
+.tickets__toolbar, .tickets__foot { flex-wrap: wrap; }
+:host ::ng-deep .cc-table .th__label {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+:host ::ng-deep .cc-table .chip {
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
 }

@@ -69,7 +69,8 @@ test.describe('menú del engranaje', () => {
 
     await page.locator('.nav__gear').click();
     await expect(page.locator('.settingsmenu')).toBeVisible();
-    await expect(page.locator('.settingsmenu__item')).toHaveCount(4);
+    await expect(page.locator('.settingsmenu').getByRole('menuitem')).toHaveCount(4);
+    await expect(page.locator('.settingsmenu').getByRole('menuitemradio')).toHaveCount(2);
 
     await page.getByRole('menuitem', { name: 'Users' }).click();
     await expect(page).toHaveURL(/#\/private\/cuscare\/settings\/users/);

@@ -4,11 +4,14 @@ import {
   Component,
   ElementRef,
   computed,
+  inject,
   input,
   output,
   signal,
   viewChild,
 } from '@angular/core';
+
+import { I18n, TrPipe } from '../../core/i18n/i18n';
 
 /**
  * Panel "Summary" de una suscripción.
@@ -38,11 +41,14 @@ import {
 @Component({
   selector: 'app-summary-panel',
   standalone: true,
+  imports: [TrPipe],
   templateUrl: './summary-panel.component.html',
   styleUrl: './summary-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SummaryPanelComponent {
+  private readonly i18n = inject(I18n);
+
   readonly ticketId = input.required<string>();
   readonly product = input.required<string>();
 
@@ -102,10 +108,14 @@ export class SummaryPanelComponent {
   /** Cuántas unidades y de qué periodo, como llega la oferta en el original. */
   readonly periodo = input<{ numero: number; codigo: string }>({ numero: 1, codigo: 'w' });
 
-  /** «1 Week», «30 Days»… Un código que no esté en la tabla se enseña tal cual, no se inventa. */
+  /**
+   * «1 Week», «30 Days»… Un código que no esté en la tabla se enseña tal cual, no se inventa.
+   * El rótulo se traduce aquí dentro para que siga al idioma.
+   */
   protected readonly periodoLegible = computed(() => {
     const { numero, codigo } = this.periodo();
-    const etiqueta = SummaryPanelComponent.PERIODOS[codigo] ?? codigo;
+    const rotulo = SummaryPanelComponent.PERIODOS[codigo];
+    const etiqueta = rotulo ? this.i18n.t(rotulo) : codigo;
     return SummaryPanelComponent.PERIODOS_CON_NUMERO.has(codigo) ? etiqueta : `${numero} ${etiqueta}`;
   });
 
