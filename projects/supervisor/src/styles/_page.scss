@@ -199,6 +199,21 @@
   grid-area: summary;
 }
 
+/* EL NOMBRE FIJO (DD-145): la copia muda de la cabecera (`sc-nombre-fijo`) va en la columna del contenido, de la
+ * fila de la cabecera a la del contenido, para que su `sticky` tenga todo el recorrido de la página: un `sticky` no
+ * sale del área de su rejilla. Cae encima de la cabecera y del contenido a propósito, y solo se ve al bajar. */
+.ficha-rail > sc-nombre-fijo {
+  grid-column: 2;
+  grid-row: 1 / -1;
+}
+
+/* Lo que se salta o se enfoca no queda debajo del nombre fijo: mientras está en pantalla, la zona que se desplaza
+ * aparta sus anclas la medida de las anclas bajo lo fijo (`--sc-form-anchor-offset`, 80; la copia mide 78,75). Un
+ * salto de canal de Distribución y colas dejaba su título en y=55,6, debajo de la copia. */
+#main-content:has(sc-nombre-fijo) {
+  scroll-padding-block-start: var(--sc-form-anchor-offset);
+}
+
 /* «Eliminar», bajo el índice (DD-144): es una acción sobre la ficha entera, y con el nombre dentro del
  * contenido la cabecera ya no tiene sitio a su derecha. De la última fila del índice al botón, 28, el aire
  * entre grupos (el índice navega y esto borra): el hueco del carril (14) y el relleno de abajo del índice
@@ -252,6 +267,12 @@
       'rail main';
   }
 
+  /* El nombre fijo, sobre el contenido: la cabecera ya no comparte columna con él. Solo se ve al quedar fijo
+   * arriba, así que no tapa la franja del resumen. */
+  .page__inner--rail.ficha-rail--summary > sc-nombre-fijo {
+    grid-area: main;
+  }
+
   .ficha-summary {
     width: auto;
     position: static;
@@ -269,6 +290,10 @@
       'summary'
       'rail'
       'main';
+  }
+
+  .page__inner--rail.ficha-rail--summary > sc-nombre-fijo {
+    grid-area: main;
   }
 }
 

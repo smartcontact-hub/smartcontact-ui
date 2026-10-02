@@ -123,6 +123,7 @@ variable cuando su nombre es único y avisa.
 - [ ] **33** · La ficha de grupo y Contact Center › Grupos: estrategias con «conversaciones», sin «Desbordar sesión».
 - [ ] **34** · El teléfono saliente obligatorio y cerrado, «Caducar sesión» y Recursos sin Etiquetas.
 - [ ] **35** · Las fichas en tres columnas: el título en el contenido, el resumen sin rótulo y «Eliminar» bajo el índice.
+- [ ] **36** · El nombre de la ficha, fijo arriba al bajar.
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
@@ -994,6 +995,24 @@ fichero: el código no cita los nodos de las fichas.
 
 **Cómo sabes que está hecho:** las maquetas se ven como `/admin/grupos/editar/11`, `/admin/agentes/editar/1` y
 `/admin/usuarios/crear` a 1440.
+
+---
+
+## 36 · El nombre de la ficha, fijo arriba al bajar (2026-10-01)
+
+**Estado:** pendiente · **Dónde:** Figma, las maquetas de las fichas de grupo, agente y usuario, en un estado «al
+bajar» · **Esfuerzo:** un estado más de la cabecera, sin piezas nuevas · **Sin verificar** contra el fichero: el código
+no cita los nodos de las fichas.
+
+- **Por qué** (DD-145): al bajar en una sección larga, el nombre se iba con ella.
+- **Qué dibujar:**
+  - la cabecera (el nombre y su línea) fija arriba de la columna del contenido, en su sitio, con el fondo de la página
+    y una línea fina debajo (`--sc-border-subtle`);
+  - la sección pasando por debajo, cortada por esa línea;
+  - el índice y el resumen, fijos como ya estaban.
+
+**Cómo sabes que está hecho:** el estado se ve como `/admin/grupos/editar/11?seccion=distribucion` a 1440, bajado del
+todo.
 
 ---
 

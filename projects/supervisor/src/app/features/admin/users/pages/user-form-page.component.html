@@ -54,6 +54,12 @@
       <!-- Las tres cifras que vivían aquí se fueron al resumen, a la derecha, como en la ficha de grupo. -->
     </div>
 
+    <!-- El nombre, fijo arriba al bajar: una copia muda de la cabecera (DD-145, como en la ficha de grupo). -->
+    <sc-nombre-fijo
+      [nombre]="form().name || ((mode() === 'duplicate' ? 'users.form.duplicate_title' : 'users.form.create_title') | translate)"
+      [datos]="form().email || ('users.form.fields.email_empty' | translate)"
+    />
+
     <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). El mismo al crear, al
          duplicar y al editar (DD-143): en el alta, la sección que se deja completa lleva ✓. -->
     <div class="page__rail">
