@@ -13,7 +13,7 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   3. «Desbordar sesión» sale de la ficha y de Contact Center: lo cubre «Caducar sesión», que se llamaba «Cerrar chat
  *      por inactividad» hasta DD-142. Lo guardado no se pierde al guardar.
  *   4. «Caducar sesión» nace con 5 minutos.
- *   5. El tamaño de cola dice qué cuenta cada modo: Fijo, el total; por agente conectado, que varía con ellos.
+ *   5. El tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, por agente conectado.
  *   6. La tipificación se elige por su categoría: el número que llevaba al lado eran sus tipificaciones, y se leía como
  *      niveles o como grupos.
  *   7. Los nombres largos caben en sus desplegables, en la ficha y en Contact Center.
@@ -28,8 +28,6 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-/** Un número de `sc-inputnumber` lleva su sufijo pegado («5 min»): se casa el número entero, no un prefijo suyo. */
-const numero = (n: number): RegExp => new RegExp(`^${n}(?!\\d)`);
 const canal = (page: Page, nombre: string) =>
   page.locator('#group-section-general sc-checkbox').filter({ hasText: new RegExp(`^\\s*${nombre}\\s*$`) });
 
@@ -166,8 +164,7 @@ test('«Desbordar sesión» sale de la ficha y de Contact Center, y lo que tení
   await expect(page.getByText('Desbordar sesión', { exact: true })).toHaveCount(0);
 
   const espera = page.locator('#group-phone-max-wait');
-  await espera.fill('45');
-  await espera.press('Tab');
+  await pickSelectOption(page, espera, '30 s');
   await page.getByRole('button', GUARDAR).click();
   await expect(page.getByText('Grupo "E2E Sesión desbordada" actualizado')).toBeVisible();
   const enElGrupo = await page.evaluate(() => JSON.parse(localStorage.getItem('sc-groups') ?? '[]')[0]?.advanced?.overflowSession);
@@ -188,7 +185,7 @@ test('«Desbordar sesión» sale de la ficha y de Contact Center, y lo que tení
 test('«Caducar sesión» nace con 5 minutos en Contact Center', async ({ page }) => {
   await goto(page, 'config/aed/grupos');
   await page.locator('#grupos-chat-inactivity-on').click();
-  await expect(page.locator('#grupos-chat-inactivity')).toHaveValue(numero(5));
+  await expect(page.locator('#grupos-chat-inactivity')).toHaveText('5 min');
 });
 
 test('un grupo nuevo caduca la sesión de chat a los 5 minutos si se enciende', async ({ page }) => {
@@ -197,10 +194,10 @@ test('un grupo nuevo caduca la sesión de chat a los 5 minutos si se enciende', 
   await canal(page, 'Chat').click();
   await page.getByRole('button', { name: 'Siguiente', exact: true }).click();
   await page.getByRole('switch', { name: 'Caducar sesión', exact: true }).click();
-  await expect(page.locator('#group-chat-inactivity')).toHaveValue(numero(5));
+  await expect(page.locator('#group-chat-inactivity')).toHaveText('5 min');
 });
 
-test('el tamaño de cola dice qué cuenta cada modo: Fijo, el total; por agente conectado, que varía con ellos', async ({
+test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, por agente conectado', async ({
   page,
 }) => {
   // El grupo 1 trae la cola fija de 50 de la semilla.
@@ -209,8 +206,8 @@ test('el tamaño de cola dice qué cuenta cada modo: Fijo, el total; por agente 
   const ayuda = telefono.locator('.field', { has: page.locator('#group-phone-queue-size') }).locator('.field__help');
   await expect(ayuda).toHaveText('Como mucho 50 conversaciones esperando en total, haya los agentes que haya.');
 
-  await telefono.getByRole('button', { name: 'Por agente conectado', exact: true }).click();
-  await expect(ayuda).toHaveText('Varía con los agentes conectados: 50 conversaciones en cola por cada uno.');
+  await pickSelectOption(page, page.locator('#group-phone-queue-type'), 'Variable');
+  await expect(ayuda).toHaveText('Varía con los agentes conectados: 2 conversaciones en cola por cada uno. Recomendado: 2');
 });
 
 test('la tipificación se elige por su categoría, sin la cuenta de sus tipificaciones al lado', async ({ page }) => {

@@ -55,9 +55,9 @@ test('Contact Center › Grupos habla como la ficha y trae los valores del docum
   await expect(page.locator('#grupos-strategy')).toHaveText('Balanceada');
   await expect(page.locator('#grupos-chat-strategy')).toHaveText('Balanceada');
   for (const c of ['phone', 'chat']) {
-    await expect(page.locator(`#grupos-${c}-transfer`), c).toHaveValue(numero(10));
-    await expect(page.locator(`#grupos-${c}-max-wait`), c).toHaveValue(numero(15));
-    await expect(page.locator(`#grupos-${c}-service-level`), c).toHaveValue(numero(60));
+    await expect(page.locator(`#grupos-${c}-transfer`), c).toHaveText('10 s');
+    await expect(page.locator(`#grupos-${c}-max-wait`), c).toHaveText('15 s');
+    await expect(page.locator(`#grupos-${c}-service-level`), c).toHaveText('1 min');
   }
   await expect(page.locator('#grupos-overflow')).toBeChecked();
   // Las multiselecciones, el FIFO/LIFO y los códecs de la réplica no son campos de la ficha.
@@ -68,8 +68,7 @@ test('lo que se guarda en Contact Center › Grupos es con lo que nace un grupo 
   await goto(page, 'config/aed/grupos');
   await pickSelectOption(page, page.locator('#grupos-chat-strategy'), 'Menos conversaciones activas');
   const esperaChat = page.locator('#grupos-chat-max-wait');
-  await esperaChat.fill('90');
-  await esperaChat.press('Tab');
+  await pickSelectOption(page, esperaChat, '1,5 min');
   await page.locator('#grupos-chat-inactivity-on').click();
   await page.getByRole('button', { name: 'Guardar' }).click();
   await expect(page.getByText('Parámetros de grupos guardados')).toBeVisible();
@@ -81,10 +80,10 @@ test('lo que se guarda en Contact Center › Grupos es con lo que nace un grupo 
   await page.getByRole('button', { name: 'Siguiente' }).click();
   await expect(interruptor(page, OVERFLOW)).toBeChecked();
   await expect(page.locator('#group-strategy')).toHaveText('Balanceada');
-  await expect(page.locator('#group-phone-transfer')).toHaveValue(numero(10));
-  await expect(page.locator('#group-phone-max-wait')).toHaveValue(numero(15));
+  await expect(page.locator('#group-phone-transfer')).toHaveText('10 s');
+  await expect(page.locator('#group-phone-max-wait')).toHaveText('15 s');
   await expect(page.locator('#group-chat-strategy')).toHaveText('Menos conversaciones activas');
-  await expect(page.locator('#group-chat-max-wait')).toHaveValue(numero(90));
+  await expect(page.locator('#group-chat-max-wait')).toHaveText('1,5 min');
   await expect(page.locator('#group-chat-inactivity')).toBeVisible();
 });
 
@@ -98,7 +97,7 @@ test('lo guardado con la cola única de antes cae en la de Teléfono y en la de 
   });
   await goto(page, 'config/aed/grupos');
   for (const c of ['phone', 'chat']) {
-    await expect(page.locator(`#grupos-${c}-max-wait`), c).toHaveValue(numero(99));
+    await expect(page.locator(`#grupos-${c}-max-wait`), c).toHaveText('99 s');
     await expect(page.locator(`#grupos-${c}-queue-size`), c).toHaveValue(numero(7));
   }
   // Leer lo de antes con la forma nueva no es un cambio.

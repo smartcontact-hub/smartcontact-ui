@@ -1658,13 +1658,15 @@
         "position_hint": "The customer hears their place in the queue.",
         "wait_to_agent": "Tell the agent how long the customer waited",
         "wait_to_agent_info": "The caller never hears this: it tells the agent, right before the call connects, how long the caller has been waiting.",
-        "wait_to_agent_hint": "Said before the call is handed over."
+        "wait_to_agent_hint": "Said before the call is handed over.",
+        "change_file": "Change",
+        "remove_music": "Remove"
       },
       "advanced": {
         "defaults_hint": "Starts with the group defaults.",
         "queue_size": "Queue size",
         "queue_fixed": "Fixed",
-        "queue_per_agent": "Per connected agent",
+        "queue_per_agent": "Variable",
         "queue_fixed_hint": "At most {{count}} conversations waiting in total, however many agents are connected.",
         "queue_per_agent_hint": "Varies with the connected agents: {{count}} conversations in queue for each one.",
         "max_queue_wait": "Maximum queue wait time",
@@ -1695,7 +1697,12 @@
         "script_title": "Chat script",
         "script_hint": "Paste this code in the head of the website where you want the chat.",
         "script_copy": "Copy code",
-        "script_copied": "Code copied"
+        "script_copied": "Code copied",
+        "queue_type": "Queue type",
+        "queue_recommended": "Recommended: 2",
+        "queue_variable_error": "Enter a whole number from 1 to 10.",
+        "queue_integer_error": "Enter a whole number greater than zero.",
+        "queue_invalid": "Check the queue sizes."
       },
       "summary": {
         "none": "None",
@@ -1741,7 +1748,9 @@
         "message_no_agents": "No agents available",
         "message_on_enter_placeholder": "E.g.: Hi, we'll be right with you.",
         "message_waiting_placeholder": "E.g.: You're still in the queue. Thanks for waiting.",
-        "message_no_agents_placeholder": "E.g.: Nobody is available right now. We'll write back as soon as we can."
+        "message_no_agents_placeholder": "E.g.: Nobody is available right now. We'll write back as soon as we can.",
+        "attendance_schedule": "Service hours",
+        "schedule_always": "Always"
       },
       "resources": {
         "client_card": "Contact card",

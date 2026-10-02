@@ -19,17 +19,33 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ▶ 2026-10-02 · E4: asignación desde la lista (DD-151)
+## ▶ 2026-10-02 · D3: tiempos, horarios y música (DD-152)
 
-**En curso:** `codex/supervisor-e4-asignacion`, worktree `supervisor-e4-asignacion/smartcontact-ui`, base `2a894b1c`.
-Cuatro pruebas rojas contra E3, commit `51dc5af0`; nueve casos propios verdes tras implementar. Regresiones
-afectadas corregidas y repetidas; suite completa **518/520**, solo los dos recortes históricos del listado (3 px).
-Confirmación colectiva desde **dos cambios reales**, tanto asignación como canales. Selector nativo, búsqueda
-por nombre/email, filas estables y paginación; panel a toda altura. `revision` verde en las ocho secciones de edición
-y alta; ocho capturas ficha/panel con ambos niveles, claro/oscuro, 1024/1440, revisadas con better-layout.
-Zoom/RTL no verificados. `verify` verde. Pendiente: preflight, PR/CI y merge/CI. Local 4405 sigue en E3. Después D3 → F.
-**D3, criterio delegado (2026-10-02):** cierre por inactividad con 5, 10, 15, 30 y 60 minutos, defecto 5; conservar
-valores guardados fuera del catálogo. Los otros tiempos mantienen el catálogo de segundos del plan. Sin implementar aún.
+**En curso:** `codex/supervisor-d3-tiempos`, worktree `supervisor-d3-tiempos/smartcontact-ui`, base `06dc6170`.
+Primer commit `11f1fafe`: siete pruebas rojas contra E4. Implementados catálogos de tiempos e inactividad, colas
+Fija/Variable, horarios independientes de Web Chat/WhatsApp y música en un control. Valores históricos conservados.
+Cierre por inactividad: criterio delegado, 5/10/15/30/60 minutos, defecto 5. Detalle y alternativas en DD-152.
+**Ejecutado:** tres unitarias verdes; ocho casos propios verdes; ampliada 90/92, dos rojos de agrupación corregidos
+con `revision` posterior verde; tanda final 13/13. Suite completa **525/528** (25,3 min): los dos recortes históricos
+del listado (181>178 y 197>194) y una carrera al cerrar/reabrir el menú de subestrategia. Esa prueba ahora elige en el
+menú ya abierto, sin alterar su contrato; **3/3 repeticiones verdes**. Contraste claro/oscuro incluido en la suite.
+Una tanda tras interrupción falló por servidor apagado, no por comportamiento; reiniciado y pruebas repetidas.
+**Visual:** 30 capturas de ficha/Contact Center, claro/oscuro a 1024/1440 y claro a 1366×768/1490×860; cero desborde
+horizontal o combobox sin nombre. Etiquetas de horarios alineadas y capacidad separada a 28. Antes E4 capturado en
+ambos temas. Revisión better-layout: sin hallazgos pendientes en lo inspeccionado; zoom 200 % y RTL no verificados.
+Lint, docs:guard, docs:coherence, i18n, primeng-coupling y **verify verdes**. Pendientes: preflight, PR/CI y merge/CI.
+Local 4405 sigue en E4. F no iniciado. Evidencia en `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/d3`.
+
+## ✅ 2026-10-02 · E4: asignación desde la lista (DD-151)
+
+**Entregado:** #314 → `06dc6170`; CI PR `37027072491` y main `37028748971`, leídas en verde con `ci:verdict`.
+Rama y worktree propios eliminados. Evidencias externas en `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/e4`.
+Cuatro pruebas rojas contra E3 (`51dc5af0`); nueve propias verdes, afectados corregidos y suite completa 518/520:
+solo los dos recortes históricos del listado, reservados a F. `revision`, `verify` y preflight verdes; nueve propias
+adicionales verdes contra el build de producción servido en 4405. Ocho capturas con ambos niveles, claro/oscuro,
+1024/1440 revisadas con better-layout; zoom/RTL no verificados. Confirmación desde dos cambios reales.
+Local 4405 actualizado a E4. El historial de recuperación E1a vive en `git show 06dc6170:docs/handoff/supervisor-fichas.md`;
+carpeta y ZIP intactos, sin reaplicar el parche.
 
 ## ✅ 2026-10-02 · E3: canales permitidos (DD-150)
 
@@ -61,26 +77,6 @@ formato nuevo, subestrategia de Chat, defaults sin Niveles y columnas por famili
 preflight verdes. Suite local 496/498: dos recortes de 3 px del listado reproducidos también sobre la base limpia
 `83e371e7`; registrados para F. Zoom 200 % y RTL no verificados. Estos resultados no validan E2 ni los siguientes.
 **Continuidad:** E2 → E3 → E4 → D3 → F, un bloque/PR tras el merge verde del anterior.
-
-## ✅ 2026-10-02 · E1a: asignaciones por familia (DD-147)
-
-> **Sello: rama `codex/supervisor-e1a-familias`, base `c6a9cd59` (G2b, #308 fundido; CI del merge leído en verde).**
-
-**Recuperado:** 14 archivos de implementación y dos de pruebas del paquete E1a; SHA-256 e integridad del ZIP
-reverificados. El parche se aplicó sin conflictos tras G2b. Se recuperó contenido, no el objeto Git `643c72fc`.
-La copia original sigue intacta. Los seis e2e en rojo de Cloud son evidencia histórica del registro de recuperación.
-
-**Completado:** tres familias en enlaces, tablas, panel, resumen y listado; lectura de WhatsApp como Chat sin
-subir versión; recorte y cascada por familia. Completadas las pruebas que aún fijaban cuatro canales y el ancho
-del listado. El resumen del agente cuenta solo familias ofrecidas, igual que su listado. Detalle: DD-147.
-
-**Validado localmente:** las 15 unitarias de canales; las 42 pruebas afectadas, con repetición de las dos
-expectativas corregidas; diez vistas en `npm run revision`. Capturas en claro/oscuro, 1024/1440: tres glifos en
-69 px dentro de 100; panel de tres familias en 556 px sin desbordamiento. Dos contratos del núcleo se reprodujeron
-en rojo contra G2b. El CI y preflight del PR propio son la evidencia de entrega, no el registro de Cloud.
-
-**Siguiente:** E1b, niveles 1–10 por familia y estrategia Niveles en Chat (DD-148 disponible al empezar E1a;
-recomprobar). Después E2 → E3 → E4 → D3 → F. No se cambió el singular «1 agentes», ajeno al alcance.
 
 ## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143), las tres columnas (G1, DD-144), el nombre fijo (G2a, DD-145) y el resumen enlazado (G2b, DD-146)
 
@@ -213,10 +209,10 @@ Las trampas vigentes se conservan abajo. El tramo del 2026-09-28 vive en `git sh
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: E4 → D3 → F (G termina con G2b, DD-146). E4, con la referencia del usuario «4. Agentes y revisión»: todos a la vista y sin
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: D3 → F (G termina con G2b, DD-146). E4, con la referencia del usuario «4. Agentes y revisión»: todos a la vista y sin
    marcar, búsqueda, filtro Todos / Asignados / Sin asignar, estado y canales. Cada uno con su prueba en rojo;
    la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center
-   validado: pídeselos al usuario si no están en el repo.
+   validado: catálogo vigente y criterio delegado de inactividad en DD-152.
 
    **Lo que queda abierto de DD-133, DD-135 y DD-136:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;

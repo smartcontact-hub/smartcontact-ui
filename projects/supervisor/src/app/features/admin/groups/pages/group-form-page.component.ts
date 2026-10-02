@@ -64,6 +64,8 @@ import {
   GroupAnnouncements,
   UNAVAILABLE_STRATEGIES,
   VOICE_OPTIONS,
+  groupDurationOptions,
+  validQueueSize,
   type ChannelQueue,
   type ChatQueueMessages,
   type ChatSettings,
@@ -76,6 +78,7 @@ import {
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { TipificacionesStore, TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
+import { HorariosStore } from '@features/admin/repositories/instances/horarios';
 import { AgendasStore } from '@features/admin/repositories/instances/agendas';
 import { AGENDA_FIELDS } from '@features/admin/repositories/instances/agendas';
 import { RepoFormPanelComponent, RepoFormSubmission } from '@features/admin/repositories/components/repo-form-panel.component';
@@ -226,6 +229,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly sectionLinks = inject(SectionLinksService);
   private readonly tipificacionesStore = inject(TipificacionesStore);
   private readonly agendasStore = inject(AgendasStore);
+  private readonly horariosStore = inject(HorariosStore);
   private readonly templatesStore = inject(TemplatesStore);
   private readonly labelsStore = inject(LabelsStore);
   private readonly defaultsStore = inject(GroupDefaultsStore);
@@ -297,7 +301,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // Distribución, sin su ✓ mientras falte el teléfono saliente; pero no es puerta: las secciones siguen libres
     // (DD-142).
     completa: (id) =>
-      id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || !this.phoneMissing(),
+      id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || (!this.phoneMissing() && !this.queueInvalid()),
   });
 
   /**
@@ -368,7 +372,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
     const out = new Set<string>();
     if (!this.generalValid() && (this.mode() === 'edit' || this.attemptedGeneral())) out.add('group-section-general');
-    if (this.phoneError()) out.add('group-section-distribution');
+    if (this.phoneError() || this.queueInvalid()) out.add('group-section-distribution');
     return out;
   });
 
@@ -501,6 +505,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (this.nameTaken()) return 'groups.errors.name_taken';
     if (f.channels.size === 0) return 'groups.errors.channels_required';
     if (this.phoneMissing()) return 'groups.errors.phone_required';
+    if (this.queueInvalid()) return 'groups.form.advanced.queue_invalid';
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
   });
@@ -536,8 +541,25 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly conflictWarning = signal(false);
   private releaseLock: (() => void) | null = null;
 
+  protected readonly queueInvalid = computed(() =>
+    (this.hasPhone() && !validQueueSize(this.form().phoneQueue)) ||
+    (this.hasChatFamily() && !validQueueSize(this.form().chatQueue)));
+
+  protected attendanceOptions(channel: ChatSubchannel) {
+    this.lang();
+    const current = this.form().chat.attendanceScheduleIds?.[channel];
+    return [{ label: this.translate.instant('groups.form.chat.schedule_always'), value: null, disabled: false },
+      ...this.horariosStore.items().filter(h => h.status === 'active' || h.id === current)
+        .map(h => ({ label: h.name, value: h.id, disabled: h.status !== 'active' }))];
+  }
+
+  protected setAttendanceSchedule(channel: ChatSubchannel, value: unknown): void {
+    if (value !== null && (typeof value !== 'number' || !this.horariosStore.items().some(h => h.id === value && h.status === 'active'))) return;
+    this.setChat('attendanceScheduleIds', { ...this.form().chat.attendanceScheduleIds, [channel]: value });
+  }
+
   protected readonly canSave = computed(() => {
-    if (!this.generalValid() || this.phoneMissing()) return false;
+    if (!this.generalValid() || this.phoneMissing() || this.queueInvalid()) return false;
     // Al editar exige cambio neto (Guardar se apaga otra vez si deshaces); en el alta basta con General.
     return this.mode() === 'create' || this.dirtyState.dirty();
   });
@@ -670,6 +692,23 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly chatScript = computed(
     () => `<script src="https://chat.smart-contact.com/widget.js" data-group="${this.editingId() ?? 'nuevo'}" async></script>`,
   );
+
+  protected durationOptions(value: number, minutes = false) {
+    this.lang();
+    return groupDurationOptions(value, minutes, this.translate.currentLang || 'es');
+  }
+
+  protected queueSizeError(queue: ChannelQueue): string | undefined {
+    return validQueueSize(queue) ? undefined : this.translate.instant(queue.queueSizeType === 'per_agent'
+      ? 'groups.form.advanced.queue_variable_error' : 'groups.form.advanced.queue_integer_error');
+  }
+
+  protected setQueueType(channel: 'phone' | 'chat', value: unknown): void {
+    if (value !== 'fixed' && value !== 'per_agent') return;
+    const field = channel === 'phone' ? 'phoneQueue' : 'chatQueue';
+    this.form.update(f => ({ ...f, [field]: { ...f[field], queueSizeType: value,
+      queueSize: value === 'per_agent' && f[field].queueSizeType !== value ? 2 : f[field].queueSize } }));
+  }
 
   protected readonly queueSizeOptions = computed(() => {
     this.lang();
@@ -908,16 +947,16 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /** Números de la cola: como los de Avanzado, un campo vaciado se queda en su valor anterior. */
-  protected setQueueNumber(channel: 'phone' | 'chat', key: 'queueSize' | 'maxQueueWaitSec' | 'serviceLevelSec' | 'transferSec', value: number | null): void {
-    if (value !== null && Number.isFinite(value) && value >= 0) this.setQueue(channel, key, value);
+  protected setQueueNumber(channel: 'phone' | 'chat', key: 'queueSize' | 'maxQueueWaitSec' | 'serviceLevelSec' | 'transferSec', value: unknown): void {
+    if (typeof value === 'number' && Number.isFinite(value)) this.setQueue(channel, key, value);
   }
 
   protected setChat<K extends keyof ChatSettings>(key: K, value: ChatSettings[K]): void {
     this.form.update((f) => ({ ...f, chat: { ...f.chat, [key]: value } }));
   }
 
-  protected setInactivityMinutes(value: number | null): void {
-    if (value !== null && Number.isFinite(value) && value >= 1) this.setChat('inactivityMinutes', value);
+  protected setInactivityMinutes(value: unknown): void {
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 1) this.setChat('inactivityMinutes', value);
   }
 
   /** Un mensaje de cola de UN subcanal, sin tocar los del otro. */
@@ -935,8 +974,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /** Números: un campo vaciado no se guarda como 0, se queda en su valor anterior. */
-  protected setAdvancedNumber(key: 'wrapUpSec' | 'cardHeight', value: number | null): void {
-    if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
+  protected setAdvancedNumber(key: 'wrapUpSec' | 'cardHeight', value: unknown): void {
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
   }
 
   /** «Dominios permitidos» del script de chat (decisión de producto, 2026-09-20): en qué webs se puede insertar sin que

@@ -1658,13 +1658,15 @@
         "position_hint": "Le client entend sa place dans la file.",
         "wait_to_agent": "Dire à l’agent combien de temps le client a attendu",
         "wait_to_agent_info": "L'appelant ne l'entend jamais : cela le dit à l'agent, juste avant que l'appel n'arrive, pour qu'il sache depuis combien de temps la personne attend.",
-        "wait_to_agent_hint": "Avant de lui passer l’appel."
+        "wait_to_agent_hint": "Avant de lui passer l’appel.",
+        "change_file": "Changer",
+        "remove_music": "Retirer"
       },
       "advanced": {
         "defaults_hint": "Démarre avec les valeurs par défaut des groupes.",
         "queue_size": "Taille de la file",
         "queue_fixed": "Fixe",
-        "queue_per_agent": "Par agent connecté",
+        "queue_per_agent": "Variable",
         "queue_fixed_hint": "Au plus {{count}} conversations en attente au total, quel que soit le nombre d’agents connectés.",
         "queue_per_agent_hint": "Varie selon les agents connectés : {{count}} conversations en file pour chacun.",
         "max_queue_wait": "Temps d'attente maximal en file",
@@ -1695,7 +1697,12 @@
         "script_title": "Script de chat",
         "script_hint": "Collez ce code dans l’en-tête du site où vous voulez le chat.",
         "script_copy": "Copier le code",
-        "script_copied": "Code copié"
+        "script_copied": "Code copié",
+        "queue_type": "Type de file",
+        "queue_recommended": "Recommandé : 2",
+        "queue_variable_error": "Saisissez un entier de 1 à 10.",
+        "queue_integer_error": "Saisissez un entier supérieur à zéro.",
+        "queue_invalid": "Vérifiez la taille des files."
       },
       "summary": {
         "none": "Aucune",
@@ -1741,7 +1748,9 @@
         "message_no_agents": "Aucun agent disponible",
         "message_on_enter_placeholder": "Ex. : Bonjour, nous sommes à vous tout de suite.",
         "message_waiting_placeholder": "Ex. : Vous êtes toujours dans la file. Merci de patienter.",
-        "message_no_agents_placeholder": "Ex. : Personne n'est disponible pour le moment. Nous vous écrirons dès que possible."
+        "message_no_agents_placeholder": "Ex. : Personne n'est disponible pour le moment. Nous vous écrirons dès que possible.",
+        "attendance_schedule": "Horaires de service",
+        "schedule_always": "Toujours"
       },
       "resources": {
         "client_card": "Fiche client",
