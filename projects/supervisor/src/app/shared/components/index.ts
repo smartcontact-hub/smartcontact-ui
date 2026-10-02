@@ -39,3 +39,6 @@ export { SummaryStatusComponent } from './summary-status/summary-status.componen
 
 // El pie de cada sección en un alta: «Atrás» y «Siguiente» (DD-143).
 export { AltaPieComponent } from './alta-pie/alta-pie.component';
+
+// El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (DD-145).
+export { NombreFijoComponent } from './nombre-fijo/nombre-fijo.component';

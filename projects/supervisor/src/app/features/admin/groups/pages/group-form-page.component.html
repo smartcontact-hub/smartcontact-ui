@@ -67,6 +67,10 @@
       </div>
     </div>
 
+    <!-- El nombre, fijo arriba al bajar (DD-145): una copia muda de la cabecera, que sigue siendo el título y el sitio
+         donde se edita el nombre. Va en la rejilla, en la columna del contenido y de arriba abajo (`_page.scss`). -->
+    <sc-nombre-fijo [nombre]="form().name || (mode() === 'edit' ? '' : ('groups.form.create_title' | translate))" [datos]="identitySummary()" />
+
     <!-- El índice, solo: la navegación no comparte carril con nada, así que no se va de la pantalla. Cada
          fila es un enlace a su sección (`?seccion=`, DD-122), y el `nav` es el único punto de referencia:
          el carril es un `div`, no un `aside` con el mismo nombre. El mismo al crear y al editar (DD-143): en el

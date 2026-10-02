@@ -19,11 +19,11 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143) y las tres columnas (G1, DD-144)
+## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143), las tres columnas (G1, DD-144) y el nombre fijo (G2a, DD-145)
 
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `004498dc`). H (#298, `57f03a0`), los diálogos de
-> Recursos (#300, `5cf3f5e1`), D1 (#303, `78b2efb9`) y D2 (#304, `004498dc`), fundidos con su CI en verde; R
-> (DD-143) y G1 (DD-144), en sus PRs.**
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `86d5b18c`). H (#298, `57f03a0`), los diálogos de
+> Recursos (#300, `5cf3f5e1`), D1 (#303, `78b2efb9`), D2 (#304, `004498dc`), R (#305, `85c32239`) y G1 (#306,
+> `86d5b18c`), fundidos con su CI en verde; G2a (DD-145), en su PR.**
 
 **Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
 ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
@@ -104,6 +104,12 @@ escribiendo el nombre.
 - por debajo de 1340, como estaba;
 - `fichas-tres-columnas.spec.ts` (9): ocho en rojo contra la maqueta anterior y una de guarda.
 
+**G2a · el nombre fijo al bajar** (DD-145): `sc-nombre-fijo`, una copia muda de la cabecera en la columna del
+contenido, de arriba abajo de la rejilla, con `sticky`. A partir de 1340 cae sobre la cabecera y se ve desde el primer
+píxel; por debajo, al quedar fija. Texto pintado (`::before`) y clases propias; las anclas, apartadas
+`--sc-form-anchor-offset`. Borrar ya pedía el nombre: ahora lo fija una prueba. `fichas-nombre-fijo.spec.ts` (9):
+cinco en rojo y cuatro de guarda.
+
 **Trampas del tramo:**
 - ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
   `@smartcontact-hub/components` (sale el `vite-error-overlay`). No midas con el servidor mientras corre el preflight,
@@ -128,6 +134,8 @@ escribiendo el nombre.
   cargado y las filas del índice miden otra cosa.
 - ⚠️ `checkVisibility()` da por visible un `.visually-hidden` (esconde con `clip`), y su texto, sin saltos en una caja
   de 1 px, cae sobre lo de al lado: una sonda que mida texto lo salta aparte (`icon-glyph-scale`, desde DD-144).
+- ⚠️ Una copia visual de algo que las pruebas buscan por su texto o su clase choca en modo estricto (cuatro rojas al
+  duplicar la cabecera): píntala con `::before` y `attr()`, y con clases propias.
 - ⚠️ Un job de e2e que tarda el triple no tiene por qué estar colgado: su paso instala chromium con `apt` (en #305,
   18 minutos antes de la primera prueba) y su log no se lee hasta que acaba. Cancelarlo por el reloj tiró una tanda
   que iba 92 de 92 en verde; espera a que termine.
@@ -257,10 +265,9 @@ grupos y el manual de usuario de Voice:
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: G2 → E1 → E2 → E3 → E4 →
-   D3 → F. G2 termina la maqueta que pidió el usuario: el nombre fijo al bajar y el resumen que lleva a su sección.
-   Borrar ya pide escribir el nombre (`sc-delete-entity-dialog` en modo `single`, en las tres fichas): G2 solo le pone
-   una prueba. Cada uno con su prueba en rojo;
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: G2b → E1 → E2 → E3 → E4
+   → D3 → F. G2b termina la maqueta que pidió el usuario: el resumen que lleva a su sección (el nombre fijo y la
+   prueba de borrar van en G2a, DD-145). Cada uno con su prueba en rojo;
    la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center
    validado: pídeselos al usuario si no están en el repo.
 

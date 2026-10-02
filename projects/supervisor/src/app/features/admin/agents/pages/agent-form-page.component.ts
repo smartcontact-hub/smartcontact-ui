@@ -33,7 +33,7 @@ import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { AltaPieComponent, NameInplaceComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
+import { AltaPieComponent, NameInplaceComponent, NombreFijoComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
 import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
@@ -158,6 +158,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     SummaryKpiComponent,
     SummaryStatusComponent,
     AltaPieComponent,
+    NombreFijoComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
     FormSectionNavComponent,

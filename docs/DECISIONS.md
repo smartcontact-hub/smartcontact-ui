@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (`sc-nombre-fijo`), en su sitio a partir de 1340 y al quedar fija por debajo · la cabecera sigue siendo el `h1` y el sitio donde se edita el nombre · las anclas, apartadas `--sc-form-anchor-offset` · borrar pide escribir el nombre, con su prueba (enmienda DD-144) | DD-145 |
 > | Las fichas en tres columnas que arrancan a la misma altura (índice, contenido y resumen): el título va en la columna del contenido · el resumen, sin rótulo a la vista (la región conserva su nombre) · «Eliminar», bajo el índice · por debajo de 1340, como estaba · una rejilla con áreas, sin mover nada en el DOM (enmienda DD-121 §2 y DD-122 §8) | DD-144 |
 > | Las altas vuelven al índice de la edición (revierte DD-138): ✓ en la sección que se deja completa (`sectionsDone` de `sc-form-section-nav`) y el punto rojo en la que se deja sin lo obligatorio · «Atrás» y «Siguiente» al pie (`sc-alta-pie`), que llevan al principio de la sección nueva con el foco en su título · General sigue siendo la puerta del grupo · la sección no va en la dirección (enmienda DD-121 §11, DD-122 §1 y §4, DD-130 §2 y DD-136) | DD-143 |
 > | Con Teléfono, el teléfono saliente es obligatorio (en el alta, al editar y al duplicar) y se elige de los números asignados (`OUTBOUND_NUMBERS`), sin escribir uno nuevo · «Caducar sesión» · la ayuda de Balanceada, corregida · Recursos sin Etiquetas, apagado y guardado (`conEtiquetas`) · el teléfono se nombra por su rótulo (enmienda DD-121 §11, DD-136 §2, DD-141 §4-5 y DD-133 §1) | DD-142 |
@@ -103,6 +104,66 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-145 · 2026-10-01 — El nombre de la ficha se queda arriba al bajar, y borrarla pide escribirlo
+
+**Contexto** · La segunda revisión con el equipo (2026-10-01) pidió el nombre del grupo fijo arriba al bajar. Con el
+título en la columna del contenido (DD-144), al bajar se iba con la sección: en Distribución y colas del grupo 11, la
+más larga (1865 px de recorrido a 1440×900), no quedaba nada que dijera qué grupo se edita. La misma revisión pidió que
+borrar un grupo pida escribir su nombre. Medido en el código, ya lo pide: las tres fichas usan
+`sc-delete-entity-dialog` en modo `single`, que no habilita «Eliminar» hasta teclear el nombre exacto.
+
+**Decisión** ·
+1. **Una copia muda de la cabecera, fija arriba de la columna del contenido** (`sc-nombre-fijo`, de la app), en las
+   tres fichas: el nombre y su línea de datos, con sus mismos estilos de texto.
+   - A partir de 1340 cae justo encima de la cabecera y se ve desde el primer píxel que se baja: el nombre no se mueve
+     y la sección pasa por debajo.
+   - Por debajo de 1340 sale al quedar fija arriba, sin tapar la franja del resumen.
+2. **La cabecera de verdad no cambia:** sigue siendo el único `h1`, la primera en el tabulador y el sitio donde se
+   edita el nombre. La copia es `aria-hidden`, no se enfoca y no se ve en reposo. Su texto va pintado (`::before`) y
+   sus clases son suyas: buscar el nombre por su texto, o la cabecera por su clase, da solo con la de verdad.
+3. **Lo que se salta o se enfoca no queda debajo de ella:** mientras la ficha está en pantalla, la zona que se desplaza
+   aparta sus anclas `--sc-form-anchor-offset` (80; la copia mide 78,75).
+4. **Borrar pide escribir el nombre**, en las tres fichas: una prueba lo fija.
+
+**Razón** ·
+- **Una copia y no la cabecera `sticky`:** un `sticky` no sale del área de su rejilla, y la cabecera ocupa la fila de
+  arriba (DD-144). Para fijarla habría que envolverla con el contenido en una columna, y eso cambia el orden del DOM:
+  el índice delante del título, o detrás del contenido.
+- **Pintada y con clases propias:** con el texto escrito y las clases de la cabecera, las pruebas que buscaban el
+  nombre por su texto o la cabecera por su clase encontraban dos. Fueron cuatro rojas en `ficha-grupo` y
+  `ficha-usuario-agente`, y hay 16 sitios que buscan así.
+- **Medido el 2026-10-01, en este build:**
+  - a 1440 la copia cae sobre la cabecera al píxel: el nombre en (332; 79,75), a 18 px y 600, y los datos en
+    (332; 103,75);
+  - a 1280, con 40 px bajados, la franja del resumen sigue a la vista; del todo, el nombre va arriba de la columna del
+    contenido, a la altura del índice;
+  - un salto a Chat dejaba su título en y=55,6; con las anclas apartadas, queda debajo de la línea de datos;
+  - `revision`, en regla en las 24 vistas de las tres fichas.
+- **Rojo primero:** `fichas-nombre-fijo`, cinco de nueve en rojo contra la maqueta de DD-144:
+  - el nombre al bajar, en las tres fichas;
+  - por debajo de 1340;
+  - el salto de canal.
+
+  Las otras cuatro son de guarda: en reposo, y borrar en las tres fichas. La de borrar enrojece con el diálogo en modo
+  `bulk`.
+
+**Descartadas** ·
+- **La cabecera `sticky`, envuelta con el contenido** → cambia el orden del DOM y del tabulador, y por debajo de 1340 la
+  cabecera va encima del resumen, fuera de esa columna.
+- **El nombre solo en la miga de la barra de arriba** (DD-33: la identidad, en el breadcrumb) → la revisión pidió el
+  nombre de la ficha arriba, no en la barra.
+- **Una barra compacta con el nombre en 14 px** → en el prototipo parecía otro elemento que aparece; la copia en su
+  sitio no se nota.
+- **Por debajo de 1340, la copia a todo lo ancho** → taparía el índice, que se queda fijo a la izquierda.
+
+**Consecuencias** ·
+- **Enmienda** DD-144: lo que quedaba para G2, el nombre fijo y la prueba de borrar.
+- **Pruebas:** `fichas-nombre-fijo.spec.ts`, nueva, con nueve.
+- **Queda para G2b:** el resumen que lleva a su sección.
+- **Para el Kit:** `figma-pendiente` §36.
 
 ---
 
@@ -169,6 +230,7 @@ a 1440:
   - una prueba que fije que borrar pide escribir el nombre, que ya pide `sc-delete-entity-dialog` en modo `single` en
     las tres fichas;
   - el resumen que lleva a su sección.
+- **Enmendado por DD-145** (2026-10-01): el nombre fijo al bajar y la prueba de borrar, hechos.
 - **Para el Kit:** `figma-pendiente` §35.
 
 ---
