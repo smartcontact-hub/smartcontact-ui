@@ -39,7 +39,8 @@
       [maxSelectedLabels]="0"
       [selectedItemsLabel]="'groups.form.assigned.add_placeholder' | translate"
       [placeholder]="'groups.form.assigned.add_placeholder' | translate"
-      [options]="availableAgents()"
+      [options]="addOptions()"
+      optionDisabled="disabled"
       [value]="assignedIds()"
       (valueChange)="onAssignedChange($event)"
     />
@@ -106,7 +107,12 @@
 
 <!-- Una columna por canal DEL GRUPO, como la matriz de Contact Center. -->
 <ng-template #channelTpl let-row let-col="col">
-  @if (isLastChannel(row.link, col.field)) {
+  @if (!allowed(row.agent, col.field)) {
+    <span class="assign__permission">
+      <sc-checkbox state="none" disabled [ariaLabel]="'groups.form.assigned.not_allowed' | translate: { name: row.agent.name, channel: col.header }" />
+      <a [routerLink]="['/admin/agentes/editar', row.agent.id]" [queryParams]="{ seccion: 'permisos' }" [attr.aria-label]="'groups.form.assigned.permissions_link' | translate: { name: row.agent.name, channel: col.header }" [pTooltip]="'groups.form.assigned.not_allowed_hint' | translate: { channel: col.header }" tooltipPosition="top"><sc-icon name="lock" /></a>
+    </span>
+  } @else if (isLastChannel(row.link, col.field)) {
     <!-- El ÚLTIMO canal no se quita aquí. Una casilla apagada no recibe foco ni ratón, así que el porqué va en su
          nombre accesible y en el tooltip de la envoltura. -->
     <span class="assign__locked" [pTooltip]="'groups.form.assigned.last_channel_hint' | translate" tooltipPosition="top">
@@ -132,6 +138,7 @@
     [inputId]="'group-' + col.field + '-' + row.agent.id"
     [ariaLabelledBy]="'group-' + col.field + '-label-' + row.agent.id"
     [options]="levelOptions"
+    [disabled]="!allowed(row.agent, levelFamily(col.field))"
     [value]="row.link.levels?.[levelFamily(col.field)] ?? 1"
     (valueChange)="setLevel(row.agent.id, col.field, $event)"
   />

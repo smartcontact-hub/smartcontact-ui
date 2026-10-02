@@ -45,7 +45,19 @@
       titleKey="config.aed.subpages.agentes.heading"
       hintKey="config.aed.subpages.agentes.hint"
     >
-      <sc-permission-matrix
+      <section class="sub-section" aria-labelledby="allowed-channels-title">
+      <header class="sub-section__head">
+        <h2 id="allowed-channels-title" class="sub-section__title sc-text-body-semibold">{{ 'agents.form.allowed.title' | translate }}</h2>
+      </header>
+      <div class="checkbox-grid">
+        @for (family of allowedFamilies; track family) {
+          <sc-checkbox [state]="form().allowedChannels.includes(family) ? 'all' : 'none'" (cycle)="setAllowedChannel(family, $event)">{{ allowedFamilyLabels[family] | translate }}</sc-checkbox>
+        }
+      </div>
+    </section>
+    <sc-divider />
+
+    <sc-permission-matrix
         [rows]="matrixRows()"
         [columns]="matrixColumns()"
         [checked]="matrixChecked()"

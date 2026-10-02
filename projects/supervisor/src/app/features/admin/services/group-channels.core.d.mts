@@ -17,6 +17,7 @@ export function toggleChatFamily<C extends string>(channels: Iterable<C>): Set<C
 export function clampLinksToChannels<L extends { readonly channels: readonly string[] }>(
   links: readonly L[],
   groupChannels: Iterable<string>,
+  allowedChannelsFor?: (link: L) => readonly string[] | undefined,
 ): L[];
 export function isLastChannel(link: { readonly channels: readonly string[] }, channel: string): boolean;
 export function toggleLinkChannel<L extends { readonly channels: readonly string[] }>(
@@ -28,6 +29,7 @@ export function newLinkFor(input: {
   agentId: number;
   groupId: number;
   groupChannels: readonly string[];
+  allowedChannels?: readonly string[];
   levels?: { readonly phone?: number; readonly chat?: number };
 }): { agentId: number; groupId: number; channels: ('phone' | 'chat' | 'email')[]; active: true; levels?: { readonly phone?: number; readonly chat?: number } };
 export function channelRemovalImpact(
@@ -42,3 +44,5 @@ export function diffLinks(
 ): { added: number; removed: number; changed: number; total: number };
 
 export function linkWithLevels<L extends { readonly level?: number; readonly levels?: { readonly phone?: number; readonly chat?: number } }>(link: L): Omit<L, 'level'> & { readonly levels?: { readonly phone?: number; readonly chat?: number } };
+
+export function permittedFamilies(groupChannels: Iterable<string>, allowedChannels?: readonly string[]): ('phone' | 'chat' | 'email')[];

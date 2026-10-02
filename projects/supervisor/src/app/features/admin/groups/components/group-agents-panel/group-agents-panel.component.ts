@@ -152,7 +152,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
   });
 
   protected readonly availableAgents = computed<readonly AgentChannelTableAgent[]>(() =>
-    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, photo: a.photo, presenceStatus: a.presenceStatus })),
+    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, photo: a.photo, presenceStatus: a.presenceStatus, allowedChannels: a.allowedChannels })),
   );
 
   /** Cuántos AGENTES cambian (entran, salen o cambian de canales o de nivel): la N de «Guardar (N)». */
@@ -195,7 +195,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
     if (!group || count === 0) return;
     this.linksStore.replaceLinksForGroup(
       group.id,
-      this.links().map((l) => (l.groupId === group.id ? l : { ...l, groupId: group.id })),
+      clampLinksToChannels(this.links(), group.channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels).map((l) => (l.groupId === group.id ? l : { ...l, groupId: group.id })),
     );
     this.messages.add({
       severity: 'success',
@@ -209,7 +209,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
     this.unlock();
     this.conflict.set(false);
     this.confirmDiscard.set(false);
-    const links = group ? clampLinksToChannels(this.linksStore.linksForGroup(group.id), group.channels) : [];
+    const links = group ? clampLinksToChannels(this.linksStore.linksForGroup(group.id), group.channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels) : [];
     this.links.set(links);
     this.initialLinks.set(links);
     if (group) this.releaseLock = this.crossTab.acquire('group', group.id, () => this.conflict.set(true));

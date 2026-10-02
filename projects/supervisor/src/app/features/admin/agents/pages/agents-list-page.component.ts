@@ -49,7 +49,7 @@ import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS } from '@features/admin/groups/data
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { Channel } from '@features/admin/services/group-agent-links.types';
-import { familiesOf } from '@features/admin/services/group-channels.core.mjs';
+import { permittedFamilies } from '@features/admin/services/group-channels.core.mjs';
 
 interface PendingBulkEdit {
   readonly field: AgentBulkField;
@@ -118,7 +118,7 @@ export class AgentsListPageComponent {
    * seed, un Email que el agente 18 no atiende en ningún grupo (medido el 2026-09-26).
    */
   protected channelsForAgent(agentId: number): readonly Channel[] {
-    const offeredBy = new Map(this.groupsStore.groups().map((g) => [g.id, new Set<Channel>(familiesOf(g.channels))]));
+    const offeredBy = new Map(this.groupsStore.groups().map((g) => [g.id, new Set<Channel>(permittedFamilies(g.channels, this.agentsStore.getAgent(agentId)?.allowedChannels))]));
     const set = new Set<Channel>();
     for (const link of this.linksStore.linksForAgent(agentId)) {
       const offered = offeredBy.get(link.groupId);

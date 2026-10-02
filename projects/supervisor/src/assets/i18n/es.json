@@ -1548,6 +1548,10 @@
         "col_agent": "Agente",
         "col_active": "Habilitado",
         "active_aria": "Habilitado en este grupo: {{name}}",
+        "incompatible": "Sin canales compatibles",
+        "not_allowed": "{{name}} — {{channel}}: no permitido en los permisos del agente",
+        "not_allowed_hint": "{{channel}} no está permitido para este agente. Revisa sus permisos.",
+        "permissions_link": "Revisar permisos de {{name}} para {{channel}}",
         "toggle_all_channel": "Activar/desactivar {{channel}} en todos los visibles",
         "remove_aria": "Quitar a {{name}} del grupo",
         "warn_no_channels": "Habilitado, pero sin canales asignados",
@@ -1925,6 +1929,12 @@
         "filter_placeholder": "Buscar grupo…",
         "no_results": "Ningún grupo asignado coincide con el filtro.",
         "channel_not_offered": "Este grupo no ofrece el canal"
+      },
+      "allowed": {
+        "title": "Canales permitidos",
+        "remove_title": "Quitar canales permitidos",
+        "remove_body": "Se retirarán estos canales de los grupos: {{groups}}. Las asignaciones y sus niveles se conservan, aunque alguna quede sin canales.",
+        "remove_accept": "Guardar cambios"
       },
       "permissions": {
         "manage_devices": "Gestión de dispositivos",

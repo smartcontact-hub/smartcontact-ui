@@ -1545,6 +1545,10 @@
         "col_agent": "Agent",
         "col_active": "Enabled",
         "active_aria": "Enabled in this group: {{name}}",
+        "incompatible": "No compatible channels",
+        "not_allowed": "{{name}} — {{channel}}: not allowed in agent permissions",
+        "not_allowed_hint": "{{channel}} is not allowed for this agent. Review their permissions.",
+        "permissions_link": "Review permissions for {{name}} in {{channel}}",
         "toggle_all_channel": "Toggle {{channel}} on all visible",
         "remove_aria": "Remove {{name}} from group",
         "warn_no_channels": "Enabled, but has no channels assigned",
@@ -1922,6 +1926,12 @@
         "filter_placeholder": "Search group…",
         "no_results": "No assigned groups match the filter.",
         "channel_not_offered": "This group does not offer the channel"
+      },
+      "allowed": {
+        "title": "Allowed channels",
+        "remove_title": "Remove allowed channels",
+        "remove_body": "These channels will be removed from the groups: {{groups}}. Assignments and levels are retained, even if an assignment has no channels left.",
+        "remove_accept": "Save changes"
       },
       "permissions": {
         "manage_devices": "Device management",

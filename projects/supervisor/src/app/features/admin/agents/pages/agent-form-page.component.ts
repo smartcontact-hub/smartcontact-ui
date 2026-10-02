@@ -37,6 +37,7 @@ import { AltaPieComponent, NameInplaceComponent, NombreFijoComponent, SummaryKpi
 import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
+  ScCheckboxComponent as CheckboxComponent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDividerComponent as DividerComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
@@ -55,9 +56,9 @@ import {
 import { LabelsStore } from '@features/admin/labels/state/labels.store';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { canonicalizeChannels, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import { canonicalizeChannels, GroupAgentLink, type Channel } from '@features/admin/services/group-agent-links.types';
 import { clampLinksToChannels } from '@features/admin/services/group-channels.core.mjs';
-import { FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
+import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import {
   Template,
@@ -108,6 +109,7 @@ interface FormState {
   loginExtOverride: boolean;
   links: readonly GroupAgentLink[];
   permissions: AgentPermissions;
+  allowedChannels: readonly Channel[];
   photo: string | null;
   languages: readonly string[];
   labelIds: ReadonlySet<number>;
@@ -131,6 +133,7 @@ const AGENT_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
   photo: 'agent-section-identity',
   links: 'agent-section-groups',
   permissions: 'agent-section-permissions',
+  allowedChannels: 'agent-section-permissions',
   labelIds: 'agent-section-resources',
   scheduleIds: 'agent-section-resources',
   templateIds: 'agent-section-resources',
@@ -160,6 +163,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     SummaryStatusComponent,
     AltaPieComponent,
     NombreFijoComponent,
+    CheckboxComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
     FormSectionNavComponent,
@@ -504,7 +508,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const f = this.form();
     const grupos = new Map(this.availableGroups().map((g) => [g.id, g.channels]));
     const canales = canonicalizeChannels(f.links.filter((l) => l.active).flatMap((l) =>
-      clampLinksToChannels([l], grupos.get(l.groupId) ?? [])[0].channels,
+      clampLinksToChannels([l], grupos.get(l.groupId) ?? [], () => f.allowedChannels)[0].channels,
     ));
     // Familias (DD-147): «Chat» es Web Chat y WhatsApp.
     const etiquetas: Readonly<Record<string, string>> = FAMILY_LABEL_KEYS;
@@ -758,6 +762,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         loginExtOverride: agent.loginExtOverride ?? false,
         links: this.linksStore.linksForAgent(agent.id),
         permissions: { ...agent.permissions },
+        allowedChannels: agent.allowedChannels ?? CHANNEL_FAMILIES,
         photo: agent.photo ?? null,
         languages: agent.languages ? [...agent.languages] : [],
         labelIds: new Set(agent.labels ?? []),
@@ -809,6 +814,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         loginExtOverride: source.loginExtOverride ?? false,
         links: this.linksStore.linksForAgent(source.id),
         permissions: { ...source.permissions },
+        allowedChannels: source.allowedChannels ?? CHANNEL_FAMILIES,
         photo: source.photo ?? null,
         languages: source.languages ? [...source.languages] : [],
         labelIds: new Set(source.labels ?? []),
@@ -969,6 +975,13 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.updateField('status', checked ? 'active' : 'inactive');
   }
 
+  protected readonly allowedFamilies = CHANNEL_FAMILIES;
+  protected readonly allowedFamilyLabels = FAMILY_LABEL_KEYS;
+
+  protected setAllowedChannel(channel: Channel, checked: boolean): void {
+    this.form.update(form => ({ ...form, allowedChannels: CHANNEL_FAMILIES.filter(family => family === channel ? checked : form.allowedChannels.includes(family)) }));
+  }
+
   protected onLinksChange(links: readonly GroupAgentLink[]): void {
     this.form.update((f) => ({ ...f, links }));
   }
@@ -995,8 +1008,21 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.updateField('name', name);
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     if (!this.canSave() || this.saving()) return;
+    const allowed = new Set(this.form().allowedChannels);
+    const affected = this.form().links.filter(link => link.channels.some(channel => !allowed.has(channel)));
+    if (affected.length) {
+      const groups = new Map(this.availableGroups().map(group => [group.id, group.name]));
+      const accepted = await this.confirmHost.request({
+        title: this.translate.instant('agents.form.allowed.remove_title'),
+        body: this.translate.instant('agents.form.allowed.remove_body', { groups: affected.map(link => groups.get(link.groupId) ?? String(link.groupId)).join(', ') }),
+        acceptLabel: this.translate.instant('agents.form.allowed.remove_accept'),
+        rejectLabel: this.translate.instant('common.cancel'),
+        acceptTone: 'danger',
+      });
+      if (!accepted) return;
+    }
 
     this.saving.set(true);
     setTimeout(() => {
@@ -1013,6 +1039,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         email: f.email.trim() || undefined,
         pin: f.pin.trim() || undefined,
         permissions: f.permissions,
+        allowedChannels: f.allowedChannels,
         pickupType: f.pickupType,
         pickupTypeChat: f.pickupTypeChat,
         randomOrder: f.randomOrder,
@@ -1035,6 +1062,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
           editingId,
           this.normalizeLinks(f.links, editingId)
         );
+        this.form.update(current => ({ ...current, links: this.linksStore.linksForAgent(editingId) }));
         const refreshed = this.agentsStore.getAgent(editingId);
         if (refreshed) this.initial.set(refreshed);
         this.messages.add({
@@ -1084,7 +1112,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     links: readonly GroupAgentLink[],
     agentId: number
   ): readonly GroupAgentLink[] {
-    return links.map((l) => (l.agentId === agentId ? l : { ...l, agentId }));
+    const groups = new Map(this.availableGroups().map(group => [group.id, group.channels]));
+    return links.map(link => {
+      const clamped = clampLinksToChannels([link], groups.get(link.groupId) ?? [], () => this.form().allowedChannels)[0];
+      return clamped.agentId === agentId ? clamped : { ...clamped, agentId };
+    });
   }
 
   /** Vuelve al último estado guardado (o al formulario vacío, en un alta). Es el
@@ -1139,6 +1171,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       loginExtOverride: false,
       links: [],
       permissions: { ...defaults.permissions },
+      allowedChannels: defaults.allowedChannels,
       photo: null,
       languages: [],
       labelIds: new Set(),

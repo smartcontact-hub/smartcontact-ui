@@ -19,23 +19,25 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ▶ 2026-10-02 · E2: Habilitado, palabras y presencia (DD-149)
+## ▶ 2026-10-02 · E3: canales permitidos (DD-150)
 
-> **Sello: `codex/supervisor-e2-habilitado`, base `3c6d13e9` (#310, CI de main leída en verde).**
+> **Sello: `codex/supervisor-e3-canales`, base `74427653` (#312, CI de main leída en verde).**
 
-**Implementado:** interruptor por enlace en tabla y panel; presencia con las etiquetas del listado y catálogo
-compartido; cuenta, presencia y habilitación separadas en cuatro idiomas. Resumen y reglas nombran habilitados.
-El panel suma la columna nueva; se conserva la asignación, sus canales y niveles al deshabilitar. Detalle: DD-149.
+**En curso:** permisos por familia, intersección y aviso al retirar; se conservan enlaces y niveles. Semilla: 499/500 solo Chat.
+**Ejecutado:** dos unitarias y dos e2e rojas contra E2 (`4d6645fa`); después 22 unitarias, typecheck y 35 e2e
+afectados verdes; suite completa 509/511 (solo los dos recortes conocidos de 3 px, mismas medidas). Los siete e2e
+nuevos pasan. `revision` y 16 capturas claro/oscuro, 1024/1440, revisadas con better-layout; zoom/RTL no verificados.
+**Verify verde** tras unificar dos traducciones y ajustar el tope del hand-off. Pendiente: preflight, PR/CI y merge/CI.
+**Siguiente:** E4 → D3 → F. E4: decisión de producto (2026-10-02), confirmar acciones colectivas desde dos agentes.
 
-**Ejecutado aquí:** dos pruebas nuevas en rojo contra E1b; 54/58 afectadas, con cuatro fallos de expectativas
-(ancho antiguo y nombre del catálogo), corregidas y repetidas: 22/22. Capturas de ficha/panel en claro/oscuro,
-1024/1440 con ambos niveles; acceso por teclado al interruptor dentro del desplazamiento horizontal.
-`revision` pasó las seis rutas afectadas. La sonda de nombres falló con 15rem; se reservan 21rem para compartir
-celda con presencias largas, y se actualizan las medidas de panel (DD-149). Zoom 200 % y RTL no verificados.
-**Validación final:** 27/29 afectadas y 2/2 repetidas tras corregir medidas antiguas; suite completa 502/504
-(22,4 min): solo los dos recortes conocidos del listado, con las mismas medidas de E1b. Contraste claro/oscuro
-incluido. `revision` repetida en las tres rutas modificadas tras el ajuste de ancho, sin incidencias.
-**`verify` verde. Pendiente:** preflight final, PR/CI, squash/CI de main y limpieza propia.
+## ✅ 2026-10-02 · E2: Habilitado, palabras y presencia (DD-149)
+
+**Entregado:** #312 → `74427653`; CI del PR `37002947849` y de main `37004403827`, leídas en verde. Rama y worktree
+propios eliminados. Habilitado por enlace; presencia compartida; cuenta y habilitación diferenciadas en cuatro
+idiomas. Resumen y reglas nombran habilitados. Tabla/panel reservan 21rem para nombre y presencia, 7rem para Habilitado.
+**Ejecutado:** pruebas rojas primero; afectados corregidos y repetidos; suite completa 502/504 (solo los dos recortes
+conocidos del listado, mismas medidas de E1b), contraste, revision, verify y preflight verdes. Zoom/RTL no verificados.
+El preflight integró #311 (solo CusCare); Supervisor y DS idénticos. Evidencias fuera del worktree; local 4405 en E2.
 
 ## ✅ 2026-10-02 · E1b: niveles por familia (DD-148)
 
