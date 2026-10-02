@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MeterGroupModule } from 'primeng/metergroup';
 import type { MeterItem } from 'primeng/types/metergroup';
@@ -20,6 +20,19 @@ export interface GroupSummaryRouting {
 export interface GroupSummaryOutbound {
   readonly channel: 'phone' | 'whatsapp';
   readonly number: string;
+}
+
+/** Las secciones de la ficha a las que lleva el resumen (DD-146). */
+export type GroupSummarySeccion = 'agentes' | 'distribucion' | 'recursos';
+
+/**
+ * Adónde lleva lo que se pulsa en el resumen: una sección y, dentro de Distribución y colas, el bloque de un canal
+ * (las filas de Reparto) o un número (las de Salida). La ficha lo traduce a su sección y a su ancla.
+ */
+export interface GroupSummaryDestino {
+  readonly seccion: GroupSummarySeccion;
+  readonly canal?: 'phone' | 'chat';
+  readonly salida?: 'phone' | 'whatsapp';
 }
 
 interface ChannelRow {
@@ -48,6 +61,10 @@ interface ChannelRow {
  *   · Reparto: la estrategia de cada familia de canales.
  *   · Salida: el teléfono saliente y el número de WhatsApp.
  *   · Recursos: cuántos le llegan desde Repositorios.
+ *
+ * Y lleva a donde se arregla lo que dice (DD-146): el rótulo de cada tarjeta, a su sección; cada fila de Reparto, al
+ * bloque de su canal; cada fila de Salida, a su número. Son enlaces de verdad, con la dirección de la sección, y la
+ * ficha resuelve el clic en su sitio (en el alta, sin tocar la dirección y con General de puerta).
  */
 @Component({
   selector: 'sc-group-summary',
@@ -77,6 +94,10 @@ export class GroupSummaryComponent {
   readonly creating = input(false);
   /** El botón «Crear grupo» está encendido. */
   readonly ready = input(false);
+  /** La dirección de cada sección a la que lleva el resumen, como la escribe el índice. */
+  readonly hrefs = input.required<Readonly<Record<GroupSummarySeccion, string>>>();
+  /** Se pulsó algo del resumen, sin teclas: la ficha va a su sitio. */
+  readonly ir = output<GroupSummaryDestino>();
 
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
 
@@ -102,5 +123,12 @@ export class GroupSummaryComponent {
 
   protected familyKey(family: GroupSummaryRouting['family']): string {
     return family === 'phone' ? 'groups.channel.phone' : 'groups.channel.chat_family';
+  }
+
+  /** Un clic sin teclas va al sitio en la ficha; con Cmd, Ctrl, Mayús o el botón central, el navegador abre la dirección. */
+  protected pulsar(evento: MouseEvent, destino: GroupSummaryDestino): void {
+    if (evento.button !== 0 || evento.metaKey || evento.ctrlKey || evento.shiftKey || evento.altKey) return;
+    evento.preventDefault();
+    this.ir.emit(destino);
   }
 }

@@ -27,7 +27,7 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, NombreFijoComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
-import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import { llegarAAncla, llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDividerComponent as DividerComponent,
@@ -102,8 +102,10 @@ import {
 import { GroupIdentityFieldsComponent } from '../components/group-identity-fields/group-identity-fields.component';
 import {
   GroupSummaryComponent,
+  type GroupSummaryDestino,
   type GroupSummaryOutbound,
   type GroupSummaryRouting,
+  type GroupSummarySeccion,
 } from '../components/group-summary/group-summary.component';
 
 interface FormState {
@@ -154,6 +156,16 @@ const SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
   links: 'group-section-agents',
 };
 const CLIENT_CARD_KEYS: ReadonlySet<string> = new Set(['cardOpening', 'cardUrl', 'cardHeight']);
+
+/** Las secciones de la ficha a las que lleva el resumen (DD-146). */
+const RESUMEN_SECCIONES: Readonly<Record<GroupSummarySeccion, string>> = {
+  agentes: 'group-section-agents',
+  distribucion: 'group-section-distribution',
+  recursos: 'group-section-resources',
+};
+
+/** Los campos de los números de Salida, en Distribución y colas: el teléfono saliente y el de WhatsApp. */
+const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' } as const;
 
 @Component({
   selector: 'sc-group-form-page',
@@ -383,11 +395,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * Ir a otra sección. Al editar, libre. En el ALTA, General es la puerta: sin nombre y sin canales las
    * demás no tienen de qué hablar (qué bloques de canal, qué recursos, qué columnas de agentes), así que
    * se queda en General y dice qué falta en cada campo.
+   *
+   * Dice si llegó: al editar, cuando acaba la navegación; en el alta, en el acto (el resumen espera a ese momento
+   * para llevar a un sitio dentro de la sección).
    */
-  protected goTo(id: string): void {
+  protected goTo(id: string): Promise<boolean> {
     if (this.mode() === 'create' && id !== 'group-section-general' && !this.generalValid()) {
       this.stayInGeneral();
-      return;
+      return Promise.resolve(false);
     }
     // Salir de Distribución sin el teléfono saliente se deja, pero desde ahí su campo dice que falta.
     if (this.activeSection() === 'group-section-distribution' && id !== 'group-section-distribution' && this.phoneMissing()) {
@@ -396,9 +411,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // En el alta, la sección se abre sin tocar la dirección: Atrás sale del alta (DD-122, DD-143).
     if (this.mode() === 'create') {
       this.alta.abrir(id);
-      return;
+      return Promise.resolve(true);
     }
-    void this.sectionLinks.go(this.sectionUrl(id));
+    return this.sectionLinks.go(this.sectionUrl(id));
   }
 
   /**
@@ -415,7 +430,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   private irAlLado(id: string | null): void {
     if (!id) return;
-    this.goTo(id);
+    void this.goTo(id);
     if (this.activeSection() === id) llegarASeccion(id, this.injector);
   }
 
@@ -984,6 +999,35 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (this.hasWhatsApp()) outbound.push({ channel: 'whatsapp', number: f.advanced.whatsappNumber.trim() });
     return outbound;
   });
+
+  /** La dirección de cada sección a la que lleva el resumen, como la escribe el índice (DD-146). */
+  protected readonly summaryHrefs = computed<Readonly<Record<GroupSummarySeccion, string>>>(() => ({
+    agentes: this.sectionLinks.href(this.sectionUrl(RESUMEN_SECCIONES.agentes)),
+    distribucion: this.sectionLinks.href(this.sectionUrl(RESUMEN_SECCIONES.distribucion)),
+    recursos: this.sectionLinks.href(this.sectionUrl(RESUMEN_SECCIONES.recursos)),
+  }));
+
+  /**
+   * Lo que se pulsa en el resumen lleva a su sitio (DD-146): su sección, como el índice (en el alta, sin tocar la
+   * dirección y con General de puerta), y dentro de ella el bloque del canal o el campo del número. Llega cuando la
+   * sección ya está pintada, arriba y con el foco en el título, o en el sitio.
+   */
+  protected irDesdeResumen(destino: GroupSummaryDestino): void {
+    const id = RESUMEN_SECCIONES[destino.seccion];
+    const ancla = destino.canal
+      ? `group-channel-${destino.canal}-title`
+      : destino.salida
+        ? RESUMEN_NUMEROS[destino.salida]
+        : null;
+    const llegar = () => (ancla ? llegarAAncla(ancla, this.injector) : llegarASeccion(id, this.injector));
+    if (this.activeSection() === id) {
+      llegar();
+      return;
+    }
+    void this.goTo(id).then((llego) => {
+      if (llego && this.activeSection() === id) llegar();
+    });
+  }
 
   /** Lo que le llega de Repositorios: tipificación, agendas, plantillas de sus canales y etiquetas. */
   protected readonly resourceCount = computed(() => {

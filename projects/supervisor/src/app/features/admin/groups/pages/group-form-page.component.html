@@ -140,6 +140,8 @@
         [missing]="summaryMissing()"
         [creating]="mode() === 'create'"
         [ready]="mode() === 'create' && canSave()"
+        [hrefs]="summaryHrefs()"
+        (ir)="irDesdeResumen($event)"
       />
     </div>
   </div>

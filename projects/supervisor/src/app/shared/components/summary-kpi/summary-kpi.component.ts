@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, afterNextRender, computed, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, afterNextRender, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ScIconComponent } from '@smartcontact-hub/icons';
@@ -30,8 +30,16 @@ import { CountUpDirective } from '@core/directives';
   template: `
     <div class="resumen__cabeza">
       <p class="resumen__label sc-text-caption-regular">
-        <sc-icon [name]="icon()" size="inherit" aria-hidden="true" />
-        {{ labelKey() | translate }}
+        <!-- Con dirección, el rótulo lleva a su sección (DD-146): enlace de verdad, que la ficha resuelve sin recargar. -->
+        @if (href(); as href) {
+          <a class="resumen__enlace" [href]="href" (click)="pulsar($event)">
+            <sc-icon [name]="icon()" size="inherit" aria-hidden="true" />
+            {{ labelKey() | translate }}
+          </a>
+        } @else {
+          <sc-icon [name]="icon()" size="inherit" aria-hidden="true" />
+          {{ labelKey() | translate }}
+        }
       </p>
       <div class="resumen__widget">
         <p class="resumen__figure">
@@ -84,6 +92,13 @@ export class SummaryKpiComponent {
   readonly of = input<number | null>(null);
   /** La cifra en `h2` en vez de `h1`, para el resumen más cargado. */
   readonly compact = input(false);
+  /**
+   * La dirección de la sección a la que lleva el rótulo (DD-146). Sin ella, el rótulo es solo texto, como en el
+   * resumen de agente y de usuario.
+   */
+  readonly href = input<string | null>(null);
+  /** Se pulsó el rótulo, sin teclas: la ficha va a la sección en su sitio (la dirección queda para Cmd+clic). */
+  readonly abrir = output<void>();
   /** Una línea bajo la cifra (p. ej. «1 en pausa»). */
   readonly noteKey = input<string | null>(null);
   readonly noteParams = input<Record<string, unknown>>({});
@@ -107,5 +122,12 @@ export class SummaryKpiComponent {
 
   constructor() {
     afterNextRender(() => requestAnimationFrame(() => this.ready.set(true)));
+  }
+
+  /** Un clic sin teclas va a la sección en su sitio; con Cmd, Ctrl, Mayús o el botón central, el navegador abre la dirección. */
+  protected pulsar(evento: MouseEvent): void {
+    if (evento.button !== 0 || evento.metaKey || evento.ctrlKey || evento.shiftKey || evento.altKey) return;
+    evento.preventDefault();
+    this.abrir.emit();
   }
 }

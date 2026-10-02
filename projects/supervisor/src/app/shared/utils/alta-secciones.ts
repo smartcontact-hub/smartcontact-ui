@@ -87,3 +87,20 @@ export function llegarASeccion(id: string, injector: Injector): void {
     { injector },
   );
 }
+
+/**
+ * La llegada a un sitio DENTRO de una sección (DD-146): el bloque de un canal o un campo, desde el resumen. Ya pintada
+ * la sección, lo trae arriba y le da el foco. El nombre fijo no lo tapa: la zona que se desplaza aparta sus anclas
+ * (DD-145). Un campo llega con su rótulo, así que se trae su `.field` y se enfoca el control.
+ */
+export function llegarAAncla(id: string, injector: Injector): void {
+  afterNextRender(
+    () => {
+      const sitio = document.getElementById(id);
+      if (!sitio) return;
+      (sitio.closest('.field') ?? sitio).scrollIntoView({ block: 'start' });
+      sitio.focus({ preventScroll: true });
+    },
+    { injector },
+  );
+}

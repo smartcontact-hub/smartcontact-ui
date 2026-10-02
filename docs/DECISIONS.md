@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El resumen de la ficha de grupo lleva a su sección: el rótulo de cada tarjeta, a su sección, y cada fila, a su sitio en ella (el bloque del canal, el campo del número) · enlaces de verdad, en el primario, con manita y subrayado al pasar · la tarjeta no se pulsa entera · en el alta, como el índice (enmienda DD-126 §5) | DD-146 |
 > | El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (`sc-nombre-fijo`), en su sitio a partir de 1340 y al quedar fija por debajo · la cabecera sigue siendo el `h1` y el sitio donde se edita el nombre · las anclas, apartadas `--sc-form-anchor-offset` · borrar pide escribir el nombre, con su prueba (enmienda DD-144) | DD-145 |
 > | Las fichas en tres columnas que arrancan a la misma altura (índice, contenido y resumen): el título va en la columna del contenido · el resumen, sin rótulo a la vista (la región conserva su nombre) · «Eliminar», bajo el índice · por debajo de 1340, como estaba · una rejilla con áreas, sin mover nada en el DOM (enmienda DD-121 §2 y DD-122 §8) | DD-144 |
 > | Las altas vuelven al índice de la edición (revierte DD-138): ✓ en la sección que se deja completa (`sectionsDone` de `sc-form-section-nav`) y el punto rojo en la que se deja sin lo obligatorio · «Atrás» y «Siguiente» al pie (`sc-alta-pie`), que llevan al principio de la sección nueva con el foco en su título · General sigue siendo la puerta del grupo · la sección no va en la dirección (enmienda DD-121 §11, DD-122 §1 y §4, DD-130 §2 y DD-136) | DD-143 |
@@ -104,6 +105,51 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-146 · 2026-10-02 — El resumen de la ficha de grupo lleva a su sección
+
+**Contexto** · La revisión de producto del 2026-10-01 pidió que el resumen no fuera solo de mirar. Lo que dice se
+arregla en una sección (Agentes, Distribución y colas, Recursos), y había que buscarla en el índice: «Sin número» en
+Salida no llevaba al número. DD-126 §5 eligió para sus tarjetas el tinte de «elegido» porque no se pulsaban.
+
+**Decisión** ·
+1. **El rótulo de cada tarjeta lleva a su sección:** Agentes activos, a Agentes; Reparto y Salida, a Distribución y
+   colas; Recursos, a Recursos. Son enlaces de verdad, con la dirección de la sección (Cmd+clic la abre en otra
+   pestaña), y el clic llega arriba con el foco en el título, como el índice.
+2. **Cada fila lleva a su sitio:** las de Reparto, al bloque de su canal; las de Salida, a su número (el teléfono
+   saliente, el de WhatsApp). El foco va a él, y queda a la vista debajo del nombre fijo (DD-145).
+3. **Se nombran por lo que se ve:** Reparto y Salida son grupos con su rótulo por nombre, así que dos «Teléfono» no se
+   confunden y el nombre de cada enlace es su texto.
+4. **En el alta, como el índice:** abre la sección sin tocar la dirección (DD-143), y General sigue siendo la puerta.
+5. **Se leen como el texto de la tarjeta:** en el primario, que es el que llega a AA sobre el tinte (DD-126 §6), con
+   manita y subrayado al pasar, como la miga (DD-103), y el anillo de foco del sistema. La tarjeta no se pulsa entera.
+
+**Razón** ·
+- **Del resumen a donde se arregla**, sin pasar por el índice.
+- **Rótulos y filas, no la tarjeta:** con el tinte de «elegido», una tarjeta que se pulsa parecería elegida, y una
+  tarjeta lleva a varios sitios.
+- **En el primario y subrayado al pasar:** en azul y subrayado siempre, el resumen se leería como una lista de
+  enlaces; y el gris secundario no llega sobre el tinte.
+- **Medido el 2026-10-02, en este build:**
+  - el enlace sobre el tinte llega a AA, y con el gris secundario se queda en 3,955 (la prueba enrojece);
+  - se subraya al pasar, y sin el subrayado la prueba enrojece;
+  - Reparto › Chat deja el título del canal debajo del nombre fijo, y Salida › WhatsApp enfoca su campo.
+- **Rojo primero:** `resumen-enlazado`, cinco de cinco en rojo contra el resumen sin enlaces.
+
+**Descartadas** ·
+- **La tarjeta entera pulsable** → parecería elegida (DD-126 §5), y una tarjeta lleva a varios sitios.
+- **Enlaces en azul y subrayados siempre**, como «Ir a: Teléfono · Chat» → el resumen se leería como una lista de
+  enlaces.
+- **Las filas por canal de Agentes activos, enlazadas** → irían todas a la sección de su rótulo.
+- **El resumen de agente y de usuario** → no lo pidió la revisión; el widget ya acepta una dirección (`href`).
+
+**Consecuencias** ·
+- **Enmienda** DD-126 §5: en el resumen de grupo se pulsan los rótulos y las filas; la tarjeta sigue sin pulsarse.
+- `sc-summary-kpi` gana `href` y `abrir`; `sc-group-summary`, `hrefs` e `ir`; `alta-secciones.ts`, `llegarAAncla`.
+- **Pruebas:** `resumen-enlazado.spec.ts`, nueva, con cinco.
+- **Para el Kit:** `figma-pendiente` §37.
 
 ---
 
@@ -1405,7 +1451,9 @@ capturas y vídeo.
 **Consecuencias** · Enmienda DD-121 §3 (las cifras se mueven también al abrir) y DD-122 §8 (el resumen de agente y
 usuario deja las cifras sueltas). `customs-catalog` §8 recoge el «N%» oculto; `figma-pendiente` §18, el widget, que el
 Kit no tiene; la tabla de AGENTS, la pieza. La primera medida del tinte en oscuro, 20,91 la cifra y 4,27 el arco, salió
-de leer mal `color(srgb … / a)`: lo medido son 15,57 y 3,18, y siguen pasando.
+de leer mal `color(srgb … / a)`: lo medido son 15,57 y 3,18, y siguen pasando. **Enmendado por DD-146**
+(2026-10-02): en el resumen de grupo se pulsan los rótulos y las filas, que llevan a su sección; la tarjeta sigue sin
+pulsarse.
 
 ---
 
