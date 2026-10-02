@@ -91,6 +91,30 @@
   margin: 0;
 }
 
+/* LO QUE LLEVA A SU SECCIÓN (DD-146): el rótulo de una tarjeta o la clave de una fila, enlace de verdad (con su
+ * dirección: Cmd+clic abre la sección en otra pestaña). Se lee como el texto de la tarjeta, en el primario, que es el
+ * que llega a AA sobre el tinte (DD-126 §6); que se pulsa lo dicen la manita y el subrayado al pasar, como la miga
+ * (DD-103). Pintado en azul y subrayado siempre, el resumen se leería como una lista de enlaces. La tarjeta no se
+ * pulsa entera: su tinte es el de «elegido», y lo parecería. El foco, el anillo del sistema. */
+.resumen__enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: var(--sc-spacing-0-125);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+}
+
 .resumen__head {
   display: flex;
   align-items: center;
