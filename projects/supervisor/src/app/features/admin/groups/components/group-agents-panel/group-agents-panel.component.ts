@@ -24,7 +24,7 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
-import { clampLinksToChannels, diffLinks } from '@features/admin/services/group-channels.core.mjs';
+import { clampLinksToChannels, diffLinks, familiesOf } from '@features/admin/services/group-channels.core.mjs';
 
 import { GROUP_CHANNELS, type Group, type GroupChannel } from '../../data/groups-data';
 import {
@@ -109,11 +109,14 @@ export class GroupAgentsPanelComponent implements OnDestroy {
     this.unlock();
   }
 
-  /** Los canales del grupo, en el orden canónico: son las columnas de la tabla. */
+  /** Los canales del grupo, en el orden canónico: la tabla saca de ellos sus familias. */
   protected readonly channels = computed<readonly GroupChannel[]>(() => {
     const group = this.group();
     return group ? GROUP_CHANNELS.filter((c) => group.channels.includes(c)) : [];
   });
+
+  /** Las familias que ofrece: son las columnas de la tabla (DD-147). Web Chat y WhatsApp son una sola, Chat. */
+  private readonly families = computed(() => familiesOf(this.channels()));
 
   /** Con la estrategia Niveles, el nivel de cada agente va en su fila, como en la ficha. */
   protected readonly showLevel = computed(() => {
@@ -129,12 +132,12 @@ export class GroupAgentsPanelComponent implements OnDestroy {
    * aquí nunca llega sin canal (entra con todos los del grupo).
    */
   protected readonly channelColumns = computed(
-    () => this.channels().length > 1 || this.initialLinks().some((l) => l.channels.length === 0),
+    () => this.families().length > 1 || this.initialLinks().some((l) => l.channels.length === 0),
   );
 
   /** El ancho del cajón, en función de sus columnas; nunca más que la pantalla. */
   protected readonly width = computed(() => {
-    const channelCols = this.channelColumns() ? this.channels().length : 0;
+    const channelCols = this.channelColumns() ? this.families().length : 0;
     const rem =
       PANEL_NAME_REM +
       channelCols * parseFloat(CHANNEL_COL_COMPACT) +

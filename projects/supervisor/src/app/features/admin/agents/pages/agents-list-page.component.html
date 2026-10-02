@@ -14,7 +14,7 @@
   [heading]="'sidebar.agents' | translate"
   [rows]="agents()"
   [columns]="columns()"
-  tableMinWidth="99.25rem"
+  tableMinWidth="97.75rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'agents.search_placeholder' | translate"
@@ -106,9 +106,9 @@
 <ng-template #channelsTpl let-agent>
   <span class="sc-channel-row">
     @for (channel of channelsForAgent(agent.id); track channel) {
-      <!-- El nombre sale de las mismas claves que la lista de grupos: antes eran las suyas, que decían «Chat» y
-           no tenían WhatsApp (su icono se anunciaba como la clave cruda). `img`: un `aria-label` en un `span`
-           sin rol no se anuncia. -->
+      <!-- Por familia, con las claves de la tabla de agentes del grupo: «Chat» es Web Chat y WhatsApp (DD-147).
+           Antes la lista tenía las suyas, sin WhatsApp, y su icono se anunciaba como la clave cruda. `img`: un
+           `aria-label` en un `span` sin rol no se anuncia. -->
       <span
         class="sc-channel-row__item"
         role="img"

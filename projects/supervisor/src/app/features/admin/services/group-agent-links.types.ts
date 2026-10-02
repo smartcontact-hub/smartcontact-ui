@@ -13,26 +13,26 @@
  *
  * Invariants enforced by `GroupAgentLinksStore`:
  *   - exactly one link per `(agentId, groupId)` pair;
- *   - `link.channels ⊆ group.channels` (the link cannot enable a channel
- *     that the group does not own — the store clamps on write);
+ *   - `link.channels ⊆ familiesOf(group.channels)` (the link cannot enable a
+ *     family the group does not offer — the forms clamp it);
  *   - removing a channel from a group cascades to every link in O(n).
  */
 
-import { GroupChannel } from '@features/admin/groups/data/groups-data';
+import { ChannelFamily } from '@features/admin/groups/data/groups-data';
 
 import { canonicalizeChannels as canonicalizeCore } from './group-channels.core.mjs';
 
 /**
- * Single shared `Channel` alias. We keep `GroupChannel` re-exported as the
- * canonical type to avoid a churny rename pass, but at the type level
- * `Channel` and `GroupChannel` are the same union.
+ * Por dónde atiende un agente en un grupo: una FAMILIA (DD-147). Teléfono, Chat (Web Chat y WhatsApp juntos) o
+ * Email, como en el AED en vivo. Hasta DD-147 era el canal del grupo, con WhatsApp aparte; lo guardado así se lee
+ * con `chat` (`linkWithFamilies`).
  */
-export type Channel = GroupChannel;
+export type Channel = ChannelFamily;
 
 export interface GroupAgentLink {
   readonly agentId: number;
   readonly groupId: number;
-  /** Subset of the parent group's channels. */
+  /** Las familias del grupo que atiende. */
   readonly channels: readonly Channel[];
   /** False = paused (config preserved, agent does not receive contacts in this group). */
   readonly active: boolean;
@@ -51,7 +51,7 @@ export function levelOf(link: GroupAgentLink): number {
 
 /**
  * Deja una lista de canales en su forma canónica: sin repetidos y siempre en el
- * mismo orden (`phone` → `chat` → `whatsapp` → `email`).
+ * mismo orden (`phone` → `chat` → `email`, las familias de DD-147).
  *
  * Estaba duplicada palabra por palabra en `group-assignment-table` y
  * `agent-channel-table`, las dos tablas que editan estos enlaces desde los dos
@@ -63,10 +63,8 @@ export function levelOf(link: GroupAgentLink): number {
  * eso no se toca: es decisión de producto, no una limpieza.
  */
 export function canonicalizeChannels(channels: readonly Channel[]): readonly Channel[] {
-  /* LOS CUATRO CANALES, y `whatsapp` no es opcional. Faltaba, y como esta función es la que NORMALIZA
-   * lo que se escribe en el enlace, marcar WhatsApp a un agente no guardaba nada: la casilla volvía
-   * sola a su sitio, desde la ficha del grupo y desde la del agente. Medido en el navegador el
-   * 2026-09-23: la casilla pasaba de `false` a `false`. Lo vigila `ficha-grupo-canales.spec.ts`.
-   * Desde el 2026-09-26 el orden vive en `group-channels.core.mjs`, con las demás reglas de canales. */
+  /* El orden vive en `group-channels.core.mjs`, con las demás reglas de canales (2026-09-26). Hasta DD-147 el
+   * enlace podía llevar `whatsapp`, y faltaba aquí: marcarlo no guardaba nada (medido el 2026-09-23). Desde
+   * DD-147 el enlace guarda familias, y WhatsApp va dentro de Chat. */
   return canonicalizeCore(channels);
 }

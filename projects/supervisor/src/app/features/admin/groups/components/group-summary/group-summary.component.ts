@@ -7,8 +7,9 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 import { AnimateOnChangeDirective } from '@core/directives';
 import { ChannelIconComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import { familiesOf } from '@features/admin/services/group-channels.core.mjs';
 
-import { CHANNEL_LABEL_KEYS, type GroupChannel } from '../../data/groups-data';
+import { CHANNEL_LABEL_KEYS, FAMILY_LABEL_KEYS, type ChannelFamily, type GroupChannel } from '../../data/groups-data';
 
 /** Cómo reparte una familia de canales: Teléfono, o Chat (Web Chat y WhatsApp comparten estrategia). */
 export interface GroupSummaryRouting {
@@ -36,7 +37,7 @@ export interface GroupSummaryDestino {
 }
 
 interface ChannelRow {
-  readonly channel: GroupChannel;
+  readonly channel: ChannelFamily;
   readonly count: number;
   readonly meter: MeterItem[];
 }
@@ -100,21 +101,22 @@ export class GroupSummaryComponent {
   readonly ir = output<GroupSummaryDestino>();
 
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
+  protected readonly familyKeys = FAMILY_LABEL_KEYS;
 
   protected readonly total = computed(() => this.links().length);
   protected readonly paused = computed(() => this.links().filter((l) => !l.active).length);
 
   /**
-   * Quién atiende cada canal: los agentes HABILITADOS que lo tienen marcado. Uno en pausa no
-   * atiende, así que no cuenta; la línea «N en pausa» de arriba dice por qué las cifras no suman.
-   * La barra es esa cifra sobre el total del grupo, del mismo color para los cuatro canales, como
-   * sus glifos en las listas (decisión de producto, 2026-09-16: el canal lo dice la forma). El de
+   * Quién atiende cada familia (Teléfono, Chat y Email, DD-147): los agentes HABILITADOS que la tienen
+   * marcada. Uno en pausa no atiende, así que no cuenta; la línea «N en pausa» de arriba dice por qué
+   * las cifras no suman. La barra es esa cifra sobre el total del grupo, del mismo color para las tres,
+   * como sus glifos en las listas (decisión de producto, 2026-09-16: el canal lo dice la forma). El de
    * acento y no el primario: el azul de los botones pesaba más que las cifras que acompaña.
    */
   protected readonly channelRows = computed<readonly ChannelRow[]>(() => {
     const total = this.total();
     const active = this.links().filter((l) => l.active);
-    return this.channels().map((channel) => {
+    return familiesOf(this.channels()).map((channel) => {
       const count = active.filter((l) => l.channels.includes(channel)).length;
       const value = total > 0 ? Math.round((count / total) * 100) : 0;
       return { channel, count, meter: [{ label: channel, value, color: 'var(--sc-bg-accent)' }] };
@@ -122,7 +124,7 @@ export class GroupSummaryComponent {
   });
 
   protected familyKey(family: GroupSummaryRouting['family']): string {
-    return family === 'phone' ? 'groups.channel.phone' : 'groups.channel.chat_family';
+    return FAMILY_LABEL_KEYS[family];
   }
 
   /** Un clic sin teclas va al sitio en la ficha; con Cmd, Ctrl, Mayús o el botón central, el navegador abre la dirección. */

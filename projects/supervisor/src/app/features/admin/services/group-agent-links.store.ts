@@ -1,12 +1,15 @@
 import { computed, Injectable, signal, Signal } from '@angular/core';
 
+import { GroupChannel } from '@features/admin/groups/data/groups-data';
+
 import { GROUP_AGENT_LINKS_SEED } from './group-agent-links.seed';
 import { Channel, GroupAgentLink } from './group-agent-links.types';
+import { familiesOf, linkWithFamilies } from './group-channels.core.mjs';
 import { createVersionedStorage } from '@core/services/local-store.factory';
 
 const STORAGE_KEY = 'sc-group-agent-links';
 const VERSION_KEY = 'sc-group-agent-links-v';
-/** Bump on shape change. v1 = initial DD#54 model. */
+/** Bump on shape change. v1 = initial DD#54 model. Las familias de DD-147 no la suben: se ponen al día al leer. */
 const CURRENT_VERSION = 1;
 
 /**
@@ -34,6 +37,9 @@ export class GroupAgentLinksStore {
     versionKey: VERSION_KEY,
     currentVersion: CURRENT_VERSION,
     defaults: GROUP_AGENT_LINKS_SEED,
+    /* Lo guardado antes de DD-147 con WhatsApp como canal del agente se lee con Chat; lo siguiente que se escriba ya
+     * va así. Subir la versión tiraría lo guardado. */
+    normalize: linkWithFamilies,
   });
 
   private readonly state = signal<readonly GroupAgentLink[]>(this.storage.read());
@@ -94,9 +100,9 @@ export class GroupAgentLinksStore {
     this.commit(next);
   }
 
-  /** Convenience: upsert with the group's channel list to clamp the subset. */
-  upsertLinkClamped(link: GroupAgentLink, groupChannels: readonly Channel[]): void {
-    const allowed = new Set<Channel>(groupChannels);
+  /** Convenience: upsert with the group's channel list to clamp the subset (por familia, DD-147). */
+  upsertLinkClamped(link: GroupAgentLink, groupChannels: readonly GroupChannel[]): void {
+    const allowed = new Set<Channel>(familiesOf(groupChannels));
     this.upsertLink({
       ...link,
       channels: link.channels.filter((c) => allowed.has(c)),
@@ -131,9 +137,9 @@ export class GroupAgentLinksStore {
   }
 
   /**
-   * When a group drops one or more channels (e.g. owner unticks "chat" in
-   * the group form), strip those channels from every link. Returns the
-   * count of affected links — caller surfaces this in a confirm dialog.
+   * When a group stops offering one or more families (`removedFamilies`: e.g.
+   * owner unticks Chat in the group form), strip them from every link. Returns
+   * the count of affected links — caller surfaces this in a confirm dialog.
    */
   cascadeGroupChannelRemoval(groupId: number, removed: readonly Channel[]): number {
     if (removed.length === 0) return 0;

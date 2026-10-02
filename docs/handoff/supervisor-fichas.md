@@ -19,6 +19,26 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
+## ✅ 2026-10-02 · E1a: asignaciones por familia (DD-147)
+
+> **Sello: rama `codex/supervisor-e1a-familias`, base `c6a9cd59` (G2b, #308 fundido; CI del merge leído en verde).**
+
+**Recuperado:** 14 archivos de implementación y dos de pruebas del paquete E1a; SHA-256 e integridad del ZIP
+reverificados. El parche se aplicó sin conflictos tras G2b. Se recuperó contenido, no el objeto Git `643c72fc`.
+La copia original sigue intacta. Los seis e2e en rojo de Cloud son evidencia histórica del registro de recuperación.
+
+**Completado:** tres familias en enlaces, tablas, panel, resumen y listado; lectura de WhatsApp como Chat sin
+subir versión; recorte y cascada por familia. Completadas las pruebas que aún fijaban cuatro canales y el ancho
+del listado. El resumen del agente cuenta solo familias ofrecidas, igual que su listado. Detalle: DD-147.
+
+**Validado localmente:** las 15 unitarias de canales; las 42 pruebas afectadas, con repetición de las dos
+expectativas corregidas; diez vistas en `npm run revision`. Capturas en claro/oscuro, 1024/1440: tres glifos en
+69 px dentro de 100; panel de tres familias en 556 px sin desbordamiento. Dos contratos del núcleo se reprodujeron
+en rojo contra G2b. El CI y preflight del PR propio son la evidencia de entrega, no el registro de Cloud.
+
+**Siguiente:** E1b, niveles 1–10 por familia y estrategia Niveles en Chat (DD-148 disponible al empezar E1a;
+recomprobar). Después E2 → E3 → E4 → D3 → F. No se cambió el singular «1 agentes», ajeno al alcance.
+
 ## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143), las tres columnas (G1, DD-144), el nombre fijo (G2a, DD-145) y el resumen enlazado (G2b, DD-146)
 
 > **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `b02fdb9b`). H (#298, `57f03a0`), los diálogos de
@@ -219,57 +239,12 @@ real: la línea a mitad del plegado (en rojo primero, 36 de 114), el plegado nat
 - ⚠️ En la nube se corre como root, y `chmod` no le quita la escritura. Para simular que la config de git no se puede
   escribir, un `.git/config.lock` ajeno.
 
-## ✅ 2026-09-28 · Panel rápido compacto (DD-131), qué trae cada tipo de usuario (DD-132) y las ayudas (DD-133)
-
-> **Sello: #273 (`7730619`) y #274 (`212debe`) fundidos en `main`; las ayudas, en la rama `areses/sweet-fermat-r9cxzw`
-> sobre `212debe`.**
-
-**Qué pasó.** Revisión de producto, con captura: el panel «Agentes · <grupo>» del listado era demasiado ancho y dejaba
-mucho aire entre el nombre y las columnas. Pase con `/better-ui`, medido antes y después con una sonda de Playwright
-a 1440: 832 → 476 px con dos canales y 448 con uno; del nombre a su primera casilla, 450 → 154; filas, 46 → 34.
-Detalle, tabla y descartadas en **DD-131**.
-
-**Qué cambia:**
-- el ancho sale de las columnas (mínimo 28rem, nunca más que la pantalla);
-- un grupo de un canal (9 de 14) no pinta columna de canal, salvo que una fila llegue sin canal al abrir;
-- `sc-agent-channel-table` gana `compact` y `channelColumns` (la ficha no cambia de medidas);
-- fuera la línea «Canales: …» y el aire pasa a 14 y 7;
-- la papelera dice «Quitar del grupo» al pasar por encima (también en la ficha), y la ayuda del candado dice dónde
-  está, en los cuatro idiomas;
-- DS: `sc-checkbox` desactivado con una sola opacidad (0,36 → 0,6), con su ejemplo en sc-docs.
-
-**Medido:** las cinco pruebas nuevas de `panel-agentes-grupo.spec.ts` fallan las cinco contra el código anterior,
-cada una por su motivo, y la de la columna que se queda falla también con la regla de «las filas de ahora».
-
-**Orden del PR, por la captura del checkbox en sc-docs:** rama → workflow `visual-baselines` sobre ella → PR. Con el
-PR ya abierto, el commit del robot dejaba el CI en «action_required» (ver trampas). Así, #273 corrió su CI entero sin
-aprobar nada. Pero la captura no es la única línea base de sc-docs: `component-structure` y `component-styles`
-cuentan lo que pinta cada demo, y un ejemplo más las puso rojas en el CI. Se regeneran en local (`SC_UPDATE_*`);
-antes de pushear un cambio de sc-docs, corre `npm run e2e` entero.
-
-**Los tipos de usuario (DD-132).** Producto respondió la pregunta de DD-121 con el documento de producto de usuarios y
-grupos y el manual de usuario de Voice:
-- cuatro tipos (Superadmin, Administrador, Supervisor Online y Offline), cada uno con su plantilla de acceso
-  (`user-packages.core.mjs`, con sus pruebas en `test:unit`);
-- seis secciones y cuatro gestiones nuevas, una por destino del menú, leídas con `resolveUserAccess` sin versionar
-  `sc-users`;
-- el alta nace Offline; al editar, cambiar el tipo pregunta; y Acceso dice «Plantilla: X · N cambios» con «Volver a
-  la plantilla».
-
-`usuario-plantillas.spec.ts`: cinco pruebas, las cinco en rojo contra el código anterior.
-
-**Las ayudas (DD-133)**, del manual de usuario de Voice y del documento de producto, sin inventar nada:
-- nuevas: Prioridad, la estrategia de teléfono (una línea por cada una, que cambia con la elegida) y la extensión del
-  agente;
-- reescritas: % de servicio, Voz, dominios y «Desbordar sesión»; fuera las cuatro ⓘ de la ficha de grupo;
-- en el DS, `sc-select` pone sus `aria-*` en el elemento con foco (antes el lector no anunciaba ninguna ayuda de un
-  select), y los textos fijos de los desplegables hablan los cuatro idiomas.
-
-`ayudas-campos.spec.ts`: cinco pruebas, las cinco en rojo contra el código anterior.
+El tramo del 2026-09-28 (panel compacto, tipos de usuario y ayudas) vive en
+`git show c6a9cd59:docs/handoff/supervisor-fichas.md`; su criterio sigue en DD-131, DD-132 y DD-133.
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: E1 → E2 → E3 → E4 → D3 →
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: E1b → E2 → E3 → E4 → D3 →
    F (G termina con G2b, DD-146). E4, con la referencia del usuario «4. Agentes y revisión»: todos a la vista y sin
    marcar, búsqueda, filtro Todos / Asignados / Sin asignar, estado y canales. Cada uno con su prueba en rojo;
    la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center

@@ -150,6 +150,13 @@ test('grupo 1 · con un solo canal no hay saltos', async ({ page }) => {
 });
 
 test('el icono de un aviso pesa lo que su texto semibold', async ({ page }) => {
+  // DD-147: el seed ya atiende las tres familias; se deja Chat sin agente para medir su aviso.
+  await page.addInitScript(() => {
+    localStorage.setItem('sc-group-agent-links-v', '1');
+    localStorage.setItem('sc-group-agent-links', JSON.stringify([
+      { agentId: 1, groupId: 11, channels: ['phone', 'email'], active: true },
+    ]));
+  });
   await goto(page, 'admin/grupos/editar/11');
   const avisos = page.locator('.ficha-summary .resumen__warn sc-icon .sc-icon');
   await expect(avisos).toHaveCount(2);

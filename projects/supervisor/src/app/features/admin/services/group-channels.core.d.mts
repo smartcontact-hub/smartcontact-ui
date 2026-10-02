@@ -1,10 +1,17 @@
 /** Tipos de las reglas de canales de grupo (la lógica vive en `group-channels.core.mjs`). */
 export const CHANNEL_ORDER: readonly ['phone', 'chat', 'whatsapp', 'email'];
+export const FAMILY_ORDER: readonly ['phone', 'chat', 'email'];
 export const CHAT_SUBCHANNELS: readonly ['chat', 'whatsapp'];
 
 export function canonicalizeChannels<C extends string>(channels: readonly C[]): C[];
 export function familyOf(channel: string): 'phone' | 'chat' | 'email';
 export function hasChatFamily(channels: Iterable<string>): boolean;
+/** Lo que ofrece un grupo, dicho en familias y en su orden (DD-147). */
+export function familiesOf(channels: Iterable<string>): ('phone' | 'chat' | 'email')[];
+/** Un enlace con sus canales en familias (`whatsapp` → `chat`); el mismo objeto si ya estaba al día. */
+export function linkWithFamilies<L extends { readonly channels: readonly string[] }>(link: L): L;
+/** Las familias que un grupo deja de ofrecer al cambiar sus canales. */
+export function removedFamilies(before: Iterable<string>, after: Iterable<string>): ('phone' | 'chat' | 'email')[];
 export function toggleGroupChannel<C extends string>(channels: Iterable<C>, channel: C): Set<C>;
 export function toggleChatFamily<C extends string>(channels: Iterable<C>): Set<C>;
 export function clampLinksToChannels<L extends { readonly channels: readonly string[] }>(
@@ -17,12 +24,12 @@ export function toggleLinkChannel<L extends { readonly channels: readonly string
   channel: string,
   options?: { minOne?: boolean },
 ): L;
-export function newLinkFor<C extends string>(input: {
+export function newLinkFor(input: {
   agentId: number;
   groupId: number;
-  groupChannels: readonly C[];
+  groupChannels: readonly string[];
   level?: number;
-}): { agentId: number; groupId: number; channels: C[]; active: true; level?: number };
+}): { agentId: number; groupId: number; channels: ('phone' | 'chat' | 'email')[]; active: true; level?: number };
 export function channelRemovalImpact(
   links: readonly { readonly channels: readonly string[] }[],
   removedChannels: Iterable<string>,

@@ -3,18 +3,9 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * Los CANALES de la ficha de grupo: que se puedan asignar los cuatro, y que lo que no aplica se
- * aparte solo. Desde el 2026-09-26 se marcan en General (Chat es la madre de Web Chat y WhatsApp)
- * y cada canal se configura en su bloque de Distribución y colas.
- *
- * Nace de un fallo servido (2026-09-23): `canonicalizeChannels`, que normaliza lo que se escribe
- * en cada enlace (agente, grupo), listaba `['phone', 'chat', 'email']` y se dejaba fuera
- * `whatsapp`. Como se llama en CADA escritura, marcar WhatsApp a un agente no guardaba nada: la
- * casilla volvía sola, desde la ficha del grupo y desde la del agente. No lo vio nadie porque
- * todavía no hay clientes con WhatsApp; se cayó solo al pintar los canales con sus glifos, donde
- * faltaba uno.
- *
- * Storage limpio por test → cada store admin re-siembra su SEED.
+ * Los cuatro canales del grupo se configuran por separado. Desde DD-147, el agente
+ * atiende tres familias: Teléfono, Chat (Web Chat y WhatsApp) y Email.
+ * La asignación debe persistir y conservar la protección del último canal.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -30,7 +21,7 @@ const canal = (page: Page, nombre: string) =>
 const irA = (page: Page, seccion: string) =>
   page.locator('sc-form-section-nav').getByText(seccion, { exact: true }).click();
 
-test('los cuatro canales se pueden asignar a un agente, WhatsApp incluido', async ({ page }) => {
+test('los cuatro canales del grupo se asignan al agente por sus tres familias', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1');
 
   // El grupo ofrece los cuatro.
@@ -39,16 +30,13 @@ test('los cuatro canales se pueden asignar a un agente, WhatsApp incluido', asyn
   }
   await irA(page, 'Agentes');
 
-  /* Una columna por canal. Por ROL y no con `hasText: /^WhatsApp$/`: el `th` lleva espacios
-   * alrededor del rótulo y el ancla `$` no casa con ellos (me costó una tirada roja). */
-  await expect(page.getByRole('columnheader', { name: 'WhatsApp' })).toHaveCount(1);
-
-  /* Y la casilla de WhatsApp de la primera fila se queda marcada. CON EL FALLO PUESTO esto se pone
-   * rojo: `canonicalizeChannels` devolvía el enlace sin `whatsapp` y la casilla volvía a `false`. */
+  await expect(page.getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);
+  await expect(page.getByRole('columnheader', { name: 'WhatsApp', exact: true })).toHaveCount(0);
+  // Marcar la familia debe conservar la casilla, sin perderla al ordenar los canales del enlace.
   const indice = await page.evaluate(() =>
-    [...document.querySelectorAll('thead th')].findIndex((t) => t.textContent?.trim() === 'WhatsApp'),
+    [...document.querySelectorAll('thead th')].findIndex((t) => t.textContent?.trim() === 'Chat'),
   );
-  expect(indice, 'no hay columna de WhatsApp').toBeGreaterThan(0);
+  expect(indice, 'no hay columna de Chat').toBeGreaterThan(0);
 
   const celda = page.locator('tbody tr').first().locator('td').nth(indice);
   const casilla = celda.locator('[role=checkbox], input[type=checkbox]').first();
@@ -91,7 +79,7 @@ test('la vista del grupo no pausa: sin «Habilitado» ni su lote, y la pausa se 
   const enPausa = page.locator('.assign tbody tr').filter({ has: page.locator('sc-tag', { hasText: 'En pausa' }) });
   await expect(enPausa).toHaveCount(1);
   // Sus canales se siguen tocando: la pausa no los apaga aquí.
-  await expect(enPausa.getByRole('checkbox', { name: /WhatsApp/ })).toBeEnabled();
+  await expect(enPausa.getByRole('checkbox', { name: / — Chat/ })).toBeEnabled();
 
   // En lote, solo «Quitar del grupo».
   await page.locator('.assign tbody tr').first().locator('td').first().locator('input[type=checkbox]').first().click();
@@ -107,7 +95,7 @@ test('un agente asignado tiene al menos un canal: la casilla del último está a
 
   const fila = page.locator('.assign tbody tr').first();
   const telefono = fila.getByRole('checkbox', { name: /Teléfono/ });
-  const webChat = fila.getByRole('checkbox', { name: /Web Chat/ });
+  const webChat = fila.getByRole('checkbox', { name: / — Chat/ });
   // Solo Teléfono: es su último canal, no se desmarca aquí.
   await expect(telefono).toBeDisabled();
   await expect(telefono).toHaveAccessibleName(/único canal/);
@@ -148,21 +136,25 @@ test('la lista de agentes no pinta un canal que ninguno de sus grupos ofrece', a
   await expect(fila.locator('.sc-channel-row__item[data-channel="email"]')).toHaveCount(0);
 });
 
-/* Los iconos de canal de la lista de agentes se anuncian con el MISMO nombre que en la lista de grupos y en las
- * fichas. Tenían sus propias claves, que decían «Chat» y no tenían WhatsApp: su icono se anunciaba como la clave
- * cruda. En el seed nadie tiene WhatsApp, así que se le da a uno desde el panel rápido (medido el 2026-09-26). */
-test('la lista de agentes anuncia cada canal por su nombre, WhatsApp incluido', async ({ page }) => {
+/* El listado anuncia la misma familia que se edita en el panel, aunque el grupo ofrezca WhatsApp. */
+test('la lista de agentes anuncia Chat al asignarlo desde el panel', async ({ page }) => {
+  await page.addInitScript(() => {
+    if (localStorage.getItem('sc-group-agent-links')) return;
+    localStorage.setItem('sc-group-agent-links-v', '1');
+    localStorage.setItem('sc-group-agent-links', JSON.stringify([
+      { agentId: 1, groupId: 12, channels: ['phone'], active: true },
+    ]));
+  });
   await goto(page, 'admin/grupos');
   await page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' }).click();
   const panel = page.locator('.agents-panel');
-  const casilla = panel.locator('tbody tr').first().getByRole('checkbox', { name: / — WhatsApp$/ });
-  const nombre = (await casilla.getAttribute('aria-label'))!.split(' — ')[0]!;
-  await casilla.click();
+  await panel.getByRole('checkbox', { name: 'Tom Hanks — Chat', exact: true }).click();
   await panel.getByRole('button', { name: 'Guardar (1)' }).click();
   await expect(panel).toHaveCount(0);
 
   await goto(page, 'admin/agentes');
-  const fila = page.locator('tbody tr', { hasText: nombre });
-  await expect(fila.getByRole('img', { name: 'WhatsApp', exact: true })).toHaveCount(1);
+  const fila = page.locator('tbody tr', { hasText: 'Tom Hanks' });
+  await expect(fila.getByRole('img', { name: 'Chat', exact: true })).toHaveCount(1);
+  await expect(fila.getByRole('img', { name: 'WhatsApp', exact: true })).toHaveCount(0);
   await expect(fila.getByRole('img', { name: 'Teléfono', exact: true })).toHaveCount(1);
 });
