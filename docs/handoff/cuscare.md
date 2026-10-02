@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-25 — rama `v3-tipo-solicitud` (`313e21cd`), fuera de `main` a propósito; ver el primer tramo. Lo anterior (2026-08-31, `ce92b18`) sigue en `main`.**
+> **Sello: 2026-10-02 — versión validada para integrar en main; la rama histórica `v3-tipo-solicitud` se conserva.**
 
 `projects/cuscare` replica `cuscare.smart-contact.com/aed`. **Las 9 vistas montadas**, con
 valores extraídos del sitio real (no estimados) y **100 tests e2e** (`npm run e2e:cuscare`, en CI).
@@ -13,6 +13,19 @@ sus paneles y su modal, el paso 2 de "+ New ticket", el panel Summary, los toolt
 avisos de acción.
 
 Contexto completo: [`projects/cuscare/README.md`](../../projects/cuscare/README.md).
+
+## 2026-10-02 · Filtro y tabla validados para producción
+
+La versión actual sustituye la selección por origen en cada fila por una lista común
+con toggles IA/Agente independientes y AND entre orígenes. Match aparece solo en tipos
+seleccionados. Cerrar sin tipos restablece el estado neutral; una selección activa
+se conserva al cerrar. La tabla acota anchos y expone el scroll por teclado.
+
+Contrato vigente: [filtro Match](../cuscare-request-type-match.md) y
+[handoff de filtros y tabla](../cuscare-filters-table-handoff.md). Validación local:
+verify y 27 pruebas Playwright. Se autoriza PR, integración en main y producción,
+con preflight y CI completos. Se conserva la rama histórica de la sección siguiente
+para mantener sus enlaces; esa sección documenta el prototipo anterior.
 
 ## ✅ 2026-09-25 · Prototipo del filtro «Tipo de solicitud» (V3) y la app en inglés o castellano
 

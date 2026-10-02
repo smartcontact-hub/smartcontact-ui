@@ -64,7 +64,10 @@
     }
   </div>
 
-  <div class="tickets__tablewrap">
+  <div class="tickets__scroll-hint sc-text-caption-regular" id="tickets-scroll-hint">
+    @if (hasHorizontalOverflow()) { {{ 'Scroll horizontally to see more columns' | tr }} }
+  </div>
+  <div #tableViewport class="tickets__tablewrap">
     <!-- Loader del original: overlay blanco translúcido sobre el CUERPO de la
          tabla + spinner azul + "Loading data...". Medido en la app real. -->
     @if (loading()) {
@@ -75,7 +78,7 @@
         </div>
       </div>
     }
-    <p-table [value]="rows()" [scrollable]="true" scrollHeight="flex" dataKey="id" class="cc-table">
+    <p-table [value]="rows()" [scrollable]="true" scrollHeight="flex" dataKey="id" class="cc-table" [tableStyle]="{ width: tableWidth() + 'px' }" [pt]="tablePt()">
       <ng-template #header>
         <tr>
           <th class="col-select">
@@ -92,10 +95,13 @@
                apagados cuando no ordena, y uno lleno según el sentido. -->
           @for (c of cols(); track c.header) {
             <th
-              [style.width]="c.width"
+              [style.width.px]="columnWidth(c)"
               [class.is-sortable]="c.sortable"
               [class.is-sorted]="sortKey() === c.key"
               [attr.aria-sort]="ariaSort(c)"
+              [attr.tabindex]="c.sortable ? 0 : null"
+              (keydown.enter)="cycleSort(c)"
+              (keydown.space)="c.sortable && $event.preventDefault(); cycleSort(c)"
               (click)="cycleSort(c)"
             >
               <div class="th__inner">
@@ -129,7 +135,7 @@
         <tr class="filterrow">
           <th class="col-select"></th>
           @for (c of cols(); track c.header) {
-            <th [style.width]="c.width">
+            <th [style.width.px]="columnWidth(c)">
               @switch (c.filter) {
                 @case ('popover') {
                   <button class="filterbtn" type="button" (click)="pop.toggle($event)">
@@ -231,7 +237,7 @@
             }
           </td>
           @for (c of cols(); track c.header) {
-            <td [style.width]="c.width" [class.cell--dim]="row.locked">
+            <td [style.width.px]="columnWidth(c)" [class.cell--dim]="row.locked">
               @switch (c.key) {
                 @case ('id') {
                   <a class="cell-id" [routerLink]="['/private/cuscare/tickets/ticket', row.id]">{{ row.id }}</a>
@@ -241,8 +247,24 @@
                 }
                 @case ('requestTypes') {
                   <span class="chips rt-chips">
-                    @for (t of displayTags(row.requestTypes); track t.label) {
-                      <p-tag [class]="'rt-tag rt-tag--' + t.origin" [value]="t.label | tr" />
+                    @for (it of cellItems(row.requestTypes); track it.key) {
+                      @if (it.kind === 'match') {
+                        <!-- Coincidencia: la IA y el agente pusieron el mismo tipo. -->
+                        <span
+                          class="rt-match"
+                          role="group"
+                          [attr.title]="'Match' | tr"
+                          [attr.aria-label]="('Match' | tr) + ': ' + (it.label | tr)"
+                        >
+                          <p-tag class="rt-tag rt-tag--ai" [value]="it.label | tr" [attr.title]="('AI' | tr) + ': ' + (it.label | tr)" [attr.aria-label]="('AI' | tr) + ': ' + (it.label | tr)" />
+                          <p-tag class="rt-tag rt-tag--agent" [value]="it.label | tr" [attr.title]="('Agent' | tr) + ': ' + (it.label | tr)" [attr.aria-label]="('Agent' | tr) + ': ' + (it.label | tr)" />
+                          <svg class="rt-match__icon" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+                            <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
+                          </svg>
+                        </span>
+                      } @else {
+                        <p-tag [class]="'rt-tag rt-tag--' + it.tag.origin" [value]="it.tag.label | tr" [attr.title]="(originLabel[it.tag.origin] | tr) + ': ' + (it.tag.label | tr)" [attr.aria-label]="(originLabel[it.tag.origin] | tr) + ': ' + (it.tag.label | tr)" />
+                      }
                     }
                   </span>
                 }
@@ -264,7 +286,14 @@
 
       <ng-template #emptymessage>
         <tr>
-          <td [attr.colspan]="cols().length + 1" class="emptyrow">{{ 'No data to show' | tr }}</td>
+          <td [attr.colspan]="cols().length + 1" class="emptyrow">
+            <div class="tickets__empty" role="status">
+              <p>{{ (hasFilters() ? 'No tickets match these filters' : 'No tickets yet') | tr }}</p>
+              @if (hasFilters()) {
+                <button class="btn btn--ghost" type="button" (click)="clearFilters()">{{ 'Delete filters' | tr }}</button>
+              }
+            </div>
+          </td>
         </tr>
       </ng-template>
     </p-table>

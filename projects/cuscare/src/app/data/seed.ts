@@ -20,21 +20,24 @@ export interface RequestTag {
 }
 
 /**
- * Los tipos de solicitud: los diez de «Nature of demand» del modal Ticket Status, en su
- * orden. La columna «Request type» y su filtro son de la V3 (SCC 2081), que aún no está en
- * la app real: aquí se enseña el comportamiento, no se replica una medida.
+ * Los tipos de solicitud, en el orden del comentario de la V3 en Figma (1900:2949), que suma
+ * Legal y Spam a los de «Nature of demand». «Empty» (Vacío) no es un tipo que se ponga: es
+ * una opción del filtro y vive en `request-type.ts`. La columna «Request type» y su filtro son
+ * de la V3 (SCC 2081), que aún no está en la app real: aquí se enseña el comportamiento.
  */
 export const REQUEST_TYPES: readonly string[] = [
   'Unsubscription',
   'Refund',
+  'Legal',
+  'Spam',
+  'Information',
+  'Withdrawal Right',
   'GDPR access',
   'GDPR Forgotten',
-  'Withdrawal Right',
-  'Information',
   'Product problem',
   'Log problem',
-  'Pending to define',
   'Others',
+  'Pending to define',
 ];
 
 export interface TicketRow {

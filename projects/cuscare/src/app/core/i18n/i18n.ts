@@ -46,6 +46,11 @@ const ES_TICKETS: Readonly<Record<string, string>> = {
   'Delete filters': 'Eliminar filtros',
   Filter: 'Filtro',
   'Loading data...': 'Cargando datos...',
+  'No filter applied': 'Sin filtro aplicado',
+  'No tickets match these filters': 'Ningún ticket coincide con estos filtros',
+  'No tickets yet': 'Todavía no hay tickets',
+  'Scroll horizontally to see more columns': 'Desplázate horizontalmente para ver más columnas',
+  'Tickets table': 'Tabla de tickets',
   'No data to show': 'No hay datos que mostrar', // propio
   of: 'de',
   results: 'resultados',
@@ -82,8 +87,19 @@ const ES_TICKETS: Readonly<Record<string, string>> = {
   AI: 'IA',
   Agent: 'Agente',
   'Search type': 'Buscar tipo',
-  'All types': 'Todos los tipos', // propio
+  'Classified by': 'Clasificado por',
+  AND: 'Y',
+  'request-type::type': 'tipo',
+  'request-type::types': 'tipos',
+  'Any classification origin': 'Cualquier origen de clasificación',
+  'Classification origin': 'Origen de la clasificación', // el de Figma (1736:13257)
+  'Only tickets where AI and agent match': 'Solo los tickets en que la IA y el agente coinciden', // propio
+  'Set by the AI, whatever the agent says': 'Lo que puso la IA, diga lo que diga el agente', // propio
+  'Set by the agent, whatever the AI says': 'Lo que puso el agente, diga lo que diga la IA', // propio
+  'Any origin: set by the AI or by the agent': 'Cualquier origen: lo puso la IA o el agente', // propio
   'No types match': 'Ningún tipo coincide', // propio
+  Empty: 'Vacío', // NATURE_OF_DEMAND.empty
+  Match: 'Coincidencia', // NATURE_OF_DEMAND.COINCIDENCE
   'Filter by Request type': 'Filtrar por Tipo de solicitud',
   'Clear Request type filter': 'Borrar el filtro de Tipo de solicitud',
   Unsubscription: 'Baja',
