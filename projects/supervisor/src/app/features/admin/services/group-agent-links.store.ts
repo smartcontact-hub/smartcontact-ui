@@ -4,7 +4,7 @@ import { GroupChannel } from '@features/admin/groups/data/groups-data';
 
 import { GROUP_AGENT_LINKS_SEED } from './group-agent-links.seed';
 import { Channel, GroupAgentLink } from './group-agent-links.types';
-import { familiesOf, linkWithFamilies } from './group-channels.core.mjs';
+import { familiesOf, linkWithFamilies, linkWithLevels } from './group-channels.core.mjs';
 import { createVersionedStorage } from '@core/services/local-store.factory';
 
 const STORAGE_KEY = 'sc-group-agent-links';
@@ -38,8 +38,8 @@ export class GroupAgentLinksStore {
     currentVersion: CURRENT_VERSION,
     defaults: GROUP_AGENT_LINKS_SEED,
     /* Lo guardado antes de DD-147 con WhatsApp como canal del agente se lee con Chat; lo siguiente que se escriba ya
-     * va así. Subir la versión tiraría lo guardado. */
-    normalize: linkWithFamilies,
+     * va así. E1b migra también el nivel antiguo a Teléfono. Subir la versión tiraría lo guardado. */
+    normalize: (link) => linkWithLevels(linkWithFamilies(link)),
   });
 
   private readonly state = signal<readonly GroupAgentLink[]>(this.storage.read());

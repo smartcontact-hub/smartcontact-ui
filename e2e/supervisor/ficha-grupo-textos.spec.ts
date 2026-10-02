@@ -59,6 +59,10 @@ test('las estrategias reparten conversaciones: Teléfono, «Dentro de cada nivel
   const deChat = await opcionesDe(page, chat);
   expect(deTelefono).toContain('Menos conversaciones atendidas');
   expect(deChat).toContain('Menos conversaciones activas');
+  expect(deChat).toContain('Niveles');
+  await pickSelectOption(page, chat, 'Niveles');
+  const dentroDeChat = await opcionesDe(page, page.locator('#group-chat-sub-strategy'));
+  expect(dentroDeChat).toEqual(deChat.filter((s) => s !== 'Niveles'));
 
   await pickSelectOption(page, telefono, 'Niveles');
   const dentroDelNivel = await opcionesDe(page, page.locator('#group-sub-strategy'));

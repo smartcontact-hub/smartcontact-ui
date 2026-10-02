@@ -37,16 +37,15 @@ export interface GroupAgentLink {
   /** False = paused (config preserved, agent does not receive contacts in this group). */
   readonly active: boolean;
   /**
-   * Nivel del agente en el grupo (1 se atiende primero) para la estrategia Niveles. Se guardaba ya
-   * sin tipar desde la tabla de agentes del grupo; ahora es parte del contrato. Se conserva aunque la
-   * estrategia cambie, para no perderlo si vuelve.
+   * Nivel del agente por familia (1 se atiende primero) para la estrategia Niveles.
+   * Se conserva aunque la estrategia cambie, para no perderlo si vuelve.
    */
-  readonly level?: number;
+  readonly levels?: { readonly phone?: number; readonly chat?: number };
 }
 
-/** El nivel de un enlace, 1 si no lo tiene. */
-export function levelOf(link: GroupAgentLink): number {
-  return link.level ?? 1;
+/** El nivel de una familia del enlace, 1 si no lo tiene. */
+export function levelOf(link: GroupAgentLink, family: 'phone' | 'chat'): number {
+  return link.levels?.[family] ?? 1;
 }
 
 /**

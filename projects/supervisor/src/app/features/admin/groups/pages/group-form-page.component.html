@@ -478,9 +478,15 @@
         <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.routing' | translate }}</h4>
         <div class="grid grid--2">
           <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-chat-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-            <sc-select inputId="group-chat-strategy" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
+            <label id="group-chat-strategy-label" class="field__label sc-text-caption-semibold" for="group-chat-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+            <sc-select inputId="group-chat-strategy" ariaLabelledBy="group-chat-strategy-label" [helperText]="form().chatStrategy === 'Niveles' ? ('groups.form.strategy_help.levels' | translate) : undefined" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
           </div>
+          @if (form().chatStrategy === 'Niveles') {
+            <div class="field">
+              <label id="group-chat-sub-strategy-label" class="field__label sc-text-caption-semibold" for="group-chat-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+              <sc-select inputId="group-chat-sub-strategy" ariaLabelledBy="group-chat-sub-strategy-label" [options]="chatSubStrategies" [value]="form().chatSubStrategy" (valueChange)="onChatSubStrategyChange($event)" />
+            </div>
+          }
           <ng-container *ngTemplateOutlet="transferField; context: { channel: 'chat', queue: form().chatQueue }" />
         </div>
         <!-- A la vista, no en un «avanzado» (visión de producto de grupos, 2026-09-25). Los minutos aparecen con el
@@ -764,7 +770,7 @@
         [links]="form().links"
         [availableAgents]="availableAgents()"
         [groupId]="editingId() ?? 0"
-        [showLevel]="isNiveles()"
+        [levelFamilies]="levelFamilies()"
         (linksChange)="onLinksChange($event)"
       />
     </section>

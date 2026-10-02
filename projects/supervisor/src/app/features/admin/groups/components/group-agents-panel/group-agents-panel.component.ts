@@ -32,6 +32,7 @@ import {
   type AgentChannelTableAgent,
   AgentChannelTableComponent,
   CHANNEL_COL_COMPACT,
+  LEVEL_COL_REM,
 } from '../agent-channel-table/agent-channel-table.component';
 
 /**
@@ -44,7 +45,6 @@ import {
 const PANEL_NAME_REM = 15;
 const PANEL_CHROME_REM = 2.25;
 const PANEL_MIN_REM = 28;
-const LEVEL_COL_REM = 6.5;
 
 /**
  * EL PANEL RÁPIDO DE AGENTES, desde el listado de grupos. Asignar y desasignar agentes y sus canales
@@ -119,9 +119,12 @@ export class GroupAgentsPanelComponent implements OnDestroy {
   private readonly families = computed(() => familiesOf(this.channels()));
 
   /** Con la estrategia Niveles, el nivel de cada agente va en su fila, como en la ficha. */
-  protected readonly showLevel = computed(() => {
+  protected readonly levelFamilies = computed<readonly ('phone' | 'chat')[]>(() => {
     const group = this.group();
-    return !!group && group.channels.includes('phone') && group.strategy === 'Niveles';
+    return [
+      ...(group && this.families().includes('phone') && group.strategy === 'Niveles' ? ['phone' as const] : []),
+      ...(group && this.families().includes('chat') && group.chatStrategy === 'Niveles' ? ['chat' as const] : []),
+    ];
   });
 
   /**
@@ -141,7 +144,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
     const rem =
       PANEL_NAME_REM +
       channelCols * parseFloat(CHANNEL_COL_COMPACT) +
-      (this.showLevel() ? LEVEL_COL_REM : 0) +
+      this.levelFamilies().length * LEVEL_COL_REM +
       parseFloat(ACTIONS_COL_COMPACT) +
       PANEL_CHROME_REM;
     return `min(${Math.max(PANEL_MIN_REM, rem)}rem, 100vw)`;

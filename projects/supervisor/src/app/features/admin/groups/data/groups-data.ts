@@ -60,8 +60,8 @@ export const SUB_STRATEGIES: readonly string[] = ['Balanceada', 'Más tiempo ina
 /** Ring All suena a la vez en 2 a 10 agentes; por defecto 2 (SISMAC-1975). */
 export const RING_ALL_OPTIONS: readonly number[] = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-/** Niveles de reparto por agente: hasta 5, como el prototipo. */
-export const LEVEL_OPTIONS: readonly number[] = [1, 2, 3, 4, 5];
+/** Niveles de reparto por familia: enteros de 1 a 10. */
+export const LEVEL_OPTIONS: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 /* ── Anuncios y avanzado: los campos del grupo en el manual de Voice (p. 10 y 13-14) ── */
 
@@ -180,7 +180,12 @@ export const CHAT_STRATEGIES: readonly string[] = [
   'Rotativa (por turnos)',
   'Menos conversaciones activas',
   'Balanceada',
+  'Niveles',
 ];
+
+/** Contact Center no fija niveles por agente; dentro de un nivel tampoco se anidan niveles. */
+export const DEFAULT_CHAT_STRATEGY_OPTIONS = CHAT_STRATEGIES.filter((strategy) => strategy !== 'Niveles');
+export const CHAT_SUB_STRATEGIES = DEFAULT_CHAT_STRATEGY_OPTIONS;
 
 /** Con la que reparte un grupo de ejemplo con Chat que no ha elegido otra. Uno nuevo nace con la de Contact Center. */
 export const DEFAULT_CHAT_STRATEGY = CHAT_STRATEGIES[0]!;
@@ -201,13 +206,15 @@ export function currentStrategyName(name: string): string {
 export function groupWithCurrentStrategies(group: Group): Group {
   const strategy = currentStrategyName(group.strategy);
   const subStrategy = group.subStrategy === undefined ? undefined : currentStrategyName(group.subStrategy);
+  const chatSubStrategy = group.chatSubStrategy === undefined ? undefined : currentStrategyName(group.chatSubStrategy);
   const chatStrategy = group.chatStrategy === undefined ? undefined : currentStrategyName(group.chatStrategy);
-  if (strategy === group.strategy && subStrategy === group.subStrategy && chatStrategy === group.chatStrategy) return group;
+  if (strategy === group.strategy && subStrategy === group.subStrategy && chatStrategy === group.chatStrategy && chatSubStrategy === group.chatSubStrategy) return group;
   return {
     ...group,
     strategy,
     ...(subStrategy === undefined ? {} : { subStrategy }),
     ...(chatStrategy === undefined ? {} : { chatStrategy }),
+    ...(chatSubStrategy === undefined ? {} : { chatSubStrategy }),
   };
 }
 
@@ -341,6 +348,7 @@ export interface Group {
   readonly labels?: readonly number[];
   readonly templates?: readonly number[];
   readonly subStrategy?: string;
+  readonly chatSubStrategy?: string;
   readonly ringAllAgents?: number;
   readonly services?: readonly string[];
   /** La tipificación del grupo: una categoría de `Repositorios > Tipificaciones`. Con ella, el agente tiene que

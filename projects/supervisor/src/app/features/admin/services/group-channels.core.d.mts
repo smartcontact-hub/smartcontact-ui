@@ -28,8 +28,8 @@ export function newLinkFor(input: {
   agentId: number;
   groupId: number;
   groupChannels: readonly string[];
-  level?: number;
-}): { agentId: number; groupId: number; channels: ('phone' | 'chat' | 'email')[]; active: true; level?: number };
+  levels?: { readonly phone?: number; readonly chat?: number };
+}): { agentId: number; groupId: number; channels: ('phone' | 'chat' | 'email')[]; active: true; levels?: { readonly phone?: number; readonly chat?: number } };
 export function channelRemovalImpact(
   links: readonly { readonly channels: readonly string[] }[],
   removedChannels: Iterable<string>,
@@ -37,6 +37,8 @@ export function channelRemovalImpact(
 
 /** Cuántos agentes cambian entre dos juegos de enlaces del mismo grupo (la N de «Guardar (N)»). */
 export function diffLinks(
-  before: readonly { readonly agentId: number; readonly channels: readonly string[]; readonly active: boolean; readonly level?: number }[],
-  after: readonly { readonly agentId: number; readonly channels: readonly string[]; readonly active: boolean; readonly level?: number }[],
+  before: readonly { readonly agentId: number; readonly channels: readonly string[]; readonly active: boolean; readonly levels?: { readonly phone?: number; readonly chat?: number } }[],
+  after: readonly { readonly agentId: number; readonly channels: readonly string[]; readonly active: boolean; readonly levels?: { readonly phone?: number; readonly chat?: number } }[],
 ): { added: number; removed: number; changed: number; total: number };
+
+export function linkWithLevels<L extends { readonly level?: number; readonly levels?: { readonly phone?: number; readonly chat?: number } }>(link: L): Omit<L, 'level'> & { readonly levels?: { readonly phone?: number; readonly chat?: number } };

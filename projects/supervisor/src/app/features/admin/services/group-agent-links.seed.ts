@@ -47,7 +47,7 @@ export const GROUP_AGENT_LINKS_SEED: readonly GroupAgentLink[] = [
   { agentId: 3, groupId: 8, channels: ['phone'], active: true },
   { agentId: 3, groupId: 9, channels: ['phone'], active: true },
   { agentId: 3, groupId: 10, channels: ['phone', 'chat'], active: true },
-  { agentId: 3, groupId: 11, channels: ['phone', 'chat'], active: true },
+  { agentId: 3, groupId: 11, channels: ['phone', 'chat'], active: true, levels: { phone: 1, chat: 10 } },
   { agentId: 3, groupId: 12, channels: ['phone', 'chat'], active: true },
   { agentId: 3, groupId: 13, channels: ['phone', 'chat'], active: true },
   { agentId: 3, groupId: 14, channels: ['phone'], active: true },
