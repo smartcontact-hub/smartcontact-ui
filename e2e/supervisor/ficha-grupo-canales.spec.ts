@@ -68,24 +68,16 @@ test('sin Teléfono, su bloque se va de Distribución y deja la línea que dice 
   await expect(page.locator('sc-form-section-nav .form-nav__item')).toHaveCount(4);
 });
 
-/* LA TABLA DE AGENTES DEL GRUPO GESTIONA COMPOSICIÓN (visión de producto de grupos, 2026-09-25;
- * DD-121): quién está y por qué canales. La pausa es de la persona y se cambia en su ficha. */
-test('la vista del grupo no pausa: sin «Habilitado» ni su lote, y la pausa se ve como etiqueta', async ({ page }) => {
-  // El 12 («Reclamaciones») tiene un agente en pausa en el seed, con Teléfono y Web Chat.
+/* Habilitado pertenece al enlace, no a la presencia de la persona (DD-149). */
+test('el grupo permite habilitar el enlace sin bloquear sus canales', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/12');
   await irA(page, 'Agentes');
-  await expect(page.getByRole('columnheader', { name: 'Habilitado' })).toHaveCount(0);
-
-  const enPausa = page.locator('.assign tbody tr').filter({ has: page.locator('sc-tag', { hasText: 'En pausa' }) });
-  await expect(enPausa).toHaveCount(1);
-  // Sus canales se siguen tocando: la pausa no los apaga aquí.
-  await expect(enPausa.getByRole('checkbox', { name: / — Chat/ })).toBeEnabled();
-
-  // En lote, solo «Quitar del grupo».
+  await expect(page.getByRole('columnheader', { name: 'Habilitado' })).toHaveCount(1);
+  const disabled = page.locator('.assign tbody tr').filter({ has: page.locator('input[role="switch"]:not(:checked)') });
+  await expect(disabled).toHaveCount(1);
+  await expect(disabled.getByRole('checkbox', { name: / — Chat/ })).toBeEnabled();
   await page.locator('.assign tbody tr').first().locator('td').first().locator('input[type=checkbox]').first().click();
-  const barra = page.locator('sc-bulk-action-bar');
-  await expect(barra.getByRole('button', { name: 'Quitar del grupo' })).toBeVisible();
-  await expect(barra.getByRole('button', { name: /Habilitar|Deshabilitar/ })).toHaveCount(0);
+  await expect(page.locator('sc-bulk-action-bar').getByRole('button', { name: 'Quitar del grupo' })).toBeVisible();
 });
 
 test('un agente asignado tiene al menos un canal: la casilla del último está apagada y dice por qué', async ({ page }) => {

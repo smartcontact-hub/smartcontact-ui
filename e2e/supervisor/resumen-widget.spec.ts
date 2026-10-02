@@ -86,7 +86,7 @@ test.describe('con los datos de siempre', () => {
   test('grupo 11 · agentes activos sobre asignados, con quién atiende cada canal debajo', async ({ page }) => {
     await goto(page, 'admin/grupos/editar/11');
     const agentes = widgets(page).first();
-    await expect(agentes).toContainText('Agentes activos');
+    await expect(agentes).toContainText('Agentes habilitados');
     await expect(anillos(page).first()).toHaveAttribute('aria-valuenow', '13');
     await expect(anillos(page).first()).toHaveAttribute('aria-valuemax', '13');
     // El canal que nadie atiende sigue avisando, con icono y texto, dentro de la misma tarjeta.
