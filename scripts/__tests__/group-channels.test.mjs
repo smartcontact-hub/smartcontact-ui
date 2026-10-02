@@ -122,3 +122,24 @@ test('diffLinks cuenta agentes, no casillas: entran, salen o cambian de canales 
     { added: 1, removed: 1, changed: 2, total: 4 },
   );
 });
+
+test('E3: un enlace nuevo respeta los permisos de la persona, también en un grupo solo de WhatsApp', () => {
+  assert.deepEqual(newLinkFor({ agentId: 1, groupId: 11, groupChannels: ['phone', 'whatsapp', 'email'], allowedChannels: ['chat'] }).channels, ['chat']);
+  assert.deepEqual(newLinkFor({ agentId: 1, groupId: 11, groupChannels: ['whatsapp'], allowedChannels: ['chat'] }).channels, ['chat']);
+  assert.deepEqual(newLinkFor({ agentId: 1, groupId: 11, groupChannels: ['phone'], allowedChannels: [] }).channels, []);
+});
+
+test('E3: la intersección de enlace, grupo y permisos conserva niveles, habilitación e identidad si no cambia', () => {
+  const intact = { agentId: 1, channels: ['chat'], active: false, levels: { phone: 10, chat: 1 } };
+  const trimmed = { agentId: 2, channels: ['phone', 'chat', 'email'], active: true, levels: { phone: 1, chat: 10 } };
+  const out = clampLinksToChannels([intact, trimmed], ['phone', 'whatsapp'], () => ['chat']);
+  assert.equal(out[0], intact);
+  assert.deepEqual(out[1], { ...trimmed, channels: ['chat'] });
+  assert.deepEqual(clampLinksToChannels([trimmed], ['phone', 'chat', 'email'], () => [])[0].channels, []);
+});
+
+test('E3: sin permisos guardados se conservan las tres familias y no se inventan cambios', () => {
+  const link = { agentId: 1, channels: ['phone', 'chat', 'email'], active: true };
+  assert.equal(clampLinksToChannels([link], ['phone', 'whatsapp', 'email'], () => undefined)[0], link);
+  assert.deepEqual(newLinkFor({ agentId: 1, groupId: 11, groupChannels: ['phone', 'whatsapp', 'email'] }).channels, link.channels);
+});
