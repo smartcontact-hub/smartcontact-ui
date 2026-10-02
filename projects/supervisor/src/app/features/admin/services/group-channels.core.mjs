@@ -144,11 +144,13 @@ export function toggleChatFamily(channels) {
  * @template {{ channels: readonly string[] }} L
  * @param {readonly L[]} links
  * @param {Iterable<string>} groupChannels
+ * @param {(link: L) => readonly string[] | undefined} [allowedChannelsFor]
  * @returns {L[]}
  */
-export function clampLinksToChannels(links, groupChannels) {
-  const allowed = new Set(familiesOf(groupChannels));
+export function clampLinksToChannels(links, groupChannels, allowedChannelsFor = () => undefined) {
+  const offered = familiesOf(groupChannels);
   return links.map((l) => {
+    const allowed = new Set(permittedFamilies(offered, allowedChannelsFor(l)));
     const filtered = l.channels.filter((c) => allowed.has(familyOf(c)));
     return filtered.length === l.channels.length ? l : { ...l, channels: filtered };
   });
@@ -183,10 +185,10 @@ export function toggleLinkChannel(link, channel, options = {}) {
 /**
  * Un enlace nuevo: con TODAS las familias que ofrece el grupo, habilitado. Los niveles solo se ponen si se
  * piden; cada familia sin nivel explícito usa 1.
- * @param {{ agentId: number, groupId: number, groupChannels: readonly string[], levels?: { phone?: number, chat?: number } }} input
+ * @param {{ agentId: number, groupId: number, groupChannels: readonly string[], allowedChannels?: readonly string[], levels?: { phone?: number, chat?: number } }} input
  */
-export function newLinkFor({ agentId, groupId, groupChannels, levels }) {
-  const link = { agentId, groupId, channels: familiesOf(groupChannels), active: true };
+export function newLinkFor({ agentId, groupId, groupChannels, allowedChannels, levels }) {
+  const link = { agentId, groupId, channels: permittedFamilies(groupChannels, allowedChannels), active: true };
   return levels === undefined ? link : { ...link, levels };
 }
 
@@ -248,4 +250,16 @@ export function diffLinks(before, after) {
   }
   for (const agentId of prev.keys()) if (!next.has(agentId)) removed++;
   return { added, removed, changed, total: added + removed + changed };
+}
+
+/**
+ * Familias del grupo que permite la persona. Sin el campo antiguo, las tres;
+ * una lista vacía significa ninguna. Web Chat y WhatsApp siguen siendo Chat.
+ * @param {Iterable<string>} groupChannels
+ * @param {readonly string[]} [allowedChannels]
+ * @returns {('phone' | 'chat' | 'email')[]}
+ */
+export function permittedFamilies(groupChannels, allowedChannels) {
+  const allowed = new Set(allowedChannels ?? FAMILY_ORDER);
+  return familiesOf(groupChannels).filter(family => allowed.has(family));
 }

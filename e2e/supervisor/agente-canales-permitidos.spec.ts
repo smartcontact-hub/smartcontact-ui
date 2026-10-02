@@ -37,8 +37,12 @@ for (const surface of ['ficha', 'panel'] as const) {
     await expect(blocked).toBeDisabled();
     await expect(blocked).not.toBeChecked();
     await expect(row.getByRole('link', { name: /permisos.*Agente Chat/i })).toHaveAttribute('href', '/admin/agentes/editar/1?seccion=permisos');
-    await table.getByRole('combobox', { name: 'Añadir agente al grupo' }).click();
-    await expect(page.getByRole('option', { name: /Agente Email.*sin canales compatibles/i })).toHaveAttribute('aria-disabled', 'true');
+    await table.locator('sc-multiselect').click();
+    const incompatible = page.getByRole('option', { name: /Agente Email.*sin canales compatibles/i });
+    await expect(incompatible).toHaveAttribute('data-p-disabled', 'true');
+    await incompatible.click({ force: true });
+    await expect(incompatible).toHaveAttribute('aria-checked', 'false');
+    await expect(table.locator('tbody tr', { hasText: 'Agente Email' })).toHaveCount(0);
   });
 }
 
@@ -47,9 +51,10 @@ test('quitar un permiso avisa de sus grupos y solo recorta los enlaces al guarda
   await goto(page, 'admin/agentes/editar/1?seccion=permisos');
   const permissions = page.getByRole('region', { name: 'Canales permitidos', exact: true });
   for (const name of ['Teléfono', 'Chat', 'Email']) await expect(permissions.getByRole('checkbox', { name, exact: true })).toBeChecked();
-  await permissions.getByRole('checkbox', { name: 'Teléfono', exact: true }).uncheck();
+  await permissions.getByRole('checkbox', { name: 'Teléfono', exact: true }).click();
+  await expect(permissions.getByRole('checkbox', { name: 'Teléfono', exact: true })).not.toBeChecked();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'Quitar canales permitidos' });
+  const dialog = page.getByRole('alertdialog', { name: 'Quitar canales permitidos' });
   await expect(dialog).toContainText('Grupo mixto');
   await expect(dialog).toContainText('Grupo telefónico');
   await dialog.getByRole('button', { name: 'Cancelar', exact: true }).click();
@@ -71,14 +76,60 @@ test('Contact Center guarda canales permitidos y el alta hereda Chat sin alterar
   await goto(page, 'config/aed/agentes');
   const permissions = page.getByRole('region', { name: 'Canales permitidos', exact: true });
   for (const name of ['Teléfono', 'Chat', 'Email']) await expect(permissions.getByRole('checkbox', { name, exact: true })).toBeChecked();
-  await permissions.getByRole('checkbox', { name: 'Teléfono', exact: true }).uncheck();
-  await permissions.getByRole('checkbox', { name: 'Email', exact: true }).uncheck();
+  await permissions.getByRole('checkbox', { name: 'Teléfono', exact: true }).click();
+  await expect(permissions.getByRole('checkbox', { name: 'Teléfono', exact: true })).not.toBeChecked();
+  await permissions.getByRole('checkbox', { name: 'Email', exact: true }).click();
+  await expect(permissions.getByRole('checkbox', { name: 'Email', exact: true })).not.toBeChecked();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-agent-defaults')!)[0].allowedChannels)).toEqual(['chat']);
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-agent-defaults') ?? '[]')[0]?.allowedChannels)).toEqual(['chat']);
   await goto(page, 'admin/agentes/crear');
   await page.getByRole('link', { name: 'Permisos', exact: true }).click();
   await expect(permissions.getByRole('checkbox', { name: 'Chat', exact: true })).toBeChecked();
   await expect(permissions.getByRole('checkbox', { name: 'Teléfono', exact: true })).not.toBeChecked();
   await expect(permissions.getByRole('checkbox', { name: 'Email', exact: true })).not.toBeChecked();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('sc-agents')!)[0].allowedChannels)).toBeUndefined();
+});
+
+
+test('tabla, resúmenes y listado solo cuentan las familias permitidas, aunque el enlace guardado contenga otras', async ({ page }) => {
+  await seed(page, true);
+  await goto(page, 'admin/grupos/editar/11?seccion=agentes');
+  const summary = page.getByRole('region', { name: 'Resumen', exact: true });
+  await expect(summary.locator('.resumen__channel', { hasText: 'Teléfono' })).toContainText('Sin agentes');
+  await expect(summary.locator('.resumen__channel', { hasText: 'Chat' }).locator('.resumen__digits')).toHaveText('1');
+  await goto(page, 'admin/agentes/editar/1?seccion=grupos');
+  const row = page.locator('sc-group-assignment-table tbody tr', { hasText: 'Grupo mixto' });
+  await expect(row.getByRole('checkbox', { name: /Teléfono.*no permitido/i })).toBeDisabled();
+  await expect(row.getByRole('checkbox', { name: /Teléfono.*no permitido/i })).not.toBeChecked();
+  await expect(summary.locator('.resumen__kpi', { hasText: 'Canales' }).locator('.resumen__value')).toHaveText('Chat');
+  await goto(page, 'admin/agentes');
+  const listed = page.locator('tbody tr', { hasText: 'Agente Chat' });
+  await expect(listed.getByRole('img', { name: 'Chat', exact: true })).toHaveCount(1);
+  await expect(listed.getByRole('img', { name: 'Teléfono', exact: true })).toHaveCount(0);
+});
+
+test('sin canales permitidos se conserva vacío al guardar y recargar, sin recuperar los tres por defecto', async ({ page }) => {
+  await seed(page);
+  await goto(page, 'config/aed/agentes');
+  const permissions = page.getByRole('region', { name: 'Canales permitidos', exact: true });
+  for (const name of ['Teléfono', 'Chat', 'Email']) {
+    await permissions.getByRole('checkbox', { name, exact: true }).click();
+    await expect(permissions.getByRole('checkbox', { name, exact: true })).not.toBeChecked();
+  }
+  await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-agent-defaults') ?? '[]')[0]?.allowedChannels)).toEqual([]);
+  await page.reload();
+  for (const name of ['Teléfono', 'Chat', 'Email']) await expect(permissions.getByRole('checkbox', { name, exact: true })).not.toBeChecked();
+});
+
+
+test('la ficha del agente tampoco permite asignar un grupo sin ninguna familia compatible', async ({ page }) => {
+  await seed(page);
+  await goto(page, 'admin/agentes/editar/2?seccion=grupos');
+  const table = page.locator('sc-group-assignment-table');
+  await table.getByRole('combobox').click();
+  const incompatible = page.getByRole('option', { name: /Grupo telefónico.*Sin canales compatibles/i });
+  await expect(incompatible).toHaveAttribute('data-p-disabled', 'true');
+  await incompatible.click({ force: true });
+  await expect(table.locator('tbody tr', { hasText: 'Grupo telefónico' })).toHaveCount(0);
 });

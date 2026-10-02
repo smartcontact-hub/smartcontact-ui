@@ -29,10 +29,13 @@ import {
   DestinoKey,
   PERMISSION_MATRIX_KEYS,
 } from '@features/admin/agents/data/agents-data';
+import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
+import type { Channel } from '@features/admin/services/group-agent-links.types';
 import { AgentDefaultsStore } from '@features/admin/agents/state/agent-defaults.store';
 
 import {
   ScButtonComponent as ButtonComponent,
+  ScCheckboxComponent as CheckboxComponent,
   ScDividerComponent as DividerComponent,
   ScInputTextComponent as InputTextComponent,
   ScPermissionMatrixComponent as PermissionMatrixComponent,
@@ -55,6 +58,7 @@ import {
   selector: 'sc-aed-agentes-page',
   imports: [
     ButtonComponent,
+    CheckboxComponent,
     DividerComponent,
     InputTextComponent,
     PermissionMatrixComponent,
@@ -125,6 +129,13 @@ export class AedAgentesPageComponent implements DirtyAware {
       for (const row of DESTINO_KEYS) permissions[PERMISSION_MATRIX_KEYS[row][e.columnId as DestinoCol]] = e.checked;
       return { ...f, permissions };
     });
+  }
+
+  protected readonly allowedFamilies = CHANNEL_FAMILIES;
+  protected readonly allowedFamilyLabels = FAMILY_LABEL_KEYS;
+
+  protected setAllowedChannel(channel: Channel, checked: boolean): void {
+    this.form.update(form => ({ ...form, allowedChannels: CHANNEL_FAMILIES.filter(family => family === channel ? checked : form.allowedChannels.includes(family)) }));
   }
 
   protected setPermission(key: keyof AgentPermissions, value: boolean): void {

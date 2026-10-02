@@ -9,6 +9,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -44,7 +46,7 @@ import {
   Channel,
   GroupAgentLink,
 } from '@features/admin/services/group-agent-links.types';
-import { familiesOf, isLastChannel, newLinkFor, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
+import { clampLinksToChannels, familiesOf, isLastChannel, newLinkFor, permittedFamilies, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
 
 /** Lightweight agent reference accepted by the table. */
 export interface AgentChannelTableAgent {
@@ -52,6 +54,7 @@ export interface AgentChannelTableAgent {
   readonly name: string;
   readonly photo?: string;
   readonly presenceStatus?: PresenceStatus;
+  readonly allowedChannels?: readonly Channel[];
 }
 
 interface VisibleRow {
@@ -108,6 +111,8 @@ export const AGENT_NAME_COL_REM = 21;
     IllustratedAvatarComponent,
     SearchComponent,
     MultiSelectComponent,
+    RouterLink,
+    ScIconComponent,
     SelectComponent,
     TagComponent,
     ToggleSwitchComponent,
@@ -291,7 +296,7 @@ export class AgentChannelTableComponent {
     return this.links()
       .map((link) => {
         const agent = map.get(link.agentId);
-        return agent ? { link, agent } : null;
+        return agent ? { link: clampLinksToChannels([link], this.groupChannels(), () => agent.allowedChannels)[0], agent } : null;
       })
       .filter((r): r is VisibleRow => r !== null);
   });
@@ -304,6 +309,19 @@ export class AgentChannelTableComponent {
       r.agent.name.toLowerCase().includes(q)
     );
   });
+
+  /** La incompatibilidad permanece visible y explicada en el selector nativo. */
+  protected readonly addOptions = computed(() => {
+    this.currentLang();
+    return this.availableAgents().map(agent => {
+      const disabled = permittedFamilies(this.groupChannels(), agent.allowedChannels).length === 0;
+      return { ...agent, disabled, name: disabled ? `${agent.name} — ${this.translate.instant('groups.form.assigned.incompatible')}` : agent.name };
+    });
+  });
+
+  protected allowed(agent: AgentChannelTableAgent, channel: string): boolean {
+    return permittedFamilies(this.groupChannels(), agent.allowedChannels).includes(channel as Channel);
+  }
 
   /** Lo marcado en «Añadir agentes»: los que ya están en el grupo. */
   protected readonly assignedIds = computed<number[]>(() => this.links().map((l) => l.agentId));
@@ -331,8 +349,8 @@ export class AgentChannelTableComponent {
     const next = new Set(value as number[]);
     const current = new Set(this.links().map((l) => l.agentId));
     const added: GroupAgentLink[] = [...next]
-      .filter((agentId) => !current.has(agentId))
-      .map((agentId) => newLinkFor({ agentId, groupId: this.groupId(), groupChannels: [...this.groupChannels()] }));
+      .filter((agentId) => !current.has(agentId) && permittedFamilies(this.groupChannels(), this.agentById().get(agentId)?.allowedChannels).length > 0)
+      .map((agentId) => newLinkFor({ agentId, groupId: this.groupId(), groupChannels: [...this.groupChannels()], allowedChannels: this.agentById().get(agentId)?.allowedChannels }));
     this.linksChange.emit([...this.links().filter((l) => next.has(l.agentId)), ...added]);
     this.selectedIds.update((prev) => new Set([...prev].filter((id) => next.has(id))));
   }
@@ -350,8 +368,10 @@ export class AgentChannelTableComponent {
 
   protected toggleChannel(agentId: number, field: string): void {
     const channel = field as Channel;
+    const agent = this.agentById().get(agentId);
+    if (!agent || !this.allowed(agent, channel)) return;
     this.linksChange.emit(
-      this.links().map((l) => (l.agentId === agentId ? toggleLinkChannel(l, channel, { minOne: true }) : l)),
+      this.links().map((l) => (l.agentId === agentId ? toggleLinkChannel(clampLinksToChannels([l], this.groupChannels(), () => agent.allowedChannels)[0], channel, { minOne: true }) : l)),
     );
   }
 

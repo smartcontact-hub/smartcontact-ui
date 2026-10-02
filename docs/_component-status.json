@@ -241,7 +241,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 39,
+      "usedInSupervisor": 42,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -521,7 +521,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 36,
+      "usedInSupervisor": 38,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
