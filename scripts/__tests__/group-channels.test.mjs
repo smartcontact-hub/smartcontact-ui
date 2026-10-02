@@ -81,7 +81,7 @@ test('newLinkFor: todos los canales del grupo, habilitado, y nivel solo si se pi
     channels: ['phone', 'email'],
     active: true,
   });
-  assert.equal(newLinkFor({ agentId: 7, groupId: 3, groupChannels: ['phone'], level: 1 }).level, 1);
+  assert.equal(newLinkFor({ agentId: 7, groupId: 3, groupChannels: ['phone'], levels: { phone: 1 } }).levels.phone, 1);
   assert.equal('level' in newLinkFor({ agentId: 7, groupId: 3, groupChannels: ['phone'] }), false);
 });
 
@@ -100,14 +100,14 @@ test('channelRemovalImpact: cuenta quién pierde un canal y quién se quedaría 
 test('diffLinks cuenta agentes, no casillas: entran, salen o cambian de canales o de nivel', () => {
   const antes = [
     { agentId: 1, channels: ['phone'], active: true },
-    { agentId: 2, channels: ['phone', 'chat'], active: true, level: 2 },
+    { agentId: 2, channels: ['phone', 'chat'], active: true, levels: { phone: 2 } },
     { agentId: 3, channels: ['chat'], active: false },
   ];
   // Nada cambia, aunque el orden de los canales sea otro y el nivel 1 venga sin escribir.
   assert.deepEqual(
     diffLinks(antes, [
-      { agentId: 1, channels: ['phone'], active: true, level: 1 },
-      { agentId: 2, channels: ['chat', 'phone'], active: true, level: 2 },
+      { agentId: 1, channels: ['phone'], active: true, levels: { phone: 1 } },
+      { agentId: 2, channels: ['chat', 'phone'], active: true, levels: { phone: 2 } },
       { agentId: 3, channels: ['chat'], active: false },
     ]),
     { added: 0, removed: 0, changed: 0, total: 0 },
@@ -116,7 +116,7 @@ test('diffLinks cuenta agentes, no casillas: entran, salen o cambian de canales 
   assert.deepEqual(
     diffLinks(antes, [
       { agentId: 1, channels: ['phone', 'whatsapp'], active: true },
-      { agentId: 2, channels: ['phone', 'chat'], active: true, level: 3 },
+      { agentId: 2, channels: ['phone', 'chat'], active: true, levels: { phone: 3 } },
       { agentId: 4, channels: ['phone'], active: true },
     ]),
     { added: 1, removed: 1, changed: 2, total: 4 },

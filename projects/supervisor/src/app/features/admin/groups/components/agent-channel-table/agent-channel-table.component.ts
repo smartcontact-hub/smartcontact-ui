@@ -58,6 +58,7 @@ interface VisibleRow {
 /** Anchos de la tabla compacta (el panel rápido). Los usa también el panel para medirse (DD-131). */
 export const CHANNEL_COL_COMPACT = '5rem';
 export const ACTIONS_COL_COMPACT = '2.5rem';
+export const LEVEL_COL_REM = 9;
 
 /**
  * Editor de los agentes de un grupo, dentro de su ficha — el gemelo de
@@ -147,17 +148,13 @@ export class AgentChannelTableComponent {
           cellTemplate: this.agentTpl(),
         },
         /* Con la estrategia Niveles, el nivel de cada agente va en su fila: donde ya se decide quién atiende qué. */
-        ...(this.showLevel()
-          ? [
-              {
-                field: 'level',
-                header: this.translate.instant('groups.form.assigned.col_level'),
-                width: '6.5rem',
-                cellTemplate: this.levelTpl(),
-                stopRowClick: true,
-              },
-            ]
-          : []),
+        ...this.levelFamilies().map((family) => ({
+          field: `level-${family}`,
+          header: this.translate.instant('groups.form.assigned.col_level', { channel: this.translate.instant(FAMILY_LABEL_KEYS[family]) }),
+          width: `${LEVEL_COL_REM}rem`,
+          cellTemplate: this.levelTpl(),
+          stopRowClick: true,
+        })),
         /* 6.5rem: lo midió «Web Chat», que a 5.5 partía en dos líneas y subía la cabecera entera
          * (visto a 1440 el 2026-09-26); desde DD-147 la más larga es «Teléfono», que también cabe.
          * Compacta, 5rem: con el relleno de celda de la tabla pequeña (8 a cada lado, no 14) le
@@ -190,8 +187,8 @@ export class AgentChannelTableComponent {
   readonly availableAgents =
     input.required<readonly AgentChannelTableAgent[]>();
   readonly groupId = input.required<number>();
-  /** Enseña la columna Nivel (estrategia de teléfono Niveles). */
-  readonly showLevel = input(false);
+  /** Una columna identificada por cada familia con estrategia Niveles. */
+  readonly levelFamilies = input<readonly ('phone' | 'chat')[]>([]);
   /**
    * Elegir filas para actuar en lote. Apagado en el panel rápido del listado: su barra de lote es
    * `position: fixed` y quedaría DEBAJO de la máscara del panel (z-index 1050 frente a 1060).
@@ -207,6 +204,14 @@ export class AgentChannelTableComponent {
    * atiende, y la columna solo eran casillas bloqueadas (DD-131).
    */
   readonly channelColumns = input(true);
+
+  /** Reserva el nombre antes de sumar niveles y canales: la tabla desplaza dentro de su caja,
+   * sin colapsar la identidad del agente cuando el rail estrecha la ficha. */
+  protected readonly tableMinWidth = computed(() => {
+    if (this.levelFamilies().length === 0) return undefined;
+    const channels = this.channelColumns() ? this.families().length : 0;
+    return `${15 + this.levelFamilies().length * LEVEL_COL_REM + channels * (this.compact() ? 5 : 6.5) + (this.compact() ? 2.5 : 3.5) + (this.selectable() ? 3 : 0)}rem`;
+  });
 
   readonly linksChange = output<readonly GroupAgentLink[]>();
 
@@ -314,7 +319,7 @@ export class AgentChannelTableComponent {
     const current = new Set(this.links().map((l) => l.agentId));
     const added: GroupAgentLink[] = [...next]
       .filter((agentId) => !current.has(agentId))
-      .map((agentId) => newLinkFor({ agentId, groupId: this.groupId(), groupChannels: [...this.groupChannels()], level: 1 }));
+      .map((agentId) => newLinkFor({ agentId, groupId: this.groupId(), groupChannels: [...this.groupChannels()] }));
     this.linksChange.emit([...this.links().filter((l) => next.has(l.agentId)), ...added]);
     this.selectedIds.update((prev) => new Set([...prev].filter((id) => next.has(id))));
   }
@@ -338,10 +343,16 @@ export class AgentChannelTableComponent {
   }
 
   protected readonly levelOptions = LEVEL_OPTIONS;
+  protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
 
-  protected setLevel(agentId: number, value: unknown): void {
-    if (typeof value !== 'number') return;
-    this.linksChange.emit(this.links().map((l) => (l.agentId === agentId ? { ...l, level: value } : l)));
+  protected setLevel(agentId: number, field: string, value: unknown): void {
+    if (typeof value !== 'number' || !LEVEL_OPTIONS.includes(value)) return;
+    const family = this.levelFamily(field);
+    this.linksChange.emit(this.links().map((l) => (l.agentId === agentId ? { ...l, levels: { ...l.levels, [family]: value } } : l)));
+  }
+
+  protected levelFamily(field: string): 'phone' | 'chat' {
+    return field === 'level-chat' ? 'chat' : 'phone';
   }
 
   // -- helpers -------------------------------------------------------

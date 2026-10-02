@@ -69,3 +69,44 @@ test('Chat normaliza y guarda Dentro de cada nivel; Contact Center excluye Nivel
     await page.keyboard.press('Escape');
   }
 });
+
+for (const theme of ['light', 'dark']) {
+  for (const width of [1024, 1440]) {
+    test(`columnas y ancho con ambos niveles: ${theme} ${width}`, async ({ page }) => {
+      await seed(page);
+      await page.addInitScript((theme) => localStorage.setItem('sc-theme', theme), theme);
+      await page.setViewportSize({ width, height: 900 });
+      await goto(page, 'admin/grupos/editar/11?seccion=agentes');
+      const table = page.locator('sc-agent-channel-table');
+      for (const panel of [false, true]) {
+        if (panel) {
+          await goto(page, 'admin/grupos');
+          await page.getByRole('button', { name: 'Asignar agentes de Niveles independientes' }).click();
+        }
+        await page.evaluate(() => document.fonts.ready);
+        for (const family of ['Teléfono', 'Chat']) await expect(level(page, family)).toBeVisible();
+        const geometry = await table.evaluate((el) => {
+          const rect = el.getBoundingClientRect();
+          return { left: rect.left, right: rect.right, overflow: el.scrollWidth - el.clientWidth,
+            cells: [...el.querySelectorAll('tbody tr')].map((row) => row.children.length),
+            nameWidth: el.querySelector('.assign__name')!.closest('td')!.getBoundingClientRect().width,
+            headers: el.querySelectorAll('thead th').length };
+        });
+        expect(geometry.nameWidth, 'el nombre no colapsa bajo las columnas de nivel').toBeGreaterThanOrEqual(180);
+        expect(geometry.left).toBeGreaterThanOrEqual(0);
+        expect(geometry.right).toBeLessThanOrEqual(width);
+        expect(geometry.overflow).toBeLessThanOrEqual(1);
+        expect(geometry.cells.every((n) => n === geometry.headers)).toBe(true);
+        await page.screenshot({ path: `/tmp/e1b-visual-${theme}-${width}-${panel ? 'panel' : 'ficha'}.png` });
+      }
+    });
+  }
+}
+
+test('la fila vacía abarca las columnas de ambas familias y selección', async ({ page }) => {
+  await seed(page);
+  await goto(page, 'admin/grupos/editar/11?seccion=agentes');
+  await page.locator('sc-agent-channel-table sc-search input').fill('Sin coincidencias');
+  const table = page.locator('sc-agent-channel-table');
+  await expect(table.locator('tbody td[colspan]')).toHaveAttribute('colspan', String(await table.locator('thead th').count()));
+});
