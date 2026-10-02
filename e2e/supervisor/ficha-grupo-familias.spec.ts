@@ -111,7 +111,7 @@ test('quitar Chat entero pregunta, y lo nombra como familia', async ({ page }) =
   await expect(dialogo).toContainText(/agentes de este grupo pierden Chat[,.]/);
   await expect(dialogo).not.toContainText('Web Chat');
   await dialogo.getByRole('button', { name: 'Sí, quitar' }).click();
-  await expect(page.getByText('Grupo \"Online Support\" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo "Online Support" actualizado')).toBeVisible();
   const guardados = (await enlacesGuardados(page)).filter((l) => l.groupId === 11);
   expect(guardados.length).toBeGreaterThan(0);
   expect(guardados.every((l) => l.channels.length > 0 && !l.channels.includes('chat') && !l.channels.includes('whatsapp'))).toBe(true);
