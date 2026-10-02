@@ -28,6 +28,7 @@
       [filter]="true"
       filterBy="name"
       [options]="pickerCandidates()"
+      optionDisabled="disabled"
       [placeholder]="'agents.form.assigned.add_placeholder' | translate"
       [value]="addPick()"
       (valueChange)="onAddPick($event)"
@@ -71,8 +72,8 @@
   @if (offers(row.group, col.field)) {
     <sc-checkbox
       [state]="hasChannel(row.link, col.field) ? 'all' : 'none'"
-      [disabled]="!row.link.active"
-      [ariaLabel]="row.group.name + ' — ' + col.header"
+      [disabled]="!row.link.active || !allowedChannels().includes($any(col.field))"
+      [ariaLabel]="allowedChannels().includes($any(col.field)) ? row.group.name + ' — ' + col.header : ('groups.form.assigned.not_allowed' | translate: { name: row.group.name, channel: col.header })"
       (cycle)="toggleChannel(row.group.id, col.field)"
     />
   } @else {

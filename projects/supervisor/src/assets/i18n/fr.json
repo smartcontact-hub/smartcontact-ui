@@ -1545,6 +1545,10 @@
         "col_agent": "Agent",
         "col_active": "Activé",
         "active_aria": "Activé dans ce groupe : {{name}}",
+        "incompatible": "Aucun canal compatible",
+        "not_allowed": "{{name}} — {{channel}} : non autorisé dans les permissions de l’agent",
+        "not_allowed_hint": "{{channel}} n’est pas autorisé pour cet agent. Vérifiez ses permissions.",
+        "permissions_link": "Vérifier les permissions de {{name}} pour {{channel}}",
         "toggle_all_channel": "Activer/désactiver {{channel}} sur tous les visibles",
         "remove_aria": "Retirer {{name}} du groupe",
         "warn_no_channels": "Activé, mais sans canal assigné",
@@ -1922,6 +1926,12 @@
         "filter_placeholder": "Rechercher un groupe…",
         "no_results": "Aucun groupe assigné ne correspond au filtre.",
         "channel_not_offered": "Ce groupe ne propose pas ce canal"
+      },
+      "allowed": {
+        "title": "Canaux autorisés",
+        "remove_title": "Retirer des canaux autorisés",
+        "remove_body": "Ces canaux seront retirés des groupes : {{groups}}. Les affectations et leurs niveaux sont conservés, même si une affectation reste sans canal.",
+        "remove_accept": "Sauvegarder les modifications"
       },
       "permissions": {
         "manage_devices": "Gestion d'appareils",

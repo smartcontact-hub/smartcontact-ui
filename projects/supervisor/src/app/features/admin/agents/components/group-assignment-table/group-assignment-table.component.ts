@@ -35,7 +35,7 @@ import {
   Channel,
   GroupAgentLink,
 } from '@features/admin/services/group-agent-links.types';
-import { familiesOf, newLinkFor, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
+import { clampLinksToChannels, familiesOf, newLinkFor, permittedFamilies, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
 
 /** Lightweight group reference accepted by this table. */
 export interface AgentGroupAssignmentRef {
@@ -149,6 +149,7 @@ export class GroupAssignmentTableComponent {
   readonly availableGroups =
     input.required<readonly AgentGroupAssignmentRef[]>();
   readonly agentId = input.required<number>();
+  readonly allowedChannels = input<readonly Channel[]>(CHANNEL_FAMILIES);
   readonly linksChange = output<readonly GroupAgentLink[]>();
 
   protected readonly trashIcon = 'delete';
@@ -170,7 +171,7 @@ export class GroupAssignmentTableComponent {
     return this.links()
       .map((link) => {
         const group = map.get(link.groupId);
-        return group ? { link, group } : null;
+        return group ? { link: clampLinksToChannels([link], group.channels, () => this.allowedChannels())[0], group } : null;
       })
       .filter((r): r is VisibleRow => r !== null);
   });
@@ -184,8 +185,12 @@ export class GroupAssignmentTableComponent {
 
   /** Los grupos que aún se pueden añadir (el desplegable filtra por su cuenta). */
   protected readonly pickerCandidates = computed<readonly AgentGroupAssignmentRef[]>(() => {
+    this.currentLang();
     const used = new Set(this.links().map((l) => l.groupId));
-    return this.availableGroups().filter((g) => !used.has(g.id));
+    return this.availableGroups().filter((g) => !used.has(g.id)).map(group => {
+      const disabled = permittedFamilies(group.channels, this.allowedChannels()).length === 0;
+      return { ...group, disabled, name: disabled ? `${group.name} — ${this.translate.instant('groups.form.assigned.incompatible')}` : group.name };
+    });
   });
 
   protected hasChannel(link: GroupAgentLink, channel: string): boolean {
@@ -200,9 +205,9 @@ export class GroupAssignmentTableComponent {
   // -- mutations --
 
   protected addGroup(group: AgentGroupAssignmentRef): void {
-    if (this.links().some((l) => l.groupId === group.id)) return;
+    if (this.links().some((l) => l.groupId === group.id) || !permittedFamilies(group.channels, this.allowedChannels()).length) return;
     // Un enlace nuevo lleva todos los canales que ofrece el grupo, habilitado y sin nivel.
-    const link: GroupAgentLink = newLinkFor({ agentId: this.agentId(), groupId: group.id, groupChannels: group.channels });
+    const link: GroupAgentLink = newLinkFor({ agentId: this.agentId(), groupId: group.id, groupChannels: group.channels, allowedChannels: this.allowedChannels() });
     this.linksChange.emit([...this.links(), link]);
   }
 
@@ -212,6 +217,7 @@ export class GroupAssignmentTableComponent {
 
   protected toggleChannel(groupId: number, field: string): void {
     const channel = field as Channel;
+    if (!this.allowedChannels().includes(channel)) return;
     this.linksChange.emit(this.links().map((l) => (l.groupId === groupId ? toggleLinkChannel(l, channel) : l)));
   }
 

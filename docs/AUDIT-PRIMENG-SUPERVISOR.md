@@ -135,7 +135,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-checkbox` · 39 usos · —
+### `sc-checkbox` · 42 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -147,7 +147,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-divider` · 36 usos · primeng/divider
+### `sc-divider` · 38 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
 

@@ -701,6 +701,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       name: a.name,
       photo: a.photo,
       presenceStatus: a.presenceStatus,
+      allowedChannels: a.allowedChannels,
     })),
   );
 
@@ -737,7 +738,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
      * (datos de antes: en el seed, un Web Chat en un grupo solo de Teléfono). Sin recortarlo al leer, ese
      * canal fantasma revivía en cuanto el grupo volvía a ofrecerlo, y la confirmación de quitar canales
      * contaba mal a quién saca del grupo. */
-    const seedLinks = clampLinksToChannels(this.linksStore.linksForGroup(group.id), group.channels);
+    const seedLinks = clampLinksToChannels(this.linksStore.linksForGroup(group.id), group.channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels);
     // La única vía de lectura: lo que el grupo no guardó sale de su juego de antes o de fábrica.
     const g = resolveGroup(group);
     this.form.set({
@@ -978,7 +979,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) => {
       const next = toggleGroupChannel(f.channels, channel);
       // Los canales de cada agente se recortan a los que ofrece ahora el grupo.
-      return { ...f, channels: next, links: clampLinksToChannels(f.links, next) };
+      return { ...f, channels: next, links: clampLinksToChannels(f.links, next, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels) };
     });
   }
 
@@ -986,7 +987,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected toggleChatFamily(): void {
     this.form.update((f) => {
       const next = toggleChatFamily(f.channels) as Set<GroupChannel>;
-      return { ...f, channels: next, links: clampLinksToChannels(f.links, next) };
+      return { ...f, channels: next, links: clampLinksToChannels(f.links, next, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels) };
     });
   }
 
@@ -1290,6 +1291,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     links: readonly GroupAgentLink[],
     groupId: number,
   ): readonly GroupAgentLink[] {
-    return links.map((l) => (l.groupId === groupId ? l : { ...l, groupId }));
+    return clampLinksToChannels(links, this.form().channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels)
+      .map((l) => (l.groupId === groupId ? l : { ...l, groupId }));
   }
 }

@@ -1,3 +1,4 @@
+import type { Channel } from '@features/admin/services/group-agent-links.types';
 import type { LabelColor } from '@shared/components';
 import { juegoDeDatos } from '@core/services/juego-de-datos';
 
@@ -128,6 +129,7 @@ export const PERMISSION_MATRIX_KEYS: Readonly<Record<DestinoKey, Record<DestinoC
 /** Con lo que nace un agente nuevo, y lo que fija Contact Center › Agentes (DD-135): sus permisos y la URL de su
  *  iframe. Lo demás (nombre, extensión, grupos…) es de cada agente. */
 export interface AgentDefaults {
+  readonly allowedChannels: readonly Channel[];
   readonly permissions: AgentPermissions;
   readonly iframeUrl: string;
 }
@@ -136,6 +138,7 @@ export interface AgentDefaults {
  *  todo menos la numeración especial, gestión de dispositivos, activación por grupo y dispositivos externos. La
  *  grabación, apagada: el documento no la cuenta entre ellos. */
 export const FACTORY_AGENT_DEFAULTS: AgentDefaults = {
+  allowedChannels: ['phone', 'chat', 'email'],
   permissions: {
     manageDevices: true,
     selfActivate: true,
@@ -162,9 +165,11 @@ export const FACTORY_AGENT_DEFAULTS: AgentDefaults = {
  *
  * Per-(agent, group) channel permissions live in `GroupAgentLinksStore`
  * since DD#54. To get an agent's effective channels, query the store for
- * its links and union the active ones.
+ * its links, intersect with offered and permitted families, and union the active ones.
  */
 export interface Agent {
+  /** Ausente en datos antiguos: las tres familias. Vacío: ninguna (DD-150). */
+  readonly allowedChannels?: readonly Channel[];
   readonly id: number;
   readonly code: string;
   readonly name: string;
@@ -573,5 +578,5 @@ function demoEmail(name: string): string {
 
 export const AGENTS_SEED: readonly Agent[] = [
   ...BASE_AGENTS.map((a) => ({ ...a, email: demoEmail(a.name) })),
-  ...GENERATED_AGENTS.map((a) => ({ ...a, email: demoEmail(a.name) })),
+  ...GENERATED_AGENTS.map((a) => ({ ...a, email: demoEmail(a.name), ...(a.id === 499 || a.id === 500 ? { allowedChannels: ['chat'] as const } : {}) })),
 ];

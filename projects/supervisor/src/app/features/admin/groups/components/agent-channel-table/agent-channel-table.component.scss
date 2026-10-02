@@ -126,3 +126,14 @@
   flex: 0 1 auto;
   min-height: 0;
 }
+
+.assign__permission {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+
+  a {
+    display: inline-flex;
+    color: var(--sc-text-primary);
+  }
+}

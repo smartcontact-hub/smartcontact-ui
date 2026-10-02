@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Canales permitidos del agente; intersección con grupo y enlace, aviso al retirar y compatibilidad en los selectores | DD-150 |
 > | Habilitación por grupo separada de la presencia y de la cuenta; etiqueta compartida y recuento de habilitados en reglas | DD-149 |
 > | Niveles 1–10 independientes de Teléfono y Chat; migración sin subir versión, prevalece el nivel nuevo; subestrategia de Chat y columnas por familia | DD-148 |
 > | Asignación de agentes por tres familias; Chat engloba Web Chat y WhatsApp, con normalización sin borrar datos | DD-147 |
@@ -110,6 +111,31 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-150 · 2026-10-02 — Canales permitidos del agente (E3)
+
+**Contexto.** Un enlace con un grupo no concede a la persona todos sus canales. La tabla, el panel, el listado y
+el resumen deben expresar el mismo conjunto efectivo: enlace ∩ familias del grupo ∩ permisos del agente.
+
+**Decisión.** `Agent.allowedChannels` contiene Teléfono, Chat y Email. Ausente conserva las tres familias; vacío
+significa ninguna. Se edita en Permisos del agente y en Contact Center › Agentes, cuyos valores hereda el alta.
+No se recupera el campo retirado `Agent.channels` ni se suben versiones de almacén. Web Chat y WhatsApp siguen
+perteneciendo a Chat (DD-147). Dos agentes concretos de la semilla, 499 y 500, tienen solo Chat, después de generar
+sus datos; no se modifica el molde que comparten los demás.
+
+Al guardar una retirada, el diálogo enumera los grupos afectados. Cancelar conserva la persistencia; confirmar
+recorta solo los canales y conserva asignaciones, habilitación y niveles, incluso si un enlace queda vacío. La
+tabla ya distingue esos enlaces heredados con «Sin canales». Los controles no autorizados están apagados y el
+candado enlaza a los permisos con su motivo. No se puede crear una asignación sin ninguna familia compatible.
+Los selectores usan `optionDisabled` nativo, con la razón en la etiqueta de la opción.
+
+**Razón.** La misma función pura recorta los enlaces en lectura y guardado sin clonar los que no cambian. Los
+almacenes no se acoplan entre sí: sus consumidores pasan los permisos de la persona. La ficha conserva el aviso
+antes de persistir, y la vista calcula lo efectivo sin inventar permisos al abrir datos anteriores.
+
+**Descartadas.** Borrar la asignación al retirar su último canal perdería habilitación y niveles. Subir la versión
+borraría datos existentes. Filtrar las opciones incompatibles sin mostrarlas escondería por qué no se puede
+asignar. Modificar las bases de la semilla extendería la restricción a decenas de agentes generados.
 
 ## DD-149 · 2026-10-02 — Habilitación por grupo y presencia del agente (E2)
 
