@@ -9,12 +9,17 @@
  * ser el padre de Web Chat y WhatsApp, y un agente asignado no se queda sin canales. Por eso nacen
  * aquí, puras, y las prueba `scripts/__tests__/group-channels.test.mjs` dentro de `verify`.
  *
- * LAS CLAVES NO CAMBIAN: `chat` sigue siendo Web Chat y `whatsapp` su hermano en los datos. «Chat»
- * como padre es un concepto de la vista y de la validación, así que no hay datos que migrar.
+ * EN EL GRUPO, `chat` es Web Chat y `whatsapp` su hermano: el grupo ofrece los cuatro, y WhatsApp tiene su número y
+ * su «Salida». EN EL ENLACE DE UN AGENTE, desde DD-147, `chat` es la FAMILIA Chat (Web Chat y WhatsApp): el agente
+ * atiende Teléfono, Chat o Email, como en el AED en vivo. Lo guardado antes con `whatsapp` se lee como `chat`
+ * (`linkWithFamilies`, en el almacén de enlaces), sin subir versión.
  */
 
 /** El orden canónico: dos listas con los mismos canales se serializan igual (comparar enlaces). */
 export const CHANNEL_ORDER = Object.freeze(['phone', 'chat', 'whatsapp', 'email']);
+
+/** Las familias por las que atiende un agente, en su orden (DD-147). */
+export const FAMILY_ORDER = Object.freeze(['phone', 'chat', 'email']);
 
 /** Los subcanales de Chat: `chat` es Web Chat. */
 export const CHAT_SUBCHANNELS = Object.freeze(['chat', 'whatsapp']);
@@ -49,6 +54,44 @@ export function hasChatFamily(channels) {
 }
 
 /**
+ * Lo que ofrece un grupo, dicho en familias y en su orden: con Web Chat, WhatsApp o los dos, ofrece Chat. Son las
+ * columnas de la tabla de agentes y lo que un agente puede atender en él (DD-147).
+ * @param {Iterable<string>} channels
+ * @returns {('phone' | 'chat' | 'email')[]}
+ */
+export function familiesOf(channels) {
+  const set = new Set();
+  for (const c of channels) set.add(familyOf(c));
+  return /** @type {('phone' | 'chat' | 'email')[]} */ (FAMILY_ORDER.filter((f) => set.has(f)));
+}
+
+/**
+ * Un enlace con sus canales en familias: lo guardado antes de DD-147 con `whatsapp` se lee con `chat`, y Web Chat y
+ * WhatsApp a la vez son un solo Chat. Devuelve el MISMO objeto si ya estaba al día, para que leer no invente cambios.
+ * Es el `normalize` del almacén de enlaces.
+ * @template {{ channels: readonly string[] }} L
+ * @param {L} link
+ * @returns {L}
+ */
+export function linkWithFamilies(link) {
+  const channels = familiesOf(link.channels);
+  const same = channels.length === link.channels.length && channels.every((c, i) => c === link.channels[i]);
+  return same ? link : { ...link, channels };
+}
+
+/**
+ * Las familias que un grupo deja de ofrecer al cambiar sus canales: quitar WhatsApp con Web Chat puesto no quita
+ * Chat, y a nadie se le quita nada.
+ * @param {Iterable<string>} before
+ * @param {Iterable<string>} after
+ * @returns {('phone' | 'chat' | 'email')[]}
+ */
+export function removedFamilies(before, after) {
+  const remaining = new Set(familiesOf(after));
+  return familiesOf(before).filter((f) => !remaining.has(f));
+}
+
+/**
  * Pone o quita UN canal del grupo (el conmutador de siempre).
  * @param {Iterable<string>} channels
  * @param {string} channel
@@ -79,17 +122,17 @@ export function toggleChatFamily(channels) {
 }
 
 /**
- * Recorta los canales de cada enlace a los que ofrece el grupo. Devuelve el MISMO objeto cuando no
- * cambia nada, para que la detección de cambios no vea diferencias falsas.
+ * Recorta los canales de cada enlace a las familias que ofrece el grupo: en uno solo de WhatsApp, el agente conserva
+ * su Chat. Devuelve el MISMO objeto cuando no cambia nada, para que la detección de cambios no vea diferencias falsas.
  * @template {{ channels: readonly string[] }} L
  * @param {readonly L[]} links
  * @param {Iterable<string>} groupChannels
  * @returns {L[]}
  */
 export function clampLinksToChannels(links, groupChannels) {
-  const allowed = new Set(groupChannels);
+  const allowed = new Set(familiesOf(groupChannels));
   return links.map((l) => {
-    const filtered = l.channels.filter((c) => allowed.has(c));
+    const filtered = l.channels.filter((c) => allowed.has(familyOf(c)));
     return filtered.length === l.channels.length ? l : { ...l, channels: filtered };
   });
 }
@@ -121,18 +164,18 @@ export function toggleLinkChannel(link, channel, options = {}) {
 }
 
 /**
- * Un enlace nuevo: con TODOS los canales que ofrece el grupo, habilitado. El nivel solo se pone si se
+ * Un enlace nuevo: con TODAS las familias que ofrece el grupo, habilitado. El nivel solo se pone si se
  * pide (la tabla del grupo lo pone a 1; la del agente, no).
  * @param {{ agentId: number, groupId: number, groupChannels: readonly string[], level?: number }} input
  */
 export function newLinkFor({ agentId, groupId, groupChannels, level }) {
-  const link = { agentId, groupId, channels: canonicalizeChannels(groupChannels), active: true };
+  const link = { agentId, groupId, channels: familiesOf(groupChannels), active: true };
   return level === undefined ? link : { ...link, level };
 }
 
 /**
- * Qué pasa con los agentes si se quitan canales del grupo: cuántos pierden alguno y cuántos se
- * quedarían sin ninguno.
+ * Qué pasa con los agentes si el grupo deja de ofrecer unas familias (`removedFamilies`): cuántos pierden
+ * alguna y cuántos se quedarían sin ninguna.
  * @param {readonly { channels: readonly string[] }[]} links
  * @param {Iterable<string>} removedChannels
  * @returns {{ affected: number, orphaned: number }}

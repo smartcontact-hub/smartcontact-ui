@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Asignación de agentes por tres familias; Chat engloba Web Chat y WhatsApp, con normalización sin borrar datos | DD-147 |
 > | El resumen de la ficha de grupo lleva a su sección: el rótulo de cada tarjeta, a su sección, y cada fila, a su sitio en ella (el bloque del canal, el campo del número) · enlaces de verdad, en el primario, con manita y subrayado al pasar · la tarjeta no se pulsa entera · en el alta, como el índice (enmienda DD-126 §5) | DD-146 |
 > | El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (`sc-nombre-fijo`), en su sitio a partir de 1340 y al quedar fija por debajo · la cabecera sigue siendo el `h1` y el sitio donde se edita el nombre · las anclas, apartadas `--sc-form-anchor-offset` · borrar pide escribir el nombre, con su prueba (enmienda DD-144) | DD-145 |
 > | Las fichas en tres columnas que arrancan a la misma altura (índice, contenido y resumen): el título va en la columna del contenido · el resumen, sin rótulo a la vista (la región conserva su nombre) · «Eliminar», bajo el índice · por debajo de 1340, como estaba · una rejilla con áreas, sin mover nada en el DOM (enmienda DD-121 §2 y DD-122 §8) | DD-144 |
@@ -105,6 +106,40 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-147 · 2026-10-02 — El agente atiende por familias: Teléfono, Chat y Email (E1a)
+
+**Por qué.** La revisión de producto del 2026-10-01 distingue la oferta del grupo de lo que atiende un agente.
+Web Chat y WhatsApp comparten la asignación Chat; separarlos duplicaba columnas y podía quitarle Chat a un agente
+cuando el grupo todavía lo ofrecía por el otro subcanal. Enmienda la asignación por cuatro canales de DD-121.
+
+**Decisión.**
+- El grupo conserva `phone`, `chat` (Web Chat), `whatsapp` y `email`, con sus ajustes y sus números separados.
+  `GroupAgentLink.channels` guarda las familias `phone`, `chat`, `email`; sus etiquetas viven en `FAMILY_LABEL_KEYS`.
+- `linkWithFamilies`, en el `normalize` del almacén, convierte `whatsapp` en `chat`, elimina duplicados y ordena
+  canónicamente. Devuelve el mismo objeto si ya estaba normalizado. La versión de almacenamiento sigue en 1;
+  lo siguiente que se guarda ya lleva familias y conserva el resto de propiedades, incluido el nivel anterior.
+- `familiesOf`, `removedFamilies`, el recorte de enlaces y las altas usan familias. Un grupo solo de WhatsApp ofrece
+  Chat. Quitar un subcanal mientras queda el otro no quita Chat ni pide cascada; quitar ambos calcula el impacto
+  y el aviso nombra Chat. Al confirmar, salen los enlaces que quedan sin ninguna familia.
+- Tabla del grupo, panel rápido, tabla de grupos del agente, resumen y listado usan las mismas tres familias.
+  El resumen del agente, como su listado, solo cuenta las que sus grupos ofrecen y cuyos enlaces están activos.
+  Reparto y Salida conservan su significado: el número de WhatsApp sigue siendo independiente.
+- El panel cuenta familias para decidir sus columnas y ancho: 448 px con una sola, 476 con dos y 556 con tres,
+  sin columna Nivel. Conserva la excepción de DD-131 si llega un enlace sin familia. La columna Canales del listado
+  mide 6.25rem: tres glifos ocupan 69 px, dentro de una celda de 100 px. Su mínimo de tabla pasa a 97.75rem.
+
+**Comprobación.** `group-channel-families.test.mjs` cubre normalización e identidad, orden, altas, recorte e impacto.
+`ficha-grupo-familias.spec.ts` cubre las tres columnas, lectura y escritura de enlaces v1, cascada, grupos solo
+WhatsApp, anchos del panel, resumen y listado. Las pruebas de canales, panel, widget y pase de fichas dejan de
+esperar cuatro columnas o un WhatsApp vacío: los avisos se prueban con una familia sin agentes explícita.
+Revisión de agrupación en las diez vistas de las dos fichas y el listado; capturas a 1024 y 1440, en claro y oscuro.
+
+**Descartadas.** Subir la versión borraría asignaciones guardadas. Eliminar WhatsApp del grupo perdería sus ajustes
+y su salida. Mantener cuatro columnas de agente contradice la asignación por familia. Los niveles 1–10 por familia
+son E1b: este cambio conserva `level` y las estrategias existentes; no introduce `levels.phone/chat`.
 
 ---
 

@@ -56,7 +56,8 @@ import { LabelsStore } from '@features/admin/labels/state/labels.store';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { canonicalizeChannels, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
-import { CHANNEL_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
+import { clampLinksToChannels } from '@features/admin/services/group-channels.core.mjs';
+import { FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import {
   Template,
@@ -501,8 +502,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly summaryFacts = computed(() => {
     this.currentLang();
     const f = this.form();
-    const canales = canonicalizeChannels(f.links.filter((l) => l.active).flatMap((l) => l.channels));
-    const etiquetas: Readonly<Record<string, string>> = CHANNEL_LABEL_KEYS;
+    const grupos = new Map(this.availableGroups().map((g) => [g.id, g.channels]));
+    const canales = canonicalizeChannels(f.links.filter((l) => l.active).flatMap((l) =>
+      clampLinksToChannels([l], grupos.get(l.groupId) ?? [])[0].channels,
+    ));
+    // Familias (DD-147): «Chat» es Web Chat y WhatsApp.
+    const etiquetas: Readonly<Record<string, string>> = FAMILY_LABEL_KEYS;
     return [
       {
         icono: 'forum',
