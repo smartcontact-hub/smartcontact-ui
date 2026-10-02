@@ -1541,10 +1541,10 @@
         "agents_hint": "Quién atiende y por qué canales"
       },
       "assigned": {
-        "query_placeholder": "Buscar agente…",
+        "query_placeholder": "Buscar por nombre o email…",
         "empty_title": "Sin agentes asignados",
         "empty": "Elígelos en «Añadir agentes», arriba a la derecha.",
-        "no_results": "Ningún agente asignado coincide con el filtro.",
+        "no_results": "No hay agentes que coincidan con el filtro.",
         "col_agent": "Agente",
         "col_active": "Habilitado",
         "active_aria": "Habilitado en este grupo: {{name}}",
@@ -1562,8 +1562,22 @@
         "col_level": "Nivel · {{channel}}",
         "level_aria": "Nivel de {{name}} — {{channel}}",
         "paused": "Deshabilitado",
-        "last_channel_hint": "Tiene que atender al menos un canal. Para sacarle del grupo, pulsa la papelera de su fila.",
-        "last_channel_aria": "{{name}} — {{channel}}: único canal; para sacarle del grupo, pulsa la papelera de su fila"
+        "last_channel_hint": "Debe atender al menos un canal. Para quitarlo del grupo, desmarca Asignado.",
+        "last_channel_aria": "{{name}} — {{channel}}: único canal; para quitarlo del grupo, desmarca Asignado",
+        "assignment": "Asignado",
+        "filter_all": "Todos",
+        "filter_assigned": "Asignados",
+        "filter_unassigned": "Sin asignar",
+        "filter_label": "Filtrar por asignación",
+        "column_all": "Cambiar {{column}} en los resultados filtrados",
+        "bulk_title": "Confirmar cambios colectivos",
+        "bulk_body": "{{action}}: {{count}} agentes.",
+        "bulk_add": "Asignar al grupo",
+        "bulk_remove": "Quitar del grupo",
+        "bulk_channel_add": "Activar {{channel}}",
+        "bulk_channel_remove": "Quitar {{channel}}",
+        "bulk_done": "Se han actualizado {{count}} agentes.",
+        "bulk_confirm": "Confirmar"
       },
       "fields": {
         "name": "Nombre",

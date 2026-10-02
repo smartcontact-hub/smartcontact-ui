@@ -256,7 +256,8 @@ const PAGINAS_EN_FORMULARIO = [
      * 69 → 50 el 2026-09-13 con Aura, igual que su gemelo. 50 → 46 el 2026-09-14: el
      * chip de canal (`_channel-chip.scss`, borrado) pasa a una columna por canal con
      * `sc-checkbox`, y los dos gemelos siguen midiendo lo mismo. */
-    altoFila: 46,
+    // DD-151: nombre y email ocupan dos líneas. El relleno sigue siendo el del DS.
+    altoFila: 55,
   },
 ] as const;
 

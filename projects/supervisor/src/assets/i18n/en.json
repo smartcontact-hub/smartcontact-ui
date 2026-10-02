@@ -1538,10 +1538,10 @@
         "agents_hint": "Who handles it and through which channels"
       },
       "assigned": {
-        "query_placeholder": "Search agent…",
+        "query_placeholder": "Search by name or email…",
         "empty_title": "No assigned agents",
         "empty": "Pick them in \"Add agents\", top right.",
-        "no_results": "No assigned agents match the filter.",
+        "no_results": "No agents match the filter.",
         "col_agent": "Agent",
         "col_active": "Enabled",
         "active_aria": "Enabled in this group: {{name}}",
@@ -1559,8 +1559,22 @@
         "col_level": "Level · {{channel}}",
         "level_aria": "Level for {{name}} — {{channel}}",
         "paused": "Disabled",
-        "last_channel_hint": "They must handle at least one channel. To take them out of the group, click the bin in their row.",
-        "last_channel_aria": "{{name}} — {{channel}}: only channel; to take them out of the group, click the bin in their row"
+        "last_channel_hint": "At least one channel is required. Uncheck Assigned to remove the agent from the group.",
+        "last_channel_aria": "{{name}} — {{channel}}: only channel; uncheck Assigned to remove from the group",
+        "assignment": "Assigned",
+        "filter_all": "All",
+        "filter_assigned": "Assigned",
+        "filter_unassigned": "Unassigned",
+        "filter_label": "Filter by assignment",
+        "column_all": "Change {{column}} in filtered results",
+        "bulk_title": "Confirm bulk changes",
+        "bulk_body": "{{action}}: {{count}} agents.",
+        "bulk_add": "Assign to group",
+        "bulk_remove": "Remove from group",
+        "bulk_channel_add": "Enable {{channel}}",
+        "bulk_channel_remove": "Remove {{channel}}",
+        "bulk_done": "Updated {{count}} agents.",
+        "bulk_confirm": "Confirm"
       },
       "fields": {
         "name": "Name",

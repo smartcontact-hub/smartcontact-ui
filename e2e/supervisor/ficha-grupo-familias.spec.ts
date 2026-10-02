@@ -68,7 +68,7 @@ test('el panel rápido y la ficha del agente, con las mismas columnas', async ({
   await goto(page, 'admin/grupos');
   await page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' }).click();
   await columnas(page.locator('.agents-panel'));
-  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(684);
+  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(756);
 
   await goto(page, 'admin/agentes/editar/3?seccion=grupos');
   const tabla = page.locator('.assign');
@@ -130,7 +130,7 @@ test('el resumen lleva una barra por familia, y el listado de agentes dice «Cha
 });
 
 
-test('solo WhatsApp conserva Chat al guardar y el panel no añade una columna redundante', async ({ page }) => {
+test('solo WhatsApp conserva Chat al guardar y el panel conserva su columna para explicar compatibilidad', async ({ page }) => {
   await sembrarEnlaces(page, [{ agentId: 1, groupId: 11, channels: ['whatsapp'], active: true }]);
   await goto(page, 'admin/grupos/editar/11');
   for (const nombre of ['Teléfono', 'Web Chat', 'Email']) await canal(page, nombre).click();
@@ -144,8 +144,8 @@ test('solo WhatsApp conserva Chat al guardar y el panel no añade una columna re
   await page.getByRole('button', { name: 'Asignar agentes de Online Support' }).click();
   const panel = page.locator('.agents-panel');
   await expect(panel.locator('tbody tr')).toHaveCount(1);
-  await expect(panel.getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(0);
-  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(524);
+  await expect(panel.getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);
+  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(676);
 
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
   await expect(page.locator('.assign').getByRole('checkbox', { name: /Chat/ })).toBeChecked();

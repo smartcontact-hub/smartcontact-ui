@@ -2,23 +2,8 @@ import { expect, test, type Page } from '@playwright/test';
 
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
-/**
- * EL PANEL RÁPIDO DE AGENTES, desde el listado de grupos (visión de producto de grupos, 2026-09-25;
- * DD-121). Asignar y desasignar agentes es lo que más se hace con un grupo una vez creado, así que
- * está a un clic de la fila, con la MISMA tabla que la ficha.
- *
- * Lo que fija:
- *   1. «Agentes» abre el panel de ESA fila sin abrir la ficha, y dentro no se eligen filas (la barra
- *      de lote quedaría debajo de la máscara).
- *   2. Guardar dice cuántos AGENTES cambian, y al guardar la cifra de la fila se pone al día.
- *   3. Cerrar con cambios pregunta antes (con Cancelar y con Escape): el cierre de `p-drawer` no se
- *      puede vetar, así que lo gobierna el panel.
- *   4. El panel mide lo que lleva dentro (DD-131). Hasta el 2026-09-28 era un `52rem` fijo: 832 px con
- *      450 px entre un nombre y su primera casilla, filas de 46 px y, en los grupos de un canal, una
- *      columna entera de casillas grises. Las cifras de cada aserción son las medidas en ese cambio.
- *
- * Storage limpio por test → cada store de admin re-siembra su seed.
- */
+/** La tabla compartida usa Asignado y confirma cambios colectivos (DD-151).
+ * El panel conserva el borrador, el cierre con aviso y los permisos de canal. */
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -35,15 +20,15 @@ const panel = (page: Page) => page.locator('.agents-panel');
 const cifraDeAgentes = (page: Page, grupo: string) =>
   page.locator('tbody tr', { hasText: grupo }).locator('sc-group-popover').last();
 
-test('«Agentes» abre el panel de esa fila sin abrir la ficha, y dentro no se eligen filas', async ({ page }) => {
+test('«Agentes» abre el panel de esa fila sin abrir la ficha, y comparte la asignación desde la cabecera', async ({ page }) => {
   await goto(page, 'admin/grupos');
   await abrirPanel(page, 'Reclamaciones');
 
   await expect(page.getByText('Agentes · Reclamaciones')).toBeVisible();
   await expect(page).toHaveURL(/admin\/grupos$/);
-  // Las columnas son los canales del grupo, y no hay casilla de elegir filas.
+  // La cabecera cambia asignaciones, no selecciona filas para una barra aparte.
   await expect(panel(page).getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);
-  await expect(panel(page).locator('thead input[type=checkbox]')).toHaveCount(0);
+  await expect(panel(page).getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox')).toBeVisible();
   await expect(panel(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });
 
@@ -52,7 +37,7 @@ test('guardar dice cuántos agentes cambian, y la cifra de la fila se pone al d�
   const antes = Number((await cifraDeAgentes(page, 'ACD Demo C2CB').innerText()).trim());
   await abrirPanel(page, 'ACD Demo C2CB');
 
-  await panel(page).locator('tbody tr').first().getByRole('button', { name: /^Quitar a / }).click();
+  await panel(page).locator('tbody tr').first().getByRole('checkbox', { name: /^Asignado —/ }).click();
   await expect(panel(page).getByText('Sin guardar: 1')).toBeVisible();
   await panel(page).getByRole('button', { name: 'Guardar (1)' }).click();
 
@@ -65,7 +50,7 @@ test('cerrar con cambios pregunta antes, con Cancelar y con Escape, y descartar 
   await goto(page, 'admin/grupos');
   const antes = (await cifraDeAgentes(page, 'ACD Demo C2CB').innerText()).trim();
   await abrirPanel(page, 'ACD Demo C2CB');
-  await panel(page).locator('tbody tr').first().getByRole('button', { name: /^Quitar a / }).click();
+  await panel(page).locator('tbody tr').first().getByRole('checkbox', { name: /^Asignado —/ }).click();
 
   const aviso = page.getByRole('dialog', { name: '¿Descartar cambios?' });
   await panel(page).getByRole('button', { name: 'Cancelar' }).click();
@@ -91,7 +76,7 @@ const medidas = (page: Page) =>
   cajon(page).evaluate((drawer) => {
     const fila = drawer.querySelector('tbody tr');
     const nombre = fila?.querySelector('.assign__name');
-    const casilla = fila?.querySelector('sc-checkbox');
+    const casilla = fila?.querySelector('.assign__locked sc-checkbox, .assign__permission sc-checkbox');
     return {
       ancho: drawer.getBoundingClientRect().width,
       altoFila: fila ? fila.getBoundingClientRect().height : 0,
@@ -99,16 +84,13 @@ const medidas = (page: Page) =>
     };
   });
 
-test('un grupo de un solo canal no pinta columna de canal: el panel cabe en 33rem y no tiene casillas', async ({ page }) => {
+test('un grupo de un solo canal muestra compatibilidad, asignación y paginación en el panel de altura completa', async ({ page }) => {
   await goto(page, 'admin/grupos');
   await abrirPanel(page, 'ACD Demo C2CB');
-
-  // Todo agente asignado atiende el único canal: la columna solo eran casillas bloqueadas (13 de 13).
-  await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(0);
-  await expect(panel(page).locator('tbody sc-checkbox')).toHaveCount(0);
-  await expect(panel(page).locator('tbody tr')).toHaveCount(13);
-  // Nombre, presencia y habilitación caben sin una columna redundante de canal.
-  expect((await medidas(page)).ancho).toBeLessThanOrEqual(33 * 16);
+  await expect(panel(page).getByRole('columnheader', { name: 'Teléfono', exact: true })).toHaveCount(1);
+  await expect(panel(page).locator('tbody tr')).toHaveCount(10);
+  expect((await cajon(page).boundingBox())!.y).toBe(0);
+  expect((await medidas(page)).ancho).toBeLessThanOrEqual(48 * 16);
 });
 
 test('con dos canales, el panel se ajusta a sus columnas: nombre cerca de sus casillas, filas compactas, sin repetir los canales', async ({ page }) => {
@@ -121,10 +103,10 @@ test('con dos canales, el panel se ajusta a sus columnas: nombre cerca de sus ca
   await expect(panel(page).locator('.agents-panel__channels')).toHaveCount(0);
 
   const { ancho, altoFila, hueco } = await medidas(page);
-  expect(ancho, 'nombre, canales y nueva columna Habilitado (DD-149)').toBeLessThanOrEqual(43 * 16);
+  expect(ancho, 'nombre, canales y nueva columna Habilitado (DD-149)').toBeLessThanOrEqual(48 * 16);
   expect(hueco, 'de nombre y presencia a la primera casilla').not.toBeNull();
   expect(hueco!, 'de nombre y presencia a la primera casilla').toBeLessThanOrEqual(12 * 16);
-  expect(altoFila, 'alto de fila (34 medido; antes 46)').toBeLessThanOrEqual(36);
+  expect(altoFila, 'nombre y email en dos líneas, con presencia').toBeLessThanOrEqual(58);
 });
 
 test('el último canal se lee marcado y fijo: la casilla desactivada queda al 60 % de Figma, no al 36 %', async ({ page }) => {
@@ -142,12 +124,12 @@ test('el último canal se lee marcado y fijo: la casilla desactivada queda al 60
   expect(opacidad).toBeCloseTo(0.6, 2);
 });
 
-test('la papelera dice qué hace al pasar por encima: «Quitar del grupo», lo que nombra la ayuda del candado', async ({ page }) => {
+test('el último canal explica que desmarcar Asignado quita del grupo', async ({ page }) => {
   await goto(page, 'admin/grupos');
   await abrirPanel(page, 'ACD demo cuscare');
-
-  await panel(page).locator('tbody tr').first().getByRole('button', { name: /^Quitar a / }).hover();
-  await expect(page.locator('.p-tooltip')).toHaveText('Quitar del grupo');
+  await panel(page).locator('.assign__locked').first().hover();
+  await expect(page.locator('.p-tooltip')).toContainText('desmarca Asignado');
+  await expect(panel(page).getByRole('button', { name: /^Quitar a / })).toHaveCount(0);
 });
 
 test('una fila que llega sin canal devuelve la columna en un grupo de uno, y marcar su casilla no la quita', async ({ page }) => {
@@ -164,7 +146,7 @@ test('una fila que llega sin canal devuelve la columna en un grupo de uno, y mar
 
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(1);
   const ancho = (await medidas(page)).ancho;
-  expect(ancho).toBeLessThanOrEqual(38 * 16);
+  expect(ancho).toBeLessThanOrEqual(43 * 16);
 
   // Es la única forma de darle canal desde aquí; al marcarla pasa a ser su último canal, y la columna se queda.
   await panel(page).getByRole('checkbox', { name: 'Tom Hanks — Teléfono' }).click();
