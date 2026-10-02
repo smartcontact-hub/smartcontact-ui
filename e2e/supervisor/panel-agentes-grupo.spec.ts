@@ -42,7 +42,7 @@ test('«Agentes» abre el panel de esa fila sin abrir la ficha, y dentro no se e
   await expect(page.getByText('Agentes · Reclamaciones')).toBeVisible();
   await expect(page).toHaveURL(/admin\/grupos$/);
   // Las columnas son los canales del grupo, y no hay casilla de elegir filas.
-  await expect(panel(page).getByRole('columnheader', { name: 'WhatsApp' })).toHaveCount(1);
+  await expect(panel(page).getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);
   await expect(panel(page).locator('thead input[type=checkbox]')).toHaveCount(0);
   await expect(panel(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });

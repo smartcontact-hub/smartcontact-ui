@@ -33,7 +33,7 @@ import { IllustratedAvatarComponent } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
-  CHANNEL_LABEL_KEYS,
+  FAMILY_LABEL_KEYS,
   GroupChannel,
   LEVEL_OPTIONS,
 } from '@features/admin/groups/data/groups-data';
@@ -41,7 +41,7 @@ import {
   Channel,
   GroupAgentLink,
 } from '@features/admin/services/group-agent-links.types';
-import { isLastChannel, newLinkFor, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
+import { familiesOf, isLastChannel, newLinkFor, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
 
 /** Lightweight agent reference accepted by the table. */
 export interface AgentChannelTableAgent {
@@ -65,11 +65,12 @@ export const ACTIONS_COL_COMPACT = '2.5rem';
  * misma tabla:
  *
  *   [ Buscar agente…     ]  ⚠ 2 sin canal                  [ Añadir agente… ▾ ]
- *   ☐  Agente                     Teléfono   Web Chat   WhatsApp
+ *   ☐  Agente                     Teléfono     Chat      Email
  *   ☐  A. López  [En pausa]          ☑          ☑          ☐       🗑
  *
- * Una columna por canal DEL GRUPO (un grupo solo de teléfono enseña solo esa), como
- * la matriz de Contact Center.
+ * Una columna por FAMILIA que ofrece el grupo (un grupo solo de teléfono enseña solo esa), como
+ * la matriz de Contact Center. Chat es Web Chat y WhatsApp juntos: el agente atiende los dos o
+ * ninguno, como en el AED en vivo (DD-147).
  *
  * LA VISTA DEL GRUPO GESTIONA COMPOSICIÓN: quién está y por qué canales (visión de producto de
  * grupos, 2026-09-25; DD-121). Por eso, desde el 2026-09-26:
@@ -157,12 +158,13 @@ export class AgentChannelTableComponent {
               },
             ]
           : []),
-        /* 6.5rem: «Web Chat» es el rótulo más largo con espacio, y a 5.5 partía en dos líneas y
-         * subía la cabecera entera (visto a 1440 el 2026-09-26). Compacta, 5rem: con el relleno de
-         * celda de la tabla pequeña (8 a cada lado, no 14) le quedan 64 px, y cabe en una línea. */
-        ...(this.channelColumns() ? this.groupChannels() : []).map((ch) => ({
+        /* 6.5rem: lo midió «Web Chat», que a 5.5 partía en dos líneas y subía la cabecera entera
+         * (visto a 1440 el 2026-09-26); desde DD-147 la más larga es «Teléfono», que también cabe.
+         * Compacta, 5rem: con el relleno de celda de la tabla pequeña (8 a cada lado, no 14) le
+         * quedan 64 px, y cabe en una línea. */
+        ...(this.channelColumns() ? this.families() : []).map((ch) => ({
           field: ch,
-          header: this.translate.instant(CHANNEL_LABEL_KEYS[ch]),
+          header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
           width: this.compact() ? CHANNEL_COL_COMPACT : '6.5rem',
           align: 'center' as const,
           cellTemplate: this.channelTpl(),
@@ -182,6 +184,8 @@ export class AgentChannelTableComponent {
   );
 
   readonly groupChannels = input.required<readonly GroupChannel[]>();
+  /** Las familias que ofrece el grupo: una columna por cada una (DD-147). */
+  protected readonly families = computed(() => familiesOf(this.groupChannels()));
   readonly links = input.required<readonly GroupAgentLink[]>();
   readonly availableAgents =
     input.required<readonly AgentChannelTableAgent[]>();

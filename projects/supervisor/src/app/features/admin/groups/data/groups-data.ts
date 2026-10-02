@@ -22,6 +22,16 @@ export const CHANNEL_LABEL_KEYS: Readonly<Record<GroupChannel, string>> = {
   email: 'groups.channel.email',
 };
 
+/** Por dónde atiende un agente en un grupo: Teléfono, Chat (Web Chat y WhatsApp juntos) o Email, como en el AED en
+ *  vivo (DD-147). El grupo ofrece sus cuatro canales; el enlace de cada agente guarda familias. */
+export type ChannelFamily = 'phone' | 'chat' | 'email';
+export const CHANNEL_FAMILIES: readonly ChannelFamily[] = ['phone', 'chat', 'email'];
+export const FAMILY_LABEL_KEYS: Readonly<Record<ChannelFamily, string>> = {
+  phone: 'groups.channel.phone',
+  chat: 'groups.channel.chat_family',
+  email: 'groups.channel.email',
+};
+
 /* Las de SISMAC-1975 en COA (decisión de producto, 2026-09-16: las estrategias siguen al COA): quita Aleatoria y Lineal, y
  * añade Niveles, Ring All y Skills. «Agente exclusivo» se queda: el COA no la quita, y el manual de Voice (p. 12) y
  * el Figma de la migración la traen.

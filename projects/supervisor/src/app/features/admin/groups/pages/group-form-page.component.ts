@@ -69,6 +69,8 @@ import {
   type ChatSubchannel,
   DEFAULT_CHAT_SETTINGS,
   DEFAULT_CHAT_STRATEGY,
+  FAMILY_LABEL_KEYS,
+  type ChannelFamily,
   resolveGroup,
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
@@ -90,6 +92,7 @@ import {
   channelRemovalImpact,
   clampLinksToChannels,
   hasChatFamily,
+  removedFamilies,
   toggleChatFamily,
   toggleGroupChannel,
 } from '@features/admin/services/group-channels.core.mjs';
@@ -509,7 +512,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    *  many agents had a removed channel enabled. */
   private readonly initialLinks = signal<readonly GroupAgentLink[]>([]);
   protected readonly cascadeConfirm = signal<{
-    readonly removed: readonly GroupChannel[];
+    /** Las familias que el grupo deja de ofrecer (DD-147): quitar solo WhatsApp, con Web Chat, no quita Chat. */
+    readonly removed: readonly ChannelFamily[];
     /** Los que pierden algún canal. */
     readonly affected: number;
     /** De ellos, los que se quedan sin ninguno: salen del grupo al guardar. */
@@ -544,11 +548,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (!this.hasEmail()) off.push('email');
     return off;
   });
-  protected readonly familyLabelKeys: Readonly<Record<'phone' | 'chat' | 'email', string>> = {
-    phone: 'groups.channel.phone',
-    chat: 'groups.channel.chat_family',
-    email: 'groups.channel.email',
-  };
+  protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
   /** Los subcanales de Chat que el grupo tiene: cada uno escribe sus propios mensajes de cola. */
   protected readonly activeChatSubchannels = computed<readonly ChatSubchannel[]>(() => {
     const subchannels: readonly ChatSubchannel[] = ['chat', 'whatsapp'];
@@ -1098,7 +1098,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // re-enters `save()` with `cascadeConfirm` already shown so this guard
     // only fires once per save.
     if (!this.cascadeConfirm()) {
-      const removed = [...this.initialChannels()].filter((c) => !this.form().channels.has(c));
+      // Por familia (DD-147): el agente atiende Chat, así que quitar WhatsApp con Web Chat puesto no le quita nada.
+      const removed = removedFamilies(this.initialChannels(), this.form().channels);
       if (removed.length > 0) {
         const { affected } = channelRemovalImpact(this.initialLinks(), removed);
         if (affected > 0) {
@@ -1199,8 +1200,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.cascadeConfirm.set(null);
   }
 
-  protected channelLabel(c: GroupChannel): string {
-    return this.translate.instant(this.channelKeys[c]);
+  /** El nombre de una familia, para el aviso de cascada: «Chat», no «Web Chat, WhatsApp». */
+  protected channelLabel(c: ChannelFamily): string {
+    return this.translate.instant(FAMILY_LABEL_KEYS[c]);
   }
 
   protected requestDelete(): void {

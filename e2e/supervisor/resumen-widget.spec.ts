@@ -90,7 +90,19 @@ test.describe('con los datos de siempre', () => {
     await expect(anillos(page).first()).toHaveAttribute('aria-valuenow', '13');
     await expect(anillos(page).first()).toHaveAttribute('aria-valuemax', '13');
     // El canal que nadie atiende sigue avisando, con icono y texto, dentro de la misma tarjeta.
-    await expect(agentes.locator('.resumen__channel')).toHaveCount(4);
+    await expect(agentes.locator('.resumen__channel')).toHaveCount(3);
+    await expect(agentes).not.toContainText('Sin agentes');
+  });
+
+  test('una familia sin agentes conserva el aviso con su icono', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('sc-group-agent-links-v', '1');
+      localStorage.setItem('sc-group-agent-links', JSON.stringify([
+        { agentId: 1, groupId: 11, channels: ['phone'], active: true },
+      ]));
+    });
+    await goto(page, 'admin/grupos/editar/11');
+    const agentes = widgets(page).first();
     await expect(agentes).toContainText('Sin agentes');
     // Sobre el tinte, el ámbar como texto no llega a AA: lo lleva el icono, y el aviso no pierde su color.
     const aviso = agentes.locator('.resumen__warn').first();
