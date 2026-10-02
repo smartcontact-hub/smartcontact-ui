@@ -149,6 +149,7 @@ export class AgendasPageComponent {
   protected readonly config: RepoPageConfig<Agenda> = {
     titleKey: 'repositories.agendas.title',
     entitySingularKey: 'repositories.agendas.singular',
+    createTitleKey: 'repositories.agendas.create_title',
     entityPluralKey: 'repositories.agendas.plural',
     icon: 'call',
     breadcrumbExtraKey: 'repositories.agendas.title',

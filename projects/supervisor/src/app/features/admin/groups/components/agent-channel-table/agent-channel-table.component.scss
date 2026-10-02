@@ -55,6 +55,11 @@
     color: var(--sc-text-disabled);
   }
 
+  /* La envoltura del último canal: da al tooltip un sitio que sí recibe el ratón. */
+  &__locked {
+    display: inline-flex;
+  }
+
   /* Con filas elegidas, la barra de acciones en lote flota sobre el pie: se reserva su alto
    * para que no tape la última fila al llegar abajo. */
   &--bulk {
@@ -74,6 +79,27 @@
   }
 }
 
+/* La tabla del panel rápido (DD-131). La barra cabe en una línea en un panel de ~30rem: el buscador y «Añadir
+ * agentes» parten de una base más corta que en la ficha (con flex-wrap, lo que decide el salto de línea es la base,
+ * no el mínimo). Y los huecos van a la escalera: 14 entre la barra y la tabla, que son dos grupos, y 7 dentro de la
+ * barra, que es uno. */
+:host(.agent-channel-table--compact) .assign {
+  gap: var(--sc-spacing-1);
+
+  &__bar {
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__search {
+    flex: 1 1 10rem;
+  }
+
+  &__add {
+    flex: 0 1 12rem;
+    min-width: 11rem;
+  }
+}
+
 /* La tabla hace scroll DENTRO, con la cabecera de columnas fija, como las listas (DD-95): así la ficha entera cabe en
  * la pantalla aunque el grupo tenga veinte agentes. Mide lo que sus filas y solo se recorta cuando no caben; el tope
  * es lo que deja la pantalla descontando el marco (barra de arriba, miga, tarjeta y lo que va sobre la tabla), y
@@ -84,9 +110,11 @@
   flex-direction: column;
   flex: 0 1 auto;
   min-height: 0;
-  max-block-size: max(
-    var(--sc-spacing-18),
-    calc(100dvh - (var(--sc-spacing-25) + var(--sc-spacing-5)))
+  /* Quien la aloja en otro marco (el panel rápido del listado) cambia el tope con `--assign-table-max`:
+   * allí el alto lo reparte su columna flexible, no la ventana. */
+  max-block-size: var(
+    --assign-table-max,
+    max(var(--sc-spacing-18), calc(100dvh - (var(--sc-spacing-25) + var(--sc-spacing-5))))
   );
 }
 

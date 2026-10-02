@@ -32,12 +32,14 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  */
 
 const FORMULARIOS = [
-  /* Las fichas de GRUPO (2026-09-22) y de USUARIO y AGENTE (2026-09-23) salieron de aquí: ya no
-   * tienen índice de rail, sino una tira de pestañas arriba (`p-tabs`). Que esa tira no parta ni
-   * recorte un rótulo lo mide `ficha-usuario-agente.spec.ts`. El índice sigue vivo en el
-   * constructor de reglas, y la regla que este spec fija —que el nombre de una sección no se
-   * esconda— se mide ahí. Tres secciones: General, Alcance y Análisis IA. */
+  /* Las cinco pantallas con índice, que desde el 2026-09-27 es UNO (DD-122): el constructor de reglas,
+   * las tres fichas (usuario y agente vuelven aquí ese día desde sus pestañas; grupo, desde DD-121) y
+   * Contact Center, que hasta entonces pintaba el suyo con una pieza propia. */
   { nombre: 'regla', ruta: 'conversaciones/reglas/nueva', secciones: 3 },
+  { nombre: 'grupo', ruta: 'admin/grupos/editar/11', secciones: 4 },
+  { nombre: 'agente', ruta: 'admin/agentes/editar/1', secciones: 5 },
+  { nombre: 'usuario', ruta: 'admin/usuarios/editar/1', secciones: 3 },
+  { nombre: 'contact center', ruta: 'config/aed/servicio', secciones: 3 },
 ] as const;
 
 const IDIOMAS = ['es', 'en', 'fr', 'pt'] as const;

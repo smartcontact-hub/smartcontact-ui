@@ -1,5 +1,6 @@
 import type { AgentPresence, DashboardWidget } from './dashboard.types';
 import { DEMO_ENTITIES } from './demo-entities';
+import type { EstadoDeAgente } from './presencia';
 import type { DetailKind } from './widget-catalog';
 
 /** Qué detalle pidió el supervisor al pulsar una cifra. */
@@ -47,9 +48,10 @@ const CHANNELS: readonly DetailChannel[] = ['calls', 'calls', 'chats', 'calls', 
 /*
  * Filas de demostración coherentes con la cifra que se pulsó: si el widget dice 6 en espera, el
  * panel lista 6. Los clientes son un número de cliente, nunca un nombre ni un teléfono: los datos
- * de demostración no llevan nada que parezca un dato personal (`audit:seed-pii`).
+ * de demostración no llevan nada que parezca un dato personal (`audit:seed-pii`). El estado de cada
+ * agente es el que tiene en Administración (`estadoDe`, DD-139), el mismo que cuentan las cifras.
  */
-export function detailRows(request: DetailRequest, widget: DashboardWidget): DetailRows {
+export function detailRows(request: DetailRequest, widget: DashboardWidget, estadoDe: EstadoDeAgente): DetailRows {
   const queues = widget.entities.length ? widget.entities : DEMO_ENTITIES.groups;
   const agents = DEMO_ENTITIES.agents;
   const customer = (i: number) => `#${(48213 + i * 7919) % 90000 + 10000}`;
@@ -93,13 +95,16 @@ export function detailRows(request: DetailRequest, widget: DashboardWidget): Det
           ? widget.available
           : widget.connected
         : 0;
-  const cycle: AgentPresence[] = ['available', 'paused', 'available', 'available', 'paused'];
+  // Los agentes que ESTÁN en ese estado (o conectados, sin estado pedido), con el estado que les da la tabla.
+  const pool = agents
+    .map((name) => ({ name, estado: estadoDe(name) ?? 'offline' }))
+    .filter(({ estado }) => (presence ? estado === presence : estado !== 'offline'));
   return {
     kind: 'agents',
-    rows: Array.from({ length: Math.min(count, agents.length) }, (_, i) => ({
+    rows: pool.slice(0, count).map(({ name, estado }, i) => ({
       id: `a${i}`,
-      name: agents[i],
-      presence: presence ?? cycle[i % cycle.length],
+      name,
+      presence: estado,
       seconds: 30 + ((i * 97) % 1500),
     })),
   };

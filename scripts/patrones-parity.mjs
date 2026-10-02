@@ -42,6 +42,7 @@ export const FRAGMENTOS = {
   6: [/4[.,]5:1/, /3:1/, /teclado/i], //  los dos umbrales y el teclado
   7: [/transform/, /opacity/, /aspect-ratio/], //  qué se anima y cómo se reserva el hueco
   8: [/sc-text-/, /token/i], //  la clase que se usa, y que un componente se cambia por su token
+  9: [/7 · 14 · 28/, /doble/i], //  la escalera, y que entre grupos va al menos el doble que dentro
 };
 
 /** Recorta §«UX de pantalla» de AGENTS.md, hasta el siguiente encabezado de nivel 2. */

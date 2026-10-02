@@ -27,7 +27,7 @@
 - [ ] **[gate: sí]** Tokens: solo `--sc-*` (nunca `--p-*` fuera del preset); escala 14-base (sin 8-point, sin `calc` a mano)
 - [ ] **[gate: a medias]** Si añadí/cambié un componente: demo en `sc-docs` + export en `public-api.ts`. `audit:components` avisa de los que no tienen demo, pero **no bloquea** (hoy hay 5)
 - [ ] **[gate: no]** Si es un cambio consumible del paquete: bump de versión (`npm run version:bump`) + nota en `CHANGELOG.md`
-- [ ] **[gate: no]** `docs/DECISIONS.md` actualizado (DD-N) si hubo decisión. Solo se vigila que el fichero esté ordenado, no que hayas añadido nada
+- [ ] **[gate: no]** `docs/DECISIONS.md` actualizado (DD-N) si hubo decisión. Solo se vigila que el fichero esté ordenado y sin números repetidos, no que hayas añadido nada
 
 ## Notas
 

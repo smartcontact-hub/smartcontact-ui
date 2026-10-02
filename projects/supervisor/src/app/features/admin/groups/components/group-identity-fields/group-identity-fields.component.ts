@@ -8,20 +8,18 @@ import {
 import { GROUP_PRIORITIES, GroupPriority, PRIORITY_LABEL_KEYS } from '../../data/groups-data';
 
 /**
- * LOS DATOS DEL GRUPO: nombre, teléfono asociado y prioridad. La MISMA pieza en el alta y en la
- * pestaña Identidad (2026-09-24).
+ * LOS DATOS DEL GRUPO: nombre, teléfono asociado y prioridad. La MISMA pieza en la sección General de la
+ * ficha (sin teléfono: desde DD-121 vive en la distribución de Teléfono) y en el diálogo de duplicar.
  *
- * Por qué una pieza y no dos copias: el alta pedía nombre y canales, y la ficha abría por la fila de
- * canales, así que lo primero que se veía al entrar era lo que se acababa de rellenar: el alta y
- * la ficha no eran consistentes, y el segundo paso repetía el primero. Ahora el alta pide lo que dice
- * la cabecera y vive en Identidad, y la ficha abre por lo siguiente, canales y agentes. Que sea el
- * mismo componente garantiza la rima: mismos campos, mismo orden, mismas palabras y mismos avisos.
+ * Por qué una pieza y no dos copias: que sea el mismo componente garantiza la rima entre lo que se pide
+ * al duplicar y lo que dice la ficha: mismos campos, mismo orden, mismas palabras y mismos avisos.
  *
  * Cuántas columnas lo decide su CONTENEDOR, no la ventana: en el diálogo, una debajo de otra; en la
- * pestaña, en una fila de tres. Por eso una `@container` y no una `@media`.
+ * ficha, en fila. Por eso una `@container` y no una `@media`.
  *
- * El teléfono asociado solo con el canal Teléfono: es el número que ve el cliente cuando llama un
- * agente del grupo, y a un grupo de chat no hay que pedírselo.
+ * El teléfono saliente solo con el canal Teléfono: es el número que ve el cliente cuando llama un
+ * agente del grupo, y a un grupo de chat no hay que pedírselo. Con Teléfono es obligatorio y sale de los
+ * números asignados, sin escribir uno nuevo (DD-142).
  */
 @Component({
   selector: 'sc-group-identity-fields',
@@ -31,21 +29,23 @@ import { GROUP_PRIORITIES, GroupPriority, PRIORITY_LABEL_KEYS } from '../../data
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupIdentityFieldsComponent {
-  /** Prefijo de los `id`: el alta y la ficha no deben compartirlos. */
+  /** Prefijo de los `id`: el diálogo y la ficha no deben compartirlos. */
   readonly idPrefix = input('group');
   readonly name = input('');
   readonly phone = input('');
   readonly priority = input<GroupPriority>('Baja');
   readonly hasPhone = input(true);
-  /** Los números que ya usan los grupos; también se puede escribir uno nuevo. */
+  /** Los números asignados a la cuenta: no se escribe uno nuevo (DD-142). */
   readonly phoneOptions = input<readonly string[]>([]);
   /** Clave del aviso bajo el nombre, ya decidido por quien la usa (vacío, repetido…). */
   readonly nameError = input<string | null>(null);
+  /** Clave del aviso bajo el teléfono saliente, ya decidido por quien la usa (falta, con Teléfono). */
+  readonly phoneError = input<string | null>(null);
 
   readonly nameChange = output<string>();
   readonly phoneChange = output<string>();
   readonly priorityChange = output<GroupPriority>();
-  /** Enter en el NOMBRE (no en los desplegables, donde Enter elige una opción): el alta lo usa para crear. */
+  /** Enter en el NOMBRE (no en los desplegables, donde Enter elige una opción): el diálogo lo usa para duplicar. */
   readonly enter = output<void>();
 
   protected readonly priorities = GROUP_PRIORITIES;

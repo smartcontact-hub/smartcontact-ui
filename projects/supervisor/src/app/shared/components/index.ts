@@ -30,3 +30,15 @@ export { LABEL_COLORS } from './label-chip/label-chip.types';
 // El DS ya lo exporta (2026-07-18): re-export para no tocar los 8 consumidores.
 export type { GroupRef } from '@smartcontact-hub/components';
 export { NameInplaceComponent } from './name-inplace/name-inplace.component';
+
+// El widget del resumen de las fichas: una cifra con su anillo (DD-126).
+export { SummaryKpiComponent } from './summary-kpi/summary-kpi.component';
+
+// Lo que le falta a un alta, hasta «Listo para crear» (DD-136).
+export { SummaryStatusComponent } from './summary-status/summary-status.component';
+
+// El pie de cada sección en un alta: «Atrás» y «Siguiente» (DD-143).
+export { AltaPieComponent } from './alta-pie/alta-pie.component';
+
+// El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (DD-145).
+export { NombreFijoComponent } from './nombre-fijo/nombre-fijo.component';

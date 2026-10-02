@@ -10,7 +10,8 @@
   padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
   text-align: left;
   border-radius: var(--sc-radius-100);
-  color: var(--sc-sidebar-fg-muted);
+  /* Texto e icono en blanco al 100%, como el tablero del sidebar (SISMAC-4340, Figma 14912:6324). */
+  color: var(--sc-sidebar-fg);
   background: transparent;
   border: 0;
   cursor: pointer;
@@ -41,18 +42,14 @@
     line-height: var(--sc-line-height-100);
   }
 
+  /* Con el ratón encima solo cambia el fondo: el texto ya va en blanco. */
   &:hover {
-    color: var(--sc-sidebar-fg-hover);
     background: var(--sc-sidebar-item-hover-bg);
   }
 
   &:focus-visible {
     outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
     outline-offset: -2px;
-  }
-
-  &--child-active {
-    color: var(--sc-sidebar-fg-hover);
   }
 
   /* Active state: solid tint + bold weight, no left bar.
@@ -64,19 +61,26 @@
 
     /* Con la selección en cyan, el seleccionado no cambia con el ratón. */
     &:hover {
-      color: var(--sidebar-active-hover-fg, var(--sc-sidebar-fg-hover));
+      color: var(--sidebar-active-hover-fg, var(--sc-sidebar-fg));
       background: var(--sidebar-active-hover-bg, var(--sc-sidebar-item-hover-bg));
     }
   }
 
+  /* El icono lleva el color de su fila; solo el padre de la página cambia (abajo). */
   &__icon {
     flex-shrink: 0;
-    color: var(--sc-sidebar-fg-subtle);
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
+  }
 
-    .nav-item--active & {
-      color: var(--sidebar-active-fg, var(--sc-sidebar-fg));
-    }
+  /* Un logo de producto en el hueco del icono: su forma como máscara y el color de la fila, así va en
+   * blanco en reposo y en el navy del seleccionado sobre el cyan. */
+  &__logo {
+    inline-size: var(--sc-icon-size-default);
+    block-size: var(--sc-icon-size-default);
+    background-color: currentColor;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
   }
 
   /*
@@ -105,32 +109,14 @@
   }
 
   /*
-   * The chevron is NOT decorative: swapping `chevron-right` for
-   * `chevron-down` is the only signal that an item has children and
-   * whether it is open (`.nav-item--expanded` styles nothing). That puts
-   * it under WCAG 1.4.11 at 3:1, not under the decorative exemption.
-   *
-   * It sat at 0.3 and failed in BOTH themes: a white alpha lightens in
-   * step with whatever is behind it, so the darker dark ground doesn't
-   * rescue it. No gate saw it — the sidebar is a sibling of `<main>` and
-   * `theme-contrast.spec.ts` only walks `main#main-content`.
-   *
-   * Measured on the real app in the state the user sees it — the sidebar
-   * starts collapsed and opens on hover, so the binding row is a HOVERED
-   * one, whose `rgb(255 255 255 / 0.05)` background lifts the ground:
-   *
-   *            light (blue-700)   dark (blue-900)
-   *   0.3          2.57 ✗             2.71 ✗
-   *   0.4          3.42 ✓             3.80 ✓
-   *
-   * The floor is alpha 0.338, and light is the binding theme. 0.35 would
-   * clear 3:1 by 0.13 — keep the margin. Don't raise it either: the alpha
-   * ramp encodes hierarchy (chevron 0.4 < icon 0.5 < label 0.6 < hover
-   * 0.9 < active 1) and 0.45+ makes the chevron as loud as its icon.
+   * The chevron is NOT decorative: its turn is the only signal that an item has children and whether
+   * it is open, so it falls under WCAG 1.4.11 (3:1). The board draws it in white at 60%
+   * (`--sc-sidebar-fg-muted`), above both measured floors: 0.338 on a hovered row and 0.5 inside a
+   * category's children block, where three white layers lift the ground (DD-118).
    */
   &__chevron {
     flex-shrink: 0;
-    color: var(--sc-sidebar-fg-faint);
+    color: var(--sc-sidebar-fg-muted);
     opacity: var(--sidebar-label-opacity, 1);
     /* One glyph that turns, instead of swapping right for down in one frame; al ritmo del submenú. */
     transition:
@@ -139,12 +125,6 @@
 
     .nav-item--expanded & {
       transform: rotate(90deg);
-    }
-
-    /* Dentro del bloque de hijos de una categoría el fondo suma tres capas (grupo 5%, hijos 10% y la
-     * fila bajo el ratón 5%) y el 40% cae a 2,94:1. Ahí sube al 50%, 3,69:1 (DD-118). */
-    .nav-item__children--top & {
-      color: var(--sc-sidebar-fg-subtle);
     }
   }
 }

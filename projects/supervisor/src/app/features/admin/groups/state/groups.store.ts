@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 
 import { createLocalStore, LocalStore } from '@core/services';
-import { Group, GROUPS_SEED, GroupChannel, GroupPriority } from '../data/groups-data';
+import { Group, GROUPS_SEED, GroupChannel, GroupPriority, groupWithCurrentStrategies } from '../data/groups-data';
 import { bulkUpdatePatch } from '@core/utils/store-helpers';
 
-/** Fields exposed to bulk edit on the Groups list. */
-export type GroupBulkField = 'priority' | 'strategy' | 'channels';
+/** Fields exposed to bulk edit on the Groups list. `strategy` es la de Teléfono y `chatStrategy` la de Chat
+ *  (Web Chat y WhatsApp): cada una, su campo. */
+export type GroupBulkField = 'priority' | 'strategy' | 'chatStrategy' | 'channels';
 
 function nextCode(items: readonly Group[]): string {
   const maxN = items.reduce((max, g) => {
@@ -22,6 +23,8 @@ export class GroupsStore {
     versionKey: 'sc-groups-v',
     currentVersion: 4,
     defaults: GROUPS_SEED,
+    // Lo guardado con los nombres de estrategia de antes de DD-141 se lee con los de ahora: la lista y cada ficha.
+    normalize: groupWithCurrentStrategies,
   });
 
   readonly groups = this.store.items;
@@ -55,6 +58,9 @@ export class GroupsStore {
           break;
         case 'strategy':
           patch = { strategy: value as string };
+          break;
+        case 'chatStrategy':
+          patch = { chatStrategy: value as string };
           break;
         case 'channels':
           patch = { channels: value as readonly GroupChannel[] };

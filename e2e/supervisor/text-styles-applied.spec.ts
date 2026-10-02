@@ -75,7 +75,7 @@ const ETIQUETAS: ReadonlyArray<{
     rol: 'Body/body-regular',
   },
   { ruta: 'admin/usuarios/crear', nombre: 'admin · alta de usuario', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
-  // Desde el 2026-09-23 el alta de grupo es un diálogo sobre la lista; la ruta lo abre.
+  // El alta de grupo es su ficha, con el índice (DD-143): se mide la etiqueta de General, la sección que abre.
   { ruta: 'admin/grupos/crear', nombre: 'admin · alta de grupo', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
 ];
 
@@ -243,14 +243,13 @@ test('admin/agendas · el título de página mide Heading/h3-semibold y conserva
   ).toBe('14px'); // `scale/1`: el 1rem de Aura entre título y contenido (2026-09-14)
 });
 
-test('config/aed/servicio · la barra lateral de ajustes mide Body/body-regular por la clase', async ({
-  page,
-}) => {
-  const sel = 'sc-settings-sidebar .nav-item:not(.nav-item--active) .nav-item__label';
+// Desde el 2026-09-27 el índice de Contact Center es el del DS (DD-122), que pone su tipografía con
+// tokens en su propia hoja (los componentes no llevan `.sc-text-*`): aquí se mide el resultado.
+test('config/aed/servicio · el índice de Contact Center mide Body/body-regular', async ({ page }) => {
+  const sel = 'sc-form-section-nav .form-nav__item:not(.form-nav__item--active) .form-nav__label';
   await goto(page, 'config/aed/servicio');
   const item = page.locator(sel).first();
   await expect(item).toBeVisible();
-  await expect(item).toHaveClass(/sc-text-body-regular/);
   expect(await leer(page, sel)).toEqual(BODY_REGULAR);
 });
 

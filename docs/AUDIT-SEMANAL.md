@@ -2,7 +2,7 @@
 
 > **Autogenerado** por la rutina cloud "Auditoría semanal"
 > (`.claude/skills/auditoria-semanal/SKILL.md`). Es la versión de **juicio**, en
-> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los 27 gates de `verify` no
+> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los 44 gates de `verify` no
 > pueden ver (deuda de diseño + deriva semántica de docs). Cada run añade una
 > sección fechada **arriba**; `[x]` = cerrado. Semana sin hallazgos reales → no
 > hay sección nueva (la rutina no abre PR).
@@ -10,6 +10,48 @@
 > ⚠️ **Este doc lo escanea `docs:coherence` en cada `verify`.** No cita nunca un
 > `npm run …` ni un `scripts/….mjs` que no exista (rompería el CI). Los gates
 > _propuestos_ se describen en prosa, sin su path. Ver §3 del skill.
+
+---
+
+## 2026-09-28
+
+> Método: pasada A (deuda de código, ≤5, incluye calidad de copy i18n de las claves nuevas en
+> los cuatro idiomas) + pasada B (deriva de docs) + pasada C (PRs parados >7d) + pasada D (panel
+> de Cloudflare). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md. Semana con 40
+> commits desde la última pasada (2026-09-21): las tres fichas de admin (agente/grupo/usuario)
+> convergen a "una página + índice lateral" con `sc-summary-kpi` reutilizado en las tres (DD-126),
+> el sidebar deja de cerrar otras categorías al abrir una (DD-118) y el monitor pasa a un solo
+> estado por agente (DD-127). Los dos hallazgos de la sección 2026-09-21 siguen sin tocar — no se
+> repiten aquí, salvo para notar que el segundo (`customs-catalog.md:680`) se ha desfasado más
+> esta semana: medido hoy sobre `scripts/color-map.mjs`, son **73** filas `enforce` y **4**
+> `diverge` (el texto sigue en 38/10). Pasada C: 2 PRs abiertos (#264, #265), ambos creados hace
+> menos de 24h — no cualifican. Pasada D: sin `CLOUDFLARE_API_TOKEN` en este entorno → no
+> comprobado.
+
+### Deuda de código
+
+- [ ] **P2** La clave `skills_unavailable` (grupos → ficha → distribución, nueva esta semana)
+      deja «skills» sin traducir en ES y PT mientras FR sí tradujo el mismo concepto —prueba de
+      que no es jerga de dominio fijada en el repo, es una traducción a medias—:
+      `projects/supervisor/src/assets/i18n/es.json:1540` ("Necesita skills en los agentes") y
+      `pt.json:1537` ("Precisa de skills nos agentes") vs `fr.json:1537` ("Nécessite des
+      compétences par agent") → es: `'Necesita habilidades en los agentes'`, pt: `'Precisa de
+      habilidades nos agentes'`. [arréglalo]
+
+### Deriva de docs
+
+- [x] Este mismo doc (`docs/AUDIT-SEMANAL.md:5`) decía que la rutina caza "lo que los 27 gates de
+      `verify` no pueden ver", pero `verify` tiene hoy **42** pasos (contando `package.json` por
+      `&&`) — la cifra que ya acertaban `CLAUDE.md:52` y `docs/DOCS-INDEX.md:43` ("42 gates"); solo
+      la cabecera de este doc se había quedado atrás. Corregido en esta misma pasada.
+
+### Trabajo sin mergear
+
+sin hallazgos (2 PRs abiertos, #264 y #265, ambos con menos de 24h).
+
+### Panel de Cloudflare
+
+no comprobado (sin `CLOUDFLARE_API_TOKEN` en este entorno).
 
 ---
 

@@ -206,3 +206,29 @@ test.describe('a 1280, donde no caben las diez columnas', () => {
     await expect(tags.nth(entera).locator('.p-tag')).not.toHaveAttribute('title', /.*/);
   });
 });
+
+test('con textos largos (`?datos=tortura`), el texto libre no pasa de dos líneas y lleva el entero', async ({ page }) => {
+  /* Medido el 2026-09-27 con los orígenes estirados (DD-124): «Oscar Fernández Fernández-Villaverde de la
+   * Concepción» bajaba a cuatro líneas y la tabla triplicaba su alto. Hasta dos líneas es lo que decidió el reparto
+   * de anchos (2026-09-13); a partir de ahí, «…» y el texto entero en el `title`. */
+  await goto(page, 'conversaciones?datos=tortura');
+  await expect(page.locator(`${TABLE} tbody tr`).first()).toBeVisible();
+
+  const origenes = await page.locator(TABLE).evaluate((table) => {
+    const col = [...table.querySelectorAll('thead th')].findIndex((th) => th.textContent?.trim() === 'Origen');
+    return [...table.querySelectorAll('tbody tr')].map((tr) => {
+      const el = tr.children[col]!.querySelector('span') as HTMLElement;
+      return {
+        texto: el.textContent?.trim() ?? '',
+        lineas: Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)),
+        entero: el.getAttribute('title'),
+        recortado: el.scrollHeight > el.clientHeight + 1,
+      };
+    });
+  });
+  expect(origenes.filter((o) => o.lineas > 2).map((o) => o.texto), 'ninguno pasa de dos líneas').toEqual([]);
+  expect(origenes.filter((o) => o.entero !== o.texto).map((o) => o.texto), 'y todos llevan el entero en el title').toEqual([]);
+  // Control: con tortura TIENE que haber orígenes recortados; si no hay ninguno, no se mira el caso.
+  expect(origenes.some((o) => o.recortado)).toBe(true);
+});
+

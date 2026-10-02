@@ -27,15 +27,15 @@ import {
 } from '@smartcontact-hub/components';
 
 import {
-  CHANNEL_LABEL_KEYS,
-  GROUP_CHANNELS,
+  CHANNEL_FAMILIES,
+  FAMILY_LABEL_KEYS,
   GroupChannel,
 } from '@features/admin/groups/data/groups-data';
 import {
-  canonicalizeChannels,
   Channel,
   GroupAgentLink,
 } from '@features/admin/services/group-agent-links.types';
+import { familiesOf, newLinkFor, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
 
 /** Lightweight group reference accepted by this table. */
 export interface AgentGroupAssignmentRef {
@@ -58,8 +58,9 @@ interface VisibleRow {
  *   Grupo            Teléfono   Chat   Email   Activo
  *   Soporte L1          ☑        ☑      —      ●━○    🗑
  *
- * Una columna por canal, como la matriz de Contact Center. Cada grupo ofrece sus
- * propios canales: donde no ofrece uno, la celda lleva un guion.
+ * Una columna por familia (Teléfono, Chat y Email, DD-147), como la matriz de Contact
+ * Center: Chat es Web Chat y WhatsApp juntos. Cada grupo ofrece sus propias familias:
+ * donde no ofrece una, la celda lleva un guion.
  *
  * No persiste nada: el formulario tiene el `links` canónico y lo guarda en
  * `GroupAgentLinksStore`.
@@ -116,9 +117,9 @@ export class GroupAssignmentTableComponent {
           header: this.translate.instant('agents.form.assigned.col_group'),
           cellTemplate: this.groupTpl(),
         },
-        ...GROUP_CHANNELS.map((ch) => ({
+        ...CHANNEL_FAMILIES.map((ch) => ({
           field: ch,
-          header: this.translate.instant(CHANNEL_LABEL_KEYS[ch]),
+          header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
           width: '5.5rem',
           align: 'center' as const,
           cellTemplate: this.channelTpl(),
@@ -191,22 +192,17 @@ export class GroupAssignmentTableComponent {
     return link.channels.includes(channel as Channel);
   }
 
-  /** ¿Ofrece este grupo el canal? Un `string` porque llega del `field` de la columna. */
+  /** ¿Ofrece este grupo la familia? Un `string` porque llega del `field` de la columna. */
   protected offers(group: AgentGroupAssignmentRef, channel: string): boolean {
-    return group.channels.includes(channel as GroupChannel);
+    return familiesOf(group.channels).includes(channel as Channel);
   }
 
   // -- mutations --
 
   protected addGroup(group: AgentGroupAssignmentRef): void {
     if (this.links().some((l) => l.groupId === group.id)) return;
-    const link: GroupAgentLink = {
-      agentId: this.agentId(),
-      groupId: group.id,
-      // Default: every channel the group offers is on for new assignments.
-      channels: [...group.channels],
-      active: true,
-    };
+    // Un enlace nuevo lleva todos los canales que ofrece el grupo, habilitado y sin nivel.
+    const link: GroupAgentLink = newLinkFor({ agentId: this.agentId(), groupId: group.id, groupChannels: group.channels });
     this.linksChange.emit([...this.links(), link]);
   }
 
@@ -216,16 +212,7 @@ export class GroupAssignmentTableComponent {
 
   protected toggleChannel(groupId: number, field: string): void {
     const channel = field as Channel;
-    this.linksChange.emit(
-      this.links().map((l) => {
-        if (l.groupId !== groupId) return l;
-        const has = l.channels.includes(channel);
-        const channels = has
-          ? l.channels.filter((c) => c !== channel)
-          : canonicalizeChannels([...l.channels, channel]);
-        return { ...l, channels };
-      })
-    );
+    this.linksChange.emit(this.links().map((l) => (l.groupId === groupId ? toggleLinkChannel(l, channel) : l)));
   }
 
   protected toggleActive(groupId: number, active: boolean): void {

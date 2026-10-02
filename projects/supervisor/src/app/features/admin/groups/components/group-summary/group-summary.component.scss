@@ -1,0 +1,126 @@
+:host {
+  display: block;
+}
+
+/* LO COMÚN DEL RESUMEN —la columna, la tarjeta, su rótulo, la cifra, el valor, el widget con su anillo y la
+ * fila de la franja ancha— vive en `src/styles/_resumen.scss`: lo usan también las fichas de agente y usuario
+ * (DD-122, DD-126), y lo que le falta a un alta (`sc-summary-status`, DD-136). Aquí quedan las piezas que solo
+ * tiene el de grupo: los canales con su barra, el aviso de canal sin agentes y los pares de datos. */
+
+.resumen__channels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Canal y cifra en una línea, la barra debajo a todo lo ancho. */
+.resumen__channel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  row-gap: var(--sc-spacing-0-25);
+  column-gap: var(--sc-spacing-0-5);
+}
+
+.resumen__channel-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.resumen__meter {
+  display: block;
+  grid-column: 1 / -1;
+}
+
+/* El aviso va sobre el tinte de marca (DD-126), y ahí el ámbar como TEXTO se queda en 4,31:1 a 12 px, bajo AA
+ * (medido por `theme-contrast` en claro). El ámbar lo lleva el icono, al que le bastan 3:1, y el texto va en
+ * primario: el aviso sigue siendo icono, color y palabra (AGENTS «UX de pantalla» 6). */
+.resumen__warn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  margin: 0;
+  color: var(--sc-text-primary);
+
+  sc-icon {
+    color: var(--sc-icon-warning);
+  }
+}
+
+.resumen__pairs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  margin: 0;
+}
+
+/* Cada dato en una línea, clave a la izquierda y valor a la derecha, como las filas por canal: la tarjeta se lee
+ * con una sola gramática y, en la columna de 240, ahorra una línea por dato (medido: con la escalera y el dato
+ * en dos líneas, el resumen del grupo 11 no cabía a 1366×660). Si no cabe en la línea, el valor baja. */
+.resumen__pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: var(--sc-spacing-0-5);
+  min-width: 0;
+}
+
+/* Reparto, salida y recursos, juntos en una tarjeta: lo que no es una proporción. Entre los tres, 28: al menos el
+ * doble que entre sus filas (14), o la tarjeta se lee como una lista plana (revisión previa, 2026-09-27). Dentro
+ * de cada uno, 7 del rótulo a sus datos. */
+.resumen__facts {
+  gap: var(--sc-spacing-2);
+}
+
+.resumen__fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+/* En la franja ancha, cada dato a los dos extremos dejaba 450 px entre la clave y su valor (medido a 1280;
+ * DD-130). Ahí la tarjeta es una rejilla de dos columnas que comparten reparto, salida y recursos (`subgrid`):
+ * los valores empiezan en la misma vertical, a 28 de la clave más larga. */
+@container (min-width: 37.5rem) {
+  .resumen__facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-content: start;
+    column-gap: var(--sc-spacing-2);
+    row-gap: var(--sc-spacing-2);
+  }
+
+  /* `column-gap: normal`: cada subrejilla usa el hueco de la de fuera. Con el suyo propio (14 los pares, 7 la
+   * cabecera, de sus reglas de siempre) el valor se corre la mitad de la diferencia, y no casan (medido: 3 px). */
+  .resumen__fact,
+  .resumen__pairs,
+  .resumen__facts .resumen__head {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    column-gap: normal;
+  }
+
+  .resumen__fact {
+    row-gap: var(--sc-spacing-0-5);
+  }
+
+  .resumen__fact > .resumen__label {
+    grid-column: 1 / -1;
+  }
+
+  .resumen__pairs {
+    row-gap: var(--sc-spacing-1);
+  }
+
+  .resumen__pair {
+    display: contents;
+  }
+}

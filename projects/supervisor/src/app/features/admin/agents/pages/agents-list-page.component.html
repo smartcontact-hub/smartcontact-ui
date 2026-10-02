@@ -14,7 +14,7 @@
   [heading]="'sidebar.agents' | translate"
   [rows]="agents()"
   [columns]="columns()"
-  tableMinWidth="99.25rem"
+  tableMinWidth="97.75rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'agents.search_placeholder' | translate"
@@ -56,7 +56,7 @@
      lo pinta ahora el DS y lleva SU `_ngcontent`, así que una regla encapsulada
      de esta página no lo alcanzaría nunca. -->
 <ng-template #codeTpl let-agent>
-  <span class="cell">{{ agent.code }}</span>
+  <span class="cell sc-text-body-regular">{{ agent.code }}</span>
 </ng-template>
 
 <ng-template #nameTpl let-agent>
@@ -71,14 +71,14 @@
         (cancelled)="onRenameCancel(agent.id)"
       />
     } @else {
-      <span class="cell-name__text">{{ agent.name }}</span>
+      <span class="cell-name__text" [title]="agent.name">{{ agent.name }}</span>
     }
   </span>
 </ng-template>
 
 <!-- El tipo de extensión, en icono y no en etiqueta: el número es lo que se lee. -->
 <ng-template #extensionTpl let-agent>
-  <span class="cell ext">
+  <span class="cell ext sc-text-body-regular">
     @let kind = 'agents.ext_kind.' + agent.extensionType | translate;
     <span class="ext__kind" role="img" [attr.aria-label]="kind" [attr.title]="kind">
       <sc-icon [name]="extensionIcon(agent.extensionType)" size="sm" aria-hidden="true" />
@@ -89,27 +89,31 @@
 
 <ng-template #emailTpl let-agent>
   @if (agent.email) {
-    <span class="cell">{{ agent.email }}</span>
+    <span class="cell sc-text-body-regular" [title]="agent.email">{{ agent.email }}</span>
   } @else {
-    <span class="cell cell--empty">—</span>
+    <span class="cell cell--empty sc-text-body-regular">—</span>
   }
 </ng-template>
 
 <ng-template #phoneTpl let-agent>
   @if (agent.phone) {
-    <span class="cell">{{ agent.phone }}</span>
+    <span class="cell sc-text-body-regular">{{ agent.phone }}</span>
   } @else {
-    <span class="cell cell--empty">—</span>
+    <span class="cell cell--empty sc-text-body-regular">—</span>
   }
 </ng-template>
 
 <ng-template #channelsTpl let-agent>
   <span class="sc-channel-row">
     @for (channel of channelsForAgent(agent.id); track channel) {
+      <!-- Por familia, con las claves de la tabla de agentes del grupo: «Chat» es Web Chat y WhatsApp (DD-147).
+           Antes la lista tenía las suyas, sin WhatsApp, y su icono se anunciaba como la clave cruda. `img`: un
+           `aria-label` en un `span` sin rol no se anuncia. -->
       <span
         class="sc-channel-row__item"
+        role="img"
         [attr.data-channel]="channel"
-        [attr.aria-label]="'agents.channel.' + channel | translate"
+        [attr.aria-label]="channelLabelKey(channel) | translate"
       >
         <sc-channel-icon [channel]="channel" />
       </span>
@@ -132,7 +136,7 @@
       <sc-tag [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
     }
   } @else {
-    <span class="cell cell--empty">—</span>
+    <span class="cell cell--empty sc-text-body-regular">—</span>
   }
 </ng-template>
 

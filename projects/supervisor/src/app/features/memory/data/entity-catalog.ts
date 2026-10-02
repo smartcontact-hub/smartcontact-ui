@@ -10,6 +10,8 @@
  * Los nombres de agente son los del seed de administración, no los curados del Figma — así la
  * membresía y el match son honestos. (Desde el 2026-09-14 el seed usa nombres de Hollywood.)
  */
+import { juegoDeDatos, nombreDeCosa, nombreDeGrupo, nombreDePersona } from '@core/services/juego-de-datos';
+
 import { AGENTS_SEED } from '../../admin/agents/data/agents-data';
 import { GROUPS_SEED } from '../../admin/groups/data/groups-data';
 import { SERVICE_OPTIONS } from './conversation-filter-options';
@@ -71,14 +73,16 @@ const GROUP_DISPLAY_NAMES: Readonly<Record<number, string>> = {
 
 export const AGENT_ENTITIES: readonly AgentEntity[] = AGENTS_SEED.map((a) => ({
   id: a.id,
-  name: AGENT_DISPLAY_NAMES[a.id] ?? a.name,
+  name: nombreDePersona(AGENT_DISPLAY_NAMES[a.id] ?? a.name),
   code: a.code,
   status: a.status,
 }));
 
+/* Con `?datos=editorial`, el nombre de negocio del grupo, el mismo que en Administración; con `?datos=tortura`, el
+ * nombre de la demo estirado (DD-124). Las condiciones guardan el id, así que el nombre solo cambia lo que se lee. */
 export const GROUP_ENTITIES: readonly EntityRef[] = GROUPS_SEED.map((g) => ({
   id: g.id,
-  name: GROUP_DISPLAY_NAMES[g.id] ?? g.name,
+  name: juegoDeDatos() === 'editorial' ? nombreDeGrupo(g.name, 'editorial') : nombreDeCosa(GROUP_DISPLAY_NAMES[g.id] ?? g.name),
 }));
 
 /** Tipificación jerárquica — el picker muestra la ruta `path` unida por " / " y

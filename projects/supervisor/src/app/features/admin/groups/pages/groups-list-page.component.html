@@ -2,8 +2,6 @@
      identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
-  <!-- Con qué nace un grupo nuevo: al lado de donde se crean, no en Configuración (decisión de producto, 2026-09-18). -->
-  <sc-button size="sm" type="button" variant="secondary" appearance="outlined" [label]="'groups.defaults.button' | translate" (clicked)="onDefaultsClick()" />
   <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'groups.create_button' | translate }}</span>
@@ -16,7 +14,7 @@
   [heading]="'sidebar.groups' | translate"
   [rows]="groups()"
   [columns]="columns()"
-  tableMinWidth="70rem"
+  tableMinWidth="95.75rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'groups.search_placeholder' | translate"
@@ -75,13 +73,14 @@
         (cancelled)="onRenameCancel(group.id)"
       />
     } @else {
-      <span class="table__td-name-text">{{ group.name }}</span>
+      <span class="table__td-name-text" [title]="group.name">{{ group.name }}</span>
     }
   </span>
 </ng-template>
 
+<!-- El saliente es del canal Teléfono: un grupo sin él lo guarda y no lo usa, como su ficha, que no lo pinta. -->
 <ng-template #phoneTpl let-group>
-  <span class="table__cell sc-text-body-regular">{{ group.phone }}</span>
+  <span class="table__cell sc-text-body-regular">{{ hasPhone(group) ? group.phone : '—' }}</span>
 </ng-template>
 
 <ng-template #channelsTpl let-group>
@@ -102,8 +101,21 @@
   <sc-tag [severity]="priorityTone(group.priority)" [value]="priorityLabelKey(group.priority) | translate" />
 </ng-template>
 
+<!-- Una estrategia por familia de canales, como en la ficha; «—» si el grupo no tiene ese canal. -->
 <ng-template #strategyTpl let-group>
-  <sc-tag severity="secondary" [value]="group.strategy" />
+  @if (phoneStrategy(group); as strategy) {
+    <sc-tag severity="secondary" [value]="strategy" />
+  } @else {
+    <span class="table__cell sc-text-body-regular">—</span>
+  }
+</ng-template>
+
+<ng-template #chatStrategyTpl let-group>
+  @if (chatStrategy(group); as strategy) {
+    <sc-tag severity="secondary" [value]="strategy" />
+  } @else {
+    <span class="table__cell sc-text-body-regular">—</span>
+  }
 </ng-template>
 
 <!-- Solo lectura. Cuántos servicios, como «Agentes»; el desplegable enseña sus teléfonos y nada más. -->
@@ -118,6 +130,23 @@
   <sc-group-popover [groups]="agents" [countAriaLabel]="'groups.table.agents_count' | translate: { count: agents.length }" />
 </ng-template>
 
+<!-- Abre el panel rápido de agentes de ESTA fila (la cifra de al lado sigue enseñando quiénes son).
+     `contrast` y no `secondary`: el texto secundario de botón del DS es gris 500 sobre blanco (2.95:1, bajo AA;
+     `theme-contrast` lo cazó aquí), y `contrast` es el color de texto de la tabla, sin color de marca. -->
+<ng-template #assignTpl let-group>
+  <sc-button
+    size="sm"
+    variant="contrast"
+    appearance="text"
+    icon="group_add"
+    [label]="'groups.table.assign' | translate"
+    [ariaLabel]="'groups.table.assign_aria' | translate: { name: group.name }"
+    (clicked)="openAgentsPanel(group)"
+  />
+</ng-template>
+
+<sc-group-agents-panel [group]="agentsPanelGroup()" (closed)="closeAgentsPanel()" />
+
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"
   [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
@@ -128,23 +157,24 @@
   (confirm)="confirmDelete($event)"
 />
 
-<!-- El alta y el duplicado, en corto: lo que dice la cabecera de la ficha (la pieza de Identidad).
-     Canales y agentes, en la ficha, que abre justo ahí. -->
-<sc-group-create-dialog
-  [visible]="createOpen()"
-  [source]="duplicateSource()"
-  [suggestedName]="suggestedCopyName()"
-  [existingNames]="groupNames()"
-  [phoneOptions]="groupPhones()"
-  [defaultPriority]="defaultPriority()"
-  (cancelled)="onCreateCancel()"
-  (confirm)="onCreateConfirm($event)"
-/>
+<!-- Duplicar, en corto: nombre, teléfono saliente y prioridad del duplicado (la pieza de General). Todo lo
+     demás viene del original. Se pinta cuando hay algo que duplicar: sin original no hay título que dar. -->
+@if (duplicateSource(); as origen) {
+  <sc-group-duplicate-dialog
+    [visible]="duplicateOpen()"
+    [source]="origen"
+    [suggestedName]="suggestedCopyName()"
+    [existingNames]="groupNames()"
+    [phoneOptions]="outboundNumbers"
+    (cancelled)="onDuplicateCancel()"
+    (confirm)="onDuplicateConfirm($event)"
+  />
+}
 
 <sc-impact-preview-dialog
   [visible]="!!pendingBulkEdit()"
   [mode]="'bulkEdit'"
-  [title]="'groups.bulk_edit_title' | translate: { count: selectedIds().size }"
+  [title]="'groups.bulk_edit_title' | translate: { count: impactItems().length }"
   [items]="impactItems()"
   [badge]="impactBadge()"
   (cancelled)="onBulkPreviewCancel()"

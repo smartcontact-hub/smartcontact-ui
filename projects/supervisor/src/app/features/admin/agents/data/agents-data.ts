@@ -1,3 +1,5 @@
+import { juegoDeDatos } from '@core/services/juego-de-datos';
+
 /**
  * «Desconectado» es no tener la sesión abierta: sustituye a la columna «Activación», que no existía en el producto
  * (definición de producto, 2026-09-16). Postconversando y Administrativo los pone la conversación o el propio
@@ -66,7 +68,9 @@ export interface AgentPermissions {
   readonly recording: boolean;
 }
 
-export const DEFAULT_AGENT_PERMISSIONS: AgentPermissions = {
+/** La base de los permisos de los agentes de EJEMPLO. Uno nuevo nace con lo de Contact Center › Agentes
+ *  (`AgentDefaultsStore`), y de fábrica con `FACTORY_AGENT_DEFAULTS` (DD-135). */
+export const SEED_AGENT_PERMISSIONS: AgentPermissions = {
   manageDevices: false,
   selfActivate: false,
   externalDevices: false,
@@ -81,6 +85,52 @@ export const DEFAULT_AGENT_PERMISSIONS: AgentPermissions = {
   transfersDestInternational: false,
   transfersDestSpecial: false,
   recording: false,
+};
+
+/** Las filas de la matriz de permisos: a qué numeración llama o transfiere el agente. */
+export type DestinoKey = 'fijos' | 'moviles' | 'internacionales' | 'especial';
+/** Sus columnas. */
+export type DestinoCol = 'llamada' | 'transferencia';
+
+export const DESTINO_KEYS: readonly DestinoKey[] = ['fijos', 'moviles', 'internacionales', 'especial'];
+
+/** Cada casilla de la matriz (destino × llamada o transferencia) es una clave de `AgentPermissions`. La misma matriz
+ *  en la ficha de agente y en Contact Center › Agentes. */
+export const PERMISSION_MATRIX_KEYS: Readonly<Record<DestinoKey, Record<DestinoCol, keyof AgentPermissions>>> = {
+  fijos: { llamada: 'callsDestFixed', transferencia: 'transfersDestFixed' },
+  moviles: { llamada: 'callsDestMobile', transferencia: 'transfersDestMobile' },
+  internacionales: { llamada: 'callsDestInternational', transferencia: 'transfersDestInternational' },
+  especial: { llamada: 'callsDestSpecial', transferencia: 'transfersDestSpecial' },
+};
+
+/** Con lo que nace un agente nuevo, y lo que fija Contact Center › Agentes (DD-135): sus permisos y la URL de su
+ *  iframe. Lo demás (nombre, extensión, grupos…) es de cada agente. */
+export interface AgentDefaults {
+  readonly permissions: AgentPermissions;
+  readonly iframeUrl: string;
+}
+
+/** De fábrica, los parámetros por defecto del documento de producto de usuarios y grupos: llamadas y transferencias a
+ *  todo menos la numeración especial, gestión de dispositivos, activación por grupo y dispositivos externos. La
+ *  grabación, apagada: el documento no la cuenta entre ellos. */
+export const FACTORY_AGENT_DEFAULTS: AgentDefaults = {
+  permissions: {
+    manageDevices: true,
+    selfActivate: true,
+    externalDevices: true,
+    callsEnabled: true,
+    transfersEnabled: true,
+    callsDestFixed: true,
+    callsDestMobile: true,
+    callsDestInternational: true,
+    callsDestSpecial: false,
+    transfersDestFixed: true,
+    transfersDestMobile: true,
+    transfersDestInternational: true,
+    transfersDestSpecial: false,
+    recording: false,
+  },
+  iframeUrl: '',
 };
 
 /**
@@ -164,7 +214,7 @@ export const AVAILABLE_EXTENSIONS: readonly ExtensionOption[] = [
   { number: '140', type: 'webrtc' },
 ];
 
-const DP = DEFAULT_AGENT_PERMISSIONS;
+const DP = SEED_AGENT_PERMISSIONS;
 
 const BASE_AGENTS: readonly Agent[] = [
   {
@@ -458,6 +508,17 @@ const NOMBRES = ['Nicole', 'Harrison', 'Sandra', 'Will', 'Anne', 'Matt', 'Charli
 const APELLIDOS = ['Kidman', 'Ford', 'Bullock', 'Smith', 'Hathaway', 'Damon', 'Theron', 'Gosling', 'Foster', 'Jackman', 'Moore', 'Pacino', 'Berry', 'Depp', 'Winslet', 'Elba', 'Cruz', 'Bardem', 'Hayek', 'Banderas', 'Coleman', 'Chalamet', 'Robbie', 'Pascal', 'Pugh'];
 const TOTAL_AGENTES_DEMO = 500;
 
+/*
+ * Con `?datos=editorial` (DD-124), el cruce va en diagonal: cada agente cambia de apellido respecto al anterior. En
+ * orden, la lista enseñaba 25 seguidos apellidados «Kidman», y en una demo se lee como generado (revisión editorial,
+ * 2026-09-27). Cada nombre sigue saliendo con apellidos distintos, así que no se repite ninguna combinación.
+ */
+const EN_DIAGONAL = juegoDeDatos() === 'editorial';
+const apellidoDe = (i: number): string => {
+  const bloque = Math.floor(i / NOMBRES.length);
+  return APELLIDOS[(EN_DIAGONAL ? (i % NOMBRES.length) + bloque : bloque) % APELLIDOS.length];
+};
+
 const GENERATED_AGENTS: readonly Agent[] = Array.from({ length: TOTAL_AGENTES_DEMO - BASE_AGENTS.length }, (_, i) => {
   const base = BASE_AGENTS[i % BASE_AGENTS.length];
   const id = BASE_AGENTS.length + i + 1;
@@ -465,7 +526,7 @@ const GENERATED_AGENTS: readonly Agent[] = Array.from({ length: TOTAL_AGENTES_DE
     ...base,
     id,
     code: String(10000 + id),
-    name: `${NOMBRES[i % NOMBRES.length]} ${APELLIDOS[Math.floor(i / NOMBRES.length) % APELLIDOS.length]}`,
+    name: `${NOMBRES[i % NOMBRES.length]} ${apellidoDe(i)}`,
     extension: String(200 + id),
     pin: String(100 + ((id * 37) % 900)),
     // Solo los que ya lo tenían en su molde, y cada uno el suyo: copiado, el mismo móvil salía en 30 agentes.

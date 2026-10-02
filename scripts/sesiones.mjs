@@ -248,6 +248,49 @@ export function parseaWorktrees(porcelain) {
   return out;
 }
 
+/**
+ * Cuántos commits de `rama` NO están en `origin/main`, medido por CONTENIDO. `null` = no se pudo
+ * medir, que no es lo mismo que cero: cero confirmado permite decir «borra», un git roto no.
+ *
+ * `git cherry origin/main <rama>` marca con `+` los commits cuyo parche no está en main. Compara
+ * parche a parche, y eso solo reconoce un squash de UN commit: el squash de un PR de dos o más no
+ * casa con ninguno de ellos, y todos salen `+` aunque su trabajo esté dentro (medido el 2026-09-29
+ * en un repo de prueba; lo fija el test «SQUASH de VARIOS commits»).
+ *
+ * Así que cuando `git cherry` ve algo fuera, se pregunta al contenido ENTERO: si fundir la rama en
+ * una base (`git merge-tree --write-tree`, git ≥ 2.38, sin tocar árbol ni índice) da exactamente el
+ * árbol de esa base, la base ya lo lleva todo y fuera no queda nada. Un conflicto o un árbol
+ * distinto dejan la cuenta de `git cherry` como estaba, así que nunca sale un 0 en falso: un commit
+ * local anterior al merge que no entró en él cambia el árbol fundido y sigue contando.
+ *
+ * Dos bases, porque `main` sola se queda corta: en cuanto otro PR toca los mismos ficheros, fundir
+ * la rama vieja choca y la cuenta vuelve a salir entera (el #232, seis commits, medido el
+ * 2026-09-29 una semana después de fundirse). La segunda base es el commit de squash del PR
+ * (`squash`, el `mergeCommit` de gh): fija el contenido de main en el momento del merge. Solo vale
+ * si es ancestro de `main`, para que «ya está dentro» signifique dentro de la historia de main.
+ */
+export function noFundidosDe(rama, { cwd, env, main = 'origin/main', squash = null } = {}) {
+  const run = (args, fallback) => {
+    try {
+      return execFileSync('git', args, { cwd, env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+    } catch {
+      return fallback;
+    }
+  };
+  // Centinela a propósito: '' es «git dice que no hay nada fuera», el centinela es «git falló».
+  const cherry = run(['cherry', main, rama], '\x00');
+  if (cherry === '\x00') return null;
+  const fuera = cherry.split('\n').filter((l) => l.startsWith('+')).length;
+  if (fuera === 0) return 0;
+  const bases = [main];
+  if (squash && run(['merge-base', '--is-ancestor', squash, main], null) !== null) bases.push(squash);
+  const laLleva = (base) => {
+    const fundido = run(['merge-tree', '--write-tree', base, rama], null)?.split('\n')[0];
+    return Boolean(fundido) && fundido === run(['rev-parse', `${base}^{tree}`], null);
+  };
+  return bases.some(laLleva) ? 0 : fuera;
+}
+
 // ── El comando ─────────────────────────────────────────────────────────────────
 
 function main() {
@@ -260,7 +303,7 @@ function main() {
   const aqui = shSafe('git', ['rev-parse', '--show-toplevel']);
   const actual = worktrees.find((w) => w.ruta === aqui)?.rama ?? null;
 
-  const CAMPOS = 'number,headRefName,state,mergeable,statusCheckRollup,url,mergedAt';
+  const CAMPOS = 'number,headRefName,state,mergeable,statusCheckRollup,url,mergedAt,mergeCommit';
   const abiertos = JSON.parse(shSafe('gh', ['pr', 'list', '--state', 'open', '--limit', '50', '--json', CAMPOS], '[]'));
   const fundidos = JSON.parse(shSafe('gh', ['pr', 'list', '--state', 'merged', '--limit', '40', '--json', CAMPOS], '[]'));
 
@@ -270,19 +313,14 @@ function main() {
     const abierto = prDe(w.rama, abiertos) ?? null;
     // Lo que decide si se puede borrar, leído del worktree REAL y no de la rama:
     //  · `status --porcelain` en SU ruta (no en la mía): ficheros a medio editar.
-    //  · `git cherry` marca con `+` los commits cuyo parche NO está en main, y con `-` los que
-    //    sí (aunque el squash les cambiara el sha). Es la única medida que ve un commit local
-    //    anterior al merge que se quedó fuera de él.
+    //  · `noFundidosDe`: cuántos commits de la rama NO están en main, medido por contenido.
     const sucio = shSafe('git', ['-C', w.ruta, 'status', '--porcelain']) !== '';
-    // Centinela a propósito: `shSafe` devuelve '' tanto cuando git dice «no hay nada fuera» como
-    // cuando git FALLA, y son cosas distintas. Cero confirmado permite decir «borra»; no haber
-    // podido medirlo, no. Sin esto, un git roto se leería como «la caja está vacía».
-    const cherry = shSafe('git', ['cherry', 'origin/main', w.rama], '\x00');
-    const noFundidos = cherry === '\x00' ? null : cherry.split('\n').filter((l) => l.startsWith('+')).length;
+    const fundido = abierto ? null : (prDe(w.rama, fundidos) ?? null);
+    const noFundidos = noFundidosDe(w.rama, { squash: fundido?.mergeCommit?.oid });
     const v = veredictoDe({
       sinFundir: Number(shSafe('git', ['rev-list', '--count', `origin/main..${w.rama}`], '0')) || 0,
       abierto,
-      fundido: abierto ? null : (prDe(w.rama, fundidos) ?? null),
+      fundido,
       ultimoCommitISO: shSafe('git', ['log', '-1', '--format=%cI', w.rama]),
       sucio,
       bloqueado: w.bloqueado,

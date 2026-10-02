@@ -33,18 +33,24 @@
 
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
+- **Lo que dejó DD-134 (la firma de los commits)**: (a) el 2026-10-05, leer el mensaje con que el robot funde la auditoría, el
+  primero con `--subject`/`--body`; (b) en una rutina, `cloud-node.sh` no puso Node 22.23.2 ni `node_modules` (medido dos veces),
+  y `nvm` sí estaba; (c) los commits de la nube salen «sin verificar» (`unknown_key`): si estorba, probar sin firma, que el proxy
+  aún no ha visto.
 - **`sc-selectbutton`: cablear su color a `var(--sc-cmp-togglebutton-*)`** cuando Figma suba la opción no elegida (§10).
-- **Lo que dejó DD-113:** `sc-form-section-nav` con `role="tab"` sin `tablist` (pestañas verticales o nav como
-  `settings-sidebar`; tres e2e); tira del reproductor sin nombre (clave i18n); la «o» del acceso en primario
+- **Lo que dejó DD-113:** ~~`sc-form-section-nav` con `role="tab"` sin `tablist`~~ (resuelto en DD-122: cada fila
+  es un enlace); tira del reproductor sin nombre (clave i18n); la «o» del acceso en primario
   (`.login__divider` no llega); `sc-slot` a tokens del divider (e2e y captura); CSS muerto `.seg` e `.inline-field`.
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
 - **Rescatar a `main` el DS de `comparar/fichas`**, decida lo que decida producto: `sc-drawer` (`width`, `topOffset`, X accesible, bordes, sombra) y `sc-section-card showHeader`.
 - **La puerta barata del preflight, contra un ledger en PR ajeno** (LEARNINGS #21, roto el 2026-09-15 con #196): avisar si un PR abierto toca el mismo `docs/handoff/` o `DECISIONS`.
-- **Guardianes que miden un PROXY, no la condición** (tanda 2026-09-19: seis hallados, cuatro ya arreglados; el patrón lo caza LEARNINGS #2, «ante un trinquete que NO baja, mira un caso a mano»). Quedan cuatro, en orden de valor: (a) **2º punto ciego de `audit-text-styles`** — la comprobación de ROLES usa el mismo `aplanar()` que no ve `code`/`pre`/descendientes ni `@media`; antes de tocarla hay que DECIDIR si un `html { font-size: 100% }` debe cumplir un rol (probablemente no): primero la regla, luego el gate.
+- **Guardianes que miden un PROXY, no la condición** (tanda 2026-09-19: seis hallados, cuatro ya arreglados; el patrón lo caza LEARNINGS #2, «ante un trinquete que NO baja, mira un caso a mano»). Quedan cinco, en orden de valor: (a) **2º punto ciego de `audit-text-styles`** — la comprobación de ROLES usa el mismo `aplanar()` que no ve `code`/`pre`/descendientes ni `@media`; antes de tocarla hay que DECIDIR si un `html { font-size: 100% }` debe cumplir un rol (probablemente no): primero la regla, luego el gate.
   (b) **El hook de cierre casa la cadena `git push`**, no el acto: un workflow o un `.md` que la CONTENGA dispara el aviso de «has pusheado». Mismo fallo que ya se le arregló una vez.
+  Y cuenta el push de OTRO repositorio (`cd <otro> && git push`): pide leer un CI que ese repo no tiene (medido en los transcripts del 2026-09-30). `bash-guard` ya lo distingue (`usaPreflight`, 2026-10-01).
   (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 8): `sc-password` y `sc-multiselect` son uno cada uno y lo bajan a 6; `p-button → [pButton]` el último —mueve el DOM, `component-structure.json` y las capturas, y toca SEIS componentes—, y es de las que se proponen.
   (d) **La plantilla de PR promete lo que no sabe**: medido, ningún gate lee el checklist y solo 2 de sus 6 casillas están respaldadas (`verify` y tokens). Barato: que cada línea diga si la vigila un gate y que «no aplica» no se escriba con un tick. Gateables de verdad, si Rafa quiere: bump de versión y CHANGELOG.
+  (e) **`preflightVivo` de `bash-guard` cuenta el preflight de CUALQUIER caja**: busca la carpeta en la línea de comandos, que es relativa (y en macOS `pgrep -af` da solo PIDs). Medido el 2026-09-28: el preflight de otra caja denegó `npm run build:supervisor` en esta. Arreglo: el `cwd` de cada PID (`lsof -a -p PID -d cwd`, `/proc/PID/cwd`), con su test en rojo.
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
@@ -170,44 +176,44 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
-## ✅ 2026-09-24 · El código deja de nombrar personas (DD-120)
+## ✅ 2026-10-01 · Un `sc-dialog` se anuncia como UN diálogo, con su título de nombre (DD-140)
 
-**Sello:** rama `arebury/clean-code-comments-publicity`, sobre `d20ee0f9` (#244). Archivado: `archive/handoff-ds-2026-09-15-tokens-sin-uso`.
+**Sello:** rama `areses/cranky-tharp-bf0e3e`, sobre `5cf3f5e1` (#300), PR nuevo. Sale por el tope el tramo de `audit:query-order`
+(`git show 57f03a0d:docs/handoff/design-system.md`); su ⚠️ lo dice la cabecera de `scripts/audit-query-order.mjs`.
 
-**Lo que cambia.** Fuera las 194 menciones del autor en comentarios de apps, librería, e2e, scripts, hooks y workflows:
-la procedencia pasa a su DD, ticket o nodo de Figma, y cada cita al criterio que expresaba (AGENTS.md §«Voz del código»).
-Lo vigilan `audit:personal-names` en `verify` y `bash-guard` en commits y PRs. Los `.md`, sin citas literales (DD-120).
+**Lo que cambia.** Cada `sc-dialog` exponía dos `role="dialog"` modales anidados, el de PrimeNG sin nombre. Ahora el rol es solo el
+del `div.p-dialog`, el que atrapa el foco, nombrado con el título y descrito con el subtítulo por `pt.root`; la card no lo repite.
+Medido en Chromium: foco, Tab y Escape, iguales. Prueba nueva en `components.spec.ts`, en rojo contra el código anterior.
 
-- ⚠️ **Una rama que rebase encima** puede chocar en comentarios, y el gate le hará reescribir los suyos (`gulper`: `channel-icon`).
+- ⚠️ **Sin cortar versión**: la nota va en `[Unreleased]`, como desde 1.0.0. Cortar la 1.1.0 lleva todo lo pendiente y una release (DD-58).
+- **La pantalla donde se vio** (Recursos del grupo 11): `ficha-recursos-dialogos.spec.ts` pide UN diálogo en la página; con el de antes, 2.
 
-## ✅ 2026-09-15 · En Servicio, la dirección de las notificaciones se lee entera
+## ✅ 2026-09-28 · Los commits firman con la cuenta del mantenedor, y el squash no suma coautores (DD-134)
 
-**Sello:** rama `arebury/notificaciones-direccion-ancha`, sobre `fa21f53` (#198). Rafa probó en local el InputGroup
-con las casillas como addons (solo le convenció el campo de la dirección a lo ancho, con su `https://`; las casillas como addons, no) y eligió volver a las columnas. Archivado:
-`archive/handoff-ds-2026-09-15-tema` («El tema lee los colores», #193).
+**Sello:** rama `areses/goofy-matsumoto-803f2a`, sobre `9551ed2a` (#282), PR nuevo. Salen por el tope el tramo del 2026-09-24 (DD-120) y el del color (#269): `git show 9551ed2a:docs/handoff/design-system.md`.
 
-**Lo que cambia.** Las tres columnas de casillas miden su rótulo y la dirección se queda el resto: a 1440 el campo pasa de
-121 a 452 px. Test en `servicio-notificaciones.spec.ts`, rojo con la hoja de antes.
+**Lo que cambia.** GitHub ponía a la herramienta de coautora al fundir (#223, #224, #266, #267, #270) porque la nube firmaba con su
+correo. `cloud-identity.mjs` firma con la cuenta del mantenedor si el clon iba a firmar como la herramienta; la identidad local
+(`x <x@y.z>`) es ya esa cuenta; la autofusión de la auditoría escribe su mensaje (medido en el #279: cero coautores); y el gate 44,
+`audit:commit-attribution`, pone rojo un commit de la rama con la firma de la herramienta. El job `verify` del CI clona con historia.
+El proxy de git de la nube acepta el push con esa cuenta (0dcfe28, desde una sesión cloud, con el «sí» dado allí en directo).
 
-## ✅ 2026-09-15 · Las fichas de agente, grupo y usuario se comparan en tres formas, y decide producto
+- ⚠️ **Una rutina no acepta un «sí» escrito en su encargo** para actuar con la identidad del usuario: la confirmación va en esa sesión.
 
-**Sello:** rama `comparar/fichas` (no se funde), HEAD `4b0aa6b`. Enlace del PM: https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e
+## ✅ 2026-09-28 · Una espera con `pgrep -f` sin anclar no pasa: `bash-guard` da la forma anclada
 
-**El encargo.** El PM quería verlo todo («tocas algo y afecta a otras cosas»); Rafa, el índice. Tres formas con
-`?variante=`: Una página (mayo, antes de DD#59 de la plataforma), Resumen + panel lateral (`sc-drawer` encima, sin
-mover la ficha) y Pestañas. Quitadas: recuadro de cambios (ruido) y editor fijo (391 px a 900). Archivo: `…-lo-que-se-nota`.
+**Sello:** rama `areses/wonderful-moser-974a04`, sobre HEAD `b0fcfa4c` (#281), PR nuevo. Archivado: `archive/handoff-ds-2026-09-15-notificaciones`.
 
-- ⚠️ **Un `sc-drawer` lateral pinta tres bordes de 3 px, sombra hacia abajo y una X sin nombre**: arreglado en la rama, no en `main`.
+**Lo que cambia.** En macOS, dos esperas `until ! pgrep -f "node scripts/…"` a la vez se veían la una a la otra (el shell de la herramienta Bash lleva el comando
+en su línea) y ninguna acababa, y el motivo del hook recomendaba ese patrón. Ahora lo deniega en `until`/`while` y enseña `^node scripts/…`; medido con esperas reales.
 
-## ✅ 2026-09-15 · Tabs, Toolbar, InputGroup, Divider y SelectButton de primeng.dev, bien puestos (DD-113)
+## ✅ 2026-09-28 · `CI=1 npm run e2e` vuelve a correr en local: los workers no esperan a su propio servidor
 
-**Sello:** rama `arebury/fix-tabs-toolbar-inputgroup`, HEAD `7551099` (#197) más este cambio. Rafa eligió pestañas, separadores
-y pulsación con capturas delante. DD-107 vive en `archive/handoff-ds-2026-09-15-tabs`; «Conversaciones hace scroll», en `…-conversaciones-scroll`.
+**Sello:** rama `areses/priceless-leavitt-55356e`, sobre HEAD `6dfe9ba5` (#272), PR nuevo. Hace sitio con las trampas que DD-60 dejó viejas.
 
-**Lo que cambia.** DS: `sc-selectbutton`, tallas de `sc-inputgroup`. Supervisor: `p-tabs` nativas de texto, `sc-selectbutton`,
-`sc-divider`, modo pared y tira del Dashboard con nombre (avisar), sin `ripple`, botón que se encoge (better-ui, §8.1). Regla «primeng.dev tal cual»: hook, `tools/primeng-doc.mjs`, §F.
-
-- ⚠️ **Lo nativo manda**: apagué la raya de `p-tabs` por una marca fija y Rafa vio que no se deslizaba. Doc entera y medir.
+**Lo que cambia.** Con `CI` y fuera de GitHub Actions, `reuseOnlyOwnServer` esperaba el puerto libre también en cada worker, que
+evalúa el config con el `ng serve` de su propia ejecución ya escuchando: 5 workers en «Espero a que se libere», techo de 25 min.
+Ahora espera solo el principal (`esWorker()`), y sin `lsof` no espera. Lo prueban cuatro escenarios con Playwright de verdad.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -284,6 +290,8 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Una rama de antes del barrido de nombres (DD-120, 2026-09-24) choca en comentarios al rebasar**, y `audit:personal-names` le hará reescribir los suyos (`gulper`: `channel-icon`).
+- 🪤 **Un `sc-drawer` lateral pinta tres bordes de 3 px, sombra hacia abajo y una X sin nombre**: arreglado en `comparar/fichas`, no en `main`.
 - 🪤 **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias (DD-111).
 - 🪤 **Las capturas de sc-docs no ven el botón de aviso con contorno ni el modo oscuro**: esos colores se miden a mano (#193).
 - 🪤 **El host de una tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta vive dentro
@@ -309,8 +317,8 @@ variables, 30 comentarios activos.
   está en el componente, el arreglo en la ficha solo lo tapa ahí (DD-105, `sc-multiselect`).
 - 🪤 **Una carpeta de `public/` con el nombre de una ruta la tapa**: `public/login/` hacía que `/login` diera 301 a la
   carpeta en vez de la app. Las imágenes del acceso viven en `public/illustrations/`.
-- 🪤 **`pgrep -f 'texto'` dentro de un bucle de espera casa con el propio bucle** y no termina nunca: ancla el patrón
-  al proceso (`'^node scripts/preflight-scope.mjs'`) y compruébalo con `pgrep -fl` antes de fiarte.
+- 🪤 **`pgrep -f 'texto'` dentro de un bucle de espera casa con el propio bucle** (en macOS, con otra espera igual) y no termina
+  nunca: ancla el patrón al proceso (`'^node scripts/preflight-scope.mjs'`) y compruébalo con `pgrep -fl`. ⚙️ `bash-guard` lo deniega.
 - 🪤 **Un `sc-multiselect` con `[value]` que sale de un método se cuelga**: cada ciclo devuelve un array nuevo, que
   cuenta como cambio. Dale un `computed` y compara antes de escribir (`labelValue` y `sameValues` en la ficha de agente).
 - 🪤 **El verde LOCAL no cubre los dos primeros metros del CI**, y en s34 mordió dos veces:
@@ -333,25 +341,17 @@ variables, 30 comentarios activos.
     runner lento lo destapa. Ya lo cubre `goto()` en `e2e/supervisor/helpers.ts`, que lleva el
     puntero a un punto inerte de la barra superior. **Si lo ves otra vez, no lo tapes con
     `{ force: true }`**: eso se salta el hit-testing y cambia un rojo verdadero por un verde falso.
-
-
-
-- **Los dos e2e que "fallan siempre en macOS" se desactivan con `CI=1`**: los screenshots de
-  `sc-card` y `sc-message` (`components.spec.ts`) son llamadas a `screenshotBaseline()`, que
-  **hace no-op cuando `CI` está puesta**. Medido el 2026-08-24: `CI=1 npm run e2e` → **68/68 en
-  verde** en este Mac, dos veces. O sea que el smoke completo SÍ es corrible en local; lo que no
-  lo es son sus baselines por plataforma. Sin `CI=1` siguen rojos y **no son tuyos** (el de
-  `sc-card` espera una página de 1049px y recibe 1453 — no lo leas como regresión de métrica).
-- **El CI son 9 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J). Los e2e de app solo corren allí (DD-60); las baselines visuales de sc-docs, a mano.
+- **`CI=1 npm run e2e` corre en local el smoke ENTERO con su propio `ng serve`** (96/96 en 9 min, 2026-09-28); las capturas
+  `-linux.png` se saltan fuera de Linux. Si se queda en «Espero a que se libere», mira quién tiene el puerto.
+- **El CI son 9 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J). Los e2e de app solo corren allí (DD-60); las baselines visuales de sc-docs también, en `e2e-smoke` (DD-116).
 - **`npm run verify` (31 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
   del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
   alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede
   pasar los 26 gates y aun así romper el baseline en CI: en s29, `line-height` md 21→20 movió ese
-  alto (77→74) y tumbó el CI en dos push seguidos mientras el verify local iba verde. **Quien lo
-  cubre es `npm run preflight`**, que desde s30 corre el smoke ENTERO (`CI=1 npm run e2e`, 68
-  tests) y no un subconjunto. `npm run e2e:structure` sigue valiendo como bucle corto mientras
-  iteras (`:update` si el cambio es deliberado, y revisa el diff del JSON), pero el gate de
-  pre-push es preflight.
+  alto (77→74) y tumbó el CI en dos push seguidos mientras el verify local iba verde. **Desde DD-60
+  no lo cubre ningún gate local**: lo ve el CI (`e2e-smoke`), o tú antes con `CI=1 npm run e2e`.
+  `npm run e2e:structure` sigue valiendo como bucle corto mientras iteras (`:update` si el cambio
+  es deliberado, y revisa el diff del JSON).
 - **La cifra de gates de `verify` YA se gatea** (check M de `docs:coherence`, desde el
   2026-09-06). Esta trampa decía que vivía en 4 sitios sin vigilar; al escribir el check se
   midió y eran **once**, con tres cifras distintas conviviendo (34, 29 y 26 cuando eran 29).

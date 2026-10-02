@@ -42,6 +42,8 @@ const RUTAS = [
   'conversaciones',
   'conversaciones/reglas',
   'admin/usuarios',
+  // El alta, con el índice (DD-143): sus filas con ✓ y «Atrás / Siguiente» llevan el anillo de todos.
+  'admin/grupos/crear',
   'admin/labels',
   'admin/repositorios',
   'config/aed/servicio',

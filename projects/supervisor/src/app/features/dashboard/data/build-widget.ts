@@ -1,4 +1,5 @@
 import type { AgentPresence, DashboardWidget, WidgetFilter } from './dashboard.types';
+import { agentesDelPanel, contarEstado, type EstadoDeAgente } from './presencia';
 import { widgetType } from './widget-catalog';
 
 const ALL: WidgetFilter = { channel: 'all', direction: 'all' };
@@ -19,6 +20,9 @@ export interface BuildWidgetOptions {
   readonly entities: readonly string[];
   readonly title?: string | null;
   readonly filter?: WidgetFilter | null;
+  /** El estado de los agentes en Administración (DD-139): el del almacén en el asistente, el de las semillas en los
+   *  monitores de fábrica. Obligatorio para que ningún widget nazca con otra lista de estados. */
+  readonly estadoDe: EstadoDeAgente;
 }
 
 /**
@@ -52,8 +56,11 @@ export function buildWidget(typeId: string, opts: BuildWidgetOptions): Dashboard
         ? { ...base, kind: 'kpi-simple', value: int(58, 96), unit: 'percent' }
         : { ...base, kind: 'kpi-simple', value: int(4, 30) * n };
     case 'agents-state': {
-      const total = int(Math.max(3, n - 2), Math.max(4, n));
       const presence: AgentPresence = def.presence ?? 'available';
+      // Agentes de la demo: el anillo cuenta su estado en Administración, el mismo que enseñan la tabla y el detalle.
+      const cuenta = contarEstado(opts.entities.map(opts.estadoDe), presence);
+      if (cuenta) return { ...base, kind: 'agents-state', presence, ...cuenta };
+      const total = int(Math.max(3, n - 2), Math.max(4, n));
       return { ...base, kind: 'agents-state', presence, total, value: int(1, Math.max(1, Math.round(total * 0.6))) };
     }
     case 'agents-table': {
@@ -66,7 +73,7 @@ export function buildWidget(typeId: string, opts: BuildWidgetOptions): Dashboard
           const attended = conversations - int(0, 1);
           return {
             name,
-            presence: presences[i % presences.length],
+            presence: opts.estadoDe(name) ?? presences[i % presences.length],
             conversations,
             attended,
             rejected: conversations - attended,
@@ -77,7 +84,12 @@ export function buildWidget(typeId: string, opts: BuildWidgetOptions): Dashboard
       };
     }
     case 'group-panel': {
-      const connected = int(3, 4) * n;
+      /* Conectados y disponibles son AGENTES reales de la demo (DD-129), no una cifra que escale
+       * con `n` (colas del panel): con QUEUES=4, `int(3,4)*n` daba 12 o 16 conectados sin relación
+       * con los 10 agentes reales, y el detalle (`detail.ts`) truncaba en silencio a los que hay de
+       * verdad. El panel agrega sobre todos los agentes, igual que `agents-state`; no hay reparto
+       * por grupo en la demo, así que se usa el total real en vez de inventar uno por panel. */
+      const { connected, available } = agentesDelPanel(opts.estadoDe);
       const total = int(20, 34) * n;
       const attended = total - int(1, 3) * n;
       return {
@@ -85,7 +97,7 @@ export function buildWidget(typeId: string, opts: BuildWidgetOptions): Dashboard
         kind: 'group-panel',
         onHold: int(0, 4),
         inProgress: int(2, 5) * n,
-        available: int(1, Math.max(1, Math.round(connected * 0.6))),
+        available,
         connected,
         total,
         attended,

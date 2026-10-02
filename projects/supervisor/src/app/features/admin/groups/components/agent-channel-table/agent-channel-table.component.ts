@@ -27,22 +27,21 @@ import {
   type ScColumnDef,
 } from '@smartcontact-hub/components';
 
+import { TooltipModule } from 'primeng/tooltip';
+
 import { IllustratedAvatarComponent } from '@shared/components';
-import {
-  ScToggleSwitchComponent as ToggleSwitchComponent,
-  ScCheckboxComponent as CheckboxComponent,
-} from '@smartcontact-hub/components';
+import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
-  CHANNEL_LABEL_KEYS,
+  FAMILY_LABEL_KEYS,
   GroupChannel,
   LEVEL_OPTIONS,
 } from '@features/admin/groups/data/groups-data';
 import {
-  canonicalizeChannels,
   Channel,
   GroupAgentLink,
 } from '@features/admin/services/group-agent-links.types';
+import { familiesOf, isLastChannel, newLinkFor, toggleLinkChannel } from '@features/admin/services/group-channels.core.mjs';
 
 /** Lightweight agent reference accepted by the table. */
 export interface AgentChannelTableAgent {
@@ -56,22 +55,41 @@ interface VisibleRow {
   readonly agent: AgentChannelTableAgent;
 }
 
+/** Anchos de la tabla compacta (el panel rápido). Los usa también el panel para medirse (DD-131). */
+export const CHANNEL_COL_COMPACT = '5rem';
+export const ACTIONS_COL_COMPACT = '2.5rem';
+export const LEVEL_COL_REM = 9;
+
 /**
  * Editor de los agentes de un grupo, dentro de su ficha — el gemelo de
  * `GroupAssignmentTableComponent` (los grupos de un agente), con su misma barra y su
  * misma tabla:
  *
  *   [ Buscar agente…     ]  ⚠ 2 sin canal                  [ Añadir agente… ▾ ]
- *   ☐  Agente          Teléfono   Chat   Activo
- *   ☐  A. López           ☑        ☑     ●━○    🗑
+ *   ☐  Agente                     Teléfono     Chat      Email
+ *   ☐  A. López  [En pausa]          ☑          ☑          ☐       🗑
  *
- * Una columna por canal DEL GRUPO (un grupo solo de teléfono enseña solo esa), como
- * la matriz de Contact Center.
+ * Una columna por FAMILIA que ofrece el grupo (un grupo solo de teléfono enseña solo esa), como
+ * la matriz de Contact Center. Chat es Web Chat y WhatsApp juntos: el agente atiende los dos o
+ * ninguno, como en el AED en vivo (DD-147).
  *
- * La casilla del principio de la fila ELIGE agentes para actuar en lote (pausar, quitar
- * del grupo); las de las columnas son permisos de canal. Se quitó y volvió el mismo día
- * (decisión de producto, 2026-09-14): la acción en lote necesita elegir varios, y la cabecera de cada columna ya dice qué
- * es cada casilla.
+ * LA VISTA DEL GRUPO GESTIONA COMPOSICIÓN: quién está y por qué canales (visión de producto de
+ * grupos, 2026-09-25; DD-121). Por eso, desde el 2026-09-26:
+ *   · Fuera «Habilitado» y su lote Habilitar/Deshabilitar. La pausa es estado de la PERSONA (en
+ *     Voice puede delegarse al agente) y se cambia en su ficha; aquí se VE, con una etiqueta de
+ *     solo lectura, y sus canales se siguen pudiendo tocar.
+ *   · Un agente asignado tiene siempre al menos un canal: la casilla del último se apaga, con su
+ *     porqué. No se desasigna solo al quitárselo: pasar a alguien de Teléfono a Chat son 2 clics
+ *     (marcar Chat, desmarcar Teléfono), y la fila no desaparece a mitad del gesto.
+ *   · «Quitar» significa una sola cosa: salir del grupo, desde la papelera, en lote o
+ *     desmarcándolo en «Añadir agentes».
+ * Las filas que YA vienen sin canales (datos de antes, o la ficha del agente, que sí deja
+ * quitarlos todos) se toleran y se marcan «Sin canales».
+ *
+ * La casilla del principio de la fila ELIGE agentes para actuar en lote (quitar del grupo); las
+ * de las columnas son permisos de canal. Se quitó y volvió el mismo día (decisión de producto,
+ * 2026-09-14): la acción en lote necesita elegir varios, y la cabecera de cada columna ya dice
+ * qué es cada casilla.
  *
  * No persiste nada: el formulario tiene el `links` canónico y lo guarda en
  * `GroupAgentLinksStore`.
@@ -89,12 +107,13 @@ interface VisibleRow {
     MultiSelectComponent,
     SelectComponent,
     TagComponent,
-    ToggleSwitchComponent,
+    TooltipModule,
     TranslateModule,
   ],
   templateUrl: './agent-channel-table.component.html',
   styleUrl: './agent-channel-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[class.agent-channel-table--compact]': 'compact()' },
 })
 export class AgentChannelTableComponent {
   private readonly translate = inject(TranslateService);
@@ -114,8 +133,6 @@ export class AgentChannelTableComponent {
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('agentTpl');
   private readonly channelTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
-  private readonly activeTpl =
-    viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('activeTpl');
   private readonly levelTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('levelTpl');
   private readonly actionsTpl =
@@ -131,37 +148,30 @@ export class AgentChannelTableComponent {
           cellTemplate: this.agentTpl(),
         },
         /* Con la estrategia Niveles, el nivel de cada agente va en su fila: donde ya se decide quién atiende qué. */
-        ...(this.showLevel()
-          ? [
-              {
-                field: 'level',
-                header: this.translate.instant('groups.form.assigned.col_level'),
-                width: '6.5rem',
-                cellTemplate: this.levelTpl(),
-                stopRowClick: true,
-              },
-            ]
-          : []),
-        ...this.groupChannels().map((ch) => ({
+        ...this.levelFamilies().map((family) => ({
+          field: `level-${family}`,
+          header: this.translate.instant('groups.form.assigned.col_level', { channel: this.translate.instant(FAMILY_LABEL_KEYS[family]) }),
+          width: `${LEVEL_COL_REM}rem`,
+          cellTemplate: this.levelTpl(),
+          stopRowClick: true,
+        })),
+        /* 6.5rem: lo midió «Web Chat», que a 5.5 partía en dos líneas y subía la cabecera entera
+         * (visto a 1440 el 2026-09-26); desde DD-147 la más larga es «Teléfono», que también cabe.
+         * Compacta, 5rem: con el relleno de celda de la tabla pequeña (8 a cada lado, no 14) le
+         * quedan 64 px, y cabe en una línea. */
+        ...(this.channelColumns() ? this.families() : []).map((ch) => ({
           field: ch,
-          header: this.translate.instant(CHANNEL_LABEL_KEYS[ch]),
-          width: '5.5rem',
+          header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
+          width: this.compact() ? CHANNEL_COL_COMPACT : '6.5rem',
           align: 'center' as const,
           cellTemplate: this.channelTpl(),
           stopRowClick: true,
         })),
         {
-          field: 'active',
-          header: this.translate.instant('groups.form.assigned.col_active'),
-          width: '5.5rem',
-          align: 'center',
-          cellTemplate: this.activeTpl(),
-        },
-        {
           field: 'actions',
           header: '',
           headerAriaLabel: this.translate.instant('common.actions'),
-          width: '3.5rem',
+          width: this.compact() ? ACTIONS_COL_COMPACT : '3.5rem',
           align: 'center',
           cellTemplate: this.actionsTpl(),
           stopRowClick: true,
@@ -171,12 +181,37 @@ export class AgentChannelTableComponent {
   );
 
   readonly groupChannels = input.required<readonly GroupChannel[]>();
+  /** Las familias que ofrece el grupo: una columna por cada una (DD-147). */
+  protected readonly families = computed(() => familiesOf(this.groupChannels()));
   readonly links = input.required<readonly GroupAgentLink[]>();
   readonly availableAgents =
     input.required<readonly AgentChannelTableAgent[]>();
   readonly groupId = input.required<number>();
-  /** Enseña la columna Nivel (estrategia de teléfono Niveles). */
-  readonly showLevel = input(false);
+  /** Una columna identificada por cada familia con estrategia Niveles. */
+  readonly levelFamilies = input<readonly ('phone' | 'chat')[]>([]);
+  /**
+   * Elegir filas para actuar en lote. Apagado en el panel rápido del listado: su barra de lote es
+   * `position: fixed` y quedaría DEBAJO de la máscara del panel (z-index 1050 frente a 1060).
+   */
+  readonly selectable = input(true);
+  /**
+   * La tabla del panel rápido: la pequeña del DS (`size="sm"`), columnas de canal y papelera más estrechas y la
+   * barra en una línea. La ficha sigue en la de siempre (DD-131).
+   */
+  readonly compact = input(false);
+  /**
+   * Una columna por canal del grupo. El panel la apaga en un grupo de un solo canal: todo agente asignado lo
+   * atiende, y la columna solo eran casillas bloqueadas (DD-131).
+   */
+  readonly channelColumns = input(true);
+
+  /** Reserva el nombre antes de sumar niveles y canales: la tabla desplaza dentro de su caja,
+   * sin colapsar la identidad del agente cuando el rail estrecha la ficha. */
+  protected readonly tableMinWidth = computed(() => {
+    if (this.levelFamilies().length === 0) return undefined;
+    const channels = this.channelColumns() ? this.families().length : 0;
+    return `${15 + this.levelFamilies().length * LEVEL_COL_REM + channels * (this.compact() ? 5 : 6.5) + (this.compact() ? 2.5 : 3.5) + (this.selectable() ? 3 : 0)}rem`;
+  });
 
   readonly linksChange = output<readonly GroupAgentLink[]>();
 
@@ -216,15 +251,6 @@ export class AgentChannelTableComponent {
 
   protected clearSelection(): void {
     this.selectedIds.set(new Set());
-  }
-
-  /** En lote: pausa a los elegidos en este grupo. */
-  /** En lote: los elegidos atienden o dejan de atender en este grupo. Las dos, como en el Figma de la migración:
-   *  con solo «Dejar de atender», volver había que hacerlo fila a fila. */
-  protected bulkSetActive(active: boolean): void {
-    const sel = this.selectedIds();
-    if (sel.size === 0) return;
-    this.linksChange.emit(this.links().map((l) => (sel.has(l.agentId) ? { ...l, active } : l)));
   }
 
   /** En lote: quita a los elegidos del grupo. */
@@ -269,15 +295,19 @@ export class AgentChannelTableComponent {
   /** Lo marcado en «Añadir agentes»: los que ya están en el grupo. */
   protected readonly assignedIds = computed<number[]>(() => this.links().map((l) => l.agentId));
 
-  /** Counter — how many active rows have zero channels (the soft warning). */
-  protected readonly zeroChannelCount = computed(() => {
-    return this.assignedRows().filter(
-      (r) => r.link.active && r.link.channels.length === 0
-    ).length;
-  });
+  /** Cuántas filas no tienen ningún canal (el aviso suave de la barra). Todas, en pausa o no:
+   *  desde que la pausa no se toca aquí, una fila sin canales es igual de rara en los dos casos. */
+  protected readonly zeroChannelCount = computed(
+    () => this.assignedRows().filter((r) => r.link.channels.length === 0).length,
+  );
 
   protected hasChannel(link: GroupAgentLink, channel: string): boolean {
     return link.channels.includes(channel as Channel);
+  }
+
+  /** El único canal que le queda: su casilla no se desmarca aquí (para sacarle, Quitar). */
+  protected isLastChannel(link: GroupAgentLink, channel: string): boolean {
+    return isLastChannel(link, channel);
   }
 
   // -- mutations -----------------------------------------------------
@@ -289,7 +319,7 @@ export class AgentChannelTableComponent {
     const current = new Set(this.links().map((l) => l.agentId));
     const added: GroupAgentLink[] = [...next]
       .filter((agentId) => !current.has(agentId))
-      .map((agentId) => ({ agentId, groupId: this.groupId(), channels: [...this.groupChannels()], active: true, level: 1 }));
+      .map((agentId) => newLinkFor({ agentId, groupId: this.groupId(), groupChannels: [...this.groupChannels()] }));
     this.linksChange.emit([...this.links().filter((l) => next.has(l.agentId)), ...added]);
     this.selectedIds.update((prev) => new Set([...prev].filter((id) => next.has(id))));
   }
@@ -308,28 +338,21 @@ export class AgentChannelTableComponent {
   protected toggleChannel(agentId: number, field: string): void {
     const channel = field as Channel;
     this.linksChange.emit(
-      this.links().map((l) => {
-        if (l.agentId !== agentId) return l;
-        const has = l.channels.includes(channel);
-        const channels = has
-          ? l.channels.filter((c) => c !== channel)
-          : [...l.channels, channel];
-        return { ...l, channels: canonicalizeChannels(channels) };
-      })
+      this.links().map((l) => (l.agentId === agentId ? toggleLinkChannel(l, channel, { minOne: true }) : l)),
     );
   }
 
   protected readonly levelOptions = LEVEL_OPTIONS;
+  protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
 
-  protected setLevel(agentId: number, value: unknown): void {
-    if (typeof value !== 'number') return;
-    this.linksChange.emit(this.links().map((l) => (l.agentId === agentId ? { ...l, level: value } : l)));
+  protected setLevel(agentId: number, field: string, value: unknown): void {
+    if (typeof value !== 'number' || !LEVEL_OPTIONS.includes(value)) return;
+    const family = this.levelFamily(field);
+    this.linksChange.emit(this.links().map((l) => (l.agentId === agentId ? { ...l, levels: { ...l.levels, [family]: value } } : l)));
   }
 
-  protected toggleActive(agentId: number, active: boolean): void {
-    this.linksChange.emit(
-      this.links().map((l) => (l.agentId === agentId ? { ...l, active } : l))
-    );
+  protected levelFamily(field: string): 'phone' | 'chat' {
+    return field === 'level-chat' ? 'chat' : 'phone';
   }
 
   // -- helpers -------------------------------------------------------

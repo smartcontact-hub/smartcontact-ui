@@ -44,9 +44,11 @@ import {
   PresenceStatus,
 } from '../data/agents-data';
 import { AgentBulkField, AgentsStore } from '../state/agents.store';
+import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { Channel } from '@features/admin/services/group-agent-links.types';
+import { familiesOf } from '@features/admin/services/group-channels.core.mjs';
 
 interface PendingBulkEdit {
   readonly field: AgentBulkField;
@@ -129,15 +131,26 @@ export class AgentsListPageComponent {
     useTopbarActions(this.topbarActions);
   }
 
-  /** Derived: union of every active-link channel for the given agent. */
+  /**
+   * Por dónde atiende: la unión de las familias de sus enlaces activos (Teléfono, Chat y Email, DD-147), cada una
+   * RECORTADA a las que su grupo ofrece hoy, que es como las lee la ficha del grupo (DD-121). Un enlace puede
+   * guardar una que su grupo ya no tiene (se la quitaron al grupo, datos de antes) y la lista la pintaba: en el
+   * seed, un Email que el agente 18 no atiende en ningún grupo (medido el 2026-09-26).
+   */
   protected channelsForAgent(agentId: number): readonly Channel[] {
+    const offeredBy = new Map(this.groupsStore.groups().map((g) => [g.id, new Set<Channel>(familiesOf(g.channels))]));
     const set = new Set<Channel>();
     for (const link of this.linksStore.linksForAgent(agentId)) {
-      if (!link.active) continue;
-      for (const c of link.channels) set.add(c);
+      const offered = offeredBy.get(link.groupId);
+      if (!link.active || !offered) continue;
+      for (const c of link.channels) if (offered.has(c)) set.add(c);
     }
-    const order: readonly Channel[] = ['phone', 'chat', 'whatsapp', 'email'];
-    return order.filter((c) => set.has(c));
+    return CHANNEL_FAMILIES.filter((c) => set.has(c));
+  }
+
+  /** El nombre de una familia, el mismo que en la tabla de agentes del grupo («Chat»: Web Chat y WhatsApp). */
+  protected channelLabelKey(channel: Channel): string {
+    return FAMILY_LABEL_KEYS[channel];
   }
 
   /** Derived: group refs for the given agent (id, name, active flag). */
@@ -258,8 +271,8 @@ export class AgentsListPageComponent {
         field: 'channels',
         header: this.translate.instant('agents.table.channels'),
         cellTemplate: this.channelsTpl(),
-        /* Cuatro glifos de 16 px con su hueco (teléfono, chat, WhatsApp, email). */
-        width: '7.75rem',
+        /* Tres familias: 48 px de glifos + 21 de huecos + 28 de relleno de celda (DD-147). */
+        width: '6.25rem',
       },
       {
         // `field: 'type'` no existe en `Agent` (la propiedad es `agentType`), así
@@ -404,8 +417,10 @@ export class AgentsListPageComponent {
     void this.router.navigateByUrl('/admin/agentes/crear');
   }
 
+  /** Abrir la ficha lleva a su sección de trabajo (`?seccion=grupos`): la ficha, sin parámetro, abre por
+   *  Identidad, la primera de su índice (DD-122). */
   protected onRowOpen(agent: Agent): void {
-    void this.router.navigateByUrl(`/admin/agentes/editar/${agent.id}`);
+    void this.router.navigate(['/admin/agentes/editar', agent.id], { queryParams: { seccion: 'grupos' } });
   }
 
   /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
@@ -441,7 +456,7 @@ export class AgentsListPageComponent {
   }
 
   protected onRowEdit(agent: Agent): void {
-    void this.router.navigateByUrl(`/admin/agentes/editar/${agent.id}`);
+    this.onRowOpen(agent);
   }
 
   protected onRowDuplicate(agent: Agent): void {

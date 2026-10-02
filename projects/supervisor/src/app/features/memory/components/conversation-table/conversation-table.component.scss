@@ -22,6 +22,16 @@
  * desde las `<ng-template>` de ESTE componente, así que conservan su
  * `_ngcontent` y la encapsulación los alcanza. */
 
+/* Texto libre (Origen, Destino): baja hasta dos líneas cuando no cabe en una, que es lo que decidió el reparto de
+ * anchos (2026-09-13), y si es más largo, recorta con «…» y lleva el texto entero en el `title` (DD-124). Con
+ * `?datos=tortura` un origen bajaba a cuatro líneas y la tabla triplicaba su alto (medido el 2026-09-27). */
+.memory-text-cell {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
 /* Columnas numéricas (T. Conv. / T. Espera): cifras alineadas por dígito. La
  * alineación a la derecha la da `align: 'right'` de la columna. */
 .memory-num-cell {

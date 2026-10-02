@@ -1,6 +1,7 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 
 import { createVersionedStorage } from '@core/services/local-store.factory';
+import { AgentsStore } from '@features/admin/agents/state/agents.store';
 
 import { DASHBOARD_DEMO_MONITORS } from '../data/dashboard-demo';
 import {
@@ -10,6 +11,7 @@ import {
   type DashboardWidget,
 } from '../data/dashboard.types';
 import { liveTick } from '../data/live-tick';
+import { conPresencia, estadosDeLaDemo } from '../data/presencia';
 import { widgetType, type WidgetSize } from '../data/widget-catalog';
 
 /** Dónde vive un widget: caja y hueco dentro del monitor activo. */
@@ -32,18 +34,29 @@ export const slotSize = (box: Pick<DashboardBox, 'layout'>): WidgetSize => (box.
  * Se guardan en el navegador (`localStorage`), como el original los guarda en su servidor por
  * usuario: lo que se cambia sigue ahí al recargar. Para volver a la demo de fábrica, sube
  * `currentVersion`.
+ *
+ * El ESTADO de cada agente no es de aquí: es el de Administración › Agentes (DD-139). Lo guardado
+ * se lee de forma aditiva (`conPresencia`): manda todo menos el estado, que llega del almacén de
+ * agentes al pintar. Así cambiarlo en la ficha de un agente lo cambia en el Dashboard, y un monitor
+ * guardado antes no enseña el estado de entonces.
  */
 @Injectable({ providedIn: 'root' })
 export class DashboardStore {
+  private readonly agentsStore = inject(AgentsStore);
+
   private readonly storage = createVersionedStorage<DashboardMonitor>({
     storageKey: 'sc-dashboard-monitors',
     versionKey: 'sc-dashboard-monitors-version',
-    currentVersion: 1,
+    // 2: la tabla de «Monitor x» enseña los 10 agentes de su cabecera, con el estado de todos (DD-127).
+    currentVersion: 2,
     defaults: DASHBOARD_DEMO_MONITORS,
   });
 
+  /** El estado de cada agente de la demo, el que tiene ahora en Administración. */
+  readonly estadoDeAgente = computed(() => estadosDeLaDemo(this.agentsStore.agents()));
+
   private readonly monitorsSignal = signal<readonly DashboardMonitor[]>(this.storage.read());
-  readonly monitors = this.monitorsSignal.asReadonly();
+  readonly monitors = computed(() => this.monitorsSignal().map((m) => conPresencia(m, this.estadoDeAgente())));
 
   private readonly activeIdSignal = signal<string>(this.monitorsSignal()[0]?.id ?? '');
   readonly activeId = this.activeIdSignal.asReadonly();

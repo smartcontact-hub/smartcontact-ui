@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs';
 
 import { expect, type Page } from '@playwright/test';
 
+import { enNavegador } from '../shared/color';
+
 /**
  * Helpers compartidos de los journeys del Supervisor.
  *
@@ -81,26 +83,25 @@ export const asegurarBuildFresco = async (page: Page): Promise<void> => {
   const oscuro = await page.evaluate(() => document.documentElement.classList.contains('sc-dark'));
   const tema = oscuro ? 'oscuro' : 'claro';
   const esperado = hexDelFuente(tema);
-  const servido = await page.evaluate((token) => {
-    // Resolver la var a un color computado: el canvas normaliza cualquier sintaxis.
-    const s = document.createElement('span');
-    s.style.color = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-    document.body.append(s);
-    const v = getComputedStyle(s).color;
-    s.remove();
-    return v;
-  }, TOKEN_CANARIO);
-
-  const aHex = (rgb: string): string => {
-    const n = (rgb.match(/\d+/g) ?? []).slice(0, 3).map(Number);
-    return n.length === 3 ? `#${n.map((x) => x.toString(16).padStart(2, '0')).join('')}` : rgb;
-  };
+  const { servido, rgb } = await page.evaluate(
+    enNavegador((kit, token: string) => {
+      // Resolver la var a un color computado; el canvas lo normaliza, sea cual sea su sintaxis.
+      const s = document.createElement('span');
+      s.style.color = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+      document.body.append(s);
+      const servido = getComputedStyle(s).color;
+      s.remove();
+      return { servido, rgb: kit.rgba(servido).slice(0, 3) };
+    }),
+    TOKEN_CANARIO,
+  );
+  const hex = `#${rgb.map((x) => x.toString(16).padStart(2, '0')).join('')}`;
 
   expect(
-    aHex(servido),
+    hex,
     `ESTÁS MIDIENDO UN BUILD ANTERIOR A TU EDICIÓN.\n` +
       `  ${TOKEN_CANARIO} en el fuente (tema ${tema}): ${esperado}\n` +
-      `  lo que sirve el navegador:              ${aHex(servido)} (${servido})\n` +
+      `  lo que sirve el navegador:              ${hex} (${servido})\n` +
       `Reinicia el dev server. Suele pasar tras un "npm run verify": reescribe dist/ ` +
       `por debajo del "ng serve", que se queda muerto pero sigue sirviendo el bundle viejo.`,
   ).toBe(esperado);
@@ -195,13 +196,19 @@ export const fillFieldByLabel = async (
   await field.locator('input').fill(value);
 };
 
-/** Elige una opción de un `sc-select` dado su locator (abre el overlay y clica). */
+/** Elige una opción de un `sc-select` dado su locator (abre el overlay y clica).
+ *
+ *  Pulsa el CONTROL, no el centro de la caja que le pasen: el `sc-select` entero incluye la ayuda y el
+ *  error de debajo, y con una ayuda de dos líneas su centro cae en el hueco entre el control y el texto
+ *  (medido en la extensión del agente, DD-133: 33 px de control, 7 de hueco y 35 de ayuda), donde el
+ *  clic no abre nada. Si el locator ya es el control (un `combobox`), se pulsa tal cual. */
 export const pickSelectOption = async (
   page: Page,
   select: ReturnType<Page['locator']>,
   optionText: string | RegExp,
 ): Promise<void> => {
-  await select.click();
+  const control = select.locator('.p-select');
+  await ((await control.count()) > 0 ? control.first() : select).click();
   const option = page.locator('.p-select-overlay .p-select-option', { hasText: optionText }).first();
   await expect(option).toBeVisible();
   await option.click();
@@ -209,11 +216,13 @@ export const pickSelectOption = async (
 
 /**
  * Cambia de sección en un formulario con `<sc-form-section-nav>` (constructor de
- * reglas, altas de agente/grupo/usuario).
+ * reglas, fichas y sus altas).
  *
- * El índice son PESTAÑAS: solo una sección está en el DOM a la vez. Un journey
- * que toque dos secciones tiene que pasar por aquí en medio, o el locator de la
- * segunda no existe y el fallo parece un bug de la sección, no de navegación.
+ * Una sección a la vista: al editar, la de la dirección (`?seccion=`, DD-122); en
+ * un alta, la abierta, que no toca la dirección (DD-143). Las demás no están en el
+ * DOM. Un journey que toque dos secciones tiene que pasar por aquí en
+ * medio, o el locator de la segunda no existe y el fallo parece un bug de la
+ * sección, no de navegación.
  *
  * Se casa por texto de la etiqueta a propósito, con `hasText` (subcadena): los
  * iconos son ligaduras de Material y entran en el `innerText` del item, así que
@@ -225,3 +234,18 @@ export const irASeccion = async (page: Page, etiqueta: string | RegExp): Promise
   await item.click();
   await expect(item).toHaveClass(/form-nav__item--active/);
 };
+
+/**
+ * Elige el teléfono saliente de un grupo (DD-142): con Teléfono es obligatorio y sale de los números asignados, así
+ * que un alta de grupo no se crea sin él. En el alta vive en Distribución y colas. Pulsa la flecha del desplegable,
+ * que abre la lista se pueda escribir en el campo o no.
+ */
+export const elegirTelefonoSaliente = async (page: Page, numero = '917945449', id = 'group-phone'): Promise<void> => {
+  const enOtraSeccion = id === 'group-phone' && (await page.locator(`#${id}`).count()) === 0;
+  if (enOtraSeccion) await irASeccion(page, 'Distribución y colas');
+  await page.locator(`sc-select:has(#${id}) .p-select-dropdown`).click();
+  const opcion = page.locator('.p-select-overlay .p-select-option', { hasText: numero }).first();
+  await expect(opcion).toBeVisible();
+  await opcion.click();
+};
+

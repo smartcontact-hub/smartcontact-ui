@@ -7,8 +7,7 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
@@ -48,16 +47,17 @@ import {
   PHONE_STRATEGIES,
   UNAVAILABLE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
+  chatStrategyOf,
   duplicateGroupDraft,
-  newGroupDraft,
+  type GroupIdentityDraft,
+  phoneStrategyOf,
+  priorityRank,
+  OUTBOUND_NUMBERS,
 } from '../data/groups-data';
 import { GroupBulkField, GroupsStore } from '../state/groups.store';
-import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import {
-  GroupCreateDialogComponent,
-  type GroupCreateSubmission,
-} from '../components/group-create-dialog/group-create-dialog.component';
+import { GroupDuplicateDialogComponent } from '../components/group-duplicate-dialog/group-duplicate-dialog.component';
+import { GroupAgentsPanelComponent } from '../components/group-agents-panel/group-agents-panel.component';
 
 interface PendingBulkEdit {
   readonly field: GroupBulkField;
@@ -69,7 +69,9 @@ interface PendingBulkEdit {
 /* v2 — bumped when ColumnSelector schema changed (set → ordered array)
  * and when `code` started shipping hidden by default. */
 /* v3 (2026-09-16): columna nueva (Servicios). Una lista guardada no la conoce y no saldría nunca. */
-/* v4 (2026-09-24): el ID pasa detrás del nombre. Una lista guardada lo seguiría poniendo el primero. */
+/* v4 (2026-09-24): el ID pasa detrás del nombre. Una lista guardada lo seguiría poniendo el primero.
+ * La columna «Estrategia de chat» (2026-09-26) no pide versión: es opcional, y el selector solo añade a lo
+ * guardado las columnas nuevas que salen por defecto. */
 const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
 
 @Component({
@@ -82,7 +84,8 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
-    GroupCreateDialogComponent,
+    GroupDuplicateDialogComponent,
+    GroupAgentsPanelComponent,
     IconComponent,
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
@@ -102,10 +105,7 @@ export class GroupsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
-  private readonly location = inject(Location);
   private readonly undoStack = inject(UndoStackService);
-  private readonly defaultsStore = inject(GroupDefaultsStore);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59): la banda de
    * page-header desaparece; identidad → breadcrumb, acción → barra. */
@@ -113,13 +113,6 @@ export class GroupsListPageComponent {
 
   constructor() {
     useTopbarActions(this.topbarActions);
-    // `/admin/grupos/crear` (la paleta de comandos, un enlace guardado) llega aquí con `?crear`: el
-    // alta es un diálogo sobre la lista, no una página. Se abre y se limpia la dirección SIN navegar:
-    // una segunda navegación cortaba la transición de la primera («Transition was skipped», medido).
-    if (this.route.snapshot.queryParamMap.has('crear')) {
-      this.createOpen.set(true);
-      this.location.replaceState('/admin/grupos');
-    }
   }
 
   /** Derived count of agents assigned to a group. */
@@ -168,9 +161,14 @@ export class GroupsListPageComponent {
       { key: 'phone', label: this.translate.instant('groups.table.phone') },
       { key: 'channels', label: this.translate.instant('groups.table.channels') },
       { key: 'priority', label: this.translate.instant('groups.table.priority') },
-      { key: 'strategy', label: this.translate.instant('groups.table.strategy') },
+      // Una columna por familia de canales, como la ficha: cada una se ordena, se edita en bloque y se exporta sola.
+      // La de chat, opcional: con las dos a la vez la tabla no cabe a 1440 sin recortar (medido el 2026-09-26).
+      { key: 'strategy', label: this.translate.instant('groups.table.strategy_phone') },
+      { key: 'chatStrategy', label: this.translate.instant('groups.table.strategy_chat'), defaultVisible: false },
       { key: 'services', label: this.translate.instant('groups.table.services') },
       { key: 'agents', label: this.translate.instant('groups.table.agents') },
+      // El panel rápido de agentes: fijo, porque es la tarea más frecuente de la lista.
+      { key: 'assign', label: this.translate.instant('groups.table.assign_column'), locked: true },
     ];
   });
 
@@ -187,22 +185,53 @@ export class GroupsListPageComponent {
       },
       {
         key: 'strategy',
-        label: this.translate.instant('groups.table.strategy'),
+        label: this.translate.instant('groups.table.strategy_phone'),
         // Skills no se puede elegir todavía (SISMAC-1975): tampoco en bloque.
-        values: [...PHONE_STRATEGIES.filter((s) => !UNAVAILABLE_STRATEGIES.has(s)), ...CHAT_STRATEGIES].map((s) => ({ value: s, label: s })),
+        values: PHONE_STRATEGIES.filter((s) => !UNAVAILABLE_STRATEGIES.has(s)).map((s) => ({ value: s, label: s })),
+      },
+      {
+        // Hasta el 2026-09-26 las de chat iban en la lista de «Estrategia» y se escribían en la de TELÉFONO.
+        key: 'chatStrategy',
+        label: this.translate.instant('groups.table.strategy_chat'),
+        values: CHAT_STRATEGIES.map((s) => ({ value: s, label: s })),
       },
     ];
   });
 
+  /** El valor de un campo del lote en un grupo; `null` si el grupo no tiene ese canal (y el cambio no le aplica). */
+  private bulkValueOf(group: Group, field: GroupBulkField): string | null {
+    switch (field) {
+      case 'priority':
+        return group.priority;
+      case 'strategy':
+        return phoneStrategyOf(group);
+      case 'chatStrategy':
+        return chatStrategyOf(group);
+      default:
+        return null;
+    }
+  }
+
+  /** A qué grupos de la selección se les puede aplicar el lote: una estrategia, solo a los que tienen su canal. */
+  private appliesTo(group: Group, field: GroupBulkField): boolean {
+    return field === 'priority' || this.bulkValueOf(group, field) !== null;
+  }
+
   /**
    * Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): cualquier campo de texto de la tabla, con
    * la prioridad en el idioma de la pantalla (2026-09-24). Los canales son iconos, y los servicios y agentes
-   * solo salen al pasar el ratón: casaría una fila sin que se viera por qué.
+   * solo salen al pasar el ratón: casaría una fila sin que se viera por qué. Por lo mismo, el teléfono y cada
+   * estrategia cuentan solo si el grupo tiene ese canal: si no, su celda dice «—».
    */
   protected readonly matchesSearch = (g: Group, q: string): boolean =>
-    [g.name, g.code, g.phone, g.strategy, this.translate.instant(this.priorityKeys[g.priority])].some(
-      (value) => value?.toLowerCase().includes(q) ?? false,
-    );
+    [
+      g.name,
+      g.code,
+      this.hasPhone(g) ? g.phone : null,
+      phoneStrategyOf(g),
+      chatStrategyOf(g),
+      this.translate.instant(this.priorityKeys[g.priority]),
+    ].some((value) => value?.toLowerCase().includes(q) ?? false);
 
   /* El orden lo resuelve ESTA página y no la tabla: `agents` es un contador DERIVADO de `linksStore` (no hay
    * `row.agents`) y `name` compara con locale 'es'. Devuelve el orden ascendente; la dirección la pone la lista. */
@@ -213,11 +242,13 @@ export class GroupsListPageComponent {
       case 'code':
         return a.code.localeCompare(b.code);
       case 'priority':
-        return a.priority.localeCompare(b.priority);
+        return priorityRank(a.priority) - priorityRank(b.priority);
       case 'agents':
         return this.assignedCountForGroup(a.id) - this.assignedCountForGroup(b.id);
       case 'strategy':
-        return a.strategy.localeCompare(b.strategy);
+        return (phoneStrategyOf(a) ?? '').localeCompare(phoneStrategyOf(b) ?? '', 'es');
+      case 'chatStrategy':
+        return (chatStrategyOf(a) ?? '').localeCompare(chatStrategyOf(b) ?? '', 'es');
       default:
         return 0;
     }
@@ -240,8 +271,10 @@ export class GroupsListPageComponent {
   private readonly channelsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('channelsTpl');
   private readonly priorityTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('priorityTpl');
   private readonly strategyTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('strategyTpl');
+  private readonly chatStrategyTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('chatStrategyTpl');
   private readonly servicesTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('servicesTpl');
   private readonly agentsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('agentsTpl');
+  private readonly assignTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('assignTpl');
 
   /** `sortable` en las MISMAS cinco que llevaban `scSortable`. La columna del menú de fila la añade la lista. */
   protected readonly columns = computed<readonly ScColumnDef<Group>[]>(() => {
@@ -285,11 +318,21 @@ export class GroupsListPageComponent {
       },
       {
         field: 'strategy',
-        header: this.translate.instant('groups.table.strategy'),
+        header: this.translate.instant('groups.table.strategy_phone'),
         sortable: true,
         cellTemplate: this.strategyTpl(),
-        /* «Más tiempo inactivo» mide 118 px de etiqueta y con 9.5rem le quedaban 114: se cortaba (2026-09-24). */
-        width: '9.75rem',
+        /* Medido a 1440 (2026-10-01): la etiqueta más ancha del catálogo, «Menos conversaciones atendidas»
+         * (DD-141), pide 201 px más los 28 de la celda. La cabecera con su flecha pedía 198 (2026-09-26). */
+        width: '14.5rem',
+      },
+      {
+        field: 'chatStrategy',
+        header: this.translate.instant('groups.table.strategy_chat'),
+        sortable: true,
+        cellTemplate: this.chatStrategyTpl(),
+        /* La etiqueta más ancha, «Menos conversaciones activas» (DD-141), pide 185 px más los 28 de la celda (medido a
+         * 1440, 2026-10-01). La cabecera pedía 171 (2026-09-26). */
+        width: '13.5rem',
       },
       {
         field: 'services',
@@ -307,6 +350,19 @@ export class GroupsListPageComponent {
         cellTemplate: this.agentsTpl(),
         width: '7rem',
       },
+      /* EL PANEL RÁPIDO, a un clic de la fila: asignar y desasignar agentes y sus canales es lo que más
+       * se hace con un grupo una vez creado (visión de producto de grupos, 2026-09-25). Un botón de TEXTO
+       * y no primario: en cada fila, un primario haría una pared azul que compite con «Nuevo grupo». Su
+       * columna propia, junto al «⋮», porque `sc-list-page` no tiene sitio para una acción en la fila (el
+       * botón en fila de DD-96 ya no existe). `stopRowClick`: pulsarlo no abre la ficha. */
+      {
+        field: 'assign',
+        header: '',
+        headerAriaLabel: this.translate.instant('groups.table.assign_column'),
+        cellTemplate: this.assignTpl(),
+        width: '7.5rem',
+        stopRowClick: true,
+      },
     ];
   });
 
@@ -322,14 +378,17 @@ export class GroupsListPageComponent {
     plural: 'common.bulk.entity.group_plural',
   });
 
+  /** Los grupos a los que llega el lote: los elegidos, y de ellos, los que tienen el canal de esa estrategia. */
   protected readonly impactItems = computed<readonly ImpactItem[]>(() => {
+    this.lang();
     const ids = this.selectedIds();
+    const field = this.pendingBulkEdit()?.field;
     return this.groups()
-      .filter((g) => ids.has(g.id))
+      .filter((g) => ids.has(g.id) && (!field || this.appliesTo(g, field)))
       .map((g) => ({
         id: g.id,
         name: g.name,
-        hint: `(${this.assignedCountForGroup(g.id)} agentes)`,
+        hint: `(${this.translate.instant('groups.table.agents_count', { count: this.assignedCountForGroup(g.id) })})`,
       }));
   });
 
@@ -351,6 +410,18 @@ export class GroupsListPageComponent {
     return this.priorityKeys[priority];
   }
 
+  protected hasPhone(group: Group): boolean {
+    return group.channels.includes('phone');
+  }
+
+  protected phoneStrategy(group: Group): string | null {
+    return phoneStrategyOf(group);
+  }
+
+  protected chatStrategy(group: Group): string | null {
+    return chatStrategyOf(group);
+  }
+
   /** Severidad del `sc-tag` de prioridad (DD-76): el vocabulario del DS, no tonos propios. */
   protected priorityTone(priority: string): 'secondary' | 'info' | 'warning' | 'danger' {
     switch (priority) {
@@ -369,50 +440,52 @@ export class GroupsListPageComponent {
     this.selectedIds.set(new Set());
   }
 
-  protected onDefaultsClick(): void {
-    void this.router.navigateByUrl('/admin/grupos/valores-por-defecto');
+  /** El grupo cuyo panel rápido de agentes está abierto. */
+  protected readonly agentsPanelGroup = signal<Group | null>(null);
+
+  protected openAgentsPanel(group: Group): void {
+    this.agentsPanelGroup.set(group);
   }
 
-  /** El alta y el duplicado comparten diálogo; `duplicateSource` dice cuál de los dos es. */
-  protected readonly createOpen = signal(false);
+  protected closeAgentsPanel(): void {
+    this.agentsPanelGroup.set(null);
+  }
+
+  /** El diálogo de duplicar: `duplicateSource` es el original (el alta es la ficha, DD-121 §11). */
+  protected readonly duplicateOpen = signal(false);
   protected readonly duplicateSource = signal<Group | null>(null);
   protected readonly groupNames = computed(() => this.groups().map((g) => g.name));
   /** Los números que ya usan los grupos: el desplegable del teléfono asociado, igual que en la ficha. */
-  protected readonly groupPhones = computed(() => [...new Set(this.groups().map((g) => g.phone).filter(Boolean))].sort());
-  protected readonly defaultPriority = computed(() => this.defaultsStore.defaults().priority);
+  /** Los números asignados a la cuenta: el duplicado elige uno de ellos (DD-142). */
+  protected readonly outboundNumbers = OUTBOUND_NUMBERS;
   protected readonly suggestedCopyName = computed(() => {
     this.lang();
     const source = this.duplicateSource();
     return source ? this.translate.instant('groups.create_dialog.copy_name', { name: source.name }) : '';
   });
 
+  /** El alta es la propia ficha en modo alta (DD-121 §11). */
   protected onCreateClick(): void {
-    this.duplicateSource.set(null);
-    this.createOpen.set(true);
+    void this.router.navigateByUrl('/admin/grupos/crear');
   }
 
-  protected onCreateCancel(): void {
-    this.createOpen.set(false);
+  protected onDuplicateCancel(): void {
+    this.duplicateOpen.set(false);
   }
 
   /**
-   * Crea el grupo y abre su ficha en «Canales y agentes», que es lo SIGUIENTE: el alta ya dijo quién
-   * es el grupo (lo que enseña su cabecera) y ahora toca por dónde le entra el trabajo y quién lo
-   * atiende. Un duplicado se lleva además los agentes del original.
+   * Crea el duplicado y abre su ficha: se lleva todo lo del original, agentes incluidos, con el nombre y
+   * el teléfono que se hayan puesto en el diálogo.
    */
-  protected onCreateConfirm(submission: GroupCreateSubmission): void {
+  protected onDuplicateConfirm(submission: GroupIdentityDraft): void {
     const source = this.duplicateSource();
-    const draft = source
-      ? duplicateGroupDraft(source, submission)
-      : newGroupDraft(this.defaultsStore.defaults(), submission);
-    const created = this.groupsStore.addGroup(draft);
-    if (source) {
-      this.linksStore.replaceLinksForGroup(
-        created.id,
-        this.linksStore.linksForGroup(source.id).map((l) => ({ ...l, groupId: created.id })),
-      );
-    }
-    this.createOpen.set(false);
+    if (!source) return;
+    const created = this.groupsStore.addGroup(duplicateGroupDraft(source, submission));
+    this.linksStore.replaceLinksForGroup(
+      created.id,
+      this.linksStore.linksForGroup(source.id).map((l) => ({ ...l, groupId: created.id })),
+    );
+    this.duplicateOpen.set(false);
     this.messages.add({
       severity: 'success',
       summary: this.translate.instant('groups.toasts.created', { name: created.name }),
@@ -462,10 +535,10 @@ export class GroupsListPageComponent {
     void this.router.navigateByUrl(`/admin/grupos/editar/${group.id}`);
   }
 
-  /** Duplicar es el alta con punto de partida: mismo diálogo, con el nombre propuesto y sus canales. */
+  /** Duplicar: el diálogo corto con el nombre propuesto; el resto se copia del original. */
   protected onRowDuplicate(group: Group): void {
     this.duplicateSource.set(group);
-    this.createOpen.set(true);
+    this.duplicateOpen.set(true);
   }
 
   protected onRowDelete(group: Group): void {
@@ -494,14 +567,25 @@ export class GroupsListPageComponent {
 
   /** «de Baja»: la selección pasa a ser todos los grupos que están en Baja. */
   protected onBulkMatch(match: BulkEditMatch): void {
-    const key = match.fieldKey as 'priority' | 'strategy';
+    const field = match.fieldKey as GroupBulkField;
     const ids = this.groups()
-      .filter((g) => g[key] === match.value)
+      .filter((g) => this.bulkValueOf(g, field) === match.value)
       .map((g) => g.id);
     this.selectedIds.set(new Set(ids));
   }
 
   protected onBulkEditCommit(commit: BulkEditCommit): void {
+    const field = commit.fieldKey as GroupBulkField;
+    const ids = this.selectedIds();
+    // Ninguno de los elegidos tiene el canal de esa estrategia: se dice, y no se abre una vista previa vacía.
+    if (!this.groups().some((g) => ids.has(g.id) && this.appliesTo(g, field))) {
+      this.messages.add({
+        severity: 'warn',
+        summary: this.translate.instant('groups.bulk_edit_none', { field: commit.fieldLabel }),
+        life: TOAST_LIFE.warn,
+      });
+      return;
+    }
     this.pendingBulkEdit.set({
       field: commit.fieldKey as GroupBulkField,
       fieldLabel: commit.fieldLabel,
@@ -584,7 +668,8 @@ export class GroupsListPageComponent {
       this.translate.instant('groups.export.name'),
       this.translate.instant('groups.export.phone'),
       this.translate.instant('groups.export.priority'),
-      this.translate.instant('groups.export.strategy'),
+      this.translate.instant('groups.export.strategy_phone'),
+      this.translate.instant('groups.export.strategy_chat'),
       this.translate.instant('groups.export.channels'),
       this.translate.instant('groups.export.services'),
       this.translate.instant('groups.export.agent_count'),
@@ -592,9 +677,10 @@ export class GroupsListPageComponent {
     const rows = visibleRows.map((g) => [
       g.code,
       g.name,
-      g.phone,
+      this.hasPhone(g) ? g.phone : '',
       this.translate.instant(this.priorityKeys[g.priority]),
-      g.strategy,
+      phoneStrategyOf(g) ?? '',
+      chatStrategyOf(g) ?? '',
       g.channels.map((c) => this.translate.instant(this.channelKeys[c])).join(', '),
       (g.services ?? []).join(', '),
       this.assignedCountForGroup(g.id),

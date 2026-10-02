@@ -6,78 +6,31 @@
   background: var(--sc-bg-canvas);
 }
 
-/* El MOLDE de esta página no vive aquí: `.page__inner--rail`, `.page__rail` y
- * `.page__main` están en `src/styles/_page.scss` (el mismo de Contact Center), y
- * `.ficha`, `.rail-delete`, `.form-identity`, `.switch-field` y `.checkbox-*` en
- * `src/styles/_forms.scss`. No los re-declares aquí: una regla encapsulada de
- * componente le gana siempre a la global, y el molde se desviaría en una sola
- * página sin avisar. Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`.
- *
- * Se fueron el 2026-09-14 la paleta `.pill--priority-*` (con su pulso animado) y
- * `.header-meta__chunk`, que ya no pintaba nada: la prioridad no sale en la ficha y
- * la banda a la que se proyectaba se retiró en S59. */
+/* El MOLDE de esta página no vive aquí: `.page__inner--rail`, `.page__rail`, `.page__main`, la
+ * cabecera (`.headline*`) y su modificador `.ficha-rail` están en `src/styles/_page.scss` (el mismo
+ * de Contact Center y de las otras fichas), y `.grid`, `.field`, `.sub-section`, `.switch-field` y
+ * `.checkbox-*` en `src/styles/_forms.scss`. No los re-declares aquí: una regla encapsulada de
+ * componente le gana siempre a la global, y el molde se desviaría en una sola página sin avisar.
+ * Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`. El aviso de «abierto en otra
+ * pestaña» (`.ficha-conflict`) también es de todas las fichas: vive en `_page.scss`. */
 
-/* Los cuatro canales y los ajustes de los marcados, en LA MISMA línea mientras quepan (2026-09-21).
- *
- * Venían en dos: las casillas arriba y «Estrategia (teléfono)» sola debajo, gastando una fila
- * entera de la tarjeta para un select de 175px que dejaba 900 en blanco a su derecha. Cuando no
- * caben —cuatro canales encendidos con su reparto— envuelve, que es para lo que está el `wrap`.
- *
- * El hueco entre los dos grupos es 56, el doble de los 28 que separan una casilla de la
- * siguiente: por debajo de eso la estrategia se lee como un canal más de la fila. */
-.channel-line {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-75) var(--sc-spacing-4);
-}
-
-/* Los cuatro canales en una fila, y al lado los ajustes de los marcados (2026-09-18). Antes iban en columna, uno por
- * línea con su reparto al lado: cuatro filas de alto para cuatro casillas, y la tabla de agentes empezaba tan abajo
- * que no cabía en la pantalla. */
-.channel-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-5) var(--sc-spacing-2);
-}
-
-.channel-settings {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-5) var(--sc-spacing-1-25);
-  /* Sin `margin-block-start`: el aire entre los dos grupos lo pone ahora el `gap` de
-   * `.channel-line`, y si lo pusieran los dos la fila envuelta quedaría al doble de distancia. */
-  min-width: 0;
-}
-
-.channel-list__setting {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-}
-
-.channel-list__label,
-.channel-list__hint {
+/* Las partes de un canal (Distribución, Cola, Mensajes en cola, Web Chat · acceso…): un rótulo
+ * pequeño, no un título más. El bloque es el canal; esto son sus tramos. */
+.channel-part {
+  margin: 0;
+  margin-block-start: var(--sc-spacing-0-5);
   color: var(--sc-text-secondary);
 }
 
-.channel-list__select {
-  inline-size: var(--sc-spacing-12-5);
+/* «X no está activo · actívalo en General»: la pista de que el bloque existe, sin controles muertos. */
+.channel-off {
+  margin: 0;
+  color: var(--sc-text-subtle);
 }
 
-/* Locuciones: el nombre a la izquierda y, en la misma vertical, de dónde sale y su archivo. */
-.audio-list {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  align-items: center;
-  column-gap: var(--sc-spacing-1-5);
-  row-gap: var(--sc-spacing-0-75);
-  margin-block-end: var(--sc-spacing-1-25);
-}
-
-.audio-list__control {
+/* Un control con lo que lo acompaña en la misma línea: «Suena en [3] agentes a la vez», la capacidad
+ * (Fijo / Por agente conectado + la cifra) o la música con su archivo. */
+.inline-control {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -85,35 +38,13 @@
   min-width: 0;
 }
 
-/* Más de un anuncio periódico: una fila por archivo, en vez de un solo control en línea. */
-.audio-list__control--stack {
-  flex-direction: column;
-  align-items: stretch;
-  align-self: start;
-  gap: var(--sc-spacing-0-5);
-}
-
-.audio-list__row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-}
-
-/* Arriba y no al centro: con varias filas de anuncios debajo, la etiqueta se quedaba a media altura. */
-.audio-list__label--top {
-  align-self: start;
-  padding-block-start: var(--sc-spacing-0-25);
-}
-
-.audio-list__file,
-.audio-list__hint {
+.inline-control__suffix,
+.inline-control__value {
   color: var(--sc-text-secondary);
 }
 
-.audio-list__text {
-  flex: 1 1 auto;
-  min-inline-size: 0;
+.script-copy {
+  align-self: flex-start;
 }
 
 /* Igual que en la ficha de agente. */
@@ -124,6 +55,37 @@
   text-underline-offset: var(--sc-spacing-0-125);
 }
 
+/* Los saltos a cada canal de Distribución y colas (DD-130). Es contenido de la caja: la misma sangría que las
+ * sub-secciones (`_forms.scss`), para arrancar en la vertical del título. Los enlaces, con el color de enlace de la
+ * app, y el foco, el anillo del sistema. */
+.channel-jumps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  margin-inline: var(--sc-spacing-0-875);
+  /* 28 hasta las reglas comunes: son otro grupo, y la caja no pone hueco entre sus hijos (medido: se tocaban). */
+  margin-block-end: var(--sc-spacing-2);
+}
+
+.channel-jumps__label {
+  color: var(--sc-text-secondary);
+}
+
+.channel-jumps__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  color: var(--sc-text-link);
+  text-decoration: underline;
+  text-underline-offset: var(--sc-spacing-0-125);
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+}
+
 /* Skills sale apagada con su motivo debajo, a la vista y no en un tooltip. */
 .strategy-option {
   display: flex;
@@ -132,13 +94,6 @@
 
 .strategy-option__note {
   color: var(--sc-text-secondary);
-}
-
-/* La sección de agentes se queda con el alto que sobra: su tabla hace scroll dentro (DD-95). */
-.sub-section--fill {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
 }
 
 /* La etiqueta y su «+ Nueva»: el botón crea sin salir de la ficha (decisión de producto, 2026-09-18). Su relleno propio
@@ -162,10 +117,12 @@
   inset-inline-end: calc(var(--sc-spacing-0-5) * -1);
 }
 
-/* Añadir un dominio permitido: campo + botón en una fila, chips debajo. */
+/* Añadir un dominio permitido: campo + botón en una fila, chips debajo. La ayuda va dentro del campo (DD-133), así
+ * que la fila se alinea ARRIBA y el botón es del tamaño del campo (los dos `md`, 32,5 px): centrado, caía contra
+ * campo + ayuda, 21 px por debajo del campo. */
 .domain-add {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--sc-spacing-0-5);
 }
 
@@ -180,18 +137,14 @@
   margin-block-start: var(--sc-spacing-0-5);
 }
 
-/* ── Variante `s` · «Una página + pestañas» (rama `comparar/fichas`) ─────────────────────
- *
- * El ANCHO no se pide desde aquí: lo ensancha `.page__inner--rail.compare-tabs` en `_page.scss`,
- * junto a la regla hermana de la variante `e`. Y el PADDING tampoco hace falta: al seguir siendo
- * `--rail`, la página conserva los 22.75/28 del molde. (El primer intento cambió el modificador a
- * `--list`, y eso dejó la página a `0px 0px 0px 0px` —`--list` solo declara `max-width`— con todo
- * pegado al sidebar; el parche era repetir aquí el padding, y el gate tenía razón en que el
- * problema era el cambio de arquetipo, no el padding que faltaba.)
- */
-
-/* La ayuda de una pestaña, arriba del todo: la que antes iba bajo el título de su caja. */
-.tab-hint {
-  margin: 0;
-  color: var(--sc-text-secondary);
+/* Los mensajes de cola de UN subcanal: su nombre y sus tres campos. */
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
 }
+
+.chat-messages__title {
+  color: var(--sc-text-primary);
+}
+

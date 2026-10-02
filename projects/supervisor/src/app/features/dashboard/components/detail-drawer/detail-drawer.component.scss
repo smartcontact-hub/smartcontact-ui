@@ -15,11 +15,24 @@
     color: var(--sc-text-secondary);
   }
 
+  /* `contain`: ninguna de las dos líneas pide ancho a su columna; la columna toma lo que deja el tiempo. Solo lo
+   * llevaba el nombre, y la segunda línea («Cliente #56705 · Atención al cliente», 200 px sin partir) ensanchaba la
+   * tabla 12,5 px más que el panel y cortaba el tiempo («9:1»; medido en producción a 1440 el 2026-09-28). */
   &__main {
     display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
     min-width: 0;
+    contain: inline-size;
     color: var(--sc-text-primary);
+  }
+
+  /* Las dos líneas, más largas que su hueco, recortan con «…» y llevan el entero en el `title` (DD-124). Con
+   * `?datos=tortura` cada nombre bajaba a tres líneas (medido el 2026-09-27). */
+  &__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__sub {

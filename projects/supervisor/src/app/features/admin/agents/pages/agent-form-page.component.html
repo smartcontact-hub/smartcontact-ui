@@ -4,9 +4,13 @@
      lista; para salir ya están la miga y el menú, y el guardián de cambios avisa si dejas
      algo sin guardar. -->
 <ng-template #topbarActions>
-  <!-- El motivo va VISIBLE, y solo cuando FALTA algo (ver `saveBlockedReason`). -->
+  <!-- El motivo va VISIBLE, y solo cuando FALTA algo (ver `saveBlockedReason`). Si no falta nada y hay
+       cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están
+       (DD-122). `role="status"`: se anuncia una vez, al aparecer. -->
   @if (saveBlockedReason(); as reason) {
     <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
+  } @else if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
     <sc-button
@@ -22,586 +26,144 @@
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
-    [label]="'common.save' | translate"
+    [label]="(mode() === 'edit' ? 'common.save' : 'agents.form.create_submit') | translate"
     [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
     (clicked)="save()"
   />
 </ng-template>
 
 <div class="page">
-  <!-- Único <h1> del documento. Al editar lo pone la franja: el nombre del agente es el título de
-       la página, como en la ficha de grupo (#232). Al crear aún no hay nombre y va oculto. -->
-  @if (mode() !== 'edit') {
-    <h1 class="visually-hidden">{{ 'agents.form.create_breadcrumb' | translate }}</h1>
-  }
+  <!-- EL MOLDE DE LA FICHA DE GRUPO (DD-122): la cabecera ENCIMA, a todo lo ancho; el índice a la
+       izquierda (el de Contact Center); una sección a la vista, en su caja; y el resumen a la derecha
+       (`.ficha-rail--summary`, en `_page.scss`). Hasta el 2026-09-27 fue «una página + pestañas». -->
+  <div class="page__inner page__inner--rail ficha-rail ficha-rail--summary">
+    <!-- La cabecera, en los tres modos, como la ficha de grupo: su <h1> es el único del documento. En el alta dice
+         «Nuevo agente» hasta que se escribe el nombre, y al crear la ficha no salta (DD-130). -->
+    <div class="headline">
+      <div class="headline__who">
+        @if (mode() === 'edit') {
+          <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad. -->
+          <h1 class="headline__name headline__name--editable sc-text-h3-semibold" [title]="form().name">
+            <sc-name-inplace
+              [name]="form().name"
+              [label]="'agents.form.fields.name' | translate"
+              (nameChange)="onNameRename($event)"
+            />
+          </h1>
+        } @else {
+          <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">
+            {{ form().name || ((mode() === 'duplicate' ? 'agents.form.duplicate_title' : 'agents.form.create_title') | translate) }}
+          </h1>
+        }
+        <span class="headline__meta sc-text-caption-regular">
+          @if (form().extension) {
+            {{ 'agents.form.fields.extension' | translate }} {{ form().extension }}
+          } @else {
+            {{ 'agents.form.fields.extension_empty' | translate }}
+          }
+        </span>
+      </div>
+      <!-- Las tres cifras que vivían aquí se fueron al resumen, a la derecha, como en la ficha de grupo. -->
+    </div>
 
-  <!-- La forma de la ficha de grupo, «una página + pestañas»: sin índice lateral y sin caja, con
-       el ancho de `.ficha-tabs` y el mismo arquetipo `--rail` (ver `_page.scss`). -->
-  <div class="page__inner page__inner--rail ficha-tabs">
-    <div class="page__main">
+    <!-- El nombre, fijo arriba al bajar: una copia muda de la cabecera (DD-145, como en la ficha de grupo). -->
+    <sc-nombre-fijo
+      [nombre]="form().name || (mode() === 'edit' ? '' : ((mode() === 'duplicate' ? 'agents.form.duplicate_title' : 'agents.form.create_title') | translate))"
+      [datos]="form().extension ? ('agents.form.fields.extension' | translate) + ' ' + form().extension : ('agents.form.fields.extension_empty' | translate)"
+    />
+
+    <!-- El índice, solo en su carril: cada fila es un enlace a su sección (`?seccion=`, DD-122). El mismo al crear, al
+         duplicar y al editar (DD-143): en el alta, la sección que se deja completa lleva ✓. -->
+    <div class="page__rail">
+      <sc-form-section-nav
+        [sections]="navSections()"
+        [activeId]="activeSection()"
+        [labelKey]="'common.form_index_aria'"
+        [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionsWithChanges]="sectionsWithChanges()"
+        [sectionsDone]="alta.hechas()"
+        [flush]="true"
+        (activeChange)="goTo($event)"
+      />
+      <!-- «Eliminar», bajo el índice (DD-144): con el nombre dentro del contenido, la cabecera ya no tiene sitio a
+           su derecha. Solo al editar. -->
       @if (mode() === 'edit') {
-        <div class="headline">
-          <div class="headline__who">
-            <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad. -->
-            <h1 class="headline__name headline__name--editable sc-text-h3-semibold" [title]="form().name">
-              <sc-name-inplace
-                [name]="form().name"
-                [label]="'agents.form.fields.name' | translate"
-                (nameChange)="onNameRename($event)"
-              />
-            </h1>
-            <span class="headline__meta sc-text-caption-regular">
-              @if (form().extension) {
-                {{ 'agents.form.fields.extension' | translate }} {{ form().extension }}
-              } @else {
-                {{ 'agents.form.fields.extension_empty' | translate }}
-              }
-            </span>
-          </div>
-          <dl class="headline__stats">
-            @for (s of headline(); track s.etiqueta) {
-              <div class="headline__stat">
-                <dt class="headline__label sc-text-caption-regular">{{ s.etiqueta | translate }}</dt>
-                <dd class="headline__value sc-text-body-semibold" [title]="s.valor">{{ s.valor }}</dd>
-              </div>
-            }
-          </dl>
-          <div class="headline__actions">
-            <sc-button variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
-          </div>
+        <div class="ficha-eliminar">
+          <sc-button variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
         </div>
       }
+    </div>
 
-      <!-- `p-tabs` NATIVO de primeng.dev, de texto y sin panels (DD-113 §1 y §3): cambia el
-           contenido de la pantalla. El nombre va al nodo `role="tablist"` por `pt`. -->
-      <p-tabs class="tabbar" [value]="activeSection()" (valueChange)="onTabChange($event)">
-        <p-tablist [pt]="{ content: { 'aria-label': 'common.form_index_aria' | translate } }">
-          @for (s of navSections(); track s.id) {
-            <p-tab [value]="s.id">{{ s.labelKey | translate }}</p-tab>
-          }
-        </p-tablist>
-      </p-tabs>
+    <div class="page__main">
+      <!-- El mismo agente abierto en otra pestaña (DD#169): el candado ya se cogía; ahora se dice. -->
+      @if (conflictWarning()) {
+        <sc-message class="ficha-conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
+      }
 
       @switch (activeSection()) {
         @case ('agent-section-identity') {
-          <div class="plain-section" id="agent-section-identity">
-            <section class="sub-section">
-              <div class="form-identity">
-                <sc-photo-upload
-                  size="sm"
-                  [photo]="form().photo"
-                  [name]="form().name"
-                  [ariaLabel]="'common.photo.change' | translate"
-                  (photoChange)="onPhotoChange($event)"
-                />
-                <!-- El nombre no tiene regla de contenido: o está o no está, y que
-                     falte lo dice el motivo del botón, no un error rojo sobre un
-                     campo que aún no has tocado. -->
-                <div class="field form-identity__name">
-                  <label class="field__label sc-text-caption-semibold" for="agent-name">
-                    {{ 'agents.form.fields.name' | translate }}
-                    <span class="field__required" aria-hidden="true">*</span>
-                  </label>
-                  <sc-inputtext
-                    inputId="agent-name"
-                    [required]="true"
-                    [value]="form().name"
-                    (valueChange)="onNameRename($event)"
-                  />
-                </div>
-              </div>
-
-              <div class="grid grid--2">
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-email">
-                    {{ 'agents.form.fields.email' | translate }}
-                  </label>
-                  <sc-inputtext
-                    inputId="agent-email"
-                    type="email"
-                    autocomplete="email"
-                    [value]="form().email"
-                    [error]="emailError() ? (emailError()! | translate) : undefined"
-                    (valueChange)="updateField('email', $event)"
-                  />
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-phone">
-                    {{ 'agents.form.fields.phone' | translate }}
-                    <span class="field__hint">({{ 'common.optional' | translate }})</span>
-                  </label>
-                  <sc-inputtext
-                    inputId="agent-phone"
-                    type="tel"
-                    autocomplete="tel"
-                    [value]="form().phone"
-                    (valueChange)="updateField('phone', $event)"
-                  />
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-ext">
-                    {{ 'agents.form.fields.extension' | translate }}
-                    <span class="field__required" aria-hidden="true">*</span>
-                  </label>
-                  <!-- Lista cerrada: o hay extensión o no la hay. `[required]` solo
-                       añade el aria-required que el `*` visible no da. -->
-                  <sc-select
-                    inputId="agent-ext"
-                    optionLabel="number"
-                    optionValue="number"
-                    [filter]="true"
-                    filterBy="number"
-                    [required]="true"
-                    [options]="availableExtensions"
-                    [placeholder]="'agents.form.fields.extension_placeholder' | translate"
-                    [value]="form().extension"
-                    (valueChange)="onExtensionValueChange($event)"
-                  >
-                    <ng-template #item let-ext>
-                      {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
-                    </ng-template>
-                    <ng-template #selectedItem let-ext>
-                      {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
-                    </ng-template>
-                  </sc-select>
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-type">
-                    {{ 'agents.form.fields.type' | translate }}
-                  </label>
-                  <sc-select
-                    inputId="agent-type"
-                    [options]="agentTypes"
-                    [value]="form().agentType"
-                    (valueChange)="onAgentTypeValueChange($event)"
-                  >
-                    <ng-template #item let-t>
-                      {{ typeLabelKeys[t] | translate }}
-                    </ng-template>
-                    <ng-template #selectedItem let-t>
-                      {{ typeLabelKeys[t] | translate }}
-                    </ng-template>
-                  </sc-select>
-                </div>
-              </div>
-            </section>
-
-            <sc-divider />
-
-            <section class="sub-section">
-              <div class="grid grid--2">
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-presence">
-                    {{ 'agents.form.fields.presence' | translate }}
-                  </label>
-                  <sc-select
-                    inputId="agent-presence"
-                    [options]="presenceStates"
-                    [value]="form().presenceStatus"
-                    (valueChange)="onPresenceValueChange($event)"
-                  >
-                    <ng-template #item let-p>
-                      {{ presenceKeys[p] | translate }}
-                    </ng-template>
-                    <ng-template #selectedItem let-p>
-                      {{ presenceKeys[p] | translate }}
-                    </ng-template>
-                  </sc-select>
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-pin">
-                    {{ 'agents.form.fields.pin' | translate }}
-                    <span class="field__hint">({{ 'common.optional' | translate }})</span>
-                  </label>
-                  <sc-inputtext
-                    inputId="agent-pin"
-                    type="text"
-                    inputmode="numeric"
-                    autocomplete="off"
-                    [maxlength]="6"
-                    [value]="form().pin"
-                    [helperText]="'agents.form.fields.pin_hint' | translate"
-                    [error]="pinError() ? (pinError()! | translate) : undefined"
-                    (valueChange)="updateField('pin', $event)"
-                  />
-                </div>
-              </div>
-            </section>
-
-            <sc-divider />
-
-            <section class="sub-section">
-              @if (mode() === 'edit') {
-                <div class="switch-field switch-field--top">
-                  <sc-toggleswitch
-                    [checked]="form().status === 'active'"
-                    [ariaLabel]="'agents.form.fields.active' | translate"
-                    (checkedChange)="onStatusChange($event)"
-                  />
-                  <!-- La etiqueta dice lo que significa ENCENDIDO («Activo»), no el nombre del
-                       dato («Estado»); y la ayuda ya no repite «Agente activo:» delante. -->
-                  <div class="switch-field__copy">
-                    <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.active' | translate }}</span>
-                    <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.fields.active_hint' | translate }}</p>
-                  </div>
-                </div>
-              }
-
-              <!-- Sin ayuda: «Las llamadas del agente quedan grabadas si está activado» repetía
-                   la etiqueta con más palabras. -->
-              <div class="switch-field">
-                <sc-toggleswitch
-                  [checked]="form().permissions.recording"
-                  [ariaLabel]="'agents.form.fields.recording' | translate"
-                  (checkedChange)="onRecordingChange($event)"
-                />
-                <div class="switch-field__copy">
-                  <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.recording' | translate }}</span>
-                </div>
-              </div>
-            </section>
-          </div>
+          <ng-container *ngTemplateOutlet="seccionIdentidad" />
         }
 
         @case ('agent-section-groups') {
-          <div class="plain-section" id="agent-section-groups">
-            <section class="sub-section">
-              <sc-group-assignment-table
-                [links]="form().links"
-                [availableGroups]="availableGroups()"
-                [agentId]="editingId() ?? 0"
-                (linksChange)="onLinksChange($event)"
-              />
-            </section>
-          </div>
+          <ng-container *ngTemplateOutlet="seccionGrupos" />
         }
 
         @case ('agent-section-permissions') {
-          <div class="plain-section" id="agent-section-permissions">
-            <!-- El mismo orden que Contact Center › Agentes: la matriz arriba, sin
-                 sangría (la pone el relleno de sus celdas), y los interruptores en
-                 su tramo debajo. -->
-            <sc-permission-matrix
-              [rows]="matrixRows()"
-              [columns]="matrixColumns()"
-              [checked]="matrixChecked()"
-              [rowHeader]="'agents.form.permissions.destino' | translate"
-              [ariaLabel]="'agents.form.permissions.calls_section' | translate"
-              selectableColumns
-              (cellToggle)="onMatrixToggle($event)"
-              (columnToggle)="onMatrixColumnToggle($event)"
-            />
-
-            <sc-divider />
-
-            <section class="sub-section" aria-labelledby="agent-perm-config-title">
-              <header class="sub-section__head">
-                <h3 id="agent-perm-config-title" class="sub-section__title sc-text-body-semibold">
-                  {{ 'agents.form.permissions.config_title' | translate }}
-                </h3>
-              </header>
-
-              <div class="switch-field switch-field--top">
-                <sc-toggleswitch
-                  [checked]="form().permissions.manageDevices"
-                  [ariaLabel]="'agents.form.permissions.manage_devices' | translate"
-                  (checkedChange)="togglePermission('manageDevices')"
-                />
-                <div class="switch-field__copy">
-                  <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.manage_devices' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.manage_devices_hint' | translate }}</p>
-                </div>
-              </div>
-
-              <div class="switch-field switch-field--top">
-                <sc-toggleswitch
-                  [checked]="form().permissions.selfActivate"
-                  [ariaLabel]="'agents.form.permissions.self_activate' | translate"
-                  (checkedChange)="togglePermission('selfActivate')"
-                />
-                <div class="switch-field__copy">
-                  <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
-                </div>
-              </div>
-            </section>
-          </div>
+          <ng-container *ngTemplateOutlet="seccionPermisos" />
         }
 
         @case ('agent-section-advanced') {
-          <div class="plain-section" id="agent-section-advanced">
-            <!-- Tramos con título a `Body/body-semibold` separados por `<sc-divider />`,
-                 como Contact Center. Antes eran cabeceras en VERSALITAS con icono y
-                 raya propia (`.disclosure`), el único sitio de la app que titulaba así.
-                 Primero los ajustes, que se leen de un vistazo; al final las tres
-                 asignaciones largas, plegadas. -->
-            <section class="sub-section" aria-labelledby="agent-adv-behaviour-title">
-              <header class="sub-section__head">
-                <h3 id="agent-adv-behaviour-title" class="sub-section__title sc-text-body-semibold">
-                  {{ 'agents.form.advanced.comportamiento.title' | translate }}
-                </h3>
-              </header>
-
-              <div class="grid grid--3">
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-pickup">
-                    {{ 'agents.form.advanced.comportamiento.pickup_call' | translate }}
-                  </label>
-                  <sc-select
-                    inputId="agent-pickup"
-                    optionLabel="label"
-                    optionValue="value"
-                    [options]="pickupOptions()"
-                    [value]="form().pickupType"
-                    (valueChange)="onPickupValueChange('pickupType', $event)"
-                  />
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-pickup-chat">
-                    {{ 'agents.form.advanced.comportamiento.pickup_chat' | translate }}
-                  </label>
-                  <sc-select
-                    inputId="agent-pickup-chat"
-                    optionLabel="label"
-                    optionValue="value"
-                    [options]="pickupOptions()"
-                    [value]="form().pickupTypeChat"
-                    (valueChange)="onPickupValueChange('pickupTypeChat', $event)"
-                  />
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-max-chats">
-                    {{ 'agents.form.advanced.comportamiento.max_chats' | translate }}
-                  </label>
-                  <sc-select
-                    inputId="agent-max-chats"
-                    [options]="maxChatsOptions"
-                    [value]="form().maxChats"
-                    (valueChange)="onMaxChatsValueChange($event)"
-                  />
-                </div>
-
-                <div class="field">
-                  <!-- «Regional» era un tramo con título para UN campo: vive aquí, con el resto de
-                       lo que decide qué conversaciones le llegan al agente. -->
-                  <label class="field__label sc-text-caption-semibold" for="agent-language">
-                    {{ 'common.languages.label' | translate }}
-                  </label>
-                  <!-- Un campo que ACUMULA es un multiselect (DD-105). Antes, un select que se
-                       vaciaba tras cada elección y una fila de pastillas debajo: dos controles para una
-                       lista, y la casilla de «todos» no existía. -->
-                  <sc-multiselect
-                    inputId="agent-language"
-                    display="chip"
-                    [maxSelectedLabels]="4"
-                    [selectedItemsLabel]="'common.languages.selected_many' | translate"
-                    [placeholder]="'common.languages.placeholder' | translate"
-                    [options]="availableLanguages"
-                    [value]="languageValue()"
-                    (valueChange)="onLanguagesChange($event)"
-                  />
-                </div>
-              </div>
-
-              <div class="switch-field switch-field--top">
-                <sc-toggleswitch
-                  [checked]="form().randomOrder"
-                  [ariaLabel]="'agents.form.advanced.comportamiento.random_order' | translate"
-                  (checkedChange)="onRandomOrderChange($event)"
-                />
-                <div class="switch-field__copy">
-                  <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.comportamiento.random_order' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.comportamiento.random_order_hint' | translate }}</p>
-                </div>
-              </div>
-            </section>
-
-            <sc-divider />
-
-            <section class="sub-section" aria-labelledby="agent-adv-integration-title">
-              <header class="sub-section__head">
-                <h3 id="agent-adv-integration-title" class="sub-section__title sc-text-body-semibold">
-                  {{ 'agents.form.advanced.integracion.title' | translate }}
-                </h3>
-              </header>
-
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="agent-iframe-url">
-                  {{ 'agents.form.advanced.integracion.url_iframe' | translate }}
-                </label>
-                <sc-inputtext
-                  inputId="agent-iframe-url"
-                  type="url"
-                  autocomplete="url"
-                  [placeholder]="'agents.form.advanced.integracion.url_iframe_placeholder' | translate"
-                  [value]="form().iframeUrl"
-                  (valueChange)="updateField('iframeUrl', $event)"
-                />
-              </div>
-
-              <div class="switch-field switch-field--top">
-                <sc-toggleswitch
-                  [checked]="form().permissions.externalDevices"
-                  [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
-                  (checkedChange)="togglePermission('externalDevices')"
-                />
-                <div class="switch-field__copy">
-                  <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
-                </div>
-              </div>
-            </section>
-
-            <sc-divider />
-
-            <section class="sub-section" aria-labelledby="agent-adv-session-title">
-              <header class="sub-section__head">
-                <h3 id="agent-adv-session-title" class="sub-section__title sc-text-body-semibold">
-                  {{ 'agents.form.advanced.sesion.title' | translate }}
-                </h3>
-              </header>
-
-              <div class="switch-field switch-field--top">
-                <sc-toggleswitch
-                  [checked]="form().loginExtOverride"
-                  [ariaLabel]="'agents.form.advanced.sesion.login_ext_override' | translate"
-                  (checkedChange)="onLoginExtOverrideChange($event)"
-                />
-                <div class="switch-field__copy">
-                  <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.sesion.login_ext_override' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.sesion.login_ext_override_hint' | translate }}</p>
-                </div>
-              </div>
-
-              @if (mode() === 'edit') {
-                <!-- Una ACCIÓN, no un ajuste: el botón va junto a lo que explica, igual
-                     que el interruptor va junto a su etiqueta. -->
-                <div class="action-field">
-                  <!-- El nombre de la acción lo dice el botón; delante solo va lo que hace. Antes
-                       «Expirar contraseña» salía dos veces seguidas, rótulo y botón. -->
-                  <p class="action-field__copy sc-text-body-regular">{{ 'agents.form.advanced.sesion.expire_pwd_hint' | translate }}</p>
-                  <sc-button
-                    size="sm"
-                    variant="secondary"
-                    appearance="outlined"
-                    [icon]="keyIcon"
-                    [label]="'agents.form.advanced.sesion.expire_pwd' | translate"
-                    (clicked)="requestExpirePassword()"
-                  />
-                </div>
-              }
-            </section>
-          </div>
+          <ng-container *ngTemplateOutlet="seccionAvanzado" />
         }
 
         @case ('agent-section-resources') {
-          <!-- Etiquetas, Agendas y Plantillas en su propia sección desde el 2026-09-14. Eran
-               tres desplegables al final de Avanzado, que con ellos abiertos medía casi dos
-               pantallas. No son ajustes del agente sino cosas que se le ASIGNAN y que viven en
-               Repositorios. Se llama «Recursos», no «Repositorios» como el menú: con el mismo
-               nombre, quien la buscaba acababa en la página del menú (DD-105). Aquí
-               van abiertas: la sección entera es para ellas. -->
-          <div class="plain-section" id="agent-section-resources">
-            <!-- Un campo por repositorio, con lo asignado a la vista y el desplegable del DS para
-                 añadir o quitar. Antes: un tramo con título por repositorio y dos tablas completas
-                 (buscador, pestañas Chat/Email, casilla por fila, vista previa) listando TODO lo que
-                 existe. Mismo dato, una cuarta parte del alto y ninguna caja dentro de la caja. -->
-            <section class="sub-section">
-              <div class="grid grid--2">
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-label">
-                    {{ 'agents.form.advanced.labels.title' | translate }}
-                  </label>
-                  @if (availableLabels().length === 0) {
-                    <p class="field__help sc-text-caption-regular">{{ 'agents.form.labels_empty' | translate }}</p>
-                  } @else {
-                    <!-- Como Agendas y Plantillas: acumula, así que es un multiselect. -->
-                    <sc-multiselect
-                      inputId="agent-label"
-                      display="chip"
-                      optionLabel="label"
-                      optionValue="value"
-                      [filter]="true"
-                      [maxSelectedLabels]="4"
-                      [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-                      [placeholder]="'agents.form.resources.none' | translate"
-                      [options]="labelOptions()"
-                      [value]="labelValue()"
-                      (valueChange)="onLabelsChange($event)"
-                    />
-                  }
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-agendas">
-                    {{ 'agents.form.advanced.agendas.title' | translate }}
-                  </label>
-                  <sc-multiselect
-                    inputId="agent-agendas"
-                    display="chip"
-                    optionLabel="label"
-                    optionValue="value"
-                    [filter]="true"
-                    [maxSelectedLabels]="4"
-                    [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-                    [placeholder]="'agents.form.resources.none' | translate"
-                    [options]="scheduleOptions()"
-                    [value]="scheduleValue()"
-                    (valueChange)="onSchedulesChange($event)"
-                  />
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-templates-chat">
-                    {{ 'agents.form.resources.templates_chat' | translate }}
-                  </label>
-                  <sc-multiselect
-                    inputId="agent-templates-chat"
-                    display="chip"
-                    optionLabel="label"
-                    optionValue="value"
-                    [filter]="true"
-                    [maxSelectedLabels]="4"
-                    [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-                    [placeholder]="'agents.form.resources.none' | translate"
-                    [options]="chatTemplateOptions()"
-                    [value]="chatTemplateValue()"
-                    (valueChange)="onTemplatesChange('chat', $event)"
-                  />
-                </div>
-
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" for="agent-templates-email">
-                    {{ 'agents.form.resources.templates_email' | translate }}
-                  </label>
-                  <sc-multiselect
-                    inputId="agent-templates-email"
-                    display="chip"
-                    optionLabel="label"
-                    optionValue="value"
-                    [filter]="true"
-                    [maxSelectedLabels]="4"
-                    [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-                    [placeholder]="'agents.form.resources.none' | translate"
-                    [options]="emailTemplateOptions()"
-                    [value]="emailTemplateValue()"
-                    (valueChange)="onTemplatesChange('email', $event)"
-                  />
-                </div>
-              </div>
-
-              <!-- Dónde se crean y se editan. Antes «Gestionar agendas», solo para una de las tres. -->
-              <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
-            </section>
-          </div>
+          <ng-container *ngTemplateOutlet="seccionRecursos" />
         }
       }
+      <!-- En el alta y al duplicar, «Atrás» y «Siguiente» al pie (DD-143). «Crear agente» sigue arriba. -->
+      @if (mode() !== 'edit') {
+        <sc-alta-pie
+          [conAnterior]="alta.anterior() !== null"
+          [conSiguiente]="alta.siguiente() !== null"
+          (anterior)="anterior()"
+          (siguiente)="siguiente()"
+        />
+      }
+    </div>
+
+    <!-- EL RESUMEN, a la derecha y fijo, como en la ficha de grupo (`.ficha-summary`; por debajo de 1340, una
+         franja encima). En cuántos grupos atiende de los asignados, con su anillo (DD-126), por qué canales y de
+         qué tipo es. -->
+    <div class="ficha-summary">
+      <section class="resumen" aria-labelledby="agent-summary-title">
+        <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
+        <h2 id="agent-summary-title" class="resumen__title visually-hidden">{{ 'common.summary' | translate }}</h2>
+        <!-- Lo que le falta al alta, hasta «Listo para crear» (DD-136). En el alta y al duplicar está siempre, y
+             cambia en su sitio; al editar, solo si falta algo. -->
+        @if (mode() !== 'edit' || summaryMissing().length > 0) {
+          <sc-summary-status [missing]="summaryMissing()" [ready]="mode() !== 'edit' && canSave()" />
+        }
+        <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
+        <div class="resumen__cards">
+          <sc-summary-kpi
+            icon="group"
+            labelKey="agents.form.summary.groups_active"
+            [value]="summaryGroups().activos"
+            [of]="summaryGroups().total"
+            [noteKey]="summaryGroups().total === 0 ? 'agents.form.summary.no_groups' : null"
+          />
+          @for (s of summaryFacts(); track s.etiqueta) {
+            <div class="resumen__kpi">
+              <p class="resumen__label sc-text-caption-regular">
+                <sc-icon [name]="s.icono" size="inherit" aria-hidden="true" />
+                {{ s.etiqueta | translate }}
+              </p>
+              <p class="resumen__value sc-text-body-semibold">{{ s.valor }}</p>
+            </div>
+          }
+        </div>
+      </section>
     </div>
   </div>
 </div>
@@ -615,3 +177,556 @@
   (cancelled)="cancelDelete()"
   (confirm)="confirmDelete()"
 />
+
+<!-- LAS SECCIONES, cada una en su plantilla, que se pinta de una en una junto al índice al crear y al editar
+     (DD-143). Un solo cuerpo para los dos, así no pueden decir cosas distintas. -->
+<ng-template #seccionIdentidad>
+  <sc-section-card
+    anchorId="agent-section-identity"
+    surface="card"
+    icon="badge"
+    titleKey="agents.form.section.identity"
+    hintKey="agents.form.section.identification_hint"
+  >
+    <section class="sub-section">
+      <div class="form-identity">
+        <sc-photo-upload
+          size="sm"
+          [photo]="form().photo"
+          [name]="form().name"
+          [ariaLabel]="'common.photo.change' | translate"
+          (photoChange)="onPhotoChange($event)"
+        />
+        <!-- El nombre no tiene regla de contenido: o está o no está, y que
+             falte lo dice el motivo del botón, no un error rojo sobre un
+             campo que aún no has tocado. -->
+        <div class="field form-identity__name">
+          <label class="field__label sc-text-caption-semibold" for="agent-name">
+            {{ 'agents.form.fields.name' | translate }}
+            <span class="field__required" aria-hidden="true">*</span>
+          </label>
+          <sc-inputtext
+            inputId="agent-name"
+            [required]="true"
+            [value]="form().name"
+            (valueChange)="onNameRename($event)"
+          />
+        </div>
+      </div>
+
+      <div class="grid grid--2">
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-email">
+            {{ 'agents.form.fields.email' | translate }}
+          </label>
+          <sc-inputtext
+            inputId="agent-email"
+            type="email"
+            autocomplete="email"
+            [value]="form().email"
+            [error]="emailError() ? (emailError()! | translate) : undefined"
+            (valueChange)="updateField('email', $event)"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-phone">
+            {{ 'agents.form.fields.phone' | translate }}
+            <span class="field__hint">({{ 'common.optional' | translate }})</span>
+          </label>
+          <sc-inputtext
+            inputId="agent-phone"
+            type="tel"
+            autocomplete="tel"
+            [value]="form().phone"
+            (valueChange)="updateField('phone', $event)"
+          />
+        </div>
+
+        <div class="field">
+          <label id="agent-ext-label" class="field__label sc-text-caption-semibold" for="agent-ext">
+            {{ 'agents.form.fields.extension' | translate }}
+            <span class="field__required" aria-hidden="true">*</span>
+          </label>
+          <!-- Lista cerrada: o hay extensión o no la hay. `[required]` solo
+               añade el aria-required que el `*` visible no da. -->
+          <sc-select
+            inputId="agent-ext"
+            ariaLabelledBy="agent-ext-label"
+            optionLabel="number"
+            optionValue="number"
+            [filter]="true"
+            filterBy="number"
+            [required]="true"
+            [options]="availableExtensions"
+            [placeholder]="'agents.form.fields.extension_placeholder' | translate"
+            [helperText]="'agents.form.fields.extension_hint' | translate"
+            [value]="form().extension"
+            (valueChange)="onExtensionValueChange($event)"
+          >
+            <ng-template #item let-ext>
+              {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
+            </ng-template>
+            <ng-template #selectedItem let-ext>
+              {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
+            </ng-template>
+          </sc-select>
+        </div>
+
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-type">
+            {{ 'agents.form.fields.type' | translate }}
+          </label>
+          <sc-select
+            inputId="agent-type"
+            [options]="agentTypes"
+            [value]="form().agentType"
+            (valueChange)="onAgentTypeValueChange($event)"
+          >
+            <ng-template #item let-t>
+              {{ typeLabelKeys[t] | translate }}
+            </ng-template>
+            <ng-template #selectedItem let-t>
+              {{ typeLabelKeys[t] | translate }}
+            </ng-template>
+          </sc-select>
+        </div>
+      </div>
+    </section>
+
+    <sc-divider />
+
+    <section class="sub-section">
+      <div class="grid grid--2">
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-presence">
+            {{ 'agents.form.fields.presence' | translate }}
+          </label>
+          <sc-select
+            inputId="agent-presence"
+            [options]="presenceStates"
+            [value]="form().presenceStatus"
+            (valueChange)="onPresenceValueChange($event)"
+          >
+            <ng-template #item let-p>
+              {{ presenceKeys[p] | translate }}
+            </ng-template>
+            <ng-template #selectedItem let-p>
+              {{ presenceKeys[p] | translate }}
+            </ng-template>
+          </sc-select>
+        </div>
+
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-pin">
+            {{ 'agents.form.fields.pin' | translate }}
+            <span class="field__hint">({{ 'common.optional' | translate }})</span>
+          </label>
+          <sc-inputtext
+            inputId="agent-pin"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            [maxlength]="6"
+            [value]="form().pin"
+            [helperText]="'agents.form.fields.pin_hint' | translate"
+            [error]="pinError() ? (pinError()! | translate) : undefined"
+            (valueChange)="updateField('pin', $event)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <sc-divider />
+
+    <section class="sub-section">
+      @if (mode() === 'edit') {
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch
+            [checked]="form().status === 'active'"
+            [ariaLabel]="'agents.form.fields.active' | translate"
+            (checkedChange)="onStatusChange($event)"
+          />
+          <!-- La etiqueta dice lo que significa ENCENDIDO («Activo»), no el nombre del
+               dato («Estado»); y la ayuda ya no repite «Agente activo:» delante. -->
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.active' | translate }}</span>
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.fields.active_hint' | translate }}</p>
+          </div>
+        </div>
+      }
+
+      <!-- Sin ayuda: «Las llamadas del agente quedan grabadas si está activado» repetía
+           la etiqueta con más palabras. -->
+      <div class="switch-field">
+        <sc-toggleswitch
+          [checked]="form().permissions.recording"
+          [ariaLabel]="'agents.form.fields.recording' | translate"
+          (checkedChange)="onRecordingChange($event)"
+        />
+        <div class="switch-field__copy">
+          <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.recording' | translate }}</span>
+        </div>
+      </div>
+    </section>
+  </sc-section-card>
+</ng-template>
+
+<ng-template #seccionGrupos>
+  <sc-section-card
+    anchorId="agent-section-groups"
+    surface="card"
+    icon="group"
+    titleKey="agents.form.section.groups"
+    hintKey="agents.form.section.groups_hint"
+  >
+    <section class="sub-section">
+      <sc-group-assignment-table
+        [links]="form().links"
+        [availableGroups]="availableGroups()"
+        [agentId]="editingId() ?? 0"
+        (linksChange)="onLinksChange($event)"
+      />
+    </section>
+  </sc-section-card>
+</ng-template>
+
+<ng-template #seccionPermisos>
+  <sc-section-card
+    anchorId="agent-section-permissions"
+    surface="card"
+    icon="verified_user"
+    titleKey="agents.form.section.permissions"
+    hintKey="agents.form.section.permissions_hint"
+  >
+    <!-- El mismo orden que Contact Center › Agentes: la matriz arriba, sin
+         sangría (la pone el relleno de sus celdas), y los interruptores en
+         su tramo debajo. -->
+    <sc-permission-matrix
+      [rows]="matrixRows()"
+      [columns]="matrixColumns()"
+      [checked]="matrixChecked()"
+      [rowHeader]="'agents.form.permissions.destino' | translate"
+      [ariaLabel]="'agents.form.permissions.calls_section' | translate"
+      selectableColumns
+      (cellToggle)="onMatrixToggle($event)"
+      (columnToggle)="onMatrixColumnToggle($event)"
+    />
+
+    <sc-divider />
+
+    <section class="sub-section" aria-labelledby="agent-perm-config-title">
+      <header class="sub-section__head">
+        <h3 id="agent-perm-config-title" class="sub-section__title sc-text-body-semibold">
+          {{ 'agents.form.permissions.config_title' | translate }}
+        </h3>
+      </header>
+
+      <div class="switch-field switch-field--top">
+        <sc-toggleswitch
+          [checked]="form().permissions.manageDevices"
+          [ariaLabel]="'agents.form.permissions.manage_devices' | translate"
+          (checkedChange)="togglePermission('manageDevices')"
+        />
+        <div class="switch-field__copy">
+          <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.manage_devices' | translate }}</span>
+          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.manage_devices_hint' | translate }}</p>
+        </div>
+      </div>
+
+      <div class="switch-field switch-field--top">
+        <sc-toggleswitch
+          [checked]="form().permissions.selfActivate"
+          [ariaLabel]="'agents.form.permissions.self_activate' | translate"
+          (checkedChange)="togglePermission('selfActivate')"
+        />
+        <div class="switch-field__copy">
+          <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
+          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
+        </div>
+      </div>
+    </section>
+  </sc-section-card>
+</ng-template>
+
+<ng-template #seccionAvanzado>
+  <sc-section-card
+    anchorId="agent-section-advanced"
+    surface="card"
+    icon="tune"
+    titleKey="agents.form.section.advanced"
+    hintKey="agents.form.section.advanced_hint"
+  >
+    <!-- Tramos con título a `Body/body-semibold` separados por `<sc-divider />`,
+         como Contact Center. Antes eran cabeceras en VERSALITAS con icono y
+         raya propia (`.disclosure`), el único sitio de la app que titulaba así.
+         Primero los ajustes, que se leen de un vistazo; al final las tres
+         asignaciones largas, plegadas. -->
+    <section class="sub-section" aria-labelledby="agent-adv-behaviour-title">
+      <header class="sub-section__head">
+        <h3 id="agent-adv-behaviour-title" class="sub-section__title sc-text-body-semibold">
+          {{ 'agents.form.advanced.comportamiento.title' | translate }}
+        </h3>
+      </header>
+
+      <div class="grid grid--3">
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-pickup">
+            {{ 'agents.form.advanced.comportamiento.pickup_call' | translate }}
+          </label>
+          <sc-select
+            inputId="agent-pickup"
+            optionLabel="label"
+            optionValue="value"
+            [options]="pickupOptions()"
+            [value]="form().pickupType"
+            (valueChange)="onPickupValueChange('pickupType', $event)"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-pickup-chat">
+            {{ 'agents.form.advanced.comportamiento.pickup_chat' | translate }}
+          </label>
+          <sc-select
+            inputId="agent-pickup-chat"
+            optionLabel="label"
+            optionValue="value"
+            [options]="pickupOptions()"
+            [value]="form().pickupTypeChat"
+            (valueChange)="onPickupValueChange('pickupTypeChat', $event)"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-max-chats">
+            {{ 'agents.form.advanced.comportamiento.max_chats' | translate }}
+          </label>
+          <sc-select
+            inputId="agent-max-chats"
+            [options]="maxChatsOptions"
+            [value]="form().maxChats"
+            (valueChange)="onMaxChatsValueChange($event)"
+          />
+        </div>
+
+        <div class="field">
+          <!-- «Regional» era un tramo con título para UN campo: vive aquí, con el resto de
+               lo que decide qué conversaciones le llegan al agente. -->
+          <label class="field__label sc-text-caption-semibold" for="agent-language">
+            {{ 'common.languages.label' | translate }}
+          </label>
+          <!-- Un campo que ACUMULA es un multiselect (DD-105). Antes, un select que se
+               vaciaba tras cada elección y una fila de pastillas debajo: dos controles para una
+               lista, y la casilla de «todos» no existía. -->
+          <sc-multiselect
+            inputId="agent-language"
+            display="chip"
+            [maxSelectedLabels]="4"
+            [selectedItemsLabel]="'common.languages.selected_many' | translate"
+            [placeholder]="'common.languages.placeholder' | translate"
+            [options]="availableLanguages"
+            [value]="languageValue()"
+            (valueChange)="onLanguagesChange($event)"
+          />
+        </div>
+      </div>
+
+      <div class="switch-field switch-field--top">
+        <sc-toggleswitch
+          [checked]="form().randomOrder"
+          [ariaLabel]="'agents.form.advanced.comportamiento.random_order' | translate"
+          (checkedChange)="onRandomOrderChange($event)"
+        />
+        <div class="switch-field__copy">
+          <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.comportamiento.random_order' | translate }}</span>
+          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.comportamiento.random_order_hint' | translate }}</p>
+        </div>
+      </div>
+    </section>
+
+    <sc-divider />
+
+    <section class="sub-section" aria-labelledby="agent-adv-integration-title">
+      <header class="sub-section__head">
+        <h3 id="agent-adv-integration-title" class="sub-section__title sc-text-body-semibold">
+          {{ 'agents.form.advanced.integracion.title' | translate }}
+        </h3>
+      </header>
+
+      <div class="field">
+        <label class="field__label sc-text-caption-semibold" for="agent-iframe-url">
+          {{ 'agents.form.advanced.integracion.url_iframe' | translate }}
+        </label>
+        <sc-inputtext
+          inputId="agent-iframe-url"
+          type="url"
+          autocomplete="url"
+          [placeholder]="'agents.form.advanced.integracion.url_iframe_placeholder' | translate"
+          [value]="form().iframeUrl"
+          (valueChange)="updateField('iframeUrl', $event)"
+        />
+      </div>
+
+      <div class="switch-field switch-field--top">
+        <sc-toggleswitch
+          [checked]="form().permissions.externalDevices"
+          [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
+          (checkedChange)="togglePermission('externalDevices')"
+        />
+        <div class="switch-field__copy">
+          <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
+          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
+        </div>
+      </div>
+    </section>
+
+    <sc-divider />
+
+    <section class="sub-section" aria-labelledby="agent-adv-session-title">
+      <header class="sub-section__head">
+        <h3 id="agent-adv-session-title" class="sub-section__title sc-text-body-semibold">
+          {{ 'agents.form.advanced.sesion.title' | translate }}
+        </h3>
+      </header>
+
+      <div class="switch-field switch-field--top">
+        <sc-toggleswitch
+          [checked]="form().loginExtOverride"
+          [ariaLabel]="'agents.form.advanced.sesion.login_ext_override' | translate"
+          (checkedChange)="onLoginExtOverrideChange($event)"
+        />
+        <div class="switch-field__copy">
+          <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.sesion.login_ext_override' | translate }}</span>
+          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.sesion.login_ext_override_hint' | translate }}</p>
+        </div>
+      </div>
+
+      @if (mode() === 'edit') {
+        <!-- Una ACCIÓN, no un ajuste: el botón va junto a lo que explica, igual
+             que el interruptor va junto a su etiqueta. -->
+        <div class="action-field">
+          <!-- El nombre de la acción lo dice el botón; delante solo va lo que hace. Antes
+               «Expirar contraseña» salía dos veces seguidas, rótulo y botón. -->
+          <p class="action-field__copy sc-text-body-regular">{{ 'agents.form.advanced.sesion.expire_pwd_hint' | translate }}</p>
+          <sc-button
+            size="sm"
+            variant="secondary"
+            appearance="outlined"
+            [icon]="keyIcon"
+            [label]="'agents.form.advanced.sesion.expire_pwd' | translate"
+            (clicked)="requestExpirePassword()"
+          />
+        </div>
+      }
+    </section>
+  </sc-section-card>
+</ng-template>
+
+<ng-template #seccionRecursos>
+  <!-- Etiquetas, Agendas y Plantillas en su propia sección desde el 2026-09-14. Eran
+       tres desplegables al final de Avanzado, que con ellos abiertos medía casi dos
+       pantallas. No son ajustes del agente sino cosas que se le ASIGNAN y que viven en
+       Repositorios. Se llama «Recursos», no «Repositorios» como el menú: con el mismo
+       nombre, quien la buscaba acababa en la página del menú (DD-105). Aquí
+       van abiertas: la sección entera es para ellas. -->
+  <sc-section-card
+    anchorId="agent-section-resources"
+    surface="card"
+    icon="library_books"
+    titleKey="agents.form.section.resources"
+    hintKey="agents.form.section.resources_hint"
+  >
+    <!-- Un campo por repositorio, con lo asignado a la vista y el desplegable del DS para
+         añadir o quitar. Antes: un tramo con título por repositorio y dos tablas completas
+         (buscador, pestañas Chat/Email, casilla por fila, vista previa) listando TODO lo que
+         existe. Mismo dato, una cuarta parte del alto y ninguna caja dentro de la caja. -->
+    <section class="sub-section">
+      <div class="grid grid--2">
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-label">
+            {{ 'agents.form.advanced.labels.title' | translate }}
+          </label>
+          @if (availableLabels().length === 0) {
+            <p class="field__help sc-text-caption-regular">{{ 'agents.form.labels_empty' | translate }}</p>
+          } @else {
+            <!-- Como Agendas y Plantillas: acumula, así que es un multiselect. -->
+            <sc-multiselect
+              inputId="agent-label"
+              display="chip"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [maxSelectedLabels]="4"
+              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+              [placeholder]="'agents.form.resources.none' | translate"
+              [options]="labelOptions()"
+              [value]="labelValue()"
+              (valueChange)="onLabelsChange($event)"
+            />
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-agendas">
+            {{ 'agents.form.advanced.agendas.title' | translate }}
+          </label>
+          <sc-multiselect
+            inputId="agent-agendas"
+            display="chip"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            [maxSelectedLabels]="4"
+            [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+            [placeholder]="'agents.form.resources.none' | translate"
+            [options]="scheduleOptions()"
+            [value]="scheduleValue()"
+            (valueChange)="onSchedulesChange($event)"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-templates-chat">
+            {{ 'agents.form.resources.templates_chat' | translate }}
+          </label>
+          <sc-multiselect
+            inputId="agent-templates-chat"
+            display="chip"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            [maxSelectedLabels]="4"
+            [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+            [placeholder]="'agents.form.resources.none' | translate"
+            [options]="chatTemplateOptions()"
+            [value]="chatTemplateValue()"
+            (valueChange)="onTemplatesChange('chat', $event)"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-templates-email">
+            {{ 'agents.form.resources.templates_email' | translate }}
+          </label>
+          <sc-multiselect
+            inputId="agent-templates-email"
+            display="chip"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            [maxSelectedLabels]="4"
+            [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+            [placeholder]="'agents.form.resources.none' | translate"
+            [options]="emailTemplateOptions()"
+            [value]="emailTemplateValue()"
+            (valueChange)="onTemplatesChange('email', $event)"
+          />
+        </div>
+      </div>
+
+      <!-- Dónde se crean y se editan. Antes «Gestionar agendas», solo para una de las tres. -->
+      <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
+    </section>
+  </sc-section-card>
+</ng-template>

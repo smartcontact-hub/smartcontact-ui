@@ -24,6 +24,7 @@ import { SC_ICON_SIZE_DEFAULT, ScIconComponent as IconComponent } from '@smartco
 import { injectLangChange } from '@core/utils/lang-change';
 
 import type { DashboardWidget } from '../../data/dashboard.types';
+import type { EstadoDeAgente } from '../../data/presencia';
 import {
   detailRows,
   type AgentStateRow,
@@ -57,6 +58,8 @@ const CHANNEL_ICON: Readonly<Record<DetailChannel, string>> = { calls: 'call', c
 export class DetailDrawerComponent {
   readonly request = input<DetailRequest | null>(null);
   readonly widget = input<DashboardWidget | null>(null);
+  /** El estado de los agentes en Administración: el detalle lista a los que están en el estado pulsado (DD-139). */
+  readonly estadoDe = input.required<EstadoDeAgente>();
 
   readonly closed = output<void>();
 
@@ -84,7 +87,9 @@ export class DetailDrawerComponent {
     const kind = this.rows()?.kind;
     return [
       { field: 'id', header: this.translate.instant(kind === 'agents' ? 'dashboard.detail.col_agent' : 'dashboard.detail.col_conversation'), cellTemplate: this.whoTpl() },
-      { field: 'seconds', header: this.translate.instant(kind === 'agents' ? 'dashboard.detail.col_in_state' : 'dashboard.detail.col_time'), align: 'right', cellTemplate: this.timeTpl() },
+      // `1%`: el tiempo mide lo que su dato y el nombre se queda el resto. Su cabecera no se parte: sus palabras
+      // van unidas por un espacio que no separa (DD-124).
+      { field: 'seconds', header: this.translate.instant(kind === 'agents' ? 'dashboard.detail.col_in_state' : 'dashboard.detail.col_time'), align: 'right', width: '1%', cellTemplate: this.timeTpl() },
     ];
   });
 
@@ -107,7 +112,7 @@ export class DetailDrawerComponent {
       untracked(() => {
         const w = this.widget();
         this.elapsed.set(0);
-        this.snapshot.set(r && w ? detailRows(r, w) : null);
+        this.snapshot.set(r && w ? detailRows(r, w, this.estadoDe()) : null);
       });
     });
     const clock = setInterval(() => {

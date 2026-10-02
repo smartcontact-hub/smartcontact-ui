@@ -18,6 +18,69 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ## [Unreleased]
 
+### Added
+
+- **`@smartcontact-hub/components`** — `sc-datatable` gana `externalSort`: la tabla pinta el indicador de
+  orden y emite `(sortChange)`, pero **no reordena** las filas; el orden lo pone quien la usa. Sin él,
+  p-table vuelve a ordenar por el valor crudo del campo encima del orden que recibe, y un orden propio
+  (una prioridad por rango, nombres con locale) no llegaba a verse. Por defecto apagado: ninguna tabla
+  cambia sin pedirlo.
+- **`@smartcontact-hub/components`** — `sc-form-section-nav` es un índice de ENLACES: cada sección puede
+  llevar su `href` (la URL de la sección, que prepara quien lo pinta). Un clic principal sin teclas sigue
+  emitiendo `activeChange` y la página navega; cualquier otro gesto de enlace (Cmd/Ctrl, Mayús, Alt o el
+  clic central) lo hace el navegador, la misma regla que `routerLink`. Sin `href`, la fila apunta a `#`
+  como hasta ahora. Gana además `titleKey` (un rótulo visible encima de las filas, que nombra el índice)
+  y `sectionsWithChanges` (un punto en el color de marca en las secciones con cambios sin guardar,
+  distinto del rojo de lo que falta). ([DD-122](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-form-section-nav` gana `sectionsDone`: un ✓ en el verde de éxito detrás
+  de la etiqueta de las secciones que la página da por hechas (en las altas del Supervisor, las que se dejaron
+  completas), que el enlace dice («Esta sección está completa»). Se ve una sola marca: lo que falta y los cambios
+  sin guardar ganan al ✓, y se oyen todas. Entra con escala, opacidad y desenfoque si llega con el índice ya a la
+  vista, y quieto con `prefers-reduced-motion`. Su diccionario (`sc.formSectionNav.*`) pasa a los cuatro idiomas:
+  en francés y en portugués se decía en español. Por defecto vacío: ningún índice cambia sin pedirlo.
+  ([DD-143](docs/DECISIONS.md))
+
+### Changed
+
+- **`@smartcontact-hub/components`** — las filas de `sc-form-section-nav` dejan de llevar `role="tab"`,
+  que anunciaba una pestaña sin lista de pestañas, y la actual se anuncia con `aria-current="page"` en
+  vez de `"true"`. El texto del punto rojo pasa de un `aria-label` en un `span` sin rol (ARIA 1.2 lo
+  prohíbe; Chrome lo leía igual) a texto oculto dentro del enlace. No se mueve un píxel: ningún estilo
+  miraba esos atributos. Quien los use como selector, que pase a `.form-nav__item--active` o al rol
+  `link`. ([DD-122](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-section-card` mide 17,5 arriba y abajo en las dos pieles (antes, 22,75
+  la gris y 24,5 la blanca), también plegada. Los lados y el aire del título a su contenido no cambian. El relleno
+  vertical no separaba nada: la caja ya la delimitan su borde y su fondo. ([DD-125](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-dialog` con cuerpo deja la botonera a 28 del contenido (el pie gana 10,5
+  arriba) y separa a los hermanos del cuerpo 14 en vez de 15,75. A 17,5, el botón quedaba más cerca del último
+  campo que dos campos entre sí y se leía como parte de ese campo. Sin cuerpo (una confirmación) y con `flushBody`,
+  como estaba. ([DD-123](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — el botón `variant="danger" appearance="text"` sube de `red-500` a
+  `red-600`: 3.76:1 sobre blanco no llegaba al 4.5:1 de WCAG AA, el mismo fallo que el `danger` sólido ya
+  había corregido en julio. Sin cambio en oscuro (ya usaba `red-400`). Todo consumidor de esa combinación,
+  no solo el «Eliminar» de las fichas, hereda el color. ([DD-128](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-select` y `sc-multiselect` sacan sus textos fijos de su diccionario
+  (`sc.select.*`, en español, inglés, francés y portugués), como `sc-drawer`: «Sin opciones», «Sin resultados»,
+  «Buscar» y «{0} seleccionados». Eran literales en español en sus `input()`, y un desplegable en otro idioma los
+  seguía diciendo en español. Sin cambio en español; quien los pase por entrada, manda. ([DD-133](docs/DECISIONS.md))
+
+### Fixed
+
+- **`@smartcontact-hub/components`** — `sc-checkbox` desactivado aplica la opacidad UNA vez, el 60 % de Figma
+  (`disabled/opacity`). La caja llevaba además la suya y las dos se multiplicaban (0,36), así que una casilla
+  marcada y desactivada, un valor fijo que no se quita desde ahí, se leía como apagada y no como marcada. Todo
+  consumidor hereda el arreglo: las casillas desactivadas se ven algo más oscuras. ([DD-131](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-select` pone `aria-describedby`, `aria-required` y `aria-invalid` en el
+  elemento que recibe el foco (el `span[role=combobox]`, o el `<input>` si es editable), por passthrough, como
+  `sc-password`. Iban en la envoltura `<p-select>`, y un lector de pantalla no anunciaba la ayuda ni el error, ni
+  sabía que el campo era obligatorio. ([DD-133](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-dialog` se anuncia como UN diálogo modal, con el título de nombre y el
+  subtítulo de descripción. Exponía dos `role="dialog"` modales, uno dentro de otro: el `p-dialog` de PrimeNG, sin
+  nombre (su `aria-labelledby` apuntaba a una cabecera que no se pinta), y la card del DS. El rol se queda en el de
+  PrimeNG, que es el que atrapa el foco, nombrado por `pt`, y la card deja de llevarlo. El foco al abrir, Tab y
+  Escape no cambian. Quien buscara la card por `[role="dialog"]` la encuentra por `.sc-dialog`.
+  ([DD-140](docs/DECISIONS.md))
+
 ## [1.0.0] — 2026-09-09
 
 Primera versión **estable**. El corte no es de calendario: es que el sistema ya tiene

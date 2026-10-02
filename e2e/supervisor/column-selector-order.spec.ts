@@ -54,6 +54,11 @@ test('Agentes · Nombre sale marcado y no se puede quitar', async ({ page }) => 
   // `data-p-disabled` y no `aria-disabled`: el nativo marca así sus opciones apagadas y no las anuncia al lector
   // de pantalla (el mismo hueco que `sc-select` con Skills, anotado en el hand-off de fichas).
   await expect(nombre).toHaveAttribute('data-p-disabled', 'true');
+  // `force` porque la opción apagada lleva `pointer-events: none` y el clic cae en la lista, como el de una persona;
+  // pero `force` no espera a que se vea, y los atributos de arriba no lo garantizan. El overlay nativo (`p-motion`)
+  // monta las opciones con `display: none` y no lo quita hasta dos fotogramas después: con la máquina cargada llegan
+  // tarde y el clic encontraba la opción sin caja («Element is not visible»). Se espera a verla, el estado final.
+  await expect(nombre).toBeVisible();
   await nombre.click({ force: true });
   await expect.poll(() => cabeceras(page)).toContain('Nombre');
 });

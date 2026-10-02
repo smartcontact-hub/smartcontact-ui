@@ -313,18 +313,20 @@ se borra.
 
 ---
 
-### 1.8 Los dos últimos botones bajo AA · 2026-07-19
+### 1.8 Los tres últimos botones bajo AA · 2026-07-19, cerrada el 2026-09-27
 
 > Cierra la lista. **Después de esto no queda ningún fallo de contraste en la app**
 > salvo el límite conocido de §1.5.
 
-Los dos venían del **preset**, no de CSS de página — que es la razón de que sobrevivieran
-a toda la limpieza anterior: ninguna hoja de página los mencionaba.
+Los tres venían del **preset o de un token de componente**, no de CSS de página — que es
+la razón de que sobrevivieran a toda la limpieza anterior: ninguna hoja de página los
+mencionaba.
 
 | Slot | Kit | Ahora | Medido |
 |---|---|---|---|
 | `button.danger` sólido (fondo) | `red-500` | **`red-600`** | 3.76:1 → **4.83:1** con su texto blanco |
 | `button.outlined.secondary` (etiqueta) | `slate-500` | **`slate-600`** | 2.95:1 → **4.52:1** |
+| `button.text.danger` (etiqueta) | `red-500` | **`red-600`** | 3.76:1 → **4.83:1** — DD-128, medido el 2026-09-26 |
 
 **`danger` desplaza la rampa entera**, de 500/600/700 a 600/700/800, para conservar el
 recorrido reposo → hover → pulsado. Si solo subiera el reposo, reposo y hover
@@ -332,13 +334,15 @@ coincidirían y el botón dejaría de responder al ratón. El `focusRing` se que
 `red-500`: es un anillo, no lleva texto encima, y moverlo cambiaría una señal de foco sin
 motivo.
 
-**Se arreglan en sitios distintos, y esa asimetría importa.** `outlined secondary` va por
-token (`--sc-cmp-button-outlined-secondary-color`, fuera de la zona `@sc-gen` + `EXCLUDE`,
-igual que §1.5 y §1.7). El `danger` sólido **no puede**: sus `--sc-cmp-button-danger-*`
-existen pero corresponden a otro slot y **no los lee nadie** — lo comprobé cambiándolos y
-midiendo el píxel, que seguía en `#ef4444`. Cablear el preset a ellos rompe
-`cmp-color-rewire`, que exige que cada `var(--sc-cmp-*)` case con SU slot (`root.danger`
-pediría `--sc-cmp-button-root-danger-*`, que no existe en el export). Así que va por
+**Se arreglan en sitios distintos, y esa asimetría importa.** `outlined secondary` y
+`text danger` van por token (`--sc-cmp-button-outlined-secondary-color` y
+`--sc-cmp-button-text-danger-color`, fuera de la zona `@sc-gen` + `EXCLUDE`, igual que
+§1.5 y §1.7): los dos SÍ los consume el preset por `var(...)`, comprobado. El `danger`
+sólido **no puede** ir por ahí: sus `--sc-cmp-button-danger-*` existen pero corresponden
+a otro slot y **no los lee nadie** — lo comprobé cambiándolos y midiendo el píxel, que
+seguía en `#ef4444`. Cablear el preset a ellos rompe `cmp-color-rewire`, que exige que
+cada `var(--sc-cmp-*)` case con SU slot (`root.danger` pediría
+`--sc-cmp-button-root-danger-*`, que no existe en el export). Así que ese va por
 referencia de paleta en `sc-preset/button.ts`, documentado ahí.
 
 Esa asimetría es una **deuda del puente Kit↔preset**, no del arreglo: hay tokens de
@@ -346,9 +350,9 @@ componente emitidos que ningún preset consume. `cmp-color-rewire` ya vigila el 
 contrario (hex hardcodeado donde hay token); el sentido "token emitido y mudo" no lo
 vigila nadie.
 
-**Cómo se cierra**: que el Kit suba `button.danger.background` y
-`button.outlined.secondary.color`. Entonces la fila de `EXCLUDE` y el bloque del preset se
-borran.
+**Cómo se cierra**: que el Kit suba `button.danger.background`,
+`button.outlined.secondary.color` y `button.text.danger.color`. Entonces las filas de
+`EXCLUDE` y el bloque del preset se borran.
 
 ### 1.9 `--sc-border-subtle` existía solo en claro · 2026-07-22
 
@@ -402,8 +406,7 @@ leer todavía: `cmp-color-rewire` espera que el slot `root.color` del preset lea
 `root` en el nombre, y el Kit no tiene ese nivel, así que cablearlos rompe el guard. Hasta que se arregle ese mapeo, va por
 referencia de paleta en `sc-preset/togglebutton.ts`, como el `danger` sólido de §1.8.
 
-**Cómo se cierra**: que el Kit suba `togglebutton.color` en claro (pregunta abierta en
-`docs/figma-pendiente.md` §10). El guard ya acepta los slots de `root` (#177), así que entonces el
+**Cómo se cierra**: que el Kit suba `togglebutton.color` en claro (`docs/figma-pendiente.md` §8). El guard ya acepta los slots de `root` (#177), así que entonces el
 preset lee `var(--sc-cmp-togglebutton-*)` y el bloque a mano se borra.
 
 ## 2. Component extensions (el DS añade lo que Figma no modela)
@@ -471,7 +474,7 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 - **Tokens**: el diseño se hizo en **rejilla de 8** (8/12/16/24/48) pero **NO se crea escala nueva** — se snapea a la escala base-14 del Kit Pro (16px de diseño exacto = `--sc-spacing-1-143`; 8→7, 12→12,25, 24→24,5; diferencias ≤1px imperceptibles). Único literal: altura de fila 48px (dimensión de componente, no token de spacing). **NO forkear a un 8-grid paralelo** (rompería el 1:1 con el Kit Pro · `migration-safety.md`); la nomenclatura 8-point (`--sc-space-*`, `--sc-spacing-100`…) está además **prohibida por `tokens:guard`**.
 - **Chips de canal** (tabla de asignación de grupos): on-state = pill claro neutro (`bg-secondary-subtle` + borde sólido + texto primario + ✓); off-state = dashed transparente + muted + ＋. El "activo" se lee por relleno sólido vs dashed, no por color fuerte.
 - **Estado de adopción** (histórico, reconciliado):
-  - **`<sc-form-section-nav> [flush]`** → **EN USO en los 3 forms** (agents/groups/users), con el aspecto del índice de Contact Center desde DD-100; la referencia común ya no es editar-agente `12277:4185` sino la maqueta de Contact Center.
+  - **`<sc-form-section-nav> [flush]`** → **EN USO en las cinco pantallas con índice desde DD-122** (2026-09-27): fichas de agente, grupo y usuario, constructor de reglas y Contact Center, este con su rótulo encima (`titleKey`). Cada fila es un enlace a su sección (una ruta o `?seccion=`), con el aspecto del índice de Contact Center desde DD-100; la referencia común es la maqueta de Contact Center (`393:12565`), no editar-agente `12277:4185`. Las fichas de agente y usuario fueron con pestañas del 2026-09-22 al 2026-09-27.
   - **`<sc-section-card> [flush]`** → **0 consumidores (reservado)**. La sección que lo motivó (Grupos asignados) acabó siendo panel propio `<sc-group-assignment-table>` (imita el p-card del Figma, sin section-card), así que el flush de section-card quedó sin adoptar. Identity/Permisos/Avanzado siguen carded en los 3 forms (consistente). **Trigger de adopción**: que la referencia muestre esas secciones en flush. Mantenido por ser camino documentado de una dirección activa, NO borrado (evita churn re-add).
 - **⚠️ Verificación obligatoria al aplicar una variante de bajo-chrome (lección aprendida)**: antes de cerrar un `[flush]`/low-chrome, **confirmar dato↔dato** contra el nodo Figma con `get_metadata` + `get_design_context` (autolayout, medidas, **fills y variables**, no solo el layout). Quitar un fondo/borde/sombra lee como "1:1" desde la estructura pero puede ser una **regresión visual silenciosa**: el índice perdió su panel `gray-50` porque el flush se interpretó como "a sangre" sin contrastar el fill real del nodo (`get_design_context` lo da: `bg-[var(--gray/50)]`, radio 6, padding 16). **Acceder al file elemento a elemento es exacto; comparar capturas a ojo NO** — la captura solo sirve como smoke de "renderiza".
 
@@ -934,10 +937,10 @@ Los tokens **brand-visible** (paletas, spacing, radius, scale, surface, shadows 
 | **Lienzo de página** | shell (`app-shell`) | `--sc-bg-canvas` (blanco) | `--sc-bg-canvas` (gray-950) | DD-45 · un solo token, sin override por tema |
 | **Bandeja** (contenedor interior gris) | `.page__inner` | `--sc-bg-default` (gray-50) | gray-950 | radius 12 · padding 16 · gap 28 |
 | **Cards de sección** | `.settings-card` | surface (blanco) | surface | radius 8 · padding 16 · borde sutil · **sin sombra** |
-| **Índice** (rail de navegación) | `.settings-sidebar` | gray-50 | gray-50/dark | radius 12 · alineado arriba |
+| **Índice** (rail de navegación) | `sc-form-section-nav [flush]` | sin fondo (el lienzo); el activo en `--sc-bg-hover` | idem | sin panel ni borde; item de radio 12 · fijo arriba (DD-100; una sola pieza en toda la app desde DD-122) |
 | **Divisor** | `<sc-divider>` | `--sc-border-default` (gray-200, `#dadfe6`) | idem | antes `--sc-border-subtle` (gray-100) — ver §2.10 |
 
-**Lectura de la jerarquía**: lienzo blanco → bandeja gris recogida (radius 12) → cards de sección blancas a sangre dentro de la bandeja, con borde sutil y sin sombra (chrome bajo) → índice gris recogido alineado al tope. El divisor sube a gray-200 para definir la separación contra los grises de la bandeja/índice sin meter sombra.
+**Lectura de la jerarquía**: lienzo blanco → bandeja gris recogida (radius 12) → cards de sección blancas a sangre dentro de la bandeja, con borde sutil y sin sombra (chrome bajo) → índice gris recogido alineado al tope. *(Desde el 2026-09-14 el índice ya no es gris: solo se pinta el item activo, DD-100.)* El divisor sube a gray-200 para definir la separación contra los grises de la bandeja/índice sin meter sombra.
 
 **Sin tokens nuevos** salvo el gap `--sc-bg-canvas` (§5.11, diferido).
 
@@ -975,6 +978,7 @@ nativo; se mide y se decide con Rafa).
 | `sc-datatable .p-datatable-header:empty` | Oculta la cabecera de la tabla cuando no se proyecta nada | `emptyCaptionCss` (css.ts), 2026-09-13 | se queda: PrimeNG deja una franja en blanco |
 | `.p-datatable-tbody > tr` | Transición del hover de fila en la tabla-lista | `listBehaviorCss` (css.ts), DD-66 | se queda: solo en filas que hacen algo |
 | `:host ::ng-deep .p-toast .p-toast-message-icon, :host ::ng-deep .p-toast .p-toast-close-button` | Oculta el icono y la X de PrimeNG en el toast del Supervisor | Plataforma (la X doble se arregló en su PR #9; el icono, sin rastrear) | se queda: el toast pinta los suyos |
+| `.resumen__ring-value` (la clase que `[pt]="{ value: … }"` pone al «N%» de `p-progress-spinner`) | Oculta el «N%» del anillo del resumen de las fichas | El ejemplo «Preview» de ProgressSpinner en primeng.dev lo oculta igual; DD-126 | se queda: a 42 px no se lee y la cifra grande ya lo dice |
 
 ### 8.1 El botón que se encoge al pulsarlo · se queda, con la receta de better-ui (2026-09-15)
 

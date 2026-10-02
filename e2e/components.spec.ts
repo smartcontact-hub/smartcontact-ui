@@ -65,9 +65,9 @@ const screenshotBaseline = async (page: Page, name: string) => {
    * Esto era `if (process.env['CI']) return`, y esa variable decidía dos cosas a la
    * vez: «estoy en un runner de GitHub» —donde un snapshot `-darwin` no puede casar
    * contra `ubuntu-latest`— y, sin que nadie lo quisiera, «no corras la red» en el
-   * PREFLIGHT, cuyo paso es `CI=1 npm run e2e`; ahí el `CI=1` está para que Playwright
-   * levante SU servidor (ver `scripts/playwright-reuse-guard.mjs`), no para apagar
-   * nada.
+   * PREFLIGHT, cuyo paso era entonces `CI=1 npm run e2e` (DD-60 sacó los e2e de allí);
+   * ese `CI=1` está para que Playwright levante SU servidor (ver
+   * `scripts/playwright-reuse-guard.mjs`), no para apagar nada.
    *
    * El precio, medido el 2026-09-07: esta red no la ejecutaba NADIE por defecto. Solo
    * la veía quien lanzase `npm run e2e` a mano. Así pudieron pudrirse las 38 baselines
@@ -757,6 +757,26 @@ test.describe('sc-dialog', () => {
     await expect(dialog).toBeHidden();
   });
 
+  /* Un lector de pantalla anunciaba DOS diálogos modales: el `div.p-dialog` de PrimeNG, sin nombre
+   * (su `aria-labelledby` apunta a una cabecera que no se pinta con `showHeader=false`), y dentro la
+   * `section` del DS, con su título. Medido en el árbol de accesibilidad de Chromium el 2026-10-01.
+   * Ahora es uno solo: el de PrimeNG, que es el que atrapa el foco, con el título de nombre. */
+  test('se anuncia UN diálogo modal, con el título de nombre y el subtítulo de descripción', async ({ page }) => {
+    await gotoPage(page, 'dialog');
+    await page.getByTestId('open-dialog').locator('button').click();
+    await expect(page.locator('.sc-dialog')).toBeVisible();
+    const dialogo = page.getByRole('dialog');
+    await expect(dialogo).toHaveCount(1);
+    await expect(dialogo).toHaveAccessibleName('¿Eliminar el agente?');
+    await expect(dialogo).toHaveAccessibleDescription('Esta acción no se puede deshacer.');
+    await expect(dialogo).toHaveAttribute('aria-modal', 'true');
+    // El foco sigue atrapado en el diálogo que se anuncia.
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press('Tab');
+      await expect(dialogo.locator(':focus')).toHaveCount(1);
+    }
+  });
+
   test('dynamic dialog: abre componente al vuelo y resuelve onClose', async ({ page }) => {
     await gotoPage(page, 'dialog');
     await page.getByTestId('open-dynamic').locator('button').click();
@@ -785,6 +805,21 @@ test.describe('sc-checkbox', () => {
     // base nativa: es un <input type=checkbox> real
     await expect(header).toHaveJSProperty('type', 'checkbox');
     await screenshotBaseline(page, 'checkbox');
+  });
+
+  test('desactivada, la opacidad va una vez: el 60 % de Figma, no 0,6 × 0,6', async ({ page }) => {
+    await gotoPage(page, 'checkbox');
+    const casilla = page.getByTestId('sc-checkbox-disabled-all');
+    await expect(casilla.locator('input')).toBeChecked();
+    await expect(casilla.locator('input')).toBeDisabled();
+    // La EFECTIVA: la de la caja por la de cada antepasado. Hasta DD-131 la caja llevaba la suya encima de la de
+    // la casilla entera, y una marcada y fija se leía como apagada (0,36).
+    const opacidad = await casilla.locator('.tri-checkbox__box').evaluate((caja) => {
+      let o = 1;
+      for (let n: Element | null = caja; n; n = n.parentElement) o *= parseFloat(getComputedStyle(n).opacity || '1');
+      return o;
+    });
+    expect(opacidad).toBeCloseTo(0.6, 2);
   });
 });
 
@@ -836,7 +871,7 @@ test.describe('sc-empty-state', () => {
 });
 
 test.describe('sc-form-section-nav', () => {
-  test('chip 28² (icono desnudo en flush), activo aria-current, punto de error, click controla', async ({ page }) => {
+  test('chip 28² (icono desnudo en flush), enlaces con su href, activo aria-current="page", punto de error, click controla', async ({ page }) => {
     await gotoPage(page, 'formsectionnav');
 
     const nav = page.getByTestId('sc-formnav-default');
@@ -848,8 +883,13 @@ test.describe('sc-form-section-nav', () => {
     const chip = nav.locator('.form-nav__icon').first();
     expect(await styleOf(chip, ['width', 'height'])).toEqual({ width: '28px', height: '28px' });
 
-    // activo inicial = general → aria-current
-    await expect(nav.locator('.form-nav__item--active')).toHaveAttribute('aria-current', 'true');
+    // Cada fila es un ENLACE a su sección de esta misma página (DD-122), con el `#` de las rutas de
+    // la doc: sin `prepareExternalUrl`, Cmd+clic saldría de sc-docs.
+    await expect(nav.locator('.form-nav__item').nth(1)).toHaveAttribute('href', '#/components/formsectionnav?seccion=voz');
+    await expect(nav.locator('[role="tab"]')).toHaveCount(0);
+
+    // activo inicial = general → la página actual
+    await expect(nav.locator('.form-nav__item--active')).toHaveAttribute('aria-current', 'page');
 
     // sección 'horario' con punto de error (required vacíos)
     await expect(nav.locator('.form-nav__item--has-error .form-nav__dot')).toHaveCount(1);
@@ -864,6 +904,13 @@ test.describe('sc-form-section-nav', () => {
     expect(await styleOf(flushChip, ['background-color'])).toEqual({ 'background-color': 'rgba(0, 0, 0, 0)' });
     const flushLabel = page.getByTestId('sc-formnav-flush').locator('.form-nav__label').first();
     expect(await styleOf(flushLabel, ['font-size'])).toEqual({ 'font-size': '14px' });
+
+    // En un alta (DD-143): ✓ en las secciones que se dejaron completas, que el enlace dice; la que se
+    // dejó sin lo obligatorio lleva el punto rojo, que gana al ✓.
+    const alta = page.getByTestId('sc-formnav-alta');
+    await expect(alta.locator('.form-nav__done')).toHaveCount(2);
+    await expect(alta.locator('.form-nav__item').first()).toHaveAccessibleName(/General.*(completa|complete)/);
+    await expect(alta.locator('.form-nav__item--has-error .form-nav__done')).toHaveCount(0);
 
     await screenshotBaseline(page, 'formsectionnav');
   });

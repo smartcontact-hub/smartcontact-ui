@@ -5,6 +5,37 @@
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
+## ✅ 2026-10-01 · El sidebar sigue a su tablero de Figma (DD-137)
+
+> **Sello: rama `arebury/sidebar-theme-icon-colors`, sobre `origin/main` HEAD `99818fb2`.**
+
+**Figma** (tablero `14912:6324`):
+- Los iconos grises y los padres sin cyan tenían un solo origen: Smart-Contact Icons pinta un gris dentro del dibujo
+  que manda sobre el color de la capa. Se eligió arreglarlo solo en el tablero: sus 199 iconos son copias desligadas
+  de la librería, a 14×14, con el blanco o el cyan que tocaba. Queda un cyan por sidebar.
+- Manda el catálogo de la sección 6 (`14912:6774`): los 198 iconos de los sidebars son el que nombra su tarjeta.
+  Se llegaron a poner los de los plegados y se quitaron.
+- Textos: «Diseñador VUI», «Análisis de Flujo» y «solicitado en SISMAC-4340».
+- La fila SCC (CusCare) lleva el logo de CusCare (`13775:62831`, instancia) en sus 8 sidebars; el catálogo no.
+- El plegado antiguo (`14912:6420`) va con 16 de margen interior y esquinas a 12, sin la fila escondida.
+- Los componentes locales del catálogo tienen instancias en la página de archivo del sidebar y en Testing: no se
+  mueven ni se tocan.
+
+**Código:**
+- Sin botón de anclar, y plegado sigue abierto lo que estaba abierto.
+- Texto e icono en blanco y la flecha al 60%.
+- Todos los iconos a 14, con los del catálogo; Administración `groups` y Grupos `group` ya no van cruzados.
+- Los dos nombres nuevos, en los cuatro idiomas.
+- Lo vigila `e2e/supervisor/sidebar-tablero.spec.ts`: 4 pruebas, verdes en local y rojas contra producción.
+
+**Siguiente:**
+1. Hecho y en `main`: #293 (el sidebar sigue al tablero), #294 (el logo vectorial del sidebar de la app CusCare) y el
+   logo de CusCare en la fila SCC.
+2. Lo que el tablero dice y el código aún no hace (no está pedido; preguntar):
+   - recordar lo abierto al recargar;
+   - no abrir nada al navegar;
+   - el texto de la fila en 13 Medium, que no está en la escala.
+
 ## ✅ 2026-09-23 · En producción va «abrir no cierra las demás» (DD-118)
 
 > **Sello: rama `sidebar-produccion`, sobre `origin/main` HEAD `b55e3017`.**
@@ -61,7 +92,8 @@ cierran 400ms después de salir, ancho 240 durante toda la transición al pulsar
 
 1. **ESPERANDO A RAFA** (no se pregunta, él lo saca):
    - Plegado: fondo de grupo solo en desplegado (propuesta de Rafa) o solo el primer nivel en plegado (propuesta de Claude).
-   - Selected al 15% (código) o al 12% (Figma).
+   - ~~Selected al 15% (código) o al 12% (Figma)~~: ya no aplica. El blanco al 15% era el del sidebar anclado, que se
+     quitó el 2026-10-01 (DD-137).
 2. Detalles premium de bajo coste: en `docs/ROADMAP.md`, «Revisión de componentes».
 
 **Trampas del frente:**

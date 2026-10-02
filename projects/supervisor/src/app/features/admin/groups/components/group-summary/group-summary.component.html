@@ -1,0 +1,111 @@
+<section class="resumen" aria-labelledby="group-summary-title">
+  <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
+  <h2 id="group-summary-title" class="resumen__title visually-hidden">{{ 'groups.form.summary.title' | translate }}</h2>
+
+  <!-- Lo que le falta al alta, hasta «Listo para crear» (DD-136). En el alta está siempre, y cambia en su sitio;
+       al editar, solo si falta algo (un nombre borrado). -->
+  @if (creating() || missing().length > 0) {
+    <sc-summary-status [missing]="missing()" [ready]="ready()" />
+  }
+
+  <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
+  <div class="resumen__cards">
+    <!-- Agentes: los que atienden sobre los asignados, con su anillo (DD-126); debajo, quién atiende cada canal. -->
+    <sc-summary-kpi
+      icon="group"
+      labelKey="groups.form.summary.agents_active"
+      [compact]="true"
+      [value]="total() - paused()"
+      [of]="total()"
+      [noteKey]="paused() > 0 ? 'groups.form.summary.paused_count' : null"
+      [noteParams]="{ count: paused() }"
+      [href]="hrefs().agentes"
+      (abrir)="ir.emit({ seccion: 'agentes' })"
+    >
+      @if (channelRows().length > 0) {
+        <ul class="resumen__channels">
+          @for (row of channelRows(); track row.channel) {
+            <li class="resumen__channel">
+              <span class="resumen__channel-name sc-text-caption-regular">
+                <sc-channel-icon [channel]="row.channel" [size]="12" />
+                {{ familyKeys[row.channel] | translate }}
+              </span>
+              @if (row.count > 0) {
+                <span class="resumen__digits sc-text-caption-semibold" [scAnimateOnChange]="row.count" animateClass="animate-sc-bump">{{ row.count }}</span>
+                <p-metergroup class="resumen__meter" aria-hidden="true" [value]="row.meter">
+                  <ng-template #label />
+                </p-metergroup>
+              } @else {
+                <span class="resumen__warn sc-text-caption-semibold">
+                  <sc-icon name="warning" size="inherit" [weight]="600" aria-hidden="true" />
+                  {{ 'groups.form.summary.no_agents' | translate }}
+                </span>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </sc-summary-kpi>
+
+    <!-- Lo que no es una proporción, junto en una tarjeta: reparto, salida y recursos. Cada rótulo lleva a su sección,
+         y cada fila a su sitio en ella (DD-146); el grupo nombra sus filas, para que dos «Teléfono» no se confundan. -->
+    <div class="resumen__kpi resumen__facts">
+      @if (routing().length > 0) {
+        <div class="resumen__fact" role="group" aria-labelledby="group-summary-routing">
+          <p id="group-summary-routing" class="resumen__label sc-text-caption-regular">
+            <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
+              <sc-icon name="alt_route" size="inherit" aria-hidden="true" />
+              {{ 'groups.form.summary.routing' | translate }}
+            </a>
+          </p>
+          <dl class="resumen__pairs">
+            @for (r of routing(); track r.family) {
+              <div class="resumen__pair">
+                <dt class="resumen__key sc-text-caption-regular">
+                  <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', canal: r.family })">{{ familyKey(r.family) | translate }}</a>
+                </dt>
+                <dd class="resumen__value sc-text-caption-semibold">{{ r.text }}</dd>
+              </div>
+            }
+          </dl>
+        </div>
+      }
+      @if (outbound().length > 0) {
+        <div class="resumen__fact" role="group" aria-labelledby="group-summary-outbound">
+          <p id="group-summary-outbound" class="resumen__label sc-text-caption-regular">
+            <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
+              <sc-icon name="call_made" size="inherit" aria-hidden="true" />
+              {{ 'groups.form.summary.outbound' | translate }}
+            </a>
+          </p>
+          <dl class="resumen__pairs">
+            @for (o of outbound(); track o.channel) {
+              <div class="resumen__pair">
+                <dt class="resumen__key sc-text-caption-regular">
+                  <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">{{ channelKeys[o.channel] | translate }}</a>
+                </dt>
+                @if (o.number) {
+                  <dd class="resumen__value sc-text-caption-semibold">{{ o.number }}</dd>
+                } @else {
+                  <dd class="resumen__warn sc-text-caption-semibold">
+                    <sc-icon name="warning" size="inherit" [weight]="600" aria-hidden="true" />
+                    {{ 'groups.form.summary.no_number' | translate }}
+                  </dd>
+                }
+              </div>
+            }
+          </dl>
+        </div>
+      }
+      <p class="resumen__head">
+        <span class="resumen__label sc-text-caption-regular">
+          <a class="resumen__enlace" [href]="hrefs().recursos" (click)="pulsar($event, { seccion: 'recursos' })">
+            <sc-icon name="library_books" size="inherit" aria-hidden="true" />
+            {{ 'groups.form.summary.resources' | translate }}
+          </a>
+        </span>
+        <span class="resumen__digits sc-text-body-semibold" [scAnimateOnChange]="resourceCount()" animateClass="animate-sc-bump">{{ resourceCount() }}</span>
+      </p>
+    </div>
+  </div>
+</section>

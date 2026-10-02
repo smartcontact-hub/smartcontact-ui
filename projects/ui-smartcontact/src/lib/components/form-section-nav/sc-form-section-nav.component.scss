@@ -1,10 +1,10 @@
 /*
- * Form section nav — aligned with `settings-sidebar` so the form rail
- * and the /config rail read as siblings (DD#54). Two visual rules:
+ * Form section nav — EL índice de la app: fichas, constructor de reglas y, desde el 2026-09-27,
+ * también Contact Center, que hasta entonces pintaba el suyo con una pieza de la app que medía lo
+ * mismo (DD-122: un solo índice). Dos reglas visuales:
  *
- *   • Icon chip (28×28) a la izquierda del label. El estado activo pinta
- *     el chip con la superficie de marca — el mismo gesto que usa
- *     settings-sidebar.
+ *   • Icon chip (28×28) a la izquierda del label en el default; en `--flush`, el icono desnudo. El
+ *     estado activo es la única mancha.
  *   • El label ENVUELVE: la fila crece de alto antes que esconder el
  *     nombre de la sección. El ancho del rail decide dónde parte la
  *     línea, nunca QUÉ se ve. (Hasta 2026-09-06 esta segunda regla decía
@@ -19,15 +19,17 @@
 .form-nav {
   display: flex;
   flex-direction: column;
+  /* 3.5 entre el rótulo y las filas (`scale/0-25`): en la maqueta son hermanos del mismo marco. */
+  gap: var(--sc-spacing-0-25);
   padding: var(--sc-spacing-1-125) var(--sc-spacing-0-875);
   background: var(--sc-bg-surface);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-200);
 
-  /* Variante flush — el índice de las fichas de agente, grupo y usuario.
+  /* Variante flush — el índice de las pantallas con carril: fichas, constructor y Contact Center.
    *
-   * Desde el 2026-09-14 se ve IGUAL que el índice de Contact Center
-   * (`settings-sidebar`, Figma 393:12565, que en la maqueta ES este componente): el
+   * Desde el 2026-09-14 se ve IGUAL que el índice de Contact Center (Figma 393:12565, que en la
+   * maqueta ES este componente), y desde el 2026-09-27 Contact Center lo usa: el
    * rail no tiene color, el icono va desnudo a 20, la etiqueta es `Body/body-regular`
    * y lo único que se pinta es el item activo, con `--sc-bg-hover`.
    *
@@ -60,8 +62,7 @@
 
     /* Companion de la etiqueta (DD-24): mide lo que ella, 14. La maqueta dibuja 20 porque
      * Figma pinta el glifo de Material a su tamaño literal (se ve ~15); en código el glifo
-     * va calibrado (DD-104) y a 20 pintaba 27 y se comía el hueco con el texto. Igual que
-     * el índice de Contact Center (`settings-sidebar`), que es la misma pieza. */
+     * va calibrado (DD-104) y a 20 pintaba 27 y se comía el hueco con el texto. */
     .form-nav__icon {
       width: auto;
       height: auto;
@@ -93,6 +94,24 @@
       }
     }
   }
+}
+
+/*
+ * El rótulo de encima de las filas (`titleKey`, Figma `Text` 393:12569): 14/20 en el gris
+ * secundario, con 3.5 arriba y abajo y 12.25 a los lados. Son las medidas que pintaba Contact
+ * Center antes de usar esta pieza (medido el 2026-09-27): el rótulo no se mueve un píxel. Texto y no
+ * encabezado: la página tiene un solo `h1` y el índice no le disputa la jerarquía.
+ *
+ * Semibold, como lo pintaba Contact Center. La maqueta está anotada como 14 regular en un comentario
+ * anterior, sin verificar: queda en `figma-pendiente` §5.
+ */
+.form-nav__title {
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-875);
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-secondary);
 }
 
 .form-nav__list {
@@ -127,8 +146,8 @@
   &--active {
     background: var(--sc-bg-secondary-subtle);
 
-    /* Active item paints the icon chip with the brand surface — same
-     * cue as settings-sidebar. */
+    /* Active item paints the icon chip with the brand surface (solo en el default: en `--flush`
+     * el icono va desnudo y el activo es el fondo de la fila). */
     .form-nav__icon {
       background: var(--sc-bg-primary);
       color: var(--sc-text-on-primary);
@@ -217,4 +236,61 @@
   border-radius: var(--sc-radius-full);
   background: var(--sc-bg-danger);
   margin-inline-start: var(--sc-spacing-0-5);
+}
+
+/*
+ * Cambios sin guardar (`sectionsWithChanges`, DD-122) — el mismo punto en el color de marca, como el
+ * «modificado» de un editor: dice dónde está lo que se va a guardar sin alarmar. `--sc-bg-primary`
+ * y no el sky de acento: el sky-500 sobre blanco se queda en ~2.8:1 y un indicador de estado pide
+ * 3:1; el de marca (navy en claro, sky-300 en oscuro) pasa en los dos temas. Solo se ve si la
+ * sección no tiene también algo que falta: el rojo gana, es lo que no deja guardar.
+ */
+.form-nav__dot--changes {
+  background: var(--sc-bg-primary);
+}
+
+/*
+ * La sección hecha (`sectionsDone`, DD-143) — un ✓ detrás de la etiqueta, en el sitio del punto: en el verde de éxito,
+ * a la altura del texto (`size="inherit"`) y con el peso de la etiqueta. Se ve solo si la sección no tiene también
+ * algo que falta o cambios sin guardar.
+ *
+ * Entra como un icono que cambia de estado: escala de 0,25 a 1, opacidad y 4 px de desenfoque, con la curva enfática
+ * del Kit. Solo si llega con el índice a la vista (`--entra`), y nunca con menos movimiento: el ✓ se queda, y el texto
+ * oculto dice lo mismo.
+ */
+.form-nav__done {
+  margin-inline-start: var(--sc-spacing-0-375);
+  color: var(--sc-text-success);
+  vertical-align: -0.125em;
+}
+
+.form-nav__done--entra {
+  animation: form-nav-done-entra var(--sc-transition-slow) var(--sc-easing-emphasized);
+}
+
+@keyframes form-nav-done-entra {
+  from {
+    opacity: 0;
+    transform: scale(0.25);
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-nav__done--entra {
+    animation: none;
+  }
+}
+
+/* Lo que dice cada marca, para el lector de pantalla: dentro del enlace, fuera de la vista. */
+.form-nav__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

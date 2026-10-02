@@ -130,6 +130,12 @@ export class ScDatatableComponent<T = unknown> {
   readonly sortField = input<string | undefined>(undefined);
   /** Sentido de la ordenación inicial: `1` ascendente, `-1` descendente. */
   readonly sortOrder = input<number>(1);
+  /**
+   * El orden lo pone QUIEN USA la tabla: pinta el indicador y emite `(sortChange)`, pero no toca las filas
+   * (`customSort` de p-table, sin manejador). Sin esto p-table reordena `value` por el valor crudo del campo
+   * ENCIMA del orden que recibe, y un orden propio (una prioridad por rango, nombres con locale) no se ve.
+   */
+  readonly externalSort = input(false, { transform: booleanAttribute });
 
   readonly size = input<ScComponentSize>('md');
 

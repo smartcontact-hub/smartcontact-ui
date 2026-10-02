@@ -12,7 +12,7 @@
   border-radius: var(--sc-radius-400);
   overflow: hidden;
   transition: border-color var(--sc-transition-fast) ease;
-  /* Offset para el salto-a-ancla de sc-form-section-nav (limpia el sticky header). */
+  /* Aire para un enlace con `#` a la sección (limpia el sticky header). */
   scroll-margin-top: var(--sc-form-anchor-offset);
 
   /* La caja GRIS la manda el maestro `Section` del Figma del DS (component set 691:23956, las
@@ -20,6 +20,9 @@
    *   padding vertical  22.75 → `scale/1-625`  (`--sc-spacing-1-625`)
    *   padding lateral   16    → `scale/1-143`  (`--sc-spacing-1-143`)
    *   título → contenido 14   → `scale/1`      (`--sc-spacing-1`, el gap del `Container`)
+   * El VERTICAL se aparta del maestro desde DD-125: 17.5 (`scale/1-25`) arriba y abajo en las dos
+   * pieles. Era aire de más —la caja ya la delimita su fondo— y alargaba cada sección sin separar
+   * nada. El cambio del Kit está en `docs/figma-pendiente.md`.
    * Antes ponía 24.5 a los cuatro lados «el valor que la maqueta del DS respalda» (DD-57): ese
    * 24.5 sale del `Block` 393:12587, que es un marco LOCAL del archivo Supervisor —la variante
    * blanca de abajo—, no del componente. Medido el 2026-09-09 en los dos nodos.
@@ -27,7 +30,7 @@
    * Y el aire entre el título y el contenido es AIRE, no una línea: ni el maestro ni el `Block`
    * tienen filo bajo la cabecera. */
   &__head {
-    padding: var(--sc-spacing-1-625) var(--sc-spacing-1-143) var(--sc-spacing-1);
+    padding: var(--sc-spacing-1-25) var(--sc-spacing-1-143) var(--sc-spacing-1);
     display: flex;
     align-items: baseline;
     /* 8.75 (`scale/0-625`). Los dos nodos de Figma dicen 8, pero ahí el número está SUELTO (sin
@@ -56,7 +59,7 @@
     /* Plegada, la cabecera ES la caja: el aire de abajo deja de separarla de un contenido que no
      * está y vuelve al padding de la caja, para que arriba y abajo midan lo mismo. */
     &--collapsed {
-      padding-bottom: var(--sc-spacing-1-625);
+      padding-bottom: var(--sc-spacing-1-25);
     }
   }
 
@@ -117,7 +120,7 @@
   /* Arriba nada: el aire hasta el contenido lo pone la cabecera (los 14 del `Container`). Si los
    * dos ponen el suyo, el título queda al doble de distancia de lo que mide el maestro. */
   &__body {
-    padding: 0 var(--sc-spacing-1-143) var(--sc-spacing-1-625);
+    padding: 0 var(--sc-spacing-1-143) var(--sc-spacing-1-25);
   }
 }
 
@@ -127,6 +130,7 @@
  * 10%, radio 12). Sus medidas son OTRAS que las del maestro gris, y también están atadas:
  *   padding      24.5 a los cuatro lados → `scale/1-75`   (`--sc-spacing-1-75`)
  *   título → contenido 16                → `scale/1-143`  (`--sc-spacing-1-143`, el gap del Block)
+ * Arriba y abajo, 17.5 (`scale/1-25`) desde DD-125, como la gris; los lados siguen en 24.5.
  */
 :host(.sc-section-card--card) {
   .section-card {
@@ -135,7 +139,7 @@
   }
 
   .section-card__head {
-    padding: var(--sc-spacing-1-75) var(--sc-spacing-1-75) var(--sc-spacing-1-143);
+    padding: var(--sc-spacing-1-25) var(--sc-spacing-1-75) var(--sc-spacing-1-143);
   }
 
   /*
@@ -172,11 +176,11 @@
   }
 
   .section-card__body {
-    padding: 0 var(--sc-spacing-1-75) var(--sc-spacing-1-75);
+    padding: 0 var(--sc-spacing-1-75) var(--sc-spacing-1-25);
   }
 
   .section-card__head--collapsed {
-    padding-bottom: var(--sc-spacing-1-75);
+    padding-bottom: var(--sc-spacing-1-25);
   }
 }
 

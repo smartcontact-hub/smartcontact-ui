@@ -9,9 +9,12 @@
  * habría duplicado también el momento en que una copia se afila y la otra no.
  *
  * Se ejecuta DENTRO del navegador vía `page.evaluate`, así que su cuerpo tiene
- * que ser autosuficiente: nada de cerrar sobre imports del módulo.
+ * que ser autosuficiente: nada de cerrar sobre imports del módulo. El color (el
+ * canvas, la composición de capas, la luminancia y el ratio) le llega en `kit`,
+ * desde `./color`, el mismo que usa cualquier otra medición de color.
  */
 
+import { enNavegador } from './color';
 
 /** Umbral de luminancia por encima del cual una superficie es "clara". El
  *  lienzo oscuro más claro del tema (`--sc-bg-surface`, slate-900) mide 0.02,
@@ -21,52 +24,8 @@ export const L_CLARO = 0.5;
 /** Recorre `body` en el navegador y devuelve las superficies problemáticas.
  *  (Decía `main`: era el alcance viejo, y ampliarlo a `body` fue el arreglo de
  *  un agujero — ver el comentario del bucle.) */
-export const medir = ({ umbral, raiz = 'body' }: { umbral: number; raiz?: string }) => {
-  const cv = document.createElement('canvas');
-  cv.width = cv.height = 1;
-  const cx = cv.getContext('2d', { willReadFrequently: true })!;
-
-  /** Cualquier sintaxis CSS → [r,g,b,a]. La normaliza el navegador. */
-  const parse = (css: string): [number, number, number, number] => {
-    cx.clearRect(0, 0, 1, 1);
-    cx.fillStyle = css;
-    cx.fillRect(0, 0, 1, 1);
-    const d = cx.getImageData(0, 0, 1, 1).data;
-    return [d[0]!, d[1]!, d[2]!, d[3]! / 255];
-  };
-  const sobre = (
-    fg: [number, number, number, number],
-    bg: [number, number, number, number],
-  ): [number, number, number, number] => {
-    const a = fg[3];
-    return [
-      Math.round(fg[0] * a + bg[0] * (1 - a)),
-      Math.round(fg[1] * a + bg[1] * (1 - a)),
-      Math.round(fg[2] * a + bg[2] * (1 - a)),
-      1,
-    ];
-  };
-  const lum = ([r, g, b]: number[]): number => {
-    const f = (v: number): number => {
-      const x = v / 255;
-      return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
-    };
-    return 0.2126 * f(r!) + 0.7152 * f(g!) + 0.0722 * f(b!);
-  };
-  const ratio = (a: number[], b: number[]): number => {
-    const [hi, lo] = lum(a) > lum(b) ? [lum(a), lum(b)] : [lum(b), lum(a)];
-    return (hi + 0.05) / (lo + 0.05);
-  };
-  /** Fondo EFECTIVO: compone la cadena de ancestros de raíz a hoja. Sin esto,
-   *  un `color-mix(... transparent)` se lee como si fuera opaco. */
-  const fondoEfectivo = (el: Element): [number, number, number, number] => {
-    const cadena: [number, number, number, number][] = [];
-    for (let n: Element | null = el; n; n = n.parentElement)
-      cadena.unshift(parse(getComputedStyle(n).backgroundColor));
-    let acc: [number, number, number, number] = [255, 255, 255, 1];
-    for (const c of cadena) acc = sobre(c, acc);
-    return acc;
-  };
+export const medir = enNavegador((kit, { umbral, raiz = 'body' }: { umbral: number; raiz?: string }) => {
+  const { rgba, sobre, fondo, luminancia, ratioContraste } = kit;
   /** ¿Lo ve el usuario? Mira TODA la cadena, no solo el elemento (ver el
    *  comentario del bucle). `display:none` ya lo filtra el rect a cero. */
   const invisiblePorCadena = (el: Element): boolean => {
@@ -115,11 +74,11 @@ export const medir = ({ umbral, raiz = 'body' }: { umbral: number; raiz?: string
     const id = `${el.tagName.toLowerCase()}.${(el.className || '').toString().slice(0, 44)}`;
 
     // --- Pregunta 1: superficies. Solo elementos con fondo PROPIO y tamaño.
-    const tieneFondo = parse(cs.backgroundColor)[3] > 0;
+    const tieneFondo = rgba(cs.backgroundColor)[3] > 0;
     if (tieneFondo && r.width >= 30 && r.height >= 14) {
-      const bgSup = fondoEfectivo(el);
-      if (lum(bgSup) > umbral) {
-        claras.push(`${id} bg=rgb(${bgSup.slice(0, 3)}) L=${lum(bgSup).toFixed(2)}`);
+      const bgSup = fondo(el);
+      if (luminancia(bgSup) > umbral) {
+        claras.push(`${id} bg=rgb(${bgSup.slice(0, 3)}) L=${luminancia(bgSup).toFixed(2)}`);
         continue; // ya reportado; su texto se juzgará cuando se arregle el fondo
       }
     }
@@ -143,12 +102,12 @@ export const medir = ({ umbral, raiz = 'body' }: { umbral: number; raiz?: string
     const esIcono =
       el.classList.contains('sc-icon') || /material symbols/i.test(cs.fontFamily);
 
-    const bg = fondoEfectivo(el);
-    const fg = sobre(parse(cs.color), bg);
+    const bg = fondo(el);
+    const fg = sobre(rgba(cs.color), bg);
     const fs = parseFloat(cs.fontSize);
     const grande = fs >= 24 || (fs >= 18.66 && Number(cs.fontWeight) >= 700);
     const umbralAA = esIcono || grande ? 3 : 4.5;
-    const c = ratio(bg, fg);
+    const c = ratioContraste(bg, fg);
     if (c < umbralAA) {
       ilegibles.push(
         `${id}${esIcono ? ' [icono 3:1]' : ''} bg=rgb(${bg.slice(0, 3)}) fg=rgb(${fg.slice(0, 3)}) ${c.toFixed(2)}:1 (${fs}px)`,
@@ -156,4 +115,4 @@ export const medir = ({ umbral, raiz = 'body' }: { umbral: number; raiz?: string
     }
   }
   return { claras, ilegibles };
-};
+});

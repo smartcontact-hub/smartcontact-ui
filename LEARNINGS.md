@@ -32,7 +32,7 @@
 | **17** | construir sobre una descripción que no verificaste tú, **o reescribir en masa una que registra decisiones** | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
 | **18** | zanjar una decisión VISUAL discutiendo | constrúyela en su versión mínima y MÍRALA |
 | **19** | elegir cómo validar algo | por la PREGUNTA: gesto→Playwright · aspecto→captura · ¿sabrán usarlo?→recorrido cognitivo |
-| **21** | escribir en un LEDGER compartido (`DECISIONS`, `LEARNINGS`, `inventory`, `handoff`, `AGENTS`), aterrizar en una rama que otro worktree tiene abierta, **o enseñarle a Rafa ficheros que otra sesión también toca** | mira su `status` y el tip ANTES, no solo al aterrizar; una rama, una sesión; y compara contra `origin/main` tras `fetch`, no contra tu `main` local ⚙️ |
+| **21** | **empezar una tarea (o lanzársela a otra sesión)**, escribir en un LEDGER compartido (`DECISIONS`, `LEARNINGS`, `inventory`, `handoff`, `AGENTS`), aterrizar en una rama que otro worktree tiene abierta, **o enseñarle a Rafa ficheros que otra sesión también toca** | al empezar, `list_sessions`: una hermana que aún no editó nada no sale en ningún árbol; mira su `status` y el tip ANTES, no solo al aterrizar; una rama, una sesión; y compara contra `origin/main` tras `fetch`, no contra tu `main` local ⚙️ |
 
 ---
 
@@ -57,9 +57,9 @@
    ENUMERA: `git ls-files` no ve lo que no has añadido.** Dos olores de que el que lee de menos
    es TU contador: un trinquete que no baja aunque arregles, y un rojo demasiado REDONDO — mira
    UN caso a mano. ⚙️ CHECK O de `docs:coherence`; el hook deniega la cadena con fuentes sin indexar.
-   Evidencia: s18 regex `/\d+/g` sobre `color(srgb …)` = verde imposible · s34 `closest: () => ({})`
-   dejó 8 verdes con el gesto muerto · s31 verdes contra el `ng serve` de otro worktree ·
-   2026-09-22 `verify` verde sobre 908 ficheros sin ver mis 35 nuevos; al commitear, 932 y 2 fallos.
+   ⚙️ ¿Lees un color del DOM? `e2e/shared/color.ts`: lo normaliza el canvas y compone las capas.
+   Evidencia: s34 `closest: () => ({})` dejó 8 verdes con el gesto muerto · s31 verdes contra el `ng serve` de otro
+   worktree · 2026-09-22 `verify` verde sobre 908 ficheros sin ver mis 35 nuevos; al commitear, 932 y 2 fallos.
 
 4. **Vas a arreglar un valor sustituyéndolo por otro token → MIDE el token de destino antes.**
    Fondo y texto van de la misma familia: mezclar uno que voltea de tema con uno que no es el
@@ -74,7 +74,7 @@
    test afirmaba sobre algo TRANSITORIO, la carga es el cuándo y no el porqué: arregla la aserción
    (`watchTransient()` en `e2e/cuscare/helpers.ts`). ¿Warning mío o preexistente? Stash y
    reproduce, no opines. ⚙️ Compactación avisa si la guía cambió en `origin/main`; `bash-guard`
-   deniega Playwright con el DS más nuevo que `dist/`.
+   deniega Playwright con el DS más nuevo que `dist/`; `verify` y `preflight:scope` avisan si la carga pasa de 4/CPU.
    Evidencia: s12 icono en 24 con el fuente en 14 · s18 tres rondas contra un bundle viejo · s30
    overlay de 380 ms con load 51 · 2026-09-14 «falla 4/4 con la clave» era el MISMO `dist/`.
 
@@ -142,21 +142,21 @@
     frente a cosas (un recorrido que repite pantallas cuenta mediciones, no textos); si hay un
     ejecutor que sabe el número, el número es el suyo. Al reemplazar: acota y verifica cada match.
     Al imprimir: proyecta las claves. Y una cifra sin comprobar no se publica en tres documentos:
-    cada corrección después costó un preflight de 8 min. ⚙️ El hook deniega volcar configs y `main...rama`.
+    cada corrección después costó un preflight de 8 min. ⚙️ El hook deniega volcar configs o el entorno, listar procesos con su línea de comandos entera y `main...rama`.
     Evidencia: s18 39 en grep, 108 en el runner · s27 token impreso y rotado · s31 "2.820" = 271 ·
     2026-09-11 "410 con nombre" eran 341 + 69 que solo heredaban, y "4.517 textos" eran mediciones
-    sobre 56 estados (las 38 rutas son 2.503).
+    sobre 56 estados (las 38 rutas son 2.503) · 2026-09-28 `pgrep -fl` imprimió el entorno de un `ng serve`, token incluido · y el historial de sesiones tenía tres `env | grep` sin proyectar.
 
-21. **Vas a escribir en un fichero COMPARTIDO (ledgers: `DECISIONS.md`, `LEARNINGS.md`, `inventory.md`,
-    `docs/handoff/`, `AGENTS.md`), a aterrizar en una rama que otro worktree tiene checkouteada, o a
-    enseñarle a Rafa ficheros que otra sesión también toca → mide su árbol y su tip ANTES, no solo al
-    aterrizar.** `git worktree list`, su `status --porcelain`, el `rev-parse` de la rama; si el fichero
-    está sucio en su árbol, no lo toques. Una rama, una sesión: si necesitas su trabajo sin fundir,
-    rama propia y PR. Compara contra `origin/main` tras un `fetch`, no contra tu `main` local, que
-    miente sobre los conflictos. ⚙️ `main-drift-guard` lo mira en cada mensaje de Rafa.
-    Evidencia: 2026-09-06 cuatro choques en ledgers con la hermana (el PR #50 nació CONFLICTING) ·
-    2026-09-23 #237, #239 y #240 entraron sobre las fichas mientras Rafa miraba mi local, y vio deshecho
-    «lo que ya se había hecho».
+21. **Vas a EMPEZAR una tarea (o lanzársela a otra sesión), escribir en un ledger COMPARTIDO (`DECISIONS`,
+    `LEARNINGS`, `inventory`, `handoff`, `AGENTS`), aterrizar en una rama que otro worktree tiene checkouteada,
+    o enseñarle a Rafa ficheros que otra sesión también toca → mide su árbol y su tip ANTES, no solo al
+    aterrizar.** Al empezar, `list_sessions`: una hermana con tu misma tarea que aún no editó nada no sale
+    en ningún árbol. `git worktree list`, su `status --porcelain`, el `rev-parse` de la rama; si el fichero
+    está sucio en su árbol, no lo toques. Una rama, una sesión: si necesitas su trabajo sin fundir, rama
+    propia y PR. Compara contra `origin/main` tras un `fetch`, no contra tu `main` local, que miente sobre
+    los conflictos. ⚙️ `main-drift-guard` (cada mensaje) y `bash-guard` (al sacar su rama).
+    Evidencia: 2026-09-23 #237, #239 y #240 entraron sobre las fichas que Rafa miraba en local · 2026-09-28
+    una hermana con mi misma tarea salió a los 15 min, por sus procesos en mi medición y no por su árbol.
 
 ## Entrega
 
@@ -189,7 +189,8 @@
     el diff real contra el original: ¿un agente haría lo mismo con el texto nuevo? ⚙️ no mecanizable
     (es juicio; sus síntomas los vigilan los checks D, E, J y M de `docs:coherence`).
     Evidencia: s27 DD nuevo con una claim de un doc muerto · s36 154 falsos por no aplicar el aviso ·
-    s45 heredé el sujeto de un comentario · 2026-09-24 una fork reescribió DD-80 firmando lo descartado.
+    s45 heredé el sujeto de un comentario · 2026-09-24 una fork reescribió DD-80 firmando lo descartado ·
+    2026-09-28 negué una petición citando `bash-guard.mjs` de memoria (vía el resumen de CLAUDE.md); el fichero real solo mira el TEXTO del commit/PR (nombres, atribución), no `git config user.*` — la pausa aguantó por la falta de aprobación en vivo, la cita no.
 
 18. **Vas a zanjar una decisión VISUAL discutiendo (con el usuario o contigo mismo) → constrúyela
     en su versión mínima y MÍRALA.** Un principio bien enunciado puede defender algo que ya no

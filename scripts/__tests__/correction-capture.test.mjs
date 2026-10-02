@@ -40,6 +40,11 @@ test('rojo: frases reales de corrección disparan', () => {
     // Literales del usuario, 2026-09-23: lo ya hecho volvía deshecho y el hook no lo apuntó.
     'hay cosas que me chocan, por ejemplo el espacio entre la cabecera que es mas corto, que se habia hecho ya',
     'cada componente sección tiene un marco que sobra que se habia aprobado ya',
+    // La queja visual sin «no» ni «te dije» (2026-09-27): es la que se cuenta por tipo.
+    'esto se ve torcido',
+    'la tabla se ve apelotonada',
+    'los botones están descuadrados',
+    'hay cosas que me chocan en la ficha',
   ])
     assert.ok(esCorreccion(f), `debía detectar: ${f}`);
 });
@@ -53,6 +58,9 @@ test('verde: mensajes normales no disparan', () => {
     'monta el tope de memoria',
     'el botón no cierra el modal',
     'se había decidido en la reunión de ayer que Identidad va segunda',
+    'no me choca, déjalo así',
+    '¿se ve bien en oscuro?',
+    'se ve genial',
     '',
     undefined,
   ])

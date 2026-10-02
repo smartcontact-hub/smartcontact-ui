@@ -1855,6 +1855,16 @@
           "nativo": null
         },
         {
+          "nombre": "externalSort",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "El orden lo pone QUIEN USA la tabla: pinta el indicador y emite `(sortChange)`, pero no toca las filas (`customSort` de p-table, sin manejador). Sin esto p-table reordena `value` por el valor crudo del campo ENCIMA del orden que recibe, y un orden propio (una prioridad por rango, nombres con locale) no se ve.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "size",
           "clase": "input",
           "tipo": "ScComponentSize",
@@ -3639,7 +3649,7 @@
           "tipo": "readonly FormNavSection[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": "Las secciones del formulario, en orden, tal como se listan en el índice lateral.",
+          "descripcion": "Las secciones, en orden, tal como se listan en el índice.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3649,7 +3659,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": "Qué sección está activa. La manda el consumidor, normalmente según el scroll.",
+          "descripcion": "Qué sección está a la vista. La manda la página (en las del Supervisor, la URL).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3659,7 +3669,17 @@
           "tipo": "string",
           "porDefecto": "'sc.formSectionNav.label'",
           "requerido": false,
-          "descripcion": "Clave de traducción del nombre accesible del índice, que es lo que oye quien navega por landmarks.",
+          "descripcion": "Clave de traducción del nombre accesible del índice, que es lo que oye quien navega por landmarks. Si hay rótulo visible (`titleKey`), el nombre es el rótulo y esta no se usa.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "titleKey",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Rótulo visible encima de las filas («Contact Center»), alineado con ellas como en Figma `393:12569`. Es también el nombre del índice (`aria-labelledby`): lo que se ve es lo que se oye. Un rótulo, no un título: no es un encabezado y no compite con el `h1` de la página.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3669,7 +3689,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": "Flush: el índice se renderiza como PANEL embebido del rail (fondo, radio, padding; chip 32, activo gris-100), 1:1 con el Figma de editar-agente (12277:4185), referencia común de agents/groups/users. Opt-in, default off. Ver customs-catalog §2.7.",
+          "descripcion": "Flush: el índice de las pantallas con carril (fichas, constructor de reglas y Contact Center), el marco `393:12565` de Figma: sin panel, icono desnudo y el activo como única mancha. Opt-in, default off (el default es el panel con borde). Ver customs-catalog §2.7.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3679,7 +3699,27 @@
           "tipo": "ReadonlySet<string>",
           "porDefecto": "new Set()",
           "requerido": false,
-          "descripcion": "Set of section ids that currently have required fields empty (or invalid required state). Each id present here renders a red dot next to the label, indicating \"te falta algo aquí\". Updates en tiempo real al rellenar los campos faltantes. NO incluye errores de formato (e.g. email malformado) — solo \"required vacíos\". Decisión consciente: la bola roja en el nav señala bloqueos de guardado, no warnings cosméticos. Errors de formato se ven en el campo mismo. Aria-label del dot via key `sc.formSectionNav.sectionHasErrors` para screen readers.",
+          "descripcion": "Set of section ids that currently have required fields empty (or invalid required state). Each id present here renders a red dot next to the label, indicating \"te falta algo aquí\". Updates en tiempo real al rellenar los campos faltantes. NO incluye errores de formato (e.g. email malformado) — solo \"required vacíos\". Decisión consciente: la bola roja en el nav señala bloqueos de guardado, no warnings cosméticos. Errors de formato se ven en el campo mismo. Se oye con el texto `sc.formSectionNav.sectionHasErrors`, dentro del enlace.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "sectionsWithChanges",
+          "clase": "input",
+          "tipo": "ReadonlySet<string>",
+          "porDefecto": "new Set()",
+          "requerido": false,
+          "descripcion": "Las secciones con cambios sin guardar: un punto en el color de marca, distinto del rojo de lo que falta, como el «modificado» de un editor. En la ficha hay un solo «Guardar» para todas las secciones (DD-122): el índice dice dónde está lo que se va a guardar. Si una sección tiene las dos cosas, se ve el rojo (es lo que no deja guardar) y se oyen las dos. Se oye con `sc.formSectionNav.sectionHasChanges`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "sectionsDone",
+          "clase": "input",
+          "tipo": "ReadonlySet<string>",
+          "porDefecto": "new Set()",
+          "requerido": false,
+          "descripcion": "Las secciones que se dejaron completas, en un alta (DD-143): un ✓ en el verde de éxito detrás de la etiqueta, donde va el punto, para que el índice diga lo que ya está y lo que queda. Lo decide la página (las fichas, cuando se sale de una sección con lo suyo hecho; la abierta no lo lleva). Se ve si la sección no tiene también algo que falta o cambios sin guardar, que ganan; se oye siempre, con `sc.formSectionNav.sectionDone`. Entra con movimiento, el de un icono que cambia de estado (escala, opacidad y desenfoque), solo si llega después de pintar el índice: el que ya estaba al abrir la página no es un cambio que se vea.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -3689,7 +3729,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": "El usuario ha pulsado otra sección del índice.",
+          "descripcion": "El usuario ha pulsado otra sección del índice (clic principal, sin teclas).",
           "origen": "nuestro",
           "nativo": null
         }
@@ -4957,9 +4997,9 @@
           "nombre": "selectedItemsLabel",
           "clase": "input",
           "tipo": "string",
-          "porDefecto": "'{0} seleccionados'",
+          "porDefecto": null,
           "requerido": false,
-          "descripcion": "Label template for fold state, e.g. \"{0} elementos seleccionados\".",
+          "descripcion": "Lo que dice el campo plegado con varias marcadas: «{0} seleccionados» en el idioma de la app (`sc.select.selected`), salvo que se pase.",
           "origen": "nativo",
           "nativo": {
             "descripcion": "Label to display after exceeding max selected labels e.g. ({0} items selected), defaults \"ellipsis\" keyword to indicate a text-overflow.",
@@ -4987,9 +5027,9 @@
           "nombre": "filterPlaceholder",
           "clase": "input",
           "tipo": "string",
-          "porDefecto": "'Buscar'",
+          "porDefecto": null,
           "requerido": false,
-          "descripcion": "Texto de ayuda del buscador del panel. Sin él, el campo salía vacío junto a una lupa.",
+          "descripcion": "Texto de ayuda del buscador del panel. Sin él, «Buscar» en el idioma de la app (`sc.select.search`).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4997,9 +5037,9 @@
           "nombre": "emptyFilterMessage",
           "clase": "input",
           "tipo": "string",
-          "porDefecto": "'Sin resultados'",
+          "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "El filtro no deja ninguna opción. Sin él, «Sin resultados» en el idioma de la app.",
           "origen": "nativo",
           "nativo": {
             "descripcion": "Text to display when filtering does not return any results.",
@@ -5012,9 +5052,9 @@
           "nombre": "emptyMessage",
           "clase": "input",
           "tipo": "string",
-          "porDefecto": "'Sin opciones'",
+          "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
+          "descripcion": "La lista no tiene opciones. Sin él, «Sin opciones» en el idioma de la app.",
           "origen": "nativo",
           "nativo": {
             "descripcion": "Text to display when there is no data. Defaults to global value in i18n translation configuration.",
@@ -6243,7 +6283,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": "Anchor id que usa `sc-form-section-nav` para scroll-spy / salto a la sección.",
+          "descripcion": "Id de la sección (`[id]` y `[data-section-anchor]`), con aire arriba para un enlace con `#`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6585,9 +6625,9 @@
           "nombre": "filterPlaceholder",
           "clase": "input",
           "tipo": "string",
-          "porDefecto": "'Buscar'",
+          "porDefecto": null,
           "requerido": false,
-          "descripcion": "Texto de ayuda del buscador del panel. Sin él, el campo salía vacío junto a una lupa.",
+          "descripcion": "Texto de ayuda del buscador del panel. Sin él, «Buscar» en el idioma de la app (`sc.select.search`).",
           "origen": "nativo",
           "nativo": {
             "descripcion": "Placeholder text to show when filter input is empty.",
@@ -6615,9 +6655,9 @@
           "nombre": "emptyFilterMessage",
           "clase": "input",
           "tipo": "string",
-          "porDefecto": "'Sin resultados'",
+          "porDefecto": null,
           "requerido": false,
-          "descripcion": "Empty-state copy when filter returns no rows.",
+          "descripcion": "El filtro no deja ninguna opción. Sin él, «Sin resultados» en el idioma de la app (`sc.select.empty_filter`).",
           "origen": "nativo",
           "nativo": {
             "descripcion": "Text to display when filtering does not return any results. Defaults to global value in i18n translation configuration.",
@@ -6630,9 +6670,9 @@
           "nombre": "emptyMessage",
           "clase": "input",
           "tipo": "string",
-          "porDefecto": "'Sin opciones'",
+          "porDefecto": null,
           "requerido": false,
-          "descripcion": "Empty-state copy when `options` is empty.",
+          "descripcion": "La lista no tiene opciones. Sin él, «Sin opciones» en el idioma de la app (`sc.select.empty`).",
           "origen": "nativo",
           "nativo": {
             "descripcion": "Text to display when there is no data. Defaults to global value in i18n translation configuration.",

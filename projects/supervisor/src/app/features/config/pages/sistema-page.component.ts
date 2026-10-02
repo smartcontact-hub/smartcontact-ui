@@ -18,6 +18,7 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 import { ScSectionCardComponent as SectionCardComponent } from '@smartcontact-hub/components';
 import { ScSelectButtonComponent as SelectButtonComponent } from '@smartcontact-hub/components';
 import { injectLangChange } from '@core/utils/lang-change';
+import { direccionConJuego, JUEGOS_DE_DATOS, juegoDeDatos, recordarJuego } from '@core/services/juego-de-datos';
 
 import {
   LanguageService,
@@ -140,6 +141,13 @@ export class SistemaPageComponent {
     }));
   });
 
+  /** El juego de datos de la demo (DD-124): el de la dirección o el recordado en la pestaña. */
+  protected readonly dataSet = juegoDeDatos();
+  protected readonly dataSetOptions = computed(() => {
+    this.lang();
+    return JUEGOS_DE_DATOS.map((value) => ({ value, label: this.translate.instant(`config.sistema.data.set_${value}`) }));
+  });
+
   protected readonly confirmPhraseToken = CONFIRM_PHRASE;
 
   /* `regenOpen` se fue: el estado de plegado vive dentro de `sc-section-card`, que es
@@ -203,6 +211,16 @@ export class SistemaPageComponent {
 
   protected selectLanguage(lang: unknown): void {
     if (lang === 'es' || lang === 'en' || lang === 'fr' || lang === 'pt') this.language.setLang(lang);
+  }
+
+  /* Cambiar de juego recarga, como «Restaurar»: cada almacén lee su juego al arrancar (`createVersionedStorage`). */
+  protected selectDataSet(value: unknown): void {
+    const w = this.doc.defaultView;
+    const juego = JUEGOS_DE_DATOS.find((j) => j === value);
+    if (!w || !juego || juego === this.dataSet) return;
+    // Recordado ANTES de navegar: si la recarga se corta (otra navegación encima), la elección no se pierde.
+    recordarJuego(juego);
+    w.location.assign(direccionConJuego(w.location.href, juego));
   }
 
   protected async resetData(): Promise<void> {

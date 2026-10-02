@@ -37,13 +37,20 @@ export function reuseOnlyOwnServer(port) {
   // ocupado peta en vez de colarse.
   if (process.env['CI']) {
     /*
-     * PERO `CI=1` no significa solo «runner de GitHub»: `preflight` lo pone en local para que
-     * Playwright levante SU servidor. Ahí un puerto ocupado NO es un bug, es la sesión hermana
-     * de otro worktree, y petar tira la cadena entera (medido el 2026-09-09: cuatro veces en
-     * una tarde, y esta rama del `if` era la única que no esperaba). El runner de verdad se
-     * distingue por `GITHUB_ACTIONS`, y allí sí se quiere el fallo seco.
+     * PERO `CI=1` no significa solo «runner de GitHub»: en local lo pone quien quiere que
+     * Playwright levante SU servidor (lo pide la plantilla de PR para lo visual, lo ofrece el
+     * mensaje de error de abajo, y hasta DD-60 lo hacía `preflight`). Ahí un puerto ocupado NO
+     * es un bug, es la sesión hermana de otro worktree, y petar tira la cadena entera (medido
+     * el 2026-09-09: cuatro veces en una tarde, y esta rama del `if` era la única que no
+     * esperaba). El runner de verdad se distingue por `GITHUB_ACTIONS`, y allí sí se quiere el
+     * fallo seco.
+     *
+     * Y espera SOLO el proceso principal, que es el que lanza el servidor. Medido el
+     * 2026-09-28: `CI=1 npm run e2e` se quedaba en «Espero a que se libere» una vez por
+     * worker, sin correr un test, hasta el techo de 25 minutos. Cada worker evalúa el config
+     * cuando el `ng serve` de su propia ejecución ya escucha, y esperaba a que se fuera.
      */
-    if (!process.env['GITHUB_ACTIONS']) esperaPuertoLibre(port);
+    if (!process.env['GITHUB_ACTIONS'] && !esWorker()) esperaPuertoLibre(port);
     return false;
   }
 
@@ -70,6 +77,23 @@ export function reuseOnlyOwnServer(port) {
       `    · O espera a que la otra sesión termine y suelte el puerto ${port}.`,
     ].join('\n'),
   );
+}
+
+/**
+ * ¿Este proceso es un WORKER de Playwright? Playwright evalúa el config en el proceso principal
+ * y otra vez en cada worker, y lo que este guardián pregunta solo tiene sentido en el principal,
+ * que es el que lanza el `webServer`.
+ *
+ * La señal es `TEST_WORKER_INDEX`, que Playwright escribe en el constructor del worker ANTES de
+ * cargar el config (medido el 2026-09-28 con 1.62.1: el config la ve valer 0 y 1 en los dos
+ * workers, y no la ve en el principal). No sale en `/proc/<pid>/environ` porque eso es el
+ * entorno con el que ARRANCÓ el proceso: mirar ahí dice que no está, y está. Si una versión de
+ * Playwright la moviera, lo cazan los tests de extremo a extremo de este guardián.
+ *
+ * @returns {boolean}
+ */
+function esWorker() {
+  return process.env['TEST_WORKER_INDEX'] !== undefined;
 }
 
 /**
@@ -153,10 +177,9 @@ function otraCadenaViva(port) {
    * el mensaje culpaba a una concurrencia que no existía.
    *
    * La pregunta que este guardián responde —¿hay OTRA cadena viva?— se contesta una sola
-   * vez, al arrancar la ejecución. En los workers, Playwright define `TEST_WORKER_INDEX`;
-   * ahí ya está contestada.
+   * vez, al arrancar la ejecución. En los workers ya está contestada.
    */
-  if (process.env['TEST_WORKER_INDEX'] !== undefined) return;
+  if (esWorker()) return;
 
   /*
    * Los workers de UNA misma ejecución son HERMANOS, no antepasados, así que
@@ -236,9 +259,19 @@ function otraCadenaViva(port) {
  * @param {number} port
  */
 function esperaPuertoLibre(port) {
-  if (listenerPid(port) === null) return;
-  const hasta = Date.now() + 25 * 60 * 1000;
   const quien = listenerPid(port);
+  if (quien === null) return;
+  /*
+   * Sin `lsof` no se sabe quién escucha, y `listenerPid` no iba a decir «nadie» NUNCA: la
+   * espera se comía sus 25 minutos con el puerto LIBRE (medido el 2026-09-28 con un PATH sin
+   * `lsof`). Sin dato no se espera; si el puerto está ocupado, Playwright lo dice en seco
+   * («is already used»), que es el fallo ruidoso de siempre.
+   */
+  if (quien === undefined) {
+    console.log(`[playwright] Sin \`lsof\` no puedo ver quién escucha en ${port}: no espero.`);
+    return;
+  }
+  const hasta = Date.now() + 25 * 60 * 1000;
   console.log(`[playwright] El puerto ${port} está ocupado (pid ${quien}). Espero a que se libere…`);
   while (listenerPid(port) !== null && Date.now() < hasta) dormir(15_000);
   if (listenerPid(port) === null) {

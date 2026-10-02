@@ -1,7 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { spawn, spawnSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { evaluar, escrituras } from '../hooks/bash-guard.mjs';
+import { carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
 // Cada patrón del hook se prueba EN ROJO (el comando que motivó la regla) y EN VERDE (la forma
 // correcta y los vecinos legítimos). Un guardián que solo se ha visto pasar no prueba que sepa
@@ -9,9 +14,13 @@ import { evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
 // `distRancio: () => null` en los tres: sin él, el test lee el `dist/` REAL de la máquina, y basta con
 // editar una fuente del DS sin reconstruir para que `npm run e2e` salga denegado y el test rojo
-// (2026-09-24, en mitad de un preflight). El caso rancio se prueba aparte, inyectado.
-const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null };
-const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null };
+// (2026-09-24, en mitad de un preflight). El caso rancio se prueba aparte, inyectado. Por lo mismo,
+// `listarPreflights: () => []`: sin él, un build en un test lee los procesos vivos de la máquina. Y
+// `usaPreflight: () => true` en `verde` y `rojo`: las carpetas de mentira (`/repo`, `/wt`) no están en
+// el disco, y sin él ningún push de un test se juzgaría como de este repo. Cómo reconoce el hook un
+// árbol de este repo se prueba aparte, en el disco.
+const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], usaPreflight: () => true };
+const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], usaPreflight: () => true };
 /** Árbol con fuentes nuevas todavía fuera del índice. */
 const sinAdd = {
   distRancio: () => null,
@@ -122,6 +131,164 @@ test('#12 secretos: volcar config con credenciales → deny; proyectar claves �
   allow('cat package.json');
 });
 
+// Medido el 2026-09-28 en macOS con un proceso de usar y tirar que fija `process.title` y lleva una
+// variable ficticia: `pgrep -l -f` sacaba su ENTORNO detrás del título (en un `ng serve` real, con un
+// token de sesión), `ps` no, pero su columna de comando enseña los argumentos de todos, y un proceso
+// auxiliar de la máquina lleva un `--token` en los suyos. La plataforma se inyecta porque `-a` y `-l`
+// cambian de sentido entre macOS y Linux.
+test('#12 procesos: la línea de comandos entera a pantalla → deny; PIDs, ejecutable, contar o sc:ok → allow', () => {
+  const mac = { ...verde, plataforma: 'darwin' };
+  const linux = { ...verde, plataforma: 'linux' };
+  // ROJO: el comando que imprimió el entorno, y sus variantes.
+  deny('pgrep -fl "ng serve"', mac, /LEARNINGS #12/);
+  deny('pgrep -lf ng', mac, /ENTORNO/);
+  deny('pgrep -f -l "ng serve" | head -5', mac, /LEARNINGS #12/);
+  deny("pgrep -ilf 'ng serve' | grep 4413", mac, /LEARNINGS #12/); // grep a secas deja pasar la línea entera
+  deny('pgrep -lf ng 2>/dev/null', mac, /LEARNINGS #12/); // tira los errores, no la lista
+  // En Linux, `-a` es `--list-full`.
+  deny('pgrep -af "ng serve"', linux, /LEARNINGS #12/);
+  deny('pgrep -a -f ng', linux, /LEARNINGS #12/);
+  deny('pgrep --list-full node', linux, /LEARNINGS #12/);
+  // `ps` con la columna de comando: pedida, o la que traen las columnas por defecto.
+  deny('ps aux | grep "[n]g serve"', mac, /LEARNINGS #12/);
+  deny('ps -ef | grep node', linux, /LEARNINGS #12/);
+  deny('ps -o pid=,command= -p 89041', mac, /LEARNINGS #12/);
+  deny('ps -eo pid,args | grep ng', linux, /LEARNINGS #12/);
+  deny('ps axo pid,command', mac, /LEARNINGS #12/);
+  deny('ps -p 89041', mac, /LEARNINGS #12/); // en macOS la columna por defecto es el comando CON argumentos
+  deny('ps -O rss -p 89041', mac, /LEARNINGS #12/); // -O suma columnas a las de por defecto
+  deny('pgrep -f ng | xargs ps -o command= -p', mac, /LEARNINGS #12/);
+  deny('for p in $(pgrep -f ng); do ps -o args= -p $p; done', mac, /LEARNINGS #12/);
+  deny('ps aux > procesos.txt', mac, /LEARNINGS #12/); // un fichero lo imprime el siguiente `cat`, y el repo es público
+  // El motivo enseña la forma que sí sirve.
+  deny('pgrep -fl ng', mac, /ps -o pid=,ppid=,comm=/);
+  deny('ps aux', mac, /sin `-l` ni `-a`/);
+
+  // VERDE: solo PIDs, solo el ejecutable, o la lista reducida a un número o a un sí/no.
+  allow('pgrep -f "ng serve"', mac);
+  allow('pgrep -f "ng serve"', linux);
+  allow('pgrep -l node', mac); // -l sin -f: el PID y el nombre del ejecutable
+  allow('pgrep -af "ng serve"', mac); // en macOS -a solo suma los ancestros: siguen siendo PIDs
+  allow('pgrep -lf "ng serve"', linux); // en Linux -l es el nombre, con -f o sin él
+  allow("pgrep -f 'node -l -a'", mac); // eso es el patrón, no opciones
+  allow('ps -o pid=,ppid=,comm=', mac);
+  allow('ps -p 89041 -o pid=,etime=,comm=', mac);
+  allow('ps -o pid= -o comm= -p 89041', linux);
+  allow('ps -p 89041', linux); // en Linux la columna por defecto es el nombre
+  allow('ps -c -p 89041', mac); // -c: solo el ejecutable
+  allow('pgrep -fl "ng serve" | wc -l', mac);
+  allow('ps aux | grep -c node', mac);
+  allow('ps aux | grep node | wc -l', mac);
+  allow('pgrep -fl ng >/dev/null && echo vivo', mac);
+  allow('ps -p 89041 > /dev/null 2>&1 || echo muerto', mac);
+  allow('pgrep -f ng | xargs ps -o pid=,comm= -p', mac);
+  allow('pgrep -fl "ng serve" # sc:ok', mac);
+  // Vecinos que nombran `ps` o `pgrep` sin ejecutarlos, o que miran otra cosa.
+  allow('man ps', mac);
+  allow('echo "ps aux" > nota.txt', mac);
+  allow("cat > nota.md <<'EOF'\npgrep -fl ng\nEOF", mac);
+  allow('pkill -f "ng serve"', mac);
+  allow('lsof -nP -iTCP -sTCP:LISTEN', mac);
+});
+
+// Medido el 2026-09-28 con un recuento que no imprime ningún valor (`printenv | grep -c
+// '^CLAUDE_CODE_MESSAGING_TOKEN='` dio 1): el entorno de la herramienta Bash lleva un token de sesión,
+// así que volcar el entorno ENTERO lo imprime en el transcript. En Linux (sesiones cloud),
+// `/proc/<pid>/environ` es ese mismo entorno. Los volcados de bash y zsh se midieron con
+// `env -i SC_FAKE_SECRET=xyz`. Las aserciones buscan la frase de ESTA regla: `#12` también es la de
+// los ficheros de config y la de los procesos, y un rojo de otra no prueba nada de esta.
+test('#12 entorno: el entorno entero a pantalla → deny; lanzar con env, una variable con nombre, solo nombres, contar o sc:ok → allow', () => {
+  const ENTORNO = /LEARNINGS #12 — «.+» vuelca el entorno ENTERO/;
+  // ROJO: los volcados de bash y zsh, con o sin ruta y detrás de lo que lanza otro comando.
+  deny('env', verde, ENTORNO);
+  deny('printenv', verde, ENTORNO);
+  deny('export -p', verde, ENTORNO);
+  deny('export', verde, ENTORNO);
+  deny('declare -x', verde, ENTORNO);
+  deny('declare -p', verde, ENTORNO);
+  deny('typeset -x', verde, ENTORNO);
+  deny('typeset', verde, ENTORNO);
+  deny('set', verde, ENTORNO);
+  deny('/usr/bin/env', verde, ENTORNO);
+  deny('sudo env', verde, ENTORNO);
+  deny('cd /tmp && env', verde, ENTORNO);
+  deny('(cd /tmp && printenv)', verde, ENTORNO);
+  deny('env -0', verde, ENTORNO);
+  deny('env -u CLAUDE_CODE_MESSAGING_TOKEN', verde, ENTORNO); // quitar una no protege las demás
+  // Un filtro que deja pasar la línea entera, o un trozo del valor, sigue imprimiéndolo. Los dos
+  // primeros son reales: salieron al pasar por el hook los comandos de las sesiones anteriores.
+  deny('env | grep -i cloudflare', verde, ENTORNO);
+  deny('env | grep -i "^GIT" || echo "(sin variables GIT)"', verde, ENTORNO);
+  deny('env | grep TOKEN', verde, ENTORNO);
+  deny('printenv | sort | head -20', verde, ENTORNO);
+  deny('set | grep -i token', verde, ENTORNO);
+  deny('env | cut -d= -f2', verde, ENTORNO); // el campo 2 es el valor
+  deny('env | cut -c1-40', verde, ENTORNO);
+  deny("env | sed 's/=.*/=&/'", verde, ENTORNO); // `&` devuelve lo casado: el valor entero
+  deny('env 2>/dev/null', verde, ENTORNO); // tira los errores, no la lista
+  deny('env > entorno.txt', verde, ENTORNO); // un fichero lo imprime el siguiente `cat`, y el repo es público
+  // `env` que lanza un volcado le pasa el entorno entero; `sh -c` lleva el comando dentro.
+  deny('env FOO=1 printenv', verde, ENTORNO);
+  deny("bash -c 'env | grep TOKEN'", verde, ENTORNO);
+  deny("zsh -lc 'printenv'", verde, ENTORNO);
+  // Linux: el entorno de un proceso, leído de /proc.
+  deny('cat /proc/*/environ', verde, ENTORNO);
+  deny("tr '\\0' '\\n' < /proc/1234/environ", verde, ENTORNO);
+  deny('strings /proc/self/environ | grep KEY', verde, ENTORNO);
+  // El motivo enseña las proyecciones que sí sirven.
+  deny('env', verde, /printenv HOME/);
+  deny('printenv', verde, /env \| cut -d= -f1/);
+  deny('set', verde, /printenv \| grep -c/);
+
+  // VERDE: `env` como lanzador de otro programa.
+  allow('env VAR=x cmd');
+  allow('env -i PATH=/usr/bin:/bin node scripts/x.mjs');
+  allow('env NODE_OPTIONS=--max-old-space-size=4096 npx ng build');
+  allow('env -u NODE_OPTIONS node scripts/x.mjs');
+  // Con el entorno vaciado (`-i`) solo sale lo que ya va escrito en la línea: así se prueba con valores falsos.
+  allow("env -i SC_FAKE_SECRET=xyz sh -c 'env'");
+  allow('env -i SC_FAKE_SECRET=xyz /usr/bin/env');
+  // Una variable por su nombre, solo los nombres, o un número.
+  allow('printenv HOME');
+  allow('printenv HOME PATH');
+  allow('echo $HOME');
+  allow('env | cut -d= -f1');
+  allow('env | cut -f1 -d= | sort');
+  allow("env | awk -F= '{print $1}'");
+  allow("env | sed 's/=.*//'");
+  allow('env | grep TOKEN | cut -d= -f1');
+  // Enmascarar también vale: así miraban el entorno dos sesiones anteriores, y la primera versión de
+  // la regla las denegaba.
+  allow("env | grep -iE 'cloudflare|^CF_' | sed 's/=.*/=<set>/' || echo \"ninguna\"");
+  allow('env | grep -iE "CLOUDFLARE|CF_API|WRANGLER" | sed -E \'s/=.*/=<set>/\' 2>&1');
+  allow('env | wc -l');
+  allow('printenv | grep -c CLAUDE_CODE_MESSAGING_TOKEN');
+  allow('env | grep -q TOKEN && echo hay');
+  allow('env > /dev/null 2>&1');
+  allow("tr '\\0' '\\n' < /proc/1/environ | cut -d= -f1");
+  // Asignar, pedir una con nombre o fijar opciones del shell no vuelca nada.
+  allow('export FOO=bar');
+  allow('export PATH=/opt/node/bin:$PATH; npm run lint');
+  allow('export -p FOO');
+  allow('declare -x FOO=1');
+  allow('declare -p FOO');
+  allow('declare -f');
+  allow('typeset -x FOO=1');
+  allow('set -o pipefail');
+  allow('set -e');
+  allow('set -- a b');
+  allow('env # sc:ok');
+  // Vecinos que nombran el entorno sin volcarlo.
+  allow("cat > nota.md <<'EOF'\nenv | grep TOKEN\nprintenv\nEOF");
+  allow('grep -rn "printenv" scripts/');
+  allow('grep -rn "/proc/self/environ" scripts/');
+  allow('ls -la /proc/1/environ');
+  allow('npm run env');
+  allow('which env');
+  allow('man printenv');
+  allow('compgen -e');
+});
+
 test('#12 base de diff: `main...rama` → deny; `main..rama` → allow', () => {
   deny('git diff main...feat/x --stat', verde, /base de fusión/);
   deny('git diff origin/main...HEAD', verde, /base de fusión/);
@@ -141,8 +308,8 @@ test('#11 zsh: `for f in $VAR` → deny; enumerado, $(…) o ${=VAR} → allow',
 });
 
 test('#5 build durante un preflight → deny; sin preflight vivo, o con sc:ok → allow', () => {
-  const corriendo = { ...verde, preflightVivo: () => true };
-  const parado = { ...verde, preflightVivo: () => false };
+  const corriendo = { ...verde, preflightVivo: () => 43948 };
+  const parado = { ...verde, preflightVivo: () => null };
   deny('npm run build:supervisor', corriendo, /LEARNINGS #5/);
   deny('npm run build', corriendo, /LEARNINGS #5/);
   deny('ng build sc-docs --configuration production', corriendo, /LEARNINGS #5/);
@@ -151,6 +318,98 @@ test('#5 build durante un preflight → deny; sin preflight vivo, o con sc:ok �
   // Vecinos legítimos: leer o servir no reescribe `dist/`.
   allow('node scripts/spa-server.mjs dist/supervisor/browser 4322', corriendo);
   allow('ls -d dist/*', corriendo);
+});
+
+/*
+ * #5 — ¿de QUÉ árbol es el preflight vivo? Medido el 2026-09-28 en macOS: con el único preflight
+ * vivo en OTRO worktree, `npm run build:supervisor` salía denegado en este. Tres fallos juntos:
+ * `pgrep -af` no lista la línea de comandos en macOS (allí `-a` es «incluye a los antepasados») y
+ * solo imprime PIDs; aun con ella, npm lo lanza con ruta RELATIVA y el árbol no sale en el texto; y
+ * el patrón sin anclar casaba con cualquier shell que lo NOMBRARA. En los cuatro primeros, el
+ * listado y el cwd de cada PID van inyectados: no dependen de lo que corra en la máquina.
+ */
+const ESTE = '/u/dev/smartcontact-ui/.claude/worktrees/magical-vaughan-5cf689';
+const OTRO = '/u/dev/smartcontact-ui/.claude/worktrees/goofy-matsumoto-803f2a';
+/** Las líneas que imprime `pgrep` y el cwd de cada PID, inyectados; un PID sin cwd legible no sale. */
+const procesos = (lineas, cwdDe, cwd = ESTE) => ({
+  ...verde,
+  cwd,
+  listarPreflights: () => lineas,
+  cwdsDe: (pids) => new Map(pids.map((pid) => [pid, cwdDe(pid)]).filter(([, dir]) => dir)),
+});
+
+test('#5 preflight de OTRO árbol, tal cual lo lista `pgrep` en macOS (PIDs pelados) → allow', () => {
+  allow('npm run build:supervisor', procesos(['43948'], (pid) => (pid === 43948 ? OTRO : null)));
+});
+
+test('#5 preflight de OTRO árbol con su línea de comandos: npm lo lanza con ruta relativa y el árbol no sale → allow', () => {
+  allow('npm run build:supervisor', procesos(['43948 node scripts/preflight-scope.mjs --run'], () => OTRO));
+});
+
+test('#5 un cwd que no se puede leer (el proceso ya murió, o no es tuyo) no cuenta → allow', () => {
+  allow('npm run build:supervisor', procesos(['43948'], () => null));
+});
+
+test('#5 preflight de ESTE árbol → deny con su pid; y el `cd <ruta> &&` manda sobre la sesión', () => {
+  deny('npm run build:supervisor', procesos(['43948'], () => ESTE), /LEARNINGS #5/);
+  // Con varios vivos, el motivo nombra el de este árbol: el pid es lo que deja comprobarlo.
+  deny('ng build supervisor', procesos(['17655', '43948'], (pid) => (pid === 43948 ? ESTE : OTRO)), /pid 43948/);
+  deny(`cd ${OTRO} && npm run build`, procesos(['17655'], () => OTRO), /LEARNINGS #5/);
+});
+
+// Con procesos PROPIOS de verdad, porque dos cosas solo las contesta el sistema: con qué casa el
+// `pgrep` real (el de macOS no entiende `\S`: el patrón que lo usaba perdía el `node` con ruta
+// absoluta) y qué cwd devuelven `lsof` y `/proc`. Cada árbol es una carpeta temporal: los
+// preflights de otros worktrees de la máquina tienen otro cwd y no cambian nada. Y los falsos
+// viven lo justo, porque las esperas de otras sesiones SÍ los ven como preflights.
+const FALSO = `// Se va solo si quien lo lanzó muere (un test cortado), y al minuto pase lo que pase.
+const padre = process.ppid;
+setInterval(() => process.ppid !== padre && process.exit(0), 250);
+setTimeout(() => process.exit(0), 60_000);
+console.log('listo');
+`;
+const ESPERA_QUE_LO_NOMBRA =
+  'echo listo; n=0; while [ $n -lt 60 ] && kill -0 $PPID 2>/dev/null; do sleep 1; n=$((n+1)); done # espera a node scripts/preflight-scope.mjs --run';
+
+test('#5 con procesos de verdad: cuenta el `node` del preflight por su cwd, no el shell que lo nombra', { timeout: 30_000 }, async (t) => {
+  if (spawnSync('pgrep', ['-f', 'x^']).error) return t.skip('sin `pgrep` en esta máquina');
+  const base = mkdtempSync(join(tmpdir(), 'bash-guard-'));
+  const arbol = (nombre) => {
+    const dir = join(base, nombre);
+    mkdirSync(join(dir, 'scripts'), { recursive: true });
+    mkdirSync(join(dir, 'projects', 'supervisor'), { recursive: true });
+    writeFileSync(join(dir, '.git'), 'gitdir: x\n'); // un worktree lleva `.git` como FICHERO
+    writeFileSync(join(dir, 'scripts', 'preflight-scope.mjs'), FALSO);
+    return dir;
+  };
+  const [conNpm, conRuta, conEspera, vacio] = ['npm', 'ruta', 'espera', 'vacio'].map(arbol);
+  const lanza = (cmd, args, opciones) => spawn(cmd, args, { ...opciones, stdio: ['ignore', 'pipe', 'ignore'] });
+  const hijos = [
+    // Como lo deja npm (medido): `node` suelto, el script con ruta RELATIVA y el cwd en el árbol.
+    lanza(process.execPath, ['scripts/preflight-scope.mjs', '--run'], { cwd: conNpm, argv0: 'node' }),
+    lanza(process.execPath, ['scripts/preflight-scope.mjs', '--run'], { cwd: conRuta }),
+    // Un shell que solo NOMBRA al preflight, como el bucle que espera a que acabe.
+    lanza('/bin/sh', ['-c', ESPERA_QUE_LO_NOMBRA], { cwd: conEspera }),
+  ];
+  try {
+    await Promise.all(hijos.map((h) => new Promise((listo, fallo) => (h.stdout.once('data', listo), h.once('error', fallo)))));
+    const decide = (cwd) => evaluar('npm run build:supervisor', { ...verde, cwd, listarPreflights: undefined }).decision;
+    assert.equal(decide(conNpm), 'deny', 'el preflight tal cual lo lanza npm');
+    assert.equal(decide(conRuta), 'deny', '`node` con ruta absoluta');
+    // Desde una subcarpeta, npm sube hasta su `package.json` y reescribe el mismo `dist/`.
+    assert.equal(decide(join(conNpm, 'projects', 'supervisor')), 'deny', 'desde una subcarpeta de su árbol');
+    assert.equal(decide(conEspera), 'allow', 'un shell que solo nombra al preflight');
+    assert.equal(decide(vacio), 'allow', 'un árbol sin preflight');
+    // La carrera corriente: uno acabó entre el `pgrep` y el `lsof`. `lsof` sale con 1 e imprime
+    // solo el vivo, y ese sigue contando.
+    const muerto = spawnSync(process.execPath, ['-e', '']).pid;
+    const lista = () => [String(muerto), String(hijos[0].pid)];
+    const r = evaluar('npm run build:supervisor', { ...verde, cwd: conNpm, listarPreflights: lista });
+    assert.match(r.reason, new RegExp(`pid ${hijos[0].pid}\\b`), 'un PID muerto en el lote no tapa al vivo');
+  } finally {
+    for (const h of hijos) h.kill();
+    rmSync(base, { recursive: true, force: true });
+  }
 });
 
 test('#5 Playwright con el DS editado después del último `dist/` → deny; con dist al día, sin e2e o sc:ok → allow', () => {
@@ -196,6 +455,13 @@ test('portada pública: un nombre o atribución en un PR o commit → deny; resu
   deny("git commit -m \"$(cat <<'EOF'\nfix: x\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>\nEOF\n)\"", verde, /co-autor/);
   deny('gh pr edit 167 --body "Para Rafa en llano: algo"', verde, /Portada pública/);
   allow(pr('**En resumen:** en Agentes la página ya no hace scroll.'));
+  // La rama lleva el alias del autor como prefijo (lo pone la app al crear la caja): es un ref, no
+  // una firma. Denegarlo tumbó el `gh pr create --head` del #269. En la prosa, sigue cayendo.
+  const RAMA = 'areses/frosty-lichterman-93fcb6';
+  const alias = RAMA.split('/')[0];
+  allow(`gh pr create --base main --head ${RAMA} --title "x" --body-file c.md`);
+  deny(`gh pr create --head ${RAMA} --title "fix: lo revisó ${alias}"`, verde, /nombre de una persona/);
+  deny(pr(`Rama ${RAMA}.\n\n**Para Rafa:** algo`), verde, /nombre de una persona/);
   allow("git commit -m \"$(cat <<'EOF'\nfix: x\n\nCo-authored-by: x <x@y.z>\nEOF\n)\""); // un co-autor humano no es atribución
   // Vecinos legítimos: leer o buscar el texto no es publicarlo, y citarlo a propósito tiene salida.
   allow('gh pr view 167 --json body | grep -c "Para Rafa, en llano"');
@@ -236,7 +502,7 @@ test('sin escrituras, el motivo no gana ruido', () => {
 });
 
 /*
- * #5 — un bucle de espera cuyo `pgrep -f` se casa con SU PROPIA línea de comandos no termina
+ * #5 — un bucle de espera cuyo `pgrep -f` casa con la línea de comandos de un SHELL no termina
  * nunca, y el síntoma miente del todo: parece que la otra sesión no acaba, y la máquina lleva
  * rato libre. El 2026-09-12 costó tres esperas muertas seguidas (una la mató el sistema por
  * memoria) con varias cajas trabajando a la vez.
@@ -255,21 +521,42 @@ test('#5 espera que se casa sola: el patrón también fuera del `pgrep` → deny
   assert.match(r.reason, /se encuentra a SÍ MISMO/);
 });
 
-test('#5 y sus tres vecinos legítimos pasan: proceso, `pgrep` suelto y heredoc que lo menciona', () => {
-  // Apuntar al PROCESO no se casa con el shell que espera.
-  assert.equal(
-    evaluar(`until ! pgrep -f "node scripts/${PATRON_ESPERA}.mjs" >/dev/null; do sleep 20; done`, { cwd: '/tmp' })
-      .decision,
-    'allow',
-  );
-  // Sin bucle no se espera a nada.
-  assert.equal(evaluar(`pgrep -f ${PATRON_ESPERA} && echo ${PATRON_ESPERA}`, { cwd: '/tmp' }).decision, 'allow');
+// ROJO que motivó el arreglo (2026-09-28, macOS): pgrep se salta a sí mismo y a sus antepasados, así
+// que un bucle solo no se ve; pero DOS a la vez ven cada uno el shell del otro y ninguno acaba. El
+// patrón era el que el motivo de este mismo hook recomendaba, «apunta al proceso», sin anclar.
+test('#5 espera con `pgrep -f` sin anclar → deny, y el motivo enseña a anclar con `^`', () => {
+  const bucle = 'until ! pgrep -f "node scripts/x.mjs"; do sleep 5; done';
+  deny(bucle, verde, /LEARNINGS #5/);
+  const r = evaluar(bucle, verde);
+  assert.match(r.reason, /pgrep -f "\^node scripts\/preflight-scope\.mjs"/, 'el motivo tiene que dar la forma ANCLADA');
+  assert.doesNotMatch(r.reason, /pgrep -f "node /, 'ni recomendar la forma sin anclar, que era una de estas esperas');
+  assert.doesNotMatch(r.reason, /grep -v \$\$/, 'ni `grep -v $$`: quita tu shell, no el de la espera hermana');
+  assert.doesNotMatch(r.reason, /pgrep -(fl|lf)\b/, 'ni `pgrep -fl`, que la regla #12 de procesos deniega en macOS');
+  // El comando de ese día, tal cual lo daba el motivo del hook.
+  deny(`until ! pgrep -f "node scripts/${PATRON_ESPERA}.mjs" >/dev/null; do sleep 15; done; echo listo`, verde, /SIN ANCLAR/);
+  // `-f` dentro de un racimo de flags, y el `pgrep` en el cuerpo del bucle en vez de en la condición.
+  deny('while pgrep -fl "node scripts/x.mjs" >/dev/null; do sleep 5; done', verde, /LEARNINGS #5/);
+  deny('while true; do pgrep -f node >/dev/null || break; sleep 5; done', verde, /«node»/);
+});
+
+test('#5 y sus vecinos legítimos pasan: ancla, `-x`, `pgrep` suelto, texto que lo nombra y heredoc', () => {
+  // El ancla: la línea de un shell empieza por `/bin/zsh`, nunca por `node`.
+  allow('until ! pgrep -f "^node scripts/x.mjs"; do sleep 5; done');
+  allow(`until ! pgrep -f '^node scripts/${PATRON_ESPERA}.mjs' >/dev/null; do sleep 20; done`);
+  // `-x` exige la línea EXACTA: tampoco casa con un shell.
+  allow('until ! pgrep -xf "node scripts/x.mjs --run"; do sleep 5; done');
+  // Sin bucle no se espera a nada, aunque el patrón vaya sin anclar.
+  allow('pgrep -f "node scripts/x.mjs"');
+  allow(`pgrep -f ${PATRON_ESPERA} && echo ${PATRON_ESPERA}`);
+  // Mirar qué casa ANTES del bucle es lo que pide el motivo: ese `pgrep` no espera a nada.
+  allow('pgrep -f "^node scripts/x.mjs"; until ! pgrep -f "^node scripts/x.mjs"; do sleep 5; done');
+  // Buscar la frase no es ejecutarla.
+  allow(`grep -rn 'until ! pgrep -f "node scripts' docs/`);
+  // Un patrón en una variable no se lee desde aquí: no se opina.
+  allow('until ! pgrep -f "$PATRON"; do sleep 5; done');
   // Escribir un fichero que HABLA del bucle no es ejecutarlo — el falso positivo que se cazó solo.
-  assert.equal(
-    evaluar(`cat > t.mjs <<'EOF'\nuntil ! pgrep -f "${PATRON_ESPERA}"; do sleep 1; done\nEOF`, { cwd: '/tmp' })
-      .decision,
-    'allow',
-  );
+  allow(`cat > t.mjs <<'EOF'\nuntil ! pgrep -f "${PATRON_ESPERA}"; do sleep 1; done\nEOF`);
+  allow('until ! pgrep -f "node scripts/x.mjs"; do sleep 5; done # sc:ok');
 });
 
 test('escrituras(): cuenta las de verdad e ignora /dev, /tmp y los descriptores', () => {
@@ -294,4 +581,78 @@ test('segmentos: una comilla escapada no abre la veda dentro de una cadena', () 
   assert.match(cmd, /\\"a\|b\|git push/, 'el caso debe llevar la comilla ESCAPADA, que es lo que rompía');
   const r = evaluar(cmd, { cwd: process.cwd() });
   assert.notEqual(r.decision, 'deny', 'el patrón entrecomillado es un DATO, no un push');
+});
+
+// 2026-09-27: `cd <worktree> && git push` y `cd <worktree> && npx playwright test` se juzgaban contra
+// el árbol de la SESIÓN, y se denegaron con la marca y el `dist/` del worktree al día.
+test('carpeta del comando: `cd <ruta> &&` manda sobre el cwd de la sesión; con variables, manda la sesión', () => {
+  const soloElWorktree = {
+    ...verde,
+    cwd: '/repo',
+    preflight: (dir) => ({ ok: dir === '/wt', motivo: 'no hay marca' }),
+    distRancio: (dir) => (dir === '/wt' ? null : 'projects/ui-smartcontact/src/lib/x.scss'),
+  };
+  // ROJO de antes, VERDE ahora: los dos comandos de ese día.
+  allow('cd /wt && git push -u origin HEAD:rama', soloElWorktree);
+  allow('export PATH=/opt/node/bin:$PATH; cd /wt && npx playwright test -c x.config.ts', soloElWorktree);
+  // Sin `cd`, o con uno que no se puede resolver, sigue mandando el árbol de la sesión.
+  deny('git push -u origin rama', soloElWorktree, /LEARNINGS #7/);
+  deny('cd $WT && git push', soloElWorktree, /LEARNINGS #7/);
+  deny('npx playwright test', soloElWorktree, /LEARNINGS #5/);
+  assert.equal(carpetaEfectiva('cd sub && ls', '/repo'), '/repo/sub');
+  assert.equal(carpetaEfectiva('ls && cd /otra', '/repo'), '/repo', 'un cd DETRÁS no cambia dónde corre lo de delante');
+});
+
+// 2026-10-01: una sesión de este repo también empuja OTROS repositorios (`cd <otro> && git push`), y
+// ahí la regla pedía una marca que solo escribe la cadena de ESTE: no se podía cumplir nunca, y la
+// única salida era `# sc:ok`. Va sin `usaPreflight` inyectado, porque lo que se prueba es cómo
+// reconoce el hook, en el DISCO, un árbol de este repo. `RAIZ` es el checkout que corre el test.
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+// Dentro de un hook de git, `GIT_DIR` apunta al repositorio de verdad: el `git init` va sin él.
+const SIN_GIT = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')));
+
+test('#7 push en un repositorio sin la cadena de preflight → allow; en un árbol de este repo sin marca → deny', () => {
+  const base = mkdtempSync(join(tmpdir(), 'bash-guard-push-'));
+  const enDisco = { sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [] };
+  try {
+    // Un repositorio recién creado: ni `scripts/preflight-mark.mjs` ni marca.
+    const otro = join(base, 'otro');
+    mkdirSync(otro);
+    spawnSync('git', ['init', '-q'], { cwd: otro, env: SIN_GIT });
+    // VERDE, y rojo hasta este cambio: el push de ese día desde una sesión de este repo, el cierre
+    // entero (añadir, commitear y empujar) y una sesión abierta en el otro repositorio.
+    allow(`cd "${otro}" && git push`, { ...enDisco, cwd: RAIZ });
+    allow(`cd "${otro}" && git add notas.md && git commit -m "notas" -- notas.md && git push`, { ...enDisco, cwd: RAIZ });
+    allow('git push', { ...enDisco, cwd: otro });
+
+    // ROJO: un árbol de este repo sin marca. El checkout de verdad, desde su raíz y desde una
+    // subcarpeta, con la marca contestada «no» (la suya depende de la última cadena)…
+    const sinMarca = { ...enDisco, cwd: otro, preflight: rojo.preflight };
+    deny(`cd "${RAIZ}" && git push`, sinMarca, /LEARNINGS #7/);
+    deny(`cd "${join(RAIZ, 'projects', 'supervisor')}" && git push -u origin HEAD`, sinMarca, /LEARNINGS #7/);
+    // …y uno montado como un worktree (`.git` FICHERO y el script de la marca), sin marca y con la
+    // lectura de la marca de verdad.
+    const arbol = join(base, 'worktree');
+    mkdirSync(join(arbol, 'scripts'), { recursive: true });
+    writeFileSync(join(arbol, '.git'), 'gitdir: x\n');
+    writeFileSync(join(arbol, 'scripts', 'preflight-mark.mjs'), '');
+    deny(`cd "${arbol}" && git push`, { ...enDisco, cwd: otro }, /LEARNINGS #7 — .*no hay marca de preflight/);
+  } finally {
+    rmSync(base, { recursive: true, force: true });
+  }
+});
+
+test('#21 sacar la rama de otra sesión para trabajar en ella → deny; desde main, un fichero suelto o sc:ok → allow', () => {
+  // ROJO: los dos comandos de ese día, sobre ramas cuya sesión seguía viva en la nube.
+  deny('git checkout -q -b pr-256 origin/feat/indice-unico', verde, /LEARNINGS #21/);
+  deny('git worktree add -q -b adapt-257 ../w257 origin/claude/ui-improvement-reddit-iykxgx', verde, /list_sessions/);
+  deny('git switch -c revisar origin/feat/otra', verde, /LEARNINGS #21/);
+  deny('git checkout --track origin/feat/otra', verde, /origin\/feat\/otra/);
+  // VERDE: partir de main es lo normal; leer un fichero de otra rama o fundirla no es trabajar en ella.
+  allow('git checkout -q -B claude/mi-rama origin/main');
+  allow('git switch -c nueva origin/main');
+  allow('git worktree add ../wt origin/main');
+  allow('git checkout origin/feat/otra -- docs/DECISIONS.md');
+  allow('git merge --no-ff origin/feat/otra');
+  allow('git checkout -q -b pr-256 origin/feat/indice-unico # sc:ok');
 });

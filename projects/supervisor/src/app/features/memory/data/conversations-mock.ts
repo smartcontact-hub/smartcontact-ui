@@ -1,3 +1,5 @@
+import { deGrupos, nombreDePersona, nombreDeServicio } from '@core/services/juego-de-datos';
+
 import type { Conversation, TranscriptionLine } from './conversation.types';
 
 /**
@@ -203,7 +205,7 @@ const INTERNA_CONSULTA: readonly TranscriptionLine[] = [
   POSTVENTA_ELOGIO,
 ];
 
-export const MOCK_CONVERSATIONS: readonly Conversation[] = [
+const CONVERSACIONES: readonly Conversation[] = [
   {
     hour: '12:50',
     date: '11/09/2026',
@@ -901,3 +903,17 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
     direction: 'saliente',
   },
 ];
+
+/** Con `?datos=editorial`, el grupo de cada conversación con su nombre de negocio (DD-124). */
+/** Un nombre de persona («Oscar Fernández»), no un teléfono, un id de chat ni un cliente anónimo con guiones. */
+const esPersona = (v: string): boolean => /^\p{L}+(?: \p{L}+)+$/u.test(v);
+
+/* Con otro juego de datos (DD-124), lo que la tabla enseña con nombre toma el del juego: el grupo y el servicio (el de
+ * negocio o el estirado), y en tortura el apellido compuesto de quien llama o recibe. Los filtros toman el mismo nombre
+ * (`conversation-filter-options.ts`), así que siguen encontrando lo que filtran. */
+export const MOCK_CONVERSATIONS: readonly Conversation[] = deGrupos(CONVERSACIONES).map((c) => ({
+  ...c,
+  service: nombreDeServicio(c.service),
+  origin: esPersona(c.origin) ? nombreDePersona(c.origin) : c.origin,
+  destination: esPersona(c.destination) ? nombreDePersona(c.destination) : c.destination,
+}));

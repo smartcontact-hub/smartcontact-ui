@@ -4,40 +4,49 @@ import {
   computed,
   HostListener,
   inject,
+  Injector,
+  input,
   OnDestroy,
   OnInit,
   signal,
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { NgTemplateOutlet } from '@angular/common';
+import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { TabsModule } from 'primeng/tabs';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { CrossTabLockService } from '@core/services';
+import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { EMAIL_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
+  ScDialogComponent as DialogComponent,
   ScDividerComponent as DividerComponent,
+  ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
+  ScMessageComponent as MessageComponent,
   ScPhotoUploadComponent as PhotoUploadComponent,
+  ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
+import { AltaPieComponent, NombreFijoComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
+import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
+  accessFor,
   AVAILABLE_SERVICES,
-  DEFAULT_PERMISSIONS,
-  DEFAULT_SECTIONS,
+  NEW_USER_TYPE,
   PERMISSION_DEFS,
   SECTION_DEFS,
   USER_TYPES,
@@ -47,6 +56,7 @@ import {
   UserSections,
   UserType,
 } from '../data/users-data';
+import { applyPackage, driftFromPackage } from '../data/user-packages.core.mjs';
 import { UsersStore } from '../state/users.store';
 
 interface FormState {
@@ -62,17 +72,41 @@ interface FormState {
   photo: string | null;
 }
 
+/** De qué sección es cada campo, para marcar en el índice las que tienen cambios sin guardar (DD-122).
+ *  `groups` no se edita en la ficha: se arrastra al guardar. */
+const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
+  name: 'user-section-identity',
+  email: 'user-section-identity',
+  identifier: 'user-section-identity',
+  type: 'user-section-identity',
+  status: 'user-section-identity',
+  photo: 'user-section-identity',
+  sections: 'user-section-access',
+  permissions: 'user-section-access',
+  groups: 'user-section-access',
+  services: 'user-section-services',
+};
+
 @Component({
   selector: 'sc-user-form-page',
   imports: [
+    NgTemplateOutlet,
     CheckboxComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
+    DialogComponent,
     DividerComponent,
+    FormSectionNavComponent,
+    IconComponent,
     InputTextComponent,
+    MessageComponent,
     PhotoUploadComponent,
+    SectionCardComponent,
     SelectComponent,
-    TabsModule,
+    SummaryKpiComponent,
+    SummaryStatusComponent,
+    AltaPieComponent,
+    NombreFijoComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -83,6 +117,8 @@ interface FormState {
 export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly sectionLinks = inject(SectionLinksService);
+  private readonly injector = inject(Injector);
   private readonly usersStore = inject(UsersStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
@@ -156,6 +192,15 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
   });
+  /** Lo que falta para poder crear, en el orden de Identidad, para el resumen (DD-136). Un email mal escrito no
+   *  falta: se dice en su campo. */
+  protected readonly summaryMissing = computed<readonly string[]>(() => {
+    const f = this.form();
+    const missing: string[] = [];
+    if (f.name.trim().length === 0) missing.push('common.summary_missing_name');
+    if (f.email.trim().length === 0) missing.push('users.form.summary.missing_email');
+    return missing;
+  });
   /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
    *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */
   protected readonly saveBlockedReason = computed(() => {
@@ -174,9 +219,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private releaseLock: (() => void) | null = null;
 
   /**
-   * Las pestañas de la ficha, en orden. Al EDITAR abre por Acceso (lo que se toca) e Identidad va
-   * al final: sus datos ya los dice la franja. Al CREAR, Identidad primero: sin nombre no hay
-   * usuario. Es la forma de la ficha de grupo, «una página + pestañas» (#232).
+   * EL ÍNDICE DE LA FICHA (DD-122): el mismo de la ficha de grupo y de Contact Center, con UN orden en
+   * los dos modos, el de sus dependencias: quién es (Identidad), a qué tiene acceso (Acceso) y qué
+   * supervisa (Servicios). Hasta el 2026-09-27 fueron pestañas y, al editar, Identidad iba en medio.
+   * Abre en la primera; el listado enlaza directo a Acceso (`?seccion=acceso`), que es donde se trabaja.
    */
   protected readonly navSections = computed<readonly FormNavSection[]>(() => {
     const identity: FormNavSection = {
@@ -195,36 +241,123 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'users.form.section.services',
       icon: 'hub',
     };
-    // Mismo orden que las fichas de grupo y agente: al EDITAR, la pestaña de trabajo y luego
-    // Identidad; al CREAR, Identidad primero, que sin nombre no hay usuario.
-    if (this.mode() === 'edit') {
-      return [access, identity, services];
-    }
-    return [identity, access, services];
+    return [identity, access, services].map((sec) => ({
+      ...sec,
+      href: this.sectionLinks.href(this.sectionUrl(sec.id)),
+    }));
   });
 
-  protected readonly activeSection = signal<string>('user-section-identity');
+  /** Cada sección en la dirección (`?seccion=acceso`). */
+  private static readonly SECTION_SLUGS: Readonly<Record<string, string>> = {
+    identidad: 'user-section-identity',
+    acceso: 'user-section-access',
+    servicios: 'user-section-services',
+  };
 
-  protected onTabChange(value: unknown): void {
-    if (typeof value === 'string' && value) this.activeSection.set(value);
+  /** `?seccion=` de la dirección (`withComponentInputBinding`), también cuando solo cambia la query. */
+  readonly seccion = input<string | undefined>();
+
+  /**
+   * EL ALTA, CON EL ÍNDICE DE LA EDICIÓN (DD-143), también al duplicar: las mismas tres secciones, en cualquier orden
+   * (DD-130: aquí no hay puerta), con ✓ en las que se dejan completas y «Atrás / Siguiente» al pie. Identidad está
+   * completa con nombre y un email bien escrito.
+   */
+  protected readonly alta = seccionesDeAlta({
+    secciones: this.navSections,
+    completa: (id) =>
+      id !== 'user-section-identity' || (this.form().name.trim().length > 0 && EMAIL_RE.test(this.form().email.trim())),
+  });
+
+  /** La sección a la vista: en el alta y al duplicar, la abierta; al editar, la de la dirección (Identidad sin parámetro). */
+  protected readonly activeSection = computed<string>(() =>
+    this.mode() === 'edit'
+      ? (UserFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'user-section-identity')
+      : this.alta.abierta(),
+  );
+
+  /** La dirección de una sección: la primera, sin parámetro (es la dirección de la ficha). */
+  private sectionUrl(id: string): UrlTree {
+    const slug = Object.entries(UserFormPageComponent.SECTION_SLUGS).find(([, v]) => v === id)?.[0] ?? null;
+    return this.sectionLinks.section(this.route, id === 'user-section-identity' ? null : slug);
+  }
+
+  /** Ir a otra sección. En el alta y al duplicar, la sección se abre sin tocar la dirección: Atrás sale (DD-122, DD-143). */
+  protected goTo(id: string): void {
+    if (this.mode() !== 'edit') {
+      this.alta.abrir(id);
+      return;
+    }
+    void this.sectionLinks.go(this.sectionUrl(id));
+  }
+
+  /** «Siguiente» y «Atrás» del alta: atajos a la sección de al lado, no puertas (la puerta es solo del grupo). Llegan
+   *  arriba, con el foco en su título (DD-143). */
+  protected siguiente(): void {
+    this.irAlLado(this.alta.siguiente());
+  }
+
+  protected anterior(): void {
+    this.irAlLado(this.alta.anterior());
+  }
+
+  private irAlLado(id: string | null): void {
+    if (!id) return;
+    this.goTo(id);
+    llegarASeccion(id, this.injector);
   }
 
   /**
-   * Las tres cifras de la franja: qué es esta persona y a qué llega sin abrir una pestaña. El tipo
-   * es cifra y no va junto al email: en la línea de debajo del nombre, «email · tipo» no cabía en
-   * los 252 de la columna y se cortaba (medido en la de Mario Supervisor, 2026-09-23). Lo mismo
-   * que «Tipo de agente» en la ficha de agente.
+   * Lo que falta para poder guardar, en el índice: el nombre y un email válido, en Identidad. Al editar y al
+   * duplicar (que llega con esos campos vacíos a propósito). En un alta recién abierta no acusa, lo dice el
+   * resumen (DD-136); desde que se deja Identidad sin ellos, sí, como la ✓ de la que se deja completa (DD-143).
    */
-  protected readonly headline = computed(() => {
-    this.lang(); // el tipo se traduce aquí: al cambiar de idioma, la franja tiene que enterarse
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
     const f = this.form();
-    const secciones = Object.values(f.sections).filter(Boolean).length;
-    const permisos = Object.values(f.permissions).filter(Boolean).length;
-    return [
-      { valor: this.translate.instant(this.typeLabelKeys[f.type]), etiqueta: 'users.form.headline.type' },
-      { valor: `${secciones}/${Object.keys(f.sections).length}`, etiqueta: 'users.form.section.sections' },
-      { valor: `${permisos}/${Object.keys(f.permissions).length}`, etiqueta: 'users.form.section.permissions' },
-    ];
+    const falta = !f.name.trim() || !EMAIL_RE.test(f.email.trim());
+    const acusa = this.mode() !== 'create' || this.alta.dejadas().has('user-section-identity');
+    return new Set(acusa && falta ? ['user-section-identity'] : []);
+  });
+
+  /** Las secciones con cambios sin guardar (DD-122), al editar. */
+  protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
+    if (this.mode() !== 'edit') return new Set<string>();
+    return new Set([...this.dirtyState.changedKeys()].map((k) => USER_SECTION_OF_FIELD[k as keyof FormState]));
+  });
+
+  /**
+   * Secciones y permisos sobre su total: las dos cifras con anillo del resumen (DD-126). Cuentan las casillas que la
+   * ficha ENSEÑA, no las claves del modelo: la de «Grupos / Agentes / Tipificaciones» sigue guardada y no se ve
+   * (DD-132).
+   */
+  protected readonly summaryAccess = computed(() => {
+    const f = this.form();
+    return {
+      secciones: SECTION_DEFS.filter((d) => f.sections[d.key]).length,
+      totalSecciones: SECTION_DEFS.length,
+      permisos: PERMISSION_DEFS.filter((d) => f.permissions[d.key]).length,
+      totalPermisos: PERMISSION_DEFS.length,
+    };
+  });
+
+  /** Cuántas casillas de Acceso se apartan de la plantilla del tipo (DD-132). Con 0, sigue la plantilla. */
+  protected readonly templateDrift = computed(() => {
+    const f = this.form();
+    return driftFromPackage(f.type, f.sections, f.permissions);
+  });
+
+  /**
+   * El tipo que se acaba de elegir cuando cambiarlo pisaría casillas que alguien tocó: la ficha pregunta si aplicar su
+   * plantilla. `null`, nada que preguntar.
+   */
+  protected readonly pendingTemplate = signal<{ readonly type: UserType; readonly changes: number } | null>(null);
+
+  /**
+   * Lo que el resumen dice sin anillo: de qué tipo es esta persona. El tipo va aquí y no junto al email porque en
+   * la línea de debajo del nombre «email · tipo» no cabía (medido el 2026-09-23).
+   */
+  protected readonly summaryFacts = computed(() => {
+    this.lang(); // el tipo se traduce aquí: al cambiar de idioma, el resumen tiene que enterarse
+    return [{ icono: 'badge', valor: this.translate.instant(this.typeLabelKeys[this.form().type]), etiqueta: 'users.form.headline.type' }];
   });
 
   protected readonly mode = computed<'edit' | 'duplicate' | 'create'>(() => {
@@ -281,13 +414,16 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         photo: user.photo ?? null,
       });
       this.dirtyState.markPristine();
-      // En edición aterriza en Secciones (1ª del orden de edición): identidad
-      // va al fondo porque casi no se toca tras crear; la ficha la resume (S60).
-      this.activeSection.set('user-section-access');
       this.releaseLock = this.crossTab.acquire('user', user.id, () =>
         this.conflictWarning.set(true),
       );
       return;
+    }
+
+    // En el alta la dirección no dice sección (DD-143), y se quita la que traiga (el duplicado conserva su
+    // `seedFromId`).
+    if (this.route.snapshot.queryParamMap.has('seccion')) {
+      void this.sectionLinks.go(this.sectionLinks.section(this.route, null), { replace: true });
     }
 
     // Modo "Duplicar": detecta ?seedFromId en query params y precarga el
@@ -347,8 +483,51 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.updateField(key, value);
   }
 
+  /**
+   * Elegir el tipo es elegir su plantilla (DD-132). El tipo cambia siempre; las casillas, según lo que haya:
+   *   · si ya son las de la nueva plantilla, no hay nada que aplicar;
+   *   · en un alta que sigue la plantilla del tipo anterior (nadie las tocó), se aplica sin preguntar;
+   *   · al editar, o si alguien las tocó, se pregunta cuántas cambiarían. Mantenerlas deja el desvío a la vista,
+   *     con «Volver a la plantilla» para cuando se quiera.
+   * El tipo cambia antes de preguntar, así el desplegable nunca enseña un valor que el formulario no tiene.
+   */
   protected onTypeValueChange(value: unknown): void {
-    if (typeof value === 'string') this.updateField('type', value as UserType);
+    if (typeof value !== 'string' || !(USER_TYPES as readonly string[]).includes(value)) return;
+    const type = value as UserType;
+    const f = this.form();
+    if (type === f.type) return;
+    const changes = driftFromPackage(type, f.sections, f.permissions);
+    const untouched = driftFromPackage(f.type, f.sections, f.permissions) === 0;
+    this.updateField('type', type);
+    if (changes === 0) return;
+    if (this.mode() !== 'edit' && untouched) this.applyTemplate(type);
+    else this.pendingTemplate.set({ type, changes });
+  }
+
+  /** «Aplicar la plantilla» del aviso. */
+  protected confirmTemplate(): void {
+    const pending = this.pendingTemplate();
+    this.pendingTemplate.set(null);
+    if (pending) this.applyTemplate(pending.type);
+  }
+
+  /** «Mantener las casillas», o cerrar el aviso: el tipo ya cambió y Acceso se queda como estaba. */
+  protected keepAccess(): void {
+    this.pendingTemplate.set(null);
+  }
+
+  /** «Volver a la plantilla», en Acceso: las casillas del tipo actual, sin los cambios a mano. */
+  protected resetToTemplate(): void {
+    this.applyTemplate(this.form().type);
+  }
+
+  private applyTemplate(type: UserType): void {
+    this.form.update((f) => ({ ...f, ...applyPackage(type, f.sections, f.permissions) }));
+  }
+
+  /** «1 cambio» o «N cambios»: el número va dentro de la clave. */
+  protected templateChangesKey(count: number): string {
+    return count === 1 ? 'users.form.template.changes_one' : 'users.form.template.changes_other';
   }
 
   protected onStatusChange(checked: boolean): void {
@@ -418,26 +597,37 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         photo: f.photo ?? undefined,
       };
 
+      // Guardar deja en la ficha, como en grupo y agente (DD-130): al editar se queda; al crear, abre la edición
+      // del usuario nuevo en la sección en la que se estaba. Hasta el 2026-09-27 volvía siempre al listado.
       const editingId = this.editingId();
       if (editingId) {
         this.usersStore.updateUser(editingId, { ...payload });
+        const refreshed = this.usersStore.getUser(editingId);
+        if (refreshed) this.initial.set(refreshed);
         this.messages.add({
           severity: 'success',
           summary: this.translate.instant('users.toasts.updated', { name: payload.name }),
           life: TOAST_LIFE.success,
         });
-      } else {
-        const created = this.usersStore.addUser(payload);
-        this.messages.add({
-          severity: 'success',
-          summary: this.translate.instant('users.toasts.created', { name: created.name }),
-          life: TOAST_LIFE.success,
-        });
+        this.saving.set(false);
+        this.dirtyState.markPristine();
+        return;
       }
 
-      this.saving.set(false);
+      const created = this.usersStore.addUser(payload);
+      this.messages.add({
+        severity: 'success',
+        summary: this.translate.instant('users.toasts.created', { name: created.name }),
+        life: TOAST_LIFE.success,
+      });
       this.dirtyState.markPristine();
-      void this.router.navigateByUrl('/admin/usuarios');
+      const slug = Object.entries(UserFormPageComponent.SECTION_SLUGS).find(([, v]) => v === this.activeSection())?.[0];
+      void this.router
+        .navigate(['/admin/usuarios/editar', created.id], {
+          replaceUrl: true,
+          queryParams: slug && slug !== 'identidad' ? { seccion: slug } : {},
+        })
+        .finally(() => this.saving.set(false));
     }, 400);
   }
 
@@ -472,15 +662,15 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     void this.router.navigateByUrl('/admin/usuarios');
   }
 
+  /** El alta nace Supervisor Offline con su plantilla: la supervisión, y nada de lo sensible (DD-132). */
   private emptyForm(): FormState {
     return {
       name: '',
       email: '',
       identifier: '',
-      type: 'agent',
+      type: NEW_USER_TYPE,
       status: 'active',
-      sections: { ...DEFAULT_SECTIONS },
-      permissions: { ...DEFAULT_PERMISSIONS },
+      ...accessFor(NEW_USER_TYPE),
       groups: new Set(),
       services: new Set(),
       photo: null,

@@ -2,9 +2,13 @@ import type { DashboardMonitor, DashboardWidget } from './dashboard.types';
 
 /**
  * Un «latido» de los datos de demostración: lo que cambiaría entre dos refrescos de un contact
- * center real. Los totales del día solo suben; lo que está pasando AHORA (en curso, en espera,
- * disponibles) sube o baja un poco. El original refresca intenciones y tipificaciones cada 60 s
- * (medido el 2026-09-14); aquí el latido es más corto para que la demo se vea viva.
+ * center real. Los totales del día solo suben; lo que está pasando AHORA (en curso, en espera)
+ * sube o baja un poco. El original refresca intenciones y tipificaciones cada 60 s (medido el
+ * 2026-09-14); aquí el latido es más corto para que la demo se vea viva.
+ *
+ * Los DISPONIBLES no se mueven solos: son el estado de cada agente en Administración (DD-139), el que
+ * enseñan la tabla y el detalle. Derivando por su cuenta, a los 8 s el anillo decía 6 con 5 agentes
+ * disponibles en la tabla, y su detalle no podía listar el sexto (DD-127).
  */
 export function liveTick(monitor: DashboardMonitor, random: () => number = Math.random): DashboardMonitor {
   const step = (max: number) => Math.floor(random() * (max + 1));
@@ -20,7 +24,7 @@ export function liveTick(monitor: DashboardMonitor, random: () => number = Math.
       case 'kpi-simple':
         return w.unit === 'percent' ? { ...w, value: drift(w.value, 0, 100) } : { ...w, value: w.value + step(1) };
       case 'agents-state':
-        return { ...w, value: drift(w.value, 0, w.total) };
+        return w;
       case 'agents-table': {
         const lucky = Math.floor(random() * w.rows.length);
         return {
@@ -39,7 +43,6 @@ export function liveTick(monitor: DashboardMonitor, random: () => number = Math.
           ...w,
           onHold: drift(w.onHold, 0, 12),
           inProgress: drift(w.inProgress, 0, 40),
-          available: drift(w.available, 0, w.connected),
           total: w.total + newOnes + lost,
           attended: w.attended + newOnes,
           notAttended: w.notAttended + lost,

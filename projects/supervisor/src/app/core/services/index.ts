@@ -16,6 +16,8 @@ export { DiscardDialogService } from './discard-dialog.service';
 
 export { CrossTabLockService } from './cross-tab-lock.service';
 
+export { SectionLinksService } from './section-links.service';
+
 export { ThemeService } from './theme.service';
 export type { ThemeMode } from './theme.service';
 

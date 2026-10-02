@@ -147,6 +147,7 @@ export class EntidadesPageComponent {
   protected readonly config: RepoPageConfig<Entidad> = {
     titleKey: 'repositories.entidades.title',
     entitySingularKey: 'repositories.entidades.singular',
+    createTitleKey: 'repositories.entidades.create_title',
     entityPluralKey: 'repositories.entidades.plural',
     icon: 'inventory_2',
     breadcrumbExtraKey: 'repositories.entidades.title',

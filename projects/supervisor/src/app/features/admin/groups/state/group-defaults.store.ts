@@ -1,12 +1,15 @@
 import { Injectable, signal, Signal } from '@angular/core';
 
 import { createVersionedStorage } from '@core/services/local-store.factory';
-import { FACTORY_GROUP_DEFAULTS, GroupDefaults } from '../data/groups-data';
+import { currentStrategyName, FACTORY_GROUP_DEFAULTS, GroupDefaults, queueFrom } from '../data/groups-data';
 
 /**
- * Los valores con los que nace un grupo. Los escribe Configuración del AED > Grupos y los lee la ficha de grupo al
- * crear, así que las dos pantallas hablan de lo mismo con las mismas palabras. Un solo objeto, guardado como lista de
- * uno para reutilizar la persistencia versionada.
+ * Los valores con los que nace un grupo. Los escribe Contact Center › Grupos (`/config/aed/grupos`, DD-135) y los lee
+ * la ficha de grupo en su modo alta, así que las dos pantallas hablan de lo mismo con las mismas palabras. Un solo
+ * objeto, guardado como lista de uno para reutilizar la persistencia versionada.
+ *
+ * Misma clave y misma versión que cuando los escribía la página de valores por defecto del listado de grupos: lo que
+ * alguien guardó allí sigue valiendo aquí.
  */
 @Injectable({ providedIn: 'root' })
 export class GroupDefaultsStore {
@@ -26,13 +29,25 @@ export class GroupDefaultsStore {
     this.storage.write([next]);
   }
 
-  /** Lo guardado sobre los de fábrica: un campo nuevo no llega vacío a quien guardó antes de que existiera. */
+  /**
+   * Lo guardado sobre los de fábrica: un campo nuevo no llega vacío a quien guardó antes de que existiera. Sin
+   * subir la versión, que BORRA lo guardado. Hasta el 2026-09-26 había una sola cola para todo el grupo, en
+   * `advanced`: lo guardado con ella cae en la de Teléfono y en la de Chat, igual que lee un grupo `resolveGroup`. Y
+   * las estrategias guardadas con su nombre de antes de DD-141 se leen con el de ahora.
+   */
   private read(): GroupDefaults {
-    const saved = this.storage.read()[0];
+    const saved = this.storage.read()[0] as Partial<GroupDefaults> | undefined;
+    const advanced = { ...FACTORY_GROUP_DEFAULTS.advanced, ...saved?.advanced };
+    const legacyQueue = queueFrom(advanced);
     return {
       ...FACTORY_GROUP_DEFAULTS,
       ...saved,
-      advanced: { ...FACTORY_GROUP_DEFAULTS.advanced, ...saved?.advanced },
+      strategy: currentStrategyName(saved?.strategy ?? FACTORY_GROUP_DEFAULTS.strategy),
+      chatStrategy: currentStrategyName(saved?.chatStrategy ?? FACTORY_GROUP_DEFAULTS.chatStrategy),
+      advanced,
+      phoneQueue: { ...legacyQueue, ...saved?.phoneQueue },
+      chatQueue: { ...legacyQueue, ...saved?.chatQueue },
+      chat: { ...FACTORY_GROUP_DEFAULTS.chat, ...saved?.chat },
     };
   }
 }

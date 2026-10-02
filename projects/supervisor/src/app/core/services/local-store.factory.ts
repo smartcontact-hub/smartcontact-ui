@@ -1,5 +1,7 @@
 import { InjectionToken, signal, Signal } from '@angular/core';
 
+import { claveDelJuego, editorializar, juegoDeDatos, torturar } from './juego-de-datos';
+
 export interface LocalStoreConfig<T> {
   /** localStorage key for the items themselves. */
   readonly storageKey: string;
@@ -9,6 +11,12 @@ export interface LocalStoreConfig<T> {
   readonly currentVersion: number;
   /** Items used the very first time the store boots, or after a version bump. */
   readonly defaults: readonly T[];
+  /**
+   * Pone al día, AL LEERLO, un elemento guardado con un nombre o una forma de antes: la vía que no borra, porque subir
+   * `currentVersion` tira lo guardado y re-siembra. Lo siguiente que se escriba ya va al día. Solo pasa por aquí lo
+   * leído de `localStorage`: los `defaults` nacen al día.
+   */
+  readonly normalize?: (item: T) => T;
 }
 
 export interface LocalStore<T extends { id: number }> {
@@ -66,7 +74,14 @@ export interface VersionedStorage<T> {
  * de versión, el `try/catch` del JSON corrupto ni la guarda de SSR.
  */
 export function createVersionedStorage<T>(config: LocalStoreConfig<T>): VersionedStorage<T> {
-  const { storageKey, versionKey, currentVersion, defaults } = config;
+  /* El juego de datos (`?datos=tortura` o `editorial`, DD-124) cambia las claves y los `defaults`; con
+   * `demo`, que es el de siempre, las dos cosas quedan exactamente como estaban. */
+  const juego = juegoDeDatos();
+  const storageKey = claveDelJuego(config.storageKey, juego);
+  const versionKey = claveDelJuego(config.versionKey, juego);
+  const { currentVersion, normalize } = config;
+  const defaults =
+    juego === 'tortura' ? torturar(config.defaults) : juego === 'editorial' ? editorializar(config.defaults) : config.defaults;
 
   return {
     read(): readonly T[] {
@@ -75,7 +90,10 @@ export function createVersionedStorage<T>(config: LocalStoreConfig<T>): Versione
         const version = localStorage.getItem(versionKey);
         if (version && Number(version) >= currentVersion) {
           const raw = localStorage.getItem(storageKey);
-          if (raw) return JSON.parse(raw) as T[];
+          if (raw) {
+            const saved = JSON.parse(raw) as T[];
+            return normalize ? saved.map(normalize) : saved;
+          }
         } else {
           localStorage.removeItem(storageKey);
           localStorage.setItem(versionKey, String(currentVersion));

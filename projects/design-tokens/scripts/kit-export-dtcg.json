@@ -1750,7 +1750,7 @@
     "toast": {
       "blur": {
         "$type": "number",
-        "$value": 1.5
+        "$value": 10
       },
       "info": {
         "background": {
@@ -6303,20 +6303,20 @@
       "font": {
         "size": {
           "$type": "number",
-          "$value": "{primitive.typography.font.size.200}"
+          "$value": "{app.typography.md.fontSize}"
         }
       },
       "lg": {
         "line": {
           "height": {
             "$type": "number",
-            "$value": "{primitive.typography.line.height.300}"
+            "$value": "{app.typography.lg.lineHeight}"
           }
         },
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{primitive.typography.font.size.300}"
+            "$value": "{app.typography.lg.fontSize}"
           }
         }
       },
@@ -6324,13 +6324,13 @@
         "line": {
           "height": {
             "$type": "number",
-            "$value": "{primitive.typography.line.height.100}"
+            "$value": "{app.typography.sm.lineHeight}"
           }
         },
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{primitive.typography.font.size.100}"
+            "$value": "{app.typography.sm.fontSize}"
           }
         }
       }
@@ -6827,11 +6827,11 @@
           "padding": {
             "y": {
               "$type": "number",
-              "$value": "{scale.0-5}"
+              "$value": "{scale.0-25}"
             },
             "x": {
               "$type": "number",
-              "$value": "{scale.0-75}"
+              "$value": "{scale.0-625}"
             }
           }
         },
@@ -6844,11 +6844,11 @@
         "padding": {
           "y": {
             "$type": "number",
-            "$value": "{scale.0-5}"
+            "$value": "{scale.0-25}"
           },
           "x": {
             "$type": "number",
-            "$value": "{scale.0-75}"
+            "$value": "{scale.0-625}"
           }
         }
       }
@@ -6862,11 +6862,11 @@
         "padding": {
           "y": {
             "$type": "number",
-            "$value": "{scale.0-5}"
+            "$value": "{scale.0-25}"
           },
           "x": {
             "$type": "number",
-            "$value": "{scale.0-75}"
+            "$value": "{scale.0-625}"
           }
         },
         "border": {
@@ -6881,11 +6881,11 @@
           "padding": {
             "y": {
               "$type": "number",
-              "$value": "{scale.0-5}"
+              "$value": "{scale.0-25}"
             },
             "x": {
               "$type": "number",
-              "$value": "{scale.0-75}"
+              "$value": "{scale.0-625}"
             }
           },
           "font": {
@@ -6898,7 +6898,7 @@
         "icon": {
           "size": {
             "$type": "number",
-            "$value": "{scale.0-875}"
+            "$value": "{scale.0-75}"
           }
         }
       },
@@ -7525,7 +7525,7 @@
       "group": {
         "offset": {
           "$type": "number",
-          "$value": "{scale.neg-0-75}"
+          "$value": "{scale.neg-0-625}"
         },
         "border": {
           "color": {
@@ -7546,13 +7546,13 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{scale.1-5}"
+            "$value": "{scale.1-25}"
           }
         },
         "icon": {
           "size": {
             "$type": "number",
-            "$value": "{scale.1-5}"
+            "$value": "{scale.1-25}"
           }
         },
         "group": {
@@ -7586,7 +7586,7 @@
         "group": {
           "offset": {
             "$type": "number",
-            "$value": "{scale.neg-1-5}"
+            "$value": "{scale.neg-1-25}"
           }
         }
       },
@@ -7600,7 +7600,7 @@
     "badge": {
       "height": {
         "$type": "number",
-        "$value": "{scale.1-5}"
+        "$value": "{scale.1-25}"
       },
       "padding": {
         "y": {
@@ -7609,7 +7609,7 @@
         },
         "x": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": "{scale.0-375}"
         }
       },
       "border": {
@@ -7621,7 +7621,7 @@
       "font": {
         "size": {
           "$type": "number",
-          "$value": "{scale.0-75}"
+          "$value": "{scale.0-625}"
         },
         "weight": {
           "$type": "number",
@@ -7631,7 +7631,7 @@
       "min": {
         "width": {
           "$type": "number",
-          "$value": "{scale.1-5}"
+          "$value": "{scale.1-25}"
         }
       },
       "dot": {
@@ -7643,36 +7643,36 @@
       "sm": {
         "height": {
           "$type": "number",
-          "$value": "{scale.1-25}"
+          "$value": "{scale.1-125}"
         },
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{scale.0-625}"
+            "$value": "{scale.0-5}"
           }
         },
         "min": {
           "width": {
             "$type": "number",
-            "$value": "{scale.1-25}"
+            "$value": "{scale.1-125}"
           }
         }
       },
       "lg": {
         "height": {
           "$type": "number",
-          "$value": "{scale.1-75}"
+          "$value": "{scale.1-5}"
         },
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{scale.0-875}"
+            "$value": "{scale.0-75}"
           }
         },
         "min": {
           "width": {
             "$type": "number",
-            "$value": "{scale.1-75}"
+            "$value": "{scale.1-5}"
           }
         }
       },
@@ -7901,7 +7901,7 @@
       "body": {
         "padding": {
           "$type": "number",
-          "$value": "{scale.1-25}"
+          "$value": "{scale.1-125}"
         },
         "gap": {
           "$type": "number",
@@ -8543,7 +8543,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.2}"
+          "$value": "{scale.1-5}"
         },
         "color": {
           "$type": "color",
@@ -10109,7 +10109,7 @@
             },
             "x": {
               "$type": "number",
-              "$value": "{scale.0-5}"
+              "$value": "{scale.0-375}"
             }
           }
         }
@@ -10133,7 +10133,7 @@
           "padding": {
             "y": {
               "$type": "number",
-              "$value": "{scale.0-5}"
+              "$value": "{scale.0-375}"
             },
             "x": {
               "$type": "number",
@@ -11276,7 +11276,7 @@
         "min": {
           "width": {
             "$type": "number",
-            "$value": "{scale.2-5}"
+            "$value": "{scale.2-25}"
           }
         }
       }
@@ -12375,11 +12375,11 @@
           "padding": {
             "y": {
               "$type": "number",
-              "$value": "{scale.0-625}"
+              "$value": "{scale.0-5}"
             },
             "x": {
               "$type": "number",
-              "$value": "{scale.0-875}"
+              "$value": "{scale.0-75}"
             }
           }
         },
@@ -12387,22 +12387,22 @@
           "padding": {
             "y": {
               "$type": "number",
-              "$value": "{scale.0-375}"
+              "$value": "{scale.0-25}"
             },
             "x": {
               "$type": "number",
-              "$value": "{scale.0-625}"
+              "$value": "{scale.0-5}"
             }
           }
         },
         "padding": {
           "y": {
             "$type": "number",
-            "$value": "{scale.0-5}"
+            "$value": "{scale.0-375}"
           },
           "x": {
             "$type": "number",
-            "$value": "{scale.0-75}"
+            "$value": "{scale.0-625}"
           }
         }
       },
@@ -13063,11 +13063,11 @@
       "padding": {
         "y": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": "{scale.0-375}"
         },
         "x": {
           "$type": "number",
-          "$value": "{scale.1}"
+          "$value": "{scale.0-875}"
         }
       },
       "border": {
@@ -13084,11 +13084,11 @@
           },
           "width": {
             "$type": "number",
-            "$value": "{scale.2-5}"
+            "$value": "{scale.2-25}"
           },
           "height": {
             "$type": "number",
-            "$value": "{scale.2-5}"
+            "$value": "{scale.2-25}"
           },
           "color": {
             "$type": "color",
@@ -13155,7 +13155,7 @@
               "max": {
                 "width": {
                   "$type": "number",
-                  "$value": "{scale.2-5}"
+                  "$value": "{scale.2-25}"
                 }
               }
             }
@@ -13181,7 +13181,7 @@
             },
             "x": {
               "$type": "number",
-              "$value": "{scale.1-125}"
+              "$value": "{scale.1}"
             }
           }
         }
@@ -13247,7 +13247,7 @@
         },
         "padding": {
           "$type": "number",
-          "$value": "{scale.1-125}"
+          "$value": "{scale.1}"
         },
         "border": {
           "color": {
@@ -13517,7 +13517,7 @@
       "arrow": {
         "offset": {
           "$type": "number",
-          "$value": "{scale.1-25}"
+          "$value": "{scale.1-125}"
         }
       },
       "content": {
@@ -13534,7 +13534,7 @@
       },
       "height": {
         "$type": "number",
-        "$value": "{scale.1-25}"
+        "$value": "{scale.1-125}"
       },
       "border": {
         "radius": {
@@ -13568,11 +13568,11 @@
     "radiobutton": {
       "width": {
         "$type": "number",
-        "$value": "{scale.1-25}"
+        "$value": "{scale.1-125}"
       },
       "height": {
         "$type": "number",
-        "$value": "{scale.1-25}"
+        "$value": "{scale.1-125}"
       },
       "background": {
         "$type": "color",
@@ -13677,7 +13677,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.0-75}"
+          "$value": "{scale.0-625}"
         },
         "checked": {
           "color": {
@@ -13706,7 +13706,7 @@
         "lg": {
           "size": {
             "$type": "number",
-            "$value": "{scale.1}"
+            "$value": "{scale.0-75}"
           }
         }
       },
@@ -13723,11 +13723,11 @@
       "lg": {
         "width": {
           "$type": "number",
-          "$value": "{scale.1-5}"
+          "$value": "{scale.1-25}"
         },
         "height": {
           "$type": "number",
-          "$value": "{scale.1-5}"
+          "$value": "{scale.1-25}"
         }
       }
     },
@@ -14723,7 +14723,7 @@
         },
         "x": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": "{scale.0-375}"
         }
       }
     },
@@ -15937,11 +15937,11 @@
       "padding": {
         "y": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": "{scale.0-375}"
         },
         "x": {
           "$type": "number",
-          "$value": "{scale.0-75}"
+          "$value": "{scale.0-625}"
         }
       },
       "border": {

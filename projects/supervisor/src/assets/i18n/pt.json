@@ -47,7 +47,7 @@
       "attended": "Atendidas",
       "rejected": "Rejeitadas",
       "transferred": "Transferidas",
-      "avg_time": "T. médio",
+      "avg_time": "T.\u00a0médio",
       "totals": "Totais"
     },
     "group_panel": {
@@ -219,7 +219,7 @@
       "col_conversation": "Conversa",
       "col_time": "Tempo",
       "col_agent": "Agente",
-      "col_in_state": "Neste estado"
+      "col_in_state": "Neste\u00a0estado"
     },
     "assistant": {
       "title_new": "Criar widget",
@@ -989,11 +989,18 @@
     },
     "delete_gate": "Eliminar…",
     "no_changes": "Não há alterações para guardar",
+    "unsaved_changes": "Alterações não salvas",
+    "summary": "Resumo",
+    "summary_missing": "Em falta: {{items}}",
+    "summary_missing_name": "nome",
+    "summary_ready": "Pronto para criar",
+    "summary_of": "{{value}} de {{total}}",
     "actions": "Ações",
     "select_row": "Selecionar {{name}}",
     "select_all": "Selecionar tudo",
     "form_index_aria": "Índice do formulário",
-    "filter_count": "{{shown}} de {{total}}"
+    "filter_count": "{{shown}} de {{total}}",
+    "next": "Seguinte"
   },
   "topbar": {
     "go_to_dashboard": "Ir ao dashboard",
@@ -1020,7 +1027,7 @@
     "conversaciones": "Conversas",
     "estadisticas": "Estatísticas",
     "informes": "Relatórios de Dados",
-    "analizador": "Analisador de Fluxo",
+    "analizador": "Análise de Fluxo",
     "scc": "SCC",
     "vui_designer": "VUI Designer",
     "centro_control": "Centro de controlo",
@@ -1036,8 +1043,7 @@
     "aed": "Contact Center",
     "integrations": "Integrações",
     "system": "Sistema",
-    "nav_aria": "Navegação principal",
-    "anchor_aria": "Fixar o menu"
+    "nav_aria": "Navegação principal"
   },
   "labels": {
     "breadcrumb": "Etiquetas",
@@ -1219,6 +1225,7 @@
     "agendas": {
       "title": "Agendas",
       "singular": "agenda",
+      "create_title": "Nova agenda",
       "plural": "agendas",
       "numbers": "Números",
       "name_placeholder": "Ex: Vendas Nacional",
@@ -1227,6 +1234,7 @@
     "horarios": {
       "title": "Horários",
       "singular": "horário",
+      "create_title": "Novo horário",
       "plural": "horários",
       "schedule": "Horário",
       "timezone": "Fuso horário",
@@ -1237,6 +1245,7 @@
     "tipificaciones": {
       "title": "Tipificações",
       "singular": "tipificação",
+      "create_title": "Nova tipificação",
       "plural": "tipificações",
       "code": "Código",
       "category": "Categoria",
@@ -1247,6 +1256,7 @@
     "variables": {
       "title": "Variáveis",
       "singular": "variável",
+      "create_title": "Nova variável",
       "plural": "variáveis",
       "key": "Chave",
       "default": "Valor padrão",
@@ -1263,6 +1273,7 @@
     "entidades": {
       "title": "Entidades",
       "singular": "entidade",
+      "create_title": "Nova entidade",
       "plural": "entidades",
       "type": "Tipo",
       "values": "Valores",
@@ -1279,6 +1290,7 @@
     "intenciones": {
       "title": "Intenções",
       "singular": "intenção",
+      "create_title": "Nova intenção",
       "plural": "intenções",
       "category": "Categoria",
       "examples": "Exemplos",
@@ -1289,6 +1301,7 @@
     "reglas_ia": {
       "title": "Regras IA",
       "singular": "regra IA",
+      "create_title": "Nova regra IA",
       "plural": "regras IA",
       "condition": "Condição",
       "action": "Ação",
@@ -1305,6 +1318,7 @@
     "entidades_ia": {
       "title": "Entidades IA",
       "singular": "entidade IA",
+      "create_title": "Nova entidade IA",
       "plural": "entidades IA",
       "type": "Tipo",
       "model": "Modelo",
@@ -1315,6 +1329,7 @@
     "clasificacion_ia": {
       "title": "Classificação IA",
       "singular": "classificação IA",
+      "create_title": "Nova classificação IA",
       "plural": "classificações IA",
       "model": "Modelo",
       "categories": "Categorias",
@@ -1339,10 +1354,10 @@
       "status": "Estado"
     },
     "type": {
+      "superadmin": "Superadmin",
       "administrator": "Administrador",
-      "supervisor": "Supervisor",
-      "agent": "Agente",
-      "viewer": "Visualizador"
+      "supervisor_online": "Supervisor online",
+      "supervisor_offline": "Supervisor offline"
     },
     "status": {
       "active": "Ativo",
@@ -1352,18 +1367,27 @@
       "dashboard": "Dashboard",
       "services": "Serviços",
       "ai_node": "Nó IA",
-      "groups_agents_typifications": "Grupos / Agentes / Tipificações",
+      "typifications": "Tipificações",
       "campaigns": "Campanhas",
       "conversations": "Conversas",
       "stats": "Estatísticas",
       "stats_data_reports": "Relatórios de Dados",
-      "stats_flow_analyzer": "Analisador de Fluxo",
+      "stats_flow_analyzer": "Análise de Fluxo",
       "vui_designer": "VUI Designer",
-      "users": "Usuários"
+      "users": "Usuários",
+      "groups": "Grupos",
+      "agents": "Agentes",
+      "repositories": "Repositórios",
+      "aed": "Contact Center",
+      "system": "Sistema"
     },
     "permission": {
       "vui_designer_management": "Gestão VUI Designer",
       "users_management": "Gestão de usuários",
+      "groups_management": "Gestão de grupos",
+      "agents_management": "Gestão de agentes",
+      "repositories_management": "Gestão de repositórios",
+      "aed_management": "Gestão do Contact Center",
       "recording_management": "Gestão de gravações",
       "transcriptions_management": "Gestão de transcrições",
       "spy_on_conversations": "Espionar conversas"
@@ -1382,7 +1406,8 @@
         "permissions_hint": "Ações avançadas",
         "services": "Serviços atribuídos",
         "services_hint": "Serviços VUI sob supervisão",
-        "access": "Acesso"
+        "access": "Acesso",
+        "access_hint": "O que vê e o que pode fazer"
       },
       "fields": {
         "name": "Nome completo",
@@ -1390,9 +1415,11 @@
         "identifier": "Identificador interno",
         "identifier_hint": "Se deixar vazio será gerado automaticamente ao salvar.",
         "type": "Tipo de usuário",
+        "type_hint": "Cada tipo traz o seu modelo de acesso: ao escolhê-lo, as suas caixas são marcadas em Acesso.",
         "status": "Estado",
         "active": "Ativo",
-        "active_hint": "Pode iniciar sessão e operar"
+        "active_hint": "Pode iniciar sessão e operar",
+        "email_empty": "Sem email"
       },
       "danger_zone_description": "Eliminar este usuário revoga seu acesso ao painel e apaga suas permissões. A ação não pode ser desfeita.",
       "duplicate_title": "Duplicar usuário",
@@ -1400,6 +1427,21 @@
       "duplicate_hint": "Duplicando «{{source}}» · preencha os campos obrigatórios e salve",
       "headline": {
         "type": "Tipo"
+      },
+      "create_submit": "Criar usuário",
+      "template": {
+        "label": "Modelo: {{type}}",
+        "changes_one": "{{count}} alteração",
+        "changes_other": "{{count}} alterações",
+        "reset": "Voltar ao modelo",
+        "apply_title": "Aplicar o modelo {{type}}?",
+        "apply_body_one": "Altera {{count}} caixa em Acesso. Se a mantiver, o tipo muda na mesma e Acesso fica como está.",
+        "apply_body_other": "Altera {{count}} caixas em Acesso. Se as mantiver, o tipo muda na mesma e Acesso fica como está.",
+        "apply": "Aplicar o modelo",
+        "keep": "Manter as caixas"
+      },
+      "summary": {
+        "missing_email": "email"
       }
     },
     "errors": {
@@ -1415,9 +1457,7 @@
     },
     "empty": {
       "title": "Ainda sem usuários",
-      "body": "Crie seu primeiro usuário para dar acesso ao painel.",
-      "title_filtered": "Nenhum usuário encontrado",
-      "body_filtered": "Ajuste a busca ou limpe os filtros para ver mais resultados."
+      "body": "Crie seu primeiro usuário para dar acesso ao painel."
     },
     "entity_plural": "usuários",
     "export": {
@@ -1438,8 +1478,7 @@
     "page_title": "Grupos",
     "create_button": "Novo grupo",
     "create_dialog": {
-      "subtitle": "O que o cabeçalho da ficha vai mostrar. Canais e agentes, no passo seguinte.",
-      "duplicate_subtitle": "Copia os agentes, os canais e as definições de «{{source}}». O telefone associado, não.",
+      "duplicate_subtitle": "Copia os agentes, os canais e as definições de «{{source}}». O telefone de saída, não.",
       "copy_name": "{{name}} (cópia)"
     },
     "search_placeholder": "Buscar grupo por nome, ID, telefone, prioridade ou estratégia...",
@@ -1451,12 +1490,16 @@
       "phone": "Telefone",
       "channels": "Canais",
       "priority": "Prioridade",
-      "strategy": "Estratégia",
       "services": "Serviços",
       "agents": "Agentes",
       "agents_count": "{{count}} agentes",
       "services_count": "{{count}} serviços",
-      "services_count_one": "1 serviço"
+      "services_count_one": "1 serviço",
+      "assign": "Atribuir",
+      "assign_aria": "Atribuir agentes a {{name}}",
+      "assign_column": "Atribuir agentes",
+      "strategy_phone": "Estratégia de telefone",
+      "strategy_chat": "Estratégia de chat"
     },
     "priority": {
       "low": "Baixa",
@@ -1466,9 +1509,10 @@
     },
     "channel": {
       "phone": "Telefone",
-      "chat": "Chat",
+      "chat": "Chat web",
       "whatsapp": "WhatsApp",
-      "email": "Email"
+      "email": "Email",
+      "chat_family": "Chat"
     },
     "form": {
       "create_title": "Novo grupo",
@@ -1480,13 +1524,17 @@
         "channels": "Canais",
         "channels_hint": "Tipos de contato",
         "strategy": "Estratégia",
-        "agents": "Agentes atribuídos",
-        "distribution": "Canais e estratégia",
+        "agents": "Agentes",
+        "distribution": "Distribuição e filas",
         "channels_agents": "Canais e agentes",
         "resources": "Recursos",
-        "announcements": "Anúncios e áudio",
         "announcements_needs_phone": "Só com o canal Telefone: aqui configura-se o que soa na chamada.",
-        "advanced": "Avançado"
+        "advanced": "Avançado",
+        "general": "Geral",
+        "general_hint": "Nome, prioridade e canais",
+        "distribution_hint": "Como cada canal distribui e coloca em fila",
+        "resources_hint": "O que se atribui a partir de Repositórios",
+        "agents_hint": "Quem atende e por quais canais"
       },
       "assigned": {
         "query_placeholder": "Buscar agente…",
@@ -1494,43 +1542,49 @@
         "empty": "Escolha-os em «Adicionar agentes», no canto superior direito.",
         "no_results": "Nenhum agente atribuído corresponde ao filtro.",
         "col_agent": "Agente",
-        "col_active": "Habilitado",
         "toggle_all_channel": "Ativar/desativar {{channel}} em todos os visíveis",
-        "active_aria": "{{name}} habilitado neste grupo",
         "remove_aria": "Remover {{name}} do grupo",
         "warn_no_channels": "Habilitado, mas sem canais atribuídos",
         "add_placeholder": "Adicionar agentes…",
         "add_aria": "Adicionar agente ao grupo",
         "no_channels_warn": "{{count}} sem canal",
-        "bulk_resume": "Habilitar",
-        "bulk_pause": "Desabilitar",
         "bulk_unassign": "Remover do grupo",
-        "col_level": "Nível",
-        "level_aria": "Nível de {{name}}"
+        "col_level": "Nível · {{channel}}",
+        "level_aria": "Nível de {{name}} — {{channel}}",
+        "paused": "Em pausa",
+        "last_channel_hint": "Tem de atender pelo menos um canal. Para o tirar do grupo, clique no caixote do lixo da sua linha.",
+        "last_channel_aria": "{{name}} — {{channel}}: único canal; para o tirar do grupo, clique no caixote do lixo da sua linha"
       },
       "fields": {
         "name": "Nome",
-        "phone": "Telefone associado",
+        "phone": "Telefone de saída",
         "priority": "Prioridade",
+        "priority_hint": "A prioridade com que entram as chamadas do grupo. Só vale para as recebidas.",
         "phone_strategy": "Estratégia (telefone)",
         "chat_strategy": "Estratégia (chat)",
-        "phone_hint": "O número que os clientes veem quando um agente do grupo liga. Escolha um ou escreva-o.",
+        "phone_hint": "O número que os clientes veem quando um agente do grupo liga.",
+        "phone_placeholder": "Escolha um número",
         "strategy": "Estratégia",
         "ring_all": "Toca em",
         "ring_all_suffix": "agentes ao mesmo tempo",
         "ring_all_summary": "{{count}} ao mesmo tempo",
         "sub_strategy": "Dentro de cada nível",
-        "levels_hint": "Escolha o nível de cada agente na tabela abaixo. O nível 1 recebe primeiro.",
-        "exclusive_hint": "Configura-se na árvore do IVR.",
         "skills_unavailable": "Precisa de skills nos agentes",
         "typification": "Tipificação",
         "typification_new": "Nova tipificação",
         "typification_none": "Sem tipificação",
-        "typification_option": "{{name}} ({{count}})",
         "typification_hint": "Com tipificação, o agente tem de tipificar antes de fechar a conversa. Criam-se em Repositórios.",
         "agenda_new": "Nova agenda",
         "template_new": "Novo modelo",
         "label_new": "Nova etiqueta"
+      },
+      "strategy_help": {
+        "balanced": "Distribui as conversas de forma equilibrada entre os agentes.",
+        "fewest_conversations": "Vai para o agente que atendeu menos conversas.",
+        "longest_idle": "Vai para o agente disponível que está há mais tempo sem atividade.",
+        "levels": "Primeiro, os do nível 1 que estejam disponíveis e livres. O nível de cada agente escolhe-se em Agentes.",
+        "ring_all": "Toca ao mesmo tempo em vários agentes.",
+        "exclusive": "Vai para o agente que o cliente marca no IVR. Configura-se na árvore do IVR, depois de criar o grupo."
       },
       "assigned_count": "Atribuídos ({{count}})",
       "available_agents": "Disponíveis",
@@ -1540,8 +1594,9 @@
       "remove_agent": "Remover agente",
       "cascade": {
         "title": "Você vai remover canais",
-        "body": "Isto desativará {{channels}} para {{count}} agentes atribuídos a este grupo. Continuar?",
-        "confirm": "Sim, remover"
+        "body": "{{count}} agentes deste grupo perdem {{channels}}. Continuar?",
+        "confirm": "Sim, remover",
+        "body_orphaned": "{{count}} agentes deste grupo perdem {{channels}}, e {{orphaned}} ficam sem nenhum canal e saem do grupo. Continuar?"
       },
       "danger_zone_description": "Eliminar este grupo o retira das regras e rotas que o referenciam. A ação não pode ser desfeita.",
       "duplicate_title": "Duplicar grupo",
@@ -1550,7 +1605,6 @@
       "announcements": {
         "audio_title": "Locuções",
         "hold_music": "Música de espera",
-        "hold_music_info": "A música de fundo enquanto a pessoa espera na fila. Sem ficheiro, toca a predefinida do sistema.",
         "default_music": "Música predefinida",
         "use_default": "Usar a predefinida",
         "queue_id": "Identificador do grupo",
@@ -1573,8 +1627,7 @@
         "outbound_audio": "Áudio de saída",
         "outbound_audio_info": "Áudio para as chamadas que o grupo faz para fora, não as que recebe. O que se ouve e quando, pendente de confirmar com o desenvolvimento.",
         "voice": "Voz dos anúncios",
-        "voice_info": "A voz que lê os textos que colocou em «Texto para voz». Se não usar essa opção em lado nenhum, este campo não faz nada.",
-        "voice_hint": "A que lê as locuções de texto para voz.",
+        "voice_hint": "A voz sintética que lê os anúncios do grupo.",
         "notices_title": "Avisos",
         "avg_wait": "Anunciar o tempo médio de espera",
         "avg_wait_info": "Diz ao cliente quanto tempo costuma durar a espera. O número escreve-o você, o sistema não o calcula.",
@@ -1588,23 +1641,21 @@
       },
       "advanced": {
         "defaults_hint": "Começa com os valores predefinidos dos grupos.",
-        "queue_title": "Fila e tempos",
         "queue_size": "Tamanho da fila",
         "queue_fixed": "Fixo",
         "queue_per_agent": "Por agente ligado",
-        "queue_fixed_hint": "No máximo {{count}} conversas em fila.",
-        "queue_per_agent_hint": "No máximo {{count}} conversas em fila por cada agente ligado.",
+        "queue_fixed_hint": "No máximo {{count}} conversas em espera no total, haja os agentes que houver.",
+        "queue_per_agent_hint": "Varia com os agentes ligados: {{count}} conversas em fila por cada um.",
         "max_queue_wait": "Tempo máximo de espera na fila",
+        "max_queue_wait_hint": "Se ninguém a atender neste tempo, a conversa sai do grupo e passa para o destino seguinte, que se escolhe no VUI Designer.",
         "transfer": "Tempo de transferência",
         "transfer_hint": "Tempo máximo para entregar a conversa ao destino.",
         "service_level": "Tempo da % de serviço",
-        "service_level_hint": "Contam como atendidas a tempo as que se atendem antes deste tempo.",
+        "service_level_hint": "A % de serviço conta as conversas atendidas neste tempo ou menos.",
         "wrap_up": "Tempo entre chamadas",
         "wrap_up_hint": "O que o agente espera antes de receber a chamada seguinte.",
-        "overflow": "Transbordar se não houver agentes ativos",
-        "overflow_hint": "As chamadas passam para o nó seguinte da árvore.",
-        "overflow_session": "Transbordar sessão",
-        "overflow_session_hint": "Redireciona as sessões ativas ao ultrapassar o limite.",
+        "overflow": "Transbordar se todos os agentes estiverem inativos",
+        "overflow_hint": "Os contactos passam para o destino seguinte, que não se escolhe aqui.",
         "card_opening": "Abertura da ficha",
         "card_embedded": "Incorporada",
         "card_new_window": "Nova janela",
@@ -1613,15 +1664,13 @@
         "card_height": "Altura",
         "chat_config_title": "Configuração de chat",
         "whatsapp_number": "Número de WhatsApp",
-        "whatsapp_number_info": "O número onde chegam as mensagens de WhatsApp deste grupo. É o que o cliente vê se contactar por aí.",
         "chat_rating": "Pedir avaliação ao fechar o chat",
         "chat_rating_info": "Ao terminar a conversa, pergunta-se ao cliente se ficou satisfeito com o atendimento.",
         "chat_rating_hint": "O cliente vê uma pergunta curta de avaliação logo após a despedida.",
         "allowed_domains": "Domínios permitidos",
         "allowed_domains_placeholder": "exemplo.com",
-        "allowed_domains_info": "Em que sites se pode inserir o script de chat deste grupo. Sem nenhum adicionado, funciona em qualquer site.",
         "allowed_domains_add": "Adicionar",
-        "allowed_domains_hint": "Evita que outro site use o seu widget de chat sem permissão. Escreva o domínio e clique em Adicionar.",
+        "allowed_domains_hint": "Os sites em que se pode inserir o chat deste grupo; sem nenhum, em qualquer site. Escreva o domínio e clique em Adicionar.",
         "script_title": "Script de chat",
         "script_hint": "Cole este código no cabeçalho do site onde quer o chat.",
         "script_copy": "Copiar código",
@@ -1632,23 +1681,58 @@
         "paused": "Desabilitado",
         "no_channels": "Sem canais",
         "priority": "Prioridade: {{value}}",
-        "no_phone": "Sem telefone associado"
-      }
-    },
-    "defaults": {
-      "heading": "Valores predefinidos",
-      "breadcrumb": "Valores predefinidos",
-      "button": "Valores predefinidos",
-      "hint": "Cada grupo novo começa com estes valores. Depois mudam-se na ficha do grupo.",
-      "routing_title": "Distribuição",
-      "strategy_hint": "Níveis, Ring All, Skills e Agente exclusivo escolhem-se na ficha de cada grupo, onde se configuram.",
-      "card_opening_type": "Tipo",
-      "toast_saved": "Valores predefinidos guardados"
+        "no_phone": "Sem telefone de saída",
+        "title": "Resumo",
+        "agents_active": "Agentes ativos",
+        "paused_count": "{{count}} em pausa",
+        "no_agents": "Sem agentes",
+        "routing": "Distribuição",
+        "outbound": "Saída",
+        "no_number": "Sem número",
+        "resources": "Recursos",
+        "missing_channels": "canais",
+        "missing_phone": "telefone de saída"
+      },
+      "channels": {
+        "title": "Canais",
+        "hint": "Pelo menos um. O que marcar aqui decide o que configura em Distribuição e filas."
+      },
+      "distribution": {
+        "common_title": "Regras comuns",
+        "common_hint": "Aplicam-se a todos os canais do grupo.",
+        "routing": "Distribuição",
+        "queue": "Fila",
+        "queue_messages": "Mensagens na fila",
+        "webchat_access": "Chat web · acesso",
+        "whatsapp_number": "WhatsApp · número",
+        "email_note": "O email não tem estratégia nem fila próprias: as mensagens chegam à caixa do grupo.",
+        "inactive": "{{channel}} não está ativo · ative-o em Geral",
+        "jump_label": "Ir para",
+        "jump_aria": "Canais desta seção"
+      },
+      "chat": {
+        "close_on_inactivity": "Expirar a sessão",
+        "close_on_inactivity_hint": "Se o cliente deixar de escrever, a sessão expira e a conversa fecha-se passado este tempo.",
+        "inactivity_minutes": "Minutos sem atividade",
+        "messages_hint": "O que se escreve ao cliente enquanto espera. Se deixar um vazio, não é enviado.",
+        "message_on_enter": "Ao entrar na fila",
+        "message_waiting": "Durante a espera",
+        "message_no_agents": "Sem agentes disponíveis",
+        "message_on_enter_placeholder": "Ex.: Olá, já o atendemos.",
+        "message_waiting_placeholder": "Ex.: Continua na fila. Obrigado por esperar.",
+        "message_no_agents_placeholder": "Ex.: Agora não há ninguém disponível. Escrevemos-lhe assim que pudermos."
+      },
+      "resources": {
+        "client_card": "Ficha de cliente",
+        "client_card_hint": "A que o agente vê ao receber um contacto deste grupo."
+      },
+      "create_submit": "Criar grupo"
     },
     "errors": {
       "name_required": "O nome é obrigatório",
       "channels_required": "Selecione pelo menos um canal",
-      "name_taken": "Já existe um grupo com este nome"
+      "name_taken": "Já existe um grupo com este nome",
+      "phone_required": "O telefone de saída é obrigatório"
     },
     "toasts": {
       "created": "Grupo \"{{name}}\" criado",
@@ -1659,9 +1743,7 @@
     },
     "empty": {
       "title": "Ainda sem grupos",
-      "body": "Crie seu primeiro grupo para começar a rotear interações.",
-      "title_filtered": "Nenhum grupo encontrado",
-      "body_filtered": "Ajuste a busca ou limpe os filtros para ver mais resultados."
+      "body": "Crie seu primeiro grupo para começar a rotear interações."
     },
     "entity_plural": "grupos",
     "export": {
@@ -1669,15 +1751,24 @@
       "name": "Nome",
       "phone": "Telefone",
       "priority": "Prioridade",
-      "strategy": "Estratégia",
       "services": "Serviços",
       "channels": "Canais",
       "agent_count": "Nº agentes",
-      "sheet": "Grupos"
+      "sheet": "Grupos",
+      "strategy_phone": "Estratégia de telefone",
+      "strategy_chat": "Estratégia de chat"
     },
     "rename_placeholder": "Nome do grupo",
     "rename_aria": "Renomear {{name}}",
-    "bulk_edit_title": "Aplicar alteração a {{count}} grupo(s)"
+    "bulk_edit_title": "Aplicar alteração a {{count}} grupo(s)",
+    "agents_panel": {
+      "title": "Agentes · {{name}}",
+      "assigned": "Atribuídos: {{count}}",
+      "unsaved": "Por guardar: {{count}}",
+      "save_count": "Salvar ({{count}})",
+      "saved": "Agentes de \"{{name}}\" atualizados"
+    },
+    "bulk_edit_none": "{{field}}: nenhum dos grupos selecionados tem esse canal"
   },
   "agents": {
     "page_title": "Agentes",
@@ -1702,11 +1793,6 @@
       "cuscare": "CusCare",
       "cuscare_carrier": "CusCare Carrier",
       "admin_cuscare": "Admin CusCare"
-    },
-    "channel": {
-      "phone": "Telefone",
-      "chat": "Chat",
-      "email": "Email"
     },
     "ext": {
       "phone": "Tel",
@@ -1749,9 +1835,11 @@
         "permissions": "Permissões",
         "permissions_hint": "Capacidades do agente",
         "advanced": "Avançado",
-        "advanced_hint": "Etiquetas, comportamento, idioma",
+        "advanced_hint": "Comportamento, integração e sessão",
         "resources": "Recursos",
-        "identity": "Identidade"
+        "identity": "Identidade",
+        "groups_hint": "Onde atende e por que canais",
+        "resources_hint": "O que lhe é atribuído a partir de Repositórios"
       },
       "advanced": {
         "labels": {
@@ -1798,6 +1886,7 @@
         "name": "Nome",
         "type": "Tipo de agente",
         "extension": "Ramal",
+        "extension_hint": "Tel: o agente atende as chamadas no celular. WebRTC: no navegador, com o Smart Contact Agent.",
         "extension_placeholder": "Selecione um ramal disponível",
         "extension_empty": "Sem ramal",
         "email_empty": "Sem email",
@@ -1858,7 +1947,13 @@
         "none": "Nenhum",
         "selected_many": "{0} selecionados",
         "manage_link": "Gerenciar em Repositórios"
-      }
+      },
+      "summary": {
+        "no_groups": "Sem grupos",
+        "groups_active": "Grupos ativos",
+        "missing_extension": "ramal"
+      },
+      "create_submit": "Criar agente"
     },
     "toasts": {
       "created": "Agente \"{{name}}\" criado",
@@ -1876,9 +1971,7 @@
     },
     "empty": {
       "title": "Ainda sem agentes",
-      "body": "Crie seu primeiro agente para começar a receber chamadas e conversas.",
-      "title_filtered": "Nenhum agente encontrado",
-      "body_filtered": "Ajuste a busca ou limpe os filtros para ver mais resultados."
+      "body": "Crie seu primeiro agente para começar a receber chamadas e conversas."
     },
     "entity_plural": "agentes",
     "export": {
@@ -1903,11 +1996,8 @@
       "title": "Contact Center",
       "version": "SmartContact · v2.4.0",
       "servicio_label": "Geral",
-      "servicio_hint": "Definições do serviço",
       "agentes_label": "Agentes",
-      "agentes_hint": "Parâmetros padrão",
-      "grupos_label": "Grupos",
-      "grupos_hint": "Parâmetros padrão"
+      "grupos_label": "Grupos"
     },
     "aed": {
       "title": "Contact Center",
@@ -2019,29 +2109,7 @@
         },
         "agentes": {
           "heading": "Agentes",
-          "comunicaciones": {
-            "title": "Comunicações",
-            "col_transferencias": "Transferências",
-            "col_permisos": "Permissões",
-            "row_fijos": "Fixos",
-            "row_moviles": "Móveis",
-            "row_internacionales": "Internacionais",
-            "row_numeracionEspecial": "Numeração especial",
-            "row_llamadasInternas": "Chamadas internas"
-          },
-          "config": {
-            "title": "Configuração",
-            "activacion_label": "Ativação/Desativação por grupo de serviço Contact Center",
-            "gestion_label": "Gestão de dispositivos de trabalho em WebRTC",
-            "externos_label": "Utilização de dispositivos externos"
-          },
-          "url": {
-            "title": "URL incorporado no posto do agente",
-            "url_label": "URL",
-            "url_placeholder": "URL",
-            "titulo_label": "Título (opcional)",
-            "titulo_placeholder": "A minha ferramenta"
-          },
+          "hint": "Cada agente novo começa com estes valores. Depois mudam-se na ficha do agente.",
           "toast": {
             "saved": "Parâmetros dos agentes guardados"
           },
@@ -2049,26 +2117,8 @@
         },
         "grupos": {
           "heading": "Grupos",
-          "params": {
-            "title": "Parâmetros",
-            "estrategia": "Estratégia de distribuição de conversas",
-            "prioridad": "Prioridade do grupo",
-            "voz": "Voz",
-            "desbordar": "Transbordar conversas quando não há agentes disponíveis",
-            "tipo_cola": "Tipo de fila de espera",
-            "capacidad_cola": "Máximo de conversas na fila",
-            "tiempo_max": "Tempo máximo de espera na fila",
-            "tiempo_transfer": "Tempo máximo de transferência",
-            "placeholder": "Selecionar",
-            "input_placeholder": "Escrever",
-            "segundos": "segundos"
-          },
-          "apertura": {
-            "title": "Abertura da ficha",
-            "tipo_label": "Tipo",
-            "tamano_label": "Tamanho",
-            "tamano_suffix": "píxeis"
-          },
+          "hint": "Cada grupo novo começa com estes valores. Depois mudam-se na ficha do grupo.",
+          "strategy_hint": "Níveis, Ring All, Skills e Agente exclusivo escolhem-se na ficha de cada grupo, onde se configuram.",
           "toast": {
             "saved": "Parâmetros dos grupos guardados"
           },
@@ -2160,6 +2210,11 @@
       "data": {
         "title": "Dados",
         "hint": "(protótipo)",
+        "set_label": "Conjunto de dados",
+        "set_hint": "Os mesmos dados com outros textos: editorial, com nomes de negócio para mostrá-lo; tortura, com textos no limite para ver onde quebra. Fica salvo até você fechar a aba.",
+        "set_demo": "Demo",
+        "set_editorial": "Editorial",
+        "set_tortura": "Tortura",
         "reset_label": "Restaurar dados de fábrica",
         "reset_hint": "Apaga as alterações que você fez em agentes, grupos, usuários, etiquetas, modelos e repositórios, e devolve o aplicativo ao seu estado inicial. As preferências de tema e de colunas são mantidas.",
         "reset_button": "Restaurar",

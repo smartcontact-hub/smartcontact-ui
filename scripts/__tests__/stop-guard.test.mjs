@@ -15,6 +15,7 @@ import {
   motivoParteDeCierre,
   motivoSinEnrutar,
   necesitaVeredicto,
+  pantallasSinRevisar,
   ultimoMensaje,
 } from '../hooks/stop-guard.mjs';
 import { enrutar, pendientes, registrar, rutaRegistro } from '../hooks/correction-capture.mjs';
@@ -194,12 +195,13 @@ test('estadoDelArbol: la ruta del fichero modificado sale entera, sin comerse la
   assert.match(estadoDelArbol(dir).motivos.join(' '), /sin commitear \(seguido.txt\)/);
 });
 
-// De punta a punta por el proceso: es lo que Claude Code ejecuta de verdad.
+// De punta a punta por el proceso: es lo que Claude Code ejecuta de verdad. Sin `GIT_*`, porque el
+// hook mide con git el `cwd` de la entrada y, heredándolas, mediría el repositorio de verdad.
 function correrHook(entrada, projectDir) {
   const r = spawnSync(process.execPath, ['scripts/hooks/stop-guard.mjs'], {
     input: JSON.stringify(entrada),
     encoding: 'utf8',
-    env: { ...process.env, SC_CLAUDE_PROJECT_DIR: projectDir },
+    env: { ...SIN_GIT, SC_CLAUDE_PROJECT_DIR: projectDir },
   });
   assert.equal(r.status, 0, `el hook no puede petar: ${r.stderr}`);
   return r.stdout.trim() ? JSON.parse(r.stdout) : null;
@@ -282,4 +284,247 @@ test('y no vale cualquier herramienta de GitHub: leer el CI es leer el CI', () =
   assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__add_issue_comment']), true, 'comentar no es leer el CI');
   assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__create_pull_request']), true, 'abrir el PR tampoco');
   assert.equal(necesitaVeredicto(['git push origin main', 'mcp__github__search_code']), true);
+});
+
+// ── La revisión previa a enseñar una pantalla · añadido el 2026-09-27 (DD-123) ───────────────
+// El primer filtro visual de una pantalla no puede ser el usuario: si la sesión escribe una
+// plantilla u hoja del Supervisor, el cierre pide antes `npm run revision`.
+
+const evEscribe = (herramienta, ruta) =>
+  JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id: 'x', name: herramienta, input: { file_path: ruta } }] } });
+const HOJA = '/repo/projects/supervisor/src/styles/_forms.scss';
+const PLANTILLA = '/repo/projects/supervisor/src/app/features/auth/pages/login-page.component.html';
+
+test('pantallasSinRevisar: escribir una pantalla sin revisar después la deja pendiente', () => {
+  assert.deepEqual(pantallasSinRevisar(evEscribe('Edit', HOJA)), ['projects/supervisor/src/styles/_forms.scss']);
+  assert.deepEqual(
+    pantallasSinRevisar([evEscribe('Write', PLANTILLA), evEscribe('Edit', PLANTILLA)].join('\n')),
+    ['projects/supervisor/src/app/features/auth/pages/login-page.component.html'],
+    'la misma ruta cuenta una vez',
+  );
+});
+
+test('pantallasSinRevisar: la revisión DESPUÉS la salda; la de ANTES no', () => {
+  assert.deepEqual(pantallasSinRevisar([evEscribe('Edit', HOJA), ev('npm run revision -- login')].join('\n')), []);
+  assert.deepEqual(pantallasSinRevisar([evEscribe('Edit', HOJA), ev('npm run -s revision -- login')].join('\n')), []);
+  assert.deepEqual(
+    pantallasSinRevisar([ev('npm run revision -- login'), evEscribe('Edit', HOJA)].join('\n')),
+    ['projects/supervisor/src/styles/_forms.scss'],
+    'ROJO: se tocó después de revisar',
+  );
+});
+
+test('pantallasSinRevisar: lo que no es pantalla del Supervisor, o nombrar la revisión en un dato, no cuenta', () => {
+  assert.deepEqual(pantallasSinRevisar(evEscribe('Edit', '/repo/docs/DECISIONS.md')), []);
+  assert.deepEqual(pantallasSinRevisar(evEscribe('Edit', '/repo/projects/sc-docs/src/app/pages/patrones/patrones.component.html')), []);
+  assert.deepEqual(pantallasSinRevisar(evEscribe('Edit', '/repo/projects/supervisor/src/app/core/auth.service.ts')), []);
+  assert.deepEqual(
+    pantallasSinRevisar([evEscribe('Edit', HOJA), ev('grep -n "npm run revision" AGENTS.md')].join('\n')),
+    ['projects/supervisor/src/styles/_forms.scss'],
+    'leer sobre la revisión no es revisar',
+  );
+});
+
+test('Stop: una pantalla tocada sin revisión bloquea una vez; revisada, deja cerrar', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-stop-'));
+  const transcript = join(dir, 'sesion.jsonl');
+  const entrada = { transcript_path: transcript, session_id: 'S9', cwd: dir };
+  writeFileSync(transcript, [evEscribe('Edit', HOJA), evTexto('Listo.')].join('\n'));
+  const r = correrHook(entrada, dir);
+  assert.equal(r?.decision, 'block', 'ROJO: la pantalla iba a llegar al usuario sin revisión previa');
+  assert.match(r.reason, /npm run revision/);
+  assert.match(r.reason, /better-layout/);
+  assert.equal(correrHook({ ...entrada, stop_hook_active: true }, dir), null, 'a la segunda deja pasar');
+  writeFileSync(transcript, [evEscribe('Edit', HOJA), ev('npm run revision -- config/aed/servicio'), evTexto('Listo.')].join('\n'));
+  assert.equal(correrHook(entrada, dir), null, 'VERDE: revisada después del último cambio');
+});
+
+// ── El idioma del parte · añadido el 2026-09-28 ─────────────────────────────────────────────────
+// ROJO que motivó la pieza: tras un tramo largo de herramientas, una sesión cerró con las etiquetas
+// del parte en castellano y el contenido en inglés. Las líneas se reconocen por su etiqueta, así que
+// el parte pasaba entero, y el usuario lee en castellano. Hasta aquí, un parte así solo caía si decía
+// «yes» en vez de «sí», y el aviso pedía cambiar esa palabra: con «sí», el resto en inglés pasaba.
+
+const PARTE_EN_INGLES = [
+  '**Cierre**',
+  '- Qué cambia: six of the seven Figma decisions are taken, and a script applies the eighty variables and checks each one before it writes it.',
+  '- En qué te ayuda: nobody has to copy the values from the cards by hand, so a typo can no longer break a file that is healthy today.',
+  '- Rastro: PR #270 · CI green, read with `ci:verdict` · docs/handoff/calidad-visual.md',
+  '- Seguro cerrar: sí, everything is pushed and the PR is merged; the question about the two search boxes is in the hand-off.',
+].join('\n');
+
+test('ROJO: un parte con las etiquetas en castellano y el contenido en inglés no pasa', () => {
+  const fallos = fallosDelParte(PARTE_EN_INGLES, LIMPIO);
+  assert.equal(fallos.length, 1, `el resto del parte cumple: solo falla el idioma. Salió: ${fallos.join(' | ')}`);
+  assert.match(fallos[0], /va en inglés/);
+  assert.match(fallos[0], /reescríbelo entero en castellano/);
+});
+
+// El VERDE tiene que poder enrojecer: el bloque de código y los nombres técnicos llevan inglés de sobra
+// para volcar el recuento si contaran como prosa. El control lo demuestra con el MISMO mensaje, sin las
+// marcas de código y con los nombres partidos en palabras.
+const PARTE_CON_CODIGO = [
+  'Si una variable no casa, sale `Error: the node is not attached to the page`. Lo que imprime el script:',
+  '',
+  '```js',
+  '// Apply the sizing batch to the file, and check each variable before it is written.',
+  '// If the value in the file is not the one in the export, it is left for review.',
+  '// The export is the source of truth: this script never invents a value.',
+  'for (const variable of batch) {',
+  '  // The node has to be bound to the token, or the theme will not follow it.',
+  '  if (variable.valuesByMode[mode] !== expected) continue; // this is the one to review',
+  '  variable.setValueForMode(mode, target); // and this is the one that is written',
+  '}',
+  '```',
+  '',
+  '**Cierre**',
+  '- Qué cambia: `figma_execute` aplica ochenta variables y comprueba cada una antes de escribirla.',
+  '- En qué te ayuda: un dato mal copiado ya no estropea un fichero sano, y un glifo como back_to_tab crece con su caja.',
+  '- Rastro: PR #270 · `tokens:parity` y CI verdes tras el `git push` · docs/handoff/calidad-visual.md',
+  '- Seguro cerrar: sí, todo subido; lo pendiente está en el hand-off.',
+].join('\n');
+
+test('VERDE: un parte en castellano con código y nombres técnicos en inglés pasa', () => {
+  assert.deepEqual(fallosDelParte(PARTE_CON_CODIGO, LIMPIO), []);
+});
+
+test('el control del verde: el mismo mensaje, con el código y los nombres como prosa, no pasa', () => {
+  const comoProsa = PARTE_CON_CODIGO.replace(/```\w*|`/g, '').replace(/(?<=\p{L})[_.:/-](?=\p{L})/gu, ' ');
+  assert.match(fallosDelParte(comoProsa, LIMPIO).join(' '), /va en inglés/, 'si esto no enrojece, el verde de arriba no prueba nada');
+});
+
+test('Stop: tras reflect, el parte en inglés bloquea; el de castellano con su código en inglés deja cerrar', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-stop-'));
+  const transcript = join(dir, 'sesion.jsonl');
+  const entrada = { transcript_path: transcript, session_id: 'S-idioma', cwd: dir };
+  writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_EN_INGLES)].join('\n'));
+  const r = correrHook(entrada, dir);
+  assert.equal(r?.decision, 'block', 'ROJO: el cierre iba a llegarle al usuario en inglés');
+  assert.match(r.reason, /va en inglés/);
+  assert.match(r.reason, /- Qué cambia: <una frase/, 'y lleva la plantilla para rehacerlo');
+  writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_CON_CODIGO)].join('\n'));
+  assert.equal(correrHook(entrada, dir), null, 'VERDE: en castellano deja cerrar');
+});
+
+// ── La rama ya fundida por squash · añadido el 2026-09-29 ───────────────────────────────────────
+// ROJO que motivó la pieza (2026-09-28, sesión cloud): GitHub borra la rama al fundir por squash, y
+// desde ahí el árbol decía «no» con todo ya en main. Tras #270, con el upstream podado: «no está en
+// el remoto». Tras #264, sin podar: el upstream viejo contaba como «2 commits sin pushear» lo que la
+// rama había recogido de main. El parte tuvo que decir que no aunque no se perdía nada, y el
+// usuario tuvo que preguntar si podía cerrar.
+//
+// Se monta con un remoto de verdad (un repo desnudo) y un segundo clon que hace de GitHub: funde la
+// rama por squash, sube otro PR encima y borra la rama. La rama lleva DOS commits a propósito: el
+// squash no es ninguno de los dos, así que ni la ascendencia ni `git cherry` lo reconocen.
+
+function montarSquash() {
+  const raiz = mkdtempSync(join(tmpdir(), 'sc-squash-'));
+  const remoto = join(raiz, 'remoto.git');
+  const sesion = join(raiz, 'sesion');
+  const github = join(raiz, 'github');
+  const git = (cwd, ...args) => {
+    const r = spawnSync('git', args, { cwd, encoding: 'utf8', env: SIN_GIT });
+    assert.equal(r.status, 0, `git ${args.join(' ')}: ${r.stderr}`);
+    return r.stdout.trim();
+  };
+  const commit = (cwd, fichero, texto, mensaje) => {
+    writeFileSync(join(cwd, fichero), texto);
+    git(cwd, 'add', '-A');
+    git(cwd, 'commit', '-q', '-m', mensaje);
+  };
+  const identidad = (cwd) => {
+    git(cwd, 'config', 'user.email', 'x@y.z');
+    git(cwd, 'config', 'user.name', 'x');
+  };
+
+  git(raiz, 'init', '-q', '--bare', '-b', 'main', remoto);
+  git(raiz, 'init', '-q', '-b', 'main', sesion);
+  identidad(sesion);
+  git(sesion, 'remote', 'add', 'origin', remoto);
+  commit(sesion, 'a.txt', 'uno\n', 'base');
+  git(sesion, 'push', '-q', '--no-verify', 'origin', 'main');
+  git(sesion, 'switch', '-q', '-c', 'rama');
+  commit(sesion, 'b.txt', 'dos\n', 'primer commit de la rama');
+  commit(sesion, 'a.txt', 'uno\ncambio\n', 'segundo commit de la rama');
+  git(sesion, 'push', '-q', '--no-verify', '-u', 'origin', 'rama');
+
+  git(raiz, 'clone', '-q', remoto, github);
+  identidad(github);
+  git(github, 'merge', '-q', '--squash', 'origin/rama');
+  git(github, 'commit', '-q', '-m', 'rama (#1)');
+  commit(github, 'c.txt', 'otro\n', 'otro PR (#2)');
+  git(github, 'push', '-q', '--no-verify', 'origin', 'main');
+  git(github, 'push', '-q', '--no-verify', 'origin', '--delete', 'rama');
+  return { raiz, sesion, github, git, commit };
+}
+
+const NOTA_FUNDIDA = /^ya fundida en main, comparado con [0-9a-f]{7,}$/;
+
+test('estadoDelArbol: rama fundida por squash, con otro PR encima en main y el upstream podado → seguro', () => {
+  const { sesion, git } = montarSquash();
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  assert.match(git(sesion, 'status', '-sb'), /\[gone\]/, 'el estímulo: el upstream ya no existe, como tras `git remote prune`');
+  assert.notEqual(
+    git(sesion, 'rev-parse', 'HEAD^{tree}'),
+    git(sesion, 'rev-parse', 'origin/main^{tree}'),
+    'main lleva otro PR encima: comparar los dos árboles a pelo no bastaría',
+  );
+  const estado = estadoDelArbol(sesion);
+  assert.equal(estado.seguro, true, `todo está en main y el árbol dice que no: ${estado.motivos.join('; ')}`);
+  assert.deepEqual(estado.motivos, [`ya fundida en main, comparado con ${git(sesion, 'rev-parse', '--short', 'origin/main')}`]);
+});
+
+test('estadoDelArbol: la misma rama puesta al día con main, con el upstream viejo y sin él → seguro las dos', () => {
+  const { sesion, git } = montarSquash();
+  git(sesion, 'fetch', '-q', '--no-prune', 'origin');
+  git(sesion, 'merge', '-q', '--no-edit', 'origin/main');
+  assert.equal(git(sesion, 'rev-list', '--count', '@{u}..HEAD'), '3', 'el estímulo: el upstream viejo cuenta como sin subir lo que la rama recogió de main');
+  const viejo = estadoDelArbol(sesion);
+  assert.equal(viejo.seguro, true, `con el upstream viejo, el árbol dice que no: ${viejo.motivos.join('; ')}`);
+  assert.match(viejo.motivos.join(' '), NOTA_FUNDIDA);
+
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  const podado = estadoDelArbol(sesion);
+  assert.equal(podado.seguro, true, `sin upstream, el árbol dice que no: ${podado.motivos.join('; ')}`);
+  assert.match(podado.motivos.join(' '), NOTA_FUNDIDA);
+});
+
+test('estadoDelArbol: un cambio que main no tiene → no seguro, con el upstream viejo y sin él', () => {
+  const { sesion, git, commit } = montarSquash();
+  commit(sesion, 'd.txt', 'después de fundir\n', 'trabajo nuevo');
+  git(sesion, 'fetch', '-q', '--no-prune', 'origin');
+  const viejo = estadoDelArbol(sesion);
+  assert.equal(viejo.seguro, false, 'ROJO: el commit nuevo solo existe aquí');
+  assert.deepEqual(viejo.motivos, ['1 commit(s) sin pushear a origin/rama']);
+
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  const podado = estadoDelArbol(sesion);
+  assert.equal(podado.seguro, false, 'ROJO: el commit nuevo solo existe aquí');
+  assert.deepEqual(podado.motivos, ['la rama rama no está en el remoto: si se pierde el disco, se pierde el trabajo']);
+});
+
+// El error posible de la comprobación es un «no» de más, nunca un «sí» falso: si main retocó después
+// las mismas líneas, fundir la rama da conflicto aunque su trabajo ya pasara por main.
+test('estadoDelArbol: si main tocó después las mismas líneas, sale conflicto y dice que no', () => {
+  const { sesion, github, git, commit } = montarSquash();
+  commit(github, 'a.txt', 'uno\ncambio de otro\n', 'retoque (#3)');
+  git(github, 'push', '-q', '--no-verify', 'origin', 'main');
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  const estado = estadoDelArbol(sesion);
+  assert.equal(estado.seguro, false);
+  assert.deepEqual(estado.motivos, ['la rama rama no está en el remoto: si se pierde el disco, se pierde el trabajo']);
+});
+
+test('Stop: tras fundir por squash, «Seguro cerrar: sí» deja cerrar; con un commit encima, el árbol lo desmiente', () => {
+  const { raiz, sesion, git, commit } = montarSquash();
+  git(sesion, 'fetch', '-q', '--prune', 'origin');
+  const transcript = join(raiz, 'sesion.jsonl');
+  const entrada = { transcript_path: transcript, session_id: 'S-squash', cwd: sesion };
+  writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_OK)].join('\n'));
+  assert.equal(correrHook(entrada, raiz), null, 'todo está en main: el «sí» es verdad y el cierre pasa');
+
+  commit(sesion, 'd.txt', 'después de fundir\n', 'trabajo nuevo');
+  const r = correrHook(entrada, raiz);
+  assert.equal(r?.decision, 'block', 'ROJO: hay un commit que main no tiene y el parte dice «sí»');
+  assert.match(r.reason, /el árbol dice que no: la rama rama no está en el remoto/);
 });

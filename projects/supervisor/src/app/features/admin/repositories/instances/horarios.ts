@@ -172,6 +172,7 @@ export class HorariosPageComponent {
   protected readonly config: RepoPageConfig<Horario> = {
     titleKey: 'repositories.horarios.title',
     entitySingularKey: 'repositories.horarios.singular',
+    createTitleKey: 'repositories.horarios.create_title',
     entityPluralKey: 'repositories.horarios.plural',
     icon: 'schedule',
     breadcrumbExtraKey: 'repositories.horarios.title',

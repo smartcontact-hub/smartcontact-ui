@@ -7,6 +7,7 @@ import {
   forceLightTheme,
   goto,
 } from './helpers';
+import { enNavegador } from '../shared/color';
 import { L_CLARO, medir } from '../shared/contrast-probe';
 
 /**
@@ -41,9 +42,8 @@ import { L_CLARO, medir } from '../shared/contrast-probe';
  *   2. ¿Se lee el texto que va encima? (el defecto DEL REVÉS: al oscurecer un
  *      fondo puedes dejar texto oscuro encima; ya pasó con `sc-label[info]`)
  *
- * Los colores los normaliza el CANVAS, no un regex. Una primera versión de
- * esta medición parseaba `color(srgb 0.99 0.88 0.88 / .5)` con `/\d+/g`,
- * sacaba `[0, 996078, 0]` y reportaba un defecto que no existía.
+ * Los colores los normaliza el CANVAS, no un regex, y las capas translúcidas se
+ * componen: todo eso vive en `../shared/color.ts`, con su historia y su test.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -64,6 +64,18 @@ const RUTAS = [
   'conversaciones/entidades',
   'admin/usuarios',
   'admin/grupos',
+  /* La ficha de grupo con su resumen (2026-09-26, DD-121): las cifras, los avisos en ámbar y las
+   * barras son colores nuevos sobre el carril, y se leen en los dos temas. El 11 es el más cargado. */
+  'admin/grupos/editar/11',
+  /* Las fichas de agente y usuario, desde que su resumen es un widget (DD-126): la cifra, el «/total» y el
+   * rótulo van sobre el tinte de marca, y eso se lee en los dos temas. El usuario 3 tiene las dos proporciones
+   * a medias (8/11, 2/5). */
+  'admin/agentes/editar/1',
+  'admin/usuarios/editar/3',
+  /* El alta de grupo, desde que su resumen dice lo que falta (DD-136): «Falta: …» en ámbar, a la vista al abrir. Las de
+   * agente y usuario llevan la misma pieza, pero aún no entran aquí: el marcador de la foto (`sc-photo-upload`, del DS)
+   * mide 2,58:1 y un icono pide 3:1. Es un arreglo del DS, abierto en DD-136; hasta entonces van en `RUTAS_SUELO`. */
+  'admin/grupos/crear',
   'admin/agentes',
   'admin/labels',
   'admin/plantillas',
@@ -72,6 +84,8 @@ const RUTAS = [
   'admin/reglas-ia',
   'config/aed/servicio',
   'config/aed/agentes',
+  /* Contact Center › Grupos: desde el 2026-09-29 es donde se fija con qué nace un grupo (DD-135), en el orden de la
+   * ficha y con el glifo de cada canal en su título. */
   'config/aed/grupos',
   'config/seguridad',
   'config/sistema',
@@ -94,9 +108,8 @@ const RUTAS = [
 const RUTAS_SUELO = [
   ...RUTAS,
   'supervision',
-  'admin/usuarios/nuevo',
-  'admin/grupos/nuevo',
-  'admin/agentes/nuevo',
+  'admin/usuarios/crear',
+  'admin/agentes/crear',
   'conversaciones/reglas/nueva',
 ] as const;
 
@@ -140,7 +153,15 @@ const CONOCIDOS_CLARO = [
   // propósito en §1.5 — subirlo a slate-700 lo pega a `text-primary` y cambia
   // un fallo de contraste por uno de jerarquía. Sobre tarjeta (que es donde
   // vive la mayor parte del texto secundario) mide 4.52 y cumple.
-  'fg=rgb(111,119,132)',
+  //
+  // Se perdona con su FONDO, no solo con su color: el lienzo (slate-50) y slate-100. Hasta el
+  // 2026-09-27 bastaba el color, y así pasó sin verse el secundario sobre el tinte de marca del
+  // resumen de las fichas (3,96:1, DD-126): cualquier fondo nuevo bajo el gris quedaba perdonado.
+  'bg=rgb(247,248,250) fg=rgb(111,119,132)',
+  'bg=rgb(236,239,243) fg=rgb(111,119,132)',
+  // 5 · `p-button-danger` + `text` → RESUELTO el 2026-09-27 (DD-128, customs-catalog §1.8): el
+  // «Eliminar» de la cabecera de las tres fichas subió de red-500 (3.76:1) a red-600 (4.83:1),
+  // mismo escalón que ya llevaba el `danger` SÓLIDO desde el 2026-09-15.
 ];
 
 
@@ -203,13 +224,11 @@ for (const { nombre, aplicar, claseRaiz } of TEMAS) {
           await goto(page, ruta);
           await asegurarTema(page, claseRaiz);
           await asegurarBuildFresco(page);
-          const { lienzo, ajenos } = await page.evaluate(() => {
-            const cv = document.createElement('canvas').getContext('2d')!;
-            const norm = (c: string): string => {
-              cv.fillStyle = '#000';
-              cv.fillStyle = c;
-              return String(cv.fillStyle);
-            };
+          /* Se comparan PÍXELES, no cadenas: el `fillStyle` del canvas solo pasa a hex
+           * los `rgb()`, y un `color(srgb …)` o un `oklch()` los devuelve tal cual
+           * (Chromium 151). Un suelo pintado con `color-mix` del lienzo no casaría. */
+          const { lienzo, ajenos } = await page.evaluate(enNavegador((kit) => {
+            const norm = (c: string): string => `rgba(${kit.rgba(c)})`;
             const muestra = document.createElement('span');
             muestra.style.backgroundColor = 'var(--sc-bg-canvas)';
             document.body.append(muestra);
@@ -224,13 +243,13 @@ for (const { nombre, aplicar, claseRaiz } of TEMAS) {
               const alto = Math.min(r.bottom, innerHeight) - Math.max(r.top, m.top);
               if (r.width < m.width * 0.99 || alto < altoVisible * 0.99) continue;
               const fondo = getComputedStyle(el).backgroundColor;
-              if (fondo === 'rgba(0, 0, 0, 0)') continue;
+              if (kit.rgba(fondo)[3] === 0) continue;
               if (norm(fondo) !== lienzo) {
                 ajenos.push(`${el.tagName.toLowerCase()}${[...el.classList].map((c) => `.${c}`).join('')} → ${norm(fondo)}`);
               }
             }
             return { lienzo, ajenos };
-          });
+          }));
           expect(ajenos, `suelos que no son el lienzo (${lienzo}):\n${ajenos.join('\n')}`).toEqual([]);
         });
       }

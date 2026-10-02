@@ -1,5 +1,8 @@
+<!-- 350 px: la fila más larga de los datos de siempre («Cliente #56705 · Atención al cliente» y su tiempo) cabe sin
+     recortar; con los 20rem de PrimeNG, no. Un dato más largo recorta con «…» (DD-124). -->
 <sc-drawer
   position="right"
+  width="var(--sc-spacing-25)"
   [visible]="open()"
   [header]="titleKey() ? (titleKey() | translate: { count: rows()?.rows?.length ?? 0 }) : null"
   (visibleChange)="onVisibleChange($event)"
@@ -32,16 +35,14 @@
       />
     }
     <span class="detail__main">
-      <span class="sc-text-body-semibold">{{ r.agent ?? r.name ?? ('dashboard.detail.customer' | translate: { id: r.customer }) }}</span>
-      <span class="detail__sub sc-text-caption-regular">
-        @if (r.presence) {
-          {{ 'dashboard.presence.' + r.presence | translate }}
-        } @else if (r.agent) {
-          {{ 'dashboard.detail.customer' | translate: { id: r.customer } }} · {{ r.queue }}
-        } @else {
-          {{ r.queue }}
-        }
-      </span>
+      @let quien = r.agent ?? r.name ?? ('dashboard.detail.customer' | translate: { id: r.customer });
+      <span class="detail__name sc-text-body-semibold" [title]="quien">{{ quien }}</span>
+      @let detalle = r.presence
+        ? ('dashboard.presence.' + r.presence | translate)
+        : r.agent
+          ? ('dashboard.detail.customer' | translate: { id: r.customer }) + ' · ' + r.queue
+          : r.queue;
+      <span class="detail__sub sc-text-caption-regular" [title]="detalle">{{ detalle }}</span>
     </span>
   </span>
 </ng-template>

@@ -6,240 +6,352 @@
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
+> El tramo del 2026-09-23 (grupos sin foto, alta en diálogo) sale de aquí por el tope de 6: `git show
+> 4f4f2018:docs/handoff/supervisor-fichas.md` o el tag `archive/handoff-fichas-2026-09-27`. Su trampa (`main`
+> se mueve bajo un worktree local) ya vive en LEARNINGS #21. El del 2026-09-24 (el alta de grupo rima con
+> Identidad, DD-119) sale por el mismo tope: `git show 16ff7930:docs/handoff/supervisor-fichas.md`. Y el de las
+tablas tras la revisión del equipo (2026-09-24, cinco PRs): `git show 197c5579:docs/handoff/supervisor-fichas.md`;
+sus dos trampas suben a «Trampas del frente». El de la visión de producto de grupos (2026-09-26, DD-121) sale por el
+mismo tope: `git show f63d13aa:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
+Contact Center suben a «Trampas del frente». El de un solo índice (2026-09-27, DD-122), igual: `git show
+7458351:docs/handoff/supervisor-fichas.md`; sus trampas también suben. Y el del resumen como widget (2026-09-27,
+DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas arriba. Y los dos del 2026-09-27
+(el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
+cuatro trampas del pase suben a «Trampas del frente».
 
-## ✅ 2026-09-24 · Las tablas de agentes y grupos tras la revisión del equipo, en cinco PRs
+## ▶ 2026-10-02 · E1b: niveles por familia (DD-148)
 
-> **Sello: rama `arebury/tablas-6-docs` sobre `origin/main` (con #247 y #252 fundidos). Rama de trabajo, ya sin uso:
-> `arebury/actualizar-tabla-grupos`.**
+> **Sello: rama `codex/supervisor-e1b-niveles`, base `83e371e7` (#309); pruebas iniciales `7692a3ca`.**
 
-**Qué pasó.** Revisión con el equipo de las tablas de `/admin/agentes` y `/admin/grupos` para entregarlas a
-desarrollo mientras se decide el layout de la ficha. Se cerró tabla a tabla y se partió en PRs por tema.
+**Implementado:** niveles 1–10 independientes, migración del nivel antiguo con precedencia del nuevo, comparación
+por ambas familias, Niveles y subestrategia de Chat, defaults sin Niveles, columnas identificadas en ficha y panel.
+La tabla reserva el ancho del nombre y desplaza horizontalmente si no cabe. Detalle y alternativas: DD-148.
 
-**Qué cambia, por PR:**
-- **#247 (fundido) · DS.** `sc-group-popover` enseña todos los nombres (scroll desde 50vh). `sc-delete-entity-dialog`:
-  borrar varios pide lo mismo que uno (teclear «N agentes»), sin la lista de nombres quitables. `sc-datatable`: ancho
-  ajustable y orden arrastrando, los nativos de `p-table`, con `(columnOrderChange)` y `(columnWidthsChange)`.
-  `sc-multiselect`: `optionDisabled`, `ariaLabel` y la flecha en Material Symbols.
-- **#249 · Listas + selector de columnas nativo** (#251 se fundió dentro). Agentes: ID opcional detrás del nombre,
-  Email, Teléfono y Tipo opcionales, fuera Activación, Estado en etiqueta de solo lectura con los colores de Contact
-  Center, Grabación con el REC rojo, extensión con icono, búsqueda por todos los campos de texto. Grupos: ID con
-  ancho medido, Estrategia sin corte. Datos de demo nuevos. El dashboard usa check en sus menús de elección. El
-  selector es el «Column Toggle» de primeng.dev/table y la lista recuerda visibles, orden y anchos en `localStorage`
-  (NO con `stateKey`: restaura también la selección).
-- **#252 (fundido) · Coherencia.** Contact Center › Servicio con los colores de la tabla; canales alineados ópticamente.
-- **#253 · Inplace** en el título de la ficha de agente y de grupo (`sc-name-inplace`): el mismo campo que Identidad.
-- **Este · Docs:** `figma-pendiente.md` §14 (la etiqueta «Draft» a `slate/700`) y `ROADMAP.md` (el avatar que se
-  vuelve check).
+**Ejecutado aquí:** 4 unitarias nuevas y 7 e2e en rojo primero; 19 unitarias de canales/familias/niveles en verde;
+44 e2e afectados en verde; 27 tras completar ayudas y medidas; 12 de E1b tras arreglar el ancho. La sonda del nombre
+se vio roja con la celda a 0 px. `revision` pasó las rutas de edición, alta, listado y Contact Center. Capturas de
+ficha y panel con ambos niveles, claro/oscuro, 1024/1440, inspeccionadas con `better-layout`.
 
-**Medido** con clics y arrastres reales a 1440 en local: 500 filas sin texto cortado, orden y anchos que vuelven al
-recargar, Inplace sin mover la cabecera (texto en x=108, pestañas en y=127,8). `verify` verde; suite del Supervisor
-240/243 con los tres rojos entendidos y arreglados (ver trampas); sc-docs entera en verde (92), y las pruebas nuevas
-vistas fallar contra `main`.
+**Verificación:** `verify` completo en verde. Suite Supervisor: 496/498; las dos sondas de recorte del listado
+fallan también sobre una copia limpia de `83e371e7` (3 px, mismas etiquetas). Evidencia local, no regresión de E1b;
+se conserva para F sin anticipar su cambio. Zoom 200 % y RTL no verificados.
 
-**Trampa del tramo:** la pila de PRs choca con `main` en movimiento. El preflight exige al EMPEZAR que la rama lleve el
-`main` del momento, y ese día entraron cuatro commits ajenos en dos horas: cada uno obligaba a rebasar la pila entera.
-Solo se apila lo que depende de lo anterior; lo independiente va contra `main`. Y un commit del bot (`visual-baselines`)
-deja el CI del PR en «action_required»: hay que aprobarlo.
+**Pendiente de entrega:** preflight final, PR y CI, squash y CI de main; después conservar
+las evidencias fuera de su worktree y limpiar solo E1b. Continuar E2 → E3 → E4 → D3 → F, cada uno tras el merge verde.
+No se reaplicó E1a ni se modificó su recuperación. Los registros de E1a son históricos; estas tandas son de E1b.
 
-## ✅ 2026-09-24 · El alta de grupo rima con Identidad: pide lo de la cabecera, no los canales (DD-119)
+## ✅ 2026-10-02 · E1a: asignaciones por familia (DD-147)
 
-> **Sello: rama `arebury/alta-grupo-rima`, worktree `shipworm`, sobre `origin/main` `9f0cfd88` (#243).**
+> **Sello: rama `codex/supervisor-e1a-familias`, base `c6a9cd59` (G2b, #308 fundido; CI del merge leído en verde).**
 
-**Qué pasó.** Rafa, del alta de #243: «es un paso extra; al entrar tengo lo mismo que acabo de configurar; tiene que
-rimar». El diálogo pedía nombre y canales, y la ficha abría por la fila de canales.
+**Recuperado:** 14 archivos de implementación y dos de pruebas del paquete E1a; SHA-256 e integridad del ZIP
+reverificados. El parche se aplicó sin conflictos tras G2b. Se recuperó contenido, no el objeto Git `643c72fc`.
+La copia original sigue intacta. Los seis e2e en rojo de Cloud son evidencia histórica del registro de recuperación.
 
-**Qué cambia.** El diálogo pide nombre, teléfono asociado y prioridad con `sc-group-identity-fields`, la MISMA pieza
-que la pestaña Identidad (en columna en el diálogo, en fila en la pestaña, por `@container`). Nace con Teléfono y la
-ficha abre en «Canales y agentes». Duplicar: «… (copia)», la prioridad del original, sin teléfono; se lleva canales,
-agentes y ajustes. Enter crea solo desde el nombre (en un desplegable, Enter elige opción).
+**Completado:** tres familias en enlaces, tablas, panel, resumen y listado; lectura de WhatsApp como Chat sin
+subir versión; recorte y cascada por familia. Completadas las pruebas que aún fijaban cuatro canales y el ancho
+del listado. El resumen del agente cuenta solo familias ofrecidas, igual que su listado. Detalle: DD-147.
 
-**Medido** con clics en local a 1440: alta, aterrizaje (la cabecera dice lo rellenado) e Identidad con la misma
-pieza. e2e de grupo y fichas en verde.
+**Validado localmente:** las 15 unitarias de canales; las 42 pruebas afectadas, con repetición de las dos
+expectativas corregidas; diez vistas en `npm run revision`. Capturas en claro/oscuro, 1024/1440: tres glifos en
+69 px dentro de 100; panel de tres familias en 556 px sin desbordamiento. Dos contratos del núcleo se reprodujeron
+en rojo contra G2b. El CI y preflight del PR propio son la evidencia de entrega, no el registro de Cloud.
 
-**Si vuelve a sonar a paso de más:** la alternativa que rima del todo es sin diálogo, «Nuevo grupo» abre la ficha con
-el nombre como campo en el sitio del título. Rafa pidió no quitar el paso.
+**Siguiente:** E1b, niveles 1–10 por familia y estrategia Niveles en Chat (DD-148 disponible al empezar E1a;
+recomprobar). Después E2 → E3 → E4 → D3 → F. No se cambió el singular «1 agentes», ajeno al alcance.
 
-## ✅ 2026-09-23 · Los grupos pierden la cara y se crean con un diálogo corto (DD-119)
+## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143), las tres columnas (G1, DD-144), el nombre fijo (G2a, DD-145) y el resumen enlazado (G2b, DD-146)
 
-> **Sello: rama `arebury/remove-group-avatar-photos`, worktree `shipworm`, sobre `origin/main` `e1b8f5fd` (#242).**
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `b02fdb9b`). H (#298, `57f03a0`), los diálogos de
+> Recursos (#300, `5cf3f5e1`), D1 (#303, `78b2efb9`), D2 (#304, `004498dc`), R (#305, `85c32239`) y G1 (#306,
+> `86d5b18c`) y G2a (#307, `b02fdb9b`), fundidos con su CI en verde; G2b (DD-146), en su PR.**
 
-**Qué pasó.** Del equipo: «las fotos en grupo no deberían existir». Medido en local: la foto se guardaba y no salía en
-ningún otro sitio, y crear un grupo abría la ficha entera (5 pestañas, ~35 campos) cuando solo pide el nombre.
+**Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
+ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
+prueba en rojo y, si decide algo, su DD: H (lo que se corta) → los diálogos de Recursos (la parte de D1 que pidió
+el usuario aparte) → D1 (estrategias y textos) → D2 (teléfono saliente) →
+D3 (tiempos, horarios y música) → E1 (canales por familia y niveles) → E2 («Habilitado» y presencia) → E3 (canales
+del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen enlazado) → F (listado).
 
-**Qué cambia.**
-- **Sin foto ni avatar de grupo**: ficha, lista (fila de 54 a 44) y tabla de grupos de la ficha de agente (46 a 44).
-- **Alta en diálogo** (`sc-group-create-dialog`): nombre y canales; lo demás, de los valores por defecto
-  (`newGroupDraft` en `groups-data.ts`). Crear deja en «Canales y agentes». `/admin/grupos/crear` abre el diálogo.
-- **Duplicar**, el mismo diálogo: «… (copia)», los canales del original, sus agentes; sin teléfono asociado.
-- **Ficha solo de edición**: Identidad segunda (como #240), sin foto; Recursos, Anuncios y Avanzado sin caja.
-- Nombre repetido avisado en vivo (alta e Identidad); la cabecera dice «918371548 · Prioridad: Media».
-- Un grupo nuevo ya no enseña buscador sobre la tabla vacía, y el vacío nombra el botón que existe.
+**H · lo que se corta al bajar del todo** (sin DD: solo arregla):
+- en Distribución y colas, al llegar al final, la rueda seguía con el documento: se iba la barra de arriba, el índice y
+  el resumen se cortaban por arriba y quedaba una franja gris;
+- la causa: el input de fichero oculto de «Música de espera» (`.visually-hidden`, `position: absolute`) no tenía
+  antepasado posicionado, así que se colgaba del documento y lo alargaba: 160 px en el grupo 1, 206 en el 11 y 147 en
+  el alta;
+- `main.app-shell__content` pasa a `position: relative`. Medido en las 36 pantallas de `agrupacion`: el documento no
+  sobra en ninguna, y lo único que toma esa zona por caja son textos ocultos;
+- `documento-quieto.spec.ts`: tres en rojo contra el código anterior (206, 147 y 160) y seis pantallas largas de
+  guarda.
 
-**Medido** con clics en local a 1440, claro y oscuro: alta, duplicado, avisos, grupo sin Teléfono. La cabecera, las
-pestañas y el contenido caen en el mismo píxel que la ficha de agente (121/128/178/185). e2e tocadas en verde.
+**Los diálogos de Recursos** (sin DD: solo arregla):
+- cada «+» de Recursos de la ficha abre un `sc-dialog` con el formulario de su pantalla, que seguía pintando su tarjeta
+  (320 px con borde, sombra y radio), su título repetido y su propio `role="dialog"`. La ficha le pasaba `flush`, pero
+  la entrada no existía;
+- los tres formularios (repositorios, plantillas y etiquetas) ganan `flush`: sin caja, sin título y sin rol propio;
+- cada diálogo se llama como su «+» («Nueva tipificación», no «Nuevo/a tipificación»; «Nueva etiqueta», no «Nueva
+  label»), y cada repositorio, su título de alta con género (`createTitleKey`; sin él, el genérico);
+- `ficha-recursos-dialogos.spec.ts`: dos en rojo y una de guarda. Al arreglar los títulos, la de los «+» siguió en
+  rojo por el `role` propio del formulario: cada parte de la prueba enrojece con su fallo;
+- fuera: `sc-dialog` traía dos `role="dialog"` modales anidados (el `p-dialog` y su `section`), del DS: lo arregló
+  DD-140 (#302). Y el ejemplo del campo de etiqueta dice «Nombre de la label», el vocabulario de la pantalla de Labels.
 
-**Descartado por Rafa, y por qué** (DD-119): sin pestaña Identidad («no sé si puedo tocarlo como usuario») y un
-«Editar datos» con diálogo (un «Aplicar» que no guardaba, y rompía el orden de las tres fichas).
+**D1 · las palabras de la ficha** (DD-141; el detalle y lo descartado, allí):
+- las estrategias reparten conversaciones: «Menos conversaciones atendidas» (Teléfono y «Dentro de cada nivel») y
+  «Menos conversaciones activas» (Chat);
+- lo guardado con el nombre de antes se lee con el de ahora, sin subir versión: `createVersionedStorage` gana
+  `normalize` (opcional), que usa `GroupsStore`; `GroupDefaultsStore` pone al día sus dos estrategias al leer. Sirve
+  igual para los enlaces de E1 (WhatsApp → Chat);
+- la prioridad solo cuenta en las entrantes; sale «Desbordar sesión» de la ficha y de Contact Center, y
+  `overflowSession` se sigue guardando; cerrar el chat por inactividad nace con 5 minutos (las semillas, con sus 10);
+- el tamaño de cola, un texto por modo; la tipificación, sin «(3)»;
+- anchos medidos de nuevo: estrategia de teléfono 14.5rem y de chat 13.5rem, `tableMinWidth` 95.75rem; los
+  desplegables de Contact Center, a 350 (`scale/25`): la escala no tiene peldaño entre 252 y 350;
+- `ficha-grupo-textos.spec.ts` (8) y las reescritas: 13 en rojo contra el código anterior, cada una por lo que mide.
 
-**Integrado con #242** (la otra caja, fundida a las 21:50 sobre el mismo fichero): «Anuncios y audio» siempre en la
-tira, apagada sin Teléfono; «Habilitado» en vez de «Atiende»; glifos de canal en la cabecera. Todo se queda.
+**La segunda revisión con el equipo** (2026-10-01, tarde) cambia el plan, que va en el plan de trabajo:
+- el alta vuelve al índice con ✓ por sección y «Siguiente» (R, revierte DD-138);
+- los tiempos, en desplegable con los valores del Contact Center validado (D3);
+- la cola por agente, de 1 a 10 enteros y 2 por defecto;
+- el nombre del grupo, fijo al bajar;
+- «Eliminar», bajo el índice (G1), y escribiendo el nombre para confirmar, que ya pedía `sc-delete-entity-dialog`;
+- los agentes del grupo, todos a la vista y sin marcar (E4, con la referencia del usuario «4. Agentes y revisión»).
 
-**Trampa del tramo:** `main` se movió CUATRO veces bajo estos ficheros mientras Rafa miraba mi local (#237, #239,
-#240, #242), y vio deshecho «lo que ya se había hecho». Al empezar no había nada que ver: hacía falta mirar a mitad
-de sesión. Nace `scripts/hooks/main-drift-guard.mjs` (en cada mensaje de Rafa, LEARNINGS #21 ⚙️).
+Respuestas del usuario: Etiquetas fuera, guardada; «Caducar sesión»; los valores del Contact Center validado; borrar
+escribiendo el nombre.
 
-## ✅ 2026-09-22 · Laboratorio de administración: lista + ficha con las decisiones del teardown dentro
+**D2 · el teléfono saliente** (DD-142):
+- con Teléfono es obligatorio. Lo dicen el resumen, la barra («Crear grupo» y «Guardar» esperan), su campo y el
+  punto de Distribución. En el alta, tras salir de su sección sin él; duplicar lo pide al enviar;
+- se elige de `OUTBOUND_NUMBERS` (los asignados), sin escribir; el que ya tuviera un grupo sigue entre las opciones;
+- «Caducar sesión»; la ayuda de Balanceada, corregida; Recursos sin Etiquetas tras `conEtiquetas` (el grupo
+  conserva las suyas); el teléfono, nombrado por su rótulo (`ariaLabelledBy`);
+- `telefono-saliente.spec.ts` (4) y las reescritas: 11 en rojo contra el código anterior.
 
-> **Sello: rama `arebury/supervisor-admin-lab-teardown`, worktree `humpback`.** Todo nuevo bajo
-> `projects/supervisor/src/app/features/lab/admin/`; de lo existente solo se tocan `app.routes.ts`
-> (una ruta) y los cuatro locales. **No toca ninguna pantalla de producto.**
+**R · el alta vuelve al índice** (DD-143, que revierte DD-138):
+- las tres altas, con la maqueta de la edición: índice, una sección en su caja con su cabecera, y el resumen;
+- el índice dice lo que ya está y lo que falta: ✓ en la sección que se deja completa (`sectionsDone`, nuevo en
+  `sc-form-section-nav`) y el punto rojo en la que se deja sin lo obligatorio; antes de abrirla, ninguna marca;
+- «Atrás» y «Siguiente» al pie (`sc-alta-pie`): llevan al principio de la sección nueva, con el foco en su título
+  (`llegarASeccion`). General sigue siendo la puerta del grupo, y la sección no va en la dirección;
+- `seccionesDeAlta` (antes `pasosDeAlta`) guarda la sección abierta y las que se dejaron;
+- `altas-indice.spec.ts` (12): nueve en rojo contra los pasos, dos de guarda, y la del punto rojo vista en rojo sin
+  su regla; las que DD-138 pasó a los pasos vuelven al índice, y `revision` y `agrupacion` recorren el del alta.
 
-**Qué pasó.** Del teardown de Telegram y WhatsApp
-(`~/Documents/Claude/2026-09 teardown admin usuarios-grupos/SINTESIS.md`, bloques A y B) salieron
-20 decisiones medidas. Este tramo las pone donde se pueden juzgar: en `/lab/admin/grupos` y
-`/lab/admin/usuarios`, dentro del shell real (sidebar, barra, miga), al lado de `/admin/grupos` y
-`/admin/usuarios`.
+**G1 · las fichas en tres columnas** (DD-144), pedido por el usuario el 2026-10-01:
+- el índice, el contenido y el resumen arrancan a la misma altura; `.ficha-rail` es una rejilla con áreas;
+- el título va en la columna del contenido, encima de la sección; el resumen, sin rótulo a la vista (su `h2`,
+  `visually-hidden`, sigue nombrando la región); «Eliminar», bajo el índice, a 28 de su última fila;
+- por debajo de 1340, como estaba;
+- `fichas-tres-columnas.spec.ts` (9): ocho en rojo contra la maqueta anterior y una de guarda.
 
-**Qué cambia.** Lista con su CTA arriba (`sc-list-page`) → ficha con el molde de siempre
-(`page__inner--rail` + `sc-section-card`, acciones por `TopBarSlotService`). Dentro:
+**G2a · el nombre fijo al bajar** (DD-145): `sc-nombre-fijo`, una copia muda de la cabecera en la columna del
+contenido, de arriba abajo de la rejilla, con `sticky`. A partir de 1340 cae sobre la cabecera y se ve desde el primer
+píxel; por debajo, al quedar fija. Texto pintado (`::before`) y clases propias; las anclas, apartadas
+`--sc-form-anchor-offset`. Borrar ya pedía el nombre: ahora lo fija una prueba. `fichas-nombre-fijo.spec.ts` (9):
+cinco en rojo y cuatro de guarda.
 
-- **A1** · el tipo de usuario ES el paquete: elegirlo preselecciona sus casillas con
-  `sc-option-cards`, y apartarse se cuenta en el índice y en la lista («Supervisor · 2 cambios»).
-  Hoy `onTypeValueChange` solo escribe el campo.
-- **B12** · apagar una madre apaga las hijas de verdad, las deja pulsables y reencenderla las
-  enciende todas. La regla vive en `toggleMother`/`toggleChild` (`admin-lab.model.ts`), no en la
-  plantilla, así que se puede probar sin pintar.
-- **B17** · cada fila del índice lleva su valor debajo del rótulo.
-- **B1 · B4 · B6 · B11 · B14 · B15 · B18 · B19**, cada una con su código en el comentario.
+**G2b · el resumen enlazado** (DD-146): el rótulo de cada tarjeta del resumen de grupo lleva a su sección, y cada fila
+a su sitio (el bloque del canal, el campo del número), con `llegarAAncla`. Enlaces de verdad en el primario, con
+manita y subrayado al pasar; la tarjeta no se pulsa. `resumen-enlazado.spec.ts` (5): las cinco en rojo primero.
 
-**El interruptor «reproducir el fallo de hoy»** (botón flotante abajo a la derecha, mismo sitio y
-mismo motivo que los controles de `/lab/sidebar`) apaga las dos reglas nuevas y enseña las dos
-grietas en vivo, sin abrir el código.
+**Trampas del tramo:**
+- ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
+  `@smartcontact-hub/components` (sale el `vite-error-overlay`). No midas con el servidor mientras corre el preflight,
+  y reinícialo al acabar.
+- ⚠️ `pages.dev` no responde desde el contenedor (el proxy no deja llegar): el despliegue de un PR se comprueba por su
+  check de Cloudflare y por el comentario del bot, que da la URL fija de cada commit.
+- ⚠️ Los JSON de i18n guardan escapes ` `, y un `JSON.parse` + `JSON.stringify` los cambia por el carácter en
+  todo el fichero: se editan línea a línea.
+- ⚠️ La sonda de recorte de un desplegable solo vale si la has visto enrojecer: el rojo de la prueba nueva venía de la
+  opción que no existía. Con el ancho de antes puesto, enrojece en el de Teléfono de Contact Center.
+- ⚠️ El texto de un rótulo con su «*» empieza por un espacio («␠Teléfono saliente *»): `getByText` con una expresión
+  regular no lo recorta, así que `^Teléfono` no casa. Mídelo antes de anclar.
+- ⚠️ La prueba de «Siguiente lleva arriba» solo vale donde la sección nueva no cabe: si cabe, el navegador sube solo
+  y la prueba pasa sin el `scrollTo`. A 1280×720, de General a Distribución y colas del grupo, sí enrojece (88).
+- ⚠️ En una sonda, el menú lateral se despliega al pasar el ratón y tapa el índice: aparta el ratón (`mouse.move`)
+  antes de pulsar, y espera a que se pliegue antes de ralentizar las animaciones.
+- ⚠️ Las unitarias del DS corren en jsdom, sin `getAnimations`: ahí no se ve un movimiento, solo la clase que lo
+  enciende. El movimiento se mide en el navegador, con la reproducción al 10 % (CDP `Animation.setPlaybackRate`).
+- ⚠️ Un elemento `sticky` no sale del área de su rejilla: para que el nombre se quede fijo al bajar (G2), la cabecera
+  tiene que ocupar las dos filas o vivir con el contenido en una columna propia.
+- ⚠️ Una medida de la rejilla sin `document.fonts.ready` sale con un píxel de más: la fuente de iconos aún no ha
+  cargado y las filas del índice miden otra cosa.
+- ⚠️ `checkVisibility()` da por visible un `.visually-hidden` (esconde con `clip`), y su texto, sin saltos en una caja
+  de 1 px, cae sobre lo de al lado: una sonda que mida texto lo salta aparte (`icon-glyph-scale`, desde DD-144).
+- ⚠️ Una copia visual de algo que las pruebas buscan por su texto o su clase choca en modo estricto (cuatro rojas al
+  duplicar la cabecera): píntala con `::before` y `attr()`, y con clases propias.
+- ⚠️ Un job de e2e que tarda el triple no tiene por qué estar colgado: su paso instala chromium con `apt` (en #305,
+  18 minutos antes de la primera prueba) y su log no se lee hasta que acaba. Cancelarlo por el reloj tiró una tanda
+  que iba 92 de 92 en verde; espera a que termine.
 
-**Medido**, no supuesto: el item del índice del laboratorio y el de `sc-form-section-nav` dan lo
-mismo en el navegador — relleno 8,75 · hueco 5,25 · radio 12 · etiqueta 14/20/600 · rail 196. Lo
-único que añade es la segunda línea.
+## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-138)
 
-**Tres hallazgos del código de HOY, que no son del laboratorio:**
+> **Sello: #290 (`e490faf`), #291 (`4be46a5`) y los pasos, #295 (`7458351`), fundidos en `main`, con su CI de
+> `main` en verde.**
 
-1. **`checkbox-row--child` es una clase muerta.** La usa `user-form-page.component.html:195` y no
-   está declarada en ninguna hoja: hoy una sección hija se lee al mismo nivel que su madre. Su
-   sitio es `styles/_forms.scss`.
-2. **`.table__td-name` está duplicada** en la hoja de cada lista en vez de vivir en
-   `styles/_table-elements.scss`, con su hermana `.table__td-text`. El laboratorio la copia una
-   cuarta vez, con la nota puesta.
-3. **`sc-form-section-nav` no tiene `value` ni `disabled`.** `value` es literalmente B17;
-   `disabled` es lo que impide forzar el orden de un alta. Si B17 se adopta, se añade `value` a
-   `FormNavSection` y se borra la copia del laboratorio.
+**Qué pasó.** Producto respondió al cierre del 2026-09-28:
+- los valores de fábrica son los del documento de producto de usuarios y grupos;
+- la página de valores por defecto del listado de grupos se quita, y se fijan en Contact Center;
+- Contact Center es el superadmin y lo contiene todo: sin guardas de acceso, producto recorta qué ve cada rol;
+- Tipificaciones va con la supervisión;
+- la cola agotada sigue por el VUI: el grupo es un nodo AED del árbol, y quien diseña el VUI elige la salida.
 
-**Trampa del tramo:** la primera versión se construyó en `sc-docs` y se trasladó tal cual, con
-componentes y espaciados propios. Veredicto de Rafa: «no casa con nada, se siente un pegote». Se
-tiró entero y se rehízo con las piezas de la app. Si vuelves a este frente, **empieza por el
-vocabulario que ya existe** (`_forms.scss`, `_page.scss`, `sc-list-page`) y dibuja solo lo que
-propones.
+**Qué cambia** (el detalle y lo descartado, en DD-135):
+- Contact Center › Grupos es la página que vivía junto al listado, dentro de su tarjeta; › Agentes, la matriz, la
+  Configuración y la Integración de la ficha de agente. Las dos guardan y las altas lo leen (`GroupDefaultsStore`, y
+  `AgentDefaultsStore`, nuevo).
+- De fábrica: 10 · 15 · 60 s, administrativo 5 s, Baja, Balanceada en Teléfono y en Chat, y desbordar encendido; el
+  agente, todo menos la numeración especial, con sus tres interruptores encendidos.
+- `/admin/grupos/valores-por-defecto` redirige a Contact Center › Grupos, y el listado pierde su botón.
+- «Tiempo máximo de espera en cola» dice qué pasa al agotarse, en la ficha y en Contact Center.
+- `cloud-identity.test.mjs` deja de depender de no ser root: un `.git/config.lock` en vez de `chmod`.
 
-Decisiones, lo que no cuadró con los tokens y lo que queda abierto:
-`~/Documents/Claude/2026-09 teardown admin usuarios-grupos/LABORATORIO-decisiones.md`.
+**Medido:** `contact-center-valores.spec.ts`, seis de seis en rojo contra el código anterior; la prueba nueva de
+`ayudas-campos`, en rojo sin la ayuda de la ficha y, aparte, sin la de Contact Center.
 
-## ✅ 2026-09-20 · El contenido de página se ancla a la izquierda: el índice lateral deja de colgar (DD-115)
+**Las altas dicen lo que falta (DD-136)**, el efecto de gradiente de meta que pidió producto:
+- el resumen de cada alta dice «Falta: nombre · extensión» y, en cuanto «Crear …» se enciende, «Listo para crear»;
+- una pieza compartida de la app, `sc-summary-status`: un solo `role="status"` que cambia en su sitio y reserva su
+  línea, en ámbar o en verde con su icono;
+- un error de formato va en su campo, y al editar nunca dice «Listo».
 
-> **Sello: rama `arebury/candlefish`, sobre `origin/main` HEAD `84f37bd5`.** Un solo fichero de código:
-> `projects/supervisor/src/styles/_page.scss`.
+`altas-meta.spec.ts`: cuatro de cinco en rojo contra el código anterior (la quinta, de guarda), y el contraste de
+«Listo» en los dos temas, en rojo con el color cambiado a propósito.
 
-**Qué pasó.** Llegó de fuera del equipo que el índice lateral «colgaba». Medido con sonda en local: el sidebar
-está clavado al borde y `.page__inner` se centraba, así que entre las dos navegaciones había lienzo muerto —108px
-a 1440 y 348 a 1920 hasta el índice de `--rail`— y las hermanas arrancaban en cuatro verticales distintas a 1920
-(80 / 200 / 520 / 584).
+**Las altas van en pasos (DD-138)**, lo que eligió producto para el mismo gradiente de meta:
+- en el alta (y al duplicar agente o usuario), el Stepper vertical nativo de PrimeNG en el sitio del índice y del
+  contenido; la edición sigue con el índice. Pieza de la app: `sc-alta-pasos`, con `pasosDeAlta()`, que saca los
+  pasos de las secciones del índice;
+- cada sección vive en su `ng-template`: la misma en los dos modos;
+- la puerta de General del grupo sigue (pasos apagados); agente y usuario, en cualquier orden;
+- ✓ al dejar un paso completo, «Atrás» y «Siguiente» como atajos, y el paso no toca la dirección;
+- el plegado es el de PrimeNG tal cual (0,2 s, `ease-out`). La línea entre pasos se despegaba al plegar, por un fallo
+  de PrimeNG, y se arregla con `pt` en la envoltura del panel (`panelPt`).
 
-**Qué cambia.** `.page__inner` pasa a `margin: 0`, `--rail` a `margin-inline: 0` y `.page__form` a `margin: 0`.
-**Los topes no se tocan**: 832 / 960 / 1100 / 1200 / 1600 siguen limitando el ancho de LECTURA. El contenido de
-`--rail` sigue midiendo 920, el `Block` 393:12587. El porqué y las referencias medidas (GitHub, Meridian) están en
-`docs/DECISIONS.md` DD-115.
+`altas-pasos.spec.ts`: siete de ocho en rojo contra el código anterior (la octava, de guarda), y dos más en rojo con
+el fallo puesto: el aire (49 con el margen de la tarjeta) y los títulos (h1 → h3 sin el h2 oculto). Las altas de otras
+seis pruebas se reescriben para los pasos con `irAPaso()`. `altas-pasos-movimiento.spec.ts`, tres, con el movimiento
+real: la línea a mitad del plegado (en rojo primero, 36 de 114), el plegado nativo y menos movimiento.
 
-**Medido** con sonda de navegador a 1440 y 1920, en Configuración del AED, Seguridad, Usuarios y Repositorios: las
-cuatro arrancan en x=80 y el hueco hasta el índice es de 28 (el `padding` del molde) en cualquier ancho. En el
-laboratorio del Sidebar de PrimeNG (`/lab/sidebar`) el sidebar mide 48 y la página arranca en 48: anclado, el
-contenido no depende del ancho del sidebar, así que un cambio de marco no lo mueve.
+**Trampas del tramo:**
+- ⚠️ El Stepper nativo desmonta el panel que se deja cuando acaba de plegarse, no al pulsar: un momento hay dos
+  paneles en el DOM y `querySelector('.p-steppanel-content')` coge el que se va (medido: 0 y 747). Espera a que quede
+  uno (`irAPaso()` lo hace) o busca el del paso con `aria-current="step"`.
+- ⚠️ Un clic de Playwright en un paso apagado espera 30 s a que se encienda. Los recorridos (`revision`,
+  `agrupacion`) rellenan antes lo que lo abre (`PREPARAR`).
+- ⚠️ El texto de una pestaña de paso es «1\nGeneral»: el número va delante. `nombreDe` lo quita.
+- ⚠️ Un error de sintaxis en el decorador de un componente (unas comillas invertidas dentro de `styles`) deja a
+  `ng serve` con NG2012 en quien lo importa aunque el fichero ya esté bien: reinicia el servidor.
+- ⚠️ La sección dentro del paso la pinta la plantilla de la ficha, no `sc-alta-pasos`: sus estilos encapsulados
+  no la alcanzan. El margen de la tarjeta se quita en `_forms.scss` (`.alta-pasos sc-section-card`).
+- ⚠️ `toHaveText` lee el `textContent`, y un `sc-icon` pone ahí el nombre de su glifo («error Falta: nombre»). El
+  lector no lo oye (va `aria-hidden`): casa el final del texto.
+- ⚠️ Las altas de agente y usuario no pasan la medida completa de `theme-contrast`: el marcador de la foto
+  (`sc-photo-upload`, del DS) mide 2,58:1. Por eso siguen en `RUTAS_SUELO` (abierto en DD-136).
+- ⚠️ Un `sc-inputnumber` con sufijo se describe con el sufijo delante: la espera en cola se anuncia «s Si nadie…».
+  Casa el final de la descripción, no el texto exacto.
+- ⚠️ El fin del plegado lo pone un temporizador de respaldo de p-motion (201 ms), no solo `animationend`. Para verlo
+  a cámara lenta hay que retrasar ese temporizador además de las animaciones: si no, corta el plegado a mitad. Para
+  medirlo a mitad, congélalo en el mismo fotograma en que empieza (`altas-pasos-movimiento.spec.ts`).
+- ⚠️ En el plegado del Stepper, la caja mide X·contenido y su fila X·caja: lo que se estire a la fila (la línea entre
+  pasos) se queda corto, y lo que mide su contenido no. Poner el panel en bloque no cambia nada: las dos X están
+  dentro del `p-motion`.
+- ⚠️ En la nube se corre como root, y `chmod` no le quita la escritura. Para simular que la config de git no se puede
+  escribir, un `.git/config.lock` ajeno.
 
-`audit:page-anatomy` y las 35 pruebas de molde del Supervisor pasan **sin tocarlas**: miden tope, `padding`, `gap`,
-rail de 196 y los 920, no el margen.
-
-**Trampa del tramo:** las capturas de `projects/sc-docs/public/usage/` son del 2026-09-07 y aún enseñan el sidebar
-de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con `npm run usage:capture`.
-
-## ✅ 2026-09-16 · La ficha de grupo sigue a Voice, Configuración del AED › Grupos habla como ella y los iconos pasan a Rounded opsz 24
-
-> **Sello: rama `comparar/fichas` (no se funde), HEAD `6e183821`.** Vivo: https://comparar-fichas.sc-supervisor.pages.dev ·
-> fijo: https://4994b228.sc-supervisor.pages.dev · tarjeta «Fichas» del Lab (#207).
-
-**Qué hay en la rama.**
-- **Listas:** Servicios con teléfonos demo en el tooltip; WhatsApp con su logo, la única excepción a Material; exportar
-  solo lo seleccionado; «ID» en vez de «Código»; edición masiva «de X a Y»; Email y Grabación en agentes.
-- **«Activo» = sesión abierta** (definición del PM): Desconectado, Post-conversando y Administrativo se ven y no se
-  cambian. Fuera la columna «Activación» y los «Activo» de agente y usuario; por grupo, «Atiende».
-- **Ficha de grupo**, con tres fuentes: manual de Voice (`~/Downloads/aed_mu_mb.pdf`), SISMAC-1975 en COA y el Figma
-  «Migración Voice a Smartcontact Supervisor» (`su0goUM3040xeCrvEPQhTK`).
-  - Canales, estrategia y agentes van en una sección.
-  - Estrategias del COA: fuera Aleatoria; Skills apagada con su motivo; Agente exclusivo se queda.
-  - Ring All de 2 a 10; Niveles con subestrategia y nivel por agente.
-  - Recursos. Anuncios y audio, con el texto de «Texto a voz» y el audio saliente. Avanzado, con tamaño de cola y
-    desbordar sesión. Foto.
-- **Configuración del AED › Grupos**: los mismos campos y palabras que la ficha; lo que guarda lo lee el alta
-  (`GroupDefaultsStore`).
-- **Las tres fichas:** guardar se queda en la ficha, como Contact Center; un alta navega a su edición.
-  Identidad va primero al crear y al final al editar, también en «Una página».
-- **Iconos en código:** Rounded 400, opsz 24, con la calibración 24/18 (DD-104). `icon-glyph-scale.spec.ts` mide con
-  la familia real y vigila que ningún glifo salga recortado.
-
-**Medido** con clics reales (chrome-devtools, localhost:4411 a 1440):
-- Guardar y crear en las tres fichas.
-- Los valores guardados en Configuración llegan al alta.
-- Skills no se elige.
-- Los números del Avanzado miden 175.
-- Índice y página van en el mismo orden en las tres formas.
-- 0 iconos recortados en 8 pantallas.
-- El spec de iconos se pone en rojo con `overflow: hidden` forzado.
+El tramo del 2026-09-28 (panel compacto, tipos de usuario y ayudas) vive en
+`git show c6a9cd59:docs/handoff/supervisor-fichas.md`; su criterio sigue en DD-131, DD-132 y DD-133.
 
 ## SIGUIENTE — sin preguntar
 
-0. **Pendiente de producto, de la ficha de grupo:** tres maneras de sacar a un agente de un grupo (desmarcar su canal,
-   apagar «Habilitado», la papelera) y «Habilitado» con cero canales es un estado que no significa nada. Preguntar
-   qué es «deshabilitado» frente a «sin canales» antes de dibujarlo. Y el número de WhatsApp sigue colgando de Chat.
-1. **Decidir sobre el laboratorio de administración** (`/lab/admin/grupos`, `/lab/admin/usuarios`).
-   Lo primero que hay que discutir con Rafa y con producto son **los paquetes por tipo**
-   (`TYPE_PACKAGES` en `admin-lab.model.ts`): hoy no existe ninguno porque el tipo no significa
-   nada, así que los propuse yo y **no están validados con nadie**. Lo demás sale del teardown y
-   está medido. Sin esa decisión, A1 no puede aterrizar en el formulario real.
-2. **Pendiente de Rafa:** dijo «tanto para Agents como groups»; se hicieron grupos y usuarios (las
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: E1b → E2 → E3 → E4 → D3 →
+   F (G termina con G2b, DD-146). E4, con la referencia del usuario «4. Agentes y revisión»: todos a la vista y sin
+   marcar, búsqueda, filtro Todos / Asignados / Sin asignar, estado y canales. Cada uno con su prueba en rojo;
+   la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center
+   validado: pídeselos al usuario si no están en el repo.
+
+   **Lo que queda abierto de DD-133, DD-135 y DD-136:**
+   - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
+   - los subtítulos de sección, sin revisar;
+   - las ayudas de la lista de ajustes de Contact Center no se anuncian con su control (el DS no deja pasar
+     `aria-describedby`);
+   - el marcador de la foto de `sc-photo-upload` (DS), a 2,58:1: al arreglarlo, las altas de agente y usuario entran
+     en `RUTAS` de `theme-contrast`.
+
+   Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
+   código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el
+   icono a 400 junto a texto semibold en el título de sección y en la fila activa del índice (`figma-pendiente` §29).
+   El laboratorio de administración (`/lab/admin/*`): sus paquetes quedan superados por los de DD-132.
+1. **Pendiente de Rafa:** dijo «tanto para Agents como groups»; se hicieron grupos y usuarios (las
    dos entidades del teardown). Si se refería a la lista real de `/admin/agentes`, es una tercera
    con el mismo molde.
-3. **Cuando Rafa diga «lanza el script de huérfanos»**, ya habrá hecho tres cosas: publicar Smart-Contact-Icons
+2. **Cuando Rafa diga «lanza el script de huérfanos»**, ya habrá hecho tres cosas: publicar Smart-Contact-Icons
    desmarcando los 21 sets `Icon…` de Playground (son de otra sesión), aceptar la actualización en el Design System y
    arrastrar `dashboard` y `neurology` a Playground. Entonces sigue el `LEEME.md` de
    `~/Documents/Claude/2026-09 iconos-material/huerfanos/`: 13 `dashboard`, 8 `brain` → `neurology`, y `query_stats`
    y `graph_5` a 14 × 14. El script para solo si la actualización no está aceptada.
-4. **Rescatar a `main` por PRs separados** (la rama no se funde). Medido el 2026-09-20 contra
+3. **Rescatar a `main` por PRs separados** (la rama no se funde). Medido el 2026-09-20 contra
    `origin/main`, de los cinco puntos **solo queda uno**:
    - ~~iconos opsz 24 con su spec~~ · ya estaban en `main` antes de mirarlo;
    - `list-page`: el ancho mínimo con columnas ocultas NO estaba en `main` (medido el 2026-09-24; entra con el PR
      de listas de las tablas). Exportar solo la selección tampoco, y se decidió no hacerlo: exportar baja todo;
    - ~~`sc-bulk-edit-menu matchable`~~ y ~~`sc-select editable`~~ · entraron en **#218**, junto con
      `sc-section-card showHeader` y `sc-drawer width/topOffset`;
-   - **las pantallas y el copy** — lo único pendiente, y lo bloquea la pregunta de producto de
-     ⏸️ ESPERANDO (qué forma de ficha se queda). Son ~3.700 líneas en ~43 ficheros, más 932 de
+   - **las pantallas y el copy** — ya no aplica: la ficha de grupo (DD-121) y las de agente y usuario (DD-122) no
+     salen de `comparar/fichas`, que queda de referencia. Son ~3.700 líneas en ~43 ficheros, más 932 de
      textos. El andamio de `admin/comparar/` (12 ficheros, 1.088 líneas: la barra `?variante=`,
      la guía «Qué mirar», el scroll-spy) **no se funde: se tira** cuando haya decisión.
    ⚠️ Antes de rescatar nada más, compruébalo contra `origin/main`: dos de los cinco puntos ya
    estaban hechos y el hand-off no se había enterado.
-3. Probar con scroll real el scroll-spy de «Una página»: al hacer scroll por código no cambiaba la sección activa.
+4. Probar con scroll real el scroll-spy de «Una página»: al hacer scroll por código no cambiaba la sección activa.
 
 ## ⏸️ ESPERANDO — no preguntar
 
-- **Producto:** qué forma de ficha se queda (`?variante=a|b|e`).
-- **Devs:** qué son «Audio saliente» y «Desbordar sesión». Solo salen en el Figma; están anotados en `groups-data.ts`.
+- **Producto:** validar en producción el índice único y las tres fichas en su molde (DD-122), con el antes y después.
+  La forma de agente y usuario ya está decidida: el índice lateral (las variantes de `comparar/fichas` quedan de
+  referencia).
+- **Devs:** qué es «Audio saliente» (solo sale en el Figma; anotado en `groups-data.ts`; «Desbordar sesión» lo
+  respondió la revisión de producto, DD-141), y el resto de preguntas abiertas de DD-121: el destino del desbordamiento, Email, el script de Web Chat, WhatsApp por
+  agente y qué ve el cliente en cola si se toca un grupo activo.
 - **Rafa:** revisar usuarios contra el Supervisor real.
 
 **Trampas del frente:**
+- ⚠️ **Una consulta de contenedor no suma especificidad.** Una regla dentro de `@container` que va antes que la regla
+  base del mismo selector pierde. La franja siguió a 244 px hasta ponerla detrás.
+- ⚠️ **Una `subgrid` con su propio `gap` desplaza sus elementos la mitad de la diferencia con el de fuera.** Con
+  `column-gap: normal` lo hereda; aquí eran 3 px de más.
+- ⚠️ **Un `href="#id"` suelto se resuelve contra `<base href="/">`.** El enlace de un salto lleva la ruta de la ficha y
+  su ancla (`jumpHref`).
+- ⚠️ **Una sonda por `requestAnimationFrame` puede leer la cifra del fotograma anterior**, según el orden de los
+  callbacks. Para comparar cifra y arco hay que usar un `MutationObserver` en el instante del cambio.
+- ⚠️ `p-drawer` escucha Escape en su contenedor y llama a `hide(false)` aunque `closeOnEscape` esté apagado: quita la
+  máscara y deja el panel abierto. El panel rápido corta Escape en su propio `(keydown)`.
+- ⚠️ `p-table` reordena en el cliente por el valor crudo del campo ENCIMA del orden que recibe. Con `externalSort`
+  (que `sc-list-page` enciende si hay `sortFn`), toda columna ordenable tiene que estar en ese `sortFn`.
+- ⚠️ El carril de Contact Center (`.page__rail`) es fijo y NO tiene scroll: lo que se le cuelgue bajo el índice se corta
+  en un portátil. Por eso el resumen de las fichas vive en su columna; `ficha-grupo.spec.ts` lo vigila a 1366×660.
+- ⚠️ Pulsar un `sc-select` por el centro de su caja: con ayuda o error debajo, el centro cae en el hueco entre el
+  control y el texto, y no abre nada (extensión del agente: 33 px de control, 7 de hueco y 35 de ayuda). Desde el
+  2026-09-28 `pickSelectOption` pulsa el control.
+- ⚠️ Medir anchos antes de que cargue la fuente de iconos: con `font-display: block` el glifo no se ve pero ocupa el
+  ancho de su nombre («group_add») con la letra de reserva, y «Asignar» mide 146 px en su celda de 120. Antes de medir,
+  `document.fonts.load(…)` y `document.fonts.ready`.
+- ⚠️ Un Ctrl+clic que espera a que el navegador cree la pestaña (`context.waitForEvent('page')`) no es fiable en el
+  runner del CI: 6 fallos en 203 vueltas (medido el 2026-09-29), ninguno en local. Es una carrera entre Playwright y
+  Chromium, vista en el protocolo: si la pestaña empieza a cargar antes de que Playwright active `Page` en ella, no
+  llega el `Page.frameNavigated` de su primera navegación, y Playwright no entrega la pestaña o la entrega en
+  `about:blank`. La app sí la abría. `indice-enlaces` comprueba la parte de la app (el clic llega al enlace sin
+  cancelar; rojo 3 de 3 con el índice cancelándolo) y abre la otra con `context.newPage()`: 0 de 240 en el CI.
+- ⚠️ Las opciones de un overlay nativo están en el DOM, con sus atributos, antes de tener caja: `p-motion` las monta con
+  `display: none` y no lo quita hasta dos fotogramas después (`nextFrame()`), y `disableAnimations` no lo tapa porque
+  no es una animación. Un clic con `force` no espera a la caja y falla en el acto («Element is not visible»; con los
+  fotogramas retrasados, 5 de 5). Antes de un clic forzado, `toBeVisible()` (`column-selector-order.spec.ts`).
+- ⚠️ Un commit del robot `visual-baselines` sobre un PR ya abierto deja su CI en «action_required», y hay que
+  aprobarlo a mano (2026-09-24). Si un cambio mueve una captura de sc-docs, lanza el workflow sobre la rama ANTES de
+  abrir el PR.
+- ⚠️ Una pila de PRs choca con `main` en movimiento: el preflight exige llevar el `main` del momento, y cada commit
+  ajeno obliga a rebasar la pila entera. Solo se apila lo que depende de lo anterior; lo independiente va contra `main`.
 - ⚠️ `p-table` con ajustar Y reordenar columnas: si el texto de la cabecera va suelto en el `th`, nunca arrastra
   (la directiva ve el tirador de ancho dentro de lo pulsado). Por eso `sc-datatable` envuelve el texto.
 - ⚠️ La tabla ajustable nativa pone `overflow: hidden` en cada celda: rompe un panel anclado DENTRO de la celda
@@ -257,3 +369,22 @@ de 64px y el contenido centrado. No sirven para comprobar esto; regéneralas con
 - ⚠️ El preflight no arranca si la memoria compartida pasa de tope (ficha >250 palabras o índice >1.000); lo mide
   `scripts/memory-shape.mjs`.
 - ⚠️ En Figma, `importComponentByKeyAsync` se cuelga más de 200 s: usa un nodo remoto que ya esté en el fichero.
+- ⚠️ `withViewTransitions` abre una transición en TODA navegación, también si solo cambia la query: sin saltarla
+  (`onlyQueryChanged`, en `app.config.ts`) cada clic del índice fundía la página. En e2e no se ve porque
+  `disableAnimations` apaga los pseudo-elementos: la prueba envuelve `document.startViewTransition`.
+- ⚠️ En el alta de grupo, en cuanto el grupo existe su nombre ya está cogido (por él mismo) y la puerta de General se
+  cierra: lo que dependa de la sección abierta al crear se lee ANTES de `addGroup`.
+- ⚠️ Con dos `page.goto`, Atrás cruza de documento y el router no se entera: la prueba de un guardián con Atrás llega
+  a la ficha navegando dentro de la app. El aviso de descartar es un `alertdialog`.
+- ⚠️ Un `input()` de página enlazado a la query recibe el valor nuevo un microtask después de navegar, y lo que falta
+  llega como `undefined`: no lo leas en un efecto que recarga el formulario, o cada clic del índice borra lo editado.
+- ⚠️ La ficha de usuario ya tenía un `sectionTree` (el árbol de Acceso): el ayudante de enlaces se llama `sectionUrl`
+  en las cuatro páginas.
+- ⚠️ En claro, el tinte de marca del resumen y «seleccionado» son el mismo color: una tarjeta del resumen no se puede
+  hacer pulsable sin cambiar de superficie (cuenta para G, el resumen enlazado).
+- ⚠️ `--sc-text-secondary` llega a AA solo sobre blanco (4,52:1); sobre cualquier fondo teñido baja, y
+  `theme-contrast` lo perdona solo sobre sus dos fondos.
+- ⚠️ Chrome serializa un color con alfa como `color(srgb r g b / a)`, de 0 a 1: una sonda que lo lea con `/\d+/` saca
+  negro. Usa `e2e/shared/color.ts`, que compone las capas.
+- ⚠️ Leer un estilo computado dentro de la detección de cambios hacía nacer lleno el anillo del resumen: la directiva
+  de la cifra lee su duración en el primer fotograma.

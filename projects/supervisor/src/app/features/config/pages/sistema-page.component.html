@@ -77,6 +77,27 @@
       hintKey="config.sistema.data.hint"
     >
       <div class="sub-section">
+        <!-- El juego de datos (DD-124): lo mismo que `?datos=` en la dirección, sin tener que recordarlo. -->
+        <div class="data-row">
+          <div class="data-row__copy">
+            <span class="data-row__label sc-text-body-regular" id="sistema-dataset-label">
+              {{ 'config.sistema.data.set_label' | translate }}
+            </span>
+            <p class="data-row__hint sc-text-caption-regular">
+              {{ 'config.sistema.data.set_hint' | translate }}
+            </p>
+          </div>
+          <sc-selectbutton
+            class="theme-row__control"
+            [options]="dataSetOptions()"
+            optionValue="value"
+            [allowEmpty]="false"
+            [value]="dataSet"
+            (valueChange)="selectDataSet($event)"
+            ariaLabelledBy="sistema-dataset-label"
+          />
+        </div>
+
         <div class="data-row">
           <div class="data-row__copy">
             <span class="data-row__label sc-text-body-regular">
@@ -98,7 +119,7 @@
       surface="card"
       titleKey="config.seguridad.policies.title"
     >
-      <div class="sub-section">
+      <div class="sub-section policy-list">
         <div class="policy-row">
           <div>
             <span class="policy-row__label sc-text-body-regular">

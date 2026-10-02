@@ -153,7 +153,9 @@ componente de primeng.dev (lo pase con enlace o no):
 
 Lo que la documentación NO dice y se ha medido aquí vive en DD-113 (el `aria-label` de la tira de `p-tabs` va
 por `[pt]`, el `aria-labelledby` de `p-selectbutton` por su entrada, un icono de fuente dentro de `p-tab`
-descoloca la raya).
+descoloca la raya, la línea del Stepper vertical se despegaba al plegar si su envoltura se estiraba (las altas ya no
+lo usan, DD-143), y el nombre de un
+`p-dialog` sin cabecera va por `pt.root`, porque un atributo en su host no llega a su raíz: DD-140).
 
 ---
 
@@ -192,6 +194,24 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    lo desconecta del canal por el que un cambio de token llega solo a todos los componentes. Si
    el texto de un componente tiene que verse distinto, se mueve su TOKEN (DD-55, gateado por
    `audit:text-styles`). Muestrario y regla: **Fundamentos → Tipografía** en `sc-docs`.
+9. **Agrupación por espacio.** Lo que va junto se separa MENOS que lo que no, con una sola
+   escalera: **7 · 14 · 28** (`--sc-spacing-0-5` · `-1` · `-2`). 7 entre una etiqueta y lo que
+   etiqueta (son una pieza); 14 entre hermanos (campos, filas, opciones, celdas); 28 entre grupos
+   y secciones, y entre el último campo y el botón que lo envía. Entre grupos, al menos el doble
+   que dentro: por debajo, una etiqueta se lee a medio camino entre su control y el de arriba, y
+   un botón, como un campo más. Si la maqueta trae otro valor (12.25, 24.5), manda la escalera y
+   el cambio del Kit va a `docs/figma-pendiente.md` (DD-123). Lo mide
+   `e2e/supervisor/agrupacion.spec.ts` en el build, pantalla a pantalla. **Densidad:** compacto donde
+   se escanea (el monitor, las listas) y más aire donde se lee y se rellena (fichas, formularios), sin
+   aire que no separe nada: el relleno de una caja que ya delimitan su borde y su fondo sobra (DD-125). La misma
+   prueba avisa del aire que se suma dentro de una caja (R4): márgenes y rellenos de dentro que llegan a 7.
+
+**Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
+recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas
+con la skill `better-layout`: lo medible se arregla antes de enseñarlo y lo que sea gusto se le lista al
+usuario, no se decide solo. La IA construye; esta pasada es la que critica, y el primer filtro visual no
+puede ser el usuario. Si escribes plantillas u hojas del Supervisor y cierras sin revisarlas, el hook de
+Stop te lo para una vez.
 
 **Mapa de composición** — punteros, no prosa: la razón vive donde apunta cada línea. Nace de
 medir que ninguno de estos nombres aparecía en AGENTS ni en CLAUDE, así que la regla existía en
@@ -215,7 +235,8 @@ el código y el agente no la leía nunca (DD-53).
   `.page__form` 1100) y `.page__heading`. Declararlo es obligatorio y lo vigila
   `audit:page-anatomy`; las excepciones viven en su `EXENTAS` con el motivo escrito.
 - **Formularios**: `projects/supervisor/src/styles/_forms.scss` (`.field`, `.ficha`, `.ipanel`;
-  DD-44) + `sc-form-section-nav` (el índice son PESTAÑAS: una sección en el DOM a la vez) +
+  DD-44) + `sc-form-section-nav` (UN índice en toda la app: cada fila es un enlace a su sección, `?seccion=` o una
+  ruta, y solo la de la dirección está en el DOM; DD-122) +
   `sc-section-card`. Config tiene su propio shell: `features/config/layout/`.
 - **Lienzo**: `--sc-bg-canvas` (DD-45). `--sc-bg-default` es el suelo del shell y el relleno de
   campo, nunca una superficie de contenido (DD-34). El `:host` de una página pinta su lienzo, o
@@ -250,8 +271,15 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Cambiar de colección en la misma pantalla (se vacían búsqueda y selección) | Pestañas `p-tabs` de primeng.dev con texto, como su ejemplo básico; el nombre de la tira por `[pt]="{ content: { 'aria-label': … } }"` | Botones con `role="tab"` a mano; `sc-selectbutton`; contador o icono que repiten lo que ya se ve | DD-113 |
 | Filtrar la misma lista o elegir un valor de un grupo corto que se ve entero | `sc-selectbutton` con `ariaLabelledBy` y opciones traducidas | Un `radiogroup` o botones con estado a mano; `p-tabs` | DD-113 |
 | Separar dos bloques con una línea | `sc-divider` | `<hr>`, un `div` de 1 px o un `border-top` entre hermanos | DD-113 |
+| El alta de una ficha con secciones | El índice de la edición (`sc-form-section-nav`) con `sectionsDone` de `seccionesDeAlta()`: ✓ en la sección que se deja completa y el punto rojo en la que se deja sin lo obligatorio; al pie, `sc-alta-pie` («Atrás» / «Siguiente»), que lleva al principio de la sección nueva con `llegarASeccion` | Un Stepper o un asistente (DD-138, revertida); la sección del alta en la dirección; «Siguiente» como puerta fuera de General del grupo | DD-143 |
+| Decir cuánto le falta a un alta | `sc-summary-status` arriba de su resumen: «Falta: …» y, cuando «Crear …» se enciende, «Listo para crear» | Un porcentaje o una barra de progreso; repetir en el resumen los errores de formato de los campos | DD-136 |
+| Con qué nace un grupo o un agente nuevo | Contact Center › Grupos o › Agentes, que guardan en `GroupDefaultsStore` o `AgentDefaultsStore`, y el alta los lee | Valores fijos en el alta, una página de valores junto al listado o una réplica de maqueta que no guarda | DD-135 |
+| Cambiar el nombre o la forma de un valor que ya se guarda (una estrategia, un canal) | `normalize` en la configuración del almacén (`createVersionedStorage`): lo pone al día al leerlo, y lo siguiente que se guarde ya va al día | Subir `currentVersion`, que borra lo guardado y re-siembra; traducir el nombre al pintarlo en cada pantalla | DD-141 |
+| El estado de un agente en una pantalla (su etiqueta, un punto, un anillo que lo cuenta) | El `presenceStatus` del almacén de agentes (`AgentsStore`), el que pinta el listado; el Dashboard lo traduce con `PRESENCIA_EN_DASHBOARD` | Una lista de estados propia de la pantalla, o leer las semillas en vez del almacén | DD-139 |
+| Una cifra con su proporción en un resumen («8 de 11») | `sc-summary-kpi` del Supervisor: la cifra con «/total» y el `p-progress-spinner` nativo, que cuenta y se llena al abrir y al cambiar | `sc-gauge` (no se mueve y empieza en 96 px); un porcentaje; un anillo SVG a mano | DD-126 |
 | Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco | Spinner centrado; datos que recolocan la página al llegar | UX 2 |
 | Un icono | `<sc-icon>` (Material Symbols) | Emojis; una segunda librería | UX 4 |
+| Un diálogo modal con contenido propio (un alta sin salir de la ficha, un aviso con su detalle) | `sc-dialog` con su `title`, que es su nombre para el lector; lo de dentro, sin rol propio | Un `role="dialog"` en lo que va dentro (sale un diálogo dentro de otro); un `p-dialog` a pelo sin nombre | DD-140 |
 | Borrar una entidad desde su ficha | `sc-form-danger-zone` + `sc-delete-entity-dialog` (el patrón de las nueve fichas que ya lo usan, ver `docs/inventory.md`) | `sc-confirmdialog` genérico; borrar sin confirmar | `docs/inventory.md` |
 | Dos flujos que se ven distintos y parece un bug | Mira DD-36 y DD-53 antes de uniformar | Igualarlos «para que cuadren» | DD-36, DD-53 |
 
@@ -288,8 +316,8 @@ Before considering any token/theme/component change done, run:
 - `npm run tokens:guard` — token guardrails (`--p-*` only in the preset, semantic spacing alias, no 8-point names, `font-size` via token)
 - `npm run tokens:type-parity` — typography parity
 - `npm run audit:theme-scale` — zero `px` in the preset, central `css.ts`
-- `npm run verify` — runs the full guardrail chain (canonical list: the table in README.md); also includes test:unit, docs:guard, docs:coherence, build, typecheck, lint
-- `npm run preflight:scope -- --run` before a push (gates + AOT builds, ~8 min; the e2e suites run only in CI since DD-60, so run by hand the suite that covers what you touched; it writes the `.preflight-ok` mark the push hook requires; the `--` is required, without it npm swallows the flag and the script only PRINTS the lane), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message. `correction-capture` (UserPromptSubmit) logs every message of Rafa's that sounds like a correction to `correcciones.jsonl` and asks you to name the rule that already covered it, and on a closing message ("cerramos") tells you to invoke `reflect`; `/reflect` reads that log first and routes each correction with `--enrutar <id> <destino> "<motivo>"` — the Stop hook blocks the close while any is unrouted, y también si el mensaje final no lleva el parte de cierre (§Session-Close Protocol, paso 6); and `docs:coherence` escalates any LEARNINGS rule broken in ≥3 sessions that is still prose (CHECK K), caps the agent memory (CHECK N) and demands a red test per `verify` script (CHECK O).
+- `npm run verify` — runs the full guardrail chain (canonical list: the table in README.md); also includes test:unit, docs:guard, docs:coherence, build, typecheck, lint. It opens with a loud, non-blocking warning when the machine is saturated (load ≥ 4 per CPU; `preverify` → `scripts/preflight-puerta-barata.mjs`): it names the top CPU consumers and the two clock-bound tests that can go red regardless of your change, and a run that passes under load is still valid
+- `npm run preflight:scope -- --run` before a push (gates + AOT builds, ~8 min; the e2e suites run only in CI since DD-60, so run by hand the suite that covers what you touched; it writes the `.preflight-ok` mark the push hook requires; the `--` is required, without it npm swallows the flag and the script only PRINTS the lane), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message. `correction-capture` (UserPromptSubmit) logs every message of Rafa's that sounds like a correction to `correcciones.jsonl` and asks you to name the rule that already covered it (`npm run correcciones` counts that log by type —spacing and alignment, color, copy, behaviour, process— on the machine where it lives), and on a closing message ("cerramos") tells you to invoke `reflect`; `/reflect` reads that log first and routes each correction with `--enrutar <id> <destino> "<motivo>"` — the Stop hook blocks the close while any is unrouted, y también si el mensaje final no lleva el parte de cierre (§Session-Close Protocol, paso 6); and `docs:coherence` escalates any LEARNINGS rule broken in ≥3 sessions that is still prose (CHECK K), caps the agent memory (CHECK N) and demands a red test per `verify` script (CHECK O). En una sesión cloud, `cloud-node.sh` (SessionStart) pone el Node del `.nvmrc` —el contenedor trae uno más viejo que el que pide Angular— y hace `npm ci` si el clon llega sin `node_modules`; y `cloud-identity.mjs` (SessionStart), si el clon firmaría como la herramienta, firma con la cuenta del mantenedor (DD-134).
 
 ### Pull requests y commits (el repo es público)
 
@@ -302,7 +330,16 @@ proyecto, y los lee cualquiera:
 - **Sin atribución de la herramienta**: ni «Generated with Claude Code», ni `Co-Authored-By: Claude`,
   ni el enlace `claude.ai/code/session_…`. Los apaga `attribution` en `.claude/settings.json`
   (y en el `~/.claude/settings.json` de Rafa), y `bash-guard` deniega un `git commit` o
-  `gh pr create|edit` que los lleve escritos a mano.
+  `gh pr create|edit` que los lleve escritos a mano. En una sesión cloud el PR se crea por MCP y el
+  servidor añade el pie igual (#256, #262, #265): `pr-footer-guard` pide quitarlo en cuanto se crea.
+- **Los commits firman con la cuenta del mantenedor (DD-134), y así el squash no suma coautores.** Al fundir por
+  squash con el mensaje por defecto, GitHub añade como coautor a cada autor de commit que no es quien funde; la
+  nube firmaba como la herramienta, y cinco fusiones de `main` salieron con ella de coautora (#223, #224, #266,
+  #267, #270) sin que la línea estuviera en su rama. En la nube la identidad la fija `cloud-identity.mjs` al
+  arrancar; en local, la config de git del repo. `audit:commit-attribution` (en `verify`) pone rojo un commit
+  de la rama con el correo de la herramienta o con una línea de atribución. Quien funde sin mirar el mensaje
+  lo escribe: el robot de la auditoría con `--subject` y `--body` (`scripts/mensaje-squash.mjs`), una sesión por
+  MCP con título y cuerpo. La autofusión de GitHub no deja escribirlo, así que no se usa (#268).
 - **Cada commit lleva su «Por qué»**, no solo su qué. El título dice el cambio; el cuerpo dice qué
   problema resuelve y qué se descartó. Norma de Rafa del 2026-09-16: el título envejece bien, pero
   el motivo solo lo sabe quien estuvo ahí, y dentro de un mes el `git log` es lo único que queda.
@@ -553,7 +590,10 @@ this wrap-up routine **without asking permission first**:
    de verdad al cerrar la ventana: *¿se pierde algo, o está todo donde otro agente pueda
    recogerlo?* Un «todo subido» afirmado sin mirar es la regla #17 en su versión más cara, porque
    el contexto de la sesión no vuelve. Si es «no», la frase dice qué falta y quién lo recoge (el
-   hand-off del frente, el PR abierto).
+   hand-off del frente, el PR abierto). Lo que main ya lleva no cuelga: tras fundir por squash
+   GitHub borra la rama, y antes de contarla como «sin subir» el hook mira si fundirla en
+   `origin/main` cambiaría algo (sin `fetch`: con el `origin/main` que tengas). Si no cambia nada,
+   es «sí».
    *Por qué existe:* el coste de Rafa no son mis vueltas, son los defectos que le llegan. Un cierre
    de trámite («pusheado, CI verde») cuenta el trámite y esconde lo único que decide algo: si esto
    le sirve, si le va a estorbar y si le toca hacer algo a él. (Petición suya, 2026-09-10.)
@@ -675,8 +715,8 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   Para «¿qué ve el usuario ahí?»: `elementFromPoint` + subir al primer ancestro con alfa 1.
   ↔ `LEARNINGS.md` **#2** (corolario A).*
 - **`color-mix` computa a `color(srgb …)`, no a `rgb()`.** Cualquier parser de `rgb()`/hex
-  devuelve basura ahí. Que convierta el navegador (1px en canvas + `getImageData`), y valida
-  el control: `ctx.fillStyle = 'var(--x)'` NO resuelve la variable (se queda en negro).
+  devuelve basura ahí. No lo escribas: `e2e/shared/color.ts` convierte en el canvas, compone
+  las capas translúcidas y se niega a una `var()`, que el canvas no resuelve.
   ↔ `LEARNINGS.md` **#2** (+ corolario B).*
 - **Una regla encapsulada de componente le gana a una global.** Antes de bautizar una clase
   compartida, `grep` el nombre en los `.scss` de componente (hubo `.page__title` muerto en

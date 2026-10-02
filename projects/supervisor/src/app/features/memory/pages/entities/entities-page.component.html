@@ -106,7 +106,7 @@
 </ng-template>
 
 <ng-template #descTpl let-entity>
-  <span class="entities-table__td-desc sc-text-body-regular">{{ entity.description }}</span>
+  <span class="entities-table__td-desc sc-text-body-regular" [title]="entity.description">{{ entity.description }}</span>
 </ng-template>
 
 <ng-template #formatTpl let-entity>

@@ -4,15 +4,24 @@
   background: var(--sc-bg-canvas);
 }
 
-/* El MOLDE de esta página no vive aquí: `.page__inner--rail`, `.page__main`, `.ficha-tabs` y su
- * franja y tira (`.headline`, `.tabbar`) están en `src/styles/_page.scss`, y `.plain-section`,
+/* El MOLDE de esta página no vive aquí: `.page__inner--rail`, `.page__rail`, `.page__main`, la
+ * cabecera (`.headline*`), `.ficha-rail`, el resumen (`.ficha-summary`) y el aviso de otra pestaña
+ * (`.ficha-conflict`) están en `src/styles/_page.scss`, las tarjetas del resumen en `_resumen.scss`, y
  * `.form-identity`, `.switch-field` y `.checkbox-*` en `src/styles/_forms.scss`. No los re-declares aquí: una regla encapsulada de
  * componente le gana siempre a la global, y el molde se desviaría en una sola
  * página sin avisar. Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`. */
 
-/* La sangría de la sección hija bajo su madre es de esta pantalla: es la única con
- * secciones anidadas. 24.5 = lo que mide la casilla más su hueco, para que la hija
- * arranque bajo el TEXTO de la madre y no bajo su casilla. */
-.checkbox-row--child {
-  padding-left: var(--sc-spacing-1-75);
+/* La plantilla del tipo, arriba de Acceso (DD-132): cuál sigue y, si alguien se apartó, cuánto y cómo volver. Una
+ * línea de texto con su botón de texto al lado: informa, no alarma, porque apartarse de la plantilla es legítimo. */
+.access-template {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.access-template__drift {
+  color: var(--sc-text-primary);
 }

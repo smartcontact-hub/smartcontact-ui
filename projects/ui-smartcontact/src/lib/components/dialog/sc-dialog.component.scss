@@ -102,7 +102,9 @@
     color: var(--sc-dialog-title);
     display: flex;
     flex-direction: column;
-    gap: var(--sc-spacing-1-125); /* gap default entre elementos directos del body */
+    /* Entre hermanos, 14: el peldaño del medio de la escalera 7 · 14 · 28 (DD-123). Era 15,75, y con él
+     * la botonera tenía que irse a 31,5 para quedar al doble. */
+    gap: var(--sc-spacing-1);
   }
 
   /* Cuerpo a ras (input `flushBody`): el contenido gestiona su propio padding
@@ -133,6 +135,14 @@
       justify-content: flex-end;
       gap: var(--sc-dialog-footer-gap);
     }
+  }
+
+  /* Con cuerpo, la botonera va a 28 del contenido: los 17,5 del cuerpo más estos 10,5. A 17,5 quedaba
+   * más cerca del último campo que dos campos entre sí (15,75), y el botón se leía como parte de ese
+   * campo (DD-123, R3). Sin cuerpo (confirmaciones) no hay campo que confundir, y el cuerpo a ras pone
+   * su propio aire: los dos se quedan como el Kit. */
+  &__body:not(.sc-dialog__body--flush) + &__foot {
+    padding-top: var(--sc-spacing-0-75);
   }
 
   /* Bodyless modals (confirm-host etc.) have no body slot. Sin border-bottom

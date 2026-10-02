@@ -30,11 +30,11 @@ test.beforeEach(async ({ page }) => {
  * flotando) y la misma app parecía dos. Medir las cinco con el MISMO bloque de aserciones es
  * lo que impide que vuelvan a separarse.
  */
-/* Las altas de GRUPO (2026-09-22), USUARIO y AGENTE (2026-09-23) salieron de aquí: sus fichas
- * dejaron el índice lateral por una tira de pestañas, así que no tienen rail que medir y su tope es
- * 1600 y no 1200 (`.ficha-tabs` en `_page.scss`). Lo que este spec fija —que el molde de ajustes no
- * se desvíe página a página— sigue vigilando las dos de Contact Center, que sí lo usan; las fichas
- * las miden `ficha-grupo.spec.ts` y `ficha-usuario-agente.spec.ts`. */
+/* Las tres FICHAS (agente, grupo y usuario) no están aquí: llevan su resumen en una columna a la
+ * derecha (`.ficha-rail--summary`), así que su tope es 1600 y su contenido 812 a 1440, no 1200 y 920.
+ * Su índice, que es lo que comparten con Contact Center, lo miden `ficha-grupo.spec.ts` (las mismas
+ * cifras de aquí: 196, `sticky`, `top` 22.75) y `ficha-usuario-agente.spec.ts`, que exige que las tres
+ * midan igual (DD-121, DD-122). */
 const FORMULARIOS = [
   { ruta: 'config/aed/agentes', nombre: 'contact center · agentes' },
   { ruta: 'config/aed/grupos', nombre: 'contact center · grupos' },

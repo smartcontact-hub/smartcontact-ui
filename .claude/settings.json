@@ -17,6 +17,18 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__.*__create_pull_request",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/pr-footer-guard.mjs",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "startup|resume|fork|compact",
@@ -25,6 +37,21 @@
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/compact-card.mjs",
             "timeout": 20
+          }
+        ]
+      },
+      {
+        "matcher": "startup|resume|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/cloud-node.sh",
+            "timeout": 300
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/cloud-identity.mjs",
+            "timeout": 10
           }
         ]
       }
