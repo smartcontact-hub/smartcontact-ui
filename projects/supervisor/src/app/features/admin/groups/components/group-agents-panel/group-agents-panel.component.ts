@@ -28,7 +28,7 @@ import { clampLinksToChannels, diffLinks, familiesOf } from '@features/admin/ser
 
 import { GROUP_CHANNELS, type Group, type GroupChannel } from '../../data/groups-data';
 import {
-  ACTIONS_COL_COMPACT,
+  ASSIGNED_COL_REM,
   type AgentChannelTableAgent,
   AgentChannelTableComponent,
   CHANNEL_COL_COMPACT,
@@ -42,7 +42,7 @@ import {
  * ancho de la tabla de la ficha: con dos canales dejaba 450 px entre el nombre y su primera casilla (medido a 1440).
  *   · NOMBRE: 21rem, que caben el avatar, un nombre y su presencia; más largo, se recorta con su `title`.
  *   · MARCO: el relleno del cajón (15,75 a cada lado) y el borde de la tabla.
- *   · MÍNIMO: 28rem, lo que piden el título y la barra (buscar + «Añadir agentes…») en una línea.
+ *   · MÍNIMO: 28rem, lo que piden el título y la barra (filtro + búsqueda) en una línea.
  */
 const PANEL_CHROME_REM = 2.25;
 const PANEL_MIN_REM = 28;
@@ -51,14 +51,13 @@ const PANEL_MIN_REM = 28;
  * EL PANEL RÁPIDO DE AGENTES, desde el listado de grupos. Asignar y desasignar agentes y sus canales
  * es lo que más se hace con un grupo una vez creado (visión de producto de grupos, 2026-09-25), así
  * que está a un clic de la fila, sin abrir la ficha. Es la MISMA tabla que la sección Agentes de la
- * ficha: mismas reglas (al menos un canal, «Quitar» con un solo sentido) y mismas palabras.
+ * ficha: mismas reglas (al menos un canal, desmarcar Asignado para quitar) y mismas palabras.
  *
  * Tres detalles medidos contra `p-drawer` 22.1:
  *   · Su cierre (la X, el clic fuera y Escape) NO se puede vetar: emite y se cierra. Por eso los
  *     tres van apagados y cierra este panel, que pregunta antes si hay cambios sin guardar. Escape
  *     vuelve a cerrar, por la misma puerta.
- *   · Dentro no se eligen filas: la barra de lote es `position: fixed` y quedaría debajo de la
- *     máscara del panel.
+ *   · Las cabeceras actúan sobre el resultado filtrado; el diálogo de confirmación vive en el shell.
  *   · El pie va dentro del contenido, abajo del todo. `p-drawer` solo pinta el suyo con una plantilla
  *     `#footer` hija directa, que `sc-drawer` aún no deja pasar; con un solo panel que lo pida, no se
  *     toca el DS (DD-121).
@@ -128,31 +127,20 @@ export class GroupAgentsPanelComponent implements OnDestroy {
     ];
   });
 
-  /**
-   * Columnas de canal solo si hay algo que elegir (DD-131). En un grupo de un solo canal todo agente asignado lo
-   * atiende y la columna eran casillas bloqueadas, una por fila. Vuelve si alguna fila LLEGÓ sin canal (datos de
-   * antes, o recortada al abrir): es la única forma de dárselo desde aquí. Se mira lo que llegó, no lo de ahora:
-   * con lo de ahora, marcar esa casilla quitaba la columna y el panel encogía bajo el puntero. Un agente añadido
-   * aquí nunca llega sin canal (entra con todos los del grupo).
-   */
-  protected readonly channelColumns = computed(
-    () => this.families().length > 1 || this.initialLinks().some((l) => l.channels.length === 0),
-  );
-
   /** El ancho del cajón, en función de sus columnas; nunca más que la pantalla. */
   protected readonly width = computed(() => {
-    const channelCols = this.channelColumns() ? this.families().length : 0;
+    const channelCols = this.families().length;
     const rem =
       AGENT_NAME_COL_REM + ENABLED_COL_REM +
       channelCols * parseFloat(CHANNEL_COL_COMPACT) +
       this.levelFamilies().length * LEVEL_COL_REM +
-      parseFloat(ACTIONS_COL_COMPACT) +
+      ASSIGNED_COL_REM +
       PANEL_CHROME_REM;
     return `min(${Math.max(PANEL_MIN_REM, rem)}rem, 100vw)`;
   });
 
   protected readonly availableAgents = computed<readonly AgentChannelTableAgent[]>(() =>
-    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, photo: a.photo, presenceStatus: a.presenceStatus, allowedChannels: a.allowedChannels })),
+    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, email: a.email, photo: a.photo, presenceStatus: a.presenceStatus, allowedChannels: a.allowedChannels })),
   );
 
   /** Cuántos AGENTES cambian (entran, salen o cambian de canales o de nivel): la N de «Guardar (N)». */

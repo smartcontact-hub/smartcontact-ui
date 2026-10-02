@@ -70,14 +70,17 @@ test('sin Teléfono, su bloque se va de Distribución y deja la línea que dice 
 
 /* Habilitado pertenece al enlace, no a la presencia de la persona (DD-149). */
 test('el grupo permite habilitar el enlace sin bloquear sus canales', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('sc-group-agent-links-v', '1');
+    localStorage.setItem('sc-group-agent-links', JSON.stringify([{ agentId: 1, groupId: 12, channels: ['phone', 'chat'], active: false }]));
+  });
   await goto(page, 'admin/grupos/editar/12');
   await irA(page, 'Agentes');
   await expect(page.getByRole('columnheader', { name: 'Habilitado' })).toHaveCount(1);
   const disabled = page.locator('.assign tbody tr').filter({ has: page.locator('input[role="switch"]:not(:checked)') });
   await expect(disabled).toHaveCount(1);
   await expect(disabled.getByRole('checkbox', { name: / — Chat/ })).toBeEnabled();
-  await page.locator('.assign tbody tr').first().locator('td').first().locator('input[type=checkbox]').first().click();
-  await expect(page.locator('sc-bulk-action-bar').getByRole('button', { name: 'Quitar del grupo' })).toBeVisible();
+  await expect(disabled.getByRole('checkbox', { name: /^Asignado —/ })).toBeChecked();
 });
 
 test('un agente asignado tiene al menos un canal: la casilla del último está apagada y dice por qué', async ({ page }) => {
@@ -114,7 +117,7 @@ test('quitar un canal del grupo dice cuántos lo pierden y cuántos salen, y al 
 
   await page.reload();
   await irA(page, 'Agentes');
-  await expect(page.getByText('Sin agentes asignados')).toBeVisible();
+  await expect(page.locator('sc-agent-channel-table tbody')).toContainText('No hay agentes');
 });
 
 /* La lista de agentes dice por dónde atiende cada uno con la MISMA regla que la ficha del grupo: los canales de un

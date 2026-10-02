@@ -37,12 +37,11 @@ for (const surface of ['ficha', 'panel'] as const) {
     await expect(blocked).toBeDisabled();
     await expect(blocked).not.toBeChecked();
     await expect(row.getByRole('link', { name: /permisos.*Agente Chat/i })).toHaveAttribute('href', '/admin/agentes/editar/1?seccion=permisos');
-    await table.locator('sc-multiselect').click();
-    const incompatible = page.getByRole('option', { name: /Agente Email.*sin canales compatibles/i });
-    await expect(incompatible).toHaveAttribute('data-p-disabled', 'true');
-    await incompatible.click({ force: true });
-    await expect(incompatible).toHaveAttribute('aria-checked', 'false');
-    await expect(table.locator('tbody tr', { hasText: 'Agente Email' })).toHaveCount(0);
+    await table.getByRole('button', { name: 'Todos', exact: true }).click();
+    const incompatible = table.locator('tbody tr', { hasText: 'Agente Email' });
+    await expect(incompatible).toContainText('Sin canales compatibles');
+    await expect(incompatible.getByRole('checkbox', { name: /^Asignado —/ })).toBeDisabled();
+    await expect(incompatible.getByRole('checkbox', { name: /^Asignado —/ })).not.toBeChecked();
   });
 }
 

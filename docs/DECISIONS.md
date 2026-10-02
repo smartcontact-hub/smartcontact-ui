@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Asignación desde la lista completa, filtro estable y confirmación colectiva desde dos cambios | DD-151 |
 > | Canales permitidos del agente; intersección con grupo y enlace, aviso al retirar y compatibilidad en los selectores | DD-150 |
 > | Habilitación por grupo separada de la presencia y de la cuenta; etiqueta compartida y recuento de habilitados en reglas | DD-149 |
 > | Niveles 1–10 independientes de Teléfono y Chat; migración sin subir versión, prevalece el nivel nuevo; subestrategia de Chat y columnas por familia | DD-148 |
@@ -111,6 +112,33 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-151 · 2026-10-02 — Asignar agentes desde la lista completa (E4)
+
+**Decisión.** La ficha de grupo y el panel rápido comparten la lista de todos los agentes. «Asignado» añade o
+quita el enlace; sustituye el selector de incorporación, la selección de filas para un lote y la papelera.
+El SelectButton nativo filtra Todos / Asignados / Sin asignar, sin contadores. Edición y panel abren en Asignados;
+el alta, en Todos. La búsqueda encuentra nombre o email y se conserva al cambiar de filtro. La identidad muestra
+nombre, email y la presencia compartida de DD-149. Los incompatibles siguen visibles, apagados y explicados (DD-150).
+
+El conjunto de filas se calcula al cambiar filtro o búsqueda y conserva su pertenencia mientras se modifica una
+asignación. Así el control no desaparece bajo el puntero. La paginación nativa de la tabla muestra 10 filas y permite
+25 o 50; las cabeceras actúan sobre todos los resultados filtrados, también los de otras páginas.
+
+**Acciones colectivas.** La cabecera Asignado añade los compatibles que faltan; cuando todos están asignados,
+los quita. La de cada familia cambia solo enlaces asignados y compatibles, y nunca retira su último canal.
+Se confirma cualquier acción que cambie a dos o más agentes (decisión de producto, 2026-10-02), contando cambios
+reales, sin incluir incompatibles ni filas que quedarían iguales. Cancelar conserva el borrador. Se anuncia el
+número de agentes modificados. Los cambios siguen pendientes hasta Guardar en la ficha o el panel.
+
+**Panel.** Nace arriba y ocupa toda la altura, sin `topOffset`. Su ancho suma Asignado, identidad, niveles,
+familias y Habilitado, limitado por la ventana. Las familias también aparecen cuando solo hay una: ahora la lista
+incluye agentes sin asignar y necesita explicar su compatibilidad. Enmienda DD-121 §8/10 y DD-131 §1–3/6.
+
+**Descartadas.** Mantener dos entradas para asignar duplicaría el mismo estado. Refiltrar tras cada casilla haría
+desaparecer la fila antes de revisar sus canales. Actuar solo sobre la página visible dejaría parte de los
+resultados sin modificar. Retirar el último canal o inventar permisos rompería DD-147 y DD-150. No se modifica
+TreeTable ni la tabla de grupos de la ficha del agente.
 
 ## DD-150 · 2026-10-02 — Canales permitidos del agente (E3)
 
