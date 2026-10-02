@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Tiempos con catálogo, cola Fija/Variable, horarios de atención por subcanal y música en un control | DD-152 |
 > | Asignación desde la lista completa, filtro estable y confirmación colectiva desde dos cambios | DD-151 |
 > | Canales permitidos del agente; intersección con grupo y enlace, aviso al retirar y compatibilidad en los selectores | DD-150 |
 > | Habilitación por grupo separada de la presencia y de la cuenta; etiqueta compartida y recuento de habilitados en reglas | DD-149 |
@@ -110,6 +111,42 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-152 · 2026-10-02 — Tiempos, capacidad, horarios y música de los grupos (D3)
+
+**Contexto.** La revisión de producto sustituye el número con unidad del plan inicial por desplegables de valores
+fijos, iguales en ficha y Contact Center. Las duraciones y asignaciones anteriores deben sobrevivir al cambio.
+
+**Decisión.**
+- Transferencia, espera en cola, tiempo del porcentaje de servicio y entre llamadas ofrecen 5, 10, 15, 20, 25 y
+  30 segundos; 1, 1,5 y 2 minutos. Se guardan segundos. Un valor anterior fuera del catálogo sigue visible y
+  seleccionable mientras sea el actual; no se redondea ni se cambia la versión del almacén.
+- Inactividad ofrece 5, 10, 15, 30 y 60 minutos, con 5 de fábrica. Criterio delegado de producto (2026-10-02):
+  intervalos cortos para atención inmediata y largos para conversaciones asíncronas. Se conserva cualquier valor
+  anterior. Las semillas existentes con 10 minutos no se reescriben.
+- Tipo de cola en `sc-select`: Fija o Variable. Variable admite enteros 1–10 y al cambiar a ese modo propone 2
+  («Recomendado: 2»). Fija admite enteros positivos sin máximo; al volver a Fija conserva la cifra actual.
+  Una cola antigua fuera de rango se muestra con error y bloquea Guardar hasta corregirla; abrir no modifica datos.
+  Se reutiliza el input numérico nativo del DS, con su límite al perder foco, sin cambiar el componente.
+- Web Chat y WhatsApp eligen su horario activo de `HorariosStore`; Siempre es ausencia/null. El dato aditivo
+  `chat.attendanceScheduleIds` es independiente de `Group.schedules`, que sigue guardando agendas. Un horario
+  inactivo ya guardado se conserva visible y deshabilitado, sin ofrecerlo como nueva elección.
+- Música: sin archivo, Música por defecto y Elegir .wav; con archivo, un único nombre, Cambiar y Quitar. Se
+  mantiene el alcance de la demo: guardar el nombre del archivo, sin incorporar una subida de audio.
+- Los dos interruptores de Chat se emparejan, y también número de WhatsApp y horario. La fila de capacidad y
+  voz queda alineada, a 28 de la de tiempos: el selector y la cifra componen otro grupo. Etiquetas de horarios
+  con la misma clase y arista que el campo vecino. No se altera el movimiento ni el DOM interno de PrimeNG.
+
+**Descartadas.** `sc-duracion` con cifra y unidad queda superado por la decisión posterior. Redondear tiempos
+históricos o resembrar perdería configuración válida; permitir cualquier duración nueva incumpliría el catálogo.
+Reutilizar agendas para horarios mezclaría entidades. Un catálogo de inactividad limitado a dos minutos no
+podría expresar los cinco de fábrica. Truncar silenciosamente colas antiguas ocultaría un cambio de capacidad.
+
+**Validación.** Siete flujos e2e en rojo contra E4 antes de implementar; pruebas de guardado, valores anteriores,
+catálogos y límites, horarios independientes y ciclo de música. Unitarias de formato/unidades, límites y conservación.
+La evidencia ejecutada y el estado de publicación se registran en el hand-off del frente.
 
 ---
 

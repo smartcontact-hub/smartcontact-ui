@@ -28,14 +28,15 @@ for (const surface of ['ficha', 'defaults'] as const) {
     await pickSelectOption(page, type, 'Variable');
     const size = page.locator(`#${prefix}-phone-queue-size`);
     await expect(size).toHaveValue('2');
-    await expect(size).toHaveAttribute('aria-valuemax', '10');
-    await expect(page.getByText('Recomendado: 2', { exact: true }).first()).toBeVisible();
-    await size.fill('2,5'); await size.press('Tab');
-    expect(Number((await size.inputValue()).replace(',', '.')) % 1).toBe(0);
+    await expect(size).toHaveAttribute('max', '10');
+    await expect(page.getByText(/Recomendado: 2/).first()).toBeVisible();
+    await size.fill('2.5'); await size.press('Tab');
+    await expect(size).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByRole('button', { name: 'Guardar', exact: true })).toBeDisabled();
     await size.fill('11'); await size.press('Tab');
     await expect(size).toHaveValue('10');
     await pickSelectOption(page, type, 'Fija');
-    await expect(size).not.toHaveAttribute('aria-valuemax', /./);
+    await expect(size).not.toHaveAttribute('max', /./);
     await size.fill('125'); await size.press('Tab');
     await page.getByRole('button', { name: 'Guardar', exact: true }).click();
     await expect.poll(() => stored(page, surface)).toMatchObject({ phoneQueue: { queueSizeType: 'fixed', queueSize: 125 } });
@@ -105,4 +106,24 @@ test('música: elegir, cambiar y quitar mantiene un solo nombre y recupera la pr
   await expect(music.getByText('Música por defecto', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect.poll(() => stored(page, 'ficha')).toMatchObject({ announcements: { holdMusicFile: null } });
+});
+
+
+test('una cola Variable antigua fuera de rango se conserva al abrir y exige corregirla antes de guardar', async ({ page }) => {
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('d3-invalid')) return;
+    sessionStorage.setItem('d3-invalid', '1');
+    localStorage.setItem('sc-groups-v', '4');
+    localStorage.setItem('sc-groups', JSON.stringify([{ id: 11, code: '20011', name: 'Cola anterior', phone: '917945449', priority: 'Baja', channels: ['phone'], strategy: 'Balanceada', phoneQueue: { queueSizeType: 'per_agent', queueSize: 25, transferSec: 10, maxQueueWaitSec: 30, serviceLevelSec: 20 } }]));
+  });
+  await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
+  const size = page.locator('#group-phone-queue-size');
+  await expect(size).toHaveValue('25');
+  await expect(size).toHaveAttribute('aria-invalid', 'true');
+  await pickSelectOption(page, page.locator('#group-phone-transfer'), '20 s');
+  await expect(page.getByRole('button', { name: 'Guardar', exact: true })).toBeDisabled();
+  expect(await stored(page, 'ficha')).toMatchObject({ phoneQueue: { queueSize: 25, transferSec: 10 } });
+  await size.fill('10'); await size.press('Tab');
+  await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect.poll(() => stored(page, 'ficha')).toMatchObject({ phoneQueue: { queueSize: 10, transferSec: 20 } });
 });

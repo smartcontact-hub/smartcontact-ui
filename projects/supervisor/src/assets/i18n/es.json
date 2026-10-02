@@ -1658,13 +1658,15 @@
         "position_hint": "El cliente oye en qué puesto de la cola está.",
         "wait_to_agent": "Decir al agente cuánto ha esperado el cliente",
         "wait_to_agent_info": "No lo oye el cliente: se lo dice al agente, justo antes de que le entre la llamada, para que sepa cuánto lleva esperando.",
-        "wait_to_agent_hint": "Se lo dice antes de pasarle la llamada."
+        "wait_to_agent_hint": "Se lo dice antes de pasarle la llamada.",
+        "change_file": "Cambiar",
+        "remove_music": "Quitar"
       },
       "advanced": {
         "defaults_hint": "Nace con los valores por defecto de Grupos.",
         "queue_size": "Tamaño de cola",
-        "queue_fixed": "Fijo",
-        "queue_per_agent": "Por agente conectado",
+        "queue_fixed": "Fija",
+        "queue_per_agent": "Variable",
         "queue_fixed_hint": "Como mucho {{count}} conversaciones esperando en total, haya los agentes que haya.",
         "queue_per_agent_hint": "Varía con los agentes conectados: {{count}} conversaciones en cola por cada uno.",
         "max_queue_wait": "Tiempo máximo de espera en cola",
@@ -1695,7 +1697,12 @@
         "script_title": "Script de chat",
         "script_hint": "Pega este código en la cabecera de la web donde quieras el chat.",
         "script_copy": "Copiar código",
-        "script_copied": "Código copiado"
+        "script_copied": "Código copiado",
+        "queue_type": "Tipo de cola",
+        "queue_recommended": "Recomendado: 2",
+        "queue_variable_error": "Introduce un entero entre 1 y 10.",
+        "queue_integer_error": "Introduce un entero mayor que cero.",
+        "queue_invalid": "Revisa el tamaño de las colas."
       },
       "summary": {
         "none": "Ninguno",
@@ -1741,7 +1748,9 @@
         "message_no_agents": "Sin agentes disponibles",
         "message_on_enter_placeholder": "Ej.: Hola, te atendemos enseguida.",
         "message_waiting_placeholder": "Ej.: Sigues en la cola. Gracias por esperar.",
-        "message_no_agents_placeholder": "Ej.: Ahora no hay nadie disponible. Te escribimos en cuanto podamos."
+        "message_no_agents_placeholder": "Ej.: Ahora no hay nadie disponible. Te escribimos en cuanto podamos.",
+        "attendance_schedule": "Horario de atención",
+        "schedule_always": "Siempre"
       },
       "resources": {
         "client_card": "Ficha de cliente",

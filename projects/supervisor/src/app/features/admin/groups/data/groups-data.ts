@@ -249,6 +249,23 @@ export interface ChannelQueue {
   readonly transferSec: number;
 }
 
+/** Catálogos de D3; los valores guardados fuera de ellos siguen siendo legibles, sin migrarlos. */
+export const GROUP_TIME_SECONDS = [5, 10, 15, 20, 25, 30, 60, 90, 120] as const;
+export const CHAT_INACTIVITY_MINUTES = [5, 10, 15, 30, 60] as const;
+
+export function groupDurationOptions(current: number, minutes: boolean, locale: string): readonly { label: string; value: number }[] {
+  const catalog: readonly number[] = minutes ? CHAT_INACTIVITY_MINUTES : GROUP_TIME_SECONDS;
+  const values = catalog.includes(current) ? catalog : [...catalog, current];
+  const format = new Intl.NumberFormat(locale, { maximumFractionDigits: 10 });
+  return values.map(value => ({ value, label: minutes ? `${format.format(value)} min`
+    : value >= 60 && value % 30 === 0 ? `${format.format(value / 60)} min` : `${format.format(value)} s` }));
+}
+
+/** Las colas cuentan conversaciones enteras; solo Variable limita la cifra a diez. */
+export function validQueueSize(queue: ChannelQueue): boolean {
+  return Number.isInteger(queue.queueSize) && queue.queueSize >= 1 && (queue.queueSizeType === 'fixed' || queue.queueSize <= 10);
+}
+
 /** Los subcanales de Chat. `chat` es Web Chat. */
 export type ChatSubchannel = 'chat' | 'whatsapp';
 
@@ -262,6 +279,8 @@ export interface ChatQueueMessages {
 /** Lo propio de Chat: cerrar por inactividad (visible, no en un «avanzado») y los mensajes de cola de cada
  *  subcanal, que se escriben por separado porque Web Chat y WhatsApp no hablan igual. */
 export interface ChatSettings {
+  /** Horarios de atención por subcanal; ausente o null = siempre. No son las agendas de Group.schedules. */
+  readonly attendanceScheduleIds?: Readonly<Partial<Record<ChatSubchannel, number | null>>>;
   readonly closeOnInactivity: boolean;
   readonly inactivityMinutes: number;
   readonly queueMessages: Readonly<Record<ChatSubchannel, ChatQueueMessages>>;
