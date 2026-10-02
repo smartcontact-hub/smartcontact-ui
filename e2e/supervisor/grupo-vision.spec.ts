@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
 
 /**
  * LA FICHA DE GRUPO QUE PIDE LA VISIÓN DE PRODUCTO (2026-09-25, DD-121), escrita como la matriz de
@@ -108,7 +108,9 @@ test('Teléfono: saliente y voz a la vista; en la cola, solo la música', async 
     await expect(page.getByText(fuera, { exact: true }), fuera).toHaveCount(0);
   }
   // Capacidad de cola: dos opciones, ni una más.
-  await expect(telefono.locator('sc-selectbutton').filter({ hasText: 'Fijo' }).getByRole('button')).toHaveCount(2);
+  await telefono.locator('#group-phone-queue-type').click();
+  await expect(page.getByRole('option')).toHaveText(['Fija', 'Variable']);
+  await page.keyboard.press('Escape');
 });
 
 test('Chat: «Caducar sesión» a la vista; Web Chat con dominios y script; WhatsApp con su número', async ({ page }) => {
@@ -154,9 +156,9 @@ test('un grupo guardado con la cola única de antes abre con ella en Teléfono y
   await irA(page, 'Distribución y colas');
 
   for (const canal of ['phone', 'chat']) {
-    await expect(page.locator(`#group-${canal}-max-wait`), canal).toHaveValue(/^99/);
-    await expect(page.locator(`#group-${canal}-service-level`), canal).toHaveValue(/^33/);
-    await expect(page.locator(`#group-${canal}-transfer`), canal).toHaveValue(/^11/);
+    await expect(page.locator(`#group-${canal}-max-wait`), canal).toHaveText('99 s');
+    await expect(page.locator(`#group-${canal}-service-level`), canal).toHaveText('33 s');
+    await expect(page.locator(`#group-${canal}-transfer`), canal).toHaveText('11 s');
     await expect(page.locator(`#group-${canal}-queue-size`), canal).toHaveValue(/^7/);
   }
   // Leer y completar lo que falta no es un cambio: Guardar sigue apagado.
@@ -174,8 +176,7 @@ test('cada canal guarda su cola: tocar la de Chat no mueve la de Teléfono', asy
   await irA(page, 'Distribución y colas');
 
   const esperaChat = page.locator('#group-chat-max-wait');
-  await esperaChat.fill('45');
-  await esperaChat.press('Tab');
+  await pickSelectOption(page, esperaChat, '30 s');
   await page.getByRole('button', { name: 'Guardar' }).click();
   /* Se espera al AVISO, no al botón: `save()` escribe a los 400ms y el botón ya sale apagado mientras
    * carga, así que esperar al botón recargaba antes de guardar (me dio un rojo falso). */
@@ -183,6 +184,6 @@ test('cada canal guarda su cola: tocar la de Chat no mueve la de Teléfono', asy
 
   await page.reload();
   await irA(page, 'Distribución y colas');
-  await expect(page.locator('#group-chat-max-wait')).toHaveValue(/^45/);
-  await expect(page.locator('#group-phone-max-wait')).toHaveValue(/^99/);
+  await expect(page.locator('#group-chat-max-wait')).toHaveText('30 s');
+  await expect(page.locator('#group-phone-max-wait')).toHaveText('99 s');
 });

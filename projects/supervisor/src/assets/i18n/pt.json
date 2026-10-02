@@ -1658,13 +1658,15 @@
         "position_hint": "O cliente ouve em que lugar da fila está.",
         "wait_to_agent": "Dizer ao agente quanto tempo o cliente esperou",
         "wait_to_agent_info": "O cliente nunca ouve isto: diz-se ao agente, mesmo antes de a chamada entrar, para que saiba há quanto tempo o cliente espera.",
-        "wait_to_agent_hint": "Antes de lhe passar a chamada."
+        "wait_to_agent_hint": "Antes de lhe passar a chamada.",
+        "change_file": "Alterar",
+        "remove_music": "Remover"
       },
       "advanced": {
         "defaults_hint": "Começa com os valores predefinidos dos grupos.",
         "queue_size": "Tamanho da fila",
-        "queue_fixed": "Fixo",
-        "queue_per_agent": "Por agente ligado",
+        "queue_fixed": "Fixa",
+        "queue_per_agent": "Variável",
         "queue_fixed_hint": "No máximo {{count}} conversas em espera no total, haja os agentes que houver.",
         "queue_per_agent_hint": "Varia com os agentes ligados: {{count}} conversas em fila por cada um.",
         "max_queue_wait": "Tempo máximo de espera na fila",
@@ -1695,7 +1697,12 @@
         "script_title": "Script de chat",
         "script_hint": "Cole este código no cabeçalho do site onde quer o chat.",
         "script_copy": "Copiar código",
-        "script_copied": "Código copiado"
+        "script_copied": "Código copiado",
+        "queue_type": "Tipo de fila",
+        "queue_recommended": "Recomendado: 2",
+        "queue_variable_error": "Introduza um inteiro entre 1 e 10.",
+        "queue_integer_error": "Introduza um inteiro maior que zero.",
+        "queue_invalid": "Verifique o tamanho das filas."
       },
       "summary": {
         "none": "Nenhum",
@@ -1741,7 +1748,9 @@
         "message_no_agents": "Sem agentes disponíveis",
         "message_on_enter_placeholder": "Ex.: Olá, já o atendemos.",
         "message_waiting_placeholder": "Ex.: Continua na fila. Obrigado por esperar.",
-        "message_no_agents_placeholder": "Ex.: Agora não há ninguém disponível. Escrevemos-lhe assim que pudermos."
+        "message_no_agents_placeholder": "Ex.: Agora não há ninguém disponível. Escrevemos-lhe assim que pudermos.",
+        "attendance_schedule": "Horário de atendimento",
+        "schedule_always": "Sempre"
       },
       "resources": {
         "client_card": "Ficha de cliente",

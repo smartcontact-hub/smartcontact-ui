@@ -26,6 +26,8 @@ import {
   GroupDefaults,
   PRIORITY_LABEL_KEYS,
   VOICE_OPTIONS,
+  groupDurationOptions,
+  validQueueSize,
   type ChannelQueue,
 } from '@features/admin/groups/data/groups-data';
 import { GroupDefaultsStore } from '@features/admin/groups/state/group-defaults.store';
@@ -86,6 +88,23 @@ export class AedGruposPageComponent implements DirtyAware {
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
   protected readonly voiceOptions = VOICE_OPTIONS;
 
+  protected durationOptions(value: number, minutes = false) {
+    this.lang();
+    return groupDurationOptions(value, minutes, this.translate.currentLang || 'es');
+  }
+
+  protected queueSizeError(queue: ChannelQueue): string | undefined {
+    return validQueueSize(queue) ? undefined : this.translate.instant(queue.queueSizeType === 'per_agent'
+      ? 'groups.form.advanced.queue_variable_error' : 'groups.form.advanced.queue_integer_error');
+  }
+
+  protected setQueueType(channel: 'phone' | 'chat', value: unknown): void {
+    if (value !== 'fixed' && value !== 'per_agent') return;
+    const field = channel === 'phone' ? 'phoneQueue' : 'chatQueue';
+    this.form.update(f => ({ ...f, [field]: { ...f[field], queueSizeType: value,
+      queueSize: value === 'per_agent' && f[field].queueSizeType !== value ? 2 : f[field].queueSize } }));
+  }
+
   protected readonly queueSizeOptions = computed(() => {
     this.lang();
     return [
@@ -109,7 +128,7 @@ export class AedGruposPageComponent implements DirtyAware {
   protected readonly dirty = computed(
     () => stableStringify(this.form()) !== stableStringify(this.store.defaults()),
   );
-  protected readonly canSave = computed(() => this.dirty() && !this.saving());
+  protected readonly canSave = computed(() => this.dirty() && !this.saving() && validQueueSize(this.form().phoneQueue) && validQueueSize(this.form().chatQueue));
   /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
   readonly formDirty = this.dirty;
 
@@ -127,8 +146,8 @@ export class AedGruposPageComponent implements DirtyAware {
     this.form.update((f) => ({ ...f, advanced: { ...f.advanced, [key]: value } }));
   }
 
-  protected setAdvancedNumber(key: 'wrapUpSec' | 'cardHeight', value: number | null): void {
-    if (value !== null && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
+  protected setAdvancedNumber(key: 'wrapUpSec' | 'cardHeight', value: unknown): void {
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) this.setAdvanced(key, value);
   }
 
   /** La cola de UN canal: Teléfono y Chat tienen cada uno la suya, como en la ficha. */
@@ -140,17 +159,17 @@ export class AedGruposPageComponent implements DirtyAware {
   protected setQueueNumber(
     channel: 'phone' | 'chat',
     key: 'queueSize' | 'maxQueueWaitSec' | 'transferSec' | 'serviceLevelSec',
-    value: number | null,
+    value: unknown,
   ): void {
-    if (value !== null && Number.isFinite(value) && value >= 0) this.setQueue(channel, key, value);
+    if (typeof value === 'number' && Number.isFinite(value)) this.setQueue(channel, key, value);
   }
 
   protected setCloseOnInactivity(value: boolean): void {
     this.form.update((f) => ({ ...f, chat: { ...f.chat, closeOnInactivity: value } }));
   }
 
-  protected setInactivityMinutes(value: number | null): void {
-    if (value !== null && Number.isFinite(value) && value >= 1) {
+  protected setInactivityMinutes(value: unknown): void {
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 1) {
       this.form.update((f) => ({ ...f, chat: { ...f.chat, inactivityMinutes: value } }));
     }
   }
