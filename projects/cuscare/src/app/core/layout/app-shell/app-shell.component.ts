@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router
 import { filter, map, startWith } from 'rxjs';
 
 import { ToasterComponent } from '../../../shared/toaster.component';
+import { I18n, LANGS, TrPipe } from '../../i18n/i18n';
 import { NAV_ITEMS, SETTINGS_ITEMS } from './nav-data';
 import { NavIconComponent } from './nav-icon.component';
 
@@ -20,7 +21,7 @@ import { NavIconComponent } from './nav-icon.component';
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, NavIconComponent, ToasterComponent],
+  imports: [RouterOutlet, RouterLink, NavIconComponent, ToasterComponent, TrPipe],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +32,8 @@ export class AppShellComponent {
   protected readonly navItems = NAV_ITEMS;
   protected readonly settingsItems = SETTINGS_ITEMS;
   protected readonly settingsOpen = signal(false);
+  protected readonly i18n = inject(I18n);
+  protected readonly langs = LANGS;
 
   /**
    * Estado del agente en la barra inferior. En la real es `<app-agent-status>`

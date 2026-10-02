@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { TrPipe } from '../../core/i18n/i18n';
+
 import { ENTITIES } from '../../data/seed';
 
 /**
@@ -14,25 +16,26 @@ import { ENTITIES } from '../../data/seed';
 @Component({
   selector: 'app-entities-page',
   standalone: true,
+  imports: [TrPipe],
   template: `
     <section class="cc-card settings-page">
-      <header class="settings-page__head"><h1 class="cc-page-title">Groups</h1></header>
+      <header class="settings-page__head"><h1 class="cc-page-title">{{ 'Groups' | tr }}</h1></header>
 
       <div class="settings-page__toolbar">
-        <button class="iconbtn" type="button" aria-label="Filter"><img src="icons/general/filter.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
-        <button class="iconbtn" type="button" aria-label="Search"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
-        <button class="iconbtn settings-page__spacer" type="button" aria-label="Export"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" [attr.aria-label]="'Filter' | tr"><img src="icons/general/filter.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" [attr.aria-label]="'action::Search' | tr"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn settings-page__spacer" type="button" [attr.aria-label]="'Export' | tr"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
       </div>
 
       <table class="mattable">
         <thead>
           <tr>
-            <th style="width:197px">Group Name</th>
-            <th style="width:190px">Products</th>
-            <th style="width:190px">Rules</th>
-            <th style="width:190px">Country</th>
-            <th style="width:190px">Company</th>
-            <th style="width:190px">Order By</th>
+            <th style="width:197px">{{ 'Group Name' | tr }}</th>
+            <th style="width:190px">{{ 'Products' | tr }}</th>
+            <th style="width:190px">{{ 'Rules' | tr }}</th>
+            <th style="width:190px">{{ 'Country' | tr }}</th>
+            <th style="width:190px">{{ 'Company' | tr }}</th>
+            <th style="width:190px">{{ 'Order By' | tr }}</th>
           </tr>
         </thead>
         <tbody>

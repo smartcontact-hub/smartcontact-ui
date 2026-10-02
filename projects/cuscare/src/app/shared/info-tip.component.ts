@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
+import { TrPipe } from '../core/i18n/i18n';
+
 /**
  * El icono ⓘ con su explicación — el tooltip de la app.
  *
@@ -19,20 +21,23 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  * Se implementa con CSS puro sobre `:hover`/`:focus-visible` en vez de traer
  * `MatTooltip`: la réplica no usa Angular Material y montarlo entero por esto
  * sería desproporcionado. Lo que se ve es lo mismo.
+ *
+ * El texto llega en inglés (el de `TOOLTIPS`) y se traduce aquí, al pintarlo.
  */
 @Component({
   selector: 'app-info-tip',
   standalone: true,
+  imports: [TrPipe],
   template: `
     <span class="tip">
-      <button class="tip__icon" type="button" [attr.aria-label]="text()">
+      <button class="tip__icon" type="button" [attr.aria-label]="text() | tr">
         <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
           <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.2" />
           <circle cx="8" cy="4.6" r="0.9" fill="currentColor" />
           <path d="M8 7v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
         </svg>
       </button>
-      <span class="tip__bubble" role="tooltip">{{ text() }}</span>
+      <span class="tip__bubble" role="tooltip">{{ text() | tr }}</span>
     </span>
   `,
   styles: `
