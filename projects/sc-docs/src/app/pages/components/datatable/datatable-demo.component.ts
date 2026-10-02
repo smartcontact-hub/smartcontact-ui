@@ -136,6 +136,12 @@ export class DatatableDemoComponent {
   protected readonly mvpTpl = viewChild<TemplateRef<StoryContext>>('mvp');
   protected readonly lazyTpl = viewChild<TemplateRef<StoryContext>>('lazy');
   protected readonly gesturesTpl = viewChild<TemplateRef<StoryContext>>('gestures');
+  protected readonly frozenTpl = viewChild<TemplateRef<StoryContext>>('frozen');
+  protected readonly frozenColumns: readonly ScColumnDef<Agent>[] = [
+    { field: 'name', header: 'Nombre', width: '14rem', frozen: true },
+    { field: 'extension', header: 'Extensión' },
+    { field: 'status', header: 'Estado', width: '10rem', frozen: true, alignFrozen: 'right' },
+  ];
   protected readonly listTpl = viewChild<TemplateRef<StoryContext>>('list');
 
   /* Propiedad, no método: una flecha nueva por ciclo tira OnPush al suelo (la
@@ -329,13 +335,16 @@ export class DatatableDemoComponent {
     const st = this.statusTpl();
     // `st` (statusTpl) alimenta `columns()`; espera a que resuelva para no
     // pintar la story MVP con la columna de estado sin su cellTemplate.
-    if (!pg || !mvp || !lz || !gs || !ls || !st) return [];
+    const fr = this.frozenTpl();
+    if (!pg || !mvp || !lz || !gs || !ls || !st || !fr) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
       { name: 'Lazy (server-driven): paginación + orden + filtro global', template: lz, snippet: LAZY_SNIPPET },
       { name: 'Gestos de fila y columnas conmutables', template: gs, snippet: GESTURES_SNIPPET },
       { name: 'variant="list" · la gramática de tabla-lista', template: ls, snippet: LIST_SNIPPET },
+      { name: 'Columnas fijas', template: fr, snippet: `<!-- ScColumnDef: frozen activa pFrozenColumn; alignFrozen elige izquierda (defecto) o derecha. -->
+<sc-datatable [value]="agents()" [columns]="frozenColumns" scrollable tableMinWidth="70rem" selectionMode="multiple" dataKey="id" />` },
     ];
   });
 }

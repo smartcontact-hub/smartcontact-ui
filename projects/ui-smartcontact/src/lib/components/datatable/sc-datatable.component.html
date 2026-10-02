@@ -57,10 +57,15 @@
       <th
         scope="col"
         [pSortableColumn]="col.field"
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
         pResizableColumn
         [pResizableColumnDisabled]="!resizableColumns()"
         pReorderableColumn
-        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false"
+        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false || !!col.frozen"
         [attr.data-field]="col.field"
         [style.width]="col.width ?? null"
         [style.text-align]="col.align ?? null"
@@ -74,10 +79,15 @@
       } @else {
       <th
         scope="col"
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
         pResizableColumn
         [pResizableColumnDisabled]="!resizableColumns()"
         pReorderableColumn
-        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false"
+        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false || !!col.frozen"
         [attr.data-field]="col.field"
         [style.width]="col.width ?? null"
         [style.text-align]="col.align ?? null"
@@ -147,6 +157,11 @@
       </td>
       } @for (col of visibleCols(); track col.field) {
       <td
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
         [style.text-align]="col.align ?? null"
         (click)="col.stopRowClick ? $event.stopPropagation() : null"
       >

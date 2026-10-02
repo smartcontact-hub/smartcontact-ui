@@ -1,8 +1,12 @@
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
 import { ScDatatableComponent } from './sc-datatable.component';
 import type { ScColumnDef } from '../../core/types/datatable.types';
+
+// jsdom no tiene geometría ni ResizeObserver; el scroll y el ancho reales se prueban en e2e.
+beforeEach(() => vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} }));
+afterEach(() => vi.unstubAllGlobals());
 
 /**
  * PRIMER TEST UNITARIO DEL REPO.

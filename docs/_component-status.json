@@ -898,7 +898,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/multiselect",
       "cva": false,
-      "inputs": 31,
+      "inputs": 33,
       "api": [
         "appendTo",
         "ariaLabel",
@@ -915,6 +915,8 @@
         "filterPlaceholder",
         "focused",
         "helperText",
+        "icon",
+        "iconOnly",
         "iftaLabel",
         "inputId",
         "invalid",

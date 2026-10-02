@@ -114,6 +114,43 @@
 
 ---
 
+## DD-153 · 2026-10-02 — Columnas en un icono y acciones fijas en los listados
+
+**Contexto.** En una tabla ancha, Asignar y el menú de fila desaparecían al mostrar ID o ensanchar
+una columna. El selector de columnas ocupaba espacio con una etiqueta y un conteo que no son datos de la tabla.
+
+**Decisión.** `sc-multiselect` publica `iconOnly` (falso por defecto) e `icon` (`view_column`). La lista
+lo usa con nombre accesible traducido «Columnas, 8 de 10» y el mismo título. El tema oculta solo el
+contenedor de texto, conservando su altura; las tallas usan los anchos de botón de icono existentes.
+Se conservan selección, opciones bloqueadas, foco y overlay nativos. Excepción declarada en
+`audit:primeng-coupling` §F y `customs-catalog` §8, con demo en sc-docs.
+
+`ScColumnDef.frozen` y `alignFrozen` pasan a `pFrozenColumn` en cabeceras y celdas de las plantillas
+por defecto. El menú de `sc-list-page` y Asignar del grupo quedan a la derecha. No se arrastran esas
+columnas fijas. PrimeNG calcula sus posiciones y hereda el fondo de fila; el hover inerte conserva
+un fondo opaco. Una sombra del token existente señala contenido oculto y desaparece al alcanzar
+el extremo. Un observador de tamaño y el scroll actualizan esa señal, también con lista virtual.
+La tabla con scroll encoge dentro de flex y las demos usan pistas grid con mínimo cero: el contenido
+ancho se desplaza dentro de su caja. Las estrategias de Teléfono y Chat disponen de 15 y 14 rem,
+respectivamente, para evitar los dos recortes de 3 px reproducidos en la base de E1b.
+
+**Razón.** Las acciones frecuentes siguen alcanzables a 1024 y 1366 sin obligar a buscar el extremo
+horizontal. Las pruebas comprueban hit testing después de arrastrar ID, fondos normales/hover/selección
+en ambos temas, persistencia de columnas y navegación por teclado. Una prueba del DS cubre ambos lados
+fijos y el cambio de sombra al desplazar. La API sigue exportada por el punto público existente.
+
+**Descartadas.** Una tabla o un selector nuevos duplicarían PrimeNG; offsets manuales romperían al
+redimensionar. Fijar solo el icono dejaría Asignar fuera. Una sombra permanente sugeriría contenido
+oculto cuando ya no lo hay. No se migra MultiSelect a Select multiple en este bloque: aunque PrimeNG
+22.1.0 marca el primero como obsoleto, el contrato vigente del DS y el plan piden ampliar ese wrapper.
+No se añaden tokens, niveles en árbol ni cambios de vocabulario ajenos al listado.
+
+**Consecuencias.** Variante y columnas son aditivas. Se prepara versión 1.1.0 en lockstep sin publicar
+paquetes (DD-17). Las capturas Linux de las demos deben regenerarse y revisarse antes de fusionar.
+No cambia el export del Kit: no procede sincronizar tokens ni el Theme Designer.
+
+---
+
 ## DD-152 · 2026-10-02 — Tiempos, capacidad, horarios y música de los grupos (D3)
 
 **Contexto.** La revisión de producto sustituye el número con unidad del plan inicial por desplegables de valores

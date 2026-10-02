@@ -18,6 +18,12 @@
 > tenía server de Figma. Lo que solo se ve en el fichero lo marca cada ficha con **«mídelo antes»**. Ninguna ficha
 > está hecha: en todas las que tocan una variable, el export aún dice el valor de antes.
 
+
+**F · listado (DD-153, 2026-10-02).** Pendiente de reflejar en el Kit y la maqueta: selector de
+columnas solo con `view_column` (tallas de botón de icono existentes), Asignar y menú fijos a la
+derecha, fondo opaco por estado y sombra solo mientras hay contenido oculto. Mídelo antes contra
+las demos de MultiSelect y DataTable; no requiere variables nuevas ni modifica el export de tokens.
+
 ---
 
 ## ▶︎ El plan de la sesión en Figma
