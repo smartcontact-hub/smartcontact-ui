@@ -179,9 +179,6 @@ const plain = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerC
       outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
       outline-offset: var(--sc-focus-ring-offset);
     }
-    @media (prefers-reduced-motion: reduce) {
-      .rtf-origin__check, .rtf-trigger__chevron { transition: none; }
-    }
 
     .rtf-trigger__types {
       overflow: hidden;
@@ -342,6 +339,10 @@ const plain = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerC
       visibility: hidden;
     }
 
+    /* Después de las transiciones base: la consulta debe ganar en la cascada. */
+    @media (prefers-reduced-motion: reduce) {
+      .rtf-origin__check, .rtf-trigger__chevron { transition: none; }
+    }
   `,
 })
 export class RequestTypeFilterComponent {
