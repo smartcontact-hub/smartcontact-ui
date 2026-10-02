@@ -11,9 +11,12 @@
         @if (columnPrefs(); as prefs) {
           <!-- El selector de columnas NATIVO: el ejemplo «Column Toggle» de primeng.dev/table, un MultiSelect
                (DD-113). Solo decide qué se ve; el orden se cambia arrastrando las cabeceras de la tabla. Dice
-               siempre «N columnas» (`maxSelectedLabels` 0) y la columna fija sale marcada y sin poder quitarse. -->
+               cuántas columnas se ven en su nombre accesible; la columna fija sale marcada y sin poder quitarse. -->
           <sc-multiselect
             class="page__columns"
+            iconOnly
+            icon="view_column"
+            [attr.title]="columnsAriaLabel()"
             [options]="columnOptions()"
             optionLabel="label"
             optionValue="key"
@@ -23,7 +26,7 @@
             [maxSelectedLabels]="0"
             [selectedItemsLabel]="'common.columns_count' | translate"
             [placeholder]="'common.columns' | translate"
-            [ariaLabel]="'common.columns' | translate"
+            [ariaLabel]="columnsAriaLabel()"
           />
         }
         @if (searchPlaceholder(); as placeholder) {

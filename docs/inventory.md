@@ -73,7 +73,7 @@
 | `sc-inputtext` | EXTENDED | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 35 |
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 7 |
-| `sc-multiselect` | EXTENDED | primeng/multiselect | 31 inputs | sc-field-label sc-field-msg | ✓ | 15 |
+| `sc-multiselect` | EXTENDED | primeng/multiselect | 33 inputs | sc-field-label sc-field-msg | ✓ | 15 |
 | `sc-option-cards` | CUSTOM | — | 4 inputs | — | — | 2 |
 | `sc-panel` | EXTENDED | primeng/panel | 6 inputs | — | ✓ | 1 |
 | `sc-password` | EXTENDED | primeng/password | 19 inputs | sc-field-label sc-field-msg | ✓ | 1 |

@@ -578,6 +578,26 @@ test.describe('sc-inputnumber', () => {
 });
 
 test.describe('sc-multiselect', () => {
+  test('solo icono conserva tamaños, nombre, teclado y opciones bloqueadas', async ({ page }) => {
+    await gotoPage(page, 'multiselect');
+    for (const [size, width] of [['sm', 28], ['md', 31.5], ['lg', 42]] as const) {
+      const host = page.getByTestId(`sc-multiselect-icon-${size}`);
+      await expect(host.getByRole('combobox')).toHaveAccessibleName('Columnas, 3 de 4');
+      expect((await host.boundingBox())!.width).toBeCloseTo(width, 0);
+      await expect(host.locator('sc-icon')).toHaveText('view_column');
+    }
+    const input = page.getByTestId('sc-multiselect-icon-md').getByRole('combobox');
+    await input.focus();
+    await input.press('ArrowDown');
+    await expect(page.getByRole('option', { name: 'Nombre', exact: true })).toHaveClass(/p-disabled/);
+    await page.getByRole('option', { name: 'Teléfono', exact: true }).click();
+    await expect(input).toHaveAccessibleName('Columnas, 4 de 4');
+    await expect(page.getByRole('listbox')).toBeVisible();
+    await input.press('Escape');
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await expect(page.getByTestId('sc-multiselect-icon-disabled').getByRole('combobox')).toBeDisabled();
+  });
+
   test('métrica de form field, opciones primitivas y overlay del Kit', async ({ page }) => {
     await gotoPage(page, 'multiselect');
     const field = page.getByTestId('sc-multiselect').locator('.p-multiselect');
@@ -1394,6 +1414,29 @@ test.describe('sc-inline-rename-cell', () => {
 });
 
 test.describe('sc-datatable', () => {
+  test('columnas fijas nativas a ambos lados, sombra según scroll y fondo de selección', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await gotoPage(page, 'datatable');
+    const table = page.getByTestId('sc-datatable-frozen');
+    await table.scrollIntoViewIfNeeded();
+    const row = table.locator('tbody tr').first();
+    const left = row.locator('.p-datatable-frozen-column').first();
+    const right = row.locator('.p-datatable-frozen-column').last();
+    await expect(left).toHaveCSS('position', 'sticky');
+    await expect(right).toHaveCSS('position', 'sticky');
+    await expect(left).toHaveCSS('box-shadow', 'none');
+    await expect(right).not.toHaveCSS('box-shadow', 'none');
+    await table.locator('.p-datatable-table-container').evaluate(el => { el.scrollLeft = el.scrollWidth; });
+    await expect(left).not.toHaveCSS('box-shadow', 'none');
+    await expect(right).toHaveCSS('box-shadow', 'none');
+    await table.locator('.p-datatable-table-container').evaluate(el => { el.scrollLeft = 0; });
+    await row.locator('p-table-checkbox').click();
+    await expect(row).toHaveClass(/p-datatable-row-selected/);
+    const backgrounds = await right.evaluate(el => [getComputedStyle(el).backgroundColor, getComputedStyle(el.parentElement!).backgroundColor]);
+    expect(backgrounds[0]).toBe(backgrounds[1]);
+    expect(backgrounds[0]).not.toMatch(/transparent|rgba\([^)]*, 0\)/);
+  });
+
   test('MVP: column-defs + cellTemplate, orden, selección, paginador, slots proyectados', async ({
     page,
   }) => {

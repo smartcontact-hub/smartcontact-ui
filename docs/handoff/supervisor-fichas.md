@@ -19,9 +19,45 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ▶ 2026-10-02 · D3: tiempos, horarios y música (DD-152)
+## ▶ 2026-10-02 · F: columnas y acciones del listado (DD-153)
 
-**En curso:** `codex/supervisor-d3-tiempos`, worktree `supervisor-d3-tiempos/smartcontact-ui`, base `06dc6170`.
+**En curso:** `codex/supervisor-f-listado`, worktree `supervisor-f-listado/smartcontact-ui`, base `faf25027`.
+Test primero: `a31d22b1`, cuatro e2e rojos contra D3 y una unitaria roja de columnas nativas.
+Implementados selector compacto y acciones fijas; corregidos los recortes históricos de estrategias.
+**Ejecutado:** 46 unitarias y build verdes; 12 e2e del listado y seis de demos verdes. Suite completa
+Supervisor **532/532 verde** (13 minutos), incluidos los dos recortes históricos corregidos. Suite DS
+**100/100 verde** (Mac: las imágenes Linux se contrastan en CI). Referencias JSON revisadas: cuatro
+variantes de MultiSelect, una tabla y el atributo estático del icono que pasa a binding, mismo glifo.
+`revision` de Grupos/Agentes/Usuarios verde. Catorce capturas antes/después, claro/oscuro a 1024/1440,
+y Grupos a 1366×768/1490×860, revisadas con better-layout. Sin hallazgos de layout pendientes en el
+alcance inspeccionado; zoom 200 % y RTL no verificados. Lint y guardas documentales/nativas verdes.
+**Pausa solicitada para relevo:** implementación terminada y `npm run verify` verde (salida 0,
+`f-verify2.log`). No hay PR ni push de F. El commit de implementación es el HEAD de esta rama al retomar.
+Solo se ha actualizado este hand-off después de verify; ejecutar sus guardas antes del commit.
+**Cuatro tandas pendientes**, en orden:
+1. Actualizar `origin/main`, revisar cualquier avance e integrarlo sin sobrescribir; ejecutar
+   `npm run preflight:scope -- --run` sobre el contenido final y los pasos vigentes de `ci.yml`.
+2. Push de la rama; lanzar `visual-baselines.yml` con `rama=codex/supervisor-f-listado` y motivo DD-153,
+   ANTES de abrir PR. Traer su commit, revisar las imágenes Linux y repetir preflight sobre ese HEAD.
+3. Crear PR, leer CI con `npm run ci:verdict` y corregir fallos. El borrador externo aún tiene pendientes.
+4. Squash explícito con CI verde; comprobar CI exacta del merge en main con `ci:verdict`.
+Después actualizar el local 4405 con el build F, guardar evidencias externas y eliminar solo rama/worktree F.
+No borrar este worktree durante el relevo. Ruta absoluta:
+`/Users/rafareses/.codex/worktrees/supervisor-f-listado/smartcontact-ui`.
+Node: `/Users/rafareses/.nvm/versions/node/v22.23.2/bin` delante de PATH; identidad Git sin cambios.
+Los servidores de pruebas 4407/4408 están apagados; 4405 conserva D3, no F. Sin suites activas al pausar.
+Paquetes preparados en 1.1.0 por API aditiva, sin publicar. Las últimas correcciones de verify afectan solo
+al texto de dos snippets (selectionMode/dataKey e iconOnly size); suites funcionales anteriores siguen válidas.
+Incidencia previa detectada: con prefers-reduced-motion: reduce, Agentes puede renderizar cero filas
+virtuales; reproducida tanto en D3 servido en 4405 como en F. Queda fuera de F, sin ocultar el hallazgo. No usar evidencia de D3 para dar F por validado.
+El detalle de E1b sale por el tope de seis secciones: `git show faf25027:docs/handoff/supervisor-fichas.md`.
+E1b #310 y sus CI `36995125759` / `36996276443` verdes. Recuperación E1a y ZIP intactos.
+Evidencia F fuera del árbol: `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/f`.
+
+## ✅ 2026-10-02 · D3: tiempos, horarios y música (DD-152)
+
+**Entregado:** #315 → `faf25027`; CI PR `37038447269` y main `37040177041`, leídas verdes con
+`ci:verdict`. Rama y worktree propios eliminados; evidencias externas en `d3`.
 Primer commit `11f1fafe`: siete pruebas rojas contra E4. Implementados catálogos de tiempos e inactividad, colas
 Fija/Variable, horarios independientes de Web Chat/WhatsApp y música en un control. Valores históricos conservados.
 Cierre por inactividad: criterio delegado, 5/10/15/30/60 minutos, defecto 5. Detalle y alternativas en DD-152.
@@ -33,8 +69,8 @@ Una tanda tras interrupción falló por servidor apagado, no por comportamiento;
 **Visual:** 30 capturas de ficha/Contact Center, claro/oscuro a 1024/1440 y claro a 1366×768/1490×860; cero desborde
 horizontal o combobox sin nombre. Etiquetas de horarios alineadas y capacidad separada a 28. Antes E4 capturado en
 ambos temas. Revisión better-layout: sin hallazgos pendientes en lo inspeccionado; zoom 200 % y RTL no verificados.
-Lint, docs:guard, docs:coherence, i18n, primeng-coupling y **verify verdes**. Pendientes: preflight, PR/CI y merge/CI.
-Local 4405 sigue en E4. F no iniciado. Evidencia en `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/d3`.
+Lint, docs:guard, docs:coherence, i18n, primeng-coupling y **verify verdes**. Preflight, PR/CI y merge/CI completados en verde.
+Local 4405 actualizado al build de producción de D3; ocho pruebas propias verdes allí. Evidencia en `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/d3`.
 
 ## ✅ 2026-10-02 · E4: asignación desde la lista (DD-151)
 
@@ -68,15 +104,6 @@ idiomas. Resumen y reglas nombran habilitados. Tabla/panel reservan 21rem para n
 conocidos del listado, mismas medidas de E1b), contraste, revision, verify y preflight verdes. Zoom/RTL no verificados.
 El preflight integró #311 (solo CusCare); Supervisor y DS idénticos. Evidencias fuera del worktree; local 4405 en E2.
 
-## ✅ 2026-10-02 · E1b: niveles por familia (DD-148)
-
-**Entregado:** #310 → `3c6d13e9`; CI del PR `36995125759` y de main `36996276443`, leídas en verde. Rama y worktree
-propios eliminados; evidencias fuera del worktree. Niveles independientes 1–10, migración con precedencia del
-formato nuevo, subestrategia de Chat, defaults sin Niveles y columnas por familia. E1a y su recuperación intactos.
-**Ejecutado en E1b:** 4 unitarias y 7 e2e rojas primero; 19 unitarias, 44/27/12 e2e afectados, revision, verify y
-preflight verdes. Suite local 496/498: dos recortes de 3 px del listado reproducidos también sobre la base limpia
-`83e371e7`; registrados para F. Zoom 200 % y RTL no verificados. Estos resultados no validan E2 ni los siguientes.
-**Continuidad:** E2 → E3 → E4 → D3 → F, un bloque/PR tras el merge verde del anterior.
 
 ## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143), las tres columnas (G1, DD-144), el nombre fijo (G2a, DD-145) y el resumen enlazado (G2b, DD-146)
 

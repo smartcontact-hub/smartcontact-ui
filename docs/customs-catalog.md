@@ -979,6 +979,8 @@ nativo; se mide y se decide con Rafa).
 | `.p-datatable-tbody > tr` | Transición del hover de fila en la tabla-lista | `listBehaviorCss` (css.ts), DD-66 | se queda: solo en filas que hacen algo |
 | `:host ::ng-deep .p-toast .p-toast-message-icon, :host ::ng-deep .p-toast .p-toast-close-button` | Oculta el icono y la X de PrimeNG en el toast del Supervisor | Plataforma (la X doble se arregló en su PR #9; el icono, sin rastrear) | se queda: el toast pinta los suyos |
 | `.resumen__ring-value` (la clase que `[pt]="{ value: … }"` pone al «N%» de `p-progress-spinner`) | Oculta el «N%» del anillo del resumen de las fichas | El ejemplo «Preview» de ProgressSpinner en primeng.dev lo oculta igual; DD-126 | se queda: a 42 px no se lee y la cifra grande ya lo dice |
+| `.sc-multiselect--icon-only .p-multiselect-label-container` | Oculta el texto del control compacto manteniendo el alto nativo; icono y nombre accesible conservan su función | DD-153, F | se queda: libera espacio en la barra sin reemplazar el selector |
+| `sc-datatable.sc-datatable--overflow-right .sc-datatable__frozen-right-edge, sc-datatable.sc-datatable--overflow-left .sc-datatable__frozen-left-edge` | Sombra de las columnas fijas solo mientras ocultan contenido desplazable; desaparece al llegar al borde | DD-153, F | se queda: indica contenido detrás de la acción fija |
 
 ### 8.1 El botón que se encoge al pulsarlo · se queda, con la receta de better-ui (2026-09-15)
 

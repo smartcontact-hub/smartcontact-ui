@@ -142,3 +142,9 @@
     {{ agent.status === 'active' ? 'Activo' : 'Inactivo' }}
   </span>
 </ng-template>
+
+<ng-template #frozen>
+  <sc-datatable [value]="agents()" [columns]="frozenColumns" scrollable
+    tableMinWidth="70rem" selectionMode="multiple" dataKey="id"
+    data-testid="sc-datatable-frozen" />
+</ng-template>

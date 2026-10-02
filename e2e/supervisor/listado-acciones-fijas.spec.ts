@@ -74,7 +74,7 @@ for (const oscuro of [false, true]) {
     }
     await asignar.click();
     await expect(page.locator('.agents-panel')).toBeVisible();
-    await page.locator('.agents-panel').getByRole('button', { name: /Cerrar/ }).click();
+    await page.locator('.agents-panel').getByRole('button', { name: 'Cancelar', exact: true }).click();
     await menu.click();
     await expect(page.getByRole('menu')).toBeVisible();
     await page.keyboard.press('Escape');

@@ -160,3 +160,11 @@
 .sc-multiselect--disabled .sc-multiselect__label {
   color: var(--sc-text-disabled);
 }
+
+/* La talla del botón de icono de la misma barra; el alto lo conserva la etiqueta nativa (DD-153). */
+.sc-multiselect--icon-only {
+  width: var(--sc-cmp-button-icon-only-width);
+  flex: 0 0 auto;
+}
+.sc-multiselect--icon-only.sc-multiselect--sm { width: var(--sc-cmp-button-sm-icon-only-width); }
+.sc-multiselect--icon-only.sc-multiselect--lg { width: var(--sc-cmp-button-lg-icon-only-width); }

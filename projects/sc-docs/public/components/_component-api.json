@@ -4694,6 +4694,26 @@
           }
         },
         {
+          "nombre": "iconOnly",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Selector compacto; conserva el control nativo y exige ariaLabel o ariaLabelledBy.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "icon",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'view_column'",
+          "requerido": false,
+          "descripcion": "Icono del selector compacto. El desplegable normal conserva expand_more.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "label",
           "clase": "input",
           "tipo": "string",
