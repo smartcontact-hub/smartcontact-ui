@@ -1,97 +1,49 @@
-<!-- Misma barra que el editor hermano (los grupos de un agente): filtrar a la
-     izquierda, recuento, y «Añadir» con el desplegable del DS a la derecha. -->
-<div class="assign" [class.assign--bulk]="selectable() && selectedIds().size > 0">
+<div class="assign">
   <div class="assign__bar">
-    <!-- Buscar solo cuando hay en qué (2026-09-23): un grupo recién creado aterriza aquí sin
-         nadie, y un buscador sobre una tabla vacía es un control que no puede hacer nada. -->
-    @if (assignedRows().length > 0 || query()) {
-      <sc-search
-        class="assign__search"
-        [placeholder]="'groups.form.assigned.query_placeholder' | translate"
-        [clearAriaLabel]="'labels.clear_search' | translate"
-        [value]="query()"
-        (valueChange)="query.set($event)"
-      />
-    }
-    <!-- Sin contador fijo: «12 asignados» lo dice la propia lista, y «0 sin canales»
-         era un cero que había que leer para descartarlo. Solo se habla cuando hay
-         algo que decir: el filtro esconde filas, o hay agentes activos sin canal. -->
-    @if (query().trim()) {
-      <span class="assign__counter sc-text-caption-regular">
-        {{ 'common.filter_count' | translate: { shown: visibleRows().length, total: assignedRows().length } }}
-      </span>
-    }
+    <span id="group-assignment-filter" class="visually-hidden">{{ 'groups.form.assigned.filter_label' | translate }}</span>
+    <sc-selectbutton [options]="filterOptions()" optionValue="value" [value]="filter()"
+      (valueChange)="filter.set($any($event))" [allowEmpty]="false" ariaLabelledBy="group-assignment-filter" />
+    <sc-search class="assign__search" [placeholder]="'groups.form.assigned.query_placeholder' | translate"
+      [clearAriaLabel]="'labels.clear_search' | translate" [value]="query()" (valueChange)="query.set($event)" />
     @if (zeroChannelCount() > 0) {
       <sc-tag severity="warn" icon="warning" [value]="'groups.form.assigned.no_channels_warn' | translate: { count: zeroChannelCount() }" />
     }
-    <span id="group-add-agent-label" class="visually-hidden">{{ 'groups.form.assigned.add_aria' | translate }}</span>
-    <!-- Multiselect (decisión de producto, 2026-09-16): se marcan o desmarcan varios agentes de una vez y la tabla
-         lo refleja al momento. Lo marcado es lo asignado; el rótulo dice siempre la acción. -->
-    <sc-multiselect
-      class="assign__add"
-      inputId="group-add-agent"
-      ariaLabelledBy="group-add-agent-label"
-      optionLabel="name"
-      optionValue="id"
-      [filter]="true"
-      filterBy="name"
-      [showToggleAll]="false"
-      [maxSelectedLabels]="0"
-      [selectedItemsLabel]="'groups.form.assigned.add_placeholder' | translate"
-      [placeholder]="'groups.form.assigned.add_placeholder' | translate"
-      [options]="addOptions()"
-      optionDisabled="disabled"
-      [value]="assignedIds()"
-      (valueChange)="onAssignedChange($event)"
-    />
   </div>
-
-  <!-- La tabla SIEMPRE, también vacía: sus columnas ya enseñan qué se va a rellenar, y
-       el vacío es una línea dentro de ella. Hasta el 2026-09-14 era `sc-empty-state`, un
-       círculo con icono y mucho aire que ocupaba media tarjeta para decir una frase. -->
+  <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <div class="table-card">
-    <sc-datatable
-      variant="list"
-      [size]="compact() ? 'sm' : 'md'"
-      scrollable
-      scrollHeight="flex"
-      [value]="visibleRows()"
-      [columns]="columns()"
-      [tableMinWidth]="tableMinWidth()"
-      dataKey="agent.id"
-      [selectionMode]="selectable() ? 'multiple' : null"
-      [selection]="selectedRows()"
-      (selectionChange)="onSelectionChange($any($event))"
-      [rowSelectionAriaLabel]="rowAriaLabel"
-      [selectAllAriaLabel]="'labels.select_all' | translate"
-    >
-      <div scTableEmpty class="assign__no-results sc-text-body-regular">
-        @if (assignedRows().length === 0) {
-          <span class="assign__empty-title sc-text-body-semibold">{{ 'groups.form.assigned.empty_title' | translate }}</span>
-          {{ 'groups.form.assigned.empty' | translate }}
-        } @else {
-          {{ 'groups.form.assigned.no_results' | translate }}
-        }
-      </div>
+    <sc-datatable variant="list" [size]="compact() ? 'sm' : 'md'" scrollable scrollHeight="flex"
+      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id"
+      [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]">
+      <ng-template #header>
+        <tr>
+          @for (col of columns(); track col.field) {
+            <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
+              @if (col.field === 'assigned' || families().includes($any(col.field))) {
+                <span class="assign__column-heading">
+                  <span>{{ col.header }}</span>
+                  <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)"
+                    [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
+                    (cycle)="toggleHeader(col.field)" />
+                </span>
+              } @else { {{ col.header }} }
+            </th>
+          }
+        </tr>
+      </ng-template>
+      <div scTableEmpty class="assign__no-results sc-text-body-regular">{{ 'groups.form.assigned.no_results' | translate }}</div>
     </sc-datatable>
   </div>
 </div>
-
-<!-- Elegir varios agentes y actuar en lote: la barra de las listas, no una a mano (la de antes
-     pintaba su fondo con un color de PALETA que no voltea en oscuro). Decisión de producto (2026-09-14): en
-     grupos también se seleccionan varios agentes a la vez, como en el resto de listas. -->
-<!-- La habilitación se cambia por fila; el lote sigue siendo solo quitar del grupo (DD-149). -->
-@if (selectable()) {
-  <sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-    <sc-button type="button" variant="danger" [label]="'groups.form.assigned.bulk_unassign' | translate" (clicked)="bulkUnassign()" />
-  </sc-bulk-action-bar>
-}
 
 <!-- Celdas del editor. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
 <ng-template #agentTpl let-row>
   <span class="assign__name">
     <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
-    <span class="assign__name-label sc-text-body-semibold" [title]="row.agent.name">{{ row.agent.name }}</span>
+    <span class="assign__identity">
+      <span class="assign__name-label sc-text-body-semibold" [title]="row.agent.name">{{ row.agent.name }}</span>
+      @if (row.agent.email) { <span class="assign__email sc-text-caption-regular">{{ row.agent.email }}</span> }
+      @if (!compatible(row.agent)) { <span class="sc-text-caption-regular">{{ 'groups.form.assigned.incompatible' | translate }}</span> }
+    </span>
     @if (row.agent.presenceStatus; as presence) {
       @if (presenceLabelColor(presence); as color) {
         <sc-tag class="assign__presence" variant="label" [labelColor]="color" [value]="presenceLabelKey(presence) | translate" />
@@ -99,7 +51,7 @@
         <sc-tag class="assign__presence" [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
       }
     }
-    @if (row.link.channels.length === 0) {
+    @if (row.link && row.link.channels.length === 0) {
       <sc-tag severity="warn" icon="warning" [value]="'groups.form.summary.no_channels' | translate" />
     }
   </span>
@@ -124,6 +76,7 @@
     </span>
   } @else {
     <sc-checkbox
+      [disabled]="!row.link || pending()"
       [state]="hasChannel(row.link, col.field) ? 'all' : 'none'"
       [ariaLabel]="row.agent.name + ' — ' + col.header"
       (cycle)="toggleChannel(row.agent.id, col.field)"
@@ -138,30 +91,25 @@
     [inputId]="'group-' + col.field + '-' + row.agent.id"
     [ariaLabelledBy]="'group-' + col.field + '-label-' + row.agent.id"
     [options]="levelOptions"
-    [disabled]="!allowed(row.agent, levelFamily(col.field))"
-    [value]="row.link.levels?.[levelFamily(col.field)] ?? 1"
+    [disabled]="!row.link || pending() || !allowed(row.agent, levelFamily(col.field))"
+    [value]="row.link?.levels?.[levelFamily(col.field)] ?? 1"
     (valueChange)="setLevel(row.agent.id, col.field, $event)"
   />
 </ng-template>
 
-<!-- Un botón solo con icono dice qué hace al pasar por encima: «Quitar del grupo», la misma palabra que la ayuda del
-     candado y el lote de la ficha. El nombre accesible lleva además a quién. -->
-<ng-template #actionsTpl let-row>
-  <sc-button
-    variant="secondary"
-    appearance="text"
-    size="sm"
-    [icon]="trashIcon"
-    [ariaLabel]="'groups.form.assigned.remove_aria' | translate: { name: row.agent.name }"
-    [pTooltip]="'groups.form.assigned.bulk_unassign' | translate"
-    tooltipPosition="left"
-    (clicked)="removeRow(row.agent.id)"
+<ng-template #assignedTpl let-row>
+  <sc-checkbox
+    [state]="row.link ? 'all' : 'none'"
+    [disabled]="pending() || (!row.link && !compatible(row.agent))"
+    [ariaLabel]="('groups.form.assigned.assignment' | translate) + ' — ' + row.agent.name"
+    (cycle)="toggleAssignment(row)"
   />
 </ng-template>
 
 <ng-template #activeTpl let-row>
   <sc-toggleswitch
-    [checked]="row.link.active"
+    [checked]="row.link?.active ?? false"
+    [disabled]="!row.link || pending()"
     [size]="compact() ? 'sm' : 'md'"
     [ariaLabel]="'groups.form.assigned.active_aria' | translate: { name: row.agent.name }"
     (checkedChange)="toggleActive(row.agent.id, $event)"

@@ -81,9 +81,8 @@ test('los desplegables del DS hablan el idioma de la app: en inglés, «No resul
       /* contexto sin storage — ignorar */
     }
   });
-  await goto(page, 'admin/grupos');
-  await page.getByRole('button', { name: /^Assign agents (of|for|to) ACD demo cuscare/ }).click();
-  await page.locator('.agents-panel sc-multiselect').click();
+  await goto(page, 'admin/agentes/editar/1?seccion=recursos');
+  await page.locator('sc-multiselect').filter({ has: page.locator('#agent-agendas') }).click();
   const filtro = page.locator('.p-multiselect-overlay input[type=text]').first();
   await expect(filtro).toHaveAttribute('placeholder', 'Search');
   await filtro.fill('zzzz');

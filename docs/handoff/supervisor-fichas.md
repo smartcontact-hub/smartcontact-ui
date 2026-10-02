@@ -19,15 +19,28 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ▶ 2026-10-02 · E3: canales permitidos (DD-150)
+## ▶ 2026-10-02 · E4: asignación desde la lista (DD-151)
+
+**En curso:** `codex/supervisor-e4-asignacion`, worktree `supervisor-e4-asignacion/smartcontact-ui`, base `2a894b1c`.
+Cuatro pruebas rojas contra E3, commit `51dc5af0`; nueve casos propios verdes tras implementar. Regresiones
+afectadas corregidas y repetidas; suite completa **518/520**, solo los dos recortes históricos del listado (3 px).
+Confirmación colectiva desde **dos cambios reales**, tanto asignación como canales. Selector nativo, búsqueda
+por nombre/email, filas estables y paginación; panel a toda altura. `revision` verde en las ocho secciones de edición
+y alta; ocho capturas ficha/panel con ambos niveles, claro/oscuro, 1024/1440, revisadas con better-layout.
+Zoom/RTL no verificados. `verify` verde. Pendiente: preflight, PR/CI y merge/CI. Local 4405 sigue en E3. Después D3 → F.
+**D3, criterio delegado (2026-10-02):** cierre por inactividad con 5, 10, 15, 30 y 60 minutos, defecto 5; conservar
+valores guardados fuera del catálogo. Los otros tiempos mantienen el catálogo de segundos del plan. Sin implementar aún.
+
+## ✅ 2026-10-02 · E3: canales permitidos (DD-150)
 
 > **Sello: `codex/supervisor-e3-canales`, base `74427653` (#312, CI de main leída en verde).**
 
-**En curso:** permisos por familia, intersección y aviso al retirar; se conservan enlaces y niveles. Semilla: 499/500 solo Chat.
+**Entregado:** #313 → `2a894b1c`; CI PR `37015026349` y main `37017197770`, leídas en verde. Rama y worktree propios
+eliminados; evidencia externa. Permisos por familia, intersección y aviso al retirar; se conservan enlaces y niveles. Semilla: 499/500 solo Chat.
 **Ejecutado:** dos unitarias y dos e2e rojas contra E2 (`4d6645fa`); después 22 unitarias, typecheck y 35 e2e
 afectados verdes; suite completa 509/511 (solo los dos recortes conocidos de 3 px, mismas medidas). Los siete e2e
 nuevos pasan. `revision` y 16 capturas claro/oscuro, 1024/1440, revisadas con better-layout; zoom/RTL no verificados.
-**Verify verde** tras unificar dos traducciones y ajustar el tope del hand-off. Pendiente: preflight, PR/CI y merge/CI.
+**Verify y preflight verdes.** Local 4405 actualizado; siete e2e adicionales verdes contra su build de producción.
 **Siguiente:** E4 → D3 → F. E4: decisión de producto (2026-10-02), confirmar acciones colectivas desde dos agentes.
 
 ## ✅ 2026-10-02 · E2: Habilitado, palabras y presencia (DD-149)
@@ -194,88 +207,13 @@ manita y subrayado al pasar; la tarjeta no se pulsa. `resumen-enlazado.spec.ts` 
   18 minutos antes de la primera prueba) y su log no se lee hasta que acaba. Cancelarlo por el reloj tiró una tanda
   que iba 92 de 92 en verde; espera a que termine.
 
-## ✅ 2026-09-29 · Contact Center fija con qué nace un grupo o un agente (DD-135), y las altas dicen lo que falta (DD-136) y van en pasos (DD-138)
-
-> **Sello: #290 (`e490faf`), #291 (`4be46a5`) y los pasos, #295 (`7458351`), fundidos en `main`, con su CI de
-> `main` en verde.**
-
-**Qué pasó.** Producto respondió al cierre del 2026-09-28:
-- los valores de fábrica son los del documento de producto de usuarios y grupos;
-- la página de valores por defecto del listado de grupos se quita, y se fijan en Contact Center;
-- Contact Center es el superadmin y lo contiene todo: sin guardas de acceso, producto recorta qué ve cada rol;
-- Tipificaciones va con la supervisión;
-- la cola agotada sigue por el VUI: el grupo es un nodo AED del árbol, y quien diseña el VUI elige la salida.
-
-**Qué cambia** (el detalle y lo descartado, en DD-135):
-- Contact Center › Grupos es la página que vivía junto al listado, dentro de su tarjeta; › Agentes, la matriz, la
-  Configuración y la Integración de la ficha de agente. Las dos guardan y las altas lo leen (`GroupDefaultsStore`, y
-  `AgentDefaultsStore`, nuevo).
-- De fábrica: 10 · 15 · 60 s, administrativo 5 s, Baja, Balanceada en Teléfono y en Chat, y desbordar encendido; el
-  agente, todo menos la numeración especial, con sus tres interruptores encendidos.
-- `/admin/grupos/valores-por-defecto` redirige a Contact Center › Grupos, y el listado pierde su botón.
-- «Tiempo máximo de espera en cola» dice qué pasa al agotarse, en la ficha y en Contact Center.
-- `cloud-identity.test.mjs` deja de depender de no ser root: un `.git/config.lock` en vez de `chmod`.
-
-**Medido:** `contact-center-valores.spec.ts`, seis de seis en rojo contra el código anterior; la prueba nueva de
-`ayudas-campos`, en rojo sin la ayuda de la ficha y, aparte, sin la de Contact Center.
-
-**Las altas dicen lo que falta (DD-136)**, el efecto de gradiente de meta que pidió producto:
-- el resumen de cada alta dice «Falta: nombre · extensión» y, en cuanto «Crear …» se enciende, «Listo para crear»;
-- una pieza compartida de la app, `sc-summary-status`: un solo `role="status"` que cambia en su sitio y reserva su
-  línea, en ámbar o en verde con su icono;
-- un error de formato va en su campo, y al editar nunca dice «Listo».
-
-`altas-meta.spec.ts`: cuatro de cinco en rojo contra el código anterior (la quinta, de guarda), y el contraste de
-«Listo» en los dos temas, en rojo con el color cambiado a propósito.
-
-**Las altas van en pasos (DD-138)**, lo que eligió producto para el mismo gradiente de meta:
-- en el alta (y al duplicar agente o usuario), el Stepper vertical nativo de PrimeNG en el sitio del índice y del
-  contenido; la edición sigue con el índice. Pieza de la app: `sc-alta-pasos`, con `pasosDeAlta()`, que saca los
-  pasos de las secciones del índice;
-- cada sección vive en su `ng-template`: la misma en los dos modos;
-- la puerta de General del grupo sigue (pasos apagados); agente y usuario, en cualquier orden;
-- ✓ al dejar un paso completo, «Atrás» y «Siguiente» como atajos, y el paso no toca la dirección;
-- el plegado es el de PrimeNG tal cual (0,2 s, `ease-out`). La línea entre pasos se despegaba al plegar, por un fallo
-  de PrimeNG, y se arregla con `pt` en la envoltura del panel (`panelPt`).
-
-`altas-pasos.spec.ts`: siete de ocho en rojo contra el código anterior (la octava, de guarda), y dos más en rojo con
-el fallo puesto: el aire (49 con el margen de la tarjeta) y los títulos (h1 → h3 sin el h2 oculto). Las altas de otras
-seis pruebas se reescriben para los pasos con `irAPaso()`. `altas-pasos-movimiento.spec.ts`, tres, con el movimiento
-real: la línea a mitad del plegado (en rojo primero, 36 de 114), el plegado nativo y menos movimiento.
-
-**Trampas del tramo:**
-- ⚠️ El Stepper nativo desmonta el panel que se deja cuando acaba de plegarse, no al pulsar: un momento hay dos
-  paneles en el DOM y `querySelector('.p-steppanel-content')` coge el que se va (medido: 0 y 747). Espera a que quede
-  uno (`irAPaso()` lo hace) o busca el del paso con `aria-current="step"`.
-- ⚠️ Un clic de Playwright en un paso apagado espera 30 s a que se encienda. Los recorridos (`revision`,
-  `agrupacion`) rellenan antes lo que lo abre (`PREPARAR`).
-- ⚠️ El texto de una pestaña de paso es «1\nGeneral»: el número va delante. `nombreDe` lo quita.
-- ⚠️ Un error de sintaxis en el decorador de un componente (unas comillas invertidas dentro de `styles`) deja a
-  `ng serve` con NG2012 en quien lo importa aunque el fichero ya esté bien: reinicia el servidor.
-- ⚠️ La sección dentro del paso la pinta la plantilla de la ficha, no `sc-alta-pasos`: sus estilos encapsulados
-  no la alcanzan. El margen de la tarjeta se quita en `_forms.scss` (`.alta-pasos sc-section-card`).
-- ⚠️ `toHaveText` lee el `textContent`, y un `sc-icon` pone ahí el nombre de su glifo («error Falta: nombre»). El
-  lector no lo oye (va `aria-hidden`): casa el final del texto.
-- ⚠️ Las altas de agente y usuario no pasan la medida completa de `theme-contrast`: el marcador de la foto
-  (`sc-photo-upload`, del DS) mide 2,58:1. Por eso siguen en `RUTAS_SUELO` (abierto en DD-136).
-- ⚠️ Un `sc-inputnumber` con sufijo se describe con el sufijo delante: la espera en cola se anuncia «s Si nadie…».
-  Casa el final de la descripción, no el texto exacto.
-- ⚠️ El fin del plegado lo pone un temporizador de respaldo de p-motion (201 ms), no solo `animationend`. Para verlo
-  a cámara lenta hay que retrasar ese temporizador además de las animaciones: si no, corta el plegado a mitad. Para
-  medirlo a mitad, congélalo en el mismo fotograma en que empieza (`altas-pasos-movimiento.spec.ts`).
-- ⚠️ En el plegado del Stepper, la caja mide X·contenido y su fila X·caja: lo que se estire a la fila (la línea entre
-  pasos) se queda corto, y lo que mide su contenido no. Poner el panel en bloque no cambia nada: las dos X están
-  dentro del `p-motion`.
-- ⚠️ En la nube se corre como root, y `chmod` no le quita la escritura. Para simular que la config de git no se puede
-  escribir, un `.git/config.lock` ajeno.
-
-El tramo del 2026-09-28 (panel compacto, tipos de usuario y ayudas) vive en
-`git show c6a9cd59:docs/handoff/supervisor-fichas.md`; su criterio sigue en DD-131, DD-132 y DD-133.
+El tramo del 2026-09-29 queda en `git show 2a894b1c:docs/handoff/supervisor-fichas.md` (DD-135/136/138).
+El Stepper fue sustituido por el índice (DD-143); sus trampas de plegado solo aplican a código histórico.
+Las trampas vigentes se conservan abajo. El tramo del 2026-09-28 vive en `git show c6a9cd59:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: E1b → E2 → E3 → E4 → D3 →
-   F (G termina con G2b, DD-146). E4, con la referencia del usuario «4. Agentes y revisión»: todos a la vista y sin
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: E4 → D3 → F (G termina con G2b, DD-146). E4, con la referencia del usuario «4. Agentes y revisión»: todos a la vista y sin
    marcar, búsqueda, filtro Todos / Asignados / Sin asignar, estado y canales. Cada uno con su prueba en rojo;
    la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center
    validado: pídeselos al usuario si no están en el repo.
@@ -326,6 +264,11 @@ El tramo del 2026-09-28 (panel compacto, tipos de usuario y ayudas) vive en
 - **Rafa:** revisar usuarios contra el Supervisor real.
 
 **Trampas del frente:**
+- Los iconos añaden su glifo a `textContent`; el lector no lo oye. `toHaveText` debe distinguirlo.
+- Un inputnumber con sufijo lo antepone a su descripción accesible. Las altas siguen fuera del contraste completo
+  por el marcador de foto de 2,58:1 (DD-136). En cloud root, simula bloqueo de Git con `.git/config.lock`, no chmod.
+- Un NG2012 que persiste después de reparar sintaxis puede exigir reiniciar `ng serve`.
+
 - ⚠️ **Una consulta de contenedor no suma especificidad.** Una regla dentro de `@container` que va antes que la regla
   base del mismo selector pierde. La franja siguió a 244 px hasta ponerla detrás.
 - ⚠️ **Una `subgrid` con su propio `gap` desplaza sus elementos la mitad de la diferencia con el de fuera.** Con

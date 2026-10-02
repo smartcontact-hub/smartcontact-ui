@@ -1,22 +1,14 @@
-/*
- * Editor de los agentes de un grupo. La CAJA la pone la `sc-section-card` del
- * formulario; la tabla, `sc-datatable`, también vacía. Aquí solo queda
- * la barra y dos celdas.
- *
- * `.assign` es el MISMO bloque que `group-assignment-table` (los grupos de un agente),
- * byte a byte: la misma relación vista desde cada lado. Si cambias uno, cambia el otro.
- */
 .assign {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-875);
+  gap: var(--sc-spacing-1);
   min-height: 0;
 
   &__bar {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--sc-spacing-0-875);
+    gap: var(--sc-spacing-0-5);
   }
 
   &__search {
@@ -25,21 +17,10 @@
     max-width: 320px;
   }
 
-  &__counter {
-    color: var(--sc-text-subtle);
-    white-space: nowrap;
-  }
-
-  &__add {
-    margin-left: auto;
-    flex: 0 1 240px;
-    min-width: 200px;
-  }
-
   &__name {
     display: inline-flex;
     align-items: center;
-    gap: var(--sc-spacing-0-875);
+    gap: var(--sc-spacing-1);
     min-width: 0;
     max-width: 100%;
   }
@@ -55,38 +36,21 @@
     white-space: nowrap;
   }
 
-  &__none {
-    color: var(--sc-text-disabled);
-  }
-
   /* La envoltura del último canal: da al tooltip un sitio que sí recibe el ratón. */
   &__locked {
     display: inline-flex;
   }
 
-  /* Con filas elegidas, la barra de acciones en lote flota sobre el pie: se reserva su alto
-   * para que no tape la última fila al llegar abajo. */
-  &--bulk {
-    padding-bottom: var(--sc-bulk-action-bar-height);
-  }
-
   &__no-results {
-    padding: var(--sc-spacing-1-5) var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
     text-align: center;
     color: var(--sc-text-subtle);
   }
 
-  /* El vacío en dos renglones dentro de la tabla: qué pasa, y debajo qué hacer. */
-  &__empty-title {
-    display: block;
-    color: var(--sc-text-primary);
-  }
 }
 
-/* La tabla del panel rápido (DD-131). La barra cabe en una línea en un panel de ~30rem: el buscador y «Añadir
- * agentes» parten de una base más corta que en la ficha (con flex-wrap, lo que decide el salto de línea es la base,
- * no el mínimo). Y los huecos van a la escalera: 14 entre la barra y la tabla, que son dos grupos, y 7 dentro de la
- * barra, que es uno. */
+/* En el panel, 7 entre controles y 14 antes de la tabla. El buscador puede ceder ancho
+ * al selector sin cambiar el comportamiento nativo de ninguno (DD-151). */
 :host(.agent-channel-table--compact) .assign {
   gap: var(--sc-spacing-1);
 
@@ -98,10 +62,6 @@
     flex: 1 1 10rem;
   }
 
-  &__add {
-    flex: 0 1 12rem;
-    min-width: 11rem;
-  }
 }
 
 /* La tabla hace scroll DENTRO, con la cabecera de columnas fija, como las listas (DD-95): así la ficha entera cabe en
@@ -136,4 +96,22 @@
     display: inline-flex;
     color: var(--sc-text-primary);
   }
+}
+
+.assign__identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.assign__email {
+  color: var(--sc-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.assign__column-heading {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
 }

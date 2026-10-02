@@ -1,10 +1,8 @@
-<!-- Bajo la barra de la app (que es donde vive Guardar en las fichas) y con el ancho de lo que lleva dentro: el
-     nombre, sus columnas de canal y la papelera (DD-131). La X, el clic fuera y Escape de `p-drawer` van apagados:
-     su cierre no se puede vetar, y aquí puede haber cambios sin guardar. Cierra el propio panel (ver el .ts). -->
+<!-- Panel a toda altura y ancho derivado de sus columnas (DD-151). El cierre pasa por
+     el borrador para permitir cancelar sin perder cambios. -->
 <sc-drawer
   position="right"
   [width]="width()"
-  topOffset="var(--sc-spacing-4)"
   [visible]="!!group()"
   [header]="group() ? ('groups.agents_panel.title' | translate: { name: group()!.name }) : null"
   [dismissible]="false"
@@ -24,9 +22,7 @@
         [availableAgents]="availableAgents()"
         [groupId]="g.id"
         [levelFamilies]="levelFamilies()"
-        [selectable]="false"
         [compact]="true"
-        [channelColumns]="channelColumns()"
         (linksChange)="onLinksChange($event)"
       />
 

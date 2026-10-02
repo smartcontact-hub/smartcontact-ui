@@ -1538,10 +1538,10 @@
         "agents_hint": "Qui traite et par quels canaux"
       },
       "assigned": {
-        "query_placeholder": "Rechercher un agent…",
+        "query_placeholder": "Rechercher par nom ou e-mail…",
         "empty_title": "Aucun agent assigné",
         "empty": "Choisissez-les dans « Ajouter des agents », en haut à droite.",
-        "no_results": "Aucun agent assigné ne correspond au filtre.",
+        "no_results": "Aucun agent ne correspond au filtre.",
         "col_agent": "Agent",
         "col_active": "Activé",
         "active_aria": "Activé dans ce groupe : {{name}}",
@@ -1559,8 +1559,22 @@
         "col_level": "Niveau · {{channel}}",
         "level_aria": "Niveau de {{name}} — {{channel}}",
         "paused": "Désactivé",
-        "last_channel_hint": "Il doit traiter au moins un canal. Pour le sortir du groupe, cliquez sur la corbeille de sa ligne.",
-        "last_channel_aria": "{{name}} — {{channel}} : seul canal ; pour le sortir du groupe, cliquez sur la corbeille de sa ligne"
+        "last_channel_hint": "Un canal au minimum est requis. Décochez Affecté pour retirer cet agent du groupe.",
+        "last_channel_aria": "{{name}} — {{channel}} : seul canal ; décochez Affecté pour retirer cet agent du groupe",
+        "assignment": "Affecté",
+        "filter_all": "Tous",
+        "filter_assigned": "Affectés",
+        "filter_unassigned": "Non affectés",
+        "filter_label": "Filtrer par affectation",
+        "column_all": "Modifier {{column}} dans les résultats filtrés",
+        "bulk_title": "Confirmer les modifications collectives",
+        "bulk_body": "{{action}} : {{count}} agents.",
+        "bulk_add": "Affecter au groupe",
+        "bulk_remove": "Retirer du groupe",
+        "bulk_channel_add": "Activer {{channel}}",
+        "bulk_channel_remove": "Retirer {{channel}}",
+        "bulk_done": "{{count}} agents mis à jour.",
+        "bulk_confirm": "Confirmer"
       },
       "fields": {
         "name": "Nom",
