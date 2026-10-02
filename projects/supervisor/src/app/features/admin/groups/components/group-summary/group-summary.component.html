@@ -19,6 +19,8 @@
       [of]="total()"
       [noteKey]="paused() > 0 ? 'groups.form.summary.paused_count' : null"
       [noteParams]="{ count: paused() }"
+      [href]="hrefs().agentes"
+      (abrir)="ir.emit({ seccion: 'agentes' })"
     >
       @if (channelRows().length > 0) {
         <ul class="resumen__channels">
@@ -45,18 +47,23 @@
       }
     </sc-summary-kpi>
 
-    <!-- Lo que no es una proporción, junto en una tarjeta: reparto, salida y recursos. -->
+    <!-- Lo que no es una proporción, junto en una tarjeta: reparto, salida y recursos. Cada rótulo lleva a su sección,
+         y cada fila a su sitio en ella (DD-146); el grupo nombra sus filas, para que dos «Teléfono» no se confundan. -->
     <div class="resumen__kpi resumen__facts">
       @if (routing().length > 0) {
-        <div class="resumen__fact">
-          <p class="resumen__label sc-text-caption-regular">
-            <sc-icon name="alt_route" size="inherit" aria-hidden="true" />
-            {{ 'groups.form.summary.routing' | translate }}
+        <div class="resumen__fact" role="group" aria-labelledby="group-summary-routing">
+          <p id="group-summary-routing" class="resumen__label sc-text-caption-regular">
+            <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
+              <sc-icon name="alt_route" size="inherit" aria-hidden="true" />
+              {{ 'groups.form.summary.routing' | translate }}
+            </a>
           </p>
           <dl class="resumen__pairs">
             @for (r of routing(); track r.family) {
               <div class="resumen__pair">
-                <dt class="resumen__key sc-text-caption-regular">{{ familyKey(r.family) | translate }}</dt>
+                <dt class="resumen__key sc-text-caption-regular">
+                  <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', canal: r.family })">{{ familyKey(r.family) | translate }}</a>
+                </dt>
                 <dd class="resumen__value sc-text-caption-semibold">{{ r.text }}</dd>
               </div>
             }
@@ -64,15 +71,19 @@
         </div>
       }
       @if (outbound().length > 0) {
-        <div class="resumen__fact">
-          <p class="resumen__label sc-text-caption-regular">
-            <sc-icon name="call_made" size="inherit" aria-hidden="true" />
-            {{ 'groups.form.summary.outbound' | translate }}
+        <div class="resumen__fact" role="group" aria-labelledby="group-summary-outbound">
+          <p id="group-summary-outbound" class="resumen__label sc-text-caption-regular">
+            <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
+              <sc-icon name="call_made" size="inherit" aria-hidden="true" />
+              {{ 'groups.form.summary.outbound' | translate }}
+            </a>
           </p>
           <dl class="resumen__pairs">
             @for (o of outbound(); track o.channel) {
               <div class="resumen__pair">
-                <dt class="resumen__key sc-text-caption-regular">{{ channelKeys[o.channel] | translate }}</dt>
+                <dt class="resumen__key sc-text-caption-regular">
+                  <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">{{ channelKeys[o.channel] | translate }}</a>
+                </dt>
                 @if (o.number) {
                   <dd class="resumen__value sc-text-caption-semibold">{{ o.number }}</dd>
                 } @else {
@@ -88,8 +99,10 @@
       }
       <p class="resumen__head">
         <span class="resumen__label sc-text-caption-regular">
-          <sc-icon name="library_books" size="inherit" aria-hidden="true" />
-          {{ 'groups.form.summary.resources' | translate }}
+          <a class="resumen__enlace" [href]="hrefs().recursos" (click)="pulsar($event, { seccion: 'recursos' })">
+            <sc-icon name="library_books" size="inherit" aria-hidden="true" />
+            {{ 'groups.form.summary.resources' | translate }}
+          </a>
         </span>
         <span class="resumen__digits sc-text-body-semibold" [scAnimateOnChange]="resourceCount()" animateClass="animate-sc-bump">{{ resourceCount() }}</span>
       </p>

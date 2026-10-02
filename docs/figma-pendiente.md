@@ -124,6 +124,7 @@ variable cuando su nombre es único y avisa.
 - [ ] **34** · El teléfono saliente obligatorio y cerrado, «Caducar sesión» y Recursos sin Etiquetas.
 - [ ] **35** · Las fichas en tres columnas: el título en el contenido, el resumen sin rótulo y «Eliminar» bajo el índice.
 - [ ] **36** · El nombre de la ficha, fijo arriba al bajar.
+- [ ] **37** · El resumen de la ficha de grupo, con sus rótulos y filas como enlaces.
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
@@ -1013,6 +1014,22 @@ no cita los nodos de las fichas.
 
 **Cómo sabes que está hecho:** el estado se ve como `/admin/grupos/editar/11?seccion=distribucion` a 1440, bajado del
 todo.
+
+---
+
+## 37 · El resumen de la ficha de grupo lleva a su sección (2026-10-02)
+
+**Estado:** pendiente · **Dónde:** Figma, el resumen de la ficha de grupo · **Esfuerzo:** un estado al pasar el ratón,
+sin piezas nuevas · **Sin verificar** contra el fichero: el código no cita los nodos de las fichas.
+
+- **Por qué** (DD-146): lo que dice el resumen se arregla en una sección, y desde él se llega a ella.
+- **Qué dibujar:**
+  - los rótulos (Agentes activos, Reparto, Salida, Recursos) y las claves de las filas (Teléfono, Chat, WhatsApp),
+    al pasar el ratón: subrayados, en el mismo color de texto;
+  - el foco: el anillo del sistema alrededor del enlace;
+  - la tarjeta, igual: no cambia al pasar.
+
+**Cómo sabes que está hecho:** se ve como `/admin/grupos/editar/11` a 1440, con el ratón sobre «Reparto».
 
 ---
 

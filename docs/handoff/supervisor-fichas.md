@@ -19,11 +19,11 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143), las tres columnas (G1, DD-144) y el nombre fijo (G2a, DD-145)
+## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143), las tres columnas (G1, DD-144), el nombre fijo (G2a, DD-145) y el resumen enlazado (G2b, DD-146)
 
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `86d5b18c`). H (#298, `57f03a0`), los diálogos de
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `b02fdb9b`). H (#298, `57f03a0`), los diálogos de
 > Recursos (#300, `5cf3f5e1`), D1 (#303, `78b2efb9`), D2 (#304, `004498dc`), R (#305, `85c32239`) y G1 (#306,
-> `86d5b18c`), fundidos con su CI en verde; G2a (DD-145), en su PR.**
+> `86d5b18c`) y G2a (#307, `b02fdb9b`), fundidos con su CI en verde; G2b (DD-146), en su PR.**
 
 **Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
 ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
@@ -109,6 +109,10 @@ contenido, de arriba abajo de la rejilla, con `sticky`. A partir de 1340 cae sob
 píxel; por debajo, al quedar fija. Texto pintado (`::before`) y clases propias; las anclas, apartadas
 `--sc-form-anchor-offset`. Borrar ya pedía el nombre: ahora lo fija una prueba. `fichas-nombre-fijo.spec.ts` (9):
 cinco en rojo y cuatro de guarda.
+
+**G2b · el resumen enlazado** (DD-146): el rótulo de cada tarjeta del resumen de grupo lleva a su sección, y cada fila
+a su sitio (el bloque del canal, el campo del número), con `llegarAAncla`. Enlaces de verdad en el primario, con
+manita y subrayado al pasar; la tarjeta no se pulsa. `resumen-enlazado.spec.ts` (5): las cinco en rojo primero.
 
 **Trampas del tramo:**
 - ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
@@ -265,9 +269,9 @@ grupos y el manual de usuario de Voice:
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: G2b → E1 → E2 → E3 → E4
-   → D3 → F. G2b termina la maqueta que pidió el usuario: el resumen que lleva a su sección (el nombre fijo y la
-   prueba de borrar van en G2a, DD-145). Cada uno con su prueba en rojo;
+0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: E1 → E2 → E3 → E4 → D3 →
+   F (G termina con G2b, DD-146). E4, con la referencia del usuario «4. Agentes y revisión»: todos a la vista y sin
+   marcar, búsqueda, filtro Todos / Asignados / Sin asignar, estado y canales. Cada uno con su prueba en rojo;
    la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center
    validado: pídeselos al usuario si no están en el repo.
 
