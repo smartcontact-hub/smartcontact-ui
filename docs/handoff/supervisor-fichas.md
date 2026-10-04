@@ -19,40 +19,47 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ▶ 2026-10-02 · F: columnas y acciones del listado (DD-153)
+## ✅ 2026-10-04 · F: columnas y acciones del listado (DD-153), en su PR
 
-**En curso:** `codex/supervisor-f-listado`, worktree `supervisor-f-listado/smartcontact-ui`, base `faf25027`.
-Test primero: `a31d22b1`, cuatro e2e rojos contra D3 y una unitaria roja de columnas nativas.
-Implementados selector compacto y acciones fijas; corregidos los recortes históricos de estrategias.
-**Ejecutado:** 46 unitarias y build verdes; 12 e2e del listado y seis de demos verdes. Suite completa
-Supervisor **532/532 verde** (13 minutos), incluidos los dos recortes históricos corregidos. Suite DS
-**100/100 verde** (Mac: las imágenes Linux se contrastan en CI). Referencias JSON revisadas: cuatro
-variantes de MultiSelect, una tabla y el atributo estático del icono que pasa a binding, mismo glifo.
-`revision` de Grupos/Agentes/Usuarios verde. Catorce capturas antes/después, claro/oscuro a 1024/1440,
-y Grupos a 1366×768/1490×860, revisadas con better-layout. Sin hallazgos de layout pendientes en el
-alcance inspeccionado; zoom 200 % y RTL no verificados. Lint y guardas documentales/nativas verdes.
-**Pausa solicitada para relevo:** implementación terminada y `npm run verify` verde (salida 0,
-`f-verify2.log`). No hay PR ni push de F. El commit de implementación es el HEAD de esta rama al retomar.
-Solo se ha actualizado este hand-off después de verify; ejecutar sus guardas antes del commit.
-**Cuatro tandas pendientes**, en orden:
-1. Actualizar `origin/main`, revisar cualquier avance e integrarlo sin sobrescribir; ejecutar
-   `npm run preflight:scope -- --run` sobre el contenido final y los pasos vigentes de `ci.yml`.
-2. Push de la rama; lanzar `visual-baselines.yml` con `rama=codex/supervisor-f-listado` y motivo DD-153,
-   ANTES de abrir PR. Traer su commit, revisar las imágenes Linux y repetir preflight sobre ese HEAD.
-3. Crear PR, leer CI con `npm run ci:verdict` y corregir fallos. El borrador externo aún tiene pendientes.
-4. Squash explícito con CI verde; comprobar CI exacta del merge en main con `ci:verdict`.
-Después actualizar el local 4405 con el build F, guardar evidencias externas y eliminar solo rama/worktree F.
-No borrar este worktree durante el relevo. Ruta absoluta:
-`/Users/rafareses/.codex/worktrees/supervisor-f-listado/smartcontact-ui`.
-Node: `/Users/rafareses/.nvm/versions/node/v22.23.2/bin` delante de PATH; identidad Git sin cambios.
-Los servidores de pruebas 4407/4408 están apagados; 4405 conserva D3, no F. Sin suites activas al pausar.
-Paquetes preparados en 1.1.0 por API aditiva, sin publicar. Las últimas correcciones de verify afectan solo
-al texto de dos snippets (selectionMode/dataKey e iconOnly size); suites funcionales anteriores siguen válidas.
-Incidencia previa detectada: con prefers-reduced-motion: reduce, Agentes puede renderizar cero filas
-virtuales; reproducida tanto en D3 servido en 4405 como en F. Queda fuera de F, sin ocultar el hallazgo. No usar evidencia de D3 para dar F por validado.
-El detalle de E1b sale por el tope de seis secciones: `git show faf25027:docs/handoff/supervisor-fichas.md`.
-E1b #310 y sus CI `36995125759` / `36996276443` verdes. Recuperación E1a y ZIP intactos.
-Evidencia F fuera del árbol: `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/f`.
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `faf25027`: `a31d22b1` (pruebas en rojo), `f90f7187` (F) y
+> `3996cbab` (capturas de Linux del bot). `codex/supervisor-f-listado` es la misma F, subida desde el portátil: copia,
+> se borra al fundir.**
+
+**Qué hace.**
+- **El selector de columnas, en un icono:** `sc-multiselect` gana `iconOnly` e `icon`, con nombre accesible
+  «Columnas, 8 de 10».
+- **«Asignar» y «⋮», fijas a la derecha:** `ScColumnDef` gana `frozen` y `alignFrozen`, que van a `pFrozenColumn`. La
+  sombra solo aparece mientras queda contenido por la derecha.
+- **Los recortes de 3 px de las estrategias:** arreglados.
+- **El paquete:** versión 1.1.0, preparada y sin publicar.
+
+**Medido.**
+- **En el portátil:**
+  - pruebas: cuatro e2e y una unitaria en rojo contra D3; después, la suite del Supervisor (532/532) y la del DS
+    (100/100), en verde; verify, limpio;
+  - pantallas: `revision` de Grupos, Agentes y Usuarios, y catorce capturas de antes y después.
+- **En la nube:**
+  - preflight, en verde sobre el árbol de F;
+  - `visual-baselines` regeneró cuatro `-linux.png`, revisadas una a una:
+    - `datatable`, con la demo nueva de columnas fijas. Sale sin filas porque la captura se toma tras «Vaciar»,
+      como el resto de esa página; que funciona con filas lo cubre la prueba funcional del DS;
+    - `multiselect`, con los controles nuevos y la sección «Solo icono»;
+    - `radiobutton` y `select`, que mejoran: con las pistas de rejilla a mínimo cero, su tarjeta y su bloque de
+      código ya no se salen por la derecha de la página.
+
+**Pendiente, fuera de F.**
+- **Página de docs de MultiSelect:**
+  - el ejemplo del playground escribe `icon="view_column"` aunque `iconOnly` esté apagado (es el valor por defecto);
+  - los cuatro selectores de solo icono salen apilados y pegados, sin hueco.
+- **Bloques de código de sc-docs:** «Copiar» flota encima de las líneas largas.
+- **Agentes:** con `prefers-reduced-motion: reduce`, su tabla puede pintar cero filas virtuales. Pasa igual en D3.
+- **Sin verificar:** zoom al 200 % y RTL.
+
+**En el portátil, al fundir:**
+- poner el local 4405 al día con `main`;
+- borrar el worktree y la rama `codex/supervisor-f-listado`, la local y la del remoto.
+
+El detalle de E1b salió por el tope de seis secciones: `git show faf25027:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-02 · D3: tiempos, horarios y música (DD-152)
 
@@ -236,10 +243,10 @@ Las trampas vigentes se conservan abajo. El tramo del 2026-09-28 vive en `git sh
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: D3 → F (G termina con G2b, DD-146). E4, con la referencia del usuario «4. Agentes y revisión»: todos a la vista y sin
-   marcar, búsqueda, filtro Todos / Asignados / Sin asignar, estado y canales. Cada uno con su prueba en rojo;
-   la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center
-   validado: catálogo vigente y criterio delegado de inactividad en DD-152.
+0. **La revisión del 2026-10-01 termina con F** (DD-153, en su PR): de H a F, todo fundido o en PR. Lo siguiente
+   es lo «pendiente, fuera de F» del bloque de arriba: los dos detalles de la página de MultiSelect y las filas
+   virtuales de Agentes con menos movimiento, cada uno con su prueba en rojo. La numeración de DD se mira en
+   `origin/main` al empezar.
 
    **Lo que queda abierto de DD-133, DD-135 y DD-136:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
