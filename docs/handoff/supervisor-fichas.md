@@ -21,11 +21,10 @@ cuatro trampas del pase suben a «Trampas del frente». Y el de la revisión de 
 Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-fichas.md`; sus trampas suben a
 «Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show c6a9cd59:…` y `git show 2a894b1c:…`.
 
-## ✅ 2026-10-04 · Lo que dejó F, en un lote: la lista virtual con «reducir movimiento» y el estado en su columna (DD-156), en su PR
+## ✅ 2026-10-04 · Lo que dejó F, en un lote: la lista virtual con «reducir movimiento» y el estado en su columna (DD-156), fundido
 
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre HEAD `15c54c47` (#320). Dos bloques, un commit en rojo y otro en
-> verde cada uno, y un solo PR (DD-154): la lista virtual (`5c6840e2`, `feb4570b`) y el estado (`a1b4edb5`, y su
-> arreglo).**
+> **Sello: #321 → HEAD `8a5660ce`, por squash; CI del PR (37209923320) y de `main` (37210588217), 14 de 14 en verde.
+> Dos bloques en un PR (DD-154), cada uno con su commit en rojo. Después, en otro PR, la guarda de los emails (abajo).**
 
 **La lista virtual con «reducir movimiento»** (sin DD: solo arregla, en el DS):
 - con esa preferencia del sistema, el listado de agentes salía sin filas: la lista virtual de PrimeNG contaba las que
@@ -41,7 +40,10 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 - medido antes y después en 18 casos (grupos de uno, dos y tres canales, de 1024 a 1680): etiquetas alineadas (antes,
   de 45 a 63 px de diferencia), ningún email más recortado y lo que cabía sigue cabiendo. Lo que ya desplazaba en
   horizontal desplaza 40 px más: a 1440, en un grupo de tres canales, Email también queda fuera;
-- `ficha-grupo-estado.spec.ts` (4): tres en rojo contra DD-149, y la guarda. Cambian `ficha-grupo-familias` (el ancho
+- `ficha-grupo-estado.spec.ts`: tres en rojo contra DD-149, y la guarda de donde cabía, que sigue cabiendo. Su
+  primera versión solo miraba el desplazamiento: la primera versión de DD-156 cabía a 1440 con cuatro emails de diez
+  recortados, y la cazó la matriz, no una prueba. Ahora mira también los emails, en un canal a 1440 y dos a 1536 (los
+  dos casos más justos, 11 y 3 px), y se pone en rojo con los anchos de entonces (cuatro recortados en cada uno). Cambian `ficha-grupo-familias` (el ancho
   del panel) y `panel-agentes-grupo` (el aire, en dos tramos; visto en rojo con aire puesto);
 - en local, en verde: los diez ficheros de prueba de la tabla y el panel (77) y los barridos de Grupos, Agentes,
   Usuarios y Contact Center › Grupos (51, DD-155); `revision` de la ficha, el alta y el listado de grupos, en regla;
@@ -146,8 +148,8 @@ El preflight integró #311 (solo CusCare); Supervisor y DS idénticos. Evidencia
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01 está entera en `main`**, de H a F (#318), y lo que dejó F va en un PR (el tramo de
-   arriba). Lo siguiente:
+0. **La revisión del 2026-10-01 está entera en `main`**, de H a F (#318), y lo que dejó F, fundido en #321 (el tramo
+   de arriba). Lo siguiente:
    - los dos detalles de la página de MultiSelect y «Copiar» encima de las líneas largas. Mueven capturas de sc-docs:
      `visual-baselines` sobre la rama antes del PR;
    - si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con tres canales (las dos salidas,
