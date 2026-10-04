@@ -72,7 +72,7 @@ export function lineasDeTiempos({ pr, primerCommit, ejecuciones, main, desde = n
 }
 
 /** Una ejecución con su fin: el del último job. */
-function conFin(github, r) {
+export function conFin(github, r) {
   const jobs = github.jobsDe(r.id);
   const fin = jobs.map((j) => j.completedAt).filter(Boolean).sort().at(-1) ?? null;
   return { id: r.id, inicio: r.startedAt, fin, conclusion: r.conclusion, sinJobs: jobs.length === 0 };
