@@ -1,12 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import {
+  actosBash,
   comandosBash,
   estadoDelArbol,
   fallosDelParte,
@@ -527,4 +528,153 @@ test('Stop: tras fundir por squash, «Seguro cerrar: sí» deja cerrar; con un c
   const r = correrHook(entrada, raiz);
   assert.equal(r?.decision, 'block', 'ROJO: hay un commit que main no tiene y el parte dice «sí»');
   assert.match(r.reason, /el árbol dice que no: la rama rama no está en el remoto/);
+});
+
+// ── Pushear es un ACTO, no una cadena de texto · añadido el 2026-10-04 ──────────────────────────────
+// El hook contaba como push todo comando que TUVIERA `git push` en posición de comando, y en una sola
+// sesión salieron tres familias de aviso falso, medidas sobre su propio transcript (12 comandos «push»,
+// de los que solo 2 lo eran):
+//   · cuatro que NUNCA corrieron: tres los denegó `bash-guard` (resultado con `is_error`) y un
+//     `false && … git push` salió con `Exit code 1`;
+//   · ocho cuyo único `git push` estaba en el texto de un heredoc (mensajes de `git commit` y scripts);
+//   · y, según el hand-off, el push de OTRO repositorio, que pide leer un CI que ese repo no tiene.
+// Cada una cuesta un turno de cierre. Lo que se pregunta es si SE PUSHEÓ, y eso lo dicen el resultado
+// de la herramienta, de qué es dato el heredoc y en qué repo corrió.
+
+const evUso = (id, cmd, cwd) =>
+  JSON.stringify({ type: 'assistant', cwd, message: { content: [{ type: 'tool_use', id, name: 'Bash', input: { command: cmd } }] } });
+const evResultado = (id, texto, error = false) =>
+  JSON.stringify({ type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: id, content: texto, is_error: error }] } });
+
+test('actosBash: cada Bash lleva su cwd y si falló; sin resultado se da por ejecutado; el canal MCP sigue entrando', () => {
+  const jsonl = [
+    evUso('a', 'git push origin main', '/r'),
+    evResultado('a', 'To https://github.com/x/y\n   abc..def  main -> main'),
+    evUso('b', 'false && git push', '/r'),
+    evResultado('b', 'Exit code 1', true),
+    evUso('c', 'git push origin rama', '/r'), // sin resultado: el transcript aún no lo trae
+    evUso('d', 'npm run ci:verdict', '/r'),
+    evResultado('d', 'Exit code 1', true), // un CI en rojo: el verdict SÍ se leyó
+    evMcp('mcp__github__actions_list'),
+  ].join('\n');
+  assert.deepEqual(actosBash(jsonl), [
+    { cmd: 'git push origin main', cwd: '/r', fallo: false },
+    { cmd: 'false && git push', cwd: '/r', fallo: true },
+    { cmd: 'git push origin rama', cwd: '/r', fallo: false },
+    { cmd: 'npm run ci:verdict', cwd: '/r', fallo: true },
+    { cmd: 'mcp__github__actions_list', cwd: undefined, fallo: false },
+  ]);
+  // Y `comandosBash` sigue siendo la lista de comandos, para quien solo quiere eso.
+  assert.deepEqual(comandosBash(jsonl).slice(0, 2), ['git push origin main', 'false && git push']);
+});
+
+test('un push que NO corrió (denegado o con error) no obliga a leer ningún CI; uno que corrió, sí', () => {
+  const denegado = [evUso('a', 'git push origin main', '/r'), evResultado('a', 'PreToolUse:Bash hook error: LEARNINGS #7 — …', true)].join('\n');
+  const noCorrio = [evUso('a', 'false && cd /x && git push', '/r'), evResultado('a', 'Exit code 1', true)].join('\n');
+  const rechazado = [evUso('a', 'git push origin main', '/r'), evResultado('a', 'Exit code 1', true)].join('\n');
+  const hecho = [evUso('a', 'git push origin main', '/r'), evResultado('a', 'To https://github.com/x/y\n   abc..def  main -> main')].join('\n');
+  const sinResultado = evUso('a', 'git push origin main', '/r');
+  assert.equal(necesitaVeredicto(actosBash(denegado)), false, 'lo denegó el guardián de push: no se pusheó');
+  assert.equal(necesitaVeredicto(actosBash(noCorrio)), false, '`false &&` corta la cadena');
+  assert.equal(necesitaVeredicto(actosBash(rechazado)), false, 'un push con error de salida no subió nada');
+  assert.equal(necesitaVeredicto(actosBash(hecho)), true, 'ROJO si se pierde: el que corrió pide leer el CI');
+  assert.equal(necesitaVeredicto(actosBash(sinResultado)), true, 'sin resultado se da por hecho: lo estricto');
+  // Un `ci:verdict` que sale en rojo (exit ≠ 0) ES leer el CI: el error de la herramienta no le quita el valor.
+  const leidoEnRojo = [hecho, evUso('b', 'npm run ci:verdict', '/r'), evResultado('b', 'Exit code 1', true)].join('\n');
+  assert.equal(necesitaVeredicto(actosBash(leidoEnRojo)), false);
+});
+
+// ⚠️ El error del COMANDO no es el error del PUSH: `git push origin main && npm run build` sale con error si el
+// build falla, aunque el push ya haya subido. Ignorarlo dejaría cerrar sin leer el CI de algo que SÍ está en el
+// remoto, que es el fallo caro de este hook. El resultado lo desmiente: un push que subió imprime el ref
+// actualizado (`abc..def  rama -> rama`, `* [new branch]`, `+ … (forced update)`); uno rechazado, `! [rejected]`.
+test('un comando con error cuyo resultado enseña un ref subido SÍ pusheó; uno rechazado no', () => {
+  const subio = [
+    'To https://github.com/x/y\n   8a5660ce..6f32d30c  main -> main\nnpm error Missing script: "build"',
+    'To https://github.com/x/y\n * [new branch]      rama -> rama\nExit code 1',
+    'To https://github.com/x/y\n + 692d984c...3afe7ce1 rama -> rama (forced update)\nExit code 1',
+    'To https://github.com/x/y\n * [new tag]         v1 -> v1\nExit code 1',
+  ];
+  for (const texto of subio) {
+    const jsonl = [evUso('a', 'git push origin rama && npm run build', '/r'), evResultado('a', texto, true)].join('\n');
+    assert.equal(actosBash(jsonl)[0].fallo, false, texto);
+    assert.equal(necesitaVeredicto(actosBash(jsonl)), true, `ROJO si se pierde: ${texto}`);
+  }
+  const rechazado = 'To https://github.com/x/y\n ! [rejected]        main -> main (fetch first)\nerror: failed to push some refs\nExit code 1';
+  const remoto = 'To https://github.com/x/y\n ! [remote rejected] main -> main (protected branch hook declined)\nExit code 1';
+  for (const texto of [rechazado, remoto]) {
+    const jsonl = [evUso('a', 'git push origin main', '/r'), evResultado('a', texto, true)].join('\n');
+    assert.equal(actosBash(jsonl)[0].fallo, true, texto);
+    assert.equal(necesitaVeredicto(actosBash(jsonl)), false, texto);
+  }
+  // El resultado puede venir como lista de bloques de texto, no solo como cadena.
+  const bloques = JSON.stringify({ type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 'a', is_error: true, content: [{ type: 'text', text: subio[0] }] }] } });
+  assert.equal(necesitaVeredicto(actosBash([evUso('a', 'git push origin rama && npm run build', '/r'), bloques].join('\n'))), true);
+});
+
+test('un heredoc es DATO salvo que lo lea un shell: el cuerpo de un commit que habla de pushes no es un push', () => {
+  const mensaje = "git commit -q -F - <<'EOF'\nUn cambio\n\n- Huecos: `cd <otro> && git push && cd <este> && git push`\nEOF";
+  // ROJO de antes: esto bloqueó el cierre en tres commits de la misma sesión.
+  assert.equal(necesitaVeredicto([mensaje]), false, 'el mensaje de un commit');
+  assert.equal(necesitaVeredicto(["cat > notas.md <<'EOF'\ngit push origin main\nEOF"]), false, 'un fichero que habla de git push (el hueco que el comentario dejaba abierto)');
+  assert.equal(necesitaVeredicto(["python3 - <<'PY'\nsubprocess.run(['x'])  # luego git push\nPY"]), false);
+  // VERDE: lo que sigue siendo un push, esté donde esté respecto al heredoc.
+  assert.equal(necesitaVeredicto(["bash <<'EOF'\ngit push origin rama\nEOF"]), true, 'un shell lee el heredoc: es un script');
+  assert.equal(necesitaVeredicto(["git commit -q -F - <<'EOF' && git push origin rama\nmensaje\nEOF"]), true, 'tras el operador, en la misma línea');
+  assert.equal(necesitaVeredicto(["git commit -q -F - <<'EOF'\nmensaje\nEOF\ngit push origin rama"]), true, 'después de cerrarlo');
+});
+
+// El push de otro repositorio no tiene CI que leer. Repos de verdad, porque lo que se mira es el disco:
+// este (con el script de la marca, que es lo que reconoce `bash-guard`) y otro sin él.
+function reposDelCierre(t) {
+  const raiz = mkdtempSync(join(tmpdir(), 'sc-stop-repos-'));
+  t.after(() => rmSync(raiz, { recursive: true, force: true }));
+  const propio = join(raiz, 'propio');
+  const otro = join(raiz, 'otro');
+  for (const d of [propio, otro]) {
+    mkdirSync(d);
+    spawnSync('git', ['init', '-q'], { cwd: d, env: SIN_GIT });
+  }
+  mkdirSync(join(propio, 'scripts'));
+  writeFileSync(join(propio, 'scripts', 'preflight-mark.mjs'), '');
+  return { raiz, propio, otro };
+}
+const acto = (cmd, cwd) => ({ cmd, cwd, fallo: false });
+
+test('el push de OTRO repositorio no pide leer el CI de este; el de este, con la sesión donde sea, sí', (t) => {
+  const { propio, otro } = reposDelCierre(t);
+  // ROJO de antes: el barrido de un repo ajeno (el cuaderno de notas) obligaba a leer un CI que no existe.
+  assert.equal(necesitaVeredicto([acto(`cd ${otro} && git add -A && git commit -qm x && git push`, propio)]), false);
+  assert.equal(necesitaVeredicto([acto(`cd "${otro}" && git push`, propio)]), false, 'con la ruta entrecomillada');
+  assert.equal(necesitaVeredicto([acto('git push', otro)]), false, 'con la sesión abierta en él');
+  assert.equal(necesitaVeredicto([acto(`git -C ${otro} push`, propio)]), false);
+  assert.equal(necesitaVeredicto([acto(`false || (cd ${otro} && git push)`, propio)]), false);
+  // VERDE: lo de este repo se sigue viendo, desde donde corra.
+  assert.equal(necesitaVeredicto([acto('git push origin main', propio)]), true);
+  assert.equal(necesitaVeredicto([acto(`cd ${propio} && git push`, otro)]), true, 'con la sesión en el otro repo');
+  assert.equal(necesitaVeredicto([acto(`git -C ${propio} push`, otro)]), true);
+  assert.equal(necesitaVeredicto([acto(`cd ${otro} && git push && cd ${propio} && git push`, propio)]), true, 'un comando con los dos: cuenta el de este');
+  assert.equal(necesitaVeredicto([acto(`(cd ${otro} && git push); git push`, propio)]), true, 'el `cd` de un subshell no sale de él: el segundo corre en la sesión');
+  assert.equal(necesitaVeredicto([acto(`cd ${otro} && git push; git push`, propio)]), false, 'sin subshell el `cd` persiste: los dos son del otro repo');
+  // Y las formas con las que git elige repositorio SON pushes aunque no empiecen por `git push` (el hook no las veía).
+  assert.equal(necesitaVeredicto([acto(`GIT_DIR=${propio}/.git git push`, otro)]), true);
+  assert.equal(necesitaVeredicto([acto(`git --git-dir=${propio}/.git push`, otro)]), true);
+  assert.equal(necesitaVeredicto([acto(`GIT_DIR=${otro}/.git git push`, propio)]), false);
+  assert.equal(necesitaVeredicto([acto(`git -C ${propio} push --dry-run`, otro)]), false, 'un dry-run no sube nada');
+  // Lo que no se sabe cuenta como de este repo: sin cwd, con una ruta opaca o con un push dentro de comillas de `bash -c`.
+  assert.equal(necesitaVeredicto([{ cmd: `cd ${otro} && git push`, fallo: false }]), true, 'sin cwd en el evento');
+  assert.equal(necesitaVeredicto([acto('cd $CUADERNO && git push', propio)]), true, 'cd opaco');
+  assert.equal(necesitaVeredicto([acto(`bash -c "cd ${otro} && git push"`, propio)]), true, 'el parser no ve un push dentro de comillas');
+  // Y leer el CI después sigue cerrando la deuda de este repo.
+  assert.equal(necesitaVeredicto([acto(`cd ${propio} && git push`, otro), acto('mcp__github__actions_list', otro)]), false);
+});
+
+test('Stop: de punta a punta, un push que no corrió no bloquea y uno que corrió sin CI leído, sí', (t) => {
+  const { raiz, propio } = reposDelCierre(t);
+  const transcript = join(raiz, 'sesion.jsonl');
+  const entrada = { transcript_path: transcript, session_id: 'S-acto', cwd: propio };
+  writeFileSync(transcript, [evUso('a', `cd ${propio} && false && git push`, propio), evResultado('a', 'Exit code 1', true)].join('\n'));
+  assert.equal(correrHook(entrada, raiz), null, 'la sonda que nunca llegó a pushear no obliga a leer el CI');
+  writeFileSync(transcript, [evUso('a', 'git push origin main', propio), evResultado('a', 'To https://github.com/x/y\n   abc..def  main -> main')].join('\n'));
+  assert.match(correrHook(entrada, raiz).reason, /LEARNINGS #7/, 'ROJO si se pierde: el push de verdad sigue pidiendo el veredicto');
 });

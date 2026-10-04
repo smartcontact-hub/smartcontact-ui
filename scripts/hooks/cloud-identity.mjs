@@ -13,7 +13,13 @@
  *
  * Qué hace: si `origin` es este repo y la identidad con que git firmaría es la de la herramienta,
  * escribe `user.name` y `user.email` en la config del clon, que gana a la global del contenedor (allí
- * no hay variables `GIT_AUTHOR_*` que la pisen, medido). Decide por esa CONDICIÓN y no por la variable
+ * no hay variables `GIT_AUTHOR_*` que la pisen, medido).
+ *
+ * Y apaga en el clon la FIRMA de commits si la global la activa (2026-10-04): el contenedor también firma
+ * con la clave SSH de la herramienta (`commit.gpgsign = true`). Con el correo del mantenedor esa firma sale
+ * «sin verificar» en el PR (DD-134, `unknown_key`) y no aporta nada: la fusión de `main` la firma GitHub. Y
+ * el aviso de Stop del entorno, que solo corre si hay firma configurada, manda re-firmar con la identidad
+ * de la herramienta, justo lo que esta decisión y `audit:commit-attribution` prohíben. Decide por esa CONDICIÓN y no por la variable
  * `CLAUDE_CODE_REMOTE`: el mismo día, en una sesión programada de la nube, `cloud-node.sh` (que sí
  * depende de ella) no llegó a poner su Node ni a instalar `node_modules`, y no quedó medido por qué.
  * Con cualquier otra identidad (la de una máquina local) calla y no toca nada; con otro `origin` (un
@@ -55,8 +61,13 @@ export function main({ env = process.env, cwd = env.CLAUDE_PROJECT_DIR || proces
     if (!debeFirmar({ urlOrigen, correoActual })) return;
     git('config', 'user.name', IDENTIDAD.nombre);
     git('config', 'user.email', IDENTIDAD.email);
+    const firmaba = leer('config', '--type=bool', 'commit.gpgsign') === 'true';
+    if (firmaba) git('config', 'commit.gpgsign', 'false');
     const autor = git('var', 'GIT_AUTHOR_IDENT').replace(/\s+\d+\s+[+-]\d{4}$/, '');
-    escribir(`sc: los commits de esta sesión firman como ${autor} (DD-134), no con la identidad de la herramienta.\n`);
+    escribir(
+      `sc: los commits de esta sesión firman como ${autor} (DD-134), no con la identidad de la herramienta` +
+        `${firmaba ? ', y sin su firma, que GitHub no puede verificar con esa cuenta' : ''}.\n`,
+    );
   } catch (e) {
     escribir(`sc: no pude fijar la identidad de git (${e.message.split('\n')[0]}); audit:commit-attribution lo parará antes del push.\n`);
   }
