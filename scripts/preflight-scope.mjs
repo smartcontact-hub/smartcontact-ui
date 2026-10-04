@@ -20,7 +20,7 @@
  */
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
-import { avisarCarga, puertaBarata } from "./preflight-puerta-barata.mjs";
+import { avisarCarga, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 import { APPS, planDe } from "./preflight-alcance.mjs";
 
@@ -95,7 +95,7 @@ if (process.argv.includes("--run")) {
   // pasada verde bajo carga sigue valiendo), pero quien la lanza tiene que saberlo ya y no horas después.
   // Deja una marca en el entorno para que el `preverify` de `verify`, que corre dentro, no lo repita.
   avisarCarga();
-  const problemas = puertaBarata(process.cwd());
+  const problemas = [...puertaBarata(process.cwd()), ...generadosAlDia()];
   if (problemas.length) {
     console.log("\n✘ La cadena NO arranca: hay algo que se comprueba en 2 s y falla.\n");
     for (const q of problemas) console.log(`    · ${q}`);
