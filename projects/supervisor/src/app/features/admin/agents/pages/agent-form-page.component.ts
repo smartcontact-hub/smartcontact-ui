@@ -407,6 +407,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
+    obligatoria: (id) => id === 'agent-section-identity',
     completa: (id) => id !== 'agent-section-identity' || this.identidadCompleta(),
   });
 

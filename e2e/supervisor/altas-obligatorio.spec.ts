@@ -97,7 +97,8 @@ test('el pie: «Atrás» y «Siguiente» juntos a la izquierda, «Siguiente» el
   const [a, s] = [await atras(page).boundingBox(), await siguiente(page).boundingBox()];
   expect(a && s, 'los dos a la vista').toBeTruthy();
   expect(s!.x, '«Siguiente» tras «Atrás»').toBeGreaterThan(a!.x);
-  expect(s!.x - (a!.x + a!.width), 'entre los dos, el aire de dos botones juntos').toBeLessThanOrEqual(8);
+  // 10,5: el de una botonera del DS (el pie de `sc-dialog`); el ejemplo pone 8.
+  expect(s!.x - (a!.x + a!.width), 'entre los dos, el aire de una botonera').toBeLessThanOrEqual(11);
   // A la izquierda: «Atrás» empieza donde empieza el contenido de la sección.
   const contenido = await page.locator('#group-section-distribution').boundingBox();
   expect(a!.x - contenido!.x, '«Atrás», al principio de la fila').toBeLessThanOrEqual(1);

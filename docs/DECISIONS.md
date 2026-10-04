@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El alta: ✓ solo en secciones con algo obligatorio, el teléfono saliente como segunda puerta del grupo y «Atrás / Siguiente» como el Stepper vertical | DD-158 |
 > | Distribución y colas con el árbol del DS (canal = subsección, parte = slot), Chat en el orden de Teléfono y los mensajes de la cola plegados | DD-157 |
 > | El estado del agente en su columna de la tabla de agentes del grupo; cada columna medida, y el panel las suma | DD-156 |
 > | Tiempos con catálogo, cola Fija/Variable, horarios de atención por subcanal y música en un control | DD-152 |
@@ -115,6 +116,35 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-158 · 2026-10-04 — El alta: ✓ solo donde hay algo obligatorio, el teléfono saliente como puerta y el pie del Stepper
+
+**Contexto.** La revisión de producto del 2026-10-04, sobre las tres altas (DD-143):
+- el ✓ del índice salía en Recursos o en Agentes solo por pasar por ellas: no comprobaba nada. Medido el 2026-10-04:
+  lo llevaban Agentes y Recursos del grupo, Grupos asignados del agente y Acceso del usuario;
+- en el alta de grupo había dos controles, el nombre y el teléfono saliente, pero solo el primero era puerta: sin
+  teléfono saliente se seguía a Recursos y a Agentes, y la falta quedaba para el final (DD-142 la quiso libre);
+- «Atrás» y «Siguiente» iban en los extremos de la fila, contorneados y con flecha, a 658 px uno del otro. La
+  referencia que se pidió es el Stepper vertical de primeng.dev: «Back» secundario y «Next» principal, juntos.
+
+**Decisión.**
+1. **✓ solo en la sección con algo obligatorio** que se deja completa. `seccionesDeAlta` gana `obligatoria(id)`, y
+   cada ficha la dice: el grupo, General y, con Teléfono, Distribución y colas; el agente y el usuario, Identidad. La
+   que no tiene nada obligatorio no lleva nunca ✓ ni punto: no hay nada que dar por bueno ni nada que falte.
+2. **El teléfono saliente es la segunda puerta del alta de grupo**: con Teléfono y sin él, ni «Siguiente» ni el
+   índice pasan de Distribución y colas; se queda en ella, lo dice bajo el campo y lleva el foco al campo. Se puede
+   volver a General (donde se quita Teléfono), y saltar desde General a Recursos o a Agentes lleva a Distribución.
+   Al editar sigue sin puerta: el punto rojo y «Guardar» apagado bastan. Enmienda DD-142 («no es puerta»).
+3. **El pie, como el Stepper vertical, con los botones del DS**: juntos a la izquierda, «Atrás» `secondary` y
+   «Siguiente» el principal, rellenos, a su tamaño y sin icono; entre ellos, 10,5, el de una botonera del DS (el pie
+   de `sc-dialog`), y no los 8 del ejemplo. Enmienda DD-143 («Siguiente», a la derecha y contorneado).
+
+**Razón.** Un ✓ que sale por pasar enseña a no fiarse de los que sí comprueban algo. Con dos puertas, el alta de grupo
+llega a Recursos y Agentes con lo único obligatorio ya resuelto, y lo que queda es libre. El pie del Stepper deja claro
+cuál es el paso esperado, y «Crear grupo» de arriba sigue siendo la única acción que crea.
+
+**Descartado.** El ✓ en todas las secciones visitadas (lo de antes); hacer puerta también al editar (al editar se va
+por el índice y no hay pasos); los 8 px del ejemplo entre botones.
 
 ## DD-157 · 2026-10-04 — Distribución y colas, con el árbol del DS: cada canal una caja, cada parte un slot, y los mensajes de la cola de vuelta
 
@@ -718,7 +748,8 @@ para un formulario tan largo, y una ficha que cambia de forma entre crear y edit
 1. **El alta tiene la maqueta de la edición**, en las tres fichas (grupo, agente y usuario) y al duplicar un agente o
    un usuario: el índice a la izquierda (`sc-form-section-nav`), una sección a la vista en su `sc-section-card`, con su
    cabecera, y el resumen a la derecha. Salen `sc-alta-pasos` y, con él, el `p-stepper`.
-2. **✓ en la sección que se deja completa**: `sc-form-section-nav` gana `sectionsDone` (DS). El ✓ va detrás de la
+2. **✓ en la sección que se deja completa** *(DD-158: solo si tiene algo obligatorio)*: `sc-form-section-nav` gana
+   `sectionsDone` (DS). El ✓ va detrás de la
    etiqueta, en el verde de éxito y con el peso de la etiqueta, y el enlace lo dice («Esta sección está completa»). La
    abierta no lo lleva aunque esté bien. Lo que falta y los cambios sin guardar ganan al ✓: se ve una marca y se oyen
    todas.
@@ -726,7 +757,8 @@ para un formulario tan largo, y una ficha que cambia de forma entre crear y edit
    y colas sin teléfono saliente, en el grupo (DD-142). Antes de abrirla, ninguna marca: un alta recién abierta no
    acusa (DD-136).
 4. **«Atrás» y «Siguiente» al pie de la sección, en las tres altas** (`sc-alta-pie`, de la app): atajos a la sección de
-   al lado, en el orden del índice. La primera no lleva «Atrás» y la última no lleva «Siguiente». «Crear …» sigue
+   al lado, en el orden del índice *(DD-158: juntos a la izquierda, «Atrás» secundario y «Siguiente» el principal, como
+   el Stepper vertical)*. La primera no lleva «Atrás» y la última no lleva «Siguiente». «Crear …» sigue
    arriba, la única acción que crea (DD-122 §6). Llevan al principio de la sección nueva, con el foco en su título
    (`llegarASeccion`).
 5. **General sigue siendo la puerta del grupo** (DD-121): sin nombre o sin canales, ni el índice ni «Siguiente» sacan
@@ -810,7 +842,8 @@ para un formulario tan largo, y una ficha que cambia de forma entre crear y edit
    - el resumen dice «Falta: … · teléfono saliente», y «Crear grupo» y «Guardar» esperan, con el motivo en la barra;
    - al editar, el aviso va bajo el campo y Distribución y colas lleva el punto del índice; en el alta, después de
      salir de su sección sin él, como el nombre al salir de General;
-   - en el alta, Distribución no lleva su ✓ sin él, pero no es puerta: los pasos siguen libres;
+   - en el alta, Distribución no lleva su ✓ sin él, pero no es puerta: los pasos siguen libres; *(enmendado por
+     DD-158, 2026-10-04: es la segunda puerta del alta, como el nombre)*
    - duplicar lo pide al enviar, como el resto de sus campos, y lleva el foco a él.
 2. **Se elige de los números asignados** (`OUTBOUND_NUMBERS`, en la demo los de los grupos de ejemplo), en la ficha y
    al duplicar: el desplegable ya no deja escribir. El número que un grupo ya tuviera guardado sigue entre las
