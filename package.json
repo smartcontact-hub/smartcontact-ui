@@ -57,6 +57,7 @@
     "e2e:structure": "playwright test -c playwright.config.ts component-structure",
     "e2e:structure:update": "SC_UPDATE_STRUCTURE=1 playwright test -c playwright.config.ts component-structure",
     "e2e:supervisor": "playwright test -c playwright.supervisor.config.ts",
+    "e2e:barridos": "playwright test -c playwright.supervisor.config.ts theme-contrast agrupacion focus-ring icon-glyph-scale",
     "export:all": "npm run build && node scripts/export-package.mjs design-tokens ui-smartcontact-icons ui-smartcontact",
     "export:components": "npm run build:components && node scripts/export-package.mjs ui-smartcontact",
     "export:design-tokens": "npm run build:design-tokens && node scripts/export-package.mjs design-tokens",
