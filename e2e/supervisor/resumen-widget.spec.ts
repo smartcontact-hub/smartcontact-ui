@@ -108,8 +108,23 @@ test.describe('con los datos de siempre', () => {
     await goto(page, 'admin/grupos/editar/11');
     const agentes = widgets(page).first();
     await expect(agentes).toContainText('Sin agentes');
-    // Sobre el tinte, el ámbar como texto no llega a AA: lo lleva el icono, y el aviso no pierde su color.
+    // La tarjeta de agentes es la cifra destacada (DD-161): sobre su degradado el ámbar no llega a 3:1, así que el
+    // aviso, icono y palabra, va en el color de la tarjeta. Sigue siendo un aviso por su icono y su texto.
     const aviso = agentes.locator('.resumen__warn').first();
+    await expect(aviso.locator('sc-icon'), 'el aviso conserva su icono').toHaveCount(1);
+    const [icono, texto] = await aviso.evaluate((e) => [
+      getComputedStyle(e.querySelector('sc-icon')!).color,
+      getComputedStyle(e).color,
+    ]);
+    expect(icono, 'sobre el degradado, el icono va en el color de la tarjeta').toBe(texto);
+  });
+
+  test('sobre el tinte, el ámbar del aviso lo lleva el icono', async ({ page }) => {
+    // En el alta, «Salida» dice que al teléfono le falta su número, en una tarjeta que no es la destacada. Ahí el ámbar
+    // como texto no llega a AA (DD-126): lo lleva el icono, y el aviso no pierde su color.
+    await goto(page, 'admin/grupos/crear');
+    const aviso = resumen(page).locator('.resumen__warn', { hasText: 'Sin número' }).first();
+    await expect(aviso).toBeVisible();
     const icono = await aviso.locator('sc-icon').evaluate((e) => getComputedStyle(e).color);
     expect(icono, 'el ámbar del aviso lo lleva el icono').toBe(await colorDeToken(page, '--sc-icon-warning'));
   });
