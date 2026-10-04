@@ -51,7 +51,7 @@
     <!-- La flecha en Material Symbols, como todos los iconos de la plataforma: la de PrimeNG es su SVG propio.
          Por la plantilla nativa `#dropdownicon`, sin tocar el comportamiento. -->
     <ng-template #dropdownicon>
-      <sc-icon name="expand_more" size="inherit" class="sc-multiselect__dropdown-icon" />
+      <sc-icon [name]="iconOnly() ? icon() : 'expand_more'" size="inherit" class="sc-multiselect__dropdown-icon" />
     </ng-template>
   </p-multiselect>
 

@@ -86,6 +86,8 @@ export interface ScDatatableSortEvent {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.sc-datatable--list]': "variant() === 'list'",
+    '[class.sc-datatable--overflow-right]': 'overflowRight()',
+    '[class.sc-datatable--overflow-left]': 'overflowLeft()',
     // `scrollHeight="flex"`: con lista virtual la tabla LLENA el alto (la lista virtual lo necesita);
     // sin ella, se AJUSTA a sus filas y solo hace scroll si no caben (DD-95).
     '[class.sc-datatable--fill]': 'pVirtualScroll()',
@@ -551,6 +553,14 @@ export class ScDatatableComponent<T = unknown> {
     return this.virtualWanted() && !this.rowHeight() ? rows.slice(0, 1) : rows;
   });
 
+  protected readonly rightFrozenEdge = computed(() =>
+    this.visibleCols().find(c => c.frozen && c.alignFrozen === 'right')?.field,
+  );
+  protected readonly leftFrozenEdge = computed(() =>
+    this.visibleCols().filter(c => c.frozen && c.alignFrozen !== 'right').at(-1)?.field,
+  );
+  protected readonly overflowRight = signal(false);
+  protected readonly overflowLeft = signal(false);
   private readonly hostEl = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
 
   constructor() {
@@ -558,6 +568,34 @@ export class ScDatatableComponent<T = unknown> {
      * coloca la pista con `--sc-datatable-thead-height`. Se mide porque el alto de la cabecera
      * cambia con la talla y con el texto de las columnas. */
     const destroyRef = inject(DestroyRef);
+    // La sombra cuenta contenido oculto, no la existencia de una columna fija (DD-153).
+    // Se observan ambos contenedores: PrimeNG cambia el dueño del scroll al virtualizar filas.
+    afterRenderEffect(onCleanup => {
+      const frozen = this.visibleCols().some(c => c.frozen);
+      this.pVirtualScroll();
+      if (!frozen || !this.scrollable() || typeof ResizeObserver === 'undefined') {
+        this.overflowRight.set(false);
+        this.overflowLeft.set(false);
+        return;
+      }
+      const containers = Array.from(this.hostEl.querySelectorAll<HTMLElement>(
+        '.p-datatable-table-container, .p-virtualscroller',
+      ));
+      const measure = () => {
+        this.overflowLeft.set(containers.some(el => el.scrollLeft > 1));
+        this.overflowRight.set(containers.some(el => el.scrollWidth - el.clientWidth - el.scrollLeft > 1));
+      };
+      const observer = new ResizeObserver(measure);
+      for (const el of containers) observer.observe(el);
+      const table = this.hostEl.querySelector('table');
+      if (table) observer.observe(table);
+      this.hostEl.addEventListener('scroll', measure, { capture: true, passive: true });
+      measure();
+      onCleanup(() => {
+        observer.disconnect();
+        this.hostEl.removeEventListener('scroll', measure, true);
+      });
+    });
     let observedThead: HTMLElement | null = null;
     let ro: ResizeObserver | null = null;
     destroyRef.onDestroy(() => ro?.disconnect());

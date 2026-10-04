@@ -6,6 +6,9 @@
  * le dejan. Va AQUÍ y no en el tema porque el `display: block` de arriba va sin capa y le ganaría a
  * `@layer primeng` (medido: la regla del tema no llegaba y la tabla no hacía scroll). */
 :host(.sc-datatable--scroll) {
+  /* La tabla ancha se desplaza dentro del componente, también cuando su host es un elemento flex. */
+  min-width: 0;
+  max-width: 100%;
   /* Alto de la cabecera de columnas: lo mide el componente y la barra de scroll empieza debajo. */
   --sc-datatable-thead-height: 0;
 }

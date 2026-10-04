@@ -18,6 +18,12 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ## [Unreleased]
 
+- **`@smartcontact-hub/components` · preparada 1.1.0, sin publicar** — `sc-multiselect` gana
+  `iconOnly` e `icon` para elegir columnas con nombre accesible. `ScColumnDef` publica `frozen`
+  y `alignFrozen`: posiciones nativas y sombra solo cuando hay contenido oculto. Las tablas con
+  scroll encogen dentro de flex, con fondos opacos en los estados de fila. ([DD-153](docs/DECISIONS.md))
+
+
 ### Added
 
 - **`@smartcontact-hub/components`** — `sc-datatable` gana `externalSort`: la tabla pinta el indicador de

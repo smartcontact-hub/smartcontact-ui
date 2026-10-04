@@ -256,6 +256,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
         width: 'var(--sc-spacing-4)',
         align: 'right',
         reorderable: false,
+        frozen: true,
+        alignFrozen: 'right',
         cellTemplate: this.actionsTpl(),
       },
     ];
@@ -288,6 +290,14 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
       /* Sin almacenamiento (ventana privada, bloqueado): la lista sale con sus columnas por defecto. */
     }
   }
+
+  protected readonly columnsAriaLabel = computed(() => {
+    this.lang();
+    return this.translate.instant('common.columns_visible', {
+      visible: this.columnPrefs()?.visible.length ?? 0,
+      total: this.columnChoices()?.length ?? 0,
+    });
+  });
 
   private savePrefs(next: ColumnPrefs): void {
     this.storedPrefs.set(next);

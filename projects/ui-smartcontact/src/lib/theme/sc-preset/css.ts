@@ -226,7 +226,7 @@ ${LIST} .p-datatable-table {
     table-layout: fixed;
 }
 
-${LIST} .p-datatable-tbody > tr > td {
+${LIST} .p-datatable-tbody > tr > td:not(.p-datatable-frozen-column) {
     position: relative;
 }
 
@@ -260,6 +260,29 @@ ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) > td {
 }
 `;
 
+/* DD-153: el nombre accesible vive en el input nativo; ocultar solo el texto conserva su alto,
+ * el foco y el movimiento del overlay. La variante se documenta como desvío en customs-catalog §8. */
+const iconOnlyMultiSelectCss = () => `
+.sc-multiselect--icon-only .p-multiselect-label-container {
+    flex: 0 0 0;
+    visibility: hidden;
+}
+.sc-multiselect--icon-only .p-multiselect-dropdown {
+    width: 100%;
+}
+`;
+
+const frozenColumnsCss = () => `
+/* El hover inerte de lista era transparente: una celda fija debe tapar los datos que pasan debajo. */
+${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):not(.p-datatable-row-selected):hover:has(> .p-datatable-frozen-column) {
+    background: var(--p-datatable-row-background);
+}
+sc-datatable.sc-datatable--overflow-right .sc-datatable__frozen-right-edge,
+sc-datatable.sc-datatable--overflow-left .sc-datatable__frozen-left-edge {
+    box-shadow: var(--sc-shadow-sm);
+}
+`;
+
 /*
  * UNA ETIQUETA ES UNA LÍNEA (2026-09-13). El maestro del Kit (❖ Tag, set `373:13337`)
  * mide 21.5 de alto con el texto en una sola línea; Aura no dice nada y, en una caja
@@ -270,6 +293,7 @@ ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) > td {
  * `clip` y no `hidden`: no convierte la etiqueta en contenedor de scroll, que le
  * cambiaría la línea base y la movería de su sitio en una fila de texto.
  */
+
 const tagOneLineCss = () => `
 .p-component.p-tag {
     max-width: 100%;
@@ -599,6 +623,8 @@ ${typographyRule(lgTypographySelectors, dt, "lg", fromDesignPx(16), fromDesignPx
 ${baseTableCss()}
 ${emptyCaptionCss()}
 ${listBehaviorCss()}
+${frozenColumnsCss()}
+${iconOnlyMultiSelectCss()}
 ${stickyHeaderCss()}
 ${scrollableScrollbarCss()}
 ${tagOneLineCss()}

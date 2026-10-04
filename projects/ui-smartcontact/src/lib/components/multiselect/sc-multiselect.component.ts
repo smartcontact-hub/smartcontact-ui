@@ -52,6 +52,7 @@ export type ScMultiSelectDisplay = 'chip' | 'comma';
   encapsulation: ViewEncapsulation.None,
   host: {
     class: 'sc-multiselect',
+    '[class.sc-multiselect--icon-only]': 'iconOnly()',
     '[class.sc-multiselect--sm]': "size() === 'sm'",
     '[class.sc-multiselect--lg]': "size() === 'lg'",
     '[class.sc-multiselect--invalid]': 'isInvalid()',
@@ -71,6 +72,10 @@ export class ScMultiSelectComponent {
 
   // ─── Chrome (mirrors sc-select) ─────────────────────────────────────
   readonly size = input<ScFieldSize>('md');
+  /** Selector compacto; conserva el control nativo y exige ariaLabel o ariaLabelledBy. */
+  readonly iconOnly = input(false, { transform: booleanAttribute });
+  /** Icono del selector compacto. El desplegable normal conserva expand_more. */
+  readonly icon = input('view_column');
   /**
    * Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control,
    * así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).

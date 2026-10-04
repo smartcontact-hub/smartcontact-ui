@@ -40,7 +40,7 @@ test('Agentes · ocultar «Canales» y volver a mostrarla la deja donde estaba',
   await selector(page).click();
   await opcion(page, 'Canales').click();
   await expect.poll(() => cabeceras(page)).not.toContain('Canales');
-  await expect(selector(page)).toContainText(`${antes.length - 1} columnas`);
+  await expect(selector(page).getByRole('combobox')).toHaveAccessibleName(new RegExp(`^Columnas, ${antes.length - 1} de `));
   await opcion(page, 'Canales').click();
 
   await expect.poll(() => cabeceras(page)).toEqual(antes);

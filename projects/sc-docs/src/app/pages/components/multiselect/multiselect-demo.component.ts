@@ -69,6 +69,8 @@ const MENOS_VISTOS_SNIPPET = `<!-- Con OBJETOS hay que decir qué campo se lee y
 })
 export class MultiSelectDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
+  protected readonly iconoTpl = viewChild<TemplateRef<StoryContext>>('icono');
+  protected readonly iconColumns = signal<unknown[]>(['name', 'extension', 'email']);
   protected readonly basicoTpl = viewChild<TemplateRef<StoryContext>>('basico');
   protected readonly estadosTpl = viewChild<TemplateRef<StoryContext>>('estados');
   protected readonly menosVistosTpl = viewChild<TemplateRef<StoryContext>>('menosVistos');
@@ -99,6 +101,8 @@ export class MultiSelectDemoComponent {
     description:
       'Multi-select sobre `p-multiselect` con la chrome del field-pattern (label + requerido + helper/error). Dos modos de display (`chip` · `comma`), filtro, «select all» y límite de selección.',
     argTypes: [
+      { name: 'iconOnly', control: { kind: 'boolean' } },
+      { name: 'icon', control: { kind: 'text' } },
       { name: 'label', control: { kind: 'text' } },
       { name: 'placeholder', control: { kind: 'text' } },
       { name: 'helperText', control: { kind: 'text' } },
@@ -114,6 +118,8 @@ export class MultiSelectDemoComponent {
       { name: 'disabled', control: { kind: 'boolean' } },
     ],
     defaultArgs: {
+      iconOnly: false,
+      icon: 'view_column',
       label: 'Grupos',
       placeholder: 'Selecciona grupos',
       helperText: '',
@@ -135,11 +141,15 @@ export class MultiSelectDemoComponent {
     const ba = this.basicoTpl();
     const es = this.estadosTpl();
     const mv = this.menosVistosTpl();
-    if (!pg || !ba || !es || !mv) return [];
+    const ic = this.iconoTpl();
+    if (!pg || !ba || !es || !mv || !ic) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Básico', template: ba },
       { name: 'Estados', template: es, snippet: ESTADOS_SNIPPET },
+      { name: 'Solo icono · columnas', template: ic, snippet: `<sc-multiselect iconOnly icon="view_column" size="md" [options]="columnas" optionValue="key"
+  optionDisabled="locked" [(value)]="iconColumns"
+  [ariaLabel]="'Columnas, ' + iconColumns().length + ' de ' + columnas.length" />` },
       { name: 'Lo que no se ve en los otros ejemplos', template: mv, snippet: MENOS_VISTOS_SNIPPET },
     ];
   });

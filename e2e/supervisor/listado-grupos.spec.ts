@@ -134,16 +134,17 @@ test('Prioridad ordena de Baja a Máxima, no por orden alfabético', async ({ pa
   await page.locator('thead th', { hasText: 'Prioridad' }).click();
 
   const indice = await columna(page, 'Prioridad');
-  const textos = await page.locator('tbody tr').evaluateAll(
-    (filas, i) => filas.map((f) => f.querySelectorAll('td')[i]?.textContent?.trim() ?? ''),
-    indice,
-  );
-  const rango = ['Baja', 'Media', 'Alta', 'Máxima'];
-  const rangos = textos.map((t) => rango.indexOf(t));
-  expect(rangos, textos.join(', ')).not.toContain(-1);
-  // En un sentido o en el otro, pero por rango (el seed tiene las cuatro).
-  const subiendo = [...rangos].sort((a, b) => a - b);
-  expect([subiendo.join(), [...subiendo].reverse().join()], textos.join(', ')).toContain(rangos.join());
+  // El consumidor ordena al recibir sortChange; esperar el resultado evita leer las filas anteriores.
+  await expect.poll(async () => {
+    const textos = await page.locator('tbody tr').evaluateAll(
+      (filas, i) => filas.map((f) => f.querySelectorAll('td')[i]?.textContent?.trim() ?? ''),
+      indice,
+    );
+    const rangos = textos.map((t) => ['Baja', 'Media', 'Alta', 'Máxima'].indexOf(t));
+    const subiendo = [...rangos].sort((a, b) => a - b);
+    return rangos.length > 0 && !rangos.includes(-1)
+      && [subiendo.join(), [...subiendo].reverse().join()].includes(rangos.join());
+  }, { message: 'Prioridad ordena por rango, en cualquiera de los dos sentidos' }).toBe(true);
 });
 
 test('a 1440 no se recorta nada: ni cabeceras ni etiquetas, con la columna de chat encendida o no', async ({ page }) => {

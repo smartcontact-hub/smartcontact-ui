@@ -19,9 +19,52 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ▶ 2026-10-02 · D3: tiempos, horarios y música (DD-152)
+## ✅ 2026-10-04 · F: columnas y acciones del listado (DD-153), en su PR
 
-**En curso:** `codex/supervisor-d3-tiempos`, worktree `supervisor-d3-tiempos/smartcontact-ui`, base `06dc6170`.
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `faf25027`: `a31d22b1` (pruebas en rojo), `f90f7187` (F) y
+> `3996cbab` (capturas de Linux del bot). `codex/supervisor-f-listado` es la misma F, subida desde el portátil: copia,
+> se borra al fundir.**
+
+**Qué hace.**
+- **El selector de columnas, en un icono:** `sc-multiselect` gana `iconOnly` e `icon`, con nombre accesible
+  «Columnas, 8 de 10».
+- **«Asignar» y «⋮», fijas a la derecha:** `ScColumnDef` gana `frozen` y `alignFrozen`, que van a `pFrozenColumn`. La
+  sombra solo aparece mientras queda contenido por la derecha.
+- **Los recortes de 3 px de las estrategias:** arreglados.
+- **El paquete:** versión 1.1.0, preparada y sin publicar.
+
+**Medido.**
+- **En el portátil:**
+  - pruebas: cuatro e2e y una unitaria en rojo contra D3; después, la suite del Supervisor (532/532) y la del DS
+    (100/100), en verde; verify, limpio;
+  - pantallas: `revision` de Grupos, Agentes y Usuarios, y catorce capturas de antes y después.
+- **En la nube:**
+  - preflight, en verde sobre el árbol de F;
+  - `visual-baselines` regeneró cuatro `-linux.png`, revisadas una a una:
+    - `datatable`, con la demo nueva de columnas fijas. Sale sin filas porque la captura se toma tras «Vaciar»,
+      como el resto de esa página; que funciona con filas lo cubre la prueba funcional del DS;
+    - `multiselect`, con los controles nuevos y la sección «Solo icono»;
+    - `radiobutton` y `select`, que mejoran: con las pistas de rejilla a mínimo cero, su tarjeta y su bloque de
+      código ya no se salen por la derecha de la página.
+
+**Pendiente, fuera de F.**
+- **Página de docs de MultiSelect:**
+  - el ejemplo del playground escribe `icon="view_column"` aunque `iconOnly` esté apagado (es el valor por defecto);
+  - los cuatro selectores de solo icono salen apilados y pegados, sin hueco.
+- **Bloques de código de sc-docs:** «Copiar» flota encima de las líneas largas.
+- **Agentes:** con `prefers-reduced-motion: reduce`, su tabla puede pintar cero filas virtuales. Pasa igual en D3.
+- **Sin verificar:** zoom al 200 % y RTL.
+
+**En el portátil, al fundir:**
+- poner el local 4405 al día con `main`;
+- borrar el worktree y la rama `codex/supervisor-f-listado`, la local y la del remoto.
+
+El detalle de E1b salió por el tope de seis secciones: `git show faf25027:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-02 · D3: tiempos, horarios y música (DD-152)
+
+**Entregado:** #315 → `faf25027`; CI PR `37038447269` y main `37040177041`, leídas verdes con
+`ci:verdict`. Rama y worktree propios eliminados; evidencias externas en `d3`.
 Primer commit `11f1fafe`: siete pruebas rojas contra E4. Implementados catálogos de tiempos e inactividad, colas
 Fija/Variable, horarios independientes de Web Chat/WhatsApp y música en un control. Valores históricos conservados.
 Cierre por inactividad: criterio delegado, 5/10/15/30/60 minutos, defecto 5. Detalle y alternativas en DD-152.
@@ -33,8 +76,8 @@ Una tanda tras interrupción falló por servidor apagado, no por comportamiento;
 **Visual:** 30 capturas de ficha/Contact Center, claro/oscuro a 1024/1440 y claro a 1366×768/1490×860; cero desborde
 horizontal o combobox sin nombre. Etiquetas de horarios alineadas y capacidad separada a 28. Antes E4 capturado en
 ambos temas. Revisión better-layout: sin hallazgos pendientes en lo inspeccionado; zoom 200 % y RTL no verificados.
-Lint, docs:guard, docs:coherence, i18n, primeng-coupling y **verify verdes**. Pendientes: preflight, PR/CI y merge/CI.
-Local 4405 sigue en E4. F no iniciado. Evidencia en `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/d3`.
+Lint, docs:guard, docs:coherence, i18n, primeng-coupling y **verify verdes**. Preflight, PR/CI y merge/CI completados en verde.
+Local 4405 actualizado al build de producción de D3; ocho pruebas propias verdes allí. Evidencia en `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/d3`.
 
 ## ✅ 2026-10-02 · E4: asignación desde la lista (DD-151)
 
@@ -68,15 +111,6 @@ idiomas. Resumen y reglas nombran habilitados. Tabla/panel reservan 21rem para n
 conocidos del listado, mismas medidas de E1b), contraste, revision, verify y preflight verdes. Zoom/RTL no verificados.
 El preflight integró #311 (solo CusCare); Supervisor y DS idénticos. Evidencias fuera del worktree; local 4405 en E2.
 
-## ✅ 2026-10-02 · E1b: niveles por familia (DD-148)
-
-**Entregado:** #310 → `3c6d13e9`; CI del PR `36995125759` y de main `36996276443`, leídas en verde. Rama y worktree
-propios eliminados; evidencias fuera del worktree. Niveles independientes 1–10, migración con precedencia del
-formato nuevo, subestrategia de Chat, defaults sin Niveles y columnas por familia. E1a y su recuperación intactos.
-**Ejecutado en E1b:** 4 unitarias y 7 e2e rojas primero; 19 unitarias, 44/27/12 e2e afectados, revision, verify y
-preflight verdes. Suite local 496/498: dos recortes de 3 px del listado reproducidos también sobre la base limpia
-`83e371e7`; registrados para F. Zoom 200 % y RTL no verificados. Estos resultados no validan E2 ni los siguientes.
-**Continuidad:** E2 → E3 → E4 → D3 → F, un bloque/PR tras el merge verde del anterior.
 
 ## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143), las tres columnas (G1, DD-144), el nombre fijo (G2a, DD-145) y el resumen enlazado (G2b, DD-146)
 
@@ -209,10 +243,10 @@ Las trampas vigentes se conservan abajo. El tramo del 2026-09-28 vive en `git sh
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01, en su orden** (tramo de arriba), con la segunda revisión: D3 → F (G termina con G2b, DD-146). E4, con la referencia del usuario «4. Agentes y revisión»: todos a la vista y sin
-   marcar, búsqueda, filtro Todos / Asignados / Sin asignar, estado y canales. Cada uno con su prueba en rojo;
-   la numeración de DD se mira en `origin/main` al empezar. D3 lleva los valores de tiempo del Contact Center
-   validado: catálogo vigente y criterio delegado de inactividad en DD-152.
+0. **La revisión del 2026-10-01 termina con F** (DD-153, en su PR): de H a F, todo fundido o en PR. Lo siguiente
+   es lo «pendiente, fuera de F» del bloque de arriba: los dos detalles de la página de MultiSelect y las filas
+   virtuales de Agentes con menos movimiento, cada uno con su prueba en rojo. La numeración de DD se mira en
+   `origin/main` al empezar.
 
    **Lo que queda abierto de DD-133, DD-135 y DD-136:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;

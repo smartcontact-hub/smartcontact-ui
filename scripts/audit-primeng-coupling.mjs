@@ -95,7 +95,8 @@ const sh = (cmd) => {
  * `ds` 20 → 12 el 2026-09-15 (DD-113): se fueron las reglas muertas de `sc-inputgroup`
  * (`.p-inputgroup-addon` ya no existe como clase) y su tope baja con ellas.
  */
-const TOPE = { app: 6, ds: 12, preset: 60 };
+// DD-153: +3 clases nativas para ocultar la label de MultiSelect, llenar su trigger y mantener celdas fijas opacas.
+const TOPE = { app: 6, ds: 12, preset: 63 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de
@@ -681,6 +682,8 @@ if (cuscareReach) log(`  · cuscare (exenta): ${cuscareReach} reach-in(s) — in
  * `a revisar`), para que el desvío se encuentre y evolucione fuera del gate. Sin fila, rojo.
  */
 const COMPORTAMIENTO_PERMITIDO = {
+  '.sc-multiselect--icon-only .p-multiselect-label-container':
+    'DD-153: oculta solo el texto del selector compacto, preservando el alto y el input nativo con nombre accesible.',
   'sc-datatable .p-datatable-header:empty':
     'p-table pinta el caption aunque no se proyecte nada y deja una franja en blanco (css.ts, emptyCaptionCss).',
   '.p-datatable-tbody > tr': 'hover de la gramática de tabla-lista, solo en filas que hacen algo (css.ts, listBehaviorCss, DD-66).',

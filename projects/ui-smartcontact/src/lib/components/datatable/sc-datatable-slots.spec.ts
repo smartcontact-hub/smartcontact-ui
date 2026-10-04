@@ -17,7 +17,7 @@
  */
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 
 import { ScDatatableComponent } from './sc-datatable.component';
 import type { ScColumnDef } from '../../core/types/datatable.types';
@@ -32,6 +32,10 @@ const FILAS: readonly Fila[] = [
   { id: 2, nombre: 'Marc' },
 ];
 const COLUMNAS: readonly ScColumnDef<Fila>[] = [{ field: 'nombre', header: 'CABECERA-COLUMN-DEF' }];
+
+// jsdom no tiene ResizeObserver; la geometría nativa se comprueba en e2e.
+beforeEach(() => vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} }));
+afterEach(() => vi.unstubAllGlobals());
 
 /** El molde de primeng.dev: `#header` + `#body` con `let-fila`, pegado tal cual. */
 @Component({
