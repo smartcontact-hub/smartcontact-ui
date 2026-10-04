@@ -17,7 +17,39 @@ Contact Center suben a «Trampas del frente». El de un solo índice (2026-09-27
 7458351:docs/handoff/supervisor-fichas.md`; sus trampas también suben. Y el del resumen como widget (2026-09-27,
 DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas arriba. Y los dos del 2026-09-27
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
-cuatro trampas del pase suben a «Trampas del frente».
+cuatro trampas del pase suben a «Trampas del frente». Y el de la revisión de producto del 2026-10-01 (H, los diálogos de
+Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-fichas.md`; sus trampas suben a
+«Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show c6a9cd59:…` y `git show 2a894b1c:…`.
+
+## ✅ 2026-10-04 · Lo que dejó F, en un lote: la lista virtual con «reducir movimiento» y el estado en su columna (DD-156), en su PR
+
+> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre HEAD `15c54c47` (#320). Dos bloques, un commit en rojo y otro en
+> verde cada uno, y un solo PR (DD-154): la lista virtual (`5c6840e2`, `feb4570b`) y el estado (`a1b4edb5`, y su
+> arreglo).**
+
+**La lista virtual con «reducir movimiento»** (sin DD: solo arregla, en el DS):
+- con esa preferencia del sistema, el listado de agentes salía sin filas: la lista virtual de PrimeNG contaba las que
+  le cabían en el fotograma en que la tabla aún medía 0, y solo vuelve a contar si cambia la ventana;
+- `sc-datatable` observa la caja de la lista y le pasa cada cambio por esa misma puerta (`onWindowResize`);
+- `listados-movimiento-reducido.spec.ts` (6): en rojo, Agentes con la preferencia, 0 filas; en verde, 18 de 18 en
+  tres vueltas.
+
+**El estado en su columna** (DD-156):
+- «Estado» es la columna que sigue a «Agente», en la ficha y en el panel, con la etiqueta y la palabra del listado;
+- cada columna mide lo más largo que lleva en los cuatro idiomas (`COLUMN_REM`), y el panel suma esas mismas
+  (`columnsRem`): 48rem con dos canales, antes 47,25;
+- medido antes y después en 18 casos (grupos de uno, dos y tres canales, de 1024 a 1680): etiquetas alineadas (antes,
+  de 45 a 63 px de diferencia), ningún email más recortado y lo que cabía sigue cabiendo. Lo que ya desplazaba en
+  horizontal desplaza 40 px más: a 1440, en un grupo de tres canales, Email también queda fuera;
+- `ficha-grupo-estado.spec.ts` (4): tres en rojo contra DD-149, y la guarda. Cambian `ficha-grupo-familias` (el ancho
+  del panel) y `panel-agentes-grupo` (el aire, en dos tramos; visto en rojo con aire puesto);
+- en local, en verde: los diez ficheros de prueba de la tabla y el panel (77) y los barridos de Grupos, Agentes,
+  Usuarios y Contact Center › Grupos (51, DD-155); `revision` de la ficha, el alta y el listado de grupos, en regla;
+  antes y después del panel y de la ficha, en claro y oscuro.
+
+**Pendiente:** la ficha de un grupo de tres canales desplaza en horizontal a 1440, como antes. Si producto quiere que
+no, hay dos salidas: fijar Asignado y Agente a la izquierda (las columnas fijas de F) o llevar la densidad compacta
+del panel también a la ficha (unos 100 px).
 
 ## ✅ 2026-10-04 · F: columnas y acciones del listado (DD-153), fundida
 
@@ -52,9 +84,7 @@ cuatro trampas del pase suben a «Trampas del frente».
   - los cuatro selectores de solo icono salen apilados y pegados, sin hueco.
 - **Bloques de código de sc-docs:** «Copiar» flota encima de las líneas largas.
 - ~~**Agentes:** con `prefers-reduced-motion: reduce`, su tabla puede pintar cero filas virtuales~~ · arreglado en el
-  DS, en su PR (2026-10-04): `sc-datatable` vuelve a contar las filas de su lista virtual cuando cambia su caja, no
-  solo la ventana. Lo fija `listados-movimiento-reducido` (los tres listados, con y sin la preferencia): en rojo,
-  Agentes con la preferencia, 0 filas; en verde, 18 de 18 en tres vueltas. La causa, en «Trampas del frente».
+  lote de arriba; la causa, en «Trampas del frente».
 - **Sin verificar:** zoom al 200 % y RTL.
 
 **En el portátil, al fundir:**
@@ -114,146 +144,16 @@ conocidos del listado, mismas medidas de E1b), contraste, revision, verify y pre
 El preflight integró #311 (solo CusCare); Supervisor y DS idénticos. Evidencias fuera del worktree; local 4405 en E2.
 
 
-## ✅ 2026-10-01 · La revisión de producto del flujo de grupos, en PRs pequeños: el documento quieto (H), los diálogos de Recursos, las palabras de la ficha (D1, DD-141), el teléfono saliente (D2, DD-142), el alta al índice (R, DD-143), las tres columnas (G1, DD-144), el nombre fijo (G2a, DD-145) y el resumen enlazado (G2b, DD-146)
-
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `main` (HEAD `b02fdb9b`). H (#298, `57f03a0`), los diálogos de
-> Recursos (#300, `5cf3f5e1`), D1 (#303, `78b2efb9`), D2 (#304, `004498dc`), R (#305, `85c32239`) y G1 (#306,
-> `86d5b18c`) y G2a (#307, `b02fdb9b`), fundidos con su CI en verde; G2b (DD-146), en su PR.**
-
-**Qué pasó.** La revisión de producto del 2026-10-01 da el flujo de grupos por bueno para que desarrollo empiece, con
-ajustes en el listado, la ficha, los agentes del grupo, el resumen y la maqueta. Va en PRs pequeños, cada uno con su
-prueba en rojo y, si decide algo, su DD: H (lo que se corta) → los diálogos de Recursos (la parte de D1 que pidió
-el usuario aparte) → D1 (estrategias y textos) → D2 (teléfono saliente) →
-D3 (tiempos, horarios y música) → E1 (canales por familia y niveles) → E2 («Habilitado» y presencia) → E3 (canales
-del agente) → E4 (asignar desde la lista y el panel) → G (maqueta y resumen enlazado) → F (listado).
-
-**H · lo que se corta al bajar del todo** (sin DD: solo arregla):
-- en Distribución y colas, al llegar al final, la rueda seguía con el documento: se iba la barra de arriba, el índice y
-  el resumen se cortaban por arriba y quedaba una franja gris;
-- la causa: el input de fichero oculto de «Música de espera» (`.visually-hidden`, `position: absolute`) no tenía
-  antepasado posicionado, así que se colgaba del documento y lo alargaba: 160 px en el grupo 1, 206 en el 11 y 147 en
-  el alta;
-- `main.app-shell__content` pasa a `position: relative`. Medido en las 36 pantallas de `agrupacion`: el documento no
-  sobra en ninguna, y lo único que toma esa zona por caja son textos ocultos;
-- `documento-quieto.spec.ts`: tres en rojo contra el código anterior (206, 147 y 160) y seis pantallas largas de
-  guarda.
-
-**Los diálogos de Recursos** (sin DD: solo arregla):
-- cada «+» de Recursos de la ficha abre un `sc-dialog` con el formulario de su pantalla, que seguía pintando su tarjeta
-  (320 px con borde, sombra y radio), su título repetido y su propio `role="dialog"`. La ficha le pasaba `flush`, pero
-  la entrada no existía;
-- los tres formularios (repositorios, plantillas y etiquetas) ganan `flush`: sin caja, sin título y sin rol propio;
-- cada diálogo se llama como su «+» («Nueva tipificación», no «Nuevo/a tipificación»; «Nueva etiqueta», no «Nueva
-  label»), y cada repositorio, su título de alta con género (`createTitleKey`; sin él, el genérico);
-- `ficha-recursos-dialogos.spec.ts`: dos en rojo y una de guarda. Al arreglar los títulos, la de los «+» siguió en
-  rojo por el `role` propio del formulario: cada parte de la prueba enrojece con su fallo;
-- fuera: `sc-dialog` traía dos `role="dialog"` modales anidados (el `p-dialog` y su `section`), del DS: lo arregló
-  DD-140 (#302). Y el ejemplo del campo de etiqueta dice «Nombre de la label», el vocabulario de la pantalla de Labels.
-
-**D1 · las palabras de la ficha** (DD-141; el detalle y lo descartado, allí):
-- las estrategias reparten conversaciones: «Menos conversaciones atendidas» (Teléfono y «Dentro de cada nivel») y
-  «Menos conversaciones activas» (Chat);
-- lo guardado con el nombre de antes se lee con el de ahora, sin subir versión: `createVersionedStorage` gana
-  `normalize` (opcional), que usa `GroupsStore`; `GroupDefaultsStore` pone al día sus dos estrategias al leer. Sirve
-  igual para los enlaces de E1 (WhatsApp → Chat);
-- la prioridad solo cuenta en las entrantes; sale «Desbordar sesión» de la ficha y de Contact Center, y
-  `overflowSession` se sigue guardando; cerrar el chat por inactividad nace con 5 minutos (las semillas, con sus 10);
-- el tamaño de cola, un texto por modo; la tipificación, sin «(3)»;
-- anchos medidos de nuevo: estrategia de teléfono 14.5rem y de chat 13.5rem, `tableMinWidth` 95.75rem; los
-  desplegables de Contact Center, a 350 (`scale/25`): la escala no tiene peldaño entre 252 y 350;
-- `ficha-grupo-textos.spec.ts` (8) y las reescritas: 13 en rojo contra el código anterior, cada una por lo que mide.
-
-**La segunda revisión con el equipo** (2026-10-01, tarde) cambia el plan, que va en el plan de trabajo:
-- el alta vuelve al índice con ✓ por sección y «Siguiente» (R, revierte DD-138);
-- los tiempos, en desplegable con los valores del Contact Center validado (D3);
-- la cola por agente, de 1 a 10 enteros y 2 por defecto;
-- el nombre del grupo, fijo al bajar;
-- «Eliminar», bajo el índice (G1), y escribiendo el nombre para confirmar, que ya pedía `sc-delete-entity-dialog`;
-- los agentes del grupo, todos a la vista y sin marcar (E4, con la referencia del usuario «4. Agentes y revisión»).
-
-Respuestas del usuario: Etiquetas fuera, guardada; «Caducar sesión»; los valores del Contact Center validado; borrar
-escribiendo el nombre.
-
-**D2 · el teléfono saliente** (DD-142):
-- con Teléfono es obligatorio. Lo dicen el resumen, la barra («Crear grupo» y «Guardar» esperan), su campo y el
-  punto de Distribución. En el alta, tras salir de su sección sin él; duplicar lo pide al enviar;
-- se elige de `OUTBOUND_NUMBERS` (los asignados), sin escribir; el que ya tuviera un grupo sigue entre las opciones;
-- «Caducar sesión»; la ayuda de Balanceada, corregida; Recursos sin Etiquetas tras `conEtiquetas` (el grupo
-  conserva las suyas); el teléfono, nombrado por su rótulo (`ariaLabelledBy`);
-- `telefono-saliente.spec.ts` (4) y las reescritas: 11 en rojo contra el código anterior.
-
-**R · el alta vuelve al índice** (DD-143, que revierte DD-138):
-- las tres altas, con la maqueta de la edición: índice, una sección en su caja con su cabecera, y el resumen;
-- el índice dice lo que ya está y lo que falta: ✓ en la sección que se deja completa (`sectionsDone`, nuevo en
-  `sc-form-section-nav`) y el punto rojo en la que se deja sin lo obligatorio; antes de abrirla, ninguna marca;
-- «Atrás» y «Siguiente» al pie (`sc-alta-pie`): llevan al principio de la sección nueva, con el foco en su título
-  (`llegarASeccion`). General sigue siendo la puerta del grupo, y la sección no va en la dirección;
-- `seccionesDeAlta` (antes `pasosDeAlta`) guarda la sección abierta y las que se dejaron;
-- `altas-indice.spec.ts` (12): nueve en rojo contra los pasos, dos de guarda, y la del punto rojo vista en rojo sin
-  su regla; las que DD-138 pasó a los pasos vuelven al índice, y `revision` y `agrupacion` recorren el del alta.
-
-**G1 · las fichas en tres columnas** (DD-144), pedido por el usuario el 2026-10-01:
-- el índice, el contenido y el resumen arrancan a la misma altura; `.ficha-rail` es una rejilla con áreas;
-- el título va en la columna del contenido, encima de la sección; el resumen, sin rótulo a la vista (su `h2`,
-  `visually-hidden`, sigue nombrando la región); «Eliminar», bajo el índice, a 28 de su última fila;
-- por debajo de 1340, como estaba;
-- `fichas-tres-columnas.spec.ts` (9): ocho en rojo contra la maqueta anterior y una de guarda.
-
-**G2a · el nombre fijo al bajar** (DD-145): `sc-nombre-fijo`, una copia muda de la cabecera en la columna del
-contenido, de arriba abajo de la rejilla, con `sticky`. A partir de 1340 cae sobre la cabecera y se ve desde el primer
-píxel; por debajo, al quedar fija. Texto pintado (`::before`) y clases propias; las anclas, apartadas
-`--sc-form-anchor-offset`. Borrar ya pedía el nombre: ahora lo fija una prueba. `fichas-nombre-fijo.spec.ts` (9):
-cinco en rojo y cuatro de guarda.
-
-**G2b · el resumen enlazado** (DD-146): el rótulo de cada tarjeta del resumen de grupo lleva a su sección, y cada fila
-a su sitio (el bloque del canal, el campo del número), con `llegarAAncla`. Enlaces de verdad en el primario, con
-manita y subrayado al pasar; la tarjeta no se pulsa. `resumen-enlazado.spec.ts` (5): las cinco en rojo primero.
-
-**Trampas del tramo:**
-- ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
-  `@smartcontact-hub/components` (sale el `vite-error-overlay`). No midas con el servidor mientras corre el preflight,
-  y reinícialo al acabar.
-- ⚠️ `pages.dev` no responde desde el contenedor (el proxy no deja llegar): el despliegue de un PR se comprueba por su
-  check de Cloudflare y por el comentario del bot, que da la URL fija de cada commit.
-- ⚠️ Los JSON de i18n guardan escapes ` `, y un `JSON.parse` + `JSON.stringify` los cambia por el carácter en
-  todo el fichero: se editan línea a línea.
-- ⚠️ La sonda de recorte de un desplegable solo vale si la has visto enrojecer: el rojo de la prueba nueva venía de la
-  opción que no existía. Con el ancho de antes puesto, enrojece en el de Teléfono de Contact Center.
-- ⚠️ El texto de un rótulo con su «*» empieza por un espacio («␠Teléfono saliente *»): `getByText` con una expresión
-  regular no lo recorta, así que `^Teléfono` no casa. Mídelo antes de anclar.
-- ⚠️ La prueba de «Siguiente lleva arriba» solo vale donde la sección nueva no cabe: si cabe, el navegador sube solo
-  y la prueba pasa sin el `scrollTo`. A 1280×720, de General a Distribución y colas del grupo, sí enrojece (88).
-- ⚠️ En una sonda, el menú lateral se despliega al pasar el ratón y tapa el índice: aparta el ratón (`mouse.move`)
-  antes de pulsar, y espera a que se pliegue antes de ralentizar las animaciones.
-- ⚠️ Las unitarias del DS corren en jsdom, sin `getAnimations`: ahí no se ve un movimiento, solo la clase que lo
-  enciende. El movimiento se mide en el navegador, con la reproducción al 10 % (CDP `Animation.setPlaybackRate`).
-- ⚠️ Un elemento `sticky` no sale del área de su rejilla: para que el nombre se quede fijo al bajar (G2), la cabecera
-  tiene que ocupar las dos filas o vivir con el contenido en una columna propia.
-- ⚠️ Una medida de la rejilla sin `document.fonts.ready` sale con un píxel de más: la fuente de iconos aún no ha
-  cargado y las filas del índice miden otra cosa.
-- ⚠️ `checkVisibility()` da por visible un `.visually-hidden` (esconde con `clip`), y su texto, sin saltos en una caja
-  de 1 px, cae sobre lo de al lado: una sonda que mida texto lo salta aparte (`icon-glyph-scale`, desde DD-144).
-- ⚠️ Una copia visual de algo que las pruebas buscan por su texto o su clase choca en modo estricto (cuatro rojas al
-  duplicar la cabecera): píntala con `::before` y `attr()`, y con clases propias.
-- ⚠️ Un job de e2e que tarda el triple no tiene por qué estar colgado: su paso instala chromium con `apt` (en #305,
-  18 minutos antes de la primera prueba) y su log no se lee hasta que acaba. Cancelarlo por el reloj tiró una tanda
-  que iba 92 de 92 en verde; espera a que termine.
-
-El tramo del 2026-09-29 queda en `git show 2a894b1c:docs/handoff/supervisor-fichas.md` (DD-135/136/138).
-El Stepper fue sustituido por el índice (DD-143); sus trampas de plegado solo aplican a código histórico.
-Las trampas vigentes se conservan abajo. El tramo del 2026-09-28 vive en `git show c6a9cd59:docs/handoff/supervisor-fichas.md`.
-
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01 está entera en `main`**, de H a F (#318). Lo que queda, en este orden:
-   - la lista virtual con «reducir movimiento», en su PR;
-   - el estado de cada agente, en su propia columna en la tabla de agentes del grupo (ficha y panel). Hoy va pegado
-     al nombre: no se alinea de una fila a otra y recorta los emails largos. La referencia «4. Agentes y revisión»
-     lo pide como dato aparte («estado con su punto»). Se mide de nuevo el ancho del panel (DD-131);
-   - los dos detalles de la página de MultiSelect y «Copiar» encima de las líneas largas. Mueven capturas de
-     sc-docs: `visual-baselines` sobre la rama antes del PR.
+0. **La revisión del 2026-10-01 está entera en `main`**, de H a F (#318), y lo que dejó F va en un PR (el tramo de
+   arriba). Lo siguiente:
+   - los dos detalles de la página de MultiSelect y «Copiar» encima de las líneas largas. Mueven capturas de sc-docs:
+     `visual-baselines` sobre la rama antes del PR;
+   - si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con tres canales (las dos salidas,
+     arriba).
 
-   Cada uno, con su prueba en rojo. La numeración de DD se mira en `origin/main` al empezar.
+   Cada uno, con su prueba en rojo. La numeración de DD se mira en `origin/main` al empezar, y otra vez antes de subir.
 
    **Lo que queda abierto de DD-133, DD-135 y DD-136:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
@@ -381,3 +281,34 @@ Las trampas vigentes se conservan abajo. El tramo del 2026-09-28 vive en `git sh
   VENTANA (`onWindowResize`). Si nace en una caja que aún mide 0 —la tarjeta del listado se estira con un `:has()`
   que puede llegar un fotograma tarde—, se queda sin filas. Con «reducir movimiento» pasaba siempre en Agentes.
   `sc-datatable` observa la caja de la lista y le pasa cada cambio por esa misma puerta.
+- ⚠️ `preflight:scope -- --run` reconstruye el DS en `dist/`, y un `ng serve` abierto a la vez pierde
+  `@smartcontact-hub/components` (sale el `vite-error-overlay`). No midas con el servidor mientras corre el preflight,
+  y reinícialo al acabar.
+- ⚠️ `pages.dev` no responde desde el contenedor (el proxy no deja llegar): el despliegue de un PR se comprueba por su
+  check de Cloudflare y por el comentario del bot, que da la URL fija de cada commit.
+- ⚠️ Los JSON de i18n guardan escapes ` `, y un `JSON.parse` + `JSON.stringify` los cambia por el carácter en
+  todo el fichero: se editan línea a línea.
+- ⚠️ La sonda de recorte de un desplegable solo vale si la has visto enrojecer: el rojo de la prueba nueva venía de la
+  opción que no existía. Con el ancho de antes puesto, enrojece en el de Teléfono de Contact Center.
+- ⚠️ El texto de un rótulo con su «*» empieza por un espacio («␠Teléfono saliente *»): `getByText` con una expresión
+  regular no lo recorta, así que `^Teléfono` no casa. Mídelo antes de anclar.
+- ⚠️ La prueba de «Siguiente lleva arriba» solo vale donde la sección nueva no cabe: si cabe, el navegador sube solo
+  y la prueba pasa sin el `scrollTo`. A 1280×720, de General a Distribución y colas del grupo, sí enrojece (88).
+- ⚠️ En una sonda, el menú lateral se despliega al pasar el ratón y tapa el índice: aparta el ratón (`mouse.move`)
+  antes de pulsar, y espera a que se pliegue antes de ralentizar las animaciones.
+- ⚠️ Las unitarias del DS corren en jsdom, sin `getAnimations`: ahí no se ve un movimiento, solo la clase que lo
+  enciende. El movimiento se mide en el navegador, con la reproducción al 10 % (CDP `Animation.setPlaybackRate`).
+- ⚠️ Un elemento `sticky` no sale del área de su rejilla: para que el nombre se quede fijo al bajar (G2), la cabecera
+  tiene que ocupar las dos filas o vivir con el contenido en una columna propia.
+- ⚠️ Una medida de la rejilla sin `document.fonts.ready` sale con un píxel de más: la fuente de iconos aún no ha
+  cargado y las filas del índice miden otra cosa.
+- ⚠️ `checkVisibility()` da por visible un `.visually-hidden` (esconde con `clip`), y su texto, sin saltos en una caja
+  de 1 px, cae sobre lo de al lado: una sonda que mida texto lo salta aparte (`icon-glyph-scale`, desde DD-144).
+- ⚠️ Una copia visual de algo que las pruebas buscan por su texto o su clase choca en modo estricto (cuatro rojas al
+  duplicar la cabecera): píntala con `::before` y `attr()`, y con clases propias.
+- ⚠️ Un job de e2e que tarda el triple no tiene por qué estar colgado: su paso instala chromium con `apt` (en #305,
+  18 minutos antes de la primera prueba) y su log no se lee hasta que acaba. Cancelarlo por el reloj tiró una tanda
+  que iba 92 de 92 en verde; espera a que termine.
+- ⚠️ El número de una DD se mira en `origin/main` al escribirla y otra vez antes de subir: este lote escribió DD-155
+  mientras #320 fundía la suya con ese número, y la del lote pasó a DD-156 al rebasar (2026-10-04). Un PR abierto de
+  otra sesión no basta: su número solo se ve si ya lo ha publicado.
