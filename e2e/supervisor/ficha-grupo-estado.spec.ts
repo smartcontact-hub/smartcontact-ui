@@ -12,7 +12,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. «Estado» es la columna que sigue a «Agente», y la etiqueta de cada persona va en ella, no en la del agente;
  *   2. las etiquetas empiezan en la misma vertical, fila a fila;
  *   3. en el panel, que mide lo que lleva (DD-131), ningún email de su primera página sale recortado;
- *   4. y la guarda: la ficha de un grupo de un canal sigue cabiendo a 1440 sin desplazar la tabla en horizontal.
+ *   4. y la guarda: donde la ficha cabía, sigue cabiendo sin desplazar la tabla en horizontal, y con los emails enteros.
+ *      Son los dos casos más justos de la matriz de DD-156: un canal a 1440 (11 px de margen) y dos a 1536 (3 px). La
+ *      primera versión de DD-156 cabía a 1440 pero recortaba cuatro emails de diez, y ninguna prueba lo vio.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -75,11 +77,24 @@ test('panel: ningún email de la primera página sale recortado', async ({ page 
   expect(recortados).toEqual([]);
 });
 
-test('ficha de un grupo de un canal, a 1440: la tabla cabe sin desplazarse en horizontal', async ({ page }) => {
-  const tabla = await abrir(page, 'admin/grupos/editar/1?seccion=agentes', null);
-  expect(await cabeceras(tabla)).toContain('Teléfono');
-  const sobra = await tabla
-    .locator('.p-datatable-table-container')
-    .evaluate((caja) => caja.scrollWidth - caja.clientWidth);
-  expect(sobra, 'lo que la tabla sobresale de su caja').toBeLessThanOrEqual(0);
-});
+const CABEN = [
+  { grupo: 1, canales: ['Teléfono'], ancho: 1440 },
+  { grupo: 2, canales: ['Teléfono', 'Email'], ancho: 1536 },
+] as const;
+
+for (const { grupo, canales, ancho } of CABEN) {
+  test(`ficha de un grupo de ${canales.length} canal(es), a ${ancho}: cabe sin desplazar y con los emails enteros`, async ({ page }) => {
+    await page.setViewportSize({ width: ancho, height: 900 });
+    const tabla = await abrir(page, `admin/grupos/editar/${grupo}?seccion=agentes`, null);
+    const rotulos = await cabeceras(tabla);
+    for (const canal of canales) expect(rotulos, `la columna ${canal}`).toContain(canal);
+    const sobra = await tabla
+      .locator('.p-datatable-table-container')
+      .evaluate((caja) => caja.scrollWidth - caja.clientWidth);
+    expect(sobra, 'lo que la tabla sobresale de su caja').toBeLessThanOrEqual(0);
+    const recortados = await tabla
+      .locator('.assign__email')
+      .evaluateAll((emails) => emails.filter((e) => e.scrollWidth > e.clientWidth + 1).map((e) => e.textContent));
+    expect(recortados, 'emails recortados').toEqual([]);
+  });
+}
