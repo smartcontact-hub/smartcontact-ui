@@ -50,7 +50,7 @@ Resumen operativo:
   la procedencia es la DD, el ticket o el nodo de Figma (AGENTS.md §«Voz del código»; lo vigilan
   `audit:personal-names` y `bash-guard`).
 - **Antes de dar nada por bueno**: `npm run verify` (44 gates encadenados) y, si
-  tocaste algo visual, `npm run e2e`. **Antes de pushear no basta `verify`**: el CI
+  tocaste algo visual, SOLO las pruebas de lo que tocaste: la batería entera la corre el CI (DD-154). **Antes de pushear no basta `verify`**: el CI
   son 9 pasos, enumerados en `.github/workflows/ci.yml`; `npm run preflight:scope -- --run` corre
   la parte rápida (gates + builds, ~8 min) y deja la marca que el hook de push exige (el `--` es
   obligatorio: sin él npm solo IMPRIME el plan). Los e2e los corre el CI: léelo con `ci:verdict`.

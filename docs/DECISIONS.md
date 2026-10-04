@@ -114,6 +114,55 @@
 
 ---
 
+## DD-154 · 2026-10-04 — En local, solo las pruebas del bloque; un PR por lote
+
+**Contexto.** Los bloques E2, E3, E4 y D3 del frente de fichas (2026-10-02) fueron un PR cada uno, y cada
+ciclo tardó entre 89 y 118 minutos. Escribir el código, las pruebas y la documentación ocupó 13 minutos
+de media. El resto del ciclo, medido sobre el registro de la sesión y las CI:
+- 30 min de CI: la del PR y la de `main`.
+- 26 min de la batería entera del Supervisor en local.
+- 11 min de otras pruebas y gates.
+- 21 min leyendo, consultando estado y esperando.
+
+La regla 3 de DD-60 («corre a mano la suite que toca») se escribió con 139 pruebas en la batería del
+Supervisor, que costaban unos 3 minutos. El 2026-10-02 ya eran 528 (`playwright --list` sobre `main`
+en cada fecha: 226 el 16-09, 366 el 27-09, 462 el 01-10). Pasarlas en local cuesta entre 13 y 29 minutos;
+20,1 en una pasada controlada el 2026-10-04. Esa misma pasada midió que, prueba a prueba, el Mac va el
+doble de rápido que el runner de CI y no se frena a lo largo de la tanda: la lentitud viene de pasarlas
+en serie, no de la máquina. En los bloques E1b-D3, quince pasadas completas (cinco locales y diez de CI)
+no cazaron ningún fallo nuevo.
+
+**Decisión** (de producto, 2026-10-04):
+1. **En local, cada bloque pasa solo sus pruebas**: los ficheros de prueba que añade o cambia, y los de
+   la pantalla que toca (`npx playwright test -c <config> <ficheros>`), que son de 1 a 5 minutos. La batería
+   entera de una app no se pasa en local; la pasa el CI. Enmienda DD-60 §3. `npm run revision` sigue
+   siendo previo a enseñar una pantalla del Supervisor.
+2. **Un lote planificado va en un solo PR.** Varios bloques de un mismo frente van en una rama, con un
+   commit por bloque que lleva su prueba roja y su DD. `preflight:scope -- --run` corre una vez, sobre el
+   árbol final del lote (LEARNINGS #7), y las CI del PR y de `main` corren una vez por lote. Se funde
+   como siempre; el PR conserva el commit de cada bloque, que es por donde se revisa y se deshace uno.
+
+**Razón.** Cada PR paga unos 30 minutos de CI, y la batería local unos 20, sea cual sea el tamaño del
+cambio: seis bloques eran seis veces ese peaje. Las pruebas del bloque son las que ese bloque puede
+poner en rojo. La batería entera sigue corriendo dos veces por lote, en paralelo, en el CI.
+
+**Descartadas.**
+- *Mantener la batería entera en local*: de 13 a 29 minutos por bloque, y ningún fallo nuevo en las quince
+  pasadas medidas.
+- *Pasar en local las pruebas de toda la zona tocada*: unos 8 minutos (las 218 de fichas y grupos son el
+  41 % de la batería). Esa red ya la da el CI del lote.
+- *Un PR cada tres bloques*: menos peaje que uno por bloque, pero lo paga dos veces en un lote de seis.
+- *Más máquina*: limpiar el Mac llevaría la pasada de 20 a 13 minutos como mucho (el mínimo medido),
+  y el peaje se cuenta en horas.
+
+**Consecuencias.** Un fallo que solo caza la batería entera aparece en el CI del lote, no antes, y se
+localiza por los commits del PR; una vuelta más de CI (unos 15 minutos) sigue saliendo más barata que
+el peaje por bloque. Queda pendiente decidir qué barridos van en cada PR y cuáles una vez al día: son
+232 pruebas que revisan una regla en muchas pantallas (contraste, agrupación, tablas, foco…) y suman el
+43 % del tiempo de la batería.
+
+---
+
 ## DD-153 · 2026-10-02 — Columnas en un icono y acciones fijas en los listados
 
 **Contexto.** En una tabla ancha, Asignar y el menú de fila desaparecían al mostrar ID o ensanchar
@@ -5025,6 +5074,7 @@ obligatoria, y allí cada suite tiene su propio runner.
    allí hoy**: ver «Lo que se midió» abajo. Quedan sin gate, a mano.
 3. Quien toque un e2e o algo visual corre a mano la suite que toca antes de pushear (LEARNINGS
    #7). El veredicto sigue siendo el CI leído (`ci:verdict`), y el hook de Stop lo exige.
+   *(Enmendado por DD-154, 2026-10-04: en local solo las pruebas del bloque, no la suite entera.)*
 4. El carril *preflight:fast* desaparece: su única razón era servir builds estáticos a las suites.
 
 **Razón** · Es la práctica estándar (hooks locales = comprobaciones rápidas, ≤ minutos, para
