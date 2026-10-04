@@ -110,8 +110,12 @@ este repo (el que tiene `scripts/preflight-mark.mjs`): el push de otro repositor
 aquí pasa, porque allí no hay cadena que escriba la marca. Cada `git push` se juzga en la carpeta de SU
 segmento del comando: la que dejan los `cd` literales anteriores, también los que no abren el comando
 (`git add -A && cd <otro> && git push`), sin salir de un `( … )`; con `git -C <ruta> push`, la de esa ruta
-(que cuenta desde la del segmento); y con un `cd` o un `-C` que no se saben adónde van (una variable) manda
-la de la sesión. Las demás reglas del hook que miran una carpeta (la cadena con fuentes sin `git add`, un
+(que cuenta desde la del segmento), y lo mismo con las otras puertas con que git elige repositorio:
+`--git-dir`, `--work-tree` y las variables `GIT_DIR` / `GIT_WORK_TREE` delante del comando (la línea manda
+sobre el entorno, y `--work-tree` sobre `--git-dir`); y con un `cd`, un `-C` o una de esas que no se saben
+adónde van (una variable) manda la de la sesión. Una carpeta que no existe cuenta como de este repo (el `cd` que la nombra falla, y con `;`
+el push corre donde estuviera el shell): `mkdir <nueva> && cd <nueva> && git init && git push` pide marca o
+`# sc:ok`. Las demás reglas del hook que miran una carpeta (la cadena con fuentes sin `git add`, un
 build durante un preflight, un Playwright con el `dist/` viejo, un `prettier --write` ajeno) usan también la
 de su propio segmento. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
 pantalla de que te la has saltado. Existe porque esta regla era la más incumplida del repo:

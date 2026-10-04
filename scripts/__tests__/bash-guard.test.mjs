@@ -834,6 +834,69 @@ test('#7 `git -C <ruta> push` se juzga en su ruta: la de otro repo pasa; la de e
   allow(`git -C ${propio} push`, { ...ctx, preflight: verde.preflight });
 });
 
+// 2026-10-04: `cd <ruta que no existe>; git push` — el `cd` falla y, con `;` o un salto de línea, el push corre donde
+// estuviera el shell, que es este repo. `usaPreflight` miraba la raíz de una carpeta que no está en el disco, no
+// encontraba el script de la marca y la daba por de otro repo. Una carpeta que no existe no es de NINGÚN otro repo:
+// cuenta como este, que es lo estricto. El precio, y se acepta: `mkdir <nueva> && cd <nueva> && git init && git push`
+// también pide marca (o `# sc:ok`), porque la carpeta aún no existe cuando el hook mira.
+test('#7 un `cd` a una carpeta que no existe no exime al push: corre donde estuviera el shell', (t) => {
+  const { raiz, otro, ctx } = reposDePrueba(t);
+  // ROJO de antes, y era un hueco: la ruta que no está, con `;`, con salto de línea, con `&&` y con `-C`.
+  deny(`cd ${raiz}/no-existe; git push`, ctx, /LEARNINGS #7/);
+  deny(`cd ${raiz}/no-existe\ngit push origin main`, ctx, /LEARNINGS #7/);
+  deny(`cd ${raiz}/no-existe && git push`, ctx, /LEARNINGS #7/); // aquí el push no llegaría a correr: un aviso de más, sin daño
+  deny(`git -C ${raiz}/no-existe push`, ctx, /LEARNINGS #7/);
+  // El precio medido, a la vista: una carpeta que se crea en el mismo comando todavía no existe.
+  deny(`mkdir -p ${raiz}/nuevo && cd ${raiz}/nuevo && git init -q && git push`, ctx, /LEARNINGS #7/);
+  allow(`mkdir -p ${raiz}/nuevo && cd ${raiz}/nuevo && git init -q && git push # sc:ok`, ctx);
+  // Y lo que existe y es de otro repo sigue pasando.
+  allow(`cd ${otro}; git push`, ctx);
+  allow(`git -C ${otro} push`, ctx);
+});
+
+// 2026-10-04: lo mismo que `-C`, por las otras tres puertas con que git elige repositorio: `--git-dir`,
+// `--work-tree` y las variables `GIT_DIR` / `GIT_WORK_TREE` delante del comando. Ninguna de las cuatro formas
+// se reconocía como un push, así que la del repo ajeno pasaba por esa omisión y la de ESTE repo se colaba sin
+// marca. Gana lo que dice la línea de comandos sobre el entorno, y `--work-tree` sobre `--git-dir`, porque la
+// marca de preflight es del ÁRBOL de trabajo. Las opciones sin valor (`--no-pager`, `-P`) tampoco quitan que sea un push.
+test('#7 `--git-dir`, `--work-tree` y `GIT_DIR`/`GIT_WORK_TREE` se juzgan en su ruta: la de otro repo pasa; la de este, o una que no se sabe, pide marca', (t) => {
+  const { raiz, propio, otro, ctx } = reposDePrueba(t);
+  const desdeOtro = { ...ctx, cwd: otro };
+  // VERDE: el repo ajeno por cada puerta, en la forma con `=` y con espacio, relativa al segmento y con otra opción delante.
+  allow(`git --git-dir=${otro}/.git push`, ctx);
+  allow(`git --git-dir ${otro}/.git push`, ctx);
+  allow(`git --work-tree=${otro} push`, ctx);
+  allow(`GIT_DIR=${otro}/.git git push`, ctx);
+  allow(`GIT_WORK_TREE=${otro} git push origin main`, ctx);
+  allow(`cd ${raiz} && git --git-dir=otro/.git push`, ctx);
+  allow(`git --no-pager -C ${otro} push`, ctx);
+  allow(`git -C ${otro} --git-dir=.git push`, ctx); // `-C` va primero: la ruta relativa cuenta desde ella
+  // ROJO de antes, y era un hueco: este repo por cada puerta, con la sesión DENTRO del otro (desde donde se cuela).
+  deny(`git --git-dir=${propio}/.git push`, desdeOtro, /LEARNINGS #7/);
+  deny(`git --git-dir ${propio}/.git push`, desdeOtro, /LEARNINGS #7/);
+  deny(`git --work-tree=${propio} push`, desdeOtro, /LEARNINGS #7/);
+  deny(`GIT_DIR=${propio}/.git git push`, desdeOtro, /LEARNINGS #7/);
+  deny(`GIT_WORK_TREE=${propio} git push origin main`, desdeOtro, /LEARNINGS #7/);
+  deny(`git --git-dir=${propio}/.git --work-tree=${propio} push`, desdeOtro, /LEARNINGS #7/);
+  deny(`git --git-dir=${propio}/.git/worktrees/wt push`, desdeOtro, /LEARNINGS #7/); // la carpeta de git de un worktree de este repo
+  deny(`git -C ${propio} --git-dir=.git push`, desdeOtro, /LEARNINGS #7/);
+  deny(`cd ${raiz} && git --git-dir=propio/.git push`, desdeOtro, /LEARNINGS #7/);
+  deny(`git --no-pager --work-tree=${propio} push`, desdeOtro, /LEARNINGS #7/);
+  // Lo que se lee de la línea manda sobre el entorno: el entorno apunta a este repo y la opción, al otro.
+  allow(`GIT_DIR=${propio}/.git git --git-dir=${otro}/.git push`, ctx);
+  // Y `--work-tree` manda sobre `--git-dir`: la marca es del árbol de trabajo, que aquí es el de este repo.
+  deny(`git --git-dir=${otro}/.git --work-tree=${propio} push`, desdeOtro, /LEARNINGS #7/);
+  // Una ruta que no se sabe adónde va manda la sesión, como con `-C`.
+  deny('git --git-dir=$GD push', ctx, /LEARNINGS #7/);
+  deny('GIT_WORK_TREE=$WT git push', ctx, /LEARNINGS #7/);
+  deny(`cd ${otro} && git --git-dir=$GD push`, ctx, /LEARNINGS #7/); // venir de otro repo no vale: la ruta opaca puede ser este
+  deny(`cd ${otro} && GIT_WORK_TREE=$WT git push`, ctx, /LEARNINGS #7/);
+  // Lo que no es un push de commits sigue sin serlo, y la salida explícita.
+  allow(`git --git-dir=${propio}/.git push --dry-run`, desdeOtro);
+  allow(`git --git-dir=${propio}/.git status`, desdeOtro);
+  allow(`git --git-dir=${propio}/.git push # sc:ok`, desdeOtro);
+});
+
 test('#21 sacar la rama de otra sesión para trabajar en ella → deny; desde main, un fichero suelto o sc:ok → allow', () => {
   // ROJO: los dos comandos de ese día, sobre ramas cuya sesión seguía viva en la nube.
   deny('git checkout -q -b pr-256 origin/feat/indice-unico', verde, /LEARNINGS #21/);

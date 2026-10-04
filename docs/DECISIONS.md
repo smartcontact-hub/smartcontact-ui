@@ -1371,6 +1371,17 @@ de la herramienta (`verified: true` en 1f7abca1, d9783902 y 8d34a82c): con el co
 PR enseña esos commits sin verificar (`unknown_key`, medido en 0dcfe28). La fusión de `main` la firma
 GitHub en cualquier caso.
 
+**Ampliación (2026-10-04)** · (decisión de producto) Las sesiones cloud tampoco firman con la clave de la
+herramienta: `cloud-identity.mjs` pone `commit.gpgsign=false` en el clon cuando la config global la activa.
+Por qué: el aviso de Stop del entorno (`~/.claude/stop-hook-git-check.sh`, que solo corre si hay firma
+configurada) bloquea el cierre de cada turno con commits sin pushear y manda re-firmarlos con la identidad de
+la herramienta (`git commit --amend --reset-author`), lo que contradice el punto 1 y pone rojo el gate 44; y
+la firma no aporta nada verificable (arriba: `unknown_key`, y la fusión de `main` la firma GitHub). Medido que
+nada del repo lee firmas de commits: un `git grep` de `gpgsig`, `%G`, `verify-signatures` y «signed» en
+workflows, scripts y docs solo da `audit-commit-attribution`, que mira la identidad, no la firma. Descartado:
+editar el aviso del entorno, que se regenera en cada contenedor y no es de este repo, y re-firmar como la
+herramienta, que es lo que esta decisión descarta.
+
 ## DD-133 · 2026-09-28 — Las ayudas bajo los campos salen de las fuentes y se anuncian con su campo
 
 **Contexto** · Revisión de las ayudas de las fichas de administración con dos fuentes:

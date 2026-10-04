@@ -5,7 +5,9 @@
  *   1. «un push sin leer el veredicto del CI no está terminado» (LEARNINGS #7, s35: seis pushes
  *      rojos seguidos escribiendo «preflight verde» sin abrir el CI ni una vez). Si el último
  *      `git push` de commits no va seguido de una lectura del CI (`npm run ci:verdict`,
- *      `gh run list|view|watch`, `gh pr checks`), bloquea con el comando exacto.
+ *      `gh run list|view|watch`, `gh pr checks`), bloquea con el comando exacto. Cuenta el push que
+ *      CORRIÓ (su resultado no vino con error, o enseña el ref subido), con `git push` en posición de comando (no dentro de
+ *      comillas ni del cuerpo de un heredoc) y en un árbol de ESTE repo: el de otro no tiene su CI.
  *   2. si en la sesión se invocó la skill `reflect` y quedan correcciones de ESTA sesión sin
  *      enrutar, bloquea con la lista y el `--enrutar` exacto. Reflexionar es decidir dónde va cada
  *      lección; sin la ruta escrita, «lo apunto en LEARNINGS» vuelve a valer como cierre y la
@@ -39,6 +41,13 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
+import {
+  carpetaDelPush,
+  carpetasPorSegmento,
+  esPushDeCommits as esPushDelGuardian,
+  segmentos,
+  usaPreflight,
+} from './bash-guard.mjs';
 import { DESTINO_AYUDA, pendientes, rutaRegistro } from './correction-capture.mjs';
 
 /**
@@ -55,6 +64,34 @@ const sinDatosEntreComillas = (cmd) =>
   );
 
 /**
+ * Quita los cuerpos de heredoc que son DATO: lo que se le pasa a `cat`, a `git commit -F -`, a `python3 -`
+ * o a `gh pr create --body-file -`. Se queda el cuerpo cuando el comando que lo recibe es un SHELL
+ * (`bash <<EOF`, `sh -s <<EOF`): ahí es un script y un `git push` de dentro SÍ es un push. Y lo que va en
+ * la misma línea tras el operador (`git commit -F - <<'EOF' && git push`) es comando y se conserva.
+ */
+const sinDatosDeHeredoc = (cmd) => {
+  const out = [];
+  let fin = null;
+  let esScript = false;
+  for (const linea of cmd.split('\n')) {
+    if (fin !== null) {
+      if (linea.trim() === fin) fin = null;
+      else if (esScript) out.push(linea);
+      continue;
+    }
+    const m = linea.match(/<<-?\s*(['"]?)([A-Za-z_][A-Za-z_0-9]*)\1/);
+    if (!m) {
+      out.push(linea);
+      continue;
+    }
+    out.push(linea.slice(0, m.index) + linea.slice(m.index + m[0].length));
+    fin = m[2];
+    esScript = /(?:^|[\s;&|(])(?:ba|z|da|k)?sh\b[^<]*$/.test(linea.slice(0, m.index));
+  }
+  return out.join('\n');
+};
+
+/**
  * ¿Este comando SUBE commits?
  *
  * Por qué mira la posición y no solo la cadena (2026-09-20): esto era `/\bgit\s+push\b/` sobre el
@@ -64,12 +101,12 @@ const sinDatosEntreComillas = (cmd) =>
  * leer un CI que no existía. Es el mismo error que ya se corrigió en `esLecturaCI`: comprobar el
  * PROXY (que aparezca un texto) en vez de la CONDICIÓN (que se haya ejecutado el push).
  *
- * Queda un hueco conocido y estrecho: una línea de heredoc que EMPIECE por `git push` sigue
- * contando. Cerrarlo pide parsear heredocs, y el precio de ese falso positivo es un aviso de más,
- * no un push sin leer.
+ * Los cuerpos de heredoc son dato (2026-10-04): el comentario de aquí dejaba abierto «una línea de heredoc que
+ * EMPIECE por `git push` sigue contando», y no era estrecho: tres `git commit` de una misma sesión, con un
+ * mensaje que hablaba de pushes, bloquearon tres cierres. Cuenta lo que lee un shell (`sinDatosDeHeredoc`).
  */
 const esPushDeCommits = (cmd) => {
-  const real = sinDatosEntreComillas(cmd);
+  const real = sinDatosEntreComillas(sinDatosDeHeredoc(cmd));
   return (
     /(^|[;&|\n(]|&&|\|\|)\s*(sudo\s+)?git\s+push\b/.test(real) &&
     !/--tags\b|refs\/tags|\barchive\//.test(real) &&
@@ -77,6 +114,21 @@ const esPushDeCommits = (cmd) => {
     !/--dry-run\b/.test(real)
   );
 };
+
+/**
+ * true si TODO push de este comando va a OTRO repositorio, que no tiene el CI de este: no hay veredicto que
+ * leer. Mira con el mismo parser que `bash-guard` (`carpetasPorSegmento`, `carpetaDelPush`) y con el mismo
+ * criterio de «este repo» (`usaPreflight`), desde el `cwd` que el transcript guarda en cada evento. Lo que no
+ * sabe resolver cuenta como de este repo: sin `cwd`, o un push dentro de comillas (`bash -c "…"`), donde el
+ * parser no ve un push. Un comando con un push a cada repo cuenta: el de este tiene su CI.
+ */
+const soloEmpujaOtroRepo = ({ cmd, cwd }) => {
+  if (typeof cwd !== 'string' || !cwd) return false;
+  const carpetas = carpetasPorSegmento(cmd, cwd);
+  const destinos = segmentos(cmd).flatMap((seg, i) => (esPushDelGuardian(seg) ? [carpetaDelPush(seg, carpetas[i], cwd)] : []));
+  return destinos.length > 0 && destinos.every((dir) => !usaPreflight(dir));
+};
+
 // `gh pr checks` cuenta igual que `gh run`: es la misma lectura, por el PR en vez de por el run.
 // Faltaba, y bloqueó un cierre en el que el CI SÍ estaba leído (2026-09-10, esta misma sesión).
 //
@@ -92,38 +144,75 @@ const esLecturaCI = (cmd) =>
   /^mcp__github__(actions_list|actions_get|get_job_logs|get_commit|pull_request_read|get_check_run)$/.test(cmd);
 
 /**
+ * ¿El resultado enseña un ref que SUBIÓ? Es lo que imprime un push que subió algo: `abc..def  rama -> rama`
+ * (avance), `+ abc...def rama -> rama (forced update)` (forzado), `* [new branch]` / `* [new tag]`. Uno
+ * rechazado imprime `! [rejected]` o `! [remote rejected]`, que no casan. Solo sirve para RESCATAR: el error
+ * del comando no es el del push (`git push && npm run build` sale con error si el build falla, aunque el push
+ * ya esté en el remoto), y ignorarlo dejaría cerrar sin leer el CI de algo que sí se subió.
+ */
+const SUBIO = /^\s*[+*]?\s*(?:[0-9a-f]{7,}\.{2,3}[0-9a-f]{7,}|\[new (?:branch|tag)\])/m;
+
+/** El texto de un `tool_result`: una cadena, o una lista de bloques de texto. */
+const textoDe = (contenido) =>
+  Array.isArray(contenido) ? contenido.map((b) => (typeof b?.text === 'string' ? b.text : '')).join('\n') : String(contenido ?? '');
+
+/**
  * Los ACTOS del transcript, en orden: el comando de cada Bash y el NOMBRE de cada herramienta
- * MCP de GitHub.
+ * MCP de GitHub, cada uno con el `cwd` que el transcript guarda en su evento y con `fallo` si su resultado
+ * vino con error (`is_error`: un comando con salida distinta de cero, o uno que un hook denegó).
  *
  * Las dos cosas en la misma lista a propósito, porque para lo que se pregunta aquí —¿se pushó?,
  * ¿se leyó el CI?— son el mismo acto por dos canales. Mirar solo Bash dejaba ciego al canal MCP,
  * que es el ÚNICO disponible en una sesión cloud (ahí no hay `gh`).
+ *
+ * `fallo` solo le quita valor a un PUSH (no se subió nada): un `ci:verdict` que sale en rojo SÍ leyó el CI. Y
+ * es un error SIN ref subido en su resultado (`SUBIO`): el comando entero puede fallar después de un push que
+ * sí subió. Sin resultado en el transcript (aún no llegó) no es fallo: lo estricto es darlo por ejecutado.
  */
-export function comandosBash(jsonl) {
-  const out = [];
+export function actosBash(jsonl) {
+  const usos = [];
+  const errores = new Map(); // id → texto del resultado, de los que vinieron con error
   for (const linea of jsonl.split('\n')) {
-    if (!linea.includes('"tool_use"')) continue;
+    if (!linea.includes('"tool_use"') && !linea.includes('"tool_result"')) continue;
     try {
       const ev = JSON.parse(linea);
       const contenido = ev?.message?.content;
       if (!Array.isArray(contenido)) continue;
       for (const c of contenido) {
-        if (c.type !== 'tool_use') continue;
-        if (c.name === 'Bash' && c.input?.command) out.push(c.input.command);
-        else if (typeof c.name === 'string' && c.name.startsWith('mcp__github__')) out.push(c.name);
+        if (c.type === 'tool_result' && c.is_error === true) errores.set(c.tool_use_id, textoDe(c.content));
+        else if (c.type !== 'tool_use') continue;
+        else if (c.name === 'Bash' && c.input?.command) usos.push({ id: c.id, cmd: c.input.command, cwd: ev.cwd });
+        else if (typeof c.name === 'string' && c.name.startsWith('mcp__github__')) usos.push({ id: c.id, cmd: c.name, cwd: ev.cwd });
       }
     } catch {
       /* línea no JSON */
     }
   }
-  return out;
+  return usos.map(({ id, cmd, cwd }) => ({ cmd, cwd, fallo: errores.has(id) && !SUBIO.test(errores.get(id)) }));
 }
 
-/** true si hay un push de commits sin lectura del CI después. */
-export function necesitaVeredicto(comandos) {
-  const ultimoPush = comandos.map(esPushDeCommits).lastIndexOf(true);
+/** Los comandos de `actosBash`, sin más: para quien solo quiere saber qué se tecleó. */
+export const comandosBash = (jsonl) => actosBash(jsonl).map((a) => a.cmd);
+
+/** Un acto, o un comando suelto (como lo pasan los tests y quien ya solo tiene el texto). */
+const comoActo = (a) => (typeof a === 'string' ? { cmd: a, fallo: false } : a);
+
+/**
+ * ¿Este comando SUBE commits, lo vea quien lo vea? El patrón de aquí entiende `bash -c "git push"` y `sudo`; el
+ * analizador de `bash-guard` entiende `git -C <ruta> push`, `--git-dir`, `GIT_DIR=… git push`… Cada uno ve lo
+ * que el otro no, y en cuanto uno lo ve es un push (2026-10-04: el hook no veía `git -C <ruta> push`).
+ */
+const subeCommits = (cmd) => esPushDeCommits(cmd) || segmentos(cmd).some(esPushDelGuardian);
+
+/** ¿Se PUSHEÓ de verdad en este repo? Corrió, y fue un push de commits, y de este repositorio. */
+const empujoDeVerdad = (a) => !a.fallo && subeCommits(a.cmd) && !soloEmpujaOtroRepo(a);
+
+/** true si hay un push de commits sin lectura del CI después. Recibe actos (`actosBash`) o comandos sueltos. */
+export function necesitaVeredicto(actos) {
+  const lista = actos.map(comoActo);
+  const ultimoPush = lista.map(empujoDeVerdad).lastIndexOf(true);
   if (ultimoPush < 0) return false;
-  return !comandos.slice(ultimoPush + 1).some(esLecturaCI);
+  return !lista.slice(ultimoPush + 1).some((a) => esLecturaCI(a.cmd));
 }
 
 /**
@@ -454,8 +543,7 @@ function main() {
     } catch {
       return;
     }
-    const comandos = comandosBash(jsonl);
-    if (necesitaVeredicto(comandos))
+    if (necesitaVeredicto(actosBash(jsonl)))
       return bloquear(
         'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, `gh run view --log-failed`). Sin `gh` —una sesión cloud— léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y `list_workflow_jobs` si algo sale rojo). En los dos casos, cuéntale al usuario el resultado LEÍDO, no el exit del wrapper.',
       );

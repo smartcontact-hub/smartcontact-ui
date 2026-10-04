@@ -44,7 +44,9 @@ function clon({ url = ESTE_REPO, global = HERRAMIENTA } = {}) {
   const git = (...args) => execFileSync('git', args, { cwd: repo, env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
   execFileSync('git', ['init', '-q', '-b', 'main', repo], { env });
   git('remote', 'add', 'origin', url);
-  git('commit', '-q', '--allow-empty', '-m', 'base');
+  // La base no firma: con la firma de la herramienta en la config global (los casos de abajo), el contenedor
+  // de pruebas no tiene su clave. Lo que se prueba es lo que el hook hace DESPUÉS.
+  git('-c', 'commit.gpgsign=false', 'commit', '-q', '--allow-empty', '-m', 'base');
   git('update-ref', 'refs/remotes/origin/main', 'HEAD');
   git('checkout', '-q', '-b', 'rama-de-la-sesion');
   return { repo, env, git };
@@ -113,4 +115,45 @@ test('el hook está registrado en SessionStart al arrancar y al retomar', () => 
   assert.equal(grupos.length, 1);
   assert.match(grupos[0].matcher, /startup/);
   assert.match(grupos[0].matcher, /resume/);
+});
+
+// ── La firma de la clave de la herramienta · añadido el 2026-10-04 (DD-134) ─────────────────────────
+// El contenedor no solo trae la identidad de la herramienta: también firma los commits con su clave SSH
+// (`commit.gpgsign = true` en su config global). Con el correo del mantenedor, esa firma sale «sin
+// verificar» en el PR (DD-134, `unknown_key`) y no aporta nada: la fusión de `main` la firma GitHub. Y el
+// aviso de Stop del entorno, que solo corre «si hay firma configurada», manda re-firmar con la identidad
+// de la herramienta, justo lo que DD-134 y el gate `audit:commit-attribution` prohíben. Sin firma
+// configurada, ese aviso no corre: el hook la apaga en el clon junto a la identidad.
+const FIRMA_DE_LA_HERRAMIENTA = `${HERRAMIENTA}[commit]\n\tgpgsign = true\n[gpg]\n\tformat = ssh\n`;
+const firmaActiva = (git) => git('config', '--type=bool', 'commit.gpgsign');
+
+test('con el hook, el clon deja de firmar con la clave de la herramienta; la config global no se toca', () => {
+  const { repo, env, git } = clon({ global: FIRMA_DE_LA_HERRAMIENTA });
+  assert.equal(firmaActiva(git), 'true', 'de partida: el contenedor firma');
+  const salida = correr(repo, env);
+  assert.equal(firmaActiva(git), 'false', 'ROJO si se pierde: el aviso de Stop sigue corriendo');
+  assert.match(salida, /sin su firma/, salida);
+  assert.ok(readFileSync(join(repo, '.git', 'config'), 'utf8').includes('gpgsign = false'), 'vive en la config del CLON');
+  assert.equal(readFileSync(env.GIT_CONFIG_GLOBAL, 'utf8'), FIRMA_DE_LA_HERRAMIENTA, 'la global no se toca');
+});
+
+test('y un commit del clon sale sin firma: ni la identidad ni la clave de la herramienta', () => {
+  const { repo, env, git } = clon({ global: FIRMA_DE_LA_HERRAMIENTA });
+  correr(repo, env);
+  git('commit', '-q', '--allow-empty', '-m', 'Trabajo de la sesión');
+  assert.equal(git('cat-file', 'commit', 'HEAD').includes('gpgsig'), false, 'sin cabecera de firma');
+  assert.equal(gate(repo, env).status, 0);
+});
+
+test('sin firma que apagar, no escribe nada de más; con otra identidad o en un fork, no toca la firma', () => {
+  const sinFirma = clon({ global: HERRAMIENTA });
+  const salida = correr(sinFirma.repo, sinFirma.env);
+  assert.ok(!readFileSync(join(sinFirma.repo, '.git', 'config'), 'utf8').includes('gpgsign'), 'la identidad se escribe y la firma no');
+  assert.ok(!salida.includes('sin su firma'), salida);
+  const local = clon({ global: `[user]\n\tname = x\n\temail = x@y.z\n[commit]\n\tgpgsign = true\n` });
+  assert.equal(correr(local.repo, local.env), '');
+  assert.equal(firmaActiva(local.git), 'true', 'una máquina local firma como quiera su dueño');
+  const fork = clon({ url: 'https://github.com/otra-cuenta/smartcontact-ui', global: FIRMA_DE_LA_HERRAMIENTA });
+  assert.equal(correr(fork.repo, fork.env), '');
+  assert.equal(firmaActiva(fork.git), 'true', 'un fork no pasa por este hook');
 });
