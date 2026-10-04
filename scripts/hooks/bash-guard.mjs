@@ -487,8 +487,17 @@ function usaPrettier(cwd) {
   }
 }
 
-/** El proceso de un preflight: `node`, con o sin ruta, AL PRINCIPIO de su línea de comandos. */
-const PREFLIGHT = '^([^ ]*/)?node .*preflight-scope\\.mjs';
+/**
+ * El proceso de un preflight, AL PRINCIPIO de su línea de comandos. Dos formas:
+ *   · `node`, con o sin ruta, corriendo `preflight-scope.mjs` (`npm run preflight:scope -- --run`).
+ *   · el `npm` de la cadena COMPLETA lanzada a mano (`npm run preflight`), que no pasa por
+ *     `preflight-scope.mjs`. npm se pone de título `npm` + sus argumentos sin flags (`npm run
+ *     preflight`, `npm run preflight --foo`) y rellena el resto del argv con espacios: medido el
+ *     2026-09-29 en macOS, `$` a secas no casa. Es lo único que vive la cadena entera (su `sh -c` lleva
+ *     el texto del `package.json`, y `en-paralelo.mjs` solo los builds del final, cuando `verify` ya
+ *     reconstruyó `dist/`). `run-script` y compañía dan otro título: no los usa nadie en el repo.
+ */
+export const PREFLIGHT = '^([^ ]*/)?node .*preflight-scope\\.mjs|^npm run preflight( |$)';
 
 /** `pgrep -f` a secas: un PID por línea, de los preflights de TODA la máquina. */
 function listarPreflights() {
@@ -571,6 +580,8 @@ function raizDelArbol(dir) {
  *     pelados y el filtro por ruta los dejaba pasar todos.
  *   · el árbol sale del DIRECTORIO de trabajo de cada PID, no de su texto: npm lo lanza como
  *     `node scripts/preflight-scope.mjs`, con ruta relativa, y el árbol no sale nunca en la línea.
+ *     El `npm` de `npm run preflight` se queda en la carpeta desde la que se lanzó, que puede ser
+ *     una subcarpeta: por eso cuenta la RAÍZ de su cwd, no el cwd.
  *     Cuenta solo si es el del comando (`carpetaEfectiva`): en esta máquina conviven decenas de
  *     worktrees (35 el 2026-09-28), y el preflight de otro no toca este `dist/`.
  *
