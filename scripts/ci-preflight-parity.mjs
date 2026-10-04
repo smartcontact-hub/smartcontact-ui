@@ -60,8 +60,8 @@ export const LOCAL_SUBSTITUTIONS = {
 };
 
 // SOLO CI (DD-60, 2026-09-09): las suites e2e ya NO van en `preflight`. Las corre el CI, que es
-// obligatorio en `main` (branch protection, cinco jobs) y paralelo; en local se corre a mano la
-// suite que toca lo cambiado. Motivo medido: el preflight completo eran 20-25 min y solo puede
+// obligatorio en `main` (branch protection, cinco jobs) y paralelo; en local se corren a mano solo
+// las pruebas del bloque, nunca la suite entera (DD-154). Motivo medido: el preflight completo eran 20-25 min y solo puede
 // vivir UN Playwright por máquina (`playwright-reuse-guard`), así que con tres sesiones a la vez
 // se hacían cola durante una hora. La lista es CERRADA y se comprueba en las dos direcciones:
 // un paso de aquí que ya no esté en ci.yml es lista rancia (`ciOnlyRancios`), y un paso nuevo del

@@ -17,7 +17,7 @@ npm run verify         # los 44 checks estáticos encadenados (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
 npm run preflight      # gates + builds AOT + baselines visuales (~5 min), antes de pushear
-npm run e2e:supervisor # y e2e:cuscare: la suite de APP que toca lo que cambiaste, a mano
+npm run e2e:supervisor -- <ficheros> # y e2e:cuscare: en local, SOLO las pruebas del bloque (DD-154); la suite entera, el CI
 ```
 
 ## Las tres redes de `npm run e2e`
