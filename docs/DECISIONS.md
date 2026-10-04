@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La cifra principal del resumen, con el degradado del botón principal y el anillo en el color de su texto: una por ficha | DD-161 |
 > | Una tabla dentro de una sección llega al pie de la pantalla: tope medido desde donde empieza (`scLlegaAlPie`), con suelo | DD-160 |
 > | En el listado de Grupos, la cifra de agentes abre su asignación y sale la columna «Asignar»; en Agentes, la de grupos ya llevaba a su sección | DD-159 |
 > | El alta: ✓ solo en secciones con algo obligatorio, el teléfono saliente como segunda puerta del grupo y «Atrás / Siguiente» como el Stepper vertical | DD-158 |
@@ -118,6 +119,37 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-161 · 2026-10-04 — La cifra principal del resumen, con color: el degradado de la vista previa de ProgressSpinner
+
+**Contexto.** La revisión de producto del 2026-10-04 pidió para el resumen de las fichas la imagen de la vista previa
+de ProgressSpinner en primeng.dev: una tarjeta con degradado y color, la cifra grande y el anillo que se llena. El
+widget ya era ese ejemplo pasado a nuestros tokens (DD-126): cifra, «/total», anillo nativo y cuenta al abrir y al
+cambiar. Lo que faltaba era la imagen: todas las tarjetas llevaban el mismo tinte claro.
+
+**Decisión.**
+1. **Una tarjeta destacada por resumen, la cifra principal**: agentes habilitados del grupo (también en el alta),
+   grupos activos del agente y secciones del usuario. `sc-summary-kpi` gana `destacada`. Las demás siguen con su
+   tinte: si todo destaca, nada destaca.
+2. **El degradado es de los tokens del botón principal** (`--sc-bg-primary-active` → `--sc-bg-primary` →
+   `--sc-bg-primary-hover`, a 135°) con `--sc-text-inverse` encima, y la sombra de tarjeta (`--sc-shadow-card`). Es el
+   par que ya usa el botón principal en claro y en oscuro, así que el texto llega a AA sobre los tres tonos; en
+   oscuro, la tarjeta es celeste con el texto oscuro. Ningún token nuevo.
+3. **El anillo y las barras, en el color del texto**, sobre una pista translúcida del mismo color (`color-mix` al
+   25 %): el arco del anillo por `dt` de la instancia y la pista por una clase propia en `pt` (DD-108); la pista de
+   cada barra, por `dt` de su `p-metergroup`. El icono de cada canal y el aviso «Sin agentes», con su icono, toman el
+   color de la tarjeta: el ámbar no llega a 3:1 sobre el degradado (en oscuro, 1,37:1), y el aviso sigue siendo icono
+   y palabra. Bajo el degradado, el tono central como color de fondo: lo que queda si la imagen no se pinta.
+4. **El movimiento no cambia**: el nativo del anillo (0,3 s) y la cifra que cuenta, al abrir y al cambiar; con menos
+   movimiento, quietos (DD-126).
+
+**Razón.** Es la imagen pedida sin salir del sistema: el color de marca dice cuál es la cifra que importa (AGENTS «UX
+de pantalla» 1: color con significado, aquí jerarquía), y el par fondo-texto ya está probado en el botón principal.
+Medido en claro y en oscuro, en grupo, alta de grupo, agente y usuario: cifra y rótulo a 4,5:1 o más sobre el tono
+más difícil del degradado, y el arco a 3:1 o más (`resumen-destacado`).
+
+**Descartado.** Un verde como el del ejemplo (no es color de marca y aquí significaría «éxito»); destacar todas las
+tarjetas; tokens de degradado nuevos (el Kit no los tiene: van a `figma-pendiente` si se quieren propios).
 
 ## DD-160 · 2026-10-04 — Una tabla dentro de una sección llega al pie de la pantalla, medida desde donde empieza
 
@@ -1930,7 +1962,8 @@ capturas y vídeo.
    no la cuenta.
 4. **El anillo va oculto al lector** (`aria-hidden`): su `progressbar` lleva `aria-busy="true"` y anunciaría «cargando»
    de un dato que no carga. La proporción ya la dice el texto oculto.
-5. **La tarjeta, en el tinte de marca** (`--sc-bg-primary-subtle`), sin borde a la vista (transparente, para que con
+5. **La tarjeta, en el tinte de marca** *(DD-161: salvo la cifra principal, con el degradado del botón principal)*
+   (`--sc-bg-primary-subtle`), sin borde a la vista (transparente, para que con
    colores forzados siga teniendo contorno). En claro es el mismo color que `--sc-bg-selected`; se eligió sabiéndolo,
    porque estas tarjetas no se pulsan ni se eligen.
 6. **Todo el texto de la tarjeta, en `--sc-text-primary`**, rótulos, «/total», canales y claves incluidos: sobre el

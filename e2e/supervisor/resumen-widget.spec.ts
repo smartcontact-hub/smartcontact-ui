@@ -66,10 +66,14 @@ for (const { tema, forzar } of [
       });
       expect(caja).toEqual([42, 42]);
 
+      // La primera, secciones, es la cifra destacada (DD-161): arco en el color de su texto, sobre el degradado. La
+      // segunda sigue como todas: arco en el acento y tarjeta en el tinte de marca.
       const arco = await secciones.locator('.p-progressspinner-circle-range').evaluate((e) => getComputedStyle(e).stroke);
-      expect(arco, 'el arco va en el acento').toBe(await colorDeToken(page, '--sc-bg-accent'));
-      const fondo = await widgets(page).first().evaluate((e) => getComputedStyle(e).backgroundColor);
-      expect(fondo, 'la tarjeta va en el tinte de marca').toBe(await colorDeToken(page, '--sc-bg-primary-subtle'));
+      expect(arco, 'en la destacada, el arco va en el color de su texto').toBe(await colorDeToken(page, '--sc-text-inverse'));
+      const arcoPermisos = await permisos.locator('.p-progressspinner-circle-range').evaluate((e) => getComputedStyle(e).stroke);
+      expect(arcoPermisos, 'en las demás, el arco va en el acento').toBe(await colorDeToken(page, '--sc-bg-accent'));
+      const fondo = await widgets(page).nth(1).evaluate((e) => getComputedStyle(e).backgroundColor);
+      expect(fondo, 'las demás tarjetas, en el tinte de marca').toBe(await colorDeToken(page, '--sc-bg-primary-subtle'));
 
       await expect(cifra(page, 0)).toHaveText('8');
       await expect(widgets(page).first().locator('.visually-hidden')).toHaveText('8 de 16');
