@@ -821,10 +821,13 @@ function evaluarBase(cmd, ctx = {}) {
   // `in_progress`. El repo ya tiene quien lo contesta bien — `ci:verdict` resuelve el run de `ci`
   // sobre el commit — y la tarjeta lo dice desde el paso 6. Estrecho a `--limit 1` a propósito
   // (LEARNINGS #2): listar varias y filtrar por `headSha` es legítimo y así lo diagnostiqué.
+  // Y su forma REST, que es la única que tiene el `gh` de la nube: `actions/runs?…per_page=1` sin `workflows/` da la
+  // última ejecución de cualquier workflow, también sobre un mismo commit (`ci` y `deploy-record` conviven).
   if (
     segs.some(
       (s) =>
-        empiezaPor(s, /^gh\s+run\s+list\b/) && /--limit[= ]\s*1(\s|$)/.test(s) && !/--workflow/.test(s),
+        (empiezaPor(s, /^gh\s+run\s+list\b/) && /--limit[= ]\s*1(\s|$)/.test(s) && !/--workflow/.test(s)) ||
+        (empiezaPor(s, /^gh\s+api\b/) && /actions\/runs\?[^\s'"]*\bper_page=1\b/.test(s) && !/workflows\//.test(s)),
     )
   )
     return {

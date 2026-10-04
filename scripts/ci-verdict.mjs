@@ -18,7 +18,7 @@
  *     mano en el PR.
  *
  * La rama por defecto es la de ORIGIN que sigue tu HEAD, no el nombre local: los worktrees de este
- * repo usan sufijo (`…-list-2`) sobre la misma rama remota, y con el nombre local `gh run list`
+ * repo usan sufijo (`…-list-2`) sobre la misma rama remota, y con el nombre local la consulta
  * devuelve cero runs y el comando canta «¿aún no has pusheado?» sobre algo pusheado y verde.
  * Ojo al caso de una rama recién sacada de `origin/main` y aún sin pushear: su upstream ES
  * `origin/main`, así que lee el CI de main — y en cuanto commiteas, la comparación de sha lo dice
@@ -41,6 +41,8 @@
  */
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+
+import { cliente } from './github.mjs';
 
 // `stdio` explícito: por defecto `execFileSync` REENVÍA el stderr del hijo al nuestro, así que el
 // `git rev-parse @{upstream}` de una rama sin upstream escupía un `fatal: no upstream configured`
@@ -73,11 +75,36 @@ export function shaDeLsRemote(salida) {
 }
 
 /**
- * La decisión, separada de la recogida para poder ponerle delante cada caso malo (LEARNINGS #2).
- * `pr` es el PR de la rama (o null); `runs` lo que devuelve `gh run list --limit 1`; `head` el sha
- * contra el que se compara y `etiqueta` cómo se llama en el mensaje (tu HEAD, o el tip de origin).
+ * Qué hacer con un rojo, según sus jobs (`null` si no se pudieron leer). Dos casos medidos en #325 (2026-10-04):
+ *   · una ejecución en rojo SIN jobs: la deja así el commit del robot de `visual-baselines` sobre un PR ya abierto, y
+ *     no hay log que leer;
+ *   · `e2e-smoke` en rojo: casi siempre una captura de sc-docs que hay que regenerar para la rama.
+ * El log se lee con `gh run view --log-failed` en el Mac; el `gh` de la nube solo tiene `api`, que da los jobs.
  */
-export function veredicto({ rama, head, runs, pr, etiqueta = 'tu HEAD' }) {
+export function pistaDelRojo({ rama, id, jobs = null }) {
+  const leer = `Lee el fallo: gh run view --log-failed ${id} (en la nube: gh api repos/{owner}/{repo}/actions/runs/${id}/jobs)`;
+  if (!jobs) return leer;
+  if (!jobs.length) {
+    return (
+      'La ejecución no arrancó ningún job: pasa con el commit del robot de visual-baselines sobre un PR ya abierto. ' +
+      'Sube el siguiente commit o reejecútala en GitHub.'
+    );
+  }
+  const rojos = jobs.filter((j) => ['failure', 'timed_out', 'cancelled'].includes(j.conclusion)).map((j) => j.name);
+  let pista = `falla: ${rojos.join(', ') || 'sin job en rojo'}. ${leer}`;
+  if (rojos.some((n) => n.startsWith('e2e-smoke'))) {
+    pista += ` · Si es una captura de sc-docs: lanza visual-baselines con rama=${rama}, revisa las PNG y sigue.`;
+  }
+  return pista;
+}
+
+/**
+ * La decisión, separada de la recogida para poder ponerle delante cada caso malo (LEARNINGS #2).
+ * `pr` es el PR de la rama (o null); `runs` la última ejecución de `ci` en la rama (lista de 0 o 1); `head` el
+ * sha contra el que se compara y `etiqueta` cómo se llama en el mensaje (tu HEAD, o el tip de origin). `jobs`,
+ * los de esa ejecución si está en rojo, para dar la pista (ver `pistaDelRojo`).
+ */
+export function veredicto({ rama, head, runs, pr, etiqueta = 'tu HEAD', jobs = null }) {
   if (pr && pr.state === 'MERGED') {
     const en = pr.mergeCommit?.oid ? ` en ${pr.mergeCommit.oid.slice(0, 7)}` : '';
     return {
@@ -123,7 +150,7 @@ export function veredicto({ rama, head, runs, pr, etiqueta = 'tu HEAD' }) {
   }
   return {
     exit: 1,
-    linea: `✗ ci ${String(r.conclusion).toUpperCase()} en ${rama} sobre ${sha}. Lee el fallo: gh run view --log-failed ${r.url.split('/').pop()}`,
+    linea: `✗ ci ${String(r.conclusion).toUpperCase()} en ${rama} sobre ${sha}. ${pistaDelRojo({ rama, id: r.id ?? r.url.split('/').pop(), jobs })}`,
   };
 }
 
@@ -151,11 +178,11 @@ function main() {
     etiqueta = 'tu HEAD';
   }
 
+  // GitHub, por `gh api` (`github.mjs`): el mismo camino en el Mac y en la nube, cuyo `gh` no tiene `run` ni `pr`.
+  const github = cliente();
   let runs;
   try {
-    runs = JSON.parse(
-      sh('gh', ['run', 'list', '--branch', rama, '--workflow', 'ci', '--limit', '1', '--json', 'headSha,conclusion,status,url,createdAt']),
-    );
+    runs = github.ultimaCI(rama);
   } catch (e) {
     // Ahora que el stderr va capturado, el motivo de verdad vive en `e.stderr`; `e.message` solo
     // dice «Command failed». Sin esto, silenciar el ruido de arriba se habría llevado por delante
@@ -164,15 +191,26 @@ function main() {
     process.exit(2);
   }
 
-  // El estado del PR no puede tumbar la lectura del CI: si `gh pr list` falla, seguimos sin él.
+  // El estado del PR no puede tumbar la lectura del CI: si no se puede leer, seguimos sin él.
   let pr = null;
   try {
-    pr = JSON.parse(sh('gh', ['pr', 'list', '--head', rama, '--state', 'all', '--limit', '1', '--json', 'number,state,mergeCommit,mergeable']))[0] || null;
+    pr = github.prDeRama(rama);
   } catch {
     /* sin PR legible: el veredicto es solo el del CI */
   }
 
-  const { linea, exit } = veredicto({ rama, head, runs, pr, etiqueta });
+  // Los jobs, solo si hay un rojo que explicar; y tampoco pueden tumbar el veredicto.
+  let jobs = null;
+  const r = runs[0];
+  if (r && r.headSha === head && r.status === 'completed' && r.conclusion !== 'success') {
+    try {
+      jobs = github.jobsDe(r.id);
+    } catch {
+      /* sin jobs: la pista es la genérica */
+    }
+  }
+
+  const { linea, exit } = veredicto({ rama, head, runs, pr, etiqueta, jobs });
   console.log(linea);
   process.exit(exit);
 }

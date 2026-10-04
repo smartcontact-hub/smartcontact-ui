@@ -16,7 +16,7 @@
 npm run verify         # los 44 checks estáticos encadenados (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
-npm run preflight      # gates + builds AOT + baselines visuales (~5 min), antes de pushear
+npm run preflight      # gates + builds AOT (~8 min), antes de pushear; las capturas las compara el CI
 npm run e2e:supervisor -- <ficheros> # y e2e:cuscare: en local, SOLO las pruebas del bloque (DD-154); la suite entera, el CI
 npm run e2e:barridos -- --grep "admin/grupos" # los barridos (contraste, agrupación, foco, iconos) de TUS pantallas (DD-155)
 ```
@@ -121,7 +121,7 @@ de su propio segmento. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y
 pantalla de que te la has saltado. Existe porque esta regla era la más incumplida del repo:
 se lee al empezar la tarea y el disparador salta horas después.
 
-> **Y después de pushear, lee el CI.** `gh run list --branch main --workflow ci --limit 1`.
+> **Y después de pushear, lee el CI.** `npm run ci:verdict` (lee GitHub por `gh api`, también en la nube).
 > Un preflight verde no es un CI verde: el paso `npm ci` resuelve dependencias contra el
 > registro y en la plataforma del runner, así que puede caerse con tu árbol local intacto.
 > `npm run guard:lockfile` cubre la parte comprobable; el resto solo lo sabe el CI.

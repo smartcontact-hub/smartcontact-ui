@@ -66,11 +66,15 @@ read-only** (sin `--write`) y compara su salida con lo que afirman los docs:
 Corta, mecánica, y la que más valor dio el día que se descubrió el patrón. El repo tiene 25
 gates para lo que ENTRA y **ninguno para lo que se queda fuera**: un PR abierto no molesta a
 nadie, así que se pudre en silencio. `verify` no puede vigilarlo —corre offline y determinista,
-y consultar GitHub lo volvería flaky—, pero tú sí: corres en la nube y tienes `gh`.
+y consultar GitHub lo volvería flaky—, pero tú sí: corres en la nube, y allí `gh` solo tiene `api`.
 
 ```bash
-gh pr list --state open --json number,title,createdAt,mergeable,statusCheckRollup
+gh api "repos/{owner}/{repo}/pulls?state=open&per_page=100"
 ```
+
+De cada PR, `created_at` da su edad. Lo mergeable sale de `gh api repos/{owner}/{repo}/pulls/<n>`
+(`mergeable`), y el CI de `gh api repos/{owner}/{repo}/commits/<head.sha>/check-runs`. O, más corto,
+las herramientas MCP de GitHub.
 
 Marca como hallazgo **todo PR abierto con más de 7 días** — uno por PR, con su edad, si es
 mergeable y si su CI está verde. El fix es siempre el mismo y es de Rafa: mergear o cerrar.
@@ -141,7 +145,7 @@ Entrega vía PR:
 1. `git switch -c audit/semanal-<YYYY-MM-DD>` desde la rama por defecto actualizada.
 2. Escribe la sección nueva en `docs/AUDIT-SEMANAL.md`.
 3. **Corre `npm run docs:guard && npm run docs:coherence` localmente** — si rojo, lo más probable es que hayas tecleado un `scripts/*.mjs`/`npm run` inexistente (§3); quítalo y re-corre. No abras el PR en rojo.
-4. `gh pr create` (mecanismo probado en los workflows de tokens) con título `chore(audit): auditoría semanal <YYYY-MM-DD>` y cuerpo = resumen de los hallazgos. Si ya hay un PR de auditoría abierto sin mergear, **actualízalo** en vez de abrir otro.
+4. Abre el PR con la herramienta MCP de GitHub (`create_pull_request`): en la nube `gh` solo tiene `api`, así que `gh pr create` no existe. Título `chore(audit): auditoría semanal <YYYY-MM-DD>` y cuerpo = resumen de los hallazgos; el servidor le añade un pie que hay que quitar (`pr-footer-guard`). Si ya hay un PR de auditoría abierto sin mergear, **actualízalo** en vez de abrir otro.
 5. Rafa revisa, mergea (= aceptar en el backlog) o marca cajas.
 
 ## 5. El orden que sigues en cada run

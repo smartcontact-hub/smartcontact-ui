@@ -13,6 +13,7 @@ import {
   avisarCarga,
   avisoActual,
   avisoDeCarga,
+  generadosAlDia,
   leerProcesos,
   numCpus,
   parsearPs,
@@ -515,3 +516,35 @@ test('package.json: `verify` arranca con el aviso, por su gancho `preverify`', (
   assert.equal(pkg.scripts.preverify, 'node scripts/preflight-puerta-barata.mjs --carga');
   assert.ok(existsSync(PUERTA));
 });
+
+/* ── Los ficheros generados, al día en un segundo ───────────────────────────── */
+
+// El caso es del 2026-10-04: el preflight de #325 se relanzó tres veces porque, tras minutos de cadena, `verify` paró en
+// `audit:components`, `audit:doc-snippets` y `usage:check`, tres comprobaciones que tardan menos de un segundo entre
+// las tres. En la puerta salen en el segundo 1, y con la orden que lo arregla.
+
+test('generadosAlDia: un generado sin poner al día para la puerta, y dice cómo regenerarlo', () => {
+  const pedidos = [];
+  const correr = (g) => {
+    pedidos.push(g.script);
+    return !g.script.includes('component-audit');
+  };
+  const problemas = generadosAlDia({ correr });
+  assert.equal(problemas.length, 1);
+  assert.match(problemas[0], /scripts\/component-audit\.mjs check/);
+  assert.match(problemas[0], /node scripts\/component-audit\.mjs --write/);
+  assert.deepEqual(pedidos, ['scripts/component-audit.mjs', 'scripts/audit-doc-snippets.mjs', 'scripts/usage-status.mjs'], 'mira los tres, aunque falle el primero');
+});
+
+test('generadosAlDia: cada uno dice su arreglo', () => {
+  const problemas = generadosAlDia({ correr: () => false });
+  assert.equal(problemas.length, 3);
+  assert.match(problemas[1], /audit-doc-snippets/);
+  assert.match(problemas[1], /ejemplo/);
+  assert.match(problemas[2], /node scripts\/usage-status\.mjs --write/);
+});
+
+test('generadosAlDia: todo al día, la puerta no dice nada', () => {
+  assert.deepEqual(generadosAlDia({ correr: () => true }), []);
+});
+

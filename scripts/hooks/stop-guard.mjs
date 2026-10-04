@@ -133,12 +133,14 @@ const soloEmpujaOtroRepo = ({ cmd, cwd }) => {
 // Faltaba, y bloqueó un cierre en el que el CI SÍ estaba leído (2026-09-10, esta misma sesión).
 //
 // ⚠️ Y las herramientas MCP de GitHub cuentan TAMBIÉN, por el mismo motivo y por uno más grave
-// (2026-09-19): en una sesión cloud **`gh` no está instalado**, y `ci:verdict` lo invoca por
-// dentro, así que sale `spawnSync gh ENOENT`. O sea que el único canal que este hook reconocía
-// era imposible de usar ahí, y bloqueaba el cierre de una sesión que SÍ había leído el CI —
-// job a job, por `mcp__github__actions_list`. Es el mismo error que tenía `docs:coherence`
-// CHECK D: comprobar el PROXY (que se teclee un comando concreto) en vez de la CONDICIÓN (que
-// el veredicto se haya leído). Un guardián que no se puede satisfacer enseña a saltárselo.
+// (2026-09-19): en una sesión cloud `ci:verdict` no funcionaba (primero no había `gh`; después, un
+// `gh` que solo tiene `api`), así que el único canal que este hook reconocía era imposible de usar
+// ahí, y bloqueaba el cierre de una sesión que SÍ había leído el CI — job a job, por
+// `mcp__github__actions_list`. Es el mismo error que tenía `docs:coherence` CHECK D: comprobar el
+// PROXY (que se teclee un comando concreto) en vez de la CONDICIÓN (que el veredicto se haya leído).
+// Un guardián que no se puede satisfacer enseña a saltárselo. Desde el 2026-10-04 `ci:verdict` lee
+// GitHub por `gh api` (`scripts/github.mjs`) y funciona también en la nube; un `gh api` suelto NO
+// cuenta a propósito: no compara contra tu HEAD, que es lo que hace del veredicto un veredicto.
 const esLecturaCI = (cmd) =>
   /\bci:verdict\b|\bgh run (list|view|watch)\b|\bgh pr checks\b/.test(cmd) ||
   /^mcp__github__(actions_list|actions_get|get_job_logs|get_commit|pull_request_read|get_check_run)$/.test(cmd);
@@ -545,7 +547,7 @@ function main() {
     }
     if (necesitaVeredicto(actosBash(jsonl)))
       return bloquear(
-        'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, `gh run view --log-failed`). Sin `gh` —una sesión cloud— léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y `list_workflow_jobs` si algo sale rojo). En los dos casos, cuéntale al usuario el resultado LEÍDO, no el exit del wrapper.',
+        'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, su pista dice dónde leer el fallo). Funciona igual en la nube: lee GitHub por `gh api`. Si aun así no puedes, léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y los jobs si algo sale rojo). En los dos casos, cuéntale al usuario el resultado LEÍDO, no el exit del wrapper.',
       );
 
     const sinRevisar = pantallasSinRevisar(jsonl);

@@ -1,5 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { delimiter, dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { motivo, ramaPorDefecto, shaDeLsRemote, veredicto } from '../ci-verdict.mjs';
 
@@ -149,4 +154,102 @@ test('motivo: el stderr manda; el message es el respaldo', () => {
   assert.equal(motivo({ stderr: '  \n', message: 'Command failed: gh run list\nmás' }), 'Command failed: gh run list');
   assert.equal(motivo({}), 'sin detalle');
   assert.equal(motivo(undefined), 'sin detalle');
+});
+
+/* ── En la nube: un `gh` que solo entiende `api` ─────────────────────────── */
+
+// El caso es del 2026-10-04: en una sesión en la nube el `gh` es un cliente que solo tiene `api`, y `ci:verdict` salía
+// con «✗ no pude leer el CI» (código 2) en cada push, así que el CI se leía a mano. Estas pruebas ponen delante un `gh`
+// falso que se porta como aquel: `run` y `pr` no existen, y `api` contesta con el REST.
+
+const SCRIPT = join(dirname(fileURLToPath(import.meta.url)), '..', 'ci-verdict.mjs');
+const SIN_GIT = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')));
+const GH_DE_LA_NUBE = `#!/usr/bin/env node
+const [orden, ruta] = process.argv.slice(2);
+if (orden !== 'api') {
+  process.stderr.write('unknown command "' + orden + '" for "gh"\\n');
+  process.exit(1);
+}
+for (const [trozo, respuesta] of JSON.parse(process.env.GH_FALSO)) {
+  if (ruta.includes(trozo)) {
+    process.stdout.write(JSON.stringify(respuesta));
+    process.exit(0);
+  }
+}
+process.stderr.write('HTTP 404: ' + ruta + '\\n');
+process.exit(1);
+`;
+
+/** Un repo con un commit, `origin` en GitHub y el `gh` de la nube primero en el PATH. `respuestas(head)` da el REST. */
+function enLaNube(respuestas) {
+  const dir = mkdtempSync(join(tmpdir(), 'ci-verdict-nube-'));
+  const bin = join(dir, 'bin');
+  const repo = join(dir, 'repo');
+  mkdirSync(bin);
+  writeFileSync(join(bin, 'gh'), GH_DE_LA_NUBE, { mode: 0o755 });
+  const git = (args) => execFileSync('git', args, { cwd: repo, env: SIN_GIT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  execFileSync('git', ['init', '-q', '-b', 'mi-rama', repo], { env: SIN_GIT });
+  git(['-c', 'user.name=Prueba', '-c', 'user.email=prueba@example.com', 'commit', '-q', '--allow-empty', '-m', 'uno']);
+  git(['remote', 'add', 'origin', 'https://github.com/o/r.git']);
+  const head = git(['rev-parse', 'HEAD']);
+  const env = { ...SIN_GIT, PATH: `${bin}${delimiter}${process.env.PATH}`, GH_FALSO: JSON.stringify(respuestas(head)) };
+  return spawnSync(process.execPath, [SCRIPT], { cwd: repo, env, encoding: 'utf8' });
+}
+
+const ejecucion = (head, extra) => ({
+  workflow_runs: [{ id: 9, head_sha: head, status: 'completed', conclusion: 'success', html_url: 'https://github.com/o/r/actions/runs/9', created_at: '2026-10-04T18:49:07Z', ...extra }],
+});
+
+test('en la nube lee el CI igual: verde sobre tu HEAD, sin `gh run` ni `gh pr`', () => {
+  const r = enLaNube((head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head)],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /✓ ci VERDE en mi-rama/);
+});
+
+test('en la nube ve el PR: fundido gana al verde (4) y en conflicto también (5)', () => {
+  const fundido = enLaNube((head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head)],
+    ['pulls?head=o:mi-rama', [{ number: 7, state: 'closed', merged_at: '2026-10-04T18:58:30Z', merge_commit_sha: 'c756d89540918b177fb72baab0e13acee0cb7c8e', head: { ref: 'mi-rama' } }]],
+  ]);
+  assert.equal(fundido.status, 4, fundido.stdout + fundido.stderr);
+  assert.match(fundido.stdout, /#7 de mi-rama ya está MERGED en c756d89/);
+
+  const choca = enLaNube((head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head)],
+    ['pulls?head=o:mi-rama', [{ number: 8, state: 'open', merged_at: null, head: { ref: 'mi-rama' } }]],
+    ['pulls/8', { number: 8, state: 'open', mergeable: false, mergeable_state: 'dirty' }],
+  ]);
+  assert.equal(choca.status, 5, choca.stdout + choca.stderr);
+  assert.match(choca.stdout, /#8 de mi-rama está en CONFLICTO/);
+});
+
+// El commit del robot de `visual-baselines` sobre un PR abierto deja una ejecución «failure» sin un solo job (#325, run
+// 37224296361): no hay log que leer, y mandar a leerlo es mandar a un callejón.
+test('una ejecución en rojo sin jobs no manda a un log que no existe: dice cómo salir', () => {
+  const r = enLaNube((head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head, { conclusion: 'failure' })],
+    ['actions/runs/9/jobs', { total_count: 0, jobs: [] }],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  assert.match(r.stdout, /ningún job/);
+  assert.match(r.stdout, /siguiente commit/);
+  assert.doesNotMatch(r.stdout, /log-failed/);
+});
+
+// En #325 cayó `e2e-smoke` por la captura de una página de sc-docs que había crecido: la salida es regenerarla.
+test('si cae e2e-smoke, la pista dice cómo regenerar las capturas de esa rama', () => {
+  const r = enLaNube((head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head, { conclusion: 'failure' })],
+    ['actions/runs/9/jobs', { total_count: 2, jobs: [{ name: 'verify', conclusion: 'success' }, { name: 'e2e-smoke', conclusion: 'failure' }] }],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  assert.match(r.stdout, /falla: e2e-smoke/);
+  assert.match(r.stdout, /visual-baselines/);
+  assert.match(r.stdout, /rama=mi-rama/);
+  assert.match(r.stdout, /actions\/runs\/9\/jobs/);
 });

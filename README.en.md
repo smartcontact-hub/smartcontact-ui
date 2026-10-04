@@ -85,7 +85,7 @@ npm run export:all     # npm tarballs into dist/archives/
 ```bash
 npm run verify         # the 44 chained static checks (~40s)
 npm run e2e            # browser smoke test (Playwright)
-npm run preflight      # gates + AOT builds + visual baselines (~5 min), before pushing
+npm run preflight      # gates + AOT builds (~8 min), before pushing; screenshots are compared in CI
 ```
 
 The `verify` chain's composition is canonical here, and this README is its single source (the
