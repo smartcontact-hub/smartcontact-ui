@@ -5748,7 +5748,7 @@ ${LIST} .p-datatable-table {
     table-layout: fixed;
 }
 
-${LIST} .p-datatable-tbody > tr > td {
+${LIST} .p-datatable-tbody > tr > td:not(.p-datatable-frozen-column) {
     position: relative;
 }
 
@@ -5779,6 +5779,25 @@ ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) {
 
 ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) > td {
     border-bottom: 0;
+}
+`;
+var iconOnlyMultiSelectCss = () => `
+.sc-multiselect--icon-only .p-multiselect-label-container {
+    flex: 0 0 0;
+    visibility: hidden;
+}
+.sc-multiselect--icon-only .p-multiselect-dropdown {
+    width: 100%;
+}
+`;
+var frozenColumnsCss = () => `
+/* El hover inerte de lista era transparente: una celda fija debe tapar los datos que pasan debajo. */
+${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):not(.p-datatable-row-selected):hover:has(> .p-datatable-frozen-column) {
+    background: var(--p-datatable-row-background);
+}
+sc-datatable.sc-datatable--overflow-right .sc-datatable__frozen-right-edge,
+sc-datatable.sc-datatable--overflow-left .sc-datatable__frozen-left-edge {
+    box-shadow: var(--sc-shadow-sm);
 }
 `;
 var tagOneLineCss = () => `
@@ -5965,6 +5984,8 @@ ${typographyRule(lgTypographySelectors, dt, "lg", fromDesignPx(16), fromDesignPx
 ${baseTableCss()}
 ${emptyCaptionCss()}
 ${listBehaviorCss()}
+${frozenColumnsCss()}
+${iconOnlyMultiSelectCss()}
 ${stickyHeaderCss()}
 ${scrollableScrollbarCss()}
 ${tagOneLineCss()}
