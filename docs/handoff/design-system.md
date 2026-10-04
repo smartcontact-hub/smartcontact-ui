@@ -180,10 +180,10 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 **Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `c756d895` (#325), PR nuevo. Sale por el tope el tramo del 2026-09-28 (DD-134):
 `git show c756d895:docs/handoff/design-system.md`.
 
-**Lo que cambia.** El primer lote de producto en un PR (#325) tardó 3 h 30 min de punta a punta; unos 45 se fueron en lo que esto
-arregla. `ci:verdict` y `sesiones` leen GitHub por `gh api` (`scripts/github.mjs`): en la nube salían con código 2 o callaban. El
-preflight para en el segundo 1 si un fichero generado no está al día (antes, tres arranques de 8 min), y al final avisa de las
-capturas de sc-docs que el cambio mueve (la vuelta roja de `e2e-smoke`). `npm run tiempos -- <PR> --desde HH:MM` saca de GitHub los
+**Lo que cambia.** #325 tardó 3 h 30 min de punta a punta; esto quita tres de sus tropiezos. `ci:verdict` y `sesiones` leen GitHub
+por `gh api` (`scripts/github.mjs`): en la nube salían con código 2 o callaban. El preflight para en el segundo 1 si un generado no
+está al día (antes, tres arranques perdidos: unos 8 min), y avisa de las capturas de sc-docs que el cambio mueve: de las tres causas
+de la vuelta roja de #325 (36 min), la captura era la única sabida de antemano. `npm run tiempos -- <PR> --desde HH:MM` saca los
 tiempos de cada lote para su squash. Lo pendiente de DD-154 y DD-155, cerrado: con 8 partes la mediana es 8,4 min (n=9, frente a
 12,8 con 4) y no hace falta el filtro de barridos (DD-155, actualización).
 
