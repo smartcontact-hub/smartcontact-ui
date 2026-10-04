@@ -86,6 +86,9 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   PrimeNG, que es el que atrapa el foco, nombrado por `pt`, y la card deja de llevarlo. El foco al abrir, Tab y
   Escape no cambian. Quien buscara la card por `[role="dialog"]` la encuentra por `.sc-dialog`.
   ([DD-140](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-datatable` con lista virtual vuelve a contar sus filas cuando su caja
+  cambia de alto, no solo cuando cambia la ventana. Con «reducir movimiento», el listado de agentes del Supervisor
+  salía sin ninguna fila: la lista virtual contaba en el fotograma en que la tabla aún medía 0. Sin API nueva.
 
 ## [1.0.0] — 2026-09-09
 

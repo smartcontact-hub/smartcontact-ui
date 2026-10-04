@@ -63,12 +63,27 @@ interface VisibleRow {
   readonly agent: AgentChannelTableAgent;
 }
 
-/** Anchos de la tabla compacta (el panel rápido). Los usa también el panel para medirse (DD-131). */
-export const CHANNEL_COL_COMPACT = '5rem';
-export const ASSIGNED_COL_REM = 7;
-export const LEVEL_COL_REM = 9;
-export const ENABLED_COL_REM = 7;
-export const AGENT_NAME_COL_REM = 21;
+/**
+ * El ancho de cada columna, en rem, en la tabla de la ficha y en la compacta del panel rápido, que suma estos mismos
+ * para medirse (DD-131). Cada uno es lo más largo que lleva en los cuatro idiomas más el relleno de celda (14 a cada
+ * lado en la ficha, 6 en el panel) y unos 6 px de margen. Medido el 2026-10-04 (DD-156):
+ *   · Asignado y Habilitado: sus rótulos, «Asignado» (66 px) y «Habilitado» (70).
+ *   · Agente: avatar (24), hueco (14) y nombre y email en dos líneas; el email más largo de la semilla mide 203 px y el
+ *     nombre más largo, 137. En la ficha es un MÍNIMO: el nombre cabe siempre y la columna crece con el sitio que haya.
+ *     En el panel, que mide lo que lleva, cabe el email entero.
+ *   · Estado: su etiqueta más larga, «Post-conversando» o «Post-conversation», 123 px.
+ *   · Canal: 6,5rem lo midió «Web Chat», que a 5,5 partía en dos líneas (2026-09-26); desde DD-147 la más larga es
+ *     «Teléfono», que también cabe. En el panel, 5rem.
+ */
+export const COLUMN_REM = {
+  regular: { assigned: 6.25, agent: 15, presence: 9.75, level: 9, channel: 6.5, enabled: 6.5 },
+  compact: { assigned: 5.25, agent: 16.25, presence: 8.75, level: 9, channel: 5, enabled: 5.5 },
+} as const;
+
+/** Lo que suman las columnas con `families` canales y `levels` niveles: el mínimo de la tabla y el ancho del panel. */
+export function columnsRem(rem: (typeof COLUMN_REM)[keyof typeof COLUMN_REM], families: number, levels: number): number {
+  return rem.assigned + rem.agent + rem.presence + levels * rem.level + families * rem.channel + rem.enabled;
+}
 
 /** La asignación se edita en la misma lista que sus canales (DD-151).
  * El filtro conserva sus filas hasta que cambia la búsqueda o la vista, para que
@@ -113,6 +128,8 @@ export class AgentChannelTableComponent {
 
   private readonly agentTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('agentTpl');
+  private readonly presenceTpl =
+    viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('presenceTpl');
   private readonly channelTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
   private readonly levelTpl =
@@ -125,11 +142,12 @@ export class AgentChannelTableComponent {
   protected readonly columns = computed<readonly ScColumnDef<VisibleRow>[]>(
     () => {
       this.currentLang();
+      const rem = COLUMN_REM[this.compact() ? 'compact' : 'regular'];
       return [
         {
           field: 'assigned',
           header: this.translate.instant('groups.form.assigned.assignment'),
-          width: `${ASSIGNED_COL_REM}rem`,
+          width: `${rem.assigned}rem`,
           align: 'center',
           cellTemplate: this.assignedTpl(),
           stopRowClick: true,
@@ -139,22 +157,26 @@ export class AgentChannelTableComponent {
           header: this.translate.instant('groups.form.assigned.col_agent'),
           cellTemplate: this.agentTpl(),
         },
+        /* El estado de la persona, en su columna y con la palabra del listado de agentes: alineado de una fila a otra
+         * y sin quitarle sitio al email (DD-156). */
+        {
+          field: 'presence',
+          header: this.translate.instant('agents.table.presence'),
+          width: `${rem.presence}rem`,
+          cellTemplate: this.presenceTpl(),
+        },
         /* Con la estrategia Niveles, el nivel de cada agente va en su fila: donde ya se decide quién atiende qué. */
         ...this.levelFamilies().map((family) => ({
           field: `level-${family}`,
           header: this.translate.instant('groups.form.assigned.col_level', { channel: this.translate.instant(FAMILY_LABEL_KEYS[family]) }),
-          width: `${LEVEL_COL_REM}rem`,
+          width: `${rem.level}rem`,
           cellTemplate: this.levelTpl(),
           stopRowClick: true,
         })),
-        /* 6.5rem: lo midió «Web Chat», que a 5.5 partía en dos líneas y subía la cabecera entera
-         * (visto a 1440 el 2026-09-26); desde DD-147 la más larga es «Teléfono», que también cabe.
-         * Compacta, 5rem: con el relleno de celda de la tabla pequeña (8 a cada lado, no 14) le
-         * quedan 64 px, y cabe en una línea. */
         ...this.families().map((ch) => ({
           field: ch,
           header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
-          width: this.compact() ? CHANNEL_COL_COMPACT : '6.5rem',
+          width: `${rem.channel}rem`,
           align: 'center' as const,
           cellTemplate: this.channelTpl(),
           stopRowClick: true,
@@ -162,7 +184,7 @@ export class AgentChannelTableComponent {
         {
           field: 'active',
           header: this.translate.instant('groups.form.assigned.col_active'),
-          width: `${ENABLED_COL_REM}rem`,
+          width: `${rem.enabled}rem`,
           align: 'center',
           cellTemplate: this.activeTpl(),
           stopRowClick: true,
@@ -184,10 +206,8 @@ export class AgentChannelTableComponent {
 
   /** Reserva el nombre antes de sumar niveles y canales: la tabla desplaza dentro de su caja,
    * sin colapsar la identidad del agente cuando el rail estrecha la ficha. */
-  protected readonly tableMinWidth = computed(() => {
-    const channels = this.families().length;
-    return `${AGENT_NAME_COL_REM + ENABLED_COL_REM + this.levelFamilies().length * LEVEL_COL_REM + channels * (this.compact() ? 5 : 6.5) + ASSIGNED_COL_REM}rem`;
-  });
+  protected readonly tableMinWidth = computed(() =>
+    `${columnsRem(COLUMN_REM[this.compact() ? 'compact' : 'regular'], this.families().length, this.levelFamilies().length)}rem`);
 
   readonly linksChange = output<readonly GroupAgentLink[]>();
 

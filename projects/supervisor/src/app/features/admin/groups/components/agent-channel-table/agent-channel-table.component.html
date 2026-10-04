@@ -41,20 +41,24 @@
     <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
     <span class="assign__identity">
       <span class="assign__name-label sc-text-body-semibold" [title]="row.agent.name">{{ row.agent.name }}</span>
-      @if (row.agent.email) { <span class="assign__email sc-text-caption-regular">{{ row.agent.email }}</span> }
+      @if (row.agent.email) { <span class="assign__email sc-text-caption-regular" [title]="row.agent.email">{{ row.agent.email }}</span> }
       @if (!compatible(row.agent)) { <span class="sc-text-caption-regular">{{ 'groups.form.assigned.incompatible' | translate }}</span> }
     </span>
-    @if (row.agent.presenceStatus; as presence) {
-      @if (presenceLabelColor(presence); as color) {
-        <sc-tag class="assign__presence" variant="label" [labelColor]="color" [value]="presenceLabelKey(presence) | translate" />
-      } @else {
-        <sc-tag class="assign__presence" [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
-      }
-    }
     @if (row.link && row.link.channels.length === 0) {
       <sc-tag severity="warn" icon="warning" [value]="'groups.form.summary.no_channels' | translate" />
     }
   </span>
+</ng-template>
+
+<!-- El estado de la persona, la misma etiqueta que el listado de agentes (DD-149). Sin estado, la celda queda vacía. -->
+<ng-template #presenceTpl let-row>
+  @if (row.agent.presenceStatus; as presence) {
+    @if (presenceLabelColor(presence); as color) {
+      <sc-tag variant="label" [labelColor]="color" [value]="presenceLabelKey(presence) | translate" />
+    } @else {
+      <sc-tag [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
+    }
+  }
 </ng-template>
 
 <!-- Una columna por canal DEL GRUPO, como la matriz de Contact Center. -->

@@ -71,16 +71,23 @@ test('cerrar con cambios pregunta antes, con Cancelar y con Escape, y descartar 
 /** El cajón que envuelve el panel: su caja es la que el usuario ve. */
 const cajon = (page: Page) => page.locator('.p-drawer', { has: panel(page) });
 
-/** Ancho del cajón, alto de la primera fila y el hueco del final de su identidad (nombre y presencia) a su primera casilla. */
+/**
+ * Ancho del cajón, alto de la primera fila y su aire, en dos tramos: del final de su identidad (nombre y email) a su
+ * estado, y de la columna del estado a su primera casilla. Desde DD-156 el estado va en su columna, entre las dos.
+ */
 const medidas = (page: Page) =>
   cajon(page).evaluate((drawer) => {
     const fila = drawer.querySelector('tbody tr');
+    const rotulos = [...drawer.querySelectorAll('thead th')].map((th) => th.getAttribute('aria-label'));
+    const celdaEstado = fila?.querySelectorAll(':scope > td')[rotulos.indexOf('Estado')];
     const nombre = fila?.querySelector('.assign__name');
+    const estado = celdaEstado?.querySelector('sc-tag');
     const casilla = fila?.querySelector('.assign__locked sc-checkbox, .assign__permission sc-checkbox');
     return {
       ancho: drawer.getBoundingClientRect().width,
       altoFila: fila ? fila.getBoundingClientRect().height : 0,
-      hueco: nombre && casilla ? casilla.getBoundingClientRect().left - nombre.getBoundingClientRect().right : null,
+      hueco: nombre && estado ? estado.getBoundingClientRect().left - nombre.getBoundingClientRect().right : null,
+      huecoCasilla: celdaEstado && casilla ? casilla.getBoundingClientRect().left - celdaEstado.getBoundingClientRect().right : null,
     };
   });
 
@@ -102,11 +109,13 @@ test('con dos canales, el panel se ajusta a sus columnas: nombre cerca de sus ca
   // La línea «Canales: …» bajo el título repetía las cabeceras.
   await expect(panel(page).locator('.agents-panel__channels')).toHaveCount(0);
 
-  const { ancho, altoFila, hueco } = await medidas(page);
-  expect(ancho, 'nombre, canales y nueva columna Habilitado (DD-149)').toBeLessThanOrEqual(48 * 16);
-  expect(hueco, 'de nombre y presencia a la primera casilla').not.toBeNull();
-  expect(hueco!, 'de nombre y presencia a la primera casilla').toBeLessThanOrEqual(12 * 16);
-  expect(altoFila, 'nombre y email en dos líneas, con presencia').toBeLessThanOrEqual(58);
+  const { ancho, altoFila, hueco, huecoCasilla } = await medidas(page);
+  expect(ancho, 'agente, estado, canales y Habilitado, cada columna medida (DD-156)').toBeLessThanOrEqual(48 * 16);
+  expect(hueco, 'del nombre y el email a su estado').not.toBeNull();
+  expect(hueco!, 'del nombre y el email a su estado').toBeLessThanOrEqual(6 * 16);
+  expect(huecoCasilla, 'de la columna del estado a la primera casilla').not.toBeNull();
+  expect(huecoCasilla!, 'de la columna del estado a la primera casilla').toBeLessThanOrEqual(3 * 16);
+  expect(altoFila, 'nombre y email en dos líneas, con el estado al lado').toBeLessThanOrEqual(58);
 });
 
 test('el último canal se lee marcado y fijo: la casilla desactivada queda al 60 % de Figma, no al 36 %', async ({ page }) => {
