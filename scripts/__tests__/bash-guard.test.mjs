@@ -1,12 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { PREFLIGHT, carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
+import { PREFLIGHT, carpetasPorSegmento, evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
 // Cada patrón del hook se prueba EN ROJO (el comando que motivó la regla) y EN VERDE (la forma
 // correcta y los vecinos legítimos). Un guardián que solo se ha visto pasar no prueba que sepa
@@ -671,8 +671,41 @@ test('carpeta del comando: `cd <ruta> &&` manda sobre el cwd de la sesión; con 
   deny('git push -u origin rama', soloElWorktree, /LEARNINGS #7/);
   deny('cd $WT && git push', soloElWorktree, /LEARNINGS #7/);
   deny('npx playwright test', soloElWorktree, /LEARNINGS #5/);
-  assert.equal(carpetaEfectiva('cd sub && ls', '/repo'), '/repo/sub');
-  assert.equal(carpetaEfectiva('ls && cd /otra', '/repo'), '/repo', 'un cd DETRÁS no cambia dónde corre lo de delante');
+  assert.deepEqual(carpetasPorSegmento('cd sub && ls', '/repo'), ['/repo', '/repo/sub']);
+  assert.deepEqual(carpetasPorSegmento('ls && cd /otra', '/repo'), ['/repo', '/repo'], 'un cd DETRÁS no cambia dónde corre lo de delante');
+  assert.deepEqual(carpetasPorSegmento('export PATH=/x:$PATH; git fetch && cd /wt && ls', '/repo'), ['/repo', '/repo', '/repo', '/wt'], 'un cd que no abre el comando también cuenta');
+});
+
+// 2026-10-04: el resto de reglas con carpeta (la cadena a ciegas, el build durante un preflight, el
+// Playwright con el `dist/` viejo y el prettier ajeno) juzgaban igual: la carpeta del comando solo seguía los
+// `cd` que ABREN el comando: `git fetch && cd <wt> && npx playwright test` se juzgaba en la sesión, y el
+// segundo Playwright de `cd <wt> && npx playwright test && cd <sesión> && npx playwright test`, en el worktree.
+// Cada regla mira la carpeta de SU segmento. Carpetas de mentira, como las de arriba: solo `/repo` (la
+// sesión) tiene el `dist/` viejo, fuentes sin indexar y un preflight vivo, y solo `/otra` adopta prettier.
+test('carpeta de cada segmento en las demás reglas: un `cd` que no abre el comando manda, y el que vuelve a la sesión cuenta', () => {
+  const ctx = {
+    ...verde,
+    cwd: '/repo',
+    distRancio: (dir) => (dir === '/repo' ? 'projects/ui-smartcontact/src/lib/x.scss' : null),
+    sinIndexar: (dir) => (dir === '/repo' ? ['projects/supervisor/src/app/a.ts'] : []),
+    preflightVivo: (dir) => (dir === '/repo' ? 4242 : null),
+    usaPrettier: (dir) => dir === '/otra',
+  };
+  // #5 e2e con el `dist/` viejo.
+  allow('git fetch && cd /wt && npx playwright test', ctx);
+  deny('cd /wt && npx playwright test && cd /repo && npx playwright test', ctx, /LEARNINGS #5/);
+  // #7 la cadena con fuentes sin `git add`.
+  allow('git fetch && cd /wt && npm run verify', ctx);
+  deny('cd /wt && git status && cd /repo && npm run verify', ctx, /git ls-files/);
+  // #5 un build mientras corre un preflight.
+  allow('git fetch && cd /wt && npm run build:supervisor', ctx);
+  deny('cd /wt && git status && cd /repo && npm run build:supervisor', ctx, /pid 4242/);
+  // #11 un formateador que el repo no adopta.
+  allow('git fetch && cd /otra && npx prettier --write src/a.ts', ctx);
+  deny('cd /otra && git status && cd /repo && npx prettier --write src/a.ts', ctx, /LEARNINGS #11/);
+  // Sin `cd`, o con uno opaco (variable), manda la sesión, como siempre.
+  deny('npx playwright test', ctx, /LEARNINGS #5/);
+  deny('cd $WT && npx playwright test', ctx, /LEARNINGS #5/);
 });
 
 // 2026-10-01: una sesión de este repo también empuja OTROS repositorios (`cd <otro> && git push`), y
@@ -712,6 +745,93 @@ test('#7 push en un repositorio sin la cadena de preflight → allow; en un árb
   } finally {
     rmSync(base, { recursive: true, force: true });
   }
+});
+
+/** Este repo (con el script que escribe la marca, que es lo que mira `usaPreflight`), un worktree suyo y otro
+ *  repo ajeno, de verdad en el disco; y el `ctx` de una sesión abierta en este, con la marca contestada «no». */
+function reposDePrueba(t) {
+  const raiz = realpathSync(mkdtempSync(join(tmpdir(), 'bash-guard-repos-')));
+  t.after(() => rmSync(raiz, { recursive: true, force: true }));
+  const git = (cwd, ...args) =>
+    spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false', ...args], { cwd, env: SIN_GIT, encoding: 'utf8' });
+  const propio = join(raiz, 'propio');
+  const otro = join(raiz, 'otro');
+  const wt = join(raiz, 'wt');
+  for (const d of [propio, otro]) {
+    mkdirSync(join(d, 'sub'), { recursive: true });
+    git(d, 'init', '-q');
+  }
+  mkdirSync(join(propio, 'scripts'));
+  writeFileSync(join(propio, 'scripts', 'preflight-mark.mjs'), '');
+  git(propio, 'add', '-A');
+  git(propio, 'commit', '-q', '-m', 'x');
+  assert.equal(git(propio, 'worktree', 'add', '-q', wt, '-b', 'rama').status, 0, 'el worktree de este repo debe existir');
+  const ctx = { sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], preflight: rojo.preflight, cwd: propio };
+  return { raiz, propio, otro, wt, ctx };
+}
+
+// 2026-10-01: `false && cd <otro repo> && git push` se denegó con el motivo de #7 aunque el push era de OTRO
+// repositorio, y un subagente que barría el cuaderno privado del autor se quedó con sus commits sin subir.
+// #301 arregló el cierre que corría de verdad (`cd <otro> && … && git push`), pero la carpeta del comando
+// solo seguía los `cd` que ABREN el comando: con algo delante (`false &&`, `git add -A &&`), dentro de un `( … )`,
+// o tras empujar al otro repo, el push se juzgaba en la carpeta de la sesión. Con repos de verdad: este (con
+// el script de la marca, que es lo que mira `usaPreflight`), un worktree suyo y otro ajeno.
+test('#7 cada push se juzga en la carpeta de SU segmento: un `cd` que no abre el comando, un subshell o la vuelta a este repo', (t) => {
+  const { propio, otro, wt, ctx } = reposDePrueba(t);
+  // ROJO de antes, VERDE ahora: el comando del informe y sus parientes (algo delante del `cd`, o un subshell).
+  allow(`false && cd ${otro} && git push`, ctx);
+  allow(`git add -A && cd ${otro} && git push`, ctx);
+  allow(`git status; cd ${otro}/sub; git push origin main`, ctx);
+  allow(`(cd ${otro} && git push) && echo hecho`, ctx);
+  // Lo de este repo sigue exigiendo marca: su worktree, con o sin algo delante del `cd`.
+  deny(`false && cd ${wt} && git push`, ctx, /LEARNINGS #7/);
+  deny(`git fetch && cd ${wt} && git push`, ctx, /LEARNINGS #7/);
+  // ROJO de antes, y era un hueco: cada push cuenta en SU carpeta, y el que vuelve a este repo no se cuela.
+  deny(`cd ${otro} && git push && cd ${propio} && git push`, ctx, /LEARNINGS #7/);
+  // Un `cd` que no se sabe adónde va (variable) puede ser este repo, venga uno de donde venga.
+  deny('cd $CUADERNO && git push', ctx, /LEARNINGS #7/);
+  deny(`cd ${otro} && cd $DESTINO && git push`, ctx, /LEARNINGS #7/);
+  // El `cd` de un subshell no sale de él: el push de después corre aquí.
+  deny(`(cd ${otro} && git push); git push`, ctx, /LEARNINGS #7/);
+  // Salida explícita; y con la marca en verde, tampoco se deniega.
+  allow(`cd ${propio} && git push # sc:ok`, ctx);
+  allow(`cd ${propio} && git push`, { ...ctx, preflight: verde.preflight });
+});
+
+// 2026-10-04: `git -C <ruta> push` no empieza por `git push`, así que el guardián no lo reconocía como un
+// push: el del informe (`git -C <otro repo> push`) pasaba solo por eso, y el de ESTE repo con `-C` se
+// colaba sin marca (medido sobre main con repos reales). `-C` es el `cd` de git: la ruta cuenta desde la
+// carpeta del segmento, y varios `-C` encadenan.
+test('#7 `git -C <ruta> push` se juzga en su ruta: la de otro repo pasa; la de este, o una que no se sabe, pide marca', (t) => {
+  const { raiz, propio, otro, wt, ctx } = reposDePrueba(t);
+  // VERDE: el repo ajeno, con la sesión en este, con `-C` sobre un `cd`, entrecomillado, o desde una subcarpeta.
+  allow(`git -C ${otro} push`, ctx);
+  allow(`git -C ${otro}/sub push origin main`, ctx);
+  allow(`git -C "${otro}" push`, ctx);
+  allow(`cd ${propio} && git -C ${otro} push`, ctx);
+  allow(`cd ${raiz} && git -C otro push`, ctx); // la ruta relativa cuenta desde la carpeta del segmento
+  allow(`git -C ${otro} push`, { ...ctx, cwd: otro });
+  // ROJO de antes, y era un hueco: el push de este repo, de su worktree o de una subcarpeta, desde donde sea.
+  deny(`git -C ${propio} push`, ctx, /LEARNINGS #7/);
+  deny(`git -C ${propio} push`, { ...ctx, cwd: otro }, /LEARNINGS #7/);
+  deny(`git -C ${wt} push -u origin HEAD`, ctx, /LEARNINGS #7/);
+  deny(`git -C ${propio}/sub push`, { ...ctx, cwd: otro }, /LEARNINGS #7/);
+  deny(`cd ${otro} && git -C ${propio} push`, ctx, /LEARNINGS #7/);
+  deny(`cd ${raiz} && git -C propio push`, { ...ctx, cwd: otro }, /LEARNINGS #7/);
+  deny(`git -C ${otro} -C ../propio push`, { ...ctx, cwd: otro }, /LEARNINGS #7/); // varios `-C` encadenan
+  // Un `-c clave=valor` delante tampoco quita que sea un push.
+  deny('git -c http.extraheader=x push', ctx, /LEARNINGS #7/);
+  allow('git -c http.extraheader=x push', { ...ctx, cwd: otro });
+  // Una ruta que no se sabe adónde va manda la sesión, venga de donde venga.
+  deny('git -C $CUADERNO push', ctx, /LEARNINGS #7/);
+  deny(`cd ${otro} && git -C $DESTINO push`, ctx, /LEARNINGS #7/);
+  // Lo que ya no era un push de commits sigue sin serlo, con `-C` o sin él; y la salida explícita.
+  allow(`git -C ${propio} push --dry-run`, ctx);
+  allow(`git -C ${propio} push origin --delete rama-vieja`, ctx);
+  allow(`git -C ${propio} status`, ctx);
+  allow(`git -C ${propio} log --oneline`, ctx);
+  allow(`git -C ${propio} push # sc:ok`, ctx);
+  allow(`git -C ${propio} push`, { ...ctx, preflight: verde.preflight });
 });
 
 test('#21 sacar la rama de otra sesión para trabajar en ella → deny; desde main, un fichero suelto o sc:ok → allow', () => {

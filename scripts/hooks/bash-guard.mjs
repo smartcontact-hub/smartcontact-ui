@@ -395,28 +395,75 @@ function entornoAPantalla(cmd) {
 // partido). Casar por substring dispararía sobre prosa: el primer falso positivo del hook fue un
 // `printf '... el hook de git push'`, denegado en su primer minuto de vida.
 const empiezaPor = (seg, re) => re.test(seg.replace(/^(\s*[A-Za-z_][A-Za-z_0-9]*=\S*\s+)*/, '').replace(/^\(\s*/, ''));
+
+/** Un valor de la línea de comandos, entrecomillado o no. */
+const VALOR = String.raw`(?:"[^"]*"|'[^']*'|\S+)`;
+/** Las opciones de git que pueden ir ANTES del subcomando: `-C <ruta>` (git entra en ella) y `-c <clave=valor>`. */
+const OPCIONES_GIT = String.raw`(?:-C\s+${VALOR}\s+|-c\s+${VALOR}\s+)*`;
+const ES_GIT_PUSH = new RegExp(String.raw`^git\s+${OPCIONES_GIT}push\b`);
 const esPushDeCommits = (seg) =>
-  empiezaPor(seg, /^git\s+push\b/) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
+  empiezaPor(seg, ES_GIT_PUSH) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
 
 /**
- * La carpeta donde de verdad corre el comando: la de la sesión, salvo que empiece por `cd <ruta>`.
- *
- * Por qué (2026-09-27): el hook recibe el cwd de la SESIÓN, así que `cd <worktree> && git push` o
- * `cd <worktree> && npx playwright test` se juzgaban contra el árbol principal. Denegó dos veces sin
- * motivo (la marca de preflight y el `dist/` del worktree estaban al día) y hubo que saltarlo con
- * `# sc:ok`. Solo rutas LITERALES: con una variable (`cd $DIR`) no se sabe adónde va y manda la sesión.
+ * La carpeta donde corre un `git push`: la de su segmento, o la que le da `-C <ruta>`, que es el `cd` de
+ * git: la ruta cuenta desde donde esté y varios `-C` encadenan. `git -C <ruta> push` no empieza por
+ * `git push`, y por eso pasaba sin que nadie lo mirara: el del informe (`git -C <otro repo> push`) solo
+ * pasaba por eso, y el de ESTE repo se colaba sin marca (2026-10-04). Una ruta que no se sabe adónde
+ * va (variable, `$(…)`) manda la de la sesión, como un `cd` opaco.
  */
-export function carpetaEfectiva(cmd, cwd) {
-  let dir = cwd;
-  for (const seg of segmentos(cmd)) {
-    if (/^(export\s+)?[A-Za-z_][A-Za-z_0-9]*=\S*$/.test(seg)) continue; // asignaciones delante del cd
-    const m = seg.match(/^cd\s+(?:"([^"$`]+)"|'([^']+)'|([^\s"'$`]+))$/);
-    if (!m) break;
-    const ruta = m[1] ?? m[2] ?? m[3];
-    if (ruta === '-') break;
-    dir = ruta === '~' || ruta.startsWith('~/') ? resolve(process.env['HOME'] ?? '/', ruta.slice(2)) : resolve(dir, ruta);
+function carpetaDelPush(seg, dir, sesion) {
+  const { args } = programa(seg);
+  for (let i = 0; i < args.length && args[i].startsWith('-'); i++) {
+    if (args[i] === '-c') i++;
+    else if (args[i] === '-C') {
+      const ruta = args[++i] ?? '';
+      dir = !ruta || ruta === 'SUB' || /[$`]/.test(ruta) ? sesion : irA(dir, ruta);
+    }
   }
   return dir;
+}
+
+/** El destino de un segmento que es un `cd`: su ruta si es LITERAL; `null` si es un `cd` pero no se sabe
+ *  adónde va (variable, `-`, sin argumento); `undefined` si el segmento no es un `cd`. */
+function destinoDeCd(seg) {
+  if (!/^cd(\s|$)/.test(seg)) return undefined;
+  const m = seg.match(/^cd\s+(?:"([^"$`]+)"|'([^']+)'|([^\s"'$`]+))$/);
+  const ruta = m ? (m[1] ?? m[2] ?? m[3]) : null;
+  return ruta && ruta !== '-' ? ruta : null;
+}
+
+const irA = (dir, ruta) => (ruta === '~' || ruta.startsWith('~/') ? resolve(process.env['HOME'] ?? '/', ruta.slice(2)) : resolve(dir, ruta));
+
+/**
+ * La carpeta en que corre CADA segmento (alineada con `segmentos(cmd)`): la que dejan los `cd` literales
+ * anteriores, estén donde estén.
+ *
+ * Por qué (2026-09-27): el hook recibe el cwd de la SESIÓN, así que `cd <worktree> && git push` o
+ * `cd <worktree> && npx playwright test` se juzgaban contra el árbol principal; denegó dos veces sin motivo
+ * (la marca de preflight y el `dist/` del worktree estaban al día) y hubo que saltarlo con `# sc:ok`. Aquello
+ * solo seguía los `cd` que ABREN el comando, y no basta: `false && cd <otro> && git push`,
+ * `git fetch && cd <wt> && npx playwright test` o un segundo push tras volver a este repo se juzgaban donde
+ * no eran (2026-10-01 y 2026-10-04). Solo rutas LITERALES: un `cd` que no se sabe adónde va (variable, `-`)
+ * vuelve a la carpeta de la sesión, que es lo estricto. Un `( … )` es un subshell: su `cd` no sale de él, así
+ * que `(cd <otro> && git push); git push` deja el segundo push en la de la sesión. No se modela el `cd`
+ * condicionado a otro test (`[ -d x ] && cd x; git push`): el repo no lo usa y complicaría lo que se lee aquí.
+ */
+export function carpetasPorSegmento(cmd, cwd) {
+  const pila = [];
+  let dir = cwd;
+  return segmentos(cmd).map((seg) => {
+    let s = seg;
+    while (s.startsWith('(')) {
+      pila.push(dir);
+      s = s.slice(1).trimStart();
+    }
+    const cierres = sinComillas(s).match(/\)+$/)?.[0].length ?? 0;
+    const enSuCarpeta = dir;
+    const ruta = destinoDeCd(s.slice(0, s.length - cierres).trimEnd());
+    if (ruta !== undefined) dir = ruta === null ? cwd : irA(dir, ruta);
+    for (let i = 0; i < cierres && pila.length; i++) dir = pila.pop();
+    return enSuCarpeta;
+  });
 }
 
 /**
@@ -582,7 +629,7 @@ function raizDelArbol(dir) {
  *     `node scripts/preflight-scope.mjs`, con ruta relativa, y el árbol no sale nunca en la línea.
  *     El `npm` de `npm run preflight` se queda en la carpeta desde la que se lanzó, que puede ser
  *     una subcarpeta: por eso cuenta la RAÍZ de su cwd, no el cwd.
- *     Cuenta solo si es el del comando (`carpetaEfectiva`): en esta máquina conviven decenas de
+ *     Cuenta solo si es el del comando (`carpetasPorSegmento`): en esta máquina conviven decenas de
  *     worktrees (35 el 2026-09-28), y el preflight de otro no toca este `dist/`.
  *
  * Un cwd que no se puede leer NO cuenta. `lsof` no devuelve nada ni para un PID que ya murió ni
@@ -676,15 +723,23 @@ export function evaluar(cmd, ctx = {}) {
 
 function evaluarBase(cmd, ctx = {}) {
   if (BYPASS.test(cmd)) return { decision: 'allow', reason: 'sc:ok explícito' };
-  const cwd = carpetaEfectiva(cmd, ctx.cwd || process.cwd());
   const preflight = ctx.preflight || estadoPreflight;
   const sinIndexar = ctx.sinIndexar || fuentesSinIndexar;
   const segs = segmentos(cmd);
+  const sesion = ctx.cwd || process.cwd();
+  const carpetas = carpetasPorSegmento(cmd, sesion);
+  /** Las carpetas en que corren los segmentos que cumplen `pred`, sin repetir: cada regla mira la de los suyos. */
+  const enCarpetas = (pred) => [...new Set(segs.flatMap((s, i) => (pred(s) ? [carpetas[i]] : [])))];
 
   // #7 (a) — push sin preflight fresco sobre el árbol FINAL. Solo en un árbol de este repo: en otro
-  // no hay cadena que escriba la marca (`usaPreflight`).
-  if (segs.some(esPushDeCommits) && (ctx.usaPreflight || usaPreflight)(cwd)) {
-    const st = preflight(cwd);
+  // no hay cadena que escriba la marca (`usaPreflight`), y exigirla dejó a un subagente con sus commits
+  // sin subir (2026-10-01). Cada push se juzga en la carpeta de SU segmento (`carpetasPorSegmento`), o en la
+  // de su `-C <ruta>` (`carpetaDelPush`).
+  for (const [i, seg] of segs.entries()) {
+    if (!esPushDeCommits(seg)) continue;
+    const dir = carpetaDelPush(seg, carpetas[i], sesion);
+    if (!(ctx.usaPreflight || usaPreflight)(dir)) continue;
+    const st = preflight(dir);
     if (!st.ok)
       return {
         decision: 'deny',
@@ -698,8 +753,8 @@ function evaluarBase(cmd, ctx = {}) {
 
   // #7 (c) — lanzar la CADENA con fuentes nuevas sin `git add`: verde ciego.
   // Dos gates enumeran con `git ls-files`, así que no ven lo que no está en el índice.
-  if (segs.some((sg) => CADENA_CIEGA.test(sg))) {
-    const nuevos = sinIndexar(cwd);
+  for (const dir of enCarpetas((sg) => CADENA_CIEGA.test(sg))) {
+    const nuevos = sinIndexar(dir);
     if (nuevos.length > 0)
       return {
         decision: 'deny',
@@ -866,8 +921,8 @@ function evaluarBase(cmd, ctx = {}) {
   // que parece una dependencia rota y no lo es — los paths del tsconfig apuntan a `dist/`, y esa
   // carpeta se está reescribiendo mientras el runner la lee. Cuesta la pasada entera (10-25 min)
   // y manda a buscar el fallo al sitio equivocado.
-  if (segs.some((seg) => empiezaPor(seg, BUILDS))) {
-    const pid = (ctx.preflightVivo || preflightVivo)(cwd, ctx);
+  for (const dir of enCarpetas((seg) => empiezaPor(seg, BUILDS))) {
+    const pid = (ctx.preflightVivo || preflightVivo)(dir, ctx);
     if (pid)
       return {
         decision: 'deny',
@@ -886,8 +941,8 @@ function evaluarBase(cmd, ctx = {}) {
   // costó un «con la clave falla 4/4, sin ella pasa 1/1» que era el mismo `dist/` en las dos
   // pasadas, un arreglo mudado a otro fichero por esa falsa causa y un «75 de 75» que no incluía
   // los cambios de componentes. Solo se vio al medir una variable y encontrarla sin cambiar.
-  if (segs.some((s) => empiezaPor(s, E2E))) {
-    const rancio = (ctx.distRancio || distRancio)(cwd);
+  for (const dir of enCarpetas((s) => empiezaPor(s, E2E))) {
+    const rancio = (ctx.distRancio || distRancio)(dir);
     if (rancio)
       return {
         decision: 'deny',
@@ -908,12 +963,9 @@ function evaluarBase(cmd, ctx = {}) {
   // ediciones a mano. Un diff inflado no es cosmético: convierte un rebase limpio en uno con
   // conflictos y te hace decidir sobre líneas que no escribiste.
   if (
-    segs.some(
-      (s) =>
-        empiezaPor(s, /^(npx\s+)?prettier\b/) &&
-        /(^|\s)(--write|-w)(\s|$)/.test(s),
-    ) &&
-    !(ctx.usaPrettier || usaPrettier)(cwd)
+    enCarpetas((s) => empiezaPor(s, /^(npx\s+)?prettier\b/) && /(^|\s)(--write|-w)(\s|$)/.test(s)).some(
+      (dir) => !(ctx.usaPrettier || usaPrettier)(dir),
+    )
   )
     return {
       decision: 'deny',
