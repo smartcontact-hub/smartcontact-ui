@@ -28,19 +28,17 @@ import { clampLinksToChannels, diffLinks, familiesOf } from '@features/admin/ser
 
 import { GROUP_CHANNELS, type Group, type GroupChannel } from '../../data/groups-data';
 import {
-  ASSIGNED_COL_REM,
   type AgentChannelTableAgent,
   AgentChannelTableComponent,
-  CHANNEL_COL_COMPACT,
-  LEVEL_COL_REM,
-  ENABLED_COL_REM,
-  AGENT_NAME_COL_REM,
+  COLUMN_REM,
+  columnsRem,
 } from '../agent-channel-table/agent-channel-table.component';
 
 /**
  * El ancho del panel sale de lo que lleva dentro (DD-131), en rem. Hasta el 2026-09-28 era un `52rem` fijo, el
  * ancho de la tabla de la ficha: con dos canales dejaba 450 px entre el nombre y su primera casilla (medido a 1440).
- *   · NOMBRE: 21rem, que caben el avatar, un nombre y su presencia; más largo, se recorta con su `title`.
+ *   · COLUMNAS: las de la tabla compacta, medidas en ella (`COLUMN_REM`, DD-156). Cabe el email más largo de la
+ *     semilla; uno más largo se recorta con su `title`.
  *   · MARCO: el relleno del cajón (15,75 a cada lado) y el borde de la tabla.
  *   · MÍNIMO: 28rem, lo que piden el título y la barra (filtro + búsqueda) en una línea.
  */
@@ -129,13 +127,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
 
   /** El ancho del cajón, en función de sus columnas; nunca más que la pantalla. */
   protected readonly width = computed(() => {
-    const channelCols = this.families().length;
-    const rem =
-      AGENT_NAME_COL_REM + ENABLED_COL_REM +
-      channelCols * parseFloat(CHANNEL_COL_COMPACT) +
-      this.levelFamilies().length * LEVEL_COL_REM +
-      ASSIGNED_COL_REM +
-      PANEL_CHROME_REM;
+    const rem = columnsRem(COLUMN_REM.compact, this.families().length, this.levelFamilies().length) + PANEL_CHROME_REM;
     return `min(${Math.max(PANEL_MIN_REM, rem)}rem, 100vw)`;
   });
 

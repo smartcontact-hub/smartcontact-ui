@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El estado del agente en su columna de la tabla de agentes del grupo; cada columna medida, y el panel las suma | DD-156 |
 > | Tiempos con catálogo, cola Fija/Variable, horarios de atención por subcanal y música en un control | DD-152 |
 > | Asignación desde la lista completa, filtro estable y confirmación colectiva desde dos cambios | DD-151 |
 > | Canales permitidos del agente; intersección con grupo y enlace, aviso al retirar y compatibilidad en los selectores | DD-150 |
@@ -114,6 +115,68 @@
 
 ---
 
+## DD-156 · 2026-10-04 — El estado del agente, en su propia columna; cada columna de la tabla, medida
+
+**Contexto.** La referencia de producto de la asignación de agentes («4. Agentes y revisión», revisión del
+2026-10-01) pide el estado de la persona como un dato aparte, tras el agente. DD-149 lo puso junto al nombre, en la
+misma celda, con 21rem para los dos. Medido el 2026-10-04 en la ficha de grupo y en el panel rápido:
+- cada etiqueta empezaba donde acababa su nombre: de 45 a 63 px de diferencia entre filas, a cualquier ancho;
+- se comía el sitio del email: en el panel, el de la fila en «Administrativo» salía recortado;
+- «Asignado» y «Habilitado» medían 7rem en las dos densidades: 18 y 14 px de aire en la ficha, y 34 y 30 en el panel.
+
+**Decisión.**
+1. **«Estado» es una columna**, la que sigue a «Agente», en la ficha y en el panel. Lleva la etiqueta del listado de
+   agentes y su misma palabra (`agents.table.presence`). Sin estado, la celda queda vacía. Enmienda DD-149: «junto al
+   nombre» y los 21rem compartidos.
+2. **Cada columna mide lo más largo que lleva** en los cuatro idiomas, más el relleno de celda (14 px a cada lado en
+   la ficha, 6 en el panel) y unos 6 px de margen (`COLUMN_REM`):
+
+   | Columna | Lo más largo | Ficha | Panel |
+   |---|---|---|---|
+   | Asignado | «Asignado», 66 px | 6,25rem | 5,25rem |
+   | Agente | el email más largo de la semilla, 203 px, con avatar y hueco | 15rem, mínimo | 16,25rem |
+   | Estado | «Post-conversando» o «Post-conversation», 123 px | 9,75rem | 8,75rem |
+   | Nivel de un canal | sin cambios | 9rem | 9rem |
+   | Canal | sin cambios | 6,5rem | 5rem |
+   | Habilitado | «Habilitado», 70 px | 6,5rem | 5,5rem |
+
+   En la ficha, el agente es un mínimo: el nombre más largo cabe siempre, y la columna crece con el sitio que haya.
+   En el panel, que mide lo que lleva (DD-131), cabe el email entero. El email gana `title`: uno más largo que su
+   columna se lee al pasar.
+3. **El panel suma esas mismas columnas** (`columnsRem`): 48rem con dos canales y 43rem con uno (antes, 47,25 y
+   42,25). Enmienda DD-151 §Panel.
+
+**Razón.** Medido antes y después en la ficha, con grupos de uno, dos y tres canales, a 1024, 1280, 1366, 1440, 1536
+y 1680 (18 casos):
+- las etiquetas empiezan en la misma vertical en los 18 (antes, de 45 a 63 px de diferencia);
+- ningún caso recorta más emails que antes; los que recortaban, uno menos o los mismos;
+- lo que cabía sin desplazar sigue cabiendo: un canal a 1280, 1440, 1536 y 1680; dos, a 1280, 1536 y 1680; los tres,
+  a 1680.
+
+En el panel, ningún email de la primera página sale recortado.
+
+**Coste.** Lo que ya desplazaba en horizontal desplaza 40 px más: la columna nueva (156 px en la ficha) menos lo que
+ceden el agente (96) y el aire de Asignado y Habilitado (20). A 1440, en un grupo de tres canales, Email también queda
+fuera; a 1366, un grupo de un canal ya desplazaba 3 px, y ahora 43.
+
+**Descartadas.**
+- *Un punto de color en vez de la etiqueta*, como en la referencia: la etiqueta es la del listado de agentes y la de
+  Contact Center › Servicio (DD-149), y un punto solo aquí haría dos lenguajes para lo mismo. El ancho lo marca el
+  texto, no la caja.
+- *El estado bajo el email, en la celda del agente*: una tercera línea alarga cada fila (DD-131 pide filas compactas),
+  y no es el dato aparte que pide la referencia.
+- *Reservar el email entero también en la ficha (17rem)*: un grupo de un canal dejaría de caber a 1440; por cuenta,
+  736 px en una caja de 735.
+- *El estado sin ancho fijo*: su columna cambiaría de ancho al filtrar o paginar, según las etiquetas de cada página.
+- *La densidad compacta del panel también en la ficha*: ganaría unos 100 px, pero DD-131 la dejó solo para el panel.
+  Queda como salida si la ficha no debe desplazar a 1440, junto con fijar Asignado y Agente a la izquierda.
+
+**Consecuencias.**
+- **Pruebas:** `ficha-grupo-estado.spec.ts` (cuatro: tres en rojo contra DD-149, en su propio commit, y la guarda de
+  no desplazar). Cambian `ficha-grupo-familias` (el ancho del panel, 768 y 688 px) y `panel-agentes-grupo`: el aire
+  se mide del email a su estado y del estado a la primera casilla, y se ha visto en rojo con aire puesto.
+- **Código:** `COLUMN_REM` y `columnsRem`, en `agent-channel-table.component.ts`. El panel deja de tener constantes
+  propias.
 ## DD-155 · 2026-10-04 — Los barridos de tus pantallas en local, el CI en 8 partes y un selector que no lo prueba todo por un fichero suelto
 
 **Contexto.** Medido tras DD-154:
@@ -301,7 +364,7 @@ reales, sin incluir incompatibles ni filas que quedarían iguales. Cancelar cons
 número de agentes modificados. Los cambios siguen pendientes hasta Guardar en la ficha o el panel.
 
 **Panel.** Nace arriba y ocupa toda la altura, sin `topOffset`. Su ancho suma Asignado, identidad, niveles,
-familias y Habilitado, limitado por la ventana. Las familias también aparecen cuando solo hay una: ahora la lista
+familias y Habilitado, limitado por la ventana. *(DD-156: y Estado, cada columna medida.)* Las familias también aparecen cuando solo hay una: ahora la lista
 incluye agentes sin asignar y necesita explicar su compatibilidad. Enmienda DD-121 §8/10 y DD-131 §1–3/6.
 
 **Descartadas.** Mantener dos entradas para asignar duplicaría el mismo estado. Refiltrar tras cada casilla haría
@@ -340,7 +403,8 @@ asignar. Modificar las bases de la semilla extendería la restricción a decenas
 `GroupAgentLink.active`, igual que la ficha del agente. Enmienda DD-121: deshabilitar una asignación no es poner
 a la persona en pausa. No elimina la relación, sus canales ni sus niveles, ni cambia las otras asignaciones.
 
-La presencia se muestra junto al nombre con la misma etiqueta de color y texto del listado. `PRESENCE_TAGS`
+La presencia se muestra junto al nombre con la misma etiqueta de color y texto del listado. *(Enmendado por DD-156,
+2026-10-04: va en su propia columna, «Estado», tras el agente.)* `PRESENCE_TAGS`
 pasa a los datos compartidos de agentes; ficha, panel y listado leen `AgentsStore`. Un estado ausente no se
 inventa. La presencia, la cuenta activa (`Agent.status`) y la habilitación del enlace son conceptos distintos;
 los textos de los cuatro idiomas explicitan esa diferencia.
@@ -353,7 +417,8 @@ los miembros que una condición de grupo incluye. No se cambia el evaluador ni l
 habilitación mide 7rem y se suma al ancho del panel y al mínimo de tabla, incluidos ambos niveles. El nombre
 reserva 21rem para compartir celda con las presencias largas sin ocultar los nombres de prueba (la sonda
 falló con 15rem). La tabla desplaza horizontalmente cuando no cabe. El lote sigue siendo solo quitar del
-grupo; la asignación desde la lista completa pertenece a E4.
+grupo; la asignación desde la lista completa pertenece a E4. *(DD-156: el agente y el estado se miden por separado, y Asignado y Habilitado,
+por su rótulo.)*
 
 **Alternativas descartadas.** Reutilizar «En pausa» confundiría una relación con la presencia. Cambiar
 `Agent.status` desde una fila afectaría a la cuenta, no al grupo. Duplicar el catálogo de colores haría divergir

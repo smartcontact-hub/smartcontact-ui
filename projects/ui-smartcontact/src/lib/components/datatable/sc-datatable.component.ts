@@ -620,6 +620,22 @@ export class ScDatatableComponent<T = unknown> {
       const row = this.hostEl.querySelector<HTMLElement>('tbody > tr:has(> td:not([colspan]))');
       if (row?.offsetHeight) this.rowHeight.set(row.offsetHeight);
     });
+    /* La lista virtual de PrimeNG cuenta las filas que le caben al nacer, y después solo vuelve a contar si
+     * cambia la VENTANA. Nace a la vez que la tabla pide el alto que queda (`sc-datatable--fill`), y la tarjeta
+     * que la contiene se estira con un selector `:has()` que puede aplicarse un fotograma tarde. Si cuenta en
+     * ese fotograma, la caja mide 0, le caben 0 filas y la tabla se queda sin ninguna. Medido el 2026-10-04:
+     * con `prefers-reduced-motion: reduce`, el listado de agentes salía siempre así. Por eso se observa su
+     * caja y cada cambio entra por la misma puerta que el de la ventana: `onWindowResize` solo rehace las
+     * cuentas si el tamaño difiere del que midió, así que el caso de siempre no cuesta nada. */
+    afterRenderEffect(onCleanup => {
+      if (!this.pVirtualScroll() || typeof ResizeObserver === 'undefined') return;
+      const scroller = this.table().scroller();
+      const box = this.hostEl.querySelector<HTMLElement>('.p-virtualscroller');
+      if (!scroller || !box) return;
+      const observer = new ResizeObserver(() => scroller.onWindowResize());
+      observer.observe(box);
+      onCleanup(() => observer.disconnect());
+    });
   }
 
   /**

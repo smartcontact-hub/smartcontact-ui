@@ -19,6 +19,11 @@
 > está hecha: en todas las que tocan una variable, el export aún dice el valor de antes.
 
 
+**Estado del agente en su columna (DD-156, 2026-10-04).** Pendiente de reflejar en la maqueta de la asignación de
+agentes del grupo (ficha y panel): «Estado» es la columna que sigue a «Agente», con la etiqueta del listado, y cada
+columna mide lo que lleva (Asignado y Habilitado, su rótulo). La referencia de producto dibuja un punto de color: se
+mantiene la etiqueta del listado y de Contact Center › Servicio. Mídelo antes; no requiere variables nuevas.
+
 **F · listado (DD-153, 2026-10-02).** Pendiente de reflejar en el Kit y la maqueta: selector de
 columnas solo con `view_column` (tallas de botón de icono existentes), Asignar y menú fijos a la
 derecha, fondo opaco por estado y sombra solo mientras hay contenido oculto. Mídelo antes contra
