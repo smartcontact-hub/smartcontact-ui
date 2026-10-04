@@ -834,6 +834,26 @@ test('#7 `git -C <ruta> push` se juzga en su ruta: la de otro repo pasa; la de e
   allow(`git -C ${propio} push`, { ...ctx, preflight: verde.preflight });
 });
 
+// 2026-10-04: `cd <ruta que no existe>; git push` — el `cd` falla y, con `;` o un salto de línea, el push corre donde
+// estuviera el shell, que es este repo. `usaPreflight` miraba la raíz de una carpeta que no está en el disco, no
+// encontraba el script de la marca y la daba por de otro repo. Una carpeta que no existe no es de NINGÚN otro repo:
+// cuenta como este, que es lo estricto. El precio, y se acepta: `mkdir <nueva> && cd <nueva> && git init && git push`
+// también pide marca (o `# sc:ok`), porque la carpeta aún no existe cuando el hook mira.
+test('#7 un `cd` a una carpeta que no existe no exime al push: corre donde estuviera el shell', (t) => {
+  const { raiz, otro, ctx } = reposDePrueba(t);
+  // ROJO de antes, y era un hueco: la ruta que no está, con `;`, con salto de línea, con `&&` y con `-C`.
+  deny(`cd ${raiz}/no-existe; git push`, ctx, /LEARNINGS #7/);
+  deny(`cd ${raiz}/no-existe\ngit push origin main`, ctx, /LEARNINGS #7/);
+  deny(`cd ${raiz}/no-existe && git push`, ctx, /LEARNINGS #7/); // aquí el push no llegaría a correr: un aviso de más, sin daño
+  deny(`git -C ${raiz}/no-existe push`, ctx, /LEARNINGS #7/);
+  // El precio medido, a la vista: una carpeta que se crea en el mismo comando todavía no existe.
+  deny(`mkdir -p ${raiz}/nuevo && cd ${raiz}/nuevo && git init -q && git push`, ctx, /LEARNINGS #7/);
+  allow(`mkdir -p ${raiz}/nuevo && cd ${raiz}/nuevo && git init -q && git push # sc:ok`, ctx);
+  // Y lo que existe y es de otro repo sigue pasando.
+  allow(`cd ${otro}; git push`, ctx);
+  allow(`git -C ${otro} push`, ctx);
+});
+
 test('#21 sacar la rama de otra sesión para trabajar en ella → deny; desde main, un fichero suelto o sc:ok → allow', () => {
   // ROJO: los dos comandos de ese día, sobre ramas cuya sesión seguía viva en la nube.
   deny('git checkout -q -b pr-256 origin/feat/indice-unico', verde, /LEARNINGS #21/);

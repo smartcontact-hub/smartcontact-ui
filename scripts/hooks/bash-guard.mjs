@@ -473,8 +473,14 @@ export function carpetasPorSegmento(cmd, cwd) {
  * Por qué (2026-10-01): una sesión de este repo también empuja OTROS repositorios (`cd <otro> &&
  * git push`), y la regla de push les pedía una marca que allí no puede escribir nadie: no se podía
  * cumplir nunca, y la única salida era `# sc:ok`. Se mira en vez de asumir, como `usaPrettier`.
+ *
+ * Una carpeta que NO existe cuenta como de este repo (2026-10-04): no es de otro, porque no hay nada que
+ * mirar, y el `cd` que la nombra falla; con `;` o un salto de línea el push corre donde estuviera el shell. El
+ * precio es `mkdir <nueva> && cd <nueva> && git init && git push`, que aún no existe cuando el hook mira y pide
+ * marca o `# sc:ok`.
  */
 function usaPreflight(dir) {
+  if (!fsSync.existsSync(dir)) return true;
   return fsSync.existsSync(resolve(raizDelArbol(dir), 'scripts', 'preflight-mark.mjs'));
 }
 
