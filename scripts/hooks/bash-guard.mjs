@@ -129,7 +129,7 @@ function partes(cmdCrudo) {
   return out.filter((p) => p.texto);
 }
 
-const segmentos = (cmd) => partes(cmd).map((p) => p.texto);
+export const segmentos = (cmd) => partes(cmd).map((p) => p.texto);
 
 /** Las tuberías del comando: cada una, sus etapas en orden (las que se pasan la salida con `|`). */
 function tuberias(cmd) {
@@ -402,7 +402,7 @@ const VALOR = String.raw`(?:"[^"]*"|'[^']*'|\S+)`;
  *  `--git-dir` y `--work-tree` (con `=` o con espacio), y las que no llevan valor (`--no-pager`, `-P`…). */
 const OPCIONES_GIT = String.raw`(?:-C\s+${VALOR}\s+|-c\s+${VALOR}\s+|--(?:git-dir|work-tree)(?:=|\s+)${VALOR}\s+|(?:--no-pager|-P|--paginate|-p|--no-optional-locks|--bare)\s+)*`;
 const ES_GIT_PUSH = new RegExp(String.raw`^git\s+${OPCIONES_GIT}push\b`);
-const esPushDeCommits = (seg) =>
+export const esPushDeCommits = (seg) =>
   empiezaPor(seg, ES_GIT_PUSH) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
 
 /** Una ruta que no se sabe adónde va: una variable, un `$(…)` (que `palabras` deja en `SUB`) o nada. */
@@ -420,7 +420,7 @@ const rutaOpaca = (ruta) => !ruta || ruta === 'SUB' || /[$`]/.test(ruta);
  * push` solo pasaba por eso, y el de ESTE repo se colaba sin marca (2026-10-04). Una ruta que no se sabe adónde
  * va (variable, `$(…)`) manda la de la sesión, como un `cd` opaco.
  */
-function carpetaDelPush(seg, dir, sesion) {
+export function carpetaDelPush(seg, dir, sesion) {
   const entorno = {};
   const ws = palabras(seg.replace(/^[({]\s*/, ''));
   for (const w of ws) {
@@ -504,7 +504,7 @@ export function carpetasPorSegmento(cmd, cwd) {
  * precio es `mkdir <nueva> && cd <nueva> && git init && git push`, que aún no existe cuando el hook mira y pide
  * marca o `# sc:ok`.
  */
-function usaPreflight(dir) {
+export function usaPreflight(dir) {
   if (!fsSync.existsSync(dir)) return true;
   return fsSync.existsSync(resolve(raizDelArbol(dir), 'scripts', 'preflight-mark.mjs'));
 }
