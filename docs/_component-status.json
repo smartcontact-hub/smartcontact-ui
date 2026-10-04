@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 43 usados en Supervisor.",
+  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 45 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 151,
+      "usedInSupervisor": 153,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -521,7 +521,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 38,
+      "usedInSupervisor": 34,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -805,7 +805,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 8,
+      "usedInSupervisor": 10,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -847,7 +847,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 35,
+      "usedInSupervisor": 36,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1286,7 +1286,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 11,
+      "usedInSupervisor": 12,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },
@@ -1319,14 +1319,16 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 2,
+      "inputs": 4,
       "api": [
+        "collapsible",
         "hintKey",
-        "icon"
+        "icon",
+        "initiallyCollapsed"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0,
+      "usedInSupervisor": 8,
       "cuando": "Para una ranura con título dentro de una composición.",
       "sobreObsoleto": []
     },
@@ -1365,16 +1367,17 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 4,
+      "inputs": 5,
       "api": [
         "collapsible",
         "hintKey",
         "icon",
-        "initiallyCollapsed"
+        "initiallyCollapsed",
+        "titleId"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0,
+      "usedInSupervisor": 4,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "sobreObsoleto": []
     },
@@ -1475,7 +1478,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 30,
+      "usedInSupervisor": 33,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

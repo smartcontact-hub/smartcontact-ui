@@ -44,6 +44,8 @@ import {
   ScFormSectionNavComponent as FormSectionNavComponent,
   ScMessageComponent as MessageComponent,
   ScSectionCardComponent as SectionCardComponent,
+  ScSlotComponent as SlotComponent,
+  ScSubsectionComponent as SubsectionComponent,
   triStateOf,
 } from '@smartcontact-hub/components';
 import {
@@ -189,6 +191,8 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     GroupSummaryComponent,
     FormSectionNavComponent,
     SectionCardComponent,
+    SubsectionComponent,
+    SlotComponent,
     MessageComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
@@ -710,6 +714,18 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       queueSize: value === 'per_agent' && f[field].queueSizeType !== value ? 2 : f[field].queueSize } }));
   }
 
+  /** De dónde sale cada mensaje de la cola de Teléfono: nada, la voz sintética o un .wav propio. */
+  protected readonly audioSourceOptions = computed(() => {
+    this.lang();
+    return (['none', 'tts', 'file'] as const).map((value) => ({
+      label: this.translate.instant(`groups.form.announcements.source_${value}`),
+      value,
+    }));
+  });
+
+  /** «Mensajes en cola» de Teléfono, aparte de la música: casi nunca se tocan, así que nacen plegados (DD-157). */
+  protected readonly phoneMessagesOpen = signal(false);
+
   protected readonly queueSizeOptions = computed(() => {
     this.lang();
     return [
@@ -994,12 +1010,37 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.setAdvanced('allowedDomains', this.form().advanced.allowedDomains.filter((d) => d !== domain));
   }
 
-  /** El .wav elegido: de momento solo se guarda su nombre (demo). A la vista solo queda la música de espera. */
-  protected onAudioFile(key: 'holdMusicFile', event: Event): void {
+  /** El .wav elegido: de momento solo se guarda su nombre (demo). */
+  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile', event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) this.setAnnouncement(key, file.name);
     input.value = '';
+  }
+
+  /** Segundos de un aviso: un campo vaciado se queda en su valor anterior, como los de la cola. */
+  protected setAnnouncementNumber(key: 'avgWaitSec', value: unknown): void {
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) this.setAnnouncement(key, value);
+  }
+
+  /** Un mensaje periódico más: su .wav, cada 30 s hasta que se cambie. */
+  protected onPeriodicFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) this.setAnnouncement('periodicAnnouncements', [...this.form().announcements.periodicAnnouncements, { file: file.name, everySec: 30 }]);
+    input.value = '';
+  }
+
+  protected setPeriodicFrequency(index: number, value: unknown): void {
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 5) return;
+    this.setAnnouncement(
+      'periodicAnnouncements',
+      this.form().announcements.periodicAnnouncements.map((a, i) => (i === index ? { ...a, everySec: value } : a)),
+    );
+  }
+
+  protected removePeriodicAnnouncement(index: number): void {
+    this.setAnnouncement('periodicAnnouncements', this.form().announcements.periodicAnnouncements.filter((_, i) => i !== index));
   }
 
   protected copyChatScript(): void {

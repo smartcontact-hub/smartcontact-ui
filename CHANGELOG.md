@@ -26,6 +26,11 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/components`** — `sc-slot` se pliega como ya hacía `sc-subsection`: `collapsible` e
+  `initiallyCollapsed`, con el título entero como botón, `aria-expanded` y el chevron del DS. `sc-subsection` gana
+  `titleId`: con él, su título lleva ese `id` y acepta el foco por programa, para ser el destino de un salto. Las dos,
+  apagadas por defecto: nada cambia sin pedirlo. El título de un slot ya no se parte cuando su aclaración es larga.
+  ([DD-157](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-datatable` gana `externalSort`: la tabla pinta el indicador de
   orden y emite `(sortChange)`, pero **no reordena** las filas; el orden lo pone quien la usa. Sin él,
   p-table vuelve a ordenar por el valor crudo del campo encima del orden que recibe, y un orden propio

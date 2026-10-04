@@ -7180,6 +7180,26 @@
           "descripcion": "Clave de traducción de la aclaración bajo el título.",
           "origen": "nuestro",
           "nativo": null
+        },
+        {
+          "nombre": "collapsible",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Deja plegar y desplegar el slot desde su título.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "initiallyCollapsed",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Empieza plegado. Solo tiene efecto con `collapsible`.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": []
@@ -7380,6 +7400,16 @@
           "porDefecto": "false",
           "requerido": false,
           "descripcion": "Empieza plegada. Solo tiene efecto con `collapsible`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "titleId",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "`id` del título, para nombrar la subsección desde fuera o saltar a ella: con él, el título acepta el foco por programa (`tabindex=\"-1\"`), como el destino de un ancla.",
           "origen": "nuestro",
           "nativo": null
         }

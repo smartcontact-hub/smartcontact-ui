@@ -32,8 +32,16 @@ test('cada canal es un bloque con sus partes dentro, y cada parte pesa más que 
   for (const id of ['group-channel-phone', 'group-channel-chat']) {
     const canal = page.locator(`#${id}`);
     await expect(canal).toBeVisible();
-    const borde = await canal.evaluate((el) => parseFloat(getComputedStyle(el).borderTopWidth));
-    expect(borde, `${id}: el canal es una caja`).toBeGreaterThanOrEqual(1);
+    // La caja es la subsección del DS: blanca sobre el gris de la sección, sin borde (árbol Section → Subsection → Slot).
+    const [caja, debajo] = await canal.evaluate((el) => {
+      const fondo = (e: Element) => getComputedStyle(e).backgroundColor;
+      const transparente = (c: string) => c === 'transparent' || c === 'rgba(0, 0, 0, 0)';
+      let p = el.parentElement;
+      while (p && transparente(fondo(p))) p = p.parentElement;
+      return [fondo(el.firstElementChild!), p ? fondo(p) : ''];
+    });
+    expect(caja, `${id}: el canal pinta su propio fondo`).not.toMatch(/^(transparent|rgba\(0, 0, 0, 0\))$/);
+    expect(caja, `${id}: el canal es una caja, de otro fondo que lo que tiene debajo`).not.toBe(debajo);
     const tamano = (l: Locator) => l.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     const parte = await tamano(canal.locator('h4').first());
     const etiqueta = await tamano(canal.locator('.field__label').first());
@@ -56,7 +64,8 @@ test('Teléfono: la música va en la cola, y los demás mensajes, plegados y sin
   await goto(page, DISTRIBUCION);
   const tel = page.locator('#group-channel-phone');
   expect(await partes(tel)).toEqual(['Distribución', 'Cola', 'Mensajes en cola']);
-  await expect(tel.getByRole('region', { name: 'Cola' }).getByText('Música de espera', { exact: true })).toBeVisible();
+  const cola = tel.locator('sc-slot').filter({ has: page.getByRole('heading', { name: 'Cola', exact: true }) });
+  await expect(cola.getByText('Música de espera', { exact: true })).toBeVisible();
 
   const mensajes = tel.getByRole('button', { name: /Mensajes en cola/ });
   await expect(mensajes, 'nacen plegados').toHaveAttribute('aria-expanded', 'false');

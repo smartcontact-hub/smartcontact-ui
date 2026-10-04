@@ -90,8 +90,9 @@ test('los desplegables del DS hablan el idioma de la app: en inglés, «No resul
 });
 
 test('el tiempo máximo de espera en cola dice qué pasa al agotarse, en los dos canales y en Contact Center', async ({ page }) => {
+  // Y qué pasa sin siguiente destino (DD-157, revisión de producto del 2026-10-04).
   const AYUDA =
-    'Si nadie la atiende en este tiempo, la conversación sale del grupo y pasa al siguiente destino, que se elige en el Diseñador VUI.';
+    'Si nadie la atiende en este tiempo, la conversación sale del grupo y pasa al siguiente destino, que se elige en el Diseñador VUI. Sin siguiente destino, la conversación termina.';
   // El campo se describe con su sufijo delante («s Si nadie…»): se casa el final, que es la ayuda.
   const anunciada = new RegExp(`${AYUDA.replaceAll('.', '\\.')}$`);
   // Grupo 1: solo Teléfono. Grupo 11: también Chat.

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Distribución y colas con el árbol del DS (canal = subsección, parte = slot), Chat en el orden de Teléfono y los mensajes de la cola plegados | DD-157 |
 > | El estado del agente en su columna de la tabla de agentes del grupo; cada columna medida, y el panel las suma | DD-156 |
 > | Tiempos con catálogo, cola Fija/Variable, horarios de atención por subcanal y música en un control | DD-152 |
 > | Asignación desde la lista completa, filtro estable y confirmación colectiva desde dos cambios | DD-151 |
@@ -114,6 +115,50 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-157 · 2026-10-04 — Distribución y colas, con el árbol del DS: cada canal una caja, cada parte un slot, y los mensajes de la cola de vuelta
+
+**Contexto.** La revisión de producto del 2026-10-04 pidió tres cosas de esta sección:
+- «Distribución» pesaba lo mismo que la etiqueta «Estrategia» y no parecía una parte de Teléfono: cada canal era una
+  `.sub-section` sobre la tarjeta blanca, sus partes un rótulo de 12 px gris y los canales, separados por un divisor;
+- Chat partía su cola con el acceso en medio (horario, dominios, script y número entre la distribución y la cola);
+- la música de espera iba sola en «Mensajes en cola», y los demás mensajes de Teléfono (identificador, «Eres el
+  siguiente», periódicos, voz y avisos), fuera de la vista desde DD-121 §6, se querían de vuelta, sin llamarlos
+  «anuncios». El tiempo máximo de espera no decía qué pasa si no hay siguiente destino.
+
+**Decisión.**
+1. **El árbol del DS, Section → Subsection → Slot** (nodo Figma `12610:23080`): la sección pasa a `surface="subtle"`,
+   cada canal y las reglas comunes son un `sc-subsection` (la caja blanca sobre el gris, con su icono y su título) y
+   cada parte un `sc-slot` (título de 14 semibold y el divisor del DS entre partes). Sin divisores a mano entre
+   canales. No es una caja a mano: `audit:screen-vocabulary` no deja dibujarla en una pantalla, y el DS ya tenía la
+   pieza.
+2. **Chat sigue el orden de Teléfono**: Distribución, Cola, Mensajes en cola, y al final Web Chat · acceso y
+   WhatsApp · número. Enmienda DD-121 §5.
+3. **Teléfono: la música va en «Cola»**, junto al tiempo máximo, el % de servicio y el tamaño (dos filas de dos). La
+   voz pasa a los mensajes, que es lo que lee.
+4. **«Mensajes en cola» de Teléfono vuelve, plegado**: el identificador del grupo y «Eres el siguiente» (sin nada,
+   texto a voz o un .wav), los mensajes periódicos (uno o varios, cada uno con su frecuencia), la voz de los mensajes
+   y los tres avisos («Decir el tiempo medio de espera», «Decir la posición en la cola», «Decir al agente cuánto ha
+   esperado el cliente»). Nace plegado porque casi nunca se toca; su título dice qué hay dentro. «Audio saliente»
+   sigue fuera, pendiente de desarrollo. Enmienda DD-121 §5 («nada nace plegado») y §6.
+5. **Sin «anuncio»**: son mensajes, como en Chat («Mensajes periódicos», «Voz de los mensajes», «Decir…»), en la
+   ficha y en Contact Center › Grupos, en los cuatro idiomas.
+6. **El tiempo máximo de espera** añade «Sin siguiente destino, la conversación termina.»
+7. **El DS gana dos entradas, sin cambiar lo que había**: `sc-slot` se pliega (`collapsible`, `initiallyCollapsed`),
+   como ya hacía `sc-subsection`, con el título entero como botón y `aria-expanded`; y `sc-subsection` acepta
+   `titleId`, para que su título sea el destino de «Ir a» y del resumen enlazado (DD-130, DD-146). El título de un
+   slot ya no se parte cuando su aclaración es larga.
+
+**Razón.** El árbol del DS es exactamente la jerarquía que se pedía, y ya estaba en Figma y en sc-docs: tres niveles
+que se leen por el fondo, el tamaño y el divisor, sin inventar ninguno. Lo medido: el título de una parte pasa de 12
+a 14 px (la etiqueta de un campo sigue en 12) y cada canal pinta su propio fondo sobre el de la sección.
+
+**Coste.** La sección es la única de la ficha con fondo gris: es la única con un nivel más. Con todo desplegado y los
+cuatro canales mide 3.129 px a 1440, y plegado, 2.620 (medido el 2026-10-04, grupo 11).
+
+**Descartado.** Una caja con borde hecha en la hoja de la página (la para `audit:screen-vocabulary`); los mensajes
+siempre a la vista (seis controles que casi nadie toca entre la cola y Chat); un botón «Ver los mensajes» bajo el
+título, en vez del título plegable (dos cosas para lo mismo).
 
 ## DD-156 · 2026-10-04 — El estado del agente, en su propia columna; cada columna de la tabla, medida
 
@@ -2248,9 +2293,12 @@ tres fichas (#240) y el alta en diálogo (DD-119).
    - Email: una nota (sin estrategia ni cola propias).
    El modelo es ADITIVO: `phoneQueue`, `chatQueue` y `chat`, opcionales, se leen con `resolveGroup()` (lo nuevo, si
    no el juego único de antes, si no el de fábrica). Un canal apagado deja una línea que dice dónde se enciende. Nada
-   nace plegado: la sección mide 2.355 px con los cuatro canales, frente a unos 4.000 de la maqueta.
+   nace plegado: la sección mide 2.355 px con los cuatro canales, frente a unos 4.000 de la maqueta. *(Enmendado por
+   DD-157, 2026-10-04: cada canal es una subsección del DS y cada parte un slot; Chat va en el orden de Teléfono, con
+   el acceso al final; y los mensajes de la cola de Teléfono nacen plegados.)*
 6. **Mensajes en cola de teléfono: la música.** El identificador, «eres el siguiente», los anuncios periódicos, el
    audio saliente y los avisos salen de la vista y siguen en el modelo (`announcements` se guarda entero).
+   *(Enmendado por DD-157: vuelven, plegados y sin «anuncio», salvo el audio saliente; la música pasa a «Cola».)*
 7. **Recursos** como estaban (tipificación, agendas, plantillas de sus canales, etiquetas, cada una con su «+»), más
    la ficha de cliente, que vivía en Avanzado.
 8. **La tabla de agentes del grupo gestiona COMPOSICIÓN**: quién está y por qué canales. Sin «Habilitado» ni su lote:
