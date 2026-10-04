@@ -114,6 +114,52 @@
 
 ---
 
+## DD-155 · 2026-10-04 — Los barridos de tus pantallas en local, el CI en 8 partes y un selector que no lo prueba todo por un fichero suelto
+
+**Contexto.** Medido tras DD-154:
+- **Barridos.** Son las pruebas que comprueban una regla en muchas pantallas: 232 pruebas, el 43 % del
+  tiempo de la batería del Supervisor (16,4 de 38 minutos por pasada, sumando las partes del CI). Los cuatro
+  grandes (contraste, agrupación, foco e iconos: 159 pruebas, 10 minutos) nombran su pantalla en cada
+  título. En la pantalla tocada cazan fallos: en D3, agrupación cazó dos reales en crear y editar grupo. En
+  las no tocadas, solo con un cambio compartido: contraste, en el PR del sidebar (2026-09-23).
+- **Otras apps.** Un PR de una sola app corre solo su suite y despliega solo su sitio (DD-117). En `main`
+  corre todo, pero en paralelo: sc-docs y CusCare tardan unos 4 minutos y el Supervisor 13-15, así que no
+  añaden espera. En los últimos 80 PR, cinco corrieron las tres suites por un fichero que nada lee: la
+  plantilla de PR, `tools/` o un fichero suelto de la raíz. El #319, de solo texto, tardó 15 minutos en vez
+  de 2.
+- **En local.** `preflight:scope` compilaba las cinco apps si se tocaba `e2e/` o `scripts/`, algo que
+  pasaba en cada bloque.
+
+**Decisión** (de producto, 2026-10-04):
+1. **En local, las pruebas del bloque incluyen los barridos de sus pantallas**:
+   `npm run e2e:barridos -- --grep "admin/grupos|config/aed/grupos"`. Son 22 pruebas para las de grupos,
+   frente a las 159 de los cuatro barridos.
+2. **El CI reparte la batería del Supervisor en 8 partes**, no en 4.
+3. **El selector del CI** (`ci-cambios`) trata como documentación la plantilla de PR, las plantillas de
+   incidencias, `.git-blame-ignore-revs` y los `.txt` de la raíz. `tools/` cuenta como `scripts/`: corre
+   suites solo si una e2e lo alcanza.
+4. **`preflight:scope` compila solo las apps tocadas** aunque el cambio incluya pruebas e2e, configs de
+   Playwright, tests o hooks de `scripts/` o el CI (`preflight-alcance.mjs`). `angular.json` pasa a mandar
+   a la cadena completa, como debía.
+5. **En el PR y en `main` los barridos siguen corriendo enteros.**
+
+**Razón.** Las 8 partes y los dos arreglos del selector quitan espera sin quitar red. Los barridos de las
+pantallas propias en local son los que han cazado fallos de un bloque.
+
+**Descartadas.**
+- *Filtrar también en el CI del PR los barridos por pantalla tocada.* Con 8 partes ahorraría unos 1,5
+  minutos por PR. A cambio, haría falta una tabla de qué fichero pinta qué pantalla, que hay que mantener
+  y que, si se equivoca, deja pasar un fallo hasta `main` y el sitio publicado. Se decide después de
+  medir la espera con 8 partes.
+- *Barridos solo en `main`*: un fallo de contraste o de agrupación llegaría al sitio publicado antes de
+  verse.
+- *Seguir con 4 partes.*
+
+**Consecuencias.** La espera del PR con 8 partes se mide en el CI de este mismo lote. Si sigue alta, se
+retoma el filtro de barridos en el CI.
+
+---
+
 ## DD-154 · 2026-10-04 — En local, solo las pruebas del bloque; un PR por lote
 
 **Contexto.** Los bloques E2, E3, E4 y D3 del frente de fichas (2026-10-02) fueron un PR cada uno, y cada

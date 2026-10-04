@@ -33,9 +33,8 @@
 
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
-- **Lo que dejó DD-154 (ciclos de validación)**: (a) la propuesta de barridos con datos (232 pruebas, 43 % del
-  tiempo de la batería: cuáles en cada PR, cuáles a diario, cuáles cuando se toca algo compartido), que se decide
-  aparte; (b) medir el primer lote con el circuito nuevo igual que E2-D3 (memoria `medir-ciclos-de-codex`).
+- **Lo que dejaron DD-154 y DD-155**: (a) con la espera medida de las 8 partes, decidir si hace falta el filtro de
+  barridos en el CI; (b) medir el primer lote de producto igual que E2-D3 (memoria `mac-saturado-disco-y-memoria`).
 - **Lo que dejó DD-134 (la firma de los commits)**: (a) el 2026-10-05, leer el mensaje con que el robot funde la auditoría, el
   primero con `--subject`/`--body`; (b) en una rutina, `cloud-node.sh` no puso Node 22.23.2 ni `node_modules` (medido dos veces),
   y `nvm` sí estaba; (c) los commits de la nube salen «sin verificar» (`unknown_key`): si estorba, probar sin firma, que el proxy
@@ -179,7 +178,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
-## ✅ 2026-10-04 · En local, solo las pruebas del bloque, y un PR por lote (DD-154)
+## ✅ 2026-10-04 · En local, solo las pruebas del bloque, y un PR por lote (DD-154); barridos de tus pantallas y CI en 8 partes (DD-155)
 
 **Sello:** rama `areses/validation-cycle-analysis-d577b3`, sobre HEAD `001bcf5f` (#318), PR nuevo. Salen por el tope los dos tramos
 del 2026-09-28 (`pgrep` anclado y `CI=1 npm run e2e`): `git show 001bcf5f:docs/handoff/design-system.md`.
@@ -187,9 +186,10 @@ del 2026-09-28 (`pgrep` anclado y `CI=1 npm run e2e`): `git show 001bcf5f:docs/h
 **Lo que cambia.** Un ciclo de E2-D3 duraba entre 89 y 118 minutos, y el cambio escrito ocupaba 13. El resto se iba en la batería
 entera del Supervisor (528 pruebas, entre 13 y 29 minutos en local) y en dos CI por PR. Ahora en local se pasan solo las pruebas
 del bloque, y un lote planificado va en un PR. Medido y explicado en DD-154; LEARNINGS #7, AGENTS y la tarjeta ya lo dicen.
+El lote de DD-155, el primero en un PR: `npm run e2e:barridos -- --grep "<ruta>"` en local, el Supervisor en 8 partes en el CI,
+y los selectores (`ci-cambios`, `preflight-alcance.mjs`) ya no lo prueban ni lo compilan todo por pruebas, tests o la plantilla de PR.
 
-- ⚠️ **El Mac (Air M4, 16 GB) llegó al 100 % de disco el 2026-10-02 y cortó pruebas**; tres informes de macOS de memoria agotada.
-  Aun así no es lo que más pesa: una pasada controlada, 20,1 min, no se frena a lo largo de la tanda (memoria `mac-saturado-disco-y-memoria`).
+- ⚠️ **El Mac (Air M4, 16 GB) llegó al 100 % de disco el 2026-10-02 y cortó pruebas**, pero no es lo que más pesa (memoria `mac-saturado-disco-y-memoria`).
 
 ## ✅ 2026-10-01 · Un `sc-dialog` se anuncia como UN diálogo, con su título de nombre (DD-140)
 

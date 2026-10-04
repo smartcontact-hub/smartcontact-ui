@@ -7,7 +7,8 @@
  * has tocado y decide si hacen falta todos los builds:
  *
  *   · si el cambio roza código COMPARTIDO (las libs del DS, los tokens, la config de la
- *     raíz, los scripts, los e2e) -> **cadena completa**, sin discusión;
+ *     raíz, los scripts de la cadena) -> **cadena completa**, sin discusión; las pruebas e2e, los
+ *     tests y hooks de `scripts/` y el CI no entran en ningún build (`preflight-alcance.mjs`);
  *   · si se queda en UNA app -> se salta los builds AOT de las OTRAS apps.
  *
  * ⚠️ NO sustituye a `preflight`, y por eso imprime **siempre** lo que deja fuera. Un carril
@@ -21,6 +22,7 @@ import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
 import { avisarCarga, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
+import { APPS, planDe } from "./preflight-alcance.mjs";
 
 // Antes de mirar qué cambió, y antes de gastar un minuto: ¿la rama lleva `origin/main`? Un
 // preflight sobre una rama rezagada mide un árbol que nunca se pushea tal cual (2026-09-11: dos
@@ -36,29 +38,7 @@ import { enParalelo } from "./en-paralelo.mjs";
   }
 }
 
-/** Tocar cualquiera de estas obliga a la cadena completa. */
-const COMPARTIDO = [
-  /^projects\/ui-smartcontact/,
-  /^projects\/design-tokens/,
-  /^scripts\//,
-  /^e2e\//,
-  /^package(-lock)?\.json$/,
-  /^tsconfig/,
-  /^playwright.*\.config\.ts$/,
-  /^\.github\//,
-  /^eslint\.config\.js$/,
-];
-
-/** Lo que NO afecta a ningún runtime. */
-const INOCUO = [
-  /^findings\//,
-  /^docs\//,
-  /^\.cache\//,
-  /^tools\//,
-  /^[^/]*\.md$/,
-];
-
-const APPS = ["agent", "agent-mini", "supervisor", "cuscare", "sc-docs"];
+// Qué es compartido, qué no entra en ningún build y qué app se tocó: `preflight-alcance.mjs` (DD-155).
 
 function cambios() {
   const salida = execSync("git status --porcelain", { encoding: "utf8" });
@@ -87,13 +67,7 @@ if (ficheros.length === 0) {
   process.exit(0);
 }
 
-const compartidos = ficheros.filter((f) => COMPARTIDO.some((re) => re.test(f)));
-const relevantes = ficheros.filter((f) => !INOCUO.some((re) => re.test(f)));
-const appsTocadas = APPS.filter((a) =>
-  ficheros.some((f) => f.startsWith(`projects/${a}/`))
-);
-
-const completo = compartidos.length > 0;
+const { compartidos, relevantes, appsTocadas, completo } = planDe(ficheros);
 
 console.log(
   `\nficheros cambiados: ${ficheros.length} (${relevantes.length} con efecto en runtime)`

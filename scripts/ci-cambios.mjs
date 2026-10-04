@@ -8,12 +8,14 @@
  * clasificar corre TODO**. Solo se ahorra lo que se sabe seguro:
  *
  *   · un fichero de UNA app (su carpeta, su suite, su config de Playwright) → solo esa suite;
- *   · documentación que ningún runtime lee → ninguna suite;
- *   · un script de `scripts/` que ninguna e2e alcanza (los gates de `verify`) → ninguna suite;
+ *   · documentación que ningún runtime lee → ninguna suite (también la plantilla de PR y los ficheros
+ *     sueltos de git: DD-155);
+ *   · un script de `scripts/` o una herramienta de `tools/` que ninguna e2e alcanza (los gates de
+ *     `verify`, que corre siempre) → ninguna suite;
  *   · lo demás (el DS, la raíz, lo que las e2e importan de `scripts/`, `e2e/shared/`…) → todas.
  *
  * Qué scripts alcanzan las e2e no se apunta a mano (se pudriría): se siguen los `import` desde
- * `e2e/` y las configs de Playwright, y las rutas `scripts/…` que citen.
+ * `e2e/` y las configs de Playwright, y las rutas `scripts/…` o `tools/…` que citen.
  *
  * `verify` y `build` no pasan por aquí: corren siempre. Y en `main` (push) corre todo siempre: es la
  * red para cuando esta tabla se equivoque.
@@ -55,8 +57,20 @@ const PROPIOS = [
   [/^playwright\.cuscare\.config\.ts$/, 'cuscare'],
 ];
 
-/** Lo que ningún runtime ni ninguna suite lee. */
-const DOCUMENTACION = [/^docs\//, /^findings\//, /^\.claude\//, /^[^/]+\.md$/];
+/**
+ * Lo que ningún runtime ni ninguna suite lee. La plantilla de PR y los ficheros sueltos de git entraron
+ * el 2026-10-04 (DD-155): en los últimos 80 PR, cinco corrieron las tres suites por uno de ellos. El
+ * workflow del CI (`.github/workflows/`) NO es documentación: sigue corriendo todo.
+ */
+const DOCUMENTACION = [
+  /^docs\//,
+  /^findings\//,
+  /^\.claude\//,
+  /^[^/]+\.md$/,
+  /^\.github\/(pull_request_template\.md|ISSUE_TEMPLATE\/)/,
+  /^\.git-blame-ignore-revs$/,
+  /^[^/]+\.txt$/,
+];
 
 /**
  * @param {string[]} ficheros rutas cambiadas, relativas a la raíz del repo
@@ -67,7 +81,7 @@ export function suitesPara(ficheros, scriptsDeE2e) {
   const out = Object.fromEntries(SUITES.map((s) => [s, false]));
   for (const f of ficheros) {
     if (DOCUMENTACION.some((re) => re.test(f))) continue;
-    if (/^scripts\//.test(f) && !scriptsDeE2e.has(f)) continue;
+    if (/^(scripts|tools)\//.test(f) && !scriptsDeE2e.has(f)) continue;
     const propio = PROPIOS.find(([re]) => re.test(f));
     if (!propio) return Object.fromEntries(SUITES.map((s) => [s, true]));
     if (propio[1]) out[propio[1]] = true;
@@ -76,7 +90,7 @@ export function suitesPara(ficheros, scriptsDeE2e) {
 }
 
 const IMPORT = /(?:from\s*|import\s*\(\s*)['"](\.{1,2}\/[^'"]+)['"]/g;
-const CITA = /\bscripts\/[\w./-]+\.(?:mjs|cjs|js|ts)\b/g;
+const CITA = /\b(?:scripts|tools)\/[\w./-]+\.(?:mjs|cjs|js|ts)\b/g;
 
 function* ficherosDe(dir) {
   for (const e of readdirSync(dir)) {
@@ -87,7 +101,7 @@ function* ficherosDe(dir) {
 }
 
 /**
- * Los ficheros de `scripts/` que alcanza alguna e2e: importados desde `e2e/` o una config de
+ * Los ficheros de `scripts/` y `tools/` que alcanza alguna e2e: importados desde `e2e/` o una config de
  * Playwright, o citados por ruta, y lo que esos importan a su vez.
  * @param {string} raiz
  * @returns {Set<string>} rutas relativas a la raíz
@@ -101,7 +115,7 @@ export function scriptsAlcanzadosPorE2e(raiz) {
   const pendientes = [];
   const anota = (abs) => {
     const rel = relative(raiz, abs);
-    if (!rel.startsWith('scripts/') || vistos.has(rel) || !existsSync(abs)) return;
+    if (!/^(scripts|tools)\//.test(rel) || vistos.has(rel) || !existsSync(abs)) return;
     vistos.add(rel);
     pendientes.push(abs);
   };
