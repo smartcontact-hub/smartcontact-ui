@@ -1495,11 +1495,9 @@
       "services": "Services",
       "agents": "Agents",
       "agents_count": "{{count}} agents",
+      "agents_assign_aria": "{{count}} agents · Attribuer des agents à {{name}}",
       "services_count": "{{count}} services",
       "services_count_one": "1 service",
-      "assign": "Attribuer",
-      "assign_aria": "Attribuer des agents à {{name}}",
-      "assign_column": "Attribuer des agents",
       "strategy_phone": "Stratégie téléphone",
       "strategy_chat": "Stratégie chat"
     },

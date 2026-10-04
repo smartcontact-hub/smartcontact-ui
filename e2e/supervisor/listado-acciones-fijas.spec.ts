@@ -20,21 +20,23 @@ test('Columnas es un icono con conteo accesible, conserva selección y teclado',
   await disableAnimations(page);
   await goto(page, 'admin/grupos');
   const control = selector(page).getByRole('combobox');
-  await expect(control).toHaveAccessibleName('Columnas, 8 de 10');
+  // Nueve: «Asignar agentes» salió del listado y su acción va en la cifra de agentes (DD-159).
+  await expect(control).toHaveAccessibleName('Columnas, 7 de 9');
   await expect(selector(page).locator('sc-icon')).toHaveText('view_column');
   expect(await selector(page).evaluate(el => el.getBoundingClientRect().width)).toBeLessThan(45);
   await control.press('ArrowDown');
   await page.getByRole('option', { name: 'ID', exact: true }).click();
-  await expect(control).toHaveAccessibleName('Columnas, 9 de 10');
+  await expect(control).toHaveAccessibleName('Columnas, 8 de 9');
   await control.press('Escape');
   await expect(page.getByRole('listbox')).toHaveCount(0);
   await page.reload();
-  await expect(selector(page).getByRole('combobox')).toHaveAccessibleName('Columnas, 9 de 10');
+  await expect(selector(page).getByRole('combobox')).toHaveAccessibleName('Columnas, 8 de 9');
   await expect(page.locator('thead th[data-field="code"]')).toBeVisible();
 });
 
 for (const oscuro of [false, true]) {
-  test(`Asignar y menú fijos con ID, ancho arrastrado y fondos opacos · ${oscuro ? 'oscuro' : 'claro'}`, async ({ page }) => {
+  // Desde DD-159 la única acción fija es el «⋮»: «Asignar» salió del listado (su acción va en la cifra de agentes).
+  test(`El menú fijo con ID, ancho arrastrado y fondos opacos · ${oscuro ? 'oscuro' : 'claro'}`, async ({ page }) => {
     await (oscuro ? forceDarkTheme : forceLightTheme)(page);
     await disableAnimations(page);
     await page.setViewportSize({ width: 1366, height: 768 });
@@ -52,15 +54,13 @@ for (const oscuro of [false, true]) {
     expect(await cabecera.evaluate(el => el.getBoundingClientRect().width)).toBeGreaterThan(125);
     await page.evaluate(() => document.fonts.ready);
     const fila = primeraFila(page);
-    const asignar = fila.getByRole('button', { name: /^Asignar/ });
     const menu = fila.locator('.rules-kebab-btn button');
-    await expect.poll(() => cabeEnTabla(asignar)).toBe(true);
     await expect.poll(() => cabeEnTabla(menu)).toBe(true);
-    const celda = asignar.locator('xpath=ancestor::td');
+    const celda = menu.locator('xpath=ancestor::td');
     await expect(celda).toHaveCSS('position', 'sticky');
     await expect(celda).not.toHaveCSS('box-shadow', 'none');
     for (const estado of ['normal', 'hover', 'seleccionada']) {
-      if (estado === 'hover') await asignar.hover();
+      if (estado === 'hover') await fila.hover();
       if (estado === 'seleccionada') await fila.locator('p-table-checkbox').click();
       const fondos = await celda.evaluate(el => {
         const canvas = document.createElement('canvas');
@@ -72,9 +72,6 @@ for (const oscuro of [false, true]) {
       expect(fondos.alpha, estado).toBe(255);
       expect(fondos.celda, estado).toBe(fondos.fila);
     }
-    await asignar.click();
-    await expect(page.locator('.agents-panel')).toBeVisible();
-    await page.locator('.agents-panel').getByRole('button', { name: 'Cancelar', exact: true }).click();
     await menu.click();
     await expect(page.getByRole('menu')).toBeVisible();
     await page.keyboard.press('Escape');

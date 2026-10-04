@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 153,
+      "usedInSupervisor": 152,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -697,6 +697,7 @@
       "cva": false,
       "inputs": 1,
       "api": [
+        "activated",
         "countAriaLabel"
       ],
       "nested": [],

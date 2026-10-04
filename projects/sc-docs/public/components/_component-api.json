@@ -3860,6 +3860,16 @@
           "descripcion": "Nombre accesible del botón, ya traducido (p. ej. «12 agentes»). Opcional: sin él dice «N grupos», que es lo que cuenta en la lista de agentes. Nace el 2026-09-14 para que la lista de grupos use el MISMO desplegable con sus agentes: la relación es la misma vista desde el otro lado, y el lector de pantalla no puede decir «grupos» ahí.",
           "origen": "nuestro",
           "nativo": null
+        },
+        {
+          "nombre": "activated",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se pulsó la cifra (clic, Intro o Espacio): lo que se hace con esa relación, si quien la pinta lo quiere (abrir la asignación de un grupo). Al pasar por encima o con el foco, la cifra sigue enseñando los nombres; al pulsarla, el globo se cierra. Sin nadie que la escuche, pulsar solo cierra el globo.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": [

@@ -26,6 +26,9 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/components`** — `sc-group-popover` gana `activated`, la salida al pulsar la cifra (clic, Intro o
+  Espacio): lo que se hace con esa relación, si quien la pinta lo quiere. Al pulsar, el globo se cierra; al pasar o
+  con el foco, sigue enseñando los nombres. Sin nadie que la escuche, nada cambia. ([DD-159](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-slot` se pliega como ya hacía `sc-subsection`: `collapsible` e
   `initiallyCollapsed`, con el título entero como botón, `aria-expanded` y el chevron del DS. `sc-subsection` gana
   `titleId`: con él, su título lleva ese `id` y acepta el foco por programa, para ser el destino de un salto. Las dos,

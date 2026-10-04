@@ -8,6 +8,7 @@
   (focus)="onTriggerFocus($event)"
   (blur)="onPointerLeave()"
   (keydown)="onKeydown($event)"
+  (click)="onClick()"
 >
   {{ 'sc.groupPopover.countShort' | translate: { count: count() } }}
 </button>

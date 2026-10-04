@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | En el listado de Grupos, la cifra de agentes abre su asignación y sale la columna «Asignar»; en Agentes, la de grupos ya llevaba a su sección | DD-159 |
 > | El alta: ✓ solo en secciones con algo obligatorio, el teléfono saliente como segunda puerta del grupo y «Atrás / Siguiente» como el Stepper vertical | DD-158 |
 > | Distribución y colas con el árbol del DS (canal = subsección, parte = slot), Chat en el orden de Teléfono y los mensajes de la cola plegados | DD-157 |
 > | El estado del agente en su columna de la tabla de agentes del grupo; cada columna medida, y el panel las suma | DD-156 |
@@ -116,6 +117,29 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-159 · 2026-10-04 — La cifra de un listado lleva a donde se cambia: en Grupos, los agentes abren su asignación
+
+**Contexto.** La revisión de producto del 2026-10-04, sobre los listados de Grupos y Agentes: en Grupos, la cifra de
+agentes (que al pasar enseña quiénes son) y el botón «Asignar», fijo a la derecha (DD-121 §10, DD-153), eran dos
+columnas para lo mismo. En Agentes se pedía que la cifra de grupos llevara a la sección «Grupos asignados» de su
+ficha: ya lo hacía, porque abrir una fila de Agentes lleva a esa sección (DD-122).
+
+**Decisión.**
+1. **En Grupos, la cifra de agentes abre el panel rápido de ese grupo**, y la columna «Asignar agentes» desaparece.
+   Al pasar por encima o con el foco, la cifra sigue enseñando quiénes son; al pulsarla, el globo se cierra y se abre
+   el panel. Su nombre accesible dice las dos cosas: «12 agentes · Asignar agentes de ACD demo cuscare». La columna
+   «Agentes» pasa a fija en el selector, como lo era «Asignar»: es la tarea más frecuente del listado. Pulsarla no
+   abre la ficha (`stopRowClick`). Enmienda DD-121 §10 y DD-153 («Asignar» fija a la derecha).
+2. **En Agentes no cambia nada**: la prueba nueva fija que la cifra de grupos lleva a «Grupos asignados».
+3. **DS: `sc-group-popover` gana `activated`**, la salida al pulsar la cifra (clic, Intro o Espacio). Sin nadie que
+   la escuche, pulsar solo cierra el globo.
+
+**Razón.** Una acción por dato: la cifra es a la vez el resumen y la puerta para cambiarlo, como en las tablas de
+Airtable o Notion, donde el contador de una relación abre la relación. La fila pierde una columna de 7,5rem.
+
+**Descartado.** Llevar la cifra a la sección Agentes de la ficha (el panel rápido es justo para no salir del
+listado); dejar las dos columnas.
 
 ## DD-158 · 2026-10-04 — El alta: ✓ solo donde hay algo obligatorio, el teléfono saliente como puerta y el pie del Stepper
 
@@ -359,7 +383,8 @@ Se conservan selección, opciones bloqueadas, foco y overlay nativos. Excepción
 `audit:primeng-coupling` §F y `customs-catalog` §8, con demo en sc-docs.
 
 `ScColumnDef.frozen` y `alignFrozen` pasan a `pFrozenColumn` en cabeceras y celdas de las plantillas
-por defecto. El menú de `sc-list-page` y Asignar del grupo quedan a la derecha. No se arrastran esas
+por defecto. El menú de `sc-list-page` y Asignar del grupo quedan a la derecha *(DD-159: Asignar sale; su acción va
+en la cifra de agentes, y solo queda fijo el menú)*. No se arrastran esas
 columnas fijas. PrimeNG calcula sus posiciones y hereda el fondo de fila; el hover inerte conserva
 un fondo opaco. Una sombra del token existente señala contenido oculto y desaparece al alcanzar
 el extremo. Un observador de tamaño y el scroll actualizan esa señal, también con lista virtual.
@@ -2342,7 +2367,8 @@ tres fichas (#240) y el alta en diálogo (DD-119).
    que ofrece el grupo.
 9. **El aviso de «abierto en otra pestaña» se pinta**: `CrossTabLockService` suelta el candado en `pagehide`
    (recargar no destruye el componente, y cada F5 se habría creído otra pestaña).
-10. **Asignar agentes, a un clic desde el listado**: cada fila lleva «Agentes», un botón de TEXTO en la variante
+10. **Asignar agentes, a un clic desde el listado** *(enmendado por DD-159, 2026-10-04: lo abre la cifra de agentes, y
+    la columna del botón sale)*: cada fila lleva «Agentes», un botón de TEXTO en la variante
     `contrast`, en una columna fija junto al «⋮» (un primario por fila haría una pared azul que compite con «Nuevo
     grupo», y el gris secundario del DS es 2,95:1 sobre blanco). Abre `sc-group-agents-panel`: `sc-drawer` a la
     derecha, bajo la barra de la app, con la MISMA tabla de la ficha y sin elegir filas (la barra de lote quedaría

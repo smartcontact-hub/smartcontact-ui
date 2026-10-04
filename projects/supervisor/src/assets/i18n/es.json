@@ -1495,11 +1495,9 @@
       "services": "Servicios",
       "agents": "Agentes",
       "agents_count": "{{count}} agentes",
+      "agents_assign_aria": "{{count}} agentes · Asignar agentes de {{name}}",
       "services_count": "{{count}} servicios",
       "services_count_one": "1 servicio",
-      "assign": "Asignar",
-      "assign_aria": "Asignar agentes de {{name}}",
-      "assign_column": "Asignar agentes",
       "strategy_phone": "Estrategia de teléfono",
       "strategy_chat": "Estrategia de chat"
     },

@@ -5,6 +5,7 @@ import {
   computed,
   inject,
   input,
+  output,
   signal,
   viewChild,
 } from '@angular/core';
@@ -47,6 +48,12 @@ export class ScGroupPopoverComponent {
    * desde el otro lado, y el lector de pantalla no puede decir «grupos» ahí.
    */
   readonly countAriaLabel = input<string | null>(null);
+  /**
+   * Se pulsó la cifra (clic, Intro o Espacio): lo que se hace con esa relación, si quien la pinta lo quiere (abrir
+   * la asignación de un grupo). Al pasar por encima o con el foco, la cifra sigue enseñando los nombres; al
+   * pulsarla, el globo se cierra. Sin nadie que la escuche, pulsar solo cierra el globo.
+   */
+  readonly activated = output<void>();
 
   protected readonly pop = viewChild.required<Popover>('pop');
   protected readonly open = signal(false);
@@ -88,6 +95,13 @@ export class ScGroupPopoverComponent {
       this.pop().hide();
       this.open.set(false);
     }, HOVER_LEAVE_DELAY_MS);
+  }
+
+  protected onClick(): void {
+    this.cancelLeave();
+    this.pop().hide();
+    this.open.set(false);
+    this.activated.emit();
   }
 
   protected onKeydown(event: KeyboardEvent): void {
