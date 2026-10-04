@@ -81,10 +81,10 @@ test('runDe: la ejecución con los nombres de gh run list', () => {
 
 test('ultimaCI: el workflow ci de la rama, con la rama escapada en la ruta', () => {
   const { gh, pedidas } = ghFalso([['actions/workflows/ci.yml/runs', { workflow_runs: [{ id: 1, head_sha: 'h', status: 'completed', conclusion: 'success', html_url: 'u' }] }]]);
-  const runs = cliente({ gh, git }).ultimaCI('areses/sweet-fermat');
+  const runs = cliente({ gh, git }).ultimaCI('equipo/rama-de-prueba');
   assert.equal(runs.length, 1);
   assert.equal(runs[0].headSha, 'h');
-  assert.deepEqual(pedidas, ['repos/o/r/actions/workflows/ci.yml/runs?branch=areses%2Fsweet-fermat&per_page=1']);
+  assert.deepEqual(pedidas, ['repos/o/r/actions/workflows/ci.yml/runs?branch=equipo%2Frama-de-prueba&per_page=1']);
 });
 
 test('prDeRama: abierto pide su mergeable aparte; fundido o sin PR, no', () => {
