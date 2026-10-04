@@ -6,7 +6,7 @@
  *      rojos seguidos escribiendo «preflight verde» sin abrir el CI ni una vez). Si el último
  *      `git push` de commits no va seguido de una lectura del CI (`npm run ci:verdict`,
  *      `gh run list|view|watch`, `gh pr checks`), bloquea con el comando exacto. Cuenta el push que
- *      CORRIÓ (su resultado no vino con error), con `git push` en posición de comando (no dentro de
+ *      CORRIÓ (su resultado no vino con error, o enseña el ref subido), con `git push` en posición de comando (no dentro de
  *      comillas ni del cuerpo de un heredoc) y en un árbol de ESTE repo: el de otro no tiene su CI.
  *   2. si en la sesión se invocó la skill `reflect` y quedan correcciones de ESTA sesión sin
  *      enrutar, bloquea con la lista y el `--enrutar` exacto. Reflexionar es decidir dónde va cada
@@ -144,6 +144,19 @@ const esLecturaCI = (cmd) =>
   /^mcp__github__(actions_list|actions_get|get_job_logs|get_commit|pull_request_read|get_check_run)$/.test(cmd);
 
 /**
+ * ¿El resultado enseña un ref que SUBIÓ? Es lo que imprime un push que subió algo: `abc..def  rama -> rama`
+ * (avance), `+ abc...def rama -> rama (forced update)` (forzado), `* [new branch]` / `* [new tag]`. Uno
+ * rechazado imprime `! [rejected]` o `! [remote rejected]`, que no casan. Solo sirve para RESCATAR: el error
+ * del comando no es el del push (`git push && npm run build` sale con error si el build falla, aunque el push
+ * ya esté en el remoto), y ignorarlo dejaría cerrar sin leer el CI de algo que sí se subió.
+ */
+const SUBIO = /^\s*[+*]?\s*(?:[0-9a-f]{7,}\.{2,3}[0-9a-f]{7,}|\[new (?:branch|tag)\])/m;
+
+/** El texto de un `tool_result`: una cadena, o una lista de bloques de texto. */
+const textoDe = (contenido) =>
+  Array.isArray(contenido) ? contenido.map((b) => (typeof b?.text === 'string' ? b.text : '')).join('\n') : String(contenido ?? '');
+
+/**
  * Los ACTOS del transcript, en orden: el comando de cada Bash y el NOMBRE de cada herramienta
  * MCP de GitHub, cada uno con el `cwd` que el transcript guarda en su evento y con `fallo` si su resultado
  * vino con error (`is_error`: un comando con salida distinta de cero, o uno que un hook denegó).
@@ -152,12 +165,13 @@ const esLecturaCI = (cmd) =>
  * ¿se leyó el CI?— son el mismo acto por dos canales. Mirar solo Bash dejaba ciego al canal MCP,
  * que es el ÚNICO disponible en una sesión cloud (ahí no hay `gh`).
  *
- * `fallo` solo le quita valor a un PUSH (no se subió nada): un `ci:verdict` que sale en rojo SÍ leyó el CI. Sin
- * resultado en el transcript (aún no llegó) no es fallo: lo estricto es darlo por ejecutado.
+ * `fallo` solo le quita valor a un PUSH (no se subió nada): un `ci:verdict` que sale en rojo SÍ leyó el CI. Y
+ * es un error SIN ref subido en su resultado (`SUBIO`): el comando entero puede fallar después de un push que
+ * sí subió. Sin resultado en el transcript (aún no llegó) no es fallo: lo estricto es darlo por ejecutado.
  */
 export function actosBash(jsonl) {
   const usos = [];
-  const fallidos = new Set();
+  const errores = new Map(); // id → texto del resultado, de los que vinieron con error
   for (const linea of jsonl.split('\n')) {
     if (!linea.includes('"tool_use"') && !linea.includes('"tool_result"')) continue;
     try {
@@ -165,7 +179,7 @@ export function actosBash(jsonl) {
       const contenido = ev?.message?.content;
       if (!Array.isArray(contenido)) continue;
       for (const c of contenido) {
-        if (c.type === 'tool_result' && c.is_error === true) fallidos.add(c.tool_use_id);
+        if (c.type === 'tool_result' && c.is_error === true) errores.set(c.tool_use_id, textoDe(c.content));
         else if (c.type !== 'tool_use') continue;
         else if (c.name === 'Bash' && c.input?.command) usos.push({ id: c.id, cmd: c.input.command, cwd: ev.cwd });
         else if (typeof c.name === 'string' && c.name.startsWith('mcp__github__')) usos.push({ id: c.id, cmd: c.name, cwd: ev.cwd });
@@ -174,7 +188,7 @@ export function actosBash(jsonl) {
       /* línea no JSON */
     }
   }
-  return usos.map(({ id, cmd, cwd }) => ({ cmd, cwd, fallo: fallidos.has(id) }));
+  return usos.map(({ id, cmd, cwd }) => ({ cmd, cwd, fallo: errores.has(id) && !SUBIO.test(errores.get(id)) }));
 }
 
 /** Los comandos de `actosBash`, sin más: para quien solo quiere saber qué se tecleó. */

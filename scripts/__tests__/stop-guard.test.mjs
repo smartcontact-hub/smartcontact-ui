@@ -584,6 +584,34 @@ test('un push que NO corrió (denegado o con error) no obliga a leer ningún CI;
   assert.equal(necesitaVeredicto(actosBash(leidoEnRojo)), false);
 });
 
+// ⚠️ El error del COMANDO no es el error del PUSH: `git push origin main && npm run build` sale con error si el
+// build falla, aunque el push ya haya subido. Ignorarlo dejaría cerrar sin leer el CI de algo que SÍ está en el
+// remoto, que es el fallo caro de este hook. El resultado lo desmiente: un push que subió imprime el ref
+// actualizado (`abc..def  rama -> rama`, `* [new branch]`, `+ … (forced update)`); uno rechazado, `! [rejected]`.
+test('un comando con error cuyo resultado enseña un ref subido SÍ pusheó; uno rechazado no', () => {
+  const subio = [
+    'To https://github.com/x/y\n   8a5660ce..6f32d30c  main -> main\nnpm error Missing script: "build"',
+    'To https://github.com/x/y\n * [new branch]      rama -> rama\nExit code 1',
+    'To https://github.com/x/y\n + 692d984c...3afe7ce1 rama -> rama (forced update)\nExit code 1',
+    'To https://github.com/x/y\n * [new tag]         v1 -> v1\nExit code 1',
+  ];
+  for (const texto of subio) {
+    const jsonl = [evUso('a', 'git push origin rama && npm run build', '/r'), evResultado('a', texto, true)].join('\n');
+    assert.equal(actosBash(jsonl)[0].fallo, false, texto);
+    assert.equal(necesitaVeredicto(actosBash(jsonl)), true, `ROJO si se pierde: ${texto}`);
+  }
+  const rechazado = 'To https://github.com/x/y\n ! [rejected]        main -> main (fetch first)\nerror: failed to push some refs\nExit code 1';
+  const remoto = 'To https://github.com/x/y\n ! [remote rejected] main -> main (protected branch hook declined)\nExit code 1';
+  for (const texto of [rechazado, remoto]) {
+    const jsonl = [evUso('a', 'git push origin main', '/r'), evResultado('a', texto, true)].join('\n');
+    assert.equal(actosBash(jsonl)[0].fallo, true, texto);
+    assert.equal(necesitaVeredicto(actosBash(jsonl)), false, texto);
+  }
+  // El resultado puede venir como lista de bloques de texto, no solo como cadena.
+  const bloques = JSON.stringify({ type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 'a', is_error: true, content: [{ type: 'text', text: subio[0] }] }] } });
+  assert.equal(necesitaVeredicto(actosBash([evUso('a', 'git push origin rama && npm run build', '/r'), bloques].join('\n'))), true);
+});
+
 test('un heredoc es DATO salvo que lo lea un shell: el cuerpo de un commit que habla de pushes no es un push', () => {
   const mensaje = "git commit -q -F - <<'EOF'\nUn cambio\n\n- Huecos: `cd <otro> && git push && cd <este> && git push`\nEOF";
   // ROJO de antes: esto bloqueó el cierre en tres commits de la misma sesión.
