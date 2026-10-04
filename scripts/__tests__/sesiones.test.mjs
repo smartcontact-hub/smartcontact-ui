@@ -10,6 +10,7 @@ import {
   duplicadosDe,
   enOrigin,
   gemelasDe,
+  hallaFundido,
   noFundidosDe,
   parseaWorktrees,
   prDe,
@@ -130,6 +131,43 @@ test('prDe casa primero la rama EXACTA: una rama que acaba en número no pierde 
   // En rojo: recortando el sufijo a ciegas, `feat/dd-30` buscaba `feat/dd`, salía «sin PR» y
   // mandaba a abrir un segundo PR de lo que ya estaba subido.
   assert.equal(enOrigin('feat/dd-30'), 'feat/dd');
+});
+
+// ── El PR fundido que ya no cabe en los últimos 40 ─────────────────────────────
+// Medido el 2026-09-29: el PR #232, fundido el 2026-09-23, no aparecía en
+// `gh pr list --state merged --limit 40` porque main ya iba por el #283. `prDe` devolvía
+// `undefined`, `fundido` salía `null` y la caja se anunciaba «SIN SUBIR» sin haberlo estado nunca.
+
+test('PR fundido fuera de los últimos 40: se busca aparte y no sale SIN SUBIR', () => {
+  const rama = 'feat/una-rama-vieja';
+  const fundidosRecientes = []; // los últimos 40 ya no incluyen el #232
+  const pr232 = { number: 232, headRefName: rama, mergedAt: '2026-09-23T10:00:00Z', mergeCommit: { oid: 'abc123' } };
+
+  // ROJO: sin la búsqueda tardía, no lo encuentra y el veredicto miente hacia «falta subirlo».
+  const sinBusqueda = hallaFundido({ rama, fundidos: fundidosRecientes, sinFundir: 1 });
+  assert.equal(sinBusqueda, null);
+  assert.equal(veredictoDe({ sinFundir: 1, fundido: sinBusqueda, noFundidos: 0 }).veredicto, 'SIN SUBIR');
+
+  // VERDE: con la búsqueda tardía se encuentra el PR, y el contenido (cherry) ya está en main.
+  const conBusqueda = hallaFundido({ rama, fundidos: fundidosRecientes, sinFundir: 1, buscaTardio: () => pr232 });
+  assert.equal(conBusqueda, pr232);
+  assert.equal(veredictoDe({ sinFundir: 1, fundido: conBusqueda, noFundidos: 0 }).veredicto, 'CERRADA');
+});
+
+test('hallaFundido no gasta la búsqueda tardía si el PR ya está en la lista de 40', () => {
+  const fundidos = [{ number: 283, headRefName: 'r', mergedAt: 'x' }];
+  let llamado = false;
+  const r = hallaFundido({ rama: 'r', fundidos, sinFundir: 1, buscaTardio: () => { llamado = true; return null; } });
+  assert.equal(r.number, 283);
+  assert.equal(llamado, false, 'si ya está en la lista corta, no hace falta gastar otra llamada a gh');
+});
+
+test('hallaFundido no gasta la búsqueda tardía si no hay commits sin fundir', () => {
+  // El coste no puede crecer con CADA caja: solo con las que de verdad lo necesitan.
+  let llamado = false;
+  const r = hallaFundido({ rama: 'r', fundidos: [], sinFundir: 0, buscaTardio: () => { llamado = true; return null; } });
+  assert.equal(r, null);
+  assert.equal(llamado, false);
 });
 
 test('checksDe distingue pendiente de vacío', () => {
