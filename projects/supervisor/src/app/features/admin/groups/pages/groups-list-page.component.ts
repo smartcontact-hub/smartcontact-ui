@@ -323,7 +323,7 @@ export class GroupsListPageComponent {
         cellTemplate: this.strategyTpl(),
         /* Medido a 1440 (2026-10-01): la etiqueta más ancha del catálogo, «Menos conversaciones atendidas»
          * (DD-141), pide 201 px más los 28 de la celda. La cabecera con su flecha pedía 198 (2026-09-26). */
-        width: '14.5rem',
+        width: '15rem',
       },
       {
         field: 'chatStrategy',
@@ -332,7 +332,7 @@ export class GroupsListPageComponent {
         cellTemplate: this.chatStrategyTpl(),
         /* La etiqueta más ancha, «Menos conversaciones activas» (DD-141), pide 185 px más los 28 de la celda (medido a
          * 1440, 2026-10-01). La cabecera pedía 171 (2026-09-26). */
-        width: '13.5rem',
+        width: '14rem',
       },
       {
         field: 'services',
@@ -357,6 +357,8 @@ export class GroupsListPageComponent {
        * botón en fila de DD-96 ya no existe). `stopRowClick`: pulsarlo no abre la ficha. */
       {
         field: 'assign',
+        frozen: true,
+        alignFrozen: 'right',
         header: '',
         headerAriaLabel: this.translate.instant('groups.table.assign_column'),
         cellTemplate: this.assignTpl(),

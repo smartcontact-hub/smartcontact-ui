@@ -951,6 +951,7 @@
     "bulk_updated": "{{count}} itens atualizados",
     "columns": "Colunas",
     "columns_count": "{0} colunas",
+    "columns_visible": "Colunas, {{visible}} de {{total}}",
     "edit_field": "Editar campo",
     "preview_impact": "Pré-visualizar impacto",
     "discard_title": "Descartar alterações?",

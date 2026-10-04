@@ -2,6 +2,8 @@
 
 <ng-template #playground let-args>
   <sc-multiselect
+    [iconOnly]="args.iconOnly"
+    [icon]="args.icon"
     [label]="args.label"
     [options]="groups"
     [placeholder]="args.placeholder"
@@ -82,5 +84,17 @@
     <sc-multiselect label="Con chips" [options]="groups" display="chip" />
     <sc-multiselect label="Con filtro" [options]="groups" [filter]="true" filterPlaceholder="Buscar grupo" />
     <sc-multiselect label="Con error" [options]="groups" error="Selecciona al menos uno" data-testid="sc-multiselect-error" />
+  </div>
+</ng-template>
+
+<ng-template #icono>
+  <div class="row">
+    @for (size of ['sm', 'md', 'lg']; track size) {
+      <sc-multiselect iconOnly icon="view_column" [size]="$any(size)"
+        [options]="columnas" optionValue="key" optionDisabled="locked"
+        [(value)]="iconColumns" [ariaLabel]="'Columnas, ' + iconColumns().length + ' de ' + columnas.length"
+        [attr.data-testid]="'sc-multiselect-icon-' + size" />
+    }
+    <sc-multiselect iconOnly disabled [options]="columnas" ariaLabel="Columnas no disponibles" data-testid="sc-multiselect-icon-disabled" />
   </div>
 </ng-template>

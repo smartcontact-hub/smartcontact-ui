@@ -1,8 +1,12 @@
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
 import { ScDatatableComponent } from './sc-datatable.component';
 import type { ScColumnDef } from '../../core/types/datatable.types';
+
+// jsdom no tiene geometría ni ResizeObserver; el scroll y el ancho reales se prueban en e2e.
+beforeEach(() => vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} }));
+afterEach(() => vi.unstubAllGlobals());
 
 /**
  * PRIMER TEST UNITARIO DEL REPO.
@@ -246,5 +250,36 @@ describe('sc-datatable · selección de rango con ancla', () => {
     );
     c.onSelectionChange([FILAS[1]!, FILAS[4]!]); // cambio ajeno, sin rango
     expect(ids(c)).toEqual([2, 5]);
+  });
+});
+
+
+describe('sc-datatable · columnas fijas nativas', () => {
+  it('conecta cabeceras ordenables, simples y celdas; las demás siguen libres', async () => {
+    vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} });
+    try {
+      TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+      const fixture = TestBed.createComponent(ScDatatableComponent);
+      const columns = [
+        { field: 'id', header: 'ID', sortable: true, frozen: true, alignFrozen: 'left' },
+        { field: 'nombre', header: 'Nombre' },
+        { field: 'acciones', header: '', frozen: true, alignFrozen: 'right' },
+      ];
+      fixture.componentRef.setInput('columns', columns);
+      fixture.componentRef.setInput('value', [{ id: 1, nombre: 'Agente' }]);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      const root: HTMLElement = fixture.nativeElement;
+      expect(root.querySelectorAll('th.p-datatable-frozen-column')).toHaveLength(2);
+      expect(root.querySelectorAll('td.p-datatable-frozen-column')).toHaveLength(2);
+      expect(root.querySelector('th[data-field="nombre"]')?.classList.contains('p-datatable-frozen-column')).toBe(false);
+      fixture.componentRef.setInput('columns', columns.map(c => ({ ...c, frozen: false })));
+      fixture.detectChanges();
+      await fixture.whenStable();
+      expect(root.querySelectorAll('.p-datatable-frozen-column')).toHaveLength(0);
+      fixture.destroy();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });

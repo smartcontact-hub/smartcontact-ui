@@ -51,6 +51,10 @@ export interface ScColumnDef<T = unknown> {
   readonly width?: string;
   /** Alineación del texto de la celda y la cabecera. */
   readonly align?: 'left' | 'right' | 'center';
+  /** Fija la columna con pFrozenColumn; sin pedirlo, sigue desplazándose. */
+  readonly frozen?: boolean;
+  /** Borde físico donde la fija PrimeNG. Por defecto, el izquierdo. */
+  readonly alignFrozen?: 'left' | 'right';
   /**
    * Plantilla de celda custom; contexto `{ $implicit: row, rowIndex }`. Si se
    * omite, la celda pinta `row[field]`.
