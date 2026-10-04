@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, afterNextRender, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, afterNextRender, booleanAttribute, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ScIconComponent } from '@smartcontact-hub/icons';
@@ -26,7 +26,7 @@ import { CountUpDirective } from '@core/directives';
   selector: 'sc-summary-kpi',
   imports: [TranslateModule, ProgressSpinnerModule, ScIconComponent, CountUpDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'resumen__kpi resumen__kpi--widget' },
+  host: { class: 'resumen__kpi resumen__kpi--widget', '[class.resumen__kpi--destacada]': 'destacada()' },
   template: `
     <div class="resumen__cabeza">
       <p class="resumen__label sc-text-caption-regular">
@@ -69,7 +69,7 @@ import { CountUpDirective } from '@core/directives';
             [min]="0"
             [max]="t"
             [strokeWidth]="10"
-            [dt]="ringDt"
+            [dt]="ringDt()"
             [pt]="ringPt"
           />
         }
@@ -99,6 +99,11 @@ export class SummaryKpiComponent {
   readonly href = input<string | null>(null);
   /** Se pulsó el rótulo, sin teclas: la ficha va a la sección en su sitio (la dirección queda para Cmd+clic). */
   readonly abrir = output<void>();
+  /**
+   * La cifra principal del resumen, con color (DD-161): el degradado de marca y el texto claro de la vista previa de
+   * ProgressSpinner en primeng.dev. Una por resumen: si todo destaca, nada destaca.
+   */
+  readonly destacada = input(false, { transform: booleanAttribute });
   /** Una línea bajo la cifra (p. ej. «1 en pausa»). */
   readonly noteKey = input<string | null>(null);
   readonly noteParams = input<Record<string, unknown>>({});
@@ -117,8 +122,12 @@ export class SummaryKpiComponent {
   private readonly ready = signal(false);
   protected readonly ringValue = computed(() => (this.ready() ? this.value() : 0));
 
-  protected readonly ringDt = { root: { colorOne: 'var(--sc-bg-accent)' } };
-  protected readonly ringPt = { value: { class: 'resumen__ring-value' } };
+  /** El arco, en el acento; en la destacada, en el color de su texto, que es el que se lee sobre el degradado. */
+  protected readonly ringDt = computed(() => ({
+    root: { colorOne: this.destacada() ? 'var(--sc-text-inverse)' : 'var(--sc-bg-accent)' },
+  }));
+  /** El `N%` nativo, oculto; y la pista con clase propia, para que la destacada la pinte translúcida (DD-108). */
+  protected readonly ringPt = { value: { class: 'resumen__ring-value' }, circleTrack: { class: 'resumen__ring-track' } };
 
   constructor() {
     afterNextRender(() => requestAnimationFrame(() => this.ready.set(true)));

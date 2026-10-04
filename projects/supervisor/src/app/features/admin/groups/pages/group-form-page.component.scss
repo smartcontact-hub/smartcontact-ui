@@ -14,12 +14,40 @@
  * Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`. El aviso de «abierto en otra
  * pestaña» (`.ficha-conflict`) también es de todas las fichas: vive en `_page.scss`. */
 
-/* Las partes de un canal (Distribución, Cola, Mensajes en cola, Web Chat · acceso…): un rótulo
- * pequeño, no un título más. El bloque es el canal; esto son sus tramos. */
-.channel-part {
-  margin: 0;
-  margin-block-start: var(--sc-spacing-0-5);
+/* Una línea de contexto al principio de un canal («Web Chat · WhatsApp», lo que pasa con Email): no es una parte,
+ * así que va antes del primer slot, separada de él como dos grupos (DD-157). */
+.channel-note {
+  margin: 0 0 var(--sc-spacing-1);
   color: var(--sc-text-secondary);
+}
+
+/* Los mensajes de la cola de Teléfono, desplegados: cuatro grupos (de dónde sale cada mensaje, los periódicos,
+ * la voz y lo que se dice), separados como grupos y no como campos (AGENTS, agrupación 7 · 14 · 28). */
+.queue-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-2);
+}
+
+.queue-messages__notices {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+/* Un mensaje periódico por fila, y debajo «Añadir mensaje». */
+.periodic-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-5);
+}
+
+/* Los canales apagados, tras las cajas: sueltos sobre el gris de la sección. */
+.channel-off-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
 }
 
 /* «X no está activo · actívalo en General»: la pista de que el bloque existe, sin controles muertos. */
@@ -154,7 +182,7 @@
 }
 
 
-/* La capacidad compone tipo y cifra: su fila se separa de los tiempos, conservando la alineación con Voz. */
+/* La capacidad compone tipo y cifra: su fila se separa de los tiempos, conservando la alineación con la música. */
 .queue-fields {
   row-gap: var(--sc-spacing-2);
 }

@@ -166,9 +166,8 @@ export class GroupsListPageComponent {
       { key: 'strategy', label: this.translate.instant('groups.table.strategy_phone') },
       { key: 'chatStrategy', label: this.translate.instant('groups.table.strategy_chat'), defaultVisible: false },
       { key: 'services', label: this.translate.instant('groups.table.services') },
-      { key: 'agents', label: this.translate.instant('groups.table.agents') },
-      // El panel rápido de agentes: fijo, porque es la tarea más frecuente de la lista.
-      { key: 'assign', label: this.translate.instant('groups.table.assign_column'), locked: true },
+      // Su cifra abre el panel rápido de agentes (DD-159): fija, porque es la tarea más frecuente de la lista.
+      { key: 'agents', label: this.translate.instant('groups.table.agents'), locked: true },
     ];
   });
 
@@ -274,7 +273,6 @@ export class GroupsListPageComponent {
   private readonly chatStrategyTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('chatStrategyTpl');
   private readonly servicesTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('servicesTpl');
   private readonly agentsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('agentsTpl');
-  private readonly assignTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('assignTpl');
 
   /** `sortable` en las MISMAS cinco que llevaban `scSortable`. La columna del menú de fila la añade la lista. */
   protected readonly columns = computed<readonly ScColumnDef<Group>[]>(() => {
@@ -344,25 +342,12 @@ export class GroupsListPageComponent {
         field: 'agents',
         header: this.translate.instant('groups.table.agents'),
         sortable: true,
-        /* 7rem: con 96 px la cabecera y su flecha de orden partían en dos líneas. A la izquierda y
-         * con el mismo desplegable que «Grupos» en la lista de agentes (2026-09-14): es la misma
-         * relación vista desde el otro lado. */
+        /* 7rem: con 96 px la cabecera y su flecha de orden partían en dos líneas. El mismo desplegable que «Grupos» en
+         * la lista de agentes: al pasar, quiénes son. Y al pulsar, el panel rápido para asignarlos (DD-159): la cifra
+         * y la acción eran dos columnas para lo mismo. Asignar es lo que más se hace con un grupo una vez creado
+         * (visión de producto de grupos, 2026-09-25). `stopRowClick`: pulsarla no abre la ficha. */
         cellTemplate: this.agentsTpl(),
         width: '7rem',
-      },
-      /* EL PANEL RÁPIDO, a un clic de la fila: asignar y desasignar agentes y sus canales es lo que más
-       * se hace con un grupo una vez creado (visión de producto de grupos, 2026-09-25). Un botón de TEXTO
-       * y no primario: en cada fila, un primario haría una pared azul que compite con «Nuevo grupo». Su
-       * columna propia, junto al «⋮», porque `sc-list-page` no tiene sitio para una acción en la fila (el
-       * botón en fila de DD-96 ya no existe). `stopRowClick`: pulsarlo no abre la ficha. */
-      {
-        field: 'assign',
-        frozen: true,
-        alignFrozen: 'right',
-        header: '',
-        headerAriaLabel: this.translate.instant('groups.table.assign_column'),
-        cellTemplate: this.assignTpl(),
-        width: '7.5rem',
         stopRowClick: true,
       },
     ];

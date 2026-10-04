@@ -19,7 +19,32 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente». Y el de la revisión de producto del 2026-10-01 (H, los diálogos de
 Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-fichas.md`; sus trampas suben a
-«Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show c6a9cd59:…` y `git show 2a894b1c:…`.
+«Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show c6a9cd59:…` y `git show 2a894b1c:…`. El de E2
+(DD-149, sin trampas propias): `git show a7bca7c0:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-04 · La revisión de producto del 2026-10-04, en un lote de seis bloques (DD-157 a DD-162), en su PR
+
+> **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Medido el tiempo de punta a punta: el feedback llegó
+> a las 15:28 UTC; los seis bloques, la pasada final, los barridos y `revision`, en local, a las 18:05 (2 h 37 min).**
+
+- **1 · Distribución y colas (DD-157):** el árbol del DS. La sección en `surface="subtle"`, cada canal un
+  `sc-subsection` y cada parte un `sc-slot`; Chat en el orden de Teléfono; la música en «Cola»; los demás mensajes de
+  Teléfono de vuelta, plegados y sin «anuncio». DS: `sc-slot` se pliega y `sc-subsection` acepta `titleId`.
+- **2 · El alta (DD-158):** ✓ solo en las secciones con algo obligatorio (`seccionesDeAlta` gana `obligatoria`); el
+  teléfono saliente, segunda puerta del grupo; «Atrás» y «Siguiente» como el Stepper vertical, con los botones del DS.
+- **3 · Los listados (DD-159):** en Grupos, la cifra de agentes abre su asignación y sale «Asignar» (DS:
+  `sc-group-popover` gana `activated`); en Agentes, la cifra de grupos ya llevaba a su sección.
+- **6 · La tabla al pie (DD-160):** `scLlegaAlPie` mide el alto que queda; norma 10 de AGENTS «UX de pantalla» y en
+  Patrones de sc-docs.
+- **5 · El resumen con color (DD-161):** la cifra principal, con el degradado del botón principal y el anillo en el
+  color del texto; una por ficha.
+- **4 · Las columnas (DD-162):** el Listbox nativo (casilla y arrastre) en el globo del icono; las cabeceras ya no se
+  arrastran. PickList, valorado y descartado para 8-12 columnas.
+- **Pasada final** (Playwright, con la lista de ui-ux-pro-max para web): nombre, foco, objetivo ≥ 24, sin saltos, en
+  claro, oscuro y «reducir movimiento». Arreglada la cifra del globo (15 × 20 → 24,5, con un `::after`).
+
+**Pendiente, anotado:** el rótulo-enlace del resumen mide 18 de alto (DD-146): llevarlo a 24 cambia el alto de todos
+los resúmenes y se mide aparte. Ordenar columnas con teclado no se puede (tampoco antes, con las cabeceras).
 
 ## ✅ 2026-10-04 · Lo que dejó F, en un lote: la lista virtual con «reducir movimiento» y el estado en su columna (DD-156), fundido
 
@@ -136,20 +161,12 @@ nuevos pasan. `revision` y 16 capturas claro/oscuro, 1024/1440, revisadas con be
 **Verify y preflight verdes.** Local 4405 actualizado; siete e2e adicionales verdes contra su build de producción.
 **Siguiente:** E4 → D3 → F. E4: decisión de producto (2026-10-02), confirmar acciones colectivas desde dos agentes.
 
-## ✅ 2026-10-02 · E2: Habilitado, palabras y presencia (DD-149)
-
-**Entregado:** #312 → `74427653`; CI del PR `37002947849` y de main `37004403827`, leídas en verde. Rama y worktree
-propios eliminados. Habilitado por enlace; presencia compartida; cuenta y habilitación diferenciadas en cuatro
-idiomas. Resumen y reglas nombran habilitados. Tabla/panel reservan 21rem para nombre y presencia, 7rem para Habilitado.
-**Ejecutado:** pruebas rojas primero; afectados corregidos y repetidos; suite completa 502/504 (solo los dos recortes
-conocidos del listado, mismas medidas de E1b), contraste, revision, verify y preflight verdes. Zoom/RTL no verificados.
-El preflight integró #311 (solo CusCare); Supervisor y DS idénticos. Evidencias fuera del worktree; local 4405 en E2.
-
-
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01 está entera en `main`**, de H a F (#318), y lo que dejó F, fundido en #321 (el tramo
-   de arriba). Lo siguiente:
+0. **La revisión del 2026-10-04, en su PR** (el tramo de arriba). Lo siguiente, decidido con producto: **Recursos**
+   (un editor de agendas de verdad, el resumen de cada recurso con su enlace a editar, y en Repositorios cuántos hay y
+   un buscador). Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar
+   permisos por separado (no entra en esta fase). Antes, lo que dejó F:
    - los dos detalles de la página de MultiSelect y «Copiar» encima de las líneas largas. Mueven capturas de sc-docs:
      `visual-baselines` sobre la rama antes del PR;
    - si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con tres canales (las dos salidas,

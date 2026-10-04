@@ -2,7 +2,7 @@ import { join } from 'node:path';
 
 import { expect, test, type Page } from '@playwright/test';
 
-import { goto } from './helpers';
+import { goto, pickSelectOption } from './helpers';
 
 /**
  * AGRUPACIÓN POR ESPACIO — LO QUE VA JUNTO SE SEPARA MENOS QUE LO QUE NO (DD-123).
@@ -131,8 +131,14 @@ const nombreDe = (txt: string): string => txt.replace(/^\s*[a-z_]+\s*\n/, '').re
  * queda en General. Se rellena al encontrarla cerrada, así que General se mide como la ve quien llega. Un alta nueva
  * con puerta entra aquí: si una sección sigue cerrada, la prueba lo dice en vez de medir otra con su nombre.
  */
-const PREPARAR: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  'admin/grupos/crear': { '#group-name': 'Agrupación' },
+const PREPARAR: Readonly<Record<string, (page: Page) => Promise<void>>> = {
+  // Las dos puertas del alta de grupo: General sin nombre (DD-121) y Distribución sin teléfono saliente (DD-158).
+  'admin/grupos/crear': async (page) => {
+    const nombre = page.locator('#group-name');
+    if (await nombre.count()) await nombre.fill('Agrupación');
+    const telefono = page.locator('sc-select').filter({ has: page.locator('#group-phone') });
+    if (await telefono.count()) await pickSelectOption(page, telefono, /./);
+  },
 };
 
 /** Lo medido en un test: los rojos y las vistas que recorrió (para saber qué conocidos le tocan). */
@@ -162,7 +168,7 @@ const medirRuta = async (page: Page, ruta: string): Promise<Medido> => {
       .toHaveAttribute(marca, valor, { timeout: 1500 })
       .then(() => true, () => false);
     if (!abierta) {
-      for (const [campo, texto] of Object.entries(PREPARAR[ruta] ?? {})) await page.locator(campo).fill(texto);
+      await PREPARAR[ruta]?.(page);
       await item.click();
       await expect(
         item,

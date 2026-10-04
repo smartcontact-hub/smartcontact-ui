@@ -332,7 +332,7 @@
        que aplica), pero deja una línea que dice que existe y dónde se enciende. -->
   <sc-section-card
     anchorId="group-section-distribution"
-    surface="card"
+    surface="subtle"
     icon="alt_route"
     titleKey="groups.form.section.distribution"
     hintKey="groups.form.section.distribution_hint"
@@ -349,11 +349,10 @@
         }
       </nav>
     }
-    <section class="sub-section" aria-labelledby="group-common-title">
-      <header class="sub-section__head">
-        <h3 id="group-common-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.distribution.common_title' | translate }}</h3>
-        <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.distribution.common_hint' | translate }}</p>
-      </header>
+    <!-- Sección → subsección → slot, el árbol del DS (nodo Figma `12610:23080`, DD-157): cada canal es una
+         subsección (la caja blanca sobre el gris de la sección) y sus partes, slots con su título y un divisor.
+         Así «Distribución» se lee como una parte de Teléfono, y no como un campo más. -->
+    <sc-subsection titleId="group-common-title" titleKey="groups.form.distribution.common_title" hintKey="groups.form.distribution.common_hint">
       <div class="switch-field switch-field--top">
         <sc-toggleswitch [checked]="form().advanced.overflowWhenNoAgents" [ariaLabel]="'groups.form.advanced.overflow' | translate" (checkedChange)="setAdvanced('overflowWhenNoAgents', $event)" />
         <div class="switch-field__copy">
@@ -362,246 +361,293 @@
         </div>
       </div>
       <!-- Sin «Desbordar sesión» desde DD-141: era de Chat, y lo cubre «Caducar sesión». -->
-    </section>
+    </sc-subsection>
 
     @if (hasPhone()) {
-      <sc-divider />
-      <section class="sub-section" id="group-channel-phone" aria-labelledby="group-channel-phone-title">
-        <header class="sub-section__head">
-          <h3 id="group-channel-phone-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
-            <sc-channel-icon channel="phone" />
-            {{ channelKeys.phone | translate }}
-          </h3>
-        </header>
-
-        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.routing' | translate }}</h4>
-        <div class="grid grid--2">
-          <div class="field">
-            <label id="group-strategy-label" class="field__label sc-text-caption-semibold" for="group-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-            <!-- Qué hace la estrategia elegida, del manual de usuario de Voice (DD-133), en el `helperText`: el lector la
-                 anuncia con el campo. Sustituye a las dos ayudas sueltas de Niveles y Agente exclusivo. -->
-            <sc-select inputId="group-strategy" ariaLabelledBy="group-strategy-label" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" [helperText]="strategyHelpKey() ? (strategyHelpKey()! | translate) : undefined" (valueChange)="onStrategyValueChange($event)">
-              <ng-template #item let-o>
-                <span class="strategy-option">
-                  <span>{{ o.label }}</span>
-                  @if (o.note) {
-                    <span class="strategy-option__note sc-text-caption-regular">{{ o.note }}</span>
-                  }
-                </span>
-              </ng-template>
-            </sc-select>
-          </div>
-          <!-- El número que ve el cliente cuando le llama un agente del grupo: un campo principal del canal, no
-               un dato de identidad (visión de producto de grupos, 2026-09-25). -->
-          <div class="field">
-            <!-- Obligatorio con Teléfono, como el nombre, y de los números asignados: no se escribe (DD-142). -->
-            <label id="group-phone-label" class="field__label sc-text-caption-semibold" for="group-phone">
-              {{ 'groups.form.fields.phone' | translate }}
-              <span class="field__required" aria-hidden="true">*</span>
-            </label>
-            <!-- `for` no nombra un `span[role=combobox]`: sin `ariaLabelledBy`, el lector leía el número como nombre (DD-133). -->
-            <sc-select
-              inputId="group-phone"
-              ariaLabelledBy="group-phone-label"
-              required
-              [options]="phoneOptions()"
-              [value]="form().phone || null"
-              [placeholder]="'groups.form.fields.phone_placeholder' | translate"
-              [helperText]="'groups.form.fields.phone_hint' | translate"
-              [error]="phoneError() ? (phoneError()! | translate) : undefined"
-              (valueChange)="onPhoneValueChange($event)"
-            />
-          </div>
-          @if (isRingAll()) {
+      <sc-subsection id="group-channel-phone" titleId="group-channel-phone-title" icon="call" [titleKey]="channelKeys.phone">
+        <sc-slot titleKey="groups.form.distribution.routing">
+          <div class="grid grid--2">
             <div class="field">
-              <label class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
-              <span class="inline-control">
-                <sc-select inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
-                <span class="inline-control__suffix sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
+              <label id="group-strategy-label" class="field__label sc-text-caption-semibold" for="group-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+              <!-- Qué hace la estrategia elegida, del manual de usuario de Voice (DD-133), en el `helperText`: el lector la
+                   anuncia con el campo. Sustituye a las dos ayudas sueltas de Niveles y Agente exclusivo. -->
+              <sc-select inputId="group-strategy" ariaLabelledBy="group-strategy-label" optionLabel="label" optionValue="value" optionDisabled="disabled" [options]="phoneStrategyOptions()" [value]="form().strategy" [helperText]="strategyHelpKey() ? (strategyHelpKey()! | translate) : undefined" (valueChange)="onStrategyValueChange($event)">
+                <ng-template #item let-o>
+                  <span class="strategy-option">
+                    <span>{{ o.label }}</span>
+                    @if (o.note) {
+                      <span class="strategy-option__note sc-text-caption-regular">{{ o.note }}</span>
+                    }
+                  </span>
+                </ng-template>
+              </sc-select>
+            </div>
+            <!-- El número que ve el cliente cuando le llama un agente del grupo: un campo principal del canal, no
+                 un dato de identidad (visión de producto de grupos, 2026-09-25). -->
+            <div class="field">
+              <!-- Obligatorio con Teléfono, como el nombre, y de los números asignados: no se escribe (DD-142). -->
+              <label id="group-phone-label" class="field__label sc-text-caption-semibold" for="group-phone">
+                {{ 'groups.form.fields.phone' | translate }}
+                <span class="field__required" aria-hidden="true">*</span>
+              </label>
+              <!-- `for` no nombra un `span[role=combobox]`: sin `ariaLabelledBy`, el lector leía el número como nombre (DD-133). -->
+              <sc-select
+                inputId="group-phone"
+                ariaLabelledBy="group-phone-label"
+                required
+                [options]="phoneOptions()"
+                [value]="form().phone || null"
+                [placeholder]="'groups.form.fields.phone_placeholder' | translate"
+                [helperText]="'groups.form.fields.phone_hint' | translate"
+                [error]="phoneError() ? (phoneError()! | translate) : undefined"
+                (valueChange)="onPhoneValueChange($event)"
+              />
+            </div>
+            @if (isRingAll()) {
+              <div class="field">
+                <label class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
+                <span class="inline-control">
+                  <sc-select inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
+                  <span class="inline-control__suffix sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
+                </span>
+              </div>
+            }
+            @if (isNiveles()) {
+              <div class="field">
+                <label class="field__label sc-text-caption-semibold" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+                <sc-select inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
+              </div>
+            }
+            <ng-container *ngTemplateOutlet="transferField; context: { channel: 'phone', queue: form().phoneQueue }" />
+            <div class="field">
+              <label class="field__label sc-text-caption-semibold" for="group-wrap-up" [id]="'group-wrap-up-label'">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
+              <sc-select inputId="group-wrap-up" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" optionValue="value" [options]="durationOptions(form().advanced.wrapUpSec, false)" [ariaLabelledBy]="'group-wrap-up-label'" />
+            </div>
+          </div>
+        </sc-slot>
+
+        <!-- La música va con la cola, junto al tiempo máximo: es lo que suena mientras se espera, y lo único que
+             casi todos cambian (revisión de producto del 2026-10-04). No es un recurso. -->
+        <sc-slot titleKey="groups.form.distribution.queue">
+          <div class="grid grid--2 queue-fields">
+            <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'phone', queue: form().phoneQueue }" />
+            <div class="field">
+              <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
+              <span class="inline-control" role="group" aria-labelledby="group-hold-music-label">
+                <span class="inline-control__value sc-text-body-regular">{{ form().announcements.holdMusicFile ?? ('groups.form.announcements.default_music' | translate) }}</span>
+                <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
+                @if (form().announcements.holdMusicFile) {
+                  <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.remove_music' | translate" (clicked)="setAnnouncement('holdMusicFile', null)" />
+                }
               </span>
             </div>
-          }
-          @if (isNiveles()) {
-            <div class="field">
-              <label class="field__label sc-text-caption-semibold" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
-              <sc-select inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
+          </div>
+        </sc-slot>
+
+        <!-- Los demás mensajes de la cola vuelven a la vista (salieron el 2026-09-25 y seguían en el modelo), plegados:
+             casi nunca se cambian. Sin la palabra «anuncio»: son mensajes, como en Chat (DD-157). «Audio saliente» sigue
+             fuera, pendiente de desarrollo. -->
+        <sc-slot titleKey="groups.form.distribution.queue_messages" hintKey="groups.form.distribution.queue_messages_hint" collapsible initiallyCollapsed>
+          <div class="queue-messages">
+            <div class="grid grid--2">
+              <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.queue_id', help: 'groups.form.announcements.queue_id_info', source: 'queueIdSource', file: 'queueIdFile', text: 'queueIdText', id: 'group-queue-id' }" />
+              <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.next_in_line', help: 'groups.form.announcements.next_in_line_info', source: 'nextInLineSource', file: 'nextInLineFile', text: 'nextInLineText', id: 'group-next-in-line' }" />
             </div>
-          }
-          <ng-container *ngTemplateOutlet="transferField; context: { channel: 'phone', queue: form().phoneQueue }" />
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-wrap-up" [id]="'group-wrap-up-label'">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
-            <sc-select inputId="group-wrap-up" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" optionValue="value" [options]="durationOptions(form().advanced.wrapUpSec, false)" [ariaLabelledBy]="'group-wrap-up-label'" />
-          </div>
-        </div>
 
-        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue' | translate }}</h4>
-        <div class="grid grid--2 queue-fields">
-          <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'phone', queue: form().phoneQueue }" />
-          <div class="field">
-            <label id="group-voice-label" class="field__label sc-text-caption-semibold" for="group-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
-            <sc-select inputId="group-voice" ariaLabelledBy="group-voice-label" [options]="voiceOptions" [value]="form().announcements.voice" [helperText]="'groups.form.announcements.voice_hint' | translate" (valueChange)="setAnnouncement('voice', $any($event))" />
-          </div>
-        </div>
+            <!-- Más de uno, cada uno con su .wav y su frecuencia (postventa, 2026-09-18). -->
+            <div class="field">
+              <span class="field__label sc-text-caption-semibold" id="group-periodic-label">{{ 'groups.form.announcements.periodic' | translate }}</span>
+              <p class="field__help sc-text-caption-regular">{{ 'groups.form.announcements.periodic_info' | translate }}</p>
+              <div class="periodic-list" role="group" aria-labelledby="group-periodic-label">
+                @for (periodic of form().announcements.periodicAnnouncements; track $index) {
+                  <span class="inline-control">
+                    <span class="inline-control__value sc-text-body-regular">{{ periodic.file }}</span>
+                    <label class="inline-control__suffix sc-text-caption-regular" [for]="'group-periodic-every-' + $index">{{ 'groups.form.announcements.every' | translate }}</label>
+                    <sc-inputnumber class="field__number" size="sm" [inputId]="'group-periodic-every-' + $index" [min]="5" suffix="s" [value]="periodic.everySec" (valueChange)="setPeriodicFrequency($index, $event)" />
+                    <sc-button size="sm" variant="secondary" appearance="text" icon="delete" [ariaLabel]="'groups.form.announcements.remove_periodic_aria' | translate: { file: periodic.file }" (clicked)="removePeriodicAnnouncement($index)" />
+                  </span>
+                }
+                <span>
+                  <input #periodicInput class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".wav,audio/wav" id="group-periodic-file" (change)="onPeriodicFile($event)" />
+                  <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.announcements.add_periodic' | translate" (clicked)="periodicInput.click()" />
+                </span>
+              </div>
+            </div>
 
-        <!-- MENSAJES EN COLA: la música es «lo principal y lo único necesario» (visión de producto de grupos,
-             2026-09-25) y no es un recurso. El identificador, «eres el siguiente», los anuncios periódicos, el
-             audio saliente y los avisos salen de la VISTA y se quedan en el modelo (`announcements` viaja
-             entero al guardar), así que volver a enseñarlos no pierde nada. -->
-        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue_messages' | translate }}</h4>
-        <div class="field">
-          <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
-          <span class="inline-control" role="group" aria-labelledby="group-hold-music-label">
-            <span class="inline-control__value sc-text-body-regular">{{ form().announcements.holdMusicFile ?? ('groups.form.announcements.default_music' | translate) }}</span>
-            <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
-            @if (form().announcements.holdMusicFile) {
-              <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.remove_music' | translate" (clicked)="setAnnouncement('holdMusicFile', null)" />
-            }
-          </span>
-        </div>
-      </section>
+            <div class="grid grid--2">
+              <div class="field">
+                <label id="group-voice-label" class="field__label sc-text-caption-semibold" for="group-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
+                <sc-select inputId="group-voice" ariaLabelledBy="group-voice-label" [options]="voiceOptions" [value]="form().announcements.voice" [helperText]="'groups.form.announcements.voice_hint' | translate" (valueChange)="setAnnouncement('voice', $any($event))" />
+              </div>
+            </div>
+
+            <div class="queue-messages__notices">
+              <div class="switch-field switch-field--top">
+                <sc-toggleswitch [checked]="form().announcements.announceAvgWait" [ariaLabel]="'groups.form.announcements.avg_wait' | translate" (checkedChange)="setAnnouncement('announceAvgWait', $event)" />
+                <div class="switch-field__copy">
+                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.avg_wait' | translate }}</span>
+                  <!-- La ayuda nombra la cifra: «Pon el tiempo que oirá». -->
+                  <label class="switch-field__hint sc-text-caption-regular" for="group-avg-wait">{{ 'groups.form.announcements.avg_wait_hint' | translate }}</label>
+                  @if (form().announcements.announceAvgWait) {
+                    <sc-inputnumber class="field__number" size="sm" inputId="group-avg-wait" [min]="0" suffix="s" [value]="form().announcements.avgWaitSec" (valueChange)="setAnnouncementNumber('avgWaitSec', $event)" />
+                  }
+                </div>
+              </div>
+              <div class="switch-field switch-field--top">
+                <sc-toggleswitch [checked]="form().announcements.announcePosition" [ariaLabel]="'groups.form.announcements.position' | translate" (checkedChange)="setAnnouncement('announcePosition', $event)" />
+                <div class="switch-field__copy">
+                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.position' | translate }}</span>
+                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.position_hint' | translate }}</p>
+                </div>
+              </div>
+              <div class="switch-field switch-field--top">
+                <sc-toggleswitch [checked]="form().announcements.announceWaitToAgent" [ariaLabel]="'groups.form.announcements.wait_to_agent' | translate" (checkedChange)="setAnnouncement('announceWaitToAgent', $event)" />
+                <div class="switch-field__copy">
+                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.wait_to_agent' | translate }}</span>
+                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.wait_to_agent_hint' | translate }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-slot>
+      </sc-subsection>
     }
 
     @if (hasChatFamily()) {
-      <sc-divider />
       <!-- Chat reúne Web Chat y WhatsApp: una estrategia y un bloque para los dos, y dentro, lo propio de cada
-           subcanal solo si está marcado. El número de WhatsApp ya no depende de Web Chat (se medía el
-           2026-09-21: con WhatsApp y sin Chat no había dónde ponerlo). -->
-      <section class="sub-section" id="group-channel-chat" aria-labelledby="group-channel-chat-title">
-        <header class="sub-section__head">
-          <h3 id="group-channel-chat-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
-            <sc-channel-icon channel="chat" />
-            {{ 'groups.channel.chat_family' | translate }}
-          </h3>
-          <p class="sub-section__hint sc-text-caption-regular">{{ chatSubchannelLabels() }}</p>
-        </header>
+           subcanal solo si está marcado. Mismo orden que Teléfono (revisión de producto del 2026-10-04): distribución,
+           cola y mensajes, y el acceso de cada subcanal al final. -->
+      <sc-subsection id="group-channel-chat" titleId="group-channel-chat-title" icon="chat_bubble" titleKey="groups.channel.chat_family">
+        <p class="channel-note sc-text-caption-regular">{{ chatSubchannelLabels() }}</p>
 
-        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.routing' | translate }}</h4>
-        <div class="grid grid--2">
-          <div class="field">
-            <label id="group-chat-strategy-label" class="field__label sc-text-caption-semibold" for="group-chat-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
-            <sc-select inputId="group-chat-strategy" ariaLabelledBy="group-chat-strategy-label" [helperText]="form().chatStrategy === 'Niveles' ? ('groups.form.strategy_help.levels' | translate) : undefined" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
-          </div>
-          @if (form().chatStrategy === 'Niveles') {
-            <div class="field">
-              <label id="group-chat-sub-strategy-label" class="field__label sc-text-caption-semibold" for="group-chat-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
-              <sc-select inputId="group-chat-sub-strategy" ariaLabelledBy="group-chat-sub-strategy-label" [options]="chatSubStrategies" [value]="form().chatSubStrategy" (valueChange)="onChatSubStrategyChange($event)" />
-            </div>
-          }
-          <ng-container *ngTemplateOutlet="transferField; context: { channel: 'chat', queue: form().chatQueue }" />
-        </div>
-        <!-- A la vista, no en un «avanzado» (visión de producto de grupos, 2026-09-25). Los minutos aparecen con el
-             interruptor: un tiempo que no se aplica es un campo muerto. -->
-        <div class="grid grid--2">
-        <div class="switch-field switch-field--top">
-          <sc-toggleswitch [checked]="form().chat.closeOnInactivity" [ariaLabel]="'groups.form.chat.close_on_inactivity' | translate" (checkedChange)="setChat('closeOnInactivity', $event)" />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.chat.close_on_inactivity' | translate }}</span>
-            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.chat.close_on_inactivity_hint' | translate }}</p>
-            @if (form().chat.closeOnInactivity) {
-              <span class="inline-control">
-                <label class="inline-control__suffix sc-text-caption-regular" for="group-chat-inactivity" [id]="'group-chat-inactivity-label'">{{ 'groups.form.chat.inactivity_minutes' | translate }}</label>
-                <sc-select size="sm" inputId="group-chat-inactivity" [value]="form().chat.inactivityMinutes" (valueChange)="setInactivityMinutes($event)" optionValue="value" [options]="durationOptions(form().chat.inactivityMinutes, true)" [ariaLabelledBy]="'group-chat-inactivity-label'" />
-              </span>
-            }
-          </div>
-        </div>
-        <div class="switch-field switch-field--top">
-          <sc-toggleswitch [checked]="form().advanced.chatRatingEnabled" [ariaLabel]="'groups.form.advanced.chat_rating' | translate" (checkedChange)="setAdvanced('chatRatingEnabled', $event)" />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.chat_rating' | translate }}</span>
-            <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.chat_rating_hint' | translate }}</p>
-          </div>
-        </div>
-
-        </div>
-
-        @if (hasWebChat()) {
-          <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.webchat_access' | translate }}</h4>
-          <div class="field">
-              <label id="group-chat-schedule-label" class="field__label sc-text-caption-semibold" for="group-chat-schedule">{{ 'groups.form.chat.attendance_schedule' | translate }}</label>
-              <sc-select inputId="group-chat-schedule" ariaLabelledBy="group-chat-schedule-label" optionValue="value" optionDisabled="disabled" [options]="attendanceOptions('chat')" [value]="form().chat.attendanceScheduleIds?.chat ?? null" (valueChange)="setAttendanceSchedule('chat', $event)" />
-            </div>
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
-            <span class="domain-add">
-              <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [helperText]="'groups.form.advanced.allowed_domains_hint' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
-              <sc-button variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
-            </span>
-            @if (form().advanced.allowedDomains.length > 0) {
-              <div class="domain-chips">
-                @for (domain of form().advanced.allowedDomains; track domain) {
-                  <sc-chip [label]="domain" removable [removeAriaLabel]="'common.delete' | translate" (removed)="removeDomain(domain)" />
-                }
+        <sc-slot titleKey="groups.form.distribution.routing">
+          <div class="grid">
+            <div class="grid grid--2">
+              <div class="field">
+                <label id="group-chat-strategy-label" class="field__label sc-text-caption-semibold" for="group-chat-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+                <sc-select inputId="group-chat-strategy" ariaLabelledBy="group-chat-strategy-label" [helperText]="form().chatStrategy === 'Niveles' ? ('groups.form.strategy_help.levels' | translate) : undefined" [options]="chatStrategies" [value]="form().chatStrategy" (valueChange)="onChatStrategyValueChange($event)" />
               </div>
-            }
-          </div>
-          <div class="field">
-            <label class="field__label sc-text-caption-semibold" for="group-chat-script">{{ 'groups.form.advanced.script_title' | translate }}</label>
-            <p class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.script_hint' | translate }}</p>
-            <sc-textarea inputId="group-chat-script" [rows]="2" fluid readonly [value]="chatScript()" />
-            <sc-button class="script-copy" size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'groups.form.advanced.script_copy' | translate" (clicked)="copyChatScript()" />
-          </div>
-        }
-
-        @if (hasWhatsApp()) {
-          <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.whatsapp_number' | translate }}</h4>
-          <div class="grid grid--2">
-            <div class="field">
-              <label class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">{{ 'groups.form.advanced.whatsapp_number' | translate }}</label>
-              <sc-inputtext inputId="group-chat-whatsapp" type="tel" placeholder="+34 900 100 200" [value]="form().advanced.whatsappNumber" (valueChange)="setAdvanced('whatsappNumber', $event)" />
+              @if (form().chatStrategy === 'Niveles') {
+                <div class="field">
+                  <label id="group-chat-sub-strategy-label" class="field__label sc-text-caption-semibold" for="group-chat-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+                  <sc-select inputId="group-chat-sub-strategy" ariaLabelledBy="group-chat-sub-strategy-label" [options]="chatSubStrategies" [value]="form().chatSubStrategy" (valueChange)="onChatSubStrategyChange($event)" />
+                </div>
+              }
+              <ng-container *ngTemplateOutlet="transferField; context: { channel: 'chat', queue: form().chatQueue }" />
             </div>
-            <div class="field">
-              <label id="group-whatsapp-schedule-label" class="field__label sc-text-caption-semibold" for="group-whatsapp-schedule">{{ 'groups.form.chat.attendance_schedule' | translate }}</label>
-              <sc-select inputId="group-whatsapp-schedule" ariaLabelledBy="group-whatsapp-schedule-label" optionValue="value" optionDisabled="disabled" [options]="attendanceOptions('whatsapp')" [value]="form().chat.attendanceScheduleIds?.whatsapp ?? null" (valueChange)="setAttendanceSchedule('whatsapp', $event)" />
+            <!-- A la vista, no en un «avanzado» (visión de producto de grupos, 2026-09-25). Los minutos aparecen con el
+                 interruptor: un tiempo que no se aplica es un campo muerto. -->
+            <div class="grid grid--2">
+              <div class="switch-field switch-field--top">
+                <sc-toggleswitch [checked]="form().chat.closeOnInactivity" [ariaLabel]="'groups.form.chat.close_on_inactivity' | translate" (checkedChange)="setChat('closeOnInactivity', $event)" />
+                <div class="switch-field__copy">
+                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.chat.close_on_inactivity' | translate }}</span>
+                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.chat.close_on_inactivity_hint' | translate }}</p>
+                  @if (form().chat.closeOnInactivity) {
+                    <span class="inline-control">
+                      <label class="inline-control__suffix sc-text-caption-regular" for="group-chat-inactivity" [id]="'group-chat-inactivity-label'">{{ 'groups.form.chat.inactivity_minutes' | translate }}</label>
+                      <sc-select size="sm" inputId="group-chat-inactivity" [value]="form().chat.inactivityMinutes" (valueChange)="setInactivityMinutes($event)" optionValue="value" [options]="durationOptions(form().chat.inactivityMinutes, true)" [ariaLabelledBy]="'group-chat-inactivity-label'" />
+                    </span>
+                  }
+                </div>
+              </div>
+              <div class="switch-field switch-field--top">
+                <sc-toggleswitch [checked]="form().advanced.chatRatingEnabled" [ariaLabel]="'groups.form.advanced.chat_rating' | translate" (checkedChange)="setAdvanced('chatRatingEnabled', $event)" />
+                <div class="switch-field__copy">
+                  <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.chat_rating' | translate }}</span>
+                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.chat_rating_hint' | translate }}</p>
+                </div>
+              </div>
             </div>
           </div>
-        }
+        </sc-slot>
 
-        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue' | translate }}</h4>
-        <div class="grid grid--2 queue-fields">
-          <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'chat', queue: form().chatQueue }" />
-        </div>
+        <sc-slot titleKey="groups.form.distribution.queue">
+          <div class="grid grid--2 queue-fields">
+            <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'chat', queue: form().chatQueue }" />
+          </div>
+        </sc-slot>
 
         <!-- Lo que se le escribe al cliente mientras espera, POR SUBCANAL y solo de los marcados: Web Chat y
              WhatsApp comparten cola, pero no hablan igual. Vacío = no se envía nada. -->
-        <h4 class="channel-part sc-text-caption-semibold">{{ 'groups.form.distribution.queue_messages' | translate }}</h4>
-        <p class="field__help sc-text-caption-regular">{{ 'groups.form.chat.messages_hint' | translate }}</p>
-        @for (sub of activeChatSubchannels(); track sub) {
-          <div class="chat-messages" role="group" [attr.aria-labelledby]="'group-chat-messages-' + sub">
-            <span class="chat-messages__title sc-text-caption-semibold" [id]="'group-chat-messages-' + sub">{{ channelKeys[sub] | translate }}</span>
-            <div class="grid grid--2">
-              @for (m of chatMessageKeys; track m.key) {
-                <div class="field">
-                  <label class="field__label sc-text-caption-semibold" [for]="'group-chat-msg-' + sub + '-' + m.key">{{ m.labelKey | translate }}</label>
-                  <sc-textarea [inputId]="'group-chat-msg-' + sub + '-' + m.key" [rows]="2" fluid [placeholder]="m.placeholderKey | translate" [value]="form().chat.queueMessages[sub][m.key]" (valueChange)="setChatMessage(sub, m.key, $event)" />
+        <sc-slot titleKey="groups.form.distribution.queue_messages" hintKey="groups.form.chat.messages_hint">
+          <div class="queue-messages">
+            @for (sub of activeChatSubchannels(); track sub) {
+              <div class="chat-messages" role="group" [attr.aria-labelledby]="'group-chat-messages-' + sub">
+                <span class="chat-messages__title sc-text-caption-semibold" [id]="'group-chat-messages-' + sub">{{ channelKeys[sub] | translate }}</span>
+                <div class="grid grid--2">
+                  @for (m of chatMessageKeys; track m.key) {
+                    <div class="field">
+                      <label class="field__label sc-text-caption-semibold" [for]="'group-chat-msg-' + sub + '-' + m.key">{{ m.labelKey | translate }}</label>
+                      <sc-textarea [inputId]="'group-chat-msg-' + sub + '-' + m.key" [rows]="2" fluid [placeholder]="m.placeholderKey | translate" [value]="form().chat.queueMessages[sub][m.key]" (valueChange)="setChatMessage(sub, m.key, $event)" />
+                    </div>
+                  }
                 </div>
-              }
-            </div>
+              </div>
+            }
           </div>
+        </sc-slot>
+
+        @if (hasWebChat()) {
+          <sc-slot titleKey="groups.form.distribution.webchat_access">
+            <div class="grid">
+              <div class="field">
+                <label id="group-chat-schedule-label" class="field__label sc-text-caption-semibold" for="group-chat-schedule">{{ 'groups.form.chat.attendance_schedule' | translate }}</label>
+                <sc-select inputId="group-chat-schedule" ariaLabelledBy="group-chat-schedule-label" optionValue="value" optionDisabled="disabled" [options]="attendanceOptions('chat')" [value]="form().chat.attendanceScheduleIds?.chat ?? null" (valueChange)="setAttendanceSchedule('chat', $event)" />
+              </div>
+              <div class="field">
+                <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
+                <span class="domain-add">
+                  <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [helperText]="'groups.form.advanced.allowed_domains_hint' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
+                  <sc-button variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
+                </span>
+                @if (form().advanced.allowedDomains.length > 0) {
+                  <div class="domain-chips">
+                    @for (domain of form().advanced.allowedDomains; track domain) {
+                      <sc-chip [label]="domain" removable [removeAriaLabel]="'common.delete' | translate" (removed)="removeDomain(domain)" />
+                    }
+                  </div>
+                }
+              </div>
+              <div class="field">
+                <label class="field__label sc-text-caption-semibold" for="group-chat-script">{{ 'groups.form.advanced.script_title' | translate }}</label>
+                <p class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.script_hint' | translate }}</p>
+                <sc-textarea inputId="group-chat-script" [rows]="2" fluid readonly [value]="chatScript()" />
+                <sc-button class="script-copy" size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'groups.form.advanced.script_copy' | translate" (clicked)="copyChatScript()" />
+              </div>
+            </div>
+          </sc-slot>
         }
-      </section>
+
+        @if (hasWhatsApp()) {
+          <sc-slot titleKey="groups.form.distribution.whatsapp_number">
+            <div class="grid grid--2">
+              <div class="field">
+                <label class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">{{ 'groups.form.advanced.whatsapp_number' | translate }}</label>
+                <sc-inputtext inputId="group-chat-whatsapp" type="tel" placeholder="+34 900 100 200" [value]="form().advanced.whatsappNumber" (valueChange)="setAdvanced('whatsappNumber', $event)" />
+              </div>
+              <div class="field">
+                <label id="group-whatsapp-schedule-label" class="field__label sc-text-caption-semibold" for="group-whatsapp-schedule">{{ 'groups.form.chat.attendance_schedule' | translate }}</label>
+                <sc-select inputId="group-whatsapp-schedule" ariaLabelledBy="group-whatsapp-schedule-label" optionValue="value" optionDisabled="disabled" [options]="attendanceOptions('whatsapp')" [value]="form().chat.attendanceScheduleIds?.whatsapp ?? null" (valueChange)="setAttendanceSchedule('whatsapp', $event)" />
+              </div>
+            </div>
+          </sc-slot>
+        }
+      </sc-subsection>
     }
 
     @if (hasEmail()) {
-      <sc-divider />
-      <section class="sub-section" id="group-channel-email" aria-labelledby="group-channel-email-title">
-        <header class="sub-section__head">
-          <h3 id="group-channel-email-title" class="sub-section__title channel-title sc-text-body-semibold" tabindex="-1">
-            <sc-channel-icon channel="email" />
-            {{ channelKeys.email | translate }}
-          </h3>
-          <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.distribution.email_note' | translate }}</p>
-        </header>
-      </section>
+      <sc-subsection id="group-channel-email" titleId="group-channel-email-title" icon="mail" [titleKey]="channelKeys.email">
+        <p class="channel-note sc-text-caption-regular">{{ 'groups.form.distribution.email_note' | translate }}</p>
+      </sc-subsection>
     }
 
     @if (inactiveFamilies().length > 0) {
-      <sc-divider />
-      <section class="sub-section">
+      <div class="channel-off-list">
         @for (family of inactiveFamilies(); track family) {
           <p class="channel-off sc-text-caption-regular">{{ 'groups.form.distribution.inactive' | translate: { channel: (familyLabelKeys[family] | translate) } }}</p>
         }
-      </section>
+      </div>
     }
   </sc-section-card>
 </ng-template>
@@ -822,5 +868,24 @@
      que si no anuncian un segundo botón «Choose File» en inglés. -->
 <ng-template #filePicker let-key="key" let-id="id">
   <input #fileInput class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".wav,audio/wav" [id]="id + '-file'" (change)="onAudioFile(key, $event)" />
-  <sc-button size="sm" variant="secondary" appearance="outlined" icon="upload" [label]="(form().announcements.holdMusicFile ? 'groups.form.announcements.change_file' : 'groups.form.announcements.choose_file') | translate" (clicked)="fileInput.click()" />
+  <sc-button size="sm" variant="secondary" appearance="outlined" icon="upload" [label]="($any(form().announcements)[key] ? 'groups.form.announcements.change_file' : 'groups.form.announcements.choose_file') | translate" (clicked)="fileInput.click()" />
+</ng-template>
+
+<!-- Un mensaje de la cola de Teléfono que puede no decir nada, leerse con la voz sintética o ser un .wav propio
+     (manual de usuario de Voice): el identificador del grupo y «Eres el siguiente». El texto o el archivo aparecen con
+     su opción: «Texto a voz» sin texto no dice nada. -->
+<ng-template #audioSource let-label="label" let-help="help" let-source="source" let-file="file" let-text="text" let-id="id">
+  <div class="field">
+    <span class="field__label sc-text-caption-semibold" [id]="id + '-label'">{{ label | translate }}</span>
+    <p class="field__help sc-text-caption-regular">{{ help | translate }}</p>
+    <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="$any(form().announcements)[source]" [ariaLabel]="label | translate" (valueChange)="setAnnouncement(source, $any($event))" />
+    @if ($any(form().announcements)[source] === 'file') {
+      <span class="inline-control">
+        <span class="inline-control__value sc-text-body-regular">{{ $any(form().announcements)[file] ?? ('groups.form.announcements.no_file' | translate) }}</span>
+        <ng-container *ngTemplateOutlet="filePicker; context: { key: file, id: id }" />
+      </span>
+    } @else if ($any(form().announcements)[source] === 'tts') {
+      <sc-inputtext size="sm" [inputId]="id + '-text'" [ariaLabel]="(label | translate) + ': ' + ('groups.form.announcements.tts_text' | translate)" [placeholder]="'groups.form.announcements.tts_text' | translate" [value]="$any(form().announcements)[text]" (valueChange)="setAnnouncement(text, $event ?? '')" />
+    }
+  </div>
 </ng-template>

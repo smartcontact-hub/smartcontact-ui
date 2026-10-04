@@ -46,11 +46,9 @@ const mostrarColumna = async (page: Page, nombre: string): Promise<void> => {
   const cabecera = page.locator('thead th', { hasText: nombre });
   await page.locator('tbody tr').first().waitFor();
   if ((await cabecera.count()) > 0) return;
-  await page.locator('.page__action-bar .p-multiselect').click();
-  await page
-    .locator('.p-multiselect-overlay li[role="option"]')
-    .filter({ hasText: new RegExp(`^\\s*${nombre}\\s*$`) })
-    .click();
+  // El globo de columnas con su lista (DD-162).
+  await page.locator('.page__action-bar').getByRole('button', { name: /^Columnas, / }).click();
+  await page.getByRole('listbox', { name: /^Columnas/ }).getByRole('option', { name: nombre, exact: true }).click();
   await page.keyboard.press('Escape');
   await expect(cabecera).toHaveCount(1);
 };

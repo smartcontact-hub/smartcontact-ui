@@ -33,6 +33,11 @@ export class ScSubsectionComponent {
   readonly collapsible = input(false, { transform: booleanAttribute });
   /** Empieza plegada. Solo tiene efecto con `collapsible`. */
   readonly initiallyCollapsed = input(false, { transform: booleanAttribute });
+  /**
+   * `id` del título, para nombrar la subsección desde fuera o saltar a ella: con él, el título
+   * acepta el foco por programa (`tabindex="-1"`), como el destino de un ancla.
+   */
+  readonly titleId = input<string | null>(null);
 
   protected readonly chevronDownIcon = 'expand_more';
   protected readonly chevronRightIcon = 'chevron_right';

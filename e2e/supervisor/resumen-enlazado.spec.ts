@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
 
 /**
  * EL RESUMEN DE LA FICHA DE GRUPO LLEVA A SU SECCIÓN (DD-146).
@@ -97,6 +97,9 @@ test('en el alta, el resumen abre la sección sin tocar la dirección, y General
   await expect(page.getByRole('heading', { level: 2, name: 'General', exact: true })).toBeVisible();
   // Con nombre, abre Recursos, arriba y con el foco en su título, y la dirección sigue sin sección.
   await page.getByLabel('Nombre').fill('Grupo del resumen');
+  // Sin teléfono saliente no se pasa de Distribución y colas (DD-158).
+  await page.locator('sc-form-section-nav').getByText('Distribución y colas', { exact: true }).click();
+  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
   await recursos.click();
   await expect(page.getByRole('heading', { level: 2, name: 'Recursos', exact: true })).toBeFocused();
   await expect(page).toHaveURL(/\/admin\/grupos\/crear$/);

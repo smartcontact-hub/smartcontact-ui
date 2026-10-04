@@ -15,6 +15,10 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
+import { FormsModule } from '@angular/forms';
+import { moveItemInArray, type CdkDragDrop } from '@angular/cdk/drag-drop';
+import { ListboxModule } from 'primeng/listbox';
+import { PopoverModule } from 'primeng/popover';
 
 import {
   type BulkActionEntityLabels,
@@ -26,7 +30,6 @@ import {
   ScDatatableComponent,
   ScDividerComponent,
   ScEmptyStateComponent,
-  ScMultiSelectComponent,
   type ScDatatableRowEvent,
   type ScDatatableRowKeyEvent,
   type ScDatatableSortEvent,
@@ -111,13 +114,15 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
 @Component({
   selector: 'sc-list-page',
   imports: [
+    FormsModule,
+    ListboxModule,
     MenuModule,
+    PopoverModule,
     ScBulkActionBarComponent,
     ScButtonComponent,
     ScDatatableComponent,
     ScDividerComponent,
     ScEmptyStateComponent,
-    ScMultiSelectComponent,
     ScSearchComponent,
     TranslateModule,
   ],
@@ -328,7 +333,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     return this.rowMenu() ? [...prefs.visible, ACTIONS_FIELD] : prefs.visible;
   });
 
-  /** El selector: qué columnas se ven. El orden no lo toca (se ordena arrastrando las cabeceras). */
+  /** El globo: qué columnas se ven. El orden no lo toca (se ordena arrastrando en el mismo globo). */
   protected onVisibleChange(keys: readonly unknown[]): void {
     const prefs = this.columnPrefs();
     if (!prefs) return;
@@ -337,19 +342,30 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     this.savePrefs({ ...prefs, visible: prefs.order.filter((k) => chosen.has(k)) });
   }
 
+  /** La lista del globo, sin su borde ni su sombra: la caja ya la pone el globo (`dt` de la instancia). */
+  protected readonly columnsListDt = { root: { borderColor: 'transparent', shadow: 'none' } };
+
+  /** El globo de columnas, abierto: su botón lo dice (`aria-expanded`). */
+  protected readonly columnsOpen = signal(false);
+
   /**
-   * Se ha arrastrado una cabecera. Las visibles toman el orden nuevo en los huecos que ya ocupaban, así que las
-   * ocultas no se mueven y vuelven a salir donde estaban. Las fijas vuelven a su sitio aunque se suelte encima.
+   * Las opciones del globo, en una copia propia: el Listbox nativo reordena la suya al soltar, y aquí se guarda el
+   * orden nuevo en las preferencias, de donde vuelve a salir esta copia.
    */
-  protected onColumnOrderChange(fields: readonly string[]): void {
+  protected readonly columnOrderDraft = computed(() => [...this.columnOptions()]);
+
+  /**
+   * Se ha soltado una columna en el globo (DD-162). Las visibles se quedan las mismas; el orden es el de la lista. Las
+   * fijas vuelven a su sitio aunque se suelten encima (`normalizePrefs`).
+   */
+  protected onColumnDrop(event: CdkDragDrop<string[]>): void {
     const prefs = this.columnPrefs();
     const choices = this.columnChoices();
-    if (!prefs || !choices) return;
-    const moved = fields.filter((f) => f !== ACTIONS_FIELD && prefs.visible.includes(f));
-    const queue = [...moved];
-    const order = prefs.order.map((k) => (prefs.visible.includes(k) ? queue.shift()! : k));
-    const next = normalizePrefs(choices, { order, visible: prefs.visible, widths: prefs.widths });
-    this.savePrefs(next);
+    if (!prefs || !choices || event.previousIndex === event.currentIndex) return;
+    const order = [...prefs.order];
+    moveItemInArray(order, event.previousIndex, event.currentIndex);
+    const visible = order.filter((k) => prefs.visible.includes(k));
+    this.savePrefs(normalizePrefs(choices, { order, visible, widths: prefs.widths }));
   }
 
   /** Se ha soltado el borde de una columna: se recuerdan, en rem, los anchos de las que ya tenían uno medido. */

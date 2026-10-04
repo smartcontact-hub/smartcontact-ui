@@ -139,6 +139,33 @@
   overflow-wrap: anywhere;
 }
 
+/* ─── La cifra principal, con color (DD-161) ────────────────────────────────────────────────────────────
+ * La imagen de la vista previa de ProgressSpinner en primeng.dev, con nuestros tokens: un degradado de marca y el
+ * texto claro encima. Los tres tonos son los del botón principal (reposo, pulsado y al pasar), que ya van con
+ * `--sc-text-inverse` en claro y en oscuro: el texto llega a AA sobre cualquiera de ellos (lo mide
+ * `resumen-destacado`). Una por resumen: el color dice cuál es la cifra que importa (AGENTS «UX de pantalla» 1).
+ * El anillo y las barras van en el color del texto, sobre una pista translúcida del mismo color. */
+.resumen__kpi--destacada {
+  color: var(--sc-text-inverse);
+  /* El tono central también de color de fondo, debajo del degradado: es lo que queda si la imagen no se pinta
+   * (colores forzados, impresión), y lo que miden las sondas de contraste que solo leen `background-color`. */
+  background-color: var(--sc-bg-primary);
+  background-image: linear-gradient(135deg, var(--sc-bg-primary-active), var(--sc-bg-primary) 55%, var(--sc-bg-primary-hover));
+  box-shadow: var(--sc-shadow-card);
+
+  :is(.resumen__count, .resumen__of, .resumen__digits, .resumen__value, .resumen__label, .resumen__note) {
+    color: inherit;
+  }
+
+  .resumen__enlace:focus-visible {
+    outline-color: currentColor;
+  }
+
+  .resumen__ring-track {
+    stroke: color-mix(in srgb, currentColor 25%, transparent);
+  }
+}
+
 /* ─── El widget (`sc-summary-kpi`) ─────────────────────────────────────────────────────────────────── */
 
 .resumen__kpi--widget {

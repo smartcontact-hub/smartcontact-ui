@@ -28,8 +28,10 @@ export class SlotDemoComponent {
       { name: 'titleKey', control: { kind: 'text' } },
       { name: 'icon', control: { kind: 'text' }, description: 'Nombre Material opcional' },
       { name: 'hintKey', control: { kind: 'text' }, description: 'Pista bajo la etiqueta' },
+      { name: 'collapsible', control: { kind: 'boolean' }, description: 'El título pliega y despliega el slot' },
+      { name: 'initiallyCollapsed', control: { kind: 'boolean' }, description: 'Nace plegado (con collapsible)' },
     ],
-    defaultArgs: { titleKey: 'Nombre', icon: '', hintKey: '' },
+    defaultArgs: { titleKey: 'Nombre', icon: '', hintKey: '', collapsible: false, initiallyCollapsed: false },
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

@@ -19,6 +19,20 @@
 > está hecha: en todas las que tocan una variable, el export aún dice el valor de antes.
 
 
+**La cifra principal del resumen, con color (DD-161, 2026-10-04).** Pendiente en la maqueta de las fichas: una
+tarjeta del resumen por ficha con el degradado del botón principal (pulsado → reposo → al pasar, a 135°), el texto
+`text-inverse`, la sombra de tarjeta y el anillo y las barras en el color del texto sobre una pista al 25 %. Si se
+quieren tokens propios de degradado, nacen en el Kit. Mídelo antes.
+
+**El alta, el listado y la tabla al pie (DD-158 a DD-160, 2026-10-04).** «Atrás» secundario y «Siguiente» principal,
+juntos a la izquierda y sin icono; sin la columna «Asignar» en Grupos; y la tabla de agentes del grupo hasta el pie de
+la pantalla. Solo maqueta: ninguna variable nueva.
+
+**Distribución y colas con el árbol del DS (DD-157, 2026-10-04).** Pendiente en el Kit y en la maqueta de la ficha de
+grupo: la sección en `surface="subtle"`, cada canal un `.Subsection` y cada parte un slot (Distribución, Cola, Mensajes
+en cola y, en Chat, el acceso al final); la música en «Cola»; y una variante plegable del slot, con el título como
+botón y el chevron de la subsección, que en el Kit no existe. Mídelo antes; no requiere variables nuevas.
+
 **Estado del agente en su columna (DD-156, 2026-10-04).** Pendiente de reflejar en la maqueta de la asignación de
 agentes del grupo (ficha y panel): «Estado» es la columna que sigue a «Agente», con la etiqueta del listado, y cada
 columna mide lo que lleva (Asignado y Habilitado, su rótulo). La referencia de producto dibuja un punto de color: se

@@ -6,13 +6,15 @@
  * La sección abierta vive aquí y no en la dirección: cambiar de sección en el alta no toca la URL ni el historial, y
  * Atrás del navegador sale del alta (DD-122 §4). Al crear, la ficha abre su edición en la sección abierta.
  *
- * Una sección lleva ✓ cuando se abrió, se dejó y está completa: la abierta no, aunque esté bien, porque aún se está
- * rellenando. Si se dejó sin lo obligatorio, la ficha la marca con el punto rojo (`dejadas`), como Distribución y
+ * Una sección lleva ✓ cuando tiene algo obligatorio, se abrió, se dejó y está completa: la abierta no, aunque esté bien,
+ * porque aún se está rellenando. La que no tiene nada obligatorio no lo lleva nunca (DD-158): un ✓ por solo pasar no
+ * comprueba nada, y enseña a no fiarse de los que sí. Si se dejó sin lo obligatorio, la ficha la marca con el punto rojo (`dejadas`), como Distribución y
  * colas sin teléfono saliente (DD-142); antes de abrirla, ninguna marca. Lo que no deja salir de una sección (la
  * puerta de General en el grupo, DD-121) lo aplica cada ficha antes de `abrir`.
  *
  *   protected readonly alta = seccionesDeAlta({
  *     secciones: this.navSections,
+ *     obligatoria: (id) => id === GENERAL,
  *     completa: (id) => id !== GENERAL || this.generalValid(),
  *   });
  */
@@ -35,6 +37,8 @@ export interface SeccionesAlta {
 
 export function seccionesDeAlta(opts: {
   readonly secciones: Signal<readonly FormNavSection[]>;
+  /** La sección tiene algo obligatorio: solo entonces puede llevar ✓. */
+  readonly obligatoria: (id: string) => boolean;
   /** Lo de la sección está completo. */
   readonly completa: (id: string) => boolean;
 }): SeccionesAlta {
@@ -53,7 +57,9 @@ export function seccionesDeAlta(opts: {
 
   return {
     abierta,
-    hechas: computed(() => new Set(ids().filter((id) => id !== abierta() && dejadas().has(id) && opts.completa(id)))),
+    hechas: computed(
+      () => new Set(ids().filter((id) => id !== abierta() && dejadas().has(id) && opts.obligatoria(id) && opts.completa(id))),
+    ),
     dejadas: dejadas.asReadonly(),
     abrir(id: string): void {
       const antes = abierta();

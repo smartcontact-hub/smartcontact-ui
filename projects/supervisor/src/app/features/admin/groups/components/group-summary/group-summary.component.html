@@ -12,6 +12,7 @@
   <div class="resumen__cards">
     <!-- Agentes: los que atienden sobre los asignados, con su anillo (DD-126); debajo, quién atiende cada canal. -->
     <sc-summary-kpi
+      destacada
       icon="group"
       labelKey="groups.form.summary.agents_active"
       [compact]="true"
@@ -32,7 +33,7 @@
               </span>
               @if (row.count > 0) {
                 <span class="resumen__digits sc-text-caption-semibold" [scAnimateOnChange]="row.count" animateClass="animate-sc-bump">{{ row.count }}</span>
-                <p-metergroup class="resumen__meter" aria-hidden="true" [value]="row.meter">
+                <p-metergroup class="resumen__meter" aria-hidden="true" [value]="row.meter" [dt]="meterDt">
                   <ng-template #label />
                 </p-metergroup>
               } @else {

@@ -201,12 +201,17 @@ export const fillFieldByLabel = async (
  *  Pulsa el CONTROL, no el centro de la caja que le pasen: el `sc-select` entero incluye la ayuda y el
  *  error de debajo, y con una ayuda de dos líneas su centro cae en el hueco entre el control y el texto
  *  (medido en la extensión del agente, DD-133: 33 px de control, 7 de hueco y 35 de ayuda), donde el
- *  clic no abre nada. Si el locator ya es el control (un `combobox`), se pulsa tal cual. */
+ *  clic no abre nada. Si el locator ya es el control (un `combobox`), se pulsa tal cual.
+ *
+ *  Antes de decidir, espera a que el campo esté pintado: `count()` no espera. Tras un clic, la app pinta en el
+ *  fotograma siguiente (`eventCoalescing`), y en el runner del CI el `count()` llegaba antes nada más cambiar de
+ *  sección: contaba 0, pulsaba el centro de la caja y no abría nada (dos pruebas en rojo el 2026-10-04). */
 export const pickSelectOption = async (
   page: Page,
   select: ReturnType<Page['locator']>,
   optionText: string | RegExp,
 ): Promise<void> => {
+  await select.first().waitFor();
   const control = select.locator('.p-select');
   await ((await control.count()) > 0 ? control.first() : select).click();
   const option = page.locator('.p-select-overlay .p-select-option', { hasText: optionText }).first();

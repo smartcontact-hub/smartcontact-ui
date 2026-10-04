@@ -47,11 +47,22 @@ export const nombreCaptura = (vista) =>
 export const nombreDe = (txt) => txt.replace(/^\s*[a-z_]+\s*\n/, '').replace(/\s+/g, ' ').trim();
 
 /**
- * Lo mínimo que abre la puerta de un alta: la de grupo no deja salir de General sin nombre (DD-121), y el índice se
- * queda en General. Se rellena al encontrarla cerrada, así que la primera vista se captura como la ve quien llega. Un
- * alta nueva con puerta entra aquí; si no, su sección se salta con un aviso en vez de capturar otra con su nombre.
+ * Lo mínimo que abre las puertas de un alta: la de grupo no deja salir de General sin nombre (DD-121) ni de Distribución
+ * y colas sin teléfono saliente (DD-158), y el índice se queda donde falta. Se rellena al encontrarla cerrada, así que
+ * la primera vista se captura como la ve quien llega. Un alta nueva con puerta entra aquí; si no, su sección se salta
+ * con un aviso en vez de capturar otra con su nombre.
  */
-export const PREPARAR = { 'admin/grupos/crear': { '#group-name': 'Revisión' } };
+export const PREPARAR = {
+  'admin/grupos/crear': async (page) => {
+    const nombre = page.locator('#group-name');
+    if (await nombre.count()) await nombre.fill('Revisión');
+    const telefono = page.locator('#group-phone');
+    if (await telefono.count()) {
+      await telefono.click();
+      await page.getByRole('option').first().click();
+    }
+  },
+};
 
 /** Espera hasta `ms` a que la pestaña o la sección quede a la vista: la app la abre en su siguiente ciclo. */
 const aLaVista = async (item, [marca, valor], ms = 3000) => {
@@ -134,7 +145,7 @@ async function revisarRuta(page, ruta, datos) {
     const nombre = nombreDe(await item.innerText());
     await item.click();
     if (!(await aLaVista(item, marca, 1500))) {
-      for (const [campo, valor] of Object.entries(PREPARAR[ruta.split('?')[0]] ?? {})) await page.locator(campo).fill(valor);
+      await PREPARAR[ruta.split('?')[0]]?.(page);
       await item.click();
       if (!(await aLaVista(item, marca))) {
         console.warn(`⚠ ${ruta} · ${nombre}: la sección no se abre y no se revisa. Lo que la abre va en PREPARAR.`);

@@ -172,9 +172,9 @@ test('el icono de un aviso pesa lo que su texto semibold', async ({ page }) => {
   await expect(estado).toHaveClass(/sc-icon--weight-600/);
 });
 
-test('listado de grupos · el botón de cada fila dice «Asignar»', async ({ page }) => {
+// DD-159: «Asignar» salió de la fila; la cifra de agentes es la que abre la asignación, y su nombre lo dice.
+test('listado de grupos · la cifra de agentes dice cuántos y, en su nombre, que asigna', async ({ page }) => {
   await goto(page, 'admin/grupos');
-  const boton = page.getByRole('button', { name: 'Asignar agentes de Online Support' });
-  await expect(boton).toContainText('Asignar');
-  await expect(boton).not.toContainText('Agentes');
+  const cifra = page.getByRole('button', { name: /^\d+ agentes · Asignar agentes de Online Support$/ });
+  await expect(cifra).toHaveText(/^\s*\d+\s*$/);
 });
