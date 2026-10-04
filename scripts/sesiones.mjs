@@ -22,6 +22,8 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+import { cliente } from './github.mjs';
+
 // `stderr: 'pipe'` a propósito: sin esto, un git que se queja (un árbol bare, una rama que no
 // existe) escupe su «fatal: …» por encima de la tabla y el comando parece roto sin estarlo.
 const sh = (cmd, args) => execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
@@ -56,7 +58,7 @@ export const prDe = (rama, lista) =>
   (lista ?? []).find((p) => p.headRefName === rama) ?? (lista ?? []).find((p) => p.headRefName === enOrigin(rama));
 
 /**
- * Cuando el PR fundido ya no cabe en los últimos 40 (`gh pr list --state merged --limit 40`),
+ * Cuando el PR fundido ya no cabe en los últimos 40 fundidos (`prsFundidos`, en `github.mjs`),
  * `prDe` no lo encuentra y la caja sale «SIN SUBIR» aunque esté fundida desde hace días. Medido el
  * 2026-09-29: PR #232, fundido el 2026-09-23, ya no aparecía con main en el #283.
  *
@@ -308,11 +310,19 @@ export function noFundidosDe(rama, { cwd, env, main = 'origin/main', squash = nu
 
 // ── El comando ─────────────────────────────────────────────────────────────────
 
-const CAMPOS_TARDIO = 'number,headRefName,mergedAt,mergeCommit';
-/** La búsqueda aparte que dispara `hallaFundido` cuando el PR no está en los últimos 40. */
-function buscaFundidoTardio(rama) {
-  const lista = JSON.parse(shSafe('gh', ['pr', 'list', '--head', rama, '--state', 'merged', '--json', CAMPOS_TARDIO], '[]'));
-  return lista[0] ?? null;
+/**
+ * GitHub, por `gh api` (`github.mjs`). Antes eran `gh pr list --json`, que en la nube no existe: el fallo se tragaba
+ * con un `[]` y TODAS las cajas salían «sin PR» (medido el 2026-10-04). Ahora un fallo se dice, y el veredicto de cada
+ * caja sale solo de git, que es lo conservador: sin PR, nada se da por fundido ni se manda borrar.
+ */
+function leeGitHub(leer, que) {
+  try {
+    return leer();
+  } catch (e) {
+    const motivo = String(e?.stderr || e?.message || 'sin detalle').trim().split('\n')[0];
+    console.error(`${C.yellow}⚠ no pude leer ${que} de GitHub (${motivo}): sale solo lo que dice git.${C.reset}`);
+    return null;
+  }
 }
 
 function main() {
@@ -325,9 +335,12 @@ function main() {
   const aqui = shSafe('git', ['rev-parse', '--show-toplevel']);
   const actual = worktrees.find((w) => w.ruta === aqui)?.rama ?? null;
 
-  const CAMPOS = 'number,headRefName,state,mergeable,statusCheckRollup,url,mergedAt,mergeCommit';
-  const abiertos = JSON.parse(shSafe('gh', ['pr', 'list', '--state', 'open', '--limit', '50', '--json', CAMPOS], '[]'));
-  const fundidos = JSON.parse(shSafe('gh', ['pr', 'list', '--state', 'merged', '--limit', '40', '--json', CAMPOS], '[]'));
+  const github = cliente();
+  // Los checks y el `mergeable` cuestan dos llamadas por PR: solo para los que tienen caja aquí.
+  const conCaja = (rama) => worktrees.some((w) => w.rama === rama || enOrigin(w.rama) === rama);
+  const abiertos = leeGitHub(() => github.prsAbiertos(conCaja), 'los PRs abiertos') ?? [];
+  const fundidos = leeGitHub(() => github.prsFundidos(40), 'los PRs fundidos') ?? [];
+  const buscaFundidoTardio = (rama) => leeGitHub(() => github.prFundidoDeRama(rama), `el PR fundido de ${rama}`);
 
   const cajas = [];
   for (const w of worktrees) {

@@ -96,6 +96,13 @@ test('#7 veredicto de CI: la run más reciente sin acotar → deny; ci:verdict o
   allow('gh run list --branch main --limit 8 --json workflowName,status,conclusion,headSha');
   allow('gh pr checks 226');
   allow('gh run list --branch main --limit 1 # sc:ok');
+  // La misma trampa por REST, que es lo único que tiene el `gh` de la nube: la última ejecución de CUALQUIER
+  // workflow de la rama. Acotar por `workflows/ci.yml` o pedir varias para filtrar por commit, sí.
+  deny('gh api "repos/o/r/actions/runs?branch=main&per_page=1"', verde, /LEARNINGS #7/);
+  deny('gh api repos/{owner}/{repo}/actions/runs?per_page=1', verde, /LEARNINGS #7/);
+  allow('gh api "repos/o/r/actions/workflows/ci.yml/runs?branch=main&per_page=1"');
+  allow('gh api "repos/o/r/actions/runs?head_sha=c756d895&per_page=5"');
+  allow('gh api repos/o/r/actions/runs/37226475456/jobs');
 });
 
 test('#7 exit enmascarado: algo detrás del gate → deny; gate al final o pipefail → allow', () => {

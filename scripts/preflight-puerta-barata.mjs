@@ -55,6 +55,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, realpathSync } from "node:fs";
 import os from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { localizarMemoria, leerMemoria, revisarMemoria } from "./memory-shape.mjs";
@@ -69,6 +70,42 @@ export function puertaBarata(cwd = process.cwd()) {
   const dir = localizarMemoria(cwd);
   if (!dir || !existsSync(dir)) return [];
   return revisarMemoria(leerMemoria(dir)).map((p) => `memoria (${dir}) — ${p}`);
+}
+
+// ── Los ficheros generados, al día ───────────────────────────────────────────────────────────────
+
+/**
+ * LA TERCERA COSA QUE SE VE EN UN SEGUNDO: los ficheros GENERADOS al día (2026-10-04). El preflight de #325 se relanzó
+ * tres veces porque, tras minutos de cadena, `verify` paró en `audit:components`, `audit:doc-snippets` y `usage:check`,
+ * que tardan menos de un segundo entre los tres (medido: 0,6 + 0,1 + 0,1 s). Leen fuentes, no el build: pueden ir antes.
+ * Como la memoria, no sustituyen al gate: siguen en `verify` y en el CI.
+ */
+export const GENERADOS = [
+  { script: "scripts/component-audit.mjs", args: ["check"], arreglo: "node scripts/component-audit.mjs --write" },
+  {
+    script: "scripts/audit-doc-snippets.mjs",
+    args: [],
+    arreglo: "cada entrada pública nueva, en un ejemplo o un knob de su página (npm run audit:doc-snippets dice cuál)",
+  },
+  { script: "scripts/usage-status.mjs", args: ["check"], arreglo: "node scripts/usage-status.mjs --write" },
+];
+
+const correrNode = (g, cwd) => {
+  // Un árbol sin esa herramienta (el repo de juguete de las pruebas) no tiene nada que regenerar.
+  if (!existsSync(join(cwd, g.script))) return true;
+  try {
+    execFileSync(process.execPath, [g.script, ...g.args], { cwd, stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/** Los generados que no están al día, cada uno con su arreglo. `correr` se inyecta en las pruebas. */
+export function generadosAlDia({ cwd = process.cwd(), correr = correrNode } = {}) {
+  return GENERADOS.filter((g) => !correr(g, cwd)).map(
+    (g) => `${[g.script, ...g.args].join(" ")} no está al día → ${g.arreglo}`
+  );
 }
 
 // ── El aviso de máquina saturada ─────────────────────────────────────────────────────────────────

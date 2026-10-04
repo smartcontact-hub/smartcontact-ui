@@ -20,9 +20,21 @@
  */
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
-import { avisarCarga, puertaBarata } from "./preflight-puerta-barata.mjs";
+import { avisarCarga, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 import { APPS, planDe } from "./preflight-alcance.mjs";
+
+/**
+ * Al final, en los dos carriles: las capturas de sc-docs que este cambio mueve y siguen sin regenerar
+ * (`api-baselines.mjs`). Es un aviso, nunca un rojo: la captura solo sale del workflow, después del push.
+ */
+function avisoDeCapturas() {
+  try {
+    execFileSync("node", ["scripts/api-baselines.mjs"], { stdio: "inherit" });
+  } catch {
+    /* un aviso que no puede medir no para el preflight */
+  }
+}
 
 // Antes de mirar qué cambió, y antes de gastar un minuto: ¿la rama lleva `origin/main`? Un
 // preflight sobre una rama rezagada mide un árbol que nunca se pushea tal cual (2026-09-11: dos
@@ -83,7 +95,7 @@ if (process.argv.includes("--run")) {
   // pasada verde bajo carga sigue valiendo), pero quien la lanza tiene que saberlo ya y no horas después.
   // Deja una marca en el entorno para que el `preverify` de `verify`, que corre dentro, no lo repita.
   avisarCarga();
-  const problemas = puertaBarata(process.cwd());
+  const problemas = [...puertaBarata(process.cwd()), ...generadosAlDia()];
   if (problemas.length) {
     console.log("\n✘ La cadena NO arranca: hay algo que se comprueba en 2 s y falla.\n");
     for (const q of problemas) console.log(`    · ${q}`);
@@ -108,6 +120,7 @@ if (completo) {
   if (process.argv.includes("--run")) {
     execFileSync("npm", ["run", "preflight"], { stdio: "inherit" });
   }
+  avisoDeCapturas();
   process.exit(0);
 }
 
@@ -148,3 +161,4 @@ if (process.argv.includes("--run")) {
   // QUÉ carril pasó; lo que se saltó quedó impreso arriba.
   execSync("node scripts/preflight-mark.mjs preflight:scope", { stdio: "inherit" });
 }
+avisoDeCapturas();

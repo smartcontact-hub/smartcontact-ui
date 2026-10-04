@@ -297,7 +297,10 @@ for (const { path, lines } of files) {
     // gate 37.
     if (/^docs\/(AUDIT-|handoff\/)/.test(rel(path)) || rel(path) === 'CHANGELOG.md') continue;
     lines.forEach((line, i) => {
-      for (const m of line.matchAll(/(\d+)\s+gates\b/gi)) {
+      // También «N checks estáticos» y «N chained static checks», que es como lo cuentan los README y guardarrailes:
+      // con solo «gates», esas cifras se quedaban viejas en silencio (2026-10-04). Un «N checks» suelto no: en el
+      // catálogo y en DECISIONS cuenta otras cosas.
+      for (const m of line.matchAll(/(\d+)\s+(?:gates\b|checks estáticos\b|chained static checks\b)/gi)) {
         if (Number(m[1]) === nGates) continue;
         fail(
           `${rel(path)}:${i + 1} — dice "${m[0]}" pero la cadena \`verify\` tiene ${nGates} eslabones. Actualiza la cifra (o la cadena).`,
