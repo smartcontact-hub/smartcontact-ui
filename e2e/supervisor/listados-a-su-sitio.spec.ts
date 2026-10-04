@@ -30,6 +30,14 @@ test('Grupos: la cifra de agentes abre su asignación, y ya no hay columna «Asi
   const fila = page.locator('sc-datatable tbody tr', { hasText: 'ACD demo cuscare' });
   const cifra = fila.getByRole('button', { name: /\d+ agentes/ });
   await expect(cifra, 'la cifra nombra su acción y su grupo').toHaveAccessibleName(/Asignar agentes de ACD demo cuscare/);
+  // Y se pulsa en al menos 24×24 (WCAG 2.5.8): pinta lo que mide su número, y la zona la agranda un `::after`.
+  const zona = await cifra.evaluate((b) => {
+    const r = b.getBoundingClientRect();
+    const a = getComputedStyle(b, '::after');
+    const agranda = a.content !== 'none' && a.position === 'absolute';
+    return [Math.max(r.width, agranda ? parseFloat(a.width) : 0), Math.max(r.height, agranda ? parseFloat(a.height) : 0)];
+  });
+  expect(Math.min(...zona), 'el lado menor de la zona que se pulsa').toBeGreaterThanOrEqual(24);
   await cifra.click();
   await expect(page.locator('sc-group-agents-panel sc-agent-channel-table tbody tr').first()).toBeVisible();
   await expect(page, 'abre el panel, no la ficha').toHaveURL(/\/admin\/grupos$/);

@@ -80,6 +80,9 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Fixed
 
+- **`@smartcontact-hub/components`** — La cifra de `sc-group-popover` se pulsa en al menos 24,5 × 24,5 (WCAG 2.5.8):
+  un `::after` invisible y centrado agranda la zona sin cambiar cómo se ve. Pintaba lo que mide su número (15 × 20
+  con dos dígitos), y desde DD-159 abre la asignación de un grupo.
 - **`@smartcontact-hub/components`** — `sc-checkbox` desactivado aplica la opacidad UNA vez, el 60 % de Figma
   (`disabled/opacity`). La caja llevaba además la suya y las dos se multiplicaban (0,36), así que una casilla
   marcada y desactivada, un valor fijo que no se quita desde ahí, se leía como apagada y no como marcada. Todo

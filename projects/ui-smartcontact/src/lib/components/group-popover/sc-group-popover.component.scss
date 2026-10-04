@@ -2,7 +2,11 @@
  * Trigger button (inline cell in agents table). Underlined dotted to read
  * as "more info available on hover" without competing with primary content.
  */
+/* La cifra pinta lo que mide su número (15 px de ancho con dos dígitos), pero se pulsa en al menos 24,5 × 24,5
+ * (WCAG 2.5.8, `scale/1-75`): un `::after` invisible y centrado agranda la zona sin mover nada ni cambiar cómo se ve.
+ * Desde que la cifra abre la asignación en Grupos (DD-159) es una acción, no solo un dato. */
 .group-popover__trigger {
+  position: relative;
   border: 0;
   background: transparent;
   padding: 0;
@@ -13,6 +17,17 @@
   text-decoration-style: dotted;
   text-decoration-color: var(--sc-text-disabled);
   text-underline-offset: 3px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    /* Físico a propósito: `translate` lo es, y con `inset-inline-start` se descentraría en RTL. */
+    top: 50%;
+    left: 50%;
+    inline-size: max(100%, var(--sc-spacing-1-75));
+    block-size: max(100%, var(--sc-spacing-1-75));
+    translate: -50% -50%;
+  }
 
   &:hover {
     text-decoration-color: var(--sc-text-subtle);
