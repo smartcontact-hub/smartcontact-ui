@@ -195,6 +195,12 @@
           "apply": "Lo que va junto, más cerca que lo que no: 7 entre una etiqueta y su control, 14 entre hermanos (campos, opciones, filas) y 28 entre grupos, entre secciones y antes del botón que envía. Es la escalera 7 · 14 · 28: entre grupos, al menos el doble que dentro. Y la densidad, por lo que se hace en la pantalla: compacto donde se escanea (el monitor, las listas), más aire donde se lee y se rellena (fichas, formularios).",
           "avoid": "Separar dos campos casi lo mismo que una etiqueta de su control (12 contra 7), o dejar el botón a la misma distancia del último campo que los campos entre sí: se lee como un campo más.",
           "have": "Las piezas compartidas del supervisor ya la aplican (.grid y .field en _forms.scss). Si una maqueta trae otro valor, manda la escalera y el cambio del Kit se apunta en figma-pendiente."
+        },
+        "fill": {
+          "title": "Una tabla llega al pie de la pantalla",
+          "apply": "Si una tabla dentro de una sección necesita más sitio, aprovecha el resto de la pantalla: desplaza por dentro, con la cabecera fija y el paginador al pie, y su tope es lo que queda hasta el pie, medido desde donde empieza. En una pantalla baja no pasa de su suelo, y entonces desplaza la página.",
+          "avoid": "Un tope fijo («el alto de la ventana menos 420 px»): no sabe dónde empieza la tabla, y deja pantalla vacía debajo mientras esconde filas.",
+          "have": "En el supervisor, la directiva scLlegaAlPie mide el alto que queda; lo prueba tabla-al-pie: con 2 px más de tabla, la página desplaza."
         }
       }
     },

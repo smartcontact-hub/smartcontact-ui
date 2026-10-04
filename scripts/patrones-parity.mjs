@@ -43,6 +43,7 @@ export const FRAGMENTOS = {
   7: [/transform/, /opacity/, /aspect-ratio/], //  qué se anima y cómo se reserva el hueco
   8: [/sc-text-/, /token/i], //  la clase que se usa, y que un componente se cambia por su token
   9: [/7 · 14 · 28/, /doble/i], //  la escalera, y que entre grupos va al menos el doble que dentro
+  10: [/pie de la pantalla/i, /desde donde empieza/i], // el tope se mide, no es una constante (DD-160)
 };
 
 /** Recorta §«UX de pantalla» de AGENTS.md, hasta el siguiente encabezado de nivel 2. */

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una tabla dentro de una sección llega al pie de la pantalla: tope medido desde donde empieza (`scLlegaAlPie`), con suelo | DD-160 |
 > | En el listado de Grupos, la cifra de agentes abre su asignación y sale la columna «Asignar»; en Agentes, la de grupos ya llevaba a su sección | DD-159 |
 > | El alta: ✓ solo en secciones con algo obligatorio, el teléfono saliente como segunda puerta del grupo y «Atrás / Siguiente» como el Stepper vertical | DD-158 |
 > | Distribución y colas con el árbol del DS (canal = subsección, parte = slot), Chat en el orden de Teléfono y los mensajes de la cola plegados | DD-157 |
@@ -117,6 +118,37 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-160 · 2026-10-04 — Una tabla dentro de una sección llega al pie de la pantalla, medida desde donde empieza
+
+**Contexto.** La revisión de producto del 2026-10-04, con una captura de la sección Agentes de la ficha de grupo: la
+tabla desplazaba por dentro (DD-95) y, a la vez, debajo de su tarjeta quedaba pantalla vacía. Su tope era
+`100dvh − 420 px`, una constante que no sabía dónde empieza la tabla. Medido el 2026-10-04 en los grupos 1, 2 y 11:
+- a 1440×900, 158 px vacíos bajo la tarjeta mientras la tabla escondía 180 px de filas;
+- a 1512×945, los mismos 158 px vacíos, con 137 px de filas escondidas;
+- a 1280×720, al revés: la página entera desplazaba de 85 a 149 px.
+Se pidió como norma: si una sección necesita más sitio, que aproveche el resto de la pantalla.
+
+**Decisión.**
+1. **El tope se mide**: la directiva `scLlegaAlPie` (`core/directives`) pone en el elemento `--llega-al-pie`, el
+   alto que le deja la zona que desplaza (`main`) sin que esta desplace: su alto visible, menos lo que hay encima del
+   elemento (medido en el contenido, da igual cuánto se haya bajado) y lo que hay debajo (lo que va apilado debajo en
+   cada antepasado, sus márgenes, rellenos y bordes; no el final de la zona, que la ficha estira a toda la pantalla).
+   Se rehace en cada pintado y al cambiar la ventana. Un nombre sin `--sc-`: es una medida de la app, no un token.
+2. **La tabla de agentes del grupo la usa** con su suelo de siempre (`scale/18`); el panel rápido sigue con su
+   `--assign-table-max`.
+3. **Norma en AGENTS.md (UX de pantalla, punto 10)**, con su prueba: con 2 px más de tabla, la página desplaza.
+
+**Razón.** Medido después, en los mismos casos: a 1440×900 la tabla pasa de 480 a 594 px y la página no desplaza; a
+1512×945, de 525 a 639. Bajo la tarjeta quedan 44 px, su margen (21) y el relleno de la página (24,5), como en
+cualquier otra pantalla. Es lo que hacen las vistas de tabla de los SaaS de referencia (Airtable, Notion, HubSpot): la
+tabla ocupa el alto disponible, con la cabecera fija y el paginador al pie.
+
+**Coste.** A 1280×720 la tabla se queda en su suelo y la página desplaza de 37 a 101 px (antes, de 85 a 149): en
+pantallas bajas, el suelo manda.
+
+**Descartado.** Otra constante mejor elegida (fallaría en cuanto cambie lo de encima: el aviso de otra pestaña, el
+filtro); que la página desplace y la tabla mida todas sus filas (se pierde la cabecera fija de DD-95).
 
 ## DD-159 · 2026-10-04 — La cifra de un listado lleva a donde se cambia: en Grupos, los agentes abren su asignación
 

@@ -61,10 +61,13 @@
 }
 
 /* La tabla hace scroll DENTRO, con la cabecera de columnas fija, como las listas (DD-95): así la ficha entera cabe en
- * la pantalla aunque el grupo tenga veinte agentes. Mide lo que sus filas y solo se recorta cuando no caben; el tope
- * es lo que deja la pantalla descontando el marco (barra de arriba, miga, tarjeta y lo que va sobre la tabla), y
- * nunca baja de `scale/18` para pantallas bajas y zoom, donde entonces hace scroll la página.
- * Decisión de producto (2026-09-18): la tabla absorbe el `1fr` de la rejilla y la ficha entera se ve sin salir de la pantalla. */
+ * la pantalla aunque el grupo tenga veinte agentes. Mide lo que sus filas y solo se recorta cuando no caben.
+ *
+ * Su tope es el alto que le queda hasta el pie de la pantalla, MEDIDO desde donde empieza (`scLlegaAlPie`, DD-160):
+ * si necesita más sitio, aprovecha el resto de la pantalla. Era `100dvh` menos 420 px fijos, que no sabía dónde
+ * empezaba la tabla: a 1440×900 dejaba 158 px vacíos bajo la tarjeta mientras escondía filas, y a 1280×720 hacía
+ * desplazar la página entera. Nunca baja de `scale/18`, para pantallas bajas y zoom, donde entonces desplaza la página.
+ * Decisión de producto (2026-09-18): la ficha entera se ve sin salir de la pantalla. */
 .table-card {
   display: flex;
   flex-direction: column;
@@ -72,10 +75,7 @@
   min-height: 0;
   /* Quien la aloja en otro marco (el panel rápido del listado) cambia el tope con `--assign-table-max`:
    * allí el alto lo reparte su columna flexible, no la ventana. */
-  max-block-size: var(
-    --assign-table-max,
-    max(var(--sc-spacing-18), calc(100dvh - (var(--sc-spacing-25) + var(--sc-spacing-5))))
-  );
+  max-block-size: var(--assign-table-max, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh)));
 }
 
 .table-card > sc-datatable {

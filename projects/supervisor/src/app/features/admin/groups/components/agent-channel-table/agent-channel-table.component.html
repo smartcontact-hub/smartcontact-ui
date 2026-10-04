@@ -10,7 +10,7 @@
     }
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
-  <div class="table-card">
+  <div class="table-card" scLlegaAlPie>
     <sc-datatable variant="list" [size]="compact() ? 'sm' : 'md'" scrollable scrollHeight="flex"
       [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id"
       [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]">
