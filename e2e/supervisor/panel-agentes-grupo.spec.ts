@@ -17,8 +17,10 @@ const abrirPanel = async (page: Page, grupo: string): Promise<void> => {
   await expect(page.locator('.agents-panel')).toBeVisible();
 };
 const panel = (page: Page) => page.locator('.agents-panel');
+// La cifra es el botón del globo, que desde DD-159 también abre el panel: se lee su texto, no el del globo entero
+// (al pulsarlo, la lista de nombres se cierra, pero con las animaciones quitadas de golpe queda a medio cerrar).
 const cifraDeAgentes = (page: Page, grupo: string) =>
-  page.locator('tbody tr', { hasText: grupo }).locator('sc-group-popover').last();
+  page.locator('tbody tr', { hasText: grupo }).locator('sc-group-popover .group-popover__trigger').last();
 
 test('«Agentes» abre el panel de esa fila sin abrir la ficha, y comparte la asignación desde la cabecera', async ({ page }) => {
   await goto(page, 'admin/grupos');

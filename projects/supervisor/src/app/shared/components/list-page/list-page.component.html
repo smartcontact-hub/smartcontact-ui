@@ -9,25 +9,42 @@
     @if (columnChoices() || searchPlaceholder() || exportable()) {
       <div class="page__action-bar">
         @if (columnPrefs(); as prefs) {
-          <!-- El selector de columnas NATIVO: el ejemplo «Column Toggle» de primeng.dev/table, un MultiSelect
-               (DD-113). Solo decide qué se ve; el orden se cambia arrastrando las cabeceras de la tabla. Dice
-               cuántas columnas se ven en su nombre accesible; la columna fija sale marcada y sin poder quitarse. -->
-          <sc-multiselect
+          <!-- ELEGIR Y ORDENAR COLUMNAS, EN UN SOLO CONTROL NATIVO (DD-162): el Listbox de primeng.dev con su casilla
+               (`checkbox`) y su arrastre (`dragdrop`), en un globo bajo el icono. Es el patrón de Airtable y Notion: una
+               lista con su casilla y su asa. Las cabeceras ya no se arrastran: un solo sitio para elegir y ordenar. La
+               columna fija sale marcada y sin poder quitarse; el botón dice cuántas se ven en su nombre. Sin la casilla
+               de «todas» (sin rótulo, y con una fija no las quita todas), sin tope de alto (son pocas: se ven todas) y
+               sin su borde, que ya pone el globo. -->
+          <sc-button
             class="page__columns"
-            iconOnly
+            variant="secondary"
+            appearance="outlined"
             icon="view_column"
-            [attr.title]="columnsAriaLabel()"
-            [options]="columnOptions()"
-            optionLabel="label"
-            optionValue="key"
-            optionDisabled="locked"
-            [value]="$any(prefs.visible)"
-            (valueChange)="onVisibleChange($event)"
-            [maxSelectedLabels]="0"
-            [selectedItemsLabel]="'common.columns_count' | translate"
-            [placeholder]="'common.columns' | translate"
             [ariaLabel]="columnsAriaLabel()"
+            [attr.title]="columnsAriaLabel()"
+            [attr.aria-haspopup]="'dialog'"
+            [attr.aria-expanded]="columnsOpen()"
+            (clicked)="columnsPop.toggle($event)"
           />
+          <p-popover #columnsPop (onShow)="columnsOpen.set(true)" (onHide)="columnsOpen.set(false)">
+            <p-listbox
+              [options]="columnOrderDraft()"
+              optionLabel="label"
+              optionValue="key"
+              optionDisabled="locked"
+              [multiple]="true"
+              [checkbox]="true"
+              [dragdrop]="true"
+              [metaKeySelection]="false"
+              [showToggleAll]="false"
+              scrollHeight="none"
+              [dt]="columnsListDt"
+              [ariaLabel]="columnsAriaLabel()"
+              [ngModel]="prefs.visible"
+              (ngModelChange)="onVisibleChange($event)"
+              (onDrop)="onColumnDrop($event)"
+            />
+          </p-popover>
         }
         @if (searchPlaceholder(); as placeholder) {
           <sc-search
@@ -58,7 +75,7 @@
       <ng-content select="[scListEmpty]" />
     } @else {
       <div class="table-card" [class.table-card--seleccion]="selectedIds().size > 0">
-        <!-- Ancho ajustable y orden arrastrando, solo en las listas que eligen columnas: la tabla ajustable nativa
+        <!-- Ancho ajustable solo en las listas que eligen columnas (el orden, en el globo de columnas, DD-162): la tabla ajustable nativa
              recorta cada celda (`overflow: hidden`), y en Etiquetas eso dejaba fuera de sitio el panel que se
              ancla dentro de la celda (medido: `admin-datatable-pilot`, el panel 70px por encima de su fila). -->
         <sc-datatable
@@ -66,8 +83,6 @@
           scrollHeight="flex"
           virtualScroll
           [resizableColumns]="!!columnChoices()"
-          [reorderableColumns]="!!columnChoices()"
-          (columnOrderChange)="onColumnOrderChange($event)"
           (columnWidthsChange)="onColumnWidthsChange($event)"
           [tableMinWidth]="effectiveTableMinWidth()"
           variant="list"

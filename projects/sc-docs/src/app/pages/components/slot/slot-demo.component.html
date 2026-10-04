@@ -1,7 +1,13 @@
 <app-story-host [meta]="meta" [stories]="stories()" />
 
 <ng-template #playground let-args>
-  <sc-slot [titleKey]="args.titleKey" [icon]="args.icon || null" [hintKey]="args.hintKey || null">
+  <sc-slot
+    [titleKey]="args.titleKey"
+    [icon]="args.icon || null"
+    [hintKey]="args.hintKey || null"
+    [collapsible]="args.collapsible"
+    [initiallyCollapsed]="args.initiallyCollapsed"
+  >
     Laura Gómez
   </sc-slot>
 </ng-template>

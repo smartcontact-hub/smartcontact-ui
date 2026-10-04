@@ -102,6 +102,8 @@ export class GroupSummaryComponent {
 
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly familyKeys = FAMILY_LABEL_KEYS;
+  /** La barra de cada canal va en la cifra destacada (DD-161): su pista, translúcida en el color claro de la tarjeta. */
+  protected readonly meterDt = { meters: { background: 'color-mix(in srgb, var(--sc-text-inverse) 25%, transparent)' } };
 
   protected readonly total = computed(() => this.links().length);
   protected readonly disabled = computed(() => this.links().filter((l) => !l.active).length);
@@ -119,7 +121,7 @@ export class GroupSummaryComponent {
     return familiesOf(this.channels()).map((channel) => {
       const count = active.filter((l) => l.channels.includes(channel)).length;
       const value = total > 0 ? Math.round((count / total) * 100) : 0;
-      return { channel, count, meter: [{ label: channel, value, color: 'var(--sc-bg-accent)' }] };
+      return { channel, count, meter: [{ label: channel, value, color: 'var(--sc-text-inverse)' }] };
     });
   });
 

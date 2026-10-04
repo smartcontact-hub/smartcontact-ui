@@ -17,8 +17,8 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *   3. «Siguiente» sube al principio de la sección nueva: sin eso, desde el pie de una sección larga se llega a media
  *      altura de la siguiente.
  *   4. La sección que se deja completa lleva ✓ en el índice, y su enlace lo dice; el ✓ se ve (3:1). La abierta no
- *      lo lleva aunque esté bien. La que se deja sin lo obligatorio lleva el punto rojo, como Distribución y colas sin
- *      teléfono saliente (DD-142); antes de abrirla, ninguna marca.
+ *      lo lleva aunque esté bien. La que se deja sin lo obligatorio lleva el punto rojo (DD-142); antes de abrirla,
+ *      ninguna marca. Qué secciones pueden llevar ✓, y la puerta del teléfono saliente: `altas-obligatorio` (DD-158).
  *   5. Cambiar de sección en el alta no toca la dirección ni el historial: Atrás del navegador sale del alta. La
  *      primera sección no lleva «Atrás», y la última no lleva «Siguiente».
  *   6. Agente y usuario: las secciones, en cualquier orden.
@@ -105,10 +105,10 @@ test('grupo · la sección que se deja completa lleva ✓ en el índice, su enla
   await expect(check).toBeVisible();
   expect((await check.evaluate(colorEfectivo)).ratio, 'el ✓ sobre su fondo').toBeGreaterThanOrEqual(3);
   // La abierta no lleva ✓ aunque esté bien: aún no se ha dejado. Y Distribución, sin teléfono saliente, no está
-  // completa (DD-142): al dejarla tampoco lo lleva.
+  // completa (DD-142) ni se deja (DD-158): «Siguiente» se queda en ella, sin ✓.
   await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa/);
   await siguiente(page).click();
-  await expect(actual(page)).toContainText('Recursos');
+  await expect(actual(page)).toContainText('Distribución y colas');
   await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa/);
   await expect(fila(page, 'Distribución y colas').locator('.form-nav__done')).toHaveCount(0);
 });
@@ -140,6 +140,8 @@ test('grupo · cambiar de sección no toca la dirección ni el historial; la pri
 
   await page.locator('#group-name').fill(`E2E Índice ${Date.now()}`);
   await siguiente(page).click();
+  // Sin teléfono saliente no se pasa de Distribución (DD-158).
+  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
   await fila(page, 'Agentes').click();
   await expect(actual(page)).toContainText('Agentes');
 

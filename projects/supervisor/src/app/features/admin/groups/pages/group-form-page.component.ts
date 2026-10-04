@@ -44,6 +44,8 @@ import {
   ScFormSectionNavComponent as FormSectionNavComponent,
   ScMessageComponent as MessageComponent,
   ScSectionCardComponent as SectionCardComponent,
+  ScSlotComponent as SlotComponent,
+  ScSubsectionComponent as SubsectionComponent,
   triStateOf,
 } from '@smartcontact-hub/components';
 import {
@@ -189,6 +191,8 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     GroupSummaryComponent,
     FormSectionNavComponent,
     SectionCardComponent,
+    SubsectionComponent,
+    SlotComponent,
     MessageComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
@@ -298,8 +302,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
-    // Distribución, sin su ✓ mientras falte el teléfono saliente; pero no es puerta: las secciones siguen libres
-    // (DD-142).
+    // ✓ solo donde hay algo obligatorio (DD-158): General, y Distribución si el grupo tiene Teléfono (su teléfono
+    // saliente). Recursos y Agentes no lo llevan nunca.
+    obligatoria: (id) => id === 'group-section-general' || (id === 'group-section-distribution' && this.hasPhone()),
     completa: (id) =>
       id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || (!this.phoneMissing() && !this.queueInvalid()),
   });
@@ -419,7 +424,18 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.stayInGeneral();
       return Promise.resolve(false);
     }
-    // Salir de Distribución sin el teléfono saliente se deja, pero desde ahí su campo dice que falta.
+    // La segunda puerta del alta (DD-158): con Teléfono y sin teléfono saliente no se pasa de Distribución y colas,
+    // como no se pasa de General sin nombre. Se puede volver a General, que es donde se quita Teléfono.
+    if (
+      this.mode() === 'create' &&
+      id !== 'group-section-general' &&
+      id !== 'group-section-distribution' &&
+      this.phoneMissing()
+    ) {
+      this.stayInDistribution();
+      return Promise.resolve(false);
+    }
+    // Al editar, salir de Distribución sin el teléfono saliente se deja, pero desde ahí su campo dice que falta.
     if (this.activeSection() === 'group-section-distribution' && id !== 'group-section-distribution' && this.phoneMissing()) {
       this.attemptedDistribution.set(true);
     }
@@ -459,6 +475,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * El alta no sale de General: cada campo dice lo que le falta y el foco va al primero, como hacía el
    * diálogo de alta. Sin eso, con teclado, «Siguiente» no hace nada visible desde donde estás.
    */
+  /** Distribución y colas, abierta, con lo que falta dicho bajo el campo y el foco en él. */
+  private stayInDistribution(): void {
+    this.attemptedDistribution.set(true);
+    this.alta.abrir('group-section-distribution');
+    llegarAAncla('group-phone', this.injector);
+  }
+
   private stayInGeneral(): void {
     this.attemptedGeneral.set(true);
     // General, abierta: es donde se dice lo que falta.
@@ -709,6 +732,18 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update(f => ({ ...f, [field]: { ...f[field], queueSizeType: value,
       queueSize: value === 'per_agent' && f[field].queueSizeType !== value ? 2 : f[field].queueSize } }));
   }
+
+  /** De dónde sale cada mensaje de la cola de Teléfono: nada, la voz sintética o un .wav propio. */
+  protected readonly audioSourceOptions = computed(() => {
+    this.lang();
+    return (['none', 'tts', 'file'] as const).map((value) => ({
+      label: this.translate.instant(`groups.form.announcements.source_${value}`),
+      value,
+    }));
+  });
+
+  /** «Mensajes en cola» de Teléfono, aparte de la música: casi nunca se tocan, así que nacen plegados (DD-157). */
+  protected readonly phoneMessagesOpen = signal(false);
 
   protected readonly queueSizeOptions = computed(() => {
     this.lang();
@@ -994,12 +1029,37 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.setAdvanced('allowedDomains', this.form().advanced.allowedDomains.filter((d) => d !== domain));
   }
 
-  /** El .wav elegido: de momento solo se guarda su nombre (demo). A la vista solo queda la música de espera. */
-  protected onAudioFile(key: 'holdMusicFile', event: Event): void {
+  /** El .wav elegido: de momento solo se guarda su nombre (demo). */
+  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile', event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (file) this.setAnnouncement(key, file.name);
     input.value = '';
+  }
+
+  /** Segundos de un aviso: un campo vaciado se queda en su valor anterior, como los de la cola. */
+  protected setAnnouncementNumber(key: 'avgWaitSec', value: unknown): void {
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) this.setAnnouncement(key, value);
+  }
+
+  /** Un mensaje periódico más: su .wav, cada 30 s hasta que se cambie. */
+  protected onPeriodicFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) this.setAnnouncement('periodicAnnouncements', [...this.form().announcements.periodicAnnouncements, { file: file.name, everySec: 30 }]);
+    input.value = '';
+  }
+
+  protected setPeriodicFrequency(index: number, value: unknown): void {
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 5) return;
+    this.setAnnouncement(
+      'periodicAnnouncements',
+      this.form().announcements.periodicAnnouncements.map((a, i) => (i === index ? { ...a, everySec: value } : a)),
+    );
+  }
+
+  protected removePeriodicAnnouncement(index: number): void {
+    this.setAnnouncement('periodicAnnouncements', this.form().announcements.periodicAnnouncements.filter((_, i) => i !== index));
   }
 
   protected copyChatScript(): void {

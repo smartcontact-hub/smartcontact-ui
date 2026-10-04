@@ -608,8 +608,16 @@
       "usedInSupervisor": 1
     },
     {
+      "selector": "sc-slot",
+      "usedInSupervisor": 8
+    },
+    {
       "selector": "sc-sticky-form-header",
       "usedInSupervisor": 2
+    },
+    {
+      "selector": "sc-subsection",
+      "usedInSupervisor": 4
     },
     {
       "selector": "sc-textarea",

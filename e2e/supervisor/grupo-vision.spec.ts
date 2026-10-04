@@ -94,19 +94,24 @@ test('Distribución y colas: un desbordamiento común y un bloque por canal acti
   await expect(page.locator('#group-channel-email')).toHaveCount(0);
 });
 
-test('Teléfono: saliente y voz a la vista; en la cola, solo la música', async ({ page }) => {
+test('Teléfono: saliente y música a la vista; los demás mensajes de la cola, plegados', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1');
   await irA(page, 'Distribución y colas');
   const telefono = page.locator('#group-channel-phone');
 
   // El rótulo del teléfono saliente lleva su «*» de obligatorio desde DD-142, y el texto de un rótulo empieza por un
   // espacio que el casado por expresión regular no recorta (medido).
-  for (const visible of ['Teléfono saliente', 'Voz de los anuncios', 'Música de espera']) {
+  for (const visible of ['Teléfono saliente', 'Música de espera']) {
     await expect(telefono.getByText(new RegExp(`^\\s*${visible}(\\s*\\*)?\\s*$`)), visible).toBeVisible();
   }
-  for (const fuera of ['Identificador del grupo', 'Anuncio periódico', 'Audio saliente', '«Eres el siguiente»']) {
+  // DD-157: los demás mensajes vuelven, plegados (DD-121 §6 los había sacado de la vista); el audio saliente, no.
+  const plegados = ['Voz de los mensajes', 'Identificador del grupo', '«Eres el siguiente»'];
+  for (const fuera of [...plegados, 'Audio saliente']) {
     await expect(page.getByText(fuera, { exact: true }), fuera).toHaveCount(0);
   }
+  await telefono.getByRole('button', { name: /Mensajes en cola/ }).click();
+  for (const dentro of plegados) await expect(telefono.getByText(dentro, { exact: true }), dentro).toBeVisible();
+  await expect(page.getByText('Audio saliente', { exact: true })).toHaveCount(0);
   // Capacidad de cola: dos opciones, ni una más.
   await telefono.locator('#group-phone-queue-type').click();
   await expect(page.getByRole('option')).toHaveText(['Fija', 'Variable']);

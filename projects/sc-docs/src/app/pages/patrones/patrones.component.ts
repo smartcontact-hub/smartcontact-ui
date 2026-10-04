@@ -43,5 +43,6 @@ export class PatronesComponent {
     { icon: 'animation', key: 'motion' },
     { icon: 'text_fields', key: 'type' },
     { icon: 'view_agenda', key: 'grouping' },
+    { icon: 'height', key: 'fill' },
   ];
 }

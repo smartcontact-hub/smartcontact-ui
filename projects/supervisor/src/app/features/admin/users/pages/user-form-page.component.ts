@@ -264,6 +264,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
+    obligatoria: (id) => id === 'user-section-identity',
     completa: (id) =>
       id !== 'user-section-identity' || (this.form().name.trim().length > 0 && EMAIL_RE.test(this.form().email.trim())),
   });

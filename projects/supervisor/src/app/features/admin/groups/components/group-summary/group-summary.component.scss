@@ -38,6 +38,18 @@
   grid-column: 1 / -1;
 }
 
+/* Las filas por canal van dentro de la cifra destacada (DD-161): sobre el degradado, el texto, el icono del canal y el
+ * aviso, con su icono, toman el color de la tarjeta. El ámbar no llega a 3:1 sobre el degradado (en oscuro, 1,37:1 sobre
+ * el celeste, medido por `theme-contrast`): el aviso sigue siendo icono y palabra (AGENTS «UX de pantalla» 6). */
+.resumen__kpi--destacada {
+  .resumen__channel-name,
+  .resumen__warn,
+  .resumen__warn sc-icon,
+  sc-channel-icon {
+    color: inherit;
+  }
+}
+
 /* El aviso va sobre el tinte de marca (DD-126), y ahí el ámbar como TEXTO se queda en 4,31:1 a 12 px, bajo AA
  * (medido por `theme-contrast` en claro). El ámbar lo lleva el icono, al que le bastan 3:1, y el texto va en
  * primario: el aviso sigue siendo icono, color y palabra (AGENTS «UX de pantalla» 6). */

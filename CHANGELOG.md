@@ -26,6 +26,14 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/components`** — `sc-group-popover` gana `activated`, la salida al pulsar la cifra (clic, Intro o
+  Espacio): lo que se hace con esa relación, si quien la pinta lo quiere. Al pulsar, el globo se cierra; al pasar o
+  con el foco, sigue enseñando los nombres. Sin nadie que la escuche, nada cambia. ([DD-159](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-slot` se pliega como ya hacía `sc-subsection`: `collapsible` e
+  `initiallyCollapsed`, con el título entero como botón, `aria-expanded` y el chevron del DS. `sc-subsection` gana
+  `titleId`: con él, su título lleva ese `id` y acepta el foco por programa, para ser el destino de un salto. Las dos,
+  apagadas por defecto: nada cambia sin pedirlo. El título de un slot ya no se parte cuando su aclaración es larga.
+  ([DD-157](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-datatable` gana `externalSort`: la tabla pinta el indicador de
   orden y emite `(sortChange)`, pero **no reordena** las filas; el orden lo pone quien la usa. Sin él,
   p-table vuelve a ordenar por el valor crudo del campo encima del orden que recibe, y un orden propio
@@ -72,6 +80,9 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Fixed
 
+- **`@smartcontact-hub/components`** — La cifra de `sc-group-popover` se pulsa en al menos 24,5 × 24,5 (WCAG 2.5.8):
+  un `::after` invisible y centrado agranda la zona sin cambiar cómo se ve. Pintaba lo que mide su número (15 × 20
+  con dos dígitos), y desde DD-159 abre la asignación de un grupo.
 - **`@smartcontact-hub/components`** — `sc-checkbox` desactivado aplica la opacidad UNA vez, el 60 % de Figma
   (`disabled/opacity`). La caja llevaba además la suya y las dos se multiplicaban (0,36), así que una casilla
   marcada y desactivada, un valor fijo que no se quita desde ahí, se leía como apagada y no como marcada. Todo

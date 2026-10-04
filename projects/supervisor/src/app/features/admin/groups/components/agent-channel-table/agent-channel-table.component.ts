@@ -33,6 +33,7 @@ import {
 import { PRESENCE_LABEL_KEYS, PRESENCE_TAGS, type PresenceStatus } from '@features/admin/agents/data/agents-data';
 
 import { TooltipModule } from 'primeng/tooltip';
+import { LlegaAlPieDirective } from '@core/directives';
 
 import { IllustratedAvatarComponent, type LabelColor } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
@@ -93,6 +94,7 @@ export function columnsRem(rem: (typeof COLUMN_REM)[keyof typeof COLUMN_REM], fa
   selector: 'sc-agent-channel-table',
   standalone: true,
   imports: [
+    LlegaAlPieDirective,
     SelectButtonComponent,
     CheckboxComponent,
     DatatableComponent,

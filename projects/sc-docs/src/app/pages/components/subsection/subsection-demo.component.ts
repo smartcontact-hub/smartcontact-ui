@@ -30,6 +30,7 @@ export class SubsectionDemoComponent {
       { name: 'icon', control: { kind: 'text' }, description: 'Nombre Material opcional' },
       { name: 'collapsible', control: { kind: 'boolean' } },
       { name: 'initiallyCollapsed', control: { kind: 'boolean' } },
+      { name: 'titleId', control: { kind: 'text' }, description: 'id del título: destino de un salto, acepta el foco' },
     ],
     defaultArgs: {
       titleKey: 'Identidad',
@@ -37,6 +38,7 @@ export class SubsectionDemoComponent {
       icon: '',
       collapsible: false,
       initiallyCollapsed: false,
+      titleId: '',
     },
   };
 

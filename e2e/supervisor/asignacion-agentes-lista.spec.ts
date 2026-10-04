@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 test.beforeEach(async ({ page }) => { await forceLightTheme(page); await disableAnimations(page); });
@@ -127,6 +127,9 @@ test('la cabecera incluye otras páginas y excluye agentes incompatibles; el pan
 test('el alta muestra Todos y pagina los 500 agentes disponibles sin asignarlos', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
   await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill('Grupo de prueba');
+  // Sin teléfono saliente no se pasa de Distribución y colas (DD-158).
+  await page.locator('sc-form-section-nav').getByText('Distribución y colas', { exact: true }).click();
+  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
   await page.locator('sc-form-section-nav').getByText('Agentes', { exact: true }).click();
   const table = page.locator('sc-agent-channel-table');
   await expect(table.getByRole('button', { name: 'Todos', exact: true })).toHaveAttribute('aria-pressed', 'true');

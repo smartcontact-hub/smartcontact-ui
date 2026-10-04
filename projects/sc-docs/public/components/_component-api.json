@@ -3860,6 +3860,16 @@
           "descripcion": "Nombre accesible del botón, ya traducido (p. ej. «12 agentes»). Opcional: sin él dice «N grupos», que es lo que cuenta en la lista de agentes. Nace el 2026-09-14 para que la lista de grupos use el MISMO desplegable con sus agentes: la relación es la misma vista desde el otro lado, y el lector de pantalla no puede decir «grupos» ahí.",
           "origen": "nuestro",
           "nativo": null
+        },
+        {
+          "nombre": "activated",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se pulsó la cifra (clic, Intro o Espacio): lo que se hace con esa relación, si quien la pinta lo quiere (abrir la asignación de un grupo). Al pasar por encima o con el foco, la cifra sigue enseñando los nombres; al pulsarla, el globo se cierra. Sin nadie que la escuche, pulsar solo cierra el globo.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": [
@@ -7180,6 +7190,26 @@
           "descripcion": "Clave de traducción de la aclaración bajo el título.",
           "origen": "nuestro",
           "nativo": null
+        },
+        {
+          "nombre": "collapsible",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Deja plegar y desplegar el slot desde su título.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "initiallyCollapsed",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Empieza plegado. Solo tiene efecto con `collapsible`.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": []
@@ -7380,6 +7410,16 @@
           "porDefecto": "false",
           "requerido": false,
           "descripcion": "Empieza plegada. Solo tiene efecto con `collapsible`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "titleId",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "`id` del título, para nombrar la subsección desde fuera o saltar a ella: con él, el título acepta el foco por programa (`tabindex=\"-1\"`), como el destino de un ancla.",
           "origen": "nuestro",
           "nativo": null
         }

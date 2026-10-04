@@ -195,6 +195,12 @@
           "apply": "What belongs together sits closer than what doesn't: 7 between a label and its control, 14 between siblings (fields, options, rows) and 28 between groups, between sections and before the submit button. It is the 7 · 14 · 28 ladder: between groups, at least double the gap within. And density follows what the screen is for: compact where people scan (the monitor, lists), more air where they read and fill in (records, forms).",
           "avoid": "Spacing two fields almost as tightly as a label and its control (12 against 7), or leaving the button as close to the last field as the fields are to each other: it reads as one more field.",
           "have": "The supervisor's shared pieces already apply it (.grid and .field in _forms.scss). When a mockup brings another value, the ladder wins and the Kit change is logged in figma-pendiente."
+        },
+        "fill": {
+          "title": "A table reaches the bottom of the screen",
+          "apply": "When a table inside a section needs more room, it uses the rest of the screen: it scrolls inside, with a sticky header and the paginator at the bottom, and its cap is what is left down to the bottom, measured from where it starts. On a short screen it stops at its floor, and then the page scrolls.",
+          "avoid": "A fixed cap («window height minus 420 px»): it does not know where the table starts, and leaves empty screen below while hiding rows.",
+          "have": "In the supervisor, the scLlegaAlPie directive measures the remaining height; tabla-al-pie tests it: 2 px more of table and the page scrolls."
         }
       }
     },
