@@ -33,8 +33,6 @@
 
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
-- **Lo que dejaron DD-154 y DD-155**: (a) con la espera medida de las 8 partes, decidir si hace falta el filtro de
-  barridos en el CI; (b) medir el primer lote de producto igual que E2-D3 (memoria `mac-saturado-disco-y-memoria`).
 - **Lo que dejó DD-134 (la firma de los commits)**: (a) el 2026-10-05, leer el mensaje con que el robot funde la auditoría, el
   primero con `--subject`/`--body`; (b) en una rutina, `cloud-node.sh` no puso Node 22.23.2 ni `node_modules` (medido dos veces),
   y `nvm` sí estaba; (c) los commits de la nube salen «sin verificar» (`unknown_key`): si estorba, probar sin firma, que el proxy
@@ -177,6 +175,20 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-04 · La red que le faltó al primer lote: GitHub por `gh api`, la puerta de los generados, el aviso de capturas y `npm run tiempos`
+
+**Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `c756d895` (#325), PR nuevo. Sale por el tope el tramo del 2026-09-28 (DD-134):
+`git show c756d895:docs/handoff/design-system.md`.
+
+**Lo que cambia.** El primer lote de producto en un PR (#325) tardó 3 h 30 min de punta a punta; unos 45 se fueron en lo que esto
+arregla. `ci:verdict` y `sesiones` leen GitHub por `gh api` (`scripts/github.mjs`): en la nube salían con código 2 o callaban. El
+preflight para en el segundo 1 si un fichero generado no está al día (antes, tres arranques de 8 min), y al final avisa de las
+capturas de sc-docs que el cambio mueve (la vuelta roja de `e2e-smoke`). `npm run tiempos -- <PR> --desde HH:MM` saca de GitHub los
+tiempos de cada lote para su squash. Lo pendiente de DD-154 y DD-155, cerrado: con 8 partes la mediana es 8,4 min (n=9, frente a
+12,8 con 4) y no hace falta el filtro de barridos (DD-155, actualización).
+
+- ⚠️ **Un `gh api` suelto no cuenta como lectura del CI** para el hook de cierre, porque no compara contra tu HEAD: usa `ci:verdict`.
+
 ## ✅ 2026-10-04 · En local, solo las pruebas del bloque, y un PR por lote (DD-154); barridos de tus pantallas y CI en 8 partes (DD-155)
 
 **Sello:** rama `areses/validation-cycle-analysis-d577b3`, sobre HEAD `001bcf5f` (#318), PR nuevo. Salen por el tope los dos tramos
@@ -201,18 +213,6 @@ Medido en Chromium: foco, Tab y Escape, iguales. Prueba nueva en `components.spe
 
 - ⚠️ **Sin cortar versión**: la nota va en `[Unreleased]`, como desde 1.0.0. Cortar la 1.1.0 lleva todo lo pendiente y una release (DD-58).
 - **La pantalla donde se vio** (Recursos del grupo 11): `ficha-recursos-dialogos.spec.ts` pide UN diálogo en la página; con el de antes, 2.
-
-## ✅ 2026-09-28 · Los commits firman con la cuenta del mantenedor, y el squash no suma coautores (DD-134)
-
-**Sello:** rama `areses/goofy-matsumoto-803f2a`, sobre `9551ed2a` (#282), PR nuevo. Salen por el tope el tramo del 2026-09-24 (DD-120) y el del color (#269): `git show 9551ed2a:docs/handoff/design-system.md`.
-
-**Lo que cambia.** GitHub ponía a la herramienta de coautora al fundir (#223, #224, #266, #267, #270) porque la nube firmaba con su
-correo. `cloud-identity.mjs` firma con la cuenta del mantenedor si el clon iba a firmar como la herramienta; la identidad local
-(`x <x@y.z>`) es ya esa cuenta; la autofusión de la auditoría escribe su mensaje (medido en el #279: cero coautores); y el gate 44,
-`audit:commit-attribution`, pone rojo un commit de la rama con la firma de la herramienta. El job `verify` del CI clona con historia.
-El proxy de git de la nube acepta el push con esa cuenta (0dcfe28, desde una sesión cloud, con el «sí» dado allí en directo).
-
-- ⚠️ **Una rutina no acepta un «sí» escrito en su encargo** para actuar con la identidad del usuario: la confirmación va en esa sesión.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -289,6 +289,7 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Una rutina no acepta un «sí» escrito en su encargo** para actuar con la identidad del usuario: la confirmación va en esa sesión (DD-134).
 - 🪤 **Una rama de antes del barrido de nombres (DD-120, 2026-09-24) choca en comentarios al rebasar**, y `audit:personal-names` le hará reescribir los suyos (`gulper`: `channel-icon`).
 - 🪤 **Un `sc-drawer` lateral pinta tres bordes de 3 px, sombra hacia abajo y una X sin nombre**: arreglado en `comparar/fichas`, no en `main`.
 - 🪤 **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias (DD-111).

@@ -417,6 +417,14 @@ pantallas propias en local son los que han cazado fallos de un bloque.
 **Consecuencias.** La espera del PR con 8 partes se mide en el CI de este mismo lote. Si sigue alta, se
 retoma el filtro de barridos en el CI.
 
+**Actualización (2026-10-04, noche)** · Medida sobre las ejecuciones de `ci` que corrieron las pruebas del
+Supervisor desde el 2026-09-29:
+- con 4 partes, mediana de 12,8 min (n=67, de 8,0 a 20,1), y crecía con la batería;
+- con 8, mediana de 8,4 min (n=9, de 6,9 a 8,8), y estable.
+
+El filtro de barridos por pantalla en el CI sigue descartado: ahorraría ~1,5 min a cambio de una tabla que
+mantener. Se retoma si la mediana pasa de 10 min; los tiempos de cada lote los saca `npm run tiempos`.
+
 ---
 
 ## DD-154 · 2026-10-04 — En local, solo las pruebas del bloque; un PR por lote

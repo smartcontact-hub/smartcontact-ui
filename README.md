@@ -84,7 +84,7 @@ npm run export:all     # tarballs npm en dist/archives/
 ```bash
 npm run verify         # los 44 checks estáticos encadenados (~40s)
 npm run e2e            # smoke en navegador (Playwright)
-npm run preflight      # gates + builds AOT + baselines visuales (~5 min), antes de pushear
+npm run preflight      # gates + builds AOT (~8 min), antes de pushear; las capturas las compara el CI
 ```
 
 La cadena `verify` es la composición canónica, y este README es su fuente única (lo exige el
