@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -43,7 +44,6 @@ test('ROJO si se esconde: el DS, la raíz, scripts y lo compartido de e2e corren
     'e2e/shared/deterministic.ts',
     'e2e/usage/x.spec.ts',
     '.github/workflows/ci.yml',
-    'tools/check-backticks.ts',
     'una/ruta/que/nadie/previo.ts',
   ]) {
     assert.deepEqual(suitesPara(['projects/supervisor/src/a.ts', f]), TODO, f);
@@ -76,4 +76,37 @@ test('un script que ninguna e2e alcanza (un gate de verify) no corre suites', ()
 test('ROJO: lo que importa una config de Playwright, y lo que eso importa, cuenta como alcanzado', () => {
   assert.ok(ALCANZADOS.has('scripts/playwright-reuse-guard.mjs'), 'lo importan las configs');
   assert.ok(ALCANZADOS.has('scripts/paths.mjs'), 'lo importa dtcg-export, que importa una e2e');
+});
+
+test('la plantilla de PR, una herramienta que ninguna e2e alcanza y los ficheros sueltos de git no corren suites (DD-155)', () => {
+  // Medido en los últimos 80 PR: cinco corrieron las tres suites por uno de estos, y el #319, de solo
+  // texto, tardó 15 minutos en vez de 2. Ninguno lo lee una app ni una prueba.
+  for (const f of [
+    '.github/pull_request_template.md',
+    '.github/ISSUE_TEMPLATE/fallo.md',
+    'tools/check-backticks.ts',
+    '.git-blame-ignore-revs',
+    'prueba-squash.txt',
+  ]) {
+    assert.deepEqual(suitesPara([f]), NADA, f);
+    assert.deepEqual(suitesPara(['projects/supervisor/src/a.ts', f]), { ...NADA, supervisor: true }, f);
+  }
+});
+
+test('ROJO: una herramienta de tools/ que alcanza una e2e corre TODO, como un script', () => {
+  assert.deepEqual(decidir(['tools/x.mjs'], new Set(['tools/x.mjs'])), TODO);
+  const raiz = mkdtempSync(join(tmpdir(), 'ci-cambios-'));
+  mkdirSync(join(raiz, 'e2e'));
+  mkdirSync(join(raiz, 'tools'));
+  writeFileSync(join(raiz, 'e2e', 'a.spec.ts'), "import { x } from '../tools/medir.mjs';\n");
+  writeFileSync(join(raiz, 'tools', 'medir.mjs'), "import { y } from './apoyo.mjs';\n");
+  writeFileSync(join(raiz, 'tools', 'apoyo.mjs'), 'export const y = 1;\n');
+  writeFileSync(join(raiz, 'tools', 'suelta.mjs'), 'export const z = 1;\n');
+  const alcanzados = scriptsAlcanzadosPorE2e(raiz);
+  assert.ok(alcanzados.has('tools/medir.mjs') && alcanzados.has('tools/apoyo.mjs'), [...alcanzados].join(', '));
+  assert.ok(!alcanzados.has('tools/suelta.mjs'));
+});
+
+test('ROJO: el workflow del CI no es documentación aunque viva en .github', () => {
+  assert.deepEqual(suitesPara(['.github/workflows/ci.yml']), TODO);
 });
