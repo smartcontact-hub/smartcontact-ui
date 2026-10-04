@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { PREFLIGHT, carpetaEfectiva, evaluar, escrituras } from '../hooks/bash-guard.mjs';
+import { PREFLIGHT, carpetasPorSegmento, evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
 // Cada patrón del hook se prueba EN ROJO (el comando que motivó la regla) y EN VERDE (la forma
 // correcta y los vecinos legítimos). Un guardián que solo se ha visto pasar no prueba que sepa
@@ -671,8 +671,41 @@ test('carpeta del comando: `cd <ruta> &&` manda sobre el cwd de la sesión; con 
   deny('git push -u origin rama', soloElWorktree, /LEARNINGS #7/);
   deny('cd $WT && git push', soloElWorktree, /LEARNINGS #7/);
   deny('npx playwright test', soloElWorktree, /LEARNINGS #5/);
-  assert.equal(carpetaEfectiva('cd sub && ls', '/repo'), '/repo/sub');
-  assert.equal(carpetaEfectiva('ls && cd /otra', '/repo'), '/repo', 'un cd DETRÁS no cambia dónde corre lo de delante');
+  assert.deepEqual(carpetasPorSegmento('cd sub && ls', '/repo'), ['/repo', '/repo/sub']);
+  assert.deepEqual(carpetasPorSegmento('ls && cd /otra', '/repo'), ['/repo', '/repo'], 'un cd DETRÁS no cambia dónde corre lo de delante');
+  assert.deepEqual(carpetasPorSegmento('export PATH=/x:$PATH; git fetch && cd /wt && ls', '/repo'), ['/repo', '/repo', '/repo', '/wt'], 'un cd que no abre el comando también cuenta');
+});
+
+// 2026-10-04: el resto de reglas con carpeta (la cadena a ciegas, el build durante un preflight, el
+// Playwright con el `dist/` viejo y el prettier ajeno) juzgaban igual: la carpeta del comando solo seguía los
+// `cd` que ABREN el comando: `git fetch && cd <wt> && npx playwright test` se juzgaba en la sesión, y el
+// segundo Playwright de `cd <wt> && npx playwright test && cd <sesión> && npx playwright test`, en el worktree.
+// Cada regla mira la carpeta de SU segmento. Carpetas de mentira, como las de arriba: solo `/repo` (la
+// sesión) tiene el `dist/` viejo, fuentes sin indexar y un preflight vivo, y solo `/otra` adopta prettier.
+test('carpeta de cada segmento en las demás reglas: un `cd` que no abre el comando manda, y el que vuelve a la sesión cuenta', () => {
+  const ctx = {
+    ...verde,
+    cwd: '/repo',
+    distRancio: (dir) => (dir === '/repo' ? 'projects/ui-smartcontact/src/lib/x.scss' : null),
+    sinIndexar: (dir) => (dir === '/repo' ? ['projects/supervisor/src/app/a.ts'] : []),
+    preflightVivo: (dir) => (dir === '/repo' ? 4242 : null),
+    usaPrettier: (dir) => dir === '/otra',
+  };
+  // #5 e2e con el `dist/` viejo.
+  allow('git fetch && cd /wt && npx playwright test', ctx);
+  deny('cd /wt && npx playwright test && cd /repo && npx playwright test', ctx, /LEARNINGS #5/);
+  // #7 la cadena con fuentes sin `git add`.
+  allow('git fetch && cd /wt && npm run verify', ctx);
+  deny('cd /wt && git status && cd /repo && npm run verify', ctx, /git ls-files/);
+  // #5 un build mientras corre un preflight.
+  allow('git fetch && cd /wt && npm run build:supervisor', ctx);
+  deny('cd /wt && git status && cd /repo && npm run build:supervisor', ctx, /pid 4242/);
+  // #11 un formateador que el repo no adopta.
+  allow('git fetch && cd /otra && npx prettier --write src/a.ts', ctx);
+  deny('cd /otra && git status && cd /repo && npx prettier --write src/a.ts', ctx, /LEARNINGS #11/);
+  // Sin `cd`, o con uno opaco (variable), manda la sesión, como siempre.
+  deny('npx playwright test', ctx, /LEARNINGS #5/);
+  deny('cd $WT && npx playwright test', ctx, /LEARNINGS #5/);
 });
 
 // 2026-10-01: una sesión de este repo también empuja OTROS repositorios (`cd <otro> && git push`), y
@@ -739,8 +772,8 @@ function reposDePrueba(t) {
 
 // 2026-10-01: `false && cd <otro repo> && git push` se denegó con el motivo de #7 aunque el push era de OTRO
 // repositorio, y un subagente que barría el cuaderno privado del autor se quedó con sus commits sin subir.
-// #301 arregló el cierre que corría de verdad (`cd <otro> && … && git push`), pero `carpetaEfectiva` solo
-// sigue los `cd` que ABREN el comando: con algo delante (`false &&`, `git add -A &&`), dentro de un `( … )`,
+// #301 arregló el cierre que corría de verdad (`cd <otro> && … && git push`), pero la carpeta del comando
+// solo seguía los `cd` que ABREN el comando: con algo delante (`false &&`, `git add -A &&`), dentro de un `( … )`,
 // o tras empujar al otro repo, el push se juzgaba en la carpeta de la sesión. Con repos de verdad: este (con
 // el script de la marca, que es lo que mira `usaPreflight`), un worktree suyo y otro ajeno.
 test('#7 cada push se juzga en la carpeta de SU segmento: un `cd` que no abre el comando, un subshell o la vuelta a este repo', (t) => {

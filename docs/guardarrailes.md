@@ -111,7 +111,9 @@ aquí pasa, porque allí no hay cadena que escriba la marca. Cada `git push` se 
 segmento del comando: la que dejan los `cd` literales anteriores, también los que no abren el comando
 (`git add -A && cd <otro> && git push`), sin salir de un `( … )`; con `git -C <ruta> push`, la de esa ruta
 (que cuenta desde la del segmento); y con un `cd` o un `-C` que no se saben adónde van (una variable) manda
-la de la sesión. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
+la de la sesión. Las demás reglas del hook que miran una carpeta (la cadena con fuentes sin `git add`, un
+build durante un preflight, un Playwright con el `dist/` viejo, un `prettier --write` ajeno) usan también la
+de su propio segmento. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
 pantalla de que te la has saltado. Existe porque esta regla era la más incumplida del repo:
 se lee al empezar la tarea y el disparador salta horas después.
 
