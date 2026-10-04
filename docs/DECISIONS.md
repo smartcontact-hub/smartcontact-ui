@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Elegir y ordenar columnas en un solo control nativo: el Listbox (casilla y arrastre) en el globo del icono; las cabeceras ya no se arrastran | DD-162 |
 > | La cifra principal del resumen, con el degradado del botón principal y el anillo en el color de su texto: una por ficha | DD-161 |
 > | Una tabla dentro de una sección llega al pie de la pantalla: tope medido desde donde empieza (`scLlegaAlPie`), con suelo | DD-160 |
 > | En el listado de Grupos, la cifra de agentes abre su asignación y sale la columna «Asignar»; en Agentes, la de grupos ya llevaba a su sección | DD-159 |
@@ -119,6 +120,38 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-162 · 2026-10-04 — Elegir y ordenar columnas en un solo control nativo: el Listbox en el globo del icono
+
+**Contexto.** Desde DD-153 las columnas se elegían en el icono de la barra (el MultiSelect del ejemplo «Column
+Toggle») y se ordenaban arrastrando las cabeceras de la tabla (`reorderableColumns` de `p-table`): dos controles
+nativos, en dos sitios, para una misma tarea. La revisión de producto del 2026-10-04 pidió un solo control nativo de
+PrimeNG y sin arrastrar cabeceras. Se valoraron Listbox y PickList con su documentación entera (`tools/primeng-doc.mjs`)
+y contra tres SaaS de referencia: Airtable y Notion usan una sola lista con casilla y asa; HubSpot, dos columnas en un
+modal («elegir» y «seleccionadas»), que es PickList, porque ofrece cientos de propiedades con buscador.
+
+**Decisión.**
+1. **El icono (`view_column`) es un botón del DS que abre un globo (`p-popover`) con el Listbox nativo**, con
+   `multiple`, `checkbox` y `dragdrop`: la casilla elige qué se ve y arrastrar ordena, en la misma lista y en el orden
+   de la tabla. El botón dice en su nombre cuántas se ven («Columnas, 7 de 10») y si el globo está abierto
+   (`aria-expanded`).
+2. **Las cabeceras ya no se arrastran**: un solo sitio para elegir y ordenar. Los anchos se siguen ajustando en la
+   cabecera.
+3. **Del nativo, tres entradas** (sin CSS sobre `.p-*`): sin la casilla de «todas» (`showToggleAll`: no tiene rótulo
+   y, con una columna fija, no las quita todas), sin tope de alto (`scrollHeight="none"`: son pocas, se ven todas) y sin
+   su borde ni su sombra (`dt` de la instancia: la caja ya la pone el globo). La columna fija sale marcada y apagada.
+4. **Lo que se guarda no cambia**: visibles, orden y anchos en `localStorage`, con `normalizePrefs` (las fijas vuelven
+   a su sitio aunque se suelten encima). Enmienda DD-153 (el orden, arrastrando las cabeceras).
+
+**Razón.** Listbox es el control de Airtable y Notion para lo mismo: con 8 a 12 columnas, una lista corta en un globo
+se usa sin salir de la tabla. PickList obliga a un modal ancho y a dos gestos por columna (pasarla y ordenarla); compensa
+con decenas de columnas y buscador, que no es el caso. Si un listado llega ahí, se cambia a PickList.
+
+**Coste.** Ordenar es arrastrar, como antes con las cabeceras: con teclado se elige pero no se ordena (tampoco antes).
+`sc-multiselect` conserva su variante de solo icono (DD-153) en el DS, sin uso en el supervisor.
+
+**Descartado.** PickList (ver Razón); dejar los dos controles; un control a medida con asas propias
+(`sc-column-selector`, que ya existe en el DS sin uso y no es nativo).
 
 ## DD-161 · 2026-10-04 — La cifra principal del resumen, con color: el degradado de la vista previa de ProgressSpinner
 
@@ -448,7 +481,8 @@ Se conservan selección, opciones bloqueadas, foco y overlay nativos. Excepción
 
 `ScColumnDef.frozen` y `alignFrozen` pasan a `pFrozenColumn` en cabeceras y celdas de las plantillas
 por defecto. El menú de `sc-list-page` y Asignar del grupo quedan a la derecha *(DD-159: Asignar sale; su acción va
-en la cifra de agentes, y solo queda fijo el menú)*. No se arrastran esas
+en la cifra de agentes, y solo queda fijo el menú. DD-162: el orden se cambia en el globo de columnas, no arrastrando
+cabeceras)*. No se arrastran esas
 columnas fijas. PrimeNG calcula sus posiciones y hereda el fondo de fila; el hover inerte conserva
 un fondo opaco. Una sombra del token existente señala contenido oculto y desaparece al alcanzar
 el extremo. Un observador de tamaño y el scroll actualizan esa señal, también con lista virtual.

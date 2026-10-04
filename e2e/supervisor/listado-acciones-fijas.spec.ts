@@ -15,22 +15,24 @@ async function cabeEnTabla(control: Locator) {
   });
 }
 
+// DD-162: el icono es un botón que abre un globo con la lista nativa (Listbox con casilla y arrastre).
 test('Columnas es un icono con conteo accesible, conserva selección y teclado', async ({ page }) => {
   await forceLightTheme(page);
   await disableAnimations(page);
   await goto(page, 'admin/grupos');
-  const control = selector(page).getByRole('combobox');
   // Nueve: «Asignar agentes» salió del listado y su acción va en la cifra de agentes (DD-159).
+  const control = selector(page).getByRole('button');
   await expect(control).toHaveAccessibleName('Columnas, 7 de 9');
-  await expect(selector(page).locator('sc-icon')).toHaveText('view_column');
+  await expect(selector(page).locator('.sc-icon-font--view_column')).toHaveCount(1);
   expect(await selector(page).evaluate(el => el.getBoundingClientRect().width)).toBeLessThan(45);
-  await control.press('ArrowDown');
-  await page.getByRole('option', { name: 'ID', exact: true }).click();
+  await control.press('Enter');
+  const lista = page.getByRole('listbox', { name: /^Columnas/ });
+  await lista.getByRole('option', { name: 'ID', exact: true }).click();
   await expect(control).toHaveAccessibleName('Columnas, 8 de 9');
-  await control.press('Escape');
-  await expect(page.getByRole('listbox')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await expect(lista).toHaveCount(0);
   await page.reload();
-  await expect(selector(page).getByRole('combobox')).toHaveAccessibleName('Columnas, 8 de 9');
+  await expect(selector(page).getByRole('button')).toHaveAccessibleName('Columnas, 8 de 9');
   await expect(page.locator('thead th[data-field="code"]')).toBeVisible();
 });
 
@@ -41,8 +43,8 @@ for (const oscuro of [false, true]) {
     await disableAnimations(page);
     await page.setViewportSize({ width: 1366, height: 768 });
     await goto(page, 'admin/grupos');
-    await selector(page).locator('.p-multiselect').click();
-    await page.getByRole('option', { name: 'ID', exact: true }).click();
+    await selector(page).getByRole('button').click();
+    await page.getByRole('listbox', { name: /^Columnas/ }).getByRole('option', { name: 'ID', exact: true }).click();
     await page.keyboard.press('Escape');
     const cabecera = page.locator('th[data-field="code"]');
     const tirador = await cabecera.locator('.p-datatable-column-resizer').boundingBox();

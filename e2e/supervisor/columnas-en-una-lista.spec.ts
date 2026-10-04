@@ -33,7 +33,7 @@ const opcion = (page: Page, nombre: string) => lista(page).getByRole('option', {
 
 test('el icono abre una lista con las columnas en el orden de la tabla, cada una con su casilla', async ({ page }) => {
   await goto(page, 'admin/agentes');
-  await expect(boton(page).locator('sc-icon')).toHaveText('view_column');
+  await expect(boton(page).locator('.sc-icon-font--view_column'), 'el icono de columnas').toHaveCount(1);
   await boton(page).click();
   await expect(lista(page)).toBeVisible();
   await expect(lista(page)).toHaveAttribute('aria-multiselectable', 'true');
@@ -43,6 +43,7 @@ test('el icono abre una lista con las columnas en el orden de la tabla, cada una
   expect(enLista.map((t) => t.trim()).filter((t) => enTabla.includes(t))).toEqual(enTabla);
   await expect(lista(page).locator('.p-checkbox').first()).toBeVisible();
   await expect(opcion(page, 'Nombre')).toHaveAttribute('aria-selected', 'true');
+  await expect(opcion(page, 'Nombre')).toHaveAttribute('aria-disabled', 'true');
 });
 
 test('desmarcar una columna la oculta, y volver a marcarla la deja donde estaba', async ({ page }) => {
