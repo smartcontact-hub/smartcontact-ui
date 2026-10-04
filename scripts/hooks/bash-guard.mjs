@@ -398,29 +398,54 @@ const empiezaPor = (seg, re) => re.test(seg.replace(/^(\s*[A-Za-z_][A-Za-z_0-9]*
 
 /** Un valor de la línea de comandos, entrecomillado o no. */
 const VALOR = String.raw`(?:"[^"]*"|'[^']*'|\S+)`;
-/** Las opciones de git que pueden ir ANTES del subcomando: `-C <ruta>` (git entra en ella) y `-c <clave=valor>`. */
-const OPCIONES_GIT = String.raw`(?:-C\s+${VALOR}\s+|-c\s+${VALOR}\s+)*`;
+/** Las opciones de git que pueden ir ANTES del subcomando: `-C <ruta>` (git entra en ella), `-c <clave=valor>`,
+ *  `--git-dir` y `--work-tree` (con `=` o con espacio), y las que no llevan valor (`--no-pager`, `-P`…). */
+const OPCIONES_GIT = String.raw`(?:-C\s+${VALOR}\s+|-c\s+${VALOR}\s+|--(?:git-dir|work-tree)(?:=|\s+)${VALOR}\s+|(?:--no-pager|-P|--paginate|-p|--no-optional-locks|--bare)\s+)*`;
 const ES_GIT_PUSH = new RegExp(String.raw`^git\s+${OPCIONES_GIT}push\b`);
 const esPushDeCommits = (seg) =>
   empiezaPor(seg, ES_GIT_PUSH) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
 
+/** Una ruta que no se sabe adónde va: una variable, un `$(…)` (que `palabras` deja en `SUB`) o nada. */
+const rutaOpaca = (ruta) => !ruta || ruta === 'SUB' || /[$`]/.test(ruta);
+
 /**
- * La carpeta donde corre un `git push`: la de su segmento, o la que le da `-C <ruta>`, que es el `cd` de
- * git: la ruta cuenta desde donde esté y varios `-C` encadenan. `git -C <ruta> push` no empieza por
- * `git push`, y por eso pasaba sin que nadie lo mirara: el del informe (`git -C <otro repo> push`) solo
- * pasaba por eso, y el de ESTE repo se colaba sin marca (2026-10-04). Una ruta que no se sabe adónde
+ * La carpeta donde corre un `git push`: la de su segmento, o la que le da lo que elige el repositorio. Git lo
+ * elige por cuatro puertas, y las cuatro cuentan: `-C <ruta>`, que es el `cd` de git (la ruta cuenta desde donde
+ * esté y varios `-C` encadenan), `--git-dir`, `--work-tree` y las variables `GIT_DIR` y `GIT_WORK_TREE` delante
+ * del comando. Lo escrito en la línea manda sobre el entorno, y `--work-tree` sobre `--git-dir`: la marca de
+ * preflight es del ÁRBOL de trabajo. Para una carpeta de git (`<repo>/.git`, o la de un worktree) basta la
+ * ruta: `raizDelArbol` sube hasta el repo.
+ *
+ * Ninguna de las cuatro empezaba por `git push`, y por eso pasaban sin que nadie las mirara: `git -C <otro repo>
+ * push` solo pasaba por eso, y el de ESTE repo se colaba sin marca (2026-10-04). Una ruta que no se sabe adónde
  * va (variable, `$(…)`) manda la de la sesión, como un `cd` opaco.
  */
 function carpetaDelPush(seg, dir, sesion) {
+  const entorno = {};
+  const ws = palabras(seg.replace(/^[({]\s*/, ''));
+  for (const w of ws) {
+    const m = w.match(/^(GIT_DIR|GIT_WORK_TREE)=(.*)$/);
+    if (m) entorno[m[1]] = m[2];
+    else if (!/^[A-Za-z_][A-Za-z_0-9]*=/.test(w)) break;
+  }
+  const aqui = (ruta) => (rutaOpaca(ruta) ? sesion : irA(dir, ruta));
+  let gitDir = entorno.GIT_DIR === undefined ? undefined : aqui(entorno.GIT_DIR);
+  let arbol = entorno.GIT_WORK_TREE === undefined ? undefined : aqui(entorno.GIT_WORK_TREE);
   const { args } = programa(seg);
   for (let i = 0; i < args.length && args[i].startsWith('-'); i++) {
-    if (args[i] === '-c') i++;
-    else if (args[i] === '-C') {
+    const a = args[i];
+    if (a === '-c') i++;
+    else if (a === '-C') {
       const ruta = args[++i] ?? '';
-      dir = !ruta || ruta === 'SUB' || /[$`]/.test(ruta) ? sesion : irA(dir, ruta);
+      dir = rutaOpaca(ruta) ? sesion : irA(dir, ruta);
+    } else if (/^--(git-dir|work-tree)(=|$)/.test(a)) {
+      const [, clave, tras] = a.match(/^--(git-dir|work-tree)(?:=(.*))?$/);
+      const ruta = tras === undefined ? (args[++i] ?? '') : tras;
+      if (clave === 'git-dir') gitDir = rutaOpaca(ruta) ? sesion : irA(dir, ruta);
+      else arbol = rutaOpaca(ruta) ? sesion : irA(dir, ruta);
     }
   }
-  return dir;
+  return arbol ?? gitDir ?? dir;
 }
 
 /** El destino de un segmento que es un `cd`: su ruta si es LITERAL; `null` si es un `cd` pero no se sabe
