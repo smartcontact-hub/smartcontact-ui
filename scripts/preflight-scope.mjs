@@ -24,6 +24,18 @@ import { avisarCarga, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 import { APPS, planDe } from "./preflight-alcance.mjs";
 
+/**
+ * Al final, en los dos carriles: las capturas de sc-docs que este cambio mueve y siguen sin regenerar
+ * (`api-baselines.mjs`). Es un aviso, nunca un rojo: la captura solo sale del workflow, después del push.
+ */
+function avisoDeCapturas() {
+  try {
+    execFileSync("node", ["scripts/api-baselines.mjs"], { stdio: "inherit" });
+  } catch {
+    /* un aviso que no puede medir no para el preflight */
+  }
+}
+
 // Antes de mirar qué cambió, y antes de gastar un minuto: ¿la rama lleva `origin/main`? Un
 // preflight sobre una rama rezagada mide un árbol que nunca se pushea tal cual (2026-09-11: dos
 // cadenas de 8 min tiradas porque main avanzó entre el preflight y el push). El fetch de aquí
@@ -108,6 +120,7 @@ if (completo) {
   if (process.argv.includes("--run")) {
     execFileSync("npm", ["run", "preflight"], { stdio: "inherit" });
   }
+  avisoDeCapturas();
   process.exit(0);
 }
 
@@ -148,3 +161,4 @@ if (process.argv.includes("--run")) {
   // QUÉ carril pasó; lo que se saltó quedó impreso arriba.
   execSync("node scripts/preflight-mark.mjs preflight:scope", { stdio: "inherit" });
 }
+avisoDeCapturas();
