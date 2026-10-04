@@ -395,8 +395,33 @@ function entornoAPantalla(cmd) {
 // partido). Casar por substring dispararía sobre prosa: el primer falso positivo del hook fue un
 // `printf '... el hook de git push'`, denegado en su primer minuto de vida.
 const empiezaPor = (seg, re) => re.test(seg.replace(/^(\s*[A-Za-z_][A-Za-z_0-9]*=\S*\s+)*/, '').replace(/^\(\s*/, ''));
+
+/** Un valor de la línea de comandos, entrecomillado o no. */
+const VALOR = String.raw`(?:"[^"]*"|'[^']*'|\S+)`;
+/** Las opciones de git que pueden ir ANTES del subcomando: `-C <ruta>` (git entra en ella) y `-c <clave=valor>`. */
+const OPCIONES_GIT = String.raw`(?:-C\s+${VALOR}\s+|-c\s+${VALOR}\s+)*`;
+const ES_GIT_PUSH = new RegExp(String.raw`^git\s+${OPCIONES_GIT}push\b`);
 const esPushDeCommits = (seg) =>
-  empiezaPor(seg, /^git\s+push\b/) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
+  empiezaPor(seg, ES_GIT_PUSH) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
+
+/**
+ * La carpeta donde corre un `git push`: la de su segmento, o la que le da `-C <ruta>`, que es el `cd` de
+ * git: la ruta cuenta desde donde esté y varios `-C` encadenan. `git -C <ruta> push` no empieza por
+ * `git push`, y por eso pasaba sin que nadie lo mirara: el del informe (`git -C <otro repo> push`) solo
+ * pasaba por eso, y el de ESTE repo se colaba sin marca (2026-10-04). Una ruta que no se sabe adónde
+ * va (variable, `$(…)`) manda la de la sesión, como un `cd` opaco.
+ */
+function carpetaDelPush(seg, dir, sesion) {
+  const { args } = programa(seg);
+  for (let i = 0; i < args.length && args[i].startsWith('-'); i++) {
+    if (args[i] === '-c') i++;
+    else if (args[i] === '-C') {
+      const ruta = args[++i] ?? '';
+      dir = !ruta || ruta === 'SUB' || /[$`]/.test(ruta) ? sesion : irA(dir, ruta);
+    }
+  }
+  return dir;
+}
 
 /** El destino de un segmento que es un `cd`: su ruta si es LITERAL; `null` si es un `cd` pero no se sabe
  *  adónde va (variable, `-`, sin argumento); `undefined` si el segmento no es un `cd`. */
@@ -719,11 +744,15 @@ function evaluarBase(cmd, ctx = {}) {
 
   // #7 (a) — push sin preflight fresco sobre el árbol FINAL. Solo en un árbol de este repo: en otro
   // no hay cadena que escriba la marca (`usaPreflight`), y exigirla dejó a un subagente con sus commits
-  // sin subir (2026-10-01). Cada push se juzga en la carpeta de SU segmento (`carpetasPorSegmento`).
-  const carpetas = carpetasPorSegmento(cmd, ctx.cwd || process.cwd());
+  // sin subir (2026-10-01). Cada push se juzga en la carpeta de SU segmento (`carpetasPorSegmento`), o en la
+  // de su `-C <ruta>` (`carpetaDelPush`).
+  const sesion = ctx.cwd || process.cwd();
+  const carpetas = carpetasPorSegmento(cmd, sesion);
   for (const [i, seg] of segs.entries()) {
-    if (!esPushDeCommits(seg) || !(ctx.usaPreflight || usaPreflight)(carpetas[i])) continue;
-    const st = preflight(carpetas[i]);
+    if (!esPushDeCommits(seg)) continue;
+    const dir = carpetaDelPush(seg, carpetas[i], sesion);
+    if (!(ctx.usaPreflight || usaPreflight)(dir)) continue;
+    const st = preflight(dir);
     if (!st.ok)
       return {
         decision: 'deny',

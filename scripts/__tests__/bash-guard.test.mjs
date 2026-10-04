@@ -714,14 +714,10 @@ test('#7 push en un repositorio sin la cadena de preflight → allow; en un árb
   }
 });
 
-// 2026-10-01: `false && cd <otro repo> && git push` se denegó con el motivo de #7 aunque el push era de OTRO
-// repositorio, y un subagente que barría el cuaderno privado del autor se quedó con sus commits sin subir.
-// #301 arregló el cierre que corría de verdad (`cd <otro> && … && git push`), pero `carpetaEfectiva` solo
-// sigue los `cd` que ABREN el comando: con algo delante (`false &&`, `git add -A &&`), dentro de un `( … )`,
-// o tras empujar al otro repo, el push se juzgaba en la carpeta de la sesión. Con repos de verdad: este (con
-// el script de la marca, que es lo que mira `usaPreflight`), un worktree suyo y otro ajeno.
-test('#7 cada push se juzga en la carpeta de SU segmento: un `cd` que no abre el comando, un subshell o la vuelta a este repo', (t) => {
-  const raiz = realpathSync(mkdtempSync(join(tmpdir(), 'bash-guard-segmentos-')));
+/** Este repo (con el script que escribe la marca, que es lo que mira `usaPreflight`), un worktree suyo y otro
+ *  repo ajeno, de verdad en el disco; y el `ctx` de una sesión abierta en este, con la marca contestada «no». */
+function reposDePrueba(t) {
+  const raiz = realpathSync(mkdtempSync(join(tmpdir(), 'bash-guard-repos-')));
   t.after(() => rmSync(raiz, { recursive: true, force: true }));
   const git = (cwd, ...args) =>
     spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false', ...args], { cwd, env: SIN_GIT, encoding: 'utf8' });
@@ -737,8 +733,18 @@ test('#7 cada push se juzga en la carpeta de SU segmento: un `cd` que no abre el
   git(propio, 'add', '-A');
   git(propio, 'commit', '-q', '-m', 'x');
   assert.equal(git(propio, 'worktree', 'add', '-q', wt, '-b', 'rama').status, 0, 'el worktree de este repo debe existir');
-
   const ctx = { sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], preflight: rojo.preflight, cwd: propio };
+  return { raiz, propio, otro, wt, ctx };
+}
+
+// 2026-10-01: `false && cd <otro repo> && git push` se denegó con el motivo de #7 aunque el push era de OTRO
+// repositorio, y un subagente que barría el cuaderno privado del autor se quedó con sus commits sin subir.
+// #301 arregló el cierre que corría de verdad (`cd <otro> && … && git push`), pero `carpetaEfectiva` solo
+// sigue los `cd` que ABREN el comando: con algo delante (`false &&`, `git add -A &&`), dentro de un `( … )`,
+// o tras empujar al otro repo, el push se juzgaba en la carpeta de la sesión. Con repos de verdad: este (con
+// el script de la marca, que es lo que mira `usaPreflight`), un worktree suyo y otro ajeno.
+test('#7 cada push se juzga en la carpeta de SU segmento: un `cd` que no abre el comando, un subshell o la vuelta a este repo', (t) => {
+  const { propio, otro, wt, ctx } = reposDePrueba(t);
   // ROJO de antes, VERDE ahora: el comando del informe y sus parientes (algo delante del `cd`, o un subshell).
   allow(`false && cd ${otro} && git push`, ctx);
   allow(`git add -A && cd ${otro} && git push`, ctx);
@@ -757,6 +763,42 @@ test('#7 cada push se juzga en la carpeta de SU segmento: un `cd` que no abre el
   // Salida explícita; y con la marca en verde, tampoco se deniega.
   allow(`cd ${propio} && git push # sc:ok`, ctx);
   allow(`cd ${propio} && git push`, { ...ctx, preflight: verde.preflight });
+});
+
+// 2026-10-04: `git -C <ruta> push` no empieza por `git push`, así que el guardián no lo reconocía como un
+// push: el del informe (`git -C <otro repo> push`) pasaba solo por eso, y el de ESTE repo con `-C` se
+// colaba sin marca (medido sobre main con repos reales). `-C` es el `cd` de git: la ruta cuenta desde la
+// carpeta del segmento, y varios `-C` encadenan.
+test('#7 `git -C <ruta> push` se juzga en su ruta: la de otro repo pasa; la de este, o una que no se sabe, pide marca', (t) => {
+  const { raiz, propio, otro, wt, ctx } = reposDePrueba(t);
+  // VERDE: el repo ajeno, con la sesión en este, con `-C` sobre un `cd`, entrecomillado, o desde una subcarpeta.
+  allow(`git -C ${otro} push`, ctx);
+  allow(`git -C ${otro}/sub push origin main`, ctx);
+  allow(`git -C "${otro}" push`, ctx);
+  allow(`cd ${propio} && git -C ${otro} push`, ctx);
+  allow(`cd ${raiz} && git -C otro push`, ctx); // la ruta relativa cuenta desde la carpeta del segmento
+  allow(`git -C ${otro} push`, { ...ctx, cwd: otro });
+  // ROJO de antes, y era un hueco: el push de este repo, de su worktree o de una subcarpeta, desde donde sea.
+  deny(`git -C ${propio} push`, ctx, /LEARNINGS #7/);
+  deny(`git -C ${propio} push`, { ...ctx, cwd: otro }, /LEARNINGS #7/);
+  deny(`git -C ${wt} push -u origin HEAD`, ctx, /LEARNINGS #7/);
+  deny(`git -C ${propio}/sub push`, { ...ctx, cwd: otro }, /LEARNINGS #7/);
+  deny(`cd ${otro} && git -C ${propio} push`, ctx, /LEARNINGS #7/);
+  deny(`cd ${raiz} && git -C propio push`, { ...ctx, cwd: otro }, /LEARNINGS #7/);
+  deny(`git -C ${otro} -C ../propio push`, { ...ctx, cwd: otro }, /LEARNINGS #7/); // varios `-C` encadenan
+  // Un `-c clave=valor` delante tampoco quita que sea un push.
+  deny('git -c http.extraheader=x push', ctx, /LEARNINGS #7/);
+  allow('git -c http.extraheader=x push', { ...ctx, cwd: otro });
+  // Una ruta que no se sabe adónde va manda la sesión, venga de donde venga.
+  deny('git -C $CUADERNO push', ctx, /LEARNINGS #7/);
+  deny(`cd ${otro} && git -C $DESTINO push`, ctx, /LEARNINGS #7/);
+  // Lo que ya no era un push de commits sigue sin serlo, con `-C` o sin él; y la salida explícita.
+  allow(`git -C ${propio} push --dry-run`, ctx);
+  allow(`git -C ${propio} push origin --delete rama-vieja`, ctx);
+  allow(`git -C ${propio} status`, ctx);
+  allow(`git -C ${propio} log --oneline`, ctx);
+  allow(`git -C ${propio} push # sc:ok`, ctx);
+  allow(`git -C ${propio} push`, { ...ctx, preflight: verde.preflight });
 });
 
 test('#21 sacar la rama de otra sesión para trabajar en ella → deny; desde main, un fichero suelto o sc:ok → allow', () => {
