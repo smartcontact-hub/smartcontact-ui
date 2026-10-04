@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 152,
+      "usedInSupervisor": 153,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -943,7 +943,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 15,
+      "usedInSupervisor": 14,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "sobreObsoleto": [
         {
