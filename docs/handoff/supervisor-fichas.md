@@ -19,11 +19,10 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 (el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente».
 
-## ✅ 2026-10-04 · F: columnas y acciones del listado (DD-153), en su PR
+## ✅ 2026-10-04 · F: columnas y acciones del listado (DD-153), fundida
 
-> **Sello: rama `areses/sweet-fermat-r9cxzw` sobre `faf25027`: `a31d22b1` (pruebas en rojo), `f90f7187` (F) y
-> `3996cbab` (capturas de Linux del bot). `codex/supervisor-f-listado` es la misma F, subida desde el portátil: copia,
-> se borra al fundir.**
+> **Sello: #318 → `001bcf5f`, por squash; CI del PR (37204180260) y de `main` (37204858176), en verde.
+> `codex/supervisor-f-listado` (`f90f7187`) es la misma F, subida desde el portátil: copia, se borra.**
 
 **Qué hace.**
 - **El selector de columnas, en un icono:** `sc-multiselect` gana `iconOnly` e `icon`, con nombre accesible
@@ -52,7 +51,10 @@ cuatro trampas del pase suben a «Trampas del frente».
   - el ejemplo del playground escribe `icon="view_column"` aunque `iconOnly` esté apagado (es el valor por defecto);
   - los cuatro selectores de solo icono salen apilados y pegados, sin hueco.
 - **Bloques de código de sc-docs:** «Copiar» flota encima de las líneas largas.
-- **Agentes:** con `prefers-reduced-motion: reduce`, su tabla puede pintar cero filas virtuales. Pasa igual en D3.
+- ~~**Agentes:** con `prefers-reduced-motion: reduce`, su tabla puede pintar cero filas virtuales~~ · arreglado en el
+  DS, en su PR (2026-10-04): `sc-datatable` vuelve a contar las filas de su lista virtual cuando cambia su caja, no
+  solo la ventana. Lo fija `listados-movimiento-reducido` (los tres listados, con y sin la preferencia): en rojo,
+  Agentes con la preferencia, 0 filas; en verde, 18 de 18 en tres vueltas. La causa, en «Trampas del frente».
 - **Sin verificar:** zoom al 200 % y RTL.
 
 **En el portátil, al fundir:**
@@ -243,10 +245,15 @@ Las trampas vigentes se conservan abajo. El tramo del 2026-09-28 vive en `git sh
 
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-01 termina con F** (DD-153, en su PR): de H a F, todo fundido o en PR. Lo siguiente
-   es lo «pendiente, fuera de F» del bloque de arriba: los dos detalles de la página de MultiSelect y las filas
-   virtuales de Agentes con menos movimiento, cada uno con su prueba en rojo. La numeración de DD se mira en
-   `origin/main` al empezar.
+0. **La revisión del 2026-10-01 está entera en `main`**, de H a F (#318). Lo que queda, en este orden:
+   - la lista virtual con «reducir movimiento», en su PR;
+   - el estado de cada agente, en su propia columna en la tabla de agentes del grupo (ficha y panel). Hoy va pegado
+     al nombre: no se alinea de una fila a otra y recorta los emails largos. La referencia «4. Agentes y revisión»
+     lo pide como dato aparte («estado con su punto»). Se mide de nuevo el ancho del panel (DD-131);
+   - los dos detalles de la página de MultiSelect y «Copiar» encima de las líneas largas. Mueven capturas de
+     sc-docs: `visual-baselines` sobre la rama antes del PR.
+
+   Cada uno, con su prueba en rojo. La numeración de DD se mira en `origin/main` al empezar.
 
    **Lo que queda abierto de DD-133, DD-135 y DD-136:**
    - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
@@ -370,3 +377,7 @@ Las trampas vigentes se conservan abajo. El tramo del 2026-09-28 vive en `git sh
   negro. Usa `e2e/shared/color.ts`, que compone las capas.
 - ⚠️ Leer un estilo computado dentro de la detección de cambios hacía nacer lleno el anillo del resumen: la directiva
   de la cifra lee su duración en el primer fotograma.
+- ⚠️ La lista virtual de PrimeNG (`p-scroller`) cuenta las filas que le caben al nacer y después solo al cambiar la
+  VENTANA (`onWindowResize`). Si nace en una caja que aún mide 0 —la tarjeta del listado se estira con un `:has()`
+  que puede llegar un fotograma tarde—, se queda sin filas. Con «reducir movimiento» pasaba siempre en Agentes.
+  `sc-datatable` observa la caja de la lista y le pasa cada cambio por esa misma puerta.
