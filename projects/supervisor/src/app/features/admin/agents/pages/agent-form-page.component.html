@@ -346,6 +346,7 @@
       @if (mode() === 'edit') {
         <div class="switch-field switch-field--top">
           <sc-toggleswitch
+            ariaDescribedBy="agent-active-hint"
             [checked]="form().status === 'active'"
             [ariaLabel]="'agents.form.fields.active' | translate"
             (checkedChange)="onStatusChange($event)"
@@ -354,7 +355,7 @@
                dato («Estado»); y la ayuda ya no repite «Agente activo:» delante. -->
           <div class="switch-field__copy">
             <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.active' | translate }}</span>
-            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.fields.active_hint' | translate }}</p>
+            <p id="agent-active-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.fields.active_hint' | translate }}</p>
           </div>
         </div>
       }
@@ -440,25 +441,27 @@
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-manage-devices-hint"
           [checked]="form().permissions.manageDevices"
           [ariaLabel]="'agents.form.permissions.manage_devices' | translate"
           (checkedChange)="togglePermission('manageDevices')"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.manage_devices' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.manage_devices_hint' | translate }}</p>
+          <p id="agent-manage-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.manage_devices_hint' | translate }}</p>
         </div>
       </div>
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-self-activate-hint"
           [checked]="form().permissions.selfActivate"
           [ariaLabel]="'agents.form.permissions.self_activate' | translate"
           (checkedChange)="togglePermission('selfActivate')"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
+          <p id="agent-self-activate-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
         </div>
       </div>
     </section>
@@ -553,13 +556,14 @@
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-random-order-hint"
           [checked]="form().randomOrder"
           [ariaLabel]="'agents.form.advanced.comportamiento.random_order' | translate"
           (checkedChange)="onRandomOrderChange($event)"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.comportamiento.random_order' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.comportamiento.random_order_hint' | translate }}</p>
+          <p id="agent-random-order-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.comportamiento.random_order_hint' | translate }}</p>
         </div>
       </div>
     </section>
@@ -589,13 +593,14 @@
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-external-devices-hint"
           [checked]="form().permissions.externalDevices"
           [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
           (checkedChange)="togglePermission('externalDevices')"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
+          <p id="agent-external-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
         </div>
       </div>
     </section>
@@ -611,13 +616,14 @@
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-login-override-hint"
           [checked]="form().loginExtOverride"
           [ariaLabel]="'agents.form.advanced.sesion.login_ext_override' | translate"
           (checkedChange)="onLoginExtOverrideChange($event)"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.sesion.login_ext_override' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.sesion.login_ext_override_hint' | translate }}</p>
+          <p id="agent-login-override-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.sesion.login_ext_override_hint' | translate }}</p>
         </div>
       </div>
 

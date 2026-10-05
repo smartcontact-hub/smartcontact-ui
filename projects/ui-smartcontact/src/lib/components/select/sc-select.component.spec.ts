@@ -50,6 +50,22 @@ describe('sc-select · el nombre del desplegable', () => {
   });
 });
 
+describe('sc-select · la descripción', () => {
+  beforeEach(() => TestBed.configureTestingModule({ providers: [provideTranslateService()] }));
+
+  it('la ayuda de fuera (`ariaDescribedBy`) se oye en el combobox, después de la propia (DD-133)', async () => {
+    const { fixture, combobox } = await montar({ ariaLabel: 'Prioridad', helperText: 'Ordena la cola', ariaDescribedBy: 'fila-ayuda' });
+    const [propia, deFuera] = (combobox.getAttribute('aria-describedby') ?? '').split(' ');
+    expect((fixture.nativeElement as HTMLElement).querySelector(`#${propia}`)?.textContent?.trim()).toBe('Ordena la cola');
+    expect(deFuera).toBe('fila-ayuda');
+  });
+
+  it('sin ninguna ayuda no deja un aria-describedby vacío', async () => {
+    const { combobox } = await montar({ ariaLabel: 'Prioridad' });
+    expect(combobox.hasAttribute('aria-describedby')).toBe(false);
+  });
+});
+
 describe('sc-select · las opciones apagadas', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideTranslateService()] });

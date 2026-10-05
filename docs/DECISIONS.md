@@ -1718,6 +1718,10 @@ permisos a todo menos la numeración especial, gestión de dispositivos, activac
   con su control, porque los campos del DS no dejan pasar `aria-describedby`. En las fichas sí se anuncian: van en el
   `helperText`.
 
+**Actualización (2026-10-05)** · Cerrado. Los campos del DS ganan `ariaDescribedBy`, y cada fila de ajustes de Contact
+Center lleva el id de su ayuda en su control: las 14 de Grupos y las 3 de Agentes. El cómo, en la actualización del
+mismo día de DD-133.
+
 ---
 
 ## DD-134 · 2026-09-28 — Los commits firman con la cuenta del mantenedor, y ningún squash deja el mensaje a GitHub
@@ -1868,6 +1872,20 @@ porque su combobox es un `<input>`, y no un `sc-select`, cuyo combobox es un `<s
   Operador, Valor, Unidad), en los cuatro idiomas. Los snippets de sc-docs enseñan el rótulo que su demo pinta.
 - **Pruebas:** la unitaria de la regla, la vitest de `sc-select` y `desplegables-con-nombre.spec.ts`, las tres en rojo
   contra el código anterior.
+
+Y las ayudas que van al lado de su campo, no debajo (la fila de un interruptor, de Contact Center o de Sistema), se
+veían y no se oían: ningún control las apuntaba, y los campos del DS no dejaban.
+- **En el DS**, seis campos ganan `ariaDescribedBy` (ids separados por espacios), que se oye después de la ayuda propia:
+  `sc-select`, `sc-multiselect`, `sc-inputnumber`, `sc-toggleswitch`, `sc-textarea` y `sc-selectbutton` (los ids los
+  junta `joinDescribedBy`, en `sc-field`). `sc-multiselect` lleva además sus `aria-*` al `<input role="combobox">`
+  (`pt.hiddenInput`, que PrimeNG 22.1 pinta aunque sus tipos no lo declaren): en la envoltura no se oían su ayuda ni su
+  error.
+- **En las pantallas**, cada ayuda lleva id y la apunta su campo principal: 12 en la ficha de grupo (con «Mensajes en
+  cola»), 6 en la de agente, 1 en la de usuario, 3 en Contact Center › Agentes, 14 en Grupos y 6 en Sistema. Con una
+  ayuda para dos campos (la cola: tipo y tamaño), los dos la apuntan. La fila de borrar los datos no cuenta: su botón
+  confirma con su propio texto.
+- **Pruebas:** `ayudas-campos` recorre esas vistas, con lo plegado abierto, y pide que cada ayuda la anuncie un campo de
+  su caja (42 en rojo antes); en sc-docs, que el error de un multiselect se anuncie con su combobox.
 
 ---
 

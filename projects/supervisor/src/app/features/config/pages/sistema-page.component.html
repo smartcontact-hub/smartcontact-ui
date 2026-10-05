@@ -17,7 +17,7 @@
             <span class="theme-row__label sc-text-body-regular" id="sistema-theme-label">
               {{ 'config.sistema.appearance.theme_label' | translate }}
             </span>
-            <p class="theme-row__hint sc-text-caption-regular">
+            <p id="sistema-theme-hint" class="theme-row__hint sc-text-caption-regular">
               {{ 'config.sistema.appearance.theme_hint' | translate }}
             </p>
           </div>
@@ -31,6 +31,7 @@
             [value]="theme.mode()"
             (valueChange)="selectTheme($event)"
             ariaLabelledBy="sistema-theme-label"
+            ariaDescribedBy="sistema-theme-hint"
           >
             <ng-template #item let-option>
               <sc-icon [name]="option.icon" size="inherit" />
@@ -52,7 +53,7 @@
             <span class="theme-row__label sc-text-body-regular" id="sistema-language-label">
               {{ 'config.sistema.language.label' | translate }}
             </span>
-            <p class="theme-row__hint sc-text-caption-regular">
+            <p id="sistema-language-hint" class="theme-row__hint sc-text-caption-regular">
               {{ 'config.sistema.language.lang_hint' | translate }}
             </p>
           </div>
@@ -66,6 +67,7 @@
             [value]="language.lang()"
             (valueChange)="selectLanguage($event)"
             ariaLabelledBy="sistema-language-label"
+            ariaDescribedBy="sistema-language-hint"
           />
         </div>
       </div>
@@ -83,7 +85,7 @@
             <span class="data-row__label sc-text-body-regular" id="sistema-dataset-label">
               {{ 'config.sistema.data.set_label' | translate }}
             </span>
-            <p class="data-row__hint sc-text-caption-regular">
+            <p id="sistema-dataset-hint" class="data-row__hint sc-text-caption-regular">
               {{ 'config.sistema.data.set_hint' | translate }}
             </p>
           </div>
@@ -95,6 +97,7 @@
             [value]="dataSet"
             (valueChange)="selectDataSet($event)"
             ariaLabelledBy="sistema-dataset-label"
+            ariaDescribedBy="sistema-dataset-hint"
           />
         </div>
 
@@ -125,11 +128,11 @@
             <span class="policy-row__label sc-text-body-regular" id="sistema-min-length-label">
               {{ 'config.seguridad.policies.min_length' | translate }}
             </span>
-            <p class="policy-row__hint sc-text-caption-regular">
+            <p id="sistema-min-length-hint" class="policy-row__hint sc-text-caption-regular">
               {{ 'config.seguridad.policies.min_length_hint' | translate }}
             </p>
           </div>
-          <sc-select class="policy-row__select" size="sm" ariaLabelledBy="sistema-min-length-label" [options]="minLengthOptions()" optionLabel="label" optionValue="value" [value]="minLength()" (valueChange)="minLength.set($any($event))" />
+          <sc-select class="policy-row__select" size="sm" ariaLabelledBy="sistema-min-length-label" ariaDescribedBy="sistema-min-length-hint" [options]="minLengthOptions()" optionLabel="label" optionValue="value" [value]="minLength()" (valueChange)="minLength.set($any($event))" />
         </div>
 
         <div class="policy-row policy-row--bordered">
@@ -137,11 +140,11 @@
             <span class="policy-row__label sc-text-body-regular" id="sistema-expiration-label">
               {{ 'config.seguridad.policies.expiration' | translate }}
             </span>
-            <p class="policy-row__hint sc-text-caption-regular">
+            <p id="sistema-expiration-hint" class="policy-row__hint sc-text-caption-regular">
               {{ 'config.seguridad.policies.expiration_hint' | translate }}
             </p>
           </div>
-          <sc-select class="policy-row__select" size="sm" ariaLabelledBy="sistema-expiration-label" [options]="expirationOptions()" optionLabel="label" optionValue="value" [value]="expiration()" (valueChange)="expiration.set($any($event))" />
+          <sc-select class="policy-row__select" size="sm" ariaLabelledBy="sistema-expiration-label" ariaDescribedBy="sistema-expiration-hint" [options]="expirationOptions()" optionLabel="label" optionValue="value" [value]="expiration()" (valueChange)="expiration.set($any($event))" />
         </div>
 
         <div class="policy-row policy-row--bordered">
@@ -149,13 +152,14 @@
             <span class="policy-row__label sc-text-body-regular">
               {{ 'config.seguridad.policies.special_chars' | translate }}
             </span>
-            <p class="policy-row__hint sc-text-caption-regular">
+            <p id="sistema-special-chars-hint" class="policy-row__hint sc-text-caption-regular">
               {{ 'config.seguridad.policies.special_chars_hint' | translate }}
             </p>
           </div>
           <sc-toggleswitch
             [checked]="true"
             [ariaLabel]="'config.seguridad.policies.special_chars' | translate"
+            ariaDescribedBy="sistema-special-chars-hint"
           />
         </div>
       </div>

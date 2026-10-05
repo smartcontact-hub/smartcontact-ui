@@ -25,6 +25,7 @@ import {
   createScFieldState,
   createScOptionState,
   createScPanelSizing,
+  joinDescribedBy,
   type ScFieldSize,
 } from '../field/sc-field';
 
@@ -113,6 +114,11 @@ export class ScSelectComponent {
    * PrimeNG nombra el combobox con la opción elegida y el lector oye el valor en lugar de lo que se pide (DD-133).
    */
   readonly ariaLabel = input<string>();
+  /**
+   * Ids, separados por espacios, de lo que describe el campo desde fuera: la ayuda que va al lado y no debajo (la fila
+   * de un ajuste, de un interruptor). Se oye después de la ayuda propia (`helperText`), si la hay (DD-133).
+   */
+  readonly ariaDescribedBy = input<string>();
   readonly name = input<string>();
 
   // ─── Select-specific ───────────────────────────────────────────────
@@ -246,7 +252,7 @@ export class ScSelectComponent {
    */
   protected readonly pt = computed<SelectPassThrough>(() => ({
     label: {
-      'aria-describedby': this.footerText() ? this.msgId() : null,
+      'aria-describedby': joinDescribedBy(this.footerText() ? this.msgId() : null, this.ariaDescribedBy()),
       'aria-required': this.required() ? 'true' : null,
       'aria-invalid': this.isInvalid() ? 'true' : null,
     },
