@@ -932,6 +932,12 @@ Salida no llevaba al número. DD-126 §5 eligió para sus tarjetas el tinte de �
 - **Pruebas:** `resumen-enlazado.spec.ts`, nueva, con cinco.
 - **Para el Kit:** `figma-pendiente` §37.
 
+**Actualización (2026-10-05)** · Cada enlace del resumen se pulsa en al menos 24,5 × 24,5 (WCAG 2.5.8): pintaba 18 de
+alto. Un `::after` invisible y centrado agranda la zona sin mover nada, como la cifra de `sc-group-popover` (DD-159).
+Las filas están a 25 de arriba a arriba, así que una zona no pisa la de al lado. `resumen-enlazado` gana la sexta: a
+1366 × 660, las cuatro esquinas de un cuadrado de 24 centrado en cada enlace caen en él (`elementFromPoint`); en rojo
+antes, los ocho.
+
 ---
 
 ## DD-145 · 2026-10-01 — El nombre de la ficha se queda arriba al bajar, y borrarla pide escribirlo
