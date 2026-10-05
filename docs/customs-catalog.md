@@ -250,7 +250,7 @@ que dependía de una hoja de página está cerrado:
 | `--sc-text-secondary` sobre `--sc-bg-default` | 4.25:1 (y 3.92 sobre slate-100) | Ya aceptado en §1.5: subirlo más lo pega a `text-primary` y rompe la jerarquía. |
 | ~~`p-button-danger`~~ | ~~3.76:1~~ → **4.83:1** | **Arreglado el 2026-09-15** — ver §1.8. |
 | ~~`p-button-secondary` `outlined`~~ | ~~2.95:1~~ → **4.52:1** | **Arreglado el 2026-09-27** — ver §1.8. |
-| ~~`p-button-secondary` `text`~~ | ~~2.95:1~~ → **4.52:1** | **Arreglado el 2026-10-05** — ver §1.11, DD-168. |
+| ~~`p-button-secondary` `text`~~ | ~~2.95:1~~ → **4.52:1** | **Arreglado el 2026-10-05** — ver §1.11, DD-169. |
 
 ---
 
@@ -322,7 +322,7 @@ se borra.
 >
 > *(Corregido el 2026-10-05: no cerraba. `button.text.secondary` — el MISMO slate-500 de
 > `outlined.secondary`, en otra `appearance` — se quedó fuera porque el Kit los emite como
-> dos filas distintas y nadie volvió a buscar hermanos del mismo color. Ver §1.11, DD-168.)*
+> dos filas distintas y nadie volvió a buscar hermanos del mismo color. Ver §1.11, DD-169.)*
 
 Los tres venían del **preset o de un token de componente**, no de CSS de página — que es
 la razón de que sobrevivieran a toda la limpieza anterior: ninguna hoja de página los
@@ -420,7 +420,7 @@ preset lee `var(--sc-cmp-togglebutton-*)` y el bloque a mano se borra.
 ### 1.11 El cuarto botón bajo AA: `secondary text` es el mismo slate-500 que `outlined`, en otra fila del Kit · 2026-10-05
 
 §1.8 cerró tres botones y dio la lista por completa. Medido al investigar un informe sobre «Añadir alternativa (O)»
-(el constructor de condiciones de una regla, DD-168): `sc-button variant="secondary" appearance="text"` también
+(el constructor de condiciones de una regla, DD-169): `sc-button variant="secondary" appearance="text"` también
 mide **2.95:1** — EXACTAMENTE el mismo número que `outlined.secondary` en §1.8, porque es el mismo `slate-500` de
 origen. §1.8 no lo tocó porque no es el mismo slot: el Kit exporta `button.outlined.secondary.color` y
 `button.text.secondary.color` como dos filas independientes, así que arreglar una no arregla la otra aunque
@@ -440,7 +440,7 @@ verificó por slot, no por color. Al cerrar un fallo de contraste de botón, con
 el resto de `sc-preset/button.ts` antes de dar la familia por sana.
 
 **Vigilado por**: `theme-contrast.spec.ts`, ruta `conversaciones/reglas/nueva?seccion=alcance` (la única de las
-~35 apariciones del slot que lleva ETIQUETA visible y está en una ruta cubierta — ver DD-168 para el resto del
+~35 apariciones del slot que lleva ETIQUETA visible y está en una ruta cubierta — ver DD-169 para el resto del
 inventario, incluida la laguna de los icono-solo en la sonda).
 
 **Cómo se cierra**: que el Kit suba `button.text.secondary.color`. Entonces la fila de `EXCLUDE` y el bloque a

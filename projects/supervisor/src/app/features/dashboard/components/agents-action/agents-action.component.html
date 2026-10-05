@@ -1,0 +1,13 @@
+@if (groups().length) {
+  <!-- Primario de texto: el secundario de texto del DS mide 2,58:1 en claro, por debajo de AA. -->
+  <sc-button
+    variant="primary"
+    appearance="text"
+    size="sm"
+    icon="support_agent"
+    [label]="'dashboard.assign_agents.label' | translate"
+    [ariaLabel]="ariaLabel()"
+    (clicked)="onClick($event, menu)"
+  />
+  <p-menu #menu [model]="menuItems()" [popup]="true" appendTo="body" [ariaLabel]="'dashboard.assign_agents.menu' | translate" />
+}

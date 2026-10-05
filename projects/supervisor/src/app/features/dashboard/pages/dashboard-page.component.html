@@ -208,6 +208,15 @@
                       [interactive]="!wall()"
                       (openDetail)="openDetail(entry.widget, $event)"
                     />
+                    <!-- El panel rápido de agentes, también aquí (DD-168). Fuera del modo pared, que no tiene paneles:
+                         la tarjeta ya lo esconde con `preview`, pero lo proyectado se crea igual. -->
+                    @if (entry.widget.kind === 'group-panel' && !wall()) {
+                      <sc-dashboard-agents-action
+                        scWidgetAction
+                        [entities]="entry.widget.entities"
+                        (open)="agentsPanelGroup.set($event)"
+                      />
+                    }
                   </sc-dashboard-widget-card>
                 } @else if (!wall()) {
                   <sc-dashboard-empty-slot
@@ -292,3 +301,7 @@
   [estadoDe]="store.estadoDeAgente()"
   (closed)="detail.set(null)"
 />
+
+<!-- El mismo panel del listado de grupos (DD-168). Asignar no cambia las cifras del Monitor: no reparten agentes por
+     grupo (DD-129, DD-139). -->
+<sc-group-agents-panel [group]="agentsPanelGroup()" (closed)="agentsPanelGroup.set(null)" />

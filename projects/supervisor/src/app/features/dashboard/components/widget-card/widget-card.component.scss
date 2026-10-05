@@ -74,6 +74,12 @@
     flex: none;
   }
 
+  /* La acción del widget y el ⋮, en fila (DD-168). */
+  &__actions {
+    display: flex;
+    align-items: center;
+  }
+
   /* El ⋮ reserva el alto del chip del filtro (31 px, lo más alto de la fila): sin eso, al filtrar
      la cabecera crecía 3 px y todo el contenido de la tarjeta bajaba (medido el 2026-09-14). */
   &__more {

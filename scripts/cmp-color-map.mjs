@@ -46,7 +46,7 @@ export const EXCLUDE = new Set([
   //    fuera de la zona `@sc-gen`, valor a mano en `04-component.css`. Se borra cuando Figma suba
   //    `button.text.danger.color`. Ver customs-catalog §1.8.
   'light:button.text.danger.color',
-  // ── etiqueta del botón `secondary` de TEXTO (light) · 2026-10-05 (DD-168) ──────────
+  // ── etiqueta del botón `secondary` de TEXTO (light) · 2026-10-05 (DD-169) ──────────
   //    El Kit da slate-500 = 2.95:1 sobre blanco — el mismo valor que `outlined.secondary` arriba,
   //    porque es el MISMO color en otra `appearance`. Es el «Añadir alternativa (O)» del
   //    constructor de reglas, un control de flujo, no un adorno; §1.8 (2026-09-27) decía

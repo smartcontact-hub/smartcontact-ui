@@ -53,18 +53,23 @@
     </div>
   </ng-template>
 
-  <!-- Sin `@if` alrededor de la plantilla: sc-panel la busca entre sus hijos directos. -->
+  <!-- Sin `@if` alrededor de la plantilla: sc-panel la busca entre sus hijos directos. La acción de un widget
+       (`[scWidgetAction]`, la pone la página) va a la izquierda del ⋮; en fila, porque `p-panel` no da forma a su
+       caja de acciones y el ⋮ es flex: sin la fila, bajaría de línea. -->
   <ng-template #icons>
     @if (!preview()) {
-      <sc-button
-        class="widget__more"
-        variant="secondary"
-        appearance="text"
-        size="sm"
-        [icon]="kebabIcon"
-        [ariaLabel]="'dashboard.widget.more_actions' | translate: { title: title() }"
-        (clicked)="menu.toggle($event)"
-      />
+      <div class="widget__actions">
+        <ng-content select="[scWidgetAction]" />
+        <sc-button
+          class="widget__more"
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          [icon]="kebabIcon"
+          [ariaLabel]="'dashboard.widget.more_actions' | translate: { title: title() }"
+          (clicked)="menu.toggle($event)"
+        />
+      </div>
     }
   </ng-template>
 

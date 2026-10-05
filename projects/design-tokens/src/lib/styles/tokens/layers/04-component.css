@@ -920,7 +920,7 @@
    *
    * Fuera de la zona `@sc-gen` y con su slot en `EXCLUDE` (cmp-color-map), mismo mecanismo que
    * los dos de arriba. El Kit da `slate-500` para la etiqueta: **2.95:1** sobre blanco — el
-   * «Añadir alternativa (O)» del constructor de reglas (DD-168), un control de flujo, no un
+   * «Añadir alternativa (O)» del constructor de reglas (DD-169), un control de flujo, no un
    * adorno. Es el MISMO color que `outlined secondary`, en otra `appearance`: el Kit los emite
    * como dos filas distintas (`button.outlined.secondary.color` / `button.text.secondary.color`),
    * así que arreglar una no arregló la otra. `slate-600` da el mismo **4.52:1**.
