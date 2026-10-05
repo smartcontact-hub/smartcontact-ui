@@ -3060,6 +3060,8 @@ anclar lleva el contenido de x=80 a x=240 y lo devuelve al soltar.
 **Consecuencias** · Pendiente: el botón de anclar pisa 5px el texto del logotipo desplegado (el texto acaba en x=208 y
 el botón empieza en 203); sube igual que en el preview.
 
+**Enmendado por DD-137** (2026-10-01) · Sale el botón de anclar (§5), y con él lo pendiente.
+
 ---
 
 ## DD-117 · 2026-09-23 — Cada PR prueba y despliega lo que toca; `main` lo sigue probando todo

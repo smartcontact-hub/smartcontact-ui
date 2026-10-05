@@ -29,7 +29,7 @@ clic y la prueba se iba antes, con el botón ya apagado (cargando). Ahora espera
 listado ya enseña el estado nuevo. La prueba de DD-129 lee sus cifras de la tabla del primer monitor en vez de fijar 9 y 5.
 La suite entera del Supervisor, 413 de 414: el que cayó es el selector de columnas del listado de agentes
 (`column-selector-order.spec.ts:49`, «Element is not visible» al pulsar con el desplegable abriéndose), que este cambio
-no toca y que pasó 9 de 9 corrido solo; queda propuesto como tarea aparte.
+no toca y que pasó 9 de 9 corrido solo. Cerrado: lo arregló #299, y la prueba se borró en #325 con el selector nuevo (DD-162).
 
 ## ✅ 2026-09-28 · El detalle de una cifra ya no corta el tiempo por la derecha
 

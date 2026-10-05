@@ -37,13 +37,12 @@
   primero con `--subject`/`--body`; (b) en una rutina, `cloud-node.sh` no puso Node 22.23.2 ni `node_modules` (medido dos veces),
   y `nvm` sí estaba; (c) los commits de la nube salen «sin verificar» (`unknown_key`): si estorba, probar sin firma, que el proxy
   aún no ha visto.
-- **`sc-selectbutton`: cablear su color a `var(--sc-cmp-togglebutton-*)`** cuando Figma suba la opción no elegida (§10).
+- **`sc-selectbutton`: cablear su color a `var(--sc-cmp-togglebutton-*)`** cuando Figma suba la opción no elegida (§8).
 - **Lo que dejó DD-113:** ~~`sc-form-section-nav` con `role="tab"` sin `tablist`~~ (resuelto en DD-122: cada fila
   es un enlace); tira del reproductor sin nombre (clave i18n); la «o» del acceso en primario
   (`.login__divider` no llega); `sc-slot` a tokens del divider (e2e y captura); CSS muerto `.seg` e `.inline-field`.
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
-- **Rescatar a `main` el DS de `comparar/fichas`**, decida lo que decida producto: `sc-drawer` (`width`, `topOffset`, X accesible, bordes, sombra) y `sc-section-card showHeader`.
 - **La puerta barata del preflight, contra un ledger en PR ajeno** (LEARNINGS #21, roto el 2026-09-15 con #196): avisar si un PR abierto toca el mismo `docs/handoff/` o `DECISIONS`.
 - **Guardianes que miden un PROXY, no la condición** (tanda 2026-09-19: seis hallados, cuatro ya arreglados; el patrón lo caza LEARNINGS #2, «ante un trinquete que NO baja, mira un caso a mano»). Quedan cuatro, en orden de valor (la (b) se cerró el 2026-10-04): (a) **2º punto ciego de `audit-text-styles`** — la comprobación de ROLES usa el mismo `aplanar()` que no ve `code`/`pre`/descendientes ni `@media`; antes de tocarla hay que DECIDIR si un `html { font-size: 100% }` debe cumplir un rol (probablemente no): primero la regla, luego el gate.
   (b) ~~El hook de cierre casa la cadena `git push`, no el acto~~ — **cerrado el 2026-10-04**: `stop-guard` cuenta el push que CORRIÓ (el resultado de su herramienta no trae `is_error`, o enseña el ref subido: un push denegado por `bash-guard` o un `false && … git push` no llegaron a subir nada, y un `git push && npm run build` con el build roto sí subió), trata el cuerpo de un heredoc como dato salvo que lo lea un shell (`bash <<EOF`), y no cuenta el push de OTRO repositorio, con el mismo `usaPreflight` y el mismo analizador de carpetas que `bash-guard` desde el `cwd` de cada evento. Medido sobre el transcript de una sesión: de 12 comandos que el hook contaba como push, 4 nunca pushearon y 8 solo llevaban `git push` en el texto de un heredoc; los pushes de verdad eran 2, y los de después se cuentan bien.
@@ -76,12 +75,8 @@
 - **Las tablas de dentro de los formularios** (agentes de un grupo, grupos de un agente) las rehace la sesión de
   `hind` (`arebury/agents-groups-users-ds`, sin commit el 2026-09-14): toca también Usuarios, Grupos y
   `audit-page-anatomy`, así que rebasa sobre DD-98 antes de subir.
-- **La baseline `datatable` de `e2e:visual` está en rojo en `main`** (medido el 2026-09-14 sobre el build de sc-docs
-  de `486feb6` y sobre DD-99): la página mide 5537 y la baseline 5557, con el contenido idéntico píxel a píxel; los
-  20 px son aire al final. Y dentro de la captura alterna 5537/5557, así que regenerarla no basta: algo crece al
-  capturar un `main` más alto que la ventana. Tumba el `preflight` de cualquier cambio del DS (DD-99 subió con
-  `# sc:ok` por esto). El CI no corre las baselines. **No se reprodujo en las tres pasadas de `e2e:visual` del
-  preflight de #175** (sobre `7007c73`, `31c2603` y `4e6c68d`, 2026-09-14): `datatable` en verde las tres.
+- ~~**La baseline `datatable` de `e2e:visual`, en rojo en `main`**~~ → cerrado: no se reproduce desde el preflight de
+  #175 (2026-09-14), y `visual-baselines` la regeneró en #330 sin moverse. El detalle, en `git show c065d664:` este fichero.
 - **Acceso (DD-110), a juicio de Rafa**: la intensidad del fondo (`amplitude` 0.045 ≈ 64 px), la frase de marca de la
   izquierda y el texto del botón de Microsoft en pt/fr (de memoria). `p-password` está obsoleto en PrimeNG 22
   (`pInputPassword` no trae conmutador): la API de `sc-password` no depende de ello.
@@ -106,11 +101,11 @@ trae `light-dark()` arriba y nosotros `colorScheme`, y gana lo nuestro); lo que 
 
 - ~~**12/20 no es ningún estilo**~~ → se mudó a [`docs/figma-pendiente.md`](../figma-pendiente.md) §4.
 - ~~**`sc-docs` es la siguiente tanda del barrido**: 237 reglas~~ → **HECHO en parte el 2026-09-12,
-  y las 237 eran la cifra equivocada.** **122 de ellas son `/validar`**, que imita el INSPECTOR DE
+  y las 237 eran la cifra equivocada.** **122 de ellas son `/validar`** (hoy 141 exentas), que imita el INSPECTOR DE
   CHROME a propósito y lo dice en su propio fichero desde que se escribió: tokenizarlo le quita al
-  simulador lo único que enseña. El alcance real eran 115, de las que se migraron 60 y quedan 55
-  con su trinquete (`TIPOGRAFIA_SUELTA_DOCS_MAX`).
-  **Las 55 que quedan NO son pereza, son tres familias medidas**: `code`/`kbd`/`pre` (su mono lo
+  simulador lo único que enseña. El alcance real eran 115, de las que se migraron 60 y quedaban 55
+  (hoy 94 en `TIPOGRAFIA_SUELTA_DOCS_MAX`: #212 arregló el contador, que perdía 52 de 107).
+  **Las que quedan NO son pereza, son tres familias medidas**: `code`/`kbd`/`pre` (su mono lo
   pone el NAVEGADOR, no una regla, así que la clase se lo quita: 88 nombres de token se quedaron
   en Inter en la primera pasada), reglas con familia propia o `font:` shorthand, y **elementos
   CONTENEDOR** — ahí la clase arrastra a todo lo que solo heredaba: 1.122 `<code>` y 353 `<td>` se
@@ -262,7 +257,7 @@ Medido en Chromium: foco, Tab y Escape, iguales. Prueba nueva en `components.spe
 | ~~**Lienzo de página gris↔blanco**~~ → **DECIDIDO Y HECHO**: [DD-45](../DECISIONS.md) lo llevó a BLANCO el 2026-08-31 (`app-shell.component.scss` pinta `--sc-bg-canvas`), y Rafa lo reconfirmó el 2026-09-11 (lienzo en blanco) sin saber que ya estaba. La fila llevaba diez días mintiendo: si una espera se resuelve en otro tramo, hay que venir a tacharla aquí |
 | ~~**Tramo actual del breadcrumb**~~ → **DECIDIDO, `bcab818` (2026-08-25)**: la propuesta de Figma `13890:157` (padres slate-500 `#8F97A3`) **se RECHAZA** — da **2,95:1** sobre blanco y no cumple AA. Se queda el código como está (padres slate-600, actual slate-700, ambos AA). Falta solo anotarlo en el nodo de Figma (Bloque 4). *Nota: el mismo commit tokenizó la miga a 14px, otro asunto ya cerrado.* |
 | ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa: el ancho no cambia sin motivo. `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
-| **Qué forma de ficha (agente, grupo, usuario)** | El PM compara las tres de la rama `comparar/fichas` (2026-09-15, tramo de arriba). Con la decisión, la elegida se construye en `main` y la rama se archiva con tag |
+| ~~**Qué forma de ficha (agente, grupo, usuario)**~~ → **DECIDIDO** (DD-121, DD-122) | Índice lateral en las tres. Las variantes de `comparar/fichas` quedan de referencia; la rama se archiva con tag desde el portátil |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
 | ~~**Experimento en LOCAL: la escala al tamaño de Aura (16px por rem)**~~ → **DECIDIDO 2026-09-14 ([DD-91](../DECISIONS.md))** | Rafa eligió solo el interlineado con la rampa que existe (20/18): 32,5 y 27, sin perder filas. La escala se queda a 14. Medido también escala 16 + 20/18: 34 / 28 y 11 filas. Simulación en `~/Documents/Claude/2026-09 escala-16/`; el nombre por clave y el gate de la escala entraron en DD-89 |
 
@@ -291,7 +286,6 @@ variables, 30 comentarios activos.
 
 - 🪤 **Una rutina no acepta un «sí» escrito en su encargo** para actuar con la identidad del usuario: la confirmación va en esa sesión (DD-134).
 - 🪤 **Una rama de antes del barrido de nombres (DD-120, 2026-09-24) choca en comentarios al rebasar**, y `audit:personal-names` le hará reescribir los suyos (`gulper`: `channel-icon`).
-- 🪤 **Un `sc-drawer` lateral pinta tres bordes de 3 px, sombra hacia abajo y una X sin nombre**: arreglado en `comparar/fichas`, no en `main`.
 - 🪤 **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias (DD-111).
 - 🪤 **Las capturas de sc-docs no ven el botón de aviso con contorno ni el modo oscuro**: esos colores se miden a mano (#193).
 - 🪤 **El host de una tabla se interpone en la cadena de altos**: `.page--tabla .table-card` no basta si la tarjeta vive dentro
