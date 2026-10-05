@@ -4,7 +4,6 @@ import {
   Component,
   computed,
   DOCUMENT,
-  effect,
   ElementRef,
   inject,
   input,
