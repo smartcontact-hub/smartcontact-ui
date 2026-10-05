@@ -18,7 +18,8 @@
 </ng-template>
 
 <div class="page">
-  <!-- El molde de las fichas (DD-122, DD-170): el nombre y el índice a la izquierda y una sección en el centro. -->
+  <!-- El molde de las fichas (DD-122, DD-170): el nombre y el índice a la izquierda, una sección en el centro y, a la
+       derecha, donde las fichas llevan su resumen, lo que verá el agente. -->
   <div class="page__inner page__inner--rail ficha-rail ficha-rail--summary">
     <div class="page__rail">
       <div class="headline">
@@ -71,6 +72,12 @@
       }
     </div>
 
+    <!-- A la derecha y fija al bajar, en el hueco del resumen de las fichas: el teléfono del agente en su sección de
+         Tipificación, con lo que se va definiendo, para probarla. Va en su propia columna (`.tip-telefono`) y no en
+         `.ficha-summary`, que desplaza por dentro y cortaba por los lados la sombra del teléfono. -->
+    <aside class="tip-telefono">
+      <sc-tipificacion-vista [options]="form().options" [levels]="niveles()" [comments]="form().comments" />
+    </aside>
   </div>
 </div>
 

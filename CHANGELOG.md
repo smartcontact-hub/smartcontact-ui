@@ -26,6 +26,10 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/design-tokens`** — la familia `--sc-agent-window-*` (fondo, franja, campo y su borde, plancha,
+  texto, apagado, píldora) y `--sc-agent-window-shadow`: la ventana de tipificar de sc-agent cuando el Supervisor la
+  enseña tal cual la verá el agente, oscura en los dos temas como la barra lateral. Salen de la paleta (slate), sin
+  colores nuevos. ([DD-174](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-button` gana `ariaHasPopup`, `ariaExpanded` y `ariaControls`: llegan
   al `<button>` real por passthrough, no al host `<sc-button>` (que nunca recibe el foco). Sin fijar ninguna,
   nada cambia. La «Columnas» de una lista, el ⋮ de un widget del Dashboard y «Agentes» del widget «Grupos» (con

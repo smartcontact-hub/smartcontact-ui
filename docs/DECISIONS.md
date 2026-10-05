@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-174 |
 > | La ficha de una tipificación sin saltos: el índice de las fichas · la dirección en un control · los niveles son las columnas (las tres siempre; la siguiente, fantasma) · añadir y renombrar en la línea de la columna · cada aviso en su línea reservada | DD-173 |
 > | Una tipificación es una ficha propia (árbol de hasta tres niveles, dirección, comentario y grupos por canal) · una por dirección y canal en cada grupo · su listado con las columnas de producto · importar y descargar detrás de un icono (`importable` en `sc-list-page`) · la ficha de grupo elige varias, sin «+» (enmienda DD-141 §7, DD-164 §1) | DD-172 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
@@ -127,6 +128,60 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-174 · 2026-10-05 — Lo que verá el agente: el teléfono de sc-agent, a la derecha de la ficha de una tipificación
+
+**Contexto** · Una tipificación se entiende por lo que le pide al agente al colgar, y la ficha solo lo describía. La
+revisión de producto del 2026-10-05 pidió enseñarlo con el teléfono de sc-agent, donde el agente tipifica tras colgar
+(la sección «Tipificación» del Comunicador: `agent/docs/comunicador.md` y `agent/…/typification.component.ts`). Un primer
+panel genérico con piezas del DS «no se parecía en nada al teléfono». Dos límites medidos al hacerlo:
+- el Supervisor no admite colores a pelo ni paleta cruda (`token-guard`, regla 8), y los de la réplica lo son a propósito
+  (DD-35);
+- la columna del resumen de las fichas desplaza por dentro (`overflow-y: auto`) y cortaba en recto, por los lados, la
+  sombra del teléfono.
+
+**Decisión** ·
+1. **A la derecha de la ficha, en el hueco del resumen, el teléfono del agente en su sección de Tipificación**
+   (`sc-tipificacion-vista`): la plancha oscura que asoma arriba con su flecha de plegar (sin ajustes), el panel, la
+   franja «Tipificación», un botón-píldora por nivel (el primero encendido, los demás apagados hasta elegir el de
+   arriba, cada uno con su lista en un globo: el Listbox de primeng.dev dentro del Popover), el comentario de 255,
+   Guardar y la barra de cuatro pestañas, redondeada en sus cuatro esquinas sobre el pie del panel.
+2. **Se prueba**: con un camino entero, Guardar se enciende y dice cómo quedaría la conversación («Quedaría como
+   Consulta › Facturación › Importe»), debajo del teléfono, en una línea reservada. Sigue a la ficha: sin comentario
+   no hay comentario, y sin niveles ni comentario dice que no pide nada.
+3. **Sus medidas, las de la réplica al peldaño más cercano de la escala**: franja 44,7 → 42, píldoras 27,3 → 28,
+   comentario 184 → 175, Guardar 40,2 → 38,5, barra 56,9 → 56, radios 23,7 y 28,8 → 24,5 y 28 (de la escala de
+   espacios: la de radios acaba en 16). Ancho, el de la columna: 240 (el teléfono mide 250).
+4. **Sus colores, una familia de tokens nueva, `--sc-agent-window-*`** (05-extensions, junto a la de la barra lateral,
+   que es el otro oscuro en los dos temas), con los grises de la paleta más cercanos a los de la réplica: panel #2d333a
+   → slate-800 (#2f3642), comentario #1f2429 → slate-900 (#181d26), su borde #11131a → slate-950. Y su sombra,
+   `--sc-agent-window-shadow`: sutil y con spread por los cuatro lados.
+5. **En su propia columna** (`.tip-telefono`, el área `summary` de la rejilla de la ficha), fija al bajar como el
+   resumen pero sin su recorte. El molde de las demás fichas no cambia.
+6. **Encima, su título con el icono del teléfono** («Lo que verá el agente» y cuándo sale: al colgar, antes de recibir
+   otra conversación). Dentro del teléfono solo va lo que ve el agente.
+
+**Razón** · Lo que el agente rellena se entiende viéndolo, y probándolo se ve qué es un nivel y qué cambia al pedir
+comentario sin leer una ayuda. Calcado del teléfono de verdad, el Supervisor enseña lo que el agente va a ver, no una
+interpretación suya.
+
+**Descartadas** ·
+- *Un panel con las piezas del DS (desplegables y área de texto)*: no se parecía al teléfono; era lo que se probó primero.
+- *Copiar el componente de la réplica*: sus colores van a pelo, y portar es rehacer en el destino (LEARNINGS #10).
+- *Un `.sc-dark` alrededor del panel para usar el modo oscuro del DS*: la regla 8 lo prohíbe, y los campos de PrimeNG no
+  lo siguen dentro de una isla (sus variables se resuelven en la raíz).
+- *El `p-select` de primeng.dev con sus tokens para las píldoras*: un campo PrimeNG crudo no se admite en el Supervisor
+  (`token-guard`), y en sc-agent los niveles son botones.
+- *El teléfono entero (teclado y botones de llamada)*: no dice nada de la tipificación y quitaría sitio.
+- *Dejar el teléfono dentro de `.ficha-summary` y estrecharlo para que la sombra quepa*: le quitaba el ancho del de verdad.
+
+**Consecuencias** ·
+- Componentes: `sc-tipificacion-vista`. Tokens nuevos en `05-extensions.css` (`--sc-agent-window-*`).
+- Pruebas: `tipificacion-telefono.spec.ts` (5), en rojo antes del bloque.
+- Queda abierto: en sc-agent el chat tipifica sin niveles; con este modelo lo decide cada tipificación (pregunta de
+  producto).
 
 ---
 

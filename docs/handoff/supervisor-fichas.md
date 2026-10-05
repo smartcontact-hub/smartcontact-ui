@@ -24,7 +24,37 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 `git show c065d664:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 7d70bfb9:…`. El de D3
 (DD-152, tampoco): `git show e7e0e8f3:docs/handoff/supervisor-fichas.md`. El de F (DD-153, tampoco): `git show
 f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`. El de lo que dejó F
-(DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`.
+(DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. Y el de la
+revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
+fcaf40db:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-172 a DD-174), en su PR
+
+> **Sello:** rama `arebury/tipificaciones-creacion` sobre `main` en `b4d1f145`. **Un PR, un commit en rojo y otro en
+> verde por bloque (DD-154).** Sale de la propuesta de producto «Tipificaciones» (PDF, 2026-10-05), discutida punto por
+> punto y probada en local antes de subir.
+
+- **1 · Una tipificación es una ficha propia (DD-172):** su árbol de hasta tres niveles, su dirección, su comentario y
+  sus grupos por canal; una por dirección y canal en cada grupo. Repositorios › Tipificaciones con las columnas de la
+  propuesta, todas ordenables; importar y descargar detrás de UN icono (`importable` en `sc-list-page`; importar, como
+  las agendas). La ficha de grupo elige varias, con su fila y su «Editar», y pierde el «+» de la tipificación.
+- **2 · La ficha, sin saltos (DD-173):** el molde de las fichas (índice; el nombre encima); la dirección en un control y
+  el comentario en un interruptor; los niveles son las columnas (las tres siempre, la siguiente fantasma, la última con
+  su ×); añadir y renombrar en la línea de la columna; cada aviso en su línea reservada. Su prueba cazó una carrera:
+  dos «Añadir» seguidos y el segundo pisaba al primero (ahora `linkedSignal`).
+- **3 · Lo que verá el agente (DD-174):** a la derecha, el teléfono de sc-agent en su sección de Tipificación, calcado
+  de la réplica y para probarlo. Tokens nuevos `--sc-agent-window-*` (05-extensions) y su sombra con spread; en su
+  propia columna, porque la del resumen recortaba la sombra.
+- **En local, en verde:** las 17 de los tres bloques (en rojo antes de cada uno) y las 13 unitarias; las vecinas que
+  tocan tipificaciones (45, cuatro cambiadas a propósito); `revision` de la ficha, el alta, el listado y la ficha de
+  grupo; las guardas de tokens y de pantalla. Las mediciones sin saltos, con su medidor validado con un salto puesto.
+
+**Trampas del lote:**
+- **`git add -N` para que las guardas vean ficheros nuevos impide el `git stash`** (`not uptodate. Cannot merge`): quita
+  la marca (`git reset -- <rutas>`) antes de apartar, y vuelve a ponerla para pasar las guardas.
+- **La columna `.ficha-summary` desplaza por dentro** (`overflow-y: auto`) y corta todo lo que sale por los lados, también
+  una sombra: lo que tenga que salirse va en su propia columna del área `summary`.
+- **Un `.sc-dark` alrededor de una pieza no pone los campos de PrimeNG en oscuro**: sus `--p-*` se resuelven en la raíz.
 
 ## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), en su rama
 
@@ -159,32 +189,12 @@ entran en `list-table-grammar`. De paso, en Variables el valor por defecto largo
 y tapaba la columna «Tipo»: pasa a `kind: 'truncate'` (DD-124). Fundido: #329 → `95d98472`. La página de Button de
 sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): la ganó en el lote 2 (#330).
 
-## ✅ 2026-10-04 · La revisión de producto del 2026-10-04, en un lote de seis bloques (DD-157 a DD-162), fundida (#325)
-
-> **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Medido el tiempo de punta a punta: el feedback llegó
-> a las 15:28 UTC; los seis bloques, la pasada final, los barridos y `revision`, en local, a las 18:05 (2 h 37 min).**
-
-- **1 · Distribución y colas (DD-157):** el árbol del DS. La sección en `surface="subtle"`, cada canal un
-  `sc-subsection` y cada parte un `sc-slot`; Chat en el orden de Teléfono; la música en «Cola»; los demás mensajes de
-  Teléfono de vuelta, plegados y sin «anuncio». DS: `sc-slot` se pliega y `sc-subsection` acepta `titleId`.
-- **2 · El alta (DD-158):** ✓ solo en las secciones con algo obligatorio (`seccionesDeAlta` gana `obligatoria`); el
-  teléfono saliente, segunda puerta del grupo; «Atrás» y «Siguiente» como el Stepper vertical, con los botones del DS.
-- **3 · Los listados (DD-159):** en Grupos, la cifra de agentes abre su asignación y sale «Asignar» (DS:
-  `sc-group-popover` gana `activated`); en Agentes, la cifra de grupos ya llevaba a su sección.
-- **6 · La tabla al pie (DD-160):** `scLlegaAlPie` mide el alto que queda; norma 10 de AGENTS «UX de pantalla» y en
-  Patrones de sc-docs.
-- **5 · El resumen con color (DD-161):** la cifra principal, con el degradado del botón principal y el anillo en el
-  color del texto; una por ficha.
-- **4 · Las columnas (DD-162):** el Listbox nativo (casilla y arrastre) en el globo del icono; las cabeceras ya no se
-  arrastran. PickList, valorado y descartado para 8-12 columnas.
-- **Pasada final** (Playwright, con la lista de ui-ux-pro-max para web): nombre, foco, objetivo ≥ 24, sin saltos, en
-  claro, oscuro y «reducir movimiento». Arreglada la cifra del globo (15 × 20 → 24,5, con un `::after`).
-
-**Pendiente, anotado:** el rótulo-enlace del resumen mide 18 de alto (DD-146): llevarlo a 24 cambia el alto de todos
-los resúmenes y se mide aparte. Ordenar columnas con teclado no se puede (tampoco antes, con las cabeceras).
-
 ## SIGUIENTE — sin preguntar
 
+00. **Tipificaciones (DD-172 a DD-174), en su PR** (el tramo de arriba): leer `ci:verdict`, fundir y leer el de `main`.
+    Queda, fuera del lote: las Reglas de Conversaciones con su propia copia de las tipificaciones (`entity-catalog.ts`),
+    Supervisión › Tipificaciones vacía, y dos preguntas para producto (en el tramo de DD-174): el chat sin niveles en
+    sc-agent, y que los desplegables del teléfono son una propuesta para el lado del agente.
 0. **Las fichas sin cabecera (DD-170), en su rama** (el tramo de arriba): Rafa lo mira en local; si le vale,
    `preflight:scope -- --run`, PR y `ci:verdict`. Supervisión y limpieza (DD-168) ya fue en su PR. Con esto se acaba
    lo que dependía de nosotros en este frente. Lo siguiente: **triar los otros frentes** (DS, CusCare, Dashboard y Sidebar, cada uno con su hand-off) en

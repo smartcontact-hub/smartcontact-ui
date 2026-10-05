@@ -7,3 +7,21 @@
 /* El MOLDE de la ficha no vive aquí: `.page__inner--rail`, `.headline*`, `.ficha-rail`, `.ficha-summary` y el aviso de
  * otra pestaña están en `src/styles/_page.scss`, y `.field`, `.sub-section` y `.switch-field` en `_forms.scss`. Aquí solo
  * lo que es de esta ficha. */
+
+/* La columna del teléfono: el hueco del resumen de las fichas (el área `summary` de la rejilla de `.ficha-rail`), fija al
+ * bajar como él, pero SIN su recorte: `.ficha-summary` desplaza por dentro (`overflow-y: auto`), y eso cortaba en recto
+ * por los lados la sombra del teléfono. Teléfono, título y resultado caben enteros a 1440 × 900. */
+.tip-telefono {
+  grid-area: summary;
+  position: sticky;
+  top: var(--sc-spacing-1-625);
+  align-self: start;
+  min-width: 0;
+}
+
+/* Por debajo de 1340 el resumen pasa a una franja encima del contenido, y deja de ser fijo (DD-170 §4). */
+@media (max-width: 1339px) {
+  .tip-telefono {
+    position: static;
+  }
+}

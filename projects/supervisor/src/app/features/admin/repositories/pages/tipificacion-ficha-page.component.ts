@@ -41,6 +41,7 @@ import { GroupsStore } from '@features/admin/groups/state/groups.store';
 
 import { TipificacionGruposComponent, type TipificacionGrupoRef } from '../components/tipificacion-grupos/tipificacion-grupos.component';
 import { TipificacionNivelesComponent } from '../components/tipificacion-niveles/tipificacion-niveles.component';
+import { TipificacionVistaComponent } from '../components/tipificacion-vista/tipificacion-vista.component';
 import { choquesDe, nivelesDe, ramasIncompletas } from '../state/tipificaciones.core.mjs';
 import {
   type Tipificacion,
@@ -85,7 +86,8 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
 
 /**
  * LA FICHA DE UNA TIPIFICACIÓN (DD-172, DD-173), con el molde de las fichas (DD-122, DD-170): el
- * nombre y el índice a la izquierda y una sección a la vista en el centro.
+ * nombre y el índice a la izquierda, una sección a la vista en el centro y, a la derecha, donde las fichas llevan su
+ * resumen, LO QUE VERÁ EL AGENTE: su ventana de tipificar con lo que se va definiendo, para probarla.
  *
  *   - General: nombre y descripción, la dirección (entrantes, salientes o ambas, en un solo control) y si pide comentario;
  *   - Categorías: los niveles son las columnas, y el siguiente se añade pulsando su columna fantasma;
@@ -110,6 +112,7 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
     SelectButtonComponent,
     TipificacionGruposComponent,
     TipificacionNivelesComponent,
+    TipificacionVistaComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
