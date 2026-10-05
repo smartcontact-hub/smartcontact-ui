@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, output, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, output, signal, viewChild } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MenuModule } from 'primeng/menu';
@@ -11,6 +11,8 @@ import { ScInlineRenameCellComponent as InlineRenameCellComponent } from '@smart
 import { injectLangChange } from '@core/utils/lang-change';
 
 import type { DashboardMonitor } from '../../data/dashboard.types';
+
+let monitorTabsMenuIdCounter = 0;
 
 /**
  * Pestañas de monitores, con las `p-tabs` de primeng.dev y el tema del DS (aspecto Aura: todas en
@@ -62,6 +64,12 @@ export class MonitorTabsComponent {
   private readonly renamePopover = viewChild.required<Popover>('renamePopover');
 
   protected readonly activeName = computed(() => this.monitors().find((m) => m.id === this.activeId())?.name ?? '');
+
+  /** Id del `p-menu` del ⋮, para su `aria-controls`. */
+  protected readonly menuId = `sc-dashboard-monitor-tabs-menu-${++monitorTabsMenuIdCounter}`;
+
+  /** Si el menú del ⋮ está abierto, para su `aria-expanded` (DD-170, el mismo patrón que el ⋮ de un widget). */
+  protected readonly menuOpen = signal(false);
 
   protected readonly menuItems = computed<MenuItem[]>(() => {
     this.lang();
