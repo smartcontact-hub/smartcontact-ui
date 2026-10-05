@@ -58,6 +58,42 @@ test('con varios grupos, «Agentes» abre un menú con ellos, y cada uno abre su
   await expect(page).toHaveURL(/\/dashboard$/);
 });
 
+test('con varios grupos, «Agentes» dice en el foco que abre un menú, y si ya está abierto (DD-170)', async ({ page }) => {
+  await irAColasYAgentes(page);
+  const agentes = tarjetaGrupos(page).getByRole('button', { name: 'Asignar agentes', exact: true });
+  await expect(agentes).toHaveAttribute('aria-haspopup', 'menu');
+  await expect(agentes).toHaveAttribute('aria-expanded', 'false');
+  const controla = await agentes.getAttribute('aria-controls');
+  expect(controla, 'apunta al id del p-menu').toBeTruthy();
+
+  await agentes.click();
+  const menu = page.getByRole('menu');
+  await expect(menu).toBeVisible();
+  await expect(menu).toHaveAttribute('id', `${controla}_list`);
+  await expect(agentes).toHaveAttribute('aria-expanded', 'true');
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(agentes).toHaveAttribute('aria-expanded', 'false');
+});
+
+test('con un solo grupo, «Agentes» no lleva aria-haspopup: no abre ningún popup propio', async ({ page }) => {
+  await irAColasYAgentes(page);
+  await tarjetaGrupos(page).getByRole('button', { name: 'Más acciones de Grupos' }).click();
+  await page.getByRole('menuitem', { name: 'Editar' }).click();
+  const asistente = page.locator('.p-dialog');
+  for (const grupo of ['ACD Demo C2CB', 'ACD outbound', 'Campaigns']) {
+    await asistente.getByRole('option', { name: grupo }).click();
+  }
+  await asistente.getByRole('button', { name: 'Guardar' }).click();
+  await expect(asistente).toHaveCount(0);
+
+  const agentes = tarjetaGrupos(page).getByRole('button', { name: 'Asignar agentes de Exclusivo' });
+  await expect(agentes).not.toHaveAttribute('aria-haspopup');
+  await expect(agentes).not.toHaveAttribute('aria-expanded');
+  await expect(agentes).not.toHaveAttribute('aria-controls');
+});
+
 test('con un solo grupo, «Agentes» abre su panel directamente', async ({ page }) => {
   await irAColasYAgentes(page);
   // El camino de verdad: el widget se edita en el asistente y se deja vigilando un grupo.
