@@ -14,6 +14,12 @@
       "more_actions": "More actions for {{title}}",
       "clear_filter": "Clear filter"
     },
+    "assign_agents": {
+      "label": "Agents",
+      "aria": "Assign agents",
+      "aria_one": "Assign agents to {{name}}",
+      "menu": "Assign agents to…"
+    },
     "menu": {
       "channels": "Channel",
       "channel": {
