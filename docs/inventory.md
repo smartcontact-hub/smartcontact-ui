@@ -59,7 +59,7 @@
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 19 |
 | `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 34 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 10 inputs | — | ✓ | 2 |
-| `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 18 |
+| `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 19 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
 | `sc-field-msg` | CUSTOM | — | 2 inputs | — | — | — |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
@@ -82,7 +82,7 @@
 | `sc-progressbar` | EXTENDED | primeng/progressbar | 4 inputs | — | ✓ | — |
 | `sc-progressspinner` | EXTENDED | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
-| `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 10 |
+| `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 11 |
 | `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 31 |
 | `sc-select` | EXTENDED | primeng/select | 28 inputs | sc-field-label sc-field-msg | ✓ | 58 |
 | `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 12 |

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Repositorios dice cuántos hay de cada uno (la cifra del almacén que enseña su página; las de IA, las de Conversaciones), también en el nombre que oye el lector, y tiene buscador por nombre y descripción · los almacenes salen de su página a `repositories/state/` (enmienda DD-101 §2) | DD-165 |
 > | El resumen de cada recurso en las fichas: una fila por agenda, plantilla o tipificación con su dato y «Editar» (`sc-resource-rows`), que lleva a su sitio (`?editar=` en Plantillas, `?buscar=` en cualquier repositorio) · «Editar» solo al editar · se ofrecen las agendas activas y la inactiva ya puesta · lo borrado no se cuenta ni se guarda (enmienda DD-101 §2 y §4, DD-105 §2) | DD-164 |
 > | La agenda es una lista de contactos (nombre y teléfono) con su editor en su propia ruta, como las fichas; la fila del listado lo abre | DD-163 |
 > | Elegir y ordenar columnas en un solo control nativo: el Listbox (casilla y arrastre) en el globo del icono; las cabeceras ya no se arrastran | DD-162 |
@@ -122,6 +123,32 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-165 · 2026-10-04 — Repositorios dice cuántos hay de cada uno, y tiene buscador
+
+**Contexto.** La revisión de producto del 2026-10-04, sobre el hub de Repositorios: se queda como está (DD-77, DD-78),
+con un dato más (cuántas agendas hay, que de horarios no hay ninguno) y un buscador.
+
+**Decisión.**
+1. **Cada fila dice cuántos hay**, a la derecha y en el gris de su descripción (texto de leyenda, cifras tabulares),
+   con el separador de miles del idioma. La cifra es la del almacén que enseña su página: las tres de IA llevan a
+   Conversaciones y cuentan lo que hay allí (reglas, entidades y categorías), no los repositorios de IA de antes.
+2. **El lector la oye.** El Menu nombra cada fila con `item.label` (DD-78), así que `label` es «Agendas (9)» y lo que
+   se ve va aparte. La cifra pintada se oculta al lector, para no decirla dos veces.
+3. **Un buscador** encima, por nombre y descripción, en minúsculas y por subcadena, como en las listas. Un grupo sin
+   filas no sale; sin ninguna, el vacío de búsqueda, con «Limpiar búsqueda».
+4. **Los almacenes de horarios, tipificaciones, variables, entidades e intenciones salen de su página** a
+   `repositories/state/`, como el de agendas (DD-163): el hub y las fichas leen el almacén sin cargar la lista.
+
+Enmienda DD-101 §2: en el hub hay cifras, que dicen dónde hay algo y no hay que leerlas para descartar.
+
+**Razón.** Una cifra junto a cada destino dice dónde hay algo antes de entrar, y con once destinos un buscador ahorra
+recorrerlos. Lo que oye el lector tiene que decir lo mismo que se ve.
+
+**Descartadas.**
+- La cifra en un `sc-badge`: el del DS es de aviso (8,75 px de letra; 10,5 en `lg`), por debajo de los 12 de la
+  descripción que tiene al lado. Medido en la página.
+- Contar los repositorios de IA de `instances/` (reglas IA y compañía): las filas no llevan a ellos.
 
 ## DD-164 · 2026-10-04 — El resumen de cada recurso, con «Editar»: una fila por agenda, plantilla o tipificación
 

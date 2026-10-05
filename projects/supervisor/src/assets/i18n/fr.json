@@ -1205,6 +1205,9 @@
     },
     "hub": {
       "coming_soon": "Bientôt disponible",
+      "search": "Rechercher un référentiel",
+      "item_aria": "{{name}} ({{count}})",
+      "no_results": "Aucun référentiel ne correspond à « {{query}} ».",
       "categories": {
         "communication": "Communication",
         "classification": "Classification",

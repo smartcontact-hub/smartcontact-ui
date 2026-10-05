@@ -79,8 +79,9 @@ import {
   resolveGroup,
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
-import { TipificacionesStore, TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
-import { HorariosStore } from '@features/admin/repositories/instances/horarios';
+import { TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
+import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
+import { TipificacionesStore } from '@features/admin/repositories/state/tipificaciones.store';
 import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
 import { AGENDA_FIELDS } from '@features/admin/repositories/instances/agendas';
 import { RepoFormPanelComponent, RepoFormSubmission } from '@features/admin/repositories/components/repo-form-panel.component';

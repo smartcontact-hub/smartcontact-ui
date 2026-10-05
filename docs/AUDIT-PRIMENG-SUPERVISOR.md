@@ -87,7 +87,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `autofocus`, `binary`, `disabled`, `invalid`, `required`, `tabindex`
 
-### `sc-search` · 10 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
+### `sc-search` · 11 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -151,7 +151,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-empty-state` · 18 usos · —
+### `sc-empty-state` · 19 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

@@ -30,7 +30,7 @@ test('cada fila dice cuántos hay, la cifra de su lista, y el lector la oye con 
   await goto(page, 'admin/repositorios');
   const fila = page.getByRole('menuitem', { name: `Tipificaciones (${tipificaciones})`, exact: true });
   await expect(fila).toBeVisible();
-  await expect(fila.locator('sc-badge')).toHaveText(String(tipificaciones));
+  await expect(fila.locator('.hub-link__count')).toHaveText(String(tipificaciones));
   await expect(page.getByRole('menuitem', { name: `Reglas IA (${reglas})`, exact: true })).toBeVisible();
 });
 

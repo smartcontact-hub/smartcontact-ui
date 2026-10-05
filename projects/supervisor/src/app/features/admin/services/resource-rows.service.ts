@@ -2,8 +2,8 @@ import { computed, inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { LanguageService } from '@core/services/language.service';
-import { TipificacionesStore } from '@features/admin/repositories/instances/tipificaciones';
 import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
+import { TipificacionesStore } from '@features/admin/repositories/state/tipificaciones.store';
 import type { TemplateType } from '@features/admin/templates/data/templates-data';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import type { ResourceRow } from '@shared/components';

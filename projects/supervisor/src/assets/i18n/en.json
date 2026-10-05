@@ -1205,6 +1205,9 @@
     },
     "hub": {
       "coming_soon": "Coming soon",
+      "search": "Search repositories",
+      "item_aria": "{{name}} ({{count}})",
+      "no_results": "No repository matches “{{query}}”.",
       "categories": {
         "communication": "Communication",
         "classification": "Classification",

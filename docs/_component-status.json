@@ -575,7 +575,7 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 18,
+      "usedInSupervisor": 19,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "sobreObsoleto": []
     },
@@ -1184,7 +1184,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 10,
+      "usedInSupervisor": 11,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
