@@ -66,6 +66,10 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Changed
 
+- **`@smartcontact-hub/components`** — `sc-drawer` modal es un diálogo (WCAG 2.4.3 y 4.1.2): se anuncia con
+  `role="dialog"`, `aria-modal` y su título por nombre; al abrirse lleva el foco al primer control de su contenido, y
+  al cerrarse lo devuelve a quien lo abrió, si sigue en la página, también cuando lo cierra el padre con `visible`.
+  Sin `modal` no cambia: sigue siendo `complementary` y no se lleva el foco. ([DD-168](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — el icono pesa lo que su texto (DD-130 §6, figma-pendiente §29). En
   `sc-form-section-nav` plano, el índice de todo el Supervisor, el icono y el ✓ de la fila activa van a 600 y los de
   las demás a 400, como sus rótulos; en el de por defecto, a 500, el medium de su rótulo. El icono del título de

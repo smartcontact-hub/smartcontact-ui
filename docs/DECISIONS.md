@@ -229,6 +229,13 @@ el supervisor», y el panel rápido (`sc-group-agents-panel`) solo se abría des
     máscara hasta que se entra en el panel.
 - **Pruebas:** `panel-agentes-monitor.spec.ts`, nueva, con seis, y una más en `panel-agentes-grupo.spec.ts`.
 
+**Actualización (2026-10-05)** · Cerrado lo segundo, en el DS: `sc-drawer` modal se anuncia como diálogo (con su
+título por nombre), lleva el foco al primer control de su contenido al abrirse y lo devuelve a quien lo abrió al
+cerrarse. Con el foco dentro, Escape cierra el panel sin tabular antes. La vuelta del foco que el panel hacía a mano
+sale: la da el cajón, también cuando lo cierra el padre (PrimeNG solo emite `onHide` cuando cierra él, así que el
+cajón mira `visible`). Lo vigila `cajon-foco.spec.ts`, desde el listado y desde el Monitor. Lo primero (el nombre del
+botón que abre un menú) lo lleva otra tarea.
+
 ---
 
 ## DD-167 · 2026-10-05 — El «+» de crear es el botón de solo icono de primeng.dev, redondo y con borde, junto a su control
