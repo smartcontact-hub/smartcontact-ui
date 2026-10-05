@@ -548,8 +548,11 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  *
  * 81 → 80 el 2026-09-27: sale `.cross-tab-warning` de `styles/main.scss`, un banner hecho a mano
  * que no pintaba nadie; el aviso de «otra pestaña» es `sc-message` (`.ficha-conflict`).
+ *
+ * 80 → 78 el 2026-10-05: sale `.seg` del constructor de reglas, un control segmentado que no pinta ninguna plantilla
+ * desde julio (dos `font-size`).
  */
-export const TIPOGRAFIA_SUELTA_MAX = 80;
+export const TIPOGRAFIA_SUELTA_MAX = 78;
 
 /**
  * El mismo trinquete para **sc-docs**, el showcase del DS — el que peor predicaba con el ejemplo:

@@ -521,6 +521,9 @@ const RETIRADOS_A_PROPOSITO = new Set([
   // que documento" de "token nuestro que cité mal" — y hace bien en preguntar: lo cazó el
   // 2026-09-02 cuando yo había escrito que la familia les llegaba por nuestro paquete.
   '--sc-font-family-base',
+  // Retirado el 2026-10-05 con el criterio de #194 (cero usos): el CHANGELOG lo nombra en «Removed» para quien lo
+  // consumía, y el hand-off del DS lo cuenta. Si alguna vez vuelve a definirse, este gate lo cubre solo → quítalo de aquí.
+  '--sc-font-size-caption-bold',
 ]);
 if (tokensDefinidos.size > 100) {
   // guard de cordura: si el barrido no encontró tokens, es que falló — no acuses a la doc

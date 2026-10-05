@@ -128,6 +128,59 @@
 
 ---
 
+## DD-172 · 2026-10-05 — Fuera de PrimeNG jubilado, lo seguro: las piezas compuestas pintan `sc-button` y `sc-password` va sobre `pInputPassword`
+
+**Contexto** · PrimeNG 22 marca obsoletos `p-button` («Use the `[pButton]` directive instead»), `p-multiselect`
+(«Use Select component with `multiple` property instead») y `p-password` («use pInputPassword directive instead»). El
+trinquete `WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX` (`scripts/component-audit.mjs`) contaba ocho piezas nuestras
+sobre ellos: `sc-button` y cinco compuestas (`sc-delete-entity-dialog`, `sc-bulk-edit-menu`,
+`sc-impact-preview-dialog`, `sc-sticky-form-header` y `sc-form-danger-zone`) sobre `p-button`, más `sc-multiselect` y
+`sc-password`. De las salidas posibles se eligió la segura: mover lo que no cambia el DOM de nadie y dejar
+documentado lo demás.
+
+**Decisión** ·
+1. Las cinco piezas compuestas pintan `<sc-button>` en vez de `<p-button>`: `severity` → `variant`, `outlined` →
+   `appearance`, `small`/`large` → `sm`/`lg` y `(onClick)` → `(clicked)`; se conservan los `data-testid` y lo
+   proyectado. Su API no cambia. El trinquete baja de 8 a 3.
+2. `sc-password` pasa a `<input pInputPassword>`. La directiva da el tipo `password`/`text` y la piel de
+   `pInputText`; lo demás es nuestro: un solo botón de mostrar, que no se desmonta al alternar y conserva el foco; el
+   medidor de fuerza (`feedback`), con los tres niveles, los patrones y los textos de PrimeNG (su traducción
+   configurada), bajo el campo mientras tiene el foco, por `aria-describedby` y con Escape; y el ojo, con el relleno
+   de la talla del campo. El trinquete baja de 3 a 2.
+3. `sc-button` → `[pButton]` y `sc-multiselect` → `p-select` múltiple quedan anotados con su coste en el hand-off
+   del DS.
+
+**Razón** ·
+- Con las compuestas sobre `sc-button`, `p-button` queda en un solo sitio: el día que pase a `[pButton]` se toca una
+  pieza, no seis.
+- El medidor de `p-password` son dos patrones y cuatro textos: tenerlo cuesta menos que arrastrar un componente
+  jubilado, y el botón de mostrar ya era nuestro.
+- Medido en el acceso (talla `lg`), antes y después: misma caja, letra, borde y colores, y el mismo nombre y foco del
+  botón. Cambian el ojo, 1,7 px a la izquierda, y el hueco del texto, de 31,5 a 37 px: PrimeNG usaba el relleno de
+  `md` en cualquier talla.
+
+**Descartadas** ·
+- **`sc-button` → `[pButton]` ahora** → la directiva no trae `label`, `icon` ni salidas, que habría que rehacer;
+  cambia el DOM de todos los botones (de componente a directiva sobre el `<button>`) y mueve
+  `component-structure.json` y las capturas. No es lo seguro.
+- **`sc-multiselect` → `p-select` con `multiple`** → medido en PrimeNG 22.1.0, `p-select` no trae seis cosas que
+  `sc-multiselect` usa hoy: `showToggleAll`, `selectAll`, `selectionLimit`, `maxSelectedLabels`,
+  `selectedItemsLabel` y `display`. DD-153 ya eligió ampliar el envoltorio.
+
+**Consecuencias** ·
+- **Una trampa, medida:** `styleClass` de `p-button` deja la clase en el `<button>` interior, que no lleva
+  `_ngcontent`, así que la SCSS emulada de la pieza no le llega: `.bulk-edit__apply { height: 36px; padding: 0 14px }`
+  no había aplicado nunca. Con `class` en `<sc-button>`, la clase cae en el host y sí aplica: un bloque de 88,5 × 36
+  con el botón 15,75 px dentro. Al pasar de `styleClass` a `class`, se mide; aquí salieron esas dos declaraciones.
+- **Descripciones:** al dejar `primeng/button` y `primeng/password`, diez miembros dejaron de heredar su descripción
+  de PrimeNG y el trinquete de descripciones (tope 0) la pidió: llevan JSDoc, la de `sc-inputtext` donde coincide.
+- **Pruebas:** el trinquete (`component-audit.test.mjs`); `sc-password.component.spec.ts` (nueva, cinco); e2e
+  `listado-grupos`, `fichas-nombre-fijo`, `admin-row-menu`, `lista-seleccion`, `login` y `focus-ring`.
+- **CHANGELOG:** `[Unreleased]` › Changed, dos entradas.
+- **Queda abierto:** `sc-button` y `sc-multiselect` (el trinquete, en 2), con su coste en el hand-off del DS.
+
+---
+
 ## DD-171 · 2026-10-05 — Un botón que abre un popup lo dice el `<button>` real, no el host `<sc-button>`
 
 **Contexto** · `sc-button` envuelve `p-button`, que envuelve un `<button>` nativo: el foco y lo que anuncia el
@@ -348,6 +401,13 @@ el supervisor», y el panel rápido (`sc-group-agents-panel`) solo se abría des
   - el panel no se lleva el foco al abrirse, en el listado tampoco. Con el teclado, el foco sigue detrás de la
     máscara hasta que se entra en el panel.
 - **Pruebas:** `panel-agentes-monitor.spec.ts`, nueva, con seis, y una más en `panel-agentes-grupo.spec.ts`.
+
+**Actualización (2026-10-05)** · Cerrado lo segundo, en el DS: `sc-drawer` modal se anuncia como diálogo (con su
+título por nombre), lleva el foco al primer control de su contenido al abrirse y lo devuelve a quien lo abrió al
+cerrarse. Con el foco dentro, Escape cierra el panel sin tabular antes. La vuelta del foco que el panel hacía a mano
+sale: la da el cajón, también cuando lo cierra el padre (PrimeNG solo emite `onHide` cuando cierra él, así que el
+cajón mira `visible`). Lo vigila `cajon-foco.spec.ts`, desde el listado y desde el Monitor. Lo primero (el nombre del
+botón que abre un menú) lo lleva otra tarea.
 
 ---
 
@@ -3186,6 +3246,8 @@ anclar lleva el contenido de x=80 a x=240 y lo devuelve al soltar.
 **Consecuencias** · Pendiente: el botón de anclar pisa 5px el texto del logotipo desplegado (el texto acaba en x=208 y
 el botón empieza en 203); sube igual que en el preview.
 
+**Enmendado por DD-137** (2026-10-01) · Sale el botón de anclar (§5), y con él lo pendiente.
+
 ---
 
 ## DD-117 · 2026-09-23 — Cada PR prueba y despliega lo que toca; `main` lo sigue probando todo
@@ -3416,6 +3478,12 @@ fracción dos veces en la rejilla del `p-motion`. Se arregla por `[pt]` (`conten
 `p-tabs`, sin tocar su movimiento. El Stepper salió de las altas con DD-143, y el arreglo con él.
 Desde DD-140: un `p-dialog` sin cabecera (`showHeader=false`) se nombra por `pt.root`. Un atributo en su host se queda
 en el host, aunque la sección de accesibilidad de primeng.dev diga que pasa a la raíz.
+
+**Actualización (2026-10-05)** · Cerrado lo que quedaba. La tira del reproductor se nombra («Contenido de la
+conversación») por `pt` al nodo con `role="tablist"`, como el Monitor. La «o» del acceso: su página le pedía el
+secundario a `.login__divider`, el host de `sc-divider`, pero PrimeNG pinta el color en `.p-divider-content` y la regla
+no llegaba; sale, y la «o» lleva el color del separador del DS, que se lee (AA). `sc-slot` toma el margen del divisor
+(`--sc-cmp-divider-horizontal-margin-y`, los mismos 14). Lo vigila `nombres-y-separadores.spec.ts`.
 
 ---
 
@@ -3992,6 +4060,21 @@ en dos líneas). Siete listas declaraban una dependencia de idioma que nunca le�
 gate en verde. Fuera de la pieza: Conversaciones (filtros y tabla propia) y Entidades (dos tablas). Ya estaba
 antes: el panel de edición de la última fila de Etiquetas, Plantillas y Repositorios hace scroll dentro de la tabla.
 
+**Actualización (2026-10-05)** · Conversaciones se monta sobre la pieza; fuera queda solo Entidades, con sus dos
+tablas (DD-95). Lo que solo tenía ella lo hace ahora la pieza para todas: Espacio en la fila selecciona, Mayús+clic en
+la fila no abre, el menú de fila puede ir solo con clic derecho (`rowMenuColumn`) y no se abre vacío, y la tabla lleva
+la piel de su pantalla (`tableClass`) y sus casillas, sus claves (`selectRowKey`, `selectAllKey`). Y salieron tres
+defectos de las ocho:
+- un tramo con Mayúsculas de cuatro pintaba dos (medido en Usuarios y Agentes). Lo pinta `sc-datatable` desde la
+  selección (`sc-row--selected`);
+- la casilla de «todas» salía sin nombre en todas (WCAG 4.1.2): PrimeNG 22.1 lo calcula solo si llegan filas después
+  de pintarse la cabecera. Lo pone `sc-datatable`;
+- el primer Escape del buscador vaciaba y soltaba el foco a la vez: `(keydown)` sobre `sc-search` llega dos veces (su
+  salida y el nativo). `escapeSearch` atiende cada evento una vez.
+Conversaciones gana ordenar por cabecera (todas menos Estado) y el Escape de su buscador. `conversation-table` ya no
+pinta: da columnas, celdas, clases de fila, menú y orden. Lo vigilan `lista-seleccion.spec.ts` y
+`conversaciones-en-la-pieza.spec.ts`.
+
 ---
 
 ## DD-97 · 2026-09-14 — Las medidas de PrimeOne que Aura 3 cambió siguen a Aura en código, atadas a la escala, y Figma se alinea después
@@ -4119,6 +4202,15 @@ buscador) y las filas deben medir igual: una lista con filas desplegables no la 
 `.page--tabla` no puede reservar la barra de selección con `padding-bottom` ni poner `overflow` en su
 `.table-card`. Pendiente: llevar el patrón al resto de listas (Usuarios, Grupos, Etiquetas, Plantillas,
 repositorios, Conversaciones).
+
+**Actualización (2026-10-05)** · Entra Entidades, la última lista que movía la página entera (1019 px de contenido en
+712 de ventana a 1366 × 768), y con ella no queda ninguna fuera del molde: las otras cuatro tarjetas con tabla son
+piezas dentro de una ficha o de Conversaciones. Lleva dos tablas y el alto se reparte así: tus entidades miden sus
+filas y las del sistema se quedan con lo que queda hasta abajo, con el scroll dentro, nunca menos que su cabecera y un
+par de filas (`scale/12-5`). Con muchas entidades tuyas, es tu tabla la que hace scroll. La sección es el eslabón que la
+página pone entre `.page__inner` y la tarjeta. Medido: a 1366 × 768 caben tus cuatro y la del sistema enseña tres y
+media; a 1440 × 900, seis; a 1440 × 1300, las dos enteras. Descartado el reparto a medias: cortaba 14 px tu cuarta fila
+con 66 px en blanco debajo, hasta la raya entre secciones. Lo vigila `e2e/supervisor/entidades-tabla.spec.ts`.
 
 ---
 

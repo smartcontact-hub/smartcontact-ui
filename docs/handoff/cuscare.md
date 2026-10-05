@@ -5,7 +5,7 @@
 > **Sello: 2026-10-02 — versión validada para integrar en main; la rama histórica `v3-tipo-solicitud` se conserva.**
 
 `projects/cuscare` replica `cuscare.smart-contact.com/aed`. **Las 9 vistas montadas**, con
-valores extraídos del sitio real (no estimados) y **100 tests e2e** (`npm run e2e:cuscare`, en CI).
+valores extraídos del sitio real (no estimados) y sus tests e2e (`npm run e2e:cuscare`, en CI).
 
 Funciona de verdad, no es maqueta: filtros, paginación sobre 3280 filas, **ordenación por
 cabecera**, selección de filas, gestor de columnas con arrastre, las 4 acciones en bloque con
@@ -13,6 +13,24 @@ sus paneles y su modal, el paso 2 de "+ New ticket", el panel Summary, los toolt
 avisos de acción.
 
 Contexto completo: [`projects/cuscare/README.md`](../../projects/cuscare/README.md).
+
+## ✅ 2026-10-05 · Summary: las cuatro filas de «Customer info» y «Show more», con lo de este hand-off
+
+Hecho con la descripción de abajo («Lo que se vio al hacerlo y NO se hizo»), **sin verificar contra el
+original**, que solo está en el portátil (`.cache/original-bundle/`). Lo vigilan tres pruebas del bloque
+Summary de `e2e/cuscare/navigation.spec.ts`.
+
+- Bajo Contact salen `Alias`, `AccountId`, `ExternalId` y `OperationId`, cada una solo si tiene valor. Los
+  valores son inventados, con forma de identificador.
+- Cada valor de Subs Info que no cabe en su línea lleva su «Show more», que abre solo ese valor; con
+  «Expand all» no sale. El componente mide el alto natural del texto contra su línea al pintarse y cuando
+  han llegado las fuentes.
+- La caja sigue enseñando el rótulo y una línea del valor, como antes, pero el recorte va en el valor:
+  en la caja entera, la línea siguiente asomaba por el relleno.
+
+**Por comprobar en el portátil:** rótulos y orden de las cuatro filas, y su castellano (hoy salen igual,
+como «Msisdn»); el rótulo de cerrar («Show less»), el sitio del botón (arriba a la derecha, como «Expand
+all») y su castellano («Ver más» y «Ver menos», propios); y cuántas líneas enseña plegado.
 
 ## 2026-10-02 · Filtro y tabla validados para producción
 
@@ -100,10 +118,11 @@ observable (no snapshot: el router reutiliza el componente) y se busca en las 32
    su plantilla pide `SERVICE.DAY30` y el diccionario define `DAYS30`: los seis salen como la ruta
    cruda de la clave. Bug suyo, no se replica.
 
-**Lo que se vio al hacerlo y NO se hizo:** el bloque «Customer info», encima de Subs Info, tiene en
-el original cuatro filas más (`Alias`, `AccountId`, `ExternalId`, `OperationId`, cada una con su
-`*ngIf`) que la réplica no pinta. Y cada valor largo de Subs Info lleva su propio botón «Show more»
-que aparece SOLO si el texto desborda: eso pide medir el desbordamiento en runtime.
+**Lo que se vio al hacerlo y NO se hizo** (→ hecho el 2026-10-05, arriba): el bloque «Customer info»,
+encima de Subs Info, tiene en el original cuatro filas más (`Alias`, `AccountId`, `ExternalId`,
+`OperationId`, cada una con su `*ngIf`) que la réplica no pinta. Y cada valor largo de Subs Info lleva
+su propio botón «Show more» que aparece SOLO si el texto desborda: eso pide medir el desbordamiento en
+runtime.
 
 ## ⏸️ Sin resolver (no bloquea)
 

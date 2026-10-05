@@ -38,14 +38,15 @@ const TABLE = '[data-testid="conversations-table"]';
 const ROW = `${TABLE} .p-datatable-tbody > tr`;
 const CHECK_CELL = '.sc-datatable__check';
 const CHECKBOX = 'p-table-checkbox';
-/* La fila seleccionada se reconoce por `is-selected`, que la pinta
- * `[rowStyleClass]` leyendo el `Set` de selección de la página —la fuente de
- * verdad, la que usa la barra masiva—. NO por `.p-datatable-row-selected` de
- * p-table: esa clase no se re-pinta al instante en las filas que un rango añade
- * por el input (solo en las que togla p-table), así que afirmar sobre ella daría
- * un falso rojo en el rango aunque la selección sea correcta. Ver el comentario
- * de `onSelectionChange` en `sc-datatable`. */
-const SELECTED = /is-selected/;
+/* La fila seleccionada se reconoce por `sc-row--selected`, que la pone
+ * `sc-datatable` desde la selección —la fuente de verdad, la que usa la barra
+ * masiva—. NO por `.p-datatable-row-selected` de p-table: esa clase no se
+ * re-pinta en las filas que un rango añade por el input (solo en las que togla
+ * p-table), así que afirmar sobre ella daría un falso rojo en el rango aunque la
+ * selección sea correcta. Hasta el 2026-10-05 la ponía esta tabla con el nombre
+ * `is-selected`; ahora la tienen todas las listas. Ver el rango con ancla en
+ * `sc-datatable`. */
+const SELECTED = /sc-row--selected/;
 const PLAYER = 'sc-memory-conversation-player-modal .p-dialog';
 const BULK = 'sc-bulk-action-bar .bulk-bar';
 

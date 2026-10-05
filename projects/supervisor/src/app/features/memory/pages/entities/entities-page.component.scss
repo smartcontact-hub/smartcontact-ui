@@ -39,7 +39,16 @@
   /* 2 + el `gap` de 1 = los 42 de siempre (antes 1-5 + 1-5). */
   margin-bottom: var(--sc-spacing-2);
 
+  /* Dos tablas en una `.page--tabla` (DD-95): tus entidades miden sus filas y las del sistema se quedan con lo que
+   * queda hasta abajo, con el scroll dentro (`--system`, más abajo). La tarjeta y la tabla siguen la cadena de altos
+   * del molde: la sección es el eslabón que esta página pone entre `.page__inner` y la tarjeta. */
+  flex: 0 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+
   &__head {
+    flex: none;
     margin-bottom: var(--sc-spacing-1-125);
 
     h2 {
@@ -79,6 +88,16 @@
 
 .entities-section--system {
   margin-top: var(--sc-spacing-1);
+  /* La última: por debajo solo el relleno de la página, los 17,5 que deja el resto de listas bajo su tarjeta. */
+  margin-bottom: 0;
+
+  /* Se queda con el alto que dejan tus entidades, hasta lo que miden sus filas, y nunca menos que su cabecera y un
+   * par de filas: con muchas entidades tuyas, es tu tabla la que hace scroll. Medido el 2026-10-05: el reparto a
+   * medias cortaba 14 px la cuarta fila tuya a 1366 × 768 con 66 px en blanco debajo, y el mínimo de 252
+   * (`scale/18`) la cortaba 1,2 px. */
+  flex: 1 1 0;
+  min-height: var(--sc-spacing-12-5);
+  max-height: max-content;
 }
 
 .entities-empty {

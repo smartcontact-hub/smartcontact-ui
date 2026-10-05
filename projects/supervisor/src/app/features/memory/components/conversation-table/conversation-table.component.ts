@@ -1,5 +1,3 @@
-import { map, startWith } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,22 +5,16 @@ import {
   inject,
   input,
   output,
-  signal,
   type TemplateRef,
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
 
 import {
   type ScColumnCellContext,
   type ScColumnDef,
-  ScDatatableComponent as DatatableComponent,
-  type ScDatatableRowEvent,
-  type ScDatatableRowKeyEvent,
-  type ScRowStyleClassFn,
   ScTagComponent as TagComponent,
   ScBadgeComponent as BadgeComponent,
 } from '@smartcontact-hub/components';
@@ -54,10 +46,6 @@ export type ConversationContextAction = 'process' | 'analyze' | 'mark-read';
  * Premisa clarificada S53.5 por el usuario: sin recording no puede haber
  * transcripción, así que "transcribir" no es un item separado del menú —
  * "procesar" cubre el caso (mismo wording que el bulk modal).
- *
- * Función libre, no computed, porque la necesitan DOS consumidores con
- * granularidad distinta: el modelo del menú (la fila apuntada) y el kebab de
- * CADA fila, que decide si pintarse.
  */
 function primaryActionFor(conv: Conversation): ConversationContextAction | null {
   if (conv.hasTranscription && conv.hasAnalysis) return null;
@@ -65,34 +53,25 @@ function primaryActionFor(conv: Conversation): ConversationContextAction | null 
   return 'process';
 }
 
+/** La fecha de una conversación como se ordena: `dd/mm/aaaa` + hora pasa a `aaaa-mm-dd hh:mm`. */
+function claveFecha(conv: Conversation): string {
+  const [dd = '', mm = '', yyyy = ''] = conv.date.split('/');
+  return `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')} ${conv.hour}`;
+}
+
 /**
- * Tabla densa de conversaciones Memory.
+ * Lo que es de una conversación en su tabla: las columnas con sus celdas, las clases de cada fila, el menú del clic
+ * derecho y el orden por columna.
  *
- * Iter 1 (S36): 9 columnas básicas + chrome `.table sc-table-zebra` AED.
- * Iter 2 (S37): + columna Estado + sticky header + hover.
- * Iter 5 (S38): + abre player modal (originalmente desde row click).
- * Iter 6a (S38): + columna checkbox de selección al inicio.
- * Ola 6:        ese gesto se INVIERTE. La fila abre (R1) y la casilla —su
- *                celda entera— selecciona.
- * Iter S40 (#15): cluster lucide cambiado por `<sc-memory-status-icon>`.
- * Iter S53.5:  + menú click-derecho con acciones dinámicas según estado.
- * Ola 2:       ese menú pasa al `<p-menu>` compartido de la casa + kebab visible.
- *
- * B4 (esta sesión): el `<table>` a mano pasa a `sc-datatable`, la última de las
- *   diez tablas de la casa que quedaba sin migrar. Conserva su piel propia
- *   —densa, plana, con los cuatro estados de fila con shimmer y el botón de
- *   estado— sobre la piel compartida `.list-table` (ver
- *   `_memory-conversation-table.scss`): la gramática es la de la casa; el aspecto
- *   BeyondUI de Memory (S59) se mantiene por encima.
- *
- *   La selección deja de ser "toglea este id": `sc-datatable` gobierna la
- *   casilla, la casilla de cabecera y el rango con ancla, y emite la selección
- *   COMPLETA. Este componente la traduce a/desde el `Set` que sigue siendo la
- *   fuente de verdad en la página (de él cuelgan la barra masiva y el dispatch).
+ * La tabla la monta la página sobre `sc-list-page`, como el resto de listas (DD-98, 2026-10-05). Hasta ese día este
+ * componente pintaba su tabla propia, la última fuera de la pieza, y por eso se apartaba de las demás: no ordenaba y
+ * su buscador no atendía a Escape. Lo que solo tenía ella (el tramo pintado, Espacio que selecciona, Mayús+clic que no
+ * abre, el menú sin «⋮») lo hace ahora la pieza para todas. Aquí no se pinta nada: el componente da las plantillas de
+ * sus celdas y las funciones que la pieza pide, y conserva su piel propia (`_memory-conversation-table.scss`).
  */
 @Component({
   selector: 'sc-memory-conversation-table',
-  imports: [BadgeComponent, DatatableComponent, TagComponent, MenuModule, TooltipModule, TranslateModule, MemoryStatusIconComponent],
+  imports: [BadgeComponent, TagComponent, TooltipModule, TranslateModule, MemoryStatusIconComponent],
   templateUrl: './conversation-table.component.html',
   styleUrl: './conversation-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -100,53 +79,24 @@ function primaryActionFor(conv: Conversation): ConversationContextAction | null 
 export class ConversationTableComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
+  private readonly language = inject(LanguageService);
 
-  readonly conversations = input.required<readonly Conversation[]>();
-  readonly selectedIds = input.required<ReadonlySet<string>>();
   /** IDs en proceso de transcripción (mock dispatch). Pintan fila amber. */
   readonly processingIds = input<ReadonlySet<string>>(new Set());
   /** IDs en proceso de análisis IA. Pintan fila cyan. */
   readonly analyzingIds = input<ReadonlySet<string>>(new Set());
 
+  /** El botón de estado de una fila: abre el reproductor, como la fila. */
   readonly conversationOpen = output<Conversation>();
-  /** La selección COMPLETA tras un gesto de casilla/cabecera/rango. Reemplaza a
-   *  los antiguos `selectionToggled`/`allToggled`: `sc-datatable` piensa en el
-   *  conjunto entero, no en toggles. */
-  readonly selectionChange = output<ReadonlySet<string>>();
-  /** Click derecho sobre una fila → acción dinámica según estado. */
+  /** Una acción del menú del clic derecho. */
   readonly contextActionRequested = output<{
     action: ConversationContextAction;
     conversation: Conversation;
   }>();
 
-  /** Fila a la que apunta el menú compartido. Se guarda el ID y no el objeto
-   *  para que el modelo siga vivo si la conversación cambia de estado
-   *  mientras el menú está abierto. */
-  protected readonly menuTargetId = signal<string | null>(null);
-
-  /** Nombre accesible de las casillas. Sin esto PrimeNG cae a `'Row Selected'`
-   *  / `'All items selected'` — inglés fijo, sin identidad de fila. La tabla a
-   *  mano sí las nombraba; se reutilizan sus claves. Ver `ScRowAriaLabelFn`. */
-  protected readonly ariaFila = (conv: Conversation): string =>
-    this.translate.instant('memory.conversations.select_row_aria', { id: conv.id });
-  protected readonly ariaTodo = this.translate.instant('memory.conversations.select_all_aria');
-
-  /** Idioma vivo: dependencia del `columns` computed para que las cabeceras NO
-   *  se queden congeladas al cambiar de idioma. `translate.instant()` no es
-   *  reactivo (a diferencia del pipe `| translate`), así que sin esto el
-   *  computed no se re-evaluaría — lo vigila `audit:datatables`. */
-  private readonly currentLang = toSignal(
-    this.translate.onLangChange.pipe(
-      map((e) => e.lang),
-      startWith(this.translate.currentLang),
-    ),
-    { initialValue: this.translate.currentLang },
-  );
-
   /* ── Plantillas de celda ─────────────────────────────────────────────────
-   * Viven FUERA del `<sc-datatable>` (el `<td>` lo pinta el DS y una regla
-   * encapsulada no lo alcanzaría); `columns()` las recoge. Son `computed` que
-   * LEEN los `viewChild`, que resuelven tarde: en un campo se quedarían en
+   * El `<td>` lo pinta el DS y una regla encapsulada no lo alcanzaría; lo que va dentro sí, porque se declara aquí.
+   * `columns()` las recoge. Son `computed` que LEEN los `viewChild`, que resuelven tarde: en un campo se quedarían en
    * `undefined` para siempre. */
   private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('statusTpl');
   private readonly servicePillTpl =
@@ -158,8 +108,6 @@ export class ConversationTableComponent {
   private readonly idTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('idTpl');
   private readonly whenTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('whenTpl');
 
-  private readonly language = inject(LanguageService);
-
   /**
    * Fecha y hora en UNA columna, con el día dicho como se dice: «Hoy · 12:50», «Ayer · 13:12» o
    * «vie, 11 sept · 12:50» (2026-09-14). Antes eran dos columnas y la fecha salía idéntica en
@@ -167,7 +115,7 @@ export class ConversationTableComponent {
    * actual. Formato del navegador (`Intl`) con el idioma de la app.
    */
   protected when(conv: Conversation): string {
-    this.currentLang();
+    this.lang();
     const [dd, mm, yyyy] = conv.date.split('/').map(Number);
     const day = new Date(yyyy, mm - 1, dd);
     const today = new Date();
@@ -195,7 +143,7 @@ export class ConversationTableComponent {
    * botón de estado (`pTooltip`, primeng.dev/tooltip) y en su nombre accesible.
    */
   protected statusDescription(conv: Conversation): string {
-    this.currentLang();
+    this.lang();
     const t = (k: string, p?: object) => this.translate.instant(`memory.conversations.status.${k}`, p);
     const failed = this.statusTone(conv) === 'error';
     const parts: string[] = [];
@@ -212,8 +160,8 @@ export class ConversationTableComponent {
     return parts.join(' · ');
   }
 
-  protected readonly columns = computed<readonly ScColumnDef<Conversation>[]>(() => {
-    this.currentLang();
+  readonly columns = computed<readonly ScColumnDef<Conversation>[]>(() => {
+    this.lang();
     const t = (k: string): string => this.translate.instant(`memory.conversations.table.${k}`);
     /* ANCHOS (2026-09-13). El reparto es fijo (`table-layout: fixed`, para que las
      * columnas no salten al filtrar o paginar), así que una columna sin ancho se
@@ -226,60 +174,93 @@ export class ConversationTableComponent {
      * 1440 les tocan 169.5px y la más larga pide 152, así que nada se parte. A 1280
      * les tocan 129.5 y no caben (las diez piden 1203 de 1153): las etiquetas
      * recortan con puntos suspensivos (el `tag` del DS no se parte) y el texto
-     * libre baja a dos líneas. */
+     * libre baja a dos líneas.
+     *
+     * ORDEN (2026-10-05): todas menos Estado se ordenan por cabecera, como en el resto de listas (DD-98). Las
+     * ordena `sortFn`. */
     return [
       { field: 'status', header: t('status'), width: '77px', cellTemplate: this.statusTpl() },
       // 182: «sex., 13 de mar. · 12:50» (pt-BR) mide 150 + 28 de relleno, redondeado a 7.
-      { field: 'date', header: t('date'), width: '182px', cellTemplate: this.whenTpl() },
-      { field: 'service', header: t('service'), cellTemplate: this.servicePillTpl() },
-      { field: 'origin', header: t('origin'), cellTemplate: this.textTpl() },
-      { field: 'group', header: t('group'), cellTemplate: this.groupPillTpl() },
-      { field: 'destination', header: t('destination'), cellTemplate: this.textTpl() },
+      { field: 'date', header: t('date'), width: '182px', sortable: true, cellTemplate: this.whenTpl() },
+      { field: 'service', header: t('service'), sortable: true, cellTemplate: this.servicePillTpl() },
+      { field: 'origin', header: t('origin'), sortable: true, cellTemplate: this.textTpl() },
+      { field: 'group', header: t('group'), sortable: true, cellTemplate: this.groupPillTpl() },
+      { field: 'destination', header: t('destination'), sortable: true, cellTemplate: this.textTpl() },
       // 112: la cabecera francesa («Durée conv.») es la que manda, no la cifra.
-      { field: 'duration', header: t('duration'), width: '112px', align: 'right', cellTemplate: this.numTpl() },
-      { field: 'waiting', header: t('waiting'), width: '98px', align: 'right', cellTemplate: this.numTpl() },
+      {
+        field: 'duration',
+        header: t('duration'),
+        width: '112px',
+        align: 'right',
+        sortable: true,
+        cellTemplate: this.numTpl(),
+      },
+      {
+        field: 'waiting',
+        header: t('waiting'),
+        width: '98px',
+        align: 'right',
+        sortable: true,
+        cellTemplate: this.numTpl(),
+      },
       // 133, no 119 (2026-09-13): `GDPR-MR-EXP` mide 100 + 28 = 128 y un ID no se
       // parte, así que con 119 se salía de la columna a cualquier ancho de ventana.
-      { field: 'id', header: t('id'), width: '133px', cellTemplate: this.idTpl() },
-      /* Sin columna de acciones (decisión de producto, 2026-09-13). Sus tres acciones tienen
-       * otra puerta visible: Transcribir y Marcar como leída, en la barra que
-       * sale al seleccionar (Espacio con teclado); Analizar, en el reproductor
-       * (Enter o clic en la fila). El clic derecho sigue abriendo el menú. */
+      { field: 'id', header: t('id'), width: '133px', sortable: true, cellTemplate: this.idTpl() },
+      /* Sin columna de acciones (decisión de producto, 2026-09-13): la pieza se monta con `rowMenuColumn` en falso.
+       * Sus tres acciones tienen otra puerta visible: Transcribir y Marcar como leída, en la barra que sale al
+       * seleccionar (Espacio con teclado); Analizar, en el reproductor (Intro o clic en la fila). El clic derecho
+       * sigue abriendo el menú. */
     ];
   });
 
-  /* Puente de selección: la fuente de verdad es el `Set` de la página. Aquí se
-   * traduce a las filas que `sc-datatable` necesita para su casilla, y de vuelta
-   * al `Set` cuando el DS emite una selección nueva. */
-  protected readonly selectedRows = computed<readonly Conversation[]>(() => {
-    const ids = this.selectedIds();
-    return this.conversations().filter((c) => ids.has(c.id));
-  });
+  /** Para ordenar texto: con los números por su valor y sin distinguir mayúsculas ni acentos, en el idioma de la app. */
+  private readonly collator = computed(
+    () => new Intl.Collator(this.language.locale(), { numeric: true, sensitivity: 'base' }),
+  );
 
-  protected onSelectionChange(selection: Conversation | readonly Conversation[] | null): void {
-    const rows = Array.isArray(selection) ? selection : selection ? [selection as Conversation] : [];
-    this.selectionChange.emit(new Set(rows.map((c) => c.id)));
-  }
+  /** El orden por columna (ascendente; la dirección la pone la pieza): la fecha por día y hora, lo demás como texto. */
+  readonly sortFn = (a: Conversation, b: Conversation, field: string): number => {
+    if (field === 'date') return claveFecha(a).localeCompare(claveFecha(b));
+    const valor = (c: Conversation) => String((c as unknown as Record<string, unknown>)[field] ?? '');
+    return this.collator().compare(valor(a), valor(b));
+  };
 
   /**
-   * Clases por fila. Los cuatro estados de Memory (deleted/processing/analyzing/
-   * failed) + el seleccionado los pinta la piel `_memory-conversation-table`
-   * sobre estas clases; `--clickable` da cursor y hover a la fila que abre.
-   *
-   * `is-selected` sale del `Set` de la página —la fuente de verdad de la
-   * selección—, NO de la clase `.p-datatable-row-selected` de p-table. Es a
-   * propósito: p-table no re-resalta al instante las filas que un rango añade
-   * por el input (solo las que togla él); leer el `Set` pinta las N filas del
-   * rango sin depender de ese detalle. Se re-evalúa porque `[selection]` cambia
-   * y con él se re-renderiza la tabla. */
-  protected readonly rowStyleClass: ScRowStyleClassFn<Conversation> = (conv) => {
-    const clases = ['sc-row--clickable'];
-    if (this.selectedIds().has(conv.id)) clases.push('is-selected');
+   * Los cuatro estados de Memory, que pinta su piel (`_memory-conversation-table.scss`). La selección la pinta
+   * `sc-datatable` (`sc-row--selected`) y la fila que abre, la pieza (`sc-row--clickable`).
+   */
+  readonly rowClass = (conv: Conversation): string | undefined => {
+    const clases: string[] = [];
     if (conv.deleted) clases.push('is-deleted');
     if (this.processingIds().has(conv.id)) clases.push('is-processing');
     if (this.analyzingIds().has(conv.id)) clases.push('is-analyzing');
     if (conv.hasFailedTranscription) clases.push('is-failed');
-    return clases.join(' ');
+    return clases.join(' ') || undefined;
+  };
+
+  /** El menú del clic derecho: depende del estado de la fila. Sin acciones, vacío, y la pieza no lo abre. */
+  readonly rowMenu = (conv: Conversation): MenuItem[] => {
+    const items: MenuItem[] = [];
+    const primary = primaryActionFor(conv);
+    if (primary) {
+      items.push({
+        label: this.translate.instant(
+          primary === 'process' ? 'memory.conversations.context.process' : 'memory.conversations.context.analyze',
+        ),
+        icon: primary === 'process' ? 'sc-icon-font sc-icon-font--bolt' : 'sc-icon-font sc-icon-font--auto_awesome',
+        command: () => this.contextActionRequested.emit({ action: primary, conversation: conv }),
+      });
+    }
+    // «Marcar como leída» solo si la fila tiene transcripción fallida.
+    if (conv.hasFailedTranscription) {
+      if (primary) items.push({ separator: true });
+      items.push({
+        label: this.translate.instant('memory.conversations.context.mark_read'),
+        icon: 'sc-icon-font sc-icon-font--done_all',
+        command: () => this.contextActionRequested.emit({ action: 'mark-read', conversation: conv }),
+      });
+    }
+    return items;
   };
 
   protected isProcessing(id: string): boolean {
@@ -288,46 +269,6 @@ export class ConversationTableComponent {
 
   protected isAnalyzing(id: string): boolean {
     return this.analyzingIds().has(id);
-  }
-
-  /* ── R1 · el click en una fila ABRE ──────────────────────────────────────
-   * fila → abre · casilla → selecciona · shift+click en la casilla → rango
-   * (lo sirve `sc-datatable`) · Enter → abre · Espacio → selecciona.
-   */
-  protected onRowClick(event: ScDatatableRowEvent<Conversation>): void {
-    // Shift+click sobre la fila NO abre el reproductor: quien encadena
-    // selecciones con Mayús no espera que se le abra un modal encima. El rango
-    // de verdad se hace desde la casilla (lo gobierna el DS); aquí basta con no
-    // abrir.
-    if (event.originalEvent.shiftKey) return;
-    this.conversationOpen.emit(event.row);
-  }
-
-  protected onRowKeydown(event: ScDatatableRowKeyEvent<Conversation>): void {
-    // Enter ABRE (acción primaria) y Espacio SELECCIONA. Es la convención de
-    // listas de escritorio y mantiene el teclado a la par del ratón.
-    const key = event.originalEvent.key;
-    if (key === 'Enter') {
-      event.originalEvent.preventDefault();
-      this.conversationOpen.emit(event.row);
-      return;
-    }
-    if (key === ' ') {
-      event.originalEvent.preventDefault();
-      const next = new Set(this.selectedIds());
-      if (next.has(event.row.id)) next.delete(event.row.id);
-      else next.add(event.row.id);
-      this.selectionChange.emit(next);
-    }
-  }
-
-  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). Solo abre si la fila
-   *  tiene acciones: un menú vacío es peor que ninguno. */
-  protected onRowContextMenu(
-    event: ScDatatableRowEvent<Conversation>,
-    menu: { toggle: (e: Event) => void },
-  ): void {
-    if (this.setMenuTarget(event.row)) menu.toggle(event.originalEvent);
   }
 
   /** El botón de estado abre el reproductor. `stopPropagation` evita que además
@@ -359,66 +300,5 @@ export class ConversationTableComponent {
 
   protected statusTone(conv: Conversation): StatusTone {
     return resolveStatusTone(conv, this.isProcessing(conv.id), this.isAnalyzing(conv.id));
-  }
-
-  /** Conversación referenciada por el menú actual (si abierto). */
-  protected readonly contextConv = computed<Conversation | null>(() => {
-    const id = this.menuTargetId();
-    if (!id) return null;
-    return this.conversations().find((c) => c.id === id) ?? null;
-  });
-
-  /** Modelo del menú compartido — computed ESTABLE: solo cambia al apuntar a
-   *  otra fila. Los items dependen del estado de ESA conversación. */
-  protected readonly menuItems = computed<MenuItem[]>(() => {
-    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
-    const conv = this.contextConv();
-    if (!conv) return [];
-    const items: MenuItem[] = [];
-    const primary = primaryActionFor(conv);
-
-    if (primary) {
-      items.push({
-        label: this.translate.instant(
-          primary === 'process'
-            ? 'memory.conversations.context.process'
-            : 'memory.conversations.context.analyze',
-        ),
-        icon:
-          primary === 'process'
-            ? 'sc-icon-font sc-icon-font--bolt'
-            : 'sc-icon-font sc-icon-font--auto_awesome',
-        command: () => this.dispatchContext(primary),
-      });
-    }
-
-    // "Marcar como leída" solo si la fila tiene transcripción fallida.
-    if (conv.hasFailedTranscription) {
-      if (primary) items.push({ separator: true });
-      items.push({
-        label: this.translate.instant('memory.conversations.context.mark_read'),
-        icon: 'sc-icon-font sc-icon-font--done_all',
-        command: () => this.dispatchContext('mark-read'),
-      });
-    }
-    return items;
-  });
-
-  /** Apunta el menú compartido a una fila. Devuelve si esa fila tiene alguna
-   *  acción — el llamante solo abre el menú si la hay. */
-  protected setMenuTarget(conv: Conversation): boolean {
-    this.menuTargetId.set(conv.id);
-    return this.rowHasActions(conv);
-  }
-
-  /** Una fila ya procesada y analizada no ofrece nada: ahí no se pinta kebab. */
-  protected rowHasActions(conv: Conversation): boolean {
-    return primaryActionFor(conv) !== null || !!conv.hasFailedTranscription;
-  }
-
-  protected dispatchContext(action: ConversationContextAction): void {
-    const conv = this.contextConv();
-    if (!conv) return;
-    this.contextActionRequested.emit({ action, conversation: conv });
   }
 }
