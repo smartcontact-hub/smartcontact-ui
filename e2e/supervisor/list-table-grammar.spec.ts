@@ -94,6 +94,9 @@ const PAGINAS = [
   /* Los contactos de una agenda (DD-163): la tabla de una sección del editor, en su propio componente.
    * `audit:datatables` la vigila por las rutas de su feature, así que su ruta tiene que estar aquí. */
   { ruta: 'admin/agendas/editar/1', nombre: 'contactos de una agenda', altoFila: 44 },
+  // Horarios y Variables: el mismo reparto de `repo-list-page` que agendas, sin su propio editor.
+  { ruta: 'admin/horarios', nombre: 'horarios', altoFila: 44 },
+  { ruta: 'admin/variables', nombre: 'variables', altoFila: 44 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */
