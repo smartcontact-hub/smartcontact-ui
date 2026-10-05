@@ -47,7 +47,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **33 props nativas no expuestas**: `ariaLabel`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `disabled`, `fluid`, `hostName`, `icon`, `iconOnly`, `iconPos`, `label`, `link`, `loading`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `rounded`, `severity`, `size`, `style`, `styleClass`, `tabindex`, `text`, `type`, `variant`
 
-### `sc-delete-entity-dialog` · 11 usos · primeng/button
+### `sc-delete-entity-dialog` · 9 usos · primeng/button
 
 **33 props nativas no expuestas**: `ariaLabel`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `disabled`, `fluid`, `hostName`, `icon`, `iconOnly`, `iconPos`, `label`, `link`, `loading`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `rounded`, `severity`, `size`, `style`, `styleClass`, `tabindex`, `text`, `type`, `variant`
 
@@ -67,7 +67,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **25 props nativas no expuestas**: `appendTo`, `ariaLabelledBy`, `autofocus`, `inputSize`, `inputStyle`, `inputStyleClass`, `max`, `mediumLabel`, `mediumRegex`, `min`, `minlength`, `motionOptions`, `overlayOptions`, `pPasswordPT`, `pPasswordUnstyled`, `pattern`, `promptLabel`, `showClear`, `showPassword`, `step`, `strongLabel`, `strongRegex`, `tabindex`, `variant`, `weakLabel`
 
-### `sc-button` · 165 usos · primeng/button
+### `sc-button` · 156 usos · primeng/button
 
 **24 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconOnly`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `severity`, `style`, `styleClass`, `tabindex`, `text`
 
@@ -87,7 +87,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `autofocus`, `binary`, `disabled`, `invalid`, `required`, `tabindex`
 
-### `sc-search` · 11 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
+### `sc-search` · 10 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -95,7 +95,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
-### `sc-toggleswitch` · 33 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 32 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
@@ -107,7 +107,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `badgeDisabled`, `badgeSize`, `severity`, `value`
 
-### `sc-inputtext` · 38 usos · primeng/inputtext
+### `sc-inputtext` · 33 usos · primeng/inputtext
 
 **4 props nativas no expuestas**: `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -119,7 +119,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
 
-### `sc-textarea` · 8 usos · primeng/textarea
+### `sc-textarea` · 7 usos · primeng/textarea
 
 **3 props nativas no expuestas**: `pSize`, `pTextareaPT`, `pTextareaUnstyled`
 
@@ -127,7 +127,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **2 props nativas no expuestas**: `style`, `styleClass`
 
-### `sc-chip` · 7 usos · primeng/chip
+### `sc-chip` · 6 usos · primeng/chip
 
 **2 props nativas no expuestas**: `chipProps`, `removeIcon`
 
@@ -135,7 +135,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-checkbox` · 44 usos · —
+### `sc-checkbox` · 38 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -147,11 +147,11 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-divider` · 34 usos · primeng/divider
+### `sc-divider` · 31 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-empty-state` · 19 usos · —
+### `sc-empty-state` · 17 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -175,7 +175,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-option-cards` · 2 usos · —
+### `sc-option-cards` · 1 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -187,7 +187,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-section-card` · 31 usos · —
+### `sc-section-card` · 23 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -199,7 +199,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-tag` · 34 usos · primeng/tag
+### `sc-tag` · 27 usos · primeng/tag
 
 Expone todo lo que PrimeNG documenta.
 

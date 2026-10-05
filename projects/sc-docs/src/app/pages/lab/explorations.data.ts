@@ -178,6 +178,28 @@ export const EXPLORATIONS: readonly Exploration[] = [
       },
     ],
   },
+  {
+    /* Era un laboratorio hasta el 2026-10-05 (DD-132, actualización): se retiró del Supervisor y queda aquí con el
+     * último build que lo tenía. Sin etiqueta de archivo: desde la nube no se puede subir, y una que solo exista en
+     * una copia rompe `explorations:check` en las demás. El `commit` es de `main`, que no se reescribe. */
+    id: 'lab-admin',
+    title: 'Administración, tras el teardown',
+    version: {
+      date: '2026-10-05',
+      behavior: 'Cuatro pantallas de Administración rehechas con el teardown; el botón flotante apaga las reglas nuevas.',
+      href: 'https://b26ebfb5.sc-supervisor.pages.dev/lab/admin/grupos',
+      commit: 'f41d3ce6',
+    },
+    objective: '¿Las 20 decisiones del teardown mejoran el alta y la edición de grupos y usuarios?',
+    status: 'archivada',
+    statusNote:
+      'Superada por los tipos de usuario con su plantilla (DD-132) y por las fichas de grupo, agente y usuario (DD-121, DD-122). El enlace abre el último build que la tenía.',
+    live: {
+      label: 'b26ebfb5.sc-supervisor.pages.dev/lab/admin',
+      href: 'https://b26ebfb5.sc-supervisor.pages.dev/lab/admin/grupos',
+    },
+    history: [],
+  },
 ];
 
 /* ── LABORATORIOS ───────────────────────────────────────────────────────────────────────────────
@@ -210,16 +232,5 @@ export const LABS: readonly Lab[] = [
     where: 'La barra de mandos, arriba de la página.',
     href: 'https://sc-supervisor.pages.dev/lab/sidebar',
     label: 'sc-supervisor.pages.dev/lab/sidebar',
-  },
-  {
-    id: 'lab-admin',
-    title: 'Administración, tras el teardown',
-    question: '¿Las 20 decisiones del teardown mejoran el alta y la edición de grupos y usuarios?',
-    controls: ['Reglas nuevas', 'Grietas de hoy'],
-    where: 'El botón flotante, abajo a la derecha: apaga las dos reglas y enseña lo de hoy en vivo.',
-    /* Producción desde que entró #225 (medido: 200). Antes apuntaba al preview de su rama, que es
-     * lo que existía; un enlace del Lab a una rama es un 404 esperando a que alguien la borre. */
-    href: 'https://sc-supervisor.pages.dev/lab/admin/grupos',
-    label: 'sc-supervisor.pages.dev/lab/admin',
   },
 ];

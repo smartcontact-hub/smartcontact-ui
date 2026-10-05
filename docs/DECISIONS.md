@@ -2072,6 +2072,16 @@ Lo que había: cuatro tipos (administrador, supervisor, agente y visor), 11 secc
   Tipificaciones va con la supervisión. Las dos, respondidas en DD-135: Tipificaciones va con la supervisión, y no hay
   guardas, porque el prototipo es el superadmin y producto recorta qué ve cada rol.
 
+**Actualización (2026-10-05)** · Se retira el laboratorio de Administración (`/lab/admin`), el que aplicaba el
+paquete sin preguntar. Rehízo el alta y la edición de grupos y usuarios con las decisiones del teardown de mensajería,
+y lo superaron esta DD y las fichas de DD-121 y DD-122.
+- **Sale:** su carpeta (24 ficheros, 2.886 líneas), su ruta y su bloque de textos en los cuatro idiomas. `/lab/admin`
+  cae en «Sección en construcción», como cualquier ruta que no existe (`laboratorio-retirado.spec.ts`).
+- **Queda archivado** en el Lab de sc-docs, entre las exploraciones: con el commit de `main` que lo tenía
+  (`f41d3ce6`) y su enlace fijo, `b26ebfb5.sc-supervisor.pages.dev/lab/admin`.
+- **Sin etiqueta de archivo:** desde la nube no se puede subir, y una que solo existiera en una copia rompería
+  `explorations:check` en las demás.
+
 ---
 
 ## DD-131 · 2026-09-28 — El panel rápido de agentes mide lo que lleva dentro, y una casilla fija se lee marcada
