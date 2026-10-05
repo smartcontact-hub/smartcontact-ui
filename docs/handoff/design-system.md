@@ -40,7 +40,7 @@
 - **`sc-selectbutton`: cablear su color a `var(--sc-cmp-togglebutton-*)`** cuando Figma suba la opción no elegida (§8).
 - **Lo que dejó DD-113:** ~~`sc-form-section-nav` con `role="tab"` sin `tablist`~~ (resuelto en DD-122: cada fila
   es un enlace); tira del reproductor sin nombre (clave i18n); la «o» del acceso en primario
-  (`.login__divider` no llega); `sc-slot` a tokens del divider (e2e y captura); CSS muerto `.seg` e `.inline-field`.
+  (`.login__divider` no llega); `sc-slot` a tokens del divider (e2e y captura); ~~CSS muerto `.seg` e `.inline-field`~~ (fuera el 2026-10-05).
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
 - **La puerta barata del preflight, contra un ledger en PR ajeno** (LEARNINGS #21, roto el 2026-09-15 con #196): avisar si un PR abierto toca el mismo `docs/handoff/` o `DECISIONS`.
@@ -152,7 +152,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 **Lo que dejó s42, medido y sin hacer:**
 
 - ~~**El tier `app/typography/xl|xxl`**~~ → se mudó a [`docs/figma-pendiente.md`](../figma-pendiente.md) §3.
-- **`--sc-font-size-caption-bold` está declarado y tiene 0 usos.**
+- ~~**`--sc-font-size-caption-bold` está declarado y tiene 0 usos.**~~ → retirado el 2026-10-05 (criterio de #194).
 - **`display-1` se quedó sin consumidores y `h1` con uno que es solo fallback.** Es el estado
   honesto tras DD-48 (la rampa era aspiracional desde DD-13), no una regresión: la rampa ya dice
   la verdad y espera consumidores de PRODUCTO. Si el Supervisor adopta la rampa, es ahí.

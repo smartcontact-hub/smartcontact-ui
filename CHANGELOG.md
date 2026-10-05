@@ -130,6 +130,12 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   cambia de alto, no solo cuando cambia la ventana. Con «reducir movimiento», el listado de agentes del Supervisor
   salía sin ninguna fila: la lista virtual contaba en el fotograma en que la tabla aún medía 0. Sin API nueva.
 
+### Removed
+
+- **`@smartcontact-hub/styles`** — se retira `--sc-font-size-caption-bold`: ningún uso en apps, DS, scripts ni docs,
+  y era lo último del juego que se retiró con el mismo criterio en #194 (sus pesos y familias). El paquete del tema lo
+  nombra entre los retirados.
+
 ## [1.0.0] — 2026-09-09
 
 Primera versión **estable**. El corte no es de calendario: es que el sistema ya tiene

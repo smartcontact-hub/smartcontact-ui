@@ -215,9 +215,8 @@
     color: var(--sc-text-secondary);
   }
 
-  /* `__info` y `__suffix` NO suben con el resto: cero plantillas los usan (el sufijo
-   * que sí se ve —"píxeles", "segundos"— es `.inline-field__suffix`, que vive con su
-   * campo). Subirlos habría cambiado dos rules muertas de sitio en vez de borrarlas. */
+  /* `__info` y `__suffix` NO suben con el resto: cero plantillas los usan. Subirlos habría
+   * cambiado dos rules muertas de sitio en vez de borrarlas. */
 
   &__required {
     color: var(--sc-text-danger);
