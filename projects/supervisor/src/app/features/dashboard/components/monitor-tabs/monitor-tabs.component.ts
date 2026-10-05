@@ -68,7 +68,7 @@ export class MonitorTabsComponent {
   /** Id del `p-menu` del ⋮, para su `aria-controls`. */
   protected readonly menuId = `sc-dashboard-monitor-tabs-menu-${++monitorTabsMenuIdCounter}`;
 
-  /** Si el menú del ⋮ está abierto, para su `aria-expanded` (DD-170, el mismo patrón que el ⋮ de un widget). */
+  /** Si el menú del ⋮ está abierto, para su `aria-expanded` (DD-171, el mismo patrón que el ⋮ de un widget). */
   protected readonly menuOpen = signal(false);
 
   protected readonly menuItems = computed<MenuItem[]>(() => {

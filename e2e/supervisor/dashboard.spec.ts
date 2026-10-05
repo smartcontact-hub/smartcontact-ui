@@ -67,7 +67,7 @@ test('el ⋮ de un widget dice en el foco que abre un menú, y si ya está abier
   await expect(masAcciones).toHaveAttribute('aria-expanded', 'false');
 });
 
-test('el ⋮ de la pestaña del monitor dice en el foco que abre un menú, y si ya está abierto (DD-170)', async ({ page }) => {
+test('el ⋮ de la pestaña del monitor dice en el foco que abre un menú, y si ya está abierto (DD-171)', async ({ page }) => {
   await goto(page, 'dashboard');
   const masAcciones = page.locator('sc-dashboard-monitor-tabs').getByRole('button', { name: /^Más acciones de / });
   await expect(masAcciones).toHaveAttribute('aria-haspopup', 'menu');
