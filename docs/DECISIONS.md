@@ -131,8 +131,8 @@
 
 ## DD-172 · 2026-10-05 — El pulido de las fichas tras DD-170: textos cortos, el nombre editable, el índice, la tabla de agentes, las columnas y la selección
 
-**Contexto** · La revisión de DD-170 en local trajo una lista: textos de ayuda largos («algunos solo sobra una palabra
-y fuerza un salto de carro»), «Tiempo de transferencia» que es el tiempo que suena en un agente, el punto del índice
+**Contexto** · La revisión de DD-170 en local trajo una lista: textos de ayuda largos, a veces con una sola palabra
+en la última línea, «Tiempo de transferencia» que es el tiempo que suena en un agente, el punto del índice
 que no se alinea, la tabla de agentes de la ficha que desplaza de lado, su paginación, el selector de columnas de los
 listados y un contador de la selección. Y una revisión de interacción con Playwright de lo que puede fallar al usar las
 fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
@@ -198,7 +198,7 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
 8. **«Administrativo», en marrón**: el color de etiqueta `brown`, nuevo en la paleta del DS (`LabelColor`, nueve
    colores) y en todas sus etiquetas: `sc-tag` y `sc-chip` con `variant="label"`, la paleta de puntos y el selector de
    color de Etiquetas. La paleta del Kit no trae familia marrón: el marrón de la paleta es el ámbar oscuro, y la
-   etiqueta va llena, no tintada como las demás, porque así se pidió («marrón de fondo y el texto que sea accesible»):
+   etiqueta va llena, no tintada como las demás: el marrón es el fondo, y el texto, el que llegue a AA sobre él:
    fondo `amber-800` (#92400e) y texto blanco, 7,1:1; en oscuro, `amber-900` con `amber-100`. Administrativo dejaba
    de ser un aviso (la severidad `warn`, amarilla): es un estado del agente.
 

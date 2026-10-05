@@ -27,10 +27,12 @@ f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/
 (DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. El de la
 revisión de producto del 2026-10-04 (DD-157 a DD-162): `git show 7d470054:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · El pulido de las fichas (DD-172), en un lote de seis bloques, en su rama
+## ✅ 2026-10-05 · El pulido de las fichas (DD-172), en un lote de ocho bloques, en su rama
 
-> **Sello:** rama `arebury/fichas-pulido` sobre `main` en HEAD `7d470054` (DD-170 ya fundido). Un PR, un commit en rojo
-> y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local.
+> **Sello:** rama `arebury/fichas-pulido` con `main` fundido en HEAD `fcaf40db` (DD-170 y DD-171 de la otra sesión ya
+> están). Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local. **Era
+> DD-171**: la otra sesión fundió antes su DD-171 (`sc-button` anuncia su popup), y esta se renumeró a DD-172 con sus 42
+> citas.
 
 - **1 · El nombre editable:** se cierra al salir (pulsar fuera, Tab) con lo escrito, y al cerrar el foco vuelve al
   nombre. Lo encontró la revisión de interacción con Playwright (una sonda que anota y no afirma): la columna fija
@@ -41,10 +43,18 @@ revisión de producto del 2026-10-04 (DD-157 a DD-162): `git show 7d470054:docs/
 - **3 · Las marcas del índice** (`sc-form-section-nav`), al final de su fila y en la misma vertical, con su hueco fijo.
 - **4 · La tabla de agentes del grupo**, compacta (`sm`) y cada columna a su rótulo: cabe a 1440 con tres canales (antes
   desplazaba 181 px). **Sin paginación**, en la ficha y en el panel; con lista virtual la caja ocupa su tope (con
-  «Todos» se quedaba en 2 px). El porqué de la paginación (DD-151 no lo decía), en DD-172 §5.
+  «Todos» se quedaba en 2 px). El porqué de la paginación (DD-151 no lo decía), en DD-172 §5. **La cabecera, una fila
+  de texto** alineada con sus controles y solo la casilla de «todos» de Asignado: elegida entre tres opciones en la
+  revisión, tras una investigación de SaaS de referencia y sistemas de diseño (DD-172 §4). Icono y casilla en cada
+  cabecera se probó antes y se descartó. La barra de filtro, de borde a borde.
 - **5 · «2/14 grupos seleccionados»** en la barra en lote del DS (`total`), y «2 de 14» para el lector.
 - **6 · El «Column Toggle» de primeng.dev**, tal cual, en los listados (sustituye el Listbox de DD-162), con su teclado
   sin arrastrar. Medido contra primeng.dev.
+- **7 · «Administrativo», en marrón:** el color de etiqueta `brown`, nuevo en todo el DS (nueve colores, sc-docs, la
+  paleta de puntos y el selector de Etiquetas). El Kit no trae marrón: `amber-800` lleno con texto blanco (7,1:1).
+  Pendiente en Figma (`figma-pendiente` §36b).
+- **Una prueba ajena que falla en tanda:** `panel-agentes-monitor` «… dice en el foco que abre un menú» (de DD-171, la
+  otra sesión) pide `…menu-1_list` y en la tanda completa llega `…menu-2_list`; pasa 3 de 3 a solas.
 
 ## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), fundido (#337)
 
@@ -181,7 +191,7 @@ sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): l
 
 ## SIGUIENTE — sin preguntar
 
-0. **El pulido de las fichas (DD-172), en su PR** (el tramo de arriba): Rafa lo mira en local; con su visto bueno, se
+0. **El pulido de las fichas (DD-172), en su PR** (el tramo de arriba): se revisa en local; con el visto bueno, se
    funde y se lee el CI de `main`. Con esto se acaba lo que dependía de nosotros en este frente. Lo siguiente: **triar los otros frentes** (DS, CusCare, Dashboard y Sidebar, cada uno con su hand-off) en
    lotes como estos, y enseñarlos antes de empezar ninguno.
 
