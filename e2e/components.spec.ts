@@ -169,6 +169,26 @@ test.describe('sc-button', () => {
     await expect(icon).toBeVisible();
     await screenshotBaseline(page, 'button');
   });
+
+  test('«Solo icono», como en primeng.dev: cada botón con su nombre, y el «+» de crear es un círculo', async ({ page }) => {
+    await gotoPage(page, 'button');
+    // Las cuatro formas que el DS expone (relleno, redondo, redondo con borde y redondo de texto), con sus siete
+    // variantes. Sin rótulo, el nombre es lo único que oye el lector.
+    const botones = page.getByTestId('sc-btn-solo-icono').getByRole('button');
+    await expect(botones).toHaveCount(28);
+    expect(await botones.evaluateAll((bs) => bs.filter((b) => !b.getAttribute('aria-label')).length), 'sin nombre').toBe(0);
+
+    // El «+» de crear (DD-167): redondo, con borde y secundario; un círculo del ancho de solo icono del Kit.
+    const mas = page.getByTestId('sc-btn-crear').getByRole('button', { name: 'Nueva agenda' });
+    const faltan = await mas.evaluate((el) =>
+      ['p-button-icon-only', 'p-button-rounded', 'p-button-outlined', 'p-button-secondary'].filter((c) => !el.classList.contains(c)),
+    );
+    expect(faltan, 'el solo icono redondo, con borde y en gris').toEqual([]);
+    const lado = parseFloat(kitPx('button.root.iconOnlyWidth'));
+    const caja = (await mas.boundingBox())!;
+    expect(caja.width, 'el ancho del solo icono del Kit').toBeCloseTo(lado, 1);
+    expect(caja.height, 'redondo: tan alto como ancho').toBeCloseTo(lado, 1);
+  });
 });
 
 test.describe('sc-badge', () => {
@@ -662,6 +682,17 @@ test.describe('sc-grouppopover', () => {
     await expect(overlay.getByText('Incidencias')).toBeVisible();
     await expect(overlay.getByText(/más$/)).toHaveCount(0);
     await screenshotBaseline(page, 'grouppopover');
+  });
+
+  test('pulsar la cifra emite `activated`: la demo lo cuenta, con el ratón y con el teclado', async ({ page }) => {
+    await gotoPage(page, 'grouppopover');
+    const cifra = page.getByTestId('sc-grouppopover-activated').getByRole('button');
+    const veces = page.getByTestId('sc-grouppopover-activated-count');
+    await expect(veces).toHaveText('0');
+    await cifra.click();
+    await expect(veces).toHaveText('1');
+    await cifra.press('Enter');
+    await expect(veces).toHaveText('2');
   });
 });
 
