@@ -5769,7 +5769,11 @@ ${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):h
     background: transparent;
 }
 
-${LIST} .p-datatable-tbody > tr.p-datatable-row-selected {
+/* \`sc-row--selected\` la pone \`sc-datatable\` a toda fila seleccionada, tambi\xE9n a las que a\xF1ade un tramo con May\xFAsculas,
+ * que p-table no resalta (2026-10-05). Va en la lista, la \xFAnica variante con selecci\xF3n m\xFAltiple (la pieza de listas,
+ * Conversaciones y la demo de sc-docs). */
+${LIST} .p-datatable-tbody > tr.p-datatable-row-selected,
+${LIST} .p-datatable-tbody > tr.sc-row--selected {
     background: var(--sc-bg-secondary-hover);
 }
 
