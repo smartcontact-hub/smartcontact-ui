@@ -77,6 +77,44 @@ test('la línea de lectura de una demo va a 14 de su control, como un hermano m�
   for (const h of huecos) expect(h, 'datepicker «Con valor» · del control a «Valor:»').toBeCloseTo(14, 0);
 });
 
+test('una `.col` del lienzo llega a su tope, y un control `fluid` dentro la llena', async ({ page }) => {
+  // El lienzo es una fila flex: la `.col`, sin crecer, medía lo que su hijo más ancho, y «Fluid» no se distinguía de
+  // los demás (textarea «Estados», medido el 2026-10-05: columna de 238 frente a un tope de 640).
+  await gotoPage(page, 'textarea');
+  const m = await historia(page, 'Estados')
+    .locator('.sb-canvas__pane')
+    .evaluate((pane) => {
+      const col = pane.querySelector(':scope > .col')!;
+      const fluido = [...col.querySelectorAll('textarea')].find((t) => t.placeholder === 'Fluid')!;
+      const s = getComputedStyle(pane);
+      const libre = pane.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight);
+      const tope = Math.min(libre, 40 * parseFloat(getComputedStyle(document.documentElement).fontSize));
+      return { tope, col: col.getBoundingClientRect().width, fluido: fluido.getBoundingClientRect().width };
+    });
+  expect(m.col, 'la columna, hasta su tope de 40rem').toBeCloseTo(m.tope, 0);
+  expect(m.fluido, '«Fluid» llena su columna').toBeCloseTo(m.col, 0);
+});
+
+/* Lo que ocupa el ancho de su contenedor, puesto suelto en el lienzo (una fila flex), medía 0: Progress Bar no
+ * enseñaba ninguna barra, y el Playground de Skeleton salía vacío (medido el 2026-10-05). */
+for (const [slug, tag] of [
+  ['progressbar', 'sc-progressbar'],
+  ['skeleton', 'sc-skeleton'],
+] as const) {
+  test(`${slug}: cada <${tag}> del lienzo se ve, no mide 0`, async ({ page }) => {
+    await gotoPage(page, slug);
+    const anchos = await page.locator(`.sb-canvas__pane ${tag}`).evaluateAll((els) =>
+      els.map((e) => {
+        // Un host con `display: contents` no tiene caja (mide 0 siempre): lo que se pinta es su primer hijo.
+        const caja = getComputedStyle(e).display === 'contents' ? (e.firstElementChild ?? e) : e;
+        return Math.round(caja.getBoundingClientRect().width);
+      }),
+    );
+    expect(anchos.length, `${slug}: hay <${tag}> en el lienzo`).toBeGreaterThan(0);
+    for (const w of anchos) expect(w, `${slug} · <${tag}>`).toBeGreaterThan(24);
+  });
+}
+
 test('«Copiar» no tapa la primera línea del código, aunque sea larga', async ({ page }) => {
   await gotoPage(page, 'radiobutton');
   const snippet = historia(page, 'Grupo').locator('.sb-snippet');
