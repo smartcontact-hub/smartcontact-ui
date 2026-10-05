@@ -38,6 +38,13 @@ for (const [ancho, alto] of [
     await goto(page, 'admin/grupos/editar/11?seccion=agentes');
     const caja = page.locator('sc-agent-channel-table .table-card');
     await caja.locator('tbody tr').first().waitFor();
+    // 25 filas por página, más de las que caben: con 10, desde DD-170 (la sección sube 56 px) a 1512×945 cabían
+    // enteras y no había nada que desplazar por dentro. Con el teclado: a 1512×945 la página tapa la lista de filas
+    // por página y el ratón no llega a «25» (medido el 2026-10-05; la paginación se va en DD-171).
+    await caja.locator('.p-paginator .p-select').click();
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await expect.poll(() => caja.locator('tbody tr').count(), 'más de 10 filas: las 13 del grupo').toBeGreaterThan(10);
     await page.evaluate(() => document.fonts.ready);
     expect(await desplaza(page), 'lo que la página desplaza').toBeLessThanOrEqual(0);
     // La tabla tiene más filas de las que caben (desplaza por dentro): darle 2 px más tiene que empujar la página.

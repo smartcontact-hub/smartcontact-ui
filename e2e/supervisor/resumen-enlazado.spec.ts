@@ -11,7 +11,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *      activos → Agentes, Reparto y Salida → Distribución y colas, Recursos → Recursos. Llega arriba, con el foco en
  *      el título de la sección.
  *   2. Cada fila de Reparto lleva al bloque de su canal, y cada fila de Salida a su número (el teléfono saliente, el
- *      de WhatsApp), con el foco ahí y a la vista, debajo del nombre fijo (DD-145).
+ *      de WhatsApp), con el foco ahí y a la vista, sin nada encima (desde DD-170 el nombre vive en la columna del
+ *      índice, y encima del contenido no queda nada fijo).
  *   3. Las filas se nombran por lo que se ve («Teléfono») y su tarjeta las agrupa («Reparto», «Salida»): dos
  *      «Teléfono» no se confunden.
  *   4. En el alta, el resumen abre la sección sin tocar la dirección (DD-143), y General sigue siendo la puerta.
@@ -28,9 +29,16 @@ test.beforeEach(async ({ page }) => {
 
 const resumen = (page: Page) => page.getByRole('region', { name: 'Resumen' });
 
-/** Lo de abajo del nombre fijo: la línea de datos de la cabecera, en reposo. */
-const finDelNombre = (page: Page) =>
-  page.evaluate(() => document.querySelector('.ficha-rail > .headline .headline__meta')!.getBoundingClientRect().bottom);
+/** El borde de arriba de la zona que se desplaza: desde DD-170 no hay nada fijo encima del contenido. */
+const arribaDeLaZona = (page: Page) =>
+  page.evaluate(() => document.querySelector('main#main-content')!.getBoundingClientRect().top);
+
+/** Que lo que se ve en el centro del borde izquierdo de un elemento es el propio elemento: nada lo tapa. */
+const sinNadaEncima = (el: Element) => {
+  const r = el.getBoundingClientRect();
+  const encima = document.elementFromPoint(r.left + 4, r.top + r.height / 2);
+  return { top: r.top, bottom: r.bottom, visto: !!encima && (encima === el || el.contains(encima)) };
+};
 
 test('el rótulo de cada tarjeta es un enlace a su sección, y llega arriba con el foco en su título', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11');
@@ -55,20 +63,21 @@ test('el rótulo de cada tarjeta es un enlace a su sección, y llega arriba con 
   }
 });
 
-test('cada fila de Reparto lleva al bloque de su canal, a la vista debajo del nombre fijo', async ({ page }) => {
+test('cada fila de Reparto lleva al bloque de su canal, a la vista y sin nada encima', async ({ page }) => {
   for (const canal of [
     { fila: 'Teléfono', titulo: '#group-channel-phone-title' },
     { fila: 'Chat', titulo: '#group-channel-chat-title' },
   ]) {
     await goto(page, 'admin/grupos/editar/11');
-    const debajo = await finDelNombre(page);
+    const zona = await arribaDeLaZona(page);
     await resumen(page).getByRole('group', { name: 'Reparto' }).getByRole('link', { name: canal.fila, exact: true }).click();
     await expect(page).toHaveURL(/\?seccion=distribucion$/);
     const titulo = page.locator(canal.titulo);
     await expect(titulo, `Reparto › ${canal.fila}`).toBeFocused();
-    const arriba = await titulo.evaluate((el) => el.getBoundingClientRect().top);
-    expect(arriba, `Reparto › ${canal.fila}: debajo del nombre fijo`).toBeGreaterThan(debajo);
-    expect(arriba, `Reparto › ${canal.fila}: a la vista`).toBeLessThan(900);
+    const caja = await titulo.evaluate(sinNadaEncima);
+    expect(caja.top, `Reparto › ${canal.fila}: dentro de la zona que se desplaza`).toBeGreaterThanOrEqual(zona);
+    expect(caja.top, `Reparto › ${canal.fila}: a la vista`).toBeLessThan(900);
+    expect(caja.visto, `Reparto › ${canal.fila}: nada lo tapa`).toBe(true);
   }
 });
 
@@ -78,14 +87,15 @@ test('cada fila de Salida lleva a su número: el teléfono saliente y el de What
     { fila: 'WhatsApp', campo: '#group-chat-whatsapp' },
   ]) {
     await goto(page, 'admin/grupos/editar/11');
-    const debajo = await finDelNombre(page);
+    const zona = await arribaDeLaZona(page);
     await resumen(page).getByRole('group', { name: 'Salida' }).getByRole('link', { name: salida.fila, exact: true }).click();
     await expect(page).toHaveURL(/\?seccion=distribucion$/);
     const campo = page.locator(salida.campo);
     await expect(campo, `Salida › ${salida.fila}`).toBeFocused();
-    const caja = await campo.evaluate((el) => el.getBoundingClientRect());
-    expect(caja.top, `Salida › ${salida.fila}: debajo del nombre fijo`).toBeGreaterThan(debajo);
+    const caja = await campo.evaluate(sinNadaEncima);
+    expect(caja.top, `Salida › ${salida.fila}: dentro de la zona que se desplaza`).toBeGreaterThanOrEqual(zona);
     expect(caja.bottom, `Salida › ${salida.fila}: a la vista`).toBeLessThan(900);
+    expect(caja.visto, `Salida › ${salida.fila}: nada lo tapa`).toBe(true);
   }
 });
 

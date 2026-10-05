@@ -23,9 +23,32 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 (DD-149, sin trampas propias): `git show a7bca7c0:docs/handoff/supervisor-fichas.md`. El de E3 (DD-150, tampoco):
 `git show c065d664:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 7d70bfb9:…`. El de D3
 (DD-152, tampoco): `git show e7e0e8f3:docs/handoff/supervisor-fichas.md`. El de F (DD-153, tampoco): `git show
-f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`.
+f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`. El de lo que dejó F
+(DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · Supervisión y limpieza, en un lote de tres bloques (DD-168), en su PR
+## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), en su rama
+
+> **Sello:** rama `arebury/figma-grid-three-columns` sobre `main` en HEAD `5cc9af78`; las pruebas en rojo, `1c7ed587`.
+> **Un bloque, un commit en rojo y otro en verde (DD-154). Sin subir: primero lo ve Rafa en local.** Sale del marco de
+> la ficha de grupo en Figma («Landing page», nodo 2467:7078), leído contenedor a contenedor.
+
+- **El molde, en las tres fichas:** el nombre y su línea van arriba de la columna del índice (dentro de `.page__rail`
+  en el DOM); la sección y el resumen arrancan a su altura; la rejilla es de una fila (`'rail main summary'`), y la
+  sección es la única columna que crece (812 a 1440, 1052 a 1920). Por debajo de 1340 la columna de la izquierda no
+  cambia y el resumen pasa a una franja encima de la sección.
+- **Fuera `sc-nombre-fijo` (DD-145 §1-§3):** el nombre ya no se va al bajar, porque vive en la columna fija. Fuera
+  también el `scroll-padding` que apartaba las anclas bajo la copia.
+- **Un nombre largo baja a dos líneas** y se corta al final de la segunda (también en `sc-name-inplace`, que ahora usa
+  los 196 enteros). En 196 caben unos 22 caracteres; todos los de la demo caben en una. Al pulsarlo para editarlo, el
+  título conserva su alto (el índice subía 24 px): `sc-name-inplace` pasa a `flow-root`, porque su `:host` sin
+  encapsular no casaba y se pintaba en línea. Del nombre a sus datos, 7: el campo de editar tapaba media línea.
+- **Los canales de General, en las columnas de Nombre y Prioridad** (`.checkbox-grid--3`): antes, a 3 y 6 px a 1440 y
+  86 px a 1920.
+- **En local, en verde:** las 38 del bloque (20 en rojo: 19 contra `main` y la del alto al editar, sin su arreglo), 126 vecinas, 63 de los barridos de las tres
+  fichas y `revision` (16 vistas, en regla). Mirado a 1440, 1280 (nombre en dos líneas), 1100 y con `?datos=tortura`.
+- **Figma:** `figma-pendiente` §35 pasa a DD-170 (grupo ya dibujado; faltan agente y usuario) y §36 se retira.
+
+## ✅ 2026-10-05 · Supervisión y limpieza, en un lote de tres bloques (DD-168), fundido (#333)
 
 > **Un PR, un commit en rojo y otro en verde por bloque (DD-154); el 2, en uno solo, porque la medida dijo que no
 > faltaba nada. Es el último lote del frente: lo que queda espera a producto, a devs o al portátil (abajo).**
@@ -160,47 +183,17 @@ sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): l
 **Pendiente, anotado:** el rótulo-enlace del resumen mide 18 de alto (DD-146): llevarlo a 24 cambia el alto de todos
 los resúmenes y se mide aparte. Ordenar columnas con teclado no se puede (tampoco antes, con las cabeceras).
 
-## ✅ 2026-10-04 · Lo que dejó F, en un lote: la lista virtual con «reducir movimiento» y el estado en su columna (DD-156), fundido
-
-> **Sello: #321 → HEAD `8a5660ce`, por squash; CI del PR (37209923320) y de `main` (37210588217), 14 de 14 en verde.
-> Dos bloques en un PR (DD-154), cada uno con su commit en rojo. Después, en otro PR, la guarda de los emails (abajo).**
-
-**La lista virtual con «reducir movimiento»** (sin DD: solo arregla, en el DS):
-- con esa preferencia del sistema, el listado de agentes salía sin filas: la lista virtual de PrimeNG contaba las que
-  le cabían en el fotograma en que la tabla aún medía 0, y solo vuelve a contar si cambia la ventana;
-- `sc-datatable` observa la caja de la lista y le pasa cada cambio por esa misma puerta (`onWindowResize`);
-- `listados-movimiento-reducido.spec.ts` (6): en rojo, Agentes con la preferencia, 0 filas; en verde, 18 de 18 en
-  tres vueltas.
-
-**El estado en su columna** (DD-156):
-- «Estado» es la columna que sigue a «Agente», en la ficha y en el panel, con la etiqueta y la palabra del listado;
-- cada columna mide lo más largo que lleva en los cuatro idiomas (`COLUMN_REM`), y el panel suma esas mismas
-  (`columnsRem`): 48rem con dos canales, antes 47,25;
-- medido antes y después en 18 casos (grupos de uno, dos y tres canales, de 1024 a 1680): etiquetas alineadas (antes,
-  de 45 a 63 px de diferencia), ningún email más recortado y lo que cabía sigue cabiendo. Lo que ya desplazaba en
-  horizontal desplaza 40 px más: a 1440, en un grupo de tres canales, Email también queda fuera;
-- `ficha-grupo-estado.spec.ts`: tres en rojo contra DD-149, y la guarda de donde cabía, que sigue cabiendo. Su
-  primera versión solo miraba el desplazamiento: la primera versión de DD-156 cabía a 1440 con cuatro emails de diez
-  recortados, y la cazó la matriz, no una prueba. Ahora mira también los emails, en un canal a 1440 y dos a 1536 (los
-  dos casos más justos, 11 y 3 px), y se pone en rojo con los anchos de entonces (cuatro recortados en cada uno). Cambian `ficha-grupo-familias` (el ancho
-  del panel) y `panel-agentes-grupo` (el aire, en dos tramos; visto en rojo con aire puesto);
-- en local, en verde: los diez ficheros de prueba de la tabla y el panel (77) y los barridos de Grupos, Agentes,
-  Usuarios y Contact Center › Grupos (51, DD-155); `revision` de la ficha, el alta y el listado de grupos, en regla;
-  antes y después del panel y de la ficha, en claro y oscuro.
-
-**Pendiente:** la ficha de un grupo de tres canales desplaza en horizontal a 1440, como antes. Si producto quiere que
-no, hay dos salidas: fijar Asignado y Agente a la izquierda (las columnas fijas de F) o llevar la densidad compacta
-del panel también a la ficha (unos 100 px).
-
 ## SIGUIENTE — sin preguntar
 
-0. **Supervisión y limpieza, en su PR** (el tramo de arriba). Con él se acaba lo que dependía de nosotros en este
-   frente. Lo siguiente: **triar los otros frentes** (DS, CusCare, Dashboard y Sidebar, cada uno con su hand-off) en
+0. **Las fichas sin cabecera (DD-170), en su rama** (el tramo de arriba): Rafa lo mira en local; si le vale,
+   `preflight:scope -- --run`, PR y `ci:verdict`. Supervisión y limpieza (DD-168) ya fue en su PR. Con esto se acaba
+   lo que dependía de nosotros en este frente. Lo siguiente: **triar los otros frentes** (DS, CusCare, Dashboard y Sidebar, cada uno con su hand-off) en
    lotes como estos, y enseñarlos antes de empezar ninguno.
 
    Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
    separado (no entra en esta fase). Si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con
-   tres canales (las dos salidas, en el tramo de DD-156). Cada cosa, con su prueba en rojo; la numeración de DD se mira
+   tres canales (dos salidas: fijar Asignado y Agente a la izquierda, con las columnas fijas de F, o llevar la densidad compacta del
+   panel también a la ficha, unos 100 px). Cada cosa, con su prueba en rojo; la numeración de DD se mira
    en `origin/main` al empezar y otra vez antes de subir.
 
    **Lo «sin verificar» de zoom al 200 % y RTL, cerrado:** DD-53 fija 1024 de ancho mínimo (el 200 % a 1440 son 720) y
@@ -256,6 +249,8 @@ del panel también a la ficha (unos 100 px).
   ciclo después (`whenStable`). Y un `git stash`/`pop` toca la fecha del DS: el hook de `dist/` pide reconstruir.
 - Un NG2012 que persiste después de reparar sintaxis puede exigir reiniciar `ng serve`.
 
+- **Una prueba de «al bajar» necesita recorrido:** con el contenido arriba (DD-170), agente y usuario a 1366×768 solo
+  bajan 43 px y la prueba no mediría nada; se miden a 1366×660. Mira el recorrido antes de fiarte de un verde así.
 - ⚠️ **Una consulta de contenedor no suma especificidad.** Una regla dentro de `@container` que va antes que la regla
   base del mismo selector pierde. La franja siguió a 244 px hasta ponerla detrás.
 - ⚠️ **Una `subgrid` con su propio `gap` desplaza sus elementos la mitad de la diferencia con el de fuera.** Con

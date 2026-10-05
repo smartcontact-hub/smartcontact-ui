@@ -37,45 +37,42 @@
 
 <div class="page">
   <!-- El molde de Contact Center (`.page__inner--rail`): índice fijo a la izquierda y una sección a la
-       vista (visión de producto de grupos, 2026-09-25; DD-121). `.ficha-rail` (en `_page.scss`) parte la
-       fila para que la cabecera vaya ENCIMA, a todo lo ancho, en la misma vertical que las fichas de agente
-       y usuario, y `--summary` abre la columna del resumen a la derecha. Sigue siendo UN arquetipo, `--rail`. -->
+       vista (visión de producto de grupos, 2026-09-25; DD-121). `.ficha-rail` (en `_page.scss`) la hace una
+       rejilla de tres columnas, la misma en las fichas de agente y usuario, y `--summary` abre la del resumen a
+       la derecha. Sigue siendo UN arquetipo, `--rail`. -->
   <div class="page__inner page__inner--rail ficha-rail ficha-rail--summary">
-    <!-- SIN AVATAR NI FOTO: los grupos no llevan cara (DD-119; cara = persona). Las tres cifras que
-         vivían aquí se fueron al resumen, que las dice con más detalle y a la vista. -->
-    <div class="headline">
-      <!-- El nombre es el TÍTULO DE LA PÁGINA y se edita en su sitio (`sc-name-inplace`, el Inplace
-           nativo), con el mismo aviso de nombre repetido que el campo de General. `h3-semibold` es el
-           rol que ya usan las nueve listas para su `h1`. -->
-      <div class="headline__who">
-        @if (mode() === 'edit') {
-          <h1 class="headline__name headline__name--editable sc-text-h3-semibold" [title]="form().name">
-            <sc-name-inplace
-              [name]="form().name"
-              [label]="'groups.form.fields.name' | translate"
-              [error]="nameTaken() ? ('groups.errors.name_taken' | translate) : null"
-              (nameChange)="onNameChange($event)"
-            />
-          </h1>
-        } @else {
-          <!-- En el alta el nombre se escribe en General; el título lo sigue según se escribe. -->
-          <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name || ('groups.form.create_title' | translate) }}</h1>
-        }
-        <!-- Los datos del grupo, CON su nombre: «Media» a secas no decía de qué. El teléfono, solo si
-             el grupo ofrece teléfono: a un grupo de chat no se le pide. -->
-        <span class="headline__meta sc-text-caption-regular" [title]="identitySummary()">{{ identitySummary() }}</span>
-      </div>
-    </div>
-
-    <!-- El nombre, fijo arriba al bajar (DD-145): una copia muda de la cabecera, que sigue siendo el título y el sitio
-         donde se edita el nombre. Va en la rejilla, en la columna del contenido y de arriba abajo (`_page.scss`). -->
-    <sc-nombre-fijo [nombre]="form().name || (mode() === 'edit' ? '' : ('groups.form.create_title' | translate))" [datos]="identitySummary()" />
-
-    <!-- El índice, solo: la navegación no comparte carril con nada, así que no se va de la pantalla. Cada
-         fila es un enlace a su sección (`?seccion=`, DD-122), y el `nav` es el único punto de referencia:
-         el carril es un `div`, no un `aside` con el mismo nombre. El mismo al crear y al editar (DD-143): en el
-         alta, la sección que se deja completa lleva ✓. -->
+    <!-- La columna de la izquierda, fija al bajar: quién es (el nombre) y dónde estás (el índice), con «Eliminar»
+         debajo (DD-170). Con el nombre en ella, no se va de la pantalla al bajar. Cada fila del índice es un enlace
+         a su sección (`?seccion=`, DD-122), y el `nav` es el único punto de referencia: el carril es un `div`, no
+         un `aside` con el mismo nombre. El mismo al crear y al editar (DD-143): en el alta, la sección que se deja
+         completa lleva ✓. -->
     <div class="page__rail">
+      <!-- SIN AVATAR NI FOTO: los grupos no llevan cara (DD-119; cara = persona). Las tres cifras que
+           vivían aquí se fueron al resumen, que las dice con más detalle y a la vista. -->
+      <div class="headline">
+        <!-- El nombre es el TÍTULO DE LA PÁGINA y se edita en su sitio (`sc-name-inplace`, el Inplace
+             nativo), con el mismo aviso de nombre repetido que el campo de General. `h3-semibold` es el
+             rol que ya usan las nueve listas para su `h1`. -->
+        <div class="headline__who">
+          @if (mode() === 'edit') {
+            <h1 class="headline__name headline__name--editable sc-text-h3-semibold" [title]="form().name">
+              <sc-name-inplace
+                [name]="form().name"
+                [label]="'groups.form.fields.name' | translate"
+                [error]="nameTaken() ? ('groups.errors.name_taken' | translate) : null"
+                (nameChange)="onNameChange($event)"
+              />
+            </h1>
+          } @else {
+            <!-- En el alta el nombre se escribe en General; el título lo sigue según se escribe. -->
+            <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name || ('groups.form.create_title' | translate) }}</h1>
+          }
+          <!-- Los datos del grupo, CON su nombre: «Media» a secas no decía de qué. El teléfono, solo si
+               el grupo ofrece teléfono: a un grupo de chat no se le pide. -->
+          <span class="headline__meta sc-text-caption-regular" [title]="identitySummary()">{{ identitySummary() }}</span>
+        </div>
+      </div>
+
       <sc-form-section-nav
         [sections]="navSections()"
         [activeId]="activeSection()"
@@ -86,8 +83,8 @@
         [flush]="true"
         (activeChange)="goTo($event)"
       />
-      <!-- «Eliminar», bajo el índice (DD-144): con el nombre dentro del contenido, la cabecera ya no tiene sitio a
-           su derecha. Solo al editar. -->
+      <!-- «Eliminar», bajo el índice (DD-144): una acción sobre la ficha entera, a 28 de la última fila del índice.
+           Solo al editar. -->
       @if (mode() === 'edit') {
         <div class="ficha-eliminar">
           <sc-button variant="danger" appearance="text" size="sm" icon="delete" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
@@ -303,7 +300,8 @@
         <h3 id="group-channels-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.channels.title' | translate }}</h3>
         <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.channels.hint' | translate }}</p>
       </header>
-      <div class="checkbox-grid">
+      <!-- En las tres columnas de Nombre y Prioridad (DD-170). -->
+      <div class="checkbox-grid checkbox-grid--3">
         <!-- Cada canal en su pila, aunque no tenga hijas: así los tres arrancan en la misma línea. -->
         <div class="checkbox-stack">
           <sc-checkbox class="checkbox-row" inputId="group-channels-phone" [state]="hasPhone() ? 'all' : 'none'" (cycle)="toggleChannel('phone')">{{ channelKeys.phone | translate }}</sc-checkbox>

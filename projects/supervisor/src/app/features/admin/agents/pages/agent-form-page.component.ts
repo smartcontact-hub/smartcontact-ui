@@ -36,7 +36,6 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 import {
   AltaPieComponent,
   NameInplaceComponent,
-  NombreFijoComponent,
   ResourceRowsComponent,
   SummaryKpiComponent,
   SummaryStatusComponent,
@@ -168,7 +167,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     SummaryKpiComponent,
     SummaryStatusComponent,
     AltaPieComponent,
-    NombreFijoComponent,
     ResourceRowsComponent,
     CheckboxComponent,
     DeleteEntityDialogComponent,

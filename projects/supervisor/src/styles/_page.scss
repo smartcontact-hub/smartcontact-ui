@@ -162,29 +162,23 @@
 }
 
 /* LAS FICHAS CON ÍNDICE (grupo desde el 2026-09-26, DD-121; agente y usuario desde el 2026-09-27,
- * DD-122, que hasta entonces iban con pestañas): TRES COLUMNAS QUE ARRANCAN A LA MISMA ALTURA (DD-144).
- * El índice de Contact Center (196), el contenido con la cabecera de la ficha encima (su nombre) y el
- * resumen (240). Hasta DD-144 la cabecera iba en una fila propia, encima de las tres y a todo lo ancho,
- * y las tres columnas arrancaban 56 px más abajo (medido a 1440).
+ * DD-122, que hasta entonces iban con pestañas): TRES COLUMNAS, Y NADA ENCIMA (DD-170). A la izquierda,
+ * quién es y dónde estás: el nombre de la ficha encima del índice de Contact Center (196). En el centro,
+ * la sección, que es la columna que crece. A la derecha, el resumen (240). Las tres arrancan a la misma
+ * altura (DD-144).
  *
- * Una rejilla con áreas, para que por debajo de 1340 la cabecera vuelva arriba a todo lo ancho sin
- * moverla en el DOM: el orden de lectura y del tabulador es el mismo en las dos maquetas. El índice y el
- * resumen ocupan las dos filas, así que siguen fijos al bajar. Entre la cabecera y el contenido, 14: la
- * cabecera es de lo que viene debajo, y a 28 se leía como un bloque suelto. */
+ * Una sola fila, sin cabecera: de DD-144 a DD-170 el nombre iba en la columna del contenido, encima de la
+ * sección (56 px más abajo arrancaba la tarjeta, medido a 1440), y al bajar se iba con ella, así que hacía
+ * falta una copia fija arriba (DD-145). En la columna del índice, que ya se queda fija al bajar, el nombre
+ * no se va nunca. El orden del DOM es el de lectura: nombre, índice, contenido y resumen. */
 .page__inner--rail.ficha-rail {
   display: grid;
   grid-template-columns: 196px minmax(0, 1fr) 240px;
-  grid-template-rows: auto 1fr;
-  grid-template-areas:
-    'rail head summary'
-    'rail main summary';
+  grid-template-areas: 'rail main summary';
   column-gap: var(--sc-spacing-2);
+  /* Entre la franja del resumen y el contenido, por debajo de 1340. */
   row-gap: var(--sc-spacing-1);
   align-items: start;
-}
-
-.ficha-rail > .headline {
-  grid-area: head;
 }
 
 .ficha-rail > .page__rail {
@@ -199,25 +193,10 @@
   grid-area: summary;
 }
 
-/* EL NOMBRE FIJO (DD-145): la copia muda de la cabecera (`sc-nombre-fijo`) va en la columna del contenido, de la
- * fila de la cabecera a la del contenido, para que su `sticky` tenga todo el recorrido de la página: un `sticky` no
- * sale del área de su rejilla. Cae encima de la cabecera y del contenido a propósito, y solo se ve al bajar. */
-.ficha-rail > sc-nombre-fijo {
-  grid-column: 2;
-  grid-row: 1 / -1;
-}
-
-/* Lo que se salta o se enfoca no queda debajo del nombre fijo: mientras está en pantalla, la zona que se desplaza
- * aparta sus anclas la medida de las anclas bajo lo fijo (`--sc-form-anchor-offset`, 80; la copia mide 78,75). Un
- * salto de canal de Distribución y colas dejaba su título en y=55,6, debajo de la copia. */
-#main-content:has(sc-nombre-fijo) {
-  scroll-padding-block-start: var(--sc-form-anchor-offset);
-}
-
-/* «Eliminar», bajo el índice (DD-144): es una acción sobre la ficha entera, y con el nombre dentro del
- * contenido la cabecera ya no tiene sitio a su derecha. De la última fila del índice al botón, 28, el aire
- * entre grupos (el índice navega y esto borra): el hueco del carril (14) y el relleno de abajo del índice
- * (8,75) ponen 22,75, y esto los completa. Su icono cae en la vertical de los del índice (medido a 0,75). */
+/* «Eliminar», bajo el índice (DD-144): es una acción sobre la ficha entera. De la última fila del índice al
+ * botón, 28, el aire entre grupos (el índice navega y esto borra): el hueco del carril (14) y el relleno de
+ * abajo del índice (8,75) ponen 22,75, y esto los completa. Su icono cae en la vertical de los del índice
+ * (medido a 0,75). */
 .ficha-rail .ficha-eliminar {
   margin-block-start: var(--sc-spacing-0-375);
 }
@@ -252,25 +231,17 @@
   container-type: inline-size;
 }
 
-/* Por debajo de 1340 no caben tres columnas sin estrangular el contenido: la cabecera vuelve arriba a todo
- * lo ancho, el resumen pasa a una franja debajo de ella, y el índice y el contenido miden lo de Contact
- * Center (tope 1200, contenido 920 a 1280). Las áreas solo mueven lo que se ve: el orden del tabulador es
- * el del DOM. */
+/* Por debajo de 1340 no caben tres columnas sin estrangular el contenido: el resumen pasa a una franja
+ * encima del contenido, en su columna, y el índice y el contenido miden lo de Contact Center (tope 1200,
+ * contenido 920 a 1280). La columna de la izquierda (nombre e índice) no cambia: ocupa las dos filas, así
+ * que sigue fija al bajar y el nombre sigue a la vista. */
 @media (max-width: 1339px) {
   .page__inner--rail.ficha-rail--summary {
     max-width: 1200px;
     grid-template-columns: 196px minmax(0, 1fr);
-    grid-template-rows: none;
     grid-template-areas:
-      'head head'
-      'summary summary'
+      'rail summary'
       'rail main';
-  }
-
-  /* El nombre fijo, sobre el contenido: la cabecera ya no comparte columna con él. Solo se ve al quedar fijo
-   * arriba, así que no tapa la franja del resumen. */
-  .page__inner--rail.ficha-rail--summary > sc-nombre-fijo {
-    grid-area: main;
   }
 
   .ficha-summary {
@@ -281,19 +252,14 @@
   }
 }
 
-/* Por debajo del mínimo soportado (1024, DD-53), una sola columna, en el mismo orden. */
+/* Por debajo del mínimo soportado (1024, DD-53), una sola columna, en el orden del DOM. */
 @media (max-width: 1023px) {
   .page__inner--rail.ficha-rail--summary {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      'head'
-      'summary'
       'rail'
+      'summary'
       'main';
-  }
-
-  .page__inner--rail.ficha-rail--summary > sc-nombre-fijo {
-    grid-area: main;
   }
 }
 
@@ -304,47 +270,50 @@
   margin-block-end: var(--sc-spacing-1);
 }
 
-/* LA FRANJA DE ESTADO de las fichas (grupo, usuario, agente): el nombre como único `h1`, una
- * línea meta y «Eliminar». Vive aquí y no en cada pantalla porque la usan las tres, y la
- * encapsulación de Angular es por componente. Sin línea abajo: separa el aire. Sin aire propio abajo:
- * la distancia hasta índice y contenido la pone el `row-gap` de `.ficha-rail`. */
-.ficha-rail .headline {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-75);
-}
-
-/* Sin cifras al lado (las dice el resumen de la derecha, desde el 2026-09-27 en las tres fichas) no hay
- * columna que alinear: el nombre se queda el ancho que sobra y solo se recorta si de verdad no cabe. */
+/* LA CABECERA de las fichas (grupo, usuario, agente), arriba de la columna del índice (DD-170): el nombre
+ * como único `h1` y una línea de datos. Vive aquí y no en cada pantalla porque la usan las tres, y la
+ * encapsulación de Angular es por componente. Hasta el índice, el hueco del carril (14). */
+/* Del nombre a su línea de datos, 7 (el peldaño de dentro de un grupo): el nombre editable (`sc-name-inplace`)
+ * sobresale 6,25 por abajo, su fondo al pasar y su campo al editar, y con 0 el campo tapaba la mitad de arriba de
+ * la línea de datos (medido: borde en 109, texto desde 102,75). En las tres fichas, editable o no, para que el
+ * índice caiga en el mismo sitio. */
 .ficha-rail .headline__who {
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
+  gap: var(--sc-spacing-0-5);
   min-width: 0;
 }
 
+/* En 196 caben unos 22 caracteres del título: más largo, el nombre baja a una segunda línea, como las
+ * filas del índice que tiene debajo (DD-52), y no se corta. Uno que no cabe en dos se corta al final de la
+ * segunda, con el nombre entero en el `title`: sin tope, un nombre de prueba bajaba el índice media
+ * pantalla. `anywhere` parte la palabra sola más ancha que la columna; `balance` reparte las dos líneas. */
 .ficha-rail .headline__name {
-  color: var(--sc-text-primary);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  color: var(--sc-text-primary);
 }
 
 /* El nombre editable en su sitio (`sc-name-inplace`): el fondo de «se puede editar» y el campo sobresalen del
- * título (compensan el relleno nativo), así que aquí no se recorta; los puntos suspensivos los pone el propio
- * Inplace sobre el nombre. */
+ * título (compensan el relleno nativo), así que aquí no se recorta; las dos líneas y su corte los pone el
+ * propio Inplace sobre el nombre. */
 .ficha-rail .headline__name--editable {
+  display: block;
   overflow: visible;
 }
 
+/* La línea de datos, con la misma regla que el nombre: hasta dos líneas, el texto entero en el `title`. */
 .ficha-rail .headline__meta {
-  color: var(--sc-text-secondary);
-  /* Una línea, como el nombre: si envolviera, la franja crecería y el índice bajaría solo en esa
-   * ficha (medido en la de usuario: email · tipo en dos líneas, 18px más abajo). El texto entero va
-   * en el `title`. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  color: var(--sc-text-secondary);
 }
 
 /* La columna de formulario que acompaña al rail de `--with-panel`.
