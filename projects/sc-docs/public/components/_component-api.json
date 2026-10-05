@@ -1204,6 +1204,36 @@
           }
         },
         {
+          "nombre": "ariaHasPopup",
+          "clase": "input",
+          "tipo": "ScButtonAriaHasPopup | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Qué tipo de popup abre el botón (`menu`, `dialog`, `listbox`…), el `aria-haspopup` nativo. El host `<sc-button>` nunca recibe el foco: sin esto en el `<button>` real, el lector no dice que el botón abre algo (la «Columnas» de una lista, el ⋮ de un widget).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaExpanded",
+          "clase": "input",
+          "tipo": "boolean | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Si el popup que abre el botón está abierto, el `aria-expanded` nativo. `null` lo omite; `false` SÍ se anuncia (cerrado), no es lo mismo que no tenerlo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaControls",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Id del popup que abre el botón, el `aria-controls` nativo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "rounded",
           "clase": "input",
           "tipo": "boolean",

@@ -46,6 +46,27 @@ test('el asistente de widget no cambia de tamaño al cambiar de categoría', asy
   }
 });
 
+test('el ⋮ de un widget dice en el foco que abre un menú, y si ya está abierto (DD-171)', async ({ page }) => {
+  await goto(page, 'dashboard');
+  // Acotado a un widget (sc-dashboard-widget-card): la pestaña del monitor tiene su propio ⋮, con el mismo
+  // texto de aria-label pero sin popup que anunciar aquí (otro componente, monitor-tabs).
+  const masAcciones = page.locator('sc-dashboard-widget-card').first().getByRole('button', { name: /^Más acciones de / });
+  await expect(masAcciones).toHaveAttribute('aria-haspopup', 'menu');
+  await expect(masAcciones).toHaveAttribute('aria-expanded', 'false');
+  const controla = await masAcciones.getAttribute('aria-controls');
+  expect(controla, 'apunta al id del p-menu').toBeTruthy();
+
+  await masAcciones.click();
+  const menu = page.getByRole('menu');
+  await expect(menu).toBeVisible();
+  await expect(menu).toHaveAttribute('id', `${controla}_list`);
+  await expect(masAcciones).toHaveAttribute('aria-expanded', 'true');
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(masAcciones).toHaveAttribute('aria-expanded', 'false');
+});
+
 test('pulsar otra pestaña cambia el monitor que se ve', async ({ page }) => {
   await goto(page, 'dashboard');
   const pestanas = page.getByRole('tab');
