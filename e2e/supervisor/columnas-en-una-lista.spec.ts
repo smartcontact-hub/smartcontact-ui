@@ -37,7 +37,7 @@ const opcion = (page: Page, nombre: string) => lista(page).getByRole('option', {
 const enfocada = (page: Page) =>
   lista(page).evaluate((ul) => document.getElementById(ul.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim() ?? null);
 
-test('el botón «Columnas» dice en el foco que abre un diálogo, y si ya está abierto (DD-170)', async ({ page }) => {
+test('el botón «Columnas» dice en el foco que abre un diálogo, y si ya está abierto (DD-171)', async ({ page }) => {
   await goto(page, 'admin/agentes');
   await expect(boton(page)).toHaveAttribute('aria-haspopup', 'dialog');
   await expect(boton(page)).toHaveAttribute('aria-expanded', 'false');

@@ -56,7 +56,7 @@ const PRESS_SNIPPET = `<!-- La pulsación la pone el tema: no hay nada que activ
 <sc-button icon="more_vert" variant="secondary" appearance="text" iconAriaLabel="Más acciones" />`;
 
 const POPUP_SNIPPET = `<!-- El host <sc-button> nunca recibe el foco: "ariaHasPopup", "ariaExpanded" y "ariaControls"
-     llegan al <button> real por dentro (DD-170). Sin ellos, el lector no dice que el botón abre
+     llegan al <button> real por dentro (DD-171). Sin ellos, el lector no dice que el botón abre
      algo ni si ya está abierto. -->
 <sc-button
   icon="view_column"

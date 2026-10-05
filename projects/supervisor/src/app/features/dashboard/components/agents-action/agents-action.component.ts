@@ -21,7 +21,7 @@ let agentsMenuIdCounter = 0;
  * lista de nombres, así que este `computed` no se rehace con él: un menú rehecho en cada ciclo perdía el primer clic
  * (como le pasaba al menú de fila del listado).
  *
- * Con varios grupos, el botón abre SU menú: `ariaHasPopup`, `ariaExpanded` y `ariaControls` lo dicen (DD-170), igual
+ * Con varios grupos, el botón abre SU menú: `ariaHasPopup`, `ariaExpanded` y `ariaControls` lo dicen (DD-171), igual
  * que el ⋮ de la tarjeta. Con uno solo, el clic abre directamente el panel que vigila la página (otro componente,
  * lejos en el DOM): no es un popup que este botón controle, así que no lleva `ariaHasPopup`.
  */

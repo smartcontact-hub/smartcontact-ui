@@ -76,10 +76,11 @@ test('grupo · sin nombre no se sale de General; con él, «Siguiente» y «Atr�
 });
 
 test('«Siguiente» sube al principio de la sección nueva', async ({ page }) => {
-  // A 1280×720 no caben ni General (88 de más) ni Distribución y colas (647): «Siguiente» se pulsa desde el final de
-  // la primera, y la segunda da para quedarse a media altura. Donde la sección nueva cabe entera (Grupos asignados del
-  // agente), el navegador sube solo y la prueba no vería el fallo.
-  await page.setViewportSize({ width: 1280, height: 720 });
+  // A 1280×640 no caben ni General ni Distribución y colas: «Siguiente» se pulsa desde el final de la primera, y la
+  // segunda da para quedarse a media altura. Donde la sección nueva cabe entera (Grupos asignados del agente), el
+  // navegador sube solo y la prueba no vería el fallo. Era 1280×720 (General, 88 de más) hasta DD-170: con el nombre
+  // en la columna del índice, General sube 56 px y a 720 ya cabía, así que la prueba no medía nada.
+  await page.setViewportSize({ width: 1280, height: 640 });
   await goto(page, 'admin/grupos/crear');
   await page.locator('#group-name').fill(`E2E Índice ${Date.now()}`);
   const zona = page.locator('main#main-content');

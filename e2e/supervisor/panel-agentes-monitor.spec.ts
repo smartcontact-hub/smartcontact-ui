@@ -58,7 +58,7 @@ test('con varios grupos, «Agentes» abre un menú con ellos, y cada uno abre su
   await expect(page).toHaveURL(/\/dashboard$/);
 });
 
-test('con varios grupos, «Agentes» dice en el foco que abre un menú, y si ya está abierto (DD-170)', async ({ page }) => {
+test('con varios grupos, «Agentes» dice en el foco que abre un menú, y si ya está abierto (DD-171)', async ({ page }) => {
   await irAColasYAgentes(page);
   const agentes = tarjetaGrupos(page).getByRole('button', { name: 'Asignar agentes', exact: true });
   await expect(agentes).toHaveAttribute('aria-haspopup', 'menu');

@@ -1007,18 +1007,19 @@ diálogo de duplicar de un grupo con Teléfono y `/config/aed/grupos`.
 
 ---
 
-## 35 · Las fichas en tres columnas: el título en el contenido y el resumen sin rótulo (2026-10-01)
+## 35 · Las fichas en tres columnas: el nombre encima del índice y el resumen sin rótulo (2026-10-01, DD-170 el 2026-10-05)
 
-**Estado:** pendiente · **Dónde:** Figma, las maquetas de las fichas de grupo, agente y usuario, al crear y al editar
-· **Esfuerzo:** recolocar la cabecera y «Eliminar», y quitar un rótulo, sin piezas nuevas · **Sin verificar** contra el
-fichero: el código no cita los nodos de las fichas.
+**Estado:** pendiente en agente y usuario; la de grupo ya está dibujada (fichero «Landing page»,
+`cLO8JZfPuC3EMx6EgCjmsU`, nodo 2467:7078) · **Dónde:** Figma, las maquetas de las fichas de agente y usuario, al crear
+y al editar · **Esfuerzo:** recolocar la cabecera y «Eliminar», y quitar un rótulo, sin piezas nuevas.
 
-- **Por qué** (DD-144): el índice, el contenido y el resumen arrancan a la misma altura.
-- **Qué cambiar:**
-  - el nombre de la ficha y su línea, en la columna del contenido, encima de la sección y a 14 de ella;
-  - el resumen, sin su rótulo «Resumen», arriba de su columna;
+- **Por qué** (DD-144 y DD-170): tres columnas sin fila de cabecera, que arrancan a la misma altura.
+- **Qué cambiar,** como en el nodo 2467:7078:
+  - el nombre de la ficha y su línea, arriba de la columna del índice (196), a 14 del índice;
+  - la sección, arriba de la columna del centro, que es la que crece (Fill de ancho, Hug de alto);
+  - el resumen, sin su rótulo «Resumen», arriba de su columna (240);
   - «Eliminar», bajo el índice, a 28 de su última fila;
-  - por debajo de 1340, como estaba: el título arriba, a todo lo ancho, y el resumen en su franja.
+  - por debajo de 1340, el nombre sigue encima del índice y el resumen pasa a una franja encima de la sección.
 
 **Cómo sabes que está hecho:** las maquetas se ven como `/admin/grupos/editar/11`, `/admin/agentes/editar/1` y
 `/admin/usuarios/crear` a 1440.
@@ -1027,19 +1028,8 @@ fichero: el código no cita los nodos de las fichas.
 
 ## 36 · El nombre de la ficha, fijo arriba al bajar (2026-10-01)
 
-**Estado:** pendiente · **Dónde:** Figma, las maquetas de las fichas de grupo, agente y usuario, en un estado «al
-bajar» · **Esfuerzo:** un estado más de la cabecera, sin piezas nuevas · **Sin verificar** contra el fichero: el código
-no cita los nodos de las fichas.
-
-- **Por qué** (DD-145): al bajar en una sección larga, el nombre se iba con ella.
-- **Qué dibujar:**
-  - la cabecera (el nombre y su línea) fija arriba de la columna del contenido, en su sitio, con el fondo de la página
-    y una línea fina debajo (`--sc-border-subtle`);
-  - la sección pasando por debajo, cortada por esa línea;
-  - el índice y el resumen, fijos como ya estaban.
-
-**Cómo sabes que está hecho:** el estado se ve como `/admin/grupos/editar/11?seccion=distribucion` a 1440, bajado del
-todo.
+**Estado:** retirada el 2026-10-05 (DD-170): el nombre vive en la columna del índice, que ya se queda fija al bajar.
+No hay estado «al bajar» que dibujar.
 
 ---
 
