@@ -6,7 +6,7 @@ Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la 
 que puede ir por delante.
 
 **45 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**426 props** que PrimeNG sí documenta.
+**402 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -46,10 +46,6 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 ### `sc-dialog` · 20 usos · primeng/dialog
 
 **29 props nativas no expuestas**: `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closeButtonProps`, `closeIcon`, `closeOnEscape`, `closeTabindex`, `contentStyle`, `contentStyleClass`, `focusOnShow`, `focusTrap`, `header`, `keepInViewport`, `maskMotionOptions`, `maskStyle`, `maskStyleClass`, `maximizable`, `maximizeButtonProps`, `maximizeIcon`, `minX`, `minY`, `minimizeIcon`, `motionOptions`, `rtl`, `showHeader`, `style`, `styleClass`
-
-### `sc-password` · 1 usos · primeng/password
-
-**25 props nativas no expuestas**: `appendTo`, `ariaLabelledBy`, `autofocus`, `inputSize`, `inputStyle`, `inputStyleClass`, `max`, `mediumLabel`, `mediumRegex`, `min`, `minlength`, `motionOptions`, `overlayOptions`, `pPasswordPT`, `pPasswordUnstyled`, `pattern`, `promptLabel`, `showClear`, `showPassword`, `step`, `strongLabel`, `strongRegex`, `tabindex`, `variant`, `weakLabel`
 
 ### `sc-button` · 156 usos · primeng/button
 
@@ -114,6 +110,10 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 ### `sc-chip` · 6 usos · primeng/chip
 
 **2 props nativas no expuestas**: `chipProps`, `removeIcon`
+
+### `sc-password` · 1 usos · primeng/config, primeng/inputpassword
+
+**1 props nativas no expuestas**: `mask`
 
 ### `sc-bulk-action-bar` · 2 usos · —
 
@@ -205,10 +205,10 @@ Expone todo lo que PrimeNG documenta.
 
 ## El catálogo de PrimeNG que NO envolvemos
 
-Aura tematiza **97 componentes**. Envolvemos **31**,
+Aura tematiza **97 componentes**. Envolvemos **30**,
 **9** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
 una pieza nuestra hecha a mano.
-Quedan **56** que existen, están tematizados y funcionan — simplemente nadie los ha
+Quedan **57** que existen, están tematizados y funcionan — simplemente nadie los ha
 traído todavía.
 
 ⚠️ **«Sin envolver» NO quiere decir «descartado»**: quiere decir que la decisión no se ha tomado.
@@ -216,7 +216,7 @@ Si necesitas uno, envolverlo es más barato (y sale mejor) que construirlo a man
 su comportamiento, su accesibilidad y su movimiento ya resueltos. Cuando se decida que uno NO se
 quiere, el sitio de esa decisión es `docs/DECISIONS.md`, y entonces se puede anotar aquí.
 
-`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `confirmpopup` · `contextmenu` · `dataview` · `dock` · `editor` · `fieldset` · `fileupload` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `inputtags` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `picklist` · `rating` · `ripple` · `scrollpanel` · `slider` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `tieredmenu` · `timeline` · `togglebutton` · `tree` · `treeselect` · `treetable` · `virtualscroller`
+`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `confirmpopup` · `contextmenu` · `dataview` · `dock` · `editor` · `fieldset` · `fileupload` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `inputtags` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `password` · `picklist` · `rating` · `ripple` · `scrollpanel` · `slider` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `tieredmenu` · `timeline` · `togglebutton` · `tree` · `treeselect` · `treetable` · `virtualscroller`
 
 ### Usados en NATIVO, sin wrapper
 

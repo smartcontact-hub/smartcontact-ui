@@ -76,7 +76,7 @@
 | `sc-multiselect` | EXTENDED | primeng/multiselect | 34 inputs | sc-field-label sc-field-msg | ✓ | 14 |
 | `sc-option-cards` | CUSTOM | — | 4 inputs | — | — | 1 |
 | `sc-panel` | EXTENDED | primeng/panel | 6 inputs | — | ✓ | 1 |
-| `sc-password` | EXTENDED | primeng/password | 19 inputs | sc-field-label sc-field-msg | ✓ | 1 |
+| `sc-password` | EXTENDED | primeng/config, primeng/inputpassword | 19 inputs | sc-field-label sc-field-msg | ✓ | 1 |
 | `sc-permission-matrix` | CUSTOM | — | 5 inputs | sc-checkbox | — | 2 |
 | `sc-photo-upload` | CUSTOM | — | 6 inputs | — | ✓ | 2 |
 | `sc-progressbar` | EXTENDED | primeng/progressbar | 4 inputs | — | ✓ | — |

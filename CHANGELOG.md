@@ -80,6 +80,12 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   jubilado. Su API no cambia y sus botones se ven igual. Sale el alto de 36 px y el relleno del botón «Aplicar» de
   `sc-bulk-edit-menu`: nunca le llegaron, porque `styleClass` dejaba la clase en el `<button>` de PrimeNG, fuera del
   alcance de su SCSS; en el host de `sc-button` lo habrían descolocado. ([DD-172](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-password` pasa de `p-password`, jubilado en PrimeNG 22, a la directiva
+  `pInputPassword`. Su API no cambia. El medidor de fuerza (`feedback`) es ahora nuestro, con los tres niveles, los
+  patrones y los textos de PrimeNG (su traducción configurada): sale bajo el campo mientras tiene el foco, lo describe
+  por `aria-describedby` y Escape lo cierra. El botón de mostrar ya no se desmonta al alternar, así que conserva el foco
+  solo. El ojo se coloca con el relleno de la talla del campo y no con el de `md`: en `lg` va 1,7 px más a la izquierda
+  y el texto le deja 5,5 px más de hueco. ([DD-172](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — el icono pesa lo que su texto (DD-130 §6, figma-pendiente §29). En
   `sc-form-section-nav` plano, el índice de todo el Supervisor, el icono y el ✓ de la fila activa van a 600 y los de
   las demás a 400, como sus rótulos; en el de por defecto, a 500, el medium de su rótulo. El icono del título de

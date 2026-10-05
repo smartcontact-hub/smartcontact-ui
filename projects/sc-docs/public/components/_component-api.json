@@ -244,7 +244,7 @@
     },
     {
       "componente": "password",
-      "envuelto": true
+      "envuelto": false
     },
     {
       "componente": "picklist",
@@ -5312,7 +5312,7 @@
     {
       "selector": "sc-password",
       "name": "password",
-      "primengBase": "primeng/password",
+      "primengBase": "primeng/config, primeng/inputpassword",
       "cuando": "Para una contraseña, con su ojo para mostrarla.",
       "contrato": [
         {
@@ -5321,14 +5321,9 @@
           "tipo": "ScFieldSize",
           "porDefecto": "'md'",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Specifies the size of the component.",
-            "porDefecto": "undefined",
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no cambia el comportamiento.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "label",
@@ -5336,14 +5331,9 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Label of the input for accessibility.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "required",
@@ -5351,14 +5341,9 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "There must be a value (if set).",
-            "porDefecto": "false",
-            "obsoleta": null,
-            "heredadaDe": "BaseEditableHolder"
-          }
+          "descripcion": "Marca el campo como obligatorio: pinta la marca en la etiqueta y lo anuncia con `aria- required`. No valida por sí solo — de eso se encarga el formulario.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "helperText",
@@ -5387,13 +5372,8 @@
           "porDefecto": "false",
           "requerido": false,
           "descripcion": "Estado inválido explícito. Se combina con `error`.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "When present, it specifies that the component should have invalid state style.",
-            "porDefecto": "false",
-            "obsoleta": null,
-            "heredadaDe": "BaseEditableHolder"
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "fluid",
@@ -5402,13 +5382,8 @@
           "porDefecto": "false",
           "requerido": false,
           "descripcion": "Ancho completo: el campo ocupa el 100 % de su contenedor.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Spans 100% width of the container when enabled.",
-            "porDefecto": "false",
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "ariaLabel",
@@ -5417,13 +5392,8 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "Nombre accesible cuando no hay `<label>` visible.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Defines a string that labels the input for accessibility.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "placeholder",
@@ -5431,14 +5401,9 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Advisory information to display on input.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "disabled",
@@ -5446,14 +5411,9 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "When present, it specifies that the component should have disabled state style.",
-            "porDefecto": "false",
-            "obsoleta": null,
-            "heredadaDe": "BaseEditableHolder"
-          }
+          "descripcion": "Deshabilita el campo y su botón de mostrar. No se puede enfocar ni editar, y no viaja en el envío del formulario.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "inputId",
@@ -5461,14 +5421,9 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Identifier of the accessible input element.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Id del control interno. Si no se pasa se genera uno, así que solo hace falta para atar una etiqueta externa o un `aria-describedby` de fuera.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "name",
@@ -5476,14 +5431,9 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "When present, it specifies that the name of the input.",
-            "porDefecto": "undefined",
-            "obsoleta": null,
-            "heredadaDe": "BaseEditableHolder"
-          }
+          "descripcion": "Atributo `name` del control, para el envío nativo del formulario y para que el navegador sepa qué autocompletar.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "autocomplete",
@@ -5492,13 +5442,8 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "`current-password` en un acceso, `new-password` al crearla (lo leen los gestores de contraseñas).",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Specify automated assistance in filling out password by browser.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "maxlength",
@@ -5506,14 +5451,9 @@
           "tipo": "number",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "The number of characters (code points) must not exceed the value of the attribute.",
-            "porDefecto": "undefined",
-            "obsoleta": null,
-            "heredadaDe": "BaseInput"
-          }
+          "descripcion": "Máximo de caracteres que deja teclear el navegador. Es un tope duro, no un aviso: no avisa, simplemente no deja escribir más.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "feedback",
@@ -5521,14 +5461,9 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": "Medidor de fuerza de PrimeNG. Apagado por defecto: un acceso no lo quiere.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Whether to show the strength indicator or not.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Medidor de fuerza, el de PrimeNG. Apagado por defecto: un acceso no lo quiere.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "toggleMask",
@@ -5537,13 +5472,8 @@
           "porDefecto": "true",
           "requerido": false,
           "descripcion": "Botón para mostrar u ocultar la contraseña.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Whether to show an icon to display the password as plain text.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "showAriaLabel",
@@ -5597,31 +5527,7 @@
         }
       ],
       "ocultas": [
-        "appendTo",
-        "ariaLabelledBy",
-        "autofocus",
-        "inputSize",
-        "inputStyle",
-        "inputStyleClass",
-        "max",
-        "mediumLabel",
-        "mediumRegex",
-        "min",
-        "minlength",
-        "motionOptions",
-        "overlayOptions",
-        "pPasswordPT",
-        "pPasswordUnstyled",
-        "pattern",
-        "promptLabel",
-        "showClear",
-        "showPassword",
-        "step",
-        "strongLabel",
-        "strongRegex",
-        "tabindex",
-        "variant",
-        "weakLabel"
+        "mask"
       ]
     },
     {
