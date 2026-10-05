@@ -1151,6 +1151,17 @@ a 1440:
 - **Enmendado por DD-145** (2026-10-01): el nombre fijo al bajar y la prueba de borrar, hechos.
 - **Para el Kit:** `figma-pendiente` §35.
 
+**Actualización (2026-10-05)** · La columna de 240 de agente y usuario cabe, medida con una sonda en este build:
+a 1366 × 768, a 1440 × 900 y a 1366 × 660, en los cuatro idiomas y en ocho fichas (los agentes 7 y 12, su alta y el
+7 duplicado; los usuarios 1 y 3, su alta y el 3 duplicado). En las 96 vistas, con 492 textos y 132 cifras con anillo:
+- cada texto cabe en una línea, sin salirse de su tarjeta ni partir una palabra;
+- la cifra más justa, 12/12, queda a 81 px de su anillo;
+- no hay que desplazarse dentro de la columna, tampoco a 1366 × 660.
+
+El molde se queda. Lo guarda `resumen-cabe.spec.ts`, una prueba por idioma a 1366 × 768, vista en rojo con un fallo
+por comprobación: la columna a 150 (la cifra pisa el anillo), los textos sin partir (se salen de su tarjeta), la
+columna corta (hay que desplazarse) y la columna a 90 (palabras partidas).
+
 ---
 
 ## DD-143 · 2026-10-01 — Las altas vuelven al índice, con ✓ en las secciones que se dejan completas y «Atrás / Siguiente» al pie
