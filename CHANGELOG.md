@@ -95,6 +95,11 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Fixed
 
+- **`@smartcontact-hub/components`** — `sc-button` con `variant="secondary" appearance="text"` se lee en claro: su
+  etiqueta e icono medían 2,95:1 (slate-500, el mismo valor que `outlined secondary`, en otra `appearance`). Ahora
+  `--sc-cmp-button-text-secondary-color` sube a slate-600 (4,52:1), el mismo escalón que ya llevaban
+  `outlined secondary` y `text danger`. Afecta a todo botón secundario de texto: «Añadir alternativa (O)» del
+  constructor de reglas, los «⋮» de fila, deshacer-10s del reproductor, cerrar del toast… ([DD-169](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — El marcador de `sc-photo-upload` sin foto se ve a 3:1, lo que pide un icono: usaba
   el color de texto apagado y medía 2,58:1 en claro. Ahora, `--sc-icon-secondary` (3,96:1). ([DD-136](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — La ayuda, el error y lo obligatorio de `sc-multiselect` se anuncian con su

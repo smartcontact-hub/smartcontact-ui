@@ -86,6 +86,10 @@ const RUTAS = [
   // El editor de una agenda (DD-163): sus campos, la tabla de contactos y su paginador, en los dos temas.
   'admin/agendas/editar/1',
   'admin/reglas-ia',
+  // El constructor de condiciones de una regla nueva (medido 2026-10-05): «Añadir alternativa
+  // (O)» es `variant="secondary" appearance="text"`, y ese slot del preset no está en la lista
+  // de conocidos — es un fallo nuevo, no el ya aceptado de §1.5/CONOCIDOS_CLARO.
+  'conversaciones/reglas/nueva?seccion=alcance',
   'config/aed/servicio',
   'config/aed/agentes',
   /* Contact Center › Grupos: desde el 2026-09-29 es donde se fija con qué nace un grupo (DD-135), en el orden de la
