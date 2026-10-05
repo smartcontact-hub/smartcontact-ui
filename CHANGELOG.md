@@ -95,6 +95,13 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Fixed
 
+- **`@smartcontact-hub/components`** — `sc-datatable` pinta todas las filas seleccionadas, también las que añade un
+  tramo con Mayúsculas: cada una lleva `sc-row--selected`, que sale de la selección. p-table solo resaltaba las que
+  marcaba él, y en las listas un tramo de cuatro pintaba dos (la barra decía cuatro). Antes lo tenía que pintar cada
+  pantalla con `[rowStyleClass]`. ([DD-98](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — La casilla de «seleccionar todas» de `sc-datatable` se nombra desde que se pinta
+  (WCAG 4.1.2): PrimeNG 22.1 calculaba su nombre solo cuando la tabla recibía filas después de pintarse la cabecera, y
+  al cargar se quedaba sin él aunque llegara `selectAllAriaLabel`. ([DD-98](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-button` con `variant="secondary" appearance="text"` se lee en claro: su
   etiqueta e icono medían 2,95:1 (slate-500, el mismo valor que `outlined secondary`, en otra `appearance`). Ahora
   `--sc-cmp-button-text-secondary-color` sube a slate-600 (4,52:1), el mismo escalón que ya llevaban

@@ -98,7 +98,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 2,
       "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
       "sobreObsoleto": []
     },
@@ -395,7 +395,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 15,
+      "usedInSupervisor": 12,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": []
     },
@@ -1186,7 +1186,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 10,
+      "usedInSupervisor": 11,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },

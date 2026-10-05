@@ -2095,7 +2095,7 @@
           "tipo": "string | undefined",
           "porDefecto": "undefined",
           "requerido": false,
-          "descripcion": "Nombre accesible de la casilla de CABECERA (seleccionar todo).",
+          "descripcion": "Nombre accesible de la casilla de CABECERA (seleccionar todo). Lo pone el componente desde que se pinta: PrimeNG 22.1 solo lo calcula cuando la tabla recibe filas después de pintarse la cabecera.",
           "origen": "nuestro",
           "nativo": null
         },

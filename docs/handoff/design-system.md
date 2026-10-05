@@ -64,10 +64,9 @@
 2. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
    ~20 de las 79 entradas de `p-table`.
 
-- **Conversaciones sobre `sc-list-page` (DD-98)**: ya va con scroll dentro (tramo 2026-09-15), pero con su tabla
-  propia; pasarla a la pieza es otra tarea. Entidades ya entró en `.page--tabla` (DD-95, 2026-10-05). Después,
-  archivar con tag las ramas `comparar/tabla-*` y borrar la local `arebury/tabla-scroll-listas` (la copia por
-  pantalla que no se subió); desde la nube no se puede.
+- **Archivar la comparación de tablas** (desde la nube no se puede): con tag las ramas `comparar/tabla-*`, y borrar la
+  local `arebury/tabla-scroll-listas`. Lo que la seguía ya está: Conversaciones monta `sc-list-page` (DD-98) y
+  Entidades entró en `.page--tabla` (DD-95), los dos el 2026-10-05.
 - **Conversaciones con más de 100 filas**: la lista virtual pide filas del mismo alto, y a 1280 Origen y Destino
   parten en dos líneas. Con los datos demo (34-47) no se activa. Agentes lo resolvió con `tableMinWidth` y scroll
   lateral (DD-102), pero aquí chocaría con las etiquetas que se recortan a 1280 a propósito: decidirlo con Rafa

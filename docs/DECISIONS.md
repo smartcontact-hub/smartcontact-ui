@@ -3868,6 +3868,21 @@ en dos líneas). Siete listas declaraban una dependencia de idioma que nunca le�
 gate en verde. Fuera de la pieza: Conversaciones (filtros y tabla propia) y Entidades (dos tablas). Ya estaba
 antes: el panel de edición de la última fila de Etiquetas, Plantillas y Repositorios hace scroll dentro de la tabla.
 
+**Actualización (2026-10-05)** · Conversaciones se monta sobre la pieza; fuera queda solo Entidades, con sus dos
+tablas (DD-95). Lo que solo tenía ella lo hace ahora la pieza para todas: Espacio en la fila selecciona, Mayús+clic en
+la fila no abre, el menú de fila puede ir solo con clic derecho (`rowMenuColumn`) y no se abre vacío, y la tabla lleva
+la piel de su pantalla (`tableClass`) y sus casillas, sus claves (`selectRowKey`, `selectAllKey`). Y salieron tres
+defectos de las ocho:
+- un tramo con Mayúsculas de cuatro pintaba dos (medido en Usuarios y Agentes). Lo pinta `sc-datatable` desde la
+  selección (`sc-row--selected`);
+- la casilla de «todas» salía sin nombre en todas (WCAG 4.1.2): PrimeNG 22.1 lo calcula solo si llegan filas después
+  de pintarse la cabecera. Lo pone `sc-datatable`;
+- el primer Escape del buscador vaciaba y soltaba el foco a la vez: `(keydown)` sobre `sc-search` llega dos veces (su
+  salida y el nativo). `escapeSearch` atiende cada evento una vez.
+Conversaciones gana ordenar por cabecera (todas menos Estado) y el Escape de su buscador. `conversation-table` ya no
+pinta: da columnas, celdas, clases de fila, menú y orden. Lo vigilan `lista-seleccion.spec.ts` y
+`conversaciones-en-la-pieza.spec.ts`.
+
 ---
 
 ## DD-97 · 2026-09-14 — Las medidas de PrimeOne que Aura 3 cambió siguen a Aura en código, atadas a la escala, y Figma se alinea después

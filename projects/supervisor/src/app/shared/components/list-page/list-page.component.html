@@ -112,6 +112,7 @@
           scrollable
           scrollHeight="flex"
           virtualScroll
+          [class]="tableClass()"
           [resizableColumns]="!!columnChoices()"
           (columnWidthsChange)="onColumnWidthsChange($event)"
           [tableMinWidth]="effectiveTableMinWidth()"

@@ -42,7 +42,7 @@
 | `sc-avatargroup` | STANDARD | primeng/avatargroup | 0 inputs | — | — | — |
 | `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 6 |
 | `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
-| `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 3 |
+| `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 2 |
 | `sc-bulk-edit-menu` | STANDARD | primeng/button | 2 inputs | sc-select | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
 | `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 156 |
@@ -53,7 +53,7 @@
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | — |
 | `sc-command-palette` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | primeng/table | 34 inputs | — | ✓ | 15 |
+| `sc-datatable` | EXTENDED | primeng/table | 34 inputs | — | ✓ | 12 |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 20 |
@@ -82,7 +82,7 @@
 | `sc-progressbar` | EXTENDED | primeng/progressbar | 4 inputs | — | ✓ | — |
 | `sc-progressspinner` | EXTENDED | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
-| `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 10 |
+| `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 11 |
 | `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 23 |
 | `sc-select` | EXTENDED | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 58 |
 | `sc-selectbutton` | EXTENDED | primeng/selectbutton | 14 inputs | — | ✓ | 12 |

@@ -1,28 +1,8 @@
-/* Page chrome alineado con AED list-pages (S41 consistency fix).
- * El ancho ya NO se declara aquí: la plantilla marca el arquetipo
- * (`page__inner--list`) y `styles/_page.scss` pone max-width + centrado.
- * Lo que queda abajo es el delta propio de esta página: el padding.
- * La forma de la página es `.page--tabla` (DD-95), como el resto de listas: la tabla hace scroll
- * dentro y, con filas marcadas, la tarjeta deja sitio a la barra de selección
- * (`.table-card--seleccion`). Por eso aquí ya no se reserva la barra con `padding-bottom`:
- * rompería la cadena de altos. */
+/* La página la monta `sc-list-page` (DD-98, 2026-10-05): título, `.page--tabla` (DD-95), rellenos y tabla son los
+ * de la pieza, como en el resto de listas. Aquí solo el eslabón de la cadena de altos: el host mide el alto entero
+ * para que la pieza pueda repartirlo. */
 :host {
   display: block;
   height: 100%;
   background: var(--sc-bg-canvas);
-}
-
-.page {
-  background: var(--sc-bg-canvas);
-
-  &__inner {
-    /* Barra → título `1-25` y lados `2`, como las demás pantallas (2026-09-14). Aquí
-     * arriba era `1` para que la tabla arrancara más arriba; con la barra de arriba a
-     * 64 caben las mismas 13 filas y el título deja de pegarse a la raya. */
-    padding: var(--sc-spacing-1-25) var(--sc-spacing-2);
-    /* S53 gestalt fix: filtros+toolbar+tabla son UNA card continua
-     * (stitched-card pattern). El divisor visual es 1 hairline border
-     * compartido — sin gap, sin doble shadow, sin doble radius. */
-    gap: 0;
-  }
 }
