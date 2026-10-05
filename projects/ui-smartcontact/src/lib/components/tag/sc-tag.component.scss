@@ -1,5 +1,5 @@
 /* Variante categórica `label` (§4.1) — 1:1 con el read-only del retirado
- * `sc-label-chip`: texto, 8 colores vía las custom props `--label-*`
+ * `sc-label-chip`: texto, 9 colores vía las custom props `--label-*`
  * que el componente fija desde `labelColor` (tokens `--sc-label-<color>-*`). */
 .sc-tag__label {
     display: inline-flex;

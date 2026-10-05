@@ -1536,7 +1536,7 @@
           "tipo": "'default' | 'label'",
           "porDefecto": "'default'",
           "requerido": false,
-          "descripcion": "Variante categórica (§4.1): etiqueta con punto + 8 colores del DS. Default `'default'` = wrapper `<p-chip>` (intacto). Es la cara REMOVIBLE del retirado `sc-label-chip` (la read-only vive en `sc-tag variant=\"label\"`).",
+          "descripcion": "Variante categórica (§4.1): etiqueta con punto + 9 colores del DS. Default `'default'` = wrapper `<p-chip>` (intacto). Es la cara REMOVIBLE del retirado `sc-label-chip` (la read-only vive en `sc-tag variant=\"label\"`).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -7606,7 +7606,7 @@
           "tipo": "'default' | 'label'",
           "porDefecto": "'default'",
           "requerido": false,
-          "descripcion": "Variante categórica (§4.1): etiqueta de solo lectura con punto + 8 colores del DS. Default `'default'` = wrapper `<p-tag>` semántico (intacto). Hereda el comportamiento read-only del retirado `sc-label-chip`.",
+          "descripcion": "Variante categórica (§4.1): etiqueta de solo lectura con punto + 9 colores del DS. Default `'default'` = wrapper `<p-tag>` semántico (intacto). Hereda el comportamiento read-only del retirado `sc-label-chip`.",
           "origen": "nuestro",
           "nativo": null
         },
