@@ -10,7 +10,8 @@ const COLUMNS: readonly RepoColumnDef<RepoVariable>[] = [
     labelKey: 'repositories.columns.name',
     kind: 'text',
     accessor: (i) => i.name,
-    width: '224px',
+    // Sin ancho: es la columna que crece. Con las cuatro medidas, el sobrante se repartía
+    // también en la casilla de selección, que dejaba de medir 40 (igual que en agendas.ts).
     emphasis: true,
   },
   {
