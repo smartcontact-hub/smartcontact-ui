@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LA TABLA DE AGENTES DE LA FICHA DE GRUPO, COMPACTA Y SIN PAGINAR (DD-171).
+ * LA TABLA DE AGENTES DE LA FICHA DE GRUPO, COMPACTA Y SIN PAGINAR (DD-172).
  *
  * Medido el 2026-10-05 a 1440, en el grupo 11 (tres canales): la tabla medía 912 en una caja de 731 y desplazaba 181 px
  * de lado. El hueco estaba en las columnas de casillas: todas a 104 o 100, para rótulos de 32 a 72 y una casilla de 16.
@@ -53,7 +53,7 @@ test('sin paginación: todas las filas del filtro, y la tabla desplaza por dentr
   await expect.poll(() => tabla.locator('tbody tr').count()).toBeGreaterThan(13);
 });
 
-/* LA CABECERA, EN UNA FILA Y ALINEADA (DD-171): las columnas de casillas llevan su icono y su casilla de «todos» al
+/* LA CABECERA, EN UNA FILA Y ALINEADA (DD-172): las columnas de casillas llevan su icono y su casilla de «todos» al
  * lado, en la vertical de las casillas de sus filas; Habilitado, su icono sobre sus interruptores. Hasta entonces cada
  * cabecera de casillas apilaba su rótulo y su casilla, y la fila de cabeceras medía 54 con «Agente» y «Estado» flotando
  * a media altura. */

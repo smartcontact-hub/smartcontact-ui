@@ -114,7 +114,7 @@ test('la cabecera actúa sobre todo el filtro y excluye agentes incompatibles; e
   await page.getByRole('button', { name: 'Asignar agentes de Grupo mixto' }).click();
   const table = page.locator('sc-agent-channel-table');
   await table.getByRole('button', { name: 'Sin asignar', exact: true }).click();
-  // Sin páginas (DD-171): los 28 sin asignar, todos en la tabla.
+  // Sin páginas (DD-172): los 28 sin asignar, todos en la tabla.
   await expect(table.locator('tbody tr')).toHaveCount(28);
   await expect(table.locator('.p-paginator')).toHaveCount(0);
   await table.getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox').click();
@@ -135,7 +135,7 @@ test('el alta muestra Todos con los 500 agentes disponibles, sin páginas y sin 
   await page.locator('sc-form-section-nav').getByText('Agentes', { exact: true }).click();
   const table = page.locator('sc-agent-channel-table');
   await expect(table.getByRole('button', { name: 'Todos', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  // Sin páginas (DD-171): con más de 100, la tabla pinta solo las filas que se ven (DD-95), y se ven filas.
+  // Sin páginas (DD-172): con más de 100, la tabla pinta solo las filas que se ven (DD-95), y se ven filas.
   await expect(table.locator('.p-paginator')).toHaveCount(0);
   await expect.poll(() => table.locator('tbody tr').count()).toBeGreaterThan(10);
   expect(await table.locator('tbody tr').count(), 'pinta solo las que se ven, no las 500').toBeLessThan(100);

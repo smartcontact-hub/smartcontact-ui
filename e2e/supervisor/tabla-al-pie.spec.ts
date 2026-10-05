@@ -38,7 +38,7 @@ for (const [ancho, alto] of [
     await goto(page, 'admin/grupos/editar/11?seccion=agentes');
     const caja = page.locator('sc-agent-channel-table .table-card');
     await caja.locator('tbody tr').first().waitFor();
-    // Todos: sin paginación (DD-171) y en la densidad compacta, los 13 del grupo ya caben; los de la lista entera, no.
+    // Todos: sin paginación (DD-172) y en la densidad compacta, los 13 del grupo ya caben; los de la lista entera, no.
     await page.locator('sc-agent-channel-table').getByRole('button', { name: 'Todos', exact: true }).click();
     await expect.poll(() => caja.locator('tbody tr').count()).toBeGreaterThan(13);
     await page.evaluate(() => document.fonts.ready);

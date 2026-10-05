@@ -45,7 +45,7 @@
 | `sc-bulk-action-bar` | CUSTOM | — | 1 inputs | — | ✓ | 3 |
 | `sc-bulk-edit-menu` | STANDARD | primeng/button | 2 inputs | sc-select | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 157 |
+| `sc-button` | EXTENDED | primeng/button | 18 inputs | — | ✓ | 157 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 38 |
 | `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 6 |

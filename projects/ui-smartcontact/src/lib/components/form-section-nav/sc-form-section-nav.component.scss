@@ -221,8 +221,8 @@
  *   3. Color: hereda del token semántico --sc-bg-danger automáticamente
  *      en dark mode sin overrides.
  *
- * Va en su propio hueco al final de la fila (`.form-nav__marker`, DD-171): el rótulo llena la fila y lo empuja, así
- * que con varias marcas caen en la misma vertical. De 2026-09-06 a DD-171 fluía detrás de la última palabra, porque
+ * Va en su propio hueco al final de la fila (`.form-nav__marker`, DD-172): el rótulo llena la fila y lo empuja, así
+ * que con varias marcas caen en la misma vertical. De 2026-09-06 a DD-172 fluía detrás de la última palabra, porque
  * de hermano le quitaba 25 px a una caja de texto de 99; hoy, en el carril de 196, al rótulo le quedan 140 con el
  * hueco puesto, y el más largo de las fichas, «Distribución y colas», mide 130.
  */

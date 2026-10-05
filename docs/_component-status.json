@@ -174,9 +174,12 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/button",
       "cva": false,
-      "inputs": 15,
+      "inputs": 18,
       "api": [
         "appearance",
+        "ariaControls",
+        "ariaExpanded",
+        "ariaHasPopup",
         "ariaLabel",
         "clicked",
         "disabled",

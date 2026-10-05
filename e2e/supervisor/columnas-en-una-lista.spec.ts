@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * ELEGIR Y ORDENAR COLUMNAS: EL «COLUMN TOGGLE» DE PRIMENG.DEV, TAL CUAL (DD-171, que sustituye el Listbox de DD-162).
+ * ELEGIR Y ORDENAR COLUMNAS: EL «COLUMN TOGGLE» DE PRIMENG.DEV, TAL CUAL (DD-172, que sustituye el Listbox de DD-162).
  *
  * primeng.dev/table, «Column Toggle»: un botón «Columns» con su engranaje (outlined, secondary, small) que abre un
  * Popover de 18rem sin relleno; arriba, el título y «Reset» (texto, secondary, small); debajo, una fila por columna con
@@ -38,6 +38,18 @@ const enfocada = (page: Page) =>
   page.evaluate(
     () => document.activeElement?.closest('.column-toggle__row')?.querySelector('.column-toggle__label')?.textContent?.trim() ?? null,
   );
+
+test('el botón «Columnas» dice en el foco que abre un diálogo, y si ya está abierto (DD-171)', async ({ page }) => {
+  await goto(page, 'admin/agentes');
+  await expect(boton(page)).toHaveAttribute('aria-haspopup', 'dialog');
+  await expect(boton(page)).toHaveAttribute('aria-expanded', 'false');
+  await boton(page).click();
+  await expect(globo(page)).toBeVisible();
+  await expect(boton(page)).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Escape');
+  await expect(globo(page)).toBeHidden();
+  await expect(boton(page)).toHaveAttribute('aria-expanded', 'false');
+});
 
 test('el botón «Columnas» abre su globo: título, «Restablecer» y una fila por columna, con su asa y su casilla', async ({ page }) => {
   await goto(page, 'admin/agentes');

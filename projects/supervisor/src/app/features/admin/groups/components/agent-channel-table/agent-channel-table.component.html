@@ -11,7 +11,7 @@
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <div class="table-card table-card--al-pie" scLlegaAlPie>
-    <!-- Compacta (`sm`, la densidad nativa de PrimeNG) y sin páginas (DD-171): todas las filas del filtro, y lo que no
+    <!-- Compacta (`sm`, la densidad nativa de PrimeNG) y sin páginas (DD-172): todas las filas del filtro, y lo que no
          cabe lo desplaza la tabla por dentro con la cabecera fija, hasta el pie de la pantalla (DD-160). Con más de 100,
          pinta solo las que se ven (`virtualScroll`, DD-95). -->
     <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
@@ -21,7 +21,7 @@
           @for (col of columns(); track col.field) {
             <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
               @if (col.field === 'assigned' || families().includes($any(col.field))) {
-                <!-- Una fila (DD-171): la casilla de «todos» y el icono de la columna, que nombra el tooltip. La pastilla se
+                <!-- Una fila (DD-172): la casilla de «todos» y el icono de la columna, que nombra el tooltip. La pastilla se
                      pulsa entera, también por el icono, y lo dice al pasar; la casilla triestado es lo que enseña el
                      estado (todos, ninguno, a medias) y lo que oye el lector («Marcar … en todos»). Cae en la vertical
                      de las casillas de sus filas (`.assign__cell`). -->
@@ -78,7 +78,7 @@
 </ng-template>
 
 <!-- Una columna por canal DEL GRUPO, como la matriz de Contact Center. En `.assign__cell`, la vertical de la casilla de
-     «todos» de su cabecera (DD-171). -->
+     «todos» de su cabecera (DD-172). -->
 <ng-template #channelTpl let-row let-col="col">
   <span class="assign__cell">
   @if (!allowed(row.agent, col.field)) {

@@ -67,11 +67,11 @@ interface VisibleRow {
 
 /**
  * El ancho de cada columna, en rem, en la tabla de la ficha y en la del panel rápido, que suma estos mismos para medirse
- * (DD-131). Las dos van en la densidad compacta nativa (`sm`, DD-171): 6 de relleno a cada lado. Medido el 2026-10-05
- * (DD-171):
+ * (DD-131). Las dos van en la densidad compacta nativa (`sm`, DD-172): 6 de relleno a cada lado. Medido el 2026-10-05
+ * (DD-172):
  *   · Asignado y cada canal: su cabecera es una pastilla con la casilla de «todos» (15,75) y el icono (14), 7 entre los
  *     dos y 3,5 de relleno: 43,75, y con el de la celda, 56. Hasta la cabecera en una fila llevaban su rótulo encima
- *     («Téléphone», 72 px, pedía 88), y de DD-156 a DD-171 los tres canales medían lo del más largo (104).
+ *     («Téléphone», 72 px, pedía 88), y de DD-156 a DD-172 los tres canales medían lo del más largo (104).
  *   · Habilitado: su interruptor (31,5) bajo su icono, y el relleno: 48.
  *   · Estado: su etiqueta más larga, «Post-conversation», 123 px.
  *   · Agente: avatar (24), hueco y nombre y email en dos líneas. En la ficha es un MÍNIMO: la columna crece con el

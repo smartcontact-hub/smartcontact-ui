@@ -109,7 +109,7 @@ test('un grupo de un solo canal muestra compatibilidad y asignación, sin págin
   await goto(page, 'admin/grupos');
   await abrirPanel(page, 'ACD Demo C2CB');
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono', exact: true })).toHaveCount(1);
-  // Sin páginas (DD-171): los 13 asignados, todos.
+  // Sin páginas (DD-172): los 13 asignados, todos.
   await expect(panel(page).locator('.p-paginator')).toHaveCount(0);
   await expect(panel(page).locator('tbody tr')).toHaveCount(13);
   expect((await cajon(page).boundingBox())!.y).toBe(0);
@@ -171,7 +171,7 @@ test('una fila que llega sin canal devuelve la columna en un grupo de uno, y mar
 
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(1);
   const ancho = (await medidas(page)).ancho;
-  // Solo Teléfono: 37,25rem (DD-171: su cabecera es su casilla y su icono, sin rótulo).
+  // Solo Teléfono: 37,25rem (DD-172: su cabecera es su casilla y su icono, sin rótulo).
   expect(ancho).toBeLessThanOrEqual(37.25 * 16);
 
   // Es la única forma de darle canal desde aquí; al marcarla pasa a ser su último canal, y la columna se queda.

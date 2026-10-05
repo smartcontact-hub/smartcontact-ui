@@ -466,7 +466,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   }
 
   /**
-   * Se ha soltado una fila en el globo (DD-171, `cdkDropList` como el ejemplo). Las visibles se quedan las mismas; el orden es el de la lista. Las
+   * Se ha soltado una fila en el globo (DD-172, `cdkDropList` como el ejemplo). Las visibles se quedan las mismas; el orden es el de la lista. Las
    * fijas vuelven a su sitio aunque se suelten encima (`normalizePrefs`).
    */
   protected onColumnDrop(event: Pick<CdkDragDrop<unknown>, 'previousIndex' | 'currentIndex'>): void {

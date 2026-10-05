@@ -938,6 +938,38 @@
       "color": "rgb(255, 255, 255)",
       "background-color": "rgb(27, 39, 61)"
     },
+    "sc-btn-popup": {
+      "padding-top": "0px",
+      "padding-right": "0px",
+      "padding-bottom": "0px",
+      "padding-left": "0px",
+      "gap": "normal",
+      "min-height": "auto",
+      "border-radius": "0px",
+      "border-top-width": "0px",
+      "border-bottom-width": "0px",
+      "font-size": "14px",
+      "font-weight": "400",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
+      "background-color": "rgba(0, 0, 0, 0)"
+    },
+    "sc-btn-popup > p-button > button.p-ripple": {
+      "padding-top": "5.25px",
+      "padding-right": "0px",
+      "padding-bottom": "5.25px",
+      "padding-left": "0px",
+      "gap": "0px",
+      "min-height": "0px",
+      "border-radius": "6px",
+      "border-top-width": "1px",
+      "border-bottom-width": "1px",
+      "font-size": "14px",
+      "font-weight": "500",
+      "line-height": "20px",
+      "color": "rgb(111, 119, 132)",
+      "background-color": "rgba(0, 0, 0, 0)"
+    },
     "sc-btn-press": {
       "padding-top": "0px",
       "padding-right": "0px",
