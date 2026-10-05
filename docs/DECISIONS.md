@@ -1638,6 +1638,10 @@ en la barra de arriba y de uno en uno.
   marcador de la foto (`sc-photo-upload`, del DS) mide 2,58:1 y un icono pide 3:1: usa el color de «deshabilitado»
   sin estarlo. Es un arreglo del DS, con su captura de sc-docs, para su propio cambio.
 
+**Actualización (2026-10-05)** · Cerrado. El marcador usa `--sc-icon-secondary`, el secundario de los iconos del DS, y
+mide 3,96:1 en claro. Las altas de agente y usuario entran en `RUTAS` de `theme-contrast`, en rojo antes del arreglo
+(solo el marcador, en claro) y en verde después, en los dos temas.
+
 ---
 
 ## DD-135 · 2026-09-29 — Contact Center fija con qué nace un grupo o un agente, con los valores del documento de producto

@@ -31,8 +31,10 @@
     object-fit: cover;
   }
 
+  /* El marcador es un icono y pide 3:1 sobre el círculo (WCAG 1.4.11): con el color de texto apagado medía 2,58:1
+     en claro (DD-136). Es el secundario de los iconos del DS. */
   &__placeholder {
-    color: var(--sc-text-disabled);
+    color: var(--sc-icon-secondary);
   }
 
   &__overlay {

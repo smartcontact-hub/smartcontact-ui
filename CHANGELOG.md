@@ -95,6 +95,8 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Fixed
 
+- **`@smartcontact-hub/components`** — El marcador de `sc-photo-upload` sin foto se ve a 3:1, lo que pide un icono: usaba
+  el color de texto apagado y medía 2,58:1 en claro. Ahora, `--sc-icon-secondary` (3,96:1). ([DD-136](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — La ayuda, el error y lo obligatorio de `sc-multiselect` se anuncian con su
   combobox, el `<input>` que recibe el foco: iban en la envoltura `<p-multiselect>`, y el lector no los oía.
   ([DD-133](docs/DECISIONS.md))
