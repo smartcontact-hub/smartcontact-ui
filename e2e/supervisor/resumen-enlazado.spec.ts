@@ -16,6 +16,7 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *      «Teléfono» no se confunden.
  *   4. En el alta, el resumen abre la sección sin tocar la dirección (DD-143), y General sigue siendo la puerta.
  *   5. Sobre el tinte de la tarjeta, el enlace se lee (AA) y se subraya al pasar, como la miga (DD-103).
+ *   6. Cada enlace se pulsa en al menos 24 × 24 (WCAG 2.5.8), también en una pantalla de 1366 × 660: pinta 18 de alto.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -131,4 +132,24 @@ test('sobre el tinte de la tarjeta el enlace se lee, y al pasar el ratón se sub
   expect(quieto.cursor).toBe('pointer');
   await enlace.hover();
   await expect.poll(async () => (await medida()).subrayado, { message: 'al pasar, subrayado' }).toContain('underline');
+});
+
+test('cada enlace del resumen se pulsa en al menos 24 × 24, también a 1366 × 660 (WCAG 2.5.8)', async ({ page }) => {
+  await page.setViewportSize({ width: 1366, height: 660 });
+  await goto(page, 'admin/grupos/editar/11');
+  const enlaces = resumen(page).locator('.resumen__enlace');
+  await expect(enlaces).toHaveCount(8);
+  // Las cuatro esquinas de un cuadrado de 24 centrado en el enlace caen en él: así se pulsa aunque pinte 18 de alto. Es
+  // la prueba del navegador (`elementFromPoint`), no la caja que se pinta.
+  const fuera = await enlaces.evaluateAll((els) =>
+    els.flatMap((el) => {
+      const r = el.getBoundingClientRect();
+      const [cx, cy] = [r.x + r.width / 2, r.y + r.height / 2];
+      const esquinas = [[-11.5, -11.5], [11.5, -11.5], [-11.5, 11.5], [11.5, 11.5]];
+      const fallan = esquinas.filter(([dx, dy]) => document.elementFromPoint(cx + dx, cy + dy)?.closest('.resumen__enlace') !== el);
+      const nombre = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
+      return fallan.length ? [`${nombre}: ${fallan.length} de 4 esquinas fuera (${r.width.toFixed(1)} × ${r.height.toFixed(1)})`] : [];
+    }),
+  );
+  expect(fuera).toEqual([]);
 });
