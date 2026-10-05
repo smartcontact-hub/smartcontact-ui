@@ -20,9 +20,39 @@ DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas 
 cuatro trampas del pase suben a «Trampas del frente». Y el de la revisión de producto del 2026-10-01 (H, los diálogos de
 Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-fichas.md`; sus trampas suben a
 «Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show c6a9cd59:…` y `git show 2a894b1c:…`. El de E2
-(DD-149, sin trampas propias): `git show a7bca7c0:docs/handoff/supervisor-fichas.md`.
+(DD-149, sin trampas propias): `git show a7bca7c0:docs/handoff/supervisor-fichas.md`. El de E3 (DD-150, tampoco):
+`git show c065d664:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-04 · La revisión de producto del 2026-10-04, en un lote de seis bloques (DD-157 a DD-162), en su PR
+## ✅ 2026-10-05 · Recursos, en un lote de cuatro bloques (DD-163 a DD-166), en su PR
+
+> **Un PR, un commit en rojo y otro en verde por bloque (DD-154), más el arreglo de `tiempos`: una ejecución que sigue
+> en curso no tiene fin. Lo pedido es de la revisión de producto del 2026-10-04.**
+
+- **1 · La agenda es una lista de contactos, con su editor (DD-163):** `contacts: {id, name, phone}[]` en lugar de
+  `numbers`; lo guardado se pone al día al leerlo, y un contacto sin nombre se pinta «Sin nombre». `admin/agendas/crear`
+  y `editar/:id` van como las fichas: Guardar y Deshacer arriba, la guarda y el cerrojo entre pestañas. Los contactos,
+  en `agenda-contacts-table`: buscador (un teléfono, también por sus cifras), paginador y la tarjeta al pie, que sube
+  como modificador `.table-card--al-pie` a `_sc-list-table.scss` (el panel rápido lo suelta con `--table-card-tope:
+  none`). La agenda 9 trae 1.250 contactos generados, sin literales.
+- **DS, en el bloque 1:** `sc-datatable` gana `first` (nativo, de dos vías). Sin él, buscar desde la página ≥3 dejaba
+  la tabla en blanco, también en la de agentes de la ficha. Mueve `datatable-linux.png`.
+- **2 · El resumen de cada recurso, con «Editar» (DD-164):** `sc-resource-rows` bajo cada campo de Recursos, en la
+  ficha de grupo y en la de agente, con sus textos en `ResourceRowsService` y la lógica en `recursos.core.mjs`.
+  Plantillas abre su panel con `?editar=`, y todo repositorio siembra su búsqueda con `?buscar=`. Se ofrecen las
+  agendas activas y la inactiva que ya estaba puesta; lo borrado no se cuenta ni se guarda, y se quita antes de
+  `markPristine`. El desplegable dice «N agendas» en lugar de repetir los nombres de las filas.
+- **3 · Repositorios dice cuántos hay, y tiene buscador (DD-165):** la cifra va en texto de leyenda y en el nombre
+  accesible de la fila. Cinco almacenes pasan a `repositories/state/`, para que el hub importe almacenes y no páginas.
+- **4 · Importar contactos, como en Voice (DD-166):** plantilla CSV con BOM, vista previa con cada error y su línea,
+  repetidos que se saltan y se cuentan, y un tope de 5000 por agenda. Un CSV de Excel en español (windows-1252) se lee
+  con sus tildes. Lo importado entra sin guardar, con Guardar y Deshacer.
+- **En local, en verde:** las e2e de cada bloque y sus vecinas, los barridos de las rutas tocadas, 914 unitarias y
+  las puertas; `revision` del editor a 1440 y a 1366.
+
+**Pendiente, anotado:** en Horarios y Variables la casilla de selección mide 74 px, por la misma causa que tuvo Agendas
+(todas las columnas con ancho fijo). Va en una tarea aparte, con su prueba en `list-table-grammar`.
+
+## ✅ 2026-10-04 · La revisión de producto del 2026-10-04, en un lote de seis bloques (DD-157 a DD-162), fundida (#325)
 
 > **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Medido el tiempo de punta a punta: el feedback llegó
 > a las 15:28 UTC; los seis bloques, la pasada final, los barridos y `revision`, en local, a las 18:05 (2 h 37 min).**
@@ -149,46 +179,37 @@ adicionales verdes contra el build de producción servido en 4405. Ocho capturas
 Local 4405 actualizado a E4. El historial de recuperación E1a vive en `git show 06dc6170:docs/handoff/supervisor-fichas.md`;
 carpeta y ZIP intactos, sin reaplicar el parche.
 
-## ✅ 2026-10-02 · E3: canales permitidos (DD-150)
-
-> **Sello: `codex/supervisor-e3-canales`, base `74427653` (#312, CI de main leída en verde).**
-
-**Entregado:** #313 → `2a894b1c`; CI PR `37015026349` y main `37017197770`, leídas en verde. Rama y worktree propios
-eliminados; evidencia externa. Permisos por familia, intersección y aviso al retirar; se conservan enlaces y niveles. Semilla: 499/500 solo Chat.
-**Ejecutado:** dos unitarias y dos e2e rojas contra E2 (`4d6645fa`); después 22 unitarias, typecheck y 35 e2e
-afectados verdes; suite completa 509/511 (solo los dos recortes conocidos de 3 px, mismas medidas). Los siete e2e
-nuevos pasan. `revision` y 16 capturas claro/oscuro, 1024/1440, revisadas con better-layout; zoom/RTL no verificados.
-**Verify y preflight verdes.** Local 4405 actualizado; siete e2e adicionales verdes contra su build de producción.
-**Siguiente:** E4 → D3 → F. E4: decisión de producto (2026-10-02), confirmar acciones colectivas desde dos agentes.
-
 ## SIGUIENTE — sin preguntar
 
-0. **La revisión del 2026-10-04, en su PR** (el tramo de arriba). Lo siguiente, decidido con producto: **Recursos**
-   (un editor de agendas de verdad, el resumen de cada recurso con su enlace a editar, y en Repositorios cuántos hay y
-   un buscador). Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar
-   permisos por separado (no entra en esta fase). Antes, lo que dejó F:
-   - los dos detalles de la página de MultiSelect y «Copiar» encima de las líneas largas. Mueven capturas de sc-docs:
-     `visual-baselines` sobre la rama antes del PR;
-   - si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con tres canales (las dos salidas,
-     arriba).
+0. **Recursos, en su PR** (el tramo de arriba). Lo siguiente, en tres lotes con su PR cada uno (DD-154), decididos tras
+   la revisión del 2026-10-04:
+   - **lote 2 · sc-docs y el peso de los iconos:** aire sobre «Salidas» y «Dos sentidos»; la demo de `activated` con
+     su línea de lectura; el código del Playground sin valores por defecto (el `icon="view_column"` de MultiSelect);
+     `.row` y `.col` de los ejemplos con su hueco (los selectores de solo icono, pegados); «Copiar» sin tapar el código;
+     y el icono a 600 junto a texto semibold, en el título de `sc-subsection` y en la fila activa del índice
+     (`figma-pendiente` §29). Una sola regeneración de capturas, cada PNG mirada antes del PR;
+   - **lote 3 · lo que queda abierto de DD-133, DD-135, DD-136, DD-146 y DD-162:**
+     - cada desplegable con nombre (los selects rotulados con `<label for>` sin `ariaLabelledBy`): la regla, dentro
+       de `audit:screen-hygiene`;
+     - las ayudas se anuncian con su control (`ariaDescribedBy` en `sc-select`, `sc-inputnumber` y
+       `sc-toggleswitch`), también las de Contact Center;
+     - las opciones apagadas de `sc-select` dicen `aria-disabled`;
+     - el marcador de la foto de `sc-photo-upload`, de 2,58:1 a 3:1: las altas de agente y usuario entran en `RUTAS`
+       de `theme-contrast`;
+     - el rótulo-enlace del resumen se pulsa en 24;
+     - ordenar columnas sin arrastrar («Subir» y «Bajar»);
+     - los subtítulos de sección, sin relleno;
+   - **lote 4 · Supervisión y limpieza:** el panel rápido también en el widget «Grupos» del Monitor (respuesta de
+     producto del 2026-09-27, anotada en DD-121); la columna de 240 de agente y usuario, medida a 1366 y a 1440 antes
+     de tocar el molde; y fuera `/lab/admin/*`, superado por DD-132, con su tag de archivo.
 
-   Cada uno, con su prueba en rojo. La numeración de DD se mira en `origin/main` al empezar, y otra vez antes de subir.
+   Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
+   separado (no entra en esta fase). Si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con
+   tres canales (las dos salidas, en el tramo de DD-156). Cada cosa, con su prueba en rojo; la numeración de DD se mira
+   en `origin/main` al empezar y otra vez antes de subir.
 
    **Lo «sin verificar» de zoom al 200 % y RTL, cerrado:** DD-53 fija 1024 de ancho mínimo (el 200 % a 1440 son 720) y
    la app no tiene idiomas RTL (es, en, fr, pt).
-
-   **Lo que queda abierto de DD-133, DD-135 y DD-136:**
-   - los selects rotulados con `<label for>` sin `ariaLabelledBy` que DD-133 no tocó: un gate que los cace;
-   - los subtítulos de sección, sin revisar;
-   - las ayudas de la lista de ajustes de Contact Center no se anuncian con su control (el DS no deja pasar
-     `aria-describedby`);
-   - el marcador de la foto de `sc-photo-upload` (DS), a 2,58:1: al arreglarlo, las altas de agente y usuario entran
-     en `RUTAS` de `theme-contrast`.
-
-   Después: **el panel rápido, también en Supervisión** (respuesta de producto del 2026-09-27; anotado en DD-121, sin
-   código) y la columna de 240, que sigue quitando 492 px de contenido a agente y usuario. Es del DS, no de la app: el
-   icono a 400 junto a texto semibold en el título de sección y en la fila activa del índice (`figma-pendiente` §29).
-   El laboratorio de administración (`/lab/admin/*`): sus paquetes quedan superados por los de DD-132.
 1. **Pendiente de Rafa:** dijo «tanto para Agents como groups»; se hicieron grupos y usuarios (las
    dos entidades del teardown). Si se refería a la lista real de `/admin/agentes`, es una tercera
    con el mismo molde.
@@ -332,3 +353,15 @@ nuevos pasan. `revision` y 16 capturas claro/oscuro, 1024/1440, revisadas con be
 - ⚠️ El número de una DD se mira en `origin/main` al escribirla y otra vez antes de subir: este lote escribió DD-155
   mientras #320 fundía la suya con ese número, y la del lote pasó a DD-156 al rebasar (2026-10-04). Un PR abierto de
   otra sesión no basta: su número solo se ve si ya lo ha publicado.
+- ⚠️ `p-table`, cuando la página en curso se queda fuera, solo retrocede UNA: con un filtro que vive fuera de la tabla
+  (un buscador encima), buscar desde la página ≥3 la deja en blanco. La tabla lleva `[(first)]` y un `linkedSignal`
+  que lo vuelve a 0 con cada búsqueda (`agent-channel-table`, `agenda-contacts-table`).
+- ⚠️ Un emergente que vive en el flujo con alto 0 (el `p-menu` de fila) cuenta como hijo en una caja flex con `gap` y
+  suma ese hueco: el editor de agendas desplazaba 14 px. Va fuera de la caja con `gap`.
+- ⚠️ Si todas las columnas de una `sc-datatable` llevan ancho fijo, la tabla reparte el sobrante también a la casilla
+  de selección (105 px en Agendas): una columna, la del nombre, se queda sin ancho.
+- ⚠️ El `sc-badge` del DS es un aviso (8,75 px en md; 10,5 en lg): una cifra que se lee va en texto de leyenda.
+- ⚠️ `Intl.NumberFormat('es')` no separa los miles de cuatro cifras («1250», «5000»; «12.500» sí): no esperes «1.250»
+  en una prueba.
+- ⚠️ El Supervisor lee el DS de `dist/`: tras tocar el DS, `npx ng build ui-smartcontact`, y toca un fichero de `src`
+  para que `ng serve` recompile; si no, la app sigue con el DS de antes.
