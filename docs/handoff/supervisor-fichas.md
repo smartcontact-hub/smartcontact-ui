@@ -23,7 +23,7 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 (DD-149, sin trampas propias): `git show a7bca7c0:docs/handoff/supervisor-fichas.md`. El de E3 (DD-150, tampoco):
 `git show c065d664:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · Recursos, en un lote de cuatro bloques (DD-163 a DD-166), en su PR
+## ✅ 2026-10-05 · Recursos, en un lote de cinco bloques (DD-163 a DD-167), en su PR
 
 > **Un PR, un commit en rojo y otro en verde por bloque (DD-154), más el arreglo de `tiempos`: una ejecución que sigue
 > en curso no tiene fin. Lo pedido es de la revisión de producto del 2026-10-04.**
@@ -46,11 +46,16 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 - **4 · Importar contactos, como en Voice (DD-166):** plantilla CSV con BOM, vista previa con cada error y su línea,
   repetidos que se saltan y se cuentan, y un tope de 5000 por agenda. Un CSV de Excel en español (windows-1252) se lee
   con sus tildes. Lo importado entra sin guardar, con Guardar y Deshacer.
+- **5 · El «+» de crear, el botón de solo icono de primeng.dev (DD-167):** decisión de producto del 2026-10-05. Los
+  «+» de Recursos de grupo son redondos, con borde y en gris, a la derecha de su desplegable y a su alto, en la fila
+  `.control-add`, la regla que ya usaba el «Añadir» de los dominios. Medido: un círculo de 31,5 a 7 del control, con
+  los centros a 0,5 px. Antes eran de texto y flotaban sobre el rótulo, a 1,5 px del control.
 - **En local, en verde:** las e2e de cada bloque y sus vecinas, los barridos de las rutas tocadas, 914 unitarias y
   las puertas; `revision` del editor a 1440 y a 1366.
 
 **Pendiente, anotado:** en Horarios y Variables la casilla de selección mide 74 px, por la misma causa que tuvo Agendas
-(todas las columnas con ancho fijo). Va en una tarea aparte, con su prueba en `list-table-grammar`.
+(todas las columnas con ancho fijo). Va en una tarea aparte, con su prueba en `list-table-grammar`. La página de
+Button de sc-docs no tiene una sección «Solo icono» como la de primeng.dev (DD-167): va en el lote 2.
 
 ## ✅ 2026-10-04 · La revisión de producto del 2026-10-04, en un lote de seis bloques (DD-157 a DD-162), fundida (#325)
 
@@ -187,7 +192,8 @@ carpeta y ZIP intactos, sin reaplicar el parche.
      su línea de lectura; el código del Playground sin valores por defecto (el `icon="view_column"` de MultiSelect);
      `.row` y `.col` de los ejemplos con su hueco (los selectores de solo icono, pegados); «Copiar» sin tapar el código;
      y el icono a 600 junto a texto semibold, en el título de `sc-subsection` y en la fila activa del índice
-     (`figma-pendiente` §29). Una sola regeneración de capturas, cada PNG mirada antes del PR;
+     (`figma-pendiente` §29). Además, la sección «Solo icono» de Button, como la de primeng.dev (DD-167). Una sola
+     regeneración de capturas, cada PNG mirada antes del PR;
    - **lote 3 · lo que queda abierto de DD-133, DD-135, DD-136, DD-146 y DD-162:**
      - cada desplegable con nombre (los selects rotulados con `<label for>` sin `ariaLabelledBy`): la regla, dentro
        de `audit:screen-hygiene`;
