@@ -46,6 +46,16 @@ export const EXCLUDE = new Set([
   //    fuera de la zona `@sc-gen`, valor a mano en `04-component.css`. Se borra cuando Figma suba
   //    `button.text.danger.color`. Ver customs-catalog §1.8.
   'light:button.text.danger.color',
+  // ── etiqueta del botón `secondary` de TEXTO (light) · 2026-10-05 (DD-168) ──────────
+  //    El Kit da slate-500 = 2.95:1 sobre blanco — el mismo valor que `outlined.secondary` arriba,
+  //    porque es el MISMO color en otra `appearance`. Es el «Añadir alternativa (O)» del
+  //    constructor de reglas, un control de flujo, no un adorno; §1.8 (2026-09-27) decía
+  //    "cierra la lista" y este slot se quedó fuera porque `outlined` y `text` son filas
+  //    DISTINTAS del export (`button.outlined.secondary.color` / `button.text.secondary.color`).
+  //    Mismo mecanismo: slate-600 (4.52), fuera de la zona `@sc-gen`, valor a mano en
+  //    `04-component.css`. Se borra cuando el Kit suba `button.text.secondary.color`. Ver
+  //    customs-catalog §1.11.
+  'light:button.text.secondary.color',
   // ── opción no elegida de SelectButton (light) · 2026-09-14 ──────────────────────
   //    El Kit da surface-500 sobre su carril: 2,56:1. El código va a surface-700 (6,40:1) y el hover a
   //    surface-900 (customs-catalog §1.10). Se borra cuando Figma haga `figma-pendiente.md` §8.

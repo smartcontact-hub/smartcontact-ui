@@ -126,6 +126,41 @@
 
 ---
 
+## DD-169 · 2026-10-05 — `sc-button secondary text` sube a slate-600: el cuarto botón bajo AA que §1.8 daba por cerrado
+
+**Contexto.** Medido el 2026-10-05 en el Supervisor: «Añadir alternativa (O)» (el constructor de condiciones de una
+regla, `conversaciones/reglas/nueva?seccion=alcance`) se lee en 2,95:1 — por debajo del 4,5:1 que pide su etiqueta y
+del 3:1 que pide su icono. El slot es `--sc-cmp-button-text-secondary-color` (slate-500, `04-component.css`), que
+consume `sc-preset/button.ts` para `variant="secondary" appearance="text"`. customs-catalog §1.8 (2026-09-27) decía
+"cierra la lista: después de esto no queda ningún fallo de contraste en la app salvo el límite conocido de §1.5" —
+y este slot se quedó fuera porque el Kit emite `button.outlined.secondary.color` y `button.text.secondary.color`
+como dos filas DISTINTAS: arreglar la primera (§1.8) no tocó la segunda, aunque el color de origen sea el mismo
+slate-500. Inventario de uso (`grep` sobre `projects/*/src`): ~35 sitios, la mayoría icono-solo (cerrar de toast,
+deshacer 10 s del reproductor, «⋮» de fila en listados, atajos de teclado…) y unos pocos con etiqueta visible
+(«Añadir alternativa (O)», «Ver todo» en la demo de sc-docs, los presets de `sc-datepicker`).
+
+**Decisión.** Mismo mecanismo que §1.8: `--sc-cmp-button-text-secondary-color` sale de la zona `@sc-gen` (con su
+slot en `EXCLUDE`, `scripts/cmp-color-map.mjs`) y pasa a `slate-600` a mano en `04-component.css` — el mismo
+escalón al que ya subieron `outlined secondary`, `text danger`, `text-secondary` y `text-subtle`: 4,52:1 sobre
+blanco, que cumple texto (4,5:1) e icono (3:1) a la vez. `theme-contrast.spec.ts` gana la ruta
+`conversaciones/reglas/nueva?seccion=alcance` — antes ninguna ruta cubierta mostraba este botón CON etiqueta, así
+que el fallo no se veía en rojo (medido: en rojo a 2,95:1 antes del cambio, verde después, en los dos temas).
+
+**Razón.** Es la misma aritmética que §1.7/§1.8: sobre blanco, slate-500 no llega a dos pasos de la rampa de
+grises y slate-600 sí (4,52:1). El oscuro no se toca: ahí el mismo slot cae sobre superficies oscuras y mide de
+sobra (el problema es específico de blanco/claro, como el resto de la familia).
+
+**Descartadas.** Dejarlo en `CONOCIDOS_CLARO` como un quinto sub-AA aceptado: a diferencia de
+`--sc-text-secondary` (§1.5, donde subir rompe la jerarquía de tres grises), aquí no hay jerarquía que proteger —
+es un botón de acción, y el mismo arreglo ya tiene precedente en sus hermanos `outlined`/`danger`.
+
+**Consecuencias.** `customs-catalog.md` §1.11 documenta el slot y corrige la frase de cierre de §1.8. Los icono-solo
+(«⋮» de fila, deshacer 10 s…) no los cubre ninguna ruta de `theme-contrast` hoy por un motivo aparte, medido al
+investigar esto: `sc-button` pinta su icono con `::before` (CSS), no con un nodo de texto, y la sonda de
+`contrast-probe.ts` solo mira `childNodes` de tipo texto — así que ni siquiera los medía al 3:1 de icono. Se
+benefician igual del cambio de color (es el mismo token), pero ampliar la sonda a pseudo-elementos queda pendiente,
+sin ticket propio todavía.
+
 ## DD-167 · 2026-10-05 — El «+» de crear es el botón de solo icono de primeng.dev, redondo y con borde, junto a su control
 
 **Contexto.** Decisión de producto del 2026-10-05, al ver Recursos: el «+» de añadir es una variante del botón, la de

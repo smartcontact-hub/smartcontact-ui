@@ -707,7 +707,6 @@
   --sc-cmp-button-outlined-plain-hover-background: var(--sc-color-slate-50);
   --sc-cmp-button-outlined-plain-active-background: var(--sc-color-slate-100);
   --sc-cmp-button-outlined-plain-border-color: var(--sc-color-slate-200);
-  --sc-cmp-button-text-secondary-color: var(--sc-color-slate-500);
   --sc-cmp-button-text-secondary-hover-background: var(--sc-color-slate-50);
   --sc-cmp-button-text-secondary-active-background: var(--sc-color-slate-100);
   --sc-cmp-button-text-success-color: var(--sc-color-green-500);
@@ -916,4 +915,16 @@
    *
    * Se cierra cuando el Kit suba `button.text.danger.color`. */
   --sc-cmp-button-text-danger-color: var(--sc-color-red-600);
+
+  /* ---------- Botón `secondary` de TEXTO: su etiqueta estaba bajo AA ----------
+   *
+   * Fuera de la zona `@sc-gen` y con su slot en `EXCLUDE` (cmp-color-map), mismo mecanismo que
+   * los dos de arriba. El Kit da `slate-500` para la etiqueta: **2.95:1** sobre blanco — el
+   * «Añadir alternativa (O)» del constructor de reglas (DD-168), un control de flujo, no un
+   * adorno. Es el MISMO color que `outlined secondary`, en otra `appearance`: el Kit los emite
+   * como dos filas distintas (`button.outlined.secondary.color` / `button.text.secondary.color`),
+   * así que arreglar una no arregló la otra. `slate-600` da el mismo **4.52:1**.
+   *
+   * Se cierra cuando el Kit suba `button.text.secondary.color`. Ver customs-catalog §1.11. */
+  --sc-cmp-button-text-secondary-color: var(--sc-color-slate-600);
 }
