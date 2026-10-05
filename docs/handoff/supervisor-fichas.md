@@ -32,7 +32,10 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
   lienzo: `component-page.scss`, que las definía, no lo importaba nadie desde julio, y se borra. «Copiar» ya no tapa la
   primera línea, y una línea larga no estira el Playground bajo «Controles». Las pruebas, a 1280 × 720, el viewport de
   las capturas: a 1440 cabía todo. Al revisar C salió una más: con `.col` en flex, el margen del párrafo se sumaba al
-  hueco, y doce líneas de lectura («Valor: …») quedaban a 28 de su control.
+  hueco, y doce líneas de lectura («Valor: …») quedaban a 28 de su control. Y al revisar las capturas, otra: el lienzo
+  es una fila flex, y una `.col` medía lo que su hijo más ancho. Ahora crece hasta su tope (40rem): «Fluid» se
+  distingue, y los campos de las demos van a su ancho de formulario. Progress Bar no enseñaba ninguna barra, ni el
+  Playground de Skeleton su bloque, también en `main`: van en una `.col`.
 - **B · Lo que sc-docs escribe es verdad:** el código de una story sin snippet sale del contrato
   (`_component-api.json`). Omite lo que vale su valor por defecto, escribe un booleano que nace encendido y se apaga
   (`[allowEmpty]="false"` en selectbutton) y escribe lo requerido aunque no tenga control (`[sections]="sections"`).
@@ -387,3 +390,5 @@ Local 4405 actualizado al build de producción de D3; ocho pruebas propias verde
   de `src` o rearranca el `ng serve`; si no, sigue con el DS de antes (en sc-docs, medido: hubo que rearrancarlo).
 - ⚠️ En una e2e de sc-docs, `page.goto` a otro `#/components/…` solo cambia el hash, y la página anterior sigue montada
   hasta que llega la nueva: una espera a algo que tienen las dos pasa en la vieja. Una página por prueba.
+- ⚠️ El lienzo de sc-docs es una fila flex: un componente que pide el 100% de su contenedor, suelto, mide 0; va en una
+  `.col`. Y al medir, un host con `display: contents` (`sc-divider`) mide 0 siempre: mide su primer hijo.
