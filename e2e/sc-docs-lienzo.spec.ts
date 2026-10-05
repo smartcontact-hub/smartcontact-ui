@@ -7,7 +7,8 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
  *   1. En la tabla de API, los títulos de «Dos sentidos» y «Salidas» van pegados a la tabla de encima (0 px) y se leen
  *      como su última fila. Entre grupos, al menos el doble que entre un título y su tabla (AGENTS, «UX de pantalla» 9).
  *   2. Las demos que agrupan con `.row` o `.col` salen con los hijos pegados: `component-page.scss`, que las definía,
- *      no lo importa nadie desde la migración de julio. Entre hermanos, 14.
+ *      no lo importa nadie desde la migración de julio. Entre hermanos, 14; también entre un control y su línea de
+ *      lectura («Valor: …»), que con la caja en flex sumaba el margen del párrafo.
  *   3. «Copiar» flota encima de la primera línea del código cuando es larga (radiobutton, «Grupo»).
  *   4. Una línea de código sin cortar estira la columna del Playground por debajo de «Controles» (formdangerzone).
  *
@@ -65,6 +66,15 @@ test('las demos con `.col` separan a sus hijos con el hueco de los hermanos (14)
   await gotoPage(page, 'inputtext');
   const columna = page.locator('.sb-canvas__pane .col').first();
   for (const h of await huecosEntreHijos(columna)) expect(h, 'inputtext · .col').toBeGreaterThanOrEqual(13.5);
+});
+
+test('la línea de lectura de una demo va a 14 de su control, como un hermano más, no al doble', async ({ page }) => {
+  // En flex, el margen del párrafo se suma al hueco: «Valor: …» quedaba a 28 de su control, el escalón de entre
+  // grupos, como si fuera otra cosa. Doce líneas así en diez páginas (medido el 2026-10-05).
+  await gotoPage(page, 'datepicker');
+  const huecos = await huecosEntreHijos(historia(page, 'Con valor').locator('.sb-canvas__pane .col'));
+  expect(huecos.length, 'el control y su línea de lectura').toBeGreaterThan(0);
+  for (const h of huecos) expect(h, 'datepicker «Con valor» · del control a «Valor:»').toBeCloseTo(14, 0);
 });
 
 test('«Copiar» no tapa la primera línea del código, aunque sea larga', async ({ page }) => {
