@@ -127,6 +127,50 @@
 
 ---
 
+## DD-170 · 2026-10-05 — Un botón que abre un popup lo dice el `<button>` real, no el host `<sc-button>`
+
+**Contexto** · `sc-button` envuelve `p-button`, que envuelve un `<button>` nativo: el foco y lo que anuncia el
+lector de pantalla van ahí, nunca en el host `<sc-button>`. Medido el 2026-10-05: la «Columnas» de una lista
+(`list-page.component.html`) ponía `[attr.aria-haspopup]`/`[attr.aria-expanded]` en el host, y el ⋮ de un widget
+del Dashboard (`widget-card.component.html`, abre un `p-menu`) no llevaba ninguno de los dos. El precedente
+correcto ya vivía en el top-bar: un `<button>` nativo con `aria-haspopup="menu"` y `[attr.aria-expanded]` en sí
+mismo. Cierra el hueco que dejó abierto DD-168 §Consecuencias: «es una tarea aparte del DS».
+
+**Decisión** ·
+1. `sc-button` gana tres entradas opcionales, sin efecto si no se fijan — `ariaHasPopup`
+   (`'menu'|'dialog'|'listbox'|'true'|null`), `ariaExpanded` (`boolean|null`; `false` SÍ se anuncia, no es lo
+   mismo que no fijarla) y `ariaControls` (`string|null`) — que llegan al `<button>` real por `pt.root`: el mismo
+   mecanismo que ya usa `ariaDescribedBy` en `sc-toggleswitch`, y el mismo patrón que DD-140 fijó para `sc-dialog`
+   (un atributo en el host de PrimeNG no llega a su raíz).
+2. La «Columnas» de `list-page`, el ⋮ de `sc-dashboard-widget-card` y el «Agentes» de
+   `sc-dashboard-agents-action` (DD-168, con varios grupos: abre un menú) pasan sus `aria-haspopup`/
+   `aria-expanded` del host a estas entradas; el ⋮ y «Agentes» ganan además `aria-controls`, con el id del
+   `p-menu` que abren. Con un solo grupo, «Agentes» no abre ningún popup propio (abre directamente el panel que
+   vigila la página): no lleva `ariaHasPopup`.
+
+**Razón** ·
+- El host nunca recibe el foco: un atributo ahí no entra en el árbol de accesibilidad del elemento enfocado.
+  Medido en el ⋮ del widget: sin ninguno de los dos, el lector no decía que el botón abre un menú ni si ya está
+  abierto.
+- `p-button` no expone `ariaHasPopup`/`ariaExpanded` como entradas propias (solo `ariaLabel`); `pt.root` es la vía
+  que la propia librería da para llegar a su `<button>`, verificada en `primeng/fesm2022/primeng-button.mjs`
+  (22.1.0) y en `primeng-bind.mjs`: un valor `undefined` en `pt` quita el atributo, así que sin fijar nada no se
+  escribe ninguno de los tres.
+
+**Descartadas** ·
+- **Seguir con `[attr.aria-*]` en `<sc-button>`** → es lo medido como roto: no llega al elemento con foco.
+- **Leer el `<button>` del DOM a mano** → la propia tarea lo prohíbe; `pt` es la API soportada por PrimeNG para
+  esto, no una query por fuera.
+
+**Consecuencias** ·
+- **Pruebas:** `sc-button.component.spec.ts` (DS, tres nuevas) y `e2e/supervisor/columnas-en-una-lista.spec.ts` y
+  `e2e/supervisor/dashboard.spec.ts` (dos cada una, Columnas y el ⋮; «Agentes» en `panel-agentes-monitor.spec.ts`).
+- **CHANGELOG:** `[Unreleased]` › Added.
+- **Queda abierto:** el ⋮ de la pestaña del monitor (`monitor-tabs.component.html`) abre el mismo tipo de `p-menu`
+  sin ninguna de las tres — no medido en el encargo original, aparte.
+
+---
+
 ## DD-169 · 2026-10-05 — `sc-button secondary text` sube a slate-600: el cuarto botón bajo AA que §1.8 daba por cerrado
 
 **Contexto.** Medido el 2026-10-05 en el Supervisor: «Añadir alternativa (O)» (el constructor de condiciones de una
