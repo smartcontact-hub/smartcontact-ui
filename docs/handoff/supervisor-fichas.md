@@ -87,9 +87,11 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 - **Fundido:** #327 → `7d70bfb9`. De punta a punta, 7 h 38 min (`npm run tiempos -- 327 --desde 22:37`); el CI del PR,
   9 min, verde a la primera.
 
-**Pendiente, anotado:** en Horarios y Variables la casilla de selección mide 74 px, por la misma causa que tuvo Agendas
-(todas las columnas con ancho fijo). Va en una tarea aparte, con su prueba en `list-table-grammar`. La página de
-Button de sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): la gana en el lote 2.
+**Hecho, en tarea aparte:** la casilla de 74 px de Horarios y Variables (misma causa que Agendas) vuelve a medir 40 —
+se quita el ancho fijo de la columna del nombre en las dos instancias, igual que en `agendas.ts`, y las dos rutas
+entran en `list-table-grammar`. De paso, en Variables el valor por defecto largo («Encuesta URL») desbordaba su celda
+y tapaba la columna «Tipo»: pasa a `kind: 'truncate'` (DD-124). Fundido: #329 → `95d98472`. La página de Button de
+sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): la ganó en el lote 2 (#330).
 
 ## ✅ 2026-10-04 · La revisión de producto del 2026-10-04, en un lote de seis bloques (DD-157 a DD-162), fundida (#325)
 
