@@ -63,10 +63,16 @@ export const REPOSITORIES_ROUTES: Routes = [
     loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent),
   },
   {
+    /* La tipificación es una ficha propia (DD-172): el listado sigue en Repositorios. */
     path: 'tipificaciones',
     data: repoInstance('repositories.tipificaciones.title'),
-    loadComponent: () =>
-      import('./instances/tipificaciones').then((m) => m.TipificacionesPageComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/tipificaciones-list-page.component').then((m) => m.TipificacionesListPageComponent),
+      },
+    ],
   },
   {
     path: 'variables',

@@ -174,6 +174,12 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   readonly sortFn = input<((a: T, b: T, field: string) => number) | undefined>(undefined);
 
   readonly exportable = input(false, { transform: booleanAttribute });
+  /**
+   * Si también importa: entonces importar y descargar van detrás de un solo icono, con su menú (revisión de producto,
+   * Tipificaciones). Lo que se importa y cómo lo decide la pantalla, con `(importRequest)`; descargar sigue siendo
+   * `(exportRequest)`.
+   */
+  readonly importable = input(false, { transform: booleanAttribute });
 
   /** Menú de una fila: el mismo con «⋮» y con clic derecho. Sin él, no hay columna de acciones. */
   readonly rowMenu = input<((row: T) => MenuItem[]) | undefined>(undefined);
@@ -203,6 +209,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
 
   readonly rowOpen = output<T>();
   readonly exportRequest = output<readonly T[]>();
+  readonly importRequest = output<void>();
 
   protected readonly filtered = computed(() => {
     const q = this.query().toLowerCase().trim();
@@ -567,6 +574,26 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     if (this.query()) this.query.set('');
     else (event.target as HTMLInputElement).blur();
   }
+
+  /** El menú de importar y descargar, abierto: su botón lo dice (`aria-expanded`, en el `<button>` real). */
+  protected readonly fileMenuOpen = signal(false);
+
+  /** El menú del icono de importar y descargar: «Importar…» abre lo que decida la pantalla; «Descargar», lo visible. */
+  protected readonly fileMenuItems = computed<MenuItem[]>(() => {
+    this.lang();
+    return [
+      {
+        label: this.translate.instant('labels.import_menu'),
+        icon: 'sc-icon-font sc-icon-font--upload',
+        command: () => this.importRequest.emit(),
+      },
+      {
+        label: this.translate.instant('labels.download_menu'),
+        icon: 'sc-icon-font sc-icon-font--download',
+        command: () => this.onExport(),
+      },
+    ];
+  });
 
   protected onExport(): void {
     this.exportRequest.emit(this.displayed());

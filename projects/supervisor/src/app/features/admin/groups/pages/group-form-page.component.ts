@@ -79,7 +79,6 @@ import {
   resolveGroup,
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
-import { TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
 import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
 import { TipificacionesStore } from '@features/admin/repositories/state/tipificaciones.store';
 import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
@@ -94,12 +93,14 @@ import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { agendasOfrecidas, idsVivos, tipificacionViva } from '@features/admin/services/recursos.core.mjs';
+import { agendasOfrecidas, idsVivos } from '@features/admin/services/recursos.core.mjs';
+import { asignarAGrupo, choquesDe, tipificacionesDeGrupo } from '@features/admin/repositories/state/tipificaciones.core.mjs';
 import { ResourceRowsService } from '@features/admin/services/resource-rows.service';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import {
   channelRemovalImpact,
   clampLinksToChannels,
+  familiesOf,
   hasChatFamily,
   removedFamilies,
   toggleChatFamily,
@@ -124,7 +125,8 @@ interface FormState {
   name: string;
   phone: string;
   priority: GroupPriority;
-  typification: string | null;
+  /** Las tipificaciones del grupo. Se guardan en cada tipificación, con sus canales: el grupo solo las elige. */
+  typificationIds: ReadonlySet<number>;
   scheduleIds: ReadonlySet<number>;
   templateIds: ReadonlySet<number>;
   labelIds: ReadonlySet<number>;
@@ -163,7 +165,7 @@ const SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
   chat: 'group-section-distribution',
   announcements: 'group-section-distribution',
   advanced: 'group-section-distribution',
-  typification: 'group-section-resources',
+  typificationIds: 'group-section-resources',
   scheduleIds: 'group-section-resources',
   templateIds: 'group-section-resources',
   labelIds: 'group-section-resources',
@@ -533,6 +535,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (f.channels.size === 0) return 'groups.errors.channels_required';
     if (this.phoneMissing()) return 'groups.errors.phone_required';
     if (this.queueInvalid()) return 'groups.form.advanced.queue_invalid';
+    if (this.typificationConflict()) return 'groups.errors.typification_conflict';
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
   });
@@ -586,7 +589,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected readonly canSave = computed(() => {
-    if (!this.generalValid() || this.phoneMissing() || this.queueInvalid()) return false;
+    if (!this.generalValid() || this.phoneMissing() || this.queueInvalid() || this.typificationConflict()) return false;
     // Al editar exige cambio neto (Guardar se apaga otra vez si deshaces); en el alta basta con General.
     return this.mode() === 'create' || this.dirtyState.dirty();
   });
@@ -663,15 +666,39 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   protected readonly conEtiquetas: boolean = false;
 
-  /** Una tipificación por grupo: cada categoría del repositorio es un conjunto (el agente elige dentro al cerrar). Va
-   *  por su nombre (DD-141): llevaba al lado cuántas tipificaciones tiene, y se leía como niveles o como grupos. */
-  protected readonly typificationOptions = computed(() => {
+  /** Las tipificaciones, por su nombre. Un grupo puede tener varias mientras no cubran lo mismo: una para entrantes
+   *  y otra para salientes, o una para el teléfono y otra para el chat (DD-172). */
+  protected readonly typificationOptions = computed(() =>
+    [...this.tipificacionesStore.items()]
+      .sort((a, b) => a.name.localeCompare(b.name, 'es'))
+      .map((t) => ({ label: t.name, value: t.id })),
+  );
+  protected readonly typificationValue = computed(() => [...this.form().typificationIds]);
+
+  /**
+   * Dos tipificaciones del grupo que cubren la misma dirección por el mismo canal: el agente no sabría cuál le toca.
+   * Se mide como quedaría al guardar: las que se añaden entran con los canales del grupo.
+   */
+  protected readonly typificationConflict = computed<string | null>(() => {
     this.lang();
-    const categories = [...new Set(this.tipificacionesStore.items().map((t) => t.category))];
-    return [
-      { label: this.translate.instant('groups.form.fields.typification_none'), value: null },
-      ...categories.sort((a, b) => a.localeCompare(b, 'es')).map((category) => ({ label: category, value: category })),
-    ];
+    const groupId = this.editingId() ?? -1;
+    const todas = this.tipificacionesStore.items();
+    const familias = familiesOf([...this.form().channels]);
+    const cambian = new Map(asignarAGrupo(todas, this.form().typificationIds, groupId, familias).map((t) => [t.id, t]));
+    const quedan = todas.map((t) => cambian.get(t.id) ?? t);
+    for (const t of quedan) {
+      if (!this.form().typificationIds.has(t.id)) continue;
+      const choque = choquesDe(t, quedan).find((c) => c.groupId === groupId);
+      if (choque) {
+        return this.translate.instant('groups.form.fields.typification_conflict', {
+          a: t.name,
+          b: choque.otherName,
+          direction: this.translate.instant(`repositories.tipificaciones.groups.conflict_direction.${choque.direction}`),
+          channel: this.translate.instant(FAMILY_LABEL_KEYS[choque.channel]),
+        });
+      }
+    }
+    return null;
   });
 
   /** Las agendas activas, y las ya puestas aunque estén inactivas (las guardadas y las de ahora): una inactiva puesta
@@ -696,7 +723,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * dirección no guarda la sección, y Atrás caería en un General vacío. */
   protected readonly typificationRows = computed(() => {
     this.lang();
-    return this.resourceRows.tipificacion(this.form().typification, this.mode() === 'edit');
+    return this.resourceRows.tipificaciones(this.form().typificationIds, this.mode() === 'edit');
   });
   protected readonly agendaRows = computed(() => {
     this.lang();
@@ -849,8 +876,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       phone: g.phone,
       priority: g.priority,
       // Lo borrado en Repositorios sale ANTES de marcar la ficha como guardada: ni se cuenta, ni se guarda de vuelta,
-      // ni la ficha abre con cambios por ello (DD-164).
-      typification: tipificacionViva(g.typification, this.tipificacionesStore.items()) ? g.typification! : null,
+      // ni la ficha abre con cambios por ello (DD-164). Las tipificaciones, las que lo tienen entre sus grupos.
+      typificationIds: new Set(tipificacionesDeGrupo(this.tipificacionesStore.items(), group.id).map((x) => x.tipificacion.id)),
       scheduleIds: new Set(idsVivos(g.schedules ?? [], this.agendasStore.items())),
       templateIds: new Set(idsVivos(g.templates ?? [], this.templatesStore.templates())),
       labelIds: new Set(idsVivos(g.labels ?? [], this.labelsStore.labels())),
@@ -924,25 +951,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected onTypificationChange(value: unknown): void {
-    this.updateField('typification', typeof value === 'string' ? value : null);
+    if (Array.isArray(value)) this.updateField('typificationIds', new Set(value as number[]));
   }
 
-  /** Crear una tipificación SIN salir de la ficha (decisión de producto, 2026-09-18): antes había que abandonar el flujo solo para
-   *  dar de alta una. Mismo formulario que Repositorios (`TIPIFICACION_FIELDS`), en un diálogo. Al guardar, el grupo
-   *  queda con la categoría recién creada. */
-  protected readonly creatingTipificacion = signal(false);
-  protected readonly tipificacionFields = TIPIFICACION_FIELDS;
-  protected readonly tipificacionExistingNames = computed(() => this.tipificacionesStore.items().map((t) => t.name));
-
-  protected onCreateTipificacionSubmit(submission: RepoFormSubmission): void {
-    const created = this.tipificacionesStore.addItem({
-      name: submission['name'] ?? '',
-      code: submission['code'] ?? '',
-      category: submission['category'] ?? '',
-      description: submission['description'] ?? '',
-    });
-    this.onTypificationChange(created.category);
-    this.creatingTipificacion.set(false);
+  /** Guarda en cada tipificación si usa este grupo: las nuevas, con los canales del grupo; las quitadas, sin él. */
+  private saveTypifications(groupId: number, channels: readonly GroupChannel[]): void {
+    const cambian = asignarAGrupo(this.tipificacionesStore.items(), this.form().typificationIds, groupId, familiesOf(channels));
+    for (const t of cambian) this.tipificacionesStore.updateItem(t.id, { groups: t.groups });
   }
 
   /** Mismo alivio que Tipificación (arriba), para los otros tres campos multiselección que solo tenían
@@ -1178,9 +1193,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly resourceCount = computed(() => {
     const f = this.form();
     const templates = (this.hasChatFamily() ? this.chatTemplateValue().length : 0) + (this.hasEmail() ? this.emailTemplateValue().length : 0);
-    // Las etiquetas cuentan solo si se ven (DD-142); la tipificación, si a su categoría le queda alguna (DD-164).
-    const tipificacion = tipificacionViva(f.typification, this.tipificacionesStore.items()) ? 1 : 0;
-    return tipificacion + f.scheduleIds.size + templates + (this.conEtiquetas ? f.labelIds.size : 0);
+    // Las etiquetas cuentan solo si se ven (DD-142).
+    return f.typificationIds.size + f.scheduleIds.size + templates + (this.conEtiquetas ? f.labelIds.size : 0);
   });
 
   /** Lo que falta para poder crear, en el orden de la ficha. Un nombre repetido no falta: se dice en su campo. */
@@ -1264,7 +1278,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         name: f.name.trim(),
         phone: f.phone.trim(),
         priority: f.priority,
-        typification: f.typification ?? undefined,
         schedules: [...f.scheduleIds],
         templates: [...f.templateIds],
         labels: [...f.labelIds],
@@ -1290,6 +1303,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       // Como Contact Center y la ficha de agente (decisión de producto, 2026-09-16): guardar se queda en la ficha, con su aviso.
       const editingId = this.editingId()!;
       this.groupsStore.updateGroup(editingId, { ...payload });
+      this.saveTypifications(editingId, payload.channels);
       this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(this.withoutOrphans(f.links), editingId));
       const refreshed = this.groupsStore.getGroup(editingId);
       if (refreshed) this.initial.set(refreshed);
@@ -1315,6 +1329,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const f = this.form();
     const slug = this.sectionSlug(this.activeSection());
     const created = this.groupsStore.addGroup(payload);
+    this.saveTypifications(created.id, payload.channels);
     this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(this.withoutOrphans(f.links), created.id));
     this.messages.add({
       severity: 'success',
@@ -1386,7 +1401,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       name: '',
       phone: '',
       priority: defaults.priority,
-      typification: null,
+      typificationIds: new Set(),
       scheduleIds: new Set<number>(),
       templateIds: new Set<number>(),
       labelIds: new Set<number>(),

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una tipificación es una ficha propia (árbol de hasta tres niveles, dirección, comentario y grupos por canal) · una por dirección y canal en cada grupo · su listado con las columnas de producto · importar y descargar detrás de un icono (`importable` en `sc-list-page`) · la ficha de grupo elige varias, sin «+» (enmienda DD-141 §7, DD-164 §1) | DD-172 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
@@ -125,6 +126,54 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-172 · 2026-10-05 — Una tipificación es una ficha propia: su árbol de hasta tres niveles, su dirección, su comentario y sus grupos por canal
+
+**Contexto** · La propuesta de producto «Tipificaciones» (2026-10-05) la trata como una entidad: un listado (nombre,
+descripción, dirección, comentarios, niveles, grupos e ID, todas ordenables, con importar y exportar «como en Voice») y
+una ficha con General, Categorización (hasta tres niveles) y Grupos (por canal). Lo que había: en Repositorios, una lista
+plana («Venta cerrada · VEN-001 · Ventas»), y en la ficha de grupo un desplegable que elegía una categoría de ella. En
+Voice la tipificación vive dentro de cada grupo: hasta tres niveles y comentario, y el agente no sale de postllamada
+hasta tipificar (manual, p. 14). Lo que la propuesta no resolvía se decidió con producto: todas las ramas llegan al mismo
+nivel; en Grupos, canales sí y «Habilitado» no; el listado sigue en Repositorios y «Crear» abre la ficha.
+
+**Decisión** ·
+1. **El modelo** (`tipificaciones.core.mjs`, puro y con su prueba): nombre, descripción, entrantes y salientes,
+   categorías sí o no, comentario sí o no, niveles (1 a 3), el árbol, y sus grupos con los canales por los que se usa
+   (las familias de DD-147). En una clave nueva (`sc-tipificaciones`); la de antes se queda sin leer.
+2. **Una por dirección y canal en cada grupo**: dos que cubran la misma dirección por el mismo canal de un grupo no se
+   pueden guardar, en la ficha de la tipificación ni en la del grupo (el agente no sabría cuál le toca).
+3. **El listado de Repositorios › Tipificaciones**: las columnas de la propuesta, todas ordenables; los niveles dicen,
+   al pasar o al enfocar, qué hay en cada uno; los grupos, la cifra con su globo de Agentes › Grupos; el ID, opcional,
+   como el de Agentes y Grupos.
+4. **Importar y descargar detrás de UN icono, con su menú** (`importable` en `sc-list-page`; las demás listas siguen con
+   su botón de descargar). Importar, como las agendas (DD-166): plantilla CSV, una fila por camino del árbol, y vista
+   previa de lo que entra, cada error con su línea y las que ya existen. Descargar saca esas mismas columnas.
+5. **La ficha de grupo elige varias tipificaciones** (desplegable múltiple), cada una en su fila de Recursos con su dato
+   («Entrantes · 3 niveles») y «Editar», que abre su ficha. Su «+» de crear en un diálogo se va: una tipificación es un
+   árbol con su ficha, y no cabe en un diálogo (enmienda la decisión de producto del 2026-09-18 solo para la tipificación,
+   DD-141 §7 y DD-164 §1).
+
+**Razón** · Una tipificación se reutiliza en varios grupos y cambia por su cuenta: como ficha propia, se cambia una vez y
+llega a todos. Y el agente necesita saber cuál le toca en cada conversación: de ahí la regla de una por dirección y canal.
+
+**Descartadas** ·
+- *Seguir con la categoría del repositorio plano*: no tenía niveles, ni dirección, ni comentario.
+- *Una por grupo, como en Voice*: un grupo que atiende y llama necesita una para entrantes y otra para salientes.
+- *«Habilitado» en cada grupo*: repetía a la papelera; asignada ya es en uso.
+- *Dos botones, importar y descargar*: ruido en la barra, y la propuesta los quería juntos.
+- *Leer `.xlsx` al importar*: como en las agendas, Excel guarda CSV y la plantilla ya se abre con él (DD-166).
+
+**Consecuencias** ·
+- Fuera `instances/tipificaciones.ts` y `tipificacionViva` (`recursos.core.mjs`). Componentes y páginas:
+  `tipificaciones-list-page`, el almacén nuevo y la ficha de grupo.
+- Pruebas: `tipificaciones-listado.spec.ts` (5) y `tipificaciones.test.mjs` (13), en rojo antes del bloque; cuatro
+  pruebas que fijaban lo de antes cambian a propósito (`desplegables-con-nombre`, `ficha-grupo-textos`,
+  `recursos-resumen`, `ficha-recursos-dialogos`).
+- Queda abierto: las Reglas de Conversaciones tienen su propia copia de las tipificaciones (`entity-catalog.ts`), y
+  Supervisión › Tipificaciones sigue vacía.
 
 ---
 
