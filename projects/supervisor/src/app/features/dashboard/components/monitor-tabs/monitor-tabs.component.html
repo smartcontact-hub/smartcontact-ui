@@ -32,6 +32,9 @@
       size="sm"
       icon="more_vert"
       [ariaLabel]="'dashboard.tabs.more_aria' | translate: { name: activeName() }"
+      ariaHasPopup="menu"
+      [ariaExpanded]="menuOpen()"
+      [ariaControls]="menuId"
       (clicked)="menu.toggle($event)"
     />
     <sc-button
@@ -45,7 +48,15 @@
   </div>
 </div>
 
-<p-menu #menu [model]="menuItems()" [popup]="true" appendTo="body" />
+<p-menu
+  #menu
+  [id]="menuId"
+  [model]="menuItems()"
+  [popup]="true"
+  appendTo="body"
+  (onShow)="menuOpen.set(true)"
+  (onHide)="menuOpen.set(false)"
+/>
 
 <p-popover
   #renamePopover
