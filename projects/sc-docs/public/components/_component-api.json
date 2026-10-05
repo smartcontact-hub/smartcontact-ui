@@ -723,6 +723,16 @@
           "nativo": null
         },
         {
+          "nombre": "total",
+          "clase": "input",
+          "tipo": "number | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "Cuántos hay en la lista, para decir cuántos de cuántos («2/16 agentes seleccionados», DD-171). Sin él, solo el número de seleccionados.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "clear",
           "clase": "output",
           "tipo": "void",
