@@ -4247,6 +4247,16 @@
           "nativo": null
         },
         {
+          "nombre": "ariaDescribedBy",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Ids, separados por espacios, de lo que describe el campo desde fuera: la ayuda que va al lado y no debajo (la fila de un ajuste, de un interruptor). Se oye después de la ayuda propia, si la hay (DD-133).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "min",
           "clase": "input",
           "tipo": "number",
@@ -4871,6 +4881,16 @@
             "obsoleta": null,
             "heredadaDe": null
           }
+        },
+        {
+          "nombre": "ariaDescribedBy",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Ids, separados por espacios, de lo que describe el campo desde fuera: la ayuda que va al lado y no debajo (la fila de un ajuste). Se oye después de la ayuda propia (`helperText`), si la hay (DD-133).",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "name",
@@ -6431,7 +6451,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
+          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y nombra el control por `aria-labelledby`, así que **sin ella el campo no tiene nombre accesible**: se le da uno con `ariaLabelledBy` (un rótulo de la pantalla) o con `ariaLabel` (sin rótulo a la vista).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6559,6 +6579,31 @@
             "obsoleta": null,
             "heredadaDe": null
           }
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Nombre accesible cuando no hay rótulo a la vista (las condiciones de una regla, un selector en una barra). Va al combobox por el `ariaLabel` nativo de `p-select`, nunca como `aria-label` en el host. Sin ningún nombre, PrimeNG nombra el combobox con la opción elegida y el lector oye el valor en lugar de lo que se pide (DD-133).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Used to define a aria label attribute the current element.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "ariaDescribedBy",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Ids, separados por espacios, de lo que describe el campo desde fuera: la ayuda que va al lado y no debajo (la fila de un ajuste, de un interruptor). Se oye después de la ayuda propia (`helperText`), si la hay (DD-133).",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "name",
@@ -6823,7 +6868,6 @@
       ],
       "ocultas": [
         "ariaFilterLabel",
-        "ariaLabel",
         "autoOptionFocus",
         "autofocus",
         "autofocusFilter",
@@ -7046,6 +7090,16 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "Nombre del grupo cuando no hay rótulo visible.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaDescribedBy",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Ids, separados por espacios, de la ayuda que describe el grupo desde fuera (DD-133).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -7596,6 +7650,16 @@
           "nativo": null
         },
         {
+          "nombre": "ariaDescribedBy",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Ids, separados por espacios, de la ayuda que describe el campo desde fuera: la que va a su lado (la fila de un ajuste, de un interruptor). El campo no tiene ayuda propia; sin esto, nadie la anuncia (DD-133).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "disabled",
           "clase": "input",
           "tipo": "boolean",
@@ -7908,6 +7972,16 @@
             "obsoleta": null,
             "heredadaDe": null
           }
+        },
+        {
+          "nombre": "ariaDescribedBy",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Ids, separados por espacios, de la ayuda que describe el campo desde fuera: la que va a su lado (la fila de un ajuste, de un interruptor). El campo no tiene ayuda propia; sin esto, nadie la anuncia (DD-133).",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "inputId",

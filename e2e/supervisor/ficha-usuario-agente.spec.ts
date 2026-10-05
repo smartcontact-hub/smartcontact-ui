@@ -18,6 +18,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   5. Abierta en otra pestaña, lo dice (el candado ya se cogía; hasta el 2026-09-27 no se pintaba).
  *   6. El alta de agente deja en su EDICIÓN de verdad: el router en `editar/N`, y el índice con él.
  * Y «Valores por defecto» va sin caja: su título es el `h1` visible de la página (DD-33).
+ * Y un subtítulo de sección dice algo que el título no dice, o no está (UX de pantalla, regla 3): «Capacidades del
+ * agente» bajo «Permisos» y «Comportamiento, integración y sesión» bajo «Avanzado» eran relleno.
  */
 
 test.beforeEach(async ({ page }) => {
@@ -182,4 +184,15 @@ test('las tres fichas comparten molde: título, índice, contenido y resumen en 
   expect(grupo, JSON.stringify(medidas)).toMatchObject({ indice: { ancho: 196 }, fijo: 'sticky', contenido: 812, resumen: 240 });
   expect(usuario, JSON.stringify(medidas)).toEqual(grupo);
   expect(agente, JSON.stringify(medidas)).toEqual(grupo);
+});
+
+test('agente · Permisos y Avanzado, sin subtítulo de relleno: su título ya lo dice', async ({ page }) => {
+  for (const [seccion, titulo, relleno] of [
+    ['permisos', 'Permisos', 'Capacidades del agente'],
+    ['avanzado', 'Avanzado', 'Comportamiento, integración y sesión'],
+  ] as const) {
+    await goto(page, `admin/agentes/editar/1?seccion=${seccion}`);
+    await expect(page.getByRole('heading', { level: 2, name: titulo, exact: true }), seccion).toBeVisible();
+    await expect(page.locator('main').getByText(relleno, { exact: true }), seccion).toHaveCount(0);
+  }
 });

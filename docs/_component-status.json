@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 162,
+      "usedInSupervisor": 164,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -781,8 +781,9 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/inputtext",
       "cva": false,
-      "inputs": 16,
+      "inputs": 17,
       "api": [
+        "ariaDescribedBy",
         "blurred",
         "disabled",
         "error",
@@ -901,9 +902,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/multiselect",
       "cva": false,
-      "inputs": 33,
+      "inputs": 34,
       "api": [
         "appendTo",
+        "ariaDescribedBy",
         "ariaLabel",
         "ariaLabelledBy",
         "blurred",
@@ -1220,9 +1222,11 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": false,
-      "inputs": 28,
+      "inputs": 30,
       "api": [
         "appendTo",
+        "ariaDescribedBy",
+        "ariaLabel",
         "ariaLabelledBy",
         "blurred",
         "disabled",
@@ -1270,9 +1274,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/selectbutton",
       "cva": false,
-      "inputs": 13,
+      "inputs": 14,
       "api": [
         "allowEmpty",
+        "ariaDescribedBy",
         "ariaLabel",
         "ariaLabelledBy",
         "disabled",
@@ -1413,8 +1418,9 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/textarea",
       "cva": false,
-      "inputs": 13,
+      "inputs": 14,
       "api": [
+        "ariaDescribedBy",
         "autoResize",
         "cols",
         "disabled",
@@ -1467,8 +1473,9 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/toggleswitch",
       "cva": false,
-      "inputs": 7,
+      "inputs": 8,
       "api": [
+        "ariaDescribedBy",
         "ariaLabel",
         "ariaLabelledBy",
         "changed",

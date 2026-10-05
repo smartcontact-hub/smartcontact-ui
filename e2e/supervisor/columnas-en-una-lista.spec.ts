@@ -14,7 +14,10 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   2. desmarcar una la oculta, y volver a marcarla la deja donde estaba;
  *   3. arrastrar una en la lista la mueve en la tabla, y sigue ahí al volver a la página;
  *   4. las cabeceras ya no se arrastran;
- *   5. Nombre sale marcada y fija.
+ *   5. Nombre sale marcada y fija;
+ *   6. todo se hace con el teclado, sin arrastrar (WCAG 2.1.1 y 2.5.7): al abrir, el foco entra en la lista; las flechas
+ *      eligen la columna (el teclado nativo del Listbox) y «Subir» y «Bajar» la mueven; Escape vuelve al icono. Medido el
+ *      2026-10-05: el globo cuelga de `<body>` y el foco no entraba, así que con el teclado no se llegaba a la lista.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -30,6 +33,9 @@ const cabeceras = (page: Page) =>
 const boton = (page: Page) => page.locator('.page__action-bar').getByRole('button', { name: /^Columnas, \d+ de \d+$/ });
 const lista = (page: Page) => page.getByRole('listbox', { name: /^Columnas/ });
 const opcion = (page: Page, nombre: string) => lista(page).getByRole('option', { name: nombre, exact: true });
+/** La opción enfocada del Listbox: la nativa, por `aria-activedescendant`, sin elegir nada. */
+const enfocada = (page: Page) =>
+  lista(page).evaluate((ul) => document.getElementById(ul.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim() ?? null);
 
 test('el icono abre una lista con las columnas en el orden de la tabla, cada una con su casilla', async ({ page }) => {
   await goto(page, 'admin/agentes');
@@ -82,4 +88,51 @@ test('las cabeceras de la tabla ya no se arrastran', async ({ page }) => {
     .dragTo(page.locator('sc-datatable thead th[data-field="extension"]'));
   await page.waitForTimeout(300);
   expect(await cabeceras(page)).toEqual(antes);
+});
+
+test('todo con el teclado, sin arrastrar: el foco entra en la lista, «Subir» y «Bajar» mueven y Escape vuelve al icono', async ({ page }) => {
+  await goto(page, 'admin/agentes');
+  const antes = await cabeceras(page);
+  const i = antes.indexOf('Email');
+  expect(i, 'Email se ve y tiene una movible delante').toBeGreaterThan(1);
+  const anterior = antes[i - 1]!;
+
+  await boton(page).focus();
+  await page.keyboard.press('Enter');
+  await expect(lista(page), 'al abrir, el foco entra en la lista').toBeFocused();
+  for (let n = 0; n < 12 && (await enfocada(page)) !== 'Email'; n++) await page.keyboard.press('ArrowDown');
+  expect(await enfocada(page)).toBe('Email');
+  // Las flechas solo enfocan: la columna sigue a la vista.
+  await expect(opcion(page, 'Email')).toHaveAttribute('aria-selected', 'true');
+
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Subir Email', exact: true })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect.poll(async () => (await cabeceras(page)).slice(i - 1, i + 1)).toEqual(['Email', anterior]);
+  await expect(page.getByRole('button', { name: 'Subir Email', exact: true }), 'el foco se queda para seguir').toBeFocused();
+
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Bajar Email', exact: true })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect.poll(() => cabeceras(page)).toEqual(antes);
+
+  await page.keyboard.press('Escape');
+  await expect(lista(page)).toBeHidden();
+  await expect(boton(page), 'Escape vuelve al icono').toBeFocused();
+});
+
+test('«Subir» lleva una columna hasta debajo de la fija, no más, con el ratón y sin arrastrar, y se queda al volver', async ({ page }) => {
+  await goto(page, 'admin/agentes');
+  const antes = await cabeceras(page);
+  const ultima = antes[antes.length - 1]!;
+  await boton(page).click();
+  await lista(page).focus();
+  for (let n = 0; n < 12 && (await enfocada(page)) !== ultima; n++) await page.keyboard.press('ArrowDown');
+  // La lista tiene también las ocultas: sube por encima de ellas hasta Nombre, que es fija.
+  const subir = page.getByRole('button', { name: `Subir ${ultima}`, exact: true });
+  for (let n = 0; n < 12 && (await subir.isEnabled()); n++) await subir.click();
+  await expect(subir, 'encima solo queda Nombre, que es fija').toBeDisabled();
+  await expect.poll(async () => (await cabeceras(page)).slice(0, 2)).toEqual(['Nombre', ultima]);
+  await page.reload();
+  await expect.poll(async () => (await cabeceras(page)).slice(0, 2)).toEqual(['Nombre', ultima]);
 });

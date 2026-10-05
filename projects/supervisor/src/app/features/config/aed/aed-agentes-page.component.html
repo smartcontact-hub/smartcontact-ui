@@ -79,25 +79,27 @@
 
         <div class="switch-field switch-field--top">
           <sc-toggleswitch
+            ariaDescribedBy="agentes-manage-devices-hint"
             [checked]="form().permissions.manageDevices"
             [ariaLabel]="'agents.form.permissions.manage_devices' | translate"
             (checkedChange)="setPermission('manageDevices', $event)"
           />
           <div class="switch-field__copy">
             <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.manage_devices' | translate }}</span>
-            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.manage_devices_hint' | translate }}</p>
+            <p id="agentes-manage-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.manage_devices_hint' | translate }}</p>
           </div>
         </div>
 
         <div class="switch-field switch-field--top">
           <sc-toggleswitch
+            ariaDescribedBy="agentes-self-activate-hint"
             [checked]="form().permissions.selfActivate"
             [ariaLabel]="'agents.form.permissions.self_activate' | translate"
             (checkedChange)="setPermission('selfActivate', $event)"
           />
           <div class="switch-field__copy">
             <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
-            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
+            <p id="agentes-self-activate-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
           </div>
         </div>
       </section>
@@ -131,13 +133,14 @@
 
         <div class="switch-field switch-field--top">
           <sc-toggleswitch
+            ariaDescribedBy="agentes-external-devices-hint"
             [checked]="form().permissions.externalDevices"
             [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
             (checkedChange)="setPermission('externalDevices', $event)"
           />
           <div class="switch-field__copy">
             <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
-            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
+            <p id="agentes-external-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
           </div>
         </div>
       </section>

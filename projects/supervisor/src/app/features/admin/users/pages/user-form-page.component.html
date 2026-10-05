@@ -281,6 +281,7 @@
     <section class="sub-section">
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="user-active-hint"
           [checked]="form().status === 'active'"
           [ariaLabel]="'users.form.fields.active' | translate"
           (checkedChange)="onStatusChange($event)"
@@ -289,7 +290,7 @@
              dato («Estado»); y la ayuda ya no repite «Usuario activo:» delante. -->
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'users.form.fields.active' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'users.form.fields.active_hint' | translate }}</p>
+          <p id="user-active-hint" class="switch-field__hint sc-text-caption-regular">{{ 'users.form.fields.active_hint' | translate }}</p>
         </div>
       </div>
     </section>

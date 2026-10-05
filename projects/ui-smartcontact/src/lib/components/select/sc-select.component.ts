@@ -25,6 +25,7 @@ import {
   createScFieldState,
   createScOptionState,
   createScPanelSizing,
+  joinDescribedBy,
   type ScFieldSize,
 } from '../field/sc-field';
 
@@ -75,8 +76,9 @@ export class ScSelectComponent {
   // ─── Chrome (mirrors sc-inputtext) ─────────────────────────────────────
   readonly size = input<ScFieldSize>('md');
   /**
-   * Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control,
-   * así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).
+   * Etiqueta del campo. Se pinta con `sc-field-label` y nombra el control por `aria-labelledby`, así que
+   * **sin ella el campo no tiene nombre accesible**: se le da uno con `ariaLabelledBy` (un rótulo de la
+   * pantalla) o con `ariaLabel` (sin rótulo a la vista).
    */
   readonly label = input<string>();
   readonly required = input(false, { transform: booleanAttribute });
@@ -106,6 +108,17 @@ export class ScSelectComponent {
    * se ata solo.
    */
   readonly ariaLabelledBy = input<string>();
+  /**
+   * Nombre accesible cuando no hay rótulo a la vista (las condiciones de una regla, un selector en una barra).
+   * Va al combobox por el `ariaLabel` nativo de `p-select`, nunca como `aria-label` en el host. Sin ningún nombre,
+   * PrimeNG nombra el combobox con la opción elegida y el lector oye el valor en lugar de lo que se pide (DD-133).
+   */
+  readonly ariaLabel = input<string>();
+  /**
+   * Ids, separados por espacios, de lo que describe el campo desde fuera: la ayuda que va al lado y no debajo (la fila
+   * de un ajuste, de un interruptor). Se oye después de la ayuda propia (`helperText`), si la hay (DD-133).
+   */
+  readonly ariaDescribedBy = input<string>();
   readonly name = input<string>();
 
   // ─── Select-specific ───────────────────────────────────────────────
@@ -233,13 +246,19 @@ export class ScSelectComponent {
    * Los `aria-*` del campo van al elemento que recibe el foco (el `span[role=combobox]`, o el `<input>` si es
    * editable), por passthrough (`pt.label`), como en `sc-password`. Hasta el 2026-09-28 iban en la envoltura
    * `<p-select>`, y un lector de pantalla no anunciaba la ayuda ni sabía que el campo era obligatorio (DD-133).
+   *
+   * Una opción que no se puede elegir lo dice con `aria-disabled` (`pt.option`, con el `context` que PrimeNG da
+   * a cada opción): la opción nativa solo lo marcaba con `data-p-disabled` y su color.
    */
   protected readonly pt = computed<SelectPassThrough>(() => ({
     label: {
-      'aria-describedby': this.footerText() ? this.msgId() : null,
+      'aria-describedby': joinDescribedBy(this.footerText() ? this.msgId() : null, this.ariaDescribedBy()),
       'aria-required': this.required() ? 'true' : null,
       'aria-invalid': this.isInvalid() ? 'true' : null,
     },
+    option: ({ context }: { context?: { disabled?: boolean } }) => ({
+      'aria-disabled': context?.disabled ? 'true' : null,
+    }),
   }));
 
   private readonly panel = createScPanelSizing('sc-select', this.size);

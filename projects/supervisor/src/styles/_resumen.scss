@@ -95,8 +95,13 @@
  * dirección: Cmd+clic abre la sección en otra pestaña). Se lee como el texto de la tarjeta, en el primario, que es el
  * que llega a AA sobre el tinte (DD-126 §6); que se pulsa lo dicen la manita y el subrayado al pasar, como la miga
  * (DD-103). Pintado en azul y subrayado siempre, el resumen se leería como una lista de enlaces. La tarjeta no se
- * pulsa entera: su tinte es el de «elegido», y lo parecería. El foco, el anillo del sistema. */
+ * pulsa entera: su tinte es el de «elegido», y lo parecería. El foco, el anillo del sistema.
+ *
+ * Pinta 18 de alto y se pulsa en al menos 24,5 × 24,5 (WCAG 2.5.8, `scale/1-75`): un `::after` invisible y centrado
+ * agranda la zona sin mover nada, como la cifra de `sc-group-popover`. Entre filas hay 25 de arriba a arriba, así que la
+ * zona de una no pisa la de la siguiente (medido a 1366 × 660). */
 .resumen__enlace {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-375);
@@ -104,6 +109,17 @@
   text-decoration: none;
   text-underline-offset: var(--sc-spacing-0-125);
   cursor: pointer;
+
+  &::after {
+    content: '';
+    position: absolute;
+    /* Físico a propósito: `translate` lo es, y con `inset-inline-start` se descentraría en RTL. */
+    top: 50%;
+    left: 50%;
+    inline-size: max(100%, var(--sc-spacing-1-75));
+    block-size: max(100%, var(--sc-spacing-1-75));
+    translate: -50% -50%;
+  }
 
   &:hover {
     text-decoration: underline;

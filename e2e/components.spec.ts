@@ -598,6 +598,16 @@ test.describe('sc-inputnumber', () => {
 });
 
 test.describe('sc-multiselect', () => {
+  test('el error se anuncia con el combobox, no con su envoltura (DD-133)', async ({ page }) => {
+    await gotoPage(page, 'multiselect');
+    const conError = page.getByTestId('sc-multiselect-error');
+    // El combobox es el `<input>` oculto de PrimeNG, que es el que recibe el foco; la envoltura no lo recibe.
+    const combobox = conError.getByRole('combobox');
+    await expect(combobox).toHaveAccessibleDescription('Selecciona al menos uno');
+    await expect(combobox).toHaveAttribute('aria-invalid', 'true');
+    await expect(conError.locator('p-multiselect')).not.toHaveAttribute('aria-describedby');
+  });
+
   test('solo icono conserva tamaños, nombre, teclado y opciones bloqueadas', async ({ page }) => {
     await gotoPage(page, 'multiselect');
     for (const [size, width] of [['sm', 28], ['md', 31.5], ['lg', 42]] as const) {

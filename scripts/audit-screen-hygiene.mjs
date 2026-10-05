@@ -4,8 +4,8 @@
  * que hasta ahora SOLO vivían en la doc (AGENTS.md §UX de pantalla). Un principio
  * que no tiene gate se pudre: esto lo convierte en un chequeo.
  *
- * Gatea DOS cosas, ambas como TRINQUETE por conteo (el mismo patrón que
- * `audit:api-era`: la lista solo puede MENGUAR, y muerde en las dos direcciones):
+ * Gatea TRES cosas. Las dos primeras, como TRINQUETE por conteo (el mismo patrón
+ * que `audit:api-era`: la lista solo puede MENGUAR, y muerde en las dos direcciones):
  *
  * 1. EMOJIS EN LA INTERFAZ. Los iconos salen de `<sc-icon>` (Material Symbols); un
  *    emoji suelto rompe ese único idioma visual. Se marcan solo los del PLANO ASTRAL
@@ -22,12 +22,22 @@
  *    `aspect-ratio` (bindings incluidos). CSS/SCSS no cuenta: no reserva alto antes
  *    de que cargue la imagen, que es justo lo que causa el salto.
  *
+ * 3. DESPLEGABLES SIN NOMBRE (DD-133), sin trinquete: ninguno. PrimeNG pinta el select
+ *    como `<span role="combobox">`, y a uno sin nombre le pone de `aria-label` la opción
+ *    elegida: el lector oía «Automático» donde la pantalla dice «Descuelgue de llamadas».
+ *    Todo `sc-select` y `sc-multiselect` lleva `label`, `ariaLabelledBy` o `ariaLabel`.
+ *    Un `<label for>` vale solo para `sc-multiselect`, cuyo combobox es un `<input>`
+ *    (medido el 2026-10-05); el span de `sc-select` no es etiquetable. Un `aria-label`
+ *    en el host tampoco vale: no llega al combobox.
+ *
  * QUÉ HACER SI SE PONE ROJO:
  *   · «nuevo incumplimiento» → arréglalo (usa `<sc-icon>` en vez del emoji; añade
  *     `width`/`height` o `aspect-ratio` a la imagen). NO lo añadas al trinquete.
  *   · «bajó a N» → enhorabuena, arreglaste uno: actualiza el número en la lista de
  *     abajo (el trinquete avanza).
  *   · «ya está a 0» → quita la entrada del trinquete.
+ *   · «desplegable sin nombre» → dale el rótulo que tiene a la vista (`ariaLabelledBy`
+ *     con el id de ese rótulo) o, si no tiene, `ariaLabel`.
  *
  * ES ESTÁTICO y PURO respecto al texto (funciones exportadas → testeable).
  */
@@ -107,6 +117,57 @@ export const IMG_PENDIENTES = {
   'projects/ui-smartcontact/src/lib/components/photo-upload/sc-photo-upload.component.html': 2,
 };
 
+/** Cambia cada carácter de lo que casa por un espacio, salvo los saltos de línea: las líneas no se mueven. */
+const enBlanco = (texto, re) => texto.replace(re, (m) => m.replace(/[^\n]/g, ' '));
+
+/** Fin de una etiqueta: el primer `>` fuera de comillas (un `=>` o un `a > b` dentro de un atributo no la cierran). */
+function finDeEtiqueta(texto, desde) {
+  let comilla = null;
+  for (let i = desde; i < texto.length; i++) {
+    const c = texto[i];
+    if (comilla) {
+      if (c === comilla) comilla = null;
+    } else if (c === '"' || c === "'") comilla = c;
+    else if (c === '>') return i;
+  }
+  return texto.length;
+}
+
+/** Un atributo que nombra el combobox, con o sin binding. `optionLabel` e `iftaLabel` no lo son. */
+const NOMBRA = /(?:^|\s)\[?(?:label|ariaLabel|ariaLabelledBy)\]?\s*=/;
+/** El id del control: `inputId="x"` o `[inputId]="'x'"`. */
+const ID_DEL_CONTROL = /(?:^|\s)(?:inputId="([^"]+)"|\[inputId\]="'([^']+)'")/;
+
+/**
+ * El texto sin sus comentarios y con cada línea en su sitio: en HTML, `<!-- -->`; en TS, además, `//` y `/* *\/`, que
+ * es donde la doc cita un `<sc-select>` sin que sea uno.
+ */
+export function sinComentariosEnSuSitio(texto, esHtml) {
+  const limpio = enBlanco(texto, /<!--[\s\S]*?-->/g);
+  return esHtml ? limpio : enBlanco(enBlanco(limpio, /\/\*[\s\S]*?\*\//g), /(?<=^|\s)\/\/.*$/gm);
+}
+
+/** Las etiquetas `<sc-select` y `<sc-multiselect` de un texto ya sin comentarios. */
+const DESPLEGABLE = /<sc-(select|multiselect)\b/g;
+
+/** Líneas de los `sc-select` y `sc-multiselect` que no llevan un nombre que llegue a su combobox (DD-133). */
+export function desplegablesSinNombre(texto, esHtml) {
+  const limpio = sinComentariosEnSuSitio(texto, esHtml);
+  const rotulados = new Set();
+  for (const m of limpio.matchAll(/<label\b[^>]*?\s(?:for="([^"]+)"|\[(?:attr\.)?for\]="'([^']+)'")/g)) {
+    rotulados.add(m[1] ?? m[2]);
+  }
+  const lineas = [];
+  for (const m of limpio.matchAll(DESPLEGABLE)) {
+    const etiqueta = limpio.slice(m.index + m[0].length, finDeEtiqueta(limpio, m.index));
+    if (NOMBRA.test(etiqueta)) continue;
+    const id = etiqueta.match(ID_DEL_CONTROL);
+    if (m[1] === 'multiselect' && id && rotulados.has(id[1] ?? id[2])) continue;
+    lineas.push(limpio.slice(0, m.index).split('\n').length);
+  }
+  return lineas;
+}
+
 /** Compara el estado medido contra un trinquete. Devuelve la lista de problemas. */
 export function chequearTrinquete(actual, congelado, etiqueta, comoArreglar) {
   const problemas = [];
@@ -151,17 +212,25 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
 
   const emojis = {};
   const imgs = {};
+  const sinNombre = [];
+  let desplegables = 0;
   for (const f of ficheros) {
     const src = readFileSync(f, 'utf8');
     const e = contarEmojis(src, f.endsWith('.html'));
     if (e > 0) emojis[f] = e;
     const i = contarImgSinDims(src);
     if (i > 0) imgs[f] = i;
+    desplegables += (sinComentariosEnSuSitio(src, f.endsWith('.html')).match(DESPLEGABLE) ?? []).length;
+    for (const linea of desplegablesSinNombre(src, f.endsWith('.html'))) sinNombre.push(`${f}:${linea}`);
   }
 
   const problemas = [
     ...chequearTrinquete(emojis, EMOJI_PENDIENTES, 'emoji', 'usa <sc-icon> (o un flag SVG) en vez del emoji.'),
     ...chequearTrinquete(imgs, IMG_PENDIENTES, 'img/iframe sin dims', 'añade width+height o aspect-ratio.'),
+    ...sinNombre.map((donde) => [
+      `${donde}: desplegable sin nombre (DD-133). PrimeNG lo nombraría con la opción elegida.`,
+      '      → `ariaLabelledBy` con el id del rótulo que tiene a la vista o, sin rótulo, `ariaLabel`. Un `<label for>` solo nombra un sc-multiselect.',
+    ]),
   ];
 
   const totEmoji = Object.values(emojis).reduce((a, b) => a + b, 0);
@@ -169,11 +238,15 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   log(
     `audit:screen-hygiene — ${ficheros.length} plantilla(s): ${totEmoji} emoji astral en ` +
       `${Object.keys(emojis).length} fichero(s), ${totImg} img/iframe sin dims en ${Object.keys(imgs).length} ` +
-      `(trinquetes: emoji ${Object.keys(EMOJI_PENDIENTES).length}, img ${Object.keys(IMG_PENDIENTES).length})\n`,
+      `(trinquetes: emoji ${Object.keys(EMOJI_PENDIENTES).length}, img ${Object.keys(IMG_PENDIENTES).length}), ` +
+      `${sinNombre.length} de ${desplegables} desplegables sin nombre\n`,
   );
 
   if (!problemas.length) {
-    log('✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz y ninguna imagen nueva sin reservar su hueco.');
+    log(
+      '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco y ' +
+        'cada desplegable con nombre.',
+    );
     process.exit(0);
   }
 

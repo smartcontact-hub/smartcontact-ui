@@ -87,6 +87,8 @@ export class ScSelectButtonComponent {
   readonly ariaLabelledBy = input<string>();
   /** Nombre del grupo cuando no hay rótulo visible. */
   readonly ariaLabel = input<string>();
+  /** Ids, separados por espacios, de la ayuda que describe el grupo desde fuera (DD-133). */
+  readonly ariaDescribedBy = input<string>();
 
   /** La opción elegida. */
   readonly value = model<unknown>(undefined);

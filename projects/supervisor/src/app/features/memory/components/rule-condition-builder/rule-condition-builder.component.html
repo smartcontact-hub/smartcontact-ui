@@ -51,6 +51,7 @@
           <sc-select
             appendTo="body"
             class="cond-row__field"
+            [ariaLabel]="'memory.rules.builder.cond.field_aria' | translate"
             [filled]="true"
             [options]="fieldOptions"
             optionLabel="label"
@@ -71,6 +72,7 @@
           <sc-select
             appendTo="body"
             class="cond-row__op"
+            [ariaLabel]="'memory.rules.builder.cond.operator_aria' | translate"
             [filled]="true"
             [options]="operatorOptionsFor(cond.field)"
             optionLabel="label"
@@ -92,6 +94,7 @@
             <sc-select
               appendTo="body"
               class="cond-row__value"
+              [ariaLabel]="'memory.rules.builder.cond.value_aria' | translate"
               [filled]="true"
               [options]="directionOptionsFor(cond.field)"
               optionLabel="label"
@@ -108,6 +111,7 @@
                 <sc-select
                   appendTo="body"
                   class="cond-row__num-unit"
+                  [ariaLabel]="'memory.rules.builder.cond.unit_aria' | translate"
                   [filled]="true"
                   [options]="durationUnitOptions"
                   optionLabel="label"
@@ -119,6 +123,7 @@
                 <sc-select
                   appendTo="body"
                   class="cond-row__preset"
+                  [ariaLabel]="'memory.rules.builder.cond.value_aria' | translate"
                   [filled]="true"
                   [options]="durationPresetOptions"
                   optionLabel="label"
@@ -131,6 +136,7 @@
                   <sc-select
                     appendTo="body"
                     class="cond-row__num-unit"
+                    [ariaLabel]="'memory.rules.builder.cond.unit_aria' | translate"
                     [filled]="true"
                     [options]="durationUnitOptions"
                     optionLabel="label"

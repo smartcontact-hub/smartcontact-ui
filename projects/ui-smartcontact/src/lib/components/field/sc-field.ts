@@ -56,6 +56,15 @@ export function createScFieldState(block: string, inputs: ScFieldStateInputs) {
 }
 
 /**
+ * El `aria-describedby` de un campo: primero lo suyo (la unidad, la ayuda o el error) y después lo de fuera
+ * (`ariaDescribedBy`, ids separados por espacios). `null` sin ninguno, para no dejar un atributo vacío.
+ */
+export function joinDescribedBy(...ids: readonly (string | null | undefined)[]): string | null {
+  const todos = ids.flatMap((id) => id?.split(/\s+/) ?? []).filter(Boolean);
+  return todos.length ? todos.join(' ') : null;
+}
+
+/**
  * Traducción de `sm/md/lg` al `size` de PrimeNG y a la clase del panel overlay.
  * La comparten los tres que abren panel: select, multiselect y datepicker.
  * `block` es el BEM del componente (`sc-select`), así que la clase sale

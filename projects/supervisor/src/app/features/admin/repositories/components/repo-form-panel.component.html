@@ -10,7 +10,7 @@
 
   @for (field of fields(); track field.key; let i = $index) {
     <div class="panel__field">
-      <label class="panel__label sc-text-caption-regular" [attr.for]="'repo-field-' + field.key">
+      <label class="panel__label sc-text-caption-regular" [attr.for]="'repo-field-' + field.key" [id]="'repo-field-' + field.key + '-label'">
         {{ field.labelKey | translate }}
         @if (!field.required) {
           <span class="panel__hint">({{ 'common.optional' | translate }})</span>
@@ -24,6 +24,7 @@
         @case ('select') {
           <sc-select
             [inputId]="'repo-field-' + field.key"
+            [ariaLabelledBy]="'repo-field-' + field.key + '-label'"
             optionValue="value"
             [options]="field.options ?? []"
             [value]="values()[field.key]"

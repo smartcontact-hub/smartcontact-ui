@@ -16,6 +16,7 @@
                de «todas» (sin rótulo, y con una fija no las quita todas), sin tope de alto (son pocas: se ven todas) y
                sin su borde, que ya pone el globo. -->
           <sc-button
+            #columnsButton
             class="page__columns"
             variant="secondary"
             appearance="outlined"
@@ -26,7 +27,7 @@
             [attr.aria-expanded]="columnsOpen()"
             (clicked)="columnsPop.toggle($event)"
           />
-          <p-popover #columnsPop (onShow)="columnsOpen.set(true)" (onHide)="columnsOpen.set(false)">
+          <p-popover #columnsPop (onShow)="columnsOpen.set(true)" (onHide)="onColumnsHide()">
             <p-listbox
               [options]="columnOrderDraft()"
               optionLabel="label"
@@ -39,11 +40,40 @@
               [showToggleAll]="false"
               scrollHeight="none"
               [dt]="columnsListDt"
+              [pt]="columnsListPt"
               [ariaLabel]="columnsAriaLabel()"
               [ngModel]="prefs.visible"
               (ngModelChange)="onVisibleChange($event)"
               (onDrop)="onColumnDrop($event)"
+              (focusin)="onColumnsListFocusIn($event)"
             />
+            <!-- Ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, DD-162): mueven la última columna enfocada en la lista, la de las
+                 flechas. Su nombre dice cuál; el lector oye después a qué puesto llegó. Primarios de texto, como «Añadir
+                 condición»: el secundario de texto mide 2,58:1 en claro, por debajo de AA. -->
+            @let mover = columnMove();
+            <div class="page__columns-move">
+              <sc-button
+                size="sm"
+                variant="primary"
+                appearance="text"
+                icon="arrow_upward"
+                [label]="'common.columns_move_up' | translate"
+                [ariaLabel]="mover ? ('common.columns_move_up_aria' | translate: { column: mover.label }) : ('common.columns_move_up' | translate)"
+                [disabled]="!mover?.up"
+                (clicked)="moveColumn(-1)"
+              />
+              <sc-button
+                size="sm"
+                variant="primary"
+                appearance="text"
+                icon="arrow_downward"
+                [label]="'common.columns_move_down' | translate"
+                [ariaLabel]="mover ? ('common.columns_move_down_aria' | translate: { column: mover.label }) : ('common.columns_move_down' | translate)"
+                [disabled]="!mover?.down"
+                (clicked)="moveColumn(1)"
+              />
+            </div>
+            <span class="visually-hidden" aria-live="polite">{{ columnsAnnouncement() }}</span>
           </p-popover>
         }
         @if (searchPlaceholder(); as placeholder) {

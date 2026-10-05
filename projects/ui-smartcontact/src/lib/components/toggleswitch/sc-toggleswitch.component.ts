@@ -1,6 +1,7 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import type { ToggleSwitchPassThrough } from 'primeng/types/toggleswitch';
 
 import { ScComponentSize } from '../../core/types/theme-component.types';
 
@@ -43,6 +44,11 @@ export class ScToggleSwitchComponent {
   readonly ariaLabel = input<string | null>(null);
   readonly ariaLabelledBy = input<string | null>(null);
   /**
+   * Ids, separados por espacios, de la ayuda que describe el campo desde fuera: la que va a su lado (la fila de un
+   * ajuste, de un interruptor). El campo no tiene ayuda propia; sin esto, nadie la anuncia (DD-133).
+   */
+  readonly ariaDescribedBy = input<string | null>(null);
+  /**
    * Override del id interno del `<input>` real renderizado por PrimeNG. Útil
    * cuando un `<label for="X">` externo necesita enlazar el toggle para
    * click-to-toggle. Si se omite, el wrapper genera id único `sc-toggle-N`
@@ -58,6 +64,11 @@ export class ScToggleSwitchComponent {
 
   private readonly internalInputId = `sc-toggle-${++toggleIdCounter}`;
   protected readonly effectiveInputId = (): string => this.inputId() ?? this.internalInputId;
+
+  /** `p-toggleswitch` no tiene entrada para la descripción: va al `<input role="switch">` por passthrough. */
+  protected readonly pt = computed<ToggleSwitchPassThrough>(() => ({
+    input: { 'aria-describedby': this.ariaDescribedBy() },
+  }));
 
   /** Mapea sm/md/lg a la prop `size` de PrimeNG (md = sin atributo). */
   protected readonly pSize = computed<'small' | 'large' | undefined>(() => {

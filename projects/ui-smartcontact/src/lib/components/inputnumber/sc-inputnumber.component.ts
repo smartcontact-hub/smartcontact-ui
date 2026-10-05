@@ -11,7 +11,7 @@ import {
 import { InputTextModule } from 'primeng/inputtext';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
-import { createScFieldState, type ScFieldSize } from '../field/sc-field';
+import { createScFieldState, joinDescribedBy, type ScFieldSize } from '../field/sc-field';
 
 /** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
 export type ScInputNumberSize = ScFieldSize;
@@ -95,6 +95,11 @@ export class ScInputNumberComponent {
    * qué autocompletar.
    */
   readonly name = input<string>();
+  /**
+   * Ids, separados por espacios, de lo que describe el campo desde fuera: la ayuda que va al lado y no debajo (la fila
+   * de un ajuste, de un interruptor). Se oye después de la ayuda propia, si la hay (DD-133).
+   */
+  readonly ariaDescribedBy = input<string>();
 
   // ─── Number-specific ───────────────────────────────────────────────
   /** Valor mínimo admitido. */
@@ -139,10 +144,9 @@ export class ScInputNumberComponent {
    * descripción, delante del mensaje de ayuda o de error si lo hay.
    */
   protected readonly suffixId = computed(() => `${this.resolvedId()}-suffix`);
-  protected readonly describedBy = computed(() => {
-    const ids = [this.hasSuffix() ? this.suffixId() : null, this.footerText() ? this.msgId() : null].filter(Boolean);
-    return ids.length ? ids.join(' ') : null;
-  });
+  protected readonly describedBy = computed(() =>
+    joinDescribedBy(this.hasSuffix() ? this.suffixId() : null, this.footerText() ? this.msgId() : null, this.ariaDescribedBy()),
+  );
 
   /**
    * Padding-right del control para reservar espacio del suffix. Se calcula

@@ -42,6 +42,7 @@ import { ArgType, ScArgs } from './story.types';
               }
               @case ('select') {
                 <sc-select
+                  [ariaLabel]="at.name"
                   [options]="selectOptions(at)"
                   optionLabel="label"
                   optionValue="value"

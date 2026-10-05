@@ -5,6 +5,7 @@ import {
   contarEmojis,
   contarImgSinDims,
   chequearTrinquete,
+  desplegablesSinNombre,
 } from '../audit-screen-hygiene.mjs';
 
 // contarEmojis: cuenta SOLO emoji astral pictográfico (+FE0F) en texto renderizable.
@@ -84,4 +85,49 @@ test('trinquete: entrada muerta (congelado sin actual) → pide quitarla', () =>
   const p = chequearTrinquete({}, { 'viejo.ts': 2 }, 'emoji', 'fix');
   assert.equal(p.length, 1);
   assert.match(p[0][0], /ya no hay ninguno/);
+});
+
+// desplegablesSinNombre (DD-133): cada `sc-select` y `sc-multiselect` lleva un nombre que llega a su combobox. Sin él,
+// PrimeNG lo nombra con la opción elegida y el lector oye «Automático» donde dice «Descuelgue de llamadas».
+
+test('desplegable sin nombre → su línea', () => {
+  assert.deepEqual(desplegablesSinNombre('<div>\n  <sc-select [options]="o" />\n</div>', true), [2]);
+  assert.deepEqual(desplegablesSinNombre('<sc-multiselect [options]="o" />', true), [1]);
+});
+
+test('label, ariaLabel o ariaLabelledBy, con o sin binding → nombrado', () => {
+  for (const a of [
+    'label="Cola"',
+    "[label]=\"'k' | translate\"",
+    'ariaLabel="Cola"',
+    "[ariaLabel]=\"'k' | translate\"",
+    'ariaLabelledBy="cola-label"',
+    "[ariaLabelledBy]=\"'cola-label'\"",
+  ]) {
+    assert.deepEqual(desplegablesSinNombre(`<sc-select ${a} [options]="o" />`, true), [], a);
+  }
+});
+
+test('NO nombran: optionLabel, iftaLabel sin label ni un aria-label en el host', () => {
+  assert.deepEqual(desplegablesSinNombre('<sc-select optionLabel="label" iftaLabel aria-label="Cola" />', true), [1]);
+});
+
+test('un <label for> nombra un multiselect (su combobox es un input) y NO un select (es un span)', () => {
+  const con = (etiqueta) => `<label for="cola">Cola</label>\n<${etiqueta} inputId="cola" />`;
+  assert.deepEqual(desplegablesSinNombre(con('sc-multiselect'), true), []);
+  assert.deepEqual(desplegablesSinNombre(con('sc-select'), true), [2]);
+  // El id literal en un binding cuenta igual; un <label for> que apunta a otro id, no.
+  assert.deepEqual(desplegablesSinNombre(`<label for="cola">Cola</label><sc-multiselect [inputId]="'cola'" />`, true), []);
+  assert.deepEqual(desplegablesSinNombre('<label for="otra">Cola</label><sc-multiselect inputId="cola" />', true), [1]);
+});
+
+test('un > dentro de un atributo (flecha, comparación) no cierra la etiqueta', () => {
+  const html = '<sc-select (valueChange)="ok = $event > 0" [options]="o.filter((a) => a)" ariaLabel="Cola" />';
+  assert.deepEqual(desplegablesSinNombre(html, true), []);
+});
+
+test('EXCLUYE los desplegables de un comentario, en HTML y en TS, sin mover la línea de los demás', () => {
+  assert.deepEqual(desplegablesSinNombre('<!-- <sc-select> -->\n<sc-select />', true), [2]);
+  assert.deepEqual(desplegablesSinNombre('/**\n * Adapter para `<sc-select>`\n */\nconst t = `<sc-select />`;', false), [4]);
+  assert.deepEqual(desplegablesSinNombre('// un <sc-multiselect> de ejemplo\nconst x = 1;', false), []);
 });

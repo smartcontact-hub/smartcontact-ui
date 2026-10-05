@@ -72,10 +72,12 @@ const RUTAS = [
    * a medias (8/11, 2/5). */
   'admin/agentes/editar/1',
   'admin/usuarios/editar/3',
-  /* El alta de grupo, desde que su resumen dice lo que falta (DD-136): «Falta: …» en ámbar, a la vista al abrir. Las de
-   * agente y usuario llevan la misma pieza, pero aún no entran aquí: el marcador de la foto (`sc-photo-upload`, del DS)
-   * mide 2,58:1 y un icono pide 3:1. Es un arreglo del DS, abierto en DD-136; hasta entonces van en `RUTAS_SUELO`. */
+  /* Las tres altas, desde que su resumen dice lo que falta (DD-136): «Falta: …» en ámbar, a la vista al abrir. Las de
+   * agente y usuario entran el 2026-10-05, cuando el marcador de la foto (`sc-photo-upload`, del DS) pasa de 2,58:1 al
+   * 3:1 que pide un icono. */
   'admin/grupos/crear',
+  'admin/agentes/crear',
+  'admin/usuarios/crear',
   'admin/agentes',
   'admin/labels',
   'admin/plantillas',
@@ -107,13 +109,7 @@ const RUTAS = [
  * abajo (lo visible). Una tarjeta nunca cumple eso: lleva el padding de la página. Van
  * también los formularios y el constructor, que no están en `RUTAS`.
  */
-const RUTAS_SUELO = [
-  ...RUTAS,
-  'supervision',
-  'admin/usuarios/crear',
-  'admin/agentes/crear',
-  'conversaciones/reglas/nueva',
-] as const;
+const RUTAS_SUELO = [...RUTAS, 'supervision', 'conversaciones/reglas/nueva'] as const;
 
 /**
  * SUB-AA CONOCIDO, MEDIDO Y NO ARREGLADO — todo en tema CLARO.

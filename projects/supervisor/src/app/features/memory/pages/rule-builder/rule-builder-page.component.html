@@ -345,7 +345,7 @@
                   @if (ruleType() === 'classification') {
                     <div class="rule-builder__ai-categories">
                       <header class="rule-builder__ai-categories-head">
-                        <h3>{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
+                        <h3 id="rule-ai-categories-label">{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
                         <a
                           class="rule-builder__ai-categories-link sc-text-caption-regular"
                           routerLink="/conversaciones/categorias"
@@ -358,6 +358,7 @@
                       </header>
                       @if (categoryOptions().length > 0) {
                         <sc-multiselect
+                          ariaLabelledBy="rule-ai-categories-label"
                           [options]="categoryOptions()"
                           optionLabel="label"
                           optionValue="value"

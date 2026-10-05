@@ -43,10 +43,8 @@
     (onFocus)="onFocus($event)"
     (onBlur)="onBlur($event)"
     [attr.name]="name() ?? null"
-    [attr.aria-describedby]="footerText() ? msgId() : null"
-    [attr.aria-required]="required() ? true : null"
+    [pt]="pt()"
     [invalid]="isInvalid()"
-    [attr.aria-invalid]="isInvalid() ? true : null"
   >
     <!-- La flecha en Material Symbols, como todos los iconos de la plataforma: la de PrimeNG es su SVG propio.
          Por la plantilla nativa `#dropdownicon`, sin tocar el comportamiento. -->

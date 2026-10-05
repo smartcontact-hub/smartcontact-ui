@@ -10,6 +10,7 @@
       [value]="selectedFieldKey()"
       (valueChange)="onFieldValueChange($event)"
       name="bulk-field"
+      [ariaLabel]="'sc.bulkEditMenu.change' | translate"
     />
   </span>
 
@@ -25,6 +26,7 @@
         [value]="fromValue()"
         (valueChange)="onFromValueChange($event)"
         name="bulk-from"
+        [ariaLabel]="'sc.bulkEditMenu.from' | translate"
       />
     </span>
   }
@@ -40,6 +42,7 @@
       [value]="selectedValue()"
       (valueChange)="onValueValueChange($event)"
       name="bulk-value"
+      [ariaLabel]="'sc.bulkEditMenu.to' | translate"
     />
   </span>
 

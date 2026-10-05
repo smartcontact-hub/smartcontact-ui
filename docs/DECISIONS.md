@@ -346,6 +346,23 @@ con decenas de columnas y buscador, que no es el caso. Si un listado llega ahí,
 **Descartado.** PickList (ver Razón); dejar los dos controles; un control a medida con asas propias
 (`sc-column-selector`, que ya existe en el DS sin uso y no es nativo).
 
+**Actualización (2026-10-05)** · Se ordena sin arrastrar (WCAG 2.1.1 y 2.5.7), y se cierra el «Coste». Medido antes:
+con el teclado ni siquiera se elegía. El globo cuelga de `<body>` y, al abrirlo con Intro, el foco se quedaba en el icono
+y Tab seguía por la página.
+- **El foco entra en la lista** al abrir: `p-popover` enfoca lo que lleve `autofocus`, y se lo pone el `<ul>` del Listbox
+  (`pt.list`). Al cerrar con el foco dentro (Escape), vuelve al icono.
+- **«Subir» y «Bajar»**, bajo la lista, mueven la última columna enfocada, la de las flechas; su nombre la dice («Subir
+  Email»), y el lector oye a qué puesto llega. No pasan por encima de una fija. Son primarios de texto: el secundario de
+  texto mide 2,58:1 en claro. Arrastrar sigue igual; los dos caminos mueven con la misma función.
+- **El teclado del Listbox es el nativo**, con dos arreglos alrededor, medidos en PrimeNG 22.1:
+  - su `aria-activedescendant` no se rellenaba nunca: lo calcula un `computed` que lee primero `focused`, que no es una
+    señal, y sin foco no llega a leer la opción. Las flechas movían el foco y el lector no oía nada. Se escribe desde su
+    señal, `focusedOptionId`;
+  - Tab desde la lista se quedaba en un elemento invisible de PrimeNG (el que lleva al buscador, que aquí no hay). Si se
+    queda ahí, el foco sigue a «Subir».
+- **Pruebas:** `columnas-en-una-lista` gana dos, en rojo antes: todo con el teclado (entrar, elegir con flechas, subir,
+  bajar, Escape) y subir con el ratón hasta debajo de la fija, que se queda al volver.
+
 ## DD-161 · 2026-10-04 — La cifra principal del resumen, con color: el degradado de la vista previa de ProgressSpinner
 
 **Contexto.** La revisión de producto del 2026-10-04 pidió para el resumen de las fichas la imagen de la vista previa
@@ -931,6 +948,12 @@ Salida no llevaba al número. DD-126 §5 eligió para sus tarjetas el tinte de �
 - `sc-summary-kpi` gana `href` y `abrir`; `sc-group-summary`, `hrefs` e `ir`; `alta-secciones.ts`, `llegarAAncla`.
 - **Pruebas:** `resumen-enlazado.spec.ts`, nueva, con cinco.
 - **Para el Kit:** `figma-pendiente` §37.
+
+**Actualización (2026-10-05)** · Cada enlace del resumen se pulsa en al menos 24,5 × 24,5 (WCAG 2.5.8): pintaba 18 de
+alto. Un `::after` invisible y centrado agranda la zona sin mover nada, como la cifra de `sc-group-popover` (DD-159).
+Las filas están a 25 de arriba a arriba, así que una zona no pisa la de al lado. `resumen-enlazado` gana la sexta: a
+1366 × 660, las cuatro esquinas de un cuadrado de 24 centrado en cada enlace caen en él (`elementFromPoint`); en rojo
+antes, los ocho.
 
 ---
 
@@ -1638,6 +1661,10 @@ en la barra de arriba y de uno en uno.
   marcador de la foto (`sc-photo-upload`, del DS) mide 2,58:1 y un icono pide 3:1: usa el color de «deshabilitado»
   sin estarlo. Es un arreglo del DS, con su captura de sc-docs, para su propio cambio.
 
+**Actualización (2026-10-05)** · Cerrado. El marcador usa `--sc-icon-secondary`, el secundario de los iconos del DS, y
+mide 3,96:1 en claro. Las altas de agente y usuario entran en `RUTAS` de `theme-contrast`, en rojo antes del arreglo
+(solo el marcador, en claro) y en verde después, en los dos temas.
+
 ---
 
 ## DD-135 · 2026-09-29 — Contact Center fija con qué nace un grupo o un agente, con los valores del documento de producto
@@ -1717,6 +1744,10 @@ permisos a todo menos la numeración especial, gestión de dispositivos, activac
 - **Queda abierto:** las ayudas de la lista de ajustes de Contact Center van bajo el nombre y el lector no las anuncia
   con su control, porque los campos del DS no dejan pasar `aria-describedby`. En las fichas sí se anuncian: van en el
   `helperText`.
+
+**Actualización (2026-10-05)** · Cerrado. Los campos del DS ganan `ariaDescribedBy`, y cada fila de ajustes de Contact
+Center lleva el id de su ayuda en su control: las 14 de Grupos y las 3 de Agentes. El cómo, en la actualización del
+mismo día de DD-133.
 
 ---
 
@@ -1852,6 +1883,36 @@ Lo que había:
   - los selects de la app rotulados con `<label for>` y sin `ariaLabelledBy` que esta tanda no toca: en la ficha de
     agente, «Tipo de agente» y «Presencia inicial» se anuncian como «normal» y «disponible» (medido el 2026-09-28).
     Un gate que los cace evitaría el siguiente.
+
+**Actualización (2026-10-05)** · Cerrado lo de los selects sin nombre, con su gate. Medido en el navegador recorriendo
+las secciones de las fichas, Sistema y el constructor de reglas: PrimeNG nombra un combobox sin nombre con la opción
+elegida («cuscare», «Sin tipificación», «8 caracteres», «Servicio»). Un `<label for>` sí nombra un `sc-multiselect`,
+porque su combobox es un `<input>`, y no un `sc-select`, cuyo combobox es un `<span>`.
+- **En el DS**, `sc-select` gana `ariaLabel`, que es el nativo de `p-select` y llega al combobox. Sus opciones
+  apagadas dicen `aria-disabled` (`pt.option`, con el `context` de cada opción). `sc-bulk-edit-menu` nombra sus tres
+  desplegables con las palabras de su frase: «Cambiar», «de» y «a».
+- **`audit:screen-hygiene` gana la regla**, sin sumar gates: todo `sc-select` y `sc-multiselect` lleva `label`,
+  `ariaLabelledBy` o `ariaLabel`. Un `<label for>` vale solo para el multiselect, y un `aria-label` en el host no
+  vale. Cazó 31 de 119: 23 en el Supervisor, 3 en el DS y 5 en sc-docs. Quedan 0.
+- **El arreglo**, en cada sitio como ya hacían sus vecinos: con rótulo a la vista, `ariaLabelledBy` con el id del
+  rótulo; sin él, `ariaLabel`. Los cuatro desplegables de una condición de regla se nombran por lo que eligen (Campo,
+  Operador, Valor, Unidad), en los cuatro idiomas. Los snippets de sc-docs enseñan el rótulo que su demo pinta.
+- **Pruebas:** la unitaria de la regla, la vitest de `sc-select` y `desplegables-con-nombre.spec.ts`, las tres en rojo
+  contra el código anterior.
+
+Y las ayudas que van al lado de su campo, no debajo (la fila de un interruptor, de Contact Center o de Sistema), se
+veían y no se oían: ningún control las apuntaba, y los campos del DS no dejaban.
+- **En el DS**, seis campos ganan `ariaDescribedBy` (ids separados por espacios), que se oye después de la ayuda propia:
+  `sc-select`, `sc-multiselect`, `sc-inputnumber`, `sc-toggleswitch`, `sc-textarea` y `sc-selectbutton` (los ids los
+  junta `joinDescribedBy`, en `sc-field`). `sc-multiselect` lleva además sus `aria-*` al `<input role="combobox">`
+  (`pt.hiddenInput`, que PrimeNG 22.1 pinta aunque sus tipos no lo declaren): en la envoltura no se oían su ayuda ni su
+  error.
+- **En las pantallas**, cada ayuda lleva id y la apunta su campo principal: 12 en la ficha de grupo (con «Mensajes en
+  cola»), 6 en la de agente, 1 en la de usuario, 3 en Contact Center › Agentes, 14 en Grupos y 6 en Sistema. Con una
+  ayuda para dos campos (la cola: tipo y tamaño), los dos la apuntan. La fila de borrar los datos no cuenta: su botón
+  confirma con su propio texto.
+- **Pruebas:** `ayudas-campos` recorre esas vistas, con lo plegado abierto, y pide que cada ayuda la anuncie un campo de
+  su caja (42 en rojo antes); en sc-docs, que el error de un multiselect se anuncie con su combobox.
 
 ---
 

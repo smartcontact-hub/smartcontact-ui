@@ -275,11 +275,12 @@
         </div>
 
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-type">
+          <label id="agent-type-label" class="field__label sc-text-caption-semibold" for="agent-type">
             {{ 'agents.form.fields.type' | translate }}
           </label>
           <sc-select
             inputId="agent-type"
+            ariaLabelledBy="agent-type-label"
             [options]="agentTypes"
             [value]="form().agentType"
             (valueChange)="onAgentTypeValueChange($event)"
@@ -300,11 +301,12 @@
     <section class="sub-section">
       <div class="grid grid--2">
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-presence">
+          <label id="agent-presence-label" class="field__label sc-text-caption-semibold" for="agent-presence">
             {{ 'agents.form.fields.presence' | translate }}
           </label>
           <sc-select
             inputId="agent-presence"
+            ariaLabelledBy="agent-presence-label"
             [options]="presenceStates"
             [value]="form().presenceStatus"
             (valueChange)="onPresenceValueChange($event)"
@@ -344,6 +346,7 @@
       @if (mode() === 'edit') {
         <div class="switch-field switch-field--top">
           <sc-toggleswitch
+            ariaDescribedBy="agent-active-hint"
             [checked]="form().status === 'active'"
             [ariaLabel]="'agents.form.fields.active' | translate"
             (checkedChange)="onStatusChange($event)"
@@ -352,7 +355,7 @@
                dato («Estado»); y la ayuda ya no repite «Agente activo:» delante. -->
           <div class="switch-field__copy">
             <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.active' | translate }}</span>
-            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.fields.active_hint' | translate }}</p>
+            <p id="agent-active-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.fields.active_hint' | translate }}</p>
           </div>
         </div>
       }
@@ -399,7 +402,6 @@
     surface="card"
     icon="verified_user"
     titleKey="agents.form.section.permissions"
-    hintKey="agents.form.section.permissions_hint"
   >
     <!-- El mismo orden que Contact Center › Agentes: la matriz arriba, sin
          sangría (la pone el relleno de sus celdas), y los interruptores en
@@ -438,25 +440,27 @@
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-manage-devices-hint"
           [checked]="form().permissions.manageDevices"
           [ariaLabel]="'agents.form.permissions.manage_devices' | translate"
           (checkedChange)="togglePermission('manageDevices')"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.manage_devices' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.manage_devices_hint' | translate }}</p>
+          <p id="agent-manage-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.manage_devices_hint' | translate }}</p>
         </div>
       </div>
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-self-activate-hint"
           [checked]="form().permissions.selfActivate"
           [ariaLabel]="'agents.form.permissions.self_activate' | translate"
           (checkedChange)="togglePermission('selfActivate')"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
+          <p id="agent-self-activate-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
         </div>
       </div>
     </section>
@@ -469,7 +473,6 @@
     surface="card"
     icon="tune"
     titleKey="agents.form.section.advanced"
-    hintKey="agents.form.section.advanced_hint"
   >
     <!-- Tramos con título a `Body/body-semibold` separados por `<sc-divider />`,
          como Contact Center. Antes eran cabeceras en VERSALITAS con icono y
@@ -485,11 +488,12 @@
 
       <div class="grid grid--3">
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-pickup">
+          <label id="agent-pickup-label" class="field__label sc-text-caption-semibold" for="agent-pickup">
             {{ 'agents.form.advanced.comportamiento.pickup_call' | translate }}
           </label>
           <sc-select
             inputId="agent-pickup"
+            ariaLabelledBy="agent-pickup-label"
             optionLabel="label"
             optionValue="value"
             [options]="pickupOptions()"
@@ -499,11 +503,12 @@
         </div>
 
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-pickup-chat">
+          <label id="agent-pickup-chat-label" class="field__label sc-text-caption-semibold" for="agent-pickup-chat">
             {{ 'agents.form.advanced.comportamiento.pickup_chat' | translate }}
           </label>
           <sc-select
             inputId="agent-pickup-chat"
+            ariaLabelledBy="agent-pickup-chat-label"
             optionLabel="label"
             optionValue="value"
             [options]="pickupOptions()"
@@ -513,11 +518,12 @@
         </div>
 
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-max-chats">
+          <label id="agent-max-chats-label" class="field__label sc-text-caption-semibold" for="agent-max-chats">
             {{ 'agents.form.advanced.comportamiento.max_chats' | translate }}
           </label>
           <sc-select
             inputId="agent-max-chats"
+            ariaLabelledBy="agent-max-chats-label"
             [options]="maxChatsOptions"
             [value]="form().maxChats"
             (valueChange)="onMaxChatsValueChange($event)"
@@ -548,13 +554,14 @@
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-random-order-hint"
           [checked]="form().randomOrder"
           [ariaLabel]="'agents.form.advanced.comportamiento.random_order' | translate"
           (checkedChange)="onRandomOrderChange($event)"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.comportamiento.random_order' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.comportamiento.random_order_hint' | translate }}</p>
+          <p id="agent-random-order-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.comportamiento.random_order_hint' | translate }}</p>
         </div>
       </div>
     </section>
@@ -584,13 +591,14 @@
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-external-devices-hint"
           [checked]="form().permissions.externalDevices"
           [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
           (checkedChange)="togglePermission('externalDevices')"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
+          <p id="agent-external-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
         </div>
       </div>
     </section>
@@ -606,13 +614,14 @@
 
       <div class="switch-field switch-field--top">
         <sc-toggleswitch
+          ariaDescribedBy="agent-login-override-hint"
           [checked]="form().loginExtOverride"
           [ariaLabel]="'agents.form.advanced.sesion.login_ext_override' | translate"
           (checkedChange)="onLoginExtOverrideChange($event)"
         />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.sesion.login_ext_override' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.sesion.login_ext_override_hint' | translate }}</p>
+          <p id="agent-login-override-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.sesion.login_ext_override_hint' | translate }}</p>
         </div>
       </div>
 
