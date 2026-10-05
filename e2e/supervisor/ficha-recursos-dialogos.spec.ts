@@ -113,6 +113,18 @@ test('grupo 11 · cada «+» de Recursos es el solo icono de primeng.dev, redond
   }
 });
 
+test('grupo 11 · la tipificación no tiene «+»: se crea en su ficha, con su título con género', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
+  await expect(page.locator('sc-multiselect:has(#group-typification)')).toBeVisible();
+  await expect(page.locator('#group-section-resources').getByRole('button', { name: 'Nueva tipificación', exact: true })).toHaveCount(0);
+
+  await goto(page, 'admin/tipificaciones');
+  await page.locator('sc-top-bar').getByRole('button', { name: 'Nueva tipificación', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/tipificaciones\/crear$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Nueva tipificación');
+  await expect(page.locator('main')).not.toContainText('Nuevo/a');
+});
+
 test('grupo 11 · Recursos no enseña Etiquetas, y el grupo conserva las suyas al guardar', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
   const recursos = page.locator('#group-section-resources');
