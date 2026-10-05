@@ -55,6 +55,24 @@ const PRESS_SNIPPET = `<!-- La pulsación la pone el tema: no hay nada que activ
 <sc-button label="Ver todo" variant="secondary" appearance="text" />
 <sc-button icon="more_vert" variant="secondary" appearance="text" iconAriaLabel="Más acciones" />`;
 
+const POPUP_SNIPPET = `<!-- El host <sc-button> nunca recibe el foco: "ariaHasPopup", "ariaExpanded" y "ariaControls"
+     llegan al <button> real por dentro (DD-171). Sin ellos, el lector no dice que el botón abre
+     algo ni si ya está abierto. -->
+<sc-button
+  icon="view_column"
+  variant="secondary"
+  appearance="outlined"
+  ariaLabel="Columnas"
+  ariaHasPopup="dialog"
+  [ariaExpanded]="false"
+  ariaControls="columnas-panel"
+/>`;
+
+const POPUP_DESCRIPTION =
+  'El botón de «Columnas» de una lista: abre un diálogo (`ariaHasPopup="dialog"`), cerrado (`ariaExpanded` en ' +
+  'false, que SÍ se anuncia) y `ariaControls` apunta al id del panel que abre. El mismo patrón sirve para un ' +
+  'menú (`"menu"`, el ⋮ de un widget) o una lista (`"listbox"`).';
+
 const PRESS_DESCRIPTION =
   'Mantén pulsado un botón: se encoge al 96 % y, al soltarlo, vuelve suave en 150 ms (ease-out), con el cambio de ' +
   'color a la misma velocidad. Si el sistema pide movimiento reducido, no se mueve. Es un desvío a propósito del ' +
@@ -76,6 +94,7 @@ export class ButtonDemoComponent {
   protected readonly iconsTpl = viewChild<TemplateRef<StoryContext>>('icons');
   protected readonly pressTpl = viewChild<TemplateRef<StoryContext>>('press');
   protected readonly soloIconoTpl = viewChild<TemplateRef<StoryContext>>('soloIcono');
+  protected readonly popupTpl = viewChild<TemplateRef<StoryContext>>('popup');
 
   /** Las filas de «Icon Only» de primeng.dev que el DS expone (sin `raised`). */
   protected readonly formasSoloIcono = [
@@ -150,7 +169,8 @@ export class ButtonDemoComponent {
     const ic = this.iconsTpl();
     const pr = this.pressTpl();
     const so = this.soloIconoTpl();
-    if (!pg || !va || !ap || !sz || !ic || !pr || !so) return [];
+    const pu = this.popupTpl();
+    if (!pg || !va || !ap || !sz || !ic || !pr || !so || !pu) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Variantes', template: va, snippet: VARIANTS_SNIPPET },
@@ -159,6 +179,7 @@ export class ButtonDemoComponent {
       { name: 'Iconos y estados', template: ic, snippet: ICONS_SNIPPET },
       { name: 'Solo icono', template: so, snippet: SOLO_ICONO_SNIPPET, description: SOLO_ICONO_DESCRIPTION },
       { name: 'Al pulsar', template: pr, snippet: PRESS_SNIPPET, description: PRESS_DESCRIPTION },
+      { name: 'Abre un popup', template: pu, snippet: POPUP_SNIPPET, description: POPUP_DESCRIPTION },
     ];
   });
 }

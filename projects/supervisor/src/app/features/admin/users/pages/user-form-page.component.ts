@@ -41,7 +41,7 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
-import { AltaPieComponent, NombreFijoComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
+import { AltaPieComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
 import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
   accessFor,
@@ -106,7 +106,6 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     SummaryKpiComponent,
     SummaryStatusComponent,
     AltaPieComponent,
-    NombreFijoComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],

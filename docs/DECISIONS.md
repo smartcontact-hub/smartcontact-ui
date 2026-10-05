@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
 > | Importar contactos de un CSV, como en Voice: la plantilla (`nombre;teléfono`, con `;` y BOM) y una vista previa con lo que entra, cada error con su línea, los repetidos y lo que no cabe · `;` o `,`, UTF-8 o windows-1252 · tope de 5000 por agenda · entra sin guardar | DD-166 |
@@ -62,8 +63,8 @@
 > | Niveles 1–10 independientes de Teléfono y Chat; migración sin subir versión, prevalece el nivel nuevo; subestrategia de Chat y columnas por familia | DD-148 |
 > | Asignación de agentes por tres familias; Chat engloba Web Chat y WhatsApp, con normalización sin borrar datos | DD-147 |
 > | El resumen de la ficha de grupo lleva a su sección: el rótulo de cada tarjeta, a su sección, y cada fila, a su sitio en ella (el bloque del canal, el campo del número) · enlaces de verdad, en el primario, con manita y subrayado al pasar · la tarjeta no se pulsa entera · en el alta, como el índice (enmienda DD-126 §5) | DD-146 |
-> | El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (`sc-nombre-fijo`), en su sitio a partir de 1340 y al quedar fija por debajo · la cabecera sigue siendo el `h1` y el sitio donde se edita el nombre · las anclas, apartadas `--sc-form-anchor-offset` · borrar pide escribir el nombre, con su prueba (enmienda DD-144) | DD-145 |
-> | Las fichas en tres columnas que arrancan a la misma altura (índice, contenido y resumen): el título va en la columna del contenido · el resumen, sin rótulo a la vista (la región conserva su nombre) · «Eliminar», bajo el índice · por debajo de 1340, como estaba · una rejilla con áreas, sin mover nada en el DOM (enmienda DD-121 §2 y DD-122 §8) | DD-144 |
+> | ~~El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (`sc-nombre-fijo`)~~ **retirada por DD-170** (el nombre va en la columna del índice; sigue §4, borrar pide escribir el nombre):, en su sitio a partir de 1340 y al quedar fija por debajo · la cabecera sigue siendo el `h1` y el sitio donde se edita el nombre · las anclas, apartadas `--sc-form-anchor-offset` · borrar pide escribir el nombre, con su prueba (enmienda DD-144) | DD-145 |
+> | Las fichas en tres columnas que arrancan a la misma altura (índice, contenido y resumen): el título va en la columna del contenido (**en la del índice desde DD-170**) · el resumen, sin rótulo a la vista (la región conserva su nombre) · «Eliminar», bajo el índice · por debajo de 1340, como estaba · una rejilla con áreas, sin mover nada en el DOM (enmienda DD-121 §2 y DD-122 §8) | DD-144 |
 > | Las altas vuelven al índice de la edición (revierte DD-138): ✓ en la sección que se deja completa (`sectionsDone` de `sc-form-section-nav`) y el punto rojo en la que se deja sin lo obligatorio · «Atrás» y «Siguiente» al pie (`sc-alta-pie`), que llevan al principio de la sección nueva con el foco en su título · General sigue siendo la puerta del grupo · la sección no va en la dirección (enmienda DD-121 §11, DD-122 §1 y §4, DD-130 §2 y DD-136) | DD-143 |
 > | Con Teléfono, el teléfono saliente es obligatorio (en el alta, al editar y al duplicar) y se elige de los números asignados (`OUTBOUND_NUMBERS`), sin escribir uno nuevo · «Caducar sesión» · la ayuda de Balanceada, corregida · Recursos sin Etiquetas, apagado y guardado (`conEtiquetas`) · el teléfono se nombra por su rótulo (enmienda DD-121 §11, DD-136 §2, DD-141 §4-5 y DD-133 §1) | DD-142 |
 > | Las estrategias reparten conversaciones: «Menos conversaciones atendidas» (Teléfono) y «Menos conversaciones activas» (Chat) · lo guardado con un nombre de antes se lee con el de ahora (`normalize` de `createVersionedStorage`), sin subir la versión · la prioridad solo cuenta en las entrantes · fuera «Desbordar sesión», que se sigue guardando sin pantalla · cerrar el chat por inactividad nace con 5 min · el tamaño de cola, un texto por modo · la tipificación, sin su cuenta (enmienda DD-133 §1, DD-121 §5 y DD-135 §3) | DD-141 |
@@ -124,6 +125,125 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-171 · 2026-10-05 — Un botón que abre un popup lo dice el `<button>` real, no el host `<sc-button>`
+
+**Contexto** · `sc-button` envuelve `p-button`, que envuelve un `<button>` nativo: el foco y lo que anuncia el
+lector de pantalla van ahí, nunca en el host `<sc-button>`. Medido el 2026-10-05: la «Columnas» de una lista
+(`list-page.component.html`) ponía `[attr.aria-haspopup]`/`[attr.aria-expanded]` en el host, y el ⋮ de un widget
+del Dashboard (`widget-card.component.html`, abre un `p-menu`) no llevaba ninguno de los dos. El precedente
+correcto ya vivía en el top-bar: un `<button>` nativo con `aria-haspopup="menu"` y `[attr.aria-expanded]` en sí
+mismo. Cierra el hueco que dejó abierto DD-168 §Consecuencias: «es una tarea aparte del DS».
+
+**Decisión** ·
+1. `sc-button` gana tres entradas opcionales, sin efecto si no se fijan — `ariaHasPopup`
+   (`'menu'|'dialog'|'listbox'|'true'|null`), `ariaExpanded` (`boolean|null`; `false` SÍ se anuncia, no es lo
+   mismo que no fijarla) y `ariaControls` (`string|null`) — que llegan al `<button>` real por `pt.root`: el mismo
+   mecanismo que ya usa `ariaDescribedBy` en `sc-toggleswitch`, y el mismo patrón que DD-140 fijó para `sc-dialog`
+   (un atributo en el host de PrimeNG no llega a su raíz).
+2. La «Columnas» de `list-page`, el ⋮ de `sc-dashboard-widget-card` y el «Agentes» de
+   `sc-dashboard-agents-action` (DD-168, con varios grupos: abre un menú) pasan sus `aria-haspopup`/
+   `aria-expanded` del host a estas entradas; el ⋮ y «Agentes» ganan además `aria-controls`, con el id del
+   `p-menu` que abren. Con un solo grupo, «Agentes» no abre ningún popup propio (abre directamente el panel que
+   vigila la página): no lleva `ariaHasPopup`.
+
+**Razón** ·
+- El host nunca recibe el foco: un atributo ahí no entra en el árbol de accesibilidad del elemento enfocado.
+  Medido en el ⋮ del widget: sin ninguno de los dos, el lector no decía que el botón abre un menú ni si ya está
+  abierto.
+- `p-button` no expone `ariaHasPopup`/`ariaExpanded` como entradas propias (solo `ariaLabel`); `pt.root` es la vía
+  que la propia librería da para llegar a su `<button>`, verificada en `primeng/fesm2022/primeng-button.mjs`
+  (22.1.0) y en `primeng-bind.mjs`: un valor `undefined` en `pt` quita el atributo, así que sin fijar nada no se
+  escribe ninguno de los tres.
+
+**Descartadas** ·
+- **Seguir con `[attr.aria-*]` en `<sc-button>`** → es lo medido como roto: no llega al elemento con foco.
+- **Leer el `<button>` del DOM a mano** → la propia tarea lo prohíbe; `pt` es la API soportada por PrimeNG para
+  esto, no una query por fuera.
+
+**Consecuencias** ·
+- **Pruebas:** `sc-button.component.spec.ts` (DS, tres nuevas); `columnas-en-una-lista.spec.ts` y `dashboard.spec.ts`
+  (una cada una, Columnas y el ⋮); `panel-agentes-monitor.spec.ts` (dos, «Agentes» con varios grupos y con uno
+  solo).
+- **CHANGELOG:** `[Unreleased]` › Added.
+- **Queda abierto:** el ⋮ de la pestaña del monitor (`monitor-tabs.component.html`) abre el mismo tipo de `p-menu`
+  sin ninguna de las tres — no medido en el encargo original, aparte.
+
+---
+
+## DD-170 · 2026-10-05 — Las fichas en tres columnas sin cabecera: el nombre encima del índice, y los canales en las columnas de los campos
+
+**Contexto** · El marco de la ficha de grupo en Figma (fichero «Landing page», `cLO8JZfPuC3EMx6EgCjmsU`, nodo
+2467:7078) quita los contenedores que la captura traía del DOM y deja la página en una rejilla de tres columnas: a la
+izquierda, el nombre y su línea encima del índice y de «Eliminar»; en el centro, la sección; a la derecha, el resumen.
+Leído contenedor a contenedor: horizontal, 28 a los lados y entre columnas; índice fijo en 196 y resumen fijo en 240;
+la sección, la que ocupa el resto. Medido en producción antes del cambio, a 1440:
+- el nombre en la columna del contenido (x=332, y=79), y la tarjeta de la sección 56 px más abajo (y=135);
+- al bajar, el nombre se iba con la sección: por eso existía una copia fija arriba (DD-145);
+- en General, los canales no caían en las columnas de Nombre y Prioridad: «Chat» y «Email» a 3 y 6 px de su columna,
+  y a 1920 la rejilla de casillas (`auto-fill`) abría una cuarta columna y «Chat» se iba 86 px a la izquierda.
+
+**Decisión** ·
+1. **Tres columnas, una fila y nada encima**, en las tres fichas, al crear y al editar: la columna de la izquierda
+   (196) lleva el nombre y su línea, el índice y «Eliminar»; la del centro, la sección, y es la única que crece; la de
+   la derecha, el resumen (240). La sección y el resumen arrancan a la altura del nombre. Del nombre al índice, el
+   hueco del carril (14), como en el marco.
+2. **El nombre va dentro de la columna del índice en el DOM** (`.page__rail`): sigue siendo el único `h1`, el primero en
+   el orden de lectura y el sitio donde se edita. Como esa columna ya se queda fija al bajar, el nombre no se va nunca.
+3. **Fuera la copia fija** (`sc-nombre-fijo`, DD-145) y el margen que apartaba las anclas bajo ella: ya no hay nada
+   fijo encima del contenido.
+4. **Por debajo de 1340, la columna de la izquierda no cambia**: ocupa las dos filas, así que sigue fija y con el
+   nombre a la vista. El resumen pasa a una franja encima de la sección, en su columna. Por debajo de 1024 (DD-53), una
+   columna en el orden del DOM: nombre e índice, resumen y sección.
+5. **Un nombre largo baja a una segunda línea**, como las filas del índice que tiene debajo (DD-52); uno que no cabe
+   en dos se corta al final de la segunda, con el nombre entero en el `title`. Igual la línea de datos. En el título
+   editable (`sc-name-inplace`), el texto usa los 196 enteros: el relleno de «se puede editar» sobresale por los dos
+   lados. Al pulsarlo para editarlo, el título conserva su alto: el campo es de una línea, y sin eso lo de debajo
+   subía 24 px. Para medirlo, la pieza es su propio contexto de bloque (`flow-root`): su regla `:host`, en un
+   componente sin encapsular, no casaba con nada y se pintaba en línea. Entre el nombre y su línea de datos, 7 (el
+   peldaño de dentro de un grupo; el marco ponía 0): el campo de editar sobresale 6,25 por abajo y tapaba la mitad de
+   arriba de los datos, como ya pasaba en producción.
+6. **Los canales de General, en las tres columnas de los campos de encima** (`.checkbox-grid--3`: las columnas y el
+   hueco de `.grid--3`), en cualquier ancho.
+
+**Razón** ·
+- **Quién es y dónde estás van juntos**, y en la columna que no se mueve. La copia fija resolvía en otro sitio lo que
+  provocaba poner el nombre en la columna que se desplaza.
+- **En 196 caben unos 22 caracteres del título.** Todos los nombres de la demo caben en una línea: el grupo más
+  largo, «Campañas salientes», mide 175; el agente más largo, 168; el email más largo, 184. Con `?datos=tortura`, el
+  nombre se corta en la segunda línea sin bajar el índice más de 24 px.
+- **Medido el 2026-10-05, en este build:**
+  - a 1440, el nombre, la tarjeta y el resumen en y=79, el nombre en la vertical del índice y el índice a 14 de su
+    línea de datos;
+  - el contenido mide 812 a 1440 y 1052 a 1920, con el índice en 196 y el resumen en 240;
+  - a 1280, el nombre en dos líneas encima del índice, y la franja del resumen (920) encima de la sección;
+  - los canales, en la vertical exacta de las tres columnas de los campos a 1440 y a 1920;
+  - `revision`, en regla en las 16 vistas de las tres fichas.
+- **Rojo primero:** contra `main`, 19 pruebas en rojo: el nombre fuera de la columna del índice, en una línea, y
+  «Chat» y «Email» fuera de su columna. En verde, las 38 del bloque, 126 vecinas y 63 de los barridos.
+
+**Descartadas** ·
+- **Dejar el nombre como un elemento suelto de la rejilla, encima del índice** (`'head main summary'` / `'rail main
+  summary'`): el índice se quedaría fijo y el nombre no, así que seguiría haciendo falta la copia.
+- **Cortar el nombre con «…» en una línea**: en 196 se cortaría a partir de unos 22 caracteres, y el índice de debajo
+  ya decidió envolver en vez de cortar (DD-52).
+- **Envolver sin tope**: un nombre de prueba bajaba el índice media pantalla.
+- **Ajustar el hueco de la rejilla de casillas para que casara a 1440**: con `auto-fill`, a otros anchos cambia el
+  número de columnas y se vuelven a despegar.
+
+**Consecuencias** ·
+- **Enmienda** DD-144 §2 (el título va en la columna del índice, no en la del contenido) y §5 (por debajo de 1340 el
+  nombre ya no sube a todo lo ancho). **Retira** DD-145 §1-§3; su §4 (borrar pide escribir el nombre) sigue, con su
+  prueba.
+- **Pruebas:** `fichas-tres-columnas` se reescribe con el molde nuevo (13 casos, uno de ellos que el
+  índice no se mueve al editar el nombre: en rojo sin el arreglo, de 158,75 a 134,75);
+  `fichas-nombre-fijo` mide que el nombre de verdad sigue a la vista al bajar, sin copia; `ficha-grupo` y
+  `resumen-enlazado` cambian el sitio del título y del resumen; `ficha-grupo` gana la de los canales en sus columnas.
+  Agente y usuario se miden a 1366×660: con el contenido arriba, a 768 solo bajaban 43 px.
+- **Figma:** la ficha de grupo ya está dibujada así (2467:7078); agente y usuario, en `figma-pendiente` §35. La §36
+  (el estado «al bajar») se retira.
 
 ---
 
@@ -1071,6 +1191,9 @@ antes, los ocho.
 
 ## DD-145 · 2026-10-01 — El nombre de la ficha se queda arriba al bajar, y borrarla pide escribirlo
 
+> **§1-§3 retirados por DD-170** (2026-10-05): el nombre va en la columna del índice, que ya se queda fija al bajar,
+> y la copia (`sc-nombre-fijo`) sobra. §4 sigue: borrar pide escribir el nombre, con su prueba.
+
 **Contexto** · La segunda revisión con el equipo (2026-10-01) pidió el nombre del grupo fijo arriba al bajar. Con el
 título en la columna del contenido (DD-144), al bajar se iba con la sección: en Distribución y colas del grupo 11, la
 más larga (1865 px de recorrido a 1440×900), no quedaba nada que dijera qué grupo se edita. La misma revisión pidió que
@@ -1130,6 +1253,9 @@ borrar un grupo pida escribir su nombre. Medido en el código, ya lo pide: las t
 ---
 
 ## DD-144 · 2026-10-01 — Las fichas en tres columnas: índice, contenido y resumen arrancan a la misma altura
+
+> **§2 y §5 enmendados por DD-170** (2026-10-05): el nombre va arriba de la columna del índice, no en la del
+> contenido, y por debajo de 1340 se queda ahí; el resumen pasa a una franja encima de la sección.
 
 **Contexto** · Pedido el 2026-10-01, tras la segunda revisión con el equipo: que el contenido suba arriba y el resumen
 se alinee con el índice, en una rejilla de tres columnas, sin el rótulo «Resumen». Hasta hoy la cabecera de la ficha

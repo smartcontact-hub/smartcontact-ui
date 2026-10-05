@@ -25,7 +25,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, NombreFijoComponent, ResourceRowsComponent } from '@shared/components';
+import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceRowsComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { llegarAAncla, llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
@@ -213,7 +213,6 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     ChipComponent,
     TooltipModule,
     AltaPieComponent,
-    NombreFijoComponent,
     ResourceRowsComponent,
     SelectComponent,
     TranslateModule,

@@ -12,6 +12,7 @@
     [text]="text()"
     [link]="link()"
     [rounded]="rounded()"
+    [pt]="buttonPt()"
     (onClick)="onClick($event)">
     @if (customIcon(); as customIconTpl) {
         <ng-template #icon let-iconClass="class">

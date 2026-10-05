@@ -37,6 +37,18 @@ const opcion = (page: Page, nombre: string) => lista(page).getByRole('option', {
 const enfocada = (page: Page) =>
   lista(page).evaluate((ul) => document.getElementById(ul.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim() ?? null);
 
+test('el botón «Columnas» dice en el foco que abre un diálogo, y si ya está abierto (DD-171)', async ({ page }) => {
+  await goto(page, 'admin/agentes');
+  await expect(boton(page)).toHaveAttribute('aria-haspopup', 'dialog');
+  await expect(boton(page)).toHaveAttribute('aria-expanded', 'false');
+  await boton(page).click();
+  await expect(lista(page)).toBeVisible();
+  await expect(boton(page)).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Escape');
+  await expect(lista(page)).toBeHidden();
+  await expect(boton(page)).toHaveAttribute('aria-expanded', 'false');
+});
+
 test('el icono abre una lista con las columnas en el orden de la tabla, cada una con su casilla', async ({ page }) => {
   await goto(page, 'admin/agentes');
   await expect(boton(page).locator('.sc-icon-font--view_column'), 'el icono de columnas').toHaveCount(1);
@@ -100,7 +112,14 @@ test('todo con el teclado, sin arrastrar: el foco entra en la lista, «Subir» y
   await boton(page).focus();
   await page.keyboard.press('Enter');
   await expect(lista(page), 'al abrir, el foco entra en la lista').toBeFocused();
-  for (let n = 0; n < 12 && (await enfocada(page)) !== 'Email'; n++) await page.keyboard.press('ArrowDown');
+  // `enfocada()` lee `aria-activedescendant`, que un `effect()` escribe a partir del foco de PrimeNG
+  // (`announceFocusedOption`, en list-page.component.ts): un efecto no asienta en el mismo tick que la
+  // tecla. Leerlo justo tras cada `ArrowDown` podía dar el valor de ANTES de esa tecla y el bucle se
+  // quedaba corto (medido el 2026-10-05: intermitente, solo bajo carga — en aislado no se reproduce).
+  for (let n = 0; n < 12 && (await enfocada(page)) !== 'Email'; n++) {
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(100);
+  }
   expect(await enfocada(page)).toBe('Email');
   // Las flechas solo enfocan: la columna sigue a la vista.
   await expect(opcion(page, 'Email')).toHaveAttribute('aria-selected', 'true');
@@ -128,9 +147,19 @@ test('«Subir» lleva una columna hasta debajo de la fija, no más, con el rató
   await boton(page).click();
   await lista(page).focus();
   for (let n = 0; n < 12 && (await enfocada(page)) !== ultima; n++) await page.keyboard.press('ArrowDown');
-  // La lista tiene también las ocultas: sube por encima de ellas hasta Nombre, que es fija.
+  // La lista tiene también las ocultas: sube por encima de ellas hasta Nombre, que es fija. Cada
+  // clic puede pasarla por encima de una oculta, que no mueve ninguna cabecera visible: `cabeceras()`
+  // no sirve de condición de parada, solo `isEnabled()`.
   const subir = page.getByRole('button', { name: `Subir ${ultima}`, exact: true });
-  for (let n = 0; n < 12 && (await subir.isEnabled()); n++) await subir.click();
+  // `currentColumn` (de dónde sale `disabled`) lo pone un `effect()` que sigue el foco de la lista, y
+  // un efecto no asienta en el mismo tick que el clic: leer `isEnabled()` justo después daba el estado
+  // de ANTES del último clic, el bucle lo seguía viendo «enabled» y lo pulsaba una vez de más contra
+  // un botón que ya iba camino de deshabilitarse — colgando 90s. El mismo margen que ya usa esta
+  // suite más abajo (al arrastrar una cabecera) le da tiempo a asentar.
+  for (let n = 0; n < 12 && (await subir.isEnabled()); n++) {
+    await subir.click();
+    await page.waitForTimeout(300);
+  }
   await expect(subir, 'encima solo queda Nombre, que es fija').toBeDisabled();
   await expect.poll(async () => (await cabeceras(page)).slice(0, 2)).toEqual(['Nombre', ultima]);
   await page.reload();
