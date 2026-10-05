@@ -3,20 +3,24 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LAS FICHAS EN TRES COLUMNAS: ÍNDICE, CONTENIDO Y RESUMEN ARRANCAN A LA MISMA ALTURA (DD-144).
+ * LAS FICHAS EN TRES COLUMNAS: EL NOMBRE ENCIMA DEL ÍNDICE, Y EL CONTENIDO Y EL RESUMEN ARRIBA (DD-170, que enmienda
+ * DD-144).
  *
- * Pedido el 2026-10-01: el contenido sube arriba, con el título dentro, y el resumen se alinea con el índice, sin el
- * rótulo «Resumen». Hasta hoy el título iba en una fila propia encima de las tres columnas (DD-121 §2, DD-122 §8):
- * medido a 1440, el título en y=79 y las tres columnas en y≈135, el resumen gastaba 25 px en su rótulo y «Eliminar»
- * iba arriba a la derecha.
+ * El marco de la ficha de grupo en Figma (Landing page, 2467:7078) sube el nombre a la columna del índice y deja la
+ * página en tres columnas sin fila de cabecera: a la izquierda quién es y dónde estás, en el centro la sección y a la
+ * derecha el resumen. Medido antes, a 1440: el nombre en la columna del contenido (x=332, y=79) y la tarjeta 56 px
+ * por debajo (y=135).
  *
  * Lo que fija, en las tres fichas, al crear y al editar:
- *   1. A 1440, el índice, el título y el resumen arrancan a la misma altura, y el título va en la columna del
- *      contenido: su borde izquierdo es el de la tarjeta de la sección.
- *   2. El resumen no enseña su rótulo, y la región conserva su nombre («Resumen»).
- *   3. «Eliminar» va bajo el índice al editar, a 28 de su última fila (el aire entre grupos); en el alta no hay.
- *   4. Por debajo de 1340: el título arriba, a todo lo ancho; luego el resumen, en su franja; y después, índice y
- *      contenido.
+ *   1. A 1440, el nombre va arriba de la columna del índice, y la tarjeta y el resumen arrancan a su altura.
+ *   2. Del nombre al índice, el hueco de la columna (14).
+ *   3. La columna del contenido es la que crece: índice 196 y resumen 240 en cualquier ancho.
+ *   4. El resumen no enseña su rótulo, y la región conserva su nombre («Resumen»).
+ *   5. «Eliminar» va bajo el índice al editar, a 28 de su última fila (el aire entre grupos); en el alta no hay.
+ *   6. Por debajo de 1340: el nombre sigue encima del índice, y el resumen pasa a una franja encima del contenido, en
+ *      su columna.
+ *   7. Un nombre que no cabe en 196 salta a una segunda línea, sin cortarse; uno que no cabe en dos, se corta en la
+ *      segunda.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -43,26 +47,48 @@ const cajas = async (page: Page) => {
   return page.evaluate(() => {
     const caja = (sel: string) => {
       const r = document.querySelector(sel)?.getBoundingClientRect();
-      return r ? { top: Math.round(r.top), left: Math.round(r.left), bottom: Math.round(r.bottom) } : null;
+      return r ? { top: Math.round(r.top), left: Math.round(r.left), bottom: Math.round(r.bottom), ancho: Math.round(r.width) } : null;
     };
     return {
       indice: caja('.page__rail'),
       titulo: caja('main#main-content h1'),
+      datos: caja('.headline__meta'),
+      menu: caja('.page__rail sc-form-section-nav'),
+      contenido: caja('.page__main'),
       tarjeta: caja('.page__main sc-section-card'),
       resumen: caja('.ficha-summary'),
+      tituloEnElIndice: !!document.querySelector('.page__rail h1'),
     };
   });
 };
 
 for (const f of FICHAS) {
-  test(`${f.ruta} · índice, título y resumen arrancan a la misma altura, y el título va con el contenido`, async ({ page }) => {
+  test(`${f.ruta} · el nombre va encima del índice, y la tarjeta y el resumen arrancan a su altura`, async ({ page }) => {
     await goto(page, f.ruta);
     const m = await cajas(page);
-    expect(m.titulo!.top, 'el título, a la altura del índice').toBe(m.indice!.top);
-    expect(m.resumen!.top, 'el resumen, a la altura del índice').toBe(m.indice!.top);
-    expect(m.titulo!.left, 'el título, en la columna del contenido').toBe(m.tarjeta!.left);
+    expect(m.tituloEnElIndice, 'el nombre, en la columna del índice').toBe(true);
+    expect(m.titulo!.top, 'el nombre, arriba de su columna').toBe(m.indice!.top);
+    expect(m.titulo!.left, 'el nombre, en la vertical del índice').toBe(m.indice!.left);
+    expect(m.tarjeta!.top, 'la tarjeta, a la altura del nombre').toBe(m.indice!.top);
+    expect(m.resumen!.top, 'el resumen, a la altura del nombre').toBe(m.indice!.top);
+    expect(m.menu!.top - m.datos!.bottom, 'del nombre al índice, el hueco de la columna').toBe(14);
   });
 }
+
+test('la columna del contenido es la que crece: índice 196 y resumen 240 en cualquier ancho', async ({ page }) => {
+  // 1920: la página llega a su tope (1600), y el contenido se queda con todo lo que sobra.
+  for (const [ancho, contenido] of [
+    [1440, 812],
+    [1920, 1052],
+  ] as const) {
+    await page.setViewportSize({ width: ancho, height: 900 });
+    await goto(page, 'admin/grupos/editar/11');
+    const m = await cajas(page);
+    expect(m.indice!.ancho, `${ancho}: el índice`).toBe(196);
+    expect(m.resumen!.ancho, `${ancho}: el resumen`).toBe(240);
+    expect(m.contenido!.ancho, `${ancho}: el contenido`).toBe(contenido);
+  }
+});
 
 test('el resumen no enseña su rótulo, y la región conserva su nombre', async ({ page }) => {
   for (const { ruta } of FICHAS) {
@@ -93,13 +119,44 @@ test('«Eliminar» va bajo el índice al editar, y en el alta no hay', async ({ 
   }
 });
 
-test('por debajo de 1340: el título arriba, luego el resumen, y después índice y contenido', async ({ page }) => {
+test('por debajo de 1340: el nombre sigue encima del índice, y el resumen va en una franja encima del contenido', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   for (const { ruta } of FICHAS) {
     await goto(page, ruta);
     const m = await cajas(page);
-    expect(m.titulo!.bottom, `${ruta}: el título, encima del resumen`).toBeLessThanOrEqual(m.resumen!.top);
-    expect(m.resumen!.bottom, `${ruta}: el resumen, encima del índice`).toBeLessThanOrEqual(m.indice!.top);
-    expect(m.titulo!.left, `${ruta}: el título, a todo lo ancho`).toBe(m.indice!.left);
+    expect(m.titulo!.top, `${ruta}: el nombre, arriba de la columna del índice`).toBe(m.indice!.top);
+    expect(m.titulo!.left, `${ruta}: el nombre, en la vertical del índice`).toBe(m.indice!.left);
+    expect(m.resumen!.top, `${ruta}: la franja del resumen, a la altura del nombre`).toBe(m.indice!.top);
+    expect(m.resumen!.left, `${ruta}: la franja, en la columna del contenido`).toBe(m.contenido!.left);
+    expect(m.resumen!.bottom, `${ruta}: la franja, encima del contenido`).toBeLessThanOrEqual(m.contenido!.top);
   }
 });
+
+/** El nombre del grupo, escrito en el campo de General: el título lo sigue según se escribe. */
+const nombrar = async (page: Page, nombre: string) => {
+  await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill(nombre);
+  await expect(page.locator('main#main-content h1')).toContainText(nombre.slice(0, 12));
+  await fuentes(page);
+  // El texto del título: el del Inplace al editar, el del propio `h1` en el alta.
+  return page.evaluate(() => {
+    const h1 = document.querySelector('main#main-content h1')!;
+    const texto = (h1.querySelector('.name-inplace__text') ?? h1) as HTMLElement;
+    const lineas = Math.round(texto.getBoundingClientRect().height / parseFloat(getComputedStyle(texto).lineHeight));
+    return { lineas, cortado: texto.scrollHeight > texto.clientHeight + 1 };
+  });
+};
+
+for (const ruta of ['admin/grupos/crear', 'admin/grupos/editar/11']) {
+  test(`${ruta} · un nombre que no cabe en 196 salta a la segunda línea; uno que no cabe en dos, se corta en ella`, async ({
+    page,
+  }) => {
+    await goto(page, ruta);
+    // 270 px a la letra del título: no cabe en una línea de 196, y sí en dos.
+    const largo = await nombrar(page, 'Atención al cliente Madrid Norte');
+    expect(largo, 'en dos líneas, entero').toEqual({ lineas: 2, cortado: false });
+    const enorme = await nombrar(page, 'Atención al cliente de la delegación de Madrid Norte y Castilla-La Mancha');
+    expect(enorme, 'en dos líneas, cortado al final de la segunda').toEqual({ lineas: 2, cortado: true });
+  });
+}
