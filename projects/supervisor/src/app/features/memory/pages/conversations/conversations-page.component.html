@@ -54,6 +54,7 @@
      Ahora la barra aparece con la selección y se va con ella. -->
 <sc-bulk-action-bar
   [count]="selectedCount()"
+  [total]="filteredCount()"
   [entity]="bulkEntity()"
   (clear)="onClearSelection()"
 >

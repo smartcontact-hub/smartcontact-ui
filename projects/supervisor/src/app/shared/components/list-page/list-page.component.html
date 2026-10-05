@@ -175,7 +175,7 @@
 <p-menu #rowMenuRef [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
 
 @if (selectable() && bulkEntity(); as entity) {
-  <sc-bulk-action-bar [count]="selectedIds().size" [entity]="entity" (clear)="clearSelection()">
+  <sc-bulk-action-bar [count]="selectedIds().size" [total]="rows().length" [entity]="entity" (clear)="clearSelection()">
     <ng-content select="[scListBulkActions]" />
   </sc-bulk-action-bar>
 }

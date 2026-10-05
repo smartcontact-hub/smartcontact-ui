@@ -15,7 +15,7 @@ export interface BulkActionEntityLabels {
 
 /**
  * Fixed-bottom action bar that surfaces when items are selected in list pages
- * (DD#298). Shows a "{n} {entity} {selected}" summary plus a clear button on
+ * (DD#298). Shows a "{n} {entity} {selected}" summary (or "{n}/{total}", DD-171) plus a clear button on
  * the left, and arbitrary projected actions on the right.
  *
  * Sits flush with the sidebar via `--sc-sidebar-width`.
@@ -44,6 +44,11 @@ export class ScBulkActionBarComponent {
    * la pantalla.
    */
   readonly entity = input.required<BulkActionEntityLabels>();
+  /**
+   * Cuántos hay en la lista, para decir cuántos de cuántos («2/16 agentes seleccionados», DD-171). Sin él, solo el
+   * número de seleccionados.
+   */
+  readonly total = input<number | undefined>(undefined);
 
   /** El usuario ha pulsado deshacer la selección. */
   readonly clear = output<void>();
@@ -64,7 +69,7 @@ export class ScBulkActionBarComponent {
       c === 1
         ? (e.suffixSingular ?? this.translate.instant('sc.bulkActionBar.selectedOne'))
         : (e.suffixPlural ?? this.translate.instant('sc.bulkActionBar.selectedOther'));
-    return `${c} ${label} ${suffix}`;
+    return `${label} ${suffix}`;
   });
 
   constructor() {

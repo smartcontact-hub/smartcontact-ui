@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas | DD-171 |
+> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote | DD-171 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
@@ -167,6 +167,9 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    fallo: con «Todos» la lista virtual se quedaba en 2 px y sin filas, porque su caja tenía tope pero no alto; ahora,
    con lista virtual, la caja ocupa su tope entero (`_sc-list-table.scss`). Y otro, de la paginación: a 1512×945 la
    página tapaba la lista de filas por página y el ratón no llegaba a «25»; se va con ella.
+6. **La selección dice cuántos de cuántos**: la barra en lote del DS (`sc-bulk-action-bar`) gana `total`, y con él dice
+   «2/14 grupos seleccionados»; el lector oye «2 de 14», porque «2/14» se puede leer como fecha o fracción. La cifra,
+   con cifras de ancho fijo. Lo pasan los listados (el total de la lista) y Conversaciones (las del filtro).
 
 **Razón** ·
 - **Una línea de más por una palabra** se lee como un salto: lo que obliga a otra línea se dice más corto, y `pretty`
@@ -185,7 +188,7 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
 - **Enmienda** DD-151 (sin paginación), DD-156 (los anchos de columna) y DD-131 (el ancho del panel, que los suma).
 - **Pruebas:** `fichas-textos.spec.ts`, nueva (el nombre del campo y ninguna ayuda de más en las tres fichas), roja
   contra lo de antes; `tabla-agentes-compacta.spec.ts`, nueva (cabe a 1440, cada canal a su rótulo, sin páginas),
-  roja antes; `asignacion-agentes-lista`, `panel-agentes-grupo`, `ficha-grupo-familias` y `tabla-al-pie` dejan las
+  roja antes; `seleccion-recuento.spec.ts`, nueva, roja antes; `asignacion-agentes-lista`, `panel-agentes-grupo`, `ficha-grupo-familias` y `tabla-al-pie` dejan las
   páginas y miden los anchos nuevos del panel; `name-inplace.spec.ts` gana tres (pulsar fuera, vacío y el foco al cerrar), rojas antes, y su
   prueba de que la cabecera no se mueve mide ahora el índice: con el nombre dentro de la columna (DD-170), la columna
   entera no se mueve nunca.
