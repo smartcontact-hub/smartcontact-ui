@@ -253,3 +253,30 @@ test('si cae e2e-smoke, la pista dice cómo regenerar las capturas de esa rama',
   assert.match(r.stdout, /rama=mi-rama/);
   assert.match(r.stdout, /actions\/runs\/9\/jobs/);
 });
+
+// Medido el 2026-10-05 con el CI de un PR en curso sobre su HEAD (run 37270726449): la consulta por
+// `branch` devolvió, de forma pasajera, el run de semanas antes (otro sha) justo cuando la de por
+// `head_sha` ya tenía el run del HEAD. El comando dijo «describe OTRO commit» (exit 3) sobre algo
+// que estaba corriendo; segundos después la propia consulta por rama se corrigió sola. `github.mjs`
+// ya tenía `ejecucionesDeCommit` para esto (línea ~109); solo faltaba que `ci:verdict` la usara.
+test('la consulta por rama trae un run viejo pero el de tu HEAD existe por head_sha: en curso, no OTRO commit', () => {
+  const r = enLaNube((head) => [
+    ['?branch=', ejecucion('c'.repeat(40))],
+    ['head_sha=' + head, { workflow_runs: [{ id: 10, head_sha: head, status: 'in_progress', conclusion: null, html_url: 'https://github.com/o/r/actions/runs/10', created_at: '2026-10-05T10:00:00Z' }] }],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 2, r.stdout + r.stderr);
+  assert.match(r.stdout, /in_progress/);
+  assert.doesNotMatch(r.stdout, /OTRO commit/);
+});
+
+// Si tampoco hay run por `head_sha` para el HEAD, el aviso de siempre: el de la rama describe otro commit.
+test('sin run por head_sha para tu HEAD, se mantiene el aviso de OTRO commit', () => {
+  const r = enLaNube((head) => [
+    ['?branch=', ejecucion('c'.repeat(40))],
+    ['head_sha=' + head, { workflow_runs: [] }],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 3, r.stdout + r.stderr);
+  assert.match(r.stdout, /describe OTRO commit/);
+});
