@@ -32,7 +32,7 @@ for (const oscuro of [false, true]) {
         const caja = el.querySelector('.p-tag') ?? el.firstElementChild!;
         const cs = getComputedStyle(caja);
         const n = (s: string) => (s.match(/\d+(\.\d+)?/g) ?? []).slice(0, 3).map(Number);
-        return { fondo: n(cs.backgroundColor), texto: n(cs.color), color: (el as HTMLElement).style.getPropertyValue('--label-bg') };
+        return { fondo: n(cs.backgroundColor), texto: n(cs.color), color: (caja as HTMLElement).style.getPropertyValue('--label-bg') };
       });
       // En oscuro el amarillo de aviso también parece marrón: lo que distingue es que sea el color de etiqueta `brown`.
       expect(c.color, 'el color de etiqueta marrón').toContain('--sc-label-brown-bg');

@@ -442,6 +442,12 @@
   --sc-label-amber-border: color-mix(in srgb, var(--sc-color-amber-700) 45%, transparent);
   --sc-label-amber-dot: var(--sc-color-amber-400);
 
+  /* Marrón (DD-172), lleno también en oscuro: amber-900 con el texto en amber-100. */
+  --sc-label-brown-bg: var(--sc-color-amber-900);
+  --sc-label-brown-text: var(--sc-color-amber-100);
+  --sc-label-brown-border: var(--sc-color-amber-800);
+  --sc-label-brown-dot: var(--sc-color-amber-600);
+
   --sc-label-green-bg: color-mix(in srgb, var(--sc-color-emerald-900) 40%, transparent);
   --sc-label-green-text: var(--sc-color-emerald-300);
   --sc-label-green-border: color-mix(in srgb, var(--sc-color-emerald-700) 45%, transparent);

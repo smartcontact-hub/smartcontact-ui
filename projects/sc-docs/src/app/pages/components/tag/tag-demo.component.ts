@@ -24,6 +24,7 @@ const LABEL_SNIPPET = `<sc-tag variant="label" labelColor="gray" value="Gris" />
 <sc-tag variant="label" labelColor="red" value="Rojo" />
 <sc-tag variant="label" labelColor="orange" value="Naranja" />
 <sc-tag variant="label" labelColor="amber" value="Ámbar" />
+<sc-tag variant="label" labelColor="brown" value="Marrón" />
 <sc-tag variant="label" labelColor="green" value="Verde" />
 <sc-tag variant="label" labelColor="teal" value="Teal" />
 <sc-tag variant="label" labelColor="blue" value="Azul" />
@@ -63,7 +64,7 @@ export class TagDemoComponent {
         name: 'labelColor',
         control: {
           kind: 'select',
-          options: ['gray', 'red', 'orange', 'amber', 'green', 'teal', 'blue', 'purple'],
+          options: ['gray', 'red', 'orange', 'amber', 'brown', 'green', 'teal', 'blue', 'purple'],
         },
         description: 'Sólo con variant="label".',
       },

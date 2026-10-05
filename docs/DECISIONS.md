@@ -40,7 +40,7 @@
 > apunta. Nace de medir que este log tiene 2.500 líneas ordenadas por FECHA y ninguna por tema,
 > así que las reglas de composición estaban escritas y eran inencontrables al componer (DD-53).
 >
-> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas | DD-172 |
+> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas, «Administrativo» en marrón (`brown`, nuevo color de etiqueta) | DD-172 |
 > | Tema | DD |
 > |---|---|
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
@@ -183,6 +183,12 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    2.5.7). La lista es una sola parada del tabulador; las flechas, Inicio y Fin van de una columna a otra; Espacio la
    marca; «Subir» y «Bajar», al pie, mueven la enfocada (o la pulsada); al abrir, el foco entra en la lista, y Escape
    vuelve al botón. La fija (Nombre) sale marcada, sin asa y sin poder quitarse ni moverse.
+8. **«Administrativo», en marrón**: el color de etiqueta `brown`, nuevo en la paleta del DS (`LabelColor`, nueve
+   colores) y en todas sus etiquetas: `sc-tag` y `sc-chip` con `variant="label"`, la paleta de puntos y el selector de
+   color de Etiquetas. La paleta del Kit no trae familia marrón: el marrón de la paleta es el ámbar oscuro, y la
+   etiqueta va llena, no tintada como las demás, porque así se pidió («marrón de fondo y el texto que sea accesible»):
+   fondo `amber-800` (#92400e) y texto blanco, 7,1:1; en oscuro, `amber-900` con `amber-100`. Administrativo dejaba
+   de ser un aviso (la severidad `warn`, amarilla): es un estado del agente.
 
 **Razón** ·
 - **Una línea de más por una palabra** se lee como un salto: lo que obliga a otra línea se dice más corto, y `pretty`
