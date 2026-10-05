@@ -11,9 +11,11 @@
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <div class="table-card table-card--al-pie" scLlegaAlPie>
-    <sc-datatable variant="list" [size]="compact() ? 'sm' : 'md'" scrollable scrollHeight="flex"
-      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id"
-      [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [(first)]="first">
+    <!-- Compacta (`sm`, la densidad nativa de PrimeNG) y sin páginas (DD-171): todas las filas del filtro, y lo que no
+         cabe lo desplaza la tabla por dentro con la cabecera fija, hasta el pie de la pantalla (DD-160). Con más de 100,
+         pinta solo las que se ven (`virtualScroll`, DD-95). -->
+    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
+      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id">
       <ng-template #header>
         <tr>
           @for (col of columns(); track col.field) {

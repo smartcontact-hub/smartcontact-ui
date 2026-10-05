@@ -64,3 +64,14 @@
   flex: 0 1 auto;
   min-height: 0;
 }
+
+/* Con más de 100 filas la tabla pinta solo las que se ven (DD-95), y ese pintor necesita un alto que no salga de sus
+ * filas: la caja ocupa su tope entero. Sin esto, la tabla de agentes con «Todos» (500 en el alta) se quedaba en 2 px
+ * y sin filas (medido el 2026-10-05, DD-171, al quitarle la paginación). */
+.table-card--al-pie:has(.p-virtualscroller) {
+  block-size: var(--table-card-tope, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh)));
+}
+
+.table-card--al-pie:has(.p-virtualscroller) > sc-datatable {
+  flex: 1 1 auto;
+}

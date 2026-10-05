@@ -68,8 +68,9 @@ test('el panel rápido y la ficha del agente, con las mismas columnas', async ({
   await goto(page, 'admin/grupos');
   await page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' }).click();
   await columnas(page.locator('.agents-panel'));
-  // Dos familias: las columnas de la tabla compacta y el marco suman 48rem (DD-156, con Estado).
-  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(768);
+  // Teléfono y Chat: las columnas de la tabla compacta y el marco suman 46,25rem (DD-171: cada canal mide su rótulo;
+  // con DD-156, 48).
+  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(740);
 
   await goto(page, 'admin/agentes/editar/3?seccion=grupos');
   const tabla = page.locator('.assign');
@@ -146,8 +147,8 @@ test('solo WhatsApp conserva Chat al guardar y el panel conserva su columna para
   const panel = page.locator('.agents-panel');
   await expect(panel.locator('tbody tr')).toHaveCount(1);
   await expect(panel.getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);
-  // Una familia: 43rem (DD-156).
-  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(688);
+  // Solo Chat: 40,75rem (DD-171, la columna de Chat mide su rótulo; con DD-156, 43).
+  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(652);
 
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
   await expect(page.locator('.assign').getByRole('checkbox', { name: /Chat/ })).toBeChecked();

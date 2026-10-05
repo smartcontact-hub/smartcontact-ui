@@ -38,17 +38,18 @@ for (const [ancho, alto] of [
     await goto(page, 'admin/grupos/editar/11?seccion=agentes');
     const caja = page.locator('sc-agent-channel-table .table-card');
     await caja.locator('tbody tr').first().waitFor();
-    // 25 filas por página, más de las que caben: con 10, desde DD-170 (la sección sube 56 px) a 1512×945 cabían
-    // enteras y no había nada que desplazar por dentro. Con el teclado: a 1512×945 la página tapa la lista de filas
-    // por página y el ratón no llega a «25» (medido el 2026-10-05; la paginación se va en DD-171).
-    await caja.locator('.p-paginator .p-select').click();
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Enter');
-    await expect.poll(() => caja.locator('tbody tr').count(), 'más de 10 filas: las 13 del grupo').toBeGreaterThan(10);
+    // Todos: sin paginación (DD-171) y en la densidad compacta, los 13 del grupo ya caben; los de la lista entera, no.
+    await page.locator('sc-agent-channel-table').getByRole('button', { name: 'Todos', exact: true }).click();
+    await expect.poll(() => caja.locator('tbody tr').count()).toBeGreaterThan(13);
     await page.evaluate(() => document.fonts.ready);
     expect(await desplaza(page), 'lo que la página desplaza').toBeLessThanOrEqual(0);
-    // La tabla tiene más filas de las que caben (desplaza por dentro): darle 2 px más tiene que empujar la página.
-    expect(await caja.locator('.p-datatable-table-container').evaluate((c) => c.scrollHeight > c.clientHeight)).toBe(true);
+    // La tabla tiene más filas de las que caben (desplaza por dentro): darle 2 px más tiene que empujar la página. Con
+    // más de 100 filas desplaza su lista virtual (DD-95), no su contenedor.
+    expect(
+      await caja.evaluate((el) =>
+        [...el.querySelectorAll('.p-datatable-table-container, .p-virtualscroller')].some((c) => c.scrollHeight > c.clientHeight),
+      ),
+    ).toBe(true);
     await caja.evaluate((el) => {
       const alto = `${el.getBoundingClientRect().height + 2}px`;
       el.style.maxBlockSize = alto;

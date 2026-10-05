@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila | DD-171 |
+> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas | DD-171 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
@@ -153,6 +153,20 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    varias, caen en la misma vertical; antes, detrás de la última palabra (medido: 203 y 284 con cambios en General y
    en Distribución y colas). En el carril de 196 al rótulo le quedan 140, y el más largo mide 130; con el hueco fijo,
    un rótulo no salta de línea al aparecer el punto.
+4. **La tabla de agentes del grupo, compacta**: la densidad nativa `sm` (6 de relleno a cada lado, la que ya usaba el
+   panel rápido) y cada columna de casillas al ancho de su rótulo en los cuatro idiomas («Téléphone» 72, «Chat» 32,
+   «Email» 37, «Atribuído» 65, «Habilitado» 69); el agente, con un mínimo de 13,25rem y el resto del sitio. Medido
+   antes, a 1440 con tres canales: 912 en una caja de 735, 181 px de desplazamiento lateral, y las columnas de
+   casillas a 104 todas. Después: cabe (735 de 735). El panel rápido suma estas mismas columnas: con Teléfono y Chat
+   pasa de 48 a 46,25rem, y su columna de Teléfono deja de cortar «Téléphone», que a 5rem no cabía.
+5. **Sin paginación**, en la ficha y en el panel: todas las filas del filtro, y lo que no cabe lo desplaza la tabla por
+   dentro, con la cabecera fija y hasta el pie de la pantalla (DD-95, DD-160); con más de 100, pinta solo las que se
+   ven. **Por qué se puso:** DD-151 trajo la lista entera de agentes a la tabla (hasta 500 en el alta) y la acotó con
+   el paginador nativo de 10, sin dejar escrito el motivo; lo más probable, no pintar cientos de filas con casillas.
+   Eso ya lo resuelve la lista virtual, y paginar partía en páginas una tabla que ya desplaza. Al quitarla salió un
+   fallo: con «Todos» la lista virtual se quedaba en 2 px y sin filas, porque su caja tenía tope pero no alto; ahora,
+   con lista virtual, la caja ocupa su tope entero (`_sc-list-table.scss`). Y otro, de la paginación: a 1512×945 la
+   página tapaba la lista de filas por página y el ratón no llegaba a «25»; se va con ella.
 
 **Razón** ·
 - **Una línea de más por una palabra** se lee como un salto: lo que obliga a otra línea se dice más corto, y `pretty`
@@ -168,8 +182,11 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
   que General), y perderlo al pulsar fuera sería una sorpresa.
 
 **Consecuencias** ·
+- **Enmienda** DD-151 (sin paginación), DD-156 (los anchos de columna) y DD-131 (el ancho del panel, que los suma).
 - **Pruebas:** `fichas-textos.spec.ts`, nueva (el nombre del campo y ninguna ayuda de más en las tres fichas), roja
-  contra lo de antes; `name-inplace.spec.ts` gana tres (pulsar fuera, vacío y el foco al cerrar), rojas antes, y su
+  contra lo de antes; `tabla-agentes-compacta.spec.ts`, nueva (cabe a 1440, cada canal a su rótulo, sin páginas),
+  roja antes; `asignacion-agentes-lista`, `panel-agentes-grupo`, `ficha-grupo-familias` y `tabla-al-pie` dejan las
+  páginas y miden los anchos nuevos del panel; `name-inplace.spec.ts` gana tres (pulsar fuera, vacío y el foco al cerrar), rojas antes, y su
   prueba de que la cabecera no se mueve mide ahora el índice: con el nombre dentro de la columna (DD-170), la columna
   entera no se mueve nunca.
 
@@ -989,6 +1006,9 @@ La evidencia ejecutada y el estado de publicación se registran en el hand-off d
 ---
 
 ## DD-151 · 2026-10-02 — Asignar agentes desde la lista completa (E4)
+
+> **Sin paginación desde DD-171** (2026-10-05): la tabla desplaza por dentro y, con más de 100 filas, pinta solo las
+> que se ven. Las cabeceras siguen actuando sobre todo el filtro.
 
 **Decisión.** La ficha de grupo y el panel rápido comparten la lista de todos los agentes. «Asignado» añade o
 quita el enlace; sustituye el selector de incorporación, la selección de filas para un lote y la papelera.

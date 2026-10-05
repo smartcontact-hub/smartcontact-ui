@@ -102,7 +102,7 @@ test('una acción sobre un solo agente no pregunta; desasignar mantiene la fila 
   await expect(table.locator('tbody')).toContainText('No hay agentes');
 });
 
-test('la cabecera incluye otras páginas y excluye agentes incompatibles; el panel confirma y guarda', async ({ page }) => {
+test('la cabecera actúa sobre todo el filtro y excluye agentes incompatibles; el panel confirma y guarda', async ({ page }) => {
   await seed(page);
   await page.addInitScript(() => {
     const agents = JSON.parse(localStorage.getItem('sc-agents')!);
@@ -114,7 +114,9 @@ test('la cabecera incluye otras páginas y excluye agentes incompatibles; el pan
   await page.getByRole('button', { name: 'Asignar agentes de Grupo mixto' }).click();
   const table = page.locator('sc-agent-channel-table');
   await table.getByRole('button', { name: 'Sin asignar', exact: true }).click();
-  await expect(table.locator('tbody tr')).toHaveCount(10);
+  // Sin páginas (DD-171): los 28 sin asignar, todos en la tabla.
+  await expect(table.locator('tbody tr')).toHaveCount(28);
+  await expect(table.locator('.p-paginator')).toHaveCount(0);
   await table.getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox').click();
   const dialog = page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' });
   await expect(dialog).toContainText('27 agentes');
@@ -124,7 +126,7 @@ test('la cabecera incluye otras páginas y excluye agentes incompatibles; el pan
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).some((link: { agentId: number }) => link.agentId === 4))).toBe(false);
 });
 
-test('el alta muestra Todos y pagina los 500 agentes disponibles sin asignarlos', async ({ page }) => {
+test('el alta muestra Todos con los 500 agentes disponibles, sin páginas y sin asignarlos', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
   await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill('Grupo de prueba');
   // Sin teléfono saliente no se pasa de Distribución y colas (DD-158).
@@ -133,7 +135,10 @@ test('el alta muestra Todos y pagina los 500 agentes disponibles sin asignarlos'
   await page.locator('sc-form-section-nav').getByText('Agentes', { exact: true }).click();
   const table = page.locator('sc-agent-channel-table');
   await expect(table.getByRole('button', { name: 'Todos', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await expect(table.locator('tbody tr')).toHaveCount(10);
+  // Sin páginas (DD-171): con más de 100, la tabla pinta solo las filas que se ven (DD-95), y se ven filas.
+  await expect(table.locator('.p-paginator')).toHaveCount(0);
+  await expect.poll(() => table.locator('tbody tr').count()).toBeGreaterThan(10);
+  expect(await table.locator('tbody tr').count(), 'pinta solo las que se ven, no las 500').toBeLessThan(100);
   for (const checkbox of await table.locator('tbody').getByRole('checkbox', { name: /^Asignado —/ }).all()) await expect(checkbox).not.toBeChecked();
   await table.getByRole('searchbox').fill('persona inexistente');
   await expect(table.locator('tbody')).toContainText('No hay agentes');
@@ -157,14 +162,13 @@ test('quitar dos asignados desde cabecera confirma y conserva los ocultos; cance
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).map((link: { agentId: number }) => link.agentId))).toEqual([2]);
 });
 
-test('buscar desde otra página vuelve a mostrar el resultado y conserva el filtro', async ({ page }) => {
+test('buscar después de bajar por la tabla muestra el resultado y conserva el filtro', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const table = page.locator('sc-agent-channel-table');
   await table.getByRole('button', { name: 'Todos', exact: true }).click();
-  // Desde la TERCERA: con la página fuera de rango, el paginador de PrimeNG retrocede una sola página, así que desde la
-  // segunda acertaba de casualidad y desde la tercera se quedaba en blanco. Buscar vuelve a la primera (DD-163).
-  await table.locator('.p-paginator-next').click();
-  await table.locator('.p-paginator-next').click();
+  await expect.poll(() => table.locator('tbody tr').count()).toBeGreaterThan(10);
+  // Abajo del todo de la tabla: Tom Hanks, el primero, ya no se pinta (la tabla pinta solo lo que se ve).
+  await table.locator('.p-virtualscroller').evaluate((el) => el.scrollTo(0, el.scrollHeight));
   await expect(table.locator('tbody tr', { hasText: 'Tom Hanks' })).toHaveCount(0);
   await table.getByRole('searchbox').fill('Tom Hanks');
   await expect(table.locator('tbody tr', { hasText: 'Tom Hanks' })).toHaveCount(1);
