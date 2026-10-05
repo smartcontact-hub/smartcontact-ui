@@ -54,11 +54,14 @@ test('la tabla de API separa sus grupos: entre grupos, al menos el doble que ent
   }
 });
 
-test('las demos con `.row` y `.col` separan a sus hijos con el hueco de los hermanos (14)', async ({ page }) => {
+// Una página por prueba: al cambiar solo el hash, la página anterior sigue montada mientras llega la nueva.
+test('las demos con `.row` separan a sus hijos con el hueco de los hermanos (14)', async ({ page }) => {
   await gotoPage(page, 'radiobutton');
   const fila = page.locator('.sb-canvas__pane .row').first();
   for (const h of await huecosEntreHijos(fila)) expect(h, 'radiobutton · .row').toBeGreaterThanOrEqual(13.5);
+});
 
+test('las demos con `.col` separan a sus hijos con el hueco de los hermanos (14)', async ({ page }) => {
   await gotoPage(page, 'inputtext');
   const columna = page.locator('.sb-canvas__pane .col').first();
   for (const h of await huecosEntreHijos(columna)) expect(h, 'inputtext · .col').toBeGreaterThanOrEqual(13.5);
