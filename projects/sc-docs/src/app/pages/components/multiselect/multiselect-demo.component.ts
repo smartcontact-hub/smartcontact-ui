@@ -23,6 +23,7 @@ const MENOS_VISTOS_SNIPPET = `<!-- Con OBJETOS hay que decir qué campo se lee y
      "optionLabel" es lo que se ve, "optionValue" lo que devuelve [(value)]. Sin el segundo,
      devuelve el objeto entero. "filterBy" dice por qué campo busca el filtro. -->
 <sc-multiselect
+  label="Objetos: qué campo es la etiqueta y cuál el valor"
   [options]="prioridades"
   optionLabel="name"
   optionValue="id"
@@ -36,6 +37,7 @@ const MENOS_VISTOS_SNIPPET = `<!-- Con OBJETOS hay que decir qué campo se lee y
      se listan antes de plegar a "N seleccionados", y ese texto lo pone "selectedItemsLabel"
      con {0} de hueco. -->
 <sc-multiselect
+  label="Como mucho dos, y a la tercera se pliega"
   [options]="groups"
   [selectionLimit]="2"
   [maxSelectedLabels]="1"

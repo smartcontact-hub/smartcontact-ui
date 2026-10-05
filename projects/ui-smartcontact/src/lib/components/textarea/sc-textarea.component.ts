@@ -53,6 +53,12 @@ export class ScTextareaComponent {
      */
     readonly name = input<string | null>(null);
 
+    /**
+     * Ids, separados por espacios, de la ayuda que describe el campo desde fuera: la que va a su lado (la fila de un
+     * ajuste, de un interruptor). El campo no tiene ayuda propia; sin esto, nadie la anuncia (DD-133).
+     */
+    readonly ariaDescribedBy = input<string | null>(null);
+
     /** Deshabilita el campo. No se puede enfocar ni editar, y no viaja en el envío del formulario. */
     readonly disabled = input(false, { transform: booleanAttribute });
 

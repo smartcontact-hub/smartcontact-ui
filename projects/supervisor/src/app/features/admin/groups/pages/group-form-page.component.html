@@ -354,10 +354,10 @@
          Así «Distribución» se lee como una parte de Teléfono, y no como un campo más. -->
     <sc-subsection titleId="group-common-title" titleKey="groups.form.distribution.common_title" hintKey="groups.form.distribution.common_hint">
       <div class="switch-field switch-field--top">
-        <sc-toggleswitch [checked]="form().advanced.overflowWhenNoAgents" [ariaLabel]="'groups.form.advanced.overflow' | translate" (checkedChange)="setAdvanced('overflowWhenNoAgents', $event)" />
+        <sc-toggleswitch [checked]="form().advanced.overflowWhenNoAgents" [ariaLabel]="'groups.form.advanced.overflow' | translate" ariaDescribedBy="group-overflow-hint" (checkedChange)="setAdvanced('overflowWhenNoAgents', $event)" />
         <div class="switch-field__copy">
           <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.overflow' | translate }}</span>
-          <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_hint' | translate }}</p>
+          <p id="group-overflow-hint" class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.overflow_hint' | translate }}</p>
         </div>
       </div>
       <!-- Sin «Desbordar sesión» desde DD-141: era de Chat, y lo cubre «Caducar sesión». -->
@@ -405,17 +405,17 @@
             </div>
             @if (isRingAll()) {
               <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
+                <label id="group-ring-all-label" class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
                 <span class="inline-control">
-                  <sc-select inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
+                  <sc-select inputId="group-ring-all" ariaLabelledBy="group-ring-all-label" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
                   <span class="inline-control__suffix sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
                 </span>
               </div>
             }
             @if (isNiveles()) {
               <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
-                <sc-select inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
+                <label id="group-sub-strategy-label" class="field__label sc-text-caption-semibold" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+                <sc-select inputId="group-sub-strategy" ariaLabelledBy="group-sub-strategy-label" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
               </div>
             }
             <ng-container *ngTemplateOutlet="transferField; context: { channel: 'phone', queue: form().phoneQueue }" />
@@ -457,8 +457,8 @@
             <!-- Más de uno, cada uno con su .wav y su frecuencia (postventa, 2026-09-18). -->
             <div class="field">
               <span class="field__label sc-text-caption-semibold" id="group-periodic-label">{{ 'groups.form.announcements.periodic' | translate }}</span>
-              <p class="field__help sc-text-caption-regular">{{ 'groups.form.announcements.periodic_info' | translate }}</p>
-              <div class="periodic-list" role="group" aria-labelledby="group-periodic-label">
+              <p id="group-periodic-help" class="field__help sc-text-caption-regular">{{ 'groups.form.announcements.periodic_info' | translate }}</p>
+              <div class="periodic-list" role="group" aria-labelledby="group-periodic-label" aria-describedby="group-periodic-help">
                 @for (periodic of form().announcements.periodicAnnouncements; track $index) {
                   <span class="inline-control">
                     <span class="inline-control__value sc-text-body-regular">{{ periodic.file }}</span>
@@ -483,28 +483,28 @@
 
             <div class="queue-messages__notices">
               <div class="switch-field switch-field--top">
-                <sc-toggleswitch [checked]="form().announcements.announceAvgWait" [ariaLabel]="'groups.form.announcements.avg_wait' | translate" (checkedChange)="setAnnouncement('announceAvgWait', $event)" />
+                <sc-toggleswitch [checked]="form().announcements.announceAvgWait" [ariaLabel]="'groups.form.announcements.avg_wait' | translate" ariaDescribedBy="group-avg-wait-hint" (checkedChange)="setAnnouncement('announceAvgWait', $event)" />
                 <div class="switch-field__copy">
                   <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.avg_wait' | translate }}</span>
                   <!-- La ayuda nombra la cifra: «Pon el tiempo que oirá». -->
-                  <label class="switch-field__hint sc-text-caption-regular" for="group-avg-wait">{{ 'groups.form.announcements.avg_wait_hint' | translate }}</label>
+                  <label id="group-avg-wait-hint" class="switch-field__hint sc-text-caption-regular" for="group-avg-wait">{{ 'groups.form.announcements.avg_wait_hint' | translate }}</label>
                   @if (form().announcements.announceAvgWait) {
                     <sc-inputnumber class="field__number" size="sm" inputId="group-avg-wait" [min]="0" suffix="s" [value]="form().announcements.avgWaitSec" (valueChange)="setAnnouncementNumber('avgWaitSec', $event)" />
                   }
                 </div>
               </div>
               <div class="switch-field switch-field--top">
-                <sc-toggleswitch [checked]="form().announcements.announcePosition" [ariaLabel]="'groups.form.announcements.position' | translate" (checkedChange)="setAnnouncement('announcePosition', $event)" />
+                <sc-toggleswitch [checked]="form().announcements.announcePosition" [ariaLabel]="'groups.form.announcements.position' | translate" ariaDescribedBy="group-position-hint" (checkedChange)="setAnnouncement('announcePosition', $event)" />
                 <div class="switch-field__copy">
                   <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.position' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.position_hint' | translate }}</p>
+                  <p id="group-position-hint" class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.position_hint' | translate }}</p>
                 </div>
               </div>
               <div class="switch-field switch-field--top">
-                <sc-toggleswitch [checked]="form().announcements.announceWaitToAgent" [ariaLabel]="'groups.form.announcements.wait_to_agent' | translate" (checkedChange)="setAnnouncement('announceWaitToAgent', $event)" />
+                <sc-toggleswitch [checked]="form().announcements.announceWaitToAgent" [ariaLabel]="'groups.form.announcements.wait_to_agent' | translate" ariaDescribedBy="group-wait-to-agent-hint" (checkedChange)="setAnnouncement('announceWaitToAgent', $event)" />
                 <div class="switch-field__copy">
                   <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.wait_to_agent' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.wait_to_agent_hint' | translate }}</p>
+                  <p id="group-wait-to-agent-hint" class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.wait_to_agent_hint' | translate }}</p>
                 </div>
               </div>
             </div>
@@ -539,10 +539,10 @@
                  interruptor: un tiempo que no se aplica es un campo muerto. -->
             <div class="grid grid--2">
               <div class="switch-field switch-field--top">
-                <sc-toggleswitch [checked]="form().chat.closeOnInactivity" [ariaLabel]="'groups.form.chat.close_on_inactivity' | translate" (checkedChange)="setChat('closeOnInactivity', $event)" />
+                <sc-toggleswitch [checked]="form().chat.closeOnInactivity" [ariaLabel]="'groups.form.chat.close_on_inactivity' | translate" ariaDescribedBy="group-chat-inactivity-hint" (checkedChange)="setChat('closeOnInactivity', $event)" />
                 <div class="switch-field__copy">
                   <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.chat.close_on_inactivity' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.chat.close_on_inactivity_hint' | translate }}</p>
+                  <p id="group-chat-inactivity-hint" class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.chat.close_on_inactivity_hint' | translate }}</p>
                   @if (form().chat.closeOnInactivity) {
                     <span class="inline-control">
                       <label class="inline-control__suffix sc-text-caption-regular" for="group-chat-inactivity" [id]="'group-chat-inactivity-label'">{{ 'groups.form.chat.inactivity_minutes' | translate }}</label>
@@ -552,10 +552,10 @@
                 </div>
               </div>
               <div class="switch-field switch-field--top">
-                <sc-toggleswitch [checked]="form().advanced.chatRatingEnabled" [ariaLabel]="'groups.form.advanced.chat_rating' | translate" (checkedChange)="setAdvanced('chatRatingEnabled', $event)" />
+                <sc-toggleswitch [checked]="form().advanced.chatRatingEnabled" [ariaLabel]="'groups.form.advanced.chat_rating' | translate" ariaDescribedBy="group-chat-rating-hint" (checkedChange)="setAdvanced('chatRatingEnabled', $event)" />
                 <div class="switch-field__copy">
                   <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.advanced.chat_rating' | translate }}</span>
-                  <p class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.chat_rating_hint' | translate }}</p>
+                  <p id="group-chat-rating-hint" class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.advanced.chat_rating_hint' | translate }}</p>
                 </div>
               </div>
             </div>
@@ -611,8 +611,8 @@
               </div>
               <div class="field">
                 <label class="field__label sc-text-caption-semibold" for="group-chat-script">{{ 'groups.form.advanced.script_title' | translate }}</label>
-                <p class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.script_hint' | translate }}</p>
-                <sc-textarea inputId="group-chat-script" [rows]="2" fluid readonly [value]="chatScript()" />
+                <p id="group-chat-script-help" class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.script_hint' | translate }}</p>
+                <sc-textarea inputId="group-chat-script" ariaDescribedBy="group-chat-script-help" [rows]="2" fluid readonly [value]="chatScript()" />
                 <sc-button class="script-copy" size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'groups.form.advanced.script_copy' | translate" (clicked)="copyChatScript()" />
               </div>
             </div>
@@ -664,7 +664,7 @@
       <div class="grid grid--2">
         <!-- UNA tipificación: el agente recorre un solo árbol al cerrar (manual de Voice, p. 14). -->
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="group-typification">
+          <label id="group-typification-label" class="field__label sc-text-caption-semibold" for="group-typification">
             {{ 'groups.form.fields.typification' | translate }}
           </label>
           <!-- Crear sin salir de la ficha (decisión de producto, 2026-09-18). El «+» es el botón de solo icono de
@@ -673,6 +673,7 @@
           <div class="control-add">
             <sc-select
               inputId="group-typification"
+              ariaLabelledBy="group-typification-label"
               optionLabel="label"
               optionValue="value"
               [options]="typificationOptions()"
@@ -851,10 +852,10 @@
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-queue-size'">{{ 'groups.form.advanced.queue_size' | translate }}</label>
     <span class="inline-control inline-control--queue">
       <span class="visually-hidden" [id]="'group-' + channel + '-queue-type' + '-label'">{{ 'groups.form.advanced.queue_type' | translate }}</span>
-      <sc-select size="sm" optionValue="value" [inputId]="'group-' + channel + '-queue-type'" [options]="queueSizeOptions()" [value]="queue.queueSizeType" [ariaLabelledBy]="'group-' + channel + '-queue-type' + '-label'" (valueChange)="setQueueType(channel, $event)" />
-      <sc-inputnumber class="field__number" size="sm" [inputId]="'group-' + channel + '-queue-size'" [min]="1" [max]="queue.queueSizeType === 'per_agent' ? 10 : undefined" [step]="1" [error]="queueSizeError(queue)" [value]="queue.queueSize" (valueChange)="setQueueNumber(channel, 'queueSize', $event)" />
+      <sc-select size="sm" optionValue="value" [inputId]="'group-' + channel + '-queue-type'" [options]="queueSizeOptions()" [value]="queue.queueSizeType" [ariaLabelledBy]="'group-' + channel + '-queue-type' + '-label'" [ariaDescribedBy]="'group-' + channel + '-queue-help'" (valueChange)="setQueueType(channel, $event)" />
+      <sc-inputnumber class="field__number" size="sm" [inputId]="'group-' + channel + '-queue-size'" [ariaDescribedBy]="'group-' + channel + '-queue-help'" [min]="1" [max]="queue.queueSizeType === 'per_agent' ? 10 : undefined" [step]="1" [error]="queueSizeError(queue)" [value]="queue.queueSize" (valueChange)="setQueueNumber(channel, 'queueSize', $event)" />
     </span>
-    <p class="field__help sc-text-caption-regular">{{ (queue.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: queue.queueSize } }} @if (queue.queueSizeType === 'per_agent') { {{ 'groups.form.advanced.queue_recommended' | translate }} }</p>
+    <p class="field__help sc-text-caption-regular" [id]="'group-' + channel + '-queue-help'">{{ (queue.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: queue.queueSize } }} @if (queue.queueSizeType === 'per_agent') { {{ 'groups.form.advanced.queue_recommended' | translate }} }</p>
   </div>
 </ng-template>
 
@@ -878,8 +879,8 @@
 <ng-template #audioSource let-label="label" let-help="help" let-source="source" let-file="file" let-text="text" let-id="id">
   <div class="field">
     <span class="field__label sc-text-caption-semibold" [id]="id + '-label'">{{ label | translate }}</span>
-    <p class="field__help sc-text-caption-regular">{{ help | translate }}</p>
-    <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="$any(form().announcements)[source]" [ariaLabel]="label | translate" (valueChange)="setAnnouncement(source, $any($event))" />
+    <p class="field__help sc-text-caption-regular" [id]="id + '-help'">{{ help | translate }}</p>
+    <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="$any(form().announcements)[source]" [ariaLabel]="label | translate" [ariaDescribedBy]="id + '-help'" (valueChange)="setAnnouncement(source, $any($event))" />
     @if ($any(form().announcements)[source] === 'file') {
       <span class="inline-control">
         <span class="inline-control__value sc-text-body-regular">{{ $any(form().announcements)[file] ?? ('groups.form.announcements.no_file' | translate) }}</span>

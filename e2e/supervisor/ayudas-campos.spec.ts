@@ -16,6 +16,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   5. Los desplegables del DS hablan el idioma de la app: «No results», no «Sin resultados», en inglés.
  *   6. El tiempo máximo de espera en cola dice qué pasa al agotarse (DD-135): el grupo es un nodo del VUI y la salida
  *      la elige quien lo diseña. El mismo texto en Teléfono, en Chat y en Contact Center.
+ *   7. Cada ayuda de un campo se anuncia con él, también la que va al lado y no dentro (la fila de un interruptor, de
+ *      Contact Center o de Sistema). Hasta el 2026-10-05 esas ayudas se veían y no se oían: ningún control las apuntaba.
  *
  * Storage limpio por test → cada store de admin re-siembra su seed.
  */
@@ -101,11 +103,67 @@ test('el tiempo máximo de espera en cola dice qué pasa al agotarse, en los dos
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   await expect(page.locator('#group-chat-max-wait')).toHaveAccessibleDescription(anunciada);
 
-  // En la lista de ajustes de Contact Center la ayuda va en la fila, bajo el nombre.
+  // En la lista de ajustes de Contact Center la ayuda va en la fila, bajo el nombre, y se anuncia con su control.
   await goto(page, 'config/aed/grupos');
   for (const c of ['phone', 'chat']) {
-    const fila = page.locator('.setting-row').filter({ has: page.locator(`#grupos-${c}-max-wait`) });
-    await expect(fila, c).toContainText(AYUDA);
+    await expect(page.locator(`#grupos-${c}-max-wait`), c).toHaveAccessibleDescription(anunciada);
+  }
+});
+
+/** La ayuda de un campo: bajo un interruptor, en una fila de ajustes o bajo un campo de la ficha. */
+const AYUDA_DE_CAMPO = '.switch-field__hint, .setting-row__hint, .field__help, .policy-row__hint, .theme-row__hint, .data-row__hint';
+/** Su caja: la ayuda es de un campo de ella. */
+const CAJA_DEL_CAMPO = '.switch-field, .setting-row, .field, .policy-row, .theme-row, .data-row';
+/** Un campo. Una fila con solo un botón no tiene (la de borrar los datos confirma con su propio texto). */
+const CAMPO = 'input:not([type=hidden]):not([type=file]), textarea, [role=combobox], [role=switch], [role=group]';
+
+const CON_AYUDAS = [
+  'admin/grupos/editar/11?seccion=distribucion',
+  'admin/agentes/editar/1',
+  'admin/agentes/editar/1?seccion=permisos',
+  'admin/agentes/editar/1?seccion=avanzado',
+  'admin/usuarios/editar/1',
+  'config/aed/agentes',
+  'config/aed/grupos',
+  'config/sistema',
+];
+
+test('cada ayuda de un campo se anuncia con él: fichas, Contact Center y Sistema', async ({ page }) => {
+  for (const ruta of CON_AYUDAS) {
+    await goto(page, ruta);
+    // Lo plegado también cuenta: «Mensajes en cola» arranca cerrado. Un desplegable no es un `button`.
+    for (const plegado of await page.locator('main button[aria-expanded="false"]:not([aria-haspopup])').all()) {
+      await plegado.click();
+    }
+    // Cada ayuda, con los campos de su caja que la apuntan. Basta uno: el principal (el interruptor, el desplegable);
+    // el texto que sale con una opción ya la ha oído en él. La aserción la hace Playwright con la descripción real.
+    const ayudas = await page.evaluate(
+      ({ ayuda, caja, campo }) => {
+        const visible = (el: Element) => el.getBoundingClientRect().height > 0;
+        let n = 0;
+        return [...document.querySelectorAll(`main :is(${ayuda})`)].filter(visible).flatMap((el) => {
+          const campos = [...(el.closest(caja)?.querySelectorAll(campo) ?? [])].filter(visible);
+          if (!campos.length) return [];
+          const texto = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
+          const marcas = campos
+            .filter((c) => !!el.id && (c.getAttribute('aria-describedby') ?? '').split(' ').includes(el.id))
+            .map((c) => {
+              c.setAttribute('data-ayuda-de', String(++n));
+              return String(n);
+            });
+          return [{ texto, marcas }];
+        });
+      },
+      { ayuda: AYUDA_DE_CAMPO, caja: CAJA_DEL_CAMPO, campo: CAMPO },
+    );
+    expect(ayudas.length, `${ruta}: sin ayudas que mirar`).toBeGreaterThan(0);
+    for (const { texto, marcas } of ayudas) {
+      expect.soft(marcas.length, `${ruta} · «${texto.slice(0, 50)}…»: ningún campo de su caja la anuncia`).toBeGreaterThan(0);
+      const anunciada = new RegExp(texto.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s+'));
+      for (const marca of marcas) {
+        await expect.soft(page.locator(`[data-ayuda-de="${marca}"]`), `${ruta} · «${texto.slice(0, 40)}…»`).toHaveAccessibleDescription(anunciada);
+      }
+    }
   }
 });
 

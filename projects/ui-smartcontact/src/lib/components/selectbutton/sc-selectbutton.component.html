@@ -11,6 +11,7 @@
   [invalid]="invalid()"
   [ariaLabelledBy]="ariaLabelledBy()"
   [attr.aria-label]="ariaLabel() ?? null"
+  [attr.aria-describedby]="ariaDescribedBy() ?? null"
   [ngModel]="value()"
   (ngModelChange)="value.set($event)"
 >

@@ -15,17 +15,20 @@ import { ScInputNumberComponent } from './sc-inputnumber.component';
 @Component({
   standalone: true,
   imports: [ScInputNumberComponent],
-  template: `<sc-inputnumber inputId="espera" [suffix]="suffix()" [helperText]="ayuda()" />`,
+  template: `<p id="fila-ayuda">Cuenta solo las entrantes</p>
+    <sc-inputnumber inputId="espera" [suffix]="suffix()" [helperText]="ayuda()" [ariaDescribedBy]="deFuera()" />`,
 })
 class Host {
   readonly suffix = signal<string | undefined>('segundos');
   readonly ayuda = signal<string | undefined>(undefined);
+  readonly deFuera = signal<string | undefined>(undefined);
 }
 
-function montar(suffix: string | undefined, ayuda: string | undefined) {
+function montar(suffix: string | undefined, ayuda: string | undefined, deFuera?: string) {
   const fixture = TestBed.createComponent(Host);
   fixture.componentInstance.suffix.set(suffix);
   fixture.componentInstance.ayuda.set(ayuda);
+  fixture.componentInstance.deFuera.set(deFuera);
   fixture.detectChanges();
   const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
   const descritoPor = (input.getAttribute('aria-describedby') ?? '')
@@ -51,5 +54,10 @@ describe('sc-inputnumber · la unidad se oye', () => {
   it('sin sufijo ni mensaje no deja un aria-describedby vacío', () => {
     const { input } = montar(undefined, undefined);
     expect(input.hasAttribute('aria-describedby')).toBe(false);
+  });
+
+  it('la ayuda de fuera (`ariaDescribedBy`) se oye después de la unidad y del mensaje (DD-133)', () => {
+    const { descritoPor } = montar('segundos', 'Tras este tiempo se desborda', 'fila-ayuda');
+    expect(descritoPor).toEqual(['segundos', 'Tras este tiempo se desborda', 'Cuenta solo las entrantes']);
   });
 });

@@ -76,4 +76,6 @@ Thumbs.db
 # cosa en el navegador y mueren en el mismo turno, pero viven donde `npx` las resuelve
 # —la raíz— para poder importar `playwright` de `node_modules`. Dos se colaron en el
 # #129 y llegaron a `main` con un `git add -A`: esta línea es la que evita la tercera.
-/.*-tmp.mjs
+# Con punto o con guion: `.algo.tmp.mjs` no casaba con `-tmp` y se coló en un commit
+# del lote 3 de fichas (2026-10-05).
+/.*[-.]tmp.mjs

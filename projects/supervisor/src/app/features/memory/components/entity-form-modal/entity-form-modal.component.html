@@ -31,11 +31,12 @@
 
     <div class="entity-form__row entity-form__row--double">
       <div>
-        <label for="entity-type" class="entity-form__label sc-text-body-regular">
+        <label id="entity-type-label" for="entity-type" class="entity-form__label sc-text-body-regular">
           {{ 'memory.entities.form.type_label' | translate }}
         </label>
         <sc-select
           [inputId]="'entity-type'"
+          ariaLabelledBy="entity-type-label"
           [options]="typeOptions"
           [(value)]="type"
           optionLabel="labelKey"

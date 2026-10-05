@@ -40,6 +40,7 @@ const MENOS_VISTOS_SNIPPET = `<!-- "invalid" marca el campo SIN texto de error: 
 <!-- "filterBy" dice POR QUÉ CAMPO se busca (si no, por la etiqueta); "emptyFilterMessage" es lo
      que se lee cuando el filtro no encuentra nada. -->
 <sc-select
+  label="Filtra por un campo concreto"
   [options]="prioridades"
   optionLabel="name"
   optionValue="id"
@@ -51,6 +52,7 @@ const MENOS_VISTOS_SNIPPET = `<!-- "invalid" marca el campo SIN texto de error: 
 
 <!-- "optionDisabled" es el NOMBRE del campo que bloquea la opción, no un booleano. -->
 <sc-select
+  label="Opciones deshabilitadas por su propio campo"
   [options]="prioridades"
   optionLabel="name"
   optionValue="id"

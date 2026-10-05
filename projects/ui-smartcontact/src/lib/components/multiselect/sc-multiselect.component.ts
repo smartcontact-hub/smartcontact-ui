@@ -13,6 +13,7 @@ import {
 // INTERNO hacia `<p-multiselect>` (no es el CVA exterior, que se retiró).
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
+import type { MultiSelectPassThroughOptions } from 'primeng/types/multiselect';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SC_SELECT_TRANSLATIONS } from '../select/i18n/sc-select.translations';
 import { ScIconComponent } from '@smartcontact-hub/icons';
@@ -22,8 +23,17 @@ import {
   createScFieldState,
   createScOptionState,
   createScPanelSizing,
+  joinDescribedBy,
   type ScFieldSize,
 } from '../field/sc-field';
+
+/**
+ * `hiddenInput` es la sección del `<input role="combobox">` del multiselect: PrimeNG 22.1 la pinta con
+ * `ptm('hiddenInput')`, aunque sus tipos no la declaren.
+ */
+type ScMultiSelectPassThrough = MultiSelectPassThroughOptions & {
+  hiddenInput?: Record<string, string | null>;
+};
 
 /** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
 export type ScMultiSelectSize = ScFieldSize;
@@ -98,6 +108,11 @@ export class ScMultiSelectComponent {
   readonly ariaLabelledBy = input<string>();
   /** Nombre accesible cuando no hay rótulo visible (p. ej. un selector en una barra de herramientas). */
   readonly ariaLabel = input<string>();
+  /**
+   * Ids, separados por espacios, de lo que describe el campo desde fuera: la ayuda que va al lado y no debajo (la fila
+   * de un ajuste). Se oye después de la ayuda propia (`helperText`), si la hay (DD-133).
+   */
+  readonly ariaDescribedBy = input<string>();
   readonly name = input<string>();
 
   // ─── MultiSelect-specific ──────────────────────────────────────────
@@ -161,16 +176,26 @@ export class ScMultiSelectComponent {
   protected readonly msgId = this.field.msgId;
   protected readonly labelId = this.field.labelId;
   /*
-   * PrimeNG pinta el multiselect como `<span role="combobox">`, igual que el select, así
-   * que el `<label for>` que emite el componente —encima o dentro— no le da nombre
-   * accesible. Medido en `config/aed/grupos`: cuatro `role="combobox"` sin un solo
-   * nombre. `aria-labelledby` sí funciona sobre cualquier elemento.
+   * El rótulo del componente —encima o dentro (`iftaLabel`)— nombra el combobox por
+   * `aria-labelledby`. En PrimeNG 22 el combobox del multiselect es un `<input>` oculto, así
+   * que un `<label for>` también lo nombra (medido el 2026-10-05); el del select, un span, no.
    */
   protected readonly resolvedLabelledBy = computed(
     () => this.ariaLabelledBy() ?? (this.label() ? this.labelId() : undefined),
   );
   protected readonly isInvalid = this.field.isInvalid;
   protected readonly footerText = this.field.footerText;
+  /**
+   * Los `aria-*` del campo van al elemento que recibe el foco, el `<input role="combobox">`, como en `sc-select`.
+   * Hasta el 2026-10-05 iban en la envoltura `<p-multiselect>`, y el lector no anunciaba la ayuda ni el error (DD-133).
+   */
+  protected readonly pt = computed<ScMultiSelectPassThrough>(() => ({
+    hiddenInput: {
+      'aria-describedby': joinDescribedBy(this.footerText() ? this.msgId() : null, this.ariaDescribedBy()),
+      'aria-required': this.required() ? 'true' : null,
+      'aria-invalid': this.isInvalid() ? 'true' : null,
+    },
+  }));
 
   private readonly panel = createScPanelSizing('sc-multiselect', this.size);
   protected readonly pSize = this.panel.pSize;

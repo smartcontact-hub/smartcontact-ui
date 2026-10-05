@@ -26,6 +26,12 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/components`** — `sc-select`, `sc-multiselect`, `sc-inputnumber`, `sc-toggleswitch`,
+  `sc-textarea` y `sc-selectbutton` ganan `ariaDescribedBy`: ids, separados por espacios, de la ayuda que va al lado del
+  campo y no debajo. Se oye después de la ayuda propia. Sin él, nada cambia. ([DD-133](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-select` gana `ariaLabel`, el nativo de `p-select`: nombra el combobox cuando
+  no hay rótulo a la vista. Sin ningún nombre, PrimeNG lo nombraba con la opción elegida, y el lector oía el valor en
+  lugar de lo que se pide. ([DD-133](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-datatable` gana `first`, la primera fila de la página abierta, en las dos
   direcciones como en `p-table` (`[(first)]`). Quien filtra las filas fuera de la tabla la vuelve a `0` al cambiar la
   búsqueda: el paginador de PrimeNG solo retrocede una página cuando la abierta queda fuera de rango, y desde la
@@ -88,6 +94,15 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   seguía diciendo en español. Sin cambio en español; quien los pase por entrada, manda. ([DD-133](docs/DECISIONS.md))
 
 ### Fixed
+
+- **`@smartcontact-hub/components`** — El marcador de `sc-photo-upload` sin foto se ve a 3:1, lo que pide un icono: usaba
+  el color de texto apagado y medía 2,58:1 en claro. Ahora, `--sc-icon-secondary` (3,96:1). ([DD-136](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — La ayuda, el error y lo obligatorio de `sc-multiselect` se anuncian con su
+  combobox, el `<input>` que recibe el foco: iban en la envoltura `<p-multiselect>`, y el lector no los oía.
+  ([DD-133](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — Las opciones apagadas de `sc-select` dicen `aria-disabled`; antes solo lo decían
+  su color y `data-p-disabled`. Y `sc-bulk-edit-menu` nombra sus tres desplegables con las palabras de su frase
+  («Cambiar», «de», «a»), que se oían con su valor. ([DD-133](docs/DECISIONS.md))
 
 - **`@smartcontact-hub/components`** — La cifra de `sc-group-popover` se pulsa en al menos 24,5 × 24,5 (WCAG 2.5.8):
   un `::after` invisible y centrado agranda la zona sin cambiar cómo se ve. Pintaba lo que mide su número (15 × 20

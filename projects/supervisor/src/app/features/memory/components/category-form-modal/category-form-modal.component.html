@@ -129,11 +129,12 @@
           </div>
 
           <div class="category-form__link-add">
-            <label for="cat-add-rule" class="category-form__link-add-label sc-text-body-regular">
+            <label id="cat-add-rule-label" for="cat-add-rule" class="category-form__link-add-label sc-text-body-regular">
               {{ 'memory.categories.linking.add_to_existing' | translate }}
             </label>
             <sc-select
               [inputId]="'cat-add-rule'"
+              ariaLabelledBy="cat-add-rule-label"
               [options]="availableRuleOptions()"
               [value]="selectedRuleToAdd()"
               (valueChange)="onAddRule($any($event))"
@@ -220,6 +221,7 @@
 
           <div class="category-form__link-add">
             <sc-select
+              [ariaLabel]="'memory.categories.linking.add_to_existing' | translate"
               [options]="availableRuleOptions()"
               [value]="selectedRuleToAdd()"
               (valueChange)="onAddRule($any($event))"
