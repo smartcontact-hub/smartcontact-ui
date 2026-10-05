@@ -17,9 +17,19 @@
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
     <h1 class="page__heading sc-text-h3-semibold">{{ 'sidebar.repositories' | translate }}</h1>
 
+    <!-- El buscador, por nombre y descripción, como el de las listas (DD-165). -->
+    <sc-search
+      class="hub__search"
+      [placeholder]="'repositories.hub.search' | translate"
+      [clearAriaLabel]="'labels.clear_search' | translate"
+      [value]="query()"
+      (valueChange)="query.set($event)"
+    />
+
     <!-- El Menu del DS en línea (DD-77): grupo, fila, hover, foco y teclado los pone el tema.
          La plantilla `#item` es la de primeng.dev («Menu › Template»): la página solo aporta el
          contenido de la fila. -->
+    @if (menu().length > 0) {
     <p-menu [model]="menu()" [style]="{ width: '100%' }" data-testid="repositorios-hub">
       <!-- `data-pc-section="itemlink"` es la marca con la que el Menu reconoce SU enlace: con ella,
            Enter pulsa este `<a>` y navega. Sin ella pulsaba el `<li>`, que no tiene manejador, y
@@ -30,11 +40,24 @@
             <sc-icon [name]="item.icon" size="inherit" />
           </span>
           <span class="hub-link__text">
-            <span class="sc-text-body-semibold">{{ item.label }}</span>
+            <span class="sc-text-body-semibold">{{ item.nombre }}</span>
             <span class="hub-link__description sc-text-caption-regular">{{ item.title }}</span>
           </span>
+          <!-- Cuántos hay (DD-165). El lector ya lo oye en el nombre de la fila: aquí se esconde para no decirlo dos veces. -->
+          <span class="hub-link__count sc-text-caption-semibold" aria-hidden="true">{{ item.cifra }}</span>
         </a>
       </ng-template>
     </p-menu>
+    } @else {
+      <sc-empty-state
+        icon="search_off"
+        titleKey="labels.no_results.title"
+        bodyKey="repositories.hub.no_results"
+        [params]="{ query: query() }"
+        ctaKey="labels.clear_search"
+        ctaIcon="close"
+        (cta)="query.set('')"
+      />
+    }
   </div>
 </div>

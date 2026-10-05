@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { kitPx } from '../kit-metrics';
 import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
 
 /**
@@ -22,6 +23,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   3. En Repositorios, el alta de cada repositorio lleva su título con género: «Nueva tipificación», no «Nuevo/a».
  *   4. Recursos ya no enseña Etiquetas (DD-142), y el grupo conserva las suyas al guardar: el campo se queda hecho y
  *      apagado, por si vuelve.
+ *   5. Cada «+» es el botón de solo icono de primeng.dev, redondo y con borde, en gris, a la derecha de su desplegable
+ *      y a su alto (DD-167).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -31,8 +34,9 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
+/** Los «+» de Recursos, por su nombre: «Nueva tipificación», «Nueva agenda», «Nueva plantilla» (chat y email). */
 const masDeRecursos = (page: Page) =>
-  page.locator('#group-section-resources sc-button.field__label-row__action button');
+  page.locator('#group-section-resources').getByRole('button', { name: /^Nueva (tipificación|agenda|plantilla|etiqueta)$/ });
 
 /** Caja y ancho del formulario dentro del diálogo, contra el hueco del cuerpo de `sc-dialog`. */
 const cajaDelFormulario = (dialogo: Locator) =>
@@ -77,6 +81,34 @@ test('grupo 11 · cada «+» de Recursos abre su diálogo con el nombre de su bo
 
     await dialogo.getByRole('button', { name: 'Cancelar', exact: true }).click();
     await expect(page.locator('section.sc-dialog')).toHaveCount(0);
+  }
+});
+
+test('grupo 11 · cada «+» de Recursos es el solo icono de primeng.dev, redondo y con borde, junto a su desplegable', async ({ page }) => {
+  // Medido el 2026-10-05 a 1440: los cuatro eran de texto y `sm` (28 × 27, sin borde ni fondo) y flotaban sobre el
+  // rótulo, a 1,5 px del control y con su centro 31 px por encima del de él. Con forma visible se habrían pegado al
+  // control: van a su derecha, con el hueco de la casa, y redondos miden lo mismo de alto que de ancho.
+  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
+  const botones = masDeRecursos(page);
+  await expect(botones).toHaveCount(4);
+  const lado = parseFloat(kitPx('button.root.iconOnlyWidth'));
+
+  for (const boton of await botones.all()) {
+    const nombre = (await boton.getAttribute('aria-label'))!;
+    const faltan = await boton.evaluate((el) =>
+      ['p-button-icon-only', 'p-button-rounded', 'p-button-outlined', 'p-button-secondary'].filter((c) => !el.classList.contains(c)),
+    );
+    expect(faltan, `${nombre}: el solo icono redondo, con borde y en gris`).toEqual([]);
+
+    const g = await boton.evaluate((el) => {
+      const b = el.getBoundingClientRect();
+      const c = el.closest('.field')!.querySelector('.p-select, .p-multiselect')!.getBoundingClientRect();
+      return { ancho: b.width, alto: b.height, hueco: b.left - c.right, centros: b.top + b.height / 2 - (c.top + c.height / 2) };
+    });
+    expect(g.ancho, `${nombre}: el ancho del solo icono del Kit`).toBeCloseTo(lado, 1);
+    expect(g.alto, `${nombre}: redondo, tan alto como ancho`).toBeCloseTo(lado, 1);
+    expect(g.hueco, `${nombre}: a la derecha del desplegable, con 7 de hueco`).toBeCloseTo(7, 0);
+    expect(Math.abs(g.centros), `${nombre}: a la altura del desplegable`).toBeLessThanOrEqual(1);
   }
 });
 

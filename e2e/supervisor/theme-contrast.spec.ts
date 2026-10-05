@@ -81,6 +81,8 @@ const RUTAS = [
   'admin/plantillas',
   'admin/repositorios',
   'admin/agendas',
+  // El editor de una agenda (DD-163): sus campos, la tabla de contactos y su paginador, en los dos temas.
+  'admin/agendas/editar/1',
   'admin/reglas-ia',
   'config/aed/servicio',
   'config/aed/agentes',

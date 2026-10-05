@@ -1,0 +1,91 @@
+<!-- El menú de fila va fuera de esta caja: es un hijo de alto 0, y dentro sumaba bajo la tarjeta un hueco de 14. -->
+<div class="contacts">
+  <div class="contacts__bar">
+    <sc-search
+      class="contacts__search"
+      [placeholder]="'repositories.agendas.search_contacts' | translate"
+      [clearAriaLabel]="'labels.clear_search' | translate"
+      [value]="query()"
+      (valueChange)="query.set($event)"
+    />
+    <!-- Importar abre su diálogo en el editor, que es quien guarda (DD-166). -->
+    <sc-button
+      size="sm"
+      variant="secondary"
+      appearance="outlined"
+      icon="upload"
+      [label]="'repositories.agendas.import' | translate"
+      (clicked)="importar.emit()"
+    />
+    <sc-button
+      size="sm"
+      variant="secondary"
+      appearance="outlined"
+      icon="add"
+      [label]="'repositories.agendas.add_contact' | translate"
+      (clicked)="add.emit()"
+    />
+  </div>
+
+  <!-- La tarjeta llega al pie de la pantalla, medida desde donde empieza (DD-160); lo que no cabe lo desplaza ella. Sin
+       filas no hay páginas: una agenda recién creada enseñaba el paginador apagado bajo el vacío. -->
+  <div class="table-card table-card--al-pie" scLlegaAlPie>
+    <sc-datatable
+      variant="list"
+      scrollable
+      scrollHeight="flex"
+      dataKey="id"
+      [value]="visibles()"
+      [columns]="columns()"
+      [paginator]="visibles().length > 0"
+      [(first)]="first"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <div scTableEmpty>
+        @if (query()) {
+          <sc-empty-state
+            icon="search_off"
+            titleKey="labels.no_results.title"
+            bodyKey="repositories.agendas.contacts_no_results"
+            [params]="{ query: query() }"
+            ctaKey="labels.clear_search"
+            ctaIcon="close"
+            (cta)="query.set('')"
+          />
+        } @else {
+          <sc-empty-state
+            icon="contacts"
+            titleKey="repositories.agendas.contacts_empty"
+            ctaKey="repositories.agendas.add_contact"
+            (cta)="add.emit()"
+          />
+        }
+      </div>
+    </sc-datatable>
+  </div>
+</div>
+
+<!-- Celdas propias. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
+<ng-template #nameTpl let-row>
+  @if (row.name) {
+    {{ row.name }}
+  } @else {
+    <!-- Lo heredado de antes de DD-163 no tiene nombre: se dice, y se le pone al editarlo. -->
+    <span class="contacts__sin-nombre">{{ 'repositories.agendas.no_name' | translate }}</span>
+  }
+</ng-template>
+
+<ng-template #actionsTpl let-row>
+  <sc-button
+    class="rules-kebab-btn"
+    variant="secondary"
+    appearance="text"
+    size="sm"
+    icon="more_vert"
+    [ariaLabel]="'labels.row_menu' | translate"
+    (clicked)="openMenu(row, menuRef, $event)"
+  />
+</ng-template>
+
+<p-menu #menuRef [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />

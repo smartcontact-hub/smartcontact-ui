@@ -60,28 +60,8 @@
 
 }
 
-/* La tabla hace scroll DENTRO, con la cabecera de columnas fija, como las listas (DD-95): así la ficha entera cabe en
- * la pantalla aunque el grupo tenga veinte agentes. Mide lo que sus filas y solo se recorta cuando no caben.
- *
- * Su tope es el alto que le queda hasta el pie de la pantalla, MEDIDO desde donde empieza (`scLlegaAlPie`, DD-160):
- * si necesita más sitio, aprovecha el resto de la pantalla. Era `100dvh` menos 420 px fijos, que no sabía dónde
- * empezaba la tabla: a 1440×900 dejaba 158 px vacíos bajo la tarjeta mientras escondía filas, y a 1280×720 hacía
- * desplazar la página entera. Nunca baja de `scale/18`, para pantallas bajas y zoom, donde entonces desplaza la página.
- * Decisión de producto (2026-09-18): la ficha entera se ve sin salir de la pantalla. */
-.table-card {
-  display: flex;
-  flex-direction: column;
-  flex: 0 1 auto;
-  min-height: 0;
-  /* Quien la aloja en otro marco (el panel rápido del listado) cambia el tope con `--assign-table-max`:
-   * allí el alto lo reparte su columna flexible, no la ventana. */
-  max-block-size: var(--assign-table-max, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh)));
-}
-
-.table-card > sc-datatable {
-  flex: 0 1 auto;
-  min-height: 0;
-}
+/* La tarjeta de la tabla y su tope al pie de la pantalla son de `.table-card--al-pie` (`styles/_sc-list-table.scss`,
+ * DD-160): la comparte con los contactos de una agenda (DD-163). */
 
 .assign__permission {
   display: inline-flex;

@@ -1,0 +1,167 @@
+<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: el motivo, visible y solo cuando falta algo;
+     «Deshacer», solo si hay algo que deshacer. -->
+<ng-template #topbarActions>
+  @if (blockedReason(); as reason) {
+    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
+  } @else if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (formDirty()) {
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    size="sm"
+    variant="primary"
+    [disabled]="!canSave()"
+    [label]="(mode() === 'create' ? 'repositories.agendas.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <!-- La identidad, como en las fichas: el nombre de la agenda, o «Nueva agenda» mientras no lo tiene. -->
+    <h1 class="page__heading sc-text-h3-semibold">{{ form().name.trim() || ('repositories.agendas.create_title' | translate) }}</h1>
+
+    @if (conflictWarning()) {
+      <sc-message class="agenda__conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
+    }
+
+    <sc-section-card titleKey="repositories.agendas.section_general" surface="card" icon="contacts">
+      <section class="sub-section">
+        <div class="grid grid--2">
+          <div class="field">
+            <sc-inputtext
+              inputId="agenda-name"
+              fluid
+              required
+              [label]="'repositories.columns.name' | translate"
+              [placeholder]="'repositories.agendas.name_placeholder' | translate"
+              [value]="form().name"
+              [error]="nameTaken() ? ('repositories.agendas.errors.name_taken' | translate) : undefined"
+              (valueChange)="update('name', $event)"
+            />
+          </div>
+          <div class="field">
+            <sc-select
+              inputId="agenda-status"
+              optionLabel="label"
+              optionValue="value"
+              [label]="'repositories.columns.status' | translate"
+              [options]="statusOptions()"
+              [value]="form().status"
+              (valueChange)="update('status', $any($event))"
+            />
+          </div>
+          <div class="field field--full">
+            <sc-inputtext
+              inputId="agenda-description"
+              fluid
+              [label]="'repositories.columns.description' | translate"
+              [placeholder]="'repositories.placeholders.description' | translate"
+              [value]="form().description"
+              (valueChange)="update('description', $event)"
+            />
+          </div>
+        </div>
+      </section>
+    </sc-section-card>
+
+    <sc-section-card titleKey="repositories.agendas.contacts" surface="card" icon="call">
+      <section class="sub-section">
+        <sc-agenda-contacts-table
+          [contacts]="form().contacts"
+          (add)="contactDialog.set({ contact: null })"
+          (importar)="abrirImportar()"
+          (edit)="contactDialog.set({ contact: $event })"
+          (remove)="removeContact($event)"
+        />
+      </section>
+    </sc-section-card>
+  </div>
+</div>
+
+<!-- Añadir o editar un contacto con el formulario de los «+» de Recursos (`sc-repo-form-panel`, a sangre en el
+     diálogo): el nombre lo exige el panel, y el teléfono, `validateContact`. -->
+@if (contactDialog(); as dialog) {
+  <sc-dialog
+    [visible]="true"
+    [title]="(dialog.contact ? 'repositories.agendas.edit_contact' : 'repositories.agendas.add_contact') | translate"
+    [hasFooter]="false"
+    (cancelled)="contactDialog.set(null)"
+  >
+    <sc-repo-form-panel
+      flush
+      [fields]="contactFields"
+      [initial]="dialog.contact"
+      [existingNames]="[]"
+      [entitySingular]="'repositories.agendas.contact' | translate"
+      [validate]="validateContact"
+      (save)="onContactSave($event)"
+      (cancelled)="contactDialog.set(null)"
+    />
+  </sc-dialog>
+}
+
+<!-- Importar contactos de un CSV, como en Voice (DD-166): la plantilla, el archivo y, antes de añadir nada, qué entra y
+     qué no. Lo que entra va al formulario, sin guardar. -->
+@if (importOpen()) {
+  <sc-dialog [visible]="true" [title]="'repositories.agendas.import_title' | translate" (cancelled)="cerrarImportar()">
+    <div class="importar">
+      <p class="sc-text-body-regular">{{ importAyuda() }}</p>
+      <div class="importar__acciones">
+        <sc-button
+          size="sm"
+          variant="secondary"
+          appearance="text"
+          icon="download"
+          [label]="'repositories.agendas.import_template' | translate"
+          (clicked)="descargarPlantilla()"
+        />
+        <!-- El input nativo va oculto y lo abre un botón del DS, como en los mensajes de la ficha de grupo: fuera del
+             tabulador y del lector, que si no anuncian un segundo botón «Choose File» en inglés. -->
+        <input #archivo class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".csv,text/csv" (change)="onImportFile($event)" />
+        <sc-button
+          size="sm"
+          variant="secondary"
+          appearance="outlined"
+          icon="upload"
+          [label]="(importPreview() ? 'repositories.agendas.import_choose_other' : 'repositories.agendas.import_choose') | translate"
+          (clicked)="archivo.click()"
+        />
+      </div>
+      @if (importResumen(); as resumen) {
+        <div class="importar__vista" role="status">
+          <p class="sc-text-body-semibold">{{ resumen.entran }}</p>
+          @if (resumen.errores) {
+            <p class="sc-text-body-regular">{{ resumen.errores }}</p>
+            <ul class="importar__errores sc-text-caption-regular">
+              @for (linea of resumen.lineas; track $index) {
+                <li>{{ linea }}</li>
+              }
+              @if (resumen.mas) {
+                <li>{{ resumen.mas }}</li>
+              }
+            </ul>
+          }
+          @if (resumen.repetidos) {
+            <p class="sc-text-body-regular">{{ resumen.repetidos }}</p>
+          }
+          @if (resumen.sobran) {
+            <p class="sc-text-body-regular">{{ resumen.sobran }}</p>
+          }
+        </div>
+      }
+    </div>
+    <div modal-actions>
+      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cerrarImportar()">
+        <span>{{ 'common.cancel' | translate }}</span>
+      </sc-button>
+      @if (importResumen()?.confirmar; as confirmar) {
+        <sc-button type="button" size="sm" (clicked)="confirmarImportar()">
+          <span>{{ confirmar }}</span>
+        </sc-button>
+      }
+    </div>
+  </sc-dialog>
+}

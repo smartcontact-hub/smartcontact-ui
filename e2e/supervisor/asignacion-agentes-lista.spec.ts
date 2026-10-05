@@ -161,6 +161,9 @@ test('buscar desde otra página vuelve a mostrar el resultado y conserva el filt
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const table = page.locator('sc-agent-channel-table');
   await table.getByRole('button', { name: 'Todos', exact: true }).click();
+  // Desde la TERCERA: con la página fuera de rango, el paginador de PrimeNG retrocede una sola página, así que desde la
+  // segunda acertaba de casualidad y desde la tercera se quedaba en blanco. Buscar vuelve a la primera (DD-163).
+  await table.locator('.p-paginator-next').click();
   await table.locator('.p-paginator-next').click();
   await expect(table.locator('tbody tr', { hasText: 'Tom Hanks' })).toHaveCount(0);
   await table.getByRole('searchbox').fill('Tom Hanks');

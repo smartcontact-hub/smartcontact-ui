@@ -42,7 +42,7 @@
           <sc-inputtext
             #firstInput
             [inputId]="'repo-field-' + field.key"
-            type="text"
+            [type]="field.inputType ?? 'text'"
             [value]="values()[field.key]"
             [placeholder]="field.placeholderKey ? (field.placeholderKey | translate) : ''"
             (valueChange)="onChange(field.key, $event)"

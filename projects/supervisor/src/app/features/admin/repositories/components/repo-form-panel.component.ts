@@ -63,6 +63,10 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
    *  porque el diálogo ya pone los tres; el formulario ocupa su cuerpo. */
   readonly flush = input(false, { transform: booleanAttribute });
 
+  /** Una regla más, de quien lo usa (el teléfono de un contacto, DD-163): recibe los valores ya recortados y devuelve
+   *  la clave del error, o nada. Va después de las de siempre (nombre, repetido, obligatorios). */
+  readonly validate = input<((values: RepoFormSubmission) => string | null) | undefined>(undefined);
+
   readonly save = output<RepoFormSubmission>();
   readonly cancelled = output<void>();
 
@@ -118,15 +122,19 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
   }
 
   protected onSave(): void {
-    if (!this.validate()) return;
+    if (!this.checkValues()) return;
+    this.save.emit(this.trimmed());
+  }
+
+  private trimmed(): Record<string, string> {
     const trimmed: Record<string, string> = {};
     for (const field of this.fields()) {
       trimmed[field.key] = this.values()[field.key]?.trim() ?? '';
     }
-    this.save.emit(trimmed);
+    return trimmed;
   }
 
-  private validate(): boolean {
+  private checkValues(): boolean {
     const values = this.values();
     const name = (values['name'] ?? '').trim();
     if (!name) {
@@ -155,6 +163,11 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
         );
         return false;
       }
+    }
+    const extra = this.validate()?.(this.trimmed());
+    if (extra) {
+      this.error.set(this.translate.instant(extra));
+      return false;
     }
     this.error.set('');
     return true;
