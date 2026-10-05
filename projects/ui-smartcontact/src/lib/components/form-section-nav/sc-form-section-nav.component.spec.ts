@@ -14,7 +14,8 @@
  *   · una sección con cambios sin guardar se marca, distinto del punto rojo de lo que falta, y los
  *     dos estados se oyen;
  *   · en un alta, la sección que se deja completa lleva ✓, que se oye y entra con movimiento solo si
- *     llega después de pintar el índice (DD-143).
+ *     llega después de pintar el índice (DD-143);
+ *   · el icono de cada fila pesa lo que su rótulo (DD-130 §6, figma-pendiente §29).
  */
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
@@ -39,7 +40,7 @@ const SECCIONES: readonly FormNavSection[] = [
     [sectionsWithErrors]="errores()"
     [sectionsWithChanges]="cambios()"
     [sectionsDone]="hechas()"
-    [flush]="true"
+    [flush]="plana()"
     (activeChange)="elegidas.push($event)"
   />`,
 })
@@ -50,6 +51,7 @@ class Host {
   readonly errores = signal<ReadonlySet<string>>(new Set());
   readonly cambios = signal<ReadonlySet<string>>(new Set());
   readonly hechas = signal<ReadonlySet<string>>(new Set());
+  readonly plana = signal(true);
   readonly elegidas: string[] = [];
 }
 
@@ -230,5 +232,28 @@ describe('sc-form-section-nav · la sección que se deja completa lleva ✓ (DD-
     const filas = [...raiz.querySelectorAll<HTMLAnchorElement>('a.form-nav__item')];
     expect(filas[0]!.querySelector('.form-nav__done')?.classList.contains('form-nav__done--entra')).toBe(false);
     expect(filas[1]!.querySelector('.form-nav__done')?.classList.contains('form-nav__done--entra')).toBe(true);
+  });
+});
+
+describe('sc-form-section-nav · el icono de cada fila pesa lo que su rótulo (DD-130 §6)', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [Host], providers: [provideTranslateService()] });
+  });
+
+  /** El peso del glifo de cada fila, de la clase que pone `sc-icon` (`sc-icon--weight-N`); `null` sin icono. */
+  const pesos = (filas: HTMLElement[]) =>
+    filas.map((a) => {
+      const clase = [...(a.querySelector('.form-nav__icon .sc-icon')?.classList ?? [])].find((c) => c.startsWith('sc-icon--weight-'));
+      return clase ? Number(clase.slice('sc-icon--weight-'.length)) : null;
+    });
+
+  it('en el índice plano, el de todo el Supervisor, la fila activa a 600 y las demás a 400, como su rótulo y su ✓', () => {
+    const { filas } = montar();
+    expect(pesos(filas)).toEqual([600, 400, null]);
+  });
+
+  it('en el de por defecto, todas a 500: su rótulo va en medium, activa o no', () => {
+    const { filas } = montar((h) => h.plana.set(false));
+    expect(pesos(filas)).toEqual([500, 500, null]);
   });
 });
