@@ -51,9 +51,29 @@ test('rojo: PR ya fundido gana al verde del CI y sale con 4', () => {
 });
 
 test('PR fundido sin mergeCommit: avisa igual, sin inventarse el sha', () => {
-  const v = veredicto({ rama: 'r', head: HEAD, runs: [RUN], pr: { number: 7, state: 'MERGED' } });
+  const v = veredicto({ rama: 'r', head: HEAD, runs: [RUN], pr: { number: 7, state: 'MERGED', headRefOid: HEAD } });
   assert.equal(v.exit, 4);
   assert.doesNotMatch(v.linea, /undefined/);
+});
+
+// #333, medido 2026-10-05: una sesión cloud reutiliza el mismo nombre de rama tras fundir un PR; el
+// siguiente lote de commits va a esa rama ANTES de que exista un PR nuevo (se abre después de
+// regenerar las capturas de sc-docs). `prDeRama` solo ve el PR fundido, y el código viejo cantaba
+// «ya está MERGED» sobre un HEAD que ese PR nunca vio — el `pull_request` que dispara el CI no
+// existe todavía, así que no hay nada verde ni rojo que leer: el aviso en sí ES la lectura.
+test('rojo→nuevo: PR fundido cuyo headRefOid es OTRO commit (hay trabajo nuevo encima): no es MERGED, exit 6', () => {
+  const v = veredicto({
+    rama: 'arebury/cloud-batch',
+    head: HEAD,
+    runs: [],
+    pr: { number: 330, state: 'MERGED', headRefOid: 'b'.repeat(40), mergeCommit: { oid: 'e7e0e8f3'.padEnd(40, '0') } },
+  });
+  assert.equal(v.exit, 6);
+  assert.match(v.linea, /#330/);
+  assert.match(v.linea, /no tiene PR abierto/);
+  assert.match(v.linea, /pull_request/);
+  assert.match(v.linea, new RegExp(HEAD.slice(0, 7)));
+  assert.doesNotMatch(v.linea, /MERGED/);
 });
 
 test('verde: un PR ABIERTO no tapa el veredicto del CI', () => {
