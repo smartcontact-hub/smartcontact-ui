@@ -37,6 +37,18 @@ const opcion = (page: Page, nombre: string) => lista(page).getByRole('option', {
 const enfocada = (page: Page) =>
   lista(page).evaluate((ul) => document.getElementById(ul.getAttribute('aria-activedescendant') ?? '')?.textContent?.trim() ?? null);
 
+test('el botón «Columnas» dice en el foco que abre un diálogo, y si ya está abierto (DD-170)', async ({ page }) => {
+  await goto(page, 'admin/agentes');
+  await expect(boton(page)).toHaveAttribute('aria-haspopup', 'dialog');
+  await expect(boton(page)).toHaveAttribute('aria-expanded', 'false');
+  await boton(page).click();
+  await expect(lista(page)).toBeVisible();
+  await expect(boton(page)).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Escape');
+  await expect(lista(page)).toBeHidden();
+  await expect(boton(page)).toHaveAttribute('aria-expanded', 'false');
+});
+
 test('el icono abre una lista con las columnas en el orden de la tabla, cada una con su casilla', async ({ page }) => {
   await goto(page, 'admin/agentes');
   await expect(boton(page).locator('.sc-icon-font--view_column'), 'el icono de columnas').toHaveCount(1);
