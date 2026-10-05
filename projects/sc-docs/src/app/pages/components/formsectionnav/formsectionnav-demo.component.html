@@ -23,7 +23,7 @@
      abre otra pestaña de esta página, en esa sección), el rótulo encima y las dos marcas: «Voz y
      saludo» con cambios sin guardar y «Horario» con algo obligatorio sin rellenar. -->
 <ng-template #links>
-  <div class="row" style="max-width: 260px">
+  <div class="col" style="max-width: 260px">
     <sc-form-section-nav
       [sections]="sections"
       [activeId]="active()"
@@ -39,7 +39,7 @@
 <!-- En un alta (DD-143): la sección que se deja completa lleva ✓ («General», «Voz y saludo»); la que se
      deja sin lo obligatorio, el punto rojo («Horario»); la abierta («Avanzado»), ninguna marca. -->
 <ng-template #alta>
-  <div class="row" style="max-width: 260px">
+  <div class="col" style="max-width: 260px">
     <sc-form-section-nav
       [sections]="sections"
       [activeId]="altaActive()"
@@ -53,7 +53,7 @@
 </ng-template>
 
 <ng-template #default>
-  <div class="row" style="max-width: 260px">
+  <div class="col" style="max-width: 260px">
     <sc-form-section-nav
       [sections]="sections"
       [activeId]="active()"
@@ -68,7 +68,7 @@
      stories para que la respuesta del componente («envuelvo, no escondo») se vea
      sin tener que abrir un formulario del Supervisor. -->
 <ng-template #long>
-  <div class="row" style="max-width: 260px">
+  <div class="col" style="max-width: 260px">
     <sc-form-section-nav
       [sections]="longSections"
       [activeId]="longActive()"
@@ -81,7 +81,7 @@
 </ng-template>
 
 <ng-template #flush>
-  <div class="row" style="max-width: 260px">
+  <div class="col" style="max-width: 260px">
     <sc-form-section-nav
       [sections]="sections"
       [activeId]="active()"

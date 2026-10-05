@@ -143,8 +143,10 @@
 }
 
 /* ── Snippet (código + copiar) ── */
+/* «Copiar» va en su propia banda, arriba a la derecha, y el código empieza debajo: flotando encima tapaba la primera
+ * línea cuando era larga (medido a 1280 en radiobutton «Grupo», `e2e/sc-docs-lienzo.spec.ts`). */
 .sb-snippet {
-  position: relative;
+  display: grid;
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-lg);
   background: var(--sc-color-slate-900, #0f172a);
@@ -152,9 +154,8 @@
 }
 
 .sb-snippet__copy {
-  position: absolute;
-  top: var(--sc-spacing-0-5);
-  right: var(--sc-spacing-0-5);
+  justify-self: end;
+  margin: var(--sc-spacing-0-5) var(--sc-spacing-0-5) 0 0;
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
@@ -179,8 +180,7 @@
 
 .sb-snippet pre {
   margin: 0;
-  padding: var(--sc-spacing-1-25);
-  padding-right: 6rem;
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-1-25) var(--sc-spacing-1-25);
   overflow-x: auto;
   color: rgb(226 232 240 / 1);
   font-size: var(--sc-font-size-100);
@@ -289,6 +289,13 @@
   color: var(--sc-text-secondary);
 }
 
+/* Entre los grupos de la tabla de API («Entradas», «Dos sentidos», «Salidas»), el escalón de entre grupos: cada título
+ * va con SU tabla y no se lee como la última fila de la de encima (AGENTS, «UX de pantalla» 9: entre grupos, al menos
+ * el doble que dentro). La clase base es también la de cada historia y la de «API», que no cambian. */
+.sb-props + .sb-host__section-title {
+  margin-block-start: var(--sc-spacing-2);
+}
+
 /* Playground en 2 columnas (canvas+código | knobs) en ancho; apila en estrecho. */
 .sb-host__play {
   display: grid;
@@ -301,9 +308,17 @@
   }
 }
 
+/* La pista y sus hijos pueden encoger: si no, una línea de código sin cortar (el `pre` no corta) fija su ancho mínimo y
+ * la columna se sale por debajo de «Controles» (formdangerzone, medido a 1280). El `pre` desplaza por dentro. */
 .sb-host__play-main {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--sc-spacing-0-75);
+  min-width: 0;
+}
+
+.sb-host__play-main > *,
+.sb-anatomy {
   min-width: 0;
 }
 

@@ -29,7 +29,7 @@ body {
    página grande y confiado (32px en el original). Lo damos con los TOKENS de display del
    propio DS —`--sc-font-size-650` = 32px—, así la doc bebe del mismo sitio que todo
    lo demás y el DS y sus componentes NO se tocan. Es fallback: las páginas con su propia
-   regla de h1 (índice, component-page) la fijan explícitas. */
+   regla de h1 (el índice) la fijan explícitas. */
 .demo-main h1 {
   /* `!important` a propósito: cada página de sección (foundations, uso, reglas, tema)
      trae su propio `h1` scoped (`h1[_ngcontent]`, misma especificidad que este + inyectado
@@ -164,4 +164,22 @@ pre code {
   ::view-transition-new(root) {
     animation: none;
   }
+}
+
+/* `.row` y `.col` de las demos: agrupan los ejemplos de un lienzo con el hueco de los hermanos (14, AGENTS «UX de
+ * pantalla» 9). Vivían en `component-page.scss`, que nadie importaba desde la migración de julio, y los hijos salían
+ * pegados (`e2e/sc-docs-lienzo.spec.ts`). Acotadas al lienzo y a sus propias filas y columnas: la página de tema tiene
+ * su `.row`, y el `li.row` del selector de columnas cuelga de un `ul`. */
+:is(.sb-canvas__pane, .sb-canvas__pane .row, .sb-canvas__pane .col) > .row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-1);
+}
+
+:is(.sb-canvas__pane, .sb-canvas__pane .row, .sb-canvas__pane .col) > .col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  max-width: 40rem;
 }
