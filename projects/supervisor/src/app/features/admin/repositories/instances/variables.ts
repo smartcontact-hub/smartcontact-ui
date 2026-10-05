@@ -24,7 +24,9 @@ const COLUMNS: readonly RepoColumnDef<RepoVariable>[] = [
   {
     key: 'defaultValue',
     labelKey: 'repositories.variables.default',
-    kind: 'text',
+    // Trunca (DD-124): la URL de encuesta es más larga que los 160px y, sin recorte, se
+    // solapaba con la columna «Tipo» siguiente.
+    kind: 'truncate',
     accessor: (i) => i.defaultValue,
     width: '160px',
   },
