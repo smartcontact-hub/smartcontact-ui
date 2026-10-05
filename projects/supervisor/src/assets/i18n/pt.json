@@ -963,6 +963,7 @@
     "columns": "Colunas",
     "columns_count": "{0} colunas",
     "columns_visible": "Colunas, {{visible}} de {{total}}",
+    "columns_reset": "Redefinir",
     "columns_move_up": "Subir",
     "columns_move_down": "Descer",
     "columns_move_up_aria": "Subir {{column}}",

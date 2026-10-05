@@ -35,7 +35,9 @@ const globo = (page: Page) => page.getByRole('dialog', { name: 'Columnas' });
 const filas = (page: Page) => globo(page).locator('.column-toggle__row');
 const casilla = (page: Page, nombre: string) => globo(page).getByRole('checkbox', { name: nombre, exact: true });
 const enfocada = (page: Page) =>
-  page.evaluate(() => document.activeElement?.closest('.column-toggle__row')?.textContent?.trim() ?? null);
+  page.evaluate(
+    () => document.activeElement?.closest('.column-toggle__row')?.querySelector('.column-toggle__label')?.textContent?.trim() ?? null,
+  );
 
 test('el botón «Columnas» abre su globo: título, «Restablecer» y una fila por columna, con su asa y su casilla', async ({ page }) => {
   await goto(page, 'admin/agentes');
@@ -45,7 +47,7 @@ test('el botón «Columnas» abre su globo: título, «Restablecer» y una fila 
   await expect(globo(page)).toBeVisible();
   await expect(globo(page).locator('.column-toggle__title')).toHaveText('Columnas');
   await expect(globo(page).getByRole('button', { name: 'Restablecer' })).toBeVisible();
-  const enGlobo = (await filas(page).allTextContents()).map((t) => t.trim());
+  const enGlobo = (await filas(page).locator('.column-toggle__label').allTextContents()).map((t) => t.trim());
   const enTabla = await cabeceras(page);
   expect(enGlobo.filter((t) => enTabla.includes(t)), 'las visibles, en el orden de la tabla').toEqual(enTabla);
   await expect(filas(page).first().locator('.column-toggle__handle'), 'el asa').toHaveCount(1);
@@ -70,7 +72,7 @@ test('arrastrar una fila mueve la columna en la tabla, y se queda al volver', as
   const antes = await cabeceras(page);
   const [primera, segunda] = [antes[1]!, antes[2]!];
   await boton(page).click();
-  const fila = (nombre: string) => filas(page).filter({ hasText: nombre }).first();
+  const fila = (nombre: string) => filas(page).filter({ has: page.locator('.column-toggle__label', { hasText: new RegExp(`^${nombre}$`) }) });
   const origen = await fila(segunda).locator('.column-toggle__handle').boundingBox();
   const destino = await fila(primera).boundingBox();
   await page.mouse.move(origen!.x + origen!.width / 2, origen!.y + origen!.height / 2);

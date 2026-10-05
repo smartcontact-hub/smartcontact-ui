@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote | DD-171 |
+> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas | DD-171 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
@@ -170,6 +170,19 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
 6. **La selección dice cuántos de cuántos**: la barra en lote del DS (`sc-bulk-action-bar`) gana `total`, y con él dice
    «2/14 grupos seleccionados»; el lector oye «2 de 14», porque «2/14» se puede leer como fecha o fracción. La cifra,
    con cifras de ancho fijo. Lo pasan los listados (el total de la lista) y Conversaciones (las del filtro).
+7. **Elegir y ordenar columnas con el «Column Toggle» de primeng.dev, tal cual** (sustituye el Listbox de DD-162): el
+   botón «Columnas» con su engranaje (outlined, secondary, small); un Popover sin relleno con el título y
+   «Restablecer» (texto, secondary, small) arriba, con su raya; una fila por columna con su asa, su casilla nativa
+   (`p-checkbox`) y su nombre, que se arrastra para ordenar (`cdkDrag`, como el ejemplo), con la fila arrastrada y su
+   hueco del ejemplo. «Restablecer» vuelve al orden y a las columnas de partida, como su `reset()`; los anchos
+   arrastrados se quedan. Botón, Popover y casilla son los nativos con los tokens del preset, así que el editor de
+   temas de PrimeNG los lee tal cual; lo que el ejemplo pinta con utilidades de Tailwind va en el paso del Kit más
+   cercano y en los semánticos que salen de los mismos de Aura (el globo, 15,75rem por los 18 del ejemplo, que no son
+   un paso del Kit). Medido contra primeng.dev el 2026-10-05: botón 92×27 (91×28), cabecera 53 (53), filas 31 (32).
+   **Lo único que el ejemplo no trae**, y que DD-162 ya pedía: ordenar con el teclado y sin arrastrar (WCAG 2.1.1 y
+   2.5.7). La lista es una sola parada del tabulador; las flechas, Inicio y Fin van de una columna a otra; Espacio la
+   marca; «Subir» y «Bajar», al pie, mueven la enfocada (o la pulsada); al abrir, el foco entra en la lista, y Escape
+   vuelve al botón. La fija (Nombre) sale marcada, sin asa y sin poder quitarse ni moverse.
 
 **Razón** ·
 - **Una línea de más por una palabra** se lee como un salto: lo que obliga a otra línea se dice más corto, y `pretty`
@@ -186,9 +199,13 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
 
 **Consecuencias** ·
 - **Enmienda** DD-151 (sin paginación), DD-156 (los anchos de columna) y DD-131 (el ancho del panel, que los suma).
+  **Sustituye** el control de DD-162 (el Listbox con casilla y arrastre) por el del ejemplo de primeng.dev; su teclado
+  sin arrastrar se queda.
 - **Pruebas:** `fichas-textos.spec.ts`, nueva (el nombre del campo y ninguna ayuda de más en las tres fichas), roja
   contra lo de antes; `tabla-agentes-compacta.spec.ts`, nueva (cabe a 1440, cada canal a su rótulo, sin páginas),
-  roja antes; `seleccion-recuento.spec.ts`, nueva, roja antes; `asignacion-agentes-lista`, `panel-agentes-grupo`, `ficha-grupo-familias` y `tabla-al-pie` dejan las
+  roja antes; `seleccion-recuento.spec.ts`, nueva, roja antes; `columnas-en-una-lista.spec.ts` se reescribe para el
+  control del ejemplo (cinco rojas contra el Listbox, y en verde tres veces seguidas), y `listado-acciones-fijas` y
+  `listado-grupos` lo usan; `asignacion-agentes-lista`, `panel-agentes-grupo`, `ficha-grupo-familias` y `tabla-al-pie` dejan las
   páginas y miden los anchos nuevos del panel; `name-inplace.spec.ts` gana tres (pulsar fuera, vacío y el foco al cerrar), rojas antes, y su
   prueba de que la cabecera no se mueve mide ahora el índice: con el nombre dentro de la columna (DD-170), la columna
   entera no se mueve nunca.
@@ -562,6 +579,9 @@ una sección con campos encima, como la de Agentes de la ficha: la lista virtual
 - Seguir editando en el panel sobre la lista: no cabe una tabla de contactos, y Atrás no vuelve a ningún sitio.
 
 ## DD-162 · 2026-10-04 — Elegir y ordenar columnas en un solo control nativo: el Listbox en el globo del icono
+
+> **Sustituida por DD-171 §7** (2026-10-05): el control pasa a ser el «Column Toggle» de primeng.dev (botón con
+> engranaje, Popover, casilla nativa y arrastre de la fila). Su teclado sin arrastrar se queda.
 
 **Contexto.** Desde DD-153 las columnas se elegían en el icono de la barra (el MultiSelect del ejemplo «Column
 Toggle») y se ordenaban arrastrando las cabeceras de la tabla (`reorderableColumns` de `p-table`): dos controles

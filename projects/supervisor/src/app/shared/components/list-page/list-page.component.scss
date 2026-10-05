@@ -22,14 +22,94 @@
     margin-bottom: var(--sc-spacing-0-875);
   }
 
-  /* «Subir» y «Bajar», bajo la lista del globo y separados de ella como dos grupos (7 · 14). */
+  /* «Subir» y «Bajar», al pie del globo, con la raya y el relleno de su cabecera (lo único que el ejemplo no trae:
+   * ordenar sin arrastrar, DD-162). */
   &__columns-move {
     display: flex;
     gap: var(--sc-spacing-0-5);
-    margin-block-start: var(--sc-spacing-0-5);
-    padding-block-start: var(--sc-spacing-0-5);
-    border-block-start: 1px solid var(--sc-border-subtle);
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-1-125);
+    border-block-start: 1px solid var(--sc-border-default);
   }
+}
+
+/* EL GLOBO DE COLUMNAS, el «Column Toggle» de primeng.dev/table (DD-171). Sus utilidades de Tailwind, en el paso del Kit
+ * más cercano y en los tokens semánticos que salen de los mismos de Aura (medido en primeng.dev el 2026-10-05):
+ *   · cabecera `px-4 py-3` (16 · 12) → 15,75 · 12,25, con la raya `border-surface-200` → `--sc-border-default` (slate-200);
+ *   · título `text-sm font-semibold` → `sc-text-body-semibold` (14);
+ *   · lista `py-2` (8) → 8,75, y `max-h-80 overflow-auto`, que aquí no hace falta: son pocas y se ven todas;
+ *   · fila `px-3 py-1.5 mx-1 gap-2 rounded-md` (12 · 6 · 4 · 8 · 6) → 12,25 · 5,25 · 3,5 · 8,75 · radio md, y
+ *     `hover:bg-surface-100` → `--sc-bg-hover`; se arrastra (`cursor-move`), salvo la fija;
+ *   · asa `bars` de 14 en `text-surface-400` → `drag_handle` en `--sc-border-strong` (slate-400): decorativa, sin texto;
+ *   · nombre `text-sm` → `sc-text-body-regular`.
+ * Botón, Popover y casilla son los nativos, con los tokens del preset: el editor de temas de PrimeNG los lee tal cual. */
+.column-toggle__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-625);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+  border-block-end: 1px solid var(--sc-border-default);
+}
+
+.column-toggle__title {
+  color: var(--sc-text-heading);
+}
+
+.column-toggle__list {
+  padding-block: var(--sc-spacing-0-625);
+}
+
+.column-toggle__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-625);
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-875);
+  margin-inline: var(--sc-spacing-0-25);
+  border-radius: var(--sc-radius-200);
+  cursor: move;
+  user-select: none;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+}
+
+.column-toggle__row--locked {
+  cursor: default;
+}
+
+.column-toggle__handle {
+  flex: none;
+  color: var(--sc-border-strong);
+}
+
+.column-toggle__label {
+  color: var(--sc-text-primary);
+  cursor: pointer;
+}
+
+.column-toggle__row--locked .column-toggle__label {
+  cursor: default;
+}
+
+/* La fija no se mueve: sin asa a la vista, y su hueco se queda para que las casillas sigan en columna. */
+.column-toggle__row--locked .column-toggle__handle {
+  visibility: hidden;
+}
+
+/* La fila mientras se arrastra, y su hueco: los del ejemplo (`--p-content-background`, `--p-content-border-radius` y
+ * `--p-overlay-popover-shadow`, en sus semánticos). */
+.column-toggle-drag-preview {
+  background: var(--sc-bg-surface);
+  border-radius: var(--sc-radius-200);
+  box-shadow: var(--sc-shadow-dropdown);
+}
+
+.column-toggle__list .cdk-drag-placeholder {
+  opacity: 0.4;
+}
+
+.page {
 
   &__search {
     flex: 1 1 auto;
