@@ -22,9 +22,30 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 «Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show c6a9cd59:…` y `git show 2a894b1c:…`. El de E2
 (DD-149, sin trampas propias): `git show a7bca7c0:docs/handoff/supervisor-fichas.md`. El de E3 (DD-150, tampoco):
 `git show c065d664:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 7d70bfb9:…`. El de D3
-(DD-152, tampoco): `git show e7e0e8f3:docs/handoff/supervisor-fichas.md`.
+(DD-152, tampoco): `git show e7e0e8f3:docs/handoff/supervisor-fichas.md`. El de F (DD-153, tampoco): `git show
+f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · Accesibilidad pendiente, en un lote de seis bloques, en su PR
+## ✅ 2026-10-05 · Supervisión y limpieza, en un lote de tres bloques (DD-168), en su PR
+
+> **Un PR, un commit en rojo y otro en verde por bloque (DD-154); el 2, en uno solo, porque la medida dijo que no
+> faltaba nada. Es el último lote del frente: lo que queda espera a producto, a devs o al portátil (abajo).**
+
+- **1 · El panel rápido de agentes, también en el Monitor (DD-168):** «Agentes», en la cabecera del widget «Grupos»,
+  abre el panel del listado de grupos: con un grupo, el suyo; con varios, un menú «Asignar agentes de…». No sale en
+  modo pared ni en la vista previa del asistente. Los grupos de la demo van por id (`DEMO_GROUPS`, como los agentes
+  de DD-139): un grupo renombrado sale con su nombre nuevo. El panel devuelve el foco a quien lo abrió, también en el
+  listado, donde caía en `<body>`. La prueba del latido de 8 s se vio en rojo con el fallo puesto.
+- **2 · La columna de 240 de agente y usuario cabe (DD-144):** 96 vistas (1366 × 768, 1440 × 900 y 1366 × 660, los
+  cuatro idiomas, ocho fichas): cada texto en una línea, la cifra más justa a 81 px de su anillo y sin scroll ni a
+  660. El molde se queda; la sonda pasa a guarda (`resumen-cabe.spec.ts`), vista en rojo con un fallo por comprobación.
+- **3 · Fuera `/lab/admin` (DD-132):** la carpeta (24 ficheros), su ruta y sus textos. Su tarjeta deja los
+  laboratorios del Lab de sc-docs y pasa a las exploraciones, archivada con el commit de `main` que la tenía
+  (`f41d3ce6`) y su enlace fijo, sin etiqueta: la nube no puede subirla.
+- **En local, en verde:** las pruebas de cada bloque (rojas antes; la guarda del 2, con un fallo por comprobación),
+  las vecinas del 1 (107), los barridos de las rutas tocadas (36) y `revision` del Dashboard y de las fichas (18 vistas,
+  en regla), con el menú y el panel abiertos desde el Monitor en una sonda aparte.
+
+## ✅ 2026-10-05 · Accesibilidad pendiente, en un lote de seis bloques, fundido (#332)
 
 > **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sin DD nueva: cada bloque cierra lo que dejó abierto
 > una DD, con su «Actualización (2026-10-05)»: DD-133, DD-135, DD-136, DD-146 y DD-162.**
@@ -40,7 +61,10 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
   «Subir» y «Bajar» mueven la última enfocada y Escape vuelve al icono; dos arreglos alrededor del Listbox (abajo).
 - **6 · Subtítulos sin relleno:** fuera «Capacidades del agente» y «Comportamiento, integración y sesión».
 - **En local, en verde:** las pruebas de cada bloque (rojas antes), sus vecinas y barridos, y `revision` de las 32
-  vistas, en regla. Cambian las capturas de sc-docs de select, multiselect y, si el comparador lo ve, photoupload.
+  vistas, en regla. `visual-baselines` regeneró cinco capturas de sc-docs (select, multiselect, inputnumber, textarea
+  y toggleswitch), miradas una a una.
+- **Fundido:** #332 → `f41d3ce6`. De punta a punta, 2 h 21 min (`npm run tiempos -- 332 --desde 08:16`); el CI del PR,
+  8 min, verde a la primera.
 
 ## ✅ 2026-10-05 · sc-docs y el peso de los iconos, en un lote de cuatro bloques, fundido (#330)
 
@@ -168,54 +192,11 @@ los resúmenes y se mide aparte. Ordenar columnas con teclado no se puede (tampo
 no, hay dos salidas: fijar Asignado y Agente a la izquierda (las columnas fijas de F) o llevar la densidad compacta
 del panel también a la ficha (unos 100 px).
 
-## ✅ 2026-10-04 · F: columnas y acciones del listado (DD-153), fundida
-
-> **Sello: #318 → `001bcf5f`, por squash; CI del PR (37204180260) y de `main` (37204858176), en verde.
-> `codex/supervisor-f-listado` (`f90f7187`) es la misma F, subida desde el portátil: copia, se borra.**
-
-**Qué hace.**
-- **El selector de columnas, en un icono:** `sc-multiselect` gana `iconOnly` e `icon`, con nombre accesible
-  «Columnas, 8 de 10».
-- **«Asignar» y «⋮», fijas a la derecha:** `ScColumnDef` gana `frozen` y `alignFrozen`, que van a `pFrozenColumn`. La
-  sombra solo aparece mientras queda contenido por la derecha.
-- **Los recortes de 3 px de las estrategias:** arreglados.
-- **El paquete:** versión 1.1.0, preparada y sin publicar.
-
-**Medido.**
-- **En el portátil:**
-  - pruebas: cuatro e2e y una unitaria en rojo contra D3; después, la suite del Supervisor (532/532) y la del DS
-    (100/100), en verde; verify, limpio;
-  - pantallas: `revision` de Grupos, Agentes y Usuarios, y catorce capturas de antes y después.
-- **En la nube:**
-  - preflight, en verde sobre el árbol de F;
-  - `visual-baselines` regeneró cuatro `-linux.png`, revisadas una a una:
-    - `datatable`, con la demo nueva de columnas fijas. Sale sin filas porque la captura se toma tras «Vaciar»,
-      como el resto de esa página; que funciona con filas lo cubre la prueba funcional del DS;
-    - `multiselect`, con los controles nuevos y la sección «Solo icono»;
-    - `radiobutton` y `select`, que mejoran: con las pistas de rejilla a mínimo cero, su tarjeta y su bloque de
-      código ya no se salen por la derecha de la página.
-
-**Pendiente, fuera de F.**
-- **Página de docs de MultiSelect:**
-  - el ejemplo del playground escribe `icon="view_column"` aunque `iconOnly` esté apagado (es el valor por defecto);
-  - los cuatro selectores de solo icono salen apilados y pegados, sin hueco.
-- **Bloques de código de sc-docs:** «Copiar» flota encima de las líneas largas.
-- ~~**Agentes:** con `prefers-reduced-motion: reduce`, su tabla puede pintar cero filas virtuales~~ · arreglado en el
-  lote de arriba; la causa, en «Trampas del frente».
-- **Sin verificar:** zoom al 200 % y RTL.
-
-**En el portátil, al fundir:**
-- poner el local 4405 al día con `main`;
-- borrar el worktree y la rama `codex/supervisor-f-listado`, la local y la del remoto.
-
-El detalle de E1b salió por el tope de seis secciones: `git show faf25027:docs/handoff/supervisor-fichas.md`.
-
 ## SIGUIENTE — sin preguntar
 
-0. **Accesibilidad pendiente, en su PR** (el tramo de arriba). Lo siguiente, el **lote 4 · Supervisión y limpieza**
-   (DD-154): el panel rápido también en el widget «Grupos» del Monitor (respuesta de producto del 2026-09-27, anotada
-   en DD-121); la columna de 240 de agente y usuario, medida a 1366 y a 1440 antes de tocar el molde; y fuera
-   `/lab/admin/*`, superado por DD-132, con su tag de archivo.
+0. **Supervisión y limpieza, en su PR** (el tramo de arriba). Con él se acaba lo que dependía de nosotros en este
+   frente. Lo siguiente: **triar los otros frentes** (DS, CusCare, Dashboard y Sidebar, cada uno con su hand-off) en
+   lotes como estos, y enseñarlos antes de empezar ninguno.
 
    Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
    separado (no entra en esta fase). Si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con
@@ -255,7 +236,9 @@ El detalle de E1b salió por el tope de seis secciones: `git show faf25027:docs/
 - **Devs:** qué es «Audio saliente» (solo sale en el Figma; anotado en `groups-data.ts`; «Desbordar sesión» lo
   respondió la revisión de producto, DD-141), y el resto de preguntas abiertas de DD-121: el destino del desbordamiento, Email, el script de Web Chat, WhatsApp por
   agente y qué ve el cliente en cola si se toca un grupo activo.
-- **Rafa:** revisar usuarios contra el Supervisor real.
+- **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
+  worktree y la rama `codex/supervisor-f-listado` (`f90f7187`, una copia de F), la local y la del remoto; desde la
+  nube no se puede.
 
 **Trampas del frente:**
 - Los iconos añaden su glifo a `textContent`; el lector no lo oye. `toHaveText` debe distinguirlo.

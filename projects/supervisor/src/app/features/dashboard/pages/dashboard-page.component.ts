@@ -29,6 +29,9 @@ import { UndoStackService } from '@core/services/undo-stack.service';
 import { injectLangChange } from '@core/utils/lang-change';
 
 import { AnimateOnChangeDirective } from '@core/directives';
+import { GroupAgentsPanelComponent } from '@features/admin/groups/components/group-agents-panel/group-agents-panel.component';
+import type { Group } from '@features/admin/groups/data/groups-data';
+import { AgentsActionComponent } from '../components/agents-action/agents-action.component';
 import { DetailDrawerComponent } from '../components/detail-drawer/detail-drawer.component';
 import { EmptySlotComponent } from '../components/empty-slot/empty-slot.component';
 import { MonitorTabsComponent } from '../components/monitor-tabs/monitor-tabs.component';
@@ -94,7 +97,9 @@ interface MonitorAlert {
     EmptyStateComponent,
     IconComponent,
     AnimateOnChangeDirective,
+    AgentsActionComponent,
     DetailDrawerComponent,
+    GroupAgentsPanelComponent,
     EmptySlotComponent,
     MonitorTabsComponent,
     WidgetAssistantComponent,
@@ -182,6 +187,15 @@ export class DashboardPageComponent {
     const box = t ? this.store.active()?.boxes[t.box] : null;
     return box ? slotSize(box) : 'small';
   });
+
+  // ─── Panel rápido de agentes (DD-168) ───
+
+  /**
+   * El grupo cuyo panel está abierto, fijado al elegirlo, como en el listado de grupos. Es el objeto del almacén de
+   * grupos, no algo derivado de los widgets: el latido de 8 s los rehace, y otra referencia haría recargar el panel y
+   * perder lo que no se ha guardado.
+   */
+  protected readonly agentsPanelGroup = signal<Group | null>(null);
 
   // ─── Detalle ───
 

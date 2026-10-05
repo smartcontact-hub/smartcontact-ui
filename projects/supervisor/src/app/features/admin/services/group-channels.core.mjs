@@ -122,7 +122,7 @@ export function toggleGroupChannel(channels, channel) {
 }
 
 /**
- * Chat, la MADRE (patrón B12 del laboratorio de administración): apagarla apaga de verdad sus
+ * Chat, la MADRE (DD-121 §4): apagarla apaga de verdad sus
  * subcanales, y encenderla los enciende todos; luego se desmarca el que sobre. Un solo gesto para el
  * caso común, y ningún estado «Chat sin tipo» que haya que validar.
  * @param {Iterable<string>} channels

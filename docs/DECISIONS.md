@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
 > | Importar contactos de un CSV, como en Voice: la plantilla (`nombre;teléfono`, con `;` y BOM) y una vista previa con lo que entra, cada error con su línea, los repetidos y lo que no cabe · `;` o `,`, UTF-8 o windows-1252 · tope de 5000 por agenda · entra sin guardar | DD-166 |
 > | Repositorios dice cuántos hay de cada uno (la cifra del almacén que enseña su página; las de IA, las de Conversaciones), también en el nombre que oye el lector, y tiene buscador por nombre y descripción · los almacenes salen de su página a `repositories/state/` (enmienda DD-101 §2) | DD-165 |
@@ -123,6 +124,73 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-168 · 2026-10-05 — El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos»
+
+**Contexto.** Respuesta de producto del 2026-09-27, apuntada en DD-121: «el 90 % del trabajo, asignar agentes, lo hace
+el supervisor», y el panel rápido (`sc-group-agents-panel`) solo se abría desde el listado de grupos. En Supervisión, lo
+único con grupos es el Dashboard (el Monitor). Medido antes de tocar:
+- sus widgets guardan los grupos que vigilan solo por NOMBRE (`entities`), y los monitores guardados no se pueden
+  migrar: subir la versión de `sc-dashboard-monitors` los borraría (DD-139 §5);
+- el latido de 8 s rehace cada widget (`conPresencia`), pero conserva su lista de nombres;
+- ni `p-drawer` (22.1) ni `sc-drawer` devuelven el foco al cerrar: el panel lo dejaba en `<body>`, también en el
+  listado.
+
+**Decisión.**
+1. **«Agentes» en la cabecera del widget «Grupos»**, a la izquierda del ⋮ y a su alto:
+   - con un grupo, abre su panel, y se llama «Asignar agentes de {grupo}»;
+   - con varios, abre un menú, «Asignar agentes de…», con los grupos.
+
+   Es el mismo `sc-group-agents-panel` del listado. Va en el hueco `[scWidgetAction]` de la tarjeta, que sigue sin saber
+   de grupos; lo pinta `sc-dashboard-agents-action`, uno por widget.
+2. **Solo donde hay paneles:** ni en modo pared ni en la vista previa del asistente. Y solo en el widget «Grupos» (el
+   grande, `group-panel`): las tarjetas pequeñas de la misma categoría, en espera y atendidas, son una cifra en un
+   hueco pequeño.
+3. **Los grupos se resuelven por id**, como los agentes (DD-139):
+   - `DEMO_GROUPS` (ids 1, 3, 4, 5, 11 y 12 de `GROUPS_SEED`) lleva el nombre al id;
+   - `GroupsStore`, el id al grupo de hoy;
+   - un grupo renombrado en Administración sale con su nombre nuevo en el menú y en el panel, aunque la cabecera
+     del widget siga con el nombre que guardó; uno borrado no sale.
+4. **Asignar no cambia las cifras del Monitor**, porque no reparten agentes por grupo (DD-129, enmendada por DD-139).
+5. **El panel devuelve el foco a quien lo abrió**, como `sc-dialog`: a «Agentes» en el Monitor y a la cifra de la
+   fila en el listado. Desde el menú, el foco vuelve antes al botón, porque el elemento que lo tenía (la lista del
+   menú) desaparece al elegir.
+
+**Razón.**
+- **A la vista y no en el ⋮:** la regla 5 de «UX de pantalla» deja el ⋮ para las acciones secundarias, y esta es la
+  tarea principal del supervisor.
+- **Un menú y no un botón por grupo:** el widget vigila de uno a seis grupos, y la cabecera no tiene sitio para seis.
+- **Referencias estables:** el grupo del panel se fija al elegirlo, como en el listado. Uno derivado de los widgets
+  cambiaría con cada latido, y el panel recargaría y perdería lo no guardado. El menú sale de un `computed` sobre la
+  lista de nombres, que el latido no cambia; uno rehecho en cada ciclo perdía el primer clic, como le pasaba al menú
+  de fila del listado.
+- **Medido el 2026-10-05, en este build:**
+  - «Agentes» (82 × 27) y el ⋮ (28 × 27) con el mismo alto y los centros a 0;
+  - la cabecera, en una fila de 20, sin cortar el título, a 1440 y a 1024, con datos normales y con `tortura`.
+- **Rojo primero** (`panel-agentes-monitor.spec.ts`): las seis pruebas fallaban porque el botón no existía. La del
+  foco en el listado (`panel-agentes-grupo.spec.ts`) fallaba con el foco «inactive». La del latido se vio en rojo
+  con el fallo puesto: con un objeto de grupo nuevo en cada latido, el panel perdía «Sin guardar: 1».
+
+**Descartadas.**
+- **«Asignar agentes» dentro del ⋮** → escondería la tarea principal tras un menú de acciones secundarias.
+- **Una acción dentro del cuerpo del widget** → el cuerpo ya abre el detalle de Conectados y Disponibles, que es
+  otra cosa. Además, haría falta una salida más a través de `group-panel` y `widget-view`.
+- **Guardar ids en los widgets** → los guardados no los tendrían sin subir la versión, que los borra (DD-139 §5).
+- **Un menú para toda la página, con el modelo puesto al pulsar** → la pieza por widget tiene su `computed` y la
+  página no crece.
+- **El reloj falso de Playwright para la prueba del latido** → con él, el menú emergente de PrimeNG no llegaba a
+  abrirse. Se espera un latido de verdad.
+
+**Consecuencias.**
+- **Cierra** el «Siguiente paso» de DD-121.
+- **Huecos que quedan, fuera de este bloque:**
+  - `sc-button` no pasa `aria-haspopup` ni `aria-expanded` a su `<button>`. Le pasa también al ⋮ de cada widget y al
+    botón de columnas del listado, así que el lector no oye que abren un menú. Es una tarea aparte del DS;
+  - el panel no se lleva el foco al abrirse, en el listado tampoco. Con el teclado, el foco sigue detrás de la
+    máscara hasta que se entra en el panel.
+- **Pruebas:** `panel-agentes-monitor.spec.ts`, nueva, con seis, y una más en `panel-agentes-grupo.spec.ts`.
 
 ---
 
@@ -1083,6 +1151,17 @@ a 1440:
 - **Enmendado por DD-145** (2026-10-01): el nombre fijo al bajar y la prueba de borrar, hechos.
 - **Para el Kit:** `figma-pendiente` §35.
 
+**Actualización (2026-10-05)** · La columna de 240 de agente y usuario cabe, medida con una sonda en este build:
+a 1366 × 768, a 1440 × 900 y a 1366 × 660, en los cuatro idiomas y en ocho fichas (los agentes 7 y 12, su alta y el
+7 duplicado; los usuarios 1 y 3, su alta y el 3 duplicado). En las 96 vistas, con 492 textos y 132 cifras con anillo:
+- cada texto cabe en una línea, sin salirse de su tarjeta ni partir una palabra;
+- la cifra más justa, 12/12, queda a 81 px de su anillo;
+- no hay que desplazarse dentro de la columna, tampoco a 1366 × 660.
+
+El molde se queda. Lo guarda `resumen-cabe.spec.ts`, una prueba por idioma a 1366 × 768, vista en rojo con un fallo
+por comprobación: la columna a 150 (la cifra pisa el anillo), los textos sin partir (se salen de su tarjeta), la
+columna corta (hay que desplazarse) y la columna a 90 (palabras partidas).
+
 ---
 
 ## DD-143 · 2026-10-01 — Las altas vuelven al índice, con ✓ en las secciones que se dejan completas y «Atrás / Siguiente» al pie
@@ -1993,6 +2072,16 @@ Lo que había: cuatro tipos (administrador, supervisor, agente y visor), 11 secc
   Tipificaciones va con la supervisión. Las dos, respondidas en DD-135: Tipificaciones va con la supervisión, y no hay
   guardas, porque el prototipo es el superadmin y producto recorta qué ve cada rol.
 
+**Actualización (2026-10-05)** · Se retira el laboratorio de Administración (`/lab/admin`), el que aplicaba el
+paquete sin preguntar. Rehízo el alta y la edición de grupos y usuarios con las decisiones del teardown de mensajería,
+y lo superaron esta DD y las fichas de DD-121 y DD-122.
+- **Sale:** su carpeta (24 ficheros, 2.886 líneas), su ruta y su bloque de textos en los cuatro idiomas. `/lab/admin`
+  cae en «Sección en construcción», como cualquier ruta que no existe (`laboratorio-retirado.spec.ts`).
+- **Queda archivado** en el Lab de sc-docs, entre las exploraciones: con el commit de `main` que lo tenía
+  (`f41d3ce6`) y su enlace fijo, `b26ebfb5.sc-supervisor.pages.dev/lab/admin`.
+- **Sin etiqueta de archivo:** desde la nube no se puede subir, y una que solo existiera en una copia rompería
+  `explorations:check` en las demás.
+
 ---
 
 ## DD-131 · 2026-09-28 — El panel rápido de agentes mide lo que lleva dentro, y una casilla fija se lee marcada
@@ -2816,6 +2905,9 @@ cifras.
 - El índice debe ser uno y funcionar de una sola forma.
 De ahí sale DD-122. **Siguiente paso: el panel rápido de agentes, también en Supervisión**, que es donde trabaja el
 supervisor; hoy solo se abre desde el listado de grupos. Anotado, sin código.
+
+**Actualización (2026-10-05)** · Hecho en DD-168: «Agentes», en la cabecera del widget «Grupos» del Dashboard, abre
+el mismo panel (con varios grupos, un menú elige cuál). Fuera del modo pared, y sin mover las cifras del Monitor.
 
 ---
 
