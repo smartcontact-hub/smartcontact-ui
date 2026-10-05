@@ -297,3 +297,22 @@ test('Atrás desde una ficha con cambios y «Seguir editando»: el listado sigue
   await aviso.getByRole('button', { name: 'Descartar' }).click();
   await expect(page).toHaveURL(/\/admin\/grupos$/);
 });
+
+test('las marcas del índice caen en la misma vertical, al final de su fila, sea cual sea el rótulo', async ({ page }) => {
+  // Dos secciones con cambios: el nombre (General) y desbordar (Distribución y colas). Hasta DD-171 el punto iba
+  // detrás de la última palabra, así que cada uno caía donde acababa su rótulo («General •», «Distribución y colas •»).
+  await goto(page, 'admin/grupos/editar/11');
+  await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill('Soporte de tarde');
+  await irASeccion(page, 'Distribución y colas');
+  await page.getByRole('switch', { name: 'Desbordar si todos los agentes están inactivos' }).click();
+  await expect(page.locator('sc-form-section-nav .form-nav__dot')).toHaveCount(2);
+  const marcas = await page.locator('sc-form-section-nav .form-nav__item').evaluateAll((filas) =>
+    filas
+      .map((fila) => ({ fila: fila.getBoundingClientRect(), punto: fila.querySelector('.form-nav__dot')?.getBoundingClientRect() }))
+      .filter((m) => m.punto)
+      .map((m) => ({ derecha: Math.round(m.punto!.right), finDeFila: Math.round(m.fila.right - parseFloat(getComputedStyle(document.querySelector('.form-nav__item')!).paddingRight)) })),
+  );
+  expect(marcas, 'dos secciones con cambios').toHaveLength(2);
+  expect(marcas[0]!.derecha, 'los dos puntos, en la misma vertical').toBe(marcas[1]!.derecha);
+  expect(marcas[0]!.derecha, 'al final de la fila, empujados por el rótulo').toBe(marcas[0]!.finDeFila);
+});
