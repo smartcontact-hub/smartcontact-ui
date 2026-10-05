@@ -1211,7 +1211,7 @@
         "ai": "IA"
       },
       "descriptions": {
-        "agendas": "Coleções de números telefônicos para roteamento de chamadas",
+        "agendas": "Os contatos que cada agente vê na agenda do seu telefone",
         "horarios": "Faixas horárias e turnos operacionais do contact center",
         "plantillas": "Mensagens predefinidas para respostas rápidas e campanhas",
         "tipificaciones": "Categorias de fechamento para classificar conversas",
@@ -1229,9 +1229,25 @@
       "singular": "agenda",
       "create_title": "Nova agenda",
       "plural": "agendas",
-      "numbers": "Números",
+      "create_submit": "Criar agenda",
+      "create_breadcrumb": "Nova agenda",
+      "edit_breadcrumb": "Editar agenda",
+      "section_general": "Geral",
+      "contacts": "Contatos",
+      "contact": "contato",
+      "phone": "Telefone",
+      "no_name": "Sem nome",
+      "add_contact": "Adicionar contato",
+      "edit_contact": "Editar contato",
+      "search_contacts": "Buscar por nome ou telefone",
+      "contacts_empty": "Esta agenda ainda não tem contatos",
+      "contacts_no_results": "Nenhum contato corresponde a “{{query}}”.",
       "name_placeholder": "Ex: Vendas Nacional",
-      "numbers_placeholder": "900 100 200, 900 100 201..."
+      "errors": {
+        "name_taken": "Já existe uma agenda com este nome.",
+        "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo.",
+        "phone_taken": "Esse telefone já está nesta agenda."
+      }
     },
     "horarios": {
       "title": "Horários",

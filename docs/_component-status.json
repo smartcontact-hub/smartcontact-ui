@@ -194,7 +194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 153,
+      "usedInSupervisor": 157,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -345,7 +345,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 33,
+      "inputs": 34,
       "api": [
         "columnOrderChange",
         "columnResizeMode",
@@ -355,6 +355,8 @@
         "externalSort",
         "filterChange",
         "filters",
+        "first",
+        "firstChange",
         "globalFilterFields",
         "lazy",
         "lazyLoad",
@@ -393,7 +395,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 13,
+      "usedInSupervisor": 15,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": []
     },
@@ -502,7 +504,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 18,
+      "usedInSupervisor": 19,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -573,7 +575,7 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 16,
+      "usedInSupervisor": 18,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "sobreObsoleto": []
     },
@@ -848,7 +850,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 36,
+      "usedInSupervisor": 38,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -888,7 +890,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 7,
+      "usedInSupervisor": 8,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
     },
@@ -1182,7 +1184,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 9,
+      "usedInSupervisor": 10,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
@@ -1207,7 +1209,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 29,
+      "usedInSupervisor": 31,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1257,7 +1259,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 57,
+      "usedInSupervisor": 58,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },

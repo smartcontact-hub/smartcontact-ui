@@ -81,7 +81,7 @@ import {
 import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { TipificacionesStore, TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
 import { HorariosStore } from '@features/admin/repositories/instances/horarios';
-import { AgendasStore } from '@features/admin/repositories/instances/agendas';
+import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
 import { AGENDA_FIELDS } from '@features/admin/repositories/instances/agendas';
 import { RepoFormPanelComponent, RepoFormSubmission } from '@features/admin/repositories/components/repo-form-panel.component';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
@@ -925,7 +925,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected onCreateAgendaSubmit(submission: RepoFormSubmission): void {
     const created = this.agendasStore.addItem({
       name: submission['name'] ?? '',
-      numbers: submission['numbers'] ?? '',
+      contacts: [],
       description: submission['description'] ?? '',
       status: submission['status'] || 'active',
     });

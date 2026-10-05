@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La agenda es una lista de contactos (nombre y teléfono) con su editor en su propia ruta, como las fichas; la fila del listado lo abre | DD-163 |
 > | Elegir y ordenar columnas en un solo control nativo: el Listbox (casilla y arrastre) en el globo del icono; las cabeceras ya no se arrastran | DD-162 |
 > | La cifra principal del resumen, con el degradado del botón principal y el anillo en el color de su texto: una por ficha | DD-161 |
 > | Una tabla dentro de una sección llega al pie de la pantalla: tope medido desde donde empieza (`scLlegaAlPie`), con suelo | DD-160 |
@@ -120,6 +121,51 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-163 · 2026-10-04 — La agenda es una lista de contactos, con su editor
+
+**Contexto.** La revisión de producto del 2026-10-04, sobre Recursos. Una agenda es lo que el agente ve en la sección
+Agenda de su teléfono, cada número con su nombre, y lo que se hace con ella es dar de alta contactos, cambiarlos y
+guardarlos. En el prototipo era un texto con números separados por comas (`numbers`), sin nombres, que se editaba en
+un panel sobre la lista. La agenda del Comunicador (`agent-mini`, `ContactRow`) ya pinta ese par nombre–teléfono.
+
+**Decisión.**
+1. **Una agenda es `contacts: { id, name, phone }[]`.** Lo guardado con `numbers` se pone al día al leerlo
+   (`normalize`, sin subir la versión del almacén): cada número es un contacto con el nombre vacío, que la vista pinta
+   «Sin nombre» hasta que alguien lo edite. Un número repetido entra una vez.
+2. **Tiene su editor**, en `admin/agendas/crear` y `admin/agendas/editar/:id`, como las fichas:
+   - Guardar y Deshacer arriba;
+   - la guarda de cambios sin guardar, y el cerrojo entre pestañas;
+   - abrir una fila del listado lleva a él, y «Crear» también. `RepoPageConfig.editRoute` lo enciende en el
+     listado genérico de repositorios.
+3. **Los contactos, en una tabla dentro de su sección** (DD-160), en su propio componente:
+   - buscador, paginador y menú de fila (Editar, Eliminar). Se busca en el nombre y en el teléfono, y un teléfono
+     también por sus cifras, como se comparan los repetidos: «900100200» encuentra «900 100 200»;
+   - buscar vuelve a la primera página, y añadir también. Para eso `sc-datatable` gana `first`, el nativo de `p-table`:
+     el paginador de PrimeNG solo retrocede una página cuando la abierta queda fuera de rango, así que desde la tercera
+     un resultado corto dejaba la tabla en blanco. La tabla de agentes de la ficha tenía el mismo fallo con su buscador
+     y su filtro, y lo arregla igual;
+   - «Añadir contacto» va en un diálogo con el mismo formulario que los «+» de Recursos, y el contacto nuevo sale el
+     primero: al final, en la agenda grande caería en la última página, sin que se viera;
+   - la tarjeta llega al pie de la pantalla, como la de Agentes. Con dos tablas, la regla deja de ser de una y sube a
+     `.table-card--al-pie` (`styles/_sc-list-table.scss`), y la variable con la que el panel rápido cambia el tope
+     pasa de `--assign-table-max` a `--table-card-tope`.
+4. **Regla de contacto:**
+   - todo contacto que se crea o se edita lleva nombre;
+   - el teléfono admite un `+` y de 3 a 15 cifras, con espacios, guiones, puntos o paréntesis, así que caben
+     extensiones y números cortos;
+   - un teléfono no se repite en la agenda, y se compara solo por sus cifras: «900 100 200» y «900-100-200» son el
+     mismo.
+5. **El listado dice cuántos contactos tiene cada agenda**, con el separador de miles de cada idioma (`Intl`).
+
+**Razón.** El dato es el contacto, no la lista de números: el agente busca por nombre. Una ruta propia hace que Atrás
+vuelva a donde se estaba y que la guarda avise, como en las fichas. Paginador y no lista virtual porque es la tabla de
+una sección con campos encima, como la de Agentes de la ficha: la lista virtual pide un alto fijo que aquí no hay.
+
+**Descartadas.**
+- Un campo de texto con «nombre: número» por línea: no se busca, no se valida y no escala.
+- Subir la versión del almacén para cambiar la forma: borraría lo guardado (AGENTS, «normalize»).
+- Seguir editando en el panel sobre la lista: no cabe una tabla de contactos, y Atrás no vuelve a ningún sitio.
 
 ## DD-162 · 2026-10-04 — Elegir y ordenar columnas en un solo control nativo: el Listbox en el globo del icono
 
@@ -201,7 +247,7 @@ Se pidió como norma: si una sección necesita más sitio, que aproveche el rest
    cada antepasado, sus márgenes, rellenos y bordes; no el final de la zona, que la ficha estira a toda la pantalla).
    Se rehace en cada pintado y al cambiar la ventana. Un nombre sin `--sc-`: es una medida de la app, no un token.
 2. **La tabla de agentes del grupo la usa** con su suelo de siempre (`scale/18`); el panel rápido sigue con su
-   `--assign-table-max`.
+   `--assign-table-max` (hoy `--table-card-tope`, de la clase `.table-card--al-pie`: DD-163).
 3. **Norma en AGENTS.md (UX de pantalla, punto 10)**, con su prueba: con 2 px más de tabla, la página desplaza.
 
 **Razón.** Medido después, en los mismos casos: a 1440×900 la tabla pasa de 480 a 594 px y la página no desplaza; a

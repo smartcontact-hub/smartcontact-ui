@@ -1211,7 +1211,7 @@
         "ai": "IA"
       },
       "descriptions": {
-        "agendas": "Collections de numéros téléphoniques pour le routage des appels",
+        "agendas": "Les contacts que chaque agent voit dans le carnet de son téléphone",
         "horarios": "Plages horaires et quarts opérationnels du centre de contact",
         "plantillas": "Messages prédéfinis pour réponses rapides et campagnes",
         "tipificaciones": "Catégories de clôture pour classifier les conversations",
@@ -1229,9 +1229,25 @@
       "singular": "carnet",
       "create_title": "Nouveau carnet",
       "plural": "carnets",
-      "numbers": "Numéros",
+      "create_submit": "Créer le carnet",
+      "create_breadcrumb": "Nouveau carnet",
+      "edit_breadcrumb": "Modifier le carnet",
+      "section_general": "Général",
+      "contacts": "Contacts",
+      "contact": "contact",
+      "phone": "Téléphone",
+      "no_name": "Sans nom",
+      "add_contact": "Ajouter un contact",
+      "edit_contact": "Modifier le contact",
+      "search_contacts": "Rechercher par nom ou téléphone",
+      "contacts_empty": "Ce carnet n'a encore aucun contact",
+      "contacts_no_results": "Aucun contact ne correspond à « {{query}} ».",
       "name_placeholder": "Ex : Ventes nationales",
-      "numbers_placeholder": "900 100 200, 900 100 201..."
+      "errors": {
+        "name_taken": "Un carnet porte déjà ce nom.",
+        "phone_invalid": "Ce numéro n'est pas valide : utilisez des chiffres, avec un + devant s'il a un indicatif.",
+        "phone_taken": "Ce numéro est déjà dans ce carnet."
+      }
     },
     "horarios": {
       "title": "Horaires",

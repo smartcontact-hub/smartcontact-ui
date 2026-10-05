@@ -1211,7 +1211,7 @@
         "ai": "AI"
       },
       "descriptions": {
-        "agendas": "Phone number collections for call routing",
+        "agendas": "The contacts each agent sees in their phone's address book",
         "horarios": "Schedule slots and operating shifts for the contact center",
         "plantillas": "Predefined messages for quick replies and campaigns",
         "tipificaciones": "Closing categories to classify conversations",
@@ -1229,9 +1229,25 @@
       "singular": "address book",
       "create_title": "New address book",
       "plural": "address books",
-      "numbers": "Numbers",
+      "create_submit": "Create address book",
+      "create_breadcrumb": "New address book",
+      "edit_breadcrumb": "Edit address book",
+      "section_general": "General",
+      "contacts": "Contacts",
+      "contact": "contact",
+      "phone": "Phone",
+      "no_name": "Unnamed",
+      "add_contact": "Add contact",
+      "edit_contact": "Edit contact",
+      "search_contacts": "Search by name or phone",
+      "contacts_empty": "This address book has no contacts yet",
+      "contacts_no_results": "No contact matches “{{query}}”.",
       "name_placeholder": "E.g. National Sales",
-      "numbers_placeholder": "900 100 200, 900 100 201..."
+      "errors": {
+        "name_taken": "There is already an address book with this name.",
+        "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix.",
+        "phone_taken": "That phone number is already in this address book."
+      }
     },
     "horarios": {
       "title": "Schedules",

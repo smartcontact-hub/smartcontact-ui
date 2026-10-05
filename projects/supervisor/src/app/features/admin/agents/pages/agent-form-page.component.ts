@@ -64,10 +64,7 @@ import {
   Template,
   TemplateType,
 } from '@features/admin/templates/data/templates-data';
-import {
-  AgendasStore,
-  Agenda,
-} from '@features/admin/repositories/instances/agendas';
+import { AgendasStore, type Agenda } from '@features/admin/repositories/state/agendas.store';
 import {
   AGENT_TYPES,
   AGENT_TYPE_LABEL_KEYS,

@@ -9,6 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
 import { MessageService, type MenuItem } from 'primeng/api';
@@ -19,6 +20,7 @@ import {
 
 import { ClickOutsideDirective } from '@core/directives/click-outside.directive';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
+import { LanguageService } from '@core/services/language.service';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { ListPageComponent } from '@shared/components';
@@ -62,6 +64,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly xlsx = inject(XlsxExportService);
+  private readonly router = inject(Router);
+  private readonly language = inject(LanguageService);
 
   readonly config = input.required<RepoPageConfig<T>>();
   readonly store = input.required<RepoStore<T>>();
@@ -163,11 +167,23 @@ export class RepoListPageComponent<T extends RepoEntity> {
     return this.config().columns.find((c) => c.key === key)?.kind === kind;
   }
 
+  /** Las cifras, con el separador de miles del idioma: en `es`, 1250 sin punto y 12.500 con él (`Intl` lo sabe). */
+  private readonly formatoCifra = computed(() => new Intl.NumberFormat(this.language.locale()));
+
   protected getCellValue(item: T, key: string): string {
     const cfg = this.config();
     const column = cfg.columns.find((c) => c.key === key);
     if (!column) return '';
-    return column.accessor(item);
+    const valor = column.accessor(item);
+    return column.kind === 'count' ? this.formatoCifra().format(Number(valor)) : valor;
+  }
+
+  /** Con editor propio (`editRoute`, DD-163) la fila lo abre, como en Grupos; sin él, la fila no abre nada. */
+  protected readonly abreFila = computed(() => !!this.config().editRoute);
+
+  protected onRowOpen(item: T): void {
+    const base = this.config().editRoute;
+    if (base) void this.router.navigateByUrl(`${base}/editar/${item.id}`);
   }
 
   /** El texto entero al pasar el ratón, solo en las columnas que recortan: con un dato más largo que lo medido, la
@@ -186,6 +202,11 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   protected onCreateClick(): void {
+    const base = this.config().editRoute;
+    if (base) {
+      void this.router.navigateByUrl(`${base}/crear`);
+      return;
+    }
     this.editingId.set(null);
     this.creating.update((c) => !c);
   }
@@ -281,6 +302,10 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   protected onRowEdit(item: T): void {
+    if (this.config().editRoute) {
+      this.onRowOpen(item);
+      return;
+    }
     this.editingId.set(item.id);
     this.creating.set(false);
   }

@@ -1,0 +1,25 @@
+/* El buscador y «Añadir contacto», y debajo la tabla: hermanos, a 14 (UX de pantalla, regla 9). La tarjeta y su tope
+ * al pie son de `.table-card--al-pie` (`styles/_sc-list-table.scss`, DD-160). */
+:host {
+  display: block;
+}
+
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.contacts__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+}
+
+.contacts__search {
+  flex: 1 1 auto;
+}
+
+.contacts__sin-nombre {
+  color: var(--sc-text-subtle);
+}

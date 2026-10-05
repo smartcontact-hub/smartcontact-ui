@@ -1,0 +1,103 @@
+<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: el motivo, visible y solo cuando falta algo;
+     «Deshacer», solo si hay algo que deshacer. -->
+<ng-template #topbarActions>
+  @if (blockedReason(); as reason) {
+    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
+  } @else if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (formDirty()) {
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    size="sm"
+    variant="primary"
+    [disabled]="!canSave()"
+    [label]="(mode() === 'create' ? 'repositories.agendas.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <!-- La identidad, como en las fichas: el nombre de la agenda, o «Nueva agenda» mientras no lo tiene. -->
+    <h1 class="page__heading sc-text-h3-semibold">{{ form().name.trim() || ('repositories.agendas.create_title' | translate) }}</h1>
+
+    @if (conflictWarning()) {
+      <sc-message class="agenda__conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
+    }
+
+    <sc-section-card titleKey="repositories.agendas.section_general" surface="card" icon="contacts">
+      <section class="sub-section">
+        <div class="grid grid--2">
+          <div class="field">
+            <sc-inputtext
+              inputId="agenda-name"
+              fluid
+              required
+              [label]="'repositories.columns.name' | translate"
+              [placeholder]="'repositories.agendas.name_placeholder' | translate"
+              [value]="form().name"
+              [error]="nameTaken() ? ('repositories.agendas.errors.name_taken' | translate) : undefined"
+              (valueChange)="update('name', $event)"
+            />
+          </div>
+          <div class="field">
+            <sc-select
+              inputId="agenda-status"
+              optionLabel="label"
+              optionValue="value"
+              [label]="'repositories.columns.status' | translate"
+              [options]="statusOptions()"
+              [value]="form().status"
+              (valueChange)="update('status', $any($event))"
+            />
+          </div>
+          <div class="field field--full">
+            <sc-inputtext
+              inputId="agenda-description"
+              fluid
+              [label]="'repositories.columns.description' | translate"
+              [placeholder]="'repositories.placeholders.description' | translate"
+              [value]="form().description"
+              (valueChange)="update('description', $event)"
+            />
+          </div>
+        </div>
+      </section>
+    </sc-section-card>
+
+    <sc-section-card titleKey="repositories.agendas.contacts" surface="card" icon="call">
+      <section class="sub-section">
+        <sc-agenda-contacts-table
+          [contacts]="form().contacts"
+          (add)="contactDialog.set({ contact: null })"
+          (edit)="contactDialog.set({ contact: $event })"
+          (remove)="removeContact($event)"
+        />
+      </section>
+    </sc-section-card>
+  </div>
+</div>
+
+<!-- Añadir o editar un contacto con el formulario de los «+» de Recursos (`sc-repo-form-panel`, a sangre en el
+     diálogo): el nombre lo exige el panel, y el teléfono, `validateContact`. -->
+@if (contactDialog(); as dialog) {
+  <sc-dialog
+    [visible]="true"
+    [title]="(dialog.contact ? 'repositories.agendas.edit_contact' : 'repositories.agendas.add_contact') | translate"
+    [hasFooter]="false"
+    (cancelled)="contactDialog.set(null)"
+  >
+    <sc-repo-form-panel
+      flush
+      [fields]="contactFields"
+      [initial]="dialog.contact"
+      [existingNames]="[]"
+      [entitySingular]="'repositories.agendas.contact' | translate"
+      [validate]="validateContact"
+      (save)="onContactSave($event)"
+      (cancelled)="contactDialog.set(null)"
+    />
+  </sc-dialog>
+}

@@ -62,6 +62,9 @@ const RUTAS = [
   'admin/plantillas',
   'admin/repositorios',
   'admin/agendas',
+  // El editor de una agenda (DD-163), en el alta y con contactos.
+  'admin/agendas/crear',
+  'admin/agendas/editar/1',
   'admin/horarios',
   'admin/tipificaciones',
   'admin/variables',
@@ -83,7 +86,9 @@ const ALTAS = [
   'conversaciones/categorias',
   'admin/labels',
   'admin/plantillas',
-  'admin/agendas',
+  /* Desde DD-163, «Crear» de Agendas navega a su editor; el diálogo es «Añadir contacto», dentro del editor. El alta
+   * (`/crear`) no entra: su primer botón es «Crear agenda», que guarda. */
+  'admin/agendas/editar/1',
   'admin/horarios',
   'admin/tipificaciones',
   'admin/variables',

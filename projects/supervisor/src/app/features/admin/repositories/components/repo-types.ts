@@ -8,8 +8,8 @@ export interface RepoEntity {
   readonly name: string;
 }
 
-/** Visual presentation for a column. */
-export type RepoColumnKind = 'text' | 'truncate' | 'status';
+/** Visual presentation for a column. `count` es una cifra: la lista la escribe con el separador de miles del idioma. */
+export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count';
 
 export interface RepoColumnDef<T extends RepoEntity> {
   readonly key: string;
@@ -39,6 +39,8 @@ export interface RepoFieldDef {
   readonly placeholderKey?: string;
   /** Required for `type === 'select'`. First option is the default. */
   readonly options?: readonly { readonly value: string; readonly labelKey: string }[];
+  /** `tel` para un teléfono: el teclado del móvil y el autocompletado lo reconocen. Por defecto, `text`. */
+  readonly inputType?: 'text' | 'tel';
 }
 
 /**
@@ -58,6 +60,12 @@ export interface RepoPageConfig<T extends RepoEntity> {
   readonly searchKeys: readonly (keyof T & string)[];
   readonly filePrefix: string;
   readonly sheetNameKey: string;
+  /**
+   * Con editor propio (DD-163): la base de sus rutas (`/admin/agendas`), de la que salen `crear` y `editar/:id`. Con
+   * ella la fila abre el editor y «Crear» y «Editar» navegan; sin ella, el alta y la edición van en el panel sobre la
+   * lista.
+   */
+  readonly editRoute?: string;
 }
 
 /** Minimal store contract every repo instance must satisfy. */
