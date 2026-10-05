@@ -78,7 +78,8 @@ export interface StoryDef {
   readonly description?: string;
   /**
    * Snippet a medida (override). Si se omite, se serializa desde `meta.tag` + args.
-   * Necesario para stories con proyección/templates (datatable, select con pTemplate).
+   * Necesario para stories con proyección/templates (datatable, select con pTemplate), y para
+   * toda story que pinta otra plantilla que la del Playground (`audit:doc-snippets`, regla e).
    */
   readonly snippet?: string;
 }

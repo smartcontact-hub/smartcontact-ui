@@ -24,7 +24,7 @@
         >
           @if (section.icon; as ic) {
             <span class="form-nav__icon" aria-hidden="true">
-              <sc-icon [name]="ic" size="inherit" />
+              <sc-icon [name]="ic" size="inherit" [weight]="iconWeight(section.id)" />
             </span>
           }
           <!-- El punto va DENTRO del label, no al lado: como hermano flex se
@@ -46,7 +46,7 @@
                 [class.form-nav__done--entra]="doneEnters(section.id)"
                 name="check_circle"
                 size="inherit"
-                [weight]="activeId() === section.id ? 600 : 400"
+                [weight]="iconWeight(section.id)"
                 aria-hidden="true"
               />}
           </span>

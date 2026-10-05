@@ -1,7 +1,7 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, type OnInit, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent, type ScIconWeight } from '@smartcontact-hub/icons';
 
 import { SC_FORM_SECTION_NAV_TRANSLATIONS } from './i18n/sc-form-section-nav.translations';
 
@@ -139,6 +139,15 @@ export class ScFormSectionNavComponent implements OnInit {
 
   protected isDone(id: string): boolean {
     return this.sectionsDone().has(id);
+  }
+
+  /**
+   * El peso de los iconos de una fila: el de su rótulo (DD-130 §6). En el índice plano, el de todo el Supervisor, el
+   * rótulo activo va en semibold y los demás en regular; en el de por defecto, todos en medium.
+   */
+  protected iconWeight(id: string): ScIconWeight {
+    if (!this.flush()) return 500;
+    return this.activeId() === id ? 600 : 400;
   }
 
   /** El ✓ entra con movimiento si la sección se completó con el índice ya a la vista. */

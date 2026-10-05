@@ -4,17 +4,23 @@
      Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
      los miden los e2e de métrica del Kit (no quitar). -->
 
+<!-- La barra ocupa el ancho de su contenedor: va en una `.col`, que le da uno. Suelta en el lienzo, que es una fila
+     flex, medía 0. -->
 <ng-template #playground let-args>
-  <sc-progressbar
-    [value]="args.value"
-    [showValue]="args.showValue"
-    [unit]="args.unit"
-    [mode]="args.mode"
-  />
+  <div class="col">
+    <sc-progressbar
+      [value]="args.value"
+      [showValue]="args.showValue"
+      [unit]="args.unit"
+      [mode]="args.mode"
+    />
+  </div>
 </ng-template>
 
 <ng-template #modes>
-  <sc-progressbar [value]="40" data-testid="sc-progressbar" />
-  <sc-progressbar [value]="80" [showValue]="false" />
-  <sc-progressbar mode="indeterminate" />
+  <div class="col">
+    <sc-progressbar [value]="40" data-testid="sc-progressbar" />
+    <sc-progressbar [value]="80" [showValue]="false" />
+    <sc-progressbar mode="indeterminate" />
+  </div>
 </ng-template>

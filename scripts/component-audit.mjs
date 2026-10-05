@@ -56,10 +56,14 @@ function blob(dir) {
 export const sinComentarios = (ts) =>
   ts.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1');
 
-/** Índice del cierre que casa con el `abre` que hay en `i`. -1 si no cierra. */
+/**
+ * Índice del cierre que casa con el `abre` que hay en `i`. -1 si no cierra. El `>` de una flecha (`=>`) no cierra un
+ * genérico: sin eso, `input<(() => void) | null>(null)` salía en la tabla de API como «(() =» y sin su `null`.
+ */
 function cierraEn(texto, i, abre, cierra) {
   let n = 0;
   for (let j = i; j < texto.length; j++) {
+    if (cierra === '>' && texto[j] === '>' && texto[j - 1] === '=') continue;
     if (texto[j] === abre) n++;
     else if (texto[j] === cierra) {
       n--;

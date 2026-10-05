@@ -31,6 +31,8 @@
  *   (c) PROYECCIÓN: `<sc-select>` proyecta por `contentChild('item')` y su snippet enseñaba
  *       `pTemplate="item"`, la sintaxis vieja de PrimeNG, que al wrapper NO le llega.
  * Y (b) un TRINQUETE: cuántos inputs públicos no aparecen en ningún ejemplo ni knob de su página.
+ * AMPLIADO EL 2026-10-05 con (e): una story SIN snippet enseña lo que el motor serializa, que describe la plantilla del
+ * Playground; si pinta otra, tiene que llevar el suyo (`historiasSinSuCodigo`).
  *
  * Dos cosas por snippet:
  *   1. Todo tag `sc-*` que aparezca tiene que ser el selector de un componente del DS.
@@ -237,7 +239,8 @@ export function historiasDe(ts) {
     const ref = refDeLocal.get(tpl[1]);
     if (!ref) continue;
     const porNombre = obj.match(/\bsnippet:\s*(\w+_SNIPPET)/);
-    const enLinea = obj.match(/\bsnippet:\s*`([\s\S]*?)`/);
+    // En línea, entre backticks o entre comillas simples (datepicker «Con valor»).
+    const enLinea = obj.match(/\bsnippet:\s*`([\s\S]*?)`/) ?? obj.match(/\bsnippet:\s*'((?:[^'\\\n]|\\.)*)'/);
     if (porNombre) usadas.add(porNombre[1]);
     historias.push({
       story: obj.match(/\bname:\s*'([^']*)'/)?.[1] ?? ref,
@@ -249,6 +252,17 @@ export function historiasDe(ts) {
   }
   const sinAtar = [...constantes.keys()].filter((n) => !usadas.has(n));
   return { historias, sinAtar };
+}
+
+/**
+ * (e) LA STORY SIN SNIPPET PINTA LA PLANTILLA DEL PLAYGROUND. Sin `snippet`, el motor enseña el tag con los args de la
+ * story (`story-host`, `snippetFor`), que describen la plantilla del Playground. Si la story pinta OTRA plantilla, ese
+ * código no es el suyo: formsectionnav «Rótulos largos» enseñaba un `labelKey` que no pinta, y multiselect «Básico» no
+ * decía sus `[options]`. Medido el 2026-10-05: cinco stories así.
+ */
+export function historiasSinSuCodigo(historias) {
+  const playground = historias.find((h) => h.playground)?.ref;
+  return historias.filter((h) => !h.playground && h.codigo === null && h.ref !== playground);
 }
 
 /**
@@ -493,6 +507,12 @@ if (process.argv[1] && process.argv[1].endsWith('audit-doc-snippets.mjs')) {
       problemas.push([
         `${corta} · ${n}: la constante existe y ninguna story la usa.`,
         '      → o la atas a su story, o sobra: un ejemplo que no se pinta no se puede comprobar.',
+      ]);
+    }
+    for (const h of historiasSinSuCodigo(historias)) {
+      problemas.push([
+        `${corta} · ${h.story}: no lleva snippet y pinta \`#${h.ref}\`, no la plantilla del Playground.`,
+        '      → el motor le escribiría los args del Playground, que describen otra plantilla: dale su `snippet`.',
       ]);
     }
     for (const h of historias) {

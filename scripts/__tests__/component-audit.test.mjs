@@ -449,3 +449,12 @@ test('el trinquete de componentes jubilados est\u00e1 en su n\u00famero MEDIDO',
     `hay ${n} componente(s) sobre uno jubilado y el tope dice ${WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX}`,
   );
 });
+
+test('miembrosPublicos: un tipo con función flecha no se corta en el «>» de «=>»', () => {
+  // El caso real: los callbacks de sc-bulk-transcription-modal (`closeRequested`, `processRequested`) salían en la
+  // tabla de API como «(() =» y sin su `null`.
+  const ts = 'export class X {\n  readonly closeRequested = input<(() => void) | null>(null);\n}';
+  const [m] = miembrosPublicos(ts);
+  assert.equal(m.tipo, '(() => void) | null');
+  assert.equal(m.porDefecto, 'null');
+});
