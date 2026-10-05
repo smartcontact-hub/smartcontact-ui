@@ -24,13 +24,33 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 `git show c065d664:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 7d70bfb9:…`. El de D3
 (DD-152, tampoco): `git show e7e0e8f3:docs/handoff/supervisor-fichas.md`. El de F (DD-153, tampoco): `git show
 f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`. El de lo que dejó F
-(DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`.
+(DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. El de la
+revisión de producto del 2026-10-04 (DD-157 a DD-162): `git show 7d470054:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), en su rama
+## ✅ 2026-10-05 · El pulido de las fichas (DD-171), en un lote de seis bloques, en su rama
 
-> **Sello:** rama `arebury/figma-grid-three-columns` sobre `main` en HEAD `5cc9af78`; las pruebas en rojo, `1c7ed587`.
-> **Un bloque, un commit en rojo y otro en verde (DD-154). Sin subir: primero lo ve Rafa en local.** Sale del marco de
-> la ficha de grupo en Figma («Landing page», nodo 2467:7078), leído contenedor a contenedor.
+> **Sello:** rama `arebury/fichas-pulido` sobre `main` en HEAD `7d470054` (DD-170 ya fundido). Un PR, un commit en rojo
+> y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local.
+
+- **1 · El nombre editable:** se cierra al salir (pulsar fuera, Tab) con lo escrito, y al cerrar el foco vuelve al
+  nombre. Lo encontró la revisión de interacción con Playwright (una sonda que anota y no afirma): la columna fija
+  cabe hasta 1440×520, al 200 % el orden es bueno y cambiar de sección deja la página arriba; solo falló esto.
+- **2 · Las ayudas, cortas:** 19 textos en los cuatro idiomas, `text-wrap: pretty` en las ayudas del DS y de la app,
+  y «Tiempo de ringing» con su ayuda «a otro agente». De 13 ayudas que se alargaban a 1440 quedan 3 en dos líneas, sin
+  palabras solas; lo vigila `fichas-textos.spec.ts`.
+- **3 · Las marcas del índice** (`sc-form-section-nav`), al final de su fila y en la misma vertical, con su hueco fijo.
+- **4 · La tabla de agentes del grupo**, compacta (`sm`) y cada columna a su rótulo: cabe a 1440 con tres canales (antes
+  desplazaba 181 px). **Sin paginación**, en la ficha y en el panel; con lista virtual la caja ocupa su tope (con
+  «Todos» se quedaba en 2 px). El porqué de la paginación (DD-151 no lo decía), en DD-171 §5.
+- **5 · «2/14 grupos seleccionados»** en la barra en lote del DS (`total`), y «2 de 14» para el lector.
+- **6 · El «Column Toggle» de primeng.dev**, tal cual, en los listados (sustituye el Listbox de DD-162), con su teclado
+  sin arrastrar. Medido contra primeng.dev.
+
+## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), fundido (#337)
+
+> **Sello:** fundido en `main` como HEAD `7d470054`; CI del PR y de `main`, en verde (leídos). Sale del marco de la
+> ficha de grupo en Figma («Landing page», nodo 2467:7078), leído contenedor a contenedor. En su CI salieron dos
+> pruebas que con DD-170 ya no medían nada (General ya cabía a 1280×720; las 10 filas cabían a 1512×945): rehechas.
 
 - **El molde, en las tres fichas:** el nombre y su línea van arriba de la columna del índice (dentro de `.page__rail`
   en el DOM); la sección y el resumen arrancan a su altura; la rejilla es de una fila (`'rail main summary'`), y la
@@ -159,35 +179,10 @@ entran en `list-table-grammar`. De paso, en Variables el valor por defecto largo
 y tapaba la columna «Tipo»: pasa a `kind: 'truncate'` (DD-124). Fundido: #329 → `95d98472`. La página de Button de
 sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): la ganó en el lote 2 (#330).
 
-## ✅ 2026-10-04 · La revisión de producto del 2026-10-04, en un lote de seis bloques (DD-157 a DD-162), fundida (#325)
-
-> **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Medido el tiempo de punta a punta: el feedback llegó
-> a las 15:28 UTC; los seis bloques, la pasada final, los barridos y `revision`, en local, a las 18:05 (2 h 37 min).**
-
-- **1 · Distribución y colas (DD-157):** el árbol del DS. La sección en `surface="subtle"`, cada canal un
-  `sc-subsection` y cada parte un `sc-slot`; Chat en el orden de Teléfono; la música en «Cola»; los demás mensajes de
-  Teléfono de vuelta, plegados y sin «anuncio». DS: `sc-slot` se pliega y `sc-subsection` acepta `titleId`.
-- **2 · El alta (DD-158):** ✓ solo en las secciones con algo obligatorio (`seccionesDeAlta` gana `obligatoria`); el
-  teléfono saliente, segunda puerta del grupo; «Atrás» y «Siguiente» como el Stepper vertical, con los botones del DS.
-- **3 · Los listados (DD-159):** en Grupos, la cifra de agentes abre su asignación y sale «Asignar» (DS:
-  `sc-group-popover` gana `activated`); en Agentes, la cifra de grupos ya llevaba a su sección.
-- **6 · La tabla al pie (DD-160):** `scLlegaAlPie` mide el alto que queda; norma 10 de AGENTS «UX de pantalla» y en
-  Patrones de sc-docs.
-- **5 · El resumen con color (DD-161):** la cifra principal, con el degradado del botón principal y el anillo en el
-  color del texto; una por ficha.
-- **4 · Las columnas (DD-162):** el Listbox nativo (casilla y arrastre) en el globo del icono; las cabeceras ya no se
-  arrastran. PickList, valorado y descartado para 8-12 columnas.
-- **Pasada final** (Playwright, con la lista de ui-ux-pro-max para web): nombre, foco, objetivo ≥ 24, sin saltos, en
-  claro, oscuro y «reducir movimiento». Arreglada la cifra del globo (15 × 20 → 24,5, con un `::after`).
-
-**Pendiente, anotado:** el rótulo-enlace del resumen mide 18 de alto (DD-146): llevarlo a 24 cambia el alto de todos
-los resúmenes y se mide aparte. Ordenar columnas con teclado no se puede (tampoco antes, con las cabeceras).
-
 ## SIGUIENTE — sin preguntar
 
-0. **Las fichas sin cabecera (DD-170), en su rama** (el tramo de arriba): Rafa lo mira en local; si le vale,
-   `preflight:scope -- --run`, PR y `ci:verdict`. Supervisión y limpieza (DD-168) ya fue en su PR. Con esto se acaba
-   lo que dependía de nosotros en este frente. Lo siguiente: **triar los otros frentes** (DS, CusCare, Dashboard y Sidebar, cada uno con su hand-off) en
+0. **El pulido de las fichas (DD-171), en su PR** (el tramo de arriba): Rafa lo mira en local; con su visto bueno, se
+   funde y se lee el CI de `main`. Con esto se acaba lo que dependía de nosotros en este frente. Lo siguiente: **triar los otros frentes** (DS, CusCare, Dashboard y Sidebar, cada uno con su hand-off) en
    lotes como estos, y enseñarlos antes de empezar ninguno.
 
    Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
