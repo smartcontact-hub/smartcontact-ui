@@ -36,13 +36,18 @@ export function mergeableDe(pr) {
   return 'UNKNOWN';
 }
 
-/** Un PR del REST con la forma de `gh pr list --json number,state,headRefName,mergedAt,mergeCommit,url`. */
+/**
+ * Un PR del REST con la forma de `gh pr list --json number,state,headRefName,headRefOid,mergedAt,mergeCommit,url`.
+ * `headRefOid` es el sha de la rama en el momento de ESTE PR (`head.sha`): lo que compara `ci:verdict` contra tu
+ * HEAD para saber si un PR fundido describe tu commit de hoy o uno viejo con trabajo nuevo encima (#333).
+ */
 export function prDe(p) {
   const fundido = Boolean(p.merged_at);
   return {
     number: p.number,
     state: fundido ? 'MERGED' : String(p.state ?? '').toUpperCase(),
     headRefName: p.head?.ref ?? '',
+    headRefOid: p.head?.sha ?? null,
     mergedAt: p.merged_at ?? null,
     mergeCommit: fundido && p.merge_commit_sha ? { oid: p.merge_commit_sha } : null,
     url: p.html_url ?? '',
@@ -118,11 +123,19 @@ export function cliente({ gh = ghReal, git = gitReal } = {}) {
         completedAt: j.completed_at,
       }));
     },
-    /** El PR más reciente de la rama, en cualquier estado, con `mergeable` si está abierto; `null` si no hay. */
+    /**
+     * El PR que importa de la rama, con `mergeable` si está abierto; `null` si no hay ninguno. Una sesión cloud
+     * reutiliza el mismo nombre de rama tras fundir un PR (#333): el siguiente lote llega a esa rama antes de
+     * que exista el PR nuevo, así que por unos commits conviven un fundido VIEJO y, en cuanto se abre, un
+     * abierto NUEVO con el mismo `headRefName`. El abierto es siempre el que describe el HEAD de hoy —gana
+     * aunque el REST no lo devuelva primero—, y si no hay ninguno abierto se cae al más reciente de la lista
+     * (el REST ordena por fecha de creación descendente por defecto).
+     */
     prDeRama(r) {
-      const lista = api(`pulls?head=${base().owner}:${rama(r)}&state=all&per_page=1`);
+      const lista = api(`pulls?head=${base().owner}:${rama(r)}&state=all&per_page=10`);
       if (!lista.length) return null;
-      const pr = prDe(lista[0]);
+      const elegido = lista.find((p) => p.state === 'open') ?? lista[0];
+      const pr = prDe(elegido);
       if (pr.state !== 'OPEN') return { ...pr, mergeable: null };
       return { ...pr, mergeable: mergeableDe(api(`pulls/${pr.number}`)) };
     },

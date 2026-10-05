@@ -15,7 +15,12 @@
  *     PR que el auto-merge había cerrado hacía tres minutos);
  *   · el PR está en CONFLICTO con la base (exit 5): s44, el propio #95 de este comando estaba
  *     verde y `CONFLICTING` a la vez, y el verde lo cantó el comando mientras el conflicto lo vi a
- *     mano en el PR.
+ *     mano en el PR;
+ *   · el PR de la rama está MERGED pero tu HEAD es un commit NUEVO por delante del suyo (exit 6):
+ *     una sesión cloud reutiliza el mismo nombre de rama tras fundir, y el siguiente lote llega
+ *     antes de abrir el PR nuevo. Hasta que lo abras no hay `pull_request` que dispare `ci.yml`, así
+ *     que no hay verde ni rojo que leer — este aviso YA es la lectura (#333, medido 2026-10-05: HEAD
+ *     77f544f6 con commits sobre el #330, ya fundido en 8b62576a).
  *
  * La rama por defecto es la de ORIGIN que sigue tu HEAD, no el nombre local: los worktrees de este
  * repo usan sufijo (`…-list-2`) sobre la misma rama remota, y con el nombre local la consulta
@@ -34,7 +39,9 @@
  *
  * Exit: 0 verde sobre HEAD · 1 rojo · 2 pendiente/en curso · 3 el run es de OTRO commit
  *       (un check atado a un commit viejo es un snapshot, no el estado de hoy — #17 s39)
- *       · 4 el PR de la rama ya está fundido · 5 el PR está en conflicto con la base.
+ *       · 4 el PR de la rama ya está fundido · 5 el PR está en conflicto con la base
+ *       · 6 el PR de la rama está fundido pero tu HEAD es un commit nuevo encima: sin PR abierto,
+ *         no hay CI que disparar todavía.
  *
  * Uso:  npm run ci:verdict            (rama actual)
  *       npm run ci:verdict -- main    (otra rama)
@@ -106,6 +113,18 @@ export function pistaDelRojo({ rama, id, jobs = null }) {
  */
 export function veredicto({ rama, head, runs, pr, etiqueta = 'tu HEAD', jobs = null }) {
   if (pr && pr.state === 'MERGED') {
+    // El MERGED solo vale si describe TU commit: `headRefOid` es el sha que ese PR llegó a ver. Si
+    // es otro, hay trabajo nuevo por delante del PR fundido (una sesión cloud que reutiliza el
+    // nombre de la rama tras fundir, #333) y todavía no existe el PR que dispararía el CI — eso NO
+    // es «ya está fundido, no queda nada», es «aún no hay nada que leer».
+    if (pr.headRefOid && pr.headRefOid !== head) {
+      return {
+        exit: 6,
+        linea:
+          `△ ${etiqueta} ${head.slice(0, 7)} no tiene PR abierto: el CI corre al abrirlo ` +
+          `(pull_request). El PR #${pr.number} anterior de ${rama} ya está fundido.`,
+      };
+    }
     const en = pr.mergeCommit?.oid ? ` en ${pr.mergeCommit.oid.slice(0, 7)}` : '';
     return {
       exit: 4,
