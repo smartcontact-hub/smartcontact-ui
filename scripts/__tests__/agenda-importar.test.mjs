@@ -2,6 +2,7 @@
 // dentro de `test:unit`.
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { TextEncoder } from 'node:util';
 
 import {
   decodificarCsv,
