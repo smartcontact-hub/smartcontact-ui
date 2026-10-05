@@ -26,6 +26,9 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/components`** — `sc-select` gana `ariaLabel`, el nativo de `p-select`: nombra el combobox cuando
+  no hay rótulo a la vista. Sin ningún nombre, PrimeNG lo nombraba con la opción elegida, y el lector oía el valor en
+  lugar de lo que se pide. ([DD-133](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-datatable` gana `first`, la primera fila de la página abierta, en las dos
   direcciones como en `p-table` (`[(first)]`). Quien filtra las filas fuera de la tabla la vuelve a `0` al cambiar la
   búsqueda: el paginador de PrimeNG solo retrocede una página cuando la abierta queda fuera de rango, y desde la
@@ -88,6 +91,10 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   seguía diciendo en español. Sin cambio en español; quien los pase por entrada, manda. ([DD-133](docs/DECISIONS.md))
 
 ### Fixed
+
+- **`@smartcontact-hub/components`** — Las opciones apagadas de `sc-select` dicen `aria-disabled`; antes solo lo decían
+  su color y `data-p-disabled`. Y `sc-bulk-edit-menu` nombra sus tres desplegables con las palabras de su frase
+  («Cambiar», «de», «a»), que se oían con su valor. ([DD-133](docs/DECISIONS.md))
 
 - **`@smartcontact-hub/components`** — La cifra de `sc-group-popover` se pulsa en al menos 24,5 × 24,5 (WCAG 2.5.8):
   un `::after` invisible y centrado agranda la zona sin cambiar cómo se ve. Pintaba lo que mide su número (15 × 20

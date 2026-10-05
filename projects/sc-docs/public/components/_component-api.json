@@ -6431,7 +6431,7 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
+          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y nombra el control por `aria-labelledby`, así que **sin ella el campo no tiene nombre accesible**: se le da uno con `ariaLabelledBy` (un rótulo de la pantalla) o con `ariaLabel` (sin rótulo a la vista).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6555,6 +6555,21 @@
           "origen": "nativo",
           "nativo": {
             "descripcion": "Establishes relationships between the component and label(s) where its value should be one or more element IDs.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Nombre accesible cuando no hay rótulo a la vista (las condiciones de una regla, un selector en una barra). Va al combobox por el `ariaLabel` nativo de `p-select`, nunca como `aria-label` en el host. Sin ningún nombre, PrimeNG nombra el combobox con la opción elegida y el lector oye el valor en lugar de lo que se pide (DD-133).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Used to define a aria label attribute the current element.",
             "porDefecto": null,
             "obsoleta": null,
             "heredadaDe": null
@@ -6823,7 +6838,6 @@
       ],
       "ocultas": [
         "ariaFilterLabel",
-        "ariaLabel",
         "autoOptionFocus",
         "autofocus",
         "autofocusFilter",

@@ -35,6 +35,7 @@
     (onFocus)="onFocus($event)"
     (onBlur)="onBlur($event)"
     [ariaLabelledBy]="resolvedLabelledBy()"
+    [ariaLabel]="ariaLabel()"
     [attr.name]="name() ?? null"
     [pt]="pt()"
     [invalid]="isInvalid()"

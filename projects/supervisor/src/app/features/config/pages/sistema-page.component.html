@@ -122,26 +122,26 @@
       <div class="sub-section policy-list">
         <div class="policy-row">
           <div>
-            <span class="policy-row__label sc-text-body-regular">
+            <span class="policy-row__label sc-text-body-regular" id="sistema-min-length-label">
               {{ 'config.seguridad.policies.min_length' | translate }}
             </span>
             <p class="policy-row__hint sc-text-caption-regular">
               {{ 'config.seguridad.policies.min_length_hint' | translate }}
             </p>
           </div>
-          <sc-select class="policy-row__select" size="sm" [options]="minLengthOptions()" optionLabel="label" optionValue="value" [value]="minLength()" (valueChange)="minLength.set($any($event))" />
+          <sc-select class="policy-row__select" size="sm" ariaLabelledBy="sistema-min-length-label" [options]="minLengthOptions()" optionLabel="label" optionValue="value" [value]="minLength()" (valueChange)="minLength.set($any($event))" />
         </div>
 
         <div class="policy-row policy-row--bordered">
           <div>
-            <span class="policy-row__label sc-text-body-regular">
+            <span class="policy-row__label sc-text-body-regular" id="sistema-expiration-label">
               {{ 'config.seguridad.policies.expiration' | translate }}
             </span>
             <p class="policy-row__hint sc-text-caption-regular">
               {{ 'config.seguridad.policies.expiration_hint' | translate }}
             </p>
           </div>
-          <sc-select class="policy-row__select" size="sm" [options]="expirationOptions()" optionLabel="label" optionValue="value" [value]="expiration()" (valueChange)="expiration.set($any($event))" />
+          <sc-select class="policy-row__select" size="sm" ariaLabelledBy="sistema-expiration-label" [options]="expirationOptions()" optionLabel="label" optionValue="value" [value]="expiration()" (valueChange)="expiration.set($any($event))" />
         </div>
 
         <div class="policy-row policy-row--bordered">

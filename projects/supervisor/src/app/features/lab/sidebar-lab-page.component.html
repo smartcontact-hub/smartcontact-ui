@@ -299,9 +299,10 @@
       <sc-toggleswitch inputId="lab-responsive" [checked]="responsive" (checkedChange)="responsive = $event" />
     </div>
     <div class="sc-text-body-regular lab__control">
-      <label for="lab-variant">Variant</label>
+      <label id="lab-variant-label" for="lab-variant">Variant</label>
       <sc-select
         inputId="lab-variant"
+        ariaLabelledBy="lab-variant-label"
         [options]="variantOptions"
         optionValue="value"
         [(value)]="variant"
@@ -325,9 +326,10 @@
       </sc-selectbutton>
     </div>
     <div class="sc-text-body-regular lab__control">
-      <label for="lab-collapsible">Collapsible</label>
+      <label id="lab-collapsible-label" for="lab-collapsible">Collapsible</label>
       <sc-select
         inputId="lab-collapsible"
+        ariaLabelledBy="lab-collapsible-label"
         [options]="collapsibleOptions"
         optionValue="value"
         [disabled]="responsive"

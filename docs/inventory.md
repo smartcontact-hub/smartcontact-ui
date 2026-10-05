@@ -84,7 +84,7 @@
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 11 |
 | `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 31 |
-| `sc-select` | EXTENDED | primeng/select | 28 inputs | sc-field-label sc-field-msg | ✓ | 58 |
+| `sc-select` | EXTENDED | primeng/select | 29 inputs | sc-field-label sc-field-msg | ✓ | 58 |
 | `sc-selectbutton` | EXTENDED | primeng/selectbutton | 13 inputs | — | ✓ | 12 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 4 inputs | — | ✓ | 8 |

@@ -1853,6 +1853,22 @@ Lo que había:
     agente, «Tipo de agente» y «Presencia inicial» se anuncian como «normal» y «disponible» (medido el 2026-09-28).
     Un gate que los cace evitaría el siguiente.
 
+**Actualización (2026-10-05)** · Cerrado lo de los selects sin nombre, con su gate. Medido en el navegador recorriendo
+las secciones de las fichas, Sistema y el constructor de reglas: PrimeNG nombra un combobox sin nombre con la opción
+elegida («cuscare», «Sin tipificación», «8 caracteres», «Servicio»). Un `<label for>` sí nombra un `sc-multiselect`,
+porque su combobox es un `<input>`, y no un `sc-select`, cuyo combobox es un `<span>`.
+- **En el DS**, `sc-select` gana `ariaLabel`, que es el nativo de `p-select` y llega al combobox. Sus opciones
+  apagadas dicen `aria-disabled` (`pt.option`, con el `context` de cada opción). `sc-bulk-edit-menu` nombra sus tres
+  desplegables con las palabras de su frase: «Cambiar», «de» y «a».
+- **`audit:screen-hygiene` gana la regla**, sin sumar gates: todo `sc-select` y `sc-multiselect` lleva `label`,
+  `ariaLabelledBy` o `ariaLabel`. Un `<label for>` vale solo para el multiselect, y un `aria-label` en el host no
+  vale. Cazó 31 de 119: 23 en el Supervisor, 3 en el DS y 5 en sc-docs. Quedan 0.
+- **El arreglo**, en cada sitio como ya hacían sus vecinos: con rótulo a la vista, `ariaLabelledBy` con el id del
+  rótulo; sin él, `ariaLabel`. Los cuatro desplegables de una condición de regla se nombran por lo que eligen (Campo,
+  Operador, Valor, Unidad), en los cuatro idiomas. Los snippets de sc-docs enseñan el rótulo que su demo pinta.
+- **Pruebas:** la unitaria de la regla, la vitest de `sc-select` y `desplegables-con-nombre.spec.ts`, las tres en rojo
+  contra el código anterior.
+
 ---
 
 ## DD-132 · 2026-09-28 — Qué trae cada tipo de usuario: cuatro tipos, cada uno con su plantilla de acceso

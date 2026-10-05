@@ -405,17 +405,17 @@
             </div>
             @if (isRingAll()) {
               <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
+                <label id="group-ring-all-label" class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
                 <span class="inline-control">
-                  <sc-select inputId="group-ring-all" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
+                  <sc-select inputId="group-ring-all" ariaLabelledBy="group-ring-all-label" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
                   <span class="inline-control__suffix sc-text-caption-regular">{{ 'groups.form.fields.ring_all_suffix' | translate }}</span>
                 </span>
               </div>
             }
             @if (isNiveles()) {
               <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
-                <sc-select inputId="group-sub-strategy" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
+                <label id="group-sub-strategy-label" class="field__label sc-text-caption-semibold" for="group-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+                <sc-select inputId="group-sub-strategy" ariaLabelledBy="group-sub-strategy-label" [options]="subStrategies" [value]="form().subStrategy" (valueChange)="onSubStrategyChange($event)" />
               </div>
             }
             <ng-container *ngTemplateOutlet="transferField; context: { channel: 'phone', queue: form().phoneQueue }" />
@@ -664,7 +664,7 @@
       <div class="grid grid--2">
         <!-- UNA tipificación: el agente recorre un solo árbol al cerrar (manual de Voice, p. 14). -->
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="group-typification">
+          <label id="group-typification-label" class="field__label sc-text-caption-semibold" for="group-typification">
             {{ 'groups.form.fields.typification' | translate }}
           </label>
           <!-- Crear sin salir de la ficha (decisión de producto, 2026-09-18). El «+» es el botón de solo icono de
@@ -673,6 +673,7 @@
           <div class="control-add">
             <sc-select
               inputId="group-typification"
+              ariaLabelledBy="group-typification-label"
               optionLabel="label"
               optionValue="value"
               [options]="typificationOptions()"

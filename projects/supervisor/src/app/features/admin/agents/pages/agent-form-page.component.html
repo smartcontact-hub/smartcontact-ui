@@ -275,11 +275,12 @@
         </div>
 
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-type">
+          <label id="agent-type-label" class="field__label sc-text-caption-semibold" for="agent-type">
             {{ 'agents.form.fields.type' | translate }}
           </label>
           <sc-select
             inputId="agent-type"
+            ariaLabelledBy="agent-type-label"
             [options]="agentTypes"
             [value]="form().agentType"
             (valueChange)="onAgentTypeValueChange($event)"
@@ -300,11 +301,12 @@
     <section class="sub-section">
       <div class="grid grid--2">
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-presence">
+          <label id="agent-presence-label" class="field__label sc-text-caption-semibold" for="agent-presence">
             {{ 'agents.form.fields.presence' | translate }}
           </label>
           <sc-select
             inputId="agent-presence"
+            ariaLabelledBy="agent-presence-label"
             [options]="presenceStates"
             [value]="form().presenceStatus"
             (valueChange)="onPresenceValueChange($event)"
@@ -485,11 +487,12 @@
 
       <div class="grid grid--3">
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-pickup">
+          <label id="agent-pickup-label" class="field__label sc-text-caption-semibold" for="agent-pickup">
             {{ 'agents.form.advanced.comportamiento.pickup_call' | translate }}
           </label>
           <sc-select
             inputId="agent-pickup"
+            ariaLabelledBy="agent-pickup-label"
             optionLabel="label"
             optionValue="value"
             [options]="pickupOptions()"
@@ -499,11 +502,12 @@
         </div>
 
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-pickup-chat">
+          <label id="agent-pickup-chat-label" class="field__label sc-text-caption-semibold" for="agent-pickup-chat">
             {{ 'agents.form.advanced.comportamiento.pickup_chat' | translate }}
           </label>
           <sc-select
             inputId="agent-pickup-chat"
+            ariaLabelledBy="agent-pickup-chat-label"
             optionLabel="label"
             optionValue="value"
             [options]="pickupOptions()"
@@ -513,11 +517,12 @@
         </div>
 
         <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-max-chats">
+          <label id="agent-max-chats-label" class="field__label sc-text-caption-semibold" for="agent-max-chats">
             {{ 'agents.form.advanced.comportamiento.max_chats' | translate }}
           </label>
           <sc-select
             inputId="agent-max-chats"
+            ariaLabelledBy="agent-max-chats-label"
             [options]="maxChatsOptions"
             [value]="form().maxChats"
             (valueChange)="onMaxChatsValueChange($event)"

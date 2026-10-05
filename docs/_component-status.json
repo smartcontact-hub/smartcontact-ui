@@ -1220,9 +1220,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": false,
-      "inputs": 28,
+      "inputs": 29,
       "api": [
         "appendTo",
+        "ariaLabel",
         "ariaLabelledBy",
         "blurred",
         "disabled",
