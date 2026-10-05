@@ -30,7 +30,7 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   al `<button>` real por passthrough, no al host `<sc-button>` (que nunca recibe el foco). Sin fijar ninguna,
   nada cambia. La «Columnas» de una lista, el ⋮ de un widget del Dashboard y «Agentes» del widget «Grupos» (con
   varios grupos) las usan: antes, el lector de pantalla no decía que abren algo ni si ya está abierto.
-  ([DD-170](docs/DECISIONS.md))
+  ([DD-171](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-select`, `sc-multiselect`, `sc-inputnumber`, `sc-toggleswitch`,
   `sc-textarea` y `sc-selectbutton` ganan `ariaDescribedBy`: ids, separados por espacios, de la ayuda que va al lado del
   campo y no debajo. Se oye después de la ayuda propia. Sin él, nada cambia. ([DD-133](docs/DECISIONS.md))

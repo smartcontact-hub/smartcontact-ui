@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewEncapsulation, inject, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AutoFocusModule } from 'primeng/autofocus';
 import { InplaceModule } from 'primeng/inplace';
@@ -15,12 +15,15 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
  * Dos teclas que el ejemplo no tiene, porque un campo de una línea las pide: Enter cierra con lo escrito y Escape
  * cierra devolviendo el nombre de antes. Y cerrar con el nombre vacío también devuelve el de antes: el título de
  * la página no puede quedarse en blanco (Guardar ya lo impide; aquí no se ve el porqué).
+ *
+ * Mientras se edita, el título conserva el alto que tenía: el nombre puede ocupar dos líneas (DD-170) y el campo es
+ * de una, así que sin eso lo de debajo (la línea de datos, el índice) subía 24 px al pulsarlo.
  */
 @Component({
   selector: 'sc-name-inplace',
   imports: [AutoFocusModule, InplaceModule, InputTextModule, ScButtonComponent, TranslateModule],
   template: `
-    <p-inplace class="name-inplace" (onActivate)="remember()">
+    <p-inplace class="name-inplace" (onActivate)="remember()" (onDeactivate)="altoEnReposo.set(null)">
       <ng-template #display>
         <span class="name-inplace__text">{{ name() }}</span>
       </ng-template>
@@ -55,8 +58,11 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
     </p-inplace>
   `,
   styles: `
-    :host {
-      display: block;
+    /* Por su nombre y no con «:host», que sin encapsular no casa con nada: la pieza se pintaba en línea. Su propio
+       contexto de bloque («flow-root») hace que mida lo mismo que el título (el relleno del display sobresale por
+       arriba y por abajo sin sumar), y así su alto en reposo es el que conserva al editar. */
+    sc-name-inplace {
+      display: flow-root;
       min-width: 0;
     }
 
@@ -66,15 +72,24 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
        pestañas bajaban 12,5px. */
     /* En bloque ajustado al texto, no en línea: en línea sumaba el hueco de la línea de base (29,5 de alto en vez de
        los 24 del título). */
+    /* El texto tiene el ancho entero del título: el relleno sobresale por los dos lados, no se come el nombre. */
     .name-inplace .p-inplace-display {
       display: block;
       width: fit-content;
-      max-width: 100%;
+      max-width: calc(100% + 2 * (var(--sc-cmp-form-field-padding-x) + 1px));
       margin-inline-start: calc(-1 * (var(--sc-cmp-form-field-padding-x) + 1px));
       margin-block: calc(-1 * (var(--sc-cmp-form-field-padding-y) + 1px));
+    }
+
+    /* Hasta dos líneas, y se corta al final de la segunda, como el título de las fichas en la columna del índice
+       (DD-170): «anywhere» parte la palabra sola más ancha que la columna; «balance» reparte las dos líneas. */
+    .name-inplace__text {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow-wrap: anywhere;
+      text-wrap: balance;
     }
 
     /* Editando, lo mismo: el campo ocupa el sitio del título sin empujar nada. */
@@ -100,6 +115,7 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
   // Sin encapsular: el display y el campo los pinta `p-inplace` dentro de su propia vista.
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[style.min-block-size.px]': 'altoEnReposo()' },
 })
 export class NameInplaceComponent {
   /** El nombre actual (el del formulario). */
@@ -113,9 +129,15 @@ export class NameInplaceComponent {
   readonly nameChange = output<string>();
 
   private before = '';
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
+  /** El alto del nombre en reposo, mientras se edita; `null` en reposo. */
+  protected readonly altoEnReposo = signal<number | null>(null);
+
+  /** Al activarse, el nombre aún se ve: se mide antes de que el campo lo sustituya. */
   protected remember(): void {
     this.before = this.name();
+    this.altoEnReposo.set(this.host.getBoundingClientRect().height);
   }
 
   protected close(closeCallback: (event: Event) => void, event: Event): void {

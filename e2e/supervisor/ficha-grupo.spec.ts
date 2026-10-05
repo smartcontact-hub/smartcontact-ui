@@ -13,7 +13,7 @@ import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from
  *   1. UN índice lateral gobierna TODO el contenido: una sección a la vista, y abre en General,
  *      que es la que decide las demás (sus canales).
  *   2. El molde es el de Contact Center (`--rail`, índice de 196), con el resumen a la derecha y las tres
- *      columnas arrancando a la misma altura: el título va en la del contenido, encima de la sección (DD-144).
+ *      columnas arrancando a la misma altura: el nombre va encima del índice, en su columna (DD-170).
  *   3. El índice y el resumen siguen enteros a la vista al bajar, también en un portátil; por debajo de 1340,
  *      el resumen es una franja encima del contenido.
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas.
@@ -128,7 +128,7 @@ test('los grupos no llevan cara: ni avatar en las listas ni foto en la ficha', a
   await expect(page.locator('.page__inner sc-illustrated-avatar')).toHaveCount(0);
 });
 
-test('el índice es el de Contact Center, y las tres columnas arrancan a la misma altura, con el título en el contenido', async ({
+test('el índice es el de Contact Center, y las tres columnas arrancan a la misma altura, con el nombre encima del índice', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -168,12 +168,12 @@ test('el índice es el de Contact Center, y las tres columnas arrancan a la mism
   expect(Math.round(m.main.x - m.rail.derecha)).toBe(28);
   expect(Math.round(m.resumen.x - m.main.derecha)).toBe(28);
   expect(m.main.ancho).toBe(812);
-  // Desde DD-144, el título va en la columna del contenido, encima de la sección, y el índice, el título y el
-  // resumen arrancan a la misma altura. Hasta entonces la cabecera iba encima de las tres, en la vertical del índice.
+  // Desde DD-170 el nombre va arriba de la columna del índice, y la sección y el resumen arrancan a su altura. De
+  // DD-144 a DD-170 iba en la columna del contenido, encima de la sección, que arrancaba 56 px más abajo.
   expect(m.h1.arriba).toBe(m.rail.arriba);
+  expect(m.h1.x).toBe(m.rail.x);
+  expect(m.main.arriba).toBe(m.rail.arriba);
   expect(m.resumen.arriba).toBe(m.rail.arriba);
-  expect(m.h1.x).toBe(Math.round(m.main.x));
-  expect(m.main.arriba).toBeGreaterThan(m.h1.abajo);
 });
 
 test('en un portátil, al bajar hasta el final de la sección más larga, el índice y el resumen siguen enteros', async ({
@@ -196,7 +196,7 @@ test('en un portátil, al bajar hasta el final de la sección más larga, el ín
   expect(m.resumen.bottom).toBeLessThanOrEqual(m.alto);
 });
 
-test('por debajo de 1340 el resumen pasa a una franja encima del contenido, que vuelve a medir 920', async ({ page }) => {
+test('por debajo de 1340 el resumen pasa a una franja encima del contenido, en su columna, que vuelve a medir 920', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await goto(page, 'admin/grupos/editar/11');
 
@@ -205,8 +205,29 @@ test('por debajo de 1340 el resumen pasa a una franja encima del contenido, que 
     return { resumen: caja('sc-group-summary'), rail: caja('.page__rail'), main: caja('.page__main') };
   });
   expect(m.resumen.bottom).toBeLessThanOrEqual(m.main.top);
-  expect(Math.round(m.resumen.left)).toBe(Math.round(m.rail.left));
+  // En la columna del contenido (DD-170): la del índice la ocupan el nombre y el índice, de arriba abajo.
+  expect(Math.round(m.resumen.left)).toBe(Math.round(m.main.left));
   expect(Math.round(m.main.width)).toBe(920);
+});
+
+test('en General, los canales caen en las tres columnas de los campos de encima, en cualquier ancho', async ({ page }) => {
+  // 1920: con la rejilla de casillas que se rellena sola (`auto-fill`) salían cuatro columnas y «Chat» caía 86 px a la
+  // izquierda de «Prioridad»; a 1440, 3 px (medido en producción el 2026-10-05, DD-170).
+  for (const ancho of [1440, 1920]) {
+    await page.setViewportSize({ width: ancho, height: 900 });
+    await goto(page, 'admin/grupos/editar/1');
+    const m = await page.evaluate(() => {
+      const campos = document.querySelector('.identity-fields')!;
+      const pistas = getComputedStyle(campos).gridTemplateColumns.split(' ').map(parseFloat);
+      const hueco = parseFloat(getComputedStyle(campos).columnGap);
+      const x0 = campos.getBoundingClientRect().left;
+      const columnas = pistas.map((_, i) => x0 + pistas.slice(0, i).reduce((a, b) => a + b + hueco, 0));
+      const casillas = [...document.querySelectorAll('.checkbox-grid > .checkbox-stack')].map((e) => e.getBoundingClientRect().left);
+      return { columnas: columnas.map((x) => Math.round(x * 4) / 4), casillas: casillas.map((x) => Math.round(x * 4) / 4) };
+    });
+    expect(m.columnas, `${ancho}: tres columnas de campos`).toHaveLength(3);
+    expect(m.casillas, `${ancho}: cada canal, en la vertical de su columna`).toEqual(m.columnas);
+  }
 });
 
 test('recargar la ficha no es «otra pestaña»; abrirla en otra de verdad, sí', async ({ page, context }) => {

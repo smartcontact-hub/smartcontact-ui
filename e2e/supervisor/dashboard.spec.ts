@@ -46,7 +46,7 @@ test('el asistente de widget no cambia de tamaño al cambiar de categoría', asy
   }
 });
 
-test('el ⋮ de un widget dice en el foco que abre un menú, y si ya está abierto (DD-170)', async ({ page }) => {
+test('el ⋮ de un widget dice en el foco que abre un menú, y si ya está abierto (DD-171)', async ({ page }) => {
   await goto(page, 'dashboard');
   // Acotado a un widget (sc-dashboard-widget-card): la pestaña del monitor tiene su propio ⋮, con el mismo
   // texto de aria-label (probado aparte, abajo).
