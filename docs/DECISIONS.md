@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La ficha de una tipificación sin saltos: el índice de las fichas · la dirección en un control · los niveles son las columnas (las tres siempre; la siguiente, fantasma) · añadir y renombrar en la línea de la columna · cada aviso en su línea reservada | DD-173 |
 > | Una tipificación es una ficha propia (árbol de hasta tres niveles, dirección, comentario y grupos por canal) · una por dirección y canal en cada grupo · su listado con las columnas de producto · importar y descargar detrás de un icono (`importable` en `sc-list-page`) · la ficha de grupo elige varias, sin «+» (enmienda DD-141 §7, DD-164 §1) | DD-172 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
@@ -126,6 +127,49 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-173 · 2026-10-05 — La ficha de una tipificación, sin saltos: el índice, los niveles como columnas y cada aviso en su línea
+
+**Contexto** · La primera versión de la ficha (índice, un selector 1 · 2 · 3 de niveles, columnas que aparecían y
+desaparecían con él, un aviso que entraba encima del árbol y errores bajo los campos) saltaba al usarla: medido, un
+aviso de rama a medias bajaba las columnas 40 px y quitar un nivel cambiaba el ancho de las demás. La revisión del
+2026-10-05 pidió menos saltos, un alta más sencilla y conservar el índice.
+
+**Decisión** ·
+1. **El molde de las fichas** (DD-122, DD-170): el nombre y su línea («Entrantes · 3 niveles») encima del índice, con
+   General, Categorías y Grupos; el alta con el índice de la edición, ✓ y «Atrás / Siguiente» (DD-143).
+2. **General, más corta**: la dirección es un solo control (Entrantes · Salientes · Ambas), sin el estado «ninguna» que
+   había que avisar; el comentario, un interruptor. «Habilitar categorización» pasa a ser tener niveles o no.
+3. **Los niveles son las columnas**, y las tres existen siempre, del mismo ancho: el siguiente nivel se añade pulsando su
+   columna fantasma («+ Añadir segundo nivel») y el último se quita con su ×, preguntando cuántas opciones se llevan.
+   Sin columnas en uso, la tipificación solo pide comentario. Una nueva nace con el primer nivel listo para escribir.
+4. **Añadir y renombrar, en la línea de cada columna** (Enter guarda, Escape deja de renombrar), y las acciones de la
+   opción elegida (renombrar, subir, bajar, eliminar) siempre a la vista, apagadas sin elegida: ni menú ⋮ ni diálogo de
+   renombrar. La opción recién añadida queda elegida, para añadir sus hijas sin más pasos.
+5. **Cada aviso en su línea reservada**, que cambia de texto y de color pero no aparece ni desaparece: bajo cada columna
+   (el repetido, qué se renombra, lo que le falta), bajo el árbol (completa, o qué ramas faltan) y encima de la tabla
+   de Grupos (con qué choca cada grupo). En la fila del grupo que choca, solo un icono. El nombre repetido marca su
+   campo y lo dice la barra, junto a Guardar, con todo lo que falte.
+
+**Razón** · Un aviso que empuja lo de debajo mueve lo que se iba a pulsar, y lo que se mueve al usarlo se lee como roto.
+Con las tres columnas siempre presentes, añadir o quitar un nivel es pulsar donde va, y nada cambia de ancho. Medido en
+la prueba, posición y tamaño de las columnas, la línea de estado y la tarjeta, antes y después de cada gesto: iguales;
+el medidor, con un salto puesto a propósito, lo caza (la columna baja de 137 a 177).
+
+**Descartadas** ·
+- *Una sola página sin índice, como el editor de una agenda*: más corta, pero se pidió conservar el índice de las fichas.
+- *El selector de niveles 1 · 2 · 3*: separaba el número de niveles de las columnas que lo muestran, y cambiar de número
+  cambiaba el ancho de todas.
+- *El menú ⋮ por columna y el diálogo de renombrar*: escondían las acciones de la opción elegida.
+- *Reservar el alto del aviso de encima del árbol*: un hueco vacío arriba, y el aviso seguía lejos de las columnas.
+
+**Consecuencias** ·
+- Componentes: `sc-tipificacion-niveles`, `sc-tipificacion-grupos`, la ficha `tipificacion-ficha-page`.
+- Arreglo cazado por su prueba: dos «Añadir» seguidos partían del mismo árbol y el segundo pisaba al primero; el editor
+  trabaja ahora sobre su copia, puesta al día en el acto (`linkedSignal`).
+- Pruebas: `tipificacion-ficha.spec.ts` (7), en rojo antes del bloque.
 
 ---
 

@@ -63,7 +63,8 @@ export const REPOSITORIES_ROUTES: Routes = [
     loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent),
   },
   {
-    /* La tipificación es una ficha propia (DD-172): el listado sigue en Repositorios. */
+    /* La tipificación tiene su ficha (DD-172): General, Categorización y Grupos, como las
+     * fichas de grupo y de agente. El listado sigue en Repositorios. */
     path: 'tipificaciones',
     data: repoInstance('repositories.tipificaciones.title'),
     children: [
@@ -71,6 +72,20 @@ export const REPOSITORIES_ROUTES: Routes = [
         path: '',
         loadComponent: () =>
           import('./pages/tipificaciones-list-page.component').then((m) => m.TipificacionesListPageComponent),
+      },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.tipificaciones.create_title' } },
+        loadComponent: () =>
+          import('./pages/tipificacion-ficha-page.component').then((m) => m.TipificacionFichaPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.tipificaciones.edit_breadcrumb' } },
+        loadComponent: () =>
+          import('./pages/tipificacion-ficha-page.component').then((m) => m.TipificacionFichaPageComponent),
+        canDeactivate: [formDirtyGuard],
       },
     ],
   },

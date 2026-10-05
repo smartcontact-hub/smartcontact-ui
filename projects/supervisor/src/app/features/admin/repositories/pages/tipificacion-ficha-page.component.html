@@ -1,0 +1,184 @@
+<!-- Guardar y Deshacer suben a la barra, como en las fichas: lo que falta, dicho al lado y solo cuando falta algo. -->
+<ng-template #topbarActions>
+  @if (blockedReason(); as reason) {
+    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
+  } @else if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (formDirty()) {
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    size="sm"
+    variant="primary"
+    [disabled]="!canSave()"
+    [label]="(mode() === 'create' ? 'repositories.tipificaciones.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <!-- El molde de las fichas (DD-122, DD-170): el nombre y el índice a la izquierda y una sección en el centro. -->
+  <div class="page__inner page__inner--rail ficha-rail ficha-rail--summary">
+    <div class="page__rail">
+      <div class="headline">
+        <div class="headline__who">
+          <h1 class="headline__name sc-text-h3-semibold" [title]="titulo()">{{ titulo() }}</h1>
+          <span class="headline__meta sc-text-caption-regular">{{ headlineMeta() }}</span>
+        </div>
+      </div>
+
+      <sc-form-section-nav
+        [sections]="navSections()"
+        [activeId]="activeSection()"
+        [labelKey]="'common.form_index_aria'"
+        [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionsWithChanges]="sectionsWithChanges()"
+        [sectionsDone]="alta.hechas()"
+        [flush]="true"
+        (activeChange)="goTo($event)"
+      />
+      @if (mode() === 'edit') {
+        <div class="ficha-eliminar">
+          <sc-button variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="deleteVisible.set(true)" />
+        </div>
+      }
+    </div>
+
+    <div class="page__main">
+      @if (conflictWarning()) {
+        <sc-message class="ficha-conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
+      }
+
+      @switch (activeSection()) {
+        @case ('tip-section-general') {
+          <ng-container *ngTemplateOutlet="seccionGeneral" />
+        }
+        @case ('tip-section-categorias') {
+          <ng-container *ngTemplateOutlet="seccionCategorias" />
+        }
+        @case ('tip-section-grupos') {
+          <ng-container *ngTemplateOutlet="seccionGrupos" />
+        }
+      }
+      @if (mode() !== 'edit') {
+        <sc-alta-pie
+          [conAnterior]="alta.anterior() !== null"
+          [conSiguiente]="alta.siguiente() !== null"
+          (anterior)="anterior()"
+          (siguiente)="siguiente()"
+        />
+      }
+    </div>
+
+  </div>
+</div>
+
+<sc-delete-entity-dialog
+  [visible]="deleteVisible()"
+  mode="single"
+  [items]="deleteItems()"
+  [entitySingular]="'repositories.tipificaciones.singular' | translate"
+  [entityPlural]="'repositories.tipificaciones.plural' | translate"
+  (cancelled)="deleteVisible.set(false)"
+  (confirm)="confirmDelete()"
+/>
+
+<!-- LAS SECCIONES, cada una en su plantilla: un solo cuerpo para el alta y la edición. -->
+<ng-template #seccionGeneral>
+  <sc-section-card anchorId="tip-section-general" surface="card" icon="tune" titleKey="repositories.tipificaciones.section.general">
+    <section class="sub-section">
+      <div class="grid grid--2">
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="tip-name">
+            {{ 'repositories.columns.name' | translate }}
+            <span class="field__required" aria-hidden="true">*</span>
+          </label>
+          <!-- Un nombre repetido marca el campo y lo dice la barra: sin línea de error que empuje lo de debajo. -->
+          <sc-inputtext
+            inputId="tip-name"
+            [required]="true"
+            [placeholder]="'repositories.tipificaciones.name_placeholder' | translate"
+            [value]="form().name"
+            [invalid]="nameTaken()"
+            (valueChange)="update('name', $event)"
+          />
+        </div>
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="tip-description">
+            {{ 'repositories.columns.description' | translate }}
+          </label>
+          <sc-inputtext
+            inputId="tip-description"
+            [placeholder]="'repositories.tipificaciones.description_placeholder' | translate"
+            [value]="form().description"
+            (valueChange)="update('description', $event)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <sc-divider />
+
+    <section class="sub-section">
+      <div class="grid grid--2">
+        <!-- Entrantes, salientes o las dos: un solo control, sin el estado «ninguna» que había que avisar. -->
+        <div class="field">
+          <span id="tip-direction-label" class="field__label sc-text-caption-semibold">{{ 'repositories.tipificaciones.columns.direction' | translate }}</span>
+          <sc-selectbutton
+            ariaLabelledBy="tip-direction-label"
+            ariaDescribedBy="tip-direction-hint"
+            [allowEmpty]="false"
+            [options]="direcciones()"
+            optionLabel="label"
+            optionValue="value"
+            [value]="direccion()"
+            (valueChange)="onDireccion($event)"
+          />
+          <p id="tip-direction-hint" class="field__hint sc-text-caption-regular">{{ 'repositories.tipificaciones.direction_hint' | translate }}</p>
+        </div>
+
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch
+            ariaDescribedBy="tip-comments-hint"
+            [checked]="form().comments"
+            [ariaLabel]="'repositories.tipificaciones.enable_comments' | translate"
+            (checkedChange)="update('comments', $event)"
+          />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'repositories.tipificaciones.enable_comments' | translate }}</span>
+            <p id="tip-comments-hint" class="switch-field__hint sc-text-caption-regular">{{ 'repositories.tipificaciones.comments_hint' | translate }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </sc-section-card>
+</ng-template>
+
+<ng-template #seccionCategorias>
+  <sc-section-card
+    anchorId="tip-section-categorias"
+    surface="card"
+    icon="account_tree"
+    titleKey="repositories.tipificaciones.section.categorization"
+    hintKey="repositories.tipificaciones.categorization_hint"
+  >
+    <section class="sub-section">
+      <sc-tipificacion-niveles
+        [options]="form().options"
+        [levels]="niveles()"
+        [comments]="form().comments"
+        (optionsChange)="onOptions($event)"
+        (levelsChange)="onLevels($event)"
+      />
+    </section>
+  </sc-section-card>
+</ng-template>
+
+<ng-template #seccionGrupos>
+  <sc-section-card anchorId="tip-section-grupos" surface="card" icon="group" titleKey="repositories.tipificaciones.section.groups" hintKey="repositories.tipificaciones.groups_hint">
+    <section class="sub-section">
+      <sc-tipificacion-grupos [links]="form().groups" [groups]="grupos()" [choques]="choques()" (linksChange)="onGroups($event)" />
+    </section>
+  </sc-section-card>
+</ng-template>
