@@ -1,6 +1,6 @@
 {
   "generated": "usage-status.mjs",
-  "capturedAt": "2026-09-20",
+  "capturedAt": "2026-10-05",
   "viewport": "1440x900",
   "theme": "light",
   "dsSelectors": 56,
@@ -40,7 +40,6 @@
         "sc-bulk-action-bar",
         "sc-bulk-edit-menu",
         "sc-button",
-        "sc-column-selector",
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-datatable",
@@ -67,13 +66,13 @@
         "sc-breadcrumb",
         "sc-bulk-action-bar",
         "sc-button",
-        "sc-column-selector",
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
         "sc-divider",
+        "sc-drawer",
         "sc-group-popover",
         "sc-impact-preview-dialog",
         "sc-keyboard-shortcuts",
@@ -137,7 +136,8 @@
         "sc-breadcrumb",
         "sc-command-palette",
         "sc-confirmdialog",
-        "sc-keyboard-shortcuts"
+        "sc-keyboard-shortcuts",
+        "sc-search"
       ]
     },
     {
@@ -154,7 +154,6 @@
         "sc-bulk-action-bar",
         "sc-bulk-edit-menu",
         "sc-button",
-        "sc-column-selector",
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-datatable",
@@ -207,6 +206,7 @@
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-divider",
+        "sc-form-section-nav",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
         "sc-permission-matrix",
@@ -227,11 +227,12 @@
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-divider",
+        "sc-form-section-nav",
         "sc-inputnumber",
         "sc-keyboard-shortcuts",
-        "sc-multiselect",
         "sc-section-card",
         "sc-select",
+        "sc-selectbutton",
         "sc-toggleswitch"
       ]
     },
@@ -250,6 +251,7 @@
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-divider",
+        "sc-form-section-nav",
         "sc-inputgroup",
         "sc-inputnumber",
         "sc-keyboard-shortcuts",
@@ -420,11 +422,6 @@
     "sc-color-dot-picker": [
       "admin-labels"
     ],
-    "sc-column-selector": [
-      "admin-agentes",
-      "admin-grupos",
-      "admin-usuarios"
-    ],
     "sc-datatable": [
       "admin-agendas",
       "admin-agentes",
@@ -472,6 +469,9 @@
       "config-aed-servicio",
       "conversaciones-entidades"
     ],
+    "sc-drawer": [
+      "admin-grupos"
+    ],
     "sc-field-label": [
       "admin-labels"
     ],
@@ -480,6 +480,9 @@
     ],
     "sc-form-section-nav": [
       "admin-usuarios-crear",
+      "config-aed-agentes",
+      "config-aed-grupos",
+      "config-aed-servicio",
       "conversaciones-reglas-nueva"
     ],
     "sc-group-popover": [
@@ -504,7 +507,6 @@
       "config-aed-agentes"
     ],
     "sc-multiselect": [
-      "config-aed-grupos",
       "conversaciones"
     ],
     "sc-option-cards": [
@@ -525,6 +527,7 @@
       "admin-grupos",
       "admin-labels",
       "admin-plantillas",
+      "admin-repositorios",
       "admin-usuarios",
       "config-sistema",
       "conversaciones"
@@ -545,6 +548,7 @@
       "conversaciones-reglas-nueva"
     ],
     "sc-selectbutton": [
+      "config-aed-grupos",
       "config-sistema",
       "conversaciones"
     ],
@@ -580,12 +584,8 @@
       "usedInSupervisor": 1
     },
     {
-      "selector": "sc-drawer",
-      "usedInSupervisor": 2
-    },
-    {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 16
+      "usedInSupervisor": 19
     },
     {
       "selector": "sc-gauge",
@@ -597,7 +597,7 @@
     },
     {
       "selector": "sc-message",
-      "usedInSupervisor": 7
+      "usedInSupervisor": 8
     },
     {
       "selector": "sc-panel",
