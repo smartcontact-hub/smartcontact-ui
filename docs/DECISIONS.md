@@ -3293,6 +3293,12 @@ fracción dos veces en la rejilla del `p-motion`. Se arregla por `[pt]` (`conten
 Desde DD-140: un `p-dialog` sin cabecera (`showHeader=false`) se nombra por `pt.root`. Un atributo en su host se queda
 en el host, aunque la sección de accesibilidad de primeng.dev diga que pasa a la raíz.
 
+**Actualización (2026-10-05)** · Cerrado lo que quedaba. La tira del reproductor se nombra («Contenido de la
+conversación») por `pt` al nodo con `role="tablist"`, como el Monitor. La «o» del acceso: su página le pedía el
+secundario a `.login__divider`, el host de `sc-divider`, pero PrimeNG pinta el color en `.p-divider-content` y la regla
+no llegaba; sale, y la «o» lleva el color del separador del DS, que se lee (AA). `sc-slot` toma el margen del divisor
+(`--sc-cmp-divider-horizontal-margin-y`, los mismos 14). Lo vigila `nombres-y-separadores.spec.ts`.
+
 ---
 
 ## DD-112 · 2026-09-15 — El sidebar del Supervisor se pliega a 80px, marca un solo padre y abre y cierra sin saltos
