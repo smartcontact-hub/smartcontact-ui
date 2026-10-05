@@ -20,7 +20,7 @@
  */
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
-import { avisarCarga, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
+import { avisarCarga, avisarLedgers, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 import { APPS, planDe } from "./preflight-alcance.mjs";
 
@@ -72,6 +72,14 @@ function cambios() {
 }
 
 const ficheros = cambios();
+
+function ramaActual() {
+  try {
+    return execSync("git rev-parse --abbrev-ref HEAD", { encoding: "utf8" }).trim();
+  } catch {
+    return "";
+  }
+}
 if (ficheros.length === 0) {
   console.log(
     "No hay cambios contra `origin/main`. No hay nada que verificar."
@@ -95,6 +103,8 @@ if (process.argv.includes("--run")) {
   // pasada verde bajo carga sigue valiendo), pero quien la lanza tiene que saberlo ya y no horas después.
   // Deja una marca en el entorno para que el `preverify` de `verify`, que corre dentro, no lo repita.
   avisarCarga();
+  // Y si otro PR abierto toca los mismos ledgers que esta rama (LEARNINGS #21): tampoco bloquea.
+  avisarLedgers({ mios: ficheros, rama: ramaActual() });
   const problemas = [...puertaBarata(process.cwd()), ...generadosAlDia()];
   if (problemas.length) {
     console.log("\n✘ La cadena NO arranca: hay algo que se comprueba en 2 s y falla.\n");
