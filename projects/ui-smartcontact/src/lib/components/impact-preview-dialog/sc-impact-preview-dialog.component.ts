@@ -9,12 +9,12 @@ import {
   signal,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ScDialogComponent } from '../dialog/sc-dialog.component';
 import { SC_IMPACT_PREVIEW_DIALOG_TRANSLATIONS } from './i18n/sc-impact-preview-dialog.translations';
+import { ScButtonComponent } from '../button/sc-button.component';
 
 export interface ImpactItem {
   readonly id: number;
@@ -46,7 +46,7 @@ export interface ImpactBadge {
 @Component({
   selector: 'sc-impact-preview-dialog',
   standalone: true,
-  imports: [ButtonModule, ScIconComponent, ScDialogComponent, TranslateModule],
+  imports: [ScButtonComponent, ScIconComponent, ScDialogComponent, TranslateModule],
   templateUrl: './sc-impact-preview-dialog.component.html',
   styleUrl: './sc-impact-preview-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,6 +63,10 @@ export class ScImpactPreviewDialogComponent {
    * de aplicarlo.
    */
   readonly items = input.required<readonly ImpactItem[]>();
+  /**
+   * El cambio que se va a aplicar, en una franja sobre la lista: el campo, su valor de ahora (si se
+   * sabe) y el nuevo. Con `null` no se pinta.
+   */
   readonly badge = input<ImpactBadge | null>(null);
   /** Override de la etiqueta del botón confirmar; default colocado `…confirm`. */
   readonly confirmLabel = input<string | null>(null);

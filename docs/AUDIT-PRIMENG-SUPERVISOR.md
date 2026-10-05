@@ -6,7 +6,7 @@ Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la 
 que puede ir por delante.
 
 **45 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**557 props** que PrimeNG sí documenta.
+**426 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -42,22 +42,6 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 ### `sc-confirmdialog` · 1 usos · primeng/confirmdialog
 
 **35 props nativas no expuestas**: `acceptAriaLabel`, `acceptButtonStyleClass`, `acceptIcon`, `acceptLabel`, `acceptVisible`, `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closable`, `closeAriaLabel`, `closeOnEscape`, `defaultFocus`, `dismissableMask`, `draggable`, `focusTrap`, `header`, `icon`, `key`, `maskMotionOptions`, `maskStyleClass`, `message`, `modal`, `motionOptions`, `position`, `rejectAriaLabel`, `rejectButtonStyleClass`, `rejectIcon`, `rejectLabel`, `rejectVisible`, `rtl`, `style`, `styleClass`, `visible`
-
-### `sc-bulk-edit-menu` · 3 usos · primeng/button
-
-**33 props nativas no expuestas**: `ariaLabel`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `disabled`, `fluid`, `hostName`, `icon`, `iconOnly`, `iconPos`, `label`, `link`, `loading`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `rounded`, `severity`, `size`, `style`, `styleClass`, `tabindex`, `text`, `type`, `variant`
-
-### `sc-delete-entity-dialog` · 9 usos · primeng/button
-
-**33 props nativas no expuestas**: `ariaLabel`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `disabled`, `fluid`, `hostName`, `icon`, `iconOnly`, `iconPos`, `label`, `link`, `loading`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `rounded`, `severity`, `size`, `style`, `styleClass`, `tabindex`, `text`, `type`, `variant`
-
-### `sc-sticky-form-header` · 2 usos · primeng/button
-
-**33 props nativas no expuestas**: `ariaLabel`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `disabled`, `fluid`, `hostName`, `icon`, `iconOnly`, `iconPos`, `label`, `link`, `loading`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `rounded`, `severity`, `size`, `style`, `styleClass`, `tabindex`, `text`, `type`, `variant`
-
-### `sc-impact-preview-dialog` · 3 usos · primeng/button
-
-**32 props nativas no expuestas**: `ariaLabel`, `autofocus`, `badgeSeverity`, `buttonProps`, `disabled`, `fluid`, `hostName`, `icon`, `iconOnly`, `iconPos`, `label`, `link`, `loading`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `rounded`, `severity`, `size`, `style`, `styleClass`, `tabindex`, `text`, `type`, `variant`
 
 ### `sc-dialog` · 20 usos · primeng/dialog
 
@@ -135,6 +119,10 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 Expone todo lo que PrimeNG documenta.
 
+### `sc-bulk-edit-menu` · 3 usos · —
+
+Expone todo lo que PrimeNG documenta.
+
 ### `sc-checkbox` · 38 usos · —
 
 Expone todo lo que PrimeNG documenta.
@@ -144,6 +132,10 @@ Expone todo lo que PrimeNG documenta.
 Expone todo lo que PrimeNG documenta.
 
 ### `sc-command-palette` · 4 usos · —
+
+Expone todo lo que PrimeNG documenta.
+
+### `sc-delete-entity-dialog` · 9 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -160,6 +152,10 @@ Expone todo lo que PrimeNG documenta.
 Expone todo lo que PrimeNG documenta.
 
 ### `sc-gauge` · 1 usos · —
+
+Expone todo lo que PrimeNG documenta.
+
+### `sc-impact-preview-dialog` · 3 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -192,6 +188,10 @@ Expone todo lo que PrimeNG documenta.
 Expone todo lo que PrimeNG documenta.
 
 ### `sc-slot` · 8 usos · —
+
+Expone todo lo que PrimeNG documenta.
+
+### `sc-sticky-form-header` · 2 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

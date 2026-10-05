@@ -738,7 +738,7 @@
     {
       "selector": "sc-bulk-edit-menu",
       "name": "bulk-edit-menu",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
       "contrato": [
         {
@@ -792,41 +792,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badge",
-        "badgeSeverity",
-        "buttonProps",
-        "disabled",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-bulk-transcription-modal",
@@ -2743,7 +2709,7 @@
     {
       "selector": "sc-delete-entity-dialog",
       "name": "delete-entity-dialog",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "contrato": [
         {
@@ -2837,41 +2803,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badge",
-        "badgeSeverity",
-        "buttonProps",
-        "disabled",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-dialog",
@@ -3557,7 +3489,7 @@
     {
       "selector": "sc-form-danger-zone",
       "name": "form-danger-zone",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
       "contrato": [
         {
@@ -3596,14 +3528,9 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "When present, it specifies that the component should be disabled.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Desactiva el botón: la acción se sigue viendo, pero no se puede pulsar.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "action",
@@ -3616,40 +3543,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badge",
-        "badgeSeverity",
-        "buttonProps",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-form-section-nav",
@@ -3903,7 +3797,7 @@
     {
       "selector": "sc-impact-preview-dialog",
       "name": "impact-preview-dialog",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
       "contrato": [
         {
@@ -3952,14 +3846,9 @@
           "tipo": "ImpactBadge | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Value of the badge.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "El cambio que se va a aplicar, en una franja sobre la lista: el campo, su valor de ahora (si se sabe) y el nuevo. Con `null` no se pinta.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "confirmLabel",
@@ -4002,40 +3891,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badgeSeverity",
-        "buttonProps",
-        "disabled",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-inline-rename-cell",
@@ -7285,7 +7141,7 @@
     {
       "selector": "sc-sticky-form-header",
       "name": "sticky-form-header",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
       "contrato": [
         {
@@ -7389,41 +7245,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badge",
-        "badgeSeverity",
-        "buttonProps",
-        "disabled",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-subsection",
