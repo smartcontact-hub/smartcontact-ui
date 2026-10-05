@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco | DD-171 |
+> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila | DD-171 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
@@ -148,6 +148,11 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
 2. **El nombre editable se cierra al salir de él** (pulsar fuera, Tab) con lo escrito, como Enter, y vacío devuelve
    el de antes. Al cerrarlo con Enter, Escape o el ✕, el foco vuelve al nombre. Medido antes: pulsar fuera dejaba el
    campo abierto, Escape ya no lo cerraba (el foco había salido) y, al cerrar, el foco caía en la página.
+3. **Las marcas del índice, al final de su fila** (`sc-form-section-nav`): el rótulo llena la fila y empuja la marca
+   (el punto rojo, el de cambios o el ✓) a un hueco propio al final, que va siempre, vacío si no hay marca. Con
+   varias, caen en la misma vertical; antes, detrás de la última palabra (medido: 203 y 284 con cambios en General y
+   en Distribución y colas). En el carril de 196 al rótulo le quedan 140, y el más largo mide 130; con el hueco fijo,
+   un rótulo no salta de línea al aparecer el punto.
 
 **Razón** ·
 - **Una línea de más por una palabra** se lee como un salto: lo que obliga a otra línea se dice más corto, y `pretty`
