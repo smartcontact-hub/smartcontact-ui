@@ -111,6 +111,9 @@ Persiste en `localStorage` (`sc-dashboard-monitors`, versión 1).
 - ⚠️ El estado de un agente no se escribe en el Dashboard: sale del almacén de agentes (DD-139). Un widget nuevo que
   cuente agentes recibe `estadoDe` y se relee en `conPresencia`; una cifra de agentes escrita a mano vuelve a separar
   las dos pantallas.
+- ⚠️ Los grupos, igual (DD-168): el widget guarda sus nombres, `DEMO_GROUPS` (`data/demo-entities.ts`) lleva cada
+  nombre a su id y `GroupsStore` al grupo de hoy, así que un grupo renombrado en Administración se sigue encontrando. Un
+  widget nuevo que nombre grupos pasa por esa tabla; buscar un grupo por su nombre se pierde al renombrarlo.
 - ⚠️ Una prueba de scroll lateral mide `main#main-content`, no `documentElement` (el scroll de la app vive ahí).
 - ⚠️ `lint` y `usage:check` a mano antes del `preflight`: a #184 le costó tres vueltas.
 - ⚠️ Un `output` llamado `select` choca con el evento nativo; por eso las pestañas avisan con `activate`.
