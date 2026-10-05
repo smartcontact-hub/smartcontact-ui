@@ -163,8 +163,9 @@ mismo. Cierra el hueco que dejó abierto DD-168 §Consecuencias: «es una tarea 
   esto, no una query por fuera.
 
 **Consecuencias** ·
-- **Pruebas:** `sc-button.component.spec.ts` (DS, tres nuevas) y `e2e/supervisor/columnas-en-una-lista.spec.ts` y
-  `e2e/supervisor/dashboard.spec.ts` (dos cada una, Columnas y el ⋮; «Agentes» en `panel-agentes-monitor.spec.ts`).
+- **Pruebas:** `sc-button.component.spec.ts` (DS, tres nuevas); `columnas-en-una-lista.spec.ts` y `dashboard.spec.ts`
+  (una cada una, Columnas y el ⋮); `panel-agentes-monitor.spec.ts` (dos, «Agentes» con varios grupos y con uno
+  solo).
 - **CHANGELOG:** `[Unreleased]` › Added.
 - **Queda abierto:** el ⋮ de la pestaña del monitor (`monitor-tabs.component.html`) abre el mismo tipo de `p-menu`
   sin ninguna de las tres — no medido en el encargo original, aparte.

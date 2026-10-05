@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule, type Menu } from 'primeng/menu';
@@ -10,6 +10,8 @@ import { GroupsStore } from '@features/admin/groups/state/groups.store';
 
 import { idDeGrupoDeLaDemo } from '../../data/demo-entities';
 
+let agentsMenuIdCounter = 0;
+
 /**
  * «Agentes», en la cabecera del widget «Grupos»: abre el panel rápido de agentes del grupo que vigila, o, si vigila
  * varios, un menú para elegir cuál (DD-168). Va en el hueco `[scWidgetAction]` de la tarjeta, que no sabe de grupos.
@@ -19,7 +21,9 @@ import { idDeGrupoDeLaDemo } from '../../data/demo-entities';
  * lista de nombres, así que este `computed` no se rehace con él: un menú rehecho en cada ciclo perdía el primer clic
  * (como le pasaba al menú de fila del listado).
  *
- * `aria-haspopup` no llega al botón: `sc-button` no lo pasa a su `<button>`, igual que en el ⋮ de la tarjeta.
+ * Con varios grupos, el botón abre SU menú: `ariaHasPopup`, `ariaExpanded` y `ariaControls` lo dicen (DD-170), igual
+ * que el ⋮ de la tarjeta. Con uno solo, el clic abre directamente el panel que vigila la página (otro componente,
+ * lejos en el DOM): no es un popup que este botón controle, así que no lleva `ariaHasPopup`.
  */
 @Component({
   selector: 'sc-dashboard-agents-action',
@@ -64,6 +68,15 @@ export class AgentsActionComponent {
       },
     ];
   });
+
+  /** Id del `p-menu`, para `aria-controls`: solo hay menú (y solo lo necesita) con varios grupos. */
+  protected readonly menuId = `sc-dashboard-agents-menu-${++agentsMenuIdCounter}`;
+
+  /** Si el botón abre SU menú (varios grupos) o nada propio (uno solo, abre el panel directamente). */
+  protected readonly ariaHasPopup = computed<'menu' | null>(() => (this.groups().length > 1 ? 'menu' : null));
+
+  /** Si el menú está abierto, solo relevante cuando `ariaHasPopup` lo es. */
+  protected readonly menuOpen = signal(false);
 
   /** El botón que abrió el menú: el foco vuelve a él antes de abrir el panel. */
   private trigger: HTMLElement | null = null;
