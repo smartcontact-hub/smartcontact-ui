@@ -76,17 +76,14 @@ test('la cabecera confirma dos cambios, permite cancelar y solo modifica los age
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).map((link: { agentId: number }) => link.agentId).sort())).toEqual([1, 2, 3, 5, 6]);
 });
 
-test('la cabecera de canal conserva el último canal y confirma solo los dos cambios posibles', async ({ page }) => {
+test('solo Asignado lleva casilla de todos en la cabecera; los canales se cambian fila a fila (DD-172)', async ({ page }) => {
   await seed(page);
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const table = page.locator('sc-agent-channel-table');
-  await table.getByRole('columnheader', { name: 'Teléfono', exact: true }).getByRole('checkbox').click();
-  const dialog = page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' });
-  await expect(dialog).toContainText('2');
-  await dialog.getByRole('button', { name: 'Confirmar', exact: true }).click();
-  await expect(table.locator('tbody tr', { hasText: 'Bruno Teléfono' }).getByRole('checkbox', { name: /^Bruno Teléfono — Teléfono/ })).toBeChecked();
-  await page.getByRole('button', { name: /^Guardar(?: \(\d+\))?$/ }).click();
-  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).map((link: { channels: string[] }) => link.channels))).toEqual([['chat'], ['phone'], ['chat']]);
+  await expect(table.getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox')).toHaveCount(1);
+  for (const canal of ['Teléfono', 'Chat']) {
+    await expect(table.getByRole('columnheader', { name: canal, exact: true }).getByRole('checkbox'), canal).toHaveCount(0);
+  }
 });
 
 test('una acción sobre un solo agente no pregunta; desasignar mantiene la fila hasta cambiar el filtro', async ({ page }) => {

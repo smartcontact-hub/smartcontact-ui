@@ -158,7 +158,19 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    «Email» 37, «Atribuído» 65, «Habilitado» 69); el agente, con un mínimo de 13,25rem y el resto del sitio. Medido
    antes, a 1440 con tres canales: 912 en una caja de 735, 181 px de desplazamiento lateral, y las columnas de
    casillas a 104 todas. Después: cabe (735 de 735). El panel rápido suma estas mismas columnas: con Teléfono y Chat
-   pasa de 48 a 46,25rem, y su columna de Teléfono deja de cortar «Téléphone», que a 5rem no cabía.
+   pasa de 48 a 47,375rem, y su columna de Teléfono deja de cortar «Téléphone», que a 5rem no cabía.
+   **La cabecera, una fila de texto alineada con sus controles**: cada rótulo empieza en la vertical de los controles de
+   su columna, y **solo Asignado lleva su casilla de «todos»**, delante del rótulo (la primera columna, donde se
+   espera). Fuera las casillas de «todos» de cada canal: un canal se cambia fila a fila (enmienda DD-151). Hasta aquí
+   cada cabecera de casillas apilaba su rótulo y su casilla, y la fila medía 54 con «Agente» y «Estado» flotando.
+   **Por qué así**, tras mirar cómo lo hacen los SaaS de referencia y los sistemas de diseño (2026-10-05): Zendesk,
+   HubSpot, Intercom y Genesys rotulan con texto y cambian una columna entera marcando filas y eligiendo una acción;
+   Atlassian prohíbe controles en las cabeceras de datos; Carbon pone la casilla de cabecera solo en la columna que
+   selecciona; Nielsen Norman pide que el nombre de un icono se vea siempre. Se probó antes icono y casilla en cada
+   cabecera, y la revisión lo descartó; también solo iconos, que no se leen sin pasar el ratón. Si hace falta cambiar
+   canales en lote, el siguiente paso es seleccionar filas con la barra en lote del DS (§6).
+   **La barra de filtro, de borde a borde de la tabla**: el selector en su tamaño pequeño (34, con su carril gris) y el
+   buscador (32,5) llenando lo que queda, centrados en la misma línea; antes dejaban 135 px vacíos a la derecha.
 5. **Sin paginación**, en la ficha y en el panel: todas las filas del filtro, y lo que no cabe lo desplaza la tabla por
    dentro, con la cabecera fija y hasta el pie de la pantalla (DD-95, DD-160); con más de 100, pinta solo las que se
    ven. **Por qué se puso:** DD-151 trajo la lista entera de agentes a la tabla (hasta 500 en el alta) y la acotó con
@@ -204,7 +216,8 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
   que General), y perderlo al pulsar fuera sería una sorpresa.
 
 **Consecuencias** ·
-- **Enmienda** DD-151 (sin paginación), DD-156 (los anchos de columna) y DD-131 (el ancho del panel, que los suma).
+- **Enmienda** DD-151 (sin paginación, y sin las casillas de «todos» de cada canal), DD-156 (los anchos de columna) y
+  DD-131 (el ancho del panel, que los suma).
   **Sustituye** el control de DD-162 (el Listbox con casilla y arrastre) por el del ejemplo de primeng.dev; su teclado
   sin arrastrar se queda.
 - **Pruebas:** `fichas-textos.spec.ts`, nueva (el nombre del campo y ninguna ayuda de más en las tres fichas), roja
@@ -1081,8 +1094,9 @@ La evidencia ejecutada y el estado de publicación se registran en el hand-off d
 
 ## DD-151 · 2026-10-02 — Asignar agentes desde la lista completa (E4)
 
-> **Sin paginación desde DD-172** (2026-10-05): la tabla desplaza por dentro y, con más de 100 filas, pinta solo las
-> que se ven. Las cabeceras siguen actuando sobre todo el filtro.
+> **Enmendada por DD-172** (2026-10-05): sin paginación (la tabla desplaza por dentro y, con más de 100 filas, pinta
+> solo las que se ven) y sin las casillas de «todos» de cada canal en la cabecera; la de Asignado sigue, sobre todo el
+> filtro.
 
 **Decisión.** La ficha de grupo y el panel rápido comparten la lista de todos los agentes. «Asignado» añade o
 quita el enlace; sustituye el selector de incorporación, la selección de filas para un lote y la papelera.

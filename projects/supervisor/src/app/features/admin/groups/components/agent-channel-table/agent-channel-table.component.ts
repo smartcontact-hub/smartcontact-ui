@@ -35,7 +35,7 @@ import { PRESENCE_LABEL_KEYS, PRESENCE_TAGS, type PresenceStatus } from '@featur
 import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
 
-import { ChannelIconComponent, IllustratedAvatarComponent, type LabelColor } from '@shared/components';
+import { IllustratedAvatarComponent, type LabelColor } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -67,22 +67,25 @@ interface VisibleRow {
 
 /**
  * El ancho de cada columna, en rem, en la tabla de la ficha y en la del panel rápido, que suma estos mismos para medirse
- * (DD-131). Las dos van en la densidad compacta nativa (`sm`, DD-172): 6 de relleno a cada lado. Medido el 2026-10-05
- * (DD-172):
- *   · Asignado y cada canal: su cabecera es una pastilla con la casilla de «todos» (15,75) y el icono (14), 7 entre los
- *     dos y 3,5 de relleno: 43,75, y con el de la celda, 56. Hasta la cabecera en una fila llevaban su rótulo encima
- *     («Téléphone», 72 px, pedía 88), y de DD-156 a DD-172 los tres canales medían lo del más largo (104).
- *   · Habilitado: su interruptor (31,5) bajo su icono, y el relleno: 48.
+ * (DD-131). Las dos van en la densidad compacta nativa (`sm`, DD-172): 6 de relleno a cada lado. La cabecera es una
+ * fila de texto, y solo Asignado lleva su casilla de «todos» delante del rótulo (DD-172). Cada ancho es lo más largo
+ * que lleva en los cuatro idiomas, más el relleno y unos 4 px de margen. Medido el 2026-10-05 con la letra de la
+ * cabecera (600, 14 px):
+ *   · Asignado: la casilla (15,75), 7 y «Atribuído» (65): 100.
+ *   · Cada canal, su rótulo: «Téléphone» (72), «Chat» (32) y «Email» (37). De DD-156 a DD-172 los tres medían lo del
+ *     más largo (104), y las columnas de casillas eran casi todo hueco.
+ *   · Habilitado: su rótulo, «Habilitado» (69).
  *   · Estado: su etiqueta más larga, «Post-conversation», 123 px.
  *   · Agente: avatar (24), hueco y nombre y email en dos líneas. En la ficha es un MÍNIMO: la columna crece con el
- *     sitio que haya, y un email más largo que su sitio se corta con «…» y el `title` (DD-124). En el panel, que mide
- *     lo que lleva, cabe el email más largo de la semilla (203 px).
+ *     sitio que haya, y un email más largo que su sitio se corta con «…» y el `title` (DD-124). Con 13,25, a 1440 y con
+ *     tres canales, la tabla cabe en su caja (735). En el panel, que mide lo que lleva, cabe el email más largo de la
+ *     semilla (203 px).
  */
-const CHANNEL_REM: Readonly<Record<ChannelFamily, number>> = { phone: 3.5, chat: 3.5, email: 3.5 };
+const CHANNEL_REM: Readonly<Record<ChannelFamily, number>> = { phone: 5.5, chat: 3, email: 3.375 };
 
 export const COLUMN_REM = {
-  regular: { assigned: 3.5, agent: 13.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 3 },
-  compact: { assigned: 3.5, agent: 16.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 3 },
+  regular: { assigned: 6.25, agent: 13.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 5.375 },
+  compact: { assigned: 6.25, agent: 16.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 5.375 },
 } as const;
 
 /** Lo que suman las columnas con esos canales y `levels` niveles: el mínimo de la tabla y el ancho del panel. */
@@ -103,7 +106,6 @@ export function columnsRem(
   selector: 'sc-agent-channel-table',
   standalone: true,
   imports: [
-    ChannelIconComponent,
     LlegaAlPieDirective,
     SelectButtonComponent,
     CheckboxComponent,
@@ -195,7 +197,6 @@ export class AgentChannelTableComponent {
           field: 'active',
           header: this.translate.instant('groups.form.assigned.col_active'),
           width: `${rem.enabled}rem`,
-          align: 'center',
           cellTemplate: this.activeTpl(),
           stopRowClick: true,
         },
@@ -223,12 +224,6 @@ export class AgentChannelTableComponent {
 
   protected readonly query = signal('');
   protected readonly filter = linkedSignal(() => this.groupId() === 0 ? 'all' : 'assigned');
-  /** Pulsar la pastilla de una cabecera fuera de su casilla (el icono, el hueco) hace lo que la casilla. */
-  protected onHeadClick(event: MouseEvent, field: string): void {
-    if (this.headerDisabled(field) || (event.target as Element).closest('sc-checkbox')) return;
-    this.toggleHeader(field);
-  }
-
   protected readonly filterOptions = computed(() => {
     this.currentLang();
     return ['all', 'assigned', 'unassigned'].map(value => ({ value, label: this.translate.instant(`groups.form.assigned.filter_${value}`) }));
@@ -258,34 +253,33 @@ export class AgentChannelTableComponent {
     return permittedFamilies(this.groupChannels(), agent.allowedChannels).length > 0;
   }
 
-  protected headerState(field: string): 'all' | 'some' | 'none' {
-    const rows = this.visibleRows().filter(row => field === 'assigned'
-      ? !!row.link || this.compatible(row.agent)
-      : !!row.link && this.allowed(row.agent, field));
-    const checked = rows.filter(row => field === 'assigned' ? !!row.link : this.hasChannel(row.link, field)).length;
+  /**
+   * La casilla de «todos» de Asignado, la única de la cabecera (DD-172): los rótulos de las demás columnas son texto, y
+   * un canal se cambia fila a fila. Cuenta las filas a la vista que se pueden asignar (o ya lo están).
+   */
+  protected assignedHeaderState(): 'all' | 'some' | 'none' {
+    const rows = this.visibleRows().filter((row) => !!row.link || this.compatible(row.agent));
+    const checked = rows.filter((row) => !!row.link).length;
     return checked === 0 ? 'none' : checked === rows.length ? 'all' : 'some';
   }
 
-  protected headerDisabled(field: string): boolean {
-    return this.pending() || this.bulkTargets(field).length === 0;
+  protected assignedHeaderDisabled(): boolean {
+    return this.pending() || this.assignedBulkTargets().length === 0;
   }
 
-  private bulkTargets(field: string): readonly VisibleRow[] {
-    const remove = this.headerState(field) === 'all';
-    return this.visibleRows().filter(row => field === 'assigned'
-      ? remove ? !!row.link : !row.link && this.compatible(row.agent)
-      : !!row.link && this.allowed(row.agent, field) && (remove
-        ? this.hasChannel(row.link, field) && !this.isLastChannel(row.link, field)
-        : !this.hasChannel(row.link, field)));
+  /** Con todas asignadas, las que quita; si no, las compatibles que faltan. */
+  private assignedBulkTargets(): readonly VisibleRow[] {
+    const remove = this.assignedHeaderState() === 'all';
+    return this.visibleRows().filter((row) => (remove ? !!row.link : !row.link && this.compatible(row.agent)));
   }
 
-  protected async toggleHeader(field: string): Promise<void> {
+  /** Asigna (o quita) a todas las filas a la vista; con dos o más, confirma antes (DD-151). */
+  protected async toggleAssignedHeader(): Promise<void> {
     if (this.pending()) return;
-    const rows = this.bulkTargets(field);
+    const rows = this.assignedBulkTargets();
     if (!rows.length) return;
-    const remove = this.headerState(field) === 'all';
-    const action = this.translate.instant(`groups.form.assigned.${field === 'assigned' ? remove ? 'bulk_remove' : 'bulk_add' : remove ? 'bulk_channel_remove' : 'bulk_channel_add'}`,
-      { channel: field === 'assigned' ? '' : this.translate.instant(FAMILY_LABEL_KEYS[field as Channel]) });
+    const remove = this.assignedHeaderState() === 'all';
+    const action = this.translate.instant(`groups.form.assigned.${remove ? 'bulk_remove' : 'bulk_add'}`);
     this.pending.set(true);
     try {
       if (rows.length >= 2 && !await this.confirm.request({
@@ -294,15 +288,10 @@ export class AgentChannelTableComponent {
         acceptLabel: this.translate.instant('groups.form.assigned.bulk_confirm'),
         rejectLabel: this.translate.instant('common.cancel'),
       })) return;
-      const ids = new Set(rows.map(row => row.agent.id));
-      if (field === 'assigned') {
-        this.linksChange.emit(remove ? this.links().filter(link => !ids.has(link.agentId)) : [
-          ...this.links(), ...rows.map(row => this.newLink(row.agent)),
-        ]);
-      } else {
-        this.linksChange.emit(this.links().map(link => ids.has(link.agentId)
-          ? toggleLinkChannel(link, field as Channel, { minOne: true }) : link));
-      }
+      const ids = new Set(rows.map((row) => row.agent.id));
+      this.linksChange.emit(remove ? this.links().filter((link) => !ids.has(link.agentId)) : [
+        ...this.links(), ...rows.map((row) => this.newLink(row.agent)),
+      ]);
       this.announcement.set(this.translate.instant('groups.form.assigned.bulk_done', { count: rows.length }));
     } finally {
       this.pending.set(false);

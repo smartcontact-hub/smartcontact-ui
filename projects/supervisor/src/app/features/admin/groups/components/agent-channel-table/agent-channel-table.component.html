@@ -20,26 +20,15 @@
         <tr>
           @for (col of columns(); track col.field) {
             <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
-              @if (col.field === 'assigned' || families().includes($any(col.field))) {
-                <!-- Una fila (DD-172): la casilla de «todos» y el icono de la columna, que nombra el tooltip. La pastilla se
-                     pulsa entera, también por el icono, y lo dice al pasar; la casilla triestado es lo que enseña el
-                     estado (todos, ninguno, a medias) y lo que oye el lector («Marcar … en todos»). Cae en la vertical
-                     de las casillas de sus filas (`.assign__cell`). -->
-                <span class="assign__head" [class.assign__head--disabled]="headerDisabled(col.field)"
-                  [pTooltip]="col.header" tooltipPosition="top" (click)="onHeadClick($event, col.field)">
-                  <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)"
+              <!-- Una fila de texto, todo alineado a la izquierda con los controles de sus filas (DD-172). Solo Asignado
+                   lleva su casilla de «todos», delante del rótulo, en la vertical de las casillas de sus filas: la primera
+                   columna, donde se espera. Los canales se cambian fila a fila. -->
+              @if (col.field === 'assigned') {
+                <span class="assign__head">
+                  <sc-checkbox [state]="assignedHeaderState()" [disabled]="assignedHeaderDisabled()"
                     [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                    (cycle)="toggleHeader(col.field)" />
-                  @if (col.field === 'assigned') {
-                    <sc-icon class="assign__head-icon" name="person_check" [size]="14" aria-hidden="true" />
-                  } @else {
-                    <sc-channel-icon class="assign__head-icon" [channel]="$any(col.field)" aria-hidden="true" />
-                  }
-                </span>
-              } @else if (col.field === 'active') {
-                <!-- Habilitado: su icono, sobre sus interruptores, con el nombre en el tooltip y en la cabecera. -->
-                <span class="assign__head-only" [pTooltip]="col.header" tooltipPosition="top">
-                  <sc-icon class="assign__head-icon" name="toggle_on" [size]="14" aria-hidden="true" />
+                    (cycle)="toggleAssignedHeader()" />
+                  <span aria-hidden="true">{{ col.header }}</span>
                 </span>
               } @else { {{ col.header }} }
             </th>
@@ -77,10 +66,8 @@
   }
 </ng-template>
 
-<!-- Una columna por canal DEL GRUPO, como la matriz de Contact Center. En `.assign__cell`, la vertical de la casilla de
-     «todos» de su cabecera (DD-172). -->
+<!-- Una columna por canal DEL GRUPO, como la matriz de Contact Center. -->
 <ng-template #channelTpl let-row let-col="col">
-  <span class="assign__cell">
   @if (!allowed(row.agent, col.field)) {
     <span class="assign__permission">
       <sc-checkbox state="none" disabled [ariaLabel]="'groups.form.assigned.not_allowed' | translate: { name: row.agent.name, channel: col.header }" />
@@ -104,7 +91,6 @@
       (cycle)="toggleChannel(row.agent.id, col.field)"
     />
   }
-  </span>
 </ng-template>
 
 <ng-template #levelTpl let-row let-col="col">
@@ -121,14 +107,12 @@
 </ng-template>
 
 <ng-template #assignedTpl let-row>
-  <span class="assign__cell">
-    <sc-checkbox
-      [state]="row.link ? 'all' : 'none'"
-      [disabled]="pending() || (!row.link && !compatible(row.agent))"
-      [ariaLabel]="('groups.form.assigned.assignment' | translate) + ' — ' + row.agent.name"
-      (cycle)="toggleAssignment(row)"
-    />
-  </span>
+  <sc-checkbox
+    [state]="row.link ? 'all' : 'none'"
+    [disabled]="pending() || (!row.link && !compatible(row.agent))"
+    [ariaLabel]="('groups.form.assigned.assignment' | translate) + ' — ' + row.agent.name"
+    (cycle)="toggleAssignment(row)"
+  />
 </ng-template>
 
 <ng-template #activeTpl let-row>

@@ -1638,8 +1638,6 @@
         "bulk_body": "{{action}}: {{count}} agentes.",
         "bulk_add": "Asignar al grupo",
         "bulk_remove": "Quitar del grupo",
-        "bulk_channel_add": "Activar {{channel}}",
-        "bulk_channel_remove": "Quitar {{channel}}",
         "bulk_done": "Se han actualizado {{count}} agentes.",
         "bulk_confirm": "Confirmar"
       },

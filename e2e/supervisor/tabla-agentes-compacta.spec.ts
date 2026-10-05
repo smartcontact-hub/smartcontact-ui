@@ -53,18 +53,12 @@ test('sin paginación: todas las filas del filtro, y la tabla desplaza por dentr
   await expect.poll(() => tabla.locator('tbody tr').count()).toBeGreaterThan(13);
 });
 
-/* LA CABECERA, EN UNA FILA Y ALINEADA (DD-172): las columnas de casillas llevan su icono y su casilla de «todos» al
- * lado, en la vertical de las casillas de sus filas; Habilitado, su icono sobre sus interruptores. Hasta entonces cada
- * cabecera de casillas apilaba su rótulo y su casilla, y la fila de cabeceras medía 54 con «Agente» y «Estado» flotando
- * a media altura. */
-const COLUMNAS_DE_CASILLAS = [
-  { nombre: 'Asignado', icono: 'person_check' },
-  { nombre: 'Teléfono', icono: 'call' },
-  { nombre: 'Chat', icono: 'chat_bubble' },
-  { nombre: 'Email', icono: 'mail' },
-] as const;
-
-test('la cabecera va en una fila: cada columna de casillas, su casilla de todos al lado de su icono y sobre las de sus filas', async ({
+/* LA CABECERA, UNA FILA DE TEXTO ALINEADA CON SUS CONTROLES (DD-172). Hasta entonces cada cabecera de casillas apilaba
+ * su rótulo y su casilla de «todos», y la fila de cabeceras medía 54 con «Agente» y «Estado» flotando a media altura.
+ * Elegido tras ver cómo lo hacen los SaaS de referencia (Zendesk, HubSpot, Genesys) y los sistemas de diseño (Carbon,
+ * Atlassian, NN/g): rótulos de texto, sin controles en las cabeceras de datos; solo la primera columna, Asignado, lleva
+ * su casilla de «todos». */
+test('la cabecera es una fila de texto: Asignado con su casilla delante, y cada rótulo sobre los controles de su columna', async ({
   page,
 }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
@@ -73,42 +67,34 @@ test('la cabecera va en una fila: cada columna de casillas, su casilla de todos 
   await page.evaluate(() => document.fonts.ready);
   const alto = await tabla.locator('thead tr').evaluate((tr) => tr.getBoundingClientRect().height);
   expect(alto, 'una sola fila de cabecera').toBeLessThanOrEqual(42);
-  for (const { nombre, icono } of COLUMNAS_DE_CASILLAS) {
-    const th = tabla.getByRole('columnheader', { name: nombre, exact: true });
-    await expect(th.locator(`.sc-icon-font--${icono}`), `${nombre}: su icono`).toHaveCount(1);
-    const m = await th.evaluate((el) => {
-      const casilla = el.querySelector('sc-checkbox')!.getBoundingClientRect();
-      const icono = el.querySelector('.assign__head-icon')!.getBoundingClientRect();
-      const indice = [...el.parentElement!.children].indexOf(el);
-      const fila = el.closest('table')!.querySelector('tbody tr')!.children[indice]!.querySelector('sc-checkbox')!.getBoundingClientRect();
+  const m = await tabla.locator('table').evaluate((t) => {
+    const ths = [...t.querySelectorAll('thead th')];
+    const fila = t.querySelector('tbody tr')!;
+    const control = (i: number) => fila.children[i]!.querySelector('sc-checkbox, sc-toggleswitch')?.getBoundingClientRect();
+    return ths.map((th, i) => {
+      const casilla = th.querySelector('sc-checkbox')?.getBoundingClientRect();
+      const rango = document.createRange();
+      const texto = [...th.querySelectorAll('span:not(.visually-hidden)')].find((s) => !s.querySelector('*') && s.textContent!.trim()) ?? th;
+      rango.selectNodeContents(texto);
       return {
-        juntos: icono.left > casilla.right && icono.left - casilla.right < 12,
-        mismaAltura: Math.abs(icono.top + icono.height / 2 - (casilla.top + casilla.height / 2)),
-        vertical: Math.abs(casilla.left - fila.left),
+        nombre: th.getAttribute('aria-label'),
+        casilla: casilla ? { left: casilla.left, centro: casilla.top + casilla.height / 2 } : null,
+        texto: { left: rango.getBoundingClientRect().left, centro: rango.getBoundingClientRect().top + rango.getBoundingClientRect().height / 2 },
+        control: control(i) ? control(i)!.left : null,
       };
     });
-    expect(m.juntos, `${nombre}: el icono, al lado de la casilla`).toBe(true);
-    expect(m.mismaAltura, `${nombre}: casilla e icono, a la misma altura`).toBeLessThanOrEqual(1);
-    expect(m.vertical, `${nombre}: la casilla de todos, sobre las de las filas`).toBeLessThanOrEqual(0.5);
-  }
-  const habilitado = tabla.getByRole('columnheader', { name: 'Habilitado', exact: true });
-  await expect(habilitado.locator('.sc-icon-font--toggle_on'), 'Habilitado: su icono').toHaveCount(1);
-  const centros = await habilitado.evaluate((el) => {
-    const icono = el.querySelector('.assign__head-icon')!.getBoundingClientRect();
-    const indice = [...el.parentElement!.children].indexOf(el);
-    const interruptor = el.closest('table')!.querySelector('tbody tr')!.children[indice]!.querySelector('sc-toggleswitch')!.getBoundingClientRect();
-    return Math.abs(icono.left + icono.width / 2 - (interruptor.left + interruptor.width / 2));
   });
-  expect(centros, 'Habilitado: el icono, centrado sobre los interruptores').toBeLessThanOrEqual(1);
-});
-
-test('pulsar el icono de una cabecera hace lo que su casilla', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11?seccion=agentes');
-  const tabla = page.locator('sc-agent-channel-table');
-  await tabla.locator('tbody tr').first().waitFor();
-  // Chat está a medias: marcarlo en todos cambia a varios agentes, y eso se confirma (DD-151).
-  await tabla.getByRole('columnheader', { name: 'Chat', exact: true }).locator('.sc-icon-font--chat_bubble').click();
-  await expect(page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' })).toBeVisible();
+  const col = (nombre: string) => m.find((c) => c.nombre === nombre)!;
+  const asignado = col('Asignado');
+  expect(asignado.casilla, 'Asignado: su casilla de todos').not.toBeNull();
+  expect(Math.abs(asignado.casilla!.left - asignado.control!), 'Asignado: sobre las casillas de sus filas').toBeLessThanOrEqual(0.5);
+  expect(asignado.texto.left, 'Asignado: el rótulo, detrás de la casilla').toBeGreaterThan(asignado.casilla!.left);
+  expect(Math.abs(asignado.texto.centro - asignado.casilla!.centro), 'Asignado: casilla y rótulo, a la misma altura').toBeLessThanOrEqual(1);
+  for (const nombre of ['Teléfono', 'Chat', 'Email', 'Habilitado']) {
+    const c = col(nombre);
+    expect(c.casilla, `${nombre}: sin controles en la cabecera`).toBeNull();
+    expect(Math.abs(c.texto.left - c.control!), `${nombre}: el rótulo, sobre los controles de su columna`).toBeLessThanOrEqual(1);
+  }
 });
 
 test('la barra: el selector y el buscador, centrados y de borde a borde de la tabla', async ({ page }) => {

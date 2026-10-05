@@ -171,8 +171,8 @@ test('una fila que llega sin canal devuelve la columna en un grupo de uno, y mar
 
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(1);
   const ancho = (await medidas(page)).ancho;
-  // Solo Teléfono: 37,25rem (DD-172: su cabecera es su casilla y su icono, sin rótulo).
-  expect(ancho).toBeLessThanOrEqual(37.25 * 16);
+  // Solo Teléfono: 44,375rem (DD-172: cada columna mide su rótulo, y «Téléphone» pide 5,5).
+  expect(ancho).toBeLessThanOrEqual(44.375 * 16);
 
   // Es la única forma de darle canal desde aquí; al marcarla pasa a ser su último canal, y la columna se queda.
   await panel(page).getByRole('checkbox', { name: 'Tom Hanks — Teléfono' }).click();

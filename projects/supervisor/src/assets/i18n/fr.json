@@ -1635,8 +1635,6 @@
         "bulk_body": "{{action}} : {{count}} agents.",
         "bulk_add": "Affecter au groupe",
         "bulk_remove": "Retirer du groupe",
-        "bulk_channel_add": "Activer {{channel}}",
-        "bulk_channel_remove": "Retirer {{channel}}",
         "bulk_done": "{{count}} agents mis à jour.",
         "bulk_confirm": "Confirmer"
       },

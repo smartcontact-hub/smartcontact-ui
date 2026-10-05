@@ -85,45 +85,9 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
- /* LA CABECERA DE UNA COLUMNA DE CASILLAS (DD-172): la casilla de «todos» y el icono de la columna, en una fila, dentro
-  * de una pastilla que se pulsa entera y lo dice al pasar (el fondo de «se puede pulsar» de la app, en 150 ms). La
-  * casilla triestado enseña el estado; el icono, de qué columna es, y el tooltip, su nombre. */
+/* La cabecera de Asignado (DD-172): su casilla de «todos» delante del rótulo, en una fila con las demás cabeceras. */
 .assign__head {
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
-  padding: var(--sc-spacing-0-25);
-  border-radius: var(--sc-radius-200);
-  cursor: pointer;
-  transition: background-color var(--sc-transition-fast) var(--sc-easing-default);
-
-  &:hover {
-    background: var(--sc-bg-hover);
-  }
-}
-
-.assign__head--disabled {
-  cursor: default;
-
-  &:hover {
-    background: transparent;
-  }
-}
-
-.assign__head-icon {
-  display: inline-flex;
-  color: var(--sc-icon-secondary);
-}
-
-/* El icono de Habilitado, sin casilla: solo nombra la columna (por el tooltip) y no se pulsa. */
-.assign__head-only {
-  display: inline-flex;
-  vertical-align: middle;
-}
-
-/* La casilla de cada fila, con el relleno de la pastilla de su cabecera: las dos, en la misma vertical. */
-.assign__cell {
-  display: inline-flex;
-  align-items: center;
-  padding-inline-start: var(--sc-spacing-0-25);
 }

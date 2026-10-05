@@ -1635,8 +1635,6 @@
         "bulk_body": "{{action}}: {{count}} agents.",
         "bulk_add": "Assign to group",
         "bulk_remove": "Remove from group",
-        "bulk_channel_add": "Enable {{channel}}",
-        "bulk_channel_remove": "Remove {{channel}}",
         "bulk_done": "Updated {{count}} agents.",
         "bulk_confirm": "Confirm"
       },
