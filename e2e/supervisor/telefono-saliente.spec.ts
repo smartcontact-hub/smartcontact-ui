@@ -85,7 +85,7 @@ test('el teléfono saliente se elige de los números asignados: no hay campo don
   // Un desplegable que deja escribir pinta un <input>; uno cerrado, solo su combobox, nombrado por su rótulo.
   await expect(campo.locator('input')).toHaveCount(0);
   await expect(page.getByRole('combobox', { name: 'Teléfono saliente', exact: true })).toBeVisible();
-  await expect(campo).toContainText('El número que ven los clientes cuando un agente del grupo llama.');
+  await expect(campo).toContainText('El número que ve el cliente cuando le llaman.');
   await expect(campo).not.toContainText('escríbelo');
 
   await campo.locator('.p-select-dropdown').click();

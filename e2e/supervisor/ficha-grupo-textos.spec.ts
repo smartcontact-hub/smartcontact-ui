@@ -204,10 +204,10 @@ test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, p
   await goto(page, 'admin/grupos/editar/1?seccion=distribucion');
   const telefono = page.locator('#group-channel-phone');
   const ayuda = telefono.locator('.field', { has: page.locator('#group-phone-queue-size') }).locator('.field__help');
-  await expect(ayuda).toHaveText('Como mucho 50 conversaciones esperando en total, haya los agentes que haya.');
+  await expect(ayuda).toHaveText('Hasta 50 conversaciones en espera en total. ');
 
   await pickSelectOption(page, page.locator('#group-phone-queue-type'), 'Variable');
-  await expect(ayuda).toHaveText('Varía con los agentes conectados: 2 conversaciones en cola por cada uno. Recomendado: 2');
+  await expect(ayuda).toHaveText('2 conversaciones en cola por agente conectado. Recomendado: 2');
 });
 
 test('la tipificación se elige por su categoría, sin la cuenta de sus tipificaciones al lado', async ({ page }) => {
