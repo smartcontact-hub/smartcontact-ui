@@ -84,3 +84,16 @@
   <sc-button label="Ver todo" variant="secondary" appearance="text" />
   <sc-button icon="more_vert" variant="secondary" appearance="text" iconAriaLabel="Más acciones" />
 </ng-template>
+
+<ng-template #popup>
+  <sc-button
+    icon="view_column"
+    variant="secondary"
+    appearance="outlined"
+    ariaLabel="Columnas"
+    ariaHasPopup="dialog"
+    [ariaExpanded]="false"
+    ariaControls="columnas-panel"
+    data-testid="sc-btn-popup"
+  />
+</ng-template>

@@ -1,4 +1,4 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { MenuModule } from 'primeng/menu';
@@ -13,6 +13,8 @@ import type { DashboardChannel, DashboardDirection, WidgetFilter } from '../../d
 
 const CHANNELS: readonly DashboardChannel[] = ['calls', 'chats', 'emails', 'all'];
 const DIRECTIONS: readonly DashboardDirection[] = ['incoming', 'outgoing', 'all'];
+
+let widgetMenuIdCounter = 0;
 
 /**
  * Chrome común de todo widget: título, lo que vigila y el menú ⋮, sobre `sc-panel` (DD-109).
@@ -60,6 +62,12 @@ export class WidgetCardComponent {
   private readonly lang = injectLangChange();
 
   protected readonly kebabIcon = 'more_vert';
+
+  /** Id del `p-menu`, para `aria-controls` en el ⋮: el mismo en los dos, único por widget. */
+  protected readonly menuId = `sc-dashboard-widget-menu-${++widgetMenuIdCounter}`;
+
+  /** Si el menú del ⋮ está abierto, para su `aria-expanded` (DD-133). */
+  protected readonly menuOpen = signal(false);
 
   /** El aviso del panel sigue al nivel de la alerta. */
   protected readonly severity = computed<ScPanelSeverity | null>(() => {

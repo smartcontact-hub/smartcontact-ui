@@ -10,10 +10,12 @@ import {
     TemplateRef
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import type { ButtonPassThrough } from 'primeng/types/button';
 
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
 import {
     ScButtonAppearance,
+    ScButtonAriaHasPopup,
     ScButtonIconPosition,
     ScButtonIconSize,
     ScButtonSize,
@@ -89,6 +91,22 @@ export class ScButtonComponent {
 
     readonly ariaLabel = input<string | null>(null);
 
+    /**
+     * Qué tipo de popup abre el botón (`menu`, `dialog`, `listbox`…), el `aria-haspopup` nativo. El
+     * host `<sc-button>` nunca recibe el foco: sin esto en el `<button>` real, el lector no dice que
+     * el botón abre algo (la «Columnas» de una lista, el ⋮ de un widget).
+     */
+    readonly ariaHasPopup = input<ScButtonAriaHasPopup | null>(null);
+
+    /**
+     * Si el popup que abre el botón está abierto, el `aria-expanded` nativo. `null` lo omite; `false`
+     * SÍ se anuncia (cerrado), no es lo mismo que no tenerlo.
+     */
+    readonly ariaExpanded = input<boolean | null>(null);
+
+    /** Id del popup que abre el botón, el `aria-controls` nativo. */
+    readonly ariaControls = input<string | null>(null);
+
     readonly rounded = input(false, { transform: booleanAttribute });
 
     /**
@@ -157,6 +175,19 @@ export class ScButtonComponent {
     protected readonly iconRole = computed<'img' | null>(() =>
         this.iconAccessibleLabel() ? 'img' : null
     );
+
+    /**
+     * `p-button` no tiene entrada para `aria-haspopup`/`aria-expanded`/`aria-controls`: van al
+     * `<button>` real por passthrough (`pt.root`), igual que `ariaDescribedBy` en `sc-toggleswitch`.
+     * `undefined` hace que `pBind` quite el atributo, así que sin fijar nada no se escribe ninguno.
+     */
+    protected readonly buttonPt = computed<ButtonPassThrough>(() => ({
+        root: {
+            'aria-haspopup': this.ariaHasPopup() ?? undefined,
+            'aria-expanded': this.ariaExpanded() ?? undefined,
+            'aria-controls': this.ariaControls() ?? undefined
+        }
+    }));
 
     protected buttonIconClass(iconClass: string, buttonIcon: string): string {
         return [iconClass, buttonIcon].filter(Boolean).join(' ');

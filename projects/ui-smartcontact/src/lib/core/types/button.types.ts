@@ -4,3 +4,4 @@ export type ScButtonIconSize = 'sm' | 'md' | 'lg';
 export type ScButtonType = 'button' | 'submit' | 'reset';
 export type ScButtonIconPosition = 'left' | 'right' | 'top' | 'bottom';
 export type ScButtonAppearance = 'filled' | 'outlined' | 'text' | 'link';
+export type ScButtonAriaHasPopup = 'menu' | 'dialog' | 'listbox' | 'true';

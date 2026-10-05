@@ -67,6 +67,9 @@
           size="sm"
           [icon]="kebabIcon"
           [ariaLabel]="'dashboard.widget.more_actions' | translate: { title: title() }"
+          ariaHasPopup="menu"
+          [ariaExpanded]="menuOpen()"
+          [ariaControls]="menuId"
           (clicked)="menu.toggle($event)"
         />
       </div>
@@ -76,4 +79,12 @@
   <ng-content />
 </sc-panel>
 
-<p-menu #menu [model]="menuItems()" [popup]="true" appendTo="body" />
+<p-menu
+  #menu
+  [id]="menuId"
+  [model]="menuItems()"
+  [popup]="true"
+  appendTo="body"
+  (onShow)="menuOpen.set(true)"
+  (onHide)="menuOpen.set(false)"
+/>

@@ -7,7 +7,19 @@
     icon="support_agent"
     [label]="'dashboard.assign_agents.label' | translate"
     [ariaLabel]="ariaLabel()"
+    [ariaHasPopup]="ariaHasPopup()"
+    [ariaExpanded]="ariaHasPopup() ? menuOpen() : null"
+    [ariaControls]="ariaHasPopup() ? menuId : null"
     (clicked)="onClick($event, menu)"
   />
-  <p-menu #menu [model]="menuItems()" [popup]="true" appendTo="body" [ariaLabel]="'dashboard.assign_agents.menu' | translate" />
+  <p-menu
+    #menu
+    [id]="menuId"
+    [model]="menuItems()"
+    [popup]="true"
+    appendTo="body"
+    [ariaLabel]="'dashboard.assign_agents.menu' | translate"
+    (onShow)="menuOpen.set(true)"
+    (onHide)="menuOpen.set(false)"
+  />
 }

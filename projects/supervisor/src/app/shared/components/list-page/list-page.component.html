@@ -23,8 +23,8 @@
             icon="view_column"
             [ariaLabel]="columnsAriaLabel()"
             [attr.title]="columnsAriaLabel()"
-            [attr.aria-haspopup]="'dialog'"
-            [attr.aria-expanded]="columnsOpen()"
+            ariaHasPopup="dialog"
+            [ariaExpanded]="columnsOpen()"
             (clicked)="columnsPop.toggle($event)"
           />
           <p-popover #columnsPop (onShow)="columnsOpen.set(true)" (onHide)="onColumnsHide()">
