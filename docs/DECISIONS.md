@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
 > | Importar contactos de un CSV, como en Voice: la plantilla (`nombre;teléfono`, con `;` y BOM) y una vista previa con lo que entra, cada error con su línea, los repetidos y lo que no cabe · `;` o `,`, UTF-8 o windows-1252 · tope de 5000 por agenda · entra sin guardar | DD-166 |
 > | Repositorios dice cuántos hay de cada uno (la cifra del almacén que enseña su página; las de IA, las de Conversaciones), también en el nombre que oye el lector, y tiene buscador por nombre y descripción · los almacenes salen de su página a `repositories/state/` (enmienda DD-101 §2) | DD-165 |
 > | El resumen de cada recurso en las fichas: una fila por agenda, plantilla o tipificación con su dato y «Editar» (`sc-resource-rows`), que lleva a su sitio (`?editar=` en Plantillas, `?buscar=` en cualquier repositorio) · «Editar» solo al editar · se ofrecen las agendas activas y la inactiva ya puesta · lo borrado no se cuenta ni se guarda (enmienda DD-101 §2 y §4, DD-105 §2) | DD-164 |
@@ -124,6 +125,43 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-167 · 2026-10-05 — El «+» de crear es el botón de solo icono de primeng.dev, redondo y con borde, junto a su control
+
+**Contexto.** Decisión de producto del 2026-10-05, al ver Recursos: el «+» de añadir es una variante del botón, la de
+solo icono de primeng.dev («Icon Only»), en cada sitio donde haya un «+» solo. Medido ese día:
+- **dónde hay:** cinco, todos en Recursos de la ficha de grupo (tipificación, agendas, plantillas de chat y de email, y
+  el de Etiquetas, apagado por DD-142). La ficha de agente no tiene ninguno, y los demás «+» de las apps llevan rótulo;
+- **cómo eran:** para PrimeNG ya eran de solo icono (`p-button-icon-only`), pero de texto y `sm` (28 × 27, sin borde ni
+  fondo en reposo), y flotaban sobre el rótulo. Se veían como un «+» suelto, a 1,5 px del control y con su centro 31 px
+  por encima del de él.
+
+**Decisión.**
+1. **El «+» es la fila «rounded» + «outlined» del «Icon Only» de primeng.dev, en gris** (`secondary`), para no competir
+   con «Guardar»: `<sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="…">`.
+   Con `rounded`, PrimeNG iguala el alto al ancho: un círculo de 31,5 (el ancho de solo icono del Kit), sin el
+   31,5 × 32,5 de DD-91. El nombre va en `ariaLabel`, como pide la sección de accesibilidad de la doc, y el tooltip lo
+   repite al pasar el ratón.
+2. **Va a la derecha de su control, a su alto.** Control y «+» comparten fila (`.control-add`): alineados arriba, con
+   7 de hueco, y el control se estira. Medido a 1440 y a 1366: un círculo de 31,5 junto a un control de 32,5, con los
+   centros a 0,5 px. Es la regla que ya tenía el «Añadir» de los dominios del chat, que pasa de `.domain-add` a
+   `.control-add`: una regla con dos usos.
+3. **El rótulo queda solo.** Sale la fila que sacaba el botón del flujo (`.field__label-row`).
+4. **El glifo se lee**: 4,52:1 en claro y 6,91:1 en oscuro, y un icono pide 3:1. El borde es el del botón secundario
+   con borde del DS, el mismo del «Añadir».
+
+**Razón.** Con forma visible, el «+» no cabía junto al rótulo: quedaba a medio píxel del control, y la casa pide 7. A
+la derecha del control es el patrón de elegir uno o crear uno nuevo, y a su alto se lee como parte del campo.
+
+**Descartadas.**
+- Las demás filas de la doc: la de relleno pesa más que el control al que acompaña, y la de texto sin borde es la que
+  se veía como un «+» suelto.
+- Dejarlo junto al rótulo con forma visible: queda pegado al control.
+- La fila con sombra: `sc-button` no expone `raised`, y una sombra no es de un control de formulario.
+
+**Consecuencias.** Precisa DD-121 §7 («cada una con su "+"»). DD-140, un diálogo por «+», no cambia.
+`ficha-recursos-dialogos` busca los «+» por su nombre y prueba las clases, el círculo del Kit, el hueco y los centros.
+La página de Button de sc-docs aún no tiene una sección «Solo icono» como la de primeng.dev: queda pendiente.
 
 ## DD-166 · 2026-10-04 — Importar contactos a una agenda desde un CSV, como en Voice
 
