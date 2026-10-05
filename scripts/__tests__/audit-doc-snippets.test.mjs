@@ -444,6 +444,13 @@ const DEMO_E = `
   });
 `;
 
+test('historiasDe lee el snippet en línea también entre comillas simples', () => {
+  const ts = DEMO_E.replace("{ name: 'Larga', template: larga }", `{ name: 'Larga', template: larga, snippet: '<sc-x a="1" />' }`);
+  const larga = historiasDe(ts).historias.find((h) => h.story === 'Larga');
+  assert.equal(larga.codigo, '<sc-x a="1" />');
+  assert.deepEqual(historiasSinSuCodigo(historiasDe(ts).historias), []);
+});
+
 test('(e) una story sin snippet que pinta otra plantilla que la del Playground se caza; con la del Playground, no', () => {
   const malas = historiasSinSuCodigo(historiasDe(DEMO_E).historias).map((h) => h.story);
   assert.deepEqual(malas, ['Larga']);

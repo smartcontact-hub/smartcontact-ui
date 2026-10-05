@@ -46,6 +46,21 @@ const ALTA_SNIPPET = `<sc-form-section-nav
   (activeChange)="onActive($event)"
 />`;
 
+/* Los rótulos van escritos: son lo que enseña la story (DD-52). */
+const LONG_SNIPPET = `<!-- Rótulos que no caben en el rail: envuelven a otra línea, sin elipsis. -->
+<sc-form-section-nav
+  [sections]="[
+    { id: 'identificacion', labelKey: 'Identificación', icon: 'badge' },
+    { id: 'servicios', labelKey: 'Servicios asignados', icon: 'hub' },
+    { id: 'permisos', labelKey: 'Permisos', icon: 'verified_user' },
+    { id: 'estrategia', labelKey: 'Estrategia de distribución', icon: 'account_tree' },
+  ]"
+  [activeId]="active()"
+  [flush]="true"
+  [sectionsWithErrors]="errors"
+  (activeChange)="onActive($event)"
+/>`;
+
 const FLUSH_SNIPPET = `<sc-form-section-nav
   [sections]="sections"
   [activeId]="active()"
@@ -152,7 +167,7 @@ export class FormSectionNavDemoComponent {
       { name: 'Flush (panel embebido)', template: fl, snippet: FLUSH_SNIPPET },
       { name: 'Enlaces, rótulo y cambios sin guardar', template: li, snippet: LINKS_SNIPPET },
       { name: 'En un alta: ✓ en las secciones que se dejan completas', template: al, snippet: ALTA_SNIPPET },
-      { name: 'Rótulos largos (envuelven, no se recortan)', template: lo },
+      { name: 'Rótulos largos (envuelven, no se recortan)', template: lo, snippet: LONG_SNIPPET },
     ];
   });
 }
