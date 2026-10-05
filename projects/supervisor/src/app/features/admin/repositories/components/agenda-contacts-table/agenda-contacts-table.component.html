@@ -8,6 +8,15 @@
       [value]="query()"
       (valueChange)="query.set($event)"
     />
+    <!-- Importar abre su diálogo en el editor, que es quien guarda (DD-166). -->
+    <sc-button
+      size="sm"
+      variant="secondary"
+      appearance="outlined"
+      icon="upload"
+      [label]="'repositories.agendas.import' | translate"
+      (clicked)="importar.emit()"
+    />
     <sc-button
       size="sm"
       variant="secondary"

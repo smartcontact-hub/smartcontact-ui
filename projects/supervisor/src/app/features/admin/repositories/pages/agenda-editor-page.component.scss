@@ -14,3 +14,34 @@
   display: block;
   margin-block-end: var(--sc-spacing-1);
 }
+
+/* El diálogo de importar (DD-166): la ayuda, las dos acciones juntas y, debajo, la vista previa, otro grupo. */
+.importar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+
+  p {
+    margin: 0;
+  }
+}
+
+.importar__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+.importar__vista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: var(--sc-spacing-1);
+}
+
+.importar__errores {
+  margin: 0;
+  padding-inline-start: var(--sc-spacing-1-25);
+  color: var(--sc-text-subtle);
+}
+

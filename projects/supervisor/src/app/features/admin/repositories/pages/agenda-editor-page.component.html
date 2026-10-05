@@ -72,6 +72,7 @@
         <sc-agenda-contacts-table
           [contacts]="form().contacts"
           (add)="contactDialog.set({ contact: null })"
+          (importar)="abrirImportar()"
           (edit)="contactDialog.set({ contact: $event })"
           (remove)="removeContact($event)"
         />
@@ -99,5 +100,68 @@
       (save)="onContactSave($event)"
       (cancelled)="contactDialog.set(null)"
     />
+  </sc-dialog>
+}
+
+<!-- Importar contactos de un CSV, como en Voice (DD-166): la plantilla, el archivo y, antes de añadir nada, qué entra y
+     qué no. Lo que entra va al formulario, sin guardar. -->
+@if (importOpen()) {
+  <sc-dialog [visible]="true" [title]="'repositories.agendas.import_title' | translate" (cancelled)="cerrarImportar()">
+    <div class="importar">
+      <p class="sc-text-body-regular">{{ importAyuda() }}</p>
+      <div class="importar__acciones">
+        <sc-button
+          size="sm"
+          variant="secondary"
+          appearance="text"
+          icon="download"
+          [label]="'repositories.agendas.import_template' | translate"
+          (clicked)="descargarPlantilla()"
+        />
+        <!-- El input nativo va oculto y lo abre un botón del DS, como en los mensajes de la ficha de grupo: fuera del
+             tabulador y del lector, que si no anuncian un segundo botón «Choose File» en inglés. -->
+        <input #archivo class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".csv,text/csv" (change)="onImportFile($event)" />
+        <sc-button
+          size="sm"
+          variant="secondary"
+          appearance="outlined"
+          icon="upload"
+          [label]="(importPreview() ? 'repositories.agendas.import_choose_other' : 'repositories.agendas.import_choose') | translate"
+          (clicked)="archivo.click()"
+        />
+      </div>
+      @if (importResumen(); as resumen) {
+        <div class="importar__vista" role="status">
+          <p class="sc-text-body-semibold">{{ resumen.entran }}</p>
+          @if (resumen.errores) {
+            <p class="sc-text-body-regular">{{ resumen.errores }}</p>
+            <ul class="importar__errores sc-text-caption-regular">
+              @for (linea of resumen.lineas; track $index) {
+                <li>{{ linea }}</li>
+              }
+              @if (resumen.mas) {
+                <li>{{ resumen.mas }}</li>
+              }
+            </ul>
+          }
+          @if (resumen.repetidos) {
+            <p class="sc-text-body-regular">{{ resumen.repetidos }}</p>
+          }
+          @if (resumen.sobran) {
+            <p class="sc-text-body-regular">{{ resumen.sobran }}</p>
+          }
+        </div>
+      }
+    </div>
+    <div modal-actions>
+      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cerrarImportar()">
+        <span>{{ 'common.cancel' | translate }}</span>
+      </sc-button>
+      @if (importResumen()?.confirmar; as confirmar) {
+        <sc-button type="button" size="sm" (clicked)="confirmarImportar()">
+          <span>{{ confirmar }}</span>
+        </sc-button>
+      }
+    </div>
   </sc-dialog>
 }

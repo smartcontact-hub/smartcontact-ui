@@ -10,14 +10,17 @@
   gap: var(--sc-spacing-1);
 }
 
+/* El buscador y, a su derecha, las dos acciones: 7 entre ellas, que van juntas, y 14 hasta el buscador, que es otra
+ * cosa (los 7 del hueco más los 7 de su margen). */
 .contacts__bar {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-1);
+  gap: var(--sc-spacing-0-5);
 }
 
 .contacts__search {
   flex: 1 1 auto;
+  margin-inline-end: var(--sc-spacing-0-5);
 }
 
 .contacts__sin-nombre {

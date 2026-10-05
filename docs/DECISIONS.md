@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Importar contactos de un CSV, como en Voice: la plantilla (`nombre;teléfono`, con `;` y BOM) y una vista previa con lo que entra, cada error con su línea, los repetidos y lo que no cabe · `;` o `,`, UTF-8 o windows-1252 · tope de 5000 por agenda · entra sin guardar | DD-166 |
 > | Repositorios dice cuántos hay de cada uno (la cifra del almacén que enseña su página; las de IA, las de Conversaciones), también en el nombre que oye el lector, y tiene buscador por nombre y descripción · los almacenes salen de su página a `repositories/state/` (enmienda DD-101 §2) | DD-165 |
 > | El resumen de cada recurso en las fichas: una fila por agenda, plantilla o tipificación con su dato y «Editar» (`sc-resource-rows`), que lleva a su sitio (`?editar=` en Plantillas, `?buscar=` en cualquier repositorio) · «Editar» solo al editar · se ofrecen las agendas activas y la inactiva ya puesta · lo borrado no se cuenta ni se guarda (enmienda DD-101 §2 y §4, DD-105 §2) | DD-164 |
 > | La agenda es una lista de contactos (nombre y teléfono) con su editor en su propia ruta, como las fichas; la fila del listado lo abre | DD-163 |
@@ -123,6 +124,39 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-166 · 2026-10-04 — Importar contactos a una agenda desde un CSV, como en Voice
+
+**Contexto.** La revisión de producto del 2026-10-04: hoy una agenda se llena descargando una plantilla e importándola
+(manual de usuario de Voice), y había que replicarlo o inventar algo.
+
+**Decisión.**
+1. **«Importar»**, junto a «Añadir contacto», abre un diálogo con la ayuda del formato, «Descargar plantilla» y «Elegir
+   archivo».
+2. **La plantilla es la cabecera y nada más** (`nombre;teléfono`, en el idioma de la app), con `;`, que es lo que
+   espera Excel en español, y con BOM, para que Excel la abra como UTF-8. Sin filas de ejemplo: se importarían si nadie
+   las borra.
+3. **Antes de añadir nada, la vista previa dice qué entra** («Se añadirán N contactos»), cada línea con error con su
+   número («Línea 3: el teléfono no es válido»; las 20 primeras, y de las demás cuántas son), los repetidos (los que ya
+   están en la agenda o salen dos veces en el archivo, comparados por sus cifras) y lo que no cabe. Las reglas son las
+   del diálogo de un contacto: nombre obligatorio y el teléfono de DD-163.
+4. **Lo importado entra en el formulario**, arriba y sin guardar: Guardar y Deshacer, como un contacto añadido a mano.
+5. **Se lee lo que guarda una hoja de cálculo**: `;` o `,` (el de la primera línea con datos), campos entre comillas
+   con `""`, el BOM, la cabecera en los cuatro idiomas y las líneas vacías. El archivo se lee en UTF-8 y, si no lo es,
+   en windows-1252: Excel en español guarda así, y leído en UTF-8 «Señal» llegaba como «Se�al».
+6. **Tope de 5000 contactos por agenda** (`TOPE_DE_CONTACTOS`): la cuota de localStorage es una para todos los
+   almacenes, y lo que la pasa se pierde sin avisar.
+
+La lógica es pura y tiene su unitaria (`parsearContactosCsv`, `decodificarCsv` y `plantillaCsv`, en
+`agenda-contacts.core.mjs`).
+
+**Razón.** Es el flujo que ya se conoce, y la vista previa evita importar a ciegas: quien sube un archivo con errores
+sabe qué líneas corregir antes de que entren.
+
+**Descartadas.**
+- Leer `.xlsx`: pide una librería de lectura, y Excel guarda CSV (la plantilla ya se abre con él).
+- Importar sin vista previa: los errores y los repetidos se perdían en silencio.
+- Un campo entre comillas que parte la línea: un contacto no lo necesita, y el lector queda más simple.
 
 ## DD-165 · 2026-10-04 — Repositorios dice cuántos hay de cada uno, y tiene buscador
 

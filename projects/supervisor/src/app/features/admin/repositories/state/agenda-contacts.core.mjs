@@ -53,3 +53,87 @@ export function contactosDeNumeros(numeros) {
   }
   return contactos;
 }
+
+/* ── Importar desde un CSV (DD-166) ─────────────────────────────────────────────────────────────────────────────── */
+
+/** Los contactos que caben en una agenda. La cuota de localStorage es una para todos los almacenes, y lo que la pasa se
+ *  pierde sin avisar (`local-store.factory.ts`): una agenda de 5000 contactos ocupa unos 250 KB. */
+export const TOPE_DE_CONTACTOS = 5000;
+
+/** La primera columna de la cabecera de la plantilla, en cualquiera de los cuatro idiomas de la app. */
+const CABECERA = /^(nombre|name|nom|nome)$/i;
+
+/** La plantilla: la cabecera y nada más, con `;` (lo que espera Excel en español) y con BOM, para que Excel la abra
+ *  como UTF-8 y no estropee las tildes. */
+export function plantillaCsv(nombre, telefono) {
+  return `\uFEFF${nombre};${telefono}\r\n`;
+}
+
+/** El texto de un CSV leído en bytes: UTF-8 si lo es (con o sin BOM) y, si no, windows-1252, que es como guarda Excel en
+ *  español. Leído siempre como UTF-8, «Señal» llegaba como «Se�al». */
+export function decodificarCsv(bytes) {
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch {
+    return new TextDecoder('windows-1252').decode(bytes);
+  }
+}
+
+/** Los campos de una línea. Un campo entre comillas puede llevar el separador, y dentro `""` es una comilla. Un campo
+ *  entre comillas no puede partir la línea: un contacto no lo necesita. */
+function campos(linea, separador) {
+  const salida = [];
+  let actual = '';
+  let entreComillas = false;
+  for (let i = 0; i < linea.length; i++) {
+    const c = linea[i];
+    if (entreComillas) {
+      if (c === '"' && linea[i + 1] === '"') {
+        actual += '"';
+        i++;
+      } else if (c === '"') entreComillas = false;
+      else actual += c;
+    } else if (c === '"') entreComillas = true;
+    else if (c === separador) {
+      salida.push(actual);
+      actual = '';
+    } else actual += c;
+  }
+  salida.push(actual);
+  return salida.map((campo) => campo.trim());
+}
+
+/**
+ * Lo que entra en una agenda desde un CSV, una línea por contacto con su nombre y su teléfono, y lo que no:
+ * - el separador es el de la primera línea con datos: `;` si lo lleva (Excel en español), si no `,`;
+ * - la cabecera de la plantilla, en cualquier idioma, y las líneas vacías no cuentan;
+ * - una línea sin nombre, o con un teléfono que no vale, es un error, con su número de línea en el archivo. La regla es
+ *   la del diálogo: todo contacto que se crea lleva nombre;
+ * - un teléfono que ya está en la agenda, o que se repite en el archivo, se salta y se cuenta (se compara por cifras);
+ * - lo que pasaría la agenda del tope se cuenta en `sobran` y no entra.
+ */
+export function parsearContactosCsv(texto, existentes, tope = TOPE_DE_CONTACTOS) {
+  const resultado = { nuevos: [], errores: [], repetidos: 0, sobran: 0 };
+  const vistos = new Set(existentes.map((c) => normalizarTelefono(c.phone)));
+  const sitio = Math.max(0, tope - existentes.length);
+  let separador = null;
+  String(texto ?? '')
+    .replace(/^\uFEFF/, '')
+    .split(/\r?\n/)
+    .forEach((linea, i) => {
+      if (!linea.trim()) return;
+      const primera = separador === null;
+      separador ??= linea.includes(';') ? ';' : ',';
+      const [name = '', phone = ''] = campos(linea, separador);
+      if (primera && CABECERA.test(name)) return;
+      if (!name) return void resultado.errores.push({ linea: i + 1, motivo: 'nombre' });
+      if (!telefonoValido(phone)) return void resultado.errores.push({ linea: i + 1, motivo: 'telefono' });
+      const clave = normalizarTelefono(phone);
+      if (vistos.has(clave)) return void resultado.repetidos++;
+      if (resultado.nuevos.length >= sitio) return void resultado.sobran++;
+      vistos.add(clave);
+      resultado.nuevos.push({ name, phone });
+    });
+  return resultado;
+}
+

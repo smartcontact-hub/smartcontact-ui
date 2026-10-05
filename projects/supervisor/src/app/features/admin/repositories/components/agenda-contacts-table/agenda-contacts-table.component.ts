@@ -64,6 +64,8 @@ export class AgendaContactsTableComponent {
   readonly contacts = input.required<readonly AgendaContact[]>();
   /** «Añadir contacto», desde la barra o desde el vacío. */
   readonly add = output<void>();
+  /** «Importar»: el editor abre su diálogo (DD-166). */
+  readonly importar = output<void>();
   readonly edit = output<AgendaContact>();
   readonly remove = output<AgendaContact>();
 

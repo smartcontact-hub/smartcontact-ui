@@ -25,6 +25,7 @@ import {
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService } from '@core/services';
+import { LanguageService } from '@core/services/language.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
@@ -32,7 +33,15 @@ import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { AgendaContactsTableComponent } from '../components/agenda-contacts-table/agenda-contacts-table.component';
 import { RepoFormPanelComponent, type RepoFormSubmission } from '../components/repo-form-panel.component';
 import type { RepoFieldDef } from '../components/repo-types';
-import { normalizarTelefono, telefonoValido } from '../state/agenda-contacts.core.mjs';
+import {
+  decodificarCsv,
+  type ImportacionDeContactos,
+  normalizarTelefono,
+  parsearContactosCsv,
+  plantillaCsv,
+  telefonoValido,
+  TOPE_DE_CONTACTOS,
+} from '../state/agenda-contacts.core.mjs';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
 
 interface AgendaDraft {
@@ -79,6 +88,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy 
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly crossTab = inject(CrossTabLockService);
+  private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
 
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
@@ -200,6 +210,90 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy 
 
   protected removeContact(contact: AgendaContact): void {
     this.form.update((f) => ({ ...f, contacts: f.contacts.filter((c) => c.id !== contact.id) }));
+  }
+
+  /* ── Importar desde un CSV (DD-166) ────────────────────────────────────── */
+
+  /** Las líneas con error que se enseñan; de las demás se dice cuántas son. */
+  private static readonly ERRORES_A_LA_VISTA = 20;
+  private readonly formatoCifra = computed(() => new Intl.NumberFormat(this.language.locale()));
+
+  protected readonly importOpen = signal(false);
+  /** Lo que dice el archivo antes de añadirlo: `null` mientras no se elige. */
+  protected readonly importPreview = signal<ImportacionDeContactos | null>(null);
+
+  /** La vista previa en frases: qué entra, cada error con su línea, los repetidos y lo que no cabe. */
+  protected readonly importResumen = computed(() => {
+    this.lang();
+    const vista = this.importPreview();
+    if (!vista) return null;
+    const cifra = (n: number) => this.formatoCifra().format(n);
+    const frase = (clave: string, n: number) =>
+      this.translate.instant(`repositories.agendas.${clave}${n === 1 ? '_one' : ''}`, { count: cifra(n), max: cifra(TOPE_DE_CONTACTOS) });
+    const vistos = vista.errores.slice(0, AgendaEditorPageComponent.ERRORES_A_LA_VISTA);
+    const resto = vista.errores.length - vistos.length;
+    return {
+      entran: vista.nuevos.length > 0 ? frase('import_add', vista.nuevos.length) : this.translate.instant('repositories.agendas.import_nothing'),
+      errores: vista.errores.length > 0 ? frase('import_errors', vista.errores.length) : null,
+      lineas: vistos.map((e) =>
+        this.translate.instant('repositories.agendas.import_error_line', {
+          line: e.linea,
+          reason: this.translate.instant(e.motivo === 'nombre' ? 'repositories.agendas.import_reason_name' : 'repositories.agendas.import_reason_phone'),
+        }),
+      ),
+      mas: resto > 0 ? this.translate.instant('repositories.agendas.import_more_errors', { count: cifra(resto) }) : null,
+      repetidos: vista.repetidos > 0 ? frase('import_duplicates', vista.repetidos) : null,
+      sobran: vista.sobran > 0 ? frase('import_over', vista.sobran) : null,
+      confirmar: vista.nuevos.length > 0 ? frase('import_confirm', vista.nuevos.length) : null,
+    };
+  });
+  protected readonly importAyuda = computed(() => {
+    this.lang();
+    return this.translate.instant('repositories.agendas.import_help', { max: this.formatoCifra().format(TOPE_DE_CONTACTOS) });
+  });
+
+  protected abrirImportar(): void {
+    this.importPreview.set(null);
+    this.importOpen.set(true);
+  }
+
+  protected cerrarImportar(): void {
+    this.importOpen.set(false);
+    this.importPreview.set(null);
+  }
+
+  /** La plantilla: solo la cabecera, en el idioma de la app, con `;` y BOM para Excel. */
+  protected descargarPlantilla(): void {
+    const t = (clave: string) => this.translate.instant(`repositories.agendas.${clave}`);
+    const blob = new Blob([plantillaCsv(t('import_template_name'), t('import_template_phone'))], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${t('import_template_file')}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  protected async onImportFile(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    // Vacío, para que elegir otra vez el mismo archivo (corregido) vuelva a leerlo.
+    input.value = '';
+    if (!archivo) return;
+    const texto = decodificarCsv(new Uint8Array(await archivo.arrayBuffer()));
+    this.importPreview.set(parsearContactosCsv(texto, this.form().contacts));
+  }
+
+  /** Lo importado entra en el formulario, arriba y sin guardar, como un contacto añadido a mano: Guardar y Deshacer. */
+  protected confirmarImportar(): void {
+    const vista = this.importPreview();
+    if (!vista || vista.nuevos.length === 0) return;
+    this.form.update((f) => {
+      let id = f.contacts.reduce((max, c) => Math.max(max, c.id), 0);
+      const nuevos = vista.nuevos.map((c) => ({ id: ++id, name: c.name, phone: c.phone }));
+      return { ...f, contacts: [...nuevos, ...f.contacts] };
+    });
+    this.cerrarImportar();
   }
 
   /* ── Teclado y pestaña ────────────────────────────────────────────────── */
