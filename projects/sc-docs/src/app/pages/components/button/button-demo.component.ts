@@ -33,6 +33,22 @@ const ICONS_SNIPPET = `<sc-button label="Con icono" icon="check" />
 <sc-button label="Deshabilitado" [disabled]="true" />
 <sc-button label="Full width" [fullWidth]="true" />`;
 
+const SOLO_ICONO_SNIPPET = `<!-- Sin rótulo, el nombre va en "ariaLabel": es lo que anuncia el lector, y el icono queda decorativo.
+     Cada forma, con las siete variantes ("variant"), como en las filas de arriba. -->
+<sc-button icon="check" ariaLabel="Confirmar" />
+<sc-button icon="check" [rounded]="true" ariaLabel="Confirmar" />
+<sc-button icon="check" [rounded]="true" appearance="outlined" ariaLabel="Confirmar" />
+<sc-button icon="check" [rounded]="true" appearance="text" ariaLabel="Confirmar" />
+
+<!-- El «+» de crear, a la derecha de su desplegable (DD-167). -->
+<sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" ariaLabel="Nueva agenda" />`;
+
+const SOLO_ICONO_DESCRIPTION =
+  'Las filas de «Icon Only» de primeng.dev que el DS expone: relleno, redondo, redondo con borde y redondo de ' +
+  'texto, con sus siete variantes. Falta la fila con sombra: `raised` no está en sc-button. Redondo, el botón es ' +
+  'un círculo del ancho de solo icono. El «+» de crear, a la derecha de su desplegable, es el redondo con borde y ' +
+  'secundario (DD-167).';
+
 const PRESS_SNIPPET = `<!-- La pulsación la pone el tema: no hay nada que activar. -->
 <sc-button label="Guardar" />
 <sc-button label="Cancelar" variant="secondary" appearance="outlined" />
@@ -59,6 +75,26 @@ export class ButtonDemoComponent {
   protected readonly sizesTpl = viewChild<TemplateRef<StoryContext>>('sizes');
   protected readonly iconsTpl = viewChild<TemplateRef<StoryContext>>('icons');
   protected readonly pressTpl = viewChild<TemplateRef<StoryContext>>('press');
+  protected readonly soloIconoTpl = viewChild<TemplateRef<StoryContext>>('soloIcono');
+
+  /** Las filas de «Icon Only» de primeng.dev que el DS expone (sin `raised`). */
+  protected readonly formasSoloIcono = [
+    { forma: 'relleno', rounded: false, appearance: 'filled' },
+    { forma: 'redondo', rounded: true, appearance: 'filled' },
+    { forma: 'redondo con borde', rounded: true, appearance: 'outlined' },
+    { forma: 'redondo de texto', rounded: true, appearance: 'text' },
+  ] as const;
+
+  /** Una por variante, con el icono de su columna en primeng.dev (en Material) y su nombre accesible. */
+  protected readonly variantesSoloIcono = [
+    { variant: 'primary', icon: 'check', nombre: 'Confirmar' },
+    { variant: 'secondary', icon: 'bookmark', nombre: 'Guardar' },
+    { variant: 'success', icon: 'search', nombre: 'Buscar' },
+    { variant: 'info', icon: 'person', nombre: 'Usuario' },
+    { variant: 'warn', icon: 'notifications', nombre: 'Avisos' },
+    { variant: 'danger', icon: 'close', nombre: 'Cancelar' },
+    { variant: 'contrast', icon: 'star', nombre: 'Destacar' },
+  ] as const;
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-button',
@@ -113,13 +149,15 @@ export class ButtonDemoComponent {
     const sz = this.sizesTpl();
     const ic = this.iconsTpl();
     const pr = this.pressTpl();
-    if (!pg || !va || !ap || !sz || !ic || !pr) return [];
+    const so = this.soloIconoTpl();
+    if (!pg || !va || !ap || !sz || !ic || !pr || !so) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Variantes', template: va, snippet: VARIANTS_SNIPPET },
       { name: 'Apariencias', template: ap, snippet: APPEARANCES_SNIPPET },
       { name: 'Tamaños', template: sz, snippet: SIZES_SNIPPET },
       { name: 'Iconos y estados', template: ic, snippet: ICONS_SNIPPET },
+      { name: 'Solo icono', template: so, snippet: SOLO_ICONO_SNIPPET, description: SOLO_ICONO_DESCRIPTION },
       { name: 'Al pulsar', template: pr, snippet: PRESS_SNIPPET, description: PRESS_DESCRIPTION },
     ];
   });
