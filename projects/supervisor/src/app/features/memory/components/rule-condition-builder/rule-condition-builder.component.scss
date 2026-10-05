@@ -149,55 +149,6 @@
 
 }
 
-/* ─── Segmented control (todas / cualquiera) ─── */
-
-.seg {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 2px;
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-200);
-
-  &__btn {
-    appearance: none;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
-    font-weight: var(--sc-font-weight-regular);
-    color: var(--sc-text-secondary);
-    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
-    border-radius: var(--sc-radius-100);
-    transition:
-      background-color 150ms ease,
-      color 150ms ease;
-
-    &:hover {
-      color: var(--sc-text-primary);
-    }
-
-    &:focus-visible {
-      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-      outline-offset: var(--sc-focus-ring-offset);
-    }
-
-    &--on,
-    &--on:hover {
-      background: var(--sc-bg-primary);
-      color: var(--sc-text-on-primary);
-    }
-  }
-
-  &--sm .seg__btn {
-    font-size: var(--sc-font-size-50);
-    padding: 3px var(--sc-spacing-0-5);
-  }
-}
-
 /* ─── Grupo (solo en modo agrupado) ─── */
 
 .group {

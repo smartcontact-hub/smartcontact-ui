@@ -58,6 +58,7 @@ import os from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { cliente as clienteDeGithub } from "./github.mjs";
 import { localizarMemoria, leerMemoria, revisarMemoria } from "./memory-shape.mjs";
 
 /**
@@ -277,6 +278,58 @@ export function avisarCarga({ escribir = escribirEnStderr, env = process.env, ..
     if (!aviso) return false;
     escribir(aviso);
     env[ENV_AVISADA] = "1";
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/* ─── EL TERCER AVISO: OTRO PR ABIERTO TOCA TUS LEDGERS (LEARNINGS #21, 2026-10-05) ──────────────────────────────
+ *
+ * Un ledger compartido (`DECISIONS`, `LEARNINGS`, `inventory`, los hand-offs y `AGENTS`) que tocan dos PRs abiertos a
+ * la vez se pisa en silencio al fundir el segundo: el conflicto, si sale, sale en GitHub y tarde (roto el 2026-09-15
+ * con #196). `main-drift-guard` mira lo que YA entró en `main`; esto mira lo que va a entrar. Como la carga, avisa y no
+ * bloquea: dos PRs pueden tocar el mismo hand-off sin pisarse, y el orden de fundir lo decide quien funde. Sin red o
+ * sin `gh`, calla. */
+
+/** Los ledgers de LEARNINGS #21, por ruta desde la raíz. */
+export const LEDGERS = [/^docs\/DECISIONS\.md$/, /^LEARNINGS\.md$/, /^docs\/inventory\.md$/, /^docs\/handoff\/[^/]+$/, /^AGENTS\.md$/];
+
+export const esLedger = (fichero) => LEDGERS.some((re) => re.test(fichero));
+
+/** Los PRs abiertos de OTRAS ramas que tocan alguno de tus ledgers, con los que comparten. Pura. */
+export function cruceDeLedgers({ mios = [], prs = [], rama = "" } = {}) {
+  const misLedgers = new Set(mios.filter(esLedger));
+  return prs
+    .filter((pr) => pr.headRefName !== rama)
+    .map((pr) => ({ number: pr.number, rama: pr.headRefName, ficheros: (pr.ficheros ?? []).filter((f) => misLedgers.has(f)) }))
+    .filter((c) => c.ficheros.length > 0);
+}
+
+/** El aviso, o `null` sin cruce. Pura. */
+export function avisoDeLedgers(cruces = []) {
+  if (!cruces.length) return null;
+  const lineas = [REGLA, "⚠️  OTRO PR ABIERTO TOCA TUS LEDGERS (LEARNINGS #21): el segundo en fundirse se pisa en silencio.", ""];
+  for (const c of cruces) lineas.push(`    #${c.number} (${c.rama}): ${c.ficheros.join(", ")}`);
+  lineas.push("", "    Esto NO bloquea. Antes de fundir, trae `main` con el otro ya dentro y relee esos ficheros.", REGLA);
+  return lineas.join("\n");
+}
+
+/**
+ * Pregunta a GitHub y avisa si hay cruce; devuelve si escribió. NO LANZA NUNCA. Si la rama no toca ningún ledger, no
+ * pregunta nada: una llamada por PR abierto solo se paga cuando hay algo que cruzar.
+ */
+export function avisarLedgers({ mios = [], rama = "", cliente, escribir = escribirEnStderr } = {}) {
+  try {
+    if (!mios.some(esLedger)) return false;
+    const gh = cliente ?? clienteDeGithub();
+    const prs = gh
+      .prsAbiertos(() => false)
+      .filter((pr) => pr.headRefName !== rama)
+      .map((pr) => ({ ...pr, ficheros: gh.ficherosDePr(pr.number) }));
+    const aviso = avisoDeLedgers(cruceDeLedgers({ mios, prs, rama }));
+    if (!aviso) return false;
+    escribir(aviso);
     return true;
   } catch {
     return false;

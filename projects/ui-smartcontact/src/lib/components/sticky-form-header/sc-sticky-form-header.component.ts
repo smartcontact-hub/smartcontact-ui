@@ -11,11 +11,11 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { SC_STICKY_FORM_HEADER_TRANSLATIONS } from './i18n/sc-sticky-form-header.translations';
+import { ScButtonComponent } from '../button/sc-button.component';
 
 /**
  * Sticky bar at the top of every Create/Edit page (Users, Groups, Agents…).
@@ -37,7 +37,7 @@ import { SC_STICKY_FORM_HEADER_TRANSLATIONS } from './i18n/sc-sticky-form-header
 @Component({
   selector: 'sc-sticky-form-header',
   standalone: true,
-  imports: [ButtonModule, FormsModule, ScIconComponent, TranslateModule],
+  imports: [ScButtonComponent, FormsModule, ScIconComponent, TranslateModule],
   templateUrl: './sc-sticky-form-header.component.html',
   styleUrl: './sc-sticky-form-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

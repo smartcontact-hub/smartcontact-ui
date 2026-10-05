@@ -655,8 +655,13 @@ export const PROPS_SOBRE_API_OBSOLETA_MAX = 1;
  *
  * TRINQUETE: solo puede BAJAR. Envolver un componente nuevo ya jubilado pone rojo el commit que
  * lo mete — que es cuando todavía no cuesta nada elegir el relevo.
+ *
+ * 8 → 3 el 2026-10-05: las cinco piezas compuestas pintan `<sc-button>` en vez de `<p-button>`. Quedan
+ * `sc-button`, `sc-multiselect` y `sc-password`.
+ * 3 → 2 el mismo día: `sc-password` pasa a `<input pInputPassword>`, con su medidor propio. Quedan
+ * `sc-button` y `sc-multiselect`, con su coste anotado en el hand-off del DS (DD-172).
  */
-export const WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX = 8;
+export const WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX = 2;
 
 /**
  * Las props que el contrato GUARDADO daba por nativas y la versión instalada ya no tiene.

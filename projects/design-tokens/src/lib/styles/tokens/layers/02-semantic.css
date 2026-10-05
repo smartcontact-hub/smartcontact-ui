@@ -311,7 +311,7 @@
    * Each role bundles three tokens (size, line-height, weight). TODOS los roles
    * usan la familia primaria (Inter): los text styles del Figma del DS
    * (Display/H1/H2/H3/Body/Caption) son Inter, caption incluida (medido en vivo
-   * con el bridge 2026-09-08). `caption`/`caption-bold` apuntaban a la secundaria
+   * con el bridge 2026-09-08). `caption` (y `caption-bold`, retirado el 2026-10-05 sin un uso) apuntaban a la secundaria
    * (Open Sans) por deriva: se corrige para casar con Figma (FIGMA MANDA, DD-48).
    *
    * FIGMA MANDA (DD-48, 2026-09-03). Cada rol apunta al MISMO paso al que apunta su text
@@ -343,7 +343,6 @@
   --sc-font-size-body-2: var(--sc-font-size-200);
   --sc-font-size-body-3: var(--sc-font-size-200);
   --sc-font-size-caption: var(--sc-font-size-100);
-  --sc-font-size-caption-bold: var(--sc-font-size-100);
 
   /* Line heights */
   --sc-line-height-display-1: var(--sc-line-height-900);

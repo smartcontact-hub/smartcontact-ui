@@ -12,11 +12,11 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 
 import {
-  ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,
   ScButtonComponent as ButtonComponent,
   ScEmptyStateComponent as EmptyStateComponent,
 } from '@smartcontact-hub/components';
+import { ListPageComponent } from '@shared/components';
 
 import { BulkTranscriptionModalComponent } from '../../components/bulk-transcription-modal/bulk-transcription-modal.component';
 import { ConversationFiltersComponent } from '../../components/conversation-filters/conversation-filters.component';
@@ -56,6 +56,9 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
  *                aprobada en el plan de convergencia, no unilateral.
  * Iter 6b (S38): + BulkTranscriptionModal v11 (state machine 6 escenarios,
  *                3 destinos MECE, toggle locked, warning costes).
+ * 2026-10-05:   la lista se monta sobre `sc-list-page`, como las demás (DD-98).
+ *                `conversation-table` da sus columnas, celdas, clases de fila,
+ *                menú y orden; la pieza pinta título, tabla, selección y barra.
  *
  * NO incluye todavía: sticky toast post-confirmación, filtros por columna,
  * estado "en proceso". Ver `docs/memory-migration-inventory.md` §10.
@@ -65,7 +68,6 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
   imports: [
     TranslateModule,
     ButtonModule,
-    BulkActionBarComponent,
     BulkTranscriptionModalComponent,
     ButtonComponent,
     ConversationFiltersComponent,
@@ -73,6 +75,7 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
     ConversationPlayerModalComponent,
     DownloadModalComponent,
     EmptyStateComponent,
+    ListPageComponent,
     RetranscriptionConfirmModalComponent,
   ],
   templateUrl: './conversations-page.component.html',
@@ -205,19 +208,12 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * La selección la gobierna ahora `sc-datatable` (casilla, casilla de
-   * cabecera y rango con ancla) y emite el conjunto COMPLETO. Se vuelca tal
-   * cual al store, que sigue siendo la fuente de verdad (de él cuelgan la barra
-   * masiva y el dispatch). Sustituye a los antiguos `onSelectionToggled` (un
-   * id) y `onAllToggled` (todo/nada): los dos son casos de "aquí está la
-   * selección nueva".
+   * La selección la gobierna la lista (casilla, casilla de cabecera, tramo, Espacio y «limpiar» de la barra) y emite
+   * el conjunto COMPLETO. Se vuelca tal cual al store, que sigue siendo la fuente de verdad (de él cuelgan la barra
+   * masiva y el dispatch).
    */
   protected onSelectionChange(ids: ReadonlySet<string>): void {
     this.conversationsStore.setSelection(ids);
-  }
-
-  protected onClearSelection(): void {
-    this.conversationsStore.clearSelection();
   }
 
   protected onBulkTranscribe(): void {

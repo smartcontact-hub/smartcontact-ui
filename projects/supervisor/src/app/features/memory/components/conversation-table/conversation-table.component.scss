@@ -1,26 +1,15 @@
-/* Eslabón de la cadena de altos de `.page--tabla` (DD-95): el host se interpone entre
- * `.page__inner` y `.table-card`, así que hace de tarjeta en el flex. Se ajusta a sus filas
- * y, con lista virtual, llena el alto, igual que la regla global. */
+/* El componente no pinta nada: sus plantillas de celda se pintan dentro de la tabla que monta `sc-list-page`, no bajo
+ * este host. */
 :host {
-  display: flex;
-  flex-direction: column;
-  flex: 0 1 auto;
-  min-height: 0;
+  display: none;
 }
 
-:host:has(sc-datatable.sc-datatable--fill) {
-  flex: 1 1 auto;
-}
-
-/* La tabla la pinta ahora `sc-datatable`; su cromo de tabla-lista (piel
- * compartida) + los cuatro estados de fila con shimmer + la cabecera fija viven
- * en el partial GLOBAL `styles/_memory-conversation-table.scss`, porque el
- * `<tr>`/`<th>`/`<td>` los emite el DS con SU `_ngcontent` y una regla
- * encapsulada de aquí no los alcanzaría.
+/* La tabla la pinta `sc-datatable`; su cromo de tabla-lista (piel compartida) + los cuatro estados de fila con
+ * shimmer viven en el partial GLOBAL `styles/_memory-conversation-table.scss`, porque el `<tr>`/`<th>`/`<td>` los
+ * emite el DS con SU `_ngcontent` y una regla encapsulada de aquí no los alcanzaría.
  *
- * Lo que SÍ vive aquí es lo que va dentro de una celda: esos nodos se pintan
- * desde las `<ng-template>` de ESTE componente, así que conservan su
- * `_ngcontent` y la encapsulación los alcanza. */
+ * Lo que SÍ vive aquí es lo que va dentro de una celda: esos nodos se pintan desde las `<ng-template>` de ESTE
+ * componente, así que conservan su `_ngcontent` y la encapsulación los alcanza. */
 
 /* Texto libre (Origen, Destino): baja hasta dos líneas cuando no cabe en una, que es lo que decidió el reparto de
  * anchos (2026-09-13), y si es más largo, recorta con «…» y lleva el texto entero en el `title` (DD-124). Con

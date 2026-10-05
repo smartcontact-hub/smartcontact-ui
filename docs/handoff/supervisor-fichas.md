@@ -26,7 +26,7 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`. El de lo que dejó F
 (DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), en su rama
+## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), fundido (#337)
 
 > **Sello:** rama `arebury/figma-grid-three-columns` sobre `main` en HEAD `5cc9af78`; las pruebas en rojo, `1c7ed587`.
 > **Un bloque, un commit en rojo y otro en verde (DD-154). Sin subir: primero lo ve Rafa en local.** Sale del marco de
@@ -185,10 +185,10 @@ los resúmenes y se mide aparte. Ordenar columnas con teclado no se puede (tampo
 
 ## SIGUIENTE — sin preguntar
 
-0. **Las fichas sin cabecera (DD-170), en su rama** (el tramo de arriba): Rafa lo mira en local; si le vale,
-   `preflight:scope -- --run`, PR y `ci:verdict`. Supervisión y limpieza (DD-168) ya fue en su PR. Con esto se acaba
-   lo que dependía de nosotros en este frente. Lo siguiente: **triar los otros frentes** (DS, CusCare, Dashboard y Sidebar, cada uno con su hand-off) en
-   lotes como estos, y enseñarlos antes de empezar ninguno.
+0. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
+   CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
+   espera a otros (producto, Figma, devs o el portátil). En este frente no queda nada que dependa de nosotros; lo de
+   fuera de lote, abajo.
 
    Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
    separado (no entra en esta fase). Si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con
@@ -280,7 +280,7 @@ los resúmenes y se mide aparte. Ordenar columnas con teclado no se puede (tampo
 - ⚠️ Las opciones de un overlay nativo están en el DOM, con sus atributos, antes de tener caja: `p-motion` las monta con
   `display: none` y no lo quita hasta dos fotogramas después (`nextFrame()`), y `disableAnimations` no lo tapa porque
   no es una animación. Un clic con `force` no espera a la caja y falla en el acto («Element is not visible»; con los
-  fotogramas retrasados, 5 de 5). Antes de un clic forzado, `toBeVisible()` (`column-selector-order.spec.ts`).
+  fotogramas retrasados, 5 de 5). Antes de un clic forzado, `toBeVisible()` (lo hacía `column-selector-order.spec.ts`, borrada en #325).
 - ⚠️ Un commit del robot `visual-baselines` sobre un PR ya abierto deja su CI sin jobs (en #325, una ejecución
   «failure» con 0 jobs): hay que aprobarla o subir el siguiente commit. Si un cambio mueve una captura de sc-docs,
   lanza el workflow sobre la rama ANTES de abrir el PR; desde el 2026-10-04 el preflight avisa al final de cuáles.

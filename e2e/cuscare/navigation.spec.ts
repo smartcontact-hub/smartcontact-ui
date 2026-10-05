@@ -445,6 +445,61 @@ test.describe('panel Summary de una suscripción', () => {
   });
 
   /**
+   * Bajo Contact, el original tiene cuatro filas más —Alias, AccountId, ExternalId y OperationId—, cada una con su
+   * `*ngIf`, que la réplica no pintaba. Rótulos y orden son los del hand-off de CusCare, SIN VERIFICAR contra el
+   * original, que solo está en el portátil (`.cache/original-bundle/`).
+   */
+  test('Customer info enseña, bajo Contact, Alias, AccountId, ExternalId y OperationId', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.summarypill').first().click();
+
+    await expect(page.locator('.sum__fields dt')).toHaveText([
+      'Name',
+      'Address',
+      'Contact',
+      'Alias',
+      'AccountId',
+      'ExternalId',
+      'OperationId',
+    ]);
+  });
+
+  /**
+   * En el original, cada valor largo de Subs Info lleva su propio «Show more», que aparece SOLO si el texto no cabe en
+   * sus dos líneas, y abre solo ese valor. Sin verificar contra el original: el rótulo de cerrar («Show less»).
+   */
+  test('«Show more» sale solo en los valores que no caben, y abre solo el suyo', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.summarypill').first().click();
+
+    const caja = (clave: string) =>
+      page.getByTestId('sum-subsinfo').filter({ has: page.locator('.sum__boxk', { hasText: new RegExp(`^${clave}$`) }) });
+    const agente = caja('User Agent');
+    const url = caja('URL');
+
+    await expect(agente.getByRole('button', { name: 'Show more' })).toBeVisible();
+    await expect(url.getByRole('button', { name: 'Show more' })).toBeVisible();
+    await expect(caja('IP').getByRole('button')).toHaveCount(0);
+    await expect(caja('Connection').getByRole('button')).toHaveCount(0);
+
+    const altoUrl = (await url.boundingBox())!.height;
+    const plegada = (await agente.boundingBox())!.height;
+    await agente.getByRole('button', { name: 'Show more' }).click();
+
+    await expect(agente.getByRole('button', { name: 'Show less' })).toHaveAttribute('aria-expanded', 'true');
+    await expect.poll(async () => (await agente.boundingBox())!.height).toBeGreaterThan(plegada);
+    expect((await url.boundingBox())!.height).toBe(altoUrl);
+  });
+
+  test('con «Expand all» abierto, ningún valor necesita su «Show more»', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.summarypill').first().click();
+
+    await page.locator('.sum__expand').click();
+    await expect(page.getByTestId('sum-subsinfo').getByRole('button')).toHaveCount(0);
+  });
+
+  /**
    * El periodo pintaba «1 Week» como TEXTO FIJO. En el original sale del dato: un número y un
    * código de una letra. Se comprueban DOS suscripciones distintas — con una sola, un literal
    * disfrazado de dato pasaría igual.

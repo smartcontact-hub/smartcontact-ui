@@ -63,6 +63,13 @@
       <dd><span class="sum__ph">{{ 'ZIP code' | tr }}</span> <span class="sum__ph">{{ 'City' | tr }}</span> <img class="sum__flag" src="icons/flags/es.svg" width="16" height="12" alt="" aria-hidden="true" /> ES</dd>
       <dt>{{ 'Contact' | tr }}</dt>
       <dd><span class="sum__ph">{{ 'Phone' | tr }}</span> +34600222333 <span class="sum__ph">{{ 'Email' | tr }}</span></dd>
+      <!-- Cuatro filas más, cada una solo con valor: ver `clienteExtra`. -->
+      @for (fila of clienteExtra; track fila.clave) {
+        @if (fila.valor) {
+          <dt>{{ fila.clave | tr }}</dt>
+          <dd>{{ fila.valor }}</dd>
+        }
+      }
     </dl>
 
     <div class="sum__subsinfo">
@@ -78,9 +85,27 @@
       </button>
     </div>
     @for (campo of subsInfo; track campo.clave) {
-      <div class="sum__box" [class.is-open]="subsInfoDesplegado()" data-testid="sum-subsinfo">
-        <span class="sum__boxk">{{ campo.clave | tr }}</span>{{ campo.valor }}
-      </div>
+      @if (campo.valor) {
+        <div
+          class="sum__box"
+          [class.is-open]="subsInfoDesplegado() || abiertos().has(campo.clave)"
+          data-testid="sum-subsinfo"
+        >
+          <span class="sum__boxk">{{ campo.clave | tr }}</span>
+          <span #valor class="sum__boxv" [attr.data-clave]="campo.clave">{{ campo.valor }}</span>
+          <!-- Solo si el valor no cabe en su línea; con «Expand all» sobra. -->
+          @if (!subsInfoDesplegado() && noCaben().has(campo.clave)) {
+            <button
+              class="sum__more"
+              type="button"
+              [attr.aria-expanded]="abiertos().has(campo.clave)"
+              (click)="alternarCampo(campo.clave)"
+            >
+              {{ (abiertos().has(campo.clave) ? 'Show less' : 'Show more') | tr }}
+            </button>
+          }
+        </div>
+      }
     }
   </aside>
 

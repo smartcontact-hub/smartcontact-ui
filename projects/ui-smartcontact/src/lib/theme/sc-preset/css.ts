@@ -247,7 +247,11 @@ ${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):h
     background: transparent;
 }
 
-${LIST} .p-datatable-tbody > tr.p-datatable-row-selected {
+/* \`sc-row--selected\` la pone \`sc-datatable\` a toda fila seleccionada, también a las que añade un tramo con Mayúsculas,
+ * que p-table no resalta (2026-10-05). Va en la lista, la única variante con selección múltiple (la pieza de listas,
+ * Conversaciones y la demo de sc-docs). */
+${LIST} .p-datatable-tbody > tr.p-datatable-row-selected,
+${LIST} .p-datatable-tbody > tr.sc-row--selected {
     background: var(--sc-bg-secondary-hover);
 }
 

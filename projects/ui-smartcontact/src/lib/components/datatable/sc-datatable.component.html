@@ -52,7 +52,9 @@
     <tr>
       @if (selectionMode() === 'multiple') {
       <th class="sc-datatable__check" scope="col">
-        <p-table-header-checkbox [ariaLabel]="selectAllAriaLabel()" />
+        <!-- `sc-datatable__check-all`: el gancho, NUESTRO, por el que el componente le pone el nombre (ver el
+             `afterRenderEffect` de la casilla de «todas»). -->
+        <p-table-header-checkbox class="sc-datatable__check-all" [ariaLabel]="selectAllAriaLabel()" />
       </th>
       } @for (col of visibleCols(); track col.field) { @if (col.sortable) {
       <th

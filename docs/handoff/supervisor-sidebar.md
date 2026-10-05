@@ -51,7 +51,7 @@ plegado solo se pinta la rama de la página. Medido contra el preview a 1440×90
 desplegado.
 
 **Siguiente:**
-1. El botón de anclar pisa 5px el texto del logotipo desplegado (texto hasta x=208, botón desde 203). Viene así del preview.
+1. ~~El botón de anclar pisa 5px el texto del logotipo desplegado~~ → superado: DD-137 quitó el botón.
 2. Probar «no se cierra nada» con el Sidebar de primeng.dev (tag `archive/lab-sidebar-2026-09-16`).
 
 ## ✅ 2026-09-16 · Regla oficial (sustituida en producción por el tramo de arriba): en el sidebar no se cierra nada
@@ -71,8 +71,8 @@ cerrar al salir las categorías que no son de la página.
 **Figma:** un solo tablero con el padre en cyan y la regla «no se cierra nada» (`khNq9dJKNi13pNllrqm6dx`, nodo
 `14912-6324`). Las versiones anteriores están en `14930-1011`.
 
-**Siguiente:** llevar la regla a `main` en la rama del sidebar y reescribir DD-112 en esa parte. Lo de 2026-09-15 sigue
-debajo como estaba.
+~~**Siguiente:** llevar la regla a `main` y reescribir DD-112 en esa parte~~ → superado: DD-118 llevó a `main` «abrir no
+cierra las demás» (y enmendó DD-112), y DD-137 siguió el tablero. Lo de 2026-09-15 sigue debajo como estaba.
 
 ## ✅ 2026-09-15 · El sidebar se pliega a 80px, marca un solo padre y abre y cierra sin saltos (SISMAC-4340)
 
@@ -94,7 +94,8 @@ cierran 400ms después de salir, ancho 240 durante toda la transición al pulsar
    - Plegado: fondo de grupo solo en desplegado (propuesta de Rafa) o solo el primer nivel en plegado (propuesta de Claude).
    - ~~Selected al 15% (código) o al 12% (Figma)~~: ya no aplica. El blanco al 15% era el del sidebar anclado, que se
      quitó el 2026-10-01 (DD-137).
-2. Detalles premium de bajo coste: en `docs/ROADMAP.md`, «Revisión de componentes».
+2. Detalles premium de bajo coste: en `docs/ROADMAP.md`, «Revisión de componentes». Ojo: «fijarlo abierto» lo descartó
+   DD-137, y el cierre ya es de 300 ms (`sidebar.component.ts:98`); queda la pista de ⌘K.
 
 **Trampas del frente:**
 - ⚠️ El output de apertura se llama `toggleOpen`: `toggle` choca con el evento nativo (`no-output-native`).

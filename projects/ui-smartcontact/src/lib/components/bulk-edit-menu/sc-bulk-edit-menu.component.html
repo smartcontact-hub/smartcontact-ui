@@ -46,14 +46,14 @@
     />
   </span>
 
-  <p-button
+  <sc-button
     type="button"
-    severity="secondary"
-    size="small"
-    styleClass="bulk-edit__apply"
+    variant="secondary"
+    size="sm"
+    class="bulk-edit__apply"
     [disabled]="!canApply()"
-    (onClick)="onApply()"
+    (clicked)="onApply()"
   >
     <span>{{ 'sc.bulkEditMenu.apply' | translate }}</span>
-  </p-button>
+  </sc-button>
 </div>

@@ -11,13 +11,13 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ScClipboardService } from '../../core/services/sc-clipboard.service';
 import { ScDialogComponent } from '../dialog/sc-dialog.component';
 import { SC_DELETE_ENTITY_DIALOG_TRANSLATIONS } from './i18n/sc-delete-entity-dialog.translations';
+import { ScButtonComponent } from '../button/sc-button.component';
 
 export interface DeletableEntity {
   readonly id: number;
@@ -51,7 +51,7 @@ export interface DeletableEntity {
 @Component({
   selector: 'sc-delete-entity-dialog',
   standalone: true,
-  imports: [ButtonModule, FormsModule, ScIconComponent, ScDialogComponent, TranslateModule],
+  imports: [ScButtonComponent, FormsModule, ScIconComponent, ScDialogComponent, TranslateModule],
   templateUrl: './sc-delete-entity-dialog.component.html',
   styleUrl: './sc-delete-entity-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

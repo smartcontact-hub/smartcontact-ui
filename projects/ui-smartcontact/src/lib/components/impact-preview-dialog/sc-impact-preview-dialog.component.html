@@ -42,17 +42,17 @@
   </ul>
 
   <div modal-actions>
-    <p-button type="button" size="small" severity="secondary" (onClick)="cancelled.emit()">
+    <sc-button type="button" size="sm" variant="secondary" (clicked)="cancelled.emit()">
       <span>{{ cancelLabel() ?? ('sc.impactPreviewDialog.cancel' | translate) }}</span>
-    </p-button>
-    <p-button
+    </sc-button>
+    <sc-button
       type="button"
-      size="small"
-      severity="primary"
+      size="sm"
+      variant="primary"
       [disabled]="!canConfirm()"
-      (onClick)="onConfirm()"
+      (clicked)="onConfirm()"
     >
       <span>{{ confirmLabel() ?? ('sc.impactPreviewDialog.confirm' | translate) }}</span>
-    </p-button>
+    </sc-button>
   </div>
 </sc-dialog>

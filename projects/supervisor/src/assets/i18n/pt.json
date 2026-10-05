@@ -394,7 +394,8 @@
       },
       "tabs": {
         "transcription": "Transcrição",
-        "analysis": "Análise"
+        "analysis": "Análise",
+        "aria": "Conteúdo da conversa"
       },
       "actions": {
         "analyze": "Análise",

@@ -1,4 +1,3 @@
-import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -84,7 +83,6 @@ export class GroupAgentsPanelComponent implements OnDestroy {
   private readonly crossTab = inject(CrossTabLockService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
-  private readonly document = inject(DOCUMENT);
 
   /** El grupo cuyo panel está abierto; `null`, cerrado. */
   readonly group = input<Group | null>(null);
@@ -96,11 +94,6 @@ export class GroupAgentsPanelComponent implements OnDestroy {
   protected readonly conflict = signal(false);
   protected readonly confirmDiscard = signal(false);
   private releaseLock: (() => void) | null = null;
-  /**
-   * Lo que tenía el foco al abrir (la cifra de la fila en el listado, «Agentes» en el Monitor): vuelve ahí al cerrar,
-   * como en `sc-dialog`. Ni `p-drawer` ni `sc-drawer` lo devuelven, y sin esto el foco caía en `<body>` (DD-168).
-   */
-  private returnFocus: HTMLElement | null = null;
 
   constructor() {
     // Al abrir, o al pasar a otro grupo: sus agentes, recortados a los canales que el grupo ofrece.
@@ -200,20 +193,13 @@ export class GroupAgentsPanelComponent implements OnDestroy {
     this.links.set(links);
     this.initialLinks.set(links);
     if (group) this.releaseLock = this.crossTab.acquire('group', group.id, () => this.conflict.set(true));
-    if (!group) this.returnFocus = null;
-    else if (!this.returnFocus) {
-      const active = this.document.activeElement;
-      this.returnFocus = active instanceof HTMLElement && active !== this.document.body ? active : null;
-    }
   }
 
+  /** Cerrar. El foco lo devuelve `sc-drawer` a quien lo abrió (la cifra de la fila en el listado, «Agentes» en el
+   *  Monitor), si sigue en la página: hasta el 2026-10-05 lo hacía este panel a mano (DD-168). */
   private close(): void {
     this.unlock();
-    const opener = this.returnFocus;
-    this.returnFocus = null;
     this.closed.emit();
-    // Después de que el cajón se desmonte, y solo si quien lo abrió sigue en la página.
-    if (opener) queueMicrotask(() => opener.isConnected && opener.focus());
   }
 
   private unlock(): void {

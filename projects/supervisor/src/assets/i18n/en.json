@@ -394,7 +394,8 @@
       },
       "tabs": {
         "transcription": "Transcription",
-        "analysis": "Analysis"
+        "analysis": "Analysis",
+        "aria": "Conversation content"
       },
       "actions": {
         "analyze": "Analysis",

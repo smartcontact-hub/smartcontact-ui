@@ -9,9 +9,20 @@ import {
   output,
   signal,
   viewChild,
+  viewChildren,
 } from '@angular/core';
 
 import { I18n, TrPipe } from '../../core/i18n/i18n';
+
+/** Un rótulo del diccionario y su valor de ejemplo. */
+type Campo = Readonly<{ clave: string; valor: string }>;
+
+/** El mismo conjunto con `clave` puesta si no estaba, o quitada si estaba. */
+function alternar(prev: ReadonlySet<string>, clave: string): ReadonlySet<string> {
+  const next = new Set(prev);
+  if (!next.delete(clave)) next.add(clave);
+  return next;
+}
 
 /**
  * Panel "Summary" de una suscripción.
@@ -137,16 +148,15 @@ export class SummaryPanelComponent {
       if (this.focus() === 'nav') {
         this.navSection()?.nativeElement.scrollIntoView({ block: 'start' });
       }
+      // Medir obliga a maquetar, y maquetar pide la fuente que aún no esté: por eso se mide ya y otra vez cuando
+      // han llegado las fuentes. La columna mide 360px fijos, así que nada más mueve el corte de líneas.
+      this.medirSubsInfo();
+      void document.fonts.ready.then(() => this.medirSubsInfo());
     });
   }
 
   protected toggle(section: string): void {
-    this.open.update((prev) => {
-      const next = new Set(prev);
-      if (next.has(section)) next.delete(section);
-      else next.add(section);
-      return next;
-    });
+    this.open.update((prev) => alternar(prev, section));
   }
 
   protected isOpen(section: string): boolean {
@@ -210,7 +220,7 @@ export class SummaryPanelComponent {
    * enseña el teléfono, la IP y las URLs por las que navegó el cliente, de lo más sensible de la
    * aplicación.
    */
-  protected readonly subsInfo: ReadonlyArray<{ clave: string; valor: string }> = [
+  protected readonly subsInfo: readonly Campo[] = [
     {
       clave: 'User Agent',
       valor:
@@ -236,5 +246,47 @@ export class SummaryPanelComponent {
 
   protected alternarSubsInfo(): void {
     this.subsInfoDesplegado.update((v) => !v);
+    // «Collapse» pliega TODO, también lo que se abrió uno a uno.
+    this.abiertos.set(new Set());
   }
+
+  /**
+   * «Show more»: en el original cada valor largo lleva el suyo, que aparece SOLO si el texto desborda y abre solo ese
+   * valor. Rótulo de cerrar («Show less») y sitio del botón, sin verificar contra el original.
+   */
+  protected readonly abiertos = signal<ReadonlySet<string>>(new Set());
+
+  /** Los valores que no caben en su línea: solo esos llevan «Show more». */
+  protected readonly noCaben = signal<ReadonlySet<string>>(new Set());
+
+  private readonly valores = viewChildren<ElementRef<HTMLElement>>('valor');
+
+  protected alternarCampo(clave: string): void {
+    this.abiertos.update((prev) => alternar(prev, clave));
+  }
+
+  /**
+   * Se compara el alto natural del texto (`scrollHeight`, el mismo recortado que abierto) con la línea que enseña
+   * plegado (`-webkit-line-clamp: 1` en `.sum__boxv`), así que la respuesta no cambia al abrir o cerrar y el botón no
+   * parpadea.
+   */
+  private medirSubsInfo(): void {
+    const noCaben = new Set<string>();
+    for (const { nativeElement: el } of this.valores()) {
+      if (el.scrollHeight > parseFloat(getComputedStyle(el).lineHeight) + 1) noCaben.add(el.dataset['clave'] ?? '');
+    }
+    this.noCaben.set(noCaben);
+  }
+
+  /**
+   * Bajo Contact, el original pinta cuatro filas más, cada una solo si tiene valor (un `*ngIf` por fila). Rótulos y
+   * orden son los del hand-off de CusCare, SIN VERIFICAR contra el original, que solo está en el portátil; su
+   * castellano, tampoco (salen igual, como «Msisdn»). Los valores son inventados, con forma de identificador.
+   */
+  protected readonly clienteExtra: readonly Campo[] = [
+    { clave: 'Alias', valor: 'playweez_000000' },
+    { clave: 'AccountId', valor: 'ACC-00000000' },
+    { clave: 'ExternalId', valor: 'EXT-00000000' },
+    { clave: 'OperationId', valor: 'OP-00000000' },
+  ];
 }

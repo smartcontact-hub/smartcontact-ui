@@ -73,18 +73,18 @@
 
   <div class="sticky-header__actions">
     @if (showBack()) {
-      <p-button type="button" severity="secondary" (onClick)="cancelled.emit()">
+      <sc-button type="button" variant="secondary" (clicked)="cancelled.emit()">
         <sc-icon [name]="backIcon" size="inherit" />
         <span>{{ 'sc.stickyFormHeader.back' | translate }}</span>
-      </p-button>
+      </sc-button>
     }
-    <p-button type="button" [disabled]="!canSave() || saving()" (onClick)="save.emit()">
+    <sc-button type="button" [disabled]="!canSave() || saving()" (clicked)="save.emit()">
       @if (saving()) {
         <sc-icon name="progress_activity" size="inherit" [spin]="true" />
         <span>{{ 'sc.stickyFormHeader.loading' | translate }}</span>
       } @else {
         <span>{{ 'sc.stickyFormHeader.save' | translate }}</span>
       }
-    </p-button>
+    </sc-button>
   </div>
 </header>

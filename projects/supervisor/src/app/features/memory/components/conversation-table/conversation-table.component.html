@@ -1,33 +1,5 @@
-<div class="table-card" [class.table-card--seleccion]="selectedIds().size > 0">
-  <sc-datatable
-    variant="list" class="memory-conversations"
-    scrollable
-    scrollHeight="flex"
-    virtualScroll
-    [value]="conversations()"
-    [columns]="columns()"
-    [rowStyleClass]="rowStyleClass"
-    dataKey="id"
-    selectionMode="multiple"
-    [rowSelectionAriaLabel]="ariaFila"
-    [selectAllAriaLabel]="ariaTodo"
-    [selection]="selectedRows()"
-    (selectionChange)="onSelectionChange($any($event))"
-    rowsFocusable
-    (rowClick)="onRowClick($event)"
-    (rowKeydown)="onRowKeydown($event)"
-    (rowContextMenu)="onRowContextMenu($event, rowMenu)"
-    data-testid="conversations-table"
-  >
-    <div scTableEmpty>
-      <!-- Lo pone la página: el vacío de la vista o de los filtros activos (2026-09-14). -->
-      <ng-content />
-    </div>
-  </sc-datatable>
-</div>
-
-<!-- ── Plantillas de celda. Fuera del `<sc-datatable>` para que resuelvan los
-     `viewChild`; el contexto es `{ $implicit: conv }`. ─────────────────────── -->
+<!-- Solo plantillas de celda: la tabla la monta la página sobre `sc-list-page` (DD-98) y las recoge de `columns()`.
+     El contexto es `{ $implicit: conv }`. -->
 
 <ng-template #statusTpl let-conv>
   <button
@@ -97,7 +69,3 @@
   <span class="sc-text-body-regular">{{ conv.id }}</span>
 </ng-template>
 
-<!-- Menú de la tabla, abierto por el click derecho (R3). Ya no hay kebab
-     (2026-09-13): cada acción tiene otra puerta visible, ver `columns`. Sus
-     items dependen del estado de la fila apuntada — ver `menuItems`. -->
-<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />

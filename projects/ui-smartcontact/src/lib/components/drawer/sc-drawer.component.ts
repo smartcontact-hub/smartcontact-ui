@@ -1,4 +1,19 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input, model, output } from '@angular/core';
+import {
+    afterNextRender,
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DOCUMENT,
+    effect,
+    ElementRef,
+    inject,
+    Injector,
+    input,
+    model,
+    output,
+    untracked,
+} from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DrawerModule } from 'primeng/drawer';
 
@@ -93,11 +108,66 @@ export class ScDrawerComponent {
     /** Ha terminado de cerrarse. Es el momento seguro para liberar lo que tuviera dentro. */
     readonly hidden = output<unknown>();
 
+    /**
+     * MODAL, EL CAJÓN ES UN DIÁLOGO (WCAG 2.4.3 y 4.1.2, 2026-10-05). `p-drawer` lo pinta como `complementary`, deja el
+     * foco donde estaba y no lo devuelve al cerrar: medido en el panel de agentes, que lo devolvía a mano (DD-168), el
+     * foco se quedaba en el botón que lo abría, FUERA del panel, y Escape no lo cerraba sin tabular antes. Ahora, modal:
+     *   · se anuncia como diálogo, con su título por nombre (`pt` al nodo raíz, que es el que lleva el rol);
+     *   · al abrirse, lleva el foco al primer control de su contenido;
+     *   · al cerrarse, lo devuelve a quien lo tenía al abrir, si sigue en la página y el foco no se ha ido a otra
+     *     parte. Se mira `visible` y no `onHide`: PrimeNG solo emite `onHide` cuando cierra él (la X, la máscara,
+     *     Escape), no cuando lo cierra el padre, que es como se cierra el panel de agentes (medido el 2026-10-05).
+     * Sin modal sigue siendo `complementary`: convive con la página y no se lleva el foco.
+     */
+    protected readonly drawerPt = computed(() =>
+        this.modal() ? { root: { role: 'dialog', 'aria-modal': 'true', 'aria-label': this.header() || null } } : undefined,
+    );
+
+    private readonly document = inject(DOCUMENT);
+    private readonly injector = inject(Injector);
+    private readonly hostEl = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
+    /** Quien tenía el foco al abrir. */
+    private opener: HTMLElement | null = null;
+
+    protected onShow(event: unknown): void {
+        if (this.modal()) {
+            const control = this.hostEl.querySelector<HTMLElement>(
+                '.p-drawer-content :is(button, [href], input, select, textarea, [tabindex]):not([disabled]):not([tabindex="-1"])',
+            );
+            control?.focus();
+        }
+        this.shown.emit(event);
+    }
+
+    /** Al cerrarse, cuando el contenido ya se ha ido: el foco que estaba dentro cae en `<body>`. */
+    private devolverFoco(): void {
+        const opener = this.opener;
+        this.opener = null;
+        if (!opener || !this.modal()) return;
+        afterNextRender(
+            () => {
+                const active = this.document.activeElement;
+                const focoSuelto = !active || active === this.document.body || this.hostEl.contains(active);
+                if (opener.isConnected && focoSuelto) opener.focus();
+            },
+            { injector: this.injector },
+        );
+    }
+
     constructor() {
         // Copy fijo colocado: registra solo el diccionario del componente (el nombre de la X).
         const translate = inject(TranslateService);
         for (const [language, dict] of Object.entries(SC_DRAWER_TRANSLATIONS)) {
             translate.setTranslation(language, dict, true);
         }
+        // Al abrirse, quién tenía el foco (todavía no se ha movido); al cerrarse, se le devuelve.
+        effect(() => {
+            const abierto = this.visible();
+            untracked(() => {
+                if (!abierto) return this.devolverFoco();
+                const active = this.document.activeElement;
+                this.opener = active instanceof HTMLElement && active !== this.document.body ? active : null;
+            });
+        });
     }
 }

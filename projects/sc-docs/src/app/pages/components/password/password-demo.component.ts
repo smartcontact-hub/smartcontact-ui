@@ -60,7 +60,7 @@ export class PasswordDemoComponent {
     tag: 'sc-password',
     title: 'Password',
     description:
-      'Campo de contraseña sobre `p-password` con la chrome del field-pattern (label + requerido + helper/error), igual que `sc-inputtext`. El botón de mostrar/ocultar es un `<button>` real: se alcanza con Tab, se activa con Enter o Espacio y su nombre accesible cambia con el estado. Sin medidor de fuerza por defecto (`feedback`). Se consume con `[(value)]` (signals).',
+      'Campo de contraseña sobre la directiva `pInputPassword` con la chrome del field-pattern (label + requerido + helper/error), igual que `sc-inputtext`. El botón de mostrar/ocultar es un `<button>` real: se alcanza con Tab, se activa con Enter o Espacio y su nombre accesible cambia con el estado. Sin medidor de fuerza por defecto (`feedback`). Se consume con `[(value)]` (signals).',
     argTypes: [
       { name: 'label', control: { kind: 'text' } },
       { name: 'value', control: { kind: 'text' } },

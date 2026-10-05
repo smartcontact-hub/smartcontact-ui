@@ -153,7 +153,7 @@ test('`@layer app` gana al tema: la fila fallida de transcripciones conserva su 
   const medido = await page.evaluate(() => {
     const fila = document.querySelector('sc-datatable.memory-conversations tbody > tr.is-failed');
     const normal = document.querySelector(
-      'sc-datatable.memory-conversations tbody > tr:not(.is-failed):not(.is-selected)',
+      'sc-datatable.memory-conversations tbody > tr:not(.is-failed):not(.sc-row--selected)',
     );
     const probe = document.createElement('div');
     probe.style.background = 'var(--sc-bg-danger-subtle)';

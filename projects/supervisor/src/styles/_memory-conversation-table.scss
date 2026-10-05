@@ -53,10 +53,11 @@
     }
 
     /* Seleccionada: el MISMO gris que la lista compartida. La regla existe por la
-     * clase, no por el color: `is-selected` sale del `Set` de la página y pinta al
-     * instante las filas que añade un rango, que `.p-datatable-row-selected` no
-     * re-resalta (ver `rowStyleClass` en el componente). */
-    tbody > tr.is-selected:not(.is-deleted) {
+     * clase, no por el color: `sc-row--selected` la pone `sc-datatable` desde la
+     * selección y pinta al instante las filas que añade un rango, que
+     * `.p-datatable-row-selected` no re-resalta. Hasta el 2026-10-05 la ponía esta
+     * tabla (`is-selected`); ahora la tienen todas las listas. */
+    tbody > tr.sc-row--selected:not(.is-deleted) {
       background: var(--sc-bg-secondary-hover);
     }
 
@@ -118,7 +119,7 @@
 
     /* Selected gana sobre failed (consistencia con el resto de tints). */
     tbody
-      > tr.is-failed.is-selected:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
+      > tr.is-failed.sc-row--selected:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
       background: var(--sc-bg-secondary-hover);
     }
   }

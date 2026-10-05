@@ -91,42 +91,6 @@
  * `gap: 15.75` a los dos ejes; ahora dice lo que mide la maqueta, y lo dice una vez.
  */
 
-/* ---------- Campo con la etiqueta AL LADO ----------
- *
- * "Máximo de conversaciones en cola [ 9 ]", "Tamaño [ 400 ] píxeles". No es un campo con
- * etiqueta flotante: es una frase con un hueco, y así lo dibuja la maqueta (2286:5411,
- * 2286:5417, 2286:5402, y en Servicio 2286:5624). Separación 12.25 (`scale/0-875`; Figma pone
- * 12 suelto) y el control a los 71 de ancho que mide ahí el `inputnumber`.
- */
-.inline-field {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-875);
-  min-width: 0;
-
-  /* Los tres ejes se fueron a la plantilla el 2026-09-10, como clase:
-   * `.sc-text-caption-regular`. Aquí queda el color de rol, que no es tipografía
-   * y no tiene text style detrás. */
-  &__label {
-    color: var(--sc-text-secondary);
-  }
-
-  &__suffix {
-    color: var(--sc-text-secondary);
-    white-space: nowrap;
-  }
-
-  sc-inputnumber {
-    /* 71 = `inputnumber` de la maqueta. Es un ancho de CONTROL, no una medida de layout: no sale
-     * de la escala 14-base y no puede — la escala mide aire, no cajas de campo. La maqueta lo
-     * dibuja también a 94 en "Tamaño" (2286:5402); ese doble valor va a la lista de
-     * discrepancias, y aquí manda el que se repite seis veces. */
-    width: 71px;
-    flex: 0 0 auto;
-  }
-}
-
 /* ---------- Radio rows ---------- */
 
 /* 14 (`scale/1`) entre radios, el doble de los 7 de cada radio a su texto (`.radio`): con los 12

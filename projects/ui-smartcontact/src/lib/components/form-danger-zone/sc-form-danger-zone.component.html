@@ -5,16 +5,16 @@
     </h2>
     <p class="danger-zone__description">{{ descriptionKey() | translate }}</p>
   </div>
-  <p-button
+  <sc-button
     type="button"
-    severity="danger"
-    [outlined]="true"
-    size="large"
-    styleClass="danger-zone__action"
+    variant="danger"
+    appearance="outlined"
+    size="lg"
+    class="danger-zone__action"
     [disabled]="disabled()"
-    (onClick)="action.emit()"
+    (clicked)="action.emit()"
   >
     <sc-icon [name]="trashIcon" [size]="iconSizeDefault" />
     <span>{{ actionKey() | translate }}</span>
-  </p-button>
+  </sc-button>
 </section>

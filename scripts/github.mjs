@@ -166,6 +166,10 @@ export function cliente({ gh = ghReal, git = gitReal } = {}) {
         };
       });
     },
+    /** Las rutas que cambia un PR (hasta 100). Las cruza el aviso de ledgers del preflight (LEARNINGS #21). */
+    ficherosDePr(numero) {
+      return api(`pulls/${numero}/files?per_page=100`).map((f) => f.filename);
+    },
     /** Los últimos PRs fundidos (el REST no filtra por fundido: se piden cerrados y se quedan los que tienen fecha). */
     prsFundidos(cuantos = 40) {
       return api('pulls?state=closed&per_page=100')

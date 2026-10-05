@@ -244,7 +244,7 @@ export class ScSelectComponent {
   protected readonly footerText = this.field.footerText;
   /**
    * Los `aria-*` del campo van al elemento que recibe el foco (el `span[role=combobox]`, o el `<input>` si es
-   * editable), por passthrough (`pt.label`), como en `sc-password`. Hasta el 2026-09-28 iban en la envoltura
+   * editable), por passthrough (`pt.label`). Hasta el 2026-09-28 iban en la envoltura
    * `<p-select>`, y un lector de pantalla no anunciaba la ayuda ni sabía que el campo era obligatorio (DD-133).
    *
    * Una opción que no se puede elegir lo dice con `aria-disabled` (`pt.option`, con el `context` que PrimeNG da

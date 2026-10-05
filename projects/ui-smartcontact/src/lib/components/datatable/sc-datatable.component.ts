@@ -240,7 +240,8 @@ export class ScDatatableComponent<T = unknown> {
    *  esto PrimeNG anuncia `'Row Selected'` en inglés y sin identidad de fila. */
   readonly rowSelectionAriaLabel = input<ScRowAriaLabelFn<T> | undefined>(undefined);
 
-  /** Nombre accesible de la casilla de CABECERA (seleccionar todo). */
+  /** Nombre accesible de la casilla de CABECERA (seleccionar todo). Lo pone el componente desde que se pinta: PrimeNG
+   *  22.1 solo lo calcula cuando la tabla recibe filas después de pintarse la cabecera. */
   readonly selectAllAriaLabel = input<string | undefined>(undefined);
 
   /**
@@ -436,11 +437,11 @@ export class ScDatatableComponent<T = unknown> {
    * LÍMITE MEDIDO de p-table: la SELECCIÓN queda correcta (el modelo y lo que
    * emitimos llevan el rango entero; la barra masiva cuenta bien), pero p-table
    * solo re-pinta su clase `.p-datatable-row-selected` en las filas que togló
-   * ÉL — las que añade el rango por el input no se re-resaltan hasta el
-   * siguiente ciclo que las toque. Si una tabla quiere el TINTE visual del
-   * rango al instante, que lo pinte desde `[rowStyleClass]` leyendo su propia
-   * fuente de selección (que es lo que hace `conversation-table`), no desde la
-   * clase de p-table.
+   * ÉL — las que añade el rango por el input no se re-resaltan. Por eso la fila
+   * seleccionada lleva además `sc-row--selected`, que sale de la selección (ver
+   * `rowClass`). Hasta el 2026-10-05 se dejaba a cada pantalla pintarlo desde
+   * `[rowStyleClass]`, y solo lo hacía Conversaciones: en las ocho listas sobre
+   * `sc-list-page` un tramo de cuatro pintaba dos.
    */
   private anclaRango: number | null = null;
   /** `shiftKey` del último `mousedown` sobre una casilla (no lo lleva el
@@ -621,6 +622,19 @@ export class ScDatatableComponent<T = unknown> {
       observedThead = thead;
       ro.observe(thead, { box: 'border-box' });
     });
+    /* El nombre de la casilla de «todas» (WCAG 4.1.2). PrimeNG 22.1 lo calcula solo cuando la tabla recibe filas
+     * DESPUÉS de pintarse la cabecera (`valueSource$`), así que al cargar se quedaba sin él aunque llegara
+     * `selectAllAriaLabel`: medido el 2026-10-05 en Usuarios, Agentes, Grupos y Conversaciones. Se escribe aquí,
+     * desde su señal; cuando PrimeNG lo recalcula, pone el mismo. Se lee la lista virtual porque al entrar o salir
+     * vuelve a pintar la cabecera. */
+    afterRenderEffect(() => {
+      const nombre = this.selectAllAriaLabel();
+      this.selectionMode();
+      this.value();
+      this.pVirtualScroll();
+      const casilla = this.hostEl.querySelector<HTMLInputElement>('.sc-datatable__check-all input[type="checkbox"]');
+      if (nombre && casilla) casilla.setAttribute('aria-label', nombre);
+    });
     afterRenderEffect(() => {
       if (!this.virtualWanted() || this.rowHeight() || !this.value().length) return;
       const row = this.hostEl.querySelector<HTMLElement>('tbody > tr:has(> td:not([colspan]))');
@@ -659,9 +673,14 @@ export class ScDatatableComponent<T = unknown> {
     return (row as Record<string, unknown>)[field];
   }
 
-  /** Clases de la fila; `ngClass` acepta `undefined` sin quejarse. */
+  /** Ids de la selección: de ellos sale `sc-row--selected`, y no de la clase de p-table (ver el rango con ancla). */
+  private readonly idsSeleccionados = computed(() => new Set(this.selectionComoArray().map((fila) => this.idDe(fila))));
+
+  /** Clases de la fila: las de la pantalla y, si está seleccionada, `sc-row--selected`. `ngClass` acepta `undefined`. */
   protected rowClass(row: T, index: number): string | undefined {
-    return this.rowStyleClass()?.(row, index);
+    const propias = this.rowStyleClass()?.(row, index);
+    if (!this.idsSeleccionados().has(this.idDe(row))) return propias;
+    return propias ? `${propias} sc-row--selected` : 'sc-row--selected';
   }
 
   protected onRowClick(event: MouseEvent, row: T, index: number): void {

@@ -206,27 +206,48 @@
   cursor: pointer;
 }
 
+/* Rótulo arriba, con su «Show more» a la derecha (como «Expand all» en el título), y el valor debajo
+ * a todo el ancho. Así el botón no suma alto a la caja. */
 .sum__box {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 8px;
   margin: 8px 12px 0;
   padding: 8px;
   border: 1px solid #cfd3de;
   border-radius: 6px;
   background: #ffffff;
   word-break: break-all;
+}
 
-  /* Plegado, el valor se recorta a dos líneas; «Expand all» lo suelta. En el original cada valor
-   * largo lleva además su propio botón «Show more», que aparece SOLO si el texto desborda: eso
-   * pide medir el desbordamiento en runtime y no se replica todavía. */
+/* Plegado, la caja enseña dos líneas: el rótulo y la primera del valor, que acaba en «…». El recorte
+ * va en el valor y no en la caja: en la caja, la línea siguiente asoma por el relleno. «Show more»
+ * abre el suyo y «Expand all», todos. Si el valor cabe, no hay botón: lo mide el componente con
+ * esta misma línea. */
+.sum__boxv {
+  grid-column: 1 / -1;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   overflow: hidden;
 
-  &.is-open {
+  .is-open > & {
     display: block;
     -webkit-line-clamp: none;
     overflow: visible;
   }
+}
+
+.sum__more {
+  grid-area: 1 / 2;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #1a56b0;
+  font-family: inherit;
+  font-size: 10px;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 .sum__boxk {
