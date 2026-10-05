@@ -346,6 +346,23 @@ con decenas de columnas y buscador, que no es el caso. Si un listado llega ahí,
 **Descartado.** PickList (ver Razón); dejar los dos controles; un control a medida con asas propias
 (`sc-column-selector`, que ya existe en el DS sin uso y no es nativo).
 
+**Actualización (2026-10-05)** · Se ordena sin arrastrar (WCAG 2.1.1 y 2.5.7), y se cierra el «Coste». Medido antes:
+con el teclado ni siquiera se elegía. El globo cuelga de `<body>` y, al abrirlo con Intro, el foco se quedaba en el icono
+y Tab seguía por la página.
+- **El foco entra en la lista** al abrir: `p-popover` enfoca lo que lleve `autofocus`, y se lo pone el `<ul>` del Listbox
+  (`pt.list`). Al cerrar con el foco dentro (Escape), vuelve al icono.
+- **«Subir» y «Bajar»**, bajo la lista, mueven la última columna enfocada, la de las flechas; su nombre la dice («Subir
+  Email»), y el lector oye a qué puesto llega. No pasan por encima de una fija. Son primarios de texto: el secundario de
+  texto mide 2,58:1 en claro. Arrastrar sigue igual; los dos caminos mueven con la misma función.
+- **El teclado del Listbox es el nativo**, con dos arreglos alrededor, medidos en PrimeNG 22.1:
+  - su `aria-activedescendant` no se rellenaba nunca: lo calcula un `computed` que lee primero `focused`, que no es una
+    señal, y sin foco no llega a leer la opción. Las flechas movían el foco y el lector no oía nada. Se escribe desde su
+    señal, `focusedOptionId`;
+  - Tab desde la lista se quedaba en un elemento invisible de PrimeNG (el que lleva al buscador, que aquí no hay). Si se
+    queda ahí, el foco sigue a «Subir».
+- **Pruebas:** `columnas-en-una-lista` gana dos, en rojo antes: todo con el teclado (entrar, elegir con flechas, subir,
+  bajar, Escape) y subir con el ratón hasta debajo de la fija, que se queda al volver.
+
 ## DD-161 · 2026-10-04 — La cifra principal del resumen, con color: el degradado de la vista previa de ProgressSpinner
 
 **Contexto.** La revisión de producto del 2026-10-04 pidió para el resumen de las fichas la imagen de la vista previa
