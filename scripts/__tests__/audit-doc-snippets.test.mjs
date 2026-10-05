@@ -12,6 +12,7 @@ import {
   apiDeComponentes,
   argTypesDe,
   historiasDe,
+  historiasSinSuCodigo,
   inputsDeComponentes,
   inputsSinEjemplo,
   plantillasDe,
@@ -421,4 +422,46 @@ test('DIVERGENCIAS: ninguna entrada cita una story que ya no existe', () => {
   for (const c of Object.keys(DIVERGENCIAS)) {
     assert.ok(claves.has(c), `${c}: DIVERGENCIAS lo cita y ya no existe`);
   }
+});
+
+/*
+ * (e) Una story sin `snippet` enseña lo que el motor serializa: el tag con los args de la story, que describen la
+ * plantilla del Playground (`story-host`, `snippetFor`). Si pinta OTRA plantilla, ese código miente: formsectionnav
+ * «Rótulos largos» enseñaba `<sc-form-section-nav labelKey=… />` para otra cosa, y multiselect «Básico» no decía sus
+ * `[options]`. Medido el 2026-10-05: cinco stories así.
+ */
+const DEMO_E = `
+  readonly pgTpl = viewChild<TemplateRef<StoryContext>>('playground');
+  readonly largaTpl = viewChild<TemplateRef<StoryContext>>('larga');
+  readonly stories = computed(() => {
+    const pg = this.pgTpl();
+    const larga = this.largaTpl();
+    return [
+      { name: 'Playground', playground: true, template: pg },
+      { name: 'Con otros args', template: pg, args: { a: 1 } },
+      { name: 'Larga', template: larga },
+    ];
+  });
+`;
+
+test('historiasDe lee el snippet en línea también entre comillas simples', () => {
+  const ts = DEMO_E.replace("{ name: 'Larga', template: larga }", `{ name: 'Larga', template: larga, snippet: '<sc-x a="1" />' }`);
+  const larga = historiasDe(ts).historias.find((h) => h.story === 'Larga');
+  assert.equal(larga.codigo, '<sc-x a="1" />');
+  assert.deepEqual(historiasSinSuCodigo(historiasDe(ts).historias), []);
+});
+
+test('(e) una story sin snippet que pinta otra plantilla que la del Playground se caza; con la del Playground, no', () => {
+  const malas = historiasSinSuCodigo(historiasDe(DEMO_E).historias).map((h) => h.story);
+  assert.deepEqual(malas, ['Larga']);
+});
+
+test('(e) el corpus real: ninguna story enseña el código del Playground para otra plantilla', () => {
+  const malas = [];
+  for (const ruta of DEMOS) {
+    for (const h of historiasSinSuCodigo(historiasDe(readFileSync(ruta, 'utf8')).historias)) {
+      malas.push(`${ruta.replace(/^.*\/components\//, '')} · ${h.story}`);
+    }
+  }
+  assert.deepEqual(malas, []);
 });

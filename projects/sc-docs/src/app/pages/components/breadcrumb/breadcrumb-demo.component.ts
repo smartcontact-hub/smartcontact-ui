@@ -15,6 +15,22 @@ const BASIC_SNIPPET = `<!-- Para navegar, routerLink: el tramo es un enlace de v
     { label: 'Wireless' },
   ]" />`;
 
+const NO_HOME_SNIPPET = `<!-- Sin [home], la miga empieza en su primer tramo. -->
+<sc-breadcrumb
+  [model]="[
+    { label: 'Electronics', routerLink: '/electronics' },
+    { label: 'Computer', routerLink: '/electronics/computer' },
+    { label: 'Accessories', routerLink: '/electronics/computer/accessories' },
+    { label: 'Keyboard', routerLink: '/electronics/computer/accessories/keyboard' },
+    { label: 'Wireless' },
+  ]" />`;
+
+const ROOT_SNIPPET = `<!-- En una página de primer nivel, el inicio y la página: sin tramos en medio. -->
+<sc-breadcrumb
+  [home]="{ icon: 'sc-icon-font sc-icon-font--home', routerLink: '/' }"
+  [model]="[{ label: 'Inicio' }]"
+  homeAriaLabel="Inicio" />`;
+
 const FLUSH_SNIPPET = `<!-- "flush" quita el relleno propio de la miga, para cuando va dentro de una barra que ya pone su aire (la TopBar). -->
 <header class="barra">
   <sc-breadcrumb [flush]="true" [model]="[{ label: 'Administración', routerLink: '/admin' }, { label: 'Usuarios' }]" />
@@ -70,8 +86,8 @@ export class BreadcrumbDemoComponent {
     if (!pg || !nh || !ro || !fl) return [];
     return [
       { name: 'Básico', playground: true, template: pg, snippet: BASIC_SNIPPET },
-      { name: 'Sin inicio', template: nh },
-      { name: 'Página raíz', template: ro },
+      { name: 'Sin inicio', template: nh, snippet: NO_HOME_SNIPPET },
+      { name: 'Página raíz', template: ro, snippet: ROOT_SNIPPET },
       { name: 'Dentro de una barra', template: fl, snippet: FLUSH_SNIPPET },
     ];
   });

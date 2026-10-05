@@ -60,6 +60,11 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Changed
 
+- **`@smartcontact-hub/components`** — el icono pesa lo que su texto (DD-130 §6, figma-pendiente §29). En
+  `sc-form-section-nav` plano, el índice de todo el Supervisor, el icono y el ✓ de la fila activa van a 600 y los de
+  las demás a 400, como sus rótulos; en el de por defecto, a 500, el medium de su rótulo. El icono del título de
+  `sc-subsection` va a 600, como su texto en semibold y como ya iba el de `sc-section-card`; el chevron de la
+  plegable sigue a 400. ([DD-130](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — las filas de `sc-form-section-nav` dejan de llevar `role="tab"`,
   que anunciaba una pestaña sin lista de pestañas, y la actual se anuncia con `aria-current="page"` en
   vez de `"true"`. El texto del punto rojo pasa de un `aria-label` en un `span` sin rol (ARIA 1.2 lo

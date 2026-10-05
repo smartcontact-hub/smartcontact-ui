@@ -54,6 +54,30 @@
   <sc-button label="Full width" [fullWidth]="true" />
 </ng-template>
 
+<!-- «Icon Only» de primeng.dev: una fila por forma, con las siete variantes. Debajo, aparte (entre grupos, el doble
+     que entre filas), el «+» de crear de DD-167. -->
+<ng-template #soloIcono>
+  <div class="col" style="gap: var(--sc-spacing-2)">
+    <div class="col" data-testid="sc-btn-solo-icono">
+      @for (f of formasSoloIcono; track f.forma) {
+        <div class="row">
+          @for (v of variantesSoloIcono; track v.variant) {
+            <sc-button [icon]="v.icon" [variant]="v.variant" [rounded]="f.rounded" [appearance]="f.appearance" [ariaLabel]="v.nombre" />
+          }
+        </div>
+      }
+    </div>
+    <sc-button
+      icon="add"
+      [rounded]="true"
+      appearance="outlined"
+      variant="secondary"
+      ariaLabel="Nueva agenda"
+      data-testid="sc-btn-crear"
+    />
+  </div>
+</ng-template>
+
 <ng-template #press>
   <sc-button label="Guardar" data-testid="sc-btn-press" />
   <sc-button label="Cancelar" variant="secondary" appearance="outlined" />

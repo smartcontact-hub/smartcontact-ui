@@ -21,9 +21,41 @@ cuatro trampas del pase suben a «Trampas del frente». Y el de la revisión de 
 Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-fichas.md`; sus trampas suben a
 «Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show c6a9cd59:…` y `git show 2a894b1c:…`. El de E2
 (DD-149, sin trampas propias): `git show a7bca7c0:docs/handoff/supervisor-fichas.md`. El de E3 (DD-150, tampoco):
-`git show c065d664:docs/handoff/supervisor-fichas.md`.
+`git show c065d664:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 7d70bfb9:…`.
 
-## ✅ 2026-10-05 · Recursos, en un lote de cinco bloques (DD-163 a DD-167), en su PR
+## ✅ 2026-10-05 · sc-docs y el peso de los iconos, en un lote de cuatro bloques, en su PR
+
+> **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sin DD nueva: A, B y C son docs, y D cumple DD-130 §6.**
+
+- **A · El lienzo y el código respiran:** en la tabla de API, «Dos sentidos» y «Salidas» llevan el escalón de entre
+  grupos (estaban a 0 de la tabla de encima). `.row` y `.col` de las demos vuelven a tener su hueco, acotadas al
+  lienzo: `component-page.scss`, que las definía, no lo importaba nadie desde julio, y se borra. «Copiar» ya no tapa la
+  primera línea, y una línea larga no estira el Playground bajo «Controles». Las pruebas, a 1280 × 720, el viewport de
+  las capturas: a 1440 cabía todo. Al revisar C salió una más: con `.col` en flex, el margen del párrafo se sumaba al
+  hueco, y doce líneas de lectura («Valor: …») quedaban a 28 de su control. Y al revisar las capturas, otra: el lienzo
+  es una fila flex, y una `.col` medía lo que su hijo más ancho. Ahora crece hasta su tope (40rem): «Fluid» se
+  distingue, y los campos de las demos van a su ancho de formulario. Progress Bar no enseñaba ninguna barra, ni el
+  Playground de Skeleton su bloque, también en `main`: van en una `.col`.
+- **B · Lo que sc-docs escribe es verdad:** el código de una story sin snippet sale del contrato
+  (`_component-api.json`). Omite lo que vale su valor por defecto, escribe un booleano que nace encendido y se apaga
+  (`[allowEmpty]="false"` en selectbutton) y escribe lo requerido aunque no tenga control (`[sections]="sections"`).
+  De 186 cajas de código cambian 43. La lógica, pura, va en `serialize-args.core.mjs`. `audit:doc-snippets` gana la
+  regla (e): una story sin snippet que pinta otra plantilla que la del Playground. Había cinco, y ya llevan el suyo.
+  `component-audit` deja de cortar un tipo en el `>` de `=>`, lo que arregla tres tipos de la tabla de API.
+- **C · Las demos nuevas:** Button gana «Solo icono», como «Icon Only» de primeng.dev: cuatro formas por siete
+  variantes, cada botón con su nombre, y el «+» de DD-167, un círculo de 31,5. GroupPopover gana «Al pulsar la
+  cifra», con su línea de lectura de `activated`.
+- **D · El icono pesa lo que su texto (DD-130 §6, figma-pendiente §29):** en `sc-form-section-nav` plano, el icono y
+  el ✓ de la fila activa van a 600 y los demás a 400; en el de por defecto, a 500. El título de `sc-subsection`, a
+  600. En el Supervisor cambian el índice de las fichas y de Contact Center, y Teléfono, Chat y Email en Distribución.
+- **En local, en verde:**
+  - las unitarias del bloque, la vitest de los dos componentes (24) y las e2e del lienzo (6) y de las demos;
+  - `component-styles`: 126 claves añadidas, ninguna cambiada;
+  - los barridos de las tres rutas (18), las vecinas del índice (39) y `revision` en regla.
+
+  Las 38 capturas de sc-docs se mueven, y se regeneran antes del PR.
+
+## ✅ 2026-10-05 · Recursos, en un lote de cinco bloques (DD-163 a DD-167), fundido (#327)
 
 > **Un PR, un commit en rojo y otro en verde por bloque (DD-154), más el arreglo de `tiempos`: una ejecución que sigue
 > en curso no tiene fin. Lo pedido es de la revisión de producto del 2026-10-04.**
@@ -52,10 +84,12 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
   los centros a 0,5 px. Antes eran de texto y flotaban sobre el rótulo, a 1,5 px del control.
 - **En local, en verde:** las e2e de cada bloque y sus vecinas, los barridos de las rutas tocadas, 914 unitarias y
   las puertas; `revision` del editor a 1440 y a 1366.
+- **Fundido:** #327 → `7d70bfb9`. De punta a punta, 7 h 38 min (`npm run tiempos -- 327 --desde 22:37`); el CI del PR,
+  9 min, verde a la primera.
 
 **Pendiente, anotado:** en Horarios y Variables la casilla de selección mide 74 px, por la misma causa que tuvo Agendas
 (todas las columnas con ancho fijo). Va en una tarea aparte, con su prueba en `list-table-grammar`. La página de
-Button de sc-docs no tiene una sección «Solo icono» como la de primeng.dev (DD-167): va en el lote 2.
+Button de sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): la gana en el lote 2.
 
 ## ✅ 2026-10-04 · La revisión de producto del 2026-10-04, en un lote de seis bloques (DD-157 a DD-162), fundida (#325)
 
@@ -173,27 +207,10 @@ ambos temas. Revisión better-layout: sin hallazgos pendientes en lo inspecciona
 Lint, docs:guard, docs:coherence, i18n, primeng-coupling y **verify verdes**. Preflight, PR/CI y merge/CI completados en verde.
 Local 4405 actualizado al build de producción de D3; ocho pruebas propias verdes allí. Evidencia en `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/d3`.
 
-## ✅ 2026-10-02 · E4: asignación desde la lista (DD-151)
-
-**Entregado:** #314 → `06dc6170`; CI PR `37027072491` y main `37028748971`, leídas en verde con `ci:verdict`.
-Rama y worktree propios eliminados. Evidencias externas en `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/e4`.
-Cuatro pruebas rojas contra E3 (`51dc5af0`); nueve propias verdes, afectados corregidos y suite completa 518/520:
-solo los dos recortes históricos del listado, reservados a F. `revision`, `verify` y preflight verdes; nueve propias
-adicionales verdes contra el build de producción servido en 4405. Ocho capturas con ambos niveles, claro/oscuro,
-1024/1440 revisadas con better-layout; zoom/RTL no verificados. Confirmación desde dos cambios reales.
-Local 4405 actualizado a E4. El historial de recuperación E1a vive en `git show 06dc6170:docs/handoff/supervisor-fichas.md`;
-carpeta y ZIP intactos, sin reaplicar el parche.
-
 ## SIGUIENTE — sin preguntar
 
-0. **Recursos, en su PR** (el tramo de arriba). Lo siguiente, en tres lotes con su PR cada uno (DD-154), decididos tras
-   la revisión del 2026-10-04:
-   - **lote 2 · sc-docs y el peso de los iconos:** aire sobre «Salidas» y «Dos sentidos»; la demo de `activated` con
-     su línea de lectura; el código del Playground sin valores por defecto (el `icon="view_column"` de MultiSelect);
-     `.row` y `.col` de los ejemplos con su hueco (los selectores de solo icono, pegados); «Copiar» sin tapar el código;
-     y el icono a 600 junto a texto semibold, en el título de `sc-subsection` y en la fila activa del índice
-     (`figma-pendiente` §29). Además, la sección «Solo icono» de Button, como la de primeng.dev (DD-167). Una sola
-     regeneración de capturas, cada PNG mirada antes del PR;
+0. **sc-docs y el peso de los iconos, en su PR** (el tramo de arriba). Lo siguiente, en dos lotes con su PR cada uno
+   (DD-154), decididos tras la revisión del 2026-10-04:
    - **lote 3 · lo que queda abierto de DD-133, DD-135, DD-136, DD-146 y DD-162:**
      - cada desplegable con nombre (los selects rotulados con `<label for>` sin `ariaLabelledBy`): la regla, dentro
        de `audit:screen-hygiene`;
@@ -362,12 +379,16 @@ carpeta y ZIP intactos, sin reaplicar el parche.
 - ⚠️ `p-table`, cuando la página en curso se queda fuera, solo retrocede UNA: con un filtro que vive fuera de la tabla
   (un buscador encima), buscar desde la página ≥3 la deja en blanco. La tabla lleva `[(first)]` y un `linkedSignal`
   que lo vuelve a 0 con cada búsqueda (`agent-channel-table`, `agenda-contacts-table`).
-- ⚠️ Un emergente que vive en el flujo con alto 0 (el `p-menu` de fila) cuenta como hijo en una caja flex con `gap` y
-  suma ese hueco: el editor de agendas desplazaba 14 px. Va fuera de la caja con `gap`.
+- ⚠️ En una caja flex con `gap`, todo hijo suma: un emergente de alto 0 (el `p-menu` de fila) añade el hueco (el editor
+  de agendas desplazaba 14 px), y el margen de un párrafo no colapsa, se suma (las líneas de lectura de sc-docs, a 28).
 - ⚠️ Si todas las columnas de una `sc-datatable` llevan ancho fijo, la tabla reparte el sobrante también a la casilla
   de selección (105 px en Agendas): una columna, la del nombre, se queda sin ancho.
 - ⚠️ El `sc-badge` del DS es un aviso (8,75 px en md; 10,5 en lg): una cifra que se lee va en texto de leyenda.
 - ⚠️ `Intl.NumberFormat('es')` no separa los miles de cuatro cifras («1250», «5000»; «12.500» sí): no esperes «1.250»
   en una prueba.
-- ⚠️ El Supervisor lee el DS de `dist/`: tras tocar el DS, `npx ng build ui-smartcontact`, y toca un fichero de `src`
-  para que `ng serve` recompile; si no, la app sigue con el DS de antes.
+- ⚠️ El Supervisor y sc-docs leen el DS de `dist/`: tras tocar el DS, `npx ng build ui-smartcontact`, y toca un fichero
+  de `src` o rearranca el `ng serve`; si no, sigue con el DS de antes (en sc-docs, medido: hubo que rearrancarlo).
+- ⚠️ En una e2e de sc-docs, `page.goto` a otro `#/components/…` solo cambia el hash, y la página anterior sigue montada
+  hasta que llega la nueva: una espera a algo que tienen las dos pasa en la vieja. Una página por prueba.
+- ⚠️ El lienzo de sc-docs es una fila flex: un componente que pide el 100% de su contenedor, suelto, mide 0; va en una
+  `.col`. Y al medir, un host con `display: contents` (`sc-divider`) mide 0 siempre: mide su primer hijo.

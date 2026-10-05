@@ -4,15 +4,18 @@
      Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
      los miden los e2e de métrica del Kit (no quitar). -->
 
+<!-- Con `width` en %, el esqueleto mide sobre su contenedor: va en una `.col`. Suelto en el lienzo, medía 0. -->
 <ng-template #playground let-args>
-  <sc-skeleton
-    [shape]="args.shape"
-    [animation]="args.animation"
-    [width]="args.width"
-    [height]="args.height"
-    [size]="args.size || null"
-    [borderRadius]="args.borderRadius || null"
-  />
+  <div class="col">
+    <sc-skeleton
+      [shape]="args.shape"
+      [animation]="args.animation"
+      [width]="args.width"
+      [height]="args.height"
+      [size]="args.size || null"
+      [borderRadius]="args.borderRadius || null"
+    />
+  </div>
 </ng-template>
 
 <ng-template #shapes>

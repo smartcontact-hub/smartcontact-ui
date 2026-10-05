@@ -977,8 +977,8 @@
         {
           "nombre": "closeRequested",
           "clase": "input",
-          "tipo": "(() =",
-          "porDefecto": null,
+          "tipo": "(() => void) | null",
+          "porDefecto": "null",
           "requerido": false,
           "descripcion": "Callback de cierre, alternativa a escuchar `closed`. Está para consumidores que no pueden atar un output (por ejemplo al abrirlo por servicio). `null` lo desactiva.",
           "origen": "nuestro",
@@ -987,8 +987,8 @@
         {
           "nombre": "processRequested",
           "clase": "input",
-          "tipo": "((result: ScBulkTranscriptionModalResult) =",
-          "porDefecto": null,
+          "tipo": "((result: ScBulkTranscriptionModalResult) => void) | null",
+          "porDefecto": "null",
           "requerido": false,
           "descripcion": "Callback de procesado, la alternativa equivalente a `processed`, con el mismo motivo.",
           "origen": "nuestro",
@@ -4935,7 +4935,7 @@
         {
           "nombre": "optionDisabled",
           "clase": "input",
-          "tipo": "string | ((option: unknown) =",
+          "tipo": "string | ((option: unknown) => boolean)",
           "porDefecto": null,
           "requerido": false,
           "descripcion": "Campo de la opción (o función) que la deja fija: se ve, pero no se puede marcar ni desmarcar.",

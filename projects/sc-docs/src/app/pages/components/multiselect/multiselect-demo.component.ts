@@ -10,6 +10,9 @@ import {
 import { ScMultiSelectComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
+const BASICO_SNIPPET = `<!-- El valor va en dos sentidos y es un ARRAY: "[(value)]". -->
+<sc-multiselect label="Grupos" [options]="groups" placeholder="Selecciona grupos" [(value)]="value" />`;
+
 const ESTADOS_SNIPPET = `<!-- El valor va en dos sentidos y es un ARRAY: "[(value)]". -->
 <sc-multiselect label="Grupos" [options]="groups" placeholder="Selecciona grupos" [(value)]="value" />
 <sc-multiselect label="Con chips" [options]="groups" display="chip" />
@@ -145,7 +148,7 @@ export class MultiSelectDemoComponent {
     if (!pg || !ba || !es || !mv || !ic) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
-      { name: 'Básico', template: ba },
+      { name: 'Básico', template: ba, snippet: BASICO_SNIPPET },
       { name: 'Estados', template: es, snippet: ESTADOS_SNIPPET },
       { name: 'Solo icono · columnas', template: ic, snippet: `<sc-multiselect iconOnly icon="view_column" size="md" [options]="columnas" optionValue="key"
   optionDisabled="locked" [(value)]="iconColumns"

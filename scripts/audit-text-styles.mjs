@@ -572,8 +572,11 @@ export const TIPOGRAFIA_SUELTA_MAX = 80;
  * 101 → 96 el 2026-09-22, al rehacer el Lab: la página ponía su tipografía a mano (`.eyebrow`,
  * `.section-lead`, `.link-item__*`, `.expl__*`…) y ahora la pide por su nombre con `.sc-text-*` en
  * la plantilla, que es DD-69. Cinco declaraciones menos, ninguna nueva.
+ *
+ * 96 → 94 el 2026-10-05: sale `component-page.scss`, que no importaba nadie desde la migración de julio (sus `h1` y
+ * `h2` contaban sin pintar nada). Sus `.row` y `.col` viven ahora en `styles.scss`, acotadas al lienzo.
  */
-export const TIPOGRAFIA_SUELTA_DOCS_MAX = 96;
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 94;
 
 /** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
 export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);
