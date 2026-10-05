@@ -71,10 +71,11 @@ export function lineasDeTiempos({ pr, primerCommit, ejecuciones, main, desde = n
   return lineas;
 }
 
-/** Una ejecución con su fin: el del último job. */
-function conFin(github, r) {
+/** Una ejecución con su fin: el del último job, y solo si la ejecución ha acabado. Mientras sigue, alguno de sus jobs
+ *  puede haber acabado ya (`changes`, en el primer minuto), y su hora no es el fin de nada. */
+export function conFin(github, r) {
   const jobs = github.jobsDe(r.id);
-  const fin = jobs.map((j) => j.completedAt).filter(Boolean).sort().at(-1) ?? null;
+  const fin = r.status === 'completed' ? (jobs.map((j) => j.completedAt).filter(Boolean).sort().at(-1) ?? null) : null;
   return { id: r.id, inicio: r.startedAt, fin, conclusion: r.conclusion, sinJobs: jobs.length === 0 };
 }
 

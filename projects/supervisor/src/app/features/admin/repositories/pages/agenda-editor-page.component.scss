@@ -1,0 +1,47 @@
+/* El editor de una agenda (DD-163): arquetipo de editor (`page__inner`, 1200), sobre el lienzo como Sistema. Sus dos
+ * secciones se apilan con el margen que les da el DS; los campos usan el vocabulario de `styles/_forms.scss`. */
+:host {
+  display: block;
+  height: 100%;
+  background: var(--sc-bg-canvas);
+}
+
+.page__inner {
+  padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
+}
+
+.agenda__conflict {
+  display: block;
+  margin-block-end: var(--sc-spacing-1);
+}
+
+/* El diálogo de importar (DD-166): la ayuda, las dos acciones juntas y, debajo, la vista previa, otro grupo. */
+.importar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+
+  p {
+    margin: 0;
+  }
+}
+
+.importar__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+.importar__vista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: var(--sc-spacing-1);
+}
+
+.importar__errores {
+  margin: 0;
+  padding-inline-start: var(--sc-spacing-1-25);
+  color: var(--sc-text-subtle);
+}
+

@@ -16,7 +16,7 @@
 /* La tabla se queda con el alto que sobra entre el título y el pie, y con muchos agentes hace scroll dentro;
  * sin esto se quedaba en el tope de la ficha y dejaba un hueco sobre el pie. */
 .agents-panel > sc-agent-channel-table {
-  --assign-table-max: none;
+  --table-card-tope: none;
   display: flex;
   flex-direction: column;
   flex: 0 1 auto;

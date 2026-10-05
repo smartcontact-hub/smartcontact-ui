@@ -19,6 +19,9 @@ export type { IllustratedAvatarPool } from './illustrated-avatar/illustrated-ava
 
 export { ListPageComponent } from './list-page/list-page.component';
 
+export { ResourceRowsComponent } from './resource-rows/resource-rows.component';
+export type { ResourceRow } from './resource-rows/resource-rows.component';
+
 export { ChannelIconComponent } from './channel-icon/channel-icon.component';
 export type { ChannelIconKind } from './channel-icon/channel-icon.component';
 

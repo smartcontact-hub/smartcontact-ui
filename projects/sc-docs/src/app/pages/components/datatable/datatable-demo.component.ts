@@ -278,6 +278,7 @@ export class DatatableDemoComponent {
     argTypes: [
       { name: 'paginator', control: { kind: 'boolean' } },
       { name: 'rows', control: { kind: 'number', min: 1, max: 20, step: 1 } },
+      { name: 'first', control: { kind: 'number', min: 0, max: 6, step: 1 }, description: 'La primera fila de la página abierta, en las dos direcciones. Quien filtra las filas fuera de la tabla la vuelve a 0 al buscar.' },
       { name: 'stripedRows', control: { kind: 'boolean' } },
       { name: 'showGridlines', control: { kind: 'boolean' } },
       { name: 'selectionMode', control: { kind: 'select', options: ['single', 'multiple'] } },
@@ -300,6 +301,7 @@ export class DatatableDemoComponent {
     defaultArgs: {
       paginator: true,
       rows: 5,
+      first: 0,
       stripedRows: true,
       showGridlines: false,
       selectionMode: 'multiple',

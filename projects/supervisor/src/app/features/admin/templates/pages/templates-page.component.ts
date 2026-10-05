@@ -2,11 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
+  input,
   signal,
   type TemplateRef,
+  untracked,
   viewChild,
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
 import { TabsModule } from 'primeng/tabs';
@@ -55,12 +59,28 @@ export class TemplatesPageComponent {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   /** CTA + panel inline proyectados a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
+  /** `?editar=<id>` (DD-164): llega del «Editar» de una plantilla en Recursos de una ficha, y abre su panel en su
+   *  pestaña. Al cerrarlo, la dirección deja de pedirlo sin apilar otra entrada: Atrás vuelve a la ficha. */
+  readonly editar = input<string>();
+
   constructor() {
     useTopbarActions(this.topbarActions);
+    effect(() => {
+      const id = Number(this.editar());
+      const tpl = untracked(this.templates).find((t) => t.id === id);
+      if (!tpl) return;
+      untracked(() => {
+        // `switchTab` cierra el panel: primero la pestaña, luego el panel.
+        this.switchTab(tpl.type);
+        this.editingId.set(tpl.id);
+      });
+    });
   }
 
   protected readonly plusIcon = 'add';
@@ -178,6 +198,7 @@ export class TemplatesPageComponent {
       body: submission.body,
     });
     this.editingId.set(null);
+    this.soltarEditar();
     this.toastSuccess('templates.toasts.updated', { name: submission.title });
   }
 
@@ -260,6 +281,18 @@ export class TemplatesPageComponent {
 
   protected closeEditPanel(): void {
     this.editingId.set(null);
+    this.soltarEditar();
+  }
+
+  /** El panel que abrió `?editar=` se cerró: la dirección deja de pedirlo, en la misma entrada del historial. */
+  private soltarEditar(): void {
+    if (this.editar() === undefined) return;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { editar: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   private toastSuccess(key: string, params?: Record<string, string | number>): void {

@@ -4,6 +4,7 @@
   [paginator]="paginator()"
   [rows]="rows()"
   [rowsPerPageOptions]="$any(rowsPerPageOptions())"
+  [(first)]="first"
   [selectionMode]="selectionMode()"
   [selection]="selection()"
   (selectionChange)="onSelectionChange($any($event))"

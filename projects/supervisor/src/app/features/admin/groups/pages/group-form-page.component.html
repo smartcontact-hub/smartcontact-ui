@@ -597,10 +597,10 @@
               </div>
               <div class="field">
                 <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
-                <span class="domain-add">
+                <div class="control-add">
                   <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [helperText]="'groups.form.advanced.allowed_domains_hint' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
                   <sc-button variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
-                </span>
+                </div>
                 @if (form().advanced.allowedDomains.length > 0) {
                   <div class="domain-chips">
                     @for (domain of form().advanced.allowedDomains; track domain) {
@@ -664,93 +664,94 @@
       <div class="grid grid--2">
         <!-- UNA tipificación: el agente recorre un solo árbol al cerrar (manual de Voice, p. 14). -->
         <div class="field">
-          <span class="field__label-row">
-            <label class="field__label sc-text-caption-semibold" for="group-typification">
-              {{ 'groups.form.fields.typification' | translate }}
-            </label>
-            <!-- Crear una sin salir de la ficha (decisión de producto, 2026-09-18), con el mismo botón «solo icono»
-                 en los cuatro campos de la sección, fuera del flujo del texto (`field__label-row__action`) para
-                 que la fila mida lo que la etiqueta. -->
-            <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.typification_new' | translate" [pTooltip]="'groups.form.fields.typification_new' | translate" tooltipPosition="top" (clicked)="creatingTipificacion.set(true)" />
-          </span>
-          <sc-select
-            inputId="group-typification"
-            optionLabel="label"
-            optionValue="value"
-            [options]="typificationOptions()"
-            [value]="form().typification"
-            [helperText]="'groups.form.fields.typification_hint' | translate"
-            (valueChange)="onTypificationChange($event)"
-          />
+          <label class="field__label sc-text-caption-semibold" for="group-typification">
+            {{ 'groups.form.fields.typification' | translate }}
+          </label>
+          <!-- Crear sin salir de la ficha (decisión de producto, 2026-09-18). El «+» es el botón de solo icono de
+               primeng.dev, redondo y con borde, a la derecha de su control y a su alto, igual en los cuatro campos
+               (DD-167). -->
+          <div class="control-add">
+            <sc-select
+              inputId="group-typification"
+              optionLabel="label"
+              optionValue="value"
+              [options]="typificationOptions()"
+              [value]="form().typification"
+              [helperText]="'groups.form.fields.typification_hint' | translate"
+              (valueChange)="onTypificationChange($event)"
+            />
+            <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.typification_new' | translate" [pTooltip]="'groups.form.fields.typification_new' | translate" tooltipPosition="top" (clicked)="creatingTipificacion.set(true)" />
+          </div>
+          <sc-resource-rows [label]="'groups.form.fields.typification' | translate" [rows]="typificationRows()" />
         </div>
 
         <div class="field">
-          <span class="field__label-row">
-            <label class="field__label sc-text-caption-semibold" for="group-agendas">
-              {{ 'agents.form.advanced.agendas.title' | translate }}
-            </label>
-            <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="creatingAgenda.set(true)" />
-          </span>
-          <sc-multiselect
-            inputId="group-agendas"
-            display="chip"
-            optionLabel="label"
-            optionValue="value"
-            [filter]="true"
-            [maxSelectedLabels]="4"
-            [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-            [placeholder]="'agents.form.resources.none' | translate"
-            [options]="scheduleOptions()"
-            [value]="scheduleValue()"
-            (valueChange)="onIdsChange('scheduleIds', $event)"
-          />
+          <label class="field__label sc-text-caption-semibold" for="group-agendas">
+            {{ 'agents.form.advanced.agendas.title' | translate }}
+          </label>
+          <div class="control-add">
+            <sc-multiselect
+              inputId="group-agendas"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              [maxSelectedLabels]="0"
+              [selectedItemsLabel]="(scheduleValue().length === 1 ? 'agents.form.resources.agendas_count_one' : 'agents.form.resources.agendas_count') | translate"
+              [placeholder]="'agents.form.resources.none' | translate"
+              [options]="scheduleOptions()"
+              [value]="scheduleValue()"
+              (valueChange)="onIdsChange('scheduleIds', $event)"
+            />
+            <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="creatingAgenda.set(true)" />
+          </div>
+          <sc-resource-rows [label]="'agents.form.advanced.agendas.title' | translate" [rows]="agendaRows()" />
         </div>
 
         @if (hasChatFamily()) {
           <div class="field">
-            <span class="field__label-row">
-              <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
-                {{ 'agents.form.resources.templates_chat' | translate }}
-              </label>
-              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingChatTemplate.set(true)" />
-            </span>
-            <sc-multiselect
-              inputId="group-templates-chat"
-              display="chip"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [maxSelectedLabels]="4"
-              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-              [placeholder]="'agents.form.resources.none' | translate"
-              [options]="chatTemplateOptions()"
-              [value]="chatTemplateValue()"
-              (valueChange)="onTemplatesChange('chat', $event)"
-            />
+            <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
+              {{ 'agents.form.resources.templates_chat' | translate }}
+            </label>
+            <div class="control-add">
+              <sc-multiselect
+                inputId="group-templates-chat"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [maxSelectedLabels]="0"
+                [selectedItemsLabel]="(chatTemplateValue().length === 1 ? 'agents.form.resources.templates_count_one' : 'agents.form.resources.templates_count') | translate"
+                [placeholder]="'agents.form.resources.none' | translate"
+                [options]="chatTemplateOptions()"
+                [value]="chatTemplateValue()"
+                (valueChange)="onTemplatesChange('chat', $event)"
+              />
+              <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingChatTemplate.set(true)" />
+            </div>
+            <sc-resource-rows [label]="'agents.form.resources.templates_chat' | translate" [rows]="chatTemplateRows()" />
           </div>
         }
 
         @if (hasEmail()) {
           <div class="field">
-            <span class="field__label-row">
-              <label class="field__label sc-text-caption-semibold" for="group-templates-email">
-                {{ 'agents.form.resources.templates_email' | translate }}
-              </label>
-              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingEmailTemplate.set(true)" />
-            </span>
-            <sc-multiselect
-              inputId="group-templates-email"
-              display="chip"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [maxSelectedLabels]="4"
-              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-              [placeholder]="'agents.form.resources.none' | translate"
-              [options]="emailTemplateOptions()"
-              [value]="emailTemplateValue()"
-              (valueChange)="onTemplatesChange('email', $event)"
-            />
+            <label class="field__label sc-text-caption-semibold" for="group-templates-email">
+              {{ 'agents.form.resources.templates_email' | translate }}
+            </label>
+            <div class="control-add">
+              <sc-multiselect
+                inputId="group-templates-email"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [maxSelectedLabels]="0"
+                [selectedItemsLabel]="(emailTemplateValue().length === 1 ? 'agents.form.resources.templates_count_one' : 'agents.form.resources.templates_count') | translate"
+                [placeholder]="'agents.form.resources.none' | translate"
+                [options]="emailTemplateOptions()"
+                [value]="emailTemplateValue()"
+                (valueChange)="onTemplatesChange('email', $event)"
+              />
+              <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingEmailTemplate.set(true)" />
+            </div>
+            <sc-resource-rows [label]="'agents.form.resources.templates_email' | translate" [rows]="emailTemplateRows()" />
           </div>
         }
 
@@ -758,25 +759,25 @@
              `conEtiquetas`. -->
         @if (conEtiquetas) {
           <div class="field">
-            <span class="field__label-row">
-              <label class="field__label sc-text-caption-semibold" for="group-labels">
-                {{ 'agents.form.advanced.labels.title' | translate }}
-              </label>
-              <sc-button class="field__label-row__action" size="sm" variant="secondary" appearance="text" icon="add" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
-            </span>
-            <sc-multiselect
-              inputId="group-labels"
-              display="chip"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [maxSelectedLabels]="4"
-              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-              [placeholder]="'agents.form.resources.none' | translate"
-              [options]="labelOptions()"
-              [value]="labelValue()"
-              (valueChange)="onIdsChange('labelIds', $event)"
-            />
+            <label class="field__label sc-text-caption-semibold" for="group-labels">
+              {{ 'agents.form.advanced.labels.title' | translate }}
+            </label>
+            <div class="control-add">
+              <sc-multiselect
+                inputId="group-labels"
+                display="chip"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [maxSelectedLabels]="4"
+                [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+                [placeholder]="'agents.form.resources.none' | translate"
+                [options]="labelOptions()"
+                [value]="labelValue()"
+                (valueChange)="onIdsChange('labelIds', $event)"
+              />
+              <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
+            </div>
           </div>
         }
       </div>

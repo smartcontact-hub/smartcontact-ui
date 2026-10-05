@@ -53,6 +53,8 @@ const RUTAS = [
   'admin/labels',
   'admin/plantillas',
   'admin/repositorios',
+  // El editor de una agenda (DD-163): los iconos de sus secciones, de «Añadir contacto» y del menú de fila.
+  'admin/agendas/editar/1',
 ];
 
 type Hallazgos = { medidos: number; sinCalibrar: string[]; rozan: string[] };

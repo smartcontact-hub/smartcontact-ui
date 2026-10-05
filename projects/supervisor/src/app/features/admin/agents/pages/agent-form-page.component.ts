@@ -33,7 +33,14 @@ import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { AltaPieComponent, NameInplaceComponent, NombreFijoComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
+import {
+  AltaPieComponent,
+  NameInplaceComponent,
+  NombreFijoComponent,
+  ResourceRowsComponent,
+  SummaryKpiComponent,
+  SummaryStatusComponent,
+} from '@shared/components';
 import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
@@ -58,16 +65,15 @@ import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { canonicalizeChannels, GroupAgentLink, type Channel } from '@features/admin/services/group-agent-links.types';
 import { clampLinksToChannels } from '@features/admin/services/group-channels.core.mjs';
+import { agendasOfrecidas, idsVivos } from '@features/admin/services/recursos.core.mjs';
+import { ResourceRowsService } from '@features/admin/services/resource-rows.service';
 import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import {
   Template,
   TemplateType,
 } from '@features/admin/templates/data/templates-data';
-import {
-  AgendasStore,
-  Agenda,
-} from '@features/admin/repositories/instances/agendas';
+import { AgendasStore, type Agenda } from '@features/admin/repositories/state/agendas.store';
 import {
   AGENT_TYPES,
   AGENT_TYPE_LABEL_KEYS,
@@ -163,6 +169,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     SummaryStatusComponent,
     AltaPieComponent,
     NombreFijoComponent,
+    ResourceRowsComponent,
     CheckboxComponent,
     DeleteEntityDialogComponent,
     DividerComponent,
@@ -212,6 +219,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly labelsStore = inject(LabelsStore);
   private readonly templatesStore = inject(TemplatesStore);
   private readonly agendasStore = inject(AgendasStore);
+  private readonly resourceRows = inject(ResourceRowsService);
   private readonly confirmHost = inject(ScConfirmService);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
@@ -301,11 +309,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * ruido para tan poca información. El formulario sigue guardando un `Set` de ids por repositorio; aquí solo
    * se traduce a lo que habla `sc-multiselect` (una lista de ids) y de vuelta. */
 
-  /** Las agendas de `Repositorios > Agendas`. */
-  private readonly availableSchedules = this.agendasStore.items;
-  protected readonly scheduleOptions = computed(() =>
-    this.availableSchedules().map((a: Agenda) => ({ label: a.name, value: a.id })),
-  );
+  /** Las agendas de `Repositorios > Agendas`: las activas, y las ya puestas aunque estén inactivas (las guardadas y las
+   *  de ahora). Una inactiva puesta se puede quitar, pero no se ofrece para poner (DD-164). */
+  protected readonly scheduleOptions = computed(() => {
+    const puestas = [...(this.initial()?.schedules ?? []), ...this.form().scheduleIds];
+    return agendasOfrecidas(this.agendasStore.items(), puestas).map((a: Agenda) => ({ label: a.name, value: a.id }));
+  });
   protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
 
   protected onSchedulesChange(ids: unknown[]): void {
@@ -333,6 +342,21 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
   protected readonly chatTemplateValue = computed(() => this.idsOfType('chat'));
   protected readonly emailTemplateValue = computed(() => this.idsOfType('email'));
+
+  /* El resumen bajo cada campo (DD-164): qué es cada recurso y, al editar, su «Editar». En el alta y al duplicar no lo
+   * lleva: la dirección no guarda la sección, y Atrás caería en una ficha vacía. */
+  protected readonly agendaRows = computed(() => {
+    this.currentLang();
+    return this.resourceRows.agendas(this.form().scheduleIds, this.mode() === 'edit');
+  });
+  protected readonly chatTemplateRows = computed(() => {
+    this.currentLang();
+    return this.resourceRows.templates(this.form().templateIds, 'chat', this.mode() === 'edit');
+  });
+  protected readonly emailTemplateRows = computed(() => {
+    this.currentLang();
+    return this.resourceRows.templates(this.form().templateIds, 'email', this.mode() === 'edit');
+  });
 
   /** Sustituye las de UN tipo sin tocar las del otro. */
   protected onTemplatesChange(type: TemplateType, ids: unknown[]): void {
@@ -766,9 +790,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         allowedChannels: agent.allowedChannels ?? CHANNEL_FAMILIES,
         photo: agent.photo ?? null,
         languages: agent.languages ? [...agent.languages] : [],
-        labelIds: new Set(agent.labels ?? []),
-        scheduleIds: new Set(agent.schedules ?? []),
-        templateIds: new Set(agent.templates ?? []),
+        // Lo borrado en Repositorios sale ANTES de marcar la ficha como guardada (DD-164).
+        ...this.recursosVivos(agent),
       });
       this.dirtyState.markPristine();
       this.releaseLock = this.crossTab.acquire('agent', agent.id, () =>
@@ -818,14 +841,22 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         allowedChannels: source.allowedChannels ?? CHANNEL_FAMILIES,
         photo: source.photo ?? null,
         languages: source.languages ? [...source.languages] : [],
-        labelIds: new Set(source.labels ?? []),
-        scheduleIds: new Set(source.schedules ?? []),
-        templateIds: new Set(source.templates ?? []),
+        ...this.recursosVivos(source),
       });
       // El duplicado nace "sucio" por construcción (datos sin guardar): el
       // snapshot ya difiere del pristine vacío, así que el guard de salida
       // avisa solo. No hace falta marcarlo a mano.
     }
+  }
+
+  /** Etiquetas, agendas y plantillas de un agente guardado, sin lo que ya no existe en Repositorios: ni se cuenta, ni
+   *  se guarda de vuelta, ni la ficha abre con cambios por ello (DD-164). */
+  private recursosVivos(agent: Agent): Pick<FormState, 'labelIds' | 'scheduleIds' | 'templateIds'> {
+    return {
+      labelIds: new Set(idsVivos(agent.labels ?? [], this.labelsStore.labels())),
+      scheduleIds: new Set(idsVivos(agent.schedules ?? [], this.agendasStore.items())),
+      templateIds: new Set(idsVivos(agent.templates ?? [], this.templatesStore.templates())),
+    };
   }
 
   ngOnDestroy(): void {

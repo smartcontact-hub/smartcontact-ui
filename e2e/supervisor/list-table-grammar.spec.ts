@@ -91,6 +91,9 @@ const PAGINAS = [
    * Con una basta —las nueve son el mismo componente— pero sin ninguna, la
    * tabla más reutilizada de la app era la única sin vigilar. */
   { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 44 },
+  /* Los contactos de una agenda (DD-163): la tabla de una sección del editor, en su propio componente.
+   * `audit:datatables` la vigila por las rutas de su feature, así que su ruta tiene que estar aquí. */
+  { ruta: 'admin/agendas/editar/1', nombre: 'contactos de una agenda', altoFila: 44 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */
@@ -101,6 +104,8 @@ const ABREN_FILA = [
   { ruta: 'conversaciones/reglas', nombre: 'reglas' },
   { ruta: 'conversaciones/categorias', nombre: 'categorias' },
   { ruta: 'conversaciones/entidades', nombre: 'entidades' },
+  // Desde DD-163 la fila de una agenda abre su editor, como la de un grupo: cursor, foco y Enter.
+  { ruta: 'admin/agendas', nombre: 'agendas' },
 ] as const;
 
 /**

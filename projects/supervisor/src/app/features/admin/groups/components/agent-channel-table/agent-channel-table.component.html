@@ -10,10 +10,10 @@
     }
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
-  <div class="table-card" scLlegaAlPie>
+  <div class="table-card table-card--al-pie" scLlegaAlPie>
     <sc-datatable variant="list" [size]="compact() ? 'sm' : 'md'" scrollable scrollHeight="flex"
       [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id"
-      [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]">
+      [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [(first)]="first">
       <ng-template #header>
         <tr>
           @for (col of columns(); track col.field) {

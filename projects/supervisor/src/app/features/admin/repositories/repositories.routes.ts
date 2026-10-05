@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { formDirtyGuard } from '@core/guards';
+
 /**
  * Repository routes — hub at `/admin/repositorios` plus 9 instance pages
  * each at `/admin/<instance>`. The instance pages live at the admin root
@@ -33,9 +35,27 @@ export const REPOSITORIES_ROUTES: Routes = [
       import('./pages/repositorios-hub-page.component').then((m) => m.RepositoriosHubPageComponent),
   },
   {
+    /* La agenda tiene su editor (DD-163), como las fichas: el alta y la edición en su ruta, con la guarda de
+     * siempre. La miga de "Agendas" enlaza a la lista; la del editor es la tercera. */
     path: 'agendas',
     data: repoInstance('repositories.agendas.title'),
-    loadComponent: () => import('./instances/agendas').then((m) => m.AgendasPageComponent),
+    children: [
+      { path: '', loadComponent: () => import('./instances/agendas').then((m) => m.AgendasPageComponent) },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.agendas.create_breadcrumb' } },
+        loadComponent: () =>
+          import('./pages/agenda-editor-page.component').then((m) => m.AgendaEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.agendas.edit_breadcrumb' } },
+        loadComponent: () =>
+          import('./pages/agenda-editor-page.component').then((m) => m.AgendaEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
   },
   {
     path: 'horarios',

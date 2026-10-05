@@ -1,0 +1,58 @@
+/* Las filas son parte de su campo: 7 bajo el desplegable (el `gap` de `.field`) y, entre una y otra, la raya fina de
+ * las tablas. Sin caja propia: la sección ya es la caja. El nombre arriba y el dato debajo, para caber en media columna
+ * (la rejilla de Recursos es de dos); «Editar», a la derecha. */
+:host {
+  display: block;
+}
+
+.resource-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resource-rows__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+  padding-block: var(--sc-spacing-0-5);
+
+  & + & {
+    border-top: 1px solid var(--sc-border-subtle);
+  }
+}
+
+.resource-rows__text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.resource-rows__name,
+.resource-rows__detail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resource-rows__name {
+  color: var(--sc-text-primary);
+}
+
+.resource-rows__detail {
+  color: var(--sc-text-subtle);
+}
+
+/* Un enlace, como «Gestionar en Repositorios»: lleva a otra página. */
+.resource-rows__edit {
+  flex: none;
+  color: var(--sc-text-link);
+  text-decoration: underline;
+  text-underline-offset: var(--sc-spacing-0-125);
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+}

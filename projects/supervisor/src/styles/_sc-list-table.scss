@@ -36,3 +36,31 @@
    * de a la página. `clip` no crea contenedor de scroll. Medido en Conversaciones. */
   overflow: clip;
 }
+
+/* UNA TABLA DENTRO DE UNA SECCIÓN LLEGA AL PIE DE LA PANTALLA (DD-160).
+ *
+ * Es la tabla que vive dentro de una sección de un formulario: los agentes de la ficha de grupo y los contactos de una
+ * agenda (DD-163). Hace scroll DENTRO, con la cabecera de columnas fija, como las listas (DD-95): así la ficha entera
+ * cabe en la pantalla aunque tenga cientos de filas. Mide lo que sus filas y solo se recorta cuando no caben.
+ *
+ * Su tope es el alto que le queda hasta el pie de la pantalla, MEDIDO desde donde empieza (`scLlegaAlPie`): si necesita
+ * más sitio, aprovecha el resto de la pantalla. Era `100dvh` menos 420 px fijos, que no sabía dónde empezaba la tabla:
+ * a 1440×900 dejaba 158 px vacíos bajo la tarjeta mientras escondía filas, y a 1280×720 hacía desplazar la página
+ * entera. Nunca baja de `scale/18`, para pantallas bajas y zoom, donde entonces desplaza la página. Decisión de
+ * producto (2026-09-18): la ficha entera se ve sin salir de la pantalla.
+ *
+ * Quien la aloja en otro marco (el panel rápido del listado de grupos) cambia el tope con `--table-card-tope`: allí el
+ * alto lo reparte su columna flexible, no la ventana.
+ */
+.table-card--al-pie {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  min-height: 0;
+  max-block-size: var(--table-card-tope, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh)));
+}
+
+.table-card--al-pie > sc-datatable {
+  flex: 0 1 auto;
+  min-height: 0;
+}

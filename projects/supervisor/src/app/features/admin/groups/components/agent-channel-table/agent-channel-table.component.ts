@@ -215,6 +215,13 @@ export class AgentChannelTableComponent {
 
   protected readonly query = signal('');
   protected readonly filter = linkedSignal(() => this.groupId() === 0 ? 'all' : 'assigned');
+  /** La página abierta (`[(first)]`): vuelve a la primera al buscar o al cambiar el filtro. Sin esto, desde la tercera
+   *  página un resultado corto dejaba la tabla en blanco (el paginador de PrimeNG solo retrocede una). */
+  protected readonly first = linkedSignal(() => {
+    this.query();
+    this.filter();
+    return 0;
+  });
   protected readonly filterOptions = computed(() => {
     this.currentLang();
     return ['all', 'assigned', 'unassigned'].map(value => ({ value, label: this.translate.instant(`groups.form.assigned.filter_${value}`) }));

@@ -40,6 +40,8 @@
   [(query)]="searchQuery"
   exportable
   [rowMenu]="rowMenu"
+  [rowOpenable]="abreFila()"
+  (rowOpen)="onRowOpen($event)"
   selectable
   [bulkEntity]="bulkEntity()"
   [(selectedIds)]="selectedIds"

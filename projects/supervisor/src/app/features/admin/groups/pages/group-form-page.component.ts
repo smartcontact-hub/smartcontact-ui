@@ -25,7 +25,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService, SectionLinksService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, NombreFijoComponent } from '@shared/components';
+import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, NombreFijoComponent, ResourceRowsComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { llegarAAncla, llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
@@ -79,9 +79,10 @@ import {
   resolveGroup,
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
-import { TipificacionesStore, TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
-import { HorariosStore } from '@features/admin/repositories/instances/horarios';
-import { AgendasStore } from '@features/admin/repositories/instances/agendas';
+import { TIPIFICACION_FIELDS } from '@features/admin/repositories/instances/tipificaciones';
+import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
+import { TipificacionesStore } from '@features/admin/repositories/state/tipificaciones.store';
+import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
 import { AGENDA_FIELDS } from '@features/admin/repositories/instances/agendas';
 import { RepoFormPanelComponent, RepoFormSubmission } from '@features/admin/repositories/components/repo-form-panel.component';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
@@ -93,6 +94,8 @@ import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
+import { agendasOfrecidas, idsVivos, tipificacionViva } from '@features/admin/services/recursos.core.mjs';
+import { ResourceRowsService } from '@features/admin/services/resource-rows.service';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import {
   channelRemovalImpact,
@@ -211,6 +214,7 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     TooltipModule,
     AltaPieComponent,
     NombreFijoComponent,
+    ResourceRowsComponent,
     SelectComponent,
     TranslateModule,
   ],
@@ -235,6 +239,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly agendasStore = inject(AgendasStore);
   private readonly horariosStore = inject(HorariosStore);
   private readonly templatesStore = inject(TemplatesStore);
+  private readonly resourceRows = inject(ResourceRowsService);
   private readonly labelsStore = inject(LabelsStore);
   private readonly defaultsStore = inject(GroupDefaultsStore);
 
@@ -670,7 +675,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     ];
   });
 
-  protected readonly scheduleOptions = computed(() => this.agendasStore.items().map((a) => ({ label: a.name, value: a.id })));
+  /** Las agendas activas, y las ya puestas aunque estén inactivas (las guardadas y las de ahora): una inactiva puesta
+   *  se puede quitar, pero no se ofrece para poner (DD-164). */
+  protected readonly scheduleOptions = computed(() => {
+    const puestas = [...(this.initial()?.schedules ?? []), ...this.form().scheduleIds];
+    return agendasOfrecidas(this.agendasStore.items(), puestas).map((a) => ({ label: a.name, value: a.id }));
+  });
   protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
   protected readonly labelOptions = computed(() => this.labelsStore.labels().map((l) => ({ label: l.name, value: l.id })));
   protected readonly labelValue = computed(() => [...this.form().labelIds]);
@@ -682,6 +692,25 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly chatTemplateValue = computed(() => this.templatesOf('chat').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
   protected readonly emailTemplateValue = computed(() => this.templatesOf('email').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
   protected readonly hasEmail = computed(() => this.form().channels.has('email'));
+
+  /* El resumen bajo cada campo (DD-164): qué es cada recurso y, al editar, su «Editar». En el alta no lo lleva: la
+   * dirección no guarda la sección, y Atrás caería en un General vacío. */
+  protected readonly typificationRows = computed(() => {
+    this.lang();
+    return this.resourceRows.tipificacion(this.form().typification, this.mode() === 'edit');
+  });
+  protected readonly agendaRows = computed(() => {
+    this.lang();
+    return this.resourceRows.agendas(this.form().scheduleIds, this.mode() === 'edit');
+  });
+  protected readonly chatTemplateRows = computed(() => {
+    this.lang();
+    return this.resourceRows.templates(this.form().templateIds, 'chat', this.mode() === 'edit');
+  });
+  protected readonly emailTemplateRows = computed(() => {
+    this.lang();
+    return this.resourceRows.templates(this.form().templateIds, 'email', this.mode() === 'edit');
+  });
 
   /**
    * Los saltos de Distribución y colas (DD-130): uno por bloque de canal activo, en su orden, y solo con dos o más
@@ -820,10 +849,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       name: g.name,
       phone: g.phone,
       priority: g.priority,
-      typification: g.typification ?? null,
-      scheduleIds: new Set(g.schedules ?? []),
-      templateIds: new Set(g.templates ?? []),
-      labelIds: new Set(g.labels ?? []),
+      // Lo borrado en Repositorios sale ANTES de marcar la ficha como guardada: ni se cuenta, ni se guarda de vuelta,
+      // ni la ficha abre con cambios por ello (DD-164).
+      typification: tipificacionViva(g.typification, this.tipificacionesStore.items()) ? g.typification! : null,
+      scheduleIds: new Set(idsVivos(g.schedules ?? [], this.agendasStore.items())),
+      templateIds: new Set(idsVivos(g.templates ?? [], this.templatesStore.templates())),
+      labelIds: new Set(idsVivos(g.labels ?? [], this.labelsStore.labels())),
       announcements: g.announcements,
       advanced: g.advanced,
       phoneQueue: g.phoneQueue,
@@ -925,7 +956,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected onCreateAgendaSubmit(submission: RepoFormSubmission): void {
     const created = this.agendasStore.addItem({
       name: submission['name'] ?? '',
-      numbers: submission['numbers'] ?? '',
+      contacts: [],
       description: submission['description'] ?? '',
       status: submission['status'] || 'active',
     });
@@ -1148,8 +1179,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly resourceCount = computed(() => {
     const f = this.form();
     const templates = (this.hasChatFamily() ? this.chatTemplateValue().length : 0) + (this.hasEmail() ? this.emailTemplateValue().length : 0);
-    // Las etiquetas cuentan solo si se ven (DD-142).
-    return (f.typification ? 1 : 0) + f.scheduleIds.size + templates + (this.conEtiquetas ? f.labelIds.size : 0);
+    // Las etiquetas cuentan solo si se ven (DD-142); la tipificación, si a su categoría le queda alguna (DD-164).
+    const tipificacion = tipificacionViva(f.typification, this.tipificacionesStore.items()) ? 1 : 0;
+    return tipificacion + f.scheduleIds.size + templates + (this.conEtiquetas ? f.labelIds.size : 0);
   });
 
   /** Lo que falta para poder crear, en el orden de la ficha. Un nombre repetido no falta: se dice en su campo. */

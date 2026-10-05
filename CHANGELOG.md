@@ -26,6 +26,10 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/components`** — `sc-datatable` gana `first`, la primera fila de la página abierta, en las dos
+  direcciones como en `p-table` (`[(first)]`). Quien filtra las filas fuera de la tabla la vuelve a `0` al cambiar la
+  búsqueda: el paginador de PrimeNG solo retrocede una página cuando la abierta queda fuera de rango, y desde la
+  tercera la tabla se quedaba en blanco. Sin enlazarlo, nada cambia. ([DD-163](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-group-popover` gana `activated`, la salida al pulsar la cifra (clic, Intro o
   Espacio): lo que se hace con esa relación, si quien la pinta lo quiere. Al pulsar, el globo se cierra; al pasar o
   con el foco, sigue enseñando los nombres. Sin nadie que la escuche, nada cambia. ([DD-159](docs/DECISIONS.md))

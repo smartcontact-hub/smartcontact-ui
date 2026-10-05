@@ -42,6 +42,11 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
+> | Importar contactos de un CSV, como en Voice: la plantilla (`nombre;teléfono`, con `;` y BOM) y una vista previa con lo que entra, cada error con su línea, los repetidos y lo que no cabe · `;` o `,`, UTF-8 o windows-1252 · tope de 5000 por agenda · entra sin guardar | DD-166 |
+> | Repositorios dice cuántos hay de cada uno (la cifra del almacén que enseña su página; las de IA, las de Conversaciones), también en el nombre que oye el lector, y tiene buscador por nombre y descripción · los almacenes salen de su página a `repositories/state/` (enmienda DD-101 §2) | DD-165 |
+> | El resumen de cada recurso en las fichas: una fila por agenda, plantilla o tipificación con su dato y «Editar» (`sc-resource-rows`), que lleva a su sitio (`?editar=` en Plantillas, `?buscar=` en cualquier repositorio) · «Editar» solo al editar · se ofrecen las agendas activas y la inactiva ya puesta · lo borrado no se cuenta ni se guarda (enmienda DD-101 §2 y §4, DD-105 §2) | DD-164 |
+> | La agenda es una lista de contactos (nombre y teléfono) con su editor en su propia ruta, como las fichas; la fila del listado lo abre | DD-163 |
 > | Elegir y ordenar columnas en un solo control nativo: el Listbox (casilla y arrastre) en el globo del icono; las cabeceras ya no se arrastran | DD-162 |
 > | La cifra principal del resumen, con el degradado del botón principal y el anillo en el color de su texto: una por ficha | DD-161 |
 > | Una tabla dentro de una sección llega al pie de la pantalla: tope medido desde donde empieza (`scLlegaAlPie`), con suelo | DD-160 |
@@ -120,6 +125,194 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-167 · 2026-10-05 — El «+» de crear es el botón de solo icono de primeng.dev, redondo y con borde, junto a su control
+
+**Contexto.** Decisión de producto del 2026-10-05, al ver Recursos: el «+» de añadir es una variante del botón, la de
+solo icono de primeng.dev («Icon Only»), en cada sitio donde haya un «+» solo. Medido ese día:
+- **dónde hay:** cinco, todos en Recursos de la ficha de grupo (tipificación, agendas, plantillas de chat y de email, y
+  el de Etiquetas, apagado por DD-142). La ficha de agente no tiene ninguno, y los demás «+» de las apps llevan rótulo;
+- **cómo eran:** para PrimeNG ya eran de solo icono (`p-button-icon-only`), pero de texto y `sm` (28 × 27, sin borde ni
+  fondo en reposo), y flotaban sobre el rótulo. Se veían como un «+» suelto, a 1,5 px del control y con su centro 31 px
+  por encima del de él.
+
+**Decisión.**
+1. **El «+» es la fila «rounded» + «outlined» del «Icon Only» de primeng.dev, en gris** (`secondary`), para no competir
+   con «Guardar»: `<sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="…">`.
+   Con `rounded`, PrimeNG iguala el alto al ancho: un círculo de 31,5 (el ancho de solo icono del Kit), sin el
+   31,5 × 32,5 de DD-91. El nombre va en `ariaLabel`, como pide la sección de accesibilidad de la doc, y el tooltip lo
+   repite al pasar el ratón.
+2. **Va a la derecha de su control, a su alto.** Control y «+» comparten fila (`.control-add`): alineados arriba, con
+   7 de hueco, y el control se estira. Medido a 1440 y a 1366: un círculo de 31,5 junto a un control de 32,5, con los
+   centros a 0,5 px. Es la regla que ya tenía el «Añadir» de los dominios del chat, que pasa de `.domain-add` a
+   `.control-add`: una regla con dos usos.
+3. **El rótulo queda solo.** Sale la fila que sacaba el botón del flujo (`.field__label-row`).
+4. **El glifo se lee**: 4,52:1 en claro y 6,91:1 en oscuro, y un icono pide 3:1. El borde es el del botón secundario
+   con borde del DS, el mismo del «Añadir».
+
+**Razón.** Con forma visible, el «+» no cabía junto al rótulo: quedaba a medio píxel del control, y la casa pide 7. A
+la derecha del control es el patrón de elegir uno o crear uno nuevo, y a su alto se lee como parte del campo.
+
+**Descartadas.**
+- Las demás filas de la doc: la de relleno pesa más que el control al que acompaña, y la de texto sin borde es la que
+  se veía como un «+» suelto.
+- Dejarlo junto al rótulo con forma visible: queda pegado al control.
+- La fila con sombra: `sc-button` no expone `raised`, y una sombra no es de un control de formulario.
+
+**Consecuencias.** Precisa DD-121 §7 («cada una con su "+"»). DD-140, un diálogo por «+», no cambia.
+`ficha-recursos-dialogos` busca los «+» por su nombre y prueba las clases, el círculo del Kit, el hueco y los centros.
+La página de Button de sc-docs aún no tiene una sección «Solo icono» como la de primeng.dev: queda pendiente.
+
+## DD-166 · 2026-10-04 — Importar contactos a una agenda desde un CSV, como en Voice
+
+**Contexto.** La revisión de producto del 2026-10-04: hoy una agenda se llena descargando una plantilla e importándola
+(manual de usuario de Voice), y había que replicarlo o inventar algo.
+
+**Decisión.**
+1. **«Importar»**, junto a «Añadir contacto», abre un diálogo con la ayuda del formato, «Descargar plantilla» y «Elegir
+   archivo».
+2. **La plantilla es la cabecera y nada más** (`nombre;teléfono`, en el idioma de la app), con `;`, que es lo que
+   espera Excel en español, y con BOM, para que Excel la abra como UTF-8. Sin filas de ejemplo: se importarían si nadie
+   las borra.
+3. **Antes de añadir nada, la vista previa dice qué entra** («Se añadirán N contactos»), cada línea con error con su
+   número («Línea 3: el teléfono no es válido»; las 20 primeras, y de las demás cuántas son), los repetidos (los que ya
+   están en la agenda o salen dos veces en el archivo, comparados por sus cifras) y lo que no cabe. Las reglas son las
+   del diálogo de un contacto: nombre obligatorio y el teléfono de DD-163.
+4. **Lo importado entra en el formulario**, arriba y sin guardar: Guardar y Deshacer, como un contacto añadido a mano.
+5. **Se lee lo que guarda una hoja de cálculo**: `;` o `,` (el de la primera línea con datos), campos entre comillas
+   con `""`, el BOM, la cabecera en los cuatro idiomas y las líneas vacías. El archivo se lee en UTF-8 y, si no lo es,
+   en windows-1252: Excel en español guarda así, y leído en UTF-8 «Señal» llegaba como «Se�al».
+6. **Tope de 5000 contactos por agenda** (`TOPE_DE_CONTACTOS`): la cuota de localStorage es una para todos los
+   almacenes, y lo que la pasa se pierde sin avisar.
+
+La lógica es pura y tiene su unitaria (`parsearContactosCsv`, `decodificarCsv` y `plantillaCsv`, en
+`agenda-contacts.core.mjs`).
+
+**Razón.** Es el flujo que ya se conoce, y la vista previa evita importar a ciegas: quien sube un archivo con errores
+sabe qué líneas corregir antes de que entren.
+
+**Descartadas.**
+- Leer `.xlsx`: pide una librería de lectura, y Excel guarda CSV (la plantilla ya se abre con él).
+- Importar sin vista previa: los errores y los repetidos se perdían en silencio.
+- Un campo entre comillas que parte la línea: un contacto no lo necesita, y el lector queda más simple.
+
+## DD-165 · 2026-10-04 — Repositorios dice cuántos hay de cada uno, y tiene buscador
+
+**Contexto.** La revisión de producto del 2026-10-04, sobre el hub de Repositorios: se queda como está (DD-77, DD-78),
+con un dato más (cuántas agendas hay, que de horarios no hay ninguno) y un buscador.
+
+**Decisión.**
+1. **Cada fila dice cuántos hay**, a la derecha y en el gris de su descripción (texto de leyenda, cifras tabulares),
+   con el separador de miles del idioma. La cifra es la del almacén que enseña su página: las tres de IA llevan a
+   Conversaciones y cuentan lo que hay allí (reglas, entidades y categorías), no los repositorios de IA de antes.
+2. **El lector la oye.** El Menu nombra cada fila con `item.label` (DD-78), así que `label` es «Agendas (9)» y lo que
+   se ve va aparte. La cifra pintada se oculta al lector, para no decirla dos veces.
+3. **Un buscador** encima, por nombre y descripción, en minúsculas y por subcadena, como en las listas. Un grupo sin
+   filas no sale; sin ninguna, el vacío de búsqueda, con «Limpiar búsqueda».
+4. **Los almacenes de horarios, tipificaciones, variables, entidades e intenciones salen de su página** a
+   `repositories/state/`, como el de agendas (DD-163): el hub y las fichas leen el almacén sin cargar la lista.
+
+Enmienda DD-101 §2: en el hub hay cifras, que dicen dónde hay algo y no hay que leerlas para descartar.
+
+**Razón.** Una cifra junto a cada destino dice dónde hay algo antes de entrar, y con once destinos un buscador ahorra
+recorrerlos. Lo que oye el lector tiene que decir lo mismo que se ve.
+
+**Descartadas.**
+- La cifra en un `sc-badge`: el del DS es de aviso (8,75 px de letra; 10,5 en `lg`), por debajo de los 12 de la
+  descripción que tiene al lado. Medido en la página.
+- Contar los repositorios de IA de `instances/` (reglas IA y compañía): las filas no llevan a ellos.
+
+## DD-164 · 2026-10-04 — El resumen de cada recurso, con «Editar»: una fila por agenda, plantilla o tipificación
+
+**Contexto.** La revisión de producto del 2026-10-04, sobre Recursos de las fichas de grupo y de agente: cada recurso
+asignado era un chip con su nombre (DD-105 §2), sin nada que dijera qué es (una agenda de 3 contactos y otra de 1.250
+se veían iguales) ni cómo llegar a editarlo, y se pidió poder ir desde ahí a editar la agenda. Medido además: las dos
+fichas ofrecían agendas inactivas, y contaban (y guardaban de vuelta) las ya borradas en Repositorios, cada una
+calculándolo a su manera.
+
+**Decisión.**
+1. **Bajo cada campo, una fila por recurso** (`sc-resource-rows`, pieza de la app): su nombre, un dato y «Editar», con
+   un nombre accesible que dice de cuál es («Editar Ventas Nacional»):
+   - agenda: cuántos contactos y su estado («1250 contactos · Activa», la cifra con el separador del idioma) → su
+     editor (DD-163);
+   - plantilla: el principio de su texto, que es lo que dice qué es (el campo ya dice el canal) →
+     `/admin/plantillas?editar=<id>`, que abre su panel en su pestaña. Al cerrarlo, la dirección deja de pedirlo sin
+     apilar otra entrada;
+   - tipificación: cuántas tiene su categoría → `/admin/tipificaciones?buscar=<categoría>`. `sc-repo-list-page` siembra
+     su búsqueda con `?buscar=` al entrar, así que vale para cualquier repositorio. Es la búsqueda de siempre, por
+     subcadena: «Venta» encuentra también «Ventas».
+2. **Las filas sustituyen a los chips, y el desplegable sigue para elegir.** Dice cuántos («3 agendas»,
+   `maxSelectedLabels=0`) sin repetir los nombres de las filas. Etiquetas, en la ficha de agente, sigue con chips: su
+   color es el dato.
+3. **«Editar», solo al editar.** Entonces la dirección lleva la sección (`?seccion=recursos`) y Atrás vuelve a Recursos.
+   En un alta, y al duplicar, la dirección no la lleva (DD-143) y Atrás caería en una ficha vacía: las filas se quedan
+   como resumen, sin «Editar».
+4. **Lo que se ofrece y lo que cuenta sale de un sitio** (`features/admin/services/recursos.core.mjs`, con su
+   unitaria), y las dos fichas lo usan:
+   - se ofrecen las agendas activas, y las ya puestas aunque estén inactivas. Puesta, una inactiva no se apaga (como
+     los horarios): apagada, no se podría quitar;
+   - lo borrado en Repositorios sale del modelo al leer la ficha, ANTES de marcarla como guardada. Así no se ofrece, no
+     se cuenta (ni en «3 agendas» ni en la cifra de Recursos del resumen) y no se guarda de vuelta, y la ficha no abre
+     con cambios por ello. La tipificación cuenta solo si a su categoría le queda alguna.
+
+Enmienda DD-101 §2 (en Recursos hay cifras: dicen qué es cada cosa, no hay que leerlas para descartarla) y §4, y
+DD-105 §2 (en Agendas y Plantillas, filas en vez de chips).
+
+**Razón.** La pregunta de Recursos es qué tiene asignado el grupo o el agente, y un nombre no la responde: el dato que
+dice qué es cada cosa, y el camino para cambiarla, sí. Medido a 1366 y a 1440: la fila cabe en media columna de la
+rejilla de Recursos (319 px a 1366, con el nombre entero y el dato recortado), así que el campo no pasa a ocupar las
+dos.
+
+**Descartadas.**
+- Editar el recurso en un diálogo dentro de la ficha: serían dos editores del mismo objeto, y el de la agenda es una
+  página con su tabla.
+- Una tarjeta por recurso: caja dentro de caja (`audit:screen-vocabulary`).
+- Un filtro por categoría en Tipificaciones: `?buscar=` sirve para cualquier repositorio sin otro control.
+
+## DD-163 · 2026-10-04 — La agenda es una lista de contactos, con su editor
+
+**Contexto.** La revisión de producto del 2026-10-04, sobre Recursos. Una agenda es lo que el agente ve en la sección
+Agenda de su teléfono, cada número con su nombre, y lo que se hace con ella es dar de alta contactos, cambiarlos y
+guardarlos. En el prototipo era un texto con números separados por comas (`numbers`), sin nombres, que se editaba en
+un panel sobre la lista. La agenda del Comunicador (`agent-mini`, `ContactRow`) ya pinta ese par nombre–teléfono.
+
+**Decisión.**
+1. **Una agenda es `contacts: { id, name, phone }[]`.** Lo guardado con `numbers` se pone al día al leerlo
+   (`normalize`, sin subir la versión del almacén): cada número es un contacto con el nombre vacío, que la vista pinta
+   «Sin nombre» hasta que alguien lo edite. Un número repetido entra una vez.
+2. **Tiene su editor**, en `admin/agendas/crear` y `admin/agendas/editar/:id`, como las fichas:
+   - Guardar y Deshacer arriba;
+   - la guarda de cambios sin guardar, y el cerrojo entre pestañas;
+   - abrir una fila del listado lleva a él, y «Crear» también. `RepoPageConfig.editRoute` lo enciende en el
+     listado genérico de repositorios.
+3. **Los contactos, en una tabla dentro de su sección** (DD-160), en su propio componente:
+   - buscador, paginador y menú de fila (Editar, Eliminar). Se busca en el nombre y en el teléfono, y un teléfono
+     también por sus cifras, como se comparan los repetidos: «900100200» encuentra «900 100 200»;
+   - buscar vuelve a la primera página, y añadir también. Para eso `sc-datatable` gana `first`, el nativo de `p-table`:
+     el paginador de PrimeNG solo retrocede una página cuando la abierta queda fuera de rango, así que desde la tercera
+     un resultado corto dejaba la tabla en blanco. La tabla de agentes de la ficha tenía el mismo fallo con su buscador
+     y su filtro, y lo arregla igual;
+   - «Añadir contacto» va en un diálogo con el mismo formulario que los «+» de Recursos, y el contacto nuevo sale el
+     primero: al final, en la agenda grande caería en la última página, sin que se viera;
+   - la tarjeta llega al pie de la pantalla, como la de Agentes. Con dos tablas, la regla deja de ser de una y sube a
+     `.table-card--al-pie` (`styles/_sc-list-table.scss`), y la variable con la que el panel rápido cambia el tope
+     pasa de `--assign-table-max` a `--table-card-tope`.
+4. **Regla de contacto:**
+   - todo contacto que se crea o se edita lleva nombre;
+   - el teléfono admite un `+` y de 3 a 15 cifras, con espacios, guiones, puntos o paréntesis, así que caben
+     extensiones y números cortos;
+   - un teléfono no se repite en la agenda, y se compara solo por sus cifras: «900 100 200» y «900-100-200» son el
+     mismo.
+5. **El listado dice cuántos contactos tiene cada agenda**, con el separador de miles de cada idioma (`Intl`).
+
+**Razón.** El dato es el contacto, no la lista de números: el agente busca por nombre. Una ruta propia hace que Atrás
+vuelva a donde se estaba y que la guarda avise, como en las fichas. Paginador y no lista virtual porque es la tabla de
+una sección con campos encima, como la de Agentes de la ficha: la lista virtual pide un alto fijo que aquí no hay.
+
+**Descartadas.**
+- Un campo de texto con «nombre: número» por línea: no se busca, no se valida y no escala.
+- Subir la versión del almacén para cambiar la forma: borraría lo guardado (AGENTS, «normalize»).
+- Seguir editando en el panel sobre la lista: no cabe una tabla de contactos, y Atrás no vuelve a ningún sitio.
 
 ## DD-162 · 2026-10-04 — Elegir y ordenar columnas en un solo control nativo: el Listbox en el globo del icono
 
@@ -201,7 +394,7 @@ Se pidió como norma: si una sección necesita más sitio, que aproveche el rest
    cada antepasado, sus márgenes, rellenos y bordes; no el final de la zona, que la ficha estira a toda la pantalla).
    Se rehace en cada pintado y al cambiar la ventana. Un nombre sin `--sc-`: es una medida de la app, no un token.
 2. **La tabla de agentes del grupo la usa** con su suelo de siempre (`scale/18`); el panel rápido sigue con su
-   `--assign-table-max`.
+   `--assign-table-max` (hoy `--table-card-tope`, de la clase `.table-card--al-pie`: DD-163).
 3. **Norma en AGENTS.md (UX de pantalla, punto 10)**, con su prueba: con 2 px más de tabla, la página desplaza.
 
 **Razón.** Medido después, en los mismos casos: a 1440×900 la tabla pasa de 480 a 594 px y la página no desplaza; a

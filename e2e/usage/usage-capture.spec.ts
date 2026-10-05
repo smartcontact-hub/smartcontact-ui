@@ -1,4 +1,4 @@
-import { test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -85,6 +85,8 @@ const settle = async (page: Page, screen: UsageScreen): Promise<void> => {
     })
     .catch(() => undefined);
   await page.evaluate(() => (document as Document).fonts?.ready).catch(() => undefined);
+  // Fuera de la barra lateral, que se despliega al pasar el ratón (el mismo punto que `revision-pantalla`).
+  await page.mouse.move(720, 8);
   await page.waitForTimeout(350);
 };
 
@@ -116,6 +118,9 @@ for (const screen of USAGE_SCREENS) {
           }
         }
         for (const t of await scanScTags(page)) tagSet.add(t);
+        // La barra lateral se despliega al pasar el ratón (`sidebar--expanded`): con el puntero quieto en 0,0, las 20
+        // fotos del 2026-10-05 la sacaron abierta, tapando media pantalla. Sin plegar, la pantalla sale con su error.
+        await expect(page.locator('.sidebar--expanded'), 'la barra lateral, plegada').toHaveCount(0, { timeout: 2000 });
         const file = state.name ? `${screen.id}-${state.name}.png` : `${screen.id}.png`;
         await page.screenshot({ path: resolve(OUT_DIR, file), fullPage: true });
         rec.shots.push(file);

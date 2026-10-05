@@ -30,3 +30,18 @@
 .hub-link__description {
   color: var(--sc-text-subtle);
 }
+
+/* La cifra, al final de la fila y en el gris de la descripción (DD-165). Texto y no `sc-badge`: el badge del DS es de
+ * aviso (8,75 px), por debajo de la descripción que tiene al lado. Cifras tabulares, para que se alineen en columna. */
+.hub-link__count {
+  margin-inline-start: auto;
+  color: var(--sc-text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+/* El buscador, encima del menú y a 14 de él, como en las listas; un campo, no todo el ancho del hub. */
+.hub__search {
+  display: block;
+  max-inline-size: var(--sc-spacing-25);
+  margin-block-end: var(--sc-spacing-1);
+}

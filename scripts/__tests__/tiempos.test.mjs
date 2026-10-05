@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { desdeISO, duracion, lineasDeTiempos } from '../tiempos.mjs';
+import { conFin, desdeISO, duracion, lineasDeTiempos } from '../tiempos.mjs';
 
 // Los datos son los de #325 (2026-10-04), leídos de GitHub: el lote que se midió a mano en 3 h 30 min. La prueba fija
 // que el script dé lo mismo, con las dos trampas que encontró al escribirse: una vuelta del CI sin jobs (el commit del
@@ -63,6 +63,17 @@ test('una ejecución en curso sale sin fin; una de otro día lleva su fecha', ()
     main: null,
   });
   assert.ok(lineas.includes('- CI del PR: 10-05 00:10 · en curso (1)'));
+});
+
+test('conFin: una ejecución que sigue en curso no tiene fin, aunque alguno de sus jobs ya haya acabado', () => {
+  // El caso real de #326 (2026-10-04): con la CI de main recién lanzada, `changes` ya había acabado y el informe pintó
+  // «22:52 → 22:52 · 0 min · en curso». La prueba de arriba no lo vio porque le daba el `fin: null` ya hecho; esta
+  // pasa por donde pasan los datos de verdad, los jobs que devuelve GitHub.
+  const github = { jobsDe: () => [{ status: 'completed', completedAt: '2026-10-04T22:52:40Z' }, { status: 'in_progress', completedAt: null }] };
+  const enCurso = conFin(github, { id: 37241651293, startedAt: '2026-10-04T22:52:20Z', status: 'in_progress', conclusion: null });
+  assert.equal(enCurso.fin, null);
+  const acabada = conFin(github, { id: 37241066120, startedAt: '2026-10-04T22:43:00Z', status: 'completed', conclusion: 'success' });
+  assert.equal(acabada.fin, '2026-10-04T22:52:40Z');
 });
 
 test('desdeISO: una hora va al día de base; una fecha ISO, tal cual; lo demás, nada', () => {

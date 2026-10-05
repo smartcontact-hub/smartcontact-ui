@@ -122,6 +122,12 @@ export class ScDatatableComponent<T = unknown> {
   readonly paginator = input(false, { transform: booleanAttribute });
   readonly rows = input<number | undefined>(undefined);
   readonly rowsPerPageOptions = input<number[] | undefined>(undefined);
+  /**
+   * La primera fila de la página abierta, en las dos direcciones como en `p-table` (`[(first)]`). Quien filtra las filas
+   * fuera de la tabla la vuelve a `0` al cambiar la búsqueda: si no, la página abierta puede quedar fuera de rango, y el
+   * paginador de PrimeNG solo retrocede una (desde la tercera, la tabla se quedaba en blanco).
+   */
+  readonly first = model<number>(0);
 
   /** `'single'` (click en la fila) · `'multiple'` (checkboxes) · `null` (sin selección). */
   readonly selectionMode = input<'single' | 'multiple' | null>(null);

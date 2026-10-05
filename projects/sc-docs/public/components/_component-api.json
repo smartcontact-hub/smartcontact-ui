@@ -1805,6 +1805,21 @@
           }
         },
         {
+          "nombre": "first",
+          "clase": "model",
+          "tipo": "number",
+          "porDefecto": "0",
+          "requerido": false,
+          "descripcion": "La primera fila de la página abierta, en las dos direcciones como en `p-table` (`[(first)]`). Quien filtra las filas fuera de la tabla la vuelve a `0` al cambiar la búsqueda: si no, la página abierta puede quedar fuera de rango, y el paginador de PrimeNG solo retrocede una (desde la tercera, la tabla se quedaba en blanco).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Index of the first row to be displayed.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "selectionMode",
           "clase": "input",
           "tipo": "'single' | 'multiple' | null",
@@ -2256,7 +2271,6 @@
         "filterLocale",
         "filterOn",
         "filtersInput",
-        "first",
         "frozenColumns",
         "frozenValue",
         "frozenWidth",
