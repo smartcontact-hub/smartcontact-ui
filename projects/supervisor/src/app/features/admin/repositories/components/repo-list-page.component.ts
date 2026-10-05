@@ -9,7 +9,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
 import { MessageService, type MenuItem } from 'primeng/api';
@@ -65,6 +65,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   private readonly lang = injectLangChange();
   private readonly xlsx = inject(XlsxExportService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly language = inject(LanguageService);
 
   readonly config = input.required<RepoPageConfig<T>>();
@@ -79,7 +80,10 @@ export class RepoListPageComponent<T extends RepoEntity> {
 
   protected readonly plusIcon = 'add';
 
-  protected readonly searchQuery = signal('');
+  /** Con `?buscar=` (DD-164), la lista abre ya buscando: así enlaza una ficha a la tipificación que tiene, por su
+   *  categoría. Se siembra al entrar y luego la búsqueda es de quien la usa. Es la de siempre, por subcadena: «Venta»
+   *  encuentra también «Ventas». */
+  protected readonly searchQuery = signal(this.route.snapshot.queryParamMap.get('buscar') ?? '');
   protected readonly creating = signal(false);
   protected readonly editingId = signal<number | null>(null);
   /** Selección: la lista la marca; de ella cuelgan la barra en lote y el borrado. */

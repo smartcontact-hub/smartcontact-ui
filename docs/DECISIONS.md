@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El resumen de cada recurso en las fichas: una fila por agenda, plantilla o tipificación con su dato y «Editar» (`sc-resource-rows`), que lleva a su sitio (`?editar=` en Plantillas, `?buscar=` en cualquier repositorio) · «Editar» solo al editar · se ofrecen las agendas activas y la inactiva ya puesta · lo borrado no se cuenta ni se guarda (enmienda DD-101 §2 y §4, DD-105 §2) | DD-164 |
 > | La agenda es una lista de contactos (nombre y teléfono) con su editor en su propia ruta, como las fichas; la fila del listado lo abre | DD-163 |
 > | Elegir y ordenar columnas en un solo control nativo: el Listbox (casilla y arrastre) en el globo del icono; las cabeceras ya no se arrastran | DD-162 |
 > | La cifra principal del resumen, con el degradado del botón principal y el anillo en el color de su texto: una por ficha | DD-161 |
@@ -121,6 +122,53 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-164 · 2026-10-04 — El resumen de cada recurso, con «Editar»: una fila por agenda, plantilla o tipificación
+
+**Contexto.** La revisión de producto del 2026-10-04, sobre Recursos de las fichas de grupo y de agente: cada recurso
+asignado era un chip con su nombre (DD-105 §2), sin nada que dijera qué es (una agenda de 3 contactos y otra de 1.250
+se veían iguales) ni cómo llegar a editarlo, y se pidió poder ir desde ahí a editar la agenda. Medido además: las dos
+fichas ofrecían agendas inactivas, y contaban (y guardaban de vuelta) las ya borradas en Repositorios, cada una
+calculándolo a su manera.
+
+**Decisión.**
+1. **Bajo cada campo, una fila por recurso** (`sc-resource-rows`, pieza de la app): su nombre, un dato y «Editar», con
+   un nombre accesible que dice de cuál es («Editar Ventas Nacional»):
+   - agenda: cuántos contactos y su estado («1250 contactos · Activa», la cifra con el separador del idioma) → su
+     editor (DD-163);
+   - plantilla: el principio de su texto, que es lo que dice qué es (el campo ya dice el canal) →
+     `/admin/plantillas?editar=<id>`, que abre su panel en su pestaña. Al cerrarlo, la dirección deja de pedirlo sin
+     apilar otra entrada;
+   - tipificación: cuántas tiene su categoría → `/admin/tipificaciones?buscar=<categoría>`. `sc-repo-list-page` siembra
+     su búsqueda con `?buscar=` al entrar, así que vale para cualquier repositorio. Es la búsqueda de siempre, por
+     subcadena: «Venta» encuentra también «Ventas».
+2. **Las filas sustituyen a los chips, y el desplegable sigue para elegir.** Dice cuántos («3 agendas»,
+   `maxSelectedLabels=0`) sin repetir los nombres de las filas. Etiquetas, en la ficha de agente, sigue con chips: su
+   color es el dato.
+3. **«Editar», solo al editar.** Entonces la dirección lleva la sección (`?seccion=recursos`) y Atrás vuelve a Recursos.
+   En un alta, y al duplicar, la dirección no la lleva (DD-143) y Atrás caería en una ficha vacía: las filas se quedan
+   como resumen, sin «Editar».
+4. **Lo que se ofrece y lo que cuenta sale de un sitio** (`features/admin/services/recursos.core.mjs`, con su
+   unitaria), y las dos fichas lo usan:
+   - se ofrecen las agendas activas, y las ya puestas aunque estén inactivas. Puesta, una inactiva no se apaga (como
+     los horarios): apagada, no se podría quitar;
+   - lo borrado en Repositorios sale del modelo al leer la ficha, ANTES de marcarla como guardada. Así no se ofrece, no
+     se cuenta (ni en «3 agendas» ni en la cifra de Recursos del resumen) y no se guarda de vuelta, y la ficha no abre
+     con cambios por ello. La tipificación cuenta solo si a su categoría le queda alguna.
+
+Enmienda DD-101 §2 (en Recursos hay cifras: dicen qué es cada cosa, no hay que leerlas para descartarla) y §4, y
+DD-105 §2 (en Agendas y Plantillas, filas en vez de chips).
+
+**Razón.** La pregunta de Recursos es qué tiene asignado el grupo o el agente, y un nombre no la responde: el dato que
+dice qué es cada cosa, y el camino para cambiarla, sí. Medido a 1366 y a 1440: la fila cabe en media columna de la
+rejilla de Recursos (319 px a 1366, con el nombre entero y el dato recortado), así que el campo no pasa a ocupar las
+dos.
+
+**Descartadas.**
+- Editar el recurso en un diálogo dentro de la ficha: serían dos editores del mismo objeto, y el de la agenda es una
+  página con su tabla.
+- Una tarjeta por recurso: caja dentro de caja (`audit:screen-vocabulary`).
+- Un filtro por categoría en Tipificaciones: `?buscar=` sirve para cualquier repositorio sin otro control.
 
 ## DD-163 · 2026-10-04 — La agenda es una lista de contactos, con su editor
 

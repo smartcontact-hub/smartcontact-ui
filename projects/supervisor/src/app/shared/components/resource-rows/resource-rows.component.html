@@ -1,0 +1,22 @@
+@if (rows().length > 0) {
+  <ul class="resource-rows" [attr.aria-label]="label()">
+    @for (row of rows(); track row.id) {
+      <li class="resource-rows__row">
+        <span class="resource-rows__text">
+          <span class="resource-rows__name sc-text-body-regular">{{ row.name }}</span>
+          <span class="resource-rows__detail sc-text-caption-regular" [title]="row.detail">{{ row.detail }}</span>
+        </span>
+        <!-- El nombre accesible empieza por lo que se ve («Editar») y dice de qué fila es. -->
+        @if (row.edit; as edit) {
+          <a
+            class="resource-rows__edit sc-text-caption-semibold"
+            [routerLink]="edit.link"
+            [queryParams]="edit.queryParams"
+            [attr.aria-label]="'common.edit_named' | translate: { name: row.name }"
+            >{{ 'common.edit' | translate }}</a
+          >
+        }
+      </li>
+    }
+  </ul>
+}

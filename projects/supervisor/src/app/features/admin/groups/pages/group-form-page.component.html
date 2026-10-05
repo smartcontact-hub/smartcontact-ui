@@ -682,6 +682,7 @@
             [helperText]="'groups.form.fields.typification_hint' | translate"
             (valueChange)="onTypificationChange($event)"
           />
+          <sc-resource-rows [label]="'groups.form.fields.typification' | translate" [rows]="typificationRows()" />
         </div>
 
         <div class="field">
@@ -693,17 +694,17 @@
           </span>
           <sc-multiselect
             inputId="group-agendas"
-            display="chip"
             optionLabel="label"
             optionValue="value"
             [filter]="true"
-            [maxSelectedLabels]="4"
-            [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+            [maxSelectedLabels]="0"
+            [selectedItemsLabel]="(scheduleValue().length === 1 ? 'agents.form.resources.agendas_count_one' : 'agents.form.resources.agendas_count') | translate"
             [placeholder]="'agents.form.resources.none' | translate"
             [options]="scheduleOptions()"
             [value]="scheduleValue()"
             (valueChange)="onIdsChange('scheduleIds', $event)"
           />
+          <sc-resource-rows [label]="'agents.form.advanced.agendas.title' | translate" [rows]="agendaRows()" />
         </div>
 
         @if (hasChatFamily()) {
@@ -716,17 +717,17 @@
             </span>
             <sc-multiselect
               inputId="group-templates-chat"
-              display="chip"
               optionLabel="label"
               optionValue="value"
               [filter]="true"
-              [maxSelectedLabels]="4"
-              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+              [maxSelectedLabels]="0"
+              [selectedItemsLabel]="(chatTemplateValue().length === 1 ? 'agents.form.resources.templates_count_one' : 'agents.form.resources.templates_count') | translate"
               [placeholder]="'agents.form.resources.none' | translate"
               [options]="chatTemplateOptions()"
               [value]="chatTemplateValue()"
               (valueChange)="onTemplatesChange('chat', $event)"
             />
+            <sc-resource-rows [label]="'agents.form.resources.templates_chat' | translate" [rows]="chatTemplateRows()" />
           </div>
         }
 
@@ -740,17 +741,17 @@
             </span>
             <sc-multiselect
               inputId="group-templates-email"
-              display="chip"
               optionLabel="label"
               optionValue="value"
               [filter]="true"
-              [maxSelectedLabels]="4"
-              [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
+              [maxSelectedLabels]="0"
+              [selectedItemsLabel]="(emailTemplateValue().length === 1 ? 'agents.form.resources.templates_count_one' : 'agents.form.resources.templates_count') | translate"
               [placeholder]="'agents.form.resources.none' | translate"
               [options]="emailTemplateOptions()"
               [value]="emailTemplateValue()"
               (valueChange)="onTemplatesChange('email', $event)"
             />
+            <sc-resource-rows [label]="'agents.form.resources.templates_email' | translate" [rows]="emailTemplateRows()" />
           </div>
         }
 

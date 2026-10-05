@@ -123,7 +123,7 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
 });
 
 test('agente · las agendas y sus «Editar»; en el alta, las filas sin «Editar»', async ({ page }) => {
-  await goto(page, 'admin/agentes/editar/4?seccion=recursos');
+  await goto(page, 'admin/agentes/editar/3?seccion=recursos');
   const agendas = filas(page, 'Agendas');
   await expect(agendas).toHaveCount(2);
   await expect(agendas.nth(1)).toContainText('Cobros');
