@@ -239,16 +239,18 @@ porque al oscurecer un fondo se puede dejar texto oscuro encima; es la que cazó
 cuatro fallos de AA que llevaban ahí desde siempre: una red que solo mira un tema sugiere
 que el otro está comprobado.
 
-**Lo que queda abierto, medido y sin arreglar** (**uno** vive en el spec `CONOCIDOS_CLARO`, no cuatro — los otros tres se arreglaron y salieron de la lista; verificado 2026-08-13, con su
-número, no escondidos). Ninguno es CSS de página — todo lo que dependía de una hoja de
-página está cerrado:
+**Lo que queda abierto, medido y sin arreglar** (**uno** vive en el spec `CONOCIDOS_CLARO` —
+verificado 2026-10-05, con su número, no escondidos; los demás de esta tabla se arreglaron y
+salieron de la lista, el último lote el 2026-09-27 en §1.8). Ninguno es CSS de página — todo lo
+que dependía de una hoja de página está cerrado:
 
 | Qué | Medido | Por qué no se toca aquí |
 |---|---|---|
 | ~~`--sc-text-subtle`~~ | ~~2.04:1~~ → **4.52:1** | **Decidido y hecho el 2026-07-19** — ver §1.7. |
 | `--sc-text-secondary` sobre `--sc-bg-default` | 4.25:1 (y 3.92 sobre slate-100) | Ya aceptado en §1.5: subirlo más lo pega a `text-primary` y rompe la jerarquía. |
-| `p-button-danger` | 3.76:1 | Preset del DS (blanco sobre red-500). Toca al Kit. |
-| `p-button-secondary` `outlined` | 2.95:1 | La etiqueta en slate-500. Es el botón "Añadir" de AED, un control primario. Toca al Kit. |
+| ~~`p-button-danger`~~ | ~~3.76:1~~ → **4.83:1** | **Arreglado el 2026-09-15** — ver §1.8. |
+| ~~`p-button-secondary` `outlined`~~ | ~~2.95:1~~ → **4.52:1** | **Arreglado el 2026-09-27** — ver §1.8. |
+| ~~`p-button-secondary` `text`~~ | ~~2.95:1~~ → **4.52:1** | **Arreglado el 2026-10-05** — ver §1.11, DD-169. |
 
 ---
 
@@ -317,6 +319,10 @@ se borra.
 
 > Cierra la lista. **Después de esto no queda ningún fallo de contraste en la app**
 > salvo el límite conocido de §1.5.
+>
+> *(Corregido el 2026-10-05: no cerraba. `button.text.secondary` — el MISMO slate-500 de
+> `outlined.secondary`, en otra `appearance` — se quedó fuera porque el Kit los emite como
+> dos filas distintas y nadie volvió a buscar hermanos del mismo color. Ver §1.11, DD-169.)*
 
 Los tres venían del **preset o de un token de componente**, no de CSS de página — que es
 la razón de que sobrevivieran a toda la limpieza anterior: ninguna hoja de página los
@@ -408,6 +414,37 @@ referencia de paleta en `sc-preset/togglebutton.ts`, como el `danger` sólido de
 
 **Cómo se cierra**: que el Kit suba `togglebutton.color` en claro (`docs/figma-pendiente.md` §8). El guard ya acepta los slots de `root` (#177), así que entonces el
 preset lee `var(--sc-cmp-togglebutton-*)` y el bloque a mano se borra.
+
+---
+
+### 1.11 El cuarto botón bajo AA: `secondary text` es el mismo slate-500 que `outlined`, en otra fila del Kit · 2026-10-05
+
+§1.8 cerró tres botones y dio la lista por completa. Medido al investigar un informe sobre «Añadir alternativa (O)»
+(el constructor de condiciones de una regla, DD-169): `sc-button variant="secondary" appearance="text"` también
+mide **2.95:1** — EXACTAMENTE el mismo número que `outlined.secondary` en §1.8, porque es el mismo `slate-500` de
+origen. §1.8 no lo tocó porque no es el mismo slot: el Kit exporta `button.outlined.secondary.color` y
+`button.text.secondary.color` como dos filas independientes, así que arreglar una no arregla la otra aunque
+compartan color y aunque las dos acaben en el mismo `slate-600`.
+
+| Slot | Kit | Ahora | Medido |
+|---|---|---|---|
+| `button.text.secondary` (etiqueta e icono) | `slate-500` | **`slate-600`** | 2.95:1 → **4.52:1** |
+
+**Va por el mismo mecanismo que §1.8**: `--sc-cmp-button-text-secondary-color` fuera de la zona `@sc-gen` + su slot
+en `EXCLUDE` (`cmp-color-map.mjs`), valor a mano en `04-component.css`. El preset ya lo consumía por token
+(`var(--sc-cmp-button-text-secondary-color)`, `sc-preset/button.ts`), sin cambios ahí.
+
+**La lección, no solo el arreglo.** Un color reparado en un slot no está reparado en sus hermanos — `outlined` y
+`text` son la misma `appearance` family mentalmente, pero el Kit los modela por separado, y "ya lo arreglé" se
+verificó por slot, no por color. Al cerrar un fallo de contraste de botón, conviene `grep` el MISMO hex/token en
+el resto de `sc-preset/button.ts` antes de dar la familia por sana.
+
+**Vigilado por**: `theme-contrast.spec.ts`, ruta `conversaciones/reglas/nueva?seccion=alcance` (la única de las
+~35 apariciones del slot que lleva ETIQUETA visible y está en una ruta cubierta — ver DD-169 para el resto del
+inventario, incluida la laguna de los icono-solo en la sonda).
+
+**Cómo se cierra**: que el Kit suba `button.text.secondary.color`. Entonces la fila de `EXCLUDE` y el bloque a
+mano se borran.
 
 ## 2. Component extensions (el DS añade lo que Figma no modela)
 
