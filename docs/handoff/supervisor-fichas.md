@@ -21,9 +21,28 @@ cuatro trampas del pase suben a «Trampas del frente». Y el de la revisión de 
 Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-fichas.md`; sus trampas suben a
 «Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show c6a9cd59:…` y `git show 2a894b1c:…`. El de E2
 (DD-149, sin trampas propias): `git show a7bca7c0:docs/handoff/supervisor-fichas.md`. El de E3 (DD-150, tampoco):
-`git show c065d664:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 7d70bfb9:…`.
+`git show c065d664:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 7d70bfb9:…`. El de D3
+(DD-152, tampoco): `git show e7e0e8f3:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · sc-docs y el peso de los iconos, en un lote de cuatro bloques, en su PR
+## ✅ 2026-10-05 · Accesibilidad pendiente, en un lote de seis bloques, en su PR
+
+> **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sin DD nueva: cada bloque cierra lo que dejó abierto
+> una DD, con su «Actualización (2026-10-05)»: DD-133, DD-135, DD-136, DD-146 y DD-162.**
+
+- **1 · Cada desplegable con nombre:** PrimeNG nombra un combobox sin nombre con la opción elegida, y un `<label for>`
+  no nombra el span de `sc-select` (sí el `<input>` de `sc-multiselect`). `sc-select` gana `ariaLabel` (el nativo) y
+  sus opciones apagadas dicen `aria-disabled`. `audit:screen-hygiene` gana la regla: cazó 31 de 119; quedan 0.
+- **2 · Las ayudas se anuncian con su campo:** seis campos del DS ganan `ariaDescribedBy` (`joinDescribedBy`), y
+  `sc-multiselect` lleva sus `aria-*` al combobox. 42 ayudas de las fichas, Contact Center y Sistema llevan su id.
+- **3 · El marcador de la foto, a 3:1:** `--sc-icon-secondary` (3,96:1). Las altas de agente y usuario, en `RUTAS`.
+- **4 · El enlace del resumen se pulsa en 24:** el `::after` de la cifra de `sc-group-popover`.
+- **5 · Ordenar columnas sin arrastrar:** con el teclado no se llegaba al globo. Ahora el foco entra en la lista,
+  «Subir» y «Bajar» mueven la última enfocada y Escape vuelve al icono; dos arreglos alrededor del Listbox (abajo).
+- **6 · Subtítulos sin relleno:** fuera «Capacidades del agente» y «Comportamiento, integración y sesión».
+- **En local, en verde:** las pruebas de cada bloque (rojas antes), sus vecinas y barridos, y `revision` de las 32
+  vistas, en regla. Cambian las capturas de sc-docs de select, multiselect y, si el comparador lo ve, photoupload.
+
+## ✅ 2026-10-05 · sc-docs y el peso de los iconos, en un lote de cuatro bloques, fundido (#330)
 
 > **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sin DD nueva: A, B y C son docs, y D cumple DD-130 §6.**
 
@@ -189,42 +208,12 @@ del panel también a la ficha (unos 100 px).
 
 El detalle de E1b salió por el tope de seis secciones: `git show faf25027:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-02 · D3: tiempos, horarios y música (DD-152)
-
-**Entregado:** #315 → `faf25027`; CI PR `37038447269` y main `37040177041`, leídas verdes con
-`ci:verdict`. Rama y worktree propios eliminados; evidencias externas en `d3`.
-Primer commit `11f1fafe`: siete pruebas rojas contra E4. Implementados catálogos de tiempos e inactividad, colas
-Fija/Variable, horarios independientes de Web Chat/WhatsApp y música en un control. Valores históricos conservados.
-Cierre por inactividad: criterio delegado, 5/10/15/30/60 minutos, defecto 5. Detalle y alternativas en DD-152.
-**Ejecutado:** tres unitarias verdes; ocho casos propios verdes; ampliada 90/92, dos rojos de agrupación corregidos
-con `revision` posterior verde; tanda final 13/13. Suite completa **525/528** (25,3 min): los dos recortes históricos
-del listado (181>178 y 197>194) y una carrera al cerrar/reabrir el menú de subestrategia. Esa prueba ahora elige en el
-menú ya abierto, sin alterar su contrato; **3/3 repeticiones verdes**. Contraste claro/oscuro incluido en la suite.
-Una tanda tras interrupción falló por servidor apagado, no por comportamiento; reiniciado y pruebas repetidas.
-**Visual:** 30 capturas de ficha/Contact Center, claro/oscuro a 1024/1440 y claro a 1366×768/1490×860; cero desborde
-horizontal o combobox sin nombre. Etiquetas de horarios alineadas y capacidad separada a 28. Antes E4 capturado en
-ambos temas. Revisión better-layout: sin hallazgos pendientes en lo inspeccionado; zoom 200 % y RTL no verificados.
-Lint, docs:guard, docs:coherence, i18n, primeng-coupling y **verify verdes**. Preflight, PR/CI y merge/CI completados en verde.
-Local 4405 actualizado al build de producción de D3; ocho pruebas propias verdes allí. Evidencia en `visualizations/2026/10/02/01a0fbe8-af94-73f3-a2cd-49d70c24736f/d3`.
-
 ## SIGUIENTE — sin preguntar
 
-0. **sc-docs y el peso de los iconos, en su PR** (el tramo de arriba). Lo siguiente, en dos lotes con su PR cada uno
-   (DD-154), decididos tras la revisión del 2026-10-04:
-   - **lote 3 · lo que queda abierto de DD-133, DD-135, DD-136, DD-146 y DD-162:**
-     - cada desplegable con nombre (los selects rotulados con `<label for>` sin `ariaLabelledBy`): la regla, dentro
-       de `audit:screen-hygiene`;
-     - las ayudas se anuncian con su control (`ariaDescribedBy` en `sc-select`, `sc-inputnumber` y
-       `sc-toggleswitch`), también las de Contact Center;
-     - las opciones apagadas de `sc-select` dicen `aria-disabled`;
-     - el marcador de la foto de `sc-photo-upload`, de 2,58:1 a 3:1: las altas de agente y usuario entran en `RUTAS`
-       de `theme-contrast`;
-     - el rótulo-enlace del resumen se pulsa en 24;
-     - ordenar columnas sin arrastrar («Subir» y «Bajar»);
-     - los subtítulos de sección, sin relleno;
-   - **lote 4 · Supervisión y limpieza:** el panel rápido también en el widget «Grupos» del Monitor (respuesta de
-     producto del 2026-09-27, anotada en DD-121); la columna de 240 de agente y usuario, medida a 1366 y a 1440 antes
-     de tocar el molde; y fuera `/lab/admin/*`, superado por DD-132, con su tag de archivo.
+0. **Accesibilidad pendiente, en su PR** (el tramo de arriba). Lo siguiente, el **lote 4 · Supervisión y limpieza**
+   (DD-154): el panel rápido también en el widget «Grupos» del Monitor (respuesta de producto del 2026-09-27, anotada
+   en DD-121); la columna de 240 de agente y usuario, medida a 1366 y a 1440 antes de tocar el molde; y fuera
+   `/lab/admin/*`, superado por DD-132, con su tag de archivo.
 
    Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
    separado (no entra en esta fase). Si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con
@@ -268,8 +257,18 @@ Local 4405 actualizado al build de producción de D3; ocho pruebas propias verde
 
 **Trampas del frente:**
 - Los iconos añaden su glifo a `textContent`; el lector no lo oye. `toHaveText` debe distinguirlo.
-- Un inputnumber con sufijo lo antepone a su descripción accesible. Las altas siguen fuera del contraste completo
-  por el marcador de foto de 2,58:1 (DD-136). En cloud root, simula bloqueo de Git con `.git/config.lock`, no chmod.
+- Un inputnumber con sufijo lo antepone a su descripción accesible. En cloud root, simula bloqueo de Git con
+  `.git/config.lock`, no chmod.
+- **La captura no ve un cambio en gris claro sobre blanco** (`maxDiffPixels: 20` y el umbral de color por defecto): un
+  borde o un fondo claro que cambia lleva una prueba medida, no basta con que se mueva la captura (Textarea, Skeleton).
+- **Una sonda que no enrojece con el fallo puesto no es evidencia:** la de divider medía un host `display: contents`.
+- **PrimeNG 22.1, Listbox:** su `aria-activedescendant` no se rellena nunca (un `computed` que lee primero `focused`,
+  que no es señal), y Tab desde la lista se queda en un `span` invisible si no hay buscador. Los dos, arreglados en
+  `list-page` (DD-162): mírelos ahí antes de usar otro Listbox con teclado.
+- **El botón `secondary` de texto del DS mide 2,58:1 en claro** (slate-400): por debajo de AA para texto. Para una acción
+  de texto que se lee, `primary` de texto.
+- **vitest del DS:** jsdom no trae `matchMedia` y el panel de PrimeNG lo pide al abrirse; `ngModel` escribe el valor un
+  ciclo después (`whenStable`). Y un `git stash`/`pop` toca la fecha del DS: el hook de `dist/` pide reconstruir.
 - Un NG2012 que persiste después de reparar sintaxis puede exigir reiniciar `ng serve`.
 
 - ⚠️ **Una consulta de contenedor no suma especificidad.** Una regla dentro de `@container` que va antes que la regla
