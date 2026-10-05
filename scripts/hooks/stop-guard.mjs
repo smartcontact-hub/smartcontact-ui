@@ -547,7 +547,7 @@ function main() {
     }
     if (necesitaVeredicto(actosBash(jsonl)))
       return bloquear(
-        'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, su pista dice dónde leer el fallo). Funciona igual en la nube: lee GitHub por `gh api`. Si aun así no puedes, léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y los jobs si algo sale rojo). En los dos casos, cuéntale al usuario el resultado LEÍDO, no el exit del wrapper.',
+        'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, su pista dice dónde leer el fallo; si sale con 6 —"no tiene PR abierto"— no hay CI que esperar, ese aviso YA es la lectura: el `pull_request` que lo dispara llega al abrir el PR). Funciona igual en la nube: lee GitHub por `gh api`. Si aun así no puedes, léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y los jobs si algo sale rojo). En los dos casos, cuéntale al usuario el resultado LEÍDO, no el exit del wrapper.',
       );
 
     const sinRevisar = pantallasSinRevisar(jsonl);

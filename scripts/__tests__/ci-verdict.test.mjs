@@ -41,7 +41,7 @@ test('rojo: PR ya fundido gana al verde del CI y sale con 4', () => {
     rama: 'arebury/unify-cf-sites-list',
     head: HEAD,
     runs: [RUN],
-    pr: { number: 91, state: 'MERGED', mergeCommit: { oid: '81654950d9ba1f08d56cc9f59b5f3e0668f3ae22' } },
+    pr: { number: 91, state: 'MERGED', headRefOid: HEAD, mergeCommit: { oid: '81654950d9ba1f08d56cc9f59b5f3e0668f3ae22' } },
   });
   assert.equal(v.exit, 4);
   assert.match(v.linea, /#91/);
@@ -51,9 +51,29 @@ test('rojo: PR ya fundido gana al verde del CI y sale con 4', () => {
 });
 
 test('PR fundido sin mergeCommit: avisa igual, sin inventarse el sha', () => {
-  const v = veredicto({ rama: 'r', head: HEAD, runs: [RUN], pr: { number: 7, state: 'MERGED' } });
+  const v = veredicto({ rama: 'r', head: HEAD, runs: [RUN], pr: { number: 7, state: 'MERGED', headRefOid: HEAD } });
   assert.equal(v.exit, 4);
   assert.doesNotMatch(v.linea, /undefined/);
+});
+
+// #333, medido 2026-10-05: una sesión cloud reutiliza el mismo nombre de rama tras fundir un PR; el
+// siguiente lote de commits va a esa rama ANTES de que exista un PR nuevo (se abre después de
+// regenerar las capturas de sc-docs). `prDeRama` solo ve el PR fundido, y el código viejo cantaba
+// «ya está MERGED» sobre un HEAD que ese PR nunca vio — el `pull_request` que dispara el CI no
+// existe todavía, así que no hay nada verde ni rojo que leer: el aviso en sí ES la lectura.
+test('rojo→nuevo: PR fundido cuyo headRefOid es OTRO commit (hay trabajo nuevo encima): no es MERGED, exit 6', () => {
+  const v = veredicto({
+    rama: 'arebury/cloud-batch',
+    head: HEAD,
+    runs: [],
+    pr: { number: 330, state: 'MERGED', headRefOid: 'b'.repeat(40), mergeCommit: { oid: 'e7e0e8f3'.padEnd(40, '0') } },
+  });
+  assert.equal(v.exit, 6);
+  assert.match(v.linea, /#330/);
+  assert.match(v.linea, /no tiene PR abierto/);
+  assert.match(v.linea, /pull_request/);
+  assert.match(v.linea, new RegExp(HEAD.slice(0, 7)));
+  assert.doesNotMatch(v.linea, /MERGED/);
 });
 
 test('verde: un PR ABIERTO no tapa el veredicto del CI', () => {
@@ -212,7 +232,7 @@ test('en la nube lee el CI igual: verde sobre tu HEAD, sin `gh run` ni `gh pr`',
 test('en la nube ve el PR: fundido gana al verde (4) y en conflicto también (5)', () => {
   const fundido = enLaNube((head) => [
     ['actions/workflows/ci.yml/runs', ejecucion(head)],
-    ['pulls?head=o:mi-rama', [{ number: 7, state: 'closed', merged_at: '2026-10-04T18:58:30Z', merge_commit_sha: 'c756d89540918b177fb72baab0e13acee0cb7c8e', head: { ref: 'mi-rama' } }]],
+    ['pulls?head=o:mi-rama', [{ number: 7, state: 'closed', merged_at: '2026-10-04T18:58:30Z', merge_commit_sha: 'c756d89540918b177fb72baab0e13acee0cb7c8e', head: { ref: 'mi-rama', sha: head } }]],
   ]);
   assert.equal(fundido.status, 4, fundido.stdout + fundido.stderr);
   assert.match(fundido.stdout, /#7 de mi-rama ya está MERGED en c756d89/);
@@ -224,6 +244,19 @@ test('en la nube ve el PR: fundido gana al verde (4) y en conflicto también (5)
   ]);
   assert.equal(choca.status, 5, choca.stdout + choca.stderr);
   assert.match(choca.stdout, /#8 de mi-rama está en CONFLICTO/);
+});
+
+// #333 de punta a punta: la rama solo tiene el PR VIEJO (fundido, con OTRO sha) y aún ningún run de
+// `ci` —exactamente lo que hay tras un push a una rama que no es `main`, antes de abrir el PR nuevo.
+test('en la nube: rama con un fundido viejo y sin PR abierto ni runs → exit 6, no "ya está MERGED"', () => {
+  const r = enLaNube(() => [
+    ['actions/workflows/ci.yml/runs', { workflow_runs: [] }],
+    ['pulls?head=o:mi-rama', [{ number: 330, state: 'closed', merged_at: '2026-10-04T10:00:00Z', merge_commit_sha: 'e7e0e8f3', head: { ref: 'mi-rama', sha: 'c'.repeat(40) } }]],
+  ]);
+  assert.equal(r.status, 6, r.stdout + r.stderr);
+  assert.match(r.stdout, /#330/);
+  assert.match(r.stdout, /no tiene PR abierto/);
+  assert.doesNotMatch(r.stdout, /ya está MERGED/);
 });
 
 // El commit del robot de `visual-baselines` sobre un PR abierto deja una ejecución «failure» sin un solo job (#325, run

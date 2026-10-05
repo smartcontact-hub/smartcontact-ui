@@ -41,14 +41,16 @@ test('mergeableDe: el REST (true/false/null) en el vocabulario de gh', () => {
 });
 
 test('prDe: el REST no tiene MERGED; lo es un PR cerrado con fecha de fusión', () => {
-  const fundido = prDe({ number: 325, state: 'closed', merged_at: '2026-10-04T18:58:30Z', merge_commit_sha: 'c756d895', head: { ref: 'rama' } });
+  const fundido = prDe({ number: 325, state: 'closed', merged_at: '2026-10-04T18:58:30Z', merge_commit_sha: 'c756d895', head: { ref: 'rama', sha: 'abc123' } });
   assert.equal(fundido.state, 'MERGED');
   assert.deepEqual(fundido.mergeCommit, { oid: 'c756d895' });
   assert.equal(fundido.headRefName, 'rama');
+  assert.equal(fundido.headRefOid, 'abc123', 'el sha que ESE PR llegó a ver, para comparar contra tu HEAD (#333)');
   const cerrado = prDe({ number: 9, state: 'closed', merged_at: null, merge_commit_sha: 'abc', head: { ref: 'x' } });
   assert.equal(cerrado.state, 'CLOSED');
   assert.equal(cerrado.mergeCommit, null, 'un PR cerrado sin fundir no tiene commit de fusión');
   assert.equal(prDe({ number: 1, state: 'open', head: { ref: 'y' } }).state, 'OPEN');
+  assert.equal(prDe({ number: 2, state: 'open', head: { ref: 'z' } }).headRefOid, null, 'sin head.sha, null y no undefined');
 });
 
 test('rollupDe: check-runs y estados de commit, en mayúsculas y null mientras corren', () => {
@@ -101,6 +103,29 @@ test('prDeRama: abierto pide su mergeable aparte; fundido o sin PR, no', () => {
 
   const nada = ghFalso([['pulls?head=o:mi-rama', []]]);
   assert.equal(cliente({ gh: nada.gh, git }).prDeRama('mi-rama'), null);
+});
+
+// #333: una sesión cloud reutiliza la rama tras fundir, y por unos commits conviven el fundido
+// VIEJO y el abierto NUEVO con el mismo headRefName. El REST no promete devolverlos en un orden
+// dado: el fundido va PRIMERO en esta lista a propósito, para que la prueba no se corrobore sola
+// con el orden que ya tenía `lista[0]`.
+test('prDeRama: con un fundido y un abierto en la misma rama, manda el abierto aunque venga segundo', () => {
+  const { gh, pedidas } = ghFalso([
+    [
+      'pulls?head=o:mi-rama',
+      [
+        { number: 330, state: 'closed', merged_at: '2026-10-04T10:00:00Z', merge_commit_sha: 'e7e0e8f3', head: { ref: 'mi-rama', sha: 'vieja' } },
+        { number: 333, state: 'open', head: { ref: 'mi-rama', sha: 'nueva' } },
+      ],
+    ],
+    ['pulls/333', { mergeable: true, mergeable_state: 'clean' }],
+  ]);
+  const pr = cliente({ gh, git }).prDeRama('mi-rama');
+  assert.equal(pr.number, 333);
+  assert.equal(pr.state, 'OPEN');
+  assert.equal(pr.headRefOid, 'nueva');
+  assert.equal(pr.mergeable, 'MERGEABLE');
+  assert.ok(pedidas.some((p) => p.includes('pulls/333')), 'solo pide el mergeable del que eligió');
 });
 
 test('prsAbiertos: los checks y el mergeable, solo de los PRs con caja local', () => {
