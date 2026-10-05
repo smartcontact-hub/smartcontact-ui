@@ -183,3 +183,9 @@ pre code {
   gap: var(--sc-spacing-1);
   max-width: 40rem;
 }
+
+/* La línea de lectura de una demo («Valor: …») es un hermano más: el hueco lo pone la caja. En flex, el margen del
+ * párrafo se sumaba y la dejaba a 28 de su control, el escalón de entre grupos. */
+:is(.sb-canvas__pane .row, .sb-canvas__pane .col) > p {
+  margin: 0;
+}
