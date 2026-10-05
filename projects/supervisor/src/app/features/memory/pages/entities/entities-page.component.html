@@ -8,7 +8,9 @@
   </sc-button>
 </ng-template>
 
-<div class="page">
+<!-- `.page--tabla` (DD-95): la página no se mueve y cada tabla hace scroll dentro. Las dos secciones se reparten
+     el alto en el SCSS. -->
+<div class="page page--tabla">
   <div class="page__inner page__inner--list">
     <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
          arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
@@ -41,10 +43,16 @@
              `entities-table` ya no estiliza nada: es el gancho por el que
              `e2e/supervisor/sibling-pages.spec.ts` distingue esta tabla de la de
              system entities (`:not(.entities-table--readonly)`). No la quites sin
-             tocar esa spec. -->
+             tocar esa spec.
+
+             `virtualScroll`, como el resto de listas: por encima de 100 filas pinta
+             solo las visibles. La del sistema es un catálogo fijo y no lo lleva. -->
         <div class="table-card">
           <sc-datatable
             variant="list" class="entities-table"
+            scrollable
+            scrollHeight="flex"
+            virtualScroll
             [value]="userEntities()"
             [columns]="userColumns()"
             dataKey="id"
@@ -78,6 +86,8 @@
       <div class="table-card">
         <sc-datatable
           variant="list" class="entities-table entities-table--readonly"
+          scrollable
+          scrollHeight="flex"
           [value]="systemEntities()"
           [columns]="systemColumns()"
           dataKey="id"

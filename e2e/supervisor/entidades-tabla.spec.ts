@@ -6,9 +6,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * ENTIDADES HACE SCROLL DENTRO DE SUS DOS TABLAS, COMO EL RESTO DE LISTAS (DD-95).
  *
  * Era la última lista que movía la página entera: medido el 2026-10-05 a 1366 × 768, 1019 px de contenido en 712 de
- * ventana, y al bajar se iban el título y las cabeceras de columnas. Lleva DOS tablas en una pantalla (las entidades
- * del usuario y las del sistema), así que el alto se reparte: cada una hasta sus filas y, si no caben las dos, a
- * medias. Las filas son las del mock: 4 del usuario y 11 del sistema.
+ * ventana, y al bajar se iban el título y las cabeceras de columnas. Lleva DOS tablas en una pantalla, así que el alto
+ * se reparte: las entidades del usuario miden sus filas, y las del sistema se quedan con lo que queda hasta abajo,
+ * nunca menos que su cabecera y un par de filas. Las filas son las del mock: 4 del usuario y 11 del sistema.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -45,6 +45,8 @@ test.describe('a 1366 × 768', () => {
     // Control: la tabla del sistema no cabe. Si cupiera, el resto no miraría nada.
     expect(await sobra(page, SISTEMA)).toBeGreaterThan(100);
     expect(await page.locator(MAIN).evaluate((el) => el.scrollHeight - el.clientHeight)).toBeLessThanOrEqual(0);
+    // Las cuatro del usuario, enteras: el alto que falta lo pone la del sistema.
+    expect(await sobra(page, USUARIO)).toBeLessThanOrEqual(0);
 
     const antes = {
       h1: await top(page, 'h1.page__heading'),
@@ -72,16 +74,19 @@ test.describe('a 1366 × 768', () => {
 test.describe('a 1366 × 600, donde no caben ni las cuatro del usuario', () => {
   test.use({ viewport: { width: 1366, height: 600 } });
 
-  test('las dos secciones se reparten el alto a medias y cada tabla hace scroll dentro', async ({ page }) => {
+  test('la del sistema se queda en su mínimo y la del usuario hace scroll con el resto', async ({ page }) => {
     await abrir(page);
 
     // Control: las dos tablas tienen filas por debajo.
     expect(await sobra(page, USUARIO)).toBeGreaterThan(20);
     expect(await sobra(page, SISTEMA)).toBeGreaterThan(20);
 
-    const altos = await page.locator('.entities-section').evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height));
-    expect(altos).toHaveLength(2);
-    expect(Math.abs(altos[0]! - altos[1]!)).toBeLessThan(2);
+    const sistema = await page
+      .locator('.entities-section--system')
+      .evaluate((el) => ({ alto: el.getBoundingClientRect().height, minimo: parseFloat(getComputedStyle(el).minHeight) }));
+    // Control: el mínimo existe. Sin él, la sección podría quedarse en nada y el «igual que su mínimo» no diría nada.
+    expect(sistema.minimo).toBeGreaterThan(100);
+    expect(Math.abs(sistema.alto - sistema.minimo)).toBeLessThan(1);
     expect(await page.locator(MAIN).evaluate((el) => el.scrollHeight - el.clientHeight)).toBeLessThanOrEqual(0);
   });
 });

@@ -3996,6 +3996,15 @@ buscador) y las filas deben medir igual: una lista con filas desplegables no la 
 `.table-card`. Pendiente: llevar el patrón al resto de listas (Usuarios, Grupos, Etiquetas, Plantillas,
 repositorios, Conversaciones).
 
+**Actualización (2026-10-05)** · Entra Entidades, la última lista que movía la página entera (1019 px de contenido en
+712 de ventana a 1366 × 768), y con ella no queda ninguna fuera del molde: las otras cuatro tarjetas con tabla son
+piezas dentro de una ficha o de Conversaciones. Lleva dos tablas y el alto se reparte así: tus entidades miden sus
+filas y las del sistema se quedan con lo que queda hasta abajo, con el scroll dentro, nunca menos que su cabecera y un
+par de filas (`scale/12-5`). Con muchas entidades tuyas, es tu tabla la que hace scroll. La sección es el eslabón que la
+página pone entre `.page__inner` y la tarjeta. Medido: a 1366 × 768 caben tus cuatro y la del sistema enseña tres y
+media; a 1440 × 900, seis; a 1440 × 1300, las dos enteras. Descartado el reparto a medias: cortaba 14 px tu cuarta fila
+con 66 px en blanco debajo, hasta la raya entre secciones. Lo vigila `e2e/supervisor/entidades-tabla.spec.ts`.
+
 ---
 
 ## DD-94 · 2026-09-14 — La cabecera y el bloque del logo miden 56 con el mismo token, y todas las listas reparten el aire igual
