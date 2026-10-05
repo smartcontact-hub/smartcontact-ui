@@ -191,6 +191,20 @@ function main() {
     process.exit(2);
   }
 
+  // Medido el 2026-10-05: con un run en curso sobre el HEAD, la consulta por `branch` dio de forma
+  // pasajera el run de semanas antes (otro sha) y el comando cantó «describe OTRO commit» sobre algo
+  // que SÍ era tuyo y SÍ estaba corriendo. Antes de darlo por «otro commit», se pregunta por el sha
+  // exacto (`ejecucionesDeCommit`, que ya existía en `github.mjs`); solo si tampoco hay run ahí es de
+  // verdad otro commit.
+  if (runs[0] && runs[0].headSha !== head) {
+    try {
+      const porSha = github.ejecucionesDeCommit(head);
+      if (porSha.length) runs = porSha;
+    } catch {
+      /* sin runs por sha: seguimos con el de la rama, que dirá «describe OTRO commit» */
+    }
+  }
+
   // El estado del PR no puede tumbar la lectura del CI: si no se puede leer, seguimos sin él.
   let pr = null;
   try {
