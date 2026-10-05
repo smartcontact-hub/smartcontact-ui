@@ -157,7 +157,9 @@ la sección, la que ocupa el resto. Medido en producción antes del cambio, a 14
    editable (`sc-name-inplace`), el texto usa los 196 enteros: el relleno de «se puede editar» sobresale por los dos
    lados. Al pulsarlo para editarlo, el título conserva su alto: el campo es de una línea, y sin eso lo de debajo
    subía 24 px. Para medirlo, la pieza es su propio contexto de bloque (`flow-root`): su regla `:host`, en un
-   componente sin encapsular, no casaba con nada y se pintaba en línea.
+   componente sin encapsular, no casaba con nada y se pintaba en línea. Entre el nombre y su línea de datos, 7 (el
+   peldaño de dentro de un grupo; el marco ponía 0): el campo de editar sobresale 6,25 por abajo y tapaba la mitad de
+   arriba de los datos, como ya pasaba en producción.
 6. **Los canales de General, en las tres columnas de los campos de encima** (`.checkbox-grid--3`: las columnas y el
    hueco de `.grid--3`), en cualquier ancho.
 

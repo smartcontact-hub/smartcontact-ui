@@ -174,3 +174,25 @@ test('al pulsar un nombre de dos líneas para editarlo, lo de debajo no se mueve
   await expect(page.locator('.name-inplace__input')).toHaveCount(0);
   expect(await arribaDelIndice(), 'al cerrar, también').toBe(antes);
 });
+
+test('al editar el nombre, el campo no tapa la línea de datos', async ({ page }) => {
+  for (const ruta of ['admin/grupos/editar/11', 'admin/agentes/editar/1']) {
+    await goto(page, ruta);
+    await fuentes(page);
+    await page.locator('.name-inplace .p-inplace-display').click();
+    const campo = page.locator('.name-inplace__input');
+    await expect(campo, ruta).toBeFocused();
+    const m = await page.evaluate(() => {
+      const meta = document.querySelector('.headline__meta')!;
+      const rango = document.createRange();
+      rango.selectNodeContents(meta);
+      return {
+        campo: document.querySelector('.name-inplace__input')!.getBoundingClientRect().bottom,
+        datos: rango.getBoundingClientRect().top,
+      };
+    });
+    // Con 0 entre los dos, el borde del campo caía en y=109 y el texto de los datos empezaba en 102,75.
+    expect(m.campo, `${ruta}: el campo acaba antes que la línea de datos`).toBeLessThanOrEqual(m.datos);
+    await page.keyboard.press('Escape');
+  }
+});

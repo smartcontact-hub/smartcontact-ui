@@ -273,9 +273,14 @@
 /* LA CABECERA de las fichas (grupo, usuario, agente), arriba de la columna del índice (DD-170): el nombre
  * como único `h1` y una línea de datos. Vive aquí y no en cada pantalla porque la usan las tres, y la
  * encapsulación de Angular es por componente. Hasta el índice, el hueco del carril (14). */
+/* Del nombre a su línea de datos, 7 (el peldaño de dentro de un grupo): el nombre editable (`sc-name-inplace`)
+ * sobresale 6,25 por abajo, su fondo al pasar y su campo al editar, y con 0 el campo tapaba la mitad de arriba de
+ * la línea de datos (medido: borde en 109, texto desde 102,75). En las tres fichas, editable o no, para que el
+ * índice caiga en el mismo sitio. */
 .ficha-rail .headline__who {
   display: flex;
   flex-direction: column;
+  gap: var(--sc-spacing-0-5);
   min-width: 0;
 }
 
