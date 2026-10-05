@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco | DD-171 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
@@ -125,6 +126,47 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-171 · 2026-10-05 — El pulido de las fichas tras DD-170: textos cortos, el nombre editable, el índice, la tabla de agentes, las columnas y la selección
+
+**Contexto** · La revisión de DD-170 en local trajo una lista: textos de ayuda largos («algunos solo sobra una palabra
+y fuerza un salto de carro»), «Tiempo de transferencia» que es el tiempo que suena en un agente, el punto del índice
+que no se alinea, la tabla de agentes de la ficha que desplaza de lado, su paginación, el selector de columnas de los
+listados y un contador de la selección. Y una revisión de interacción con Playwright de lo que puede fallar al usar las
+fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
+
+**Decisión** ·
+1. **Las ayudas, cortas, y sin una palabra sola en la última línea.** Medido a 1440 en las tres fichas: 13 ayudas
+   pasaban a dos o tres líneas, y tres dejaban una sola palabra («llama.», «agentes.», «Añadir.»). Se reescriben 19
+   textos en los cuatro idiomas, diciendo lo mismo con las palabras justas (DD-133: lo que dicen las fuentes). Quedan
+   3 en dos líneas y ninguna con una palabra sola. Las ayudas de campo del DS (`sc-field-msg`), las de `sc-slot` y las
+   de los interruptores y subsecciones de la app llevan `text-wrap: pretty`: el navegador no deja una palabra sola al
+   final, también en otros idiomas y anchos. En Distribución y colas, «Tiempo de transferencia» pasa a **«Tiempo de
+   ringing»**, y su ayuda dice «a otro agente» en vez de «a su destino».
+2. **El nombre editable se cierra al salir de él** (pulsar fuera, Tab) con lo escrito, como Enter, y vacío devuelve
+   el de antes. Al cerrarlo con Enter, Escape o el ✕, el foco vuelve al nombre. Medido antes: pulsar fuera dejaba el
+   campo abierto, Escape ya no lo cerraba (el foco había salido) y, al cerrar, el foco caía en la página.
+
+**Razón** ·
+- **Una línea de más por una palabra** se lee como un salto: lo que obliga a otra línea se dice más corto, y `pretty`
+  guarda lo que el texto no puede prever (otro ancho, otro idioma).
+- **La revisión de interacción**, con una sonda que anota y no afirma, en tres fichas: la columna fija cabe en todas
+  las alturas probadas (hasta 1440×520, con el nombre en dos líneas); al 200 % (720) el orden es nombre, índice,
+  resumen y sección, sin desplazar de lado; cambiar de sección deja la página arriba y el foco en el índice. Lo único
+  que falló fue el nombre editable.
+
+**Descartadas** ·
+- **Dejar los textos y poner solo `pretty`** → evita la palabra sola pero no acorta, y lo pedido era limpiar.
+- **Cerrar el nombre editable al salir sin guardar lo escrito** → lo escrito ya está en la ficha (es el mismo campo
+  que General), y perderlo al pulsar fuera sería una sorpresa.
+
+**Consecuencias** ·
+- **Pruebas:** `fichas-textos.spec.ts`, nueva (el nombre del campo y ninguna ayuda de más en las tres fichas), roja
+  contra lo de antes; `name-inplace.spec.ts` gana tres (pulsar fuera, vacío y el foco al cerrar), rojas antes, y su
+  prueba de que la cabecera no se mueve mide ahora el índice: con el nombre dentro de la columna (DD-170), la columna
+  entera no se mueve nunca.
 
 ---
 

@@ -15,7 +15,9 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   selector: 'sc-field-msg',
   standalone: true,
   template: ` <span [class]="msgClass()" [id]="msgId()">{{ text() }}</span> `,
-  styles: ':host { display: contents; }',
+  /* La ayuda no deja una palabra sola en su última línea («pretty»): una ayuda que se alarga una línea por una
+   * palabra se lee como un salto de más (DD-171). */
+  styles: ':host { display: contents; } span { text-wrap: pretty; }',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScFieldMsgComponent {

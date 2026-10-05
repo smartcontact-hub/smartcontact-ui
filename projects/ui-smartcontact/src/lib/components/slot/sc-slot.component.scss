@@ -68,6 +68,8 @@
 
 .sc-slot__hint {
   min-width: 0;
+  /* Sin una palabra sola en la última línea (DD-171). */
+  text-wrap: pretty;
   font-family: var(--sc-font-family-caption);
   font-size: var(--sc-font-size-caption);
   line-height: var(--sc-line-height-caption);
