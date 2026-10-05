@@ -155,7 +155,9 @@ la sección, la que ocupa el resto. Medido en producción antes del cambio, a 14
 5. **Un nombre largo baja a una segunda línea**, como las filas del índice que tiene debajo (DD-52); uno que no cabe
    en dos se corta al final de la segunda, con el nombre entero en el `title`. Igual la línea de datos. En el título
    editable (`sc-name-inplace`), el texto usa los 196 enteros: el relleno de «se puede editar» sobresale por los dos
-   lados.
+   lados. Al pulsarlo para editarlo, el título conserva su alto: el campo es de una línea, y sin eso lo de debajo
+   subía 24 px. Para medirlo, la pieza es su propio contexto de bloque (`flow-root`): su regla `:host`, en un
+   componente sin encapsular, no casaba con nada y se pintaba en línea.
 6. **Los canales de General, en las tres columnas de los campos de encima** (`.checkbox-grid--3`: las columnas y el
    hueco de `.grid--3`), en cualquier ancho.
 
@@ -173,7 +175,7 @@ la sección, la que ocupa el resto. Medido en producción antes del cambio, a 14
   - los canales, en la vertical exacta de las tres columnas de los campos a 1440 y a 1920;
   - `revision`, en regla en las 16 vistas de las tres fichas.
 - **Rojo primero:** contra `main`, 19 pruebas en rojo: el nombre fuera de la columna del índice, en una línea, y
-  «Chat» y «Email» fuera de su columna. En verde, las 37 del bloque, 126 vecinas y 63 de los barridos.
+  «Chat» y «Email» fuera de su columna. En verde, las 38 del bloque, 126 vecinas y 63 de los barridos.
 
 **Descartadas** ·
 - **Dejar el nombre como un elemento suelto de la rejilla, encima del índice** (`'head main summary'` / `'rail main
@@ -188,7 +190,8 @@ la sección, la que ocupa el resto. Medido en producción antes del cambio, a 14
 - **Enmienda** DD-144 §2 (el título va en la columna del índice, no en la del contenido) y §5 (por debajo de 1340 el
   nombre ya no sube a todo lo ancho). **Retira** DD-145 §1-§3; su §4 (borrar pide escribir el nombre) sigue, con su
   prueba.
-- **Pruebas:** `fichas-tres-columnas` se reescribe con el molde nuevo (12 casos);
+- **Pruebas:** `fichas-tres-columnas` se reescribe con el molde nuevo (13 casos, uno de ellos que el
+  índice no se mueve al editar el nombre: en rojo sin el arreglo, de 158,75 a 134,75);
   `fichas-nombre-fijo` mide que el nombre de verdad sigue a la vista al bajar, sin copia; `ficha-grupo` y
   `resumen-enlazado` cambian el sitio del título y del resumen; `ficha-grupo` gana la de los canales en sus columnas.
   Agente y usuario se miden a 1366×660: con el contenido arriba, a 768 solo bajaban 43 px.

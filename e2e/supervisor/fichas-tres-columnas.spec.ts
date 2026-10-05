@@ -20,7 +20,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   6. Por debajo de 1340: el nombre sigue encima del índice, y el resumen pasa a una franja encima del contenido, en
  *      su columna.
  *   7. Un nombre que no cabe en 196 salta a una segunda línea, sin cortarse; uno que no cabe en dos, se corta en la
- *      segunda.
+ *      segunda. Al pulsarlo para editarlo (el campo es de una línea), lo de debajo no se mueve.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -160,3 +160,17 @@ for (const ruta of ['admin/grupos/crear', 'admin/grupos/editar/11']) {
     expect(enorme, 'en dos líneas, cortado al final de la segunda').toEqual({ lineas: 2, cortado: true });
   });
 }
+
+test('al pulsar un nombre de dos líneas para editarlo, lo de debajo no se mueve', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/11');
+  expect((await nombrar(page, 'Atención al cliente Madrid Norte')).lineas, 'el nombre, en dos líneas').toBe(2);
+  const arribaDelIndice = () => page.locator('.page__rail sc-form-section-nav').evaluate((el) => el.getBoundingClientRect().top);
+  const antes = await arribaDelIndice();
+  // El campo es de una línea: sin conservar el alto del título, el índice subía 24 px.
+  await page.locator('.name-inplace .p-inplace-display').click();
+  await expect(page.locator('.name-inplace__input')).toBeFocused();
+  expect(await arribaDelIndice(), 'editando, el índice donde estaba').toBe(antes);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.name-inplace__input')).toHaveCount(0);
+  expect(await arribaDelIndice(), 'al cerrar, también').toBe(antes);
+});

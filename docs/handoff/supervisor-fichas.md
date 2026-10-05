@@ -39,10 +39,12 @@ f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/
 - **Fuera `sc-nombre-fijo` (DD-145 §1-§3):** el nombre ya no se va al bajar, porque vive en la columna fija. Fuera
   también el `scroll-padding` que apartaba las anclas bajo la copia.
 - **Un nombre largo baja a dos líneas** y se corta al final de la segunda (también en `sc-name-inplace`, que ahora usa
-  los 196 enteros). En 196 caben unos 22 caracteres; todos los de la demo caben en una.
+  los 196 enteros). En 196 caben unos 22 caracteres; todos los de la demo caben en una. Al pulsarlo para editarlo, el
+  título conserva su alto (el índice subía 24 px): `sc-name-inplace` pasa a `flow-root`, porque su `:host` sin
+  encapsular no casaba y se pintaba en línea.
 - **Los canales de General, en las columnas de Nombre y Prioridad** (`.checkbox-grid--3`): antes, a 3 y 6 px a 1440 y
   86 px a 1920.
-- **En local, en verde:** las 37 del bloque (19 en rojo contra `main`), 126 vecinas, 63 de los barridos de las tres
+- **En local, en verde:** las 38 del bloque (20 en rojo: 19 contra `main` y la del alto al editar, sin su arreglo), 126 vecinas, 63 de los barridos de las tres
   fichas y `revision` (16 vistas, en regla). Mirado a 1440, 1280 (nombre en dos líneas), 1100 y con `?datos=tortura`.
 - **Figma:** `figma-pendiente` §35 pasa a DD-170 (grupo ya dibujado; faltan agente y usuario) y §36 se retira.
 
