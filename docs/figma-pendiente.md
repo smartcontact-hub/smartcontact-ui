@@ -894,8 +894,9 @@ fila activa) y las maquetas de las fichas de grupo, agente y usuario · **Esfuer
 y retocar tres maquetas · **Sin verificar** contra el fichero: el código no cita los nodos.
 
 - **Por qué** (DD-130): un icono junto a un texto lleva su peso óptico. En la app, los avisos en semibold ya llevan el
-  icono a 600 (`sc-icon [weight]="600"`). Dentro de piezas del DS siguen a 400 junto a un título en semibold: el
-  icono del título de cada sección (`sc-section-card`) y el de la fila activa del índice (`sc-form-section-nav`).
+  icono a 600 (`sc-icon [weight]="600"`). En el código del DS también, desde el 2026-10-05: el icono del título de
+  cada sección (`sc-section-card`) y de cada subsección (`sc-subsection`), y el de la fila activa del índice
+  (`sc-form-section-nav`), a 600; las demás filas del índice, a 400, como sus rótulos. En el Kit siguen a 400.
 - **Las altas:** agente y usuario enseñan su cabecera al crear («Nuevo agente» hasta que se escribe el nombre), y el
   botón principal dice «Crear agente» / «Crear usuario», como «Crear grupo».
 - **Distribución y colas:** una línea «Ir a: Teléfono · Chat · Email» arriba de la sección, con dos o más canales.

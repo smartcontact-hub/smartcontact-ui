@@ -256,4 +256,21 @@ describe('sc-form-section-nav · el icono de cada fila pesa lo que su rótulo (D
     const { filas } = montar((h) => h.plana.set(false));
     expect(pesos(filas)).toEqual([500, 500, null]);
   });
+
+  it('el ✓ de la sección hecha pesa lo mismo que el icono de su fila, en las dos variantes', () => {
+    const delCheck = (filas: HTMLElement[]) =>
+      filas.map((a) => {
+        const clase = [...(a.querySelector('.form-nav__done .sc-icon')?.classList ?? [])].find((c) => c.startsWith('sc-icon--weight-'));
+        return clase ? Number(clase.slice('sc-icon--weight-'.length)) : null;
+      });
+    const plano = montar((h) => h.hechas.set(new Set(['general', 'distribucion'])));
+    expect(delCheck(plano.filas)).toEqual([600, 400, null]);
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ imports: [Host], providers: [provideTranslateService()] });
+    const porDefecto = montar((h) => {
+      h.plana.set(false);
+      h.hechas.set(new Set(['general', 'distribucion']));
+    });
+    expect(delCheck(porDefecto.filas)).toEqual([500, 500, null]);
+  });
 });
