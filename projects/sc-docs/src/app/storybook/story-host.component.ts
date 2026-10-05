@@ -102,15 +102,11 @@ export class StoryHostComponent {
   /** Args editables del Playground; se siembran de `meta.defaultArgs` (writable + reseed). */
   protected readonly playArgs = linkedSignal<ScArgs>(() => ({ ...this.meta().defaultArgs }));
 
-  /** El valor por defecto de cada input, del contrato: lo que vale eso no se escribe en el código. */
-  private readonly porDefecto = computed(() =>
-    Object.fromEntries((this.contrato() ?? []).filter((m) => m.clase !== 'output').map((m) => [m.nombre, m.porDefecto])),
-  );
-
-  /** Código de una story: override propio, o serializado de `tag` + sus args (live en Playground). */
+  /** Código de una story: override propio, o serializado de `tag` + sus args (live en Playground), con lo que el
+   *  contrato dice: lo requerido se escribe y lo que vale su valor por defecto, no. */
   protected snippetFor(s: StoryDef): string {
     if (s.snippet) return s.snippet;
     const args = s.playground ? this.playArgs() : (s.args ?? this.meta().defaultArgs);
-    return serializeArgs(this.meta(), args, this.porDefecto());
+    return serializeArgs(this.meta(), args, this.contrato());
   }
 }
