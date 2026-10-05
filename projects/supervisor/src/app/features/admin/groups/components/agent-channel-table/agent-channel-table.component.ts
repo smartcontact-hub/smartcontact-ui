@@ -35,7 +35,7 @@ import { PRESENCE_LABEL_KEYS, PRESENCE_TAGS, type PresenceStatus } from '@featur
 import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
 
-import { IllustratedAvatarComponent, type LabelColor } from '@shared/components';
+import { ChannelIconComponent, IllustratedAvatarComponent, type LabelColor } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -67,23 +67,22 @@ interface VisibleRow {
 
 /**
  * El ancho de cada columna, en rem, en la tabla de la ficha y en la del panel rápido, que suma estos mismos para medirse
- * (DD-131). Las dos van en la densidad compacta nativa (`sm`, DD-171): 6 de relleno a cada lado. Cada ancho es lo más
- * largo que lleva en los cuatro idiomas, más el relleno y unos 4 px de margen. Medido el 2026-10-05 (DD-171), con la
- * letra de la cabecera (600, 14 px):
- *   · Asignado y Habilitado: sus rótulos, «Atribuído» (65 px) y «Habilitado» (69).
- *   · Cada canal, el suyo: «Téléphone» (72), «Chat» (32) y «Email» (37). Hasta DD-171 los tres medían lo del más
- *     largo (104), y las columnas de casillas eran casi todo hueco.
+ * (DD-131). Las dos van en la densidad compacta nativa (`sm`, DD-171): 6 de relleno a cada lado. Medido el 2026-10-05
+ * (DD-171):
+ *   · Asignado y cada canal: su cabecera es una pastilla con la casilla de «todos» (15,75) y el icono (14), 7 entre los
+ *     dos y 3,5 de relleno: 43,75, y con el de la celda, 56. Hasta la cabecera en una fila llevaban su rótulo encima
+ *     («Téléphone», 72 px, pedía 88), y de DD-156 a DD-171 los tres canales medían lo del más largo (104).
+ *   · Habilitado: su interruptor (31,5) bajo su icono, y el relleno: 48.
  *   · Estado: su etiqueta más larga, «Post-conversation», 123 px.
  *   · Agente: avatar (24), hueco y nombre y email en dos líneas. En la ficha es un MÍNIMO: la columna crece con el
- *     sitio que haya, y un email más largo que su sitio se corta con «…» y el `title` (DD-124). Con 13,25, a 1440 y
- *     con tres canales, la tabla cabe en su caja (731) sin desplazar de lado. En el panel, que mide lo que lleva, cabe
- *     el email más largo de la semilla (203 px).
+ *     sitio que haya, y un email más largo que su sitio se corta con «…» y el `title` (DD-124). En el panel, que mide
+ *     lo que lleva, cabe el email más largo de la semilla (203 px).
  */
-const CHANNEL_REM: Readonly<Record<ChannelFamily, number>> = { phone: 5.5, chat: 3, email: 3.375 };
+const CHANNEL_REM: Readonly<Record<ChannelFamily, number>> = { phone: 3.5, chat: 3.5, email: 3.5 };
 
 export const COLUMN_REM = {
-  regular: { assigned: 5.125, agent: 13.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 5.375 },
-  compact: { assigned: 5.125, agent: 16.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 5.375 },
+  regular: { assigned: 3.5, agent: 13.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 3 },
+  compact: { assigned: 3.5, agent: 16.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 3 },
 } as const;
 
 /** Lo que suman las columnas con esos canales y `levels` niveles: el mínimo de la tabla y el ancho del panel. */
@@ -104,6 +103,7 @@ export function columnsRem(
   selector: 'sc-agent-channel-table',
   standalone: true,
   imports: [
+    ChannelIconComponent,
     LlegaAlPieDirective,
     SelectButtonComponent,
     CheckboxComponent,
@@ -160,7 +160,6 @@ export class AgentChannelTableComponent {
           field: 'assigned',
           header: this.translate.instant('groups.form.assigned.assignment'),
           width: `${rem.assigned}rem`,
-          align: 'center',
           cellTemplate: this.assignedTpl(),
           stopRowClick: true,
         },
@@ -189,7 +188,6 @@ export class AgentChannelTableComponent {
           field: ch,
           header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
           width: `${rem.channel[ch]}rem`,
-          align: 'center' as const,
           cellTemplate: this.channelTpl(),
           stopRowClick: true,
         })),
@@ -225,6 +223,12 @@ export class AgentChannelTableComponent {
 
   protected readonly query = signal('');
   protected readonly filter = linkedSignal(() => this.groupId() === 0 ? 'all' : 'assigned');
+  /** Pulsar la pastilla de una cabecera fuera de su casilla (el icono, el hueco) hace lo que la casilla. */
+  protected onHeadClick(event: MouseEvent, field: string): void {
+    if (this.headerDisabled(field) || (event.target as Element).closest('sc-checkbox')) return;
+    this.toggleHeader(field);
+  }
+
   protected readonly filterOptions = computed(() => {
     this.currentLang();
     return ['all', 'assigned', 'unassigned'].map(value => ({ value, label: this.translate.instant(`groups.form.assigned.filter_${value}`) }));

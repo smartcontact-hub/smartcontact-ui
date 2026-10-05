@@ -11,10 +11,10 @@
     gap: var(--sc-spacing-0-5);
   }
 
+  /* El buscador llena lo que deja el selector: la barra va de borde a borde de la tabla, como ella (DD-171). */
   &__search {
     flex: 1 1 240px;
     min-width: 0;
-    max-width: 320px;
   }
 
   &__name {
@@ -85,9 +85,45 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.assign__column-heading {
+ /* LA CABECERA DE UNA COLUMNA DE CASILLAS (DD-171): la casilla de «todos» y el icono de la columna, en una fila, dentro
+  * de una pastilla que se pulsa entera y lo dice al pasar (el fondo de «se puede pulsar» de la app, en 150 ms). La
+  * casilla triestado enseña el estado; el icono, de qué columna es, y el tooltip, su nombre. */
+.assign__head {
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
   gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-25);
+  border-radius: var(--sc-radius-200);
+  cursor: pointer;
+  transition: background-color var(--sc-transition-fast) var(--sc-easing-default);
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+}
+
+.assign__head--disabled {
+  cursor: default;
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+.assign__head-icon {
+  display: inline-flex;
+  color: var(--sc-icon-secondary);
+}
+
+/* El icono de Habilitado, sin casilla: solo nombra la columna (por el tooltip) y no se pulsa. */
+.assign__head-only {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+/* La casilla de cada fila, con el relleno de la pastilla de su cabecera: las dos, en la misma vertical. */
+.assign__cell {
+  display: inline-flex;
+  align-items: center;
+  padding-inline-start: var(--sc-spacing-0-25);
 }

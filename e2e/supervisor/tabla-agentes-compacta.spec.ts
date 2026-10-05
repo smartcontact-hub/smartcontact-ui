@@ -78,7 +78,7 @@ test('la cabecera va en una fila: cada columna de casillas, su casilla de todos 
     await expect(th.locator(`.sc-icon-font--${icono}`), `${nombre}: su icono`).toHaveCount(1);
     const m = await th.evaluate((el) => {
       const casilla = el.querySelector('sc-checkbox')!.getBoundingClientRect();
-      const icono = el.querySelector('.sc-icon, sc-channel-icon')!.getBoundingClientRect();
+      const icono = el.querySelector('.assign__head-icon')!.getBoundingClientRect();
       const indice = [...el.parentElement!.children].indexOf(el);
       const fila = el.closest('table')!.querySelector('tbody tr')!.children[indice]!.querySelector('sc-checkbox')!.getBoundingClientRect();
       return {
@@ -94,7 +94,7 @@ test('la cabecera va en una fila: cada columna de casillas, su casilla de todos 
   const habilitado = tabla.getByRole('columnheader', { name: 'Habilitado', exact: true });
   await expect(habilitado.locator('.sc-icon-font--toggle_on'), 'Habilitado: su icono').toHaveCount(1);
   const centros = await habilitado.evaluate((el) => {
-    const icono = el.querySelector('.sc-icon')!.getBoundingClientRect();
+    const icono = el.querySelector('.assign__head-icon')!.getBoundingClientRect();
     const indice = [...el.parentElement!.children].indexOf(el);
     const interruptor = el.closest('table')!.querySelector('tbody tr')!.children[indice]!.querySelector('sc-toggleswitch')!.getBoundingClientRect();
     return Math.abs(icono.left + icono.width / 2 - (interruptor.left + interruptor.width / 2));
@@ -111,7 +111,7 @@ test('pulsar el icono de una cabecera hace lo que su casilla', async ({ page }) 
   await expect(page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' })).toBeVisible();
 });
 
-test('la barra: el selector y el buscador a la misma altura, de borde a borde de la tabla', async ({ page }) => {
+test('la barra: el selector y el buscador, centrados y de borde a borde de la tabla', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const tabla = page.locator('sc-agent-channel-table');
   await tabla.locator('tbody tr').first().waitFor();
@@ -120,11 +120,14 @@ test('la barra: el selector y el buscador a la misma altura, de borde a borde de
     const [selector, buscador, caja] = [r('sc-selectbutton .p-selectbutton'), r('sc-search'), r('.table-card')];
     return {
       altos: Math.abs(selector.height - buscador.height),
+      centros: Math.abs(selector.top + selector.height / 2 - (buscador.top + buscador.height / 2)),
       izquierda: Math.abs(selector.left - caja.left),
       derecha: Math.abs(buscador.right - caja.right),
     };
   });
-  expect(m.altos, 'la misma altura').toBeLessThanOrEqual(0.5);
+  // El selector, en su tamaño pequeño, lleva su carril gris: 1,5 más que el campo (34 frente a 32,5), y centrados.
+  expect(m.altos, 'casi la misma altura').toBeLessThanOrEqual(1.5);
+  expect(m.centros, 'centrados en la misma línea').toBeLessThanOrEqual(0.5);
   expect(m.izquierda, 'el selector, en el borde izquierdo de la tabla').toBeLessThanOrEqual(0.5);
   expect(m.derecha, 'el buscador, en el borde derecho de la tabla').toBeLessThanOrEqual(0.5);
 });
