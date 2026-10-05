@@ -66,15 +66,24 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
        pestañas bajaban 12,5px. */
     /* En bloque ajustado al texto, no en línea: en línea sumaba el hueco de la línea de base (29,5 de alto en vez de
        los 24 del título). */
+    /* El texto tiene el ancho entero del título: el relleno sobresale por los dos lados, no se come el nombre. */
     .name-inplace .p-inplace-display {
       display: block;
       width: fit-content;
-      max-width: 100%;
+      max-width: calc(100% + 2 * (var(--sc-cmp-form-field-padding-x) + 1px));
       margin-inline-start: calc(-1 * (var(--sc-cmp-form-field-padding-x) + 1px));
       margin-block: calc(-1 * (var(--sc-cmp-form-field-padding-y) + 1px));
+    }
+
+    /* Hasta dos líneas, y se corta al final de la segunda, como el título de las fichas en la columna del índice
+       (DD-170): «anywhere» parte la palabra sola más ancha que la columna; «balance» reparte las dos líneas. */
+    .name-inplace__text {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      overflow-wrap: anywhere;
+      text-wrap: balance;
     }
 
     /* Editando, lo mismo: el campo ocupa el sitio del título sin empujar nada. */

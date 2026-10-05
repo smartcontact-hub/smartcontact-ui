@@ -294,6 +294,14 @@
   &--services {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
+
+  /* Las tres columnas de `.grid--3` (y de `sc-group-identity-fields`), con su mismo hueco: cada casilla cae en
+   * la vertical del campo de encima, en cualquier ancho (DD-170). Con `auto-fill`, en los canales de la ficha de
+   * grupo «Chat» caía 3 px a la izquierda de «Prioridad» a 1440 y, a 1920, con una cuarta columna, 86. */
+  &--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--sc-spacing-1-75);
+  }
 }
 
 /* Una casilla con sus hijas debajo, en la misma celda de la rejilla. */

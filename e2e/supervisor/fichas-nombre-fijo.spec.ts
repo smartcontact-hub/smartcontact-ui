@@ -24,11 +24,12 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-/** Las que tienen recorrido de verdad (medido el 2026-10-01): a 1440×900 solo Distribución y colas no cabe. */
+/** Las que tienen recorrido de verdad: a 1440×900 solo Distribución y colas no cabe. Agente y usuario, a 1366×660 (el
+ * portátil con el navegador abierto): con el contenido arriba (DD-170), a 768 solo bajaban 43 px. */
 const LARGAS = [
   { ruta: 'admin/grupos/editar/11?seccion=distribucion', ancho: 1440, alto: 900 },
-  { ruta: 'admin/agentes/editar/1?seccion=grupos', ancho: 1366, alto: 768 },
-  { ruta: 'admin/usuarios/editar/1?seccion=acceso', ancho: 1366, alto: 768 },
+  { ruta: 'admin/agentes/editar/1?seccion=grupos', ancho: 1366, alto: 660 },
+  { ruta: 'admin/usuarios/editar/1?seccion=acceso', ancho: 1366, alto: 660 },
   { ruta: 'admin/grupos/editar/11?seccion=distribucion', ancho: 1280, alto: 720 },
 ] as const;
 
