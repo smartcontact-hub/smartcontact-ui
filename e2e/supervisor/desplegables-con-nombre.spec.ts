@@ -40,9 +40,10 @@ test('la ficha de agente: tipo, presencia, descuelgues y chats simultáneos se o
   });
 });
 
-test('la ficha de grupo: tipificación, «Suena en» y «Dentro de cada nivel» se oyen con su rótulo', async ({ page }) => {
+test('la ficha de grupo: tipificaciones, «Suena en» y «Dentro de cada nivel» se oyen con su rótulo', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  await nombres(page, { '#group-typification': 'Tipificación' });
+  // Desde DD-172 el grupo elige varias: el campo se llama en plural.
+  await nombres(page, { '#group-typification': 'Tipificaciones' });
   // Grupo 7: llama a todos (Ring All). Grupo 9: Niveles.
   await goto(page, 'admin/grupos/editar/7?seccion=distribucion');
   await nombres(page, { '#group-ring-all': 'Suena en' });
