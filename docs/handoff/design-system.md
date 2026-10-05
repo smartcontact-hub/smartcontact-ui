@@ -43,7 +43,7 @@
 - ~~**La puerta barata del preflight, contra un ledger en PR ajeno**~~ → hecho el 2026-10-05: `avisarLedgers` avisa, sin bloquear, si otro PR abierto toca tus ledgers (LEARNINGS #21).
 - **Guardianes que miden un PROXY, no la condición** (tanda 2026-09-19: seis hallados, cuatro ya arreglados; el patrón lo caza LEARNINGS #2, «ante un trinquete que NO baja, mira un caso a mano»). Quedan cuatro, en orden de valor (la (b) se cerró el 2026-10-04): (a) **2º punto ciego de `audit-text-styles`** — la comprobación de ROLES usa el mismo `aplanar()` que no ve `code`/`pre`/descendientes ni `@media`; antes de tocarla hay que DECIDIR si un `html { font-size: 100% }` debe cumplir un rol (probablemente no): primero la regla, luego el gate.
   (b) ~~El hook de cierre casa la cadena `git push`, no el acto~~ — **cerrado el 2026-10-04**: `stop-guard` cuenta el push que CORRIÓ (el resultado de su herramienta no trae `is_error`, o enseña el ref subido: un push denegado por `bash-guard` o un `false && … git push` no llegaron a subir nada, y un `git push && npm run build` con el build roto sí subió), trata el cuerpo de un heredoc como dato salvo que lo lea un shell (`bash <<EOF`), y no cuenta el push de OTRO repositorio, con el mismo `usaPreflight` y el mismo analizador de carpetas que `bash-guard` desde el `cwd` de cada evento. Medido sobre el transcript de una sesión: de 12 comandos que el hook contaba como push, 4 nunca pushearon y 8 solo llevaban `git push` en el texto de un heredoc; los pushes de verdad eran 2, y los de después se cuentan bien.
-  (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 8): `sc-password` y `sc-multiselect` son uno cada uno y lo bajan a 6; `p-button → [pButton]` el último —mueve el DOM, `component-structure.json` y las capturas, y toca SEIS componentes—, y es de las que se proponen.
+  (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 2 tras DD-172): quedan dos, y son de las que se proponen. `sc-button → [pButton]`: la directiva no trae `label`, `icon` ni salidas, y cambia el DOM de todos los botones (mueve `component-structure.json` y las capturas). `sc-multiselect → p-select` con `multiple`: le faltan seis cosas que usamos (`showToggleAll`, `selectAll`, `selectionLimit`, `maxSelectedLabels`, `selectedItemsLabel`, `display`; medido en 22.1.0), y DD-153 eligió ampliar el envoltorio.
   (d) **La plantilla de PR promete lo que no sabe**: medido, ningún gate lee el checklist y solo 2 de sus 6 casillas están respaldadas (`verify` y tokens). Barato: que cada línea diga si la vigila un gate y que «no aplica» no se escriba con un tick. Gateables de verdad, si Rafa quiere: bump de versión y CHANGELOG.
   (e) **`preflightVivo` de `bash-guard` cuenta el preflight de CUALQUIER caja**: busca la carpeta en la línea de comandos, que es relativa (y en macOS `pgrep -af` da solo PIDs). Medido el 2026-09-28: el preflight de otra caja denegó `npm run build:supervisor` en esta. Arreglo: el `cwd` de cada PID (`lsof -a -p PID -d cwd`, `/proc/PID/cwd`), con su test en rojo.
 
@@ -74,8 +74,7 @@
 - ~~**La baseline `datatable` de `e2e:visual`, en rojo en `main`**~~ → cerrado: no se reproduce desde el preflight de
   #175 (2026-09-14), y `visual-baselines` la regeneró en #330 sin moverse. El detalle, en `git show c065d664:` este fichero.
 - **Acceso (DD-110), a juicio de Rafa**: la intensidad del fondo (`amplitude` 0.045 ≈ 64 px), la frase de marca de la
-  izquierda y el texto del botón de Microsoft en pt/fr (de memoria). `p-password` está obsoleto en PrimeNG 22
-  (`pInputPassword` no trae conmutador): la API de `sc-password` no depende de ello.
+  izquierda y el texto del botón de Microsoft en pt/fr (de memoria).
 
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
 Qué resulta de instalar Aura y aplicarle nuestro styling: una ficha por componente que diga qué
@@ -166,6 +165,20 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-05 · Los lotes 5 a 9 en un PR: fuera de PrimeNG jubilado, lo seguro (DD-172), y el cajón modal con foco
+
+**Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `b4d1f145` (#339), PR nuevo. Sale por el tope el tramo del 2026-10-01
+(`sc-dialog`, DD-140): `git show b4d1f145:docs/handoff/design-system.md`.
+
+**Lo que cambia.** Las cinco piezas compuestas pintan `sc-button` y `sc-password` va sobre `pInputPassword`, con su medidor
+propio: el trinquete de piezas sobre PrimeNG jubilado baja de 8 a 2 (DD-172). `sc-drawer` modal se anuncia como diálogo, se lleva
+el foco y lo devuelve (DD-168, actualización). `sc-datatable` pinta todas las filas de un tramo seleccionado y nombra la casilla de
+«todas» desde que se pinta (DD-98). `sc-slot` toma el token del divisor (DD-113) y sale `--sc-font-size-caption-bold`. En el mismo
+PR, fuera del DS: Entidades en `.page--tabla` (DD-95), Conversaciones sobre `sc-list-page` (DD-98) y CusCare (su hand-off).
+
+- ⚠️ **Al quitar un import de PrimeNG, el trinquete de descripciones pide JSDoc** para lo que heredaba la suya (diez miembros esta
+  vez): la de la pieza hermana (`sc-inputtext`) sirve donde coincide.
+
 ## ✅ 2026-10-04 · La red que le faltó al primer lote: GitHub por `gh api`, la puerta de los generados, el aviso de capturas y `npm run tiempos`
 
 **Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `c756d895` (#325), PR nuevo. Sale por el tope el tramo del 2026-09-28 (DD-134):
@@ -192,18 +205,6 @@ El lote de DD-155, el primero en un PR: `npm run e2e:barridos -- --grep "<ruta>"
 y los selectores (`ci-cambios`, `preflight-alcance.mjs`) ya no lo prueban ni lo compilan todo por pruebas, tests o la plantilla de PR.
 
 - ⚠️ **El Mac (Air M4, 16 GB) llegó al 100 % de disco el 2026-10-02 y cortó pruebas**, pero no es lo que más pesa (memoria `mac-saturado-disco-y-memoria`).
-
-## ✅ 2026-10-01 · Un `sc-dialog` se anuncia como UN diálogo, con su título de nombre (DD-140)
-
-**Sello:** rama `areses/cranky-tharp-bf0e3e`, sobre `5cf3f5e1` (#300), PR nuevo. Sale por el tope el tramo de `audit:query-order`
-(`git show 57f03a0d:docs/handoff/design-system.md`); su ⚠️ lo dice la cabecera de `scripts/audit-query-order.mjs`.
-
-**Lo que cambia.** Cada `sc-dialog` exponía dos `role="dialog"` modales anidados, el de PrimeNG sin nombre. Ahora el rol es solo el
-del `div.p-dialog`, el que atrapa el foco, nombrado con el título y descrito con el subtítulo por `pt.root`; la card no lo repite.
-Medido en Chromium: foco, Tab y Escape, iguales. Prueba nueva en `components.spec.ts`, en rojo contra el código anterior.
-
-- ⚠️ **Sin cortar versión**: la nota va en `[Unreleased]`, como desde 1.0.0. Cortar la 1.1.0 lleva todo lo pendiente y una release (DD-58).
-- **La pantalla donde se vio** (Recursos del grupo 11): `ficha-recursos-dialogos.spec.ts` pide UN diálogo en la página; con el de antes, 2.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -281,6 +282,9 @@ variables, 30 comentarios activos.
 ## ⚠️ Trampas de este frente
 
 - 🪤 **Una rutina no acepta un «sí» escrito en su encargo** para actuar con la identidad del usuario: la confirmación va en esa sesión (DD-134).
+- 🪤 **`styleClass` de `p-button` y `class` en `<sc-button>` no caen en el mismo elemento**: el primero, en el `<button>` interior,
+  fuera del alcance de la SCSS emulada de la pieza; el segundo, en el host. Una regla que nunca aplicaba empieza a aplicar: al
+  migrar, mide la caja (DD-172, `bulk-edit__apply`).
 - 🪤 **Una rama de antes del barrido de nombres (DD-120, 2026-09-24) choca en comentarios al rebasar**, y `audit:personal-names` le hará reescribir los suyos (`gulper`: `channel-icon`).
 - 🪤 **«Sin uso» se mide por familia, no por token**: sin el fondo de una etiqueta cuyo punto sí se usa, la paleta queda a medias (DD-111).
 - 🪤 **Las capturas de sc-docs no ven el botón de aviso con contorno ni el modo oscuro**: esos colores se miden a mano (#193).

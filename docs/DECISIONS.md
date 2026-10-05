@@ -128,6 +128,59 @@
 
 ---
 
+## DD-172 · 2026-10-05 — Fuera de PrimeNG jubilado, lo seguro: las piezas compuestas pintan `sc-button` y `sc-password` va sobre `pInputPassword`
+
+**Contexto** · PrimeNG 22 marca obsoletos `p-button` («Use the `[pButton]` directive instead»), `p-multiselect`
+(«Use Select component with `multiple` property instead») y `p-password` («use pInputPassword directive instead»). El
+trinquete `WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX` (`scripts/component-audit.mjs`) contaba ocho piezas nuestras
+sobre ellos: `sc-button` y cinco compuestas (`sc-delete-entity-dialog`, `sc-bulk-edit-menu`,
+`sc-impact-preview-dialog`, `sc-sticky-form-header` y `sc-form-danger-zone`) sobre `p-button`, más `sc-multiselect` y
+`sc-password`. De las salidas posibles se eligió la segura: mover lo que no cambia el DOM de nadie y dejar
+documentado lo demás.
+
+**Decisión** ·
+1. Las cinco piezas compuestas pintan `<sc-button>` en vez de `<p-button>`: `severity` → `variant`, `outlined` →
+   `appearance`, `small`/`large` → `sm`/`lg` y `(onClick)` → `(clicked)`; se conservan los `data-testid` y lo
+   proyectado. Su API no cambia. El trinquete baja de 8 a 3.
+2. `sc-password` pasa a `<input pInputPassword>`. La directiva da el tipo `password`/`text` y la piel de
+   `pInputText`; lo demás es nuestro: un solo botón de mostrar, que no se desmonta al alternar y conserva el foco; el
+   medidor de fuerza (`feedback`), con los tres niveles, los patrones y los textos de PrimeNG (su traducción
+   configurada), bajo el campo mientras tiene el foco, por `aria-describedby` y con Escape; y el ojo, con el relleno
+   de la talla del campo. El trinquete baja de 3 a 2.
+3. `sc-button` → `[pButton]` y `sc-multiselect` → `p-select` múltiple quedan anotados con su coste en el hand-off
+   del DS.
+
+**Razón** ·
+- Con las compuestas sobre `sc-button`, `p-button` queda en un solo sitio: el día que pase a `[pButton]` se toca una
+  pieza, no seis.
+- El medidor de `p-password` son dos patrones y cuatro textos: tenerlo cuesta menos que arrastrar un componente
+  jubilado, y el botón de mostrar ya era nuestro.
+- Medido en el acceso (talla `lg`), antes y después: misma caja, letra, borde y colores, y el mismo nombre y foco del
+  botón. Cambian el ojo, 1,7 px a la izquierda, y el hueco del texto, de 31,5 a 37 px: PrimeNG usaba el relleno de
+  `md` en cualquier talla.
+
+**Descartadas** ·
+- **`sc-button` → `[pButton]` ahora** → la directiva no trae `label`, `icon` ni salidas, que habría que rehacer;
+  cambia el DOM de todos los botones (de componente a directiva sobre el `<button>`) y mueve
+  `component-structure.json` y las capturas. No es lo seguro.
+- **`sc-multiselect` → `p-select` con `multiple`** → medido en PrimeNG 22.1.0, `p-select` no trae seis cosas que
+  `sc-multiselect` usa hoy: `showToggleAll`, `selectAll`, `selectionLimit`, `maxSelectedLabels`,
+  `selectedItemsLabel` y `display`. DD-153 ya eligió ampliar el envoltorio.
+
+**Consecuencias** ·
+- **Una trampa, medida:** `styleClass` de `p-button` deja la clase en el `<button>` interior, que no lleva
+  `_ngcontent`, así que la SCSS emulada de la pieza no le llega: `.bulk-edit__apply { height: 36px; padding: 0 14px }`
+  no había aplicado nunca. Con `class` en `<sc-button>`, la clase cae en el host y sí aplica: un bloque de 88,5 × 36
+  con el botón 15,75 px dentro. Al pasar de `styleClass` a `class`, se mide; aquí salieron esas dos declaraciones.
+- **Descripciones:** al dejar `primeng/button` y `primeng/password`, diez miembros dejaron de heredar su descripción
+  de PrimeNG y el trinquete de descripciones (tope 0) la pidió: llevan JSDoc, la de `sc-inputtext` donde coincide.
+- **Pruebas:** el trinquete (`component-audit.test.mjs`); `sc-password.component.spec.ts` (nueva, cinco); e2e
+  `listado-grupos`, `fichas-nombre-fijo`, `admin-row-menu`, `lista-seleccion`, `login` y `focus-ring`.
+- **CHANGELOG:** `[Unreleased]` › Changed, dos entradas.
+- **Queda abierto:** `sc-button` y `sc-multiselect` (el trinquete, en 2), con su coste en el hand-off del DS.
+
+---
+
 ## DD-171 · 2026-10-05 — Un botón que abre un popup lo dice el `<button>` real, no el host `<sc-button>`
 
 **Contexto** · `sc-button` envuelve `p-button`, que envuelve un `<button>` nativo: el foco y lo que anuncia el
