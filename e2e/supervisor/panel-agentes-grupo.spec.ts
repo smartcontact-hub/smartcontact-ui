@@ -34,6 +34,18 @@ test('«Agentes» abre el panel de esa fila sin abrir la ficha, y comparte la as
   await expect(panel(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });
 
+test('cerrar el panel devuelve el foco a la cifra que lo abrió', async ({ page }) => {
+  // Ni `p-drawer` ni `sc-drawer` lo devuelven: el foco caía en <body> y el teclado empezaba de cero (DD-168).
+  await goto(page, 'admin/grupos');
+  const cifra = page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' });
+  await cifra.click();
+  await expect(panel(page)).toBeVisible();
+
+  await panel(page).getByRole('button', { name: 'Cancelar' }).click();
+  await expect(panel(page)).toHaveCount(0);
+  await expect(cifra).toBeFocused();
+});
+
 test('guardar dice cuántos agentes cambian, y la cifra de la fila se pone al día', async ({ page }) => {
   await goto(page, 'admin/grupos');
   const antes = Number((await cifraDeAgentes(page, 'ACD Demo C2CB').innerText()).trim());
