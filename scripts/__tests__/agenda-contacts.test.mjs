@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  contactoCoincide,
   contactosDeNumeros,
   normalizarTelefono,
   telefonoValido,
@@ -39,4 +40,21 @@ test('contactosDeNumeros: el texto de antes, un contacto por número y sin nombr
   );
   assert.deepEqual(contactosDeNumeros(''), []);
   assert.deepEqual(contactosDeNumeros(undefined), []);
+});
+
+test('contactoCoincide: el nombre y el teléfono por subcadena; un teléfono, también por sus cifras', () => {
+  const centralita = { id: 1, name: 'Centralita de ventas', phone: '900 100 200' };
+  const exterior = { id: 2, name: 'Atención en México', phone: '+52 800 123 4567' };
+  assert.equal(contactoCoincide(centralita, ''), true);
+  assert.equal(contactoCoincide(centralita, 'VENTAS'), true);
+  assert.equal(contactoCoincide(centralita, '100 2'), true);
+  // Se compara como los repetidos: escrito sin espacios o con guiones, es el mismo teléfono.
+  assert.equal(contactoCoincide(centralita, '900100200'), true);
+  assert.equal(contactoCoincide(centralita, '900-100'), true);
+  assert.equal(contactoCoincide(exterior, '+52 800'), true);
+  // Un texto con cifras no es un teléfono: «ventas 2» no encuentra todo lo que lleva un 2.
+  assert.equal(contactoCoincide(exterior, 'ventas 2'), false);
+  // Sin cifras no hay teléfono que comparar: un guion no encuentra cualquier cosa.
+  assert.equal(contactoCoincide(centralita, '-'), false);
+  assert.equal(contactoCoincide(centralita, '911'), false);
 });

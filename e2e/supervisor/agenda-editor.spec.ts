@@ -12,7 +12,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   2. el editor añade (con el teléfono validado y sin repetir), edita y borra contactos, y Guardar los deja en la agenda;
  *   3. Atrás con cambios sin guardar avisa, y descartar no guarda;
  *   4. lo guardado antes como texto con comas se lee como contactos «Sin nombre», sin repetidos;
- *   5. la agenda grande se pinta por páginas y se busca.
+ *   5. la agenda grande se pinta por páginas y se busca, un teléfono también por sus cifras.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -60,6 +60,8 @@ test('añadir un contacto valida el teléfono y no lo repite; guardar lo deja en
   await dialogo.getByRole('button', { name: 'Crear' }).click();
   await expect(dialogo).toBeHidden();
   await expect(filas(page)).toHaveCount(4);
+  // Arriba, donde se ve: al final, en una agenda grande caería en la última página.
+  await expect(filas(page).first()).toContainText('Ventas al por mayor');
 
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
   await expect.poll(async () => (await guardadas(page)).find((a) => a.id === 1)?.contacts?.length).toBe(4);
@@ -127,4 +129,29 @@ test('la agenda grande se pinta por páginas y se busca', async ({ page }) => {
   await tabla(page).getByRole('searchbox').fill('0999');
   await expect(filas(page)).toHaveCount(1);
   await expect(filas(page)).toContainText('Punto de venta 0999');
+  // Un teléfono se busca también por sus cifras, como se comparan los repetidos: sin los espacios con que se guardó.
+  await tabla(page).getByRole('searchbox').fill('900700999');
+  await expect(filas(page)).toHaveCount(1);
+  await expect(filas(page)).toContainText('900 700 999');
 });
+
+test('en la agenda grande, buscar o añadir desde otra página vuelve a la primera', async ({ page }) => {
+  await goto(page, 'admin/agendas/editar/9');
+  const paginador = tabla(page).locator('.p-paginator');
+  await paginador.getByRole('button', { name: '5', exact: true }).click();
+  await expect(filas(page).first()).toContainText('Punto de venta 0041');
+  // Un solo resultado y la página 5 abierta: sin volver a la primera, la tabla se quedaba en blanco.
+  await tabla(page).getByRole('searchbox').fill('0999');
+  await expect(filas(page)).toHaveCount(1);
+  await expect(filas(page)).toContainText('Punto de venta 0999');
+
+  await tabla(page).getByRole('searchbox').fill('');
+  await paginador.getByRole('button', { name: '5', exact: true }).click();
+  await page.getByRole('button', { name: 'Añadir contacto' }).first().click();
+  const dialogo = page.getByRole('dialog', { name: 'Añadir contacto' });
+  await dialogo.getByLabel('Nombre').fill('Punto de venta nuevo');
+  await dialogo.getByLabel('Teléfono').fill('900 799 999');
+  await dialogo.getByRole('button', { name: 'Crear' }).click();
+  await expect(filas(page).first()).toContainText('Punto de venta nuevo');
+});
+
