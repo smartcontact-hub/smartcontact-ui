@@ -12,7 +12,7 @@ import type { TipificacionOpcion } from '../../state/tipificaciones.core.mjs';
 const LARGO_DEL_COMENTARIO = 255;
 
 /**
- * LO QUE VERÁ EL AGENTE (DD-174), mientras se crea la tipificación: el teléfono de sc-agent en su sección de Tipificación, la que
+ * LO QUE VERÁ EL AGENTE (DD-175), mientras se crea la tipificación: el teléfono de sc-agent en su sección de Tipificación, la que
  * sale al colgar, con lo que se va definiendo. Cada nivel es su píldora (con las opciones de lo elegido en la de arriba),
  * el comentario si lo pide, y Guardar, que se enciende cuando está todo. Se puede probar: así se entiende qué es un
  * nivel y qué cambia al pedir comentario sin leer una ayuda. No guarda nada.

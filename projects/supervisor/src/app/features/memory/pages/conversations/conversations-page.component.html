@@ -1,78 +1,84 @@
 <!-- Modelo "todo arriba" (experiment S59): sin banda de page-header — la
      identidad la da el breadcrumb de la TopBar. El switcher de datos demo
      también vive arriba (junto al avatar) vía TopBarSlotService. Ver el .ts. -->
-<!-- `.page--tabla` (DD-95): la página no hace scroll; lo hace la tabla, como el resto de listas. -->
-<div class="page page--tabla">
-  <div class="page__inner page__inner--list">
-    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
-         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
-         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
-         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ 'memory.conversations.page_title' | translate }}</h1>
 
-    <sc-memory-conversation-filters
-      [filters]="filters()"
-      [availableAiCategories]="availableAiCategories()"
-      [filteredCount]="filteredCount()"
-      (filtersChange)="onFiltersChange($event)"
-    />
+<!-- Lo que es de una conversación en su tabla (columnas, celdas, clases de fila, menú del clic derecho y orden). No
+     pinta nada: lo recoge la lista. -->
+<sc-memory-conversation-table
+  #tabla
+  [processingIds]="processingIds()"
+  [analyzingIds]="analyzingIds()"
+  (conversationOpen)="onConversationOpen($event)"
+  (contextActionRequested)="onContextAction($event)"
+/>
 
-    <!-- Sin ninguna conversación todavía, el vacío de página. Con filtros o una vista que se quedan
-         sin resultados, el vacío va DENTRO de la tabla, con la cabecera visible: la misma regla que
-         las listas de administración (2026-09-14). -->
-    @if (allConversations().length === 0) {
-      <sc-empty-state
-        [icon]="emptyIcon"
-        titleKey="memory.conversations.empty.title"
-        bodyKey="memory.conversations.empty.body_unfiltered"
-      />
-    } @else {
-      <sc-memory-conversation-table
-        [conversations]="conversations()"
-        [selectedIds]="selectedIds()"
-        [processingIds]="processingIds()"
-        [analyzingIds]="analyzingIds()"
-        (conversationOpen)="onConversationOpen($event)"
-        (selectionChange)="onSelectionChange($event)"
-        (contextActionRequested)="onContextAction($event)"
-      >
-        <sc-empty-state
-          [icon]="emptyCopy().icon"
-          [titleKey]="emptyCopy().titleKey"
-          [bodyKey]="emptyCopy().bodyKey"
-          [ctaKey]="emptyCopy().ctaKey"
-          [ctaIcon]="emptyCopy().ctaIcon"
-          (cta)="onClearFilters()"
-        />
-      </sc-memory-conversation-table>
-    }
-  </div>
-</div>
-
-<!-- R5 · la selección se manifiesta en UN solo sitio. Estas tres acciones
-     estaban en la toolbar de filtros, grises hasta que seleccionabas algo.
-     Ahora la barra aparece con la selección y se va con ella. -->
-<sc-bulk-action-bar
-  [count]="selectedCount()"
-  [entity]="bulkEntity()"
-  (clear)="onClearSelection()"
+<!-- La lista se monta sobre la pieza, como las demás (DD-98, 2026-10-05): título, `.page--tabla` (DD-95), tabla con
+     su selección y su barra en lote, y el menú de fila solo con clic derecho (sin «⋮», decisión de producto del
+     2026-09-13). La fila abre el reproductor. -->
+<sc-list-page
+  [heading]="'memory.conversations.page_title' | translate"
+  [rows]="conversations()"
+  [empty]="allConversations().length === 0"
+  [columns]="tabla.columns()"
+  [sortFn]="tabla.sortFn"
+  [rowClass]="tabla.rowClass"
+  [rowMenu]="tabla.rowMenu"
+  [rowMenuColumn]="false"
+  rowOpenable
+  selectable
+  [bulkEntity]="bulkEntity()"
+  [selectedIds]="selectedIds()"
+  (selectedIdsChange)="onSelectionChange($event)"
+  selectRowKey="memory.conversations.select_row_aria"
+  selectAllKey="memory.conversations.select_all_aria"
+  tableTestId="conversations-table"
+  tableClass="memory-conversations"
+  (rowOpen)="onConversationOpen($event)"
 >
-  <!-- Transcribir es la acción PRIMARIA: es la razón por la que alguien
-       selecciona filas aquí. Con las tres en secundario, la barra entera se
-       leía gris sobre gris —indistinguible de deshabilitada, justo la
-       percepción que esta ola viene a corregir— y sin jerarquía. -->
-  <sc-button type="button" variant="primary" (clicked)="onBulkTranscribe()">
-    <span>{{ 'memory.conversations.filters.transcribe' | translate }}</span>
-  </sc-button>
-  <sc-button type="button" variant="secondary" (clicked)="onDownloadRequested()">
-    <span>{{ 'memory.conversations.filters.download' | translate }}</span>
-  </sc-button>
-  @if (failedCount() > 0) {
-    <sc-button type="button" variant="secondary" (clicked)="onBulkMarkRead()">
-      <span>{{ 'memory.conversations.filters.mark_read' | translate }}</span>
+  <sc-memory-conversation-filters
+    scListBeforeToolbar
+    [filters]="filters()"
+    [availableAiCategories]="availableAiCategories()"
+    [filteredCount]="filteredCount()"
+    (filtersChange)="onFiltersChange($event)"
+  />
+
+  <!-- Sin ninguna conversación todavía, el vacío de página. Con filtros o una vista que se quedan sin resultados, el
+       vacío va DENTRO de la tabla, con la cabecera visible: la misma regla que las listas de administración
+       (2026-09-14). -->
+  <sc-empty-state
+    scListEmpty
+    [icon]="emptyIcon"
+    titleKey="memory.conversations.empty.title"
+    bodyKey="memory.conversations.empty.body_unfiltered"
+  />
+  <sc-empty-state
+    scListNoResults
+    [icon]="emptyCopy().icon"
+    [titleKey]="emptyCopy().titleKey"
+    [bodyKey]="emptyCopy().bodyKey"
+    [ctaKey]="emptyCopy().ctaKey"
+    [ctaIcon]="emptyCopy().ctaIcon"
+    (cta)="onClearFilters()"
+  />
+
+  <!-- R5 · la selección se manifiesta en UN solo sitio: la barra aparece con la selección y se va con ella.
+       Transcribir es la acción PRIMARIA: es la razón por la que alguien selecciona filas aquí. Con las tres en
+       secundario, la barra entera se leía gris sobre gris —indistinguible de deshabilitada— y sin jerarquía. -->
+  <ng-container ngProjectAs="[scListBulkActions]">
+    <sc-button type="button" variant="primary" (clicked)="onBulkTranscribe()">
+      <span>{{ 'memory.conversations.filters.transcribe' | translate }}</span>
     </sc-button>
-  }
-</sc-bulk-action-bar>
+    <sc-button type="button" variant="secondary" (clicked)="onDownloadRequested()">
+      <span>{{ 'memory.conversations.filters.download' | translate }}</span>
+    </sc-button>
+    @if (failedCount() > 0) {
+      <sc-button type="button" variant="secondary" (clicked)="onBulkMarkRead()">
+        <span>{{ 'memory.conversations.filters.mark_read' | translate }}</span>
+      </sc-button>
+    }
+  </ng-container>
+</sc-list-page>
 
 <sc-memory-conversation-player-modal
   [visible]="playerOpen()"

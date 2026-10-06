@@ -11,11 +11,11 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { ButtonModule } from 'primeng/button';
 
 import { ScSelectComponent } from '../select/sc-select.component';
 
 import { SC_BULK_EDIT_MENU_TRANSLATIONS } from './i18n/sc-bulk-edit-menu.translations';
+import { ScButtonComponent } from '../button/sc-button.component';
 
 export interface BulkEditFieldOption {
   /** Stable key passed back to the caller. */
@@ -61,7 +61,7 @@ export interface BulkEditMatch {
 @Component({
   selector: 'sc-bulk-edit-menu',
   standalone: true,
-  imports: [ButtonModule, ScSelectComponent, TranslateModule],
+  imports: [ScButtonComponent, ScSelectComponent, TranslateModule],
   templateUrl: './sc-bulk-edit-menu.component.html',
   styleUrl: './sc-bulk-edit-menu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

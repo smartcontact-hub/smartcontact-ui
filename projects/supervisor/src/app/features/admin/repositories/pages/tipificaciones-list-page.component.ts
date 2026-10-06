@@ -60,7 +60,7 @@ function direccionDe(t: Tipificacion): 'inbound' | 'outbound' | 'both' {
 }
 
 /**
- * El listado de Tipificaciones (DD-172): nombre, descripción, dirección, comentarios,
+ * El listado de Tipificaciones (DD-173): nombre, descripción, dirección, comentarios,
  * niveles, grupos e ID, todas ordenables. Crear y abrir una fila llevan a su ficha (General, Categorización y Grupos);
  * importar y descargar van detrás de un solo icono, con las columnas de la plantilla, una fila por camino del árbol.
  * El ID es una columna opcional, como el de Agentes y Grupos.

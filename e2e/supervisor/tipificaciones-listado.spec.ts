@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * TIPIFICACIONES: EL LISTADO Y LA FICHA DE GRUPO (DD-172).
+ * TIPIFICACIONES: EL LISTADO Y LA FICHA DE GRUPO (DD-173).
  *
  * La propuesta de producto del 2026-10-05: una tipificación es un árbol de hasta tres niveles, con su dirección, su
  * comentario y sus grupos. Lo que fija:

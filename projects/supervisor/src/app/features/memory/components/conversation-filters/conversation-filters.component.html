@@ -33,6 +33,7 @@
       shortcutHint="/"
       [value]="filters().query"
       (valueChange)="setQuery($event)"
+      (keydown)="onSearchKey($event)"
     />
 
     <div class="memory-conversation-filters__fields">

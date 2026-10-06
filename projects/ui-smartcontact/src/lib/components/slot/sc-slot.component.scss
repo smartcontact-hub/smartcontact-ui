@@ -2,12 +2,12 @@
   display: block;
 }
 
-/* Divisor entre slots: Figma `divider/border/color` #dadfe6 → --sc-border-default,
-   con margen vertical 14 (`divider/horizontal/margin/y` = scale-1). El primer slot
-   no lleva línea arriba. */
+/* Divisor entre slots: Figma `divider/border/color` #dadfe6 → --sc-border-default (el divisor no tiene token de
+   color propio), con el margen vertical del divisor (`divider/horizontal/margin/y`, 14): si el Kit lo mueve, los slots
+   lo siguen. El primer slot no lleva línea arriba. */
 :host(:not(:first-of-type)) {
-  margin-top: var(--sc-spacing-1);
-  padding-top: var(--sc-spacing-1);
+  margin-top: var(--sc-cmp-divider-horizontal-margin-y);
+  padding-top: var(--sc-cmp-divider-horizontal-margin-y);
   border-top: 1px solid var(--sc-border-default);
 }
 

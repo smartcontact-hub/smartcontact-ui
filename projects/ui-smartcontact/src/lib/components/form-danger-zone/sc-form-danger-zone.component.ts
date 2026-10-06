@@ -1,10 +1,10 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
 
 import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { SC_FORM_DANGER_ZONE_TRANSLATIONS } from './i18n/sc-form-danger-zone.translations';
+import { ScButtonComponent } from '../button/sc-button.component';
 
 /**
  * End-of-form section that hosts irreversible / sensitive actions
@@ -21,7 +21,7 @@ import { SC_FORM_DANGER_ZONE_TRANSLATIONS } from './i18n/sc-form-danger-zone.tra
 @Component({
   selector: 'sc-form-danger-zone',
   standalone: true,
-  imports: [ButtonModule, ScIconComponent, TranslateModule],
+  imports: [ScButtonComponent, ScIconComponent, TranslateModule],
   templateUrl: './sc-form-danger-zone.component.html',
   styleUrl: './sc-form-danger-zone.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +36,7 @@ export class ScFormDangerZoneComponent {
   readonly descriptionKey = input.required<string>();
   /** Clave de traducción de la etiqueta del botón. */
   readonly actionKey = input<string>('sc.formDangerZone.action');
+  /** Desactiva el botón: la acción se sigue viendo, pero no se puede pulsar. */
   readonly disabled = input(false, { transform: booleanAttribute });
 
   /**

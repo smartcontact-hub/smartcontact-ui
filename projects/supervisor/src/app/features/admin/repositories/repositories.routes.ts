@@ -63,7 +63,7 @@ export const REPOSITORIES_ROUTES: Routes = [
     loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent),
   },
   {
-    /* La tipificación tiene su ficha (DD-172): General, Categorización y Grupos, como las
+    /* La tipificación tiene su ficha (DD-173): General, Categorización y Grupos, como las
      * fichas de grupo y de agente. El listado sigue en Repositorios. */
     path: 'tipificaciones',
     data: repoInstance('repositories.tipificaciones.title'),

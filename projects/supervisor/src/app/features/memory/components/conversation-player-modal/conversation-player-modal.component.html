@@ -65,10 +65,12 @@
       }
 
       <!-- Pestañas de primeng.dev (`p-tabs`) sin paneles: el cuerpo de cada una va debajo, en
-           `.player-tab-body`. Las acciones quedan FUERA de la tira para no robarle las flechas. -->
+           `.player-tab-body`. Las acciones quedan FUERA de la tira para no robarle las flechas.
+           La tira se nombra por `pt` al nodo con `role="tablist"`, como en el Monitor: en el host
+           de `p-tablist` no llega (DD-113). -->
       <div class="player-tabs">
         <p-tabs class="player-tabs__tabs" [value]="activeTab()" (valueChange)="onTabChange($event)">
-          <p-tablist>
+          <p-tablist [pt]="{ content: { 'aria-label': 'memory.player.tabs.aria' | translate } }">
             <p-tab value="transcription">{{ 'memory.player.tabs.transcription' | translate }}</p-tab>
             <p-tab value="analysis">{{ 'memory.player.tabs.analysis' | translate }}</p-tab>
           </p-tablist>

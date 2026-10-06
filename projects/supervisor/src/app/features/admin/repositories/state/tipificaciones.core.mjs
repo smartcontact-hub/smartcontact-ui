@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Las tipificaciones (DD-172), sin Angular: su árbol de hasta tres niveles, qué le falta para guardarse, con qué choca en un
+ * Las tipificaciones (DD-173), sin Angular: su árbol de hasta tres niveles, qué le falta para guardarse, con qué choca en un
  * grupo y cómo entra y sale de un CSV. Puro para probarlo con node:test (`scripts/__tests__/tipificaciones.test.mjs`);
  * lo usan el almacén (`tipificaciones.store.ts`), su listado, su ficha y la ficha de grupo.
  *

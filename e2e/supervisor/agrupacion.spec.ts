@@ -67,7 +67,7 @@ const RUTAS = [
   'admin/agendas/editar/1',
   'admin/horarios',
   'admin/tipificaciones',
-  // La ficha de una tipificación (DD-172), en el alta y con su árbol.
+  // La ficha de una tipificación (DD-173), en el alta y con su árbol.
   'admin/tipificaciones/crear',
   'admin/tipificaciones/editar/1',
   'admin/variables',
@@ -93,7 +93,7 @@ const ALTAS = [
    * (`/crear`) no entra: su primer botón es «Crear agenda», que guarda. */
   'admin/agendas/editar/1',
   'admin/horarios',
-  /* Desde DD-172, «Nueva tipificación» navega a su ficha, que se mide en RUTAS; no tiene panel de alta. */
+  /* Desde DD-173, «Nueva tipificación» navega a su ficha, que se mide en RUTAS; no tiene panel de alta. */
   'admin/variables',
   'admin/entidades',
   'admin/intenciones',

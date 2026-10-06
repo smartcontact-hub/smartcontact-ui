@@ -85,7 +85,7 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
 };
 
 /**
- * LA FICHA DE UNA TIPIFICACIÓN (DD-172, DD-173), con el molde de las fichas (DD-122, DD-170): el
+ * LA FICHA DE UNA TIPIFICACIÓN (DD-173, DD-174), con el molde de las fichas (DD-122, DD-170): el
  * nombre y el índice a la izquierda, una sección a la vista en el centro y, a la derecha, donde las fichas llevan su
  * resumen, LO QUE VERÁ EL AGENTE: su ventana de tipificar con lo que se va definiendo, para probarla.
  *
@@ -93,7 +93,7 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
  *   - Categorías: los niveles son las columnas, y el siguiente se añade pulsando su columna fantasma;
  *   - Grupos: dónde se usa y por qué canales.
  *
- * SIN SALTOS (DD-173): ningún aviso entra ni sale empujando lo de debajo. Cada uno tiene su línea
+ * SIN SALTOS (DD-174): ningún aviso entra ni sale empujando lo de debajo. Cada uno tiene su línea
  * reservada (bajo las columnas, encima de la tabla de grupos) o va en la barra, junto a Guardar; el nombre repetido
  * marca su campo en rojo y lo dice la barra, sin una línea de error que lo desplace todo.
  */

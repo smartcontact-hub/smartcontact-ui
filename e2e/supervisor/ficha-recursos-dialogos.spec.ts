@@ -19,7 +19,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * Lo que fija:
  *   1. Cada «+» abre su diálogo, que se llama como su botón; dentro, el formulario no abre otro, va a sangre (sin
  *      borde ni sombra) y a todo el ancho, y el título sale una vez.
- *   2. La tipificación ya no tiene «+» (DD-172): es un árbol de hasta tres niveles con su ficha, y no cabe en un
+ *   2. La tipificación ya no tiene «+» (DD-173): es un árbol de hasta tres niveles con su ficha, y no cabe en un
  *      diálogo. Se crea en Repositorios, y su alta lleva su título con género: «Nueva tipificación», no «Nuevo/a».
  *   3. (Fundido en el 2.)
  *   4. Recursos ya no enseña Etiquetas (DD-142), y el grupo conserva las suyas al guardar: el campo se queda hecho y
@@ -57,7 +57,7 @@ test('grupo 11 · cada «+» de Recursos abre su diálogo con el nombre de su bo
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
   const botones = masDeRecursos(page);
   const n = await botones.count();
-  // Agenda y plantillas de chat y de email (la etiqueta salió con DD-142 y la tipificación con DD-172): si faltan, la
+  // Agenda y plantillas de chat y de email (la etiqueta salió con DD-142 y la tipificación con DD-173): si faltan, la
   // prueba no recorre lo que dice.
   expect(n, 'los «+» de Recursos').toBeGreaterThanOrEqual(3);
 
@@ -132,7 +132,7 @@ test('grupo 11 · Recursos no enseña Etiquetas, y el grupo conserva las suyas a
   await expect(recursos.locator('sc-multiselect:has(#group-typification)')).toBeVisible();
   await expect(recursos.locator('#group-labels')).toHaveCount(0);
   await expect(recursos.getByText('Etiquetas', { exact: true })).toHaveCount(0);
-  // El resumen cuenta lo que se ve: dos tipificaciones (DD-172), tres agendas y seis plantillas, sin las dos etiquetas.
+  // El resumen cuenta lo que se ve: dos tipificaciones (DD-173), tres agendas y seis plantillas, sin las dos etiquetas.
   await expect(page.locator('.ficha-summary')).toContainText(/Recursos\s*11(?!\d)/);
 
   // Guardar no las tira: el grupo 11 sigue con las suyas, por si Etiquetas vuelve. El cambio: quitarle una tipificación.

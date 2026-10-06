@@ -10,7 +10,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  * ni cómo llegar a editarla. Lo que fija:
  *   1. bajo cada campo, una fila por recurso con su nombre, un dato y «Editar», que lleva a su sitio; Atrás vuelve a
  *      Recursos;
- *   2. una plantilla abre su panel en su pestaña; una tipificación, su ficha (DD-172: antes, su repositorio con la
+ *   2. una plantilla abre su panel en su pestaña; una tipificación, su ficha (DD-173: antes, su repositorio con la
  *      búsqueda puesta, cuando era una categoría);
  *   3. se ofrecen las agendas activas, y la inactiva que ya estaba puesta, para poder quitarla;
  *   4. lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello;

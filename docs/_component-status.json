@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "56 componentes · 18 custom · 12 standard · 26 extended · 45 usados en Supervisor.",
+  "summary": "56 componentes · 23 custom · 8 standard · 25 extended · 45 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -98,16 +98,16 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 2,
       "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
       "sobreObsoleto": []
     },
     {
       "name": "bulk-edit-menu",
       "selector": "sc-bulk-edit-menu",
-      "provenance": "WRAPPER",
-      "kind": "STANDARD",
-      "primengBase": "primeng/button",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
       "cva": false,
       "inputs": 2,
       "api": [
@@ -117,17 +117,13 @@
         "matchable"
       ],
       "nested": [
-        "sc-select"
+        "sc-select",
+        "sc-button"
       ],
       "hasDemo": true,
       "usedInSupervisor": 3,
       "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
-      "sobreObsoleto": [
-        {
-          "sel": "p-button",
-          "motivo": "Use the `[pButton]` directive instead."
-        }
-      ]
+      "sobreObsoleto": []
     },
     {
       "name": "bulk-transcription-modal",
@@ -398,7 +394,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 16,
+      "usedInSupervisor": 13,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": []
     },
@@ -453,9 +449,9 @@
     {
       "name": "delete-entity-dialog",
       "selector": "sc-delete-entity-dialog",
-      "provenance": "WRAPPER",
-      "kind": "STANDARD",
-      "primengBase": "primeng/button",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
       "cva": false,
       "inputs": 2,
       "api": [
@@ -465,17 +461,13 @@
         "singleDetailMessage"
       ],
       "nested": [
-        "sc-dialog"
+        "sc-dialog",
+        "sc-button"
       ],
       "hasDemo": true,
       "usedInSupervisor": 11,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
-      "sobreObsoleto": [
-        {
-          "sel": "p-button",
-          "motivo": "Use the `[pButton]` directive instead."
-        }
-      ]
+      "sobreObsoleto": []
     },
     {
       "name": "dialog",
@@ -622,9 +614,9 @@
     {
       "name": "form-danger-zone",
       "selector": "sc-form-danger-zone",
-      "provenance": "WRAPPER",
-      "kind": "STANDARD",
-      "primengBase": "primeng/button",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
       "cva": false,
       "inputs": 3,
       "api": [
@@ -633,16 +625,13 @@
         "disabled",
         "titleKey"
       ],
-      "nested": [],
+      "nested": [
+        "sc-button"
+      ],
       "hasDemo": true,
       "usedInSupervisor": 0,
       "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
-      "sobreObsoleto": [
-        {
-          "sel": "p-button",
-          "motivo": "Use the `[pButton]` directive instead."
-        }
-      ]
+      "sobreObsoleto": []
     },
     {
       "name": "form-section-nav",
@@ -714,9 +703,9 @@
     {
       "name": "impact-preview-dialog",
       "selector": "sc-impact-preview-dialog",
-      "provenance": "WRAPPER",
-      "kind": "STANDARD",
-      "primengBase": "primeng/button",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
       "cva": false,
       "inputs": 3,
       "api": [
@@ -727,17 +716,13 @@
         "confirmLabel"
       ],
       "nested": [
-        "sc-dialog"
+        "sc-dialog",
+        "sc-button"
       ],
       "hasDemo": true,
       "usedInSupervisor": 3,
       "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
-      "sobreObsoleto": [
-        {
-          "sel": "p-button",
-          "motivo": "Use the `[pButton]` directive instead."
-        }
-      ]
+      "sobreObsoleto": []
     },
     {
       "name": "inline-rename-cell",
@@ -1010,7 +995,7 @@
       "selector": "sc-password",
       "provenance": "WRAPPER",
       "kind": "EXTENDED",
-      "primengBase": "primeng/password",
+      "primengBase": "primeng/config, primeng/inputpassword",
       "cva": false,
       "inputs": 19,
       "api": [
@@ -1044,12 +1029,7 @@
       "hasDemo": true,
       "usedInSupervisor": 1,
       "cuando": "Para una contraseña, con su ojo para mostrarla.",
-      "sobreObsoleto": [
-        {
-          "sel": "p-password",
-          "motivo": "since v22, use pInputPassword directive instead."
-        }
-      ]
+      "sobreObsoleto": []
     },
     {
       "name": "permission-matrix",
@@ -1189,7 +1169,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 11,
+      "usedInSupervisor": 12,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
@@ -1346,9 +1326,9 @@
     {
       "name": "sticky-form-header",
       "selector": "sc-sticky-form-header",
-      "provenance": "WRAPPER",
-      "kind": "EXTENDED",
-      "primengBase": "primeng/button",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
       "cva": false,
       "inputs": 4,
       "api": [
@@ -1360,16 +1340,13 @@
         "saving",
         "showBack"
       ],
-      "nested": [],
+      "nested": [
+        "sc-button"
+      ],
       "hasDemo": true,
       "usedInSupervisor": 2,
       "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
-      "sobreObsoleto": [
-        {
-          "sel": "p-button",
-          "motivo": "Use the `[pButton]` directive instead."
-        }
-      ]
+      "sobreObsoleto": []
     },
     {
       "name": "subsection",

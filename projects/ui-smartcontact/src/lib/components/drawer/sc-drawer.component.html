@@ -9,8 +9,9 @@
     [ariaCloseLabel]="'sc.drawer.close' | translate"
     [fullScreen]="fullScreen()"
     [style]="panelStyle()"
+    [pt]="drawerPt()"
     (visibleChange)="visible.set($event ?? false)"
-    (onShow)="shown.emit($event)"
+    (onShow)="onShow($event)"
     (onHide)="hidden.emit($event)">
     <ng-content></ng-content>
 </p-drawer>

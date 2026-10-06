@@ -28,21 +28,21 @@ f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/
 revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
 fcaf40db:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-172 a DD-174), en su PR
+## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-173 a DD-175), en su PR
 
 > **Sello:** rama `arebury/tipificaciones-creacion` sobre `main` en `b4d1f145`. **Un PR, un commit en rojo y otro en
 > verde por bloque (DD-154).** Sale de la propuesta de producto «Tipificaciones» (PDF, 2026-10-05), discutida punto por
 > punto y probada en local antes de subir.
 
-- **1 · Una tipificación es una ficha propia (DD-172):** su árbol de hasta tres niveles, su dirección, su comentario y
+- **1 · Una tipificación es una ficha propia (DD-173):** su árbol de hasta tres niveles, su dirección, su comentario y
   sus grupos por canal; una por dirección y canal en cada grupo. Repositorios › Tipificaciones con las columnas de la
   propuesta, todas ordenables; importar y descargar detrás de UN icono (`importable` en `sc-list-page`; importar, como
   las agendas). La ficha de grupo elige varias, con su fila y su «Editar», y pierde el «+» de la tipificación.
-- **2 · La ficha, sin saltos (DD-173):** el molde de las fichas (índice; el nombre encima); la dirección en un control y
+- **2 · La ficha, sin saltos (DD-174):** el molde de las fichas (índice; el nombre encima); la dirección en un control y
   el comentario en un interruptor; los niveles son las columnas (las tres siempre, la siguiente fantasma, la última con
   su ×); añadir y renombrar en la línea de la columna; cada aviso en su línea reservada. Su prueba cazó una carrera:
   dos «Añadir» seguidos y el segundo pisaba al primero (ahora `linkedSignal`).
-- **3 · Lo que verá el agente (DD-174):** a la derecha, el teléfono de sc-agent en su sección de Tipificación, calcado
+- **3 · Lo que verá el agente (DD-175):** a la derecha, el teléfono de sc-agent en su sección de Tipificación, calcado
   de la réplica y para probarlo. Tokens nuevos `--sc-agent-window-*` (05-extensions) y su sombra con spread; en su
   propia columna, porque la del resumen recortaba la sombra.
 - **En local, en verde:** las 17 de los tres bloques (en rojo antes de cada uno) y las 13 unitarias; las vecinas que
@@ -56,7 +56,7 @@ fcaf40db:docs/handoff/supervisor-fichas.md`.
   una sombra: lo que tenga que salirse va en su propia columna del área `summary`.
 - **Un `.sc-dark` alrededor de una pieza no pone los campos de PrimeNG en oscuro**: sus `--p-*` se resuelven en la raíz.
 
-## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), en su rama
+## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), fundido (#337)
 
 > **Sello:** rama `arebury/figma-grid-three-columns` sobre `main` en HEAD `5cc9af78`; las pruebas en rojo, `1c7ed587`.
 > **Un bloque, un commit en rojo y otro en verde (DD-154). Sin subir: primero lo ve Rafa en local.** Sale del marco de
@@ -191,14 +191,14 @@ sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): l
 
 ## SIGUIENTE — sin preguntar
 
-00. **Tipificaciones (DD-172 a DD-174), en su PR** (el tramo de arriba): leer `ci:verdict`, fundir y leer el de `main`.
+00. **Tipificaciones (DD-173 a DD-175), en su PR** (el tramo de arriba): leer `ci:verdict`, fundir y leer el de `main`.
     Queda, fuera del lote: las Reglas de Conversaciones con su propia copia de las tipificaciones (`entity-catalog.ts`),
-    Supervisión › Tipificaciones vacía, y dos preguntas para producto (en el tramo de DD-174): el chat sin niveles en
+    Supervisión › Tipificaciones vacía, y dos preguntas para producto (en el tramo de DD-175): el chat sin niveles en
     sc-agent, y que los desplegables del teléfono son una propuesta para el lado del agente.
-0. **Las fichas sin cabecera (DD-170), en su rama** (el tramo de arriba): Rafa lo mira en local; si le vale,
-   `preflight:scope -- --run`, PR y `ci:verdict`. Supervisión y limpieza (DD-168) ya fue en su PR. Con esto se acaba
-   lo que dependía de nosotros en este frente. Lo siguiente: **triar los otros frentes** (DS, CusCare, Dashboard y Sidebar, cada uno con su hand-off) en
-   lotes como estos, y enseñarlos antes de empezar ninguno.
+0. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
+   CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
+   espera a otros (producto, Figma, devs o el portátil). Con Tipificaciones fundido, en este frente no queda nada
+   que dependa de nosotros; lo de fuera de lote, abajo.
 
    Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
    separado (no entra en esta fase). Si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con
@@ -290,7 +290,7 @@ sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): l
 - ⚠️ Las opciones de un overlay nativo están en el DOM, con sus atributos, antes de tener caja: `p-motion` las monta con
   `display: none` y no lo quita hasta dos fotogramas después (`nextFrame()`), y `disableAnimations` no lo tapa porque
   no es una animación. Un clic con `force` no espera a la caja y falla en el acto («Element is not visible»; con los
-  fotogramas retrasados, 5 de 5). Antes de un clic forzado, `toBeVisible()` (`column-selector-order.spec.ts`).
+  fotogramas retrasados, 5 de 5). Antes de un clic forzado, `toBeVisible()` (lo hacía `column-selector-order.spec.ts`, borrada en #325).
 - ⚠️ Un commit del robot `visual-baselines` sobre un PR ya abierto deja su CI sin jobs (en #325, una ejecución
   «failure» con 0 jobs): hay que aprobarla o subir el siguiente commit. Si un cambio mueve una captura de sc-docs,
   lanza el workflow sobre la rama ANTES de abrir el PR; desde el 2026-10-04 el preflight avisa al final de cuáles.

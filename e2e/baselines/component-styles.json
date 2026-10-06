@@ -566,22 +566,6 @@
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
-    "sc-bulkedit > div.bulk-edit > p-button > button.p-ripple": {
-      "padding-top": "3.5px",
-      "padding-right": "7px",
-      "padding-bottom": "3.5px",
-      "padding-left": "7px",
-      "gap": "7px",
-      "min-height": "0px",
-      "border-radius": "6px",
-      "border-top-width": "1px",
-      "border-bottom-width": "1px",
-      "font-size": "12px",
-      "font-weight": "500",
-      "line-height": "18px",
-      "color": "rgb(111, 119, 132)",
-      "background-color": "rgb(236, 239, 243)"
-    },
     "sc-bulkedit > div.bulk-edit > span.bulk-edit__pair": {
       "padding-top": "0px",
       "padding-right": "0px",
@@ -3614,22 +3598,6 @@
       "font-weight": "400",
       "line-height": "20px",
       "color": "rgb(79, 86, 99)",
-      "background-color": "rgba(0, 0, 0, 0)"
-    },
-    "sc-dangerzone > section.danger-zone > p-button > button.p-ripple": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
-      "gap": "7px",
-      "min-height": "0px",
-      "border-radius": "6px",
-      "border-top-width": "1px",
-      "border-bottom-width": "1px",
-      "font-size": "16px",
-      "font-weight": "500",
-      "line-height": "24px",
-      "color": "rgb(239, 68, 68)",
       "background-color": "rgba(0, 0, 0, 0)"
     }
   },

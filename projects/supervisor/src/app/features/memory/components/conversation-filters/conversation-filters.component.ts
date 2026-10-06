@@ -22,6 +22,7 @@ import {
 } from '../../data/conversation-filters.types';
 import { LanguageService } from '../../../../core/services/language.service';
 import { TypeFilterButtonComponent } from '../type-filter-button/type-filter-button.component';
+import { escapeSearch } from '@core/utils/escape-search';
 import { injectLangChange } from '@core/utils/lang-change';
 
 type QuickView = 'all' | 'pending' | 'failed';
@@ -227,6 +228,11 @@ export class ConversationFiltersComponent {
 
   protected setDateRange(dateRange: readonly (Date | null)[] | null): void {
     this.filters.update((f) => ({ ...f, dateRange }));
+  }
+
+  /** Escape, como en el buscador de las demás listas: con texto lo vacía y, vacío, lo suelta (DD-98). */
+  protected onSearchKey(event: KeyboardEvent): void {
+    escapeSearch(event, this.filters().query, () => this.setQuery(''));
   }
 
   protected setQuery(query: string): void {

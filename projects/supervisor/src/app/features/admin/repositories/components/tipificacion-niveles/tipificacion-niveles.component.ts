@@ -59,7 +59,7 @@ function cambiarHijas(
 }
 
 /**
- * LAS CATEGORÍAS DE UNA TIPIFICACIÓN (DD-173): una columna por nivel, como la maqueta de producto, y los niveles son las propias
+ * LAS CATEGORÍAS DE UNA TIPIFICACIÓN (DD-174): una columna por nivel, como la maqueta de producto, y los niveles son las propias
  * columnas. La siguiente que se puede usar sale como columna fantasma («+ Añadir segundo nivel»), y la última en uso
  * se quita con su ×. Sin categorías, la primera es la fantasma.
  *

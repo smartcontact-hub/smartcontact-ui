@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LO QUE VERÁ EL AGENTE: EL TELÉFONO DE SC-AGENT EN LA FICHA DE UNA TIPIFICACIÓN (DD-174).
+ * LO QUE VERÁ EL AGENTE: EL TELÉFONO DE SC-AGENT EN LA FICHA DE UNA TIPIFICACIÓN (DD-175).
  *
  * La revisión del 2026-10-05: a la derecha de la ficha, donde las fichas llevan su resumen, la sección de Tipificación
  * del teléfono del agente, con lo que se va definiendo y para probarla. Lo que fija:

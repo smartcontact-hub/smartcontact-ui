@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LA FICHA DE UNA TIPIFICACIÓN, SIN SALTOS (DD-173).
+ * LA FICHA DE UNA TIPIFICACIÓN, SIN SALTOS (DD-174).
  *
  * La revisión del 2026-10-05: el molde de las fichas con su índice, los niveles como columnas y ningún aviso que entre
  * empujando lo de debajo. Lo que fija:

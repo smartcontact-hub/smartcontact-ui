@@ -46,7 +46,7 @@ interface Fila {
 /**
  * Los grupos de una tipificación, dentro de su ficha: la tabla de los grupos de un agente
  * (`sc-group-assignment-table`) con su barra, buscar a la izquierda y «Añadir grupo…» a la derecha, y una columna por
- * familia de canales (DD-147). Sin «Habilitado» (DD-172): asignada ya es en uso, y para
+ * familia de canales (DD-147). Sin «Habilitado» (DD-173): asignada ya es en uso, y para
  * dejar de usarla está la papelera.
  *
  * Si en un grupo otra tipificación cubre la misma dirección por el mismo canal, la fila lo dice debajo del nombre:

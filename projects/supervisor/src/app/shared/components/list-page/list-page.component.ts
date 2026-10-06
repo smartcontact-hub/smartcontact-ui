@@ -40,6 +40,7 @@ import {
   type ScRowStyleClassFn,
   ScSearchComponent,
 } from '@smartcontact-hub/components';
+import { escapeSearch } from '@core/utils/escape-search';
 import { injectLangChange } from '@core/utils/lang-change';
 
 /** Id de columna reservado para la del menú de fila; ninguna pantalla puede usarlo. */
@@ -106,14 +107,17 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
  *   - si busca (`searchPlaceholder` + `searchFn`, y `[(query)]` si necesita lo tecleado), si elige columnas
  *     (`columnChoices` + `columnStorageKey`) y si exporta (`exportable` → `(exportRequest)` con las filas en
  *     el orden visible);
- *   - el menú de cada fila (`rowMenu`), qué pasa al abrir una (`rowOpenable` → `(rowOpen)`) y sus clases
- *     propias (`rowClass`);
- *   - la selección (`selectable`, `[(selectedIds)]`, `bulkEntity`) y sus acciones en lote
- *     (`[scListBulkActions]`);
+ *   - el menú de cada fila (`rowMenu`, con «⋮» o solo con clic derecho: `rowMenuColumn`), qué pasa al abrir una
+ *     (`rowOpenable` → `(rowOpen)`), sus clases propias (`rowClass`) y las de su tabla (`tableClass`);
+ *   - la selección (`selectable`, `[(selectedIds)]`, `bulkEntity`, y lo que dicen sus casillas: `selectRowKey`,
+ *     `selectAllKey`) y sus acciones en lote (`[scListBulkActions]`);
  *   - el vacío (`[scListEmpty]`, y `empty` si lo decide sobre algo más que las filas), la búsqueda sin
  *     resultados (`noResultsKey` o `[scListNoResults]`) y lo que vaya entre el título y la barra
  *     (`[scListBeforeToolbar]`: pestañas, avisos).
  * Los diálogos (borrar, edición en lote), los paneles y las acciones de verdad siguen en la pantalla.
+ *
+ * El gesto de fila es el de Conversaciones, la última en montarla (2026-10-05): la fila abre, la casilla selecciona
+ * (Mayúsculas, el tramo), Intro abre y Espacio selecciona, y Mayús+clic en la fila no abre nada.
  */
 @Component({
   selector: 'sc-list-page',
@@ -181,8 +185,12 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    */
   readonly importable = input(false, { transform: booleanAttribute });
 
-  /** Menú de una fila: el mismo con «⋮» y con clic derecho. Sin él, no hay columna de acciones. */
+  /** Menú de una fila: el mismo con «⋮» y con clic derecho. Sin él, no hay columna de acciones. Si una fila no tiene
+   *  acciones (el menú sale vacío), el clic derecho no abre nada: un menú vacío es peor que ninguno. */
   readonly rowMenu = input<((row: T) => MenuItem[]) | undefined>(undefined);
+  /** Con `false`, el menú de fila se abre solo con clic derecho, sin la columna «⋮» (Conversaciones: cada acción tiene
+   *  otra puerta visible). */
+  readonly rowMenuColumn = input(true, { transform: booleanAttribute });
 
   /** Si la fila se abre con clic y con Enter (puede depender de la fila: p. ej. mientras se renombra). */
   readonly rowOpenable = input<boolean | ((row: T) => boolean), boolean | '' | ((row: T) => boolean)>(false, {
@@ -197,7 +205,13 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   readonly rowLabel = input<(row: T) => string>((row) => String((row as { name?: unknown }).name ?? row.id));
   readonly selectedIds = model<ReadonlySet<T['id']>>(new Set());
 
+  /** Claves i18n de los nombres de las casillas: la de una fila recibe `{{name}}` (de `rowLabel`) e `{{id}}`. */
+  readonly selectRowKey = input('common.select_row');
+  readonly selectAllKey = input('common.select_all');
+
   readonly tableTestId = input<string | undefined>(undefined);
+  /** Clases de la tabla, para la piel propia de una pantalla (p. ej. `memory-conversations`). */
+  readonly tableClass = input('');
   /**
    * Ancho mínimo de la tabla (p. ej. `'65rem'`), la suma de lo que mide el dato de cada columna.
    * Por debajo, la tabla se desplaza de lado DENTRO de su caja en vez de recortar texto con
@@ -259,7 +273,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
       width: prefs?.widths[c.field] ?? c.width,
       reorderable: !locked.has(c.field),
     }));
-    if (!this.rowMenu()) return cols;
+    if (!this.rowMenu() || !this.rowMenuColumn()) return cols;
     this.lang(); // el nombre accesible de la columna de acciones, al día al cambiar de idioma
     return [
       ...cols,
@@ -341,7 +355,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected readonly visibleColumns = computed<readonly string[] | undefined>(() => {
     const prefs = this.columnPrefs();
     if (!prefs) return undefined;
-    return this.rowMenu() ? [...prefs.visible, ACTIONS_FIELD] : prefs.visible;
+    return this.rowMenu() && this.rowMenuColumn() ? [...prefs.visible, ACTIONS_FIELD] : prefs.visible;
   });
 
   /** El globo: qué columnas se ven. El orden no lo toca (se ordena arrastrando en el mismo globo). */
@@ -509,26 +523,38 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     };
   });
 
+  /* Mayús+clic en la fila no abre: quien encadena selecciones con Mayúsculas no espera que se le abra una ficha encima.
+   * El tramo de verdad sale de la casilla (lo gobierna `sc-datatable`). Medido el 2026-10-05: en Usuarios abría. */
   protected onRowClick(event: ScDatatableRowEvent<T>): void {
+    if (event.originalEvent.shiftKey) return;
     if (this.isOpenable(event.row)) this.rowOpen.emit(event.row);
   }
 
-  /* WCAG 2.1.1: si la fila se abre con el ratón, se abre con el teclado. Enter abre; Espacio se queda para
-   * la casilla. Solo con el foco en la FILA: un control de dentro (enlace del nombre, menú de estado, «⋮») ya
-   * tiene su acción, y su Enter sube hasta el `<tr>`. */
+  /* WCAG 2.1.1: si la fila se abre con el ratón, se abre con el teclado. Intro abre y Espacio selecciona, la
+   * convención de las listas de escritorio (hasta el 2026-10-05, Espacio no hacía nada fuera de Conversaciones). Solo
+   * con el foco en la FILA: un control de dentro (enlace del nombre, menú de estado, «⋮») ya tiene su acción, y su
+   * tecla sube hasta el `<tr>`. */
   protected onRowKeydown(event: ScDatatableRowKeyEvent<T>): void {
     const native = event.originalEvent;
-    if (native.key !== 'Enter' || (native.target as HTMLElement | null)?.tagName !== 'TR') return;
-    if (!this.isOpenable(event.row)) return;
-    event.originalEvent.preventDefault();
+    if ((native.target as HTMLElement | null)?.tagName !== 'TR') return;
+    if (native.key === ' ' && this.selectable()) {
+      native.preventDefault();
+      const next = new Set(this.selectedIds());
+      if (!next.delete(event.row.id)) next.add(event.row.id);
+      this.selectedIds.set(next);
+      return;
+    }
+    if (native.key !== 'Enter' || !this.isOpenable(event.row)) return;
+    native.preventDefault();
     this.rowOpen.emit(event.row);
   }
 
   /* ── Menú de fila: UNO para toda la tabla, el mismo con «⋮» y con clic derecho ─────────────── */
   private readonly menuTarget = signal<T | null>(null);
 
-  /** Estable: solo cambia al apuntar a otra fila (recrearlo en cada ciclo perdía el primer clic). */
+  /** Estable: solo cambia al apuntar a otra fila (recrearlo en cada ciclo perdía el primer clic) o de idioma. */
   protected readonly menuItems = computed<MenuItem[]>(() => {
+    this.lang();
     const row = this.menuTarget();
     const build = this.rowMenu();
     return row && build ? build(row) : [];
@@ -543,7 +569,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected onRowContextMenu(event: ScDatatableRowEvent<T>, menu: { toggle: (event: Event) => void }): void {
     if (!this.rowMenu()) return;
     this.menuTarget.set(event.row);
-    menu.toggle(event.originalEvent);
+    if (this.menuItems().length) menu.toggle(event.originalEvent);
   }
 
   /* ── Selección: la fuente de verdad son los ids (de ellos cuelgan la barra en lote y los diálogos) ── */
@@ -562,17 +588,14 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   }
 
   protected readonly rowAriaLabel = (row: T): string =>
-    this.translate.instant('common.select_row', { name: this.rowLabel()(row) });
+    this.translate.instant(this.selectRowKey(), { name: this.rowLabel()(row), id: row.id });
   protected readonly selectAllAriaLabel = computed(() => {
     this.lang();
-    return this.translate.instant('common.select_all');
+    return this.translate.instant(this.selectAllKey());
   });
 
-  /* Escape vacía la búsqueda; con la búsqueda vacía, suelta el foco. */
   protected onSearchKey(event: KeyboardEvent): void {
-    if (event.key !== 'Escape') return;
-    if (this.query()) this.query.set('');
-    else (event.target as HTMLInputElement).blur();
+    escapeSearch(event, this.query(), () => this.query.set(''));
   }
 
   /** El menú de importar y descargar, abierto: su botón lo dice (`aria-expanded`, en el `<button>` real). */

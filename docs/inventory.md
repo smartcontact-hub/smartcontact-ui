@@ -34,7 +34,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**56 componentes** · 18 custom · 12 standard · 26 extended · 45 usados en Supervisor.
+**56 componentes** · 23 custom · 8 standard · 25 extended · 45 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -42,8 +42,8 @@
 | `sc-avatargroup` | STANDARD | primeng/avatargroup | 0 inputs | — | — | — |
 | `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 6 |
 | `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
-| `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 3 |
-| `sc-bulk-edit-menu` | STANDARD | primeng/button | 2 inputs | sc-select | ✓ | 3 |
+| `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 2 |
+| `sc-bulk-edit-menu` | CUSTOM | — | 2 inputs | sc-select sc-button | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
 | `sc-button` | EXTENDED | primeng/button | 18 inputs | — | ✓ | 176 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
@@ -53,20 +53,20 @@
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | — |
 | `sc-command-palette` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | primeng/table | 34 inputs | — | ✓ | 16 |
+| `sc-datatable` | EXTENDED | primeng/table | 34 inputs | — | ✓ | 13 |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
-| `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 11 |
+| `sc-delete-entity-dialog` | CUSTOM | — | 2 inputs | sc-dialog sc-button | ✓ | 11 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 22 |
 | `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 33 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 10 inputs | — | ✓ | 2 |
 | `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 18 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
 | `sc-field-msg` | CUSTOM | — | 2 inputs | — | — | — |
-| `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
+| `sc-form-danger-zone` | CUSTOM | — | 3 inputs | sc-button | ✓ | — |
 | `sc-form-section-nav` | CUSTOM | — | 7 inputs | — | ✓ | 6 |
 | `sc-gauge` | CUSTOM | — | 9 inputs | — | ✓ | 1 |
 | `sc-group-popover` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 5 |
-| `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
+| `sc-impact-preview-dialog` | CUSTOM | — | 3 inputs | sc-dialog sc-button | ✓ | 3 |
 | `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | ✓ | 4 |
 | `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
 | `sc-inputnumber` | EXTENDED | primeng/inputtext | 17 inputs | sc-field-label sc-field-msg | ✓ | 10 |
@@ -76,19 +76,19 @@
 | `sc-multiselect` | EXTENDED | primeng/multiselect | 34 inputs | sc-field-label sc-field-msg | ✓ | 15 |
 | `sc-option-cards` | CUSTOM | — | 4 inputs | — | — | 1 |
 | `sc-panel` | EXTENDED | primeng/panel | 6 inputs | — | ✓ | 1 |
-| `sc-password` | EXTENDED | primeng/password | 19 inputs | sc-field-label sc-field-msg | ✓ | 1 |
+| `sc-password` | EXTENDED | primeng/config, primeng/inputpassword | 19 inputs | sc-field-label sc-field-msg | ✓ | 1 |
 | `sc-permission-matrix` | CUSTOM | — | 5 inputs | sc-checkbox | — | 2 |
 | `sc-photo-upload` | CUSTOM | — | 6 inputs | — | ✓ | 2 |
 | `sc-progressbar` | EXTENDED | primeng/progressbar | 4 inputs | — | ✓ | — |
 | `sc-progressspinner` | EXTENDED | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
-| `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 11 |
+| `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 12 |
 | `sc-section-card` | CUSTOM | — | 9 inputs | — | ✓ | 26 |
 | `sc-select` | EXTENDED | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 58 |
 | `sc-selectbutton` | EXTENDED | primeng/selectbutton | 14 inputs | — | ✓ | 13 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 4 inputs | — | ✓ | 8 |
-| `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 2 |
+| `sc-sticky-form-header` | CUSTOM | — | 4 inputs | sc-button | ✓ | 2 |
 | `sc-subsection` | CUSTOM | — | 5 inputs | — | ✓ | 4 |
 | `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | 27 |
 | `sc-textarea` | EXTENDED | primeng/textarea | 14 inputs | — | ✓ | 7 |

@@ -667,7 +667,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly conEtiquetas: boolean = false;
 
   /** Las tipificaciones, por su nombre. Un grupo puede tener varias mientras no cubran lo mismo: una para entrantes
-   *  y otra para salientes, o una para el teléfono y otra para el chat (DD-172). */
+   *  y otra para salientes, o una para el teléfono y otra para el chat (DD-173). */
   protected readonly typificationOptions = computed(() =>
     [...this.tipificacionesStore.items()]
       .sort((a, b) => a.name.localeCompare(b.name, 'es'))

@@ -5,6 +5,15 @@
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
+## ✅ 2026-10-05 · El panel de agentes del Monitor se lleva el foco, y Escape lo cierra (DD-168, actualización)
+
+> **Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `origin/main` `b4d1f145` (#339), en el PR de los lotes 5 a 9.
+
+**Qué cambia.** El panel rápido que abre «Agentes» en el widget «Grupos» es un `sc-drawer` modal, y el cajón ahora se
+anuncia como diálogo con su título («Agentes · <grupo>»), lleva el foco a su primer control al abrirse y lo devuelve a
+«Agentes» al cerrarse. Antes el foco se quedaba fuera, PrimeNG lo pintaba como `complementary` y Escape no cerraba sin
+tabular antes. Lo vigila `cajon-foco.spec.ts`, junto a `panel-agentes-monitor.spec.ts`.
+
 ## ✅ 2026-10-01 · Cada agente enseña en el Dashboard el estado que tiene en Administración
 
 > **Sello: rama `areses/kind-liskov-9cae8c`, sobre `origin/main` HEAD `74583514` (con #295 fundido encima: su DD-138
@@ -29,7 +38,7 @@ clic y la prueba se iba antes, con el botón ya apagado (cargando). Ahora espera
 listado ya enseña el estado nuevo. La prueba de DD-129 lee sus cifras de la tabla del primer monitor en vez de fijar 9 y 5.
 La suite entera del Supervisor, 413 de 414: el que cayó es el selector de columnas del listado de agentes
 (`column-selector-order.spec.ts:49`, «Element is not visible» al pulsar con el desplegable abriéndose), que este cambio
-no toca y que pasó 9 de 9 corrido solo; queda propuesto como tarea aparte.
+no toca y que pasó 9 de 9 corrido solo. Cerrado: lo arregló #299, y la prueba se borró en #325 con el selector nuevo (DD-162).
 
 ## ✅ 2026-09-28 · El detalle de una cifra ya no corta el tiempo por la derecha
 
@@ -115,6 +124,8 @@ Persiste en `localStorage` (`sc-dashboard-monitors`, versión 1).
   nombre a su id y `GroupsStore` al grupo de hoy, así que un grupo renombrado en Administración se sigue encontrando. Un
   widget nuevo que nombre grupos pasa por esa tabla; buscar un grupo por su nombre se pierde al renombrarlo.
 - ⚠️ Una prueba de scroll lateral mide `main#main-content`, no `documentElement` (el scroll de la app vive ahí).
+- ⚠️ El foco de un panel lateral lo lleva y lo devuelve `sc-drawer` modal (DD-168, actualización): un panel nuevo sobre
+  el cajón no lo repite a mano, o se pelearán al cerrar.
 - ⚠️ `lint` y `usage:check` a mano antes del `preflight`: a #184 le costó tres vueltas.
 - ⚠️ Un `output` llamado `select` choca con el evento nativo; por eso las pestañas avisan con `activate`.
 - ⚠️ En una celda de `sc-datatable` (tabla automática), `min-width: 0` y `overflow: hidden` no bastan: un texto
