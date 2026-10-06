@@ -581,7 +581,7 @@
   "gated": [
     {
       "selector": "sc-avatar",
-      "usedInSupervisor": 1
+      "usedInSupervisor": 3
     },
     {
       "selector": "sc-empty-state",

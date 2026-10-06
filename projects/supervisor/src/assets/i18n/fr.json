@@ -1247,7 +1247,14 @@
         "reglas_ia": "Règles métier appliquées au moteur d'intelligence artificielle",
         "entidades_ia": "Entités sémantiques gérées par modèles de langage",
         "clasificacion_ia": "Modèles de classification automatique de conversations"
-      }
+      },
+      "all": "Tous",
+      "filter": "Filtrer par catégorie",
+      "open": "Ouvrir le référentiel",
+      "entries": "{{count}} entrées",
+      "entries_one": "1 entrée",
+      "no_entries": "Aucune pour le moment.",
+      "recent": "Récents"
     },
     "agendas": {
       "title": "Carnets",

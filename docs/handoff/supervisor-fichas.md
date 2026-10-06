@@ -27,12 +27,14 @@ f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/
 (DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. Y el de la
 revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
 fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
-`git show 4217ed41:docs/handoff/supervisor-fichas.md`. El de sc-docs y el peso de los iconos (#330, sin DD nueva ni
-trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`.
+`git show 4217ed41:docs/handoff/supervisor-fichas.md`. Y el de sc-docs y el peso de los iconos (#330, sin
+trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`. El de Accesibilidad pendiente (#332, sin DD nueva ni trampas
+propias): `git show 540f246c:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-06 · Ordenar por cualquier columna, la barra de los listados y las casillas de cada columna (DD-180 y DD-181)
 
-> **Sello:** rama `arebury/pearlside` sobre `main` en `3ff6cd71`; un commit en rojo y otro en verde por bloque (DD-154).
+> **Sello:** rama `arebury/pearlside`, con `main` dentro hasta #347 (`540f246c`); un commit en rojo y otro en verde por
+> bloque (DD-154).
 > Sale de una conversación con Figma Make sobre las tablas: lo que pidió la revisión, no lo que propuso Figma Make.
 
 - **1 · Ordenar (DD-180):** Grupos, por todas sus columnas (faltaban Teléfono, Canales y Servicios); Agentes, por todas
@@ -50,6 +52,35 @@ trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`.
   `tabla-agentes-compacta` (en rojo antes del bloque 3), las vecinas de los listados (145) y de la ficha y el panel
   (cinco pruebas fijaban los anchos de antes y se ponen al día: el panel crece lo que suman las casillas), y `revision`
   de los dos listados y la ficha de grupo, en regla.
+
+## ✅ 2026-10-06 · Repositorios en tarjetas por grupo, con su panel (DD-179), en su PR
+
+> **Sello:** rama `arebury/premium-repository-hub-redesign` sobre `main` en `3ff6cd71`. **Un PR, un commit en rojo y
+> otro en verde (DD-154).** Sale de una maqueta de Figma Make («Premium Repository Hub»), estudiada en su código y su
+> comportamiento con `impeccable` y `better-ui`, e iterada en local antes de subir.
+
+- **El hub, en tarjetas por grupo:** icono, cifra, nombre y descripción; la rejilla de cuatro, tres o dos según el
+  grupo, y los grupos de dos juntos en una fila. Cabe sin desplazar a 1440 × 800 y 1366 × 768, en los cuatro idiomas.
+- **Un tono por grupo**, de los de etiqueta del DS (azul, morado, teal y naranja): el título, el icono, la cifra, el
+  borde al pasar y al marcar, el filtro elegido y el panel. Un icono por concepto (`sell` y `category`).
+- **El panel**, acoplado bajo la barra de la app: lo que hay dentro, de verdad, y «Abrir repositorio» arriba. Lo cierran
+  la X, Escape, su tarjeta y un clic fuera; con velo solo si taparía tarjetas, medido al abrir.
+- **El filtro por grupo** con transición del navegador y **los recientes** en el buscador vacío.
+- **En el DS:** `sc-drawer` `docked`, `sc-avatar` `labelColor` y `sc-tag` `bordered`, con su ejemplo en sc-docs y su
+  línea en el CHANGELOG.
+- **En local, en verde:** las 9 del hub (las 9 en rojo contra `main`, y las del clic fuera y el velo, también con el
+  fallo puesto a propósito); las guardas de la ruta (contraste en los dos temas, foco, iconos, identidad, agrupación y
+  piezas hechas a mano); el contraste de icono y título, medido a mano; `revision` en regla.
+
+**Trampas del lote:**
+- **`npm run revision` mide 0 relaciones en tarjetas** (y en los títulos de grupo del `Menu`): el aire entre grupos se
+  mide a mano, entre cajas de texto.
+- **`dismissible` de `p-drawer` solo cierra al pulsar el velo**: sin modal, el clic fuera lo pone la página.
+- **Un «clic fuera» a una coordenada puesta a ojo cayó dentro del panel acoplado** (empieza en 1090 a 1440) y navegó:
+  se pulsa un elemento de fuera (el `h1`), no un punto.
+- **Tocar un comentario de un componente del DS lo deja más nuevo que `dist/`**, y el hook no deja medir con
+  Playwright: reconstruye y reinicia el `ng serve`.
+- **`p-avatar` no tiene entrada de estilo**: el tono va con `[style.background]` sobre su elemento, que gana al tema.
 
 ## ✅ 2026-10-06 · El pulido de las fichas (DD-176), en un lote de ocho bloques, fundido (#341)
 
@@ -154,36 +185,18 @@ trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`.
   las vecinas del 1 (107), los barridos de las rutas tocadas (36) y `revision` del Dashboard y de las fichas (18 vistas,
   en regla), con el menú y el panel abiertos desde el Monitor en una sonda aparte.
 
-## ✅ 2026-10-05 · Accesibilidad pendiente, en un lote de seis bloques, fundido (#332)
-
-> **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sin DD nueva: cada bloque cierra lo que dejó abierto
-> una DD, con su «Actualización (2026-10-05)»: DD-133, DD-135, DD-136, DD-146 y DD-162.**
-
-- **1 · Cada desplegable con nombre:** PrimeNG nombra un combobox sin nombre con la opción elegida, y un `<label for>`
-  no nombra el span de `sc-select` (sí el `<input>` de `sc-multiselect`). `sc-select` gana `ariaLabel` (el nativo) y
-  sus opciones apagadas dicen `aria-disabled`. `audit:screen-hygiene` gana la regla: cazó 31 de 119; quedan 0.
-- **2 · Las ayudas se anuncian con su campo:** seis campos del DS ganan `ariaDescribedBy` (`joinDescribedBy`), y
-  `sc-multiselect` lleva sus `aria-*` al combobox. 42 ayudas de las fichas, Contact Center y Sistema llevan su id.
-- **3 · El marcador de la foto, a 3:1:** `--sc-icon-secondary` (3,96:1). Las altas de agente y usuario, en `RUTAS`.
-- **4 · El enlace del resumen se pulsa en 24:** el `::after` de la cifra de `sc-group-popover`.
-- **5 · Ordenar columnas sin arrastrar:** con el teclado no se llegaba al globo. Ahora el foco entra en la lista,
-  «Subir» y «Bajar» mueven la última enfocada y Escape vuelve al icono; dos arreglos alrededor del Listbox (abajo).
-- **6 · Subtítulos sin relleno:** fuera «Capacidades del agente» y «Comportamiento, integración y sesión».
-- **En local, en verde:** las pruebas de cada bloque (rojas antes), sus vecinas y barridos, y `revision` de las 32
-  vistas, en regla. `visual-baselines` regeneró cinco capturas de sc-docs (select, multiselect, inputnumber, textarea
-  y toggleswitch), miradas una a una.
-- **Fundido:** #332 → `f41d3ce6`. De punta a punta, 2 h 21 min (`npm run tiempos -- 332 --desde 08:16`); el CI del PR,
-  8 min, verde a la primera.
-
 ## SIGUIENTE — sin preguntar
 
-0. **El pulido de las fichas (DD-176), fundido (#341).** Queda en Figma: la ficha de agente y la de usuario en tres
+0. **Repositorios en tarjetas (DD-179), en su PR.** Queda en Figma (`figma-pendiente`, la ficha de DD-179) y, para
+   producto, fuera de lote: el oscuro en slate en vez de zinc (DD-79) y los grises de texto un paso más oscuros en
+   claro (DD-106), que el análisis de la maqueta propuso y cambian todo el producto.
+1. **El pulido de las fichas (DD-176), fundido (#341).** Queda en Figma: la ficha de agente y la de usuario en tres
    columnas (`figma-pendiente` §35) y el color marrón de etiqueta (§36b).
-1. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).** Queda, fuera del lote: las Reglas de Conversaciones
+2. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).** Queda, fuera del lote: las Reglas de Conversaciones
    con su propia copia de las tipificaciones (`entity-catalog.ts`), Supervisión › Tipificaciones vacía, y dos
    preguntas para producto (en el tramo de DD-177): el chat sin niveles en sc-agent, y la lista que abre cada
    píldora del teléfono, que es una propuesta: sc-agent ya pinta un botón por nivel, pero la réplica no dice qué abre.
-2. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
+3. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
    CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
    espera a otros (producto, Figma, devs o el portátil). Con Tipificaciones fundido, en este frente no queda nada
    que dependa de nosotros; lo de fuera de lote, abajo.
