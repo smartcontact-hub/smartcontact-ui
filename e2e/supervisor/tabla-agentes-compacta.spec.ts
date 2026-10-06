@@ -9,7 +9,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * de lado. El hueco estaba en las columnas de casillas: todas a 104 o 100, para rótulos de 32 a 72 y una casilla de 16.
  * Y paginaba de 10 en 10 (DD-151, sin un porqué), cuando la tabla ya desplaza por dentro con la cabecera fija y llega
  * al pie de la pantalla (DD-160). Lo que fija:
- *   1. A 1440, con tres canales y sin niveles, la tabla cabe en su caja: no desplaza de lado.
+ *   1. A 1440, con uno o dos canales y sin niveles, la tabla cabe en su caja; con tres desplaza 59 px (DD-181).
  *   2. Cada columna de casillas mide su rótulo: Chat y Email, más estrechas que Teléfono.
  *   3. Sin paginación: están todas las filas del filtro, y lo que no cabe lo desplaza la tabla por dentro.
  */
@@ -21,15 +21,24 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-test('a 1440, con tres canales, la tabla de agentes cabe sin desplazar de lado', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await goto(page, 'admin/grupos/editar/11?seccion=agentes');
-  const caja = page.locator('sc-agent-channel-table .p-datatable-table-container');
-  await caja.locator('tbody tr').first().waitFor();
-  await page.evaluate(() => document.fonts.ready);
-  const m = await caja.evaluate((c) => ({ caja: c.clientWidth, tabla: c.scrollWidth }));
-  expect(m.tabla, `la tabla (${m.tabla}) cabe en su caja (${m.caja})`).toBeLessThanOrEqual(m.caja);
-});
+/* Con las casillas de «todos» en cada columna (DD-181), las de canales y Habilitado ganan 23 px cada una: a 1440 caben
+ * uno o dos canales (el grupo 12, Teléfono y Chat), y con los tres (el 11) la tabla desplaza 59 px de lado, sin cortar
+ * ningún nombre de la semilla. */
+for (const [grupo, desplaza] of [[12, 0], [11, 59]] as const) {
+  test(`a 1440, en el grupo ${grupo}, la tabla de agentes desplaza de lado ${desplaza} px como mucho`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await goto(page, `admin/grupos/editar/${grupo}?seccion=agentes`);
+    const caja = page.locator('sc-agent-channel-table .p-datatable-table-container');
+    await caja.locator('tbody tr').first().waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    const m = await caja.evaluate((c) => ({ caja: c.clientWidth, tabla: c.scrollWidth }));
+    expect(m.tabla - m.caja, `la tabla (${m.tabla}) en su caja (${m.caja})`).toBeLessThanOrEqual(desplaza);
+    const cortados = await page.locator('sc-agent-channel-table .assign__name-label').evaluateAll((ns) =>
+      ns.filter((n) => n.scrollWidth > n.clientWidth).map((n) => n.textContent),
+    );
+    expect(cortados, 'ningún nombre de la semilla se corta').toEqual([]);
+  });
+}
 
 test('cada columna de casillas mide su rótulo', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');

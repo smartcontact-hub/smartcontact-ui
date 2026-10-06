@@ -30,19 +30,24 @@ fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #3
 `git show 4217ed41:docs/handoff/supervisor-fichas.md`. El de sc-docs y el peso de los iconos (#330, sin DD nueva ni
 trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-06 · Ordenar por cualquier columna y la barra a una altura (DD-180)
+## ✅ 2026-10-06 · Ordenar por cualquier columna, la barra de los listados y las casillas de cada columna (DD-180 y DD-181)
 
-> **Sello:** rama `arebury/pearlside` sobre `main` en `3ff6cd71`; un commit en rojo y otro en verde (DD-154). Sale de
-> una conversación con Figma Make sobre las tablas: lo que pidió la revisión, no lo que propuso Figma Make.
+> **Sello:** rama `arebury/pearlside` sobre `main` en `3ff6cd71`; un commit en rojo y otro en verde por bloque (DD-154).
+> Sale de una conversación con Figma Make sobre las tablas: lo que pidió la revisión, no lo que propuso Figma Make.
 
-- **Grupos se ordena por todas sus columnas** (faltaban Teléfono, Canales y Servicios) y **Agentes por todas menos
-  Estado**, que cambia sola (faltaban Canales y Grupos). Canales, por cuántos tiene la fila y, con los mismos, por
-  cuáles (`compareChannels`, en `groups-data.ts`).
-- **Cada cabecera cabe con su flecha** en los cuatro idiomas: cinco se salían (la peor, «Groupes», 16 px; «Prioridade»
-  ya se salía 5 en `main`). Ensanchadas lo justo y sin desplazamiento lateral a 1440.
-- **«Columnas», a la altura del buscador** (32,5; medía 27): enmienda DD-176 §7, en las diez listas de `sc-list-page`.
-- **En local, en verde:** `listados-ordenar-columnas.spec.ts` (6, en rojo contra `main`: sin orden, el botón a 27 y
-  «Prioridade»), y las vecinas de los listados.
+- **1 · Ordenar (DD-180):** Grupos, por todas sus columnas (faltaban Teléfono, Canales y Servicios); Agentes, por todas
+  menos Estado, que cambia sola (faltaban Canales y Grupos). Canales, por cuántos tiene la fila y, con los mismos, por
+  cuáles (`compareChannels`, en `groups-data.ts`). Cinco cabeceras se salían con su flecha en algún idioma (la peor,
+  «Groupes», 16 px; «Prioridade» ya se salía 5 en `main`): ensanchadas lo justo, sin desplazamiento lateral a 1440.
+  «Columnas», a la altura del buscador (32,5; medía 27): enmienda DD-176 §7.
+- **2 · La barra, en dos grupos (DD-180 §4):** Columnas a 12,25 del buscador (estaba a 24,5) y la descarga con solo el
+  aire de su separador, 14 por lado (estaba a 53,5). El globo de Columnas y el menú de archivo son nodos vacíos en la
+  barra y sumaban un hueco de flex cada uno.
+- **3 · Las casillas de cada columna (DD-181):** en la tabla de agentes del grupo, cada canal y Habilitado llevan su
+  casilla de «todos» delante del rótulo, como Asignado (enmienda DD-176 §4). Un canal nunca se lleva el último de una
+  fila. **Coste:** con los tres canales (Online Support) la tabla desplaza 59 px a 1440.
+- **En local, en verde:** `listados-ordenar-columnas.spec.ts` (7, en rojo contra `main`), `asignacion-agentes-lista` y
+  `tabla-agentes-compacta` (en rojo antes del bloque 3), y las vecinas de los listados (145).
 
 ## ✅ 2026-10-06 · El pulido de las fichas (DD-176), en un lote de ocho bloques, fundido (#341)
 
