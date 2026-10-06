@@ -281,8 +281,9 @@ export class AgentsListPageComponent {
         header: this.translate.instant('agents.table.recording'),
         sortable: true,
         cellTemplate: this.recordingTpl(),
-        /* La cabecera en francés, «Enregistrement», con su flecha de orden. */
-        width: '9.5rem',
+        /* La cabecera en francés, «Enregistrement», con su flecha de orden. Con 9,5rem le sobraban 1,5 px en macOS y en el CI
+         * se salía 1 (las letras pintan más anchas en Linux): 4 px de margen, como las demás (2026-10-06). */
+        width: '9.75rem',
       },
       {
         field: 'groups',

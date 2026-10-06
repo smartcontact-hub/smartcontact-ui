@@ -177,8 +177,9 @@ Grupos, sin una razón escrita: eran las que llevaban `scSortable` antes de pasa
    el número, y un grupo sin Teléfono («—») va como vacío, como las estrategias.
 2. **Cada cabecera cabe con su flecha**, en los cuatro idiomas: Teléfono y Prioridad pasan a 7,625rem («Téléphone»,
    118 px; «Prioridade», 117, que ya se salía 5 antes), Servicios a 7,25 («Servicios», 111); en Agentes, Canales a
-   7,25 («Channels», 111) y Grupos a 6,875 («Groupes», 105, se salía 16). Los mínimos de tabla suben lo mismo (98,75
-   y 100,125rem). Medido a 1440: ninguna de las dos tablas desplaza de lado.
+   7,25 («Channels», 111), Grupos a 6,875 («Groupes», 105, se salía 16) y Grabación a 9,75 («Enregistrement», que en
+   el CI se salía 1 px: Linux pinta las letras algo más anchas). Los mínimos de tabla suben lo mismo (98,75 y
+   100,375rem). Medido a 1440: ninguna de las dos tablas desplaza de lado.
 3. **El botón «Columnas», a la altura del buscador de su barra**: el tamaño normal del botón, no `small` (enmienda
    DD-176 §7). Los dos, 32,5, en las diez listas que monta `sc-list-page`.
 4. **La barra, en dos grupos**: lo que cambia la vista (Columnas y el buscador, a `0-875`, 12,25, como dos hermanos) y lo
