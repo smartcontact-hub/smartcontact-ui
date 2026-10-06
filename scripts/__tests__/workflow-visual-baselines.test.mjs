@@ -79,3 +79,19 @@ test('el lector enrojece con el fallo del robot y se calla con la variable puest
   assert.deepEqual(smokeStepsWithoutSkip(roto.replace('npm run e2e', 'npm run e2e:visual')), []);
   assert.deepEqual(smokeStepsWithoutSkip(roto.replace('ubuntu-latest', 'macos-latest')), []);
 });
+
+/** Grupo de `concurrency` de nivel superior de un workflow (o null). */
+export function grupoDeConcurrencia(yml) {
+  return /^concurrency:\s*\n\s+group:\s*(.+)$/m.exec(yml)?.[1].trim() ?? null;
+}
+
+/*
+ * Una cola por rama: con un grupo fijo, la regeneración de una rama esperaba detrás de la de
+ * otra y GitHub cancelaba la que quedaba pendiente si llegaba una tercera. El 2026-10-05 la
+ * ejecución 20 (rama del #342) murió así sin llegar a correr: ~30 min perdidos (DD-175).
+ */
+test('visual-baselines encola por rama y no cancela la que corre', () => {
+  const yml = readFileSync(join(workflowsDir, 'visual-baselines.yml'), 'utf8');
+  assert.match(grupoDeConcurrencia(yml) ?? '', /inputs\.rama/, 'el grupo de concurrency tiene que incluir inputs.rama');
+  assert.match(yml, /^\s+cancel-in-progress:\s*false\s*$/m);
+});
