@@ -167,7 +167,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 ## ✅ 2026-10-06 · Lote 10 · velocidad: cola de capturas por rama, «sin máquina», aviso de estilos y DD libre (DD-175)
 
-**Sello:** rama `claude/lote-10-velocidad`, sobre `99534623` (#342), PR nuevo. Sale por el tope el tramo del 2026-10-04
+**Sello:** rama `claude/lote-10-velocidad`, sobre HEAD `99534623` (#342), PR nuevo. Sale por el tope el tramo del 2026-10-04
 (DD-154 y DD-155): `git show 99534623:docs/handoff/design-system.md`.
 
 **Lo que cambia.** Cuatro huecos que en el #342 costaron colas y un CI de más (DD-175): `visual-baselines` encola por
