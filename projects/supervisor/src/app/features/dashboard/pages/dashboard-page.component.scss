@@ -67,8 +67,8 @@
     white-space: nowrap;
   }
 
-  &__updated::before {
-    content: '· ';
+  &__live-label::after {
+    content: ',';
   }
 
   &__carousel {

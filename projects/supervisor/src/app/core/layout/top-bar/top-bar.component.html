@@ -76,9 +76,7 @@
           <div class="top-bar__menu-meta">
             <span class="top-bar__menu-name sc-text-body-semibold">{{ userName }}</span>
             <span class="top-bar__menu-role">
-              {{ 'topbar.user.role_admin' | translate }}
-              <span class="top-bar__menu-sep" aria-hidden="true">·</span>
-              {{ userPhone }}
+              {{ 'topbar.user.role_admin' | translate }}, {{ userPhone }}
             </span>
           </div>
           <sc-button class="top-bar__menu-shortcut" variant="secondary" appearance="text" size="sm" icon="keyboard" [ariaLabel]="'topbar.keyboard_shortcuts' | translate" [attr.title]="'topbar.keyboard_shortcuts' | translate" (clicked)="openShortcuts()" />

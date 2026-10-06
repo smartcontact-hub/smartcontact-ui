@@ -54,10 +54,10 @@ test('Chat: distribución, cola, y por subcanal sus mensajes, su horario y su ac
   expect(await partes(page.locator('#group-channel-chat'))).toEqual([
     'Distribución',
     'Cola',
-    'Web Chat · mensajes inicial y final',
-    'Web Chat · horario',
-    'Web Chat · dominios y scripts',
-    'WhatsApp · número',
+    'Mensajes de Web Chat',
+    'Horario de Web Chat',
+    'Dominios y scripts de Web Chat',
+    'Acceso WhatsApp',
   ]);
 });
 

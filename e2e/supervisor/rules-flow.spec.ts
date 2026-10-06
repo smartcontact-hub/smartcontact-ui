@@ -102,7 +102,7 @@ test('cross-link: la categoría llega preseleccionada al constructor y queda vin
   // de la propia tabla para que el test no fije el copy.
   const categoryId = 'cat_queja_facturacion';
   await goto(page, 'conversaciones/categorias');
-  const categoryName = (await page.locator('tbody tr td').first().innerText()).split('·')[0].trim();
+  const categoryName = (await page.locator('tbody tr .categories-table__name').first().innerText()).trim();
 
   await goto(page, `conversaciones/reglas/nueva?type=classification&categoria=${categoryId}`);
 

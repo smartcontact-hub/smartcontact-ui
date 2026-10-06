@@ -86,13 +86,15 @@ export const VOICE_OPTIONS: readonly string[] = [
 
 /** Cómo se llamaban las cuatro voces de antes: lo guardado con ellas se lee con la voz de su idioma. */
 const LEGACY_VOICES: Readonly<Record<string, string>> = {
-  'Femenina · español': 'Monica (femenino, Español)',
-  'Masculina · español': 'Jorge (masculino, Español)',
-  'Femenina · inglés': 'Allison (femenino, Inglés)',
-  'Masculina · inglés': 'Ethan (masculino, Inglés)',
+  'Femenina, español': 'Monica (femenino, Español)',
+  'Masculina, español': 'Jorge (masculino, Español)',
+  'Femenina, inglés': 'Allison (femenino, Inglés)',
+  'Masculina, inglés': 'Ethan (masculino, Inglés)',
 };
+/** El punto medio de antes (DD-183) se lee como la coma de ahora. */
 export function voiceOf(stored: string): string {
-  return LEGACY_VOICES[stored] ?? stored;
+  const sinPuntoMedio = stored.replace(' \u00b7 ', ', ');
+  return LEGACY_VOICES[sinPuntoMedio] ?? sinPuntoMedio;
 }
 
 /** Un anuncio periódico: su .wav y cada cuánto suena. Postventa, 2026-09-18: «posibilidad de meter más de uno». */

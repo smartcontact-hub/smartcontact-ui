@@ -166,7 +166,7 @@
     },
     "tabs": {
       "aria": "Monitores",
-      "hint": "Doble clic para renombrar · arrastra para reordenar",
+      "hint": "Doble clic para renombrar, arrastra para reordenar",
       "rename": "Renombrar",
       "rename_aria": "Nombre del monitor",
       "duplicate": "Duplicar",
@@ -277,12 +277,12 @@
       },
       "status": {
         "call": "Llamada",
-        "call_recorded": "Llamada · grabada",
-        "call_transcribed": "Llamada · grabada y transcrita",
-        "call_analyzed": "Llamada · grabada, transcrita y analizada",
+        "call_recorded": "Llamada: grabada",
+        "call_transcribed": "Llamada: grabada y transcrita",
+        "call_analyzed": "Llamada: grabada, transcrita y analizada",
         "chat": "Chat",
-        "chat_transcribed": "Chat · transcrito",
-        "chat_analyzed": "Chat · analizado",
+        "chat_transcribed": "Chat: transcrito",
+        "chat_analyzed": "Chat: analizado",
         "transcribing": "Transcribiendo…",
         "analyzing": "Analizando…",
         "failed": "Transcripción fallida",
@@ -349,7 +349,7 @@
     "type_filter": {
       "label": "Más filtros",
       "aria_default": "Filtros de tipo y estado",
-      "aria_active": "Filtros de tipo y estado · activos",
+      "aria_active": "Filtros de tipo y estado activos",
       "panel_title": "Más filtros",
       "reset": "Limpiar",
       "groups": {
@@ -434,19 +434,19 @@
         "no_transcription_desc": "Genera el texto para buscar dentro de la conversación y dejar el análisis disponible.",
         "transcribe_btn": "Transcribir",
         "transcribing_btn": "Solicitando…",
-        "transcribe_cost": "Genera coste · ~30 s",
+        "transcribe_cost": "Genera coste, ~30 s",
         "transcription_empty_title": "Transcripción vacía",
         "transcription_empty_desc": "El procesado terminó sin extraer líneas. Suele pasar con audios muy cortos o con silencios largos.",
         "ready_title": "Lista para analizar",
         "ready_desc": "Resumen accionable y valoración de sentimiento sobre la transcripción existente.",
         "ready_btn": "Solicitar análisis",
         "requesting_btn": "Solicitando…",
-        "ready_cost": "Genera coste · ~10 s",
+        "ready_cost": "Genera coste, ~10 s",
         "deadend_title": "Pendiente de transcribir y analizar",
         "deadend_desc": "El análisis necesita texto. Lanzamos la transcripción y, en cuanto termine, generamos resumen y sentimiento.",
         "deadend_btn": "Transcribir y analizar",
         "processing_btn": "Procesando…",
-        "deadend_cost": "Genera coste · transcripción + análisis"
+        "deadend_cost": "Genera coste: transcripción + análisis"
       },
       "processing": {
         "transcribing_title": "Transcribiendo",
@@ -696,11 +696,11 @@
           "impact_title": "Impacto estimado",
           "impact": "Afectaría a {{count}} de las últimas {{total}} conversaciones.",
           "impact_note": "tipificación y categoría se evalúan en backend",
-          "est_projection": "≈ {{day}} al día · ≈ {{month}} al mes, a este ritmo.",
+          "est_projection": "≈ {{day}} al día, ≈ {{month}} al mes, a este ritmo.",
           "pick_all": "Todos",
-          "pick_all_hint": "· incluye nuevos",
+          "pick_all_hint": "incluye nuevos",
           "search": "Buscar…",
-          "pick_all_row": "Todos · se aplica a cualquiera, incluidos los nuevos.",
+          "pick_all_row": "Todos: se aplica a cualquiera, incluidos los nuevos.",
           "pick_manual": "Elegir manualmente",
           "pick_groups": "Grupos (sus miembros)",
           "enabled_members": "{{count}} agentes habilitados",
@@ -897,7 +897,7 @@
       "analyzing": "Generando análisis IA de {{n}} conversaciones…",
       "success": "{{n}} conversaciones procesadas correctamente",
       "all_failed": "{{n}} transcripciones fallaron. Revisa 'Solo fallidas' para reintentarlas.",
-      "partial": "{{ok}} procesadas · {{ko}} fallaron. Revisa 'Solo fallidas' para reintentarlas."
+      "partial": "{{ok}} procesadas, {{ko}} fallaron. Revisa 'Solo fallidas' para reintentarlas."
     }
   },
   "common": {
@@ -1475,7 +1475,7 @@
       "rename_field": "Nuevo nombre de la opción",
       "add_first": "Añadir opción…",
       "add_under": "Añadir en «{{name}}»…",
-      "renaming_hint": "Enter guarda el nombre · Esc cancela",
+      "renaming_hint": "Enter guarda el nombre, Esc cancela",
       "level_needs": "«{{name}}» necesita opciones aquí",
       "option_actions": {
         "group": "Acciones de {{name}}",
@@ -1650,7 +1650,7 @@
       "edit_breadcrumb": "Editar usuario",
       "duplicate_title": "Duplicar usuario",
       "duplicate_breadcrumb": "Duplicar usuario",
-      "duplicate_hint": "Duplicando «{{source}}» · rellena los campos obligatorios y guarda",
+      "duplicate_hint": "Duplicando «{{source}}»: rellena los campos obligatorios y guarda",
       "section": {
         "summary": "Resumen de perfil",
         "identity": "Identidad",
@@ -1745,7 +1745,7 @@
       "services": "Servicios",
       "agents": "Agentes",
       "agents_count": "{{count}} agentes",
-      "agents_assign_aria": "{{count}} agentes · Asignar agentes de {{name}}",
+      "agents_assign_aria": "{{count}} agentes. Asignar agentes de {{name}}",
       "services_count": "{{count}} servicios",
       "services_count_one": "1 servicio",
       "strategy_phone": "Estrategia de teléfono",
@@ -1770,7 +1770,7 @@
       "edit_breadcrumb": "Editar grupo",
       "duplicate_title": "Duplicar grupo",
       "duplicate_breadcrumb": "Duplicar grupo",
-      "duplicate_hint": "Duplicando «{{source}}» · rellena los campos obligatorios y guarda",
+      "duplicate_hint": "Duplicando «{{source}}»: rellena los campos obligatorios y guarda",
       "section": {
         "identity": "Identidad",
         "identity_hint": "Datos básicos y prioridad",
@@ -1808,7 +1808,7 @@
         "add_aria": "Añadir agente al grupo",
         "no_channels_warn": "{{count}} sin canal",
         "bulk_unassign": "Quitar del grupo",
-        "col_level": "Nivel · {{channel}}",
+        "col_level": "Nivel {{channel}}",
         "level_aria": "Nivel de {{name}} — {{channel}}",
         "paused": "Deshabilitado",
         "last_channel_hint": "Debe atender al menos un canal. Para quitarlo del grupo, desmarca Asignado.",
@@ -1938,7 +1938,7 @@
         "card_url_hint": "Si no empieza por https, se abre en una ventana nueva.",
         "card_height": "Alto",
         "chat_config_title": "Configuración de chat",
-        "whatsapp_number": "Número de WhatsApp",
+        "whatsapp_number": "Número WhatsApp",
         "chat_rating": "Pedir valoración al cerrar el chat",
         "chat_rating_info": "Al terminar la conversación, se le pregunta al cliente si quedó satisfecho con la atención.",
         "chat_rating_hint": "Una pregunta corta de valoración al despedirse.",
@@ -1982,16 +1982,16 @@
         "queue": "Cola",
         "queue_messages": "Mensajes en cola",
         "queue_messages_hint": "Lo que oye el cliente al entrar, al esperar y antes de que le atiendan. Casi nunca se cambia.",
-        "webchat_access": "Web Chat · dominios y scripts",
-        "whatsapp_number": "WhatsApp · número",
+        "webchat_access": "Dominios y scripts de Web Chat",
+        "whatsapp_number": "Acceso WhatsApp",
         "email_note": "Email no tiene estrategia ni cola propias: los correos llegan a la bandeja del grupo.",
-        "inactive": "{{channel}} no está activo · actívalo en General",
+        "inactive": "{{channel}} no está activo: actívalo en General",
         "jump_label": "Ir a",
         "jump_aria": "Canales de esta sección",
-        "webchat_messages": "Web Chat · mensajes inicial y final",
-        "webchat_schedule": "Web Chat · horario",
-        "whatsapp_messages": "WhatsApp · mensajes inicial y final",
-        "whatsapp_schedule": "WhatsApp · horario"
+        "webchat_messages": "Mensajes de Web Chat",
+        "webchat_schedule": "Horario de Web Chat",
+        "whatsapp_messages": "Mensajes de WhatsApp",
+        "whatsapp_schedule": "Horario de WhatsApp"
       },
       "chat": {
         "close_on_inactivity": "Caducar sesión",
@@ -2054,7 +2054,7 @@
     "rename_aria": "Renombrar {{name}}",
     "bulk_edit_title": "Aplicar cambio a {{count}} grupo(s)",
     "agents_panel": {
-      "title": "Agentes · {{name}}",
+      "title": "Agentes: {{name}}",
       "assigned": "Asignados: {{count}}",
       "unsaved": "Sin guardar: {{count}}",
       "save_count": "Guardar ({{count}})",
@@ -2117,7 +2117,7 @@
       "edit_breadcrumb": "Editar agente",
       "duplicate_title": "Duplicar agente",
       "duplicate_breadcrumb": "Duplicar agente",
-      "duplicate_hint": "Duplicando «{{source}}» · rellena los campos obligatorios y guarda",
+      "duplicate_hint": "Duplicando «{{source}}»: rellena los campos obligatorios y guarda",
       "section": {
         "identification_hint": "Foto, contacto y extensión",
         "channels": "Canales",
@@ -2294,7 +2294,7 @@
   "config": {
     "sidebar": {
       "title": "Contact Center",
-      "version": "SmartContact · v2.4.0",
+      "version": "SmartContact v2.4.0",
       "servicio_label": "General",
       "agentes_label": "Agentes",
       "grupos_label": "Grupos"

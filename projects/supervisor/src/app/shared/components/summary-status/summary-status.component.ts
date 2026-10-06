@@ -46,7 +46,7 @@ export class SummaryStatusComponent {
   protected readonly missingText = computed(() => {
     this.lang();
     const items = this.missing().map((key) => this.translate.instant(key));
-    return items.length > 0 ? this.translate.instant('common.summary_missing', { items: items.join(' · ') }) : '';
+    return items.length > 0 ? this.translate.instant('common.summary_missing', { items: items.join(', ') }) : '';
   });
 
   protected readonly showReady = computed(() => !this.missingText() && this.ready());

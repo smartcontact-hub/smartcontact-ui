@@ -127,13 +127,13 @@ test('Chat: «Caducar sesión» a la vista; Web Chat con dominios y script; What
   await expect(chat.getByText('Caducar sesión', { exact: true })).toBeVisible();
   await expect(chat.getByText('Dominios permitidos')).toBeVisible();
   await expect(chat.getByRole('button', { name: 'Copiar código' })).toBeVisible();
-  await expect(chat.getByText('Número de WhatsApp')).toBeVisible();
+  await expect(chat.getByText('Número WhatsApp')).toBeVisible();
 
   // Sin WhatsApp, su número y sus mensajes desaparecen; Web Chat sigue.
   await irA(page, 'General');
   await canal(page, 'WhatsApp').click();
   await irA(page, 'Distribución y colas');
-  await expect(page.locator('#group-channel-chat').getByText('Número de WhatsApp')).toHaveCount(0);
+  await expect(page.locator('#group-channel-chat').getByText('Número WhatsApp')).toHaveCount(0);
   await expect(page.locator('#group-channel-chat').getByText('Dominios permitidos')).toBeVisible();
 });
 

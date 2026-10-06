@@ -88,7 +88,7 @@ export class WidgetCardComponent {
       f.direction !== 'all' ? this.translate.instant(`dashboard.menu.directions.${f.direction}`) : null,
       f.channel !== 'all' ? this.translate.instant(`dashboard.menu.channel.${f.channel}`) : null,
     ].filter((p): p is string => p !== null);
-    return parts.length ? parts.join(' · ') : null;
+    return parts.length ? parts.join(', ') : null;
   });
 
   protected clearFilter(): void {

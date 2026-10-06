@@ -92,7 +92,7 @@ test('la ficha de grupo elige varias tipificaciones y no deja dos que cubran lo 
   await expect(campo).toContainText('2 tipificaciones');
   const filasRecurso = page.locator('sc-resource-rows').first();
   await expect(filasRecurso).toContainText('Atención al cliente');
-  await expect(filasRecurso).toContainText('Entrantes · 3 niveles');
+  await expect(filasRecurso).toContainText('Entrantes, 3 niveles');
   await expect(filasRecurso).toContainText('Encuesta de calidad');
 
   // «Cierre de chat» también es de entrantes: con los canales del grupo choca con «Atención al cliente».

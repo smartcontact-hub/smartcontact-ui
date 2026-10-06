@@ -361,11 +361,11 @@ export class ScBulkTranscriptionModalComponent implements OnDestroy {
     const chunks: string[] = [];
 
     if (includeHints.length > 0) {
-      chunks.push(this.translate('includes', { items: includeHints.join(' · ') }));
+      chunks.push(this.translate('includes', { items: includeHints.join(', ') }));
     }
 
     if (excludeHints.length > 0) {
-      chunks.push(this.translate('excludes', { items: excludeHints.join(' · ') }));
+      chunks.push(this.translate('excludes', { items: excludeHints.join(', ') }));
     }
 
     return chunks.join(' ');

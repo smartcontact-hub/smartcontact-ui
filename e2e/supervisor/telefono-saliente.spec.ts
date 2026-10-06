@@ -39,7 +39,7 @@ test('alta · con Teléfono falta el teléfono saliente: lo dice el resumen, «C
 }) => {
   await goto(page, 'admin/grupos/crear');
   // Teléfono ya viene marcado.
-  await expect(estado(page)).toHaveText(dice('Falta: nombre · teléfono saliente'));
+  await expect(estado(page)).toHaveText(dice('Falta: nombre, teléfono saliente'));
 
   const nombre = `E2E Saliente ${Date.now()}`;
   await page.locator('#group-name').fill(nombre);

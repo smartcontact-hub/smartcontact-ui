@@ -46,11 +46,11 @@ test('Ring All: «Nº agentes simultáneos» y el aviso de costes, siempre', asy
 test('WhatsApp: sin número no hay mensajes ni horario; Web Chat: los mensajes de horario piden un horario', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const chat = page.locator('#group-channel-chat');
-  await expect(chat.getByText('WhatsApp · mensajes inicial y final')).toHaveCount(0);
-  await expect(chat.getByText('WhatsApp · horario')).toHaveCount(0);
+  await expect(chat.getByText('Mensajes de WhatsApp')).toHaveCount(0);
+  await expect(chat.getByText('Horario de WhatsApp')).toHaveCount(0);
   await pickSelectOption(page, page.locator('#group-chat-whatsapp'), '+34 900 100 200');
-  await expect(chat.getByText('WhatsApp · mensajes inicial y final')).toBeVisible();
-  await expect(chat.getByText('WhatsApp · horario')).toBeVisible();
+  await expect(chat.getByText('Mensajes de WhatsApp')).toBeVisible();
+  await expect(chat.getByText('Horario de WhatsApp')).toBeVisible();
 
   await expect(chat.getByText('Mensaje de horario', { exact: true })).toHaveCount(0);
   await pickSelectOption(page, page.locator('#group-chat-schedule'), 'Turno Mañana');

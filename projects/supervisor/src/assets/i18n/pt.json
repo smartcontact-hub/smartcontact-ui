@@ -166,7 +166,7 @@
     },
     "tabs": {
       "aria": "Monitores",
-      "hint": "Duplo clique para mudar o nome · arraste para reordenar",
+      "hint": "Duplo clique para mudar o nome, arraste para reordenar",
       "rename": "Mudar o nome",
       "rename_aria": "Nome do monitor",
       "duplicate": "Duplicar",
@@ -277,12 +277,12 @@
       },
       "status": {
         "call": "Chamada",
-        "call_recorded": "Chamada · gravada",
-        "call_transcribed": "Chamada · gravada e transcrita",
-        "call_analyzed": "Chamada · gravada, transcrita e analisada",
+        "call_recorded": "Chamada: gravada",
+        "call_transcribed": "Chamada: gravada e transcrita",
+        "call_analyzed": "Chamada: gravada, transcrita e analisada",
         "chat": "Chat",
-        "chat_transcribed": "Chat · transcrito",
-        "chat_analyzed": "Chat · analisado",
+        "chat_transcribed": "Chat: transcrito",
+        "chat_analyzed": "Chat: analisado",
         "transcribing": "Transcrevendo…",
         "analyzing": "Analisando…",
         "failed": "Transcrição falhou",
@@ -349,7 +349,7 @@
     "type_filter": {
       "label": "Mais filtros",
       "aria_default": "Filtros de tipo e estado",
-      "aria_active": "Filtros de tipo e estado · ativos",
+      "aria_active": "Filtros de tipo e estado ativos",
       "panel_title": "Mais filtros",
       "reset": "Limpar",
       "groups": {
@@ -434,19 +434,19 @@
         "no_transcription_desc": "Gere o texto para buscar dentro da conversa e disponibilizar a análise.",
         "transcribe_btn": "Transcrever",
         "transcribing_btn": "Solicitando…",
-        "transcribe_cost": "Gera custo · ~30 s",
+        "transcribe_cost": "Gera custo, ~30 s",
         "transcription_empty_title": "Transcrição vazia",
         "transcription_empty_desc": "O processamento terminou sem extrair linhas. Costuma acontecer com áudios muito curtos ou silêncios longos.",
         "ready_title": "Pronta para analisar",
         "ready_desc": "Resumo acionável e avaliação de sentimento sobre a transcrição existente.",
         "ready_btn": "Solicitar análise",
         "requesting_btn": "Solicitando…",
-        "ready_cost": "Gera custo · ~10 s",
+        "ready_cost": "Gera custo, ~10 s",
         "deadend_title": "Pendente de transcrição e análise",
         "deadend_desc": "A análise precisa de texto. Lançamos a transcrição e, assim que terminar, geramos resumo e sentimento.",
         "deadend_btn": "Transcrever e analisar",
         "processing_btn": "Processando…",
-        "deadend_cost": "Gera custo · transcrição + análise"
+        "deadend_cost": "Gera custo: transcrição + análise"
       },
       "processing": {
         "transcribing_title": "Transcrevendo",
@@ -696,11 +696,11 @@
           "impact_title": "Impacto estimado",
           "impact": "Afetaria {{count}} das últimas {{total}} conversas.",
           "impact_note": "tipificação e categoria são avaliadas no backend",
-          "est_projection": "≈ {{day}} por dia · ≈ {{month}} por mês, a este ritmo.",
+          "est_projection": "≈ {{day}} por dia, ≈ {{month}} por mês, a este ritmo.",
           "pick_all": "Todos",
-          "pick_all_hint": "· inclui novos",
+          "pick_all_hint": "inclui novos",
           "search": "Buscar…",
-          "pick_all_row": "Todos · aplica-se a qualquer um, incluindo os novos.",
+          "pick_all_row": "Todos: aplica-se a qualquer um, incluindo os novos.",
           "pick_manual": "Escolher manualmente",
           "pick_groups": "Grupos (os seus membros)",
           "enabled_members": "{{count}} agentes habilitados",
@@ -897,7 +897,7 @@
       "analyzing": "Gerando análise IA de {{n}} conversas…",
       "success": "{{n}} conversas processadas com sucesso",
       "all_failed": "{{n}} transcrições falharam. Verifique 'Apenas falhas' para tentar novamente.",
-      "partial": "{{ok}} processadas · {{ko}} falharam. Verifique 'Apenas falhas' para tentar novamente."
+      "partial": "{{ok}} processadas, {{ko}} falharam. Verifique 'Apenas falhas' para tentar novamente."
     }
   },
   "common": {
@@ -1475,7 +1475,7 @@
       "rename_field": "Novo nome da opção",
       "add_first": "Adicionar opção…",
       "add_under": "Adicionar em «{{name}}»…",
-      "renaming_hint": "Enter guarda o nome · Esc cancela",
+      "renaming_hint": "Enter guarda o nome, Esc cancela",
       "level_needs": "«{{name}}» precisa de opções aqui",
       "option_actions": {
         "group": "Ações de {{name}}",
@@ -1676,7 +1676,7 @@
       "danger_zone_description": "Eliminar este usuário revoga seu acesso ao painel e apaga suas permissões. A ação não pode ser desfeita.",
       "duplicate_title": "Duplicar usuário",
       "duplicate_breadcrumb": "Duplicar usuário",
-      "duplicate_hint": "Duplicando «{{source}}» · preencha os campos obrigatórios e salve",
+      "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "headline": {
         "type": "Tipo"
       },
@@ -1745,7 +1745,7 @@
       "services": "Serviços",
       "agents": "Agentes",
       "agents_count": "{{count}} agentes",
-      "agents_assign_aria": "{{count}} agentes · Atribuir agentes a {{name}}",
+      "agents_assign_aria": "{{count}} agentes. Atribuir agentes a {{name}}",
       "services_count": "{{count}} serviços",
       "services_count_one": "1 serviço",
       "strategy_phone": "Estratégia de telefone",
@@ -1805,7 +1805,7 @@
         "add_aria": "Adicionar agente ao grupo",
         "no_channels_warn": "{{count}} sem canal",
         "bulk_unassign": "Remover do grupo",
-        "col_level": "Nível · {{channel}}",
+        "col_level": "Nível {{channel}}",
         "level_aria": "Nível de {{name}} — {{channel}}",
         "paused": "Desabilitado",
         "last_channel_hint": "É necessário pelo menos um canal. Desmarque Atribuído para remover o agente do grupo.",
@@ -1873,7 +1873,7 @@
       "danger_zone_description": "Eliminar este grupo o retira das regras e rotas que o referenciam. A ação não pode ser desfeita.",
       "duplicate_title": "Duplicar grupo",
       "duplicate_breadcrumb": "Duplicar grupo",
-      "duplicate_hint": "Duplicando «{{source}}» · preencha os campos obrigatórios e salve",
+      "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "announcements": {
         "audio_title": "Locuções",
         "hold_music": "Música de espera/Transferência",
@@ -1982,16 +1982,16 @@
         "queue": "Fila",
         "queue_messages": "Mensagens na fila",
         "queue_messages_hint": "O que o cliente ouve ao entrar, ao esperar e antes de ser atendido. Raramente se muda.",
-        "webchat_access": "Chat web · domínios e scripts",
-        "whatsapp_number": "WhatsApp · número",
+        "webchat_access": "Domínios e scripts do chat web",
+        "whatsapp_number": "Acesso WhatsApp",
         "email_note": "O email não tem estratégia nem fila próprias: as mensagens chegam à caixa do grupo.",
-        "inactive": "{{channel}} não está ativo · ative-o em Geral",
+        "inactive": "{{channel}} não está ativo: ative-o em Geral",
         "jump_label": "Ir para",
         "jump_aria": "Canais desta seção",
-        "webchat_messages": "Chat web · mensagens inicial e final",
-        "webchat_schedule": "Chat web · horário",
-        "whatsapp_messages": "WhatsApp · mensagens inicial e final",
-        "whatsapp_schedule": "WhatsApp · horário"
+        "webchat_messages": "Mensagens do chat web",
+        "webchat_schedule": "Horário do chat web",
+        "whatsapp_messages": "Mensagens do WhatsApp",
+        "whatsapp_schedule": "Horário do WhatsApp"
       },
       "chat": {
         "close_on_inactivity": "Expirar a sessão",
@@ -2054,7 +2054,7 @@
     "rename_aria": "Renomear {{name}}",
     "bulk_edit_title": "Aplicar alteração a {{count}} grupo(s)",
     "agents_panel": {
-      "title": "Agentes · {{name}}",
+      "title": "Agentes: {{name}}",
       "assigned": "Atribuídos: {{count}}",
       "unsaved": "Por guardar: {{count}}",
       "save_count": "Salvar ({{count}})",
@@ -2236,7 +2236,7 @@
       "danger_zone_description": "Eliminar este agente o desassocia de todos os grupos onde participa. A ação não pode ser desfeita.",
       "duplicate_title": "Duplicar agente",
       "duplicate_breadcrumb": "Duplicar agente",
-      "duplicate_hint": "Duplicando «{{source}}» · preencha os campos obrigatórios e salve",
+      "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "resources": {
         "templates_chat": "Modelos de chat",
         "templates_email": "Modelos de email",
@@ -2294,7 +2294,7 @@
   "config": {
     "sidebar": {
       "title": "Contact Center",
-      "version": "SmartContact · v2.4.0",
+      "version": "SmartContact v2.4.0",
       "servicio_label": "Geral",
       "agentes_label": "Agentes",
       "grupos_label": "Grupos"

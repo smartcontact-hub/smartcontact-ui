@@ -27,7 +27,7 @@ for (const panel of [false, true]) {
       if (panel) await page.getByRole('button', { name: 'Asignar agentes de Niveles independientes' }).click();
       const table = page.locator('sc-agent-channel-table');
       for (const family of ['Teléfono', 'Chat']) {
-        await expect(table.getByRole('columnheader', { name: `Nivel · ${family}`, exact: true })).toHaveCount(families.includes(family) ? 1 : 0);
+        await expect(table.getByRole('columnheader', { name: `Nivel ${family}`, exact: true })).toHaveCount(families.includes(family) ? 1 : 0);
       }
       for (const family of families) {
         await expect(level(page, family)).toHaveText(family === 'Teléfono' ? '5' : '10');

@@ -170,6 +170,33 @@ subida de tipificaciones con este componente y medir el modo `basic` si algún d
 
 ---
 
+## DD-183 · 2026-10-06 — Sin punto medio («·») entre datos de la interfaz
+
+**Contexto** · El punto entre dos datos («918371548 · Prioridad: Media», «Llamada · grabada», «Nivel · Teléfono») se
+leía como relleno: no dice qué une y ocupa un hueco que ya da la coma o el `gap`. Unos 25 textos por idioma y unos
+30 sitios de código lo escribían.
+
+**Decisión** ·
+1. **Ninguno entre datos que se ven.** Se escribe con lo que ya hay, y nunca más largo que lo que sustituye:
+   - dos datos simples: coma («918371548, prioridad: baja», «3 contactos, activa», «Femenina, español»);
+   - rótulo y estado: dos puntos («Llamada: grabada», «Teléfono no está activo: actívalo en General»);
+   - dos instrucciones o dos hechos de una frase: coma o «y», sin cambiar de oración («Enter guarda el nombre, Esc cancela»);
+   - un rótulo compuesto, sin partícula: «Acceso Web Chat», «Número WhatsApp», «Nivel Teléfono», «Agentes: {grupo}»;
+   - lista de valores: coma («Incluye A, B»);
+   - separador puramente visual: el `gap` del contenedor, o nada (la cabecera de un lector, el resumen de la plantilla).
+2. **Lo que arrastra mayúsculas** baja a minúscula tras la coma («3 contactos, activa»).
+3. **Lo vigila `audit:interpunct`** (en `verify`, tope 0): los textos del i18n del Supervisor y las plantillas, el
+   TypeScript y el SCSS del Supervisor y del DS, sin comentarios. Quedan fuera sc-docs (el showcase) y las réplicas
+   `agent`, `agent-mini` y `cuscare` (DD-35: calcan la app viva).
+
+**Coste** · Ninguno de espacio: cada texto cambiado mide lo mismo o menos (medido por clave en los cuatro idiomas), y
+el portugués de «Número de WhatsApp» se queda como estaba por tener ya su gemelo en Avanzado.
+
+**Descartadas** · Una barra vertical o un guion: es el mismo relleno con otra forma. Un punto solo en listas de
+metadatos: partía la regla en dos y obligaba a decidir caso a caso.
+
+---
+
 ## DD-182 · 2026-10-06 — Las cuatro secciones de la ficha de grupo, en el mismo árbol del DS
 
 **Contexto** · Desde DD-157 solo «Distribución y colas» seguía Sección → Subsección → Slot. General, Recursos y
