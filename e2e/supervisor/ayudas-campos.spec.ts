@@ -35,12 +35,12 @@ test('la estrategia de teléfono dice qué hace la elegida, se anuncia con el ca
   // El grupo 2 reparte por teléfono con Balanceada.
   await goto(page, 'admin/grupos/editar/2?seccion=distribucion');
   // Hasta DD-142 decía «Por turnos…», que es lo que hace Rotativa: Balanceada reparte de forma equilibrada.
-  await expect(estrategia(page)).toHaveAccessibleDescription('Reparte las conversaciones de forma equilibrada entre los agentes.');
+  await expect(estrategia(page)).toHaveAccessibleDescription('Reparte por igual entre los agentes.');
 
   await pickSelectOption(page, estrategia(page), 'Más tiempo inactivo');
-  await expect(estrategia(page)).toHaveAccessibleDescription('Va al agente disponible que lleva más tiempo sin actividad.');
+  await expect(estrategia(page)).toHaveAccessibleDescription('Al disponible que lleva más tiempo sin actividad.');
   await pickSelectOption(page, estrategia(page), 'Niveles');
-  await expect(estrategia(page)).toHaveAccessibleDescription(/^Primero, los del nivel 1 que estén disponibles y libres/);
+  await expect(estrategia(page)).toHaveAccessibleDescription(/^Primero, los de nivel 1 libres/);
 });
 
 test('prioridad se nombra por su etiqueta y dice que solo cuenta en las entrantes', async ({ page }) => {
@@ -48,14 +48,14 @@ test('prioridad se nombra por su etiqueta y dice que solo cuenta en las entrante
   const prioridad = page.getByRole('combobox', { name: 'Prioridad' });
   await expect(prioridad).toHaveCount(1);
   // Hasta DD-141 decía, con el manual de Voice, que contaba también en las salientes: la revisión de producto lo corrige.
-  await expect(prioridad).toHaveAccessibleDescription(/Solo cuenta en las entrantes\.$/);
+  await expect(prioridad).toHaveAccessibleDescription(/Solo para las llamadas entrantes\.$/);
   await expect(prioridad).not.toHaveAccessibleDescription(/salientes/);
 });
 
 test('la ayuda de un desplegable se anuncia con él: la extensión del agente dice qué es Tel y qué WebRTC', async ({ page }) => {
   await goto(page, 'admin/agentes/editar/1');
   const extension = page.getByRole('combobox', { name: /Extensión/ });
-  await expect(extension).toHaveAccessibleDescription(/^Tel: el agente atiende las llamadas en su móvil\. WebRTC:/);
+  await expect(extension).toHaveAccessibleDescription(/^Tel: en su móvil\. WebRTC:/);
 });
 
 test('la ficha de grupo no tiene ⓘ: cada ayuda se lee sin pasar el ratón', async ({ page }) => {
@@ -67,7 +67,7 @@ test('la ficha de grupo no tiene ⓘ: cada ayuda se lee sin pasar el ratón', as
   }
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const dominio = page.getByRole('textbox', { name: 'Dominios permitidos' });
-  await expect(dominio).toHaveAccessibleDescription(/^Las webs en las que se puede insertar el chat de este grupo/);
+  await expect(dominio).toHaveAccessibleDescription(/^Las webs donde se puede insertar el chat/);
   // La ayuda va dentro del campo, así que la fila ya no centra «Añadir» contra campo + ayuda: el botón se alinea con el
   // campo (con la ayuda de dos líneas, cayó 21 px).
   const añadir = page.getByRole('button', { name: 'Añadir' });
@@ -93,8 +93,7 @@ test('los desplegables del DS hablan el idioma de la app: en inglés, «No resul
 
 test('el tiempo máximo de espera en cola dice qué pasa al agotarse, en los dos canales y en Contact Center', async ({ page }) => {
   // Y qué pasa sin siguiente destino (DD-157, revisión de producto del 2026-10-04).
-  const AYUDA =
-    'Si nadie la atiende en este tiempo, la conversación sale del grupo y pasa al siguiente destino, que se elige en el Diseñador VUI. Sin siguiente destino, la conversación termina.';
+  const AYUDA = 'Sin atender en este tiempo, pasa al siguiente destino del Diseñador VUI; si no hay, termina.';
   // El campo se describe con su sufijo delante («s Si nadie…»): se casa el final, que es la ayuda.
   const anunciada = new RegExp(`${AYUDA.replaceAll('.', '\\.')}$`);
   // Grupo 1: solo Teléfono. Grupo 11: también Chat.
@@ -173,6 +172,6 @@ test('Niveles de Chat anuncia su ayuda y nombra Dentro de cada nivel', async ({ 
   const chat = page.locator('#group-channel-chat');
   const estrategiaChat = chat.getByRole('combobox', { name: 'Estrategia', exact: true });
   await pickSelectOption(page, estrategiaChat, 'Niveles');
-  await expect(estrategiaChat).toHaveAccessibleDescription(/^Primero, los del nivel 1/);
+  await expect(estrategiaChat).toHaveAccessibleDescription(/^Primero, los de nivel 1/);
   await expect(chat.getByRole('combobox', { name: 'Dentro de cada nivel', exact: true })).toBeVisible();
 });

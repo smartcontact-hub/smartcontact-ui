@@ -127,7 +127,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
 
   /** El ancho del cajón, en función de sus columnas; nunca más que la pantalla. */
   protected readonly width = computed(() => {
-    const rem = columnsRem(COLUMN_REM.compact, this.families().length, this.levelFamilies().length) + PANEL_CHROME_REM;
+    const rem = columnsRem(COLUMN_REM.compact, this.families(), this.levelFamilies().length) + PANEL_CHROME_REM;
     return `min(${Math.max(PANEL_MIN_REM, rem)}rem, 100vw)`;
   });
 

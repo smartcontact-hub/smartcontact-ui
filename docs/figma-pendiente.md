@@ -1033,6 +1033,19 @@ No hay estado «al bajar» que dibujar.
 
 ---
 
+## 36b · El color de etiqueta marrón (2026-10-05, DD-176)
+
+**Estado:** pendiente · **Dónde:** Figma, la librería del DS, las variantes de color de `tag`/`chip` en `label` y la
+paleta de puntos · **Esfuerzo:** una variante más, con variables que ya existen.
+
+- **Por qué** (DD-176 §8): el estado Administrativo va en marrón, y la paleta del Kit no trae familia marrón.
+- **Qué añadir:** el color `brown`, lleno: fondo `amber-800` y texto blanco; en oscuro, `amber-900` con `amber-100`. Va
+  detrás de `amber` en el orden de la paleta.
+
+**Cómo sabes que está hecho:** la etiqueta «Marrón» de sc-docs (`/components/tag`) y la de Figma dicen lo mismo.
+
+---
+
 ## 37 · El resumen de la ficha de grupo lleva a su sección (2026-10-02)
 
 **Estado:** pendiente · **Dónde:** Figma, el resumen de la ficha de grupo · **Esfuerzo:** un estado al pasar el ratón,

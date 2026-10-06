@@ -4,7 +4,6 @@ import {
   Component,
   computed,
   DOCUMENT,
-  effect,
   ElementRef,
   inject,
   input,
@@ -19,10 +18,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { FormsModule } from '@angular/forms';
-import { moveItemInArray, type CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Listbox, ListboxModule } from 'primeng/listbox';
-import type { ListBoxPassThrough } from 'primeng/types/listbox';
+import { CdkDrag, CdkDropList, moveItemInArray, type CdkDragDrop } from '@angular/cdk/drag-drop';
+import { CheckboxModule } from 'primeng/checkbox';
 import { PopoverModule } from 'primeng/popover';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import {
   type BulkActionEntityLabels,
@@ -122,8 +121,10 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
 @Component({
   selector: 'sc-list-page',
   imports: [
+    CdkDrag,
+    CdkDropList,
+    CheckboxModule,
     FormsModule,
-    ListboxModule,
     MenuModule,
     PopoverModule,
     ScBulkActionBarComponent,
@@ -131,6 +132,7 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
     ScDatatableComponent,
     ScDividerComponent,
     ScEmptyStateComponent,
+    ScIconComponent,
     ScSearchComponent,
     TranslateModule,
   ],
@@ -367,51 +369,84 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     this.savePrefs({ ...prefs, visible: prefs.order.filter((k) => chosen.has(k)) });
   }
 
-  /** La lista del globo, sin su borde ni su sombra: la caja ya la pone el globo (`dt` de la instancia). */
-  protected readonly columnsListDt = { root: { borderColor: 'transparent', shadow: 'none' } };
-
   /** El globo de columnas, abierto: su botón lo dice (`aria-expanded`). */
   protected readonly columnsOpen = signal(false);
 
   private readonly document = inject(DOCUMENT);
   /** El icono de columnas: al cerrar el globo con el foco dentro, vuelve aquí. */
   private readonly columnsButton = viewChild('columnsButton', { read: ElementRef });
-  /** La lista del globo: su foco nativo dice qué columna mueven «Subir» y «Bajar». */
-  private readonly columnsList = viewChild(Listbox);
+  /** Del título del globo cuelgan su nombre y los ids de sus casillas. */
+  protected readonly columnsTitleId = `columnas-${Math.random().toString(36).slice(2, 8)}`;
+
+  /** El ancho del globo: el paso del Kit más cercano a los 18rem del ejemplo (`w-72`). */
+  protected readonly columnsPopoverStyle = { width: 'var(--sc-spacing-18)' };
+
+  /** El contenido del globo sin relleno, como el ejemplo (`[pt]="{ content: 'p-0!' }"`): lo ponen su cabecera y su lista. */
+  protected readonly columnsPopoverPt = { content: { style: { padding: '0' } } };
 
   /**
-   * Al abrir el globo, el foco entra en la lista: `p-popover` enfoca lo que lleve `autofocus` (`focusOnShow`), y aquí lo
-   * lleva el `<ul role="listbox">`. Sin él, con el teclado no se llegaba: el globo cuelga de `<body>` y Tab seguía por la
-   * página (medido el 2026-10-05, DD-162).
-   */
-  protected readonly columnsListPt: ListBoxPassThrough = { list: { autofocus: true } };
-
-  /**
-   * La última columna enfocada en la lista, la que mueven «Subir» y «Bajar»: ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7).
-   * El Listbox olvida su foco al salir de él (lo pone a -1), y los botones están fuera, así que se recuerda aquí. El
-   * teclado de la lista es el nativo: las flechas enfocan sin elegir.
+   * La columna en curso: la última enfocada (o pulsada) en la lista, la que mueven «Subir» y «Bajar» y la que lleva el
+   * foco al volver a la lista. Ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, DD-162).
    */
   protected readonly currentColumn = signal<string | null>(null);
-  private readonly followListFocus = effect(() => {
-    const index = this.columnsList()?.focusedOptionIndex() ?? -1;
-    const key = index >= 0 ? this.columnOptions()[index]?.key : undefined;
-    if (key) this.currentColumn.set(key);
-  });
+
+  /** Las columnas que se pueden enfocar: las que no son fijas (la fija va con su casilla apagada). */
+  private readonly movableColumns = computed(() => this.columnOptions().filter((o) => !o.locked));
+
+  /** La lista es una sola parada del tabulador: solo la columna en curso (o la primera movible) lleva `tabindex` 0. */
+  protected columnTabindex(key: string): number {
+    const active = this.currentColumn() ?? this.movableColumns()[0]?.key;
+    return key === active ? 0 : -1;
+  }
+
+  protected columnInputId(key: string): string {
+    return `${this.columnsTitleId}-${key}`;
+  }
+
+  /** Las flechas van de una columna a otra (y Inicio y Fin, a la primera y la última); Espacio la marca, el nativo. */
+  protected onColumnsKeydown(event: KeyboardEvent): void {
+    const keys = this.movableColumns().map((o) => o.key);
+    if (!keys.length) return;
+    const from = Math.max(0, keys.indexOf(this.currentColumn() ?? keys[0]!));
+    const to =
+      event.key === 'ArrowDown' ? Math.min(keys.length - 1, from + 1)
+      : event.key === 'ArrowUp' ? Math.max(0, from - 1)
+      : event.key === 'Home' ? 0
+      : event.key === 'End' ? keys.length - 1
+      : -1;
+    if (to < 0) return;
+    event.preventDefault();
+    this.focusColumn(keys[to]!);
+  }
+
+  /** Pulsar una fila (fuera de su casilla) la deja en curso, para «Subir» y «Bajar» con el ratón. */
+  protected onColumnRowClick(key: string): void {
+    if (!this.columnOptions().find((o) => o.key === key)?.locked) this.currentColumn.set(key);
+  }
+
+  private focusColumn(key: string): void {
+    this.currentColumn.set(key);
+    this.document.getElementById(this.columnInputId(key))?.focus();
+  }
 
   /**
-   * La opción enfocada se anuncia: `aria-activedescendant` en la lista. PrimeNG 22.1 lo calcula con
-   * `computed(() => this.focused ? this.focusedOptionId() : undefined)`, y `focused` no es una señal: el primer cálculo,
-   * sin foco, no lee `focusedOptionId()` y el atributo se queda vacío para siempre. Medido el 2026-10-05: las flechas
-   * movían el foco y el lector no oía nada. Se escribe aquí, desde su señal; la plantilla de PrimeNG no lo vuelve a tocar.
+   * Al abrir, el foco entra en la lista, en la columna en curso: el globo cuelga de `<body>` y, sin esto, con el teclado
+   * no se llegaba (medido el 2026-10-05, DD-162). Se enfoca aquí y no con `focusOnShow`, que iría a «Restablecer».
    */
-  private readonly announceFocusedOption = effect(() => {
-    const list = this.columnsList();
-    const id = list?.focusedOptionId() ?? null;
-    const ul = (list?.el.nativeElement as HTMLElement | undefined)?.querySelector('[role="listbox"]');
-    if (!ul) return;
-    if (id) ul.setAttribute('aria-activedescendant', id);
-    else ul.removeAttribute('aria-activedescendant');
-  });
+  protected onColumnsShow(): void {
+    this.columnsOpen.set(true);
+    const key = this.currentColumn() ?? this.movableColumns()[0]?.key;
+    if (key) setTimeout(() => this.focusColumn(key));
+  }
+
+  /** «Restablecer»: el orden y las columnas de partida, como el `reset()` del ejemplo. Los anchos arrastrados se quedan. */
+  protected resetColumns(): void {
+    const prefs = this.columnPrefs();
+    const choices = this.columnChoices();
+    if (!prefs || !choices) return;
+    this.savePrefs({ ...normalizePrefs(choices, undefined), widths: prefs.widths });
+    this.columnsAnnouncement.set('');
+  }
 
   /** Si la columna en curso sube o baja: sin salir de la lista ni pasar por encima de una fija. `null` si es fija o no hay. */
   protected readonly columnMove = computed(() => {
@@ -440,22 +475,6 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     );
   }
 
-  /**
-   * Tab desde la lista: PrimeNG la rodea de dos elementos invisibles que llevan el foco a su buscador, y sin buscador el
-   * de detrás no tiene a dónde llevarlo; el foco se queda en él, sin verse (medido el 2026-10-05). Si se queda ahí, sigue
-   * al primer botón de mover. Las flechas, Espacio e Inicio/Fin de la lista son los nativos.
-   */
-  protected onColumnsListFocusIn(event: FocusEvent): void {
-    const host = event.currentTarget as HTMLElement;
-    const invisible = event.target as HTMLElement;
-    const fromList = host.contains(event.relatedTarget as Node | null);
-    if (invisible !== host.lastElementChild || !fromList) return;
-    setTimeout(() => {
-      if (this.document.activeElement !== invisible) return;
-      host.parentElement?.querySelector<HTMLButtonElement>('.page__columns-move button:not(:disabled)')?.focus();
-    });
-  }
-
   /** El globo se ha cerrado. Con el foco dentro (Escape, o el botón que lo tenía), el foco vuelve al icono; si se cerró
    *  pulsando fuera, el foco es de lo pulsado y no se toca. */
   protected onColumnsHide(): void {
@@ -468,16 +487,10 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   }
 
   /**
-   * Las opciones del globo, en una copia propia: el Listbox nativo reordena la suya al soltar, y aquí se guarda el
-   * orden nuevo en las preferencias, de donde vuelve a salir esta copia.
-   */
-  protected readonly columnOrderDraft = computed(() => [...this.columnOptions()]);
-
-  /**
-   * Se ha soltado una columna en el globo (DD-162). Las visibles se quedan las mismas; el orden es el de la lista. Las
+   * Se ha soltado una fila en el globo (DD-176, `cdkDropList` como el ejemplo). Las visibles se quedan las mismas; el orden es el de la lista. Las
    * fijas vuelven a su sitio aunque se suelten encima (`normalizePrefs`).
    */
-  protected onColumnDrop(event: CdkDragDrop<string[]>): void {
+  protected onColumnDrop(event: Pick<CdkDragDrop<unknown>, 'previousIndex' | 'currentIndex'>): void {
     this.reorderColumns(event.previousIndex, event.currentIndex);
   }
 

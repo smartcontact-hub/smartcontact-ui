@@ -11,10 +11,10 @@
     gap: var(--sc-spacing-0-5);
   }
 
+  /* El buscador llena lo que deja el selector: la barra va de borde a borde de la tabla, como ella (DD-176). */
   &__search {
     flex: 1 1 240px;
     min-width: 0;
-    max-width: 320px;
   }
 
   &__name {
@@ -85,9 +85,9 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.assign__column-heading {
+/* La cabecera de Asignado (DD-176): su casilla de «todos» delante del rótulo, en una fila con las demás cabeceras. */
+.assign__head {
   display: inline-flex;
-  flex-direction: column;
   align-items: center;
   gap: var(--sc-spacing-0-5);
 }

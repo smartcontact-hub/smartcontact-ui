@@ -221,21 +221,27 @@
  *   3. Color: hereda del token semántico --sc-bg-danger automáticamente
  *      en dark mode sin overrides.
  *
- * Vive DENTRO del label (2026-09-06), no como hermano flex. De hermano ocupaba
- * un carril propio —gap 10,5 + 8 del punto + 7 de margen = 25px— y la caja de
- * texto bajaba de 99 a 74px, justo por debajo de los 79 que mide
- * «Identificación» en el peso activo: la sección con error era la que peor se
- * leía, que es lo contrario de lo que el punto pretende. En flujo inline la
- * caja conserva sus 99px y el punto acompaña a la última palabra.
+ * Va en su propio hueco al final de la fila (`.form-nav__marker`, DD-176): el rótulo llena la fila y lo empuja, así
+ * que con varias marcas caen en la misma vertical. De 2026-09-06 a DD-176 fluía detrás de la última palabra, porque
+ * de hermano le quitaba 25 px a una caja de texto de 99; hoy, en el carril de 196, al rótulo le quedan 140 con el
+ * hueco puesto, y el más largo de las fichas, «Distribución y colas», mide 130.
  */
+/* El hueco de la marca, siempre (vacío si no hay): el ancho del ✓, que es la más ancha, y la marca pegada a su
+ * borde derecho. Así un rótulo no salta de línea cuando aparece el punto. */
+.form-nav__marker {
+  flex: 0 0 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: var(--sc-font-size-body-2);
+}
+
 .form-nav__dot {
-  display: inline-block;
-  vertical-align: middle;
+  display: block;
   width: 8px;
   height: 8px;
   border-radius: var(--sc-radius-full);
   background: var(--sc-bg-danger);
-  margin-inline-start: var(--sc-spacing-0-5);
 }
 
 /*
@@ -259,9 +265,7 @@
  * oculto dice lo mismo.
  */
 .form-nav__done {
-  margin-inline-start: var(--sc-spacing-0-375);
   color: var(--sc-text-success);
-  vertical-align: -0.125em;
 }
 
 .form-nav__done--entra {

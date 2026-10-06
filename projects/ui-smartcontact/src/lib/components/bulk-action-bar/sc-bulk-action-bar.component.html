@@ -1,7 +1,17 @@
 @if (visible()) {
   <div class="bulk-bar" role="region" [attr.aria-label]="'sc.bulkActionBar.region' | translate">
     <div class="bulk-bar__summary">
-      <span>{{ summary() }}</span>
+      <!-- «2/16» a la vista y «2 de 16» para el lector: «2/16» se puede leer como fecha o fracción (DD-176). -->
+      <span>
+        <span class="bulk-bar__count">
+          @if (total(); as total) {
+            <span aria-hidden="true">{{ count() }}/{{ total }}</span><span class="bulk-bar__sr">{{ count() }} {{ 'sc.bulkActionBar.of' | translate }} {{ total }}</span>
+          } @else {
+            {{ count() }}
+          }
+        </span>
+        {{ summary() }}
+      </span>
       <button
         type="button"
         class="bulk-bar__clear"

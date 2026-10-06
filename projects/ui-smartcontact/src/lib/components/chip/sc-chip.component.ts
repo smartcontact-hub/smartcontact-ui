@@ -28,7 +28,7 @@ export class ScChipComponent {
     readonly disabled = input(false, { transform: booleanAttribute });
 
     /**
-     * Variante categórica (§4.1): etiqueta con punto + 8 colores del DS. Default
+     * Variante categórica (§4.1): etiqueta con punto + 9 colores del DS. Default
      * `'default'` = wrapper `<p-chip>` (intacto). Es la cara REMOVIBLE del
      * retirado `sc-label-chip` (la read-only vive en `sc-tag variant="label"`).
      */
