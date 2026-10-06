@@ -55,6 +55,12 @@ const PATRONES = [
   /\bse ven? (?:raro|mal|torcid[oa]s?|descuadrad[oa]s?|apelotonad[oa]s?|apretad[oa]s?|pegad[oa]s?)\b/i,
   /\b(?:descuadrad|apelotonad)[oa]s?\b/i,
   /(?<!\bno )\bme chocan?\b/i,
+  // El gusto y el parecido (2026-10-05: «No me gusta que haya tanto layout shift», «no se parece en
+  // nada al telefono»). En el historial de prompts (leído el 2026-10-06), 11 de 13 «no me gusta»
+  // distintos eran quejas del trabajo; los otros dos, de una app y de un enlace. «No se parece», solo
+  // con «nada»: suelto salió en un texto del propio agente pegado de vuelta.
+  /\bno me gusta\b/i,
+  /\bno se parece (?:en )?nada\b/i,
 ];
 
 // Cierre = el verbo ABRE la frase y no lleva más objeto que la sesión. «cerramos el ticket en
