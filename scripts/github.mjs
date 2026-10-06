@@ -77,6 +77,7 @@ export function runDe(r) {
     createdAt: r.created_at,
     startedAt: r.run_started_at ?? r.created_at,
     event: r.event,
+    runAttempt: r.run_attempt ?? 1,
   };
 }
 
@@ -121,7 +122,13 @@ export function cliente({ gh = ghReal, git = gitReal } = {}) {
         conclusion: j.conclusion,
         startedAt: j.started_at,
         completedAt: j.completed_at,
+        // Vacío en un job que GitHub canceló sin darle máquina (DD-175): no llegó a correr.
+        runnerName: j.runner_name ?? '',
       }));
+    },
+    /** Relanza los jobs fallidos o cancelados de una ejecución (`rerun-failed-jobs`). */
+    relanzarFallidos(id) {
+      gh(['api', `repos/${base().owner}/${base().repo}/actions/runs/${id}/rerun-failed-jobs`, '-X', 'POST']);
     },
     /**
      * El PR que importa de la rama, con `mergeable` si está abierto; `null` si no hay ninguno. Una sesión cloud
