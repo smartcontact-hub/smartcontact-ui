@@ -153,7 +153,7 @@ export class TipificacionesListPageComponent {
               count: cifra.format(total),
             }),
       )
-      .join(' · ');
+      .join(', ');
   }
 
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {

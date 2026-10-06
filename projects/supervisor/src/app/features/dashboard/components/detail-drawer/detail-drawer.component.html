@@ -40,7 +40,7 @@
       @let detalle = r.presence
         ? ('dashboard.presence.' + r.presence | translate)
         : r.agent
-          ? ('dashboard.detail.customer' | translate: { id: r.customer }) + ' · ' + r.queue
+          ? ('dashboard.detail.customer' | translate: { id: r.customer }) + ', ' + r.queue
           : r.queue;
       <span class="detail__sub sc-text-caption-regular" [title]="detalle">{{ detalle }}</span>
     </span>

@@ -26,7 +26,7 @@ const focoDentro = (page: Page): Promise<boolean> =>
   page.evaluate(() => !!document.activeElement?.closest('.agents-panel'));
 
 const comprobar = async (page: Page, quienAbre: Locator, grupo: string): Promise<void> => {
-  await expect(page.getByRole('dialog', { name: `Agentes · ${grupo}` })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: `Agentes: ${grupo}` })).toBeVisible();
   await expect.poll(() => focoDentro(page)).toBe(true);
 
   // Escape, sin tabular antes: cierra (sin cambios no pregunta) y el foco vuelve a quien lo abrió.

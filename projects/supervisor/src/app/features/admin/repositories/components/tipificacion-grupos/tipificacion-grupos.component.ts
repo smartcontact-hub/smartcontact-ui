@@ -144,7 +144,7 @@ export class TipificacionGruposComponent {
       return { texto: this.translate.instant('repositories.tipificaciones.groups.status_ok'), error: false };
     }
     return {
-      texto: conChoque.map((f) => `${f.group.name}: ${f.choques.join('; ')}`).join(' · '),
+      texto: conChoque.map((f) => `${f.group.name}: ${f.choques.join('; ')}`).join('. '),
       error: true,
     };
   });

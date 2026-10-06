@@ -293,7 +293,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
     this.lang();
     const falta = this.falta();
     if (falta.length > 0) {
-      return this.translate.instant('common.summary_missing', { items: falta.map((k) => this.translate.instant(k)).join(' · ') });
+      return this.translate.instant('common.summary_missing', { items: falta.map((k) => this.translate.instant(k)).join(', ') });
     }
     return this.nameTaken() ? this.translate.instant('repositories.tipificaciones.errors.name_taken') : null;
   });
@@ -330,7 +330,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
       n === 0
         ? this.translate.instant('repositories.tipificaciones.levels_none')
         : this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
-    return `${this.translate.instant(`repositories.tipificaciones.direction.${this.direccion()}`)} · ${niveles}`;
+    return `${this.translate.instant(`repositories.tipificaciones.direction.${this.direccion()}`)}, ${niveles}`;
   });
 
   /* ── Ciclo de vida ────────────────────────────────────────────────────── */

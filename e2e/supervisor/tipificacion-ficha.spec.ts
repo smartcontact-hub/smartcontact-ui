@@ -48,7 +48,7 @@ test('el molde de las fichas: el nombre encima del índice, con sus tres seccion
   await goto(page, 'admin/tipificaciones/editar/1');
   const carril = page.locator('.page__rail');
   await expect(carril.getByRole('heading', { level: 1 })).toHaveText('Atención al cliente');
-  await expect(carril).toContainText('Entrantes · 3 niveles');
+  await expect(carril).toContainText('Entrantes, 3 niveles');
   await expect(carril.locator('sc-form-section-nav')).toContainText('General');
   await expect(carril.locator('sc-form-section-nav')).toContainText('Categorías');
   await expect(carril.locator('sc-form-section-nav')).toContainText('Grupos');
@@ -93,7 +93,7 @@ test('quitar el último nivel pregunta, deja su columna fantasma y no cambia nin
   const despues = await foto(page);
   expect(despues.columnas.map(([x, , ancho]) => [x, ancho])).toEqual(antes.columnas.map(([x, , ancho]) => [x, ancho]));
   expect(despues.tarjeta).toEqual(antes.tarjeta);
-  await expect(page.locator('.page__rail')).toContainText('Entrantes · 2 niveles');
+  await expect(page.locator('.page__rail')).toContainText('Entrantes, 2 niveles');
 });
 
 test('renombrar se hace en la línea de la columna: Enter guarda el nombre nuevo', async ({ page }) => {
@@ -126,7 +126,7 @@ test('un choque en Grupos se dice encima de la tabla, sin alargar ninguna fila, 
 
 test('un alta de punta a punta: nombre, opciones y Crear, y sale en el listado', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/crear');
-  await expect(barra(page)).toContainText('Falta: nombre · opciones en todas las ramas');
+  await expect(barra(page)).toContainText('Falta: nombre, opciones en todas las ramas');
   await page.locator('#tip-name').fill('Seguimiento de pedido');
   await page.locator('sc-form-section-nav').getByText('Categorías').click();
   for (const opcion of ['Entregado', 'En reparto', 'Retrasado']) {

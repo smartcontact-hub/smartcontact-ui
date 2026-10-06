@@ -133,7 +133,7 @@ export class ConversationTableComponent {
               month: 'short',
               ...(yyyy === today.getFullYear() ? {} : { year: 'numeric' }),
             }).format(day);
-    return `${label} · ${conv.hour}`;
+    return `${label}, ${conv.hour}`;
   }
 
   /**
@@ -157,7 +157,7 @@ export class ConversationTableComponent {
     if (failed && reason) parts.push(t(`failure.${reason}`));
     if (conv.deleted) parts.push(t('deleted'));
     if (this.recordingsCount(conv) > 1) parts.push(t('multi_recording', { count: this.recordingsCount(conv) }));
-    return parts.join(' · ');
+    return parts.join(', ');
   }
 
   readonly columns = computed<readonly ScColumnDef<Conversation>[]>(() => {

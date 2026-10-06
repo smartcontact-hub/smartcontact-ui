@@ -166,7 +166,7 @@
     },
     "tabs": {
       "aria": "Moniteurs",
-      "hint": "Double-clic pour renommer · glisser pour réordonner",
+      "hint": "Double-clic pour renommer, glisser pour réordonner",
       "rename": "Renommer",
       "rename_aria": "Nom du moniteur",
       "duplicate": "Dupliquer",
@@ -277,12 +277,12 @@
       },
       "status": {
         "call": "Appel",
-        "call_recorded": "Appel · enregistré",
-        "call_transcribed": "Appel · enregistré et transcrit",
-        "call_analyzed": "Appel · enregistré, transcrit et analysé",
+        "call_recorded": "Appel : enregistré",
+        "call_transcribed": "Appel : enregistré et transcrit",
+        "call_analyzed": "Appel : enregistré, transcrit et analysé",
         "chat": "Chat",
-        "chat_transcribed": "Chat · transcrit",
-        "chat_analyzed": "Chat · analysé",
+        "chat_transcribed": "Chat : transcrit",
+        "chat_analyzed": "Chat : analysé",
         "transcribing": "Transcription en cours…",
         "analyzing": "Analyse en cours…",
         "failed": "Transcription échouée",
@@ -349,7 +349,7 @@
     "type_filter": {
       "label": "Plus de filtres",
       "aria_default": "Filtres de type et état",
-      "aria_active": "Filtres de type et état · actifs",
+      "aria_active": "Filtres de type et état actifs",
       "panel_title": "Plus de filtres",
       "reset": "Effacer",
       "groups": {
@@ -434,19 +434,19 @@
         "no_transcription_desc": "Générez le texte pour chercher dans la conversation et rendre l'analyse disponible.",
         "transcribe_btn": "Transcrire",
         "transcribing_btn": "Demande en cours…",
-        "transcribe_cost": "Engendre un coût · ~30 s",
+        "transcribe_cost": "Engendre un coût, ~30 s",
         "transcription_empty_title": "Transcription vide",
         "transcription_empty_desc": "Le traitement s'est terminé sans extraire de lignes. Cela arrive avec des audios très courts ou de longs silences.",
         "ready_title": "Prêt à analyser",
         "ready_desc": "Résumé actionnable et évaluation du sentiment sur la transcription existante.",
         "ready_btn": "Demander l'analyse",
         "requesting_btn": "Demande en cours…",
-        "ready_cost": "Engendre un coût · ~10 s",
+        "ready_cost": "Engendre un coût, ~10 s",
         "deadend_title": "En attente de transcription et analyse",
         "deadend_desc": "L'analyse a besoin de texte. Nous lançons la transcription et, dès qu'elle finit, nous générons le résumé et le sentiment.",
         "deadend_btn": "Transcrire et analyser",
         "processing_btn": "Traitement…",
-        "deadend_cost": "Engendre un coût · transcription + analyse"
+        "deadend_cost": "Engendre un coût : transcription + analyse"
       },
       "processing": {
         "transcribing_title": "Transcription",
@@ -696,11 +696,11 @@
           "impact_title": "Impact estimé",
           "impact": "Affecterait {{count}} des {{total}} dernières conversations.",
           "impact_note": "le type et la catégorie sont évalués côté serveur",
-          "est_projection": "≈ {{day}} par jour · ≈ {{month}} par mois, à ce rythme.",
+          "est_projection": "≈ {{day}} par jour, ≈ {{month}} par mois, à ce rythme.",
           "pick_all": "Tous",
-          "pick_all_hint": "· inclut les nouveaux",
+          "pick_all_hint": "inclut les nouveaux",
           "search": "Rechercher…",
-          "pick_all_row": "Tous · s'applique à n'importe qui, y compris les nouveaux.",
+          "pick_all_row": "Tous : s'applique à n'importe qui, y compris les nouveaux.",
           "pick_manual": "Choisir manuellement",
           "pick_groups": "Groupes (leurs membres)",
           "enabled_members": "{{count}} agents activés",
@@ -897,7 +897,7 @@
       "analyzing": "Génération de l'analyse IA de {{n}} conversations…",
       "success": "{{n}} conversations traitées correctement",
       "all_failed": "{{n}} transcriptions ont échoué. Vérifiez 'Échouées uniquement' pour réessayer.",
-      "partial": "{{ok}} traitées · {{ko}} échouées. Vérifiez 'Échouées uniquement' pour réessayer."
+      "partial": "{{ok}} traitées, {{ko}} échouées. Vérifiez 'Échouées uniquement' pour réessayer."
     }
   },
   "common": {
@@ -1475,7 +1475,7 @@
       "rename_field": "Nouveau nom de l'option",
       "add_first": "Ajouter une option…",
       "add_under": "Ajouter dans « {{name}} »…",
-      "renaming_hint": "Entrée enregistre le nom · Échap annule",
+      "renaming_hint": "Entrée enregistre le nom, Échap annule",
       "level_needs": "« {{name}} » a besoin d’options ici",
       "option_actions": {
         "group": "Actions pour {{name}}",
@@ -1676,7 +1676,7 @@
       "danger_zone_description": "Supprimer cet utilisateur révoque son accès au panneau et efface ses permissions. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer l'utilisateur",
       "duplicate_breadcrumb": "Dupliquer l'utilisateur",
-      "duplicate_hint": "Duplication de «{{source}}» · remplissez les champs obligatoires et sauvegardez",
+      "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "headline": {
         "type": "Type"
       },
@@ -1745,7 +1745,7 @@
       "services": "Services",
       "agents": "Agents",
       "agents_count": "{{count}} agents",
-      "agents_assign_aria": "{{count}} agents · Attribuer des agents à {{name}}",
+      "agents_assign_aria": "{{count}} agents. Attribuer des agents à {{name}}",
       "services_count": "{{count}} services",
       "services_count_one": "1 service",
       "strategy_phone": "Stratégie téléphone",
@@ -1805,7 +1805,7 @@
         "add_aria": "Ajouter un agent au groupe",
         "no_channels_warn": "{{count}} sans canal",
         "bulk_unassign": "Retirer du groupe",
-        "col_level": "Niveau · {{channel}}",
+        "col_level": "Niveau {{channel}}",
         "level_aria": "Niveau de {{name}} — {{channel}}",
         "paused": "Désactivé",
         "last_channel_hint": "Un canal au minimum est requis. Décochez Affecté pour retirer cet agent du groupe.",
@@ -1874,7 +1874,7 @@
       "danger_zone_description": "Supprimer ce groupe le retire des règles et routes qui le référencent. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer le groupe",
       "duplicate_breadcrumb": "Dupliquer le groupe",
-      "duplicate_hint": "Duplication de «{{source}}» · remplissez les champs obligatoires et sauvegardez",
+      "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "announcements": {
         "audio_title": "Messages vocaux",
         "hold_music": "Musique d’attente",
@@ -1984,10 +1984,10 @@
         "queue": "File d'attente",
         "queue_messages": "Messages en file d'attente",
         "queue_messages_hint": "Ce que l’appelant entend en arrivant, en attente et avant d’être servi. Rarement modifié.",
-        "webchat_access": "Chat web · accès",
-        "whatsapp_number": "WhatsApp · numéro",
+        "webchat_access": "Accès chat web",
+        "whatsapp_number": "Accès WhatsApp",
         "email_note": "L'email n'a ni stratégie ni file d'attente propres : les messages arrivent dans la boîte du groupe.",
-        "inactive": "{{channel}} n'est pas actif · activez-le dans Général",
+        "inactive": "{{channel}} n'est pas actif : activez-le dans Général",
         "jump_label": "Aller à",
         "jump_aria": "Canaux de cette section"
       },
@@ -2049,7 +2049,7 @@
     "rename_aria": "Renommer {{name}}",
     "bulk_edit_title": "Appliquer la modification à {{count}} groupe(s)",
     "agents_panel": {
-      "title": "Agents · {{name}}",
+      "title": "Agents : {{name}}",
       "assigned": "Assignés : {{count}}",
       "unsaved": "Non enregistrés : {{count}}",
       "save_count": "Sauvegarder ({{count}})",
@@ -2231,7 +2231,7 @@
       "danger_zone_description": "Supprimer cet agent le désassigne de tous les groupes auxquels il participe. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer l'agent",
       "duplicate_breadcrumb": "Dupliquer l'agent",
-      "duplicate_hint": "Duplication de «{{source}}» · remplissez les champs obligatoires et sauvegardez",
+      "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "resources": {
         "templates_chat": "Modèles de chat",
         "templates_email": "Modèles d'e-mail",
@@ -2289,7 +2289,7 @@
   "config": {
     "sidebar": {
       "title": "Contact Center",
-      "version": "SmartContact · v2.4.0",
+      "version": "SmartContact v2.4.0",
       "servicio_label": "Général",
       "agentes_label": "Agents",
       "grupos_label": "Groupes"

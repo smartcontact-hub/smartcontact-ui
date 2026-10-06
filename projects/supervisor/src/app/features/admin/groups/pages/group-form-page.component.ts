@@ -625,7 +625,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return subchannels
       .filter((c) => this.form().channels.has(c))
       .map((c) => this.translate.instant(this.channelKeys[c]))
-      .join(' · ');
+      .join(', ');
   });
   /** La casilla madre: marcada con los dos subcanales, a medias con uno. */
   protected readonly chatFamilyState = computed(() =>
@@ -816,8 +816,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** La estrategia de teléfono con lo que la completa, para el resumen. */
   protected phoneStrategySummary(): string {
     const f = this.form();
-    if (this.isRingAll()) return `${f.strategy} · ${this.translate.instant('groups.form.fields.ring_all_summary', { count: f.ringAllAgents })}`;
-    if (this.isNiveles()) return `${f.strategy} · ${f.subStrategy}`;
+    if (this.isRingAll()) return `${f.strategy}, ${this.translate.instant('groups.form.fields.ring_all_summary', { count: f.ringAllAgents })}`;
+    if (this.isNiveles()) return `${f.strategy}, ${f.subStrategy}`;
     return f.strategy;
   }
 
@@ -1241,7 +1241,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     });
     if (!this.hasPhone()) return priority;
     const phone = f.phone || this.translate.instant('groups.form.summary.no_phone');
-    return `${phone} · ${priority}`;
+    return `${phone}, ${priority.toLocaleLowerCase()}`;
   });
 
   protected save(): void {

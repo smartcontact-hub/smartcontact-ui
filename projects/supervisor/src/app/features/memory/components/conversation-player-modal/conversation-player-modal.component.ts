@@ -120,13 +120,13 @@ export class ConversationPlayerModalComponent {
     const c = this.conversation();
     if (!c) return '';
     const label = this.isChat() ? 'Chat' : 'Llamada';
-    return `${label} · #${c.id}`;
+    return `${label} #${c.id}`;
   });
 
   protected readonly modalSubtitle = computed(() => {
     const c = this.conversation();
     if (!c) return null;
-    return `${c.service} · ${c.date} ${c.hour} · Duración ${c.duration}`;
+    return `${c.service}, ${c.date} ${c.hour}, duración ${c.duration}`;
   });
 
   protected readonly playerEnabled = computed(() => {

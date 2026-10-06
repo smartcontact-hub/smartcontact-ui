@@ -26,7 +26,7 @@ test('«Agentes» abre el panel de esa fila sin abrir la ficha, y comparte la as
   await goto(page, 'admin/grupos');
   await abrirPanel(page, 'Reclamaciones');
 
-  await expect(page.getByText('Agentes · Reclamaciones')).toBeVisible();
+  await expect(page.getByText('Agentes: Reclamaciones')).toBeVisible();
   await expect(page).toHaveURL(/admin\/grupos$/);
   // La cabecera cambia asignaciones, no selecciona filas para una barra aparte.
   await expect(panel(page).getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);

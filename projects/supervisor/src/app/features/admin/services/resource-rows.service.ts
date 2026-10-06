@@ -32,7 +32,7 @@ export class ResourceRowsService {
       if (!agenda) return [];
       const contactos = this.cuenta('repositories.agendas.contacts_count', agenda.contacts.length);
       const estado = this.translate.instant(`repositories.status.${agenda.status}`);
-      return [{ id, name: agenda.name, detail: `${contactos} · ${estado}`, edit: editable ? { link: `/admin/agendas/editar/${id}` } : null }];
+      return [{ id, name: agenda.name, detail: `${contactos}, ${estado.toLocaleLowerCase()}`, edit: editable ? { link: `/admin/agendas/editar/${id}` } : null }];
     });
   }
 
@@ -63,7 +63,7 @@ export class ResourceRowsService {
         n === 0
           ? this.translate.instant('repositories.tipificaciones.levels_none')
           : this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
-      return [{ id, name: t.name, detail: `${direccion} · ${niveles}`, edit: editable ? { link: `/admin/tipificaciones/editar/${id}` } : null }];
+      return [{ id, name: t.name, detail: `${direccion}, ${niveles}`, edit: editable ? { link: `/admin/tipificaciones/editar/${id}` } : null }];
     });
   }
 

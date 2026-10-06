@@ -55,8 +55,8 @@ test('Chat sigue el orden de Teléfono: distribución, cola y mensajes, y el acc
     'Distribución',
     'Cola',
     'Mensajes en cola',
-    'Web Chat · acceso',
-    'WhatsApp · número',
+    'Acceso Web Chat',
+    'Acceso WhatsApp',
   ]);
 });
 
