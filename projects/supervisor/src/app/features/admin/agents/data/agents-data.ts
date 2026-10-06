@@ -44,7 +44,7 @@ export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   bano: { labelColor: 'red' },
   comida: { labelColor: 'red' },
   formacion: { labelColor: 'red' },
-  /* Marrón (DD-172), no el amarillo de aviso: un estado del agente, no una alerta. */
+  /* Marrón (DD-173), no el amarillo de aviso: un estado del agente, no una alerta. */
   administrativo: { labelColor: 'brown' },
   post_conversando: { labelColor: 'blue' },
   desconectado: { severity: 'secondary' },

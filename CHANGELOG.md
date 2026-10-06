@@ -71,6 +71,21 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Changed
 
+- **`@smartcontact-hub/components`** — `sc-drawer` modal es un diálogo (WCAG 2.4.3 y 4.1.2): se anuncia con
+  `role="dialog"`, `aria-modal` y su título por nombre; al abrirse lleva el foco al primer control de su contenido, y
+  al cerrarse lo devuelve a quien lo abrió, si sigue en la página, también cuando lo cierra el padre con `visible`.
+  Sin `modal` no cambia: sigue siendo `complementary` y no se lleva el foco. ([DD-168](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-delete-entity-dialog`, `sc-bulk-edit-menu`, `sc-impact-preview-dialog`,
+  `sc-sticky-form-header` y `sc-form-danger-zone` pintan `sc-button` en vez de `p-button`, que PrimeNG 22 da por
+  jubilado. Su API no cambia y sus botones se ven igual. Sale el alto de 36 px y el relleno del botón «Aplicar» de
+  `sc-bulk-edit-menu`: nunca le llegaron, porque `styleClass` dejaba la clase en el `<button>` de PrimeNG, fuera del
+  alcance de su SCSS; en el host de `sc-button` lo habrían descolocado. ([DD-172](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — `sc-password` pasa de `p-password`, jubilado en PrimeNG 22, a la directiva
+  `pInputPassword`. Su API no cambia. El medidor de fuerza (`feedback`) es ahora nuestro, con los tres niveles, los
+  patrones y los textos de PrimeNG (su traducción configurada): sale bajo el campo mientras tiene el foco, lo describe
+  por `aria-describedby` y Escape lo cierra. El botón de mostrar ya no se desmonta al alternar, así que conserva el foco
+  solo. El ojo se coloca con el relleno de la talla del campo y no con el de `md`: en `lg` va 1,7 px más a la izquierda
+  y el texto le deja 5,5 px más de hueco. ([DD-172](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — el icono pesa lo que su texto (DD-130 §6, figma-pendiente §29). En
   `sc-form-section-nav` plano, el índice de todo el Supervisor, el icono y el ✓ de la fila activa van a 600 y los de
   las demás a 400, como sus rótulos; en el de por defecto, a 500, el medium de su rótulo. El icono del título de
@@ -100,6 +115,13 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Fixed
 
+- **`@smartcontact-hub/components`** — `sc-datatable` pinta todas las filas seleccionadas, también las que añade un
+  tramo con Mayúsculas: cada una lleva `sc-row--selected`, que sale de la selección. p-table solo resaltaba las que
+  marcaba él, y en las listas un tramo de cuatro pintaba dos (la barra decía cuatro). Antes lo tenía que pintar cada
+  pantalla con `[rowStyleClass]`. ([DD-98](docs/DECISIONS.md))
+- **`@smartcontact-hub/components`** — La casilla de «seleccionar todas» de `sc-datatable` se nombra desde que se pinta
+  (WCAG 4.1.2): PrimeNG 22.1 calculaba su nombre solo cuando la tabla recibía filas después de pintarse la cabecera, y
+  al cargar se quedaba sin él aunque llegara `selectAllAriaLabel`. ([DD-98](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-button` con `variant="secondary" appearance="text"` se lee en claro: su
   etiqueta e icono medían 2,95:1 (slate-500, el mismo valor que `outlined secondary`, en otra `appearance`). Ahora
   `--sc-cmp-button-text-secondary-color` sube a slate-600 (4,52:1), el mismo escalón que ya llevaban
@@ -134,6 +156,12 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 - **`@smartcontact-hub/components`** — `sc-datatable` con lista virtual vuelve a contar sus filas cuando su caja
   cambia de alto, no solo cuando cambia la ventana. Con «reducir movimiento», el listado de agentes del Supervisor
   salía sin ninguna fila: la lista virtual contaba en el fotograma en que la tabla aún medía 0. Sin API nueva.
+
+### Removed
+
+- **`@smartcontact-hub/styles`** — se retira `--sc-font-size-caption-bold`: ningún uso en apps, DS, scripts ni docs,
+  y era lo último del juego que se retiró con el mismo criterio en #194 (sus pesos y familias). El paquete del tema lo
+  nombra entre los retirados.
 
 ## [1.0.0] — 2026-09-09
 

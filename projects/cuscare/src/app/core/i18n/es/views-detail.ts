@@ -75,6 +75,8 @@ export const ES_VIEWS_DETAIL: Readonly<Record<string, string>> = {
   'Subs Info': 'Sub Info',
   'Expand all': 'Expandir todo',
   Collapse: 'Contraer',
+  'Show more': 'Ver más', // propio
+  'Show less': 'Ver menos', // propio
   Device: 'Dispositivo',
   'Device/OS': 'Dispositivo/OS',
   Connection: 'Conexión',

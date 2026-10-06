@@ -16,7 +16,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   standalone: true,
   template: ` <span [class]="msgClass()" [id]="msgId()">{{ text() }}</span> `,
   /* La ayuda no deja una palabra sola en su última línea («pretty»): una ayuda que se alarga una línea por una
-   * palabra se lee como un salto de más (DD-172). */
+   * palabra se lee como un salto de más (DD-173). */
   styles: ':host { display: contents; } span { text-wrap: pretty; }',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

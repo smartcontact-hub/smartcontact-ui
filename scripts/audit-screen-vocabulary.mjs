@@ -96,7 +96,6 @@ export const VOCABULARIO = [
   '.field__help',
   '.sub-section',
   '.sub-section__title',
-  '.inline-field',
   '.radio-row',
   '.radio',
   '.switch-field',

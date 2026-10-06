@@ -244,7 +244,7 @@
     },
     {
       "componente": "password",
-      "envuelto": true
+      "envuelto": false
     },
     {
       "componente": "picklist",
@@ -728,7 +728,7 @@
           "tipo": "number | undefined",
           "porDefecto": "undefined",
           "requerido": false,
-          "descripcion": "Cuántos hay en la lista, para decir cuántos de cuántos («2/16 agentes seleccionados», DD-172). Sin él, solo el número de seleccionados.",
+          "descripcion": "Cuántos hay en la lista, para decir cuántos de cuántos («2/16 agentes seleccionados», DD-173). Sin él, solo el número de seleccionados.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -748,7 +748,7 @@
     {
       "selector": "sc-bulk-edit-menu",
       "name": "bulk-edit-menu",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
       "contrato": [
         {
@@ -802,41 +802,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badge",
-        "badgeSeverity",
-        "buttonProps",
-        "disabled",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-bulk-transcription-modal",
@@ -2135,7 +2101,7 @@
           "tipo": "string | undefined",
           "porDefecto": "undefined",
           "requerido": false,
-          "descripcion": "Nombre accesible de la casilla de CABECERA (seleccionar todo).",
+          "descripcion": "Nombre accesible de la casilla de CABECERA (seleccionar todo). Lo pone el componente desde que se pinta: PrimeNG 22.1 solo lo calcula cuando la tabla recibe filas después de pintarse la cabecera.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2783,7 +2749,7 @@
     {
       "selector": "sc-delete-entity-dialog",
       "name": "delete-entity-dialog",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "contrato": [
         {
@@ -2877,41 +2843,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badge",
-        "badgeSeverity",
-        "buttonProps",
-        "disabled",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-dialog",
@@ -3597,7 +3529,7 @@
     {
       "selector": "sc-form-danger-zone",
       "name": "form-danger-zone",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
       "contrato": [
         {
@@ -3636,14 +3568,9 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "When present, it specifies that the component should be disabled.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Desactiva el botón: la acción se sigue viendo, pero no se puede pulsar.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "action",
@@ -3656,40 +3583,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badge",
-        "badgeSeverity",
-        "buttonProps",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-form-section-nav",
@@ -3943,7 +3837,7 @@
     {
       "selector": "sc-impact-preview-dialog",
       "name": "impact-preview-dialog",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
       "contrato": [
         {
@@ -3992,14 +3886,9 @@
           "tipo": "ImpactBadge | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Value of the badge.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "El cambio que se va a aplicar, en una franja sobre la lista: el campo, su valor de ahora (si se sabe) y el nuevo. Con `null` no se pinta.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "confirmLabel",
@@ -4042,40 +3931,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badgeSeverity",
-        "buttonProps",
-        "disabled",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-inline-rename-cell",
@@ -5466,7 +5322,7 @@
     {
       "selector": "sc-password",
       "name": "password",
-      "primengBase": "primeng/password",
+      "primengBase": "primeng/config, primeng/inputpassword",
       "cuando": "Para una contraseña, con su ojo para mostrarla.",
       "contrato": [
         {
@@ -5475,14 +5331,9 @@
           "tipo": "ScFieldSize",
           "porDefecto": "'md'",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Specifies the size of the component.",
-            "porDefecto": "undefined",
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no cambia el comportamiento.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "label",
@@ -5490,14 +5341,9 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Label of the input for accessibility.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "required",
@@ -5505,14 +5351,9 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "There must be a value (if set).",
-            "porDefecto": "false",
-            "obsoleta": null,
-            "heredadaDe": "BaseEditableHolder"
-          }
+          "descripcion": "Marca el campo como obligatorio: pinta la marca en la etiqueta y lo anuncia con `aria- required`. No valida por sí solo — de eso se encarga el formulario.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "helperText",
@@ -5541,13 +5382,8 @@
           "porDefecto": "false",
           "requerido": false,
           "descripcion": "Estado inválido explícito. Se combina con `error`.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "When present, it specifies that the component should have invalid state style.",
-            "porDefecto": "false",
-            "obsoleta": null,
-            "heredadaDe": "BaseEditableHolder"
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "fluid",
@@ -5556,13 +5392,8 @@
           "porDefecto": "false",
           "requerido": false,
           "descripcion": "Ancho completo: el campo ocupa el 100 % de su contenedor.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Spans 100% width of the container when enabled.",
-            "porDefecto": "false",
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "ariaLabel",
@@ -5571,13 +5402,8 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "Nombre accesible cuando no hay `<label>` visible.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Defines a string that labels the input for accessibility.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "placeholder",
@@ -5585,14 +5411,9 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Advisory information to display on input.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "disabled",
@@ -5600,14 +5421,9 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "When present, it specifies that the component should have disabled state style.",
-            "porDefecto": "false",
-            "obsoleta": null,
-            "heredadaDe": "BaseEditableHolder"
-          }
+          "descripcion": "Deshabilita el campo y su botón de mostrar. No se puede enfocar ni editar, y no viaja en el envío del formulario.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "inputId",
@@ -5615,14 +5431,9 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Identifier of the accessible input element.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Id del control interno. Si no se pasa se genera uno, así que solo hace falta para atar una etiqueta externa o un `aria-describedby` de fuera.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "name",
@@ -5630,14 +5441,9 @@
           "tipo": "string",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "When present, it specifies that the name of the input.",
-            "porDefecto": "undefined",
-            "obsoleta": null,
-            "heredadaDe": "BaseEditableHolder"
-          }
+          "descripcion": "Atributo `name` del control, para el envío nativo del formulario y para que el navegador sepa qué autocompletar.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "autocomplete",
@@ -5646,13 +5452,8 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "`current-password` en un acceso, `new-password` al crearla (lo leen los gestores de contraseñas).",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Specify automated assistance in filling out password by browser.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "maxlength",
@@ -5660,14 +5461,9 @@
           "tipo": "number",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": null,
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "The number of characters (code points) must not exceed the value of the attribute.",
-            "porDefecto": "undefined",
-            "obsoleta": null,
-            "heredadaDe": "BaseInput"
-          }
+          "descripcion": "Máximo de caracteres que deja teclear el navegador. Es un tope duro, no un aviso: no avisa, simplemente no deja escribir más.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "feedback",
@@ -5675,14 +5471,9 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": "Medidor de fuerza de PrimeNG. Apagado por defecto: un acceso no lo quiere.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Whether to show the strength indicator or not.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Medidor de fuerza, el de PrimeNG. Apagado por defecto: un acceso no lo quiere.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "toggleMask",
@@ -5691,13 +5482,8 @@
           "porDefecto": "true",
           "requerido": false,
           "descripcion": "Botón para mostrar u ocultar la contraseña.",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Whether to show an icon to display the password as plain text.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "showAriaLabel",
@@ -5751,31 +5537,7 @@
         }
       ],
       "ocultas": [
-        "appendTo",
-        "ariaLabelledBy",
-        "autofocus",
-        "inputSize",
-        "inputStyle",
-        "inputStyleClass",
-        "max",
-        "mediumLabel",
-        "mediumRegex",
-        "min",
-        "minlength",
-        "motionOptions",
-        "overlayOptions",
-        "pPasswordPT",
-        "pPasswordUnstyled",
-        "pattern",
-        "promptLabel",
-        "showClear",
-        "showPassword",
-        "step",
-        "strongLabel",
-        "strongRegex",
-        "tabindex",
-        "variant",
-        "weakLabel"
+        "mask"
       ]
     },
     {
@@ -7325,7 +7087,7 @@
     {
       "selector": "sc-sticky-form-header",
       "name": "sticky-form-header",
-      "primengBase": "primeng/button",
+      "primengBase": "—",
       "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
       "contrato": [
         {
@@ -7429,41 +7191,7 @@
           "nativo": null
         }
       ],
-      "ocultas": [
-        "ariaLabel",
-        "autofocus",
-        "badge",
-        "badgeSeverity",
-        "buttonProps",
-        "disabled",
-        "fluid",
-        "hostName",
-        "icon",
-        "iconOnly",
-        "iconPos",
-        "label",
-        "link",
-        "loading",
-        "loadingIcon",
-        "outlined",
-        "pButton",
-        "pButtonIconPT",
-        "pButtonLabelPT",
-        "pButtonLabelUnstyled",
-        "pButtonPT",
-        "pButtonUnstyled",
-        "plain",
-        "raised",
-        "rounded",
-        "severity",
-        "size",
-        "style",
-        "styleClass",
-        "tabindex",
-        "text",
-        "type",
-        "variant"
-      ]
+      "ocultas": []
     },
     {
       "selector": "sc-subsection",

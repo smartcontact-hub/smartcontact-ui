@@ -41,24 +41,24 @@
   </div>
 
   <div modal-actions>
-    <p-button
+    <sc-button
       type="button"
-      size="small"
-      severity="secondary"
+      size="sm"
+      variant="secondary"
       data-testid="delete-cancel-btn"
-      (onClick)="cancelled.emit()"
+      (clicked)="cancelled.emit()"
     >
       <span>{{ 'sc.deleteEntityDialog.cancel' | translate }}</span>
-    </p-button>
-    <p-button
+    </sc-button>
+    <sc-button
       type="button"
-      size="small"
-      severity="danger"
+      size="sm"
+      variant="danger"
       [disabled]="!canConfirm()"
       data-testid="delete-confirm-btn"
-      (onClick)="onConfirm()"
+      (clicked)="onConfirm()"
     >
       <span>{{ 'sc.deleteEntityDialog.delete' | translate }}</span>
-    </p-button>
+    </sc-button>
   </div>
 </sc-dialog>

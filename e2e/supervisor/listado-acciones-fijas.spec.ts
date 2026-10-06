@@ -15,7 +15,7 @@ async function cabeEnTabla(control: Locator) {
   });
 }
 
-// DD-172: el «Column Toggle» de primeng.dev: el botón «Columnas» con su engranaje abre un globo con una casilla por columna.
+// DD-173: el «Column Toggle» de primeng.dev: el botón «Columnas» con su engranaje abre un globo con una casilla por columna.
 test('Columnas es un botón con su engranaje y conteo accesible, conserva selección y teclado', async ({ page }) => {
   await forceLightTheme(page);
   await disableAnimations(page);

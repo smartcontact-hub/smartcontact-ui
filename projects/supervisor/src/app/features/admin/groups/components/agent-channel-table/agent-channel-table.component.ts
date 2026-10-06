@@ -67,12 +67,12 @@ interface VisibleRow {
 
 /**
  * El ancho de cada columna, en rem, en la tabla de la ficha y en la del panel rápido, que suma estos mismos para medirse
- * (DD-131). Las dos van en la densidad compacta nativa (`sm`, DD-172): 6 de relleno a cada lado. La cabecera es una
- * fila de texto, y solo Asignado lleva su casilla de «todos» delante del rótulo (DD-172). Cada ancho es lo más largo
+ * (DD-131). Las dos van en la densidad compacta nativa (`sm`, DD-173): 6 de relleno a cada lado. La cabecera es una
+ * fila de texto, y solo Asignado lleva su casilla de «todos» delante del rótulo (DD-173). Cada ancho es lo más largo
  * que lleva en los cuatro idiomas, más el relleno y unos 4 px de margen. Medido el 2026-10-05 con la letra de la
  * cabecera (600, 14 px):
  *   · Asignado: la casilla (15,75), 7 y «Atribuído» (65): 100.
- *   · Cada canal, su rótulo: «Téléphone» (72), «Chat» (32) y «Email» (37). De DD-156 a DD-172 los tres medían lo del
+ *   · Cada canal, su rótulo: «Téléphone» (72), «Chat» (32) y «Email» (37). De DD-156 a DD-173 los tres medían lo del
  *     más largo (104), y las columnas de casillas eran casi todo hueco.
  *   · Habilitado: su rótulo, «Habilitado» (69).
  *   · Estado: su etiqueta más larga, «Post-conversation», 123 px.
@@ -254,7 +254,7 @@ export class AgentChannelTableComponent {
   }
 
   /**
-   * La casilla de «todos» de Asignado, la única de la cabecera (DD-172): los rótulos de las demás columnas son texto, y
+   * La casilla de «todos» de Asignado, la única de la cabecera (DD-173): los rótulos de las demás columnas son texto, y
    * un canal se cambia fila a fila. Cuenta las filas a la vista que se pueden asignar (o ya lo están).
    */
   protected assignedHeaderState(): 'all' | 'some' | 'none' {

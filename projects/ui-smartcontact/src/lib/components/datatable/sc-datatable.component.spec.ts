@@ -46,6 +46,7 @@ type Interno = {
   onCheckMousedown: (event: MouseEvent, index: number) => void;
   onSelectionChange: (nueva: Fila | readonly Fila[] | null) => void;
   selection: { (): unknown; set: (v: unknown) => void };
+  rowClass: (row: Fila, index: number) => string | undefined;
 };
 
 function montar(inputs: Record<string, unknown> = {}) {
@@ -253,6 +254,53 @@ describe('sc-datatable · selección de rango con ancla', () => {
   });
 });
 
+
+/**
+ * La fila seleccionada lleva `sc-row--selected`, que sale de la SELECCIÓN y no de p-table.
+ *
+ * p-table pone `.p-datatable-row-selected` solo en las filas que marca él: las que añade un tramo con Mayúsculas llegan
+ * por el input y se quedaban sin pintar (medido el 2026-10-05 en Usuarios y Agentes: la barra decía 4 seleccionadas y
+ * se veían 2). Hasta hoy lo resolvía cada pantalla desde `[rowStyleClass]`, y solo lo hacía Conversaciones.
+ */
+describe('sc-datatable · la fila seleccionada lleva su clase, también la que añade un tramo', () => {
+  const FILAS: Fila[] = [
+    { id: 1, nombre: 'uno' },
+    { id: 2, nombre: 'dos' },
+    { id: 3, nombre: 'tres' },
+  ];
+  const tabla = (inputs: Record<string, unknown>) =>
+    montar({ columns: COLS, value: FILAS, dataKey: 'id', selectionMode: 'multiple', ...inputs });
+
+  it('marca las filas de la selección y ninguna más', () => {
+    const c = tabla({ selection: [FILAS[1]!, FILAS[2]!] });
+    expect(c.rowClass(FILAS[1]!, 1)).toBe('sc-row--selected');
+    expect(c.rowClass(FILAS[2]!, 2)).toBe('sc-row--selected');
+    expect(c.rowClass(FILAS[0]!, 0)).toBeUndefined();
+  });
+
+  it('las del tramo también: lo que emite la tabla tras un Mayús+clic', () => {
+    const c = tabla({});
+    const box = document.createElement('p-table-checkbox');
+    box.className = 'sc-datatable__check-box';
+    c.onCheckMousedown({ shiftKey: false, target: box } as unknown as MouseEvent, 0);
+    c.onSelectionChange([FILAS[0]!]);
+    c.onCheckMousedown({ shiftKey: true, target: box } as unknown as MouseEvent, 2);
+    c.onSelectionChange([FILAS[0]!, FILAS[2]!]);
+    // La del medio no la marcó p-table: la añadió el tramo.
+    expect(c.rowClass(FILAS[1]!, 1)).toBe('sc-row--selected');
+  });
+
+  it('se suma a las clases de la pantalla', () => {
+    const c = tabla({ selection: [FILAS[1]!], rowStyleClass: () => 'propia' });
+    expect(c.rowClass(FILAS[1]!, 1)).toBe('propia sc-row--selected');
+    expect(c.rowClass(FILAS[0]!, 0)).toBe('propia');
+  });
+
+  it('cuenta por `dataKey`: una copia con el mismo id está seleccionada', () => {
+    const c = tabla({ selection: [{ ...FILAS[1]! }] });
+    expect(c.rowClass(FILAS[1]!, 1)).toBe('sc-row--selected');
+  });
+});
 
 describe('sc-datatable · columnas fijas nativas', () => {
   it('conecta cabeceras ordenables, simples y celdas; las demás siguen libres', async () => {

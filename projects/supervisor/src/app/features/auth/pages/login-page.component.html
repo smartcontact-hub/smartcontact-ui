@@ -44,6 +44,8 @@
             }
           </sc-button>
 
+          <!-- La «o» lleva el color del separador del DS. `login__divider` es el gancho de su prueba
+               (`nombres-y-separadores.spec.ts`): la regla de color que colgaba de aquí no llegaba al texto. -->
           <sc-divider class="login__divider" align="center">
             <span class="sc-text-caption-regular">{{ 'auth.login.or' | translate }}</span>
           </sc-divider>

@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { disableAnimations, forceDarkTheme, forceLightTheme, goto } from './helpers';
 
 /**
- * «ADMINISTRATIVO», EN MARRÓN (DD-172).
+ * «ADMINISTRATIVO», EN MARRÓN (DD-173).
  *
  * El estado Administrativo de un agente se pintaba en amarillo (la severidad `warn`, la de los avisos). Pasa al color
  * de etiqueta `brown`, nuevo en la paleta del DS y hecho con primitivos del Kit: fondo `amber-800` (el marrón de la

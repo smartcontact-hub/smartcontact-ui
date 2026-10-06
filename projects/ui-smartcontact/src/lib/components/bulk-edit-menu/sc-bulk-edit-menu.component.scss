@@ -26,9 +26,8 @@
     width: 164px;
   }
 
+  // La talla la pone `sc-button size="sm"`, la misma que la de los desplegables de al lado.
   &__apply {
     flex-shrink: 0;
-    height: 36px;
-    padding: 0 var(--sc-spacing-1-125);
   }
 }

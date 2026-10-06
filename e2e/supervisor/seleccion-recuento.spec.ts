@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LA SELECCIÓN DICE CUÁNTOS DE CUÁNTOS (DD-172).
+ * LA SELECCIÓN DICE CUÁNTOS DE CUÁNTOS (DD-173).
  *
  * Al marcar varias filas de un listado, la barra en lote decía «2 grupos seleccionados», sin el total de la lista. Ahora
  * dice «2/14 grupos seleccionados», y el lector oye «2 de 14»: «2/14» se puede leer como una fecha o una fracción.

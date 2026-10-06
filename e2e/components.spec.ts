@@ -1119,7 +1119,7 @@ test.describe('sc-delete-entity-dialog', () => {
 });
 
 test.describe('sc-color-dot-picker', () => {
-  test('9 swatches (con el marrón, DD-172), aria-checked en el seleccionado, click cambia (two-way)', async ({ page }) => {
+  test('9 swatches (con el marrón, DD-173), aria-checked en el seleccionado, click cambia (two-way)', async ({ page }) => {
     await gotoPage(page, 'colordotpicker');
     const picker = page.getByTestId('sc-dotpicker');
 
