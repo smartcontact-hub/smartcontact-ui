@@ -14,6 +14,7 @@
     [badgeVariant]="args.badgeVariant"
     [image]="args.image || null"
     [illustrationBase]="args.illustrationBase"
+    [labelColor]="args.labelColor || null"
   />
 </ng-template>
 
@@ -51,4 +52,11 @@
   />
   <sc-avatar illustrationName="Carlos Ruiz" illustrationPool="abstract" size="xlarge" />
   <sc-avatar illustrationName="Soporte Ventas" illustrationPool="abstract" size="xlarge" />
+</ng-template>
+
+<ng-template #tone>
+  <sc-avatar icon="call" shape="square" labelColor="blue" data-testid="sc-avatar-tone" />
+  <sc-avatar icon="data_object" shape="square" labelColor="purple" />
+  <sc-avatar icon="inventory_2" shape="square" labelColor="teal" />
+  <sc-avatar icon="auto_awesome" shape="square" labelColor="orange" />
 </ng-template>

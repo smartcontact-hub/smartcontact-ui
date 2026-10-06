@@ -14,34 +14,371 @@
    * canónica añadida. Aquí queda solo el padding, que es delta suyo. */
   &__inner {
     /* Arriba y a los lados, lo mismo que el resto de pantallas (barra → título 17,5,
-     * lados 28): aquí medía 38,5 arriba (2026-09-14). Abajo se queda el aire de antes. */
-    padding: var(--sc-spacing-1-25) var(--sc-spacing-2) var(--sc-spacing-2-75);
+     * lados 28). Abajo, 28: todo tiene que caber sin desplazar a 1440 × 800 (DD-179). */
+    padding: var(--sc-spacing-1-25) var(--sc-spacing-2) var(--sc-spacing-2);
   }
 }
 
-/* La fila, su hover, su foco y el título de grupo son del Menu del DS (DD-77). Lo único que pone la
- * página es cómo se apilan el título y la descripción dentro de la fila. */
-.hub-link__text {
+/* El buscador y el filtro en una línea, como en la maqueta; a 28 de la primera categoría, que es otro grupo. */
+.hub__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+  margin-block-end: var(--sc-spacing-2);
+}
+
+/* Un campo, no todo el ancho: deja la línea al filtro. */
+.hub__search {
+  display: block;
+  inline-size: var(--sc-spacing-18);
+  max-inline-size: 100%;
+}
+
+/* Las categorías en una rejilla de dos: una de cuatro o de tres ocupa la fila, y las de dos van de dos en dos, una al
+ * lado de la otra, para que todo quepa sin desplazar (DD-179). A 28 entre sí, el doble que entre tarjetas (DD-123). Se
+ * adapta a lo ancho que tenga ESTE bloque, no la ventana: por eso es un contenedor. */
+.hub__sections {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sc-spacing-2);
+}
+
+/* En columna, y la rejilla ocupa lo que sobre: dos categorías en la misma fila acaban a la misma altura, aunque las
+ * tarjetas de una lleven más texto. */
+.cat {
   display: flex;
   flex-direction: column;
+  grid-column: 1 / -1;
+  min-width: 0;
+  /* La transición del filtro solo mueve las categorías (global, `_sc-animations.scss`). */
+  view-transition-class: repo-cat;
+
+  &[data-columnas='2'] {
+    grid-column: auto;
+  }
+}
+
+/* El tono de cada categoría (DD-179), de los de etiqueta del DS: lo leen su título, el borde de sus tarjetas y el
+ * panel. */
+[data-tono='blue'] {
+  --tono-text: var(--sc-label-blue-text);
+  --tono-border: var(--sc-label-blue-border);
+  --tono-strong: var(--sc-label-blue-dot);
+}
+
+[data-tono='purple'] {
+  --tono-text: var(--sc-label-purple-text);
+  --tono-border: var(--sc-label-purple-border);
+  --tono-strong: var(--sc-label-purple-dot);
+}
+
+[data-tono='teal'] {
+  --tono-text: var(--sc-label-teal-text);
+  --tono-border: var(--sc-label-teal-border);
+  --tono-strong: var(--sc-label-teal-dot);
+}
+
+[data-tono='orange'] {
+  --tono-text: var(--sc-label-orange-text);
+  --tono-border: var(--sc-label-orange-border);
+  --tono-strong: var(--sc-label-orange-dot);
+}
+
+/* El título de la categoría, en su tono, y una raya hasta el borde, como en la maqueta. */
+.cat__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  margin-block-end: var(--sc-spacing-1);
+  color: var(--tono-text, var(--sc-text-subtle));
+
+  &::after {
+    content: '';
+    flex: 1;
+    border-block-start: 1px solid var(--sc-border-subtle);
+  }
+}
+
+/* Dos, tres o cuatro columnas según cuántas tenga la categoría (la maqueta), a 14 entre hermanas. */
+.cat__grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--columnas, 4), minmax(0, 1fr));
+  gap: var(--sc-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &[data-columnas='2'] {
+    --columnas: 2;
+  }
+
+  &[data-columnas='3'] {
+    --columnas: 3;
+  }
+}
+
+/* Estrecho, se pliega: las categorías de dos dejan de ir juntas, cuatro o tres columnas pasan a dos, y todo a una al
+ * final. Con el atributo, para pesar lo mismo que las reglas de arriba y ganarles por ir después. */
+@container (max-width: 45rem) {
+  .cat[data-columnas] {
+    grid-column: 1 / -1;
+  }
+
+  .cat__grid[data-columnas='4'],
+  .cat__grid[data-columnas='3'] {
+    --columnas: 2;
+  }
+}
+
+@container (max-width: 26rem) {
+  .cat__grid[data-columnas] {
+    --columnas: 1;
+  }
+}
+
+.cat__cell {
+  display: flex;
   min-width: 0;
 }
 
-.hub-link__description {
-  color: var(--sc-text-subtle);
+/* La tarjeta: la receta de `sc-option-cards` del DS (borde, al pasar el borde fuerte, pulsar al 96 % y el anillo de
+ * foco en la tarjeta; marcada, borde de marca y fondo tintado), con el radio de tarjeta (12). Compacta, 14 por dentro:
+ * todo tiene que caber sin desplazar. Es un botón: abre su panel. */
+.repo-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  margin: 0;
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-xl);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  /* Solo lo que cambia, y a 120 ms: se pasa por encima a menudo, la respuesta tiene que ser inmediata. */
+  transition-property: border-color, box-shadow, scale;
+  transition-duration: var(--sc-transition-fast);
+  transition-timing-function: var(--sc-easing-emphasized);
+
+  /* Al pasar, el borde toma el tono de su grupo (la maqueta). */
+  &:hover {
+    border-color: var(--tono-border, var(--sc-border-strong));
+  }
+
+  &:active {
+    scale: 0.96;
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+
+  /* Marcada, la de su panel abierto: el borde fuerte de su tono y un halo de un píxel del mismo tono, como la maqueta.
+   * Señales quietas, ninguna el movimiento. Sin fondo tintado: la descripción, en gris, no llega a AA sobre el tinte. */
+  &--selected,
+  &--selected:hover {
+    border-color: var(--tono-strong, var(--sc-border-primary));
+    box-shadow: 0 0 0 1px var(--tono-border, var(--sc-border-primary));
+  }
+
+  /* Del icono y la cifra al nombre, 10,5; del nombre a su descripción, 3,5 (la maqueta deja 4): son una pieza. */
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sc-spacing-0-5);
+    margin-block-end: var(--sc-spacing-0-75);
+  }
+
+  /* Cifras tabulares: las de una fila de tarjetas se leen alineadas. */
+  &__count {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tres líneas como mucho (en español caben todas las de hoy), para que un texto largo no estire la fila; entera, en
+   * el panel. */
+  &__description {
+    margin-block-start: var(--sc-spacing-0-25);
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--sc-text-subtle);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
 }
 
-/* La cifra, al final de la fila y en el gris de la descripción (DD-165). Texto y no `sc-badge`: el badge del DS es de
- * aviso (8,75 px), por debajo de la descripción que tiene al lado. Cifras tabulares, para que se alineen en columna. */
-.hub-link__count {
-  margin-inline-start: auto;
-  color: var(--sc-text-subtle);
-  font-variant-numeric: tabular-nums;
+/* El panel de la tarjeta marcada. Lo de dentro se lee de arriba abajo: la categoría, lo que es y «Abrir repositorio»,
+ * que es a lo que se viene; luego cuántas entradas hay y la lista. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100%;
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-5);
+    margin-block-end: var(--sc-spacing-2);
+  }
+
+  /* La categoría, en su tono, como su título en el hub. */
+  &__cat {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    margin: 0;
+    color: var(--tono-text, var(--sc-text-subtle));
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--sc-text-subtle);
+  }
+
+  /* Del texto al botón, 14: el botón es otra pieza; del tamaño de su texto, a la izquierda, donde empieza la lectura. */
+  &__open {
+    align-self: flex-start;
+    margin-block-start: var(--sc-spacing-0-5);
+  }
+
+  &__count {
+    margin: 0 0 var(--sc-spacing-0-5);
+    color: var(--sc-text-subtle);
+  }
+
+  &__list {
+    flex: 1;
+    margin: 0 calc(var(--sc-spacing-0-75) * -1);
+    padding: 0;
+    list-style: none;
+  }
+
+  &__empty {
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    color: var(--sc-text-subtle);
+  }
+
 }
 
-/* El buscador, encima del menú y a 14 de él, como en las listas; un campo, no todo el ancho del hub. */
-.hub__search {
-  display: block;
-  max-inline-size: var(--sc-spacing-25);
-  margin-block-end: var(--sc-spacing-1);
+/* Cada entrada lleva a su sitio: una fila con su nombre y un dato suyo; la flecha aparece al pasar, como en la maqueta. */
+.entrada {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border-radius: var(--sc-radius-md);
+  color: var(--sc-text-primary);
+  text-decoration: none;
+  transition-property: background-color;
+  transition-duration: var(--sc-transition-fast);
+  transition-timing-function: var(--sc-easing-emphasized);
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: calc(var(--sc-focus-ring-offset) * -1);
+  }
+
+  &__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__name,
+  &__detail {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__detail {
+    color: var(--sc-text-subtle);
+  }
+
+  &__arrow {
+    color: var(--sc-icon-secondary);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: var(--sc-easing-emphasized);
+  }
+
+  &:hover &__arrow,
+  &:focus-visible &__arrow {
+    opacity: 1;
+  }
+}
+
+/* La opción elegida del filtro, en el tono de su grupo (lo pone `data-tono` solo a la elegida). */
+.hub-filter__label {
+  color: var(--tono-text, inherit);
+}
+
+/* Los recientes, bajo el buscador: el título y una fila por repositorio, con su cifra. */
+.hub-recientes {
+  &__title {
+    margin: 0 0 var(--sc-spacing-0-25);
+    padding-inline: var(--sc-spacing-0-75);
+    color: var(--sc-text-subtle);
+  }
+
+  &__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    min-inline-size: var(--sc-spacing-18);
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-75);
+    inline-size: 100%;
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    border: 0;
+    border-radius: var(--sc-radius-md);
+    background: transparent;
+    color: var(--sc-text-primary);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--sc-bg-hover);
+    }
+
+    &:focus-visible {
+      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+      outline-offset: calc(var(--sc-focus-ring-offset) * -1);
+    }
+  }
+
+  &__icon {
+    color: var(--tono-text, var(--sc-icon-secondary));
+  }
+
+  &__count {
+    margin-inline-start: auto;
+    color: var(--sc-text-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .repo-card:active {
+    scale: none;
+  }
 }

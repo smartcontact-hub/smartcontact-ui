@@ -16,10 +16,29 @@
     [fullScreen]="args.fullScreen"
     [width]="args.width || null"
     [topOffset]="args.topOffset || null"
+    [docked]="args.docked"
     [visible]="open()"
     (visibleChange)="open.set($event)"
     data-testid="sc-drawer"
   >
     Contenido del drawer.
+  </sc-drawer>
+</ng-template>
+
+<ng-template #docked>
+  <sc-button label="Abrir panel acoplado" data-testid="open-drawer-docked" (clicked)="openDocked.set(true)" />
+
+  <sc-drawer
+    header="Detalle"
+    position="right"
+    width="var(--sc-spacing-25)"
+    topOffset="var(--sc-spacing-4)"
+    docked
+    [modal]="false"
+    [visible]="openDocked()"
+    (visibleChange)="openDocked.set($event)"
+    data-testid="sc-drawer-docked"
+  >
+    Un panel de la página: sin sombra ni velo, con el borde en su filo interior y la esquina de arriba redondeada.
   </sc-drawer>
 </ng-template>

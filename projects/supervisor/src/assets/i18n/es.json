@@ -1247,7 +1247,14 @@
         "reglas_ia": "Reglas de negocio aplicadas al motor de inteligencia artificial",
         "entidades_ia": "Entidades semánticas gestionadas por modelos de lenguaje",
         "clasificacion_ia": "Modelos de clasificación automática de conversaciones"
-      }
+      },
+      "all": "Todos",
+      "filter": "Filtrar por categoría",
+      "open": "Abrir repositorio",
+      "entries": "{{count}} entradas",
+      "entries_one": "1 entrada",
+      "no_entries": "Todavía no hay ninguna.",
+      "recent": "Recientes"
     },
     "agendas": {
       "title": "Agendas",

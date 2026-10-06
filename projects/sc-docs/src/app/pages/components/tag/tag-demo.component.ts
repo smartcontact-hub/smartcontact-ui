@@ -30,6 +30,11 @@ const LABEL_SNIPPET = `<sc-tag variant="label" labelColor="gray" value="Gris" />
 <sc-tag variant="label" labelColor="blue" value="Azul" />
 <sc-tag variant="label" labelColor="purple" value="Morado" />`;
 
+const BORDERLESS_SNIPPET = `<sc-tag variant="label" labelColor="blue" [bordered]="false" value="9" />
+<sc-tag variant="label" labelColor="purple" [bordered]="false" value="10" />
+<sc-tag variant="label" labelColor="teal" [bordered]="false" value="8" />
+<sc-tag variant="label" labelColor="orange" [bordered]="false" value="15" />`;
+
 /** Demo de `sc-tag` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-tag-demo',
@@ -42,6 +47,7 @@ export class TagDemoComponent {
   protected readonly severitiesTpl = viewChild<TemplateRef<StoryContext>>('severities');
   protected readonly variantsTpl = viewChild<TemplateRef<StoryContext>>('variants');
   protected readonly labelTpl = viewChild<TemplateRef<StoryContext>>('label');
+  protected readonly borderlessTpl = viewChild<TemplateRef<StoryContext>>('borderless');
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-tag',
@@ -68,6 +74,11 @@ export class TagDemoComponent {
         },
         description: 'Sólo con variant="label".',
       },
+      {
+        name: 'bordered',
+        control: { kind: 'boolean' },
+        description: 'Sólo con variant="label": sin borde, solo el fondo tintado (una cifra dentro de una tarjeta).',
+      },
     ],
     defaultArgs: {
       value: 'Estado',
@@ -76,6 +87,7 @@ export class TagDemoComponent {
       rounded: false,
       variant: 'default',
       labelColor: 'gray',
+      bordered: true,
     },
   };
 
@@ -84,12 +96,14 @@ export class TagDemoComponent {
     const se = this.severitiesTpl();
     const va = this.variantsTpl();
     const la = this.labelTpl();
-    if (!pg || !se || !va || !la) return [];
+    const bl = this.borderlessTpl();
+    if (!pg || !se || !va || !la || !bl) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Severities', template: se, snippet: SEVERITIES_SNIPPET },
       { name: 'Variantes', template: va, snippet: VARIANTS_SNIPPET },
       { name: 'Variante label', template: la, snippet: LABEL_SNIPPET },
+      { name: 'Label sin borde', template: bl, snippet: BORDERLESS_SNIPPET },
     ];
   });
 }

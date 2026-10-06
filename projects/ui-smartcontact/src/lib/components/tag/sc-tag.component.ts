@@ -39,6 +39,13 @@ export class ScTagComponent {
     /** Color categórico cuando `variant='label'`. */
     readonly labelColor = input<LabelColor>('gray');
 
+    /**
+     * Solo con `variant='label'`: `false` quita el borde y deja el fondo tintado, para una cifra que ya va dentro de
+     * una tarjeta con borde (la de cada destino del hub de Repositorios, DD-179). El borde queda transparente, así que
+     * la pastilla mide lo mismo con él o sin él.
+     */
+    readonly bordered = input(true, { transform: booleanAttribute });
+
     /** CSS custom props del color de la etiqueta (consumidas por el SCSS). */
     protected readonly labelVars = computed<Record<string, string>>(() => {
         const c = this.labelColor();
@@ -46,7 +53,7 @@ export class ScTagComponent {
         return {
             '--label-bg': `var(--sc-label-${c}-bg)`,
             '--label-text': `var(--sc-label-${c}-text)`,
-            '--label-border': `var(--sc-label-${c}-border)`
+            '--label-border': this.bordered() ? `var(--sc-label-${c}-border)` : 'transparent'
         };
     });
 

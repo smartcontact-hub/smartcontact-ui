@@ -116,6 +116,10 @@ test('EXCLUYE la CONDICIÓN de una media query, que no es una declaración', () 
   assert.equal(anchosSueltos('@media (max-width: 1024px) {\n  .a { display: block; }\n}'), 0);
 });
 
+test('EXCLUYE la CONDICIÓN de una container query, que tampoco es una declaración', () => {
+  assert.equal(anchosSueltos('@container (max-width: 45rem) {\n  .a { --columnas: 2; }\n}'), 0);
+});
+
 /* ── revisarPagina: verde sobre lo real, rojo con la regresión puesta ──────── */
 
 const RUTA_REAL =

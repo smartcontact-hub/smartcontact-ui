@@ -1247,7 +1247,14 @@
         "reglas_ia": "Business rules applied to the AI engine",
         "entidades_ia": "Semantic entities managed by language models",
         "clasificacion_ia": "Automatic conversation classification models"
-      }
+      },
+      "all": "All",
+      "filter": "Filter by category",
+      "open": "Open repository",
+      "entries": "{{count}} entries",
+      "entries_one": "1 entry",
+      "no_entries": "None yet.",
+      "recent": "Recent"
     },
     "agendas": {
       "title": "Address books",

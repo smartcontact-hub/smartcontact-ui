@@ -96,3 +96,35 @@
     animation: none !important;
   }
 }
+
+/*
+ * El filtro por categoría del hub de Repositorios (DD-179): al cambiarlo, las categorías que quedan se desplazan a su
+ * sitio, las que se van se funden y las que llegan suben y aparecen, como en la maqueta de Figma Make. Es una transición
+ * del navegador (`startViewTransition`); solo la llevan las categorías (`view-transition-class: repo-cat`), así que
+ * las navegaciones del router siguen con su fundido de siempre. Con menos movimiento, la página no la abre.
+ */
+::view-transition-group(*.repo-cat) {
+  animation-duration: var(--sc-transition-slow);
+  animation-timing-function: var(--sc-easing-emphasized);
+}
+
+::view-transition-old(*.repo-cat) {
+  animation: sc-repo-cat-out var(--sc-transition-fast) var(--sc-easing-default) both;
+}
+
+::view-transition-new(*.repo-cat) {
+  animation: sc-repo-cat-in var(--sc-transition-slow) var(--sc-easing-emphasized) both;
+}
+
+@keyframes sc-repo-cat-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes sc-repo-cat-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sc-spacing-0-75));
+  }
+}

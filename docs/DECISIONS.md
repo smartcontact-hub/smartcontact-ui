@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Repositorios en tarjetas por grupo: un tono de etiqueta por grupo (azul, morado, teal y naranja) en su título, el icono, la cifra, el borde al pasar y al marcar y el filtro · un icono por concepto · pulsar una tarjeta abre a la derecha un panel acoplado con lo que hay dentro y «Abrir repositorio» (con velo solo si taparía tarjetas) · filtro por grupo con transición y recientes en el buscador · cabe sin desplazar a 1440 × 800 · `sc-drawer` `docked`, `sc-avatar` `labelColor` y `sc-tag` `bordered` (sustituye DD-78 en el hub, enmienda DD-165 §1) | DD-179 |
 > | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-177 |
 > | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas, «Administrativo» en marrón (`brown`, nuevo color de etiqueta) | DD-176 |
 > | La ficha de una tipificación sin saltos: el índice de las fichas · la dirección en un control · los niveles son las columnas (las tres siempre; la siguiente, fantasma) · añadir y renombrar en la línea de la columna · cada aviso en su línea reservada | DD-174 |
@@ -111,7 +112,7 @@
 > | TopBar y bloque del logo con el mismo `scale/4` (56) · tallas de dentro con tokens del DS · barra → título `1-25`, lados `2`, buscador → tabla `0-875` · una barra `sticky` necesita que ningún antepasado tenga `overflow: auto` | DD-94 |
 > | Título de página → contenido `scale/1` en las 13 pantallas · una miga dentro de una barra va `flush` (la barra pone el aire) | DD-90 |
 > | Cabecera fija al scroll de la página con `<sc-datatable stickyHeader>` · ninguna caja por encima con `overflow: hidden` (usa `clip`) · una etiqueta no se parte, recorta | DD-80 |
-> | Una lista de destinos es el `Menu` del DS en línea · lo que dice Aura lo sigue el código y Figma se revincula | DD-78 |
+> | Una lista de destinos es el `Menu` del DS en línea (**en Repositorios, tarjetas desde DD-179**) · lo que dice Aura lo sigue el código y Figma se revincula | DD-78 |
 > | Un estado es `sc-tag` con severidad y un contador `sc-badge` · una pastilla dibujada por la pantalla la caza `hand-made-pieces` | DD-77 |
 > | Un valor categórico en una celda es `sc-tag` secundario del DS · nada en monoespaciada en el producto (sí en sc-docs) · el ancho de columna se mide | DD-76 |
 > | El texto de una celda va en SU envoltorio con su clase · suelto en el `<td>` hereda los 16 del documento | DD-71 |
@@ -129,6 +130,82 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-179 · 2026-10-06 — Repositorios en tarjetas por grupo, con un tono por grupo y un panel con lo que hay dentro
+
+**Contexto** · El hub de Repositorios era el `Menu` del DS en línea (DD-78), con cifras y buscador (DD-165): once
+destinos en una lista larga y gris que, a 1440, dejaba media pantalla vacía. La revisión de producto del 2026-10-06
+trajo una maqueta de Figma Make («Premium Repository Hub», hecha sobre una captura de esta pantalla): tarjetas por
+grupo, un color por grupo, un panel lateral al pulsar, filtros por grupo y recientes en el buscador. Se estudió su
+código y su comportamiento, y se pasó por `impeccable` y `better-ui`; un análisis paralelo midió su contraste y lo que
+la delata como hecha por IA. Lo que se toma, con piezas y tokens del DS:
+
+**Decisión** ·
+1. **Tarjetas por grupo.** Cada destino es una tarjeta (icono, cifra, nombre y descripción, esta en tres líneas como
+   mucho) y la tarjeta entera es un botón: la receta de `sc-option-cards` (borde, pulsar al 96 %, el anillo de foco en
+   la tarjeta), con el radio de tarjeta (12) y 14 por dentro. La rejilla, como la maqueta: cuatro, tres o dos columnas
+   según cuántos tenga el grupo, y los grupos de dos van juntos en una fila. **Todo cabe sin desplazar**: medido a
+   1440 × 800, 1440 × 832 y 1366 × 768, en los cuatro idiomas.
+2. **Un tono por grupo**, de los de etiqueta del DS (`LabelColor`, tokens `--sc-label-<color>-*`, que voltean solos en
+   oscuro): Comunicación azul, Clasificación morado, Diseñador Conversacional teal e IA naranja. Ni rojo, verde ni ámbar
+   (ya dicen error, bien y aviso) ni marrón («Administrativo», DD-176). Lo llevan el título del grupo, el icono (el
+   avatar cuadrado del DS con `labelColor`), la cifra (la etiqueta del DS sin borde), el borde de la tarjeta al pasar
+   (el borde de la etiqueta) y al marcarla (el punto de la etiqueta y un halo de un píxel), la opción elegida del filtro
+   y la categoría en el panel. Medido: el icono sobre su marco, de 4,88 a 6,51 en claro y de 8,29 a 9,77 en oscuro; el
+   título, de 5,18 a 6,98 y de 11,03 a 13,45.
+3. **Un icono por concepto**: Tipificaciones pasa a `sell` (el de la tipificación en el resto del producto,
+   `condition.types.ts`) y Clasificación IA a `category`; ya no comparten el de Labels.
+4. **Pulsar una tarjeta la marca y abre a la derecha su panel** (`sc-drawer` acoplado, bajo la barra de la app): su
+   categoría, lo que es, «Abrir repositorio» (lo primero, arriba) y sus entradas de verdad, cada una a su sitio (el
+   editor de la agenda y de la tipificación, la ficha de la regla, `?editar=` en Plantillas y `?buscar=` en las listas,
+   DD-164). Lo cierran la X, Escape, volver a pulsar su tarjeta y un clic fuera; otra tarjeta lo cambia. No tapa nada,
+   así que va sin velo y la página sigue a mano; si por el ancho taparía tarjetas (medido al abrir y al cambiar la
+   ventana, no a un ancho fijo), lleva velo y es modal. Con el teclado, el foco entra en el panel y vuelve a su tarjeta.
+5. **Un filtro por grupo** (`sc-selectbutton`, que DD-113 reserva para filtrar la misma lista), junto al buscador: al
+   cambiarlo, las categorías se mueven a su sitio con una transición del navegador (`startViewTransition`), y con menos
+   movimiento cambia sin más. Pulsar la elegida vuelve a «Todos».
+6. **Recientes**: el buscador vacío ofrece los tres últimos repositorios abiertos en el panel, guardados en el
+   navegador de quien los abre (`createVersionedStorage`). Elegir uno lo busca.
+7. **Tres opciones nuevas del DS**, con su ejemplo en sc-docs: `sc-drawer` `docked` (sin sombra, el borde en su filo
+   interior y la esquina de arriba redondeada, como el panel lateral de GitHub), `sc-avatar` `labelColor` y `sc-tag`
+   `bordered` (en `false`, solo el fondo tintado).
+
+Sustituye DD-78 en el hub (deja de ser el `Menu`) y enmienda DD-165 §1: la cifra va en la etiqueta del tono de su grupo,
+no en el gris de la descripción. Lo demás de DD-165 se queda: el lector oye «Agendas (9)» y la descripción aparte, el
+buscador y los almacenes.
+
+**Razón** · Once destinos en tarjetas se recorren de un vistazo, y el tono dice de qué grupo es cada uno sin decir
+nada de su estado. El panel deja mirar lo que hay dentro sin salir y saltar directo a una entrada, y como el hub deja
+sitio a la derecha, puede ser parte de la página en vez de una capa encima.
+
+**Descartadas** ·
+- *Copiar la maqueta tal cual*: su paleta (cian y verde neón sobre negro, degradado azul y violeta), 17 textos por
+  debajo de 4,5:1, letra de 10 px y cifras en monoespaciada (DD-76).
+- *Sus datos*: «+2 esta semana», «Última edición» y una barra que compara con el mayor del grupo no existen en el
+  producto; la barra, además, compara cosas que no se comparan (agendas con horarios).
+- *Un punto de color delante del título del grupo*: se probó y se leía como adorno de plantilla.
+- *El marco del icono dibujado en la página*: `hand-made-pieces.spec.ts` lo contó (11); es el avatar del DS.
+- *El icono gris en reposo y de color solo al pasar, como la maqueta*: en reposo, el color es lo que hace que la
+  página se lea por grupos.
+- *Fondo tintado en la tarjeta marcada, como la maqueta*: la descripción, en gris, no llega a 4,5:1 sobre el tinte.
+- *El panel a toda la altura, o con sombra*: es parte de la página, no una capa, y no tapa nada.
+- *«Abrir repositorio» en el sitio de la X*: con 350 de ancho no cabe junto a un título largo, y sin la X cerrar solo
+  se descubre volviendo a pulsar la tarjeta o con Escape.
+- *El botón en el tono del grupo*: el botón principal es el mismo en todo el producto; el tono dice de qué grupo es
+  algo, no qué hacer.
+- *Una entrada escalonada al abrir la página*: se probó; en una página que se abre a menudo es una animación en cada
+  carga.
+- *Cada grupo de dos en su propia fila*: con ellos en filas separadas, el hub no cabía sin desplazar.
+
+**Consecuencias** · `hand-made-pieces.spec.ts` sigue con el inventario vacío. `repositorios-hub.spec.ts` se reescribe
+para las tarjetas, el filtro, el panel y los recientes. La tarjeta entra, con su motivo, en el trinquete de cajas a mano
+de `audit:screen-vocabulary` (es un botón, y `sc-section-card` es una sección de campos); pasa al DS como tarjeta-botón
+cuando otra pantalla la pida. `audit:page-anatomy` aprende que la condición de una container query, como la de una
+media query, no es un ancho. El hub no tiene página en el fichero `Supervisor` de Figma
+(DD-77): lo que Figma tiene que seguir va a `figma-pendiente`. Fuera de esta decisión, porque cambian todo el producto
+desde el Kit: el oscuro en slate en vez de zinc (DD-79) y un paso más oscuros los grises de texto en claro (DD-106).
 
 ---
 
@@ -802,6 +879,9 @@ recorrerlos. Lo que oye el lector tiene que decir lo mismo que se ve.
 - La cifra en un `sc-badge`: el del DS es de aviso (8,75 px de letra; 10,5 en `lg`), por debajo de los 12 de la
   descripción que tiene al lado. Medido en la página.
 - Contar los repositorios de IA de `instances/` (reglas IA y compañía): las filas no llevan a ellos.
+
+**Actualización (2026-10-06)** · El hub pasa a tarjetas (DD-179): la cifra va en la etiqueta del tono de su grupo, en
+la esquina de su tarjeta. Lo que oye el lector, el buscador y los almacenes no cambian.
 
 ## DD-164 · 2026-10-04 — El resumen de cada recurso, con «Editar»: una fila por agenda, plantilla o tipificación
 
@@ -5302,6 +5382,9 @@ revinculado con el bridge: 36 tags redondeados y 72 textos en las tres páginas,
 botón y badge, aceptado y escrito aquí. Fuera de este cambio: la página `Contact Center` de Figma y el
 marco «Editar agente» usan tags redondeados para presencia, que en código es un desplegable con punto;
 no se tocaron.
+
+**Actualización (2026-10-06)** · El hub de Repositorios deja de ser el `Menu`: pasa a tarjetas por grupo, con un panel
+lateral (DD-179). La regla sigue para las demás listas de destinos.
 
 ---
 

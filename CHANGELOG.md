@@ -26,6 +26,12 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/components`** — tres opciones nuevas para el hub de Repositorios en tarjetas, y para quien
+  las necesite: `sc-drawer` gana `docked`, un panel acoplado a la página (sin sombra, con el borde en su filo interior
+  y la esquina de arriba redondeada, como el panel lateral de GitHub), para usarlo con `topOffset`; `sc-avatar` gana
+  `labelColor`, el tono de etiqueta de los nueve de `LabelColor` (fondo tintado e icono en el color del texto de la
+  etiqueta); y `sc-tag` con `variant="label"` gana `bordered`, que en `false` deja solo el fondo tintado. Sin
+  fijarlas, nada cambia. ([DD-179](docs/DECISIONS.md))
 - **`@smartcontact-hub/design-tokens`** — la familia `--sc-agent-window-*` (fondo, franja, campo y su borde, plancha,
   texto, apagado, píldora) y `--sc-agent-window-shadow`: la ventana de tipificar de sc-agent cuando el Supervisor la
   enseña tal cual la verá el agente, oscura en los dos temas como la barra lateral. Salen de la paleta (slate), sin

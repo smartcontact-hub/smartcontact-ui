@@ -4,6 +4,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
+import { LabelColor } from '../../core/types/label.types';
 import { ScAvatarShape, ScAvatarSize, ScSeverity } from '../../core/types/theme-component.types';
 import { AvatarIllustrationPool, buildIllustrationSrc } from '../../core/avatar-illustration';
 
@@ -38,6 +39,24 @@ export class ScAvatarComponent {
     readonly shape = input<ScAvatarShape>('circle');
 
     readonly ariaLabel = input<string | null>(null);
+
+    /**
+     * Tono de etiqueta para un avatar de icono que dice a qué grupo pertenece algo (los destinos del hub de
+     * Repositorios, DD-179): el fondo tintado y el icono en el color del texto de la etiqueta, con los tokens
+     * `--sc-label-<color>-*`, que voltean solos en oscuro. Los mismos nueve que `sc-tag` y `sc-chip` con
+     * `variant="label"`. `null` = el gris del tema.
+     */
+    readonly labelColor = input<LabelColor | null>(null);
+
+    /** El tono de etiqueta, en línea sobre `p-avatar` (no tiene entrada de estilo): gana al fondo del tema. */
+    protected readonly labelBackground = computed(() => {
+        const c = this.labelColor();
+        return c ? `var(--sc-label-${c}-bg)` : null;
+    });
+    protected readonly labelForeground = computed(() => {
+        const c = this.labelColor();
+        return c ? `var(--sc-label-${c}-text)` : null;
+    });
 
     /** Badge superpuesto (spec Figma Avatar+Badge). `null` = sin badge. */
     readonly badge = input<string | number | null>(null);

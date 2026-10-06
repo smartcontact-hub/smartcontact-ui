@@ -9,7 +9,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/avatar, primeng/overlaybadge",
       "cva": false,
-      "inputs": 11,
+      "inputs": 12,
       "api": [
         "ariaLabel",
         "badge",
@@ -21,12 +21,13 @@
         "image",
         "imageError",
         "label",
+        "labelColor",
         "shape",
         "size"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 3,
       "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
       "sobreObsoleto": []
     },
@@ -194,7 +195,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 177,
+      "usedInSupervisor": 178,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -530,10 +531,11 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/drawer",
       "cva": false,
-      "inputs": 10,
+      "inputs": 11,
       "api": [
         "closeOnEscape",
         "dismissible",
+        "docked",
         "fullScreen",
         "header",
         "hidden",
@@ -548,7 +550,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 2,
+      "usedInSupervisor": 3,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
       "sobreObsoleto": []
     },
@@ -1278,7 +1280,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 13,
+      "usedInSupervisor": 14,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },
@@ -1377,8 +1379,9 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/tag",
       "cva": false,
-      "inputs": 6,
+      "inputs": 7,
       "api": [
+        "bordered",
         "icon",
         "labelColor",
         "rounded",
@@ -1388,7 +1391,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 27,
+      "usedInSupervisor": 28,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },

@@ -17,37 +17,97 @@
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
     <h1 class="page__heading sc-text-h3-semibold">{{ 'sidebar.repositories' | translate }}</h1>
 
-    <!-- El buscador, por nombre y descripción, como el de las listas (DD-165). -->
-    <sc-search
-      class="hub__search"
-      [placeholder]="'repositories.hub.search' | translate"
-      [clearAriaLabel]="'labels.clear_search' | translate"
-      [value]="query()"
-      (valueChange)="query.set($event)"
-    />
+    <!-- El buscador (DD-165) y el filtro por categoría, en una línea (DD-179). -->
+    <div class="hub__toolbar">
+      <sc-search
+        class="hub__search"
+        [placeholder]="'repositories.hub.search' | translate"
+        [clearAriaLabel]="'labels.clear_search' | translate"
+        [value]="query()"
+        (valueChange)="alEscribir($event)"
+        (focusin)="alEnfocarBuscador($event)"
+      />
+      <sc-selectbutton
+        class="hub__filter"
+        size="sm"
+        [options]="opcionesFiltro()"
+        optionValue="value"
+        [value]="filtro()"
+        (valueChange)="filtrar($any($event))"
+        [ariaLabel]="'repositories.hub.filter' | translate"
+      >
+        <!-- La opción elegida, en el tono de su grupo (la maqueta); «Todos», en el de siempre. -->
+        <ng-template #item let-o>
+          <span class="hub-filter__label" [attr.data-tono]="o.value === filtro() ? o.tono : null">{{ o.label }}</span>
+        </ng-template>
+      </sc-selectbutton>
+    </div>
 
-    <!-- El Menu del DS en línea (DD-77): grupo, fila, hover, foco y teclado los pone el tema.
-         La plantilla `#item` es la de primeng.dev («Menu › Template»): la página solo aporta el
-         contenido de la fila. -->
-    @if (menu().length > 0) {
-    <p-menu [model]="menu()" [style]="{ width: '100%' }" data-testid="repositorios-hub">
-      <!-- `data-pc-section="itemlink"` es la marca con la que el Menu reconoce SU enlace: con ella,
-           Enter pulsa este `<a>` y navega. Sin ella pulsaba el `<li>`, que no tiene manejador, y
-           Enter no hacía nada (medido 2026-09-13). -->
-      <ng-template #item let-item>
-        <a class="p-menu-item-link" data-pc-section="itemlink" [routerLink]="item.routerLink">
-          <span class="p-menu-item-icon" aria-hidden="true">
-            <sc-icon [name]="item.icon" size="inherit" />
-          </span>
-          <span class="hub-link__text">
-            <span class="sc-text-body-semibold">{{ item.nombre }}</span>
-            <span class="hub-link__description sc-text-caption-regular">{{ item.title }}</span>
-          </span>
-          <!-- Cuántos hay (DD-165). El lector ya lo oye en el nombre de la fila: aquí se esconde para no decirlo dos veces. -->
-          <span class="hub-link__count sc-text-caption-semibold" aria-hidden="true">{{ item.cifra }}</span>
-        </a>
-      </ng-template>
-    </p-menu>
+    <!-- Los recientes: al entrar en el buscador vacío, los últimos repositorios abiertos (la maqueta). -->
+    <p-popover #recientesPopover styleClass="hub-recientes" [attr.aria-label]="'repositories.hub.recent' | translate">
+      <p class="hub-recientes__title sc-text-caption-semibold">{{ 'repositories.hub.recent' | translate }}</p>
+      <ul class="hub-recientes__list">
+        @for (r of recientes(); track r.id) {
+        <li>
+          <button type="button" class="hub-recientes__item" (click)="elegirReciente(r.nombre)">
+            <sc-icon class="hub-recientes__icon" [attr.data-tono]="r.tono" [name]="r.icon" [size]="14" aria-hidden="true" />
+            <span class="sc-text-body-regular">{{ r.nombre }}</span>
+            <span class="hub-recientes__count sc-text-caption-regular" aria-hidden="true">{{ r.cifra }}</span>
+          </button>
+        </li>
+        }
+      </ul>
+    </p-popover>
+
+    <!-- Una sección por categoría, con sus tarjetas (DD-179). Pulsar una abre su panel a la derecha. -->
+    @if (sections().length > 0) {
+    <div class="hub__sections" data-testid="repositorios-hub">
+      @for (section of sections(); track section.id) {
+      <section
+        class="cat"
+        [attr.data-tono]="section.tono"
+        [attr.data-columnas]="columnas(section.cards.length)"
+        [attr.aria-labelledby]="'repo-cat-' + section.id"
+        [style.view-transition-name]="'repo-cat-' + section.id"
+      >
+        <!-- El título en el tono de su categoría (DD-179). -->
+        <h2 class="cat__title sc-text-caption-semibold" [id]="'repo-cat-' + section.id">{{ section.titulo }}</h2>
+        <ul class="cat__grid" [attr.data-columnas]="columnas(section.cards.length)">
+          @for (card of section.cards; track card.id) {
+          <li class="cat__cell">
+            <button
+              type="button"
+              class="repo-card"
+              [class.repo-card--selected]="seleccion() === card.id"
+              [attr.aria-label]="card.aria"
+              [attr.aria-describedby]="'repo-desc-' + card.id"
+              [attr.aria-expanded]="seleccion() === card.id"
+              [attr.aria-controls]="seleccion() === card.id ? 'repo-panel' : null"
+              (click)="alternar(card.id, $event)"
+            >
+              <span class="repo-card__top">
+                <!-- El icono en su marco es el avatar de icono del DS, cuadrado: no un marco dibujado aquí (DD-77). -->
+                <sc-avatar class="repo-card__icon" [icon]="card.icon" [labelColor]="card.tono" shape="square" aria-hidden="true" />
+                <!-- Cuántos hay (DD-165), en la etiqueta del DS con el tono del grupo (la pastilla de la maqueta). El lector
+                     ya lo oye en el nombre: aquí se esconde para no decirlo dos veces. -->
+                <sc-tag
+                  class="repo-card__count"
+                  variant="label"
+                  [labelColor]="card.tono"
+                  [bordered]="false"
+                  [value]="card.cifra"
+                  aria-hidden="true"
+                />
+              </span>
+              <span class="repo-card__name sc-text-body-semibold">{{ card.nombre }}</span>
+              <span class="repo-card__description sc-text-caption-regular" [id]="'repo-desc-' + card.id">{{ card.descripcion }}</span>
+            </button>
+          </li>
+          }
+        </ul>
+      </section>
+      }
+    </div>
     } @else {
       <sc-empty-state
         icon="search_off"
@@ -61,3 +121,58 @@
     }
   </div>
 </div>
+
+<!-- El panel de la tarjeta marcada (la maqueta): acoplado bajo la barra de la app, como el panel lateral de GitHub, y
+     sin máscara, así que la página sigue a mano para marcar otra; con velo solo si taparía tarjetas (`panelTapa`). Su título es el nombre del repositorio; debajo, su
+     categoría, lo que es y «Abrir repositorio», lo primero que se hace aquí; luego sus entradas, cada una a su sitio.
+     Lo cierran la X, Escape, volver a pulsar su tarjeta y un clic fuera. -->
+<sc-drawer
+  position="right"
+  width="var(--sc-spacing-25)"
+  topOffset="var(--sc-spacing-4)"
+  docked
+  [modal]="panelTapa()"
+  [visible]="!!panel()"
+  (visibleChange)="$event || cerrar()"
+  [header]="panel()?.nombre ?? null"
+>
+  @if (panel(); as p) {
+  <div class="panel" id="repo-panel">
+    <div class="panel__head">
+      <p class="panel__cat" [attr.data-tono]="p.tono">
+        <sc-avatar class="panel__icon" [icon]="p.icon" [labelColor]="p.tono" shape="square" aria-hidden="true" />
+        <span class="sc-text-caption-semibold">{{ p.categoria }}</span>
+      </p>
+      <p class="panel__description sc-text-caption-regular">{{ p.descripcion }}</p>
+      <sc-button
+        class="panel__open"
+        size="sm"
+        [label]="'repositories.hub.open' | translate"
+        icon="arrow_forward"
+        iconPosition="right"
+        (click)="abrir(p.path)"
+      />
+    </div>
+
+    <h3 class="panel__count sc-text-caption-semibold">{{ p.cuantas }}</h3>
+    <ul class="panel__list">
+      @for (e of p.entradas; track e.id) {
+      <li>
+        <a class="entrada" [routerLink]="e.link" [queryParams]="e.queryParams ?? null">
+          <span class="entrada__text">
+            <span class="entrada__name sc-text-body-regular">{{ e.nombre }}</span>
+            @if (e.detalle) {
+            <span class="entrada__detail sc-text-caption-regular">{{ e.detalle }}</span>
+            }
+          </span>
+          <sc-icon class="entrada__arrow" name="arrow_forward" [size]="14" aria-hidden="true" />
+        </a>
+      </li>
+      } @empty {
+      <li class="panel__empty sc-text-caption-regular">{{ 'repositories.hub.no_entries' | translate }}</li>
+      }
+    </ul>
+
+  </div>
+  }
+</sc-drawer>

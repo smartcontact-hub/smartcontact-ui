@@ -490,6 +490,16 @@
           }
         },
         {
+          "nombre": "labelColor",
+          "clase": "input",
+          "tipo": "LabelColor | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Tono de etiqueta para un avatar de icono que dice a qué grupo pertenece algo (los destinos del hub de Repositorios, DD-179): el fondo tintado y el icono en el color del texto de la etiqueta, con los tokens `--sc-label-<color>-*`, que voltean solos en oscuro. Los mismos nueve que `sc-tag` y `sc-chip` con `variant=\"label\"`. `null` = el gris del tema.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "badge",
           "clase": "input",
           "tipo": "string | number | null",
@@ -3301,6 +3311,16 @@
           "porDefecto": "null",
           "requerido": false,
           "descripcion": "Cuánto baja el panel desde arriba en `left`/`right` (p. ej. `'var(--sc-spacing-4)'`, la barra de la app). Sin él ocupa toda la altura y tapa lo que haya arriba: la barra con Guardar, la miga. El alto se descuenta solo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "docked",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "ACOPLADO: un panel de la página, no una capa encima (el panel lateral de GitHub). Para un cajón sin máscara que convive con lo que tiene al lado sin taparlo (el hub de Repositorios, DD-179): sin sombra, porque no flota, con el borde en su filo interior y la esquina interior de arriba redondeada con el radio de tarjeta (`--sc-radius-xl`). Va con `topOffset` (la barra de la app): sin él, la esquina redondeada queda contra el borde de la ventana.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -7345,6 +7365,16 @@
           "porDefecto": "'gray'",
           "requerido": false,
           "descripcion": "Color categórico cuando `variant='label'`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "bordered",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "Solo con `variant='label'`: `false` quita el borde y deja el fondo tintado, para una cifra que ya va dentro de una tarjeta con borde (la de cada destino del hub de Repositorios, DD-179). El borde queda transparente, así que la pastilla mide lo mismo con él o sin él.",
           "origen": "nuestro",
           "nativo": null
         }

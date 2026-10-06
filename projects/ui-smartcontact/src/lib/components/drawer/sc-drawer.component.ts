@@ -66,6 +66,13 @@ export class ScDrawerComponent {
     readonly topOffset = input<string | null>(null);
 
     /**
+     * ACOPLADO: un panel de la página, no una capa encima (el panel lateral de GitHub). Para un cajón sin máscara que
+     * convive con lo que tiene al lado sin taparlo (el hub de Repositorios, DD-179): sin sombra, porque no flota, con el
+     * borde en su filo interior y la esquina interior de arriba redondeada con el radio de tarjeta (`--sc-radius-xl`).
+     * Va con `topOffset` (la barra de la app): sin él, la esquina redondeada queda contra el borde de la ventana.
+     */
+    readonly docked = input(false, { transform: booleanAttribute });
+    /**
      * El estilo en línea del panel.
      *
      * En `left`/`right`, además de ancho y alto, dos arreglos de piel (2026-09-15, medidos en el
@@ -94,10 +101,17 @@ export class ScDrawerComponent {
             const toward = side === 'right' ? '-' : '';
             style['border-block-width'] = '0';
             style[side === 'right' ? 'border-inline-end-width' : 'border-inline-start-width'] = '0';
-            style['box-shadow'] =
-                `${toward}8px 0 10px -6px rgb(var(--sc-shadow-color-rgb) / 0.1), ` +
-                `${toward}20px 0 25px -5px rgb(var(--sc-shadow-color-rgb) / 0.1)`;
-            style['clip-path'] = side === 'right' ? 'inset(0 0 0 -3rem)' : 'inset(0 -3rem 0 0)';
+            if (this.docked()) {
+                // Acoplado: el filo interior y su esquina de arriba redondeada. Ni sombra (tampoco la del tema, que cae
+                // hacia abajo como la de un diálogo) ni recorte.
+                style[side === 'right' ? 'border-start-start-radius' : 'border-start-end-radius'] = 'var(--sc-radius-xl)';
+                style['box-shadow'] = 'none';
+            } else {
+                style['box-shadow'] =
+                    `${toward}8px 0 10px -6px rgb(var(--sc-shadow-color-rgb) / 0.1), ` +
+                    `${toward}20px 0 25px -5px rgb(var(--sc-shadow-color-rgb) / 0.1)`;
+                style['clip-path'] = side === 'right' ? 'inset(0 0 0 -3rem)' : 'inset(0 -3rem 0 0)';
+            }
         }
         return Object.keys(style).length > 0 ? style : undefined;
     });

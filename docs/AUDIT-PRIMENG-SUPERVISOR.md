@@ -47,11 +47,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **29 props nativas no expuestas**: `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closeButtonProps`, `closeIcon`, `closeOnEscape`, `closeTabindex`, `contentStyle`, `contentStyleClass`, `focusOnShow`, `focusTrap`, `header`, `keepInViewport`, `maskMotionOptions`, `maskStyle`, `maskStyleClass`, `maximizable`, `maximizeButtonProps`, `maximizeIcon`, `minX`, `minY`, `minimizeIcon`, `motionOptions`, `rtl`, `showHeader`, `style`, `styleClass`
 
-### `sc-button` · 177 usos · primeng/button
+### `sc-button` · 178 usos · primeng/button
 
 **24 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconOnly`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `severity`, `style`, `styleClass`, `tabindex`, `text`
 
-### `sc-drawer` · 2 usos · primeng/drawer
+### `sc-drawer` · 3 usos · primeng/drawer
 
 **11 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `autoZIndex`, `baseZIndex`, `blockScroll`, `closable`, `closeButtonProps`, `maskStyle`, `motionOptions`, `style`, `styleClass`
 
@@ -59,7 +59,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **11 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `baseZIndex`, `dismissable`, `focusOnShow`, `motionOptions`, `style`, `styleClass`
 
-### `sc-avatar` · 1 usos · primeng/avatar, primeng/overlaybadge
+### `sc-avatar` · 3 usos · primeng/avatar, primeng/overlaybadge
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `badgeDisabled`, `badgeSize`, `severity`, `style`, `styleClass`, `value`
 
@@ -71,7 +71,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
-### `sc-selectbutton` · 13 usos · primeng/selectbutton
+### `sc-selectbutton` · 14 usos · primeng/selectbutton
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
@@ -199,7 +199,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-tag` · 27 usos · primeng/tag
+### `sc-tag` · 28 usos · primeng/tag
 
 Expone todo lo que PrimeNG documenta.
 
