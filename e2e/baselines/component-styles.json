@@ -2048,7 +2048,7 @@
       "font-weight": "400",
       "line-height": "normal",
       "color": "rgb(0, 0, 0)",
-      "background-color": "rgb(16, 185, 129)"
+      "background-color": "rgb(146, 64, 14)"
     },
     "sc-dotpicker > div.picker > button.picker__swatch > span.picker__dot#6": {
       "padding-top": "0px",
@@ -2064,7 +2064,7 @@
       "font-weight": "400",
       "line-height": "normal",
       "color": "rgb(0, 0, 0)",
-      "background-color": "rgb(20, 184, 166)"
+      "background-color": "rgb(16, 185, 129)"
     },
     "sc-dotpicker > div.picker > button.picker__swatch > span.picker__dot#7": {
       "padding-top": "0px",
@@ -2080,9 +2080,25 @@
       "font-weight": "400",
       "line-height": "normal",
       "color": "rgb(0, 0, 0)",
-      "background-color": "rgb(59, 130, 246)"
+      "background-color": "rgb(20, 184, 166)"
     },
     "sc-dotpicker > div.picker > button.picker__swatch > span.picker__dot#8": {
+      "padding-top": "0px",
+      "padding-right": "0px",
+      "padding-bottom": "0px",
+      "padding-left": "0px",
+      "gap": "normal",
+      "min-height": "auto",
+      "border-radius": "9999px",
+      "border-top-width": "0px",
+      "border-bottom-width": "0px",
+      "font-size": "13.33px",
+      "font-weight": "400",
+      "line-height": "normal",
+      "color": "rgb(0, 0, 0)",
+      "background-color": "rgb(59, 130, 246)"
+    },
+    "sc-dotpicker > div.picker > button.picker__swatch > span.picker__dot#9": {
       "padding-top": "0px",
       "padding-right": "0px",
       "padding-bottom": "0px",
@@ -2195,6 +2211,22 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-dotpicker > div.picker > button.picker__swatch#8": {
+      "padding-top": "1px",
+      "padding-right": "6px",
+      "padding-bottom": "1px",
+      "padding-left": "6px",
+      "gap": "normal",
+      "min-height": "auto",
+      "border-radius": "4px",
+      "border-top-width": "1px",
+      "border-bottom-width": "1px",
+      "font-size": "13.33px",
+      "font-weight": "400",
+      "line-height": "normal",
+      "color": "rgb(0, 0, 0)",
+      "background-color": "rgba(0, 0, 0, 0)"
+    },
+    "sc-dotpicker > div.picker > button.picker__swatch#9": {
       "padding-top": "1px",
       "padding-right": "6px",
       "padding-bottom": "1px",
