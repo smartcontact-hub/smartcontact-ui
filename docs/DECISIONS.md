@@ -132,7 +132,7 @@
 
 ---
 
-## DD-180 · 2026-10-06 — Los listados se ordenan por cualquier columna, salvo la que cambia sola, y la barra va a una altura
+## DD-180 · 2026-10-06 — Los listados se ordenan por cualquier columna, salvo la que cambia sola, y su barra va a una altura y en dos grupos
 
 **Contexto** · En Grupos se ordenaban 6 de 9 columnas (no Teléfono, Canales ni Servicios) y en Agentes faltaban Canales y
 Grupos, sin una razón escrita: eran las que llevaban `scSortable` antes de pasar a `sc-datatable`. Y el botón «Columnas»
@@ -149,11 +149,17 @@ Grupos, sin una razón escrita: eran las que llevaban `scSortable` antes de pasa
    y 100,125rem). Medido a 1440: ninguna de las dos tablas desplaza de lado.
 3. **El botón «Columnas», a la altura del buscador de su barra**: el tamaño normal del botón, no `small` (enmienda
    DD-176 §7). Los dos, 32,5, en las diez listas que monta `sc-list-page`.
+4. **La barra, en dos grupos**: lo que cambia la vista (Columnas y el buscador, a `0-875`, 12,25, como dos hermanos) y lo
+   del archivo, detrás del separador y con solo su aire del tema, 14 por lado (29 del buscador a la descarga, el
+   escalón de entre grupos). Medido antes: Columnas a 24,5 del buscador y la descarga a 53,5. El globo de Columnas y
+   el menú de archivo son nodos vacíos en la barra (pintan en `body`) y cada uno sumaba un hueco de flex, y el
+   separador ponía su margen encima del hueco: la barra deja de tener hueco y Columnas lleva el suyo.
 
 **Descartadas** · Ordenar también Estado: el orden se rompe solo en cuanto alguien cambia de estado.
 
 **Consecuencias** · Lo vigila `e2e/supervisor/listados-ordenar-columnas.spec.ts` (qué cabeceras ordenan, que las nuevas
-ordenan de verdad, que cada flecha cabe en los cuatro idiomas y la altura del botón), vista en rojo contra `main`.
+ordenan de verdad, que cada flecha cabe en los cuatro idiomas, la altura del botón y los huecos de la barra), vista en
+rojo contra `main`.
 
 ## DD-177 · 2026-10-05 — Lo que verá el agente: el teléfono de sc-agent, a la derecha de la ficha de una tipificación
 
