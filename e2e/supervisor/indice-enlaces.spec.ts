@@ -299,7 +299,7 @@ test('Atrás desde una ficha con cambios y «Seguir editando»: el listado sigue
 });
 
 test('las marcas del índice caen en la misma vertical, al final de su fila, sea cual sea el rótulo', async ({ page }) => {
-  // Dos secciones con cambios: el nombre (General) y desbordar (Distribución y colas). Hasta DD-173 el punto iba
+  // Dos secciones con cambios: el nombre (General) y desbordar (Distribución y colas). Hasta DD-176 el punto iba
   // detrás de la última palabra, así que cada uno caía donde acababa su rótulo («General •», «Distribución y colas •»).
   await goto(page, 'admin/grupos/editar/11');
   await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill('Soporte de tarde');

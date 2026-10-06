@@ -46,7 +46,7 @@ const mostrarColumna = async (page: Page, nombre: string): Promise<void> => {
   const cabecera = page.locator('thead th', { hasText: nombre });
   await page.locator('tbody tr').first().waitFor();
   if ((await cabecera.count()) > 0) return;
-  // El globo de columnas, con una casilla por columna (DD-173).
+  // El globo de columnas, con una casilla por columna (DD-176).
   await page.locator('.page__action-bar').getByRole('button', { name: /^Columnas, / }).click();
   await page.getByRole('dialog', { name: 'Columnas' }).getByRole('checkbox', { name: nombre, exact: true }).click();
   await page.keyboard.press('Escape');

@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * ELEGIR Y ORDENAR COLUMNAS: EL «COLUMN TOGGLE» DE PRIMENG.DEV, TAL CUAL (DD-173, que sustituye el Listbox de DD-162).
+ * ELEGIR Y ORDENAR COLUMNAS: EL «COLUMN TOGGLE» DE PRIMENG.DEV, TAL CUAL (DD-176, que sustituye el Listbox de DD-162).
  *
  * primeng.dev/table, «Column Toggle»: un botón «Columns» con su engranaje (outlined, secondary, small) que abre un
  * Popover de 18rem sin relleno; arriba, el título y «Reset» (texto, secondary, small); debajo, una fila por columna con

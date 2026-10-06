@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LAS AYUDAS DE LAS FICHAS, CORTAS: SIN PALABRAS SUELTAS NI TRES LÍNEAS (DD-173).
+ * LAS AYUDAS DE LAS FICHAS, CORTAS: SIN PALABRAS SUELTAS NI TRES LÍNEAS (DD-176).
  *
  * Medido el 2026-10-05 a 1440, en las tres fichas: 13 ayudas pasaban a dos o tres líneas, y tres dejaban una sola
  * palabra en la última («llama.», «agentes.», «Añadir.»). Una ayuda dice lo que dicen las fuentes (DD-133), con las

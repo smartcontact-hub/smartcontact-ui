@@ -264,7 +264,7 @@ const PAGINAS_EN_FORMULARIO = [
      * 69 → 50 el 2026-09-13 con Aura, igual que su gemelo. 50 → 46 el 2026-09-14: el
      * chip de canal (`_channel-chip.scss`, borrado) pasa a una columna por canal con
      * `sc-checkbox`, y los dos gemelos siguen midiendo lo mismo.
-     * 46 → 55 con DD-151 (nombre y email a dos líneas). 55 → 43 con DD-173: la tabla
+     * 46 → 55 con DD-151 (nombre y email a dos líneas). 55 → 43 con DD-176: la tabla
      * pasa a la densidad compacta nativa (`sm`, 6 de relleno a cada lado) y el gemelo
      * de arriba deja de serlo — este ya no lleva avatar de 24, solo casillas. Con el
      * relleno `sm` también baja el `padding-top` de la celda y de la cabecera, de

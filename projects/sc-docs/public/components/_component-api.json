@@ -728,7 +728,7 @@
           "tipo": "number | undefined",
           "porDefecto": "undefined",
           "requerido": false,
-          "descripcion": "Cuántos hay en la lista, para decir cuántos de cuántos («2/16 agentes seleccionados», DD-173). Sin él, solo el número de seleccionados.",
+          "descripcion": "Cuántos hay en la lista, para decir cuántos de cuántos («2/16 agentes seleccionados», DD-176). Sin él, solo el número de seleccionados.",
           "origen": "nuestro",
           "nativo": null
         },
