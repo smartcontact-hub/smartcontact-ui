@@ -29,10 +29,10 @@ revisión de producto del 2026-10-04 (DD-157 a DD-162): `git show 7d470054:docs/
 
 ## ✅ 2026-10-05 · El pulido de las fichas (DD-176), en un lote de ocho bloques, en su rama
 
-> **Sello:** rama `arebury/fichas-pulido` con `main` fundido en HEAD `fcaf40db` (DD-170 y DD-171 de la otra sesión ya
-> están). Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local. **Era
-> DD-171**: la otra sesión fundió antes su DD-171 (`sc-button` anuncia su popup), y esta se renumeró a DD-176 con sus 42
-> citas.
+> **Sello:** rama `arebury/fichas-pulido` con `main` fundido en HEAD `e5f2a9a1` (hasta DD-175). Un PR, un commit en
+> rojo y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local. **Era DD-171 y luego DD-172**:
+> `main` fundió antes las suyas y el PR de tipificaciones lleva DD-173 y DD-174, así que se renumeró a DD-176 con
+> todas sus citas.
 
 - **1 · El nombre editable:** se cierra al salir (pulsar fuera, Tab) con lo escrito, y al cerrar el foco vuelve al
   nombre. Lo encontró la revisión de interacción con Playwright (una sonda que anota y no afirma): la columna fija
@@ -192,15 +192,14 @@ sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): l
 ## SIGUIENTE — sin preguntar
 
 0. **El pulido de las fichas (DD-176), en su PR** (el tramo de arriba): se revisa en local; con el visto bueno, se
-   funde y se lee el CI de `main`. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el
-   triaje de los otros frentes (DS, CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, ya fundidos en `main` en un
-   PR: cada hand-off lleva su tramo, y lo que queda en ellos espera a otros (producto, Figma, devs o el portátil).
-   Con el pulido fundido, en este frente no queda nada que dependa de nosotros; lo de fuera de lote, abajo.
+   funde y se lee el CI de `main`.
+1. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
+   CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
+   espera a otros (producto, Figma, devs o el portátil). En este frente no queda nada que dependa de nosotros; lo de
+   fuera de lote, abajo.
 
    Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
-   separado (no entra en esta fase). Si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con
-   tres canales (dos salidas: fijar Asignado y Agente a la izquierda, con las columnas fijas de F, o llevar la densidad compacta del
-   panel también a la ficha, unos 100 px). Cada cosa, con su prueba en rojo; la numeración de DD se mira
+   separado (no entra en esta fase). Cada cosa, con su prueba en rojo; la numeración de DD se mira
    en `origin/main` al empezar y otra vez antes de subir.
 
    **Lo «sin verificar» de zoom al 200 % y RTL, cerrado:** DD-53 fija 1024 de ancho mínimo (el 200 % a 1440 son 720) y

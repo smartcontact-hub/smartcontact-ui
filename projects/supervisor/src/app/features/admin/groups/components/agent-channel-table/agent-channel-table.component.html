@@ -11,7 +11,7 @@
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <div class="table-card table-card--al-pie" scLlegaAlPie>
-    <!-- Compacta (`sm`, la densidad nativa de PrimeNG) y sin páginas (DD-172): todas las filas del filtro, y lo que no
+    <!-- Compacta (`sm`, la densidad nativa de PrimeNG) y sin páginas (DD-176): todas las filas del filtro, y lo que no
          cabe lo desplaza la tabla por dentro con la cabecera fija, hasta el pie de la pantalla (DD-160). Con más de 100,
          pinta solo las que se ven (`virtualScroll`, DD-95). -->
     <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
@@ -20,7 +20,7 @@
         <tr>
           @for (col of columns(); track col.field) {
             <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
-              <!-- Una fila de texto, todo alineado a la izquierda con los controles de sus filas (DD-172). Solo Asignado
+              <!-- Una fila de texto, todo alineado a la izquierda con los controles de sus filas (DD-176). Solo Asignado
                    lleva su casilla de «todos», delante del rótulo, en la vertical de las casillas de sus filas: la primera
                    columna, donde se espera. Los canales se cambian fila a fila. -->
               @if (col.field === 'assigned') {

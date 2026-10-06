@@ -67,7 +67,7 @@
 
 /* Con más de 100 filas la tabla pinta solo las que se ven (DD-95; el DS lo dice con `sc-datatable--fill`), y ese pintor
  * necesita un alto que no salga de sus filas: la caja ocupa su tope entero. Sin esto, la tabla de agentes con «Todos» (500 en el alta) se quedaba en 2 px
- * y sin filas (medido el 2026-10-05, DD-172, al quitarle la paginación). */
+ * y sin filas (medido el 2026-10-05, DD-176, al quitarle la paginación). */
 .table-card--al-pie:has(> sc-datatable.sc-datatable--fill) {
   block-size: var(--table-card-tope, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh)));
 }

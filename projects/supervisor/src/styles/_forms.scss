@@ -91,7 +91,7 @@
   &__hint {
     margin: 0;
     color: var(--sc-text-subtle);
-    /* Sin una palabra sola en la última línea (DD-172). */
+    /* Sin una palabra sola en la última línea (DD-176). */
     text-wrap: pretty;
   }
 }
@@ -257,7 +257,7 @@
     display: block;
     margin-top: var(--sc-spacing-0-25);
     color: var(--sc-text-subtle);
-    /* Sin una palabra sola en la última línea (DD-172). */
+    /* Sin una palabra sola en la última línea (DD-176). */
     text-wrap: pretty;
   }
 
@@ -423,7 +423,7 @@
   &__hint {
     margin: 0;
     color: var(--sc-text-subtle);
-    /* Sin una palabra sola en la última línea (DD-172). */
+    /* Sin una palabra sola en la última línea (DD-176). */
     text-wrap: pretty;
   }
 }

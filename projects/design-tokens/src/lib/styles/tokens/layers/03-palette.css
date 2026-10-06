@@ -52,7 +52,7 @@
   --sc-label-amber-border: var(--sc-color-amber-200);
   --sc-label-amber-dot: var(--sc-color-amber-500);
 
-  /* Marrón (DD-172): el estado Administrativo de un agente. La paleta del Kit no trae familia marrón; el marrón de la
+  /* Marrón (DD-176): el estado Administrativo de un agente. La paleta del Kit no trae familia marrón; el marrón de la
    * paleta es el ámbar oscuro. Lleno, no tintado como los demás: el fondo es el color (amber-800, #92400e) y el texto,
    * blanco (7,1:1). */
   --sc-label-brown-bg: var(--sc-color-amber-800);

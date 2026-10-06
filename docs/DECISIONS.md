@@ -40,9 +40,9 @@
 > apunta. Nace de medir que este log tiene 2.500 líneas ordenadas por FECHA y ninguna por tema,
 > así que las reglas de composición estaban escritas y eran inencontrables al componer (DD-53).
 >
-> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas, «Administrativo» en marrón (`brown`, nuevo color de etiqueta) | DD-176 |
 > | Tema | DD |
 > |---|---|
+> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas, «Administrativo» en marrón (`brown`, nuevo color de etiqueta) | DD-176 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
@@ -266,8 +266,6 @@ pendientes capturas que el robot ya había regenerado idénticas; (4) tres PR ab
   que sí existe.
 - La regla de profundidad congelaría datos de ejemplo como contrato. Para leer el botón de las piezas compuestas hace
   falta otra regla (por ejemplo, no gastar nivel solo en los hosts `sc-*`/`p-*`), que queda en el hand-off del DS.
-
----
 
 ## DD-172 · 2026-10-05 — Fuera de PrimeNG jubilado, lo seguro: las piezas compuestas pintan `sc-button` y `sc-password` va sobre `pInputPassword`
 
