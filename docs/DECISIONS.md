@@ -133,6 +133,26 @@
 
 ---
 
+## DD-182 · 2026-10-06 — Las cuatro secciones de la ficha de grupo, en el mismo árbol del DS
+
+**Contexto** · Desde DD-157 solo «Distribución y colas» seguía Sección → Subsección → Slot. General, Recursos y
+Agentes eran una tarjeta blanca con bloques de la hoja de la ficha (`.sub-section`, título de 14 a mano y divisor
+suelto): cuatro secciones, dos formas de leerlas.
+
+**Decisión** ·
+1. **Las cuatro, sobre el gris (`surface="subtle"`) y con `sc-subsection` por bloque.** General: «Identidad» y
+   «Canales». Recursos: «Repositorios» y «Ficha de cliente». Agentes: «Agentes asignados» (clave nueva, en los cuatro
+   idiomas). Distribución y colas no cambia.
+2. **Sin divisores a mano entre bloques**: la separación la da la caja blanca sobre el gris.
+3. **Solo el prototipo.** En Figma se mantiene el cuerpo anterior, para no cambiarle el modelo a quien lo implementa;
+   el índice, con sus bordes grises, se respeta allí. Va a `docs/figma-pendiente.md` cuando se dibuje.
+
+**Descartadas** · Llevar el cambio también a las fichas de agente y usuario: se mide aparte.
+
+**Consecuencias** · Lo vigila `grupo-secciones-mismo-arbol.spec.ts` (fondo gris, títulos y que no quede `.sub-section`).
+
+---
+
 ## DD-181 · 2026-10-06 — Cada columna de la tabla de agentes del grupo se marca entera desde su cabecera
 
 **Contexto** · DD-176 §4 dejó la casilla de «todos» solo en Asignado: los canales y Habilitado se cambiaban fila a fila.

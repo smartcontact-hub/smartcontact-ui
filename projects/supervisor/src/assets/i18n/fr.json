@@ -2009,7 +2009,10 @@
         "client_card": "Fiche client",
         "client_card_hint": "Celle que l'agent voit en recevant un contact de ce groupe."
       },
-      "create_submit": "Créer le groupe"
+      "create_submit": "Créer le groupe",
+      "agents": {
+        "assigned_title": "Agents assignés"
+      }
     },
     "errors": {
       "name_required": "Le nom est obligatoire",

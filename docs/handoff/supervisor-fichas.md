@@ -29,7 +29,17 @@ revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias
 fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
 `git show 4217ed41:docs/handoff/supervisor-fichas.md`. Y el de sc-docs y el peso de los iconos (#330, sin
 trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`. El de Accesibilidad pendiente (#332, sin DD nueva ni trampas
-propias): `git show 540f246c:docs/handoff/supervisor-fichas.md`.
+propias): `git show 540f246c:docs/handoff/supervisor-fichas.md``. El de supervisión y limpieza (2026-10-05, DD-168, #333, sin trampas propias): `git show
+60f8e617:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-06 · Las cuatro secciones de la ficha de grupo, en el mismo árbol (DD-182)
+
+> **Sello:** rama `arebury/daily-transcript-change-validation` sobre `main` en `60f8e617`.
+
+- General, Recursos y Agentes pasan a `surface="subtle"` con un `sc-subsection` por bloque, como Distribución y colas
+  (DD-157). Clave nueva `groups.form.agents.assigned_title`. Medido en local: sin desborde a 1440 y 12 e2e en verde.
+- **Solo el prototipo**: Figma conserva el cuerpo anterior y el índice con sus bordes grises. Las fichas de agente y
+  usuario no se tocaron.
 
 ## ✅ 2026-10-06 · Ordenar por cualquier columna, la barra de los listados y las casillas de cada columna (DD-180 y DD-181)
 
@@ -164,26 +174,6 @@ propias): `git show 540f246c:docs/handoff/supervisor-fichas.md`.
 - **En local, en verde:** las 38 del bloque (20 en rojo: 19 contra `main` y la del alto al editar, sin su arreglo), 126 vecinas, 63 de los barridos de las tres
   fichas y `revision` (16 vistas, en regla). Mirado a 1440, 1280 (nombre en dos líneas), 1100 y con `?datos=tortura`.
 - **Figma:** `figma-pendiente` §35 pasa a DD-170 (grupo ya dibujado; faltan agente y usuario) y §36 se retira.
-
-## ✅ 2026-10-05 · Supervisión y limpieza, en un lote de tres bloques (DD-168), fundido (#333)
-
-> **Un PR, un commit en rojo y otro en verde por bloque (DD-154); el 2, en uno solo, porque la medida dijo que no
-> faltaba nada. Es el último lote del frente: lo que queda espera a producto, a devs o al portátil (abajo).**
-
-- **1 · El panel rápido de agentes, también en el Monitor (DD-168):** «Agentes», en la cabecera del widget «Grupos»,
-  abre el panel del listado de grupos: con un grupo, el suyo; con varios, un menú «Asignar agentes de…». No sale en
-  modo pared ni en la vista previa del asistente. Los grupos de la demo van por id (`DEMO_GROUPS`, como los agentes
-  de DD-139): un grupo renombrado sale con su nombre nuevo. El panel devuelve el foco a quien lo abrió, también en el
-  listado, donde caía en `<body>`. La prueba del latido de 8 s se vio en rojo con el fallo puesto.
-- **2 · La columna de 240 de agente y usuario cabe (DD-144):** 96 vistas (1366 × 768, 1440 × 900 y 1366 × 660, los
-  cuatro idiomas, ocho fichas): cada texto en una línea, la cifra más justa a 81 px de su anillo y sin scroll ni a
-  660. El molde se queda; la sonda pasa a guarda (`resumen-cabe.spec.ts`), vista en rojo con un fallo por comprobación.
-- **3 · Fuera `/lab/admin` (DD-132):** la carpeta (24 ficheros), su ruta y sus textos. Su tarjeta deja los
-  laboratorios del Lab de sc-docs y pasa a las exploraciones, archivada con el commit de `main` que la tenía
-  (`f41d3ce6`) y su enlace fijo, sin etiqueta: la nube no puede subirla.
-- **En local, en verde:** las pruebas de cada bloque (rojas antes; la guarda del 2, con un fallo por comprobación),
-  las vecinas del 1 (107), los barridos de las rutas tocadas (36) y `revision` del Dashboard y de las fichas (18 vistas,
-  en regla), con el menú y el panel abiertos desde el Monitor en una sonda aparte.
 
 ## SIGUIENTE — sin preguntar
 

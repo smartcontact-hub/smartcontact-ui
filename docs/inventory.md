@@ -57,7 +57,7 @@
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | CUSTOM | — | 2 inputs | sc-dialog sc-button | ✓ | 11 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 22 |
-| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 33 |
+| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 31 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 11 inputs | — | ✓ | 3 |
 | `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 18 |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
@@ -89,7 +89,7 @@
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 4 inputs | — | ✓ | 8 |
 | `sc-sticky-form-header` | CUSTOM | — | 4 inputs | sc-button | ✓ | 2 |
-| `sc-subsection` | CUSTOM | — | 5 inputs | — | ✓ | 4 |
+| `sc-subsection` | CUSTOM | — | 5 inputs | — | ✓ | 9 |
 | `sc-tag` | EXTENDED | primeng/tag | 7 inputs | — | ✓ | 28 |
 | `sc-textarea` | EXTENDED | primeng/textarea | 14 inputs | — | ✓ | 7 |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |

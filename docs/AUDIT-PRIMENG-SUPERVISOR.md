@@ -139,7 +139,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-divider` · 33 usos · primeng/divider
+### `sc-divider` · 31 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
 
@@ -195,7 +195,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-subsection` · 4 usos · —
+### `sc-subsection` · 9 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

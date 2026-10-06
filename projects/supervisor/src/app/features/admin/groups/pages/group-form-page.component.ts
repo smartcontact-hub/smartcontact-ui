@@ -30,7 +30,6 @@ import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-stat
 import { llegarAAncla, llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
-  ScDividerComponent as DividerComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
   ScMultiSelectComponent as MultiSelectComponent,
@@ -201,7 +200,6 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     MessageComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
-    DividerComponent,
     InputTextComponent,
     MultiSelectComponent,
     InputNumberComponent,
