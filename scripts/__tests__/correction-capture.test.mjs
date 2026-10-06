@@ -45,6 +45,9 @@ test('rojo: frases reales de corrección disparan', () => {
     'la tabla se ve apelotonada',
     'los botones están descuadrados',
     'hay cosas que me chocan en la ficha',
+    // Literales del usuario, 2026-10-05: la queja por gusto o por parecido, sin «no,» ni «te dije».
+    'No me gusta que haya tanto layout shift. Podemos simplificar más el flujo de creación?',
+    '[Image #1] no se parece en nada al telefono. Lo tienes en sc-agent',
   ])
     assert.ok(esCorreccion(f), `debía detectar: ${f}`);
 });
@@ -59,6 +62,9 @@ test('verde: mensajes normales no disparan', () => {
     'el botón no cierra el modal',
     'se había decidido en la reunión de ayer que Identidad va segunda',
     'no me choca, déjalo así',
+    'No me parece mal, le quitaria lo del setting al dialpad',
+    'me gusta, déjalo así',
+    '¿se parece al de sc-agent?',
     '¿se ve bien en oscuro?',
     'se ve genial',
     '',
