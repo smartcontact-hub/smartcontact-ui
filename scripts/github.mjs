@@ -81,6 +81,11 @@ export function runDe(r) {
   };
 }
 
+/** Los números de los `## DD-N` que AÑADE un parche unificado (las líneas `+`), en su orden. */
+export function ddsAnadidas(parche) {
+  return [...String(parche ?? '').matchAll(/^\+## DD-(\d+)\b/gm)].map((m) => Number(m[1]));
+}
+
 /**
  * El cliente. `gh` y `git` se inyectan para las pruebas; por defecto son los de verdad. El repo sale de `origin` y, si no
  * se entiende, se deja a `gh`, que rellena `{owner}` y `{repo}` él solo.
@@ -176,6 +181,11 @@ export function cliente({ gh = ghReal, git = gitReal } = {}) {
     /** Las rutas que cambia un PR (hasta 100). Las cruza el aviso de ledgers del preflight (LEARNINGS #21). */
     ficherosDePr(numero) {
       return api(`pulls/${numero}/files?per_page=100`).map((f) => f.filename);
+    },
+    /** Los `## DD-N` que añade el `docs/DECISIONS.md` de un PR, sacados de su parche (DD-175). */
+    ddsDePr(numero) {
+      const f = api(`pulls/${numero}/files?per_page=100`).find((x) => x.filename === 'docs/DECISIONS.md');
+      return ddsAnadidas(f?.patch);
     },
     /** Los últimos PRs fundidos (el REST no filtra por fundido: se piden cerrados y se quedan los que tienen fecha). */
     prsFundidos(cuantos = 40) {
