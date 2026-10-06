@@ -24,15 +24,16 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 `git show c065d664:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 7d70bfb9:…`. El de D3
 (DD-152, tampoco): `git show e7e0e8f3:docs/handoff/supervisor-fichas.md`. El de F (DD-153, tampoco): `git show
 f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`. El de lo que dejó F
-(DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. El de la
-revisión de producto del 2026-10-04 (DD-157 a DD-162): `git show 7d470054:docs/handoff/supervisor-fichas.md`.
+(DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. Y el de la
+revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
+fcaf40db:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-05 · El pulido de las fichas (DD-176), en un lote de ocho bloques, en su rama
 
-> **Sello:** rama `arebury/fichas-pulido` con `main` fundido en HEAD `e5f2a9a1` (hasta DD-175). Un PR, un commit en
+> **Sello:** rama `arebury/fichas-pulido` con `main` fundido en HEAD `4217ed41` (hasta DD-177). Un PR, un commit en
 > rojo y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local. **Era DD-171 y luego DD-172**:
-> `main` fundió antes las suyas y el PR de tipificaciones lleva DD-173 y DD-174, así que se renumeró a DD-176 con
-> todas sus citas.
+> `main` fundió antes las suyas y Tipificaciones (#340) tomó DD-173, DD-174 y DD-177, así que se renumeró a DD-176
+> con todas sus citas.
 
 - **1 · El nombre editable:** se cierra al salir (pulsar fuera, Tab) con lo escrito, y al cerrar el foco vuelve al
   nombre. Lo encontró la revisión de interacción con Playwright (una sonda que anota y no afirma): la columna fija
@@ -55,6 +56,34 @@ revisión de producto del 2026-10-04 (DD-157 a DD-162): `git show 7d470054:docs/
   Pendiente en Figma (`figma-pendiente` §36b).
 - **Una prueba ajena que falla en tanda:** `panel-agentes-monitor` «… dice en el foco que abre un menú» (de DD-171, la
   otra sesión) pide `…menu-1_list` y en la tanda completa llega `…menu-2_list`; pasa 3 de 3 a solas.
+
+## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-173 a DD-174, DD-177), en su PR
+
+> **Sello:** rama `arebury/tipificaciones-creacion` sobre `main` en `b4d1f145`. **Un PR, un commit en rojo y otro en
+> verde por bloque (DD-154).** Sale de la propuesta de producto «Tipificaciones» (PDF, 2026-10-05), discutida punto por
+> punto y probada en local antes de subir.
+
+- **1 · Una tipificación es una ficha propia (DD-173):** su árbol de hasta tres niveles, su dirección, su comentario y
+  sus grupos por canal; una por dirección y canal en cada grupo. Repositorios › Tipificaciones con las columnas de la
+  propuesta, todas ordenables; importar y descargar detrás de UN icono (`importable` en `sc-list-page`; importar, como
+  las agendas). La ficha de grupo elige varias, con su fila y su «Editar», y pierde el «+» de la tipificación.
+- **2 · La ficha, sin saltos (DD-174):** el molde de las fichas (índice; el nombre encima); la dirección en un control y
+  el comentario en un interruptor; los niveles son las columnas (las tres siempre, la siguiente fantasma, la última con
+  su ×); añadir y renombrar en la línea de la columna; cada aviso en su línea reservada. Su prueba cazó una carrera:
+  dos «Añadir» seguidos y el segundo pisaba al primero (ahora `linkedSignal`).
+- **3 · Lo que verá el agente (DD-177):** a la derecha, el teléfono de sc-agent en su sección de Tipificación, calcado
+  de la réplica y para probarlo. Tokens nuevos `--sc-agent-window-*` (05-extensions) y su sombra con spread; en su
+  propia columna, porque la del resumen recortaba la sombra.
+- **En local, en verde:** las 17 de los tres bloques (en rojo antes de cada uno) y las 13 unitarias; las vecinas que
+  tocan tipificaciones (45, cuatro cambiadas a propósito); `revision` de la ficha, el alta, el listado y la ficha de
+  grupo; las guardas de tokens y de pantalla. Las mediciones sin saltos, con su medidor validado con un salto puesto.
+
+**Trampas del lote:**
+- **`git add -N` para que las guardas vean ficheros nuevos impide el `git stash`** (`not uptodate. Cannot merge`): quita
+  la marca (`git reset -- <rutas>`) antes de apartar, y vuelve a ponerla para pasar las guardas.
+- **La columna `.ficha-summary` desplaza por dentro** (`overflow-y: auto`) y corta todo lo que sale por los lados, también
+  una sombra: lo que tenga que salirse va en su propia columna del área `summary`.
+- **Un `.sc-dark` alrededor de una pieza no pone los campos de PrimeNG en oscuro**: sus `--p-*` se resuelven en la raíz.
 
 ## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), fundido (#337)
 
@@ -193,10 +222,14 @@ sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): l
 
 0. **El pulido de las fichas (DD-176), en su PR** (el tramo de arriba): se revisa en local; con el visto bueno, se
    funde y se lee el CI de `main`.
-1. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
+1. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).**
+   Queda, fuera del lote: las Reglas de Conversaciones con su propia copia de las tipificaciones (`entity-catalog.ts`),
+   Supervisión › Tipificaciones vacía, y dos preguntas para producto (en el tramo de DD-177): el chat sin niveles en
+   sc-agent, y que los desplegables del teléfono son una propuesta para el lado del agente.
+2. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
    CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
-   espera a otros (producto, Figma, devs o el portátil). En este frente no queda nada que dependa de nosotros; lo de
-   fuera de lote, abajo.
+   espera a otros (producto, Figma, devs o el portátil). Con Tipificaciones fundido, en este frente no queda nada
+   que dependa de nosotros; lo de fuera de lote, abajo.
 
    Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
    separado (no entra en esta fase). Cada cosa, con su prueba en rojo; la numeración de DD se mira

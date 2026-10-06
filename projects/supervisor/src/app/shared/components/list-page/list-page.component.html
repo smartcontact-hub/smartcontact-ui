@@ -6,7 +6,7 @@
 
     <ng-content select="[scListBeforeToolbar]" />
 
-    @if (columnChoices() || searchPlaceholder() || exportable()) {
+    @if (columnChoices() || searchPlaceholder() || exportable() || importable()) {
       <div class="page__action-bar">
         @if (columnPrefs(); as prefs) {
           <!-- ELEGIR Y ORDENAR COLUMNAS: el «Column Toggle» de primeng.dev/table, tal cual (DD-176, sustituye el Listbox de
@@ -120,7 +120,31 @@
             (keydown)="onSearchKey($event)"
           />
         }
-        @if (exportable()) {
+        @if (importable()) {
+          <!-- Importar y descargar, detrás de UN icono (revisión de producto, Tipificaciones): dos botones de archivo
+               seguidos eran ruido en la barra. El menú es el de las filas (`p-menu` en globo); lo que importa y cómo lo
+               decide la pantalla, con `(importRequest)`. -->
+          <sc-divider layout="vertical" />
+          <sc-button
+            variant="secondary"
+            appearance="outlined"
+            icon="import_export"
+            [ariaLabel]="'labels.import_export_button' | translate"
+            [attr.title]="'labels.import_export_button' | translate"
+            ariaHasPopup="menu"
+            [ariaExpanded]="fileMenuOpen()"
+            (clicked)="fileMenuRef.toggle($event)"
+          />
+          <p-menu
+            #fileMenuRef
+            [model]="fileMenuItems()"
+            [popup]="true"
+            appendTo="body"
+            styleClass="rules-kebab-menu"
+            (onShow)="fileMenuOpen.set(true)"
+            (onHide)="fileMenuOpen.set(false)"
+          />
+        } @else if (exportable()) {
           <sc-divider layout="vertical" />
           <sc-button
             variant="secondary"

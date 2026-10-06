@@ -585,7 +585,7 @@
     },
     {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 17
+      "usedInSupervisor": 18
     },
     {
       "selector": "sc-gauge",
@@ -597,7 +597,7 @@
     },
     {
       "selector": "sc-message",
-      "usedInSupervisor": 8
+      "usedInSupervisor": 9
     },
     {
       "selector": "sc-panel",

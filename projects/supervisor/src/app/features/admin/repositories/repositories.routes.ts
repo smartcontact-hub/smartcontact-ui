@@ -63,10 +63,31 @@ export const REPOSITORIES_ROUTES: Routes = [
     loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent),
   },
   {
+    /* La tipificación tiene su ficha (DD-173): General, Categorización y Grupos, como las
+     * fichas de grupo y de agente. El listado sigue en Repositorios. */
     path: 'tipificaciones',
     data: repoInstance('repositories.tipificaciones.title'),
-    loadComponent: () =>
-      import('./instances/tipificaciones').then((m) => m.TipificacionesPageComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/tipificaciones-list-page.component').then((m) => m.TipificacionesListPageComponent),
+      },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.tipificaciones.create_title' } },
+        loadComponent: () =>
+          import('./pages/tipificacion-ficha-page.component').then((m) => m.TipificacionFichaPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.tipificaciones.edit_breadcrumb' } },
+        loadComponent: () =>
+          import('./pages/tipificacion-ficha-page.component').then((m) => m.TipificacionFichaPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
   },
   {
     path: 'variables',

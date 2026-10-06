@@ -180,26 +180,6 @@
   </sc-dialog>
 }
 
-@if (creatingTipificacion()) {
-  <!-- El mismo formulario que Repositorios (`sc-repo-form-panel`), en un diálogo: crear no saca de la ficha. Cada
-       diálogo se llama como el «+» que lo abre, y el formulario va a sangre (`flush`): el diálogo es su caja. -->
-  <sc-dialog
-    [visible]="true"
-    [title]="'groups.form.fields.typification_new' | translate"
-    [hasFooter]="false"
-    (cancelled)="creatingTipificacion.set(false)"
-  >
-    <sc-repo-form-panel
-      flush
-      [fields]="tipificacionFields"
-      [existingNames]="tipificacionExistingNames()"
-      [entitySingular]="'repositories.tipificaciones.singular' | translate"
-      (save)="onCreateTipificacionSubmit($event)"
-      (cancelled)="creatingTipificacion.set(false)"
-    />
-  </sc-dialog>
-}
-
 @if (creatingAgenda()) {
   <sc-dialog
     [visible]="true"
@@ -660,27 +640,27 @@
   >
     <section class="sub-section">
       <div class="grid grid--2">
-        <!-- UNA tipificación: el agente recorre un solo árbol al cerrar (manual de Voice, p. 14). -->
+        <!-- Las tipificaciones del grupo (DD-173): varias, mientras no cubran lo mismo. Se
+             crean en su ficha, que tiene su árbol: aquí se eligen. -->
         <div class="field">
           <label id="group-typification-label" class="field__label sc-text-caption-semibold" for="group-typification">
             {{ 'groups.form.fields.typification' | translate }}
           </label>
-          <!-- Crear sin salir de la ficha (decisión de producto, 2026-09-18). El «+» es el botón de solo icono de
-               primeng.dev, redondo y con borde, a la derecha de su control y a su alto, igual en los cuatro campos
-               (DD-167). -->
-          <div class="control-add">
-            <sc-select
-              inputId="group-typification"
-              ariaLabelledBy="group-typification-label"
-              optionLabel="label"
-              optionValue="value"
-              [options]="typificationOptions()"
-              [value]="form().typification"
-              [helperText]="'groups.form.fields.typification_hint' | translate"
-              (valueChange)="onTypificationChange($event)"
-            />
-            <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.typification_new' | translate" [pTooltip]="'groups.form.fields.typification_new' | translate" tooltipPosition="top" (clicked)="creatingTipificacion.set(true)" />
-          </div>
+          <sc-multiselect
+            inputId="group-typification"
+            ariaLabelledBy="group-typification-label"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            [maxSelectedLabels]="0"
+            [selectedItemsLabel]="(typificationValue().length === 1 ? 'groups.form.fields.typification_count_one' : 'groups.form.fields.typification_count') | translate"
+            [placeholder]="'agents.form.resources.none' | translate"
+            [options]="typificationOptions()"
+            [value]="typificationValue()"
+            [helperText]="typificationConflict() ? undefined : ('groups.form.fields.typification_hint' | translate)"
+            [error]="typificationConflict() ?? undefined"
+            (valueChange)="onTypificationChange($event)"
+          />
           <sc-resource-rows [label]="'groups.form.fields.typification' | translate" [rows]="typificationRows()" />
         </div>
 

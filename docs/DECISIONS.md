@@ -42,7 +42,10 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-177 |
 > | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas, «Administrativo» en marrón (`brown`, nuevo color de etiqueta) | DD-176 |
+> | La ficha de una tipificación sin saltos: el índice de las fichas · la dirección en un control · los niveles son las columnas (las tres siempre; la siguiente, fantasma) · añadir y renombrar en la línea de la columna · cada aviso en su línea reservada | DD-174 |
+> | Una tipificación es una ficha propia (árbol de hasta tres niveles, dirección, comentario y grupos por canal) · una por dirección y canal en cada grupo · su listado con las columnas de producto · importar y descargar detrás de un icono (`importable` en `sc-list-page`) · la ficha de grupo elige varias, sin «+» (enmienda DD-141 §7, DD-164 §1) | DD-173 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
 > | El panel rápido de agentes, también en el Monitor: «Agentes» en la cabecera del widget «Grupos» (con varios, un menú), los grupos por id y el foco de vuelta a quien lo abrió | DD-168 |
 > | El «+» de crear es el botón de solo icono de primeng.dev, redondo, con borde y en gris, a la derecha de su control y a su alto · la misma fila que el «Añadir» de los dominios (`.control-add`) | DD-167 |
@@ -126,6 +129,60 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-177 · 2026-10-05 — Lo que verá el agente: el teléfono de sc-agent, a la derecha de la ficha de una tipificación
+
+**Contexto** · Una tipificación se entiende por lo que le pide al agente al colgar, y la ficha solo lo describía. La
+revisión de producto del 2026-10-05 pidió enseñarlo con el teléfono de sc-agent, donde el agente tipifica tras colgar
+(la sección «Tipificación» del Comunicador: `agent/docs/comunicador.md` y `agent/…/typification.component.ts`). Un primer
+panel genérico con piezas del DS «no se parecía en nada al teléfono». Dos límites medidos al hacerlo:
+- el Supervisor no admite colores a pelo ni paleta cruda (`token-guard`, regla 8), y los de la réplica lo son a propósito
+  (DD-35);
+- la columna del resumen de las fichas desplaza por dentro (`overflow-y: auto`) y cortaba en recto, por los lados, la
+  sombra del teléfono.
+
+**Decisión** ·
+1. **A la derecha de la ficha, en el hueco del resumen, el teléfono del agente en su sección de Tipificación**
+   (`sc-tipificacion-vista`): la plancha oscura que asoma arriba con su flecha de plegar (sin ajustes), el panel, la
+   franja «Tipificación», un botón-píldora por nivel (el primero encendido, los demás apagados hasta elegir el de
+   arriba, cada uno con su lista en un globo: el Listbox de primeng.dev dentro del Popover), el comentario de 255,
+   Guardar y la barra de cuatro pestañas, redondeada en sus cuatro esquinas sobre el pie del panel.
+2. **Se prueba**: con un camino entero, Guardar se enciende y dice cómo quedaría la conversación («Quedaría como
+   Consulta › Facturación › Importe»), debajo del teléfono, en una línea reservada. Sigue a la ficha: sin comentario
+   no hay comentario, y sin niveles ni comentario dice que no pide nada.
+3. **Sus medidas, las de la réplica al peldaño más cercano de la escala**: franja 44,7 → 42, píldoras 27,3 → 28,
+   comentario 184 → 175, Guardar 40,2 → 38,5, barra 56,9 → 56, radios 23,7 y 28,8 → 24,5 y 28 (de la escala de
+   espacios: la de radios acaba en 16). Ancho, el de la columna: 240 (el teléfono mide 250).
+4. **Sus colores, una familia de tokens nueva, `--sc-agent-window-*`** (05-extensions, junto a la de la barra lateral,
+   que es el otro oscuro en los dos temas), con los grises de la paleta más cercanos a los de la réplica: panel #2d333a
+   → slate-800 (#2f3642), comentario #1f2429 → slate-900 (#181d26), su borde #11131a → slate-950. Y su sombra,
+   `--sc-agent-window-shadow`: sutil y con spread por los cuatro lados.
+5. **En su propia columna** (`.tip-telefono`, el área `summary` de la rejilla de la ficha), fija al bajar como el
+   resumen pero sin su recorte. El molde de las demás fichas no cambia.
+6. **Encima, su título con el icono del teléfono** («Lo que verá el agente» y cuándo sale: al colgar, antes de recibir
+   otra conversación). Dentro del teléfono solo va lo que ve el agente.
+
+**Razón** · Lo que el agente rellena se entiende viéndolo, y probándolo se ve qué es un nivel y qué cambia al pedir
+comentario sin leer una ayuda. Calcado del teléfono de verdad, el Supervisor enseña lo que el agente va a ver, no una
+interpretación suya.
+
+**Descartadas** ·
+- *Un panel con las piezas del DS (desplegables y área de texto)*: no se parecía al teléfono; era lo que se probó primero.
+- *Copiar el componente de la réplica*: sus colores van a pelo, y portar es rehacer en el destino (LEARNINGS #10).
+- *Un `.sc-dark` alrededor del panel para usar el modo oscuro del DS*: la regla 8 lo prohíbe, y los campos de PrimeNG no
+  lo siguen dentro de una isla (sus variables se resuelven en la raíz).
+- *El `p-select` de primeng.dev con sus tokens para las píldoras*: un campo PrimeNG crudo no se admite en el Supervisor
+  (`token-guard`), y en sc-agent los niveles son botones.
+- *El teléfono entero (teclado y botones de llamada)*: no dice nada de la tipificación y quitaría sitio.
+- *Dejar el teléfono dentro de `.ficha-summary` y estrecharlo para que la sombra quepa*: le quitaba el ancho del de verdad.
+
+**Consecuencias** ·
+- Componentes: `sc-tipificacion-vista`. Tokens nuevos en `05-extensions.css` (`--sc-agent-window-*`).
+- Pruebas: `tipificacion-telefono.spec.ts` (5), en rojo antes del bloque.
+- Queda abierto: en sc-agent el chat tipifica sin niveles; con este modelo lo decide cada tipificación (pregunta de
+  producto).
 
 ---
 
@@ -266,6 +323,100 @@ pendientes capturas que el robot ya había regenerado idénticas; (4) tres PR ab
   que sí existe.
 - La regla de profundidad congelaría datos de ejemplo como contrato. Para leer el botón de las piezas compuestas hace
   falta otra regla (por ejemplo, no gastar nivel solo en los hosts `sc-*`/`p-*`), que queda en el hand-off del DS.
+
+---
+
+## DD-174 · 2026-10-05 — La ficha de una tipificación, sin saltos: el índice, los niveles como columnas y cada aviso en su línea
+
+**Contexto** · La primera versión de la ficha (índice, un selector 1 · 2 · 3 de niveles, columnas que aparecían y
+desaparecían con él, un aviso que entraba encima del árbol y errores bajo los campos) saltaba al usarla: medido, un
+aviso de rama a medias bajaba las columnas 40 px y quitar un nivel cambiaba el ancho de las demás. La revisión del
+2026-10-05 pidió menos saltos, un alta más sencilla y conservar el índice.
+
+**Decisión** ·
+1. **El molde de las fichas** (DD-122, DD-170): el nombre y su línea («Entrantes · 3 niveles») encima del índice, con
+   General, Categorías y Grupos; el alta con el índice de la edición, ✓ y «Atrás / Siguiente» (DD-143).
+2. **General, más corta**: la dirección es un solo control (Entrantes · Salientes · Ambas), sin el estado «ninguna» que
+   había que avisar; el comentario, un interruptor. «Habilitar categorización» pasa a ser tener niveles o no.
+3. **Los niveles son las columnas**, y las tres existen siempre, del mismo ancho: el siguiente nivel se añade pulsando su
+   columna fantasma («+ Añadir segundo nivel») y el último se quita con su ×, preguntando cuántas opciones se llevan.
+   Sin columnas en uso, la tipificación solo pide comentario. Una nueva nace con el primer nivel listo para escribir.
+4. **Añadir y renombrar, en la línea de cada columna** (Enter guarda, Escape deja de renombrar), y las acciones de la
+   opción elegida (renombrar, subir, bajar, eliminar) siempre a la vista, apagadas sin elegida: ni menú ⋮ ni diálogo de
+   renombrar. La opción recién añadida queda elegida, para añadir sus hijas sin más pasos.
+5. **Cada aviso en su línea reservada**, que cambia de texto y de color pero no aparece ni desaparece: bajo cada columna
+   (el repetido, qué se renombra, lo que le falta), bajo el árbol (completa, o qué ramas faltan) y encima de la tabla
+   de Grupos (con qué choca cada grupo). En la fila del grupo que choca, solo un icono. El nombre repetido marca su
+   campo y lo dice la barra, junto a Guardar, con todo lo que falte.
+
+**Razón** · Un aviso que empuja lo de debajo mueve lo que se iba a pulsar, y lo que se mueve al usarlo se lee como roto.
+Con las tres columnas siempre presentes, añadir o quitar un nivel es pulsar donde va, y nada cambia de ancho. Medido en
+la prueba, posición y tamaño de las columnas, la línea de estado y la tarjeta, antes y después de cada gesto: iguales;
+el medidor, con un salto puesto a propósito, lo caza (la columna baja de 137 a 177).
+
+**Descartadas** ·
+- *Una sola página sin índice, como el editor de una agenda*: más corta, pero se pidió conservar el índice de las fichas.
+- *El selector de niveles 1 · 2 · 3*: separaba el número de niveles de las columnas que lo muestran, y cambiar de número
+  cambiaba el ancho de todas.
+- *El menú ⋮ por columna y el diálogo de renombrar*: escondían las acciones de la opción elegida.
+- *Reservar el alto del aviso de encima del árbol*: un hueco vacío arriba, y el aviso seguía lejos de las columnas.
+
+**Consecuencias** ·
+- Componentes: `sc-tipificacion-niveles`, `sc-tipificacion-grupos`, la ficha `tipificacion-ficha-page`.
+- Arreglo cazado por su prueba: dos «Añadir» seguidos partían del mismo árbol y el segundo pisaba al primero; el editor
+  trabaja ahora sobre su copia, puesta al día en el acto (`linkedSignal`).
+- Pruebas: `tipificacion-ficha.spec.ts` (7), en rojo antes del bloque.
+
+---
+
+## DD-173 · 2026-10-05 — Una tipificación es una ficha propia: su árbol de hasta tres niveles, su dirección, su comentario y sus grupos por canal
+
+**Contexto** · La propuesta de producto «Tipificaciones» (2026-10-05) la trata como una entidad: un listado (nombre,
+descripción, dirección, comentarios, niveles, grupos e ID, todas ordenables, con importar y exportar «como en Voice») y
+una ficha con General, Categorización (hasta tres niveles) y Grupos (por canal). Lo que había: en Repositorios, una lista
+plana («Venta cerrada · VEN-001 · Ventas»), y en la ficha de grupo un desplegable que elegía una categoría de ella. En
+Voice la tipificación vive dentro de cada grupo: hasta tres niveles y comentario, y el agente no sale de postllamada
+hasta tipificar (manual, p. 14). Lo que la propuesta no resolvía se decidió con producto: todas las ramas llegan al mismo
+nivel; en Grupos, canales sí y «Habilitado» no; el listado sigue en Repositorios y «Crear» abre la ficha.
+
+**Decisión** ·
+1. **El modelo** (`tipificaciones.core.mjs`, puro y con su prueba): nombre, descripción, entrantes y salientes,
+   categorías sí o no, comentario sí o no, niveles (1 a 3), el árbol, y sus grupos con los canales por los que se usa
+   (las familias de DD-147). En una clave nueva (`sc-tipificaciones`); la de antes se queda sin leer.
+2. **Una por dirección y canal en cada grupo**: dos que cubran la misma dirección por el mismo canal de un grupo no se
+   pueden guardar, en la ficha de la tipificación ni en la del grupo (el agente no sabría cuál le toca).
+3. **El listado de Repositorios › Tipificaciones**: las columnas de la propuesta, todas ordenables; los niveles dicen,
+   al pasar o al enfocar, qué hay en cada uno; los grupos, la cifra con su globo de Agentes › Grupos; el ID, opcional,
+   como el de Agentes y Grupos.
+4. **Importar y descargar detrás de UN icono, con su menú** (`importable` en `sc-list-page`; las demás listas siguen con
+   su botón de descargar). Importar, como las agendas (DD-166): plantilla CSV, una fila por camino del árbol, y vista
+   previa de lo que entra, cada error con su línea y las que ya existen. Descargar saca esas mismas columnas.
+5. **La ficha de grupo elige varias tipificaciones** (desplegable múltiple), cada una en su fila de Recursos con su dato
+   («Entrantes · 3 niveles») y «Editar», que abre su ficha. Su «+» de crear en un diálogo se va: una tipificación es un
+   árbol con su ficha, y no cabe en un diálogo (enmienda la decisión de producto del 2026-09-18 solo para la tipificación,
+   DD-141 §7 y DD-164 §1).
+
+**Razón** · Una tipificación se reutiliza en varios grupos y cambia por su cuenta: como ficha propia, se cambia una vez y
+llega a todos. Y el agente necesita saber cuál le toca en cada conversación: de ahí la regla de una por dirección y canal.
+
+**Descartadas** ·
+- *Seguir con la categoría del repositorio plano*: no tenía niveles, ni dirección, ni comentario.
+- *Una por grupo, como en Voice*: un grupo que atiende y llama necesita una para entrantes y otra para salientes.
+- *«Habilitado» en cada grupo*: repetía a la papelera; asignada ya es en uso.
+- *Dos botones, importar y descargar*: ruido en la barra, y la propuesta los quería juntos.
+- *Leer `.xlsx` al importar*: como en las agendas, Excel guarda CSV y la plantilla ya se abre con él (DD-166).
+
+**Consecuencias** ·
+- Fuera `instances/tipificaciones.ts` y `tipificacionViva` (`recursos.core.mjs`). Componentes y páginas:
+  `tipificaciones-list-page`, el almacén nuevo y la ficha de grupo.
+- Pruebas: `tipificaciones-listado.spec.ts` (5) y `tipificaciones.test.mjs` (13), en rojo antes del bloque; cuatro
+  pruebas que fijaban lo de antes cambian a propósito (`desplegables-con-nombre`, `ficha-grupo-textos`,
+  `recursos-resumen`, `ficha-recursos-dialogos`).
+- Queda abierto: las Reglas de Conversaciones tienen su propia copia de las tipificaciones (`entity-catalog.ts`), y
+  Supervisión › Tipificaciones sigue vacía.
+
+---
+
 
 ## DD-172 · 2026-10-05 — Fuera de PrimeNG jubilado, lo seguro: las piezas compuestas pintan `sc-button` y `sc-password` va sobre `pInputPassword`
 

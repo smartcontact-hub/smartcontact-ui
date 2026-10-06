@@ -1,0 +1,71 @@
+:host {
+  display: block;
+  height: 100%;
+  background: var(--sc-bg-canvas);
+}
+
+/* La página, la barra y el vacío de búsqueda los pinta `sc-list-page` (DD-97). Aquí solo las celdas. */
+.table__cell {
+  color: var(--sc-text-secondary);
+
+  &--truncate {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* «Solo comentario»: no hay árbol que enseñar. */
+  &--muted {
+    color: var(--sc-text-subtle);
+  }
+
+  /* Lleva su detalle al pasar o al enfocar: el subrayado punteado dice que hay más. */
+  &--levels {
+    text-decoration: underline dotted;
+    text-underline-offset: 0.2em;
+    cursor: help;
+  }
+}
+
+.table__td-name {
+  display: block;
+  overflow: hidden;
+  color: var(--sc-text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El diálogo de importar, como el de las agendas (DD-166): la ayuda, las dos acciones juntas y la vista previa. */
+.importar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+
+  p {
+    margin: 0;
+  }
+}
+
+.importar__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+.importar__vista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: var(--sc-spacing-1);
+}
+
+.importar__nombres,
+.importar__errores {
+  color: var(--sc-text-subtle);
+}
+
+.importar__errores {
+  margin: 0;
+  padding-inline-start: var(--sc-spacing-1-25);
+}
