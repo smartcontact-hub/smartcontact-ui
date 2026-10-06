@@ -313,3 +313,83 @@ test('sin run por head_sha para tu HEAD, se mantiene el aviso de OTRO commit', (
   assert.equal(r.status, 3, r.stdout + r.stderr);
   assert.match(r.stdout, /describe OTRO commit/);
 });
+
+// Medido el 2026-10-05 en el #342: 12 jobs se cancelaron a los 15 min sin que GitHub les diera máquina
+// («The job was not acquired by Runner of type hosted even after multiple attempts»). Llegan `cancelled` con
+// `runner_name` vacío, y el veredicto los contaba como un rojo más: se notó 45 min después. No es un fallo del
+// código: el remedio es relanzarlos, una vez (DD-175).
+const sinRunner = (name) => ({ name, status: 'completed', conclusion: 'cancelled', runner_name: '' });
+const conRunner = (name, conclusion) => ({ name, status: 'completed', conclusion, runner_name: 'GitHub Actions 12' });
+
+test('sin máquina: todos los rojos son jobs cancelados sin runner → exit 7, con su remedio, no «falla»', () => {
+  const r = enLaNube((head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head, { conclusion: 'cancelled', run_attempt: 1 })],
+    ['actions/runs/9/jobs', { jobs: [conRunner('verify', 'success'), sinRunner('e2e-supervisor (1)'), sinRunner('e2e-smoke')] }],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 7, r.stdout + r.stderr);
+  assert.match(r.stdout, /sin máquina/);
+  assert.match(r.stdout, /e2e-supervisor \(1\), e2e-smoke/);
+  assert.match(r.stdout, /--relanzar/);
+  assert.doesNotMatch(r.stdout, /falla:/);
+});
+
+test('fallo con runner: un cancelado CON máquina sigue siendo rojo (exit 1)', () => {
+  const r = enLaNube((head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head, { conclusion: 'failure', run_attempt: 1 })],
+    ['actions/runs/9/jobs', { jobs: [conRunner('verify', 'failure'), conRunner('build', 'cancelled')] }],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  assert.match(r.stdout, /falla: verify, build/);
+  assert.doesNotMatch(r.stdout, /sin máquina/);
+});
+
+test('mezcla: un rojo real manda (exit 1), y los que no tuvieron máquina se dicen aparte', () => {
+  const r = enLaNube((head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head, { conclusion: 'failure', run_attempt: 1 })],
+    ['actions/runs/9/jobs', { jobs: [conRunner('verify', 'failure'), sinRunner('e2e-smoke')] }],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 1, r.stdout + r.stderr);
+  assert.match(r.stdout, /falla: verify\./);
+  assert.match(r.stdout, /sin máquina: e2e-smoke/);
+});
+
+/** Como `enLaNube`, pero con argumentos para el script. */
+function enLaNubeCon(args, respuestas) {
+  const dir = mkdtempSync(join(tmpdir(), 'ci-verdict-nube-'));
+  const bin = join(dir, 'bin');
+  const repo = join(dir, 'repo');
+  mkdirSync(bin);
+  writeFileSync(join(bin, 'gh'), GH_DE_LA_NUBE, { mode: 0o755 });
+  const git = (a) => execFileSync('git', a, { cwd: repo, env: SIN_GIT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  execFileSync('git', ['init', '-q', '-b', 'mi-rama', repo], { env: SIN_GIT });
+  git(['-c', 'user.name=Prueba', '-c', 'user.email=prueba@example.com', 'commit', '-q', '--allow-empty', '-m', 'uno']);
+  git(['remote', 'add', 'origin', 'https://github.com/o/r.git']);
+  const head = git(['rev-parse', 'HEAD']);
+  const env = { ...SIN_GIT, PATH: `${bin}${delimiter}${process.env.PATH}`, GH_FALSO: JSON.stringify(respuestas(head)) };
+  return spawnSync(process.execPath, [SCRIPT, ...args], { cwd: repo, env, encoding: 'utf8' });
+}
+
+test('--relanzar en el primer intento: pide rerun-failed-jobs una vez', () => {
+  const r = enLaNubeCon(['--relanzar'], (head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head, { conclusion: 'cancelled', run_attempt: 1 })],
+    ['actions/runs/9/rerun-failed-jobs', {}],
+    ['actions/runs/9/jobs', { jobs: [sinRunner('e2e-smoke')] }],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 7, r.stdout + r.stderr);
+  assert.match(r.stdout, /relanzad/);
+});
+
+test('--relanzar en el segundo intento: no relanza, un segundo fallo ya es real', () => {
+  const r = enLaNubeCon(['--relanzar'], (head) => [
+    ['actions/workflows/ci.yml/runs', ejecucion(head, { conclusion: 'cancelled', run_attempt: 2 })],
+    ['actions/runs/9/jobs', { jobs: [sinRunner('e2e-smoke')] }],
+    ['pulls?head=o:mi-rama', []],
+  ]);
+  assert.equal(r.status, 7, r.stdout + r.stderr);
+  assert.match(r.stdout, /no lo relanzo/);
+  assert.doesNotMatch(r.stdout, /relanzados/);
+});

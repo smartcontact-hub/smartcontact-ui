@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { aviso, capturasDeSpec, capturasPendientes, slugDe, tablaPintada } from '../api-baselines.mjs';
+import { aviso, capturasDeSpec, capturasPendientes, comprobadasPorRobot, estilosPendientes, slugDe, tablaPintada } from '../api-baselines.mjs';
 
 // El caso que lo motivó es #325 (2026-10-04): `sc-group-popover` ganó la salida `activated`, su página de sc-docs creció
 // 142 px y `e2e-smoke` cayó en el CI por `grouppopover-linux.png`. Cada prueba fija una de las dos mitades: que avise
@@ -103,4 +103,50 @@ test('aviso: dice qué captura, por qué y qué hacer con la rama; vacío si no 
   assert.match(texto, /visual-baselines con rama=mi-rama/);
   assert.match(texto, /ANTES de abrir el PR/);
   assert.equal(aviso([], 'mi-rama'), '');
+});
+
+// Fallo 1, medido en el #342 (2026-10-05): la plantilla de cinco piezas cambió y `e2e/baselines/component-styles.json`
+// cayó en e2e-smoke. Costó un CI de más (~20 min) por algo que se regenera en local en ~1 min (DD-175).
+const ESTILOS = new Set(['button', 'select']);
+const PLANTILLA = 'projects/ui-smartcontact/src/lib/components/select/sc-select.component.html';
+
+test('rojo, el caso del #342: la plantilla de una pieza con línea base de estilos, sin regenerarla, avisa', () => {
+  assert.deepEqual(estilosPendientes({ cambiados: [PLANTILLA], estilos: ESTILOS }), ['select']);
+  assert.match(aviso([], 'mi-rama', ['select']), /SC_UPDATE_STYLES=1 npx playwright test component-styles/);
+});
+
+test('verde: con la línea base de estilos tocada en la rama, o sin entrada en ella, no avisa', () => {
+  assert.deepEqual(estilosPendientes({ cambiados: [PLANTILLA, 'e2e/baselines/component-styles.json'], estilos: ESTILOS }), []);
+  const sinEntrada = 'projects/ui-smartcontact/src/lib/components/subsection/sc-subsection.component.html';
+  assert.deepEqual(estilosPendientes({ cambiados: [sinEntrada], estilos: ESTILOS }), []);
+  // La lógica (.ts) no mueve estilos por sí sola: avisar de ella enseñaría a ignorar el aviso.
+  assert.deepEqual(estilosPendientes({ cambiados: [PLANTILLA.replace('.html', '.ts')], estilos: ESTILOS }), []);
+});
+
+// Fallo 2, del #342: `bulkeditmenu` y `select` seguían «sin regenerar» después de que el robot las regenerara y
+// salieran idénticas (sin PNG en el diff). Un commit del robot posterior al último cambio de la pieza la comprueba.
+const ROBOT = 'chore(e2e): baselines visuales regeneradas en Linux';
+const toca = (pieza) => [`projects/ui-smartcontact/src/lib/components/${pieza}/sc-${pieza}.component.html`];
+
+test('verde: el robot pasó DESPUÉS del último cambio de la pieza → comprobada, no pendiente', () => {
+  const commits = [
+    { subject: ROBOT, files: [] },
+    { subject: 'feat: select', files: toca('select') },
+  ];
+  const comprobadas = comprobadasPorRobot(commits, ['select']);
+  assert.deepEqual([...comprobadas], ['select']);
+  const p = capturasPendientes({ apiAntes: api(), apiAhora: api(), cambiados: toca('select'), capturas: CAPTURAS, comprobadas });
+  assert.deepEqual(p, []);
+});
+
+test('rojo: la pieza cambió DESPUÉS del robot (o está sin commitear) → sigue pendiente', () => {
+  const despues = [
+    { subject: 'fix: select otra vez', files: toca('select') },
+    { subject: ROBOT, files: [] },
+  ];
+  assert.deepEqual([...comprobadasPorRobot(despues, ['select'])], []);
+  const sinCommitear = [{ subject: '(árbol de trabajo)', files: toca('select') }, { subject: ROBOT, files: [] }];
+  assert.deepEqual([...comprobadasPorRobot(sinCommitear, ['select'])], []);
+  const p = capturasPendientes({ apiAntes: api(), apiAhora: api(), cambiados: toca('select'), capturas: CAPTURAS, comprobadas: new Set() });
+  assert.deepEqual(p, [{ slug: 'select', porque: ['el componente'] }]);
 });

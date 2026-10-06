@@ -77,7 +77,13 @@ export function runDe(r) {
     createdAt: r.created_at,
     startedAt: r.run_started_at ?? r.created_at,
     event: r.event,
+    runAttempt: r.run_attempt ?? 1,
   };
+}
+
+/** Los números de los `## DD-N` que AÑADE un parche unificado (las líneas `+`), en su orden. */
+export function ddsAnadidas(parche) {
+  return [...String(parche ?? '').matchAll(/^\+## DD-(\d+)\b/gm)].map((m) => Number(m[1]));
 }
 
 /**
@@ -121,7 +127,13 @@ export function cliente({ gh = ghReal, git = gitReal } = {}) {
         conclusion: j.conclusion,
         startedAt: j.started_at,
         completedAt: j.completed_at,
+        // Vacío en un job que GitHub canceló sin darle máquina (DD-175): no llegó a correr.
+        runnerName: j.runner_name ?? '',
       }));
+    },
+    /** Relanza los jobs fallidos o cancelados de una ejecución (`rerun-failed-jobs`). */
+    relanzarFallidos(id) {
+      gh(['api', `repos/${base().owner}/${base().repo}/actions/runs/${id}/rerun-failed-jobs`, '-X', 'POST']);
     },
     /**
      * El PR que importa de la rama, con `mergeable` si está abierto; `null` si no hay ninguno. Una sesión cloud
@@ -169,6 +181,11 @@ export function cliente({ gh = ghReal, git = gitReal } = {}) {
     /** Las rutas que cambia un PR (hasta 100). Las cruza el aviso de ledgers del preflight (LEARNINGS #21). */
     ficherosDePr(numero) {
       return api(`pulls/${numero}/files?per_page=100`).map((f) => f.filename);
+    },
+    /** Los `## DD-N` que añade el `docs/DECISIONS.md` de un PR, sacados de su parche (DD-175). */
+    ddsDePr(numero) {
+      const f = api(`pulls/${numero}/files?per_page=100`).find((x) => x.filename === 'docs/DECISIONS.md');
+      return ddsAnadidas(f?.patch);
     },
     /** Los últimos PRs fundidos (el REST no filtra por fundido: se piden cerrados y se quedan los que tienen fecha). */
     prsFundidos(cuantos = 40) {

@@ -20,7 +20,7 @@
  */
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
-import { avisarCarga, avisarLedgers, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
+import { avisarCarga, avisarDds, avisarLedgers, ddsDeRama, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 import { APPS, planDe } from "./preflight-alcance.mjs";
 
@@ -105,6 +105,8 @@ if (process.argv.includes("--run")) {
   avisarCarga();
   // Y si otro PR abierto toca los mismos ledgers que esta rama (LEARNINGS #21): tampoco bloquea.
   avisarLedgers({ mios: ficheros, rama: ramaActual() });
+  // Y si el número de DD de esta rama ya lo usa otro PR abierto (DD-175): avisa y propone el siguiente libre.
+  avisarDds({ ...ddsDeRama(), rama: ramaActual() });
   const problemas = [...puertaBarata(process.cwd()), ...generadosAlDia()];
   if (problemas.length) {
     console.log("\n✘ La cadena NO arranca: hay algo que se comprueba en 2 s y falla.\n");

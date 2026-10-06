@@ -42,9 +42,12 @@
  *       · 4 el PR de la rama ya está fundido · 5 el PR está en conflicto con la base
  *       · 6 el PR de la rama está fundido pero tu HEAD es un commit nuevo encima: sin PR abierto,
  *         no hay CI que disparar todavía.
+ *       · 7 sin máquina: los únicos rojos son jobs que GitHub canceló sin darles runner (DD-175).
+ *         `--relanzar` pide `rerun-failed-jobs` una sola vez, y solo si la ejecución va por su intento 1.
  *
  * Uso:  npm run ci:verdict            (rama actual)
  *       npm run ci:verdict -- main    (otra rama)
+ *       npm run ci:verdict -- --relanzar  (relanza una vez lo que se quedó sin máquina)
  */
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -82,6 +85,20 @@ export function shaDeLsRemote(salida) {
 }
 
 /**
+ * Los jobs en rojo, separados en dos: los que fallaron con máquina y los que GitHub canceló SIN darles una
+ * (`cancelled` con `runner_name` vacío; su check-run dice «The job was not acquired by Runner of type hosted even
+ * after multiple attempts»). Medido el 2026-10-05 en el #342: 12 jobs así, contados como rojo, y se notó 45 min
+ * después. Los segundos no dicen nada del código: se relanzan (DD-175).
+ */
+export function clasificarJobs(jobs = []) {
+  const sinMaquina = jobs.filter((j) => j.conclusion === 'cancelled' && !j.runnerName && !j.runner_name).map((j) => j.name);
+  const rojos = jobs
+    .filter((j) => ['failure', 'timed_out', 'cancelled'].includes(j.conclusion) && !sinMaquina.includes(j.name))
+    .map((j) => j.name);
+  return { rojos, sinMaquina };
+}
+
+/**
  * Qué hacer con un rojo, según sus jobs (`null` si no se pudieron leer). Dos casos medidos en #325 (2026-10-04):
  *   · una ejecución en rojo SIN jobs: la deja así el commit del robot de `visual-baselines` sobre un PR ya abierto, y
  *     no hay log que leer;
@@ -97,8 +114,9 @@ export function pistaDelRojo({ rama, id, jobs = null }) {
       'Sube el siguiente commit o reejecútala en GitHub.'
     );
   }
-  const rojos = jobs.filter((j) => ['failure', 'timed_out', 'cancelled'].includes(j.conclusion)).map((j) => j.name);
+  const { rojos, sinMaquina } = clasificarJobs(jobs);
   let pista = `falla: ${rojos.join(', ') || 'sin job en rojo'}. ${leer}`;
+  if (sinMaquina.length) pista += ` · sin máquina: ${sinMaquina.join(', ')} (se relanzan solos con el siguiente push).`;
   if (rojos.some((n) => n.startsWith('e2e-smoke'))) {
     pista += ` · Si es una captura de sc-docs: lanza visual-baselines con rama=${rama}, revisa las PNG y sigue.`;
   }
@@ -167,6 +185,18 @@ export function veredicto({ rama, head, runs, pr, etiqueta = 'tu HEAD', jobs = n
   if (r.conclusion === 'success') {
     return { exit: 0, linea: `✓ ci VERDE en ${rama} sobre ${sha} (${etiqueta}). ${r.url}` };
   }
+  const { rojos, sinMaquina } = clasificarJobs(jobs ?? []);
+  if (sinMaquina.length && !rojos.length) {
+    const intento = r.runAttempt ?? 1;
+    const remedio =
+      intento > 1
+        ? `Ya es el intento ${intento}: no se relanza otra vez. Mira el estado de GitHub Actions y, si sigue, sube el siguiente commit.`
+        : 'No es un fallo del código: relánzalos una vez con npm run ci:verdict -- --relanzar.';
+    return {
+      exit: 7,
+      linea: `⊘ ci sin máquina en ${rama} sobre ${sha}: GitHub canceló sin runner ${sinMaquina.join(', ')}. ${remedio} ${r.url}`,
+    };
+  }
   return {
     exit: 1,
     linea: `✗ ci ${String(r.conclusion).toUpperCase()} en ${rama} sobre ${sha}. ${pistaDelRojo({ rama, id: r.id ?? r.url.split('/').pop(), jobs })}`,
@@ -180,7 +210,9 @@ function main() {
   } catch {
     /* rama sin upstream: nos quedamos con el nombre local */
   }
-  const ramaPedida = process.argv[2];
+  const args = process.argv.slice(2);
+  const relanzar = args.includes('--relanzar');
+  const ramaPedida = args.find((a) => !a.startsWith('--'));
   const rama = ramaPedida || ramaPorDefecto(upstream, sh('git', ['rev-parse', '--abbrev-ref', 'HEAD']));
 
   let head;
@@ -245,6 +277,19 @@ function main() {
 
   const { linea, exit } = veredicto({ rama, head, runs, pr, etiqueta, jobs });
   console.log(linea);
+  // `--relanzar` solo actúa sobre «sin máquina», y solo en el primer intento: un segundo fallo ya es real.
+  if (exit === 7 && relanzar) {
+    if ((r.runAttempt ?? 1) === 1) {
+      try {
+        github.relanzarFallidos(r.id);
+        console.log(`↻ jobs relanzados (intento 2 de la ejecución ${r.id}). Vuelve a leer con npm run ci:verdict cuando acabe.`);
+      } catch (e) {
+        console.error(`✗ no pude relanzar (${motivo(e)}). Hazlo en GitHub: Re-run failed jobs.`);
+      }
+    } else {
+      console.log(`△ intento ${r.runAttempt}: no lo relanzo, un segundo fallo sin máquina ya no es casualidad.`);
+    }
+  }
   process.exit(exit);
 }
 

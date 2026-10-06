@@ -58,10 +58,11 @@ permissions:
   contents: write
   pull-requests: write
 
-# Dos regeneraciones a la vez se pisarían la rama. La segunda espera, no se cancela: una
-# regeneración a medias dejaría la rama con parte de las capturas viejas y parte nuevas.
+# Dos regeneraciones de la MISMA rama se pisarían. La segunda espera, no se cancela: una
+# regeneración a medias dejaría la rama con capturas viejas y nuevas. Ramas distintas, colas
+# distintas: ya no se esperan ni se cancelan entre sí (DD-175).
 concurrency:
-  group: visual-baselines
+  group: visual-baselines-${{ inputs.rama }}
   cancel-in-progress: false
 
 jobs:
