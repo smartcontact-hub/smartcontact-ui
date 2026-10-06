@@ -158,6 +158,12 @@ b49b56e0:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
+-1. **`fichas-nombre-fijo.spec.ts`, intermitente en el CI (2026-10-06).** Falló cuatro veces en dos PRs (#349 y #350),
+   siempre en el shard 4/8, cada vez en una ficha distinta (agente a 1366, usuario a 1366, grupo a 1280) y con el mismo
+   mensaje, «X sigue a la vista»: en el punto donde debía estar el nombre devuelve el texto de la barra superior. Pasa al
+   relanzar el shard. **Sin medir la causa**; la hipótesis es de tiempo (`bajar` espera dos fotogramas y lee enseguida, y
+   en un runner cargado la cabecera fija aún no se ha asentado). Primer paso: repetir ese shard en bucle en el CI para
+   ver cuándo falla, y esperar a que el scroll se asiente antes de leer.
 0. **Repositorios en tarjetas (DD-179), en su PR.** Queda en Figma (`figma-pendiente`, la ficha de DD-179) y, para
    producto, fuera de lote: el oscuro en slate en vez de zinc (DD-79) y los grises de texto un paso más oscuros en
    claro (DD-106), que el análisis de la maqueta propuso y cambian todo el producto.
