@@ -78,7 +78,7 @@ test('rollupDe: check-runs y estados de commit, en mayúsculas y null mientras c
 
 test('runDe: la ejecución con los nombres de gh run list', () => {
   const r = runDe({ id: 9, head_sha: 'a'.repeat(40), status: 'completed', conclusion: 'success', html_url: 'u', created_at: 't', run_started_at: 's', event: 'push' });
-  assert.deepEqual(r, { id: 9, headSha: 'a'.repeat(40), status: 'completed', conclusion: 'success', url: 'u', createdAt: 't', startedAt: 's', event: 'push' });
+  assert.deepEqual(r, { id: 9, headSha: 'a'.repeat(40), status: 'completed', conclusion: 'success', url: 'u', createdAt: 't', startedAt: 's', event: 'push', runAttempt: 1 });
 });
 
 test('ultimaCI: el workflow ci de la rama, con la rama escapada en la ruta', () => {

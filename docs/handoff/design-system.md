@@ -181,13 +181,9 @@ comprobó; y el preflight avisa si tu número de DD ya lo usa un PR abierto. Los
   mide de nuevo.
 - ⚠️ **En la nube, Angular pide Node ≥ 22.22.3 y el contenedor trae 22.22.0**: baja la de `.nvmrc` (22.23.2). Playwright
   busca `chromium_headless_shell-1234`; usa `executablePath: '/opt/pw-browsers/chromium'` en una config temporal.
-- **Plan sin ejecutar, `sc-button → [pButton]`** (medido 2026-10-06): 265 usos en 78 ficheros (supervisor 156, sc-docs
-  89 y 9 piezas del DS), 178 `(clicked)` en plantillas. La directiva no trae `label`, `icon`, `iconFilled`, `clicked`,
-  el mapeo `variant`/`appearance` ni `type="button"` por defecto. Desaparecen dos niveles de host (`sc-button` y
-  `p-button`) y los aria de DD-171 pasan a escribirse en cada consumidor.
-- **Plan sin ejecutar, `sc-multiselect → p-select` múltiple**: 14 usos en 4 pantallas del supervisor. 13 de ellos
-  usan `maxSelectedLabels` y `selectedItemsLabel`, y 3 usan `display`, que `p-select` 22.1.2 no tiene. Ninguno usa
-  `showToggleAll` (salvo por defecto), `selectAll` ni `selectionLimit`.
+- **Plan sin ejecutar** (medido 2026-10-06): `sc-button → [pButton]`, 265 usos en 78 ficheros y 178 `(clicked)`; la
+  directiva no trae `label`, `icon`, `clicked`, el mapeo `variant`/`appearance` ni `type="button"`. `sc-multiselect →
+  p-select`: 14 usos, 13 con `maxSelectedLabels`/`selectedItemsLabel` y 3 con `display`, que `p-select` 22.1.2 no tiene.
 
 ## ✅ 2026-10-05 · Los lotes 5 a 9 en un PR: fuera de PrimeNG jubilado, lo seguro (DD-172), y el cajón modal con foco
 
