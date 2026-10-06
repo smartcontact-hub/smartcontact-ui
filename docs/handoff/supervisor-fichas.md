@@ -191,8 +191,8 @@ fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #3
    columnas (`figma-pendiente` §35) y el color marrón de etiqueta (§36b).
 1. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).** Queda, fuera del lote: las Reglas de Conversaciones
    con su propia copia de las tipificaciones (`entity-catalog.ts`), Supervisión › Tipificaciones vacía, y dos
-   preguntas para producto (en el tramo de DD-177): el chat sin niveles en sc-agent, y que las píldoras del teléfono
-   son una propuesta para el lado del agente.
+   preguntas para producto (en el tramo de DD-177): el chat sin niveles en sc-agent, y la lista que abre cada
+   píldora del teléfono, que es una propuesta: sc-agent ya pinta un botón por nivel, pero la réplica no dice qué abre.
 2. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
    CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
    espera a otros (producto, Figma, devs o el portátil). Con Tipificaciones fundido, en este frente no queda nada
