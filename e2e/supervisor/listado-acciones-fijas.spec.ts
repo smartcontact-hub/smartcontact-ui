@@ -15,19 +15,19 @@ async function cabeEnTabla(control: Locator) {
   });
 }
 
-// DD-162: el icono es un botón que abre un globo con la lista nativa (Listbox con casilla y arrastre).
-test('Columnas es un icono con conteo accesible, conserva selección y teclado', async ({ page }) => {
+// DD-176: el «Column Toggle» de primeng.dev: el botón «Columnas» con su engranaje abre un globo con una casilla por columna.
+test('Columnas es un botón con su engranaje y conteo accesible, conserva selección y teclado', async ({ page }) => {
   await forceLightTheme(page);
   await disableAnimations(page);
   await goto(page, 'admin/grupos');
   // Nueve: «Asignar agentes» salió del listado y su acción va en la cifra de agentes (DD-159).
   const control = selector(page).getByRole('button');
   await expect(control).toHaveAccessibleName('Columnas, 7 de 9');
-  await expect(selector(page).locator('.sc-icon-font--view_column')).toHaveCount(1);
-  expect(await selector(page).evaluate(el => el.getBoundingClientRect().width)).toBeLessThan(45);
+  await expect(selector(page).locator('.sc-icon-font--settings')).toHaveCount(1);
+  await expect(control).toContainText('Columnas');
   await control.press('Enter');
-  const lista = page.getByRole('listbox', { name: /^Columnas/ });
-  await lista.getByRole('option', { name: 'ID', exact: true }).click();
+  const lista = page.getByRole('dialog', { name: 'Columnas' });
+  await lista.getByRole('checkbox', { name: 'ID', exact: true }).click();
   await expect(control).toHaveAccessibleName('Columnas, 8 de 9');
   await page.keyboard.press('Escape');
   await expect(lista).toHaveCount(0);
@@ -44,7 +44,7 @@ for (const oscuro of [false, true]) {
     await page.setViewportSize({ width: 1366, height: 768 });
     await goto(page, 'admin/grupos');
     await selector(page).getByRole('button').click();
-    await page.getByRole('listbox', { name: /^Columnas/ }).getByRole('option', { name: 'ID', exact: true }).click();
+    await page.getByRole('dialog', { name: 'Columnas' }).getByRole('checkbox', { name: 'ID', exact: true }).click();
     await page.keyboard.press('Escape');
     const cabecera = page.locator('th[data-field="code"]');
     const tirador = await cabecera.locator('.p-datatable-column-resizer').boundingBox();

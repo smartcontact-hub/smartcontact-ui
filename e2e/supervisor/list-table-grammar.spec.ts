@@ -263,9 +263,16 @@ const PAGINAS_EN_FORMULARIO = [
      * desde cada lado.
      * 69 → 50 el 2026-09-13 con Aura, igual que su gemelo. 50 → 46 el 2026-09-14: el
      * chip de canal (`_channel-chip.scss`, borrado) pasa a una columna por canal con
-     * `sc-checkbox`, y los dos gemelos siguen midiendo lo mismo. */
-    // DD-151: nombre y email ocupan dos líneas. El relleno sigue siendo el del DS.
-    altoFila: 55,
+     * `sc-checkbox`, y los dos gemelos siguen midiendo lo mismo.
+     * 46 → 55 con DD-151 (nombre y email a dos líneas). 55 → 43 con DD-176: la tabla
+     * pasa a la densidad compacta nativa (`sm`, 6 de relleno a cada lado) y el gemelo
+     * de arriba deja de serlo — este ya no lleva avatar de 24, solo casillas. Con el
+     * relleno `sm` también baja el `padding-top` de la celda y de la cabecera, de
+     * los 8px de la gramática a 2px: la tipografía (tamaño, peso, color) sigue
+     * la misma. */
+    altoFila: 43,
+    paddingCelda: '2px',
+    paddingCabecera: '2px',
   },
 ] as const;
 
@@ -319,9 +326,14 @@ for (const caso of PAGINAS_EN_FORMULARIO) {
     });
 
     expect(Math.abs(medido.altoFila - caso.altoFila)).toBeLessThanOrEqual(1);
-    expect(medido.paddingCelda).toBe(GRAMATICA.paddingCelda);
+    expect(medido.paddingCelda).toBe(
+      'paddingCelda' in caso ? caso.paddingCelda : GRAMATICA.paddingCelda,
+    );
     expect(medido.celda).toEqual(GRAMATICA.celda);
-    expect(medido.cabecera).toEqual(GRAMATICA.cabecera);
+    expect(medido.cabecera).toEqual({
+      ...GRAMATICA.cabecera,
+      ...('paddingCabecera' in caso ? { padding: caso.paddingCabecera } : {}),
+    });
   });
 }
 

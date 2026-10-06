@@ -42,10 +42,10 @@
 | `sc-avatargroup` | STANDARD | primeng/avatargroup | 0 inputs | — | — | — |
 | `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 6 |
 | `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
-| `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 2 |
+| `sc-bulk-action-bar` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
 | `sc-bulk-edit-menu` | CUSTOM | — | 2 inputs | sc-select sc-button | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | primeng/button | 18 inputs | — | ✓ | 176 |
+| `sc-button` | EXTENDED | primeng/button | 18 inputs | — | ✓ | 177 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 39 |
 | `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 6 |

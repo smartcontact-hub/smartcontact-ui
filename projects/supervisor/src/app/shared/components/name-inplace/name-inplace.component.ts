@@ -16,6 +16,10 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
  * cierra devolviendo el nombre de antes. Y cerrar con el nombre vacío también devuelve el de antes: el título de
  * la página no puede quedarse en blanco (Guardar ya lo impide; aquí no se ve el porqué).
  *
+ * Y dos cosas de foco que el ejemplo tampoco trae: salir del campo (pulsar fuera, Tab) cierra con lo escrito, como
+ * Enter; antes se quedaba abierto, y Escape ya no lo cerraba porque el foco había salido. Y al cerrar con Enter,
+ * Escape o el ✕, el foco vuelve al nombre, que sigue siendo el sitio de la acción: antes caía en la página.
+ *
  * Mientras se edita, el título conserva el alto que tenía: el nombre puede ocupar dos líneas (DD-170) y el campo es
  * de una, así que sin eso lo de debajo (la línea de datos, el índice) subía 24 px al pulsarlo.
  */
@@ -28,7 +32,7 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
         <span class="name-inplace__text">{{ name() }}</span>
       </ng-template>
       <ng-template #content let-closeCallback="closeCallback">
-        <span class="name-inplace__edit">
+        <span class="name-inplace__edit" (focusout)="onFocusOut(closeCallback, $event)">
           <input
             type="text"
             pInputText
@@ -142,13 +146,32 @@ export class NameInplaceComponent {
 
   protected close(closeCallback: (event: Event) => void, event: Event): void {
     event.preventDefault();
-    if (this.name().trim().length === 0) this.nameChange.emit(this.before);
-    closeCallback(event);
+    this.commit(closeCallback, event);
+    this.focusName();
   }
 
   protected cancel(closeCallback: (event: Event) => void, event: Event): void {
     event.preventDefault();
     this.nameChange.emit(this.before);
     closeCallback(event);
+    this.focusName();
+  }
+
+  /** El foco sale del campo y de su ✕ (se pulsa fuera, Tab): se cierra con lo escrito, y el foco es de donde fue. */
+  protected onFocusOut(closeCallback: (event: Event) => void, event: FocusEvent): void {
+    const row = event.currentTarget as HTMLElement;
+    if (row.contains(event.relatedTarget as Node | null)) return;
+    this.commit(closeCallback, event);
+  }
+
+  /** Cierra con lo escrito; vacío, con el nombre de antes. */
+  private commit(closeCallback: (event: Event) => void, event: Event): void {
+    if (this.name().trim().length === 0) this.nameChange.emit(this.before);
+    closeCallback(event);
+  }
+
+  /** El nombre vuelve a pintarse en el siguiente ciclo: el foco va a él cuando ya está. */
+  private focusName(): void {
+    setTimeout(() => this.host.querySelector<HTMLElement>('.p-inplace-display')?.focus());
   }
 }

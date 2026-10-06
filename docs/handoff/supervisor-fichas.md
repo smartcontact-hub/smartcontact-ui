@@ -26,7 +26,37 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`. El de lo que dejó F
 (DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. Y el de la
 revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
-fcaf40db:docs/handoff/supervisor-fichas.md`.
+fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
+`git show 4217ed41:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-06 · El pulido de las fichas (DD-176), en un lote de ocho bloques, fundido (#341)
+
+> **Sello:** fundido en `main` como #341, con `main` dentro hasta #345 (DD-177); CI del PR en verde (leído). Un
+> commit en rojo y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local. **Era DD-171 y luego DD-172**:
+> `main` fundió antes las suyas y Tipificaciones (#340) tomó DD-173, DD-174 y DD-177, así que se renumeró a DD-176
+> con todas sus citas.
+
+- **1 · El nombre editable:** se cierra al salir (pulsar fuera, Tab) con lo escrito, y al cerrar el foco vuelve al
+  nombre. Lo encontró la revisión de interacción con Playwright (una sonda que anota y no afirma): la columna fija
+  cabe hasta 1440×520, al 200 % el orden es bueno y cambiar de sección deja la página arriba; solo falló esto.
+- **2 · Las ayudas, cortas:** 19 textos en los cuatro idiomas, `text-wrap: pretty` en las ayudas del DS y de la app,
+  y «Tiempo de ringing» con su ayuda «a otro agente». De 13 ayudas que se alargaban a 1440 quedan 3 en dos líneas, sin
+  palabras solas; lo vigila `fichas-textos.spec.ts`.
+- **3 · Las marcas del índice** (`sc-form-section-nav`), al final de su fila y en la misma vertical, con su hueco fijo.
+- **4 · La tabla de agentes del grupo**, compacta (`sm`) y cada columna a su rótulo: cabe a 1440 con tres canales (antes
+  desplazaba 181 px). **Sin paginación**, en la ficha y en el panel; con lista virtual la caja ocupa su tope (con
+  «Todos» se quedaba en 2 px). El porqué de la paginación (DD-151 no lo decía), en DD-176 §5. **La cabecera, una fila
+  de texto** alineada con sus controles y solo la casilla de «todos» de Asignado: elegida entre tres opciones en la
+  revisión, tras una investigación de SaaS de referencia y sistemas de diseño (DD-176 §4). Icono y casilla en cada
+  cabecera se probó antes y se descartó. La barra de filtro, de borde a borde.
+- **5 · «2/14 grupos seleccionados»** en la barra en lote del DS (`total`), y «2 de 14» para el lector.
+- **6 · El «Column Toggle» de primeng.dev**, tal cual, en los listados (sustituye el Listbox de DD-162), con su teclado
+  sin arrastrar. Medido contra primeng.dev.
+- **7 · «Administrativo», en marrón:** el color de etiqueta `brown`, nuevo en todo el DS (nueve colores, sc-docs, la
+  paleta de puntos y el selector de Etiquetas). El Kit no trae marrón: `amber-800` lleno con texto blanco (7,1:1).
+  Pendiente en Figma (`figma-pendiente` §36b).
+- **Una prueba ajena que falla en tanda:** `panel-agentes-monitor` «… dice en el foco que abre un menú» (de DD-171, la
+  otra sesión) pide `…menu-1_list` y en la tanda completa llega `…menu-2_list`; pasa 3 de 3 a solas.
 
 ## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-173, DD-174 y DD-177), fundido (#340)
 
@@ -62,9 +92,9 @@ fcaf40db:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), fundido (#337)
 
-> **Sello:** rama `arebury/figma-grid-three-columns` sobre `main` en HEAD `5cc9af78`; las pruebas en rojo, `1c7ed587`.
-> **Un bloque, un commit en rojo y otro en verde (DD-154). Sin subir: primero lo ve Rafa en local.** Sale del marco de
-> la ficha de grupo en Figma («Landing page», nodo 2467:7078), leído contenedor a contenedor.
+> **Sello:** fundido en `main` como HEAD `7d470054`; CI del PR y de `main`, en verde (leídos). Sale del marco de la
+> ficha de grupo en Figma («Landing page», nodo 2467:7078), leído contenedor a contenedor. En su CI salieron dos
+> pruebas que con DD-170 ya no medían nada (General ya cabía a 1280×720; las 10 filas cabían a 1512×945): rehechas.
 
 - **El molde, en las tres fichas:** el nombre y su línea van arriba de la columna del índice (dentro de `.page__rail`
   en el DOM); la sección y el resumen arrancan a su altura; la rejilla es de una fila (`'rail main summary'`), y la
@@ -155,59 +185,21 @@ fcaf40db:docs/handoff/supervisor-fichas.md`.
 
   Las 38 capturas de sc-docs se mueven, y se regeneran antes del PR.
 
-## ✅ 2026-10-05 · Recursos, en un lote de cinco bloques (DD-163 a DD-167), fundido (#327)
-
-> **Un PR, un commit en rojo y otro en verde por bloque (DD-154), más el arreglo de `tiempos`: una ejecución que sigue
-> en curso no tiene fin. Lo pedido es de la revisión de producto del 2026-10-04.**
-
-- **1 · La agenda es una lista de contactos, con su editor (DD-163):** `contacts: {id, name, phone}[]` en lugar de
-  `numbers`; lo guardado se pone al día al leerlo, y un contacto sin nombre se pinta «Sin nombre». `admin/agendas/crear`
-  y `editar/:id` van como las fichas: Guardar y Deshacer arriba, la guarda y el cerrojo entre pestañas. Los contactos,
-  en `agenda-contacts-table`: buscador (un teléfono, también por sus cifras), paginador y la tarjeta al pie, que sube
-  como modificador `.table-card--al-pie` a `_sc-list-table.scss` (el panel rápido lo suelta con `--table-card-tope:
-  none`). La agenda 9 trae 1.250 contactos generados, sin literales.
-- **DS, en el bloque 1:** `sc-datatable` gana `first` (nativo, de dos vías). Sin él, buscar desde la página ≥3 dejaba
-  la tabla en blanco, también en la de agentes de la ficha. Mueve `datatable-linux.png`.
-- **2 · El resumen de cada recurso, con «Editar» (DD-164):** `sc-resource-rows` bajo cada campo de Recursos, en la
-  ficha de grupo y en la de agente, con sus textos en `ResourceRowsService` y la lógica en `recursos.core.mjs`.
-  Plantillas abre su panel con `?editar=`, y todo repositorio siembra su búsqueda con `?buscar=`. Se ofrecen las
-  agendas activas y la inactiva que ya estaba puesta; lo borrado no se cuenta ni se guarda, y se quita antes de
-  `markPristine`. El desplegable dice «N agendas» en lugar de repetir los nombres de las filas.
-- **3 · Repositorios dice cuántos hay, y tiene buscador (DD-165):** la cifra va en texto de leyenda y en el nombre
-  accesible de la fila. Cinco almacenes pasan a `repositories/state/`, para que el hub importe almacenes y no páginas.
-- **4 · Importar contactos, como en Voice (DD-166):** plantilla CSV con BOM, vista previa con cada error y su línea,
-  repetidos que se saltan y se cuentan, y un tope de 5000 por agenda. Un CSV de Excel en español (windows-1252) se lee
-  con sus tildes. Lo importado entra sin guardar, con Guardar y Deshacer.
-- **5 · El «+» de crear, el botón de solo icono de primeng.dev (DD-167):** decisión de producto del 2026-10-05. Los
-  «+» de Recursos de grupo son redondos, con borde y en gris, a la derecha de su desplegable y a su alto, en la fila
-  `.control-add`, la regla que ya usaba el «Añadir» de los dominios. Medido: un círculo de 31,5 a 7 del control, con
-  los centros a 0,5 px. Antes eran de texto y flotaban sobre el rótulo, a 1,5 px del control.
-- **En local, en verde:** las e2e de cada bloque y sus vecinas, los barridos de las rutas tocadas, 914 unitarias y
-  las puertas; `revision` del editor a 1440 y a 1366.
-- **Fundido:** #327 → `7d70bfb9`. De punta a punta, 7 h 38 min (`npm run tiempos -- 327 --desde 22:37`); el CI del PR,
-  9 min, verde a la primera.
-
-**Hecho, en tarea aparte:** la casilla de 74 px de Horarios y Variables (misma causa que Agendas) vuelve a medir 40 —
-se quita el ancho fijo de la columna del nombre en las dos instancias, igual que en `agendas.ts`, y las dos rutas
-entran en `list-table-grammar`. De paso, en Variables el valor por defecto largo («Encuesta URL») desbordaba su celda
-y tapaba la columna «Tipo»: pasa a `kind: 'truncate'` (DD-124). Fundido: #329 → `95d98472`. La página de Button de
-sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): la ganó en el lote 2 (#330).
-
 ## SIGUIENTE — sin preguntar
 
-00. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).** Queda, fuera del lote: las Reglas de Conversaciones
-    con su propia copia de las tipificaciones (`entity-catalog.ts`), Supervisión › Tipificaciones vacía, y dos
-    preguntas para producto (en el tramo de DD-177): el chat sin niveles en sc-agent, y que las píldoras del teléfono
-    son una propuesta para el lado del agente.
-0. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
+0. **El pulido de las fichas (DD-176), fundido (#341).** Queda en Figma: la ficha de agente y la de usuario en tres
+   columnas (`figma-pendiente` §35) y el color marrón de etiqueta (§36b).
+1. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).** Queda, fuera del lote: las Reglas de Conversaciones
+   con su propia copia de las tipificaciones (`entity-catalog.ts`), Supervisión › Tipificaciones vacía, y dos
+   preguntas para producto (en el tramo de DD-177): el chat sin niveles en sc-agent, y que las píldoras del teléfono
+   son una propuesta para el lado del agente.
+2. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
    CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
    espera a otros (producto, Figma, devs o el portátil). Con Tipificaciones fundido, en este frente no queda nada
    que dependa de nosotros; lo de fuera de lote, abajo.
 
    Fuera de lote: el tiempo entre llamadas como ajuste general (pendiente de postventa) y ver y gestionar permisos por
-   separado (no entra en esta fase). Si producto lo pide, que la tabla de agentes de la ficha no desplace a 1440 con
-   tres canales (dos salidas: fijar Asignado y Agente a la izquierda, con las columnas fijas de F, o llevar la densidad compacta del
-   panel también a la ficha, unos 100 px). Cada cosa, con su prueba en rojo; la numeración de DD se mira
+   separado (no entra en esta fase). Cada cosa, con su prueba en rojo; la numeración de DD se mira
    en `origin/main` al empezar y otra vez antes de subir.
 
    **Lo «sin verificar» de zoom al 200 % y RTL, cerrado:** DD-53 fija 1024 de ancho mínimo (el 200 % a 1440 son 720) y

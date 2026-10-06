@@ -9,71 +9,104 @@
     @if (columnChoices() || searchPlaceholder() || exportable() || importable()) {
       <div class="page__action-bar">
         @if (columnPrefs(); as prefs) {
-          <!-- ELEGIR Y ORDENAR COLUMNAS, EN UN SOLO CONTROL NATIVO (DD-162): el Listbox de primeng.dev con su casilla
-               (`checkbox`) y su arrastre (`dragdrop`), en un globo bajo el icono. Es el patrón de Airtable y Notion: una
-               lista con su casilla y su asa. Las cabeceras ya no se arrastran: un solo sitio para elegir y ordenar. La
-               columna fija sale marcada y sin poder quitarse; el botón dice cuántas se ven en su nombre. Sin la casilla
-               de «todas» (sin rótulo, y con una fija no las quita todas), sin tope de alto (son pocas: se ven todas) y
-               sin su borde, que ya pone el globo. -->
+          <!-- ELEGIR Y ORDENAR COLUMNAS: el «Column Toggle» de primeng.dev/table, tal cual (DD-176, sustituye el Listbox de
+               DD-162). El botón con su engranaje (outlined, secondary, small); el Popover sin relleno; arriba, el título y
+               «Restablecer»; una fila por columna con su asa, su casilla nativa y su nombre, que se arrastra para ordenar.
+               Lo único que el ejemplo no trae es el teclado sin arrastrar (WCAG 2.1.1 y 2.5.7, que DD-162 ya pedía): la
+               lista es una sola parada del tabulador, las flechas van de una columna a otra y «Subir» y «Bajar», al pie,
+               mueven la enfocada. Nombre (la fija) sale marcada, sin poder quitarse ni moverse. -->
           <sc-button
             #columnsButton
             class="page__columns"
             variant="secondary"
             appearance="outlined"
-            icon="view_column"
+            size="sm"
+            icon="settings"
+            [label]="'common.columns' | translate"
             [ariaLabel]="columnsAriaLabel()"
-            [attr.title]="columnsAriaLabel()"
             ariaHasPopup="dialog"
             [ariaExpanded]="columnsOpen()"
             (clicked)="columnsPop.toggle($event)"
           />
-          <p-popover #columnsPop (onShow)="columnsOpen.set(true)" (onHide)="onColumnsHide()">
-            <p-listbox
-              [options]="columnOrderDraft()"
-              optionLabel="label"
-              optionValue="key"
-              optionDisabled="locked"
-              [multiple]="true"
-              [checkbox]="true"
-              [dragdrop]="true"
-              [metaKeySelection]="false"
-              [showToggleAll]="false"
-              scrollHeight="none"
-              [dt]="columnsListDt"
-              [pt]="columnsListPt"
-              [ariaLabel]="columnsAriaLabel()"
-              [ngModel]="prefs.visible"
-              (ngModelChange)="onVisibleChange($event)"
-              (onDrop)="onColumnDrop($event)"
-              (focusin)="onColumnsListFocusIn($event)"
-            />
-            <!-- Ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, DD-162): mueven la última columna enfocada en la lista, la de las
-                 flechas. Su nombre dice cuál; el lector oye después a qué puesto llegó. Primarios de texto, como «Añadir
-                 condición»: el secundario de texto mide 2,58:1 en claro, por debajo de AA. -->
-            @let mover = columnMove();
-            <div class="page__columns-move">
-              <sc-button
-                size="sm"
-                variant="primary"
-                appearance="text"
-                icon="arrow_upward"
-                [label]="'common.columns_move_up' | translate"
-                [ariaLabel]="mover ? ('common.columns_move_up_aria' | translate: { column: mover.label }) : ('common.columns_move_up' | translate)"
-                [disabled]="!mover?.up"
-                (clicked)="moveColumn(-1)"
-              />
-              <sc-button
-                size="sm"
-                variant="primary"
-                appearance="text"
-                icon="arrow_downward"
-                [label]="'common.columns_move_down' | translate"
-                [ariaLabel]="mover ? ('common.columns_move_down_aria' | translate: { column: mover.label }) : ('common.columns_move_down' | translate)"
-                [disabled]="!mover?.down"
-                (clicked)="moveColumn(1)"
-              />
-            </div>
-            <span class="visually-hidden" aria-live="polite">{{ columnsAnnouncement() }}</span>
+          <p-popover
+            #columnsPop
+            [style]="columnsPopoverStyle"
+            [pt]="columnsPopoverPt"
+            [focusOnShow]="false"
+            [ariaLabelledBy]="columnsTitleId"
+            (onShow)="onColumnsShow()"
+            (onHide)="onColumnsHide()"
+          >
+            <ng-template #content>
+              <div class="column-toggle__header">
+                <span class="column-toggle__title sc-text-body-semibold" [id]="columnsTitleId">{{ 'common.columns' | translate }}</span>
+                <sc-button
+                  variant="secondary"
+                  appearance="text"
+                  size="sm"
+                  icon="refresh"
+                  [label]="'common.columns_reset' | translate"
+                  (clicked)="resetColumns()"
+                />
+              </div>
+              <div
+                class="column-toggle__list"
+                cdkDropList
+                [cdkDropListData]="columnOptions()"
+                (cdkDropListDropped)="onColumnDrop($event)"
+                (keydown)="onColumnsKeydown($event)"
+              >
+                @for (opt of columnOptions(); track opt.key) {
+                  <div
+                    class="column-toggle__row"
+                    [class.column-toggle__row--locked]="opt.locked"
+                    cdkDrag
+                    [cdkDragDisabled]="opt.locked"
+                    cdkDragPreviewClass="column-toggle-drag-preview"
+                    (focusin)="currentColumn.set(opt.key)"
+                    (click)="onColumnRowClick(opt.key)"
+                  >
+                    <sc-icon class="column-toggle__handle" name="drag_handle" size="sm" aria-hidden="true" />
+                    <p-checkbox
+                      [inputId]="columnInputId(opt.key)"
+                      [value]="opt.key"
+                      [ngModel]="prefs.visible"
+                      [disabled]="opt.locked"
+                      [tabindex]="columnTabindex(opt.key)"
+                      (ngModelChange)="onVisibleChange($event)"
+                      (click)="$event.stopPropagation()"
+                    />
+                    <label class="column-toggle__label sc-text-body-regular" [for]="columnInputId(opt.key)" (click)="$event.stopPropagation()">{{ opt.label }}</label>
+                  </div>
+                }
+              </div>
+              <!-- Ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, DD-162): mueven la columna enfocada en la lista. Su nombre dice
+                   cuál; el lector oye después a qué puesto llegó. Primarios de texto, como «Añadir condición». -->
+              @let mover = columnMove();
+              <div class="page__columns-move">
+                <sc-button
+                  size="sm"
+                  variant="primary"
+                  appearance="text"
+                  icon="arrow_upward"
+                  [label]="'common.columns_move_up' | translate"
+                  [ariaLabel]="mover ? ('common.columns_move_up_aria' | translate: { column: mover.label }) : ('common.columns_move_up' | translate)"
+                  [disabled]="!mover?.up"
+                  (clicked)="moveColumn(-1)"
+                />
+                <sc-button
+                  size="sm"
+                  variant="primary"
+                  appearance="text"
+                  icon="arrow_downward"
+                  [label]="'common.columns_move_down' | translate"
+                  [ariaLabel]="mover ? ('common.columns_move_down_aria' | translate: { column: mover.label }) : ('common.columns_move_down' | translate)"
+                  [disabled]="!mover?.down"
+                  (clicked)="moveColumn(1)"
+                />
+              </div>
+              <span class="visually-hidden" aria-live="polite">{{ columnsAnnouncement() }}</span>
+            </ng-template>
           </p-popover>
         }
         @if (searchPlaceholder(); as placeholder) {
@@ -200,7 +233,7 @@
 <p-menu #rowMenuRef [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
 
 @if (selectable() && bulkEntity(); as entity) {
-  <sc-bulk-action-bar [count]="selectedIds().size" [entity]="entity" (clear)="clearSelection()">
+  <sc-bulk-action-bar [count]="selectedIds().size" [total]="rows().length" [entity]="entity" (clear)="clearSelection()">
     <ng-content select="[scListBulkActions]" />
   </sc-bulk-action-bar>
 }

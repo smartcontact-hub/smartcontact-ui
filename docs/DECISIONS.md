@@ -43,6 +43,7 @@
 > | Tema | DD |
 > |---|---|
 > | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-177 |
+> | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas, «Administrativo» en marrón (`brown`, nuevo color de etiqueta) | DD-176 |
 > | La ficha de una tipificación sin saltos: el índice de las fichas · la dirección en un control · los niveles son las columnas (las tres siempre; la siguiente, fantasma) · añadir y renombrar en la línea de la columna · cada aviso en su línea reservada | DD-174 |
 > | Una tipificación es una ficha propia (árbol de hasta tres niveles, dirección, comentario y grupos por canal) · una por dirección y canal en cada grupo · su listado con las columnas de producto · importar y descargar detrás de un icono (`importable` en `sc-list-page`) · la ficha de grupo elige varias, sin «+» (enmienda DD-141 §7, DD-164 §1) | DD-173 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
@@ -182,6 +183,108 @@ interpretación suya.
 - Pruebas: `tipificacion-telefono.spec.ts` (5), en rojo antes del bloque.
 - Queda abierto: en sc-agent el chat tipifica sin niveles; con este modelo lo decide cada tipificación (pregunta de
   producto).
+
+---
+
+## DD-176 · 2026-10-05 — El pulido de las fichas tras DD-170: textos cortos, el nombre editable, el índice, la tabla de agentes, las columnas y la selección
+
+**Contexto** · La revisión de DD-170 en local trajo una lista: textos de ayuda largos, a veces con una sola palabra
+en la última línea, «Tiempo de transferencia» que es el tiempo que suena en un agente, el punto del índice
+que no se alinea, la tabla de agentes de la ficha que desplaza de lado, su paginación, el selector de columnas de los
+listados y un contador de la selección. Y una revisión de interacción con Playwright de lo que puede fallar al usar las
+fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
+
+**Decisión** ·
+1. **Las ayudas, cortas, y sin una palabra sola en la última línea.** Medido a 1440 en las tres fichas: 13 ayudas
+   pasaban a dos o tres líneas, y tres dejaban una sola palabra («llama.», «agentes.», «Añadir.»). Se reescriben 19
+   textos en los cuatro idiomas, diciendo lo mismo con las palabras justas (DD-133: lo que dicen las fuentes). Quedan
+   3 en dos líneas y ninguna con una palabra sola. Las ayudas de campo del DS (`sc-field-msg`), las de `sc-slot` y las
+   de los interruptores y subsecciones de la app llevan `text-wrap: pretty`: el navegador no deja una palabra sola al
+   final, también en otros idiomas y anchos. En Distribución y colas, «Tiempo de transferencia» pasa a **«Tiempo de
+   ringing»**, y su ayuda dice «a otro agente» en vez de «a su destino».
+2. **El nombre editable se cierra al salir de él** (pulsar fuera, Tab) con lo escrito, como Enter, y vacío devuelve
+   el de antes. Al cerrarlo con Enter, Escape o el ✕, el foco vuelve al nombre. Medido antes: pulsar fuera dejaba el
+   campo abierto, Escape ya no lo cerraba (el foco había salido) y, al cerrar, el foco caía en la página.
+3. **Las marcas del índice, al final de su fila** (`sc-form-section-nav`): el rótulo llena la fila y empuja la marca
+   (el punto rojo, el de cambios o el ✓) a un hueco propio al final, que va siempre, vacío si no hay marca. Con
+   varias, caen en la misma vertical; antes, detrás de la última palabra (medido: 203 y 284 con cambios en General y
+   en Distribución y colas). En el carril de 196 al rótulo le quedan 140, y el más largo mide 130; con el hueco fijo,
+   un rótulo no salta de línea al aparecer el punto.
+4. **La tabla de agentes del grupo, compacta**: la densidad nativa `sm` (6 de relleno a cada lado, la que ya usaba el
+   panel rápido) y cada columna de casillas al ancho de su rótulo en los cuatro idiomas («Téléphone» 72, «Chat» 32,
+   «Email» 37, «Atribuído» 65, «Habilitado» 69); el agente, con un mínimo de 13,25rem y el resto del sitio. Medido
+   antes, a 1440 con tres canales: 912 en una caja de 735, 181 px de desplazamiento lateral, y las columnas de
+   casillas a 104 todas. Después: cabe (735 de 735). El panel rápido suma estas mismas columnas: con Teléfono y Chat
+   pasa de 48 a 47,375rem, y su columna de Teléfono deja de cortar «Téléphone», que a 5rem no cabía.
+   **La cabecera, una fila de texto alineada con sus controles**: cada rótulo empieza en la vertical de los controles de
+   su columna, y **solo Asignado lleva su casilla de «todos»**, delante del rótulo (la primera columna, donde se
+   espera). Fuera las casillas de «todos» de cada canal: un canal se cambia fila a fila (enmienda DD-151). Hasta aquí
+   cada cabecera de casillas apilaba su rótulo y su casilla, y la fila medía 54 con «Agente» y «Estado» flotando.
+   **Por qué así**, tras mirar cómo lo hacen los SaaS de referencia y los sistemas de diseño (2026-10-05): Zendesk,
+   HubSpot, Intercom y Genesys rotulan con texto y cambian una columna entera marcando filas y eligiendo una acción;
+   Atlassian prohíbe controles en las cabeceras de datos; Carbon pone la casilla de cabecera solo en la columna que
+   selecciona; Nielsen Norman pide que el nombre de un icono se vea siempre. Se probó antes icono y casilla en cada
+   cabecera, y la revisión lo descartó; también solo iconos, que no se leen sin pasar el ratón. Si hace falta cambiar
+   canales en lote, el siguiente paso es seleccionar filas con la barra en lote del DS (§6).
+   **La barra de filtro, de borde a borde de la tabla**: el selector en su tamaño pequeño (34, con su carril gris) y el
+   buscador (32,5) llenando lo que queda, centrados en la misma línea; antes dejaban 135 px vacíos a la derecha.
+5. **Sin paginación**, en la ficha y en el panel: todas las filas del filtro, y lo que no cabe lo desplaza la tabla por
+   dentro, con la cabecera fija y hasta el pie de la pantalla (DD-95, DD-160); con más de 100, pinta solo las que se
+   ven. **Por qué se puso:** DD-151 trajo la lista entera de agentes a la tabla (hasta 500 en el alta) y la acotó con
+   el paginador nativo de 10, sin dejar escrito el motivo; lo más probable, no pintar cientos de filas con casillas.
+   Eso ya lo resuelve la lista virtual, y paginar partía en páginas una tabla que ya desplaza. Al quitarla salió un
+   fallo: con «Todos» la lista virtual se quedaba en 2 px y sin filas, porque su caja tenía tope pero no alto; ahora,
+   con lista virtual, la caja ocupa su tope entero (`_sc-list-table.scss`). Y otro, de la paginación: a 1512×945 la
+   página tapaba la lista de filas por página y el ratón no llegaba a «25»; se va con ella.
+6. **La selección dice cuántos de cuántos**: la barra en lote del DS (`sc-bulk-action-bar`) gana `total`, y con él dice
+   «2/14 grupos seleccionados»; el lector oye «2 de 14», porque «2/14» se puede leer como fecha o fracción. La cifra,
+   con cifras de ancho fijo. Lo pasan los listados (el total de la lista) y Conversaciones (las del filtro).
+7. **Elegir y ordenar columnas con el «Column Toggle» de primeng.dev, tal cual** (sustituye el Listbox de DD-162): el
+   botón «Columnas» con su engranaje (outlined, secondary, small); un Popover sin relleno con el título y
+   «Restablecer» (texto, secondary, small) arriba, con su raya; una fila por columna con su asa, su casilla nativa
+   (`p-checkbox`) y su nombre, que se arrastra para ordenar (`cdkDrag`, como el ejemplo), con la fila arrastrada y su
+   hueco del ejemplo. «Restablecer» vuelve al orden y a las columnas de partida, como su `reset()`; los anchos
+   arrastrados se quedan. Botón, Popover y casilla son los nativos con los tokens del preset, así que el editor de
+   temas de PrimeNG los lee tal cual; lo que el ejemplo pinta con utilidades de Tailwind va en el paso del Kit más
+   cercano y en los semánticos que salen de los mismos de Aura (el globo, 15,75rem por los 18 del ejemplo, que no son
+   un paso del Kit). Medido contra primeng.dev el 2026-10-05: botón 92×27 (91×28), cabecera 53 (53), filas 31 (32).
+   **Lo único que el ejemplo no trae**, y que DD-162 ya pedía: ordenar con el teclado y sin arrastrar (WCAG 2.1.1 y
+   2.5.7). La lista es una sola parada del tabulador; las flechas, Inicio y Fin van de una columna a otra; Espacio la
+   marca; «Subir» y «Bajar», al pie, mueven la enfocada (o la pulsada); al abrir, el foco entra en la lista, y Escape
+   vuelve al botón. La fija (Nombre) sale marcada, sin asa y sin poder quitarse ni moverse.
+8. **«Administrativo», en marrón**: el color de etiqueta `brown`, nuevo en la paleta del DS (`LabelColor`, nueve
+   colores) y en todas sus etiquetas: `sc-tag` y `sc-chip` con `variant="label"`, la paleta de puntos y el selector de
+   color de Etiquetas. La paleta del Kit no trae familia marrón: el marrón de la paleta es el ámbar oscuro, y la
+   etiqueta va llena, no tintada como las demás: el marrón es el fondo, y el texto, el que llegue a AA sobre él:
+   fondo `amber-800` (#92400e) y texto blanco, 7,1:1; en oscuro, `amber-900` con `amber-100`. Administrativo dejaba
+   de ser un aviso (la severidad `warn`, amarilla): es un estado del agente.
+
+**Razón** ·
+- **Una línea de más por una palabra** se lee como un salto: lo que obliga a otra línea se dice más corto, y `pretty`
+  guarda lo que el texto no puede prever (otro ancho, otro idioma).
+- **La revisión de interacción**, con una sonda que anota y no afirma, en tres fichas: la columna fija cabe en todas
+  las alturas probadas (hasta 1440×520, con el nombre en dos líneas); al 200 % (720) el orden es nombre, índice,
+  resumen y sección, sin desplazar de lado; cambiar de sección deja la página arriba y el foco en el índice. Lo único
+  que falló fue el nombre editable.
+
+**Descartadas** ·
+- **Dejar los textos y poner solo `pretty`** → evita la palabra sola pero no acorta, y lo pedido era limpiar.
+- **Cerrar el nombre editable al salir sin guardar lo escrito** → lo escrito ya está en la ficha (es el mismo campo
+  que General), y perderlo al pulsar fuera sería una sorpresa.
+
+**Consecuencias** ·
+- **Enmienda** DD-151 (sin paginación, y sin las casillas de «todos» de cada canal), DD-156 (los anchos de columna) y
+  DD-131 (el ancho del panel, que los suma).
+  **Sustituye** el control de DD-162 (el Listbox con casilla y arrastre) por el del ejemplo de primeng.dev; su teclado
+  sin arrastrar se queda.
+- **Pruebas:** `fichas-textos.spec.ts`, nueva (el nombre del campo y ninguna ayuda de más en las tres fichas), roja
+  contra lo de antes; `tabla-agentes-compacta.spec.ts`, nueva (cabe a 1440, cada canal a su rótulo, sin páginas),
+  roja antes; `seleccion-recuento.spec.ts`, nueva, roja antes; `columnas-en-una-lista.spec.ts` se reescribe para el
+  control del ejemplo (cinco rojas contra el Listbox, y en verde tres veces seguidas), y `listado-acciones-fijas` y
+  `listado-grupos` lo usan; `asignacion-agentes-lista`, `panel-agentes-grupo`, `ficha-grupo-familias` y `tabla-al-pie` dejan las
+  páginas y miden los anchos nuevos del panel; `name-inplace.spec.ts` gana tres (pulsar fuera, vacío y el foco al cerrar), rojas antes, y su
+  prueba de que la cabecera no se mueve mide ahora el índice: con el nombre dentro de la columna (DD-170), la columna
+  entera no se mueve nunca.
 
 ---
 
@@ -794,6 +897,9 @@ una sección con campos encima, como la de Agentes de la ficha: la lista virtual
 
 ## DD-162 · 2026-10-04 — Elegir y ordenar columnas en un solo control nativo: el Listbox en el globo del icono
 
+> **Sustituida por DD-176 §7** (2026-10-05): el control pasa a ser el «Column Toggle» de primeng.dev (botón con
+> engranaje, Popover, casilla nativa y arrastre de la fila). Su teclado sin arrastrar se queda.
+
 **Contexto.** Desde DD-153 las columnas se elegían en el icono de la barra (el MultiSelect del ejemplo «Column
 Toggle») y se ordenaban arrastrando las cabeceras de la tabla (`reorderableColumns` de `p-table`): dos controles
 nativos, en dos sitios, para una misma tarea. La revisión de producto del 2026-10-04 pidió un solo control nativo de
@@ -1240,6 +1346,10 @@ La evidencia ejecutada y el estado de publicación se registran en el hand-off d
 ---
 
 ## DD-151 · 2026-10-02 — Asignar agentes desde la lista completa (E4)
+
+> **Enmendada por DD-176** (2026-10-05): sin paginación (la tabla desplaza por dentro y, con más de 100 filas, pinta
+> solo las que se ven) y sin las casillas de «todos» de cada canal en la cabecera; la de Asignado sigue, sobre todo el
+> filtro.
 
 **Decisión.** La ficha de grupo y el panel rápido comparten la lista de todos los agentes. «Asignado» añade o
 quita el enlace; sustituye el selector de incorporación, la selección de filas para un lote y la papelera.

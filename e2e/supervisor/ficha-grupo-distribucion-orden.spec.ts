@@ -105,11 +105,15 @@ test('un mensaje de la cola se guarda con el grupo', async ({ page }) => {
 
 test('el tiempo máximo de espera dice qué pasa sin siguiente destino, en la ficha y en Contact Center', async ({ page }) => {
   await goto(page, DISTRIBUCION);
-  await expect(page.locator('#group-channel-phone')).toContainText('Sin siguiente destino, la conversación termina.');
+  await expect(page.locator('#group-channel-phone')).toContainText(
+    'Sin atender en este tiempo, pasa al siguiente destino del Diseñador VUI; si no hay, termina.',
+  );
 
   await goto(page, 'config/aed/grupos');
   const contactCenter = page.locator('main#main-content');
-  await expect(contactCenter).toContainText('Sin siguiente destino, la conversación termina.');
+  await expect(contactCenter).toContainText(
+    'Sin atender en este tiempo, pasa al siguiente destino del Diseñador VUI; si no hay, termina.',
+  );
   await expect(contactCenter).toContainText('Voz de los mensajes');
   await expect(contactCenter).not.toContainText(/anunci/i);
 });

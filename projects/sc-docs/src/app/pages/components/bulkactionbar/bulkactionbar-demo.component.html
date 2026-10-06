@@ -6,7 +6,7 @@
      `data-testid` los miden los e2e de métrica del Kit (no quitar). -->
 
 <ng-template #playground let-args>
-  <sc-bulk-action-bar [count]="args.count" [entity]="entity" (clear)="count.set(0)">
+  <sc-bulk-action-bar [count]="args.count" [total]="args.total || undefined" [entity]="entity" (clear)="count.set(0)">
     <button type="button">Editar</button>
     <button type="button">Eliminar</button>
   </sc-bulk-action-bar>

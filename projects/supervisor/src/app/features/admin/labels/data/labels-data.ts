@@ -24,6 +24,7 @@ export const LABEL_COLOR_OPTIONS: readonly {
   { value: 'red', labelKey: 'labels.color.red', color: 'var(--sc-label-red-dot)' },
   { value: 'orange', labelKey: 'labels.color.orange', color: 'var(--sc-label-orange-dot)' },
   { value: 'amber', labelKey: 'labels.color.amber', color: 'var(--sc-label-amber-dot)' },
+  { value: 'brown', labelKey: 'labels.color.brown', color: 'var(--sc-label-brown-dot)' },
   { value: 'green', labelKey: 'labels.color.green', color: 'var(--sc-label-green-dot)' },
   { value: 'teal', labelKey: 'labels.color.teal', color: 'var(--sc-label-teal-dot)' },
   { value: 'blue', labelKey: 'labels.color.blue', color: 'var(--sc-label-blue-dot)' },

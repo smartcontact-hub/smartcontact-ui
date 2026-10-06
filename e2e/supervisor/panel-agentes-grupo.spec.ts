@@ -105,11 +105,13 @@ const medidas = (page: Page) =>
     };
   });
 
-test('un grupo de un solo canal muestra compatibilidad, asignación y paginación en el panel de altura completa', async ({ page }) => {
+test('un grupo de un solo canal muestra compatibilidad y asignación, sin páginas, en el panel de altura completa', async ({ page }) => {
   await goto(page, 'admin/grupos');
   await abrirPanel(page, 'ACD Demo C2CB');
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono', exact: true })).toHaveCount(1);
-  await expect(panel(page).locator('tbody tr')).toHaveCount(10);
+  // Sin páginas (DD-176): los 13 asignados, todos.
+  await expect(panel(page).locator('.p-paginator')).toHaveCount(0);
+  await expect(panel(page).locator('tbody tr')).toHaveCount(13);
   expect((await cajon(page).boundingBox())!.y).toBe(0);
   expect((await medidas(page)).ancho).toBeLessThanOrEqual(48 * 16);
 });
@@ -169,7 +171,8 @@ test('una fila que llega sin canal devuelve la columna en un grupo de uno, y mar
 
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(1);
   const ancho = (await medidas(page)).ancho;
-  expect(ancho).toBeLessThanOrEqual(43 * 16);
+  // Solo Teléfono: 44,375rem (DD-176: cada columna mide su rótulo, y «Téléphone» pide 5,5).
+  expect(ancho).toBeLessThanOrEqual(44.375 * 16);
 
   // Es la única forma de darle canal desde aquí; al marcarla pasa a ser su último canal, y la columna se queda.
   await panel(page).getByRole('checkbox', { name: 'Tom Hanks — Teléfono' }).click();

@@ -91,6 +91,8 @@
   &__hint {
     margin: 0;
     color: var(--sc-text-subtle);
+    /* Sin una palabra sola en la última línea (DD-176). */
+    text-wrap: pretty;
   }
 }
 
@@ -255,6 +257,8 @@
     display: block;
     margin-top: var(--sc-spacing-0-25);
     color: var(--sc-text-subtle);
+    /* Sin una palabra sola en la última línea (DD-176). */
+    text-wrap: pretty;
   }
 
   /* Un número mide lo que pide su contenido, el mismo peldaño que en Configuración del AED (175, `scale/12-5`), y su
@@ -419,6 +423,8 @@
   &__hint {
     margin: 0;
     color: var(--sc-text-subtle);
+    /* Sin una palabra sola en la última línea (DD-176). */
+    text-wrap: pretty;
   }
 }
 

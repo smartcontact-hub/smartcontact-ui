@@ -30,7 +30,7 @@ export class ScTagComponent {
     readonly rounded = input(false, { transform: booleanAttribute });
 
     /**
-     * Variante categórica (§4.1): etiqueta de solo lectura con punto + 8 colores
+     * Variante categórica (§4.1): etiqueta de solo lectura con punto + 9 colores
      * del DS. Default `'default'` = wrapper `<p-tag>` semántico (intacto). Hereda
      * el comportamiento read-only del retirado `sc-label-chip`.
      */

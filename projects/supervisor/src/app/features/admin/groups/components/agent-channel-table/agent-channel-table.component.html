@@ -1,7 +1,7 @@
 <div class="assign">
   <div class="assign__bar">
     <span id="group-assignment-filter" class="visually-hidden">{{ 'groups.form.assigned.filter_label' | translate }}</span>
-    <sc-selectbutton [options]="filterOptions()" optionValue="value" [value]="filter()"
+    <sc-selectbutton size="sm" [options]="filterOptions()" optionValue="value" [value]="filter()"
       (valueChange)="filter.set($any($event))" [allowEmpty]="false" ariaLabelledBy="group-assignment-filter" />
     <sc-search class="assign__search" [placeholder]="'groups.form.assigned.query_placeholder' | translate"
       [clearAriaLabel]="'labels.clear_search' | translate" [value]="query()" (valueChange)="query.set($event)" />
@@ -11,19 +11,24 @@
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <div class="table-card table-card--al-pie" scLlegaAlPie>
-    <sc-datatable variant="list" [size]="compact() ? 'sm' : 'md'" scrollable scrollHeight="flex"
-      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id"
-      [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [(first)]="first">
+    <!-- Compacta (`sm`, la densidad nativa de PrimeNG) y sin páginas (DD-176): todas las filas del filtro, y lo que no
+         cabe lo desplaza la tabla por dentro con la cabecera fija, hasta el pie de la pantalla (DD-160). Con más de 100,
+         pinta solo las que se ven (`virtualScroll`, DD-95). -->
+    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
+      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id">
       <ng-template #header>
         <tr>
           @for (col of columns(); track col.field) {
             <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
-              @if (col.field === 'assigned' || families().includes($any(col.field))) {
-                <span class="assign__column-heading">
-                  <span>{{ col.header }}</span>
-                  <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)"
+              <!-- Una fila de texto, todo alineado a la izquierda con los controles de sus filas (DD-176). Solo Asignado
+                   lleva su casilla de «todos», delante del rótulo, en la vertical de las casillas de sus filas: la primera
+                   columna, donde se espera. Los canales se cambian fila a fila. -->
+              @if (col.field === 'assigned') {
+                <span class="assign__head">
+                  <sc-checkbox [state]="assignedHeaderState()" [disabled]="assignedHeaderDisabled()"
                     [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                    (cycle)="toggleHeader(col.field)" />
+                    (cycle)="toggleAssignedHeader()" />
+                  <span aria-hidden="true">{{ col.header }}</span>
                 </span>
               } @else { {{ col.header }} }
             </th>

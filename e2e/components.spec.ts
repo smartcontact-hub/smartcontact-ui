@@ -1119,12 +1119,12 @@ test.describe('sc-delete-entity-dialog', () => {
 });
 
 test.describe('sc-color-dot-picker', () => {
-  test('8 swatches, aria-checked en el seleccionado, click cambia (two-way)', async ({ page }) => {
+  test('9 swatches (con el marrón, DD-176), aria-checked en el seleccionado, click cambia (two-way)', async ({ page }) => {
     await gotoPage(page, 'colordotpicker');
     const picker = page.getByTestId('sc-dotpicker');
 
-    // 8 colores categóricos
-    await expect(picker.locator('.picker__swatch')).toHaveCount(8);
+    // 9 colores categóricos
+    await expect(picker.locator('.picker__swatch')).toHaveCount(9);
 
     // inicial 'blue' (índice 6) → aria-checked
     await expect(picker.locator('[aria-checked="true"]')).toHaveAttribute('aria-label', 'blue');

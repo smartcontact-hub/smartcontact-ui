@@ -49,9 +49,15 @@ export class BulkActionBarDemoComponent {
         control: { kind: 'number', min: 0, max: 20, step: 1 },
         description: 'Nº de filas seleccionadas. La barra se oculta con 0.',
       },
+      {
+        name: 'total',
+        control: { kind: 'number', min: 0, max: 200, step: 1 },
+        description: 'Cuántas hay en la lista: con él, «3/16 agentes seleccionados» (y «3 de 16» para el lector). 0, sin total.',
+      },
     ],
     defaultArgs: {
       count: 3,
+      total: 0,
     },
   };
 

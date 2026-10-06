@@ -10,7 +10,7 @@ export interface ColorDotOption {
 }
 
 /**
- * Inline row of selectable color dots — el picker categórico de 8 colores del
+ * Inline row of selectable color dots — el picker categórico de 9 colores del
  * DS (Labels form). Two-way bindable via `[(value)]`. Los colores se pasan por
  * `ColorDotOption.color` (típicamente `var(--sc-label-<color>-dot)`), así que el
  * componente no acopla la paleta: el consumidor decide qué colores ofrecer.
