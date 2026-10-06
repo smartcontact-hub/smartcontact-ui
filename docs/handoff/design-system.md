@@ -173,8 +173,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 **Lo que cambia.** Cuatro huecos que en el #342 costaron colas y un CI de más (DD-175): `visual-baselines` encola por
 rama; `ci:verdict` sale con 7 cuando los únicos rojos son jobs sin máquina, y `-- --relanzar` los relanza una vez; el
 aviso de capturas del preflight da el comando de `component-styles` y no cuenta como pendiente lo que el robot ya
-comprobó; y el preflight avisa si tu número de DD ya lo usa un PR abierto. Los tests de este último están en
-`aviso-ledgers.test.mjs`, junto a los del aviso de ledgers.
+comprobó; y el preflight avisa si tu número de DD ya lo usa un PR abierto (tests en `aviso-ledgers.test.mjs`).
 
 - ⚠️ **El 10.5 (envoltorios neutros en `component-styles`) se midió y no se hizo**: 267 entradas nuevas, 180 de celdas del
   `datatable`. Para leer el botón de las piezas compuestas, prueba a no gastar nivel solo en los hosts `sc-*` y `p-*`, y
