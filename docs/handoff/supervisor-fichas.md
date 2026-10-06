@@ -36,7 +36,7 @@ a3e03136:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-06 · La revisión de grupos del equipo y `sc-fileupload` (DD-184)
 
-> **Sello:** rama `arebury/escolar` sobre main, HEAD `b49b56e0`. Un solo PR, con la revisión del equipo punto por punto y el
+> **Sello:** rama `arebury/revision-grupos-telefono-indice` (#351) sobre main, HEAD `b49b56e0`. Un solo PR, con la revisión del equipo punto por punto y el
 > componente de subida; los cambios, enseñados en local antes de subir.
 
 - **La ficha, alineada con Voice:** sin Skills ni Rotativa (lo guardado con ellas se lee con Balanceada y Menos
@@ -158,6 +158,12 @@ b49b56e0:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
+-2. **Auditoría de los componentes de PrimeNG contra los del DS (propuesta del 2026-10-06).** `sc-fileupload` (DD-184)
+   existía en PrimeNG desde siempre y se nos pasó: lo único que avisa de «¿PrimeNG ya trae esto?» es el gancho de un
+   enlace pegado (`primeng-doc-guard`). Primer paso: cruzar el catálogo de `primeng/*` con `docs/_component-status.json`
+   y con lo que usan las apps (`audit:primeng-coupling`), y listar cada componente de PrimeNG que no tenemos y cada
+   wrapper nuestro que repite uno nativo, con su fuente (`node tools/primeng-doc.mjs <componente>`). Una tabla en
+   `docs/`, sin construir nada hasta decidir cuáles entran.
 -1. **`fichas-nombre-fijo.spec.ts`, intermitente en el CI (2026-10-06).** Falló cuatro veces en dos PRs (#349 y #350),
    siempre en el shard 4/8, cada vez en una ficha distinta (agente a 1366, usuario a 1366, grupo a 1280) y con el mismo
    mensaje, «X sigue a la vista»: en el punto donde debía estar el nombre devuelve el texto de la barra superior. Pasa al
