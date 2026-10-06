@@ -119,6 +119,7 @@ export const DELIBERADAS = {};
  */
 export const CAJAS_A_MANO = {
   'projects/supervisor/src/app/features/memory/pages/rule-builder/rule-builder-page.component.scss': 1,
+  'projects/supervisor/src/app/features/admin/repositories/pages/repositorios-hub-page.component.scss': 1,
 };
 
 /** Por qué sigue cada una en la lista de arriba. Sin motivo escrito no entra nadie. */
@@ -129,6 +130,11 @@ export const CAJAS_A_MANO_MOTIVO = {
     'una descripción de frase entera debajo. `sc-section-card` no proyecta nada a la derecha y ' +
     'pone su pista EN LÍNEA. Dárselas por un solo consumidor sería deformar el DS; entra al DS ' +
     'cuando una segunda pantalla lo pida.',
+  'projects/supervisor/src/app/features/admin/repositories/pages/repositorios-hub-page.component.scss':
+    'DD-179 · `.repo-card` no es una sección de campos sino un BOTÓN: un destino del hub que abre su ' +
+    'panel, con su estado al pasar, pulsado, marcado y de foco. `sc-section-card` es un `<section>` con ' +
+    'título obligatorio y nada de eso. La tarjeta calca la receta de `sc-option-cards` del DS (borde, ' +
+    'pulsar al 96 %, anillo de foco); entra al DS como tarjeta-botón cuando una segunda pantalla la pida.',
 };
 
 /* ── parser ────────────────────────────────────────────────────────────────── */

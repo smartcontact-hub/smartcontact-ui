@@ -12,6 +12,7 @@
     [rounded]="args.rounded"
     [variant]="args.variant"
     [labelColor]="args.labelColor"
+    [bordered]="args.bordered"
   />
 </ng-template>
 
@@ -40,4 +41,11 @@
   <sc-tag variant="label" labelColor="teal" value="Teal" />
   <sc-tag variant="label" labelColor="blue" value="Azul" />
   <sc-tag variant="label" labelColor="purple" value="Morado" />
+</ng-template>
+
+<ng-template #borderless>
+  <sc-tag variant="label" labelColor="blue" [bordered]="false" value="9" data-testid="sc-tag-label-borderless" />
+  <sc-tag variant="label" labelColor="purple" [bordered]="false" value="10" />
+  <sc-tag variant="label" labelColor="teal" [bordered]="false" value="8" />
+  <sc-tag variant="label" labelColor="orange" [bordered]="false" value="15" />
 </ng-template>
