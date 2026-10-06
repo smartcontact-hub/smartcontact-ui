@@ -316,6 +316,12 @@ pendientes capturas que el robot ya había regenerado idénticas; (4) tres PR ab
    salen 267 entradas nuevas (0 cambiadas). 180 son celdas del `datatable`, una por cada `td` de las filas de
    ejemplo, y solo unas 35 son los botones que se buscaban. Eso no es «pocas y estables».
 
+**Actualización 2026-10-06 (la nube, lista al arrancar)** · `cloud-node.sh` salía con 3 en 0,09 s en cada sesión
+cloud: `. nvm.sh` hacía `nvm use` del `.nvmrc` aún sin instalar y `set -e` cortaba el hook. Ahora carga `nvm` con
+`--no-use`, instala y activa la versión, completa el clon superficial con sus etiquetas y define `SC_CHROMIUM` con el
+Chromium del contenedor, que las configs de Playwright lanzan (`scripts/playwright-navegador.mjs`). Fuera de la nube
+no cambia nada.
+
 **Razón** ·
 - Los cuatro son tiempo de espera, no de trabajo: cada uno se midió en el #342 y cada arreglo lleva su test, que se
   vio en rojo antes del cambio.

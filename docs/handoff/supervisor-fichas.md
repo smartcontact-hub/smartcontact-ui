@@ -29,10 +29,10 @@ revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias
 fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
 `git show 4217ed41:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · El pulido de las fichas (DD-176), en un lote de ocho bloques, en su rama
+## ✅ 2026-10-06 · El pulido de las fichas (DD-176), en un lote de ocho bloques, fundido (#341)
 
-> **Sello:** rama `arebury/fichas-pulido` con `main` fundido en HEAD `4217ed41` (hasta DD-177). Un PR, un commit en
-> rojo y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local. **Era DD-171 y luego DD-172**:
+> **Sello:** fundido en `main` como #341, con `main` dentro hasta #345 (DD-177); CI del PR en verde (leído). Un
+> commit en rojo y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local. **Era DD-171 y luego DD-172**:
 > `main` fundió antes las suyas y Tipificaciones (#340) tomó DD-173, DD-174 y DD-177, así que se renumeró a DD-176
 > con todas sus citas.
 
@@ -58,11 +58,15 @@ fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #3
 - **Una prueba ajena que falla en tanda:** `panel-agentes-monitor` «… dice en el foco que abre un menú» (de DD-171, la
   otra sesión) pide `…menu-1_list` y en la tanda completa llega `…menu-2_list`; pasa 3 de 3 a solas.
 
-## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-173 a DD-174, DD-177), en su PR
+## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-173, DD-174 y DD-177), fundido (#340)
 
 > **Sello:** rama `arebury/tipificaciones-creacion` sobre `main` en `b4d1f145`. **Un PR, un commit en rojo y otro en
 > verde por bloque (DD-154).** Sale de la propuesta de producto «Tipificaciones» (PDF, 2026-10-05), discutida punto por
 > punto y probada en local antes de subir.
+
+> **Fundido el 2026-10-06 (#340, `4217ed41`).** El título del squash cita DD-172, DD-173 y DD-174, los números de antes
+> de renumerar: mientras su CI corría entraron #342 (DD-172) y #343 (DD-175), y al fundir quedaron en DD-173 (el
+> modelo), DD-174 (la ficha) y DD-177 (el teléfono). El código, las pruebas y los docs ya citan estos.
 
 - **1 · Una tipificación es una ficha propia (DD-173):** su árbol de hasta tres niveles, su dirección, su comentario y
   sus grupos por canal; una por dirección y canal en cada grupo. Repositorios › Tipificaciones con las columnas de la
@@ -183,12 +187,12 @@ fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #3
 
 ## SIGUIENTE — sin preguntar
 
-0. **El pulido de las fichas (DD-176), en su PR** (el tramo de arriba): se revisa en local; con el visto bueno, se
-   funde y se lee el CI de `main`.
-1. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).**
-   Queda, fuera del lote: las Reglas de Conversaciones con su propia copia de las tipificaciones (`entity-catalog.ts`),
-   Supervisión › Tipificaciones vacía, y dos preguntas para producto (en el tramo de DD-177): el chat sin niveles en
-   sc-agent, y que los desplegables del teléfono son una propuesta para el lado del agente.
+0. **El pulido de las fichas (DD-176), fundido (#341).** Queda en Figma: la ficha de agente y la de usuario en tres
+   columnas (`figma-pendiente` §35) y el color marrón de etiqueta (§36b).
+1. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).** Queda, fuera del lote: las Reglas de Conversaciones
+   con su propia copia de las tipificaciones (`entity-catalog.ts`), Supervisión › Tipificaciones vacía, y dos
+   preguntas para producto (en el tramo de DD-177): el chat sin niveles en sc-agent, y que las píldoras del teléfono
+   son una propuesta para el lado del agente.
 2. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
    CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
    espera a otros (producto, Figma, devs o el portátil). Con Tipificaciones fundido, en este frente no queda nada

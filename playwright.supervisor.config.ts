@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { navegadorPropio } from './scripts/playwright-navegador.mjs';
+
 import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
 
 function shardDesdeEntorno(valor: string | undefined): { current: number; total: number } | null {
@@ -49,6 +51,7 @@ export default defineConfig({
   shard: shardDesdeEntorno(process.env['SC_SUPERVISOR_SHARD']),
   reporter: process.env['CI'] ? 'list' : 'line',
   use: {
+    ...navegadorPropio(),
     baseURL: process.env['SC_SUPERVISOR_URL'] ?? 'http://localhost:4405',
     viewport: { width: 1440, height: 900 },
     colorScheme: 'light',
