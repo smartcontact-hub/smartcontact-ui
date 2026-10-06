@@ -26,7 +26,8 @@ Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-
 f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`. El de lo que dejó F
 (DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. Y el de la
 revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
-fcaf40db:docs/handoff/supervisor-fichas.md`.
+fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
+`git show 4217ed41:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-05 · El pulido de las fichas (DD-176), en un lote de ocho bloques, en su rama
 
@@ -179,44 +180,6 @@ fcaf40db:docs/handoff/supervisor-fichas.md`.
   - los barridos de las tres rutas (18), las vecinas del índice (39) y `revision` en regla.
 
   Las 38 capturas de sc-docs se mueven, y se regeneran antes del PR.
-
-## ✅ 2026-10-05 · Recursos, en un lote de cinco bloques (DD-163 a DD-167), fundido (#327)
-
-> **Un PR, un commit en rojo y otro en verde por bloque (DD-154), más el arreglo de `tiempos`: una ejecución que sigue
-> en curso no tiene fin. Lo pedido es de la revisión de producto del 2026-10-04.**
-
-- **1 · La agenda es una lista de contactos, con su editor (DD-163):** `contacts: {id, name, phone}[]` en lugar de
-  `numbers`; lo guardado se pone al día al leerlo, y un contacto sin nombre se pinta «Sin nombre». `admin/agendas/crear`
-  y `editar/:id` van como las fichas: Guardar y Deshacer arriba, la guarda y el cerrojo entre pestañas. Los contactos,
-  en `agenda-contacts-table`: buscador (un teléfono, también por sus cifras), paginador y la tarjeta al pie, que sube
-  como modificador `.table-card--al-pie` a `_sc-list-table.scss` (el panel rápido lo suelta con `--table-card-tope:
-  none`). La agenda 9 trae 1.250 contactos generados, sin literales.
-- **DS, en el bloque 1:** `sc-datatable` gana `first` (nativo, de dos vías). Sin él, buscar desde la página ≥3 dejaba
-  la tabla en blanco, también en la de agentes de la ficha. Mueve `datatable-linux.png`.
-- **2 · El resumen de cada recurso, con «Editar» (DD-164):** `sc-resource-rows` bajo cada campo de Recursos, en la
-  ficha de grupo y en la de agente, con sus textos en `ResourceRowsService` y la lógica en `recursos.core.mjs`.
-  Plantillas abre su panel con `?editar=`, y todo repositorio siembra su búsqueda con `?buscar=`. Se ofrecen las
-  agendas activas y la inactiva que ya estaba puesta; lo borrado no se cuenta ni se guarda, y se quita antes de
-  `markPristine`. El desplegable dice «N agendas» en lugar de repetir los nombres de las filas.
-- **3 · Repositorios dice cuántos hay, y tiene buscador (DD-165):** la cifra va en texto de leyenda y en el nombre
-  accesible de la fila. Cinco almacenes pasan a `repositories/state/`, para que el hub importe almacenes y no páginas.
-- **4 · Importar contactos, como en Voice (DD-166):** plantilla CSV con BOM, vista previa con cada error y su línea,
-  repetidos que se saltan y se cuentan, y un tope de 5000 por agenda. Un CSV de Excel en español (windows-1252) se lee
-  con sus tildes. Lo importado entra sin guardar, con Guardar y Deshacer.
-- **5 · El «+» de crear, el botón de solo icono de primeng.dev (DD-167):** decisión de producto del 2026-10-05. Los
-  «+» de Recursos de grupo son redondos, con borde y en gris, a la derecha de su desplegable y a su alto, en la fila
-  `.control-add`, la regla que ya usaba el «Añadir» de los dominios. Medido: un círculo de 31,5 a 7 del control, con
-  los centros a 0,5 px. Antes eran de texto y flotaban sobre el rótulo, a 1,5 px del control.
-- **En local, en verde:** las e2e de cada bloque y sus vecinas, los barridos de las rutas tocadas, 914 unitarias y
-  las puertas; `revision` del editor a 1440 y a 1366.
-- **Fundido:** #327 → `7d70bfb9`. De punta a punta, 7 h 38 min (`npm run tiempos -- 327 --desde 22:37`); el CI del PR,
-  9 min, verde a la primera.
-
-**Hecho, en tarea aparte:** la casilla de 74 px de Horarios y Variables (misma causa que Agendas) vuelve a medir 40 —
-se quita el ancho fijo de la columna del nombre en las dos instancias, igual que en `agendas.ts`, y las dos rutas
-entran en `list-table-grammar`. De paso, en Variables el valor por defecto largo («Encuesta URL») desbordaba su celda
-y tapaba la columna «Tipo»: pasa a `kind: 'truncate'` (DD-124). Fundido: #329 → `95d98472`. La página de Button de
-sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): la ganó en el lote 2 (#330).
 
 ## SIGUIENTE — sin preguntar
 
