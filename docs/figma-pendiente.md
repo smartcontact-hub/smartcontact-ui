@@ -19,6 +19,16 @@
 > está hecha: en todas las que tocan una variable, el export aún dice el valor de antes.
 
 
+**Repositorios en tarjetas por grupo (DD-179, 2026-10-06).** El hub no tiene página en el fichero del Supervisor
+(DD-77); si se dibuja, a 1440 y sin desplazar: tarjetas por grupo (radio 12, 14 por dentro, borde `border-default`),
+el icono en el Avatar cuadrado de 28, la cifra en el Tag `label` sin borde, y el borde de la tarjeta en el tono de su
+grupo al pasar (el borde de la etiqueta) y al marcarla (su punto y un halo de un píxel). El panel lateral, acoplado bajo
+la barra de la app: 350 de ancho, sin sombra, con el borde en su filo interior y la esquina de arriba a 12. En el Kit,
+tres variantes que aún no existen: Drawer acoplado, Avatar con tono de etiqueta y Tag `label` sin borde. Los tonos son
+los de etiqueta del código (`--sc-label-<color>-bg`, `-text`, `-border` y `-dot`: Comunicación azul, Clasificación
+morado, Diseñador teal, IA naranja), que no tienen variables en el Kit, y el azul sale de `azure`, que el Kit no tiene
+(DD-83): decide con qué familia del Kit se pinta antes de dibujarlo. Mídelo antes.
+
 **La cifra principal del resumen, con color (DD-161, 2026-10-04).** Pendiente en la maqueta de las fichas: una
 tarjeta del resumen por ficha con el degradado del botón principal (pulsado → reposo → al pasar, a 135°), el texto
 `text-inverse`, la sombra de tarjeta y el anillo y las barras en el color del texto sobre una pista al 25 %. Si se

@@ -33,6 +33,11 @@ const ILLUSTRATION_SNIPPET = `<sc-avatar illustrationName="Inés García" illust
 <sc-avatar illustrationName="Carlos Ruiz" illustrationPool="abstract" size="xlarge" />
 <sc-avatar illustrationName="Soporte Ventas" illustrationPool="abstract" size="xlarge" />`;
 
+const TONE_SNIPPET = `<sc-avatar icon="call" shape="square" labelColor="blue" />
+<sc-avatar icon="data_object" shape="square" labelColor="purple" />
+<sc-avatar icon="inventory_2" shape="square" labelColor="teal" />
+<sc-avatar icon="auto_awesome" shape="square" labelColor="orange" />`;
+
 /** Demo de `sc-avatar` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-avatar-demo',
@@ -47,6 +52,7 @@ export class AvatarDemoComponent {
   protected readonly badgeTpl = viewChild<TemplateRef<StoryContext>>('badge');
   protected readonly groupTpl = viewChild<TemplateRef<StoryContext>>('group');
   protected readonly illustrationTpl = viewChild<TemplateRef<StoryContext>>('illustration');
+  protected readonly toneTpl = viewChild<TemplateRef<StoryContext>>('tone');
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-avatar',
@@ -71,6 +77,14 @@ export class AvatarDemoComponent {
       },
           { name: 'image', control: { kind: 'text' }, description: 'URL de la foto; gana a label e icon.' },
       { name: 'illustrationBase', control: { kind: 'text' }, description: 'Carpeta de las ilustraciones de respaldo.' },
+      {
+        name: 'labelColor',
+        control: {
+          kind: 'select',
+          options: ['', 'gray', 'red', 'orange', 'amber', 'brown', 'green', 'teal', 'blue', 'purple'],
+        },
+        description: 'Tono de etiqueta: fondo tintado e icono en el color del texto de la etiqueta. Vacío, el gris del tema.',
+      },
     ],
     defaultArgs: {
       label: 'SC',
@@ -81,6 +95,7 @@ export class AvatarDemoComponent {
       badgeVariant: 'danger',
           image: '',
       illustrationBase: 'assets/avatars',
+      labelColor: '',
     },
   };
 
@@ -91,7 +106,8 @@ export class AvatarDemoComponent {
     const bd = this.badgeTpl();
     const gr = this.groupTpl();
     const il = this.illustrationTpl();
-    if (!pg || !ty || !sz || !bd || !gr || !il) return [];
+    const to = this.toneTpl();
+    if (!pg || !ty || !sz || !bd || !gr || !il || !to) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Tipos (Label / Icon)', template: ty, snippet: TYPES_SNIPPET },
@@ -99,6 +115,7 @@ export class AvatarDemoComponent {
       { name: 'Badge', template: bd, snippet: BADGE_SNIPPET },
       { name: 'Grupo', template: gr, snippet: GROUP_SNIPPET },
       { name: 'Fallback de ilustración', template: il, snippet: ILLUSTRATION_SNIPPET },
+      { name: 'Tono de etiqueta', template: to, snippet: TONE_SNIPPET },
     ];
   });
 }

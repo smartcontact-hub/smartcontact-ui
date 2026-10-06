@@ -133,12 +133,13 @@ export function maxWidthEnInner(scss) {
   return n;
 }
 
-/** Anchos grandes sueltos: ≥600px o ≥40rem, fuera de una condición de media query. */
+/** Anchos grandes sueltos: ≥600px o ≥40rem, fuera de la condición de una media o container query (que dicen DESDE qué
+ *  ancho cambia algo, no cuánto mide). */
 export function anchosSueltos(scss) {
   const limpio = sinComentarios(scss);
   let n = 0;
   for (const linea of limpio.split('\n')) {
-    if (linea.includes('@media')) continue;
+    if (linea.includes('@media') || linea.includes('@container')) continue;
     const m = linea.match(/max-width\s*:\s*([\d.]+)(px|rem)/);
     if (!m) continue;
     const valor = Number(m[1]);

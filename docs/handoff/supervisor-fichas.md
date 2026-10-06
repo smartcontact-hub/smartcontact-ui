@@ -27,7 +27,37 @@ f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/
 (DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. Y el de la
 revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
 fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
-`git show 4217ed41:docs/handoff/supervisor-fichas.md`.
+`git show 4217ed41:docs/handoff/supervisor-fichas.md`. Y el de sc-docs y el peso de los iconos (#330, sin
+trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-06 · Repositorios en tarjetas por grupo, con su panel (DD-179), en su PR
+
+> **Sello:** rama `arebury/premium-repository-hub-redesign` sobre `main` en `3ff6cd71`. **Un PR, un commit en rojo y
+> otro en verde (DD-154).** Sale de una maqueta de Figma Make («Premium Repository Hub»), estudiada en su código y su
+> comportamiento con `impeccable` y `better-ui`, e iterada en local antes de subir.
+
+- **El hub, en tarjetas por grupo:** icono, cifra, nombre y descripción; la rejilla de cuatro, tres o dos según el
+  grupo, y los grupos de dos juntos en una fila. Cabe sin desplazar a 1440 × 800 y 1366 × 768, en los cuatro idiomas.
+- **Un tono por grupo**, de los de etiqueta del DS (azul, morado, teal y naranja): el título, el icono, la cifra, el
+  borde al pasar y al marcar, el filtro elegido y el panel. Un icono por concepto (`sell` y `category`).
+- **El panel**, acoplado bajo la barra de la app: lo que hay dentro, de verdad, y «Abrir repositorio» arriba. Lo cierran
+  la X, Escape, su tarjeta y un clic fuera; con velo solo si taparía tarjetas, medido al abrir.
+- **El filtro por grupo** con transición del navegador y **los recientes** en el buscador vacío.
+- **En el DS:** `sc-drawer` `docked`, `sc-avatar` `labelColor` y `sc-tag` `bordered`, con su ejemplo en sc-docs y su
+  línea en el CHANGELOG.
+- **En local, en verde:** las 9 del hub (las 9 en rojo contra `main`, y las del clic fuera y el velo, también con el
+  fallo puesto a propósito); las guardas de la ruta (contraste en los dos temas, foco, iconos, identidad, agrupación y
+  piezas hechas a mano); el contraste de icono y título, medido a mano; `revision` en regla.
+
+**Trampas del lote:**
+- **`npm run revision` mide 0 relaciones en tarjetas** (y en los títulos de grupo del `Menu`): el aire entre grupos se
+  mide a mano, entre cajas de texto.
+- **`dismissible` de `p-drawer` solo cierra al pulsar el velo**: sin modal, el clic fuera lo pone la página.
+- **Un «clic fuera» a una coordenada puesta a ojo cayó dentro del panel acoplado** (empieza en 1090 a 1440) y navegó:
+  se pulsa un elemento de fuera (el `h1`), no un punto.
+- **Tocar un comentario de un componente del DS lo deja más nuevo que `dist/`**, y el hook no deja medir con
+  Playwright: reconstruye y reinicia el `ng serve`.
+- **`p-avatar` no tiene entrada de estilo**: el tono va con `[style.background]` sobre su elemento, que gana al tema.
 
 ## ✅ 2026-10-06 · El pulido de las fichas (DD-176), en un lote de ocho bloques, fundido (#341)
 
@@ -153,47 +183,18 @@ fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #3
 - **Fundido:** #332 → `f41d3ce6`. De punta a punta, 2 h 21 min (`npm run tiempos -- 332 --desde 08:16`); el CI del PR,
   8 min, verde a la primera.
 
-## ✅ 2026-10-05 · sc-docs y el peso de los iconos, en un lote de cuatro bloques, fundido (#330)
-
-> **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sin DD nueva: A, B y C son docs, y D cumple DD-130 §6.**
-
-- **A · El lienzo y el código respiran:** en la tabla de API, «Dos sentidos» y «Salidas» llevan el escalón de entre
-  grupos (estaban a 0 de la tabla de encima). `.row` y `.col` de las demos vuelven a tener su hueco, acotadas al
-  lienzo: `component-page.scss`, que las definía, no lo importaba nadie desde julio, y se borra. «Copiar» ya no tapa la
-  primera línea, y una línea larga no estira el Playground bajo «Controles». Las pruebas, a 1280 × 720, el viewport de
-  las capturas: a 1440 cabía todo. Al revisar C salió una más: con `.col` en flex, el margen del párrafo se sumaba al
-  hueco, y doce líneas de lectura («Valor: …») quedaban a 28 de su control. Y al revisar las capturas, otra: el lienzo
-  es una fila flex, y una `.col` medía lo que su hijo más ancho. Ahora crece hasta su tope (40rem): «Fluid» se
-  distingue, y los campos de las demos van a su ancho de formulario. Progress Bar no enseñaba ninguna barra, ni el
-  Playground de Skeleton su bloque, también en `main`: van en una `.col`.
-- **B · Lo que sc-docs escribe es verdad:** el código de una story sin snippet sale del contrato
-  (`_component-api.json`). Omite lo que vale su valor por defecto, escribe un booleano que nace encendido y se apaga
-  (`[allowEmpty]="false"` en selectbutton) y escribe lo requerido aunque no tenga control (`[sections]="sections"`).
-  De 186 cajas de código cambian 43. La lógica, pura, va en `serialize-args.core.mjs`. `audit:doc-snippets` gana la
-  regla (e): una story sin snippet que pinta otra plantilla que la del Playground. Había cinco, y ya llevan el suyo.
-  `component-audit` deja de cortar un tipo en el `>` de `=>`, lo que arregla tres tipos de la tabla de API.
-- **C · Las demos nuevas:** Button gana «Solo icono», como «Icon Only» de primeng.dev: cuatro formas por siete
-  variantes, cada botón con su nombre, y el «+» de DD-167, un círculo de 31,5. GroupPopover gana «Al pulsar la
-  cifra», con su línea de lectura de `activated`.
-- **D · El icono pesa lo que su texto (DD-130 §6, figma-pendiente §29):** en `sc-form-section-nav` plano, el icono y
-  el ✓ de la fila activa van a 600 y los demás a 400; en el de por defecto, a 500. El título de `sc-subsection`, a
-  600. En el Supervisor cambian el índice de las fichas y de Contact Center, y Teléfono, Chat y Email en Distribución.
-- **En local, en verde:**
-  - las unitarias del bloque, la vitest de los dos componentes (24) y las e2e del lienzo (6) y de las demos;
-  - `component-styles`: 126 claves añadidas, ninguna cambiada;
-  - los barridos de las tres rutas (18), las vecinas del índice (39) y `revision` en regla.
-
-  Las 38 capturas de sc-docs se mueven, y se regeneran antes del PR.
-
 ## SIGUIENTE — sin preguntar
 
-0. **El pulido de las fichas (DD-176), fundido (#341).** Queda en Figma: la ficha de agente y la de usuario en tres
+0. **Repositorios en tarjetas (DD-179), en su PR.** Queda en Figma (`figma-pendiente`, la ficha de DD-179) y, para
+   producto, fuera de lote: el oscuro en slate en vez de zinc (DD-79) y los grises de texto un paso más oscuros en
+   claro (DD-106), que el análisis de la maqueta propuso y cambian todo el producto.
+1. **El pulido de las fichas (DD-176), fundido (#341).** Queda en Figma: la ficha de agente y la de usuario en tres
    columnas (`figma-pendiente` §35) y el color marrón de etiqueta (§36b).
-1. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).** Queda, fuera del lote: las Reglas de Conversaciones
+2. **Tipificaciones (DD-173, DD-174 y DD-177), fundido (#340).** Queda, fuera del lote: las Reglas de Conversaciones
    con su propia copia de las tipificaciones (`entity-catalog.ts`), Supervisión › Tipificaciones vacía, y dos
    preguntas para producto (en el tramo de DD-177): el chat sin niveles en sc-agent, y la lista que abre cada
    píldora del teléfono, que es una propuesta: sc-agent ya pinta un botón por nivel, pero la réplica no dice qué abre.
-2. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
+3. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
    CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
    espera a otros (producto, Figma, devs o el portátil). Con Tipificaciones fundido, en este frente no queda nada
    que dependa de nosotros; lo de fuera de lote, abajo.
