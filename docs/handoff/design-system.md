@@ -34,8 +34,8 @@
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
 - **Lo que dejó DD-134 (la firma de los commits)**: (a) el 2026-10-05, leer el mensaje con que el robot funde la auditoría, el
-  primero con `--subject`/`--body`; (b) en una rutina, `cloud-node.sh` no puso Node 22.23.2 ni `node_modules` (medido dos veces),
-  y `nvm` sí estaba; (c) los commits de la nube salen «sin verificar» (`unknown_key`): si estorba, probar sin firma, que el proxy
+  primero con `--subject`/`--body`; (b) ~~`cloud-node.sh` no ponía Node ni `node_modules`~~ → arreglado el 2026-10-06:
+  `. nvm.sh` hacía `nvm use` del `.nvmrc` sin instalar, devolvía 3 y `set -e` cortaba el hook; (c) los commits de la nube salen «sin verificar» (`unknown_key`): si estorba, probar sin firma, que el proxy
   aún no ha visto.
 - **`sc-selectbutton`: cablear su color a `var(--sc-cmp-togglebutton-*)`** cuando Figma suba la opción no elegida (§8).
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
@@ -178,8 +178,8 @@ comprobó; y el preflight avisa si tu número de DD ya lo usa un PR abierto (tes
 - ⚠️ **El 10.5 (envoltorios neutros en `component-styles`) se midió y no se hizo**: 267 entradas nuevas, 180 de celdas del
   `datatable`. Para leer el botón de las piezas compuestas, prueba a no gastar nivel solo en los hosts `sc-*` y `p-*`, y
   mide de nuevo.
-- ⚠️ **En la nube, Angular pide Node ≥ 22.22.3 y el contenedor trae 22.22.0**: baja la de `.nvmrc` (22.23.2). Playwright
-  busca `chromium_headless_shell-1234`; usa `executablePath: '/opt/pw-browsers/chromium'` en una config temporal.
+- **La nube, lista al arrancar** (mismo día, PR aparte): `cloud-node.sh` pone el Node del `.nvmrc`, completa el clon con sus
+  etiquetas y define `SC_CHROMIUM`, que las configs de Playwright usan (`scripts/playwright-navegador.mjs`).
 - **Plan sin ejecutar** (medido 2026-10-06): `sc-button → [pButton]`, 265 usos en 78 ficheros y 178 `(clicked)`; la
   directiva no trae `label`, `icon`, `clicked`, el mapeo `variant`/`appearance` ni `type="button"`. `sc-multiselect →
   p-select`: 14 usos, 13 con `maxSelectedLabels`/`selectedItemsLabel` y 3 con `display`, que `p-select` 22.1.2 no tiene.

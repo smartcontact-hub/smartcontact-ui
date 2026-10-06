@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { navegadorPropio } from './scripts/playwright-navegador.mjs';
+
 import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
 
 /**
@@ -20,6 +22,7 @@ export default defineConfig({
   // Un solo worker: la captura escribe artefactos compartidos (_usage-raw.json).
   workers: 1,
   use: {
+    ...navegadorPropio(),
     baseURL: 'http://localhost:4290',
     viewport: { width: 1440, height: 900 },
     colorScheme: 'light',

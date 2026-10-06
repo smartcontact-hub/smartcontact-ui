@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { navegadorPropio } from './scripts/playwright-navegador.mjs';
+
 import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
 
 export default defineConfig({
@@ -45,6 +47,7 @@ export default defineConfig({
    * en rojo que no son una regresión, solo otra configuración de build. Para
    * ese test, `ng serve … --port <libre>` y `SC_DOCS_URL` a ese puerto. */
   use: {
+    ...navegadorPropio(),
     baseURL: process.env['SC_DOCS_URL'] ?? 'http://localhost:4280',
     /* Qué queda cuando algo falla. Sin esto, un rojo del CI era una línea de texto y a
      * adivinar: la traza y la captura son lo que el navegador VIO, y el CI las sube como

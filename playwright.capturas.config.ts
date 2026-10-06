@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { navegadorPropio } from './scripts/playwright-navegador.mjs';
+
 /**
  * Config de las CAPTURAS DE ANTES Y DESPUÉS del robot de tokens (`tokens-sync.yml`).
  *
@@ -16,6 +18,7 @@ export default defineConfig({
   workers: 1,
   reporter: 'list',
   use: {
+    ...navegadorPropio(),
     viewport: { width: 1440, height: 900 },
     colorScheme: 'light',
   },
