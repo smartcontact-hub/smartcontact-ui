@@ -47,7 +47,9 @@ trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`.
   casilla de «todos» delante del rótulo, como Asignado (enmienda DD-176 §4). Un canal nunca se lleva el último de una
   fila. **Coste:** con los tres canales (Online Support) la tabla desplaza 59 px a 1440.
 - **En local, en verde:** `listados-ordenar-columnas.spec.ts` (7, en rojo contra `main`), `asignacion-agentes-lista` y
-  `tabla-agentes-compacta` (en rojo antes del bloque 3), y las vecinas de los listados (145).
+  `tabla-agentes-compacta` (en rojo antes del bloque 3), las vecinas de los listados (145) y de la ficha y el panel
+  (cinco pruebas fijaban los anchos de antes y se ponen al día: el panel crece lo que suman las casillas), y `revision`
+  de los dos listados y la ficha de grupo, en regla.
 
 ## ✅ 2026-10-06 · El pulido de las fichas (DD-176), en un lote de ocho bloques, fundido (#341)
 
