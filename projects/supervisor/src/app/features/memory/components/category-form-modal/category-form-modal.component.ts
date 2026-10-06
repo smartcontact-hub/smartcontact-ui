@@ -297,6 +297,6 @@ export class CategoryFormModalComponent {
     const services = rule.servicios.slice(0, 2).join(', ');
     const extra = rule.servicios.length > 2 ? ` +${rule.servicios.length - 2}` : '';
     const catCount = rule.categorias?.length ?? 0;
-    return `${services}${extra} · ${catCount} cat.`;
+    return `${services}${extra}, ${catCount} cat.`;
   }
 }

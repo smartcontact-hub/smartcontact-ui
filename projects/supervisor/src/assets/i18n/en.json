@@ -166,7 +166,7 @@
     },
     "tabs": {
       "aria": "Monitors",
-      "hint": "Double-click to rename · drag to reorder",
+      "hint": "Double-click to rename, drag to reorder",
       "rename": "Rename",
       "rename_aria": "Monitor name",
       "duplicate": "Duplicate",
@@ -277,12 +277,12 @@
       },
       "status": {
         "call": "Call",
-        "call_recorded": "Call · recorded",
-        "call_transcribed": "Call · recorded and transcribed",
-        "call_analyzed": "Call · recorded, transcribed and analyzed",
+        "call_recorded": "Call: recorded",
+        "call_transcribed": "Call: recorded and transcribed",
+        "call_analyzed": "Call: recorded, transcribed and analyzed",
         "chat": "Chat",
-        "chat_transcribed": "Chat · transcribed",
-        "chat_analyzed": "Chat · analyzed",
+        "chat_transcribed": "Chat: transcribed",
+        "chat_analyzed": "Chat: analyzed",
         "transcribing": "Transcribing…",
         "analyzing": "Analyzing…",
         "failed": "Transcription failed",
@@ -349,7 +349,7 @@
     "type_filter": {
       "label": "More filters",
       "aria_default": "Type and status filters",
-      "aria_active": "Type and status filters · active",
+      "aria_active": "Type and status filters active",
       "panel_title": "More filters",
       "reset": "Clear",
       "groups": {
@@ -434,19 +434,19 @@
         "no_transcription_desc": "Generate the text to search within the conversation and enable analysis.",
         "transcribe_btn": "Transcribe",
         "transcribing_btn": "Requesting…",
-        "transcribe_cost": "Incurs cost · ~30 s",
+        "transcribe_cost": "Incurs cost, ~30 s",
         "transcription_empty_title": "Empty transcription",
         "transcription_empty_desc": "Processing finished without extracting lines. This often happens with very short audios or long silences.",
         "ready_title": "Ready to analyze",
         "ready_desc": "Actionable summary and sentiment assessment over the existing transcription.",
         "ready_btn": "Request analysis",
         "requesting_btn": "Requesting…",
-        "ready_cost": "Incurs cost · ~10 s",
+        "ready_cost": "Incurs cost, ~10 s",
         "deadend_title": "Pending transcription and analysis",
         "deadend_desc": "Analysis needs text. We launch transcription and, as soon as it finishes, we generate summary and sentiment.",
         "deadend_btn": "Transcribe and analyze",
         "processing_btn": "Processing…",
-        "deadend_cost": "Incurs cost · transcription + analysis"
+        "deadend_cost": "Incurs cost: transcription + analysis"
       },
       "processing": {
         "transcribing_title": "Transcribing",
@@ -696,11 +696,11 @@
           "impact_title": "Estimated impact",
           "impact": "Would affect {{count}} of the last {{total}} conversations.",
           "impact_note": "type and category are evaluated in the backend",
-          "est_projection": "≈ {{day}} per day · ≈ {{month}} per month, at this rate.",
+          "est_projection": "≈ {{day}} per day, ≈ {{month}} per month, at this rate.",
           "pick_all": "All",
-          "pick_all_hint": "· includes new ones",
+          "pick_all_hint": "includes new ones",
           "search": "Search…",
-          "pick_all_row": "All · applies to anyone, including new ones.",
+          "pick_all_row": "All: applies to anyone, including new ones.",
           "pick_manual": "Choose manually",
           "pick_groups": "Groups (their members)",
           "enabled_members": "{{count}} enabled agents",
@@ -897,7 +897,7 @@
       "analyzing": "Generating AI analysis for {{n}} conversations…",
       "success": "{{n}} conversations processed successfully",
       "all_failed": "{{n}} transcriptions failed. Check 'Failed only' to retry.",
-      "partial": "{{ok}} processed · {{ko}} failed. Check 'Failed only' to retry."
+      "partial": "{{ok}} processed, {{ko}} failed. Check 'Failed only' to retry."
     }
   },
   "common": {
@@ -1475,7 +1475,7 @@
       "rename_field": "New name for the option",
       "add_first": "Add option…",
       "add_under": "Add under “{{name}}”…",
-      "renaming_hint": "Enter saves the name · Esc cancels",
+      "renaming_hint": "Enter saves the name, Esc cancels",
       "level_needs": "“{{name}}” needs options here",
       "option_actions": {
         "group": "Actions for {{name}}",
@@ -1676,7 +1676,7 @@
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
       "duplicate_title": "Duplicate user",
       "duplicate_breadcrumb": "Duplicate user",
-      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
+      "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "headline": {
         "type": "Type"
       },
@@ -1745,7 +1745,7 @@
       "services": "Services",
       "agents": "Agents",
       "agents_count": "{{count}} agents",
-      "agents_assign_aria": "{{count}} agents · Assign agents to {{name}}",
+      "agents_assign_aria": "{{count}} agents. Assign agents to {{name}}",
       "services_count": "{{count}} services",
       "services_count_one": "1 service",
       "strategy_phone": "Phone strategy",
@@ -1805,7 +1805,7 @@
         "add_aria": "Add agent to the group",
         "no_channels_warn": "{{count}} with no channel",
         "bulk_unassign": "Remove from group",
-        "col_level": "Level · {{channel}}",
+        "col_level": "Level {{channel}}",
         "level_aria": "Level for {{name}} — {{channel}}",
         "paused": "Disabled",
         "last_channel_hint": "At least one channel is required. Uncheck Assigned to remove the agent from the group.",
@@ -1874,7 +1874,7 @@
       "danger_zone_description": "Deleting this group removes it from the rules and routes that reference it. The action cannot be undone.",
       "duplicate_title": "Duplicate group",
       "duplicate_breadcrumb": "Duplicate group",
-      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
+      "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "announcements": {
         "audio_title": "Recordings",
         "hold_music": "Hold music",
@@ -1984,10 +1984,10 @@
         "queue": "Queue",
         "queue_messages": "Queue messages",
         "queue_messages_hint": "What the caller hears on entering, while waiting and before being answered. Rarely changed.",
-        "webchat_access": "Web Chat · access",
-        "whatsapp_number": "WhatsApp · number",
+        "webchat_access": "Web Chat access",
+        "whatsapp_number": "WhatsApp access",
         "email_note": "Email has no strategy or queue of its own: messages arrive in the group's inbox.",
-        "inactive": "{{channel}} is not active · turn it on in General",
+        "inactive": "{{channel}} is not active: turn it on in General",
         "jump_label": "Go to",
         "jump_aria": "Channels in this section"
       },
@@ -2049,7 +2049,7 @@
     "rename_aria": "Rename {{name}}",
     "bulk_edit_title": "Apply change to {{count}} group(s)",
     "agents_panel": {
-      "title": "Agents · {{name}}",
+      "title": "Agents: {{name}}",
       "assigned": "Assigned: {{count}}",
       "unsaved": "Unsaved: {{count}}",
       "save_count": "Save ({{count}})",
@@ -2231,7 +2231,7 @@
       "danger_zone_description": "Deleting this agent unassigns them from all groups they participate in. The action cannot be undone.",
       "duplicate_title": "Duplicate agent",
       "duplicate_breadcrumb": "Duplicate agent",
-      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
+      "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "resources": {
         "templates_chat": "Chat templates",
         "templates_email": "Email templates",
@@ -2289,7 +2289,7 @@
   "config": {
     "sidebar": {
       "title": "Contact Center",
-      "version": "SmartContact · v2.4.0",
+      "version": "SmartContact v2.4.0",
       "servicio_label": "General",
       "agentes_label": "Agents",
       "grupos_label": "Groups"

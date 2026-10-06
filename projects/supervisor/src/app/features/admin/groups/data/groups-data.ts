@@ -79,7 +79,7 @@ export type QueueSizeType = 'fixed' | 'per_agent';
 export type AudioSource = 'none' | 'tts' | 'file';
 export type CardOpening = 'new_window' | 'embedded';
 
-export const VOICE_OPTIONS: readonly string[] = ['Femenina · español', 'Masculina · español', 'Femenina · inglés', 'Masculina · inglés'];
+export const VOICE_OPTIONS: readonly string[] = ['Femenina, español', 'Masculina, español', 'Femenina, inglés', 'Masculina, inglés'];
 
 /** Un anuncio periódico: su .wav y cada cuánto suena. Postventa, 2026-09-18: «posibilidad de meter más de uno». */
 export interface PeriodicAnnouncement {
@@ -156,7 +156,7 @@ export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
   nextInLineSource: 'none',
   nextInLineFile: null,
   nextInLineText: '',
-  voice: 'Femenina · español',
+  voice: 'Femenina, español',
   periodicAnnouncements: [],
   outboundAudioFile: null,
   announceAvgWait: false,

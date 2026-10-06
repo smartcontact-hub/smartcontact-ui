@@ -35,7 +35,7 @@ const panel = (page: Page) => page.locator('.agents-panel');
 /** Un latido del Monitor (`LIVE_TICK_MS = 8000`, `dashboard-page.component.ts`) y medio segundo de margen. */
 const LATIDO_Y_ALGO = 8_500;
 /** El título va en la cabecera del cajón, fuera de `.agents-panel` (como lo lee `panel-agentes-grupo.spec.ts`). */
-const tituloDelPanel = (page: Page, grupo: string) => page.getByText(`Agentes · ${grupo}`, { exact: true });
+const tituloDelPanel = (page: Page, grupo: string) => page.getByText(`Agentes: ${grupo}`, { exact: true });
 
 /** «Colas y agentes»: el segundo monitor de fábrica, con cuatro grupos en su widget «Grupos». */
 const irAColasYAgentes = async (page: Page) => {

@@ -234,7 +234,7 @@ export class RepositoriosHubPageComponent {
             this.horarios.items().map((h) => ({
               id: h.id,
               nombre: h.name,
-              detalle: `${h.schedule} · ${this.estado(h.status === 'active')}`,
+              detalle: `${h.schedule}, ${this.estado(h.status === 'active').toLocaleLowerCase()}`,
               ...this.buscando('/admin/horarios', h.name),
             })),
         },

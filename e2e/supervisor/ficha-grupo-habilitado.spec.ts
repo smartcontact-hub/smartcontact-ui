@@ -69,8 +69,8 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1024, 1440]
       if (surface === 'panel') await page.getByRole('button', { name: 'Asignar agentes de Habilitación por grupo' }).click();
       const table = page.locator('sc-agent-channel-table');
       await expect(table.getByRole('columnheader', { name: 'Habilitado', exact: true })).toBeVisible();
-      await expect(table.getByRole('columnheader', { name: 'Nivel · Teléfono', exact: true })).toBeVisible();
-      await expect(table.getByRole('columnheader', { name: 'Nivel · Chat', exact: true })).toBeVisible();
+      await expect(table.getByRole('columnheader', { name: 'Nivel Teléfono', exact: true })).toBeVisible();
+      await expect(table.getByRole('columnheader', { name: 'Nivel Chat', exact: true })).toBeVisible();
       await page.evaluate(() => document.fonts.ready);
       const metrics = await table.locator('tbody tr').first().evaluate(row => ({ name: row.querySelector('.assign__name-label')!.getBoundingClientRect().width, tag: row.querySelector('sc-tag')!.getBoundingClientRect().width, cell: row.querySelector('.assign__name')!.closest('td')!.getBoundingClientRect().width }));
       expect(metrics.name).toBeGreaterThan(50);

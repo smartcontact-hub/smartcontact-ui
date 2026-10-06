@@ -309,7 +309,6 @@
       <p class="access-template sc-text-body-regular">
         <span>{{ 'users.form.template.label' | translate: { type: (typeLabelKeys[form().type] | translate) } }}</span>
         @if (templateDrift() > 0) {
-          <span aria-hidden="true">·</span>
           <span class="access-template__drift">{{ templateChangesKey(templateDrift()) | translate: { count: templateDrift() } }}</span>
           <sc-button type="button" size="sm" variant="contrast" appearance="text" (clicked)="resetToTemplate()">
             <span>{{ 'users.form.template.reset' | translate }}</span>
