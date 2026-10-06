@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { LanguageService } from '@core/services/language.service';
 import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
+import { nivelesDe } from '@features/admin/repositories/state/tipificaciones.core.mjs';
 import { TipificacionesStore } from '@features/admin/repositories/state/tipificaciones.store';
 import type { TemplateType } from '@features/admin/templates/data/templates-data';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
@@ -48,18 +49,22 @@ export class ResourceRowsService {
       }));
   }
 
-  /** La tipificación: cuántas tiene su categoría. Abre su repositorio buscándola, que es como se ve una categoría. */
-  tipificacion(categoria: string | null, editable: boolean): ResourceRow[] {
-    const n = this.tipificacionesStore.items().filter((t) => t.category === categoria).length;
-    if (!categoria || n === 0) return [];
-    return [
-      {
-        id: categoria,
-        name: categoria,
-        detail: this.cuenta('repositories.tipificaciones.count', n),
-        edit: editable ? { link: '/admin/tipificaciones', queryParams: { buscar: categoria } } : null,
-      },
-    ];
+  /** Las tipificaciones del grupo: en qué conversaciones se piden y cuántos niveles tienen. «Editar» abre su ficha. */
+  tipificaciones(ids: Iterable<number>, editable: boolean): ResourceRow[] {
+    const porId = new Map(this.tipificacionesStore.items().map((t) => [t.id, t]));
+    return [...ids].flatMap((id) => {
+      const t = porId.get(id);
+      if (!t) return [];
+      const direccion = this.translate.instant(
+        `repositories.tipificaciones.direction.${t.inbound && t.outbound ? 'both' : t.inbound ? 'inbound' : 'outbound'}`,
+      );
+      const n = nivelesDe(t);
+      const niveles =
+        n === 0
+          ? this.translate.instant('repositories.tipificaciones.levels_none')
+          : this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
+      return [{ id, name: t.name, detail: `${direccion} · ${niveles}`, edit: editable ? { link: `/admin/tipificaciones/editar/${id}` } : null }];
+    });
   }
 
   /** «1 contacto» o «1.250 contactos»: la clave en plural, y la misma con `_one` para uno. */

@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { agendasOfrecidas, idsVivos, tipificacionViva } from '../../projects/supervisor/src/app/features/admin/services/recursos.core.mjs';
+import { agendasOfrecidas, idsVivos } from '../../projects/supervisor/src/app/features/admin/services/recursos.core.mjs';
 
 const AGENDAS = [
   { id: 1, status: 'active' },
@@ -20,12 +20,4 @@ test('idsVivos: un id borrado en Repositorios sale, y el orden de lo puesto se q
 test('agendasOfrecidas: las activas, y la inactiva solo si ya estaba puesta', () => {
   assert.deepEqual(agendasOfrecidas(AGENDAS, []).map((a) => a.id), [1, 7]);
   assert.deepEqual(agendasOfrecidas(AGENDAS, [6]).map((a) => a.id), [1, 6, 7]);
-});
-
-test('tipificacionViva: la categoría cuenta solo si le queda alguna tipificación', () => {
-  const tips = [{ category: 'Consulta' }, { category: 'Venta' }];
-  assert.equal(tipificacionViva('Consulta', tips), true);
-  assert.equal(tipificacionViva('Borrada', tips), false);
-  assert.equal(tipificacionViva(null, tips), false);
-  assert.equal(tipificacionViva('', tips), false);
 });

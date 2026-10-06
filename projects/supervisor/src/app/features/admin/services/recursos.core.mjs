@@ -31,13 +31,3 @@ export function agendasOfrecidas(agendas, puestas) {
   const ya = new Set(puestas);
   return agendas.filter((a) => a.status === 'active' || ya.has(a.id));
 }
-
-/**
- * ¿Sigue existiendo la categoría de tipificación? Una categoría sin ninguna tipificación ni se cuenta ni se enlaza.
- * @param {string | null | undefined} categoria
- * @param {readonly { readonly category: string }[]} tipificaciones
- * @returns {boolean}
- */
-export function tipificacionViva(categoria, tipificaciones) {
-  return !!categoria && tipificaciones.some((t) => t.category === categoria);
-}

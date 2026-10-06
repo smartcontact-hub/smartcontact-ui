@@ -1,0 +1,96 @@
+<!-- Su título: qué es y cuándo sale, con el icono del teléfono. -->
+<header class="vista__cabecera">
+  <span class="vista__icono" aria-hidden="true"><sc-icon name="smartphone" size="lg" /></span>
+  <div class="vista__textos">
+    <h2 class="vista__titulo sc-text-body-semibold">{{ 'repositories.tipificaciones.preview.title' | translate }}</h2>
+    <p class="vista__ayuda sc-text-caption-regular">{{ 'repositories.tipificaciones.preview.when' | translate }}</p>
+  </div>
+</header>
+
+<!-- EL TELÉFONO DEL AGENTE, en su sección de Tipificación (sc-agent, tras colgar: `agent/docs/comunicador.md`, «La ventana de
+     Tipificación»), con las medidas de la réplica: la plancha oscura que asoma arriba con su flecha de plegar, el panel,
+     la sección con su franja de título, los tres niveles en píldora, el comentario, Guardar y, encima del pie, la barra
+     de pestañas redondeada en sus cuatro esquinas. Los colores, de `--sc-agent-window-*`. -->
+<div class="tel">
+  <div class="tel__placa" aria-hidden="true">
+    <sc-icon name="keyboard_arrow_down" [size]="14" />
+  </div>
+
+  <div class="tel__panel">
+    <div class="tel__seccion">
+      <div class="tel__cabeza sc-text-body-semibold">{{ 'repositories.tipificaciones.preview.window' | translate }}</div>
+
+      <div class="tel__cuerpo">
+        @if (levels() > 0) {
+          <div class="tel__niveles">
+            @for (n of niveles(); track n.nivel) {
+              <!-- Cada nivel es el botón-píldora del agente: blanco el que se puede elegir, apagado hasta elegir el de
+                   arriba. Abre su lista en un globo (el Listbox de primeng.dev dentro del Popover), como en sc-agent. -->
+              <button
+                type="button"
+                class="tel__nivel sc-text-caption-regular"
+                [id]="'tip-vista-' + n.nivel"
+                [disabled]="n.apagado"
+                aria-haspopup="listbox"
+                [attr.aria-expanded]="abierto() === n.nivel"
+                [attr.aria-label]="('repositories.tipificaciones.preview.level' | translate: { level: n.nivel + 1 }) + (n.elegida ? ': ' + n.elegida.label : '')"
+                (click)="abrir(n.nivel, globo, $event)"
+              >
+                <span class="tel__nivel-texto">{{ n.elegida?.label ?? ('repositories.tipificaciones.preview.level' | translate: { level: n.nivel + 1 }) }}</span>
+                <sc-icon name="keyboard_arrow_down" size="sm" aria-hidden="true" />
+              </button>
+            }
+          </div>
+        }
+
+        @if (comments()) {
+          <textarea
+            class="tel__comentario sc-text-caption-regular"
+            maxlength="255"
+            [attr.aria-label]="'repositories.tipificaciones.preview.comment' | translate"
+            [placeholder]="'repositories.tipificaciones.preview.comment_placeholder' | translate"
+            [value]="comentario()"
+            (input)="escribir($any($event.target).value)"
+          ></textarea>
+        } @else if (levels() === 0) {
+          <p class="tel__nada sc-text-caption-regular">{{ 'repositories.tipificaciones.preview.nothing' | translate }}</p>
+        }
+
+        <button type="button" class="tel__guardar sc-text-caption-regular" [disabled]="!completo()" (click)="guardar()">{{ 'common.save' | translate }}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- La barra de pestañas: Teléfono (encendida), Chat, Contactos e Historial. De adorno: es la del agente. -->
+  <div class="tel__pestanas" aria-hidden="true">
+    <sc-icon name="call" [size]="18" [filled]="true" />
+    <sc-icon name="chat_bubble" [size]="18" />
+    <sc-icon name="person" [size]="18" />
+    <sc-icon name="history" [size]="18" />
+  </div>
+</div>
+
+<!-- Lo que quedaría en la tabla del agente al guardar la prueba: debajo del teléfono, en su línea reservada. -->
+<p class="vista__resultado sc-text-caption-regular" [class.vista__resultado--hecho]="guardado() !== null" role="status">
+  @if (guardado() !== null) {
+    <sc-icon name="check_circle" size="sm" [weight]="600" aria-hidden="true" />
+    <span>{{ guardado() ? ('repositories.tipificaciones.preview.saved' | translate: { path: guardado() }) : ('repositories.tipificaciones.preview.saved_comment' | translate) }}</span>
+  } @else {
+    <span>{{ 'repositories.tipificaciones.preview.try' | translate }}</span>
+  }
+</p>
+
+<!-- El globo de los niveles, fuera de la columna del panel: dentro, su hueco vacío sumaba un hueco más. -->
+<p-popover #globo [dt]="globoDt" (onHide)="abierto.set(null)">
+  <p-listbox
+    [options]="opcionesAbiertas()"
+    optionLabel="label"
+    optionValue="id"
+    [dt]="lista"
+    [pt]="listaPt"
+    scrollHeight="var(--sc-spacing-12-5)"
+    [ariaLabel]="abierto() !== null ? ('repositories.tipificaciones.preview.level' | translate: { level: abierto()! + 1 }) : ''"
+    [ngModel]="elegidaAbierta()"
+    (ngModelChange)="elegirAbierta($event, globo)"
+  />
+</p-popover>

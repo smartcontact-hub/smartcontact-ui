@@ -10,7 +10,8 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  * ni cómo llegar a editarla. Lo que fija:
  *   1. bajo cada campo, una fila por recurso con su nombre, un dato y «Editar», que lleva a su sitio; Atrás vuelve a
  *      Recursos;
- *   2. una plantilla abre su panel en su pestaña; una tipificación, su repositorio con la búsqueda puesta;
+ *   2. una plantilla abre su panel en su pestaña; una tipificación, su ficha (DD-173: antes, su repositorio con la
+ *      búsqueda puesta, cuando era una categoría);
  *   3. se ofrecen las agendas activas, y la inactiva que ya estaba puesta, para poder quitarla;
  *   4. lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello;
  *   5. en un alta, las filas dicen qué es cada recurso, pero sin «Editar»: Atrás caería en un alta vacía.
@@ -61,7 +62,7 @@ test('grupo · cada agenda es una fila con sus contactos y su estado; «Editar»
   await expect(page.getByRole('heading', { level: 2, name: 'Recursos', exact: true })).toBeVisible();
 });
 
-test('grupo · una plantilla abre su panel en su pestaña; la tipificación, su repositorio con la búsqueda puesta', async ({
+test('grupo · una plantilla abre su panel en su pestaña; la tipificación, su ficha', async ({
   page,
 }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
@@ -76,14 +77,14 @@ test('grupo · una plantilla abre su panel en su pestaña; la tipificación, su 
   await expect(page.locator('sc-template-form-panel input').first()).toHaveValue('Saludo inicial');
 
   await goto(page, 'admin/grupos/editar/12?seccion=recursos');
-  const tipificacion = filas(page, 'Tipificación');
-  await expect(tipificacion).toHaveCount(1);
-  await expect(tipificacion).toContainText('Consulta');
-  await expect(tipificacion).toContainText('3 tipificaciones');
-  await tipificacion.getByRole('link', { name: 'Editar Consulta' }).click();
-  await expect(page).toHaveURL(/\/admin\/tipificaciones\?buscar=Consulta$/);
-  await expect(page.getByRole('searchbox')).toHaveValue('Consulta');
-  await expect(page.locator('tbody tr')).toHaveCount(3);
+  const tipificaciones = filas(page, 'Tipificaciones');
+  await expect(tipificaciones).toHaveCount(2);
+  await expect(tipificaciones.first()).toContainText('Atención al cliente');
+  // El dato: en qué conversaciones se pide y cuántos niveles tiene.
+  await expect(tipificaciones.first()).toContainText('Entrantes · 3 niveles');
+  await tipificaciones.first().getByRole('link', { name: 'Editar Atención al cliente' }).click();
+  await expect(page).toHaveURL(/\/admin\/tipificaciones\/editar\/1$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Atención al cliente');
 });
 
 test('se ofrecen las agendas activas, y la inactiva que ya estaba puesta, para poder quitarla', async ({ page }) => {

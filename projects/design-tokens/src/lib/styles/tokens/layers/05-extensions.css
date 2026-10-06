@@ -46,6 +46,29 @@
   --sc-sidebar-divider: var(--sc-color-blue-500);
   /* El icono de la sección que contiene la página activa. */
   --sc-sidebar-accent: var(--sc-color-cyan-300);
+  /*
+   * LA VENTANA DEL AGENTE (DD-177), cuando el Supervisor la enseña tal cual la verá él (la vista previa de una
+   * tipificación). Es el teléfono de sc-agent, oscuro en los dos temas como la barra lateral, con los
+   * grises de la paleta más cercanos a los medidos en la réplica (`agent/…/typification.component.ts`):
+   * panel #2d333a → slate-800 (#2f3642), comentario #1f2429 → slate-900 (#181d26), su borde #11131a →
+   * slate-950, apagado #5f5f5f → slate-600. Sin ellos, el Supervisor no podía dibujarla: su color sigue
+   * al tema y no admite paleta cruda (token-guard, regla 8).
+   */
+  --sc-agent-window-bg: var(--sc-color-slate-800);
+  --sc-agent-window-header-bg: color-mix(in srgb, var(--sc-color-slate-0) 4%, var(--sc-color-slate-800));
+  --sc-agent-window-field-bg: var(--sc-color-slate-900);
+  --sc-agent-window-field-border: var(--sc-color-slate-950);
+  --sc-agent-window-plate-bg: var(--sc-color-slate-900);
+  --sc-agent-window-fg: var(--sc-color-slate-0);
+  --sc-agent-window-fg-muted: color-mix(in srgb, var(--sc-color-slate-0) 60%, transparent);
+  --sc-agent-window-disabled: var(--sc-color-slate-600);
+  --sc-agent-window-pill-bg: var(--sc-color-slate-0);
+  --sc-agent-window-pill-fg: var(--sc-color-slate-950);
+  /* Sutil y con spread (DD-177): un halo que lo despega del lienzo por los cuatro lados, no la
+   * sombra lateral del agente (que cae hacia la izquierda con spread negativo sobre su panel oscuro). */
+  --sc-agent-window-shadow:
+    0 8px 24px 2px rgb(var(--sc-shadow-color-rgb) / 0.14),
+    0 0 0 1px rgb(var(--sc-shadow-color-rgb) / 0.06);
   --sc-topbar-height: 56px;
   --sc-bulk-action-bar-height: 56px;
   /*

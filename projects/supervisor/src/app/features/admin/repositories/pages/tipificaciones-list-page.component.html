@@ -1,0 +1,163 @@
+<ng-template #topbarActions>
+  <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
+    <sc-icon [name]="plusIcon" size="inherit" />
+    <span>{{ 'repositories.tipificaciones.create_title' | translate }}</span>
+  </sc-button>
+</ng-template>
+
+<!-- La lista la monta `sc-list-page` (DD-97). Importar y descargar, detrás de un solo icono (`importable`). -->
+<sc-list-page
+  [heading]="'repositories.tipificaciones.title' | translate"
+  [rows]="rows()"
+  [columns]="columns()"
+  [columnChoices]="columnDefs()"
+  [columnStorageKey]="columnPrefKey"
+  [searchPlaceholder]="'repositories.tipificaciones.search_placeholder' | translate"
+  [searchFn]="matchesSearch"
+  [sortFn]="compare"
+  noResultsKey="repositories.tipificaciones.no_results_query"
+  exportable
+  importable
+  [rowMenu]="rowMenu"
+  rowOpenable
+  selectable
+  [bulkEntity]="bulkEntity()"
+  [(selectedIds)]="selectedIds"
+  tableTestId="tipificaciones-table"
+  (rowOpen)="onRowOpen($event)"
+  (exportRequest)="onExport($event)"
+  (importRequest)="abrirImportar()"
+>
+  <sc-empty-state
+    scListEmpty
+    icon="checklist"
+    titleKey="repositories.tipificaciones.empty_title"
+    bodyKey="repositories.tipificaciones.empty_body"
+    ctaKey="repositories.tipificaciones.create_title"
+    (cta)="onCreateClick()"
+  />
+
+  <ng-container ngProjectAs="[scListBulkActions]">
+    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+      <span>{{ 'common.delete' | translate }}</span>
+    </sc-button>
+  </ng-container>
+</sc-list-page>
+
+<ng-template #nameTpl let-t>
+  <span class="table__td-name sc-text-body-semibold" [title]="t.name">{{ t.name }}</span>
+</ng-template>
+
+<ng-template #descriptionTpl let-t>
+  <span class="table__cell table__cell--truncate sc-text-body-regular" [title]="t.description">{{ t.description || '—' }}</span>
+</ng-template>
+
+<ng-template #directionTpl let-t>
+  <span class="table__cell sc-text-body-regular">{{ directionLabel(t) | translate }}</span>
+</ng-template>
+
+<ng-template #commentsTpl let-t>
+  <span class="table__cell sc-text-body-regular">{{ (t.comments ? 'common.yes' : 'common.no') | translate }}</span>
+</ng-template>
+
+<!-- Cuántos niveles pide, y al pasar o al enfocar, qué hay en cada uno: el primero por sus nombres, los demás
+     contados. Enfocable para que el teclado llegue a lo mismo que el ratón. -->
+<ng-template #levelsTpl let-t>
+  @let detalle = levelsDetail(t);
+  @if (detalle) {
+    <span
+      class="table__cell table__cell--levels sc-text-body-regular"
+      tabindex="0"
+      [pTooltip]="detalle"
+      tooltipPosition="top"
+      [attr.aria-label]="levelsLabel(t) + '. ' + detalle"
+    >{{ levelsLabel(t) }}</span>
+  } @else {
+    <span class="table__cell table__cell--muted sc-text-body-regular">{{ levelsLabel(t) }}</span>
+  }
+</ng-template>
+
+<ng-template #groupsTpl let-t>
+  @let grupos = groupsOf(t);
+  <sc-group-popover
+    [groups]="grupos"
+    [countAriaLabel]="(grupos.length === 1 ? 'repositories.tipificaciones.groups_aria_one' : 'repositories.tipificaciones.groups_aria') | translate: { count: grupos.length }"
+  />
+</ng-template>
+
+<ng-template #idTpl let-t>
+  <span class="table__cell sc-text-body-regular">{{ t.id }}</span>
+</ng-template>
+
+<sc-delete-entity-dialog
+  [visible]="!!deleteTarget()"
+  [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
+  [items]="deleteItems()"
+  [entitySingular]="'repositories.tipificaciones.singular' | translate"
+  [entityPlural]="'repositories.tipificaciones.plural' | translate"
+  (cancelled)="deleteTarget.set(null)"
+  (confirm)="confirmDelete($event)"
+/>
+
+<!-- Importar de un CSV, como las agendas (DD-166): la plantilla, el archivo y, antes de crear nada, qué entra y qué no. -->
+@if (importOpen()) {
+  <sc-dialog [visible]="true" [title]="'repositories.tipificaciones.import_title' | translate" (cancelled)="cerrarImportar()">
+    <div class="importar">
+      <p class="sc-text-body-regular">{{ importAyuda() }}</p>
+      <div class="importar__acciones">
+        <sc-button
+          size="sm"
+          variant="secondary"
+          appearance="text"
+          icon="download"
+          [label]="'repositories.tipificaciones.import_template' | translate"
+          (clicked)="descargarPlantilla()"
+        />
+        <input #archivo class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".csv,text/csv" (change)="onImportFile($event)" />
+        <sc-button
+          size="sm"
+          variant="secondary"
+          appearance="outlined"
+          icon="upload"
+          [label]="(importPreview() ? 'repositories.tipificaciones.import_choose_other' : 'repositories.tipificaciones.import_choose') | translate"
+          (clicked)="archivo.click()"
+        />
+      </div>
+      @if (importResumen(); as resumen) {
+        <div class="importar__vista" role="status">
+          <p class="sc-text-body-semibold">{{ resumen.entran }}</p>
+          @if (resumen.nombres) {
+            <p class="importar__nombres sc-text-caption-regular">{{ resumen.nombres }}</p>
+          }
+          @if (resumen.errores) {
+            <p class="sc-text-body-regular">{{ resumen.errores }}</p>
+            <ul class="importar__errores sc-text-caption-regular">
+              @for (linea of resumen.lineas; track $index) {
+                <li>{{ linea }}</li>
+              }
+              @if (resumen.mas) {
+                <li>{{ resumen.mas }}</li>
+              }
+            </ul>
+          }
+          @if (resumen.repetidas) {
+            <p class="sc-text-body-regular">{{ resumen.repetidas }}</p>
+          }
+          @if (resumen.sobran) {
+            <p class="sc-text-body-regular">{{ resumen.sobran }}</p>
+          }
+        </div>
+      }
+    </div>
+    <div modal-actions>
+      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cerrarImportar()">
+        <span>{{ 'common.cancel' | translate }}</span>
+      </sc-button>
+      @if (importResumen()?.confirmar; as confirmar) {
+        <sc-button type="button" size="sm" (clicked)="confirmarImportar()">
+          <span>{{ confirmar }}</span>
+        </sc-button>
+      }
+    </div>
+  </sc-dialog>
+}

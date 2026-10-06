@@ -1,0 +1,234 @@
+/* La columna de la derecha: su título, el teléfono y lo que quedaría guardado. Entre las tres, el hueco de los hermanos
+ * (14); dentro del título, icono y textos son una pieza (7). */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.vista__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+/* El icono, en su pastilla del color del enlace: dice «vista del agente» antes de leerlo. */
+.vista__icono {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--sc-spacing-2-25);
+  height: var(--sc-spacing-2-25);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-primary-subtle);
+  color: var(--sc-text-link);
+}
+
+.vista__textos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.vista__titulo {
+  margin: 0;
+  color: var(--sc-text-heading);
+}
+
+.vista__ayuda {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+/* Lo que quedaría guardado: dos renglones reservados, con o sin resultado. */
+.vista__resultado {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-5);
+  min-height: 2lh;
+  margin: 0;
+  color: var(--sc-text-secondary);
+
+  &--hecho {
+    color: var(--sc-text-success);
+  }
+
+  sc-icon {
+    flex: none;
+    margin-block-start: var(--sc-spacing-0-125);
+  }
+}
+
+/* EL TELÉFONO DEL AGENTE, con las medidas de la réplica (`agent/…/comunicator.component.ts` y `typification.component.ts`,
+ * a 1456 de ancho) pasadas al peldaño más cercano de la escala del DS:
+ *   teléfono 250 × 507, radio 23,7 → radio 24,5 · plancha que asoma 19 → 17,5 · panel radio 28,8 → 28
+ *   sección con radio de arriba 25,8 → 24,5 · franja 44,7 → 42 · márgenes 22 → 21
+ *   píldoras 27,3 con radio 10,6 → 28 y 10,5 · 8 entre ellas → 7 · comentario 184 con radio 12,1 → 175 y 12
+ *   Guardar 40,2 con radio 12,1 → 38,5 y 12 · barra de pestañas 56,9 con radio 23,7 → 56 y 24,5 · iconos 18
+ * Los radios grandes salen de la escala de espacios: la de radios acaba en 16. */
+.tel {
+  position: relative;
+  padding-block-start: var(--sc-spacing-1-25);
+  border-radius: var(--sc-spacing-1-75);
+  background: var(--sc-agent-window-plate-bg);
+  box-shadow: var(--sc-agent-window-shadow);
+  color: var(--sc-agent-window-fg);
+}
+
+/* La plancha oscura que asoma arriba, con la flecha de plegar en el centro. Sin ajustes (DD-177). */
+.tel__placa {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--sc-spacing-1-25);
+}
+
+/* El panel: del color de la franja, y su pie (del alto de la barra) queda debajo de ella, así que por encima de las
+ * esquinas redondeadas de la barra se ve el panel, como en sc-agent. */
+.tel__panel {
+  padding-block-end: var(--sc-spacing-4);
+  border-radius: var(--sc-spacing-2);
+  background: var(--sc-agent-window-header-bg);
+}
+
+.tel__seccion {
+  border-start-start-radius: var(--sc-spacing-1-75);
+  border-start-end-radius: var(--sc-spacing-1-75);
+  background: var(--sc-agent-window-bg);
+}
+
+.tel__cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--sc-spacing-3);
+  border-start-start-radius: var(--sc-spacing-1-75);
+  border-start-end-radius: var(--sc-spacing-1-75);
+  border-block-end: 1px solid var(--sc-agent-window-field-border);
+  background: var(--sc-agent-window-header-bg);
+}
+
+.tel__cuerpo {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1-5) var(--sc-spacing-1-5);
+}
+
+.tel__niveles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+/* La píldora del agente: blanca con texto oscuro la que se puede elegir; apagada, transparente con borde y texto gris. */
+.tel__nivel {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  width: 100%;
+  height: var(--sc-spacing-2);
+  padding: 0 var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-agent-window-pill-bg);
+  border-radius: var(--sc-spacing-0-75);
+  background-color: var(--sc-agent-window-pill-bg);
+  color: var(--sc-agent-window-pill-fg);
+  font-family: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  &:disabled {
+    border-color: var(--sc-agent-window-disabled);
+    background-color: transparent;
+    color: var(--sc-agent-window-disabled);
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-agent-window-fg);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+}
+
+.tel__nivel-texto {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El comentario: el área oscura del agente, alta, con su borde casi negro. */
+.tel__comentario {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--sc-spacing-12-5);
+  margin-block-start: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  border: 1px solid var(--sc-agent-window-field-border);
+  border-radius: var(--sc-radius-xl);
+  background: var(--sc-agent-window-field-bg);
+  color: var(--sc-agent-window-fg);
+  font-family: inherit;
+  resize: none;
+
+  &::placeholder {
+    color: var(--sc-agent-window-fg-muted);
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-agent-window-fg);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+}
+
+/* Guardar: transparente con borde blanco; apagado, en el gris del agente. */
+.tel__guardar {
+  height: var(--sc-spacing-2-75);
+  margin-block-start: var(--sc-spacing-0-875);
+  border: 1px solid var(--sc-agent-window-fg);
+  border-radius: var(--sc-radius-xl);
+  background-color: transparent;
+  color: var(--sc-agent-window-fg);
+  font-family: inherit;
+  cursor: pointer;
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+
+  &:hover:not(:disabled) {
+    background-color: var(--sc-agent-window-fg);
+    color: var(--sc-agent-window-pill-fg);
+  }
+
+  &:disabled {
+    border-color: var(--sc-agent-window-disabled);
+    color: var(--sc-agent-window-disabled);
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-agent-window-fg);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+}
+
+.tel__nada {
+  margin: 0;
+  color: var(--sc-agent-window-fg-muted);
+}
+
+/* La barra de pestañas: una píldora oscura sobre el pie del panel, redondeada en sus CUATRO esquinas (por encima de las
+ * de arriba asoma el panel). Teléfono, la de ahora, en blanco relleno; las demás, en su trazo. */
+.tel__pestanas {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  height: var(--sc-spacing-4);
+  border-radius: var(--sc-spacing-1-75);
+  background: var(--sc-agent-window-plate-bg);
+  color: var(--sc-agent-window-fg);
+}

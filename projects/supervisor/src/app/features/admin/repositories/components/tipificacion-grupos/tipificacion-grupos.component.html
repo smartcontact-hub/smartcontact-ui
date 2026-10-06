@@ -1,0 +1,81 @@
+<div class="assign">
+  <div class="assign__bar">
+    <sc-search
+      class="assign__search"
+      [placeholder]="'repositories.tipificaciones.groups.filter_placeholder' | translate"
+      [clearAriaLabel]="'labels.clear_search' | translate"
+      [value]="query()"
+      (valueChange)="query.set($event)"
+    />
+    @if (query().trim()) {
+      <span class="assign__counter sc-text-caption-regular">
+        {{ 'common.filter_count' | translate: { shown: visibles().length, total: filas().length } }}
+      </span>
+    }
+    <span id="tip-add-group-label" class="visually-hidden">{{ 'repositories.tipificaciones.groups.picker_aria' | translate }}</span>
+    <sc-select
+      class="assign__add"
+      inputId="tip-add-group"
+      ariaLabelledBy="tip-add-group-label"
+      optionLabel="name"
+      optionValue="id"
+      [filter]="true"
+      filterBy="name"
+      [options]="candidatos()"
+      [placeholder]="'repositories.tipificaciones.groups.add_placeholder' | translate"
+      [value]="addPick()"
+      (valueChange)="onAddPick($event)"
+    />
+  </div>
+
+  <!-- La línea reservada: qué se marca, o con qué choca cada grupo. Cambia de texto, no de alto. -->
+  @let e = estado();
+  <p class="assign__estado sc-text-caption-regular" [class.assign__estado--error]="e.error" role="status" [attr.title]="e.texto">{{ e.texto }}</p>
+
+  <!-- La tabla siempre, también vacía: sus columnas ya enseñan qué se va a rellenar. -->
+  <div class="table-card">
+    <sc-datatable variant="list" [value]="visibles()" [columns]="columns()" dataKey="group.id">
+      <div scTableEmpty class="assign__no-results sc-text-body-regular">
+        @if (filas().length === 0) {
+          <span class="assign__empty-title sc-text-body-semibold">{{ 'repositories.tipificaciones.groups.empty_title' | translate }}</span>
+          {{ 'repositories.tipificaciones.groups.empty' | translate }}
+        } @else {
+          {{ 'repositories.tipificaciones.groups.no_results' | translate }}
+        }
+      </div>
+    </sc-datatable>
+  </div>
+</div>
+
+<ng-template #groupTpl let-row>
+  <span class="assign__name">
+    <span class="assign__name-label sc-text-body-semibold" [title]="row.group.name">{{ row.group.name }}</span>
+    @if (row.choques.length > 0) {
+      <sc-icon class="assign__conflict" name="error" size="inherit" [attr.aria-label]="row.choques.join('; ')" [pTooltip]="row.choques.join('; ')" tooltipPosition="top" />
+    }
+  </span>
+</ng-template>
+
+<!-- Un grupo que no ofrece ese canal no tiene nada que marcar: la celda lo dice con un guion (como en la ficha de agente). -->
+<ng-template #channelTpl let-row let-col="col">
+  @if (offers(row.group, col.field)) {
+    <sc-checkbox
+      [state]="has(row.link, col.field) ? 'all' : 'none'"
+      [ariaLabel]="row.group.name + ' — ' + col.header"
+      (cycle)="toggle(row.group.id, col.field)"
+    />
+  } @else {
+    <span class="assign__none sc-text-body-regular" [attr.aria-label]="'agents.form.assigned.channel_not_offered' | translate">—</span>
+  }
+</ng-template>
+
+<ng-template #actionsTpl let-row>
+  <sc-button
+    variant="secondary"
+    appearance="text"
+    size="sm"
+    [icon]="trashIcon"
+    [ariaLabel]="'repositories.tipificaciones.groups.remove_aria' | translate: { name: row.group.name }"
+    (clicked)="remove(row.group.id)"
+  />
+</ng-template>

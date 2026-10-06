@@ -1130,7 +1130,10 @@
       "description": "Description",
       "assigned_agents": "Agents assignés",
       "sheet": "Étiquettes"
-    }
+    },
+    "import_export_button": "Importer ou télécharger",
+    "import_menu": "Importer…",
+    "download_menu": "Télécharger"
   },
   "templates": {
     "breadcrumb": "Modèles",
@@ -1311,13 +1314,187 @@
       "singular": "typification",
       "create_title": "Nouvelle typification",
       "plural": "typifications",
-      "count": "{{count}} typifications",
-      "count_one": "1 typification",
-      "code": "Code",
-      "category": "Catégorie",
-      "name_placeholder": "Ex : Requête résolue",
-      "code_placeholder": "Ex : REQ-001",
-      "category_placeholder": "Ex : Requête"
+      "name_placeholder": "Ex. Service client",
+      "description_placeholder": "Ex. Motif de l'appel d'un client",
+      "create_submit": "Créer la typification",
+      "edit_breadcrumb": "Modifier la typification",
+      "search_placeholder": "Rechercher une typification par nom ou description...",
+      "no_results_query": "Aucune typification ne correspond à « {{query}} ».",
+      "empty_title": "Aucune typification pour le moment",
+      "empty_body": "Créez la première, ou importez-les avec le modèle.",
+      "columns": {
+        "name": "Nom",
+        "description": "Description",
+        "direction": "Direction",
+        "comments": "Commentaires",
+        "levels": "Niveaux",
+        "groups": "Groupes",
+        "id": "ID"
+      },
+      "direction": {
+        "inbound": "Entrants",
+        "outbound": "Sortants",
+        "both": "Les deux"
+      },
+      "levels_count": "{{count}} niveaux",
+      "levels_count_one": "1 niveau",
+      "levels_none": "Commentaire seul",
+      "levels_first": "Niveau 1 : {{names}}",
+      "levels_other": "Niveau {{level}} : {{count}} options",
+      "levels_other_one": "Niveau {{level}} : 1 option",
+      "groups_aria": "{{count}} groupes",
+      "groups_aria_one": "1 groupe",
+      "import_columns": {
+        "name": "nom",
+        "description": "description",
+        "direction": "sens",
+        "comments": "commentaires",
+        "level_1": "niveau 1",
+        "level_2": "niveau 2",
+        "level_3": "niveau 3"
+      },
+      "import_title": "Importer des typifications",
+      "import_help": "Une ligne par chemin de l'arbre, comme dans le modèle : nom, description, sens (Entrants, Sortants ou Les deux), commentaires (Oui ou Non) et jusqu'à trois niveaux. Les lignes portant le même nom forment une même typification : sa description, son sens et ses commentaires vont sur la première. Jusqu'à {{max}} typifications par fichier.",
+      "import_template": "Télécharger le modèle",
+      "import_template_file": "modele-typifications",
+      "import_choose": "Choisir un fichier",
+      "import_choose_other": "Choisir un autre fichier",
+      "import_create": "{{count}} typifications seront créées",
+      "import_create_one": "1 typification sera créée",
+      "import_nothing": "Il n'y a aucune nouvelle typification à créer.",
+      "import_errors": "{{count}} lignes en erreur, non importées :",
+      "import_errors_one": "1 ligne en erreur, non importée :",
+      "import_error_line": "Ligne {{line}} : {{reason}}",
+      "import_reason": {
+        "nombre": "le nom manque",
+        "direccion": "le sens n'est ni Entrants, ni Sortants, ni Les deux",
+        "comentarios": "les commentaires ne sont ni Oui ni Non",
+        "hueco": "il manque un niveau entre deux niveaux remplis",
+        "nivel": "elle n'atteint pas le même niveau que la première ligne de sa typification",
+        "vacia": "sans niveaux ni commentaires, elle ne demande rien"
+      },
+      "import_more_errors": "et {{count}} de plus",
+      "import_duplicates": "{{count}} existent déjà sous ce nom et ne sont pas créées.",
+      "import_duplicates_one": "1 existe déjà sous ce nom et ne sera pas créée.",
+      "import_over": "{{count}} dépassent la limite de {{max}} et ne sont pas importées.",
+      "import_over_one": "1 dépasse la limite de {{max}} et ne sera pas importée.",
+      "import_confirm": "Créer {{count}} typifications",
+      "import_confirm_one": "Créer 1 typification",
+      "import_done": "{{count}} typifications créées",
+      "import_done_one": "1 typification créée",
+      "level_title": {
+        "1": "Premier niveau",
+        "2": "Deuxième niveau",
+        "3": "Troisième niveau"
+      },
+      "level_empty": "Pas encore d'options",
+      "level_waiting": {
+        "2": "Choisissez une option du premier niveau pour voir les siennes.",
+        "3": "Choisissez une option du deuxième niveau pour voir les siennes."
+      },
+      "add_option": "Ajouter",
+      "rename_confirm": "Renommer",
+      "delete_option_title": "Supprimer « {{name}} » ?",
+      "delete_option_body": "Les {{count}} options en dessous sont aussi supprimées.",
+      "delete_option_body_one": "L'option en dessous est aussi supprimée.",
+      "errors": {
+        "option_taken": "« {{name}} » existe déjà à ce niveau",
+        "name_taken": "Une typification porte déjà ce nom"
+      },
+      "section": {
+        "general": "Général",
+        "categorization": "Catégories",
+        "groups": "Groupes"
+      },
+      "direction_hint": "Dans quelles conversations elle est demandée à l’agent.",
+      "enable_comments": "Demander un commentaire",
+      "groups_hint": "Où l’agent la remplit, et sur quels canaux",
+      "missing": {
+        "what": "ce que l’agent remplit",
+        "options": "des options dans toutes les branches",
+        "channel": "un canal dans chaque groupe",
+        "conflicts": "des groupes sans conflit"
+      },
+      "groups": {
+        "col_group": "Groupe",
+        "filter_placeholder": "Rechercher un groupe...",
+        "picker_aria": "Ajouter un groupe",
+        "add_placeholder": "Ajouter un groupe...",
+        "empty_title": "Pas encore utilisée dans un groupe",
+        "empty": "Ajoutez les groupes où l’agent la remplira.",
+        "no_results": "Aucun groupe ne correspond à la recherche.",
+        "remove_aria": "Retirer {{name}}",
+        "conflict": "En conflit avec « {{name}} » pour {{direction}} par {{channel}}",
+        "conflict_direction": {
+          "inbound": "les entrants",
+          "outbound": "les sortants"
+        },
+        "status_ok": "Cochez les canaux où elle est utilisée dans chaque groupe."
+      },
+      "level_selected": "Option choisie",
+      "level_none_selected": "Aucune option choisie",
+      "comments_hint": "L'agent écrit une note libre, jusqu'à 255 caractères.",
+      "categorization_hint": "Ce que choisit l'agent, sur trois niveaux au plus",
+      "remove_level": {
+        "1": "Retirer le premier niveau",
+        "2": "Retirer le deuxième niveau",
+        "3": "Retirer le troisième niveau"
+      },
+      "remove_level_title": {
+        "1": "Retirer le premier niveau ?",
+        "2": "Retirer le deuxième niveau ?",
+        "3": "Retirer le troisième niveau ?"
+      },
+      "remove_level_body": "Ses {{count}} options sont supprimées.",
+      "remove_level_body_one": "Son option est supprimée.",
+      "remove_level_confirm": "Retirer le niveau",
+      "add_level": {
+        "1": "Ajouter le premier niveau",
+        "2": "Ajouter le deuxième niveau",
+        "3": "Ajouter le troisième niveau"
+      },
+      "add_level_hint": {
+        "1": "Pour que l'agent choisisse une catégorie",
+        "2": "Chaque option du premier niveau aura les siennes",
+        "3": "Chaque option du deuxième niveau aura les siennes"
+      },
+      "add_field": {
+        "1": "Nouvelle option du premier niveau",
+        "2": "Nouvelle option du deuxième niveau",
+        "3": "Nouvelle option du troisième niveau"
+      },
+      "rename_field": "Nouveau nom de l'option",
+      "add_first": "Ajouter une option…",
+      "add_under": "Ajouter dans « {{name}} »…",
+      "renaming_hint": "Entrée enregistre le nom · Échap annule",
+      "level_needs": "« {{name}} » a besoin d’options ici",
+      "option_actions": {
+        "group": "Actions pour {{name}}",
+        "rename": "Renommer {{name}}",
+        "up": "Monter {{name}}",
+        "down": "Descendre {{name}}",
+        "delete": "Supprimer {{name}}"
+      },
+      "tree_status": {
+        "none": "Pas de catégories : l'agent écrit seulement un commentaire.",
+        "nothing": "Sans catégories ni commentaire, l'agent n'aurait rien à remplir.",
+        "empty": "Ajoutez la première option.",
+        "missing": "Il manque des options sous : {{paths}}",
+        "ok": "Complète : toutes les branches atteignent le niveau {{count}}.",
+        "ok_one": "Complète : {{last}} options sur un niveau."
+      },
+      "preview": {
+        "title": "Ce que verra l'agent",
+        "window": "Typification",
+        "level": "Niveau {{level}}",
+        "comment": "Commentaire",
+        "comment_placeholder": "Écrire un commentaire...",
+        "nothing": "Elle ne demande rien : activez le commentaire ou ajoutez un niveau.",
+        "saved": "Elle serait enregistrée comme {{path}}",
+        "saved_comment": "Elle serait enregistrée avec son commentaire",
+        "try": "Essayez-la : choisissez les niveaux et appuyez sur Enregistrer.",
+        "when": "Après avoir raccroché, avant de recevoir une autre conversation"
+      }
     },
     "variables": {
       "title": "Variables",
@@ -1654,13 +1831,14 @@
         "ring_all_summary": "{{count}} à la fois",
         "sub_strategy": "Dans chaque niveau",
         "skills_unavailable": "Nécessite des compétences par agent",
-        "typification": "Typification",
-        "typification_new": "Nouvelle typification",
-        "typification_none": "Aucune typification",
-        "typification_hint": "Avec une typification, l’agent doit typifier avant de fermer la conversation. Elles se créent dans Référentiels.",
+        "typification": "Typifications",
+        "typification_hint": "Ce que l'agent remplit à la fin : tant qu'il ne l'a pas fait, il ne reçoit pas d'autre conversation. Elles se créent dans Référentiels.",
         "agenda_new": "Nouveau carnet",
         "template_new": "Nouveau modèle",
-        "label_new": "Nouvelle étiquette"
+        "label_new": "Nouvelle étiquette",
+        "typification_count": "{0} typifications",
+        "typification_count_one": "1 typification",
+        "typification_conflict": "« {{a}} » et « {{b}} » couvrent toutes deux {{direction}} par {{channel}} : l'agent ne saurait pas laquelle s'applique."
       },
       "strategy_help": {
         "balanced": "Répartit les conversations de manière équilibrée entre les agents.",
@@ -1826,7 +2004,8 @@
       "name_required": "Le nom est obligatoire",
       "channels_required": "Sélectionnez au moins un canal",
       "name_taken": "Un groupe porte déjà ce nom",
-      "phone_required": "Le téléphone sortant est obligatoire"
+      "phone_required": "Le téléphone sortant est obligatoire",
+      "typification_conflict": "Deux typifications couvrent la même chose"
     },
     "toasts": {
       "created": "Groupe \"{{name}}\" créé",
