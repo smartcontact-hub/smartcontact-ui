@@ -117,6 +117,7 @@ const COMPONENTS = [
   { route: 'formsectionnav', tag: 'sc-form-section-nav' },
   { route: 'grouppopover', tag: 'sc-group-popover' },
   { route: 'inlinerenamecell', tag: 'sc-inline-rename-cell' },
+  { route: 'fileupload', tag: 'sc-fileupload' },
   { route: 'inputgroup', tag: 'sc-inputgroup' },
   { route: 'inputnumber', tag: 'sc-inputnumber' },
   { route: 'inputtext', tag: 'sc-inputtext' },

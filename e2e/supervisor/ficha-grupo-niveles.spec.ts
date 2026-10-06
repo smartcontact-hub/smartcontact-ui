@@ -56,7 +56,7 @@ test('Chat normaliza y guarda Dentro de cada nivel; Contact Center excluye Nivel
   await expect(sub).toHaveText('Menos conversaciones activas');
   await sub.click();
   await expect(page.getByRole('option').first()).toBeVisible();
-  await expect(page.getByRole('option')).toHaveText(['Rotativa (por turnos)', 'Menos conversaciones activas', 'Balanceada']);
+  await expect(page.getByRole('option')).toHaveText(['Menos conversaciones activas', 'Balanceada']);
   // Elegir en el menú ya abierto evita reabrirlo mientras termina el cierre nativo.
   await page.getByRole('option', { name: 'Balanceada', exact: true }).click();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();

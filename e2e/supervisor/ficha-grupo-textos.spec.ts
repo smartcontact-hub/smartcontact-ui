@@ -160,7 +160,7 @@ test('«Desbordar sesión» sale de la ficha y de Contact Center, y lo que tení
 
   await goto(page, 'admin/grupos/editar/1?seccion=distribucion');
   // La regla común que se queda, a la vista: así el cero de abajo no es de una sección sin pintar.
-  await expect(page.getByRole('switch', { name: 'Desbordar si todos los agentes están inactivos', exact: true })).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Desbordar conversaciones si no hay agentes conectados', exact: true })).toBeVisible();
   await expect(page.getByText('Desbordar sesión', { exact: true })).toHaveCount(0);
 
   const espera = page.locator('#group-phone-max-wait');
@@ -194,7 +194,7 @@ test('un grupo nuevo caduca la sesión de chat a los 5 minutos si se enciende', 
   await canal(page, 'Chat').click();
   await page.getByRole('button', { name: 'Siguiente', exact: true }).click();
   await page.getByRole('switch', { name: 'Caducar sesión', exact: true }).click();
-  await expect(page.locator('#group-chat-inactivity')).toHaveText('5 min');
+  await expect(page.locator('#group-chat-inactivity')).toHaveValue(/^5/);
 });
 
 test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, por agente conectado', async ({
@@ -207,7 +207,7 @@ test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, p
   await expect(ayuda).toHaveText('Hasta 50 conversaciones en espera en total. ');
 
   await pickSelectOption(page, page.locator('#group-phone-queue-type'), 'Variable');
-  await expect(ayuda).toHaveText('2 conversaciones en cola por agente conectado. Recomendado: 2');
+  await expect(ayuda).toHaveText('2 conversaciones en cola por agente conectado.');
 });
 
 test('las tipificaciones se eligen por su nombre, sin cifras al lado', async ({ page }) => {

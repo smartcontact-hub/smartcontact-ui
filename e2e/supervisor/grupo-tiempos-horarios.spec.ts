@@ -11,13 +11,19 @@ for (const surface of ['ficha', 'defaults'] as const) {
     const transfer = page.locator(`#${prefix}-phone-transfer`);
     await expect(transfer).toHaveAttribute('role', 'combobox');
     await transfer.click();
-    await expect(page.getByRole('option')).toHaveText(['5 s', '10 s', '15 s', '20 s', '25 s', '30 s', '1 min', '1,5 min', '2 min']);
+    await expect(page.getByRole('option')).toHaveText(['5 s', '10 s', '15 s', '20 s', '25 s', '30 s', '1 min', '1,5 min', '2 min', '3 min', '4 min', '5 min', '10 min', '15 min', '30 min']);
     await page.getByRole('option', { name: '1,5 min', exact: true }).click();
     const inactivity = surface === 'ficha' ? page.getByRole('switch', { name: 'Caducar sesión', exact: true }) : page.locator('#grupos-chat-inactivity-on');
     if (!await inactivity.isChecked()) await inactivity.click();
-    await page.locator(`#${prefix}-chat-inactivity`).click();
-    await expect(page.getByRole('option')).toHaveText(['5 min', '10 min', '15 min', '30 min', '60 min']);
-    await page.getByRole('option', { name: '30 min', exact: true }).click();
+    if (surface === 'ficha') {
+      // Los minutos se escriben, como en Voice.
+      await page.locator('#group-chat-inactivity').fill('30');
+      await page.locator('#group-chat-inactivity').press('Tab');
+    } else {
+      await page.locator(`#${prefix}-chat-inactivity`).click();
+      await expect(page.getByRole('option')).toHaveText(['5 min', '10 min', '15 min', '30 min', '60 min']);
+      await page.getByRole('option', { name: '30 min', exact: true }).click();
+    }
     await page.getByRole('button', { name: 'Guardar', exact: true }).click();
     await expect.poll(() => stored(page, surface)).toMatchObject({ phoneQueue: { transferSec: 90 }, chat: { inactivityMinutes: 30 } });
   });
@@ -29,7 +35,6 @@ for (const surface of ['ficha', 'defaults'] as const) {
     const size = page.locator(`#${prefix}-phone-queue-size`);
     await expect(size).toHaveValue('2');
     await expect(size).toHaveAttribute('max', '10');
-    await expect(page.getByText(/Recomendado: 2/).first()).toBeVisible();
     await size.fill('2.5'); await size.press('Tab');
     await expect(size).toHaveAttribute('aria-invalid', 'true');
     await expect(page.getByRole('button', { name: 'Guardar', exact: true })).toBeDisabled();
@@ -63,7 +68,7 @@ test('los tiempos guardados fuera del catálogo permanecen al editar otro campo,
   await expect(page.locator('#group-phone-transfer')).toHaveText('11 s');
   await expect(page.locator('#group-phone-max-wait')).toHaveText('99 s');
   await expect(page.locator('#group-wrap-up')).toHaveText('0 s');
-  await expect(page.locator('#group-chat-inactivity')).toHaveText('17 min');
+  await expect(page.locator('#group-chat-inactivity')).toHaveValue(/^17/);
   await expect(page.getByRole('button', { name: 'Guardar', exact: true })).toBeDisabled();
   await pickSelectOption(page, page.locator('#group-phone-transfer'), '20 s');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
@@ -74,6 +79,8 @@ test('los tiempos guardados fuera del catálogo permanecen al editar otro campo,
 
 test('Web Chat y WhatsApp guardan horarios independientes y solo ofrecen los activos', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
+  // Sin número, WhatsApp no pinta su horario (revisión de grupos, 2026-10-06).
+  await pickSelectOption(page, page.locator('#group-chat-whatsapp'), '+34 900 100 200');
   for (const channel of ['chat', 'whatsapp']) {
     const select = page.locator(`#group-${channel}-schedule`);
     await expect(select).toHaveText('Siempre');
@@ -92,13 +99,13 @@ test('Web Chat y WhatsApp guardan horarios independientes y solo ofrecen los act
 
 test('música: elegir, cambiar y quitar mantiene un solo nombre y recupera la predeterminada', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
-  const music = page.getByRole('group', { name: 'Música de espera', exact: true });
+  const music = page.getByRole('group', { name: 'Música de espera/Transferencia', exact: true });
   await expect(music.getByText('Música por defecto', { exact: true })).toBeVisible();
-  const input = page.locator('#group-hold-music-file');
+  const input = page.locator('#group-hold-music-upload input[type="file"]');
   await input.setInputFiles({ name: 'espera.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFFdemo') });
   await expect(music.getByText('espera.wav', { exact: true })).toHaveCount(1);
-  await expect(music.getByRole('button', { name: 'Cambiar', exact: true })).toBeVisible();
-  await expect(music.getByRole('button', { name: 'Elegir .wav', exact: true })).toHaveCount(0);
+  // La zona de subir sigue ahí con el archivo ya elegido: el nombre se ve una vez, en el campo.
+  await expect(music.getByRole('button', { name: 'Elegir .wav' })).toBeVisible();
   await input.setInputFiles({ name: 'otra.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFFdemo') });
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect.poll(() => stored(page, 'ficha')).toMatchObject({ announcements: { holdMusicFile: 'otra.wav' } });

@@ -1,0 +1,63 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<ng-template #playground let-args>
+  <sc-fileupload
+    [mode]="args.mode"
+    [multiple]="args.multiple"
+    [auto]="args.auto"
+    [disabled]="args.disabled"
+    [url]="args.url || undefined"
+    chooseLabel="Elegir"
+    dropLabel="o suelta aquí los archivos."
+  />
+</ng-template>
+
+<ng-template #audio>
+  <div class="col">
+    <sc-fileupload
+      accept=".wav,audio/wav"
+      chooseLabel="Elegir .wav"
+      dropLabel="o suelta un .wav aquí."
+      [clearAfterSelect]="true"
+      (filesSelected)="musica.set($event[0]?.name ?? null)"
+      data-testid="sc-fileupload-audio"
+    />
+    <span>{{ musica() ?? 'Música por defecto' }}</span>
+  </div>
+</ng-template>
+
+<ng-template #list>
+  <div class="col">
+    <sc-fileupload
+      [multiple]="true"
+      accept="image/*"
+      chooseLabel="Elegir"
+      dropLabel="o suelta aquí los archivos."
+      (filesSelected)="elegidos.set($event)"
+      data-testid="sc-fileupload-list"
+    />
+    <span>{{ elegidos().length }} archivos</span>
+  </div>
+</ng-template>
+
+<ng-template #basic>
+  <sc-fileupload mode="basic" chooseLabel="Elegir" accept=".csv" data-testid="sc-fileupload-basic" />
+</ng-template>
+
+<ng-template #rules>
+  <sc-fileupload
+    name="audios[]"
+    accept=".wav,audio/wav"
+    [maxFileSize]="5000000"
+    [fileLimit]="3"
+    [multiple]="true"
+    chooseIcon="pi pi-upload"
+    chooseLabel="Elegir"
+    dropLabel="o suelta aquí hasta 3 .wav."
+    invalidFileTypeMessageSummary="{0}: tipo de archivo no válido. "
+    invalidFileTypeMessageDetail="Solo .wav."
+    invalidFileSizeMessageSummary="{0}: pesa demasiado. "
+    invalidFileSizeMessageDetail="El máximo es {0}."
+    data-testid="sc-fileupload-rules"
+  />
+</ng-template>
