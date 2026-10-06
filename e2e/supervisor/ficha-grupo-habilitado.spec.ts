@@ -77,7 +77,8 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1024, 1440]
       const clipped = await table.locator('.assign__name-label').evaluateAll(names => names.filter(name => name.scrollWidth > name.clientWidth + 1).map(name => name.textContent));
       expect(clipped, 'la presencia no recorta estos nombres de la semilla').toEqual([]);
       expect(metrics.tag).toBeGreaterThan(50);
-      expect(metrics.cell).toBeGreaterThanOrEqual(200);
+      // El mínimo de Agente en la ficha, 11,625rem: lo que pide el nombre más largo de la semilla (DD-181).
+      expect(metrics.cell).toBeGreaterThanOrEqual(186);
       await page.screenshot({ path: `/tmp/e2-${theme}-${width}-${surface}.png`, fullPage: true });
       const control = table.getByRole('switch').first();
       await control.focus();

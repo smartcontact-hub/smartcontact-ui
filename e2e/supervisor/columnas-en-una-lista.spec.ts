@@ -8,7 +8,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * primeng.dev/table, «Column Toggle»: un botón «Columns» con su engranaje (outlined, secondary, small) que abre un
  * Popover de 18rem sin relleno; arriba, el título y «Reset» (texto, secondary, small); debajo, una fila por columna con
  * su asa, su casilla (`p-checkbox`) y su nombre, que se arrastra para ordenar (`cdkDrag`). Medido en primeng.dev el
- * 2026-10-05: botón de 28 de alto, globo de 288, cabecera de 53 con raya abajo, filas de 32. Lo que fija, en Agentes:
+ * 2026-10-05: botón de 28 de alto, globo de 288, cabecera de 53 con raya abajo, filas de 32. El botón ya no va en
+ * `small`: a la altura del buscador de su barra (DD-180, lo fija `listados-ordenar-columnas.spec.ts`). Lo que fija, en Agentes:
  *   1. el botón dice «Columnas» y abre su globo: el título, «Restablecer» y una fila por columna, en el orden de la tabla,
  *      cada una con su asa y su casilla; Nombre, marcada y fija;
  *   2. desmarcar una la oculta, y volver a marcarla la deja donde estaba;

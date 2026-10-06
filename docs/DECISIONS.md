@@ -133,6 +133,69 @@
 
 ---
 
+## DD-181 · 2026-10-06 — Cada columna de la tabla de agentes del grupo se marca entera desde su cabecera
+
+**Contexto** · DD-176 §4 dejó la casilla de «todos» solo en Asignado: los canales y Habilitado se cambiaban fila a fila.
+En la revisión de la ficha de grupo, sección Agentes, hace falta marcar o desmarcar una columna entera.
+
+**Decisión** ·
+1. **Asignado, cada canal (Teléfono, Chat, Email) y Habilitado llevan su casilla de «todos»**, delante del rótulo y en
+   la vertical de los controles de sus filas, como ya la llevaba Asignado: la cabecera sigue siendo una fila de texto
+   (DD-176), no la de dos pisos de DD-151. Los niveles no: son un desplegable por fila.
+2. **Lo que cuenta cada casilla**, sobre las filas a la vista (el filtro y la búsqueda, como Asignado): un canal, las
+   asignadas con permiso para él (DD-150); Habilitado, las asignadas. Con la columna entera marcada, la desmarca; si
+   no, marca lo que falta. **Un canal nunca se lleva el último de una fila** (DD-147): si en todas es el último, la
+   casilla sale apagada. Con dos o más cambios, confirma («Quitar Chat: 2 agentes.», «Deshabilitar: 3 agentes.»), y
+   nada se guarda hasta Guardar (DD-151).
+3. **Los anchos**: cada columna con casilla suma la casilla y su hueco (22,75) a su rótulo: Teléfono 112, Chat 72,
+   Email 76 y Habilitado 108. Agente baja su mínimo de 13,25 a 11,625rem, lo que pide el nombre más largo de la
+   semilla («Denzel Washington», 131 px): a 1440 la tabla cabe con uno o dos canales.
+
+**Coste** · Con los tres canales (en la demo, solo Online Support) la tabla desplaza 59 px de lado a 1440 y Habilitado
+queda a medias hasta desplazar; cabe desde unos 1500 de ancho. Bajar más el mínimo de Agente cortaría los nombres.
+
+**Descartadas** · La cabecera de dos pisos, rótulo encima y casilla debajo (DD-151): la fila medía 54 y dejaba Agente y
+Estado flotando, que es lo que DD-176 quitó. Una casilla sin rótulo, o un icono con casilla: DD-176 ya los descartó.
+
+**Consecuencias** · Enmienda DD-176 §4 y DD-151 (las casillas de cada familia vuelven, en una fila). Lo vigilan
+`asignacion-agentes-lista.spec.ts` (qué cambia cada cabecera, el último canal y la confirmación) y
+`tabla-agentes-compacta.spec.ts` (la casilla sobre los controles de sus filas, y lo que desplaza a 1440 sin cortar
+ningún nombre). El panel rápido suma los mismos anchos y crece lo mismo.
+
+---
+
+## DD-180 · 2026-10-06 — Los listados se ordenan por cualquier columna, salvo la que cambia sola, y su barra va a una altura y en dos grupos
+
+**Contexto** · En Grupos se ordenaban 6 de 9 columnas (no Teléfono, Canales ni Servicios) y en Agentes faltaban Canales y
+Grupos, sin una razón escrita: eran las que llevaban `scSortable` antes de pasar a `sc-datatable`. Y el botón «Columnas»
+(DD-176 §7, `small` como el ejemplo de primeng.dev) medía 27 de alto junto a un buscador de 32,5, en la misma barra.
+
+**Decisión** ·
+1. **Un listado se ordena por cualquier columna, salvo la que cambia sola**: Estado, en Agentes (la presencia cambia
+   mientras miras, y ordenarla deja una foto que miente al momento). Canales ordena por cuántos tiene la fila y, con los
+   mismos, por cuáles, en el orden de sus iconos (`compareChannels`); Servicios y Grupos, por su cifra; Teléfono, por
+   el número, y un grupo sin Teléfono («—») va como vacío, como las estrategias.
+2. **Cada cabecera cabe con su flecha**, en los cuatro idiomas: Teléfono y Prioridad pasan a 7,625rem («Téléphone»,
+   118 px; «Prioridade», 117, que ya se salía 5 antes), Servicios a 7,25 («Servicios», 111); en Agentes, Canales a
+   7,25 («Channels», 111), Grupos a 6,875 («Groupes», 105, se salía 16) y Grabación a 9,75 («Enregistrement», que en
+   el CI se salía 1 px: Linux pinta las letras algo más anchas). Los mínimos de tabla suben lo mismo (98,75 y
+   100,375rem). Medido a 1440: ninguna de las dos tablas desplaza de lado.
+3. **El botón «Columnas», a la altura del buscador de su barra**: el tamaño normal del botón, no `small` (enmienda
+   DD-176 §7). Los dos, 32,5, en las diez listas que monta `sc-list-page`.
+4. **La barra, en dos grupos**: lo que cambia la vista (Columnas y el buscador, a `0-875`, 12,25, como dos hermanos) y lo
+   del archivo, detrás del separador y con solo su aire del tema, 14 por lado (29 del buscador a la descarga, el
+   escalón de entre grupos). Medido antes: Columnas a 24,5 del buscador y la descarga a 53,5. El globo de Columnas y
+   el menú de archivo son nodos vacíos en la barra (pintan en `body`) y cada uno sumaba un hueco de flex, y el
+   separador ponía su margen encima del hueco: la barra deja de tener hueco y Columnas lleva el suyo.
+
+**Descartadas** · Ordenar también Estado: el orden se rompe solo en cuanto alguien cambia de estado.
+
+**Consecuencias** · Lo vigila `e2e/supervisor/listados-ordenar-columnas.spec.ts` (qué cabeceras ordenan, que las nuevas
+ordenan de verdad, que cada flecha cabe en los cuatro idiomas, la altura del botón y los huecos de la barra), vista en
+rojo contra `main`.
+
+---
+
 ## DD-179 · 2026-10-06 — Repositorios en tarjetas por grupo, con un tono por grupo y un panel con lo que hay dentro
 
 **Contexto** · El hub de Repositorios era el `Menu` del DS en línea (DD-78), con cifras y buscador (DD-165): once
@@ -295,7 +358,8 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    pasa de 48 a 47,375rem, y su columna de Teléfono deja de cortar «Téléphone», que a 5rem no cabía.
    **La cabecera, una fila de texto alineada con sus controles**: cada rótulo empieza en la vertical de los controles de
    su columna, y **solo Asignado lleva su casilla de «todos»**, delante del rótulo (la primera columna, donde se
-   espera). Fuera las casillas de «todos» de cada canal: un canal se cambia fila a fila (enmienda DD-151). Hasta aquí
+   espera). *(Enmendado por DD-181, 2026-10-06: cada canal y Habilitado también llevan la suya, en la misma
+   fila.)* Fuera las casillas de «todos» de cada canal: un canal se cambia fila a fila (enmienda DD-151). Hasta aquí
    cada cabecera de casillas apilaba su rótulo y su casilla, y la fila medía 54 con «Agente» y «Estado» flotando.
    **Por qué así**, tras mirar cómo lo hacen los SaaS de referencia y los sistemas de diseño (2026-10-05): Zendesk,
    HubSpot, Intercom y Genesys rotulan con texto y cambian una columna entera marcando filas y eligiendo una acción;
@@ -329,6 +393,7 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    2.5.7). La lista es una sola parada del tabulador; las flechas, Inicio y Fin van de una columna a otra; Espacio la
    marca; «Subir» y «Bajar», al pie, mueven la enfocada (o la pulsada); al abrir, el foco entra en la lista, y Escape
    vuelve al botón. La fija (Nombre) sale marcada, sin asa y sin poder quitarse ni moverse.
+   *(Enmendado por DD-180, 2026-10-06: el botón va en su tamaño normal, a la altura del buscador de su barra.)*
 8. **«Administrativo», en marrón**: el color de etiqueta `brown`, nuevo en la paleta del DS (`LabelColor`, nueve
    colores) y en todas sus etiquetas: `sc-tag` y `sc-chip` con `variant="label"`, la paleta de puntos y el selector de
    color de Etiquetas. La paleta del Kit no trae familia marrón: el marrón de la paleta es el ámbar oscuro, y la
@@ -1430,6 +1495,8 @@ La evidencia ejecutada y el estado de publicación se registran en el hand-off d
 > **Enmendada por DD-176** (2026-10-05): sin paginación (la tabla desplaza por dentro y, con más de 100 filas, pinta
 > solo las que se ven) y sin las casillas de «todos» de cada canal en la cabecera; la de Asignado sigue, sobre todo el
 > filtro.
+> **Y por DD-181** (2026-10-06): las casillas de «todos» de cada canal vuelven, delante del rótulo y en una fila, junto
+> con la de Habilitado.
 
 **Decisión.** La ficha de grupo y el panel rápido comparten la lista de todos los agentes. «Asignado» añade o
 quita el enlace; sustituye el selector de incorporación, la selección de filas para un lote y la papelera.

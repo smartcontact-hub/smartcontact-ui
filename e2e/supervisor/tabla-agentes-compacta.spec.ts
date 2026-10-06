@@ -9,7 +9,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * de lado. El hueco estaba en las columnas de casillas: todas a 104 o 100, para rótulos de 32 a 72 y una casilla de 16.
  * Y paginaba de 10 en 10 (DD-151, sin un porqué), cuando la tabla ya desplaza por dentro con la cabecera fija y llega
  * al pie de la pantalla (DD-160). Lo que fija:
- *   1. A 1440, con tres canales y sin niveles, la tabla cabe en su caja: no desplaza de lado.
+ *   1. A 1440, con uno o dos canales y sin niveles, la tabla cabe en su caja; con tres desplaza 59 px (DD-181).
  *   2. Cada columna de casillas mide su rótulo: Chat y Email, más estrechas que Teléfono.
  *   3. Sin paginación: están todas las filas del filtro, y lo que no cabe lo desplaza la tabla por dentro.
  */
@@ -21,15 +21,24 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-test('a 1440, con tres canales, la tabla de agentes cabe sin desplazar de lado', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await goto(page, 'admin/grupos/editar/11?seccion=agentes');
-  const caja = page.locator('sc-agent-channel-table .p-datatable-table-container');
-  await caja.locator('tbody tr').first().waitFor();
-  await page.evaluate(() => document.fonts.ready);
-  const m = await caja.evaluate((c) => ({ caja: c.clientWidth, tabla: c.scrollWidth }));
-  expect(m.tabla, `la tabla (${m.tabla}) cabe en su caja (${m.caja})`).toBeLessThanOrEqual(m.caja);
-});
+/* Con las casillas de «todos» en cada columna (DD-181), las de canales y Habilitado ganan 23 px cada una: a 1440 caben
+ * uno o dos canales (el grupo 12, Teléfono y Chat), y con los tres (el 11) la tabla desplaza 59 px de lado, sin cortar
+ * ningún nombre de la semilla. */
+for (const [grupo, desplaza] of [[12, 0], [11, 59]] as const) {
+  test(`a 1440, en el grupo ${grupo}, la tabla de agentes desplaza de lado ${desplaza} px como mucho`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await goto(page, `admin/grupos/editar/${grupo}?seccion=agentes`);
+    const caja = page.locator('sc-agent-channel-table .p-datatable-table-container');
+    await caja.locator('tbody tr').first().waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    const m = await caja.evaluate((c) => ({ caja: c.clientWidth, tabla: c.scrollWidth }));
+    expect(m.tabla - m.caja, `la tabla (${m.tabla}) en su caja (${m.caja})`).toBeLessThanOrEqual(desplaza);
+    const cortados = await page.locator('sc-agent-channel-table .assign__name-label').evaluateAll((ns) =>
+      ns.filter((n) => n.scrollWidth > n.clientWidth).map((n) => n.textContent),
+    );
+    expect(cortados, 'ningún nombre de la semilla se corta').toEqual([]);
+  });
+}
 
 test('cada columna de casillas mide su rótulo', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
@@ -55,10 +64,9 @@ test('sin paginación: todas las filas del filtro, y la tabla desplaza por dentr
 
 /* LA CABECERA, UNA FILA DE TEXTO ALINEADA CON SUS CONTROLES (DD-176). Hasta entonces cada cabecera de casillas apilaba
  * su rótulo y su casilla de «todos», y la fila de cabeceras medía 54 con «Agente» y «Estado» flotando a media altura.
- * Elegido tras ver cómo lo hacen los SaaS de referencia (Zendesk, HubSpot, Genesys) y los sistemas de diseño (Carbon,
- * Atlassian, NN/g): rótulos de texto, sin controles en las cabeceras de datos; solo la primera columna, Asignado, lleva
- * su casilla de «todos». */
-test('la cabecera es una fila de texto: Asignado con su casilla delante, y cada rótulo sobre los controles de su columna', async ({
+ * Desde DD-181, Asignado, cada canal y Habilitado llevan su casilla de «todos» DELANTE del rótulo, en la misma fila y
+ * en la vertical de los controles de sus filas: se marca una columna entera sin volver a la cabecera de dos pisos. */
+test('la cabecera es una fila de texto: cada columna de controles con su casilla delante, sobre los controles de sus filas', async ({
   page,
 }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
@@ -85,15 +93,12 @@ test('la cabecera es una fila de texto: Asignado con su casilla delante, y cada 
     });
   });
   const col = (nombre: string) => m.find((c) => c.nombre === nombre)!;
-  const asignado = col('Asignado');
-  expect(asignado.casilla, 'Asignado: su casilla de todos').not.toBeNull();
-  expect(Math.abs(asignado.casilla!.left - asignado.control!), 'Asignado: sobre las casillas de sus filas').toBeLessThanOrEqual(0.5);
-  expect(asignado.texto.left, 'Asignado: el rótulo, detrás de la casilla').toBeGreaterThan(asignado.casilla!.left);
-  expect(Math.abs(asignado.texto.centro - asignado.casilla!.centro), 'Asignado: casilla y rótulo, a la misma altura').toBeLessThanOrEqual(1);
-  for (const nombre of ['Teléfono', 'Chat', 'Email', 'Habilitado']) {
+  for (const nombre of ['Asignado', 'Teléfono', 'Chat', 'Email', 'Habilitado']) {
     const c = col(nombre);
-    expect(c.casilla, `${nombre}: sin controles en la cabecera`).toBeNull();
-    expect(Math.abs(c.texto.left - c.control!), `${nombre}: el rótulo, sobre los controles de su columna`).toBeLessThanOrEqual(1);
+    expect(c.casilla, `${nombre}: su casilla de todos`).not.toBeNull();
+    expect(Math.abs(c.casilla!.left - c.control!), `${nombre}: sobre los controles de sus filas`).toBeLessThanOrEqual(0.5);
+    expect(c.texto.left, `${nombre}: el rótulo, detrás de la casilla`).toBeGreaterThan(c.casilla!.left);
+    expect(Math.abs(c.texto.centro - c.casilla!.centro), `${nombre}: casilla y rótulo, a la misma altura`).toBeLessThanOrEqual(1);
   }
 });
 

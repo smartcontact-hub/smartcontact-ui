@@ -1820,6 +1820,10 @@
         "bulk_body": "{{action}}: {{count}} agentes.",
         "bulk_add": "Atribuir ao grupo",
         "bulk_remove": "Remover do grupo",
+        "bulk_channel_add": "Ativar {{channel}}",
+        "bulk_channel_remove": "Remover {{channel}}",
+        "bulk_enable": "Habilitar",
+        "bulk_disable": "Desabilitar",
         "bulk_done": "{{count}} agentes atualizados.",
         "bulk_confirm": "Confirmar"
       },

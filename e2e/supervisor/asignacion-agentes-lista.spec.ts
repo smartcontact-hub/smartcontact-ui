@@ -76,14 +76,41 @@ test('la cabecera confirma dos cambios, permite cancelar y solo modifica los age
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).map((link: { agentId: number }) => link.agentId).sort())).toEqual([1, 2, 3, 5, 6]);
 });
 
-test('solo Asignado lleva casilla de todos en la cabecera; los canales se cambian fila a fila (DD-176)', async ({ page }) => {
+/* Cada columna se marca o desmarca entera (DD-181, enmienda DD-176 §4): Asignado, cada canal y Habilitado llevan su
+ * casilla de «todos». En el grupo mixto, Ana y Elena tienen Teléfono y Chat; Bruno, solo Teléfono (no puede Chat);
+ * Ana está deshabilitada. */
+test('cada columna lleva su casilla de todos: un canal nunca se lleva el último de una fila, y Habilitado cambia a todos (DD-181)', async ({ page }) => {
   await seed(page);
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const table = page.locator('sc-agent-channel-table');
-  await expect(table.getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox')).toHaveCount(1);
-  for (const canal of ['Teléfono', 'Chat']) {
-    await expect(table.getByRole('columnheader', { name: canal, exact: true }).getByRole('checkbox'), canal).toHaveCount(0);
-  }
+  const cabecera = (nombre: string) => table.getByRole('columnheader', { name: nombre, exact: true }).getByRole('checkbox');
+  for (const nombre of ['Asignado', 'Teléfono', 'Chat', 'Habilitado']) await expect(cabecera(nombre), nombre).toHaveCount(1);
+  const dialog = page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' });
+
+  // Chat: Ana y Elena lo tienen, y Bruno no puede. Desmarcarla les quita Chat a las dos.
+  await expect(cabecera('Chat')).toBeChecked();
+  await cabecera('Chat').click();
+  await expect(dialog).toContainText('Quitar Chat: 2 agentes.');
+  await dialog.getByRole('button', { name: 'Confirmar', exact: true }).click();
+  for (const nombre of ['Ana Mixta', 'Elena Mixta']) await expect(table.getByRole('checkbox', { name: `${nombre} — Chat`, exact: true })).not.toBeChecked();
+
+  // Teléfono: ahora es el último canal de las tres filas, y no se puede quitar desde la cabecera.
+  await expect(cabecera('Teléfono')).toBeDisabled();
+
+  // Habilitado: Ana estaba deshabilitada, así que marca la que falta (un cambio, sin preguntar) y luego quita las tres.
+  await cabecera('Habilitado').click();
+  await expect(dialog).toHaveCount(0);
+  await expect(cabecera('Habilitado')).toBeChecked();
+  await cabecera('Habilitado').click();
+  await expect(dialog).toContainText('Deshabilitar: 3 agentes.');
+  await dialog.getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await expect(cabecera('Habilitado')).not.toBeChecked();
+
+  await page.getByRole('button', { name: /^Guardar(?: \(\d+\))?$/ }).click();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!)
+    .map((l: { agentId: number; channels: string[]; active: boolean }) => [l.agentId, l.channels.join('+'), l.active]))).toEqual([
+    [1, 'phone', false], [2, 'phone', false], [5, 'phone', false],
+  ]);
 });
 
 test('una acción sobre un solo agente no pregunta; desasignar mantiene la fila hasta cambiar el filtro', async ({ page }) => {

@@ -32,6 +32,14 @@ export const FAMILY_LABEL_KEYS: Readonly<Record<ChannelFamily, string>> = {
   email: 'groups.channel.email',
 };
 
+/** El orden de la columna Canales en los listados: por cuántos tiene, y a igual número, por cuáles, en el orden de
+ *  `order` (el de los iconos de la celda). Devuelve el ascendente: de menos canales a más. */
+export function compareChannels<C extends string>(a: readonly C[], b: readonly C[], order: readonly C[]): number {
+  if (a.length !== b.length) return a.length - b.length;
+  const key = (channels: readonly C[]) => order.map((c) => (channels.includes(c) ? '0' : '1')).join('');
+  return key(a).localeCompare(key(b));
+}
+
 /* Las de SISMAC-1975 en COA (decisión de producto, 2026-09-16: las estrategias siguen al COA): quita Aleatoria y Lineal, y
  * añade Niveles, Ring All y Skills. «Agente exclusivo» se queda: el COA no la quita, y el manual de Voice (p. 12) y
  * el Figma de la migración la traen.

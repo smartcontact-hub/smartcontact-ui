@@ -14,12 +14,19 @@
     padding: var(--sc-spacing-1-25) var(--sc-spacing-2);
   }
 
-  /* Buscador → tabla `0-875`, menos que título → buscador (`1`): la barra es de la tabla (DD-94). */
+  /* Buscador → tabla `0-875`, menos que título → buscador (`1`): la barra es de la tabla (DD-94).
+   * Dos grupos (DD-180): lo que cambia la vista (Columnas y el buscador, a `0-875`) y lo del archivo, detrás del
+   * separador y con solo su aire del tema, 14 por lado. Sin hueco de flex: el globo de Columnas y el menú de archivo
+   * son nodos vacíos en la barra (pintan en `body`), y cada hueco se sumaba (Columnas quedaba a 24,5 del buscador y la
+   * descarga a 53,5, medido el 2026-10-06). */
   &__action-bar {
     display: flex;
     align-items: center;
-    gap: var(--sc-spacing-0-875);
     margin-bottom: var(--sc-spacing-0-875);
+  }
+
+  &__columns {
+    margin-inline-end: var(--sc-spacing-0-875);
   }
 
   /* «Subir» y «Bajar», al pie del globo, con la raya y el relleno de su cabecera (lo único que el ejemplo no trae:
