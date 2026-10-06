@@ -617,7 +617,7 @@
     },
     {
       "selector": "sc-subsection",
-      "usedInSupervisor": 4
+      "usedInSupervisor": 9
     },
     {
       "selector": "sc-textarea",

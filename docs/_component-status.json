@@ -520,7 +520,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 33,
+      "usedInSupervisor": 31,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -1368,7 +1368,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4,
+      "usedInSupervisor": 9,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "sobreObsoleto": []
     },
