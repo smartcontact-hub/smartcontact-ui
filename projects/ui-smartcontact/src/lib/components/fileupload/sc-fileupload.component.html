@@ -1,0 +1,33 @@
+<p-fileupload
+  #fu
+  [name]="name()"
+  [mode]="mode()"
+  [multiple]="multiple()"
+  [accept]="accept()"
+  [maxFileSize]="maxFileSize()"
+  [fileLimit]="fileLimit()"
+  [disabled]="disabled()"
+  [auto]="auto()"
+  [customUpload]="!url()"
+  [url]="url()"
+  [chooseLabel]="chooseLabel()"
+  [chooseIcon]="chooseIcon()"
+  [showUploadButton]="!auto()"
+  [showCancelButton]="!auto()"
+  [invalidFileSizeMessageSummary]="invalidFileSizeMessageSummary()"
+  [invalidFileSizeMessageDetail]="invalidFileSizeMessageDetail()"
+  [invalidFileTypeMessageSummary]="invalidFileTypeMessageSummary()"
+  [invalidFileTypeMessageDetail]="invalidFileTypeMessageDetail()"
+  (onSelect)="onSelect($event)"
+  (onRemove)="fileRemoved.emit($event.file)"
+  (onClear)="cleared.emit()"
+  (uploadHandler)="uploaded.emit($event.files)"
+>
+  <!-- La zona de soltar, tal como la del ejemplo «advanced» de primeng.dev: solo el texto. Va dentro de este
+       componente porque la consulta de `p-fileupload` no ve una plantilla que atraviesa dos proyecciones. -->
+  @if (dropLabel()) {
+    <ng-template #empty>
+      <div>{{ dropLabel() }}</div>
+    </ng-template>
+  }
+</p-fileupload>

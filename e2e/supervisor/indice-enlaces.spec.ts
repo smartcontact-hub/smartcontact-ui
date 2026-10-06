@@ -304,7 +304,7 @@ test('las marcas del índice caen en la misma vertical, al final de su fila, sea
   await goto(page, 'admin/grupos/editar/11');
   await page.getByRole('textbox', { name: 'Nombre', exact: true }).fill('Soporte de tarde');
   await irASeccion(page, 'Distribución y colas');
-  await page.getByRole('switch', { name: 'Desbordar si todos los agentes están inactivos' }).click();
+  await page.getByRole('switch', { name: 'Desbordar conversaciones si no hay agentes conectados' }).click();
   await expect(page.locator('sc-form-section-nav .form-nav__dot')).toHaveCount(2);
   const marcas = await page.locator('sc-form-section-nav .form-nav__item').evaluateAll((filas) =>
     filas

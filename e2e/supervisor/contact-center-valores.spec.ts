@@ -34,7 +34,7 @@ const canal = (page: Page, nombre: string) =>
 
 const DESTINOS = ['Fijos', 'Móviles', 'Internacionales', 'Numeración especial'] as const;
 const COLUMNAS = ['Llamadas', 'Transferencias'] as const;
-const OVERFLOW = 'Desbordar si todos los agentes están inactivos';
+const OVERFLOW = 'Desbordar conversaciones si no hay agentes conectados';
 
 /** La matriz de fábrica: todo menos la numeración especial, en las dos columnas. */
 const esperaMatrizDeFabrica = async (page: Page): Promise<void> => {

@@ -133,6 +133,43 @@
 
 ---
 
+## DD-184 · 2026-10-06 — Revisión de grupos del equipo, y `sc-fileupload` para subir cualquier archivo
+
+**Contexto** · El equipo revisó la ficha de grupo punto por punto contra Voice. Lo que ya existía en Voice y aquí
+faltaba o decía otra cosa se alinea (abajo). Y para elegir los audios no había nada más que un botón «Elegir .wav»:
+PrimeNG trae `p-fileupload` (arrastrar y soltar, lista, validación de tipo y tamaño), y no lo habíamos usado.
+
+**Decisión** ·
+1. **`sc-fileupload`**, wrapper Extended sobre `p-fileupload` en su modo `advanced`, el de la documentación
+   (primeng.dev/fileupload; `node tools/primeng-doc.mjs fileupload`). La plantilla, la cabecera, las filas y el
+   movimiento son los de PrimeNG; el aspecto, los tokens `fileupload.*` del preset, que ya existían. Lo que añade el
+   wrapper, y por qué: sin `url` no sube a ningún sitio (`customUpload`: es un prototipo, no un punto de discordia) y
+   entrega los archivos por `filesSelected`/`uploaded`; `auto` por defecto, sin «Subir» ni «Cancelar»;
+   `clearAfterSelect` para quien guarda el archivo en otro campo, así el nombre no se pinta dos veces; los textos
+   (`chooseLabel`, `dropLabel`, avisos de tipo y tamaño) llegan traducidos, porque PrimeNG los toma de su locale
+   inglés; y la plantilla `#empty` va dentro, porque la consulta de PrimeNG no ve una plantilla que atraviesa dos
+   proyecciones (lo mismo que `sc-selectbutton`).
+2. **Dónde se usa**: los cuatro audios de Grupos (música de espera, identificador del grupo, «Eres el siguiente» y
+   mensajes periódicos, estos con `multiple`). **Dónde se usará**: la importación de tipificaciones y de contactos, y cualquier
+   subida nueva; para la foto de una persona o entidad sigue `sc-photo-upload` (recorte e ilustración de reserva).
+3. **Ficha de grupo**: sin Skills ni Rotativa (lo guardado con ellas se lee con Balanceada y Menos conversaciones
+   activas); Ring All con «Nº agentes simultáneos» y su aviso de costes siempre; tiempos hasta 30 min; rótulos del
+   equipo para timbrado, tiempo entre conversaciones, % de servicio, desbordar y música de espera/transferencia;
+   «Anunciar» en vez de «Decir»; voces como las lista Voice; «Caducar sesión» con minutos escritos, sin su ayuda ni la
+   de «Pedir valoración» (que no es una pregunta corta, son estrellas); sin «Sin teléfono saliente» en la cabecera.
+4. **Chat y WhatsApp** en el orden de Voice: Distribución, Cola, y por subcanal sus mensajes inicial y final, su
+   horario (con «Mensaje de horario» y «Mensaje de día no valorable», que dependen de él) y, en Web Chat, dominios y
+   script. WhatsApp va después, con su número elegido de una lista; sin número no se pinta nada de lo que sigue.
+
+**Descartadas** · Envolver `p-fileupload` en modo `basic` (un botón, sin zona de soltar): no es lo que se pidió.
+Sembrar la lista con los archivos ya guardados: solo se guarda el nombre, y un tamaño inventado sería falso.
+
+**Consecuencias** · `ficha-grupo-revision-equipo.spec.ts` fija lo de la ficha y la subida; la página de `sc-docs`
+(Componentes → FileUpload) es la referencia de uso. Pendiente: su nodo en Figma (`docs/figma-pendiente.md`), la
+subida de tipificaciones con este componente y medir el modo `basic` si algún día hace falta.
+
+---
+
 ## DD-183 · 2026-10-06 — Sin punto medio («·») entre datos de la interfaz
 
 **Contexto** · El punto entre dos datos («918371548 · Prioridad: Media», «Llamada · grabada», «Nivel · Teléfono») se

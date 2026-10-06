@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "56 componentes · 23 custom · 8 standard · 25 extended · 45 usados en Supervisor.",
+  "summary": "57 componentes · 23 custom · 8 standard · 26 extended · 46 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -195,7 +195,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 178,
+      "usedInSupervisor": 176,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -615,6 +615,43 @@
       "sobreObsoleto": []
     },
     {
+      "name": "fileupload",
+      "selector": "sc-fileupload",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/fileupload",
+      "cva": false,
+      "inputs": 17,
+      "api": [
+        "accept",
+        "auto",
+        "chooseIcon",
+        "chooseLabel",
+        "clearAfterSelect",
+        "cleared",
+        "disabled",
+        "dropLabel",
+        "fileLimit",
+        "fileRemoved",
+        "filesSelected",
+        "invalidFileSizeMessageDetail",
+        "invalidFileSizeMessageSummary",
+        "invalidFileTypeMessageDetail",
+        "invalidFileTypeMessageSummary",
+        "maxFileSize",
+        "mode",
+        "multiple",
+        "name",
+        "uploaded",
+        "url"
+      ],
+      "nested": [],
+      "hasDemo": true,
+      "usedInSupervisor": 2,
+      "cuando": "Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.",
+      "sobreObsoleto": []
+    },
+    {
       "name": "form-danger-zone",
       "selector": "sc-form-danger-zone",
       "provenance": "CUSTOM",
@@ -800,7 +837,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 10,
+      "usedInSupervisor": 11,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -842,7 +879,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 36,
+      "usedInSupervisor": 35,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -882,7 +919,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 9,
+      "usedInSupervisor": 10,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
     },
@@ -1249,7 +1286,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 58,
+      "usedInSupervisor": 57,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1322,7 +1359,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 8,
+      "usedInSupervisor": 11,
       "cuando": "Para una ranura con título dentro de una composición.",
       "sobreObsoleto": []
     },

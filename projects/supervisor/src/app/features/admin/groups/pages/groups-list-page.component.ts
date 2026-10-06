@@ -46,7 +46,6 @@ import {
   GroupChannel,
   GroupPriority,
   PHONE_STRATEGIES,
-  UNAVAILABLE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
   chatStrategyOf,
   compareChannels,
@@ -188,7 +187,7 @@ export class GroupsListPageComponent {
         key: 'strategy',
         label: this.translate.instant('groups.table.strategy_phone'),
         // Skills no se puede elegir todavía (SISMAC-1975): tampoco en bloque.
-        values: PHONE_STRATEGIES.filter((s) => !UNAVAILABLE_STRATEGIES.has(s)).map((s) => ({ value: s, label: s })),
+        values: PHONE_STRATEGIES.map((s) => ({ value: s, label: s })),
       },
       {
         // Hasta el 2026-09-26 las de chat iban en la lista de «Estrategia» y se escribían en la de TELÉFONO.

@@ -30,6 +30,31 @@ fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #3
 `git show 4217ed41:docs/handoff/supervisor-fichas.md`. Y el de sc-docs y el peso de los iconos (#330, sin
 trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`. El de Accesibilidad pendiente (#332, sin DD nueva ni trampas
 propias): `git show 540f246c:docs/handoff/supervisor-fichas.md``. El de supervisión y limpieza (2026-10-05, DD-168, #333, sin trampas propias): `git show
+60f8e617:docs/handoff/supervisor-fichas.md`. El de las tres columnas sin cabecera (2026-10-05, DD-170, #337): `git show
+b49b56e0:docs/handoff/supervisor-fichas.md`. El de Tipificaciones (2026-10-05, DD-173, DD-174 y DD-177, #340): `git show
+a3e03136:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-06 · La revisión de grupos del equipo y `sc-fileupload` (DD-184)
+
+> **Sello:** rama `arebury/escolar` sobre main, HEAD `b49b56e0`. Un solo PR, con la revisión del equipo punto por punto y el
+> componente de subida; los cambios, enseñados en local antes de subir.
+
+- **La ficha, alineada con Voice:** sin Skills ni Rotativa (lo guardado con ellas se lee con Balanceada y Menos
+  conversaciones activas, por `RENAMED_STRATEGIES`); Ring All con «Nº agentes simultáneos» y su aviso siempre; tiempos
+  hasta 30 min; los rótulos del equipo; «Anunciar»; voces como las lista Voice; «Caducar sesión» con minutos escritos y
+  sin las ayudas de «Caducar sesión» y «Pedir valoración»; la cabecera sin «Sin teléfono saliente».
+- **Chat y WhatsApp:** Distribución, Cola, y por subcanal mensajes inicial y final, horario con sus dos mensajes
+  (solo con horario elegido) y, en Web Chat, dominios y script; WhatsApp después, con su número de una lista y, sin él,
+  nada de lo que sigue. El modelo de mensajes cambia a `initial`, `final`, `outOfSchedule` y `nonWorkingDay`; lo guardado
+  con las claves de antes se lee vacío, sin romper nada.
+- **`sc-fileupload`:** `p-fileupload` en modo advanced, sin servidor (`customUpload`) y con `auto`; los cuatro audios de
+  Grupos lo llevan, con `clearAfterSelect`. Página en sc-docs (Componentes › FileUpload). Registrado en DD-184 y en la
+  memoria (`primeng-fileupload`) para la subida de tipificaciones y las que vengan.
+- **Contact Center › Grupos** comparte rótulos y quita las ayudas de transferencia y tiempo entre llamadas.
+- **Pendiente:** su nodo en Figma (`figma-pendiente.md`); medir el modo `basic` si hace falta; la subida de tipificaciones
+  con este componente. **Tipificaciones** (la propuesta de Miguel, niveles por rama, vista previa fiel al agente) se
+  aparta hasta que la presente.
+
 60f8e617:docs/handoff/supervisor-fichas.md`. El de las fichas en tres columnas (2026-10-05, DD-170, #337, sin trampas propias): `git show
 b49b56e0:docs/handoff/supervisor-fichas.md`.
 
@@ -130,38 +155,6 @@ b49b56e0:docs/handoff/supervisor-fichas.md`.
   Pendiente en Figma (`figma-pendiente` §36b).
 - **Una prueba ajena que falla en tanda:** `panel-agentes-monitor` «… dice en el foco que abre un menú» (de DD-171, la
   otra sesión) pide `…menu-1_list` y en la tanda completa llega `…menu-2_list`; pasa 3 de 3 a solas.
-
-## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-173, DD-174 y DD-177), fundido (#340)
-
-> **Sello:** rama `arebury/tipificaciones-creacion` sobre `main` en `b4d1f145`. **Un PR, un commit en rojo y otro en
-> verde por bloque (DD-154).** Sale de la propuesta de producto «Tipificaciones» (PDF, 2026-10-05), discutida punto por
-> punto y probada en local antes de subir.
-
-> **Fundido el 2026-10-06 (#340, `4217ed41`).** El título del squash cita DD-172, DD-173 y DD-174, los números de antes
-> de renumerar: mientras su CI corría entraron #342 (DD-172) y #343 (DD-175), y al fundir quedaron en DD-173 (el
-> modelo), DD-174 (la ficha) y DD-177 (el teléfono). El código, las pruebas y los docs ya citan estos.
-
-- **1 · Una tipificación es una ficha propia (DD-173):** su árbol de hasta tres niveles, su dirección, su comentario y
-  sus grupos por canal; una por dirección y canal en cada grupo. Repositorios › Tipificaciones con las columnas de la
-  propuesta, todas ordenables; importar y descargar detrás de UN icono (`importable` en `sc-list-page`; importar, como
-  las agendas). La ficha de grupo elige varias, con su fila y su «Editar», y pierde el «+» de la tipificación.
-- **2 · La ficha, sin saltos (DD-174):** el molde de las fichas (índice; el nombre encima); la dirección en un control y
-  el comentario en un interruptor; los niveles son las columnas (las tres siempre, la siguiente fantasma, la última con
-  su ×); añadir y renombrar en la línea de la columna; cada aviso en su línea reservada. Su prueba cazó una carrera:
-  dos «Añadir» seguidos y el segundo pisaba al primero (ahora `linkedSignal`).
-- **3 · Lo que verá el agente (DD-177):** a la derecha, el teléfono de sc-agent en su sección de Tipificación, calcado
-  de la réplica y para probarlo. Tokens nuevos `--sc-agent-window-*` (05-extensions) y su sombra con spread; en su
-  propia columna, porque la del resumen recortaba la sombra.
-- **En local, en verde:** las 17 de los tres bloques (en rojo antes de cada uno) y las 13 unitarias; las vecinas que
-  tocan tipificaciones (45, cuatro cambiadas a propósito); `revision` de la ficha, el alta, el listado y la ficha de
-  grupo; las guardas de tokens y de pantalla. Las mediciones sin saltos, con su medidor validado con un salto puesto.
-
-**Trampas del lote:**
-- **`git add -N` para que las guardas vean ficheros nuevos impide el `git stash`** (`not uptodate. Cannot merge`): quita
-  la marca (`git reset -- <rutas>`) antes de apartar, y vuelve a ponerla para pasar las guardas.
-- **La columna `.ficha-summary` desplaza por dentro** (`overflow-y: auto`) y corta todo lo que sale por los lados, también
-  una sombra: lo que tenga que salirse va en su propia columna del área `summary`.
-- **Un `.sc-dark` alrededor de una pieza no pone los campos de PrimeNG en oscuro**: sus `--p-*` se resuelven en la raíz.
 
 ## SIGUIENTE — sin preguntar
 

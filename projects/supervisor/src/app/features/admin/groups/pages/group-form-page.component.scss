@@ -119,14 +119,11 @@
   }
 }
 
-/* Skills sale apagada con su motivo debajo, a la vista y no en un tooltip. */
-.strategy-option {
+/* Un archivo guardado y, debajo, la zona para subir otro (`sc-fileupload`). */
+.upload-field {
   display: flex;
   flex-direction: column;
-}
-
-.strategy-option__note {
-  color: var(--sc-text-secondary);
+  gap: var(--sc-spacing-0-5);
 }
 
 /* Un control con su botón de añadir a la derecha: el «Añadir» de los dominios y los «+» de Recursos, que son el botón de
@@ -149,18 +146,6 @@
   gap: var(--sc-spacing-0-5);
   margin-block-start: var(--sc-spacing-0-5);
 }
-
-/* Los mensajes de cola de UN subcanal: su nombre y sus tres campos. */
-.chat-messages {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-5);
-}
-
-.chat-messages__title {
-  color: var(--sc-text-primary);
-}
-
 
 /* La capacidad compone tipo y cifra: su fila se separa de los tiempos, conservando la alineación con la música. */
 .queue-fields {

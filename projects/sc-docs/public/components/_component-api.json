@@ -112,7 +112,7 @@
     },
     {
       "componente": "fileupload",
-      "envuelto": false
+      "envuelto": true
     },
     {
       "componente": "floatlabel",
@@ -3545,6 +3545,324 @@
         }
       ],
       "ocultas": []
+    },
+    {
+      "selector": "sc-fileupload",
+      "name": "fileupload",
+      "primengBase": "primeng/fileupload",
+      "cuando": "Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.",
+      "contrato": [
+        {
+          "nombre": "name",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'files[]'",
+          "requerido": false,
+          "descripcion": "Nombre del parámetro con el que viajan los archivos, si hay `url`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Name of the request parameter to identify the files at backend.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "mode",
+          "clase": "input",
+          "tipo": "'advanced' | 'basic'",
+          "porDefecto": "'advanced'",
+          "requerido": false,
+          "descripcion": "`advanced` (zona de soltar y lista) o `basic` (un solo botón).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines the UI of the component.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "multiple",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Varios archivos a la vez. Sin ello, elegir otro sustituye al anterior.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Used to select multiple files at once from file dialog.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "accept",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Tipos admitidos: MIME (`image/*`) o extensiones (`.wav`), separados por coma.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Comma-separated list of pattern to restrict the allowed file types. Can be any combination of either the MIME types (such as \"image/*\") or the file extensions (such as \".jpg\").",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "maxFileSize",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Tamaño máximo por archivo, en bytes.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Maximum file size allowed in bytes.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "fileLimit",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Número máximo de archivos.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Maximum number of files that can be uploaded.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "disabled",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Disables the upload functionality.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "auto",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "El archivo se entrega al elegirlo, sin botón de «Subir».",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When enabled, upload begins automatically after selection is completed.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "url",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Adónde enviar. Sin `url`, el componente no sube nada: entrega los archivos por `uploaded`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Remote url to upload the files.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "clearAfterSelect",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Vacía la lista tras entregar: para quien guarda el archivo en otro sitio.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "chooseLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Texto del botón de elegir, traducido.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Label of the choose button. Defaults to PrimeNG Locale configuration.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "chooseIcon",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Icono del botón de elegir (por defecto, el de PrimeNG).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Icon of the choose button.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "dropLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Texto de la zona de soltar, traducido. Sin él, la zona queda vacía.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "invalidFileSizeMessageSummary",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'{0}: Invalid file size, '",
+          "requerido": false,
+          "descripcion": "Avisos de archivo rechazado, con los mismos `{0}` que PrimeNG (nombre del archivo, tamaño o tipos admitidos).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Summary message of the invalid file size.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "invalidFileSizeMessageDetail",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'maximum upload size is {0}.'",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Detail message of the invalid file size.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "invalidFileTypeMessageSummary",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'{0}: Invalid file type, '",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Summary message of the invalid file type.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "invalidFileTypeMessageDetail",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'allowed file types: {0}.'",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Detail message of the invalid file type.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "filesSelected",
+          "clase": "output",
+          "tipo": "readonly File[]",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Los archivos de una elección, ya validados.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "uploaded",
+          "clase": "output",
+          "tipo": "readonly File[]",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Los archivos entregados (con `auto`, nada más elegirlos).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "fileRemoved",
+          "clase": "output",
+          "tipo": "File",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Un archivo quitado de la lista con su botón.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "cleared",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La lista se vació, por quien usa el componente o por `clearAfterSelect`.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": [
+        "cancelButtonProps",
+        "cancelIcon",
+        "cancelLabel",
+        "cancelStyleClass",
+        "chooseButtonProps",
+        "chooseStyleClass",
+        "customUpload",
+        "filesInput",
+        "headers",
+        "invalidFileLimitMessageDetail",
+        "invalidFileLimitMessageSummary",
+        "method",
+        "previewWidth",
+        "removeStyleClass",
+        "showCancelButton",
+        "showUploadButton",
+        "style",
+        "styleClass",
+        "uploadButtonProps",
+        "uploadIcon",
+        "uploadLabel",
+        "uploadStyleClass",
+        "withCredentials"
+      ]
     },
     {
       "selector": "sc-form-danger-zone",

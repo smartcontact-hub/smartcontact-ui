@@ -8,8 +8,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * Medido el 2026-10-05 a 1440, en las tres fichas: 13 ayudas pasaban a dos o tres líneas, y tres dejaban una sola
  * palabra en la última («llama.», «agentes.», «Añadir.»). Una ayuda dice lo que dicen las fuentes (DD-133), con las
  * palabras justas: lo que obliga a otra línea por una palabra se dice más corto. Lo que fija:
- *   1. En Distribución y colas, el tiempo que suena en un agente se llama «Tiempo de ringing», y su ayuda dice que es
- *      el máximo para entregar la conversación a otro agente.
+ *   1. En Distribución y colas, el tiempo que suena en un agente se llama «Tiempo de timbrado de una conversación a un
+ *      agente», sin ayuda aparte: el rótulo ya lo dice (revisión de grupos, 2026-10-06).
  *   2. Ninguna ayuda de las tres fichas, a 1440, pasa de dos líneas ni deja una sola palabra en la última.
  */
 
@@ -48,11 +48,10 @@ const medirAyudas = (page: Page) =>
       });
   }, AYUDAS);
 
-test('Distribución y colas · «Tiempo de ringing», con su ayuda: a otro agente', async ({ page }) => {
+test('Distribución y colas · «Tiempo de timbrado de una conversación a un agente», sin ayuda aparte', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const campo = page.locator('label[for="group-phone-transfer"]');
-  await expect(campo).toHaveText('Tiempo de ringing');
-  await expect(page.locator('#group-phone-transfer').locator('xpath=ancestor::sc-select[1]')).toContainText('a otro agente');
+  await expect(campo).toHaveText('Tiempo de timbrado de una conversación a un agente');
 });
 
 for (const base of ['admin/grupos/editar/11', 'admin/grupos/crear', 'admin/agentes/editar/1', 'admin/usuarios/editar/1']) {

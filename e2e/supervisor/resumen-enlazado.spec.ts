@@ -75,7 +75,7 @@ test('cada fila de Reparto lleva al bloque de su canal, a la vista y sin nada en
     const titulo = page.locator(canal.titulo);
     await expect(titulo, `Reparto › ${canal.fila}`).toBeFocused();
     const caja = await titulo.evaluate(sinNadaEncima);
-    expect(caja.top, `Reparto › ${canal.fila}: dentro de la zona que se desplaza`).toBeGreaterThanOrEqual(zona);
+    expect(caja.top, `Reparto › ${canal.fila}: dentro de la zona que se desplaza`).toBeGreaterThanOrEqual(zona - 0.5); // medio píxel: el desplazamiento cae en fracciones
     expect(caja.top, `Reparto › ${canal.fila}: a la vista`).toBeLessThan(900);
     expect(caja.visto, `Reparto › ${canal.fila}: nada lo tapa`).toBe(true);
   }
@@ -93,7 +93,7 @@ test('cada fila de Salida lleva a su número: el teléfono saliente y el de What
     const campo = page.locator(salida.campo);
     await expect(campo, `Salida › ${salida.fila}`).toBeFocused();
     const caja = await campo.evaluate(sinNadaEncima);
-    expect(caja.top, `Salida › ${salida.fila}: dentro de la zona que se desplaza`).toBeGreaterThanOrEqual(zona);
+    expect(caja.top, `Salida › ${salida.fila}: dentro de la zona que se desplaza`).toBeGreaterThanOrEqual(zona - 0.5); // medio píxel: el desplazamiento cae en fracciones
     expect(caja.bottom, `Salida › ${salida.fila}: a la vista`).toBeLessThan(900);
     expect(caja.visto, `Salida › ${salida.fila}: nada lo tapa`).toBe(true);
   }
