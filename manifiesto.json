@@ -1,8 +1,8 @@
 {
-  "commit": "4217ed41",
+  "commit": "406285f1",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-10-06T04:31:39.421Z",
+  "generado": "2026-10-06T05:16:03.618Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
@@ -12,17 +12,14 @@
         "smartcontact-tokens.css"
       ],
       "variables": [
-        "claro|--sc-agent-window-bg",
-        "claro|--sc-agent-window-disabled",
-        "claro|--sc-agent-window-fg",
-        "claro|--sc-agent-window-fg-muted",
-        "claro|--sc-agent-window-field-bg",
-        "claro|--sc-agent-window-field-border",
-        "claro|--sc-agent-window-header-bg",
-        "claro|--sc-agent-window-pill-bg",
-        "claro|--sc-agent-window-pill-fg",
-        "claro|--sc-agent-window-plate-bg",
-        "claro|--sc-agent-window-shadow"
+        "claro|--sc-label-brown-bg",
+        "claro|--sc-label-brown-border",
+        "claro|--sc-label-brown-dot",
+        "claro|--sc-label-brown-text",
+        "oscuro|--sc-label-brown-bg",
+        "oscuro|--sc-label-brown-border",
+        "oscuro|--sc-label-brown-dot",
+        "oscuro|--sc-label-brown-text"
       ],
       "retirados": [],
       "semanticaComun": false,
@@ -35,5 +32,5 @@
       "faltan": []
     }
   },
-  "version": "0.20261006.431"
+  "version": "0.20261006.516"
 }
