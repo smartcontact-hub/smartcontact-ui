@@ -23,7 +23,7 @@ nvm() {
     install) mkdir -p "$NVM_DIR/v/$2/bin"; echo "$2" >> "$NVM_DIR/instaladas" ;;
     alias) : ;;
     which) echo "$NVM_DIR/v/$2/bin/node" ;;
-    use) [ -d "$NVM_DIR/v/$2" ] || return 3 ;;
+    use) [ -d "$NVM_DIR/v/$2" ] || return 3; echo "$2" >> "$NVM_DIR/activadas" ;;
   esac
 }
 # Como el real: sin --no-use, activa el .nvmrc del directorio, y si no está instalado devuelve 3.
@@ -62,6 +62,8 @@ test('con la versión del .nvmrc sin instalar, la instala y la pone en el PATH d
   const { r, nvm, envFile } = escenario();
   assert.equal(r.status, 0, r.stdout + r.stderr);
   assert.equal(readFileSync(join(nvm, 'instaladas'), 'utf8').trim(), '22.23.2');
+  // Y la activa en el propio hook: `npm ci` y su mensaje corrían con el Node del contenedor.
+  assert.equal(readFileSync(join(nvm, 'activadas'), 'utf8').trim(), '22.23.2');
   assert.match(readFileSync(envFile, 'utf8'), new RegExp(`export PATH="${join(nvm, 'v/22.23.2/bin')}:`));
 });
 
