@@ -193,7 +193,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 156,
+      "usedInSupervisor": 176,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -240,7 +240,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 38,
+      "usedInSupervisor": 39,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -394,7 +394,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 12,
+      "usedInSupervisor": 13,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": []
     },
@@ -465,7 +465,7 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 9,
+      "usedInSupervisor": 11,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "sobreObsoleto": []
     },
@@ -499,7 +499,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 20,
+      "usedInSupervisor": 22,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -518,7 +518,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 31,
+      "usedInSupervisor": 33,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -570,7 +570,7 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 17,
+      "usedInSupervisor": 18,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "sobreObsoleto": []
     },
@@ -653,7 +653,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5,
+      "usedInSupervisor": 6,
       "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
       "sobreObsoleto": []
     },
@@ -696,7 +696,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4,
+      "usedInSupervisor": 5,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
       "sobreObsoleto": []
     },
@@ -839,7 +839,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 33,
+      "usedInSupervisor": 36,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -879,7 +879,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 8,
+      "usedInSupervisor": 9,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
     },
@@ -935,7 +935,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 14,
+      "usedInSupervisor": 15,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "sobreObsoleto": [
         {
@@ -1169,7 +1169,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 11,
+      "usedInSupervisor": 12,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
@@ -1194,7 +1194,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 26,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1277,7 +1277,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 12,
+      "usedInSupervisor": 13,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },
@@ -1468,7 +1468,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 32,
+      "usedInSupervisor": 33,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

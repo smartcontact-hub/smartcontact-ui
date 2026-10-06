@@ -1130,7 +1130,10 @@
       "description": "Descrição",
       "assigned_agents": "Agentes atribuídos",
       "sheet": "Etiquetas"
-    }
+    },
+    "import_export_button": "Importar ou transferir",
+    "import_menu": "Importar…",
+    "download_menu": "Baixar"
   },
   "templates": {
     "breadcrumb": "Modelos",
@@ -1311,13 +1314,187 @@
       "singular": "tipificação",
       "create_title": "Nova tipificação",
       "plural": "tipificações",
-      "count": "{{count}} tipificações",
-      "count_one": "1 tipificação",
-      "code": "Código",
-      "category": "Categoria",
-      "name_placeholder": "Ex: Consulta resolvida",
-      "code_placeholder": "Ex: CON-001",
-      "category_placeholder": "Ex: Consulta"
+      "name_placeholder": "Ex. Apoio ao cliente",
+      "description_placeholder": "Ex. Motivo da chamada de um cliente",
+      "create_submit": "Criar tipificação",
+      "edit_breadcrumb": "Editar tipificação",
+      "search_placeholder": "Pesquisar tipificação por nome ou descrição...",
+      "no_results_query": "Nenhuma tipificação corresponde a «{{query}}».",
+      "empty_title": "Ainda não há tipificações",
+      "empty_body": "Crie a primeira, ou importe-as com o modelo.",
+      "columns": {
+        "name": "Nome",
+        "description": "Descrição",
+        "direction": "Direção",
+        "comments": "Comentários",
+        "levels": "Níveis",
+        "groups": "Grupos",
+        "id": "ID"
+      },
+      "direction": {
+        "inbound": "Entrantes",
+        "outbound": "Saintes",
+        "both": "Ambas"
+      },
+      "levels_count": "{{count}} níveis",
+      "levels_count_one": "1 nível",
+      "levels_none": "Só comentário",
+      "levels_first": "Nível 1: {{names}}",
+      "levels_other": "Nível {{level}}: {{count}} opções",
+      "levels_other_one": "Nível {{level}}: 1 opção",
+      "groups_aria": "{{count}} grupos",
+      "groups_aria_one": "1 grupo",
+      "import_columns": {
+        "name": "nome",
+        "description": "descrição",
+        "direction": "direção",
+        "comments": "comentários",
+        "level_1": "nível 1",
+        "level_2": "nível 2",
+        "level_3": "nível 3"
+      },
+      "import_title": "Importar tipificações",
+      "import_help": "Uma linha por caminho da árvore, como no modelo: nome, descrição, direção (Entrada, Saída ou Ambas), comentários (Sim ou Não) e até três níveis. As linhas com o mesmo nome são a mesma tipificação: a descrição, a direção e os comentários vão na primeira. Até {{max}} tipificações por ficheiro.",
+      "import_template": "Baixar modelo",
+      "import_template_file": "modelo-tipificacoes",
+      "import_choose": "Escolher arquivo",
+      "import_choose_other": "Escolher outro arquivo",
+      "import_create": "Serão criadas {{count}} tipificações",
+      "import_create_one": "Será criada 1 tipificação",
+      "import_nothing": "Não há tipificações novas para criar.",
+      "import_errors": "{{count}} linhas com erro, que não entram:",
+      "import_errors_one": "1 linha com erro, que não entra:",
+      "import_error_line": "Linha {{line}}: {{reason}}",
+      "import_reason": {
+        "nombre": "falta o nome",
+        "direccion": "a direção não é Entrada, Saída nem Ambas",
+        "comentarios": "os comentários não são Sim nem Não",
+        "hueco": "falta um nível entre dois que estão preenchidos",
+        "nivel": "não chega ao mesmo nível que a primeira linha da sua tipificação",
+        "vacia": "sem níveis nem comentários não pede nada"
+      },
+      "import_more_errors": "e mais {{count}}",
+      "import_duplicates": "{{count}} já existem com esse nome e não são criadas.",
+      "import_duplicates_one": "1 já existe com esse nome e não é criada.",
+      "import_over": "{{count}} passam o limite de {{max}} e não entram.",
+      "import_over_one": "1 passa o limite de {{max}} e não entra.",
+      "import_confirm": "Criar {{count}} tipificações",
+      "import_confirm_one": "Criar 1 tipificação",
+      "import_done": "Foram criadas {{count}} tipificações",
+      "import_done_one": "Foi criada 1 tipificação",
+      "level_title": {
+        "1": "Primeiro nível",
+        "2": "Segundo nível",
+        "3": "Terceiro nível"
+      },
+      "level_empty": "Ainda sem opções",
+      "level_waiting": {
+        "2": "Escolha uma opção do primeiro nível para ver as suas.",
+        "3": "Escolha uma opção do segundo nível para ver as suas."
+      },
+      "add_option": "Adicionar",
+      "rename_confirm": "Mudar o nome",
+      "delete_option_title": "Eliminar «{{name}}»?",
+      "delete_option_body": "As {{count}} opções abaixo também são eliminadas.",
+      "delete_option_body_one": "A opção abaixo também é eliminada.",
+      "errors": {
+        "option_taken": "Já existe «{{name}}» neste nível",
+        "name_taken": "Já existe uma tipificação com este nome"
+      },
+      "section": {
+        "general": "Geral",
+        "categorization": "Categorias",
+        "groups": "Grupos"
+      },
+      "direction_hint": "Em que conversas é pedida ao agente.",
+      "enable_comments": "Pedir um comentário",
+      "groups_hint": "Onde o agente a preenche, e por que canais",
+      "missing": {
+        "what": "o que o agente preenche",
+        "options": "opções em todos os ramos",
+        "channel": "um canal em cada grupo",
+        "conflicts": "grupos sem conflitos"
+      },
+      "groups": {
+        "col_group": "Grupo",
+        "filter_placeholder": "Pesquisar grupo...",
+        "picker_aria": "Adicionar um grupo",
+        "add_placeholder": "Adicionar grupo...",
+        "empty_title": "Ainda não é usada em nenhum grupo",
+        "empty": "Adicione os grupos onde o agente a vai preencher.",
+        "no_results": "Nenhum grupo corresponde à pesquisa.",
+        "remove_aria": "Remover {{name}}",
+        "conflict": "Em conflito com «{{name}}» nas {{direction}} por {{channel}}",
+        "conflict_direction": {
+          "inbound": "de entrada",
+          "outbound": "de saída"
+        },
+        "status_ok": "Marque por que canais é usada em cada grupo."
+      },
+      "level_selected": "Opção escolhida",
+      "level_none_selected": "Nenhuma opção escolhida",
+      "comments_hint": "O agente escreve uma nota livre, até 255 caracteres.",
+      "categorization_hint": "O que o agente escolhe, em até três níveis",
+      "remove_level": {
+        "1": "Remover o primeiro nível",
+        "2": "Remover o segundo nível",
+        "3": "Remover o terceiro nível"
+      },
+      "remove_level_title": {
+        "1": "Remover o primeiro nível?",
+        "2": "Remover o segundo nível?",
+        "3": "Remover o terceiro nível?"
+      },
+      "remove_level_body": "As suas {{count}} opções são eliminadas.",
+      "remove_level_body_one": "A sua opção é eliminada.",
+      "remove_level_confirm": "Remover nível",
+      "add_level": {
+        "1": "Adicionar primeiro nível",
+        "2": "Adicionar segundo nível",
+        "3": "Adicionar terceiro nível"
+      },
+      "add_level_hint": {
+        "1": "Para que o agente escolha uma categoria",
+        "2": "Cada opção do primeiro nível terá as suas",
+        "3": "Cada opção do segundo nível terá as suas"
+      },
+      "add_field": {
+        "1": "Nova opção do primeiro nível",
+        "2": "Nova opção do segundo nível",
+        "3": "Nova opção do terceiro nível"
+      },
+      "rename_field": "Novo nome da opção",
+      "add_first": "Adicionar opção…",
+      "add_under": "Adicionar em «{{name}}»…",
+      "renaming_hint": "Enter guarda o nome · Esc cancela",
+      "level_needs": "«{{name}}» precisa de opções aqui",
+      "option_actions": {
+        "group": "Ações de {{name}}",
+        "rename": "Renomear {{name}}",
+        "up": "Subir {{name}}",
+        "down": "Descer {{name}}",
+        "delete": "Eliminar {{name}}"
+      },
+      "tree_status": {
+        "none": "Sem categorias: o agente só escreve um comentário.",
+        "nothing": "Sem categorias nem comentário, o agente não teria nada para preencher.",
+        "empty": "Adicione a primeira opção.",
+        "missing": "Faltam opções abaixo de: {{paths}}",
+        "ok": "Completa: todos os ramos chegam ao nível {{count}}.",
+        "ok_one": "Completa: {{last}} opções num nível."
+      },
+      "preview": {
+        "title": "O que o agente vai ver",
+        "window": "Tipificação",
+        "level": "Nível {{level}}",
+        "comment": "Comentário",
+        "comment_placeholder": "Escrever um comentário...",
+        "nothing": "Não pede nada: ative o comentário ou adicione um nível.",
+        "saved": "Ficaria como {{path}}",
+        "saved_comment": "Ficaria guardada com o seu comentário",
+        "try": "Experimente: escolha os níveis e prima Guardar.",
+        "when": "Ao desligar, antes de receber outra conversa"
+      }
     },
     "variables": {
       "title": "Variáveis",
@@ -1654,13 +1831,14 @@
         "ring_all_summary": "{{count}} ao mesmo tempo",
         "sub_strategy": "Dentro de cada nível",
         "skills_unavailable": "Precisa de skills nos agentes",
-        "typification": "Tipificação",
-        "typification_new": "Nova tipificação",
-        "typification_none": "Sem tipificação",
-        "typification_hint": "Com tipificação, o agente tem de tipificar antes de fechar a conversa. Criam-se em Repositórios.",
+        "typification": "Tipificações",
+        "typification_hint": "O que o agente preenche ao terminar: até o fazer, não recebe outra conversa. Criam-se em Repositórios.",
         "agenda_new": "Nova agenda",
         "template_new": "Novo modelo",
-        "label_new": "Nova etiqueta"
+        "label_new": "Nova etiqueta",
+        "typification_count": "{0} tipificações",
+        "typification_count_one": "1 tipificação",
+        "typification_conflict": "«{{a}}» e «{{b}}» cobrem as {{direction}} por {{channel}}: o agente não saberia qual lhe cabe."
       },
       "strategy_help": {
         "balanced": "Distribui as conversas de forma equilibrada entre os agentes.",
@@ -1826,7 +2004,8 @@
       "name_required": "O nome é obrigatório",
       "channels_required": "Selecione pelo menos um canal",
       "name_taken": "Já existe um grupo com este nome",
-      "phone_required": "O telefone de saída é obrigatório"
+      "phone_required": "O telefone de saída é obrigatório",
+      "typification_conflict": "Duas tipificações cobrem o mesmo"
     },
     "toasts": {
       "created": "Grupo \"{{name}}\" criado",

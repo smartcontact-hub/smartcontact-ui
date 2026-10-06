@@ -14,8 +14,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *      por inactividad» hasta DD-142. Lo guardado no se pierde al guardar.
  *   4. «Caducar sesión» nace con 5 minutos.
  *   5. El tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, por agente conectado.
- *   6. La tipificación se elige por su categoría: el número que llevaba al lado eran sus tipificaciones, y se leía como
- *      niveles o como grupos.
+ *   6. Las tipificaciones se eligen por su nombre, sin cifras al lado, que se leían como niveles o como grupos. Desde
+ *      DD-173 son tipificaciones (árboles con su ficha) y no categorías del repositorio de antes.
  *   7. Los nombres largos caben en sus desplegables, en la ficha y en Contact Center.
  *
  * Storage limpio por test → cada almacén vuelve a su semilla.
@@ -210,14 +210,14 @@ test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, p
   await expect(ayuda).toHaveText('Varía con los agentes conectados: 2 conversaciones en cola por cada uno. Recomendado: 2');
 });
 
-test('la tipificación se elige por su categoría, sin la cuenta de sus tipificaciones al lado', async ({ page }) => {
-  // El grupo 12 tipifica con «Consulta», que en la semilla tiene tres.
+test('las tipificaciones se eligen por su nombre, sin cifras al lado', async ({ page }) => {
+  // El grupo 12 usa «Atención al cliente» y «Encuesta de calidad» (DD-173).
   await goto(page, 'admin/grupos/editar/12?seccion=recursos');
-  const tipificacion = page.locator('#group-typification');
-  await expect(tipificacion).toHaveText('Consulta');
-  const opciones = await opcionesDe(page, tipificacion);
-  expect(opciones).toContain('Consulta');
-  expect(opciones.filter((o) => /\(\d+\)$/.test(o))).toEqual([]);
+  await expect(page.locator('sc-multiselect:has(#group-typification)')).toContainText('2 tipificaciones');
+  await page.locator('sc-multiselect:has(#group-typification) .p-multiselect').click();
+  const opciones = await page.locator('.p-multiselect-overlay .p-multiselect-option').allInnerTexts();
+  expect(opciones.map((o) => o.trim())).toContain('Atención al cliente');
+  expect(opciones.filter((o) => /\(\d+\)\s*$/.test(o))).toEqual([]);
 });
 
 test('a 1366 los nombres largos caben en sus desplegables, en la ficha y en Contact Center', async ({ page }) => {

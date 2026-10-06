@@ -7,8 +7,3 @@ export function agendasOfrecidas<A extends { readonly id: number; readonly statu
   agendas: readonly A[],
   puestas: Iterable<number>,
 ): A[];
-/** ¿Le queda alguna tipificación a la categoría? */
-export function tipificacionViva(
-  categoria: string | null | undefined,
-  tipificaciones: readonly { readonly category: string }[],
-): boolean;

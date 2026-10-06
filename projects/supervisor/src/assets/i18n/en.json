@@ -1130,7 +1130,10 @@
       "description": "Description",
       "assigned_agents": "Assigned agents",
       "sheet": "Labels"
-    }
+    },
+    "import_export_button": "Import or download",
+    "import_menu": "Import…",
+    "download_menu": "Download"
   },
   "templates": {
     "breadcrumb": "Templates",
@@ -1311,13 +1314,187 @@
       "singular": "typification",
       "create_title": "New typification",
       "plural": "typifications",
-      "count": "{{count}} typifications",
-      "count_one": "1 typification",
-      "code": "Code",
-      "category": "Category",
-      "name_placeholder": "E.g. Query resolved",
-      "code_placeholder": "E.g. QRY-001",
-      "category_placeholder": "E.g. Query"
+      "name_placeholder": "E.g. Customer service",
+      "description_placeholder": "E.g. Why a customer called",
+      "create_submit": "Create typification",
+      "edit_breadcrumb": "Edit typification",
+      "search_placeholder": "Search typifications by name or description...",
+      "no_results_query": "No typifications match “{{query}}”.",
+      "empty_title": "No typifications yet",
+      "empty_body": "Create the first one, or import them with the template.",
+      "columns": {
+        "name": "Name",
+        "description": "Description",
+        "direction": "Direction",
+        "comments": "Comments",
+        "levels": "Levels",
+        "groups": "Groups",
+        "id": "ID"
+      },
+      "direction": {
+        "inbound": "Inbound",
+        "outbound": "Outbound",
+        "both": "Both"
+      },
+      "levels_count": "{{count}} levels",
+      "levels_count_one": "1 level",
+      "levels_none": "Comment only",
+      "levels_first": "Level 1: {{names}}",
+      "levels_other": "Level {{level}}: {{count}} options",
+      "levels_other_one": "Level {{level}}: 1 option",
+      "groups_aria": "{{count}} groups",
+      "groups_aria_one": "1 group",
+      "import_columns": {
+        "name": "name",
+        "description": "description",
+        "direction": "direction",
+        "comments": "comments",
+        "level_1": "level 1",
+        "level_2": "level 2",
+        "level_3": "level 3"
+      },
+      "import_title": "Import typifications",
+      "import_help": "One line per path in the tree, as in the template: name, description, direction (Inbound, Outbound or Both), comments (Yes or No) and up to three levels. Lines with the same name are the same typification: its description, direction and comments go on the first one. Up to {{max}} typifications per file.",
+      "import_template": "Download template",
+      "import_template_file": "typifications-template",
+      "import_choose": "Choose file",
+      "import_choose_other": "Choose another file",
+      "import_create": "{{count}} typifications will be created",
+      "import_create_one": "1 typification will be created",
+      "import_nothing": "There are no new typifications to create.",
+      "import_errors": "{{count}} lines with errors, which are left out:",
+      "import_errors_one": "1 line with an error, which is left out:",
+      "import_error_line": "Line {{line}}: {{reason}}",
+      "import_reason": {
+        "nombre": "the name is missing",
+        "direccion": "the direction is not Inbound, Outbound or Both",
+        "comentarios": "comments is neither Yes nor No",
+        "hueco": "a level is missing between two that are filled in",
+        "nivel": "it does not reach the same level as the first line of its typification",
+        "vacia": "with no levels and no comments it asks for nothing"
+      },
+      "import_more_errors": "and {{count}} more",
+      "import_duplicates": "{{count}} already exist with that name and are not created.",
+      "import_duplicates_one": "1 already exists with that name and is not created.",
+      "import_over": "{{count}} go over the limit of {{max}} and are left out.",
+      "import_over_one": "1 goes over the limit of {{max}} and is left out.",
+      "import_confirm": "Create {{count}} typifications",
+      "import_confirm_one": "Create 1 typification",
+      "import_done": "{{count}} typifications created",
+      "import_done_one": "1 typification created",
+      "level_title": {
+        "1": "First level",
+        "2": "Second level",
+        "3": "Third level"
+      },
+      "level_empty": "No options yet",
+      "level_waiting": {
+        "2": "Choose a first-level option to see its options.",
+        "3": "Choose a second-level option to see its options."
+      },
+      "add_option": "Add",
+      "rename_confirm": "Rename",
+      "delete_option_title": "Delete “{{name}}”?",
+      "delete_option_body": "The {{count}} options below it are deleted too.",
+      "delete_option_body_one": "The option below it is deleted too.",
+      "errors": {
+        "option_taken": "“{{name}}” is already at this level",
+        "name_taken": "There is already a typification with this name"
+      },
+      "section": {
+        "general": "General",
+        "categorization": "Categories",
+        "groups": "Groups"
+      },
+      "direction_hint": "Which conversations the agent is asked for it in.",
+      "enable_comments": "Ask for a comment",
+      "groups_hint": "Where the agent fills it in, and on which channels",
+      "missing": {
+        "what": "what the agent fills in",
+        "options": "options in every branch",
+        "channel": "a channel in each group",
+        "conflicts": "groups without clashes"
+      },
+      "groups": {
+        "col_group": "Group",
+        "filter_placeholder": "Search group...",
+        "picker_aria": "Add a group",
+        "add_placeholder": "Add group...",
+        "empty_title": "Not used in any group yet",
+        "empty": "Add the groups where the agent will fill it in.",
+        "no_results": "No group matches the search.",
+        "remove_aria": "Remove {{name}}",
+        "conflict": "Clashes with “{{name}}” on {{direction}} via {{channel}}",
+        "conflict_direction": {
+          "inbound": "inbound",
+          "outbound": "outbound"
+        },
+        "status_ok": "Tick which channels it is used on in each group."
+      },
+      "level_selected": "Option chosen",
+      "level_none_selected": "No option chosen",
+      "comments_hint": "The agent writes a free note, up to 255 characters.",
+      "categorization_hint": "What the agent chooses, in up to three levels",
+      "remove_level": {
+        "1": "Remove the first level",
+        "2": "Remove the second level",
+        "3": "Remove the third level"
+      },
+      "remove_level_title": {
+        "1": "Remove the first level?",
+        "2": "Remove the second level?",
+        "3": "Remove the third level?"
+      },
+      "remove_level_body": "Its {{count}} options are deleted.",
+      "remove_level_body_one": "Its option is deleted.",
+      "remove_level_confirm": "Remove level",
+      "add_level": {
+        "1": "Add first level",
+        "2": "Add second level",
+        "3": "Add third level"
+      },
+      "add_level_hint": {
+        "1": "So the agent chooses a category",
+        "2": "Each first-level option will have its own",
+        "3": "Each second-level option will have its own"
+      },
+      "add_field": {
+        "1": "New first-level option",
+        "2": "New second-level option",
+        "3": "New third-level option"
+      },
+      "rename_field": "New name for the option",
+      "add_first": "Add option…",
+      "add_under": "Add under “{{name}}”…",
+      "renaming_hint": "Enter saves the name · Esc cancels",
+      "level_needs": "“{{name}}” needs options here",
+      "option_actions": {
+        "group": "Actions for {{name}}",
+        "rename": "Rename {{name}}",
+        "up": "Move {{name}} up",
+        "down": "Move {{name}} down",
+        "delete": "Delete {{name}}"
+      },
+      "tree_status": {
+        "none": "No categories: the agent only writes a comment.",
+        "nothing": "With no categories and no comment, the agent would have nothing to fill in.",
+        "empty": "Add the first option.",
+        "missing": "Options are missing under: {{paths}}",
+        "ok": "Complete: every branch reaches level {{count}}.",
+        "ok_one": "Complete: {{last}} options in one level."
+      },
+      "preview": {
+        "title": "What the agent will see",
+        "window": "Typification",
+        "level": "Level {{level}}",
+        "comment": "Comment",
+        "comment_placeholder": "Write a comment...",
+        "nothing": "It asks for nothing: turn on the comment or add a level.",
+        "saved": "It would be saved as {{path}}",
+        "saved_comment": "It would be saved with its comment",
+        "try": "Try it: choose the levels and press Save.",
+        "when": "After hanging up, before taking another conversation"
+      }
     },
     "variables": {
       "title": "Variables",
@@ -1654,13 +1831,14 @@
         "ring_all_summary": "{{count}} at once",
         "sub_strategy": "Within each level",
         "skills_unavailable": "Needs agent skills",
-        "typification": "Typification",
-        "typification_new": "New typification",
-        "typification_none": "No typification",
-        "typification_hint": "With a typification, the agent must typify before closing the conversation. They are created in Repositories.",
+        "typification": "Typifications",
+        "typification_hint": "What the agent fills in at the end: until they do, they get no other conversation. Created in Repositories.",
         "agenda_new": "New address book",
         "template_new": "New template",
-        "label_new": "New label"
+        "label_new": "New label",
+        "typification_count": "{0} typifications",
+        "typification_count_one": "1 typification",
+        "typification_conflict": "“{{a}}” and “{{b}}” both cover {{direction}} via {{channel}}: the agent would not know which one applies."
       },
       "strategy_help": {
         "balanced": "Spreads conversations evenly across the agents.",
@@ -1826,7 +2004,8 @@
       "name_required": "Name is required",
       "channels_required": "Select at least one channel",
       "name_taken": "A group with this name already exists",
-      "phone_required": "The outbound phone is required"
+      "phone_required": "The outbound phone is required",
+      "typification_conflict": "Two typifications cover the same thing"
     },
     "toasts": {
       "created": "Group \"{{name}}\" created",
