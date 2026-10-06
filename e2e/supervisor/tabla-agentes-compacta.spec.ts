@@ -55,10 +55,9 @@ test('sin paginación: todas las filas del filtro, y la tabla desplaza por dentr
 
 /* LA CABECERA, UNA FILA DE TEXTO ALINEADA CON SUS CONTROLES (DD-176). Hasta entonces cada cabecera de casillas apilaba
  * su rótulo y su casilla de «todos», y la fila de cabeceras medía 54 con «Agente» y «Estado» flotando a media altura.
- * Elegido tras ver cómo lo hacen los SaaS de referencia (Zendesk, HubSpot, Genesys) y los sistemas de diseño (Carbon,
- * Atlassian, NN/g): rótulos de texto, sin controles en las cabeceras de datos; solo la primera columna, Asignado, lleva
- * su casilla de «todos». */
-test('la cabecera es una fila de texto: Asignado con su casilla delante, y cada rótulo sobre los controles de su columna', async ({
+ * Desde DD-181, Asignado, cada canal y Habilitado llevan su casilla de «todos» DELANTE del rótulo, en la misma fila y
+ * en la vertical de los controles de sus filas: se marca una columna entera sin volver a la cabecera de dos pisos. */
+test('la cabecera es una fila de texto: cada columna de controles con su casilla delante, sobre los controles de sus filas', async ({
   page,
 }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
@@ -85,15 +84,12 @@ test('la cabecera es una fila de texto: Asignado con su casilla delante, y cada 
     });
   });
   const col = (nombre: string) => m.find((c) => c.nombre === nombre)!;
-  const asignado = col('Asignado');
-  expect(asignado.casilla, 'Asignado: su casilla de todos').not.toBeNull();
-  expect(Math.abs(asignado.casilla!.left - asignado.control!), 'Asignado: sobre las casillas de sus filas').toBeLessThanOrEqual(0.5);
-  expect(asignado.texto.left, 'Asignado: el rótulo, detrás de la casilla').toBeGreaterThan(asignado.casilla!.left);
-  expect(Math.abs(asignado.texto.centro - asignado.casilla!.centro), 'Asignado: casilla y rótulo, a la misma altura').toBeLessThanOrEqual(1);
-  for (const nombre of ['Teléfono', 'Chat', 'Email', 'Habilitado']) {
+  for (const nombre of ['Asignado', 'Teléfono', 'Chat', 'Email', 'Habilitado']) {
     const c = col(nombre);
-    expect(c.casilla, `${nombre}: sin controles en la cabecera`).toBeNull();
-    expect(Math.abs(c.texto.left - c.control!), `${nombre}: el rótulo, sobre los controles de su columna`).toBeLessThanOrEqual(1);
+    expect(c.casilla, `${nombre}: su casilla de todos`).not.toBeNull();
+    expect(Math.abs(c.casilla!.left - c.control!), `${nombre}: sobre los controles de sus filas`).toBeLessThanOrEqual(0.5);
+    expect(c.texto.left, `${nombre}: el rótulo, detrás de la casilla`).toBeGreaterThan(c.casilla!.left);
+    expect(Math.abs(c.texto.centro - c.casilla!.centro), `${nombre}: casilla y rótulo, a la misma altura`).toBeLessThanOrEqual(1);
   }
 });
 
