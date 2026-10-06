@@ -253,12 +253,12 @@
 <ng-template #seccionGeneral>
   <sc-section-card
     anchorId="group-section-general"
-    surface="card"
+    surface="subtle"
     icon="tune"
     titleKey="groups.form.section.general"
     hintKey="groups.form.section.general_hint"
   >
-    <section class="sub-section">
+    <sc-subsection titleKey="groups.form.section.identity" hintKey="groups.form.section.identity_hint">
       <!-- La MISMA pieza que el diálogo de duplicar: mismos campos, mismo orden y mismos avisos. Aquí sin
            el teléfono: el saliente vive en el bloque de Teléfono de Distribución y colas. -->
       <sc-group-identity-fields
@@ -269,17 +269,11 @@
         (nameChange)="onNameChange($event)"
         (priorityChange)="onPriorityValueChange($event)"
       />
-    </section>
-
-    <sc-divider />
+    </sc-subsection>
 
     <!-- Que falte marcar un canal no es contenido equivocado: lo dicen el punto del índice, el resumen y el
          motivo junto a Guardar. -->
-    <section class="sub-section" aria-labelledby="group-channels-title">
-      <header class="sub-section__head">
-        <h3 id="group-channels-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.channels.title' | translate }}</h3>
-        <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.channels.hint' | translate }}</p>
-      </header>
+    <sc-subsection titleKey="groups.form.channels.title" hintKey="groups.form.channels.hint">
       <!-- En las tres columnas de Nombre y Prioridad (DD-170). -->
       <div class="checkbox-grid checkbox-grid--3">
         <!-- Cada canal en su pila, aunque no tenga hijas: así los tres arrancan en la misma línea. -->
@@ -300,7 +294,7 @@
       @if (channelsError()) {
         <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.channels_required' | translate }}</p>
       }
-    </section>
+    </sc-subsection>
   </sc-section-card>
 </ng-template>
 
@@ -633,12 +627,12 @@
 <ng-template #seccionRecursos>
   <sc-section-card
     anchorId="group-section-resources"
-    surface="card"
+    surface="subtle"
     icon="library_books"
     titleKey="groups.form.section.resources"
     hintKey="groups.form.section.resources_hint"
   >
-    <section class="sub-section">
+    <sc-subsection titleKey="sidebar.repositories">
       <div class="grid grid--2">
         <!-- Las tipificaciones del grupo (DD-173): varias, mientras no cubran lo mismo. Se
              crean en su ficha, que tiene su árbol: aquí se eligen. -->
@@ -763,17 +757,11 @@
 
       <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
       <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
-    </section>
-
-    <sc-divider />
+    </sc-subsection>
 
     <!-- La ficha de cliente que se le abre al agente (vivía en Avanzado). No es un objeto de Repositorios, pero de
          las cuatro secciones es su casa menos mala, y la visión la cuenta entre los recursos (DD-121). -->
-    <section class="sub-section" aria-labelledby="group-card-title">
-      <header class="sub-section__head">
-        <h3 id="group-card-title" class="sub-section__title sc-text-body-semibold">{{ 'groups.form.resources.client_card' | translate }}</h3>
-        <p class="sub-section__hint sc-text-caption-regular">{{ 'groups.form.resources.client_card_hint' | translate }}</p>
-      </header>
+    <sc-subsection titleKey="groups.form.resources.client_card" hintKey="groups.form.resources.client_card_hint">
       <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
       <div class="grid grid--2">
         <div class="field">
@@ -787,7 +775,7 @@
           </div>
         }
       </div>
-    </section>
+    </sc-subsection>
   </sc-section-card>
 </ng-template>
 
@@ -796,12 +784,12 @@
        (escala). La CAJA la pone esta `sc-section-card`, como antes de las pestañas. -->
   <sc-section-card
     anchorId="group-section-agents"
-    surface="card"
+    surface="subtle"
     icon="group"
     titleKey="groups.form.section.agents"
     hintKey="groups.form.section.agents_hint"
   >
-    <section class="sub-section">
+    <sc-subsection titleKey="groups.form.agents.assigned_title">
       <sc-agent-channel-table
         [groupChannels]="formGroupChannels()"
         [links]="form().links"
@@ -810,7 +798,7 @@
         [levelFamilies]="levelFamilies()"
         (linksChange)="onLinksChange($event)"
       />
-    </section>
+    </sc-subsection>
   </sc-section-card>
 </ng-template>
 
