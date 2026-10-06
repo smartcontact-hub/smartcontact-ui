@@ -161,6 +161,11 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () => import('./selectbutton/selectbutton-demo.component').then((m) => m.SelectButtonDemoComponent),
   },
   {
+    path: 'fileupload',
+    label: 'FileUpload',
+    load: () => import('./fileupload/fileupload-demo.component').then((m) => m.FileUploadDemoComponent),
+  },
+  {
     path: 'toggleswitch',
     label: 'ToggleSwitch',
     load: () => import('./toggleswitch/toggleswitch-demo.component').then((m) => m.ToggleSwitchDemoComponent),

@@ -35,6 +35,7 @@ import {
   ScMultiSelectComponent as MultiSelectComponent,
   ScInputNumberComponent as InputNumberComponent,
   ScSelectButtonComponent as SelectButtonComponent,
+  ScFileUploadComponent as FileUploadComponent,
   ScTextareaComponent as TextareaComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
   ScDialogComponent as DialogComponent,
@@ -63,8 +64,8 @@ import {
   DEFAULT_ANNOUNCEMENTS,
   GroupAdvanced,
   GroupAnnouncements,
-  UNAVAILABLE_STRATEGIES,
   VOICE_OPTIONS,
+  WHATSAPP_NUMBERS,
   groupDurationOptions,
   validQueueSize,
   type ChannelQueue,
@@ -204,6 +205,7 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     MultiSelectComponent,
     InputNumberComponent,
     SelectButtonComponent,
+    FileUploadComponent,
     TextareaComponent,
     ToggleSwitchComponent,
     DialogComponent,
@@ -256,16 +258,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
   protected readonly channels = GROUP_CHANNELS;
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
-  /** Skills se ve pero no se elige, con su motivo escrito en la opción (SISMAC-1975). */
-  protected readonly phoneStrategyOptions = computed(() => {
-    this.lang();
-    return PHONE_STRATEGIES.map((s) => ({
-      label: s,
-      value: s,
-      disabled: UNAVAILABLE_STRATEGIES.has(s),
-      note: UNAVAILABLE_STRATEGIES.has(s) ? this.translate.instant('groups.form.fields.skills_unavailable') : null,
-    }));
-  });
+  protected readonly phoneStrategyOptions = PHONE_STRATEGIES.map((s) => ({ label: s, value: s }));
   protected readonly chatStrategies = CHAT_STRATEGIES;
   protected readonly chatSubStrategies = CHAT_SUB_STRATEGIES;
   protected readonly levelFamilies = computed<readonly ('phone' | 'chat')[]>(() => [
@@ -607,17 +600,38 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return off;
   });
   protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
-  /** Los subcanales de Chat que el grupo tiene: cada uno escribe sus propios mensajes de cola. */
-  protected readonly activeChatSubchannels = computed<readonly ChatSubchannel[]>(() => {
-    const subchannels: readonly ChatSubchannel[] = ['chat', 'whatsapp'];
-    return subchannels.filter((c) => this.form().channels.has(c));
+  /** Los mensajes de un subcanal, por su sitio en la ficha: el inicial y el final, y los dos que dependen del horario
+   *  (solo con uno elegido). */
+  protected readonly chatMessageGroups: Readonly<Record<'frame' | 'schedule', readonly { key: keyof ChatQueueMessages; labelKey: string; placeholderKey: string }[]>> = {
+    frame: [
+      { key: 'initial', labelKey: 'groups.form.chat.message_initial', placeholderKey: 'groups.form.chat.message_initial_placeholder' },
+      { key: 'final', labelKey: 'groups.form.chat.message_final', placeholderKey: 'groups.form.chat.message_final_placeholder' },
+    ],
+    schedule: [
+      { key: 'outOfSchedule', labelKey: 'groups.form.chat.message_schedule', placeholderKey: 'groups.form.chat.message_schedule_placeholder' },
+      { key: 'nonWorkingDay', labelKey: 'groups.form.chat.message_non_working_day', placeholderKey: 'groups.form.chat.message_non_working_day_placeholder' },
+    ],
+  };
+  protected chatMessageSet(set: 'frame' | 'schedule') {
+    return this.chatMessageGroups[set];
+  }
+  protected chatMessage(sub: ChatSubchannel, key: keyof ChatQueueMessages): string {
+    return this.form().chat.queueMessages[sub][key];
+  }
+  protected attendanceSchedule(sub: ChatSubchannel): number | null {
+    return this.form().chat.attendanceScheduleIds?.[sub] ?? null;
+  }
+  /** Los números de WhatsApp de la cuenta, más el que ya tuviera guardado el grupo, y «Sin número» para quitarlo. */
+  protected readonly whatsappOptions = computed(() => {
+    this.lang();
+    const numbers = new Set(WHATSAPP_NUMBERS);
+    const current = this.form().advanced.whatsappNumber;
+    if (current) numbers.add(current);
+    return [{ label: this.translate.instant('groups.form.summary.no_number'), value: '' }, ...[...numbers].map((n) => ({ label: n, value: n }))];
   });
-  /** Los tres mensajes de cola de un subcanal, en el orden en que los recibe el cliente. */
-  protected readonly chatMessageKeys: readonly { key: keyof ChatQueueMessages; labelKey: string; placeholderKey: string }[] = [
-    { key: 'onEnter', labelKey: 'groups.form.chat.message_on_enter', placeholderKey: 'groups.form.chat.message_on_enter_placeholder' },
-    { key: 'whileWaiting', labelKey: 'groups.form.chat.message_waiting', placeholderKey: 'groups.form.chat.message_waiting_placeholder' },
-    { key: 'noAgents', labelKey: 'groups.form.chat.message_no_agents', placeholderKey: 'groups.form.chat.message_no_agents_placeholder' },
-  ];
+  protected setWhatsappNumber(value: unknown): void {
+    this.setAdvanced('whatsappNumber', typeof value === 'string' ? value : '');
+  }
   /** Los subcanales de Chat que el grupo tiene, para la cabecera de su bloque: «Web Chat · WhatsApp». */
   protected readonly chatSubchannelLabels = computed(() => {
     this.lang();
@@ -1073,11 +1087,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /** El .wav elegido: de momento solo se guarda su nombre (demo). */
-  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile', event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
+  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile', files: readonly File[]): void {
+    const file = files[0];
     if (file) this.setAnnouncement(key, file.name);
-    input.value = '';
   }
 
   /** Segundos de un aviso: un campo vaciado se queda en su valor anterior, como los de la cola. */
@@ -1085,12 +1097,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (typeof value === 'number' && Number.isFinite(value) && value >= 0) this.setAnnouncement(key, value);
   }
 
-  /** Un mensaje periódico más: su .wav, cada 30 s hasta que se cambie. */
-  protected onPeriodicFile(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) this.setAnnouncement('periodicAnnouncements', [...this.form().announcements.periodicAnnouncements, { file: file.name, everySec: 30 }]);
-    input.value = '';
+  /** Un mensaje periódico más por cada .wav elegido: cada 30 s hasta que se cambie. */
+  protected onPeriodicFiles(files: readonly File[]): void {
+    if (files.length === 0) return;
+    this.setAnnouncement('periodicAnnouncements', [
+      ...this.form().announcements.periodicAnnouncements,
+      ...files.map((file) => ({ file: file.name, everySec: 30 })),
+    ]);
   }
 
   protected setPeriodicFrequency(index: number, value: unknown): void {
@@ -1239,9 +1252,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const priority = this.translate.instant('groups.form.summary.priority', {
       value: this.translate.instant(this.priorityKeys[f.priority]),
     });
-    if (!this.hasPhone()) return priority;
-    const phone = f.phone || this.translate.instant('groups.form.summary.no_phone');
-    return `${phone} · ${priority}`;
+    return this.hasPhone() && f.phone ? `${f.phone} · ${priority}` : priority;
   });
 
   protected save(): void {

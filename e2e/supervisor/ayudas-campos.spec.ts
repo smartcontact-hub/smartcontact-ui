@@ -40,7 +40,7 @@ test('la estrategia de teléfono dice qué hace la elegida, se anuncia con el ca
   await pickSelectOption(page, estrategia(page), 'Más tiempo inactivo');
   await expect(estrategia(page)).toHaveAccessibleDescription('Al disponible que lleva más tiempo sin actividad.');
   await pickSelectOption(page, estrategia(page), 'Niveles');
-  await expect(estrategia(page)).toHaveAccessibleDescription(/^Primero, los de nivel 1 libres/);
+  await expect(estrategia(page)).toHaveAccessibleDescription(/^La conversación será distribuida al agente de mayor nivel/);
 });
 
 test('prioridad se nombra por su etiqueta y dice que solo cuenta en las entrantes', async ({ page }) => {
@@ -172,6 +172,6 @@ test('Niveles de Chat anuncia su ayuda y nombra Dentro de cada nivel', async ({ 
   const chat = page.locator('#group-channel-chat');
   const estrategiaChat = chat.getByRole('combobox', { name: 'Estrategia', exact: true });
   await pickSelectOption(page, estrategiaChat, 'Niveles');
-  await expect(estrategiaChat).toHaveAccessibleDescription(/^Primero, los de nivel 1/);
+  await expect(estrategiaChat).toHaveAccessibleDescription(/^La conversación será distribuida al agente de mayor nivel/);
   await expect(chat.getByRole('combobox', { name: 'Dentro de cada nivel', exact: true })).toBeVisible();
 });

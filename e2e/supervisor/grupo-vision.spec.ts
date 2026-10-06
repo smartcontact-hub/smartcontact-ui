@@ -81,7 +81,7 @@ test('Distribución y colas: un desbordamiento común y un bloque por canal acti
   await irA(page, 'Distribución y colas');
   const seccion = page.locator('#group-section-distribution');
 
-  await expect(seccion.getByText('Desbordar si todos los agentes están inactivos')).toHaveCount(1);
+  await expect(seccion.getByText('Desbordar conversaciones si no hay agentes conectados')).toHaveCount(1);
   for (const id of ['phone', 'chat', 'email']) {
     await expect(seccion.locator(`#group-channel-${id}`), id).toBeVisible();
   }
@@ -101,7 +101,7 @@ test('Teléfono: saliente y música a la vista; los demás mensajes de la cola, 
 
   // El rótulo del teléfono saliente lleva su «*» de obligatorio desde DD-142, y el texto de un rótulo empieza por un
   // espacio que el casado por expresión regular no recorta (medido).
-  for (const visible of ['Teléfono saliente', 'Música de espera']) {
+  for (const visible of ['Teléfono saliente', 'Música de espera/Transferencia']) {
     await expect(telefono.getByText(new RegExp(`^\\s*${visible}(\\s*\\*)?\\s*$`)), visible).toBeVisible();
   }
   // DD-157: los demás mensajes vuelven, plegados (DD-121 §6 los había sacado de la vista); el audio saliente, no.
@@ -148,7 +148,7 @@ const grupoDeAntes = {
   priority: 'Baja',
   channels: ['phone', 'chat'],
   strategy: 'Balanceada',
-  chatStrategy: 'Rotativa (por turnos)',
+  chatStrategy: 'Rotativa (por turnos)', // ya no existe: se lee con «Menos conversaciones activas»
   advanced: { queueSizeType: 'per_agent', queueSize: 7, maxQueueWaitSec: 99, serviceLevelSec: 33, transferSec: 11, wrapUpSec: 4 },
 };
 

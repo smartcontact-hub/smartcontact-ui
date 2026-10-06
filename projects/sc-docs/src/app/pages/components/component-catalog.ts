@@ -42,6 +42,7 @@ const CATEGORY: Record<string, ComponentCategory> = {
   search: 'Inputs',
   select: 'Inputs',
   selectbutton: 'Inputs',
+  fileupload: 'Inputs',
   textarea: 'Inputs',
   toggleswitch: 'Inputs',
   // Datos

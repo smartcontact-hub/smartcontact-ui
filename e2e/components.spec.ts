@@ -548,6 +548,23 @@ test.describe('sc-selectbutton', () => {
   });
 });
 
+test.describe('sc-fileupload', () => {
+  test('zona de soltar con su texto, botón de elegir y entrega al elegir; un tipo que no es, se rechaza', async ({ page }) => {
+    await gotoPage(page, 'fileupload');
+    const host = page.getByTestId('sc-fileupload-audio');
+    await expect(host.getByText('o suelta un .wav aquí.')).toBeVisible();
+    await expect(host.getByRole('button', { name: 'Elegir .wav' })).toBeVisible();
+    // Con `auto` no hay «Subir» ni «Cancelar».
+    await expect(host.getByRole('button', { name: /subir|upload|cancel/i })).toHaveCount(0);
+    await host.locator('input[type="file"]').setInputFiles({ name: 'espera.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFFdemo') });
+    await expect(page.getByText('espera.wav', { exact: true })).toHaveCount(1);
+    // `clearAfterSelect`: la lista se vacía, el nombre vive en el campo de al lado.
+    await expect(host.getByText('espera.wav')).toHaveCount(0);
+    await host.locator('input[type="file"]').setInputFiles({ name: 'voz.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
+    await expect(host.getByText(/voz\.mp3/)).toBeVisible();
+  });
+});
+
 test.describe('sc-search', () => {
   test('chrome del Kit: campo, icono lupa, clear y CVA', async ({ page }) => {
     await gotoPage(page, 'search');

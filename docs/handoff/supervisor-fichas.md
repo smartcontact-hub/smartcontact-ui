@@ -30,7 +30,29 @@ fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #3
 `git show 4217ed41:docs/handoff/supervisor-fichas.md`. Y el de sc-docs y el peso de los iconos (#330, sin
 trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`. El de Accesibilidad pendiente (#332, sin DD nueva ni trampas
 propias): `git show 540f246c:docs/handoff/supervisor-fichas.md``. El de supervisión y limpieza (2026-10-05, DD-168, #333, sin trampas propias): `git show
-60f8e617:docs/handoff/supervisor-fichas.md`.
+60f8e617:docs/handoff/supervisor-fichas.md`. El de las tres columnas sin cabecera (2026-10-05, DD-170, #337): `git show
+b49b56e0:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-06 · La revisión de grupos del equipo y `sc-fileupload` (DD-184)
+
+> **Sello:** rama `arebury/escolar` sobre main, HEAD `b49b56e0`. Un solo PR, con la revisión del equipo punto por punto y el
+> componente de subida; los cambios, enseñados en local antes de subir.
+
+- **La ficha, alineada con Voice:** sin Skills ni Rotativa (lo guardado con ellas se lee con Balanceada y Menos
+  conversaciones activas, por `RENAMED_STRATEGIES`); Ring All con «Nº agentes simultáneos» y su aviso siempre; tiempos
+  hasta 30 min; los rótulos del equipo; «Anunciar»; voces como las lista Voice; «Caducar sesión» con minutos escritos y
+  sin las ayudas de «Caducar sesión» y «Pedir valoración»; la cabecera sin «Sin teléfono saliente».
+- **Chat y WhatsApp:** Distribución, Cola, y por subcanal mensajes inicial y final, horario con sus dos mensajes
+  (solo con horario elegido) y, en Web Chat, dominios y script; WhatsApp después, con su número de una lista y, sin él,
+  nada de lo que sigue. El modelo de mensajes cambia a `initial`, `final`, `outOfSchedule` y `nonWorkingDay`; lo guardado
+  con las claves de antes se lee vacío, sin romper nada.
+- **`sc-fileupload`:** `p-fileupload` en modo advanced, sin servidor (`customUpload`) y con `auto`; los cuatro audios de
+  Grupos lo llevan, con `clearAfterSelect`. Página en sc-docs (Componentes › FileUpload). Registrado en DD-184 y en la
+  memoria (`primeng-fileupload`) para la subida de tipificaciones y las que vengan.
+- **Contact Center › Grupos** comparte rótulos y quita las ayudas de transferencia y tiempo entre llamadas.
+- **Pendiente:** su nodo en Figma (`figma-pendiente.md`); medir el modo `basic` si hace falta; la subida de tipificaciones
+  con este componente. **Tipificaciones** (la propuesta de Miguel, niveles por rama, vista previa fiel al agente) se
+  aparta hasta que la presente.
 
 ## ✅ 2026-10-06 · Las cuatro secciones de la ficha de grupo, en el mismo árbol (DD-182)
 
@@ -152,28 +174,6 @@ propias): `git show 540f246c:docs/handoff/supervisor-fichas.md``. El de supervis
 - **La columna `.ficha-summary` desplaza por dentro** (`overflow-y: auto`) y corta todo lo que sale por los lados, también
   una sombra: lo que tenga que salirse va en su propia columna del área `summary`.
 - **Un `.sc-dark` alrededor de una pieza no pone los campos de PrimeNG en oscuro**: sus `--p-*` se resuelven en la raíz.
-
-## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), fundido (#337)
-
-> **Sello:** fundido en `main` como HEAD `7d470054`; CI del PR y de `main`, en verde (leídos). Sale del marco de la
-> ficha de grupo en Figma («Landing page», nodo 2467:7078), leído contenedor a contenedor. En su CI salieron dos
-> pruebas que con DD-170 ya no medían nada (General ya cabía a 1280×720; las 10 filas cabían a 1512×945): rehechas.
-
-- **El molde, en las tres fichas:** el nombre y su línea van arriba de la columna del índice (dentro de `.page__rail`
-  en el DOM); la sección y el resumen arrancan a su altura; la rejilla es de una fila (`'rail main summary'`), y la
-  sección es la única columna que crece (812 a 1440, 1052 a 1920). Por debajo de 1340 la columna de la izquierda no
-  cambia y el resumen pasa a una franja encima de la sección.
-- **Fuera `sc-nombre-fijo` (DD-145 §1-§3):** el nombre ya no se va al bajar, porque vive en la columna fija. Fuera
-  también el `scroll-padding` que apartaba las anclas bajo la copia.
-- **Un nombre largo baja a dos líneas** y se corta al final de la segunda (también en `sc-name-inplace`, que ahora usa
-  los 196 enteros). En 196 caben unos 22 caracteres; todos los de la demo caben en una. Al pulsarlo para editarlo, el
-  título conserva su alto (el índice subía 24 px): `sc-name-inplace` pasa a `flow-root`, porque su `:host` sin
-  encapsular no casaba y se pintaba en línea. Del nombre a sus datos, 7: el campo de editar tapaba media línea.
-- **Los canales de General, en las columnas de Nombre y Prioridad** (`.checkbox-grid--3`): antes, a 3 y 6 px a 1440 y
-  86 px a 1920.
-- **En local, en verde:** las 38 del bloque (20 en rojo: 19 contra `main` y la del alto al editar, sin su arreglo), 126 vecinas, 63 de los barridos de las tres
-  fichas y `revision` (16 vistas, en regla). Mirado a 1440, 1280 (nombre en dos líneas), 1100 y con `?datos=tortura`.
-- **Figma:** `figma-pendiente` §35 pasa a DD-170 (grupo ya dibujado; faltan agente y usuario) y §36 se retira.
 
 ## SIGUIENTE — sin preguntar
 
