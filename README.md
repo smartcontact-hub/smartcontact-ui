@@ -1,6 +1,6 @@
 # Smart Contact · Tema para PrimeNG
 
-Versión 0.20261005.2155 · 2026-10-05 · origen: Design System de Smart Contact (`99534623`)
+Versión 0.20261006.431 · 2026-10-06 · origen: Design System de Smart Contact (`4217ed41`)
 
 Tema oficial de Smart Contact para aplicaciones Angular con PrimeNG. Es el mismo tema que utilizan las
 aplicaciones de Smart Contact, por lo que los componentes se muestran de forma idéntica en ambos entornos.
@@ -68,11 +68,10 @@ instalada figura en la cabecera de este documento y en `node_modules/smartcontac
 
 ## Cambios respecto a la versión anterior
 
-- Ficheros modificados: sc-preset.mjs, smartcontact-tokens.css.
-- Tokens de diseño modificados: 1.
-- Tokens de diseño retirados (si el código del proyecto los referencia, esas propiedades dejan de aplicarse): `--sc-font-size-caption-bold`.
+- Ficheros modificados: smartcontact-tokens.css.
+- Tokens de diseño modificados: 11.
 - Estilos comunes del tema: sin cambios.
-- Reglas CSS del tema: modificadas.
+- Reglas CSS del tema: sin cambios.
 - Componentes con estilos modificados: ninguno.
 
 ## Comprobaciones de esta versión
