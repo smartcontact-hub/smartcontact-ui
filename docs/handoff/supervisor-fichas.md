@@ -33,7 +33,7 @@ propias): `git show 540f246c:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-06 · Ordenar por cualquier columna, la barra de los listados y las casillas de cada columna (DD-180 y DD-181)
 
-> **Sello:** rama `arebury/pearlside`, con `main` dentro hasta #347 (`540f246c`); un commit en rojo y otro en verde por
+> **Sello:** rama `arebury/figma-make-prototipo-fiel`, con `main` dentro hasta #347 (`540f246c`); un commit en rojo y otro en verde por
 > bloque (DD-154).
 > Sale de una conversación con Figma Make sobre las tablas: lo que pidió la revisión, no lo que propuso Figma Make.
 
