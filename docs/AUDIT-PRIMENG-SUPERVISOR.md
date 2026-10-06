@@ -47,10 +47,6 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **29 props nativas no expuestas**: `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closeButtonProps`, `closeIcon`, `closeOnEscape`, `closeTabindex`, `contentStyle`, `contentStyleClass`, `focusOnShow`, `focusTrap`, `header`, `keepInViewport`, `maskMotionOptions`, `maskStyle`, `maskStyleClass`, `maximizable`, `maximizeButtonProps`, `maximizeIcon`, `minX`, `minY`, `minimizeIcon`, `motionOptions`, `rtl`, `showHeader`, `style`, `styleClass`
 
-### `sc-password` · 1 usos · primeng/password
-
-**25 props nativas no expuestas**: `appendTo`, `ariaLabelledBy`, `autofocus`, `inputSize`, `inputStyle`, `inputStyleClass`, `max`, `mediumLabel`, `mediumRegex`, `min`, `minlength`, `motionOptions`, `overlayOptions`, `pPasswordPT`, `pPasswordUnstyled`, `pattern`, `promptLabel`, `showClear`, `showPassword`, `step`, `strongLabel`, `strongRegex`, `tabindex`, `variant`, `weakLabel`
-
 ### `sc-button` · 157 usos · primeng/button
 
 **24 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconOnly`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `severity`, `style`, `styleClass`, `tabindex`, `text`

@@ -42,7 +42,7 @@
 | `sc-avatargroup` | STANDARD | primeng/avatargroup | 0 inputs | — | — | — |
 | `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 6 |
 | `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
-| `sc-bulk-action-bar` | CUSTOM | — | 1 inputs | — | ✓ | 3 |
+| `sc-bulk-action-bar` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
 | `sc-bulk-edit-menu` | CUSTOM | — | 2 inputs | sc-select sc-button | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
 | `sc-button` | EXTENDED | primeng/button | 18 inputs | — | ✓ | 157 |
