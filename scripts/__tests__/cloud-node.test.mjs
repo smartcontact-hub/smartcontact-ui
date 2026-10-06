@@ -48,14 +48,16 @@ function escenario() {
   mkdirSync(join(clon, 'node_modules'));
   mkdirSync(nvm);
   writeFileSync(join(nvm, 'nvm.sh'), NVM_FALSO);
+  const chromium = join(dir, 'chromium');
+  writeFileSync(chromium, '#!/bin/sh\n', { mode: 0o755 });
   const envFile = join(dir, 'env');
   writeFileSync(envFile, '');
   const r = spawnSync('bash', [HOOK], {
     cwd: clon,
     encoding: 'utf8',
-    env: { ...SIN_GIT, CLAUDE_CODE_REMOTE: 'true', CLAUDE_PROJECT_DIR: clon, CLAUDE_ENV_FILE: envFile, NVM_DIR: nvm },
+    env: { ...SIN_GIT, CLAUDE_CODE_REMOTE: 'true', CLAUDE_PROJECT_DIR: clon, CLAUDE_ENV_FILE: envFile, NVM_DIR: nvm, SC_CHROMIUM_CONTENEDOR: chromium },
   });
-  return { r, clon, nvm, envFile, git: (args) => git(clon, args) };
+  return { r, clon, nvm, envFile, chromium, git: (args) => git(clon, args) };
 }
 
 test('con la versión del .nvmrc sin instalar, la instala y la pone en el PATH de la sesión', () => {
@@ -78,4 +80,10 @@ test('fuera de la nube no toca nada', () => {
   const r = spawnSync('bash', [HOOK], { encoding: 'utf8', env: { ...SIN_GIT, CLAUDE_CODE_REMOTE: '' } });
   assert.equal(r.status, 0);
   assert.equal(r.stdout, '');
+});
+
+test('con el Chromium del contenedor, se lo pasa a Playwright por SC_CHROMIUM', () => {
+  const { r, envFile, chromium } = escenario();
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  assert.match(readFileSync(envFile, 'utf8'), new RegExp(`export SC_CHROMIUM="${chromium}"`));
 });
