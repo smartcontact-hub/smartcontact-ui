@@ -14,9 +14,10 @@
  * Sin trinquete: el tope es 0. Si sale rojo, quita el punto: no lo añadas a nada.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { dirname, join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const RAIZ = new URL('..', import.meta.url).pathname;
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PUNTO = '·';
 
 function* ficheros(dir) {
@@ -86,4 +87,4 @@ function main() {
   console.log('✓ audit:interpunct OK: ningún punto medio entre datos de la interfaz.');
 }
 
-if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) main();
+if (process.argv[1] && process.argv[1].endsWith('audit-interpunct.mjs')) main();

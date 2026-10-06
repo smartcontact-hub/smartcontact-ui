@@ -28,10 +28,7 @@
 
       <div class="agents-panel__footer">
         <span class="agents-panel__count sc-text-caption-regular">
-          {{ 'groups.agents_panel.assigned' | translate: { count: links().length } }}
-          @if (changes() > 0) {
-            · {{ 'groups.agents_panel.unsaved' | translate: { count: changes() } }}
-          }
+          {{ 'groups.agents_panel.assigned' | translate: { count: links().length } }}@if (changes() > 0) {, {{ 'groups.agents_panel.unsaved' | translate: { count: changes() } }}}
         </span>
         <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="requestClose()" />
         <sc-button

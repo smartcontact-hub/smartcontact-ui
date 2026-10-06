@@ -11,7 +11,7 @@ export const SC_PHOTO_UPLOAD_TRANSLATIONS: Record<string, TranslationObject> = {
       photoUpload: {
         changePhoto: 'Change photo',
         select: 'Select photo',
-        hint: 'JPG, PNG or GIF · max 800 KB',
+        hint: 'JPG, PNG or GIF, max 800 KB',
         remove: 'Remove photo',
         invalidType: 'Invalid file type. Use JPG, PNG or GIF.',
         tooLarge: 'Image too large (max 800 KB).',
@@ -23,7 +23,7 @@ export const SC_PHOTO_UPLOAD_TRANSLATIONS: Record<string, TranslationObject> = {
       photoUpload: {
         changePhoto: 'Cambiar foto',
         select: 'Seleccionar foto',
-        hint: 'JPG, PNG o GIF · máx 800 KB',
+        hint: 'JPG, PNG o GIF, máx 800 KB',
         remove: 'Quitar foto',
         invalidType: 'Tipo de archivo no válido. Usa JPG, PNG o GIF.',
         tooLarge: 'Imagen demasiado grande (máx 800 KB).',

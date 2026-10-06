@@ -50,7 +50,7 @@ test('grupo · cada agenda es una fila con sus contactos y su estado; «Editar»
   const agendas = filas(page, 'Agendas');
   await expect(agendas).toHaveCount(3);
   await expect(agendas.first()).toContainText('Ventas Nacional');
-  await expect(agendas.first()).toContainText('3 contactos · Activa');
+  await expect(agendas.first()).toContainText('3 contactos, activa');
   // Los nombres ya están en las filas: el desplegable dice cuántas, no las repite.
   await expect(etiqueta(page, 'group-agendas')).toHaveText('3 agendas');
 
@@ -81,7 +81,7 @@ test('grupo · una plantilla abre su panel en su pestaña; la tipificación, su 
   await expect(tipificaciones).toHaveCount(2);
   await expect(tipificaciones.first()).toContainText('Atención al cliente');
   // El dato: en qué conversaciones se pide y cuántos niveles tiene.
-  await expect(tipificaciones.first()).toContainText('Entrantes · 3 niveles');
+  await expect(tipificaciones.first()).toContainText('Entrantes, 3 niveles');
   await tipificaciones.first().getByRole('link', { name: 'Editar Atención al cliente' }).click();
   await expect(page).toHaveURL(/\/admin\/tipificaciones\/editar\/1$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Atención al cliente');
@@ -128,13 +128,13 @@ test('agente · las agendas y sus «Editar»; en el alta, las filas sin «Editar
   const agendas = filas(page, 'Agendas');
   await expect(agendas).toHaveCount(2);
   await expect(agendas.nth(1)).toContainText('Cobros');
-  await expect(agendas.nth(1)).toContainText('4 contactos · Activa');
+  await expect(agendas.nth(1)).toContainText('4 contactos, activa');
   await expect(agendas.nth(1).getByRole('link', { name: 'Editar Cobros' })).toHaveAttribute('href', '/admin/agendas/editar/3');
 
   await goto(page, 'admin/agentes/crear');
   await irASeccion(page, 'Recursos');
   await marcar(page, 'agent-agendas', 'Cobros');
   await expect(filas(page, 'Agendas')).toHaveCount(1);
-  await expect(filas(page, 'Agendas')).toContainText('4 contactos · Activa');
+  await expect(filas(page, 'Agendas')).toContainText('4 contactos, activa');
   await expect(filas(page, 'Agendas').getByRole('link')).toHaveCount(0);
 });

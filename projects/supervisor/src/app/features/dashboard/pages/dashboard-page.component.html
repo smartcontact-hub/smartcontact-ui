@@ -30,7 +30,7 @@
           <p-toolbar class="dashboard-head__actions" [dt]="toolbarDt" ariaLabelledBy="dashboard-title">
             <p class="dashboard-head__live sc-text-caption-regular">
               <sc-badge variant="success" aria-hidden="true" />
-              <span>{{ 'dashboard.live' | translate }}</span>
+              <span class="dashboard-head__live-label">{{ 'dashboard.live' | translate }}</span>
               <span class="dashboard-head__updated">{{ 'dashboard.updated_at' | translate: { time: updatedAtLabel() } }}</span>
             </p>
 
@@ -115,7 +115,7 @@
               }
               <span class="wall-bar__live sc-text-caption-regular">
                 <sc-badge variant="success" aria-hidden="true" />
-                {{ 'dashboard.live' | translate }} · {{ 'dashboard.updated_at' | translate: { time: updatedAtLabel() } }}
+                {{ 'dashboard.live' | translate }}, {{ 'dashboard.updated_at' | translate: { time: updatedAtLabel() } }}
               </span>
             </span>
           </ng-template>
@@ -270,10 +270,7 @@
         <span class="alerts-panel__text">
           <span class="sc-text-body-semibold">{{ a.alert.reasonKey | translate: a.alert.params }}</span>
           <span class="alerts-panel__where sc-text-caption-regular">
-            {{ titleOf(a.widget) }} · {{ a.monitorName }}
-            @if (a.seen) {
-              · {{ 'dashboard.alerts.seen' | translate }}
-            }
+            {{ titleOf(a.widget) }}, {{ a.monitorName }}@if (a.seen) {, {{ 'dashboard.alerts.seen' | translate }}}
           </span>
         </span>
       </button>

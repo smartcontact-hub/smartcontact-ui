@@ -16,7 +16,7 @@ import {
  * LAS ALTAS DICEN LO QUE FALTA, HASTA «LISTO PARA CREAR» (DD-136).
  *
  * Es el efecto de gradiente de meta: cuanto menos le falta a un formulario, antes se termina. Las altas nacen con los
- * valores de Contact Center (DD-135), y el resumen dice lo poco que queda: «Falta: nombre · extensión». En cuanto el
+ * valores de Contact Center (DD-135), y el resumen dice lo poco que queda: «Falta: nombre, extensión». En cuanto el
  * botón «Crear …» se enciende, «Listo para crear». Sin porcentaje ni barra (DD-121, DD-126).
  *
  * Lo dice UN `role="status"` que cambia en su sitio: el lector lo anuncia al cambiar, y no aparece ni desaparece. Un
@@ -45,7 +45,7 @@ test('grupo · dice qué falta y, con nombre, un canal y su teléfono saliente, 
   await goto(page, 'admin/grupos/crear');
   // Teléfono ya viene marcado, y con él el teléfono saliente es obligatorio (DD-142): faltan los dos.
   await expect(estado(page)).toHaveCount(1);
-  await expect(estado(page)).toHaveText(dice('Falta: nombre · teléfono saliente'));
+  await expect(estado(page)).toHaveText(dice('Falta: nombre, teléfono saliente'));
   await expect(boton(page, 'Crear grupo')).toBeDisabled();
 
   await page.locator('#group-name').fill(`E2E Meta ${Date.now()}`);
@@ -73,7 +73,7 @@ test('grupo · con un nombre repetido no dice «Listo»: el error va en su campo
 test('agente · dice que faltan nombre y extensión y, con los dos, «Listo para crear»', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
   await expect(estado(page)).toHaveCount(1);
-  await expect(estado(page)).toHaveText(dice('Falta: nombre · extensión'));
+  await expect(estado(page)).toHaveText(dice('Falta: nombre, extensión'));
   await expect(boton(page, 'Crear agente')).toBeDisabled();
 
   await page.locator('#agent-name').fill(`E2E Meta ${Date.now()}`);
@@ -92,7 +92,7 @@ test('agente · dice que faltan nombre y extensión y, con los dos, «Listo para
 test('usuario · dice que faltan nombre y email y, con los dos, «Listo para crear»', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');
   await expect(estado(page)).toHaveCount(1);
-  await expect(estado(page)).toHaveText(dice('Falta: nombre · email'));
+  await expect(estado(page)).toHaveText(dice('Falta: nombre, email'));
   await expect(boton(page, 'Crear usuario')).toBeDisabled();
 
   await page.locator('#user-name').fill(`E2E Meta ${Date.now()}`);

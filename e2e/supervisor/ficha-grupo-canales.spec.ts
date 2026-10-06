@@ -64,7 +64,7 @@ test('sin Teléfono, su bloque se va de Distribución y deja la línea que dice 
   await irA(page, 'Distribución y colas');
   await expect(page.locator('#group-channel-phone')).toHaveCount(0);
   await expect(page.locator('#group-phone')).toHaveCount(0);
-  await expect(page.locator('#group-section-distribution')).toContainText('Teléfono no está activo · actívalo en General');
+  await expect(page.locator('#group-section-distribution')).toContainText('Teléfono no está activo: actívalo en General');
   await expect(page.locator('sc-form-section-nav .form-nav__item')).toHaveCount(4);
 });
 

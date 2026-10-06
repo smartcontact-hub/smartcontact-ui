@@ -95,7 +95,7 @@ test('crear es la misma ficha: abre en General con Teléfono, no deja pasar sin 
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+\?seccion=distribucion$/);
   await expect(page.locator('#group-section-distribution')).toBeVisible();
   // Nace con los valores por defecto de Grupos.
-  await expect(page.locator('.headline__meta')).toContainText('Prioridad: Baja');
+  await expect(page.locator('.headline__meta')).toContainText('prioridad: baja');
 });
 
 test('duplicar sigue siendo un diálogo corto y se lleva los agentes del original', async ({ page }) => {
