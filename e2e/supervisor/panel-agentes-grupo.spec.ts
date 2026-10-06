@@ -126,7 +126,8 @@ test('con dos canales, el panel se ajusta a sus columnas: nombre cerca de sus ca
   await expect(panel(page).locator('.agents-panel__channels')).toHaveCount(0);
 
   const { ancho, altoFila, hueco, huecoCasilla } = await medidas(page);
-  expect(ancho, 'agente, estado, canales y Habilitado, cada columna medida (DD-156)').toBeLessThanOrEqual(48 * 16);
+  // Con la casilla de «todos» en cada canal y en Habilitado (DD-181), 52rem; antes, 48.
+  expect(ancho, 'agente, estado, canales y Habilitado, cada columna medida (DD-156)').toBeLessThanOrEqual(52 * 16);
   expect(hueco, 'del nombre y el email a su estado').not.toBeNull();
   expect(hueco!, 'del nombre y el email a su estado').toBeLessThanOrEqual(6 * 16);
   expect(huecoCasilla, 'de la columna del estado a la primera casilla').not.toBeNull();
@@ -171,8 +172,8 @@ test('una fila que llega sin canal devuelve la columna en un grupo de uno, y mar
 
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(1);
   const ancho = (await medidas(page)).ancho;
-  // Solo Teléfono: 44,375rem (DD-176: cada columna mide su rótulo, y «Téléphone» pide 5,5).
-  expect(ancho).toBeLessThanOrEqual(44.375 * 16);
+  // Solo Teléfono: 47,25rem (DD-181: Teléfono y Habilitado con su casilla de «todos»; con DD-176, 44,375).
+  expect(ancho).toBeLessThanOrEqual(47.25 * 16);
 
   // Es la única forma de darle canal desde aquí; al marcarla pasa a ser su último canal, y la columna se queda.
   await panel(page).getByRole('checkbox', { name: 'Tom Hanks — Teléfono' }).click();

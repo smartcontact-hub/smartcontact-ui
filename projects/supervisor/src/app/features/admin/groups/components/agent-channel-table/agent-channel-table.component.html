@@ -20,14 +20,14 @@
         <tr>
           @for (col of columns(); track col.field) {
             <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
-              <!-- Una fila de texto, todo alineado a la izquierda con los controles de sus filas (DD-176). Solo Asignado
-                   lleva su casilla de «todos», delante del rótulo, en la vertical de las casillas de sus filas: la primera
-                   columna, donde se espera. Los canales se cambian fila a fila. -->
-              @if (col.field === 'assigned') {
+              <!-- Una fila de texto, todo alineado a la izquierda con los controles de sus filas (DD-176). Asignado, cada
+                   canal y Habilitado llevan su casilla de «todos» delante del rótulo, en la vertical de los controles de
+                   sus filas (DD-180, enmienda DD-176 §4): marcar o desmarcar una columna entera sin ir fila a fila. -->
+              @if (hasHeaderCheckbox(col.field)) {
                 <span class="assign__head">
-                  <sc-checkbox [state]="assignedHeaderState()" [disabled]="assignedHeaderDisabled()"
+                  <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)"
                     [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                    (cycle)="toggleAssignedHeader()" />
+                    (cycle)="toggleHeader(col.field)" />
                   <span aria-hidden="true">{{ col.header }}</span>
                 </span>
               } @else { {{ col.header }} }

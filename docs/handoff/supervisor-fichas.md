@@ -28,7 +28,30 @@ f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/
 revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
 fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
 `git show 4217ed41:docs/handoff/supervisor-fichas.md`. Y el de sc-docs y el peso de los iconos (#330, sin
-trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`.
+trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`. El de Accesibilidad pendiente (#332, sin DD nueva ni trampas
+propias): `git show 540f246c:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-06 · Ordenar por cualquier columna, la barra de los listados y las casillas de cada columna (DD-180 y DD-181)
+
+> **Sello:** rama `arebury/figma-make-prototipo-fiel`, con `main` dentro hasta #347 (`540f246c`); un commit en rojo y otro en verde por
+> bloque (DD-154).
+> Sale de una conversación con Figma Make sobre las tablas: lo que pidió la revisión, no lo que propuso Figma Make.
+
+- **1 · Ordenar (DD-180):** Grupos, por todas sus columnas (faltaban Teléfono, Canales y Servicios); Agentes, por todas
+  menos Estado, que cambia sola (faltaban Canales y Grupos). Canales, por cuántos tiene la fila y, con los mismos, por
+  cuáles (`compareChannels`, en `groups-data.ts`). Cinco cabeceras se salían con su flecha en algún idioma (la peor,
+  «Groupes», 16 px; «Prioridade» ya se salía 5 en `main`): ensanchadas lo justo, sin desplazamiento lateral a 1440.
+  «Columnas», a la altura del buscador (32,5; medía 27): enmienda DD-176 §7.
+- **2 · La barra, en dos grupos (DD-180 §4):** Columnas a 12,25 del buscador (estaba a 24,5) y la descarga con solo el
+  aire de su separador, 14 por lado (estaba a 53,5). El globo de Columnas y el menú de archivo son nodos vacíos en la
+  barra y sumaban un hueco de flex cada uno.
+- **3 · Las casillas de cada columna (DD-181):** en la tabla de agentes del grupo, cada canal y Habilitado llevan su
+  casilla de «todos» delante del rótulo, como Asignado (enmienda DD-176 §4). Un canal nunca se lleva el último de una
+  fila. **Coste:** con los tres canales (Online Support) la tabla desplaza 59 px a 1440.
+- **En local, en verde:** `listados-ordenar-columnas.spec.ts` (7, en rojo contra `main`), `asignacion-agentes-lista` y
+  `tabla-agentes-compacta` (en rojo antes del bloque 3), las vecinas de los listados (145) y de la ficha y el panel
+  (cinco pruebas fijaban los anchos de antes y se ponen al día: el panel crece lo que suman las casillas), y `revision`
+  de los dos listados y la ficha de grupo, en regla.
 
 ## ✅ 2026-10-06 · Repositorios en tarjetas por grupo, con su panel (DD-179), en su PR
 
@@ -161,27 +184,6 @@ trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`.
 - **En local, en verde:** las pruebas de cada bloque (rojas antes; la guarda del 2, con un fallo por comprobación),
   las vecinas del 1 (107), los barridos de las rutas tocadas (36) y `revision` del Dashboard y de las fichas (18 vistas,
   en regla), con el menú y el panel abiertos desde el Monitor en una sonda aparte.
-
-## ✅ 2026-10-05 · Accesibilidad pendiente, en un lote de seis bloques, fundido (#332)
-
-> **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sin DD nueva: cada bloque cierra lo que dejó abierto
-> una DD, con su «Actualización (2026-10-05)»: DD-133, DD-135, DD-136, DD-146 y DD-162.**
-
-- **1 · Cada desplegable con nombre:** PrimeNG nombra un combobox sin nombre con la opción elegida, y un `<label for>`
-  no nombra el span de `sc-select` (sí el `<input>` de `sc-multiselect`). `sc-select` gana `ariaLabel` (el nativo) y
-  sus opciones apagadas dicen `aria-disabled`. `audit:screen-hygiene` gana la regla: cazó 31 de 119; quedan 0.
-- **2 · Las ayudas se anuncian con su campo:** seis campos del DS ganan `ariaDescribedBy` (`joinDescribedBy`), y
-  `sc-multiselect` lleva sus `aria-*` al combobox. 42 ayudas de las fichas, Contact Center y Sistema llevan su id.
-- **3 · El marcador de la foto, a 3:1:** `--sc-icon-secondary` (3,96:1). Las altas de agente y usuario, en `RUTAS`.
-- **4 · El enlace del resumen se pulsa en 24:** el `::after` de la cifra de `sc-group-popover`.
-- **5 · Ordenar columnas sin arrastrar:** con el teclado no se llegaba al globo. Ahora el foco entra en la lista,
-  «Subir» y «Bajar» mueven la última enfocada y Escape vuelve al icono; dos arreglos alrededor del Listbox (abajo).
-- **6 · Subtítulos sin relleno:** fuera «Capacidades del agente» y «Comportamiento, integración y sesión».
-- **En local, en verde:** las pruebas de cada bloque (rojas antes), sus vecinas y barridos, y `revision` de las 32
-  vistas, en regla. `visual-baselines` regeneró cinco capturas de sc-docs (select, multiselect, inputnumber, textarea
-  y toggleswitch), miradas una a una.
-- **Fundido:** #332 → `f41d3ce6`. De punta a punta, 2 h 21 min (`npm run tiempos -- 332 --desde 08:16`); el CI del PR,
-  8 min, verde a la primera.
 
 ## SIGUIENTE — sin preguntar
 
