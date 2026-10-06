@@ -22,6 +22,13 @@ else
   git fetch -q --tags origin 2>/dev/null || true
 fi
 
+# Playwright busca una build de Chromium que el contenedor no trae (medido el 2026-10-06: «Executable doesn't exist»).
+# Las configs lanzan el de `SC_CHROMIUM` si está (`scripts/playwright-navegador.mjs`); fuera de la nube nadie la define.
+chromium="${SC_CHROMIUM_CONTENEDOR:-/opt/pw-browsers/chromium}"
+if [ -x "$chromium" ] && [ -n "${CLAUDE_ENV_FILE:-}" ]; then
+  echo "export SC_CHROMIUM=\"$chromium\"" >> "$CLAUDE_ENV_FILE"
+fi
+
 [ -f .nvmrc ] || exit 0
 
 export NVM_DIR="${NVM_DIR:-/opt/nvm}"

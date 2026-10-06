@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { navegadorPropio } from './scripts/playwright-navegador.mjs';
+
 import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
 
 /**
@@ -45,6 +47,7 @@ export default defineConfig({
   workers: process.env['CI'] ? undefined : 4,
   reporter: process.env['CI'] ? 'list' : 'line',
   use: {
+    ...navegadorPropio(),
     baseURL: process.env['SC_CUSCARE_URL'] ?? 'http://localhost:4415',
     // El mismo viewport en el que se MIDIÓ el sitio real: la app escala con
     // `font-size: 0.8vw`, así que a otro ancho las medidas no casarían.
