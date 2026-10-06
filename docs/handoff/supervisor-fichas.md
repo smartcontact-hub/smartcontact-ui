@@ -27,7 +27,22 @@ f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/
 (DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. Y el de la
 revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
 fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
-`git show 4217ed41:docs/handoff/supervisor-fichas.md`.
+`git show 4217ed41:docs/handoff/supervisor-fichas.md`. El de sc-docs y el peso de los iconos (#330, sin DD nueva ni
+trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-06 · Ordenar por cualquier columna y la barra a una altura (DD-180)
+
+> **Sello:** rama `arebury/pearlside` sobre `main` en `3ff6cd71`; un commit en rojo y otro en verde (DD-154). Sale de
+> una conversación con Figma Make sobre las tablas: lo que pidió la revisión, no lo que propuso Figma Make.
+
+- **Grupos se ordena por todas sus columnas** (faltaban Teléfono, Canales y Servicios) y **Agentes por todas menos
+  Estado**, que cambia sola (faltaban Canales y Grupos). Canales, por cuántos tiene la fila y, con los mismos, por
+  cuáles (`compareChannels`, en `groups-data.ts`).
+- **Cada cabecera cabe con su flecha** en los cuatro idiomas: cinco se salían (la peor, «Groupes», 16 px; «Prioridade»
+  ya se salía 5 en `main`). Ensanchadas lo justo y sin desplazamiento lateral a 1440.
+- **«Columnas», a la altura del buscador** (32,5; medía 27): enmienda DD-176 §7, en las diez listas de `sc-list-page`.
+- **En local, en verde:** `listados-ordenar-columnas.spec.ts` (6, en rojo contra `main`: sin orden, el botón a 27 y
+  «Prioridade»), y las vecinas de los listados.
 
 ## ✅ 2026-10-06 · El pulido de las fichas (DD-176), en un lote de ocho bloques, fundido (#341)
 
@@ -152,38 +167,6 @@ fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #3
   y toggleswitch), miradas una a una.
 - **Fundido:** #332 → `f41d3ce6`. De punta a punta, 2 h 21 min (`npm run tiempos -- 332 --desde 08:16`); el CI del PR,
   8 min, verde a la primera.
-
-## ✅ 2026-10-05 · sc-docs y el peso de los iconos, en un lote de cuatro bloques, fundido (#330)
-
-> **Un PR, un commit en rojo y otro en verde por bloque (DD-154). Sin DD nueva: A, B y C son docs, y D cumple DD-130 §6.**
-
-- **A · El lienzo y el código respiran:** en la tabla de API, «Dos sentidos» y «Salidas» llevan el escalón de entre
-  grupos (estaban a 0 de la tabla de encima). `.row` y `.col` de las demos vuelven a tener su hueco, acotadas al
-  lienzo: `component-page.scss`, que las definía, no lo importaba nadie desde julio, y se borra. «Copiar» ya no tapa la
-  primera línea, y una línea larga no estira el Playground bajo «Controles». Las pruebas, a 1280 × 720, el viewport de
-  las capturas: a 1440 cabía todo. Al revisar C salió una más: con `.col` en flex, el margen del párrafo se sumaba al
-  hueco, y doce líneas de lectura («Valor: …») quedaban a 28 de su control. Y al revisar las capturas, otra: el lienzo
-  es una fila flex, y una `.col` medía lo que su hijo más ancho. Ahora crece hasta su tope (40rem): «Fluid» se
-  distingue, y los campos de las demos van a su ancho de formulario. Progress Bar no enseñaba ninguna barra, ni el
-  Playground de Skeleton su bloque, también en `main`: van en una `.col`.
-- **B · Lo que sc-docs escribe es verdad:** el código de una story sin snippet sale del contrato
-  (`_component-api.json`). Omite lo que vale su valor por defecto, escribe un booleano que nace encendido y se apaga
-  (`[allowEmpty]="false"` en selectbutton) y escribe lo requerido aunque no tenga control (`[sections]="sections"`).
-  De 186 cajas de código cambian 43. La lógica, pura, va en `serialize-args.core.mjs`. `audit:doc-snippets` gana la
-  regla (e): una story sin snippet que pinta otra plantilla que la del Playground. Había cinco, y ya llevan el suyo.
-  `component-audit` deja de cortar un tipo en el `>` de `=>`, lo que arregla tres tipos de la tabla de API.
-- **C · Las demos nuevas:** Button gana «Solo icono», como «Icon Only» de primeng.dev: cuatro formas por siete
-  variantes, cada botón con su nombre, y el «+» de DD-167, un círculo de 31,5. GroupPopover gana «Al pulsar la
-  cifra», con su línea de lectura de `activated`.
-- **D · El icono pesa lo que su texto (DD-130 §6, figma-pendiente §29):** en `sc-form-section-nav` plano, el icono y
-  el ✓ de la fila activa van a 600 y los demás a 400; en el de por defecto, a 500. El título de `sc-subsection`, a
-  600. En el Supervisor cambian el índice de las fichas y de Contact Center, y Teléfono, Chat y Email en Distribución.
-- **En local, en verde:**
-  - las unitarias del bloque, la vitest de los dos componentes (24) y las e2e del lienzo (6) y de las demos;
-  - `component-styles`: 126 claves añadidas, ninguna cambiada;
-  - los barridos de las tres rutas (18), las vecinas del índice (39) y `revision` en regla.
-
-  Las 38 capturas de sc-docs se mueven, y se regeneran antes del PR.
 
 ## SIGUIENTE — sin preguntar
 

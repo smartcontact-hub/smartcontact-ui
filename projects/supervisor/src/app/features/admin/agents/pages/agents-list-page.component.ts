@@ -45,7 +45,7 @@ import {
   PresenceStatus,
 } from '../data/agents-data';
 import { AgentBulkField, AgentsStore } from '../state/agents.store';
-import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
+import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS, compareChannels } from '@features/admin/groups/data/groups-data';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { Channel } from '@features/admin/services/group-agent-links.types';
@@ -250,9 +250,11 @@ export class AgentsListPageComponent {
       {
         field: 'channels',
         header: this.translate.instant('agents.table.channels'),
+        sortable: true,
         cellTemplate: this.channelsTpl(),
-        /* Tres familias: 48 px de glifos + 21 de huecos + 28 de relleno de celda (DD-147). */
-        width: '6.25rem',
+        /* Tres familias: 48 px de glifos + 21 de huecos + 28 de relleno de celda (DD-147). Desde que se ordena
+         * (2026-10-06) manda la cabecera con su flecha: «Channels», 111 px (medido a 1440). */
+        width: '7.25rem',
       },
       {
         // `field: 'type'` no existe en `Agent` (la propiedad es `agentType`), así
@@ -285,8 +287,10 @@ export class AgentsListPageComponent {
       {
         field: 'groups',
         header: this.translate.instant('agents.table.groups'),
+        sortable: true,
         cellTemplate: this.groupsTpl(),
-        width: '5.5rem',
+        /* La cabecera con su flecha: «Groupes», 105 px (medido a 1440, 2026-10-06). */
+        width: '6.875rem',
       },
     ];
   });
@@ -349,6 +353,10 @@ export class AgentsListPageComponent {
         return a.agentType.localeCompare(b.agentType);
       case 'recording':
         return Number(a.permissions.recording) - Number(b.permissions.recording);
+      case 'channels':
+        return compareChannels(this.channelsForAgent(a.id), this.channelsForAgent(b.id), CHANNEL_FAMILIES);
+      case 'groups':
+        return this.groupsForAgent(a.id).length - this.groupsForAgent(b.id).length;
       default:
         return 0;
     }

@@ -40,6 +40,7 @@ import {
 import {
   CHANNEL_LABEL_KEYS,
   CHAT_STRATEGIES,
+  GROUP_CHANNELS,
   GROUP_PRIORITIES,
   Group,
   GroupChannel,
@@ -48,6 +49,7 @@ import {
   UNAVAILABLE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
   chatStrategyOf,
+  compareChannels,
   duplicateGroupDraft,
   type GroupIdentityDraft,
   phoneStrategyOf,
@@ -248,6 +250,12 @@ export class GroupsListPageComponent {
         return (phoneStrategyOf(a) ?? '').localeCompare(phoneStrategyOf(b) ?? '', 'es');
       case 'chatStrategy':
         return (chatStrategyOf(a) ?? '').localeCompare(chatStrategyOf(b) ?? '', 'es');
+      case 'phone':
+        return (this.hasPhone(a) ? a.phone : '').localeCompare(this.hasPhone(b) ? b.phone : '', 'es', { numeric: true });
+      case 'channels':
+        return compareChannels(a.channels, b.channels, GROUP_CHANNELS);
+      case 'services':
+        return (a.services?.length ?? 0) - (b.services?.length ?? 0);
       default:
         return 0;
     }
@@ -274,7 +282,7 @@ export class GroupsListPageComponent {
   private readonly servicesTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('servicesTpl');
   private readonly agentsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('agentsTpl');
 
-  /** `sortable` en las MISMAS cinco que llevaban `scSortable`. La columna del menú de fila la añade la lista. */
+  /** Todas se ordenan (antes, solo las cinco que llevaban `scSortable`). La columna del menú de fila la añade la lista. */
   protected readonly columns = computed<readonly ScColumnDef<Group>[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
     return [
@@ -295,14 +303,17 @@ export class GroupsListPageComponent {
       {
         field: 'phone',
         header: this.translate.instant('groups.table.phone'),
+        sortable: true,
         cellTemplate: this.phoneTpl(),
         /* Anchos MEDIDOS del dato más largo de cada columna corta (2026-09-14); el nombre se come el
-         * resto y la tabla lleva `tableMinWidth`: por debajo se desplaza en vez de cortar. */
-        width: '7rem',
+         * resto y la tabla lleva `tableMinWidth`: por debajo se desplaza en vez de cortar. Desde que se ordena
+         * (2026-10-06), lo que manda es la cabecera con su flecha: «Téléphone», 118 px, y unos 4 de margen. */
+        width: '7.625rem',
       },
       {
         field: 'channels',
         header: this.translate.instant('groups.table.channels'),
+        sortable: true,
         cellTemplate: this.channelsTpl(),
         /* Cuatro glifos de 16 px con su hueco (teléfono, chat, WhatsApp, email). */
         width: '7.75rem',
@@ -312,7 +323,8 @@ export class GroupsListPageComponent {
         header: this.translate.instant('groups.table.priority'),
         sortable: true,
         cellTemplate: this.priorityTpl(),
-        width: '7rem',
+        /* La cabecera con su flecha: «Prioridade», 117 px (medido a 1440, 2026-10-06; con 7rem se salía 5). */
+        width: '7.625rem',
       },
       {
         field: 'strategy',
@@ -335,8 +347,10 @@ export class GroupsListPageComponent {
       {
         field: 'services',
         header: this.translate.instant('groups.table.services'),
+        sortable: true,
         cellTemplate: this.servicesTpl(),
-        width: '6.5rem',
+        /* La cabecera con su flecha: «Servicios», 111 px (medido a 1440, 2026-10-06). */
+        width: '7.25rem',
       },
       {
         field: 'agents',

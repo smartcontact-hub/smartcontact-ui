@@ -132,6 +132,29 @@
 
 ---
 
+## DD-180 · 2026-10-06 — Los listados se ordenan por cualquier columna, salvo la que cambia sola, y la barra va a una altura
+
+**Contexto** · En Grupos se ordenaban 6 de 9 columnas (no Teléfono, Canales ni Servicios) y en Agentes faltaban Canales y
+Grupos, sin una razón escrita: eran las que llevaban `scSortable` antes de pasar a `sc-datatable`. Y el botón «Columnas»
+(DD-176 §7, `small` como el ejemplo de primeng.dev) medía 27 de alto junto a un buscador de 32,5, en la misma barra.
+
+**Decisión** ·
+1. **Un listado se ordena por cualquier columna, salvo la que cambia sola**: Estado, en Agentes (la presencia cambia
+   mientras miras, y ordenarla deja una foto que miente al momento). Canales ordena por cuántos tiene la fila y, con los
+   mismos, por cuáles, en el orden de sus iconos (`compareChannels`); Servicios y Grupos, por su cifra; Teléfono, por
+   el número, y un grupo sin Teléfono («—») va como vacío, como las estrategias.
+2. **Cada cabecera cabe con su flecha**, en los cuatro idiomas: Teléfono y Prioridad pasan a 7,625rem («Téléphone»,
+   118 px; «Prioridade», 117, que ya se salía 5 antes), Servicios a 7,25 («Servicios», 111); en Agentes, Canales a
+   7,25 («Channels», 111) y Grupos a 6,875 («Groupes», 105, se salía 16). Los mínimos de tabla suben lo mismo (98,75
+   y 100,125rem). Medido a 1440: ninguna de las dos tablas desplaza de lado.
+3. **El botón «Columnas», a la altura del buscador de su barra**: el tamaño normal del botón, no `small` (enmienda
+   DD-176 §7). Los dos, 32,5, en las diez listas que monta `sc-list-page`.
+
+**Descartadas** · Ordenar también Estado: el orden se rompe solo en cuanto alguien cambia de estado.
+
+**Consecuencias** · Lo vigila `e2e/supervisor/listados-ordenar-columnas.spec.ts` (qué cabeceras ordenan, que las nuevas
+ordenan de verdad, que cada flecha cabe en los cuatro idiomas y la altura del botón), vista en rojo contra `main`.
+
 ## DD-177 · 2026-10-05 — Lo que verá el agente: el teléfono de sc-agent, a la derecha de la ficha de una tipificación
 
 **Contexto** · Una tipificación se entiende por lo que le pide al agente al colgar, y la ficha solo lo describía. La
@@ -252,6 +275,7 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    2.5.7). La lista es una sola parada del tabulador; las flechas, Inicio y Fin van de una columna a otra; Espacio la
    marca; «Subir» y «Bajar», al pie, mueven la enfocada (o la pulsada); al abrir, el foco entra en la lista, y Escape
    vuelve al botón. La fija (Nombre) sale marcada, sin asa y sin poder quitarse ni moverse.
+   *(Enmendado por DD-180, 2026-10-06: el botón va en su tamaño normal, a la altura del buscador de su barra.)*
 8. **«Administrativo», en marrón**: el color de etiqueta `brown`, nuevo en la paleta del DS (`LabelColor`, nueve
    colores) y en todas sus etiquetas: `sc-tag` y `sc-chip` con `variant="label"`, la paleta de puntos y el selector de
    color de Etiquetas. La paleta del Kit no trae familia marrón: el marrón de la paleta es el ámbar oscuro, y la
