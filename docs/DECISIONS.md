@@ -129,6 +129,44 @@
 
 ---
 
+## DD-175 · 2026-10-06 — Lote 10 · velocidad: una cola de capturas por rama, «sin máquina» no es rojo, el aviso de estilos y el número de DD frente a los PR abiertos
+
+**Contexto** · El PR #342 (lotes 5 a 9) tardó 9 h 13 min de punta a punta: un 41 % fueron pausas por límite de uso, un
+39 % trabajo, un 18 % colas de GitHub y un 2 % CI normal. Las colas y un CI de más salieron de cuatro huecos de las
+herramientas: (1) `visual-baselines` compartía una sola cola para todas las ramas, y la ejecución 20 (#342) esperó
+detrás de la 19 y se canceló sin correr (~30 min); (2) `ci:verdict` contaba como rojo los 12 jobs que GitHub canceló
+sin darles máquina, y se notó 45 min después; (3) el aviso de capturas del preflight no miraba
+`component-styles.json`, que cayó en e2e-smoke por cinco plantillas (un CI de más, ~20 min), y seguía dando por
+pendientes capturas que el robot ya había regenerado idénticas; (4) tres PR abiertos usaron DD-172 a la vez.
+
+**Decisión** ·
+1. `visual-baselines.yml`: `concurrency.group: visual-baselines-${{ inputs.rama }}`, con `cancel-in-progress: false`.
+   La misma rama sigue sin pisarse; las ramas distintas ya no se esperan. Llega al fundir: el workflow se lanza
+   desde el fichero de `main`.
+2. `ci:verdict`: un job `cancelled` con `runner_name` vacío cuenta como «sin máquina». Si son los únicos rojos, sale
+   con 7 y su remedio; en una mezcla, manda el rojo real (exit 1) y los otros se nombran aparte. `--relanzar` pide
+   `rerun-failed-jobs` una sola vez, y solo si `run_attempt` es 1: un segundo fallo ya es real.
+3. `api-baselines` (aviso del preflight): si cambian la plantilla o la hoja de una pieza que está en
+   `component-styles.json`, y la rama no lo ha regenerado, da el comando
+   `SC_UPDATE_STYLES=1 npx playwright test component-styles`. Una captura cuenta como comprobada si hay un commit
+   del robot (`chore(e2e): baselines visuales regeneradas en Linux`) posterior al último cambio de su pieza.
+4. `preflight:scope --run` lee los `## DD-N` que añade el `docs/DECISIONS.md` de cada PR abierto (de su parche, con
+   `ddsDePr` de `github.mjs`). Si tu rama usa uno, avisa sin bloquear, nombra el PR y propone el siguiente libre: el
+   mayor entre `main` y los PR abiertos, más uno. Sin red, calla.
+5. No se hace: que en `component-styles` los envoltorios neutros no gasten profundidad. Medido con la regla puesta,
+   salen 267 entradas nuevas (0 cambiadas). 180 son celdas del `datatable`, una por cada `td` de las filas de
+   ejemplo, y solo unas 35 son los botones que se buscaban. Eso no es «pocas y estables».
+
+**Razón** ·
+- Los cuatro son tiempo de espera, no de trabajo: cada uno se midió en el #342 y cada arreglo lleva su test, que se
+  vio en rojo antes del cambio.
+- Un rojo que en realidad es «sin máquina» manda a buscar un fallo que no existe; relanzar más de una vez esconde uno
+  que sí existe.
+- La regla de profundidad congelaría datos de ejemplo como contrato. Para leer el botón de las piezas compuestas hace
+  falta otra regla (por ejemplo, no gastar nivel solo en los hosts `sc-*`/`p-*`), que queda en el hand-off del DS.
+
+---
+
 ## DD-173 · 2026-10-05 — El pulido de las fichas tras DD-170: textos cortos, el nombre editable, el índice, la tabla de agentes, las columnas y la selección
 
 **Contexto** · La revisión de DD-170 en local trajo una lista: textos de ayuda largos, a veces con una sola palabra

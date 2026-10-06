@@ -58,7 +58,9 @@ import os from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { cliente as clienteDeGithub } from "./github.mjs";
+import { cliente as clienteDeGithub, ddsAnadidas } from "./github.mjs";
+
+export { ddsAnadidas };
 import { localizarMemoria, leerMemoria, revisarMemoria } from "./memory-shape.mjs";
 
 /**
@@ -333,6 +335,59 @@ export function avisarLedgers({ mios = [], rama = "", cliente, escribir = escrib
     return true;
   } catch {
     return false;
+  }
+}
+
+/* EL NÚMERO DE DD, frente a los PR abiertos. El 2026-10-05 tres PR abiertos usaron DD-172 a la vez: cada uno miró
+ * `main`, y en `main` el 172 estaba libre. Como el de ledgers, avisa sin bloquear y calla sin red (DD-175). */
+
+/** Tus DD que ya usa otro PR abierto, y el siguiente libre (el mayor de `main` y de los PR, más uno); `null` si no chocan. Pura. */
+export function choqueDeDds({ mias = [], maxMain = 0, prs = [], rama = "" } = {}) {
+  const otros = prs.filter((pr) => pr.headRefName !== rama);
+  const choques = mias
+    .map((dd) => ({ dd, prs: otros.filter((pr) => (pr.dds ?? []).includes(dd)).map((pr) => pr.number) }))
+    .filter((c) => c.prs.length > 0);
+  if (!choques.length) return null;
+  const siguiente = Math.max(maxMain, ...otros.flatMap((pr) => pr.dds ?? [])) + 1;
+  return { choques, siguiente };
+}
+
+/** El aviso del choque, listo para imprimir. Pura. */
+export function avisoDeDds({ choques, siguiente }) {
+  const lineas = [REGLA, "⚠️  OTRO PR ABIERTO YA USA TU NÚMERO DE DD: al fundir el segundo, habrá dos con el mismo número.", ""];
+  for (const c of choques) lineas.push(`    DD-${c.dd}: también en ${c.prs.map((n) => `#${n}`).join(", ")}`);
+  lineas.push("", `    Esto NO bloquea. El siguiente libre, mirando main y los PR abiertos: DD-${siguiente}.`, REGLA);
+  return lineas.join("\n");
+}
+
+/** Pregunta a GitHub y avisa si tus DD chocan; devuelve si escribió. NO LANZA NUNCA; sin DD propia no pregunta. */
+export function avisarDds({ mias = [], maxMain = 0, rama = "", cliente, escribir = escribirEnStderr } = {}) {
+  try {
+    if (!mias.length) return false;
+    const gh = cliente ?? clienteDeGithub();
+    const prs = gh
+      .prsAbiertos(() => false)
+      .filter((pr) => pr.headRefName !== rama)
+      .map((pr) => ({ ...pr, dds: gh.ddsDePr(pr.number) }));
+    const choque = choqueDeDds({ mias, maxMain, prs, rama });
+    if (!choque) return false;
+    escribir(avisoDeDds(choque));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Las DD que añade tu rama respecto a `origin/main`, y la mayor de `origin/main`. Sin git legible, nada. */
+export function ddsDeRama(cwd = process.cwd()) {
+  try {
+    const g = (args) => execFileSync("git", args, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 });
+    const base = g(["merge-base", "HEAD", "origin/main"]).trim();
+    const mias = ddsAnadidas(g(["diff", base, "--", "docs/DECISIONS.md"]));
+    const enMain = [...g(["show", "origin/main:docs/DECISIONS.md"]).matchAll(/^## DD-(\d+)\b/gm)].map((m) => Number(m[1]));
+    return { mias, maxMain: Math.max(0, ...enMain) };
+  } catch {
+    return { mias: [], maxMain: 0 };
   }
 }
 

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { cliente } from '../github.mjs';
-import { avisarLedgers, avisoDeLedgers, cruceDeLedgers, esLedger } from '../preflight-puerta-barata.mjs';
+import { avisarDds, avisarLedgers, avisoDeLedgers, choqueDeDds, cruceDeLedgers, ddsAnadidas, esLedger } from '../preflight-puerta-barata.mjs';
 
 // LEARNINGS #21: un ledger compartido (DECISIONS, LEARNINGS, inventory, handoff y AGENTS) que tocan dos PRs abiertos a
 // la vez se pisa en silencio al fundir el segundo. El preflight lo avisa al arrancar, sin bloquear, como la carga.
@@ -88,5 +88,58 @@ test('avisarLedgers: si tu rama no toca ningún ledger, no pregunta nada a la re
     },
   };
   assert.equal(avisarLedgers({ mios: ['projects/a.ts'], rama: 'mi', cliente: cuenta, escribir: () => {} }), false);
+  assert.equal(llamadas, 0);
+});
+
+// El 2026-10-05, tres PR abiertos usaron DD-172 a la vez (#340, #341 y #342): el número se elige mirando `main`, y los
+// PR abiertos no se miraban. El preflight los mira ahora, avisa sin bloquear y propone el siguiente libre (DD-175).
+const PARCHE = '@@ -1,3 +1,9 @@\n # Decisiones\n+\n+## DD-173 · 2026-10-05 — Sin saltos\n+texto\n+## DD-172 · 2026-10-05 — Tipificaciones\n ## DD-171 · vieja\n-## DD-9 · quitada';
+
+test('ddsAnadidas: solo los `## DD-N` que el parche AÑADE', () => {
+  assert.deepEqual(ddsAnadidas(PARCHE), [173, 172]);
+  assert.deepEqual(ddsAnadidas(''), []);
+});
+
+test('ddsDePr: los DD que añade el docs/DECISIONS.md de un PR, por su parche', () => {
+  const { gh } = ghFalso([['pulls/340/files', [{ filename: 'projects/a.ts', patch: '+## DD-999 · no cuenta' }, { filename: 'docs/DECISIONS.md', patch: PARCHE }]]]);
+  assert.deepEqual(cliente({ gh, git }).ddsDePr(340), [173, 172]);
+});
+
+test('choqueDeDds: nombra el PR con el que chocas y propone el mayor de main y de los PR, más uno', () => {
+  const prs = [
+    { number: 340, headRefName: 'tipificaciones', dds: [172, 173, 174] },
+    { number: 341, headRefName: 'fichas', dds: [172] },
+    { number: 1, headRefName: 'mi-rama', dds: [172] },
+  ];
+  assert.deepEqual(choqueDeDds({ mias: [172], maxMain: 172, prs, rama: 'mi-rama' }), {
+    choques: [{ dd: 172, prs: [340, 341] }],
+    siguiente: 175,
+  });
+  assert.equal(choqueDeDds({ mias: [175], maxMain: 172, prs, rama: 'mi-rama' }), null);
+  assert.equal(choqueDeDds({ mias: [], maxMain: 172, prs, rama: 'mi-rama' }), null);
+});
+
+test('avisarDds: con choque escribe una vez, sin bloquear; sin red calla', () => {
+  const escritos = [];
+  const escribir = (t) => escritos.push(t);
+  const falso = {
+    prsAbiertos: () => [{ number: 340, headRefName: 'tipificaciones' }],
+    ddsDePr: () => [172, 173, 174],
+  };
+  assert.equal(avisarDds({ mias: [173], maxMain: 172, rama: 'mi', cliente: falso, escribir }), true);
+  assert.equal(escritos.length, 1);
+  assert.match(escritos[0], /DD-173/);
+  assert.match(escritos[0], /#340/);
+  assert.match(escritos[0], /DD-175/);
+  assert.match(escritos[0], /NO bloquea/);
+
+  const sinRed = { prsAbiertos() { throw new Error('sin red'); }, ddsDePr() { throw new Error('sin red'); } };
+  assert.equal(avisarDds({ mias: [173], maxMain: 172, rama: 'mi', cliente: sinRed, escribir }), false);
+  assert.equal(escritos.length, 1);
+
+  // Sin DD propia no pregunta nada a la red.
+  let llamadas = 0;
+  const cuenta = { prsAbiertos: () => (llamadas++, []), ddsDePr: () => (llamadas++, []) };
+  assert.equal(avisarDds({ mias: [], maxMain: 172, rama: 'mi', cliente: cuenta, escribir }), false);
   assert.equal(llamadas, 0);
 });
