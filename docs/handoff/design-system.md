@@ -43,7 +43,7 @@
 - ~~**La puerta barata del preflight, contra un ledger en PR ajeno**~~ → hecho el 2026-10-05: `avisarLedgers` avisa, sin bloquear, si otro PR abierto toca tus ledgers (LEARNINGS #21).
 - **Guardianes que miden un PROXY, no la condición** (tanda 2026-09-19: seis hallados, cuatro ya arreglados; el patrón lo caza LEARNINGS #2, «ante un trinquete que NO baja, mira un caso a mano»). Quedan cuatro, en orden de valor (la (b) se cerró el 2026-10-04): (a) **2º punto ciego de `audit-text-styles`** — la comprobación de ROLES usa el mismo `aplanar()` que no ve `code`/`pre`/descendientes ni `@media`; antes de tocarla hay que DECIDIR si un `html { font-size: 100% }` debe cumplir un rol (probablemente no): primero la regla, luego el gate.
   (b) ~~El hook de cierre casa la cadena `git push`, no el acto~~ — **cerrado el 2026-10-04**: `stop-guard` cuenta el push que CORRIÓ (el resultado de su herramienta no trae `is_error`, o enseña el ref subido: un push denegado por `bash-guard` o un `false && … git push` no llegaron a subir nada, y un `git push && npm run build` con el build roto sí subió), trata el cuerpo de un heredoc como dato salvo que lo lea un shell (`bash <<EOF`), y no cuenta el push de OTRO repositorio, con el mismo `usaPreflight` y el mismo analizador de carpetas que `bash-guard` desde el `cwd` de cada evento. Medido sobre el transcript de una sesión: de 12 comandos que el hook contaba como push, 4 nunca pushearon y 8 solo llevaban `git push` en el texto de un heredoc; los pushes de verdad eran 2, y los de después se cuentan bien.
-  (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 2 tras DD-172): quedan dos, y son de las que se proponen. `sc-button → [pButton]`: la directiva no trae `label`, `icon` ni salidas, y cambia el DOM de todos los botones (mueve `component-structure.json` y las capturas). `sc-multiselect → p-select` con `multiple`: le faltan seis cosas que usamos (`showToggleAll`, `selectAll`, `selectionLimit`, `maxSelectedLabels`, `selectedItemsLabel`, `display`; medido en 22.1.0), y DD-153 eligió ampliar el envoltorio.
+  (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 2 tras DD-172): quedan dos, y son de las que se proponen. `sc-button → [pButton]`: la directiva no trae `label`, `icon` ni salidas, y cambia el DOM de todos los botones (mueve las capturas y las 8 entradas `p-button` de `component-styles.json`; `component-structure.json` no tiene ninguna, medido el 2026-10-06). Coste medido y opciones: tramo del 2026-10-06. `sc-multiselect → p-select` con `multiple`: le faltan seis cosas que usamos (`showToggleAll`, `selectAll`, `selectionLimit`, `maxSelectedLabels`, `selectedItemsLabel`, `display`; medido en 22.1.0), y DD-153 eligió ampliar el envoltorio.
   (d) **La plantilla de PR promete lo que no sabe**: medido, ningún gate lee el checklist y solo 2 de sus 6 casillas están respaldadas (`verify` y tokens). Barato: que cada línea diga si la vigila un gate y que «no aplica» no se escriba con un tick. Gateables de verdad, si Rafa quiere: bump de versión y CHANGELOG.
   (e) **`preflightVivo` de `bash-guard` cuenta el preflight de CUALQUIER caja**: busca la carpeta en la línea de comandos, que es relativa (y en macOS `pgrep -af` da solo PIDs). Medido el 2026-09-28: el preflight de otra caja denegó `npm run build:supervisor` en esta. Arreglo: el `cwd` de cada PID (`lsof -a -p PID -d cwd`, `/proc/PID/cwd`), con su test en rojo.
 
@@ -165,6 +165,25 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-06 · Lote 10 · velocidad: cola de capturas por rama, «sin máquina», aviso de estilos y DD libre (DD-175)
+
+**Sello:** rama `claude/lote-10-velocidad`, sobre HEAD `99534623` (#342), PR nuevo. Sale por el tope el tramo del 2026-10-04
+(DD-154 y DD-155): `git show 99534623:docs/handoff/design-system.md`.
+
+**Lo que cambia.** Cuatro huecos que en el #342 costaron colas y un CI de más (DD-175): `visual-baselines` encola por
+rama; `ci:verdict` sale con 7 cuando los únicos rojos son jobs sin máquina, y `-- --relanzar` los relanza una vez; el
+aviso de capturas del preflight da el comando de `component-styles` y no cuenta como pendiente lo que el robot ya
+comprobó; y el preflight avisa si tu número de DD ya lo usa un PR abierto (tests en `aviso-ledgers.test.mjs`).
+
+- ⚠️ **El 10.5 (envoltorios neutros en `component-styles`) se midió y no se hizo**: 267 entradas nuevas, 180 de celdas del
+  `datatable`. Para leer el botón de las piezas compuestas, prueba a no gastar nivel solo en los hosts `sc-*` y `p-*`, y
+  mide de nuevo.
+- ⚠️ **En la nube, Angular pide Node ≥ 22.22.3 y el contenedor trae 22.22.0**: baja la de `.nvmrc` (22.23.2). Playwright
+  busca `chromium_headless_shell-1234`; usa `executablePath: '/opt/pw-browsers/chromium'` en una config temporal.
+- **Plan sin ejecutar** (medido 2026-10-06): `sc-button → [pButton]`, 265 usos en 78 ficheros y 178 `(clicked)`; la
+  directiva no trae `label`, `icon`, `clicked`, el mapeo `variant`/`appearance` ni `type="button"`. `sc-multiselect →
+  p-select`: 14 usos, 13 con `maxSelectedLabels`/`selectedItemsLabel` y 3 con `display`, que `p-select` 22.1.2 no tiene.
+
 ## ✅ 2026-10-05 · Los lotes 5 a 9 en un PR: fuera de PrimeNG jubilado, lo seguro (DD-172), y el cajón modal con foco
 
 **Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `b4d1f145` (#339), PR nuevo. Sale por el tope el tramo del 2026-10-01
@@ -192,19 +211,6 @@ tiempos de cada lote para su squash. Lo pendiente de DD-154 y DD-155, cerrado: c
 12,8 con 4) y no hace falta el filtro de barridos (DD-155, actualización).
 
 - ⚠️ **Un `gh api` suelto no cuenta como lectura del CI** para el hook de cierre, porque no compara contra tu HEAD: usa `ci:verdict`.
-
-## ✅ 2026-10-04 · En local, solo las pruebas del bloque, y un PR por lote (DD-154); barridos de tus pantallas y CI en 8 partes (DD-155)
-
-**Sello:** rama `areses/validation-cycle-analysis-d577b3`, sobre HEAD `001bcf5f` (#318), PR nuevo. Salen por el tope los dos tramos
-del 2026-09-28 (`pgrep` anclado y `CI=1 npm run e2e`): `git show 001bcf5f:docs/handoff/design-system.md`.
-
-**Lo que cambia.** Un ciclo de E2-D3 duraba entre 89 y 118 minutos, y el cambio escrito ocupaba 13. El resto se iba en la batería
-entera del Supervisor (528 pruebas, entre 13 y 29 minutos en local) y en dos CI por PR. Ahora en local se pasan solo las pruebas
-del bloque, y un lote planificado va en un PR. Medido y explicado en DD-154; LEARNINGS #7, AGENTS y la tarjeta ya lo dicen.
-El lote de DD-155, el primero en un PR: `npm run e2e:barridos -- --grep "<ruta>"` en local, el Supervisor en 8 partes en el CI,
-y los selectores (`ci-cambios`, `preflight-alcance.mjs`) ya no lo prueban ni lo compilan todo por pruebas, tests o la plantilla de PR.
-
-- ⚠️ **El Mac (Air M4, 16 GB) llegó al 100 % de disco el 2026-10-02 y cortó pruebas**, pero no es lo que más pesa (memoria `mac-saturado-disco-y-memoria`).
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

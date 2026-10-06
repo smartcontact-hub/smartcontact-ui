@@ -47,7 +47,7 @@
   /* El icono de la sección que contiene la página activa. */
   --sc-sidebar-accent: var(--sc-color-cyan-300);
   /*
-   * LA VENTANA DEL AGENTE (DD-175), cuando el Supervisor la enseña tal cual la verá él (la vista previa de una
+   * LA VENTANA DEL AGENTE (DD-177), cuando el Supervisor la enseña tal cual la verá él (la vista previa de una
    * tipificación). Es el teléfono de sc-agent, oscuro en los dos temas como la barra lateral, con los
    * grises de la paleta más cercanos a los medidos en la réplica (`agent/…/typification.component.ts`):
    * panel #2d333a → slate-800 (#2f3642), comentario #1f2429 → slate-900 (#181d26), su borde #11131a →
@@ -64,7 +64,7 @@
   --sc-agent-window-disabled: var(--sc-color-slate-600);
   --sc-agent-window-pill-bg: var(--sc-color-slate-0);
   --sc-agent-window-pill-fg: var(--sc-color-slate-950);
-  /* Sutil y con spread (DD-175): un halo que lo despega del lienzo por los cuatro lados, no la
+  /* Sutil y con spread (DD-177): un halo que lo despega del lienzo por los cuatro lados, no la
    * sombra lateral del agente (que cae hacia la izquierda con spread negativo sobre su panel oscuro). */
   --sc-agent-window-shadow:
     0 8px 24px 2px rgb(var(--sc-shadow-color-rgb) / 0.14),

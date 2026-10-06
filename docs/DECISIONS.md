@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-175 |
+> | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-177 |
 > | La ficha de una tipificación sin saltos: el índice de las fichas · la dirección en un control · los niveles son las columnas (las tres siempre; la siguiente, fantasma) · añadir y renombrar en la línea de la columna · cada aviso en su línea reservada | DD-174 |
 > | Una tipificación es una ficha propia (árbol de hasta tres niveles, dirección, comentario y grupos por canal) · una por dirección y canal en cada grupo · su listado con las columnas de producto · importar y descargar detrás de un icono (`importable` en `sc-list-page`) · la ficha de grupo elige varias, sin «+» (enmienda DD-141 §7, DD-164 §1) | DD-173 |
 > | Las fichas en tres columnas sin cabecera: el nombre y su línea encima del índice, en la columna que se queda fija (fuera la copia fija de DD-145) · la sección, la única que crece · por debajo de 1340, el resumen en una franja encima de la sección · el nombre, hasta dos líneas · los canales de General en las columnas de los campos (`.checkbox-grid--3`) (enmienda DD-144 §2 §5, retira DD-145 §1-§3) | DD-170 |
@@ -131,7 +131,7 @@
 
 ---
 
-## DD-175 · 2026-10-05 — Lo que verá el agente: el teléfono de sc-agent, a la derecha de la ficha de una tipificación
+## DD-177 · 2026-10-05 — Lo que verá el agente: el teléfono de sc-agent, a la derecha de la ficha de una tipificación
 
 **Contexto** · Una tipificación se entiende por lo que le pide al agente al colgar, y la ficha solo lo describía. La
 revisión de producto del 2026-10-05 pidió enseñarlo con el teléfono de sc-agent, donde el agente tipifica tras colgar
@@ -182,6 +182,44 @@ interpretación suya.
 - Pruebas: `tipificacion-telefono.spec.ts` (5), en rojo antes del bloque.
 - Queda abierto: en sc-agent el chat tipifica sin niveles; con este modelo lo decide cada tipificación (pregunta de
   producto).
+
+---
+
+## DD-175 · 2026-10-06 — Lote 10 · velocidad: una cola de capturas por rama, «sin máquina» no es rojo, el aviso de estilos y el número de DD frente a los PR abiertos
+
+**Contexto** · El PR #342 (lotes 5 a 9) tardó 9 h 13 min de punta a punta: un 41 % fueron pausas por límite de uso, un
+39 % trabajo, un 18 % colas de GitHub y un 2 % CI normal. Las colas y un CI de más salieron de cuatro huecos de las
+herramientas: (1) `visual-baselines` compartía una sola cola para todas las ramas, y la ejecución 20 (#342) esperó
+detrás de la 19 y se canceló sin correr (~30 min); (2) `ci:verdict` contaba como rojo los 12 jobs que GitHub canceló
+sin darles máquina, y se notó 45 min después; (3) el aviso de capturas del preflight no miraba
+`component-styles.json`, que cayó en e2e-smoke por cinco plantillas (un CI de más, ~20 min), y seguía dando por
+pendientes capturas que el robot ya había regenerado idénticas; (4) tres PR abiertos usaron DD-172 a la vez.
+
+**Decisión** ·
+1. `visual-baselines.yml`: `concurrency.group: visual-baselines-${{ inputs.rama }}`, con `cancel-in-progress: false`.
+   La misma rama sigue sin pisarse; las ramas distintas ya no se esperan. Llega al fundir: el workflow se lanza
+   desde el fichero de `main`.
+2. `ci:verdict`: un job `cancelled` con `runner_name` vacío cuenta como «sin máquina». Si son los únicos rojos, sale
+   con 7 y su remedio; en una mezcla, manda el rojo real (exit 1) y los otros se nombran aparte. `--relanzar` pide
+   `rerun-failed-jobs` una sola vez, y solo si `run_attempt` es 1: un segundo fallo ya es real.
+3. `api-baselines` (aviso del preflight): si cambian la plantilla o la hoja de una pieza que está en
+   `component-styles.json`, y la rama no lo ha regenerado, da el comando
+   `SC_UPDATE_STYLES=1 npx playwright test component-styles`. Una captura cuenta como comprobada si hay un commit
+   del robot (`chore(e2e): baselines visuales regeneradas en Linux`) posterior al último cambio de su pieza.
+4. `preflight:scope --run` lee los `## DD-N` que añade el `docs/DECISIONS.md` de cada PR abierto (de su parche, con
+   `ddsDePr` de `github.mjs`). Si tu rama usa uno, avisa sin bloquear, nombra el PR y propone el siguiente libre: el
+   mayor entre `main` y los PR abiertos, más uno. Sin red, calla.
+5. No se hace: que en `component-styles` los envoltorios neutros no gasten profundidad. Medido con la regla puesta,
+   salen 267 entradas nuevas (0 cambiadas). 180 son celdas del `datatable`, una por cada `td` de las filas de
+   ejemplo, y solo unas 35 son los botones que se buscaban. Eso no es «pocas y estables».
+
+**Razón** ·
+- Los cuatro son tiempo de espera, no de trabajo: cada uno se midió en el #342 y cada arreglo lleva su test, que se
+  vio en rojo antes del cambio.
+- Un rojo que en realidad es «sin máquina» manda a buscar un fallo que no existe; relanzar más de una vez esconde uno
+  que sí existe.
+- La regla de profundidad congelaría datos de ejemplo como contrato. Para leer el botón de las piezas compuestas hace
+  falta otra regla (por ejemplo, no gastar nivel solo en los hosts `sc-*`/`p-*`), que queda en el hand-off del DS.
 
 ---
 
@@ -275,6 +313,7 @@ llega a todos. Y el agente necesita saber cuál le toca en cada conversación: d
   Supervisión › Tipificaciones sigue vacía.
 
 ---
+
 
 ## DD-172 · 2026-10-05 — Fuera de PrimeNG jubilado, lo seguro: las piezas compuestas pintan `sc-button` y `sc-password` va sobre `pInputPassword`
 

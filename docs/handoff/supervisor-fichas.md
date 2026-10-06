@@ -28,7 +28,7 @@ f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/
 revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
 fcaf40db:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-173 a DD-175), en su PR
+## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-173 a DD-174, DD-177), en su PR
 
 > **Sello:** rama `arebury/tipificaciones-creacion` sobre `main` en `b4d1f145`. **Un PR, un commit en rojo y otro en
 > verde por bloque (DD-154).** Sale de la propuesta de producto «Tipificaciones» (PDF, 2026-10-05), discutida punto por
@@ -42,7 +42,7 @@ fcaf40db:docs/handoff/supervisor-fichas.md`.
   el comentario en un interruptor; los niveles son las columnas (las tres siempre, la siguiente fantasma, la última con
   su ×); añadir y renombrar en la línea de la columna; cada aviso en su línea reservada. Su prueba cazó una carrera:
   dos «Añadir» seguidos y el segundo pisaba al primero (ahora `linkedSignal`).
-- **3 · Lo que verá el agente (DD-175):** a la derecha, el teléfono de sc-agent en su sección de Tipificación, calcado
+- **3 · Lo que verá el agente (DD-177):** a la derecha, el teléfono de sc-agent en su sección de Tipificación, calcado
   de la réplica y para probarlo. Tokens nuevos `--sc-agent-window-*` (05-extensions) y su sombra con spread; en su
   propia columna, porque la del resumen recortaba la sombra.
 - **En local, en verde:** las 17 de los tres bloques (en rojo antes de cada uno) y las 13 unitarias; las vecinas que
@@ -191,9 +191,9 @@ sc-docs no tenía una sección «Solo icono» como la de primeng.dev (DD-167): l
 
 ## SIGUIENTE — sin preguntar
 
-00. **Tipificaciones (DD-173 a DD-175), en su PR** (el tramo de arriba): leer `ci:verdict`, fundir y leer el de `main`.
+00. **Tipificaciones (DD-173 a DD-174, DD-177), en su PR** (el tramo de arriba): leer `ci:verdict`, fundir y leer el de `main`.
     Queda, fuera del lote: las Reglas de Conversaciones con su propia copia de las tipificaciones (`entity-catalog.ts`),
-    Supervisión › Tipificaciones vacía, y dos preguntas para producto (en el tramo de DD-175): el chat sin niveles en
+    Supervisión › Tipificaciones vacía, y dos preguntas para producto (en el tramo de DD-177): el chat sin niveles en
     sc-agent, y que los desplegables del teléfono son una propuesta para el lado del agente.
 0. **Hecho el 2026-10-05:** las fichas sin cabecera (DD-170) entraron en #337, y el triaje de los otros frentes (DS,
    CusCare, Dashboard y Sidebar) dio los lotes 5 a 9, en un PR: cada hand-off lleva su tramo, y lo que queda en ellos
