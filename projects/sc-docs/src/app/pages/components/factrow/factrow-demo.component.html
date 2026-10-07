@@ -1,0 +1,26 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<ng-template #playground let-args>
+  <dl class="col">
+    <div scFactRow [label]="args.label" [icon]="args.icon" [href]="args.href || null">918 371 548</div>
+  </dl>
+</ng-template>
+
+<ng-template #list>
+  <dl class="col" data-testid="sc-fact-row-list">
+    <div scFactRow label="Teléfono" icon="call" href="#distribucion">
+      <sc-tag severity="success" rounded size="md" value="Balanceada" />
+    </div>
+    <div scFactRow label="Chat" icon="chat_bubble" href="#distribucion">Menos conversaciones atendidas</div>
+    <div scFactRow label="Recursos" icon="library_books">11</div>
+  </dl>
+</ng-template>
+
+<ng-template #iconProj>
+  <dl class="col">
+    <div scFactRow label="WhatsApp">
+      <svg scFactIcon width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16v12H5.17L4 17.17V4z"/></svg>
+      Sin número
+    </div>
+  </dl>
+</ng-template>

@@ -92,6 +92,8 @@ export const CUANDO = {
   'sc-search': 'Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.',
   'sc-section-card': 'Para una sección con título dentro de un formulario o una ficha.',
   'sc-select': 'Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.',
+  'sc-icon-tile': 'Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.',
+  'div[scFactRow]': 'Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.',
   'sc-fileupload': 'Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.',
   'sc-selectbutton': 'Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).',
   'sc-skeleton': 'Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.',

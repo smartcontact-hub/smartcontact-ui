@@ -3439,6 +3439,55 @@
       "ocultas": []
     },
     {
+      "selector": "div[scFactRow]",
+      "name": "fact-row",
+      "primengBase": "—",
+      "cuando": "Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.",
+      "contrato": [
+        {
+          "nombre": "label",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": true,
+          "descripcion": "La clave, ya traducida.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "icon",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El icono de la clave (Material Symbols). Sin él, va el que se proyecte con `scFactIcon`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "href",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Adónde lleva la clave. Sin `href`, la clave es texto.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "open",
+          "clase": "output",
+          "tipo": "MouseEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "El clic en la clave, con su evento: la app decide si navega por su cuenta.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": []
+    },
+    {
       "selector": "sc-field-label",
       "name": "field-label",
       "primengBase": "—",
@@ -4167,6 +4216,45 @@
         "style",
         "styleClass"
       ]
+    },
+    {
+      "selector": "sc-icon-tile",
+      "name": "icon-tile",
+      "primengBase": "—",
+      "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
+      "contrato": [
+        {
+          "nombre": "icon",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El icono del DS (nombre de Material Symbols). Sin él, va el que se proyecte dentro.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "size",
+          "clase": "input",
+          "tipo": "'sm' | 'md'",
+          "porDefecto": "'md'",
+          "requerido": false,
+          "descripcion": "`md`: 28 con el icono a 16, para texto de 14. `sm`: 24,5 con el icono a 14, para texto de 12.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "tone",
+          "clase": "input",
+          "tipo": "'default' | 'strong'",
+          "porDefecto": "'default'",
+          "requerido": false,
+          "descripcion": "`strong`: el icono en el color de los títulos (el de un encabezado); por defecto, el del texto.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": []
     },
     {
       "selector": "sc-impact-preview-dialog",
@@ -7689,6 +7777,16 @@
           "porDefecto": "true",
           "requerido": false,
           "descripcion": "Solo con `variant='label'`: `false` quita el borde y deja el fondo tintado, para una cifra que ya va dentro de una tarjeta con borde (la de cada destino del hub de Repositorios, DD-179). El borde queda transparente, así que la pastilla mide lo mismo con él o sin él.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "size",
+          "clase": "input",
+          "tipo": "'sm' | 'md'",
+          "porDefecto": "'sm'",
+          "requerido": false,
+          "descripcion": "Talla: `sm` (por defecto) es la del Kit, 12 en negrita; `md` es 14 en semibold, la del texto de una fila de datos, para una píldora que hace de valor junto a otros valores de 14 (el resumen de la ficha de grupo, DD-186). Va por la entrada `pt` de `p-tag`, no con CSS encima.",
           "origen": "nuestro",
           "nativo": null
         }

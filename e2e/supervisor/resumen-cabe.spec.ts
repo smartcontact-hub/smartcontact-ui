@@ -70,7 +70,7 @@ const loQueNoCabe = (page: Page) =>
     if (columna.scrollWidth > columna.clientWidth) fallos.push(`la columna desborda ${columna.scrollWidth - columna.clientWidth} en ancho`);
     if (columna.scrollHeight > columna.clientHeight) fallos.push(`hay que desplazarse ${columna.scrollHeight - columna.clientHeight} dentro de la columna`);
 
-    const textos = [...columna.querySelectorAll('.resumen__label, .resumen__value, .resumen__status, .resumen__note')].filter(
+    const textos = [...columna.querySelectorAll('.resumen__label, .resumen__value, .resumen__status, .resumen__note, .sc-fact-row__key, .sc-fact-row__value')].filter(
       (el) => !fuera(el) && el.getClientRects().length > 0,
     );
     for (const el of textos) {

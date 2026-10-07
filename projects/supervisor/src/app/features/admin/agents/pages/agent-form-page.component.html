@@ -149,15 +149,15 @@
             [of]="summaryGroups().total"
             [noteKey]="summaryGroups().total === 0 ? 'agents.form.summary.no_groups' : null"
           />
-          @for (s of summaryFacts(); track s.etiqueta) {
-            <div class="resumen__kpi">
-              <p class="resumen__label sc-text-caption-regular">
-                <sc-icon [name]="s.icono" size="inherit" aria-hidden="true" />
-                {{ s.etiqueta | translate }}
-              </p>
-              <p class="resumen__value sc-text-body-semibold">{{ s.valor }}</p>
-            </div>
-          }
+          <!-- Los datos sueltos, en una tarjeta con las filas del resumen de grupo (`sc-fact-row`, DD-186): la clave con su
+               baldosa y el valor a la derecha. -->
+          <div class="resumen__kpi resumen__facts">
+            <dl class="resumen__pairs">
+              @for (s of summaryFacts(); track s.etiqueta) {
+                <div scFactRow class="resumen__pair" [icon]="s.icono" [label]="s.etiqueta | translate">{{ s.valor }}</div>
+              }
+            </dl>
+          </div>
         </div>
       </section>
     </div>

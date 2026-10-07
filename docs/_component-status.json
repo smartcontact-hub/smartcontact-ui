@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "57 componentes · 23 custom · 8 standard · 26 extended · 46 usados en Supervisor.",
+  "summary": "59 componentes · 25 custom · 8 standard · 26 extended · 47 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -578,6 +578,25 @@
       "sobreObsoleto": []
     },
     {
+      "name": "fact-row",
+      "selector": "div[scFactRow]",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 2,
+      "api": [
+        "href",
+        "icon",
+        "open"
+      ],
+      "nested": [],
+      "hasDemo": true,
+      "usedInSupervisor": 0,
+      "cuando": "Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.",
+      "sobreObsoleto": []
+    },
+    {
       "name": "field-label",
       "selector": "sc-field-label",
       "provenance": "CUSTOM",
@@ -738,6 +757,25 @@
       "hasDemo": true,
       "usedInSupervisor": 5,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "icon-tile",
+      "selector": "sc-icon-tile",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 3,
+      "api": [
+        "icon",
+        "size",
+        "tone"
+      ],
+      "nested": [],
+      "hasDemo": true,
+      "usedInSupervisor": 2,
+      "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
       "sobreObsoleto": []
     },
     {
@@ -1416,13 +1454,14 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/tag",
       "cva": false,
-      "inputs": 7,
+      "inputs": 8,
       "api": [
         "bordered",
         "icon",
         "labelColor",
         "rounded",
         "severity",
+        "size",
         "value",
         "variant"
       ],

@@ -54,6 +54,8 @@ const CATEGORY: Record<string, ComponentCategory> = {
   gauge: 'Datos',
   inlinerenamecell: 'Datos',
   tag: 'Datos',
+  icontile: 'Datos',
+  factrow: 'Datos',
   // Overlays
   commandpalette: 'Overlays',
   confirmdialog: 'Overlays',
