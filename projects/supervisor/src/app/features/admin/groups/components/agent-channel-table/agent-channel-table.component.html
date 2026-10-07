@@ -43,8 +43,8 @@
                     [attr.aria-expanded]="statusPopover.overlayVisible"
                     (clicked)="statusPopover.toggle($event)"
                   />
-                  @if (presenceFilter().size > 0) {
-                    <sc-tag severity="info" [value]="(presenceFilter().size === 1 ? 'groups.form.assigned.filter_status_count_one' : 'groups.form.assigned.filter_status_count') | translate: { count: presenceFilter().size }" />
+                  @if (presenceChosen() > 0) {
+                    <sc-tag severity="info" [value]="(presenceChosen() === 1 ? 'groups.form.assigned.filter_status_count_one' : 'groups.form.assigned.filter_status_count') | translate: { count: presenceChosen() }" />
                   }
                 </span>
               } @else { {{ col.header }} }
@@ -60,7 +60,7 @@
 <p-popover #statusPopover [attr.aria-label]="'groups.form.assigned.filter_status' | translate">
   <div class="assign__status-filter" role="group" [attr.aria-label]="'groups.form.assigned.filter_status' | translate">
     @for (option of presenceOptions; track option.value) {
-      <sc-checkbox [state]="presenceFilter().has(option.value) ? 'all' : 'none'" (cycle)="togglePresence(option.value)">{{ option.labelKey | translate }}</sc-checkbox>
+      <sc-checkbox [state]="presenceChecked(option.members) ? 'all' : 'none'" (cycle)="togglePresence(option.members)">{{ option.labelKey | translate }}</sc-checkbox>
     }
     @if (presenceFilter().size > 0) {
       <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.assigned.filter_status_clear' | translate" (clicked)="presenceFilter.set(emptyPresence)" />

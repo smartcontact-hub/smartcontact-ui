@@ -54,9 +54,9 @@
     <div class="resumen__kpi resumen__facts">
       @if (routing().length > 0) {
         <div class="resumen__fact" role="group" aria-labelledby="group-summary-routing">
-          <p id="group-summary-routing" class="resumen__label resumen__title-row sc-text-body-semibold">
+          <p id="group-summary-routing" class="resumen__label resumen__title-row sc-text-h3-semibold">
             <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
-              <span class="resumen__tile"><sc-icon name="alt_route" size="inherit" aria-hidden="true" /></span>
+              <span class="resumen__tile"><sc-icon name="alt_route" [size]="16" aria-hidden="true" /></span>
               {{ 'groups.form.summary.routing' | translate }}
             </a>
           </p>
@@ -65,7 +65,7 @@
               <div class="resumen__pair">
                 <dt class="resumen__key sc-text-body-regular">
                   <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
-                    <span class="resumen__tile"><sc-channel-icon [channel]="r.family" [size]="14" /></span>
+                    <span class="resumen__tile"><sc-channel-icon [channel]="r.family" [size]="16" /></span>
                     {{ familyKey(r.family) | translate }}
                   </a>
                 </dt>
@@ -73,7 +73,7 @@
                      líneas no se lee. -->
                 <dd class="resumen__value sc-text-body-semibold">
                   @if (r.text.length <= 16) {
-                    <sc-tag severity="success" [value]="r.text" />
+                    <sc-tag severity="success" rounded [value]="r.text" />
                   } @else {
                     {{ r.text }}
                   }
@@ -85,9 +85,9 @@
       }
       @if (outbound().length > 0 || routing().length === 0) {
         <div class="resumen__fact" role="group" aria-labelledby="group-summary-outbound">
-          <p id="group-summary-outbound" class="resumen__label resumen__title-row sc-text-body-semibold">
+          <p id="group-summary-outbound" class="resumen__label resumen__title-row sc-text-h3-semibold">
             <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
-              <span class="resumen__tile"><sc-icon name="call_made" size="inherit" aria-hidden="true" /></span>
+              <span class="resumen__tile"><sc-icon name="call_made" [size]="16" aria-hidden="true" /></span>
               {{ 'groups.form.summary.outbound' | translate }}
             </a>
           </p>
@@ -96,7 +96,7 @@
               <div class="resumen__pair">
                 <dt class="resumen__key sc-text-body-regular">
                   <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">
-                    <span class="resumen__tile"><sc-channel-icon [channel]="o.channel" [size]="14" /></span>
+                    <span class="resumen__tile"><sc-channel-icon [channel]="o.channel" [size]="16" /></span>
                     {{ channelKeys[o.channel] | translate }}
                   </a>
                 </dt>
@@ -113,7 +113,7 @@
             <div class="resumen__pair">
               <dt class="resumen__key sc-text-body-regular">
                 <a class="resumen__enlace" [href]="hrefs().recursos" (click)="pulsar($event, { seccion: 'recursos' })">
-                  <span class="resumen__tile"><sc-icon name="library_books" size="inherit" aria-hidden="true" /></span>
+                  <span class="resumen__tile"><sc-icon name="library_books" [size]="16" aria-hidden="true" /></span>
                   {{ 'groups.form.summary.resources' | translate }}
                 </a>
               </dt>

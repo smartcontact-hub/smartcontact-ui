@@ -232,15 +232,34 @@ export class AgentChannelTableComponent {
   /** Los estados que se dejan ver: ninguno marcado, todos. Se marcan en el menú de la cabecera del agente. */
   protected readonly emptyPresence: ReadonlySet<PresenceStatus> = new Set();
   protected readonly presenceFilter = signal<ReadonlySet<PresenceStatus>>(this.emptyPresence);
-  protected readonly presenceOptions = (Object.keys(PRESENCE_LABEL_KEYS) as PresenceStatus[]).map((value) => ({
-    value,
-    labelKey: PRESENCE_LABEL_KEYS[value],
-  }));
+  /**
+   * Las opciones del menú: cinco, no ocho. Los cuatro motivos de no atender (No disponible, Baño, Comida y Formación, los
+   * cuatro en rojo) van juntos en «No disponible», para que el menú no haga ruido (DD-185).
+   */
+  protected readonly presenceOptions: readonly { readonly value: string; readonly labelKey: string; readonly members: readonly PresenceStatus[] }[] = [
+    { value: 'disponible', labelKey: PRESENCE_LABEL_KEYS.disponible, members: ['disponible'] },
+    { value: 'no_disponible', labelKey: PRESENCE_LABEL_KEYS.no_disponible, members: ['no_disponible', 'bano', 'comida', 'formacion'] },
+    { value: 'post_conversando', labelKey: PRESENCE_LABEL_KEYS.post_conversando, members: ['post_conversando'] },
+    { value: 'administrativo', labelKey: PRESENCE_LABEL_KEYS.administrativo, members: ['administrativo'] },
+    { value: 'desconectado', labelKey: PRESENCE_LABEL_KEYS.desconectado, members: ['desconectado'] },
+  ];
+  /** Cuántas opciones del menú están marcadas: lo que dice la marca de la cabecera. */
+  protected readonly presenceChosen = computed(
+    () => this.presenceOptions.filter((o) => o.members.every((m) => this.presenceFilter().has(m))).length,
+  );
 
-  protected togglePresence(value: PresenceStatus): void {
+  protected presenceChecked(members: readonly PresenceStatus[]): boolean {
+    return members.every((m) => this.presenceFilter().has(m));
+  }
+
+  protected togglePresence(members: readonly PresenceStatus[]): void {
     this.presenceFilter.update((current) => {
       const next = new Set(current);
-      if (!next.delete(value)) next.add(value);
+      const on = members.every((m) => next.has(m));
+      for (const m of members) {
+        if (on) next.delete(m);
+        else next.add(m);
+      }
       return next;
     });
   }

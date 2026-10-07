@@ -163,16 +163,24 @@ soltar sobraban; y la tabla de agentes del grupo no alineaba sus casillas como l
    a la columna «Estado» de la tabla de agentes del grupo, que se va. En el listado de agentes la burbuja va en el avatar y
    la columna sigue en «Columnas», escondida de inicio. La posición es lo único que se desvía del nativo (arriba a la
    derecha): va por su propia entrada `style`, sin CSS encima.
-8. **Filtro por estado** en la cabecera del agente de la tabla del grupo: un menú con los ocho estados, de varios en
-   varios, y una marca con cuántos hay elegidos. Lo que la columna daba al ordenar y al ojear, se recupera filtrando.
+8. **Filtro por estado** en la cabecera del agente de la tabla del grupo: un menú de cinco opciones, de varias en varias,
+   y una marca con cuántas hay elegidas. Los cuatro motivos de no atender (No disponible, Baño, Comida y Formación, los
+   cuatro en rojo) van juntos en «No disponible», para no hacer ruido. Lo que la columna daba al ojear se recupera
+   filtrando.
 9. **Repositorio de Email** (nueva tarjeta en Comunicación del hub, `/admin/emails`): las cuentas de correo y los
    triggers de la pestaña Emails de Voice, cada uno con su lista y su «Crear», y su editor en su ruta. La cuenta lleva los
    datos del servidor entrante y del saliente (con su prueba), los triggers que se le aplican y la acción por defecto; el
    trigger, su condición (campo, operador y valor), su acción y su cuenta. No va en Grupos: es un repositorio. Los
    almacenes son de prototipo (`sc-mailboxes-repo`, `sc-email-triggers-repo`); las pruebas de conexión no salen a ninguna
    parte.
-10. **El resumen del grupo**, como la maqueta: cada título y cada fila con el icono de su canal en una baldosa, la
-    estrategia corta en una píldora verde y la larga en texto, la salida con sus recursos y una raya entre reparto y salida.
+10. **El resumen del grupo**, medido sobre la maqueta del widget en proporción al texto: cada título y cada fila con su
+    icono en una baldosa de 28 (dos veces la letra), radio 6 e icono de 16 con el trazo del texto; la baldosa en un gris
+    frío un paso más hondo que la tarjeta, con brillo arriba y sombra mínima; la tarjeta con la sombra difusa de su
+    hermana destacada; los datos y los títulos un paso más oscuros que la clave, siempre a la derecha y centrados en su
+    fila; la estrategia corta en una píldora verde redondeada y la larga en texto; la salida con sus recursos, y una raya
+    entre reparto y salida con el mismo aire arriba y abajo. Lo que NO se calca: el tinte de la tarjeta (DD-126, el texto
+    gris de la maqueta no llega a AA sobre él) y la letra de la píldora (la del `sc-tag`, 12 en negrita). Si convence, la
+    baldosa y la fila pasan al DS.
 
 **Descartadas** · Quitar la columna «Estado» también del listado de agentes: entra en la búsqueda, la exportación y el
 selector de columnas; se esconde, no se quita.

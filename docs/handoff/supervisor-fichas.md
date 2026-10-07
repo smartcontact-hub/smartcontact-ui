@@ -49,7 +49,9 @@ a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-1
   escondida de inicio en el listado; se filtra por estado desde la cabecera del agente.
 - **Repositorio de Email** (`/admin/emails`, tarjeta en Comunicación): cuentas de correo y triggers, con su editor cada uno.
   Datos de prototipo; las pruebas de conexión no salen a ninguna parte.
-- **El resumen del grupo**, con baldosas de icono, píldora verde y su raya, como la maqueta.
+- **El resumen del grupo**, medido sobre la maqueta del widget (baldosa, peso del icono, sombras, jerarquía). Si convence,
+  la baldosa y la fila pasan al DS (pendiente).
+- **Filtro por estado:** cinco opciones; los cuatro motivos de no atender, juntos en «No disponible».
 - **Pendiente:** el nodo de la tabla de agentes en Figma (`figma-pendiente`), y lo de DD-184.
 
 ## ✅ 2026-10-06 · La revisión de grupos del equipo y `sc-fileupload` (DD-184)

@@ -65,27 +65,59 @@
   }
 }
 
-/* La baldosa del icono de cada título y de cada fila, como en la maqueta del resumen (DD-185): un cuadrado de 28 con las
- * esquinas redondeadas y un tinte de la marca, más hondo que el de la tarjeta. El icono, en el color del texto. */
+/* La baldosa del icono de cada título y de cada fila, medida sobre la maqueta del widget (DD-185) en proporción al texto:
+ * la baldosa, dos veces la letra (28 para 14), con el radio a una quinta parte (6); el icono, a algo más de la mitad
+ * (16), con el trazo de la letra de al lado. Su gris es frío y un paso más hondo que la tarjeta, con un brillo arriba
+ * y una sombra mínima debajo: se lee en relieve, como en la maqueta. El icono, en el color del texto. */
 .resumen__tile {
   display: inline-grid;
   flex-shrink: 0;
   place-items: center;
   inline-size: var(--sc-spacing-2);
   block-size: var(--sc-spacing-2);
-  border-radius: var(--sc-radius-lg);
-  background: color-mix(in srgb, var(--sc-bg-primary) 10%, transparent);
+  border-radius: var(--sc-radius-md);
+  background: color-mix(in srgb, var(--sc-text-heading) 6%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--sc-bg-surface) 60%, transparent),
+    var(--sc-shadow-xs);
   color: var(--sc-text-primary);
+}
+
+/* Los títulos, su icono en el color del título. */
+.resumen__title-row .resumen__tile {
+  color: var(--sc-text-heading);
+}
+
+/* La tarjeta de datos, con la sombra difusa de la maqueta: se lee como un widget que flota sobre la página, como su
+ * hermana destacada (DD-161). */
+.resumen__facts {
+  box-shadow: var(--sc-shadow-card);
 }
 
 .resumen__title-row {
   padding-block-end: 0;
 }
 
-/* Entre reparto y salida, una raya fina, y el aire de 28 de arriba (DD-130 §2). */
+/* Entre reparto y salida, una raya fina que se vea sobre el tinte (la sutil se perdía en él), como en la maqueta, con el
+ * mismo aire arriba y abajo: el hueco entre grupos (10,5) es una vez y media el de entre filas (7). */
 .resumen__fact + .resumen__fact {
-  padding-block-start: var(--sc-spacing-1);
-  border-block-start: 1px solid var(--sc-border-subtle);
+  padding-block-start: var(--sc-spacing-0-75);
+  border-block-start: 1px solid var(--sc-border-default);
+}
+
+/* La jerarquía de la maqueta: la clave en el texto de la tarjeta y el dato y los títulos un paso más oscuros. */
+.resumen__title-row,
+.resumen__pair > .resumen__value,
+.resumen__pair > .resumen__value .resumen__digits,
+.resumen__pair > .resumen__warn {
+  color: var(--sc-text-heading);
+}
+
+/* El valor, siempre a la derecha, como en la maqueta: si no cabe en la línea de su clave, baja y sigue a la derecha. */
+.resumen__pair > .resumen__value,
+.resumen__pair > .resumen__warn {
+  margin-inline-start: auto;
+  text-align: end;
 }
 
 .resumen__pairs {
@@ -101,7 +133,7 @@
 .resumen__pair {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   column-gap: var(--sc-spacing-0-5);
   min-width: 0;
@@ -111,7 +143,7 @@
  * doble que entre sus filas (14), o la tarjeta se lee como una lista plana (revisión previa, 2026-09-27). Dentro
  * de cada uno, 7 del rótulo a sus datos. */
 .resumen__facts {
-  gap: var(--sc-spacing-1);
+  gap: var(--sc-spacing-0-75);
 }
 
 .resumen__fact {

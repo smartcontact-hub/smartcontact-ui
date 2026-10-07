@@ -90,16 +90,20 @@ test('subir audios: botón «Subir archivo», varios periódicos y rechazo de ot
   await expect(telefono.getByText('voz.mp3', { exact: false })).toHaveCount(1);
 });
 
-test('el estado se filtra desde la cabecera del agente y no hay columna «Estado»', async ({ page }) => {
+test('el estado se filtra desde la cabecera del agente, con los no disponibles juntos, y no hay columna «Estado»', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const tabla = page.locator('sc-agent-channel-table');
   await expect(tabla.getByRole('columnheader', { name: 'Estado' })).toHaveCount(0);
   const antes = await tabla.locator('tbody tr').count();
   await tabla.getByRole('button', { name: 'Filtrar por estado' }).click();
-  await page.getByRole('checkbox', { name: 'Comida' }).click();
+  // Cinco opciones, no ocho: Baño, Comida y Formación van dentro de «No disponible» (DD-185).
+  const menu = page.locator('.assign__status-filter');
+  await expect(menu.getByRole('checkbox')).toHaveCount(5);
+  await expect(menu.getByRole('checkbox', { name: 'Comida' })).toHaveCount(0);
+  await menu.getByRole('checkbox', { name: 'No disponible' }).click();
   await expect(tabla.locator('tbody tr'), 'con un estado marcado, solo los agentes en él').not.toHaveCount(antes);
-  for (const estado of await tabla.locator('tbody tr sc-presence-avatar .visually-hidden').allTextContents()) {
-    expect(estado.trim()).toBe('Comida');
-  }
+  const estados = await tabla.locator('tbody tr sc-presence-avatar .visually-hidden').allTextContents();
+  expect(estados.length, 'quedan agentes').toBeGreaterThan(0);
+  for (const estado of estados) expect(['No disponible', 'Baño', 'Comida', 'Formación']).toContain(estado.trim());
   await expect(tabla.getByText('1 estado', { exact: true })).toBeVisible();
 });
