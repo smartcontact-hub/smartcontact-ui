@@ -201,7 +201,7 @@ export const DEFAULT_ADVANCED: GroupAdvanced = {
 };
 
 export const CHAT_STRATEGIES: readonly string[] = [
-  'Menos conversaciones activas',
+  'Menos conversaciones atendidas',
   'Balanceada',
   'Niveles',
 ];
@@ -218,8 +218,9 @@ export const DEFAULT_CHAT_STRATEGY = CHAT_STRATEGIES[0]!;
  *  la que las sustituye: lo guardado con ellas no abre el campo en blanco. */
 const RENAMED_STRATEGIES: Readonly<Record<string, string>> = {
   'Menos llamadas atendidas': 'Menos conversaciones atendidas',
-  'Menos chats activos': 'Menos conversaciones activas',
-  'Rotativa (por turnos)': 'Menos conversaciones activas',
+  'Menos chats activos': 'Menos conversaciones atendidas',
+  'Menos conversaciones activas': 'Menos conversaciones atendidas',
+  'Rotativa (por turnos)': 'Menos conversaciones atendidas',
   Skills: 'Balanceada',
 };
 
@@ -527,7 +528,7 @@ export const GROUPS_SEED: readonly Group[] = [
     priority: 'Baja',
     channels: ['phone', 'chat'],
     strategy: 'Balanceada',
-    chatStrategy: 'Menos conversaciones activas',
+    chatStrategy: 'Menos conversaciones atendidas',
     services: ['Atención general', 'Soporte técnico', 'Consultas facturación'],
   },
   {
@@ -538,7 +539,7 @@ export const GROUPS_SEED: readonly Group[] = [
     priority: 'Máxima',
     channels: ['phone', 'chat', 'whatsapp', 'email'],
     strategy: 'Balanceada',
-    chatStrategy: 'Menos conversaciones activas',
+    chatStrategy: 'Menos conversaciones atendidas',
     labels: [3, 6],
     templates: [1, 2, 3, 4, 5, 11],
     services: ['Soporte técnico', 'Soporte web'],
@@ -553,7 +554,7 @@ export const GROUPS_SEED: readonly Group[] = [
     typification: 'Consulta',
     channels: ['phone', 'chat', 'whatsapp'],
     strategy: 'Balanceada',
-    chatStrategy: 'Menos conversaciones activas',
+    chatStrategy: 'Menos conversaciones atendidas',
     labels: [4, 10],
     templates: [7, 8, 10],
     services: ['Reclamaciones', 'Atención general'],
@@ -567,7 +568,7 @@ export const GROUPS_SEED: readonly Group[] = [
     priority: 'Máxima',
     channels: ['phone', 'chat', 'whatsapp'],
     strategy: 'Más tiempo inactivo',
-    chatStrategy: 'Menos conversaciones activas',
+    chatStrategy: 'Menos conversaciones atendidas',
     services: ['Soporte taller', 'Averías'],
   },
   {

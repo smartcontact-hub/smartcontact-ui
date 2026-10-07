@@ -11,7 +11,6 @@
   [customUpload]="!url()"
   [url]="url()"
   [chooseLabel]="chooseLabel()"
-  [chooseIcon]="chooseIcon()"
   [showUploadButton]="!auto()"
   [showCancelButton]="!auto()"
   [invalidFileSizeMessageSummary]="invalidFileSizeMessageSummary()"
@@ -25,6 +24,8 @@
 >
   <!-- La zona de soltar, tal como la del ejemplo «advanced» de primeng.dev: solo el texto. Va dentro de este
        componente porque la consulta de `p-fileupload` no ve una plantilla que atraviesa dos proyecciones. -->
+  <!-- El icono del botón de elegir, el del DS (`sc-icon`): el `chooseIcon` de PrimeNG es una clase de fuente de iconos. -->
+  <ng-template #chooseicon><sc-icon [name]="chooseIconName()" size="inherit" /></ng-template>
   @if (dropLabel()) {
     <ng-template #empty>
       <div>{{ dropLabel() }}</div>

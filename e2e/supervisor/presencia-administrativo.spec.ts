@@ -6,9 +6,10 @@ import { disableAnimations, forceDarkTheme, forceLightTheme, goto } from './help
  * «ADMINISTRATIVO», EN MARRÓN (DD-176).
  *
  * El estado Administrativo de un agente se pintaba en amarillo (la severidad `warn`, la de los avisos). Pasa al color
- * de etiqueta `brown`, nuevo en la paleta del DS y hecho con primitivos del Kit: fondo `amber-800` (el marrón de la
- * paleta) y texto blanco, 7,1:1; en oscuro, fondo `amber-900` y texto `amber-100`. Lo que fija, en el listado de
- * agentes y en la tabla de agentes del grupo, en claro y en oscuro: la etiqueta, con fondo marrón y su texto a AA.
+ * de etiqueta `brown`, nuevo en la paleta del DS y hecho con primitivos del Kit. Tintado como las demás etiquetas
+ * (DD-185; lleno chocaba con el resto): fondo `amber-100` y texto `amber-900`; en oscuro, `amber-800` al 45 % y texto
+ * `amber-200`. Lo que fija, en el listado de agentes y en la tabla de agentes del grupo, en claro y en oscuro: la
+ * etiqueta, con fondo cálido (marrón o ámbar, nunca gris ni azul) y su texto a AA.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -37,8 +38,8 @@ for (const oscuro of [false, true]) {
       // En oscuro el amarillo de aviso también parece marrón: lo que distingue es que sea el color de etiqueta `brown`.
       expect(c.color, 'el color de etiqueta marrón').toContain('--sc-label-brown-bg');
       const [r, g, b] = c.fondo;
-      // Marrón: rojo por encima de verde, verde por encima de azul, y oscuro.
-      expect(r! > g! && g! > b! && r! < 160, `fondo marrón (${c.fondo})`).toBe(true);
+      // Cálido: rojo por encima de verde, y verde por encima de azul.
+      expect(r! > g! && g! > b!, `fondo marrón (${c.fondo})`).toBe(true);
       const [l1, l2] = [lum(c.fondo), lum(c.texto)].sort((x, y) => y - x);
       expect((l1! + 0.05) / (l2! + 0.05), 'texto a AA sobre el marrón').toBeGreaterThanOrEqual(4.5);
     });

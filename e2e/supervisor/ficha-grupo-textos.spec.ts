@@ -7,7 +7,7 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *
  * La revisión de producto del 2026-10-01 dio el flujo de grupos por bueno con ajustes de texto y de campos. Lo que fija:
  *   1. Las estrategias reparten conversaciones, no llamadas ni chats: «Menos conversaciones atendidas» en Teléfono y en
- *      «Dentro de cada nivel», y «Menos conversaciones activas» en Chat, con su ayuda.
+ *      «Dentro de cada nivel», y «Menos conversaciones atendidas» en Chat, con su ayuda.
  *   2. Un grupo o unos valores de Contact Center guardados con los nombres de antes abren con los de ahora y sin cambios
  *      pendientes: el nombre ES el valor guardado, y subir la versión del almacén borraría lo que hay.
  *   3. «Desbordar sesión» sale de la ficha y de Contact Center: lo cubre «Caducar sesión», que se llamaba «Cerrar chat
@@ -56,7 +56,7 @@ test('las estrategias reparten conversaciones: Teléfono, «Dentro de cada nivel
   const deTelefono = await opcionesDe(page, telefono);
   const deChat = await opcionesDe(page, chat);
   expect(deTelefono).toContain('Menos conversaciones atendidas');
-  expect(deChat).toContain('Menos conversaciones activas');
+  expect(deChat).toContain('Menos conversaciones atendidas');
   expect(deChat).toContain('Niveles');
   await pickSelectOption(page, chat, 'Niveles');
   const dentroDeChat = await opcionesDe(page, page.locator('#group-chat-sub-strategy'));
@@ -117,7 +117,7 @@ test('lo guardado con los nombres de antes abre con los de ahora, sin cambios pe
 
   await goto(page, 'admin/grupos/editar/1?seccion=distribucion');
   await expect(page.locator('#group-sub-strategy')).toHaveText('Menos conversaciones atendidas');
-  await expect(page.locator('#group-chat-strategy')).toHaveText('Menos conversaciones activas');
+  await expect(page.locator('#group-chat-strategy')).toHaveText('Menos conversaciones atendidas');
   await expect(page.getByRole('button', GUARDAR)).toBeDisabled();
 
   await goto(page, 'admin/grupos/editar/2?seccion=distribucion');
@@ -128,7 +128,7 @@ test('lo guardado con los nombres de antes abre con los de ahora, sin cambios pe
 
   await goto(page, 'config/aed/grupos');
   await expect(page.locator('#grupos-strategy')).toHaveText('Menos conversaciones atendidas');
-  await expect(page.locator('#grupos-chat-strategy')).toHaveText('Menos conversaciones activas');
+  await expect(page.locator('#grupos-chat-strategy')).toHaveText('Menos conversaciones atendidas');
   await expect(page.getByRole('button', GUARDAR)).toBeDisabled();
 });
 
@@ -224,13 +224,13 @@ test('a 1366 los nombres largos caben en sus desplegables, en la ficha y en Cont
   await page.setViewportSize({ width: 1366, height: 768 });
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   await pickSelectOption(page, page.locator('#group-strategy'), 'Menos conversaciones atendidas');
-  await pickSelectOption(page, page.locator('#group-chat-strategy'), 'Menos conversaciones activas');
+  await pickSelectOption(page, page.locator('#group-chat-strategy'), 'Menos conversaciones atendidas');
   expect(await recortado(page.locator('#group-strategy')), 'la de Teléfono, en la ficha').toBe(false);
   expect(await recortado(page.locator('#group-chat-strategy')), 'la de Chat, en la ficha').toBe(false);
 
   await goto(page, 'config/aed/grupos');
   await pickSelectOption(page, page.locator('#grupos-strategy'), 'Menos conversaciones atendidas');
-  await pickSelectOption(page, page.locator('#grupos-chat-strategy'), 'Menos conversaciones activas');
+  await pickSelectOption(page, page.locator('#grupos-chat-strategy'), 'Menos conversaciones atendidas');
   expect(await recortado(page.locator('#grupos-strategy')), 'la de Teléfono, en Contact Center').toBe(false);
   expect(await recortado(page.locator('#grupos-chat-strategy')), 'la de Chat, en Contact Center').toBe(false);
 });

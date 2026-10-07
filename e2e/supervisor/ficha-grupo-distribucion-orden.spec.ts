@@ -66,7 +66,7 @@ test('Teléfono: la música va en la cola, y los demás mensajes, plegados y sin
   const tel = page.locator('#group-channel-phone');
   expect(await partes(tel)).toEqual(['Distribución', 'Cola', 'Mensajes en cola']);
   const cola = tel.locator('sc-slot').filter({ has: page.getByRole('heading', { name: 'Cola', exact: true }) });
-  await expect(cola.getByText('Música de espera/Transferencia', { exact: true })).toBeVisible();
+  await expect(cola.getByText('Música de espera', { exact: true })).toBeVisible();
 
   const mensajes = tel.getByRole('button', { name: /Mensajes en cola/ });
   await expect(mensajes, 'nacen plegados').toHaveAttribute('aria-expanded', 'false');

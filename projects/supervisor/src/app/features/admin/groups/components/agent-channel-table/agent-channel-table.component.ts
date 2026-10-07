@@ -84,8 +84,8 @@ interface VisibleRow {
 const CHANNEL_REM: Readonly<Record<ChannelFamily, number>> = { phone: 7, chat: 4.5, email: 4.75 };
 
 export const COLUMN_REM = {
-  regular: { assigned: 6.25, agent: 11.625, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 6.75 },
-  compact: { assigned: 6.25, agent: 16.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 6.75 },
+  regular: { assigned: 3.5, agent: 11.625, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
+  compact: { assigned: 3.5, agent: 16.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
 } as const;
 
 /** Lo que suman las columnas con esos canales y `levels` niveles: el mínimo de la tabla y el ancho del panel. */
@@ -162,6 +162,7 @@ export class AgentChannelTableComponent {
           field: 'assigned',
           header: this.translate.instant('groups.form.assigned.assignment'),
           width: `${rem.assigned}rem`,
+          align: 'center' as const,
           cellTemplate: this.assignedTpl(),
           stopRowClick: true,
         },
@@ -190,6 +191,7 @@ export class AgentChannelTableComponent {
           field: ch,
           header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
           width: `${rem.channel[ch]}rem`,
+          align: 'center' as const,
           cellTemplate: this.channelTpl(),
           stopRowClick: true,
         })),
@@ -197,6 +199,7 @@ export class AgentChannelTableComponent {
           field: 'active',
           header: this.translate.instant('groups.form.assigned.col_active'),
           width: `${rem.enabled}rem`,
+          align: 'center' as const,
           cellTemplate: this.activeTpl(),
           stopRowClick: true,
         },

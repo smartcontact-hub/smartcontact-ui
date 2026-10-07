@@ -131,7 +131,7 @@ test('con dos canales, el panel se ajusta a sus columnas: nombre cerca de sus ca
   expect(hueco, 'del nombre y el email a su estado').not.toBeNull();
   expect(hueco!, 'del nombre y el email a su estado').toBeLessThanOrEqual(6 * 16);
   expect(huecoCasilla, 'de la columna del estado a la primera casilla').not.toBeNull();
-  expect(huecoCasilla!, 'de la columna del estado a la primera casilla').toBeLessThanOrEqual(3 * 16);
+  expect(huecoCasilla!, 'de la columna del estado a la primera casilla').toBeLessThanOrEqual(4 * 16); // con las casillas centradas en su columna, como la matriz de permisos (DD-185)
   expect(altoFila, 'nombre y email en dos líneas, con el estado al lado').toBeLessThanOrEqual(58);
 });
 

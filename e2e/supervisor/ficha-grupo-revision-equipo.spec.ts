@@ -29,18 +29,23 @@ test('las estrategias no traen Skills ni Rotativa', async ({ page }) => {
   ]);
   await page.keyboard.press('Escape');
   await page.locator('#group-chat-strategy').click();
-  await expect(page.getByRole('option')).toHaveText(['Menos conversaciones activas', 'Balanceada', 'Niveles']);
+  await expect(page.getByRole('option')).toHaveText(['Menos conversaciones atendidas', 'Balanceada', 'Niveles']);
 });
 
-test('Ring All: «Nº agentes simultáneos» y el aviso de costes, siempre', async ({ page }) => {
+test('Ring All: «Nº agentes simultáneos» y el aviso de costes a partir de 3, que se cierra', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const telefono = page.locator('#group-channel-phone');
   await expect(telefono.getByText('Esta estrategia puede generar costes adicionales')).toHaveCount(0);
   await pickSelectOption(page, page.locator('#group-strategy'), 'Ring All');
   await expect(telefono.locator('label[for="group-ring-all"]')).toHaveText('Nº agentes simultáneos');
-  await expect(telefono.getByText('Esta estrategia puede generar costes adicionales al multiplicar el número de llamadas salientes.')).toBeVisible();
-  await pickSelectOption(page, page.locator('#group-ring-all'), '5');
-  await expect(telefono.getByText('Esta estrategia puede generar costes adicionales')).toBeVisible();
+  // Con 2 no hay aviso; con 3 o más aparece junto al campo que lo causa, y el usuario lo cierra.
+  const aviso = telefono.getByText('Esta estrategia puede generar costes adicionales al multiplicar el número de llamadas salientes.');
+  await expect(aviso).toHaveCount(0);
+  await pickSelectOption(page, page.locator('#group-ring-all'), /^\s*3\s*$/);
+  await expect(aviso).toBeVisible();
+  await expect(telefono.locator('.field', { has: page.locator('#group-ring-all') }).getByText('Esta estrategia puede')).toBeVisible();
+  await telefono.getByRole('button', { name: /cerrar|close/i }).click();
+  await expect(aviso).toHaveCount(0);
 });
 
 test('WhatsApp: sin número no hay mensajes ni horario; Web Chat: los mensajes de horario piden un horario', async ({ page }) => {
@@ -65,10 +70,10 @@ test('los tiempos llegan a 5 minutos y más', async ({ page }) => {
   await expect(page.locator('#group-phone-max-wait')).toHaveText('5 min');
 });
 
-test('subir audios: zona de soltar con «Elegir .wav», varios periódicos y rechazo de otros tipos', async ({ page }) => {
+test('subir audios: botón «Subir archivo», varios periódicos y rechazo de otros tipos', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const telefono = page.locator('#group-channel-phone');
-  await expect(telefono.locator('#group-hold-music-upload').getByText('o suelta un .wav aquí.')).toBeVisible();
+  await expect(telefono.locator('#group-hold-music-upload').getByRole('button', { name: 'Subir archivo' })).toBeVisible();
 
   await telefono.getByRole('button', { name: /Mensajes en cola/ }).click();
   const periodicos = page.locator('#group-periodic-upload input[type="file"]');

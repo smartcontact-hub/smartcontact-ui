@@ -66,7 +66,7 @@ test('sin paginación: todas las filas del filtro, y la tabla desplaza por dentr
  * su rótulo y su casilla de «todos», y la fila de cabeceras medía 54 con «Agente» y «Estado» flotando a media altura.
  * Desde DD-181, Asignado, cada canal y Habilitado llevan su casilla de «todos» DELANTE del rótulo, en la misma fila y
  * en la vertical de los controles de sus filas: se marca una columna entera sin volver a la cabecera de dos pisos. */
-test('la cabecera es una fila de texto: cada columna de controles con su casilla delante, sobre los controles de sus filas', async ({
+test('la cabecera es una fila de texto: rótulo y casilla de «todos» centrados sobre los controles de sus filas, como la matriz de permisos', async ({
   page,
 }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
@@ -86,9 +86,9 @@ test('la cabecera es una fila de texto: cada columna de controles con su casilla
       rango.selectNodeContents(texto);
       return {
         nombre: th.getAttribute('aria-label'),
-        casilla: casilla ? { left: casilla.left, centro: casilla.top + casilla.height / 2 } : null,
+        casilla: casilla ? { left: casilla.left, derecha: casilla.right, mitad: casilla.left + casilla.width / 2, centro: casilla.top + casilla.height / 2 } : null,
         texto: { left: rango.getBoundingClientRect().left, centro: rango.getBoundingClientRect().top + rango.getBoundingClientRect().height / 2 },
-        control: control(i) ? control(i)!.left : null,
+        control: control(i) ? control(i)!.left + control(i)!.width / 2 : null,
       };
     });
   });
@@ -96,9 +96,13 @@ test('la cabecera es una fila de texto: cada columna de controles con su casilla
   for (const nombre of ['Asignado', 'Teléfono', 'Chat', 'Email', 'Habilitado']) {
     const c = col(nombre);
     expect(c.casilla, `${nombre}: su casilla de todos`).not.toBeNull();
-    expect(Math.abs(c.casilla!.left - c.control!), `${nombre}: sobre los controles de sus filas`).toBeLessThanOrEqual(0.5);
-    expect(c.texto.left, `${nombre}: el rótulo, detrás de la casilla`).toBeGreaterThan(c.casilla!.left);
-    expect(Math.abs(c.texto.centro - c.casilla!.centro), `${nombre}: casilla y rótulo, a la misma altura`).toBeLessThanOrEqual(1);
+    // El grupo «rótulo + casilla» va centrado en su columna, y los controles de las filas, también (DD-185).
+    expect(Math.abs(c.casilla!.mitad - c.control!), `${nombre}: centrado sobre los controles de sus filas`).toBeLessThanOrEqual(1);
+    if (nombre !== 'Asignado') {
+      // El rótulo abre el grupo (la casilla va después, como en la matriz de permisos).
+      expect(Math.abs(c.texto.left - c.casilla!.left), `${nombre}: el rótulo, al principio del grupo`).toBeLessThanOrEqual(2);
+      expect(Math.abs(c.texto.centro - c.casilla!.centro), `${nombre}: casilla y rótulo, a la misma altura`).toBeLessThanOrEqual(1);
+    }
   }
 });
 

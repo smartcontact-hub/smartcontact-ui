@@ -1127,8 +1127,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (typeof value === 'string') this.updateField('subStrategy', value);
   }
 
+  /** El aviso de costes de Ring All, cerrado por quien lo leyó: vuelve si baja de tres agentes y se sube otra vez. */
+  protected readonly ringAllWarningClosed = signal(false);
+
   protected onRingAllChange(value: unknown): void {
-    if (typeof value === 'number') this.updateField('ringAllAgents', value);
+    if (typeof value !== 'number') return;
+    if (value < 3) this.ringAllWarningClosed.set(false);
+    this.updateField('ringAllAgents', value);
   }
 
   protected toggleChannel(channel: GroupChannel): void {

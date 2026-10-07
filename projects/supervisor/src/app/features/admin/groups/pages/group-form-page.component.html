@@ -370,6 +370,10 @@
               <div class="field">
                 <label id="group-ring-all-label" class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
                 <sc-select inputId="group-ring-all" ariaLabelledBy="group-ring-all-label" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
+                <!-- Con tres o más agentes a la vez, el aviso de costes, pegado a lo que lo causa y que se cierra (como en Voice). -->
+                @if (form().ringAllAgents >= 3 && !ringAllWarningClosed()) {
+                  <sc-message severity="warn" icon="warning" closable [text]="'groups.form.strategy_help.ring_all_warning' | translate" (closed)="ringAllWarningClosed.set(true)" />
+                }
               </div>
             }
             @if (isNiveles()) {
@@ -381,13 +385,9 @@
             <ng-container *ngTemplateOutlet="transferField; context: { channel: 'phone', queue: form().phoneQueue }" />
             <div class="field">
               <label class="field__label sc-text-caption-semibold" for="group-wrap-up" [id]="'group-wrap-up-label'">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
-              <sc-select inputId="group-wrap-up" [value]="form().advanced.wrapUpSec" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" optionValue="value" [options]="durationOptions(form().advanced.wrapUpSec, false)" [ariaLabelledBy]="'group-wrap-up-label'" />
+              <sc-select inputId="group-wrap-up" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" optionValue="value" [options]="durationOptions(form().advanced.wrapUpSec, false)" [ariaLabelledBy]="'group-wrap-up-label'" />
             </div>
           </div>
-          <!-- Ring All multiplica las llamadas salientes: el aviso va siempre con la estrategia, como en Voice. -->
-          @if (isRingAll()) {
-            <sc-message severity="warning" icon="warning" [text]="'groups.form.strategy_help.ring_all_warning' | translate" />
-          }
         </sc-slot>
 
         <!-- La música va con la cola, junto al tiempo máximo: es lo que suena mientras se espera, y lo único que
@@ -433,7 +433,7 @@
                     <sc-button size="sm" variant="secondary" appearance="text" icon="delete" [ariaLabel]="'groups.form.announcements.remove_periodic_aria' | translate: { file: periodic.file }" (clicked)="removePeriodicAnnouncement($index)" />
                   </span>
                 }
-                <sc-fileupload id="group-periodic-upload" [multiple]="true" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.add_periodic' | translate" [dropLabel]="'groups.form.announcements.drop_many' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onPeriodicFiles($event)" />
+                <sc-fileupload id="group-periodic-upload" [multiple]="true" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onPeriodicFiles($event)" />
               </div>
             </div>
 
@@ -838,14 +838,14 @@
 <ng-template #transferField let-channel="channel" let-queue="queue">
   <div class="field">
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-transfer'" [id]="'group-' + channel + '-transfer' + '-label'">{{ 'groups.form.advanced.transfer' | translate }}</label>
-    <sc-select [inputId]="'group-' + channel + '-transfer'" [value]="queue.transferSec" (valueChange)="setQueueNumber(channel, 'transferSec', $event)" optionValue="value" [options]="durationOptions(queue.transferSec, false)" [ariaLabelledBy]="'group-' + channel + '-transfer' + '-label'" />
+    <sc-select [inputId]="'group-' + channel + '-transfer'" [value]="queue.transferSec" [helperText]="'groups.form.advanced.transfer_hint' | translate" (valueChange)="setQueueNumber(channel, 'transferSec', $event)" optionValue="value" [options]="durationOptions(queue.transferSec, false)" [ariaLabelledBy]="'group-' + channel + '-transfer' + '-label'" />
   </div>
 </ng-template>
 
 <!-- Elegir un .wav: el `p-fileupload` de primeng.dev (`sc-fileupload`), con su zona de soltar. Entrega el nombre y se
      vacía: el archivo elegido se ve en el campo de al lado, no dos veces (DD-184). -->
 <ng-template #filePicker let-key="key" let-id="id">
-  <sc-fileupload [id]="id + '-upload'" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [dropLabel]="'groups.form.announcements.drop_one' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onAudioFile(key, $event)" />
+  <sc-fileupload [id]="id + '-upload'" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onAudioFile(key, $event)" />
 </ng-template>
 
 <!-- Un mensaje de la cola de Teléfono que puede no decir nada, leerse con la voz sintética o ser un .wav propio

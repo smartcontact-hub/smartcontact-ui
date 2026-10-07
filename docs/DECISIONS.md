@@ -133,6 +133,36 @@
 
 ---
 
+## DD-185 · 2026-10-07 — Segunda vuelta de la revisión de grupos: el copy de Voice y la subida con «Subir archivo»
+
+**Contexto** · Con DD-184 fundida, el equipo corrigió lo que se había entendido al revés y pidió más: el rótulo largo de
+los tiempos era la ayuda, no el nombre; el aviso de Ring All parecía de todo el bloque; «Elegir .wav» y su texto de
+soltar sobraban; y la tabla de agentes del grupo no alineaba sus casillas como la matriz de permisos de Contact Center.
+
+**Decisión** ·
+1. **Chat reparte con «Menos conversaciones atendidas»**, el mismo nombre que Teléfono. Lo guardado como «Menos
+   conversaciones activas» se lee con el de ahora (`RENAMED_STRATEGIES`). En el resumen, el valor largo baja a otra línea.
+2. **Los tiempos**: «Tiempo de ringing» y «Tiempo entre llamadas» vuelven a ser el nombre, y «Tiempo de timbrado de una
+   conversación a un agente» y «Tiempo que espera el agente entre una conversación y otra», su ayuda (DD-184 §3 los había
+   puesto como nombre).
+3. **El aviso de costes de Ring All** sale solo con tres agentes o más, pegado al campo que lo causa (no al bloque) y con
+   su cierre; vuelve si el número baja de tres y se sube otra vez.
+4. **Audios**: «Música de espera» (sin «/Transferencia»), un botón «Subir archivo» con el icono de subida del DS
+   (`chooseIconName` de `sc-fileupload`, que sustituye al `chooseIcon` de fuente de iconos) y sin el texto de soltar:
+   la zona sigue aceptando el arrastre. «Subir» a secas lo ocupa «Subir» de mover una columna, y el gate de i18n no deja
+   dos traducciones de una misma frase.
+5. **Tabla de agentes del grupo, como la matriz de permisos**: la cabecera de cada columna con casilla va centrada, con
+   el rótulo y la casilla de «todos» después, sobre las casillas de sus filas (enmienda DD-180/DD-176 §4, que las
+   alineaba a la izquierda). Asignado, sin rótulo: solo su casilla. Asignado se estrecha a 3,5 rem y Habilitado se
+   ensancha a 9,5; con tres canales la tabla desplaza 51 px a 1440 (antes 59).
+6. **«Administrativo», tintado** como las demás etiquetas (`brown`: fondo `amber-100`, texto `amber-900`; en oscuro,
+   `amber-800` al 45 % y `amber-200`). Lleno, chocaba con el resto (enmienda DD-176 §8).
+
+**Consecuencias** · Los e2e de la tabla de agentes, de los tiempos, de Ring All y de Administrativo se ponen al día;
+`ficha-grupo-revision-equipo.spec.ts` fija el aviso de Ring All y la subida.
+
+---
+
 ## DD-184 · 2026-10-06 — Revisión de grupos del equipo, y `sc-fileupload` para subir cualquier archivo
 
 **Contexto** · El equipo revisó la ficha de grupo punto por punto contra Voice. Lo que ya existía en Voice y aquí

@@ -85,9 +85,3 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* La cabecera de Asignado (DD-176): su casilla de «todos» delante del rótulo, en una fila con las demás cabeceras. */
-.assign__head {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-}

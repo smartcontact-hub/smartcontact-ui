@@ -20,16 +20,15 @@
         <tr>
           @for (col of columns(); track col.field) {
             <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
-              <!-- Una fila de texto, todo alineado a la izquierda con los controles de sus filas (DD-176). Asignado, cada
-                   canal y Habilitado llevan su casilla de «todos» delante del rótulo, en la vertical de los controles de
-                   sus filas (DD-180, enmienda DD-176 §4): marcar o desmarcar una columna entera sin ir fila a fila. -->
+              <!-- Como la matriz de permisos de Contact Center › Agentes: la cabecera, centrada sobre las casillas de su
+                   columna, con la casilla de «todos» DESPUÉS del rótulo (Asignado, sin rótulo: solo la casilla). Marcar o
+                   desmarcar una columna entera sin ir fila a fila (DD-180; enmienda: DD-185). -->
               @if (hasHeaderCheckbox(col.field)) {
-                <span class="assign__head">
-                  <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)"
-                    [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                    (cycle)="toggleHeader(col.field)" />
-                  <span aria-hidden="true">{{ col.header }}</span>
-                </span>
+                <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)" labelPosition="start"
+                  [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
+                  (cycle)="toggleHeader(col.field)">
+                  @if (col.field !== 'assigned') { <span class="sc-text-body-semibold">{{ col.header }}</span> }
+                </sc-checkbox>
               } @else { {{ col.header }} }
             </th>
           }

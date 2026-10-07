@@ -625,7 +625,7 @@
       "api": [
         "accept",
         "auto",
-        "chooseIcon",
+        "chooseIconName",
         "chooseLabel",
         "clearAfterSelect",
         "cleared",
