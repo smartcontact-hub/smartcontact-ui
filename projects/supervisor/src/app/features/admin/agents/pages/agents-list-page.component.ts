@@ -17,7 +17,7 @@ import { UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent, IllustratedAvatarComponent, ListPageComponent, type LabelColor } from '@shared/components';
+import { ChannelIconComponent, ListPageComponent, PresenceAvatarComponent, type LabelColor } from '@shared/components';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
@@ -81,7 +81,7 @@ const EXTENSION_ICONS: Readonly<Record<ExtensionType, string>> = {
     EmptyStateComponent,
     IconComponent,
     ChannelIconComponent,
-    IllustratedAvatarComponent,
+    PresenceAvatarComponent,
     GroupPopoverComponent,
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
@@ -173,7 +173,7 @@ export class AgentsListPageComponent {
       { key: 'phone', label: this.translate.instant('agents.table.phone'), defaultVisible: false },
       { key: 'channels', label: this.translate.instant('agents.table.channels') },
       { key: 'type', label: this.translate.instant('agents.table.type'), defaultVisible: false },
-      { key: 'presence', label: this.translate.instant('agents.table.presence') },
+      { key: 'presence', label: this.translate.instant('agents.table.presence'), defaultVisible: false },
       { key: 'recording', label: this.translate.instant('agents.table.recording') },
       { key: 'groups', label: this.translate.instant('agents.table.groups') },
     ];

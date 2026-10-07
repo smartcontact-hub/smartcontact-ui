@@ -339,9 +339,9 @@ export class GroupsListPageComponent {
         header: this.translate.instant('groups.table.strategy_chat'),
         sortable: true,
         cellTemplate: this.chatStrategyTpl(),
-        /* La etiqueta más ancha, «Menos conversaciones activas» (DD-141), pide 185 px más los 28 de la celda (medido a
-         * 1440, 2026-10-01). La cabecera pedía 171 (2026-09-26). */
-        width: '14rem',
+        /* La etiqueta más ancha, «Menos conversaciones atendidas», la misma que en teléfono desde que Chat dejó
+         * «activas» (DD-185): 15rem, como ella (medido a 1440, 2026-10-07). */
+        width: '15rem',
       },
       {
         field: 'services',

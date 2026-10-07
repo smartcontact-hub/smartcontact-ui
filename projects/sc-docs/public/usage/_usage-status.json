@@ -585,7 +585,7 @@
     },
     {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 18
+      "usedInSupervisor": 20
     },
     {
       "selector": "sc-fileupload",
@@ -609,7 +609,7 @@
     },
     {
       "selector": "sc-password",
-      "usedInSupervisor": 1
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-slot",

@@ -133,6 +133,64 @@
 
 ---
 
+## DD-185 · 2026-10-07 — Segunda vuelta de la revisión de grupos: copy de Voice, subir archivo, el estado en el avatar y el repositorio de Email
+
+**Contexto** · Con DD-184 fundida, el equipo corrigió lo que se había entendido al revés y pidió más: el rótulo largo de
+los tiempos era la ayuda, no el nombre; el aviso de Ring All parecía de todo el bloque; «Elegir .wav» y su texto de
+soltar sobraban; y la tabla de agentes del grupo no alineaba sus casillas como la matriz de permisos de Contact Center.
+
+**Decisión** ·
+1. **Chat reparte con «Menos conversaciones atendidas»**, el mismo nombre que Teléfono. Lo guardado como «Menos
+   conversaciones activas» se lee con el de ahora (`RENAMED_STRATEGIES`). En el resumen, el valor largo baja a otra línea.
+2. **Los tiempos**: «Tiempo de ringing» y «Tiempo entre llamadas» vuelven a ser el nombre, y «Tiempo de timbrado de una
+   conversación a un agente» y «Tiempo que espera el agente entre una conversación y otra», su ayuda (DD-184 §3 los había
+   puesto como nombre).
+3. **El aviso de costes de Ring All** sale solo con tres agentes o más, pegado al campo que lo causa (no al bloque) y con
+   su cierre; vuelve si el número baja de tres y se sube otra vez.
+4. **Audios**: «Música de espera» (sin «/Transferencia»), un botón «Subir archivo» con el icono de subida del DS
+   (`chooseIconName` de `sc-fileupload`, que sustituye al `chooseIcon` de fuente de iconos) y sin el texto de soltar:
+   la zona sigue aceptando el arrastre. «Subir» a secas lo ocupa «Subir» de mover una columna, y el gate de i18n no deja
+   dos traducciones de una misma frase.
+5. **Tabla de agentes del grupo, como la matriz de permisos**: la cabecera de cada columna con casilla va centrada, con
+   el rótulo y la casilla de «todos» después, sobre las casillas de sus filas (enmienda DD-180/DD-176 §4, que las
+   alineaba a la izquierda). Asignado, sin rótulo: solo su casilla. Asignado se estrecha a 3,5 rem y Habilitado se
+   ensancha a 9,5; con tres canales la tabla desplaza 51 px a 1440 (antes 59).
+6. **«Administrativo», tintado** como las demás etiquetas (`brown`: fondo `amber-100`, texto `amber-900`; en oscuro,
+   `amber-800` al 45 % y `amber-200`). Lleno, chocaba con el resto (enmienda DD-176 §8).
+
+7. **El estado, en la burbuja del avatar** (`sc-presence-avatar`, el `p-overlay-badge` de primeng.dev/avatar sin valor):
+   un punto abajo a la derecha, del color del punto de su etiqueta, con su palabra dicha al lector y en `title`. Sustituye
+   a la columna «Estado» de la tabla de agentes del grupo, que se va. En el listado de agentes la burbuja va en el avatar y
+   la columna sigue en «Columnas», escondida de inicio. La posición es lo único que se desvía del nativo (arriba a la
+   derecha): va por su propia entrada `style`, sin CSS encima.
+8. **Filtro por estado** en la cabecera del agente de la tabla del grupo: un menú de cinco opciones, de varias en varias,
+   y una marca con cuántas hay elegidas. Los cuatro motivos de no atender (No disponible, Baño, Comida y Formación, los
+   cuatro en rojo) van juntos en «No disponible», para no hacer ruido. Lo que la columna daba al ojear se recupera
+   filtrando.
+9. **Repositorio de Email** (nueva tarjeta en Comunicación del hub, `/admin/emails`): las cuentas de correo y los
+   triggers de la pestaña Emails de Voice, cada uno con su lista y su «Crear», y su editor en su ruta. La cuenta lleva los
+   datos del servidor entrante y del saliente (con su prueba), los triggers que se le aplican y la acción por defecto; el
+   trigger, su condición (campo, operador y valor), su acción y su cuenta. No va en Grupos: es un repositorio. Los
+   almacenes son de prototipo (`sc-mailboxes-repo`, `sc-email-triggers-repo`); las pruebas de conexión no salen a ninguna
+   parte.
+10. **El resumen del grupo**, medido sobre la maqueta del widget en proporción al texto: cada título y cada fila con su
+    icono en una baldosa de 28 (dos veces la letra), radio 6 e icono de 16 con el trazo del texto; la baldosa en un gris
+    frío un paso más hondo que la tarjeta, con brillo arriba y sombra mínima; la tarjeta con la sombra difusa de su
+    hermana destacada; los datos y los títulos un paso más oscuros que la clave, siempre a la derecha y centrados en su
+    fila; la estrategia corta en una píldora verde redondeada y la larga en texto; la salida con sus recursos, y una raya
+    entre reparto y salida con el mismo aire arriba y abajo. Lo que NO se calca: el tinte de la tarjeta (DD-126, el texto
+    gris de la maqueta no llega a AA sobre él) y la letra de la píldora (la del `sc-tag`, 12 en negrita). Si convence, la
+    baldosa y la fila pasan al DS.
+
+**Descartadas** · Quitar la columna «Estado» también del listado de agentes: entra en la búsqueda, la exportación y el
+selector de columnas; se esconde, no se quita.
+
+**Consecuencias** · Los e2e de la tabla de agentes, de los tiempos, de Ring All, de Administrativo y del resumen se ponen
+al día; `ficha-grupo-revision-equipo.spec.ts` fija el aviso de Ring All, la subida y el filtro, y
+`repositorio-email.spec.ts`, el repositorio de Email.
+
+---
+
 ## DD-184 · 2026-10-06 — Revisión de grupos del equipo, y `sc-fileupload` para subir cualquier archivo
 
 **Contexto** · El equipo revisó la ficha de grupo punto por punto contra Voice. Lo que ya existía en Voice y aquí

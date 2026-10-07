@@ -61,7 +61,8 @@
 
 <ng-template #nameTpl let-agent>
   <span class="cell-name sc-text-body-semibold">
-    <sc-illustrated-avatar [name]="agent.name" [photo]="agent.photo" [size]="32" />
+    <!-- El estado, en la burbuja del avatar (DD-185); su columna sigue en «Columnas», escondida de inicio. -->
+    <sc-presence-avatar [name]="agent.name" [photo]="agent.photo" [size]="32" [presence]="agent.presenceStatus" />
     @if (renamingId() === agent.id) {
       <sc-inline-rename-cell
         [initialValue]="agent.name"

@@ -1,0 +1,90 @@
+<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: el motivo, visible y solo cuando falta algo. -->
+<ng-template #topbarActions>
+  @if (blockedReason(); as reason) {
+    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
+  } @else if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (formDirty()) {
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    size="sm"
+    variant="primary"
+    [disabled]="!canSave()"
+    [label]="(mode() === 'create' ? 'repositories.emails.mailbox.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <h1 class="page__heading sc-text-h3-semibold">{{ form().name.trim() || ('repositories.emails.mailbox.create_title' | translate) }}</h1>
+
+    <sc-section-card titleKey="repositories.emails.mailbox.section_account" surface="card" icon="mail">
+      <section class="sub-section">
+      <div class="grid grid--2">
+        <div class="field">
+          <sc-inputtext
+            inputId="mailbox-name"
+            fluid
+            required
+            [label]="'repositories.columns.name' | translate"
+            [placeholder]="'repositories.emails.mailbox.name_placeholder' | translate"
+            [value]="form().name"
+            [error]="nameTaken() ? ('repositories.emails.mailbox.name_taken' | translate) : undefined"
+            (valueChange)="setName($event)"
+          />
+        </div>
+      </div>
+    </section>
+    </sc-section-card>
+
+    <!-- Entrante y saliente, con los mismos cuatro datos y su prueba (los «Test Inbox» y «Test Outbox» de Voice). -->
+    @for (side of ['incoming', 'outgoing']; track side) {
+      <sc-section-card [titleKey]="'repositories.emails.mailbox.section_' + side" surface="card" [icon]="side === 'incoming' ? 'move_to_inbox' : 'outbox'">
+      <section class="sub-section">
+        <div class="grid grid--2">
+          <div class="field">
+            <sc-inputtext [inputId]="'mailbox-' + side + '-host'" fluid [label]="'repositories.emails.mailbox.host' | translate" [value]="form()[side === 'incoming' ? 'incoming' : 'outgoing'].host" (valueChange)="setServer(side === 'incoming' ? 'incoming' : 'outgoing', 'host', $event)" />
+          </div>
+          <div class="field">
+            <sc-inputtext [inputId]="'mailbox-' + side + '-port'" fluid [label]="'repositories.emails.mailbox.port' | translate" [value]="form()[side === 'incoming' ? 'incoming' : 'outgoing'].port" (valueChange)="setServer(side === 'incoming' ? 'incoming' : 'outgoing', 'port', $event)" />
+          </div>
+          <div class="field">
+            <sc-inputtext [inputId]="'mailbox-' + side + '-user'" fluid [label]="'repositories.emails.mailbox.user' | translate" [value]="form()[side === 'incoming' ? 'incoming' : 'outgoing'].user" (valueChange)="setServer(side === 'incoming' ? 'incoming' : 'outgoing', 'user', $event)" />
+          </div>
+          <div class="field">
+            <sc-password [inputId]="'mailbox-' + side + '-password'" fluid [label]="'repositories.emails.mailbox.password' | translate" [value]="form()[side === 'incoming' ? 'incoming' : 'outgoing'].password" (valueChange)="setServer(side === 'incoming' ? 'incoming' : 'outgoing', 'password', $event)" />
+          </div>
+        </div>
+        <div class="emails__test">
+          <sc-button size="sm" variant="secondary" appearance="outlined" [label]="('repositories.emails.mailbox.test_' + (side === 'incoming' ? 'inbox' : 'outbox')) | translate" (clicked)="test(side === 'incoming' ? 'incoming' : 'outgoing')" />
+        </div>
+      </section>
+    </sc-section-card>
+    }
+
+    <sc-section-card titleKey="repositories.emails.triggers" surface="card" icon="bolt">
+      <section class="sub-section">
+      @if (triggers.items().length === 0) {
+        <p class="sc-text-body-regular">{{ 'repositories.emails.triggers_empty' | translate }}</p>
+      } @else {
+        <div class="emails__checks">
+          @for (t of triggers.items(); track t.id) {
+            <sc-checkbox [state]="hasTrigger(t.id) ? 'all' : 'none'" (cycle)="toggleTrigger(t.id)">{{ t.name }}</sc-checkbox>
+          }
+        </div>
+      }
+      <div class="grid grid--2 emails__default">
+        <div class="field">
+          <sc-select inputId="mailbox-action" optionLabel="label" optionValue="value" [label]="'repositories.emails.mailbox.default_action' | translate" [options]="actionOptions()" [value]="form().defaultAction" (valueChange)="setAction($event)" />
+        </div>
+        <div class="field">
+          <sc-select inputId="mailbox-target" optionLabel="label" optionValue="value" [label]="'repositories.emails.mailbox.target' | translate" [options]="targetOptions()" [value]="form().defaultTarget" (valueChange)="setTarget($event)" />
+        </div>
+      </div>
+    </section>
+    </sc-section-card>
+  </div>
+</div>

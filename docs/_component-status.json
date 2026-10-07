@@ -195,7 +195,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 176,
+      "usedInSupervisor": 187,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -242,7 +242,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 39,
+      "usedInSupervisor": 41,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -396,7 +396,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 13,
+      "usedInSupervisor": 15,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": []
     },
@@ -467,7 +467,7 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 11,
+      "usedInSupervisor": 12,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "sobreObsoleto": []
     },
@@ -573,7 +573,7 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 18,
+      "usedInSupervisor": 20,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "sobreObsoleto": []
     },
@@ -625,7 +625,7 @@
       "api": [
         "accept",
         "auto",
-        "chooseIcon",
+        "chooseIconName",
         "chooseLabel",
         "clearAfterSelect",
         "cleared",
@@ -879,7 +879,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 35,
+      "usedInSupervisor": 43,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1067,7 +1067,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 2,
       "cuando": "Para una contraseña, con su ojo para mostrarla.",
       "sobreObsoleto": []
     },
@@ -1234,7 +1234,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 26,
+      "usedInSupervisor": 35,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1286,7 +1286,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 57,
+      "usedInSupervisor": 64,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },

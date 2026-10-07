@@ -80,7 +80,8 @@ test('Grupos ordena por todas sus columnas', async ({ page }) => {
 test('Agentes ordena por todas menos Estado', async ({ page }) => {
   await goto(page, '/admin/agentes');
   const todas = await cabeceras(page);
-  expect(todas.filter((c) => !c.ordena).map((c) => c.campo)).toEqual(['presence']);
+  // «Estado» ya no sale de inicio (su burbuja va en el avatar, DD-185): todas las que salen ordenan.
+  expect(todas.filter((c) => !c.ordena).map((c) => c.campo)).toEqual([]);
   for (const campo of ['channels', 'groups']) {
     await ordenarDescendente(page, campo);
     const xs = await valores(page, campo);

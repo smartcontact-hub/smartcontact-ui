@@ -1,0 +1,61 @@
+<div class="page">
+  <div class="page__inner">
+    <h1 class="page__heading sc-text-h3-semibold">{{ 'repositories.emails.title' | translate }}</h1>
+
+    <!-- Cuentas de correo y triggers, cada uno con su «Crear» (la pestaña Emails de Voice). -->
+    <sc-section-card titleKey="repositories.emails.mailboxes" surface="card" icon="mail">
+      <section class="sub-section">
+      <div class="emails__bar">
+        <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'repositories.emails.create' | translate" (clicked)="crear('cuentas')" />
+      </div>
+      <div class="table-card">
+        <sc-datatable variant="list" dataKey="id" [value]="mailboxes.items()" [columns]="mailboxColumns()">
+          <div scTableEmpty>
+            <sc-empty-state icon="mail" titleKey="repositories.emails.mailboxes_empty" ctaKey="repositories.emails.create" (cta)="crear('cuentas')" />
+          </div>
+        </sc-datatable>
+      </div>
+    </section>
+    </sc-section-card>
+
+    <sc-section-card titleKey="repositories.emails.triggers" surface="card" icon="bolt">
+      <section class="sub-section">
+      <div class="emails__bar">
+        <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'repositories.emails.create' | translate" (clicked)="crear('triggers')" />
+      </div>
+      <div class="table-card">
+        <sc-datatable variant="list" dataKey="id" [value]="triggers.items()" [columns]="triggerColumns()">
+          <div scTableEmpty>
+            <sc-empty-state icon="bolt" titleKey="repositories.emails.triggers_empty" ctaKey="repositories.emails.create" (cta)="crear('triggers')" />
+          </div>
+        </sc-datatable>
+      </div>
+    </section>
+    </sc-section-card>
+  </div>
+</div>
+
+<ng-template #nameTpl let-row>
+  <span class="sc-text-body-semibold">{{ row.name }}</span>
+</ng-template>
+
+<ng-template #createdTpl let-row>{{ fecha(row.createdAt) }}</ng-template>
+<ng-template #modifiedTpl let-row>{{ fecha(row.modifiedAt) }}</ng-template>
+
+<!-- Editar y quitar, como los dos iconos de Voice; cada botón nombra su fila. -->
+<ng-template #actionsTpl let-row>
+  <span class="emails__actions">
+    <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('common.edit' | translate) + ': ' + row.name" (clicked)="editar(row.mailboxId !== undefined ? 'triggers' : 'cuentas', row.id)" />
+    <sc-button variant="danger" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ': ' + row.name" (clicked)="pedirBorrar(row.mailboxId !== undefined ? 'triggers' : 'cuentas', row)" />
+  </span>
+</ng-template>
+
+<sc-delete-entity-dialog
+  [visible]="borrar() !== null"
+  mode="single"
+  [items]="borrarItems()"
+  [entitySingular]="(borrar()?.tipo === 'triggers' ? 'repositories.emails.trigger_singular' : 'repositories.emails.mailbox_singular') | translate"
+  [entityPlural]="(borrar()?.tipo === 'triggers' ? 'repositories.emails.triggers' : 'repositories.emails.mailboxes') | translate"
+  (cancelled)="borrar.set(null)"
+  (confirm)="confirmarBorrar()"
+/>

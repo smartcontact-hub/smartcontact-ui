@@ -99,13 +99,13 @@ test('Web Chat y WhatsApp guardan horarios independientes y solo ofrecen los act
 
 test('música: elegir, cambiar y quitar mantiene un solo nombre y recupera la predeterminada', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
-  const music = page.getByRole('group', { name: 'Música de espera/Transferencia', exact: true });
+  const music = page.getByRole('group', { name: 'Música de espera', exact: true });
   await expect(music.getByText('Música por defecto', { exact: true })).toBeVisible();
   const input = page.locator('#group-hold-music-upload input[type="file"]');
   await input.setInputFiles({ name: 'espera.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFFdemo') });
   await expect(music.getByText('espera.wav', { exact: true })).toHaveCount(1);
   // La zona de subir sigue ahí con el archivo ya elegido: el nombre se ve una vez, en el campo.
-  await expect(music.getByRole('button', { name: 'Elegir .wav' })).toBeVisible();
+  await expect(music.getByRole('button', { name: 'Subir archivo' })).toBeVisible();
   await input.setInputFiles({ name: 'otra.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFFdemo') });
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect.poll(() => stored(page, 'ficha')).toMatchObject({ announcements: { holdMusicFile: 'otra.wav' } });

@@ -3713,19 +3713,14 @@
           }
         },
         {
-          "nombre": "chooseIcon",
+          "nombre": "chooseIconName",
           "clase": "input",
           "tipo": "string",
-          "porDefecto": null,
+          "porDefecto": "'upload'",
           "requerido": false,
-          "descripcion": "Icono del botón de elegir (por defecto, el de PrimeNG).",
-          "origen": "nativo",
-          "nativo": {
-            "descripcion": "Icon of the choose button.",
-            "porDefecto": null,
-            "obsoleta": null,
-            "heredadaDe": null
-          }
+          "descripcion": "Icono del botón de elegir, del DS (`sc-icon`): por defecto, el de subida.",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "dropLabel",
@@ -3844,6 +3839,7 @@
         "cancelLabel",
         "cancelStyleClass",
         "chooseButtonProps",
+        "chooseIcon",
         "chooseStyleClass",
         "customUpload",
         "filesInput",

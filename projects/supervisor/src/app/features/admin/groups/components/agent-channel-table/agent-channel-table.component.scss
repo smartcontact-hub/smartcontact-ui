@@ -85,9 +85,18 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* La cabecera de Asignado (DD-176): su casilla de «todos» delante del rótulo, en una fila con las demás cabeceras. */
-.assign__head {
+
+/* La cabecera del agente, con el filtro por estado al lado del nombre (DD-185). */
+.assign__agent-head {
   display: inline-flex;
   align-items: center;
+  gap: var(--sc-spacing-0-25);
+}
+
+.assign__status-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--sc-spacing-0-5);
+  min-width: 12rem;
 }

@@ -9,6 +9,8 @@ import {
 } from '@angular/core';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 
+import { ScIconComponent } from '@smartcontact-hub/icons';
+
 /**
  * Subir archivos: elegir con el botón o soltarlos en la zona, con su lista, su validación de tipo y tamaño y su
  * progreso. Wrapper Extended sobre `<p-fileupload>` de primeng.dev, en su modo **advanced** (el de
@@ -33,8 +35,7 @@ import { FileUpload, FileUploadModule } from 'primeng/fileupload';
  * ```html
  * <sc-fileupload
  *   accept=".wav,audio/wav"
- *   chooseLabel="Elegir .wav"
- *   dropLabel="o suelta un .wav aquí."
+ *   chooseLabel="Subir archivo"
  *   [clearAfterSelect]="true"
  *   (filesSelected)="onFiles($event)"
  * />
@@ -45,7 +46,7 @@ import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 @Component({
   selector: 'sc-fileupload',
   standalone: true,
-  imports: [FileUploadModule],
+  imports: [FileUploadModule, ScIconComponent],
   templateUrl: './sc-fileupload.component.html',
   styleUrl: './sc-fileupload.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,8 +76,8 @@ export class ScFileUploadComponent {
 
   /** Texto del botón de elegir, traducido. */
   readonly chooseLabel = input<string>();
-  /** Icono del botón de elegir (por defecto, el de PrimeNG). */
-  readonly chooseIcon = input<string>();
+  /** Icono del botón de elegir, del DS (`sc-icon`): por defecto, el de subida. */
+  readonly chooseIconName = input('upload');
   /** Texto de la zona de soltar, traducido. Sin él, la zona queda vacía. */
   readonly dropLabel = input<string>();
   /** Avisos de archivo rechazado, con los mismos `{0}` que PrimeNG (nombre del archivo, tamaño o tipos admitidos). */

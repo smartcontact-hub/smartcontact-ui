@@ -1,0 +1,78 @@
+<ng-template #topbarActions>
+  @if (blockedReason(); as reason) {
+    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
+  } @else if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (formDirty()) {
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    size="sm"
+    variant="primary"
+    [disabled]="!canSave()"
+    [label]="(mode() === 'create' ? 'repositories.emails.trigger.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <h1 class="page__heading sc-text-h3-semibold">{{ form().name.trim() || ('repositories.emails.trigger.create_title' | translate) }}</h1>
+
+    <sc-section-card titleKey="repositories.emails.trigger.section_trigger" surface="card" icon="bolt">
+      <section class="sub-section">
+      <div class="grid grid--2">
+        <div class="field">
+          <sc-inputtext inputId="trigger-name" fluid required [label]="'repositories.columns.name' | translate" [value]="form().name" [error]="nameTaken() ? ('repositories.emails.trigger.name_taken' | translate) : undefined" (valueChange)="update('name', $event)" />
+        </div>
+        <div class="field">
+          <sc-inputtext inputId="trigger-label" fluid [label]="'repositories.emails.trigger.label' | translate" [value]="form().label" (valueChange)="update('label', $event)" />
+        </div>
+        <div class="field field--full">
+          <sc-inputtext inputId="trigger-description" fluid [label]="'repositories.columns.description' | translate" [placeholder]="'repositories.placeholders.description' | translate" [value]="form().description" (valueChange)="update('description', $event)" />
+        </div>
+      </div>
+    </section>
+    </sc-section-card>
+
+    <sc-section-card titleKey="repositories.emails.trigger.section_condition" surface="card" icon="filter_alt">
+      <section class="sub-section">
+      <div class="grid grid--3">
+        <div class="field">
+          <sc-select inputId="trigger-field" optionLabel="label" optionValue="value" [label]="'repositories.emails.trigger.field' | translate" [options]="fieldOptions()" [value]="form().field" (valueChange)="update('field', $any($event))" />
+        </div>
+        <div class="field">
+          <sc-select inputId="trigger-operator" optionLabel="label" optionValue="value" [label]="'repositories.emails.trigger.operator' | translate" [options]="operatorOptions()" [value]="form().operator" (valueChange)="update('operator', $any($event))" />
+        </div>
+        <div class="field">
+          <sc-inputtext inputId="trigger-value" fluid [label]="'repositories.emails.trigger.value' | translate" [value]="form().value" (valueChange)="update('value', $event)" />
+        </div>
+      </div>
+    </section>
+    </sc-section-card>
+
+    <sc-section-card titleKey="repositories.emails.trigger.section_action" surface="card" icon="alt_route">
+      <section class="sub-section">
+      <div class="grid grid--2">
+        <div class="field">
+          <sc-select inputId="trigger-action" optionLabel="label" optionValue="value" [label]="'repositories.emails.mailbox.default_action' | translate" [options]="actionOptions()" [value]="form().action" (valueChange)="update('action', $any($event))" />
+        </div>
+        <div class="field">
+          <sc-select inputId="trigger-target" optionLabel="label" optionValue="value" [label]="'repositories.emails.mailbox.target' | translate" [options]="targetOptions()" [value]="form().target" (valueChange)="update('target', $any($event) ?? '')" />
+        </div>
+      </div>
+    </section>
+    </sc-section-card>
+
+    <sc-section-card titleKey="repositories.emails.trigger.section_mailbox" surface="card" icon="mail">
+      <section class="sub-section">
+      <div class="grid grid--2">
+        <div class="field">
+          <sc-select inputId="trigger-mailbox" optionLabel="label" optionValue="value" [label]="'repositories.emails.mailbox_singular_title' | translate" [options]="mailboxOptions()" [value]="form().mailboxId" (valueChange)="update('mailboxId', $any($event) ?? null)" />
+        </div>
+      </div>
+    </section>
+    </sc-section-card>
+  </div>
+</div>

@@ -5,8 +5,7 @@ import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../
 
 const AUDIO_SNIPPET = `<sc-fileupload
   accept=".wav,audio/wav"
-  chooseLabel="Elegir .wav"
-  dropLabel="o suelta un .wav aquí."
+  chooseLabel="Subir archivo"
   [clearAfterSelect]="true"
   (filesSelected)="musica.set($event[0]?.name ?? null)"
 />
@@ -15,7 +14,7 @@ const AUDIO_SNIPPET = `<sc-fileupload
 const LIST_SNIPPET = `<sc-fileupload
   [multiple]="true"
   accept="image/*"
-  chooseLabel="Elegir"
+  chooseLabel="Subir archivo"
   dropLabel="o suelta aquí los archivos."
   (filesSelected)="elegidos.set($event)"
 />`;
@@ -26,8 +25,8 @@ const RULES_SNIPPET = `<sc-fileupload
   [maxFileSize]="5000000"
   [fileLimit]="3"
   [multiple]="true"
-  chooseIcon="pi pi-upload"
-  chooseLabel="Elegir"
+  chooseIconName="upload"
+  chooseLabel="Subir archivo"
   dropLabel="o suelta aquí hasta 3 .wav."
   invalidFileTypeMessageSummary="{0}: tipo de archivo no válido. "
   invalidFileTypeMessageDetail="Solo .wav."
@@ -36,7 +35,7 @@ const RULES_SNIPPET = `<sc-fileupload
 />
 <!-- Con url="https://…" PrimeNG envía los archivos; sin ella, solo se entregan por (uploaded). -->`;
 
-const BASIC_SNIPPET = `<sc-fileupload mode="basic" chooseLabel="Elegir" accept=".csv" />`;
+const BASIC_SNIPPET = `<sc-fileupload mode="basic" chooseLabel="Subir archivo" accept=".csv" />`;
 
 /** Demo de `sc-fileupload` en formato story (motor «Storybook-like»). */
 @Component({

@@ -83,7 +83,7 @@ test('cada familia de canales enseña su estrategia en su columna, y «—» don
   await goto(page, 'admin/grupos');
   await mostrarColumna(page, 'Estrategia de chat');
   await expect(await celda(page, 'Online Support', 'Estrategia de teléfono')).toHaveText('Balanceada');
-  await expect(await celda(page, 'Online Support', 'Estrategia de chat')).toHaveText('Menos conversaciones activas');
+  await expect(await celda(page, 'Online Support', 'Estrategia de chat')).toHaveText('Menos conversaciones atendidas');
   await expect(await celda(page, 'ACD Demo C2CB', 'Estrategia de chat')).toHaveText('—');
 
   // Un grupo solo de Chat: ni estrategia ni número de teléfono, aunque los guarde.
@@ -113,7 +113,7 @@ test('cambiar en bloque la estrategia de chat escribe la de chat, y solo en los 
   await lote.locator('sc-select').first().click();
   await page.getByRole('option', { name: 'Estrategia de chat', exact: true }).click();
   await lote.locator('sc-select').last().click();
-  await page.getByRole('option', { name: 'Menos conversaciones activas', exact: true }).click();
+  await page.getByRole('option', { name: 'Menos conversaciones atendidas', exact: true }).click();
   await lote.getByRole('button', { name: 'Aplicar' }).click();
 
   // La vista previa solo trae al que tiene Chat: a Telemarketing (solo Teléfono) no le aplica.
@@ -122,7 +122,7 @@ test('cambiar en bloque la estrategia de chat escribe la de chat, y solo en los 
   await expect(vista).not.toContainText('Telemarketing');
   await vista.getByRole('button', { name: 'Aplicar' }).click();
 
-  await expect(await celda(page, 'Reclamaciones', 'Estrategia de chat')).toHaveText('Menos conversaciones activas');
+  await expect(await celda(page, 'Reclamaciones', 'Estrategia de chat')).toHaveText('Menos conversaciones atendidas');
   await expect(await celda(page, 'Reclamaciones', 'Estrategia de teléfono')).toHaveText('Balanceada');
   await expect(await celda(page, 'Telemarketing', 'Estrategia de chat')).toHaveText('—');
 });
@@ -166,7 +166,7 @@ const grupoConLasEstrategiasMasLargas = {
   priority: 'Máxima',
   channels: ['phone', 'chat', 'whatsapp', 'email'],
   strategy: 'Menos conversaciones atendidas',
-  chatStrategy: 'Menos conversaciones activas',
+  chatStrategy: 'Menos conversaciones atendidas',
   services: ['Soporte técnico'],
 };
 
@@ -183,6 +183,6 @@ test('a 1440 caben también las estrategias más largas del catálogo, con la co
   expect(await recortes(page)).toEqual([]);
 
   await mostrarColumna(page, 'Estrategia de chat');
-  await expect(await celda(page, 'Online Support', 'Estrategia de chat')).toHaveText('Menos conversaciones activas');
+  await expect(await celda(page, 'Online Support', 'Estrategia de chat')).toHaveText('Menos conversaciones atendidas');
   expect(await recortes(page)).toEqual([]);
 });

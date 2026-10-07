@@ -90,6 +90,42 @@ export const REPOSITORIES_ROUTES: Routes = [
     ],
   },
   {
+    /* El repositorio de Email (DD-185): las cuentas de correo y los triggers, cada uno con su editor en su ruta. */
+    path: 'emails',
+    data: repoInstance('repositories.emails.title'),
+    children: [
+      { path: '', loadComponent: () => import('./pages/emails-page.component').then((m) => m.EmailsPageComponent) },
+      {
+        path: 'cuentas/crear',
+        data: { breadcrumb: { labelKey: 'repositories.emails.mailbox.create_breadcrumb' } },
+        loadComponent: () =>
+          import('./pages/email-cuenta-editor-page.component').then((m) => m.EmailCuentaEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'cuentas/editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.emails.mailbox.edit_breadcrumb' } },
+        loadComponent: () =>
+          import('./pages/email-cuenta-editor-page.component').then((m) => m.EmailCuentaEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'triggers/crear',
+        data: { breadcrumb: { labelKey: 'repositories.emails.trigger.create_breadcrumb' } },
+        loadComponent: () =>
+          import('./pages/email-trigger-editor-page.component').then((m) => m.EmailTriggerEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'triggers/editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.emails.trigger.edit_breadcrumb' } },
+        loadComponent: () =>
+          import('./pages/email-trigger-editor-page.component').then((m) => m.EmailTriggerEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
+  },
+  {
     path: 'variables',
     data: repoInstance('repositories.variables.title'),
     loadComponent: () => import('./instances/variables').then((m) => m.VariablesPageComponent),

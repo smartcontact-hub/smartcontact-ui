@@ -101,7 +101,7 @@ test('Teléfono: saliente y música a la vista; los demás mensajes de la cola, 
 
   // El rótulo del teléfono saliente lleva su «*» de obligatorio desde DD-142, y el texto de un rótulo empieza por un
   // espacio que el casado por expresión regular no recorta (medido).
-  for (const visible of ['Teléfono saliente', 'Música de espera/Transferencia']) {
+  for (const visible of ['Teléfono saliente', 'Música de espera']) {
     await expect(telefono.getByText(new RegExp(`^\\s*${visible}(\\s*\\*)?\\s*$`)), visible).toBeVisible();
   }
   // DD-157: los demás mensajes vuelven, plegados (DD-121 §6 los había sacado de la vista); el audio saliente, no.
@@ -148,7 +148,7 @@ const grupoDeAntes = {
   priority: 'Baja',
   channels: ['phone', 'chat'],
   strategy: 'Balanceada',
-  chatStrategy: 'Rotativa (por turnos)', // ya no existe: se lee con «Menos conversaciones activas»
+  chatStrategy: 'Rotativa (por turnos)', // ya no existe: se lee con «Menos conversaciones atendidas»
   advanced: { queueSizeType: 'per_agent', queueSize: 7, maxQueueWaitSec: 99, serviceLevelSec: 33, transferSec: 11, wrapUpSec: 4 },
 };
 

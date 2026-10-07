@@ -13,6 +13,9 @@
  */
 
 
+// El avatar con su estado en una burbuja abajo a la derecha (DD-185).
+export { PresenceAvatarComponent } from './presence-avatar/presence-avatar.component';
+
 export { IllustratedAvatarComponent } from './illustrated-avatar/illustrated-avatar.component';
 export type { IllustratedAvatarPool } from './illustrated-avatar/illustrated-avatar.component';
 

@@ -66,7 +66,7 @@ test('Contact Center › Grupos habla como la ficha y trae los valores del docum
 
 test('lo que se guarda en Contact Center › Grupos es con lo que nace un grupo nuevo', async ({ page }) => {
   await goto(page, 'config/aed/grupos');
-  await pickSelectOption(page, page.locator('#grupos-chat-strategy'), 'Menos conversaciones activas');
+  await pickSelectOption(page, page.locator('#grupos-chat-strategy'), 'Menos conversaciones atendidas');
   const esperaChat = page.locator('#grupos-chat-max-wait');
   await pickSelectOption(page, esperaChat, '1,5 min');
   await page.locator('#grupos-chat-inactivity-on').click();
@@ -82,7 +82,7 @@ test('lo que se guarda en Contact Center › Grupos es con lo que nace un grupo 
   await expect(page.locator('#group-strategy')).toHaveText('Balanceada');
   await expect(page.locator('#group-phone-transfer')).toHaveText('10 s');
   await expect(page.locator('#group-phone-max-wait')).toHaveText('15 s');
-  await expect(page.locator('#group-chat-strategy')).toHaveText('Menos conversaciones activas');
+  await expect(page.locator('#group-chat-strategy')).toHaveText('Menos conversaciones atendidas');
   await expect(page.locator('#group-chat-max-wait')).toHaveText('1,5 min');
   await expect(page.locator('#group-chat-inactivity')).toBeVisible();
 });
