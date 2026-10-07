@@ -1,7 +1,7 @@
 # Cuscare: filtros y tabla — handoff
 
 Decisión de producto validada para publicación (2026-10-02); la regla del filtro cambió el
-2026-10-07. Implementación en
+2026-10-06. Implementación en
 `projects/cuscare/src/app/features/tickets/`. Complementa
 [cuscare-request-type-match.md](cuscare-request-type-match.md).
 
@@ -30,7 +30,7 @@ para que la próxima apertura muestre el catálogo completo, conservando las cas
 seleccionadas. Una búsqueda sin coincidencias muestra «Ningún tipo coincide» dentro
 del panel y no cambia los resultados de tickets.
 
-La regla (2026-10-07): cada origen encendido tiene que haber puesto alguno de los tipos
+La regla (2026-10-06): cada origen encendido tiene que haber puesto alguno de los tipos
 marcados, no necesariamente el mismo. OR dentro de cada origen, AND entre orígenes. Las
 opciones ya no llevan «Match»; el detalle, en
 [cuscare-request-type-match.md](cuscare-request-type-match.md).
@@ -120,7 +120,7 @@ el desplazamiento horizontal. No se crea una columna de acciones redundante.
   Disparador y limpieza tienen foco visible. El panel tiene nombre accesible.
 - El origen de cada tag se expone también en nombre accesible y title. Los
   colores locales IA/Agente y la agrupación de coincidencias, con su check, se conservan
-  en el prototipo como avance de fase 2 (decisión del 2026-10-07).
+  en el prototipo como avance de fase 2 (decisión del 2026-10-06).
 - Se respeta reduced-motion para los checks de origen y el chevron. No se añade
   animación al filtrado ni al scroll.
 
