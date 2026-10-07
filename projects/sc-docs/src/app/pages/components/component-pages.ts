@@ -166,6 +166,16 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () => import('./fileupload/fileupload-demo.component').then((m) => m.FileUploadDemoComponent),
   },
   {
+    path: 'icontile',
+    label: 'IconTile',
+    load: () => import('./icontile/icontile-demo.component').then((m) => m.IconTileDemoComponent),
+  },
+  {
+    path: 'factrow',
+    label: 'FactRow',
+    load: () => import('./factrow/factrow-demo.component').then((m) => m.FactRowDemoComponent),
+  },
+  {
     path: 'toggleswitch',
     label: 'ToggleSwitch',
     load: () => import('./toggleswitch/toggleswitch-demo.component').then((m) => m.ToggleSwitchDemoComponent),

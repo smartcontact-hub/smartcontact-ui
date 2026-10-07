@@ -33,7 +33,16 @@ propias): `git show 540f246c:docs/handoff/supervisor-fichas.md``. El de supervis
 60f8e617:docs/handoff/supervisor-fichas.md`. El de las tres columnas sin cabecera (2026-10-05, DD-170, #337): `git show
 b49b56e0:docs/handoff/supervisor-fichas.md`. El de Tipificaciones (2026-10-05, DD-173, DD-174 y DD-177, #340): `git show
 a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-10-06, DD-176, #341): `git show
-0bf19647:docs/handoff/supervisor-fichas.md`.
+0bf19647:docs/handoff/supervisor-fichas.md`. El de Repositorios en tarjetas (2026-10-06, DD-179, #347): `git show
+d4843e43:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-07 · La baldosa y la fila del resumen, al DS (DD-186)
+
+> **Sello:** rama `arebury/resumen-al-ds` sobre main, HEAD `d4843e43`. Un PR con dos bloques: este y la auditoría de
+> PrimeNG (abajo, en «SIGUIENTE»).
+
+- **`sc-icon-tile` y `sc-fact-row`** (`<div scFactRow>`) en el DS, con su página en sc-docs; **`sc-tag size="md"`**, la
+  píldora a 14. El resumen de grupo, agente y usuario los usan; el de agente y usuario pasa a una tarjeta de filas.
 
 ## ✅ 2026-10-07 · Segunda vuelta de la revisión de grupos (DD-185)
 
@@ -118,43 +127,12 @@ b49b56e0:docs/handoff/supervisor-fichas.md`.
   (cinco pruebas fijaban los anchos de antes y se ponen al día: el panel crece lo que suman las casillas), y `revision`
   de los dos listados y la ficha de grupo, en regla.
 
-## ✅ 2026-10-06 · Repositorios en tarjetas por grupo, con su panel (DD-179), en su PR
-
-> **Sello:** rama `arebury/premium-repository-hub-redesign` sobre `main` en `3ff6cd71`. **Un PR, un commit en rojo y
-> otro en verde (DD-154).** Sale de una maqueta de Figma Make («Premium Repository Hub»), estudiada en su código y su
-> comportamiento con `impeccable` y `better-ui`, e iterada en local antes de subir.
-
-- **El hub, en tarjetas por grupo:** icono, cifra, nombre y descripción; la rejilla de cuatro, tres o dos según el
-  grupo, y los grupos de dos juntos en una fila. Cabe sin desplazar a 1440 × 800 y 1366 × 768, en los cuatro idiomas.
-- **Un tono por grupo**, de los de etiqueta del DS (azul, morado, teal y naranja): el título, el icono, la cifra, el
-  borde al pasar y al marcar, el filtro elegido y el panel. Un icono por concepto (`sell` y `category`).
-- **El panel**, acoplado bajo la barra de la app: lo que hay dentro, de verdad, y «Abrir repositorio» arriba. Lo cierran
-  la X, Escape, su tarjeta y un clic fuera; con velo solo si taparía tarjetas, medido al abrir.
-- **El filtro por grupo** con transición del navegador y **los recientes** en el buscador vacío.
-- **En el DS:** `sc-drawer` `docked`, `sc-avatar` `labelColor` y `sc-tag` `bordered`, con su ejemplo en sc-docs y su
-  línea en el CHANGELOG.
-- **En local, en verde:** las 9 del hub (las 9 en rojo contra `main`, y las del clic fuera y el velo, también con el
-  fallo puesto a propósito); las guardas de la ruta (contraste en los dos temas, foco, iconos, identidad, agrupación y
-  piezas hechas a mano); el contraste de icono y título, medido a mano; `revision` en regla.
-
-**Trampas del lote:**
-- **`npm run revision` mide 0 relaciones en tarjetas** (y en los títulos de grupo del `Menu`): el aire entre grupos se
-  mide a mano, entre cajas de texto.
-- **`dismissible` de `p-drawer` solo cierra al pulsar el velo**: sin modal, el clic fuera lo pone la página.
-- **Un «clic fuera» a una coordenada puesta a ojo cayó dentro del panel acoplado** (empieza en 1090 a 1440) y navegó:
-  se pulsa un elemento de fuera (el `h1`), no un punto.
-- **Tocar un comentario de un componente del DS lo deja más nuevo que `dist/`**, y el hook no deja medir con
-  Playwright: reconstruye y reinicia el `ng serve`.
-- **`p-avatar` no tiene entrada de estilo**: el tono va con `[style.background]` sobre su elemento, que gana al tema.
-
 ## SIGUIENTE — sin preguntar
 
--2. **Auditoría de los componentes de PrimeNG contra los del DS (propuesta del 2026-10-06).** `sc-fileupload` (DD-184)
-   existía en PrimeNG desde siempre y se nos pasó: lo único que avisa de «¿PrimeNG ya trae esto?» es el gancho de un
-   enlace pegado (`primeng-doc-guard`). Primer paso: cruzar el catálogo de `primeng/*` con `docs/_component-status.json`
-   y con lo que usan las apps (`audit:primeng-coupling`), y listar cada componente de PrimeNG que no tenemos y cada
-   wrapper nuestro que repite uno nativo, con su fuente (`node tools/primeng-doc.mjs <componente>`). Una tabla en
-   `docs/`, sin construir nada hasta decidir cuáles entran.
+-2. **Auditoría de PrimeNG contra el DS: hecha (2026-10-07)**, en `docs/AUDIT-PRIMENG-CATALOGO.md`. Queda decidir lo que
+   propone, por orden: TreeSelect/Tree para las tipificaciones (con la propuesta pendiente), InputTags para los dominios
+   del chat y OrderList para el selector de columnas; revisar `sc-inputnumber` sobre `p-inputnumber` y las dos maneras de
+   editar un nombre en su sitio; envolver Tabs y quitar Sidebar del laboratorio. Nada se construye sin decidirlo.
 -1. **`fichas-nombre-fijo.spec.ts`, intermitente en el CI (2026-10-06).** Falló cuatro veces en dos PRs (#349 y #350),
    siempre en el shard 4/8, cada vez en una ficha distinta (agente a 1366, usuario a 1366, grupo a 1280) y con el mismo
    mensaje, «X sigue a la vista»: en el punto donde debía estar el nombre devuelve el texto de la barra superior. Pasa al

@@ -65,6 +65,7 @@ export class TagDemoComponent {
       },
       { name: 'icon', control: { kind: 'text' }, description: 'Nombre Material (p.ej. check).' },
       { name: 'rounded', control: { kind: 'boolean' } },
+      { name: 'size', control: { kind: 'select', options: ['sm', 'md'] }, description: 'sm, la del Kit (12 en negrita); md, 14 en semibold, para una píldora entre valores de 14.' },
       { name: 'variant', control: { kind: 'select', options: ['default', 'label'] } },
       {
         name: 'labelColor',
@@ -85,6 +86,7 @@ export class TagDemoComponent {
       severity: 'primary',
       icon: '',
       rounded: false,
+      size: 'sm',
       variant: 'default',
       labelColor: 'gray',
       bordered: true,

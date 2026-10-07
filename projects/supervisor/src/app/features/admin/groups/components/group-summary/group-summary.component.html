@@ -56,28 +56,21 @@
         <div class="resumen__fact" role="group" aria-labelledby="group-summary-routing">
           <p id="group-summary-routing" class="resumen__label resumen__title-row sc-text-h3-semibold">
             <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
-              <span class="resumen__tile"><sc-icon name="alt_route" [size]="16" aria-hidden="true" /></span>
+              <sc-icon-tile icon="alt_route" tone="strong" />
               {{ 'groups.form.summary.routing' | translate }}
             </a>
           </p>
+          <!-- Cada fila, `sc-fact-row` del DS (DD-186): la clave con su baldosa y el valor a la derecha. -->
           <dl class="resumen__pairs">
             @for (r of routing(); track r.family) {
-              <div class="resumen__pair">
-                <dt class="resumen__key sc-text-body-regular">
-                  <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
-                    <span class="resumen__tile"><sc-channel-icon [channel]="r.family" [size]="16" /></span>
-                    {{ familyKey(r.family) | translate }}
-                  </a>
-                </dt>
-                <!-- La estrategia corta, en una píldora verde (configurada); la larga, en texto, que una píldora de tres
-                     líneas no se lee. -->
-                <dd class="resumen__value sc-text-body-semibold">
-                  @if (r.text.length <= 16) {
-                    <sc-tag severity="success" rounded [value]="r.text" />
-                  } @else {
-                    {{ r.text }}
-                  }
-                </dd>
+              <div scFactRow class="resumen__pair" [label]="familyKey(r.family) | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
+                <sc-channel-icon scFactIcon [channel]="r.family" [size]="16" />
+                <!-- La estrategia corta, en una píldora verde redondeada a la talla de los valores; la larga, en texto. -->
+                @if (r.text.length <= 16) {
+                  <sc-tag severity="success" rounded size="md" [value]="r.text" />
+                } @else {
+                  {{ r.text }}
+                }
               </div>
             }
           </dl>
@@ -87,37 +80,26 @@
         <div class="resumen__fact" role="group" aria-labelledby="group-summary-outbound">
           <p id="group-summary-outbound" class="resumen__label resumen__title-row sc-text-h3-semibold">
             <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
-              <span class="resumen__tile"><sc-icon name="call_made" [size]="16" aria-hidden="true" /></span>
+              <sc-icon-tile icon="call_made" tone="strong" />
               {{ 'groups.form.summary.outbound' | translate }}
             </a>
           </p>
           <dl class="resumen__pairs">
             @for (o of outbound(); track o.channel) {
-              <div class="resumen__pair">
-                <dt class="resumen__key sc-text-body-regular">
-                  <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">
-                    <span class="resumen__tile"><sc-channel-icon [channel]="o.channel" [size]="16" /></span>
-                    {{ channelKeys[o.channel] | translate }}
-                  </a>
-                </dt>
+              <div scFactRow class="resumen__pair" [label]="channelKeys[o.channel] | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">
+                <sc-channel-icon scFactIcon [channel]="o.channel" [size]="16" />
                 @if (o.number) {
-                  <dd class="resumen__value sc-text-body-semibold">{{ o.number }}</dd>
+                  {{ o.number }}
                 } @else {
-                  <dd class="resumen__warn sc-text-body-semibold">
+                  <span class="resumen__warn">
                     <sc-icon name="warning" size="inherit" [weight]="600" aria-hidden="true" />
                     {{ 'groups.form.summary.no_number' | translate }}
-                  </dd>
+                  </span>
                 }
               </div>
             }
-            <div class="resumen__pair">
-              <dt class="resumen__key sc-text-body-regular">
-                <a class="resumen__enlace" [href]="hrefs().recursos" (click)="pulsar($event, { seccion: 'recursos' })">
-                  <span class="resumen__tile"><sc-icon name="library_books" [size]="16" aria-hidden="true" /></span>
-                  {{ 'groups.form.summary.resources' | translate }}
-                </a>
-              </dt>
-              <dd class="resumen__value sc-text-body-semibold"><span class="resumen__digits" [scAnimateOnChange]="resourceCount()" animateClass="animate-sc-bump">{{ resourceCount() }}</span></dd>
+            <div scFactRow class="resumen__pair" icon="library_books" [label]="'groups.form.summary.resources' | translate" [href]="hrefs().recursos" (open)="pulsar($event, { seccion: 'recursos' })">
+              <span class="resumen__digits" [scAnimateOnChange]="resourceCount()" animateClass="animate-sc-bump">{{ resourceCount() }}</span>
             </div>
           </dl>
         </div>

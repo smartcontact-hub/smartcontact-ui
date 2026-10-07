@@ -17,7 +17,9 @@ import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
+import { ScCheckboxComponent as CheckboxComponent,
+  ScFactRowComponent as FactRowComponent,
+} from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
@@ -90,6 +92,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
 @Component({
   selector: 'sc-user-form-page',
   imports: [
+    FactRowComponent,
     NgTemplateOutlet,
     CheckboxComponent,
     ButtonComponent,

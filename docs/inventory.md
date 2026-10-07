@@ -34,7 +34,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**57 componentes** · 23 custom · 8 standard · 26 extended · 46 usados en Supervisor.
+**59 componentes** · 25 custom · 8 standard · 26 extended · 47 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -60,6 +60,7 @@
 | `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 31 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 11 inputs | — | ✓ | 3 |
 | `sc-empty-state` | CUSTOM | — | 4 inputs | sc-button | ✓ | 20 |
+| `div[scFactRow]` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-field-label` | CUSTOM | — | 3 inputs | — | — | — |
 | `sc-field-msg` | CUSTOM | — | 2 inputs | — | — | — |
 | `sc-fileupload` | EXTENDED | primeng/fileupload | 17 inputs | — | ✓ | 2 |
@@ -67,6 +68,7 @@
 | `sc-form-section-nav` | CUSTOM | — | 7 inputs | — | ✓ | 6 |
 | `sc-gauge` | CUSTOM | — | 9 inputs | — | ✓ | 1 |
 | `sc-group-popover` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 5 |
+| `sc-icon-tile` | CUSTOM | — | 3 inputs | — | ✓ | 2 |
 | `sc-impact-preview-dialog` | CUSTOM | — | 3 inputs | sc-dialog sc-button | ✓ | 3 |
 | `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | ✓ | 4 |
 | `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
@@ -91,7 +93,7 @@
 | `sc-slot` | CUSTOM | — | 4 inputs | — | ✓ | 11 |
 | `sc-sticky-form-header` | CUSTOM | — | 4 inputs | sc-button | ✓ | 2 |
 | `sc-subsection` | CUSTOM | — | 5 inputs | — | ✓ | 9 |
-| `sc-tag` | EXTENDED | primeng/tag | 7 inputs | — | ✓ | 28 |
+| `sc-tag` | EXTENDED | primeng/tag | 8 inputs | — | ✓ | 28 |
 | `sc-textarea` | EXTENDED | primeng/textarea | 14 inputs | — | ✓ | 7 |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
 | `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 8 inputs | — | ✓ | 33 |

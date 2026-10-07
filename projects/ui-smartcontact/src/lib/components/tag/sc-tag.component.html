@@ -3,7 +3,7 @@
         <span class="sc-tag__text">{{ tagValue() }}</span>
     </span>
 } @else {
-    <p-tag [value]="tagValue()" [severity]="tagSeverity()" [icon]="tagIcon()" [rounded]="rounded()">
+    <p-tag [value]="tagValue()" [severity]="tagSeverity()" [icon]="tagIcon()" [rounded]="rounded()" [pt]="tagPt()">
         <ng-content></ng-content>
     </p-tag>
 }

@@ -548,6 +548,26 @@ test.describe('sc-selectbutton', () => {
   });
 });
 
+test.describe('sc-fact-row y sc-icon-tile', () => {
+  test('la fila es un par dt/dd dentro de un div del dl, con su baldosa decorativa y la clave como enlace', async ({ page }) => {
+    await gotoPage(page, 'factrow');
+    const lista = page.getByTestId('sc-fact-row-list');
+    // dl > div > dt + dd: la lista de definiciones sigue siendo válida (DD-186).
+    const estructura = await lista.evaluate((dl) =>
+      [...dl.children].map((div) => `${div.tagName}:${[...div.children].map((c) => c.tagName).join('+')}`),
+    );
+    expect(estructura).toEqual(['DIV:DT+DD', 'DIV:DT+DD', 'DIV:DT+DD']);
+    await expect(lista.getByRole('link', { name: 'Teléfono' })).toHaveAttribute('href', '#distribucion');
+    await expect(lista.locator('sc-icon-tile').first()).toHaveAttribute('aria-hidden', 'true');
+    // El valor, a la derecha de su clave.
+    const fila = lista.locator('.sc-fact-row').first();
+    const [clave, valor] = await Promise.all([fila.locator('dt').boundingBox(), fila.locator('dd').boundingBox()]);
+    expect(valor!.x).toBeGreaterThan(clave!.x + clave!.width);
+    // La píldora a 14, como los valores (`sc-tag size="md"`).
+    expect(await fila.locator('.p-tag').evaluate((e) => getComputedStyle(e).fontSize)).toBe('14px');
+  });
+});
+
 test.describe('sc-fileupload', () => {
   test('zona de soltar, botón «Subir archivo» y entrega al elegir; un tipo que no es, se rechaza', async ({ page }) => {
     await gotoPage(page, 'fileupload');

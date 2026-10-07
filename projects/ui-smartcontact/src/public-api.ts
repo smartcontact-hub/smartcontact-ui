@@ -46,6 +46,8 @@ export * from './lib/components/inputtext/sc-inputtext.component';
 export * from './lib/components/password/sc-password.component';
 export * from './lib/components/select/sc-select.component';
 export * from './lib/components/fileupload/sc-fileupload.component';
+export * from './lib/components/icon-tile/sc-icon-tile.component';
+export * from './lib/components/fact-row/sc-fact-row.component';
 export * from './lib/components/selectbutton/sc-selectbutton.component';
 export * from './lib/components/toggleswitch/sc-toggleswitch.component';
 export * from './lib/components/dialog/sc-dialog.component';

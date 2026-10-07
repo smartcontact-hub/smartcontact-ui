@@ -65,35 +65,6 @@
   }
 }
 
-/* La baldosa del icono de cada título y de cada fila, medida sobre la maqueta del widget (DD-185) en proporción al texto:
- * la baldosa, dos veces la letra (28 para 14), con el radio a una quinta parte (6); el icono, a algo más de la mitad
- * (16), con el trazo de la letra de al lado. Su gris es frío y un paso más hondo que la tarjeta, con un brillo arriba
- * y una sombra mínima debajo: se lee en relieve, como en la maqueta. El icono, en el color del texto. */
-.resumen__tile {
-  display: inline-grid;
-  flex-shrink: 0;
-  place-items: center;
-  inline-size: var(--sc-spacing-2);
-  block-size: var(--sc-spacing-2);
-  border-radius: var(--sc-radius-md);
-  background: color-mix(in srgb, var(--sc-text-heading) 6%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--sc-bg-surface) 60%, transparent),
-    var(--sc-shadow-xs);
-  color: var(--sc-text-primary);
-}
-
-/* Los títulos, su icono en el color del título. */
-.resumen__title-row .resumen__tile {
-  color: var(--sc-text-heading);
-}
-
-/* La tarjeta de datos, con la sombra difusa de la maqueta: se lee como un widget que flota sobre la página, como su
- * hermana destacada (DD-161). */
-.resumen__facts {
-  box-shadow: var(--sc-shadow-card);
-}
-
 .resumen__title-row {
   padding-block-end: 0;
 }
@@ -105,38 +76,12 @@
   border-block-start: 1px solid var(--sc-border-default);
 }
 
-/* La jerarquía de la maqueta: la clave en el texto de la tarjeta y el dato y los títulos un paso más oscuros. */
+/* La jerarquía de la maqueta: los títulos un paso más oscuros que la clave, como los valores de `sc-fact-row`, y su
+ * cifra y su aviso en el mismo color. */
 .resumen__title-row,
-.resumen__pair > .resumen__value,
-.resumen__pair > .resumen__value .resumen__digits,
-.resumen__pair > .resumen__warn {
+.resumen__pair .resumen__digits,
+.resumen__pair .resumen__warn {
   color: var(--sc-text-heading);
-}
-
-/* El valor, siempre a la derecha, como en la maqueta: si no cabe en la línea de su clave, baja y sigue a la derecha. */
-.resumen__pair > .resumen__value,
-.resumen__pair > .resumen__warn {
-  margin-inline-start: auto;
-  text-align: end;
-}
-
-.resumen__pairs {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-5);
-  margin: 0;
-}
-
-/* Cada dato en una línea, clave a la izquierda y valor a la derecha, como las filas por canal: la tarjeta se lee
- * con una sola gramática y, en la columna de 240, ahorra una línea por dato (medido: con la escalera y el dato
- * en dos líneas, el resumen del grupo 11 no cabía a 1366×660). Si no cabe en la línea, el valor baja. */
-.resumen__pair {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  column-gap: var(--sc-spacing-0-5);
-  min-width: 0;
 }
 
 /* Reparto, salida y recursos, juntos en una tarjeta: lo que no es una proporción. Entre los tres, 28: al menos el
@@ -191,11 +136,5 @@
     display: contents;
   }
 
-  /* En la franja, los valores en su columna y empezando en la misma vertical (DD-130): el «a la derecha» de la columna
-   * estrecha no aplica aquí. */
-  .resumen__pair > .resumen__value,
-  .resumen__pair > .resumen__warn {
-    margin-inline-start: 0;
-    text-align: start;
-  }
+  /* En la franja, el valor de `sc-fact-row` ya empieza en su columna (su propia consulta de contenedor). */
 }

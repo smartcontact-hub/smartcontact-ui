@@ -5,7 +5,7 @@
 Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la web,
 que puede ir por delante.
 
-**46 componentes** del DS se usan en el Supervisor, y entre todos esconden
+**47 componentes** del DS se usan en el Supervisor, y entre todos esconden
 **426 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
@@ -156,6 +156,10 @@ Expone todo lo que PrimeNG documenta.
 Expone todo lo que PrimeNG documenta.
 
 ### `sc-gauge` · 1 usos · —
+
+Expone todo lo que PrimeNG documenta.
+
+### `sc-icon-tile` · 2 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

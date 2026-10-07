@@ -133,6 +133,37 @@
 
 ---
 
+## DD-186 · 2026-10-07 — La baldosa y la fila de datos del resumen pasan al DS, y la píldora a 14
+
+**Contexto** · DD-185 midió el widget de resumen de la ficha de grupo sobre la maqueta (baldosa de icono en relieve,
+clave y valor en una fila, píldora verde) y lo dejó en la hoja de la ficha, a la espera de ver si convencía. Convenció, y
+las fichas de agente y usuario pintaban sus datos sueltos, cada uno en su tarjeta, con otra gramática.
+
+**Decisión** ·
+1. **`sc-icon-tile`** (DS, custom): la baldosa de un icono, medida en proporción al texto (`md`, 28 con el icono a 16,
+   para texto de 14; `sm`, 24,5 con el icono a 14), gris frío con brillo arriba y sombra mínima, `tone="strong"` para un
+   título. Decorativa (`aria-hidden`). Un icono del DS por `icon` u otro proyectado (el de un canal).
+2. **`sc-fact-row`** (DS, custom) **sobre un `div`** (`<div scFactRow>`): la clave con su baldosa a la izquierda y el
+   valor a la derecha, que baja y sigue a la derecha si no cabe; con `href`, la clave es un enlace de verdad, se pulsa en
+   24,5 × 24,5 y `open` avisa del clic. Va sobre un `div` y no en una etiqueta propia porque dentro hay un `dt` y un `dd`,
+   y un `dl` solo admite `div` entre él y sus pares: así la lista sigue siendo válida y la franja ancha del resumen puede
+   poner las filas en `display: contents` y alinear los valores de varias listas (DD-130). En un contenedor ancho
+   (≥ 37,5 rem), el valor empieza en su columna.
+3. **`sc-tag size="md"`**: 14 en semibold, para una píldora que hace de valor entre valores de 14. La de por defecto
+   (`sm`) sigue siendo la del Kit, 12 en negrita. Va por la entrada `pt` de `p-tag`, sin CSS encima.
+4. **Las tres fichas** usan las mismas filas: el grupo, su reparto y su salida; el agente, canales y tipo; el usuario, su
+   tipo. Los datos sueltos del agente y del usuario pasan de una tarjeta cada uno a una sola tarjeta de filas.
+
+**Descartadas** · Un componente que pinte la tarjeta entera a partir de datos: la franja ancha alinea los valores de
+reparto y salida en una sola rejilla, y la cifra animada de Recursos y el icono de canal son de la app; con la fila sobre
+un `div`, la app conserva las dos cosas.
+
+**Consecuencias** · Páginas en sc-docs (Datos › IconTile y FactRow), su línea base de estilos y una prueba de estructura
+(`dl > div > dt + dd`, la clave enlace, la píldora a 14). Las pruebas del resumen que leían las clases de antes leen las
+del DS. Pendiente: el nodo de los dos componentes en Figma (`figma-pendiente`).
+
+---
+
 ## DD-185 · 2026-10-07 — Segunda vuelta de la revisión de grupos: copy de Voice, subir archivo, el estado en el avatar y el repositorio de Email
 
 **Contexto** · Con DD-184 fundida, el equipo corrigió lo que se había entendido al revés y pidió más: el rótulo largo de
