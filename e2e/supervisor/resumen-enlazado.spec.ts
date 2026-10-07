@@ -147,7 +147,7 @@ test('sobre el tinte de la tarjeta el enlace se lee, y al pasar el ratón se sub
 test('cada enlace del resumen se pulsa en al menos 24 × 24, también a 1366 × 660 (WCAG 2.5.8)', async ({ page }) => {
   await page.setViewportSize({ width: 1366, height: 660 });
   await goto(page, 'admin/grupos/editar/11');
-  const enlaces = resumen(page).locator('.resumen__enlace');
+  const enlaces = resumen(page).locator('.resumen__enlace, a.sc-fact-row__link');
   await expect(enlaces).toHaveCount(8);
   // Las cuatro esquinas de un cuadrado de 24 centrado en el enlace caen en él: así se pulsa aunque pinte 18 de alto. Es
   // la prueba del navegador (`elementFromPoint`), no la caja que se pinta.
@@ -156,7 +156,7 @@ test('cada enlace del resumen se pulsa en al menos 24 × 24, también a 1366 × 
       const r = el.getBoundingClientRect();
       const [cx, cy] = [r.x + r.width / 2, r.y + r.height / 2];
       const esquinas = [[-11.5, -11.5], [11.5, -11.5], [-11.5, 11.5], [11.5, 11.5]];
-      const fallan = esquinas.filter(([dx, dy]) => document.elementFromPoint(cx + dx, cy + dy)?.closest('.resumen__enlace') !== el);
+      const fallan = esquinas.filter(([dx, dy]) => document.elementFromPoint(cx + dx, cy + dy)?.closest('.resumen__enlace, a.sc-fact-row__link') !== el);
       const nombre = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
       return fallan.length ? [`${nombre}: ${fallan.length} de 4 esquinas fuera (${r.width.toFixed(1)} × ${r.height.toFixed(1)})`] : [];
     }),

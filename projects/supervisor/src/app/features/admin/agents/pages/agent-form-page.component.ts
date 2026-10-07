@@ -25,7 +25,9 @@ import type {
   ScMatrixRow,
   ScMatrixToggle,
 } from '@smartcontact-hub/components';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent,
+  ScFactRowComponent as FactRowComponent,
+} from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -161,6 +163,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
 @Component({
   selector: 'sc-agent-form-page',
   imports: [
+    FactRowComponent,
     NgTemplateOutlet,
     ButtonComponent,
     NameInplaceComponent,

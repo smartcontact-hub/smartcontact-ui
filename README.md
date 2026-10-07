@@ -9,7 +9,7 @@
 
 **Español** · [English](README.en.md)
 
-El design system de Smart Contact: **57 componentes `sc-*`** sobre Angular y PrimeNG, con un
+El design system de Smart Contact: **59 componentes `sc-*`** sobre Angular y PrimeNG, con un
 tema donde **cada valor es trazable al Kit de Figma y verificable por máquina**.
 
 > 📖 **[Documentación viva: sc-doc.pages.dev](https://sc-doc.pages.dev)** · catálogo de

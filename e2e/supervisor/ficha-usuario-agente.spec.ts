@@ -100,7 +100,11 @@ for (const f of FICHAS) {
 
   test(`${f.nombre} · el resumen de la derecha dice sus tres cifras`, async ({ page }) => {
     await goto(page, f.editar);
-    await expect(page.locator('.ficha-summary .resumen__kpi')).toHaveCount(3);
+    // Tres datos: las cifras con anillo, cada una en su tarjeta, y los datos sueltos como filas de una sola tarjeta
+    // (`sc-fact-row`, DD-186). El agente: su anillo y dos filas (canales y tipo); el usuario: dos anillos y una fila.
+    const cifras = await page.locator('.ficha-summary sc-summary-kpi').count();
+    const filas = await page.locator('.ficha-summary .resumen__pairs .sc-fact-row').count();
+    expect(cifras + filas, `${cifras} cifras y ${filas} filas`).toBe(3);
   });
 
   test(`${f.nombre} · recargar no es «otra pestaña»; abrirla en otra de verdad, sí`, async ({ page, context }) => {

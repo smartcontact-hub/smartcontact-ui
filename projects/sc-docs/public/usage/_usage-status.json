@@ -3,7 +3,7 @@
   "capturedAt": "2026-10-05",
   "viewport": "1440x900",
   "theme": "light",
-  "dsSelectors": 57,
+  "dsSelectors": 59,
   "screens": [
     {
       "id": "admin-agendas",
@@ -594,6 +594,10 @@
     {
       "selector": "sc-gauge",
       "usedInSupervisor": 1
+    },
+    {
+      "selector": "sc-icon-tile",
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-inline-rename-cell",
