@@ -1,8 +1,8 @@
 {
-  "commit": "406285f1",
+  "commit": "d4843e43",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-10-06T05:16:03.618Z",
+  "generado": "2026-10-07T13:11:45.910Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
@@ -14,11 +14,9 @@
       "variables": [
         "claro|--sc-label-brown-bg",
         "claro|--sc-label-brown-border",
-        "claro|--sc-label-brown-dot",
         "claro|--sc-label-brown-text",
         "oscuro|--sc-label-brown-bg",
         "oscuro|--sc-label-brown-border",
-        "oscuro|--sc-label-brown-dot",
         "oscuro|--sc-label-brown-text"
       ],
       "retirados": [],
@@ -32,5 +30,5 @@
       "faltan": []
     }
   },
-  "version": "0.20261006.516"
+  "version": "0.20261007.1311"
 }

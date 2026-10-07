@@ -898,11 +898,11 @@
   --sc-label-amber-dot: var(--sc-color-amber-500);
 
   /* Marrón (DD-176): el estado Administrativo de un agente. La paleta del Kit no trae familia marrón; el marrón de la
-   * paleta es el ámbar oscuro. Lleno, no tintado como los demás: el fondo es el color (amber-800, #92400e) y el texto,
-   * blanco (7,1:1). */
-  --sc-label-brown-bg: var(--sc-color-amber-800);
-  --sc-label-brown-text: var(--sc-color-slate-0);
-  --sc-label-brown-border: var(--sc-color-amber-800);
+   * paleta es el ámbar oscuro. Tintado como los demás (DD-185): lleno chocaba con el resto de etiquetas. Fondo amber-100,
+   * un paso más hondo que el del ámbar (50), y texto amber-900 (más de 7:1). */
+  --sc-label-brown-bg: var(--sc-color-amber-100);
+  --sc-label-brown-text: var(--sc-color-amber-900);
+  --sc-label-brown-border: var(--sc-color-amber-300);
   --sc-label-brown-dot: var(--sc-color-amber-800);
 
   --sc-label-green-bg: var(--sc-color-emerald-50);
@@ -2527,10 +2527,10 @@
   --sc-label-amber-border: color-mix(in srgb, var(--sc-color-amber-700) 45%, transparent);
   --sc-label-amber-dot: var(--sc-color-amber-400);
 
-  /* Marrón (DD-176), lleno también en oscuro: amber-900 con el texto en amber-100. */
-  --sc-label-brown-bg: var(--sc-color-amber-900);
-  --sc-label-brown-text: var(--sc-color-amber-100);
-  --sc-label-brown-border: var(--sc-color-amber-800);
+  /* Marrón (DD-176), tintado como los demás en oscuro (DD-185): amber-800 sobre el 40 %, texto amber-200. */
+  --sc-label-brown-bg: color-mix(in srgb, var(--sc-color-amber-800) 45%, transparent);
+  --sc-label-brown-text: var(--sc-color-amber-200);
+  --sc-label-brown-border: color-mix(in srgb, var(--sc-color-amber-700) 45%, transparent);
   --sc-label-brown-dot: var(--sc-color-amber-600);
 
   --sc-label-green-bg: color-mix(in srgb, var(--sc-color-emerald-900) 40%, transparent);
