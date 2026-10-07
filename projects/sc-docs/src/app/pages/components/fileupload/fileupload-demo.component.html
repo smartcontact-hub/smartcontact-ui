@@ -7,7 +7,7 @@
     [auto]="args.auto"
     [disabled]="args.disabled"
     [url]="args.url || undefined"
-    chooseLabel="Elegir"
+    chooseLabel="Subir archivo"
     dropLabel="o suelta aquí los archivos."
   />
 </ng-template>
@@ -16,8 +16,7 @@
   <div class="col">
     <sc-fileupload
       accept=".wav,audio/wav"
-      chooseLabel="Elegir .wav"
-      dropLabel="o suelta un .wav aquí."
+      chooseLabel="Subir archivo"
       [clearAfterSelect]="true"
       (filesSelected)="musica.set($event[0]?.name ?? null)"
       data-testid="sc-fileupload-audio"
@@ -31,7 +30,7 @@
     <sc-fileupload
       [multiple]="true"
       accept="image/*"
-      chooseLabel="Elegir"
+      chooseLabel="Subir archivo"
       dropLabel="o suelta aquí los archivos."
       (filesSelected)="elegidos.set($event)"
       data-testid="sc-fileupload-list"
@@ -41,7 +40,7 @@
 </ng-template>
 
 <ng-template #basic>
-  <sc-fileupload mode="basic" chooseLabel="Elegir" accept=".csv" data-testid="sc-fileupload-basic" />
+  <sc-fileupload mode="basic" chooseLabel="Subir archivo" accept=".csv" data-testid="sc-fileupload-basic" />
 </ng-template>
 
 <ng-template #rules>
@@ -51,8 +50,8 @@
     [maxFileSize]="5000000"
     [fileLimit]="3"
     [multiple]="true"
-    chooseIcon="pi pi-upload"
-    chooseLabel="Elegir"
+    chooseIconName="upload"
+    chooseLabel="Subir archivo"
     dropLabel="o suelta aquí hasta 3 .wav."
     invalidFileTypeMessageSummary="{0}: tipo de archivo no válido. "
     invalidFileTypeMessageDetail="Solo .wav."

@@ -32,7 +32,27 @@ trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`. El de A
 propias): `git show 540f246c:docs/handoff/supervisor-fichas.md``. El de supervisión y limpieza (2026-10-05, DD-168, #333, sin trampas propias): `git show
 60f8e617:docs/handoff/supervisor-fichas.md`. El de las tres columnas sin cabecera (2026-10-05, DD-170, #337): `git show
 b49b56e0:docs/handoff/supervisor-fichas.md`. El de Tipificaciones (2026-10-05, DD-173, DD-174 y DD-177, #340): `git show
-a3e03136:docs/handoff/supervisor-fichas.md`.
+a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-10-06, DD-176, #341): `git show
+0bf19647:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-07 · Segunda vuelta de la revisión de grupos (DD-185)
+
+> **Sello:** rama `arebury/grupos-segunda-revision` sobre main, HEAD `0bf19647`. Un PR; enseñado en local antes de subir.
+
+- Chat con «Menos conversaciones atendidas» (en el resumen baja de línea); «Tiempo de ringing» y «Tiempo entre llamadas»
+  como nombre, con el timbrado y la espera como ayuda; el aviso de Ring All a partir de tres agentes, junto a su campo y
+  con cierre; audios con «Subir archivo» y su icono, sin el texto de soltar.
+- **Tabla de agentes del grupo, como la matriz de permisos:** cabeceras centradas con la casilla de «todos» después del
+  rótulo; Asignado, solo la casilla. Desplaza 51 px a 1440 con tres canales.
+- «Administrativo» tintado, no lleno.
+- **El estado, en la burbuja del avatar** (`sc-presence-avatar`): la columna sale de la tabla de agentes del grupo y queda
+  escondida de inicio en el listado; se filtra por estado desde la cabecera del agente.
+- **Repositorio de Email** (`/admin/emails`, tarjeta en Comunicación): cuentas de correo y triggers, con su editor cada uno.
+  Datos de prototipo; las pruebas de conexión no salen a ninguna parte.
+- **El resumen del grupo**, medido sobre la maqueta del widget (baldosa, peso del icono, sombras, jerarquía). Si convence,
+  la baldosa y la fila pasan al DS (pendiente).
+- **Filtro por estado:** cinco opciones; los cuatro motivos de no atender, juntos en «No disponible».
+- **Pendiente:** el nodo de la tabla de agentes en Figma (`figma-pendiente`), y lo de DD-184.
 
 ## ✅ 2026-10-06 · La revisión de grupos del equipo y `sc-fileupload` (DD-184)
 
@@ -126,35 +146,6 @@ b49b56e0:docs/handoff/supervisor-fichas.md`.
 - **Tocar un comentario de un componente del DS lo deja más nuevo que `dist/`**, y el hook no deja medir con
   Playwright: reconstruye y reinicia el `ng serve`.
 - **`p-avatar` no tiene entrada de estilo**: el tono va con `[style.background]` sobre su elemento, que gana al tema.
-
-## ✅ 2026-10-06 · El pulido de las fichas (DD-176), en un lote de ocho bloques, fundido (#341)
-
-> **Sello:** fundido en `main` como #341, con `main` dentro hasta #345 (DD-177); CI del PR en verde (leído). Un
-> commit en rojo y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local. **Era DD-171 y luego DD-172**:
-> `main` fundió antes las suyas y Tipificaciones (#340) tomó DD-173, DD-174 y DD-177, así que se renumeró a DD-176
-> con todas sus citas.
-
-- **1 · El nombre editable:** se cierra al salir (pulsar fuera, Tab) con lo escrito, y al cerrar el foco vuelve al
-  nombre. Lo encontró la revisión de interacción con Playwright (una sonda que anota y no afirma): la columna fija
-  cabe hasta 1440×520, al 200 % el orden es bueno y cambiar de sección deja la página arriba; solo falló esto.
-- **2 · Las ayudas, cortas:** 19 textos en los cuatro idiomas, `text-wrap: pretty` en las ayudas del DS y de la app,
-  y «Tiempo de ringing» con su ayuda «a otro agente». De 13 ayudas que se alargaban a 1440 quedan 3 en dos líneas, sin
-  palabras solas; lo vigila `fichas-textos.spec.ts`.
-- **3 · Las marcas del índice** (`sc-form-section-nav`), al final de su fila y en la misma vertical, con su hueco fijo.
-- **4 · La tabla de agentes del grupo**, compacta (`sm`) y cada columna a su rótulo: cabe a 1440 con tres canales (antes
-  desplazaba 181 px). **Sin paginación**, en la ficha y en el panel; con lista virtual la caja ocupa su tope (con
-  «Todos» se quedaba en 2 px). El porqué de la paginación (DD-151 no lo decía), en DD-176 §5. **La cabecera, una fila
-  de texto** alineada con sus controles y solo la casilla de «todos» de Asignado: elegida entre tres opciones en la
-  revisión, tras una investigación de SaaS de referencia y sistemas de diseño (DD-176 §4). Icono y casilla en cada
-  cabecera se probó antes y se descartó. La barra de filtro, de borde a borde.
-- **5 · «2/14 grupos seleccionados»** en la barra en lote del DS (`total`), y «2 de 14» para el lector.
-- **6 · El «Column Toggle» de primeng.dev**, tal cual, en los listados (sustituye el Listbox de DD-162), con su teclado
-  sin arrastrar. Medido contra primeng.dev.
-- **7 · «Administrativo», en marrón:** el color de etiqueta `brown`, nuevo en todo el DS (nueve colores, sc-docs, la
-  paleta de puntos y el selector de Etiquetas). El Kit no trae marrón: `amber-800` lleno con texto blanco (7,1:1).
-  Pendiente en Figma (`figma-pendiente` §36b).
-- **Una prueba ajena que falla en tanda:** `panel-agentes-monitor` «… dice en el foco que abre un menú» (de DD-171, la
-  otra sesión) pide `…menu-1_list` y en la tanda completa llega `…menu-2_list`; pasa 3 de 3 a solas.
 
 ## SIGUIENTE — sin preguntar
 

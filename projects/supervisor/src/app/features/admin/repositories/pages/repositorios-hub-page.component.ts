@@ -41,6 +41,7 @@ import { RulesStore } from '@features/memory/state/rules.store';
 
 import type { LucideIconData } from '../components/repo-types';
 import { AgendasStore } from '../state/agendas.store';
+import { EmailTriggersStore, MailboxesStore } from '../state/emails.store';
 import { EntidadesStore } from '../state/entidades.store';
 import { HorariosStore } from '../state/horarios.store';
 import { IntencionesStore } from '../state/intenciones.store';
@@ -152,6 +153,8 @@ export class RepositoriosHubPageComponent {
   private readonly injector = inject(Injector);
   private readonly filas = inject(ResourceRowsService);
   private readonly agendas = inject(AgendasStore);
+  private readonly mailboxes = inject(MailboxesStore);
+  private readonly emailTriggers = inject(EmailTriggersStore);
   private readonly horarios = inject(HorariosStore);
   private readonly templates = inject(TemplatesStore);
   private readonly tipificaciones = inject(TipificacionesStore);
@@ -237,6 +240,29 @@ export class RepositoriosHubPageComponent {
               detalle: `${h.schedule}, ${this.estado(h.status === 'active').toLocaleLowerCase()}`,
               ...this.buscando('/admin/horarios', h.name),
             })),
+        },
+        {
+          id: 'emails',
+          labelKey: 'repositories.emails.title',
+          descriptionKey: 'repositories.hub.descriptions.emails',
+          icon: 'mail',
+          path: '/admin/emails',
+          // Cuentas de correo y triggers: lo que se configura en esa página.
+          count: () => this.mailboxes.items().length + this.emailTriggers.items().length,
+          entradas: () => [
+            ...this.mailboxes.items().map((m) => ({
+              id: `cuenta-${m.id}`,
+              nombre: m.name,
+              detalle: this.t('repositories.emails.mailbox_singular'),
+              link: `/admin/emails/cuentas/editar/${m.id}`,
+            })),
+            ...this.emailTriggers.items().map((x) => ({
+              id: `trigger-${x.id}`,
+              nombre: x.name,
+              detalle: this.t('repositories.emails.trigger_singular'),
+              link: `/admin/emails/triggers/editar/${x.id}`,
+            })),
+          ],
         },
         {
           id: 'plantillas',

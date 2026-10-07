@@ -1192,6 +1192,75 @@
     }
   },
   "repositories": {
+    "emails": {
+      "title": "Email",
+      "mailboxes": "Mail accounts",
+      "triggers": "Triggers",
+      "create": "Create",
+      "created": "Created on",
+      "modified": "Modified on",
+      "total": "Total emails",
+      "mailbox_singular": "mail account",
+      "mailbox_singular_title": "Mail account",
+      "trigger_singular": "trigger",
+      "mailboxes_empty": "No mail accounts yet",
+      "triggers_empty": "No triggers yet",
+      "mailbox": {
+        "create_title": "New mail account",
+        "create_breadcrumb": "New account",
+        "edit_breadcrumb": "Edit account",
+        "create_submit": "Create account",
+        "name_placeholder": "mailbox@example.com",
+        "name_taken": "An account with this address already exists",
+        "section_account": "Account",
+        "section_incoming": "Incoming mail settings",
+        "section_outgoing": "Outgoing mail settings",
+        "host": "Host",
+        "port": "Port",
+        "user": "User",
+        "password": "Password",
+        "test_inbox": "Test inbox",
+        "test_outbox": "Test outbox",
+        "test_ok_incoming": "Incoming server connection successful",
+        "test_ok_outgoing": "Outgoing server connection successful",
+        "test_missing": "The host, port or user is missing",
+        "default_action": "Default action",
+        "action_transfer": "Transfer",
+        "action_queue": "Queue",
+        "target": "Group",
+        "no_target": "No group"
+      },
+      "trigger": {
+        "create_title": "New trigger",
+        "create_breadcrumb": "New trigger",
+        "edit_breadcrumb": "Edit trigger",
+        "create_submit": "Create trigger",
+        "name_taken": "A trigger with this name already exists",
+        "section_trigger": "Trigger",
+        "section_condition": "Condition",
+        "section_action": "Action",
+        "section_mailbox": "Mail account",
+        "label": "Label",
+        "field": "Field",
+        "operator": "Operator",
+        "value": "Value",
+        "mailbox_none": "None",
+        "fields": {
+          "body": "Email body",
+          "date": "Date",
+          "from": "From",
+          "subject": "Subject",
+          "time": "Time",
+          "to": "To"
+        },
+        "operators": {
+          "contains": "Contains",
+          "not_contains": "Does not contain",
+          "equals": "Equals",
+          "starts_with": "Starts with"
+        }
+      }
+    },
     "search_placeholder": "Search {{entity}}...",
     "errors": {
       "name_required": "Name is required",
@@ -1236,6 +1305,7 @@
         "ai": "AI"
       },
       "descriptions": {
+        "emails": "Mail accounts and triggers that route incoming emails",
         "agendas": "The contacts each agent sees in their phone's address book",
         "horarios": "Schedule slots and operating shifts for the contact center",
         "plantillas": "Predefined messages for quick replies and campaigns",
@@ -1787,6 +1857,10 @@
         "agents_hint": "Who handles it and through which channels"
       },
       "assigned": {
+        "filter_status": "Filter by status",
+        "filter_status_count": "{{count}} statuses",
+        "filter_status_count_one": "{{count}} status",
+        "filter_status_clear": "Clear filter",
         "query_placeholder": "Search by name or email…",
         "empty_title": "No assigned agents",
         "empty": "Pick them in \"Add agents\", top right.",
@@ -1876,7 +1950,7 @@
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "announcements": {
         "audio_title": "Recordings",
-        "hold_music": "Hold/Transfer music",
+        "hold_music": "Hold music",
         "default_music": "Default music",
         "use_default": "Use the default",
         "queue_id": "Group identifier",
@@ -1888,12 +1962,11 @@
         "source_file": "File",
         "tts_text": "Text the voice reads",
         "no_file": "No file",
-        "choose_file": "Choose .wav",
+        "choose_file": "Upload file",
         "remove_file": "Remove file",
         "periodic": "Periodic messages",
         "periodic_info": "Audios that repeat while the caller keeps waiting, each with its own frequency. You can add several; they play in turn.",
         "periodic_count": "messages",
-        "add_periodic": "Add message",
         "remove_periodic_aria": "Remove {{file}}",
         "every": "Every",
         "outbound_audio": "Outbound audio",
@@ -1911,8 +1984,6 @@
         "wait_to_agent_info": "The caller never hears this: it tells the agent, right before the call connects, how long the caller has been waiting.",
         "wait_to_agent_hint": "Said before the call is handed over.",
         "remove_music": "Remove",
-        "drop_one": "or drop a .wav here.",
-        "drop_many": "or drop the .wav files here.",
         "invalid_type": "{0}: invalid file. ",
         "invalid_type_detail": "Only .wav files are accepted."
       },
@@ -1925,10 +1996,10 @@
         "queue_per_agent_hint": "{{count}} conversations in queue per connected agent.",
         "max_queue_wait": "Maximum queue wait time",
         "max_queue_wait_hint": "If unanswered in this time, it moves to the next destination in VUI Designer; if none, it ends.",
-        "transfer": "Ringing time of a conversation to an agent",
+        "transfer": "Ringing time",
         "service_level": "Service level time",
         "service_level_hint": "Time used to measure the service level percentage",
-        "wrap_up": "Time the agent waits between one conversation and the next",
+        "wrap_up": "Time between calls",
         "overflow": "Overflow conversations if no agents are connected",
         "overflow_hint": "Contacts move on to the next destination, which is not chosen here.",
         "card_opening": "Contact card opening",
@@ -1953,7 +2024,9 @@
         "queue_type": "Queue type",
         "queue_variable_error": "Enter a whole number from 1 to 10.",
         "queue_integer_error": "Enter a whole number greater than zero.",
-        "queue_invalid": "Check the queue sizes."
+        "queue_invalid": "Check the queue sizes.",
+        "transfer_hint": "Ringing time of a conversation to an agent",
+        "wrap_up_hint": "Time the agent waits between one conversation and the next"
       },
       "summary": {
         "none": "None",

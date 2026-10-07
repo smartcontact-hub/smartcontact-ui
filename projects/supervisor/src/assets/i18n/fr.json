@@ -1192,6 +1192,75 @@
     }
   },
   "repositories": {
+    "emails": {
+      "title": "Email",
+      "mailboxes": "Comptes de messagerie",
+      "triggers": "Triggers",
+      "create": "Créer",
+      "created": "Date de création",
+      "modified": "Date de modification",
+      "total": "Emails au total",
+      "mailbox_singular": "compte de messagerie",
+      "mailbox_singular_title": "Compte de messagerie",
+      "trigger_singular": "trigger",
+      "mailboxes_empty": "Aucun compte de messagerie pour l’instant",
+      "triggers_empty": "Aucun trigger pour l’instant",
+      "mailbox": {
+        "create_title": "Nouveau compte de messagerie",
+        "create_breadcrumb": "Nouveau compte",
+        "edit_breadcrumb": "Modifier le compte",
+        "create_submit": "Créer le compte",
+        "name_placeholder": "mailbox@example.com",
+        "name_taken": "Un compte avec cette adresse existe déjà",
+        "section_account": "Compte",
+        "section_incoming": "Données du courrier entrant",
+        "section_outgoing": "Données du courrier sortant",
+        "host": "Hôte",
+        "port": "Port",
+        "user": "Utilisateur",
+        "password": "Mot de passe",
+        "test_inbox": "Tester l’entrée",
+        "test_outbox": "Tester la sortie",
+        "test_ok_incoming": "Connexion au serveur entrant réussie",
+        "test_ok_outgoing": "Connexion au serveur sortant réussie",
+        "test_missing": "L’hôte, le port ou l’utilisateur manque",
+        "default_action": "Action par défaut",
+        "action_transfer": "Transférer",
+        "action_queue": "File d'attente",
+        "target": "Groupe",
+        "no_target": "Aucun groupe"
+      },
+      "trigger": {
+        "create_title": "Nouveau trigger",
+        "create_breadcrumb": "Nouveau trigger",
+        "edit_breadcrumb": "Modifier le trigger",
+        "create_submit": "Créer le trigger",
+        "name_taken": "Un trigger avec ce nom existe déjà",
+        "section_trigger": "Trigger",
+        "section_condition": "Condition",
+        "section_action": "Action",
+        "section_mailbox": "Compte de messagerie",
+        "label": "Étiquette",
+        "field": "Champ",
+        "operator": "Opérateur",
+        "value": "Valeur",
+        "mailbox_none": "Aucun",
+        "fields": {
+          "body": "Corps de l’email",
+          "date": "Date",
+          "from": "De",
+          "subject": "Objet",
+          "time": "Heure",
+          "to": "À"
+        },
+        "operators": {
+          "contains": "Contient",
+          "not_contains": "Ne contient pas",
+          "equals": "Égal à",
+          "starts_with": "Commence par"
+        }
+      }
+    },
     "search_placeholder": "Rechercher {{entity}}...",
     "errors": {
       "name_required": "Le nom est obligatoire",
@@ -1236,6 +1305,7 @@
         "ai": "IA"
       },
       "descriptions": {
+        "emails": "Comptes de messagerie et triggers qui répartissent les emails entrants",
         "agendas": "Les contacts que chaque agent voit dans le carnet de son téléphone",
         "horarios": "Plages horaires et quarts opérationnels du centre de contact",
         "plantillas": "Messages prédéfinis pour réponses rapides et campagnes",
@@ -1787,6 +1857,10 @@
         "agents_hint": "Qui traite et par quels canaux"
       },
       "assigned": {
+        "filter_status": "Filtrer par statut",
+        "filter_status_count": "{{count}} statuts",
+        "filter_status_count_one": "{{count}} statut",
+        "filter_status_clear": "Retirer le filtre",
         "query_placeholder": "Rechercher par nom ou e-mail…",
         "empty_title": "Aucun agent assigné",
         "empty": "Choisissez-les dans « Ajouter des agents », en haut à droite.",
@@ -1876,7 +1950,7 @@
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "announcements": {
         "audio_title": "Messages vocaux",
-        "hold_music": "Musique d’attente/Transfert",
+        "hold_music": "Musique d’attente",
         "default_music": "Musique par défaut",
         "use_default": "Utiliser celle par défaut",
         "queue_id": "Identifiant du groupe",
@@ -1888,12 +1962,11 @@
         "source_file": "Fichier",
         "tts_text": "Texte lu par la voix",
         "no_file": "Aucun fichier",
-        "choose_file": "Choisir un .wav",
+        "choose_file": "Téléverser un fichier",
         "remove_file": "Retirer le fichier",
         "periodic": "Messages périodiques",
         "periodic_info": "Des audios qui se répètent pendant l'attente, chacun avec sa propre fréquence. Vous pouvez en ajouter plusieurs; ils jouent à tour de rôle.",
         "periodic_count": "messages",
-        "add_periodic": "Ajouter un message",
         "remove_periodic_aria": "Retirer {{file}}",
         "every": "Toutes les",
         "outbound_audio": "Audio sortant",
@@ -1911,8 +1984,6 @@
         "wait_to_agent_info": "L'appelant ne l'entend jamais : cela le dit à l'agent, juste avant que l'appel n'arrive, pour qu'il sache depuis combien de temps la personne attend.",
         "wait_to_agent_hint": "Avant de lui passer l’appel.",
         "remove_music": "Retirer",
-        "drop_one": "ou déposez un .wav ici.",
-        "drop_many": "ou déposez ici les .wav.",
         "invalid_type": "{0} : fichier non valide. ",
         "invalid_type_detail": "Seuls les fichiers .wav sont acceptés."
       },
@@ -1925,10 +1996,10 @@
         "queue_per_agent_hint": "{{count}} conversations en file par agent connecté.",
         "max_queue_wait": "Temps d'attente maximal en file",
         "max_queue_wait_hint": "Sans réponse dans ce délai, elle passe à la destination suivante du VUI Designer ; sinon, elle se termine.",
-        "transfer": "Temps de sonnerie d’une conversation vers un agent",
+        "transfer": "Temps de sonnerie",
         "service_level": "Temps du % de service",
         "service_level_hint": "Délai pour mesurer le pourcentage de service",
-        "wrap_up": "Temps que l’agent attend entre une conversation et la suivante",
+        "wrap_up": "Temps entre appels",
         "overflow": "Déborder les conversations s’il n’y a aucun agent connecté",
         "overflow_hint": "Les contacts passent à la destination suivante, qui ne se choisit pas ici.",
         "card_opening": "Ouverture de la fiche",
@@ -1953,7 +2024,9 @@
         "queue_type": "Type de file",
         "queue_variable_error": "Saisissez un entier de 1 à 10.",
         "queue_integer_error": "Saisissez un entier supérieur à zéro.",
-        "queue_invalid": "Vérifiez la taille des files."
+        "queue_invalid": "Vérifiez la taille des files.",
+        "transfer_hint": "Temps de sonnerie d’une conversation vers un agent",
+        "wrap_up_hint": "Temps que l’agent attend entre une conversation et la suivante"
       },
       "summary": {
         "none": "Aucune",

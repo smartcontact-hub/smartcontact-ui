@@ -1192,6 +1192,75 @@
     }
   },
   "repositories": {
+    "emails": {
+      "title": "Email",
+      "mailboxes": "Contas de correio",
+      "triggers": "Triggers",
+      "create": "Criar",
+      "created": "Data de criação",
+      "modified": "Data de modificação",
+      "total": "Emails totais",
+      "mailbox_singular": "conta de correio",
+      "mailbox_singular_title": "Conta de correio",
+      "trigger_singular": "trigger",
+      "mailboxes_empty": "Ainda não há contas de correio",
+      "triggers_empty": "Ainda não há triggers",
+      "mailbox": {
+        "create_title": "Nova conta de correio",
+        "create_breadcrumb": "Nova conta",
+        "edit_breadcrumb": "Editar conta",
+        "create_submit": "Criar conta",
+        "name_placeholder": "mailbox@example.com",
+        "name_taken": "Já existe uma conta com este endereço",
+        "section_account": "Conta",
+        "section_incoming": "Dados do correio de entrada",
+        "section_outgoing": "Dados do correio de saída",
+        "host": "Host",
+        "port": "Porta",
+        "user": "Utilizador",
+        "password": "Senha",
+        "test_inbox": "Testar entrada",
+        "test_outbox": "Testar saída",
+        "test_ok_incoming": "Ligação correta ao servidor de entrada",
+        "test_ok_outgoing": "Ligação correta ao servidor de saída",
+        "test_missing": "Faltam o host, a porta ou o utilizador",
+        "default_action": "Ação por defeito",
+        "action_transfer": "Transferir",
+        "action_queue": "Fila",
+        "target": "Grupo",
+        "no_target": "Nenhum grupo"
+      },
+      "trigger": {
+        "create_title": "Novo trigger",
+        "create_breadcrumb": "Novo trigger",
+        "edit_breadcrumb": "Editar trigger",
+        "create_submit": "Criar trigger",
+        "name_taken": "Já existe um trigger com este nome",
+        "section_trigger": "Trigger",
+        "section_condition": "Condição",
+        "section_action": "Ação",
+        "section_mailbox": "Conta de correio",
+        "label": "Etiqueta",
+        "field": "Campo",
+        "operator": "Operador",
+        "value": "Valor",
+        "mailbox_none": "Nenhum",
+        "fields": {
+          "body": "Corpo do email",
+          "date": "Data",
+          "from": "De",
+          "subject": "Assunto",
+          "time": "Hora",
+          "to": "Para"
+        },
+        "operators": {
+          "contains": "Contenha",
+          "not_contains": "Não contenha",
+          "equals": "Igual a",
+          "starts_with": "Comece por"
+        }
+      }
+    },
     "search_placeholder": "Buscar {{entity}}...",
     "errors": {
       "name_required": "O nome é obrigatório",
@@ -1236,6 +1305,7 @@
         "ai": "IA"
       },
       "descriptions": {
+        "emails": "Contas de correio e triggers que distribuem os emails recebidos",
         "agendas": "Os contatos que cada agente vê na agenda do seu telefone",
         "horarios": "Faixas horárias e turnos operacionais do contact center",
         "plantillas": "Mensagens predefinidas para respostas rápidas e campanhas",
@@ -1787,6 +1857,10 @@
         "agents_hint": "Quem atende e por quais canais"
       },
       "assigned": {
+        "filter_status": "Filtrar por estado",
+        "filter_status_count": "{{count}} estados",
+        "filter_status_count_one": "{{count}} estado",
+        "filter_status_clear": "Remover filtro",
         "query_placeholder": "Pesquisar por nome ou email…",
         "empty_title": "Sem agentes atribuídos",
         "empty": "Escolha-os em «Adicionar agentes», no canto superior direito.",
@@ -1876,7 +1950,7 @@
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "announcements": {
         "audio_title": "Locuções",
-        "hold_music": "Música de espera/Transferência",
+        "hold_music": "Música de espera",
         "default_music": "Música predefinida",
         "use_default": "Usar a predefinida",
         "queue_id": "Identificador do grupo",
@@ -1888,12 +1962,11 @@
         "source_file": "Ficheiro",
         "tts_text": "Texto que a voz lê",
         "no_file": "Sem ficheiro",
-        "choose_file": "Escolher .wav",
+        "choose_file": "Carregar ficheiro",
         "remove_file": "Remover ficheiro",
         "periodic": "Mensagens periódicas",
         "periodic_info": "Áudios que se repetem enquanto a pessoa espera, cada um com a sua própria frequência. Pode adicionar vários; tocam à vez.",
         "periodic_count": "mensagens",
-        "add_periodic": "Adicionar mensagem",
         "remove_periodic_aria": "Remover {{file}}",
         "every": "A cada",
         "outbound_audio": "Áudio de saída",
@@ -1911,8 +1984,6 @@
         "wait_to_agent_info": "O cliente nunca ouve isto: diz-se ao agente, mesmo antes de a chamada entrar, para que saiba há quanto tempo o cliente espera.",
         "wait_to_agent_hint": "Antes de lhe passar a chamada.",
         "remove_music": "Remover",
-        "drop_one": "ou largue um .wav aqui.",
-        "drop_many": "ou largue aqui os .wav.",
         "invalid_type": "{0}: ficheiro inválido. ",
         "invalid_type_detail": "Só são aceites ficheiros .wav."
       },
@@ -1925,10 +1996,10 @@
         "queue_per_agent_hint": "{{count}} conversas em fila por agente ligado.",
         "max_queue_wait": "Tempo máximo de espera na fila",
         "max_queue_wait_hint": "Sem atendimento neste tempo, passa ao destino seguinte do VUI Designer; se não houver, termina.",
-        "transfer": "Tempo de toque de uma conversa a um agente",
+        "transfer": "Tempo de toque",
         "service_level": "Tempo da % de serviço",
         "service_level_hint": "Tempo para medir a percentagem de serviço",
-        "wrap_up": "Tempo que o agente espera entre uma conversa e outra",
+        "wrap_up": "Tempo entre chamadas",
         "overflow": "Transbordar conversas se não houver agentes ligados",
         "overflow_hint": "Os contactos passam para o destino seguinte, que não se escolhe aqui.",
         "card_opening": "Abertura da ficha",
@@ -1953,7 +2024,9 @@
         "queue_type": "Tipo de fila",
         "queue_variable_error": "Introduza um inteiro entre 1 e 10.",
         "queue_integer_error": "Introduza um inteiro maior que zero.",
-        "queue_invalid": "Verifique o tamanho das filas."
+        "queue_invalid": "Verifique o tamanho das filas.",
+        "transfer_hint": "Tempo de toque de uma conversa a um agente",
+        "wrap_up_hint": "Tempo que o agente espera entre uma conversa e outra"
       },
       "summary": {
         "none": "Nenhum",

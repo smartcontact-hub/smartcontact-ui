@@ -53,7 +53,7 @@ const filasDelDashboard = async (page: Page): Promise<Fila[]> => {
   );
 };
 
-/** El estado de un agente en Administración › Agentes: lo busca por su nombre y lee su columna «Estado». */
+/** El estado de un agente en Administración › Agentes: lo busca por su nombre y lee su burbuja (la columna «Estado» queda escondida de inicio, DD-185). */
 const estadoEnElListado = async (page: Page, nombre: string): Promise<string> => {
   const tabla = page.getByTestId('agents-table');
   await page.locator('sc-search input').fill(nombre);
@@ -62,12 +62,7 @@ const estadoEnElListado = async (page: Page, nombre: string): Promise<string> =>
     const nombres = await tabla.locator('tbody tr .cell-name__text').allTextContents();
     expect(nombres.map((n) => n.trim())).toEqual([nombre]);
   }).toPass();
-  return tabla.evaluate((t) => {
-    const columna = [...t.querySelectorAll('thead th')].findIndex(
-      (th) => th.querySelector('.sc-datatable__header-label')?.textContent?.trim() === 'Estado',
-    );
-    return columna < 0 ? '(sin columna «Estado»)' : (t.querySelectorAll('tbody tr td')[columna]?.textContent?.trim() ?? '');
-  });
+  return ((await tabla.locator('tbody tr sc-presence-avatar .visually-hidden').first().textContent()) ?? '').trim();
 };
 
 /** Los agentes cuyo estado en el Dashboard no es el que les toca por el listado, dichos para leerlos en el fallo. */

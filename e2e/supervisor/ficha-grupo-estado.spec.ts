@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * EL ESTADO DE CADA AGENTE, EN SU PROPIA COLUMNA (DD-156).
+ * EL ESTADO DE CADA AGENTE, EN LA BURBUJA DE SU AVATAR (DD-185; antes, su propia columna, DD-156).
  *
  * La referencia de producto de la asignación («4. Agentes y revisión») pide el estado de la persona como un dato
  * aparte, tras el agente. Iba pegado al nombre (DD-149): cada etiqueta empezaba donde acababa su nombre y se comía el
@@ -43,29 +43,27 @@ const cabeceras = (tabla: Locator) =>
   tabla.locator('thead th').evaluateAll((ths) => ths.map((th) => th.getAttribute('aria-label') ?? ''));
 
 for (const { nombre, ruta, panel } of SUPERFICIES) {
-  test(`${nombre}: el estado va en su propia columna, tras el agente, y alineado fila a fila`, async ({ page }) => {
+  test(`${nombre}: el estado va en la burbuja del avatar, abajo a la derecha, y no en una columna`, async ({ page }) => {
     const tabla = await abrir(page, ruta, panel);
     const rotulos = await cabeceras(tabla);
-    const agente = rotulos.indexOf('Agente');
-    expect(agente, 'la columna «Agente»').toBeGreaterThanOrEqual(0);
-    expect(rotulos[agente + 1], 'la columna que sigue a «Agente»').toBe('Estado');
+    expect(rotulos, 'sin columna «Estado» (DD-185)').not.toContain('Estado');
 
     const tom = tabla.locator('tbody tr', { hasText: 'Tom Hanks' });
-    await expect(tom.locator('td').nth(agente + 1), 'su estado, en la columna Estado').toHaveText('Disponible');
-    await expect(tom.locator('td').nth(agente).locator('sc-tag'), 'y no en la del agente').toHaveCount(0);
+    await expect(tom.locator('sc-presence-avatar .visually-hidden'), 'su estado, dicho con palabras').toHaveText('Disponible');
+    await expect(tom.locator('sc-tag'), 'y sin etiqueta').toHaveCount(0);
 
-    const inicios = await tabla
-      .locator('tbody tr')
-      .evaluateAll(
-        (filas, columna) =>
-          filas
-            .map((fila) => fila.querySelectorAll(':scope > td')[columna]?.querySelector('sc-tag'))
-            .filter((tag): tag is Element => !!tag)
-            .map((tag) => tag.getBoundingClientRect().left),
-        agente + 1,
-      );
-    expect(inicios.length, 'filas con estado').toBeGreaterThanOrEqual(5);
-    expect(Math.max(...inicios) - Math.min(...inicios), 'de la etiqueta más a la izquierda a la más a la derecha').toBeLessThanOrEqual(1);
+    const caja = await tom.locator('sc-presence-avatar').evaluate((el) => {
+      const avatar = el.querySelector('sc-illustrated-avatar')!.getBoundingClientRect();
+      const punto = el.querySelector('.p-badge')!.getBoundingClientRect();
+      return {
+        derecha: punto.left + punto.width / 2 - (avatar.left + avatar.width / 2),
+        abajo: punto.top + punto.height / 2 - (avatar.top + avatar.height / 2),
+        color: getComputedStyle(el.querySelector('.p-badge')!).backgroundColor,
+      };
+    });
+    expect(caja.derecha, 'la burbuja, a la derecha del centro del avatar').toBeGreaterThan(0);
+    expect(caja.abajo, 'y por debajo').toBeGreaterThan(0);
+    expect(caja.color, 'del color del estado, no el del nativo').not.toBe('rgba(0, 0, 0, 0)');
   });
 }
 
