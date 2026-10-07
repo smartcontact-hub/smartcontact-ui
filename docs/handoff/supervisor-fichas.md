@@ -129,12 +129,10 @@ b49b56e0:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
--2. **Auditoría de los componentes de PrimeNG contra los del DS (propuesta del 2026-10-06).** `sc-fileupload` (DD-184)
-   existía en PrimeNG desde siempre y se nos pasó: lo único que avisa de «¿PrimeNG ya trae esto?» es el gancho de un
-   enlace pegado (`primeng-doc-guard`). Primer paso: cruzar el catálogo de `primeng/*` con `docs/_component-status.json`
-   y con lo que usan las apps (`audit:primeng-coupling`), y listar cada componente de PrimeNG que no tenemos y cada
-   wrapper nuestro que repite uno nativo, con su fuente (`node tools/primeng-doc.mjs <componente>`). Una tabla en
-   `docs/`, sin construir nada hasta decidir cuáles entran.
+-2. **Auditoría de PrimeNG contra el DS: hecha (2026-10-07)**, en `docs/AUDIT-PRIMENG-CATALOGO.md`. Queda decidir lo que
+   propone, por orden: TreeSelect/Tree para las tipificaciones (con la propuesta pendiente), InputTags para los dominios
+   del chat y OrderList para el selector de columnas; revisar `sc-inputnumber` sobre `p-inputnumber` y las dos maneras de
+   editar un nombre en su sitio; envolver Tabs y quitar Sidebar del laboratorio. Nada se construye sin decidirlo.
 -1. **`fichas-nombre-fijo.spec.ts`, intermitente en el CI (2026-10-06).** Falló cuatro veces en dos PRs (#349 y #350),
    siempre en el shard 4/8, cada vez en una ficha distinta (agente a 1366, usuario a 1366, grupo a 1280) y con el mismo
    mensaje, «X sigue a la vista»: en el punto donde debía estar el nombre devuelve el texto de la barra superior. Pasa al
