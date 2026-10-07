@@ -190,4 +190,12 @@
   .resumen__pair {
     display: contents;
   }
+
+  /* En la franja, los valores en su columna y empezando en la misma vertical (DD-130): el «a la derecha» de la columna
+   * estrecha no aplica aquí. */
+  .resumen__pair > .resumen__value,
+  .resumen__pair > .resumen__warn {
+    margin-inline-start: 0;
+    text-align: start;
+  }
 }
