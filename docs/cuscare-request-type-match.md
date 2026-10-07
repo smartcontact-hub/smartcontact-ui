@@ -1,6 +1,6 @@
 # Cuscare: la regla del filtro de tipo de solicitud
 
-Decisión de producto y desarrollo (2026-10-07), que sustituye a la del 2026-10-02.
+Decisión de producto y desarrollo (2026-10-06), que sustituye a la del 2026-10-02.
 
 ## La regla
 
@@ -30,7 +30,7 @@ La «Y» fija entre IA y Agente del panel describe esta regla tal cual.
 
 La regla anterior pedía que IA y Agente pusieran el MISMO tipo («parejas»):
 `(IA Baja y Agente Baja) o (IA Devolución y Agente Devolución)`. Con ella, IA Devolución con
-Agente Baja no salía. Se descarta por demasiado restrictiva: en la reunión del 2026-10-07 se
+Agente Baja no salía. Se descarta por demasiado restrictiva: en la reunión del 2026-10-06 se
 eligió la regla flexible, que enseña más combinaciones y cubre el caso urgente (IA Spam, IA
 Vacío) igual que cualquiera de las otras.
 
