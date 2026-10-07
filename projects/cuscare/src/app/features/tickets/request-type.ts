@@ -5,7 +5,8 @@ import { RequestOrigin, RequestTag } from '../../data/seed';
  * Landing page › V3 › «Main Container» (1736:13257): origen de la clasificación arriba y una
  * lista de tipos con casillas debajo.
  *
- *   · `origins` → orígenes encendidos: ninguno (de inicio), IA, Agente o los dos.
+ *   · `origins` → orígenes encendidos: ninguno (de inicio), IA, Agente o los dos. Sin ninguno,
+ *                 no se filtra.
  *   · `types`   → UNA lista de tipos para los dos orígenes. Vacía = sin filtro.
  */
 export interface RequestTypeFilter {
@@ -22,33 +23,32 @@ export const EMPTY_TYPE = 'Empty';
 
 export const DEFAULT_REQUEST_TYPE_FILTER: RequestTypeFilter = { origins: [], types: [] };
 
-/** El filtro solo actúa con algún tipo marcado. */
+/**
+ * El filtro solo actúa con algún origen encendido Y algún tipo marcado: sin origen no se
+ * filtra (decisión de producto y desarrollo del 2026-10-07).
+ */
 export function isRequestTypeActive(f: RequestTypeFilter): boolean {
-  return f.types.length > 0;
+  return f.origins.length > 0 && f.types.length > 0;
 }
 
-/**
- * ¿Ese origen puso ese tipo? Sin origen (`null`), vale cualquiera de los dos. «Vacío» = no
- * puso ninguno (sin origen: nadie puso ninguno).
- */
-function hasType(tags: readonly RequestTag[], origin: RequestOrigin | null, type: string): boolean {
-  const from = origin ? tags.filter((t) => t.origin === origin) : tags;
+/** ¿Ese origen puso ese tipo? «Vacío» = ese origen no puso ninguno. */
+function hasType(tags: readonly RequestTag[], origin: RequestOrigin, type: string): boolean {
+  const from = tags.filter((t) => t.origin === origin);
   return type === EMPTY_TYPE ? from.length === 0 : from.some((t) => t.label === type);
 }
 
 /**
- * ¿El ticket pasa el filtro? Basta con UNO de los tipos marcados, y ese tipo lo tienen que
- * haber puesto TODOS los orígenes encendidos:
- *   · ninguno      → lo puso la IA o el agente, da igual quién;
- *   · solo IA      → lo puso la IA, diga lo que diga el agente;
+ * ¿El ticket pasa el filtro? Cada origen encendido tiene que haber puesto ALGUNO de los tipos
+ * marcados, no necesariamente el mismo: «IA (Baja o Devolución) Y Agente (Baja o Devolución)».
+ * O dentro de cada origen, Y entre orígenes.
+ *   · solo IA      → la IA puso alguno de los tipos, diga lo que diga el agente;
  *   · solo Agente  → lo mismo con el agente;
- *   · los dos      → coincidencia: la IA y el agente pusieron el MISMO tipo. Un ticket que
- *                    el agente aún no ha revisado no coincide, así que no sale.
+ *   · los dos      → la IA puso alguno Y el agente puso alguno. IA Baja con Agente Devolución
+ *                    sale; IA Baja con Agente Spam, no.
  */
 export function matchesRequestType(tags: readonly RequestTag[], f: RequestTypeFilter): boolean {
   if (!isRequestTypeActive(f)) return true;
-  if (!f.origins.length) return f.types.some((type) => hasType(tags, null, type));
-  return f.types.some((type) => f.origins.every((o) => hasType(tags, o, type)));
+  return f.origins.every((o) => f.types.some((type) => hasType(tags, o, type)));
 }
 
 /** Lo que pinta la celda: una coincidencia (el mismo tipo de los dos) o una etiqueta suelta. */

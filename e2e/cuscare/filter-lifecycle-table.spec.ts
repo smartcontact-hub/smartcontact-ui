@@ -45,6 +45,7 @@ test('selección inmediata persiste al cerrar, se revierte al desmarcar y reinic
   await expect(page.getByRole('dialog')).toBeHidden();
   await trigger.click();
   await expect(page.getByRole('button', { name: 'Agente', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  await page.getByRole('button', { name: 'Agente', exact: true }).click();
   await page.getByRole('option', { name: 'Baja', exact: true }).click();
   await page.getByRole('heading', { name: 'Tickets', exact: true }).click();
   await page.getByRole('link', { name: 'Panel de control', exact: true }).click();
