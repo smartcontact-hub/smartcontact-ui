@@ -92,16 +92,9 @@ const cajon = (page: Page) => page.locator('.p-drawer', { has: panel(page) });
 const medidas = (page: Page) =>
   cajon(page).evaluate((drawer) => {
     const fila = drawer.querySelector('tbody tr');
-    const rotulos = [...drawer.querySelectorAll('thead th')].map((th) => th.getAttribute('aria-label'));
-    const celdaEstado = fila?.querySelectorAll(':scope > td')[rotulos.indexOf('Estado')];
-    const nombre = fila?.querySelector('.assign__name');
-    const estado = celdaEstado?.querySelector('sc-tag');
-    const casilla = fila?.querySelector('.assign__locked sc-checkbox, .assign__permission sc-checkbox');
     return {
       ancho: drawer.getBoundingClientRect().width,
       altoFila: fila ? fila.getBoundingClientRect().height : 0,
-      hueco: nombre && estado ? estado.getBoundingClientRect().left - nombre.getBoundingClientRect().right : null,
-      huecoCasilla: celdaEstado && casilla ? casilla.getBoundingClientRect().left - celdaEstado.getBoundingClientRect().right : null,
     };
   });
 
@@ -125,14 +118,10 @@ test('con dos canales, el panel se ajusta a sus columnas: nombre cerca de sus ca
   // La línea «Canales: …» bajo el título repetía las cabeceras.
   await expect(panel(page).locator('.agents-panel__channels')).toHaveCount(0);
 
-  const { ancho, altoFila, hueco, huecoCasilla } = await medidas(page);
-  // Con la casilla de «todos» en cada canal y en Habilitado (DD-181), 52rem; antes, 48.
-  expect(ancho, 'agente, estado, canales y Habilitado, cada columna medida (DD-156)').toBeLessThanOrEqual(52 * 16);
-  expect(hueco, 'del nombre y el email a su estado').not.toBeNull();
-  expect(hueco!, 'del nombre y el email a su estado').toBeLessThanOrEqual(6 * 16);
-  expect(huecoCasilla, 'de la columna del estado a la primera casilla').not.toBeNull();
-  expect(huecoCasilla!, 'de la columna del estado a la primera casilla').toBeLessThanOrEqual(4 * 16); // con las casillas centradas en su columna, como la matriz de permisos (DD-185)
-  expect(altoFila, 'nombre y email en dos líneas, con el estado al lado').toBeLessThanOrEqual(58);
+  const { ancho, altoFila } = await medidas(page);
+  // Sin la columna de Estado (su burbuja va en el avatar, DD-185): agente, canales y Habilitado, 46rem (antes, 52).
+  expect(ancho, 'agente, canales y Habilitado, cada columna medida (DD-156)').toBeLessThanOrEqual(46 * 16);
+  expect(altoFila, 'nombre y email en dos líneas').toBeLessThanOrEqual(58);
 });
 
 test('el último canal se lee marcado y fijo: la casilla desactivada queda al 60 % de Figma, no al 36 %', async ({ page }) => {

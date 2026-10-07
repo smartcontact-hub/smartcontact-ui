@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { TranslateModule } from '@ngx-translate/core';
 import { MeterGroupModule } from 'primeng/metergroup';
 import type { MeterItem } from 'primeng/types/metergroup';
+import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { AnimateOnChangeDirective } from '@core/directives';
@@ -73,6 +74,7 @@ interface ChannelRow {
     TranslateModule,
     MeterGroupModule,
     ScIconComponent,
+    TagComponent,
     ChannelIconComponent,
     AnimateOnChangeDirective,
     SummaryKpiComponent,

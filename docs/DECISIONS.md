@@ -133,7 +133,7 @@
 
 ---
 
-## DD-185 · 2026-10-07 — Segunda vuelta de la revisión de grupos: el copy de Voice y la subida con «Subir archivo»
+## DD-185 · 2026-10-07 — Segunda vuelta de la revisión de grupos: copy de Voice, subir archivo, el estado en el avatar y el repositorio de Email
 
 **Contexto** · Con DD-184 fundida, el equipo corrigió lo que se había entendido al revés y pidió más: el rótulo largo de
 los tiempos era la ayuda, no el nombre; el aviso de Ring All parecía de todo el bloque; «Elegir .wav» y su texto de
@@ -158,8 +158,28 @@ soltar sobraban; y la tabla de agentes del grupo no alineaba sus casillas como l
 6. **«Administrativo», tintado** como las demás etiquetas (`brown`: fondo `amber-100`, texto `amber-900`; en oscuro,
    `amber-800` al 45 % y `amber-200`). Lleno, chocaba con el resto (enmienda DD-176 §8).
 
-**Consecuencias** · Los e2e de la tabla de agentes, de los tiempos, de Ring All y de Administrativo se ponen al día;
-`ficha-grupo-revision-equipo.spec.ts` fija el aviso de Ring All y la subida.
+7. **El estado, en la burbuja del avatar** (`sc-presence-avatar`, el `p-overlay-badge` de primeng.dev/avatar sin valor):
+   un punto abajo a la derecha, del color del punto de su etiqueta, con su palabra dicha al lector y en `title`. Sustituye
+   a la columna «Estado» de la tabla de agentes del grupo, que se va. En el listado de agentes la burbuja va en el avatar y
+   la columna sigue en «Columnas», escondida de inicio. La posición es lo único que se desvía del nativo (arriba a la
+   derecha): va por su propia entrada `style`, sin CSS encima.
+8. **Filtro por estado** en la cabecera del agente de la tabla del grupo: un menú con los ocho estados, de varios en
+   varios, y una marca con cuántos hay elegidos. Lo que la columna daba al ordenar y al ojear, se recupera filtrando.
+9. **Repositorio de Email** (nueva tarjeta en Comunicación del hub, `/admin/emails`): las cuentas de correo y los
+   triggers de la pestaña Emails de Voice, cada uno con su lista y su «Crear», y su editor en su ruta. La cuenta lleva los
+   datos del servidor entrante y del saliente (con su prueba), los triggers que se le aplican y la acción por defecto; el
+   trigger, su condición (campo, operador y valor), su acción y su cuenta. No va en Grupos: es un repositorio. Los
+   almacenes son de prototipo (`sc-mailboxes-repo`, `sc-email-triggers-repo`); las pruebas de conexión no salen a ninguna
+   parte.
+10. **El resumen del grupo**, como la maqueta: cada título y cada fila con el icono de su canal en una baldosa, la
+    estrategia corta en una píldora verde y la larga en texto, la salida con sus recursos y una raya entre reparto y salida.
+
+**Descartadas** · Quitar la columna «Estado» también del listado de agentes: entra en la búsqueda, la exportación y el
+selector de columnas; se esconde, no se quita.
+
+**Consecuencias** · Los e2e de la tabla de agentes, de los tiempos, de Ring All, de Administrativo y del resumen se ponen
+al día; `ficha-grupo-revision-equipo.spec.ts` fija el aviso de Ring All, la subida y el filtro, y
+`repositorio-email.spec.ts`, el repositorio de Email.
 
 ---
 

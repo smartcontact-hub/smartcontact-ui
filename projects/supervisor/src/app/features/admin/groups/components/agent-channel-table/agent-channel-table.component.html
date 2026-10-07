@@ -29,6 +29,24 @@
                   (cycle)="toggleHeader(col.field)">
                   @if (col.field !== 'assigned') { <span class="sc-text-body-semibold">{{ col.header }}</span> }
                 </sc-checkbox>
+              } @else if (col.field === 'agent') {
+                <!-- El estado ya no tiene columna (va en la burbuja del avatar, DD-185): se filtra desde la cabecera del agente,
+                     con un menú de estados que se marcan de varios en varios. -->
+                <span class="assign__agent-head">
+                  <span>{{ col.header }}</span>
+                  <sc-button
+                    variant="secondary"
+                    appearance="text"
+                    size="sm"
+                    icon="filter_list"
+                    [ariaLabel]="'groups.form.assigned.filter_status' | translate"
+                    [attr.aria-expanded]="statusPopover.overlayVisible"
+                    (clicked)="statusPopover.toggle($event)"
+                  />
+                  @if (presenceFilter().size > 0) {
+                    <sc-tag severity="info" [value]="(presenceFilter().size === 1 ? 'groups.form.assigned.filter_status_count_one' : 'groups.form.assigned.filter_status_count') | translate: { count: presenceFilter().size }" />
+                  }
+                </span>
               } @else { {{ col.header }} }
             </th>
           }
@@ -39,10 +57,21 @@
   </div>
 </div>
 
+<p-popover #statusPopover [attr.aria-label]="'groups.form.assigned.filter_status' | translate">
+  <div class="assign__status-filter" role="group" [attr.aria-label]="'groups.form.assigned.filter_status' | translate">
+    @for (option of presenceOptions; track option.value) {
+      <sc-checkbox [state]="presenceFilter().has(option.value) ? 'all' : 'none'" (cycle)="togglePresence(option.value)">{{ option.labelKey | translate }}</sc-checkbox>
+    }
+    @if (presenceFilter().size > 0) {
+      <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.assigned.filter_status_clear' | translate" (clicked)="presenceFilter.set(emptyPresence)" />
+    }
+  </div>
+</p-popover>
+
 <!-- Celdas del editor. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
 <ng-template #agentTpl let-row>
   <span class="assign__name">
-    <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
+    <sc-presence-avatar [name]="row.agent.name" [size]="24" [presence]="row.agent.presenceStatus" />
     <span class="assign__identity">
       <span class="assign__name-label sc-text-body-semibold" [title]="row.agent.name">{{ row.agent.name }}</span>
       @if (row.agent.email) { <span class="assign__email sc-text-caption-regular" [title]="row.agent.email">{{ row.agent.email }}</span> }
@@ -52,17 +81,6 @@
       <sc-tag severity="warn" icon="warning" [value]="'groups.form.summary.no_channels' | translate" />
     }
   </span>
-</ng-template>
-
-<!-- El estado de la persona, la misma etiqueta que el listado de agentes (DD-149). Sin estado, la celda queda vacía. -->
-<ng-template #presenceTpl let-row>
-  @if (row.agent.presenceStatus; as presence) {
-    @if (presenceLabelColor(presence); as color) {
-      <sc-tag variant="label" [labelColor]="color" [value]="presenceLabelKey(presence) | translate" />
-    } @else {
-      <sc-tag [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
-    }
-  }
 </ng-template>
 
 <!-- Una columna por canal DEL GRUPO, como la matriz de Contact Center. -->

@@ -45,6 +45,11 @@ a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-1
 - **Tabla de agentes del grupo, como la matriz de permisos:** cabeceras centradas con la casilla de «todos» después del
   rótulo; Asignado, solo la casilla. Desplaza 51 px a 1440 con tres canales.
 - «Administrativo» tintado, no lleno.
+- **El estado, en la burbuja del avatar** (`sc-presence-avatar`): la columna sale de la tabla de agentes del grupo y queda
+  escondida de inicio en el listado; se filtra por estado desde la cabecera del agente.
+- **Repositorio de Email** (`/admin/emails`, tarjeta en Comunicación): cuentas de correo y triggers, con su editor cada uno.
+  Datos de prototipo; las pruebas de conexión no salen a ninguna parte.
+- **El resumen del grupo**, con baldosas de icono, píldora verde y su raya, como la maqueta.
 - **Pendiente:** el nodo de la tabla de agentes en Figma (`figma-pendiente`), y lo de DD-184.
 
 ## ✅ 2026-10-06 · La revisión de grupos del equipo y `sc-fileupload` (DD-184)

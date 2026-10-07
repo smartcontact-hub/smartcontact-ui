@@ -89,3 +89,17 @@ test('subir audios: botón «Subir archivo», varios periódicos y rechazo de ot
   await expect(telefono.getByText('tipo de archivo no válido', { exact: false })).toBeVisible();
   await expect(telefono.getByText('voz.mp3', { exact: false })).toHaveCount(1);
 });
+
+test('el estado se filtra desde la cabecera del agente y no hay columna «Estado»', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/11?seccion=agentes');
+  const tabla = page.locator('sc-agent-channel-table');
+  await expect(tabla.getByRole('columnheader', { name: 'Estado' })).toHaveCount(0);
+  const antes = await tabla.locator('tbody tr').count();
+  await tabla.getByRole('button', { name: 'Filtrar por estado' }).click();
+  await page.getByRole('checkbox', { name: 'Comida' }).click();
+  await expect(tabla.locator('tbody tr'), 'con un estado marcado, solo los agentes en él').not.toHaveCount(antes);
+  for (const estado of await tabla.locator('tbody tr sc-presence-avatar .visually-hidden').allTextContents()) {
+    expect(estado.trim()).toBe('Comida');
+  }
+  await expect(tabla.getByText('1 estado', { exact: true })).toBeVisible();
+});

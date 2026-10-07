@@ -65,10 +65,33 @@
   }
 }
 
+/* La baldosa del icono de cada título y de cada fila, como en la maqueta del resumen (DD-185): un cuadrado de 28 con las
+ * esquinas redondeadas y un tinte de la marca, más hondo que el de la tarjeta. El icono, en el color del texto. */
+.resumen__tile {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  inline-size: var(--sc-spacing-2);
+  block-size: var(--sc-spacing-2);
+  border-radius: var(--sc-radius-lg);
+  background: color-mix(in srgb, var(--sc-bg-primary) 10%, transparent);
+  color: var(--sc-text-primary);
+}
+
+.resumen__title-row {
+  padding-block-end: 0;
+}
+
+/* Entre reparto y salida, una raya fina, y el aire de 28 de arriba (DD-130 §2). */
+.resumen__fact + .resumen__fact {
+  padding-block-start: var(--sc-spacing-1);
+  border-block-start: 1px solid var(--sc-border-subtle);
+}
+
 .resumen__pairs {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-1);
+  gap: var(--sc-spacing-0-5);
   margin: 0;
 }
 
@@ -88,7 +111,7 @@
  * doble que entre sus filas (14), o la tarjeta se lee como una lista plana (revisión previa, 2026-09-27). Dentro
  * de cada uno, 7 del rótulo a sus datos. */
 .resumen__facts {
-  gap: var(--sc-spacing-2);
+  gap: var(--sc-spacing-1);
 }
 
 .resumen__fact {

@@ -21,6 +21,7 @@ import {
   ScSelectButtonComponent as SelectButtonComponent,
   ScSearchComponent as SearchComponent,
   ScSelectComponent as SelectComponent,
+  ScButtonComponent as ButtonComponent,
   ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -30,12 +31,13 @@ import {
   type ScColumnDef,
 } from '@smartcontact-hub/components';
 
-import { PRESENCE_LABEL_KEYS, PRESENCE_TAGS, type PresenceStatus } from '@features/admin/agents/data/agents-data';
+import { PRESENCE_LABEL_KEYS, type PresenceStatus } from '@features/admin/agents/data/agents-data';
 
+import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
 
-import { IllustratedAvatarComponent, type LabelColor } from '@shared/components';
+import { PresenceAvatarComponent } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -84,8 +86,8 @@ interface VisibleRow {
 const CHANNEL_REM: Readonly<Record<ChannelFamily, number>> = { phone: 7, chat: 4.5, email: 4.75 };
 
 export const COLUMN_REM = {
-  regular: { assigned: 3.5, agent: 11.625, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
-  compact: { assigned: 3.5, agent: 16.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
+  regular: { assigned: 3.5, agent: 14, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
+  compact: { assigned: 3.5, agent: 16.25, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
 } as const;
 
 /** Lo que suman las columnas con esos canales y `levels` niveles: el mínimo de la tabla y el ancho del panel. */
@@ -95,7 +97,7 @@ export function columnsRem(
   levels: number,
 ): number {
   const channels = families.reduce((sum, family) => sum + rem.channel[family], 0);
-  return rem.assigned + rem.agent + rem.presence + levels * rem.level + channels + rem.enabled;
+  return rem.assigned + rem.agent + levels * rem.level + channels + rem.enabled;
 }
 
 /** La asignación se edita en la misma lista que sus canales (DD-151).
@@ -108,9 +110,11 @@ export function columnsRem(
   imports: [
     LlegaAlPieDirective,
     SelectButtonComponent,
+    ButtonComponent,
     CheckboxComponent,
     DatatableComponent,
-    IllustratedAvatarComponent,
+    PopoverModule,
+    PresenceAvatarComponent,
     SearchComponent,
     RouterLink,
     ScIconComponent,
@@ -142,8 +146,6 @@ export class AgentChannelTableComponent {
 
   private readonly agentTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('agentTpl');
-  private readonly presenceTpl =
-    viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('presenceTpl');
   private readonly channelTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
   private readonly levelTpl =
@@ -171,14 +173,7 @@ export class AgentChannelTableComponent {
           header: this.translate.instant('groups.form.assigned.col_agent'),
           cellTemplate: this.agentTpl(),
         },
-        /* El estado de la persona, en su columna y con la palabra del listado de agentes: alineado de una fila a otra
-         * y sin quitarle sitio al email (DD-156). */
-        {
-          field: 'presence',
-          header: this.translate.instant('agents.table.presence'),
-          width: `${rem.presence}rem`,
-          cellTemplate: this.presenceTpl(),
-        },
+        /* El estado de la persona va en la burbuja de su avatar (DD-185), no en una columna: el email gana el sitio. */
         /* Con la estrategia Niveles, el nivel de cada agente va en su fila: donde ya se decide quién atiende qué. */
         ...this.levelFamilies().map((family) => ({
           field: `level-${family}`,
@@ -234,14 +229,32 @@ export class AgentChannelTableComponent {
   protected readonly announcement = signal('');
   protected readonly pending = signal(false);
   private readonly agentById = computed(() => new Map(this.availableAgents().map(agent => [agent.id, agent])));
+  /** Los estados que se dejan ver: ninguno marcado, todos. Se marcan en el menú de la cabecera del agente. */
+  protected readonly emptyPresence: ReadonlySet<PresenceStatus> = new Set();
+  protected readonly presenceFilter = signal<ReadonlySet<PresenceStatus>>(this.emptyPresence);
+  protected readonly presenceOptions = (Object.keys(PRESENCE_LABEL_KEYS) as PresenceStatus[]).map((value) => ({
+    value,
+    labelKey: PRESENCE_LABEL_KEYS[value],
+  }));
+
+  protected togglePresence(value: PresenceStatus): void {
+    this.presenceFilter.update((current) => {
+      const next = new Set(current);
+      if (!next.delete(value)) next.add(value);
+      return next;
+    });
+  }
+
   private readonly filteredAgents = computed(() => {
     const filter = this.filter();
+    const presence = this.presenceFilter();
     const query = this.query().trim().toLowerCase();
     const agents = this.availableAgents();
     const assigned = new Set(untracked(this.links).map(link => link.agentId));
     return agents.filter(agent =>
       (filter === 'all' || (filter === 'assigned') === assigned.has(agent.id)) &&
-      (!query || `${agent.name} ${agent.email ?? ''}`.toLowerCase().includes(query)));
+      (!query || `${agent.name} ${agent.email ?? ''}`.toLowerCase().includes(query)) &&
+      (presence.size === 0 || (!!agent.presenceStatus && presence.has(agent.presenceStatus))));
   });
   protected readonly visibleRows = computed<readonly VisibleRow[]>(() => {
     const links = new Map(this.links().map(link => [link.agentId, link]));
@@ -369,20 +382,6 @@ export class AgentChannelTableComponent {
     this.linksChange.emit(
       this.links().map((l) => (l.agentId === agentId ? toggleLinkChannel(clampLinksToChannels([l], this.groupChannels(), () => agent.allowedChannels)[0], channel, { minOne: true }) : l)),
     );
-  }
-
-  protected presenceLabelColor(presence: PresenceStatus): LabelColor | null {
-    const tag = PRESENCE_TAGS[presence];
-    return 'labelColor' in tag ? tag.labelColor : null;
-  }
-
-  protected presenceSeverity(presence: PresenceStatus): 'warn' | 'secondary' {
-    const tag = PRESENCE_TAGS[presence];
-    return 'severity' in tag ? tag.severity : 'secondary';
-  }
-
-  protected presenceLabelKey(presence: PresenceStatus): string {
-    return PRESENCE_LABEL_KEYS[presence];
   }
 
   protected toggleActive(agentId: number, active: boolean): void {

@@ -1192,6 +1192,75 @@
     }
   },
   "repositories": {
+    "emails": {
+      "title": "Email",
+      "mailboxes": "Cuentas de correo",
+      "triggers": "Triggers",
+      "create": "Crear",
+      "created": "Fecha de creación",
+      "modified": "Fecha de modificación",
+      "total": "Emails totales",
+      "mailbox_singular": "cuenta de correo",
+      "mailbox_singular_title": "Cuenta de correo",
+      "trigger_singular": "trigger",
+      "mailboxes_empty": "Aún no hay cuentas de correo",
+      "triggers_empty": "Aún no hay triggers",
+      "mailbox": {
+        "create_title": "Nueva cuenta de correo",
+        "create_breadcrumb": "Nueva cuenta",
+        "edit_breadcrumb": "Editar cuenta",
+        "create_submit": "Crear cuenta",
+        "name_placeholder": "mailbox@example.com",
+        "name_taken": "Ya hay una cuenta con esta dirección",
+        "section_account": "Cuenta",
+        "section_incoming": "Datos del correo entrante",
+        "section_outgoing": "Datos del correo saliente",
+        "host": "Host",
+        "port": "Puerto",
+        "user": "Usuario",
+        "password": "Contraseña",
+        "test_inbox": "Probar entrada",
+        "test_outbox": "Probar salida",
+        "test_ok_incoming": "Conexión correcta con el servidor de entrada",
+        "test_ok_outgoing": "Conexión correcta con el servidor de salida",
+        "test_missing": "Faltan el host, el puerto o el usuario",
+        "default_action": "Acción por defecto",
+        "action_transfer": "Transferir",
+        "action_queue": "Cola",
+        "target": "Grupo",
+        "no_target": "Ningún grupo"
+      },
+      "trigger": {
+        "create_title": "Nuevo trigger",
+        "create_breadcrumb": "Nuevo trigger",
+        "edit_breadcrumb": "Editar trigger",
+        "create_submit": "Crear trigger",
+        "name_taken": "Ya hay un trigger con este nombre",
+        "section_trigger": "Trigger",
+        "section_condition": "Condición",
+        "section_action": "Acción",
+        "section_mailbox": "Cuenta de correo",
+        "label": "Etiqueta",
+        "field": "Campo",
+        "operator": "Operador",
+        "value": "Valor",
+        "mailbox_none": "Ninguna",
+        "fields": {
+          "body": "Cuerpo del email",
+          "date": "Fecha",
+          "from": "De",
+          "subject": "Asunto",
+          "time": "Hora",
+          "to": "Para"
+        },
+        "operators": {
+          "contains": "Contenga",
+          "not_contains": "No contenga",
+          "equals": "Igual a",
+          "starts_with": "Empiece por"
+        }
+      }
+    },
     "search_placeholder": "Buscar {{entity}}...",
     "errors": {
       "name_required": "El nombre es obligatorio",
@@ -1236,6 +1305,7 @@
         "ai": "IA"
       },
       "descriptions": {
+        "emails": "Cuentas de correo y triggers que reparten los emails entrantes",
         "agendas": "Los contactos que cada agente ve en la agenda de su teléfono",
         "horarios": "Franjas horarias y turnos operativos del contact center",
         "plantillas": "Mensajes predefinidos para respuestas rápidas y campañas",
@@ -1790,6 +1860,10 @@
         "agents_hint": "Quién atiende y por qué canales"
       },
       "assigned": {
+        "filter_status": "Filtrar por estado",
+        "filter_status_count": "{{count}} estados",
+        "filter_status_count_one": "{{count}} estado",
+        "filter_status_clear": "Quitar filtro",
         "query_placeholder": "Buscar por nombre o email…",
         "empty_title": "Sin agentes asignados",
         "empty": "Elígelos en «Añadir agentes», arriba a la derecha.",
