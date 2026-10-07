@@ -3,7 +3,7 @@ import { expect, Page, test } from '@playwright/test';
 const HOME = '/#/private/cuscare/tickets?lang=es';
 
 /*
- * Regla del filtro (decisión de producto y desarrollo del 2026-10-07):
+ * Regla del filtro (decisión de producto y desarrollo del 2026-10-06):
  * IA (alguno de los tipos) Y Agente (alguno de los tipos). O dentro de cada origen, Y entre
  * orígenes; no hace falta que los dos pongan el MISMO tipo. Sin origen no se filtra.
  * Las filas de la semilla que se usan:

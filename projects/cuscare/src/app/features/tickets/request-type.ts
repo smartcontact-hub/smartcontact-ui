@@ -25,7 +25,7 @@ export const DEFAULT_REQUEST_TYPE_FILTER: RequestTypeFilter = { origins: [], typ
 
 /**
  * El filtro solo actúa con algún origen encendido Y algún tipo marcado: sin origen no se
- * filtra (decisión de producto y desarrollo del 2026-10-07).
+ * filtra (decisión de producto y desarrollo del 2026-10-06).
  */
 export function isRequestTypeActive(f: RequestTypeFilter): boolean {
   return f.origins.length > 0 && f.types.length > 0;
