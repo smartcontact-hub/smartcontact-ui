@@ -1,6 +1,7 @@
 # Cuscare: filtros y tabla — handoff
 
-Decisión de producto validada para publicación (2026-10-02). Implementación en
+Decisión de producto validada para publicación (2026-10-02); la regla del filtro cambió el
+2026-10-07. Implementación en
 `projects/cuscare/src/app/features/tickets/`. Complementa
 [cuscare-request-type-match.md](cuscare-request-type-match.md).
 
@@ -13,8 +14,10 @@ campo «Tipo de contenido» ni se cambia el vocabulario del dominio.
 | --- | --- | --- |
 | Entrada inicial | Cerrado, «—», descripción accesible «Sin filtro aplicado», orígenes apagados | Todos los tickets; nunca empty state por no haber interactuado |
 | Abrir y cerrar sin tocar nada | Sigue neutral | No cambia |
+| Abrir sin origen | La lista de tipos, el buscador y «todos» están desactivados hasta encender un origen | No cambia |
 | Activar orígenes sin tipos | Preparación dentro del panel; no aparece limpieza | No filtra ni cambia la página |
-| Cerrar sin tipos, por clic exterior, disparador o Escape | Descarta los orígenes preparados; siguiente apertura empieza apagada | Todos los tickets compatibles con los otros filtros |
+| Apagar el último origen con tipos marcados | Los tipos siguen marcados pero desactivados; «—», sin × | Deja de filtrar hasta encender otro origen |
+| Cerrar sin tipos o sin origen, por clic exterior, disparador o Escape | Descarta lo preparado; siguiente apertura empieza apagada | Todos los tickets compatibles con los otros filtros |
 | Seleccionar tipos | Aplica inmediatamente, «1 tipo» / «N tipos» y × | Filtra y vuelve a página 1; no existe un paso adicional Aplicar |
 | Cerrar y reabrir con tipos | Conserva selección y orígenes | Conserva resultados |
 | Desmarcar el último tipo | «—», sin ×; permite preparar otra selección dentro del panel | Retira esta condición; mantiene los demás filtros |
@@ -27,9 +30,10 @@ para que la próxima apertura muestre el catálogo completo, conservando las cas
 seleccionadas. Una búsqueda sin coincidencias muestra «Ningún tipo coincide» dentro
 del panel y no cambia los resultados de tickets.
 
-Match aparece exclusivamente en tipos seleccionados cuando IA y Agente están
-activos. AND entre orígenes para el mismo tipo; OR entre los tipos seleccionados.
-No es un tercer control ni una afirmación sobre todo el catálogo.
+La regla (2026-10-07): cada origen encendido tiene que haber puesto alguno de los tipos
+marcados, no necesariamente el mismo. OR dentro de cada origen, AND entre orígenes. Las
+opciones ya no llevan «Match»; el detalle, en
+[cuscare-request-type-match.md](cuscare-request-type-match.md).
 
 **Resultados vacíos:** con filtros activos, «Ningún ticket coincide con estos
 filtros» y acción «Eliminar filtros». Se conservan los controles y el criterio
@@ -115,8 +119,8 @@ el desplazamiento horizontal. No se crea una columna de acciones redundante.
 - Cabeceras ordenables accesibles por Tab, Enter y Espacio; conservan aria-sort.
   Disparador y limpieza tienen foco visible. El panel tiene nombre accesible.
 - El origen de cada tag se expone también en nombre accesible y title. Los
-  colores locales IA/Agente y la agrupación previa de coincidencias se conservan;
-  la simplificación de esa agrupación sigue pendiente de validación de fase 1.
+  colores locales IA/Agente y la agrupación de coincidencias, con su check, se conservan
+  en el prototipo como avance de fase 2 (decisión del 2026-10-07).
 - Se respeta reduced-motion para los checks de origen y el chevron. No se añade
   animación al filtrado ni al scroll.
 

@@ -14,6 +14,24 @@ avisos de acción.
 
 Contexto completo: [`projects/cuscare/README.md`](../../projects/cuscare/README.md).
 
+## 2026-10-07 · La regla del filtro «Tipo de solicitud»: O dentro de cada origen, Y entre orígenes
+
+**Sello:** fundido en `main` desde la rama `arebury/cuscare-filtro-tipo-solicitud`, para que
+desarrollo lo vea en sc-cuscare.pages.dev.
+
+Sale de la reunión de producto y desarrollo del 2026-10-07 y de su pizarra. La regla pasa de
+«parejas» (IA y Agente con el MISMO tipo) a «IA (alguno) Y Agente (alguno)»: IA Devolución con
+Agente Baja ahora sale. Sin origen la lista de tipos está desactivada. Se retira el «Match» de
+las opciones; la marca de coincidencia de la tabla se queda como avance de fase 2. Contrato:
+[`docs/cuscare-request-type-match.md`](../cuscare-request-type-match.md). La semilla repartía
+las discrepancias entre solo dos tipos, así que el caso de la pizarra no existía en los datos;
+ahora recorren todos (IA y Agente con Baja y Devolución: 157 → 172 tickets).
+
+**Pendiente:** poner al día la especificación de Figma (cómo funciona y reglas) si recoge el
+Match de las opciones o la regla de parejas. Abierto a revisión: sin origen, la lista sale
+desactivada (lectura literal de «obligatoriamente uno de los dos»); la alternativa es abrir el
+panel con IA encendida.
+
 ## ✅ 2026-10-05 · Summary: las cuatro filas de «Customer info» y «Show more», con lo de este hand-off
 
 Hecho con la descripción de abajo («Lo que se vio al hacerlo y NO se hizo»), **sin verificar contra el
