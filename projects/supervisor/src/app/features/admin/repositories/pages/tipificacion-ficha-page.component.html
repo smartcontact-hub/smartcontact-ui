@@ -6,10 +6,9 @@
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
-    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
   }
   <sc-button
-    size="sm"
     variant="primary"
     [disabled]="!canSave()"
     [label]="(mode() === 'create' ? 'repositories.tipificaciones.create_submit' : 'common.save') | translate"
@@ -24,7 +23,7 @@
     <div class="page__rail">
       <div class="headline">
         <div class="headline__who">
-          <h1 class="headline__name sc-text-h3-semibold" [title]="titulo()">{{ titulo() }}</h1>
+          <h1 class="headline__name sc-text-title-semibold" [title]="titulo()">{{ titulo() }}</h1>
           <span class="headline__meta sc-text-caption-regular">{{ headlineMeta() }}</span>
         </div>
       </div>

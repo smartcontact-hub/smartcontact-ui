@@ -77,11 +77,12 @@ function medidas() {
   return { cambios, manuales };
 }
 
-/** Fichas 8, 12, 14 y 19, con las decisiones del 2026-09-28: el hover y el título, a 900; el rojo contorneado, también. */
+/** Fichas 8, 12, 14 y 19, con las decisiones del 2026-09-28 (el hover y el título, a 900; el rojo contorneado, también) y la
+ * del 2026-10-09 (DD-188): el texto principal, a 900, para que el secundario (700) se separe de él 2,29:1 y no 1,65:1. */
 function color() {
   const cambios = [
-    cambio('8', LUZ_SEM, 'text/color', alias('surface/700'), alias('surface/800')),
-    cambio('8', LUZ_SEM, 'form/field/color', alias('surface/700'), alias('surface/800')),
+    cambio('8', LUZ_SEM, 'text/color', alias('surface/700'), alias('surface/900')),
+    cambio('8', LUZ_SEM, 'form/field/color', alias('surface/700'), alias('surface/900')),
     cambio('8', LUZ_SEM, 'text/muted/color', alias('slate/600'), alias('slate/700')),
     cambio('8', LUZ_SEM, 'text/hover/color', alias('surface/800'), alias('surface/900')),
     cambio('8', LUZ_CMP, 'togglebutton/color', alias('surface/500'), alias('surface/700')),

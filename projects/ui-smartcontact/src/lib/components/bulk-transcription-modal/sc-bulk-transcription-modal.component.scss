@@ -119,7 +119,7 @@
     margin: 0 0 var(--sc-spacing-0-5);
     font-size: var(--sc-font-size-400);
     line-height: var(--sc-line-height-400);
-    font-weight: var(--sc-font-weight-bold);
+    font-weight: var(--sc-font-weight-semibold);
 }
 
 .sc-bulk-modal__heading p,
@@ -161,7 +161,7 @@
     color: var(--sc-text-secondary);
     font-size: var(--sc-font-size-200);
     line-height: var(--sc-line-height-200);
-    font-weight: var(--sc-font-weight-bold);
+    font-weight: var(--sc-font-weight-semibold);
     text-transform: uppercase;
 }
 
@@ -178,7 +178,7 @@
     color: var(--sc-bg-primary);
     font-size: var(--sc-font-size-900);
     line-height: var(--sc-line-height-900);
-    font-weight: var(--sc-font-weight-bold);
+    font-weight: var(--sc-font-weight-semibold);
     transform-origin: center bottom;
     transition: transform 260ms ease;
 }

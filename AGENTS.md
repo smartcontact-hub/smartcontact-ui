@@ -173,6 +173,9 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
 2. **Estados de carga.** Cuando una pantalla espera datos, pinta `sc-skeleton` con la FORMA del
    contenido (filas, tarjetas) y reserva su hueco. Nunca un spinner centrado ni inyectar datos
    que recolocan la página (layout shift). El componente ya existe (demo en `/components/skeleton`).
+   **Por tiempos** (Primer, DD-188): por debajo de 1 s no se pinta nada, porque un indicador que
+   parpadea hace la app más lenta; de 1 a 3 s, esqueleto; de 3 a 10 s, progreso con cifra; más de
+   10 s, en segundo plano sin bloquear. Un indicador por bloque, no por pieza.
 3. **Copy sin relleno.** Un título que se explica solo NO lleva un subtítulo explicándolo. Un
    lead o descripción solo donde aporta algo no obvio (un catálogo, una regla no evidente). Si al
    quitar el texto no se pierde nada, quítalo.
@@ -188,8 +191,9 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    Imágenes con `width`+`height` o `aspect-ratio`. Banners y toasts en un hueco reservado, no
    insertados encima del contenido al cargar.
 8. **Tipografía por clase, y solo fuera de los componentes.** El texto de la PÁGINA lleva una de
-   las 12 clases `.sc-text-*` (los text styles del Figma del DS: display · h1 · h2 · h3 · body ·
-   caption, en regular y semibold). Un `<sc-*>` **nunca** lleva `.sc-text-*` en su etiqueta: su
+   las 14 clases `.sc-text-*` (los text styles del Figma del DS: display · h1 · h2 · h3 · body ·
+   caption, en regular y semibold, más `title` y `subtitle` en semibold). El título de la página es
+   `title` (20) y el de una sección o tarjeta, `subtitle` (16) (DD-188). Un `<sc-*>` **nunca** lleva `.sc-text-*` en su etiqueta: su
    tipografía la publica el tema, y una clase encima —que va sin capa, y sin capa gana siempre—
    lo desconecta del canal por el que un cambio de token llega solo a todos los componentes. Si
    el texto de un componente tiene que verse distinto, se mueve su TOKEN (DD-55, gateado por

@@ -2,7 +2,7 @@
      identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
-  <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onNewEntity()">
+  <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="onNewEntity()">
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'memory.entities.new_entity' | translate }}</span>
   </sc-button>
@@ -16,7 +16,7 @@
          arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
          medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ 'memory.entities.page_title' | translate }}</h1>
+    <h1 class="page__heading sc-text-title-semibold">{{ 'memory.entities.page_title' | translate }}</h1>
 
     <!-- User entities -->
     <section class="entities-section">

@@ -182,7 +182,7 @@ test('`@layer app` gana al tema: la fila fallida de transcripciones conserva su 
  * Configuración y seis muebles más. Aquí se miden los que cubren esa familia entera.
  *
  * El segundo test NO mide tipografía: mide el MARGEN. El bloque compartido de
- * `typography.css` declara `margin: 0` para las 12 clases, y `.page__heading` necesita
+ * `typography.css` declara `margin: 0` para las 14 clases, y `.page__heading` necesita
  * conservar su separación con el cuerpo. Con la misma especificidad decide el orden del
  * bundle, y ese orden es una consecuencia del empaquetado (los `@import` de las capas
  * suben a la cabecera), no una decisión de nadie. Por eso el selector lleva el elemento
@@ -193,7 +193,8 @@ test('`@layer app` gana al tema: la fila fallida de transcripciones conserva su 
  * Medido con el fallo puesto: con `.page__heading` a secas el margen AGUANTA hoy (entonces 21px, 14 desde el 2026-09-14),
  * así que un gate estático no vería nada. Lo que este test fija es que siga aguantando.
  */
-const H3_SEMIBOLD = { fontSize: '18px', lineHeight: '24px', fontWeight: '600' };
+/* `Title/title-semibold` desde el 2026-10-09 (DD-188); antes `h3` (18/24). */
+const TITLE_SEMIBOLD = { fontSize: '20px', lineHeight: '28px', fontWeight: '600' };
 
 test('admin/agendas · la celda destacada de una lista de repositorio mide Body/body-semibold', async ({
   page,
@@ -227,14 +228,14 @@ test('admin/tipificaciones · ninguna celda ni el buscador salen en monoespaciad
   expect(enMono, 'textos que siguen en monoespaciada').toEqual([]);
 });
 
-test('admin/agendas · el título de página mide Heading/h3-semibold y conserva su margen', async ({
+test('admin/agendas · el título de página mide Title/title-semibold y conserva su margen', async ({
   page,
 }) => {
   await goto(page, 'admin/agendas');
   const titulo = page.locator('h1.page__heading');
   await expect(titulo).toBeVisible();
-  await expect(titulo).toHaveClass(/sc-text-h3-semibold/);
-  expect(await leer(page, 'h1.page__heading')).toEqual(H3_SEMIBOLD);
+  await expect(titulo).toHaveClass(/sc-text-title-semibold/);
+  expect(await leer(page, 'h1.page__heading')).toEqual(TITLE_SEMIBOLD);
 
   const margen = await titulo.evaluate((el: HTMLElement) => getComputedStyle(el).marginBottom);
   expect(

@@ -16,7 +16,6 @@
   }
   @if (formDirty()) {
     <sc-button
-      size="sm"
       variant="secondary"
       appearance="outlined"
       [label]="'common.undo' | translate"
@@ -25,7 +24,6 @@
   }
   <!-- En el alta, «Crear grupo»: se enciende en cuanto General está completa (DD-121). -->
   <sc-button
-    size="sm"
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
@@ -55,7 +53,7 @@
              rol que ya usan las nueve listas para su `h1`. -->
         <div class="headline__who">
           @if (mode() === 'edit') {
-            <h1 class="headline__name headline__name--editable sc-text-h3-semibold" [title]="form().name">
+            <h1 class="headline__name headline__name--editable sc-text-title-semibold" [title]="form().name">
               <sc-name-inplace
                 [name]="form().name"
                 [label]="'groups.form.fields.name' | translate"
@@ -65,7 +63,7 @@
             </h1>
           } @else {
             <!-- En el alta el nombre se escribe en General; el título lo sigue según se escribe. -->
-            <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">{{ form().name || ('groups.form.create_title' | translate) }}</h1>
+            <h1 class="headline__name sc-text-title-semibold" [title]="form().name">{{ form().name || ('groups.form.create_title' | translate) }}</h1>
           }
           <!-- Los datos del grupo, CON su nombre: «Media» a secas no decía de qué. El teléfono, solo si
                el grupo ofrece teléfono: a un grupo de chat no se le pide. -->

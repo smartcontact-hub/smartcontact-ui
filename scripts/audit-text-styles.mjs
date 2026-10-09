@@ -1,8 +1,8 @@
 /*
- * GUARDIÁN · las 12 clases `.sc-text-*` valen lo que valen sus text styles en Figma.
+ * GUARDIÁN · las 14 clases `.sc-text-*` valen lo que valen sus text styles en Figma.
  * =================================================================================
  *
- * Por qué existe. `base/typography.css` empaqueta los 12 text styles del Figma
+ * Por qué existe. `base/typography.css` empaqueta los 14 text styles del Figma
  * del DS en una clase cada uno, y a propósito NO fija ningún número: cada clase
  * bebe de un token de rol (`--sc-font-size-h2`), que a su vez cuelga de un
  * peldaño primitivo (`--sc-font-size-500`), que es lo único que `tokens:type-parity`
@@ -23,11 +23,11 @@
  * Qué afirma: (1) cada clase resuelve al font-size, line-height, peso y familia
  * del text style del que dice ser; (2) ninguna `.sc-text-*` va encima de un
  * `<sc-*>`; y desde el 2026-09-11 también (3) que **el CSS de las pantallas no
- * declare tipografía fuera de los 12 roles**. No opina sobre QUÉ debería medir un
+ * declare tipografía fuera de los 14 roles**. No opina sobre QUÉ debería medir un
  * rol: eso lo decide Figma.
  *
  * La tercera nació de medir: 76 reglas del Supervisor usaban `font-weight: medium`
- * (500), que NO es el peso de ninguno de los 12 estilos —solo existen 400 y 600—, y
+ * (500), que NO es el peso de ninguno de los 14 estilos —solo existen 400 y 600—, y
  * otras tantas ponían tamaños (16, 32) que tampoco son peldaño de ningún rol. Nada
  * lo cruzaba: este gate comprobaba que las clases VALEN lo que Figma, y el de
  * vocabulario que un nombre no viva en dos hojas, pero un valor suelto en la hoja de
@@ -59,7 +59,7 @@ const LAYERS = resolve(STYLES, 'tokens/layers');
 const log = (s = '') => process.stdout.write(s + '\n');
 
 /*
- * Los 12 text styles del Figma del DS. `bind` es la variable de Figma a la que
+ * Los 14 text styles del Figma del DS. `bind` es la variable de Figma a la que
  * el estilo ata cada eje: sirve de rastro para el humano que audite esto contra
  * el archivo, y es lo que explica por qué h3 lleva line/height/300 y no 400.
  */
@@ -70,8 +70,10 @@ export const FIGMA_TEXT_STYLES = [
   { estilo: 'Heading/h1-semibold',      clase: 'sc-text-h1-semibold',      size: 48, lh: 58, weight: 600, bind: 'size/800 · lh/800' },
   { estilo: 'Heading/h2-regular',       clase: 'sc-text-h2-regular',       size: 24, lh: 36, weight: 400, bind: 'size/500 · lh/500' },
   { estilo: 'Heading/h2-semibold',      clase: 'sc-text-h2-semibold',      size: 24, lh: 36, weight: 600, bind: 'size/500 · lh/500' },
+  { estilo: 'Title/title-semibold',     clase: 'sc-text-title-semibold',   size: 20, lh: 28, weight: 600, bind: 'size/450 · lh/450' },
   { estilo: 'Heading/h3-regular',       clase: 'sc-text-h3-regular',       size: 18, lh: 24, weight: 400, bind: 'size/400 · lh/300' },
   { estilo: 'Heading/h3-semibold',      clase: 'sc-text-h3-semibold',      size: 18, lh: 24, weight: 600, bind: 'size/400 · lh/300' },
+  { estilo: 'Subtitle/subtitle-semibold', clase: 'sc-text-subtitle-semibold', size: 16, lh: 24, weight: 600, bind: 'size/300 · lh/300' },
   { estilo: 'Body/body-regular',        clase: 'sc-text-body-regular',     size: 14, lh: 20, weight: 400, bind: 'size/200 · lh/200' },
   { estilo: 'Body/body-semibold',       clase: 'sc-text-body-semibold',    size: 14, lh: 20, weight: 600, bind: 'size/200 · lh/200' },
   { estilo: 'Caption/caption-regular',  clase: 'sc-text-caption-regular',  size: 12, lh: 18, weight: 400, bind: 'size/100 · lh/100' },
@@ -143,7 +145,7 @@ const vars = new Map([
 ]);
 
 const fallos = [];
-log('TEXT STYLES · las 12 clases `.sc-text-*` ↔ los 12 text styles del Figma del DS');
+log('TEXT STYLES · las 14 clases `.sc-text-*` ↔ los 14 text styles del Figma del DS');
 log('='.repeat(78));
 log('  clase                       esperado(Figma)   resuelto(código)   cadena');
 log('-'.repeat(78));
@@ -308,7 +310,7 @@ export function encimaDeComponente(html) {
   return out;
 }
 
-/* ── 3 · el CSS de pantalla no declara tipografía fuera de los 12 roles ─────── */
+/* ── 3 · el CSS de pantalla no declara tipografía fuera de los 14 roles ─────── */
 
 /**
  * Los seis peldaños de tamaño con su interlineado, y los DOS únicos pesos. Sale de
@@ -448,7 +450,7 @@ log('');
 log('✔ Ningún `<sc-*>` lleva `.sc-text-*` en su propia etiqueta.');
 
 log('');
-log('ROLES · el CSS de pantalla no declara tipografía fuera de los 12 estilos');
+log('ROLES · el CSS de pantalla no declara tipografía fuera de los 14 estilos');
 log('='.repeat(62));
 {
   const size = tablaTokens('--sc-font-size-');
@@ -484,15 +486,15 @@ log('='.repeat(62));
       log('      → quita su entrada; una excepción caducada miente sobre lo que falta.');
     }
     log('');
-    log('  Los 12 estilos son seis tamaños × dos pesos (400 y 600). Un 500 o un 16 no');
-    log('  son «casi»: no existen. Usa el rol que toque, o declara la divergencia en');
+    log('  Los 14 estilos son seis tamaños × dos pesos (400 y 600), más Title (20) y');
+    log('  Subtitle (16) en 600. Un 500 no es «casi»: no existe. Usa el rol que toque, o declara la divergencia en');
     log('  TIPOGRAFIA_DELIBERADA con su motivo (DD-36 aplicado aquí).');
     process.exit(1);
   }
 }
 
 log('');
-log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
+log('✔ Ninguna pantalla declara tipografía fuera de los 14 roles.');
 
 /*
  * §4 · Y LA TIPOGRAFÍA SE PONE POR SU NOMBRE, NO POR SUS NÚMEROS.

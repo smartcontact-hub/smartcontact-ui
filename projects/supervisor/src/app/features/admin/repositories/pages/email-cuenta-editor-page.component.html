@@ -6,10 +6,9 @@
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
-    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
   }
   <sc-button
-    size="sm"
     variant="primary"
     [disabled]="!canSave()"
     [label]="(mode() === 'create' ? 'repositories.emails.mailbox.create_submit' : 'common.save') | translate"
@@ -19,7 +18,7 @@
 
 <div class="page">
   <div class="page__inner">
-    <h1 class="page__heading sc-text-h3-semibold">{{ form().name.trim() || ('repositories.emails.mailbox.create_title' | translate) }}</h1>
+    <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.emails.mailbox.create_title' | translate) }}</h1>
 
     <sc-section-card titleKey="repositories.emails.mailbox.section_account" surface="card" icon="mail">
       <section class="sub-section">
