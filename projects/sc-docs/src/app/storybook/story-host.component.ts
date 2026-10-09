@@ -7,6 +7,7 @@ import { StoryPropsTableComponent } from './story-props-table.component';
 import { StoryAnatomyComponent } from './story-anatomy.component';
 import { StorySnippetComponent } from './story-snippet.component';
 import { ComponentApiService } from './component-api.service';
+import { EstadoComponenteComponent } from './estado-componente.component';
 import { ScArgs, StoryDef, StoryMeta } from './story.types';
 
 /**
@@ -20,6 +21,7 @@ import { ScArgs, StoryDef, StoryMeta } from './story.types';
 @Component({
   selector: 'app-story-host',
   imports: [
+    EstadoComponenteComponent,
     StoryAnatomyComponent,
     StoryCanvasComponent,
     StoryControlsComponent,
@@ -35,6 +37,8 @@ import { ScArgs, StoryDef, StoryMeta } from './story.types';
           {{ meta().title ?? meta().tag }}
           <span class="sb-host__tag">&lt;{{ meta().tag }}&gt;</span>
         </h1>
+        <!-- El estado del componente (DD-190): listo, experimental o retirado, y por qué. -->
+        <app-estado-componente class="sb-host__estado" [estado]="estado()" explicado />
         @if (meta().description) {
           <p class="sb-host__desc">{{ meta().description }}</p>
         }
@@ -97,6 +101,8 @@ export class StoryHostComponent {
   protected readonly contrato = computed(() => this.api.contrato(this.meta().tag));
   /** Su línea de «cuándo se usa», la pregunta que se hace ANTES que la de las props. */
   protected readonly cuando = computed(() => this.api.cuando(this.meta().tag));
+  /** Su estado (DD-190), del mismo contrato generado. */
+  protected readonly estado = computed(() => this.api.estado(this.meta().tag));
   protected readonly apiError = this.api.error;
 
   /** Args editables del Playground; se siembran de `meta.defaultArgs` (writable + reseed). */

@@ -249,6 +249,12 @@
   color: var(--sc-text-primary);
 }
 
+/* El estado del componente (DD-190), bajo el título: a 7 de él, como la descripción. */
+.sb-host__estado {
+  display: block;
+  margin-top: var(--sc-spacing-0-5);
+}
+
 .sb-host__tag {
   font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-200);

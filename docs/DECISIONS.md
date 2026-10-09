@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Cada componente dice en sc-docs si está listo (maestro en el Kit y demo), es experimental (le falta algo, y dice qué) o está retirado (`@deprecated`, con su motivo) · el índice etiqueta solo la excepción | DD-190 |
 > | El icono que acompaña a un texto sigue a su estilo: su tamaño, su peso y el eje óptico a su tamaño (20, el mínimo, en pequeño) · en la cabecera de `sc-section-card`, 16 en sección y 20 en página | DD-189 |
 > | Lo que se adopta de Primer: el título de página a 20 (`Title`) y el de sección a 16 (`Subtitle`), dos text styles nuevos del Kit · el botón principal de la barra en md · sin 700 fuera del Kit · la carga por tiempos · el texto principal a slate-900 en el plan de color · la escala se queda, con una medida por relación · el toast solo para eventos del sistema | DD-188 |
 > | Revisión de agentes y tipificaciones del 2026-10-09: la ficha de agente en cuatro secciones como la de grupo (General, Configuración, Recursos, Grupos) con lo obligatorio de producto · su tabla de grupos es la del grupo, con «Salientes» · «Habilitado» bloqueado con «Activación por grupo» · equipos en Repositorios, con su editor, para filtrar · la tipificación es nombre, descripción y árbol (ramas libres, todo a la vista, un «+» en la fila de lo que se añade) y el grupo decide su Postconversación · quitar canales hace lo mismo en las dos fichas · tablas que no bailan al filtrar, Nombre con tope en pantallas anchas · notas de decisión · el botón entero del Kit y el «+» pequeño · editar recursos sin salir · borrar una tipificación dice quién la usa · sin el aviso de otra pestaña · gate de literales de CSS (enmienda DD-122 §8, DD-150, DD-167, DD-173 §2 y §5, DD-174, DD-185 y DD-186 §4) | DD-187 |
@@ -133,6 +134,33 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-190 · 2026-10-09 — Cada componente dice en sc-docs si está listo, es experimental o está retirado
+
+**Contexto** · Primer marca cada componente como Experimental, Ready o Deprecated, y lo retirado avisa al usarse y dice
+qué usar en su lugar. sc-docs enseñaba 54 páginas iguales: no decía cuáles tienen maestro en el Kit, cuáles nacieron en
+una pantalla y siguen solo en código, ni que `sc-sticky-form-header` está retenido solo para volver atrás.
+
+**Decisión** · El estado sale de dos hechos medibles, criterio elegido de entre dos: **listo** si el componente tiene
+maestro en el Kit (una página «❖» en el fichero del DS) y página de demo en sc-docs; **experimental** si le falta alguna
+de las dos, y la página dice cuál; **retirado** si su clase lleva `@deprecated`, con el motivo que escribe su JSDoc.
+Lo calcula `scripts/component-audit.mjs` (lista de páginas del Kit en `component-audit-map.mjs`, `KIT_MAESTROS`, leída
+por la API de Figma) y viaja en el contrato que ya sirve a sc-docs. La ficha de cada componente lo pinta bajo el título
+con su motivo, y el índice etiqueta solo lo que no está listo. Hoy: 32 listos, 26 experimentales y 1 retirado.
+
+**Razón** · Son los dos hechos que dicen si un componente forma parte del sistema: si está en el Kit, Figma manda
+(DD-48); si tiene demo, se puede ver y probar. Los 26 experimentales son justo los componentes propios de la app que
+nacieron en una pantalla.
+
+**Descartadas** ·
+- **Exigir además la captura de referencia de las pruebas**: Dialog, Toast o Password saldrían experimentales por no
+  tener captura, que es deuda de pruebas y no de madurez (23 listos y 36 experimentales).
+- **Escribir el estado a mano en cada componente**: se desfasa; calculado, `audit:components` lo mantiene al día.
+
+**Consecuencias** · Si se crea o se borra una página «❖» en el fichero del DS, se actualiza `KIT_MAESTROS` (el CI no
+llega a Figma). La tabla del inventario gana la columna «Estado». Pruebas en `scripts/__tests__/component-estado.test.mjs`.
 
 ---
 
