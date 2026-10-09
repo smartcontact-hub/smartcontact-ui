@@ -55,7 +55,7 @@
   gap: 0.5rem;
   margin: 0;
   font-size: var(--sc-font-size-200);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   white-space: nowrap;
 }
 
@@ -82,7 +82,7 @@
 
 .hud__puntos {
   font-size: var(--sc-font-size-300);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
@@ -128,7 +128,7 @@
   background: $verde;
   color: $fondo;
   font-size: var(--sc-font-size-200);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   box-shadow: 0 10px 30px rgba(#000, 0.35);
   animation: aparecer 200ms ease-out;
   @include sin-movimiento {
@@ -204,7 +204,7 @@
   margin: 0.5rem 0 0;
   font-size: var(--sc-font-size-650);
   line-height: 1.05;
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: -0.02em;
   color: $texto;
 }
@@ -246,7 +246,7 @@
 .diploma__r {
   margin: 0.25rem 0 0;
   font-size: var(--sc-font-size-500);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   color: $texto;
 }
 
@@ -329,7 +329,7 @@
   background: rgba($ambar, 0.18);
   color: $ambar-2;
   font-size: var(--sc-font-size-300);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
 }
 
 .caso__cuerpo {
@@ -340,7 +340,7 @@
 
 .caso__t {
   font-size: var(--sc-font-size-300);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
 }
 
 .caso__s {
@@ -475,7 +475,7 @@
 .cierre__t {
   margin: 0.5rem 0 0;
   font-size: var(--sc-font-size-400);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
 }
 
 .cierre__d {

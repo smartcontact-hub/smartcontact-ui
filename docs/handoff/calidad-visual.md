@@ -12,11 +12,25 @@
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
+0. **Lo que queda del estudio de Primer (DD-188), un PR cada uno, enseñado antes en local y añadido a la página de
+   antes y después** (artefacto «Antes y después del Supervisor»; las capturas salen de `sc-supervisor.pages.dev`
+   contra el `ng serve` de la rama, a 1440, vista entera y la cabecera a doble resolución):
+   - el toast solo para eventos del sistema: el éxito que se ve, sin aviso; el que no, un mensaje junto al botón
+     (`sc-inline-message`, nuevo en el DS); los errores, fijos junto a su contexto (51 toasts de éxito en 28 ficheros);
+   - la cabecera y el esqueleto de página comunes, con la escalera 7 · 14 · 28 en la cabecera, ancho máximo de 1280 y
+     columnas que quepan a 1024 (Grupos esconde 358 px a 1024);
+   - el estado de cada componente en sc-docs (Experimental, Ready, Deprecated), como Primer.
 1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).
 
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
+
+- **Celdas vacías: «—» o en blanco.** Primer las deja en blanco (los lectores de pantalla leen el guion); la revisión de
+  agentes del 2026-10-09 pintó «—» en todas por consistencia. Decide él cuál gana.
+- **La sesión en Figma suma las fichas 38 y 39** de `figma-pendiente` (el maestro `Section` a `Subtitle`, Tag y Badge a
+  600, las etiquetas en píldora, publicar la librería con `Title` y `Subtitle`, y las plantillas de vistas), y el texto
+  principal pasa a slate-900 en la ficha 8 (DD-188).
 
 - **La sesión en Figma** (`docs/figma-pendiente.md`, entero), en marcha desde el 2026-09-28 con el bridge en su máquina.
   Seis decisiones tomadas y una pendiente: los dos buscadores (ficha 10). Lo que el código hace después (quitar filas de
@@ -42,6 +56,30 @@
 - **Tras fundir un PR, GitHub borra la rama y la ref local `origin/<rama>` se queda colgando.** El aviso de «N commits
   sin subir» que da entonces es falso: `git remote prune origin` lo quita. Compruébalo antes con
   `git rev-list HEAD --not --remotes --count`.
+
+## ✅ 2026-10-09 · El estudio de Primer: título de página a 20, sección a 16, la barra a una altura y sin 700
+
+**Sello:** rama `arebury/design-system-primer-research`, sobre `origin/main` `d94e5ad8`.
+
+**Qué pasó.**
+- **Estudio de Primer (GitHub) y medición** de github.com contra sc-supervisor a 1440: lo que más separa es el contraste
+  del texto (7,38:1 frente a 15,8:1), página y sección con el mismo tamaño (18 y 18), el botón principal de la barra
+  más bajo que el buscador (27 frente a 32,5) y el 700. Informes en el archivo de entregables (`2026-10 estudio-primer`).
+- **Dos text styles nuevos en el Kit**, creados por la API de Figma en la nube: `Title/title-semibold` (20/28) y
+  `Subtitle/subtitle-semibold` (16/24), con sus filas en el tablero de tipografía. En código, sus clases y el rol
+  `title`; el título de página y el nombre de las fichas a `Title`, la sección de `sc-section-card` a `Subtitle`.
+- **La barra**: los botones de `#topbarActions` (32 en 21 pantallas) de sm a md. **Sin 700** fuera del Kit (35 usos).
+- **Decisiones** en DD-188: el texto principal a slate-900 en el plan de color; la escala se queda y se pide una medida
+  por relación; el toast solo para eventos del sistema; Guardar deshabilitado y las acciones arriba se quedan.
+
+**Trampas.**
+- **El título de página tiene dos familias** (`.page__heading` sobre el lienzo y `sc-section-card` con
+  `headingLevel="1"`); `page-identity.spec.ts` exige que midan igual. Por eso la caja de página sube a `Title` con
+  `:host(.sc-section-card--page)`.
+- **Otra sesión abierta el mismo día** (`arebury/feat-agentes-tipificacion-design`) tocaba la ficha de agente y
+  `DECISIONS.md` con DD-187: esta tomó DD-188, y sus cambios en la ficha están en líneas que no se cruzan.
+
+---
 
 ## ✅ 2026-09-28 (7) · Las decisiones de Figma, tomadas, y un script que aplica las variables verificando cada una
 
@@ -168,35 +206,3 @@ el resto de pendientes de ESPERANDO A RAFA de arriba.
   texto y la agrupación, 157 en verde; la revisión previa de los dos monitores, en regla; y el lector de pantalla
   anuncia «Ver el detalle de 5» con la descripción «de 9 conectados».
 
-## ✅ 2026-09-27 (2) · Las preguntas abiertas, respondidas con medida
-
-**Sello:** fusionado en `main` con #258, HEAD `a5619a2f` (el seguimiento de #257, rehecho desde `main` porque #257
-se fusionó antes de que esto llegara).
-
-**Qué pasó.**
-- **El pie de los diálogos** no era el nativo de PrimeNG, como se escribió en el tramo de abajo, sino el de
-  `sc-dialog`, que es del DS. Rige la escalera: con cuerpo, la botonera a 28 del contenido y 14 entre hermanos
-  (DD-123). «Nueva entidad», «Nueva categoría» y «Duplicar grupo» pasan de 18 a 28,5 contra 14; `CONOCIDOS`, vacío.
-- **DD-102 con datos largos** (DD-124): sigue siendo la regla con los datos medidos; más largo que eso, «…» y el texto
-  entero en el `title`. Barrido de 19 pantallas con los dos juegos: 56 recortes (1 con los datos de siempre), 0 sin
-  `title`. Antes faltaba en Agentes, Grupos, Plantillas y Tipificaciones. La cabecera de ficha ya no recorta el nombre:
-  con DD-122 (#256) agente y usuario van al molde de la de grupo y el nombre toma el ancho libre (1213 a 1440).
-- **`?datos=editorial`**: los 14 grupos con nombre de negocio, también en la ficha de usuario, Conversaciones y el
-  Dashboard; `juego-de-datos.spec.ts` lo prueba.
-- **La caja de sección**, 17,5 arriba y abajo (DD-125); «Políticas de contraseñas» de 327 a 260 de alto. Con #256
-  alcanza también a las fichas de agente y usuario: revisadas con `npm run revision`, en regla.
-- **La densidad de pantalla**, aceptada en la revisión de producto: compacto donde se escanea (monitor, listas), más
-  aire donde se lee y se rellena (fichas, formularios), y ningún aire que no separe nada. Escrita en AGENTS §«UX de
-  pantalla» 9 y en su tarjeta de Patrones.
-- **#256 y #257**: la DD-122 de #256 (el índice único) llegó antes, así que las de este frente son DD-123, 124 y 125.
-  #257 se fusionó con la renumeración que hizo otra sesión en paralelo, la misma que aquí, y antes de que llegara este
-  tramo: va en un PR de seguimiento, rehecho desde `main` con un commit por bloque.
-- **Cuántas correcciones son de espaciado**, aproximado sobre `docs/DECISIONS.md` porque el registro vive en la
-  máquina de Rafa: 39 de las 124 DD nacen de algo que Rafa vio o pidió. Leídas a mano, 7 son de espaciado o
-  alineación (DD-25, 57, 61, 90, 94, 101, 114) y 3 lo tocan de lado (DD-63, 81, 87), más DD-125 de hoy: una de cada
-  cuatro. El clasificador de `correcciones-resumen` marca 21, porque en una DD «hueco», «ancho» o «padding» salen
-  aunque el asunto sea otro. Vale para los mensajes, no para las DD.
-- **Verificado en local** contra el build de producción del árbol fundido con `main`: suite e2e del Supervisor, 346 en
-  verde y 1 en rojo que no es de esta rama (`listado-grupos.spec.ts:137`, «Agentes» 150>120: igual con el código
-  anterior, y verde en el CI, que usa otro Chromium). La revisión previa de las 10 pantallas tocadas o alcanzadas, en
-  regla. La foto de estilos del DS casa con el build fundido.

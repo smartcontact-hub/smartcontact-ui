@@ -503,7 +503,7 @@
     gap: var(--sc-spacing-0-5);
     margin: 0;
     font-size: var(--sc-font-size-300); /* 16, como el Figma */
-    font-weight: var(--sc-font-weight-bold);
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
 
     sc-icon {
@@ -531,7 +531,7 @@
   &__hero {
     margin: 0;
     font-size: var(--sc-font-size-650);
-    font-weight: var(--sc-font-weight-bold);
+    font-weight: var(--sc-font-weight-semibold);
     line-height: 1.1;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;

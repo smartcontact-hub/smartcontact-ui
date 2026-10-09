@@ -475,10 +475,10 @@ oscuro no se toca.
 
 | Export | Variable | Hoy | Nuevo | Qué consigue |
 |---|---|---|---|---|
-| `aura/semantic/light` | `text/color` | `surface/700` | **`surface/800`** | texto principal 7,38 → 12,16:1 |
-| `aura/semantic/light` | `form/field/color` | `surface/700` | **`surface/800`** | alimenta el mismo `--sc-text-primary`: se mueven juntas |
+| `aura/semantic/light` | `text/color` | `surface/700` | **`surface/900`** (DD-188) | texto principal 7,38 → 16,9:1; del secundario se separa 2,29:1 (con 800, 1,65) |
+| `aura/semantic/light` | `form/field/color` | `surface/700` | **`surface/900`** (DD-188) | alimenta el mismo `--sc-text-primary`: se mueven juntas |
 | `aura/semantic/light` | `text/muted/color` | `slate/600` | **`slate/700`** | texto secundario 4,52 → 7,38:1 |
-| `aura/semantic/light` | `text/hover/color` | `surface/800` | **`surface/900`** (decidido) | que el texto siga cambiando al pasar el ratón |
+| `aura/semantic/light` | `text/hover/color` | `surface/800` | **`surface/900`** (decidido) | con el texto ya en 900 (DD-188) no cambia de color al pasar el ratón: lo marca el fondo, como en GitHub |
 | `aura/component/light` | `togglebutton/color` | `surface/500` | **`surface/700`** | opción no elegida de SelectButton 2,56 → 6,40:1 |
 | `aura/component/light` | `togglebutton/hover/color` | `surface/700` | **`surface/900`** | que el ratón encima se siga notando |
 | `aura/component/light` | `togglebutton/icon/color` | `surface/500` | **`surface/700`** | el icono, igual que su texto |
@@ -1069,6 +1069,47 @@ sin piezas nuevas · **Sin verificar** contra el fichero: el código no cita los
   - la tarjeta, igual: no cambia al pasar.
 
 **Cómo sabes que está hecho:** se ve como `/admin/grupos/editar/11` a 1440, con el ratón sobre «Reparto».
+
+---
+
+## 38 · Title y Subtitle: los dos estilos nuevos, el maestro `Section` y la etiqueta a 600 (2026-10-09, DD-188)
+
+**Estado:** los estilos, HECHOS; lo demás, pendiente · **Dónde:** fichero del DS, página «ª Typography» (`12899:61527`),
+tablero `Text styles` (`13407:3586`).
+
+- **Hecho el 2026-10-09:** `Title/title-semibold` (20/28, atado a `font/size/450` y `line/height/450`) y
+  `Subtitle/subtitle-semibold` (16/24, a `font/size/300` y `line/height/300`), Inter Semi Bold, con sus filas en el
+  tablero (`15334:14` y `15334:18`) y una viñeta nueva en las reglas de jerarquía (`13407:3602`). **Falta publicar la
+  librería** (paso 4) para que el fichero del Supervisor los vea.
+- **El maestro `Section`** (`691:23956`): su título pasa a `Subtitle/subtitle-semibold`, y en la variante que titula la
+  página, a `Title/title-semibold`. Hoy dibuja `Body/body-semibold` (14) y el código pinta 16 y 20.
+- **Las maquetas del Supervisor:** el título de página (`.page__heading`, el nombre de las fichas) a `Title`.
+- **Tag y Badge a 600:** sus maestros llevan 700 (`tag.ts` y `badge.ts` lo copian del Kit). Primer no tiene 700 y DD-13
+  pedía dos pesos, regular y semibold. El código sigue en 700 hasta que el maestro cambie aquí.
+- **Etiquetas en píldora (propuesta, decídela aquí):** Primer separa la etiqueta de dato (píldora con borde de 1, 20 de
+  alto, texto 12 en 500) de la de estado (rellena, con icono), y el contador va en su propio chip (12 en 600, 18 de
+  alto). El Tag del Kit es uno solo: radio 6, sin borde, 21,5 de alto y 700. Si se adopta, primero aquí y luego el
+  código por el export.
+
+**Cómo sabes que está hecho:** `npm run audit:text-styles` lista los 14 estilos en verde, y el título de `Section` en el
+fichero mide 16 (20 en la variante de página).
+
+---
+
+## 39 · Plantillas de vistas: listado, ficha y diálogo ya montados (2026-10-09, DD-188)
+
+**Estado:** pendiente · **Origen:** el estudio de Primer. GitHub publica en Figma, además de sus componentes, una
+librería de plantillas («Primer Interfaces») con las vistas y los patrones que más se repiten, para empezar una maqueta
+desde algo ya montado y no desde piezas sueltas.
+
+- **Qué montar:** tres plantillas en el fichero del DS, a 1440 y medidas sobre producción: el listado (barra con
+  título `Title`, buscador y botón principal a 32,5; tabla), la ficha en tres columnas (nombre en `Title`, índice,
+  secciones con `Subtitle`, resumen) y el diálogo con formulario (la escalera 7 · 14 · 28 de DD-123).
+- **Con qué:** solo instancias de la librería y variables que ya existen. Lo que no tenga componente, se anota.
+- **Cuándo:** después de los pasos 1 a 4 (variables y estilos publicados), para que nazcan con lo nuevo.
+
+**Cómo sabes que está hecho:** una página «Plantillas» con las tres, cada una con su enlace a la pantalla de producción
+que calca, y sin un número suelto que no salga de una variable.
 
 ---
 

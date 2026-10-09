@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Lo que se adopta de Primer: el título de página a 20 (`Title`) y el de sección a 16 (`Subtitle`), dos text styles nuevos del Kit · el botón principal de la barra en md · sin 700 fuera del Kit · la carga por tiempos · el texto principal a slate-900 en el plan de color · la escala se queda, con una medida por relación · el toast solo para eventos del sistema | DD-188 |
 > | Repositorios en tarjetas por grupo: un tono de etiqueta por grupo (azul, morado, teal y naranja) en su título, el icono, la cifra, el borde al pasar y al marcar y el filtro · un icono por concepto · pulsar una tarjeta abre a la derecha un panel acoplado con lo que hay dentro y «Abrir repositorio» (con velo solo si taparía tarjetas) · filtro por grupo con transición y recientes en el buscador · cabe sin desplazar a 1440 × 800 · `sc-drawer` `docked`, `sc-avatar` `labelColor` y `sc-tag` `bordered` (sustituye DD-78 en el hub, enmienda DD-165 §1) | DD-179 |
 > | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-177 |
 > | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas, «Administrativo» en marrón (`brown`, nuevo color de etiqueta) | DD-176 |
@@ -130,6 +131,55 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-188 · 2026-10-09 — Lo que se adopta de Primer (GitHub): título de página a 20, de sección a 16, el botón de la barra a la altura de los demás, sin 700 y la carga por tiempos
+
+**Contexto** · Estudio del sistema de diseño de GitHub (Primer: tokens 11.10.0, fundamentos, patrones, componentes y su
+sitio de marca) y medición en el navegador, a 1440 y con el mismo método, de github.com contra sc-supervisor. Lo que más
+separa no es el tamaño de las piezas sino la disciplina: el texto principal da 7,38:1 (GitHub, 15,8:1) y se separa del
+secundario 1,63:1 (GitHub, 2,58:1); el título de la página y el de una sección miden lo mismo (18 y 18; GitHub, 20 en
+listas y 32 en el detalle); el botón principal de la barra mide 27 con texto de 12 junto a controles de 32,5 (GitHub,
+todos a 32); el 10,9 % del texto visible va a 700 (GitHub, nada); y una pantalla usa de 16 a 22 huecos distintos (GitHub,
+de 13 a 15). Informes y capturas en el archivo de entregables (`2026-10 estudio-primer`).
+
+**Decisión** ·
+1. **Dos text styles nuevos en el Kit**, creados en el fichero del DS (`Title/title-semibold`, 20/28, atado a
+   `font/size/450` y `line/height/450`; `Subtitle/subtitle-semibold`, 16/24, a `font/size/300` y `line/height/300`), y
+   sus clases `.sc-text-title-semibold` y `.sc-text-subtitle-semibold` (rol `title` nuevo; `subtitle-1` ya existía con
+   esas medidas). El título de la página pasa a `Title`: `.page__heading`, el nombre de las fichas y la caja de sección
+   que titula la página (`headingLevel="1"`). El de una sección (`sc-section-card`) pasa a `Subtitle`.
+2. **El botón principal de la barra (`.top-bar__cta`) pasa de sm a md**, la talla de los demás controles de la barra.
+3. **Sin 700 donde no lo pide el Kit**: los 35 usos de `--sc-font-weight-bold` pasan a semibold (DD-13 ya pedía dos
+   pesos). Tag y Badge siguen en 700 hasta que su maestro cambie en Figma.
+4. **La carga, por tiempos** (regla 2 de «UX de pantalla»): nada por debajo de 1 s, esqueleto de 1 a 3 s, progreso de 3
+   a 10 s y segundo plano a partir de 10 s.
+5. **El texto principal, a slate-900** en vez de slate-800 en el plan de color pendiente de Figma (DD-106 y las
+   decisiones del 2026-09-28); el secundario sigue yendo a slate-700. Con 800 se separaban 1,65:1; con 900, 2,29:1.
+6. **La escala de espaciado se queda**: las fracciones no se notan. Lo que se pide es consistencia, una sola medida por
+   relación: la escalera 7 · 14 · 28 (DD-123) también en la cabecera de página y la de los listados (pendiente).
+7. **El toast, solo para eventos del sistema** (una llamada entrante, una conexión perdida); el éxito que ya se ve no
+   lleva aviso, y los errores van junto a su contexto y no se cierran solos (pendiente).
+
+**Razón** · Son las diferencias medidas que más pesan en que la app se vea profesional, y las que se cambian sin rehacer
+la escala ni los componentes. La rampa del Kit saltaba de 24 a 18 y de 18 a 14, así que página y sección caían en el
+mismo `h3` (DD-54 obligaba a usar un estilo de la librería); con `Title` y `Subtitle` se separan con estilos con nombre
+y atados a variables que ya existían.
+
+**Descartadas** ·
+- **La escala en enteros sobre 4**, como Primer: las fracciones no se notan en pantalla, y cuesta de 5 a 8 días y el Kit.
+- **El título de página en `h2` (24/36)**, que ya existía: más grande que el de GitHub, y su interlineado de 36 alarga la
+  cabecera.
+- **Guardar siempre activo y validar al pulsar**, como Primer: se queda DD-136 (deshabilitado, con lo que falta dicho).
+- **Las acciones de la ficha abajo**, como Primer: se queda S59 (arriba); Primer no lo prohíbe.
+- **Celdas vacías en blanco**, como Primer: el repo pinta «—» y cambiarlo es otra decisión.
+
+**Consecuencias** · `audit:text-styles` registra 14 estilos; `page-identity.spec.ts` espera 20/600 en las dos familias
+de título y `text-styles-applied.spec.ts`, `Title`. Ficha 38 de `figma-pendiente`: el maestro `Section` a `Subtitle`
+(y `Title` en la página), las maquetas, Tag y Badge a 600, y publicar la librería. `tools/figma-pendiente.mjs` lleva
+`text/color` y `form/field/color` a `surface/900`. Pendientes con su propio PR, para verlos antes: el toast, la cabecera
+y el esqueleto de página comunes con la escalera en la cabecera, y las etiquetas en píldora.
 
 ---
 

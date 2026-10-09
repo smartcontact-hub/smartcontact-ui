@@ -158,7 +158,7 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
       margin: 0 0 var(--sc-spacing-0-75);
       font-size: var(--sc-font-size-650); /* 32px — la doc nombra el paso (DD-48) */
       line-height: var(--sc-line-height-650);
-      font-weight: var(--sc-font-weight-bold);
+      font-weight: var(--sc-font-weight-semibold);
       letter-spacing: -0.01em;
       color: var(--sc-text-primary);
     }
@@ -182,7 +182,7 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
       gap: var(--sc-spacing-0-5);
       margin: 0 0 var(--sc-spacing-0-875);
       font-size: var(--sc-font-size-100);
-      font-weight: var(--sc-font-weight-bold);
+      font-weight: var(--sc-font-weight-semibold);
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--sc-text-secondary);
