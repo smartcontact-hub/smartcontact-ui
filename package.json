@@ -1,6 +1,6 @@
 {
   "name": "smartcontact-tema",
-  "version": "0.20261007.1311",
+  "version": "0.20261009.1710",
   "description": "Tema oficial de Smart Contact para PrimeNG: preset, tokens de diseño y tipografía.",
   "type": "module",
   "main": "./sc-preset.mjs",
@@ -31,6 +31,6 @@
     "url": "https://github.com/smartcontact-hub/smartcontact-ui.git"
   },
   "smartcontact": {
-    "commit": "d4843e43"
+    "commit": "83cbc0d1"
   }
 }
