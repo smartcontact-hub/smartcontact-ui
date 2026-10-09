@@ -51,9 +51,9 @@ for (const surface of ['ficha', 'panel'] as const) {
     const links = await page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!));
     expect(links.find((l: { agentId: number; groupId: number }) => l.agentId === 1 && l.groupId === 11)).toEqual({ agentId: 1, groupId: 11, channels: ['phone', 'chat'], active: true, levels: { phone: 1, chat: 10 } });
     expect(links.find((l: { groupId: number }) => l.groupId === 12).active).toBe(true);
-    await goto(page, 'admin/agentes');
-    await expect(page.locator('tbody tr', { hasText: 'Tom Hanks' }).first()).toContainText('Disponible');
+    // El estado se lee en la ficha del agente: el listado de Administración ya no lo pinta (DD-187 §8).
     await goto(page, 'admin/agentes/editar/1');
+    await expect(page.locator('#agent-presence')).toHaveText('Disponible');
     await expect(page.locator('sc-summary-kpi')).toContainText('Habilitado en grupos');
     await expectRuleMembers(page, 3);
   });

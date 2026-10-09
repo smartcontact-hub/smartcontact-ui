@@ -32,7 +32,7 @@
     /* Reserve a fixed slot so adding/removing the icon never shifts the
      * title baseline. */
     width: 16px;
-    height: 28px; /* matches title line-height so they align on baseline */
+    height: 28px; /* reserves the icon slot; the title line-height is 24 (h3) */
   }
 
   &__head-text {
@@ -49,7 +49,8 @@
     font-family: var(--sc-font-family-primary);
     font-weight: var(--sc-dialog-title-font-weight);
     font-size: var(--sc-dialog-title-font-size);
-    line-height: 1.4;
+    /* El de h3 de la rampa (24), no 1.4 (25,2, fuera de la rampa): barrido de tipografía del 2026-10-09. */
+    line-height: var(--sc-line-height-h3);
     color: var(--sc-dialog-title);
     /* Long titles wrap; never truncate (the user needs to read what
      * they're confirming). */

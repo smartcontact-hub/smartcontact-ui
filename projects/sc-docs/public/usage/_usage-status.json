@@ -605,7 +605,7 @@
     },
     {
       "selector": "sc-message",
-      "usedInSupervisor": 10
+      "usedInSupervisor": 4
     },
     {
       "selector": "sc-panel",
@@ -625,7 +625,7 @@
     },
     {
       "selector": "sc-subsection",
-      "usedInSupervisor": 9
+      "usedInSupervisor": 18
     },
     {
       "selector": "sc-textarea",

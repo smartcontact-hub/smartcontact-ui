@@ -160,7 +160,7 @@ export const nombreDeServicio = (nombre: string, juego: JuegoDeDatos = juegoDeDa
  * Los campos que guardan el NOMBRE de un grupo. Solo esos: «Reclamaciones» también es un servicio
  * (`services` del grupo 12) y ahí no se toca, que el catálogo de servicios sigue diciéndolo así.
  */
-const CAMPOS_DE_GRUPO = ['name', 'group', 'defaultOutboundGroup'] as const;
+const CAMPOS_DE_GRUPO = ['name', 'group'] as const;
 
 /** Renombra los grupos de cada elemento sin tocar su forma, como `torturar`: ids y referencias, igual. */
 function renombrarGrupos<T>(items: readonly T[], juego: JuegoDeDatos): readonly T[] {

@@ -38,7 +38,7 @@
   />
 
   <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
   </ng-container>
@@ -50,14 +50,6 @@
 
 <ng-template #descriptionTpl let-t>
   <span class="table__cell table__cell--truncate sc-text-body-regular" [title]="t.description">{{ t.description || '—' }}</span>
-</ng-template>
-
-<ng-template #directionTpl let-t>
-  <span class="table__cell sc-text-body-regular">{{ directionLabel(t) | translate }}</span>
-</ng-template>
-
-<ng-template #commentsTpl let-t>
-  <span class="table__cell sc-text-body-regular">{{ (t.comments ? 'common.yes' : 'common.no') | translate }}</span>
 </ng-template>
 
 <!-- Cuántos niveles pide, y al pasar o al enfocar, qué hay en cada uno: el primero por sus nombres, los demás
@@ -95,6 +87,8 @@
   [items]="deleteItems()"
   [entitySingular]="'repositories.tipificaciones.singular' | translate"
   [entityPlural]="'repositories.tipificaciones.plural' | translate"
+  [singleDetailMessage]="avisoDeUso()"
+  [bulkFooterMessage]="avisoDeUso()"
   (cancelled)="deleteTarget.set(null)"
   (confirm)="confirmDelete($event)"
 />

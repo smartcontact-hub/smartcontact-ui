@@ -40,9 +40,11 @@
                     size="sm"
                     icon="filter_list"
                     [ariaLabel]="'groups.form.assigned.filter_status' | translate"
-                    [attr.aria-expanded]="statusPopover.overlayVisible"
+                    [attr.aria-expanded]="statusPopover.overlayVisible()"
                     (clicked)="statusPopover.toggle($event)"
                   />
+                  <!-- ¿Burbuja o aro para el estado? Lo decide el equipo (2026-10-09). -->
+                  <sc-nota-decision claveTitulo="decision_notes.presence_ring.title" claveTexto="decision_notes.presence_ring.body" />
                   @if (presenceChosen() > 0) {
                     <sc-tag severity="info" [value]="(presenceChosen() === 1 ? 'groups.form.assigned.filter_status_count_one' : 'groups.form.assigned.filter_status_count') | translate: { count: presenceChosen() }" />
                   }
@@ -58,12 +60,24 @@
 </div>
 
 <p-popover #statusPopover [attr.aria-label]="'groups.form.assigned.filter_status' | translate">
-  <div class="assign__status-filter" role="group" [attr.aria-label]="'groups.form.assigned.filter_status' | translate">
-    @for (option of presenceOptions; track option.value) {
-      <sc-checkbox [state]="presenceChecked(option.members) ? 'all' : 'none'" (cycle)="togglePresence(option.members)">{{ option.labelKey | translate }}</sc-checkbox>
+  <div class="assign__filters">
+    <div class="assign__status-filter" role="group" [attr.aria-label]="'groups.form.assigned.filter_by_state' | translate">
+      <span class="assign__filter-title sc-text-caption-semibold" aria-hidden="true">{{ 'groups.form.assigned.filter_by_state' | translate }}</span>
+      @for (option of presenceOptions; track option.value) {
+        <sc-checkbox [state]="presenceChecked(option.members) ? 'all' : 'none'" (cycle)="togglePresence(option.members)">{{ option.labelKey | translate }}</sc-checkbox>
+      }
+    </div>
+    <!-- Los equipos: marcas para filtrar (Repositorios › Equipos). -->
+    @if (teamOptions().length > 0) {
+      <div class="assign__status-filter" role="group" [attr.aria-label]="'repositories.equipos.title' | translate">
+        <span class="assign__filter-title sc-text-caption-semibold" aria-hidden="true">{{ 'repositories.equipos.title' | translate }}</span>
+        @for (g of teamOptions(); track g.id) {
+          <sc-checkbox [state]="teamFilter().has(g.id) ? 'all' : 'none'" (cycle)="toggleTeam(g.id)">{{ g.name }}</sc-checkbox>
+        }
+      </div>
     }
-    @if (presenceFilter().size > 0) {
-      <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.assigned.filter_status_clear' | translate" (clicked)="presenceFilter.set(emptyPresence)" />
+    @if (presenceChosen() > 0) {
+      <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.assigned.filter_status_clear' | translate" (clicked)="clearFilters()" />
     }
   </div>
 </p-popover>
@@ -88,7 +102,7 @@
   @if (!allowed(row.agent, col.field)) {
     <span class="assign__permission">
       <sc-checkbox state="none" disabled [ariaLabel]="'groups.form.assigned.not_allowed' | translate: { name: row.agent.name, channel: col.header }" />
-      <a [routerLink]="['/admin/agentes/editar', row.agent.id]" [queryParams]="{ seccion: 'permisos' }" [attr.aria-label]="'groups.form.assigned.permissions_link' | translate: { name: row.agent.name, channel: col.header }" [pTooltip]="'groups.form.assigned.not_allowed_hint' | translate: { channel: col.header }" tooltipPosition="top"><sc-icon name="lock" /></a>
+      <a [routerLink]="['/admin/agentes/editar', row.agent.id]" [queryParams]="{ seccion: 'general' }" [attr.aria-label]="'groups.form.assigned.permissions_link' | translate: { name: row.agent.name, channel: col.header }" [pTooltip]="'groups.form.assigned.not_allowed_hint' | translate: { channel: col.header }" tooltipPosition="top"><sc-icon name="lock" /></a>
     </span>
   } @else if (isLastChannel(row.link, col.field)) {
     <!-- El ÚLTIMO canal no se quita aquí. Una casilla apagada no recibe foco ni ratón, así que el porqué va en su
@@ -133,6 +147,15 @@
 </ng-template>
 
 <ng-template #activeTpl let-row>
+  @if (row.agent.selfActivate && row.link) {
+    <!-- «Activación por grupo»: se habilita el agente, no la ficha. Se ve, apagado, con el candado que lleva a su
+         Configuración (revisión de agentes del 2026-10-09; en Voice el interruptor desaparece). -->
+    <span class="assign__permission" [pTooltip]="'groups.form.assigned.self_activate_hint' | translate" tooltipPosition="top">
+      <sc-toggleswitch [checked]="row.link.active" [disabled]="true" [size]="compact() ? 'sm' : 'md'"
+        [ariaLabel]="'agents.form.assigned.active_self_aria' | translate: { name: row.agent.name }" />
+      <a [routerLink]="['/admin/agentes/editar', row.agent.id]" [queryParams]="{ seccion: 'configuracion' }" [attr.aria-label]="'groups.form.assigned.self_activate_link' | translate: { name: row.agent.name }"><sc-icon name="lock" /></a>
+    </span>
+  } @else {
   <sc-toggleswitch
     [checked]="row.link?.active ?? false"
     [disabled]="!row.link || pending()"
@@ -140,4 +163,5 @@
     [ariaLabel]="'groups.form.assigned.active_aria' | translate: { name: row.agent.name }"
     (checkedChange)="toggleActive(row.agent.id, $event)"
   />
+  }
 </ng-template>

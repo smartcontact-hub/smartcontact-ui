@@ -16,7 +16,9 @@ import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
  * S62) quita la caja (fondo/borde/radio/padding lateral) para sangrar el
  * contenido. `anchorId` expone `[id]`/`[data-section-anchor]` + `scroll-margin-top`:
  * el id de la sección, y el aire para un enlace con `#` (el índice de secciones ya no
- * salta a anclas: cada sección es su propia dirección, DD-122).
+ * salta a anclas: cada sección es su propia dirección, DD-122). La acción de la sección
+ * va en la esquina derecha de su cabecera con `<sc-button scSectionActions …>` (DD-187).
+ * Solo con la cabecera fija: la plegable es un botón.
  */
 @Component({
   selector: 'sc-section-card',

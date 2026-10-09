@@ -12,9 +12,6 @@
   @if (group(); as g) {
     <div class="agents-panel" (keydown)="onKeydown($event)">
       <!-- Sin la línea de canales bajo el título: repetía, uno a uno, las cabeceras de las columnas (DD-131). -->
-      @if (conflict()) {
-        <sc-message severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
-      }
 
       <sc-agent-channel-table
         [groupChannels]="channels()"

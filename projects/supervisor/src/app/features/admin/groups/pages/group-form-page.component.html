@@ -91,11 +91,6 @@
     </div>
 
     <div class="page__main">
-      <!-- El mismo grupo abierto en otra pestaña (DD#169). Se calculaba y no se pintaba; se pinta desde que
-           recargar ya no cuenta como «otra pestaña» (`CrossTabLockService` suelta el candado en `pagehide`). -->
-      @if (conflictWarning()) {
-        <sc-message class="ficha-conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
-      }
 
       @if (showSection('group-section-general')) {
         <ng-container *ngTemplateOutlet="seccionGeneral" />
@@ -157,7 +152,7 @@
     [visible]="true"
     [title]="'groups.form.cascade.title' | translate"
     [subtitle]="
-      (c.orphaned > 0 ? 'groups.form.cascade.body_orphaned' : 'groups.form.cascade.body')
+      cascadeBodyKey(c)
         | translate
           : {
               channels: c.removed.map(channelLabel.bind(this)).join(', '),
@@ -178,56 +173,10 @@
   </sc-dialog>
 }
 
-@if (creatingAgenda()) {
-  <sc-dialog
-    [visible]="true"
-    [title]="'groups.form.fields.agenda_new' | translate"
-    [hasFooter]="false"
-    (cancelled)="creatingAgenda.set(false)"
-  >
-    <sc-repo-form-panel
-      flush
-      [fields]="agendaFields"
-      [existingNames]="agendaExistingNames()"
-      [entitySingular]="'repositories.agendas.singular' | translate"
-      (save)="onCreateAgendaSubmit($event)"
-      (cancelled)="creatingAgenda.set(false)"
-    />
-  </sc-dialog>
-}
-
-@if (creatingChatTemplate()) {
-  <sc-dialog
-    [visible]="true"
-    [title]="'groups.form.fields.template_new' | translate"
-    [hasFooter]="false"
-    (cancelled)="creatingChatTemplate.set(false)"
-  >
-    <sc-template-form-panel
-      flush
-      defaultType="chat"
-      [existingTitles]="templateExistingTitles()"
-      (save)="onCreateTemplateSubmit('chat', $event)"
-      (cancelled)="creatingChatTemplate.set(false)"
-    />
-  </sc-dialog>
-}
-
-@if (creatingEmailTemplate()) {
-  <sc-dialog
-    [visible]="true"
-    [title]="'groups.form.fields.template_new' | translate"
-    [hasFooter]="false"
-    (cancelled)="creatingEmailTemplate.set(false)"
-  >
-    <sc-template-form-panel
-      flush
-      defaultType="email"
-      [existingTitles]="templateExistingTitles()"
-      (save)="onCreateTemplateSubmit('email', $event)"
-      (cancelled)="creatingEmailTemplate.set(false)"
-    />
-  </sc-dialog>
+<!-- Crear o editar una agenda o una plantilla sin salir de la ficha: la misma ventana para el «+» del campo y para el
+     «Editar» de cada fila (DD-187). -->
+@if (recursoAbierto(); as r) {
+  <app-recurso-dialog [recurso]="r" (creado)="alCrearRecurso(r, $event)" (cerrar)="recursoAbierto.set(null)" />
 }
 
 @if (creatingLabel()) {
@@ -293,8 +242,97 @@
         <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.channels_required' | translate }}</p>
       }
     </sc-subsection>
+
+    <!-- LA POSTCONVERSACIÓN DEL GRUPO (revisión de tipificaciones del 2026-10-09, la propuesta de producto): si el agente
+         puede dejar un comentario al acabar, si tipifica con UNA tipificación de Repositorios y en cuáles. Se titula así
+         porque encender cualquiera de los dos deja al agente en postconversación al acabar. Hasta ese día se elegían
+         varias tipificaciones en Recursos y cada una decía su dirección y su comentario (DD-173). -->
+    <sc-subsection titleKey="groups.form.wrapup.title" hintKey="groups.form.wrapup.hint">
+      <div class="wrapup">
+        <div class="switch-field">
+          <sc-toggleswitch
+            [checked]="form().wrapUp.comments"
+            [ariaLabel]="'groups.form.wrapup.comments' | translate"
+            (checkedChange)="setWrapUp('comments', $event)"
+          />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.wrapup.comments' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Clasificar y con cuál, en la misma fila; la tipificación y en cuáles aparecen al encenderlo. -->
+        <div class="wrapup__classify">
+          <div class="switch-field">
+            <sc-toggleswitch
+              [checked]="form().wrapUp.classify"
+              [ariaLabel]="classifyLabelKey() | translate"
+              (checkedChange)="setWrapUp('classify', $event)"
+            />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">{{ classifyLabelKey() | translate }}</span>
+            </div>
+          </div>
+          @if (form().wrapUp.classify) {
+            <div class="control-add wrapup__select">
+              <span id="group-typification-label" class="visually-hidden">{{ 'groups.form.wrapup.typification' | translate }}</span>
+              <sc-select
+                inputId="group-typification"
+                ariaLabelledBy="group-typification-label"
+                optionLabel="label"
+                optionValue="value"
+                [filter]="true"
+                [options]="typificationOptions()"
+                [placeholder]="'groups.form.wrapup.typification_placeholder' | translate"
+                [invalid]="typificationError()"
+                [value]="form().wrapUp.typificationId"
+                (valueChange)="onTypificationChange($event)"
+              />
+              <!-- Qué tiene: su árbol entero, y «Editar en Repositorios», que lleva a su ficha. El botón a la talla de su
+                   control, como los «+» de Recursos (DD-187). -->
+              @if (typification(); as t) {
+                <!-- Las tres rayas de «Tipificar» en sc-agent: el mismo signo que ve el agente al tipificar. -->
+                <sc-button
+                  icon="menu"
+                  variant="secondary"
+                  [ariaLabel]="'groups.form.wrapup.view' | translate: { name: t.name }"
+                  [pTooltip]="'groups.form.wrapup.view' | translate: { name: t.name }"
+                  tooltipPosition="top"
+                  aria-haspopup="dialog"
+                  (clicked)="viendoTipificacion.set(true)"
+                />
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Lo que falta, bajo su campo, como los canales: al editar, o en el alta desde que se intenta salir. -->
+        @if (typificationError()) {
+          <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.typification_required' | translate }}</p>
+        }
+
+        @if (form().wrapUp.classify) {
+          <div class="field">
+            <span id="group-wrapup-scope-label" class="visually-hidden">{{ 'groups.form.wrapup.scope_label' | translate }}</span>
+            <sc-selectbutton
+              size="sm"
+              ariaLabelledBy="group-wrapup-scope-label"
+              [allowEmpty]="false"
+              [options]="wrapUpScopeOptions()"
+              optionLabel="label"
+              optionValue="value"
+              [value]="form().wrapUp.scope"
+              (valueChange)="onWrapUpScopeChange($event)"
+            />
+          </div>
+        }
+      </div>
+    </sc-subsection>
   </sc-section-card>
 </ng-template>
+
+@if (typification(); as t) {
+  <sc-tipificacion-arbol [tipificacion]="t" [visible]="viendoTipificacion()" (cerrar)="viendoTipificacion.set(false)" />
+}
 
 <ng-template #seccionDistribucion>
   <!-- DENTRO DE CADA CANAL, SU DISTRIBUCIÓN Y SU COLA (visión de producto de grupos, 2026-09-25): un bloque
@@ -615,31 +653,8 @@
     hintKey="groups.form.section.resources_hint"
   >
     <sc-subsection titleKey="sidebar.repositories">
+      <div class="bloque">
       <div class="grid grid--2">
-        <!-- Las tipificaciones del grupo (DD-173): varias, mientras no cubran lo mismo. Se
-             crean en su ficha, que tiene su árbol: aquí se eligen. -->
-        <div class="field">
-          <label id="group-typification-label" class="field__label sc-text-caption-semibold" for="group-typification">
-            {{ 'groups.form.fields.typification' | translate }}
-          </label>
-          <sc-multiselect
-            inputId="group-typification"
-            ariaLabelledBy="group-typification-label"
-            optionLabel="label"
-            optionValue="value"
-            [filter]="true"
-            [maxSelectedLabels]="0"
-            [selectedItemsLabel]="(typificationValue().length === 1 ? 'groups.form.fields.typification_count_one' : 'groups.form.fields.typification_count') | translate"
-            [placeholder]="'agents.form.resources.none' | translate"
-            [options]="typificationOptions()"
-            [value]="typificationValue()"
-            [helperText]="typificationConflict() ? undefined : ('groups.form.fields.typification_hint' | translate)"
-            [error]="typificationConflict() ?? undefined"
-            (valueChange)="onTypificationChange($event)"
-          />
-          <sc-resource-rows [label]="'groups.form.fields.typification' | translate" [rows]="typificationRows()" />
-        </div>
-
         <div class="field">
           <label class="field__label sc-text-caption-semibold" for="group-agendas">
             {{ 'agents.form.advanced.agendas.title' | translate }}
@@ -657,9 +672,9 @@
               [value]="scheduleValue()"
               (valueChange)="onIdsChange('scheduleIds', $event)"
             />
-            <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="creatingAgenda.set(true)" />
+            <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'agenda', id: null })" />
           </div>
-          <sc-resource-rows [label]="'agents.form.advanced.agendas.title' | translate" [rows]="agendaRows()" />
+          <sc-resource-rows [label]="'agents.form.advanced.agendas.title' | translate" [rows]="agendaRows()" (editar)="recursoAbierto.set({ tipo: 'agenda', id: +$event })" />
         </div>
 
         @if (hasChatFamily()) {
@@ -680,9 +695,9 @@
                 [value]="chatTemplateValue()"
                 (valueChange)="onTemplatesChange('chat', $event)"
               />
-              <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingChatTemplate.set(true)" />
+              <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'chat', id: null })" />
             </div>
-            <sc-resource-rows [label]="'agents.form.resources.templates_chat' | translate" [rows]="chatTemplateRows()" />
+            <sc-resource-rows [label]="'agents.form.resources.templates_chat' | translate" [rows]="chatTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'chat', id: +$event })" />
           </div>
         }
 
@@ -704,9 +719,9 @@
                 [value]="emailTemplateValue()"
                 (valueChange)="onTemplatesChange('email', $event)"
               />
-              <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="creatingEmailTemplate.set(true)" />
+              <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'email', id: null })" />
             </div>
-            <sc-resource-rows [label]="'agents.form.resources.templates_email' | translate" [rows]="emailTemplateRows()" />
+            <sc-resource-rows [label]="'agents.form.resources.templates_email' | translate" [rows]="emailTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'email', id: +$event })" />
           </div>
         }
 
@@ -731,19 +746,21 @@
                 [value]="labelValue()"
                 (valueChange)="onIdsChange('labelIds', $event)"
               />
-              <sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
+              <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.label_new' | translate" [pTooltip]="'groups.form.fields.label_new' | translate" tooltipPosition="top" (clicked)="creatingLabel.set(true)" />
             </div>
           </div>
         }
       </div>
 
       <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
-      <a class="repo-link sc-text-caption-regular" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
+      <a class="repo-link sc-text-caption-semibold" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
+      </div>
     </sc-subsection>
 
     <!-- La ficha de cliente que se le abre al agente (vivía en Avanzado). No es un objeto de Repositorios, pero de
          las cuatro secciones es su casa menos mala, y la visión la cuenta entre los recursos (DD-121). -->
     <sc-subsection titleKey="groups.form.resources.client_card" hintKey="groups.form.resources.client_card_hint">
+      <div class="bloque">
       <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
       <div class="grid grid--2">
         <div class="field">
@@ -756,6 +773,7 @@
             <sc-inputnumber class="field__number" inputId="group-card-height" [min]="100" suffix="px" [value]="form().advanced.cardHeight" (valueChange)="setAdvancedNumber('cardHeight', $event)" />
           </div>
         }
+      </div>
       </div>
     </sc-subsection>
   </sc-section-card>
@@ -842,8 +860,10 @@
 
 <!-- Elegir un .wav: el `p-fileupload` de primeng.dev (`sc-fileupload`), con su zona de soltar. Entrega el nombre y se
      vacía: el archivo elegido se ve en el campo de al lado, no dos veces (DD-184). -->
+<!-- El modo «basic» de primeng.dev: solo el botón, sin la caja de soltar (revisión del 2026-10-09: «solo el texto y el
+     botón, sin caja»). El nombre del archivo, o «Música por defecto», lo dice el texto de al lado. -->
 <ng-template #filePicker let-key="key" let-id="id">
-  <sc-fileupload [id]="id + '-upload'" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onAudioFile(key, $event)" />
+  <sc-fileupload mode="basic" [id]="id + '-upload'" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onAudioFile(key, $event)" />
 </ng-template>
 
 <!-- Un mensaje de la cola de Teléfono que puede no decir nada, leerse con la voz sintética o ser un .wav propio

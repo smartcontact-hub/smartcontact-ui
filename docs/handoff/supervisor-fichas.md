@@ -34,7 +34,83 @@ propias): `git show 540f246c:docs/handoff/supervisor-fichas.md``. El de supervis
 b49b56e0:docs/handoff/supervisor-fichas.md`. El de Tipificaciones (2026-10-05, DD-173, DD-174 y DD-177, #340): `git show
 a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-10-06, DD-176, #341): `git show
 0bf19647:docs/handoff/supervisor-fichas.md`. El de Repositorios en tarjetas (2026-10-06, DD-179, #347): `git show
-d4843e43:docs/handoff/supervisor-fichas.md`.
+d4843e43:docs/handoff/supervisor-fichas.md`. El de ordenar por cualquier columna (2026-10-06, DD-180 y DD-181): `git show
+d94e5ad8:docs/handoff/supervisor-fichas.md`.
+
+## 🚧 2026-10-09 · Revisión de agentes y tipificaciones: en el PR #360
+
+> **Sello:** worktree `pinniped`, rama `arebury/feat-agentes-tipificacion-design` sobre `main` en `1a0ae258` (DD-188 y DD-189
+> integrados), **PR #360**.
+> Fuentes: la transcripción del design review del 2026-10-09, el pptx de producto (parte de agentes), la propuesta
+> dibujada de producto («Postconversación») y el chat del equipo. Enseñado en local (`ng serve supervisor --port 4310`).
+
+- **Ficha de agente en 4 secciones** como la de grupo (General, Configuración, Recursos, Grupos) con `sc-subsection`.
+  General: email obligatorio, tipo de extensión (navegador/teléfono; con teléfono, móvil obligatorio y PIN con nota),
+  canales (mínimo uno), estado al editar, tipo de agente al final y solo con CusCare (`CLIENTE_CON_CUSCARE`).
+  Configuración en el orden del pptx: grabar, activación por grupo, gestión de dispositivos (pide móvil), externos,
+  conversaciones pendientes (permiso nuevo, «gestionar pérdidas»), la matriz y «Avanzado» plegado. Grupos: la tabla
+  del grupo con «Salientes» (obligatorio; se elige el primero con Teléfono si no hay otro). Lo obligatorio, en `faltas`.
+- **«Habilitado» bloqueado** con «Activación por grupo», en las dos tablas. **Contact Center › Agentes** en el orden de
+  la ficha.
+- **Equipos**: repositorio con su editor (nombre y agentes, como en Voice), columna en el listado de agentes.
+- **Tipificación**: solo nombre, descripción y árbol; árbol entero en columnas, ramas de profundidad libre (sin regla de
+  completar), icono `menu` (el de tipificar en sc-agent). **El grupo** decide en General › Postconversación: permitir
+  comentarios, tipificar, con cuál (una) y Todas / Solo entrantes / Solo salientes; ver su mapa en un diálogo con
+  «Editar en Repositorios». Deshace DD-173 §2 y §5 y la regla de ramas completas.
+- **Notas de decisión** (`sc-nota-decision`, tarjeta morada sólida): PIN, filtrar por estado en el listado, burbuja o
+  aro del estado. Se borran cuando el equipo decida.
+- **Listados sin tope de ancho** (`.page__inner--list`) para enseñarlo: a 1920 la columna Nombre se lleva 737 px.
+- **Audios del grupo** en modo `basic` (sin caja de soltar).
+- **Barrido de consistencia grupo↔agente** (24 hallazgos; arreglados los de regla salvo la DD): el resumen del grupo
+  dice que falta la tipificación y la marca bajo su campo; «Atiende por» en el resumen del agente lleva a Grupos; los
+  candados de la tabla del agente llevan a su sitio; «N sin canal» en su tabla; «+» de agenda y plantilla en Recursos
+  del agente; `.bloque`, `.control-add` y `.field--span-2` pasan a `_forms.scss`; iconos de canal con nombre en el
+  listado de grupos; «repartir conversaciones»; «Editar» traducido en las dos barras de lote.
+- **Abierto (gusto, sin regla):** marca de aviso para un obligatorio vacío en el resumen del agente, «Salientes»
+  (agente) frente a «Salida» (grupo), la ficha de tipificación aún en `surface="card"`, «Grupos» y «Equipos»
+  contiguas en el listado. **Para producto:** quitar canales saca del grupo desde la ficha de grupo y conserva la
+  asignación vacía desde la del agente (DD-147 frente a DD-150).
+- **Tercera vuelta (misma tarde):** el hub de Repositorios ya no pinta sus tarjetas encima del menú al entrar (el
+  `view-transition-name` solo existe mientras cambia el filtro; medido: 80 capas → 0); las tablas llegan siempre al
+  pie, también vacías (enmienda DD-95 §1: el marco ya no baila al filtrar); en los listados, Nombre se queda en 24rem
+  en pantallas anchas y el sobrante va a la columna del «⋮»; tipificaciones con un solo «+» en la fila de lo
+  que se añade; el punto de estado, proporcional (30 % de la foto) y solo en la tabla de agentes del grupo; las notas,
+  sólidas; los equipos filtran la tabla de agentes del grupo (con el estado, en el mismo menú); y **quitar
+  canales hace lo mismo en las dos fichas**: la asignación que se queda sin canal sale al guardar, con «Vas a quitar
+  canales» (enmienda DD-150).
+- **Tipografía** (barrido medido, DD-187 §10): diálogo, ayudas y error de campo, y título de tarjeta, a la rampa (toca el
+  DS: `sc-dialog`, `sc-section-card` y los seis campos con ayuda); el árbol de tipificaciones a 14. Abierto: la etiqueta
+  propia de los campos del DS (`[label]`) hereda 21 de interlineado; el filtro segmentado de las tablas de asignación
+  mide 34 junto a un buscador de 32,5 (en mediano, 36).
+- **Botón y gate** (DD-187 §11 y §12): `sc-button` abre `help`, `plain` y `raised` (las nueve severidades de
+  `button-small` del Kit) y sc-docs las enseña; el «+» de añadir y el botón que abre la tipificación son el pequeño
+  secundario relleno (28×27, nodo 7593:168617), centrado con su campo (enmienda DD-167). El tirador del árbol aparece al
+  pasar por la fila. Gate nuevo `audit:css-literals` (46 gates): trinquete de tipografía y espaciados escritos a mano,
+  DS y Supervisor; rojo medido con el `1.45` puesto de vuelta.
+- **Barrido tipográfico del flujo de grupos** (DD-187 §10, segunda pasada), medido en el navegador: menú «⋮», tooltip y
+  aviso a 20; título del panel de agentes a 28; `sc-inputnumber` sm a 27 y 12/18; etiquetas de los paneles de crear a
+  12/18/600; barra masiva a 400; plural de «quitar canales». La nota de decisión pasa a `pTooltipPT` (clases propias, la
+  flecha nativa en morado): `audit:primeng-coupling` cazaba su `.p-tooltip-*` sin capa. Tope del preset 63 → 69.
+  Lo de gusto, decidido en la cuarta vuelta (abajo).
+- **Cuarta vuelta (misma tarde, DD-187 §11):** los componentes riman en talla (el «+» y los botones de fila, a la de su
+  campo; «Eliminar» masivo y pies de paneles en pequeño; «Tamaño de cola» de CC en mediano); `sc-button` gana
+  `iconOnly` y el playground de sc-docs tiene los controles del panel de Figma; Categorías distingue «Añadir categoría»
+  (con rótulo) de la flecha de subcategoría; una sola etiqueta de campo (12/18/600, también la propia del DS); enlaces de
+  Recursos a 12/600; el multiselect con la flecha del Kit, centrada (medido: 5 desplegables a −2,5 → 0). Se quedan como
+  están, por su motivo: «Agentes habilitados» (la maqueta del widget, DD-186), el ajuste de CC como fila (otro patrón) y
+  la tecla «/» de `sc-search` (mueble de interlineado apretado).
+- **Quinta vuelta (misma tarde, DD-187 §7 y §12), ya sobre DD-188:** «Editar» de Recursos abre la ventana del «+» con
+  sus datos, sin salir (`app-recurso-dialog`, compartida por las dos fichas); borrar una tipificación dice qué grupos la
+  usan y los deja sin tipificar; «Añadir categoría» en la esquina de la sección (`scSectionActions` del DS); el teléfono
+  con tamaño fijo y «Guardar» abajo; las tablas miden lo que sus filas y no encogen al filtrar (vuelve DD-95 §1: la
+  tarjeta hasta el fondo con 5 filas se veía vacía).
+- **Sexta vuelta:** «Grupos de agentes» pasa a **Equipos** en la interfaz y en el código (`/admin/equipos`,
+  `EquiposStore`, `Agent.teams`): el nombre se confundía con los grupos y con los agentes. Fuera el aviso de «abierta en
+  otra pestaña» y su candado (DD-187 §13).
+- **Aterrizaje:** PR #360, un commit por bloque (DS, Supervisor, gate) y los arreglos que pidieron los gates. Hecho:
+  `component-styles.json` y las capturas de sc-docs regeneradas (revisadas), preflight en verde, y las e2e de
+  tipificación, canales del agente, Recursos y sus diálogos reescritas y en verde en local. Lo que falte lo dice
+  `npm run ci:verdict` sobre el PR.
 
 ## ✅ 2026-10-07 · La baldosa y la fila del resumen, al DS (DD-186)
 
@@ -105,29 +181,13 @@ b49b56e0:docs/handoff/supervisor-fichas.md`.
 - **Solo el prototipo**: Figma conserva el cuerpo anterior y el índice con sus bordes grises. Las fichas de agente y
   usuario no se tocaron.
 
-## ✅ 2026-10-06 · Ordenar por cualquier columna, la barra de los listados y las casillas de cada columna (DD-180 y DD-181)
-
-> **Sello:** rama `arebury/figma-make-prototipo-fiel`, con `main` dentro hasta #347 (`540f246c`); un commit en rojo y otro en verde por
-> bloque (DD-154).
-> Sale de una conversación con Figma Make sobre las tablas: lo que pidió la revisión, no lo que propuso Figma Make.
-
-- **1 · Ordenar (DD-180):** Grupos, por todas sus columnas (faltaban Teléfono, Canales y Servicios); Agentes, por todas
-  menos Estado, que cambia sola (faltaban Canales y Grupos). Canales, por cuántos tiene la fila y, con los mismos, por
-  cuáles (`compareChannels`, en `groups-data.ts`). Cinco cabeceras se salían con su flecha en algún idioma (la peor,
-  «Groupes», 16 px; «Prioridade» ya se salía 5 en `main`): ensanchadas lo justo, sin desplazamiento lateral a 1440.
-  «Columnas», a la altura del buscador (32,5; medía 27): enmienda DD-176 §7.
-- **2 · La barra, en dos grupos (DD-180 §4):** Columnas a 12,25 del buscador (estaba a 24,5) y la descarga con solo el
-  aire de su separador, 14 por lado (estaba a 53,5). El globo de Columnas y el menú de archivo son nodos vacíos en la
-  barra y sumaban un hueco de flex cada uno.
-- **3 · Las casillas de cada columna (DD-181):** en la tabla de agentes del grupo, cada canal y Habilitado llevan su
-  casilla de «todos» delante del rótulo, como Asignado (enmienda DD-176 §4). Un canal nunca se lleva el último de una
-  fila. **Coste:** con los tres canales (Online Support) la tabla desplaza 59 px a 1440.
-- **En local, en verde:** `listados-ordenar-columnas.spec.ts` (7, en rojo contra `main`), `asignacion-agentes-lista` y
-  `tabla-agentes-compacta` (en rojo antes del bloque 3), las vecinas de los listados (145) y de la ficha y el panel
-  (cinco pruebas fijaban los anchos de antes y se ponen al día: el panel crece lo que suman las casillas), y `revision`
-  de los dos listados y la ficha de grupo, en regla.
-
 ## SIGUIENTE — sin preguntar
+
+-3. **Aterrizar la revisión del 2026-10-09** (tramo de arriba): pruebas, DD y PR. Se enseña antes al equipo.
+-2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
+   elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
+   Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
+   son lo que falta; una card de Jira con los observadores de componentes.
 
 -2. **Auditoría de PrimeNG contra el DS: hecha (2026-10-07)**, en `docs/AUDIT-PRIMENG-CATALOGO.md`. Queda decidir lo que
    propone, por orden: TreeSelect/Tree para las tipificaciones (con la propuesta pendiente), InputTags para los dominios

@@ -62,6 +62,9 @@
 /* Las tarjetas del resumen de las fichas (grupo, agente, usuario): UNA, no una por pantalla (DD-122). */
 @use 'resumen';
 
+/* El globo de las notas de decisión (`sc-nota-decision`): una tarjeta morada, para no confundirlo con una ayuda. */
+@use 'nota-decision';
+
 /* Fuentes de marca, self-hospedadas (ver `fonts.css`). Antes las servía Google. */
 @import './fonts.css';
 

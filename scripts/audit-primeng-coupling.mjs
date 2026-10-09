@@ -96,7 +96,10 @@ const sh = (cmd) => {
  * (`.p-inputgroup-addon` ya no existe como clase) y su tope baja con ellas.
  */
 // DD-153: +3 clases nativas para ocultar la label de MultiSelect, llenar su trigger y mantener celdas fijas opacas.
-const TOPE = { app: 6, ds: 12, preset: 63 };
+// DD-187: 63 → 69 por el interlineado de cinco textos sin token propio que heredaban el 1.5 del body (21 en vez de 20):
+// `.p-menu-item-label`, `.p-tooltip-text`, `.p-message-text` con `.p-message-sm` y `.p-message-lg`, y `.p-drawer-title`
+// (30 en vez de 28). PrimeNG no da token de interlineado para ninguno; en el preset viajan con el tema.
+const TOPE = { app: 6, ds: 12, preset: 69 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de

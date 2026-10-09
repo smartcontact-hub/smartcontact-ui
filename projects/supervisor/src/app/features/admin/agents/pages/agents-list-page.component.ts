@@ -17,7 +17,7 @@ import { UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent, ListPageComponent, PresenceAvatarComponent, type LabelColor } from '@shared/components';
+import { ChannelIconComponent, ListPageComponent, NotaDecisionComponent, PresenceAvatarComponent, type LabelColor } from '@shared/components';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
@@ -47,6 +47,7 @@ import {
 import { AgentBulkField, AgentsStore } from '../state/agents.store';
 import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS, compareChannels } from '@features/admin/groups/data/groups-data';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
+import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { Channel } from '@features/admin/services/group-agent-links.types';
 import { permittedFamilies } from '@features/admin/services/group-channels.core.mjs';
@@ -75,6 +76,7 @@ const EXTENSION_ICONS: Readonly<Record<ExtensionType, string>> = {
   selector: 'sc-agents-list-page',
   imports: [
     BulkEditMenuComponent,
+    NotaDecisionComponent,
     ButtonComponent,
     TagComponent,
     DeleteEntityDialogComponent,
@@ -95,6 +97,7 @@ const EXTENSION_ICONS: Readonly<Record<ExtensionType, string>> = {
 export class AgentsListPageComponent {
   private readonly agentsStore = inject(AgentsStore);
   private readonly groupsStore = inject(GroupsStore);
+  private readonly equipos = inject(EquiposStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly xlsx = inject(XlsxExportService);
   private readonly messages = inject(MessageService);
@@ -176,8 +179,18 @@ export class AgentsListPageComponent {
       { key: 'presence', label: this.translate.instant('agents.table.presence'), defaultVisible: false },
       { key: 'recording', label: this.translate.instant('agents.table.recording') },
       { key: 'groups', label: this.translate.instant('agents.table.groups') },
+      // Las marcas para filtrar (revisión de agentes del 2026-10-09): en Voice, la columna con la que filtran.
+      { key: 'teams', label: this.translate.instant('repositories.equipos.title') },
     ];
   });
+
+  /** Los equipos de cada uno, por su nombre (Repositorios › Equipos). */
+  private readonly teamNames = computed(() => new Map(this.equipos.items().map((g) => [g.id, g.name])));
+
+  protected teamsOf(agent: Agent): string {
+    const names = this.teamNames();
+    return (agent.teams ?? []).flatMap((id) => names.get(id) ?? []).join(', ');
+  }
 
   /* ── La tabla, ahora `sc-datatable` ───────────────────────────────────
    * Las nueve celdas son composiciones propias de la página (avatar +
@@ -205,6 +218,7 @@ export class AgentsListPageComponent {
   private readonly presenceTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('presenceTpl');
   private readonly recordingTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('recordingTpl');
   private readonly groupsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('groupsTpl');
+  private readonly teamsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('teamsTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
@@ -293,6 +307,14 @@ export class AgentsListPageComponent {
         /* La cabecera con su flecha: «Groupes», 105 px (medido a 1440, 2026-10-06). */
         width: '6.875rem',
       },
+      {
+        field: 'teams',
+        header: this.translate.instant('repositories.equipos.title'),
+        sortable: true,
+        cellTemplate: this.teamsTpl(),
+        /* «Groupes d'agents» con su flecha; los nombres largos se cortan con «…» y su `title`. */
+        width: '11rem',
+      },
     ];
   });
 
@@ -334,6 +356,7 @@ export class AgentsListPageComponent {
       a.phone,
       this.translate.instant(this.typeKeys[a.agentType]),
       a.presenceStatus ? this.translate.instant(this.presenceKeys[a.presenceStatus]) : undefined,
+      this.teamsOf(a),
     ].some((value) => value?.toLowerCase().includes(q) ?? false);
 
   /* El orden lo resuelve ESTA página y no la tabla: `type` se ordena por `agentType` (no hay `row.type`) y `name`
@@ -358,6 +381,8 @@ export class AgentsListPageComponent {
         return compareChannels(this.channelsForAgent(a.id), this.channelsForAgent(b.id), CHANNEL_FAMILIES);
       case 'groups':
         return this.groupsForAgent(a.id).length - this.groupsForAgent(b.id).length;
+      case 'teams':
+        return this.teamsOf(a).localeCompare(this.teamsOf(b), 'es');
       default:
         return 0;
     }
@@ -407,7 +432,7 @@ export class AgentsListPageComponent {
   }
 
   /** Abrir la ficha lleva a su sección de trabajo (`?seccion=grupos`): la ficha, sin parámetro, abre por
-   *  Identidad, la primera de su índice (DD-122). */
+   *  General, la primera de su índice (DD-122). */
   protected onRowOpen(agent: Agent): void {
     void this.router.navigate(['/admin/agentes/editar', agent.id], { queryParams: { seccion: 'grupos' } });
   }
@@ -597,6 +622,7 @@ export class AgentsListPageComponent {
       t('agents.export.status'),
       t('agents.export.recording'),
       t('agents.export.groups'),
+      t('repositories.equipos.title'),
     ];
     const rows = visibleRows.map((a) => [
       a.code,
@@ -611,6 +637,7 @@ export class AgentsListPageComponent {
       this.groupsForAgent(a.id)
         .map((g) => g.name)
         .join(', '),
+      this.teamsOf(a),
     ]);
     this.xlsx.export({
       headers,

@@ -6,7 +6,7 @@ Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la 
 que puede ir por delante.
 
 **47 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**426 props** que PrimeNG sí documenta.
+**424 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -31,11 +31,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **55 props nativas no expuestas**: `appendTo`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `autofocus`, `baseZIndex`, `clearButtonStyleClass`, `dataType`, `defaultDate`, `disabledDates`, `disabledDays`, `firstDayOfWeek`, `fluid`, `focusTrap`, `hideOnDateTimeSelect`, `hourFormat`, `icon`, `iconAriaLabel`, `iconDisplay`, `inputSize`, `inputStyle`, `inputStyleClass`, `keepInvalid`, `max`, `maxDateCount`, `maxlength`, `min`, `minlength`, `motionOptions`, `multipleSeparator`, `numberOfMonths`, `panelStyle`, `panelStyleClass`, `pattern`, `rangeSeparator`, `readonlyInput`, `responsiveOptions`, `selectOtherMonths`, `shortYearCutoff`, `showOnFocus`, `showOtherMonths`, `showSeconds`, `showTime`, `showWeek`, `startWeekFromFirstDayOfYear`, `step`, `stepHour`, `stepMinute`, `stepSecond`, `tabindex`, `timeOnly`, `timeSeparator`, `todayButtonStyleClass`, `touchUI`, `variant`
 
-### `sc-multiselect` · 15 usos · primeng/multiselect
+### `sc-multiselect` · 13 usos · primeng/multiselect
 
 **44 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autocomplete`, `autofocus`, `autofocusFilter`, `chipIcon`, `dataKey`, `displaySelectedLabel`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterPlaceHolder`, `filterValue`, `fluid`, `focusOnHover`, `group`, `highlightOnSelect`, `id`, `lazy`, `loading`, `loadingIcon`, `motionOptions`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `overlayVisible`, `panelStyle`, `panelStyleClass`, `readonly`, `resetFilterOnHide`, `scrollHeight`, `selectAll`, `selectOnFocus`, `showHeader`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
-### `sc-select` · 64 usos · primeng/select
+### `sc-select` · 60 usos · primeng/select
 
 **43 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autofocus`, `autofocusFilter`, `checkmark`, `dataKey`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterValue`, `fluid`, `focusOnHover`, `group`, `id`, `inputSize`, `lazy`, `loadingIcon`, `max`, `maxlength`, `min`, `minlength`, `motionOptions`, `multiple`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `resetFilterOnHide`, `scrollHeight`, `selectOnFocus`, `step`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -43,17 +43,17 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **35 props nativas no expuestas**: `acceptAriaLabel`, `acceptButtonStyleClass`, `acceptIcon`, `acceptLabel`, `acceptVisible`, `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closable`, `closeAriaLabel`, `closeOnEscape`, `defaultFocus`, `dismissableMask`, `draggable`, `focusTrap`, `header`, `icon`, `key`, `maskMotionOptions`, `maskStyleClass`, `message`, `modal`, `motionOptions`, `position`, `rejectAriaLabel`, `rejectButtonStyleClass`, `rejectIcon`, `rejectLabel`, `rejectVisible`, `rtl`, `style`, `styleClass`, `visible`
 
-### `sc-dialog` · 22 usos · primeng/dialog
+### `sc-dialog` · 20 usos · primeng/dialog
 
 **29 props nativas no expuestas**: `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closeButtonProps`, `closeIcon`, `closeOnEscape`, `closeTabindex`, `contentStyle`, `contentStyleClass`, `focusOnShow`, `focusTrap`, `header`, `keepInViewport`, `maskMotionOptions`, `maskStyle`, `maskStyleClass`, `maximizable`, `maximizeButtonProps`, `maximizeIcon`, `minX`, `minY`, `minimizeIcon`, `motionOptions`, `rtl`, `showHeader`, `style`, `styleClass`
-
-### `sc-button` · 187 usos · primeng/button
-
-**24 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconOnly`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `severity`, `style`, `styleClass`, `tabindex`, `text`
 
 ### `sc-fileupload` · 2 usos · primeng/fileupload
 
 **24 props nativas no expuestas**: `cancelButtonProps`, `cancelIcon`, `cancelLabel`, `cancelStyleClass`, `chooseButtonProps`, `chooseIcon`, `chooseStyleClass`, `customUpload`, `filesInput`, `headers`, `invalidFileLimitMessageDetail`, `invalidFileLimitMessageSummary`, `method`, `previewWidth`, `removeStyleClass`, `showCancelButton`, `showUploadButton`, `style`, `styleClass`, `uploadButtonProps`, `uploadIcon`, `uploadLabel`, `uploadStyleClass`, `withCredentials`
+
+### `sc-button` · 188 usos · primeng/button
+
+**22 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `severity`, `style`, `styleClass`, `tabindex`, `text`
 
 ### `sc-drawer` · 3 usos · primeng/drawer
 
@@ -67,7 +67,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `badgeDisabled`, `badgeSize`, `severity`, `style`, `styleClass`, `value`
 
-### `sc-radiobutton` · 2 usos · primeng/radiobutton
+### `sc-radiobutton` · 3 usos · primeng/radiobutton
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `autofocus`, `binary`, `disabled`, `invalid`, `required`, `tabindex`
 
@@ -75,11 +75,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
-### `sc-selectbutton` · 14 usos · primeng/selectbutton
+### `sc-selectbutton` · 17 usos · primeng/selectbutton
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
-### `sc-toggleswitch` · 33 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 38 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
@@ -91,7 +91,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `badgeDisabled`, `badgeSize`, `severity`, `value`
 
-### `sc-inputtext` · 43 usos · primeng/inputtext
+### `sc-inputtext` · 45 usos · primeng/inputtext
 
 **4 props nativas no expuestas**: `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -99,7 +99,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `iconPos`, `motionOptions`, `toggleButtonProps`, `toggler`
 
-### `sc-message` · 10 usos · primeng/message
+### `sc-message` · 4 usos · primeng/message
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
 
@@ -127,7 +127,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-checkbox` · 41 usos · —
+### `sc-checkbox` · 47 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -143,7 +143,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-divider` · 31 usos · primeng/divider
+### `sc-divider` · 23 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
 
@@ -179,7 +179,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-option-cards` · 1 usos · —
+### `sc-option-cards` · 2 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -203,11 +203,11 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-subsection` · 9 usos · —
+### `sc-subsection` · 18 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-tag` · 28 usos · primeng/tag
+### `sc-tag` · 30 usos · primeng/tag
 
 Expone todo lo que PrimeNG documenta.
 

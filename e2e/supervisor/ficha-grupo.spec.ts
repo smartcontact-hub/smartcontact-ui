@@ -17,7 +17,7 @@ import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from
  *   3. El índice y el resumen siguen enteros a la vista al bajar, también en un portátil; por debajo de 1340,
  *      el resumen es una franja encima del contenido.
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas.
- *   5. Recargar la ficha no es «otra pestaña»; abrirla en otra de verdad, sí.
+ *   5. (Quitado el 2026-10-09, DD-187: el aviso de «abierta en otra pestaña» ya no existe.)
  *   6. El alta es la MISMA ficha, con el mismo índice (DD-143): General es la puerta (nombre y canales antes de
  *      seguir), «Siguiente» guía por las secciones y crear deja en la edición, en la sección abierta.
  */
@@ -228,20 +228,6 @@ test('en General, los canales caen en las tres columnas de los campos de encima,
     expect(m.columnas, `${ancho}: tres columnas de campos`).toHaveLength(3);
     expect(m.casillas, `${ancho}: cada canal, en la vertical de su columna`).toEqual(m.columnas);
   }
-});
-
-test('recargar la ficha no es «otra pestaña»; abrirla en otra de verdad, sí', async ({ page, context }) => {
-  await goto(page, 'admin/grupos/editar/1');
-  await page.reload();
-  await expect(page.locator('main#main-content')).toBeVisible();
-  await expect(page.locator('.headline__name')).toBeVisible();
-  await expect(page.locator('.ficha-conflict')).toHaveCount(0);
-
-  const otra = await context.newPage();
-  await goto(otra, 'admin/grupos/editar/1');
-  await expect(otra.locator('.ficha-conflict')).toBeVisible();
-  // Y la primera se entera también (evento `storage`).
-  await expect(page.locator('.ficha-conflict')).toBeVisible();
 });
 
 test('el nombre del grupo es el título de la página, y solo hay un h1', async ({ page }) => {

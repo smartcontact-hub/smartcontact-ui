@@ -1267,6 +1267,36 @@
           }
         },
         {
+          "nombre": "iconOnly",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Solo el icono, como la propiedad «Icon Only» del Kit: el rótulo no se pinta y pasa a ser el nombre accesible (y el tooltip, si lo pone quien lo usa). Necesita `icon`. Sin esto, un botón de solo icono es el que no lleva `label`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Forces icon-only styling regardless of content. When unset, icon-only is inferred from the absence of a label/badge.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "raised",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Le da la sombra de «Raised» del Kit (`button.raisedShadow` en el preset): el botón que flota sobre un contenido, no el de una barra. Llega a PrimeNG como `raised`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Add a shadow to indicate elevation.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "clicked",
           "clase": "output",
           "tipo": "MouseEvent",
@@ -1284,7 +1314,6 @@
         "buttonProps",
         "fluid",
         "hostName",
-        "iconOnly",
         "iconPos",
         "link",
         "loadingIcon",
@@ -1296,7 +1325,6 @@
         "pButtonPT",
         "pButtonUnstyled",
         "plain",
-        "raised",
         "severity",
         "style",
         "styleClass",

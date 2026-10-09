@@ -79,28 +79,21 @@ test('la página no se mueve: la tabla hace scroll dentro y título, filtros y c
   expect(loQueSeVe).toBe('thead');
 });
 
-test('con pocas filas la tarjeta acaba en la última, sin hueco vacío hasta abajo', async ({ page }) => {
+test('filtrar a pocas filas no encoge la tarjeta: el marco se queda donde estaba', async ({ page }) => {
+  // DD-187 §7: la tarjeta mide lo que sus filas, pero al filtrar no baja del alto que llegó a medir (antes, con
+  // «Fallidas», encogía hasta la última fila y todo lo de abajo subía).
   await goto(page, 'conversaciones');
   await expect(page.locator(`${TABLE} tbody tr`).first()).toBeVisible();
   const total = await page.locator(`${TABLE} tbody tr`).count();
+  const fondo = () => page.locator('.table-card').evaluate((card) => Math.round(card.getBoundingClientRect().bottom));
+  const antes = await fondo();
 
   await page.locator('.memory-conversation-filters__views').getByText('Fallidas', { exact: true }).click();
   await expect.poll(() => page.locator(`${TABLE} tbody tr`).count()).toBeLessThan(total);
-
-  const medida = await page.locator('.table-card').evaluate((card) => {
-    const filas = card.querySelectorAll('tbody tr');
-    return {
-      filas: filas.length,
-      hueco: card.getBoundingClientRect().bottom - filas[filas.length - 1]!.getBoundingClientRect().bottom,
-      alto: innerHeight,
-      fondo: card.getBoundingClientRect().bottom,
-    };
-  });
-  // Control: pocas filas de verdad, que quedan muy por encima del fondo de la ventana.
-  expect(medida.filas).toBeGreaterThan(0);
-  expect(medida.fondo).toBeLessThan(medida.alto / 2);
-  // Solo el borde de la tarjeta bajo la última fila.
-  expect(medida.hueco).toBeLessThan(3);
+  // Control: pocas filas de verdad, que acaban muy por encima del fondo de la tarjeta.
+  const ultima = await page.locator(`${TABLE} tbody tr`).last().evaluate((tr) => tr.getBoundingClientRect().bottom);
+  expect(antes - ultima).toBeGreaterThan(100);
+  expect(Math.abs((await fondo()) - antes)).toBeLessThanOrEqual(1);
 });
 
 /* El color de estado de una fila (rojo de fallida, amarillo en proceso) cubre la fila ENTERA, de borde a

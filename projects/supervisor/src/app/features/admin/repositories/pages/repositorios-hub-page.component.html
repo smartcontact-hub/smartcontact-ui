@@ -68,7 +68,7 @@
         [attr.data-tono]="section.tono"
         [attr.data-columnas]="columnas(section.cards.length)"
         [attr.aria-labelledby]="'repo-cat-' + section.id"
-        [style.view-transition-name]="'repo-cat-' + section.id"
+        [style.view-transition-name]="filtrando() ? 'repo-cat-' + section.id : null"
       >
         <!-- El título en el tono de su categoría (DD-179). -->
         <h2 class="cat__title sc-text-caption-semibold" [id]="'repo-cat-' + section.id">{{ section.titulo }}</h2>

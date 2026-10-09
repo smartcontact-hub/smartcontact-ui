@@ -14,6 +14,10 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  * inactivos; para agentes, llamadas y transferencias a todo menos la numeración especial, con gestión de dispositivos,
  * activación por grupo y dispositivos externos.
  *
+ * En la ficha de agente, todo esto vive desde DD-187 en Configuración: la matriz y los interruptores en «Permisos», y la
+ * URL en «Avanzado», plegada. «Gestión de dispositivos» pide un teléfono móvil (DD-187): sin él se ve apagada, así que el
+ * alta escribe uno antes de mirarla.
+ *
  * Storage limpio por test → cada store vuelve a los de fábrica.
  */
 
@@ -129,13 +133,13 @@ test('Contact Center › Agentes habla como la ficha de agente y trae los valore
   await expect(page.getByText('Llamadas internas')).toHaveCount(0);
   await expect(page.getByText('Título (opcional)')).toHaveCount(0);
 
-  // Y el alta de agente nace con lo mismo.
+  // Y el alta de agente nace con lo mismo. Con móvil: sin él, «Gestión de dispositivos» se ve apagada (DD-187).
   await goto(page, 'admin/agentes/crear');
-  await irASeccion(page, 'Permisos');
+  await page.locator('#agent-phone').fill('600123123');
+  await irASeccion(page, 'Configuración');
   await esperaMatrizDeFabrica(page);
   await expect(interruptor(page, 'Gestión de dispositivos')).toBeChecked();
   await expect(interruptor(page, 'Activación por grupo')).toBeChecked();
-  await irASeccion(page, 'Avanzado');
   await expect(interruptor(page, 'Dispositivos externos')).toBeChecked();
 });
 
@@ -148,10 +152,10 @@ test('lo que se guarda en Contact Center › Agentes es con lo que nace un agent
   await expect(page.getByText('Parámetros de agentes guardados')).toBeVisible();
 
   await goto(page, 'admin/agentes/crear');
-  await irASeccion(page, 'Permisos');
+  await irASeccion(page, 'Configuración');
   await expect(casilla(page, 'Móviles', 'Llamadas')).not.toBeChecked();
   await expect(casilla(page, 'Móviles', 'Transferencias')).toBeChecked();
-  await irASeccion(page, 'Avanzado');
-  await expect(page.locator('#agent-iframe-url')).toHaveValue('https://crm.ejemplo.com/ficha');
   await expect(interruptor(page, 'Dispositivos externos')).not.toBeChecked();
+  await page.getByRole('button', { name: /Avanzado/ }).click();
+  await expect(page.locator('#agent-iframe-url')).toHaveValue('https://crm.ejemplo.com/ficha');
 });

@@ -63,6 +63,28 @@ export const REPOSITORIES_ROUTES: Routes = [
     loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent),
   },
   {
+    /* Como el «grupo de agentes» de Voice, el equipo tiene su editor: su nombre y sus agentes (revisión del 2026-10-09). */
+    path: 'equipos',
+    data: repoInstance('repositories.equipos.title'),
+    children: [
+      { path: '', loadComponent: () => import('./instances/equipos').then((m) => m.EquiposPageComponent) },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.equipos.create_title' } },
+        loadComponent: () =>
+          import('./pages/equipo-editor-page.component').then((m) => m.EquipoEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.equipos.edit_breadcrumb' } },
+        loadComponent: () =>
+          import('./pages/equipo-editor-page.component').then((m) => m.EquipoEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
+  },
+  {
     /* La tipificación tiene su ficha (DD-173): General, Categorización y Grupos, como las
      * fichas de grupo y de agente. El listado sigue en Repositorios. */
     path: 'tipificaciones',

@@ -110,7 +110,7 @@ for (const { ruta, nombre } of FORMULARIOS) {
  * Control negativo: una página de LISTA no debe cambiar al mudarse el molde del
  * formulario. Si el movimiento contamina `_page.scss`, esta es la que lo canta.
  */
-test('la lista de usuarios conserva su arquetipo (1600) tras mudarse el molde', async ({
+test('la lista de usuarios conserva su arquetipo (sin tope de ancho) tras mudarse el molde', async ({
   page,
 }) => {
   await goto(page, 'admin/usuarios');
@@ -122,6 +122,8 @@ test('la lista de usuarios conserva su arquetipo (1600) tras mudarse el molde', 
     return { maxWidth: s.maxWidth, display: s.display };
   });
 
-  expect(medido.maxWidth).toBe('1600px');
+  // Sin tope desde la revisión del 2026-10-09 (DD-187 §7): con 1600, en pantallas anchas la tarjeta se quedaba corta y
+  // dejaba lienzo muerto a la derecha. La columna que crece se para en 24rem y el sobrante va a la del «⋮».
+  expect(medido.maxWidth).toBe('none');
   expect(medido.display).not.toBe('grid');
 });

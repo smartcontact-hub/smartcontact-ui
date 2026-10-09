@@ -57,15 +57,31 @@ export class PresenceAvatarComponent {
     return `var(--sc-label-${'labelColor' in tag ? tag.labelColor : 'gray'}-dot)`;
   });
 
+  /**
+   * El punto, en proporción con la foto (revisión del 2026-10-09): un 30 % de su diámetro, nunca menos de 8 px, con un
+   * aro del color de la superficie que lo separa de la foto. Hasta ese día medía siempre 16 px (el `small` del nativo):
+   * en una foto de 24 eran dos tercios y la tapaba. Va dentro de la esquina, sin salirse del cuadro de la foto.
+   */
+  private readonly dotPx = computed(() => {
+    const size = this.size();
+    const px = typeof size === 'number' ? size : parseFloat(size) || 32;
+    return Math.max(8, Math.round(px * 0.3));
+  });
+
   protected readonly dotStyle = computed<Record<string, string>>(() => {
     const color = this.dotColor();
-    // Abajo a la derecha, sobre el borde del círculo (arriba a la derecha es la posición del nativo).
+    const d = `${this.dotPx()}px`;
+    // Abajo a la derecha (arriba a la derecha es la posición del nativo).
     return {
       top: 'auto',
       bottom: '0',
       right: '0',
-      transform: 'translate(25%, 25%)',
-      'transform-origin': '100% 100%',
+      transform: 'none',
+      width: d,
+      height: d,
+      'min-width': d,
+      padding: '0',
+      'outline-width': '2px',
       ...(color ? { background: color } : { display: 'none' }),
     };
   });

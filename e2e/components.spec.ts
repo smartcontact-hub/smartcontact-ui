@@ -170,24 +170,27 @@ test.describe('sc-button', () => {
     await screenshotBaseline(page, 'button');
   });
 
-  test('«Solo icono», como en primeng.dev: cada botón con su nombre, y el «+» de crear es un círculo', async ({ page }) => {
+  test('«Solo icono», como en el Kit: cada botón con su nombre, y el «+» de añadir rima con su campo', async ({ page }) => {
     await gotoPage(page, 'button');
-    // Las cuatro formas que el DS expone (relleno, redondo, redondo con borde y redondo de texto), con sus siete
-    // variantes. Sin rótulo, el nombre es lo único que oye el lector.
+    // Las cinco formas del Kit (relleno, redondo, redondo con borde, redondo de texto y redondo con sombra), con sus
+    // ocho variantes rellenas. Sin rótulo, el nombre es lo único que oye el lector.
     const botones = page.getByTestId('sc-btn-solo-icono').getByRole('button');
-    await expect(botones).toHaveCount(28);
+    await expect(botones).toHaveCount(40);
     expect(await botones.evaluateAll((bs) => bs.filter((b) => !b.getAttribute('aria-label')).length), 'sin nombre').toBe(0);
 
-    // El «+» de crear (DD-167): redondo, con borde y secundario; un círculo del ancho de solo icono del Kit.
-    const mas = page.getByTestId('sc-btn-crear').getByRole('button', { name: 'Nueva agenda' });
-    const faltan = await mas.evaluate((el) =>
-      ['p-button-icon-only', 'p-button-rounded', 'p-button-outlined', 'p-button-secondary'].filter((c) => !el.classList.contains(c)),
-    );
-    expect(faltan, 'el solo icono redondo, con borde y en gris').toEqual([]);
-    const lado = parseFloat(kitPx('button.root.iconOnlyWidth'));
-    const caja = (await mas.boundingBox())!;
-    expect(caja.width, 'el ancho del solo icono del Kit').toBeCloseTo(lado, 1);
-    expect(caja.height, 'redondo: tan alto como ancho').toBeCloseTo(lado, 1);
+    // El «+» de añadir (DD-187, que corrige DD-167): el secundario relleno del Kit, a la talla de su campo. Rima con él:
+    // mediano junto a un select mediano y pequeño junto a uno pequeño, los dos del mismo alto que su campo.
+    for (const [id, talla, ancho] of [['sc-btn-crear', 'md', 'button.root.iconOnlyWidth'], ['sc-btn-crear-sm', 'sm', 'button.root.sm.iconOnlyWidth']] as const) {
+      const mas = page.getByTestId(id).getByRole('button', { name: 'Nueva agenda' });
+      const clases = await mas.evaluate((el) => [...el.classList]);
+      expect(clases.includes('p-button-icon-only') && clases.includes('p-button-secondary'), `${talla}: solo icono y en gris`).toBe(true);
+      expect(clases.includes('p-button-sm'), `${talla}: su talla`).toBe(talla === 'sm');
+      expect(['p-button-rounded', 'p-button-outlined'].filter((c) => clases.includes(c)), 'ni redondo ni con borde').toEqual([]);
+      const caja = (await mas.boundingBox())!;
+      expect(caja.width, `${talla}: el ancho del solo icono del Kit`).toBeCloseTo(parseFloat(kitPx(ancho)), 1);
+      const campo = (await page.getByTestId(id).locator('xpath=..').locator('.p-select').boundingBox())!;
+      expect(caja.height, `${talla}: tan alto como su campo`).toBeCloseTo(campo.height, 1);
+    }
   });
 });
 

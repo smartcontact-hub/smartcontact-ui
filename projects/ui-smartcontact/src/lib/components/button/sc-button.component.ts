@@ -23,7 +23,7 @@ import {
     ScButtonVariant
 } from '../../core/types/button.types';
 
-type PrimeButtonSeverity = 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'contrast';
+type PrimeButtonSeverity = 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast';
 type PrimeButtonSize = 'small' | 'large' | undefined;
 
 /**
@@ -110,6 +110,18 @@ export class ScButtonComponent {
     readonly rounded = input(false, { transform: booleanAttribute });
 
     /**
+     * Solo el icono, como la propiedad «Icon Only» del Kit: el rótulo no se pinta y pasa a ser el nombre accesible (y el
+     * tooltip, si lo pone quien lo usa). Necesita `icon`. Sin esto, un botón de solo icono es el que no lleva `label`.
+     */
+    readonly iconOnly = input(false, { transform: booleanAttribute });
+
+    /**
+     * Le da la sombra de «Raised» del Kit (`button.raisedShadow` en el preset): el botón que flota sobre
+     * un contenido, no el de una barra. Llega a PrimeNG como `raised`.
+     */
+    readonly raised = input(false, { transform: booleanAttribute });
+
+    /**
      * Icono propio para lo que no está en Material (un SVG de la librería): `<ng-template
      * #scButtonIcon>`. Llega a PrimeNG como su plantilla `icon`, así que el botón toma la forma
      * y la talla de icono como con `icon`. El SVG mide `1em` y `fill="currentColor"`.
@@ -121,7 +133,16 @@ export class ScButtonComponent {
 
     protected readonly isInteractionDisabled = computed(() => this.disabled() || this.loading());
 
-    protected readonly buttonSeverity = computed<PrimeButtonSeverity>(() => this.variant());
+    /** El rótulo que se pinta: ninguno con `iconOnly`, que lo deja para el nombre accesible. */
+    protected readonly visibleLabel = computed(() => (this.iconOnly() ? '' : this.label()));
+
+    /** `plain` no es una severidad de PrimeNG sino su booleano `plain`: sin severidad, con la clase gris. */
+    protected readonly buttonSeverity = computed<PrimeButtonSeverity | undefined>(() => {
+        const variant = this.variant();
+        return variant === 'plain' ? undefined : variant;
+    });
+
+    protected readonly plain = computed(() => this.variant() === 'plain');
 
     protected readonly buttonSize = computed<PrimeButtonSize>(() => {
         const size = this.size();
@@ -159,6 +180,10 @@ export class ScButtonComponent {
 
         if (ariaLabel) {
             return ariaLabel;
+        }
+
+        if (this.iconOnly() && this.label().trim()) {
+            return this.label().trim();
         }
 
         if (!this.label().trim()) {

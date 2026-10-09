@@ -51,7 +51,10 @@ const mdTypographySelectors = [
     ".p-chip",
     ".p-toast-summary",
     ".p-breadcrumb-item-label",
-    ".p-contextmenu-item-label"
+    ".p-contextmenu-item-label",
+    /* Como la del menú contextual: sin letra ni interlineado propios, heredaba el 1.5 del body (14/21). Medido en el menú
+     * «⋮» de las filas de grupos (2026-10-09). */
+    ".p-menu-item-label"
 ] as const;
 
 const smTypographySelectors = [
@@ -622,6 +625,28 @@ ${typographyRule(lgTypographySelectors, dt, "lg", fromDesignPx(16), fromDesignPx
 
 .p-button .p-button-icon {
     line-height: 1;
+}
+
+/* El aviso y el tooltip tienen su letra en el preset (\`message.text.*\`, \`tooltip.fontSize\`: lo que lee el Theme Designer)
+ * pero ningún interlineado: heredaban el 1.5 del body, 14/21 (el aviso de tres líneas medía 63 en vez de 60). Aquí solo el
+ * interlineado de su talla, para no pisarles la letra. */
+.p-tooltip-text,
+.p-message-text {
+    line-height: ${token(dt, "app.typography.md.line.height", fromDesignPx(20))};
+}
+
+.p-message-sm .p-message-text {
+    line-height: ${token(dt, "app.typography.sm.line.height", fromDesignPx(18))};
+}
+
+.p-message-lg .p-message-text {
+    line-height: ${token(dt, "app.typography.lg.line.height", fromDesignPx(24))};
+}
+
+/* El título del drawer es el peldaño 450 (20, \`drawer.title.fontSize\`) y su interlineado es el del mismo peldaño, 28
+ * (\`docs/tipografia.md\` §2); heredaba 30. */
+.p-drawer-title {
+    line-height: var(--sc-line-height-450);
 }
 
 ${baseTableCss()}

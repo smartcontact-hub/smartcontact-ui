@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScButtonComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScSelectComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const VARIANTS_SNIPPET = `<sc-button label="Primario" />
@@ -14,13 +14,28 @@ const VARIANTS_SNIPPET = `<sc-button label="Primario" />
 <sc-button label="Success" variant="success" />
 <sc-button label="Info" variant="info" />
 <sc-button label="Warn" variant="warn" />
+<sc-button label="Help" variant="help" />
 <sc-button label="Danger" variant="danger" />
-<sc-button label="Contrast" variant="contrast" />`;
+<sc-button label="Contrast" variant="contrast" />
+
+<!-- "plain", la gris neutra: como en el Kit, solo de texto o con borde. -->
+<sc-button label="Plain" variant="plain" appearance="text" />
+<sc-button label="Plain" variant="plain" appearance="outlined" />`;
 
 const APPEARANCES_SNIPPET = `<sc-button label="Filled" />
 <sc-button label="Outlined" appearance="outlined" />
 <sc-button label="Text" appearance="text" />
 <sc-button label="Link" appearance="link" />`;
+
+const RAISED_SNIPPET = `<!-- La sombra de «Raised» del Kit: el botón que flota sobre un contenido. -->
+<sc-button label="Primario" [raised]="true" />
+<sc-button label="Secundario" variant="secondary" [raised]="true" />
+<sc-button label="Texto" variant="secondary" appearance="text" [raised]="true" />
+<sc-button icon="add" [rounded]="true" [raised]="true" ariaLabel="Nuevo" />`;
+
+const RAISED_DESCRIPTION =
+  'La propiedad «Raised» del Kit: la sombra `button.raisedShadow` del preset. Para el botón que flota sobre un ' +
+  'contenido (un mapa, una lista que se desplaza), no para el de una barra o un formulario.';
 
 const SIZES_SNIPPET = `<sc-button label="Small" size="sm" />
 <sc-button label="Medium" />
@@ -34,20 +49,27 @@ const ICONS_SNIPPET = `<sc-button label="Con icono" icon="check" />
 <sc-button label="Full width" [fullWidth]="true" />`;
 
 const SOLO_ICONO_SNIPPET = `<!-- Sin rótulo, el nombre va en "ariaLabel": es lo que anuncia el lector, y el icono queda decorativo.
-     Cada forma, con las siete variantes ("variant"), como en las filas de arriba. -->
+     Cada forma, con las ocho variantes rellenas ("variant"), como en las filas de arriba. -->
 <sc-button icon="check" ariaLabel="Confirmar" />
 <sc-button icon="check" [rounded]="true" ariaLabel="Confirmar" />
 <sc-button icon="check" [rounded]="true" appearance="outlined" ariaLabel="Confirmar" />
 <sc-button icon="check" [rounded]="true" appearance="text" ariaLabel="Confirmar" />
+<sc-button icon="check" [rounded]="true" [raised]="true" ariaLabel="Confirmar" />
 
-<!-- El «+» de crear, a la derecha de su desplegable (DD-167). -->
-<sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" ariaLabel="Nueva agenda" />`;
+<!-- El «+» de añadir, a la derecha de su campo o en la fila que crece: el secundario relleno del Kit, A LA TALLA DE SU
+     CAMPO (DD-187, que corrige DD-167): rima con él, mediano junto a uno mediano y pequeño junto a uno pequeño. -->
+<sc-select placeholder="Agendas" ariaLabel="Agendas" [options]="agendas" />
+<sc-button icon="add" variant="secondary" ariaLabel="Nueva agenda" />
+
+<sc-select size="sm" placeholder="Agendas" ariaLabel="Agendas" [options]="agendas" />
+<sc-button icon="add" size="sm" variant="secondary" ariaLabel="Nueva agenda" />`;
 
 const SOLO_ICONO_DESCRIPTION =
-  'Las filas de «Icon Only» de primeng.dev que el DS expone: relleno, redondo, redondo con borde y redondo de ' +
-  'texto, con sus siete variantes. Falta la fila con sombra: `raised` no está en sc-button. Redondo, el botón es ' +
-  'un círculo del ancho de solo icono. El «+» de crear, a la derecha de su desplegable, es el redondo con borde y ' +
-  'secundario (DD-167).';
+  'Las filas de «Icon Only» del Kit: relleno, redondo, redondo con borde, redondo de texto y redondo con sombra, ' +
+  'con sus ocho variantes. Redondo, el botón es un círculo del ancho de solo icono. Debajo, el «+» de añadir, a la ' +
+  'derecha de su campo o en la fila que crece: el secundario relleno del Kit, a la talla de su campo, para que rime con ' +
+  'él (DD-187, que corrige el redondo con borde de DD-167). Es el mismo en todas partes: no se elige forma ni color en ' +
+  'cada pantalla, y la talla la decide el campo.';
 
 const PRESS_SNIPPET = `<!-- La pulsación la pone el tema: no hay nada que activar. -->
 <sc-button label="Guardar" />
@@ -82,7 +104,7 @@ const PRESS_DESCRIPTION =
 /** Demo de `sc-button` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-button-demo',
-  imports: [ScButtonComponent, StoryHostComponent],
+  imports: [ScButtonComponent, ScSelectComponent, StoryHostComponent],
   templateUrl: './button-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -91,17 +113,19 @@ export class ButtonDemoComponent {
   protected readonly variantsTpl = viewChild<TemplateRef<StoryContext>>('variants');
   protected readonly appearancesTpl = viewChild<TemplateRef<StoryContext>>('appearances');
   protected readonly sizesTpl = viewChild<TemplateRef<StoryContext>>('sizes');
+  protected readonly raisedTpl = viewChild<TemplateRef<StoryContext>>('raisedTpl');
   protected readonly iconsTpl = viewChild<TemplateRef<StoryContext>>('icons');
   protected readonly pressTpl = viewChild<TemplateRef<StoryContext>>('press');
   protected readonly soloIconoTpl = viewChild<TemplateRef<StoryContext>>('soloIcono');
   protected readonly popupTpl = viewChild<TemplateRef<StoryContext>>('popup');
 
-  /** Las filas de «Icon Only» de primeng.dev que el DS expone (sin `raised`). */
+  /** Las filas de «Icon Only» del Kit. */
   protected readonly formasSoloIcono = [
-    { forma: 'relleno', rounded: false, appearance: 'filled' },
-    { forma: 'redondo', rounded: true, appearance: 'filled' },
-    { forma: 'redondo con borde', rounded: true, appearance: 'outlined' },
-    { forma: 'redondo de texto', rounded: true, appearance: 'text' },
+    { forma: 'relleno', rounded: false, appearance: 'filled', raised: false },
+    { forma: 'redondo', rounded: true, appearance: 'filled', raised: false },
+    { forma: 'redondo con borde', rounded: true, appearance: 'outlined', raised: false },
+    { forma: 'redondo de texto', rounded: true, appearance: 'text', raised: false },
+    { forma: 'redondo con sombra', rounded: true, appearance: 'filled', raised: true },
   ] as const;
 
   /** Una por variante, con el icono de su columna en primeng.dev (en Material) y su nombre accesible. */
@@ -111,6 +135,7 @@ export class ButtonDemoComponent {
     { variant: 'success', icon: 'search', nombre: 'Buscar' },
     { variant: 'info', icon: 'person', nombre: 'Usuario' },
     { variant: 'warn', icon: 'notifications', nombre: 'Avisos' },
+    { variant: 'help', icon: 'help', nombre: 'Ayuda' },
     { variant: 'danger', icon: 'close', nombre: 'Cancelar' },
     { variant: 'contrast', icon: 'star', nombre: 'Destacar' },
   ] as const;
@@ -119,44 +144,57 @@ export class ButtonDemoComponent {
     tag: 'sc-button',
     title: 'Button',
     description:
-      'Botón de acción. Wrapper de PrimeNG con variantes de marca, apariencias, tamaños e iconos Material.',
+      'Botón de acción. Wrapper de PrimeNG con todo lo que trae el botón del Kit: nueve severidades, cuatro ' +
+      'apariencias, tres tamaños, redondo, con sombra e iconos Material. Antes de hacer un botón a mano, búscalo aquí.',
     argTypes: [
-      { name: 'label', control: { kind: 'text' } },
+      // En el orden del panel del Kit (button-small, button y button-large), con su nombre de Figma debajo. «State»
+      // (Idle, Hover, Active) no es una propiedad: se ve al pasar el ratón y al pulsar.
+      { name: 'label', control: { kind: 'text' }, description: 'El texto del botón' },
       {
         name: 'variant',
         control: {
           kind: 'select',
-          options: ['primary', 'secondary', 'success', 'info', 'warn', 'danger', 'contrast'],
+          options: ['primary', 'secondary', 'success', 'info', 'warn', 'help', 'danger', 'contrast', 'plain'],
         },
+        description: 'Severity en Figma. Plain, solo con text u outlined',
       },
+      {
+        name: 'size',
+        control: { kind: 'select', options: ['sm', 'md', 'lg'] },
+        description: 'button-small, button y button-large en Figma',
+      },
+      { name: 'disabled', control: { kind: 'boolean' }, description: 'Disabled en Figma' },
+      { name: 'iconOnly', control: { kind: 'boolean' }, description: 'Icon Only en Figma: el texto pasa a ser su nombre' },
+      { name: 'raised', control: { kind: 'boolean' }, description: 'Raised en Figma' },
+      { name: 'rounded', control: { kind: 'boolean' }, description: 'Rounded en Figma' },
       {
         name: 'appearance',
         control: { kind: 'select', options: ['filled', 'outlined', 'text', 'link'] },
+        description: 'Outlined, Text y Link en Figma: uno a la vez',
       },
-      { name: 'size', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
       { name: 'icon', control: { kind: 'text' }, description: 'Nombre Material (p.ej. check)' },
-      { name: 'loading', control: { kind: 'boolean' } },
-      { name: 'disabled', control: { kind: 'boolean' } },
-      { name: 'rounded', control: { kind: 'boolean' } },
-      { name: 'fullWidth', control: { kind: 'boolean' } },
       { name: 'iconPosition', control: { kind: 'select', options: ['left', 'right', 'top', 'bottom'] } },
       { name: 'iconSize', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
       { name: 'iconFilled', control: { kind: 'boolean' } },
+      { name: 'loading', control: { kind: 'boolean' } },
+      { name: 'fullWidth', control: { kind: 'boolean' } },
       { name: 'type', control: { kind: 'select', options: ['button', 'submit', 'reset'] } },
     ],
     defaultArgs: {
       label: 'Guardar cambios',
       variant: 'primary',
-      appearance: 'filled',
       size: 'md',
-      icon: '',
-      loading: false,
       disabled: false,
+      iconOnly: false,
+      raised: false,
       rounded: false,
-      fullWidth: false,
+      appearance: 'filled',
+      icon: 'check',
       iconPosition: 'left',
       iconSize: 'md',
       iconFilled: false,
+      loading: false,
+      fullWidth: false,
       type: 'button',
     },
   };
@@ -170,12 +208,14 @@ export class ButtonDemoComponent {
     const pr = this.pressTpl();
     const so = this.soloIconoTpl();
     const pu = this.popupTpl();
-    if (!pg || !va || !ap || !sz || !ic || !pr || !so || !pu) return [];
+    const ra = this.raisedTpl();
+    if (!pg || !va || !ap || !sz || !ic || !pr || !so || !pu || !ra) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Variantes', template: va, snippet: VARIANTS_SNIPPET },
       { name: 'Apariencias', template: ap, snippet: APPEARANCES_SNIPPET },
       { name: 'Tamaños', template: sz, snippet: SIZES_SNIPPET },
+      { name: 'Con sombra', template: ra, snippet: RAISED_SNIPPET, description: RAISED_DESCRIPTION },
       { name: 'Iconos y estados', template: ic, snippet: ICONS_SNIPPET },
       { name: 'Solo icono', template: so, snippet: SOLO_ICONO_SNIPPET, description: SOLO_ICONO_DESCRIPTION },
       { name: 'Al pulsar', template: pr, snippet: PRESS_SNIPPET, description: PRESS_DESCRIPTION },

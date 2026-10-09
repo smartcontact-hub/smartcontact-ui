@@ -1,0 +1,39 @@
+/*
+ * EL GLOBO DE UNA NOTA DE DECISIÓN (`sc-nota-decision`, 2026-10-09). Global porque PrimeNG pinta el tooltip en el
+ * `body`, fuera del componente. El morado de las etiquetas del DS, sólido, con su borde y una sombra suave. Un tooltip
+ * del producto es oscuro, pequeño y de una línea; este es claro, ancho y con título, para que en la revisión se distinga
+ * a la primera qué es ayuda y qué es una pregunta abierta. (Se probó como cristal translúcido; se quedó en sólido.)
+ */
+.nota-decision__globo {
+  max-width: 22rem;
+}
+
+/* La caja y la flecha llevan clase propia por el passthrough del tooltip (`pTooltipPT`): el globo no toca `.p-tooltip-*`
+ * (`audit:primeng-coupling`). La flecha es la nativa, en el color del borde. */
+.nota-decision__tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-1) var(--sc-spacing-1);
+  border: 1px solid var(--sc-label-purple-border);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-label-purple-bg);
+  box-shadow: var(--sc-shadow-dropdown);
+  /* El cuerpo, en el texto de siempre; el morado, para la etiqueta y el título. */
+  color: var(--sc-text-primary);
+  white-space: normal;
+}
+
+.nota-decision__flecha {
+  border-top-color: var(--sc-label-purple-border);
+}
+
+.nota-decision__eyebrow,
+.nota-decision__titulo {
+  color: var(--sc-label-purple-text);
+}
+
+.nota-decision__eyebrow {
+  text-transform: uppercase;
+  opacity: 0.8;
+}

@@ -45,7 +45,7 @@
     >
       <section class="sub-section" aria-labelledby="allowed-channels-title">
       <header class="sub-section__head">
-        <h2 id="allowed-channels-title" class="sub-section__title sc-text-body-semibold">{{ 'agents.form.allowed.title' | translate }}</h2>
+        <h2 id="allowed-channels-title" class="sub-section__title sc-text-body-semibold">{{ 'agents.form.section.channels' | translate }}</h2>
       </header>
       <div class="checkbox-grid">
         @for (family of allowedFamilies; track family) {
@@ -55,25 +55,38 @@
     </section>
     <sc-divider />
 
-    <sc-permission-matrix
-        [rows]="matrixRows()"
-        [columns]="matrixColumns()"
-        [checked]="matrixChecked()"
-        [rowHeader]="'agents.form.permissions.destino' | translate"
-        [ariaLabel]="'agents.form.permissions.calls_section' | translate"
-        selectableColumns
-        (cellToggle)="onMatrixToggle($event)"
-        (columnToggle)="onMatrixColumnToggle($event)"
-      />
-
-      <sc-divider />
-
-      <section class="sub-section" aria-labelledby="agentes-config-title">
+    <!-- Los permisos, en el orden de la ficha de agente (revisión de agentes, 2026-10-09): grabar, activación por grupo,
+         dispositivos, dispositivos externos y conversaciones pendientes; después la matriz. -->
+    <section class="sub-section" aria-labelledby="agentes-config-title">
         <header class="sub-section__head">
           <h2 id="agentes-config-title" class="sub-section__title sc-text-body-semibold">
-            {{ 'agents.form.permissions.config_title' | translate }}
+            {{ 'agents.form.section.permissions' | translate }}
           </h2>
         </header>
+
+        <div class="switch-field">
+          <sc-toggleswitch
+            [checked]="form().permissions.recording"
+            [ariaLabel]="'agents.form.fields.recording' | translate"
+            (checkedChange)="setPermission('recording', $event)"
+          />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.recording' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch
+            ariaDescribedBy="agentes-self-activate-hint"
+            [checked]="form().permissions.selfActivate"
+            [ariaLabel]="'agents.form.permissions.self_activate' | translate"
+            (checkedChange)="setPermission('selfActivate', $event)"
+          />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
+            <p id="agentes-self-activate-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
+          </div>
+        </div>
 
         <div class="switch-field switch-field--top">
           <sc-toggleswitch
@@ -90,24 +103,44 @@
 
         <div class="switch-field switch-field--top">
           <sc-toggleswitch
-            ariaDescribedBy="agentes-self-activate-hint"
-            [checked]="form().permissions.selfActivate"
-            [ariaLabel]="'agents.form.permissions.self_activate' | translate"
-            (checkedChange)="setPermission('selfActivate', $event)"
+            ariaDescribedBy="agentes-external-devices-hint"
+            [checked]="form().permissions.externalDevices"
+            [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
+            (checkedChange)="setPermission('externalDevices', $event)"
           />
           <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
-            <p id="agentes-self-activate-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
+            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
+            <p id="agentes-external-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="switch-field">
+          <sc-toggleswitch
+            [checked]="!!form().permissions.pendingConversations"
+            [ariaLabel]="'agents.form.permissions.pending_conversations' | translate"
+            (checkedChange)="setPermission('pendingConversations', $event)"
+          />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.pending_conversations' | translate }}</span>
           </div>
         </div>
       </section>
 
       <sc-divider />
 
-      <!-- Misma caja que lo anterior, no una tarjeta aparte: en la maqueta
-           (Figma 393:12587) todo lo de Agentes vive en UN solo bloque, con
-           divisores entre secciones. Dos tarjetas sugerían dos ámbitos
-           distintos bajo un título que solo cubría la primera. -->
+    <sc-permission-matrix
+        [rows]="matrixRows()"
+        [columns]="matrixColumns()"
+        [checked]="matrixChecked()"
+        [rowHeader]="'agents.form.permissions.destino' | translate"
+        [ariaLabel]="'agents.form.permissions.calls_section' | translate"
+        selectableColumns
+        (cellToggle)="onMatrixToggle($event)"
+        (columnToggle)="onMatrixColumnToggle($event)"
+      />
+
+      <sc-divider />
+
       <section class="sub-section" aria-labelledby="agentes-integration-title">
         <header class="sub-section__head">
           <h2 id="agentes-integration-title" class="sub-section__title sc-text-body-semibold">
@@ -127,19 +160,6 @@
             [value]="form().iframeUrl"
             (valueChange)="setIframeUrl($event)"
           />
-        </div>
-
-        <div class="switch-field switch-field--top">
-          <sc-toggleswitch
-            ariaDescribedBy="agentes-external-devices-hint"
-            [checked]="form().permissions.externalDevices"
-            [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
-            (checkedChange)="setPermission('externalDevices', $event)"
-          />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
-            <p id="agentes-external-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
-          </div>
         </div>
       </section>
     </sc-section-card>

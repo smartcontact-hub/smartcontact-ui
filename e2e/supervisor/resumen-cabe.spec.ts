@@ -21,16 +21,22 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * parten. Con la columna de verdad, en verde.
  *
  * Los idiomas se recorren por `sc-language`, el canal que escribe Configuración › Sistema (LEARNINGS #1).
+ *
+ * Cambió con DD-187 (revisión de agentes del 2026-10-09): el resumen del agente pasa a «Habilitado en grupos» con su
+ * anillo y seis filas (Atiende por, Extensión, Grabación, Salientes, Recursos y Tipo de agente), cada una con su clave y
+ * su valor; las cuentas de textos del agente, abajo, son las de esas piezas.
  */
 
 const IDIOMAS = ['es', 'en', 'fr', 'pt'] as const;
 
-/** Las fichas que más enseñan, y cuántos textos y cifras con anillo pinta cada una (lo que la red tiene que medir). */
+/** Las fichas que más enseñan, y cuántos textos y cifras con anillo pinta cada una (lo que la red tiene que medir). El
+ * agente (DD-187): el rótulo de la cifra y las doce piezas de sus seis filas; en el alta, además, lo que falta y la nota
+ * «Sin grupos» en vez del anillo; al duplicar, lo que falta. */
 const FICHAS = [
-  { ruta: 'admin/agentes/editar/7', textos: 5, cifras: 1 },
-  { ruta: 'admin/agentes/editar/12', textos: 5, cifras: 1 },
-  { ruta: 'admin/agentes/crear', textos: 7, cifras: 0 },
-  { ruta: 'admin/agentes/crear?seedFromId=7', textos: 6, cifras: 1 },
+  { ruta: 'admin/agentes/editar/7', textos: 13, cifras: 1 },
+  { ruta: 'admin/agentes/editar/12', textos: 13, cifras: 1 },
+  { ruta: 'admin/agentes/crear', textos: 15, cifras: 0 },
+  { ruta: 'admin/agentes/crear?seedFromId=7', textos: 14, cifras: 1 },
   { ruta: 'admin/usuarios/editar/1', textos: 4, cifras: 2 },
   { ruta: 'admin/usuarios/editar/3', textos: 4, cifras: 2 },
   { ruta: 'admin/usuarios/crear', textos: 5, cifras: 2 },

@@ -47,6 +47,8 @@
       @if (hintKey()) {
         <span class="section-card__hint">{{ hintKey()! | translate }}</span>
       }
+      <!-- La acción de la sección, en la esquina derecha de su cabecera: `<sc-button scSectionActions …>`. -->
+      <span class="section-card__actions"><ng-content select="[scSectionActions]" /></span>
     </header>
   }
   @if (!collapsible() || open()) {

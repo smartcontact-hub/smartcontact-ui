@@ -15,7 +15,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   4. «Caducar sesión» nace con 5 minutos.
  *   5. El tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, por agente conectado.
  *   6. Las tipificaciones se eligen por su nombre, sin cifras al lado, que se leían como niveles o como grupos. Desde
- *      DD-173 son tipificaciones (árboles con su ficha) y no categorías del repositorio de antes.
+ *      DD-173 son tipificaciones (árboles con su ficha) y no categorías del repositorio de antes; desde DD-187, el grupo
+ *      elige UNA en General › Postconversación, no varias en Recursos.
  *   7. Los nombres largos caben en sus desplegables, en la ficha y en Contact Center.
  *
  * Storage limpio por test → cada almacén vuelve a su semilla.
@@ -210,13 +211,14 @@ test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, p
   await expect(ayuda).toHaveText('2 conversaciones en cola por agente conectado.');
 });
 
-test('las tipificaciones se eligen por su nombre, sin cifras al lado', async ({ page }) => {
-  // El grupo 12 usa «Atención al cliente» y «Encuesta de calidad» (DD-173).
-  await goto(page, 'admin/grupos/editar/12?seccion=recursos');
-  await expect(page.locator('sc-multiselect:has(#group-typification)')).toContainText('2 tipificaciones');
-  await page.locator('sc-multiselect:has(#group-typification) .p-multiselect').click();
-  const opciones = await page.locator('.p-multiselect-overlay .p-multiselect-option').allInnerTexts();
-  expect(opciones.map((o) => o.trim())).toContain('Atención al cliente');
+test('la tipificación se elige por su nombre, sin cifras al lado', async ({ page }) => {
+  // El grupo 12 tipifica con «Atención al cliente»: una, en General › Postconversación (DD-187; hasta entonces, un
+  // multiselect de Recursos con «Atención al cliente» y «Encuesta de calidad», DD-173).
+  await goto(page, 'admin/grupos/editar/12');
+  const tipificacion = page.locator('#group-typification');
+  await expect(tipificacion).toHaveText('Atención al cliente');
+  const opciones = await opcionesDe(page, tipificacion);
+  expect(opciones).toContain('Atención al cliente');
   expect(opciones.filter((o) => /\(\d+\)\s*$/.test(o))).toEqual([]);
 });
 

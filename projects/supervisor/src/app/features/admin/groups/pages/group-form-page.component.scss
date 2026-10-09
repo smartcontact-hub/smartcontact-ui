@@ -11,8 +11,7 @@
  * de Contact Center y de las otras fichas), y `.grid`, `.field`, `.sub-section`, `.switch-field` y
  * `.checkbox-*` en `src/styles/_forms.scss`. No los re-declares aquí: una regla encapsulada de
  * componente le gana siempre a la global, y el molde se desviaría en una sola página sin avisar.
- * Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`. El aviso de «abierto en otra
- * pestaña» (`.ficha-conflict`) también es de todas las fichas: vive en `_page.scss`. */
+ * Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`. */
 
 /* Una línea de contexto al principio de un canal («Web Chat · WhatsApp», lo que pasa con Email): no es una parte,
  * así que va antes del primer slot, separada de él como dos grupos (DD-157). */
@@ -120,25 +119,15 @@
 }
 
 /* Un archivo guardado y, debajo, la zona para subir otro (`sc-fileupload`). */
+/* El archivo y su botón, en una línea: el nombre (o «Música por defecto») y «Subir archivo» detrás, sin caja de soltar
+ * (`mode="basic"`, revisión del 2026-10-09). Si no caben, el botón baja. */
 .upload-field {
   display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-5);
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
 }
 
-/* Un control con su botón de añadir a la derecha: el «Añadir» de los dominios y los «+» de Recursos, que son el botón de
- * solo icono redondo y con borde (DD-167). Alineados arriba, para que la ayuda bajo el control no descentre el botón
- * (`ayudas-campos`), y con el hueco de la casa. El control se estira y puede encoger en media columna. */
-.control-add {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--sc-spacing-0-5);
-}
-
-.control-add > :is(sc-inputtext, sc-select, sc-multiselect) {
-  flex: 1 1 auto;
-  min-inline-size: 0;
-}
 
 .domain-chips {
   display: flex;
@@ -150,4 +139,24 @@
 /* La capacidad compone tipo y cifra: su fila se separa de los tiempos, conservando la alineación con la música. */
 .queue-fields {
   row-gap: var(--sc-spacing-2);
+}
+
+/* La tipificación del grupo, en General: cada ajuste en su línea, a 14 (AGENTS «UX de pantalla» 9). Clasificar y con
+ * cuál comparten fila, como en la propuesta de producto; la tipificación, del ancho de una columna de campos. */
+.wrapup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.wrapup__classify {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-1);
+}
+
+.wrapup__select {
+  flex: 0 1 var(--sc-spacing-25);
+  min-width: 0;
 }

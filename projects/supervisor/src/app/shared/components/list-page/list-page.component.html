@@ -2,7 +2,11 @@
   <div class="page__inner page__inner--list">
     <!-- El título vive en el cuerpo: la miga de arriba dice DÓNDE estás y esta línea dice QUÉ miras
          (DD-33). Uno por documento. -->
-    <h1 class="page__heading sc-text-title-semibold">{{ heading() }}</h1>
+    <!-- Junto al título, lo que la página quiera decir de sí misma (una nota de decisión, `scListHeadingNote`). -->
+    <div class="page__heading-row">
+      <h1 class="page__heading sc-text-title-semibold">{{ heading() }}</h1>
+      <ng-content select="[scListHeadingNote]" />
+    </div>
 
     <ng-content select="[scListBeforeToolbar]" />
 
@@ -160,7 +164,7 @@
     @if (isEmpty()) {
       <ng-content select="[scListEmpty]" />
     } @else {
-      <div class="table-card" [class.table-card--seleccion]="selectedIds().size > 0">
+      <div #tarjeta class="table-card" scLlegaAlPie [class.table-card--seleccion]="selectedIds().size > 0">
         <!-- Ancho ajustable solo en las listas que eligen columnas (el orden, en el globo de columnas, DD-162): la tabla ajustable nativa
              recorta cada celda (`overflow: hidden`), y en Etiquetas eso dejaba fuera de sitio el panel que se
              ancla dentro de la celda (medido: `admin-datatable-pilot`, el panel 70px por encima de su fila). -->

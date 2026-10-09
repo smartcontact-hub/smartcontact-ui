@@ -22,9 +22,6 @@
     <!-- La identidad, como en las fichas: el nombre de la agenda, o «Nueva agenda» mientras no lo tiene. -->
     <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.agendas.create_title' | translate) }}</h1>
 
-    @if (conflictWarning()) {
-      <sc-message class="agenda__conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
-    }
 
     <sc-section-card titleKey="repositories.agendas.section_general" surface="card" icon="contacts">
       <section class="sub-section">
