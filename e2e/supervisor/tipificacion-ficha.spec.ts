@@ -3,19 +3,17 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * LA FICHA DE UNA TIPIFICACIÓN, SIN SALTOS (DD-174).
+ * LA FICHA DE UNA TIPIFICACIÓN: EL ÁRBOL ENTERO A LA VISTA (DD-187, que enmienda DD-174).
  *
- * La revisión del 2026-10-05: el molde de las fichas con su índice, los niveles como columnas y ningún aviso que entre
- * empujando lo de debajo. Lo que fija:
- *   1. el nombre encima del índice (General, Categorías, Grupos), como las demás fichas (DD-170);
- *   2. elegir una opción enseña sus hijas en la columna de al lado;
- *   3. un nombre repetido y una rama a medias se dicen en sus líneas reservadas: ni las columnas ni la tarjeta se
- *      mueven, y Guardar dice lo que falta;
- *   4. las tres columnas existen siempre: quitar el último nivel pregunta, deja su columna fantasma y no cambia
- *      ningún ancho;
- *   5. renombrar se hace en la línea de la columna (Enter guarda);
- *   6. un choque en Grupos se dice encima de la tabla, sin alargar ninguna fila, y no deja guardar;
- *   7. un alta de punta a punta: nombre, opciones y Crear, y sale en el listado.
+ * La revisión de agentes y tipificaciones del 2026-10-09: una tipificación es nombre, descripción y árbol, y el árbol se
+ * ve entero en tres columnas. Lo que fija:
+ *   1. el nombre encima del índice, con General y Categorías, y debajo cuántos niveles y en cuántos grupos;
+ *   2. dos formas de añadir que no se confunden: «Añadir categoría», en la esquina de la sección, pone la primera del
+ *      primer nivel; la flecha de una fila pone la primera de la columna de al lado, debajo de esa opción;
+ *   3. un nombre repetido entre hermanas se dice bajo el árbol y no deja guardar; completo, no hay línea;
+ *   4. el teléfono de la vista previa no cambia de tamaño al elegir;
+ *   5. eliminarla dice qué grupos la usan, y al eliminarla esos grupos dejan de tipificar;
+ *   6. un alta de punta a punta: nombre, opciones y Crear, y sale en el listado.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -24,120 +22,101 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-const columna = (page: Page, i: number) => page.locator('sc-tipificacion-niveles section.nivel').nth(i);
-const linea = (page: Page, i: number) => page.locator(`#tip-linea-${i}`);
 const barra = (page: Page) => page.locator('sc-top-bar');
+const campos = (page: Page) => page.locator('sc-tipificacion-niveles .opcion input');
+const primerNivel = (page: Page) => page.locator('sc-tipificacion-niveles .arbol__rama > .rama > .opcion input');
 
-/** Dónde está cada pieza que no debe moverse: x, y, ancho y alto, redondeados. */
-const cajas = (page: Page, selector: string) =>
-  page.evaluate(
-    (s) =>
-      [...document.querySelectorAll(s)].map((e) => {
-        const r = e.getBoundingClientRect();
-        return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)];
-      }),
-    selector,
-  );
-const foto = async (page: Page) => ({
-  columnas: await cajas(page, 'sc-tipificacion-niveles .niveles > *'),
-  estado: await cajas(page, '.niveles__estado'),
-  tarjeta: await cajas(page, '.page__main sc-section-card'),
-});
-
-test('el molde de las fichas: el nombre encima del índice, con sus tres secciones', async ({ page }) => {
+test('el molde de las fichas: el nombre encima del índice, con sus dos secciones', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/1');
   const carril = page.locator('.page__rail');
   await expect(carril.getByRole('heading', { level: 1 })).toHaveText('Atención al cliente');
-  await expect(carril).toContainText('Entrantes, 3 niveles');
+  await expect(carril).toContainText('3 niveles, en 4 grupos');
   await expect(carril.locator('sc-form-section-nav')).toContainText('General');
   await expect(carril.locator('sc-form-section-nav')).toContainText('Categorías');
-  await expect(carril.locator('sc-form-section-nav')).toContainText('Grupos');
 });
 
-test('elegir una opción enseña sus hijas en la columna de al lado', async ({ page }) => {
+test('«Añadir categoría» pone la primera del primer nivel; la flecha de una fila, la primera debajo de ella', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/1?seccion=categorias');
-  await expect(columna(page, 1).getByRole('option')).toHaveText([/Facturación/, /Producto/]);
-  await columna(page, 0).getByRole('option', { name: 'Reclamación' }).click();
-  await expect(columna(page, 1).getByRole('option')).toHaveText([/Servicio/, /Facturación/]);
-  await expect(columna(page, 2).getByRole('option')).toHaveText(['Retraso', 'Avería', 'Atención recibida']);
+  await expect(primerNivel(page)).toHaveCount(3);
+
+  await page.locator('#tip-section-categorias .section-card__actions').getByRole('button', { name: 'Añadir categoría' }).click();
+  await expect(primerNivel(page)).toHaveCount(4);
+  await expect(primerNivel(page).first()).toBeFocused();
+  await page.keyboard.type('Ventas');
+  await expect(primerNivel(page).first()).toHaveValue('Ventas');
+
+  await page.getByRole('button', { name: 'Añadir subcategoría a «Consulta»' }).click();
+  const consulta = page.locator('sc-tipificacion-niveles .arbol__rama').filter({ has: page.getByRole('textbox', { name: 'Primer nivel: Consulta' }) });
+  // Solo sus hijas directas (el segundo nivel), no las nietas.
+  const segundo = consulta.locator(':scope > .rama > .rama__hijas > .rama > .opcion input');
+  await expect(segundo.first()).toBeFocused();
+  await page.keyboard.type('Cobros');
+  await expect(segundo).toHaveCount(3);
+  await expect(segundo.first()).toHaveValue('Cobros');
 });
 
-test('el repetido y la rama a medias se dicen en su línea: nada se mueve y Guardar dice lo que falta', async ({ page }) => {
+test('un nombre repetido entre hermanas se dice bajo el árbol y no deja guardar; completo, no hay línea', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/1?seccion=categorias');
-  await expect(page.locator('.niveles__estado')).toContainText('Completa');
-  const antes = await foto(page);
+  await expect(page.locator('.niveles__estado')).toHaveCount(0);
 
-  await linea(page, 0).fill('gestión');
-  await expect(columna(page, 0).locator('.nivel__mensaje')).toHaveText('Ya hay «Gestión» en este nivel');
-  expect(await foto(page)).toEqual(antes);
-
-  await linea(page, 0).fill('Ventas');
-  await linea(page, 0).press('Enter');
-  await expect(page.locator('.niveles__estado')).toContainText('Faltan opciones debajo de: Ventas');
-  await expect(columna(page, 1).locator('.nivel__mensaje')).toHaveText('«Ventas» necesita opciones aquí');
-  expect(await foto(page)).toEqual(antes);
-  await expect(barra(page)).toContainText('Falta: opciones en todas las ramas');
+  await primerNivel(page).nth(2).fill('consulta');
+  await expect(page.locator('.niveles__estado')).toHaveText(/Hay opciones con el mismo nombre en una misma lista/);
+  await expect(barra(page)).toContainText('Falta: un nombre distinto en cada opción');
   await expect(barra(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
+
+  await primerNivel(page).nth(2).fill('Gestión');
+  await expect(page.locator('.niveles__estado')).toHaveCount(0);
 });
 
-test('quitar el último nivel pregunta, deja su columna fantasma y no cambia ningún ancho', async ({ page }) => {
+test('el teléfono de la vista previa no cambia de tamaño al elegir', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/1?seccion=categorias');
-  await expect(columna(page, 2).getByRole('option')).toHaveCount(3);
-  const antes = await foto(page);
-
-  await page.getByRole('button', { name: 'Quitar el tercer nivel' }).click();
-  const dialogo = page.getByRole('dialog', { name: '¿Quitar el tercer nivel?' });
-  await expect(dialogo).toContainText('Se eliminan sus 20 opciones.');
-  await dialogo.getByRole('button', { name: 'Quitar nivel' }).click();
-  await expect(page.getByRole('button', { name: /Añadir tercer nivel/ })).toBeVisible();
-  const despues = await foto(page);
-  expect(despues.columnas.map(([x, , ancho]) => [x, ancho])).toEqual(antes.columnas.map(([x, , ancho]) => [x, ancho]));
-  expect(despues.tarjeta).toEqual(antes.tarjeta);
-  await expect(page.locator('.page__rail')).toContainText('Entrantes, 2 niveles');
+  const telefono = page.locator('sc-tipificacion-vista .tel');
+  const antes = (await telefono.boundingBox())!;
+  await page.locator('sc-tipificacion-vista .tel__nivel').first().click();
+  await page.getByRole('option', { name: 'Consulta' }).click();
+  await expect(page.locator('sc-tipificacion-vista .tel__nivel').first()).toContainText('Consulta');
+  const despues = (await telefono.boundingBox())!;
+  expect([despues.width, despues.height]).toEqual([antes.width, antes.height]);
 });
 
-test('renombrar se hace en la línea de la columna: Enter guarda el nombre nuevo', async ({ page }) => {
-  await goto(page, 'admin/tipificaciones/editar/1?seccion=categorias');
-  await columna(page, 0).getByRole('option', { name: 'Reclamación' }).click();
-  await columna(page, 0).getByRole('button', { name: 'Renombrar Reclamación' }).click();
-  await expect(linea(page, 0)).toHaveValue('Reclamación');
-  await linea(page, 0).fill('Reclamaciones');
-  await linea(page, 0).press('Enter');
-  await expect(columna(page, 0).getByRole('option')).toHaveText([/Consulta/, /Reclamaciones/, /Gestión/]);
-  await expect(linea(page, 0)).toHaveValue('');
-});
-
-test('un choque en Grupos se dice encima de la tabla, sin alargar ninguna fila, y no deja guardar', async ({ page }) => {
-  await goto(page, 'admin/tipificaciones/editar/5?seccion=grupos');
-  const filas = page.locator('sc-tipificacion-grupos tbody > tr');
-  await expect(filas).toHaveCount(1);
-  const alto = (await filas.first().boundingBox())!.height;
-
-  await page.locator('#tip-add-group').click();
-  await page.getByRole('option', { name: 'Online Support' }).click();
-  await expect(page.locator('.assign__estado')).toHaveText(
-    'Online Support: Choca con «Atención al cliente» en las entrantes por Teléfono, Chat y Email',
+test('eliminarla dice qué grupos la usan, y esos grupos dejan de tipificar', async ({ page }) => {
+  await goto(page, 'admin/tipificaciones/editar/1');
+  await page.locator('.page__rail').getByRole('button', { name: 'Eliminar' }).click();
+  const dialogo = page.getByRole('dialog');
+  await expect(dialogo).toContainText(
+    'La usan 4 grupos: ACD demo cuscare, Grupo pedidos, Online Support y Reclamaciones. Al eliminarla, dejan de tipificar hasta que elijas otra.',
   );
-  await expect(filas).toHaveCount(2);
-  for (const fila of await filas.all()) expect((await fila.boundingBox())!.height).toBe(alto);
-  await expect(barra(page)).toContainText('Falta: grupos sin choques');
-  await expect(barra(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
+  await dialogo.getByRole('textbox').fill('Atención al cliente');
+  await dialogo.getByRole('button', { name: 'Eliminar' }).click();
+  await expect(page).toHaveURL(/\/admin\/tipificaciones$/);
+
+  await goto(page, 'admin/grupos/editar/2?seccion=general');
+  await expect(page.getByRole('switch', { name: /Tipificar/ })).not.toBeChecked();
 });
 
 test('un alta de punta a punta: nombre, opciones y Crear, y sale en el listado', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/crear');
-  await expect(barra(page)).toContainText('Falta: nombre, opciones en todas las ramas');
+  await expect(barra(page)).toContainText('Falta: nombre, al menos una opción');
   await page.locator('#tip-name').fill('Seguimiento de pedido');
   await page.locator('sc-form-section-nav').getByText('Categorías').click();
-  for (const opcion of ['Entregado', 'En reparto', 'Retrasado']) {
-    await linea(page, 0).fill(opcion);
-    await linea(page, 0).press('Enter');
+  await page.getByRole('button', { name: 'Añadir categoría' }).click();
+  // Enter abre la siguiente justo detrás, con el foco: se escribe en cuanto lo tiene.
+  for (const [i, opcion] of ['Entregado', 'En reparto', 'Retrasado'].entries()) {
+    if (i > 0) await page.keyboard.press('Enter');
+    await expect(campos(page).nth(i)).toBeFocused();
+    await page.keyboard.type(opcion);
   }
-  await expect(columna(page, 0).getByRole('option')).toHaveText(['Entregado', 'En reparto', 'Retrasado']);
-  await expect(page.locator('.niveles__estado')).toContainText('Completa: 3 opciones en un nivel.');
+  await expect(campos(page)).toHaveCount(3);
+  await expect.poll(() => campos(page).evaluateAll((es) => es.map((e) => (e as HTMLInputElement).value))).toEqual([
+    'Entregado',
+    'En reparto',
+    'Retrasado',
+  ]);
 
   await barra(page).getByRole('button', { name: 'Crear tipificación' }).click();
   await expect(page).toHaveURL(/\/admin\/tipificaciones\/editar\/\d+/);
   await goto(page, 'admin/tipificaciones');
-  await expect(page.getByTestId('tipificaciones-table').locator('tbody > tr').filter({ hasText: 'Seguimiento de pedido' })).toContainText('1 nivel');
+  await expect(
+    page.getByTestId('tipificaciones-table').locator('tbody > tr').filter({ hasText: 'Seguimiento de pedido' }),
+  ).toContainText('1 nivel');
 });

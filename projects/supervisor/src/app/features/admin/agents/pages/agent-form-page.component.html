@@ -354,7 +354,8 @@
     <!-- Los canales, como en el grupo: por cuáles puede atender. Lo que no se marca aquí no se marca en sus grupos
          (DD-150; hasta el 2026-10-09 vivía en Permisos como «Canales permitidos»). -->
     <sc-subsection titleId="agent-channels-title" titleKey="agents.form.section.channels" hintKey="agents.form.section.channels_hint">
-      <div class="checkbox-grid checkbox-grid--3">
+      <!-- Las casillas, como un grupo con el nombre del título: el lector dice «Canales» antes de cada una. -->
+      <div class="checkbox-grid checkbox-grid--3" role="group" aria-labelledby="agent-channels-title">
         @for (family of allowedFamilies; track family) {
           <sc-checkbox [state]="form().allowedChannels.includes(family) ? 'all' : 'none'" (cycle)="setAllowedChannel(family, $event)">{{ allowedFamilyLabels[family] | translate }}</sc-checkbox>
         }

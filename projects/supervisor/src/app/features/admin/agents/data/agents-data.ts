@@ -491,7 +491,7 @@ const BASE_AGENTS: readonly Agent[] = [
     name: 'Robert De Niro',
     extension: '109',
     extensionType: 'phone',
-    phone: '634567812',
+    phone: '600112233',
     agentType: 'normal',
     status: 'inactive',
     presenceStatus: 'desconectado',
