@@ -82,11 +82,11 @@
     <!-- El «+» de añadir, a la talla de su campo (DD-187): mediano junto a uno mediano, pequeño junto a uno pequeño. -->
     <div class="col">
       <div class="row" style="gap: var(--sc-spacing-0-5)">
-        <sc-select placeholder="Agendas" [options]="[]" style="inline-size: 16rem" />
+        <sc-select placeholder="Agendas" ariaLabel="Agendas" [options]="[]" style="inline-size: 16rem" />
         <sc-button icon="add" variant="secondary" ariaLabel="Nueva agenda" data-testid="sc-btn-crear" />
       </div>
       <div class="row" style="gap: var(--sc-spacing-0-5)">
-        <sc-select size="sm" placeholder="Agendas" [options]="[]" style="inline-size: 16rem" />
+        <sc-select size="sm" placeholder="Agendas" ariaLabel="Agendas" [options]="[]" style="inline-size: 16rem" />
         <sc-button icon="add" size="sm" variant="secondary" ariaLabel="Nueva agenda" data-testid="sc-btn-crear-sm" />
       </div>
     </div>

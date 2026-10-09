@@ -58,10 +58,10 @@ const SOLO_ICONO_SNIPPET = `<!-- Sin rótulo, el nombre va en "ariaLabel": es lo
 
 <!-- El «+» de añadir, a la derecha de su campo o en la fila que crece: el secundario relleno del Kit, A LA TALLA DE SU
      CAMPO (DD-187, que corrige DD-167): rima con él, mediano junto a uno mediano y pequeño junto a uno pequeño. -->
-<sc-select placeholder="Agendas" [options]="agendas" />
+<sc-select placeholder="Agendas" ariaLabel="Agendas" [options]="agendas" />
 <sc-button icon="add" variant="secondary" ariaLabel="Nueva agenda" />
 
-<sc-select size="sm" placeholder="Agendas" [options]="agendas" />
+<sc-select size="sm" placeholder="Agendas" ariaLabel="Agendas" [options]="agendas" />
 <sc-button icon="add" size="sm" variant="secondary" ariaLabel="Nueva agenda" />`;
 
 const SOLO_ICONO_DESCRIPTION =
