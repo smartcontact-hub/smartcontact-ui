@@ -180,7 +180,12 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    lead o descripción solo donde aporta algo no obvio (un catálogo, una regla no evidente). Si al
    quitar el texto no se pierde nada, quítalo.
 4. **Iconografía consistente.** Una sola librería, siempre vía `<sc-icon>` (Material Symbols).
-   Nunca emojis en la interfaz ni un segundo juego de iconos.
+   Nunca emojis en la interfaz ni un segundo juego de iconos. **Un icono que acompaña a un texto
+   sigue a su estilo** (DD-130 §6, DD-189): su tamaño es el del texto (`size="inherit"` con el
+   `font-size` del texto, o su token), su peso el del texto (`weight` 600 junto a semibold) y el eje
+   óptico a su tamaño (`opticalSize` 20, el mínimo, por debajo de 20 px), que engorda el trazo en
+   pequeño hasta igualarlo con la letra. Un icono suelto o de control (chevron, cerrar) no sigue a
+   ningún texto y se queda en su talla.
 5. **Densidad y jerarquía.** Layout compacto. Acciones secundarias en un kebab/overflow, métricas
    alineadas, chips a icono cuando el color ya comunica el estado. No repitas en cada vista los
    KPIs que ya están en el dashboard, y fuera las tarjetas sin dato ni acción.

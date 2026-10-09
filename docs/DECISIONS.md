@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El icono que acompaña a un texto sigue a su estilo: su tamaño, su peso y el eje óptico a su tamaño (20, el mínimo, en pequeño) · en la cabecera de `sc-section-card`, 16 en sección y 20 en página | DD-189 |
 > | Lo que se adopta de Primer: el título de página a 20 (`Title`) y el de sección a 16 (`Subtitle`), dos text styles nuevos del Kit · el botón principal de la barra en md · sin 700 fuera del Kit · la carga por tiempos · el texto principal a slate-900 en el plan de color · la escala se queda, con una medida por relación · el toast solo para eventos del sistema | DD-188 |
 > | Repositorios en tarjetas por grupo: un tono de etiqueta por grupo (azul, morado, teal y naranja) en su título, el icono, la cifra, el borde al pasar y al marcar y el filtro · un icono por concepto · pulsar una tarjeta abre a la derecha un panel acoplado con lo que hay dentro y «Abrir repositorio» (con velo solo si taparía tarjetas) · filtro por grupo con transición y recientes en el buscador · cabe sin desplazar a 1440 × 800 · `sc-drawer` `docked`, `sc-avatar` `labelColor` y `sc-tag` `bordered` (sustituye DD-78 en el hub, enmienda DD-165 §1) | DD-179 |
 > | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-177 |
@@ -131,6 +132,33 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-189 · 2026-10-09 — El icono que acompaña a un texto sigue a su estilo: tamaño, peso y eje óptico
+
+**Contexto** · Al subir el título de página a 20 (DD-188), el icono de la cabecera de `sc-section-card` se quedó en 14,
+corto y fino a su lado (visto en la revisión previa de `config/aed/agentes`). La regla de producto es que un icono siga
+al estilo de texto que acompaña, y que el eje óptico de Material Symbols sirva para ello. DD-130 §6 ya fijaba el peso
+(600 junto a semibold); faltaban el tamaño y el eje óptico.
+
+**Decisión** · Un icono junto a un texto toma el tamaño del texto, su peso y el eje óptico a su tamaño (`opsz` 20, el
+mínimo de la fuente, por debajo de 20 px). En `sc-section-card`, el icono de la cabecera mide `Subtitle` (16) en una
+sección y `Title` (20) en la caja que titula la página, en 600 y con `opsz` 20, por `--section-card-icon-size`; lo que
+cuelga en la piel blanca sale de ese tamaño (sangría − hueco − icono) para que el título siga en la vertical del
+contenido. El chevron de la plegable no acompaña a un texto y sigue en 14. Escrito en «UX de pantalla» 4.
+
+**Razón** · Construidas y miradas junto a los dos títulos: 14 (hoy), el tamaño del texto con `opsz` 20, 24 y 40, y el
+alto de línea. Con el tamaño del texto y `opsz` 20 el trazo iguala a Inter semibold; con 40 adelgaza, y al alto de línea
+(28 y 24) el icono domina la cabecera.
+
+**Descartadas** ·
+- **Subir el icono a 18 y dejar el eje óptico por defecto**: arregla el tamaño pero no el trazo, que sigue más fino que
+  la letra.
+- **El icono al alto de línea del título**: demasiado grande, compite con el título.
+
+**Consecuencias** · Ficha 40 de `figma-pendiente`: el icono de la cabecera del maestro `Section`, a 16 (20 en la
+variante de página) y en 600. La regla vale para las pantallas: un icono junto a un texto de otro estilo se ajusta igual.
 
 ---
 

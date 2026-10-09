@@ -71,6 +71,10 @@
 - **La barra**: los botones de `#topbarActions` (32 en 21 pantallas) de sm a md. **Sin 700** fuera del Kit (35 usos).
 - **Decisiones** en DD-188: el texto principal a slate-900 en el plan de color; la escala se queda y se pide una medida
   por relación; el toast solo para eventos del sistema; Guardar deshabilitado y las acciones arriba se quedan.
+- **El icono que acompaña a un texto sigue a su estilo** (DD-189, «UX de pantalla» 4): tamaño y peso del texto y eje
+  óptico a 20. En `sc-section-card`, 16 en sección y 20 en página; lo que cuelga en la piel blanca sale de su tamaño.
+- **Página de comparación** (artefacto «Antes y después del Supervisor»): el antes es la app del 2026-10-09 antes de
+  empezar; el después, el estado acumulado. Se recaptura solo el después (`capturar` con `sites` = el local).
 
 **Trampas.**
 - **El título de página tiene dos familias** (`.page__heading` sobre el lienzo y `sc-section-card` con

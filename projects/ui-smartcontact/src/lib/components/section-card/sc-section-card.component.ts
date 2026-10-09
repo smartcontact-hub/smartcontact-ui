@@ -89,9 +89,9 @@ export class ScSectionCardComponent {
   protected readonly chevronDownIcon = 'expand_more';
   protected readonly chevronRightIcon = 'chevron_right';
   /**
-   * 14, no 16. Los DOS nodos de Figma que definen esta caja llevan el icono de la cabecera a
-   * 14×14: el maestro `Section` del DS (691:23976) y el `Block` de la maqueta (393:12589).
-   * `SC_ICON_SIZE_DEFAULT` es justo ese 14, el tamaño por defecto del Kit.
+   * El chevron de la variante plegable: 14, el tamaño por defecto del Kit (`SC_ICON_SIZE_DEFAULT`).
+   * No acompaña a un texto, así que no sigue al título. El icono que SÍ lo acompaña toma su tamaño,
+   * su peso y el eje óptico a su tamaño desde el SCSS (`--section-card-icon-size`, DD-189).
    */
   protected readonly headIconSize = SC_ICON_SIZE_DEFAULT;
 
