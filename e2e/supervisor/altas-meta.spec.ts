@@ -23,6 +23,9 @@ import {
  * error de formato (un email mal escrito) se dice en su campo; mientras lo haya, el resumen no dice «Listo». Al
  * editar, nunca «Listo».
  *
+ * El agente dice más cosas desde DD-187: le faltan nombre, email, extensión y un grupo (el email y el grupo pasan a ser
+ * obligatorios con la revisión de agentes del 2026-10-09).
+ *
  * Storage limpio por test → cada store vuelve a su seed.
  */
 
@@ -70,20 +73,29 @@ test('grupo · con un nombre repetido no dice «Listo»: el error va en su campo
   await expect(estado(page)).not.toHaveText(/Listo/);
 });
 
-test('agente · dice que faltan nombre y extensión y, con los dos, «Listo para crear»', async ({ page }) => {
+test('agente · dice que faltan nombre, email, extensión y un grupo y, con todo, «Listo para crear»', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
   await expect(estado(page)).toHaveCount(1);
-  await expect(estado(page)).toHaveText(dice('Falta: nombre, extensión'));
+  await expect(estado(page)).toHaveText(dice('Falta: nombre, email, extensión, un grupo'));
   await expect(boton(page, 'Crear agente')).toBeDisabled();
 
   await page.locator('#agent-name').fill(`E2E Meta ${Date.now()}`);
-  await expect(estado(page)).toHaveText(dice('Falta: extensión'));
+  await expect(estado(page)).toHaveText(dice('Falta: email, extensión, un grupo'));
+
+  await page.locator('#agent-email').fill('e2e.meta@smartcontact.test');
+  await expect(estado(page)).toHaveText(dice('Falta: extensión, un grupo'));
 
   await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#agent-ext') }), /./);
+  await expect(estado(page)).toHaveText(dice('Falta: un grupo'));
+
+  // El primero de su tabla de grupos: con Teléfono, sus salientes salen solas por él (DD-187).
+  await irASeccion(page, 'Grupos');
+  await page.locator('sc-group-assignment-table tbody tr').first().getByRole('checkbox', { name: /^Asignado —/ }).click();
   await expect(estado(page)).toHaveText(dice('Listo para crear'));
   await expect(boton(page, 'Crear agente')).toBeEnabled();
 
   // Un email mal escrito apaga el botón: el resumen deja de decir «Listo», y el motivo va en el campo.
+  await irASeccion(page, 'General');
   await page.locator('#agent-email').fill('sin-arroba');
   await expect(boton(page, 'Crear agente')).toBeDisabled();
   await expect(estado(page)).not.toHaveText(/Listo/);

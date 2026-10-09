@@ -165,7 +165,8 @@ test('acoplado no tapa ninguna tarjeta y va sin velo; si las taparía, lleva vel
 test('todo a la vista: a 1440 × 800 el hub no desplaza', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 800 });
   await goto(page, 'admin/repositorios');
-  await expect(page.locator('.repo-card')).toHaveCount(12);
+  // 13 desde DD-187: se suma Equipos.
+  await expect(page.locator('.repo-card')).toHaveCount(13);
   const sobra = await page.locator('.hub').evaluate((el) => el.scrollHeight - el.clientHeight);
   expect(sobra).toBe(0);
 });

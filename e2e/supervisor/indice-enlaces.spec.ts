@@ -49,12 +49,12 @@ for (const { pantalla, ruta, hrefs } of [
   {
     pantalla: 'ficha de agente',
     ruta: 'admin/agentes/editar/1',
+    // Las cuatro de la ficha de grupo (DD-187).
     hrefs: [
       '/admin/agentes/editar/1',
-      '/admin/agentes/editar/1?seccion=grupos',
-      '/admin/agentes/editar/1?seccion=permisos',
+      '/admin/agentes/editar/1?seccion=configuracion',
       '/admin/agentes/editar/1?seccion=recursos',
-      '/admin/agentes/editar/1?seccion=avanzado',
+      '/admin/agentes/editar/1?seccion=grupos',
     ],
   },
   {
@@ -154,8 +154,8 @@ test('alta · cambiar de sección no deja rastro: Atrás del navegador sale del 
   await page.getByRole('button', { name: 'Nuevo agente', exact: true }).click();
   await expect(page).toHaveURL(/\/admin\/agentes\/crear$/);
 
-  await irASeccion(page, 'Permisos');
-  await irASeccion(page, 'Avanzado');
+  await irASeccion(page, 'Configuración');
+  await irASeccion(page, 'Recursos');
   expect(seccion(page)).toBeNull();
 
   // Sin cambios que guardar, Atrás sale sin preguntar: si cada sección dejara su entrada, volvería a la anterior.

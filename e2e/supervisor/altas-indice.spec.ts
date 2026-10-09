@@ -21,7 +21,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *      ninguna marca. Qué secciones pueden llevar ✓, y la puerta del teléfono saliente: `altas-obligatorio` (DD-158).
  *   5. Cambiar de sección en el alta no toca la dirección ni el historial: Atrás del navegador sale del alta. La
  *      primera sección no lleva «Atrás», y la última no lleva «Siguiente».
- *   6. Agente y usuario: las secciones, en cualquier orden.
+ *   6. Agente y usuario: las secciones, en cualquier orden (el agente, las cuatro de la ficha de grupo desde DD-187).
  *   7. Crear desde una sección lleva a la edición en esa sección.
  *   8. Al editar, ni ✓ ni «Atrás / Siguiente».
  *   9. El aire: 28 de la sección a «Atrás / Siguiente», el de entre grupos (7 · 14 · 28).
@@ -44,6 +44,14 @@ const actual = (page: Page) => page.locator('sc-form-section-nav .form-nav__item
 const siguiente = (page: Page) => page.getByRole('button', { name: 'Siguiente', exact: true });
 const atras = (page: Page) => page.getByRole('button', { name: 'Atrás', exact: true });
 const titulo = (page: Page, nombre: string) => page.getByRole('heading', { level: 2, name: nombre, exact: true });
+
+
+/** Lo obligatorio de General en el alta de un agente (DD-187): nombre, email y extensión. */
+const rellenarGeneral = async (page: Page): Promise<void> => {
+  await page.locator('#agent-name').fill(`E2E Índice ${Date.now()}`);
+  await page.locator('#agent-email').fill(`e2e.indice.${Date.now()}@example.com`);
+  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#agent-ext') }), /./);
+};
 
 test('grupo · el alta tiene el índice de la edición, con General a la vista, y ningún Stepper', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
@@ -114,20 +122,19 @@ test('grupo · la sección que se deja completa lleva ✓ en el índice, su enla
   await expect(fila(page, 'Distribución y colas').locator('.form-nav__done')).toHaveCount(0);
 });
 
-test('agente · Identidad que se deja sin lo obligatorio lleva el punto rojo; al completarla, ✓', async ({ page }) => {
+test('agente · General que se deja sin lo obligatorio lleva el punto rojo; al completarla, ✓', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
   // Recién abierta no acusa: lo dice el resumen (DD-136).
-  await expect(fila(page, 'Identidad')).not.toHaveAccessibleName(/obligatorios/);
+  await expect(fila(page, 'General')).not.toHaveAccessibleName(/obligatorios/);
   await siguiente(page).click();
-  await expect(fila(page, 'Identidad')).toHaveAccessibleName(/Identidad.*campos obligatorios sin rellenar/);
-  await expect(fila(page, 'Identidad').locator('.form-nav__dot')).toBeVisible();
+  await expect(fila(page, 'General')).toHaveAccessibleName(/General.*campos obligatorios sin rellenar/);
+  await expect(fila(page, 'General').locator('.form-nav__dot')).toBeVisible();
 
-  await irASeccion(page, 'Identidad');
-  await page.locator('#agent-name').fill(`E2E Índice ${Date.now()}`);
-  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#agent-ext') }), /./);
+  await irASeccion(page, 'General');
+  await rellenarGeneral(page);
   await siguiente(page).click();
-  await expect(fila(page, 'Identidad')).toHaveAccessibleName(/Identidad.*Esta sección está completa/);
-  await expect(fila(page, 'Identidad').locator('.form-nav__dot')).toHaveCount(0);
+  await expect(fila(page, 'General')).toHaveAccessibleName(/General.*Esta sección está completa/);
+  await expect(fila(page, 'General').locator('.form-nav__dot')).toHaveCount(0);
 });
 
 test('grupo · cambiar de sección no toca la dirección ni el historial; la primera no lleva «Atrás», la última no lleva «Siguiente»', async ({
@@ -153,11 +160,12 @@ test('grupo · cambiar de sección no toca la dirección ni el historial; la pri
   await expect(atras(page)).toBeVisible();
 });
 
-test('agente · las secciones van en cualquier orden: sin nombre se llega a Permisos', async ({ page }) => {
+test('agente · las secciones van en cualquier orden: sin nombre se llega a Configuración', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
-  await expect(filas(page)).toHaveText([/Identidad/, /Grupos asignados/, /Permisos/, /Recursos/, /Avanzado/]);
-  await irASeccion(page, 'Permisos');
-  await expect(page.locator('#agent-section-permissions')).toBeVisible();
+  // Las cuatro de la ficha de grupo, desde la revisión del 2026-10-09 (DD-187).
+  await expect(filas(page)).toHaveText([/General/, /Configuración/, /Recursos/, /Grupos/]);
+  await irASeccion(page, 'Configuración');
+  await expect(page.locator('#agent-section-config')).toBeVisible();
   await expect(page.locator('p-stepper')).toHaveCount(0);
 });
 
@@ -170,19 +178,21 @@ test('usuario · las secciones van en cualquier orden: sin nombre se llega a Acc
 
 test('crear desde una sección lleva a la edición en esa sección', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
-  await page.locator('#agent-name').fill(`E2E Índice ${Date.now()}`);
-  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#agent-ext') }), /./);
-  await irASeccion(page, 'Permisos');
+  await rellenarGeneral(page);
+  // Un agente se crea en algún grupo (DD-187): el primero de su tabla.
+  await irASeccion(page, 'Grupos');
+  await page.locator('sc-group-assignment-table tbody tr').first().getByRole('checkbox', { name: /^Asignado —/ }).click();
+  await irASeccion(page, 'Configuración');
   await page.getByRole('button', { name: 'Crear agente', exact: true }).click();
 
-  await expect(page).toHaveURL(/\/admin\/agentes\/editar\/\d+\?seccion=permisos$/);
-  await expect(actual(page)).toContainText('Permisos');
+  await expect(page).toHaveURL(/\/admin\/agentes\/editar\/\d+\?seccion=configuracion$/);
+  await expect(actual(page)).toContainText('Configuración');
 });
 
 test('al editar, ni ✓ ni «Atrás / Siguiente»', async ({ page }) => {
   for (const [ruta, otra] of [
     ['admin/grupos/editar/11', 'Recursos'],
-    ['admin/agentes/editar/1', 'Permisos'],
+    ['admin/agentes/editar/1', 'Configuración'],
     ['admin/usuarios/editar/1', 'Acceso'],
   ] as const) {
     await goto(page, ruta);
@@ -195,9 +205,9 @@ test('al editar, ni ✓ ni «Atrás / Siguiente»', async ({ page }) => {
 
 test('el aire: 28 de la sección a «Atrás / Siguiente»', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
-  await irASeccion(page, 'Permisos');
+  await irASeccion(page, 'Configuración');
   const aire = await page.evaluate(() => {
-    const seccion = document.querySelector('#agent-section-permissions')!.getBoundingClientRect();
+    const seccion = document.querySelector('#agent-section-config')!.getBoundingClientRect();
     const boton = document.querySelector('.alta-pie sc-button')!.getBoundingClientRect();
     return Math.round(boton.top - seccion.bottom);
   });

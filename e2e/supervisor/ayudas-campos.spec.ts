@@ -52,10 +52,11 @@ test('prioridad se nombra por su etiqueta y dice que solo cuenta en las entrante
   await expect(prioridad).not.toHaveAccessibleDescription(/salientes/);
 });
 
-test('la ayuda de un desplegable se anuncia con él: la extensión del agente dice qué es Tel y qué WebRTC', async ({ page }) => {
+test('la ayuda del tipo de extensión se anuncia con él: dice dónde suena', async ({ page }) => {
+  // Desde la revisión del 2026-10-09 el tipo es su propio campo (navegador o teléfono), y su ayuda cambia con él.
   await goto(page, 'admin/agentes/editar/1');
-  const extension = page.getByRole('combobox', { name: /Extensión/ });
-  await expect(extension).toHaveAccessibleDescription(/^Tel: en su móvil\. WebRTC:/);
+  const tipo = page.getByRole('group', { name: 'Tipo de extensión' });
+  await expect(tipo).toHaveAccessibleDescription(/^Suena en el navegador/);
 });
 
 test('la ficha de grupo no tiene ⓘ: cada ayuda se lee sin pasar el ratón', async ({ page }) => {
@@ -119,8 +120,7 @@ const CAMPO = 'input:not([type=hidden]):not([type=file]), textarea, [role=combob
 const CON_AYUDAS = [
   'admin/grupos/editar/11?seccion=distribucion',
   'admin/agentes/editar/1',
-  'admin/agentes/editar/1?seccion=permisos',
-  'admin/agentes/editar/1?seccion=avanzado',
+  'admin/agentes/editar/1?seccion=configuracion',
   'admin/usuarios/editar/1',
   'config/aed/agentes',
   'config/aed/grupos',

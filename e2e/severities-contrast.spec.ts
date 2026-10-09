@@ -84,6 +84,11 @@ const CONOCIDOS: readonly string[] = [
   'fg=rgb(22,163,74) 3.30:1',
   'fg=rgb(22,163,74) 3.16:1',
 
+  /* ── help · el morado del Kit tampoco llega (light) ───────────────────────────
+   * `purple-500` con texto blanco da **3.96:1** en el botón, desde que sc-button abre `help` (DD-187). Es el paso que
+   * da el export (`{purple.500}`): como success, subirlo es divergir del Kit, decisión de marca que no se cuela aquí. */
+  'bg=rgb(168,85,247) fg=rgb(255,255,255) 3.96:1',
+
   /* ── danger · el BADGE se quedó atrás ───────────────────────────────────────
    * `red-500` con blanco da **3.76:1**. El BOTÓN ya se arregló en julio subiendo
    * a red-600 (4.83); el badge comparte el defecto y no se tocó entonces. Aquí es

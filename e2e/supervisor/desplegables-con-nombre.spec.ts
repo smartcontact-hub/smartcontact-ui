@@ -29,21 +29,20 @@ const nombres = async (page: Page, esperados: Record<string, string>) => {
   }
 };
 
-test('la ficha de agente: tipo, presencia, descuelgues y chats simultáneos se oyen con su rótulo', async ({ page }) => {
+test('la ficha de agente: tipo, estado y chats simultáneos se oyen con su rótulo', async ({ page }) => {
   await goto(page, 'admin/agentes/editar/1');
-  await nombres(page, { '#agent-type': 'Tipo de agente', '#agent-presence': 'Presencia inicial' });
-  await goto(page, 'admin/agentes/editar/1?seccion=avanzado');
-  await nombres(page, {
-    '#agent-pickup': 'Descuelgue de llamadas',
-    '#agent-pickup-chat': 'Descuelgue de chats',
-    '#agent-max-chats': 'Chats simultáneos',
-  });
+  // «Estado» desde la revisión del 2026-10-09 (antes «Presencia inicial»), en General.
+  await nombres(page, { '#agent-type': 'Tipo de agente', '#agent-presence': 'Estado' });
+  // El descuelgue es ahora una elección de tarjetas, no un desplegable; los chats simultáneos, en Avanzado (plegado).
+  await goto(page, 'admin/agentes/editar/1?seccion=configuracion');
+  await page.getByRole('button', { name: /Avanzado/ }).click();
+  await nombres(page, { '#agent-max-chats': 'Chats simultáneos' });
 });
 
-test('la ficha de grupo: tipificaciones, «Nº agentes simultáneos» y «Dentro de cada nivel» se oyen con su rótulo', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  // Desde DD-173 el grupo elige varias: el campo se llama en plural.
-  await nombres(page, { '#group-typification': 'Tipificaciones' });
+test('la ficha de grupo: la tipificación, «Nº agentes simultáneos» y «Dentro de cada nivel» se oyen con su rótulo', async ({ page }) => {
+  // Desde DD-187 el grupo elige UNA, en General › Postconversación.
+  await goto(page, 'admin/grupos/editar/11?seccion=general');
+  await nombres(page, { '#group-typification': 'Tipificación' });
   // Grupo 7: llama a todos (Ring All). Grupo 9: Niveles.
   await goto(page, 'admin/grupos/editar/7?seccion=distribucion');
   await nombres(page, { '#group-ring-all': 'Nº agentes simultáneos' });

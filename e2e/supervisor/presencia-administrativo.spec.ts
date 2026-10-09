@@ -8,15 +8,16 @@ import { disableAnimations, forceDarkTheme, forceLightTheme, goto } from './help
  * El estado Administrativo de un agente se pintaba en amarillo (la severidad `warn`, la de los avisos). Pasa al color
  * de etiqueta `brown`, nuevo en la paleta del DS y hecho con primitivos del Kit. Tintado como las demás etiquetas
  * (DD-185; lleno chocaba con el resto): fondo `amber-100` y texto `amber-900`; en oscuro, `amber-800` al 45 % y texto
- * `amber-200`. Lo que fija, en el listado de agentes y en la tabla de agentes del grupo, en claro y en oscuro: la
- * burbuja del avatar, con su punto cálido (marrón, nunca gris ni azul).
+ * `amber-200`. Lo que fija, en la tabla de agentes del grupo, en claro y en oscuro: la burbuja del avatar, con su
+ * punto cálido (marrón, nunca gris ni azul). El listado de agentes ya no lleva burbuja (DD-187 §8): el estado ayuda a
+ * decidir en la tabla del grupo, no en Administración.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
 
 for (const oscuro of [false, true]) {
-  for (const ruta of ['admin/agentes', 'admin/grupos/editar/11?seccion=agentes']) {
+  for (const ruta of ['admin/grupos/editar/11?seccion=agentes']) {
     test(`${ruta} · Administrativo, en marrón en la burbuja del avatar · ${oscuro ? 'oscuro' : 'claro'}`, async ({ page }) => {
       await (oscuro ? forceDarkTheme : forceLightTheme)(page);
       await disableAnimations(page);

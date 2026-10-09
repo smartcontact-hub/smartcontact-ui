@@ -151,7 +151,8 @@ test('solo WhatsApp conserva Chat al guardar y el panel conserva su columna para
   await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(576); // sin la columna de Estado (DD-185); antes, 716
 
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
-  await expect(page.locator('.assign').getByRole('checkbox', { name: /Chat/ })).toBeChecked();
+  // La casilla de la fila: desde DD-187 la columna Chat lleva también su casilla de «todos» en la cabecera.
+  await expect(page.locator('.assign').getByRole('checkbox', { name: /^Online Support — Chat/ })).toBeChecked();
   await expect(page.getByRole('region', { name: 'Resumen' })).toContainText('Chat');
   await goto(page, 'admin/agentes');
   const fila = page.locator('tbody tr', { hasText: 'Tom Hanks' });

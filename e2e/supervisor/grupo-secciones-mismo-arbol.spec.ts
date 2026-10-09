@@ -10,6 +10,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. la sección va sobre el fondo gris (`subtle`);
  *   2. cada bloque es un `sc-subsection`, con su título;
  *   3. ya no queda ningún bloque dibujado a mano (`.sub-section`).
+ * General gana «Postconversación» con DD-187: comentarios y tipificación, que hasta entonces estaba en Recursos.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -19,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 const SECCIONES = [
-  { clave: 'general', titulos: ['Identidad', 'Canales'] },
+  { clave: 'general', titulos: ['Identidad', 'Canales', 'Postconversación'] },
   { clave: 'distribucion', titulos: ['Reglas comunes', 'Teléfono', 'Chat', 'Email'] },
   { clave: 'recursos', titulos: ['Repositorios', 'Ficha de cliente'] },
   { clave: 'agentes', titulos: ['Agentes asignados'] },

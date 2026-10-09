@@ -53,7 +53,17 @@ const filasDelDashboard = async (page: Page): Promise<Fila[]> => {
   );
 };
 
-/** El estado de un agente en Administración › Agentes: lo busca por su nombre y lee su burbuja (la columna «Estado» queda escondida de inicio, DD-185). */
+/** El listado dice el estado en su columna «Estado», escondida de inicio (DD-185); el avatar ya no lleva burbuja en
+ *  Administración (DD-187 §8). Se enciende una vez desde «Columnas» y se queda guardada. */
+const conColumnaDeEstado = async (page: Page): Promise<void> => {
+  await page.getByRole('button', { name: /^Columnas/ }).click();
+  const estado = page.getByRole('dialog').getByRole('checkbox', { name: 'Estado', exact: true });
+  if (!(await estado.isChecked())) await estado.check();
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('agents-table').locator('thead th', { hasText: 'Estado' })).toHaveCount(1);
+};
+
+/** El estado de un agente en Administración › Agentes: lo busca por su nombre y lee su columna «Estado». */
 const estadoEnElListado = async (page: Page, nombre: string): Promise<string> => {
   const tabla = page.getByTestId('agents-table');
   await page.locator('sc-search input').fill(nombre);
@@ -62,12 +72,15 @@ const estadoEnElListado = async (page: Page, nombre: string): Promise<string> =>
     const nombres = await tabla.locator('tbody tr .cell-name__text').allTextContents();
     expect(nombres.map((n) => n.trim())).toEqual([nombre]);
   }).toPass();
-  return ((await tabla.locator('tbody tr sc-presence-avatar .visually-hidden').first().textContent()) ?? '').trim();
+  const columna = await tabla.locator('thead th').evaluateAll((ths) => ths.findIndex((th) => th.textContent?.trim() === 'Estado'));
+  expect(columna, 'la columna «Estado», a la vista').toBeGreaterThanOrEqual(0);
+  return ((await tabla.locator('tbody tr').first().locator('td').nth(columna).textContent()) ?? '').trim();
 };
 
 /** Los agentes cuyo estado en el Dashboard no es el que les toca por el listado, dichos para leerlos en el fallo. */
 const distintosDelListado = async (page: Page, filas: readonly Fila[]): Promise<string[]> => {
   await goto(page, 'admin/agentes');
+  await conColumnaDeEstado(page);
   const distintos: string[] = [];
   for (const { nombre, estado } of filas) {
     const enElListado = await estadoEnElListado(page, nombre);
@@ -140,11 +153,12 @@ test('cambiar el estado en la ficha de un agente lo cambia en el Dashboard', asy
 
   // Su ficha, desde el listado: la fila abre la ficha con el id del agente en la dirección.
   await goto(page, 'admin/agentes');
+  await conColumnaDeEstado(page);
   await estadoEnElListado(page, objetivo.nombre);
   await page.getByTestId('agents-table').locator('tbody tr .cell-name__text').click();
   await expect(page).toHaveURL(/\/admin\/agentes\/editar\/\d+/);
   const id = /editar\/(\d+)/.exec(page.url())?.[1];
-  await goto(page, `admin/agentes/editar/${id}?seccion=identidad`);
+  await goto(page, `admin/agentes/editar/${id}?seccion=general`);
   await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#agent-presence') }), /^\s*Disponible\s*$/);
   await page.getByRole('button', { name: 'Guardar' }).click();
   /* Se espera al aviso, no al botón: mientras guarda, el botón ya está apagado (cargando) y el guardado llega 400 ms
