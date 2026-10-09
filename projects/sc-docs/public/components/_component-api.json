@@ -397,6 +397,9 @@
       "selector": "sc-avatar",
       "name": "avatar",
       "primengBase": "primeng/avatar, primeng/overlaybadge",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
       "contrato": [
         {
@@ -574,6 +577,11 @@
       "selector": "sc-avatargroup",
       "name": "avatargroup",
       "primengBase": "primeng/avatargroup",
+      "estado": "experimental",
+      "faltas": [
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Para apilar varios avatares cuando importa «quiénes» y no «cuántos» exactamente.",
       "contrato": [],
       "ocultas": [
@@ -584,6 +592,9 @@
       "selector": "sc-badge",
       "name": "badge",
       "primengBase": "primeng/badge",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.",
       "contrato": [
         {
@@ -633,6 +644,9 @@
       "selector": "sc-breadcrumb",
       "name": "breadcrumb",
       "primengBase": "primeng/breadcrumb",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para decir dónde estás dentro de una jerarquía y poder subir. No es navegación principal.",
       "contrato": [
         {
@@ -710,6 +724,11 @@
       "selector": "sc-bulk-action-bar",
       "name": "bulk-action-bar",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
       "contrato": [
         {
@@ -759,6 +778,11 @@
       "selector": "sc-bulk-edit-menu",
       "name": "bulk-edit-menu",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
       "contrato": [
         {
@@ -818,6 +842,11 @@
       "selector": "sc-bulk-transcription-modal",
       "name": "bulk-transcription-modal",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Solo para el procesado masivo de conversaciones. Es específico del dominio y hoy solo lo usa la demo.",
       "contrato": [
         {
@@ -1007,6 +1036,9 @@
       "selector": "sc-button",
       "name": "button",
       "primengBase": "primeng/button",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "contrato": [
         {
@@ -1276,6 +1308,9 @@
       "selector": "sc-card",
       "name": "card",
       "primengBase": "primeng/card",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para agrupar contenido suelto con una superficie propia. Si el grupo tiene título y pertenece a un formulario, es `sc-section-card`.",
       "contrato": [
         {
@@ -1325,6 +1360,9 @@
       "selector": "sc-checkbox",
       "name": "checkbox",
       "primengBase": "—",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "contrato": [
         {
@@ -1414,6 +1452,9 @@
       "selector": "sc-chip",
       "name": "chip",
       "primengBase": "primeng/chip",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
       "contrato": [
         {
@@ -1566,6 +1607,11 @@
       "selector": "sc-color-dot-picker",
       "name": "color-dot-picker",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.",
       "contrato": [
         {
@@ -1605,6 +1651,11 @@
       "selector": "sc-column-selector",
       "name": "column-selector",
       "primengBase": "primeng/popover",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para que el usuario decida qué columnas ve en una tabla.",
       "contrato": [
         {
@@ -1676,6 +1727,11 @@
       "selector": "sc-command-palette",
       "name": "command-palette",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para llegar a cualquier sitio o acción escribiendo, sin recorrer menús. Es atajo, nunca el único camino.",
       "contrato": [],
       "ocultas": []
@@ -1684,6 +1740,9 @@
       "selector": "sc-confirmdialog",
       "name": "confirmdialog",
       "primengBase": "primeng/confirmdialog",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para confirmar una acción normal. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.",
       "contrato": [],
       "ocultas": [
@@ -1728,6 +1787,9 @@
       "selector": "sc-datatable",
       "name": "datatable",
       "primengBase": "primeng/table",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "contrato": [
         {
@@ -2355,6 +2417,9 @@
       "selector": "sc-datepicker",
       "name": "datepicker",
       "primengBase": "primeng/datepicker",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
       "contrato": [
         {
@@ -2760,6 +2825,11 @@
       "selector": "sc-delete-entity-dialog",
       "name": "delete-entity-dialog",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "contrato": [
         {
@@ -2859,6 +2929,9 @@
       "selector": "sc-dialog",
       "name": "dialog",
       "primengBase": "primeng/dialog",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "contrato": [
         {
@@ -3118,6 +3191,9 @@
       "selector": "sc-divider",
       "name": "divider",
       "primengBase": "primeng/divider",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "contrato": [
         {
@@ -3172,6 +3248,9 @@
       "selector": "sc-drawer",
       "name": "drawer",
       "primengBase": "primeng/drawer",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
       "contrato": [
         {
@@ -3363,6 +3442,11 @@
       "selector": "sc-empty-state",
       "name": "empty-state",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "contrato": [
         {
@@ -3442,6 +3526,11 @@
       "selector": "div[scFactRow]",
       "name": "fact-row",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.",
       "contrato": [
         {
@@ -3491,6 +3580,12 @@
       "selector": "sc-field-label",
       "name": "field-label",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la etiqueta. En una pantalla se usa el campo entero (`sc-inputtext`, `sc-select`…), nunca esto suelto.",
       "contrato": [
         {
@@ -3550,6 +3645,12 @@
       "selector": "sc-field-msg",
       "name": "field-msg",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la ayuda y del error. En una pantalla se usa el campo entero, nunca esto suelto.",
       "contrato": [
         {
@@ -3599,6 +3700,9 @@
       "selector": "sc-fileupload",
       "name": "fileupload",
       "primengBase": "primeng/fileupload",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.",
       "contrato": [
         {
@@ -3913,6 +4017,11 @@
       "selector": "sc-form-danger-zone",
       "name": "form-danger-zone",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
       "contrato": [
         {
@@ -3972,6 +4081,11 @@
       "selector": "sc-form-section-nav",
       "name": "form-section-nav",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
       "contrato": [
         {
@@ -4071,6 +4185,11 @@
       "selector": "sc-gauge",
       "name": "gauge",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para una magnitud contra su máximo, de un vistazo. Para progreso de una tarea, `sc-progressbar`.",
       "contrato": [
         {
@@ -4170,6 +4289,11 @@
       "selector": "sc-group-popover",
       "name": "group-popover",
       "primengBase": "primeng/popover",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
       "contrato": [
         {
@@ -4221,6 +4345,11 @@
       "selector": "sc-icon-tile",
       "name": "icon-tile",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
       "contrato": [
         {
@@ -4260,6 +4389,11 @@
       "selector": "sc-impact-preview-dialog",
       "name": "impact-preview-dialog",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
       "contrato": [
         {
@@ -4359,6 +4493,11 @@
       "selector": "sc-inline-rename-cell",
       "name": "inline-rename-cell",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para renombrar en el sitio, sin abrir un formulario.",
       "contrato": [
         {
@@ -4418,6 +4557,9 @@
       "selector": "sc-inputgroup",
       "name": "inputgroup",
       "primengBase": "primeng/inputgroup",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un campo con algo pegado (icono, botón, prefijo). Mantiene alineadas las dos piezas.",
       "contrato": [
         {
@@ -4447,6 +4589,9 @@
       "selector": "sc-inputnumber",
       "name": "inputnumber",
       "primengBase": "primeng/inputtext",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "contrato": [
         {
@@ -4657,6 +4802,9 @@
       "selector": "sc-inputtext",
       "name": "inputtext",
       "primengBase": "primeng/inputtext",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "contrato": [
         {
@@ -4901,6 +5049,11 @@
       "selector": "sc-keyboard-shortcuts",
       "name": "keyboard-shortcuts",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para enseñar los atajos disponibles en la pantalla.",
       "contrato": [
         {
@@ -4920,6 +5073,9 @@
       "selector": "sc-message",
       "name": "message",
       "primengBase": "primeng/message",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "contrato": [
         {
@@ -5028,6 +5184,9 @@
       "selector": "sc-multiselect",
       "name": "multiselect",
       "primengBase": "primeng/multiselect",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "contrato": [
         {
@@ -5562,6 +5721,12 @@
       "selector": "sc-option-cards",
       "name": "option-card",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
       "contrato": [
         {
@@ -5631,6 +5796,9 @@
       "selector": "sc-panel",
       "name": "panel",
       "primengBase": "primeng/panel",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un bloque con cabecera propia, plegable y con acciones.",
       "contrato": [
         {
@@ -5745,6 +5913,9 @@
       "selector": "sc-password",
       "name": "password",
       "primengBase": "primeng/config, primeng/inputpassword",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una contraseña, con su ojo para mostrarla.",
       "contrato": [
         {
@@ -5966,6 +6137,12 @@
       "selector": "sc-permission-matrix",
       "name": "permission-matrix",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Para dar permisos cruzando quién con qué, marcando por columna entera.",
       "contrato": [
         {
@@ -6055,6 +6232,11 @@
       "selector": "sc-photo-upload",
       "name": "photo-upload",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para la foto de una persona, con ilustración de reserva.",
       "contrato": [
         {
@@ -6134,6 +6316,9 @@
       "selector": "sc-progressbar",
       "name": "progressbar",
       "primengBase": "primeng/progressbar",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para el avance de una tarea de la que SÍ se sabe cuánto queda. Si no se sabe, `sc-progressspinner`.",
       "contrato": [
         {
@@ -6206,6 +6391,9 @@
       "selector": "sc-progressspinner",
       "name": "progressspinner",
       "primengBase": "primeng/progressspinner",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una espera de duración desconocida. Si la espera es de contenido que va a aparecer, `sc-skeleton` desconcierta menos.",
       "contrato": [
         {
@@ -6279,6 +6467,9 @@
       "selector": "sc-radiobutton",
       "name": "radiobutton",
       "primengBase": "primeng/radiobutton",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
       "contrato": [
         {
@@ -6406,6 +6597,11 @@
       "selector": "sc-search",
       "name": "search",
       "primengBase": "primeng/iconfield, primeng/inputicon, primeng/inputtext",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "contrato": [
         {
@@ -6543,6 +6739,9 @@
       "selector": "sc-section-card",
       "name": "section-card",
       "primengBase": "—",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "contrato": [
         {
@@ -6652,6 +6851,9 @@
       "selector": "sc-select",
       "name": "select",
       "primengBase": "primeng/select",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "contrato": [
         {
@@ -7140,6 +7342,9 @@
       "selector": "sc-selectbutton",
       "name": "selectbutton",
       "primengBase": "primeng/selectbutton",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "contrato": [
         {
@@ -7352,6 +7557,9 @@
       "selector": "sc-skeleton",
       "name": "skeleton",
       "primengBase": "primeng/skeleton",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.",
       "contrato": [
         {
@@ -7451,6 +7659,11 @@
       "selector": "sc-slot",
       "name": "slot",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para una ranura con título dentro de una composición.",
       "contrato": [
         {
@@ -7510,6 +7723,9 @@
       "selector": "sc-sticky-form-header",
       "name": "sticky-form-header",
       "primengBase": "—",
+      "estado": "deprecated",
+      "faltas": [],
+      "retirado": "RETENIDO PARA ROLLBACK (S59, Supervisor DD#65). Ya NO lo usa ningún form de la app: los 3 form shells migraron al modelo \"todo arriba\" (acciones al TopBar + la ficha del panel para la identidad). Se conserva intacto —exportado + showcased en la demo— como red de seguridad por si se revierte el \"todo arriba\". NO borrar sin decisión explícita (ver DD#65 § \"Cómo revertir\").",
       "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
       "contrato": [
         {
@@ -7619,6 +7835,11 @@
       "selector": "sc-subsection",
       "name": "subsection",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "contrato": [
         {
@@ -7688,6 +7909,9 @@
       "selector": "sc-tag",
       "name": "tag",
       "primengBase": "primeng/tag",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "contrato": [
         {
@@ -7797,6 +8021,9 @@
       "selector": "sc-textarea",
       "name": "textarea",
       "primengBase": "primeng/textarea",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
       "contrato": [
         {
@@ -7980,6 +8207,9 @@
       "selector": "sc-toast",
       "name": "toast",
       "primengBase": "primeng/toast",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para el resultado de una acción, que se va solo. Si el aviso pertenece a la página y debe quedarse, `sc-message`.",
       "contrato": [
         {
@@ -8096,6 +8326,9 @@
       "selector": "sc-toggleswitch",
       "name": "toggleswitch",
       "primengBase": "primeng/toggleswitch",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "contrato": [
         {

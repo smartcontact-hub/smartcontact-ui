@@ -135,3 +135,32 @@ export const MODULO_A_TEMA = {
 export const CUBIERTO_POR_NUESTRO = {
   checkbox: 'sc-checkbox (custom: necesita el tercer estado, el grupo elegido a medias)',
 };
+
+/**
+ * Los componentes que tienen MAESTRO en el Kit: una página «❖ Nombre» en el fichero del DS
+ * (`khNq9dJKNi13pNllrqm6dx`), leídas por la API de Figma el 2026-10-09 (DD-190). Es la mitad del
+ * estado de un componente en sc-docs: «Ready» si tiene maestro en el Kit y página de demo,
+ * «Experimental» si le falta algo, «Deprecated» si su clase lleva `@deprecated`.
+ *
+ * El CI no llega a Figma, así que la lista vive aquí. Si se crea o se borra una página «❖» en el
+ * fichero, se actualiza esta lista (los nombres, tal cual, sin el «❖» ni espacios).
+ */
+export const KIT_MAESTROS = new Set([
+  'AutoComplete', 'CascadeSelect', 'Checkbox', 'ColorPicker', 'DatePicker', 'Editor', 'FloatLabel', 'IftaLabel',
+  'InputGroup', 'InputNumber', 'InputOtp', 'InputText', 'Knob', 'Listbox', 'MultiSelect', 'Password', 'RadioButton',
+  'Rating', 'Select', 'SelectButton', 'Slider', 'Textarea', 'ToggleButton', 'ToggleSwitch', 'TreeSelect', 'Button',
+  'SplitButton', 'SpeedDial', 'DataTable', 'DataView', 'OrderList', 'OrganizationChart', 'Paginator', 'PickList',
+  'Timeline', 'Tree', 'TreeTable', 'Accordion', 'Card', 'Divide', 'Fieldset', 'Panel', 'ScrollPanel', 'Splitter',
+  'Stepper', 'Tabs', 'Toolbar', 'ConfirmDialog', 'ConfirmPopup', 'Dialog', 'Drawer', 'Popover', 'Tooltip',
+  'FileUpload', 'Breadcrumb', 'ContextMenu', 'Dock', 'Menu', 'Menubar', 'MegaMenu', 'PanelMenu', 'TieredMenu',
+  'Message', 'Toast', 'Carousel', 'Galleria', 'Image', 'ImageCompare', 'Avatar', 'Badge', 'BlockUI', 'Chip',
+  'Inplace', 'MeterGroup', 'ScrollTop', 'Skeleton', 'ProgressBar', 'ProgressSpinner', 'Tag', 'Terminal',
+  'Custom modal', 'Sidebar', 'Navmenu', 'Section',
+]);
+
+/** Componente del DS → su página del Kit, cuando el nombre no casa solo (el Kit escribe «Divide»). */
+export const KIT_ALIAS = {
+  divider: 'Divide',
+  'section-card': 'Section',
+  avatargroup: 'Avatar',
+};
