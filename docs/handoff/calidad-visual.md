@@ -19,7 +19,6 @@
      (`sc-inline-message`, nuevo en el DS); los errores, fijos junto a su contexto (51 toasts de éxito en 28 ficheros);
    - la cabecera y el esqueleto de página comunes, con la escalera 7 · 14 · 28 en la cabecera, ancho máximo de 1280 y
      columnas que quepan a 1024 (Grupos esconde 358 px a 1024);
-   - el estado de cada componente en sc-docs (Experimental, Ready, Deprecated), como Primer.
 1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).
@@ -73,6 +72,8 @@
   por relación; el toast solo para eventos del sistema; Guardar deshabilitado y las acciones arriba se quedan.
 - **El icono que acompaña a un texto sigue a su estilo** (DD-189, «UX de pantalla» 4): tamaño y peso del texto y eje
   óptico a 20. En `sc-section-card`, 16 en sección y 20 en página; lo que cuelga en la piel blanca sale de su tamaño.
+- **El estado de cada componente en sc-docs** (DD-190): listo, experimental o retirado, calculado por
+  `component-audit` (maestro en el Kit + demo; `@deprecated`). Si cambian las páginas «❖» del Kit, `KIT_MAESTROS`.
 - **Página de comparación** (artefacto «Antes y después del Supervisor»): el antes es la app del 2026-10-09 antes de
   empezar; el después, el estado acumulado. Se recaptura solo el después (`capturar` con `sites` = el local).
 

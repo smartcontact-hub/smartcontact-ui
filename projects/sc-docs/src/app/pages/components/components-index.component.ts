@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
+import { ComponentApiService } from '../../storybook/component-api.service';
+import { EstadoComponenteComponent } from '../../storybook/estado-componente.component';
 
 /**
  * Portada de la sección Componentes.
@@ -14,7 +16,7 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
  */
 @Component({
   selector: 'app-components-index',
-  imports: [RouterLink, TranslatePipe],
+  imports: [EstadoComponenteComponent, RouterLink, TranslatePipe],
   template: `
     <header class="hero">
       <img
@@ -55,7 +57,14 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
           @for (e of group.items; track e.path) {
             <li>
               <a class="card" [routerLink]="['/components', e.path]">
-                <span class="card__name">{{ e.label }}</span>
+                <span class="card__name">
+                  {{ e.label }}
+                  <!-- Solo la excepción (DD-190): lo listo no lleva etiqueta, para no llenar de verde el índice. -->
+                  @let est = api.estadoDeRuta(e.path);
+                  @if (est && est.estado !== 'ready') {
+                    <app-estado-componente [estado]="est" />
+                  }
+                </span>
                 @let blurbKey = 'components.blurb.' + e.path;
                 @let blurb = blurbKey | translate;
                 @if (blurb !== blurbKey) {
@@ -234,6 +243,10 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
     }
 
     .card__name {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--sc-spacing-0-5);
       font-size: var(--sc-font-size-200);
       font-weight: var(--sc-font-weight-semibold);
       color: var(--sc-text-primary);
@@ -251,4 +264,5 @@ export class ComponentsIndexComponent {
   /** Familias no vacías, en el orden del catálogo (mismo origen que la sidebar). */
   protected readonly groups = groupCatalog();
   protected readonly total = COMPONENT_CATALOG.length;
+  protected readonly api = inject(ComponentApiService);
 }
