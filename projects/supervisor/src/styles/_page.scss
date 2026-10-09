@@ -358,19 +358,16 @@
  * trampa que lo motivó sigue siendo real para cualquier clase global futura.
  */
 /*
- * `h3` (18/24) y no `subtitle-1` (16/24), desde el 2026-09-09. DD-54 fijó que la
- * escala que manda es la de la LIBRERÍA del Figma del DS, y ahí no hay ningún
- * text style de 16: `--sc-font-size-subtitle-1` apunta a `--sc-font-size-300`,
- * un peldaño que se quedó sin estilo detrás. Un título de página solo puede ser
- * `h3` o `body`, y `body` (14) mediría lo mismo que el texto de las tablas.
+ * `Title/title-semibold` (20/28) desde el 2026-10-09 (DD-188). Del 2026-09-09 a esa fecha fue
+ * `h3` (18/24), porque la librería del DS (DD-54) no tenía otro estilo por encima del cuerpo, y el
+ * título de página medía lo mismo que el de sección. El Kit ganó `Title` (20) para la página y
+ * `Subtitle` (16) para la sección, los dos escalones de Primer.
  *
- * Sube en TODAS las rutas a la vez, no solo donde se notó: lo que hace útil a
- * esta clase es que el título mida igual en todas partes, y eso lo vigila
- * `page-identity.spec.ts` («el título de página mide igual en todas partes»),
- * que es justo quien cazó el desajuste al cambiar una sola pantalla.
+ * Sube en TODAS las rutas a la vez: lo que hace útil a esta clase es que el título mida igual en
+ * todas partes, y eso lo vigila `page-identity.spec.ts`.
  */
 /*
- * La TIPOGRAFÍA la pone la clase `.sc-text-h3-semibold` en la plantilla (DD-55
+ * La TIPOGRAFÍA la pone la clase `.sc-text-title-semibold` en la plantilla (DD-55
  * dejó este barrido nombrado como pendiente): en Inspect se lee el nombre del
  * text style, no tres números que hay que traducir.
  *

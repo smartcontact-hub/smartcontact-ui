@@ -37,7 +37,7 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
             type="text"
             pInputText
             [pAutoFocus]="true"
-            class="name-inplace__input sc-text-h3-semibold"
+            class="name-inplace__input sc-text-title-semibold"
             autocomplete="off"
             [value]="name()"
             [attr.aria-label]="label()"
