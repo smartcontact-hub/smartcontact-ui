@@ -453,5 +453,11 @@ h1.page__heading {
 
   .table-card--seleccion {
     margin-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-5));
+    /* Y su suelo (`--alto-visto`) deja ese sitio: sin restarlo, al marcar una fila la tarjeta no podía acortarse y la
+     * barra se le montaba encima (medido en Conversaciones: 881 de fondo con la barra en 815). */
+    min-height: min(
+      var(--alto-visto, 0px),
+      calc(var(--llega-al-pie, 0px) - var(--sc-bulk-action-bar-height) - var(--sc-spacing-1-5))
+    );
   }
 }

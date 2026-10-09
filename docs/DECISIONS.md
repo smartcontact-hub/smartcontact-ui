@@ -302,7 +302,9 @@ grupos por canal, y su editor solo enseñaba la rama elegida.
 **Consecuencias** · Pendiente al aterrizar: poner al día las e2e de estas pantallas, regenerar
 `e2e/baselines/component-styles.json` (diálogo, campos, tarjeta de sección y botón del DS) y el preflight. Las unitarias de
 tipificaciones, reescritas (11). El hub de Repositorios solo da nombre de transición a sus categorías mientras cambia
-el filtro: con el nombre puesto siempre, al entrar desde el menú se pintaban encima de él.
+el filtro: con el nombre puesto siempre, al entrar desde el menú se pintaban encima de él. `help` con texto blanco da 3,96:1 en claro (el
+`purple-500` del Kit): como `success`, subirlo es apartarse del Kit, una decisión de marca pendiente (anotado en
+`severities-contrast`).
 
 ---
 

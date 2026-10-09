@@ -285,7 +285,7 @@
             [value]="form().extensionType"
             (valueChange)="onExtensionTypeChange($event)"
           />
-          <p id="agent-ext-type-hint" class="field__hint sc-text-caption-regular">{{ 'agents.form.fields.extension_type_hint.' + form().extensionType | translate }}</p>
+          <p id="agent-ext-type-hint" class="field__help sc-text-caption-regular">{{ 'agents.form.fields.extension_type_hint.' + form().extensionType | translate }}</p>
         </div>
 
         <!-- El PIN, solo con la extensión en el teléfono: es con lo que el agente se activa desde él. Producto pidió quitarlo;

@@ -860,7 +860,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       email: a.email,
       presenceStatus: a.presenceStatus,
       allowedChannels: a.allowedChannels,
-      selfActivate: a.permissions.selfActivate,
+      selfActivate: a.permissions?.selfActivate ?? false,
       teams: a.teams,
     })),
   );

@@ -29,8 +29,10 @@
     white-space: nowrap;
   }
 
+  /* El «—» de una celda sin dato: se lee (AA), en el gris de lo secundario. En el de desactivado medía 2,95:1, y desde
+   * que los canales y los equipos vacíos lo enseñan sale en muchas filas (theme-contrast). */
   &--empty {
-    color: var(--sc-text-disabled);
+    color: var(--sc-text-subtle);
   }
 }
 

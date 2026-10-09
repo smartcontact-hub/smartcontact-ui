@@ -37,9 +37,10 @@ a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-1
 d4843e43:docs/handoff/supervisor-fichas.md`. El de ordenar por cualquier columna (2026-10-06, DD-180 y DD-181): `git show
 d94e5ad8:docs/handoff/supervisor-fichas.md`.
 
-## 🚧 2026-10-09 · Revisión de agentes y tipificaciones: aplicada EN LOCAL, sin commit
+## 🚧 2026-10-09 · Revisión de agentes y tipificaciones: en el PR #360
 
-> **Sello:** worktree `pinniped`, rama `arebury/feat-agentes-tipificacion-design` sobre `main` en `83cbc0d1` (DD-188 integrado), **sin commit**.
+> **Sello:** worktree `pinniped`, rama `arebury/feat-agentes-tipificacion-design` sobre `main` en `1a0ae258` (DD-188 y DD-189
+> integrados), **PR #360**.
 > Fuentes: la transcripción del design review del 2026-10-09, el pptx de producto (parte de agentes), la propuesta
 > dibujada de producto («Postconversación») y el chat del equipo. Enseñado en local (`ng serve supervisor --port 4310`).
 
@@ -106,9 +107,10 @@ d94e5ad8:docs/handoff/supervisor-fichas.md`.
 - **Sexta vuelta:** «Grupos de agentes» pasa a **Equipos** en la interfaz y en el código (`/admin/equipos`,
   `EquiposStore`, `Agent.teams`): el nombre se confundía con los grupos y con los agentes. Fuera el aviso de «abierta en
   otra pestaña» y su candado (DD-187 §13).
-- **Falta para aterrizar** (~2 h): DD-187 escrita y las unitarias de tipificaciones reescritas (11 en verde); quedan las
-  e2e de estas pantallas (unas 27; la del «+» de sc-docs ya está al día), regenerar
-  `e2e/baselines/component-styles.json` y el preflight.
+- **Aterrizaje:** PR #360, un commit por bloque (DS, Supervisor, gate) y los arreglos que pidieron los gates. Hecho:
+  `component-styles.json` y las capturas de sc-docs regeneradas (revisadas), preflight en verde, y las e2e de
+  tipificación, canales del agente, Recursos y sus diálogos reescritas y en verde en local. Lo que falte lo dice
+  `npm run ci:verdict` sobre el PR.
 
 ## ✅ 2026-10-07 · La baldosa y la fila del resumen, al DS (DD-186)
 

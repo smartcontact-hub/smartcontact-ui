@@ -120,7 +120,7 @@ export class GroupAgentsPanelComponent {
   });
 
   protected readonly availableAgents = computed<readonly AgentChannelTableAgent[]>(() =>
-    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, email: a.email, photo: a.photo, presenceStatus: a.presenceStatus, allowedChannels: a.allowedChannels, selfActivate: a.permissions.selfActivate, teams: a.teams })),
+    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, email: a.email, photo: a.photo, presenceStatus: a.presenceStatus, allowedChannels: a.allowedChannels, selfActivate: a.permissions?.selfActivate ?? false, teams: a.teams })),
   );
 
   /** Cuántos AGENTES cambian (entran, salen o cambian de canales o de nivel): la N de «Guardar (N)». */
