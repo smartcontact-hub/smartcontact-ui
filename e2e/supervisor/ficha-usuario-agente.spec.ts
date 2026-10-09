@@ -15,7 +15,7 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *      (`?seccion=`).
  *   4. Las tres fichas comparten molde: la cabecera en la misma vertical, el índice de Contact
  *      Center (196, fijo) y el contenido de 812 a 1440 con el resumen a la derecha.
- *   5. Abierta en otra pestaña, lo dice (el candado ya se cogía; hasta el 2026-09-27 no se pintaba).
+ *   5. (Quitado el 2026-10-09, DD-187: el aviso de «abierta en otra pestaña» ya no existe.)
  *   6. El alta de agente deja en su EDICIÓN de verdad: el router en `editar/N`, y el índice con él.
  * Y «Valores por defecto» va sin caja: su título es el `h1` visible de la página (DD-33).
  * Y un subtítulo de sección dice algo que el título no dice, o no está (UX de pantalla, regla 3): «Capacidades del
@@ -105,19 +105,6 @@ for (const f of FICHAS) {
     const cifras = await page.locator('.ficha-summary sc-summary-kpi').count();
     const filas = await page.locator('.ficha-summary .resumen__pairs .sc-fact-row').count();
     expect(cifras + filas, `${cifras} cifras y ${filas} filas`).toBe(3);
-  });
-
-  test(`${f.nombre} · recargar no es «otra pestaña»; abrirla en otra de verdad, sí`, async ({ page, context }) => {
-    await goto(page, f.editar);
-    await page.reload();
-    await expect(page.locator('.headline__name')).toBeVisible();
-    await expect(page.locator('.ficha-conflict')).toHaveCount(0);
-
-    const otra = await context.newPage();
-    await goto(otra, f.editar);
-    await expect(otra.locator('.ficha-conflict')).toBeVisible();
-    // Y la primera se entera también (evento `storage`).
-    await expect(page.locator('.ficha-conflict')).toBeVisible();
   });
 }
 

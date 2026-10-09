@@ -4,7 +4,6 @@ import {
   computed,
   HostListener,
   inject,
-  type OnDestroy,
   type OnInit,
   signal,
   type TemplateRef,
@@ -24,7 +23,6 @@ import {
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { CrossTabLockService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -81,13 +79,12 @@ const CAMPOS_DE_CONTACTO: readonly RepoFieldDef[] = [
   styleUrl: './agenda-editor-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy {
+export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly store = inject(AgendasStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
-  private readonly crossTab = inject(CrossTabLockService);
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
 
@@ -99,8 +96,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy 
 
   protected readonly mode = signal<'create' | 'edit'>('create');
   private agendaId: number | null = null;
-  private releaseLock: (() => void) | null = null;
-  protected readonly conflictWarning = signal(false);
 
   protected readonly form = signal<AgendaDraft>(VACIA);
   private readonly dirtyState = createFormDirtyState(() => this.form());
@@ -146,13 +141,8 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy 
     this.agendaId = agenda.id;
     this.form.set({ name: agenda.name, description: agenda.description, status: agenda.status, contacts: agenda.contacts });
     this.dirtyState.markPristine();
-    this.releaseLock = this.crossTab.acquire('agenda', agenda.id, () => this.conflictWarning.set(true));
   }
 
-  ngOnDestroy(): void {
-    this.releaseLock?.();
-    this.releaseLock = null;
-  }
 
   protected update<K extends keyof AgendaDraft>(key: K, value: AgendaDraft[K]): void {
     this.form.update((f) => ({ ...f, [key]: value }));

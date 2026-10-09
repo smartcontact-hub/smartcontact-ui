@@ -40,9 +40,12 @@
     (cta)="onCreateClick()"
   />
 
+  <!-- ¿Filtrar por estado aquí? Lo decide el equipo (revisión de agentes, 2026-10-09). -->
+  <sc-nota-decision scListHeadingNote claveTitulo="decision_notes.state_filter.title" claveTexto="decision_notes.state_filter.body" />
+
   <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (commit)="onBulkEditCommit($event)" />
-    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+    <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'common.edit' | translate" (commit)="onBulkEditCommit($event)" />
+    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
   </ng-container>
@@ -62,7 +65,9 @@
 <ng-template #nameTpl let-agent>
   <span class="cell-name sc-text-body-semibold">
     <!-- El estado, en la burbuja del avatar (DD-185); su columna sigue en «Columnas», escondida de inicio. -->
-    <sc-presence-avatar [name]="agent.name" [photo]="agent.photo" [size]="32" [presence]="agent.presenceStatus" />
+    <!-- Sin la burbuja del estado: aquí se configura, no se supervisa (revisión del 2026-10-09). El estado sigue en su
+         columna, en «Columnas». -->
+    <sc-presence-avatar [name]="agent.name" [photo]="agent.photo" [size]="32" />
     @if (renamingId() === agent.id) {
       <sc-inline-rename-cell
         [initialValue]="agent.name"
@@ -118,6 +123,9 @@
       >
         <sc-channel-icon [channel]="channel" />
       </span>
+    } @empty {
+      <!-- Sin canales, un guion como el resto de celdas vacías (barrido de consistencia). -->
+      <span class="cell cell--empty sc-text-body-regular">—</span>
     }
   </span>
 </ng-template>
@@ -155,6 +163,16 @@
 
 <ng-template #groupsTpl let-agent>
   <sc-group-popover [groups]="groupsForAgent(agent.id)" />
+</ng-template>
+
+<!-- Los equipos, por su nombre: se buscan con el buscador de la lista. -->
+<ng-template #teamsTpl let-agent>
+  @let nombres = teamsOf(agent);
+  @if (nombres) {
+    <span class="cell cell--truncate sc-text-body-regular" [title]="nombres">{{ nombres }}</span>
+  } @else {
+    <span class="cell cell--empty sc-text-body-regular">—</span>
+  }
 </ng-template>
 
 <sc-delete-entity-dialog

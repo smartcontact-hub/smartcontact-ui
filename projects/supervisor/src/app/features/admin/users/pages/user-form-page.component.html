@@ -76,10 +76,6 @@
     </div>
 
     <div class="page__main">
-      <!-- El mismo usuario abierto en otra pestaña (DD#169): el candado ya se cogía; ahora se dice. -->
-      @if (conflictWarning()) {
-        <sc-message class="ficha-conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
-      }
 
       @switch (activeSection()) {
         @case ('user-section-identity') {

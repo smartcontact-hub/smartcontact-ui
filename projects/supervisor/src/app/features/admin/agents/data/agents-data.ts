@@ -72,8 +72,20 @@ export const AGENT_TYPE_LABEL_KEYS: Readonly<Record<AgentType, string>> = {
   admin_cuscare: 'agents.type.admin_cuscare',
 };
 
+/**
+ * Si el cliente tiene CusCare. Solo entonces la ficha pregunta el tipo de agente (CusCare, Carrier, Admin CusCare): en
+ * un cliente sin CusCare todos son normales y el campo no sale (revisión de agentes del 2026-10-09). El cliente de la
+ * demo lo tiene: SCC está en el menú.
+ */
+export const CLIENTE_CON_CUSCARE = true;
+
+/** Dónde suena: `phone`, en su teléfono móvil; `webrtc`, en el navegador, con Smart Contact Agent. */
 export type ExtensionType = 'phone' | 'webrtc';
-export type PickupType = 'auto' | 'manual';
+export const EXTENSION_TYPES: readonly ExtensionType[] = ['webrtc', 'phone'];
+/** Las tres de Contact Center › Servicio («Tipo de descuelgue»), con sus palabras. Una para llamadas y chats: que
+ *  fueran distintas no tenía sentido para comercial ni para postventa (revisión de agentes del 2026-10-09). */
+export type PickupType = 'manual' | 'auto' | 'auto_preview';
+export const PICKUP_TYPES: readonly PickupType[] = ['manual', 'auto', 'auto_preview'];
 
 export interface AgentPermissions {
   readonly manageDevices: boolean;
@@ -90,6 +102,9 @@ export interface AgentPermissions {
   readonly transfersDestInternational: boolean;
   readonly transfersDestSpecial: boolean;
   readonly recording: boolean;
+  /** «Gestión de conversaciones pendientes»: el agente gestiona las pérdidas (revisión de agentes del 2026-10-09: es del
+   *  agente, no del grupo). Lo guardado antes no lo trae: se lee apagado. */
+  readonly pendingConversations: boolean;
 }
 
 /** La base de los permisos de los agentes de EJEMPLO. Uno nuevo nace con lo de Contact Center › Agentes
@@ -109,6 +124,7 @@ export const SEED_AGENT_PERMISSIONS: AgentPermissions = {
   transfersDestInternational: false,
   transfersDestSpecial: false,
   recording: false,
+  pendingConversations: false,
 };
 
 /** Las filas de la matriz de permisos: a qué numeración llama o transfiere el agente. */
@@ -155,6 +171,7 @@ export const FACTORY_AGENT_DEFAULTS: AgentDefaults = {
     transfersDestInternational: true,
     transfersDestSpecial: false,
     recording: false,
+    pendingConversations: false,
   },
   iframeUrl: '',
 };
@@ -182,12 +199,16 @@ export interface Agent {
   readonly phone?: string;
   readonly email?: string;
   readonly pin?: string;
-  readonly defaultOutboundGroup?: string;
+  /** El grupo por el que salen sus llamadas: uno de los suyos con Teléfono. Se elige en su tabla de grupos. */
+  readonly defaultOutboundGroupId?: number;
+  /** Sus equipos (Repositorios › Equipos): marcas para filtrar, no reparten nada. */
+  readonly teams?: readonly number[];
   readonly iframeUrl?: string;
   readonly permissions: AgentPermissions;
   readonly languages?: readonly string[];
   readonly randomOrder?: boolean;
   readonly pickupType?: PickupType;
+  /** De cuando chat y llamadas tenían cada uno su descuelgue: ya no se lee ni se escribe. */
   readonly pickupTypeChat?: PickupType;
   readonly photo?: string;
   readonly maxChats?: number;
@@ -255,6 +276,8 @@ const BASE_AGENTS: readonly Agent[] = [
     status: 'active',
     presenceStatus: 'disponible',
     pin: '392',
+    teams: [1],
+    defaultOutboundGroupId: 1,
     permissions: { ...DP },
     pickupType: 'auto',
   },
@@ -283,6 +306,7 @@ const BASE_AGENTS: readonly Agent[] = [
     presenceStatus: 'comida',
     pin: '135',
     iframeUrl: 'https://crm.example.com/agent-panel',
+    teams: [1, 4],
     permissions: { ...DP, manageDevices: true, recording: true },
     pickupType: 'auto',
     schedules: [1, 3],
@@ -307,6 +331,7 @@ const BASE_AGENTS: readonly Agent[] = [
     name: 'Leonardo DiCaprio',
     extension: '103',
     extensionType: 'phone',
+    phone: '612345678',
     agentType: 'normal',
     status: 'active',
     presenceStatus: 'bano',
@@ -343,7 +368,8 @@ const BASE_AGENTS: readonly Agent[] = [
     email: 'mperez@company.com',
     iframeUrl: 'https://crm.example.com/mario',
     pin: '246',
-    defaultOutboundGroup: 'ACD Demo C2CB',
+    defaultOutboundGroupId: 1,
+    teams: [1, 3],
     permissions: { ...DP, selfActivate: true, manageDevices: true, recording: true },
     languages: ['Español', 'Inglés'],
     pickupType: 'auto',
@@ -360,6 +386,7 @@ const BASE_AGENTS: readonly Agent[] = [
     presenceStatus: 'formacion',
     email: 'mrecio@company.com',
     pin: '835',
+    teams: [2],
     permissions: { ...DP, recording: true },
     pickupType: 'auto',
     schedules: [2],
@@ -464,6 +491,7 @@ const BASE_AGENTS: readonly Agent[] = [
     name: 'Robert De Niro',
     extension: '109',
     extensionType: 'phone',
+    phone: '634567812',
     agentType: 'normal',
     status: 'inactive',
     presenceStatus: 'desconectado',
@@ -505,6 +533,7 @@ const BASE_AGENTS: readonly Agent[] = [
     name: 'Miguel Palacios',
     extension: '127',
     extensionType: 'phone',
+    phone: '655443322',
     agentType: 'normal',
     status: 'active',
     presenceStatus: 'comida',

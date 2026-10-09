@@ -32,6 +32,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { ListPageComponent } from '@shared/components';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
+import { resolveGroup } from '@features/admin/groups/data/groups-data';
 
 import { decodificarCsv } from '../state/agenda-contacts.core.mjs';
 import {
@@ -44,20 +45,11 @@ import {
   TOPE_DE_IMPORTACION,
 } from '../state/tipificaciones.core.mjs';
 import { type Tipificacion, TipificacionesStore } from '../state/tipificaciones.store';
+import { TipificacionUsoService } from '../state/tipificacion-uso.service';
 
-/* v1 (2026-10-05): las columnas de la revisión de producto. */
-const COLUMN_PREF_KEY = 'sc-tipificaciones-columns-v1';
-
-/** Lo que el agente rellena al acabar una conversación, por dirección: la clave de su texto. */
-const DIRECCION: Readonly<Record<'inbound' | 'outbound' | 'both', string>> = {
-  inbound: 'repositories.tipificaciones.direction.inbound',
-  outbound: 'repositories.tipificaciones.direction.outbound',
-  both: 'repositories.tipificaciones.direction.both',
-};
-
-function direccionDe(t: Tipificacion): 'inbound' | 'outbound' | 'both' {
-  return t.inbound && t.outbound ? 'both' : t.inbound ? 'inbound' : 'outbound';
-}
+/* v1 (2026-10-05): las columnas de la revisión de producto. v2 (2026-10-09): sin Dirección ni Comentarios, que pasan
+ * al grupo (revisión de tipificaciones). */
+const COLUMN_PREF_KEY = 'sc-tipificaciones-columns-v2';
 
 /**
  * El listado de Tipificaciones (DD-173): nombre, descripción, dirección, comentarios,
@@ -85,6 +77,7 @@ function direccionDe(t: Tipificacion): 'inbound' | 'outbound' | 'both' {
 export class TipificacionesListPageComponent {
   private readonly store = inject(TipificacionesStore);
   private readonly groupsStore = inject(GroupsStore);
+  private readonly uso = inject(TipificacionUsoService);
   private readonly router = inject(Router);
   private readonly xlsx = inject(XlsxExportService);
   private readonly messages = inject(MessageService);
@@ -107,6 +100,12 @@ export class TipificacionesListPageComponent {
   protected readonly selectedIds = signal<ReadonlySet<Tipificacion['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly Tipificacion[] | null>(null);
   protected readonly deleteItems = computed(() => (this.deleteTarget() ?? []).map((t) => ({ id: t.id, name: t.name })));
+  /** Qué grupos las usan, en el diálogo de eliminar: dejarán de tipificar. */
+  protected readonly avisoDeUso = computed(() => {
+    this.lang();
+    const target = this.deleteTarget() ?? [];
+    return target.length === 0 ? null : this.uso.aviso(new Set(target.map((t) => t.id)), target.length > 1);
+  });
   protected readonly bulkEntity = useBulkEntityI18n({
     singular: 'repositories.tipificaciones.singular',
     plural: 'repositories.tipificaciones.plural',
@@ -116,24 +115,18 @@ export class TipificacionesListPageComponent {
 
   private readonly groupsById = computed(() => new Map(this.groupsStore.groups().map((g) => [g.id, g])));
 
-  /** Los grupos de una fila, para el MISMO desplegable que «Grupos» en la lista de agentes. */
+  /** Los grupos que clasifican con ella (lo dice cada grupo, en su General), para el MISMO desplegable que «Grupos» en
+   *  la lista de agentes. */
   protected groupsOf(t: Tipificacion): readonly GroupRef[] {
-    const byId = this.groupsById();
-    return t.groups.flatMap((g) => {
-      const group = byId.get(g.groupId);
-      return group ? [{ id: group.id, name: group.name, active: true }] : [];
-    });
+    return [...this.groupsById().values()]
+      .filter((g) => resolveGroup(g).wrapUp.typificationId === t.id)
+      .map((g) => ({ id: g.id, name: g.name, active: true }));
   }
 
-  protected directionLabel(t: Tipificacion): string {
-    return DIRECCION[direccionDe(t)];
-  }
-
-  /** «3 niveles», o «Solo comentario» si no pide árbol. */
+  /** «3 niveles». */
   protected levelsLabel(t: Tipificacion): string {
     this.lang();
     const n = nivelesDe(t);
-    if (n === 0) return this.translate.instant('repositories.tipificaciones.levels_none');
     return this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
   }
 
@@ -162,8 +155,6 @@ export class TipificacionesListPageComponent {
     return [
       { key: 'name', label: t('name'), locked: true },
       { key: 'description', label: t('description') },
-      { key: 'direction', label: t('direction') },
-      { key: 'comments', label: t('comments') },
       { key: 'levels', label: t('levels') },
       { key: 'groups', label: t('groups') },
       { key: 'id', label: t('id'), defaultVisible: false },
@@ -172,8 +163,6 @@ export class TipificacionesListPageComponent {
 
   private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('nameTpl');
   private readonly descriptionTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('descriptionTpl');
-  private readonly directionTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('directionTpl');
-  private readonly commentsTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('commentsTpl');
   private readonly levelsTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('levelsTpl');
   private readonly groupsTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('groupsTpl');
   private readonly idTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('idTpl');
@@ -186,26 +175,19 @@ export class TipificacionesListPageComponent {
     return [
       { field: 'name', header: t('name'), sortable: true, cellTemplate: this.nameTpl() },
       { field: 'description', header: t('description'), sortable: true, cellTemplate: this.descriptionTpl() },
-      { field: 'direction', header: t('direction'), sortable: true, cellTemplate: this.directionTpl(), width: '9rem' },
-      { field: 'comments', header: t('comments'), sortable: true, cellTemplate: this.commentsTpl(), width: '8.5rem' },
       { field: 'levels', header: t('levels'), sortable: true, cellTemplate: this.levelsTpl(), width: '9.5rem' },
       { field: 'groups', header: t('groups'), sortable: true, cellTemplate: this.groupsTpl(), width: '6.5rem' },
       { field: 'id', header: t('id'), sortable: true, cellTemplate: this.idTpl(), width: '4.5rem' },
     ];
   });
 
-  /** El orden de cada cabecera, ascendente: la dirección en el orden de la ficha (entrantes, salientes, ambas). */
+  /** El orden de cada cabecera, ascendente. */
   protected readonly compare = (a: Tipificacion, b: Tipificacion, field: string): number => {
-    const rangoDireccion = { inbound: 0, outbound: 1, both: 2 };
     switch (field) {
       case 'name':
         return a.name.localeCompare(b.name, 'es');
       case 'description':
         return a.description.localeCompare(b.description, 'es');
-      case 'direction':
-        return rangoDireccion[direccionDe(a)] - rangoDireccion[direccionDe(b)];
-      case 'comments':
-        return Number(a.comments) - Number(b.comments);
       case 'levels':
         return nivelesDe(a) - nivelesDe(b);
       case 'groups':
@@ -255,6 +237,7 @@ export class TipificacionesListPageComponent {
     if (!target) return;
     const keep = remainingIds === null ? null : new Set(remainingIds);
     const borradas = keep ? target.filter((t) => keep.has(t.id)) : [...target];
+    this.uso.soltar(new Set(borradas.map((t) => t.id)));
     this.store.deleteItems(borradas.map((t) => t.id));
     const entity = this.translate.instant('repositories.tipificaciones.singular');
     this.toast(
@@ -274,19 +257,13 @@ export class TipificacionesListPageComponent {
   /** La cabecera de la plantilla y de lo descargado, en el idioma de la app: lo descargado vuelve a entrar. */
   private cabecera(): string[] {
     const t = (k: string) => this.translate.instant(`repositories.tipificaciones.import_columns.${k}`);
-    return [t('name'), t('description'), t('direction'), t('comments'), t('level_1'), t('level_2'), t('level_3')];
+    return [t('name'), t('description'), t('level_1'), t('level_2'), t('level_3')];
   }
 
   /** Descarga lo que se ve, con las columnas de la plantilla: una fila por camino del árbol. */
   protected onExport(visibleRows: readonly Tipificacion[]): void {
     const tr = (k: string) => this.translate.instant(k);
-    const filas = filasParaDescargar(visibleRows, {
-      inbound: tr(DIRECCION.inbound),
-      outbound: tr(DIRECCION.outbound),
-      both: tr(DIRECCION.both),
-      yes: tr('common.yes'),
-      no: tr('common.no'),
-    });
+    const filas = filasParaDescargar(visibleRows);
     this.xlsx.export({
       headers: this.cabecera(),
       rows: filas,

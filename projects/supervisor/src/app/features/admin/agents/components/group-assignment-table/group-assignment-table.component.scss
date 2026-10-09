@@ -1,47 +1,38 @@
 /*
- * Editor de los grupos de un agente. La CAJA (título, icono, borde) la pone la
- * `sc-section-card` del formulario; la tabla, `sc-datatable` con su gramática de
- * lista, también vacía. Aquí solo queda la barra y dos celdas.
- *
- * `.assign` es el MISMO bloque que `agent-channel-table` (los agentes de un grupo):
- * son la misma relación vista desde cada lado, y hasta el 2026-09-14 cada una tenía
- * su propio panel, su propia lista desplegable a mano y su propio vacío.
+ * Los grupos de un agente. El MISMO bloque que `agent-channel-table` (los agentes de un grupo): la misma relación vista
+ * desde cada lado, con la misma barra, la misma tabla compacta y las mismas casillas de cabecera (revisión de agentes
+ * del 2026-10-09). La tarjeta y su tope al pie son de `.table-card--al-pie` (DD-160).
  */
 .assign {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-875);
+  gap: var(--sc-spacing-1);
+  min-height: 0;
 
   &__bar {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--sc-spacing-0-875);
+    gap: var(--sc-spacing-0-5);
   }
 
   &__search {
     flex: 1 1 240px;
     min-width: 0;
-    max-width: 320px;
-  }
-
-  &__counter {
-    color: var(--sc-text-subtle);
-    white-space: nowrap;
-  }
-
-  &__add {
-    margin-left: auto;
-    flex: 0 1 240px;
-    min-width: 200px;
   }
 
   &__name {
     display: inline-flex;
     align-items: center;
-    gap: var(--sc-spacing-0-875);
+    gap: var(--sc-spacing-1);
     min-width: 0;
     max-width: 100%;
+  }
+
+  &__identity {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
   &__name-label {
@@ -51,19 +42,30 @@
     white-space: nowrap;
   }
 
+  &__note {
+    color: var(--sc-text-secondary);
+  }
+
   &__none {
     color: var(--sc-text-disabled);
   }
 
-  &__no-results {
-    padding: var(--sc-spacing-1-5) var(--sc-spacing-0-875);
-    text-align: center;
-    color: var(--sc-text-subtle);
+  /* Las envolturas de lo apagado: dan al tooltip un sitio que sí recibe el ratón. */
+  &__locked,
+  &__head {
+    display: inline-flex;
   }
 
-  /* El vacío en dos renglones dentro de la tabla: qué pasa, y debajo qué hacer. */
-  &__empty-title {
-    display: block;
+  &__permission {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
     color: var(--sc-text-primary);
+  }
+
+  &__no-results {
+    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
+    text-align: center;
+    color: var(--sc-text-subtle);
   }
 }

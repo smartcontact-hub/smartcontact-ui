@@ -42,9 +42,11 @@
   max-width: 1200px;
 
   /* Lista: la tabla ES el contenido y agradece el ancho — más columnas
-   * visibles sin scroll horizontal. */
+   * visibles sin scroll horizontal. Sin tope desde la revisión de agentes del 2026-10-09: con 1600, a partir de
+   * 1680 de ventana la tarjeta se quedaba corta y dejaba lienzo muerto a la derecha («¿esto cuelga?»); a 1920,
+   * medido, 272px. La tabla llega al borde con el mismo margen de 28 que a la izquierda. */
   &--list {
-    max-width: 1600px;
+    max-width: none;
   }
 
   /* Hub de tarjetas: rejilla de destinos, no contenido continuo. */
@@ -263,13 +265,6 @@
   }
 }
 
-/* EL AVISO DE «ABIERTO EN OTRA PESTAÑA» (DD#169), encima de la sección: un `sc-message` de aviso, el
- * mismo en todas las fichas. Aquí y no en cada pantalla por lo mismo que la cabecera de abajo. */
-.ficha-conflict {
-  display: block;
-  margin-block-end: var(--sc-spacing-1);
-}
-
 /* LA CABECERA de las fichas (grupo, usuario, agente), arriba de la columna del índice (DD-170): el nombre
  * como único `h1` y una línea de datos. Vive aquí y no en cada pantalla porque la usan las tres, y la
  * encapsulación de Angular es por componente. Hasta el índice, el hueco del carril (14). */
@@ -396,6 +391,13 @@ h1.page__heading {
   color: var(--sc-text-primary);
 }
 
+/* El título de un listado con su nota al lado: la misma línea base, a 7. El margen de debajo sigue en el `h1`. */
+.page__heading-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-5);
+}
+
 /* PÁGINA DE TABLA CON SCROLL PROPIO (`.page--tabla`, DD-95, 2026-09-14).
  *
  * La página no hace scroll: título, buscador y cabecera de columnas se quedan a la vista, y la
@@ -428,9 +430,12 @@ h1.page__heading {
     flex-direction: column;
   }
 
+  /* La tarjeta mide lo que sus filas (regla 1) y, al buscar o filtrar, no baja del alto que llegó a medir: el marco no
+   * baila con cada letra ni se queda en una raya al no encontrar nada (revisión del 2026-10-09). El suelo lo mide
+   * `scLlegaAlPie` (`--alto-visto`), sin pasar del pie de la pantalla. */
   .table-card {
     flex: 0 1 auto;
-    min-height: 0;
+    min-height: min(var(--alto-visto, 0px), var(--llega-al-pie, 0px));
     display: flex;
     flex-direction: column;
   }

@@ -34,6 +34,30 @@
  * título queda 12.25 a la derecha de todo lo demás. Los DIVISORES no la llevan: cruzan
  * la caja entera.
  * ------------------------------------------------------------------ */
+/* Un control con su botón de añadir a la derecha: el «Añadir» de los dominios y los «+» de Recursos, que son el botón
+ * de solo icono, secundario y relleno, del Kit, a la talla de su control (DD-187, que corrige el redondo con borde de
+ * DD-167): un campo mediano lleva el botón mediano y uno pequeño, el pequeño. Global desde el barrido de consistencia (2026-10-09): lo usan las fichas de grupo y de agente. Alineados arriba, para que la ayuda bajo el control no descentre el botón
+ * (`ayudas-campos`), y con el hueco de la casa. El control se estira y puede encoger en media columna. */
+.control-add {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-5);
+}
+
+.control-add > :is(sc-inputtext, sc-select, sc-multiselect) {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+/* Lo de dentro de un bloque (`sc-subsection`) de las fichas, a 14 entre piezas (AGENTS «UX de pantalla» 9). Sin el
+ * margen lateral de `.sub-section`, que es de la tarjeta de antes: el bloque ya pone su relleno. Lo comparten las
+ * fichas de agente y de grupo (barrido de consistencia, 2026-10-09). */
+.bloque {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
 .sub-section {
   display: flex;
   flex-direction: column;
@@ -188,6 +212,11 @@
     grid-column: 1 / -1;
   }
 
+  /* Dos columnas de una rejilla de tres: un dato largo (el email del agente) sin salirse de las columnas de debajo. */
+  &--span-2 {
+    grid-column: span 2;
+  }
+
   /*
    * LA CAJA de la etiqueta, y solo la caja. La TIPOGRAFÍA la pone
    * `.sc-text-caption-regular` en la plantilla — el text style
@@ -272,10 +301,11 @@
   &__error {
     display: block;
     /* Reserve space so toggling validation doesn't shift layout (DD#16). */
-    min-height: 1.25em;
+    min-height: 1lh;
     margin-top: var(--sc-spacing-0-25);
     font-size: var(--sc-font-size-50);
-    line-height: 1.25;
+    /* El de caption (18), como las ayudas: 1.25 daba 15, fuera de la rampa (barrido de tipografía, 2026-10-09). */
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-danger);
   }
 }

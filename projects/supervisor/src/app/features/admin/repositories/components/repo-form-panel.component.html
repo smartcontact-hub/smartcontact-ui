@@ -10,7 +10,7 @@
 
   @for (field of fields(); track field.key; let i = $index) {
     <div class="panel__field">
-      <label class="panel__label sc-text-caption-regular" [attr.for]="'repo-field-' + field.key" [id]="'repo-field-' + field.key + '-label'">
+      <label class="panel__label sc-text-caption-semibold" [attr.for]="'repo-field-' + field.key" [id]="'repo-field-' + field.key + '-label'">
         {{ field.labelKey | translate }}
         @if (!field.required) {
           <span class="panel__hint">({{ 'common.optional' | translate }})</span>
@@ -64,7 +64,7 @@
   </div>
 
   <div class="panel__actions">
-    <sc-button variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelled.emit()" />
-    <sc-button variant="primary" [label]="(initial() ? 'common.save' : 'common.create') | translate" (clicked)="onSave()" />
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelled.emit()" />
+    <sc-button size="sm" variant="primary" [label]="(initial() ? 'common.save' : 'common.create') | translate" (clicked)="onSave()" />
   </div>
 </div>

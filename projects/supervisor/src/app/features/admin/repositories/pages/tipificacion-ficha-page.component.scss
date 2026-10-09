@@ -4,9 +4,9 @@
   background: var(--sc-bg-canvas);
 }
 
-/* El MOLDE de la ficha no vive aquí: `.page__inner--rail`, `.headline*`, `.ficha-rail`, `.ficha-summary` y el aviso de
- * otra pestaña están en `src/styles/_page.scss`, y `.field`, `.sub-section` y `.switch-field` en `_forms.scss`. Aquí solo
- * lo que es de esta ficha. */
+/* El MOLDE de la ficha no vive aquí: `.page__inner--rail`, `.headline*`, `.ficha-rail` y `.ficha-summary` están en
+ * `src/styles/_page.scss`, y `.field`, `.sub-section` y `.switch-field` en `_forms.scss`. Aquí solo lo que es de esta
+ * ficha. */
 
 /* La columna del teléfono: el hueco del resumen de las fichas (el área `summary` de la rejilla de `.ficha-rail`), fija al
  * bajar como él, pero SIN su recorte: `.ficha-summary` desplaza por dentro (`overflow-y: auto`), y eso cortaba en recto

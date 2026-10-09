@@ -335,6 +335,42 @@ export function queueFrom(advanced: GroupAdvanced): ChannelQueue {
   return { queueSizeType, queueSize, maxQueueWaitSec, serviceLevelSec, transferSec };
 }
 
+/* ── La tipificación del grupo (revisión de tipificaciones del 2026-10-09) ──
+ *
+ * Lo que el grupo pide al agente al acabar cada conversación: un comentario, clasificarla con UNA tipificación, o las
+ * dos cosas, y en cuáles (todas, solo las entrantes o solo las salientes). Es del grupo y no de la tipificación, que
+ * se queda en su árbol: la misma tipificación sirve a un grupo para las entrantes y a otro para todas. Hasta ese día
+ * la tipificación llevaba su dirección, su comentario y sus grupos por canal, y un grupo podía tener varias (DD-173). */
+
+/** En qué conversaciones se clasifica: todas, solo las entrantes o solo las salientes. */
+export type WrapUpScope = 'all' | 'inbound' | 'outbound';
+export const WRAP_UP_SCOPES: readonly WrapUpScope[] = ['all', 'inbound', 'outbound'];
+
+export interface GroupWrapUp {
+  /** «Permitir comentarios»: el agente puede dejar una nota al acabar. */
+  readonly comments: boolean;
+  /** «Clasificar llamadas»: el agente elige del árbol de `typificationId`. */
+  readonly classify: boolean;
+  readonly typificationId: number | null;
+  readonly scope: WrapUpScope;
+}
+
+export const DEFAULT_WRAP_UP: GroupWrapUp = { comments: false, classify: false, typificationId: null, scope: 'all' };
+
+/** La de los grupos de EJEMPLO, por id: la que llevaban las tipificaciones de la semilla hasta el 2026-10-09, una por
+ *  grupo (la de entrantes, si tenía dos). */
+const SEED_WRAP_UP: Readonly<Record<number, GroupWrapUp>> = {
+  2: { comments: true, classify: true, typificationId: 1, scope: 'inbound' },
+  3: { comments: true, classify: true, typificationId: 2, scope: 'outbound' },
+  4: { comments: true, classify: true, typificationId: 2, scope: 'outbound' },
+  9: { comments: true, classify: true, typificationId: 1, scope: 'inbound' },
+  10: { comments: true, classify: true, typificationId: 3, scope: 'all' },
+  11: { comments: true, classify: true, typificationId: 1, scope: 'all' },
+  12: { comments: true, classify: true, typificationId: 1, scope: 'all' },
+  13: { comments: true, classify: true, typificationId: 3, scope: 'all' },
+  14: { comments: true, classify: true, typificationId: 2, scope: 'outbound' },
+};
+
 /** Un grupo con TODO resuelto: lo que guardó, y lo que no, de su juego de antes o de fábrica. */
 export interface ResolvedGroup extends Group {
   readonly announcements: GroupAnnouncements;
@@ -342,6 +378,7 @@ export interface ResolvedGroup extends Group {
   readonly phoneQueue: ChannelQueue;
   readonly chatQueue: ChannelQueue;
   readonly chat: ChatSettings;
+  readonly wrapUp: GroupWrapUp;
 }
 
 /**
@@ -360,6 +397,7 @@ export function resolveGroup(group: Group): ResolvedGroup {
     advanced,
     phoneQueue: { ...legacyQueue, ...group.phoneQueue },
     chatQueue: { ...legacyQueue, ...group.chatQueue },
+    wrapUp: { ...DEFAULT_WRAP_UP, ...(group.wrapUp ?? SEED_WRAP_UP[group.id]) },
     chat: {
       ...DEFAULT_CHAT_SETTINGS,
       ...group.chat,
@@ -406,9 +444,10 @@ export interface Group {
   readonly chatSubStrategy?: string;
   readonly ringAllAgents?: number;
   readonly services?: readonly string[];
-  /** La tipificación del grupo: una categoría de `Repositorios > Tipificaciones`. Con ella, el agente tiene que
-   *  tipificar antes de cerrar (manual de Voice, p. 14). */
+  /** De antes de las tipificaciones con su árbol (DD-173): ya no se lee. Lo de ahora va en `wrapUp`. */
   readonly typification?: string;
+  /** Comentario y clasificación al acabar cada conversación. Sin ella, la de su semilla o ninguna (`resolveGroup`). */
+  readonly wrapUp?: GroupWrapUp;
   readonly announcements?: GroupAnnouncements;
   readonly advanced?: GroupAdvanced;
   /** La cola y los tiempos de Teléfono. Sin ella, los de `advanced` (se lee con `resolveGroup`). */

@@ -254,7 +254,7 @@
     </div>
     <span class="setting-row__control setting-row__group">
       <span class="visually-hidden" [id]="'grupos-' + channel + '-queue-type' + '-label'">{{ 'groups.form.advanced.queue_type' | translate }}</span>
-      <sc-select size="sm" optionValue="value" [inputId]="'grupos-' + channel + '-queue-type'" [options]="queueSizeOptions()" [value]="queue.queueSizeType" [ariaLabelledBy]="'grupos-' + channel + '-queue-type' + '-label'" [ariaDescribedBy]="'grupos-' + channel + '-queue-help'" (valueChange)="setQueueType(channel, $event)" />
+      <sc-select optionValue="value" [inputId]="'grupos-' + channel + '-queue-type'" [options]="queueSizeOptions()" [value]="queue.queueSizeType" [ariaLabelledBy]="'grupos-' + channel + '-queue-type' + '-label'" [ariaDescribedBy]="'grupos-' + channel + '-queue-help'" (valueChange)="setQueueType(channel, $event)" />
       <sc-inputnumber class="setting-row__control--number" [inputId]="'grupos-' + channel + '-queue-size'" [ariaDescribedBy]="'grupos-' + channel + '-queue-help'" [min]="1" [max]="queue.queueSizeType === 'per_agent' ? 10 : undefined" [step]="1" [error]="queueSizeError(queue)" [value]="queue.queueSize" (valueChange)="setQueueNumber(channel, 'queueSize', $event)" />
     </span>
   </div>

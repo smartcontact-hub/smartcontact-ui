@@ -6,7 +6,6 @@ import {
   inject,
   Injector,
   input,
-  OnDestroy,
   OnInit,
   signal,
   type TemplateRef,
@@ -24,7 +23,7 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { CrossTabLockService, SectionLinksService } from '@core/services';
+import { SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { EMAIL_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -116,7 +115,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
   styleUrl: './user-form-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
+export class UserFormPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sectionLinks = inject(SectionLinksService);
@@ -125,7 +124,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
-  private readonly crossTab = inject(CrossTabLockService);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
    * fuera la banda sticky-form-header; identidad → breadcrumb + campos del
@@ -217,8 +215,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    *  (admin/AED/builder); `formDirty` queda de alias para el guard de salida. */
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
-  protected readonly conflictWarning = signal(false);
-  private releaseLock: (() => void) | null = null;
 
   /**
    * EL ÍNDICE DE LA FICHA (DD-122): el mismo de la ficha de grupo y de Contact Center, con UN orden en
@@ -417,9 +413,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         photo: user.photo ?? null,
       });
       this.dirtyState.markPristine();
-      this.releaseLock = this.crossTab.acquire('user', user.id, () =>
-        this.conflictWarning.set(true),
-      );
       return;
     }
 
@@ -460,10 +453,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.releaseLock?.();
-    this.releaseLock = null;
-  }
 
   @HostListener('window:beforeunload', ['$event'])
   protected onBeforeUnload(event: BeforeUnloadEvent): void {

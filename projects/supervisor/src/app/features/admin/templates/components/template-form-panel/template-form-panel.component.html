@@ -11,11 +11,12 @@
   }
 
   <div class="panel__field">
+    <!-- La etiqueta de campo de las fichas (12/18/600, DD-100 §4), como «Canal» y «Contenido»; no la propia del DS. -->
+    <label class="panel__label sc-text-caption-semibold" for="template-title">{{ 'templates.form.title' | translate }}</label>
     <sc-inputtext
       #titleInput
       inputId="template-title"
       type="text"
-      [label]="'templates.form.title' | translate"
       [value]="title()"
       [placeholder]="'templates.form.title_placeholder' | translate"
       (valueChange)="onTitleInput($event)"
@@ -24,7 +25,7 @@
   </div>
 
   <div class="panel__field">
-    <span class="panel__label sc-text-caption-regular" [id]="channelLabelId">{{ 'templates.form.channel' | translate }}</span>
+    <span class="panel__label sc-text-caption-semibold" [id]="channelLabelId">{{ 'templates.form.channel' | translate }}</span>
     <!-- Botones segmentados (`sc-selectbutton`): se elige el valor del campo (DD-113). -->
     <sc-selectbutton
       [options]="typeOptions()"
@@ -42,7 +43,7 @@
   </div>
 
   <div class="panel__field">
-    <label class="panel__label sc-text-caption-regular" for="template-body">
+    <label class="panel__label sc-text-caption-semibold" for="template-body">
       {{ 'templates.form.body' | translate }}
     </label>
     <sc-textarea inputId="template-body" [rows]="3" fluid [value]="body()" [placeholder]="'templates.form.body_placeholder' | translate" (valueChange)="onBodyInput($event)" (keydown)="onKey($event)" />
@@ -61,7 +62,7 @@
   </div>
 
   <div class="panel__actions">
-    <sc-button variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelled.emit()" />
-    <sc-button variant="primary" [label]="(initial() ? 'common.save' : 'common.create') | translate" (clicked)="onSave()" />
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelled.emit()" />
+    <sc-button size="sm" variant="primary" [label]="(initial() ? 'common.save' : 'common.create') | translate" (clicked)="onSave()" />
   </div>
 </div>

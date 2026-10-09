@@ -92,6 +92,18 @@ export class AgentsStore {
     });
   }
 
+  /** Deja en el equipo `grupoId` exactamente a `ids`: lo guarda su editor, en Repositorios › Equipos.
+   *  Solo toca a los que entran o salen. */
+  setTeamMembers(grupoId: number, ids: ReadonlySet<number>): void {
+    const cambian = this.agents()
+      .filter((a) => (a.teams ?? []).includes(grupoId) !== ids.has(a.id))
+      .map((a) => a.id);
+    bulkUpdatePatch(this.store, this.agents(), cambian, (agent) => {
+      const actuales = agent.teams ?? [];
+      return { teams: ids.has(agent.id) ? [...actuales, grupoId] : actuales.filter((id) => id !== grupoId) };
+    });
+  }
+
   /** Strip a list of label ids from every agent that references them. */
   removeLabelsFromAllAgents(labelIds: readonly number[]): void {
     if (labelIds.length === 0) return;

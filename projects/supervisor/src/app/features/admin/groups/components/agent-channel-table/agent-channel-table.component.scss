@@ -100,3 +100,15 @@
   gap: var(--sc-spacing-0-5);
   min-width: 12rem;
 }
+
+/* Estados y equipos: dos grupos de casillas a 14 (entre grupos, el doble que dentro). */
+.assign__filters {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-1);
+}
+
+.assign__filter-title {
+  color: var(--sc-text-secondary);
+}

@@ -41,8 +41,8 @@
   />
 
   <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-bulk-edit-menu matchable [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (match)="onBulkMatch($event)" (commit)="onBulkEditCommit($event)" />
-    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+    <sc-bulk-edit-menu matchable [fields]="bulkEditFields()" [buttonLabel]="'common.edit' | translate" (match)="onBulkMatch($event)" (commit)="onBulkEditCommit($event)" />
+    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
   </ng-container>
@@ -86,9 +86,12 @@
 <ng-template #channelsTpl let-group>
   <span class="sc-channel-row">
     @for (channel of group.channels; track channel) {
+      <!-- Con nombre, como en el listado de agentes: un `title` solo no se anuncia (barrido de consistencia). -->
       <span
         class="sc-channel-row__item"
+        role="img"
         [attr.data-channel]="channel"
+        [attr.aria-label]="channelLabelKey(channel) | translate"
         [title]="channelLabelKey(channel) | translate"
       >
         <sc-channel-icon [channel]="channel" />

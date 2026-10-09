@@ -44,6 +44,7 @@ import { AgendasStore } from '../state/agendas.store';
 import { EmailTriggersStore, MailboxesStore } from '../state/emails.store';
 import { EntidadesStore } from '../state/entidades.store';
 import { HorariosStore } from '../state/horarios.store';
+import { EquiposStore } from '../state/equipos.store';
 import { IntencionesStore } from '../state/intenciones.store';
 import { TipificacionesStore } from '../state/tipificaciones.store';
 import { VariablesStore } from '../state/variables.store';
@@ -156,6 +157,7 @@ export class RepositoriosHubPageComponent {
   private readonly mailboxes = inject(MailboxesStore);
   private readonly emailTriggers = inject(EmailTriggersStore);
   private readonly horarios = inject(HorariosStore);
+  private readonly equipos = inject(EquiposStore);
   private readonly templates = inject(TemplatesStore);
   private readonly tipificaciones = inject(TipificacionesStore);
   private readonly labels = inject(LabelsStore);
@@ -307,6 +309,21 @@ export class RepositoriosHubPageComponent {
           count: () => this.labels.labels().length,
           entradas: () =>
             this.labels.labels().map((l) => ({ id: l.id, nombre: l.name, detalle: l.description ?? '', link: '/admin/labels' })),
+        },
+        {
+          id: 'equipos',
+          labelKey: 'repositories.equipos.title',
+          descriptionKey: 'repositories.hub.descriptions.equipos',
+          icon: 'group_work',
+          path: '/admin/equipos',
+          count: () => this.equipos.items().length,
+          entradas: () =>
+            this.equipos.items().map((g) => ({
+              id: g.id,
+              nombre: g.name,
+              detalle: g.description,
+              link: `/admin/equipos/editar/${g.id}`,
+            })),
         },
         {
           id: 'variables',
@@ -558,17 +575,28 @@ export class RepositoriosHubPageComponent {
   protected filtrar(valor: string | null): void {
     const siguiente = valor ?? TODAS;
     if (siguiente === this.filtro()) return;
-    const doc = this.document as Document & { startViewTransition?: (cb: () => void) => unknown };
+    const doc = this.document as Document & {
+      startViewTransition?: (cb: () => void) => { finished: Promise<void> };
+    };
     const quieto = this.document.defaultView?.matchMedia('(prefers-reduced-motion: reduce)').matches ?? true;
     if (!doc.startViewTransition || quieto) {
       this.filtro.set(siguiente);
       return;
     }
-    doc.startViewTransition(() => {
+    // El nombre de cada categoría existe SOLO durante esta transición. Puesto siempre, la transición del router al entrar
+    // en Repositorios las pintaba en su propia capa, por encima de todo, menú desplegado incluido, y con la animación de
+    // «subir y aparecer» del filtro (medido el 2026-10-09: cuatro `::view-transition-new(repo-cat-…)` al navegar).
+    this.filtrando.set(true);
+    this.cdr.detectChanges();
+    const transicion = doc.startViewTransition(() => {
       this.filtro.set(siguiente);
       this.cdr.detectChanges();
     });
+    void transicion.finished.finally(() => this.filtrando.set(false));
   }
+
+  /** Mientras dura la transición del filtro: solo entonces llevan nombre las categorías. */
+  protected readonly filtrando = signal(false);
 
   /** Al entrar en el buscador vacío, los recientes (si hay); al escribir, se van. */
   protected alEnfocarBuscador(event: FocusEvent): void {

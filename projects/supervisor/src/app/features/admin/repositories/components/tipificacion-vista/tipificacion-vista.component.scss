@@ -1,5 +1,5 @@
 /* La columna de la derecha: su título, el teléfono y lo que quedaría guardado. Entre las tres, el hueco de los hermanos
- * (14); dentro del título, icono y textos son una pieza (7). */
+ * (14); dentro del título, icono y texto son una pieza (7). */
 :host {
   display: flex;
   flex-direction: column;
@@ -25,30 +25,31 @@
   color: var(--sc-text-link);
 }
 
-.vista__textos {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
 .vista__titulo {
+  min-width: 0;
   margin: 0;
+  overflow: hidden;
   color: var(--sc-text-heading);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.vista__ayuda {
-  margin: 0;
-  color: var(--sc-text-secondary);
-}
-
-/* Lo que quedaría guardado: dos renglones reservados, con o sin resultado. */
+/* Lo que quedaría guardado: una línea reservada, con o sin resultado; lo que no cabe se corta y se lee entero al pasar. */
 .vista__resultado {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--sc-spacing-0-5);
-  min-height: 2lh;
+  min-height: 1lh;
+  max-inline-size: var(--sc-spacing-18);
   margin: 0;
   color: var(--sc-text-secondary);
+
+  span {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   &--hecho {
     color: var(--sc-text-success);
@@ -56,7 +57,6 @@
 
   sc-icon {
     flex: none;
-    margin-block-start: var(--sc-spacing-0-125);
   }
 }
 
@@ -67,8 +67,16 @@
  *   píldoras 27,3 con radio 10,6 → 28 y 10,5 · 8 entre ellas → 7 · comentario 184 con radio 12,1 → 175 y 12
  *   Guardar 40,2 con radio 12,1 → 38,5 y 12 · barra de pestañas 56,9 con radio 23,7 → 56 y 24,5 · iconos 18
  * Los radios grandes salen de la escala de espacios: la de radios acaba en 16. */
+/* Del tamaño del teléfono del agente y siempre el mismo, elija lo que elija (revisión del 2026-10-09: con uno, dos o tres
+ * niveles crecía y empujaba lo de debajo). Su proporción, 250 × 507, con el ancho tope del peldaño más cercano (252): no
+ * hay token de 507, y la proporción no lo necesita. */
 .tel {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  max-inline-size: var(--sc-spacing-18);
+  aspect-ratio: 250 / 507;
   padding-block-start: var(--sc-spacing-1-25);
   border-radius: var(--sc-spacing-1-75);
   background: var(--sc-agent-window-plate-bg);
@@ -89,12 +97,18 @@
 /* El panel: del color de la franja, y su pie (del alto de la barra) queda debajo de ella, así que por encima de las
  * esquinas redondeadas de la barra se ve el panel, como en sc-agent. */
 .tel__panel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   padding-block-end: var(--sc-spacing-4);
   border-radius: var(--sc-spacing-2);
   background: var(--sc-agent-window-header-bg);
 }
 
 .tel__seccion {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   border-start-start-radius: var(--sc-spacing-1-75);
   border-start-end-radius: var(--sc-spacing-1-75);
   background: var(--sc-agent-window-bg);
@@ -111,8 +125,11 @@
   background: var(--sc-agent-window-header-bg);
 }
 
+/* Lo de dentro llena la sección: los niveles arriba y Guardar en su sitio, abajo, como en sc-agent (no sigue a los
+ * niveles ni se mueve al elegir). */
 .tel__cuerpo {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   padding: var(--sc-spacing-0-75) var(--sc-spacing-1-5) var(--sc-spacing-1-5);
 }
@@ -187,7 +204,7 @@
 /* Guardar: transparente con borde blanco; apagado, en el gris del agente. */
 .tel__guardar {
   height: var(--sc-spacing-2-75);
-  margin-block-start: var(--sc-spacing-0-875);
+  margin-block-start: auto;
   border: 1px solid var(--sc-agent-window-fg);
   border-radius: var(--sc-radius-xl);
   background-color: transparent;

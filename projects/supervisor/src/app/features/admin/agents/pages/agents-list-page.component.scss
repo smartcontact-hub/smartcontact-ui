@@ -21,6 +21,14 @@
 .cell {
   color: var(--sc-text-secondary);
 
+  /* Una lista de nombres que no cabe se corta con «…»; el `title` la da entera. */
+  &--truncate {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   &--empty {
     color: var(--sc-text-disabled);
   }

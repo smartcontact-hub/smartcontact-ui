@@ -1,10 +1,7 @@
-<!-- Su título: qué es y cuándo sale, con el icono del teléfono. -->
+<!-- Su título, en una línea: qué es y cuándo sale, con el icono del teléfono. -->
 <header class="vista__cabecera">
   <span class="vista__icono" aria-hidden="true"><sc-icon name="smartphone" size="lg" /></span>
-  <div class="vista__textos">
-    <h2 class="vista__titulo sc-text-body-semibold">{{ 'repositories.tipificaciones.preview.title' | translate }}</h2>
-    <p class="vista__ayuda sc-text-caption-regular">{{ 'repositories.tipificaciones.preview.when' | translate }}</p>
-  </div>
+  <h2 class="vista__titulo sc-text-body-semibold">{{ 'repositories.tipificaciones.preview.title' | translate }}</h2>
 </header>
 
 <!-- EL TELÉFONO DEL AGENTE, en su sección de Tipificación (sc-agent, tras colgar: `agent/docs/comunicador.md`, «La ventana de
@@ -73,8 +70,9 @@
 <!-- Lo que quedaría en la tabla del agente al guardar la prueba: debajo del teléfono, en su línea reservada. -->
 <p class="vista__resultado sc-text-caption-regular" [class.vista__resultado--hecho]="guardado() !== null" role="status">
   @if (guardado() !== null) {
+    @let texto = guardado() ? ('repositories.tipificaciones.preview.saved' | translate: { path: guardado() }) : ('repositories.tipificaciones.preview.saved_comment' | translate);
     <sc-icon name="check_circle" size="sm" [weight]="600" aria-hidden="true" />
-    <span>{{ guardado() ? ('repositories.tipificaciones.preview.saved' | translate: { path: guardado() }) : ('repositories.tipificaciones.preview.saved_comment' | translate) }}</span>
+    <span [title]="texto">{{ texto }}</span>
   } @else {
     <span>{{ 'repositories.tipificaciones.preview.try' | translate }}</span>
   }

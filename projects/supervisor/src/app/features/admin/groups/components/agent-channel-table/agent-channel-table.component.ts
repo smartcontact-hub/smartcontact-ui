@@ -36,8 +36,9 @@ import { PRESENCE_LABEL_KEYS, type PresenceStatus } from '@features/admin/agents
 import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
+import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
 
-import { PresenceAvatarComponent } from '@shared/components';
+import { NotaDecisionComponent, PresenceAvatarComponent } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -60,6 +61,10 @@ export interface AgentChannelTableAgent {
   readonly email?: string;
   readonly presenceStatus?: PresenceStatus;
   readonly allowedChannels?: readonly Channel[];
+  /** «Activación por grupo» (su Configuración): se habilita él mismo en cada grupo, y aquí no se toca. */
+  readonly selfActivate?: boolean;
+  /** Sus equipos (Repositorios › Equipos): se filtra por ellos. */
+  readonly teams?: readonly number[];
 }
 
 interface VisibleRow {
@@ -115,6 +120,7 @@ export function columnsRem(
     DatatableComponent,
     PopoverModule,
     PresenceAvatarComponent,
+    NotaDecisionComponent,
     SearchComponent,
     RouterLink,
     ScIconComponent,
@@ -243,10 +249,35 @@ export class AgentChannelTableComponent {
     { value: 'administrativo', labelKey: PRESENCE_LABEL_KEYS.administrativo, members: ['administrativo'] },
     { value: 'desconectado', labelKey: PRESENCE_LABEL_KEYS.desconectado, members: ['desconectado'] },
   ];
-  /** Cuántas opciones del menú están marcadas: lo que dice la marca de la cabecera. */
+  /** Cuántas opciones del menú están marcadas: lo que dice la marca de la cabecera (estados y equipos). */
   protected readonly presenceChosen = computed(
-    () => this.presenceOptions.filter((o) => o.members.every((m) => this.presenceFilter().has(m))).length,
+    () =>
+      this.presenceOptions.filter((o) => o.members.every((m) => this.presenceFilter().has(m))).length +
+      this.teamFilter().size,
   );
+
+  /**
+   * LOS EQUIPOS, PARA FILTRAR (revisión del 2026-10-09): para lo que sirven en Voice. Aquí, para asignar de una
+   * vez a los que comparten uno: «Sin asignar» + «Inglés» y la casilla de «todos» de Asignado. Un agente pasa si está en
+   * alguno de los marcados.
+   */
+  private readonly equiposStore = inject(EquiposStore);
+  protected readonly teamOptions = computed(() => this.equiposStore.items().map((g) => ({ id: g.id, name: g.name })));
+  protected readonly teamFilter = signal<ReadonlySet<number>>(new Set());
+
+  protected toggleTeam(id: number): void {
+    this.teamFilter.update((actual) => {
+      const next = new Set(actual);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  protected clearFilters(): void {
+    this.presenceFilter.set(this.emptyPresence);
+    this.teamFilter.set(new Set());
+  }
 
   protected presenceChecked(members: readonly PresenceStatus[]): boolean {
     return members.every((m) => this.presenceFilter().has(m));
@@ -267,13 +298,15 @@ export class AgentChannelTableComponent {
   private readonly filteredAgents = computed(() => {
     const filter = this.filter();
     const presence = this.presenceFilter();
+    const grupos = this.teamFilter();
     const query = this.query().trim().toLowerCase();
     const agents = this.availableAgents();
     const assigned = new Set(untracked(this.links).map(link => link.agentId));
     return agents.filter(agent =>
       (filter === 'all' || (filter === 'assigned') === assigned.has(agent.id)) &&
       (!query || `${agent.name} ${agent.email ?? ''}`.toLowerCase().includes(query)) &&
-      (presence.size === 0 || (!!agent.presenceStatus && presence.has(agent.presenceStatus))));
+      (presence.size === 0 || (!!agent.presenceStatus && presence.has(agent.presenceStatus))) &&
+      (grupos.size === 0 || (agent.teams ?? []).some((id) => grupos.has(id))));
   });
   protected readonly visibleRows = computed<readonly VisibleRow[]>(() => {
     const links = new Map(this.links().map(link => [link.agentId, link]));
@@ -300,7 +333,7 @@ export class AgentChannelTableComponent {
   private headerRows(field: string): readonly VisibleRow[] {
     return this.visibleRows().filter((row) =>
       field === 'assigned' ? !!row.link || this.compatible(row.agent)
-        : field === 'active' ? !!row.link
+        : field === 'active' ? !!row.link && !row.agent.selfActivate
           : !!row.link && this.allowed(row.agent, field));
   }
 
@@ -404,6 +437,7 @@ export class AgentChannelTableComponent {
   }
 
   protected toggleActive(agentId: number, active: boolean): void {
+    if (this.agentById().get(agentId)?.selfActivate) return;
     this.linksChange.emit(this.links().map(link => link.agentId === agentId ? { ...link, active } : link));
   }
 

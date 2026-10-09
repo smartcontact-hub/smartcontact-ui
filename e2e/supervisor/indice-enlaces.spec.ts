@@ -110,7 +110,7 @@ test('ficha de grupo · un enlace con ?seccion= abre esa sección', async ({ pag
   await expect(actual(page)).toHaveText('Recursos');
 });
 
-test('ficha de grupo · Cmd/Ctrl+clic abre la sección en otra pestaña, y las dos avisan de que la ficha está abierta en otra', async ({
+test('ficha de grupo · Cmd/Ctrl+clic abre la sección en otra pestaña y la ficha no se mueve', async ({
   page,
   context,
 }) => {
@@ -123,7 +123,7 @@ test('ficha de grupo · Cmd/Ctrl+clic abre la sección en otra pestaña, y las d
    * entre Playwright y Chromium, vista en el protocolo: cuando la carga de la pestaña empieza antes de que Playwright
    * active `Page` en ella, Chromium no le manda el `Page.frameNavigated` de esa primera navegación, y Playwright o no
    * entrega la pestaña (espera esa navegación: los 90 s del CI) o la entrega con el marco aún en `about:blank` (los
-   * localizadores no encuentran la sección). La pestaña sí se abría y cargaba la ficha: la original mostraba el aviso.
+   * localizadores no encuentran la sección). La pestaña sí se abría y cargaba la ficha.
    * Una pestaña de `context.newPage()` la sigue Playwright desde que nace. No vuelvas a la espera subiendo el timeout.
    * Que el manejador del índice no cancele el clic con tecla lo fija además la prueba unitaria del DS. */
   await page.addInitScript(() => {
@@ -147,9 +147,6 @@ test('ficha de grupo · Cmd/Ctrl+clic abre la sección en otra pestaña, y las d
   await expect(otra.locator('#group-section-agents')).toBeVisible();
   // La original no se ha movido.
   await expect(page.locator('#group-section-general')).toBeVisible();
-  // Dos editores del mismo grupo: el aviso de otra pestaña es justo lo que lo cubre.
-  await expect(otra.locator('.ficha-conflict')).toBeVisible();
-  await expect(page.locator('.ficha-conflict')).toBeVisible();
 });
 
 test('alta · cambiar de sección no deja rastro: Atrás del navegador sale del alta', async ({ page }) => {

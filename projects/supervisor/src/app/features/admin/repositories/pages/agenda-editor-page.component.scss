@@ -10,11 +10,6 @@
   padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
 }
 
-.agenda__conflict {
-  display: block;
-  margin-block-end: var(--sc-spacing-1);
-}
-
 /* El diálogo de importar (DD-166): la ayuda, las dos acciones juntas y, debajo, la vista previa, otro grupo. */
 .importar {
   display: flex;
