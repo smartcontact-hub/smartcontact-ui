@@ -1,23 +1,22 @@
 {
-  "commit": "d4843e43",
+  "commit": "83cbc0d1",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-10-07T13:11:45.910Z",
+  "generado": "2026-10-09T17:10:50.778Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "smartcontact-tokens.css"
+        "smartcontact-tokens.css",
+        "smartcontact-typography.css"
       ],
       "variables": [
-        "claro|--sc-label-brown-bg",
-        "claro|--sc-label-brown-border",
-        "claro|--sc-label-brown-text",
-        "oscuro|--sc-label-brown-bg",
-        "oscuro|--sc-label-brown-border",
-        "oscuro|--sc-label-brown-text"
+        "claro|--sc-font-family-title",
+        "claro|--sc-font-size-title",
+        "claro|--sc-font-weight-title",
+        "claro|--sc-line-height-title"
       ],
       "retirados": [],
       "semanticaComun": false,
@@ -30,5 +29,5 @@
       "faltan": []
     }
   },
-  "version": "0.20261007.1311"
+  "version": "0.20261009.1710"
 }

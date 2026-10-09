@@ -779,11 +779,17 @@
    *   Display/display-*  → font/size/900 (64) · line/height/900 (78)
    *   Heading/h1-*       → font/size/800 (48) · line/height/800 (58)
    *   Heading/h2-*       → font/size/500 (24) · line/height/500 (36)
+   *   Title/title-*      → font/size/450 (20) · line/height/450 (28)
    *   Heading/h3-*       → font/size/400 (18) · line/height/300 (24)
+   *   Subtitle/subtitle-*→ font/size/300 (16) · line/height/300 (24)
    *   Body/body-*        → font/size/200 (14) · line/height/200 (20)
    *   Caption/caption-*  → font/size/100 (12) · line/height/100 (18)
    *
-   * `h4`, `subtitle-1`, `subtitle-2` y `body-1` NO tienen text style en Figma: son roles del
+   * `Title` y `Subtitle` entraron en el Kit el 2026-10-09 (DD-188): el título de la página y el
+   * de sección de las pantallas densas, los dos escalones que Primer usa (20 y 16) y que la
+   * rampa no tenía. `subtitle-1` ya existía en código con esas medidas; ahora tiene estilo.
+   *
+   * `h4`, `subtitle-2` y `body-1` NO tienen text style en Figma: son roles del
    * código que se quedan como estaban. `h4` coincide ahora con `h3` (18/24) porque la escalera
    * de Figma tiene TRES niveles de heading, no cuatro; se deja como alias redundante en vez de
    * inventarle un tamaño que el Kit no respalda (misma doctrina que subtitle-2 = subtitle-3 en
@@ -794,6 +800,7 @@
   --sc-font-size-display-1: var(--sc-font-size-900);
   --sc-font-size-h1: var(--sc-font-size-800);
   --sc-font-size-h2: var(--sc-font-size-500);
+  --sc-font-size-title: var(--sc-font-size-450);
   --sc-font-size-h3: var(--sc-font-size-400);
   --sc-font-size-h4: var(--sc-font-size-400); /* = h3: Figma no tiene h4 */
   --sc-font-size-subtitle-1: var(--sc-font-size-300);
@@ -807,6 +814,7 @@
   --sc-line-height-display-1: var(--sc-line-height-900);
   --sc-line-height-h1: var(--sc-line-height-800);
   --sc-line-height-h2: var(--sc-line-height-500);
+  --sc-line-height-title: var(--sc-line-height-450);
   --sc-line-height-h3: var(--sc-line-height-300);
   --sc-line-height-h4: var(--sc-line-height-400);
   --sc-line-height-subtitle-1: var(--sc-line-height-300);
@@ -825,6 +833,7 @@
 
   /* Weights */
   --sc-font-weight-h1: var(--sc-font-weight-semibold);
+  --sc-font-weight-title: var(--sc-font-weight-semibold);
   --sc-font-weight-h3: var(--sc-font-weight-semibold);
   --sc-font-weight-h4: var(--sc-font-weight-semibold);
   --sc-font-weight-subtitle-1: var(--sc-font-weight-semibold);
@@ -833,6 +842,7 @@
   --sc-font-weight-caption: var(--sc-font-weight-regular);
 
   /* Family selector — primary for everything except captions. */
+  --sc-font-family-title: var(--sc-font-family-primary);
   --sc-font-family-h3: var(--sc-font-family-primary);
   --sc-font-family-h4: var(--sc-font-family-primary);
   --sc-font-family-subtitle-1: var(--sc-font-family-primary);
