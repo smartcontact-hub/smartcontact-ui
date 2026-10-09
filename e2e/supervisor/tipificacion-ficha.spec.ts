@@ -100,11 +100,15 @@ test('un alta de punta a punta: nombre, opciones y Crear, y sale en el listado',
   await page.locator('#tip-name').fill('Seguimiento de pedido');
   await page.locator('sc-form-section-nav').getByText('Categorías').click();
   await page.getByRole('button', { name: 'Añadir categoría' }).click();
-  // Enter abre la siguiente justo detrás, con el foco: se escribe en cuanto lo tiene.
+  // Enter abre la siguiente justo detrás, con el foco: se escribe en cuanto lo tiene, y Enter va cuando el nombre ya
+  // está en el campo (en el CI, más lento, llegaba antes y no abría la siguiente).
   for (const [i, opcion] of ['Entregado', 'En reparto', 'Retrasado'].entries()) {
-    if (i > 0) await page.keyboard.press('Enter');
-    await expect(campos(page).nth(i)).toBeFocused();
-    await page.keyboard.type(opcion);
+    const campo = campos(page).nth(i);
+    await expect(campo).toBeFocused();
+    await campo.fill(opcion);
+    // El nombre ya está en el árbol, no solo en el campo: su nombre accesible lo repite.
+    await expect(campo).toHaveAttribute('aria-label', `Primer nivel: ${opcion}`);
+    if (i < 2) await campo.press('Enter');
   }
   await expect(campos(page)).toHaveCount(3);
   await expect.poll(() => campos(page).evaluateAll((es) => es.map((e) => (e as HTMLInputElement).value))).toEqual([
