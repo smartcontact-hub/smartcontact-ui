@@ -1113,6 +1113,22 @@ que calca, y sin un número suelto que no salga de una variable.
 
 ---
 
+## 40 · El icono que acompaña a un texto, al tamaño y al peso de ese texto (2026-10-09, DD-189)
+
+**Estado:** pendiente · **Dónde:** el maestro `Section` (`691:23956`; su icono, `691:23976`) y las maquetas que lo usan.
+
+- **El icono de la cabecera** pasa de 14 a 16 (el tamaño de `Subtitle`) y a 20 en la variante que titula la página
+  (`Title`), en peso 600. Si el `IconSet` expone el eje óptico, a 20.
+- **Lo que cuelga**: el título tiene que seguir en la vertical del contenido; el icono retrocede 12,5 con 16 y 16,5 con
+  20 (sangría 12,25 − hueco 8,75 − icono).
+- **La regla, para cualquier maqueta**: un icono junto a un texto toma su tamaño y su peso; los de control (chevron,
+  cerrar) se quedan en su talla.
+
+**Cómo sabes que está hecho:** en el fichero, el icono de `Section` mide 16 (20 en la de página) y el texto del título
+empieza en la misma x que el contenido de la caja.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
