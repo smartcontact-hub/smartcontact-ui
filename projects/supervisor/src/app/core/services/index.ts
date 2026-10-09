@@ -14,7 +14,6 @@ export type { PaletteCommand } from './command-palette.service';
 
 export { DiscardDialogService } from './discard-dialog.service';
 
-export { CrossTabLockService } from './cross-tab-lock.service';
 
 export { SectionLinksService } from './section-links.service';
 

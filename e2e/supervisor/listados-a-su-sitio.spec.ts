@@ -9,7 +9,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * lo mismo; y en Agentes, la cifra de grupos solo enseñaba sus nombres. Lo que fija:
  *   1. Grupos: la cifra de agentes abre la asignación de ESE grupo, y la columna «Asignar» desaparece. Al pasar por
  *      encima sigue diciendo quiénes son;
- *   2. Agentes: la cifra de grupos lleva a la sección «Grupos asignados» de la ficha de ese agente, no a Identidad.
+ *   2. Agentes: la cifra de grupos lleva a la sección «Grupos» de la ficha de ese agente, no a General. Se llamaba
+ *      «Grupos asignados», y la primera, Identidad, hasta DD-187 (la ficha de agente con las secciones de la de grupo).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -43,10 +44,10 @@ test('Grupos: la cifra de agentes abre su asignación, y ya no hay columna «Asi
   await expect(page, 'abre el panel, no la ficha').toHaveURL(/\/admin\/grupos$/);
 });
 
-test('Agentes: la cifra de grupos lleva a «Grupos asignados» de su ficha', async ({ page }) => {
+test('Agentes: la cifra de grupos lleva a «Grupos» de su ficha', async ({ page }) => {
   await goto(page, 'admin/agentes');
   const fila = page.locator('sc-datatable tbody tr', { hasText: 'Tom Hanks' });
   await fila.getByRole('button', { name: /\d+ grupos/ }).click();
   await expect(page).toHaveURL(/\/admin\/agentes\/editar\/\d+\?seccion=grupos$/);
-  await expect(page.locator('sc-form-section-nav .form-nav__item[aria-current="page"]')).toContainText('Grupos asignados');
+  await expect(page.locator('sc-form-section-nav .form-nav__item[aria-current="page"] .form-nav__label')).toHaveText('Grupos');
 });

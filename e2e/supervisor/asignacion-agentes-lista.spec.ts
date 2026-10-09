@@ -10,10 +10,12 @@ async function seed(page: Page) {
     const names = ['Ana Mixta', 'Bruno Teléfono', 'Carla Chat', 'Darío Email', 'Elena Mixta', 'Fabio Chat'];
     const allowed = [['phone', 'chat'], ['phone'], ['chat'], ['email'], ['phone', 'chat'], ['chat']];
     localStorage.setItem('sc-agents-v', '3');
+    // Con sus permisos, como todo agente: la tabla del grupo lee de ellos la «Activación por grupo» (DD-187 §2). Sin
+    // ella, Habilitado es el interruptor de siempre.
     localStorage.setItem('sc-agents', JSON.stringify(names.map((name, index) => ({
       id: index + 1, name, email: `persona${index + 1}@equipo.test`, code: `1000${index + 1}`,
       extension: '122', extensionType: 'webrtc', agentType: 'normal', status: 'active',
-      presenceStatus: 'disponible', allowedChannels: allowed[index],
+      presenceStatus: 'disponible', allowedChannels: allowed[index], permissions: { selfActivate: false },
     }))));
     localStorage.setItem('sc-groups-v', '4');
     localStorage.setItem('sc-groups', JSON.stringify([{ id: 11, code: '20011', name: 'Grupo mixto', phone: '917945449', priority: 'Baja', channels: ['phone', 'whatsapp'], strategy: 'Niveles', chatStrategy: 'Niveles' }]));

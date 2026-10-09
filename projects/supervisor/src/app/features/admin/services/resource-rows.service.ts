@@ -49,21 +49,15 @@ export class ResourceRowsService {
       }));
   }
 
-  /** Las tipificaciones del grupo: en qué conversaciones se piden y cuántos niveles tienen. «Editar» abre su ficha. */
+  /** Las tipificaciones: cuántos niveles tienen. «Editar» abre su ficha. */
   tipificaciones(ids: Iterable<number>, editable: boolean): ResourceRow[] {
     const porId = new Map(this.tipificacionesStore.items().map((t) => [t.id, t]));
     return [...ids].flatMap((id) => {
       const t = porId.get(id);
       if (!t) return [];
-      const direccion = this.translate.instant(
-        `repositories.tipificaciones.direction.${t.inbound && t.outbound ? 'both' : t.inbound ? 'inbound' : 'outbound'}`,
-      );
       const n = nivelesDe(t);
-      const niveles =
-        n === 0
-          ? this.translate.instant('repositories.tipificaciones.levels_none')
-          : this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
-      return [{ id, name: t.name, detail: `${direccion}, ${niveles}`, edit: editable ? { link: `/admin/tipificaciones/editar/${id}` } : null }];
+      const niveles = this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
+      return [{ id, name: t.name, detail: niveles, edit: editable ? { link: `/admin/tipificaciones/editar/${id}` } : null }];
     });
   }
 

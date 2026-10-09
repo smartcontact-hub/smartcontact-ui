@@ -6,7 +6,6 @@ import {
   inject,
   Injector,
   input,
-  type OnDestroy,
   type OnInit,
   signal,
   type TemplateRef,
@@ -19,69 +18,52 @@ import { MessageService } from 'primeng/api';
 import {
   ScButtonComponent as ButtonComponent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
-  ScDividerComponent as DividerComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
   ScMessageComponent as MessageComponent,
   ScSectionCardComponent as SectionCardComponent,
-  ScSelectButtonComponent as SelectButtonComponent,
-  ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { CrossTabLockService, SectionLinksService } from '@core/services';
+import { SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { AltaPieComponent } from '@shared/components';
 import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
+import { resolveGroup } from '@features/admin/groups/data/groups-data';
 
-import { TipificacionGruposComponent, type TipificacionGrupoRef } from '../components/tipificacion-grupos/tipificacion-grupos.component';
 import { TipificacionNivelesComponent } from '../components/tipificacion-niveles/tipificacion-niveles.component';
 import { TipificacionVistaComponent } from '../components/tipificacion-vista/tipificacion-vista.component';
-import { choquesDe, nivelesDe, ramasIncompletas } from '../state/tipificaciones.core.mjs';
+import { hermanasRepetidas, nivelesDe, profundidad } from '../state/tipificaciones.core.mjs';
 import {
   type Tipificacion,
-  type TipificacionGrupo,
-  type TipificacionNiveles,
   type TipificacionOpcion,
   TipificacionesStore,
 } from '../state/tipificaciones.store';
+import { TipificacionUsoService } from '../state/tipificacion-uso.service';
 
 type Borrador = Omit<Tipificacion, 'id'>;
-type Direccion = 'inbound' | 'outbound' | 'both';
-
-/** Una tipificación nueva: entrantes, con comentario y con el primer nivel listo para escribir sus opciones. */
+/** Una tipificación nueva: con el primer nivel listo para escribir sus opciones. */
 const NUEVA: Borrador = {
   name: '',
   description: '',
-  inbound: true,
-  outbound: false,
-  categorization: true,
-  comments: true,
   levels: 1,
   options: [],
-  groups: [],
 };
 
 const GENERAL = 'tip-section-general';
 const CATEGORIAS = 'tip-section-categorias';
-const GRUPOS = 'tip-section-grupos';
 
 /** De qué sección es cada campo, para marcar en el índice las que tienen cambios sin guardar (DD-122). */
 const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
   name: GENERAL,
   description: GENERAL,
-  inbound: GENERAL,
-  outbound: GENERAL,
-  comments: GENERAL,
-  categorization: CATEGORIAS,
   levels: CATEGORIAS,
   options: CATEGORIAS,
-  groups: GRUPOS,
 };
 
 /**
@@ -89,13 +71,15 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
  * nombre y el índice a la izquierda, una sección a la vista en el centro y, a la derecha, donde las fichas llevan su
  * resumen, LO QUE VERÁ EL AGENTE: su ventana de tipificar con lo que se va definiendo, para probarla.
  *
- *   - General: nombre y descripción, la dirección (entrantes, salientes o ambas, en un solo control) y si pide comentario;
- *   - Categorías: los niveles son las columnas, y el siguiente se añade pulsando su columna fantasma;
- *   - Grupos: dónde se usa y por qué canales.
+ *   - General: nombre y descripción (opcional);
+ *   - Categorías: el árbol entero a la vista, una columna por nivel.
  *
- * SIN SALTOS (DD-174): ningún aviso entra ni sale empujando lo de debajo. Cada uno tiene su línea
- * reservada (bajo las columnas, encima de la tabla de grupos) o va en la barra, junto a Guardar; el nombre repetido
- * marca su campo en rojo y lo dice la barra, sin una línea de error que lo desplace todo.
+ * Solo eso desde la revisión de tipificaciones del 2026-10-09: si un grupo clasifica, con cuál, en qué conversaciones y
+ * si pide comentario se decide en el GRUPO (su General). Hasta ese día aquí iban la dirección, el comentario y una
+ * sección Grupos con los canales de cada uno.
+ *
+ * SIN SALTOS (DD-174): ningún aviso entra ni sale empujando lo de debajo. Cada uno tiene su línea reservada (bajo el
+ * árbol) o va en la barra, junto a Guardar; el nombre repetido marca su campo en rojo y lo dice la barra.
  */
 @Component({
   selector: 'sc-tipificacion-ficha-page',
@@ -103,33 +87,29 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
     AltaPieComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
-    DividerComponent,
     FormSectionNavComponent,
     InputTextComponent,
     MessageComponent,
     NgTemplateOutlet,
     SectionCardComponent,
-    SelectButtonComponent,
-    TipificacionGruposComponent,
     TipificacionNivelesComponent,
     TipificacionVistaComponent,
-    ToggleSwitchComponent,
     TranslateModule,
   ],
   templateUrl: './tipificacion-ficha-page.component.html',
   styleUrl: './tipificacion-ficha-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDestroy {
+export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sectionLinks = inject(SectionLinksService);
   private readonly injector = inject(Injector);
   private readonly store = inject(TipificacionesStore);
   private readonly groupsStore = inject(GroupsStore);
+  private readonly uso = inject(TipificacionUsoService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
-  private readonly crossTab = inject(CrossTabLockService);
   private readonly lang = injectLangChange();
 
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
@@ -144,8 +124,6 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
   protected readonly form = signal<Borrador>(NUEVA);
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
-  protected readonly conflictWarning = signal(false);
-  private releaseLock: (() => void) | null = null;
   protected readonly deleteVisible = signal(false);
 
   /* ── El índice ────────────────────────────────────────────────────────── */
@@ -153,7 +131,6 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
   private static readonly SLUGS: Readonly<Record<string, string>> = {
     general: GENERAL,
     categorias: CATEGORIAS,
-    grupos: GRUPOS,
   };
 
   /** `?seccion=` de la dirección. */
@@ -162,17 +139,16 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
   protected readonly navSections = computed<readonly FormNavSection[]>(() =>
     [
       { id: GENERAL, labelKey: 'repositories.tipificaciones.section.general', icon: 'tune' },
-      { id: CATEGORIAS, labelKey: 'repositories.tipificaciones.section.categorization', icon: 'account_tree' },
-      { id: GRUPOS, labelKey: 'repositories.tipificaciones.section.groups', icon: 'group' },
+      { id: CATEGORIAS, labelKey: 'repositories.tipificaciones.section.categorization', icon: 'menu' },
     ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) })),
   );
 
-  /** El alta con el índice de la edición (DD-143): General (el nombre) y Categorías (algo que rellenar, y ramas
-   *  completas) tienen algo obligatorio y llevan ✓ al dejarlas completas; Grupos, no. */
+  /** El alta con el índice de la edición (DD-143): General (el nombre) y Categorías (ramas completas, con nombre y sin
+   *  repetir) tienen algo obligatorio y llevan ✓ al dejarlas completas. */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
-    obligatoria: (id) => id === GENERAL || id === CATEGORIAS,
-    completa: (id) => (id === GENERAL ? this.generalCompleta() : id === CATEGORIAS ? this.categoriasCompletas() : true),
+    obligatoria: () => true,
+    completa: (id) => (id === GENERAL ? this.generalCompleta() : this.categoriasCompletas()),
   });
 
   protected readonly activeSection = computed<string>(() =>
@@ -208,24 +184,6 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
 
   /* ── General ──────────────────────────────────────────────────────────── */
 
-  protected readonly direcciones = computed(() => {
-    this.lang();
-    return (['inbound', 'outbound', 'both'] as const).map((value) => ({
-      value,
-      label: this.translate.instant(`repositories.tipificaciones.direction.${value}`),
-    }));
-  });
-
-  protected readonly direccion = computed<Direccion>(() => {
-    const f = this.form();
-    return f.inbound && f.outbound ? 'both' : f.outbound ? 'outbound' : 'inbound';
-  });
-
-  protected onDireccion(value: unknown): void {
-    if (value !== 'inbound' && value !== 'outbound' && value !== 'both') return;
-    this.form.update((f) => ({ ...f, inbound: value !== 'outbound', outbound: value !== 'inbound' }));
-  }
-
   protected readonly nameTaken = computed(() => {
     const name = this.form().name.trim().toLowerCase();
     return !!name && this.store.items().some((t) => t.id !== this.editingId() && t.name.trim().toLowerCase() === name);
@@ -235,46 +193,27 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
 
   /* ── Categorías ───────────────────────────────────────────────────────── */
 
-  /** Los niveles en uso: 0 si no pide categoría. */
+  /** Los niveles del árbol. */
   protected readonly niveles = computed(() => nivelesDe(this.form()));
 
-  private readonly incompletas = computed(() => {
-    const f = this.form();
-    return f.categorization ? ramasIncompletas(f.options, f.levels) : [];
+  /** Opciones sin nombre, o con el de una hermana: el agente no sabría cuál es cuál. */
+  private readonly nombresMal = computed(() => {
+    const sinNombre = (lista: readonly TipificacionOpcion[]): boolean => lista.some((o) => !o.label.trim() || sinNombre(o.children));
+    return sinNombre(this.form().options) || hermanasRepetidas(this.form().options).length > 0;
   });
 
-  /** Sin categorías ni comentario, no pide nada. */
-  private readonly noPideNada = computed(() => this.niveles() === 0 && !this.form().comments);
+  /** Con alguna opción, y todas con nombre y sin repetir. Cada rama llega hasta donde haga falta. */
+  private readonly categoriasCompletas = computed(() => this.form().options.length > 0 && !this.nombresMal());
 
-  private readonly categoriasCompletas = computed(() => this.incompletas().length === 0 && !this.noPideNada());
-
-  protected onLevels(n: number): void {
-    this.form.update((f) =>
-      n === 0 ? { ...f, categorization: false, levels: 1, options: [] } : { ...f, categorization: true, levels: n as TipificacionNiveles },
-    );
-  }
-
+  /** Los niveles son los de la rama más larga: no se eligen, salen del árbol. */
   protected onOptions(options: readonly TipificacionOpcion[]): void {
-    this.form.update((f) => ({ ...f, options }));
+    this.form.update((f) => ({ ...f, options, levels: profundidad(options) }));
   }
 
-  /* ── Grupos ───────────────────────────────────────────────────────────── */
-
-  protected readonly grupos = computed<readonly TipificacionGrupoRef[]>(() =>
-    this.groupsStore
-      .groups()
-      .map((g) => ({ id: g.id, name: g.name, channels: g.channels }))
-      .sort((a, b) => a.name.localeCompare(b.name, 'es')),
+  /** En cuántos grupos se usa: lo dice la cabecera, para saber a quién llega un cambio. */
+  private readonly enGrupos = computed(
+    () => this.groupsStore.groups().filter((g) => resolveGroup(g).wrapUp.typificationId === this.editingId()).length,
   );
-
-  /** Con qué choca en sus grupos, contra lo guardado de las demás. */
-  protected readonly choques = computed(() => choquesDe({ ...this.form(), id: this.editingId() ?? -1 }, this.store.items()));
-
-  private readonly gruposConFallo = computed(() => this.choques().length > 0 || this.form().groups.some((g) => g.channels.length === 0));
-
-  protected onGroups(groups: readonly TipificacionGrupo[]): void {
-    this.form.update((f) => ({ ...f, groups }));
-  }
 
   /* ── Lo que falta: en la barra y en el índice ─────────────────────────── */
 
@@ -282,10 +221,8 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
     const f = this.form();
     const falta: string[] = [];
     if (!f.name.trim()) falta.push('common.summary_missing_name');
-    if (this.noPideNada()) falta.push('repositories.tipificaciones.missing.what');
-    if (this.incompletas().length > 0) falta.push('repositories.tipificaciones.missing.options');
-    if (f.groups.some((g) => g.channels.length === 0)) falta.push('repositories.tipificaciones.missing.channel');
-    if (this.choques().length > 0) falta.push('repositories.tipificaciones.missing.conflicts');
+    if (f.options.length === 0) falta.push('repositories.tipificaciones.missing.options');
+    if (this.nombresMal()) falta.push('repositories.tipificaciones.missing.names');
     return falta;
   });
 
@@ -306,7 +243,6 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
     const errores = new Set<string>();
     if (!this.generalCompleta() && acusa(GENERAL)) errores.add(GENERAL);
     if (!this.categoriasCompletas() && acusa(CATEGORIAS)) errores.add(CATEGORIAS);
-    if (this.gruposConFallo() && acusa(GRUPOS)) errores.add(GRUPOS);
     return errores;
   });
 
@@ -322,15 +258,14 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
     return this.form().name.trim() || this.translate.instant('repositories.tipificaciones.create_title');
   });
 
-  /** Debajo del nombre: en qué conversaciones y cuántos niveles. */
+  /** Debajo del nombre: cuántos niveles y, al editar, en cuántos grupos se usa. */
   protected readonly headlineMeta = computed(() => {
     this.lang();
     const n = this.niveles();
-    const niveles =
-      n === 0
-        ? this.translate.instant('repositories.tipificaciones.levels_none')
-        : this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
-    return `${this.translate.instant(`repositories.tipificaciones.direction.${this.direccion()}`)}, ${niveles}`;
+    const niveles = this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
+    if (this.mode() !== 'edit') return niveles;
+    const g = this.enGrupos();
+    return `${niveles}, ${this.translate.instant(`repositories.tipificaciones.used_in${g === 1 ? '_one' : ''}`, { count: g })}`;
   });
 
   /* ── Ciclo de vida ────────────────────────────────────────────────────── */
@@ -351,17 +286,10 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
     }
     this.editingId.set(t.id);
     const { id: _id, ...borrador } = t;
-    // Los grupos borrados no se enseñan ni se guardan de vuelta, antes de dar la ficha por guardada (como DD-164).
-    const vivos = new Set(this.groupsStore.groups().map((g) => g.id));
-    this.form.set({ ...borrador, groups: borrador.groups.filter((g) => vivos.has(g.groupId)) });
+    this.form.set(borrador);
     this.dirtyState.markPristine();
-    this.releaseLock = this.crossTab.acquire('tipificacion', t.id, () => this.conflictWarning.set(true));
   }
 
-  ngOnDestroy(): void {
-    this.releaseLock?.();
-    this.releaseLock = null;
-  }
 
   protected update<K extends keyof Borrador>(key: K, value: Borrador[K]): void {
     this.form.update((f) => ({ ...f, [key]: value }));
@@ -397,10 +325,18 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit, OnDes
     return id === null ? [] : [{ id, name: this.form().name }];
   });
 
+  /** Qué grupos la usan, en el diálogo de eliminar: dejarán de tipificar. */
+  protected readonly avisoDeUso = computed(() => {
+    this.lang();
+    const id = this.editingId();
+    return id === null ? null : this.uso.aviso(new Set([id]));
+  });
+
   protected confirmDelete(): void {
     const id = this.editingId();
     if (id === null) return;
     const name = this.form().name;
+    this.uso.soltar(new Set([id]));
     this.store.deleteItem(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();

@@ -85,6 +85,11 @@ const EXCEPCIONES_DIVERGENCIA = [
     frases: ['Pausar'],
     motivo: 'botón del reproductor ("Pause", término de audio) vs acción masiva ("Mettre en pause")',
   },
+  {
+    locales: ['pt'],
+    frases: ['Ninguno'],
+    motivo: 'concordancia de género: idiomas ("idioma", masculino: "Nenhum") vs equipos ("equipe", femenino: "Nenhuma")',
+  },
 ];
 
 const SEP = '─'.repeat(60);

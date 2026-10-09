@@ -207,7 +207,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/button",
       "cva": false,
-      "inputs": 18,
+      "inputs": 20,
       "api": [
         "appearance",
         "ariaControls",
@@ -220,10 +220,12 @@
         "icon",
         "iconAriaLabel",
         "iconFilled",
+        "iconOnly",
         "iconPosition",
         "iconSize",
         "label",
         "loading",
+        "raised",
         "rounded",
         "size",
         "type",
@@ -235,7 +237,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 187,
+      "usedInSupervisor": 188,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -290,7 +292,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 41,
+      "usedInSupervisor": 47,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -593,7 +595,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 22,
+      "usedInSupervisor": 20,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -616,7 +618,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 31,
+      "usedInSupervisor": 23,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -1101,7 +1103,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 43,
+      "usedInSupervisor": 45,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1151,7 +1153,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 10,
+      "usedInSupervisor": 4,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
     },
@@ -1211,7 +1213,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 15,
+      "usedInSupervisor": 13,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "sobreObsoleto": [
         {
@@ -1244,7 +1246,7 @@
         "demo"
       ],
       "retirado": null,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 2,
       "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
       "sobreObsoleto": []
     },
@@ -1456,7 +1458,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 2,
+      "usedInSupervisor": 3,
       "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
       "sobreObsoleto": []
     },
@@ -1514,7 +1516,9 @@
         "showHeader",
         "surface"
       ],
-      "nested": [],
+      "nested": [
+        "sc-button"
+      ],
       "hasDemo": true,
       "kit": true,
       "estado": "ready",
@@ -1576,7 +1580,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 64,
+      "usedInSupervisor": 60,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1611,7 +1615,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 14,
+      "usedInSupervisor": 17,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },
@@ -1719,7 +1723,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 9,
+      "usedInSupervisor": 18,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "sobreObsoleto": []
     },
@@ -1747,7 +1751,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 28,
+      "usedInSupervisor": 30,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
@@ -1840,7 +1844,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 33,
+      "usedInSupervisor": 38,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

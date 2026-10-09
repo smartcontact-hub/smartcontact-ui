@@ -47,3 +47,6 @@ export { SummaryStatusComponent } from './summary-status/summary-status.componen
 export { AltaPieComponent } from './alta-pie/alta-pie.component';
 
 // El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (DD-145).
+
+// Un punto que el equipo tiene que decidir, junto a lo que afecta: un globo de cristal morado, no una ayuda (2026-10-09).
+export { NotaDecisionComponent } from './nota-decision/nota-decision.component';

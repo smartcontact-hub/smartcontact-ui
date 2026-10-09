@@ -1,154 +1,111 @@
-/* Tres columnas SIEMPRE, del mismo ancho: añadir o quitar un nivel no cambia el ancho de ninguna. Entre columnas, el
- * hueco de los hermanos (14, AGENTS «UX de pantalla» 9). */
-.niveles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+:host {
+  display: flex;
+  flex-direction: column;
   gap: var(--sc-spacing-1);
 }
 
-/* Dentro de una columna: título, lista, línea, acciones y mensaje, piezas de lo mismo (7). */
-.nivel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-5);
-  min-width: 0;
+/* Una columna por nivel, del mismo ancho, con el hueco de los hermanos (14). Las ramas y sus hijas heredan las columnas
+ * con `subgrid` y sin hueco propio: con uno propio, la subrejilla se desplaza (trampa del frente, DD-170). */
+.arbol {
+  display: grid;
+  grid-template-columns: repeat(var(--niveles), minmax(0, 1fr));
+  column-gap: var(--sc-spacing-1);
 }
 
-.nivel__cabeza {
+.arbol__cabeza,
+.arbol__rama,
+.rama {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: start;
+}
+
+.arbol__cabeza {
+  padding-block-end: var(--sc-spacing-0-5);
+}
+
+.arbol__titulo {
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
-  /* El alto del botón de quitar: con él o sin él, la cabecera mide lo mismo. */
   min-height: var(--sc-spacing-2-25);
-}
 
-.nivel__titulo {
-  margin: 0;
-  color: var(--sc-text-primary);
-
-  &--fantasma {
-    color: var(--sc-text-secondary);
+  h3 {
+    margin: 0;
+    color: var(--sc-text-primary);
   }
 }
 
-.nivel__cuenta {
+/* Cada opción del primer nivel, con todo lo suyo, en su franja: una raya entre ramas, como las filas de una tabla. */
+.arbol__rama {
+  border-block-start: 1px solid var(--sc-border-subtle);
+  padding-block: var(--sc-spacing-0-5);
+
+  /* La última, sin relleno abajo: el aire hasta el borde lo pone la tarjeta. Sin la línea de estado debajo (DD-187),
+   * los dos se sumaban (`npm run revision`, R4). */
+  &:last-child {
+    padding-block-end: 0;
+  }
+}
+
+.arbol__vacio {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-block: var(--sc-spacing-1);
+  border-block-start: 1px solid var(--sc-border-subtle);
   color: var(--sc-text-secondary);
-  font-variant-numeric: tabular-nums;
 }
 
-.nivel__quitar {
-  margin-inline-start: auto;
+/* Sus hijas, de la segunda columna al final: cada una en su fila, a 7 de la siguiente (piezas de lo mismo). */
+.rama__hijas {
+  grid-column: 2 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  row-gap: var(--sc-spacing-0-5);
 }
 
-.nivel__lista {
-  display: block;
-}
 
-.nivel__opcion {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-  width: 100%;
-  min-width: 0;
-}
-
-.nivel__texto {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.nivel__hijas {
-  color: var(--sc-text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
-.nivel__flecha {
-  color: var(--sc-icon-secondary);
-}
-
-/* Una rama que no llega al último nivel: el aviso, en el color del error. */
-.nivel__falta {
-  color: var(--sc-text-danger);
-}
-
-.nivel__linea {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-}
-
-.nivel__campo {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.nivel__acciones {
+/* Una opción: el tirador, su nombre y la papelera, en una línea. */
+.opcion {
+  grid-column: 1;
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
+  min-width: 0;
 }
 
-.nivel__borrar {
-  margin-inline-start: auto;
+.opcion__campo {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-/* Una línea, siempre: con texto o sin él mide lo mismo, y lo largo se corta (entero en el `title`). */
-.nivel__mensaje {
-  min-height: 1lh;
-  margin: 0;
-  overflow: hidden;
-  color: var(--sc-text-secondary);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  &--error {
-    color: var(--sc-text-danger);
-  }
-}
-
-/* Sin elegida a la izquierda: un hueco del alto de la lista con el porqué, para que la columna no encoja. */
-.nivel__espera {
-  display: flex;
+.opcion__tirador {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: var(--sc-spacing-12-5);
-  padding: var(--sc-spacing-1);
-  border: 1px dashed var(--sc-border-default);
-  border-radius: var(--sc-radius-md);
-  color: var(--sc-text-secondary);
-  text-align: center;
-}
-
-/* El nivel que se puede añadir: una columna fantasma del alto de la lista, con el borde discontinuo en su hueco y el
- * botón que la llena entera. */
-.nivel--fantasma .nivel__cabeza + * {
-  border: 1px dashed var(--sc-border-default);
-  border-radius: var(--sc-radius-md);
-}
-
-.nivel__anadir {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sc-spacing-0-5);
-  min-height: var(--sc-spacing-12-5);
-  padding: var(--sc-spacing-1);
+  flex: none;
+  padding: 0;
   border: 0;
-  background-color: transparent;
-  color: var(--sc-text-link);
-  font: inherit;
-  text-align: center;
-  cursor: pointer;
-  transition-property: background-color;
-  transition-duration: 150ms;
+  border-radius: var(--sc-radius-sm);
+  background: none;
+  color: var(--sc-text-subtle);
+  cursor: grab;
+  /* Aparece al pasar por su fila o con el foco dentro, y guarda su hueco al esconderse: el campo no salta. Con el
+   * dedo no hay «pasar por encima»: ahí se ve siempre. */
+  opacity: 0;
+  transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
 
+  .opcion:is(:hover, :focus-within) > & {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    opacity: 1;
+  }
 
   &:hover {
-    background-color: var(--sc-bg-subtle);
+    color: var(--sc-text-secondary);
   }
 
   &:focus-visible {
@@ -157,26 +114,13 @@
   }
 }
 
-.nivel__anadir-ayuda {
-  color: var(--sc-text-secondary);
-}
-
-/* El estado del árbol: una línea reservada bajo la rejilla, que cambia de texto y de color, no de sitio. */
+/* Lo que falta, bajo el árbol: solo aparece cuando falta algo (DD-187). */
 .niveles__estado {
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
-  min-height: 1lh;
-  margin: var(--sc-spacing-1) 0 0;
-  color: var(--sc-text-secondary);
-
-  &--ok {
-    color: var(--sc-text-success);
-  }
-
-  &--falta {
-    color: var(--sc-text-danger);
-  }
+  margin: 0;
+  color: var(--sc-text-danger);
 }
 
 .niveles__estado-texto {

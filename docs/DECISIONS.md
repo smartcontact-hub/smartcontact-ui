@@ -45,6 +45,7 @@
 > | Cada componente dice en sc-docs si está listo (maestro en el Kit y demo), es experimental (le falta algo, y dice qué) o está retirado (`@deprecated`, con su motivo) · el índice etiqueta solo la excepción | DD-190 |
 > | El icono que acompaña a un texto sigue a su estilo: su tamaño, su peso y el eje óptico a su tamaño (20, el mínimo, en pequeño) · en la cabecera de `sc-section-card`, 16 en sección y 20 en página | DD-189 |
 > | Lo que se adopta de Primer: el título de página a 20 (`Title`) y el de sección a 16 (`Subtitle`), dos text styles nuevos del Kit · el botón principal de la barra en md · sin 700 fuera del Kit · la carga por tiempos · el texto principal a slate-900 en el plan de color · la escala se queda, con una medida por relación · el toast solo para eventos del sistema | DD-188 |
+> | Revisión de agentes y tipificaciones del 2026-10-09: la ficha de agente en cuatro secciones como la de grupo (General, Configuración, Recursos, Grupos) con lo obligatorio de producto · su tabla de grupos es la del grupo, con «Salientes» · «Habilitado» bloqueado con «Activación por grupo» · equipos en Repositorios, con su editor, para filtrar · la tipificación es nombre, descripción y árbol (ramas libres, todo a la vista, un «+» en la fila de lo que se añade) y el grupo decide su Postconversación · quitar canales hace lo mismo en las dos fichas · tablas que no bailan al filtrar, Nombre con tope en pantallas anchas · notas de decisión · el botón entero del Kit y el «+» pequeño · editar recursos sin salir · borrar una tipificación dice quién la usa · sin el aviso de otra pestaña · gate de literales de CSS (enmienda DD-122 §8, DD-150, DD-167, DD-173 §2 y §5, DD-174, DD-185 y DD-186 §4) | DD-187 |
 > | Repositorios en tarjetas por grupo: un tono de etiqueta por grupo (azul, morado, teal y naranja) en su título, el icono, la cifra, el borde al pasar y al marcar y el filtro · un icono por concepto · pulsar una tarjeta abre a la derecha un panel acoplado con lo que hay dentro y «Abrir repositorio» (con velo solo si taparía tarjetas) · filtro por grupo con transición y recientes en el buscador · cabe sin desplazar a 1440 × 800 · `sc-drawer` `docked`, `sc-avatar` `labelColor` y `sc-tag` `bordered` (sustituye DD-78 en el hub, enmienda DD-165 §1) | DD-179 |
 > | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-177 |
 > | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas, «Administrativo» en marrón (`brown`, nuevo color de etiqueta) | DD-176 |
@@ -236,6 +237,102 @@ de título y `text-styles-applied.spec.ts`, `Title`. Ficha 38 de `figma-pendient
 (y `Title` en la página), las maquetas, Tag y Badge a 600, y publicar la librería. `tools/figma-pendiente.mjs` lleva
 `text/color` y `form/field/color` a `surface/900`. Pendientes con su propio PR, para verlos antes: el toast, la cabecera
 y el esqueleto de página comunes con la escalera en la cabecera, y las etiquetas en píldora.
+
+---
+
+## DD-187 · 2026-10-09 — Revisión de agentes y tipificaciones: la ficha de agente como la de grupo, y la tipificación como árbol
+
+**Contexto** · El primer design review de agentes y tipificaciones (2026-10-09), el pptx de producto con lo que pide la
+ficha de agente, la propuesta dibujada de producto para la tipificación en el grupo y el chat del equipo. La ficha de
+agente tenía cinco secciones con otra gramática que la de grupo; la tipificación llevaba su dirección, su comentario y sus
+grupos por canal, y su editor solo enseñaba la rama elegida.
+
+**Decisión** ·
+1. **La ficha de agente, en cuatro secciones como la de grupo**, con `sc-subsection` por bloque: General (identidad;
+   extensión con su tipo, navegador o teléfono, y con teléfono el móvil obligatorio y el PIN; el estado al editar; el
+   tipo de agente al final y solo si el cliente tiene CusCare; los canales, al menos uno), Configuración (grabar,
+   activación por grupo, gestión de dispositivos, que pide móvil, dispositivos externos y «Gestión de conversaciones
+   pendientes»; la matriz; «Avanzado» plegado: descuelgue único como en Contact Center › Servicio, chats simultáneos si
+   atiende chat, idiomas, orden aleatorio, URL y sesión), Recursos (agendas y plantillas de chat con su «+», y grupos de
+   agentes; fuera Etiquetas y Plantillas de email) y Grupos. Obligatorio: nombre, email, extensión, el móvil con
+   teléfono, un canal, un grupo y, si atiende teléfono, el grupo de sus salientes (si no se elige, el primero con
+   Teléfono). Una sola lista (`faltas`) da el resumen, el índice y el motivo de Guardar. Contact Center › Agentes, en el
+   mismo orden. Enmienda DD-122 §8 y DD-150 («vacío: ninguna» ya no vale).
+2. **Su tabla de grupos es la del grupo**, con las filas al revés (filtro, buscador, Asignado, un canal por columna con
+   su casilla de «todos», Habilitado) y la columna **Salientes**. Con «Activación por grupo», Habilitado se ve apagado
+   con el candado que lleva a Configuración, en las dos tablas (en Voice desaparece; así se ve el estado y el porqué).
+3. **Quitar canales hace lo mismo en las dos fichas**: una asignación sin canales no existe; la que se queda sin ninguno
+   sale al guardar, después de «Vas a quitar canales» y «Sí, quitar». Enmienda DD-150 (la ficha de agente conservaba la
+   asignación vacía y la de grupo la quitaba, DD-147).
+4. **Equipos** en Repositorios (lo decidió el equipo; en Voice se llaman «grupos de agentes», y aquí ese nombre se
+   confundía con los grupos y con los agentes), con su editor como en Voice (nombre y agentes, con la
+   tabla de asignar del grupo, DD-151) y asignables desde la ficha del agente. Sirven para filtrar: la tabla de agentes
+   del grupo filtra por ellos junto al estado, y el listado los enseña en su columna y los encuentra al buscar.
+5. **La tipificación es nombre, descripción y árbol.** Su árbol, entero a la vista en columnas por nivel, con ramas de
+   largo libre (sin regla de completar), un solo «+» en la fila de lo que se añade (el del primer nivel en su título),
+   Enter para la siguiente y tirador para ordenar. Icono `menu`, el de tipificar en sc-agent. Enmienda DD-173 (sin
+   dirección, comentario ni grupos; los niveles salen de la rama más larga) y DD-174 (columnas con el árbol entero).
+6. **El grupo decide su Postconversación**, en General: permitir comentarios, tipificar (una tipificación) y en cuáles
+   (todas, solo entrantes, solo salientes). Su botón abre el árbol en un diálogo con «Editar en Repositorios».
+   Enmienda DD-173 §2 y §5 (una por grupo, como Voice; ya no varias por dirección y canal).
+7. **Las tablas no bailan**: miden lo que sus filas, con el pie de la pantalla de tope (DD-95 §1, que se mantiene: con
+   pocas filas, una tarjeta hasta el fondo se veía vacía), y al buscar o filtrar no bajan del alto que llegaron a medir
+   en esa visita (`--alto-visto`, de `scLlegaAlPie`). El mensaje de «Sin resultados» no cuenta para ese suelo. **En los
+   listados anchos**, la columna que crece se queda en 24rem y el sobrante va a la del «⋮».
+8. **El punto de estado**, proporcional (30 % de la foto, 8 px mínimo, con su borde) y solo donde el estado ayuda a
+   decidir (la tabla de agentes del grupo); fuera del listado de Administración. Enmienda DD-185.
+9. **Notas de decisión** (`sc-nota-decision`): una tarjeta morada junto a lo que el equipo tiene que decidir (el PIN,
+   filtrar por estado en el listado, punto o aro). Se borran al decidir.
+10. **Tipografía en la rampa** (barrido medido): el título de `sc-dialog` a 24 de interlineado (era 25,2), la ayuda bajo
+    los campos del DS y el error de campo a 18 (17,4 y 15), el título de `sc-section-card` sin espaciado propio, el
+    árbol de tipificaciones a la talla de la ficha (14) y las etiquetas del editor de equipos como las de las
+    fichas (12/600/18). Segunda pasada, al flujo de grupos entero: el menú «⋮» de fila, los tooltips y el aviso (con su
+    talla) a 20 de interlineado y el título del panel de agentes a 28 (heredaban el 1.5 del body: 21 y 30), en el preset
+    y sin pisar la letra que dan sus tokens; `sc-inputnumber` pasa su talla al tema como `sc-inputtext` (DD-91: el pequeño
+    medía 30 de alto y 14 de letra junto a selects de 27 y 12); la etiqueta propia de los campos del DS a 20; las de los
+    paneles de crear (agenda, plantilla, etiqueta) como las de las fichas, 12/18/600; el texto de la barra masiva, de 500
+    a 400; y «1 agente pierde», no «1 agentes pierden».
+11. **El botón, entero como en el Kit**: `sc-button` abre las nueve severidades de `button-small` (suma `help` y
+    `plain`, la gris que solo existe de texto o con borde), la sombra `raised` e `iconOnly` («Icon Only»: el rótulo pasa a
+    nombre accesible); el playground de sc-docs tiene los controles del panel de Figma. **Los componentes riman en
+    talla**: el «+» de añadir es el de solo icono, secundario y relleno, a la talla de su campo (mediano junto a uno
+    mediano, pequeño junto a uno pequeño), y lo mismo el botón que abre la tipificación del grupo y los de cada fila del
+    árbol; «Eliminar» de las barras masivas y los pies de los paneles de crear van en pequeño, como el resto de su barra
+    y de los diálogos; «Tamaño de cola» de Contact Center, en mediano como su página. Enmienda DD-167 (era el redondo con
+    borde). **En Categorías**, las dos formas de añadir no se confunden: «Añadir categoría», con rótulo, en el título del
+    primer nivel, y en cada fila la flecha «↳» de «Añadir subcategoría a…»; el tirador aparece al pasar por la fila.
+    **Una sola etiqueta de campo**: la propia de los campos del DS pasa a la de las fichas, 12/18/600, y los enlaces de
+    texto de Recursos a 12/600. **El multiselect lleva la flecha del Kit**, la de `sc-select` (14, centrada): desde
+    DD-153 llevaba la de Material, 2,5 px por encima del centro; solo el de «Columnas» cambia la flecha por su icono.
+12. **Editar un recurso sin salir de la ficha**: el «Editar» de las filas de Recursos (agendas, plantillas, grupos de
+    agentes) abre la misma ventana que el «+» del campo, con sus datos, en las fichas de grupo y de agente, y también
+    en un alta; el campo de equipos gana su «+». Lo que no cabe en esa ventana (los contactos de una agenda,
+    los agentes de un equipo) sigue en Repositorios. **Borrar una tipificación dice quién la usa** («La
+    usan 3 grupos: …»), en la lista y en la ficha, y esos grupos dejan de tipificar hasta que elijan otra.
+    **Categorías**: «Añadir categoría» va en la esquina derecha de la sección (`sc-section-card` gana el hueco
+    `scSectionActions`); la línea de resumen del árbol solo aparece si falta algo. **El teléfono de la vista previa**
+    mide siempre lo mismo, la proporción del de sc-agent (250 × 507), con «Guardar» en su sitio, abajo, y su título en
+    una línea («Lo que ve el agente al colgar»).
+13. **Fuera el aviso de «abierta en otra pestaña»** («Este registro está siendo editado en otra pestaña…», DD#169 del
+    prototipo), en las siete pantallas que lo pintaban, con el candado que lo detectaba (`CrossTabLockService`).
+14. **Gate `audit:css-literals`**: tipografía y espaciados con su variable, no con un número, en el SCSS del DS y del
+    Supervisor. Trinquete por zona (DS 13 y 38, Supervisor 50 y 44, tipografía y espaciado): no juzga lo de antes,
+    impide lo nuevo. Dentro de un componente de PrimeNG manda su token del preset, que es lo que lee el Theme Designer.
+
+**Descartadas** ·
+- *PickList para el árbol*: mueve elementos entre dos listas, no dibuja niveles. *PickList para asignar agentes a un
+  equipo*: sería un segundo patrón para la misma tarea, y con 500 agentes dos listas pesan.
+- *El estado como columna con filtro en el listado de Administración*: es tiempo real; filtrarlo es del Monitor (nota de
+  decisión abierta).
+- *«Postconversación» como «Tipificación»*: encender cualquiera de los dos deja al agente en postconversación.
+- *Notas de decisión como cristal translúcido*: se probó y se quedó en sólido.
+
+**Consecuencias** · Pendiente al aterrizar: poner al día las e2e de estas pantallas, regenerar
+`e2e/baselines/component-styles.json` (diálogo, campos, tarjeta de sección y botón del DS) y el preflight. Las unitarias de
+tipificaciones, reescritas (11). El hub de Repositorios solo da nombre de transición a sus categorías mientras cambia
+el filtro: con el nombre puesto siempre, al entrar desde el menú se pintaban encima de él. `help` con texto blanco da 3,96:1 en claro (el
+`purple-500` del Kit): como `success`, subirlo es apartarse del Kit, una decisión de marca pendiente (anotado en
+`severities-contrast`).
 
 ---
 
@@ -1143,7 +1240,8 @@ solo icono de primeng.dev («Icon Only»), en cada sitio donde haya un «+» sol
    con «Guardar»: `<sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="…">`.
    Con `rounded`, PrimeNG iguala el alto al ancho: un círculo de 31,5 (el ancho de solo icono del Kit), sin el
    31,5 × 32,5 de DD-91. El nombre va en `ariaLabel`, como pide la sección de accesibilidad de la doc, y el tooltip lo
-   repite al pasar el ratón.
+   repite al pasar el ratón. *(Enmendado por DD-187, 2026-10-09: es el de solo icono, secundario y relleno, del Kit, a la
+   talla de su campo: mediano junto a uno mediano, pequeño junto a uno pequeño.)*
 2. **Va a la derecha de su control, a su alto.** Control y «+» comparten fila (`.control-add`): alineados arriba, con
    7 de hueco, y el control se estira. Medido a 1440 y a 1366: un círculo de 31,5 junto a un control de 32,5, con los
    centros a 0,5 px. Es la regla que ya tenía el «Añadir» de los dominios del chat, que pasa de `.domain-add` a

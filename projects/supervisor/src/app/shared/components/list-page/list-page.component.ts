@@ -4,6 +4,7 @@ import {
   Component,
   computed,
   DOCUMENT,
+  effect,
   ElementRef,
   inject,
   input,
@@ -39,11 +40,14 @@ import {
   type ScRowStyleClassFn,
   ScSearchComponent,
 } from '@smartcontact-hub/components';
+import { LlegaAlPieDirective } from '@core/directives';
 import { escapeSearch } from '@core/utils/escape-search';
 import { injectLangChange } from '@core/utils/lang-change';
 
 /** Id de columna reservado para la del menú de fila; ninguna pantalla puede usarlo. */
 const ACTIONS_FIELD = '__actions';
+/** El ancho máximo de la columna que crece (la del nombre) en una tabla ancha. */
+const NOMBRE_TOPE = '24rem';
 
 /**
  * Lo que se recuerda de la tabla de cada lista al volver: qué columnas se ven, en qué orden (el de TODAS, también
@@ -122,6 +126,7 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
   selector: 'sc-list-page',
   imports: [
     CdkDrag,
+    LlegaAlPieDirective,
     CdkDropList,
     CheckboxModule,
     FormsModule,
@@ -270,9 +275,14 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     const prefs = this.columnPrefs();
     const locked = new Set((this.columnChoices() ?? []).filter((c) => c.locked).map((c) => c.key));
     /* Los anchos arrastrados mandan sobre los medidos; las columnas fijas no se arrastran a otro sitio. */
+    /* En una tabla ancha, la columna que crece (la que no trae ancho, la del nombre) se queda en su tope y el sobrante
+     * va al final de la fila, a la columna del «⋮» (revisión del 2026-10-09). Sin tope, a 1920 Nombre medía 737 px y
+     * había un salto enorme hasta el dato siguiente. Solo con menú de fila: es la columna que puede crecer sin que se
+     * note. */
+    const tope = this.conTopeDeNombre();
     const cols = this.columns().map((c) => ({
       ...c,
-      width: prefs?.widths[c.field] ?? c.width,
+      width: prefs?.widths[c.field] ?? c.width ?? (tope ? NOMBRE_TOPE : undefined),
       reorderable: !locked.has(c.field),
     }));
     if (!this.rowMenu() || !this.rowMenuColumn()) return cols;
@@ -284,8 +294,9 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
         stopRowClick: true,
         header: '',
         headerAriaLabel: this.translate.instant('common.actions'),
-        /* Relleno de celda + botón de 28 + relleno: el «⋮» queda centrado. Con `3` (42) tocaba el borde derecho. */
-        width: 'var(--sc-spacing-4)',
+        /* Relleno de celda + botón de 28 + relleno: el «⋮» queda centrado. Con `3` (42) tocaba el borde derecho. Con
+         * el nombre en su tope, esta columna se lleva el sobrante (`auto`) y el «⋮» sigue pegado a la derecha. */
+        width: tope ? 'auto' : 'var(--sc-spacing-4)',
         align: 'right',
         reorderable: false,
         frozen: true,
@@ -293,6 +304,38 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
         cellTemplate: this.actionsTpl(),
       },
     ];
+  });
+
+  /** El ancho de la tarjeta de la tabla, medido al cambiar (la ventana, el menú lateral o la selección). */
+  private readonly anchoTarjeta = signal(0);
+  private readonly tarjeta = viewChild<ElementRef<HTMLElement>>('tarjeta');
+  private readonly medirTarjeta = effect((onCleanup) => {
+    const el = this.tarjeta()?.nativeElement;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const observador = new ResizeObserver(([e]) => this.anchoTarjeta.set(Math.round(e.contentRect.width)));
+    observador.observe(el);
+    onCleanup(() => observador.disconnect());
+  });
+
+  /**
+   * ¿Le sobraría al nombre más que su tope? Lo que suman las columnas con ancho a la vista, la casilla de selección y el
+   * «⋮», más el tope del nombre, contra lo que mide la tarjeta. Solo si hay una sola columna sin ancho y menú de fila.
+   */
+  protected readonly conTopeDeNombre = computed(() => {
+    if (!this.rowMenu() || !this.rowMenuColumn()) return false;
+    const visibles = this.visibleColumns();
+    const prefs = this.columnPrefs();
+    const cols = this.columns().filter((c) => c.field !== ACTIONS_FIELD && (!visibles || visibles.includes(c.field)));
+    const sinAncho = cols.filter((c) => !(prefs?.widths[c.field] ?? c.width));
+    if (sinAncho.length !== 1) return false;
+    const rem = parseFloat(getComputedStyle(this.document.documentElement).fontSize) || 16;
+    const fijas = cols.reduce((suma, c) => {
+      const w = prefs?.widths[c.field] ?? c.width;
+      if (!w) return suma;
+      return suma + (w.endsWith('rem') ? parseFloat(w) * rem : w.endsWith('px') ? parseFloat(w) : 0);
+    }, 0);
+    const extras = (this.selectable() ? 2.5 : 0) * rem + 3.5 * rem;
+    return this.anchoTarjeta() > fijas + extras + parseFloat(NOMBRE_TOPE) * rem;
   });
 
   /** Lo leído de `localStorage` al abrir (`undefined` hasta entonces); `columnPrefs` lo contrasta con las columnas. */

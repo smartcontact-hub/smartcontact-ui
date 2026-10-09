@@ -95,9 +95,12 @@ test('el estado se filtra desde la cabecera del agente, con los no disponibles j
   const tabla = page.locator('sc-agent-channel-table');
   await expect(tabla.getByRole('columnheader', { name: 'Estado' })).toHaveCount(0);
   const antes = await tabla.locator('tbody tr').count();
-  await tabla.getByRole('button', { name: 'Filtrar por estado' }).click();
-  // Cinco opciones, no ocho: Baño, Comida y Formación van dentro de «No disponible» (DD-185).
-  const menu = page.locator('.assign__status-filter');
+  await tabla.getByRole('button', { name: 'Filtrar por estado o equipo', exact: true }).click();
+  // Desde DD-187 §4 el menú lleva dos grupos de casillas, Estado y Equipos. En Estado, cinco opciones, no ocho: Baño,
+  // Comida y Formación van dentro de «No disponible» (DD-185).
+  const filtros = page.locator('.assign__filters');
+  await expect(filtros.getByRole('group', { name: 'Equipos', exact: true })).toBeVisible();
+  const menu = filtros.getByRole('group', { name: 'Estado', exact: true });
   await expect(menu.getByRole('checkbox')).toHaveCount(5);
   await expect(menu.getByRole('checkbox', { name: 'Comida' })).toHaveCount(0);
   await menu.getByRole('checkbox', { name: 'No disponible' }).click();
@@ -105,5 +108,6 @@ test('el estado se filtra desde la cabecera del agente, con los no disponibles j
   const estados = await tabla.locator('tbody tr sc-presence-avatar .visually-hidden').allTextContents();
   expect(estados.length, 'quedan agentes').toBeGreaterThan(0);
   for (const estado of estados) expect(['No disponible', 'Baño', 'Comida', 'Formación']).toContain(estado.trim());
-  await expect(tabla.getByText('1 estado', { exact: true })).toBeVisible();
+  // La cuenta suma estados y equipos: «1 filtro» (DD-187).
+  await expect(tabla.getByText('1 filtro', { exact: true })).toBeVisible();
 });

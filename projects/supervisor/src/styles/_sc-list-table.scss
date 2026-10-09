@@ -57,11 +57,14 @@
   flex-direction: column;
   flex: 0 1 auto;
   min-height: 0;
+  /* Mide lo que sus filas, con el pie de la pantalla de tope, y al filtrar Asignados o buscar no baja del alto que llegó
+   * a medir (`--alto-visto`, de `scLlegaAlPie`): el marco no baila ni se queda en una raya (revisión del 2026-10-09). */
   max-block-size: var(--table-card-tope, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh)));
+  min-block-size: min(var(--alto-visto, 0px), var(--table-card-tope, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh))));
 }
 
 .table-card--al-pie > sc-datatable {
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-height: 0;
 }
 
