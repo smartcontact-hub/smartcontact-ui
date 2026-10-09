@@ -3436,7 +3436,8 @@ var tooltip_default = {
      * (`tooltip-tooltip`, 623:36926) y así casa con menús y desplegables. Por TOKEN y no
      * con una regla en `css.ts`: la hoja de Aura ya lee `tooltip.font.size`, y una clase
      * `.p-tooltip-text` nuestra sería acoplamiento al DOM de PrimeNG que no hace falta
-     * (`audit:primeng-coupling`). El interlineado no tiene token: lo hereda de la página. */
+     * (`audit:primeng-coupling`). El interlineado no tiene token: heredaba el 1.5 de la página (21), y desde el
+     * 2026-10-09 lo pone `css.ts`, el de la rampa (20), sin tocar la letra. */
     fontSize: "var(--sc-font-size-200)",
     borderRadius: "{overlay.popover.border.radius}"
   },
@@ -5685,7 +5686,10 @@ var mdTypographySelectors = [
   ".p-chip",
   ".p-toast-summary",
   ".p-breadcrumb-item-label",
-  ".p-contextmenu-item-label"
+  ".p-contextmenu-item-label",
+  /* Como la del menú contextual: sin letra ni interlineado propios, heredaba el 1.5 del body (14/21). Medido en el menú
+   * «⋮» de las filas de grupos (2026-10-09). */
+  ".p-menu-item-label"
 ];
 var smTypographySelectors = [
   ".p-component.p-button-sm",
@@ -5983,6 +5987,28 @@ ${typographyRule(lgTypographySelectors, dt, "lg", fromDesignPx(16), fromDesignPx
 
 .p-button .p-button-icon {
     line-height: 1;
+}
+
+/* El aviso y el tooltip tienen su letra en el preset (\`message.text.*\`, \`tooltip.fontSize\`: lo que lee el Theme Designer)
+ * pero ning\xFAn interlineado: heredaban el 1.5 del body, 14/21 (el aviso de tres l\xEDneas med\xEDa 63 en vez de 60). Aqu\xED solo el
+ * interlineado de su talla, para no pisarles la letra. */
+.p-tooltip-text,
+.p-message-text {
+    line-height: ${token(dt, "app.typography.md.line.height", fromDesignPx(20))};
+}
+
+.p-message-sm .p-message-text {
+    line-height: ${token(dt, "app.typography.sm.line.height", fromDesignPx(18))};
+}
+
+.p-message-lg .p-message-text {
+    line-height: ${token(dt, "app.typography.lg.line.height", fromDesignPx(24))};
+}
+
+/* El t\xEDtulo del drawer es el pelda\xF1o 450 (20, \`drawer.title.fontSize\`) y su interlineado es el del mismo pelda\xF1o, 28
+ * (\`docs/tipografia.md\` \xA72); heredaba 30. */
+.p-drawer-title {
+    line-height: var(--sc-line-height-450);
 }
 
 ${baseTableCss()}
