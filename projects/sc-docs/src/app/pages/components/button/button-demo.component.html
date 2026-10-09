@@ -18,6 +18,8 @@
     [loading]="args.loading"
     [disabled]="args.disabled"
     [rounded]="args.rounded"
+    [raised]="args.raised"
+    [iconOnly]="args.iconOnly"
     [fullWidth]="args.fullWidth"
   />
 </ng-template>
@@ -28,8 +30,11 @@
   <sc-button label="Success" variant="success" />
   <sc-button label="Info" variant="info" />
   <sc-button label="Warn" variant="warn" />
+  <sc-button label="Help" variant="help" />
   <sc-button label="Danger" variant="danger" />
   <sc-button label="Contrast" variant="contrast" />
+  <sc-button label="Plain" variant="plain" appearance="text" />
+  <sc-button label="Plain" variant="plain" appearance="outlined" />
 </ng-template>
 
 <ng-template #appearances>
@@ -45,6 +50,13 @@
   <sc-button label="Large" size="lg" data-testid="sc-btn-lg" />
 </ng-template>
 
+<ng-template #raisedTpl>
+  <sc-button label="Primario" [raised]="true" data-testid="sc-btn-raised" />
+  <sc-button label="Secundario" variant="secondary" [raised]="true" />
+  <sc-button label="Texto" variant="secondary" appearance="text" [raised]="true" />
+  <sc-button icon="add" [rounded]="true" [raised]="true" ariaLabel="Nuevo" />
+</ng-template>
+
 <ng-template #icons>
   <sc-button label="Con icono" icon="check" />
   <sc-button icon="check" iconAriaLabel="Confirmar" data-testid="sc-btn-icononly" />
@@ -54,27 +66,30 @@
   <sc-button label="Full width" [fullWidth]="true" />
 </ng-template>
 
-<!-- «Icon Only» de primeng.dev: una fila por forma, con las siete variantes. Debajo, aparte (entre grupos, el doble
-     que entre filas), el «+» de crear de DD-167. -->
+<!-- «Icon Only» del Kit: una fila por forma, con las ocho variantes rellenas. Debajo, aparte (entre grupos, el doble
+     que entre filas), el «+» de añadir de DD-187 junto a su campo. -->
 <ng-template #soloIcono>
   <div class="col" style="gap: var(--sc-spacing-2)">
     <div class="col" data-testid="sc-btn-solo-icono">
       @for (f of formasSoloIcono; track f.forma) {
         <div class="row">
           @for (v of variantesSoloIcono; track v.variant) {
-            <sc-button [icon]="v.icon" [variant]="v.variant" [rounded]="f.rounded" [appearance]="f.appearance" [ariaLabel]="v.nombre" />
+            <sc-button [icon]="v.icon" [variant]="v.variant" [rounded]="f.rounded" [appearance]="f.appearance" [raised]="f.raised" [ariaLabel]="v.nombre" />
           }
         </div>
       }
     </div>
-    <sc-button
-      icon="add"
-      [rounded]="true"
-      appearance="outlined"
-      variant="secondary"
-      ariaLabel="Nueva agenda"
-      data-testid="sc-btn-crear"
-    />
+    <!-- El «+» de añadir, a la talla de su campo (DD-187): mediano junto a uno mediano, pequeño junto a uno pequeño. -->
+    <div class="col">
+      <div class="row" style="gap: var(--sc-spacing-0-5)">
+        <sc-select placeholder="Agendas" [options]="[]" style="inline-size: 16rem" />
+        <sc-button icon="add" variant="secondary" ariaLabel="Nueva agenda" data-testid="sc-btn-crear" />
+      </div>
+      <div class="row" style="gap: var(--sc-spacing-0-5)">
+        <sc-select size="sm" placeholder="Agendas" [options]="[]" style="inline-size: 16rem" />
+        <sc-button icon="add" size="sm" variant="secondary" ariaLabel="Nueva agenda" data-testid="sc-btn-crear-sm" />
+      </div>
+    </div>
   </div>
 </ng-template>
 

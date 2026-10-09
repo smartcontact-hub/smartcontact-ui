@@ -27,8 +27,10 @@
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
-  font-size: var(--sc-font-size-200);
-  font-weight: var(--sc-font-weight-medium);
+  /* Caption semibold 12/18/600, la de las fichas: una sola etiqueta de campo (DD-187, como en sc-inputtext). */
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-secondary);
   margin-bottom: 0;
 }
@@ -130,7 +132,7 @@
   min-height: 1.25em;
   /* Figma spec: 12px helper. */
   font-size: var(--sc-font-size-100);
-  line-height: 1.45;
+  line-height: var(--sc-line-height-caption); /* caption, 18: la de las ayudas de página (era 1.45, 17,4) */
   color: var(--sc-text-subtle);
 }
 

@@ -108,7 +108,21 @@
      * de título sube a 12.16:1 y el cuerpo se queda en 7.38 — un escalón de color que
      * en claro no existía (ver la nota de `--sc-text-heading`). */
     color: var(--sc-text-heading);
-    letter-spacing: -0.01em;
+    /* Sin espaciado propio: los estilos de texto del DS van a 0 (barrido de tipografía del 2026-10-09; era −0,01em). */
+  }
+
+  /* La acción de la sección (`scSectionActions`), en la esquina derecha de la cabecera y centrada con el título. Sin
+   * acción, no ocupa nada. Solo en la cabecera fija: la plegable es un botón y no puede llevar otro dentro. */
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    margin-inline-start: auto;
+    align-self: center;
+
+    &:empty {
+      display: none;
+    }
   }
 
   &__hint {
