@@ -582,17 +582,9 @@
             <div class="grid">
               <div class="field">
                 <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
-                <div class="control-add">
-                  <sc-inputtext inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [helperText]="'groups.form.advanced.allowed_domains_hint' | translate" [value]="domainInput()" (valueChange)="domainInput.set($event)" (keydown.enter)="addDomain()" />
-                  <sc-button variant="secondary" appearance="outlined" icon="add" [label]="'groups.form.advanced.allowed_domains_add' | translate" (clicked)="addDomain()" />
-                </div>
-                @if (form().advanced.allowedDomains.length > 0) {
-                  <div class="domain-chips">
-                    @for (domain of form().advanced.allowedDomains; track domain) {
-                      <sc-chip [label]="domain" removable [removeAriaLabel]="'common.delete' | translate" (removed)="removeDomain(domain)" />
-                    }
-                  </div>
-                }
+                <!-- `p-inputtags` de primeng.dev (DD-194): Enter, la coma, pegar o salir del campo añaden; cada dominio se quita
+                     con su ✕ o con Retroceso. Sustituye al campo, el botón «Añadir» y la fila de chips que lo hacían a mano. -->
+                <sc-inputtags inputId="group-chat-domain" [placeholder]="'groups.form.advanced.allowed_domains_placeholder' | translate" [helperText]="'groups.form.advanced.allowed_domains_hint' | translate" [value]="form().advanced.allowedDomains" (valueChange)="setDomains($event)" />
               </div>
               <div class="field">
                 <label class="field__label sc-text-caption-semibold" for="group-chat-script">{{ 'groups.form.advanced.script_title' | translate }}</label>

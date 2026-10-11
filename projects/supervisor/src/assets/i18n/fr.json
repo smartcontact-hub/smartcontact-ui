@@ -1973,7 +1973,6 @@
         "chat_rating_hint": "Une courte question d’évaluation à la fin de l’échange.",
         "allowed_domains": "Domaines autorisés",
         "allowed_domains_placeholder": "exemple.com",
-        "allowed_domains_add": "Ajouter",
         "allowed_domains_hint": "Les sites où le chat peut s’intégrer.",
         "script_title": "Script de chat",
         "script_hint": "Collez ce code dans l’en-tête du site où vous voulez le chat.",
@@ -2620,7 +2619,8 @@
   "primeng": {
     "today": "Aujourd'hui",
     "clear": "Effacer",
-    "week_header": "Sem"
+    "week_header": "Sem",
+    "remove": "Retirer"
   },
   "auth": {
     "login": {

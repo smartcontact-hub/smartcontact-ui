@@ -25,7 +25,7 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
   ScDialogComponent as DialogComponent,
   ScSelectComponent as SelectComponent,
-  ScChipComponent as ChipComponent,
+  ScInputTagsComponent as InputTagsComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   ScMessageComponent as MessageComponent,
   ScSectionCardComponent as SectionCardComponent,
@@ -199,7 +199,7 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     DialogComponent,
     RecursoDialogComponent,
     LabelFormPanelComponent,
-    ChipComponent,
+    InputTagsComponent,
     TooltipModule,
     TipificacionArbolComponent,
     AltaPieComponent,
@@ -1046,19 +1046,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   }
 
   /** «Dominios permitidos» del script de chat (decisión de producto, 2026-09-20): en qué webs se puede insertar sin que
-   *  cualquiera lo copie. Texto libre en un campo + Enter/botón lo añade a la lista; sin duplicados. */
-  protected readonly domainInput = signal('');
-
-  protected addDomain(): void {
-    const value = this.domainInput().trim().toLowerCase();
-    if (!value) return;
-    const current = this.form().advanced.allowedDomains;
-    if (!current.includes(value)) this.setAdvanced('allowedDomains', [...current, value]);
-    this.domainInput.set('');
-  }
-
-  protected removeDomain(domain: string): void {
-    this.setAdvanced('allowedDomains', this.form().advanced.allowedDomains.filter((d) => d !== domain));
+   *  cualquiera lo copie. `sc-inputtags` los añade y los quita (DD-194); aquí se guardan en minúsculas, sin repetir y
+   *  uno por etiqueta: un dominio no lleva comas ni espacios, así que «a.com, b.com» con Enter son dos. */
+  protected setDomains(domains: readonly string[]): void {
+    const limpios = [...new Set(domains.flatMap((d) => d.toLowerCase().split(/[\s,]+/)).filter(Boolean))];
+    this.setAdvanced('allowedDomains', limpios);
   }
 
   /** El .wav elegido: de momento solo se guarda su nombre (demo). */

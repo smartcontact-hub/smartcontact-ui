@@ -9,10 +9,9 @@ import {
   signal,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TabsModule } from 'primeng/tabs';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent, ScTabsComponent as TabsComponent } from '@smartcontact-hub/components';
 
 
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
@@ -61,7 +60,7 @@ import { ResultadoAccionService } from '@core/services';
 @Component({
   selector: 'sc-memory-conversation-player-modal',
   imports: [
-    TabsModule,
+    TabsComponent,
     SearchComponent,
     ButtonComponent,
     IconComponent,

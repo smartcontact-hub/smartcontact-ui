@@ -72,7 +72,7 @@ for (const ruta of LISTAS) {
 test('plantillas: las pestañas, a 14 del título y a 14 de su buscador', async ({ page }) => {
   await goto(page, 'admin/plantillas');
   await page.locator('.table-card').waitFor();
-  const m = await cajas(page, ['main h1.page__heading', 'p-tabs.tabs', '.page__action-bar', '.table-card']);
+  const m = await cajas(page, ['main h1.page__heading', 'sc-tabs.tabs', '.page__action-bar', '.table-card']);
   expect(huecos(m)).toEqual([28, 14, 14, 7]);
 });
 

@@ -1973,7 +1973,6 @@
         "chat_rating_hint": "A short rating question after saying goodbye.",
         "allowed_domains": "Allowed domains",
         "allowed_domains_placeholder": "example.com",
-        "allowed_domains_add": "Add",
         "allowed_domains_hint": "The websites where the chat can be embedded.",
         "script_title": "Chat script",
         "script_hint": "Paste this code in the head of the website where you want the chat.",
@@ -2620,7 +2619,8 @@
   "primeng": {
     "today": "Today",
     "clear": "Clear",
-    "week_header": "Wk"
+    "week_header": "Wk",
+    "remove": "Remove"
   },
   "auth": {
     "login": {
