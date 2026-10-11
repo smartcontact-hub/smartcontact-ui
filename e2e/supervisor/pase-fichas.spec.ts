@@ -58,8 +58,10 @@ test.describe('la franja, por debajo de 1340', () => {
           Math.round(e.getBoundingClientRect().left)
         )
       );
-    // Reparto (2), salida (2) y recursos (1), contados: sobre una lista vacía, «todos alineados» se cumpliría.
-    expect(xs).toHaveLength(5);
+    // Chat (Reparto) y los dos números de Salida: Teléfono (Reparto) y Recursos son un botón, no un `scFactRow`, y
+    // quedan fuera de la subrejilla a propósito (revisión de diseño, 2026-10-11: «quedan a su aire en su propia
+    // fila»). Sobre una lista vacía, «todos alineados» se cumpliría.
+    expect(xs).toHaveLength(3);
     expect(new Set(xs).size, `x de cada valor: ${xs.join(', ')}`).toBe(1);
   });
 });
