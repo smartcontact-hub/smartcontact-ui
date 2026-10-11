@@ -13,6 +13,8 @@ export interface UndoEntry {
   readonly description: string;
   readonly undo: () => void;
   readonly expiresAt: number;
+  /** Quien cuenta el resultado en su sitio (la barra de lote, DD-196): al deshacer, avisa él y no sale toast. */
+  readonly alDeshacer?: () => void;
 }
 
 const EXPIRY_MS = 9000; // slightly longer than toast life so Ctrl+Z works until the toast disappears
@@ -55,6 +57,24 @@ export class UndoStackService {
     });
   }
 
+  /**
+   * Un deshacer que cuenta su resultado en la barra de lote de su lista, no en un toast (DD-196). Vive mientras la
+   * barra lo enseña: no caduca solo, y quien lo registra lo `olvida` al cerrar la barra o al salir de la página. Ctrl+Z
+   * también lo deshace. Devuelve el id para el botón «Deshacer» de la barra.
+   */
+  registrar(description: string, undo: () => void, alDeshacer: () => void): string {
+    this.prune();
+    const id = `undo_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+    this.stack.push({ id, description, undo, expiresAt: Number.POSITIVE_INFINITY, alDeshacer });
+    if (this.stack.length > MAX_STACK) this.stack.shift();
+    return id;
+  }
+
+  /** La barra que enseñaba ese deshacer se ha cerrado: ya no se puede deshacer (tampoco con Ctrl+Z). */
+  olvidar(id: string): void {
+    this.stack = this.stack.filter((e) => e.id !== id);
+  }
+
   /** Pop and run the most recent undoable action (Ctrl+Z handler). */
   popLatest(): void {
     this.prune();
@@ -79,6 +99,10 @@ export class UndoStackService {
 
   private run(entry: UndoEntry): void {
     entry.undo();
+    if (entry.alDeshacer) {
+      entry.alDeshacer();
+      return;
+    }
     this.messages.add({
       severity: 'info',
       summary: this.translate.instant('common.change_reverted'),

@@ -960,7 +960,7 @@
     "copy_failed": "Não foi possível copiar para área de transferência",
     "click_to_copy": "Clique para copiar",
     "remove_from_list": "Remover {{name}} da lista",
-    "bulk_updated": "{{count}} itens atualizados",
+    "bulk_applied": "Alteração aplicada a {{count}} {{entity}}",
     "columns": "Colunas",
     "columns_count": "{0} colunas",
     "columns_visible": "Colunas, {{visible}} de {{total}}",
@@ -2680,6 +2680,10 @@
   },
   "decision_notes": {
     "label": "Nota para a equipa",
+    "bulk_undo": {
+      "title": "«Desfazer» na barra ou num aviso flutuante?",
+      "body": "Depois de uma alteração em lote, aparecia um aviso no canto inferior direito: tapava a última linha, dizia «1 itens atualizados» e desaparecia ao fim de 8 segundos. Agora a barra onde a alteração foi aplicada fica com o resultado e o seu «Desfazer» até ser fechada ou até se voltar a selecionar uma linha. Proposta: a barra. O aviso flutuante fica para o que o sistema comunica e para o que se retira do início, que não deixa lugar onde o dizer."
+    },
     "pin": {
       "title": "PIN só com extensão Telefone?",
       "body": "O produto pediu para retirar o PIN. Serve para o agente se ativar a partir do telefone, por isso aqui só aparece com a extensão no telefone. A decidir: retirá-lo de vez ou mantê-lo assim."

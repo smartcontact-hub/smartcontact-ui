@@ -960,7 +960,7 @@
     "copy_failed": "Could not copy to clipboard",
     "click_to_copy": "Click to copy",
     "remove_from_list": "Remove {{name}} from list",
-    "bulk_updated": "{{count}} items updated",
+    "bulk_applied": "Change applied to {{count}} {{entity}}",
     "columns": "Columns",
     "columns_count": "{0} columns",
     "columns_visible": "Columns, {{visible}} of {{total}}",
@@ -2680,6 +2680,10 @@
   },
   "decision_notes": {
     "label": "Note for the team",
+    "bulk_undo": {
+      "title": "“Undo” in the bar or in a floating notice?",
+      "body": "After a bulk change, a notice appeared at the bottom right: it covered the last row, said “1 items updated” and left after 8 seconds. Now the bar where the change was applied stays with the result and its “Undo” until it is closed or a row is selected again. Proposal: the bar. The floating notice is kept for what the system reports and for what is removed from the home page, which leaves no place to say it."
+    },
     "pin": {
       "title": "PIN only with a Phone extension?",
       "body": "Product asked to remove the PIN. It lets the agent activate from the phone, so here it only shows with a phone extension. To decide: remove it entirely or keep it like this."

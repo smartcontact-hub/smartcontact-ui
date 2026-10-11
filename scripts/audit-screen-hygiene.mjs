@@ -154,7 +154,8 @@ export function sinComentariosEnSuSitio(texto, esHtml) {
 
 /**
  * Los ficheros que pueden lanzar toasts, y cuántos (DD-191). La lista solo MENGUA.
- * - `undo-stack`: el aviso con «Deshacer» de lo que se puede deshacer; pendiente de decidir su sitio.
+ * - `undo-stack`: el aviso con «Deshacer» de lo que se quita del inicio (un monitor, un widget), que desaparece sin dejar
+ *   sitio donde contarlo; el de un cambio en lote ya va en su barra (DD-196).
  * - `conversations-page`: transcripciones y análisis en segundo plano, con su progreso y su resultado.
  */
 export const TOAST_DEL_SISTEMA = {

@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { registerScBulkActionBarTranslations } from './i18n/sc-bulk-action-bar.translations';
+import { ScButtonComponent } from '../button/sc-button.component';
+import { ScMessageComponent } from '../message/sc-message.component';
 
 export interface BulkActionEntityLabels {
   readonly singular: string;
@@ -28,7 +30,7 @@ export interface BulkActionEntityLabels {
 @Component({
   selector: 'sc-bulk-action-bar',
   standalone: true,
-  imports: [ScIconComponent, TranslateModule],
+  imports: [ScButtonComponent, ScIconComponent, ScMessageComponent, TranslateModule],
   templateUrl: './sc-bulk-action-bar.component.html',
   styleUrl: './sc-bulk-action-bar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,13 +52,27 @@ export class ScBulkActionBarComponent {
    */
   readonly total = input<number | undefined>(undefined);
 
-  /** El usuario ha pulsado deshacer la selección. */
+  /**
+   * El resultado de la acción en lote que se acaba de aplicar («Cambio aplicado a 2 grupos», DD-196). Sin selección, la
+   * barra se queda en su sitio y lo cuenta hasta que se cierra o se vuelve a seleccionar: el resultado sale donde se hizo
+   * la acción, sin toast que tape filas ni se vaya solo.
+   */
+  readonly result = input<string | null>(null);
+  /** Si el resultado se puede deshacer todavía: pinta «Deshacer» pegado a su texto, que es lo que deshace. */
+  readonly resultUndoable = input(false, { transform: booleanAttribute });
+
+  /** El usuario ha pulsado «Deshacer» junto al resultado. */
+  readonly undo = output<void>();
+
+  /** El usuario ha pulsado la «×»: deshacer la selección o, con un resultado, cerrarlo. */
   readonly clear = output<void>();
 
   private readonly translate = inject(TranslateService);
   protected readonly closeIcon = 'close';
 
-  protected readonly visible = computed(() => this.count() > 0);
+  protected readonly visible = computed(() => this.count() > 0 || !!this.result());
+  /** Con selección manda la selección; el resultado solo se cuenta cuando no hay ninguna. */
+  protected readonly resultado = computed(() => (this.count() > 0 ? null : this.result()));
 
   protected readonly summary = computed(() => {
     const c = this.count();
