@@ -157,6 +157,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
       field: c.key,
       header: this.translate.instant(c.labelKey),
       width: c.width,
+      /* La columna del nombre es la cabecera de su fila también con ancho propio (Intenciones, Reglas IA…), DD-194. */
+      rowHeader: c.emphasis,
       cellTemplate: cell,
     }));
   });

@@ -275,7 +275,7 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
         cellTemplate: this.assignedTpl(),
         stopRowClick: true,
       },
-      { field: 'agent', header: this.translate.instant('groups.form.assigned.col_agent'), cellTemplate: this.agentTpl() },
+      { field: 'agent', header: this.translate.instant('groups.form.assigned.col_agent'), rowHeader: true, cellTemplate: this.agentTpl() },
     ];
   });
 

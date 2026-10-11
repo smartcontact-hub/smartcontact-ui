@@ -137,6 +137,7 @@ export class GroupAssignmentTableComponent {
       {
         field: 'group',
         header: this.translate.instant('agents.form.assigned.col_group'),
+        rowHeader: true,
         cellTemplate: this.groupTpl(),
       },
       ...CHANNEL_FAMILIES.map((ch) => ({

@@ -293,6 +293,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
       width: prefs?.widths[c.field] ?? c.width ?? (tope ? NOMBRE_TOPE : undefined),
       reorderable: !locked.has(c.field),
       frozen: c.frozen ?? c.field === nombre,
+      rowHeader: c.rowHeader ?? c.field === nombre,
     }));
     if (!this.rowMenu() || !this.rowMenuColumn()) return cols;
     this.lang(); // el nombre accesible de la columna de acciones, al día al cambiar de idioma
@@ -318,8 +319,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   /**
    * La columna que nombra la fila (la «row header» de Primer): la fija del selector de columnas o, si no lo hay, la
    * primera cuando crece (Nombre, Título, Regla). Se queda fija a la izquierda al desplazar la tabla de lado: lo que dice
-   * de qué fila es cada dato no se va nunca (DD-193). Una primera columna con ancho propio no nombra la fila (el Estado
-   * de Conversaciones), y no se fija nada.
+   * de qué fila es cada dato no se va nunca (DD-193), y su celda es la cabecera de la fila para un lector de pantalla
+   * (DD-194). Una primera columna con ancho propio no nombra la fila (el Estado de Conversaciones), y no se fija nada.
    */
   private readonly campoNombre = computed<string | undefined>(() => {
     const fija = (this.columnChoices() ?? []).find((c) => c.locked)?.key;

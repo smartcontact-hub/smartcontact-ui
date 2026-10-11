@@ -38,7 +38,7 @@ const columna = async (page: Page, cabecera: string): Promise<number> => {
 };
 
 const celda = async (page: Page, grupo: string, cabecera: string) =>
-  fila(page, grupo).locator('td').nth(await columna(page, cabecera));
+  fila(page, grupo).locator('td, th').nth(await columna(page, cabecera));
 
 /** Enciende una columna opcional desde el selector de columnas y lo cierra. Si ya se ve, no la toca: la lista
  *  recuerda sus columnas en `localStorage`, y un segundo clic la apagaría. */
@@ -135,7 +135,7 @@ test('Prioridad ordena de Baja a Máxima, no por orden alfabético', async ({ pa
   // El consumidor ordena al recibir sortChange; esperar el resultado evita leer las filas anteriores.
   await expect.poll(async () => {
     const textos = await page.locator('tbody tr').evaluateAll(
-      (filas, i) => filas.map((f) => f.querySelectorAll('td')[i]?.textContent?.trim() ?? ''),
+      (filas, i) => filas.map((f) => f.children[i]?.textContent?.trim() ?? ''),
       indice,
     );
     const rangos = textos.map((t) => ['Baja', 'Media', 'Alta', 'Máxima'].indexOf(t));

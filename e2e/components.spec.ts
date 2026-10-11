@@ -1528,6 +1528,17 @@ test.describe('sc-datatable', () => {
     const backgrounds = await right.evaluate(el => [getComputedStyle(el).backgroundColor, getComputedStyle(el.parentElement!).backgroundColor]);
     expect(backgrounds[0]).toBe(backgrounds[1]);
     expect(backgrounds[0]).not.toMatch(/transparent|rgba\([^)]*, 0\)/);
+    // DD-194: el nombre es la cabecera de su fila (`th`), pinta como su vecina `td` y, fijo, toma el fondo de la fila.
+    await expect(left).toHaveAttribute('scope', 'row');
+    const nombre = await left.evaluate(th => {
+      const td = th.nextElementSibling!;
+      const props = ['padding-left', 'padding-top', 'font-weight', 'font-size', 'text-align', 'border-bottom-width', 'border-bottom-color'];
+      return {
+        distintas: props.filter(p => getComputedStyle(th).getPropertyValue(p) !== getComputedStyle(td).getPropertyValue(p)),
+        fondo: getComputedStyle(th).backgroundColor === getComputedStyle(th.parentElement!).backgroundColor,
+      };
+    });
+    expect(nombre).toEqual({ distintas: [], fondo: true });
   });
 
   test('MVP: column-defs + cellTemplate, orden, selección, paginador, slots proyectados', async ({

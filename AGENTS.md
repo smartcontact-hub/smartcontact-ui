@@ -230,6 +230,7 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    mientras esconde filas. Lo prueba `e2e/supervisor/tabla-al-pie.spec.ts`: 2 px más de tabla y la página desplaza.
    **En estrecho, el nombre se queda** (DD-193): la columna que nombra la fila va fija a la izquierda y la tabla
    desplaza de lado; su mínimo sale de las columnas y no baja de 15rem para el nombre. Prueba cada lista a 1024.
+   Esa columna es la cabecera de su fila (`rowHeader` en `ScColumnDef`, DD-194): una tabla nueva con nombre la marca.
 
 **Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
 recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas

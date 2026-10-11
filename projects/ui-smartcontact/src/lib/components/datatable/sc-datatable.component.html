@@ -163,6 +163,22 @@
         />
       </td>
       } @for (col of visibleCols(); track col.field) {
+      <!-- La columna que nombra la fila es su cabecera, como en Primer (DD-194): el lector de pantalla la
+           anuncia al recorrer la fila. Mismos atributos que la celda de datos; el aspecto lo iguala el tema. -->
+      @if (col.rowHeader) {
+      <th
+        scope="row"
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+        [style.text-align]="col.align ?? null"
+        (click)="col.stopRowClick ? $event.stopPropagation() : null"
+      >
+        <ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" />
+      </th>
+      } @else {
       <td
         pFrozenColumn
         [frozen]="!!col.frozen"
@@ -172,18 +188,9 @@
         [style.text-align]="col.align ?? null"
         (click)="col.stopRowClick ? $event.stopPropagation() : null"
       >
-        @if (col.cellTemplate) {
-        <ng-container
-          *ngTemplateOutlet="
-            col.cellTemplate;
-            context: { $implicit: row, rowIndex: rowIndex, col: col }
-          "
-        />
-        } @else {
-        {{ cellValue(row, col.field) }}
-        }
+        <ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" />
       </td>
-      }
+      } }
     </tr>
     }
   </ng-template>
@@ -602,3 +609,11 @@
   </ng-template>
   }
 </p-table>
+
+<ng-template #cellContent let-row let-rowIndex="rowIndex" let-col="col">
+  @if (col.cellTemplate) {
+  <ng-container *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row, rowIndex: rowIndex, col: col }" />
+  } @else {
+  {{ cellValue(row, col.field) }}
+  }
+</ng-template>
