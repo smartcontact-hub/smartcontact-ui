@@ -17,7 +17,16 @@ const STATES_SNIPPET = `<sc-textarea placeholder="Auto-resize" [autoResize]="tru
 <sc-textarea placeholder="Fluid" [fluid]="true" />`;
 
 const COPY_SNIPPET = `<!-- Para lo que se lee y se copia: el botón va dentro, solo con su icono (DD-198). -->
-<sc-textarea [rows]="2" fluid readonly [copyable]="true" copyLabel="Copiar código" copiedLabel="Código copiado" helperText="Pega este código en la cabecera de la web." [value]="script" />`;
+<sc-textarea
+  [rows]="2"
+  fluid
+  readonly
+  [copyable]="true"
+  copyLabel="Copiar código"
+  copiedLabel="Código copiado"
+  helperText="Pega este código en la cabecera de la web."
+  [value]="script"
+/>`;
 
 /** Demo de `sc-textarea` en formato story (motor «Storybook-like»). */
 @Component({
