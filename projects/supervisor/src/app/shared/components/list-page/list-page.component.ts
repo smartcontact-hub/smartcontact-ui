@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   DOCUMENT,
   effect,
   ElementRef,
@@ -41,6 +42,8 @@ import {
   ScSearchComponent,
 } from '@smartcontact-hub/components';
 import { LlegaAlPieDirective } from '@core/directives';
+import { NotaDecisionComponent } from '../nota-decision/nota-decision.component';
+import { ResultadoAccionService, UndoStackService } from '@core/services';
 import { escapeSearch } from '@core/utils/escape-search';
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -137,6 +140,7 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
     CheckboxModule,
     FormsModule,
     MenuModule,
+    NotaDecisionComponent,
     PopoverModule,
     ScBulkActionBarComponent,
     ScButtonComponent,
@@ -689,6 +693,57 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected clearSelection(): void {
     this.selectedIds.set(new Set());
   }
+
+  /* ─── El resultado de la acción en lote, en su barra (DD-196) ───────────────────────────────────────────────── */
+
+  private readonly deshacer = inject(UndoStackService);
+  private readonly resultadoAccion = inject(ResultadoAccionService);
+
+  /** Lo que la barra de lote cuenta tras aplicar un cambio: el texto y, mientras se pueda, el id de su «Deshacer». */
+  protected readonly resultadoLote = signal<{ readonly texto: string; readonly deshacerId: string | null } | null>(null);
+
+  /**
+   * La página aplicó un cambio en lote a `cuantos` filas: la barra se queda donde estaba y lo cuenta, con «Deshacer»,
+   * hasta que se cierra, se vuelve a seleccionar o se sale de la página. Sin toast: el resultado sale donde se hizo la
+   * acción y no tapa filas (DD-196). `deshacer` devuelve las filas a como estaban.
+   */
+  contarLote(cuantos: number, deshacer: () => void): void {
+    this.cerrarResultadoLote();
+    const entidad = this.bulkEntity();
+    const nombre = entidad ? (cuantos === 1 ? entidad.singular : entidad.plural) : '';
+    const texto = this.translate.instant('common.bulk_applied', { count: cuantos, entity: nombre }).trim();
+    const revertido = this.translate.instant('common.change_reverted');
+    const deshacerId = this.deshacer.registrar(revertido, deshacer, () => {
+      this.resultadoLote.set({ texto: revertido, deshacerId: null });
+      this.resultadoAccion.visto(revertido);
+    });
+    this.resultadoLote.set({ texto, deshacerId });
+    this.resultadoAccion.visto(texto);
+  }
+
+  protected deshacerLote(): void {
+    const id = this.resultadoLote()?.deshacerId;
+    if (id) this.deshacer.runById(id);
+  }
+
+  protected cerrarResultadoLote(): void {
+    const id = this.resultadoLote()?.deshacerId;
+    if (id) this.deshacer.olvidar(id);
+    this.resultadoLote.set(null);
+  }
+
+  /** La «×» de la barra: con filas marcadas, desmarca; sin ellas, cierra el resultado. */
+  protected onBarraLoteClear(): void {
+    if (this.selectedIds().size > 0) this.clearSelection();
+    else this.cerrarResultadoLote();
+  }
+
+  /** Volver a seleccionar es la siguiente acción: el resultado anterior ya no vale. */
+  private readonly nuevaSeleccion = effect(() => {
+    if (this.selectedIds().size > 0 && this.resultadoLote()) this.cerrarResultadoLote();
+  });
+
+  private readonly alSalir = inject(DestroyRef).onDestroy(() => this.cerrarResultadoLote());
 
   protected readonly rowAriaLabel = (row: T): string =>
     this.translate.instant(this.selectRowKey(), { name: this.rowLabel()(row), id: row.id });

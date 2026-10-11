@@ -111,12 +111,18 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 1,
+      "inputs": 3,
       "api": [
         "clear",
-        "total"
+        "result",
+        "resultUndoable",
+        "total",
+        "undo"
       ],
-      "nested": [],
+      "nested": [
+        "sc-message",
+        "sc-button"
+      ],
       "hasDemo": true,
       "kit": false,
       "estado": "experimental",
@@ -125,7 +131,7 @@
       ],
       "retirado": null,
       "usedInSupervisor": 2,
-      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
+      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale con la selección; tras aplicar un cambio en lote, se queda para contarlo con su «Deshacer».",
       "sobreObsoleto": []
     },
     {

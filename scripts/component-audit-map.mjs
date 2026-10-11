@@ -49,7 +49,7 @@ export const CUANDO = {
   'sc-avatargroup': 'Para apilar varios avatares cuando importa «quiénes» y no «cuántos» exactamente.',
   'sc-badge': 'Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.',
   'sc-breadcrumb': 'Para decir dónde estás dentro de una jerarquía y poder subir. No es navegación principal.',
-  'sc-bulk-action-bar': 'Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.',
+  'sc-bulk-action-bar': 'Para las acciones que aparecen al seleccionar varias filas. Sale con la selección; tras aplicar un cambio en lote, se queda para contarlo con su «Deshacer».',
   'sc-bulk-edit-menu': 'Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.',
   'sc-bulk-transcription-modal': 'Solo para el procesado masivo de conversaciones. Es específico del dominio y hoy solo lo usa la demo.',
   'sc-button': 'Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.',

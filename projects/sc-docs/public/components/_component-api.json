@@ -729,7 +729,7 @@
         "kit"
       ],
       "retirado": null,
-      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
+      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale con la selección; tras aplicar un cambio en lote, se queda para contarlo con su «Deshacer».",
       "contrato": [
         {
           "nombre": "count",
@@ -762,12 +762,42 @@
           "nativo": null
         },
         {
+          "nombre": "result",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El resultado de la acción en lote que se acaba de aplicar («Cambio aplicado a 2 grupos», DD-196). Sin selección, la barra se queda en su sitio y lo cuenta hasta que se cierra o se vuelve a seleccionar: el resultado sale donde se hizo la acción, sin toast que tape filas ni se vaya solo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "resultUndoable",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Si el resultado se puede deshacer todavía: pinta «Deshacer» pegado a su texto, que es lo que deshace.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "undo",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "El usuario ha pulsado «Deshacer» junto al resultado.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "clear",
           "clase": "output",
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": "El usuario ha pulsado deshacer la selección.",
+          "descripcion": "El usuario ha pulsado la «×»: deshacer la selección o, con un resultado, cerrarlo.",
           "origen": "nuestro",
           "nativo": null
         }
