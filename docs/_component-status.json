@@ -131,7 +131,7 @@
       ],
       "retirado": null,
       "usedInSupervisor": 2,
-      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
+      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale con la selección; tras aplicar un cambio en lote, se queda para contarlo con su «Deshacer».",
       "sobreObsoleto": []
     },
     {
