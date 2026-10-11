@@ -157,11 +157,11 @@ test('el índice es el de Contact Center, y las tres columnas arrancan a la mism
   expect(m.clases).toContain('page__inner--rail');
   expect(m.clases).toContain('ficha-rail--summary');
   expect(m.clases).not.toContain('ficha-tabs');
-  expect(m.padding).toBe('22.75px 28px');
+  expect(m.padding).toBe('28px');
   // El índice, el de Contact Center: 196 y fijo con el mismo `top` que el relleno de arriba.
   expect(m.rail.ancho).toBe(196);
   expect(m.rail.pos).toBe('sticky');
-  expect(m.rail.top).toBe('22.75px');
+  expect(m.rail.top).toBe('28px');
   // El resumen, a la derecha: 240, con el hueco de siempre (28) entre las tres columnas. A 1440 el
   // contenido mide 812, sitio de sobra para la tabla de agentes con sus cuatro canales.
   expect(m.resumen.ancho).toBe(240);

@@ -51,7 +51,9 @@
     } @else {
     <tr>
       @if (selectionMode() === 'multiple') {
-      <th class="sc-datatable__check" scope="col">
+      <!-- La casilla se queda fija si hay una columna fija a la izquierda: PrimeNG coloca esa columna sumando el ancho de
+           TODO lo que tiene delante, fijo o no, y sin esto la casilla pasaba por debajo del nombre (DD-193). -->
+      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()">
         <!-- `sc-datatable__check-all`: el gancho, NUESTRO, por el que el componente le pone el nombre (ver el
              `afterRenderEffect` de la casilla de «todas»). -->
         <p-table-header-checkbox class="sc-datatable__check-all" [ariaLabel]="selectAllAriaLabel()" />
@@ -149,6 +151,8 @@
              p-table togglea en el `change`, que no conserva el modificador. -->
       <td
         class="sc-datatable__check"
+        pFrozenColumn
+        [frozen]="!!leftFrozenEdge()"
         (mousedown)="onCheckMousedown($event, rowIndex)"
         (click)="$event.stopPropagation()"
       >

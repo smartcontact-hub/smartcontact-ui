@@ -42,6 +42,8 @@
 >
 > | Tema | DD |
 > |---|---|
+> | En una lista estrecha el nombre se queda: columna fija a la izquierda (con la casilla), y la tabla desplaza de lado · el mínimo de la tabla nunca deja menos de 15rem al nombre | DD-193 |
+> | La cabecera de página en la escalera: barra → título 28, título → lo que titula 14, buscador → su tabla 7 · el borde de la página, 28 por los cuatro lados y una sola vez, en el molde | DD-192 |
 > | El toast, solo para lo que manda el sistema: lo ya visible, solo al lector (`visto`); guardar y quedarse, junto a los botones de la barra (`enLaBarra`); lo de un control, a su lado · un error no se cierra solo | DD-191 |
 > | Cada componente dice en sc-docs si está listo (maestro en el Kit y demo), es experimental (le falta algo, y dice qué) o está retirado (`@deprecated`, con su motivo) · el índice etiqueta solo la excepción | DD-190 |
 > | El icono que acompaña a un texto sigue a su estilo: su tamaño, su peso y el eje óptico a su tamaño (20, el mínimo, en pequeño) · en la cabecera de `sc-section-card`, 16 en sección y 20 en página | DD-189 |
@@ -135,6 +137,74 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-193 · 2026-10-11 — En una lista estrecha, el nombre se queda: la tabla desplaza de lado con él fijo
+
+**Contexto** · Con la ventana a unos 900 px, la tabla de Agentes enseñaba «No» donde iba Nombre y media foto. Medido en
+un navegador limpio: Nombre medía 32 px a 900 y a 1024, y 100 a 1280. Era la única columna sin ancho y se quedaba con
+lo que sobraba del mínimo de la tabla, que cada lista escribía a mano (`tableMinWidth`, 100,375rem en Agentes); el
+#360 (DD-187 §4) añadió Equipos (11rem) sin subirlo. A 1024, Grupos escondía 358 px y Usuarios 90. Primer resuelve la
+tabla estrecha con anchos de columna, quitando las menos importantes o desplazando de lado, siempre con la celda que
+nombra la fila a la vista; el producto pidió «por lo menos dejar el nombre», con lo nativo de PrimeNG.
+
+**Decisión** · (1) La columna que nombra la fila (la fija del selector de columnas o, si no lo hay, la primera cuando
+crece) va fija a la izquierda con `pFrozenColumn`, en todas las listas de `sc-list-page`. (2) `sc-datatable` fija
+también la casilla de selección cuando hay una columna fija a la izquierda: PrimeNG coloca la fija sumando el ancho de
+todo lo que tiene delante, fijo o no, y sin esto la casilla pasaba por debajo del nombre (pasaba también en su demo).
+(3) Si el nombre crece, el mínimo de la tabla es al menos lo que suman las columnas con ancho, la casilla, el «⋮» y
+15rem (240 px) por cada columna que crece; el mínimo escrito a mano de cada página se queda como suelo. 15rem: el
+nombre más ancho de Agentes pide 204 px y el de las demás listas de Administración, menos de 215.
+
+**Razón** · Es la regla de DD-102 (una lista no corta texto: desplaza) con el nombre siempre a la vista. Ninguna lista
+cambia a 1440. A 1024 desplazan de lado, con el nombre fijo y la sombra que avisa de lo que queda: Agentes (396 px),
+Grupos, Usuarios (110), Reglas de Conversaciones (20) y Categorías (72). Las celdas fijas toman el fondo de la fila al
+pasar el ratón y al marcarla.
+
+**Descartadas** ·
+- **Esconder columnas por ancho**: Primer lo propone, pero qué columna sobra es de producto, y el selector de columnas
+  ya deja quitarlas. No hace falta decidirlo para que el nombre se quede.
+- **Un modo apilado en móvil**: PrimeNG 22 no lo tiene (`responsiveLayout` ya no existe), y el mínimo soportado es 1024.
+- **Mínimo para todas las columnas que crecen, sin mirar el nombre**: en Conversaciones (la primera columna, Estado,
+  trae ancho) ensanchaba la tabla también a 1440, donde se decidió recortar las etiquetas con su valor al pasar.
+
+**Consecuencias** · Lo mide `e2e/supervisor/listas-nombre-fijo.spec.ts` (rojo con el build de antes en los seis
+casos estrechos) y `components.spec.ts` comprueba en la demo del DS que casilla y nombre no se pisan al desplazar.
+Pendiente aparte: Primer pinta esa celda como `<th scope="row">`, y `sc-datatable` como `td`.
+
+---
+
+## DD-192 · 2026-10-11 — La cabecera de página sube por la escalera 7 · 14 · 28, y el borde de la página es uno
+
+**Contexto** · DD-188 §2 pidió la escalera 7 · 14 · 28 también en la estructura de página. Medido el 2026-10-11 a 1440
+en 42 rutas: las 16 listas repartían la cabecera igual, pero fuera de la escalera (barra → título 17,5, título →
+buscador 14, buscador → tabla 12,25); DD-94 ya quería el buscador más cerca de la tabla que del título, y 12,25 contra
+14 no se distingue. El borde de arriba de la página valía 17,5 en listas y editores (copiado en ocho hojas), 22,75 en
+las pantallas con índice (fichas y Contact Center, de la maqueta 393:12564) y 24,5 en el constructor de reglas; a los
+lados, 28 en todas. Plantillas ponía 21 de las pestañas al buscador; Conversaciones, 10,5 del segmentado a los
+filtros y 12,25 de los filtros a la tabla; Entidades, 15,75 del subtítulo a su tabla.
+
+**Decisión** · (1) El borde de la página es uno, 28 por los cuatro lados, y lo pone el molde (`.page__inner` en
+`styles/_page.scss`); las ocho copias se van. El índice y el resumen fijos se pegan a 28, el mismo borde. (2) En la
+cabecera, cada frontera con su peldaño: barra → título 28, título → lo que titula 14 (también de unas pestañas o un
+segmentado a su buscador), y del buscador o los filtros a su tabla 7. (3) Dentro de la barra de la lista, Columnas y
+el buscador a 7, y en Conversaciones 7 entre filtro y filtro, como los botones de la barra de arriba.
+
+**Razón** · Con la escalera, cada nivel se separa el doble que el de dentro: la página de la barra (28), el título de
+lo suyo (14) y el buscador de su tabla (7). De la barra al título hay lo mismo que del menú al título. Medido antes y
+después en las 42 rutas: ninguna lista pierde filas a 1440 × 900 ni gana desplazamiento de página; el editor de equipo
+enseña 9 filas de su tabla en vez de 10.
+
+**Descartadas** ·
+- **Tope de ancho de 1280, como Primer**: las listas van sin tope desde la revisión del 2026-10-09 (a 1920 dejaba 272 px
+  de lienzo muerto). Los demás arquetipos ya tienen el suyo por debajo (1200, 960, 832).
+- **Título a 14 de la barra**: lo descartó DD-94; el título quedaría a la misma distancia de la barra que de lo suyo.
+- **Buscador a 14 de la tabla**: igual que del título, y el buscador dejaría de leerse como de la tabla.
+
+**Consecuencias** · Lo mide `e2e/supervisor/cabecera-escalera.spec.ts` (rojo con las cifras de antes en los 18 casos).
+`page-anatomy`, `ficha-grupo` y `listados-ordenar-columnas` pasan a 28 y a 7. La maqueta de Contact Center pone 22,75
+arriba: ficha 41 de `docs/figma-pendiente.md`. Escrito en «UX de pantalla» 9.
 
 ---
 
