@@ -3,12 +3,14 @@
 }
 
 /* Barra de filtros de Conversaciones (rehecha 2026-09-14), sin caja ni relleno lateral: arranca
- * en la misma línea que el título y la tabla. Controles del DS a su tamaño `md` (32,5). */
+ * en la misma línea que el título y la tabla. Controles del DS a su tamaño `md` (32,5).
+ * La escalera de la cabecera de las listas (DD-192): del segmentado a los filtros 14, como de unas pestañas a su
+ * buscador, y de los filtros a la tabla 7, porque son de la tabla. */
 .memory-conversation-filters {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-75);
-  padding-bottom: var(--sc-spacing-0-875);
+  gap: var(--sc-spacing-1);
+  padding-bottom: var(--sc-spacing-0-5);
 
   &__top {
     display: flex;
@@ -23,10 +25,11 @@
     white-space: nowrap;
   }
 
+  /* Entre filtro y filtro 7, como entre Columnas y el buscador de las demás listas (DD-192). */
   &__bar {
     display: flex;
     align-items: center;
-    gap: var(--sc-spacing-0-875);
+    gap: var(--sc-spacing-0-5);
   }
 
   /* Ancho propio (`12-5` = 175): con «Buscar» no necesita más, y el resto va a los campos. */

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La cabecera de página en la escalera: barra → título 28, título → lo que titula 14, buscador → su tabla 7 · el borde de la página, 28 por los cuatro lados y una sola vez, en el molde | DD-192 |
 > | El toast, solo para lo que manda el sistema: lo ya visible, solo al lector (`visto`); guardar y quedarse, junto a los botones de la barra (`enLaBarra`); lo de un control, a su lado · un error no se cierra solo | DD-191 |
 > | Cada componente dice en sc-docs si está listo (maestro en el Kit y demo), es experimental (le falta algo, y dice qué) o está retirado (`@deprecated`, con su motivo) · el índice etiqueta solo la excepción | DD-190 |
 > | El icono que acompaña a un texto sigue a su estilo: su tamaño, su peso y el eje óptico a su tamaño (20, el mínimo, en pequeño) · en la cabecera de `sc-section-card`, 16 en sección y 20 en página | DD-189 |
@@ -135,6 +136,39 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-192 · 2026-10-11 — La cabecera de página sube por la escalera 7 · 14 · 28, y el borde de la página es uno
+
+**Contexto** · DD-188 §2 pidió la escalera 7 · 14 · 28 también en la estructura de página. Medido el 2026-10-11 a 1440
+en 42 rutas: las 16 listas repartían la cabecera igual, pero fuera de la escalera (barra → título 17,5, título →
+buscador 14, buscador → tabla 12,25); DD-94 ya quería el buscador más cerca de la tabla que del título, y 12,25 contra
+14 no se distingue. El borde de arriba de la página valía 17,5 en listas y editores (copiado en ocho hojas), 22,75 en
+las pantallas con índice (fichas y Contact Center, de la maqueta 393:12564) y 24,5 en el constructor de reglas; a los
+lados, 28 en todas. Plantillas ponía 21 de las pestañas al buscador; Conversaciones, 10,5 del segmentado a los
+filtros y 12,25 de los filtros a la tabla; Entidades, 15,75 del subtítulo a su tabla.
+
+**Decisión** · (1) El borde de la página es uno, 28 por los cuatro lados, y lo pone el molde (`.page__inner` en
+`styles/_page.scss`); las ocho copias se van. El índice y el resumen fijos se pegan a 28, el mismo borde. (2) En la
+cabecera, cada frontera con su peldaño: barra → título 28, título → lo que titula 14 (también de unas pestañas o un
+segmentado a su buscador), y del buscador o los filtros a su tabla 7. (3) Dentro de la barra de la lista, Columnas y
+el buscador a 7, y en Conversaciones 7 entre filtro y filtro, como los botones de la barra de arriba.
+
+**Razón** · Con la escalera, cada nivel se separa el doble que el de dentro: la página de la barra (28), el título de
+lo suyo (14) y el buscador de su tabla (7). De la barra al título hay lo mismo que del menú al título. Medido antes y
+después en las 42 rutas: ninguna lista pierde filas a 1440 × 900 ni gana desplazamiento de página; el editor de equipo
+enseña 9 filas de su tabla en vez de 10.
+
+**Descartadas** ·
+- **Tope de ancho de 1280, como Primer**: las listas van sin tope desde la revisión del 2026-10-09 (a 1920 dejaba 272 px
+  de lienzo muerto). Los demás arquetipos ya tienen el suyo por debajo (1200, 960, 832).
+- **Título a 14 de la barra**: lo descartó DD-94; el título quedaría a la misma distancia de la barra que de lo suyo.
+- **Buscador a 14 de la tabla**: igual que del título, y el buscador dejaría de leerse como de la tabla.
+
+**Consecuencias** · Lo mide `e2e/supervisor/cabecera-escalera.spec.ts` (rojo con las cifras de antes en los 18 casos).
+`page-anatomy`, `ficha-grupo` y `listados-ordenar-columnas` pasan a 28 y a 7. La maqueta de Contact Center pone 22,75
+arriba: ficha 41 de `docs/figma-pendiente.md`. Escrito en «UX de pantalla» 9.
 
 ---
 

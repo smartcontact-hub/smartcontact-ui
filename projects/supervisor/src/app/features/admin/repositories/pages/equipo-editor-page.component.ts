@@ -175,14 +175,11 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
     </ng-template>
   `,
   styles: `
-    /* El molde del editor de agendas (DD-163): arquetipo de editor sobre el lienzo, con el margen de la miga. */
+    /* El molde del editor de agendas (DD-163): arquetipo de editor sobre el lienzo; el borde lo pone el molde (DD-192). */
     :host {
       display: block;
       height: 100%;
       background: var(--sc-bg-canvas);
-    }
-    .page__inner {
-      padding: var(--sc-spacing-1-25) var(--sc-spacing-2);
     }
     /* Las dos secciones se apilan con el margen que les da el DS, como en el editor de agendas. */
     .editor {

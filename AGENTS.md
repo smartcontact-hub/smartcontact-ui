@@ -220,6 +220,9 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    se escanea (el monitor, las listas) y más aire donde se lee y se rellena (fichas, formularios), sin
    aire que no separe nada: el relleno de una caja que ya delimitan su borde y su fondo sobra (DD-125). La misma
    prueba avisa del aire que se suma dentro de una caja (R4): márgenes y rellenos de dentro que llegan a 7.
+   **La cabecera de página, en la misma escalera** (DD-192): de la barra al título 28, del título a lo que titula 14
+   (y de unas pestañas a su buscador), del buscador o los filtros a su tabla 7. El borde de la página, 28 por los
+   cuatro lados, lo pone el molde (`.page__inner`): una pantalla no lo repite. Lo mide `cabecera-escalera.spec.ts`.
 10. **Una tabla dentro de una sección llega al pie de la pantalla** (DD-160). Si necesita más sitio que el que
    tiene, aprovecha el resto de la pantalla: desplaza por dentro, con la cabecera fija, y su tope es lo que queda
    hasta el pie, MEDIDO desde donde empieza (`scLlegaAlPie`, en `core/directives`), con un suelo (`scale/18`) para

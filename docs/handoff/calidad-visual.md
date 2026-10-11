@@ -15,14 +15,18 @@
 0. **Lo que queda del estudio de Primer (DD-188), un PR cada uno, enseñado antes en local y añadido a la página de
    antes y después** (artefacto «Antes y después del Supervisor»; las capturas salen de `sc-supervisor.pages.dev`
    contra el `ng serve` de la rama, a 1440, vista entera y la cabecera a doble resolución):
-   - la cabecera y el esqueleto de página comunes, con la escalera 7 · 14 · 28 en la cabecera, ancho máximo de 1280 y
-     columnas que quepan a 1024 (Grupos esconde 358 px a 1024);
+   - las columnas que quepan a 1024: Grupos esconde 358 px (9 columnas de ancho fijo, 1244 en una caja de 886) y
+     Usuarios 90 (Estado). Usuarios cabe estrechando Nombre y Email; Grupos necesita esconder dos columnas a ese ancho,
+     y cuáles es decisión de producto (ver «Esperando a Rafa»). La cabecera de página ya está (DD-192); el tope de
+     1280 de Primer se descartó (las listas van sin tope desde el 2026-10-09).
 1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).
 
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
+- **Qué columnas de Grupos se esconden a 1024** (o si se acepta desplazar de lado): Nombre 312, Teléfono 122, Canales
+  124, Prioridad 122, Estrategia de teléfono 240, Servicios 116 y Agentes 112. Hay que quitar unos 358 px.
 - **Celdas vacías: «—» o en blanco.** Primer las deja en blanco (los lectores de pantalla leen el guion); la revisión de
   agentes del 2026-10-09 pintó «—» en todas por consistencia. Decide él cuál gana.
 - **La sesión en Figma suma las fichas 38 y 39** de `figma-pendiente` (el maestro `Section` a `Subtitle`, Tag y Badge a
