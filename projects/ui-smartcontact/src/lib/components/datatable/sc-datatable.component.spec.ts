@@ -331,3 +331,26 @@ describe('sc-datatable · columnas fijas nativas', () => {
     }
   });
 });
+
+describe('sc-datatable · la columna que nombra la fila es su cabecera (DD-194)', () => {
+  it('pinta `th scope="row"` solo en la columna `rowHeader`, con su valor y fija si lo pide', async () => {
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent(ScDatatableComponent);
+    fixture.componentRef.setInput('columns', [
+      { field: 'id', header: 'ID' },
+      { field: 'nombre', header: 'Nombre', rowHeader: true, frozen: true },
+    ]);
+    fixture.componentRef.setInput('value', [{ id: 1, nombre: 'Agente' }]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const fila = (fixture.nativeElement as HTMLElement).querySelector('tbody tr')!;
+    expect([...fila.children].map((c) => `${c.tagName}${c.getAttribute('scope') ? `[${c.getAttribute('scope')}]` : ''}`)).toEqual([
+      'TD',
+      'TH[row]',
+    ]);
+    const cabecera = fila.querySelector('th')!;
+    expect(cabecera.textContent?.trim()).toBe('Agente');
+    expect(cabecera.classList.contains('p-datatable-frozen-column')).toBe(true);
+    fixture.destroy();
+  });
+});

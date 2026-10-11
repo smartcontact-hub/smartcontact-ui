@@ -177,6 +177,7 @@ export class AgentChannelTableComponent {
         {
           field: 'agent',
           header: this.translate.instant('groups.form.assigned.col_agent'),
+          rowHeader: true,
           cellTemplate: this.agentTpl(),
         },
         /* El estado de la persona va en la burbuja de su avatar (DD-185), no en una columna: el email gana el sitio. */

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La celda que nombra la fila es su cabecera (`<th scope="row">`, `rowHeader` en `ScColumnDef`) en las 27 tablas del Supervisor que tienen nombre · se ve igual: el tema repite para ella las reglas de celda de PrimeNG | DD-194 |
 > | En una lista estrecha el nombre se queda: columna fija a la izquierda (con la casilla), y la tabla desplaza de lado · el mínimo de la tabla nunca deja menos de 15rem al nombre | DD-193 |
 > | La cabecera de página en la escalera: barra → título 28, título → lo que titula 14, buscador → su tabla 7 · el borde de la página, 28 por los cuatro lados y una sola vez, en el molde | DD-192 |
 > | El toast, solo para lo que manda el sistema: lo ya visible, solo al lector (`visto`); guardar y quedarse, junto a los botones de la barra (`enLaBarra`); lo de un control, a su lado · un error no se cierra solo | DD-191 |
@@ -140,6 +141,40 @@
 
 ---
 
+## DD-194 · 2026-10-11 — La celda que nombra la fila es su cabecera, como en Primer
+
+**Contexto** · Primer pinta la celda que nombra cada fila de una tabla como `<th scope="row">`: un lector de pantalla
+la anuncia al recorrer el resto de la fila («Tom Hanks, Extensión, 122»). `sc-datatable` pintaba todas las celdas del
+cuerpo como `td`, y la documentación de PrimeNG deja la semántica de las celdas a quien escribe la plantilla.
+
+**Decisión** · (1) `ScColumnDef` gana `rowHeader`: la celda de esa columna es `<th scope="row">`, con los mismos
+atributos que la de datos (`pFrozenColumn`, alineación, `stopRowClick`). (2) La hoja de PrimeNG solo pinta la celda del
+cuerpo como `td`; el tema (`sc-preset/css.ts`, `rowHeaderCss`) repite para la `th` sus reglas, con sus mismos tokens:
+alineación, raya, relleno, tallas, selección, tabla ajustable y rejilla, y, fija, el fondo de su fila. (3) La marcan
+`sc-list-page` en la columna del nombre de DD-193, las listas de repositorio en su columna `emphasis` (también con ancho
+propio: Intenciones, Reglas IA, Entidades IA, Clasificación IA, Entidades) y las diez tablas sueltas en la suya:
+grupos de la ficha de agente, agentes de la ficha de grupo y del editor de equipo, contactos de la agenda, buzones y
+disparadores de Emails, las dos de Entidades de Conversaciones, y la tabla de agentes y el detalle del Dashboard. Medido:
+26 tablas con la cabecera en cada fila (el detalle del Dashboard solo se abre al pulsar). Conversaciones no la lleva:
+ninguna columna nombra la conversación.
+
+**Razón** · Es lo nativo de HTML para lo que Primer resuelve, y no cambia nada a la vista: medido en 24 pantallas a 1440
+y a 1024 contra el build de antes, 0 píxeles distintos salvo el reloj del Dashboard; en Agentes, los 20 estilos
+calculados de la celda (relleno, raya, letra, fondo al pasar el ratón y al marcar) iguales, y tras desplazar de lado el
+nombre sigue encima de lo que pasa por debajo.
+
+**Descartadas** ·
+- **`role="rowheader"` sobre la `td`**: no cambia el aspecto, pero ARIA in HTML no admite otro rol en una celda de una
+  tabla que ya es tabla.
+- **Igualar el `z-index` a `auto`** para que la celda no tapara la cabecera de columnas: la cabecera ya gana con el suyo
+  (`--sc-z-sticky`), y sin el `1` que PrimeNG da a la `th` fija, las celdas desplazadas tapaban el nombre (medido).
+
+**Consecuencias** · `components.spec.ts` comprueba en la demo del DS (columnas fijas, que marca `rowHeader`) que la
+celda es `th` de fila, que pinta como su vecina y que, fija y marcada, toma el fondo de la fila. Las pruebas que
+buscaban una columna contando `td` cuentan `td, th`.
+
+---
+
 ## DD-193 · 2026-10-11 — En una lista estrecha, el nombre se queda: la tabla desplaza de lado con él fijo
 
 **Contexto** · Con la ventana a unos 900 px, la tabla de Agentes enseñaba «No» donde iba Nombre y media foto. Medido en
@@ -171,7 +206,7 @@ pasar el ratón y al marcarla.
 
 **Consecuencias** · Lo mide `e2e/supervisor/listas-nombre-fijo.spec.ts` (rojo con el build de antes en los seis
 casos estrechos) y `components.spec.ts` comprueba en la demo del DS que casilla y nombre no se pisan al desplazar.
-Pendiente aparte: Primer pinta esa celda como `<th scope="row">`, y `sc-datatable` como `td`.
+Primer pinta esa celda como `<th scope="row">`: hecho en DD-194.
 
 ---
 

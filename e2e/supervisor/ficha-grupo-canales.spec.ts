@@ -38,7 +38,7 @@ test('los cuatro canales del grupo se asignan al agente por sus tres familias', 
   );
   expect(indice, 'no hay columna de Chat').toBeGreaterThan(0);
 
-  const celda = page.locator('tbody tr').first().locator('td').nth(indice);
+  const celda = page.locator('tbody tr').first().locator('td, th').nth(indice);
   const casilla = celda.locator('[role=checkbox], input[type=checkbox]').first();
   await expect(casilla).toHaveAttribute('aria-checked', 'false');
 

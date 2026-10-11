@@ -138,7 +138,7 @@ export class DatatableDemoComponent {
   protected readonly gesturesTpl = viewChild<TemplateRef<StoryContext>>('gestures');
   protected readonly frozenTpl = viewChild<TemplateRef<StoryContext>>('frozen');
   protected readonly frozenColumns: readonly ScColumnDef<Agent>[] = [
-    { field: 'name', header: 'Nombre', width: '14rem', frozen: true },
+    { field: 'name', header: 'Nombre', width: '14rem', frozen: true, rowHeader: true },
     { field: 'extension', header: 'Extensión' },
     { field: 'status', header: 'Estado', width: '10rem', frozen: true, alignFrozen: 'right' },
   ];
@@ -345,7 +345,7 @@ export class DatatableDemoComponent {
       { name: 'Lazy (server-driven): paginación + orden + filtro global', template: lz, snippet: LAZY_SNIPPET },
       { name: 'Gestos de fila y columnas conmutables', template: gs, snippet: GESTURES_SNIPPET },
       { name: 'variant="list" · la gramática de tabla-lista', template: ls, snippet: LIST_SNIPPET },
-      { name: 'Columnas fijas', template: fr, snippet: `<!-- ScColumnDef: frozen activa pFrozenColumn; alignFrozen elige izquierda (defecto) o derecha. -->
+      { name: 'Columnas fijas', template: fr, snippet: `<!-- ScColumnDef: frozen fija la columna (alignFrozen elige el lado); rowHeader la pinta como <th scope="row">. -->
 <sc-datatable [value]="agents()" [columns]="frozenColumns" scrollable tableMinWidth="70rem" selectionMode="multiple" dataKey="id" />` },
     ];
   });

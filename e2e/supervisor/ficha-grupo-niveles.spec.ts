@@ -89,7 +89,7 @@ for (const theme of ['light', 'dark']) {
           const rect = el.getBoundingClientRect();
           return { left: rect.left, right: rect.right, overflow: el.scrollWidth - el.clientWidth,
             cells: [...el.querySelectorAll('tbody tr')].map((row) => row.children.length),
-            nameWidth: el.querySelector('.assign__name')!.closest('td')!.getBoundingClientRect().width,
+            nameWidth: el.querySelector('.assign__name')!.closest('td, th')!.getBoundingClientRect().width,
             headers: el.querySelectorAll('thead th').length };
         });
         expect(geometry.nameWidth, 'el nombre no colapsa bajo las columnas de nivel').toBeGreaterThanOrEqual(180);

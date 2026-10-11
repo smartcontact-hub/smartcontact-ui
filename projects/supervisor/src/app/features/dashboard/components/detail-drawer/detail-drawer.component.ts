@@ -86,7 +86,7 @@ export class DetailDrawerComponent {
     this.lang();
     const kind = this.rows()?.kind;
     return [
-      { field: 'id', header: this.translate.instant(kind === 'agents' ? 'dashboard.detail.col_agent' : 'dashboard.detail.col_conversation'), cellTemplate: this.whoTpl() },
+      { field: 'id', header: this.translate.instant(kind === 'agents' ? 'dashboard.detail.col_agent' : 'dashboard.detail.col_conversation'), rowHeader: true, cellTemplate: this.whoTpl() },
       // `1%`: el tiempo mide lo que su dato y el nombre se queda el resto. Su cabecera no se parte: sus palabras
       // van unidas por un espacio que no separa (DD-124).
       { field: 'seconds', header: this.translate.instant(kind === 'agents' ? 'dashboard.detail.col_in_state' : 'dashboard.detail.col_time'), align: 'right', width: '1%', cellTemplate: this.timeTpl() },
