@@ -1825,7 +1825,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 30,
+      "usedInSupervisor": 29,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
