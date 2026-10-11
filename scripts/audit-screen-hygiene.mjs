@@ -4,7 +4,7 @@
  * que hasta ahora SOLO vivían en la doc (AGENTS.md §UX de pantalla). Un principio
  * que no tiene gate se pudre: esto lo convierte en un chequeo.
  *
- * Gatea CUATRO cosas. La primera, la segunda y la cuarta, como TRINQUETE por conteo (el mismo patrón
+ * Gatea CINCO cosas. La primera, la segunda y la cuarta, como TRINQUETE por conteo (el mismo patrón
  * que `audit:api-era`: la lista solo puede MENGUAR, y muerde en las dos direcciones):
  *
  * 1. EMOJIS EN LA INTERFAZ. Los iconos salen de `<sc-icon>` (Material Symbols); un
@@ -34,6 +34,11 @@
  *    (una tarea en segundo plano que acaba). Lo que acaba de hacer el usuario se cuenta junto a
  *    su contexto: `ResultadoAccionService.visto` si ya se ve, `enLaBarra` si guarda y se queda, o
  *    un mensaje junto a su control. Solo en el Supervisor (las réplicas copian su app, DD-35).
+ *
+ * 5. GUIONES SUELTOS EN UNA PLANTILLA (DD-197), sin trinquete: ninguno. Una celda sin dato es
+ *    `<sc-celda-vacia>`: «—» a la vista, oculto al lector, que oye «Sin dato» (o su `texto`). Un «—»
+ *    escrito a mano el lector lo lee «guion», que es el motivo de Primer para dejarlas en blanco.
+ *    Solo plantillas `.html` del Supervisor; un «—» dentro de un texto del `.ts` no es una celda.
  *
  * QUÉ HACER SI SE PONE ROJO:
  *   · «nuevo incumplimiento» → arréglalo (usa `<sc-icon>` en vez del emoji; añade
@@ -168,6 +173,16 @@ export function contarToasts(texto) {
   return (sinComentarios(texto).match(/\bmessages\.add\(/g) ?? []).length;
 }
 
+/** Líneas de una plantilla con un «—» suelto de contenido: `>—<` o un `'—'` de respaldo (`|| '—'`, `?? '—'`, `: '—'`). */
+export function guionesSueltos(html) {
+  const limpio = sinComentariosEnSuSitio(html, true);
+  const lineas = [];
+  for (const m of limpio.matchAll(/>\s*—\s*<|(?:\|\||\?\?|:)\s*'—'/g)) {
+    lineas.push(limpio.slice(0, m.index).split('\n').length);
+  }
+  return lineas;
+}
+
 /** Las etiquetas `<sc-select` y `<sc-multiselect` de un texto ya sin comentarios. */
 const DESPLEGABLE = /<sc-(select|multiselect)\b/g;
 
@@ -235,6 +250,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   const imgs = {};
   const toasts = {};
   const sinNombre = [];
+  const guiones = [];
   let desplegables = 0;
   for (const f of ficheros) {
     const src = readFileSync(f, 'utf8');
@@ -248,6 +264,9 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     }
     desplegables += (sinComentariosEnSuSitio(src, f.endsWith('.html')).match(DESPLEGABLE) ?? []).length;
     for (const linea of desplegablesSinNombre(src, f.endsWith('.html'))) sinNombre.push(`${f}:${linea}`);
+    if (f.startsWith('projects/supervisor/') && f.endsWith('.html')) {
+      for (const linea of guionesSueltos(src)) guiones.push(`${f}:${linea}`);
+    }
   }
 
   const problemas = [
@@ -263,6 +282,10 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
       `${donde}: desplegable sin nombre (DD-133). PrimeNG lo nombraría con la opción elegida.`,
       '      → `ariaLabelledBy` con el id del rótulo que tiene a la vista o, sin rótulo, `ariaLabel`. Un `<label for>` solo nombra un sc-multiselect.',
     ]),
+    ...guiones.map((donde) => [
+      `${donde}: «—» suelto (DD-197). El lector de pantalla lo lee «guion».`,
+      '      → `<sc-celda-vacia />` (con `[texto]` si el vacío tiene su porqué); si el vacío significa algo o es una cifra, escríbelo.',
+    ]),
   ];
 
   const totEmoji = Object.values(emojis).reduce((a, b) => a + b, 0);
@@ -271,14 +294,14 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     `audit:screen-hygiene — ${ficheros.length} plantilla(s): ${totEmoji} emoji astral en ` +
       `${Object.keys(emojis).length} fichero(s), ${totImg} img/iframe sin dims en ${Object.keys(imgs).length} ` +
       `(trinquetes: emoji ${Object.keys(EMOJI_PENDIENTES).length}, img ${Object.keys(IMG_PENDIENTES).length}), ` +
-      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ` +
+      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ${guiones.length} guion(es) suelto(s), ` +
       `${Object.values(toasts).reduce((a, b) => a + b, 0)} toast(s) del sistema en ${Object.keys(toasts).length} fichero(s)\n`,
   );
 
   if (!problemas.length) {
     log(
       '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco, ' +
-        'cada desplegable con nombre y ningún toast nuevo fuera de los del sistema.',
+        'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema y ningún «—» suelto.',
     );
     process.exit(0);
   }

@@ -17,7 +17,7 @@ import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 
-import { IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
+import { CeldaVaciaComponent, IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
@@ -49,6 +49,7 @@ interface PendingBulkEdit {
 @Component({
   selector: 'sc-users-list-page',
   imports: [
+    CeldaVaciaComponent,
     BulkEditMenuComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,

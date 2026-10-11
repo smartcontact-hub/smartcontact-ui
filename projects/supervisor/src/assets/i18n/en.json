@@ -978,6 +978,8 @@
     "discard_keep": "Keep editing",
     "undo": "Undo",
     "change_reverted": "Change reverted",
+    "empty_cell": "No data",
+    "not_applicable": "Not applicable",
     "photo": {
       "select": "Select photo",
       "change": "Change photo",
@@ -2695,6 +2697,10 @@
     "presence_ring": {
       "title": "Dot or ring for the status?",
       "body": "The status is a dot on the photo. It was 16 px on a 24 px photo: two thirds of the photo, covering it. Now it is proportional, 30% of the photo (8 px) with its white border. The other option is a coloured ring around the photo, which covers nothing but only tells the status by colour. Proposal: the proportional dot. It only shows where the status helps decide (here), not in the Administration list."
+    },
+    "empty_cells": {
+      "title": "Empty cells with “—” or blank?",
+      "body": "GitHub (Primer) leaves them blank because screen readers read the dash. In a table with so many columns, a blank cell looks as if it had not loaded. Proposal: a grey “—”, and the screen reader hears “No data” (or “Not applicable” when the group does not have that channel). If the empty value means something, it is written: “Never”, “Unassigned”, or “0” if it is a number."
     }
   }
 }

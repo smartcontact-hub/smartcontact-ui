@@ -32,6 +32,7 @@ import type { Entity } from '../../data/entity.types';
 import { EntitiesStore } from '../../state/entities.store';
 import { injectLangChange } from '@core/utils/lang-change';
 import { ResultadoAccionService } from '@core/services';
+import { CeldaVaciaComponent } from '@shared/components';
 
 /**
  * Listado de entidades Memory · iter 10a.
@@ -44,6 +45,7 @@ import { ResultadoAccionService } from '@core/services';
 @Component({
   selector: 'sc-memory-entities-page',
   imports: [
+    CeldaVaciaComponent,
     TagComponent,
     DividerComponent,
     ButtonComponent,
