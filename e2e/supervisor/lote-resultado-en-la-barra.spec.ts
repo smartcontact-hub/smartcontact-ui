@@ -57,7 +57,7 @@ test('Grupos · el cambio en lote se cuenta en la barra con «Deshacer», sin to
 
   // El toast se iba a los 8 s; la barra sigue con su «Deshacer».
   await page.clock.fastForward(15_000);
-  const deshacer = barra.getByRole('button', { name: 'Deshacer' });
+  const deshacer = barra.getByRole('button', { name: 'Deshacer', exact: true });
   await expect(deshacer).toBeVisible();
 
   await deshacer.click();

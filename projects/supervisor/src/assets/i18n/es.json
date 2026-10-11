@@ -2675,6 +2675,10 @@
   },
   "decision_notes": {
     "label": "Nota para el equipo",
+    "bulk_undo": {
+      "title": "¿El «Deshacer» en la barra o en un aviso flotante?",
+      "body": "Tras un cambio en lote salía un aviso abajo a la derecha: tapaba la última fila, decía «1 elementos actualizados» y se iba a los 8 segundos. Ahora la barra donde se aplicó el cambio se queda con el resultado y su «Deshacer» hasta cerrarla o volver a marcar una fila. Propuesta: la barra. El aviso flotante queda para lo que manda el sistema y para lo que se quita del inicio, que no deja sitio donde contarlo."
+    },
     "pin": {
       "title": "¿PIN solo con extensión Teléfono?",
       "body": "Producto pidió quitar el PIN. Sirve para que el agente se active desde el teléfono, así que aquí solo sale con la extensión en el teléfono. A decidir: quitarlo del todo o dejarlo así."

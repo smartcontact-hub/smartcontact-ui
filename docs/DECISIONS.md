@@ -172,7 +172,9 @@ y aplicó el cambio, y ya tiene su sitio reservado bajo la tabla. Sin plazo, «D
 
 **Consecuencias** · Lo prueba `e2e/supervisor/lote-resultado-en-la-barra.spec.ts` (rojo con el build de antes en sus
 tres casos), y `components.spec.ts` la historia «Tras aplicar un cambio» de sc-docs. `common.bulk_updated` pasa a
-`common.bulk_applied` en los cuatro idiomas. DD-191 queda cumplida también en este caso.
+`common.bulk_applied` en los cuatro idiomas. DD-191 queda cumplida también en este caso. Para revisarlo con el
+equipo, una nota de decisión junto al «Deshacer» (`decision_notes.bulk_undo`, hueco `[scBulkResult]` de la barra);
+se quita cuando el equipo lo dé por bueno.
 
 ---
 

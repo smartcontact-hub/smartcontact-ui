@@ -249,5 +249,7 @@
     @if (selectedIds().size > 0) {
       <ng-content select="[scListBulkActions]" />
     }
+    <!-- Para la revisión con el equipo: por qué el resultado va aquí y no en un toast. -->
+    <sc-nota-decision ngProjectAs="[scBulkResult]" claveTitulo="decision_notes.bulk_undo.title" claveTexto="decision_notes.bulk_undo.body" />
   </sc-bulk-action-bar>
 }
