@@ -5798,6 +5798,43 @@ var iconOnlyMultiSelectCss = () => `
     width: 100%;
 }
 `;
+var RH = "sc-datatable .p-datatable-tbody > tr > th[scope='row']";
+var rowHeaderCss = () => `
+${RH} {
+    text-align: start;
+    border-color: var(--p-datatable-body-cell-border-color);
+    border-style: solid;
+    border-width: 0 0 1px 0;
+    padding: var(--p-datatable-body-cell-padding);
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-regular);
+}
+sc-datatable .p-datatable-tbody > tr:has(+ .p-datatable-row-selected) > th[scope='row'],
+sc-datatable .p-datatable-tbody > tr.p-datatable-row-selected > th[scope='row'] {
+    border-block-end-color: var(--p-datatable-body-cell-selected-border-color);
+}
+sc-datatable.sc-datatable--resizable .p-datatable-tbody > tr > th[scope='row'] {
+    overflow: hidden;
+    white-space: nowrap;
+}
+sc-datatable.sc-datatable--sm .p-datatable-tbody > tr > th[scope='row'] {
+    padding: var(--p-datatable-body-cell-sm-padding);
+}
+sc-datatable.sc-datatable--lg .p-datatable-tbody > tr > th[scope='row'] {
+    padding: var(--p-datatable-body-cell-lg-padding);
+}
+sc-datatable.sc-datatable--gridlines .p-datatable-tbody > tr > th[scope='row'] {
+    border-width: 0 0 1px 1px;
+}
+/* Fija, toma el fondo de su fila como la \`td\` fija. */
+sc-datatable.sc-datatable--scroll .p-datatable-tbody > tr > th.p-datatable-frozen-column {
+    background: inherit;
+}
+${LIST} .p-datatable-tbody > tr > th[scope='row']:not(.p-datatable-frozen-column) {
+    position: relative;
+}
+`;
 var frozenColumnsCss = () => `
 /* El hover inerte de lista era transparente: una celda fija debe tapar los datos que pasan debajo. */
 ${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):not(.p-datatable-row-selected):hover:has(> .p-datatable-frozen-column) {
@@ -6015,6 +6052,7 @@ ${baseTableCss()}
 ${emptyCaptionCss()}
 ${listBehaviorCss()}
 ${frozenColumnsCss()}
+${rowHeaderCss()}
 ${iconOnlyMultiSelectCss()}
 ${stickyHeaderCss()}
 ${scrollableScrollbarCss()}
