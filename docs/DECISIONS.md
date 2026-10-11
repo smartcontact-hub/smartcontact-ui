@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una celda sin dato: «—» en gris suave, oculto al lector, que oye «Sin dato» o su porqué («No aplica»), con `sc-celda-vacia` · si el vacío significa algo o es una cifra, se escribe («0») · ningún «—» suelto en una plantilla (`audit:screen-hygiene`) | DD-197 |
 > | Un cambio en lote se cuenta en su barra: «Cambio aplicado a 2 grupos» con «Deshacer» pegado al texto, sin irse sola, hasta cerrarla o volver a marcar (`contarLote` de `sc-list-page`, `result` de `sc-bulk-action-bar`) · el toast con «Deshacer», solo para lo que desaparece sin sitio (el inicio) | DD-196 |
 > | Antes de construir una pieza, ¿la trae PrimeNG? La tabla del catálogo (`docs/AUDIT-PRIMENG-CATALOGO.md`, la vigila `audit:primeng-catalog`) · varios valores cortos en un campo, `sc-inputtags`; vistas hermanas, `sc-tabs` | DD-195 |
 > | La celda que nombra la fila es su cabecera (`<th scope="row">`, `rowHeader` en `ScColumnDef`) en las 27 tablas del Supervisor que tienen nombre · se ve igual: el tema repite para ella las reglas de celda de PrimeNG | DD-194 |
@@ -140,6 +141,36 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-197 · 2026-10-11 — Una celda sin dato lleva «—» a la vista y «Sin dato» para el lector
+
+**Contexto** · Primer deja en blanco las celdas sin dato, porque un lector de pantalla lee el guion. La revisión de
+agentes del 2026-10-09 había pintado «—» en todas por consistencia, y DD-188 dejó la elección para otra decisión. En
+las plantillas del Supervisor había 14 «—» escritos a mano en celdas: Agentes (email, teléfono, canales, estado y
+equipos), Grupos (teléfono y las estrategias de un canal que el grupo no tiene), Usuarios, Tipificaciones, Entidades de
+Conversaciones, la ficha de agente (canal no ofrecido, sin saliente) y «Usada en» de Categorías.
+
+**Decisión** · (1) Se queda «—»: en una tabla densa, una celda en blanco parece que no ha cargado, y el guion dice
+que ahí no hay nada a propósito. (2) Lo pinta `sc-celda-vacia`, en el gris suave (`--sc-text-subtle`), con el guion
+oculto al lector, que oye «Sin dato» o, cuando el vacío tiene su porqué, su `texto` («No aplica» en las estrategias de
+Grupos; «canal no ofrecido» y «sin saliente» en la ficha de agente, que ya lo decían en un `aria-label` que un `span`
+no anuncia). (3) Si el vacío significa algo concreto o es una cifra, se escribe: «Usada en» de Categorías pasa a «0»,
+como las cifras de Grupos. (4) `audit:screen-hygiene` no deja ningún «—» suelto en una plantilla del Supervisor.
+
+**Razón** · Se queda lo que se ve bien y se quita el único motivo de Primer para dejarlas en blanco. Nombrar el
+porqué al lector le da más que el guion a la vista: «No aplica» no es lo mismo que un dato que falta.
+
+**Descartadas** ·
+- **En blanco, como Primer**: en las tablas de Administración, con muchas columnas, el hueco se lee como fallo de carga.
+- **Un `aria-label` en el `span` del guion**: un `span` sin rol no lo anuncia de forma fiable; el texto oculto, sí.
+- **Cambiar también los «—» del código** (el resumen de la ficha de agente, la pista «(ext. —)», los chips de filtro):
+  no son celdas de tabla; quedan apuntados en el hand-off de calidad visual.
+
+**Consecuencias** · `audit:screen-hygiene` gana la regla 5 (`guionesSueltos`, con sus pruebas): en `main` cazaba los
+14. `common.empty_cell` y `common.not_applicable`, en los cuatro idiomas. `listado-grupos.spec.ts` espera «—» y su
+texto para el lector.
 
 ---
 
@@ -463,7 +494,7 @@ y atados a variables que ya existían.
   cabecera.
 - **Guardar siempre activo y validar al pulsar**, como Primer: se queda DD-136 (deshabilitado, con lo que falta dicho).
 - **Las acciones de la ficha abajo**, como Primer: se queda S59 (arriba); Primer no lo prohíbe.
-- **Celdas vacías en blanco**, como Primer: el repo pinta «—» y cambiarlo es otra decisión.
+- **Celdas vacías en blanco**, como Primer: el repo pinta «—» y cambiarlo es otra decisión. Decidido en DD-197.
 
 **Consecuencias** · `audit:text-styles` registra 14 estilos; `page-identity.spec.ts` espera 20/600 en las dos familias
 de título y `text-styles-applied.spec.ts`, `Title`. Ficha 38 de `figma-pendiente`: el maestro `Section` a `Subtitle`

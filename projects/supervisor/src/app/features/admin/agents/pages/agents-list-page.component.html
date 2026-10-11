@@ -97,7 +97,7 @@
   @if (agent.email) {
     <span class="cell sc-text-body-regular" [title]="agent.email">{{ agent.email }}</span>
   } @else {
-    <span class="cell cell--empty sc-text-body-regular">—</span>
+    <span class="cell cell--empty sc-text-body-regular"><sc-celda-vacia /></span>
   }
 </ng-template>
 
@@ -105,7 +105,7 @@
   @if (agent.phone) {
     <span class="cell sc-text-body-regular">{{ agent.phone }}</span>
   } @else {
-    <span class="cell cell--empty sc-text-body-regular">—</span>
+    <span class="cell cell--empty sc-text-body-regular"><sc-celda-vacia /></span>
   }
 </ng-template>
 
@@ -125,7 +125,7 @@
       </span>
     } @empty {
       <!-- Sin canales, un guion como el resto de celdas vacías (barrido de consistencia). -->
-      <span class="cell cell--empty sc-text-body-regular">—</span>
+      <span class="cell cell--empty sc-text-body-regular"><sc-celda-vacia /></span>
     }
   </span>
 </ng-template>
@@ -145,7 +145,7 @@
       <sc-tag [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
     }
   } @else {
-    <span class="cell cell--empty sc-text-body-regular">—</span>
+    <span class="cell cell--empty sc-text-body-regular"><sc-celda-vacia /></span>
   }
 </ng-template>
 
@@ -171,7 +171,7 @@
   @if (nombres) {
     <span class="cell cell--truncate sc-text-body-regular" [title]="nombres">{{ nombres }}</span>
   } @else {
-    <span class="cell cell--empty sc-text-body-regular">—</span>
+    <span class="cell cell--empty sc-text-body-regular"><sc-celda-vacia /></span>
   }
 </ng-template>
 

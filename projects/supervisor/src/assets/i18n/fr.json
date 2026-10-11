@@ -978,6 +978,8 @@
     "discard_keep": "Continuer l'édition",
     "undo": "Annuler",
     "change_reverted": "Modification annulée",
+    "empty_cell": "Aucune donnée",
+    "not_applicable": "Non applicable",
     "photo": {
       "select": "Sélectionner une photo",
       "change": "Changer la photo",

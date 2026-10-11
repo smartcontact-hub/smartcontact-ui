@@ -74,7 +74,11 @@
 </ng-template>
 
 <ng-template #identifierTpl let-user>
-  <span class="table__td-text sc-text-body-regular">{{ user.identifier || '—' }}</span>
+  @if (user.identifier) {
+    <span class="table__td-text sc-text-body-regular">{{ user.identifier }}</span>
+  } @else {
+    <span class="table__td-text sc-text-body-regular"><sc-celda-vacia /></span>
+  }
 </ng-template>
 
 <ng-template #typeTpl let-user>

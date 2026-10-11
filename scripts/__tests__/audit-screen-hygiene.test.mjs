@@ -7,6 +7,7 @@ import {
   contarImgSinDims,
   chequearTrinquete,
   desplegablesSinNombre,
+  guionesSueltos,
 } from '../audit-screen-hygiene.mjs';
 
 // contarEmojis: cuenta SOLO emoji astral pictográfico (+FE0F) en texto renderizable.
@@ -138,4 +139,14 @@ test('contarToasts cuenta las llamadas y no los comentarios', () => {
   const src = "// this.messages.add({ ... }) en un comentario\nthis.messages.add({ severity: 'success' });\n/* this.messages.add( */\nthis.messages.add({ severity: 'error' });";
   assert.equal(contarToasts(src), 2);
   assert.equal(contarToasts('this.resultado.visto(texto);'), 0);
+});
+
+// DD-197: una celda sin dato es `<sc-celda-vacia>`; un «—» de contenido escrito a mano, el lector lo lee «guion».
+test('guionesSueltos caza el «—» de contenido y el de respaldo, y no el de un comentario ni el de un texto', () => {
+  assert.deepEqual(guionesSueltos('<span class="cell">—</span>'), [1]);
+  assert.deepEqual(guionesSueltos("<span>\n{{ user.identifier || '—' }}</span>"), [2]);
+  assert.deepEqual(guionesSueltos("{{ entity.format ?? '—' }}\n{{ a ? b : '—' }}"), [1, 2]);
+  assert.deepEqual(guionesSueltos('<!-- un guion «—» si no hay canal -->\n<sc-celda-vacia />'), []);
+  assert.deepEqual(guionesSueltos('<span [attr.aria-label]="nombre + \' — \' + canal">x</span>'), []);
+  assert.deepEqual(guionesSueltos('<p>De 9 — 14 h</p>'), []);
 });

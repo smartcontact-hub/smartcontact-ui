@@ -29,7 +29,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ListPageComponent } from '@shared/components';
+import { CeldaVaciaComponent, ListPageComponent } from '@shared/components';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { resolveGroup } from '@features/admin/groups/data/groups-data';
 
@@ -59,6 +59,7 @@ const COLUMN_PREF_KEY = 'sc-tipificaciones-columns-v2';
 @Component({
   selector: 'sc-tipificaciones-list-page',
   imports: [
+    CeldaVaciaComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
     DialogComponent,
