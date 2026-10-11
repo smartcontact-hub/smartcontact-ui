@@ -13,7 +13,8 @@ import {
 // `FormsModule` es el puente INTERNO hacia `<p-selectbutton>` (como en `sc-select`).
 import { FormsModule } from '@angular/forms';
 import { SelectButtonModule } from 'primeng/selectbutton';
-import { createScOptionState, type ScFieldSize } from '../field/sc-field';
+import { createScFieldState, createScOptionState, joinDescribedBy, type ScFieldSize } from '../field/sc-field';
+import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 
 /**
  * Botones segmentados: elegir UNA opción (o varias, con `multiple`) de un grupo corto
@@ -52,7 +53,7 @@ import { createScOptionState, type ScFieldSize } from '../field/sc-field';
 @Component({
   selector: 'sc-selectbutton',
   standalone: true,
-  imports: [SelectButtonModule, FormsModule, NgTemplateOutlet],
+  imports: [SelectButtonModule, FormsModule, NgTemplateOutlet, ScFieldMsgComponent],
   templateUrl: './sc-selectbutton.component.html',
   styleUrl: './sc-selectbutton.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -89,6 +90,11 @@ export class ScSelectButtonComponent {
   readonly ariaLabel = input<string>();
   /** Ids, separados por espacios, de la ayuda que describe el grupo desde fuera (DD-133). */
   readonly ariaDescribedBy = input<string>();
+  /**
+   * La ayuda del campo, debajo de las opciones como en el resto de campos del DS (DD-198): el rótulo y el control
+   * quedan juntos para leer de un vistazo, y lo que la opción elegida abre debajo va después. Se anuncia con el grupo.
+   */
+  readonly helperText = input<string>();
 
   /** La opción elegida. */
   readonly value = model<unknown>(undefined);
@@ -104,6 +110,17 @@ export class ScSelectButtonComponent {
   protected readonly optionsMutable = this.optionState.optionsMutable;
   protected readonly resolvedOptionLabel = this.optionState.resolvedOptionLabel;
   protected readonly resolvedOptionValue = this.optionState.resolvedOptionValue;
+
+  private readonly field = createScFieldState('sc-selectbutton', {
+    inputId: computed(() => undefined),
+    helperText: this.helperText,
+  });
+  protected readonly msgId = this.field.msgId;
+  protected readonly footerText = this.field.footerText;
+  /** Primero su ayuda y después lo de fuera (`ariaDescribedBy`). */
+  protected readonly describedBy = computed(() =>
+    joinDescribedBy(this.footerText() ? this.msgId() : null, this.ariaDescribedBy()),
+  );
 
   protected readonly pSize = computed<'small' | 'large' | undefined>(() => {
     const s = this.size();

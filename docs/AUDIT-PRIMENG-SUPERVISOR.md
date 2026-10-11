@@ -6,7 +6,7 @@ Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la 
 que puede ir por delante.
 
 **49 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**462 props** que PrimeNG sí documenta.
+**483 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -55,7 +55,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **24 props nativas no expuestas**: `cancelButtonProps`, `cancelIcon`, `cancelLabel`, `cancelStyleClass`, `chooseButtonProps`, `chooseIcon`, `chooseStyleClass`, `customUpload`, `filesInput`, `headers`, `invalidFileLimitMessageDetail`, `invalidFileLimitMessageSummary`, `method`, `previewWidth`, `removeStyleClass`, `showCancelButton`, `showUploadButton`, `style`, `styleClass`, `uploadButtonProps`, `uploadIcon`, `uploadLabel`, `uploadStyleClass`, `withCredentials`
 
-### `sc-button` · 187 usos · primeng/button
+### `sc-textarea` · 7 usos · primeng/textarea, primeng/tooltip
+
+**24 props nativas no expuestas**: `appendTo`, `autoHide`, `content`, `escape`, `fitContent`, `hideDelay`, `hideOnEscape`, `life`, `pSize`, `pTextareaPT`, `pTextareaUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
+
+### `sc-button` · 186 usos · primeng/button
 
 **22 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `severity`, `style`, `styleClass`, `tabindex`, `text`
 
@@ -110,10 +114,6 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 ### `sc-message` · 9 usos · primeng/message
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
-
-### `sc-textarea` · 7 usos · primeng/textarea
-
-**3 props nativas no expuestas**: `pSize`, `pTextareaPT`, `pTextareaUnstyled`
 
 ### `sc-breadcrumb` · 1 usos · primeng/breadcrumb
 
@@ -221,8 +221,8 @@ Expone todo lo que PrimeNG documenta.
 
 ## El catálogo de PrimeNG que NO envolvemos
 
-Aura tematiza **97 componentes**. Envolvemos **33**,
-**8** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
+Aura tematiza **97 componentes**. Envolvemos **34**,
+**7** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
 una pieza nuestra hecha a mano.
 Quedan **55** que existen, están tematizados y funcionan — simplemente nadie los ha
 traído todavía.
@@ -238,7 +238,7 @@ quiere, el sitio de esa decisión es `docs/DECISIONS.md`, y entonces se puede an
 
 Entraron por la vía de DD-113: el nativo tal cual, adaptado solo con tokens. No hay nada que envolver.
 
-`inplace` · `listbox` · `menu` · `metergroup` · `scrollarea` · `sidebar` · `toolbar` · `tooltip`
+`inplace` · `listbox` · `menu` · `metergroup` · `scrollarea` · `sidebar` · `toolbar`
 
 ### Cubiertos por una pieza nuestra
 

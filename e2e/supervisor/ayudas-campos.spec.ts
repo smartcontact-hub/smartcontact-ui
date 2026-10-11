@@ -107,7 +107,7 @@ test('el tiempo máximo de espera en cola dice qué pasa al agotarse, en los dos
 });
 
 /** La ayuda de un campo: bajo un interruptor, en una fila de ajustes o bajo un campo de la ficha. */
-const AYUDA_DE_CAMPO = '.switch-field__hint, .setting-row__hint, .field__help, .policy-row__hint, .theme-row__hint, .data-row__hint';
+const AYUDA_DE_CAMPO = '.switch-field__hint, .setting-row__hint, .field__help, .sc-selectbutton__msg, .sc-textarea__msg, .policy-row__hint, .theme-row__hint, .data-row__hint';
 /** Su caja: la ayuda es de un campo de ella. */
 const CAJA_DEL_CAMPO = '.switch-field, .setting-row, .field, .policy-row, .theme-row, .data-row';
 /** Un campo. Una fila con solo un botón no tiene (la de borrar los datos confirma con su propio texto). */
