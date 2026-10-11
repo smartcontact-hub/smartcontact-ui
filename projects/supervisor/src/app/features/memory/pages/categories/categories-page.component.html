@@ -57,11 +57,8 @@
 </ng-template>
 
 <ng-template #usedInTpl let-cat>
-  @if (usedInRules(cat.id) > 0) {
-    <span class="categories-num">{{ usedInRules(cat.id) }}</span>
-  } @else {
-    <span class="categories-num categories-num--empty">—</span>
-  }
+  <!-- Es una cifra: sin reglas, «0», como las cifras de Grupos (DD-197). -->
+  <span class="categories-num">{{ usedInRules(cat.id) }}</span>
 </ng-template>
 
 <ng-template #classifiedTpl let-cat>

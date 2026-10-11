@@ -1189,6 +1189,17 @@ ninguna maqueta de listado enseña un toast tras editar en lote.
 
 ---
 
+## 44 · Una celda sin dato: «—» en gris suave (2026-10-11, DD-197)
+
+**Estado:** pendiente · **Dónde:** las tablas de las plantillas de la ficha 39 y las maquetas con tablas.
+
+- **Celda sin dato**: «—» con el color `text/subtle`, alineado como el resto de la columna. Nunca en blanco.
+- **Una cifra a cero** se escribe «0», como las demás cifras.
+
+**Cómo sabes que está hecho:** ninguna tabla del fichero deja una celda en blanco, y sus guiones van en `text/subtle`.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de

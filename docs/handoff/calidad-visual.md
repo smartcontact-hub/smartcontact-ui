@@ -20,9 +20,10 @@
    - decidido el 2026-10-11, con su PR: el cambio en lote se cuenta en su barra con «Deshacer» (DD-196); el toast con
      «Deshacer» queda solo en el inicio, al quitar un monitor o un widget. Antes se dijo que salía «al borrar una fila»:
      falso, sale tras la edición en lote de Agentes, Grupos y Usuarios, y en el inicio.
-   - decidido el 2026-10-11, falta el PR: las celdas vacías siguen con «—», en gris, oculto al lector con «sin dato»
-     al lado, y con la palabra cuando el vacío significa algo («Nunca», «Sin asignar», «Todos»). 20 sitios en 11
-     ficheros.
+   - decidido el 2026-10-11, con su PR: las celdas vacías siguen con «—», en gris suave, oculto al lector, que oye
+     «Sin dato» o «No aplica» (`sc-celda-vacia`, DD-197); «Usada en» de Categorías escribe «0». Los «—» que quedan en
+     el código (resumen de la ficha de agente, pista «(ext. —)», chips de filtro) no son celdas: si se quiere, la
+     palabra en su lugar («Ninguno», «Sin extensión»).
 1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).

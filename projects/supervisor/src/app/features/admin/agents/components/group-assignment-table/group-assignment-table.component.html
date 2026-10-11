@@ -64,7 +64,7 @@
 <!-- Una columna por familia. Un grupo que no la ofrece no tiene nada que marcar: un guion, no una casilla apagada. -->
 <ng-template #channelTpl let-row let-col="col">
   @if (!offers(row.group, col.field)) {
-    <span class="assign__none sc-text-body-regular" [attr.aria-label]="'agents.form.assigned.channel_not_offered' | translate">—</span>
+    <span class="assign__none sc-text-body-regular"><sc-celda-vacia [texto]="'agents.form.assigned.channel_not_offered' | translate" /></span>
   } @else if (!allowed(col.field)) {
     <!-- Sin ese canal en General: la casilla apagada y el candado que lleva allí. -->
     <span class="assign__permission">
@@ -101,7 +101,7 @@
       (modelValueChange)="setOutbound(row.group.id)"
     />
   } @else {
-    <span class="assign__none sc-text-body-regular" [attr.aria-label]="'agents.form.assigned.outbound_none' | translate">—</span>
+    <span class="assign__none sc-text-body-regular"><sc-celda-vacia [texto]="'agents.form.assigned.outbound_none' | translate" /></span>
   }
 </ng-template>
 

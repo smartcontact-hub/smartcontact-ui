@@ -978,6 +978,8 @@
     "discard_keep": "Continuar editando",
     "undo": "Desfazer",
     "change_reverted": "Alteração revertida",
+    "empty_cell": "Sem dados",
+    "not_applicable": "Não se aplica",
     "photo": {
       "select": "Selecionar foto",
       "change": "Alterar foto",
@@ -2690,6 +2692,10 @@
     "presence_ring": {
       "title": "Ponto ou aro para o estado?",
       "body": "O estado é um ponto sobre a foto. Media 16 px numa foto de 24: dois terços da foto, tapava-a. Agora é proporcional, 30 % da foto (8 px) com a sua borda branca. A outra opção é um aro de cor à volta da foto, que não tapa nada mas só diz o estado pela cor. Proposta: o ponto proporcional. Só aparece onde o estado ajuda a decidir (aqui), não na lista da Administração."
+    },
+    "empty_cells": {
+      "title": "Células vazias com «—» ou em branco?",
+      "body": "O GitHub (Primer) deixa-as em branco porque o leitor de ecrã lê o travessão. Numa tabela com tantas colunas, uma célula em branco parece que não carregou. Proposta: um «—» cinzento, e o leitor de ecrã ouve «Sem dados» (ou «Não se aplica» quando o grupo não tem esse canal). Se o vazio significa algo, escreve-se: «Nunca», «Sem atribuição», ou «0» se for um número."
     }
   }
 }
