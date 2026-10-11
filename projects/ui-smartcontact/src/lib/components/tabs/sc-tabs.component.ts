@@ -54,9 +54,9 @@ export interface ScTab {
     <p-tabs [value]="value()" (valueChange)="value.set($event)">
       <p-tablist [pt]="tablistPt()">
         @for (tab of tabs(); track tab.value) {
-          <p-tab [value]="tab.value" [disabled]="!!tab.disabled">
+          <p-tab [value]="tab.value" [disabled]="!!tab.disabled" [class.sc-tabs__tab--icon]="!!tab.icon">
             @if (tab.icon) {
-              <sc-icon class="sc-tabs__icon" [name]="tab.icon" size="inherit" aria-hidden="true" />
+              <sc-icon class="sc-tabs__icon" [name]="tab.icon" size="inherit" [weight]="600" [opticalSize]="20" aria-hidden="true" />
             }
             {{ tab.label }}
           </p-tab>
