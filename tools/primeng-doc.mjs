@@ -9,7 +9,9 @@
  * con JavaScript, así que leer la web no trae el código: esto lo junta de las fuentes que sí lo tienen.
  *
  *   1. Ejemplos y texto de cada sección: `apps/showcase/doc/<componente>/*.ts` del repo de PrimeNG
- *      (rama principal, por `gh`). Ojo: pueden ir por delante de la versión instalada.
+ *      (rama principal, por `gh`). Ojo: pueden ir por delante de la versión instalada. Los componentes nuevos de la
+ *      v22 (InputTags, Sidebar, CommandMenu…) no están en ese repo: entonces, la página en Markdown que primeng.dev
+ *      publica para los agentes (`primeng.dev/llms/components/<componente>.md`), que trae texto y código.
  *   2. API de la versión INSTALADA: `node_modules/primeng/types/primeng-<componente>.d.ts`, con su
  *      descripción, valor por defecto y lo OBSOLETO (un `@deprecated` se usa sin darse cuenta).
  *   3. Movimiento y lo que se oculta o transforma: la hoja del componente (`@primeuix/styles`).
@@ -167,13 +169,25 @@ async function main() {
     process.exit(2);
   }
   const l = [];
-  const version = (readFileSync(resolve(ROOT, `node_modules/primeng/fesm2022/primeng-${comp}.mjs`), 'utf8').match(/version: "([\d.]+)"/) ?? [])[1];
+  // La versión de PrimeNG es la de su package.json. El `version: "…"` de dentro del .mjs es la del compilador de
+  // Angular que lo empaquetó (22.1.2 con PrimeNG 22.1.0), y así se llegó a escribir una versión que no era (DD-195).
+  const version = JSON.parse(readFileSync(resolve(ROOT, 'node_modules/primeng/package.json'), 'utf8')).version;
   const sha = gh(`repos/${REPO}/commits/master`).sha.slice(0, 7);
   l.push(`# ${comp} — primeng.dev/${comp}, entero`, '');
   l.push(`PrimeNG instalado: ${version ?? '¿?'} · ejemplos de \`${REPO}@${sha}\` (rama principal: pueden ir por delante).`, '');
 
   l.push('## 1. Secciones de la documentación', '');
-  const ficheros = gh(`repos/${REPO}/contents/apps/showcase/doc/${comp}`);
+  let ficheros;
+  try {
+    ficheros = gh(`repos/${REPO}/contents/apps/showcase/doc/${comp}`);
+  } catch {
+    // No está en el repo (componente nuevo): la página entera que primeng.dev publica en Markdown.
+    const md = execFileSync('curl', ['-sfL', `https://primeng.dev/llms/components/${comp}.md`], { encoding: 'utf8', maxBuffer: 20 * 1024 * 1024 });
+    // Un componente sin página devuelve la portada de la web (HTML con 200), no un 404: no es documentación.
+    if (!md.startsWith('# ')) throw new Error(`primeng.dev no tiene página de «${comp}» (ni el repo ni primeng.dev/llms).`);
+    l.push(`(Sin carpeta en \`apps/showcase/doc/${comp}\`: es la página de \`primeng.dev/llms/components/${comp}.md\`.)`, '', md, '');
+    ficheros = [];
+  }
   for (const f of ficheros.filter((x) => x.type === 'file' && x.name.endsWith('-doc.ts'))) {
     const ts = Buffer.from(gh(`repos/${REPO}/contents/apps/showcase/doc/${comp}/${f.name}`).content, 'base64').toString('utf8');
     const s = seccionDeDoc(ts);

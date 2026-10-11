@@ -13,9 +13,8 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { type MenuItem } from 'primeng/api';
-import { TabsModule } from 'primeng/tabs';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent, ScTabsComponent as TabsComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -40,7 +39,7 @@ import { ResultadoAccionService } from '@core/services';
 @Component({
   selector: 'sc-templates-page',
   imports: [
-    TabsModule,
+    TabsComponent,
     ButtonComponent,
     ClickOutsideDirective,
     DeleteEntityDialogComponent,

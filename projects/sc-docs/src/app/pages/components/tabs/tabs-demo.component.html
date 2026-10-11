@@ -1,0 +1,15 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<ng-template #playground let-args>
+  <sc-tabs ariaLabel="Vistas" [tabs]="tabsDe(args.count)" [(value)]="pgValue" />
+  <p>Elegida: {{ pgValue() }}</p>
+</ng-template>
+
+<ng-template #channel>
+  <sc-tabs ariaLabel="Canal" [tabs]="channelTabs" [(value)]="canal" data-testid="sc-tabs-channel" />
+  <p>{{ canal() === 'chat' ? 'Las plantillas de chat.' : 'Las plantillas de email.' }}</p>
+</ng-template>
+
+<ng-template #icon>
+  <sc-tabs ariaLabel="Vistas de la conversación" [tabs]="iconTabs" [(value)]="vista" data-testid="sc-tabs-icon" />
+</ng-template>

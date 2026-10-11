@@ -111,3 +111,17 @@ test('el estado se filtra desde la cabecera del agente, con los no disponibles j
   // La cuenta suma estados y equipos: «1 filtro» (DD-187).
   await expect(tabla.getByText('1 filtro', { exact: true })).toBeVisible();
 });
+
+test('dominios del Web Chat con el InputTags nativo: minúsculas, uno por etiqueta y su ✕ en español (DD-195)', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
+  const campo = page.locator('#group-chat-domain');
+  await expect(campo).toHaveAccessibleName('Dominios permitidos');
+  await expect(page.getByRole('button', { name: 'Añadir' })).toHaveCount(0);
+  await campo.fill('Tienda.example.com, blog.example.com');
+  await campo.press('Enter');
+  const etiquetas = page.locator('sc-inputtags .p-chip');
+  await expect(etiquetas).toHaveText(['tienda.example.com', 'blog.example.com']);
+  await expect(etiquetas.first().getByRole('button', { name: 'Quitar' })).toBeVisible();
+  await etiquetas.first().getByRole('button', { name: 'Quitar' }).click();
+  await expect(etiquetas).toHaveText(['blog.example.com']);
+});

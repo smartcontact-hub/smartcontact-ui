@@ -35,9 +35,22 @@ b49b56e0:docs/handoff/supervisor-fichas.md`. El de Tipificaciones (2026-10-05, D
 a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-10-06, DD-176, #341): `git show
 0bf19647:docs/handoff/supervisor-fichas.md`. El de Repositorios en tarjetas (2026-10-06, DD-179, #347): `git show
 d4843e43:docs/handoff/supervisor-fichas.md`. El de ordenar por cualquier columna (2026-10-06, DD-180 y DD-181): `git show
-d94e5ad8:docs/handoff/supervisor-fichas.md`.
+d94e5ad8:docs/handoff/supervisor-fichas.md`. El de las cuatro secciones en el mismo árbol (2026-10-06, DD-182, sin
+trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`.
 
-## 🚧 2026-10-09 · Revisión de agentes y tipificaciones: en el PR #360
+## ✅ 2026-10-11 · Lo que se decide de la auditoría de PrimeNG (DD-195)
+
+> **Sello:** rama `arebury/decisiones-auditoria` sobre main, HEAD `11c607cf`. Un PR; enseñado en local antes de subir.
+
+- **Entran:** `sc-inputtags` en «Dominios permitidos» de Web Chat (sustituye campo, «Añadir» y chips; guarda minúsculas,
+  sin repetir y uno por etiqueta) y `sc-tabs` en Plantillas, el reproductor de Memory y «Uso» de sc-docs (el Monitor
+  sigue directo: arrastra y renombra). El ✕ de las etiquetas dice «Quitar» (`aria.removeLabel` de PrimeNG).
+- **No entran** (el porqué, en DD-195): Tree/TreeSelect, OrderList, `sc-inputnumber` sobre `p-inputnumber` y una sola
+  manera de editar un nombre. **Corregido:** la versión (22.1.0) y Sidebar, que se queda (es el menú lateral nuevo).
+- **Que no se vuelva a pasar:** `audit:primeng-catalog` (gate 47) y `tools/primeng-doc.mjs` con la versión buena y las
+  páginas de primeng.dev/llms. Figma: ficha 42 de `figma-pendiente` (lo de DD-184 a DD-187 y el InputTags).
+
+## ✅ 2026-10-09 · Revisión de agentes y tipificaciones (DD-187, fundida en #360)
 
 > **Sello:** worktree `pinniped`, rama `arebury/feat-agentes-tipificacion-design` sobre `main` en `1a0ae258` (DD-188 y DD-189
 > integrados), **PR #360**.
@@ -172,27 +185,16 @@ b49b56e0:docs/handoff/supervisor-fichas.md`.
 - Los e2e que fijaban esos textos se ponen al día (rótulos de columna, resúmenes, título del panel de agentes).
 - **No se tocó:** sc-docs y las réplicas (`agent`, `agent-mini`, `cuscare`), que calcan la app viva (DD-35).
 
-## ✅ 2026-10-06 · Las cuatro secciones de la ficha de grupo, en el mismo árbol (DD-182)
-
-> **Sello:** rama `arebury/daily-transcript-change-validation` sobre `main` en `60f8e617`.
-
-- General, Recursos y Agentes pasan a `surface="subtle"` con un `sc-subsection` por bloque, como Distribución y colas
-  (DD-157). Clave nueva `groups.form.agents.assigned_title`. Medido en local: sin desborde a 1440 y 12 e2e en verde.
-- **Solo el prototipo**: Figma conserva el cuerpo anterior y el índice con sus bordes grises. Las fichas de agente y
-  usuario no se tocaron.
-
 ## SIGUIENTE — sin preguntar
 
--3. **Aterrizar la revisión del 2026-10-09** (tramo de arriba): pruebas, DD y PR. Se enseña antes al equipo.
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
    son lo que falta; una card de Jira con los observadores de componentes.
 
--2. **Auditoría de PrimeNG contra el DS: hecha (2026-10-07)**, en `docs/AUDIT-PRIMENG-CATALOGO.md`. Queda decidir lo que
-   propone, por orden: TreeSelect/Tree para las tipificaciones (con la propuesta pendiente), InputTags para los dominios
-   del chat y OrderList para el selector de columnas; revisar `sc-inputnumber` sobre `p-inputnumber` y las dos maneras de
-   editar un nombre en su sitio; envolver Tabs y quitar Sidebar del laboratorio. Nada se construye sin decidirlo.
+-2. **Lo que queda de la auditoría de PrimeNG** (DD-195, `docs/AUDIT-PRIMENG-CATALOGO.md`, «Siguientes pasos»):
+   documentar en sc-docs Menu, Listbox, Toolbar y MeterGroup, que las apps usan sin wrapper; revisar las dos casillas
+   (`p-checkbox` en el selector de columnas y `sc-checkbox` en el resto); y `sc-command-palette` frente a CommandMenu.
 -1. **`fichas-nombre-fijo.spec.ts`, intermitente en el CI (2026-10-06).** Falló cuatro veces en dos PRs (#349 y #350),
    siempre en el shard 4/8, cada vez en una ficha distinta (agente a 1366, usuario a 1366, grupo a 1280) y con el mismo
    mensaje, «X sigue a la vista»: en el punto donde debía estar el nombre devuelve el texto de la barra superior. Pasa al

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Antes de construir una pieza, ¿la trae PrimeNG? La tabla del catálogo (`docs/AUDIT-PRIMENG-CATALOGO.md`, la vigila `audit:primeng-catalog`) · varios valores cortos en un campo, `sc-inputtags`; vistas hermanas, `sc-tabs` | DD-195 |
 > | La celda que nombra la fila es su cabecera (`<th scope="row">`, `rowHeader` en `ScColumnDef`) en las 27 tablas del Supervisor que tienen nombre · se ve igual: el tema repite para ella las reglas de celda de PrimeNG | DD-194 |
 > | En una lista estrecha el nombre se queda: columna fija a la izquierda (con la casilla), y la tabla desplaza de lado · el mínimo de la tabla nunca deja menos de 15rem al nombre | DD-193 |
 > | La cabecera de página en la escalera: barra → título 28, título → lo que titula 14, buscador → su tabla 7 · el borde de la página, 28 por los cuatro lados y una sola vez, en el molde | DD-192 |
@@ -138,6 +139,61 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-195 · 2026-10-11 — Lo que se decide de la auditoría de PrimeNG: InputTags y Tabs entran, y la tabla del catálogo la vigila un gate
+
+**Contexto** · DD-186 cruzó el catálogo de PrimeNG con el DS (`docs/AUDIT-PRIMENG-CATALOGO.md`) sin construir nada y
+dejó por decidir InputTags, TreeSelect/Tree, OrderList, `sc-inputnumber` frente a `p-inputnumber`, las dos maneras de
+editar un nombre en su sitio, envolver Tabs y quitar Sidebar del laboratorio. Al releerla, dos datos estaban mal: la
+versión (22.1.2 era la del compilador de Angular; PrimeNG es 22.1.0) y Sidebar, que en la 22 no es el Drawer de antes
+sino el menú lateral nuevo.
+
+**Decisión** ·
+1. **`sc-inputtags`** (DS, wrapper Extended sobre `p-inputtags`): varios valores cortos en un campo. Enter, la coma, pegar
+   o salir del campo añaden; cada etiqueta se quita con su ✕ o con Retroceso. Lleva la etiqueta, la ayuda y el error de
+   los campos del DS, y como `p-inputtags` no pasa `inputId` a su campo interno, el id, el nombre y la descripción llegan
+   por su `pt`. Sustituye en la ficha de grupo a «Dominios permitidos» hecho a mano (campo, «Añadir» y fila de chips);
+   la ficha guarda los dominios en minúsculas, sin repetir y uno por etiqueta («a.com, b.com» con Enter son dos).
+2. **`sc-tabs`** (DS, wrapper Standard sobre `p-tabs`): la tira de pestañas con su nombre accesible obligatorio, que va
+   por `pt` al nodo con `role="tablist"` (cada uso lo repetía). Sin paneles: lo de debajo lo pinta quien la usa. Lo usan
+   Plantillas, el reproductor de Memory y la página «Uso» de sc-docs. Las pestañas del Monitor siguen en `p-tabs`
+   directo: se arrastran y se renombran, y eso necesita directivas sobre cada `p-tab`.
+3. **El ✕ de una etiqueta se dice en el idioma de la pantalla** («Quitar»): la traducción de PrimeNG de la app gana
+   `aria.removeLabel`, que leen todos los `p-chip`. Antes decía «Remove».
+4. **`audit:primeng-catalog`** (gate 47 de `verify`): la tabla del catálogo cuenta todo lo instalado. Se pone rojo si
+   PrimeNG cambia de versión, si un módulo no tiene fila, si una app importa algo sin wrapper que la sección 3 no
+   anota, si una fila de esa sección ya no la usa nadie o si algo «sin caso» empieza a usarse. Rojo medido con la tabla
+   de antes (13 desajustes) y quitando una fila.
+5. **`tools/primeng-doc.mjs`** lee la versión de `node_modules/primeng/package.json`, y para los componentes nuevos de la
+   22 (InputTags, Sidebar, CommandMenu…), que no están en el repo de PrimeNG, la página en Markdown de
+   `primeng.dev/llms/components/<componente>.md`.
+
+**Razón** · Las dos quitan código propio con lo nativo: InputTags, tres piezas hechas a mano (y el campo mide lo que
+los demás, 32,5); Tabs, el `pt` del nombre que repetía cada uso. Lo que no entra, no entra por lo que el repo ya
+decidió o por lo medido (abajo).
+
+**Descartadas** ·
+- *TreeSelect · Tree para las tipificaciones*: DD-187 §5 dibuja el árbol entero en columnas, con «+» por fila y
+  tirador, y el grupo elige una tipificación entera, no una hoja. TreeSelect tendría caso en sc-agent al cerrar.
+- *OrderList en el selector de columnas*: DD-176 §7 ya calca el «Column Toggle» de primeng.dev, que es nativo; OrderList
+  añadiría una segunda lista con cuatro botones de mover.
+- *`sc-inputnumber` sobre `p-inputnumber`*: acotan igual (al salir, con Enter y con Tab: medido en su código), así que el
+  motivo de usar el input nativo sigue. El cambio metería la unidad en el texto del número, con su color, y el valor
+  solo llegaría tecla a tecla: pegar con el ratón, el dictado o un `fill` esperarían a salir del campo.
+- *Una sola manera de editar un nombre*: `sc-name-inplace` es el `p-inplace` nativo (de reposo a edición);
+  `sc-inline-rename-cell` no tiene reposo (sale ya editando tras duplicar una fila) y un `p-inplace` en la fila pelearía
+  con el clic que abre la ficha.
+- *Quitar Sidebar del laboratorio*: es la base de la versión «no se cierra nada» del sidebar, la favorita (DD-118).
+
+**Consecuencias** · Páginas en sc-docs (Inputs › InputTags, Layout › Tabs), su línea base de estilos y sus pruebas.
+`sc-inputtags` sale «experimental» (DD-190): el Kit no tiene su maestro (`figma-pendiente`, ficha 42). **El paquete inicial
+de sc-docs llega a 2,67 MB** (medido en el build de producción): `app.config.ts` sube el paquete del DS entero al
+arranque (DD-42), así que cada componente nuevo lo engorda, y estos dos traen AutoComplete y Tabs de PrimeNG. Su
+presupuesto pasa de 2,3 / 2,6 a 2,75 / 3 MB, con la cifra escrita aquí para que no sea un tope subido en silencio. Lo que queda de
+la auditoría (documentar Menu, Listbox, Toolbar y MeterGroup; las dos casillas; `sc-command-palette`), en su
+«Siguientes pasos».
 
 ---
 

@@ -16,13 +16,14 @@
               }
       }}
     </p>
-    <!-- Pestañas de primeng.dev (`p-tabs`): cada una es una forma de recorrer el inventario. -->
-    <p-tabs class="uso-tabs" [value]="view()" (valueChange)="onViewChange($event)">
-      <p-tablist>
-        <p-tab value="component">{{ 'uso.byComponent' | translate }}</p-tab>
-        <p-tab value="screen">{{ 'uso.byScreen' | translate }}</p-tab>
-      </p-tablist>
-    </p-tabs>
+    <!-- Pestañas del DS (`sc-tabs`): cada una es una forma de recorrer el inventario. -->
+    <sc-tabs
+      class="uso-tabs"
+      [ariaLabel]="'uso.viewsAria' | translate"
+      [tabs]="[{ value: 'component', label: 'uso.byComponent' | translate }, { value: 'screen', label: 'uso.byScreen' | translate }]"
+      [value]="view()"
+      (valueChange)="onViewChange($event)"
+    />
   }
 </header>
 

@@ -44,13 +44,14 @@
   [noResultsParams]="{ tab: ('templates.type.' + activeTab()) | translate }"
   tableTestId="templates-table"
 >
-  <p-tabs scListBeforeToolbar class="tabs" [value]="activeTab()" (valueChange)="onTabChange($event)">
-    <!-- El nombre va al nodo con `role="tablist"`, que es el `content` de dentro de `p-tablist`. -->
-    <p-tablist [pt]="{ content: { 'aria-label': 'templates.form.channel' | translate } }">
-      <p-tab value="chat">{{ 'templates.type.chat' | translate }}</p-tab>
-      <p-tab value="email">{{ 'templates.type.email' | translate }}</p-tab>
-    </p-tablist>
-  </p-tabs>
+  <sc-tabs
+    scListBeforeToolbar
+    class="tabs"
+    [ariaLabel]="'templates.form.channel' | translate"
+    [tabs]="[{ value: 'chat', label: 'templates.type.chat' | translate }, { value: 'email', label: 'templates.type.email' | translate }]"
+    [value]="activeTab()"
+    (valueChange)="onTabChange($event)"
+  />
 
   <sc-empty-state
     scListEmpty

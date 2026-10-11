@@ -119,6 +119,8 @@ const COMPONENTS = [
   { route: 'inlinerenamecell', tag: 'sc-inline-rename-cell' },
   { route: 'factrow', tag: '.sc-fact-row' },
   { route: 'fileupload', tag: 'sc-fileupload' },
+  { route: 'inputtags', tag: 'sc-inputtags' },
+  { route: 'tabs', tag: 'sc-tabs' },
   { route: 'icontile', tag: 'sc-icon-tile' },
   { route: 'inputgroup', tag: 'sc-inputgroup' },
   { route: 'inputnumber', tag: 'sc-inputnumber' },

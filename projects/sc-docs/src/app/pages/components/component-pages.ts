@@ -166,6 +166,16 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () => import('./fileupload/fileupload-demo.component').then((m) => m.FileUploadDemoComponent),
   },
   {
+    path: 'inputtags',
+    label: 'InputTags',
+    load: () => import('./inputtags/inputtags-demo.component').then((m) => m.InputTagsDemoComponent),
+  },
+  {
+    path: 'tabs',
+    label: 'Tabs',
+    load: () => import('./tabs/tabs-demo.component').then((m) => m.TabsDemoComponent),
+  },
+  {
     path: 'icontile',
     label: 'IconTile',
     load: () => import('./icontile/icontile-demo.component').then((m) => m.IconTileDemoComponent),

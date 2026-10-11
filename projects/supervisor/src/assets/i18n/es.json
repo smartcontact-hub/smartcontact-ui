@@ -1973,7 +1973,6 @@
         "chat_rating_hint": "Una pregunta corta de valoración al despedirse.",
         "allowed_domains": "Dominios permitidos",
         "allowed_domains_placeholder": "ejemplo.com",
-        "allowed_domains_add": "Añadir",
         "allowed_domains_hint": "Las webs donde se puede insertar el chat.",
         "script_title": "Script de chat",
         "script_hint": "Pega este código en la cabecera de la web donde quieras el chat.",
@@ -2620,7 +2619,8 @@
   "primeng": {
     "today": "Hoy",
     "clear": "Limpiar",
-    "week_header": "Sem"
+    "week_header": "Sem",
+    "remove": "Quitar"
   },
   "auth": {
     "login": {
