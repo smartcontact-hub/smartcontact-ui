@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El toast, solo para lo que manda el sistema: lo ya visible, solo al lector (`visto`); guardar y quedarse, junto a los botones de la barra (`enLaBarra`); lo de un control, a su lado · un error no se cierra solo | DD-191 |
 > | Cada componente dice en sc-docs si está listo (maestro en el Kit y demo), es experimental (le falta algo, y dice qué) o está retirado (`@deprecated`, con su motivo) · el índice etiqueta solo la excepción | DD-190 |
 > | El icono que acompaña a un texto sigue a su estilo: su tamaño, su peso y el eje óptico a su tamaño (20, el mínimo, en pequeño) · en la cabecera de `sc-section-card`, 16 en sección y 20 en página | DD-189 |
 > | Lo que se adopta de Primer: el título de página a 20 (`Title`) y el de sección a 16 (`Subtitle`), dos text styles nuevos del Kit · el botón principal de la barra en md · sin 700 fuera del Kit · la carga por tiempos · el texto principal a slate-900 en el plan de color · la escala se queda, con una medida por relación · el toast solo para eventos del sistema | DD-188 |
@@ -134,6 +135,41 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-191 · 2026-10-11 — El toast, solo para lo que manda el sistema: lo que hace el usuario se cuenta junto a su contexto
+
+**Contexto** · DD-188 §7 decidió, siguiendo a Primer, que el toast quedara para los eventos del sistema. El Supervisor
+lanzaba 58 toasts, casi todos del resultado de una acción del usuario (51 de éxito), y el de error se cerraba solo a
+los 6 s. Primer los desaconseja: se van solos, quedan lejos de lo que los causó, tapan botones y la gente aprende a
+ignorarlos; el éxito que ya se ve no necesita aviso.
+
+**Decisión** · Cada resultado, según lo que se ve:
+1. **Ya se ve** (la fila nueva o la que desaparece al borrar, duplicar o importar; la ficha a la que se llega; la
+   descarga del navegador; las filas que se marcan como leídas): no se pinta nada más y se anuncia al lector de
+   pantalla (`ResultadoAccionService.visto`, sobre el `LiveAnnouncer` de Angular CDK).
+2. **Guardar y quedarse** (fichas de agente, grupo y usuario, editores de Repositorios, Contact Center, el panel de
+   agentes): el texto de siempre («Agente "X" actualizado»), junto a los botones de la barra, en una zona `role="status"`
+   del `top-bar` (`enLaBarra`). Se va con el siguiente cambio sin guardar o al salir de la página. Crear abre la
+   edición de lo creado, y el aviso se pone al llegar.
+3. **Junto a su control**: «Copiar código» pasa a «Código copiado» dos segundos; «Caducar contraseña», «Probar
+   conexión», la numeración especial y la edición masiva que no se aplica dicen su resultado al lado de su botón.
+4. **Del sistema**, en toast: las transcripciones y los análisis en segundo plano, con su progreso. Su error y su
+   resultado parcial ya no se cierran solos.
+
+**Razón** · Es la regla de Primer adaptada: el resultado, lo más cerca posible de la acción, y un aviso solo si no se
+ve. El texto de «guardado» no cambia, así que las pruebas que lo leían siguen valiendo (41 pruebas de las seis
+afectadas, en verde contra el build de la rama).
+
+**Descartadas** ·
+- **Un componente nuevo `sc-inline-message` en el DS**: `sc-message` (el `p-message` de PrimeNG) ya es el mensaje en
+  línea de Primer, en su variante `simple` y talla `sm`.
+- **Quitar también el aviso con «Deshacer»** (`UndoStackService`): Primer prefiere deshacer a confirmar, pero no dice
+  dónde va el botón. Se queda como toast hasta que se decida su sitio.
+
+**Consecuencias** · `audit:screen-hygiene` gana una regla con trinquete: un toast solo sale de los dos ficheros del
+sistema (`undo-stack` y Conversaciones). Escrito en «UX de pantalla» 7.
 
 ---
 

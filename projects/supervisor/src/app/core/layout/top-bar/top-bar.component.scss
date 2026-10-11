@@ -51,6 +51,24 @@
 
   /* Acciones primarias de la página (modelo "todo arriba" S59). Empujadas a
    * la derecha; si hay slot contextual antes, se empaquetan tras él. */
+  /* El resultado de la última acción (DD-191): justo a la izquierda de los botones. Es quien empuja
+   * el grupo a la derecha (vacío mide 0), así que las acciones que lo siguen ya no llevan su margen
+   * automático; tras el slot contextual, se empaqueta como hacían ellas. */
+  &__resultado {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    margin-left: auto;
+
+    > * {
+      margin-right: var(--sc-spacing-0-5);
+    }
+  }
+
+  &__slot + &__resultado {
+    margin-left: var(--sc-spacing-1);
+  }
+
   &__actions {
     display: flex;
     align-items: center;
@@ -62,6 +80,10 @@
     .top-bar__slot + & {
       margin-left: var(--sc-spacing-1);
     }
+  }
+
+  &__resultado + &__actions {
+    margin-left: 0;
   }
 
   &__home {

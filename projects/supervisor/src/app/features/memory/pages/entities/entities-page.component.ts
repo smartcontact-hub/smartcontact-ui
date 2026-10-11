@@ -8,7 +8,6 @@ import {
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScDividerComponent as DividerComponent } from '@smartcontact-hub/components';
@@ -26,13 +25,13 @@ import {
   type ScDatatableRowKeyEvent,
   type ScRowStyleClassFn,
 } from '@smartcontact-hub/components';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 
 import { EntityFormModalComponent } from '../../components/entity-form-modal/entity-form-modal.component';
 import type { Entity } from '../../data/entity.types';
 import { EntitiesStore } from '../../state/entities.store';
 import { injectLangChange } from '@core/utils/lang-change';
+import { ResultadoAccionService } from '@core/services';
 
 /**
  * Listado de entidades Memory · iter 10a.
@@ -62,7 +61,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 export class EntitiesPageComponent {
   private readonly entitiesStore = inject(EntitiesStore);
   private readonly confirm = inject(ScConfirmService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
@@ -230,14 +229,7 @@ export class EntitiesPageComponent {
   protected onFormSaved(entity: Entity): void {
     const wasEdit = this.formEntity() !== null;
     this.formOpen.set(false);
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(
-        wasEdit ? 'memory.entities.form.updated_toast' : 'memory.entities.form.created_toast',
-        { name: entity.name },
-      ),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant( wasEdit ? 'memory.entities.form.updated_toast' : 'memory.entities.form.created_toast', { name: entity.name }, ));
   }
 
   private async confirmDelete(entity: Entity): Promise<void> {
@@ -250,10 +242,6 @@ export class EntitiesPageComponent {
     });
     if (!accepted) return;
     this.entitiesStore.deleteEntity(entity.id);
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('memory.entities.deleted_toast', { name: entity.name }),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant('memory.entities.deleted_toast', { name: entity.name }));
   }
 }

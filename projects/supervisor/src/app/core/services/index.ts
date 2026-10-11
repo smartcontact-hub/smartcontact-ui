@@ -27,3 +27,5 @@ export { KeyboardShortcutsService } from './keyboard-shortcuts.service';
 
 export { UndoStackService } from './undo-stack.service';
 export type { UndoEntry } from './undo-stack.service';
+
+export { ResultadoAccionService } from './resultado-accion.service';

@@ -4,7 +4,7 @@
  * que hasta ahora SOLO vivían en la doc (AGENTS.md §UX de pantalla). Un principio
  * que no tiene gate se pudre: esto lo convierte en un chequeo.
  *
- * Gatea TRES cosas. Las dos primeras, como TRINQUETE por conteo (el mismo patrón
+ * Gatea CUATRO cosas. La primera, la segunda y la cuarta, como TRINQUETE por conteo (el mismo patrón
  * que `audit:api-era`: la lista solo puede MENGUAR, y muerde en las dos direcciones):
  *
  * 1. EMOJIS EN LA INTERFAZ. Los iconos salen de `<sc-icon>` (Material Symbols); un
@@ -29,6 +29,11 @@
  *    Un `<label for>` vale solo para `sc-multiselect`, cuyo combobox es un `<input>`
  *    (medido el 2026-10-05); el span de `sc-select` no es etiquetable. Un `aria-label`
  *    en el host tampoco vale: no llega al combobox.
+ *
+ * 4. TOASTS DE UNA ACCIÓN DEL USUARIO (DD-191). El toast queda para lo que manda el SISTEMA
+ *    (una tarea en segundo plano que acaba). Lo que acaba de hacer el usuario se cuenta junto a
+ *    su contexto: `ResultadoAccionService.visto` si ya se ve, `enLaBarra` si guarda y se queda, o
+ *    un mensaje junto a su control. Solo en el Supervisor (las réplicas copian su app, DD-35).
  *
  * QUÉ HACER SI SE PONE ROJO:
  *   · «nuevo incumplimiento» → arréglalo (usa `<sc-icon>` en vez del emoji; añade
@@ -147,6 +152,21 @@ export function sinComentariosEnSuSitio(texto, esHtml) {
   return esHtml ? limpio : enBlanco(enBlanco(limpio, /\/\*[\s\S]*?\*\//g), /(?<=^|\s)\/\/.*$/gm);
 }
 
+/**
+ * Los ficheros que pueden lanzar toasts, y cuántos (DD-191). La lista solo MENGUA.
+ * - `undo-stack`: el aviso con «Deshacer» de lo que se puede deshacer; pendiente de decidir su sitio.
+ * - `conversations-page`: transcripciones y análisis en segundo plano, con su progreso y su resultado.
+ */
+export const TOAST_DEL_SISTEMA = {
+  'projects/supervisor/src/app/core/services/undo-stack.service.ts': 2,
+  'projects/supervisor/src/app/features/memory/pages/conversations/conversations-page.component.ts': 7,
+};
+
+/** Cuántos toasts lanza un fichero (`messages.add(`), sin contar los comentarios. */
+export function contarToasts(texto) {
+  return (sinComentarios(texto).match(/\bmessages\.add\(/g) ?? []).length;
+}
+
 /** Las etiquetas `<sc-select` y `<sc-multiselect` de un texto ya sin comentarios. */
 const DESPLEGABLE = /<sc-(select|multiselect)\b/g;
 
@@ -212,6 +232,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
 
   const emojis = {};
   const imgs = {};
+  const toasts = {};
   const sinNombre = [];
   let desplegables = 0;
   for (const f of ficheros) {
@@ -220,6 +241,10 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     if (e > 0) emojis[f] = e;
     const i = contarImgSinDims(src);
     if (i > 0) imgs[f] = i;
+    if (f.startsWith('projects/supervisor/') && f.endsWith('.ts')) {
+      const t = contarToasts(src);
+      if (t > 0) toasts[f] = t;
+    }
     desplegables += (sinComentariosEnSuSitio(src, f.endsWith('.html')).match(DESPLEGABLE) ?? []).length;
     for (const linea of desplegablesSinNombre(src, f.endsWith('.html'))) sinNombre.push(`${f}:${linea}`);
   }
@@ -227,6 +252,12 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   const problemas = [
     ...chequearTrinquete(emojis, EMOJI_PENDIENTES, 'emoji', 'usa <sc-icon> (o un flag SVG) en vez del emoji.'),
     ...chequearTrinquete(imgs, IMG_PENDIENTES, 'img/iframe sin dims', 'añade width+height o aspect-ratio.'),
+    ...chequearTrinquete(
+      toasts,
+      TOAST_DEL_SISTEMA,
+      'toast(s)',
+      'cuenta el resultado con `ResultadoAccionService` (`visto` si ya se ve, `enLaBarra` si guarda y se queda) o junto a su control (DD-191).',
+    ),
     ...sinNombre.map((donde) => [
       `${donde}: desplegable sin nombre (DD-133). PrimeNG lo nombraría con la opción elegida.`,
       '      → `ariaLabelledBy` con el id del rótulo que tiene a la vista o, sin rótulo, `ariaLabel`. Un `<label for>` solo nombra un sc-multiselect.',
@@ -239,13 +270,14 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     `audit:screen-hygiene — ${ficheros.length} plantilla(s): ${totEmoji} emoji astral en ` +
       `${Object.keys(emojis).length} fichero(s), ${totImg} img/iframe sin dims en ${Object.keys(imgs).length} ` +
       `(trinquetes: emoji ${Object.keys(EMOJI_PENDIENTES).length}, img ${Object.keys(IMG_PENDIENTES).length}), ` +
-      `${sinNombre.length} de ${desplegables} desplegables sin nombre\n`,
+      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ` +
+      `${Object.values(toasts).reduce((a, b) => a + b, 0)} toast(s) del sistema en ${Object.keys(toasts).length} fichero(s)\n`,
   );
 
   if (!problemas.length) {
     log(
-      '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco y ' +
-        'cada desplegable con nombre.',
+      '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco, ' +
+        'cada desplegable con nombre y ningún toast nuevo fuera de los del sistema.',
     );
     process.exit(0);
   }

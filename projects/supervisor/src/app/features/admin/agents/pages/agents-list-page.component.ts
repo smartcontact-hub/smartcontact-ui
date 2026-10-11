@@ -9,13 +9,12 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService, type MenuItem } from 'primeng/api';
+import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { UndoStackService, XlsxExportService } from '@core/services';
+import { ResultadoAccionService, UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 import { ChannelIconComponent, ListPageComponent, NotaDecisionComponent, PresenceAvatarComponent, type LabelColor } from '@shared/components';
 import {
@@ -100,7 +99,7 @@ export class AgentsListPageComponent {
   private readonly equipos = inject(EquiposStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly xlsx = inject(XlsxExportService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
@@ -491,11 +490,8 @@ export class AgentsListPageComponent {
   protected onRenameCommit(id: number, value: string): void {
     this.agentsStore.updateAgent(id, { name: value });
     this.renamingId.set(null);
-    this.messages.add({
-      severity: 'secondary',
-      summary: this.translate.instant('agents.toasts.duplicated', { name: value }),
-      life: TOAST_LIFE.info,
-    });
+    // El nombre nuevo ya se ve en la fila: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(this.translate.instant('agents.toasts.duplicated', { name: value }));
   }
 
   /** Cancel the inline rename — also drops the just-created draft so the user
@@ -583,21 +579,11 @@ export class AgentsListPageComponent {
     if (ids.length === 1) {
       this.agentsStore.deleteAgent(ids[0]!);
       this.linksStore.removeAgent(ids[0]!);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('agents.toasts.deleted_single', {
-          name: toasted[0]!.name,
-        }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('agents.toasts.deleted_single', { name: toasted[0]!.name, }));
     } else {
       this.agentsStore.deleteAgents(ids);
       for (const id of ids) this.linksStore.removeAgent(id);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('agents.toasts.deleted_bulk', { count: ids.length }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('agents.toasts.deleted_bulk', { count: ids.length }));
     }
 
     this.deleteTarget.set(null);

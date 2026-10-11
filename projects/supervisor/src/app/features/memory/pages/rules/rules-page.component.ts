@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
@@ -19,8 +18,7 @@ import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/
 import { ScMessageComponent as MessageComponent } from '@smartcontact-hub/components';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { type ScColumnCellContext, type ScColumnDef } from '@smartcontact-hub/components';
-import { LanguageService } from '@core/services';
-import { TOAST_LIFE } from '@core/utils/toast-life';
+import { LanguageService, ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ListPageComponent } from '@shared/components';
@@ -58,7 +56,7 @@ export class RulesPageComponent {
   private readonly rulesStore = inject(RulesStore);
   private readonly resolver = inject(ConditionResolverService);
   private readonly confirm = inject(ScConfirmService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly language = inject(LanguageService);
@@ -248,11 +246,7 @@ export class RulesPageComponent {
   private duplicateRule(rule: Rule): void {
     const copy = this.rulesStore.duplicateRule(rule.id);
     if (!copy) return;
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('memory.rules.duplicated_toast'),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant('memory.rules.duplicated_toast'));
   }
 
   private async confirmDelete(rule: Rule): Promise<void> {
@@ -265,10 +259,6 @@ export class RulesPageComponent {
     });
     if (!accepted) return;
     this.rulesStore.deleteRule(rule.id);
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('memory.rules.deleted_toast', { name: rule.name }),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant('memory.rules.deleted_toast', { name: rule.name }));
   }
 }

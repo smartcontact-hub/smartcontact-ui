@@ -59,6 +59,11 @@
         </div>
         <div class="emails__test">
           <sc-button size="sm" variant="secondary" appearance="outlined" [label]="('repositories.emails.mailbox.test_' + (side === 'incoming' ? 'inbox' : 'outbox')) | translate" (clicked)="test(side === 'incoming' ? 'incoming' : 'outgoing')" />
+          @if (prueba(); as r) {
+            @if (r.which === (side === 'incoming' ? 'incoming' : 'outgoing')) {
+              <sc-message [severity]="r.ok ? 'success' : 'warn'" variant="simple" size="sm" [icon]="r.ok ? 'check_circle' : 'info'" [text]="r.texto" />
+            }
+          }
         </div>
       </section>
     </sc-section-card>

@@ -9,13 +9,12 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService, type MenuItem } from 'primeng/api';
+import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { UndoStackService, XlsxExportService } from '@core/services';
+import { ResultadoAccionService, UndoStackService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 
 import { IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
@@ -69,7 +68,7 @@ interface PendingBulkEdit {
 export class UsersListPageComponent {
   private readonly usersStore = inject(UsersStore);
   private readonly xlsx = inject(XlsxExportService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
@@ -348,11 +347,8 @@ export class UsersListPageComponent {
   protected onRenameCommit(id: number, value: string): void {
     this.usersStore.updateUser(id, { name: value });
     this.renamingId.set(null);
-    this.messages.add({
-      severity: 'secondary',
-      summary: this.translate.instant('users.toasts.duplicated', { name: value }),
-      life: TOAST_LIFE.info,
-    });
+    // El nombre nuevo ya se ve en la fila: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(this.translate.instant('users.toasts.duplicated', { name: value }));
   }
 
   protected onRenameCancel(_id: number): void {
@@ -380,20 +376,10 @@ export class UsersListPageComponent {
 
     if (ids.length === 1) {
       this.usersStore.deleteUser(ids[0]!);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('users.toasts.deleted_single', {
-          name: toasted[0]!.name,
-        }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('users.toasts.deleted_single', { name: toasted[0]!.name, }));
     } else {
       this.usersStore.deleteUsers(ids);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('users.toasts.deleted_bulk', { count: ids.length }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('users.toasts.deleted_bulk', { count: ids.length }));
     }
 
     this.deleteTarget.set(null);

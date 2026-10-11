@@ -1,30 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  type OnInit,
-  signal,
-  type TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
-import {
-  ScButtonComponent as ButtonComponent,
-  ScCheckboxComponent as CheckboxComponent,
-  ScInputTextComponent as InputTextComponent,
-  ScPasswordComponent as PasswordComponent,
-  ScSectionCardComponent as SectionCardComponent,
-  ScSelectComponent as SelectComponent,
-} from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent, ScCheckboxComponent as CheckboxComponent, ScInputTextComponent as InputTextComponent, ScMessageComponent, ScPasswordComponent as PasswordComponent, ScSectionCardComponent as SectionCardComponent, ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
@@ -36,6 +17,7 @@ import {
   MailboxesStore,
   SERVIDOR_VACIO,
 } from '../state/emails.store';
+import { ResultadoAccionService } from '@core/services';
 
 interface MailboxDraft {
   readonly name: string;
@@ -70,6 +52,7 @@ const VACIO: MailboxDraft = {
     SectionCardComponent,
     SelectComponent,
     TranslateModule,
+    ScMessageComponent,
   ],
   templateUrl: './email-cuenta-editor-page.component.html',
   styleUrl: './emails-page.component.scss',
@@ -79,7 +62,7 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly store = inject(MailboxesStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   protected readonly triggers = inject(EmailTriggersStore);
@@ -99,6 +82,10 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
   protected readonly form = signal<MailboxDraft>(VACIO);
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.formDirty()) this.resultado.limpiar();
+  });
 
   protected readonly actionOptions = computed(() => {
     this.lang();
@@ -186,13 +173,17 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
   }
 
   /** La prueba de un servidor: de momento no sale a ninguna parte; dice si hay datos para intentarla. */
+  /** El resultado de la última prueba de un servidor, junto a su botón (DD-191). */
+  protected readonly prueba = signal<{ which: 'incoming' | 'outgoing'; ok: boolean; texto: string } | null>(null);
+
   protected test(which: 'incoming' | 'outgoing'): void {
     const s = this.form()[which];
     const ok = !!(s.host.trim() && s.port.trim() && s.user.trim());
-    this.messages.add({
-      severity: ok ? 'success' : 'warn',
-      summary: this.translate.instant(ok ? `repositories.emails.mailbox.test_ok_${which}` : 'repositories.emails.mailbox.test_missing'),
-      life: ok ? TOAST_LIFE.success : TOAST_LIFE.warn,
+    // El resultado, junto al botón que lo probó (DD-191).
+    this.prueba.set({
+      which,
+      ok,
+      texto: this.translate.instant(ok ? `repositories.emails.mailbox.test_ok_${which}` : 'repositories.emails.mailbox.test_missing'),
     });
   }
 
@@ -203,14 +194,15 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
     if (this.mode() === 'create') {
       const created = this.store.addItem({ ...draft, createdAt: ahora(), modifiedAt: ahora(), totalEmails: 0 });
       this.dirtyState.markPristine();
-      this.toast('repositories.toasts.created', created.name);
-      void this.router.navigateByUrl(`/admin/emails/cuentas/editar/${created.id}`, { replaceUrl: true });
+      const creado = this.texto('repositories.toasts.created', created.name);
+      // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
+      void this.router.navigateByUrl(`/admin/emails/cuentas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.enLaBarra(creado));
       return;
     }
     this.store.updateItem(this.mailboxId!, { ...draft, createdAt: this.createdAt, modifiedAt: ahora(), totalEmails: this.totalEmails });
     this.form.set(draft);
     this.dirtyState.markPristine();
-    this.toast('repositories.toasts.updated', draft.name);
+    this.resultado.enLaBarra(this.texto('repositories.toasts.updated', draft.name));
   }
 
   protected discard(): void {
@@ -222,11 +214,9 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
     if (this.formDirty()) event.preventDefault();
   }
 
-  private toast(key: string, name: string): void {
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(key, { entity: this.translate.instant('repositories.emails.mailbox_singular'), name }),
-      life: TOAST_LIFE.success,
-    });
+  /** El texto de «creado», «actualizado» o «eliminado» de esta entidad. */
+  private texto(key: string, name: string): string {
+    return this.translate.instant(key, { entity: this.translate.instant('repositories.emails.mailbox_singular'), name });
   }
+
 }
