@@ -1,20 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  Injector,
-  input,
-  OnInit,
-  signal,
-  type TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScCheckboxComponent as CheckboxComponent,
   ScFactRowComponent as FactRowComponent,
@@ -23,10 +10,9 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { SectionLinksService } from '@core/services';
+import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { EMAIL_RE } from '@core/utils/validators';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -121,7 +107,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   private readonly sectionLinks = inject(SectionLinksService);
   private readonly injector = inject(Injector);
   private readonly usersStore = inject(UsersStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
@@ -215,6 +201,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
    *  (admin/AED/builder); `formDirty` queda de alias para el guard de salida. */
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.formDirty()) this.resultado.limpiar();
+  });
 
   /**
    * EL ÍNDICE DE LA FICHA (DD-122): el mismo de la ficha de grupo y de Contact Center, con UN orden en
@@ -596,22 +586,14 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
         this.usersStore.updateUser(editingId, { ...payload });
         const refreshed = this.usersStore.getUser(editingId);
         if (refreshed) this.initial.set(refreshed);
-        this.messages.add({
-          severity: 'success',
-          summary: this.translate.instant('users.toasts.updated', { name: payload.name }),
-          life: TOAST_LIFE.success,
-        });
+        this.resultado.enLaBarra(this.translate.instant('users.toasts.updated', { name: payload.name }));
         this.saving.set(false);
         this.dirtyState.markPristine();
         return;
       }
 
       const created = this.usersStore.addUser(payload);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('users.toasts.created', { name: created.name }),
-        life: TOAST_LIFE.success,
-      });
+      const creado = this.translate.instant('users.toasts.created', { name: created.name });
       this.dirtyState.markPristine();
       const slug = Object.entries(UserFormPageComponent.SECTION_SLUGS).find(([, v]) => v === this.activeSection())?.[0];
       void this.router
@@ -619,6 +601,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
           replaceUrl: true,
           queryParams: slug && slug !== 'identidad' ? { seccion: slug } : {},
         })
+        // Tras llegar a la ficha nueva: antes, el cambio de página se lo llevaría (DD-191).
+        .then(() => this.resultado.enLaBarra(creado))
         .finally(() => this.saving.set(false));
     }, 400);
   }
@@ -644,13 +628,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     this.usersStore.deleteUser(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('users.toasts.deleted_single', {
-        name: user?.name ?? '',
-      }),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant('users.toasts.deleted_single', { name: user?.name ?? '' }));
     void this.router.navigateByUrl('/admin/usuarios');
   }
 

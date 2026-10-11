@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  TemplateRef,
-  computed,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, TemplateRef, viewChild } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type {
   ScMatrixColumn,
@@ -14,12 +6,10 @@ import type {
   ScMatrixRow,
   ScMatrixToggle,
 } from '@smartcontact-hub/components';
-import { MessageService } from 'primeng/api';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { stableStringify } from '@shared/utils/form-dirty-state';
 import {
   AgentDefaults,
@@ -42,6 +32,7 @@ import {
   ScSectionCardComponent as SectionCardComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
+import { ResultadoAccionService } from '@core/services';
 
 /**
  * Contact Center › Agentes — `/config/aed/agentes`. Con esto nace cada agente nuevo (DD-135).
@@ -71,7 +62,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AedAgentesPageComponent implements DirtyAware {
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   /* El idioma como DEPENDENCIA de los computed de la matriz: `translate.instant()` es una llamada, no una señal, y
    * sin esto las cabeceras y los nombres de fila se congelan al cambiar de idioma (§6 de `audit:datatables`). */
@@ -85,6 +76,10 @@ export class AedAgentesPageComponent implements DirtyAware {
   protected readonly dirty = computed(
     () => stableStringify(this.form()) !== stableStringify(this.store.defaults()),
   );
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.dirty()) this.resultado.limpiar();
+  });
   protected readonly canSave = computed(() => this.dirty() && !this.saving());
   /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
   readonly formDirty = this.dirty;
@@ -156,11 +151,7 @@ export class AedAgentesPageComponent implements DirtyAware {
     setTimeout(() => {
       this.store.save(structuredClone(this.form()));
       this.saving.set(false);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('config.aed.subpages.agentes.toast.saved'),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.enLaBarra(this.translate.instant('config.aed.subpages.agentes.toast.saved'));
     }, 600);
   }
 }

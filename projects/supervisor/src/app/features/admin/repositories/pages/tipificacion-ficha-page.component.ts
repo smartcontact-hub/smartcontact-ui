@@ -1,20 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  Injector,
-  input,
-  type OnInit,
-  signal,
-  type TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import {
   ScButtonComponent as ButtonComponent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -27,9 +14,8 @@ import {
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { SectionLinksService } from '@core/services';
+import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { AltaPieComponent } from '@shared/components';
 import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
@@ -108,7 +94,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   private readonly store = inject(TipificacionesStore);
   private readonly groupsStore = inject(GroupsStore);
   private readonly uso = inject(TipificacionUsoService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
@@ -124,6 +110,10 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   protected readonly form = signal<Borrador>(NUEVA);
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.formDirty()) this.resultado.limpiar();
+  });
   protected readonly deleteVisible = signal(false);
 
   /* ── El índice ────────────────────────────────────────────────────────── */
@@ -302,18 +292,21 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     if (this.mode() === 'create') {
       const created = this.store.addItem(borrador);
       this.dirtyState.markPristine();
-      this.toast('repositories.toasts.created', created.name);
+      const creado = this.texto('repositories.toasts.created', created.name);
       const slug = Object.entries(TipificacionFichaPageComponent.SLUGS).find(([, v]) => v === this.activeSection())?.[0];
-      void this.router.navigate(['/admin/tipificaciones/editar', created.id], {
-        replaceUrl: true,
-        queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
-      });
+      // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
+      void this.router
+        .navigate(['/admin/tipificaciones/editar', created.id], {
+          replaceUrl: true,
+          queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
+        })
+        .then(() => this.resultado.enLaBarra(creado));
       return;
     }
     this.store.updateItem(this.editingId()!, borrador);
     this.form.set(borrador);
     this.dirtyState.markPristine();
-    this.toast('repositories.toasts.updated', borrador.name);
+    this.resultado.enLaBarra(this.texto('repositories.toasts.updated', borrador.name));
   }
 
   protected discard(): void {
@@ -340,7 +333,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     this.store.deleteItem(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.toast('repositories.toasts.deleted_single', name);
+    this.resultado.visto(this.texto('repositories.toasts.deleted_single', name));
     void this.router.navigateByUrl('/admin/tipificaciones');
   }
 
@@ -357,11 +350,9 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     }
   }
 
-  private toast(key: string, name: string): void {
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(key, { entity: this.translate.instant('repositories.tipificaciones.singular'), name }),
-      life: TOAST_LIFE.success,
-    });
+  /** El texto de «creado», «actualizado» o «eliminado» de esta entidad. */
+  private texto(key: string, name: string): string {
+    return this.translate.instant(key, { entity: this.translate.instant('repositories.tipificaciones.singular'), name });
   }
+
 }

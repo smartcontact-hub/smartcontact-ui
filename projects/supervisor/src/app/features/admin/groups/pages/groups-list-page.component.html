@@ -42,6 +42,10 @@
 
   <ng-container ngProjectAs="[scListBulkActions]">
     <sc-bulk-edit-menu matchable [fields]="bulkEditFields()" [buttonLabel]="'common.edit' | translate" (match)="onBulkMatch($event)" (commit)="onBulkEditCommit($event)" />
+    <!-- Por qué no se aplicó, junto al menú que lo intentó (DD-191); se va al cambiar la selección. -->
+    @if (bulkAviso(); as aviso) {
+      <sc-message severity="warn" variant="simple" size="sm" icon="info" [text]="aviso" />
+    }
     <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>

@@ -33,6 +33,7 @@ import { EMPTY_FILTERS } from '../../data/conversation-filters.types';
 import { ConversationsStore } from '../../state/conversations.store';
 import { TopBarSlotService } from '../../../../core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { ResultadoAccionService } from '@core/services';
 
 /**
  * Pantalla principal del módulo Memory (`/conversaciones`).
@@ -85,6 +86,7 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 export class ConversationsPageComponent implements OnInit, OnDestroy {
   private readonly conversationsStore = inject(ConversationsStore);
   private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly topBarSlot = inject(TopBarSlotService);
 
@@ -233,11 +235,8 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
     const ids = [...this.selectedIds()];
     this.conversationsStore.markAsRead(ids);
     this.conversationsStore.clearSelection();
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('memory.bulk.mark_read_toast', { n }),
-      life: TOAST_LIFE.success,
-    });
+    // Las filas dejan de marcarse en el acto: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(this.translate.instant('memory.bulk.mark_read_toast', { n }));
   }
 
   protected onBulkModalClose(): void {
@@ -259,18 +258,11 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
     // player-modal (S47 §10 #4). En producción este punto llamará al
     // endpoint de descarga.
     if (opts.recordings) {
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('memory.bulk.download_audio_toast', { n }),
-        life: TOAST_LIFE.success,
-      });
+      // Sin backend, no hay descarga que enseñe el navegador: el aviso, en la barra (DD-191).
+      this.resultado.enLaBarra(this.translate.instant('memory.bulk.download_audio_toast', { n }));
     }
     if (opts.chats) {
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('memory.bulk.download_chat_toast', { n }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.enLaBarra(this.translate.instant('memory.bulk.download_chat_toast', { n }));
     }
   }
 
@@ -347,7 +339,8 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
         summary: this.translate.instant('memory.dispatch.all_failed', {
           n: result.failedIds.length,
         }),
-        life: TOAST_LIFE.error,
+        // Un error no se cierra solo (DD-191): se queda hasta que se cierra a mano.
+        sticky: true,
       });
     } else {
       this.messages.add({
@@ -356,7 +349,7 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
           ok: result.successIds.length,
           ko: result.failedIds.length,
         }),
-        life: TOAST_LIFE.warn,
+        sticky: true,
       });
     }
   }
@@ -463,11 +456,7 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
         return;
       case 'mark-read':
         this.conversationsStore.markAsRead([conversation.id]);
-        this.messages.add({
-          severity: 'success',
-          summary: this.translate.instant('memory.bulk.mark_read_toast', { n: 1 }),
-          life: TOAST_LIFE.success,
-        });
+        this.resultado.visto(this.translate.instant('memory.bulk.mark_read_toast', { n: 1 }));
         return;
     }
   }

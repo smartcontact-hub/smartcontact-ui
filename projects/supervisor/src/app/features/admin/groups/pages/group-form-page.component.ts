@@ -1,20 +1,6 @@
-import {
-  afterNextRender,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  Injector,
-  input,
-  OnInit,
-  signal,
-  type TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
 import { TipificacionArbolComponent } from '@features/admin/repositories/components/tipificacion-arbol/tipificacion-arbol.component';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
@@ -22,8 +8,7 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { SectionLinksService } from '@core/services';
-import { TOAST_LIFE } from '@core/utils/toast-life';
+import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceRowsComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
@@ -234,7 +219,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   private readonly groupsStore = inject(GroupsStore);
   private readonly agentsStore = inject(AgentsStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly sectionLinks = inject(SectionLinksService);
@@ -575,6 +560,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    *  (admin/AED/builder); `formDirty` queda de alias para el guard de salida. */
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
+  /** «Copiar» pasa a «Copiado» dos segundos, como Primer (DD-191). */
+  protected readonly copiado = signal(false);
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.formDirty()) this.resultado.limpiar();
+  });
 
   protected readonly queueInvalid = computed(() =>
     (this.hasPhone() && !validQueueSize(this.form().phoneQueue)) ||
@@ -1104,7 +1095,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
 
   protected copyChatScript(): void {
     void navigator.clipboard?.writeText(this.chatScript());
-    this.messages.add({ severity: 'success', summary: this.translate.instant('groups.form.advanced.script_copied'), life: TOAST_LIFE.success });
+    this.copiado.set(true);
+    this.resultado.visto(this.translate.instant('groups.form.advanced.script_copied'));
+    setTimeout(() => this.copiado.set(false), 2000);
   }
 
   protected onSubStrategyChange(value: unknown): void {
@@ -1308,11 +1301,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(this.withoutOrphans(f.links), editingId));
       const refreshed = this.groupsStore.getGroup(editingId);
       if (refreshed) this.initial.set(refreshed);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('groups.toasts.updated', { name: payload.name }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.enLaBarra(this.translate.instant('groups.toasts.updated', { name: payload.name }));
       // Lo guardado pasa a ser la referencia para avisar si luego se quita un canal con agentes.
       this.initialChannels.set(new Set(f.channels));
       this.initialLinks.set(this.linksStore.linksForGroup(editingId));
@@ -1331,11 +1320,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     const slug = this.sectionSlug(this.activeSection());
     const created = this.groupsStore.addGroup(payload);
     this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(this.withoutOrphans(f.links), created.id));
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('groups.toasts.created', { name: created.name }),
-      life: TOAST_LIFE.success,
-    });
+    const creado = this.translate.instant('groups.toasts.created', { name: created.name });
     this.dirtyState.markPristine();
     // `saving` sigue encendido hasta que se va (ver `activeSection`).
     void this.router
@@ -1343,6 +1328,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
         replaceUrl: true,
         queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
       })
+      // Tras llegar a la ficha nueva: antes, el cambio de página se lo llevaría (DD-191).
+      .then(() => this.resultado.enLaBarra(creado))
       .finally(() => this.saving.set(false));
   }
 
@@ -1391,13 +1378,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     this.linksStore.removeGroup(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('groups.toasts.deleted_single', {
-        name: group?.name ?? '',
-      }),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant('groups.toasts.deleted_single', { name: group?.name ?? '' }));
     void this.router.navigateByUrl('/admin/grupos');
   }
 

@@ -563,6 +563,10 @@
               [label]="'agents.form.advanced.sesion.expire_pwd' | translate"
               (clicked)="requestExpirePassword()"
             />
+            <!-- Lo hecho, junto al botón que lo hizo (DD-191). -->
+            @if (expiraAviso(); as aviso) {
+              <sc-message severity="success" variant="simple" size="sm" icon="check_circle" [text]="aviso" />
+            }
           </div>
         }
       </div>

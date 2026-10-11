@@ -598,7 +598,8 @@
                 <label class="field__label sc-text-caption-semibold" for="group-chat-script">{{ 'groups.form.advanced.script_title' | translate }}</label>
                 <p id="group-chat-script-help" class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.script_hint' | translate }}</p>
                 <sc-textarea inputId="group-chat-script" ariaDescribedBy="group-chat-script-help" [rows]="2" fluid readonly [value]="chatScript()" />
-                <sc-button class="script-copy" size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'groups.form.advanced.script_copy' | translate" (clicked)="copyChatScript()" />
+                <!-- «Copiar» pasa a «Copiado» dos segundos, como Primer (DD-191). -->
+                <sc-button class="script-copy" size="sm" variant="secondary" appearance="outlined" [icon]="copiado() ? 'check' : 'content_copy'" [label]="(copiado() ? 'groups.form.advanced.script_copied' : 'groups.form.advanced.script_copy') | translate" (clicked)="copyChatScript()" />
               </div>
             </div>
           </sc-slot>

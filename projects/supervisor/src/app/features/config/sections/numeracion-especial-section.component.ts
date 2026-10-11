@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScChipComponent as ChipComponent } from '@smartcontact-hub/components';
+import { ScChipComponent as ChipComponent, ScMessageComponent } from '@smartcontact-hub/components';
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
@@ -11,9 +10,9 @@ import {
   ScSectionCardComponent as SectionCardComponent,
 } from '@smartcontact-hub/components';
 
-import { TOAST_LIFE } from '@core/utils/toast-life';
 
 import { COUNTRY_PREFIXES, type CountryPrefix } from '../data/country-prefixes';
+import { ResultadoAccionService } from '@core/services';
 
 /**
  * Numeración especial section — country-prefix multiselect with
@@ -39,13 +38,14 @@ import { COUNTRY_PREFIXES, type CountryPrefix } from '../data/country-prefixes';
     SectionCardComponent,
     DividerComponent,
     TranslateModule,
+    ScMessageComponent,
   ],
   templateUrl: './numeracion-especial-section.component.html',
   styleUrl: './numeracion-especial-section.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NumeracionEspecialSectionComponent {
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
 
   protected readonly hashIcon = 'tag';
@@ -59,6 +59,11 @@ export class NumeracionEspecialSectionComponent {
   protected readonly selectedCodes = signal<ReadonlySet<string>>(new Set());
   protected readonly searchQuery = signal('');
   protected readonly dirty = signal(false);
+  /** Lo guardado, junto a los botones de la sección (DD-191); se va con el siguiente cambio. */
+  protected readonly guardadoAviso = signal<string | null>(null);
+  private readonly limpiaAviso = effect(() => {
+    if (this.dirty()) this.guardadoAviso.set(null);
+  });
   protected readonly saving = signal(false);
 
   protected readonly filtered = computed(() => {
@@ -114,14 +119,9 @@ export class NumeracionEspecialSectionComponent {
       this.saving.set(false);
       this.dirty.set(false);
       const count = this.selectedCodes().size;
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant(
-          count === 1 ? 'config.aed.toast.saved_one' : 'config.aed.toast.saved_many',
-          { count },
-        ),
-        life: TOAST_LIFE.success,
-      });
+      this.guardadoAviso.set(
+        this.translate.instant(count === 1 ? 'config.aed.toast.saved_one' : 'config.aed.toast.saved_many', { count }),
+      );
     }, 600);
   }
 

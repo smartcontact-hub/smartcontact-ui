@@ -1,22 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  Injector,
-  input,
-  OnInit,
-  signal,
-  type TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { LowerCasePipe, NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
 import type {
   ScMatrixColumn,
@@ -30,10 +17,9 @@ import { ScButtonComponent as ButtonComponent,
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { SectionLinksService } from '@core/services';
+import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import {
   AltaPieComponent,
   NameInplaceComponent,
@@ -228,7 +214,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   private readonly agentDefaults = inject(AgentDefaultsStore);
   private readonly groupsStore = inject(GroupsStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   /* El idioma como DEPENDENCIA de los computed de abajo. `translate.instant()`
    * es una llamada, no una señal: sin esto las cabeceras y los nombres de fila
@@ -893,6 +879,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    *  lectura para el guard de salida (DirtyAware) y el template. */
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
+  /** Lo que dice «Caducar contraseña» al hacerse, junto a su botón (DD-191). */
+  protected readonly expiraAviso = signal<string | null>(null);
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.formDirty()) this.resultado.limpiar();
+  });
 
   protected readonly mode = computed<'edit' | 'duplicate' | 'create'>(() => {
     if (this.editingId()) return 'edit';
@@ -1105,14 +1097,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       acceptTone: 'danger',
     });
     if (!ok) return;
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(
-        'agents.form.advanced.sesion.expire_toast',
-        { name }
-      ),
-      life: TOAST_LIFE.success,
-    });
+    this.expiraAviso.set(this.translate.instant('agents.form.advanced.sesion.expire_toast', { name }));
   }
 
   protected onRandomOrderChange(checked: boolean): void {
@@ -1258,13 +1243,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         this.form.update(current => ({ ...current, links: this.linksStore.linksForAgent(editingId) }));
         const refreshed = this.agentsStore.getAgent(editingId);
         if (refreshed) this.initial.set(refreshed);
-        this.messages.add({
-          severity: 'success',
-          summary: this.translate.instant('agents.toasts.updated', {
-            name: payload.name,
-          }),
-          life: TOAST_LIFE.success,
-        });
+        this.resultado.enLaBarra(this.translate.instant('agents.toasts.updated', { name: payload.name }));
       } else {
         this.createAgent(payload);
         return;
@@ -1286,17 +1265,15 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     const slug = Object.entries(AgentFormPageComponent.SECTION_SLUGS).find(([, v]) => v === this.activeSection())?.[0];
     const created = this.agentsStore.addAgent(payload);
     this.linksStore.replaceLinksForAgent(created.id, this.normalizeLinks(f.links, created.id));
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('agents.toasts.created', { name: created.name }),
-      life: TOAST_LIFE.success,
-    });
+    const creado = this.translate.instant('agents.toasts.created', { name: created.name });
     this.dirtyState.markPristine();
     void this.router
       .navigate(['/admin/agentes/editar', created.id], {
         replaceUrl: true,
         queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
       })
+      // Tras llegar a la ficha nueva: antes, el cambio de página se lo llevaría (DD-191).
+      .then(() => this.resultado.enLaBarra(creado))
       .finally(() => this.saving.set(false));
   }
 
@@ -1336,13 +1313,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     this.linksStore.removeAgent(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('agents.toasts.deleted_single', {
-        name: agent?.name ?? '',
-      }),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant('agents.toasts.deleted_single', { name: agent?.name ?? '' }));
     void this.router.navigateByUrl('/admin/agentes');
   }
 

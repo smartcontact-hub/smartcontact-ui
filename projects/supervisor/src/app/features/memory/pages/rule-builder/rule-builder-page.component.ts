@@ -13,14 +13,12 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { DirtyAware } from '@core/guards';
-import { SectionLinksService } from '@core/services';
+import { ResultadoAccionService, SectionLinksService } from '@core/services';
 
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
@@ -93,7 +91,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly router = inject(Router);
   private readonly rulesStore = inject(RulesStore);
   private readonly categoriesStore = inject(CategoriesStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
   private readonly resolver = inject(ConditionResolverService);
@@ -446,18 +444,10 @@ export class RuleBuilderPageComponent implements DirtyAware {
 
     if (this.isEditMode()) {
       this.rulesStore.updateRule(this.ruleId()!, base);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('memory.rules.builder.updated_toast'),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('memory.rules.builder.updated_toast'));
     } else {
       this.rulesStore.addRule(base);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('memory.rules.builder.created_toast'),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('memory.rules.builder.created_toast'));
     }
     // Just saved → the current form IS the clean state; don't prompt on the way out.
     this.dirtyState.markPristine();

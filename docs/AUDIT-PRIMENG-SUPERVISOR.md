@@ -99,7 +99,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `iconPos`, `motionOptions`, `toggleButtonProps`, `toggler`
 
-### `sc-message` · 4 usos · primeng/message
+### `sc-message` · 9 usos · primeng/message
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
 
@@ -143,7 +143,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-divider` · 23 usos · primeng/divider
+### `sc-divider` · 24 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
 

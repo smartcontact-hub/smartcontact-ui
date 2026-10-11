@@ -11,11 +11,9 @@ import {
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 
 import {
   ScButtonComponent as ButtonComponent,
@@ -38,6 +36,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
 import { stableStringify } from '../../../shared/utils/form-dirty-state';
 import { injectLangChange } from '@core/utils/lang-change';
+import { ResultadoAccionService } from '@core/services';
 
 interface VisibilidadEstados {
   postConversando: boolean;
@@ -223,7 +222,7 @@ const BLOQUEO_RULES: readonly {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AedServicioPageComponent implements DirtyAware {
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   protected readonly addIcon = 'add';
@@ -273,6 +272,14 @@ export class AedServicioPageComponent implements DirtyAware {
   protected readonly dirty = computed(
     () => stableStringify(this.form()) !== stableStringify(this.pristine()),
   );
+
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+
+  private readonly limpiaResultado = effect(() => {
+
+    if (this.dirty()) this.resultado.limpiar();
+
+  });
   protected readonly canSave = computed(() => this.dirty() && !this.saving());
 
   /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
@@ -470,11 +477,7 @@ export class AedServicioPageComponent implements DirtyAware {
     setTimeout(() => {
       this.saving.set(false);
       this.pristine.set(structuredClone(this.form()));
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('config.aed.subpages.servicio.toast.saved'),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.enLaBarra(this.translate.instant('config.aed.subpages.servicio.toast.saved'));
     }, 600);
   }
 
