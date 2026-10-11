@@ -2692,6 +2692,10 @@
     "presence_ring": {
       "title": "¿Punto o aro para el estado?",
       "body": "El estado va en un punto sobre la foto. Medía 16 px en una foto de 24: dos tercios de la foto, la tapaba. Ahora es proporcional, un 30 % de la foto (8 px) con su borde blanco. La otra opción es un aro de color alrededor de la foto, que no tapa nada pero solo dice el estado por el color. Propuesta: el punto proporcional. Solo sale donde el estado sirve para decidir (aquí), no en el listado de Administración."
+    },
+    "empty_cells": {
+      "title": "¿Celdas vacías con «—» o en blanco?",
+      "body": "GitHub (Primer) las deja en blanco porque el lector de pantalla lee el guion. En una tabla con tantas columnas, una celda en blanco parece que no ha cargado. Propuesta: «—» en gris, y el lector oye «Sin dato» (o «No aplica» cuando el grupo no tiene ese canal). Si el vacío significa algo, se escribe: «Nunca», «Sin asignar», o «0» si es una cifra."
     }
   }
 }

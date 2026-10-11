@@ -170,7 +170,8 @@ porqué al lector le da más que el guion a la vista: «No aplica» no es lo mis
 
 **Consecuencias** · `audit:screen-hygiene` gana la regla 5 (`guionesSueltos`, con sus pruebas): en `main` cazaba los
 14. `common.empty_cell` y `common.not_applicable`, en los cuatro idiomas. `listado-grupos.spec.ts` espera «—» y su
-texto para el lector.
+texto para el lector. Para revisarlo con el equipo, una nota de decisión junto al título de Agentes
+(`decision_notes.empty_cells`); se quita cuando el equipo lo dé por bueno.
 
 ---
 

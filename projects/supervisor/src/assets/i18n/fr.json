@@ -2692,6 +2692,10 @@
     "presence_ring": {
       "title": "Point ou anneau pour l'état ?",
       "body": "L'état est un point sur la photo. Il faisait 16 px sur une photo de 24 : deux tiers de la photo, il la couvrait. Il est désormais proportionnel, 30 % de la photo (8 px) avec sa bordure blanche. L'autre option est un anneau de couleur autour de la photo, qui ne couvre rien mais ne dit l'état que par la couleur. Proposition : le point proportionnel. Il n'apparaît que là où l'état aide à décider (ici), pas dans la liste d'Administration."
+    },
+    "empty_cells": {
+      "title": "Cellules vides avec « — » ou laissées en blanc ?",
+      "body": "GitHub (Primer) les laisse en blanc parce que le lecteur d'écran lit le tiret. Dans un tableau avec autant de colonnes, une cellule vide semble ne pas avoir chargé. Proposition : un « — » gris, et le lecteur d'écran entend « Aucune donnée » (ou « Non applicable » quand le groupe n'a pas ce canal). Si le vide signifie quelque chose, on l'écrit : « Jamais », « Non attribué », ou « 0 » s'il s'agit d'un nombre."
     }
   }
 }

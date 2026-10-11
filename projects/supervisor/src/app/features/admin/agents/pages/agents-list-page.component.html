@@ -42,6 +42,8 @@
 
   <!-- ¿Filtrar por estado aquí? Lo decide el equipo (revisión de agentes, 2026-10-09). -->
   <sc-nota-decision scListHeadingNote claveTitulo="decision_notes.state_filter.title" claveTexto="decision_notes.state_filter.body" />
+  <!-- Para la revisión con el equipo: las celdas vacías llevan «—» y el lector oye «Sin dato» (DD-197). -->
+  <sc-nota-decision scListHeadingNote claveTitulo="decision_notes.empty_cells.title" claveTexto="decision_notes.empty_cells.body" />
 
   <ng-container ngProjectAs="[scListBulkActions]">
     <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'common.edit' | translate" (commit)="onBulkEditCommit($event)" />
