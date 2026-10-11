@@ -67,13 +67,9 @@ test('la ficha de grupo no tiene ⓘ: cada ayuda se lee sin pasar el ratón', as
     await expect(page.locator('main button .sc-icon-font--info'), seccion).toHaveCount(0);
   }
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
-  const dominio = page.getByRole('textbox', { name: 'Dominios permitidos' });
+  // Desde DD-194 los dominios son un `sc-inputtags` (su campo es un combobox) y ya no hay botón «Añadir» al lado.
+  const dominio = page.getByRole('combobox', { name: 'Dominios permitidos' });
   await expect(dominio).toHaveAccessibleDescription(/^Las webs donde se puede insertar el chat/);
-  // La ayuda va dentro del campo, así que la fila ya no centra «Añadir» contra campo + ayuda: el botón se alinea con el
-  // campo (con la ayuda de dos líneas, cayó 21 px).
-  const añadir = page.getByRole('button', { name: 'Añadir' });
-  const [c, b] = [await dominio.boundingBox(), await añadir.boundingBox()];
-  expect(Math.abs(b!.y + b!.height / 2 - (c!.y + c!.height / 2))).toBeLessThanOrEqual(1);
 });
 
 test('los desplegables del DS hablan el idioma de la app: en inglés, «No results» y «Search»', async ({ page }) => {
