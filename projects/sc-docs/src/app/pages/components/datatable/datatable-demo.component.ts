@@ -345,7 +345,7 @@ export class DatatableDemoComponent {
       { name: 'Lazy (server-driven): paginación + orden + filtro global', template: lz, snippet: LAZY_SNIPPET },
       { name: 'Gestos de fila y columnas conmutables', template: gs, snippet: GESTURES_SNIPPET },
       { name: 'variant="list" · la gramática de tabla-lista', template: ls, snippet: LIST_SNIPPET },
-      { name: 'Columnas fijas', template: fr, snippet: `<!-- ScColumnDef: frozen activa pFrozenColumn; alignFrozen elige izquierda (defecto) o derecha; rowHeader pinta la celda como <th scope="row">. -->
+      { name: 'Columnas fijas', template: fr, snippet: `<!-- ScColumnDef: frozen fija la columna (alignFrozen elige el lado); rowHeader la pinta como <th scope="row">. -->
 <sc-datatable [value]="agents()" [columns]="frozenColumns" scrollable tableMinWidth="70rem" selectionMode="multiple" dataKey="id" />` },
     ];
   });
