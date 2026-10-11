@@ -1751,6 +1751,21 @@
     "rename_aria": "Rename {{name}}",
     "bulk_edit_title": "Apply change to {{count}} user(s)"
   },
+  "resources": {
+    "templates_chat": "Chat templates",
+    "templates_email": "Email templates",
+    "none": "None",
+    "selected_many": "{0} selected",
+    "agendas_count": "{0} address books",
+    "agendas_count_one": "1 address book",
+    "templates_count": "{0} templates",
+    "templates_count_one": "1 template",
+    "manage_link": "Manage in Repositories",
+    "teams_hint": "To find them when filtering. They don't route conversations.",
+    "teams_count": "{0} teams",
+    "teams_count_one": "1 team",
+    "none_m": "None"
+  },
   "groups": {
     "page_title": "Groups",
     "create_button": "New group",
@@ -2212,6 +2227,7 @@
           "pickup_call": "Call pickup",
           "pickup_chat": "Chat pickup",
           "max_chats": "Concurrent chats",
+          "max_chats_inactive": "Concurrent chats: turn on the Chat channel in General",
           "random_order": "Random order",
           "random_order_hint": "Show agents in random order within the group"
         },
@@ -2317,27 +2333,14 @@
         "row_especial": "Special numbering",
         "config_title": "Configuration",
         "manage_devices_no_phone": "Needs a mobile phone, in General.",
-        "pending_conversations": "Pending conversations management"
+        "pending_conversations": "Pending conversations management",
+        "slot_access": "Access and devices",
+        "slot_tracking": "Recording and tracking"
       },
       "danger_zone_description": "Deleting this agent unassigns them from all groups they participate in. The action cannot be undone.",
       "duplicate_title": "Duplicate agent",
       "duplicate_breadcrumb": "Duplicate agent",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
-      "resources": {
-        "templates_chat": "Chat templates",
-        "templates_email": "Email templates",
-        "none": "None",
-        "selected_many": "{0} selected",
-        "agendas_count": "{0} address books",
-        "agendas_count_one": "1 address book",
-        "templates_count": "{0} templates",
-        "templates_count_one": "1 template",
-        "manage_link": "Manage in Repositories",
-        "teams_hint": "To find them when filtering. They don't route conversations.",
-        "teams_count": "{0} teams",
-        "teams_count_one": "1 team",
-        "none_m": "None"
-      },
       "summary": {
         "no_groups": "No groups",
         "groups_active": "Enabled in groups",

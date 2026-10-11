@@ -660,8 +660,8 @@
               optionValue="value"
               [filter]="true"
               [maxSelectedLabels]="0"
-              [selectedItemsLabel]="(scheduleValue().length === 1 ? 'agents.form.resources.agendas_count_one' : 'agents.form.resources.agendas_count') | translate"
-              [placeholder]="'agents.form.resources.none' | translate"
+              [selectedItemsLabel]="(scheduleValue().length === 1 ? 'resources.agendas_count_one' : 'resources.agendas_count') | translate"
+              [placeholder]="'resources.none' | translate"
               [options]="scheduleOptions()"
               [value]="scheduleValue()"
               (valueChange)="onIdsChange('scheduleIds', $event)"
@@ -674,7 +674,7 @@
         @if (hasChatFamily()) {
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
-              {{ 'agents.form.resources.templates_chat' | translate }}
+              {{ 'resources.templates_chat' | translate }}
             </label>
             <div class="control-add">
               <sc-multiselect
@@ -683,22 +683,22 @@
                 optionValue="value"
                 [filter]="true"
                 [maxSelectedLabels]="0"
-                [selectedItemsLabel]="(chatTemplateValue().length === 1 ? 'agents.form.resources.templates_count_one' : 'agents.form.resources.templates_count') | translate"
-                [placeholder]="'agents.form.resources.none' | translate"
+                [selectedItemsLabel]="(chatTemplateValue().length === 1 ? 'resources.templates_count_one' : 'resources.templates_count') | translate"
+                [placeholder]="'resources.none' | translate"
                 [options]="chatTemplateOptions()"
                 [value]="chatTemplateValue()"
                 (valueChange)="onTemplatesChange('chat', $event)"
               />
               <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'chat', id: null })" />
             </div>
-            <sc-resource-rows [label]="'agents.form.resources.templates_chat' | translate" [rows]="chatTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'chat', id: +$event })" />
+            <sc-resource-rows [label]="'resources.templates_chat' | translate" [rows]="chatTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'chat', id: +$event })" />
           </div>
         }
 
         @if (hasEmail()) {
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-templates-email">
-              {{ 'agents.form.resources.templates_email' | translate }}
+              {{ 'resources.templates_email' | translate }}
             </label>
             <div class="control-add">
               <sc-multiselect
@@ -707,15 +707,15 @@
                 optionValue="value"
                 [filter]="true"
                 [maxSelectedLabels]="0"
-                [selectedItemsLabel]="(emailTemplateValue().length === 1 ? 'agents.form.resources.templates_count_one' : 'agents.form.resources.templates_count') | translate"
-                [placeholder]="'agents.form.resources.none' | translate"
+                [selectedItemsLabel]="(emailTemplateValue().length === 1 ? 'resources.templates_count_one' : 'resources.templates_count') | translate"
+                [placeholder]="'resources.none' | translate"
                 [options]="emailTemplateOptions()"
                 [value]="emailTemplateValue()"
                 (valueChange)="onTemplatesChange('email', $event)"
               />
               <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'email', id: null })" />
             </div>
-            <sc-resource-rows [label]="'agents.form.resources.templates_email' | translate" [rows]="emailTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'email', id: +$event })" />
+            <sc-resource-rows [label]="'resources.templates_email' | translate" [rows]="emailTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'email', id: +$event })" />
           </div>
         }
 
@@ -734,8 +734,8 @@
                 optionValue="value"
                 [filter]="true"
                 [maxSelectedLabels]="4"
-                [selectedItemsLabel]="'agents.form.resources.selected_many' | translate"
-                [placeholder]="'agents.form.resources.none' | translate"
+                [selectedItemsLabel]="'resources.selected_many' | translate"
+                [placeholder]="'resources.none' | translate"
                 [options]="labelOptions()"
                 [value]="labelValue()"
                 (valueChange)="onIdsChange('labelIds', $event)"
@@ -747,7 +747,7 @@
       </div>
 
       <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
-      <a class="repo-link sc-text-caption-semibold" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
+      <a class="repo-link sc-text-caption-semibold" routerLink="/admin/repositorios">{{ 'resources.manage_link' | translate }}</a>
       </div>
     </sc-subsection>
 

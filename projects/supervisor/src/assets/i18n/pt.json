@@ -1751,6 +1751,21 @@
     "rename_aria": "Renomear {{name}}",
     "bulk_edit_title": "Aplicar alteração a {{count}} usuário(s)"
   },
+  "resources": {
+    "templates_chat": "Modelos de chat",
+    "templates_email": "Modelos de email",
+    "none": "Nenhum",
+    "selected_many": "{0} selecionados",
+    "agendas_count": "{0} agendas",
+    "agendas_count_one": "1 agenda",
+    "templates_count": "{0} modelos",
+    "templates_count_one": "1 modelo",
+    "manage_link": "Gerenciar em Repositórios",
+    "teams_hint": "Para o encontrar ao filtrar. Não distribuem conversas.",
+    "teams_count": "{0} equipes",
+    "teams_count_one": "1 equipe",
+    "none_m": "Nenhuma"
+  },
   "groups": {
     "page_title": "Grupos",
     "create_button": "Novo grupo",
@@ -2212,6 +2227,7 @@
           "pickup_call": "Atendimento de chamadas",
           "pickup_chat": "Atendimento de chats",
           "max_chats": "Chats simultâneos",
+          "max_chats_inactive": "Chats simultâneos: ative o canal Chat em Geral",
           "random_order": "Ordem aleatória",
           "random_order_hint": "Visualizar agentes em ordem aleatória dentro do grupo"
         },
@@ -2317,27 +2333,14 @@
         "row_especial": "Numeração especial",
         "config_title": "Configuração",
         "manage_devices_no_phone": "Precisa de um telemóvel, em Geral.",
-        "pending_conversations": "Gestão de conversas pendentes"
+        "pending_conversations": "Gestão de conversas pendentes",
+        "slot_access": "Acesso e dispositivos",
+        "slot_tracking": "Gravação e acompanhamento"
       },
       "danger_zone_description": "Eliminar este agente o desassocia de todos os grupos onde participa. A ação não pode ser desfeita.",
       "duplicate_title": "Duplicar agente",
       "duplicate_breadcrumb": "Duplicar agente",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
-      "resources": {
-        "templates_chat": "Modelos de chat",
-        "templates_email": "Modelos de email",
-        "none": "Nenhum",
-        "selected_many": "{0} selecionados",
-        "agendas_count": "{0} agendas",
-        "agendas_count_one": "1 agenda",
-        "templates_count": "{0} modelos",
-        "templates_count_one": "1 modelo",
-        "manage_link": "Gerenciar em Repositórios",
-        "teams_hint": "Para o encontrar ao filtrar. Não distribuem conversas.",
-        "teams_count": "{0} equipes",
-        "teams_count_one": "1 equipe",
-        "none_m": "Nenhuma"
-      },
       "summary": {
         "no_groups": "Sem grupos",
         "groups_active": "Habilitado em grupos",
@@ -2364,7 +2367,7 @@
     "errors": {
       "name_required": "O nome é obrigatório",
       "extension_required": "Selecione um ramal",
-      "channels_required": "Marque pelo menos um canal",
+      "channels_required": "Selecione pelo menos um canal",
       "email_invalid": "Insira um email válido",
       "pin_invalid": "O PIN deve ter entre 3 e 6 dígitos",
       "phone_required": "Escreva o telemóvel: a extensão toca nele",

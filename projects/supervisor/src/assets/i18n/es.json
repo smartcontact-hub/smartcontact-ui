@@ -1751,6 +1751,21 @@
     "rename_aria": "Renombrar {{name}}",
     "bulk_edit_title": "Aplicar cambio a {{count}} usuario(s)"
   },
+  "resources": {
+    "templates_chat": "Plantillas de chat",
+    "templates_email": "Plantillas de email",
+    "none": "Ninguna",
+    "selected_many": "{0} seleccionadas",
+    "agendas_count": "{0} agendas",
+    "agendas_count_one": "1 agenda",
+    "templates_count": "{0} plantillas",
+    "templates_count_one": "1 plantilla",
+    "manage_link": "Gestionar en Repositorios",
+    "teams_hint": "Para encontrarlo al filtrar. No reparten conversaciones.",
+    "teams_count": "{0} equipos",
+    "teams_count_one": "1 equipo",
+    "none_m": "Ninguno"
+  },
   "groups": {
     "page_title": "Grupos",
     "create_button": "Nuevo grupo",
@@ -2215,6 +2230,7 @@
           "pickup_call": "Descuelgue de llamadas",
           "pickup_chat": "Descuelgue de chats",
           "max_chats": "Chats simultáneos",
+          "max_chats_inactive": "Chats simultáneos: actívalo en General con el canal Chat",
           "random_order": "Orden aleatorio",
           "random_order_hint": "Visualizar agentes en orden aleatorio dentro del grupo"
         },
@@ -2320,24 +2336,11 @@
         "row_especial": "Numeración especial",
         "config_title": "Configuración",
         "manage_devices_no_phone": "Necesita un teléfono móvil, en General.",
-        "pending_conversations": "Gestión de conversaciones pendientes"
+        "pending_conversations": "Gestión de conversaciones pendientes",
+        "slot_access": "Acceso y dispositivos",
+        "slot_tracking": "Grabación y seguimiento"
       },
       "danger_zone_description": "Eliminar este agente lo desasigna de todos los grupos donde participa. La acción no se puede deshacer.",
-      "resources": {
-        "templates_chat": "Plantillas de chat",
-        "templates_email": "Plantillas de email",
-        "none": "Ninguna",
-        "selected_many": "{0} seleccionadas",
-        "agendas_count": "{0} agendas",
-        "agendas_count_one": "1 agenda",
-        "templates_count": "{0} plantillas",
-        "templates_count_one": "1 plantilla",
-        "manage_link": "Gestionar en Repositorios",
-        "teams_hint": "Para encontrarlo al filtrar. No reparten conversaciones.",
-        "teams_count": "{0} equipos",
-        "teams_count_one": "1 equipo",
-        "none_m": "Ninguno"
-      },
       "summary": {
         "no_groups": "Sin grupos",
         "groups_active": "Habilitado en grupos",
@@ -2364,7 +2367,7 @@
     "errors": {
       "name_required": "El nombre es obligatorio",
       "extension_required": "Selecciona una extensión",
-      "channels_required": "Marca al menos un canal",
+      "channels_required": "Selecciona al menos un canal",
       "email_invalid": "Introduce un email válido",
       "pin_invalid": "El PIN debe tener entre 3 y 6 dígitos",
       "phone_required": "Escribe el teléfono móvil: la extensión suena en él",

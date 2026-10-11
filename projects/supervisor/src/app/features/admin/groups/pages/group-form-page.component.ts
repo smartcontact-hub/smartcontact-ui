@@ -403,7 +403,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return null;
   });
 
-  protected readonly channelsError = computed(() => this.attemptedGeneral() && this.form().channels.size === 0);
+  protected readonly channelsError = computed(
+    () => (this.mode() === 'edit' || this.attemptedGeneral()) && this.form().channels.size === 0,
+  );
 
   /**
    * Ir a otra sección. Al editar, libre. En el ALTA, General es la puerta: sin nombre y sin canales las
