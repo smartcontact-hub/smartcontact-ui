@@ -45,9 +45,9 @@
    nombra el sujeto EXACTO que mediste: un nombre colectivo ("el MCP", "el CI") son varias piezas
    que caen por separado. Dos validadores con el mismo modo de fallo no se corroboran. Si no puedes
    probarlo, el veredicto es "sin verificar", nunca "roto". ⚙️ tarjeta p.3; `bash-guard` para `claude mcp list`.
-   Evidencia: s11 Enter en `sc-datatable` (la acción `key` manda `key` vacío) · s31 inyecté `600px`
-   y declaré roto lo que PrimeNG normaliza · s32 `reducedMotion` escrito y no entregado · s27 "el
-   MCP de Figma" eran tres servers y sondeé uno · s44 el CLI decía Playwright ✔ y la sesión no lo tenía.
+   Evidencia: s11 Enter en `sc-datatable` (la acción `key` manda `key` vacío) · s31 inyecté `600px` y declaré roto lo que PrimeNG normaliza ·
+   s32 `reducedMotion` escrito y no entregado · s27 "el MCP de Figma" eran tres servers y sondeé uno · s44 el CLI decía Playwright ✔ y la
+   sesión no lo tenía · s45 `graphify hook install` dijo "installed" pero cayó en `.git/hooks/`, que `core.hooksPath` ignora.
 
 2. **Tu sonda, tu test o un GATE te da un verde y lo escribiste tú → valida el instrumento con
    un caso cuya respuesta ya sabes, en todos sus ejes, y ponle el fallo delante para verlo
