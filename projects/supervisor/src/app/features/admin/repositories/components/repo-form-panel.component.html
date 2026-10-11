@@ -13,7 +13,7 @@
       <label class="panel__label sc-text-caption-semibold" [attr.for]="'repo-field-' + field.key" [id]="'repo-field-' + field.key + '-label'">
         {{ field.labelKey | translate }}
         @if (!field.required) {
-          <span class="panel__hint">({{ 'common.optional' | translate }})</span>
+          <span class="panel__hint sc-text-caption-regular">({{ 'common.optional' | translate }})</span>
         }
       </label>
 

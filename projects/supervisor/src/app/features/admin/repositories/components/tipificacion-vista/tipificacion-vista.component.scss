@@ -156,6 +156,13 @@
   text-align: start;
   cursor: pointer;
 
+  &:hover:not(:disabled),
+  &[aria-expanded='true'] {
+    border-color: var(--sc-agent-window-pill-hover-bg);
+    background-color: var(--sc-agent-window-pill-hover-bg);
+    color: var(--sc-agent-window-fg);
+  }
+
   &:disabled {
     border-color: var(--sc-agent-window-disabled);
     background-color: transparent;

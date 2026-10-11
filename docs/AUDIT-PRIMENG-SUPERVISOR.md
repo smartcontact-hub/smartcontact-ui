@@ -215,7 +215,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-tag` · 30 usos · primeng/tag
+### `sc-tag` · 29 usos · primeng/tag
 
 Expone todo lo que PrimeNG documenta.
 
