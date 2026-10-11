@@ -18,7 +18,7 @@ import { createScFieldState, joinDescribedBy, type ScFieldSize } from '../field/
 
 /**
  * Un campo de varios valores cortos: se escribe uno, Enter (o la coma) lo convierte en etiqueta, y cada etiqueta se
- * quita con su ✕ o con Retroceso. Wrapper Extended sobre `<p-inputtags>` de primeng.dev (DD-194): la plantilla, las
+ * quita con su ✕ o con Retroceso. Wrapper Extended sobre `<p-inputtags>` de primeng.dev (DD-195): la plantilla, las
  * fichas, el teclado (flechas entre etiquetas) y el aspecto son los nativos, con los tokens del tema.
  *
  * **Cuándo sí y cuándo no**: una lista abierta de textos que escribe el usuario (dominios, etiquetas libres, correos de

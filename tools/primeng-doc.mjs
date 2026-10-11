@@ -170,7 +170,7 @@ async function main() {
   }
   const l = [];
   // La versión de PrimeNG es la de su package.json. El `version: "…"` de dentro del .mjs es la del compilador de
-  // Angular que lo empaquetó (22.1.2 con PrimeNG 22.1.0), y así se llegó a escribir una versión que no era (DD-194).
+  // Angular que lo empaquetó (22.1.2 con PrimeNG 22.1.0), y así se llegó a escribir una versión que no era (DD-195).
   const version = JSON.parse(readFileSync(resolve(ROOT, 'node_modules/primeng/package.json'), 'utf8')).version;
   const sha = gh(`repos/${REPO}/commits/master`).sha.slice(0, 7);
   l.push(`# ${comp} — primeng.dev/${comp}, entero`, '');

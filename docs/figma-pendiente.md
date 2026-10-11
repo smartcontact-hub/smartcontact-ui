@@ -1142,7 +1142,7 @@ del `content`, y la plantilla de listado mide 28, 14 y 7.
 
 ---
 
-## 42 · Las piezas nuevas del DS desde la revisión de grupos: FileUpload, IconTile, FactRow, Tag mediano, InputTags y la burbuja de estado (2026-10-11, DD-184 a DD-187 y DD-194)
+## 42 · Las piezas nuevas del DS desde la revisión de grupos: FileUpload, IconTile, FactRow, Tag mediano, InputTags y la burbuja de estado (2026-10-11, DD-184 a DD-187 y DD-195)
 
 **Estado:** pendiente · **Dónde:** el fichero del DS (maestros) · Ninguna variable nueva: todo sale de las que ya hay.
 La ficha de grupo entera no va (no tiene maqueta desde DD-121; ver abajo). **Mídelo antes**: ningún nodo de esta ficha
@@ -1161,7 +1161,7 @@ se ha leído en el fichero.
 - **Tag mediano** (`sc-tag size="md"`, DD-186): la píldora a 14 en semibold con relleno 1,75 × 10,5, para un valor entre
   valores de 14. El Tag del Kit (12 en negrita) sigue siendo el pequeño. Va con la ficha 38: si el Tag pasa a 600, el
   mediano ya nace así.
-- **InputTags** (`sc-inputtags`, DD-194): el Kit no tiene maestro (por eso sale «experimental» en sc-docs). El campo
+- **InputTags** (`sc-inputtags`, DD-195): el Kit no tiene maestro (por eso sale «experimental» en sc-docs). El campo
   de los demás (32,5 de alto, borde y radio de campo) con las etiquetas dentro: el Chip del Kit a 24,5 de alto, texto
   14, radio 6, y su ✕ al final; el texto guía a 14 detrás de la última. Mira antes si PrimeOne lo trae.
 - **La burbuja de estado en el avatar** (`sc-presence-avatar`, DD-185 y DD-187 §8): el Avatar con el Badge de punto,

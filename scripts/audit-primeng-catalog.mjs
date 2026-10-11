@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * AUDIT · el catálogo de PrimeNG contra su tabla (`docs/AUDIT-PRIMENG-CATALOGO.md`, DD-194).
+ * AUDIT · el catálogo de PrimeNG contra su tabla (`docs/AUDIT-PRIMENG-CATALOGO.md`, DD-195).
  *
  * POR QUÉ. `sc-fileupload` (DD-184) existía en PrimeNG desde siempre y se nos pasó: nada avisaba de «PrimeNG ya trae
  * esto». La tabla del catálogo se hizo a mano el 2026-10-07 y en cuatro días ya decía una versión que no era la

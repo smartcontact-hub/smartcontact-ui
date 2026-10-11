@@ -38,14 +38,14 @@ d4843e43:docs/handoff/supervisor-fichas.md`. El de ordenar por cualquier columna
 d94e5ad8:docs/handoff/supervisor-fichas.md`. El de las cuatro secciones en el mismo árbol (2026-10-06, DD-182, sin
 trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-11 · Lo que se decide de la auditoría de PrimeNG (DD-194)
+## ✅ 2026-10-11 · Lo que se decide de la auditoría de PrimeNG (DD-195)
 
 > **Sello:** rama `arebury/decisiones-auditoria` sobre main, HEAD `11c607cf`. Un PR; enseñado en local antes de subir.
 
 - **Entran:** `sc-inputtags` en «Dominios permitidos» de Web Chat (sustituye campo, «Añadir» y chips; guarda minúsculas,
   sin repetir y uno por etiqueta) y `sc-tabs` en Plantillas, el reproductor de Memory y «Uso» de sc-docs (el Monitor
   sigue directo: arrastra y renombra). El ✕ de las etiquetas dice «Quitar» (`aria.removeLabel` de PrimeNG).
-- **No entran** (el porqué, en DD-194): Tree/TreeSelect, OrderList, `sc-inputnumber` sobre `p-inputnumber` y una sola
+- **No entran** (el porqué, en DD-195): Tree/TreeSelect, OrderList, `sc-inputnumber` sobre `p-inputnumber` y una sola
   manera de editar un nombre. **Corregido:** la versión (22.1.0) y Sidebar, que se queda (es el menú lateral nuevo).
 - **Que no se vuelva a pasar:** `audit:primeng-catalog` (gate 47) y `tools/primeng-doc.mjs` con la versión buena y las
   páginas de primeng.dev/llms. Figma: ficha 42 de `figma-pendiente` (lo de DD-184 a DD-187 y el InputTags).
@@ -192,7 +192,7 @@ b49b56e0:docs/handoff/supervisor-fichas.md`.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
    son lo que falta; una card de Jira con los observadores de componentes.
 
--2. **Lo que queda de la auditoría de PrimeNG** (DD-194, `docs/AUDIT-PRIMENG-CATALOGO.md`, «Siguientes pasos»):
+-2. **Lo que queda de la auditoría de PrimeNG** (DD-195, `docs/AUDIT-PRIMENG-CATALOGO.md`, «Siguientes pasos»):
    documentar en sc-docs Menu, Listbox, Toolbar y MeterGroup, que las apps usan sin wrapper; revisar las dos casillas
    (`p-checkbox` en el selector de columnas y `sc-checkbox` en el resto); y `sc-command-palette` frente a CommandMenu.
 -1. **`fichas-nombre-fijo.spec.ts`, intermitente en el CI (2026-10-06).** Falló cuatro veces en dos PRs (#349 y #350),

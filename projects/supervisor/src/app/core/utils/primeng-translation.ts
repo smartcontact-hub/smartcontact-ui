@@ -11,7 +11,7 @@ import type { Translation } from 'primeng/api';
  * idiomas. Lo que `Intl` no sabe («Hoy», «Limpiar», la cabecera de semana) sale del i18n de la
  * app (`primeng.*`).
  *
- * Y el nombre del ✕ de una etiqueta (`aria.removeLabel`), que `p-chip` lee de aquí: con `sc-inputtags` (DD-194)
+ * Y el nombre del ✕ de una etiqueta (`aria.removeLabel`), que `p-chip` lee de aquí: con `sc-inputtags` (DD-195)
  * cada dominio se anunciaba «Remove». PrimeNG fusiona la traducción solo por arriba, así que `aria` llega entera
  * (`ariaActual`, la que ya tiene) con lo nuestro encima: si no, se perderían sus otros textos.
  */

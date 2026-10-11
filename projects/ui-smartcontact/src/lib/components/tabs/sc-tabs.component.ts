@@ -17,7 +17,7 @@ export interface ScTab {
 
 /**
  * Una tira de pestañas que cambia lo que se ve debajo. Wrapper Standard sobre `<p-tabs>` + `<p-tablist>` de
- * primeng.dev (DD-194): la tira, la raya que se desliza, la activa y el teclado (flechas, Inicio, Fin) son los nativos,
+ * primeng.dev (DD-195): la tira, la raya que se desliza, la activa y el teclado (flechas, Inicio, Fin) son los nativos,
  * con los tokens del tema.
  *
  * **Cuándo sí y cuándo no**: vistas hermanas de una misma cosa (Chat y Email de Plantillas, Transcripción y Análisis de

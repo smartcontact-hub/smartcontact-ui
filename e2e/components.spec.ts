@@ -592,7 +592,7 @@ test.describe('sc-inputtags', () => {
   test('Enter y la coma añaden, Retroceso quita; la etiqueta y la ayuda llegan al campo de escribir', async ({ page }) => {
     await gotoPage(page, 'inputtags');
     const host = page.getByTestId('sc-inputtags-domains');
-    // El nombre y la descripción entran por `pt`: `p-inputtags` no pasa `inputId` a su campo (DD-194).
+    // El nombre y la descripción entran por `pt`: `p-inputtags` no pasa `inputId` a su campo (DD-195).
     const input = host.getByRole('combobox', { name: 'Dominios permitidos' });
     await expect(input).toHaveAccessibleDescription('Las webs donde se puede insertar el chat.');
     await expect(host.locator('.p-chip')).toHaveCount(2);

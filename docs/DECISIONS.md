@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Antes de construir una pieza, ¿la trae PrimeNG? La tabla del catálogo (`docs/AUDIT-PRIMENG-CATALOGO.md`, la vigila `audit:primeng-catalog`) · varios valores cortos en un campo, `sc-inputtags`; vistas hermanas, `sc-tabs` | DD-195 |
 > | La celda que nombra la fila es su cabecera (`<th scope="row">`, `rowHeader` en `ScColumnDef`) en las 27 tablas del Supervisor que tienen nombre · se ve igual: el tema repite para ella las reglas de celda de PrimeNG | DD-194 |
 > | En una lista estrecha el nombre se queda: columna fija a la izquierda (con la casilla), y la tabla desplaza de lado · el mínimo de la tabla nunca deja menos de 15rem al nombre | DD-193 |
 > | La cabecera de página en la escalera: barra → título 28, título → lo que titula 14, buscador → su tabla 7 · el borde de la página, 28 por los cuatro lados y una sola vez, en el molde | DD-192 |

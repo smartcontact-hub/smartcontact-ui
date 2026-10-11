@@ -67,7 +67,7 @@ test('la ficha de grupo no tiene ⓘ: cada ayuda se lee sin pasar el ratón', as
     await expect(page.locator('main button .sc-icon-font--info'), seccion).toHaveCount(0);
   }
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
-  // Desde DD-194 los dominios son un `sc-inputtags` (su campo es un combobox) y ya no hay botón «Añadir» al lado.
+  // Desde DD-195 los dominios son un `sc-inputtags` (su campo es un combobox) y ya no hay botón «Añadir» al lado.
   const dominio = page.getByRole('combobox', { name: 'Dominios permitidos' });
   await expect(dominio).toHaveAccessibleDescription(/^Las webs donde se puede insertar el chat/);
 });

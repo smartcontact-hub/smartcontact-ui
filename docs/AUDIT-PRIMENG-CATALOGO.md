@@ -3,7 +3,7 @@
 > **Qué es.** Un cruce de tres listas contra PrimeNG **22.1.0** (el de `package-lock.json`): los módulos que trae
 > PrimeNG (`node_modules/primeng/fesm2022`), lo que envuelve el DS (`docs/_component-status.json`, columna «PrimeNG
 > base») y lo que las apps importan de `primeng/*` directamente. Se hizo el 2026-10-07 (DD-186) y se decidió el
-> 2026-10-11 (DD-194). Nace porque `sc-fileupload` (DD-184) existía en PrimeNG desde siempre y se nos pasó.
+> 2026-10-11 (DD-195). Nace porque `sc-fileupload` (DD-184) existía en PrimeNG desde siempre y se nos pasó.
 >
 > **Cómo se mantiene.** Lo vigila `npm run audit:primeng-catalog` (dentro de `verify`): se pone rojo si PrimeNG cambia
 > de versión, si un módulo no tiene fila, si una app importa algo sin wrapper que la sección 3 no cuenta, si una fila de
@@ -31,7 +31,7 @@ Las da el gate en cada `verify`; estas son las del 2026-10-11.
 
 Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 
-| Prioridad | Componente | Caso en el producto | Decisión (DD-194) |
+| Prioridad | Componente | Caso en el producto | Decisión (DD-195) |
 |---|---|---|---|
 | Alta | **InputTags** | «Dominios permitidos» de Web Chat (campo + «Añadir» + chips). También etiquetas libres. | **Hecho**: `sc-inputtags` (wrapper Extended), en los dominios de la ficha de grupo. Sustituye a las tres piezas hechas a mano. |
 | Alta | **TreeSelect · Tree** | Las tipificaciones son un árbol de niveles. | **No**: DD-187 §5 dibuja el árbol entero en columnas por nivel (DD-174), con «+» por fila y tirador, que Tree no da; y el grupo elige una tipificación entera (un desplegable), no una hoja. TreeSelect tendría caso en sc-agent, al cerrar una conversación: se decide allí. |
@@ -54,9 +54,9 @@ Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 | Nuestro | Nativo | Veredicto | Por qué |
 |---|---|---|---|
 | `sc-checkbox` (input nativo) | Checkbox | **Mantener** | `p-checkbox` no modela el ciclo ninguno/alguno/todos que piden las casillas de «todos» (su `indeterminate` es binario). Escrito en el componente. |
-| `sc-inputnumber` (sobre InputText) | InputNumber | **Mantener** (revisado, DD-194) | El motivo sigue: enteros sin formato. La unidad, los topes y las flechas ya los da, y acota al salir del campo, como `p-inputnumber` (medido en su código: `onInputBlur`, Enter y Tab). Pasarse cambiaría dos cosas a peor: la unidad entraría en el texto del número, con su color, y el valor solo llega tecla a tecla (pegar con el ratón, el dictado o un `fill` esperan a salir del campo). |
+| `sc-inputnumber` (sobre InputText) | InputNumber | **Mantener** (revisado, DD-195) | El motivo sigue: enteros sin formato. La unidad, los topes y las flechas ya los da, y acota al salir del campo, como `p-inputnumber` (medido en su código: `onInputBlur`, Enter y Tab). Pasarse cambiaría dos cosas a peor: la unidad entraría en el texto del número, con su color, y el valor solo llega tecla a tecla (pegar con el ratón, el dictado o un `fill` esperan a salir del campo). |
 | `sc-photo-upload` | FileUpload (basic) + Avatar | **Mantener** | Recorte e ilustración de reserva; decisión §10 del componente. El resto de subidas, `sc-fileupload` (DD-184). |
-| `sc-inline-rename-cell` | Inplace | **Mantener** (revisado, DD-194) | No es lo mismo que `sc-name-inplace` (el `p-inplace` nativo del nombre de las fichas, de reposo a edición). La celda no tiene reposo: aparece ya editando tras duplicar una fila, o en el globo de renombrar del Monitor, con confirmar y cancelar. Un `p-inplace` en la fila pelearía con el clic que abre la ficha. |
+| `sc-inline-rename-cell` | Inplace | **Mantener** (revisado, DD-195) | No es lo mismo que `sc-name-inplace` (el `p-inplace` nativo del nombre de las fichas, de reposo a edición). La celda no tiene reposo: aparece ya editando tras duplicar una fila, o en el globo de renombrar del Monitor, con confirmar y cancelar. Un `p-inplace` en la fila pelearía con el clic que abre la ficha. |
 | `sc-command-palette` | CommandMenu | **Revisar** | Mirar si CommandMenu cubre la búsqueda por grupos y los atajos antes de tocarla. |
 | `sc-delete-entity-dialog` | ConfirmDialog | **Mantener** | Lista de lo que se borra y su recuento; ConfirmDialog solo da un mensaje. |
 | `sc-section-card` · `sc-subsection` · `sc-slot` | Card · Fieldset · Panel | **Mantener** | El árbol del DS (DD-157) con sus fondos y medidas; ninguno de los nativos lo da. |
@@ -83,7 +83,7 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 | ToggleButton | cuscare | Réplica (DD-35): no se toca. |
 | Sidebar | supervisor (página de laboratorio) | **Se queda.** Es el menú lateral nuevo de la 22, en prueba para la versión «no se cierra nada» del sidebar (frente `supervisor-sidebar`, DD-118). |
 
-**Tabs** ya tiene wrapper (`sc-tabs`, DD-194): Plantillas, el reproductor de Memory y la página «Uso» de sc-docs lo
+**Tabs** ya tiene wrapper (`sc-tabs`, DD-195): Plantillas, el reproductor de Memory y la página «Uso» de sc-docs lo
 usan. Solo las pestañas del Monitor siguen en `p-tabs` directo: se arrastran para ordenarse y se renombran con doble
 clic, y eso necesita sus directivas sobre cada `p-tab`.
 

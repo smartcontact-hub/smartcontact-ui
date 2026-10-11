@@ -112,7 +112,7 @@ test('el estado se filtra desde la cabecera del agente, con los no disponibles j
   await expect(tabla.getByText('1 filtro', { exact: true })).toBeVisible();
 });
 
-test('dominios del Web Chat con el InputTags nativo: minúsculas, uno por etiqueta y su ✕ en español (DD-194)', async ({ page }) => {
+test('dominios del Web Chat con el InputTags nativo: minúsculas, uno por etiqueta y su ✕ en español (DD-195)', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const campo = page.locator('#group-chat-domain');
   await expect(campo).toHaveAccessibleName('Dominios permitidos');

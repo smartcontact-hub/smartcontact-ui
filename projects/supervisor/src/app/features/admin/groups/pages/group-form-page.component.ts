@@ -1046,7 +1046,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   }
 
   /** «Dominios permitidos» del script de chat (decisión de producto, 2026-09-20): en qué webs se puede insertar sin que
-   *  cualquiera lo copie. `sc-inputtags` los añade y los quita (DD-194); aquí se guardan en minúsculas, sin repetir y
+   *  cualquiera lo copie. `sc-inputtags` los añade y los quita (DD-195); aquí se guardan en minúsculas, sin repetir y
    *  uno por etiqueta: un dominio no lleva comas ni espacios, así que «a.com, b.com» con Enter son dos. */
   protected setDomains(domains: readonly string[]): void {
     const limpios = [...new Set(domains.flatMap((d) => d.toLowerCase().split(/[\s,]+/)).filter(Boolean))];
