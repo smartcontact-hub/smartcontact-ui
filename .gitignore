@@ -72,6 +72,10 @@ Thumbs.db
 # Marca de "preflight en verde sobre este árbol" (scripts/preflight-mark.mjs); la lee el hook al pushear.
 .preflight-ok
 
+# Grafo local de Graphify: generado, pesa ~10 MB (graph.json) y se reconstruye con
+# `graphify update .`. No es entregable de equipo (eso es Graphify Cloud, ya conectado).
+/graphify-out/
+
 # Sondas de un solo uso en la RAÍZ del árbol (`.algo-tmp.mjs`). Nacen para medir una
 # cosa en el navegador y mueren en el mismo turno, pero viven donde `npx` las resuelve
 # —la raíz— para poder importar `playwright` de `node_modules`. Dos se colaron en el
