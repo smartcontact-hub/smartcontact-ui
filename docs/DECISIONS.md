@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | En una lista estrecha el nombre se queda: columna fija a la izquierda (con la casilla), y la tabla desplaza de lado · el mínimo de la tabla nunca deja menos de 15rem al nombre | DD-193 |
 > | La cabecera de página en la escalera: barra → título 28, título → lo que titula 14, buscador → su tabla 7 · el borde de la página, 28 por los cuatro lados y una sola vez, en el molde | DD-192 |
 > | El toast, solo para lo que manda el sistema: lo ya visible, solo al lector (`visto`); guardar y quedarse, junto a los botones de la barra (`enLaBarra`); lo de un control, a su lado · un error no se cierra solo | DD-191 |
 > | Cada componente dice en sc-docs si está listo (maestro en el Kit y demo), es experimental (le falta algo, y dice qué) o está retirado (`@deprecated`, con su motivo) · el índice etiqueta solo la excepción | DD-190 |
@@ -136,6 +137,41 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-193 · 2026-10-11 — En una lista estrecha, el nombre se queda: la tabla desplaza de lado con él fijo
+
+**Contexto** · Con la ventana a unos 900 px, la tabla de Agentes enseñaba «No» donde iba Nombre y media foto. Medido en
+un navegador limpio: Nombre medía 32 px a 900 y a 1024, y 100 a 1280. Era la única columna sin ancho y se quedaba con
+lo que sobraba del mínimo de la tabla, que cada lista escribía a mano (`tableMinWidth`, 100,375rem en Agentes); el
+#360 (DD-187 §4) añadió Equipos (11rem) sin subirlo. A 1024, Grupos escondía 358 px y Usuarios 90. Primer resuelve la
+tabla estrecha con anchos de columna, quitando las menos importantes o desplazando de lado, siempre con la celda que
+nombra la fila a la vista; el producto pidió «por lo menos dejar el nombre», con lo nativo de PrimeNG.
+
+**Decisión** · (1) La columna que nombra la fila (la fija del selector de columnas o, si no lo hay, la primera cuando
+crece) va fija a la izquierda con `pFrozenColumn`, en todas las listas de `sc-list-page`. (2) `sc-datatable` fija
+también la casilla de selección cuando hay una columna fija a la izquierda: PrimeNG coloca la fija sumando el ancho de
+todo lo que tiene delante, fijo o no, y sin esto la casilla pasaba por debajo del nombre (pasaba también en su demo).
+(3) Si el nombre crece, el mínimo de la tabla es al menos lo que suman las columnas con ancho, la casilla, el «⋮» y
+15rem (240 px) por cada columna que crece; el mínimo escrito a mano de cada página se queda como suelo. 15rem: el
+nombre más ancho de Agentes pide 204 px y el de las demás listas de Administración, menos de 215.
+
+**Razón** · Es la regla de DD-102 (una lista no corta texto: desplaza) con el nombre siempre a la vista. Ninguna lista
+cambia a 1440. A 1024 desplazan de lado, con el nombre fijo y la sombra que avisa de lo que queda: Agentes (396 px),
+Grupos, Usuarios (110), Reglas de Conversaciones (20) y Categorías (72). Las celdas fijas toman el fondo de la fila al
+pasar el ratón y al marcarla.
+
+**Descartadas** ·
+- **Esconder columnas por ancho**: Primer lo propone, pero qué columna sobra es de producto, y el selector de columnas
+  ya deja quitarlas. No hace falta decidirlo para que el nombre se quede.
+- **Un modo apilado en móvil**: PrimeNG 22 no lo tiene (`responsiveLayout` ya no existe), y el mínimo soportado es 1024.
+- **Mínimo para todas las columnas que crecen, sin mirar el nombre**: en Conversaciones (la primera columna, Estado,
+  trae ancho) ensanchaba la tabla también a 1440, donde se decidió recortar las etiquetas con su valor al pasar.
+
+**Consecuencias** · Lo mide `e2e/supervisor/listas-nombre-fijo.spec.ts` (rojo con el build de antes en los seis
+casos estrechos) y `components.spec.ts` comprueba en la demo del DS que casilla y nombre no se pisan al desplazar.
+Pendiente aparte: Primer pinta esa celda como `<th scope="row">`, y `sc-datatable` como `td`.
 
 ---
 

@@ -228,6 +228,8 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    hasta el pie, MEDIDO desde donde empieza (`scLlegaAlPie`, en `core/directives`), con un suelo (`scale/18`) para
    pantallas bajas. Nunca un `100dvh` menos una constante: no sabe dónde empieza la tabla, y deja hueco vacío debajo
    mientras esconde filas. Lo prueba `e2e/supervisor/tabla-al-pie.spec.ts`: 2 px más de tabla y la página desplaza.
+   **En estrecho, el nombre se queda** (DD-193): la columna que nombra la fila va fija a la izquierda y la tabla
+   desplaza de lado; su mínimo sale de las columnas y no baja de 15rem para el nombre. Prueba cada lista a 1024.
 
 **Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
 recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas

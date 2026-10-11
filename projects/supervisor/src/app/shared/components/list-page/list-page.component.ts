@@ -48,6 +48,12 @@ import { injectLangChange } from '@core/utils/lang-change';
 const ACTIONS_FIELD = '__actions';
 /** El ancho máximo de la columna que crece (la del nombre) en una tabla ancha. */
 const NOMBRE_TOPE = '24rem';
+/**
+ * Lo que nunca baja la columna del nombre cuando crece (DD-193): el nombre más ancho de Agentes pide 204 px y el de las
+ * demás listas de Administración, menos de 215 (medido a 1440 el 2026-10-11). Por debajo, la tabla se desplaza de lado
+ * con el nombre fijo, en vez de comérselo: a 1024 Nombre medía 32 px en Agentes.
+ */
+const NOMBRE_MINIMO = '15rem';
 
 /**
  * Lo que se recuerda de la tabla de cada lista al volver: qué columnas se ven, en qué orden (el de TODAS, también
@@ -224,7 +230,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    * Por debajo, la tabla se desplaza de lado DENTRO de su caja en vez de recortar texto con
    * puntos suspensivos (DD-102: una lista nunca corta texto). Sin él, la tabla se ajusta al
    * ancho disponible como hasta ahora. Cuenta TODAS las columnas con `width` en rem: las que están
-   * ocultas en el selector se descuentan solas.
+   * ocultas en el selector se descuentan solas. Si el nombre crece, nunca deja menos de `NOMBRE_MINIMO` para él
+   * (`effectiveTableMinWidth`, DD-193).
    */
   readonly tableMinWidth = input<string | undefined>(undefined);
 
@@ -280,10 +287,12 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
      * había un salto enorme hasta el dato siguiente. Solo con menú de fila: es la columna que puede crecer sin que se
      * note. */
     const tope = this.conTopeDeNombre();
+    const nombre = this.campoNombre();
     const cols = this.columns().map((c) => ({
       ...c,
       width: prefs?.widths[c.field] ?? c.width ?? (tope ? NOMBRE_TOPE : undefined),
       reorderable: !locked.has(c.field),
+      frozen: c.frozen ?? c.field === nombre,
     }));
     if (!this.rowMenu() || !this.rowMenuColumn()) return cols;
     this.lang(); // el nombre accesible de la columna de acciones, al día al cambiar de idioma
@@ -306,6 +315,18 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     ];
   });
 
+  /**
+   * La columna que nombra la fila (la «row header» de Primer): la fija del selector de columnas o, si no lo hay, la
+   * primera cuando crece (Nombre, Título, Regla). Se queda fija a la izquierda al desplazar la tabla de lado: lo que dice
+   * de qué fila es cada dato no se va nunca (DD-193). Una primera columna con ancho propio no nombra la fila (el Estado
+   * de Conversaciones), y no se fija nada.
+   */
+  private readonly campoNombre = computed<string | undefined>(() => {
+    const fija = (this.columnChoices() ?? []).find((c) => c.locked)?.key;
+    const primera = this.columns()[0];
+    return fija ?? (primera && !primera.width ? primera.field : undefined);
+  });
+
   /** El ancho de la tarjeta de la tabla, medido al cambiar (la ventana, el menú lateral o la selección). */
   private readonly anchoTarjeta = signal(0);
   private readonly tarjeta = viewChild<ElementRef<HTMLElement>>('tarjeta');
@@ -323,19 +344,34 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    */
   protected readonly conTopeDeNombre = computed(() => {
     if (!this.rowMenu() || !this.rowMenuColumn()) return false;
+    const { fijas, crecen, extras, rem } = this.medidaColumnas();
+    if (crecen !== 1) return false;
+    return this.anchoTarjeta() > fijas + extras + parseFloat(NOMBRE_TOPE) * rem;
+  });
+
+  /**
+   * Las columnas a la vista, en px: lo que suman las que traen ancho (también el arrastrado), cuántas crecen (sin ancho),
+   * si una de ellas es la del nombre, y lo que ocupan la casilla de selección (2,5rem) y el «⋮» (3,5rem).
+   */
+  private readonly medidaColumnas = computed(() => {
     const visibles = this.visibleColumns();
     const prefs = this.columnPrefs();
     const cols = this.columns().filter((c) => c.field !== ACTIONS_FIELD && (!visibles || visibles.includes(c.field)));
-    const sinAncho = cols.filter((c) => !(prefs?.widths[c.field] ?? c.width));
-    if (sinAncho.length !== 1) return false;
     const rem = parseFloat(getComputedStyle(this.document.documentElement).fontSize) || 16;
-    const fijas = cols.reduce((suma, c) => {
+    const nombre = this.campoNombre();
+    let fijas = 0;
+    let crecen = 0;
+    let nombreCrece = false;
+    for (const c of cols) {
       const w = prefs?.widths[c.field] ?? c.width;
-      if (!w) return suma;
-      return suma + (w.endsWith('rem') ? parseFloat(w) * rem : w.endsWith('px') ? parseFloat(w) : 0);
-    }, 0);
-    const extras = (this.selectable() ? 2.5 : 0) * rem + 3.5 * rem;
-    return this.anchoTarjeta() > fijas + extras + parseFloat(NOMBRE_TOPE) * rem;
+      if (!w) {
+        crecen++;
+        if (c.field === nombre) nombreCrece = true;
+      } else fijas += w.endsWith('rem') ? parseFloat(w) * rem : w.endsWith('px') ? parseFloat(w) : 0;
+    }
+    const menu = this.rowMenu() && this.rowMenuColumn();
+    const extras = ((this.selectable() ? 2.5 : 0) + (menu ? 3.5 : 0)) * rem;
+    return { fijas, crecen, nombreCrece, extras, rem };
   });
 
   /** Lo leído de `localStorage` al abrir (`undefined` hasta entonces); `columnPrefs` lo contrasta con las columnas. */
@@ -386,15 +422,25 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   }
 
   /* Una columna oculta no ocupa sitio: sin descontarla, esconder Email en Agentes dejaba 268 px de scroll lateral
-   * (rama `comparar/fichas`, 2026-09-16). Hace falta desde que Agentes tiene columnas opcionales (2026-09-24). */
+   * (rama `comparar/fichas`, 2026-09-16). Hace falta desde que Agentes tiene columnas opcionales (2026-09-24).
+   * Y EL NOMBRE NO BAJA DE `NOMBRE_MINIMO` (DD-193): el mínimo de la página se escribe a mano y se desfasa (Agentes ganó
+   * Equipos, 11rem, sin subirlo, y a 1024 a Nombre le quedaban 32 px). Si el nombre crece, el mínimo es al menos lo que
+   * suman las columnas con ancho, la casilla, el «⋮» y `NOMBRE_MINIMO` por cada columna que crece: el sobrante se reparte
+   * a partes iguales, y con Nombre y Email creciendo (Usuarios) a Nombre le tocaba la mitad. */
   protected readonly effectiveTableMinWidth = computed<string | undefined>(() => {
     const min = this.tableMinWidth();
     const visible = this.visibleColumns();
-    if (!min?.endsWith('rem') || !visible) return min;
-    const hidden = this.columns()
-      .filter((c) => !visible.includes(c.field) && c.width?.endsWith('rem'))
-      .reduce((sum, c) => sum + parseFloat(c.width!), 0);
-    return `${parseFloat(min) - hidden}rem`;
+    let manual = min;
+    if (min?.endsWith('rem') && visible) {
+      const hidden = this.columns()
+        .filter((c) => !visible.includes(c.field) && c.width?.endsWith('rem'))
+        .reduce((sum, c) => sum + parseFloat(c.width!), 0);
+      manual = `${parseFloat(min) - hidden}rem`;
+    }
+    const { fijas, crecen, nombreCrece, extras, rem } = this.medidaColumnas();
+    if (!nombreCrece) return manual;
+    const manualPx = manual?.endsWith('rem') ? parseFloat(manual) * rem : manual?.endsWith('px') ? parseFloat(manual) : 0;
+    return `${Math.ceil(Math.max(manualPx, fijas + extras + crecen * parseFloat(NOMBRE_MINIMO) * rem))}px`;
   });
 
   protected readonly visibleColumns = computed<readonly string[] | undefined>(() => {

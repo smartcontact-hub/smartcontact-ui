@@ -1501,15 +1501,27 @@ test.describe('sc-datatable', () => {
     const table = page.getByTestId('sc-datatable-frozen');
     await table.scrollIntoViewIfNeeded();
     const row = table.locator('tbody tr').first();
-    const left = row.locator('.p-datatable-frozen-column').first();
+    // La de la izquierda es la última fija de ese lado (la que lleva la sombra); delante va la casilla, también fija.
+    const left = row.locator('.sc-datatable__frozen-left-edge');
     const right = row.locator('.p-datatable-frozen-column').last();
+    const check = row.locator('td.sc-datatable__check');
     await expect(left).toHaveCSS('position', 'sticky');
     await expect(right).toHaveCSS('position', 'sticky');
+    await expect(check).toHaveCSS('position', 'sticky');
     await expect(left).toHaveCSS('box-shadow', 'none');
     await expect(right).not.toHaveCSS('box-shadow', 'none');
     await table.locator('.p-datatable-table-container').evaluate(el => { el.scrollLeft = el.scrollWidth; });
     await expect(left).not.toHaveCSS('box-shadow', 'none');
     await expect(right).toHaveCSS('box-shadow', 'none');
+    // DD-193: con la casilla sin fijar, PrimeNG dejaba el nombre a su ancho del borde y la casilla pasaba por debajo.
+    const pegadas = await table.locator('.p-datatable-table-container').evaluate(caja => {
+      const borde = caja.getBoundingClientRect().left;
+      const fila = caja.querySelector('tbody tr')!;
+      const casilla = fila.querySelector('td.sc-datatable__check')!.getBoundingClientRect();
+      const nombre = fila.querySelector('.sc-datatable__frozen-left-edge')!.getBoundingClientRect();
+      return { casilla: Math.round(casilla.left - borde), nombre: Math.round(nombre.left - casilla.right) };
+    });
+    expect(pegadas, 'la casilla en el borde y el nombre justo detrás, tras desplazar').toEqual({ casilla: 0, nombre: 0 });
     await table.locator('.p-datatable-table-container').evaluate(el => { el.scrollLeft = 0; });
     await row.locator('p-table-checkbox').click();
     await expect(row).toHaveClass(/p-datatable-row-selected/);
