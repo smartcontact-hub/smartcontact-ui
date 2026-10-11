@@ -1174,6 +1174,21 @@ número suelto), y cada uno con el enlace a su página de sc-docs en la descripc
 
 ---
 
+## 43 · La barra de lote cuenta el resultado, con «Deshacer» (2026-10-11, DD-196)
+
+**Estado:** pendiente · **Dónde:** la barra de lote, si se maqueta (no tiene maestro en el Kit) y la plantilla de
+listado de la ficha 39.
+
+- **Tras aplicar un cambio en lote**, sin filas marcadas, la barra sigue: «✓ Cambio aplicado a 2 grupos» (mensaje
+  simple de éxito, talla pequeña), «Deshacer» (botón secundario con borde, pequeño) pegado al texto y la «×».
+- **Tras deshacer**: «✓ Cambio revertido» y la «×», sin botón.
+- **Ningún toast** en los listados tras un cambio en lote.
+
+**Cómo sabes que está hecho:** la barra tiene sus tres estados (con selección, con resultado y tras deshacer), y
+ninguna maqueta de listado enseña un toast tras editar en lote.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de

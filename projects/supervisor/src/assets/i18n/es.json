@@ -960,7 +960,7 @@
     "copy_failed": "No se pudo copiar al portapapeles",
     "click_to_copy": "Clic para copiar",
     "remove_from_list": "Quitar {{name}} de la lista",
-    "bulk_updated": "{{count}} elementos actualizados",
+    "bulk_applied": "Cambio aplicado a {{count}} {{entity}}",
     "columns": "Columnas",
     "columns_count": "{0} columnas",
     "columns_visible": "Columnas, {{visible}} de {{total}}",

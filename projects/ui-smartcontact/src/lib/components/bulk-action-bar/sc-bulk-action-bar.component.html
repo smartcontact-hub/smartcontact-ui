@@ -1,6 +1,15 @@
 @if (visible()) {
   <div class="bulk-bar" role="region" [attr.aria-label]="'sc.bulkActionBar.region' | translate">
     <div class="bulk-bar__summary">
+      @if (resultado(); as r) {
+      <sc-message severity="success" variant="simple" size="sm" icon="check_circle" [text]="r" />
+      @if (resultUndoable()) {
+      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" [label]="'sc.bulkActionBar.undo' | translate" (clicked)="undo.emit()" />
+      }
+      <button type="button" class="bulk-bar__clear" (click)="clear.emit()" [attr.aria-label]="'sc.bulkActionBar.closeResult' | translate">
+        <sc-icon [name]="closeIcon" size="inherit" />
+      </button>
+      } @else {
       <!-- «2/16» a la vista y «2 de 16» para el lector: «2/16» se puede leer como fecha o fracción (DD-176). -->
       <span>
         <span class="bulk-bar__count">
@@ -20,6 +29,7 @@
       >
         <sc-icon [name]="closeIcon" size="inherit" />
       </button>
+      }
     </div>
     <div class="bulk-bar__actions">
       <ng-content />

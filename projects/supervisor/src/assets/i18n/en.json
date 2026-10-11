@@ -960,7 +960,7 @@
     "copy_failed": "Could not copy to clipboard",
     "click_to_copy": "Click to copy",
     "remove_from_list": "Remove {{name}} from list",
-    "bulk_updated": "{{count}} items updated",
+    "bulk_applied": "Change applied to {{count}} {{entity}}",
     "columns": "Columns",
     "columns_count": "{0} columns",
     "columns_visible": "Columns, {{visible}} of {{total}}",

@@ -13,7 +13,7 @@ import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { ResultadoAccionService, UndoStackService, XlsxExportService } from '@core/services';
+import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 import { ChannelIconComponent, ListPageComponent, NotaDecisionComponent, PresenceAvatarComponent, type LabelColor } from '@shared/components';
@@ -103,11 +103,11 @@ export class AgentsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
-  private readonly undoStack = inject(UndoStackService);
 
   /** CTA "Nuevo agente" proyectado a la TopBar (modelo "todo arriba" S59):
    * la banda de page-header desaparece; identidad → breadcrumb, acción → barra. */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
+  private readonly lista = viewChild.required<ListPageComponent<Agent>>(ListPageComponent);
 
   constructor() {
     useTopbarActions(this.topbarActions);
@@ -548,15 +548,12 @@ export class AgentsListPageComponent {
     this.pendingBulkEdit.set(null);
     this.clearSelection();
 
-    this.undoStack.push(
-      this.translate.instant('common.bulk_updated', { count: remainingIds.length }),
-      this.translate.instant('common.change_reverted'),
-      () => {
-        for (const prev of snapshot) {
-          this.agentsStore.updateAgent(prev.id, prev);
-        }
-      },
-    );
+    // El resultado, con su «Deshacer», lo cuenta la barra de lote donde se aplicó (DD-196).
+    this.lista().contarLote(remainingIds.length, () => {
+      for (const prev of snapshot) {
+        this.agentsStore.updateAgent(prev.id, prev);
+      }
+    });
   }
 
   protected onBulkPreviewCancel(): void {

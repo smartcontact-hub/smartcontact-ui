@@ -960,7 +960,7 @@
     "copy_failed": "Impossible de copier dans le presse-papiers",
     "click_to_copy": "Cliquer pour copier",
     "remove_from_list": "Retirer {{name}} de la liste",
-    "bulk_updated": "{{count}} éléments mis à jour",
+    "bulk_applied": "Modification appliquée à {{count}} {{entity}}",
     "columns": "Colonnes",
     "columns_count": "{0} colonnes",
     "columns_visible": "Colonnes, {{visible}} sur {{total}}",

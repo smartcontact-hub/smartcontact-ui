@@ -111,12 +111,18 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 1,
+      "inputs": 3,
       "api": [
         "clear",
-        "total"
+        "result",
+        "resultUndoable",
+        "total",
+        "undo"
       ],
-      "nested": [],
+      "nested": [
+        "sc-message",
+        "sc-button"
+      ],
       "hasDemo": true,
       "kit": false,
       "estado": "experimental",

@@ -1091,6 +1091,27 @@ test.describe('sc-bulk-action-bar', () => {
 
     await screenshotBaseline(page, 'bulkactionbar');
   });
+
+  test('tras aplicar, sin selección, cuenta el resultado con «Deshacer» pegado al texto (DD-196)', async ({ page }) => {
+    await gotoPage(page, 'bulkactionbar');
+    const host = page.getByTestId('sc-bulkbar-result');
+    await expect(host.locator('.bulk-bar'), 'sin resultado no se ve').toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Aplicar un cambio' }).click();
+    const bar = host.locator('.bulk-bar');
+    await expect(bar.locator('.bulk-bar__summary')).toContainText('Cambio aplicado a 3 agentes');
+    // «Deshacer» va junto a su texto, en el resumen, y no en la otra punta de la barra.
+    const deshacer = bar.locator('.bulk-bar__summary').getByRole('button', { name: 'Deshacer' });
+    const [texto, boton] = [await bar.locator('sc-message').boundingBox(), await deshacer.boundingBox()];
+    expect(boton!.x - (texto!.x + texto!.width), 'Deshacer, pegado al texto').toBeLessThan(20);
+
+    await deshacer.click();
+    await expect(bar.locator('.bulk-bar__summary')).toContainText('Cambio revertido');
+    await expect(bar.getByRole('button', { name: 'Deshacer' })).toHaveCount(0);
+
+    await bar.getByRole('button', { name: 'Cerrar' }).click();
+    await expect(host.locator('.bulk-bar')).toHaveCount(0);
+  });
 });
 
 test.describe('sc-form-danger-zone', () => {

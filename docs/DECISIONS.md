@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Un cambio en lote se cuenta en su barra: «Cambio aplicado a 2 grupos» con «Deshacer» pegado al texto, sin irse sola, hasta cerrarla o volver a marcar (`contarLote` de `sc-list-page`, `result` de `sc-bulk-action-bar`) · el toast con «Deshacer», solo para lo que desaparece sin sitio (el inicio) | DD-196 |
 > | Antes de construir una pieza, ¿la trae PrimeNG? La tabla del catálogo (`docs/AUDIT-PRIMENG-CATALOGO.md`, la vigila `audit:primeng-catalog`) · varios valores cortos en un campo, `sc-inputtags`; vistas hermanas, `sc-tabs` | DD-195 |
 > | La celda que nombra la fila es su cabecera (`<th scope="row">`, `rowHeader` en `ScColumnDef`) en las 27 tablas del Supervisor que tienen nombre · se ve igual: el tema repite para ella las reglas de celda de PrimeNG | DD-194 |
 > | En una lista estrecha el nombre se queda: columna fija a la izquierda (con la casilla), y la tabla desplaza de lado · el mínimo de la tabla nunca deja menos de 15rem al nombre | DD-193 |
@@ -139,6 +140,39 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-196 · 2026-10-11 — Un cambio en lote se cuenta en su barra, con «Deshacer», y no en un toast
+
+**Contexto** · DD-191 dejó el aviso con «Deshacer» como toast hasta decidir su sitio. Sale en dos casos: tras aplicar
+un cambio en lote en Agentes, Grupos y Usuarios, y al quitar un monitor o un widget del inicio. Medido en Grupos a 1440:
+el toast salía abajo a la derecha, a 30 px de donde estaba el «Aplicar» de la barra de lote, pero tapaba la última
+fila (sus Agentes y su «⋮»), decía «1 elementos actualizados» y se iba a los 8 s (al pasar el ratón por encima se
+paraba). El campo cambiado, Estrategia de chat, no es una columna visible: el aviso era la única prueba del cambio.
+
+**Decisión** · (1) Tras aplicar, la barra de lote no desaparece: sin selección, cuenta el resultado («Cambio aplicado a
+2 grupos») con «Deshacer» pegado al texto y su «×». (2) No se va sola: se cierra con la «×», al volver a marcar una
+fila o al salir de la página. (3) «Deshacer» y Ctrl+Z dejan «Cambio revertido» en la misma barra, sin toast. (4) La
+tabla le deja sitio como a la barra de selección, así que no tapa filas. (5) El toast con «Deshacer» queda para el
+inicio: lo que se quita desaparece y no queda sitio donde contarlo. Piezas: `result`, `resultUndoable` y `undo` en
+`sc-bulk-action-bar` (DS); `contarLote` en `sc-list-page`; `registrar` y `olvidar` en `UndoStackService`, un deshacer
+que no caduca solo y que avisa a su barra en lugar de abrir un toast.
+
+**Razón** · Es la regla de DD-191: el resultado, junto a lo que lo causó y sin tapar nada. La barra es donde se eligió
+y aplicó el cambio, y ya tiene su sitio reservado bajo la tabla. Sin plazo, «Deshacer» no castiga a quien lee despacio
+(WCAG 2.2.1). El texto nombra lo cambiado con su entidad y sin «1 elementos».
+
+**Descartadas** ·
+- **El resultado en la barra de arriba (`enLaBarra`)**: es la de guardar en las fichas, pero en una lista queda en la
+  otra punta de la pantalla respecto a la barra de lote.
+- **Dejar el toast y arreglar solo el texto**: seguía tapando la última fila y yéndose a los 8 s.
+- **«Deshacer» a la derecha de la barra, donde estaban las acciones**: a 1000 px de su texto; junto al texto se lee
+  qué deshace.
+
+**Consecuencias** · Lo prueba `e2e/supervisor/lote-resultado-en-la-barra.spec.ts` (rojo con el build de antes en sus
+tres casos), y `components.spec.ts` la historia «Tras aplicar un cambio» de sc-docs. `common.bulk_updated` pasa a
+`common.bulk_applied` en los cuatro idiomas. DD-191 queda cumplida también en este caso.
 
 ---
 
@@ -327,7 +361,7 @@ afectadas, en verde contra el build de la rama).
 - **Un componente nuevo `sc-inline-message` en el DS**: `sc-message` (el `p-message` de PrimeNG) ya es el mensaje en
   línea de Primer, en su variante `simple` y talla `sm`.
 - **Quitar también el aviso con «Deshacer»** (`UndoStackService`): Primer prefiere deshacer a confirmar, pero no dice
-  dónde va el botón. Se queda como toast hasta que se decida su sitio.
+  dónde va el botón. Se queda como toast hasta que se decida su sitio. Decidido en DD-196.
 
 **Consecuencias** · `audit:screen-hygiene` gana una regla con trinquete: un toast solo sale de los dos ficheros del
 sistema (`undo-stack` y Conversaciones). Escrito en «UX de pantalla» 7.
