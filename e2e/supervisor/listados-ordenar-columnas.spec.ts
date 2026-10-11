@@ -115,7 +115,7 @@ for (const idioma of ['es', 'en', 'fr', 'pt']) {
   });
 }
 
-/* La barra, en dos grupos (DD-180 §4): Columnas y el buscador, a `0-875` (12,25) como dos hermanos; la descarga, detrás
+/* La barra, en dos grupos (DD-180 §4): Columnas y el buscador, a 7 (DD-192; antes 12,25) como dos hermanos; la descarga, detrás
  * del separador y solo con su aire del tema, 14 por lado. Medido antes: Columnas a 24,5 del buscador y la descarga a
  * 53,5, porque el globo de Columnas y el separador sumaban cada uno un hueco de la barra. */
 test('la barra: Columnas junto al buscador, y la descarga detrás del separador con su aire', async ({ page }) => {
@@ -132,7 +132,7 @@ test('la barra: Columnas junto al buscador, y la descarga detrás del separador 
         despuesDelSeparador: descarga.left - separador.right,
       };
     });
-    expect(m.columnasBuscador, `${ruta}: Columnas → buscador`).toBeCloseTo(12.25, 0);
+    expect(m.columnasBuscador, `${ruta}: Columnas → buscador`).toBeCloseTo(7, 0);
     expect(m.antesDelSeparador, `${ruta}: buscador → separador`).toBeCloseTo(14, 0);
     expect(m.despuesDelSeparador, `${ruta}: separador → descarga`).toBeCloseTo(14, 0);
   }

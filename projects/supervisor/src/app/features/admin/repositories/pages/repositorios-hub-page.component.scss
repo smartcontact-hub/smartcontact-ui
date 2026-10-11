@@ -11,12 +11,7 @@
   /* El ancho lo pone `page__inner--hub` (partial `_page.scss`), que la
    * plantilla lleva en este mismo elemento: es la única página cuyo bloque
    * se llama `.hub` y no `.page`, así que declara el arquetipo con la clase
-   * canónica añadida. Aquí queda solo el padding, que es delta suyo. */
-  &__inner {
-    /* Arriba y a los lados, lo mismo que el resto de pantallas (barra → título 17,5,
-     * lados 28). Abajo, 28: todo tiene que caber sin desplazar a 1440 × 800 (DD-179). */
-    padding: var(--sc-spacing-1-25) var(--sc-spacing-2) var(--sc-spacing-2);
-  }
+   * canónica añadida. El borde, 28 por los cuatro lados, lo pone el molde (DD-192). */
 }
 
 /* El buscador y el filtro en una línea, como en la maqueta; a 28 de la primera categoría, que es otro grupo. */

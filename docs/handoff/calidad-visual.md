@@ -15,8 +15,8 @@
 0. **Lo que queda del estudio de Primer (DD-188), un PR cada uno, enseñado antes en local y añadido a la página de
    antes y después** (artefacto «Antes y después del Supervisor»; las capturas salen de `sc-supervisor.pages.dev`
    contra el `ng serve` de la rama, a 1440, vista entera y la cabecera a doble resolución):
-   - la cabecera y el esqueleto de página comunes, con la escalera 7 · 14 · 28 en la cabecera, ancho máximo de 1280 y
-     columnas que quepan a 1024 (Grupos esconde 358 px a 1024);
+   - hecho en DD-193: a 1024 la tabla desplaza de lado con el nombre fijo (Agentes medía 32 px de Nombre). Queda la
+     celda del nombre como `<th scope="row">`, como Primer, en `sc-datatable`.
 1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).

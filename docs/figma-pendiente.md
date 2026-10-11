@@ -1129,6 +1129,19 @@ empieza en la misma x que el contenido de la caja.
 
 ---
 
+## 41 · La cabecera de página en la escalera 7 · 14 · 28 (2026-10-11, DD-192)
+
+**Estado:** pendiente · **Dónde:** el `content` de Contact Center (`393:12564`) y las plantillas de la ficha 39.
+
+- **El borde de la página**, 28 por los cuatro lados: el `content` pone 22,75 arriba.
+- **La cabecera de un listado**: barra → título 28, título → buscador 14, buscador → tabla 7; Columnas y el buscador, a 7.
+- **Con pestañas o segmentado**: 14 del título a las pestañas y 14 de las pestañas al buscador.
+
+**Cómo sabes que está hecho:** en el fichero, el índice y la caja de Contact Center arrancan a 28 del borde de arriba
+del `content`, y la plantilla de listado mide 28, 14 y 7.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
