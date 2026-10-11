@@ -1954,6 +1954,12 @@
   --sc-agent-window-disabled: var(--sc-color-slate-600);
   --sc-agent-window-pill-bg: var(--sc-color-slate-0);
   --sc-agent-window-pill-fg: var(--sc-color-slate-950);
+  /* El `:hover` de la píldora en la réplica, #8d939d → slate-500 (#8f97a3), el paso más cercano: en el agente
+   * real falta en `tipificacion-vista` (barrido de consistencia, 2026-10-11). La vista previa del Supervisor,
+   * además, abre un globo con las opciones —algo que el agente real no tiene, es cosa de este visor—, así que
+   * el mismo gris sirve también para «sigue abierta» (`aria-expanded`), la misma lógica que ya separa hover de
+   * abierto en el resumen de grupo. */
+  --sc-agent-window-pill-hover-bg: var(--sc-color-slate-500);
   /* Sutil y con spread (DD-177): un halo que lo despega del lienzo por los cuatro lados, no la
    * sombra lateral del agente (que cae hacia la izquierda con spread negativo sobre su panel oscuro). */
   --sc-agent-window-shadow:
