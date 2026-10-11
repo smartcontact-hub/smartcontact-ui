@@ -48,45 +48,99 @@
       }
     </sc-summary-kpi>
 
-    <!-- Lo que no es una proporción, junto en una tarjeta: reparto y salida, con sus recursos. Cada título lleva a su
-         sección, y cada fila a su sitio en ella (DD-146); el grupo nombra sus filas, para que dos «Teléfono» no se
-         confundan. Cada fila con el icono de su canal en una baldosa, y los títulos en semibold (DD-185). -->
+    <!-- Lo que no es una proporción, junto en una tarjeta: distribución y salida, con sus recursos. Cada título lleva
+         a su sección, y cada fila a su sitio en ella (DD-146); el grupo nombra sus filas, para que dos «Teléfono» no
+         se confundan. El título va en una línea de caption, sin baldosa propia: con su icono grande sumado al de
+         cada fila, Distribución y Salida leían como dos tarjetas (revisión de diseño, 2026-10-11), no una (DD-185).
+         El título dice «Distribución», como la cabecera de la sección a la que lleva: «Reparto» era otra palabra
+         para lo mismo (corregido el mismo día). -->
     <div class="resumen__kpi resumen__facts">
       @if (routing().length > 0) {
         <div class="resumen__fact" role="group" aria-labelledby="group-summary-routing">
-          <p id="group-summary-routing" class="resumen__label resumen__title-row sc-text-h3-semibold">
+          <p id="group-summary-routing" class="resumen__label resumen__title-row sc-text-caption-regular">
             <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
-              <sc-icon-tile icon="alt_route" tone="strong" />
               {{ 'groups.form.summary.routing' | translate }}
             </a>
           </p>
-          <!-- Cada fila, `sc-fact-row` del DS (DD-186): la clave con su baldosa y el valor a la derecha. -->
+          <!-- Cada fila, `sc-fact-row` del DS (DD-186): la clave con su baldosa y el valor a la derecha, y un
+               enlace de verdad a su sección (DD-146). La de Teléfono es la excepción (revisión de diseño,
+               2026-10-11): en vez de enlace, es UN solo botón que abre el selector rápido —antes tenía el enlace Y
+               un botón de más pegados, dos objetivos a un dedo de distancia que hacían cosas distintas; quien
+               quería cambiar el reparto podía acabar en Distribución y colas sin querer. El botón lleva las tres
+               estrategias que no piden nada más, con su misma ayuda que el campo real (DD-133), y su propio
+               «Configurar colas» al pie para cuando sí hace falta la sección entera. -->
           <dl class="resumen__pairs">
             @for (r of routing(); track r.family) {
-              <div scFactRow class="resumen__pair" [label]="familyKey(r.family) | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
-                <sc-channel-icon scFactIcon [channel]="r.family" [size]="16" />
-                <!-- La estrategia corta, en una píldora verde redondeada a la talla de los valores; la larga, en texto. -->
-                @if (r.text.length <= 16) {
-                  <sc-tag severity="success" rounded size="md" [value]="r.text" />
-                } @else {
+              @if (r.family === 'phone') {
+                <div class="resumen__routing-row">
+                  <button
+                    type="button"
+                    class="resumen__pair-button"
+                    [class.resumen__pair-button--active]="expandedQuick() === 'reparto'"
+                    [attr.aria-expanded]="expandedQuick() === 'reparto'"
+                    aria-controls="group-summary-quick-strategy"
+                    (click)="toggleQuick('reparto')"
+                  >
+                    <sc-icon-tile><sc-channel-icon [channel]="r.family" [size]="16" /></sc-icon-tile>
+                    <span class="resumen__pair-label sc-text-body-regular">{{ familyKey(r.family) | translate }}</span>
+                    <span class="resumen__pair-value sc-text-body-semibold">
+                      {{ r.text }}
+                      <span class="resumen__pair-chevron">
+                        <sc-icon name="chevron_right" size="inherit" aria-hidden="true" [class.resumen__pair-chevron--hidden]="expandedQuick() === 'reparto'" />
+                        <sc-icon name="expand_more" size="inherit" aria-hidden="true" [class.resumen__pair-chevron--hidden]="expandedQuick() !== 'reparto'" />
+                      </span>
+                    </span>
+                    <span class="visually-hidden">{{ 'groups.form.summary.routing_quick' | translate }}</span>
+                  </button>
+                </div>
+              } @else {
+                <div scFactRow class="resumen__pair" [label]="familyKey(r.family) | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
+                  <sc-channel-icon scFactIcon [channel]="r.family" [size]="16" />
                   {{ r.text }}
-                }
-              </div>
+                </div>
+              }
+              @if (r.family === 'phone' && expandedQuick() === 'reparto') {
+                <div id="group-summary-quick-strategy" class="resumen__quick">
+                  <div role="radiogroup" [attr.aria-label]="'groups.form.summary.routing_quick' | translate">
+                    @for (opcion of quickStrategyOptions; track opcion) {
+                      <button
+                        type="button"
+                        role="radio"
+                        [attr.aria-checked]="opcion === r.text"
+                        class="resumen__quick-option"
+                        [class.resumen__quick-option--chosen]="opcion === r.text"
+                        (click)="elegirQuickStrategy(opcion)"
+                      >
+                        <span class="resumen__quick-option-text">
+                          <strong class="sc-text-caption-semibold">{{ opcion }}</strong>
+                          @if (quickStrategyHelpKey(opcion); as helpKey) {
+                            <small class="sc-text-caption-regular">{{ helpKey | translate }}</small>
+                          }
+                        </span>
+                        <span class="resumen__quick-radio" aria-hidden="true"></span>
+                      </button>
+                    }
+                  </div>
+                  <a class="resumen__quick-link sc-text-caption-regular" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
+                    {{ 'groups.form.summary.routing_see' | translate }}
+                    <sc-icon name="chevron_right" size="inherit" aria-hidden="true" />
+                  </a>
+                </div>
+              }
             }
           </dl>
         </div>
       }
       @if (outbound().length > 0 || routing().length === 0) {
         <div class="resumen__fact" role="group" aria-labelledby="group-summary-outbound">
-          <p id="group-summary-outbound" class="resumen__label resumen__title-row sc-text-h3-semibold">
+          <p id="group-summary-outbound" class="resumen__label resumen__title-row sc-text-caption-regular">
             <a class="resumen__enlace" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion' })">
-              <sc-icon-tile icon="call_made" tone="strong" />
               {{ 'groups.form.summary.outbound' | translate }}
             </a>
           </p>
           <dl class="resumen__pairs">
             @for (o of outbound(); track o.channel) {
-              <div scFactRow class="resumen__pair" [label]="channelKeys[o.channel] | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">
+              <div scFactRow class="resumen__pair" [label]="outboundKeys[o.channel] | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">
                 <sc-channel-icon scFactIcon [channel]="o.channel" [size]="16" />
                 @if (o.number) {
                   {{ o.number }}
@@ -98,9 +152,46 @@
                 }
               </div>
             }
-            <div scFactRow class="resumen__pair" icon="library_books" [label]="'groups.form.summary.resources' | translate" [href]="hrefs().recursos" (open)="pulsar($event, { seccion: 'recursos' })">
-              <span class="resumen__digits" [scAnimateOnChange]="resourceCount()" animateClass="animate-sc-bump">{{ resourceCount() }}</span>
+            <!-- Recursos, la misma excepción que Teléfono: un solo botón, no un enlace y un botón de más pegados. -->
+            <div class="resumen__routing-row">
+              <button
+                type="button"
+                class="resumen__pair-button"
+                [class.resumen__pair-button--active]="expandedQuick() === 'salida'"
+                [attr.aria-expanded]="expandedQuick() === 'salida'"
+                aria-controls="group-summary-quick-resources"
+                (click)="toggleQuick('salida')"
+              >
+                <sc-icon-tile icon="library_books" />
+                <span class="resumen__pair-label sc-text-body-regular">{{ 'groups.form.summary.resources' | translate }}</span>
+                <span class="resumen__pair-value sc-text-body-semibold">
+                  <span [scAnimateOnChange]="resourceCount()" animateClass="animate-sc-bump">{{ resourceCount() }}</span>
+                  <span class="resumen__pair-chevron">
+                    <sc-icon name="chevron_right" size="inherit" aria-hidden="true" [class.resumen__pair-chevron--hidden]="expandedQuick() === 'salida'" />
+                    <sc-icon name="expand_more" size="inherit" aria-hidden="true" [class.resumen__pair-chevron--hidden]="expandedQuick() !== 'salida'" />
+                  </span>
+                </span>
+                <span class="visually-hidden">{{ 'groups.form.summary.resources_quick' | translate }}</span>
+              </button>
             </div>
+            @if (expandedQuick() === 'salida') {
+              <div id="group-summary-quick-resources" class="resumen__quick">
+                @if (resourceRows().length > 0) {
+                  @for (recurso of resourceRows(); track recurso.id) {
+                    <div class="resumen__quick-resource">
+                      <strong class="sc-text-caption-semibold">{{ recurso.name }}</strong>
+                      <small class="sc-text-caption-regular">{{ recurso.detail }}</small>
+                    </div>
+                  }
+                } @else {
+                  <p class="resumen__quick-empty sc-text-caption-regular">{{ 'groups.form.summary.resources_empty' | translate }}</p>
+                }
+                <a class="resumen__quick-link sc-text-caption-regular" [href]="hrefs().recursos" (click)="pulsar($event, { seccion: 'recursos' })">
+                  {{ 'groups.form.summary.resources_see' | translate }}
+                  <sc-icon name="chevron_right" size="inherit" aria-hidden="true" />
+                </a>
+              </div>
+            }
           </dl>
         </div>
       }

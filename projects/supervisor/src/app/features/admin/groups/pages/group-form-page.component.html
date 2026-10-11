@@ -127,11 +127,13 @@
         [routing]="summaryRouting()"
         [outbound]="summaryOutbound()"
         [resourceCount]="resourceCount()"
+        [resourceRows]="summaryResourceRows()"
         [missing]="summaryMissing()"
         [creating]="mode() === 'create'"
         [ready]="mode() === 'create' && canSave()"
         [hrefs]="summaryHrefs()"
         (ir)="irDesdeResumen($event)"
+        (cambiarReparto)="onStrategyValueChange($event)"
       />
     </div>
   </div>
@@ -434,12 +436,12 @@
             <div class="field">
               <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
               <div class="upload-field" role="group" aria-labelledby="group-hold-music-label">
-                <span class="inline-control">
-                  <span class="inline-control__value sc-text-body-regular">{{ form().announcements.holdMusicFile ?? ('groups.form.announcements.default_music' | translate) }}</span>
-                  @if (form().announcements.holdMusicFile) {
+                @if (form().announcements.holdMusicFile; as archivo) {
+                  <span class="inline-control">
+                    <span class="inline-control__value sc-text-body-regular">{{ archivo }}</span>
                     <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.remove_music' | translate" (clicked)="setAnnouncement('holdMusicFile', null)" />
-                  }
-                </span>
+                  </span>
+                }
                 <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
               </div>
             </div>
@@ -469,7 +471,7 @@
                     <sc-button size="sm" variant="secondary" appearance="text" icon="delete" [ariaLabel]="'groups.form.announcements.remove_periodic_aria' | translate: { file: periodic.file }" (clicked)="removePeriodicAnnouncement($index)" />
                   </span>
                 }
-                <sc-fileupload id="group-periodic-upload" [multiple]="true" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onPeriodicFiles($event)" />
+                <sc-fileupload mode="basic" id="group-periodic-upload" [multiple]="true" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onPeriodicFiles($event)" />
               </div>
             </div>
 

@@ -10,7 +10,7 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceRowsComponent } from '@shared/components';
+import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceRowsComponent, type ResourceRow } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { llegarAAncla, llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
@@ -43,6 +43,7 @@ import {
   GroupPriority,
   OUTBOUND_NUMBERS,
   PHONE_STRATEGIES,
+  PHONE_STRATEGY_HELP_KEYS,
   PRIORITY_LABEL_KEYS,
   RING_ALL_OPTIONS,
   SUB_STRATEGIES,
@@ -653,21 +654,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected readonly isNiveles = computed(() => this.hasPhone() && this.form().strategy === 'Niveles');
   protected readonly isRingAll = computed(() => this.hasPhone() && this.form().strategy === 'Ring All');
 
-  /**
-   * Qué hace la estrategia de teléfono elegida, en una línea bajo el campo (DD-133). El texto sale del manual de usuario
-   * de Voice, que describe seis; Skills sale apagada con su motivo y no lleva ayuda.
-   */
-  private static readonly STRATEGY_HELP: Readonly<Record<string, string>> = {
-    Balanceada: 'groups.form.strategy_help.balanced',
-    'Menos conversaciones atendidas': 'groups.form.strategy_help.fewest_conversations',
-    'Más tiempo inactivo': 'groups.form.strategy_help.longest_idle',
-    Niveles: 'groups.form.strategy_help.levels',
-    'Ring All': 'groups.form.strategy_help.ring_all',
-    'Agente exclusivo': 'groups.form.strategy_help.exclusive',
-  };
-  protected readonly strategyHelpKey = computed<string | null>(
-    () => GroupFormPageComponent.STRATEGY_HELP[this.form().strategy] ?? null,
-  );
+  /** Qué hace la estrategia de teléfono elegida, en una línea bajo el campo (DD-133): `PHONE_STRATEGY_HELP_KEYS`,
+   *  compartida con el selector rápido del resumen. */
+  protected readonly strategyHelpKey = computed<string | null>(() => PHONE_STRATEGY_HELP_KEYS[this.form().strategy] ?? null);
 
   /** Los números asignados a la cuenta, sin escribir uno nuevo (DD-142). Y el que ya tuviera guardado el grupo, aunque
    *  no esté entre ellos: abrir la ficha no lo borra. */
@@ -1181,6 +1170,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     const templates = (this.hasChatFamily() ? this.chatTemplateValue().length : 0) + (this.hasEmail() ? this.emailTemplateValue().length : 0);
     // Las etiquetas cuentan solo si se ven (DD-142).
     return f.scheduleIds.size + templates + (this.conEtiquetas ? f.labelIds.size : 0);
+  });
+
+  /** Los mismos recursos de `resourceCount`, con su nombre y su dato, para el panel rápido de Salida del resumen
+   *  (revisión de diseño, 2026-10-11): sin «Editar», es solo vista previa, y «Ver recursos» lleva a la sección. */
+  protected readonly summaryResourceRows = computed<readonly ResourceRow[]>(() => {
+    const f = this.form();
+    return [
+      ...this.resourceRows.agendas(f.scheduleIds, false),
+      ...(this.hasChatFamily() ? this.resourceRows.templates(f.templateIds, 'chat', false) : []),
+      ...(this.hasEmail() ? this.resourceRows.templates(f.templateIds, 'email', false) : []),
+    ];
   });
 
   /** Lo que falta para poder crear, en el orden de la ficha. Un nombre repetido no falta: se dice en su campo. */

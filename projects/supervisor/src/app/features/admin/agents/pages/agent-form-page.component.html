@@ -231,7 +231,7 @@
             @if (phoneRequired()) {
               <span class="field__required" aria-hidden="true">*</span>
             } @else {
-              <span class="field__hint">({{ 'common.optional' | translate }})</span>
+              <span class="field__hint sc-text-caption-regular">({{ 'common.optional' | translate }})</span>
             }
           </label>
           <sc-inputtext
@@ -294,7 +294,7 @@
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="agent-pin">
               {{ 'agents.form.fields.pin' | translate }}
-              <span class="field__hint">({{ 'common.optional' | translate }})</span>
+              <span class="field__hint sc-text-caption-regular">({{ 'common.optional' | translate }})</span>
               <sc-nota-decision claveTitulo="decision_notes.pin.title" claveTexto="decision_notes.pin.body" />
             </label>
             <sc-inputtext

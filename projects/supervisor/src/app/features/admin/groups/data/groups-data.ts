@@ -22,6 +22,13 @@ export const CHANNEL_LABEL_KEYS: Readonly<Record<GroupChannel, string>> = {
   email: 'groups.channel.email',
 };
 
+/** El nombre de cada número de salida, el del campo real en Distribución y colas («Teléfono saliente»,
+ *  «Número WhatsApp»): el genérico del canal («Teléfono», «WhatsApp») no es el que lee quien llega ahí. */
+export const OUTBOUND_LABEL_KEYS: Readonly<Record<'phone' | 'whatsapp', string>> = {
+  phone: 'groups.form.fields.phone',
+  whatsapp: 'groups.form.advanced.whatsapp_number',
+};
+
 /** Por dónde atiende un agente en un grupo: Teléfono, Chat (Web Chat y WhatsApp juntos) o Email, como en el AED en
  *  vivo (DD-147). El grupo ofrece sus cuatro canales; el enlace de cada agente guarda familias. */
 export type ChannelFamily = 'phone' | 'chat' | 'email';
@@ -56,6 +63,18 @@ export const PHONE_STRATEGIES: readonly string[] = [
 /** Las que sirven de valor por defecto en Contact Center › Grupos: las que no piden nada más en cada grupo. Niveles,
  *  Ring All, Skills y Agente exclusivo necesitan niveles, un número de agentes, skills o el IVR (SISMAC-1975). */
 export const DEFAULT_STRATEGY_OPTIONS: readonly string[] = ['Balanceada', 'Menos conversaciones atendidas', 'Más tiempo inactivo'];
+
+/** Qué hace cada estrategia de teléfono, en una línea (DD-133): sale del manual de usuario de Voice, que describe
+ *  seis; Skills sale apagada con su motivo y no lleva ayuda. La usan el campo de Distribución y colas y el
+ *  selector rápido del resumen (DD-146): la misma frase en los dos sitios. */
+export const PHONE_STRATEGY_HELP_KEYS: Readonly<Record<string, string>> = {
+  Balanceada: 'groups.form.strategy_help.balanced',
+  'Menos conversaciones atendidas': 'groups.form.strategy_help.fewest_conversations',
+  'Más tiempo inactivo': 'groups.form.strategy_help.longest_idle',
+  Niveles: 'groups.form.strategy_help.levels',
+  'Ring All': 'groups.form.strategy_help.ring_all',
+  'Agente exclusivo': 'groups.form.strategy_help.exclusive',
+};
 
 /** Desempata entre agentes del mismo nivel. No puede ser Niveles (manual de Voice, p. 12). */
 export const SUB_STRATEGIES: readonly string[] = ['Balanceada', 'Más tiempo inactivo', 'Menos conversaciones atendidas'];
