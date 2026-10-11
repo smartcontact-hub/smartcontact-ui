@@ -1142,6 +1142,38 @@ del `content`, y la plantilla de listado mide 28, 14 y 7.
 
 ---
 
+## 42 · Las piezas nuevas del DS desde la revisión de grupos: FileUpload, IconTile, FactRow, Tag mediano, InputTags y la burbuja de estado (2026-10-11, DD-184 a DD-187 y DD-194)
+
+**Estado:** pendiente · **Dónde:** el fichero del DS (maestros) · Ninguna variable nueva: todo sale de las que ya hay.
+La ficha de grupo entera no va (no tiene maqueta desde DD-121; ver abajo). **Mídelo antes**: ningún nodo de esta ficha
+se ha leído en el fichero.
+
+- **FileUpload** (`sc-fileupload`, DD-184): el maestro de PrimeOne en sus dos modos. El de uso hoy es `basic` (los audios
+  del grupo, DD-187): solo el botón, secundario y pequeño, «Subir archivo» con el icono `upload` del `IconSet`. El
+  `advanced` (caja de soltar, lista de archivos, aviso de tipo y tamaño) queda para importar tipificaciones y contactos.
+  La referencia es la página de sc-docs (Componentes › FileUpload).
+- **IconTile** (`sc-icon-tile`, DD-186): la baldosa de un icono. `md`, 28 × 28 con el icono a 16 (para texto de 14);
+  `sm`, 24,5 con el icono a 14; radio `md`. Relleno: el color del título al 6 % sobre la tarjeta; brillo arriba (1 px, la
+  superficie al 60 %) y la sombra `xs`. Variante `tone=strong` para un título. El icono, al peso de su texto (DD-189).
+- **FactRow** (`sc-fact-row`, DD-186): la clave (baldosa `md` + texto 14 regular, del color del texto de su tarjeta) a la izquierda y el
+  valor (14 semibold, color de título) a la derecha, centrados en la fila; si no cabe, el valor baja y sigue a la
+  derecha. Variante con enlace: la clave subrayada al pasar. Las filas, a 7 entre sí dentro de su tarjeta.
+- **Tag mediano** (`sc-tag size="md"`, DD-186): la píldora a 14 en semibold con relleno 1,75 × 10,5, para un valor entre
+  valores de 14. El Tag del Kit (12 en negrita) sigue siendo el pequeño. Va con la ficha 38: si el Tag pasa a 600, el
+  mediano ya nace así.
+- **InputTags** (`sc-inputtags`, DD-194): el Kit no tiene maestro (por eso sale «experimental» en sc-docs). El campo
+  de los demás (32,5 de alto, borde y radio de campo) con las etiquetas dentro: el Chip del Kit a 24,5 de alto, texto
+  14, radio 6, y su ✕ al final; el texto guía a 14 detrás de la última. Mira antes si PrimeOne lo trae.
+- **La burbuja de estado en el avatar** (`sc-presence-avatar`, DD-185 y DD-187 §8): el Avatar con el Badge de punto,
+  abajo a la derecha y dentro del cuadro de la foto; diámetro el 30 % de la foto (8 como mínimo), con un aro del color de
+  la superficie, en el color del punto de la etiqueta de su estado (gris para «Desconectado»). Solo en la tabla de
+  agentes del grupo.
+
+**Cómo sabes que está hecho:** los seis maestros existen en el fichero con estas medidas, atados a variables (ningún
+número suelto), y cada uno con el enlace a su página de sc-docs en la descripción.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
