@@ -54,7 +54,9 @@ export class LanguageService {
     // PrimeNG (el calendario) habla el idioma de la app. En `onLangChange` y no en el `effect`:
     // ahí las traducciones ya han cargado y `instant` devuelve texto, no la clave.
     this.translate.onLangChange.subscribe(() =>
-      this.primeng.setTranslation(primengTranslation(this.locale(), (k) => this.translate.instant(k))),
+      this.primeng.setTranslation(
+        primengTranslation(this.locale(), (k) => this.translate.instant(k), this.primeng.translation.aria),
+      ),
     );
 
     // Propagate any future signal change to ngx-translate + storage.

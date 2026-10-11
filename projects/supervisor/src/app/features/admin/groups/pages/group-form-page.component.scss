@@ -129,13 +129,6 @@
 }
 
 
-.domain-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sc-spacing-0-5);
-  margin-block-start: var(--sc-spacing-0-5);
-}
-
 /* La capacidad compone tipo y cifra: su fila se separa de los tiempos, conservando la alineación con la música. */
 .queue-fields {
   row-gap: var(--sc-spacing-2);
