@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "59 componentes · 25 custom · 8 standard · 26 extended · 47 usados en Supervisor · estado (DD-190): 32 ready, 26 experimental, 1 deprecated.",
+  "summary": "61 componentes · 25 custom · 9 standard · 27 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -237,7 +237,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 188,
+      "usedInSupervisor": 187,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -323,7 +323,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 6,
+      "usedInSupervisor": 5,
       "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
       "sobreObsoleto": []
     },
@@ -1062,6 +1062,52 @@
       "sobreObsoleto": []
     },
     {
+      "name": "inputtags",
+      "selector": "sc-inputtags",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/inputtags",
+      "cva": false,
+      "inputs": 18,
+      "api": [
+        "addOnBlur",
+        "addOnPaste",
+        "added",
+        "allowDuplicate",
+        "ariaDescribedBy",
+        "ariaLabel",
+        "delimiter",
+        "disabled",
+        "error",
+        "fluid",
+        "helperText",
+        "inputId",
+        "invalid",
+        "label",
+        "max",
+        "placeholder",
+        "removed",
+        "required",
+        "size",
+        "value",
+        "valueChange"
+      ],
+      "nested": [
+        "sc-field-label",
+        "sc-field-msg"
+      ],
+      "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 1,
+      "cuando": "Para varios valores cortos que escribe el usuario (dominios, etiquetas libres, correos). Si salen de una lista cerrada, `sc-multiselect`; si es uno solo, `sc-inputtext`.",
+      "sobreObsoleto": []
+    },
+    {
       "name": "inputtext",
       "selector": "sc-inputtext",
       "provenance": "WRAPPER",
@@ -1103,7 +1149,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 45,
+      "usedInSupervisor": 44,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1725,6 +1771,28 @@
       "retirado": null,
       "usedInSupervisor": 18,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "tabs",
+      "selector": "sc-tabs",
+      "provenance": "WRAPPER",
+      "kind": "STANDARD",
+      "primengBase": "primeng/tabs",
+      "cva": false,
+      "inputs": 1,
+      "api": [
+        "value",
+        "valueChange"
+      ],
+      "nested": [],
+      "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 2,
+      "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
       "sobreObsoleto": []
     },
     {

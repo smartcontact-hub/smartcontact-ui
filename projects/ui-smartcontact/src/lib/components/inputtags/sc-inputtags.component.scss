@@ -1,0 +1,39 @@
+/*
+ * sc-inputtags — wrapper Extended sobre <p-inputtags>.
+ *
+ * El campo, las fichas y su ✕ los pinta el tema (`inputtags.*` y `chip.*`, sobre los de campo del Kit). Aquí solo
+ * la columna etiqueta / campo / ayuda, con la etiqueta y la ayuda de `sc-inputtext` (una sola etiqueta de campo, DD-187).
+ */
+
+.sc-inputtags {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-width: 0;
+}
+
+.sc-inputtags__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-125);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-secondary);
+}
+
+.sc-inputtags__required {
+  color: var(--sc-text-danger);
+  font-weight: var(--sc-font-weight-medium);
+}
+
+.sc-inputtags__msg {
+  display: block;
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  color: var(--sc-text-subtle);
+}
+
+.sc-inputtags__msg--error {
+  color: var(--sc-text-danger);
+}

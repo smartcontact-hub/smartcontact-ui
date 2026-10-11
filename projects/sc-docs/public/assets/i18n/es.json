@@ -245,6 +245,7 @@
     "meta": "{{screens}} pantallas · {{seen}}/{{total}} componentes DS vistos · capturado {{date}} · {{viewport}} · tema {{theme}}",
     "byComponent": "Por componente",
     "byScreen": "Por pantalla",
+    "viewsAria": "Vistas del inventario",
     "error": "No se pudo cargar <code>/usage/_usage-status.json</code>. Corre <code>npm run usage:capture</code> para generar las capturas.",
     "loading": "Cargando capturas…",
     "screensCount": "{{count}} pantalla(s)",

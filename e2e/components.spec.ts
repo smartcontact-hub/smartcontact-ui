@@ -588,6 +588,39 @@ test.describe('sc-fileupload', () => {
   });
 });
 
+test.describe('sc-inputtags', () => {
+  test('Enter y la coma añaden, Retroceso quita; la etiqueta y la ayuda llegan al campo de escribir', async ({ page }) => {
+    await gotoPage(page, 'inputtags');
+    const host = page.getByTestId('sc-inputtags-domains');
+    // El nombre y la descripción entran por `pt`: `p-inputtags` no pasa `inputId` a su campo (DD-194).
+    const input = host.getByRole('combobox', { name: 'Dominios permitidos' });
+    await expect(input).toHaveAccessibleDescription('Las webs donde se puede insertar el chat.');
+    await expect(host.locator('.p-chip')).toHaveCount(2);
+    await input.pressSequentially('blog.example.com,');
+    await expect(host.locator('.p-chip')).toHaveCount(3);
+    await input.fill('docs.example.com');
+    await input.press('Enter');
+    await expect(host.locator('.p-chip').last()).toHaveText('docs.example.com');
+    await input.press('Backspace');
+    await expect(host.locator('.p-chip')).toHaveCount(3);
+    expect(await styleOf(host.locator('.p-inputtags'), ['border-radius'])).toEqual({ 'border-radius': kitPx('formField.borderRadius') });
+  });
+});
+
+test.describe('sc-tabs', () => {
+  test('la tira lleva su nombre en el nodo tablist y cambia de pestaña con clic y flechas', async ({ page }) => {
+    await gotoPage(page, 'tabs');
+    const host = page.getByTestId('sc-tabs-icon');
+    await expect(host.getByRole('tablist', { name: 'Vistas de la conversación' })).toBeVisible();
+    await expect(host.getByRole('tab', { name: 'Transcripción' })).toHaveAttribute('aria-selected', 'true');
+    await host.getByRole('tab', { name: 'Análisis' }).click();
+    await expect(host.getByRole('tab', { name: 'Análisis' })).toHaveAttribute('aria-selected', 'true');
+    // La apagada se ve, pero no se elige.
+    await expect(host.getByRole('tab', { name: 'Auditoría' })).toHaveAttribute('aria-disabled', 'true');
+    await expect(host.locator('sc-icon')).toHaveCount(3);
+  });
+});
+
 test.describe('sc-search', () => {
   test('chrome del Kit: campo, icono lupa, clear y CVA', async ({ page }) => {
     await gotoPage(page, 'search');

@@ -95,6 +95,8 @@ export const CUANDO = {
   'sc-icon-tile': 'Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.',
   'div[scFactRow]': 'Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.',
   'sc-fileupload': 'Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.',
+  'sc-inputtags': 'Para varios valores cortos que escribe el usuario (dominios, etiquetas libres, correos). Si salen de una lista cerrada, `sc-multiselect`; si es uno solo, `sc-inputtext`.',
+  'sc-tabs': 'Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.',
   'sc-selectbutton': 'Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).',
   'sc-skeleton': 'Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.',
   'sc-slot': 'Para una ranura con título dentro de una composición.',

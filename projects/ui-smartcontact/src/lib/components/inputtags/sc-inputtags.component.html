@@ -1,0 +1,37 @@
+@if (label()) {
+  <sc-field-label
+    block="sc-inputtags"
+    [text]="label()!"
+    [required]="required()"
+    [for]="resolvedId()"
+    [labelId]="labelId()"
+  />
+}
+
+<p-inputtags
+  class="sc-inputtags__control"
+  [ngModel]="value()"
+  (ngModelChange)="value.set($event)"
+  [placeholder]="placeholder()"
+  [disabled]="disabled()"
+  [invalid]="isInvalid()"
+  [fluid]="fluid()"
+  [size]="pSize()"
+  [delimiter]="delimiter()"
+  [addOnPaste]="addOnPaste()"
+  [addOnBlur]="addOnBlur()"
+  [max]="max()"
+  [allowDuplicate]="allowDuplicate()"
+  [pt]="tagsPt()"
+  (onAdd)="added.emit($event)"
+  (onRemove)="removed.emit($event)"
+/>
+
+@if (footerText()) {
+  <sc-field-msg
+    block="sc-inputtags"
+    [text]="footerText()"
+    [isError]="!!error()"
+    [msgId]="msgId()"
+  />
+}

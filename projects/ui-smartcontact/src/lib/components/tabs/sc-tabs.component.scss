@@ -1,0 +1,15 @@
+/*
+ * sc-tabs — wrapper Standard sobre <p-tabs>.
+ *
+ * La tira, la raya que se desliza y la pestaña activa los pinta el tema (`tabs.*` en sc-preset). Aquí solo que el host
+ * ocupe su sitio y el hueco entre el icono y el texto.
+ */
+
+.sc-tabs {
+  display: block;
+  min-width: 0;
+}
+
+.sc-tabs__icon {
+  margin-inline-end: var(--sc-spacing-0-5);
+}

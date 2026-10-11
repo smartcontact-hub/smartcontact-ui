@@ -172,7 +172,7 @@
     },
     {
       "componente": "inputtags",
-      "envuelto": false
+      "envuelto": true
     },
     {
       "componente": "inputtext",
@@ -328,7 +328,7 @@
     },
     {
       "componente": "tabs",
-      "envuelto": false
+      "envuelto": true
     },
     {
       "componente": "tabview",
@@ -4827,6 +4827,307 @@
       ]
     },
     {
+      "selector": "sc-inputtags",
+      "name": "inputtags",
+      "primengBase": "primeng/inputtags",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "cuando": "Para varios valores cortos que escribe el usuario (dominios, etiquetas libres, correos). Si salen de una lista cerrada, `sc-multiselect`; si es uno solo, `sc-inputtext`.",
+      "contrato": [
+        {
+          "nombre": "size",
+          "clase": "input",
+          "tipo": "ScFieldSize",
+          "porDefecto": "'md'",
+          "requerido": false,
+          "descripcion": "Talla del campo: `sm`, `md` o `lg`, la de los demás campos del DS.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Specifies the size of the component.",
+            "porDefecto": "undefined",
+            "obsoleta": null,
+            "heredadaDe": "BaseInput"
+          }
+        },
+        {
+          "nombre": "label",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Etiqueta del campo. Sin ella el campo no tiene nombre accesible (o se le da uno por `ariaLabel`).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Nombre accesible cuando no hay `label` visible.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "required",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Marca el campo como obligatorio en su etiqueta. No valida por sí solo.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "There must be a value (if set).",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": "BaseEditableHolder"
+          }
+        },
+        {
+          "nombre": "helperText",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "error",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Mensaje de error. Su sola presencia pone el campo en estado inválido.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "invalid",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Estado inválido explícito.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When present, it specifies that the component should have invalid state style.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": "BaseEditableHolder"
+          }
+        },
+        {
+          "nombre": "placeholder",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Texto del campo de escribir mientras está vacío.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Advisory information to display on input.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "disabled",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Deshabilita el campo entero: ni se escribe ni se quitan etiquetas.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When present, it specifies that the component should have disabled state style.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": "BaseEditableHolder"
+          }
+        },
+        {
+          "nombre": "inputId",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Id del campo de escribir; si no se pasa, se genera.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaDescribedBy",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Ids de lo que describe el campo desde fuera; se oyen después de la ayuda propia.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "fluid",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "Ocupa todo el ancho de su contenedor.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Spans 100% width of the container when enabled.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": "BaseInput"
+          }
+        },
+        {
+          "nombre": "delimiter",
+          "clase": "input",
+          "tipo": "string | RegExp",
+          "porDefecto": "','",
+          "requerido": false,
+          "descripcion": "Carácter (o expresión) que, además de Enter, cierra una etiqueta. Por defecto, la coma.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Delimiter character or regex to split input into tags.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "addOnPaste",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "Pegar un texto lo parte por `delimiter` en etiquetas.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to add tags on paste event.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "addOnBlur",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "Salir del campo con algo escrito lo añade como etiqueta.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to add a tag when the input loses focus.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "max",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Cuántas etiquetas como máximo.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Maximum number of tags allowed.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "allowDuplicate",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Deja repetir una etiqueta que ya está.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to allow duplicate tags.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "value",
+          "clase": "model",
+          "tipo": "readonly string[]",
+          "porDefecto": "[]",
+          "requerido": false,
+          "descripcion": "Las etiquetas.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "added",
+          "clase": "output",
+          "tipo": "InputTagsAddEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha añadido una etiqueta.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "removed",
+          "clase": "output",
+          "tipo": "InputTagsRemoveEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha quitado una etiqueta.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": [
+        "addOnTab",
+        "appendTo",
+        "autoOptionFocus",
+        "completeOnFocus",
+        "delay",
+        "focusOnHover",
+        "group",
+        "inputSize",
+        "inputStyle",
+        "inputStyleClass",
+        "maxlength",
+        "min",
+        "minQueryLength",
+        "minlength",
+        "motionOptions",
+        "name",
+        "optionDisabled",
+        "optionGroupChildren",
+        "optionGroupLabel",
+        "optionLabel",
+        "optionValue",
+        "overlayOptions",
+        "panelStyle",
+        "panelStyleClass",
+        "pattern",
+        "scrollHeight",
+        "step",
+        "suggestions",
+        "tabindex",
+        "typeahead",
+        "variant"
+      ]
+    },
+    {
       "selector": "sc-inputtext",
       "name": "inputtext",
       "primengBase": "primeng/inputtext",
@@ -7932,6 +8233,61 @@
         }
       ],
       "ocultas": []
+    },
+    {
+      "selector": "sc-tabs",
+      "name": "tabs",
+      "primengBase": "primeng/tabs",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
+      "contrato": [
+        {
+          "nombre": "tabs",
+          "clase": "input",
+          "tipo": "readonly ScTab[]",
+          "porDefecto": null,
+          "requerido": true,
+          "descripcion": "Las pestañas, en orden.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": true,
+          "descripcion": "El nombre de la tira para el lector de pantalla («Canal», «Vistas de la conversación»).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "value",
+          "clase": "model",
+          "tipo": "string | number | undefined",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La pestaña elegida (su `value`).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Value of the active tab.",
+            "porDefecto": "undefined",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        }
+      ],
+      "ocultas": [
+        "disabled",
+        "lazy",
+        "scrollStrategy",
+        "scrollable",
+        "selectOnFocus",
+        "showNavigators",
+        "tabindex"
+      ]
     },
     {
       "selector": "sc-tag",
