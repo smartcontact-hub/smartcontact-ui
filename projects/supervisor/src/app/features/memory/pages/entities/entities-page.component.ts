@@ -115,6 +115,7 @@ export class EntitiesPageComponent {
       {
         field: 'name',
         header: this.translate.instant('memory.entities.cols.name'),
+        rowHeader: true,
         cellTemplate: this.nameTpl(),
       },
       {

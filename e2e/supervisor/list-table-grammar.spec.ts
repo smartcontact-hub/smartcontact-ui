@@ -165,7 +165,7 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
         '.p-datatable-thead th:not(.sc-datatable__check)'
       )!;
       const tr = host.querySelector('.p-datatable-tbody > tr')!;
-      const td = tr.querySelector('td:not(.sc-datatable__check)')!;
+      const td = tr.querySelector(':scope > :not(.sc-datatable__check)')!;
       // NO todas las tablas `list` tienen selección: el trío de memory nunca la
       // tuvo. La casilla se mide SOLO si existe; exigirla convertía una
       // diferencia legítima en un fallo (y así petó la primera vez).
@@ -313,7 +313,7 @@ for (const caso of PAGINAS_EN_FORMULARIO) {
         '.p-datatable-thead th:not(.sc-datatable__check)'
       )!;
       const tr = host.querySelector('.p-datatable-tbody > tr')!;
-      const td = tr.querySelector('td:not(.sc-datatable__check)')!;
+      const td = tr.querySelector(':scope > :not(.sc-datatable__check)')!;
       return {
         altoFila: Math.round(tr.getBoundingClientRect().height),
         paddingCelda: cs(td, 'padding-top'),

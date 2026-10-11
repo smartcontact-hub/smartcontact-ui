@@ -220,7 +220,7 @@ test('admin/tipificaciones · ninguna celda ni el buscador salen en monoespaciad
   await goto(page, 'admin/tipificaciones');
   await expect(page.locator('sc-datatable tbody > tr').first()).toBeVisible();
   const enMono = await page.evaluate(() =>
-    [...document.querySelectorAll('sc-datatable td *, sc-datatable td, sc-search *')]
+    [...document.querySelectorAll('sc-datatable :is(td, th[scope=row]) *, sc-datatable :is(td, th[scope=row]), sc-search *')]
       .filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent?.trim()))
       .filter((el) => /mono|menlo|consolas/i.test(getComputedStyle(el).fontFamily))
       .map((el) => el.textContent?.trim()),

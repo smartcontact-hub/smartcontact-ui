@@ -59,7 +59,7 @@ export class EmailsPageComponent {
     this.lang();
     const t = (k: string) => this.translate.instant(k);
     return [
-      { field: 'name', header: t('repositories.columns.name'), cellTemplate: this.nameTpl() },
+      { field: 'name', header: t('repositories.columns.name'), rowHeader: true, cellTemplate: this.nameTpl() },
       { field: 'createdAt', header: t('repositories.emails.created'), width: '12.5rem', cellTemplate: this.createdTpl() as never },
       { field: 'modifiedAt', header: t('repositories.emails.modified'), width: '12.5rem', cellTemplate: this.modifiedTpl() as never },
       { field: 'totalEmails', header: t('repositories.emails.total'), width: '8rem', align: 'right' },
@@ -71,7 +71,7 @@ export class EmailsPageComponent {
     this.lang();
     const t = (k: string) => this.translate.instant(k);
     return [
-      { field: 'name', header: t('repositories.columns.name') },
+      { field: 'name', header: t('repositories.columns.name'), rowHeader: true },
       { field: 'createdAt', header: t('repositories.emails.created'), width: '12.5rem', cellTemplate: this.createdTpl() as never },
       { field: 'modifiedAt', header: t('repositories.emails.modified'), width: '12.5rem', cellTemplate: this.modifiedTpl() as never },
       this.actionsColumn(),

@@ -74,7 +74,7 @@ const estadoEnElListado = async (page: Page, nombre: string): Promise<string> =>
   }).toPass();
   const columna = await tabla.locator('thead th').evaluateAll((ths) => ths.findIndex((th) => th.textContent?.trim() === 'Estado'));
   expect(columna, 'la columna «Estado», a la vista').toBeGreaterThanOrEqual(0);
-  return ((await tabla.locator('tbody tr').first().locator('td').nth(columna).textContent()) ?? '').trim();
+  return ((await tabla.locator('tbody tr').first().locator('td, th').nth(columna).textContent()) ?? '').trim();
 };
 
 /** Los agentes cuyo estado en el Dashboard no es el que les toca por el listado, dichos para leerlos en el fallo. */

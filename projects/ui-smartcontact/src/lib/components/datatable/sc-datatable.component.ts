@@ -97,6 +97,12 @@ export interface ScDatatableSortEvent {
     // Sin la clase si también es `scrollable`: ahí la cabecera ya la fija PrimeNG
     // dentro de la tabla, y el tema no tiene que preguntar a `p-table` por ello.
     '[class.sc-datatable--sticky-header]': 'stickyHeader() && !scrollable()',
+    // Lo que la cabecera de fila (DD-194) necesita saber para pintar como la `td`, sin preguntar a `p-table`
+    // por `.p-datatable-sm`, `-lg`, `-gridlines` ni `-resizable-table`.
+    '[class.sc-datatable--sm]': "size() === 'sm'",
+    '[class.sc-datatable--lg]': "size() === 'lg'",
+    '[class.sc-datatable--gridlines]': 'showGridlines()',
+    '[class.sc-datatable--resizable]': 'resizableColumns()',
   },
 })
 export class ScDatatableComponent<T = unknown> {

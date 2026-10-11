@@ -15,8 +15,8 @@
 0. **Lo que queda del estudio de Primer (DD-188), un PR cada uno, enseñado antes en local y añadido a la página de
    antes y después** (artefacto «Antes y después del Supervisor»; las capturas salen de `sc-supervisor.pages.dev`
    contra el `ng serve` de la rama, a 1440, vista entera y la cabecera a doble resolución):
-   - hecho en DD-193: a 1024 la tabla desplaza de lado con el nombre fijo (Agentes medía 32 px de Nombre). Queda la
-     celda del nombre como `<th scope="row">`, como Primer, en `sc-datatable`.
+   - hecho en DD-193 y DD-194: a 1024 la tabla desplaza de lado con el nombre fijo, y la celda del nombre es la
+     cabecera de su fila (`rowHeader`). Del estudio de Primer no queda nada en código sin decidir.
 1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).
@@ -24,7 +24,10 @@
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
 - **Celdas vacías: «—» o en blanco.** Primer las deja en blanco (los lectores de pantalla leen el guion); la revisión de
-  agentes del 2026-10-09 pintó «—» en todas por consistencia. Decide él cuál gana.
+  agentes del 2026-10-09 pintó «—» en todas por consistencia. Recomendado el 2026-10-11: «—» oculto al lector con
+  «sin dato» al lado (20 sitios en 11 ficheros). Decide él.
+- **«Deshacer» tras borrar** (DD-191, descartadas): recomendado el 2026-10-11 dejarlo en el toast; la fila borrada ya
+  no está, así que no hay contexto donde contarlo. Decide él.
 - **La sesión en Figma suma las fichas 38 y 39** de `figma-pendiente` (el maestro `Section` a `Subtitle`, Tag y Badge a
   600, las etiquetas en píldora, publicar la librería con `Title` y `Subtitle`, y las plantillas de vistas), y el texto
   principal pasa a slate-900 en la ficha 8 (DD-188).

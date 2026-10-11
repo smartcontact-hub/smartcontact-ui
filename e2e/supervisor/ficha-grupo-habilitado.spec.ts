@@ -72,7 +72,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1024, 1440]
       await expect(table.getByRole('columnheader', { name: 'Nivel Teléfono', exact: true })).toBeVisible();
       await expect(table.getByRole('columnheader', { name: 'Nivel Chat', exact: true })).toBeVisible();
       await page.evaluate(() => document.fonts.ready);
-      const metrics = await table.locator('tbody tr').first().evaluate(row => ({ name: row.querySelector('.assign__name-label')!.getBoundingClientRect().width, tag: row.querySelector('sc-presence-avatar')!.getBoundingClientRect().width, cell: row.querySelector('.assign__name')!.closest('td')!.getBoundingClientRect().width }));
+      const metrics = await table.locator('tbody tr').first().evaluate(row => ({ name: row.querySelector('.assign__name-label')!.getBoundingClientRect().width, tag: row.querySelector('sc-presence-avatar')!.getBoundingClientRect().width, cell: row.querySelector('.assign__name')!.closest('td, th')!.getBoundingClientRect().width }));
       expect(metrics.name).toBeGreaterThan(50);
       const clipped = await table.locator('.assign__name-label').evaluateAll(names => names.filter(name => name.scrollWidth > name.clientWidth + 1).map(name => name.textContent));
       expect(clipped, 'la presencia no recorta estos nombres de la semilla').toEqual([]);
