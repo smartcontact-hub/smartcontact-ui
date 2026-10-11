@@ -126,8 +126,10 @@ const CON_AYUDAS = [
 test('cada ayuda de un campo se anuncia con él: fichas, Contact Center y Sistema', async ({ page }) => {
   for (const ruta of CON_AYUDAS) {
     await goto(page, ruta);
-    // Lo plegado también cuenta: «Mensajes en cola» arranca cerrado. Un desplegable no es un `button`.
-    for (const plegado of await page.locator('main button[aria-expanded="false"]:not([aria-haspopup])').all()) {
+    // Lo plegado también cuenta: «Mensajes en cola» arranca cerrado. Un desplegable no es un `button`. El panel rápido
+    // del resumen (Teléfono, Recursos) también es `aria-expanded` sin `aria-haspopup`, pero es otro patrón (una
+    // vista previa, no una ayuda plegada) y abrirlo desplaza el resto de la página: se excluye por su clase.
+    for (const plegado of await page.locator('main button[aria-expanded="false"]:not([aria-haspopup]):not(.resumen__pair-button)').all()) {
       await plegado.click();
     }
     // Cada ayuda, con los campos de su caja que la apuntan. Basta uno: el principal (el interruptor, el desplegable);

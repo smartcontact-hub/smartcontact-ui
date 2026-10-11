@@ -103,7 +103,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
                 <div class="field">
                   <label class="field__label sc-text-caption-semibold" for="grupo-agentes-description">
                     {{ 'repositories.columns.description' | translate }}
-                    <span class="field__hint">({{ 'common.optional' | translate }})</span>
+                    <span class="field__hint sc-text-caption-regular">({{ 'common.optional' | translate }})</span>
                   </label>
                   <sc-inputtext
                     inputId="grupo-agentes-description"

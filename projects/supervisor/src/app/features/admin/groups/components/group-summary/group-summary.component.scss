@@ -69,27 +69,35 @@
   padding-block-end: 0;
 }
 
-/* Entre reparto y salida, una raya fina que se vea sobre el tinte (la sutil se perdía en él), como en la maqueta, con el
- * mismo aire arriba y abajo: el hueco entre grupos (10,5) es una vez y media el de entre filas (7). */
-.resumen__fact + .resumen__fact {
-  padding-block-start: var(--sc-spacing-0-75);
-  border-block-start: 1px solid var(--sc-border-default);
-}
-
-/* La jerarquía de la maqueta: los títulos un paso más oscuros que la clave, como los valores de `sc-fact-row`, y su
- * cifra y su aviso en el mismo color. */
-.resumen__title-row,
-.resumen__pair .resumen__digits,
-.resumen__pair .resumen__warn {
-  color: var(--sc-text-heading);
-}
-
-/* Reparto, salida y recursos, juntos en una tarjeta: lo que no es una proporción. Entre los tres, 28: al menos el
- * doble que entre sus filas (14), o la tarjeta se lee como una lista plana (revisión previa, 2026-09-27). Dentro
- * de cada uno, 7 del rótulo a sus datos. */
+/* Distribución, salida y recursos, juntos en una tarjeta: lo que no es una proporción. Entre los tres, 14: el doble que
+ * entre sus filas (7, AGENTS «UX de pantalla»), igual que leería una sola lista. La baldosa grande del título y la
+ * raya entre grupos (revisión previa, 2026-09-27) hacían que Distribución y Salida leyeran como dos tarjetas en vez de
+ * una (revisión de diseño, 2026-10-11): el título bajó a caption, sin baldosa, y la raya se fue. */
 .resumen__facts {
-  gap: var(--sc-spacing-0-75);
+  gap: var(--sc-spacing-1);
 }
+
+/* ────────────────────────────────────────────────────────────────────────────────────────────────────────
+ * LA TARJETA PLANA (decisión de producto, 2026-10-11, reconciliada con el Kit el mismo día): el blanco liso y el borde fino
+ * —en vez del tinte de marca de `.resumen__kpi`— siguen siendo la excepción, sobre la referencia de iconos en
+ * fila del encargo. Pero cada color y cada tamaño de letra son ya tokens `--sc-*` y clases `.sc-text-*`, como
+ * el resto de la ficha: no quedan valores a mano fuera de los `gap`/`padding` finos que la escala no cubre
+ * (ninguno de los dos tramos, 14-base, cae en 13 o 11 px).
+ * ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.resumen__facts {
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-xl);
+  box-shadow: none;
+}
+
+.resumen__title-row {
+  color: var(--sc-text-secondary);
+}
+
+/* La clave y el valor de cada fila siguen el `sc-fact-row` del Kit tal cual (DD-186: clave en el color de su
+ * sitio, valor un paso más oscuro en semibold) — ya no hay override de por medio. */
 
 .resumen__fact {
   display: flex;
@@ -136,5 +144,245 @@
     display: contents;
   }
 
-  /* En la franja, el valor de `sc-fact-row` ya empieza en su columna (su propia consulta de contenedor). */
+  /* En la franja, el valor de `sc-fact-row` ya empieza en su columna (su propia consulta de contenedor). Teléfono y
+   * Recursos, cada uno un solo botón (no clave + valor por separado), no entran en la subrejilla: quedan a su aire
+   * en su propia fila, y en la franja ancha (≥ 600 px) hay sitio de sobra para que no desentone. */
+  .resumen__routing-row {
+    grid-column: 1 / -1;
+  }
+}
+
+.resumen__routing-row {
+  display: flex;
+  align-items: center;
+}
+
+/* Teléfono (Distribución) y Recursos (Salida), la excepción a «cada fila es un enlace» (revisión de diseño, 2026-10-11,
+ * sobre crítica de better-ui): antes tenían el enlace a la sección Y un botón de más pegados, a un dedo de
+ * distancia y con dos destinos distintos — quien quería cambiar el reparto podía acabar en Distribución y colas sin
+ * querer. Ahora la fila ENTERA es un solo botón: la clave, el valor y el chevron. Ir a la sección se queda en
+ * «Configurar colas» / «Ver recursos», al pie del panel. */
+.resumen__pair-button {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-625);
+  width: 100%;
+  padding: 0;
+  text-align: start;
+  border-radius: var(--sc-radius-sm);
+  transition: background 0.18s ease, scale 0.1s ease;
+
+  /* El mismo token que usa el resto del Kit para este gesto (`sc-form-section-nav`, `sc-select`, `sc-search`…):
+   * no `--sc-bg-secondary-subtle`, pensado para un fondo estático, no para un hover (barrido de consistencia,
+   * 2026-10-11). */
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:hover .resumen__pair-chevron {
+    color: var(--sc-icon-secondary);
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+
+  /* 0,96: ni más (se ve exagerado) ni menos (no se nota) — better-ui «scale on press». */
+  &:active {
+    scale: 0.96;
+  }
+}
+
+/* Mientras el panel está abierto, el mismo tinte del `:hover` se queda fijo: la fila y el panel de abajo
+ * (`.resumen__quick`, mismo color) se leen como una sola pieza por ley de similitud, no como dos controles
+ * sin relación (decisión de producto, 2026-10-11). */
+.resumen__pair-button--active {
+  background: var(--sc-bg-secondary-subtle);
+
+  .resumen__pair-chevron {
+    color: var(--sc-icon-secondary);
+  }
+}
+
+.resumen__pair-label {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-625);
+  color: var(--sc-text-secondary);
+  min-width: 0;
+
+  sc-icon-tile {
+    flex: 0 0 auto;
+  }
+}
+
+.resumen__pair-value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  margin-inline-start: auto;
+  color: var(--sc-text-heading);
+  text-align: end;
+}
+
+/* Las dos flechas, una encima de otra en la misma celda: el cambio de sentido es un cruce de opacidad (150 ms), no
+ * un salto seco (better-ui «contextual icon animations»). */
+.resumen__pair-chevron {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  inline-size: 16px;
+  block-size: 16px;
+  color: var(--sc-icon-subtle);
+  transition: color 0.18s ease;
+
+  sc-icon {
+    grid-area: 1 / 1;
+    transition: opacity 0.15s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  &--hidden {
+    opacity: 0;
+  }
+}
+
+/* La entrada del panel, sutil: no es de alta frecuencia (se abre de vez en cuando), así que se beneficia de un
+ * poco de movimiento; la salida se queda instantánea, sin `@angular/animations` de por medio. */
+@keyframes resumen-quick-appear {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.resumen__quick {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-375);
+  padding: var(--sc-spacing-0-625);
+  background: var(--sc-bg-secondary-subtle);
+  border-radius: var(--sc-radius-md);
+  animation: resumen-quick-appear 0.18s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.resumen__quick-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-625);
+  width: 100%;
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-0-75);
+  text-align: start;
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-md);
+  transition: border-color 0.18s ease, background 0.18s ease, scale 0.1s ease;
+
+  &:hover {
+    border-color: var(--sc-border-accent);
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+
+  &:active {
+    scale: 0.96;
+  }
+
+  &--chosen {
+    background: var(--sc-bg-selected);
+    border-color: var(--sc-border-accent);
+  }
+}
+
+.resumen__quick-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-width: 0;
+
+  strong {
+    color: var(--sc-text-heading);
+  }
+
+  small {
+    color: var(--sc-text-secondary);
+  }
+}
+
+/* El punto del radio, a mano: no hay `sc-radiobutton` que valga sin un `ngModel`/`FormControl` para tres botones
+ * con su propia tarjeta de texto (`better-ui`: una sola forma por estado, sin icono aparte del borde y el relleno). */
+.resumen__quick-radio {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  inline-size: 13px;
+  block-size: 13px;
+  border: 1px solid var(--sc-border-strong);
+  border-radius: 50%;
+
+  .resumen__quick-option--chosen & {
+    border-color: var(--sc-border-accent);
+
+    &::after {
+      content: '';
+      inline-size: var(--sc-spacing-0-375);
+      block-size: var(--sc-spacing-0-375);
+      background: var(--sc-icon-accent);
+      border-radius: 50%;
+    }
+  }
+}
+
+/* El pie de cada panel rápido: «Configurar colas» en Distribución, «Ver recursos» en Salida. Lleva a la sección entera
+ * (DD-146), para cuando ninguna fila del panel basta. */
+.resumen__quick-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-375);
+  width: 100%;
+  padding-top: var(--sc-spacing-1-25);
+  color: var(--sc-text-link);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+}
+
+/* Cada recurso de verdad del grupo (DD-164: agendas y plantillas, nunca inventados), en el panel de Salida. */
+.resumen__quick-resource {
+  padding: var(--sc-spacing-0-875) 0;
+  border-top: 1px solid var(--sc-border-subtle);
+
+  strong {
+    display: block;
+    color: var(--sc-text-heading);
+  }
+
+  small {
+    display: block;
+    color: var(--sc-text-secondary);
+    margin-top: var(--sc-spacing-0-25);
+  }
+}
+
+.resumen__quick-empty {
+  color: var(--sc-text-subtle);
+  margin: 0;
 }

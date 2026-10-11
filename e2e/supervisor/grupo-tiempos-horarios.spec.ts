@@ -97,10 +97,12 @@ test('Web Chat y WhatsApp guardan horarios independientes y solo ofrecen los act
   await expect.poll(() => stored(page, 'ficha')).toMatchObject({ chat: { attendanceScheduleIds: { chat: 2, whatsapp: null } } });
 });
 
-test('música: elegir, cambiar y quitar mantiene un solo nombre y recupera la predeterminada', async ({ page }) => {
+test('música: elegir, cambiar y quitar mantiene un solo nombre y recupera el estado vacío', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const music = page.getByRole('group', { name: 'Música de espera', exact: true });
-  await expect(music.getByText('Música por defecto', { exact: true })).toBeVisible();
+  // Vacío no muestra «Predeterminada» (quitado esta sesión): solo el botón de subir, sin nombre de archivo.
+  await expect(music.getByRole('button', { name: 'Subir archivo' })).toBeVisible();
+  await expect(music.getByText('espera.wav', { exact: true })).toHaveCount(0);
   const input = page.locator('#group-hold-music-upload input[type="file"]');
   await input.setInputFiles({ name: 'espera.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFFdemo') });
   await expect(music.getByText('espera.wav', { exact: true })).toHaveCount(1);
@@ -110,7 +112,8 @@ test('música: elegir, cambiar y quitar mantiene un solo nombre y recupera la pr
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect.poll(() => stored(page, 'ficha')).toMatchObject({ announcements: { holdMusicFile: 'otra.wav' } });
   await music.getByRole('button', { name: 'Quitar', exact: true }).click();
-  await expect(music.getByText('Música por defecto', { exact: true })).toBeVisible();
+  await expect(music.getByRole('button', { name: 'Subir archivo' })).toBeVisible();
+  await expect(music.getByText('otra.wav', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect.poll(() => stored(page, 'ficha')).toMatchObject({ announcements: { holdMusicFile: null } });
 });
