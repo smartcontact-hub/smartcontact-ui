@@ -187,7 +187,10 @@ decidió o por lo medido (abajo).
 - *Quitar Sidebar del laboratorio*: es la base de la versión «no se cierra nada» del sidebar, la favorita (DD-118).
 
 **Consecuencias** · Páginas en sc-docs (Inputs › InputTags, Layout › Tabs), su línea base de estilos y sus pruebas.
-`sc-inputtags` sale «experimental» (DD-190): el Kit no tiene su maestro (`figma-pendiente`, ficha 42). Lo que queda de
+`sc-inputtags` sale «experimental» (DD-190): el Kit no tiene su maestro (`figma-pendiente`, ficha 42). **El paquete inicial
+de sc-docs llega a 2,67 MB** (medido en el build de producción): `app.config.ts` sube el paquete del DS entero al
+arranque (DD-42), así que cada componente nuevo lo engorda, y estos dos traen AutoComplete y Tabs de PrimeNG. Su
+presupuesto pasa de 2,3 / 2,6 a 2,75 / 3 MB, con la cifra escrita aquí para que no sea un tope subido en silencio. Lo que queda de
 la auditoría (documentar Menu, Listbox, Toolbar y MeterGroup; las dos casillas; `sc-command-palette`), en su
 «Siguientes pasos».
 
