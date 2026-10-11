@@ -49,7 +49,11 @@
 </ng-template>
 
 <ng-template #descriptionTpl let-t>
-  <span class="table__cell table__cell--truncate sc-text-body-regular" [title]="t.description">{{ t.description || '—' }}</span>
+  @if (t.description) {
+    <span class="table__cell table__cell--truncate sc-text-body-regular" [title]="t.description">{{ t.description }}</span>
+  } @else {
+    <span class="table__cell sc-text-body-regular"><sc-celda-vacia /></span>
+  }
 </ng-template>
 
 <!-- Cuántos niveles pide, y al pasar o al enfocar, qué hay en cada uno: el primero por sus nombres, los demás

@@ -22,6 +22,9 @@ export type { IllustratedAvatarPool } from './illustrated-avatar/illustrated-ava
 
 export { ListPageComponent } from './list-page/list-page.component';
 
+// Una celda sin dato: «—» a la vista y «Sin dato» para el lector (DD-197).
+export { CeldaVaciaComponent } from './celda-vacia/celda-vacia.component';
+
 export { ResourceRowsComponent } from './resource-rows/resource-rows.component';
 export type { ResourceRow } from './resource-rows/resource-rows.component';
 

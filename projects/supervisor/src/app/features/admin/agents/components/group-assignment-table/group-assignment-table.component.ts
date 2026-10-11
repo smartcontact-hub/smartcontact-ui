@@ -48,6 +48,7 @@ import {
   permittedFamilies,
   toggleLinkChannel,
 } from '@features/admin/services/group-channels.core.mjs';
+import { CeldaVaciaComponent } from '@shared/components';
 
 /** Lightweight group reference accepted by this table. */
 export interface AgentGroupAssignmentRef {
@@ -89,6 +90,7 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
   selector: 'sc-group-assignment-table',
   standalone: true,
   imports: [
+    CeldaVaciaComponent,
     ButtonComponent,
     CheckboxComponent,
     TagComponent,

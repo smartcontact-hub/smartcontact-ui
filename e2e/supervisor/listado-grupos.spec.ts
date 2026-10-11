@@ -29,6 +29,10 @@ test.beforeEach(async ({ page }) => {
 
 const fila = (page: Page, grupo: string) => page.locator('tbody tr', { hasText: grupo });
 
+/** Una celda vacía: «—» a la vista y, para el lector, «Sin dato» o «No aplica» si el grupo no tiene ese canal (DD-197). */
+const SIN_DATO = '—Sin dato';
+const NO_APLICA = '—No aplica';
+
 /** El índice de una columna por su cabecera: sale de la tabla, no de un número clavado. */
 const columna = async (page: Page, cabecera: string): Promise<number> => {
   const cabeceras = await page.locator('thead th').allInnerTexts();
@@ -68,6 +72,8 @@ const recortes = async (page: Page) => {
   return tablaGrupos.evaluate((tabla) => {
     const fuera: string[] = [];
     for (const el of tabla.querySelectorAll<HTMLElement>('th, td, th *, td *')) {
+      // El texto solo para el lector (el «No aplica» de una celda vacía, DD-197) mide 1 px a propósito: no es un recorte.
+      if (el.closest('.visually-hidden')) continue;
       const cs = getComputedStyle(el);
       const corta = cs.overflowX !== 'visible' || cs.textOverflow === 'ellipsis';
       const texto = (el.textContent ?? '').trim();
@@ -84,7 +90,7 @@ test('cada familia de canales enseña su estrategia en su columna, y «—» don
   await mostrarColumna(page, 'Estrategia de chat');
   await expect(await celda(page, 'Online Support', 'Estrategia de teléfono')).toHaveText('Balanceada');
   await expect(await celda(page, 'Online Support', 'Estrategia de chat')).toHaveText('Menos conversaciones atendidas');
-  await expect(await celda(page, 'ACD Demo C2CB', 'Estrategia de chat')).toHaveText('—');
+  await expect(await celda(page, 'ACD Demo C2CB', 'Estrategia de chat')).toHaveText(NO_APLICA);
 
   // Un grupo solo de Chat: ni estrategia ni número de teléfono, aunque los guarde.
   await goto(page, 'admin/grupos/crear');
@@ -97,8 +103,8 @@ test('cada familia de canales enseña su estrategia en su columna, y «—» don
 
   await goto(page, 'admin/grupos');
   await mostrarColumna(page, 'Estrategia de chat');
-  await expect(await celda(page, 'Solo chat E2E', 'Estrategia de teléfono')).toHaveText('—');
-  await expect(await celda(page, 'Solo chat E2E', 'Teléfono')).toHaveText('—');
+  await expect(await celda(page, 'Solo chat E2E', 'Estrategia de teléfono')).toHaveText(NO_APLICA);
+  await expect(await celda(page, 'Solo chat E2E', 'Teléfono')).toHaveText(SIN_DATO);
   // Nace con la de Contact Center › Grupos, que de fábrica es Balanceada (DD-135).
   await expect(await celda(page, 'Solo chat E2E', 'Estrategia de chat')).toHaveText('Balanceada');
 });
@@ -124,7 +130,7 @@ test('cambiar en bloque la estrategia de chat escribe la de chat, y solo en los 
 
   await expect(await celda(page, 'Reclamaciones', 'Estrategia de chat')).toHaveText('Menos conversaciones atendidas');
   await expect(await celda(page, 'Reclamaciones', 'Estrategia de teléfono')).toHaveText('Balanceada');
-  await expect(await celda(page, 'Telemarketing', 'Estrategia de chat')).toHaveText('—');
+  await expect(await celda(page, 'Telemarketing', 'Estrategia de chat')).toHaveText(NO_APLICA);
 });
 
 test('Prioridad ordena de Baja a Máxima, no por orden alfabético', async ({ page }) => {
