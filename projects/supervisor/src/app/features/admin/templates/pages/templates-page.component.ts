@@ -12,14 +12,13 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService, type MenuItem } from 'primeng/api';
+import { type MenuItem } from 'primeng/api';
 import { TabsModule } from 'primeng/tabs';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 
 import { ListPageComponent } from '@shared/components';
@@ -36,6 +35,7 @@ import {
   TemplateFormPanelComponent,
   TemplateFormSubmission,
 } from '../components/template-form-panel/template-form-panel.component';
+import { ResultadoAccionService } from '@core/services';
 
 @Component({
   selector: 'sc-templates-page',
@@ -56,7 +56,7 @@ import {
 })
 export class TemplatesPageComponent {
   private readonly templatesStore = inject(TemplatesStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
@@ -296,10 +296,7 @@ export class TemplatesPageComponent {
   }
 
   private toastSuccess(key: string, params?: Record<string, string | number>): void {
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(key, params),
-      life: TOAST_LIFE.success,
-    });
+    // El resultado ya se ve en la lista: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(this.translate.instant(key, params));
   }
 }

@@ -57,7 +57,7 @@
 | `sc-datepicker` | EXTENDED | ready | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-dialog sc-button | ✓ | 12 |
 | `sc-dialog` | EXTENDED | ready | primeng/dialog | 14 inputs | — | ✓ | 20 |
-| `sc-divider` | STANDARD | ready | primeng/divider | 3 inputs | — | ✓ | 23 |
+| `sc-divider` | STANDARD | ready | primeng/divider | 3 inputs | — | ✓ | 24 |
 | `sc-drawer` | EXTENDED | ready | primeng/drawer | 11 inputs | — | ✓ | 3 |
 | `sc-empty-state` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | sc-button | ✓ | 20 |
 | `div[scFactRow]` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | — | ✓ | — |
@@ -75,7 +75,7 @@
 | `sc-inputnumber` | EXTENDED | ready | primeng/inputtext | 17 inputs | sc-field-label sc-field-msg | ✓ | 11 |
 | `sc-inputtext` | EXTENDED | ready | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 45 |
 | `sc-keyboard-shortcuts` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | — | ✓ | 2 |
-| `sc-message` | EXTENDED | ready | primeng/message | 6 inputs | — | ✓ | 4 |
+| `sc-message` | EXTENDED | ready | primeng/message | 6 inputs | — | ✓ | 9 |
 | `sc-multiselect` | EXTENDED | ready | primeng/multiselect | 34 inputs | sc-field-label sc-field-msg | ✓ | 13 |
 | `sc-option-cards` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 4 inputs | — | — | 2 |
 | `sc-panel` | EXTENDED | ready | primeng/panel | 6 inputs | — | ✓ | 1 |

@@ -93,5 +93,11 @@
         </span>
       </sc-button>
     </div>
+  } @else if (guardadoAviso(); as aviso) {
+    <!-- Lo guardado, donde estaban los botones que lo guardaron (DD-191). -->
+    <sc-divider />
+    <div class="section-actions">
+      <sc-message severity="success" variant="simple" size="sm" icon="check_circle" [text]="aviso" />
+    </div>
   }
 </sc-section-card>

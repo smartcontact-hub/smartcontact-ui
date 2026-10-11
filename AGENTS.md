@@ -194,7 +194,13 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    etiqueta (`aria-label`/`<label>`). No comuniques un estado solo con color.
 7. **Estabilidad visual.** Anima solo `transform`/`opacity` (nunca `top`/`left`/`width`/`height`).
    Imágenes con `width`+`height` o `aspect-ratio`. Banners y toasts en un hueco reservado, no
-   insertados encima del contenido al cargar.
+   insertados encima del contenido al cargar. **El toast, solo para lo que manda el sistema**
+   (DD-191: una tarea en segundo plano que acaba). Lo que acaba de hacer el usuario se cuenta junto
+   a su contexto, con `ResultadoAccionService`: `visto` si el resultado ya se ve (la fila nueva o
+   la que desaparece, la ficha a la que se llega, la descarga), que solo lo anuncia al lector de
+   pantalla; `enLaBarra` si guarda y se queda, junto a los botones de la barra hasta el siguiente
+   cambio; y un `sc-message` junto a su control si el resultado es de ese control (copiar, probar
+   una conexión). Un error no se cierra solo. Lo vigila `audit:screen-hygiene`.
 8. **Tipografía por clase, y solo fuera de los componentes.** El texto de la PÁGINA lleva una de
    las 14 clases `.sc-text-*` (los text styles del Figma del DS: display · h1 · h2 · h3 · body ·
    caption, en regular y semibold, más `title` y `subtitle` en semibold). El título de la página es

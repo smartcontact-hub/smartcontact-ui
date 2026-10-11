@@ -1,19 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  linkedSignal,
-  type OnInit,
-  signal,
-  type TemplateRef,
-  untracked,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, linkedSignal, signal, type OnInit, type TemplateRef, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import {
   ScButtonComponent as ButtonComponent,
   ScCheckboxComponent as CheckboxComponent,
@@ -31,13 +18,13 @@ import type { DirtyAware } from '@core/guards';
 import { LlegaAlPieDirective } from '@core/directives';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { PresenceAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import type { Agent } from '@features/admin/agents/data/agents-data';
 
 import { EquiposStore } from '../state/equipos.store';
+import { ResultadoAccionService } from '@core/services';
 
 interface Borrador {
   readonly name: string;
@@ -257,7 +244,7 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   private readonly router = inject(Router);
   private readonly store = inject(EquiposStore);
   private readonly agentsStore = inject(AgentsStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
@@ -275,6 +262,10 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   protected readonly form = signal<Borrador>(VACIO);
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.formDirty()) this.resultado.limpiar();
+  });
 
   protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => {
     this.lang();
@@ -404,14 +395,12 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     if (this.grupoId !== null) this.store.updateItem(id, datos);
     this.agentsStore.setTeamMembers(id, f.agentIds);
     this.dirtyState.markPristine();
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(this.grupoId === null ? 'repositories.toasts.created' : 'repositories.toasts.updated', {
-        entity: this.translate.instant('repositories.equipos.singular'),
-        name: datos.name,
-      }),
-      life: TOAST_LIFE.success,
+    const texto = this.translate.instant(this.grupoId === null ? 'repositories.toasts.created' : 'repositories.toasts.updated', {
+      entity: this.translate.instant('repositories.equipos.singular'),
+      name: datos.name,
     });
-    if (this.grupoId === null) void this.router.navigate(['/admin/equipos/editar', id], { replaceUrl: true });
+    // Crear abre la edición, y el aviso va tras llegar; guardar se queda en la ficha (DD-191).
+    if (this.grupoId === null) void this.router.navigate(['/admin/equipos/editar', id], { replaceUrl: true }).then(() => this.resultado.enLaBarra(texto));
+    else this.resultado.enLaBarra(texto);
   }
 }

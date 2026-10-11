@@ -15,8 +15,6 @@
 0. **Lo que queda del estudio de Primer (DD-188), un PR cada uno, enseñado antes en local y añadido a la página de
    antes y después** (artefacto «Antes y después del Supervisor»; las capturas salen de `sc-supervisor.pages.dev`
    contra el `ng serve` de la rama, a 1440, vista entera y la cabecera a doble resolución):
-   - el toast solo para eventos del sistema: el éxito que se ve, sin aviso; el que no, un mensaje junto al botón
-     (`sc-inline-message`, nuevo en el DS); los errores, fijos junto a su contexto (51 toasts de éxito en 28 ficheros);
    - la cabecera y el esqueleto de página comunes, con la escalera 7 · 14 · 28 en la cabecera, ancho máximo de 1280 y
      columnas que quepan a 1024 (Grupos esconde 358 px a 1024);
 1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
@@ -74,6 +72,9 @@
   óptico a 20. En `sc-section-card`, 16 en sección y 20 en página; lo que cuelga en la piel blanca sale de su tamaño.
 - **El estado de cada componente en sc-docs** (DD-190): listo, experimental o retirado, calculado por
   `component-audit` (maestro en el Kit + demo; `@deprecated`). Si cambian las páginas «❖» del Kit, `KIT_MAESTROS`.
+- **El toast, solo para el sistema** (DD-191, 2026-10-11): `ResultadoAccionService` (`visto` al lector, `enLaBarra`
+  junto a los botones de la barra) y `sc-message` junto a su control; `audit:screen-hygiene` lo vigila. Pendiente de
+  decidir: el aviso con «Deshacer» (`undo-stack`), que sigue en toast.
 - **Página de comparación** (artefacto «Antes y después del Supervisor»): el antes es la app del 2026-10-09 antes de
   empezar; el después, el estado acumulado. Se recaptura solo el después (`capturar` con `sites` = el local).
 

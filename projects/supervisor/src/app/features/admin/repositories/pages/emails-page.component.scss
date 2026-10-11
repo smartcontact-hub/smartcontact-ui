@@ -25,6 +25,11 @@
 /* Las pruebas de un servidor, bajo sus cuatro datos; los triggers de una cuenta, en una columna de casillas. */
 .emails__test {
   margin-block-start: var(--sc-spacing-0-75);
+  /* El botón y, a su lado, lo que dijo la prueba (DD-191): 7, la pieza que forma con él. */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
 }
 
 .emails__checks {

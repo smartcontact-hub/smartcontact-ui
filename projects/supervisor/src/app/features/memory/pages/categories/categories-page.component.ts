@@ -8,7 +8,6 @@ import {
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
@@ -20,8 +19,7 @@ import {
   ScEmptyStateComponent as EmptyStateComponent,
 } from '@smartcontact-hub/components';
 import { ScConfirmService } from '@smartcontact-hub/components';
-import { LanguageService } from '@core/services';
-import { TOAST_LIFE } from '@core/utils/toast-life';
+import { LanguageService, ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ListPageComponent } from '@shared/components';
@@ -60,7 +58,7 @@ export class CategoriesPageComponent {
   private readonly categoriesStore = inject(CategoriesStore);
   private readonly rulesStore = inject(RulesStore);
   private readonly confirm = inject(ScConfirmService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly language = inject(LanguageService);
@@ -208,14 +206,7 @@ export class CategoriesPageComponent {
   protected onFormSaved(cat: Category): void {
     const wasEdit = this.formCategory() !== null;
     this.formOpen.set(false);
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(
-        wasEdit ? 'memory.categories.form.updated_toast' : 'memory.categories.form.created_toast',
-        { name: cat.name },
-      ),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant( wasEdit ? 'memory.categories.form.updated_toast' : 'memory.categories.form.created_toast', { name: cat.name }, ));
   }
 
   protected formatDate(iso: string): string {
@@ -229,11 +220,7 @@ export class CategoriesPageComponent {
   private duplicateCategory(cat: Category): void {
     const copy = this.categoriesStore.duplicateCategory(cat.id);
     if (!copy) return;
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('memory.categories.duplicated_toast', { name: copy.name }),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant('memory.categories.duplicated_toast', { name: copy.name }));
   }
 
   private async confirmDelete(cat: Category): Promise<void> {
@@ -246,10 +233,6 @@ export class CategoriesPageComponent {
     });
     if (!accepted) return;
     this.categoriesStore.deleteCategory(cat.id);
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('memory.categories.deleted_toast', { name: cat.name }),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant('memory.categories.deleted_toast', { name: cat.name }));
   }
 }

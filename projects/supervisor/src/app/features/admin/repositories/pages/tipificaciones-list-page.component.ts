@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService, type MenuItem } from 'primeng/api';
+import { type MenuItem } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
@@ -26,10 +26,9 @@ import {
 } from '@smartcontact-hub/components';
 
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { XlsxExportService } from '@core/services';
+import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { ListPageComponent } from '@shared/components';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { resolveGroup } from '@features/admin/groups/data/groups-data';
@@ -80,7 +79,7 @@ export class TipificacionesListPageComponent {
   private readonly uso = inject(TipificacionUsoService);
   private readonly router = inject(Router);
   private readonly xlsx = inject(XlsxExportService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
@@ -362,6 +361,7 @@ export class TipificacionesListPageComponent {
   }
 
   private toast(summary: string): void {
-    this.messages.add({ severity: 'success', summary, life: TOAST_LIFE.success });
+    // Lo importado ya se ve en la lista: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(summary);
   }
 }

@@ -10,18 +10,17 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
-import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { TOAST_LIFE } from '@core/utils/toast-life';
 
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 import type { Conversation, Recording, TranscriptionLine } from '../../data/conversation.types';
 import { DownloadModalComponent } from '../download-modal/download-modal.component';
 import { MultiRecordingPlayerComponent } from '../multi-recording-player/multi-recording-player.component';
 import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
+import { ResultadoAccionService } from '@core/services';
 
 /**
  * Modal por conversación · Memory iter 5.
@@ -76,7 +75,7 @@ import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConversationPlayerModalComponent {
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
 
   // input con default false: previene NG0950 cuando el effect del
@@ -411,11 +410,8 @@ export class ConversationPlayerModalComponent {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('memory.player.download_success'),
-      life: TOAST_LIFE.success,
-    });
+    // La descarga la enseña el navegador (DD-191).
+    this.resultado.visto(this.translate.instant('memory.player.download_success'));
   }
 
   protected onDownloadCancelled(): void {

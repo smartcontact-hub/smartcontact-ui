@@ -10,7 +10,6 @@ import {
   untracked,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import {
   ScButtonComponent as ButtonComponent,
   ScDialogComponent as DialogComponent,
@@ -18,7 +17,6 @@ import {
   ScMessageComponent as MessageComponent,
 } from '@smartcontact-hub/components';
 
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
@@ -31,6 +29,7 @@ import {
   COLUMN_REM,
   columnsRem,
 } from '../agent-channel-table/agent-channel-table.component';
+import { ResultadoAccionService } from '@core/services';
 
 /**
  * El ancho del panel sale de lo que lleva dentro (DD-131), en rem. Hasta el 2026-09-28 era un `52rem` fijo, el
@@ -75,7 +74,7 @@ const PANEL_MIN_REM = 28;
 export class GroupAgentsPanelComponent {
   private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly agentsStore = inject(AgentsStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
 
   /** El grupo cuyo panel está abierto; `null`, cerrado. */
@@ -165,11 +164,8 @@ export class GroupAgentsPanelComponent {
       group.id,
       clampLinksToChannels(this.links(), group.channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels).map((l) => (l.groupId === group.id ? l : { ...l, groupId: group.id })),
     );
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('groups.agents_panel.saved', { name: group.name }),
-      life: TOAST_LIFE.success,
-    });
+    // El panel se cierra: el resultado, en la barra de la página (DD-191).
+    this.resultado.enLaBarra(this.translate.instant('groups.agents_panel.saved', { name: group.name }));
     this.close();
   }
 

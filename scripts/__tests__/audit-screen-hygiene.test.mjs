@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  contarToasts,
   contarEmojis,
   contarImgSinDims,
   chequearTrinquete,
@@ -130,4 +131,11 @@ test('EXCLUYE los desplegables de un comentario, en HTML y en TS, sin mover la l
   assert.deepEqual(desplegablesSinNombre('<!-- <sc-select> -->\n<sc-select />', true), [2]);
   assert.deepEqual(desplegablesSinNombre('/**\n * Adapter para `<sc-select>`\n */\nconst t = `<sc-select />`;', false), [4]);
   assert.deepEqual(desplegablesSinNombre('// un <sc-multiselect> de ejemplo\nconst x = 1;', false), []);
+});
+
+// DD-191: un toast se cuenta por su llamada, no por un comentario que la nombre.
+test('contarToasts cuenta las llamadas y no los comentarios', () => {
+  const src = "// this.messages.add({ ... }) en un comentario\nthis.messages.add({ severity: 'success' });\n/* this.messages.add( */\nthis.messages.add({ severity: 'error' });";
+  assert.equal(contarToasts(src), 2);
+  assert.equal(contarToasts('this.resultado.visto(texto);'), 0);
 });
