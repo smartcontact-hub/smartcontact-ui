@@ -164,7 +164,7 @@
     @if (isEmpty()) {
       <ng-content select="[scListEmpty]" />
     } @else {
-      <div #tarjeta class="table-card" scLlegaAlPie [class.table-card--seleccion]="selectedIds().size > 0">
+      <div #tarjeta class="table-card" scLlegaAlPie [class.table-card--seleccion]="selectedIds().size > 0 || !!resultadoLote()">
         <!-- Ancho ajustable solo en las listas que eligen columnas (el orden, en el globo de columnas, DD-162): la tabla ajustable nativa
              recorta cada celda (`overflow: hidden`), y en Etiquetas eso dejaba fuera de sitio el panel que se
              ancla dentro de la celda (medido: `admin-datatable-pilot`, el panel 70px por encima de su fila). -->
@@ -236,7 +236,20 @@
 <p-menu #rowMenuRef [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
 
 @if (selectable() && bulkEntity(); as entity) {
-  <sc-bulk-action-bar [count]="selectedIds().size" [total]="rows().length" [entity]="entity" (clear)="clearSelection()">
-    <ng-content select="[scListBulkActions]" />
+  <!-- Con filas marcadas, sus acciones; tras aplicar un cambio en lote, la misma barra lo cuenta con su «Deshacer» (DD-196). -->
+  <sc-bulk-action-bar
+    [count]="selectedIds().size"
+    [total]="rows().length"
+    [entity]="entity"
+    [result]="resultadoLote()?.texto ?? null"
+    [resultUndoable]="!!resultadoLote()?.deshacerId"
+    (undo)="deshacerLote()"
+    (clear)="onBarraLoteClear()"
+  >
+    @if (selectedIds().size > 0) {
+      <ng-content select="[scListBulkActions]" />
+    }
+    <!-- Para la revisión con el equipo: por qué el resultado va aquí y no en un toast. -->
+    <sc-nota-decision ngProjectAs="[scBulkResult]" claveTitulo="decision_notes.bulk_undo.title" claveTexto="decision_notes.bulk_undo.body" />
   </sc-bulk-action-bar>
 }

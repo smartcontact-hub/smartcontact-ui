@@ -960,7 +960,7 @@
     "copy_failed": "Impossible de copier dans le presse-papiers",
     "click_to_copy": "Cliquer pour copier",
     "remove_from_list": "Retirer {{name}} de la liste",
-    "bulk_updated": "{{count}} éléments mis à jour",
+    "bulk_applied": "Modification appliquée à {{count}} {{entity}}",
     "columns": "Colonnes",
     "columns_count": "{0} colonnes",
     "columns_visible": "Colonnes, {{visible}} sur {{total}}",
@@ -2675,6 +2675,10 @@
   },
   "decision_notes": {
     "label": "Note pour l'équipe",
+    "bulk_undo": {
+      "title": "« Annuler » dans la barre ou dans une notification flottante ?",
+      "body": "Après une modification groupée, une notification apparaissait en bas à droite : elle masquait la dernière ligne, disait « 1 éléments mis à jour » et disparaissait au bout de 8 secondes. Désormais, la barre où la modification a été appliquée reste avec le résultat et son « Annuler » jusqu'à ce qu'on la ferme ou qu'on sélectionne à nouveau une ligne. Proposition : la barre. La notification flottante reste pour ce qu'annonce le système et pour ce qu'on retire de l'accueil, qui ne laisse aucun endroit où le dire."
+    },
     "pin": {
       "title": "PIN seulement avec une extension Téléphone ?",
       "body": "Le produit a demandé de retirer le PIN. Il sert à l'agent pour s'activer depuis le téléphone ; ici, il n'apparaît donc qu'avec une extension téléphone. À décider : le retirer complètement ou le garder ainsi."
