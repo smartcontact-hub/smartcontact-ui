@@ -304,6 +304,7 @@
         }
       },
       "filters": {
+        "none": "None",
         "search_placeholder": "Search",
         "services_label": "Services",
         "date_label": "Date",
@@ -2347,7 +2348,9 @@
         "missing_channel": "a channel",
         "missing_group": "a group",
         "missing_outbound": "a group for outbound calls",
-        "attends_by": "Works on"
+        "attends_by": "Works on",
+        "no_channels": "No channels",
+        "none": "None"
       },
       "create_submit": "Create agent"
     },
