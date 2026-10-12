@@ -14,7 +14,7 @@
     <!-- Compacta (`sm`, la densidad nativa de PrimeNG) y sin páginas (DD-176): todas las filas del filtro, y lo que no
          cabe lo desplaza la tabla por dentro con la cabecera fija, hasta el pie de la pantalla (DD-160). Con más de 100,
          pinta solo las que se ven (`virtualScroll`, DD-95). -->
-    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
+    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll fill
       [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id">
       <ng-template #header>
         <tr>

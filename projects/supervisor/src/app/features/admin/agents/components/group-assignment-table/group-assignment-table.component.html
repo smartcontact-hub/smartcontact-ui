@@ -13,7 +13,7 @@
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <div class="table-card table-card--al-pie" scLlegaAlPie>
-    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
+    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll fill
       [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth" dataKey="group.id">
       <ng-template #header>
         <tr>
@@ -117,11 +117,21 @@
         [pTooltip]="'agents.form.assigned.self_activate_hint' | translate" tooltipPosition="top"
         (clicked)="irA.emit('configuracion')" />
     </span>
+  } @else if (!row.link) {
+    <!-- Sin asignar: el interruptor apagado dice por qué, no solo que no se puede tocar. -->
+    <sc-toggleswitch
+      size="sm"
+      [checked]="false"
+      [disabled]="true"
+      [ariaLabel]="'agents.form.assigned.not_assigned_hint' | translate: { name: row.group.name }"
+      [pTooltip]="'agents.form.assigned.not_assigned_hint' | translate: { name: row.group.name }"
+      tooltipPosition="top"
+    />
   } @else {
     <sc-toggleswitch
       size="sm"
-      [checked]="row.link?.active ?? false"
-      [disabled]="!row.link || pending()"
+      [checked]="row.link.active"
+      [disabled]="pending()"
       [ariaLabel]="'agents.form.assigned.active_aria' | translate: { name: row.group.name }"
       (checkedChange)="toggleActive(row.group.id, $event)"
     />

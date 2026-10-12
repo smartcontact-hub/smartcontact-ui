@@ -172,6 +172,11 @@
   padding: 0;
   text-align: start;
   border-radius: var(--sc-radius-sm);
+  /* En reposo, un tinte del mismo gris que el panel abierto pero más flojo (`color-mix`, no un token nuevo): sin
+   * esto, Teléfono y Recursos leían como las filas planas de alrededor hasta pasar el ratón — el único aviso de
+   * que son botón era un chevron de 16px (better-layout «keep controls distinct from content», 2026-10-12). Al
+   * abrir sube a la mezcla entera (`--active`, abajo): reposo < abierto < `:hover`, una escala, no un empate. */
+  background: color-mix(in srgb, var(--sc-bg-secondary-subtle) 55%, transparent);
   transition: background 0.18s ease, scale 0.1s ease;
 
   /* El mismo token que usa el resto del Kit para este gesto (`sc-form-section-nav`, `sc-select`, `sc-search`…):
@@ -181,8 +186,10 @@
     background: var(--sc-bg-hover);
   }
 
+  /* `--sc-icon-primary`, no `--sc-icon-secondary`: ese token es idéntico a `--sc-icon-subtle` (el reposo del
+   * chevron) en los dos temas — el cambio no se veía (medido 2026-10-12). */
   &:hover .resumen__pair-chevron {
-    color: var(--sc-icon-secondary);
+    color: var(--sc-icon-primary);
   }
 
   &:focus-visible {
@@ -203,7 +210,7 @@
   background: var(--sc-bg-secondary-subtle);
 
   .resumen__pair-chevron {
-    color: var(--sc-icon-secondary);
+    color: var(--sc-icon-primary);
   }
 }
 

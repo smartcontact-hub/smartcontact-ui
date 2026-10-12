@@ -2289,6 +2289,7 @@
         "outbound_none": "Sem telefone neste grupo",
         "self_activate_hint": "É o agente que o muda: tem «Ativação por grupo»",
         "active_self_aria": "Ativo em {{name}}: é o agente que o muda",
+        "not_assigned_hint": "Não atribuído a {{name}}: liga-se ao atribuir",
         "not_allowed_hint": "{{channel}} não está entre os seus canais (Geral)",
         "bulk_add": "Atribuir ao agente",
         "bulk_remove": "Retirar ao agente",

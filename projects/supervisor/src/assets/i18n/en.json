@@ -2289,6 +2289,7 @@
         "outbound_none": "No phone in this group",
         "self_activate_hint": "The agent changes it: they have “Activation per group”",
         "active_self_aria": "Enabled in {{name}}: the agent changes it",
+        "not_assigned_hint": "Not assigned to {{name}}: it turns on once assigned",
         "not_allowed_hint": "{{channel}} is not among their channels (General)",
         "bulk_add": "Assign to the agent",
         "bulk_remove": "Remove from the agent",
