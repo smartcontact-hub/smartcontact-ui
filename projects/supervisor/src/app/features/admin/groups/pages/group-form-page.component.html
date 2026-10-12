@@ -454,7 +454,7 @@
         <sc-slot titleKey="groups.form.distribution.queue_messages" hintKey="groups.form.distribution.queue_messages_hint" collapsible initiallyCollapsed>
           <div class="queue-messages">
             <div class="grid grid--2">
-              <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.queue_id', help: 'groups.form.announcements.queue_id_info', source: 'queueIdSource', file: 'queueIdFile', text: 'queueIdText', id: 'group-queue-id' }" />
+              <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.queue_id', help: 'groups.form.announcements.queue_id_info', source: 'queueIdSource', file: 'queueIdFile', text: 'queueIdText', id: 'group-queue-id', nota: true }" />
               <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.next_in_line', help: 'groups.form.announcements.next_in_line_info', source: 'nextInLineSource', file: 'nextInLineFile', text: 'nextInLineText', id: 'group-next-in-line' }" />
             </div>
 
@@ -863,9 +863,16 @@
 <!-- Un mensaje de la cola de Teléfono que puede no decir nada, leerse con la voz sintética o ser un .wav propio
      (manual de usuario de Voice): el identificador del grupo y «Eres el siguiente». El texto o el archivo aparecen con
      su opción: «Texto a voz» sin texto no dice nada. -->
-<ng-template #audioSource let-label="label" let-help="help" let-source="source" let-file="file" let-text="text" let-id="id">
+<ng-template #audioSource let-label="label" let-help="help" let-source="source" let-file="file" let-text="text" let-id="id" let-nota="nota">
   <div class="field">
-    <span class="field__label sc-text-caption-semibold" [id]="id + '-label'">{{ label | translate }}</span>
+    <span class="field__label sc-text-caption-semibold" [id]="id + '-label'">
+      <span>{{ label | translate }}</span>
+      <!-- Para la revisión con el equipo, en el primero de los dos: la ayuda debajo de su control (DD-198). El rótulo, en
+           su span, para que su texto siga siendo solo el rótulo. -->
+      @if (nota) {
+        <sc-nota-decision claveTitulo="decision_notes.help_below.title" claveTexto="decision_notes.help_below.body" />
+      }
+    </span>
     <!-- La ayuda, debajo de las opciones como en todo campo (DD-198); el archivo o el texto que abre la opción, después. -->
     <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="$any(form().announcements)[source]" [ariaLabel]="label | translate" [helperText]="help | translate" (valueChange)="setAnnouncement(source, $any($event))" />
     @if ($any(form().announcements)[source] === 'file') {

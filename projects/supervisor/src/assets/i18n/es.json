@@ -2701,6 +2701,18 @@
     "empty_cells": {
       "title": "¿Celdas vacías con «—» o en blanco?",
       "body": "GitHub (Primer) las deja en blanco porque el lector de pantalla lee el guion. En una tabla con tantas columnas, una celda en blanco parece que no ha cargado. Propuesta: «—» en gris, y el lector oye «Sin dato» (o «No aplica» cuando el grupo no tiene ese canal). Si el vacío significa algo, se escribe: «Nunca», «Sin asignar», o «0» si es una cifra."
+    },
+    "header_ladder": {
+      "title": "¿Cuánto aire entre la barra, el título y la tabla?",
+      "body": "Cada pantalla ponía su propio margen arriba (entre 17,5 y 24,5 px), y el buscador quedaba casi tan cerca del título (14 px) como de la tabla (12). Ahora la cabecera sigue la escalera de 7, 14 y 28 px: de la barra al título 28, del título a lo suyo 14 y del buscador a su tabla 7. Cada nivel se separa el doble que el de dentro, y así se ve qué va con qué. Propuesta: la escalera, en todas las pantallas. A 1440 × 900 ninguna lista pierde filas."
+    },
+    "narrow_name": {
+      "title": "¿Qué hace la lista con la ventana estrecha?",
+      "body": "A 900 o 1024 px de ancho, la columna Nombre se encogía hasta 32 px y en Agentes se leía «No» y media foto. Ahora la tabla se desplaza de lado y el nombre se queda fijo a la izquierda, con una sombra que avisa de lo que queda por ver. Propuesta: el nombre fijo. La otra opción es esconder columnas según el ancho, como propone GitHub (Primer), pero decidir cuál sobra es de producto, y el botón Columnas ya deja quitarlas."
+    },
+    "help_below": {
+      "title": "¿La ayuda de un campo, encima o debajo?",
+      "body": "Aquí la ayuda iba entre el rótulo y las opciones, y en el resto de campos va debajo. Ahora va siempre debajo, como en GitHub (Primer): el rótulo y sus opciones se leen de un vistazo y, en dos columnas, las opciones de cada campo quedan a la misma altura. Lo que abre la opción elegida (el archivo o el texto) sale después, y la ayuda no se mueve. En el script de Web Chat, igual, y el botón de copiar va dentro del campo, solo con su icono. Ponerla encima, como GOV.UK, sirve para formularios que se rellenan una sola vez; esta ficha se vuelve a repasar. Propuesta: debajo."
     }
   }
 }

@@ -71,7 +71,9 @@ trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`.
   comentarios, tipificar, con cuál (una) y Todas / Solo entrantes / Solo salientes; ver su mapa en un diálogo con
   «Editar en Repositorios». Deshace DD-173 §2 y §5 y la regla de ramas completas.
 - **Notas de decisión** (`sc-nota-decision`, tarjeta morada sólida): PIN, filtrar por estado en el listado, burbuja o
-  aro del estado. Se borran cuando el equipo decida.
+  aro del estado, celdas vacías (Agentes), «Deshacer» en la barra de lote, la cabecera en la escalera y el nombre fijo
+  en la lista estrecha (Grupos), la ayuda debajo (ficha de grupo, «Mensajes en cola»). Se borran cuando el equipo
+  decida.
 - **Listados sin tope de ancho** (`.page__inner--list`) para enseñarlo: a 1920 la columna Nombre se lleva 737 px.
 - **Audios del grupo** en modo `basic` (sin caja de soltar).
 - **Barrido de consistencia grupo↔agente** (24 hallazgos; arreglados los de regla salvo la DD): el resumen del grupo

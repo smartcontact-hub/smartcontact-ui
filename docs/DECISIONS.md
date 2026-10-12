@@ -179,7 +179,9 @@ dice qué copia: lo que hay justo debajo del icono.
 
 **Consecuencias** · Lo miden `e2e/supervisor/ayuda-debajo.spec.ts` (orden, rejilla alineada, la ayuda quieta al cambiar
 de opción, copiar dentro) y `components.spec.ts` (las historias «Con ayuda» del segmentado y «Para copiar» del área de
-texto). `ayudas-campos.spec.ts` cuenta también la ayuda del segmentado.
+texto). `ayudas-campos.spec.ts` cuenta también la ayuda del segmentado. Para revisarlo con el equipo, una nota de
+decisión en el rótulo de «Identificador del grupo» (`decision_notes.help_below`); se quita cuando el equipo lo dé por
+bueno.
 
 ---
 
@@ -369,7 +371,8 @@ pasar el ratón y al marcarla.
 
 **Consecuencias** · Lo mide `e2e/supervisor/listas-nombre-fijo.spec.ts` (rojo con el build de antes en los seis
 casos estrechos) y `components.spec.ts` comprueba en la demo del DS que casilla y nombre no se pisan al desplazar.
-Primer pinta esa celda como `<th scope="row">`: hecho en DD-194.
+Primer pinta esa celda como `<th scope="row">`: hecho en DD-194. Para revisarlo con el equipo, una nota de decisión
+junto al título de Grupos (`decision_notes.narrow_name`); se quita cuando el equipo lo dé por bueno.
 
 ---
 
@@ -402,7 +405,8 @@ enseña 9 filas de su tabla en vez de 10.
 
 **Consecuencias** · Lo mide `e2e/supervisor/cabecera-escalera.spec.ts` (rojo con las cifras de antes en los 18 casos).
 `page-anatomy`, `ficha-grupo` y `listados-ordenar-columnas` pasan a 28 y a 7. La maqueta de Contact Center pone 22,75
-arriba: ficha 41 de `docs/figma-pendiente.md`. Escrito en «UX de pantalla» 9.
+arriba: ficha 41 de `docs/figma-pendiente.md`. Escrito en «UX de pantalla» 9. Para revisarlo con el equipo, una nota
+de decisión junto al título de Grupos (`decision_notes.header_ladder`); se quita cuando el equipo lo dé por bueno.
 
 ---
 
