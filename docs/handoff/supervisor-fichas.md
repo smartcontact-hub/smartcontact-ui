@@ -36,7 +36,10 @@ a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-1
 0bf19647:docs/handoff/supervisor-fichas.md`. El de Repositorios en tarjetas (2026-10-06, DD-179, #347): `git show
 d4843e43:docs/handoff/supervisor-fichas.md`. El de ordenar por cualquier columna (2026-10-06, DD-180 y DD-181): `git show
 d94e5ad8:docs/handoff/supervisor-fichas.md`. El de las cuatro secciones en el mismo árbol (2026-10-06, DD-182, sin
-trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`.
+trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`. El de la segunda vuelta de grupos
+(2026-10-07, DD-185, #355, sin trampas propias): `git show d4843e43:docs/handoff/supervisor-fichas.md`. Y el de la
+baldosa y la fila del resumen al DS (2026-10-07, DD-186, #356, sin trampas propias): `git show
+d94e5ad8:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-12 · Quick-wins de la auditoría UX Agentes/Grupos + columna Nivel
 
@@ -160,33 +163,6 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
   tipificación, canales del agente, Recursos y sus diálogos reescritas y en verde en local. Lo que falte lo dice
   `npm run ci:verdict` sobre el PR.
 
-## ✅ 2026-10-07 · La baldosa y la fila del resumen, al DS (DD-186)
-
-> **Sello:** rama `arebury/resumen-al-ds` sobre main, HEAD `d4843e43`. Un PR con dos bloques: este y la auditoría de
-> PrimeNG (abajo, en «SIGUIENTE»).
-
-- **`sc-icon-tile` y `sc-fact-row`** (`<div scFactRow>`) en el DS, con su página en sc-docs; **`sc-tag size="md"`**, la
-  píldora a 14. El resumen de grupo, agente y usuario los usan; el de agente y usuario pasa a una tarjeta de filas.
-
-## ✅ 2026-10-07 · Segunda vuelta de la revisión de grupos (DD-185)
-
-> **Sello:** rama `arebury/grupos-segunda-revision` sobre main, HEAD `0bf19647`. Un PR; enseñado en local antes de subir.
-
-- Chat con «Menos conversaciones atendidas» (en el resumen baja de línea); «Tiempo de ringing» y «Tiempo entre llamadas»
-  como nombre, con el timbrado y la espera como ayuda; el aviso de Ring All a partir de tres agentes, junto a su campo y
-  con cierre; audios con «Subir archivo» y su icono, sin el texto de soltar.
-- **Tabla de agentes del grupo, como la matriz de permisos:** cabeceras centradas con la casilla de «todos» después del
-  rótulo; Asignado, solo la casilla. Desplaza 51 px a 1440 con tres canales.
-- «Administrativo» tintado, no lleno.
-- **El estado, en la burbuja del avatar** (`sc-presence-avatar`): la columna sale de la tabla de agentes del grupo y queda
-  escondida de inicio en el listado; se filtra por estado desde la cabecera del agente.
-- **Repositorio de Email** (`/admin/emails`, tarjeta en Comunicación): cuentas de correo y triggers, con su editor cada uno.
-  Datos de prototipo; las pruebas de conexión no salen a ninguna parte.
-- **El resumen del grupo**, medido sobre la maqueta del widget (baldosa, peso del icono, sombras, jerarquía). Si convence,
-  la baldosa y la fila pasan al DS (pendiente).
-- **Filtro por estado:** cinco opciones; los cuatro motivos de no atender, juntos en «No disponible».
-- **Pendiente:** el nodo de la tabla de agentes en Figma (`figma-pendiente`), y lo de DD-184.
-
 ## SIGUIENTE — sin preguntar
 
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
@@ -194,9 +170,18 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
    son lo que falta; una card de Jira con los observadores de componentes.
 
--2. **Lo que queda de la auditoría de PrimeNG** (DD-195, `docs/AUDIT-PRIMENG-CATALOGO.md`, «Siguientes pasos»):
-   documentar en sc-docs Menu, Listbox, Toolbar y MeterGroup, que las apps usan sin wrapper; revisar las dos casillas
-   (`p-checkbox` en el selector de columnas y `sc-checkbox` en el resto); y `sc-command-palette` frente a CommandMenu.
+-2. **Lo que queda de la auditoría de PrimeNG** (DD-195, `docs/AUDIT-PRIMENG-CATALOGO.md`, «Siguientes pasos»), revisado
+   el 2026-10-12. Cerrado con evidencia: las dos casillas son intencionales (el Column Toggle calca el ejemplo nativo
+   de PrimeNG con `[value]` + `ngModel` de array, que `sc-checkbox` —tri-estado, `state: TriState`— no modela; no es
+   una inconsistencia, son dos trabajos distintos); `sc-command-palette` se mantiene frente a CommandMenu (agrupa y
+   filtra igual, pero CommandMenu no trae overlay, Cmd+K global, Esc ni `/`, que es la mitad del componente —detalle
+   en el audit—).
+   **Queda abierto, y no es un hueco de estos cuatro componentes**: documentar Menu, Listbox, Toolbar y MeterGroup en
+   sc-docs no tiene dónde ir — el showcase solo tiene página para wrappers `sc-*` (`component-catalog.ts`), y no hay
+   precedente de página para un nativo sin wrapper (tampoco lo tienen Inplace, Tooltip, Sidebar o las pestañas del
+   Monitor, todos ya «bien directos»). Antes de escribir páginas nuevas, decidir la forma: ¿una categoría «Nativos»
+   en el catálogo?, ¿una sola página «PrimeNG directo» con una sección por módulo? Es una decisión de estructura del
+   showcase, no de este frente solo.
 -1. **`fichas-nombre-fijo.spec.ts`, intermitente en el CI (2026-10-06).** Falló cuatro veces en dos PRs (#349 y #350),
    siempre en el shard 4/8, cada vez en una ficha distinta (agente a 1366, usuario a 1366, grupo a 1280) y con el mismo
    mensaje, «X sigue a la vista»: en el punto donde debía estar el nombre devuelve el texto de la barra superior. Pasa al
