@@ -22,6 +22,7 @@ import {
   ScRadioButtonComponent as RadioButtonComponent,
   ScSearchComponent as SearchComponent,
   ScSelectButtonComponent as SelectButtonComponent,
+  ScSelectComponent as SelectComponent,
   ScButtonComponent as ButtonComponent,
   ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
@@ -38,6 +39,7 @@ import {
   type ChannelFamily,
   FAMILY_LABEL_KEYS,
   GroupChannel,
+  LEVEL_OPTIONS,
 } from '@features/admin/groups/data/groups-data';
 import { Channel, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import {
@@ -55,6 +57,9 @@ export interface AgentGroupAssignmentRef {
   readonly id: number;
   readonly name: string;
   readonly channels: readonly GroupChannel[];
+  /** La estrategia de teléfono y de chat del grupo: solo para saber si reparte por Niveles (columna Nivel). */
+  readonly strategy?: string;
+  readonly chatStrategy?: string;
 }
 
 interface VisibleRow {
@@ -67,7 +72,7 @@ interface VisibleRow {
  * es la gemela: la misma densidad compacta y las mismas casillas de «todos» en la cabecera. Salientes, su rótulo más
  * largo («Sortantes»/«Outbound», 70 px) con el relleno: 6,5.
  */
-const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4.75 }, outbound: 6.5, enabled: 9.5 } as const;
+const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4.75 }, level: 9, outbound: 6.5, enabled: 9.5 } as const;
 
 /**
  * Los grupos de un agente, dentro de su ficha: LA MISMA TABLA que los agentes de un grupo (revisión de agentes del
@@ -99,6 +104,7 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
     RadioButtonComponent,
     SearchComponent,
     SelectButtonComponent,
+    SelectComponent,
     ToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -122,6 +128,7 @@ export class GroupAssignmentTableComponent {
   private readonly assignedTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('assignedTpl');
   private readonly groupTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('groupTpl');
   private readonly channelTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
+  private readonly levelTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('levelTpl');
   private readonly outboundTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('outboundTpl');
   private readonly activeTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('activeTpl');
 
@@ -151,6 +158,14 @@ export class GroupAssignmentTableComponent {
         stopRowClick: true,
       })),
       {
+        field: 'level',
+        header: this.translate.instant('agents.form.assigned.col_level'),
+        width: `${REM.level}rem`,
+        align: 'center' as const,
+        cellTemplate: this.levelTpl(),
+        stopRowClick: true,
+      },
+      {
         field: 'outbound',
         header: this.translate.instant('agents.form.assigned.col_outbound'),
         width: `${REM.outbound}rem`,
@@ -171,7 +186,7 @@ export class GroupAssignmentTableComponent {
 
   /** Lo que suman las columnas: el mínimo de la tabla, que desplaza por dentro antes que cortar el nombre. */
   protected readonly tableMinWidth = `${
-    REM.assigned + REM.group + CHANNEL_FAMILIES.reduce((s, f) => s + REM.channel[f], 0) + REM.outbound + REM.enabled
+    REM.assigned + REM.group + CHANNEL_FAMILIES.reduce((s, f) => s + REM.channel[f], 0) + REM.level + REM.outbound + REM.enabled
   }rem`;
 
   readonly links = input.required<readonly GroupAgentLink[]>();
@@ -244,6 +259,24 @@ export class GroupAssignmentTableComponent {
 
   protected isLastChannel(link: GroupAgentLink | null, channel: string): boolean {
     return !!link && isLastChannel(link, channel);
+  }
+
+  protected readonly levelOptions = LEVEL_OPTIONS;
+  protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
+
+  /** Las familias de ESTA fila con nivel: el grupo reparte por Niveles en ellas y el agente las tiene asignadas. Vacío
+   *  si el grupo no reparte por Niveles en ninguna, o si las tiene pero el agente no está en esos canales (DD-121: el
+   *  nivel es del agente dentro del grupo, no tiene sentido sin el canal). */
+  protected levelFamilies(row: VisibleRow): readonly ('phone' | 'chat')[] {
+    const families: ('phone' | 'chat')[] = [];
+    if (row.group.strategy === 'Niveles' && this.hasChannel(row.link, 'phone')) families.push('phone');
+    if (row.group.chatStrategy === 'Niveles' && this.hasChannel(row.link, 'chat')) families.push('chat');
+    return families;
+  }
+
+  protected setLevel(groupId: number, family: 'phone' | 'chat', value: unknown): void {
+    if (typeof value !== 'number' || !LEVEL_OPTIONS.includes(value)) return;
+    this.linksChange.emit(this.links().map((l) => (l.groupId === groupId ? { ...l, levels: { ...l.levels, [family]: value } } : l)));
   }
 
   /** Puede ser el de sus salientes: asignado y con Teléfono marcado. */

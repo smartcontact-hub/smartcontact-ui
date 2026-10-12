@@ -38,6 +38,39 @@ d4843e43:docs/handoff/supervisor-fichas.md`. El de ordenar por cualquier columna
 d94e5ad8:docs/handoff/supervisor-fichas.md`. El de las cuatro secciones en el mismo árbol (2026-10-06, DD-182, sin
 trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-10-12 · Quick-wins de la auditoría UX Agentes/Grupos + columna Nivel
+
+> **Sello:** rama `feat/agentes-quickwins-nivel` sobre main, HEAD `5e482e53`. Aún sin PR abierto.
+> Fuente: `docs/AUDIT-UX-AGENTES-VS-GRUPOS-2026-10.md` (rama aparte `docs/audit-ux-agentes-vs-grupos`, ya pusheada).
+
+- **6 quick-wins:** `channelsError` de Grupos avisa también al editar (como `phoneError`); mismo verbo
+  ("Selecciona…") en el aviso de "sin canales" de Grupos y Agentes; "Chats simultáneos" explica por qué
+  no se ve cuando el agente no atiende chat; "Permisos" de Agentes en 2 `sc-slot` (Acceso y dispositivos /
+  Grabación y seguimiento); icono en las 3 `sc-subsection` de Configuración; namespace i18n de Recursos
+  movido de `agents.form.resources.*` a uno neutro (`resources.*`), compartido de verdad por las dos fichas.
+- **`sc-link-button` (nuevo, local a Supervisor):** el candado "no permitido"/autoactivación de
+  `agent-channel-table` pasa de `<a><sc-icon></a>` suelto a un botón de solo icono que navega
+  (`<a [pButton] [routerLink]>`, directiva de PrimeNG, no el componente). Vive en
+  `shared/components/link-button/`, **no** en `@smartcontact-hub/components`: depende de `@angular/router`,
+  que el paquete publicado no tiene como peer dependency. No se tocó `sc-button` (DD-172 sigue en pie,
+  acotado a este caso).
+- **Columna "Nivel"** en `group-assignment-table` (tabla "Grupos" de la ficha de agente): `availableGroups`
+  gana `strategy`/`chatStrategy` del grupo (ya estaban en el store, se recortaban antes de llegar a la
+  tabla); columna fija con celda condicional por fila — selector 1-10 solo si ese grupo reparte por Niveles
+  en una familia que el agente tiene asignada, `sc-celda-vacia` si no. Mismo dato (`GroupAgentLink.levels`)
+  que ya usa la tabla del lado del grupo. Probado en el navegador real (Playwright): cambio de nivel desde
+  la ficha de agente, persiste y se ve igual desde la ficha del grupo.
+- **Abierto (gusto, sin regla):** la columna Nivel añade 9rem a `group-assignment-table` y a 1440 "Habilitado"
+  ya no cabe sin desplazar (antes iba ~18px justa, ahora ~162px corta) — scroll horizontal funciona bien, y
+  hay precedente ya aceptado en la tabla gemela (`agent-channel-table`, DD-181) de scrollear al ganar
+  columnas. No se tocó por no ser un número objetivamente equivocado, solo una decisión de densidad.
+- **Pendiente:** abrir el PR (branch ya verde en preflight) y, si se quiere, repasar los anchos de las dos
+  tablas de asignación a la vez para que quepan sin scroll a 1440 con Nivel incluido.
+
+El del barrido de consistencia y sin punto medio entre datos (2026-10-06, DD-183, sin trampas propias), y el de
+la revisión de grupos del equipo y `sc-fileupload` (2026-10-06, DD-184, sin trampas propias): `git show
+a7ddc14b:docs/handoff/supervisor-fichas.md`.
+
 ## ✅ 2026-10-11 · Lo que se decide de la auditoría de PrimeNG (DD-195)
 
 > **Sello:** rama `arebury/decisiones-auditoria` sobre main, HEAD `11c607cf`. Un PR; enseñado en local antes de subir.
@@ -153,39 +186,6 @@ trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`.
   la baldosa y la fila pasan al DS (pendiente).
 - **Filtro por estado:** cinco opciones; los cuatro motivos de no atender, juntos en «No disponible».
 - **Pendiente:** el nodo de la tabla de agentes en Figma (`figma-pendiente`), y lo de DD-184.
-
-## ✅ 2026-10-06 · La revisión de grupos del equipo y `sc-fileupload` (DD-184)
-
-> **Sello:** rama `arebury/revision-grupos-telefono-indice` (#351) sobre main, HEAD `b49b56e0`. Un solo PR, con la revisión del equipo punto por punto y el
-> componente de subida; los cambios, enseñados en local antes de subir.
-
-- **La ficha, alineada con Voice:** sin Skills ni Rotativa (lo guardado con ellas se lee con Balanceada y Menos
-  conversaciones activas, por `RENAMED_STRATEGIES`); Ring All con «Nº agentes simultáneos» y su aviso siempre; tiempos
-  hasta 30 min; los rótulos del equipo; «Anunciar»; voces como las lista Voice; «Caducar sesión» con minutos escritos y
-  sin las ayudas de «Caducar sesión» y «Pedir valoración»; la cabecera sin «Sin teléfono saliente».
-- **Chat y WhatsApp:** Distribución, Cola, y por subcanal mensajes inicial y final, horario con sus dos mensajes
-  (solo con horario elegido) y, en Web Chat, dominios y script; WhatsApp después, con su número de una lista y, sin él,
-  nada de lo que sigue. El modelo de mensajes cambia a `initial`, `final`, `outOfSchedule` y `nonWorkingDay`; lo guardado
-  con las claves de antes se lee vacío, sin romper nada.
-- **`sc-fileupload`:** `p-fileupload` en modo advanced, sin servidor (`customUpload`) y con `auto`; los cuatro audios de
-  Grupos lo llevan, con `clearAfterSelect`. Página en sc-docs (Componentes › FileUpload). Registrado en DD-184 y en la
-  memoria (`primeng-fileupload`) para la subida de tipificaciones y las que vengan.
-- **Contact Center › Grupos** comparte rótulos y quita las ayudas de transferencia y tiempo entre llamadas.
-- **Pendiente:** su nodo en Figma (`figma-pendiente.md`); medir el modo `basic` si hace falta; la subida de tipificaciones
-  con este componente. **Tipificaciones** (la propuesta de Miguel, niveles por rama, vista previa fiel al agente) se
-  aparta hasta que la presente.
-
-60f8e617:docs/handoff/supervisor-fichas.md`. El de las fichas en tres columnas (2026-10-05, DD-170, #337, sin trampas propias): `git show
-b49b56e0:docs/handoff/supervisor-fichas.md`.
-
-## ✅ 2026-10-06 · Sin punto medio entre datos de la interfaz (DD-183)
-
-> **Sello:** rama `arebury/sin-punto-medio` sobre `main`, HEAD `b49b56e0`.
-
-- Fuera el «·» de unos 25 textos por idioma y de unos 30 sitios de código del Supervisor y del DS; cada sustituto mide
-  lo mismo o menos. Regla y casos en DD-183. `audit:interpunct` (tope 0) lo vigila, en `verify`.
-- Los e2e que fijaban esos textos se ponen al día (rótulos de columna, resúmenes, título del panel de agentes).
-- **No se tocó:** sc-docs y las réplicas (`agent`, `agent-mini`, `cuscare`), que calcan la app viva (DD-35).
 
 ## SIGUIENTE — sin preguntar
 

@@ -1751,6 +1751,21 @@
     "rename_aria": "Renommer {{name}}",
     "bulk_edit_title": "Appliquer la modification à {{count}} utilisateur(s)"
   },
+  "resources": {
+    "templates_chat": "Modèles de chat",
+    "templates_email": "Modèles d'e-mail",
+    "none": "Aucun",
+    "selected_many": "{0} sélectionnés",
+    "agendas_count": "{0} carnets",
+    "agendas_count_one": "1 carnet",
+    "templates_count": "{0} modèles",
+    "templates_count_one": "1 modèle",
+    "manage_link": "Gérer dans Référentiels",
+    "teams_hint": "Pour le retrouver en filtrant. Ils ne distribuent pas de conversations.",
+    "teams_count": "{0} équipes",
+    "teams_count_one": "1 équipe",
+    "none_m": "Aucune"
+  },
   "groups": {
     "page_title": "Groupes",
     "create_button": "Nouveau groupe",
@@ -2212,6 +2227,7 @@
           "pickup_call": "Décrochage des appels",
           "pickup_chat": "Décrochage des chats",
           "max_chats": "Chats simultanés",
+          "max_chats_inactive": "Chats simultanés : activez le canal Chat dans Général",
           "random_order": "Ordre aléatoire",
           "random_order_hint": "Afficher les agents en ordre aléatoire dans le groupe"
         },
@@ -2284,6 +2300,7 @@
         "channel_not_offered": "Ce groupe ne propose pas ce canal",
         "title": "Groupes attribués",
         "filter_label": "Filtrer par affectation",
+        "col_level": "Niveau",
         "col_outbound": "Sortants",
         "outbound_aria": "Ses appels sortants, par {{name}}",
         "outbound_none": "Pas de téléphone dans ce groupe",
@@ -2317,27 +2334,14 @@
         "row_especial": "Numérotation spéciale",
         "config_title": "Configuration",
         "manage_devices_no_phone": "Nécessite un téléphone portable, dans Général.",
-        "pending_conversations": "Gestion des conversations en attente"
+        "pending_conversations": "Gestion des conversations en attente",
+        "slot_access": "Accès et appareils",
+        "slot_tracking": "Enregistrement et suivi"
       },
       "danger_zone_description": "Supprimer cet agent le désassigne de tous les groupes auxquels il participe. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer l'agent",
       "duplicate_breadcrumb": "Dupliquer l'agent",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
-      "resources": {
-        "templates_chat": "Modèles de chat",
-        "templates_email": "Modèles d'e-mail",
-        "none": "Aucun",
-        "selected_many": "{0} sélectionnés",
-        "agendas_count": "{0} carnets",
-        "agendas_count_one": "1 carnet",
-        "templates_count": "{0} modèles",
-        "templates_count_one": "1 modèle",
-        "manage_link": "Gérer dans Référentiels",
-        "teams_hint": "Pour le retrouver en filtrant. Ils ne distribuent pas de conversations.",
-        "teams_count": "{0} équipes",
-        "teams_count_one": "1 équipe",
-        "none_m": "Aucune"
-      },
       "summary": {
         "no_groups": "Sans groupes",
         "groups_active": "Activé dans les groupes",
@@ -2364,7 +2368,7 @@
     "errors": {
       "name_required": "Le nom est obligatoire",
       "extension_required": "Sélectionnez une extension",
-      "channels_required": "Cochez au moins un canal",
+      "channels_required": "Sélectionnez au moins un canal",
       "email_invalid": "Entrez un email valide",
       "pin_invalid": "Le PIN doit avoir entre 3 et 6 chiffres",
       "phone_required": "Saisissez le téléphone portable : l'extension y sonne",
