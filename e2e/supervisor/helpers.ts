@@ -166,7 +166,23 @@ export const goto = async (page: Page, route: string): Promise<void> => {
    *
    * Va aquí y no en cada test para que ninguno nuevo herede la trampa. Si algún
    * test necesita la barra expandida, que la hoveree él después de `goto`. */
+  await sacarPuntero(page);
+};
+
+/**
+ * Saca el puntero de la barra lateral y espera a que se pliegue.
+ *
+ * Mover el puntero no basta: la barra se pliega 300 ms DESPUÉS de que salga
+ * (`COLLAPSE_AFTER_LEAVE_MS` en `sidebar.component.ts`, para perdonar el temblor
+ * del ratón). Medido el 2026-10-11 en la traza de un rojo del CI
+ * (`fichas-nombre-fijo`, usuario a 1366): la barra estaba desplegada al mover el
+ * puntero, y la prueba midió 71 a 271 ms después, con la barra aún encima del
+ * nombre. En local, Chromium no despliega la barra bajo el puntero quieto al
+ * cargar, y por eso solo fallaba en el CI.
+ */
+export const sacarPuntero = async (page: Page): Promise<void> => {
   await page.mouse.move(PUNTERO_NEUTRO.x, PUNTERO_NEUTRO.y);
+  await expect(page.locator('aside.sidebar--expanded')).toHaveCount(0);
 };
 
 /**

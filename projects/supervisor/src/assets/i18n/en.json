@@ -304,6 +304,7 @@
         }
       },
       "filters": {
+        "none": "None",
         "search_placeholder": "Search",
         "services_label": "Services",
         "date_label": "Date",
@@ -2347,7 +2348,9 @@
         "missing_channel": "a channel",
         "missing_group": "a group",
         "missing_outbound": "a group for outbound calls",
-        "attends_by": "Works on"
+        "attends_by": "Works on",
+        "no_channels": "No channels",
+        "none": "None"
       },
       "create_submit": "Create agent"
     },
@@ -2701,6 +2704,18 @@
     "empty_cells": {
       "title": "Empty cells with “—” or blank?",
       "body": "GitHub (Primer) leaves them blank because screen readers read the dash. In a table with so many columns, a blank cell looks as if it had not loaded. Proposal: a grey “—”, and the screen reader hears “No data” (or “Not applicable” when the group does not have that channel). If the empty value means something, it is written: “Never”, “Unassigned”, or “0” if it is a number."
+    },
+    "header_ladder": {
+      "title": "How much space between the bar, the title and the table?",
+      "body": "Each screen set its own top margin (between 17.5 and 24.5 px), and the search box sat almost as close to the title (14 px) as to the table (12). The header now follows the 7, 14 and 28 px ladder: bar to title 28, title to what it heads 14, search box to its table 7. Each level is spaced twice as much as the one inside it, so you can see what belongs together. Proposal: the ladder, on every screen. At 1440 × 900 no list loses rows."
+    },
+    "narrow_name": {
+      "title": "What does the list do in a narrow window?",
+      "body": "At 900 or 1024 px wide, the Name column shrank to 32 px, and in Agents only two letters of its header and half a photo showed. Now the table scrolls sideways and the name stays fixed on the left, with a shadow hinting at what is left to see. Proposal: the fixed name. The alternative is hiding columns by width, as GitHub (Primer) suggests, but which column goes is a product call, and the Columns button already lets you remove them."
+    },
+    "help_below": {
+      "title": "Field help: above or below?",
+      "body": "Here the help sat between the label and the options, while every other field has it below. It now always goes below, as in GitHub (Primer): the label and its options read at a glance, and in two columns each field's options line up. What the chosen option opens (the file or the text) comes after, and the help does not move. Same in the Web Chat script, where the copy button now sits inside the field, icon only. Putting it above, as GOV.UK does, suits forms filled in once; this record gets reviewed again and again. Proposal: below."
     }
   }
 }

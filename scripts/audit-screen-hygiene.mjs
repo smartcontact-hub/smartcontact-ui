@@ -4,7 +4,7 @@
  * que hasta ahora SOLO vivían en la doc (AGENTS.md §UX de pantalla). Un principio
  * que no tiene gate se pudre: esto lo convierte en un chequeo.
  *
- * Gatea CINCO cosas. La primera, la segunda y la cuarta, como TRINQUETE por conteo (el mismo patrón
+ * Gatea SEIS cosas. La primera, la segunda y la cuarta, como TRINQUETE por conteo (el mismo patrón
  * que `audit:api-era`: la lista solo puede MENGUAR, y muerde en las dos direcciones):
  *
  * 1. EMOJIS EN LA INTERFAZ. Los iconos salen de `<sc-icon>` (Material Symbols); un
@@ -39,6 +39,11 @@
  *    `<sc-celda-vacia>`: «—» a la vista, oculto al lector, que oye «Sin dato» (o su `texto`). Un «—»
  *    escrito a mano el lector lo lee «guion», que es el motivo de Primer para dejarlas en blanco.
  *    Solo plantillas `.html` del Supervisor; un «—» dentro de un texto del `.ts` no es una celda.
+ *
+ * 6. AYUDA ENTRE EL RÓTULO Y SU CONTROL (DD-198), sin trinquete: ninguna. La ayuda de un campo va debajo de su
+ *    control (`helperText`): rótulo y control son una pieza que se lee de un vistazo, y en una rejilla los controles
+ *    quedan a la misma altura. Se marca un `.field__help` escrito justo antes de un control suelto del DS. La única
+ *    excepción, una lista que crece, no lleva un control suelto detrás (su ayuda va bajo el título del grupo).
  *
  * QUÉ HACER SI SE PONE ROJO:
  *   · «nuevo incumplimiento» → arréglalo (usa `<sc-icon>` en vez del emoji; añade
@@ -183,6 +188,17 @@ export function guionesSueltos(html) {
   return lineas;
 }
 
+/** Los controles sueltos del DS: una fila, con su ayuda debajo. */
+const CONTROL_SUELTO = 'sc-(?:selectbutton|select|multiselect|inputtext|inputnumber|textarea|datepicker|password|inputtags)';
+
+/** Líneas de una plantilla con una ayuda (`.field__help`) escrita justo antes de un control suelto (DD-198). */
+export function ayudasEncima(html) {
+  const limpio = sinComentariosEnSuSitio(html, true);
+  // Dentro de la ayuda, nada que cierre su etiqueta: si no, la búsqueda saltaría de una ayuda a la siguiente.
+  const re = new RegExp(`<(\\w+)\\b[^>]*class="[^"]*\\bfield__help\\b[^"]*"[^>]*>(?:(?!</\\1>)[\\s\\S])*</\\1>\\s*<${CONTROL_SUELTO}\\b`, 'g');
+  return [...limpio.matchAll(re)].map((m) => limpio.slice(0, m.index).split('\n').length);
+}
+
 /** Las etiquetas `<sc-select` y `<sc-multiselect` de un texto ya sin comentarios. */
 const DESPLEGABLE = /<sc-(select|multiselect)\b/g;
 
@@ -251,6 +267,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   const toasts = {};
   const sinNombre = [];
   const guiones = [];
+  const encima = [];
   let desplegables = 0;
   for (const f of ficheros) {
     const src = readFileSync(f, 'utf8');
@@ -266,6 +283,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     for (const linea of desplegablesSinNombre(src, f.endsWith('.html'))) sinNombre.push(`${f}:${linea}`);
     if (f.startsWith('projects/supervisor/') && f.endsWith('.html')) {
       for (const linea of guionesSueltos(src)) guiones.push(`${f}:${linea}`);
+      for (const linea of ayudasEncima(src)) encima.push(`${f}:${linea}`);
     }
   }
 
@@ -286,6 +304,10 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
       `${donde}: «—» suelto (DD-197). El lector de pantalla lo lee «guion».`,
       '      → `<sc-celda-vacia />` (con `[texto]` si el vacío tiene su porqué); si el vacío significa algo o es una cifra, escríbelo.',
     ]),
+    ...encima.map((donde) => [
+      `${donde}: ayuda entre el rótulo y su control (DD-198).`,
+      '      → pásala al `helperText` del control, que la pinta debajo y la anuncia; si es una lista que crece, bajo su título.',
+    ]),
   ];
 
   const totEmoji = Object.values(emojis).reduce((a, b) => a + b, 0);
@@ -294,14 +316,14 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     `audit:screen-hygiene — ${ficheros.length} plantilla(s): ${totEmoji} emoji astral en ` +
       `${Object.keys(emojis).length} fichero(s), ${totImg} img/iframe sin dims en ${Object.keys(imgs).length} ` +
       `(trinquetes: emoji ${Object.keys(EMOJI_PENDIENTES).length}, img ${Object.keys(IMG_PENDIENTES).length}), ` +
-      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ${guiones.length} guion(es) suelto(s), ` +
+      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ${guiones.length} guion(es) suelto(s), ${encima.length} ayuda(s) encima, ` +
       `${Object.values(toasts).reduce((a, b) => a + b, 0)} toast(s) del sistema en ${Object.keys(toasts).length} fichero(s)\n`,
   );
 
   if (!problemas.length) {
     log(
       '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco, ' +
-        'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema y ningún «—» suelto.',
+        'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema, ningún «—» suelto y ninguna ayuda encima de su control.',
     );
     process.exit(0);
   }

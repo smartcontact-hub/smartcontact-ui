@@ -454,11 +454,12 @@
         <sc-slot titleKey="groups.form.distribution.queue_messages" hintKey="groups.form.distribution.queue_messages_hint" collapsible initiallyCollapsed>
           <div class="queue-messages">
             <div class="grid grid--2">
-              <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.queue_id', help: 'groups.form.announcements.queue_id_info', source: 'queueIdSource', file: 'queueIdFile', text: 'queueIdText', id: 'group-queue-id' }" />
+              <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.queue_id', help: 'groups.form.announcements.queue_id_info', source: 'queueIdSource', file: 'queueIdFile', text: 'queueIdText', id: 'group-queue-id', nota: true }" />
               <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.next_in_line', help: 'groups.form.announcements.next_in_line_info', source: 'nextInLineSource', file: 'nextInLineFile', text: 'nextInLineText', id: 'group-next-in-line' }" />
             </div>
 
-            <!-- Más de uno, cada uno con su .wav y su frecuencia (postventa, 2026-09-18). -->
+            <!-- Más de uno, cada uno con su .wav y su frecuencia (postventa, 2026-09-18). Es una lista que crece: su ayuda va
+                 bajo el título y no al final, donde bajaría con cada fila (DD-198). -->
             <div class="field">
               <span class="field__label sc-text-caption-semibold" id="group-periodic-label">{{ 'groups.form.announcements.periodic' | translate }}</span>
               <p id="group-periodic-help" class="field__help sc-text-caption-regular">{{ 'groups.form.announcements.periodic_info' | translate }}</p>
@@ -590,10 +591,8 @@
               </div>
               <div class="field">
                 <label class="field__label sc-text-caption-semibold" for="group-chat-script">{{ 'groups.form.advanced.script_title' | translate }}</label>
-                <p id="group-chat-script-help" class="field__help sc-text-caption-regular">{{ 'groups.form.advanced.script_hint' | translate }}</p>
-                <sc-textarea inputId="group-chat-script" ariaDescribedBy="group-chat-script-help" [rows]="2" fluid readonly [value]="chatScript()" />
-                <!-- «Copiar» pasa a «Copiado» dos segundos, como Primer (DD-191). -->
-                <sc-button class="script-copy" size="sm" variant="secondary" appearance="outlined" [icon]="copiado() ? 'check' : 'content_copy'" [label]="(copiado() ? 'groups.form.advanced.script_copied' : 'groups.form.advanced.script_copy') | translate" (clicked)="copyChatScript()" />
+                <!-- Copiar va dentro del campo, solo con su icono, y pasa a ✓ dos segundos (DD-198, como Primer y DD-191). -->
+                <sc-textarea inputId="group-chat-script" [rows]="2" fluid readonly copyable [copyLabel]="'groups.form.advanced.script_copy' | translate" [copiedLabel]="'groups.form.advanced.script_copied' | translate" [helperText]="'groups.form.advanced.script_hint' | translate" [value]="chatScript()" />
               </div>
             </div>
           </sc-slot>
@@ -864,11 +863,18 @@
 <!-- Un mensaje de la cola de Teléfono que puede no decir nada, leerse con la voz sintética o ser un .wav propio
      (manual de usuario de Voice): el identificador del grupo y «Eres el siguiente». El texto o el archivo aparecen con
      su opción: «Texto a voz» sin texto no dice nada. -->
-<ng-template #audioSource let-label="label" let-help="help" let-source="source" let-file="file" let-text="text" let-id="id">
+<ng-template #audioSource let-label="label" let-help="help" let-source="source" let-file="file" let-text="text" let-id="id" let-nota="nota">
   <div class="field">
-    <span class="field__label sc-text-caption-semibold" [id]="id + '-label'">{{ label | translate }}</span>
-    <p class="field__help sc-text-caption-regular" [id]="id + '-help'">{{ help | translate }}</p>
-    <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="$any(form().announcements)[source]" [ariaLabel]="label | translate" [ariaDescribedBy]="id + '-help'" (valueChange)="setAnnouncement(source, $any($event))" />
+    <span class="field__label sc-text-caption-semibold" [id]="id + '-label'">
+      <span>{{ label | translate }}</span>
+      <!-- Para la revisión con el equipo, en el primero de los dos: la ayuda debajo de su control (DD-198). El rótulo, en
+           su span, para que su texto siga siendo solo el rótulo. -->
+      @if (nota) {
+        <sc-nota-decision claveTitulo="decision_notes.help_below.title" claveTexto="decision_notes.help_below.body" />
+      }
+    </span>
+    <!-- La ayuda, debajo de las opciones como en todo campo (DD-198); el archivo o el texto que abre la opción, después. -->
+    <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="$any(form().announcements)[source]" [ariaLabel]="label | translate" [helperText]="help | translate" (valueChange)="setAnnouncement(source, $any($event))" />
     @if ($any(form().announcements)[source] === 'file') {
       <div class="upload-field">
         <span class="inline-control__value sc-text-body-regular">{{ $any(form().announcements)[file] ?? ('groups.form.announcements.no_file' | translate) }}</span>

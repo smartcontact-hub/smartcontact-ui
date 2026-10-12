@@ -7,10 +7,23 @@
 
 .sc-selectbutton {
   display: inline-flex;
+  /* En columna: la ayuda (`helperText`) va debajo de las opciones (DD-198). Sin ayuda, igual que en fila. */
+  flex-direction: column;
+  align-items: flex-start;
   max-width: 100%;
 }
 
 .sc-selectbutton--fluid {
   display: flex;
+  align-items: stretch;
   width: 100%;
+}
+
+/* La ayuda, como la de los demás campos del DS (`sc-inputnumber__msg`, `sc-select__msg`). */
+.sc-selectbutton__msg {
+  display: block;
+  margin-top: var(--sc-spacing-0-25);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-caption);
+  color: var(--sc-text-subtle);
 }

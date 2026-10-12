@@ -10,7 +10,7 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceRowsComponent, type ResourceRow } from '@shared/components';
+import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, NotaDecisionComponent, ResourceRowsComponent, type ResourceRow } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { llegarAAncla, llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
@@ -179,6 +179,7 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     NgTemplateOutlet,
     ChannelIconComponent,
     NameInplaceComponent,
+    NotaDecisionComponent,
     CheckboxComponent,
     AgentChannelTableComponent,
     GroupIdentityFieldsComponent,
@@ -562,7 +563,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
   /** «Copiar» pasa a «Copiado» dos segundos, como Primer (DD-191). */
-  protected readonly copiado = signal(false);
   /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
   private readonly limpiaResultado = effect(() => {
     if (this.formDirty()) this.resultado.limpiar();
@@ -1072,13 +1072,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
 
   protected removePeriodicAnnouncement(index: number): void {
     this.setAnnouncement('periodicAnnouncements', this.form().announcements.periodicAnnouncements.filter((_, i) => i !== index));
-  }
-
-  protected copyChatScript(): void {
-    void navigator.clipboard?.writeText(this.chatScript());
-    this.copiado.set(true);
-    this.resultado.visto(this.translate.instant('groups.form.advanced.script_copied'));
-    setTimeout(() => this.copiado.set(false), 2000);
   }
 
   protected onSubStrategyChange(value: unknown): void {

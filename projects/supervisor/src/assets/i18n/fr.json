@@ -304,6 +304,7 @@
         }
       },
       "filters": {
+        "none": "Aucune",
         "search_placeholder": "Rechercher",
         "services_label": "Services",
         "date_label": "Date",
@@ -2347,7 +2348,9 @@
         "missing_channel": "un canal",
         "missing_group": "un groupe",
         "missing_outbound": "un groupe pour les appels sortants",
-        "attends_by": "Traite par"
+        "attends_by": "Traite par",
+        "no_channels": "Aucun canal",
+        "none": "Aucune"
       },
       "create_submit": "Créer l'agent"
     },
@@ -2701,6 +2704,18 @@
     "empty_cells": {
       "title": "Cellules vides avec « — » ou laissées en blanc ?",
       "body": "GitHub (Primer) les laisse en blanc parce que le lecteur d'écran lit le tiret. Dans un tableau avec autant de colonnes, une cellule vide semble ne pas avoir chargé. Proposition : un « — » gris, et le lecteur d'écran entend « Aucune donnée » (ou « Non applicable » quand le groupe n'a pas ce canal). Si le vide signifie quelque chose, on l'écrit : « Jamais », « Non attribué », ou « 0 » s'il s'agit d'un nombre."
+    },
+    "header_ladder": {
+      "title": "Combien d'espace entre la barre, le titre et le tableau ?",
+      "body": "Chaque écran fixait sa propre marge en haut (entre 17,5 et 24,5 px), et la recherche était presque aussi près du titre (14 px) que du tableau (12). L'en-tête suit maintenant l'échelle 7, 14 et 28 px : de la barre au titre 28, du titre à son contenu 14 et de la recherche à son tableau 7. Chaque niveau est deux fois plus espacé que celui qu'il contient : on voit ce qui va ensemble. Proposition : l'échelle, sur tous les écrans. À 1440 × 900, aucune liste ne perd de lignes."
+    },
+    "narrow_name": {
+      "title": "Que fait la liste dans une fenêtre étroite ?",
+      "body": "À 900 ou 1024 px de large, la colonne Nom se réduisait à 32 px et, dans Agents, on ne voyait que deux lettres de son en-tête et une demi-photo. Maintenant le tableau défile sur le côté et le nom reste fixe à gauche, avec une ombre qui signale ce qu'il reste à voir. Proposition : le nom fixe. L'autre option est de masquer des colonnes selon la largeur, comme le propose GitHub (Primer), mais choisir laquelle retirer relève du produit, et le bouton Colonnes permet déjà de les retirer."
+    },
+    "help_below": {
+      "title": "L'aide d'un champ : au-dessus ou en dessous ?",
+      "body": "Ici, l'aide était entre le libellé et les options, alors que tous les autres champs l'ont en dessous. Elle est maintenant toujours en dessous, comme chez GitHub (Primer) : le libellé et ses options se lisent d'un coup d'œil et, sur deux colonnes, les options de chaque champ sont à la même hauteur. Ce que l'option choisie ouvre (le fichier ou le texte) vient après, et l'aide ne bouge pas. Pareil pour le script Web Chat, où le bouton copier est dans le champ, icône seule. La mettre au-dessus, comme GOV.UK, convient aux formulaires remplis une seule fois ; cette fiche se relit souvent. Proposition : en dessous."
     }
   }
 }

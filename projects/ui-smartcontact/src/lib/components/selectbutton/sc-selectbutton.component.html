@@ -11,7 +11,7 @@
   [invalid]="invalid()"
   [ariaLabelledBy]="ariaLabelledBy()"
   [attr.aria-label]="ariaLabel() ?? null"
-  [attr.aria-describedby]="ariaDescribedBy() ?? null"
+  [attr.aria-describedby]="describedBy()"
   [ngModel]="value()"
   (ngModelChange)="value.set($event)"
 >
@@ -23,3 +23,7 @@
     </ng-template>
   }
 </p-selectbutton>
+
+@if (footerText()) {
+  <sc-field-msg block="sc-selectbutton" [text]="footerText()" [msgId]="msgId()" />
+}

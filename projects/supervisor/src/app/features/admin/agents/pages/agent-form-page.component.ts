@@ -610,14 +610,14 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       // cambia; los que PUEDE atender son las casillas de General (barrido de consistencia, 2026-10-09).
       {
         icono: 'forum',
-        valor: canales.length ? canales.map((c) => t(etiquetas[c])).join(', ') : '—',
+        valor: canales.length ? canales.map((c) => t(etiquetas[c])).join(', ') : t('agents.form.summary.no_channels'),
         etiqueta: 'agents.form.summary.attends_by',
         seccion: 'agent-section-groups',
         ancla: null,
       },
       {
         icono: 'dialpad',
-        valor: f.extension ? `${f.extension}, ${t(`agents.ext_kind.${f.extensionType}`).toLowerCase()}` : '—',
+        valor: f.extension ? `${f.extension}, ${t(`agents.ext_kind.${f.extensionType}`).toLowerCase()}` : t('agents.form.fields.extension_empty'),
         etiqueta: 'agents.form.fields.extension',
         seccion: 'agent-section-general',
         ancla: 'agent-ext',
@@ -631,7 +631,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       },
       {
         icono: 'call_made',
-        valor: saliente !== null ? (grupos.get(saliente)?.name ?? '—') : '—',
+        valor: (saliente !== null ? grupos.get(saliente)?.name : null) ?? t('agents.form.summary.none'),
         etiqueta: 'agents.form.summary.outbound',
         seccion: 'agent-section-groups',
         ancla: null,
