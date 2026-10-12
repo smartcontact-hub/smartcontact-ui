@@ -401,10 +401,11 @@ export class AgentsListPageComponent {
   });
 
   protected readonly impactItems = computed<readonly ImpactItem[]>(() => {
+    this.lang(); // la pista «(sin extensión)» al día al cambiar de idioma (ver `injectLangChange`)
     const ids = this.selectedIds();
     return this.agents()
       .filter((a) => ids.has(a.id))
-      .map((a) => ({ id: a.id, name: a.name, hint: `(ext. ${a.extension || '—'})` }));
+      .map((a) => ({ id: a.id, name: a.name, hint: a.extension ? `(ext. ${a.extension})` : `(${this.translate.instant('agents.form.fields.extension_empty').toLowerCase()})` }));
   });
 
   protected readonly impactBadge = computed<ImpactBadge | null>(() => {

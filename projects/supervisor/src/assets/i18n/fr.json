@@ -304,6 +304,7 @@
         }
       },
       "filters": {
+        "none": "Aucune",
         "search_placeholder": "Rechercher",
         "services_label": "Services",
         "date_label": "Date",
@@ -2347,7 +2348,9 @@
         "missing_channel": "un canal",
         "missing_group": "un groupe",
         "missing_outbound": "un groupe pour les appels sortants",
-        "attends_by": "Traite par"
+        "attends_by": "Traite par",
+        "no_channels": "Aucun canal",
+        "none": "Aucune"
       },
       "create_submit": "Créer l'agent"
     },
