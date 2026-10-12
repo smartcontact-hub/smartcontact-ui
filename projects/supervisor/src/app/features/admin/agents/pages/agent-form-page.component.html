@@ -378,78 +378,86 @@
   >
     <!-- En el orden de la revisión de agentes (2026-10-09): grabar lo primero, después los interruptores de Contact
          Center (activación por grupo, dispositivos, externos y conversaciones pendientes) y luego la matriz. -->
-    <sc-subsection titleKey="agents.form.section.permissions" hintKey="agents.form.section.permissions_hint">
-      <div class="bloque">
-        <div class="switch-field">
-          <sc-toggleswitch
-            inputId="agent-recording"
-            [checked]="form().permissions.recording"
-            [ariaLabel]="'agents.form.fields.recording' | translate"
-            (checkedChange)="onRecordingChange($event)"
-          />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.recording' | translate }}</span>
+    <sc-subsection icon="admin_panel_settings" titleKey="agents.form.section.permissions" hintKey="agents.form.section.permissions_hint">
+      <!-- Dos slots (quick-win de la auditoría UX, 2026-10): acceso/dispositivos primero, grabación y
+           seguimiento después, mismo patrón que los bloques de canal de Grupos (sc-slot por subconjunto). -->
+      <sc-slot titleKey="agents.form.permissions.slot_access">
+        <div class="bloque">
+          <div class="switch-field switch-field--top">
+            <sc-toggleswitch
+              ariaDescribedBy="agent-self-activate-hint"
+              [checked]="form().permissions.selfActivate"
+              [ariaLabel]="'agents.form.permissions.self_activate' | translate"
+              (checkedChange)="togglePermission('selfActivate')"
+            />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
+              <p id="agent-self-activate-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
+            </div>
           </div>
-        </div>
 
-        <div class="switch-field switch-field--top">
-          <sc-toggleswitch
-            ariaDescribedBy="agent-self-activate-hint"
-            [checked]="form().permissions.selfActivate"
-            [ariaLabel]="'agents.form.permissions.self_activate' | translate"
-            (checkedChange)="togglePermission('selfActivate')"
-          />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.self_activate' | translate }}</span>
-            <p id="agent-self-activate-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.permissions.self_activate_hint' | translate }}</p>
+          <!-- Elegir navegador o teléfono en el puesto pide un teléfono móvil: sin él, apagado y dice por qué. -->
+          <div class="switch-field switch-field--top">
+            <sc-toggleswitch
+              ariaDescribedBy="agent-manage-devices-hint"
+              [checked]="form().permissions.manageDevices && hasPhone()"
+              [disabled]="!hasPhone()"
+              [ariaLabel]="'agents.form.permissions.manage_devices' | translate"
+              (checkedChange)="togglePermission('manageDevices')"
+            />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.manage_devices' | translate }}</span>
+              <p id="agent-manage-devices-hint" class="switch-field__hint sc-text-caption-regular">
+                {{ (hasPhone() ? 'agents.form.permissions.manage_devices_hint' : 'agents.form.permissions.manage_devices_no_phone') | translate }}
+              </p>
+            </div>
           </div>
-        </div>
 
-        <!-- Elegir navegador o teléfono en el puesto pide un teléfono móvil: sin él, apagado y dice por qué. -->
-        <div class="switch-field switch-field--top">
-          <sc-toggleswitch
-            ariaDescribedBy="agent-manage-devices-hint"
-            [checked]="form().permissions.manageDevices && hasPhone()"
-            [disabled]="!hasPhone()"
-            [ariaLabel]="'agents.form.permissions.manage_devices' | translate"
-            (checkedChange)="togglePermission('manageDevices')"
-          />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.manage_devices' | translate }}</span>
-            <p id="agent-manage-devices-hint" class="switch-field__hint sc-text-caption-regular">
-              {{ (hasPhone() ? 'agents.form.permissions.manage_devices_hint' : 'agents.form.permissions.manage_devices_no_phone') | translate }}
-            </p>
+          <div class="switch-field switch-field--top">
+            <sc-toggleswitch
+              ariaDescribedBy="agent-external-devices-hint"
+              [checked]="form().permissions.externalDevices"
+              [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
+              (checkedChange)="togglePermission('externalDevices')"
+            />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
+              <p id="agent-external-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
+            </div>
           </div>
         </div>
+      </sc-slot>
 
-        <div class="switch-field switch-field--top">
-          <sc-toggleswitch
-            ariaDescribedBy="agent-external-devices-hint"
-            [checked]="form().permissions.externalDevices"
-            [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos' | translate"
-            (checkedChange)="togglePermission('externalDevices')"
-          />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}</span>
-            <p id="agent-external-devices-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.integracion.dispositivos_externos_hint' | translate }}</p>
+      <sc-slot titleKey="agents.form.permissions.slot_tracking">
+        <div class="bloque">
+          <div class="switch-field">
+            <sc-toggleswitch
+              inputId="agent-recording"
+              [checked]="form().permissions.recording"
+              [ariaLabel]="'agents.form.fields.recording' | translate"
+              (checkedChange)="onRecordingChange($event)"
+            />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.recording' | translate }}</span>
+            </div>
           </div>
-        </div>
 
-        <!-- «Gestionar pérdidas»: del agente, no del grupo (revisión de tipificaciones, 2026-10-09). -->
-        <div class="switch-field">
-          <sc-toggleswitch
-            [checked]="!!form().permissions.pendingConversations"
-            [ariaLabel]="'agents.form.permissions.pending_conversations' | translate"
-            (checkedChange)="togglePermission('pendingConversations')"
-          />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.pending_conversations' | translate }}</span>
+          <!-- «Gestionar pérdidas»: del agente, no del grupo (revisión de tipificaciones, 2026-10-09). -->
+          <div class="switch-field">
+            <sc-toggleswitch
+              [checked]="!!form().permissions.pendingConversations"
+              [ariaLabel]="'agents.form.permissions.pending_conversations' | translate"
+              (checkedChange)="togglePermission('pendingConversations')"
+            />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.permissions.pending_conversations' | translate }}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </sc-slot>
     </sc-subsection>
 
-    <sc-subsection titleKey="agents.form.section.calls" hintKey="agents.form.section.calls_hint">
+    <sc-subsection icon="call" titleKey="agents.form.section.calls" hintKey="agents.form.section.calls_hint">
       <sc-permission-matrix
         [rows]="matrixRows()"
         [columns]="matrixColumns()"
@@ -462,7 +470,7 @@
       />
     </sc-subsection>
 
-    <sc-subsection titleKey="agents.form.section.advanced" hintKey="agents.form.section.advanced_hint" collapsible initiallyCollapsed>
+    <sc-subsection icon="tune" titleKey="agents.form.section.advanced" hintKey="agents.form.section.advanced_hint" collapsible initiallyCollapsed>
       <!-- En el orden de la revisión: descuelgue, chats simultáneos (si atiende chat), idiomas, orden aleatorio, URL y sesión. -->
       <div class="bloque">
         <div class="field field--full">
@@ -477,7 +485,7 @@
         </div>
 
         <div class="grid grid--2">
-          <!-- Solo si atiende chat. -->
+          <!-- Solo si atiende chat; si no, dice por qué no está (quick-win de la auditoría UX, 2026-10). -->
           @if (attendsChat()) {
             <div class="field">
               <label id="agent-max-chats-label" class="field__label sc-text-caption-semibold" for="agent-max-chats">
@@ -491,6 +499,8 @@
                 (valueChange)="onMaxChatsValueChange($event)"
               />
             </div>
+          } @else {
+            <p class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.comportamiento.max_chats_inactive' | translate }}</p>
           }
 
           <div class="field">
@@ -598,8 +608,8 @@
               optionValue="value"
               [filter]="true"
               [maxSelectedLabels]="0"
-              [selectedItemsLabel]="(scheduleValue().length === 1 ? 'agents.form.resources.agendas_count_one' : 'agents.form.resources.agendas_count') | translate"
-              [placeholder]="'agents.form.resources.none' | translate"
+              [selectedItemsLabel]="(scheduleValue().length === 1 ? 'resources.agendas_count_one' : 'resources.agendas_count') | translate"
+              [placeholder]="'resources.none' | translate"
               [options]="scheduleOptions()"
               [value]="scheduleValue()"
               (valueChange)="onSchedulesChange($event)"
@@ -613,7 +623,7 @@
         @if (attendsChat()) {
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="agent-templates-chat">
-              {{ 'agents.form.resources.templates_chat' | translate }}
+              {{ 'resources.templates_chat' | translate }}
             </label>
             <div class="control-add">
               <sc-multiselect
@@ -622,15 +632,15 @@
                 optionValue="value"
                 [filter]="true"
                 [maxSelectedLabels]="0"
-                [selectedItemsLabel]="(chatTemplateValue().length === 1 ? 'agents.form.resources.templates_count_one' : 'agents.form.resources.templates_count') | translate"
-                [placeholder]="'agents.form.resources.none' | translate"
+                [selectedItemsLabel]="(chatTemplateValue().length === 1 ? 'resources.templates_count_one' : 'resources.templates_count') | translate"
+                [placeholder]="'resources.none' | translate"
                 [options]="chatTemplateOptions()"
                 [value]="chatTemplateValue()"
                 (valueChange)="onTemplatesChange('chat', $event)"
               />
               <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'chat', id: null })" />
             </div>
-            <sc-resource-rows [label]="'agents.form.resources.templates_chat' | translate" [rows]="chatTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'chat', id: +$event })" />
+            <sc-resource-rows [label]="'resources.templates_chat' | translate" [rows]="chatTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'chat', id: +$event })" />
           </div>
         }
 
@@ -645,9 +655,9 @@
             optionValue="value"
             [filter]="true"
             [maxSelectedLabels]="0"
-            [selectedItemsLabel]="(teamValue().length === 1 ? 'agents.form.resources.teams_count_one' : 'agents.form.resources.teams_count') | translate"
-            [placeholder]="'agents.form.resources.none_m' | translate"
-            [helperText]="'agents.form.resources.teams_hint' | translate"
+            [selectedItemsLabel]="(teamValue().length === 1 ? 'resources.teams_count_one' : 'resources.teams_count') | translate"
+            [placeholder]="'resources.none_m' | translate"
+            [helperText]="'resources.teams_hint' | translate"
             [options]="teamOptions()"
             [value]="teamValue()"
             (valueChange)="onTeamsChange($event)"
@@ -659,7 +669,7 @@
       </div>
 
       <!-- Dónde se crean y se editan. -->
-      <a class="repo-link sc-text-caption-semibold" routerLink="/admin/repositorios">{{ 'agents.form.resources.manage_link' | translate }}</a>
+      <a class="repo-link sc-text-caption-semibold" routerLink="/admin/repositorios">{{ 'resources.manage_link' | translate }}</a>
       </div>
     </sc-subsection>
   </sc-section-card>
