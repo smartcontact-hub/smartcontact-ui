@@ -2,7 +2,7 @@
 
 > **Autogenerado** por la rutina cloud "Auditoría semanal"
 > (`.claude/skills/auditoria-semanal/SKILL.md`). Es la versión de **juicio**, en
-> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los 44 gates de `verify` no
+> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los 47 gates de `verify` no
 > pueden ver (deuda de diseño + deriva semántica de docs). Cada run añade una
 > sección fechada **arriba**; `[x]` = cerrado. Semana sin hallazgos reales → no
 > hay sección nueva (la rutina no abre PR).
@@ -10,6 +10,46 @@
 > ⚠️ **Este doc lo escanea `docs:coherence` en cada `verify`.** No cita nunca un
 > `npm run …` ni un `scripts/….mjs` que no exista (rompería el CI). Los gates
 > _propuestos_ se describen en prosa, sin su path. Ver §3 del skill.
+
+---
+
+## 2026-10-12
+
+> Método: pasada A (deuda de código, ≤5, incluye calidad de copy i18n de las claves nuevas en
+> los cuatro idiomas) + pasada B (deriva de docs) + pasada C (PRs parados >7d) + pasada D (panel
+> de Cloudflare). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md. Dos semanas
+> desde la última pasada (2026-09-28), 106 commits: fichas de grupo/agente, bloque nuevo de
+> email (cuentas y disparadores) y columnas configurables en las listas. Pasada A: copy de las
+> claves nuevas revisado en en/es/fr/pt (bloque `emails`, `bulk_applied`, `columns_*`,
+> `empty_cell`) sin hallazgos; la clave `skills_unavailable` de la sección anterior ya no existe.
+> Pasada C: 1 PR abierto (#370), creado hace menos de 24h — no cualifica. Pasada D: sin
+> `CLOUDFLARE_API_TOKEN` en este entorno → no comprobado.
+
+### Deuda de código
+
+sin hallazgos.
+
+### Deriva de docs
+
+- [ ] `docs/customs-catalog.md:721` afirma que el gate de paridad cruza «**38 colores**» y que la
+      lista `diverge` de `scripts/color-map.mjs` tiene «**10 filas**». Medido hoy importando ese
+      módulo: **73** filas `enforce` y **4** `diverge` (77 en total). Es el mismo desfase de la
+      sección 2026-09-21, que sigue sin corregirse (entonces citaba `:680`; la línea se ha
+      movido) → actualizar las dos cifras y listar solo las 4 divergencias reales. **Gate-able**:
+      un guard debería contar las filas por tipo en el mapa de color y comparar con las cifras que
+      cita el catálogo.
+- [x] La cabecera de este doc (`docs/AUDIT-SEMANAL.md:5`) decía «44 gates» y `verify` encadena
+      hoy **47** (la cifra que ya dicen `CLAUDE.md:52` y `docs/DOCS-INDEX.md:43`). Corregido en
+      esta pasada. **Gate-able**: es la segunda vez que esta cifra se queda atrás; un guard debería
+      contar los pasos de `verify` y compararlos con las cifras de gates que citan los docs.
+
+### Trabajo sin mergear
+
+sin hallazgos (1 PR abierto, #370, con menos de 24h).
+
+### Panel de Cloudflare
+
+no comprobado (sin `CLOUDFLARE_API_TOKEN` en este entorno).
 
 ---
 
