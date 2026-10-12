@@ -2303,6 +2303,7 @@
         "channel_not_offered": "Este grupo no ofrece el canal",
         "title": "Grupos asignados",
         "filter_label": "Filtrar por asignación",
+        "col_level": "Nivel",
         "col_outbound": "Salientes",
         "outbound_aria": "Sus llamadas salientes, por {{name}}",
         "outbound_none": "Sin teléfono en este grupo",

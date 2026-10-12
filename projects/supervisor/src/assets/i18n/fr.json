@@ -2300,6 +2300,7 @@
         "channel_not_offered": "Ce groupe ne propose pas ce canal",
         "title": "Groupes attribués",
         "filter_label": "Filtrer par affectation",
+        "col_level": "Niveau",
         "col_outbound": "Sortants",
         "outbound_aria": "Ses appels sortants, par {{name}}",
         "outbound_none": "Pas de téléphone dans ce groupe",
