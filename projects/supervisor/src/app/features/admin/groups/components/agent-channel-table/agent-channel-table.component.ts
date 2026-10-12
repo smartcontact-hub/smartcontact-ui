@@ -11,8 +11,6 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { ScIconComponent } from '@smartcontact-hub/icons';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -38,7 +36,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
 import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
 
-import { NotaDecisionComponent, PresenceAvatarComponent } from '@shared/components';
+import { NotaDecisionComponent, PresenceAvatarComponent, ScLinkButtonComponent } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -122,8 +120,7 @@ export function columnsRem(
     PresenceAvatarComponent,
     NotaDecisionComponent,
     SearchComponent,
-    RouterLink,
-    ScIconComponent,
+    ScLinkButtonComponent,
     SelectComponent,
     TagComponent,
     ToggleSwitchComponent,
