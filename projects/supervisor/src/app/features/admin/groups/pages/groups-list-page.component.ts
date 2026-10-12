@@ -8,7 +8,7 @@ import { ScButtonComponent as ButtonComponent, ScMessageComponent } from '@smart
 import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
-import { CeldaVaciaComponent, ChannelIconComponent, ListPageComponent } from '@shared/components';
+import { CeldaVaciaComponent, ChannelIconComponent, ListPageComponent, NotaDecisionComponent } from '@shared/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import {
   useBulkEntityI18n,
@@ -83,6 +83,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
     ListPageComponent,
+    NotaDecisionComponent,
     TranslateModule,
     ScMessageComponent,
   ],
