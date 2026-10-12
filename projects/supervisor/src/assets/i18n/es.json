@@ -304,6 +304,7 @@
         }
       },
       "filters": {
+        "none": "Ninguno",
         "search_placeholder": "Buscar",
         "services_label": "Servicios",
         "date_label": "Fecha",
@@ -2347,7 +2348,9 @@
         "missing_channel": "un canal",
         "missing_group": "un grupo",
         "missing_outbound": "un grupo para las salientes",
-        "attends_by": "Atiende por"
+        "attends_by": "Atiende por",
+        "no_channels": "Sin canales",
+        "none": "Ninguno"
       },
       "create_submit": "Crear agente"
     },
