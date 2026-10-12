@@ -9,8 +9,10 @@ type PrimeButtonSize = 'small' | 'large' | undefined;
 /**
  * Un botón de solo icono que NAVEGA (DD-172 no reabierto: `sc-button` renderiza sobre `<p-button>`,
  * que no deja elegir `<a>` como raíz; esto es un componente nuevo y acotado, no una migración de
- * `sc-button`). Sobre `<a [pButton] [routerLink]>` — la directiva de PrimeNG, no el componente — porque
- * es la única vía que admite un `<a>` real con `routerLink` y las clases/tokens de botón del preset.
+ * `sc-button`). Sobre `<a [pButton] [routerLink]>` — la directiva de PrimeNG, no el componente —
+ * porque es la única vía que admite un `<a>` real con `routerLink` y las clases/tokens de botón del
+ * preset. Local a Supervisor, no en `@smartcontact-hub/components`: depende de `@angular/router`,
+ * que el paquete publicado no tiene como peer dependency (es una navegación de la app, no del DS).
  *
  * Pensado solo para un candado que cruza a la ficha de OTRA entidad (si el destino es interno a la
  * misma ficha, usa `sc-button` con un `(clicked)` que navegue por dentro, como ya hace
