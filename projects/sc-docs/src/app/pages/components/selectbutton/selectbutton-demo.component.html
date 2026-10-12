@@ -59,3 +59,19 @@
     <sc-selectbutton [disabled]="true" [options]="vistas" optionValue="value" [value]="'all'" ariaLabel="Vistas deshabilitadas" />
   </div>
 </ng-template>
+
+<ng-template #help>
+  <div class="col">
+    <span id="demo-fuente-label">Identificador del grupo</span>
+    <sc-selectbutton
+      [options]="fuentes"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="fuente()"
+      (valueChange)="fuente.set($event)"
+      ariaLabelledBy="demo-fuente-label"
+      helperText="Lo que oye el cliente al entrar en la cola."
+      data-testid="sc-selectbutton-ayuda"
+    />
+  </div>
+</ng-template>

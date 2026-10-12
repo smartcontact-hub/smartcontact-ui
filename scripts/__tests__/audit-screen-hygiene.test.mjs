@@ -8,6 +8,7 @@ import {
   chequearTrinquete,
   desplegablesSinNombre,
   guionesSueltos,
+  ayudasEncima,
 } from '../audit-screen-hygiene.mjs';
 
 // contarEmojis: cuenta SOLO emoji astral pictográfico (+FE0F) en texto renderizable.
@@ -149,4 +150,14 @@ test('guionesSueltos caza el «—» de contenido y el de respaldo, y no el de u
   assert.deepEqual(guionesSueltos('<!-- un guion «—» si no hay canal -->\n<sc-celda-vacia />'), []);
   assert.deepEqual(guionesSueltos('<span [attr.aria-label]="nombre + \' — \' + canal">x</span>'), []);
   assert.deepEqual(guionesSueltos('<p>De 9 — 14 h</p>'), []);
+});
+
+// DD-198: la ayuda de un campo va debajo de su control; escrita entre el rótulo y un control suelto, se marca.
+test('ayudasEncima marca la ayuda justo antes de un control suelto, y no la de debajo ni la de una lista', () => {
+  assert.deepEqual(ayudasEncima('<span class="field__label">X</span>\n<p class="field__help sc-text-caption-regular">Ayuda</p>\n<sc-selectbutton />'), [2]);
+  assert.deepEqual(ayudasEncima('<sc-textarea />\n<p class="field__help">Ayuda</p>\n<sc-button />'), []);
+  assert.deepEqual(ayudasEncima('<p class="field__help">Ayuda</p>\n<div class="periodic-list" role="group"></div>'), []);
+  // No salta de una ayuda que no precede a nada a otra que sí: marca solo la segunda, en su línea.
+  assert.deepEqual(ayudasEncima('<p class="field__help">A</p>\n<div></div>\n<p class="field__help">B</p>\n<sc-select />'), [3]);
+  assert.deepEqual(ayudasEncima('<!-- <p class="field__help">A</p><sc-select /> -->'), []);
 });

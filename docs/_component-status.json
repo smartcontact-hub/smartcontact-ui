@@ -243,7 +243,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 187,
+      "usedInSupervisor": 186,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -1643,7 +1643,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/selectbutton",
       "cva": false,
-      "inputs": 14,
+      "inputs": 15,
       "api": [
         "allowEmpty",
         "ariaDescribedBy",
@@ -1651,6 +1651,7 @@
         "ariaLabelledBy",
         "disabled",
         "fluid",
+        "helperText",
         "invalid",
         "multiple",
         "optionDisabled",
@@ -1661,7 +1662,9 @@
         "value",
         "valueChange"
       ],
-      "nested": [],
+      "nested": [
+        "sc-field-msg"
+      ],
       "hasDemo": true,
       "kit": true,
       "estado": "ready",
@@ -1834,15 +1837,20 @@
       "selector": "sc-textarea",
       "provenance": "WRAPPER",
       "kind": "EXTENDED",
-      "primengBase": "primeng/textarea",
+      "primengBase": "primeng/textarea, primeng/tooltip",
       "cva": false,
-      "inputs": 14,
+      "inputs": 18,
       "api": [
         "ariaDescribedBy",
         "autoResize",
         "cols",
+        "copied",
+        "copiedLabel",
+        "copyLabel",
+        "copyable",
         "disabled",
         "fluid",
+        "helperText",
         "inputId",
         "invalid",
         "name",
@@ -1855,7 +1863,10 @@
         "valueChange",
         "variant"
       ],
-      "nested": [],
+      "nested": [
+        "sc-button",
+        "sc-field-msg"
+      ],
       "hasDemo": true,
       "kit": true,
       "estado": "ready",

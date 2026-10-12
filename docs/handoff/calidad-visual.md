@@ -24,6 +24,8 @@
      «Sin dato» o «No aplica» (`sc-celda-vacia`, DD-197); «Usada en» de Categorías escribe «0». Los «—» que quedan en
      el código (resumen de la ficha de agente, pista «(ext. —)», chips de filtro) no son celdas: si se quiere, la
      palabra en su lugar («Ninguno», «Sin extensión»).
+   - decidido el 2026-10-11, con su PR: la ayuda de un campo va debajo de su control, también en el segmentado
+     (`helperText`, DD-198); copiar el script de Web Chat va dentro del campo (`sc-textarea copyable`).
 1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).

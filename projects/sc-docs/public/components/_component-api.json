@@ -372,7 +372,7 @@
     },
     {
       "componente": "tooltip",
-      "envuelto": false
+      "envuelto": true
     },
     {
       "componente": "tree",
@@ -7892,6 +7892,16 @@
           "nativo": null
         },
         {
+          "nombre": "helperText",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La ayuda del campo, debajo de las opciones como en el resto de campos del DS (DD-198): el rótulo y el control quedan juntos para leer de un vistazo, y lo que la opción elegida abre debajo va después. Se anuncia con el grupo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "value",
           "clase": "model",
           "tipo": "unknown",
@@ -8434,7 +8444,7 @@
     {
       "selector": "sc-textarea",
       "name": "textarea",
-      "primengBase": "primeng/textarea",
+      "primengBase": "primeng/textarea, primeng/tooltip",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -8506,7 +8516,17 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": "Ids, separados por espacios, de la ayuda que describe el campo desde fuera: la que va a su lado (la fila de un ajuste, de un interruptor). El campo no tiene ayuda propia; sin esto, nadie la anuncia (DD-133).",
+          "descripcion": "Ids, separados por espacios, de la ayuda que describe el campo desde fuera: la que va a su lado (la fila de un ajuste, de un interruptor). Se oye después de la ayuda propia (`helperText`), si la hay (DD-133).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "helperText",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La ayuda del campo, debajo, como en el resto de campos del DS (DD-198). Se anuncia con el campo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -8609,12 +8629,73 @@
           "descripcion": "El usuario ha arrastrado la esquina para cambiar el tamaño del campo.",
           "origen": "nuestro",
           "nativo": null
+        },
+        {
+          "nombre": "copyable",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Un botón de copiar, solo con su icono, dentro del campo arriba a la derecha (DD-198): para lo que se lee y se copia (un script, una clave). Al pulsarlo, el icono pasa a ✓ dos segundos y el lector oye «Copiado». El texto no pasa por debajo del botón.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "copyLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Nombre del botón de copiar («Copiar código»). Sin él, el del diccionario del DS («Copiar»).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "copiedLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Lo que dice tras copiar («Código copiado»). Sin él, «Copiado».",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "copied",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha copiado el valor.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": [
+        "appendTo",
+        "autoHide",
+        "content",
+        "escape",
+        "fitContent",
+        "hideDelay",
+        "hideOnEscape",
+        "life",
         "pSize",
         "pTextareaPT",
-        "pTextareaUnstyled"
+        "pTextareaUnstyled",
+        "pTooltipPT",
+        "pTooltipUnstyled",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
+        "showDelay",
+        "showOnEllipsis",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
       ]
     },
     {

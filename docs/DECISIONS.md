@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La ayuda de un campo va debajo de su control (`helperText`, también en `sc-selectbutton` y `sc-textarea`) · lo que abre la opción, después · una lista que crece, bajo su título · copiar va dentro de `sc-textarea copyable`, solo con icono | DD-198 |
 > | Una celda sin dato: «—» en gris suave, oculto al lector, que oye «Sin dato» o su porqué («No aplica»), con `sc-celda-vacia` · si el vacío significa algo o es una cifra, se escribe («0») · ningún «—» suelto en una plantilla (`audit:screen-hygiene`) | DD-197 |
 > | Un cambio en lote se cuenta en su barra: «Cambio aplicado a 2 grupos» con «Deshacer» pegado al texto, sin irse sola, hasta cerrarla o volver a marcar (`contarLote` de `sc-list-page`, `result` de `sc-bulk-action-bar`) · el toast con «Deshacer», solo para lo que desaparece sin sitio (el inicio) | DD-196 |
 > | Antes de construir una pieza, ¿la trae PrimeNG? La tabla del catálogo (`docs/AUDIT-PRIMENG-CATALOGO.md`, la vigila `audit:primeng-catalog`) · varios valores cortos en un campo, `sc-inputtags`; vistas hermanas, `sc-tabs` | DD-195 |
@@ -141,6 +142,44 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-198 · 2026-10-11 — La ayuda de un campo va debajo de su control
+
+**Contexto** · En la ficha de grupo, la ayuda de «Identificador del grupo» y de «Eres el siguiente» (en «Mensajes en
+cola») iba entre el rótulo y su botón segmentado, y la del script de Web Chat encima de su campo, con un botón «Copiar
+código» debajo; en el resto de campos va debajo (los 7 del DS con `helperText`, DD-133). No lo decía ninguna regla: el
+segmentado y el área de texto del DS no tenían sitio para la ayuda, y cada pantalla la escribía a mano. Contrastado
+con Primer (la ayuda de un campo, bajo el control; la de un grupo de casillas, bajo su título) y con GOV.UK, que la
+pone entre el rótulo y el campo, pensado para formularios que se rellenan una vez.
+
+**Decisión** · (1) La ayuda va justo debajo de su control. (2) Lo que abre la opción elegida (el archivo o el texto de
+un mensaje) va después de la ayuda, que no se mueve al cambiar de opción. (3) Solo una lista que crece (los avisos
+periódicos) la lleva bajo su título, donde no baja con cada fila. (4) En el DS, `sc-selectbutton` y `sc-textarea` ganan
+`helperText`, como los otros siete campos (la ayuda a 4 px de su control), y `sc-textarea` gana `copyable`: un botón de solo icono dentro del campo, arriba a la
+derecha, que pasa a ✓ dos segundos y dice «Copiado» al lector, con el texto apartado de él. (5) `audit:screen-hygiene`
+gana su regla 6: ningún `.field__help` justo antes de un control suelto (en `main` cazaba los dos de la ficha de grupo).
+
+**Razón** · Quien configura el Supervisor vuelve a revisar sus fichas y las lee de un vistazo, rótulo y valor: una
+línea de ayuda entre los dos alarga cada campo y, en una rejilla de dos columnas, deja un control más bajo que su
+vecino. Con la ayuda debajo, los controles quedan a la misma altura y la ayuda se lee cuando hace falta. Un segmentado
+es una fila, como un desplegable: no es el grupo de casillas de Primer. Copiar dentro del campo quita una línea y
+dice qué copia: lo que hay justo debajo del icono.
+
+**Descartadas** ·
+- **La ayuda entre el rótulo y el control, como GOV.UK**: sirve a quien rellena un formulario una sola vez y necesita
+  la instrucción antes de responder; aquí alarga cada campo y desalinea la rejilla.
+- **El segmentado como grupo de Primer (ayuda bajo el título)**: fue el motivo de cómo estaba; un segmentado de tres
+  opciones en una fila se lee como un control suelto.
+- **Hacerle sitio al botón de copiar desde la pantalla, con `::ng-deep`**: entraría en el componente del DS (lo
+  impide `audit:primeng-coupling`); el modo `copyable` lo resuelve en el DS para todos.
+- **La ayuda del script escrita a mano debajo del campo**: quedaba a 17 px de él, y las del DS a 4 (medido); con
+  `helperText`, igual que las demás. El campo solo se apila cuando lleva ayuda o copiar: sus otros 6 usos no cambian.
+
+**Consecuencias** · Lo miden `e2e/supervisor/ayuda-debajo.spec.ts` (orden, rejilla alineada, la ayuda quieta al cambiar
+de opción, copiar dentro) y `components.spec.ts` (las historias «Con ayuda» del segmentado y «Para copiar» del área de
+texto). `ayudas-campos.spec.ts` cuenta también la ayuda del segmentado.
 
 ---
 
