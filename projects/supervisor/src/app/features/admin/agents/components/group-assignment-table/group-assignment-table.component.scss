@@ -63,6 +63,14 @@
     color: var(--sc-text-primary);
   }
 
+  /* La celda de Nivel: casi siempre una familia, a veces dos (teléfono y chat, ambas en Niveles) — apiladas, no una
+   * columna por familia como en la tabla del grupo, porque aquí la condición es por FILA, no por tabla entera. */
+  &__levels {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-5);
+  }
+
   &__no-results {
     padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
     text-align: center;

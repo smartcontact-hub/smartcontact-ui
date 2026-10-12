@@ -44,6 +44,7 @@ import {
   ScOptionCardsComponent as OptionCardsComponent,
   ScSelectButtonComponent as SelectButtonComponent,
   ScSelectComponent as SelectComponent,
+  ScSlotComponent as SlotComponent,
   ScSubsectionComponent as SubsectionComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
   type TriState,
@@ -197,6 +198,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     SectionCardComponent,
     SelectButtonComponent,
     SelectComponent,
+    SlotComponent,
     SubsectionComponent,
     ToggleSwitchComponent,
     TranslateModule,
@@ -296,9 +298,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   protected readonly availableLanguages = AVAILABLE_LANGUAGES;
   protected readonly availableLabels = this.labelsStore.labels;
 
-  /** Roster of every group in the system, with channels — fed to the
-   * group-assignment table so it can render the correct chip cluster
-   * per row and the picker dropdown of joinable groups. */
+  /** Roster of every group in the system, with channels and strategy — fed to the
+   * group-assignment table so it can render the correct chip cluster per row,
+   * the picker dropdown of joinable groups, and the Nivel column (quick-win de
+   * la auditoría UX, 2026-10: solo se incluía channels, sin strategy/chatStrategy
+   * la tabla no podía saber si el grupo reparte por Niveles). */
   protected readonly availableGroups = computed<
     readonly AgentGroupAssignmentRef[]
   >(() =>
@@ -306,6 +310,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       id: g.id,
       name: g.name,
       channels: g.channels,
+      strategy: g.strategy,
+      chatStrategy: g.chatStrategy,
     }))
   );
 

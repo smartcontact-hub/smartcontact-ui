@@ -1633,7 +1633,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 60,
+      "usedInSupervisor": 61,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1723,7 +1723,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 11,
+      "usedInSupervisor": 13,
       "cuando": "Para una ranura con título dentro de una composición.",
       "sobreObsoleto": []
     },

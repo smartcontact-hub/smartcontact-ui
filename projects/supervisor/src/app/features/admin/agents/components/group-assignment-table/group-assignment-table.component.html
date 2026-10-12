@@ -89,6 +89,29 @@
   }
 </ng-template>
 
+<!-- El nivel del agente (1 se atiende primero) en las familias donde ESTE grupo reparte por Niveles — solo las que
+     tiene asignadas; casi siempre una, a veces dos (quick-win de la auditoría UX, 2026-10). -->
+<ng-template #levelTpl let-row>
+  @if (levelFamilies(row).length > 0) {
+    <span class="assign__levels">
+      @for (family of levelFamilies(row); track family) {
+        <span [id]="'agent-level-' + family + '-label-' + row.group.id" class="visually-hidden">{{ 'groups.form.assigned.level_aria' | translate: { name: row.group.name, channel: (familyLabelKeys[family] | translate) } }}</span>
+        <sc-select
+          size="sm"
+          [inputId]="'agent-level-' + family + '-' + row.group.id"
+          [ariaLabelledBy]="'agent-level-' + family + '-label-' + row.group.id"
+          [options]="levelOptions"
+          [disabled]="pending()"
+          [value]="row.link?.levels?.[family] ?? 1"
+          (valueChange)="setLevel(row.group.id, family, $event)"
+        />
+      }
+    </span>
+  } @else {
+    <span class="assign__none sc-text-body-regular"><sc-celda-vacia [texto]="'common.not_applicable' | translate" /></span>
+  }
+</ng-template>
+
 <!-- Salientes: el grupo por el que salen sus llamadas. Solo uno, de los asignados con Teléfono marcado. -->
 <ng-template #outboundTpl let-row>
   @if (canBeOutbound(row)) {

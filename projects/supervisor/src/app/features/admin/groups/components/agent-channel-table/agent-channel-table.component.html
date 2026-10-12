@@ -102,7 +102,14 @@
   @if (!allowed(row.agent, col.field)) {
     <span class="assign__permission">
       <sc-checkbox state="none" disabled [ariaLabel]="'groups.form.assigned.not_allowed' | translate: { name: row.agent.name, channel: col.header }" />
-      <a [routerLink]="['/admin/agentes/editar', row.agent.id]" [queryParams]="{ seccion: 'general' }" [attr.aria-label]="'groups.form.assigned.permissions_link' | translate: { name: row.agent.name, channel: col.header }" [pTooltip]="'groups.form.assigned.not_allowed_hint' | translate: { channel: col.header }" tooltipPosition="top"><sc-icon name="lock" /></a>
+      <sc-link-button
+        icon="lock"
+        [routerLink]="['/admin/agentes/editar', row.agent.id]"
+        [queryParams]="{ seccion: 'general' }"
+        [ariaLabel]="'groups.form.assigned.permissions_link' | translate: { name: row.agent.name, channel: col.header }"
+        [pTooltip]="'groups.form.assigned.not_allowed_hint' | translate: { channel: col.header }"
+        tooltipPosition="top"
+      />
     </span>
   } @else if (isLastChannel(row.link, col.field)) {
     <!-- El ÚLTIMO canal no se quita aquí. Una casilla apagada no recibe foco ni ratón, así que el porqué va en su
@@ -153,7 +160,12 @@
     <span class="assign__permission" [pTooltip]="'groups.form.assigned.self_activate_hint' | translate" tooltipPosition="top">
       <sc-toggleswitch [checked]="row.link.active" [disabled]="true" [size]="compact() ? 'sm' : 'md'"
         [ariaLabel]="'agents.form.assigned.active_self_aria' | translate: { name: row.agent.name }" />
-      <a [routerLink]="['/admin/agentes/editar', row.agent.id]" [queryParams]="{ seccion: 'configuracion' }" [attr.aria-label]="'groups.form.assigned.self_activate_link' | translate: { name: row.agent.name }"><sc-icon name="lock" /></a>
+      <sc-link-button
+        icon="lock"
+        [routerLink]="['/admin/agentes/editar', row.agent.id]"
+        [queryParams]="{ seccion: 'configuracion' }"
+        [ariaLabel]="'groups.form.assigned.self_activate_link' | translate: { name: row.agent.name }"
+      />
     </span>
   } @else {
   <sc-toggleswitch
