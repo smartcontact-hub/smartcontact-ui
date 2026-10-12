@@ -277,15 +277,14 @@
           <span id="agent-ext-type-label" class="field__label sc-text-caption-semibold">{{ 'agents.form.fields.extension_type' | translate }}</span>
           <sc-selectbutton
             ariaLabelledBy="agent-ext-type-label"
-            ariaDescribedBy="agent-ext-type-hint"
             [allowEmpty]="false"
             [options]="extensionTypeOptions()"
             optionLabel="label"
             optionValue="value"
             [value]="form().extensionType"
+            [helperText]="'agents.form.fields.extension_type_hint.' + form().extensionType | translate"
             (valueChange)="onExtensionTypeChange($event)"
           />
-          <p id="agent-ext-type-hint" class="field__help sc-text-caption-regular">{{ 'agents.form.fields.extension_type_hint.' + form().extensionType | translate }}</p>
         </div>
 
         <!-- El PIN, solo con la extensión en el teléfono: es con lo que el agente se activa desde él. Producto pidió quitarlo;

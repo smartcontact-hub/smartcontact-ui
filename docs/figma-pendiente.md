@@ -1200,6 +1200,21 @@ ninguna maqueta de listado enseña un toast tras editar en lote.
 
 ---
 
+## 45 · La ayuda de un campo, debajo de su control; copiar, dentro del campo (2026-10-11, DD-198)
+
+**Estado:** pendiente · **Dónde:** el maestro del botón segmentado (si lo hay), las maquetas de la ficha de grupo y las
+plantillas de la ficha 39.
+
+- **Ayuda de un campo**: debajo del control, también en un segmentado. Nunca entre el rótulo y el control.
+- **Una lista que crece** (avisos periódicos): su ayuda bajo el título.
+- **Un campo que se copia** (script de Web Chat): botón de solo icono (`content_copy`, pequeño, de texto) dentro del
+  campo arriba a la derecha; sin botón «Copiar» debajo.
+
+**Cómo sabes que está hecho:** en el fichero, ninguna ayuda va entre un rótulo y su control, y el script de Web Chat
+lleva su copiar dentro.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de

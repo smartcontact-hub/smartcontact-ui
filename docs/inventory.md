@@ -45,7 +45,7 @@
 | `sc-bulk-action-bar` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-message sc-button | ✓ | 2 |
 | `sc-bulk-edit-menu` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-select sc-button | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | experimental (sin maestro en el Kit) | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | ready | primeng/button | 20 inputs | — | ✓ | 187 |
+| `sc-button` | EXTENDED | ready | primeng/button | 20 inputs | — | ✓ | 186 |
 | `sc-card` | STANDARD | ready | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 47 |
 | `sc-chip` | EXTENDED | ready | primeng/chip | 9 inputs | — | ✓ | 5 |
@@ -89,14 +89,14 @@
 | `sc-search` | EXTENDED | experimental (sin maestro en el Kit) | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 12 |
 | `sc-section-card` | CUSTOM | ready | — | 9 inputs | sc-button | ✓ | 35 |
 | `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 60 |
-| `sc-selectbutton` | EXTENDED | ready | primeng/selectbutton | 14 inputs | — | ✓ | 17 |
+| `sc-selectbutton` | EXTENDED | ready | primeng/selectbutton | 15 inputs | sc-field-msg | ✓ | 17 |
 | `sc-skeleton` | EXTENDED | ready | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 11 |
 | `sc-sticky-form-header` | CUSTOM | deprecated | — | 4 inputs | sc-button | ✓ | 2 |
 | `sc-subsection` | CUSTOM | experimental (sin maestro en el Kit) | — | 5 inputs | — | ✓ | 18 |
 | `sc-tabs` | STANDARD | ready | primeng/tabs | 1 inputs | — | ✓ | 2 |
 | `sc-tag` | EXTENDED | ready | primeng/tag | 8 inputs | — | ✓ | 29 |
-| `sc-textarea` | EXTENDED | ready | primeng/textarea | 14 inputs | — | ✓ | 7 |
+| `sc-textarea` | EXTENDED | ready | primeng/textarea, primeng/tooltip | 18 inputs | sc-button sc-field-msg | ✓ | 7 |
 | `sc-toast` | EXTENDED | ready | primeng/toast | 6 inputs | — | ✓ | — |
 | `sc-toggleswitch` | EXTENDED | ready | primeng/toggleswitch | 8 inputs | — | ✓ | 38 |
 <!-- @audit:components:end -->

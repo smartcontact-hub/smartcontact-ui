@@ -397,6 +397,24 @@ test.describe('sc-textarea', () => {
     expect((await styleOf(sm, ['font-size']))['font-size']).toBe(kitPx('formField.sm.fontSize'));
     await screenshotBaseline(page, 'textarea');
   });
+
+  test('copyable: copiar va dentro del campo, solo con icono, el texto no pasa por debajo y dice «Copiado» (DD-198)', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await gotoPage(page, 'textarea');
+    const host = page.getByTestId('sc-textarea-copiar');
+    const campo = host.locator('textarea');
+    const boton = host.getByRole('button', { name: 'Copiar código' });
+    const [c, b] = [await campo.boundingBox(), await boton.boundingBox()];
+    expect(b!.x + b!.width, 'dentro por la derecha').toBeLessThanOrEqual(c!.x + c!.width);
+    expect(b!.y, 'dentro por arriba').toBeGreaterThanOrEqual(c!.y);
+    // El texto deja el sitio del botón: el relleno de la derecha es al menos lo que ocupa el botón desde el borde.
+    const relleno = parseFloat((await styleOf(campo, ['padding-right']))['padding-right']);
+    expect(relleno, 'el texto no pasa por debajo').toBeGreaterThanOrEqual(c!.x + c!.width - b!.x);
+    await expect(boton).not.toContainText('Copiar');
+    await boton.click();
+    await expect(host.getByRole('button', { name: 'Código copiado' })).toBeVisible();
+    await expect(host.locator('[aria-live="polite"]')).toHaveText('Código copiado');
+  });
 });
 
 test.describe('sc-drawer', () => {
@@ -548,6 +566,17 @@ test.describe('sc-selectbutton', () => {
     await fallidas.click();
     await expect(fallidas).toHaveAttribute('aria-pressed', 'true');
     await expect(host.getByRole('button', { name: 'Todas' })).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('la ayuda va debajo de las opciones y se anuncia con el grupo (DD-198)', async ({ page }) => {
+    await gotoPage(page, 'selectbutton');
+    const host = page.getByTestId('sc-selectbutton-ayuda');
+    const grupo = host.locator('p-selectbutton');
+    const ayuda = host.locator('.sc-selectbutton__msg');
+    await expect(ayuda).toHaveText('Lo que oye el cliente al entrar en la cola.');
+    const [g, a] = [await grupo.boundingBox(), await ayuda.boundingBox()];
+    expect(a!.y, 'la ayuda, debajo de las opciones').toBeGreaterThanOrEqual(g!.y + g!.height);
+    await expect(grupo).toHaveAccessibleDescription('Lo que oye el cliente al entrar en la cola.');
   });
 });
 
