@@ -72,11 +72,27 @@ const enElPunto = (page: Page, x: number, y: number) =>
     [x, y] as const,
   );
 
+/** Espera a que la cabecera fija deje de moverse, no a un número fijo de fotogramas: en un runner
+ * cargado dos `requestAnimationFrame` leían antes de que `position: sticky` asentara, y el punto
+ * medido caía sobre la barra superior en vez de sobre el nombre («X sigue a la vista», #349, #350). */
 const bajar = (page: Page, y: number) =>
   page.evaluate((y) => {
     const raiz = document.querySelector('main#main-content')!;
     raiz.scrollTo(0, y);
-    return new Promise<number>((listo) => requestAnimationFrame(() => requestAnimationFrame(() => listo(raiz.scrollTop))));
+    return new Promise<number>((listo) => {
+      let anterior = NaN;
+      let quietos = 0;
+      const paso = (restantes: number) => {
+        const el = document.querySelector('.page__rail .headline .headline__name');
+        const actual = el ? el.getBoundingClientRect().top : NaN;
+        if (actual === anterior) quietos++;
+        else quietos = 0;
+        anterior = actual;
+        if (quietos >= 2 || restantes <= 0) return listo(raiz.scrollTop);
+        requestAnimationFrame(() => paso(restantes - 1));
+      };
+      requestAnimationFrame(() => paso(60));
+    });
   }, y);
 
 for (const f of LARGAS) {
