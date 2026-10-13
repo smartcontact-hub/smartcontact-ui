@@ -168,7 +168,7 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
           </section>
         }
 
-        <section class="sb-host__story" data-testid="sb-api">
+        <section class="sb-host__story sb-host__api">
           <p class="sb-host__section-title sc-text-caption-semibold">API</p>
           <app-story-props-table [miembros]="contrato()" [error]="apiError()" />
         </section>

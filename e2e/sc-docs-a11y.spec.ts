@@ -36,6 +36,7 @@ test('accesibilidad: ninguna story de sc-docs suma un fallo de axe que no estuvi
   test.setTimeout(15 * 60_000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
 
+  const tope: Tope = existsSync(BASELINE) ? JSON.parse(readFileSync(BASELINE, 'utf8')) : {};
   const medido: Tope = {};
   const detalle: Record<string, string> = {};
   let revisadas = 0;
@@ -50,7 +51,7 @@ test('accesibilidad: ninguna story de sc-docs suma un fallo de axe que no estuvi
     await page.evaluate(() => document.fonts.ready);
     await page.addScriptTag({ path: AXE });
 
-    const porStory = await page.evaluate(async (opciones) => {
+    const pasar = (): Promise<Record<string, unknown[]>> => page.evaluate(async (opciones) => {
       const axe = (window as unknown as { axe: { run: (c: Element, o: unknown) => Promise<{ violations: unknown[] }> } }).axe;
       const fuera: Record<string, unknown[]> = {};
       const secciones = [...document.querySelectorAll<HTMLElement>('section.sb-host__story[id^="historia-"]')].filter(
@@ -75,6 +76,24 @@ test('accesibilidad: ninguna story de sc-docs suma un fallo de axe que no estuvi
       }
       return fuera;
     }, OPCIONES_AXE);
+
+    let porStory = await pasar();
+    // Por DEBAJO del tope, una segunda pasada antes de creérselo, y de cada story se queda la que más cuenta. Medido el
+    // 2026-10-13 contra `ng serve`: una pasada leyó 0 en las cuatro stories de `gauge` (tope 7) y la siguiente, 7. Un
+    // arreglo de verdad sale igual en las dos; un lienzo a medio pintar, no.
+    const fallos = (r: Record<string, unknown[]>): number =>
+      Object.values(r).reduce((n, v) => n + contarFallos(resumirViolaciones(v)), 0);
+    const delTope = Object.values(tope[pagina] ?? {}).reduce(
+      (n, reglas) => n + Object.values(reglas).reduce((a, b) => a + b, 0),
+      0,
+    );
+    if (!ACTUALIZAR && fallos(porStory) < delTope) {
+      await page.waitForTimeout(1_500);
+      const otra = await pasar();
+      for (const [story, v] of Object.entries(otra)) {
+        if (fallos({ [story]: v }) > fallos({ [story]: porStory[story] ?? [] })) porStory = { ...porStory, [story]: v };
+      }
+    }
 
     expect(Object.keys(porStory).length, `${pagina}: ninguna story con lienzo, ¿cambió la ficha?`).toBeGreaterThan(0);
     revisadas += Object.keys(porStory).length;
@@ -102,7 +121,6 @@ test('accesibilidad: ninguna story de sc-docs suma un fallo de axe que no estuvi
     return;
   }
 
-  const tope: Tope = existsSync(BASELINE) ? JSON.parse(readFileSync(BASELINE, 'utf8')) : {};
   const nuevos: string[] = [];
   const arreglados: string[] = [];
   const claves = new Set([...aplanar(medido).keys(), ...aplanar(tope).keys()]);

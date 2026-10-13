@@ -100,7 +100,9 @@ test.describe('sc-docs · herramientas del lienzo', () => {
     await page.mouse.move(caja.x + 3, caja.y + caja.height / 2);
     const etiqueta = story.locator('.sb-medidor__etiqueta');
     await expect(etiqueta).toContainText('button.p-button');
-    await expect(etiqueta).toContainText(`${Math.round(caja.width)}`);
+    // Con un decimal si no es entero, como la escribe la regla: en Linux el botón mide 74.5.
+    const px = (v: number): string => `${Number.isInteger(v) ? v : Math.round(v * 10) / 10}`;
+    await expect(etiqueta).toContainText(`${px(caja.width)} ×`);
     await expect(etiqueta).toContainText('relleno');
   });
 
@@ -128,7 +130,7 @@ test.describe('sc-docs · herramientas del lienzo', () => {
 
     // La referencia va debajo, a todo el ancho: el panel acompaña a las stories, y una tabla de API a su lado se
     // estrechaba hasta alargarse el doble.
-    const api = (await page.locator('[data-testid="sb-api"]').boundingBox())!;
+    const api = (await page.locator('.sb-host__api').boundingBox())!;
     const caja = (await panel.boundingBox())!;
     expect(api.x + api.width, 'la tabla de API pasa por debajo del panel').toBeGreaterThan(caja.x + caja.width / 2);
 

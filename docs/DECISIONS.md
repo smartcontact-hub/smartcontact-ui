@@ -218,7 +218,9 @@ regla sin activar, el borde del iframe, un fallo de axe quitado del tope) antes 
 
 **Consecuencias** · `sc-docs-a11y` y `sc-docs-herramientas` entran en `npm run e2e` (el CI). La barra del lienzo cambia
 las capturas de regresión de sc-docs: se regeneran con `visual-baselines` en la rama, y en ellas el botón de
-accesibilidad va oculto (dice «Revisando…» hasta que axe acaba, y la foto dependería de cuándo). Las capturas por story llegan
+accesibilidad va oculto (dice «Revisando…» hasta que axe acaba, y la foto dependería de cuándo). Las redes de estructura
+y de estilos (`component-structure`, `component-styles`) cuentan solo la demo: fuera la barra del lienzo, el panel y «Todas
+las combinaciones», que son el mismo componente con otros datos. Las capturas por story llegan
 después de fundir (workflow `docs-capturas`, o el lunes). Quedan 71 fallos de accesibilidad: cada arreglo baja el tope
 en el mismo cambio (`SC_UPDATE_A11Y=1 npx playwright test sc-docs-a11y`).
 
