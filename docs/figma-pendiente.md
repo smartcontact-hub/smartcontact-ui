@@ -1215,6 +1215,26 @@ lleva su copiar dentro.
 
 ---
 
+## 46 · Iconos: un significado por icono y el estado de una conversación con forma (2026-10-13, DD-200)
+
+**Estado:** pendiente · **Dónde:** los maestros que llevan icono (Button «Icon Only», Section, Empty state) y las maquetas
+del Supervisor; en el fichero del Supervisor, «Memory +» › Iconografía transcripciones.
+
+- **Iconos reservados**: la X solo cierra o quita de una lista; eliminar es la papelera; la hamburguesa solo abre la
+  navegación; el engranaje es Configuración. «Columnas» lleva `view_column`.
+- **Un icono por concepto** (`SC_ICONS`): Agentes `headphones`, Grupos `group`, Usuarios `person`, Administración
+  `groups`; Restablecer `restart_alt`; Filtrar `filter_alt`; saltos de audio `replay_10` y `forward_10`.
+- **Botón de solo icono**: su tooltip con el mismo nombre (en una anotación, no hace falta dibujarlo en cada maqueta).
+- **Estado de una conversación**: el fallo, con la insignia `error` rellena (10) en la esquina de abajo a la derecha del
+  glifo, sobre un recorte del fondo del botón; el trabajo en curso, con la insignia `progress_activity`; la llamada sin
+  grabación, el teléfono tachado (trazo de 1,5, de esquina a esquina). Mídelo antes: el código pinta los glifos de la
+  maqueta del 2026-09-23.
+
+**Cómo sabes que está hecho:** ningún maestro ni maqueta usa la X para eliminar ni la hamburguesa para otra cosa que el
+menú, y la iconografía de transcripciones tiene sus tres insignias.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de

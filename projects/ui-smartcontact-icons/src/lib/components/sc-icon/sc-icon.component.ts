@@ -1,14 +1,19 @@
 import { NgClass } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, input, isDevMode } from '@angular/core';
 
+import { ScIconTalla } from '../../icons/sc-icon-sizes';
 import {
     resolveScIconGlyph,
+    resolveScIconName,
     ScIconGrade,
     ScIconName,
     ScIconOpticalSize,
     ScIconSize,
     ScIconWeight
 } from '../../icons/sc-icon.types';
+
+/** Los tonos de `sc-icon`: cada uno es un token `--sc-icon-*`. */
+export type ScIconTono = 'default' | 'subtle' | 'accent' | 'info' | 'success' | 'warning' | 'error' | 'disabled';
 
 @Component({
     selector: 'sc-icon',
@@ -32,8 +37,10 @@ export class ScIconComponent {
      * juntos en sm/lg. Es el default semántico de los iconos junto a texto
      * dentro de un control (button/input/search/chip/tag/menu…); el size
      * pinneado queda como escape hatch e iconos sueltos/decorativos.
+     *
+     * El número solo admite las tallas de la escala (`ScIconTalla`, DD-200): una intermedia (13, 15, 24) no compila.
      */
-    readonly size = input<ScIconSize | number | 'inherit'>('md');
+    readonly size = input<ScIconSize | ScIconTalla | 'inherit'>('md');
 
     readonly filled = input(false, { transform: booleanAttribute });
 
@@ -45,6 +52,13 @@ export class ScIconComponent {
 
     readonly ariaLabel = input<string | null>(null);
 
+    /**
+     * El color con significado, solo desde los tokens `--sc-icon-*` (DD-200). `default` sigue al texto
+     * (`currentColor`). Un tono no basta para decir un estado: va con su forma (`check_circle`, `warning`, `error`,
+     * `info`) y con texto.
+     */
+    readonly tone = input<ScIconTono>('default');
+
     /** Gira el glifo en bucle (spinner). Respeta prefers-reduced-motion. */
     readonly spin = input(false, { transform: booleanAttribute });
 
@@ -55,6 +69,18 @@ export class ScIconComponent {
     });
 
     protected readonly glyph = computed(() => resolveScIconGlyph(this.name()));
+
+    constructor() {
+        // Un nombre que no existe se pinta como palabra (la ligadura no casa): en desarrollo, que se note.
+        if (isDevMode()) {
+            effect(() => {
+                const nombre = this.name()?.trim();
+                if (nombre && !resolveScIconName(nombre)) {
+                    console.warn(`sc-icon: «${nombre}» no es un icono de Material ni un alias del DS (DD-200).`);
+                }
+            });
+        }
+    }
 
     protected readonly ariaHidden = computed<'true' | null>(() => (this.ariaLabel() ? null : 'true'));
 
@@ -71,6 +97,7 @@ export class ScIconComponent {
             'sc-icon--inherit': size === 'inherit',
             'sc-icon--spin': this.spin(),
             'sc-icon--filled': this.filled(),
+            [`sc-icon--tono-${this.tone()}`]: this.tone() !== 'default',
             [`sc-icon--weight-${this.weight()}`]: true,
             [`sc-icon--grade-${grade < 0 ? 'negative-25' : grade}`]: true,
             [`sc-icon--optical-${this.opticalSize()}`]: true

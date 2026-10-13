@@ -1,17 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact-hub/icons';
 
 import type { Conversation } from '../../data/conversation.types';
-import { injectLangChange } from '@core/utils/lang-change';
 
 /**
  * Pictograma única canal+estado para la columna "Estado" de `ConversationTable`: SVGs propios
  * entregados por diseño, "una sola señal por estado".
  *
  * Dos tonos (Figma «Memory +», Iconografía transcripciones, 2026-09-23): gris sin fallo, rojo si
- * algo falló. La forma dice en qué punto está (líneas = transcrita, destello = analizada) y el
- * pulso, que hay trabajo en curso. El color lo pone el botón que lo envuelve (`currentColor`),
- * porque en hover el botón se rellena y el glifo pasa a blanco.
+ * algo falló. La forma dice en qué punto está (líneas = transcrita, destello = analizada). El color
+ * lo pone el botón que lo envuelve (`currentColor`), porque en hover el botón se rellena y el glifo
+ * pasa a blanco.
+ *
+ * Cada estado tiene además su FORMA (DD-200; ficha en `figma-pendiente`): el fallo lleva la
+ * insignia de error, el trabajo en curso la de progreso (antes, un pulso que «reducir movimiento»
+ * apagaba y dejaba igual que «transcrita») y la llamada sin grabación, el teléfono tachado (antes,
+ * el mismo dibujo que «grabada»). Así nada depende solo del color (WCAG 1.4.1).
  *
  * Los overlays (contador multi-grabación) los pinta el caller alrededor de este componente.
  */
@@ -35,28 +39,23 @@ interface ResolvedStatus {
 
 @Component({
   selector: 'sc-memory-status-icon',
-  imports: [TranslateModule],
+  imports: [ScIconComponent],
   templateUrl: './memory-status-icon.component.html',
   styleUrl: './memory-status-icon.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MemoryStatusIconComponent {
-  private readonly translate = inject(TranslateService);
-  private readonly lang = injectLangChange();
-
   readonly conversation = input.required<Conversation>();
   readonly isProcessing = input<boolean>(false);
   readonly isAnalyzing = input<boolean>(false);
   readonly size = input<number>(18);
 
+  /** La insignia de fallo o de trabajo en curso, en la esquina del glifo. */
+  protected readonly tallaInsignia = SC_ICON_SIZE_SM;
+
   protected readonly status = computed<ResolvedStatus>(() =>
     resolveStatus(this.conversation(), this.isProcessing(), this.isAnalyzing()),
   );
-
-  protected readonly tooltip = computed<string>(() => {
-    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
-    return this.translate.instant(this.status().labelKey);
-  });
 }
 
 /** El caller combina el estado con su `aria-label`: el lector de pantalla tiene que oírlo. */

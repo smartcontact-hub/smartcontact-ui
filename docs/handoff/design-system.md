@@ -33,6 +33,9 @@
 
 - **Criterio de Rafa (2026-09-15)**: lo que digan el Kit y Aura, el código lo sigue; un ajuste nuestro va a `figma-pendiente.md`
   (DD-111). Y cada tarea responde «¿qué cambia para quien usa la app?»: si no, sale (así salió `sc-selectbutton`).
+- **Vaciar el trinquete de `audit:icons` (DD-200)** cuando aterrice la caja `cabecera-icono` (el #383 ya está en main;
+  la caja tiene abiertos los 5 ficheros); `npm run audit:icons` dice qué cambia en cada línea.
+  Después, el test de reconocimiento con supervisores (Consecuencias de DD-200).
 - **Lo que dejó DD-134 (la firma de los commits)**: (a) el 2026-10-05, leer el mensaje con que el robot funde la auditoría, el
   primero con `--subject`/`--body`; (b) ~~`cloud-node.sh` no ponía Node ni `node_modules`~~ → arreglado el 2026-10-06:
   `. nvm.sh` hacía `nvm use` del `.nvmrc` sin instalar, devolvía 3 y `set -e` cortaba el hook; (c) los commits de la nube salen «sin verificar» (`unknown_key`): si estorba, probar sin firma, que el proxy
@@ -165,6 +168,17 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-13 · Iconos: un icono, un significado (DD-200)
+
+**Sello:** rama `arebury/ux-ui-design-system`, sobre `2b409e92` (#384). Sale por el tope el tramo del 2026-10-04:
+`git show 20801911:docs/handoff/design-system.md`.
+
+**Lo que cambia.** Cada icono dice qué significa y `audit:icons` lo vigila; `sc-button` de solo icono pone su tooltip
+(también con teclado); `sc-icon` con tallas de la escala y `tone`; estados de conversación con forma; Fundamentos → Iconos.
+
+- ⚠️ **Los `aria-haspopup`/`expanded`/`controls` de `sc-button` ya no van por `[pt]`** (chocaba con el `pt` del tooltip):
+  los escribe un `afterRenderEffect`. `audit:primeng-coupling` cuenta ya las entradas de una directiva (`[pTooltip]`).
+
 ## ✅ 2026-10-06 · Lote 10 · velocidad: cola de capturas por rama, «sin máquina», aviso de estilos y DD libre (DD-175)
 
 **Sello:** rama `claude/lote-10-velocidad`, sobre HEAD `99534623` (#342), PR nuevo. Sale por el tope el tramo del 2026-10-04
@@ -197,20 +211,6 @@ PR, fuera del DS: Entidades en `.page--tabla` (DD-95), Conversaciones sobre `sc-
 
 - ⚠️ **Al quitar un import de PrimeNG, el trinquete de descripciones pide JSDoc** para lo que heredaba la suya (diez miembros esta
   vez): la de la pieza hermana (`sc-inputtext`) sirve donde coincide.
-
-## ✅ 2026-10-04 · La red que le faltó al primer lote: GitHub por `gh api`, la puerta de los generados, el aviso de capturas y `npm run tiempos`
-
-**Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `c756d895` (#325), PR nuevo. Sale por el tope el tramo del 2026-09-28 (DD-134):
-`git show c756d895:docs/handoff/design-system.md`.
-
-**Lo que cambia.** #325 tardó 3 h 30 min de punta a punta; esto quita tres de sus tropiezos. `ci:verdict` y `sesiones` leen GitHub
-por `gh api` (`scripts/github.mjs`): en la nube salían con código 2 o callaban. El preflight para en el segundo 1 si un generado no
-está al día (antes, tres arranques perdidos: unos 8 min), y avisa de las capturas de sc-docs que el cambio mueve: de las tres causas
-de la vuelta roja de #325 (36 min), la captura era la única sabida de antemano. `npm run tiempos -- <PR> --desde HH:MM` saca los
-tiempos de cada lote para su squash. Lo pendiente de DD-154 y DD-155, cerrado: con 8 partes la mediana es 8,4 min (n=9, frente a
-12,8 con 4) y no hace falta el filtro de barridos (DD-155, actualización).
-
-- ⚠️ **Un `gh api` suelto no cuenta como lectura del CI** para el hook de cierre, porque no compara contra tu HEAD: usa `ci:verdict`.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

@@ -62,3 +62,21 @@ export const SC_ICON_SIZE_DISPLAY_SM = 32;
 export const SC_ICON_SIZE_DISPLAY_MD = 44;
 export const SC_ICON_SIZE_DISPLAY_LG = 56;
 export const SC_ICON_SIZE_DISPLAY_XL = 64;
+
+/**
+ * Las tallas que `<sc-icon [size]>` acepta en número (DD-200): la rampa de arriba y las de ilustración. Una talla
+ * intermedia (13, 15, 24) se lee como un descuido al lado de las demás, así que no compila.
+ */
+export type ScIconTalla =
+    | typeof SC_ICON_SIZE_XS
+    | typeof SC_ICON_SIZE_SM
+    | typeof SC_ICON_SIZE_MD
+    | typeof SC_ICON_SIZE_DEFAULT
+    | typeof SC_ICON_SIZE_LG
+    | typeof SC_ICON_SIZE_XL
+    | typeof SC_ICON_SIZE_2XL
+    | typeof SC_ICON_SIZE_3XL
+    | typeof SC_ICON_SIZE_DISPLAY_SM
+    | typeof SC_ICON_SIZE_DISPLAY_MD
+    | typeof SC_ICON_SIZE_DISPLAY_LG
+    | typeof SC_ICON_SIZE_DISPLAY_XL;

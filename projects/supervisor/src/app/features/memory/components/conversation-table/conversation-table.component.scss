@@ -47,6 +47,8 @@
   border-radius: var(--sc-radius-200);
   background: var(--sc-bg-surface);
   color: var(--sc-text-subtle);
+  /* El fondo que recorta la insignia de estado (DD-200): el del botón en cada momento. */
+  --memory-status-recorte: var(--sc-bg-surface);
   cursor: pointer;
   transition:
     background-color var(--sc-transition-fast) ease-out,
@@ -55,6 +57,7 @@
   &:hover {
     background: var(--sc-bg-secondary);
     color: var(--sc-text-inverse);
+    --memory-status-recorte: var(--sc-bg-secondary);
   }
   &:focus-visible {
     outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
@@ -67,6 +70,7 @@
     &:hover {
       background: var(--sc-bg-danger);
       color: var(--sc-text-on-error);
+      --memory-status-recorte: var(--sc-bg-danger);
     }
   }
 

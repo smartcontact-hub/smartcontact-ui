@@ -791,6 +791,22 @@
       "line-height": "20px",
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
+    },
+    "sc-bulk-modal > section.sc-bulk-modal > header.sc-bulk-modal__header > sc-icon-tile.sc-icon-tile": {
+      "padding-top": "0px",
+      "padding-right": "0px",
+      "padding-bottom": "0px",
+      "padding-left": "0px",
+      "gap": "normal",
+      "min-height": "auto",
+      "border-radius": "6px",
+      "border-top-width": "0px",
+      "border-bottom-width": "0px",
+      "font-size": "14px",
+      "font-weight": "400",
+      "line-height": "20px",
+      "color": "rgb(111, 119, 132)",
+      "background-color": "color(srgb 0.184314 0.211765 0.258824 / 0.06)"
     }
   },
   "button": {

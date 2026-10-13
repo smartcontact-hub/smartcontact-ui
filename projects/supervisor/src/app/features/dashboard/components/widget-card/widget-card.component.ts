@@ -100,7 +100,8 @@ export class WidgetCardComponent {
     this.lang();
     const remove: MenuItem = {
       label: this.translate.instant('dashboard.menu.remove'),
-      icon: 'sc-icon-font sc-icon-font--delete',
+      // Quitar el widget del tablero no lo destruye (vuelve desde el catálogo): la X, no la papelera (DD-200).
+      icon: 'sc-icon-font sc-icon-font--close',
       styleClass: 'sc-menu-item--danger',
       command: () => this.remove.emit(),
     };

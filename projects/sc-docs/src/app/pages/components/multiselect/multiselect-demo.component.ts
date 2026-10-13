@@ -124,7 +124,7 @@ export class MultiSelectDemoComponent {
     ],
     defaultArgs: {
       iconOnly: false,
-      icon: 'view_column',
+      icon: 'group',
       label: 'Grupos',
       placeholder: 'Selecciona grupos',
       helperText: '',

@@ -127,7 +127,7 @@ import { CHATS, GRUPOS, type ChatRow } from '../../data/seed';
           (click)="state.toggleComunicator()"
         >
           R<span class="footer__badge"
-            ><sc-icon name="language" [size]="9"
+            ><sc-icon name="language" size="inherit"
           /></span>
         </button>
       </div>
@@ -255,6 +255,8 @@ import { CHATS, GRUPOS, type ChatRow } from '../../data/seed';
       color: #fff;
       background: var(--ag-red);
     }
+    /* El icono mide 9 px en la app real, fuera de la escala de sc-icon (DD-200): la talla la pone la insignia y el icono
+       la hereda. */
     .footer__badge {
       position: absolute;
       right: -0.206044vw;
@@ -267,6 +269,7 @@ import { CHATS, GRUPOS, type ChatRow } from '../../data/seed';
       align-items: center;
       justify-content: center;
       color: var(--ag-muted);
+      font-size: 9px;
     }
 
     /* Panel Status (sube desde el botón) */

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Un icono, un significado: `SC_ICONS` (un icono por concepto) y `SC_ICON_RESERVADOS` (la X cierra o quita, la papelera elimina, la hamburguesa abre la navegación) · el botón de solo icono enseña su nombre en un tooltip, también con teclado · `sc-icon` solo en tallas de la escala, color con `tone` · `audit:icons` | DD-200 |
 > | Lo que falta se dice cuando ya hubo ocasión: al dejar su sección sin ello, o al abrir si lo guardado ya venía sin ello · el campo que aparece al encender una opción nace callado · duplicar es un alta · antes, el resumen y el motivo junto al botón, sin rojo · el contenido equivocado, en vivo (`ocasionDeAvisar`, regla 7 de `audit:screen-hygiene`; precisa DD-142) | DD-199 |
 > | La ayuda de un campo va debajo de su control (`helperText`, también en `sc-selectbutton` y `sc-textarea`) · lo que abre la opción, después · una lista que crece, bajo su título · copiar va dentro de `sc-textarea copyable`, solo con icono | DD-198 |
 > | Una celda sin dato: «—» en gris suave, oculto al lector, que oye «Sin dato» o su porqué («No aplica»), con `sc-celda-vacia` · si el vacío significa algo o es una cifra, se escribe («0») · ningún «—» suelto en una plantilla (`audit:screen-hygiene`) | DD-197 |
@@ -143,6 +144,70 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-200 · 2026-10-13 — Un icono, un significado: iconos reservados, un icono por concepto y el tooltip del botón de solo icono
+
+**Contexto** · Auditoría de iconos del 2026-10-13 contra NN/g («Icon Usability») y Primer (Octicons, `IconButton`): 418
+iconos en plantillas y 209 en objetos de TS, 181 nombres. El nombre accesible estaba bien (ningún botón de solo icono
+sin él en el DS ni en el Supervisor). El significado no: `close` era cerrar, cancelar, quitar y eliminar; `rotate_left`,
+retroceder 10 s y re-transcribir en el mismo modal, y además restablecer y restaurar; `menu`, unas opciones (en un botón
+del DS que no hacía nada) y las categorías; `settings`, Configuración y Columnas. «Agentes» salía con cuatro iconos y
+`group` era a la vez Grupos y Agentes. Dos de cada tres botones de solo icono no tenían tooltip, y los que lo tenían
+usaban el de PrimeNG por defecto (`tooltipEvent: 'hover'`), que no sale al enfocar con teclado. En Conversaciones,
+«llamada» y «grabada» dibujaban lo mismo, un fallo solo cambiaba de color y el trabajo en curso solo parpadeaba. Había
+17 tallas fuera de la escala.
+
+**Decisión** ·
+1. **El paquete de iconos dice qué significa cada uno.** `SC_ICONS`: un icono por concepto (las entidades, el del menú
+   lateral, DD-137 §5; las acciones, el de Material). `SC_ICON_RESERVADOS`: `close` cierra o quita de una lista,
+   `delete` elimina, `menu` abre la navegación, `settings` es configuración, `refresh` recarga, `restart_alt`
+   restablece, `replay_10` y `forward_10` saltan en un audio; `rotate_left` y `rotate_right` quedan retirados.
+2. **`sc-button` de solo icono enseña su nombre**: pone él el tooltip, con el ratón y con el teclado, como el `IconButton`
+   de Primer. Si quien lo usa pone su `pTooltip` (otra cosa que el nombre), manda el suyo. En desarrollo avisa si no
+   tiene nombre. `iconAriaLabel` queda obsoleto (`ariaLabel`). Sus `aria-haspopup`, `aria-expanded` y `aria-controls`
+   van al `<button>` tras pintar: por el passthrough `[pt]` llegaban también al tooltip, que tiene su propia entrada
+   `pt`.
+3. **`sc-icon`**: `size` en número solo de la escala (`ScIconTalla`: 13, 15 o 24 no compilan); `tone` para el color con
+   significado, desde los tokens `--sc-icon-*`; aviso en desarrollo con un nombre que no existe. Un solo mapa de alias:
+   el resolver de los componentes lo importa del paquete. Una réplica que mide otra talla en la app real (el Agent, 9 px)
+   la pone en el contenedor y el icono la hereda (`size="inherit"`).
+4. **El estado de una conversación tiene forma**: insignia de error en los fallos, de progreso mientras trabaja (quieta
+   con «reducir movimiento») y el teléfono tachado sin grabación. Pisa el diseño de la columna (Figma «Memory +»,
+   2026-09-23): ficha 46 de `figma-pendiente`.
+5. **«Columnas» lleva `view_column`**, el del DS (DD-153), y no el engranaje del «Column Toggle» de primeng.dev (pisa
+   DD-176 §7).
+6. **`audit:icons`** lo vigila: nombre que no existe, talla fuera de escala, icono reservado con otro significado,
+   concepto con otro icono, tooltip que repite el nombre, que no sale con teclado o `title` en un botón de solo icono,
+   botón nativo de solo icono sin nombre y `aria-label` en un `span` o `div` sin rol. Trinquete con los 6 ficheros
+   que otras ramas tenían abiertos ese día.
+7. **sc-docs, Fundamentos → Iconos**: cuándo icono solo, con texto o solo texto; los reservados y el diccionario, leídos
+   del paquete.
+
+**Razón** · NN/g: los iconos se reconocen por consistencia, y «Icon labels should be visible at all times». Primer:
+«Certain Octicons are designed for specific use cases and their meaning should not be changed», y el tooltip de un
+`IconButton` «visually replicates the accessible name» al pasar y al enfocar. WCAG 1.4.1: un estado no se dice solo con
+color. Medido en el código de `main` (20801911) con un escáner de plantillas; cada caso, abierto en su fichero.
+
+**Descartadas** ·
+- **`decorative` y `label` en `sc-icon`**: dos entradas más para lo que ya dice `ariaLabel` (sin él, decorativo), y
+  cabría `decorative` con `ariaLabel` a la vez. Primer usa una sola.
+- **Tipar `name` como `ScIconName`**: los nombres que llegan de datos (el menú, los canales) son `string` y había que
+  convertir en cada uno sin cazar nada más; el aviso en desarrollo y el gate (que lee los literales) cubren el caso.
+- **El tooltip en el host de `sc-button` (`hostDirectives`)**: chocaba con los `pTooltip` que las pantallas ya ponen en
+  `<sc-button>` (el mismo directivo dos veces en un elemento).
+- **«Añadir subcategoría» con `add`**: dos «+» iguales en la misma fila; es su propio concepto (`anadirDebajo`).
+- **Texto corto en la celda de estado**: la forma ya separa los estados y el nombre está en el tooltip y en el
+  `aria-label`; lo dirá el test de reconocimiento.
+- **Pasar a `tone` los 22 colores de icono por CSS**: ya salen de los tokens `--sc-icon-*`; `tone` es para lo nuevo.
+
+**Consecuencias** · Queda en el trinquete, para cuando aterricen las ramas que lo tienen abierto: `list-page` (Columnas
+con `view_column`, Restablecer con `restart_alt`, Importar con `upload` y texto, sin `title`), `group-form-page` («Ver
+qué tiene» con `account_tree`, quitar un aviso con la X, Agentes con `headphones`, los `pTooltip` que repiten),
+`agent-form-page` y `agent-channel-table` (Filtrar con `filter_alt` y texto). Falta el test de
+reconocimiento con supervisores (la lista está en la auditoría). La línea base de estructura de componentes cambia solo en el
+botón de copiar de `sc-textarea`: su tooltip pasa del host al `<p-button>`.
 
 ---
 
@@ -1108,7 +1173,8 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    «2/14 grupos seleccionados»; el lector oye «2 de 14», porque «2/14» se puede leer como fecha o fracción. La cifra,
    con cifras de ancho fijo. Lo pasan los listados (el total de la lista) y Conversaciones (las del filtro).
 7. **Elegir y ordenar columnas con el «Column Toggle» de primeng.dev, tal cual** (sustituye el Listbox de DD-162): el
-   botón «Columnas» con su engranaje (outlined, secondary, small); un Popover sin relleno con el título y
+   botón «Columnas» con su engranaje *(enmendado por DD-200: lleva `view_column`, el icono de Columnas del DS; el engranaje
+   es Configuración)* (outlined, secondary, small); un Popover sin relleno con el título y
    «Restablecer» (texto, secondary, small) arriba, con su raya; una fila por columna con su asa, su casilla nativa
    (`p-checkbox`) y su nombre, que se arrastra para ordenar (`cdkDrag`, como el ejemplo), con la fila arrastrada y su
    hueco del ejemplo. «Restablecer» vuelve al orden y a las columnas de partida, como su `reset()`; los anchos

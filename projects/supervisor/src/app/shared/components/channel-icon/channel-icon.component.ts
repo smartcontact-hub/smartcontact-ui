@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent, ScIconTalla } from '@smartcontact-hub/icons';
 
 export type ChannelIconKind = 'phone' | 'chat' | 'whatsapp' | 'email';
 
@@ -57,7 +57,7 @@ const MATERIAL_NAMES: Readonly<Record<Exclude<ChannelIconKind, 'whatsapp'>, stri
 })
 export class ChannelIconComponent {
   readonly channel = input.required<ChannelIconKind>();
-  readonly size = input(14);
+  readonly size = input<ScIconTalla>(14);
 
   protected materialName(): string {
     const channel = this.channel();

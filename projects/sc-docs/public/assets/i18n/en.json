@@ -95,7 +95,8 @@
     "tabs": {
       "escala-color": "Scale & color",
       "tipografia": "Typography",
-      "patrones": "Patterns"
+      "patrones": "Patterns",
+      "iconos": "Icons"
     },
     "type": {
       "title": "Typography",
@@ -164,7 +165,7 @@
           "title": "Consistent iconography",
           "apply": "A single professional library, always via sc-icon (Material Symbols).",
           "avoid": "Emojis in the interface, or mixing two icon sets.",
-          "have": "sc-icon over the generated set: one visual language across every app."
+          "have": "sc-icon over the generated set: one visual language across every app. What each icon says, in Fundamentals → Icons."
         },
         "density": {
           "title": "Density and hierarchy",
@@ -243,6 +244,96 @@
         "peligro": "Danger",
         "violeta": "Violet"
       }
+    },
+    "iconos": {
+      "title": "Icons",
+      "lead": "An icon goes alone only if it reads in five seconds without text. Otherwise, icon and text. If no icon says it, text only. The rule lives in the icons package (<code>SC_ICONS</code> and <code>SC_ICON_RESERVADOS</code>) and <code>audit:icons</code> enforces it.",
+      "cuando": {
+        "title": "When an icon, when text",
+        "solo": {
+          "title": "Icon only",
+          "apply": "The icon is universal and the context explains it: close, more actions, add, delete, edit, play.",
+          "note": "It carries ariaLabel. The button shows that name as a tooltip, on hover and on keyboard focus.",
+          "ejemplo": "More actions"
+        },
+        "mixto": {
+          "title": "Icon and text",
+          "apply": "The concept has no immediate picture, it is navigation, or it is a toolbar action: columns, filter, import, re-transcribe.",
+          "ejemplo": "Columns"
+        },
+        "texto": {
+          "title": "Text only",
+          "apply": "No icon says it in five seconds: General, Advanced, Cancel in a dialog.",
+          "ejemplo": "Cancel"
+        }
+      },
+      "siNo": {
+        "title": "One icon, one meaning",
+        "si": "Do",
+        "no": "Don't",
+        "eliminar": "Delete",
+        "quitar": "Remove from list",
+        "opciones": "Options",
+        "siNota": "The bin deletes, the X removes or closes, and options are a setting.",
+        "noNota": "An X that deletes, a bin that only removes, and the hamburger, which opens navigation, used for options."
+      },
+      "reservados": {
+        "title": "Reserved icons",
+        "lead": "One meaning across the product. A control that carries one is named after what it means.",
+        "icono": "Icon",
+        "significa": "Means",
+        "noSignifica": "Does not mean"
+      },
+      "conceptos": {
+        "title": "One icon per concept",
+        "lead": "Entities use the side menu icon; actions, the Material one. Use it from the screen, <code>SC_ICONS.agentes</code>, not the bare name.",
+        "nombres": {
+          "agentes": "Agents",
+          "grupos": "Groups",
+          "usuarios": "Users",
+          "administracion": "Administration",
+          "anadir": "Add, create, new",
+          "anadirDebajo": "Add below (one level)",
+          "editar": "Edit",
+          "eliminar": "Delete",
+          "quitar": "Remove from a list",
+          "cerrar": "Close",
+          "masAcciones": "More actions",
+          "filtrar": "Filter",
+          "columnas": "Columns",
+          "restablecer": "Reset",
+          "descargar": "Download, export",
+          "importar": "Import",
+          "copiar": "Copy",
+          "buscar": "Search",
+          "configuracion": "Settings",
+          "retroceder10": "Back 10 s",
+          "avanzar10": "Forward 10 s",
+          "transcribir": "Transcribe",
+          "navegacion": "Open navigation"
+        }
+      },
+      "talla": {
+        "title": "Size",
+        "inherit": "Next to text, <code>size=\"inherit\"</code>, with the text's weight and optical axis (DD-24, DD-189).",
+        "suelto": "On its own, a size from the scale: 8 to 20 and 28, and 32 to 64 for illustration. An in-between size (13, 15, 24) does not compile."
+      },
+      "color": {
+        "title": "Color with meaning",
+        "lead": "Only through <code>tone</code>, which comes from the <code>--sc-icon-*</code> tokens, and always with its shape and its text. Two states that differ only in color cannot be told apart.",
+        "success": "Done",
+        "warning": "Attention",
+        "error": "Failed",
+        "info": "Information"
+      },
+      "a11y": {
+        "title": "Accessibility",
+        "decorativo": "Decorative by default: <code>sc-icon</code> without <code>ariaLabel</code> is not announced.",
+        "significado": "With its own meaning and no text beside it, <code>ariaLabel</code>: it becomes <code>role=\"img\"</code>.",
+        "boton": "Icon-only button: <code>ariaLabel</code>. The button shows the tooltip, also on focus; a <code>title</code> is redundant.",
+        "contraste": "Contrast of at least 3:1 and a target of at least 24 px."
+      },
+      "foot": "Checked against <a href=\"https://www.nngroup.com/articles/icon-usability/\" target=\"_blank\" rel=\"noopener\">NN/g, Icon Usability</a> and <a href=\"https://primer.style/product/components/icon-button/\" target=\"_blank\" rel=\"noopener\">Primer's IconButton</a>. Decision: DD-200."
     }
   },
   "uso": {

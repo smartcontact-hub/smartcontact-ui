@@ -69,7 +69,7 @@ export class EmptyStateDemoComponent {
           { name: 'ctaIcon', control: { kind: 'text' }, description: 'Icono de la CTA (Material).' },
     ],
     defaultArgs: {
-      icon: 'inbox',
+      icon: 'headphones',
       titleKey: 'No hay agentes todavía',
       bodyKey: 'Crea tu primer agente para empezar a recibir llamadas.',
       ctaKey: '',

@@ -5,28 +5,20 @@
 }
 
 .memory-status-icon {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: inherit;
-
-  &.is-animating {
-    animation: memory-status-icon-pulse 1100ms ease-in-out infinite;
-  }
 }
 
-@keyframes memory-status-icon-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .memory-status-icon.is-animating {
-    animation: none;
-  }
+/* La insignia, en la esquina de abajo a la derecha del glifo, sobre un recorte del fondo del botón
+   (`--memory-status-recorte`, que el botón cambia en hover) para que se lea encima del dibujo. */
+.memory-status-icon__badge {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  background: var(--memory-status-recorte, var(--sc-bg-surface));
+  box-shadow: 0 0 0 1px var(--memory-status-recorte, var(--sc-bg-surface));
 }
