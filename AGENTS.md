@@ -498,6 +498,15 @@ Docs MUST:
 - include variants, states, usage, API
 - not invent features
 
+**Para LEER un componente entero, sin abrir cinco ficheros** (DD-202): `npm run docs:ia` escribe en
+`projects/sc-docs/public/ia/<ficha>.md` su ficha en texto (cuándo, estado, importar, propiedades, cada story con su código
+y su enlace, anatomía, dónde se usa) y el índice en `projects/sc-docs/public/llms.txt`. No se versionan: se generan en cada
+build, y publicadas viven en `sc-doc.pages.dev/llms.txt` y `/ia/<ficha>.md`. Para ENSEÑAR o capturar una story concreta,
+su dirección: `/#/components/<ficha>?historia=<nombre>` (`&args=clave:valor;otra:!true` siembra el Playground, `&solo=1`
+la pinta sin el marco). El lienzo trae ancho (iframe con el viewport real), medir, contornos, accesibilidad (axe, el
+mismo tope que `e2e/sc-docs-a11y.spec.ts`) y «Todas las combinaciones», y los controles van en un panel a la derecha
+(`story-panel.component.ts`) que marca lo tocado; una ficha nueva lo tiene todo sin hacer nada.
+
 ---
 
 ## Integration Rules

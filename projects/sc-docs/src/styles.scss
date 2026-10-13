@@ -192,3 +192,17 @@ pre code {
 :is(.sb-canvas__pane .row, .sb-canvas__pane .col) > p {
   margin: 0;
 }
+
+/* «Contornos» del lienzo (`story-canvas.component.ts`): un borde a cada elemento de la story para ver cómo se reparte el
+ * espacio. Aquí y no en `storybook.scss`: lo que pinta la story viene del `<ng-template>` del demo, y la hoja
+ * encapsulada del motor no llega a esos nodos. `outline` y no `border`: no ocupa sitio, así que no mueve nada. */
+.sb-contornos .sb-canvas__pane * {
+  outline: 1px dashed color-mix(in srgb, var(--sc-color-sky-500) 60%, transparent);
+  outline-offset: -1px;
+}
+
+/* El elemento de un fallo de accesibilidad, mientras el ratón está sobre su línea en el panel. */
+.sb-canvas__pane .sb-a11y-senal {
+  outline: 2px solid var(--sc-color-red-500);
+  outline-offset: 2px;
+}

@@ -64,6 +64,17 @@ export class AppComponent {
     { initialValue: this.router.url },
   );
 
+  /**
+   * ¿Es una story suelta (`?solo=1`)? Entonces no hay barra lateral. Antes de la primera navegación `router.url` aún
+   * vale `/`: se lee del hash para no pintar el marco un instante y quitarlo después (el iframe de un ancho fijo lo
+   * enseñaría parpadeando).
+   */
+  private readonly soloAlArrancar = /[?&]solo=1(&|$)/.test(document.location.hash);
+  protected readonly solo = computed(() => {
+    const url = this.url();
+    return /[?&]solo=1(&|$)/.test(url) || (url === '/' && this.soloAlArrancar);
+  });
+
   /** ¿La ruta activa está dentro de Componentes? Muestra la lista en la sidebar. */
   protected readonly onComponents = computed(() => this.url().startsWith('/components'));
 

@@ -31,6 +31,12 @@ import { expect, test, type Page } from '@playwright/test';
  */
 
 const BASELINE = join(process.cwd(), 'e2e', 'baselines', 'component-structure.json');
+
+/**
+ * Las instancias de la DEMO: fuera las que pinta sc-docs como herramienta, los controles del panel y los ejes de «Todas
+ * las combinaciones» (DD-202). Son el mismo componente con otros datos, y moverlos de sitio no cambia el DS.
+ */
+const enDemo = (tag: string): string => `${tag}:not(app-story-panel ${tag}):not(app-story-matriz ${tag})`;
 const UPDATING = process.env['SC_UPDATE_STRUCTURE'] === '1';
 
 /**
@@ -88,7 +94,7 @@ const structureOf = async (
   await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => undefined);
   // Que exista al menos uno: si la ruta del demo cambia de nombre, este test
   // debe fallar en vez de fijar un baseline vacío y dar verde para siempre.
-  await expect(page.locator(tag).first()).toBeVisible();
+  await expect(page.locator(enDemo(tag)).first()).toBeVisible();
 
   // ⚠️ ESPERAR AL NÚMERO, no a "que haya alguno". `evaluateAll` lee en UNA sola
   // pasada y NO reintenta: si la página aún está pintando instancias, se lleva
@@ -101,7 +107,7 @@ const structureOf = async (
   // instancia (regresión real) o tarda más de la cuenta. El mensaje lo dice.
   if (esperados !== undefined) {
     await expect(
-      page.locator(tag),
+      page.locator(enDemo(tag)),
       `${tag}: el demo debería renderizar ${esperados} instancias. Si de verdad cambiaron, ` +
         'regenera el baseline con SC_UPDATE_STRUCTURE=1; si no, es que la página no terminó de pintar.',
       // 15s y no los 5 por defecto: la máquina del CI va cargada y este test corre detrás de
@@ -114,14 +120,14 @@ const structureOf = async (
     // congelar un baseline a medio pintar y heredar el flake para siempre.
     let previo = -1;
     for (let i = 0; i < 10; i++) {
-      const n = await page.locator(tag).count();
+      const n = await page.locator(enDemo(tag)).count();
       if (n === previo && n > 0) break;
       previo = n;
       await page.waitForTimeout(200);
     }
   }
 
-  const raw = await page.locator(tag).evaluateAll((els) => els.map((el) => el.outerHTML));
+  const raw = await page.locator(enDemo(tag)).evaluateAll((els) => els.map((el) => el.outerHTML));
   return raw.map(normalize);
 };
 

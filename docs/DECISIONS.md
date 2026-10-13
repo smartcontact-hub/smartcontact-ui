@@ -148,6 +148,84 @@
 
 ---
 
+## DD-202 · 2026-10-13 — sc-docs se queda con su motor y suma lo que tiene un Storybook: dirección por story, anchos, regla, contornos, accesibilidad, todas las combinaciones, controles en un panel lateral y una ficha en texto para agentes
+
+**Contexto** · Barrido del Storybook de Primer el 2026-10-13, por si convenía cambiar sc-docs a Storybook. Primer
+tiene dos: el de tokens (158 historias; 25 solo para capturas de prueba) y el de componentes (1.101 historias de 211
+componentes, en cuatro capas: «Default», «Playground», «Features» con una historia por estado —el botón, 34— y
+«Examples»). Su barra: 9 temas (alto contraste, tres de daltonismo y «todos a la vez»), 6 anchos, 8 filtros de visión,
+regla, contornos y abrir la historia suelta. Sus paneles: controles, eventos, interacciones, accesibilidad (axe),
+código y rendimiento. Para agentes publica un manifiesto (`/react/storybook/manifests/components.json`) y un servidor
+MCP; medido por dentro, el manifiesto trae descripción en 19 de 211 componentes y 23 con error.
+
+sc-docs ya era un Storybook propio (DD-29) y su CONTENIDO era mejor para un agente: «cuándo se usa» en los 61
+componentes y descripción en las 616 propiedades (`_component-api.json`), anatomía leída del DOM, estado y uso real.
+Lo que le faltaba era otra cosa: (1) estaba repartido en cinco sitios, y la web es una SPA que enruta por `#`, así que
+un agente que la pedía recibía un `index.html` vacío (`sc-doc.pages.dev/llms.txt` devolvía ese HTML); (2) no tenía
+herramientas para ESTRESAR un componente: ni anchos, ni accesibilidad, ni enlace a una historia, ni regla.
+
+**Decisión** · Se queda el motor propio y se le añade:
+1. **Dirección por story** (`storybook/story-url.core.mjs`): `?historia=<nombre>` baja hasta ella y la marca;
+   `&args=variant:danger;loading:!true` siembra el Playground (formato de Storybook); `&solo=1` la pinta sola, sin la
+   barra lateral (`app.component` no pinta el marco). Cada lienzo tiene «copiar enlace» y «abrir suelta».
+2. **Ancho del lienzo**: libre, 375, 768, 1280 y 1440. Con un ancho fijo la story se pinta en un `iframe` de la story
+   suelta, así que cambia el VIEWPORT; sigue a los controles cambiando solo el hash, sin recargar.
+3. **Medir** (`story-medidor.component.ts`): al pasar el ratón, la caja con relleno y margen y, debajo, tamaño, relleno,
+   margen, borde, hueco entre hijos, hueco con los hermanos, letra y radio, del `getComputedStyle` (el valor que gana).
+   **Contornos**: un `outline` discontinuo a cada elemento de la story.
+4. **Accesibilidad**: axe-core 4.13.0, cargado en su propio trozo la primera vez, pasa por cada lienzo al verlo y cuando
+   cambian los controles o el tema; el número va en la barra y el detalle (en castellano, con el elemento señalado al
+   pasar el ratón) debajo. Las reglas son WCAG 2.2 A y AA (`a11y.core.mjs`), las mismas que vigila el CI en
+   `e2e/sc-docs-a11y.spec.ts`: un trinquete por ficha, story y regla contra `e2e/baselines/a11y.json`.
+5. **Todas las combinaciones** (`matriz.core.mjs`, `story-matriz.component.ts`): el Playground con cada valor de hasta
+   tres controles (desplegables e interruptores) a la vez; el resto, como esté en el Playground. Plegada hasta que se
+   pide. `StoryMeta.combinacionImposible` pinta como hueco lo que el Kit no tiene (el `plain` relleno del botón).
+6. **Ficha en texto para agentes** (`scripts/docs-ia.mjs`): una por componente en `/ia/<ficha>.md` (cuándo, estado,
+   importar, propiedades, cada story con su código y su enlace, anatomía y dónde se usa) y su índice en `/llms.txt`.
+   Lee las fichas con el compilador de TypeScript y las evalúa en `node:vm`, así que una descripción en trozos o un
+   snippet en constante salen como en la web; el código de una story sin snippet sale de `serializeArgs`, el de la web.
+   Se GENERA en cada build (`build:docs:app`, `start`) y no se versiona; con `--paquete` viaja dentro de
+   `@smartcontact-hub/components` (`build:components`).
+7. **Una captura por story** (`scripts/docs-capturas.mjs`) y la anatomía de cada componente, para la ficha. Las toma el
+   workflow `docs-capturas` en Linux, a mano o cada lunes, y abre un PR (`docs-capturas-sync`).
+8. **Los controles, en un panel a la derecha** (`story-panel.component.ts`): fijo al bajar, para ver cómo cambian el
+   Playground, «Todas las combinaciones» y el código mientras se tocan. Acompaña solo a las stories: «Cuándo se usa» y
+   la API van debajo a todo el ancho (a su lado, la de `datatable` se alargaba el doble a 1280). Cada control que ya no vale lo de la ficha lo
+   marca y trae su botón para volver; la cabecera cuenta los cambiados y trae «Restablecer». Por debajo de 1200 px de
+   ventana (`PANEL_ESTRECHO`) es un botón flotante con la cuenta que lo abre por encima; Escape lo cierra. En ancho se
+   pliega, y el navegador lo recuerda.
+
+**Razón** · Medido al construirlo: la prueba de accesibilidad revisa **181 stories en 56 fichas** y la ficha en texto
+lee **56 fichas y 181 stories**, el mismo número por dos caminos distintos (el DOM pintado y el TypeScript). Al nacer
+hay **71 fallos de axe en 11 fichas** (zona de toque pequeña 20, campo sin etiqueta 18, `svg` sin nombre 7, atributo
+ARIA inválido 7…); ninguno se veía antes. El iframe da un viewport de 375 exactos (con `border-box` daba 373: el borde
+se comía 2 px, y la prueba de herramientas lo caza). Las pruebas nuevas se pusieron en rojo con el fallo puesto (la
+regla sin activar, el borde del iframe, un fallo de axe quitado del tope) antes de darlas por buenas.
+
+**Descartadas** ·
+- *Cambiar a Storybook*: DD-29 lo descartó por otra build, otra estética y otra fuente de tokens, y sigue en pie. Hoy
+  además el marco de Angular que genera el manifiesto para agentes (`@storybook/angular-vite`) y su servidor MCP están
+  en prueba, y migrar es rehacer 56 fichas (unas 7.800 líneas) perdiendo la anatomía, el «cuándo», el estado y el uso
+  real, que Storybook no trae.
+- *Un servidor MCP propio*: un `.md` lo lee cualquier agente sin instalar nada, y viaja dentro del paquete.
+- *El ancho fijo estrechando una caja*: no dispara las media queries (el DS tiene `max-width: 640px` en un componente y
+  PrimeNG las suyas); enseñaría un móvil que no existe.
+- *Versionar las fichas `.md` con un gate de frescura*: sería la tercera pieza generada que regenerar en cada PR que
+  toque un componente (con `_component-api.json` e `inventory.md`). Generada en el build, no puede ir por detrás.
+- *Tomar las capturas desde el Mac*: las fuentes del sistema las hacen de una máquina (DD-60, DD-62).
+- *Panel de eventos* (qué salidas dispara un control): hay que conectar las 56 fichas a mano, un día. Aparcado.
+- *Filtros de daltonismo y tema de alto contraste*: lo primero aporta poco; lo segundo es una decisión de tokens.
+
+**Consecuencias** · `sc-docs-a11y` y `sc-docs-herramientas` entran en `npm run e2e` (el CI). La barra del lienzo cambia
+las capturas de regresión de sc-docs: se regeneran con `visual-baselines` en la rama, y en ellas el botón de
+accesibilidad va oculto (dice «Revisando…» hasta que axe acaba, y la foto dependería de cuándo). Las redes de estructura
+y de estilos (`component-structure`, `component-styles`) cuentan solo la demo: fuera la barra del lienzo, el panel y «Todas
+las combinaciones», que son el mismo componente con otros datos. Las capturas por story llegan
+después de fundir (workflow `docs-capturas`, o el lunes). Quedan 71 fallos de accesibilidad: cada arreglo baja el tope
+en el mismo cambio (`SC_UPDATE_A11Y=1 npx playwright test sc-docs-a11y`).
+
+---
+
 ## DD-201 · 2026-10-13 — El esqueleto de carga con la forma de su contenido, y la carga simulada del Supervisor
 
 **Contexto** · Barrido de dónde pintaría el Supervisor un esqueleto si tuviera servidor (regla 2 de «UX de pantalla»,

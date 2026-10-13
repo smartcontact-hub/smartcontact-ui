@@ -1,98 +1,106 @@
-<div class="demo-shell">
-  <aside class="demo-sidebar">
-    <a class="demo-sidebar__brand" routerLink="/components">
-      <span class="demo-sidebar__mark" aria-hidden="true">
-        <svg class="demo-sidebar__logo" viewBox="0 0 109 98" xmlns="http://www.w3.org/2000/svg">
-          <path d="M37.703 0C50.8156 0 61.4453 10.6256 61.4453 23.7332C61.4453 36.839 50.8156 47.4647 37.703 47.4647C24.5905 47.4647 13.9624 36.839 13.9624 23.7332C13.9624 10.6256 24.5905 0 37.703 0Z" fill="currentColor" />
-          <path d="M93.1898 8.01218C101.921 8.01218 109 15.0882 109 23.8165C109 32.5466 101.921 39.6225 93.1898 39.6225C84.458 39.6225 77.3793 32.5466 77.3793 23.8165C77.3793 15.0882 84.458 8.01218 93.1898 8.01218Z" fill="currentColor" />
-          <path d="M71.6506 15.536C66.4333 15.536 61.6258 13.8336 57.7066 10.9819C60.0628 14.6681 61.4453 19.0358 61.4453 23.7332C61.4453 28.074 60.2594 32.1299 58.2231 35.6312C62.0424 33.0061 66.6649 31.4653 71.6506 31.4653C74.7684 31.4653 77.7395 32.0816 80.4673 33.1743C78.5344 30.5524 77.3793 27.3212 77.3793 23.8165C77.3793 19.8754 78.831 16.2806 81.2172 13.5138C78.2877 14.8064 75.0567 15.536 71.6506 15.536Z" fill="currentColor" fill-opacity="0.45" />
-          <path d="M71.2952 97.4189C58.1827 97.4189 47.5546 86.7933 47.5546 73.6874C47.5546 60.5798 58.1827 49.9542 71.2952 49.9542C84.4078 49.9542 95.0358 60.5798 95.0358 73.6874C95.0358 86.7933 84.4078 97.4189 71.2952 97.4189Z" fill="currentColor" />
-          <path d="M15.8104 89.3982C7.07869 89.3982 0 82.3222 0 73.5939C0 64.8638 7.07869 57.7879 15.8104 57.7879C24.5421 57.7879 31.6208 64.8638 31.6208 73.5939C31.6208 82.3222 24.5421 89.3982 15.8104 89.3982Z" fill="currentColor" />
-          <path d="M37.3499 81.8761C42.5672 81.8761 47.3753 83.5791 51.293 86.4308C48.9367 82.7463 47.5546 78.3847 47.5546 73.6874C47.5546 69.3449 48.7411 65.2806 50.7774 61.7809C46.9581 64.4044 42.3356 65.9469 37.3499 65.9469C34.2321 65.9469 31.261 65.3289 28.5332 64.2378C30.4661 66.858 31.6208 70.0892 31.6208 73.5939C31.6208 77.5366 30.1695 81.1299 27.7833 83.8983C30.7128 82.6057 33.9438 81.8761 37.3499 81.8761Z" fill="currentColor" fill-opacity="0.45" />
-        </svg>
-      </span>
-      <span class="demo-sidebar__brand-text">
-        <span class="demo-sidebar__brand-name sc-text-caption-semibold">Smart Contact</span>
-        <span class="demo-sidebar__brand-sub sc-text-caption-regular">{{ 'chrome.brandSub' | translate }}</span>
-      </span>
-    </a>
-
-    <button type="button" class="demo-sidebar__search" (click)="palette.open()">
-      <span class="demo-sidebar__search-label">{{ 'chrome.search' | translate }}</span>
-      <kbd class="demo-sidebar__kbd">⌘K</kbd>
-    </button>
-
-    <nav class="demo-sidebar__nav" [attr.aria-label]="'chrome.nav.sectionsAria' | translate">
-      <a routerLink="/fundamentos" routerLinkActive="is-active">{{ 'chrome.nav.fundamentos' | translate }}</a>
-
-      <a class="demo-sidebar__lead" routerLink="/components" routerLinkActive="is-active">
-        <span>{{ 'chrome.nav.componentes' | translate }}</span>
-        <span class="demo-sidebar__count sc-text-caption-semibold">{{ total }}</span>
-      </a>
-      @if (onComponents()) {
-        <div class="demo-sidebar__sub">
-          @for (group of groups; track group.category) {
-            <button
-              type="button"
-              class="demo-sidebar__group"
-              [class.is-open]="openGroup() === group.category"
-              [attr.aria-expanded]="openGroup() === group.category"
-              (click)="toggleGroup(group.category)"
-            >
-              <svg class="demo-sidebar__chevron" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
-                <path
-                  d="M6 4l4 4-4 4"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <span class="demo-sidebar__group-name">{{ 'categories.' + group.category | translate }}</span>
-              <span class="demo-sidebar__group-count">{{ group.items.length }}</span>
-            </button>
-            @if (openGroup() === group.category) {
-              @for (e of group.items; track e.path) {
-                <a
-                  class="demo-sidebar__sublink"
-                  [routerLink]="['/components', e.path]"
-                  routerLinkActive="is-active"
-                  >{{ e.label }}</a
-                >
-              }
-            }
-          }
-        </div>
-      }
-
-      <a routerLink="/uso" routerLinkActive="is-active">{{ 'chrome.nav.uso' | translate }}</a>
-      <a routerLink="/reglas" routerLinkActive="is-active">{{ 'chrome.nav.reglas' | translate }}</a>
-      <a routerLink="/novedades" routerLinkActive="is-active">{{ 'chrome.nav.novedades' | translate }}</a>
-    </nav>
-
-    <!-- Cluster de herramientas: NO son documentación, por eso van separadas de la nav.
-         Lab a la izquierda; a la derecha, agrupados, el selector de idioma (ES|EN) y el
-         interruptor de tema (icono, no texto). El idioma vive aquí, en la barra que está en
-         TODAS las rutas, por eso se puede cambiar desde cualquier parte. -->
-    <div class="demo-sidebar__tools">
-      <a class="demo-sidebar__tool" routerLink="/lab" routerLinkActive="is-active">Lab</a>
-      <div class="demo-sidebar__tools-right">
-        <app-language-toggle />
-        <app-theme-toggle [dark]="isDark()" (toggled)="toggleDark()" />
-      </div>
-    </div>
-
-    <!-- Pie legal: es lo último y lo más callado de la barra, como en cualquier sitio.
-         Fuera de la nav de secciones a propósito: no es documentación del DS. -->
-    <a class="demo-sidebar__legal sc-text-caption-regular" routerLink="/aviso-legal" routerLinkActive="is-active">
-      {{ 'chrome.nav.avisoLegal' | translate }}
-    </a>
-  </aside>
-
-  <main class="demo-main">
+<!-- Una story suelta (`?solo=1`: «abrir suelta», el iframe de un ancho fijo, las capturas) se pinta SIN la barra
+     lateral ni el ⌘K: solo la ruta. Ver `story-host.component.ts`. -->
+@if (solo()) {
+  <main class="demo-solo">
     <router-outlet />
   </main>
-</div>
+} @else {
+  <div class="demo-shell">
+    <aside class="demo-sidebar">
+      <a class="demo-sidebar__brand" routerLink="/components">
+        <span class="demo-sidebar__mark" aria-hidden="true">
+          <svg class="demo-sidebar__logo" viewBox="0 0 109 98" xmlns="http://www.w3.org/2000/svg">
+            <path d="M37.703 0C50.8156 0 61.4453 10.6256 61.4453 23.7332C61.4453 36.839 50.8156 47.4647 37.703 47.4647C24.5905 47.4647 13.9624 36.839 13.9624 23.7332C13.9624 10.6256 24.5905 0 37.703 0Z" fill="currentColor" />
+            <path d="M93.1898 8.01218C101.921 8.01218 109 15.0882 109 23.8165C109 32.5466 101.921 39.6225 93.1898 39.6225C84.458 39.6225 77.3793 32.5466 77.3793 23.8165C77.3793 15.0882 84.458 8.01218 93.1898 8.01218Z" fill="currentColor" />
+            <path d="M71.6506 15.536C66.4333 15.536 61.6258 13.8336 57.7066 10.9819C60.0628 14.6681 61.4453 19.0358 61.4453 23.7332C61.4453 28.074 60.2594 32.1299 58.2231 35.6312C62.0424 33.0061 66.6649 31.4653 71.6506 31.4653C74.7684 31.4653 77.7395 32.0816 80.4673 33.1743C78.5344 30.5524 77.3793 27.3212 77.3793 23.8165C77.3793 19.8754 78.831 16.2806 81.2172 13.5138C78.2877 14.8064 75.0567 15.536 71.6506 15.536Z" fill="currentColor" fill-opacity="0.45" />
+            <path d="M71.2952 97.4189C58.1827 97.4189 47.5546 86.7933 47.5546 73.6874C47.5546 60.5798 58.1827 49.9542 71.2952 49.9542C84.4078 49.9542 95.0358 60.5798 95.0358 73.6874C95.0358 86.7933 84.4078 97.4189 71.2952 97.4189Z" fill="currentColor" />
+            <path d="M15.8104 89.3982C7.07869 89.3982 0 82.3222 0 73.5939C0 64.8638 7.07869 57.7879 15.8104 57.7879C24.5421 57.7879 31.6208 64.8638 31.6208 73.5939C31.6208 82.3222 24.5421 89.3982 15.8104 89.3982Z" fill="currentColor" />
+            <path d="M37.3499 81.8761C42.5672 81.8761 47.3753 83.5791 51.293 86.4308C48.9367 82.7463 47.5546 78.3847 47.5546 73.6874C47.5546 69.3449 48.7411 65.2806 50.7774 61.7809C46.9581 64.4044 42.3356 65.9469 37.3499 65.9469C34.2321 65.9469 31.261 65.3289 28.5332 64.2378C30.4661 66.858 31.6208 70.0892 31.6208 73.5939C31.6208 77.5366 30.1695 81.1299 27.7833 83.8983C30.7128 82.6057 33.9438 81.8761 37.3499 81.8761Z" fill="currentColor" fill-opacity="0.45" />
+          </svg>
+        </span>
+        <span class="demo-sidebar__brand-text">
+          <span class="demo-sidebar__brand-name sc-text-caption-semibold">Smart Contact</span>
+          <span class="demo-sidebar__brand-sub sc-text-caption-regular">{{ 'chrome.brandSub' | translate }}</span>
+        </span>
+      </a>
 
-<sc-command-palette />
+      <button type="button" class="demo-sidebar__search" (click)="palette.open()">
+        <span class="demo-sidebar__search-label">{{ 'chrome.search' | translate }}</span>
+        <kbd class="demo-sidebar__kbd">⌘K</kbd>
+      </button>
+
+      <nav class="demo-sidebar__nav" [attr.aria-label]="'chrome.nav.sectionsAria' | translate">
+        <a routerLink="/fundamentos" routerLinkActive="is-active">{{ 'chrome.nav.fundamentos' | translate }}</a>
+
+        <a class="demo-sidebar__lead" routerLink="/components" routerLinkActive="is-active">
+          <span>{{ 'chrome.nav.componentes' | translate }}</span>
+          <span class="demo-sidebar__count sc-text-caption-semibold">{{ total }}</span>
+        </a>
+        @if (onComponents()) {
+          <div class="demo-sidebar__sub">
+            @for (group of groups; track group.category) {
+              <button
+                type="button"
+                class="demo-sidebar__group"
+                [class.is-open]="openGroup() === group.category"
+                [attr.aria-expanded]="openGroup() === group.category"
+                (click)="toggleGroup(group.category)"
+              >
+                <svg class="demo-sidebar__chevron" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+                  <path
+                    d="M6 4l4 4-4 4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span class="demo-sidebar__group-name">{{ 'categories.' + group.category | translate }}</span>
+                <span class="demo-sidebar__group-count">{{ group.items.length }}</span>
+              </button>
+              @if (openGroup() === group.category) {
+                @for (e of group.items; track e.path) {
+                  <a
+                    class="demo-sidebar__sublink"
+                    [routerLink]="['/components', e.path]"
+                    routerLinkActive="is-active"
+                    >{{ e.label }}</a
+                  >
+                }
+              }
+            }
+          </div>
+        }
+
+        <a routerLink="/uso" routerLinkActive="is-active">{{ 'chrome.nav.uso' | translate }}</a>
+        <a routerLink="/reglas" routerLinkActive="is-active">{{ 'chrome.nav.reglas' | translate }}</a>
+        <a routerLink="/novedades" routerLinkActive="is-active">{{ 'chrome.nav.novedades' | translate }}</a>
+      </nav>
+
+      <!-- Cluster de herramientas: NO son documentación, por eso van separadas de la nav.
+           Lab a la izquierda; a la derecha, agrupados, el selector de idioma (ES|EN) y el
+           interruptor de tema (icono, no texto). El idioma vive aquí, en la barra que está en
+           TODAS las rutas, por eso se puede cambiar desde cualquier parte. -->
+      <div class="demo-sidebar__tools">
+        <a class="demo-sidebar__tool" routerLink="/lab" routerLinkActive="is-active">Lab</a>
+        <div class="demo-sidebar__tools-right">
+          <app-language-toggle />
+          <app-theme-toggle [dark]="isDark()" (toggled)="toggleDark()" />
+        </div>
+      </div>
+
+      <!-- Pie legal: es lo último y lo más callado de la barra, como en cualquier sitio.
+           Fuera de la nav de secciones a propósito: no es documentación del DS. -->
+      <a class="demo-sidebar__legal sc-text-caption-regular" routerLink="/aviso-legal" routerLinkActive="is-active">
+        {{ 'chrome.nav.avisoLegal' | translate }}
+      </a>
+    </aside>
+
+    <main class="demo-main">
+      <router-outlet />
+    </main>
+  </div>
+
+  <sc-command-palette />
+}

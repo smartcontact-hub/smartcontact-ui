@@ -83,3 +83,9 @@ Thumbs.db
 # Con punto o con guion: `.algo.tmp.mjs` no casaba con `-tmp` y se coló en un commit
 # del lote 3 de fichas (2026-10-05).
 /.*[-.]tmp.mjs
+
+# La ficha para agentes de cada componente y su índice (`scripts/docs-ia.mjs`): se GENERAN en cada build de sc-docs y
+# del DS, así nunca van por detrás del código. Las capturas de `ia/capturas/` sí se versionan: las toma el workflow
+# `docs-capturas` en Linux.
+/projects/sc-docs/public/ia/*.md
+/projects/sc-docs/public/llms.txt
