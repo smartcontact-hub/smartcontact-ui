@@ -21,7 +21,7 @@ import { ArgType, ScArgs } from './story.types';
 
 /**
  * Hasta qué ancho de ventana el panel va POR ENCIMA de la página y no a su lado. La misma cifra está en
- * `storybook.scss` (`.sb-host--con-panel`): por debajo, la columna de la página no deja sitio a los dos.
+ * `storybook.scss` (`.sb-host__zona--con-panel`): por debajo, la columna de la página no deja sitio a los dos.
  */
 export const PANEL_ESTRECHO = '(max-width: 75rem)';
 

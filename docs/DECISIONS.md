@@ -188,7 +188,8 @@ herramientas para ESTRESAR un componente: ni anchos, ni accesibilidad, ni enlace
 7. **Una captura por story** (`scripts/docs-capturas.mjs`) y la anatomía de cada componente, para la ficha. Las toma el
    workflow `docs-capturas` en Linux, a mano o cada lunes, y abre un PR (`docs-capturas-sync`).
 8. **Los controles, en un panel a la derecha** (`story-panel.component.ts`): fijo al bajar, para ver cómo cambian el
-   Playground, «Todas las combinaciones» y el código mientras se tocan. Cada control que ya no vale lo de la ficha lo
+   Playground, «Todas las combinaciones» y el código mientras se tocan. Acompaña solo a las stories: «Cuándo se usa» y
+   la API van debajo a todo el ancho (a su lado, la de `datatable` se alargaba el doble a 1280). Cada control que ya no vale lo de la ficha lo
    marca y trae su botón para volver; la cabecera cuenta los cambiados y trae «Restablecer». Por debajo de 1200 px de
    ventana (`PANEL_ESTRECHO`) es un botón flotante con la cuenta que lo abre por encima; Escape lo cierra. En ancho se
    pliega, y el navegador lo recuerda.

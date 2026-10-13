@@ -293,6 +293,7 @@
 /* ── Host (página de un componente) ── */
 /* La página de un componente, y su columna cuando lleva el panel de controles al lado: el mismo ritmo entre secciones. */
 .sb-host,
+.sb-host__zona,
 .sb-host__contenido {
   display: flex;
   flex-direction: column;
@@ -363,7 +364,9 @@
  * Dos columnas: la página y el panel, que va `sticky` y acompaña al bajar. Por debajo de 75rem de ventana (`PANEL_ESTRECHO`)
  * la página va sola y el panel pasa por ENCIMA, desde un botón flotante: a esa anchura no caben los dos sin apretar el
  * Playground. Entre la página y el panel, el escalón de entre grupos (28). */
-.sb-host.sb-host--con-panel {
+/* Las stories a la izquierda y el panel a la derecha. Solo ellas: la referencia (cuándo, API) va debajo a todo el ancho,
+ * que una tabla de API en dos tercios se alarga el doble (medido en `datatable` a 1280). */
+.sb-host__zona.sb-host__zona--con-panel {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--sc-spacing-2);

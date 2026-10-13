@@ -19,8 +19,9 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
 
 /**
  * Orquesta la página de UN componente: cabecera + Playground (canvas + snippet) + «Todas las combinaciones» + stories
- * de ejemplo (apiladas, cada una con su canvas + código) + tabla de API, y a la derecha el panel de controles
- * (`story-panel.component.ts`), fijo al bajar. El demo declara las stories como `<ng-template>` y pasa `meta` + `stories`.
+ * de ejemplo (apiladas, cada una con su canvas + código), con el panel de controles a su derecha
+ * (`story-panel.component.ts`), fijo al bajar; debajo, a todo el ancho, «Cuándo se usa» y la tabla de API. El demo
+ * declara las stories como `<ng-template>` y pasa `meta` + `stories`.
  *
  * Apilado (no por pestañas) a propósito: una página = un componente con TODO a la vista, y así los `data-testid` de los
  * ejemplos siguen en el DOM (los e2e de métrica del Kit los miden).
@@ -71,101 +72,106 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
         }
       </div>
     } @else {
-      <div class="sb-host" [class.sb-host--con-panel]="hayControles()">
-        <div class="sb-host__contenido">
-          <header class="sb-host__head">
-            <h1>
-              {{ meta().title ?? meta().tag }}
-              <span class="sb-host__tag">&lt;{{ meta().tag }}&gt;</span>
-            </h1>
-            <!-- El estado del componente (DD-190): listo, experimental o retirado, y por qué. -->
-            <app-estado-componente class="sb-host__estado" [estado]="estado()" explicado />
-            @if (meta().description) {
-              <p class="sb-host__desc">{{ meta().description }}</p>
-            }
-          </header>
-
-          @for (s of stories(); track s.name) {
-            <section
-              class="sb-host__story"
-              [id]="'historia-' + slug(s)"
-              [class.sb-host__story--enlazada]="slug(s) === historiaUrl()"
-            >
-              <p class="sb-host__section-title sc-text-caption-semibold">{{ s.playground ? '✦ ' + s.name : s.name }}</p>
-              @if (s.description) {
-                <p class="sb-host__story-desc sc-text-body-regular">{{ s.description }}</p>
+      <div class="sb-host">
+        <!-- El panel de controles acompaña a las stories y no a la referencia: «Cuándo se usa» y la API van debajo, a
+             todo el ancho, y el panel deja de seguir al bajar al llegar a ellas. -->
+        <div class="sb-host__zona" [class.sb-host__zona--con-panel]="hayControles()">
+          <div class="sb-host__contenido">
+            <header class="sb-host__head">
+              <h1>
+                {{ meta().title ?? meta().tag }}
+                <span class="sb-host__tag">&lt;{{ meta().tag }}&gt;</span>
+              </h1>
+              <!-- El estado del componente (DD-190): listo, experimental o retirado, y por qué. -->
+              <app-estado-componente class="sb-host__estado" [estado]="estado()" explicado />
+              @if (meta().description) {
+                <p class="sb-host__desc">{{ meta().description }}</p>
               }
+            </header>
 
-              @if (s.playground) {
-                <!-- Sus controles van en el panel de la derecha (app-story-panel), fijo al bajar. -->
-                <div class="sb-host__play-main">
-                  <app-story-canvas
-                    [template]="s.template"
-                    [args]="playArgs()"
-                    [enlace]="enlaceDe(s)"
-                    [enlaceSolo]="enlaceDe(s, true)"
-                  />
-                  <app-story-snippet [code]="snippetFor(s)" />
-                  <!-- La anatomía se LEE del DOM ya pintado: no hay texto a mano que pueda mentir. -->
-                  <app-story-anatomy [tag]="meta().tag" />
-                </div>
-              } @else {
-                <div class="sb-host__grid">
-                  <app-story-canvas
-                    [template]="s.template"
-                    [args]="argsDe(s)"
-                    [enlace]="enlaceDe(s)"
-                    [enlaceSolo]="enlaceDe(s, true)"
-                  />
-                  <app-story-snippet [code]="snippetFor(s)" />
-                </div>
-              }
-            </section>
-
-            @if (s.playground && hayEjes()) {
+            @for (s of stories(); track s.name) {
               <section
                 class="sb-host__story"
-                id="historia-combinaciones"
-                [class.sb-host__story--enlazada]="historiaUrl() === 'combinaciones'"
+                [id]="'historia-' + slug(s)"
+                [class.sb-host__story--enlazada]="slug(s) === historiaUrl()"
               >
-                <p class="sb-host__section-title sc-text-caption-semibold">Todas las combinaciones</p>
-                <p class="sb-host__story-desc sc-text-body-regular">
-                  El Playground con cada valor de hasta tres controles a la vez. Los demás van como estén arriba: pon ahí
-                  un texto muy largo o enciende «loading», y se ve en todas las casillas.
-                </p>
-                <app-story-matriz
-                  [meta]="meta()"
-                  [template]="s.template"
-                  [base]="playArgs()"
-                  [pagina]="pagina()"
-                  [argsUrl]="argsPlayUrl()"
-                  [ejesUrl]="ejesUrl()"
-                />
+                <p class="sb-host__section-title sc-text-caption-semibold">{{ s.playground ? '✦ ' + s.name : s.name }}</p>
+                @if (s.description) {
+                  <p class="sb-host__story-desc sc-text-body-regular">{{ s.description }}</p>
+                }
+
+                @if (s.playground) {
+                  <!-- Sus controles van en el panel de la derecha (app-story-panel), fijo al bajar. -->
+                  <div class="sb-host__play-main">
+                    <app-story-canvas
+                      [template]="s.template"
+                      [args]="playArgs()"
+                      [enlace]="enlaceDe(s)"
+                      [enlaceSolo]="enlaceDe(s, true)"
+                    />
+                    <app-story-snippet [code]="snippetFor(s)" />
+                    <!-- La anatomía se LEE del DOM ya pintado: no hay texto a mano que pueda mentir. -->
+                    <app-story-anatomy [tag]="meta().tag" />
+                  </div>
+                } @else {
+                  <div class="sb-host__grid">
+                    <app-story-canvas
+                      [template]="s.template"
+                      [args]="argsDe(s)"
+                      [enlace]="enlaceDe(s)"
+                      [enlaceSolo]="enlaceDe(s, true)"
+                    />
+                    <app-story-snippet [code]="snippetFor(s)" />
+                  </div>
+                }
               </section>
+
+              @if (s.playground && hayEjes()) {
+                <section
+                  class="sb-host__story"
+                  id="historia-combinaciones"
+                  [class.sb-host__story--enlazada]="historiaUrl() === 'combinaciones'"
+                >
+                  <p class="sb-host__section-title sc-text-caption-semibold">Todas las combinaciones</p>
+                  <p class="sb-host__story-desc sc-text-body-regular">
+                    El Playground con cada valor de hasta tres controles a la vez. Los demás van como estén arriba: pon ahí
+                    un texto muy largo o enciende «loading», y se ve en todas las casillas.
+                  </p>
+                  <app-story-matriz
+                    [meta]="meta()"
+                    [template]="s.template"
+                    [base]="playArgs()"
+                    [pagina]="pagina()"
+                    [argsUrl]="argsPlayUrl()"
+                    [ejesUrl]="ejesUrl()"
+                  />
+                </section>
+              }
             }
-          }
 
-          @if (cuando(); as cuando) {
-            <section class="sb-host__story">
-              <p class="sb-host__section-title sc-text-caption-semibold">Cuándo se usa</p>
-              <p class="sb-host__desc">{{ cuando }}</p>
-            </section>
-          }
+          </div>
 
-          <section class="sb-host__story">
-            <p class="sb-host__section-title sc-text-caption-semibold">API</p>
-            <app-story-props-table [miembros]="contrato()" [error]="apiError()" />
-          </section>
+          @if (hayControles()) {
+            <app-story-panel
+              [argTypes]="meta().argTypes"
+              [base]="meta().defaultArgs"
+              [args]="playArgs()"
+              (argsChange)="playArgs.set($event)"
+            />
+          }
         </div>
 
-        @if (hayControles()) {
-          <app-story-panel
-            [argTypes]="meta().argTypes"
-            [base]="meta().defaultArgs"
-            [args]="playArgs()"
-            (argsChange)="playArgs.set($event)"
-          />
+        @if (cuando(); as cuando) {
+          <section class="sb-host__story">
+            <p class="sb-host__section-title sc-text-caption-semibold">Cuándo se usa</p>
+            <p class="sb-host__desc">{{ cuando }}</p>
+          </section>
         }
+
+        <section class="sb-host__story" data-testid="sb-api">
+          <p class="sb-host__section-title sc-text-caption-semibold">API</p>
+          <app-story-props-table [miembros]="contrato()" [error]="apiError()" />
+        </section>
       </div>
     }
   `,

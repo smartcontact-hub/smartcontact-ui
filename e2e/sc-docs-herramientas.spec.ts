@@ -126,6 +126,12 @@ test.describe('sc-docs · herramientas del lienzo', () => {
     await expect.poll(async () => (await panel.boundingBox())?.y ?? -1).toBeGreaterThanOrEqual(0);
     expect((await panel.boundingBox())!.y).toBeLessThan(page.viewportSize()!.height / 2);
 
+    // La referencia va debajo, a todo el ancho: el panel acompaña a las stories, y una tabla de API a su lado se
+    // estrechaba hasta alargarse el doble.
+    const api = (await page.locator('[data-testid="sb-api"]').boundingBox())!;
+    const caja = (await panel.boundingBox())!;
+    expect(api.x + api.width, 'la tabla de API pasa por debajo del panel').toBeGreaterThan(caja.x + caja.width / 2);
+
     // Volver UN control: el botón de la story deja de ser `danger`, los otros dos siguen.
     await panel.locator('[data-control="variant"] .sb-controls__volver').click();
     await expect(panel.locator('[data-testid="sb-panel-cuenta"]')).toHaveText('2 cambiados');
