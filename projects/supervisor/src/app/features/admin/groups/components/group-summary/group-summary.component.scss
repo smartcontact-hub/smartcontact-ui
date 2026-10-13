@@ -218,7 +218,10 @@
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-625);
-  color: var(--sc-text-secondary);
+  /* `--sc-text-primary`, no `--sc-text-secondary`: con el fondo sutil permanente encima
+   * (`.resumen__pair-button`), el secundario bajaba de 4,52:1 a 4,37:1 — por debajo de AA
+   * (medido por `theme-contrast`). */
+  color: var(--sc-text-primary);
   min-width: 0;
 
   sc-icon-tile {
