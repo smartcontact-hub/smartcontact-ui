@@ -67,7 +67,9 @@
                   appearance="text"
                   size="sm"
                   icon="timer"
+                  [label]="'dashboard.carousel.seconds' | translate: { s: carouselSeconds() }"
                   [ariaLabel]="'dashboard.carousel.interval_aria' | translate: { s: carouselSeconds() }"
+                  ariaHasPopup="menu"
                   (clicked)="carouselMenuRef.toggle($event)"
                 />
               </div>

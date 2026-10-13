@@ -14,7 +14,10 @@
     [rounded]="rounded()"
     [raised]="raised()"
     [plain]="plain()"
-    [pt]="buttonPt()"
+    [pTooltip]="tooltipAutomatico() ?? ''"
+    [tooltipDisabled]="!tooltipAutomatico()"
+    tooltipEvent="both"
+    tooltipPosition="top"
     (onClick)="onClick($event)">
     @if (customIcon(); as customIconTpl) {
         <ng-template #icon let-iconClass="class">

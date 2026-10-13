@@ -421,14 +421,22 @@ const esHtmlPuro = (a) =>
 
 const DECL = /type:\s*\w+,\s*isStandalone:\s*\w+,\s*selector:\s*"([^"]+)",\s*inputs:\s*\{(.*?)\}\s*,\s*(?:outputs|host|providers|queries|ngImport|usesInheritance|viewQueries|template)/gs;
 const entradasDe = new Map();
+/* Las directivas de atributo (`[pTooltip]`) también ponen entradas en el elemento que las lleva: en
+ * `<p-button pTooltip="…" tooltipEvent="both">`, `tooltipEvent` es del tooltip, no del botón, y llega. */
+const entradasDeDirectiva = new Map();
 for (const f of readdirSync('node_modules/primeng/fesm2022').filter((f) => f.endsWith('.mjs'))) {
   const txt = readFileSync(`node_modules/primeng/fesm2022/${f}`, 'utf8');
   for (const [, selector, inputs] of txt.matchAll(DECL)) {
     const nombres = [...inputs.matchAll(/(\w+):\s*[{"]/g)].map((m) => m[1]);
     for (const sel of selector.split(',').map((x) => x.trim())) {
-      if (!sel.startsWith('p-')) continue;
-      if (!entradasDe.has(sel)) entradasDe.set(sel, new Set());
-      for (const n of nombres) entradasDe.get(sel).add(n);
+      const atributo = sel.match(/^\[(\w+)\]$/)?.[1];
+      const mapa = sel.startsWith('p-') ? entradasDe : atributo ? entradasDeDirectiva : null;
+      const clave = atributo ?? sel;
+      if (!mapa) continue;
+      if (!mapa.has(clave)) mapa.set(clave, new Set());
+      for (const n of nombres) mapa.get(clave).add(n);
+      // Una entrada con alias se escribe por su nombre público (`content` → `pTooltip`).
+      for (const [, publico] of inputs.matchAll(/publicName:\s*"(\w+)"/g)) mapa.get(clave).add(publico);
     }
   }
 }
@@ -437,11 +445,15 @@ const inertes = [];
 for (const f of ficherosTodos.filter((f) => f.endsWith('.html'))) {
   const txt = readFileSync(f, 'utf8');
   for (const m of txt.matchAll(/<(p-[\w-]+)((?:[^<>]|\n)*?)>/g)) {
-    const acepta = entradasDe.get(m[1]);
-    if (!acepta) continue;
+    const delComponente = entradasDe.get(m[1]);
+    if (!delComponente) continue;
+    const directivas = [...m[2].matchAll(/(?:^|\s)\[?(\w+)\]?(?==|\s|$)/g)]
+      .map((d) => entradasDeDirectiva.get(d[1]))
+      .filter(Boolean);
+    const acepta = (e) => delComponente.has(e) || directivas.some((d) => d.has(e));
     for (const a of m[2].matchAll(/(?:^|\s)([a-zA-Z][\w]*)=/g)) {
       const entrada = a[1];
-      if (esHtmlPuro(entrada) || acepta.has(entrada)) continue;
+      if (esHtmlPuro(entrada) || acepta(entrada)) continue;
       inertes.push({ tag: m[1], entrada, f, linea: txt.slice(0, m.index).split('\n').length });
     }
   }

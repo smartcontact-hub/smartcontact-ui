@@ -98,7 +98,8 @@ export class RuleConditionBuilderComponent {
   protected readonly autoOpenCondId = signal<string | null>(null);
 
   protected readonly addIcon = 'add';
-  protected readonly closeIcon = 'close';
+  /** «Eliminar alternativa» y «Eliminar condición»: la papelera, como todo «Eliminar» (DD-200). */
+  protected readonly deleteIcon = 'delete';
   protected readonly summaryIcon = 'rule';
 
   /* ── Validación / guía de errores (lógica pura; ver condition-validate) ── */

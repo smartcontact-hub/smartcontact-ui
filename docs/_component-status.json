@@ -192,6 +192,7 @@
         "transcriptionCount"
       ],
       "nested": [
+        "sc-icon-tile",
         "sc-button",
         "sc-toggleswitch"
       ],
@@ -211,7 +212,7 @@
       "selector": "sc-button",
       "provenance": "WRAPPER",
       "kind": "EXTENDED",
-      "primengBase": "primeng/button",
+      "primengBase": "primeng/button, primeng/tooltip",
       "cva": false,
       "inputs": 20,
       "api": [
@@ -1838,7 +1839,7 @@
       "selector": "sc-textarea",
       "provenance": "WRAPPER",
       "kind": "EXTENDED",
-      "primengBase": "primeng/textarea, primeng/tooltip",
+      "primengBase": "primeng/textarea",
       "cva": false,
       "inputs": 18,
       "api": [

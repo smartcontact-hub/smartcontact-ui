@@ -84,7 +84,7 @@ export class UsersListPageComponent {
   }
 
   protected readonly plusIcon = 'add';
-  protected readonly emptyIcon = 'manage_accounts';
+  protected readonly emptyIcon = 'person';
 
   protected readonly typeLabelKeys = USER_TYPE_LABEL_KEYS;
   protected readonly users = this.usersStore.users;

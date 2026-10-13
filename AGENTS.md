@@ -185,7 +185,12 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    `font-size` del texto, o su token), su peso el del texto (`weight` 600 junto a semibold) y el eje
    óptico a su tamaño (`opticalSize` 20, el mínimo, por debajo de 20 px), que engorda el trazo en
    pequeño hasta igualarlo con la letra. Un icono suelto o de control (chevron, cerrar) no sigue a
-   ningún texto y se queda en su talla.
+   ningún texto y se queda en su talla. **Un icono dice una sola cosa** (DD-200): el de cada concepto
+   sale de `SC_ICONS` y los reservados (`SC_ICON_RESERVADOS`: la X cierra o quita, la papelera elimina,
+   la hamburguesa abre la navegación) no se usan para otra cosa. **Solo icono si se entiende en cinco
+   segundos sin texto**; si no, icono y texto; si ningún icono lo dice, solo texto. El botón de solo icono
+   lleva `ariaLabel` y el tooltip lo pone `sc-button`, también con teclado. Lo vigila `audit:icons`;
+   navegable en `sc-docs` → Fundamentos → Iconos.
 5. **Densidad y jerarquía.** Layout compacto. Acciones secundarias en un kebab/overflow, métricas
    alineadas, chips a icono cuando el color ya comunica el estado. No repitas en cada vista los
    KPIs que ya están en el dashboard, y fuera las tarjetas sin dato ni acción.
@@ -319,6 +324,8 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Una cifra con su proporción en un resumen («8 de 11») | `sc-summary-kpi` del Supervisor: la cifra con «/total» y el `p-progress-spinner` nativo, que cuenta y se llena al abrir y al cambiar | `sc-gauge` (no se mueve y empieza en 96 px); un porcentaje; un anillo SVG a mano | DD-126 |
 | Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco | Spinner centrado; datos que recolocan la página al llegar | UX 2 |
 | Un icono | `<sc-icon>` (Material Symbols) | Emojis; una segunda librería | UX 4 |
+| El icono de un concepto (Agentes, Eliminar, Columnas…) | `SC_ICONS.<concepto>` del paquete de iconos | Otro icono para lo mismo; un icono reservado con otro significado | DD-200 |
+| Un botón de solo icono | `sc-button` con `ariaLabel` (el tooltip sale solo, con ratón y teclado) | `pTooltip` que repite el nombre; `title`; un `<button>` con un `sc-icon` dentro | DD-200 |
 | Un diálogo modal con contenido propio (un alta sin salir de la ficha, un aviso con su detalle) | `sc-dialog` con su `title`, que es su nombre para el lector; lo de dentro, sin rol propio | Un `role="dialog"` en lo que va dentro (sale un diálogo dentro de otro); un `p-dialog` a pelo sin nombre | DD-140 |
 | Borrar una entidad desde su ficha | `sc-form-danger-zone` + `sc-delete-entity-dialog` (el patrón de las nueve fichas que ya lo usan, ver `docs/inventory.md`) | `sc-confirmdialog` genérico; borrar sin confirmar | `docs/inventory.md` |
 | Dos flujos que se ven distintos y parece un bug | Mira DD-36 y DD-53 antes de uniformar | Igualarlos «para que cuadren» | DD-36, DD-53 |
@@ -784,6 +791,9 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
 - **`npm run verify` reescribe `dist/` bajo un `ng serve` vivo** y lo deja con `Cannot find
   module '@smartcontact-hub/components'`; el server sigue sirviendo el bundle ANTERIOR. Tras un
   `verify`, reinicia el dev server antes de volver a medir. ↔ `LEARNINGS.md` **#5**.*
+- **El `pTooltip` de PrimeNG, por defecto, NO sale al enfocar con teclado** (`tooltipEvent: 'hover'`;
+  medido en PrimeNG 22.1). Si el tooltip dice algo que el teclado necesita, `tooltipEvent="both"`;
+  el de un botón de solo icono ya lo pone `sc-button` (DD-200). Lo vigila `audit:icons`.
 - **Los iconos Material son LIGATURAS** (llegan al DOM como texto): umbral de contraste 1.4.11
   (3:1), no 4.5. Y salen en `innerText` aunque estén bien pintados → para comprobar que la
   fuente cargó, mira la imagen, no el texto.

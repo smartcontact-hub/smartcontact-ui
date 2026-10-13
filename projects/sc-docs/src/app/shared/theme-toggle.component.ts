@@ -1,15 +1,20 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 /**
- * Toggle de tema claro/oscuro: un botón único con iconos SVG de sol y luna (no emoji) que
+ * Toggle de tema claro/oscuro: un botón único con el sol y la luna de Material (`light_mode`,
+ * `dark_mode`; DD-200: un solo juego de iconos, también en la doc) que
  * se TRANSFORMA de uno a otro (funde + rota + escala), sutil y elegante, respetando
  * `prefers-reduced-motion`. No guarda estado: recibe `dark` y emite `toggle`, así el mismo
  * control sirve para el tema global (sidebar) y para el lienzo local de cada componente.
  *
- * `role="switch"` + `aria-checked`: es un interruptor accesible, no un botón cualquiera.
+ * `role="switch"` + `aria-checked`: es un interruptor accesible, no un botón cualquiera. Su nombre
+ * no cambia («Tema oscuro»): el estado lo dice `aria-checked`. Antes el nombre decía la acción
+ * («Cambiar a tema claro») y el lector oía «Cambiar a tema claro, activado».
  */
 @Component({
   selector: 'app-theme-toggle',
+  imports: [ScIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
@@ -18,20 +23,14 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
       role="switch"
       [class.tt--dark]="dark()"
       [attr.aria-checked]="dark()"
-      [attr.aria-label]="dark() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
-      [attr.title]="dark() ? 'Tema oscuro' : 'Tema claro'"
+      aria-label="Tema oscuro"
+      title="Tema oscuro"
       (click)="toggled.emit()"
     >
       <span class="tt__stage" aria-hidden="true">
-        <!-- Sol: núcleo + rayos. Visible en claro. -->
-        <svg class="tt__ico tt__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="12" cy="12" r="4.2" />
-          <path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6" />
-        </svg>
-        <!-- Luna: creciente. Visible en oscuro. -->
-        <svg class="tt__ico tt__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20.5 13.2A8.2 8.2 0 1 1 10.8 3.5 6.4 6.4 0 0 0 20.5 13.2Z" />
-        </svg>
+        <!-- Sol, visible en claro; luna, visible en oscuro. -->
+        <sc-icon class="tt__ico tt__sun" name="light_mode" [size]="14" />
+        <sc-icon class="tt__ico tt__moon" name="dark_mode" [size]="14" />
       </span>
     </button>
   `,
@@ -82,6 +81,8 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
       inset: 0;
       width: 100%;
       height: 100%;
+      align-items: center;
+      justify-content: center;
       transition:
         opacity 420ms cubic-bezier(0.34, 0.08, 0.16, 1),
         transform 420ms cubic-bezier(0.34, 0.08, 0.16, 1);

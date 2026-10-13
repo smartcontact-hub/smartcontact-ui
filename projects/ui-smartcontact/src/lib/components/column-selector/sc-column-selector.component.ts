@@ -11,7 +11,7 @@ import {
 import { PopoverModule } from 'primeng/popover';
 
 
-import { ScIconComponent } from '@smartcontact-hub/icons';
+import { SC_ICONS, ScIconComponent } from '@smartcontact-hub/icons';
 
 export interface ColumnDef {
   /** Stable key persisted in localStorage. */
@@ -78,7 +78,8 @@ export class ScColumnSelectorComponent {
   readonly visibilityChange = output<ReadonlySet<string>>();
 
   protected readonly columnsIcon = 'view_column';
-  protected readonly resetIcon = 'rotate_left';
+  /** Restablecer = `restart_alt` (DD-200): `rotate_left` decía también retroceder y re-transcribir. */
+  protected readonly resetIcon = SC_ICONS.restablecer;
   protected readonly gripIcon = 'drag_indicator';
   protected readonly lockIcon = 'lock';
 

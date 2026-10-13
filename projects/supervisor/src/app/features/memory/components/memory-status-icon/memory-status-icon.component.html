@@ -1,10 +1,6 @@
 @let s = status();
-<span
-  class="memory-status-icon"
-  [class.is-animating]="s.animating"
-  [attr.title]="tooltip()"
-  [attr.aria-label]="tooltip()"
->
+<!-- El nombre (y el estado) lo dice el botón que lo envuelve, con su aria-label y su tooltip: aquí no se repite. -->
+<span class="memory-status-icon">
   @switch (s.kind) {
     @case ('call') {
       <svg
@@ -21,6 +17,8 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         />
+        <!-- Sin grabación: el teléfono tachado, la forma de «apagado» (DD-200). Antes dibujaba lo mismo que «grabada». -->
+        <path d="M2.5 2.5L17.5 17.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
       </svg>
     }
     @case ('call_recorded') {
@@ -135,5 +133,12 @@
         />
       </svg>
     }
+  }
+  <!-- Fallo y trabajo en curso con FORMA propia, no solo color o parpadeo (DD-200, WCAG 1.4.1): la insignia de error, o
+       la de progreso, que gira y se queda quieta con «reducir movimiento». -->
+  @if (s.tone === 'error') {
+    <sc-icon class="memory-status-icon__badge" name="error" filled [size]="tallaInsignia" />
+  } @else if (s.animating) {
+    <sc-icon class="memory-status-icon__badge" name="progress_activity" spin [size]="tallaInsignia" />
   }
 </span>

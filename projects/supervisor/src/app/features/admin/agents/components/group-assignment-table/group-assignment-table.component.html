@@ -73,7 +73,6 @@
       <sc-checkbox state="none" disabled [ariaLabel]="'groups.form.assigned.not_allowed' | translate: { name: row.group.name, channel: col.header }" />
       <sc-button variant="secondary" appearance="text" size="sm" icon="lock"
         [ariaLabel]="'agents.form.assigned.not_allowed_hint' | translate: { channel: col.header }"
-        [pTooltip]="'agents.form.assigned.not_allowed_hint' | translate: { channel: col.header }" tooltipPosition="top"
         (clicked)="irA.emit('canales')" />
     </span>
   } @else if (isLastChannel(row.link, col.field)) {
@@ -128,8 +127,6 @@
       icon="call_made"
       [disabled]="pending()"
       [ariaLabel]="'agents.form.assigned.outbound_set' | translate: { name: row.group.name }"
-      [pTooltip]="'agents.form.assigned.outbound_set' | translate: { name: row.group.name }"
-      tooltipPosition="top"
       (clicked)="setOutbound(row.group.id)"
     />
   } @else {
@@ -146,7 +143,6 @@
         [ariaLabel]="'agents.form.assigned.active_self_aria' | translate: { name: row.group.name }" />
       <sc-button variant="secondary" appearance="text" size="sm" icon="lock"
         [ariaLabel]="'agents.form.assigned.self_activate_hint' | translate"
-        [pTooltip]="'agents.form.assigned.self_activate_hint' | translate" tooltipPosition="top"
         (clicked)="irA.emit('configuracion')" />
     </span>
   } @else if (!row.link) {

@@ -12,7 +12,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
   template: `
     <div class="sb-snippet">
       <button type="button" class="sb-snippet__copy" (click)="copy()">
-        <sc-icon [name]="copied() ? 'check' : 'content_copy'" [size]="13" />
+        <sc-icon [name]="copied() ? 'check' : 'content_copy'" size="inherit" />
         {{ copied() ? 'Copiado' : 'Copiar' }}
       </button>
       <pre><code>{{ code() }}</code></pre>

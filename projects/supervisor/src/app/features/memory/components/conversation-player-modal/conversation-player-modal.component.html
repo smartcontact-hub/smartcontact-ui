@@ -77,11 +77,11 @@
 
         <span class="player-tabs__actions">
           @if (c.hasTranscription) {
-            <sc-button variant="secondary" appearance="text" size="sm" [icon]="back10Icon" [ariaLabel]="'memory.player.actions.retranscribe' | translate" [attr.title]="'memory.player.actions.retranscribe' | translate" data-testid="player-retrans-btn" (clicked)="onOpenRetransConfirm()" />
+            <sc-button variant="secondary" appearance="text" size="sm" [icon]="retranscribeIcon" [label]="'memory.player.actions.retranscribe' | translate" data-testid="player-retrans-btn" (clicked)="onOpenRetransConfirm()" />
           }
           <!-- «documento con análisis» (librería Smart-Contact Icons, «Custom»): no está en Material,
                así que va en SVG proyectado, con la geometría 24/18 de la librería. -->
-          <sc-button variant="secondary" appearance="text" size="sm" [ariaLabel]="'memory.player.actions.analyze' | translate" [attr.title]="analyzeTitleKey() | translate" [disabled]="analyzeDisabled()" data-testid="player-analyze-btn" (clicked)="onRequestAnalysis()">
+          <sc-button variant="secondary" appearance="text" size="sm" [label]="'memory.player.actions.analyze' | translate" [attr.title]="analyzeTitleKey() | translate" [disabled]="analyzeDisabled()" data-testid="player-analyze-btn" (clicked)="onRequestAnalysis()">
             <ng-template #scButtonIcon>
               <svg class="player-tabs__glyph" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
                 <path d="M2.3333 14.7778Q1.6917 14.7778 1.2347 14.3208Q0.7778 13.8639 0.7778 13.2222V0.7778Q0.7778 0.1361 1.2347 -0.3208Q1.6917 -0.7778 2.3333 -0.7778H7.9139Q8.225 -0.7778 8.5069 -0.6611Q8.7889 -0.5444 9.0028 -0.3306L12.775 3.4417Q12.9889 3.6556 13.1056 3.9375Q13.2222 4.2194 13.2222 4.5306V13.2222Q13.2222 13.8639 12.7653 14.3208Q12.3083 14.7778 11.6667 14.7778ZM7.7778 3.8889V0.7778H2.3333V13.2222H11.6667V4.6667H8.5556Q8.225 4.6667 8.0014 4.4431Q7.7778 4.2194 7.7778 3.8889Z" />
@@ -89,7 +89,7 @@
               </svg>
             </ng-template>
           </sc-button>
-          <sc-button variant="secondary" appearance="text" size="sm" [icon]="downloadIcon" [ariaLabel]="(isChat() ? 'memory.player.actions.download_chat' : 'memory.player.actions.download_audio' ) | translate" [attr.title]="(isChat() ? 'memory.player.actions.download_chat' : 'memory.player.actions.download_audio' ) | translate" (clicked)="onDownload()" />
+          <sc-button variant="secondary" appearance="text" size="sm" [icon]="downloadIcon" [ariaLabel]="(isChat() ? 'memory.player.actions.download_chat' : 'memory.player.actions.download_audio' ) | translate" (clicked)="onDownload()" />
         </span>
       </div>
 
@@ -100,7 +100,7 @@
               <sc-icon
                 class="player-state__spinner"
                 name="progress_activity"
-                [size]="24"
+                [size]="28"
                 [spin]="true"
               />
               <div class="player-state__text">
@@ -114,7 +114,7 @@
             </div>
           } @else if (!c.hasRecording && c.channel === 'llamada') {
             <div class="player-state">
-              <sc-icon class="player-state__icon" [name]="fileXIcon" [size]="24" />
+              <sc-icon class="player-state__icon" [name]="fileXIcon" [size]="28" />
               <h3 class="player-state__title">
                 {{ 'memory.player.empty.no_recording_title' | translate }}
               </h3>
@@ -124,7 +124,7 @@
             </div>
           } @else if (!c.hasTranscription) {
             <div class="player-state player-state--decision">
-              <sc-icon class="player-state__icon" [name]="fileTextIcon" [size]="24" />
+              <sc-icon class="player-state__icon" [name]="fileTextIcon" [size]="28" />
               <div class="player-state__text">
                 <h3 class="player-state__title">
                   {{ 'memory.player.empty.no_transcription_title' | translate }}
@@ -143,7 +143,7 @@
             </div>
           } @else if (!c.transcription || c.transcription.length === 0) {
             <div class="player-state">
-              <sc-icon class="player-state__icon" [name]="fileTextIcon" [size]="24" />
+              <sc-icon class="player-state__icon" [name]="fileTextIcon" [size]="28" />
               <h3 class="player-state__title">
                 {{ 'memory.player.empty.transcription_empty_title' | translate }}
               </h3>
@@ -192,7 +192,7 @@
               <sc-icon
                 class="player-state__spinner"
                 name="progress_activity"
-                [size]="24"
+                [size]="28"
                 [spin]="true"
               />
               <div class="player-state__text">
@@ -207,7 +207,7 @@
           } @else if (!c.hasAnalysis) {
             @if (!canRequestAnalysis()) {
               <div class="player-state player-state--decision">
-                <sc-icon class="player-state__icon" [name]="sparklesIcon" [size]="24" />
+                <sc-icon class="player-state__icon" [name]="sparklesIcon" [size]="28" />
                 <div class="player-state__text">
                   <h3 class="player-state__title">
                     {{ 'memory.player.empty.deadend_title' | translate }}
@@ -226,7 +226,7 @@
               </div>
             } @else {
               <div class="player-state player-state--decision">
-                <sc-icon class="player-state__icon" [name]="sparklesIcon" [size]="24" />
+                <sc-icon class="player-state__icon" [name]="sparklesIcon" [size]="28" />
                 <div class="player-state__text">
                   <h3 class="player-state__title">
                     {{ 'memory.player.empty.ready_title' | translate }}

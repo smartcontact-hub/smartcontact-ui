@@ -23,7 +23,7 @@
       <section class="group">
         <header class="group__head">
           <span class="group__num">{{ 'memory.rules.builder.cond.group_n' | translate: { n: gi + 1 } }}</span>
-          <sc-button class="group__remove" variant="secondary" appearance="text" size="sm" [icon]="closeIcon" [ariaLabel]="'memory.rules.builder.cond.remove_group' | translate" (clicked)="removeGroup(group.id)" />
+          <sc-button class="group__remove" variant="secondary" appearance="text" size="sm" [icon]="deleteIcon" [ariaLabel]="'memory.rules.builder.cond.remove_group' | translate" (clicked)="removeGroup(group.id)" />
         </header>
 
         <ng-container *ngTemplateOutlet="rows; context: { $implicit: group, flat: false }" />
@@ -149,7 +149,7 @@
             </div>
           }
 
-          <sc-button class="cond-row__remove" variant="secondary" appearance="text" size="sm" [icon]="closeIcon" [ariaLabel]="'memory.rules.builder.cond.remove_condition' | translate" (clicked)="removeCondition(group.id, cond.id)" />
+          <sc-button class="cond-row__remove" variant="secondary" appearance="text" size="sm" [icon]="deleteIcon" [ariaLabel]="'memory.rules.builder.cond.remove_condition' | translate" (clicked)="removeCondition(group.id, cond.id)" />
         </div>
 
         @if (issuesForCond(cond.id).length) {
@@ -160,7 +160,7 @@
                 [class.cond-issue--error]="issue.severity === 'error'"
                 [class.cond-issue--warn]="issue.severity === 'warning'"
               >
-                <sc-icon [name]="issue.severity === 'error' ? 'error' : 'warning'" [size]="13" />
+                <sc-icon [name]="issue.severity === 'error' ? 'error' : 'warning'" size="inherit" />
                 <span>{{ 'memory.rules.builder.cond.val.' + issue.code | translate }}</span>
               </li>
             }

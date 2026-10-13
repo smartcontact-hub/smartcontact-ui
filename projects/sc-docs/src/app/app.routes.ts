@@ -27,6 +27,10 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/patrones/patrones.component').then((m) => m.PatronesComponent),
       },
+      {
+        path: 'iconos',
+        loadComponent: () => import('./pages/iconos/iconos.component').then((m) => m.IconosComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'escala-color' },
     ],
   },

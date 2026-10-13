@@ -9,6 +9,35 @@
     user-select: none;
 }
 
+/* DD-200 — el color con significado, solo desde los tokens de icono. */
+.sc-icon--tono-subtle {
+    color: var(--sc-icon-subtle);
+}
+
+.sc-icon--tono-accent {
+    color: var(--sc-icon-accent);
+}
+
+.sc-icon--tono-info {
+    color: var(--sc-icon-info);
+}
+
+.sc-icon--tono-success {
+    color: var(--sc-icon-success);
+}
+
+.sc-icon--tono-warning {
+    color: var(--sc-icon-warning);
+}
+
+.sc-icon--tono-error {
+    color: var(--sc-icon-error);
+}
+
+.sc-icon--tono-disabled {
+    color: var(--sc-icon-disabled);
+}
+
 .sc-icon--sm {
     font-size: var(--sc-font-size-200);
 }

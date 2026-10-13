@@ -76,7 +76,7 @@
 
         <div class="category-form__link-head">
           <h3>{{ 'memory.categories.linking.title' | translate }}</h3>
-          <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'memory.categories.linking.tooltip' | translate" [pTooltip]="'memory.categories.linking.tooltip' | translate" tooltipPosition="right" tabindex="0" />
+          <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'memory.categories.linking.tooltip' | translate" tabindex="0" />
         </div>
 
         @if (linkedRules().length === 0 && !hasAnyRules()) {

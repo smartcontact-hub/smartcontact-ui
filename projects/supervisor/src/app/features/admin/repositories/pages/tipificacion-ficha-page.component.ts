@@ -129,7 +129,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   protected readonly navSections = computed<readonly FormNavSection[]>(() =>
     [
       { id: GENERAL, labelKey: 'repositories.tipificaciones.section.general', icon: 'tune' },
-      { id: CATEGORIAS, labelKey: 'repositories.tipificaciones.section.categorization', icon: 'menu' },
+      { id: CATEGORIAS, labelKey: 'repositories.tipificaciones.section.categorization', icon: 'account_tree' },
     ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) })),
   );
 

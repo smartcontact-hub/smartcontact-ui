@@ -1,4 +1,4 @@
-<div class="pasos" aria-label="Progreso del caso">
+<div class="pasos" role="group" aria-label="Progreso del caso">
   @for (m of misiones; track m.id; let i = $index) {
     <button
       type="button"
@@ -61,7 +61,7 @@
           </span>
         }
         @if (l().desborda > 0) {
-          <span class="scroll" aria-label="Scroll horizontal">
+          <span class="scroll">
             <i></i>
             <span>scroll horizontal · se sale {{ l().desborda }}</span>
           </span>
@@ -100,7 +100,7 @@
 {{ '}' }}</pre>
           }
         </div>
-        <div class="migas" aria-label="Camino hasta la pieza seleccionada">
+        <div class="migas" role="group" aria-label="Camino hasta la pieza seleccionada">
           @for (g of migas; track g; let i = $index) {
             @if (i > 0) {
               <span class="migas__sep" aria-hidden="true">›</span>

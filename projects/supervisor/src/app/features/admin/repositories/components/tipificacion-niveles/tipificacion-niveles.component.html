@@ -36,6 +36,7 @@
         [attr.aria-label]="accion('repositories.tipificaciones.option_actions.move', opcion)"
         [pTooltip]="'repositories.tipificaciones.option_actions.move_hint' | translate"
         tooltipPosition="top"
+        tooltipEvent="both"
         (dragstart)="empezarArrastre($event, padres, opcion.id)"
         (dragend)="terminarArrastre()"
         (keydown)="teclaTirador($event, padres, opcion.id)"
@@ -62,8 +63,6 @@
           icon="subdirectory_arrow_right"
           variant="secondary"
           [ariaLabel]="'repositories.tipificaciones.add_under_aria' | translate: { name: opcion.label || ('repositories.tipificaciones.unnamed' | translate) }"
-          [pTooltip]="'repositories.tipificaciones.add_under_aria' | translate: { name: opcion.label || ('repositories.tipificaciones.unnamed' | translate) }"
-          tooltipPosition="top"
           (clicked)="anadir([...padres, opcion.id], 'inicio')"
         />
       }
@@ -72,8 +71,6 @@
         appearance="text"
         icon="delete"
         [ariaLabel]="accion('repositories.tipificaciones.option_actions.delete', opcion)"
-        [pTooltip]="accion('repositories.tipificaciones.option_actions.delete', opcion)"
-        tooltipPosition="top"
         (clicked)="pedirEliminar(padres, opcion)"
       />
     </div>

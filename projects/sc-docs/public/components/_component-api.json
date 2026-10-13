@@ -1065,7 +1065,7 @@
     {
       "selector": "sc-button",
       "name": "button",
-      "primengBase": "primeng/button",
+      "primengBase": "primeng/button, primeng/tooltip",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -1232,7 +1232,7 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": "Nombre accesible del icono, para cuando el icono es el que lleva el significado y no hay etiqueta que lo diga. Sin esto, un botón de solo icono no se anuncia.",
+          "descripcion": "Nombre accesible del icono, para cuando el icono es el que lleva el significado y no hay etiqueta que lo diga. mientras alguien la use; hace lo mismo que antes.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -1302,7 +1302,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": "Solo el icono, como la propiedad «Icon Only» del Kit: el rótulo no se pinta y pasa a ser el nombre accesible (y el tooltip, si lo pone quien lo usa). Necesita `icon`. Sin esto, un botón de solo icono es el que no lleva `label`.",
+          "descripcion": "Solo el icono, como la propiedad «Icon Only» del Kit: el rótulo no se pinta y pasa a ser el nombre accesible y el tooltip. Necesita `icon`. Sin esto, un botón de solo icono es el que no lleva `label`.",
           "origen": "nativo",
           "nativo": {
             "descripcion": "Forces icon-only styling regardless of content. When unset, icon-only is inferred from the absence of a label/badge.",
@@ -1338,13 +1338,21 @@
         }
       ],
       "ocultas": [
+        "appendTo",
+        "autoHide",
         "autofocus",
         "badge",
         "badgeSeverity",
         "buttonProps",
+        "content",
+        "escape",
+        "fitContent",
         "fluid",
+        "hideDelay",
+        "hideOnEscape",
         "hostName",
         "iconPos",
+        "life",
         "link",
         "loadingIcon",
         "outlined",
@@ -1354,12 +1362,25 @@
         "pButtonLabelUnstyled",
         "pButtonPT",
         "pButtonUnstyled",
+        "pTooltipPT",
+        "pTooltipUnstyled",
         "plain",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
         "severity",
+        "showDelay",
+        "showOnEllipsis",
         "style",
         "styleClass",
         "tabindex",
-        "text"
+        "text",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
       ]
     },
     {
@@ -8454,7 +8475,7 @@
     {
       "selector": "sc-textarea",
       "name": "textarea",
-      "primengBase": "primeng/textarea, primeng/tooltip",
+      "primengBase": "primeng/textarea",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -8682,30 +8703,9 @@
         }
       ],
       "ocultas": [
-        "appendTo",
-        "autoHide",
-        "content",
-        "escape",
-        "fitContent",
-        "hideDelay",
-        "hideOnEscape",
-        "life",
         "pSize",
         "pTextareaPT",
-        "pTextareaUnstyled",
-        "pTooltipPT",
-        "pTooltipUnstyled",
-        "positionLeft",
-        "positionStyle",
-        "positionTop",
-        "showDelay",
-        "showOnEllipsis",
-        "tooltipDisabled",
-        "tooltipEvent",
-        "tooltipOptions",
-        "tooltipPosition",
-        "tooltipStyleClass",
-        "tooltipZIndex"
+        "pTextareaUnstyled"
       ]
     },
     {

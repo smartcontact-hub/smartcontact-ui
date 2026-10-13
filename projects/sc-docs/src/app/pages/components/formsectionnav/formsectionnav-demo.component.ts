@@ -101,7 +101,7 @@ export class FormSectionNavDemoComponent {
     { id: 'general', labelKey: 'General', icon: 'tune', href: this.hrefFor('general') },
     { id: 'voz', labelKey: 'Voz y saludo', icon: 'record_voice_over', href: this.hrefFor('voz') },
     { id: 'horario', labelKey: 'Horario', icon: 'schedule', href: this.hrefFor('horario') },
-    { id: 'avanzado', labelKey: 'Avanzado', icon: 'settings', href: this.hrefFor('avanzado') },
+    { id: 'avanzado', labelKey: 'Avanzado', icon: 'tune', href: this.hrefFor('avanzado') },
   ];
   readonly active = signal('general');
   readonly errors = new Set(['horario']);

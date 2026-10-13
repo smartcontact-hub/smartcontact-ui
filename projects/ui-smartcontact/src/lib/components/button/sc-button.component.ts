@@ -1,16 +1,23 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    afterEveryRender,
+    afterNextRender,
+    afterRenderEffect,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
     contentChild,
+    ElementRef,
+    inject,
     input,
+    isDevMode,
     output,
+    signal,
     TemplateRef
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import type { ButtonPassThrough } from 'primeng/types/button';
+import { Tooltip } from 'primeng/tooltip';
 
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
 import {
@@ -39,7 +46,7 @@ type PrimeButtonSize = 'small' | 'large' | undefined;
 @Component({
     selector: 'sc-button',
     standalone: true,
-    imports: [ButtonModule, NgTemplateOutlet],
+    imports: [ButtonModule, NgTemplateOutlet, Tooltip],
     templateUrl: './sc-button.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -85,7 +92,10 @@ export class ScButtonComponent {
 
     /**
      * Nombre accesible del icono, para cuando el icono es el que lleva el significado y no hay
-     * etiqueta que lo diga. Sin esto, un botón de solo icono no se anuncia.
+     * etiqueta que lo diga.
+     *
+     * @deprecated Usa `ariaLabel` (DD-200): dos entradas para el mismo nombre dejaban decidir cuál gana. Se queda
+     * mientras alguien la use; hace lo mismo que antes.
      */
     readonly iconAriaLabel = input<string | null>(null);
 
@@ -110,8 +120,8 @@ export class ScButtonComponent {
     readonly rounded = input(false, { transform: booleanAttribute });
 
     /**
-     * Solo el icono, como la propiedad «Icon Only» del Kit: el rótulo no se pinta y pasa a ser el nombre accesible (y el
-     * tooltip, si lo pone quien lo usa). Necesita `icon`. Sin esto, un botón de solo icono es el que no lleva `label`.
+     * Solo el icono, como la propiedad «Icon Only» del Kit: el rótulo no se pinta y pasa a ser el nombre accesible y el
+     * tooltip. Necesita `icon`. Sin esto, un botón de solo icono es el que no lleva `label`.
      */
     readonly iconOnly = input(false, { transform: booleanAttribute });
 
@@ -130,6 +140,17 @@ export class ScButtonComponent {
 
     /** El botón se ha pulsado. Es el `onClick` de PrimeNG renombrado a la convención del DS. */
     readonly clicked = output<MouseEvent>();
+
+    /** Un `pTooltip` puesto en el propio `<sc-button>` por quien lo usa: si lo hay, el suyo manda y no se pinta otro. */
+    private readonly tooltipDeFuera = inject(Tooltip, { self: true, optional: true });
+
+    private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+    /**
+     * Texto que quien lo usa proyecta dentro (`<sc-button>Cancelar</sc-button>`, 64 usos): no pasa por `label`, así
+     * que solo se sabe mirando el `<button>` ya pintado. Con él el botón no es de solo icono.
+     */
+    private readonly textoDentro = signal(false);
 
     protected readonly isInteractionDisabled = computed(() => this.disabled() || this.loading());
 
@@ -193,6 +214,65 @@ export class ScButtonComponent {
         return undefined;
     });
 
+    /** El `<button>` que pinta PrimeNG: el que recibe el foco y el que anuncia el lector. */
+    private boton(): HTMLButtonElement | null {
+        return this.host.nativeElement.querySelector('button');
+    }
+
+    /** Lleva icono: por nombre o por plantilla propia. */
+    private readonly tieneIcono = computed(() => !!this.icon()?.trim() || !!this.customIcon());
+
+    /**
+     * El tooltip de un botón de solo icono (DD-200): su nombre accesible, al pasar el ratón **y al enfocar con
+     * teclado**, como el `IconButton` de Primer («the tooltip visually replicates the accessible name»). Antes lo ponía
+     * cada pantalla a mano, en 16 de 66 botones, y con el `tooltipEvent` por defecto de PrimeNG (`hover`) no salía
+     * con teclado en ninguno. Si quien lo usa pone su propio `pTooltip` (otra cosa que el nombre), manda el suyo.
+     */
+    protected readonly tooltipAutomatico = computed<string | null>(() => {
+        if (this.tooltipDeFuera || !this.tieneIcono() || this.visibleLabel().trim() || this.textoDentro()) {
+            return null;
+        }
+
+        return this.buttonAriaLabel() ?? null;
+    });
+
+    constructor() {
+        afterEveryRender(() => {
+            const hay = !!this.boton()?.textContent?.trim();
+            if (hay !== this.textoDentro()) {
+                this.textoDentro.set(hay);
+            }
+        });
+
+        // `p-button` no tiene entrada para `aria-haspopup`/`aria-expanded`/`aria-controls`, y el host `<sc-button>`
+        // nunca recibe el foco: van al `<button>` real. Antes iban por su passthrough (`[pt]`), pero el `pTooltip` del
+        // botón de solo icono vive en el mismo `<p-button>` y también tiene una entrada `pt` (DD-200): el binding le
+        // llegaba a los dos. Sin valor, el atributo no se escribe.
+        afterRenderEffect({
+            write: () => {
+                const boton = this.boton();
+                if (!boton) {
+                    return;
+                }
+                const expandido = this.ariaExpanded();
+                ponerAtributo(boton, 'aria-haspopup', this.ariaHasPopup());
+                ponerAtributo(boton, 'aria-expanded', expandido === null ? null : String(expandido));
+                ponerAtributo(boton, 'aria-controls', this.ariaControls());
+            }
+        });
+
+        // Un botón de solo icono sin nombre no se anuncia y no tiene tooltip: en desarrollo, que se note.
+        if (isDevMode()) {
+            afterNextRender(() => {
+                if (this.tieneIcono() && !this.visibleLabel().trim() && !this.textoDentro() && !this.buttonAriaLabel()) {
+                    console.warn(
+                        `sc-button: botón de solo icono («${this.icon() ?? 'plantilla propia'}») sin nombre. Ponle ariaLabel (DD-200).`
+                    );
+                }
+            });
+        }
+    }
+
     protected readonly iconAriaHidden = computed<'true' | null>(() =>
         this.iconAccessibleLabel() ? null : 'true'
     );
@@ -200,19 +280,6 @@ export class ScButtonComponent {
     protected readonly iconRole = computed<'img' | null>(() =>
         this.iconAccessibleLabel() ? 'img' : null
     );
-
-    /**
-     * `p-button` no tiene entrada para `aria-haspopup`/`aria-expanded`/`aria-controls`: van al
-     * `<button>` real por passthrough (`pt.root`), igual que `ariaDescribedBy` en `sc-toggleswitch`.
-     * `undefined` hace que `pBind` quite el atributo, así que sin fijar nada no se escribe ninguno.
-     */
-    protected readonly buttonPt = computed<ButtonPassThrough>(() => ({
-        root: {
-            'aria-haspopup': this.ariaHasPopup() ?? undefined,
-            'aria-expanded': this.ariaExpanded() ?? undefined,
-            'aria-controls': this.ariaControls() ?? undefined
-        }
-    }));
 
     protected buttonIconClass(iconClass: string, buttonIcon: string): string {
         return [iconClass, buttonIcon].filter(Boolean).join(' ');
@@ -226,5 +293,13 @@ export class ScButtonComponent {
         }
 
         this.clicked.emit(event);
+    }
+}
+
+function ponerAtributo(el: HTMLElement, nombre: string, valor: string | null): void {
+    if (valor === null || valor === '') {
+        el.removeAttribute(nombre);
+    } else {
+        el.setAttribute(nombre, valor);
     }
 }

@@ -101,7 +101,7 @@ export class SistemaPageComponent {
   private readonly agentsStore = inject(AgentsStore);
 
   protected readonly settingsIcon = 'settings';
-  protected readonly resetIcon = 'rotate_left';
+  protected readonly resetIcon = 'restart_alt';
   protected readonly shieldIcon = 'shield';
   protected readonly keyIcon = 'key';
   protected readonly searchIcon = 'search';

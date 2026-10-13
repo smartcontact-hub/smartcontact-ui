@@ -95,7 +95,8 @@
     "tabs": {
       "escala-color": "Escala y color",
       "tipografia": "Tipografía",
-      "patrones": "Patrones"
+      "patrones": "Patrones",
+      "iconos": "Iconos"
     },
     "type": {
       "title": "Tipografía",
@@ -164,7 +165,7 @@
           "title": "Iconografía consistente",
           "apply": "Una sola librería profesional, siempre vía sc-icon (Material Symbols).",
           "avoid": "Emojis en la interfaz, o mezclar dos juegos de iconos.",
-          "have": "sc-icon sobre el set generado: un único idioma visual en todas las apps."
+          "have": "sc-icon sobre el set generado: un único idioma visual en todas las apps. Qué icono dice cada cosa, en Fundamentos → Iconos."
         },
         "density": {
           "title": "Densidad y jerarquía",
@@ -243,6 +244,96 @@
         "peligro": "Peligro",
         "violeta": "Violeta"
       }
+    },
+    "iconos": {
+      "title": "Iconos",
+      "lead": "Un icono va solo si se entiende en cinco segundos sin texto. Si no, icono y texto. Si ningún icono lo dice, solo texto. La regla vive en el paquete de iconos (<code>SC_ICONS</code> y <code>SC_ICON_RESERVADOS</code>) y la vigila <code>audit:icons</code>.",
+      "cuando": {
+        "title": "Cuándo icono, cuándo texto",
+        "solo": {
+          "title": "Solo icono",
+          "apply": "El icono es universal y el contexto lo explica: cerrar, más acciones, añadir, eliminar, editar, reproducir.",
+          "note": "Lleva ariaLabel. El tooltip con ese nombre lo pone el botón, al pasar el ratón y al enfocar con teclado.",
+          "ejemplo": "Más acciones"
+        },
+        "mixto": {
+          "title": "Icono y texto",
+          "apply": "El concepto no tiene un dibujo inmediato, es navegación o es una acción de una barra: columnas, filtrar, importar, re-transcribir.",
+          "ejemplo": "Columnas"
+        },
+        "texto": {
+          "title": "Solo texto",
+          "apply": "Ningún icono lo dice en cinco segundos: General, Avanzado, Cancelar en un diálogo.",
+          "ejemplo": "Cancelar"
+        }
+      },
+      "siNo": {
+        "title": "Un icono, un significado",
+        "si": "Sí",
+        "no": "No",
+        "eliminar": "Eliminar",
+        "quitar": "Quitar de la lista",
+        "opciones": "Opciones",
+        "siNota": "La papelera elimina, la X quita o cierra y las opciones son un ajuste.",
+        "noNota": "La X que elimina, la papelera que solo quita y la hamburguesa, que abre la navegación, para unas opciones."
+      },
+      "reservados": {
+        "title": "Iconos reservados",
+        "lead": "Un solo significado en todo el producto. El control que lleva uno se llama con lo que significa.",
+        "icono": "Icono",
+        "significa": "Significa",
+        "noSignifica": "No significa"
+      },
+      "conceptos": {
+        "title": "Un icono por concepto",
+        "lead": "Las entidades llevan el icono del menú lateral; las acciones, el de Material. Úsalo desde la pantalla, <code>SC_ICONS.agentes</code>, y no el nombre suelto.",
+        "nombres": {
+          "agentes": "Agentes",
+          "grupos": "Grupos",
+          "usuarios": "Usuarios",
+          "administracion": "Administración",
+          "anadir": "Añadir, crear, nuevo",
+          "anadirDebajo": "Añadir debajo (un nivel)",
+          "editar": "Editar",
+          "eliminar": "Eliminar",
+          "quitar": "Quitar de una lista",
+          "cerrar": "Cerrar",
+          "masAcciones": "Más acciones",
+          "filtrar": "Filtrar",
+          "columnas": "Columnas",
+          "restablecer": "Restablecer",
+          "descargar": "Descargar, exportar",
+          "importar": "Importar",
+          "copiar": "Copiar",
+          "buscar": "Buscar",
+          "configuracion": "Configuración",
+          "retroceder10": "Retroceder 10 s",
+          "avanzar10": "Avanzar 10 s",
+          "transcribir": "Transcribir",
+          "navegacion": "Abrir la navegación"
+        }
+      },
+      "talla": {
+        "title": "Tamaño",
+        "inherit": "Junto a un texto, <code>size=\"inherit\"</code>, con el peso y el eje óptico del texto (DD-24, DD-189).",
+        "suelto": "Suelto, una talla de la escala: 8 a 20 y 28, y 32 a 64 para ilustración. Una talla intermedia (13, 15, 24) no compila."
+      },
+      "color": {
+        "title": "Color con significado",
+        "lead": "Solo con <code>tone</code>, que sale de los tokens <code>--sc-icon-*</code>, y siempre con su forma y su texto. Dos estados que solo cambian de color no se distinguen.",
+        "success": "Hecho",
+        "warning": "Atención",
+        "error": "Falló",
+        "info": "Información"
+      },
+      "a11y": {
+        "title": "Accesibilidad",
+        "decorativo": "Decorativo por defecto: <code>sc-icon</code> sin <code>ariaLabel</code> no se anuncia.",
+        "significado": "Con significado propio y sin texto al lado, <code>ariaLabel</code>: pasa a <code>role=\"img\"</code>.",
+        "boton": "Botón de solo icono: <code>ariaLabel</code>. El tooltip lo pone el botón, también al enfocar; un <code>title</code> sobra.",
+        "contraste": "Contraste de al menos 3:1 y diana de al menos 24 px."
+      },
+      "foot": "Contrastado con <a href=\"https://www.nngroup.com/articles/icon-usability/\" target=\"_blank\" rel=\"noopener\">NN/g, Icon Usability</a> y <a href=\"https://primer.style/product/components/icon-button/\" target=\"_blank\" rel=\"noopener\">el IconButton de Primer</a>. Decisión: DD-200."
     }
   },
   "uso": {
