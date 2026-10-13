@@ -54,7 +54,9 @@
           }
         </tr>
       </ng-template>
-      <div scTableEmpty class="assign__no-results sc-text-body-regular">{{ 'groups.form.assigned.no_results' | translate }}</div>
+      <div scTableEmpty>
+        <sc-empty-state icon="search_off" titleKey="labels.no_results.title" bodyKey="groups.form.assigned.no_results" />
+      </div>
     </sc-datatable>
   </div>
 </div>
@@ -131,13 +133,16 @@
   }
 </ng-template>
 
+<!-- Nivel: entero 1-10, no una categoría — un stepper pesa menos que una lista de 10 opciones (auditoría UX, 2026-10). -->
 <ng-template #levelTpl let-row let-col="col">
-  <span [id]="'group-' + col.field + '-label-' + row.agent.id" class="visually-hidden">{{ 'groups.form.assigned.level_aria' | translate: { name: row.agent.name, channel: (familyLabelKeys[levelFamily(col.field)] | translate) } }}</span>
-  <sc-select
+  <label [attr.for]="'group-' + col.field + '-' + row.agent.id" class="visually-hidden">{{ 'groups.form.assigned.level_aria' | translate: { name: row.agent.name, channel: (familyLabelKeys[levelFamily(col.field)] | translate) } }}</label>
+  <sc-inputnumber
+    class="assign__level-input"
     size="sm"
     [inputId]="'group-' + col.field + '-' + row.agent.id"
-    [ariaLabelledBy]="'group-' + col.field + '-label-' + row.agent.id"
-    [options]="levelOptions"
+    [min]="1"
+    [max]="10"
+    [step]="1"
     [disabled]="!row.link || pending() || !allowed(row.agent, levelFamily(col.field))"
     [value]="row.link?.levels?.[levelFamily(col.field)] ?? 1"
     (valueChange)="setLevel(row.agent.id, col.field, $event)"

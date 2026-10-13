@@ -70,10 +70,4 @@
     flex-direction: column;
     gap: var(--sc-spacing-0-5);
   }
-
-  &__no-results {
-    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
-    text-align: center;
-    color: var(--sc-text-subtle);
-  }
 }

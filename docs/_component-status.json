@@ -243,7 +243,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 186,
+      "usedInSupervisor": 187,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -688,7 +688,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 20,
+      "usedInSupervisor": 22,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "sobreObsoleto": []
     },
@@ -1064,7 +1064,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 11,
+      "usedInSupervisor": 12,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1511,7 +1511,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 2,
       "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
       "sobreObsoleto": []
     },
@@ -1633,7 +1633,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 61,
+      "usedInSupervisor": 60,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1829,7 +1829,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 29,
+      "usedInSupervisor": 30,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
