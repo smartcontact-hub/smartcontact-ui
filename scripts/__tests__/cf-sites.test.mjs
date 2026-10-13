@@ -21,7 +21,7 @@ test('el repo de hoy está alineado: las apps que sella son exactamente las del 
 test('las apps selladas se leen de los `build:*` que terminan en stamp-build.mjs', () => {
   assert.deepEqual(
     [...appsSelladas(scripts).keys()].sort(),
-    ['agent', 'agent-mini', 'cuscare', 'sc-docs', 'supervisor'],
+    ['agent', 'agent-mini', 'cuscare', 'cuscare-ds', 'sc-docs', 'supervisor'],
   );
   // `build` y `build:components` construyen pero no sellan: no son sitios y no cuentan.
   assert.equal(appsSelladas(scripts).has('components'), false);
@@ -69,8 +69,8 @@ test('ROJO · el sello lo pone un script distinto del que dice el catálogo', ()
   assert.match(fallos[0], /build:sc-docs/);
 });
 
-test('ROJO · un catálogo vacío deja las cinco apps del repo sin registrar ni auditar', () => {
-  assert.equal(desalineadas(scripts, []).length, 5);
+test('ROJO · un catálogo vacío deja las seis apps del repo sin registrar ni auditar', () => {
+  assert.equal(desalineadas(scripts, []).length, 6);
 });
 
 test('cada fila lleva sus cuatro datos, y app, proyecto y url son únicos', () => {

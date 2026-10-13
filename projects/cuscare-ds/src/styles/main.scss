@@ -1,0 +1,35 @@
+/*
+ * CusCare con el Design System — entrada de estilos.
+ * El orden de capas se declara PRIMERO (ver _layers.scss), y los tokens del DS van antes de cualquier
+ * regla de la app. Mismo montaje que la app Supervisor, sin sus parciales de página.
+ */
+@use 'layers';
+@use 'reset';
+@use 'page';
+@use 'cuscare-theme';
+
+@import './fonts.css';
+
+@import '../../../design-tokens/src/lib/styles/tokens/layers/01-primitive.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/02-semantic.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/03-palette.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/04-component.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/05-extensions.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/07-dark.css';
+
+/* Las clases `.sc-text-*` (los 12 estilos de texto del Figma). */
+@import '../../../design-tokens/src/lib/styles/base/typography.css';
+
+@import 'primeicons/primeicons.css';
+
+/* Material Symbols Outlined self-hospedado + el catálogo de glifos del paquete de iconos. */
+@import '../../../ui-smartcontact-icons/src/lib/styles/index.css';
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--sc-font-family-primary, 'Inter', system-ui, sans-serif);
+  background: var(--sc-color-slate-50);
+  color: var(--sc-text-primary);
+}

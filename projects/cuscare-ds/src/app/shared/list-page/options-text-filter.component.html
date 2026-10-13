@@ -1,0 +1,43 @@
+<div #trigger class="filter-trigger" [class.filter-trigger--active]="active()" [class.filter-trigger--open]="open()">
+  <button
+    class="filter-trigger__main sc-text-body-regular"
+    type="button"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="'Filter by ' + columnLabel()"
+    (click)="pop.toggle($event, trigger)"
+  >
+    @if (active()) {
+      <span class="filter-trigger__value">{{ summary() }}</span>
+    } @else {
+      <span class="filter-trigger__placeholder">{{ placeholder() }}</span>
+    }
+  </button>
+  @if (active()) {
+    <button class="filter-trigger__clear" type="button" [attr.aria-label]="'Clear ' + columnLabel() + ' filter'" (click)="clear()">
+      <sc-icon name="close" [size]="14" />
+    </button>
+  }
+  <sc-icon class="filter-trigger__chevron" name="expand_more" [size]="14" />
+</div>
+
+<p-popover #pop [dt]="popoverTokens" [ariaLabel]="columnLabel()" (onShow)="onShow()" (onHide)="open.set(false)">
+  <div #panel class="otf-panel">
+    <sc-inputtext
+      fluid
+      [placeholder]="textPlaceholder()"
+      [ariaLabel]="'Search ' + columnLabel()"
+      [value]="state().text"
+      (valueChange)="setText($event)"
+    />
+    <p-listbox
+      [dt]="listboxTokens"
+      [options]="$any(options())"
+      optionLabel="label"
+      optionValue="value"
+      [ariaLabel]="columnLabel()"
+      [ngModel]="state().mode"
+      (ngModelChange)="setMode($event)"
+    />
+  </div>
+</p-popover>

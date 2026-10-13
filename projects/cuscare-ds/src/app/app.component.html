@@ -1,0 +1,14 @@
+@if (!isLogin()) {
+  <app-sidebar
+    [items]="items"
+    [activeKey]="activeKey()"
+    ariaLabel="Main navigation"
+    (itemSelect)="go($event)"
+  >
+    <span appSidebarBrand class="brand" role="img" aria-label="CusCare"></span>
+  </app-sidebar>
+}
+
+<main class="app__main" [class.app__main--bare]="isLogin()">
+  <router-outlet />
+</main>

@@ -1,0 +1,21 @@
+/*
+ * PRUEBA DEL CUARTO MODO («cuscare»). Solo para ver cómo quedaría; NO es del DS.
+ *
+ * Un modo es un conjunto de valores para los MISMOS tokens, no un fichero de componentes aparte: el sidebar, la tabla
+ * y el resto siguen leyendo `--sc-*` y solo cambia el valor que reciben. Aquí se prueba con el sidebar, que en
+ * producción es claro (fondo blanco, texto gris, el seleccionado en oscuro) y en el DS es oscuro. Todo sale de
+ * tokens que ya existen; no se añade ninguno. Se activa con `data-theme="cuscare"` en `<html>` (index.html).
+ *
+ * Si se aprueba, el camino es: crear el modo en Figma, exportarlo con el Kit y que los generadores emitan este
+ * bloque (como hoy emiten `07-dark.css`). A mano, solo mientras es una prueba.
+ */
+:root[data-theme='cuscare'] {
+  --sc-sidebar-bg: var(--sc-bg-surface);
+  --sc-sidebar-fg: var(--sc-text-primary);
+  --sc-sidebar-fg-muted: var(--sc-text-secondary);
+  --sc-sidebar-item-hover-bg: var(--sc-bg-hover);
+  --sc-sidebar-border: var(--sc-border-default);
+  --sc-sidebar-scrollbar: var(--sc-border-default);
+  /* El seleccionado: píldora en el azul de marca con el texto del fondo del sidebar (blanco). */
+  --sc-sidebar-accent: var(--sc-bg-primary);
+}

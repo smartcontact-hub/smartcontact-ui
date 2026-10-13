@@ -55,6 +55,7 @@ antes de construir encima.
 | --------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | **Agent** — réplica medida del Comunicador (SISMAC-3780)              | [`docs/handoff/agent.md`](docs/handoff/agent.md)                 |
 | **CusCare** — réplica de la herramienta de tickets                    | [`docs/handoff/cuscare.md`](docs/handoff/cuscare.md)             |
+| **CusCare con el DS** — la misma herramienta, hecha con `sc-*` (app `cuscare-ds`) | [`docs/handoff/cuscare-ds.md`](docs/handoff/cuscare-ds.md)       |
 | **Design System + herramienta** — tokens, componentes, Figma, tooling | [`docs/handoff/design-system.md`](docs/handoff/design-system.md) |
 | **Agent Mini** — dialpad standalone (réplica del mini aed)            | [`docs/handoff/agent-mini.md`](docs/handoff/agent-mini.md)       |
 | **Supervisor Dashboard** — adaptación del Monitor del Supervisor      | [`docs/handoff/supervisor-dashboard.md`](docs/handoff/supervisor-dashboard.md) |
@@ -82,9 +83,10 @@ que mergear cuenta como pushear.
 | `supervisor` | **sc-supervisor.pages.dev** | La app real, con datos de demostración |
 | `agent`      | **sc-agent.pages.dev**      | Réplica del dashboard del agente       |
 | `cuscare`    | **sc-cuscare.pages.dev**    | Réplica de la herramienta de tickets   |
+| `cuscare-ds` | **sc-cuscare-ds.pages.dev** | CusCare hecha con el DS (independiente de `cuscare`) |
 | `agent-mini` | **agent-mini.pages.dev**    | Réplica del dialpad mini (standalone)  |
 
-⚠️ Cloudflare da preview por rama en los 5. **Si apuntas un proyecto a una rama, NO la borres al
+⚠️ Cloudflare da preview por rama en los 6. **Si apuntas un proyecto a una rama, NO la borres al
 mergear sin repuntarlo a `main` antes** — pasó con `feat/cuscare` y volvió a pasar con `agent-mini`
 (estaba clavado en `worktree-agent-mini`, que GitHub borró al mergear; repuntado a `main` el
 2026-09-01). La URL sigue sirviendo el último build aunque la rama desaparezca, así que **no se

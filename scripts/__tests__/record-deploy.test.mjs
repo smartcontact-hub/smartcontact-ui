@@ -60,16 +60,16 @@ test('los sitios que se registran salen del mismo catálogo que los proyectos qu
   );
 });
 
-test('un commit que solo toca el Supervisor espera solo al Supervisor; los otros 4 no se registran (DD-117)', () => {
+test('un commit que solo toca el Supervisor espera solo al Supervisor; los otros 5 no se registran (DD-117)', () => {
   const { esperar, sinCambios } = sitiosAEsperar(SITIOS, ['projects/supervisor/src/app/a.ts', 'docs/x.md']);
   assert.deepEqual(esperar.map((s) => s.entorno), ['supervisor']);
-  assert.equal(sinCambios.length, 4);
+  assert.equal(sinCambios.length, 5);
 });
 
 test('solo documentación: no se espera a nadie', () => {
   assert.deepEqual(sitiosAEsperar(SITIOS, ['LEARNINGS.md', 'docs/DECISIONS.md']).esperar, []);
 });
 
-test('ROJO si se esconde: sin la lista de ficheros se esperan los cinco, como antes', () => {
+test('ROJO si se esconde: sin la lista de ficheros se esperan los seis, como antes', () => {
   assert.deepEqual(sitiosAEsperar(SITIOS, null).esperar, SITIOS);
 });

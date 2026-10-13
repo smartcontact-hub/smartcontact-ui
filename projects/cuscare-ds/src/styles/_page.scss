@@ -1,0 +1,115 @@
+/*
+ * Molde de las páginas de lista, el mismo que usa la lista de Grupos del Supervisor: anclado a la
+ * izquierda con tope de 1600, título de 18/600 sobre el contenido (`scale/1`) y tabla con scroll propio
+ * dentro de su tarjeta. Cada medida sale de ese molde; no se inventa ninguna aquí.
+ */
+.page__inner {
+  margin: 0;
+  max-width: 1200px;
+
+  &--list {
+    max-width: 1600px;
+  }
+}
+
+h1.page__heading {
+  margin: 0 0 var(--sc-spacing-1);
+  color: var(--sc-text-primary);
+}
+
+/* PÁGINA DE TABLA CON SCROLL PROPIO: la página no se desplaza; título y barra se quedan a la vista y la
+ * tabla hace scroll dentro de su tarjeta. La tarjeta mide lo que sus filas y solo se estira hasta el fondo
+ * si no caben; con lista virtual llena el alto que queda. */
+.page--tabla {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .page__inner {
+    box-sizing: border-box;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: var(--sc-spacing-25);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-card {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-card:has(> sc-datatable.sc-datatable--fill) {
+    flex: 1 1 auto;
+  }
+
+  .table-card > sc-datatable {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
+/* Dentro de la sección blanca la tabla no repite el borde de su tarjeta. */
+.table-card--flat {
+  border: 0;
+  border-radius: 0;
+}
+
+/* La caja de la tabla. `clip` y no `hidden`: recorta las esquinas sin convertirla en contenedor de scroll. */
+.table-card {
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  overflow: clip;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Un ticket que gestiona otro agente: la fila sale apagada (el diseño la pide deshabilitada). */
+.row--locked > td {
+  color: var(--sc-text-disabled);
+}
+
+/* Un ticket resuelto: sin candado, solo apagado, como una fila deshabilitada. */
+/* La opacidad va en el contenido y no en la celda: una celda fija translúcida deja ver las columnas que pasan por debajo. */
+.row--resolved > td > * {
+  opacity: 0.5;
+}
+
+/*
+ * LA FILA MARCADA CONSERVA SU COLOR CON EL RATÓN ENCIMA. En una lista sin filas pulsables, la regla de `sc-datatable`
+ * «las filas no pulsables no reaccionan al ratón» (fondo transparente al pasar) tapa el color de la fila marcada, y este
+ * solo aparecía al apartar el ratón. Desvío local, sin tocar el DS: el color de la marca es el de la propia lista.
+ */
+sc-datatable tr.sc-row--selected:hover {
+  background: var(--sc-bg-secondary-hover);
+}
+
+/*
+ * LA CASILLA DE SELECCIÓN SE QUEDA FIJA JUNTO A LA COLUMNA FIJA (ID). `sc-datatable` no fija su columna de casillas, y al
+ * desplazar de lado quedaba un hueco de su ancho entre el borde y ID por el que asomaban las demás columnas. Se resuelve
+ * aquí, sin tocar el componente del DS. La cabecera (que es nuestra) ya la fija su `pFrozenColumn`.
+ */
+sc-datatable tbody .sc-datatable__check {
+  position: sticky;
+  inset-inline-start: 0;
+  z-index: 1;
+  background: var(--sc-bg-surface);
+}
+
+sc-datatable tr.sc-row--selected .sc-datatable__check {
+  background: var(--sc-bg-secondary-hover);
+}
