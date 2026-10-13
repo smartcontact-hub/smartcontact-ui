@@ -1,0 +1,124 @@
+# Toma UNA CAPTURA POR STORY de sc-docs, y la anatomía de cada componente, para la ficha que leen los agentes.
+#
+# ─── Por qué existe ───────────────────────────────────────────────────────────────────────────
+#
+# `scripts/docs-ia.mjs` escribe en cada build una ficha en Markdown por componente (`sc-doc.pages.dev/ia/<x>.md`, con su
+# índice en `/llms.txt`). El texto sale del código y nunca va por detrás. Lo que NO puede sacar del código es lo que
+# solo existe pintado: cómo se VE cada story y qué DOM sale de verdad (la anatomía). Eso lo toma
+# `scripts/docs-capturas.mjs` con un navegador, y este workflow lo corre donde se publica: en Linux, no en un Mac.
+#
+# ─── Cómo se usa ──────────────────────────────────────────────────────────────────────────────
+#
+# Igual que `visual-baselines`: a mano desde Actions (`workflow_dispatch`), con `rama`:
+#   · `main` (por defecto) — deja las capturas en `docs-capturas-sync` y abre/actualiza su PR;
+#   · cualquier otra rama — las commitea ENCIMA de ella, para que su PR ya las lleve.
+# Y además cada lunes, desde `main`: las capturas son ilustraciones, no una red, así que nada se pone rojo cuando
+# envejecen. Sin una pasada fija, envejecerían sin que nadie lo viera.
+#
+# No empuja a `main` ni se auto-fusiona: son imágenes, y GitHub enseña su diff en la revisión.
+name: docs-capturas
+
+on:
+  workflow_dispatch:
+    inputs:
+      motivo:
+        description: 'Por qué se toman (queda en el commit y en el PR)'
+        required: true
+        type: string
+      rama:
+        description: 'Rama cuyas capturas se toman. Con main abre el PR de siempre; con otra, commitea encima de ella'
+        required: false
+        default: main
+        type: string
+  schedule:
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: docs-capturas-${{ inputs.rama || 'main' }}
+  cancel-in-progress: false
+
+jobs:
+  capturar:
+    runs-on: ubuntu-latest
+    env:
+      RAMA: ${{ inputs.rama || 'main' }}
+      MOTIVO: ${{ inputs.motivo || 'pasada semanal' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ env.RAMA }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # El DS, las fichas en texto y sc-docs en producción: el script sirve `dist/sc-docs/browser` él mismo.
+      - run: npm run build:docs
+
+      - name: Tomar las capturas en Linux
+        run: |
+          # El repo APT de Chrome que trae el runner puede venir desincronizado y tumbar `--with-deps` (ver `ci.yml`).
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          npx playwright install --with-deps chromium
+          npm run docs:capturas
+
+      - name: Subir lo tomado
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # Solo las capturas y su índice: un `git add -A` se llevaría `dist/` y el resto del run.
+          git add -A -- 'projects/sc-docs/public/ia/capturas'
+          if git diff --cached --quiet; then
+            echo "Ninguna captura ha cambiado." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          # El índice lleva la fecha: si es lo ÚNICO que cambia, no hay nada que enseñar.
+          if [ "$(git diff --cached --name-only | grep -v '_indice.json' | wc -l | tr -d ' ')" = '0' ]; then
+            echo "Solo cambia la fecha del índice: no se sube nada." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          NUEVAS=$(git diff --cached --name-only --diff-filter=A -- '*.png' | wc -l | tr -d ' ')
+          CAMBIADAS=$(git diff --cached --name-only --diff-filter=M -- '*.png' | wc -l | tr -d ' ')
+          BORRADAS=$(git diff --cached --name-only --diff-filter=D -- '*.png' | wc -l | tr -d ' ')
+
+          git commit -m "docs(ia): capturas de las stories de sc-docs tomadas en Linux
+
+          Motivo: ${MOTIVO}
+
+          ${NUEVAS} nueva(s), ${CAMBIADAS} cambiada(s), ${BORRADAS} borrada(s).
+          Generadas por el workflow docs-capturas desde ${GITHUB_SHA}."
+
+          if [ "${RAMA}" != 'main' ]; then
+            git pull --rebase origin "${RAMA}"
+            git push origin "HEAD:${RAMA}"
+            echo "Capturas commiteadas encima de \`${RAMA}\`." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          git push --force origin HEAD:docs-capturas-sync
+          {
+            echo "Una captura por story de sc-docs, tomada en **ubuntu-latest**, para las fichas que leen los agentes (\`/ia/<componente>.md\`)."
+            echo
+            echo "**Motivo:** ${MOTIVO}"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Nuevas | ${NUEVAS} |"
+            echo "| Cambiadas | ${CAMBIADAS} |"
+            echo "| Borradas | ${BORRADAS} |"
+            echo
+            echo "No son una red: no comparan nada. Ilustran cada story en su ficha. Mira que se vean enteras antes de fundir."
+          } > "$RUNNER_TEMP/body.md"
+          gh pr edit docs-capturas-sync --body-file "$RUNNER_TEMP/body.md" \
+            || gh pr create --base main --head docs-capturas-sync \
+                 --title 'docs(ia): capturas de las stories de sc-docs' \
+                 --body-file "$RUNNER_TEMP/body.md"

@@ -132,20 +132,14 @@ test('«Copiar» no tapa la primera línea del código, aunque sea larga', async
   expect(cruce.seCruzan, `línea ${cruce.linea} · botón ${cruce.boton}`).toBe(false);
 });
 
-test('una línea de código larga no estira la columna del Playground por debajo de «Controles»', async ({ page }) => {
+test('una línea de código larga no se mete por debajo del panel de «Controles»', async ({ page }) => {
   await gotoPage(page, 'formdangerzone');
-  // La columna no crece (lleva `min-width: 0`): lo que se sale es su contenido, el código y la anatomía, que se cuelan
-  // por debajo de «Controles». Se mide el borde derecho de lo que hay dentro, no el de la caja.
-  const { derechoDelContenido, controles } = await page
-    .locator('.sb-host__play')
-    .first()
-    .evaluate((el) => {
-      const [principal, panel] = [...el.children] as HTMLElement[];
-      const hijos = [...principal!.querySelectorAll('.sb-snippet, .sb-anatomy, .sb-canvas')];
-      return {
-        derechoDelContenido: Math.max(...hijos.map((h) => h.getBoundingClientRect().right)),
-        controles: panel!.getBoundingClientRect().left,
-      };
-    });
+  // La columna de la página no crece (lleva `min-width: 0`): lo que se sale es su contenido, el código y la anatomía,
+  // que se colarían por debajo del panel. Se mide el borde derecho de lo que hay dentro, no el de la caja.
+  const contenido = page.locator('.sb-host__contenido').first();
+  const derechoDelContenido = await contenido.evaluate((el) =>
+    Math.max(...[...el.querySelectorAll('.sb-snippet, .sb-anatomy, .sb-canvas')].map((h) => h.getBoundingClientRect().right)),
+  );
+  const controles = (await page.locator('app-story-panel').first().boundingBox())!.x;
   expect(derechoDelContenido, 'el borde derecho del código y la anatomía').toBeLessThanOrEqual(controles);
 });

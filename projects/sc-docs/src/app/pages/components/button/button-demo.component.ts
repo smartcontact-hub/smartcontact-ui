@@ -197,6 +197,8 @@ export class ButtonDemoComponent {
       fullWidth: false,
       type: 'button',
     },
+    // «plain», la gris neutra, solo existe de texto o con borde en el Kit: relleno o de enlace sería inventarlo.
+    combinacionImposible: (a) => a['variant'] === 'plain' && (a['appearance'] === 'filled' || a['appearance'] === 'link'),
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

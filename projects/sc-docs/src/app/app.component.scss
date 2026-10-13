@@ -369,3 +369,9 @@
     padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
   }
 }
+
+/* Una story suelta (`?solo=1`): sin barra ni márgenes de página. Sin alto mínimo a propósito: el iframe de un ancho fijo
+ * mide lo que ocupa la story para crecer con ella, y un `100vh` aquí le devolvería siempre su propio alto. */
+.demo-solo {
+  display: block;
+}

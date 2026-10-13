@@ -94,15 +94,62 @@
 }
 
 /* ── Controls (knobs) ── */
+/* Uno debajo de otro, como en el panel de Figma: nombre y para qué sirve, y debajo el campo a todo el ancho. */
 .sb-controls {
   display: grid;
-  grid-template-columns: minmax(8rem, 12rem) 1fr;
-  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  gap: var(--sc-spacing-0-25);
+}
+
+.sb-controls__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'label volver'
+    'campo campo';
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-625);
+  border-left: 2px solid transparent;
+  border-radius: var(--sc-radius-200);
+  transition: background-color 150ms ease-out, border-color 150ms ease-out;
+}
+
+/* Un interruptor cabe en la línea de su nombre: a la derecha, como en el panel de Figma. */
+.sb-controls__item--interruptor {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: 'label volver campo';
   align-items: center;
-  padding: var(--sc-spacing-1-25);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-lg);
-  background: var(--sc-bg-surface);
+}
+
+.sb-controls__item--interruptor .sb-controls__volver {
+  align-self: center;
+}
+
+/* Lo que ya no vale lo de la ficha: el borde de marca y el fondo de seleccionado. Se ve de un vistazo qué se ha tocado. */
+.sb-controls__item--cambiado {
+  border-left-color: var(--sc-color-sky-500);
+  background: var(--sc-bg-selected);
+}
+
+.sb-controls__volver {
+  grid-area: volver;
+  align-self: start;
+  display: inline-flex;
+  padding: var(--sc-spacing-0-25);
+  border: 0;
+  border-radius: var(--sc-radius-200);
+  background: transparent;
+  color: var(--sc-text-secondary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+    color: var(--sc-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-sky-500);
+    outline-offset: 1px;
+  }
 }
 
 .sb-controls__empty {
@@ -112,6 +159,7 @@
 }
 
 .sb-controls__label {
+  grid-area: label;
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -129,7 +177,14 @@
 }
 
 .sb-controls__field {
+  grid-area: campo;
   min-width: 0;
+}
+
+/* Los campos del DS, a todo el ancho del panel. */
+.sb-controls__field > :is(sc-select, sc-inputtext, sc-inputnumber) {
+  display: block;
+  width: 100%;
 }
 
 .sb-color {
@@ -236,7 +291,9 @@
 }
 
 /* ── Host (página de un componente) ── */
-.sb-host {
+/* La página de un componente, y su columna cuando lleva el panel de controles al lado: el mismo ritmo entre secciones. */
+.sb-host,
+.sb-host__contenido {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-1-5);
@@ -302,20 +359,131 @@
   margin-block-start: var(--sc-spacing-2);
 }
 
-/* Playground en 2 columnas (canvas+código | knobs) en ancho; apila en estrecho. */
-.sb-host__play {
+/* ── La ficha con su panel de controles a la derecha (`story-panel.component.ts`) ──
+ * Dos columnas: la página y el panel, que va `sticky` y acompaña al bajar. Por debajo de 75rem de ventana (`PANEL_ESTRECHO`)
+ * la página va sola y el panel pasa por ENCIMA, desde un botón flotante: a esa anchura no caben los dos sin apretar el
+ * Playground. Entre la página y el panel, el escalón de entre grupos (28). */
+.sb-host.sb-host--con-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
-  gap: var(--sc-spacing-1);
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sc-spacing-2);
   align-items: start;
 
-  @media (max-width: 56rem) {
-    grid-template-columns: 1fr;
+  @media (max-width: 75rem) {
+    display: block;
   }
 }
 
+.sb-host__contenido {
+  min-width: 0;
+}
+
+.sb-panel {
+  position: sticky;
+  top: var(--sc-spacing-1-25);
+  z-index: 3;
+  align-self: start;
+}
+
+.sb-panel--abierto {
+  width: 20rem;
+}
+
+.sb-panel__caja {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2 * var(--sc-spacing-1-25));
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+}
+
+.sb-panel__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-5) var(--sc-spacing-0-5) var(--sc-spacing-1);
+  border-bottom: 1px solid var(--sc-border-default);
+}
+
+.sb-panel__titulo {
+  margin: 0;
+  color: var(--sc-text-primary);
+}
+
+.sb-panel__cuenta {
+  color: var(--sc-color-sky-600, var(--sc-text-secondary));
+}
+
+.sb-panel__cerrar {
+  margin-left: auto;
+}
+
+.sb-panel__cuerpo {
+  overflow-y: auto;
+  padding: var(--sc-spacing-0-5);
+}
+
+/* Plegado: la pestaña que lo vuelve a abrir, con cuántos controles van cambiados. */
+.sb-panel__abrir {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  box-shadow: var(--sc-shadow-sm);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-sky-500);
+    outline-offset: 2px;
+  }
+}
+
+.sb-panel__insignia {
+  min-width: 1.25rem;
+  padding: 0 var(--sc-spacing-0-375);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-color-sky-500);
+  color: var(--sc-color-slate-0);
+  text-align: center;
+}
+
+/* Estrecho: por encima de la página. Plegado, el botón flota abajo a la derecha; abierto, el panel ocupa el alto de la
+ * ventana pegado a la derecha, con la sombra de lo que flota. */
+.sb-panel--encima {
+  position: fixed;
+  top: auto;
+  right: var(--sc-spacing-1-25);
+  bottom: var(--sc-spacing-1-25);
+  z-index: 20;
+
+  &.sb-panel--abierto {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(20rem, 100vw);
+  }
+}
+
+/* La caja, por encima: su clase va en ELLA y no colgada del host, porque la encapsulación de Angular no deja que la
+ * regla de un componente baje al interior de otro. */
+.sb-panel__caja--encima {
+  height: 100%;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: var(--sc-shadow-dialog);
+}
+
 /* La pista y sus hijos pueden encoger: si no, una línea de código sin cortar (el `pre` no corta) fija su ancho mínimo y
- * la columna se sale por debajo de «Controles» (formdangerzone, medido a 1280). El `pre` desplaza por dentro. */
+ * la página se sale por debajo del panel de controles (formdangerzone, medido a 1280). El `pre` desplaza por dentro. */
 .sb-host__play-main {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -459,4 +627,316 @@ app-story-anatomy {
   margin: 0;
   overflow-x: auto;
   color: var(--sc-text-default);
+}
+
+/* ── Herramientas del lienzo (ancho, medir, contornos, accesibilidad, enlace) ───────────────────
+ * La barra reparte a dos lados: a la izquierda lo que ESTRESA la story, a la derecha el tema y la dirección. En
+ * estrecho, baja a dos líneas en vez de apretarse. La tipografía va en la plantilla (`.sc-text-*`), no aquí. */
+.sb-canvas__bar {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+/* En un lienzo estrecho (el del Playground, junto a los controles) los botones se quedan en icono, con su nombre en el
+ * `title`, para que la barra quepa en una línea. Por el ancho del LIENZO, no de la ventana. */
+.sb-canvas {
+  container-type: inline-size;
+}
+
+@container (max-width: 44rem) {
+  .sb-seg__texto {
+    display: none;
+  }
+}
+
+.sb-canvas__tools {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+/* El ancho: un `<select>` nativo vestido de botón de la barra. */
+.sb-seg--select {
+  position: relative;
+
+  select {
+    appearance: none;
+    /* Del ancho de la opción elegida, no de la más larga («Escritorio 1440»). */
+    field-sizing: content;
+    padding: 0 var(--sc-spacing-0-75) 0 0;
+    border: 0;
+    background: transparent
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%2364748b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      no-repeat right center / 0.75rem;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  select:focus-visible {
+    outline: none;
+  }
+
+  &:focus-within {
+    outline: 2px solid var(--sc-color-sky-500);
+    outline-offset: 1px;
+  }
+}
+
+.sb-seg--icono {
+  padding: var(--sc-spacing-0-25);
+  text-decoration: none;
+}
+
+.sb-seg sc-icon {
+  flex: none;
+}
+
+.sb-seg:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* El resultado no se apaga al pasar el ratón: `.sb-seg:hover` pondría el texto en gris oscuro. */
+.sb-seg.sb-a11y-boton--fallos,
+.sb-seg.sb-a11y-boton--fallos:hover {
+  color: var(--sc-text-danger);
+}
+
+.sb-seg.sb-a11y-boton--ok,
+.sb-seg.sb-a11y-boton--ok:hover {
+  color: var(--sc-text-success);
+}
+
+/* La regla de medir y la señal de un fallo se pintan en coordenadas del stage. */
+.sb-canvas__stage {
+  position: relative;
+}
+
+/* Un ancho fijo: la story en un iframe de ese ancho, sobre el fondo del lienzo, con scroll lateral si no cabe. */
+.sb-canvas__stage--marco {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1);
+  overflow-x: auto;
+  background: var(--sc-bg-subtle);
+}
+
+.sb-canvas__marco {
+  display: grid;
+  gap: var(--sc-spacing-0-25);
+  flex: none;
+}
+
+.sb-canvas__marco-ancho {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+/* `content-box`: el ancho elegido es el del VIEWPORT de dentro; el borde va por fuera (con `border-box` salía a 373). */
+.sb-canvas__marco iframe {
+  display: block;
+  box-sizing: content-box;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+}
+
+/* Desnudo: la story suelta. Sin barra ni borde; el pane es todo. */
+.sb-canvas--desnudo {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+
+  .sb-canvas__stage,
+  .sb-canvas__pane {
+    border-radius: 0;
+  }
+}
+
+/* ── La regla de medir ── */
+.sb-medidor {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sb-medidor__margen,
+.sb-medidor__relleno,
+.sb-medidor__borde,
+.sb-medidor__etiqueta {
+  position: absolute;
+}
+
+.sb-medidor__margen {
+  background: color-mix(in srgb, var(--sc-color-orange-400) 30%, transparent);
+}
+
+.sb-medidor__relleno {
+  background: color-mix(in srgb, var(--sc-color-emerald-400) 35%, transparent);
+}
+
+.sb-medidor__borde {
+  outline: 1px solid var(--sc-color-sky-500);
+}
+
+.sb-medidor__etiqueta {
+  display: grid;
+  gap: 1px;
+  margin-top: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-color-slate-900);
+  color: var(--sc-color-slate-0);
+  white-space: nowrap;
+  box-shadow: var(--sc-shadow-dropdown);
+
+  &--arriba {
+    margin-top: 0;
+    transform: translateY(calc(-100% - var(--sc-spacing-0-25)));
+  }
+}
+
+/* ── Accesibilidad: el detalle de los fallos, bajo el lienzo ── */
+.sb-a11y {
+  display: grid;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1) var(--sc-spacing-1-25);
+  border-top: 1px solid var(--sc-border-default);
+  background: var(--sc-bg-surface);
+  border-radius: 0 0 calc(var(--sc-radius-lg) - 1px) calc(var(--sc-radius-lg) - 1px);
+}
+
+.sb-a11y__vacio,
+.sb-a11y__titulo {
+  margin: 0;
+  color: var(--sc-text-primary);
+}
+
+.sb-a11y__regla {
+  display: grid;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sb-a11y__impacto {
+  display: inline-block;
+  margin-right: var(--sc-spacing-0-25);
+  padding: 0 var(--sc-spacing-0-375);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-warning-subtle);
+  color: var(--sc-text-warning);
+
+  &[data-impacto='critical'],
+  &[data-impacto='serious'] {
+    background: var(--sc-bg-danger-subtle);
+    color: var(--sc-text-danger);
+  }
+}
+
+.sb-a11y__nodos {
+  display: grid;
+  gap: var(--sc-spacing-0-25);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    gap: 1px;
+    padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
+    border-radius: var(--sc-radius-200);
+    background: var(--sc-bg-subtle);
+    color: var(--sc-text-secondary);
+    white-space: pre-line;
+  }
+
+  li:hover {
+    background: var(--sc-bg-hover);
+  }
+}
+
+/* ── Todas las combinaciones ── */
+.sb-matriz {
+  display: grid;
+  gap: var(--sc-spacing-1);
+}
+
+.sb-matriz__ejes {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-1);
+
+  sc-select {
+    width: 11rem;
+  }
+}
+
+.sb-matriz__cuenta,
+.sb-matriz__aviso {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.sb-matriz__cuenta {
+  align-self: center;
+}
+
+.sb-matriz__rejilla {
+  display: grid;
+  gap: var(--sc-spacing-0-5);
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Entre un grupo y el siguiente, el doble que entre su título y su tabla. */
+.sb-matriz__tabla + .sb-matriz__grupo {
+  margin-top: var(--sc-spacing-1);
+}
+
+.sb-matriz__grupo {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.sb-matriz__tabla {
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    border: 1px solid var(--sc-border-default);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th {
+    color: var(--sc-text-secondary);
+    background: var(--sc-bg-subtle);
+    white-space: nowrap;
+  }
+}
+
+.sb-matriz__hueco {
+  color: var(--sc-text-disabled, var(--sc-text-secondary));
+}
+
+/* ── Story suelta (`?solo=1`) ── */
+.sb-solo {
+  display: block;
+}
+
+.sb-solo__vacio {
+  margin: 0;
+  padding: var(--sc-spacing-1-75);
+  color: var(--sc-text-secondary);
+}
+
+/* La story a la que lleva un enlace: un borde de marca a su izquierda, para encontrarla al llegar. */
+.sb-host__story--enlazada {
+  padding-left: var(--sc-spacing-0-75);
+  border-left: 3px solid var(--sc-color-sky-500);
 }

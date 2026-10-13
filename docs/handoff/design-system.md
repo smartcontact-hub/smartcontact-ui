@@ -168,6 +168,19 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-13 · sc-docs suma lo que tiene un Storybook, sin cambiarse a él (DD-201)
+
+**Sello:** rama `arebury/docs-storybook-vs-sc`, sobre HEAD `9845c34c` (#385). Sale por el tope el tramo del 2026-10-05
+(DD-172): `git show 9845c34c:docs/handoff/design-system.md`.
+
+**Lo que cambia.** Ocho piezas en sc-docs tras barrer el Storybook de Primer (DD-201): dirección por story, ancho en
+iframe, medir, contornos, axe con su trinquete (`e2e/sc-docs-a11y.spec.ts`), «Todas las combinaciones», los controles en
+un panel a la derecha que marca lo tocado, la ficha para agentes (`docs:ia`) y una captura por story (`docs:capturas`).
+
+- **Tras fundir**: lanzar `docs-capturas` con `rama=main` (o esperar al lunes); hasta entonces, fichas sin captura.
+- **Los 71 fallos de accesibilidad** (por regla, en DD-201): colordotpicker 18, progressbar 12, checkbox 10, inputtags 10,
+  gauge 7, datatable 4, radiobutton 3, tabs 3, grouppopover 2, chip 1, textarea 1. Cada arreglo baja el tope.
+
 ## ✅ 2026-10-13 · Iconos: un icono, un significado (DD-200)
 
 **Sello:** rama `arebury/ux-ui-design-system`, sobre `2b409e92` (#384). Sale por el tope el tramo del 2026-10-04:
@@ -197,20 +210,6 @@ comprobó; y el preflight avisa si tu número de DD ya lo usa un PR abierto (tes
 - **Plan sin ejecutar** (medido 2026-10-06): `sc-button → [pButton]`, 265 usos en 78 ficheros y 178 `(clicked)`; la
   directiva no trae `label`, `icon`, `clicked`, el mapeo `variant`/`appearance` ni `type="button"`. `sc-multiselect →
   p-select`: 14 usos, 13 con `maxSelectedLabels`/`selectedItemsLabel` y 3 con `display`, que `p-select` 22.1.2 no tiene.
-
-## ✅ 2026-10-05 · Los lotes 5 a 9 en un PR: fuera de PrimeNG jubilado, lo seguro (DD-172), y el cajón modal con foco
-
-**Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `b4d1f145` (#339), PR nuevo. Sale por el tope el tramo del 2026-10-01
-(`sc-dialog`, DD-140): `git show b4d1f145:docs/handoff/design-system.md`.
-
-**Lo que cambia.** Las cinco piezas compuestas pintan `sc-button` y `sc-password` va sobre `pInputPassword`, con su medidor
-propio: el trinquete de piezas sobre PrimeNG jubilado baja de 8 a 2 (DD-172). `sc-drawer` modal se anuncia como diálogo, se lleva
-el foco y lo devuelve (DD-168, actualización). `sc-datatable` pinta todas las filas de un tramo seleccionado y nombra la casilla de
-«todas» desde que se pinta (DD-98). `sc-slot` toma el token del divisor (DD-113) y sale `--sc-font-size-caption-bold`. En el mismo
-PR, fuera del DS: Entidades en `.page--tabla` (DD-95), Conversaciones sobre `sc-list-page` (DD-98) y CusCare (su hand-off).
-
-- ⚠️ **Al quitar un import de PrimeNG, el trinquete de descripciones pide JSDoc** para lo que heredaba la suya (diez miembros esta
-  vez): la de la pieza hermana (`sc-inputtext`) sirve donde coincide.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -287,6 +286,7 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Al quitar un import de PrimeNG, el trinquete de descripciones pide JSDoc** para lo que heredaba la suya: la de la pieza hermana sirve donde coincide (DD-172).
 - 🪤 **Una rutina no acepta un «sí» escrito en su encargo** para actuar con la identidad del usuario: la confirmación va en esa sesión (DD-134).
 - 🪤 **`styleClass` de `p-button` y `class` en `<sc-button>` no caen en el mismo elemento**: el primero, en el `<button>` interior,
   fuera del alcance de la SCSS emulada de la pieza; el segundo, en el host. Una regla que nunca aplicaba empieza a aplicar: al
