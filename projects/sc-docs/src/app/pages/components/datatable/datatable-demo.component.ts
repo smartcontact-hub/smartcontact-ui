@@ -285,6 +285,8 @@ export class DatatableDemoComponent {
       { name: 'size', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
       { name: 'variant', control: { kind: 'select', options: ['default', 'list'] } },
       { name: 'loading', control: { kind: 'boolean' } },
+      { name: 'skeleton', control: { kind: 'boolean' }, description: 'Esqueleto de carga: la cabecera se queda y cada celda es un `p-skeleton`, como el ejemplo «DataTable» de primeng.dev/skeleton. Es el que piden las pantallas que esperan datos (regla 2 de «UX de pantalla»), no el spinner de `loading`.' },
+      { name: 'skeletonRows', control: { kind: 'number', min: 1, max: 20, step: 1 }, description: 'Cuántas filas pinta el esqueleto.' },
           { name: 'sortField', control: { kind: 'text' }, description: 'Columna por la que sale ordenada.' },
       { name: 'sortOrder', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
       { name: 'externalSort', control: { kind: 'boolean' }, description: 'El orden lo pone quien usa la tabla: pinta la flecha y emite (sortChange), pero no mueve las filas.' },
@@ -309,6 +311,8 @@ export class DatatableDemoComponent {
       size: 'md',
       variant: 'default',
       loading: false,
+      skeleton: false,
+      skeletonRows: 10,
           // El knob arranca VACÍO a propósito: con `sortField: 'name'` la tabla salía ya ordenada y
       // cambiaba cuál es la primera fila, que es lo que miden los e2e de gestos. Un valor por
       // defecto en la ficha no puede cambiar el comportamiento de la demo.

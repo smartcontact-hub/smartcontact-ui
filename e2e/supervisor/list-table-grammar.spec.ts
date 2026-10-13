@@ -75,8 +75,11 @@ test.beforeEach(async ({ page }) => {
 const PAGINAS = [
   { ruta: 'admin/labels', nombre: 'labels', altoFila: 44 },
   { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 44 },
-  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 54 }, // 44 hasta el 2026-09-14: la celda de nombre gana el avatar de sus hermanas
-  { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 54 },
+  /* 44 hasta el 2026-09-14 (la celda de nombre gana el avatar de sus hermanas) y 54 hasta el 2026-10-13: el avatar se
+   * apoyaba en la línea base del texto y dejaba 5 px muertos debajo. Sin ellos, 32 + 8×2 + 1, lo mismo que su esqueleto
+   * de carga (`esqueleto-carga.spec.ts`). */
+  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 49 },
+  { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 49 },
   // 54 hasta el 2026-09-23: los grupos dejaron de llevar avatar (cara = persona) y manda el kebab, 27 + 8×2 + 1.
   { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 44 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO

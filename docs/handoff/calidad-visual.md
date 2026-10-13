@@ -12,7 +12,16 @@
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-0. **Lo que queda del estudio de Primer (DD-188), un PR cada uno, enseñado antes en local y añadido a la página de
+0. **El resto del barrido de esqueletos (DD-201), un PR cada uno y enseñado antes en local con `?latencia=1`**, con la
+   forma de lo que viene y medido esqueleto contra datos con la sonda de `esqueleto-carga.spec.ts`:
+   - las ocho fichas al abrirse para editar (no al crear) y las cinco de Configuración: el nombre de arriba y cada caja
+     de sección con su etiqueta y su campo, como el ejemplo «Formulario» de sc-docs → Skeleton; el índice, no;
+   - el Monitor: un esqueleto por widget con la forma de su tipo (cifra y línea, filas, filas con barra), solo al entrar
+     o al cambiar de monitor; el refresco en vivo cambia los datos en su sitio;
+   - las tarjetas de Repositorios y las líneas de la transcripción al abrir una conversación.
+   No llevan esqueleto: las altas, guardar o entrar (su botón ya lo dice), transcribir (más de 10 s, en segundo plano),
+   buscar u ordenar (se quedan las filas de antes) ni las réplicas (Agent, Agent Mini, CusCare: DD-35).
+1. **Lo que queda del estudio de Primer (DD-188), un PR cada uno, enseñado antes en local y añadido a la página de
    antes y después** (artefacto «Antes y después del Supervisor»; las capturas salen de `sc-supervisor.pages.dev`
    contra el `ng serve` de la rama, a 1440, vista entera y la cabecera a doble resolución):
    - hecho en DD-193 y DD-194: a 1024 la tabla desplaza de lado con el nombre fijo, y la celda del nombre es la
@@ -26,7 +35,7 @@
      la pista del diálogo de impacto «(sin extensión)» y la píldora de un filtro sin nada marcado «Ninguno».
    - decidido el 2026-10-11, con su PR: la ayuda de un campo va debajo de su control, también en el segmentado
      (`helperText`, DD-198); copiar el script de Web Chat va dentro del campo (`sc-textarea copyable`).
-1. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
+2. **Antes de la próxima demo, `npm run revision -- --datos editorial` sobre lo que se vaya a enseñar**, que ahora espera
    a que acaben las entradas animadas antes de fotografiar. Lo que se vea mal con nombres de negocio se arregla en la
    pantalla; un nombre de prueba que asome es un hueco del juego y va al mapa editorial (`juego-de-datos.ts`).
 
@@ -57,9 +66,30 @@
 - **Sin `git fetch --tags`**, `docs:coherence` da por fantasmas los sellos de los hand-offs que viven en etiquetas.
 - **El bridge de Figma vive en la máquina de quien lo abre.** Una sesión en la nube no llega a él: genera el
   JavaScript (`tools/figma-pendiente.mjs`, `tools/figma-export-parity.mjs`) y lo ejecuta la sesión local.
+- **`npm run verify` (y un `ng build` del DS) reconstruye `dist/`**, y los `ng serve` abiertos se quedan sin el paquete
+  a mitad («Cannot find module '@smartcontact-hub/icons'») o con el viejo, porque no vigilan `dist/`: tras construir,
+  relánzalos. Lo mismo tras un rebase que traiga cambios del DS.
+- **La carga simulada solo espera en un navegador de persona.** El de Playwright (`navigator.webdriver`) no espera salvo
+  con `?latencia=1`; el del MCP de Playwright sí espera (dice `webdriver: false`).
 - **Tras fundir un PR, GitHub borra la rama y la ref local `origin/<rama>` se queda colgando.** El aviso de «N commits
   sin subir» que da entonces es falso: `git remote prune origin` lo quita. Compruébalo antes con
   `git rev-list HEAD --not --remotes --count`.
+
+## ✅ 2026-10-13 · El esqueleto de carga con la forma de su contenido (DD-201)
+
+**Sello:** rama `arebury/skeleton-tablas-barrido-primeng`, sobre `origin/main` `9845c34c`.
+
+**Qué pasó.**
+- **Barrido** de dónde pintaría el Supervisor un esqueleto con servidor: 18 listados por `sc-list-page`, tablas
+  sueltas, fichas al editar, Configuración, Monitor, Repositorios y transcripción (el resto, en SIGUIENTE 0).
+- **La carga simulada** (`CargaSimuladaService`): 1,5 s la primera vez que se abre una pantalla en la pestaña; un robot
+  no espera salvo con `?latencia=1`. Hoy la usa `sc-list-page`.
+- **El ejemplo «DataTable» de primeng.dev tal cual no sirvió**: las filas pasaban de 33 a 44 o 54 al llegar los datos y
+  las barras ocupaban la celda entera. La receta que no salta es la de la carga perezosa de primeng.dev/table, y la
+  forma por columna (`ScColumnDef.skeleton`) la lleva a cualquier tabla del DS.
+- **Las celdas reales sin hueco**: el avatar ilustrado y las etiquetas y botones de una celda de listado, centrados en su
+  línea. Filas con foto de 54 a 49 y Conversaciones de 43 a 39; en los 10 listados medidos, esqueleto = datos.
+- **sc-docs → Skeleton** con los ejemplos útiles de primeng.dev, la tabla del DS y un formulario, con «Recargar».
 
 ## ✅ 2026-10-09 · El estudio de Primer: título de página a 20, sección a 16, la barra a una altura y sin 700
 
@@ -198,24 +228,3 @@ el resto de pendientes de ESPERANDO A RAFA de arriba.
   Lo que es decisión de producto o de gusto está arriba, en «Esperando».
 - **Visto y no tocado:** con tortura, el párrafo de alcance del detalle del anillo lista los 10 nombres largos (unas 12
   líneas antes de la tabla). Es un párrafo, no una lista, así que no lo cubre DD-124.
-
-## ✅ 2026-09-27 (3) · El monitor medido, el juego de datos en Sistema y la regla del aire que se suma
-
-**Sello:** fusionado en `main` con #260, HEAD `cd84f8ec`.
-
-**Qué pasó.**
-- **Medido a 1440** (DD-125): su ritmo ya era el compacto y no se suma relleno dentro de las tarjetas. El blanco
-  que se ve es de la rejilla de alto fijo. Sobraba una cosa: la flecha invisible de «ver el detalle» separaba el
-  anillo de «de 9 conectados» 36 px; ahora van a 14, con su prueba (31,5 en rojo contra el build anterior). Sin
-  verificar: la cabecera de la tabla de agentes nombra 10 y la tabla enseña 8.
-- **El juego de datos se elige en Configuración → Sistema** (DD-124): la demo pública sigue con los de siempre y el
-  editorial se enseña con su enlace o eligiéndolo ahí. Prueba nueva en `juego-de-datos.spec.ts` (12 de 12 en tres
-  pasadas); la primera versión la hizo roja una carrera real, navegar antes de que la recarga guardara el juego, y
-  ahora se recuerda antes de navegar.
-- **La regla R4, «aire que se suma»** (DD-125), en la medida de agrupación: de su borde a lo primero y lo último que
-  tiene dentro, una caja no suma 7 o más. En rojo contra el build anterior («Políticas», 12,25); en el actual, 90
-  bordes y ninguno. Los 3,5 de `.checkbox-row` quedan por debajo del umbral: son zona de clic.
-- **Verificado en local**: las e2e del Dashboard, la anatomía de página, el contraste en los dos temas, los estilos de
-  texto y la agrupación, 157 en verde; la revisión previa de los dos monitores, en regla; y el lector de pantalla
-  anuncia «Ver el detalle de 5» con la descripción «de 9 conectados».
-

@@ -318,6 +318,7 @@ export class GroupsListPageComponent {
       },
       {
         field: 'priority',
+        skeleton: 'tag',
         header: this.translate.instant('groups.table.priority'),
         sortable: true,
         cellTemplate: this.priorityTpl(),
@@ -326,6 +327,7 @@ export class GroupsListPageComponent {
       },
       {
         field: 'strategy',
+        skeleton: 'tag',
         header: this.translate.instant('groups.table.strategy_phone'),
         sortable: true,
         cellTemplate: this.strategyTpl(),
@@ -335,6 +337,7 @@ export class GroupsListPageComponent {
       },
       {
         field: 'chatStrategy',
+        skeleton: 'tag',
         header: this.translate.instant('groups.table.strategy_chat'),
         sortable: true,
         cellTemplate: this.chatStrategyTpl(),

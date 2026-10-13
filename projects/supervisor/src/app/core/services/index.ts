@@ -29,3 +29,5 @@ export { UndoStackService } from './undo-stack.service';
 export type { UndoEntry } from './undo-stack.service';
 
 export { ResultadoAccionService } from './resultado-accion.service';
+
+export { CargaSimuladaService } from './carga-simulada.service';

@@ -159,6 +159,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
       width: c.width,
       /* La columna del nombre es la cabecera de su fila también con ancho propio (Intenciones, Reglas IA…), DD-194. */
       rowHeader: c.emphasis,
+      // El estado se pinta con su etiqueta: mientras carga, su píldora.
+      skeleton: c.kind === 'status' ? 'tag' : undefined,
       cellTemplate: cell,
     }));
   });

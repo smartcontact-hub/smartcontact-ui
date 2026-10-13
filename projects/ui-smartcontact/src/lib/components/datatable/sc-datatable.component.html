@@ -26,7 +26,7 @@
   [stripedRows]="stripedRows()"
   [showGridlines]="showGridlines()"
   [loading]="loading()"
-  [rowHover]="true"
+  [rowHover]="!skeleton()"
   [lazy]="lazy()"
   [totalRecords]="pTotalRecords()"
   [filters]="$any(pFilters())"
@@ -57,7 +57,7 @@
       <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()">
         <!-- `sc-datatable__check-all`: el gancho, NUESTRO, por el que el componente le pone el nombre (ver el
              `afterRenderEffect` de la casilla de «todas»). -->
-        <p-table-header-checkbox class="sc-datatable__check-all" [ariaLabel]="selectAllAriaLabel()" />
+        <p-table-header-checkbox class="sc-datatable__check-all" [ariaLabel]="selectAllAriaLabel()" [disabled]="skeleton()" />
       </th>
       } @for (col of visibleCols(); track col.field) { @if (col.sortable) {
       <th
@@ -117,7 +117,40 @@
     let-rowgroup="rowgroup"
     let-rowspan="rowspan"
   >
-    @if (userBody()) {
+    @if (skeleton()) {
+    <!-- Esqueleto con la FORMA de la fila (`col.skeleton`): el círculo del avatar, el cuadrado del botón, la píldora de la
+         etiqueta y barras de ancho variado, como la carga perezosa de primeng.dev/table. Así la fila mide lo que la de
+         datos y al llegar no cambia nada. Sin `pSelectableRow` ni clics: hasta entonces no hay nada que marcar ni abrir. -->
+    <tr class="sc-datatable__skeleton-row" aria-hidden="true">
+      @if (selectionMode() === 'multiple') {
+      <td class="sc-datatable__check" pFrozenColumn [frozen]="!!leftFrozenEdge()">
+        <sc-skeleton size="var(--sc-cmp-checkbox-width)" />
+      </td>
+      } @for (col of visibleCols(); track col.field; let c = $index) {
+      <td
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+        [style.text-align]="col.align ?? null"
+      >
+        @switch (col.skeleton ?? 'text') { @case ('avatar') {
+        <span class="sc-datatable__skeleton-avatar">
+          <sc-skeleton shape="circle" size="var(--sc-datatable-skeleton-avatar-size, var(--sc-cmp-avatar-width))" />
+          <sc-skeleton [width]="skeletonWidth(rowIndex, c)" />
+        </span>
+        } @case ('tag') {
+        <span class="sc-datatable__skeleton-tag"><sc-skeleton width="3rem" height="var(--sc-line-height-100)" /></span>
+        } @case ('action') {
+        <span class="sc-datatable__skeleton-action"><sc-skeleton size="var(--sc-line-height-100)" /></span>
+        } @case ('none') { } @default {
+        <sc-skeleton [width]="skeletonWidth(rowIndex, c)" />
+        } }
+      </td>
+      }
+    </tr>
+    } @else if (userBody()) {
     <ng-container
       *ngTemplateOutlet="
         userBody()!;

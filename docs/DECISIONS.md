@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El esqueleto de carga con la forma de su contenido: en una tabla, `[skeleton]` de `sc-datatable` y la forma de cada columna (`ScColumnDef.skeleton`: `avatar`, `tag`, `action`, texto) · no el ejemplo «DataTable» de primeng.dev tal cual · una caja más alta que la línea no estira la celda · la carga simulada del Supervisor: 1,5 s la primera vez, nada para un robot salvo `?latencia=1` | DD-201 |
 > | Un icono, un significado: `SC_ICONS` (un icono por concepto) y `SC_ICON_RESERVADOS` (la X cierra o quita, la papelera elimina, la hamburguesa abre la navegación) · el botón de solo icono enseña su nombre en un tooltip, también con teclado · `sc-icon` solo en tallas de la escala, color con `tone` · `audit:icons` | DD-200 |
 > | Lo que falta se dice cuando ya hubo ocasión: al dejar su sección sin ello, o al abrir si lo guardado ya venía sin ello · el campo que aparece al encender una opción nace callado · duplicar es un alta · antes, el resumen y el motivo junto al botón, sin rojo · el contenido equivocado, en vivo (`ocasionDeAvisar`, regla 7 de `audit:screen-hygiene`; precisa DD-142) | DD-199 |
 > | La ayuda de un campo va debajo de su control (`helperText`, también en `sc-selectbutton` y `sc-textarea`) · lo que abre la opción, después · una lista que crece, bajo su título · copiar va dentro de `sc-textarea copyable`, solo con icono | DD-198 |
@@ -220,6 +221,58 @@ las capturas de regresión de sc-docs: se regeneran con `visual-baselines` en la
 accesibilidad va oculto (dice «Revisando…» hasta que axe acaba, y la foto dependería de cuándo). Las capturas por story llegan
 después de fundir (workflow `docs-capturas`, o el lunes). Quedan 71 fallos de accesibilidad: cada arreglo baja el tope
 en el mismo cambio (`SC_UPDATE_A11Y=1 npx playwright test sc-docs-a11y`).
+
+---
+
+## DD-201 · 2026-10-13 — El esqueleto de carga con la forma de su contenido, y la carga simulada del Supervisor
+
+**Contexto** · Barrido de dónde pintaría el Supervisor un esqueleto si tuviera servidor (regla 2 de «UX de pantalla»,
+DD-188): 18 listados por `sc-list-page`, tablas sueltas, ocho fichas al editar, cinco pantallas de Configuración, los
+widgets del Monitor, las tarjetas de Repositorios y la transcripción. Sus datos llegan al instante, así que el estado de
+carga no se veía nunca. La primera versión, el ejemplo «DataTable» de primeng.dev/skeleton tal cual (una barra a todo el
+ancho por celda), hacía que al llegar los datos cambiara todo: filas de 33 contra 44, 54 con foto y 43 en Conversaciones;
+la barra del nombre de Etiquetas, 575 px contra 63 de texto; 10 filas grises contra las que hubiera (medido el 2026-10-13
+a 1440; Chrome no lo cuenta como desplazamiento, porque las filas se sustituyen, pero se ve). La propia doc de PrimeNG
+tiene tres recetas de carga para tablas: la máscara con spinner (`loading`, la que la regla 2 descarta), la de las barras
+(«loadingskeleton») y la de la carga perezosa («Virtual Scroll Lazy»), que pone la fila del esqueleto al alto de la de
+datos y varía el ancho de las barras.
+
+**Decisión** ·
+1. **El esqueleto lleva la forma de lo que sustituye.** `sc-datatable` gana `[skeleton]` y `skeletonRows`, y cada columna
+   dice su forma en `ScColumnDef.skeleton`: `avatar` (el círculo y una barra), `tag` (la píldora), `action` (el hueco del
+   botón de solo icono pequeño), `none` o, por defecto, una barra de texto de ancho variado. Las medidas salen de los
+   tokens del componente que sustituyen (`--sc-cmp-avatar-width`, `--sc-cmp-tag-padding-y`,
+   `--sc-cmp-button-sm-padding-y`…); quien use otro avatar ajusta el círculo con `--sc-datatable-skeleton-avatar-size`.
+   La casilla de «todas» se desactiva y ninguna fila se marca ni se abre mientras dura; la tabla lleva `aria-busy`.
+2. **Una caja más alta que la línea no estira la celda.** Una etiqueta (21,5) o un botón (27) en una celda de listado van
+   centrados en su línea (`listBehaviorCss` del tema), y el avatar ilustrado del Supervisor es `inline-flex` centrado:
+   apoyados en la línea base dejaban 4 o 5 px muertos. Las filas con foto pasan de 54 a 49 y las de Conversaciones de 43
+   a 39; con eso, en los 10 listados medidos la fila del esqueleto mide lo que la de datos (en Conversaciones, a 0,25 px)
+   y las columnas no cambian de ancho.
+3. **La carga simulada del Supervisor** (`CargaSimuladaService`): la primera vez que se abre una pantalla en la pestaña,
+   sus datos «tardan» 1,5 s, dentro de la franja del esqueleto; al volver ya están. Sin espera para un navegador
+   automático (`navigator.webdriver`) salvo con `?latencia=1`; `?latencia=0` la quita. La enciende `app.config`, así que
+   TestBed tampoco espera. Hoy la usa `sc-list-page`.
+4. **sc-docs → Skeleton** enseña los ejemplos de primeng.dev que sirven (Formas, Lista, Tarjeta), la tabla del DS y un
+   formulario de ficha, cada uno con «Recargar» para ver el cambio.
+
+**Razón** · Un esqueleto que no se parece a lo que viene no reserva el hueco: es otra pantalla que se cambia por la
+buena. La receta que no salta ya la daba PrimeNG (fila al alto de la de datos, barras de ancho variado); la forma por
+columna la lleva a cualquier tabla sin que cada pantalla escriba sus celdas de carga. Medido con sondas que se ponen rojas
+con el fallo puesto (`esqueleto-carga.spec.ts` falla «44 contra 49» si a Usuarios le falta la forma de avatar).
+
+**Descartadas** ·
+- **El ejemplo «DataTable» de primeng.dev tal cual**, que fue la primera versión: ver Contexto.
+- **El `loading` de `p-table`**: un spinner encima de la tabla, lo que la regla 2 descarta. Se queda en la API sin uso.
+- **Igualar solo el alto de la fila** (`tr` a un alto fijo, como la receta lazy): el alto real depende del contenido
+  (44 con el botón, 49 con foto) y las barras seguían ocupando la celda entera.
+- **Esperar en cada entrada a una pantalla**: más realista, pero cada clic de navegación esperaría; y **solo con
+  interruptor**: la demo seguiría sin enseñar la carga.
+
+**Consecuencias** · `list-table-grammar.spec.ts` espera 49 en Usuarios y Agentes. Pendiente, por orden: las fichas al
+editar y la Configuración (etiqueta y campo, como el ejemplo «Formulario»), el Monitor (un esqueleto por widget, solo al
+entrar o cambiar de monitor), las tarjetas de Repositorios y la transcripción. Cuántas filas grises pinta un listado
+(hoy 10) no se puede saber sin servidor.
 
 ---
 
