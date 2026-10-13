@@ -397,13 +397,6 @@ h1.page__heading {
   color: var(--sc-text-primary);
 }
 
-/* El título de un listado con su nota al lado: la misma línea base, a 7. El margen de debajo sigue en el `h1`. */
-.page__heading-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--sc-spacing-0-5);
-}
-
 /* PÁGINA DE TABLA CON SCROLL PROPIO (`.page--tabla`, DD-95, 2026-09-14).
  *
  * La página no hace scroll: título, buscador y cabecera de columnas se quedan a la vista, y la
