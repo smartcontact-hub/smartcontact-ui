@@ -34,7 +34,9 @@
           }
         </tr>
       </ng-template>
-      <div scTableEmpty class="assign__no-results sc-text-body-regular">{{ 'agents.form.assigned.no_results' | translate }}</div>
+      <div scTableEmpty>
+        <sc-empty-state icon="search_off" titleKey="labels.no_results.title" bodyKey="agents.form.assigned.no_results" />
+      </div>
     </sc-datatable>
   </div>
 </div>
@@ -112,16 +114,23 @@
   }
 </ng-template>
 
-<!-- Salientes: el grupo por el que salen sus llamadas. Solo uno, de los asignados con Teléfono marcado. -->
+<!-- Salientes: el grupo por el que salen sus llamadas. Solo uno, de los asignados con Teléfono marcado. Una etiqueta en
+     la fila elegida, no un radio button por fila (auditoría UX, 2026-10): el valor ya es un hecho (sc-tag), y marcarlo
+     en otra fila es una acción puntual, no un estado que toda la columna comparte visualmente. -->
 <ng-template #outboundTpl let-row>
-  @if (canBeOutbound(row)) {
-    <sc-radiobutton
-      name="agent-outbound-group"
+  @if (row.group.id === outboundGroupId()) {
+    <sc-tag severity="info" icon="call_made" [value]="'agents.form.assigned.outbound_badge' | translate" />
+  } @else if (canBeOutbound(row)) {
+    <sc-button
+      variant="secondary"
+      appearance="text"
       size="sm"
-      [value]="row.group.id"
-      [modelValue]="outboundGroupId()"
-      [ariaLabel]="'agents.form.assigned.outbound_aria' | translate: { name: row.group.name }"
-      (modelValueChange)="setOutbound(row.group.id)"
+      icon="call_made"
+      [disabled]="pending()"
+      [ariaLabel]="'agents.form.assigned.outbound_set' | translate: { name: row.group.name }"
+      [pTooltip]="'agents.form.assigned.outbound_set' | translate: { name: row.group.name }"
+      tooltipPosition="top"
+      (clicked)="setOutbound(row.group.id)"
     />
   } @else {
     <span class="assign__none sc-text-body-regular"><sc-celda-vacia [texto]="'agents.form.assigned.outbound_none' | translate" /></span>

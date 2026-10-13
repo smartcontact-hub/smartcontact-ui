@@ -19,7 +19,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import {
   ScCheckboxComponent as CheckboxComponent,
   ScConfirmService,
-  ScRadioButtonComponent as RadioButtonComponent,
+  ScEmptyStateComponent as EmptyStateComponent,
   ScSearchComponent as SearchComponent,
   ScSelectButtonComponent as SelectButtonComponent,
   ScSelectComponent as SelectComponent,
@@ -100,8 +100,8 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
     CheckboxComponent,
     TagComponent,
     DatatableComponent,
+    EmptyStateComponent,
     LlegaAlPieDirective,
-    RadioButtonComponent,
     SearchComponent,
     SelectButtonComponent,
     SelectComponent,

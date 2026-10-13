@@ -16,9 +16,10 @@ import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ScConfirmService,
+  ScEmptyStateComponent as EmptyStateComponent,
+  ScInputNumberComponent as InputNumberComponent,
   ScSelectButtonComponent as SelectButtonComponent,
   ScSearchComponent as SearchComponent,
-  ScSelectComponent as SelectComponent,
   ScButtonComponent as ButtonComponent,
   ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
@@ -116,12 +117,13 @@ export function columnsRem(
     ButtonComponent,
     CheckboxComponent,
     DatatableComponent,
+    EmptyStateComponent,
+    InputNumberComponent,
     PopoverModule,
     PresenceAvatarComponent,
     NotaDecisionComponent,
     SearchComponent,
     ScLinkButtonComponent,
-    SelectComponent,
     TagComponent,
     ToggleSwitchComponent,
     TooltipModule,
@@ -439,7 +441,6 @@ export class AgentChannelTableComponent {
     this.linksChange.emit(this.links().map(link => link.agentId === agentId ? { ...link, active } : link));
   }
 
-  protected readonly levelOptions = LEVEL_OPTIONS;
   protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
 
   protected setLevel(agentId: number, field: string, value: unknown): void {

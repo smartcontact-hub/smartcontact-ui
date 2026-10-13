@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
+import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 test.beforeEach(async ({ page }) => { await forceLightTheme(page); await disableAnimations(page); });
@@ -17,7 +17,7 @@ async function seed(page: Page, phone = true, chat = true) {
     ]));
   }, { phone, chat });
 }
-const level = (page: Page, family: string) => page.getByRole('combobox', { name: `Nivel de Tom Hanks — ${family}`, exact: true });
+const level = (page: Page, family: string) => page.getByRole('spinbutton', { name: `Nivel de Tom Hanks — ${family}`, exact: true });
 
 for (const panel of [false, true]) {
   for (const families of [['Teléfono'], ['Chat'], ['Teléfono', 'Chat']]) {
@@ -30,12 +30,8 @@ for (const panel of [false, true]) {
         await expect(table.getByRole('columnheader', { name: `Nivel ${family}`, exact: true })).toHaveCount(families.includes(family) ? 1 : 0);
       }
       for (const family of families) {
-        await expect(level(page, family)).toHaveText(family === 'Teléfono' ? '5' : '10');
-        await level(page, family).click();
-        await expect(page.getByRole('option').first()).toBeVisible();
-        await expect(page.getByRole('option')).toHaveText(Array.from({ length: 10 }, (_, i) => String(i + 1)));
-        await page.keyboard.press('Escape');
-        await pickSelectOption(page, level(page, family), family === 'Teléfono' ? '10' : '1');
+        await expect(level(page, family)).toHaveValue(family === 'Teléfono' ? '5' : '10');
+        await level(page, family).fill(family === 'Teléfono' ? '10' : '1');
         if (panel) await expect(page.getByRole('button', { name: 'Guardar (1)', exact: true })).toBeEnabled();
       }
       await page.getByRole('button', { name: panel ? 'Guardar (1)' : 'Guardar', exact: true }).click();
