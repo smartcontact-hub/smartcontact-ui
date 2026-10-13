@@ -128,6 +128,10 @@ const screenshotBaseline = async (page: Page, name: string) => {
   await expect(contenido, 'el shell de sc-docs tiene que exponer un landmark `main`').toBeVisible({
     timeout: 5_000,
   });
+  /* El botón de accesibilidad de cada lienzo no sale en la captura (DD-202): dice «Revisando…» hasta que axe termina,
+   * y axe corre al ver el lienzo, así que la foto dependería de si llegó antes o después. Oculto sin quitarlo, para que
+   * no mueva nada; sus fallos los vigila `sc-docs-a11y.spec.ts`. */
+  await page.addStyleTag({ content: '[data-testid="sb-a11y"] { visibility: hidden !important; }' });
   await expect(contenido).toHaveScreenshot(`${name}.png`, { animations: 'disabled' });
 };
 

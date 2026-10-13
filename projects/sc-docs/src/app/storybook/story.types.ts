@@ -56,6 +56,11 @@ export interface StoryMeta {
   readonly argTypes: readonly ArgType[];
   /** Args iniciales del Playground (default por arg). */
   readonly defaultArgs: ScArgs;
+  /**
+   * «Todas las combinaciones» pinta como hueco las que devuelvan `true`: las que el componente acepta pero el Kit no
+   * tiene (el `plain` relleno del botón). Sin ella, se pintan todas.
+   */
+  readonly combinacionImposible?: (args: ScArgs) => boolean;
 }
 
 /** Una story concreta: un `<ng-template>` + sus args + (opcional) un snippet a medida. */

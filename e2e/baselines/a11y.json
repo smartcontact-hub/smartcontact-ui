@@ -1,0 +1,111 @@
+{
+  "checkbox": {
+    "tamanos-y-variantes": {
+      "label": 7
+    },
+    "tri-estado-seleccionar-todo": {
+      "label": 3
+    }
+  },
+  "chip": {
+    "basico": {
+      "aria-hidden-focus": 1
+    }
+  },
+  "colordotpicker": {
+    "basico": {
+      "target-size": 9
+    },
+    "playground": {
+      "target-size": 9
+    }
+  },
+  "datatable": {
+    "columnas-fijas": {
+      "label": 1
+    },
+    "columnas-seleccion-multiple-y-paginador": {
+      "label": 1
+    },
+    "gestos-de-fila-y-columnas-conmutables": {
+      "label": 1
+    },
+    "playground": {
+      "label": 1
+    }
+  },
+  "gauge": {
+    "grosor-y-track": {
+      "svg-img-alt": 3
+    },
+    "kpis": {
+      "svg-img-alt": 2
+    },
+    "playground": {
+      "svg-img-alt": 1
+    },
+    "sobre-un-total": {
+      "svg-img-alt": 1
+    }
+  },
+  "grouppopover": {
+    "pocos-y-muchos": {
+      "target-size": 2
+    }
+  },
+  "inputtags": {
+    "con-error": {
+      "aria-input-field-name": 1,
+      "aria-required-children": 1
+    },
+    "con-tope": {
+      "aria-input-field-name": 1,
+      "aria-required-children": 1
+    },
+    "deshabilitado": {
+      "aria-input-field-name": 1,
+      "aria-required-children": 1
+    },
+    "dominios-del-chat": {
+      "aria-input-field-name": 1,
+      "aria-required-children": 1
+    },
+    "playground": {
+      "aria-input-field-name": 1,
+      "aria-required-children": 1
+    }
+  },
+  "progressbar": {
+    "modos": {
+      "aria-allowed-attr": 3,
+      "aria-progressbar-name": 3,
+      "aria-valid-attr-value": 3
+    },
+    "playground": {
+      "aria-allowed-attr": 1,
+      "aria-progressbar-name": 1,
+      "aria-valid-attr-value": 1
+    }
+  },
+  "radiobutton": {
+    "tamanos": {
+      "label": 3
+    }
+  },
+  "tabs": {
+    "con-icono-y-una-apagada": {
+      "aria-valid-attr-value": 1
+    },
+    "dos-canales": {
+      "aria-valid-attr-value": 1
+    },
+    "playground": {
+      "aria-valid-attr-value": 1
+    }
+  },
+  "textarea": {
+    "para-copiar": {
+      "label": 1
+    }
+  }
+}
