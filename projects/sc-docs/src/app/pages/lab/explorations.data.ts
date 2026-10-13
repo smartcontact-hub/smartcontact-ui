@@ -233,4 +233,13 @@ export const LABS: readonly Lab[] = [
     href: 'https://sc-supervisor.pages.dev/lab/sidebar',
     label: 'sc-supervisor.pages.dev/lab/sidebar',
   },
+  {
+    id: 'lab-tabla',
+    title: 'Tabla, dentro del Supervisor',
+    question: '¿Cómo se ve una tabla real dentro de la app, no aislada en un lienzo?',
+    controls: ['Tema', 'Sidebar desplegado', 'Densidad', 'Viewport'],
+    where: 'El botón flotante, abajo a la derecha.',
+    href: 'https://sc-supervisor.pages.dev/lab/tabla',
+    label: 'sc-supervisor.pages.dev/lab/tabla',
+  },
 ];

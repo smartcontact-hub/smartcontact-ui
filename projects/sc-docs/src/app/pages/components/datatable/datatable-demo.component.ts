@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, TemplateRef, computed, signal, viewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import type { FilterMetadata } from 'primeng/api';
 import type { TableLazyLoadEvent } from 'primeng/table';
 
@@ -7,10 +8,15 @@ import {
   ScColumnDef,
   ScDatatableComponent,
   ScDatatableRowEvent,
+  ScInputNumberComponent,
+  ScInputTextComponent,
+  ScPanelComponent,
   ScRowStyleClassFn,
+  ScSelectComponent,
+  ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import type { ScDatatableFilters } from '@smartcontact-hub/components';
-import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
+import { ArgType, StoryContext, StoryControlsContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 interface Agent {
   id: number;
@@ -127,12 +133,23 @@ protected readonly listRowClassFn: ScRowStyleClassFn<Agent> = () => 'sc-row--cli
 /** Demo de `sc-datatable` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-datatable-demo',
-  imports: [ScDatatableComponent, StoryHostComponent],
+  imports: [
+    RouterLink,
+    ScDatatableComponent,
+    ScInputNumberComponent,
+    ScInputTextComponent,
+    ScPanelComponent,
+    ScSelectComponent,
+    ScToggleSwitchComponent,
+    StoryHostComponent,
+  ],
   templateUrl: './datatable-demo.component.html',
+  styleUrl: './datatable-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatatableDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
+  protected readonly controlsTpl = viewChild<TemplateRef<{ $implicit: StoryControlsContext }>>('controls');
   protected readonly mvpTpl = viewChild<TemplateRef<StoryContext>>('mvp');
   protected readonly lazyTpl = viewChild<TemplateRef<StoryContext>>('lazy');
   protected readonly gesturesTpl = viewChild<TemplateRef<StoryContext>>('gestures');
@@ -276,30 +293,30 @@ export class DatatableDemoComponent {
     description:
       'Tabla de datos sobre `p-table`. El wrapper aporta la API data-driven (column-defs + `cellTemplate` por columna) y los slots `[scTableCaption]` / `[scTableEmpty]`. Orden y paginación client-side; modo `[lazy]` para server-driven. `header` va ya traducido por el consumidor. El aspecto es el de Aura tal cual (primeng.dev/table): si una receta de `p-table` existe allí, se usa esa. `variant="list"` añade el comportamiento de tabla-lista, que publica el TEMA (viaja con el preset, no con la app).',
     argTypes: [
-      { name: 'paginator', control: { kind: 'boolean' } },
-      { name: 'rows', control: { kind: 'number', min: 1, max: 20, step: 1 } },
-      { name: 'first', control: { kind: 'number', min: 0, max: 6, step: 1 }, description: 'La primera fila de la página abierta, en las dos direcciones. Quien filtra las filas fuera de la tabla la vuelve a 0 al buscar.' },
-      { name: 'stripedRows', control: { kind: 'boolean' } },
-      { name: 'showGridlines', control: { kind: 'boolean' } },
-      { name: 'selectionMode', control: { kind: 'select', options: ['single', 'multiple'] } },
-      { name: 'size', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
-      { name: 'variant', control: { kind: 'select', options: ['default', 'list'] } },
-      { name: 'loading', control: { kind: 'boolean' } },
-      { name: 'skeleton', control: { kind: 'boolean' }, description: 'Esqueleto de carga: la cabecera se queda y cada celda es un `p-skeleton`, como el ejemplo «DataTable» de primeng.dev/skeleton. Es el que piden las pantallas que esperan datos (regla 2 de «UX de pantalla»), no el spinner de `loading`.' },
-      { name: 'skeletonRows', control: { kind: 'number', min: 1, max: 20, step: 1 }, description: 'Cuántas filas pinta el esqueleto.' },
-          { name: 'sortField', control: { kind: 'text' }, description: 'Columna por la que sale ordenada.' },
-      { name: 'sortOrder', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
-      { name: 'externalSort', control: { kind: 'boolean' }, description: 'El orden lo pone quien usa la tabla: pinta la flecha y emite (sortChange), pero no mueve las filas.' },
-      { name: 'scrollable', control: { kind: 'boolean' }, description: 'Cabecera fija y cuerpo con scroll propio.' },
-      { name: 'scrollHeight', control: { kind: 'text' }, description: 'Alto de ese scroll (p.ej. 240px).' },
-      { name: 'stickyHeader', control: { kind: 'boolean' }, description: 'Cabecera fija al scroll de la página (sin scroll propio).' },
-      { name: 'virtualScroll', control: { kind: 'boolean' }, description: 'Lista virtual con scroll propio: entra por encima de 100 filas (esta demo tiene 7).' },
-      { name: 'fill', control: { kind: 'boolean' }, description: 'Llega al pie de su contenedor aunque no haga falta lista virtual: mismo CSS de «llega al pie» (DD-160), sin pagar la ventana.' },
-      { name: 'rowsFocusable', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
-      { name: 'tableMinWidth', control: { kind: 'text' }, description: 'Ancho mínimo (p.ej. 60rem): por debajo la tabla se desplaza de lado en vez de cortar texto.' },
-      { name: 'resizableColumns', control: { kind: 'boolean' }, description: 'Ancho de columna ajustable arrastrando el borde de la cabecera (el nativo de p-table).' },
-      { name: 'columnResizeMode', control: { kind: 'select', options: ['fit', 'expand'] }, description: 'fit: la tabla no cambia de ancho. expand: crece con la columna.' },
-      { name: 'reorderableColumns', control: { kind: 'boolean' }, description: 'Orden de columnas arrastrando la cabecera (el nativo de p-table); la tabla avisa con (columnOrderChange).' },
+      { name: 'paginator', label: 'Paginación', control: { kind: 'boolean' } },
+      { name: 'rows', label: 'Filas por página', control: { kind: 'number', min: 1, max: 20, step: 1 } },
+      { name: 'first', label: 'Primera fila visible', control: { kind: 'number', min: 0, max: 6, step: 1 }, description: 'La primera fila de la página abierta, en las dos direcciones. Quien filtra las filas fuera de la tabla la vuelve a 0 al buscar.' },
+      { name: 'stripedRows', label: 'Filas alternas (cebra)', control: { kind: 'boolean' } },
+      { name: 'showGridlines', label: 'Líneas de rejilla', control: { kind: 'boolean' } },
+      { name: 'size', label: 'Tamaño', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
+      { name: 'variant', label: 'Variante', control: { kind: 'select', options: ['default', 'list'] } },
+      { name: 'loading', label: 'Cargando', control: { kind: 'boolean' } },
+      { name: 'skeleton', label: 'Esqueleto de carga', control: { kind: 'boolean' }, description: 'Esqueleto de carga: la cabecera se queda y cada celda es un `p-skeleton`, como el ejemplo «DataTable» de primeng.dev/skeleton. Es el que piden las pantallas que esperan datos (regla 2 de «UX de pantalla»), no el spinner de `loading`.' },
+      { name: 'skeletonRows', label: 'Filas del esqueleto', control: { kind: 'number', min: 1, max: 20, step: 1 }, description: 'Cuántas filas pinta el esqueleto.' },
+      { name: 'selectionMode', label: 'Modo de selección', control: { kind: 'select', options: ['single', 'multiple'] } },
+      { name: 'sortField', label: 'Ordenar por columna', control: { kind: 'text' }, description: 'Columna por la que sale ordenada.' },
+      { name: 'sortOrder', label: 'Sentido del orden', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
+      { name: 'externalSort', label: 'Orden gestionado fuera', control: { kind: 'boolean' }, description: 'El orden lo pone quien usa la tabla: pinta la flecha y emite (sortChange), pero no mueve las filas.' },
+      { name: 'rowsFocusable', label: 'Filas navegables con teclado', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
+      { name: 'scrollable', label: 'Scroll propio', control: { kind: 'boolean' }, description: 'Cabecera fija y cuerpo con scroll propio.' },
+      { name: 'scrollHeight', label: 'Alto del scroll', control: { kind: 'text' }, description: 'Alto de ese scroll (p.ej. 240px).' },
+      { name: 'stickyHeader', label: 'Cabecera fija', control: { kind: 'boolean' }, description: 'Cabecera fija al scroll de la página (sin scroll propio).' },
+      { name: 'virtualScroll', label: 'Lista virtual', control: { kind: 'boolean' }, description: 'Lista virtual con scroll propio: entra por encima de 100 filas (esta demo tiene 7).' },
+      { name: 'fill', label: 'Llega al pie', control: { kind: 'boolean' }, description: 'Llega al pie de su contenedor aunque no haga falta lista virtual: mismo CSS de «llega al pie» (DD-160), sin pagar la ventana.' },
+      { name: 'tableMinWidth', label: 'Ancho mínimo', control: { kind: 'text' }, description: 'Ancho mínimo (p.ej. 60rem): por debajo la tabla se desplaza de lado en vez de cortar texto.' },
+      { name: 'resizableColumns', label: 'Redimensionar columnas', control: { kind: 'boolean' }, description: 'Ancho de columna ajustable arrastrando el borde de la cabecera (el nativo de p-table).' },
+      { name: 'columnResizeMode', label: 'Modo de redimensión', control: { kind: 'select', options: ['fit', 'expand'] }, description: 'fit: la tabla no cambia de ancho. expand: crece con la columna.' },
+      { name: 'reorderableColumns', label: 'Reordenar columnas', control: { kind: 'boolean' }, description: 'Orden de columnas arrastrando la cabecera (el nativo de p-table); la tabla avisa con (columnOrderChange).' },
     ],
     defaultArgs: {
       paginator: true,
@@ -334,8 +351,45 @@ export class DatatableDemoComponent {
     },
   };
 
+  /**
+   * Agrupación de los 21 knobs del Playground para no-devs (BI, PMs en la reunión de tablas):
+   * híbrido entre el vocabulario del Excel de BI (Selección, Scroll, Columnas — mismas palabras
+   * que en la reunión) y menos grupos que sus 17, para que cada acordeón quepa de un vistazo.
+   * «General» empieza abierto (lo primero que se toca); el resto, plegado.
+   */
+  protected readonly controlGroupDefs: readonly { title: string; open: boolean; names: readonly string[] }[] = [
+    { title: 'General', open: true, names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'variant', 'loading', 'skeleton', 'skeletonRows'] },
+    { title: 'Selección y orden', open: false, names: ['selectionMode', 'sortField', 'sortOrder', 'externalSort', 'rowsFocusable'] },
+    { title: 'Scroll y tamaño', open: false, names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'fill', 'tableMinWidth'] },
+    { title: 'Columnas', open: false, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
+  ];
+
+  /** Resuelve cada grupo contra `meta.argTypes`: una sola fuente de verdad para kind/opciones/label. */
+  protected readonly controlGroups: readonly { title: string; open: boolean; knobs: readonly ArgType[] }[] =
+    this.controlGroupDefs.map((g) => ({
+      title: g.title,
+      open: g.open,
+      knobs: g.names
+        .map((n) => this.meta.argTypes.find((at) => at.name === n))
+        .filter((at): at is ArgType => !!at),
+    }));
+
+  protected asStr(v: unknown): string {
+    return typeof v === 'string' ? v : v == null ? '' : String(v);
+  }
+  protected asNum(v: unknown): number | null {
+    return typeof v === 'number' ? v : null;
+  }
+  protected asBool(v: unknown): boolean {
+    return !!v;
+  }
+  protected selectOptions(at: ArgType): readonly { label: string; value: string | number }[] {
+    return at.control.kind === 'select' ? at.control.options.map((o) => ({ label: String(o), value: o })) : [];
+  }
+
   protected readonly stories = computed<readonly StoryDef[]>(() => {
     const pg = this.playgroundTpl();
+    const controls = this.controlsTpl();
     const mvp = this.mvpTpl();
     const lz = this.lazyTpl();
     const gs = this.gesturesTpl();
@@ -344,9 +398,9 @@ export class DatatableDemoComponent {
     // `st` (statusTpl) alimenta `columns()`; espera a que resuelva para no
     // pintar la story MVP con la columna de estado sin su cellTemplate.
     const fr = this.frozenTpl();
-    if (!pg || !mvp || !lz || !gs || !ls || !st || !fr) return [];
+    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr) return [];
     return [
-      { name: 'Playground', playground: true, template: pg },
+      { name: 'Playground', playground: true, template: pg, controlsTemplate: controls },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
       { name: 'Lazy (server-driven): paginación + orden + filtro global', template: lz, snippet: LAZY_SNIPPET },
       { name: 'Gestos de fila y columnas conmutables', template: gs, snippet: GESTURES_SNIPPET },

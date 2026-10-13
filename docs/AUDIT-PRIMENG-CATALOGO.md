@@ -82,6 +82,8 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 | Tooltip · AutoFocus · ScrollArea · DynamicDialog · InputGroupAddon | supervisor, sc-docs | Directivas y piezas internas de otro componente: bien directas. |
 | ToggleButton | cuscare | Réplica (DD-35): no se toca. |
 | Sidebar | supervisor (página de laboratorio) | **Se queda.** Es el menú lateral nuevo de la 22, en prueba para la versión «no se cierra nada» del sidebar (frente `supervisor-sidebar`, DD-118). |
+| Rating | supervisor (`lab/tabla`, celda de «Valoración» en modo `readonly`) | El nativo tal cual (DD-113): el DS ya trae el tema listo (`sc-preset/rating.ts`), sin wrapper propio todavía. Demuestra contenido rico en celda (estrellas), no sustituye ningún componente del DS. |
+| TreeTable | supervisor (`lab/arbol`) | El nativo tal cual: el DS ya trae el tema listo (`sc-preset/treetable.ts`), sin wrapper propio todavía. Jerarquía de verdad (equipos → agentes), no una tabla plana — no sustituye a `sc-datatable`. |
 
 **Tabs** ya tiene wrapper (`sc-tabs`, DD-195): Plantillas, el reproductor de Memory y la página «Uso» de sc-docs lo
 usan. Solo las pestañas del Monitor siguen en `p-tabs` directo: se arrastran para ordenarse y se renombran con doble
@@ -100,8 +102,8 @@ equipo la mire.
 
 Carousel, Galleria, Gallery, Image, ImageCompare, Dock, SpeedDial, Terminal, OrganizationChart, PickList, DataView,
 MegaMenu, Menubar, PanelMenu, TieredMenu, Splitter, ScrollTop, BlockUI, CascadeSelect, ButtonGroup, SplitButton,
-FloatLabel, IftaLabel, InputColor, KeyFilter, Chart, Steps (la documentación ya no lo trae; su sucesor es Stepper),
-TreeTable. Se reabren si aparece el caso.
+FloatLabel, IftaLabel, InputColor, KeyFilter, Chart, Steps (la documentación ya no lo trae; su sucesor es Stepper).
+Se reabren si aparece el caso.
 
 ## 5. Directivas, piezas de otros componentes y obsoletos
 

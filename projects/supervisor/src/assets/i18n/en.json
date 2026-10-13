@@ -2685,6 +2685,23 @@
       "mode_slim": "Slim",
       "anchor_aria": "Pin the menu open",
       "unanchor_aria": "Unpin the menu"
+    },
+    "tabla": {
+      "options_aria": "Table lab options",
+      "controls_aria": "Table controls",
+      "context_label": "App context",
+      "theme_label": "Theme",
+      "sidebar_label": "Sidebar expanded",
+      "viewport_label": "Viewport",
+      "freeze_label": "Freeze «Agent»",
+      "switch_label": "Switch between table and tree"
+    },
+    "arbol": {
+      "context_label": "App context",
+      "theme_label": "Theme",
+      "sidebar_label": "Sidebar expanded",
+      "viewport_label": "Viewport",
+      "switch_label": "Switch between table and tree"
     }
   }
 }

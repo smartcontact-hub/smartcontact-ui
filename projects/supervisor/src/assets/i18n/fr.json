@@ -2685,6 +2685,23 @@
       "mode_slim": "Slim",
       "anchor_aria": "Épingler le menu déplié",
       "unanchor_aria": "Désépingler le menu"
+    },
+    "tabla": {
+      "options_aria": "Options du laboratoire de tableau",
+      "controls_aria": "Contrôles du tableau",
+      "context_label": "Contexte de l'app",
+      "theme_label": "Thème",
+      "sidebar_label": "Menu déplié",
+      "viewport_label": "Viewport",
+      "freeze_label": "Figer «Agent»",
+      "switch_label": "Basculer entre tableau et arbre"
+    },
+    "arbol": {
+      "context_label": "Contexte de l'app",
+      "theme_label": "Thème",
+      "sidebar_label": "Menu déplié",
+      "viewport_label": "Viewport",
+      "switch_label": "Basculer entre tableau et arbre"
     }
   }
 }

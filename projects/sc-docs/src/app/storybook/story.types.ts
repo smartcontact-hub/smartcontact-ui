@@ -63,6 +63,12 @@ export interface StoryMeta {
   readonly combinacionImposible?: (args: ScArgs) => boolean;
 }
 
+/** Lo que recibe un `controlsTemplate` a medida: los args en vivo de la story y cómo mutarlos. */
+export interface StoryControlsContext {
+  readonly args: ScArgs;
+  setArg(name: string, value: unknown): void;
+}
+
 /** Una story concreta: un `<ng-template>` + sus args + (opcional) un snippet a medida. */
 export interface StoryDef {
   /** Nombre de la story, p.ej. `Playground`, `Variantes`. */
@@ -87,4 +93,11 @@ export interface StoryDef {
    * toda story que pinta otra plantilla que la del Playground (`audit:doc-snippets`, regla e).
    */
   readonly snippet?: string;
+  /**
+   * Panel de Controles a medida para ESTA story, en vez del genérico `<app-story-controls>`
+   * (grid plano de knobs). Para cuando una página necesita agrupar o relabelar sus knobs para
+   * una audiencia no-dev (DataTable). Las demás páginas no lo pasan: sin este campo, el motor
+   * sigue pintando el panel genérico, sin cambios.
+   */
+  readonly controlsTemplate?: TemplateRef<{ $implicit: StoryControlsContext }>;
 }
