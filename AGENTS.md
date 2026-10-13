@@ -233,6 +233,13 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    **En estrecho, el nombre se queda** (DD-193): la columna que nombra la fila va fija a la izquierda y la tabla
    desplaza de lado; su mínimo sale de las columnas y no baja de 15rem para el nombre. Prueba cada lista a 1024.
    Esa columna es la cabecera de su fila (`rowHeader` en `ScColumnDef`, DD-194): una tabla nueva con nombre la marca.
+11. **Lo que falta se dice cuando ya hubo ocasión** (DD-199). Un obligatorio vacío no es un error, es algo por
+   rellenar: ni borde rojo, ni aviso bajo el campo, ni punto en el índice hasta que la persona ha tenido ocasión de
+   rellenarlo, que es dejar su sección sin ello (en el alta y al editar) o que lo guardado ya viniera sin ello. Un
+   campo que aparece al encender una opción nace callado, y duplicar es un alta. Mientras tanto lo dicen el resumen
+   («Falta: …») y el motivo junto al botón, sin rojo. Un error de contenido (repetido, mal escrito) va en vivo. En una
+   ficha lo decide `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`); lo vigilan `audit:screen-hygiene` (regla 7)
+   y `sin-acusar-de-primeras.spec.ts`.
 
 **Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
 recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas

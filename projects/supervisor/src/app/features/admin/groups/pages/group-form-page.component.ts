@@ -12,7 +12,7 @@ import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, NotaDecisionComponent, ResourceRowsComponent, type ResourceRow } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
-import { llegarAAncla, llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import { llegarAAncla, llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   type FormNavSection,
@@ -338,10 +338,36 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /** «Clasificar llamadas» encendido sin tipificación elegida: falta la tipificación. */
   protected readonly typificationMissing = computed(() => this.form().wrapUp.classify && this.form().wrapUp.typificationId === null);
 
-  /** Que falte se dice en su campo al editar, o en el alta desde que se intenta salir de General. */
-  protected readonly typificationError = computed(
-    () => this.typificationMissing() && (this.mode() === 'edit' || this.attemptedGeneral()),
-  );
+  /** Que falte se dice en su campo cuando ya hubo ocasión de elegirla (DD-199): encender «Tipificar» no acusa. */
+  protected readonly typificationError = computed(() => this.typificationMissing() && this.acusaGeneral('typification'));
+
+  /** Lo obligatorio que falta ahora, por clave: de aquí sale cuándo se puede decir (`ocasion`). */
+  private readonly faltas = computed<readonly string[]>(() => {
+    const f = this.form();
+    return [
+      ...(f.name.trim() ? [] : ['name']),
+      ...(f.channels.size > 0 ? [] : ['channels']),
+      ...(this.typificationMissing() ? ['typification'] : []),
+      ...(this.phoneMissing() ? ['phone'] : []),
+    ];
+  });
+
+  /**
+   * Cuándo se dice lo que falta (DD-199): desde que se deja su sección sin ello, en el alta y al editar, o desde que se
+   * abre si lo guardado ya venía sin ello (DD-142). Antes, lo dicen el resumen y el motivo junto al botón, sin rojo.
+   */
+  private readonly ocasion = ocasionDeAvisar({
+    alta: this.alta,
+    editando: () => this.mode() === 'edit',
+    abierta: () => this.activeSection(),
+    cambios: () => this.dirtyState.dirty(),
+    faltas: () => this.faltas(),
+  });
+
+  /** En el alta, General no se deja sin lo suyo (es la puerta, DD-121): ahí la ocasión es el intento de salir. */
+  private acusaGeneral(falta: string): boolean {
+    return this.attemptedGeneral() || this.ocasion.acusa('group-section-general', falta);
+  }
 
   /**
    * Se ha intentado salir de General (o crear) sin completarla: desde entonces lo que falta se dice en su
@@ -355,22 +381,24 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    */
   protected readonly phoneMissing = computed(() => this.hasPhone() && this.form().phone.trim().length === 0);
 
-  /** En el alta se ha salido de Distribución y colas sin él: desde entonces lo dice su campo, como el nombre. */
+  /** En el alta se ha intentado pasar de Distribución y colas sin él (es la segunda puerta, DD-158). */
   private readonly attemptedDistribution = signal(false);
 
-  /** El aviso bajo el teléfono saliente: al editar, siempre que falte; en el alta, tras salir de su sección sin él. */
+  /** El aviso bajo el teléfono saliente, cuando ya hubo ocasión de elegirlo (DD-199). */
   protected readonly phoneError = computed<string | null>(() =>
-    this.phoneMissing() && (this.mode() === 'edit' || this.attemptedDistribution()) ? 'groups.errors.phone_required' : null,
+    this.phoneMissing() && (this.attemptedDistribution() || this.ocasion.acusa('group-section-distribution', 'phone'))
+      ? 'groups.errors.phone_required'
+      : null,
   );
 
   /**
-   * Las secciones con algo obligatorio sin rellenar: su punto rojo en el índice. General (el nombre, y al menos un
-   * canal; un nombre repetido tampoco deja guardar) y, con Teléfono, Distribución y colas (su teléfono saliente). En
-   * el alta, solo después de intentar salir: el resumen ya dice qué falta sin acusar.
+   * El punto rojo del índice: la sección tiene un aviso a la vista. General (el nombre, repetido o vacío, los canales y
+   * la tipificación) y Distribución y colas (el teléfono saliente y la cola). Lo que falta, cuando ya hubo ocasión
+   * (DD-199); antes, el resumen ya dice qué falta sin acusar.
    */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
     const out = new Set<string>();
-    if (!this.generalValid() && (this.mode() === 'edit' || this.attemptedGeneral())) out.add('group-section-general');
+    if (this.nameError() || this.channelsError() || this.typificationError()) out.add('group-section-general');
     if (this.phoneError() || this.queueInvalid()) out.add('group-section-distribution');
     return out;
   });
@@ -396,16 +424,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** El aviso bajo el nombre: repetido siempre; vacío, solo tras intentar salir de General. */
+  /** El aviso bajo el nombre: repetido, en vivo (es contenido); vacío, cuando ya hubo ocasión (DD-199). */
   protected readonly nameError = computed<string | null>(() => {
     if (this.nameTaken()) return 'groups.errors.name_taken';
-    if (this.attemptedGeneral() && this.form().name.trim().length === 0) return 'groups.errors.name_required';
+    if (this.form().name.trim().length === 0 && this.acusaGeneral('name')) return 'groups.errors.name_required';
     return null;
   });
 
-  protected readonly channelsError = computed(
-    () => (this.mode() === 'edit' || this.attemptedGeneral()) && this.form().channels.size === 0,
-  );
+  protected readonly channelsError = computed(() => this.form().channels.size === 0 && this.acusaGeneral('channels'));
 
   /**
    * Ir a otra sección. Al editar, libre. En el ALTA, General es la puerta: sin nombre y sin canales las
@@ -431,10 +457,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       this.stayInDistribution();
       return Promise.resolve(false);
     }
-    // Al editar, salir de Distribución sin el teléfono saliente se deja, pero desde ahí su campo dice que falta.
-    if (this.activeSection() === 'group-section-distribution' && id !== 'group-section-distribution' && this.phoneMissing()) {
-      this.attemptedDistribution.set(true);
-    }
+    // Al editar, salir de Distribución sin el teléfono saliente se deja; desde ahí su campo dice que falta (`ocasion`).
     // En el alta, la sección se abre sin tocar la dirección: Atrás sale del alta (DD-122, DD-143).
     if (this.mode() === 'create') {
       this.alta.abrir(id);

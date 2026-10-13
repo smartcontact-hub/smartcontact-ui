@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Lo que falta se dice cuando ya hubo ocasión: al dejar su sección sin ello, o al abrir si lo guardado ya venía sin ello · el campo que aparece al encender una opción nace callado · duplicar es un alta · antes, el resumen y el motivo junto al botón, sin rojo · el contenido equivocado, en vivo (`ocasionDeAvisar`, regla 7 de `audit:screen-hygiene`; precisa DD-142) | DD-199 |
 > | La ayuda de un campo va debajo de su control (`helperText`, también en `sc-selectbutton` y `sc-textarea`) · lo que abre la opción, después · una lista que crece, bajo su título · copiar va dentro de `sc-textarea copyable`, solo con icono | DD-198 |
 > | Una celda sin dato: «—» en gris suave, oculto al lector, que oye «Sin dato» o su porqué («No aplica»), con `sc-celda-vacia` · si el vacío significa algo o es una cifra, se escribe («0») · ningún «—» suelto en una plantilla (`audit:screen-hygiene`) | DD-197 |
 > | Un cambio en lote se cuenta en su barra: «Cambio aplicado a 2 grupos» con «Deshacer» pegado al texto, sin irse sola, hasta cerrarla o volver a marcar (`contarLote` de `sc-list-page`, `result` de `sc-bulk-action-bar`) · el toast con «Deshacer», solo para lo que desaparece sin sitio (el inicio) | DD-196 |
@@ -142,6 +143,47 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-199 · 2026-10-13 — Lo que falta se dice cuando ya hubo ocasión de rellenarlo
+
+**Contexto** · En la ficha de un grupo guardado, al encender «Tipificar llamadas» el desplegable que aparece nacía en
+rojo: borde y texto rojos, «Elige una tipificación» debajo y el punto rojo en General, antes de poder elegir nada
+(medido el 2026-10-13: un clic y tres avisos en rojo, además del «Falta» del resumen). La causa era una excepción por
+modo: al editar, todo obligatorio vacío acusaba en el acto (`mode() === 'edit' || …`). Servía para lo guardado que ya
+venía sin algo (DD-142: «sí en un grupo ya guardado que no lo tiene») y alcanzaba también a lo que la persona acababa
+de abrir o vaciar: quitar los canales de un agente o de un grupo, y duplicar un agente o un usuario, que llegan sin
+nombre a propósito. La regla R6 de las fichas ya lo decía («un campo vacío calla»), y el alta lo cumplía (DD-136,
+DD-143).
+
+**Decisión** ·
+1. Un obligatorio vacío acusa (borde, aviso bajo el campo, punto del índice) cuando la persona ya tuvo ocasión de
+   rellenarlo: al dejar su sección sin ello (con «Siguiente», el índice o el resumen), en el alta y al editar; o desde
+   que se abre la ficha, si lo guardado ya venía sin ello.
+2. Un campo que aparece al encender una opción nace callado. Duplicar es un alta.
+3. Mientras tanto lo dicen el resumen («Falta: …», DD-136) y el motivo junto al botón, sin rojo; el botón sigue
+   apagado.
+4. Un error de contenido (un nombre repetido, un email o un PIN mal escritos) no espera ocasión: va en vivo (R6).
+5. Lo decide una sola pieza, `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`), en las fichas de grupo, agente,
+   usuario y tipificación. «Lo guardado» es lo que había la última vez que la ficha no tenía cambios: al abrirla, al
+   guardar o al deshacer.
+6. Es norma de pantalla: principio 11 de AGENTS.md §«UX de pantalla», y su copia en sc-docs (Fundamentos → Patrones).
+
+**Razón** · Un aviso en rojo dice «te has equivocado». Antes de que la persona haya podido hacer nada, esa culpa es
+falsa, y enseña a no fiarse del rojo cuando sí importa. Lo que falta ya se ve sin acusar: en el resumen y en el
+motivo del botón apagado.
+
+**Descartadas** ·
+- **Acusar al salir del campo**: en un desplegable o en unas casillas, salir del campo no dice que se haya terminado;
+  dejar la sección es la ocasión que el alta ya usaba (DD-143), y así hay una sola.
+- **Callar también lo guardado que ya viene sin algo**: ahí falta de verdad y no lo ha causado quien abre la ficha; si
+  no se dice al abrir, se descubre al ir a guardar.
+
+**Consecuencias** · `e2e/supervisor/sin-acusar-de-primeras.spec.ts` (encender «Tipificar», duplicar un agente, quitar
+los canales de uno guardado) se pone en rojo contra el código anterior, cada prueba por su motivo. `audit:screen-hygiene`
+gana su regla 7: ninguna ficha decide por el modo cuándo acusa, ni lee las secciones dejadas sin `ocasionDeAvisar` (en
+`main` marcaba las 8 líneas). `tipificaciones-listado.spec.ts` deja de dar por bueno el rojo al encender.
 
 ---
 
@@ -1890,6 +1932,15 @@ cuál es el paso esperado, y «Crear grupo» de arriba sigue siendo la única ac
 
 **Descartado.** El ✓ en todas las secciones visitadas (lo de antes); hacer puerta también al editar (al editar se va
 por el índice y no hay pasos); los 8 px del ejemplo entre botones.
+*(Revisado el 2026-10-13; el pie se queda como está.)* Dos más:
+- **«Atrás» a la izquierda y «Siguiente» a la derecha, separados.** Es la geometría de un asistente horizontal
+  (izquierda, atrás; derecha, adelante). Aquí el índice va de arriba abajo, así que «Siguiente» es la sección de
+  abajo, no la de la derecha. La sección acaba en su borde izquierdo, donde está el último campo: separados,
+  «Siguiente» se iba al otro lado de la columna (658 px entre los dos, lo de antes). Hasta los asistentes de
+  escritorio los llevan juntos. Lo que separarlos protege, no pulsar «Atrás» por error, ya lo cubre el peso:
+  «Atrás» secundario y «Siguiente» el principal.
+- **«Atrás» y «Siguiente» también al editar.** Al editar se entra a cambiar una cosa y se va por el índice; un
+  «Siguiente» sugiere un recorrido que no hay, y «Guardar» sigue arriba.
 
 ## DD-157 · 2026-10-04 — Distribución y colas, con el árbol del DS: cada canal una caja, cada parte un slot, y los mensajes de la cola de vuelta
 
@@ -2625,7 +2676,8 @@ para un formulario tan largo, y una ficha que cambia de forma entre crear y edit
    - su rótulo lleva el «*» y el desplegable, `required`;
    - el resumen dice «Falta: … · teléfono saliente», y «Crear grupo» y «Guardar» esperan, con el motivo en la barra;
    - al editar, el aviso va bajo el campo y Distribución y colas lleva el punto del índice; en el alta, después de
-     salir de su sección sin él, como el nombre al salir de General;
+     salir de su sección sin él, como el nombre al salir de General; *(precisado por DD-199, 2026-10-13: al editar,
+     si lo guardado ya venía sin él o desde que se sale de su sección sin él)*
    - en el alta, Distribución no lleva su ✓ sin él, pero no es puerta: los pasos siguen libres; *(enmendado por
      DD-158, 2026-10-04: es la segunda puerta del alta, como el nombre)*
    - duplicar lo pide al enviar, como el resto de sus campos, y lleva el foco a él.

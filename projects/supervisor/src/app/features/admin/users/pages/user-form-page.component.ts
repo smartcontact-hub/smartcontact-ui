@@ -29,7 +29,7 @@ import {
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
 import { AltaPieComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
-import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import { llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
   accessFor,
   AVAILABLE_SERVICES,
@@ -295,17 +295,35 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     llegarASeccion(id, this.injector);
   }
 
-  /**
-   * Lo que falta para poder guardar, en el índice: el nombre y un email válido, en Identidad. Al editar y al
-   * duplicar (que llega con esos campos vacíos a propósito). En un alta recién abierta no acusa, lo dice el
-   * resumen (DD-136); desde que se deja Identidad sin ellos, sí, como la ✓ de la que se deja completa (DD-143).
-   */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
+  /** Identidad, sin el nombre o sin un email válido: lo que hace falta para poder guardar. */
+  private readonly faltaIdentidad = computed(() => {
     const f = this.form();
-    const falta = !f.name.trim() || !EMAIL_RE.test(f.email.trim());
-    const acusa = this.mode() !== 'create' || this.alta.dejadas().has('user-section-identity');
-    return new Set(acusa && falta ? ['user-section-identity'] : []);
+    return !f.name.trim() || !EMAIL_RE.test(f.email.trim());
   });
+
+  /**
+   * Cuándo se dice lo que falta (DD-199): desde que se deja Identidad sin ello, en el alta y al editar, o desde que se
+   * abre si lo guardado ya venía sin ello. Duplicar es un alta: llega sin nombre ni email a propósito y no acusa.
+   */
+  private readonly ocasion = ocasionDeAvisar({
+    alta: this.alta,
+    editando: () => this.mode() === 'edit',
+    abierta: () => this.activeSection(),
+    cambios: () => this.dirtyState.dirty(),
+    faltas: () => (this.faltaIdentidad() ? ['user-section-identity'] : []),
+  });
+
+  /**
+   * Lo que falta para poder guardar, en el índice, cuando ya hubo ocasión (DD-199). Antes lo dice el resumen (DD-136);
+   * desde que se deja Identidad sin ello, el punto, como la ✓ de la que se deja completa (DD-143).
+   */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() =>
+    new Set(
+      this.faltaIdentidad() && this.ocasion.acusa('user-section-identity', 'user-section-identity')
+        ? ['user-section-identity']
+        : [],
+    ),
+  );
 
   /** Las secciones con cambios sin guardar (DD-122), al editar. */
   protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
@@ -415,7 +433,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     // Modo "Duplicar": detecta ?seedFromId en query params y precarga el
     // form desde el source EXCEPTO los identificadores únicos (name +
     // email + identifier). El usuario debe rellenar esos 3 antes de
-    // guardar. La bola roja en el nav señala la sección Identity.
+    // guardar: lo dice el resumen, y el punto rojo del índice cuando deja
+    // Identidad sin ellos (DD-199).
     const seedFromId = this.route.snapshot.queryParamMap.get('seedFromId');
     if (seedFromId) {
       const source = this.usersStore.getUser(Number(seedFromId));

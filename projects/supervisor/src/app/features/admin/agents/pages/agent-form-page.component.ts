@@ -28,7 +28,7 @@ import {
   SummaryKpiComponent,
   SummaryStatusComponent,
 } from '@shared/components';
-import { llegarAAncla, llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import { llegarAAncla, llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScCheckboxComponent as CheckboxComponent,
@@ -561,24 +561,37 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return f.links.map((l) => clampLinksToChannels([l], grupos.get(l.groupId) ?? [], () => f.allowedChannels)[0]);
   });
 
-  /** Sin canales, el aviso bajo las casillas: al editar, o en el alta desde que se deja General. */
+  /**
+   * Cuándo se dice lo que falta (DD-199): desde que se deja su sección sin ello, en el alta y al editar, o desde que se
+   * abre si lo guardado ya venía sin ello (DD-142). Duplicar es un alta: lo que llega vacío a propósito no acusa. Antes,
+   * lo dicen el resumen (DD-136) y el motivo junto al botón, sin rojo. Un email o un PIN mal escritos, en su campo y en
+   * vivo; al índice llegan con la misma ocasión que lo que falta.
+   */
+  private readonly ocasion = ocasionDeAvisar({
+    alta: this.alta,
+    editando: () => this.mode() === 'edit',
+    abierta: () => this.activeSection(),
+    cambios: () => this.dirtyState.dirty(),
+    faltas: () => [...this.faltas().map((f) => f.motivo), ...(this.formatoMal() ? ['formato'] : [])],
+  });
+
+  /** Sin canales, el aviso bajo las casillas, cuando ya hubo ocasión de marcarlos (DD-199). */
   protected readonly channelsError = computed(
     () =>
       this.form().allowedChannels.length === 0 &&
-      (this.mode() !== 'create' || this.alta.dejadas().has('agent-section-general')),
+      this.ocasion.acusa('agent-section-general', 'agents.errors.channels_required'),
   );
 
   /** ¿Tiene teléfono móvil? «Gestión de dispositivos» (elegir navegador o teléfono en el puesto) lo necesita. */
   protected readonly hasPhone = computed(() => !!this.form().phone.trim());
 
   /**
-   * Lo que falta, en el índice. Al editar y al duplicar (que llega con campos vacíos a propósito), siempre. En un alta
-   * recién abierta no acusa, lo dice el resumen (DD-136); desde que se deja una sección sin lo suyo, sí (DD-143).
+   * Lo que falta, en el índice, cuando ya hubo ocasión (DD-199). En un alta recién abierta, al duplicar y tras un cambio
+   * al editar no acusa: lo dice el resumen (DD-136); desde que se deja la sección sin lo suyo, sí (DD-143).
    */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const acusa = (id: string) => this.mode() !== 'create' || this.alta.dejadas().has(id);
-    const out = new Set(this.faltas().map((f) => f.seccion).filter(acusa));
-    if (this.formatoMal() && acusa('agent-section-general')) out.add('agent-section-general');
+    const out = new Set(this.faltas().filter((f) => this.ocasion.acusa(f.seccion, f.motivo)).map((f) => f.seccion));
+    if (this.formatoMal() && this.ocasion.acusa('agent-section-general', 'formato')) out.add('agent-section-general');
     return out;
   });
 
@@ -964,8 +977,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     // Modo "Duplicar": detecta ?seedFromId en query params y precarga el
     // form desde el source EXCEPTO los identificadores únicos (nombre,
     // extensión, email, PIN). El usuario debe rellenar esos 4 antes de
-    // guardar — la bola roja en el nav señala la sección Identity con
-    // required vacíos.
+    // guardar: lo dice el resumen («Falta: …»), y el punto rojo del índice
+    // solo cuando deja General sin ellos (DD-199).
     const seedFromId = this.route.snapshot.queryParamMap.get('seedFromId');
     if (seedFromId) {
       const source = this.agentsStore.getAgent(Number(seedFromId));

@@ -90,10 +90,11 @@ test('el grupo elige una tipificación, ve su árbol sin salir y, si tipifica, n
   );
   await page.keyboard.press('Escape');
 
-  // Un grupo que no tipifica: al encenderlo, pide cuál y no deja guardar sin ella.
+  // Un grupo que no tipifica: al encenderlo, pide cuál y no deja guardar sin ella. Lo pide sin acusar (DD-199): el
+  // aviso en rojo, al dejar General sin elegirla (`sin-acusar-de-primeras.spec.ts`).
   await goto(page, 'admin/grupos/editar/1?seccion=general');
   await page.getByRole('switch', { name: /^Tipificar/ }).click();
-  await expect(page.getByText('Elige una tipificación', { exact: true }).last()).toBeVisible();
+  await expect(page.locator('#group-typification')).toBeVisible();
   await expect(page.locator('sc-top-bar')).toContainText('tipificación');
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });
