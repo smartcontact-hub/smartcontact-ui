@@ -66,17 +66,16 @@
    fallo exacto. `npm run e2e:contrast` lo mide por ti; córrelo antes de dar el cambio por bueno.
    Evidencia: s18 `--sc-text-subtle` como "arreglo" medía 2.04:1 en 161 usos.
 
-5. **La medición contradice al fuente → lo rancio es la MEDICIÓN; neutralízalo antes de tocar
-   código.** Sospechosos, todos vistos: el dev server sirve el DS COMPILADO (rebuild y reinicio);
-   `verify` reescribe `dist/` bajo un `ng serve` vivo; HMR deja vistas viejas (recarga dura); una
-   animación a medio terminar (espera); OTRA instancia (un deploy no es tu build); la máquina
-   ahogada por procesos huérfanos TUYOS (`ps`, `lsof`, mata, repite). Si tras culpar a la carga el
-   test afirmaba sobre algo TRANSITORIO, la carga es el cuándo y no el porqué: arregla la aserción
-   (`watchTransient()` en `e2e/cuscare/helpers.ts`). ¿Warning mío o preexistente? Stash y
-   reproduce, no opines. ⚙️ Compactación avisa si la guía cambió en `origin/main`; `bash-guard`
+5. **La medición contradice al fuente → lo rancio es la MEDICIÓN; neutralízalo antes de tocar código.**
+   Sospechosos, todos vistos: el dev server sirve el DS COMPILADO (rebuild y reinicio; si no basta, borra
+   también `node_modules/.vite` — Vite no revisa su caché solo porque reinicies); `verify` reescribe `dist/`
+   bajo un `ng serve` vivo; HMR deja vistas viejas (recarga dura); una animación a medio terminar (espera);
+   OTRA instancia (un deploy no es tu build); la máquina ahogada por procesos huérfanos TUYOS (`ps`, `lsof`,
+   mata, repite). Si tras culpar a la carga el test afirmaba sobre algo TRANSITORIO, la carga es el cuándo y
+   no el porqué: arregla la aserción. ⚙️ Compactación avisa si la guía cambió en `origin/main`; `bash-guard`
    deniega Playwright con el DS más nuevo que `dist/`; `verify` y `preflight:scope` avisan si la carga pasa de 4/CPU.
-   Evidencia: s12 icono en 24 con el fuente en 14 · s18 tres rondas contra un bundle viejo · s30
-   overlay de 380 ms con load 51 · 2026-09-14 «falla 4/4 con la clave» era el MISMO `dist/`.
+   Evidencia: s12 icono en 24 con el fuente en 14 · s18 tres rondas contra un bundle viejo · s30 overlay con
+   load 51 · 2026-09-14 «falla 4/4» era el MISMO `dist/` · s46 cambió solo al borrar `node_modules/.vite`.
 
 19. **Elige el validador por la PREGUNTA, y ninguno contesta la de usabilidad.** ¿El gesto hace lo
    que digo? → Playwright con clic REAL: `dispatchEvent` y un unitario a pelo se saltan el
@@ -149,14 +148,15 @@
 
 21. **Vas a EMPEZAR una tarea (o lanzársela a otra sesión), escribir en un ledger COMPARTIDO (`DECISIONS`,
     `LEARNINGS`, `inventory`, `handoff`, `AGENTS`), aterrizar en una rama que otro worktree tiene checkouteada,
-    o enseñarle a Rafa ficheros que otra sesión también toca → mide su árbol y su tip ANTES, no solo al
-    aterrizar.** Al empezar, `list_sessions`: una hermana con tu misma tarea que aún no editó nada no sale
-    en ningún árbol. `git worktree list`, su `status --porcelain`, el `rev-parse` de la rama; si el fichero
-    está sucio en su árbol, no lo toques. Una rama, una sesión: si necesitas su trabajo sin fundir, rama
-    propia y PR. Compara contra `origin/main` tras un `fetch`, no contra tu `main` local, que miente sobre
-    los conflictos. ⚙️ `main-drift-guard` (cada mensaje) y `bash-guard` (al sacar su rama).
-    Evidencia: 2026-09-23 #237, #239 y #240 entraron sobre las fichas que Rafa miraba en local · 2026-09-28
-    una hermana con mi misma tarea salió a los 15 min, por sus procesos en mi medición y no por su árbol.
+    o enseñarle a Rafa ficheros que otra sesión también toca → mide su árbol y su tip ANTES, no solo al aterrizar,
+    y TAMBIÉN justo antes de cada `push`: `list_sessions` no ve un push hecho fuera de esta herramienta (Rafa en
+    local, otra sesión).** `git worktree list`, su `status --porcelain`, el `rev-parse` de la rama; si el fichero
+    está sucio en su árbol, no lo toques. Una rama, una sesión: si necesitas su trabajo sin fundir, rama propia y
+    PR. Compara contra `origin/main` tras un `fetch`, no tu `main` local, que miente sobre los conflictos. ⚙️
+    `main-drift-guard` y `bash-guard`; el «fetch first» de git es la última red, no la primera comprobación.
+    Evidencia: 2026-09-23 #237/#239/#240 sobre fichas que Rafa miraba en local · 2026-09-28 una hermana salió a
+    los 15 min por sus procesos, no su árbol · s46 push rechazado: Rafa arregló en paralelo el mismo fallo y ya
+    había mergeado el PR.
 
 ## Entrega
 
