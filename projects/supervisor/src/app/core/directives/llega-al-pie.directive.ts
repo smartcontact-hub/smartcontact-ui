@@ -14,12 +14,17 @@ import { DestroyRef, Directive, ElementRef, afterEveryRender, inject } from '@an
  * ese relleno vacío se contaría como si hiciera falta. Se rehace en cada pintado (una cifra igual no toca el estilo) y
  * al cambiar la ventana. Medido el 2026-10-04: con `100dvh − 420 px`, a 1440×900 la tabla escondía 180 px de filas y
  * dejaba 158 px vacíos bajo su tarjeta.
+ *
+ * Y `--alto-visto`, el alto MAYOR que han tenido sus filas en esta visita (su `<table>` y el borde de la tarjeta). La
+ * tarjeta lo usa de suelo: mide lo que sus filas (DD-95 §1: con tres, una tarjeta hasta el fondo se veía vacía) y, al
+ * buscar o filtrar, no encoge por debajo de lo que llegó a medir; el marco no baila (revisión del 2026-10-09).
  */
 @Directive({ selector: '[scLlegaAlPie]' })
 export class LlegaAlPieDirective {
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly document = inject(DOCUMENT);
   private ultimo = '';
+  private visto = 0;
 
   constructor() {
     afterEveryRender({ read: () => this.medir() });
@@ -34,9 +39,25 @@ export class LlegaAlPieDirective {
     const propio = this.el.getBoundingClientRect();
     const encima = propio.top - zona.getBoundingClientRect().top + zona.scrollTop;
     const alto = `${Math.max(0, Math.floor(zona.clientHeight - encima - this.debajo(zona)))}px`;
-    if (alto === this.ultimo) return;
-    this.ultimo = alto;
-    this.el.style.setProperty('--llega-al-pie', alto);
+    if (alto !== this.ultimo) {
+      this.ultimo = alto;
+      this.el.style.setProperty('--llega-al-pie', alto);
+    }
+    this.medirFilas();
+  }
+
+  /** El alto de sus filas ahora, con el borde de la tarjeta; si es el mayor visto, pasa a ser el suelo. Sin filas (el
+   *  mensaje de «Sin resultados», una celda que ocupa todas las columnas) no cuenta: si no, al limpiar la búsqueda las
+   *  filas se quedaban en el alto de ese mensaje. */
+  private medirFilas(): void {
+    const tabla = this.el.querySelector('table');
+    if (!tabla || tabla.querySelector('tbody > tr > td[colspan]')) return;
+    const estilo = getComputedStyle(this.el);
+    const borde = parseFloat(estilo.borderTopWidth) + parseFloat(estilo.borderBottomWidth);
+    const filas = Math.ceil(tabla.getBoundingClientRect().height + borde);
+    if (filas <= this.visto) return;
+    this.visto = filas;
+    this.el.style.setProperty('--alto-visto', `${filas}px`);
   }
 
   /** Lo que hay por debajo del elemento hasta el final del contenido de la zona. */

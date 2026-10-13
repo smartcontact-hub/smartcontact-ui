@@ -22,9 +22,10 @@
     display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-220);
-    font-weight: var(--sc-font-weight-medium);
+    /* Body regular, 14/20/400: el 500 no es de ningún estilo de texto (barrido tipográfico del 2026-10-09). */
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-heading);
   }
 

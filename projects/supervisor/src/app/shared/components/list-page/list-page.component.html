@@ -2,7 +2,7 @@
   <div class="page__inner page__inner--list">
     <!-- El título vive en el cuerpo: la miga de arriba dice DÓNDE estás y esta línea dice QUÉ miras
          (DD-33). Uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ heading() }}</h1>
+    <h1 class="page__heading sc-text-title-semibold">{{ heading() }}</h1>
 
     <ng-content select="[scListBeforeToolbar]" />
 
@@ -160,7 +160,7 @@
     @if (isEmpty()) {
       <ng-content select="[scListEmpty]" />
     } @else {
-      <div class="table-card" [class.table-card--seleccion]="selectedIds().size > 0">
+      <div #tarjeta class="table-card" scLlegaAlPie [class.table-card--seleccion]="selectedIds().size > 0 || !!resultadoLote()">
         <!-- Ancho ajustable solo en las listas que eligen columnas (el orden, en el globo de columnas, DD-162): la tabla ajustable nativa
              recorta cada celda (`overflow: hidden`), y en Etiquetas eso dejaba fuera de sitio el panel que se
              ancla dentro de la celda (medido: `admin-datatable-pilot`, el panel 70px por encima de su fila). -->
@@ -232,7 +232,18 @@
 <p-menu #rowMenuRef [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
 
 @if (selectable() && bulkEntity(); as entity) {
-  <sc-bulk-action-bar [count]="selectedIds().size" [total]="rows().length" [entity]="entity" (clear)="clearSelection()">
-    <ng-content select="[scListBulkActions]" />
+  <!-- Con filas marcadas, sus acciones; tras aplicar un cambio en lote, la misma barra lo cuenta con su «Deshacer» (DD-196). -->
+  <sc-bulk-action-bar
+    [count]="selectedIds().size"
+    [total]="rows().length"
+    [entity]="entity"
+    [result]="resultadoLote()?.texto ?? null"
+    [resultUndoable]="!!resultadoLote()?.deshacerId"
+    (undo)="deshacerLote()"
+    (clear)="onBarraLoteClear()"
+  >
+    @if (selectedIds().size > 0) {
+      <ng-content select="[scListBulkActions]" />
+    }
   </sc-bulk-action-bar>
 }

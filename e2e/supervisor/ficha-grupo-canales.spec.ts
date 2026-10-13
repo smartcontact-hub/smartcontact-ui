@@ -38,7 +38,7 @@ test('los cuatro canales del grupo se asignan al agente por sus tres familias', 
   );
   expect(indice, 'no hay columna de Chat').toBeGreaterThan(0);
 
-  const celda = page.locator('tbody tr').first().locator('td').nth(indice);
+  const celda = page.locator('tbody tr').first().locator('td, th').nth(indice);
   const casilla = celda.locator('[role=checkbox], input[type=checkbox]').first();
   await expect(casilla).toHaveAttribute('aria-checked', 'false');
 
@@ -64,7 +64,7 @@ test('sin Teléfono, su bloque se va de Distribución y deja la línea que dice 
   await irA(page, 'Distribución y colas');
   await expect(page.locator('#group-channel-phone')).toHaveCount(0);
   await expect(page.locator('#group-phone')).toHaveCount(0);
-  await expect(page.locator('#group-section-distribution')).toContainText('Teléfono no está activo · actívalo en General');
+  await expect(page.locator('#group-section-distribution')).toContainText('Teléfono no está activo: actívalo en General');
   await expect(page.locator('sc-form-section-nav .form-nav__item')).toHaveCount(4);
 });
 

@@ -1,0 +1,13 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<ng-template #playground let-args>
+  <sc-icon-tile [icon]="args.icon" [size]="args.size" [tone]="args.tone" />
+</ng-template>
+
+<ng-template #sizes>
+  <div class="row">
+    <sc-icon-tile icon="call" data-testid="sc-icon-tile" />
+    <sc-icon-tile icon="call" size="sm" data-testid="sc-icon-tile-sm" />
+    <sc-icon-tile icon="alt_route" tone="strong" />
+  </div>
+</ng-template>

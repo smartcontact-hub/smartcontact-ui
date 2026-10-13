@@ -5,13 +5,11 @@ import {
   effect,
   inject,
   input,
-  OnDestroy,
   output,
   signal,
   untracked,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import {
   ScButtonComponent as ButtonComponent,
   ScDialogComponent as DialogComponent,
@@ -19,8 +17,6 @@ import {
   ScMessageComponent as MessageComponent,
 } from '@smartcontact-hub/components';
 
-import { CrossTabLockService } from '@core/services';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
@@ -33,6 +29,7 @@ import {
   COLUMN_REM,
   columnsRem,
 } from '../agent-channel-table/agent-channel-table.component';
+import { ResultadoAccionService } from '@core/services';
 
 /**
  * El ancho del panel sale de lo que lleva dentro (DD-131), en rem. Hasta el 2026-09-28 era un `52rem` fijo, el
@@ -59,9 +56,6 @@ const PANEL_MIN_REM = 28;
  *   · El pie va dentro del contenido, abajo del todo. `p-drawer` solo pinta el suyo con una plantilla
  *     `#footer` hija directa, que `sc-drawer` aún no deja pasar; con un solo panel que lo pida, no se
  *     toca el DS (DD-121).
- *
- * Mientras está abierto coge el mismo candado que la ficha (`CrossTabLockService`): el mismo grupo
- * abierto en otra pestaña avisa en las dos.
  */
 @Component({
   selector: 'sc-group-agents-panel',
@@ -77,11 +71,10 @@ const PANEL_MIN_REM = 28;
   styleUrl: './group-agents-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GroupAgentsPanelComponent implements OnDestroy {
+export class GroupAgentsPanelComponent {
   private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly agentsStore = inject(AgentsStore);
-  private readonly crossTab = inject(CrossTabLockService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
 
   /** El grupo cuyo panel está abierto; `null`, cerrado. */
@@ -91,9 +84,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
 
   protected readonly links = signal<readonly GroupAgentLink[]>([]);
   private readonly initialLinks = signal<readonly GroupAgentLink[]>([]);
-  protected readonly conflict = signal(false);
   protected readonly confirmDiscard = signal(false);
-  private releaseLock: (() => void) | null = null;
 
   constructor() {
     // Al abrir, o al pasar a otro grupo: sus agentes, recortados a los canales que el grupo ofrece.
@@ -101,10 +92,6 @@ export class GroupAgentsPanelComponent implements OnDestroy {
       const group = this.group();
       untracked(() => this.load(group));
     });
-  }
-
-  ngOnDestroy(): void {
-    this.unlock();
   }
 
   /** Los canales del grupo, en el orden canónico: la tabla saca de ellos sus familias. */
@@ -132,7 +119,7 @@ export class GroupAgentsPanelComponent implements OnDestroy {
   });
 
   protected readonly availableAgents = computed<readonly AgentChannelTableAgent[]>(() =>
-    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, email: a.email, photo: a.photo, presenceStatus: a.presenceStatus, allowedChannels: a.allowedChannels })),
+    this.agentsStore.agents().map((a) => ({ id: a.id, name: a.name, email: a.email, photo: a.photo, presenceStatus: a.presenceStatus, allowedChannels: a.allowedChannels, selfActivate: a.permissions?.selfActivate ?? false, teams: a.teams })),
   );
 
   /** Cuántos AGENTES cambian (entran, salen o cambian de canales o de nivel): la N de «Guardar (N)». */
@@ -177,33 +164,21 @@ export class GroupAgentsPanelComponent implements OnDestroy {
       group.id,
       clampLinksToChannels(this.links(), group.channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels).map((l) => (l.groupId === group.id ? l : { ...l, groupId: group.id })),
     );
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('groups.agents_panel.saved', { name: group.name }),
-      life: TOAST_LIFE.success,
-    });
+    // El panel se cierra: el resultado, en la barra de la página (DD-191).
+    this.resultado.enLaBarra(this.translate.instant('groups.agents_panel.saved', { name: group.name }));
     this.close();
   }
 
   private load(group: Group | null): void {
-    this.unlock();
-    this.conflict.set(false);
     this.confirmDiscard.set(false);
     const links = group ? clampLinksToChannels(this.linksStore.linksForGroup(group.id), group.channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels) : [];
     this.links.set(links);
     this.initialLinks.set(links);
-    if (group) this.releaseLock = this.crossTab.acquire('group', group.id, () => this.conflict.set(true));
   }
 
   /** Cerrar. El foco lo devuelve `sc-drawer` a quien lo abrió (la cifra de la fila en el listado, «Agentes» en el
    *  Monitor), si sigue en la página: hasta el 2026-10-05 lo hacía este panel a mano (DD-168). */
   private close(): void {
-    this.unlock();
     this.closed.emit();
-  }
-
-  private unlock(): void {
-    this.releaseLock?.();
-    this.releaseLock = null;
   }
 }

@@ -2,10 +2,14 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  contarToasts,
   contarEmojis,
   contarImgSinDims,
   chequearTrinquete,
   desplegablesSinNombre,
+  guionesSueltos,
+  ayudasEncima,
+  acusaDePrimeras,
 } from '../audit-screen-hygiene.mjs';
 
 // contarEmojis: cuenta SOLO emoji astral pictográfico (+FE0F) en texto renderizable.
@@ -130,4 +134,45 @@ test('EXCLUYE los desplegables de un comentario, en HTML y en TS, sin mover la l
   assert.deepEqual(desplegablesSinNombre('<!-- <sc-select> -->\n<sc-select />', true), [2]);
   assert.deepEqual(desplegablesSinNombre('/**\n * Adapter para `<sc-select>`\n */\nconst t = `<sc-select />`;', false), [4]);
   assert.deepEqual(desplegablesSinNombre('// un <sc-multiselect> de ejemplo\nconst x = 1;', false), []);
+});
+
+// DD-191: un toast se cuenta por su llamada, no por un comentario que la nombre.
+test('contarToasts cuenta las llamadas y no los comentarios', () => {
+  const src = "// this.messages.add({ ... }) en un comentario\nthis.messages.add({ severity: 'success' });\n/* this.messages.add( */\nthis.messages.add({ severity: 'error' });";
+  assert.equal(contarToasts(src), 2);
+  assert.equal(contarToasts('this.resultado.visto(texto);'), 0);
+});
+
+// DD-197: una celda sin dato es `<sc-celda-vacia>`; un «—» de contenido escrito a mano, el lector lo lee «guion».
+test('guionesSueltos caza el «—» de contenido y el de respaldo, y no el de un comentario ni el de un texto', () => {
+  assert.deepEqual(guionesSueltos('<span class="cell">—</span>'), [1]);
+  assert.deepEqual(guionesSueltos("<span>\n{{ user.identifier || '—' }}</span>"), [2]);
+  assert.deepEqual(guionesSueltos("{{ entity.format ?? '—' }}\n{{ a ? b : '—' }}"), [1, 2]);
+  assert.deepEqual(guionesSueltos('<!-- un guion «—» si no hay canal -->\n<sc-celda-vacia />'), []);
+  assert.deepEqual(guionesSueltos('<span [attr.aria-label]="nombre + \' — \' + canal">x</span>'), []);
+  assert.deepEqual(guionesSueltos('<p>De 9 — 14 h</p>'), []);
+});
+
+// DD-198: la ayuda de un campo va debajo de su control; escrita entre el rótulo y un control suelto, se marca.
+test('ayudasEncima marca la ayuda justo antes de un control suelto, y no la de debajo ni la de una lista', () => {
+  assert.deepEqual(ayudasEncima('<span class="field__label">X</span>\n<p class="field__help sc-text-caption-regular">Ayuda</p>\n<sc-selectbutton />'), [2]);
+  assert.deepEqual(ayudasEncima('<sc-textarea />\n<p class="field__help">Ayuda</p>\n<sc-button />'), []);
+  assert.deepEqual(ayudasEncima('<p class="field__help">Ayuda</p>\n<div class="periodic-list" role="group"></div>'), []);
+  // No salta de una ayuda que no precede a nada a otra que sí: marca solo la segunda, en su línea.
+  assert.deepEqual(ayudasEncima('<p class="field__help">A</p>\n<div></div>\n<p class="field__help">B</p>\n<sc-select />'), [3]);
+  assert.deepEqual(ayudasEncima('<!-- <p class="field__help">A</p><sc-select /> -->'), []);
+});
+
+test('acusaDePrimeras marca el aviso que se enciende por el modo o lee las dejadas, y no canSave ni un comentario', () => {
+  // Los dos de la ficha de grupo que acusaban al encender «Tipificar» o al quitar canales (DD-199).
+  assert.deepEqual(acusaDePrimeras("() => this.typificationMissing() && (this.mode() === 'edit' || this.attemptedGeneral()),"), [1]);
+  assert.deepEqual(acusaDePrimeras("x\nconst acusa = (id: string) => this.mode() !== 'create' || this.alta.dejadas().has(id);"), [2]);
+  assert.deepEqual(acusaDePrimeras('if (this.alta.dejadas().has(GENERAL)) out.add(GENERAL);'), [1]);
+  // Mirar el modo sin acusar: guardar en el alta sin cambios, el resumen.
+  assert.deepEqual(acusaDePrimeras("canSave = computed(() => !this.blockedReason() && (this.mode() === 'create' || this.formDirty()));"), []);
+  assert.deepEqual(acusaDePrimeras("if (this.mode() !== 'edit') return new Set();"), []);
+  // La que pasa por `ocasionDeAvisar`.
+  assert.deepEqual(acusaDePrimeras("this.form().channels.size === 0 && this.ocasion.acusa('group-section-general', 'channels')"), []);
+  // Un comentario que lo cuenta no es código, y las líneas no se descuadran.
+  assert.deepEqual(acusaDePrimeras("/* antes: mode() === 'edit' || attemptedGeneral()\n */\nconst a = this.alta.dejadas();"), [3]);
 });

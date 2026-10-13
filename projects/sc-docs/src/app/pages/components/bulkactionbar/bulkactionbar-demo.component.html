@@ -22,3 +22,17 @@
     <button type="button">Eliminar</button>
   </sc-bulk-action-bar>
 </ng-template>
+
+<ng-template #result>
+  <button type="button" (click)="aplicar()">Aplicar un cambio</button>
+
+  <sc-bulk-action-bar
+    [count]="0"
+    [entity]="entity"
+    [result]="resultado()"
+    [resultUndoable]="sePuedeDeshacer()"
+    (undo)="deshacer()"
+    (clear)="resultado.set(null)"
+    data-testid="sc-bulkbar-result"
+  />
+</ng-template>

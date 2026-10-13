@@ -56,6 +56,11 @@ export interface ScColumnDef<T = unknown> {
   /** Borde físico donde la fija PrimeNG. Por defecto, el izquierdo. */
   readonly alignFrozen?: 'left' | 'right';
   /**
+   * La columna nombra la fila: su celda es `<th scope="row">` y no `<td>`, y un lector de pantalla
+   * la anuncia al recorrer el resto de la fila (DD-194). Una por tabla, la que se queda fija en estrecho.
+   */
+  readonly rowHeader?: boolean;
+  /**
    * Plantilla de celda custom; contexto `{ $implicit: row, rowIndex }`. Si se
    * omite, la celda pinta `row[field]`.
    */

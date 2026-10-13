@@ -9,16 +9,15 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService, type MenuItem } from 'primeng/api';
+import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { UndoStackService, XlsxExportService } from '@core/services';
+import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 
-import { IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
+import { CeldaVaciaComponent, IllustratedAvatarComponent, ListPageComponent } from '@shared/components';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
@@ -50,6 +49,7 @@ interface PendingBulkEdit {
 @Component({
   selector: 'sc-users-list-page',
   imports: [
+    CeldaVaciaComponent,
     BulkEditMenuComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
@@ -69,15 +69,15 @@ interface PendingBulkEdit {
 export class UsersListPageComponent {
   private readonly usersStore = inject(UsersStore);
   private readonly xlsx = inject(XlsxExportService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
-  private readonly undoStack = inject(UndoStackService);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59): la banda de
    * page-header desaparece; identidad → breadcrumb, acción → barra. */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
+  private readonly lista = viewChild.required<ListPageComponent<User>>(ListPageComponent);
 
   constructor() {
     useTopbarActions(this.topbarActions);
@@ -278,15 +278,12 @@ export class UsersListPageComponent {
     this.pendingBulkEdit.set(null);
     this.clearSelection();
 
-    this.undoStack.push(
-      this.translate.instant('common.bulk_updated', { count: remainingIds.length }),
-      this.translate.instant('common.change_reverted'),
-      () => {
-        for (const prev of snapshot) {
-          this.usersStore.updateUser(prev.id, prev);
-        }
-      },
-    );
+    // El resultado, con su «Deshacer», lo cuenta la barra de lote donde se aplicó (DD-196).
+    this.lista().contarLote(remainingIds.length, () => {
+      for (const prev of snapshot) {
+        this.usersStore.updateUser(prev.id, prev);
+      }
+    });
   }
 
   protected onCreateClick(): void {
@@ -348,11 +345,8 @@ export class UsersListPageComponent {
   protected onRenameCommit(id: number, value: string): void {
     this.usersStore.updateUser(id, { name: value });
     this.renamingId.set(null);
-    this.messages.add({
-      severity: 'secondary',
-      summary: this.translate.instant('users.toasts.duplicated', { name: value }),
-      life: TOAST_LIFE.info,
-    });
+    // El nombre nuevo ya se ve en la fila: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(this.translate.instant('users.toasts.duplicated', { name: value }));
   }
 
   protected onRenameCancel(_id: number): void {
@@ -380,20 +374,10 @@ export class UsersListPageComponent {
 
     if (ids.length === 1) {
       this.usersStore.deleteUser(ids[0]!);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('users.toasts.deleted_single', {
-          name: toasted[0]!.name,
-        }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('users.toasts.deleted_single', { name: toasted[0]!.name, }));
     } else {
       this.usersStore.deleteUsers(ids);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('users.toasts.deleted_bulk', { count: ids.length }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('users.toasts.deleted_bulk', { count: ids.length }));
     }
 
     this.deleteTarget.set(null);

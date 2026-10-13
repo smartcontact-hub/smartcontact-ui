@@ -236,7 +236,7 @@ export const TICKETS: readonly TicketRow[] = [
     countryFlag: '🇪🇸',
     countryFlagSrc: 'icons/flags/es.svg',
     products: ['fuzeforge_spain_orange_mo', 'itrip'],
-    requestTypes: [{ label: 'Refund', origin: 'ai' }, { label: 'Withdrawal Right', origin: 'agent' }],
+    requestTypes: [{ label: 'Refund', origin: 'ai' }, { label: 'Unsubscription', origin: 'agent' }],
     created: '09-08-2026 11:47',
     updated: '09-08-2026 12:05',
     description: '-',
@@ -358,11 +358,14 @@ const GROUPS_NAMES = ['ES - DOD', 'SK - Cuscare'];
 /**
  * Tipos de solicitud de una fila generada. Reparte los cinco casos que el filtro tiene que
  * distinguir: solo IA, solo agente, los dos coinciden, los dos discrepan, y sin clasificar.
+ * Cuando discrepan, el del agente recorre todos los demás tipos: con la fórmula anterior solo
+ * salían dos («Withdrawal Right» y «Pending to define»), y una discrepancia como IA Devolución
+ * con Agente Baja no existía en los datos.
  */
 function requestTypesFor(i: number): RequestTag[] {
   const n = REQUEST_TYPES.length;
   const a = REQUEST_TYPES[i % 7];
-  const b = REQUEST_TYPES[(i * 3 + 2) % n] === a ? REQUEST_TYPES[(i + 1) % n] : REQUEST_TYPES[(i * 3 + 2) % n];
+  const b = REQUEST_TYPES[((i % 7) + 1 + (Math.floor(i / 6) % (n - 1))) % n];
   switch (i % 6) {
     case 0:
       return [{ label: a, origin: 'ai' }];

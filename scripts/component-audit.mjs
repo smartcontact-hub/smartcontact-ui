@@ -21,7 +21,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { rewriteRegion } from './marker-rewrite.mjs';
-import { PROVENANCE_OVERRIDE, DEMO_EXEMPT, PRIMENG_UTIL, NESTED_IGNORE, CUANDO, MODULO_A_TEMA, CUBIERTO_POR_NUESTRO } from './component-audit-map.mjs';
+import { PROVENANCE_OVERRIDE, DEMO_EXEMPT, PRIMENG_UTIL, NESTED_IGNORE, CUANDO, MODULO_A_TEMA, CUBIERTO_POR_NUESTRO, KIT_MAESTROS, KIT_ALIAS } from './component-audit-map.mjs';
 import { apiConHerencia } from '../tools/primeng-doc.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -299,6 +299,9 @@ export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, sup
    * y sin ella la decisión no existía — se descubría construyendo la pantalla. */
   const nuestras = new Set(contrato.map((m) => m.nombre));
   const ocultas = nativas ? [...nativas.keys()].filter((p) => !nuestras.has(p)).sort() : [];
+  const kit = tieneMaestroEnKit(name);
+  const retirado = motivoRetirado(tsRaw);
+  const { estado, faltas } = estadoDe({ kit, hasDemo, retirado });
   return {
     name,
     selector,
@@ -310,6 +313,10 @@ export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, sup
     api: nombresApi,
     nested,
     hasDemo,
+    kit,
+    estado,
+    faltas,
+    retirado,
     usedInSupervisor,
     contrato,
     ocultas,
@@ -324,6 +331,47 @@ export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, sup
           .sort((a, b) => a.sel.localeCompare(b.sel))
       : [],
   };
+}
+
+const plano = (s) => s.toLowerCase().replace(/[^a-z]/g, '');
+const KIT_PLANO = new Set([...KIT_MAESTROS].map(plano));
+
+/** ¿Tiene maestro en el Kit? Por su página «❖», con el alias cuando el nombre no casa solo. */
+export function tieneMaestroEnKit(name) {
+  return KIT_PLANO.has(plano(KIT_ALIAS[name] ?? name));
+}
+
+/**
+ * El motivo de `@deprecated` del JSDoc de la CLASE del componente (el que va justo antes de
+ * `@Component(`), o `null`. Los `@deprecated` de alias de tipo del mismo fichero no cuentan.
+ * Devuelve el párrafo de la etiqueta, hasta la primera línea en blanco.
+ */
+export function motivoRetirado(tsRaw) {
+  const i = tsRaw.search(/@Component\(/);
+  if (i < 0) return null;
+  const antes = tsRaw.slice(0, i).replace(/\s+$/, '');
+  if (!antes.endsWith('*/')) return null;
+  const doc = antes.slice(antes.lastIndexOf('/**'));
+  const lineas = doc.split('\n').map((l) => l.replace(/^\s*\/?\*+\/?\s?/, '').trimEnd());
+  const desde = lineas.findIndex((l) => l.startsWith('@deprecated'));
+  if (desde < 0) return null;
+  const parrafo = [];
+  for (const l of [lineas[desde].replace(/^@deprecated\s*/, ''), ...lineas.slice(desde + 1)]) {
+    if (!l.trim() || l.startsWith('@')) break;
+    parrafo.push(l.trim());
+  }
+  return parrafo.join(' ').trim() || 'Retirado.';
+}
+
+/**
+ * El estado de un componente en sc-docs (DD-190), con el criterio de Primer adaptado: «ready» si tiene
+ * maestro en el Kit y página de demo; «experimental» si le falta alguna de las dos (`faltas` dice
+ * cuál); «deprecated» si su clase lleva `@deprecated`, pase lo que pase con lo demás.
+ */
+export function estadoDe({ kit, hasDemo, retirado }) {
+  if (retirado) return { estado: 'deprecated', faltas: [] };
+  const faltas = [...(kit ? [] : ['kit']), ...(hasDemo ? [] : ['demo'])];
+  return { estado: faltas.length ? 'experimental' : 'ready', faltas };
 }
 
 /** Los módulos `primeng/<x>` que envuelve un componente, sin las utilidades. */
@@ -487,11 +535,12 @@ export function audit(leerTipos = leerTiposInstalados) {
 
 /** Tabla markdown para la zona @audit:components de inventory.md. */
 function table(rows) {
-  const head = '| Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |\n|---|---|---|---|---|---|---|';
+  const head = '| Componente | Tipo | Estado | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |\n|---|---|---|---|---|---|---|---|';
   const body = rows
     .map((r) => {
       const api = r.provenance === 'WRAPPER' ? `${r.cva ? 'CVA · ' : ''}${r.inputs} inputs` : `${r.inputs} inputs`;
-      return `| \`${r.selector}\` | ${r.kind} | ${r.primengBase} | ${api} | ${r.nested.length ? r.nested.join(' ') : '—'} | ${r.hasDemo ? '✓' : '—'} | ${r.usedInSupervisor || '—'} |`;
+      const estado = r.estado === 'experimental' ? `experimental (sin ${r.faltas.map((f) => (f === 'kit' ? 'maestro en el Kit' : 'demo')).join(' ni ')})` : r.estado;
+      return `| \`${r.selector}\` | ${r.kind} | ${estado} | ${r.primengBase} | ${api} | ${r.nested.length ? r.nested.join(' ') : '—'} | ${r.hasDemo ? '✓' : '—'} | ${r.usedInSupervisor || '—'} |`;
     })
     .join('\n');
   return `${head}\n${body}`;
@@ -593,7 +642,8 @@ export function informeSupervisor(rows, versionPrimeng, catalogo = [], envueltos
 /** Resumen de conteos. */
 function summary(rows) {
   const by = (k) => rows.filter((r) => r.kind === k).length;
-  return `**${rows.length} componentes** · ${by('CUSTOM')} custom · ${by('STANDARD')} standard · ${by('EXTENDED')} extended · ${rows.filter((r) => r.usedInSupervisor > 0).length} usados en Supervisor.`;
+  const est = (e) => rows.filter((r) => r.estado === e).length;
+  return `**${rows.length} componentes** · ${by('CUSTOM')} custom · ${by('STANDARD')} standard · ${by('EXTENDED')} extended · ${rows.filter((r) => r.usedInSupervisor > 0).length} usados en Supervisor · estado (DD-190): ${est('ready')} ready, ${est('experimental')} experimental, ${est('deprecated')} deprecated.`;
 }
 
 const HEADER = '<!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano.';
@@ -723,7 +773,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         primeng: versionPrimeng,
         catalogoPrimeng: catalogo.map((c) => ({ componente: c, envuelto: envueltos.has(c) })),
         nota: 'Contrato de los componentes del DS, cruzado con la API de la versión de PrimeNG instalada. NO editar a mano.',
-        components: rows.map((r) => ({ selector: r.selector, name: r.name, primengBase: r.primengBase, cuando: r.cuando, contrato: r.contrato, ocultas: r.ocultas })),
+        components: rows.map((r) => ({ selector: r.selector, name: r.name, primengBase: r.primengBase, estado: r.estado, faltas: r.faltas, retirado: r.retirado, cuando: r.cuando, contrato: r.contrato, ocultas: r.ocultas })),
       },
       null,
       2,

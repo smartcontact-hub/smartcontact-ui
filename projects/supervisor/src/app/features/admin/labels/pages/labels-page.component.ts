@@ -9,14 +9,13 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService, type MenuItem } from 'primeng/api';
+import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { XlsxExportService } from '@core/services';
-import { TOAST_LIFE } from '@core/utils/toast-life';
+import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { LabelChipComponent, ListPageComponent } from '@shared/components';
 import {
@@ -58,7 +57,7 @@ export class LabelsPageComponent {
   private readonly agentsStore = inject(AgentsStore);
   private readonly labelCascade = inject(LabelCascadeService);
   private readonly xlsx = inject(XlsxExportService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
@@ -253,10 +252,7 @@ export class LabelsPageComponent {
   }
 
   private toastSuccess(key: string, params?: Record<string, string | number>): void {
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(key, params),
-      life: TOAST_LIFE.success,
-    });
+    // El resultado ya se ve en la lista: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(this.translate.instant(key, params));
   }
 }

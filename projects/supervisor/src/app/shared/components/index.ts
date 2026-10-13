@@ -13,11 +13,17 @@
  */
 
 
+// El avatar con su estado en una burbuja abajo a la derecha (DD-185).
+export { PresenceAvatarComponent } from './presence-avatar/presence-avatar.component';
+
 export { IllustratedAvatarComponent } from './illustrated-avatar/illustrated-avatar.component';
 export type { IllustratedAvatarPool } from './illustrated-avatar/illustrated-avatar.component';
 
 
 export { ListPageComponent } from './list-page/list-page.component';
+
+// Una celda sin dato: «—» a la vista y «Sin dato» para el lector (DD-197).
+export { CeldaVaciaComponent } from './celda-vacia/celda-vacia.component';
 
 export { ResourceRowsComponent } from './resource-rows/resource-rows.component';
 export type { ResourceRow } from './resource-rows/resource-rows.component';
@@ -44,3 +50,7 @@ export { SummaryStatusComponent } from './summary-status/summary-status.componen
 export { AltaPieComponent } from './alta-pie/alta-pie.component';
 
 // El nombre de la ficha, fijo arriba al bajar: una copia muda de la cabecera (DD-145).
+
+// Botón de solo icono que navega con routerLink (quick-win de la auditoría UX, 2026-10): local
+// porque depende de @angular/router, que @smartcontact-hub/components no tiene como peer.
+export { ScLinkButtonComponent } from './link-button/sc-link-button.component';

@@ -9,13 +9,6 @@
   background: var(--sc-bg-canvas);
 }
 
-.page {
-  &__inner {
-    padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
-  }
-
-}
-
 /* ---------- La caja de sección ----------
  *
  * SE FUE el 2026-09-10. Era un `.card` a mano —fondo, borde, radio 300, sombra `xs`,

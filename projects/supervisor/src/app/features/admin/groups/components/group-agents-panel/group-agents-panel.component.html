@@ -12,9 +12,6 @@
   @if (group(); as g) {
     <div class="agents-panel" (keydown)="onKeydown($event)">
       <!-- Sin la línea de canales bajo el título: repetía, uno a uno, las cabeceras de las columnas (DD-131). -->
-      @if (conflict()) {
-        <sc-message severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
-      }
 
       <sc-agent-channel-table
         [groupChannels]="channels()"
@@ -28,10 +25,7 @@
 
       <div class="agents-panel__footer">
         <span class="agents-panel__count sc-text-caption-regular">
-          {{ 'groups.agents_panel.assigned' | translate: { count: links().length } }}
-          @if (changes() > 0) {
-            · {{ 'groups.agents_panel.unsaved' | translate: { count: changes() } }}
-          }
+          {{ 'groups.agents_panel.assigned' | translate: { count: links().length } }}@if (changes() > 0) {, {{ 'groups.agents_panel.unsaved' | translate: { count: changes() } }}}
         </span>
         <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="requestClose()" />
         <sc-button

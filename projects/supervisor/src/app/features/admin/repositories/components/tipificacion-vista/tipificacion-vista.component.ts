@@ -121,10 +121,16 @@ export class TipificacionVistaComponent {
     });
   });
 
-  /** Guardar se enciende con un camino entero; si solo pide comentario, con algo escrito. */
-  protected readonly completo = computed(() =>
-    this.levels() > 0 ? this.niveles().every((n) => !!n.elegida) : this.comments() && !!this.comentario().trim(),
-  );
+  /** Guardar se enciende con un camino que acaba en una hoja (cada rama llega hasta donde haga falta); si solo pide
+   *  comentario, con algo escrito. */
+  protected readonly completo = computed(() => {
+    if (this.levels() === 0) return this.comments() && !!this.comentario().trim();
+    for (const n of this.niveles()) {
+      if (!n.elegida) return false;
+      if (n.elegida.children.length === 0) return true;
+    }
+    return true;
+  });
 
   protected elegir(nivel: number, id: unknown): void {
     this.elegidas.update((ids) => [...ids.slice(0, nivel), typeof id === 'string' ? id : null]);

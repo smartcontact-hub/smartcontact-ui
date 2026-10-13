@@ -1,15 +1,27 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MeterGroupModule } from 'primeng/metergroup';
 import type { MeterItem } from 'primeng/types/metergroup';
+import {
+  ScFactRowComponent as FactRowComponent,
+  ScIconTileComponent as IconTileComponent,
+} from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { AnimateOnChangeDirective } from '@core/directives';
-import { ChannelIconComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
+import { ChannelIconComponent, SummaryKpiComponent, SummaryStatusComponent, type ResourceRow } from '@shared/components';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import { familiesOf } from '@features/admin/services/group-channels.core.mjs';
 
-import { CHANNEL_LABEL_KEYS, FAMILY_LABEL_KEYS, type ChannelFamily, type GroupChannel } from '../../data/groups-data';
+import {
+  CHANNEL_LABEL_KEYS,
+  DEFAULT_STRATEGY_OPTIONS,
+  FAMILY_LABEL_KEYS,
+  OUTBOUND_LABEL_KEYS,
+  PHONE_STRATEGY_HELP_KEYS,
+  type ChannelFamily,
+  type GroupChannel,
+} from '../../data/groups-data';
 
 /** Cómo reparte una familia de canales: Teléfono, o Chat (Web Chat y WhatsApp comparten estrategia). */
 export interface GroupSummaryRouting {
@@ -28,7 +40,7 @@ export type GroupSummarySeccion = 'agentes' | 'distribucion' | 'recursos';
 
 /**
  * Adónde lleva lo que se pulsa en el resumen: una sección y, dentro de Distribución y colas, el bloque de un canal
- * (las filas de Reparto) o un número (las de Salida). La ficha lo traduce a su sección y a su ancla.
+ * (las filas de Distribución) o un número (las de Salida). La ficha lo traduce a su sección y a su ancla.
  */
 export interface GroupSummaryDestino {
   readonly seccion: GroupSummarySeccion;
@@ -59,13 +71,28 @@ interface ChannelRow {
  *   · Agentes habilitados: cuántos atienden de los asignados (los demás, deshabilitados), y cuántos cada canal.
  *     Un canal activo sin nadie que lo atienda sale en aviso, con icono y texto (el color solo no
  *     basta, WCAG 1.4.1).
- *   · Reparto: la estrategia de cada familia de canales.
+ *   · Distribución: la estrategia de cada familia de canales.
  *   · Salida: el teléfono saliente y el número de WhatsApp.
  *   · Recursos: cuántos le llegan desde Repositorios.
  *
- * Y lleva a donde se arregla lo que dice (DD-146): el rótulo de cada tarjeta, a su sección; cada fila de Reparto, al
- * bloque de su canal; cada fila de Salida, a su número. Son enlaces de verdad, con la dirección de la sección, y la
- * ficha resuelve el clic en su sitio (en el alta, sin tocar la dirección y con General de puerta).
+ * Y lleva a donde se arregla lo que dice (DD-146): el rótulo de cada tarjeta, a su sección; cada fila de
+ * Distribución, al bloque de su canal; cada fila de Salida, a su número. Son enlaces de verdad, con la dirección de
+ * la sección, y la ficha resuelve el clic en su sitio (en el alta, sin tocar la dirección y con General de puerta).
+ *
+ * Distribución y Salida, además, abren un panel rápido (revisión de diseño, 2026-10-11, sobre el prototipo del
+ * encargo): uno abierto a la vez, como el original. El de Teléfono en Distribución trae las tres estrategias que
+ * no piden nada más (`DEFAULT_STRATEGY_OPTIONS`, SISMAC-1975), con la misma frase de ayuda que el campo real
+ * (`PHONE_STRATEGY_HELP_KEYS`, DD-133): elegir una la aplica al momento (`cambiarReparto`). Las otras tres
+ * (Niveles, Ring All, Agente exclusivo) necesitan algo más y se quedan en Distribución y colas, donde ya lleva
+ * el enlace de la fila; Chat no tiene esta ayuda documentada, así que se queda solo con su enlace. El de Salida
+ * lleva los recursos de verdad del grupo (`resourceRows`, DD-164: agendas y plantillas, con su nombre y su dato,
+ * las mismas filas que ya pinta Recursos) — nunca los «Línea principal» / «Guion de atención» fijos del
+ * prototipo: ese grupo puede no tener ni uno ni el otro, y esto no inventa contenido.
+ *
+ * El rótulo dice «Distribución», no «Reparto» (nombre antiguo del 2026-10-11, corregido el mismo día): la
+ * sección a la que lleva se llama «Distribución y colas» y su propia cabecera dentro dice «Distribución»; dos
+ * palabras para lo mismo confundían más de lo que ahorraban letras. `cambiarReparto` se queda con su nombre: es
+ * un identificador interno, no lo lee nadie en pantalla.
  */
 @Component({
   selector: 'sc-group-summary',
@@ -73,6 +100,8 @@ interface ChannelRow {
     TranslateModule,
     MeterGroupModule,
     ScIconComponent,
+    FactRowComponent,
+    IconTileComponent,
     ChannelIconComponent,
     AnimateOnChangeDirective,
     SummaryKpiComponent,
@@ -89,6 +118,9 @@ export class GroupSummaryComponent {
   readonly routing = input<readonly GroupSummaryRouting[]>([]);
   readonly outbound = input<readonly GroupSummaryOutbound[]>([]);
   readonly resourceCount = input(0);
+  /** Los recursos de verdad del grupo, para el panel rápido de Salida: agendas y plantillas, ya resueltos
+   *  (DD-164). Sin ellos, el panel se queda solo con «Ver recursos». */
+  readonly resourceRows = input<readonly ResourceRow[]>([]);
   /** Claves de lo que falta para poder crear (nombre, canales). Vacío = nada. */
   readonly missing = input<readonly string[]>([]);
   /** Es un alta: el estado está siempre, y dice «Listo para crear» cuando `ready`. */
@@ -99,9 +131,18 @@ export class GroupSummaryComponent {
   readonly hrefs = input.required<Readonly<Record<GroupSummarySeccion, string>>>();
   /** Se pulsó algo del resumen, sin teclas: la ficha va a su sitio. */
   readonly ir = output<GroupSummaryDestino>();
+  /** Se eligió una estrategia de teléfono en el selector rápido: la ficha la aplica al campo real. */
+  readonly cambiarReparto = output<string>();
 
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly familyKeys = FAMILY_LABEL_KEYS;
+  /** El nombre de cada fila de Salida es el del campo real al que lleva («Teléfono saliente», «Número
+   *  WhatsApp»), no el genérico del canal: el mismo criterio que igualó «Reparto» con «Distribución». */
+  protected readonly outboundKeys = OUTBOUND_LABEL_KEYS;
+  /** Las tres estrategias de teléfono que el selector rápido puede poner sin pedir nada más. */
+  protected readonly quickStrategyOptions = DEFAULT_STRATEGY_OPTIONS;
+  /** Qué panel rápido está abierto: uno a la vez, como el prototipo del encargo. */
+  protected readonly expandedQuick = signal<'reparto' | 'salida' | null>(null);
   /** La barra de cada canal va en la cifra destacada (DD-161): su pista, translúcida en el color claro de la tarjeta. */
   protected readonly meterDt = { meters: { background: 'color-mix(in srgb, var(--sc-text-inverse) 25%, transparent)' } };
 
@@ -127,6 +168,19 @@ export class GroupSummaryComponent {
 
   protected familyKey(family: GroupSummaryRouting['family']): string {
     return FAMILY_LABEL_KEYS[family];
+  }
+
+  protected quickStrategyHelpKey(valor: string): string | null {
+    return PHONE_STRATEGY_HELP_KEYS[valor] ?? null;
+  }
+
+  protected toggleQuick(panel: 'reparto' | 'salida'): void {
+    this.expandedQuick.update((actual) => (actual === panel ? null : panel));
+  }
+
+  protected elegirQuickStrategy(valor: string): void {
+    this.cambiarReparto.emit(valor);
+    this.expandedQuick.set(null);
   }
 
   /** Un clic sin teclas va al sitio en la ficha; con Cmd, Ctrl, Mayús o el botón central, el navegador abre la dirección. */

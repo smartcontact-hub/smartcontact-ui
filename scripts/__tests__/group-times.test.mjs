@@ -11,7 +11,7 @@ new Function('module', 'exports', js)(mod, mod.exports);
 const { groupDurationOptions, validQueueSize, resolveGroup } = mod.exports;
 
 test('los tiempos fijos guardan segundos y las etiquetas respetan el idioma', () => {
-  assert.deepEqual(groupDurationOptions(10, false, 'es').map(x => x.value), [5, 10, 15, 20, 25, 30, 60, 90, 120]);
+  assert.deepEqual(groupDurationOptions(10, false, 'es').map(x => x.value), [5, 10, 15, 20, 25, 30, 60, 90, 120, 180, 240, 300, 600, 900, 1800]);
   assert.equal(groupDurationOptions(90, false, 'es').find(x => x.value === 90).label, '1,5 min');
   assert.equal(groupDurationOptions(90, false, 'en').find(x => x.value === 90).label, '1.5 min');
   assert.deepEqual(groupDurationOptions(5, true, 'es').map(x => x.value), [5, 10, 15, 30, 60]);

@@ -15,6 +15,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   3. Un salto de canal («Ir a») deja el título del canal arriba y a la vista: nada fijo lo tapa.
  *   4. Borrar pide escribir el nombre (`sc-delete-entity-dialog` en modo `single`): «Eliminar» espera al nombre
  *      exacto.
+ *
+ * Cambió con DD-187: la ficha de agente mide en Configuración con «Avanzado» abierto. Su sección Grupos, la de antes,
+ * ya no da para bajar: su tabla llega al pie y se desplaza dentro (DD-187 §7).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -25,13 +28,15 @@ test.beforeEach(async ({ page }) => {
 });
 
 /** Las que tienen recorrido de verdad: a 1440×900 solo Distribución y colas no cabe. Agente y usuario, a 1366×660 (el
- * portátil con el navegador abierto): con el contenido arriba (DD-170), a 768 solo bajaban 43 px. */
-const LARGAS = [
+ * portátil con el navegador abierto): con el contenido arriba (DD-170), a 768 solo bajaban 43 px. El agente, en
+ * Configuración con su subsección plegada «Avanzado» abierta (`abrir`): medido el 2026-10-09, 661 px de recorrido, y
+ * 203 con ella plegada. */
+const LARGAS: readonly { ruta: string; ancho: number; alto: number; abrir?: string }[] = [
   { ruta: 'admin/grupos/editar/11?seccion=distribucion', ancho: 1440, alto: 900 },
-  { ruta: 'admin/agentes/editar/1?seccion=grupos', ancho: 1366, alto: 660 },
+  { ruta: 'admin/agentes/editar/1?seccion=configuracion', ancho: 1366, alto: 660, abrir: 'Avanzado' },
   { ruta: 'admin/usuarios/editar/1?seccion=acceso', ancho: 1366, alto: 660 },
   { ruta: 'admin/grupos/editar/11?seccion=distribucion', ancho: 1280, alto: 720 },
-] as const;
+];
 
 /** Mide con las fuentes cargadas: antes, la de iconos ocupa el ancho de su ligadura. */
 const fuentes = (page: Page) => page.evaluate(() => document.fonts.ready.then(() => undefined));
@@ -67,11 +72,27 @@ const enElPunto = (page: Page, x: number, y: number) =>
     [x, y] as const,
   );
 
+/** Espera a que la cabecera fija deje de moverse, no a un número fijo de fotogramas: en un runner
+ * cargado dos `requestAnimationFrame` leían antes de que `position: sticky` asentara, y el punto
+ * medido caía sobre la barra superior en vez de sobre el nombre («X sigue a la vista», #349, #350). */
 const bajar = (page: Page, y: number) =>
   page.evaluate((y) => {
     const raiz = document.querySelector('main#main-content')!;
     raiz.scrollTo(0, y);
-    return new Promise<number>((listo) => requestAnimationFrame(() => requestAnimationFrame(() => listo(raiz.scrollTop))));
+    return new Promise<number>((listo) => {
+      let anterior = NaN;
+      let quietos = 0;
+      const paso = (restantes: number) => {
+        const el = document.querySelector('.page__rail .headline .headline__name');
+        const actual = el ? el.getBoundingClientRect().top : NaN;
+        if (actual === anterior) quietos++;
+        else quietos = 0;
+        anterior = actual;
+        if (quietos >= 2 || restantes <= 0) return listo(raiz.scrollTop);
+        requestAnimationFrame(() => paso(restantes - 1));
+      };
+      requestAnimationFrame(() => paso(60));
+    });
   }, y);
 
 for (const f of LARGAS) {
@@ -80,6 +101,11 @@ for (const f of LARGAS) {
   }) => {
     await page.setViewportSize({ width: f.ancho, height: f.alto });
     await goto(page, f.ruta);
+    if (f.abrir) {
+      const plegada = page.getByRole('button', { name: new RegExp(f.abrir) });
+      await plegada.click();
+      await expect(plegada).toHaveAttribute('aria-expanded', 'true');
+    }
     await fuentes(page);
     const recorrido = await page.evaluate(() => {
       const m = document.querySelector('main#main-content')!;

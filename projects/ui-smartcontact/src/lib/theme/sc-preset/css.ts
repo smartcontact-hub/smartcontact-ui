@@ -51,7 +51,10 @@ const mdTypographySelectors = [
     ".p-chip",
     ".p-toast-summary",
     ".p-breadcrumb-item-label",
-    ".p-contextmenu-item-label"
+    ".p-contextmenu-item-label",
+    /* Como la del menú contextual: sin letra ni interlineado propios, heredaba el 1.5 del body (14/21). Medido en el menú
+     * «⋮» de las filas de grupos (2026-10-09). */
+    ".p-menu-item-label"
 ] as const;
 
 const smTypographySelectors = [
@@ -273,6 +276,51 @@ const iconOnlyMultiSelectCss = () => `
 }
 .sc-multiselect--icon-only .p-multiselect-dropdown {
     width: 100%;
+}
+`;
+
+/*
+ * LA CELDA QUE NOMBRA LA FILA ES \`<th scope="row">\` (DD-194). La hoja de PrimeNG solo pinta la celda del cuerpo
+ * como \`td\`, así que aquí se repiten sus reglas (las de \`@primeuix/styles\` datatable, con sus mismos tokens) y la
+ * celda queda igual que sus vecinas. Sin ellas, el navegador la pinta en negrita y centrada, sin relleno ni raya,
+ * y fija sin fondo: lo que pasa por debajo al desplazar de lado se transparenta. Talla, rejilla, columnas ajustables y
+ * scroll propio se leen de las clases de \`sc-datatable\`, no de las de \`p-table\` (\`audit:primeng-coupling\`).
+ */
+const RH = "sc-datatable .p-datatable-tbody > tr > th[scope='row']";
+const rowHeaderCss = () => `
+${RH} {
+    text-align: start;
+    border-color: var(--p-datatable-body-cell-border-color);
+    border-style: solid;
+    border-width: 0 0 1px 0;
+    padding: var(--p-datatable-body-cell-padding);
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-regular);
+}
+sc-datatable .p-datatable-tbody > tr:has(+ .p-datatable-row-selected) > th[scope='row'],
+sc-datatable .p-datatable-tbody > tr.p-datatable-row-selected > th[scope='row'] {
+    border-block-end-color: var(--p-datatable-body-cell-selected-border-color);
+}
+sc-datatable.sc-datatable--resizable .p-datatable-tbody > tr > th[scope='row'] {
+    overflow: hidden;
+    white-space: nowrap;
+}
+sc-datatable.sc-datatable--sm .p-datatable-tbody > tr > th[scope='row'] {
+    padding: var(--p-datatable-body-cell-sm-padding);
+}
+sc-datatable.sc-datatable--lg .p-datatable-tbody > tr > th[scope='row'] {
+    padding: var(--p-datatable-body-cell-lg-padding);
+}
+sc-datatable.sc-datatable--gridlines .p-datatable-tbody > tr > th[scope='row'] {
+    border-width: 0 0 1px 1px;
+}
+/* Fija, toma el fondo de su fila como la \`td\` fija. */
+sc-datatable.sc-datatable--scroll .p-datatable-tbody > tr > th.p-datatable-frozen-column {
+    background: inherit;
+}
+${LIST} .p-datatable-tbody > tr > th[scope='row']:not(.p-datatable-frozen-column) {
+    position: relative;
 }
 `;
 
@@ -624,10 +672,33 @@ ${typographyRule(lgTypographySelectors, dt, "lg", fromDesignPx(16), fromDesignPx
     line-height: 1;
 }
 
+/* El aviso y el tooltip tienen su letra en el preset (\`message.text.*\`, \`tooltip.fontSize\`: lo que lee el Theme Designer)
+ * pero ningún interlineado: heredaban el 1.5 del body, 14/21 (el aviso de tres líneas medía 63 en vez de 60). Aquí solo el
+ * interlineado de su talla, para no pisarles la letra. */
+.p-tooltip-text,
+.p-message-text {
+    line-height: ${token(dt, "app.typography.md.line.height", fromDesignPx(20))};
+}
+
+.p-message-sm .p-message-text {
+    line-height: ${token(dt, "app.typography.sm.line.height", fromDesignPx(18))};
+}
+
+.p-message-lg .p-message-text {
+    line-height: ${token(dt, "app.typography.lg.line.height", fromDesignPx(24))};
+}
+
+/* El título del drawer es el peldaño 450 (20, \`drawer.title.fontSize\`) y su interlineado es el del mismo peldaño, 28
+ * (\`docs/tipografia.md\` §2); heredaba 30. */
+.p-drawer-title {
+    line-height: var(--sc-line-height-450);
+}
+
 ${baseTableCss()}
 ${emptyCaptionCss()}
 ${listBehaviorCss()}
 ${frozenColumnsCss()}
+${rowHeaderCss()}
 ${iconOnlyMultiSelectCss()}
 ${stickyHeaderCss()}
 ${scrollableScrollbarCss()}

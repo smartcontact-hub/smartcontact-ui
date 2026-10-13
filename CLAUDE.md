@@ -49,7 +49,7 @@ Resumen operativo:
 - **Voz del código**: comentarios, commits y PRs sin nombres de personas ni citas de conversación;
   la procedencia es la DD, el ticket o el nodo de Figma (AGENTS.md §«Voz del código»; lo vigilan
   `audit:personal-names` y `bash-guard`).
-- **Antes de dar nada por bueno**: `npm run verify` (44 gates encadenados) y, si
+- **Antes de dar nada por bueno**: `npm run verify` (47 gates encadenados) y, si
   tocaste algo visual, SOLO las pruebas de lo que tocaste: la batería entera la corre el CI (DD-154). **Antes de pushear no basta `verify`**: el CI
   son 9 pasos, enumerados en `.github/workflows/ci.yml`; `npm run preflight:scope -- --run` corre
   la parte rápida (gates + builds, ~8 min) y deja la marca que el hook de push exige (el `--` es
@@ -60,3 +60,13 @@ Resumen operativo:
   `05-extensions` (effects) y `07-dark` (semantic-color-dark · cmp-color-dark) —
   10 zonas. **No editar ninguna a mano**: `npm run tokens:import` encadena 5
   generadores y las reescribe todas. (Medido 2026-08-13.)
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).

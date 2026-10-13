@@ -49,14 +49,15 @@ test('cada canal es un bloque con sus partes dentro, y cada parte pesa más que 
   }
 });
 
-test('Chat sigue el orden de Teléfono: distribución, cola y mensajes, y el acceso al final', async ({ page }) => {
+test('Chat: distribución, cola, y por subcanal sus mensajes, su horario y su acceso; WhatsApp sin número no sigue', async ({ page }) => {
   await goto(page, DISTRIBUCION);
   expect(await partes(page.locator('#group-channel-chat'))).toEqual([
     'Distribución',
     'Cola',
-    'Mensajes en cola',
-    'Web Chat · acceso',
-    'WhatsApp · número',
+    'Mensajes de Web Chat',
+    'Horario de Web Chat',
+    'Dominios y scripts de Web Chat',
+    'Acceso WhatsApp',
   ]);
 });
 
@@ -76,13 +77,13 @@ test('Teléfono: la música va en la cola, y los demás mensajes, plegados y sin
     '«Eres el siguiente»',
     'Mensajes periódicos',
     'Voz de los mensajes',
-    'Decir el tiempo medio de espera',
-    'Decir la posición en la cola',
-    'Decir al agente cuánto ha esperado el cliente',
+    'Anunciar el tiempo medio de espera',
+    'Anunciar la posición en la cola',
+    'Anunciar al agente cuánto ha esperado el cliente',
   ]) {
     await expect(tel.getByText(rotulo, { exact: true }), rotulo).toBeVisible();
   }
-  await expect(tel).not.toContainText(/anunci/i);
+  await expect(tel).not.toContainText(/\bDecir (el|la|al)\b/);
 });
 
 test('un mensaje de la cola se guarda con el grupo', async ({ page }) => {

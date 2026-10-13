@@ -11,16 +11,16 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { ScIconComponent } from '@smartcontact-hub/icons';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ScConfirmService,
+  ScEmptyStateComponent as EmptyStateComponent,
+  ScInputNumberComponent as InputNumberComponent,
   ScSelectButtonComponent as SelectButtonComponent,
   ScSearchComponent as SearchComponent,
-  ScSelectComponent as SelectComponent,
+  ScButtonComponent as ButtonComponent,
   ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -30,12 +30,14 @@ import {
   type ScColumnDef,
 } from '@smartcontact-hub/components';
 
-import { PRESENCE_LABEL_KEYS, PRESENCE_TAGS, type PresenceStatus } from '@features/admin/agents/data/agents-data';
+import { PRESENCE_LABEL_KEYS, type PresenceStatus } from '@features/admin/agents/data/agents-data';
 
+import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
+import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
 
-import { IllustratedAvatarComponent, type LabelColor } from '@shared/components';
+import { PresenceAvatarComponent, ScLinkButtonComponent } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -58,6 +60,10 @@ export interface AgentChannelTableAgent {
   readonly email?: string;
   readonly presenceStatus?: PresenceStatus;
   readonly allowedChannels?: readonly Channel[];
+  /** «Activación por grupo» (su Configuración): se habilita él mismo en cada grupo, y aquí no se toca. */
+  readonly selfActivate?: boolean;
+  /** Sus equipos (Repositorios › Equipos): se filtra por ellos. */
+  readonly teams?: readonly number[];
 }
 
 interface VisibleRow {
@@ -84,8 +90,8 @@ interface VisibleRow {
 const CHANNEL_REM: Readonly<Record<ChannelFamily, number>> = { phone: 7, chat: 4.5, email: 4.75 };
 
 export const COLUMN_REM = {
-  regular: { assigned: 6.25, agent: 11.625, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 6.75 },
-  compact: { assigned: 6.25, agent: 16.25, presence: 8.75, level: 9, channel: CHANNEL_REM, enabled: 6.75 },
+  regular: { assigned: 3.5, agent: 14, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
+  compact: { assigned: 3.5, agent: 16.25, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
 } as const;
 
 /** Lo que suman las columnas con esos canales y `levels` niveles: el mínimo de la tabla y el ancho del panel. */
@@ -95,7 +101,7 @@ export function columnsRem(
   levels: number,
 ): number {
   const channels = families.reduce((sum, family) => sum + rem.channel[family], 0);
-  return rem.assigned + rem.agent + rem.presence + levels * rem.level + channels + rem.enabled;
+  return rem.assigned + rem.agent + levels * rem.level + channels + rem.enabled;
 }
 
 /** La asignación se edita en la misma lista que sus canales (DD-151).
@@ -108,13 +114,15 @@ export function columnsRem(
   imports: [
     LlegaAlPieDirective,
     SelectButtonComponent,
+    ButtonComponent,
     CheckboxComponent,
     DatatableComponent,
-    IllustratedAvatarComponent,
+    EmptyStateComponent,
+    InputNumberComponent,
+    PopoverModule,
+    PresenceAvatarComponent,
     SearchComponent,
-    RouterLink,
-    ScIconComponent,
-    SelectComponent,
+    ScLinkButtonComponent,
     TagComponent,
     ToggleSwitchComponent,
     TooltipModule,
@@ -142,8 +150,6 @@ export class AgentChannelTableComponent {
 
   private readonly agentTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('agentTpl');
-  private readonly presenceTpl =
-    viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('presenceTpl');
   private readonly channelTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
   private readonly levelTpl =
@@ -162,22 +168,17 @@ export class AgentChannelTableComponent {
           field: 'assigned',
           header: this.translate.instant('groups.form.assigned.assignment'),
           width: `${rem.assigned}rem`,
+          align: 'center' as const,
           cellTemplate: this.assignedTpl(),
           stopRowClick: true,
         },
         {
           field: 'agent',
           header: this.translate.instant('groups.form.assigned.col_agent'),
+          rowHeader: true,
           cellTemplate: this.agentTpl(),
         },
-        /* El estado de la persona, en su columna y con la palabra del listado de agentes: alineado de una fila a otra
-         * y sin quitarle sitio al email (DD-156). */
-        {
-          field: 'presence',
-          header: this.translate.instant('agents.table.presence'),
-          width: `${rem.presence}rem`,
-          cellTemplate: this.presenceTpl(),
-        },
+        /* El estado de la persona va en la burbuja de su avatar (DD-185), no en una columna: el email gana el sitio. */
         /* Con la estrategia Niveles, el nivel de cada agente va en su fila: donde ya se decide quién atiende qué. */
         ...this.levelFamilies().map((family) => ({
           field: `level-${family}`,
@@ -190,6 +191,7 @@ export class AgentChannelTableComponent {
           field: ch,
           header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
           width: `${rem.channel[ch]}rem`,
+          align: 'center' as const,
           cellTemplate: this.channelTpl(),
           stopRowClick: true,
         })),
@@ -197,6 +199,7 @@ export class AgentChannelTableComponent {
           field: 'active',
           header: this.translate.instant('groups.form.assigned.col_active'),
           width: `${rem.enabled}rem`,
+          align: 'center' as const,
           cellTemplate: this.activeTpl(),
           stopRowClick: true,
         },
@@ -231,14 +234,78 @@ export class AgentChannelTableComponent {
   protected readonly announcement = signal('');
   protected readonly pending = signal(false);
   private readonly agentById = computed(() => new Map(this.availableAgents().map(agent => [agent.id, agent])));
+  /** Los estados que se dejan ver: ninguno marcado, todos. Se marcan en el menú de la cabecera del agente. */
+  protected readonly emptyPresence: ReadonlySet<PresenceStatus> = new Set();
+  protected readonly presenceFilter = signal<ReadonlySet<PresenceStatus>>(this.emptyPresence);
+  /**
+   * Las opciones del menú: cinco, no ocho. Los cuatro motivos de no atender (No disponible, Baño, Comida y Formación, los
+   * cuatro en rojo) van juntos en «No disponible», para que el menú no haga ruido (DD-185).
+   */
+  protected readonly presenceOptions: readonly { readonly value: string; readonly labelKey: string; readonly members: readonly PresenceStatus[] }[] = [
+    { value: 'disponible', labelKey: PRESENCE_LABEL_KEYS.disponible, members: ['disponible'] },
+    { value: 'no_disponible', labelKey: PRESENCE_LABEL_KEYS.no_disponible, members: ['no_disponible', 'bano', 'comida', 'formacion'] },
+    { value: 'post_conversando', labelKey: PRESENCE_LABEL_KEYS.post_conversando, members: ['post_conversando'] },
+    { value: 'administrativo', labelKey: PRESENCE_LABEL_KEYS.administrativo, members: ['administrativo'] },
+    { value: 'desconectado', labelKey: PRESENCE_LABEL_KEYS.desconectado, members: ['desconectado'] },
+  ];
+  /** Cuántas opciones del menú están marcadas: lo que dice la marca de la cabecera (estados y equipos). */
+  protected readonly presenceChosen = computed(
+    () =>
+      this.presenceOptions.filter((o) => o.members.every((m) => this.presenceFilter().has(m))).length +
+      this.teamFilter().size,
+  );
+
+  /**
+   * LOS EQUIPOS, PARA FILTRAR (revisión del 2026-10-09): para lo que sirven en Voice. Aquí, para asignar de una
+   * vez a los que comparten uno: «Sin asignar» + «Inglés» y la casilla de «todos» de Asignado. Un agente pasa si está en
+   * alguno de los marcados.
+   */
+  private readonly equiposStore = inject(EquiposStore);
+  protected readonly teamOptions = computed(() => this.equiposStore.items().map((g) => ({ id: g.id, name: g.name })));
+  protected readonly teamFilter = signal<ReadonlySet<number>>(new Set());
+
+  protected toggleTeam(id: number): void {
+    this.teamFilter.update((actual) => {
+      const next = new Set(actual);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  protected clearFilters(): void {
+    this.presenceFilter.set(this.emptyPresence);
+    this.teamFilter.set(new Set());
+  }
+
+  protected presenceChecked(members: readonly PresenceStatus[]): boolean {
+    return members.every((m) => this.presenceFilter().has(m));
+  }
+
+  protected togglePresence(members: readonly PresenceStatus[]): void {
+    this.presenceFilter.update((current) => {
+      const next = new Set(current);
+      const on = members.every((m) => next.has(m));
+      for (const m of members) {
+        if (on) next.delete(m);
+        else next.add(m);
+      }
+      return next;
+    });
+  }
+
   private readonly filteredAgents = computed(() => {
     const filter = this.filter();
+    const presence = this.presenceFilter();
+    const grupos = this.teamFilter();
     const query = this.query().trim().toLowerCase();
     const agents = this.availableAgents();
     const assigned = new Set(untracked(this.links).map(link => link.agentId));
     return agents.filter(agent =>
       (filter === 'all' || (filter === 'assigned') === assigned.has(agent.id)) &&
-      (!query || `${agent.name} ${agent.email ?? ''}`.toLowerCase().includes(query)));
+      (!query || `${agent.name} ${agent.email ?? ''}`.toLowerCase().includes(query)) &&
+      (presence.size === 0 || (!!agent.presenceStatus && presence.has(agent.presenceStatus))) &&
+      (grupos.size === 0 || (agent.teams ?? []).some((id) => grupos.has(id))));
   });
   protected readonly visibleRows = computed<readonly VisibleRow[]>(() => {
     const links = new Map(this.links().map(link => [link.agentId, link]));
@@ -265,7 +332,7 @@ export class AgentChannelTableComponent {
   private headerRows(field: string): readonly VisibleRow[] {
     return this.visibleRows().filter((row) =>
       field === 'assigned' ? !!row.link || this.compatible(row.agent)
-        : field === 'active' ? !!row.link
+        : field === 'active' ? !!row.link && !row.agent.selfActivate
           : !!row.link && this.allowed(row.agent, field));
   }
 
@@ -368,25 +435,11 @@ export class AgentChannelTableComponent {
     );
   }
 
-  protected presenceLabelColor(presence: PresenceStatus): LabelColor | null {
-    const tag = PRESENCE_TAGS[presence];
-    return 'labelColor' in tag ? tag.labelColor : null;
-  }
-
-  protected presenceSeverity(presence: PresenceStatus): 'warn' | 'secondary' {
-    const tag = PRESENCE_TAGS[presence];
-    return 'severity' in tag ? tag.severity : 'secondary';
-  }
-
-  protected presenceLabelKey(presence: PresenceStatus): string {
-    return PRESENCE_LABEL_KEYS[presence];
-  }
-
   protected toggleActive(agentId: number, active: boolean): void {
+    if (this.agentById().get(agentId)?.selfActivate) return;
     this.linksChange.emit(this.links().map(link => link.agentId === agentId ? { ...link, active } : link));
   }
 
-  protected readonly levelOptions = LEVEL_OPTIONS;
   protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
 
   protected setLevel(agentId: number, field: string, value: unknown): void {

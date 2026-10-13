@@ -138,7 +138,7 @@ export class DatatableDemoComponent {
   protected readonly gesturesTpl = viewChild<TemplateRef<StoryContext>>('gestures');
   protected readonly frozenTpl = viewChild<TemplateRef<StoryContext>>('frozen');
   protected readonly frozenColumns: readonly ScColumnDef<Agent>[] = [
-    { field: 'name', header: 'Nombre', width: '14rem', frozen: true },
+    { field: 'name', header: 'Nombre', width: '14rem', frozen: true, rowHeader: true },
     { field: 'extension', header: 'Extensión' },
     { field: 'status', header: 'Estado', width: '10rem', frozen: true, alignFrozen: 'right' },
   ];
@@ -292,6 +292,7 @@ export class DatatableDemoComponent {
       { name: 'scrollHeight', control: { kind: 'text' }, description: 'Alto de ese scroll (p.ej. 240px).' },
       { name: 'stickyHeader', control: { kind: 'boolean' }, description: 'Cabecera fija al scroll de la página (sin scroll propio).' },
       { name: 'virtualScroll', control: { kind: 'boolean' }, description: 'Lista virtual con scroll propio: entra por encima de 100 filas (esta demo tiene 7).' },
+      { name: 'fill', control: { kind: 'boolean' }, description: 'Llega al pie de su contenedor aunque no haga falta lista virtual: mismo CSS de «llega al pie» (DD-160), sin pagar la ventana.' },
       { name: 'rowsFocusable', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
       { name: 'tableMinWidth', control: { kind: 'text' }, description: 'Ancho mínimo (p.ej. 60rem): por debajo la tabla se desplaza de lado en vez de cortar texto.' },
       { name: 'resizableColumns', control: { kind: 'boolean' }, description: 'Ancho de columna ajustable arrastrando el borde de la cabecera (el nativo de p-table).' },
@@ -318,6 +319,7 @@ export class DatatableDemoComponent {
       scrollHeight: '240px',
       stickyHeader: false,
       virtualScroll: false,
+      fill: false,
       rowsFocusable: false,
       // Vacío: un ancho mínimo por defecto cambiaría la demo que miden los e2e.
       tableMinWidth: '',
@@ -345,7 +347,7 @@ export class DatatableDemoComponent {
       { name: 'Lazy (server-driven): paginación + orden + filtro global', template: lz, snippet: LAZY_SNIPPET },
       { name: 'Gestos de fila y columnas conmutables', template: gs, snippet: GESTURES_SNIPPET },
       { name: 'variant="list" · la gramática de tabla-lista', template: ls, snippet: LIST_SNIPPET },
-      { name: 'Columnas fijas', template: fr, snippet: `<!-- ScColumnDef: frozen activa pFrozenColumn; alignFrozen elige izquierda (defecto) o derecha. -->
+      { name: 'Columnas fijas', template: fr, snippet: `<!-- ScColumnDef: frozen fija la columna (alignFrozen elige el lado); rowHeader la pinta como <th scope="row">. -->
 <sc-datatable [value]="agents()" [columns]="frozenColumns" scrollable tableMinWidth="70rem" selectionMode="multiple" dataKey="id" />` },
     ];
   });

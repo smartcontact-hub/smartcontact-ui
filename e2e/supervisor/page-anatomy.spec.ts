@@ -33,7 +33,7 @@ test.beforeEach(async ({ page }) => {
 /* Las tres FICHAS (agente, grupo y usuario) no están aquí: llevan su resumen en una columna a la
  * derecha (`.ficha-rail--summary`), así que su tope es 1600 y su contenido 812 a 1440, no 1200 y 920.
  * Su índice, que es lo que comparten con Contact Center, lo miden `ficha-grupo.spec.ts` (las mismas
- * cifras de aquí: 196, `sticky`, `top` 22.75) y `ficha-usuario-agente.spec.ts`, que exige que las tres
+ * cifras de aquí: 196, `sticky`, `top` 28) y `ficha-usuario-agente.spec.ts`, que exige que las tres
  * midan igual (DD-121, DD-122). */
 const FORMULARIOS = [
   { ruta: 'config/aed/agentes', nombre: 'contact center · agentes' },
@@ -76,18 +76,17 @@ for (const { ruta, nombre } of FORMULARIOS) {
     await goto(page, ruta);
     const m = await medirMolde(page);
 
-    // La pieza: rail + contenido en fila, con tope de 1200 y el aire de la maqueta
-    // (`--sc-spacing-1-625` = 22.75px arriba · `--sc-spacing-2` = 28px a los lados y entre
-    // columnas).
+    // La pieza: rail + contenido en fila, con tope de 1200 y el borde de todas las páginas
+    // (`--sc-spacing-2` = 28px por los cuatro lados y entre columnas, DD-192; la maqueta ponía 22.75 arriba).
     expect(m.inner.display).toBe('flex');
     expect(m.inner.direccion).toBe('row');
     expect(m.inner.maxWidth).toBe('1200px');
-    expect(m.inner.padding).toBe('22.75px 28px');
+    expect(m.inner.padding).toBe('28px');
     expect(m.inner.gap).toBe('28px');
 
     // El rail: 196 reales, y SE QUEDA fijo con el mismo `top` que el relleno de arriba.
     expect(m.rail.position).toBe('sticky');
-    expect(m.rail.top).toBe('22.75px');
+    expect(m.rail.top).toBe('28px');
     expect(m.rail.ancho).toBe(196);
 
     // La columna de contenido se come el resto: 1200 − 2×28 − 196 − 28 = 920 a 1440,
@@ -110,7 +109,7 @@ for (const { ruta, nombre } of FORMULARIOS) {
  * Control negativo: una página de LISTA no debe cambiar al mudarse el molde del
  * formulario. Si el movimiento contamina `_page.scss`, esta es la que lo canta.
  */
-test('la lista de usuarios conserva su arquetipo (1600) tras mudarse el molde', async ({
+test('la lista de usuarios conserva su arquetipo (sin tope de ancho) tras mudarse el molde', async ({
   page,
 }) => {
   await goto(page, 'admin/usuarios');
@@ -122,6 +121,8 @@ test('la lista de usuarios conserva su arquetipo (1600) tras mudarse el molde', 
     return { maxWidth: s.maxWidth, display: s.display };
   });
 
-  expect(medido.maxWidth).toBe('1600px');
+  // Sin tope desde la revisión del 2026-10-09 (DD-187 §7): con 1600, en pantallas anchas la tarjeta se quedaba corta y
+  // dejaba lienzo muerto a la derecha. La columna que crece se para en 24rem y el sobrante va a la del «⋮».
+  expect(medido.maxWidth).toBe('none');
   expect(medido.display).not.toBe('grid');
 });

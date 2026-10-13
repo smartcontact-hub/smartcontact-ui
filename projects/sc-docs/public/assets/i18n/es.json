@@ -201,6 +201,12 @@
           "apply": "Si una tabla dentro de una sección necesita más sitio, aprovecha el resto de la pantalla: desplaza por dentro, con la cabecera fija y el paginador al pie, y su tope es lo que queda hasta el pie, medido desde donde empieza. En una pantalla baja no pasa de su suelo, y entonces desplaza la página.",
           "avoid": "Un tope fijo («el alto de la ventana menos 420 px»): no sabe dónde empieza la tabla, y deja pantalla vacía debajo mientras esconde filas.",
           "have": "En el supervisor, la directiva scLlegaAlPie mide el alto que queda; lo prueba tabla-al-pie: con 2 px más de tabla, la página desplaza."
+        },
+        "blame": {
+          "title": "Lo que falta se dice cuando ya hubo ocasión",
+          "apply": "Un obligatorio vacío es algo por rellenar, no un error: se dice en su campo, en rojo, cuando la persona ya tuvo ocasión de rellenarlo, al dejar su sección sin ello o si lo guardado ya venía sin ello. Antes, el resumen y el motivo junto al botón dicen qué falta, sin rojo. Un error de contenido (un nombre repetido, un email mal escrito) va en vivo.",
+          "avoid": "El campo que aparece al encender una opción y nace en rojo, con su aviso y un punto en el índice, antes de poder elegir nada: parece que la persona se ha equivocado sin haber hecho nada.",
+          "have": "En el supervisor, ocasionDeAvisar decide cuándo acusa cada ficha; lo vigilan la regla 7 de audit:screen-hygiene y sin-acusar-de-primeras."
         }
       }
     },
@@ -245,6 +251,7 @@
     "meta": "{{screens}} pantallas · {{seen}}/{{total}} componentes DS vistos · capturado {{date}} · {{viewport}} · tema {{theme}}",
     "byComponent": "Por componente",
     "byScreen": "Por pantalla",
+    "viewsAria": "Vistas del inventario",
     "error": "No se pudo cargar <code>/usage/_usage-status.json</code>. Corre <code>npm run usage:capture</code> para generar las capturas.",
     "loading": "Cargando capturas…",
     "screensCount": "{{count}} pantalla(s)",

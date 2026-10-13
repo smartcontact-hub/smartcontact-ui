@@ -42,6 +42,19 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Lo que falta se dice cuando ya hubo ocasión: al dejar su sección sin ello, o al abrir si lo guardado ya venía sin ello · el campo que aparece al encender una opción nace callado · duplicar es un alta · antes, el resumen y el motivo junto al botón, sin rojo · el contenido equivocado, en vivo (`ocasionDeAvisar`, regla 7 de `audit:screen-hygiene`; precisa DD-142) | DD-199 |
+> | La ayuda de un campo va debajo de su control (`helperText`, también en `sc-selectbutton` y `sc-textarea`) · lo que abre la opción, después · una lista que crece, bajo su título · copiar va dentro de `sc-textarea copyable`, solo con icono | DD-198 |
+> | Una celda sin dato: «—» en gris suave, oculto al lector, que oye «Sin dato» o su porqué («No aplica»), con `sc-celda-vacia` · si el vacío significa algo o es una cifra, se escribe («0») · ningún «—» suelto en una plantilla (`audit:screen-hygiene`) | DD-197 |
+> | Un cambio en lote se cuenta en su barra: «Cambio aplicado a 2 grupos» con «Deshacer» pegado al texto, sin irse sola, hasta cerrarla o volver a marcar (`contarLote` de `sc-list-page`, `result` de `sc-bulk-action-bar`) · el toast con «Deshacer», solo para lo que desaparece sin sitio (el inicio) | DD-196 |
+> | Antes de construir una pieza, ¿la trae PrimeNG? La tabla del catálogo (`docs/AUDIT-PRIMENG-CATALOGO.md`, la vigila `audit:primeng-catalog`) · varios valores cortos en un campo, `sc-inputtags`; vistas hermanas, `sc-tabs` | DD-195 |
+> | La celda que nombra la fila es su cabecera (`<th scope="row">`, `rowHeader` en `ScColumnDef`) en las 27 tablas del Supervisor que tienen nombre · se ve igual: el tema repite para ella las reglas de celda de PrimeNG | DD-194 |
+> | En una lista estrecha el nombre se queda: columna fija a la izquierda (con la casilla), y la tabla desplaza de lado · el mínimo de la tabla nunca deja menos de 15rem al nombre | DD-193 |
+> | La cabecera de página en la escalera: barra → título 28, título → lo que titula 14, buscador → su tabla 7 · el borde de la página, 28 por los cuatro lados y una sola vez, en el molde | DD-192 |
+> | El toast, solo para lo que manda el sistema: lo ya visible, solo al lector (`visto`); guardar y quedarse, junto a los botones de la barra (`enLaBarra`); lo de un control, a su lado · un error no se cierra solo | DD-191 |
+> | Cada componente dice en sc-docs si está listo (maestro en el Kit y demo), es experimental (le falta algo, y dice qué) o está retirado (`@deprecated`, con su motivo) · el índice etiqueta solo la excepción | DD-190 |
+> | El icono que acompaña a un texto sigue a su estilo: su tamaño, su peso y el eje óptico a su tamaño (20, el mínimo, en pequeño) · en la cabecera de `sc-section-card`, 16 en sección y 20 en página | DD-189 |
+> | Lo que se adopta de Primer: el título de página a 20 (`Title`) y el de sección a 16 (`Subtitle`), dos text styles nuevos del Kit · el botón principal de la barra en md · sin 700 fuera del Kit · la carga por tiempos · el texto principal a slate-900 en el plan de color · la escala se queda, con una medida por relación · el toast solo para eventos del sistema | DD-188 |
+> | Revisión de agentes y tipificaciones del 2026-10-09: la ficha de agente en cuatro secciones como la de grupo (General, Configuración, Recursos, Grupos) con lo obligatorio de producto · su tabla de grupos es la del grupo, con «Salientes» · «Habilitado» bloqueado con «Activación por grupo» · equipos en Repositorios, con su editor, para filtrar · la tipificación es nombre, descripción y árbol (ramas libres, todo a la vista, un «+» en la fila de lo que se añade) y el grupo decide su Postconversación · quitar canales hace lo mismo en las dos fichas · tablas que no bailan al filtrar, Nombre con tope en pantallas anchas · notas de decisión · el botón entero del Kit y el «+» pequeño · editar recursos sin salir · borrar una tipificación dice quién la usa · sin el aviso de otra pestaña · gate de literales de CSS (enmienda DD-122 §8, DD-150, DD-167, DD-173 §2 y §5, DD-174, DD-185 y DD-186 §4) | DD-187 |
 > | Repositorios en tarjetas por grupo: un tono de etiqueta por grupo (azul, morado, teal y naranja) en su título, el icono, la cifra, el borde al pasar y al marcar y el filtro · un icono por concepto · pulsar una tarjeta abre a la derecha un panel acoplado con lo que hay dentro y «Abrir repositorio» (con velo solo si taparía tarjetas) · filtro por grupo con transición y recientes en el buscador · cabe sin desplazar a 1440 × 800 · `sc-drawer` `docked`, `sc-avatar` `labelColor` y `sc-tag` `bordered` (sustituye DD-78 en el hub, enmienda DD-165 §1) | DD-179 |
 > | Lo que verá el agente: el teléfono de sc-agent en su sección de Tipificación, a la derecha de la ficha de una tipificación, para probarla · sus medidas, al peldaño más cercano · su color, `--sc-agent-window-*` (oscuro en los dos temas, como la barra lateral) · en su propia columna, sin el recorte del resumen | DD-177 |
 > | El pulido de las fichas: ayudas cortas y sin una palabra sola (`text-wrap: pretty`), «Tiempo de ringing», el nombre editable se cierra al salir y devuelve el foco, las marcas del índice al final de su fila, la tabla de agentes compacta y sin páginas, «2/14 seleccionados» en la barra en lote, el «Column Toggle» de primeng.dev para elegir y ordenar columnas, «Administrativo» en marrón (`brown`, nuevo color de etiqueta) | DD-176 |
@@ -130,6 +143,700 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-199 · 2026-10-13 — Lo que falta se dice cuando ya hubo ocasión de rellenarlo
+
+**Contexto** · En la ficha de un grupo guardado, al encender «Tipificar llamadas» el desplegable que aparece nacía en
+rojo: borde y texto rojos, «Elige una tipificación» debajo y el punto rojo en General, antes de poder elegir nada
+(medido el 2026-10-13: un clic y tres avisos en rojo, además del «Falta» del resumen). La causa era una excepción por
+modo: al editar, todo obligatorio vacío acusaba en el acto (`mode() === 'edit' || …`). Servía para lo guardado que ya
+venía sin algo (DD-142: «sí en un grupo ya guardado que no lo tiene») y alcanzaba también a lo que la persona acababa
+de abrir o vaciar: quitar los canales de un agente o de un grupo, y duplicar un agente o un usuario, que llegan sin
+nombre a propósito. La regla R6 de las fichas ya lo decía («un campo vacío calla»), y el alta lo cumplía (DD-136,
+DD-143).
+
+**Decisión** ·
+1. Un obligatorio vacío acusa (borde, aviso bajo el campo, punto del índice) cuando la persona ya tuvo ocasión de
+   rellenarlo: al dejar su sección sin ello (con «Siguiente», el índice o el resumen), en el alta y al editar; o desde
+   que se abre la ficha, si lo guardado ya venía sin ello.
+2. Un campo que aparece al encender una opción nace callado. Duplicar es un alta.
+3. Mientras tanto lo dicen el resumen («Falta: …», DD-136) y el motivo junto al botón, sin rojo; el botón sigue
+   apagado.
+4. Un error de contenido (un nombre repetido, un email o un PIN mal escritos) no espera ocasión: va en vivo (R6).
+5. Lo decide una sola pieza, `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`), en las fichas de grupo, agente,
+   usuario y tipificación. «Lo guardado» es lo que había la última vez que la ficha no tenía cambios: al abrirla, al
+   guardar o al deshacer.
+6. Es norma de pantalla: principio 11 de AGENTS.md §«UX de pantalla», y su copia en sc-docs (Fundamentos → Patrones).
+
+**Razón** · Un aviso en rojo dice «te has equivocado». Antes de que la persona haya podido hacer nada, esa culpa es
+falsa, y enseña a no fiarse del rojo cuando sí importa. Lo que falta ya se ve sin acusar: en el resumen y en el
+motivo del botón apagado.
+
+**Descartadas** ·
+- **Acusar al salir del campo**: en un desplegable o en unas casillas, salir del campo no dice que se haya terminado;
+  dejar la sección es la ocasión que el alta ya usaba (DD-143), y así hay una sola.
+- **Callar también lo guardado que ya viene sin algo**: ahí falta de verdad y no lo ha causado quien abre la ficha; si
+  no se dice al abrir, se descubre al ir a guardar.
+
+**Consecuencias** · `e2e/supervisor/sin-acusar-de-primeras.spec.ts` (encender «Tipificar», duplicar un agente, quitar
+los canales de uno guardado) se pone en rojo contra el código anterior, cada prueba por su motivo. `audit:screen-hygiene`
+gana su regla 7: ninguna ficha decide por el modo cuándo acusa, ni lee las secciones dejadas sin `ocasionDeAvisar` (en
+`main` marcaba las 8 líneas). `tipificaciones-listado.spec.ts` deja de dar por bueno el rojo al encender.
+
+---
+
+## DD-198 · 2026-10-11 — La ayuda de un campo va debajo de su control
+
+**Contexto** · En la ficha de grupo, la ayuda de «Identificador del grupo» y de «Eres el siguiente» (en «Mensajes en
+cola») iba entre el rótulo y su botón segmentado, y la del script de Web Chat encima de su campo, con un botón «Copiar
+código» debajo; en el resto de campos va debajo (los 7 del DS con `helperText`, DD-133). No lo decía ninguna regla: el
+segmentado y el área de texto del DS no tenían sitio para la ayuda, y cada pantalla la escribía a mano. Contrastado
+con Primer (la ayuda de un campo, bajo el control; la de un grupo de casillas, bajo su título) y con GOV.UK, que la
+pone entre el rótulo y el campo, pensado para formularios que se rellenan una vez.
+
+**Decisión** · (1) La ayuda va justo debajo de su control. (2) Lo que abre la opción elegida (el archivo o el texto de
+un mensaje) va después de la ayuda, que no se mueve al cambiar de opción. (3) Solo una lista que crece (los avisos
+periódicos) la lleva bajo su título, donde no baja con cada fila. (4) En el DS, `sc-selectbutton` y `sc-textarea` ganan
+`helperText`, como los otros siete campos (la ayuda a 4 px de su control), y `sc-textarea` gana `copyable`: un botón de solo icono dentro del campo, arriba a la
+derecha, que pasa a ✓ dos segundos y dice «Copiado» al lector, con el texto apartado de él. (5) `audit:screen-hygiene`
+gana su regla 6: ningún `.field__help` justo antes de un control suelto (en `main` cazaba los dos de la ficha de grupo).
+
+**Razón** · Quien configura el Supervisor vuelve a revisar sus fichas y las lee de un vistazo, rótulo y valor: una
+línea de ayuda entre los dos alarga cada campo y, en una rejilla de dos columnas, deja un control más bajo que su
+vecino. Con la ayuda debajo, los controles quedan a la misma altura y la ayuda se lee cuando hace falta. Un segmentado
+es una fila, como un desplegable: no es el grupo de casillas de Primer. Copiar dentro del campo quita una línea y
+dice qué copia: lo que hay justo debajo del icono.
+
+**Descartadas** ·
+- **La ayuda entre el rótulo y el control, como GOV.UK**: sirve a quien rellena un formulario una sola vez y necesita
+  la instrucción antes de responder; aquí alarga cada campo y desalinea la rejilla.
+- **El segmentado como grupo de Primer (ayuda bajo el título)**: fue el motivo de cómo estaba; un segmentado de tres
+  opciones en una fila se lee como un control suelto.
+- **Hacerle sitio al botón de copiar desde la pantalla, con `::ng-deep`**: entraría en el componente del DS (lo
+  impide `audit:primeng-coupling`); el modo `copyable` lo resuelve en el DS para todos.
+- **La ayuda del script escrita a mano debajo del campo**: quedaba a 17 px de él, y las del DS a 4 (medido); con
+  `helperText`, igual que las demás. El campo solo se apila cuando lleva ayuda o copiar: sus otros 6 usos no cambian.
+
+**Consecuencias** · Lo miden `e2e/supervisor/ayuda-debajo.spec.ts` (orden, rejilla alineada, la ayuda quieta al cambiar
+de opción, copiar dentro) y `components.spec.ts` (las historias «Con ayuda» del segmentado y «Para copiar» del área de
+texto). `ayudas-campos.spec.ts` cuenta también la ayuda del segmentado. El equipo lo dio por bueno el 2026-10-13 y
+su nota de decisión se quitó.
+
+---
+
+## DD-197 · 2026-10-11 — Una celda sin dato lleva «—» a la vista y «Sin dato» para el lector
+
+**Contexto** · Primer deja en blanco las celdas sin dato, porque un lector de pantalla lee el guion. La revisión de
+agentes del 2026-10-09 había pintado «—» en todas por consistencia, y DD-188 dejó la elección para otra decisión. En
+las plantillas del Supervisor había 14 «—» escritos a mano en celdas: Agentes (email, teléfono, canales, estado y
+equipos), Grupos (teléfono y las estrategias de un canal que el grupo no tiene), Usuarios, Tipificaciones, Entidades de
+Conversaciones, la ficha de agente (canal no ofrecido, sin saliente) y «Usada en» de Categorías.
+
+**Decisión** · (1) Se queda «—»: en una tabla densa, una celda en blanco parece que no ha cargado, y el guion dice
+que ahí no hay nada a propósito. (2) Lo pinta `sc-celda-vacia`, en el gris suave (`--sc-text-subtle`), con el guion
+oculto al lector, que oye «Sin dato» o, cuando el vacío tiene su porqué, su `texto` («No aplica» en las estrategias de
+Grupos; «canal no ofrecido» y «sin saliente» en la ficha de agente, que ya lo decían en un `aria-label` que un `span`
+no anuncia). (3) Si el vacío significa algo concreto o es una cifra, se escribe: «Usada en» de Categorías pasa a «0»,
+como las cifras de Grupos. (4) `audit:screen-hygiene` no deja ningún «—» suelto en una plantilla del Supervisor.
+
+**Razón** · Se queda lo que se ve bien y se quita el único motivo de Primer para dejarlas en blanco. Nombrar el
+porqué al lector le da más que el guion a la vista: «No aplica» no es lo mismo que un dato que falta.
+
+**Descartadas** ·
+- **En blanco, como Primer**: en las tablas de Administración, con muchas columnas, el hueco se lee como fallo de carga.
+- **Un `aria-label` en el `span` del guion**: un `span` sin rol no lo anuncia de forma fiable; el texto oculto, sí.
+- **Cambiar también los «—» del código** (el resumen de la ficha de agente, la pista «(ext. —)», los chips de filtro):
+  no son celdas de tabla; quedan apuntados en el hand-off de calidad visual.
+
+**Consecuencias** · `audit:screen-hygiene` gana la regla 5 (`guionesSueltos`, con sus pruebas): en `main` cazaba los
+14. `common.empty_cell` y `common.not_applicable`, en los cuatro idiomas. `listado-grupos.spec.ts` espera «—» y su
+texto para el lector. El equipo lo dio por bueno el 2026-10-13 y su nota de decisión se
+quitó.
+
+---
+
+## DD-196 · 2026-10-11 — Un cambio en lote se cuenta en su barra, con «Deshacer», y no en un toast
+
+**Contexto** · DD-191 dejó el aviso con «Deshacer» como toast hasta decidir su sitio. Sale en dos casos: tras aplicar
+un cambio en lote en Agentes, Grupos y Usuarios, y al quitar un monitor o un widget del inicio. Medido en Grupos a 1440:
+el toast salía abajo a la derecha, a 30 px de donde estaba el «Aplicar» de la barra de lote, pero tapaba la última
+fila (sus Agentes y su «⋮»), decía «1 elementos actualizados» y se iba a los 8 s (al pasar el ratón por encima se
+paraba). El campo cambiado, Estrategia de chat, no es una columna visible: el aviso era la única prueba del cambio.
+
+**Decisión** · (1) Tras aplicar, la barra de lote no desaparece: sin selección, cuenta el resultado («Cambio aplicado a
+2 grupos») con «Deshacer» pegado al texto y su «×». (2) No se va sola: se cierra con la «×», al volver a marcar una
+fila o al salir de la página. (3) «Deshacer» y Ctrl+Z dejan «Cambio revertido» en la misma barra, sin toast. (4) La
+tabla le deja sitio como a la barra de selección, así que no tapa filas. (5) El toast con «Deshacer» queda para el
+inicio: lo que se quita desaparece y no queda sitio donde contarlo. Piezas: `result`, `resultUndoable` y `undo` en
+`sc-bulk-action-bar` (DS); `contarLote` en `sc-list-page`; `registrar` y `olvidar` en `UndoStackService`, un deshacer
+que no caduca solo y que avisa a su barra en lugar de abrir un toast.
+
+**Razón** · Es la regla de DD-191: el resultado, junto a lo que lo causó y sin tapar nada. La barra es donde se eligió
+y aplicó el cambio, y ya tiene su sitio reservado bajo la tabla. Sin plazo, «Deshacer» no castiga a quien lee despacio
+(WCAG 2.2.1). El texto nombra lo cambiado con su entidad y sin «1 elementos».
+
+**Descartadas** ·
+- **El resultado en la barra de arriba (`enLaBarra`)**: es la de guardar en las fichas, pero en una lista queda en la
+  otra punta de la pantalla respecto a la barra de lote.
+- **Dejar el toast y arreglar solo el texto**: seguía tapando la última fila y yéndose a los 8 s.
+- **«Deshacer» a la derecha de la barra, donde estaban las acciones**: a 1000 px de su texto; junto al texto se lee
+  qué deshace.
+
+**Consecuencias** · Lo prueba `e2e/supervisor/lote-resultado-en-la-barra.spec.ts` (rojo con el build de antes en sus
+tres casos), y `components.spec.ts` la historia «Tras aplicar un cambio» de sc-docs. `common.bulk_updated` pasa a
+`common.bulk_applied` en los cuatro idiomas. DD-191 queda cumplida también en este caso. El equipo lo dio por
+bueno el 2026-10-13: su nota de decisión se quitó, y con ella el hueco `[scBulkResult]` de la barra, que solo la llevaba
+a ella.
+
+---
+
+## DD-195 · 2026-10-11 — Lo que se decide de la auditoría de PrimeNG: InputTags y Tabs entran, y la tabla del catálogo la vigila un gate
+
+**Contexto** · DD-186 cruzó el catálogo de PrimeNG con el DS (`docs/AUDIT-PRIMENG-CATALOGO.md`) sin construir nada y
+dejó por decidir InputTags, TreeSelect/Tree, OrderList, `sc-inputnumber` frente a `p-inputnumber`, las dos maneras de
+editar un nombre en su sitio, envolver Tabs y quitar Sidebar del laboratorio. Al releerla, dos datos estaban mal: la
+versión (22.1.2 era la del compilador de Angular; PrimeNG es 22.1.0) y Sidebar, que en la 22 no es el Drawer de antes
+sino el menú lateral nuevo.
+
+**Decisión** ·
+1. **`sc-inputtags`** (DS, wrapper Extended sobre `p-inputtags`): varios valores cortos en un campo. Enter, la coma, pegar
+   o salir del campo añaden; cada etiqueta se quita con su ✕ o con Retroceso. Lleva la etiqueta, la ayuda y el error de
+   los campos del DS, y como `p-inputtags` no pasa `inputId` a su campo interno, el id, el nombre y la descripción llegan
+   por su `pt`. Sustituye en la ficha de grupo a «Dominios permitidos» hecho a mano (campo, «Añadir» y fila de chips);
+   la ficha guarda los dominios en minúsculas, sin repetir y uno por etiqueta («a.com, b.com» con Enter son dos).
+2. **`sc-tabs`** (DS, wrapper Standard sobre `p-tabs`): la tira de pestañas con su nombre accesible obligatorio, que va
+   por `pt` al nodo con `role="tablist"` (cada uso lo repetía). Sin paneles: lo de debajo lo pinta quien la usa. Lo usan
+   Plantillas, el reproductor de Memory y la página «Uso» de sc-docs. Las pestañas del Monitor siguen en `p-tabs`
+   directo: se arrastran y se renombran, y eso necesita directivas sobre cada `p-tab`.
+3. **El ✕ de una etiqueta se dice en el idioma de la pantalla** («Quitar»): la traducción de PrimeNG de la app gana
+   `aria.removeLabel`, que leen todos los `p-chip`. Antes decía «Remove».
+4. **`audit:primeng-catalog`** (gate 47 de `verify`): la tabla del catálogo cuenta todo lo instalado. Se pone rojo si
+   PrimeNG cambia de versión, si un módulo no tiene fila, si una app importa algo sin wrapper que la sección 3 no
+   anota, si una fila de esa sección ya no la usa nadie o si algo «sin caso» empieza a usarse. Rojo medido con la tabla
+   de antes (13 desajustes) y quitando una fila.
+5. **`tools/primeng-doc.mjs`** lee la versión de `node_modules/primeng/package.json`, y para los componentes nuevos de la
+   22 (InputTags, Sidebar, CommandMenu…), que no están en el repo de PrimeNG, la página en Markdown de
+   `primeng.dev/llms/components/<componente>.md`.
+
+**Razón** · Las dos quitan código propio con lo nativo: InputTags, tres piezas hechas a mano (y el campo mide lo que
+los demás, 32,5); Tabs, el `pt` del nombre que repetía cada uso. Lo que no entra, no entra por lo que el repo ya
+decidió o por lo medido (abajo).
+
+**Descartadas** ·
+- *TreeSelect · Tree para las tipificaciones*: DD-187 §5 dibuja el árbol entero en columnas, con «+» por fila y
+  tirador, y el grupo elige una tipificación entera, no una hoja. TreeSelect tendría caso en sc-agent al cerrar.
+- *OrderList en el selector de columnas*: DD-176 §7 ya calca el «Column Toggle» de primeng.dev, que es nativo; OrderList
+  añadiría una segunda lista con cuatro botones de mover.
+- *`sc-inputnumber` sobre `p-inputnumber`*: acotan igual (al salir, con Enter y con Tab: medido en su código), así que el
+  motivo de usar el input nativo sigue. El cambio metería la unidad en el texto del número, con su color, y el valor
+  solo llegaría tecla a tecla: pegar con el ratón, el dictado o un `fill` esperarían a salir del campo.
+- *Una sola manera de editar un nombre*: `sc-name-inplace` es el `p-inplace` nativo (de reposo a edición);
+  `sc-inline-rename-cell` no tiene reposo (sale ya editando tras duplicar una fila) y un `p-inplace` en la fila pelearía
+  con el clic que abre la ficha.
+- *Quitar Sidebar del laboratorio*: es la base de la versión «no se cierra nada» del sidebar, la favorita (DD-118).
+
+**Consecuencias** · Páginas en sc-docs (Inputs › InputTags, Layout › Tabs), su línea base de estilos y sus pruebas.
+`sc-inputtags` sale «experimental» (DD-190): el Kit no tiene su maestro (`figma-pendiente`, ficha 42). **El paquete inicial
+de sc-docs llega a 2,67 MB** (medido en el build de producción): `app.config.ts` sube el paquete del DS entero al
+arranque (DD-42), así que cada componente nuevo lo engorda, y estos dos traen AutoComplete y Tabs de PrimeNG. Su
+presupuesto pasa de 2,3 / 2,6 a 2,75 / 3 MB, con la cifra escrita aquí para que no sea un tope subido en silencio. Lo que queda de
+la auditoría (documentar Menu, Listbox, Toolbar y MeterGroup; las dos casillas; `sc-command-palette`), en su
+«Siguientes pasos».
+
+---
+
+## DD-194 · 2026-10-11 — La celda que nombra la fila es su cabecera, como en Primer
+
+**Contexto** · Primer pinta la celda que nombra cada fila de una tabla como `<th scope="row">`: un lector de pantalla
+la anuncia al recorrer el resto de la fila («Tom Hanks, Extensión, 122»). `sc-datatable` pintaba todas las celdas del
+cuerpo como `td`, y la documentación de PrimeNG deja la semántica de las celdas a quien escribe la plantilla.
+
+**Decisión** · (1) `ScColumnDef` gana `rowHeader`: la celda de esa columna es `<th scope="row">`, con los mismos
+atributos que la de datos (`pFrozenColumn`, alineación, `stopRowClick`). (2) La hoja de PrimeNG solo pinta la celda del
+cuerpo como `td`; el tema (`sc-preset/css.ts`, `rowHeaderCss`) repite para la `th` sus reglas, con sus mismos tokens:
+alineación, raya, relleno, tallas, selección, tabla ajustable y rejilla, y, fija, el fondo de su fila. (3) La marcan
+`sc-list-page` en la columna del nombre de DD-193, las listas de repositorio en su columna `emphasis` (también con ancho
+propio: Intenciones, Reglas IA, Entidades IA, Clasificación IA, Entidades) y las diez tablas sueltas en la suya:
+grupos de la ficha de agente, agentes de la ficha de grupo y del editor de equipo, contactos de la agenda, buzones y
+disparadores de Emails, las dos de Entidades de Conversaciones, y la tabla de agentes y el detalle del Dashboard. Medido:
+26 tablas con la cabecera en cada fila (el detalle del Dashboard solo se abre al pulsar). Conversaciones no la lleva:
+ninguna columna nombra la conversación.
+
+**Razón** · Es lo nativo de HTML para lo que Primer resuelve, y no cambia nada a la vista: medido en 24 pantallas a 1440
+y a 1024 contra el build de antes, 0 píxeles distintos salvo el reloj del Dashboard; en Agentes, los 20 estilos
+calculados de la celda (relleno, raya, letra, fondo al pasar el ratón y al marcar) iguales, y tras desplazar de lado el
+nombre sigue encima de lo que pasa por debajo.
+
+**Descartadas** ·
+- **`role="rowheader"` sobre la `td`**: no cambia el aspecto, pero ARIA in HTML no admite otro rol en una celda de una
+  tabla que ya es tabla.
+- **Igualar el `z-index` a `auto`** para que la celda no tapara la cabecera de columnas: la cabecera ya gana con el suyo
+  (`--sc-z-sticky`), y sin el `1` que PrimeNG da a la `th` fija, las celdas desplazadas tapaban el nombre (medido).
+
+**Consecuencias** · `components.spec.ts` comprueba en la demo del DS (columnas fijas, que marca `rowHeader`) que la
+celda es `th` de fila, que pinta como su vecina y que, fija y marcada, toma el fondo de la fila. Las pruebas que
+buscaban una columna contando `td` cuentan `td, th`.
+
+---
+
+## DD-193 · 2026-10-11 — En una lista estrecha, el nombre se queda: la tabla desplaza de lado con él fijo
+
+**Contexto** · Con la ventana a unos 900 px, la tabla de Agentes enseñaba «No» donde iba Nombre y media foto. Medido en
+un navegador limpio: Nombre medía 32 px a 900 y a 1024, y 100 a 1280. Era la única columna sin ancho y se quedaba con
+lo que sobraba del mínimo de la tabla, que cada lista escribía a mano (`tableMinWidth`, 100,375rem en Agentes); el
+#360 (DD-187 §4) añadió Equipos (11rem) sin subirlo. A 1024, Grupos escondía 358 px y Usuarios 90. Primer resuelve la
+tabla estrecha con anchos de columna, quitando las menos importantes o desplazando de lado, siempre con la celda que
+nombra la fila a la vista; el producto pidió «por lo menos dejar el nombre», con lo nativo de PrimeNG.
+
+**Decisión** · (1) La columna que nombra la fila (la fija del selector de columnas o, si no lo hay, la primera cuando
+crece) va fija a la izquierda con `pFrozenColumn`, en todas las listas de `sc-list-page`. (2) `sc-datatable` fija
+también la casilla de selección cuando hay una columna fija a la izquierda: PrimeNG coloca la fija sumando el ancho de
+todo lo que tiene delante, fijo o no, y sin esto la casilla pasaba por debajo del nombre (pasaba también en su demo).
+(3) Si el nombre crece, el mínimo de la tabla es al menos lo que suman las columnas con ancho, la casilla, el «⋮» y
+15rem (240 px) por cada columna que crece; el mínimo escrito a mano de cada página se queda como suelo. 15rem: el
+nombre más ancho de Agentes pide 204 px y el de las demás listas de Administración, menos de 215.
+
+**Razón** · Es la regla de DD-102 (una lista no corta texto: desplaza) con el nombre siempre a la vista. Ninguna lista
+cambia a 1440. A 1024 desplazan de lado, con el nombre fijo y la sombra que avisa de lo que queda: Agentes (396 px),
+Grupos, Usuarios (110), Reglas de Conversaciones (20) y Categorías (72). Las celdas fijas toman el fondo de la fila al
+pasar el ratón y al marcarla.
+
+**Descartadas** ·
+- **Esconder columnas por ancho**: Primer lo propone, pero qué columna sobra es de producto, y el selector de columnas
+  ya deja quitarlas. No hace falta decidirlo para que el nombre se quede.
+- **Un modo apilado en móvil**: PrimeNG 22 no lo tiene (`responsiveLayout` ya no existe), y el mínimo soportado es 1024.
+- **Mínimo para todas las columnas que crecen, sin mirar el nombre**: en Conversaciones (la primera columna, Estado,
+  trae ancho) ensanchaba la tabla también a 1440, donde se decidió recortar las etiquetas con su valor al pasar.
+
+**Consecuencias** · Lo mide `e2e/supervisor/listas-nombre-fijo.spec.ts` (rojo con el build de antes en los seis
+casos estrechos) y `components.spec.ts` comprueba en la demo del DS que casilla y nombre no se pisan al desplazar.
+Primer pinta esa celda como `<th scope="row">`: hecho en DD-194. El equipo lo dio por bueno el 2026-10-13 y su nota
+de decisión se quitó.
+
+---
+
+## DD-192 · 2026-10-11 — La cabecera de página sube por la escalera 7 · 14 · 28, y el borde de la página es uno
+
+**Contexto** · DD-188 §2 pidió la escalera 7 · 14 · 28 también en la estructura de página. Medido el 2026-10-11 a 1440
+en 42 rutas: las 16 listas repartían la cabecera igual, pero fuera de la escalera (barra → título 17,5, título →
+buscador 14, buscador → tabla 12,25); DD-94 ya quería el buscador más cerca de la tabla que del título, y 12,25 contra
+14 no se distingue. El borde de arriba de la página valía 17,5 en listas y editores (copiado en ocho hojas), 22,75 en
+las pantallas con índice (fichas y Contact Center, de la maqueta 393:12564) y 24,5 en el constructor de reglas; a los
+lados, 28 en todas. Plantillas ponía 21 de las pestañas al buscador; Conversaciones, 10,5 del segmentado a los
+filtros y 12,25 de los filtros a la tabla; Entidades, 15,75 del subtítulo a su tabla.
+
+**Decisión** · (1) El borde de la página es uno, 28 por los cuatro lados, y lo pone el molde (`.page__inner` en
+`styles/_page.scss`); las ocho copias se van. El índice y el resumen fijos se pegan a 28, el mismo borde. (2) En la
+cabecera, cada frontera con su peldaño: barra → título 28, título → lo que titula 14 (también de unas pestañas o un
+segmentado a su buscador), y del buscador o los filtros a su tabla 7. (3) Dentro de la barra de la lista, Columnas y
+el buscador a 7, y en Conversaciones 7 entre filtro y filtro, como los botones de la barra de arriba.
+
+**Razón** · Con la escalera, cada nivel se separa el doble que el de dentro: la página de la barra (28), el título de
+lo suyo (14) y el buscador de su tabla (7). De la barra al título hay lo mismo que del menú al título. Medido antes y
+después en las 42 rutas: ninguna lista pierde filas a 1440 × 900 ni gana desplazamiento de página; el editor de equipo
+enseña 9 filas de su tabla en vez de 10.
+
+**Descartadas** ·
+- **Tope de ancho de 1280, como Primer**: las listas van sin tope desde la revisión del 2026-10-09 (a 1920 dejaba 272 px
+  de lienzo muerto). Los demás arquetipos ya tienen el suyo por debajo (1200, 960, 832).
+- **Título a 14 de la barra**: lo descartó DD-94; el título quedaría a la misma distancia de la barra que de lo suyo.
+- **Buscador a 14 de la tabla**: igual que del título, y el buscador dejaría de leerse como de la tabla.
+
+**Consecuencias** · Lo mide `e2e/supervisor/cabecera-escalera.spec.ts` (rojo con las cifras de antes en los 18 casos).
+`page-anatomy`, `ficha-grupo` y `listados-ordenar-columnas` pasan a 28 y a 7. La maqueta de Contact Center pone 22,75
+arriba: ficha 41 de `docs/figma-pendiente.md`. Escrito en «UX de pantalla» 9. El equipo lo dio por bueno el 2026-10-13
+y su nota de decisión se quitó.
+
+---
+
+## DD-191 · 2026-10-11 — El toast, solo para lo que manda el sistema: lo que hace el usuario se cuenta junto a su contexto
+
+**Contexto** · DD-188 §7 decidió, siguiendo a Primer, que el toast quedara para los eventos del sistema. El Supervisor
+lanzaba 58 toasts, casi todos del resultado de una acción del usuario (51 de éxito), y el de error se cerraba solo a
+los 6 s. Primer los desaconseja: se van solos, quedan lejos de lo que los causó, tapan botones y la gente aprende a
+ignorarlos; el éxito que ya se ve no necesita aviso.
+
+**Decisión** · Cada resultado, según lo que se ve:
+1. **Ya se ve** (la fila nueva o la que desaparece al borrar, duplicar o importar; la ficha a la que se llega; la
+   descarga del navegador; las filas que se marcan como leídas): no se pinta nada más y se anuncia al lector de
+   pantalla (`ResultadoAccionService.visto`, sobre el `LiveAnnouncer` de Angular CDK).
+2. **Guardar y quedarse** (fichas de agente, grupo y usuario, editores de Repositorios, Contact Center, el panel de
+   agentes): el texto de siempre («Agente "X" actualizado»), junto a los botones de la barra, en una zona `role="status"`
+   del `top-bar` (`enLaBarra`). Se va con el siguiente cambio sin guardar o al salir de la página. Crear abre la
+   edición de lo creado, y el aviso se pone al llegar.
+3. **Junto a su control**: «Copiar código» pasa a «Código copiado» dos segundos; «Caducar contraseña», «Probar
+   conexión», la numeración especial y la edición masiva que no se aplica dicen su resultado al lado de su botón.
+4. **Del sistema**, en toast: las transcripciones y los análisis en segundo plano, con su progreso. Su error y su
+   resultado parcial ya no se cierran solos.
+
+**Razón** · Es la regla de Primer adaptada: el resultado, lo más cerca posible de la acción, y un aviso solo si no se
+ve. El texto de «guardado» no cambia, así que las pruebas que lo leían siguen valiendo (41 pruebas de las seis
+afectadas, en verde contra el build de la rama).
+
+**Descartadas** ·
+- **Un componente nuevo `sc-inline-message` en el DS**: `sc-message` (el `p-message` de PrimeNG) ya es el mensaje en
+  línea de Primer, en su variante `simple` y talla `sm`.
+- **Quitar también el aviso con «Deshacer»** (`UndoStackService`): Primer prefiere deshacer a confirmar, pero no dice
+  dónde va el botón. Se queda como toast hasta que se decida su sitio. Decidido en DD-196.
+
+**Consecuencias** · `audit:screen-hygiene` gana una regla con trinquete: un toast solo sale de los dos ficheros del
+sistema (`undo-stack` y Conversaciones). Escrito en «UX de pantalla» 7.
+
+---
+
+## DD-190 · 2026-10-09 — Cada componente dice en sc-docs si está listo, es experimental o está retirado
+
+**Contexto** · Primer marca cada componente como Experimental, Ready o Deprecated, y lo retirado avisa al usarse y dice
+qué usar en su lugar. sc-docs enseñaba 54 páginas iguales: no decía cuáles tienen maestro en el Kit, cuáles nacieron en
+una pantalla y siguen solo en código, ni que `sc-sticky-form-header` está retenido solo para volver atrás.
+
+**Decisión** · El estado sale de dos hechos medibles, criterio elegido de entre dos: **listo** si el componente tiene
+maestro en el Kit (una página «❖» en el fichero del DS) y página de demo en sc-docs; **experimental** si le falta alguna
+de las dos, y la página dice cuál; **retirado** si su clase lleva `@deprecated`, con el motivo que escribe su JSDoc.
+Lo calcula `scripts/component-audit.mjs` (lista de páginas del Kit en `component-audit-map.mjs`, `KIT_MAESTROS`, leída
+por la API de Figma) y viaja en el contrato que ya sirve a sc-docs. La ficha de cada componente lo pinta bajo el título
+con su motivo, y el índice etiqueta solo lo que no está listo. Hoy: 32 listos, 26 experimentales y 1 retirado.
+
+**Razón** · Son los dos hechos que dicen si un componente forma parte del sistema: si está en el Kit, Figma manda
+(DD-48); si tiene demo, se puede ver y probar. Los 26 experimentales son justo los componentes propios de la app que
+nacieron en una pantalla.
+
+**Descartadas** ·
+- **Exigir además la captura de referencia de las pruebas**: Dialog, Toast o Password saldrían experimentales por no
+  tener captura, que es deuda de pruebas y no de madurez (23 listos y 36 experimentales).
+- **Escribir el estado a mano en cada componente**: se desfasa; calculado, `audit:components` lo mantiene al día.
+
+**Consecuencias** · Si se crea o se borra una página «❖» en el fichero del DS, se actualiza `KIT_MAESTROS` (el CI no
+llega a Figma). La tabla del inventario gana la columna «Estado». Pruebas en `scripts/__tests__/component-estado.test.mjs`.
+
+---
+
+## DD-189 · 2026-10-09 — El icono que acompaña a un texto sigue a su estilo: tamaño, peso y eje óptico
+
+**Contexto** · Al subir el título de página a 20 (DD-188), el icono de la cabecera de `sc-section-card` se quedó en 14,
+corto y fino a su lado (visto en la revisión previa de `config/aed/agentes`). La regla de producto es que un icono siga
+al estilo de texto que acompaña, y que el eje óptico de Material Symbols sirva para ello. DD-130 §6 ya fijaba el peso
+(600 junto a semibold); faltaban el tamaño y el eje óptico.
+
+**Decisión** · Un icono junto a un texto toma el tamaño del texto, su peso y el eje óptico a su tamaño (`opsz` 20, el
+mínimo de la fuente, por debajo de 20 px). En `sc-section-card`, el icono de la cabecera mide `Subtitle` (16) en una
+sección y `Title` (20) en la caja que titula la página, en 600 y con `opsz` 20, por `--section-card-icon-size`; lo que
+cuelga en la piel blanca sale de ese tamaño (sangría − hueco − icono) para que el título siga en la vertical del
+contenido. El chevron de la plegable no acompaña a un texto y sigue en 14. Escrito en «UX de pantalla» 4.
+
+**Razón** · Construidas y miradas junto a los dos títulos: 14 (hoy), el tamaño del texto con `opsz` 20, 24 y 40, y el
+alto de línea. Con el tamaño del texto y `opsz` 20 el trazo iguala a Inter semibold; con 40 adelgaza, y al alto de línea
+(28 y 24) el icono domina la cabecera.
+
+**Descartadas** ·
+- **Subir el icono a 18 y dejar el eje óptico por defecto**: arregla el tamaño pero no el trazo, que sigue más fino que
+  la letra.
+- **El icono al alto de línea del título**: demasiado grande, compite con el título.
+
+**Consecuencias** · Ficha 40 de `figma-pendiente`: el icono de la cabecera del maestro `Section`, a 16 (20 en la
+variante de página) y en 600. La regla vale para las pantallas: un icono junto a un texto de otro estilo se ajusta igual.
+
+---
+
+## DD-188 · 2026-10-09 — Lo que se adopta de Primer (GitHub): título de página a 20, de sección a 16, el botón de la barra a la altura de los demás, sin 700 y la carga por tiempos
+
+**Contexto** · Estudio del sistema de diseño de GitHub (Primer: tokens 11.10.0, fundamentos, patrones, componentes y su
+sitio de marca) y medición en el navegador, a 1440 y con el mismo método, de github.com contra sc-supervisor. Lo que más
+separa no es el tamaño de las piezas sino la disciplina: el texto principal da 7,38:1 (GitHub, 15,8:1) y se separa del
+secundario 1,63:1 (GitHub, 2,58:1); el título de la página y el de una sección miden lo mismo (18 y 18; GitHub, 20 en
+listas y 32 en el detalle); el botón principal de la barra mide 27 con texto de 12 junto a controles de 32,5 (GitHub,
+todos a 32); el 10,9 % del texto visible va a 700 (GitHub, nada); y una pantalla usa de 16 a 22 huecos distintos (GitHub,
+de 13 a 15). Informes y capturas en el archivo de entregables (`2026-10 estudio-primer`).
+
+**Decisión** ·
+1. **Dos text styles nuevos en el Kit**, creados en el fichero del DS (`Title/title-semibold`, 20/28, atado a
+   `font/size/450` y `line/height/450`; `Subtitle/subtitle-semibold`, 16/24, a `font/size/300` y `line/height/300`), y
+   sus clases `.sc-text-title-semibold` y `.sc-text-subtitle-semibold` (rol `title` nuevo; `subtitle-1` ya existía con
+   esas medidas). El título de la página pasa a `Title`: `.page__heading`, el nombre de las fichas y la caja de sección
+   que titula la página (`headingLevel="1"`). El de una sección (`sc-section-card`) pasa a `Subtitle`.
+2. **El botón principal de la barra (`.top-bar__cta`) pasa de sm a md**, la talla de los demás controles de la barra.
+3. **Sin 700 donde no lo pide el Kit**: los 35 usos de `--sc-font-weight-bold` pasan a semibold (DD-13 ya pedía dos
+   pesos). Tag y Badge siguen en 700 hasta que su maestro cambie en Figma.
+4. **La carga, por tiempos** (regla 2 de «UX de pantalla»): nada por debajo de 1 s, esqueleto de 1 a 3 s, progreso de 3
+   a 10 s y segundo plano a partir de 10 s.
+5. **El texto principal, a slate-900** en vez de slate-800 en el plan de color pendiente de Figma (DD-106 y las
+   decisiones del 2026-09-28); el secundario sigue yendo a slate-700. Con 800 se separaban 1,65:1; con 900, 2,29:1.
+6. **La escala de espaciado se queda**: las fracciones no se notan. Lo que se pide es consistencia, una sola medida por
+   relación: la escalera 7 · 14 · 28 (DD-123) también en la cabecera de página y la de los listados (pendiente).
+7. **El toast, solo para eventos del sistema** (una llamada entrante, una conexión perdida); el éxito que ya se ve no
+   lleva aviso, y los errores van junto a su contexto y no se cierran solos (pendiente).
+
+**Razón** · Son las diferencias medidas que más pesan en que la app se vea profesional, y las que se cambian sin rehacer
+la escala ni los componentes. La rampa del Kit saltaba de 24 a 18 y de 18 a 14, así que página y sección caían en el
+mismo `h3` (DD-54 obligaba a usar un estilo de la librería); con `Title` y `Subtitle` se separan con estilos con nombre
+y atados a variables que ya existían.
+
+**Descartadas** ·
+- **La escala en enteros sobre 4**, como Primer: las fracciones no se notan en pantalla, y cuesta de 5 a 8 días y el Kit.
+- **El título de página en `h2` (24/36)**, que ya existía: más grande que el de GitHub, y su interlineado de 36 alarga la
+  cabecera.
+- **Guardar siempre activo y validar al pulsar**, como Primer: se queda DD-136 (deshabilitado, con lo que falta dicho).
+- **Las acciones de la ficha abajo**, como Primer: se queda S59 (arriba); Primer no lo prohíbe.
+- **Celdas vacías en blanco**, como Primer: el repo pinta «—» y cambiarlo es otra decisión. Decidido en DD-197.
+
+**Consecuencias** · `audit:text-styles` registra 14 estilos; `page-identity.spec.ts` espera 20/600 en las dos familias
+de título y `text-styles-applied.spec.ts`, `Title`. Ficha 38 de `figma-pendiente`: el maestro `Section` a `Subtitle`
+(y `Title` en la página), las maquetas, Tag y Badge a 600, y publicar la librería. `tools/figma-pendiente.mjs` lleva
+`text/color` y `form/field/color` a `surface/900`. Pendientes con su propio PR, para verlos antes: el toast, la cabecera
+y el esqueleto de página comunes con la escalera en la cabecera, y las etiquetas en píldora.
+
+---
+
+## DD-187 · 2026-10-09 — Revisión de agentes y tipificaciones: la ficha de agente como la de grupo, y la tipificación como árbol
+
+**Contexto** · El primer design review de agentes y tipificaciones (2026-10-09), el pptx de producto con lo que pide la
+ficha de agente, la propuesta dibujada de producto para la tipificación en el grupo y el chat del equipo. La ficha de
+agente tenía cinco secciones con otra gramática que la de grupo; la tipificación llevaba su dirección, su comentario y sus
+grupos por canal, y su editor solo enseñaba la rama elegida.
+
+**Decisión** ·
+1. **La ficha de agente, en cuatro secciones como la de grupo**, con `sc-subsection` por bloque: General (identidad;
+   extensión con su tipo, navegador o teléfono, y con teléfono el móvil obligatorio y el PIN; el estado al editar; el
+   tipo de agente al final y solo si el cliente tiene CusCare; los canales, al menos uno), Configuración (grabar,
+   activación por grupo, gestión de dispositivos, que pide móvil, dispositivos externos y «Gestión de conversaciones
+   pendientes»; la matriz; «Avanzado» plegado: descuelgue único como en Contact Center › Servicio, chats simultáneos si
+   atiende chat, idiomas, orden aleatorio, URL y sesión), Recursos (agendas y plantillas de chat con su «+», y grupos de
+   agentes; fuera Etiquetas y Plantillas de email) y Grupos. Obligatorio: nombre, email, extensión, el móvil con
+   teléfono, un canal, un grupo y, si atiende teléfono, el grupo de sus salientes (si no se elige, el primero con
+   Teléfono). Una sola lista (`faltas`) da el resumen, el índice y el motivo de Guardar. Contact Center › Agentes, en el
+   mismo orden. Enmienda DD-122 §8 y DD-150 («vacío: ninguna» ya no vale).
+2. **Su tabla de grupos es la del grupo**, con las filas al revés (filtro, buscador, Asignado, un canal por columna con
+   su casilla de «todos», Habilitado) y la columna **Salientes**. Con «Activación por grupo», Habilitado se ve apagado
+   con el candado que lleva a Configuración, en las dos tablas (en Voice desaparece; así se ve el estado y el porqué).
+3. **Quitar canales hace lo mismo en las dos fichas**: una asignación sin canales no existe; la que se queda sin ninguno
+   sale al guardar, después de «Vas a quitar canales» y «Sí, quitar». Enmienda DD-150 (la ficha de agente conservaba la
+   asignación vacía y la de grupo la quitaba, DD-147).
+4. **Equipos** en Repositorios (lo decidió el equipo; en Voice se llaman «grupos de agentes», y aquí ese nombre se
+   confundía con los grupos y con los agentes), con su editor como en Voice (nombre y agentes, con la
+   tabla de asignar del grupo, DD-151) y asignables desde la ficha del agente. Sirven para filtrar: la tabla de agentes
+   del grupo filtra por ellos junto al estado, y el listado los enseña en su columna y los encuentra al buscar.
+5. **La tipificación es nombre, descripción y árbol.** Su árbol, entero a la vista en columnas por nivel, con ramas de
+   largo libre (sin regla de completar), un solo «+» en la fila de lo que se añade (el del primer nivel en su título),
+   Enter para la siguiente y tirador para ordenar. Icono `menu`, el de tipificar en sc-agent. Enmienda DD-173 (sin
+   dirección, comentario ni grupos; los niveles salen de la rama más larga) y DD-174 (columnas con el árbol entero).
+6. **El grupo decide su Postconversación**, en General: permitir comentarios, tipificar (una tipificación) y en cuáles
+   (todas, solo entrantes, solo salientes). Su botón abre el árbol en un diálogo con «Editar en Repositorios».
+   Enmienda DD-173 §2 y §5 (una por grupo, como Voice; ya no varias por dirección y canal).
+7. **Las tablas no bailan**: miden lo que sus filas, con el pie de la pantalla de tope (DD-95 §1, que se mantiene: con
+   pocas filas, una tarjeta hasta el fondo se veía vacía), y al buscar o filtrar no bajan del alto que llegaron a medir
+   en esa visita (`--alto-visto`, de `scLlegaAlPie`). El mensaje de «Sin resultados» no cuenta para ese suelo. **En los
+   listados anchos**, la columna que crece se queda en 24rem y el sobrante va a la del «⋮».
+8. **El punto de estado**, proporcional (30 % de la foto, 8 px mínimo, con su borde) y solo donde el estado ayuda a
+   decidir (la tabla de agentes del grupo); fuera del listado de Administración. Enmienda DD-185.
+9. **Notas de decisión** (`sc-nota-decision`): una tarjeta morada junto a lo que el equipo tiene que decidir (el PIN,
+   filtrar por estado en el listado, punto o aro). Se borran al decidir. **Retiradas el 2026-10-13**, las ocho a la
+   vez, con el componente: el equipo dio por resuelto lo que preguntaban, y queda lo que ya estaba construido (el PIN
+   solo con la extensión en el teléfono, sin filtro de estado en el listado y el punto proporcional).
+10. **Tipografía en la rampa** (barrido medido): el título de `sc-dialog` a 24 de interlineado (era 25,2), la ayuda bajo
+    los campos del DS y el error de campo a 18 (17,4 y 15), el título de `sc-section-card` sin espaciado propio, el
+    árbol de tipificaciones a la talla de la ficha (14) y las etiquetas del editor de equipos como las de las
+    fichas (12/600/18). Segunda pasada, al flujo de grupos entero: el menú «⋮» de fila, los tooltips y el aviso (con su
+    talla) a 20 de interlineado y el título del panel de agentes a 28 (heredaban el 1.5 del body: 21 y 30), en el preset
+    y sin pisar la letra que dan sus tokens; `sc-inputnumber` pasa su talla al tema como `sc-inputtext` (DD-91: el pequeño
+    medía 30 de alto y 14 de letra junto a selects de 27 y 12); la etiqueta propia de los campos del DS a 20; las de los
+    paneles de crear (agenda, plantilla, etiqueta) como las de las fichas, 12/18/600; el texto de la barra masiva, de 500
+    a 400; y «1 agente pierde», no «1 agentes pierden».
+11. **El botón, entero como en el Kit**: `sc-button` abre las nueve severidades de `button-small` (suma `help` y
+    `plain`, la gris que solo existe de texto o con borde), la sombra `raised` e `iconOnly` («Icon Only»: el rótulo pasa a
+    nombre accesible); el playground de sc-docs tiene los controles del panel de Figma. **Los componentes riman en
+    talla**: el «+» de añadir es el de solo icono, secundario y relleno, a la talla de su campo (mediano junto a uno
+    mediano, pequeño junto a uno pequeño), y lo mismo el botón que abre la tipificación del grupo y los de cada fila del
+    árbol; «Eliminar» de las barras masivas y los pies de los paneles de crear van en pequeño, como el resto de su barra
+    y de los diálogos; «Tamaño de cola» de Contact Center, en mediano como su página. Enmienda DD-167 (era el redondo con
+    borde). **En Categorías**, las dos formas de añadir no se confunden: «Añadir categoría», con rótulo, en el título del
+    primer nivel, y en cada fila la flecha «↳» de «Añadir subcategoría a…»; el tirador aparece al pasar por la fila.
+    **Una sola etiqueta de campo**: la propia de los campos del DS pasa a la de las fichas, 12/18/600, y los enlaces de
+    texto de Recursos a 12/600. **El multiselect lleva la flecha del Kit**, la de `sc-select` (14, centrada): desde
+    DD-153 llevaba la de Material, 2,5 px por encima del centro; solo el de «Columnas» cambia la flecha por su icono.
+12. **Editar un recurso sin salir de la ficha**: el «Editar» de las filas de Recursos (agendas, plantillas, grupos de
+    agentes) abre la misma ventana que el «+» del campo, con sus datos, en las fichas de grupo y de agente, y también
+    en un alta; el campo de equipos gana su «+». Lo que no cabe en esa ventana (los contactos de una agenda,
+    los agentes de un equipo) sigue en Repositorios. **Borrar una tipificación dice quién la usa** («La
+    usan 3 grupos: …»), en la lista y en la ficha, y esos grupos dejan de tipificar hasta que elijan otra.
+    **Categorías**: «Añadir categoría» va en la esquina derecha de la sección (`sc-section-card` gana el hueco
+    `scSectionActions`); la línea de resumen del árbol solo aparece si falta algo. **El teléfono de la vista previa**
+    mide siempre lo mismo, la proporción del de sc-agent (250 × 507), con «Guardar» en su sitio, abajo, y su título en
+    una línea («Lo que ve el agente al colgar»).
+13. **Fuera el aviso de «abierta en otra pestaña»** («Este registro está siendo editado en otra pestaña…», DD#169 del
+    prototipo), en las siete pantallas que lo pintaban, con el candado que lo detectaba (`CrossTabLockService`).
+14. **Gate `audit:css-literals`**: tipografía y espaciados con su variable, no con un número, en el SCSS del DS y del
+    Supervisor. Trinquete por zona (DS 13 y 38, Supervisor 50 y 44, tipografía y espaciado): no juzga lo de antes,
+    impide lo nuevo. Dentro de un componente de PrimeNG manda su token del preset, que es lo que lee el Theme Designer.
+
+**Descartadas** ·
+- *PickList para el árbol*: mueve elementos entre dos listas, no dibuja niveles. *PickList para asignar agentes a un
+  equipo*: sería un segundo patrón para la misma tarea, y con 500 agentes dos listas pesan.
+- *El estado como columna con filtro en el listado de Administración*: es tiempo real; filtrarlo es del Monitor (nota de
+  decisión abierta).
+- *«Postconversación» como «Tipificación»*: encender cualquiera de los dos deja al agente en postconversación.
+- *Notas de decisión como cristal translúcido*: se probó y se quedó en sólido.
+
+**Consecuencias** · Pendiente al aterrizar: poner al día las e2e de estas pantallas, regenerar
+`e2e/baselines/component-styles.json` (diálogo, campos, tarjeta de sección y botón del DS) y el preflight. Las unitarias de
+tipificaciones, reescritas (11). El hub de Repositorios solo da nombre de transición a sus categorías mientras cambia
+el filtro: con el nombre puesto siempre, al entrar desde el menú se pintaban encima de él. `help` con texto blanco da 3,96:1 en claro (el
+`purple-500` del Kit): como `success`, subirlo es apartarse del Kit, una decisión de marca pendiente (anotado en
+`severities-contrast`).
+
+---
+
+## DD-186 · 2026-10-07 — La baldosa y la fila de datos del resumen pasan al DS, y la píldora a 14
+
+**Contexto** · DD-185 midió el widget de resumen de la ficha de grupo sobre la maqueta (baldosa de icono en relieve,
+clave y valor en una fila, píldora verde) y lo dejó en la hoja de la ficha, a la espera de ver si convencía. Convenció, y
+las fichas de agente y usuario pintaban sus datos sueltos, cada uno en su tarjeta, con otra gramática.
+
+**Decisión** ·
+1. **`sc-icon-tile`** (DS, custom): la baldosa de un icono, medida en proporción al texto (`md`, 28 con el icono a 16,
+   para texto de 14; `sm`, 24,5 con el icono a 14), gris frío con brillo arriba y sombra mínima, `tone="strong"` para un
+   título. Decorativa (`aria-hidden`). Un icono del DS por `icon` u otro proyectado (el de un canal).
+2. **`sc-fact-row`** (DS, custom) **sobre un `div`** (`<div scFactRow>`): la clave con su baldosa a la izquierda y el
+   valor a la derecha, que baja y sigue a la derecha si no cabe; con `href`, la clave es un enlace de verdad, se pulsa en
+   24,5 × 24,5 y `open` avisa del clic. Va sobre un `div` y no en una etiqueta propia porque dentro hay un `dt` y un `dd`,
+   y un `dl` solo admite `div` entre él y sus pares: así la lista sigue siendo válida y la franja ancha del resumen puede
+   poner las filas en `display: contents` y alinear los valores de varias listas (DD-130). En un contenedor ancho
+   (≥ 37,5 rem), el valor empieza en su columna.
+3. **`sc-tag size="md"`**: 14 en semibold, para una píldora que hace de valor entre valores de 14. La de por defecto
+   (`sm`) sigue siendo la del Kit, 12 en negrita. Va por la entrada `pt` de `p-tag`, sin CSS encima.
+4. **Las tres fichas** usan las mismas filas: el grupo, su reparto y su salida; el agente, canales y tipo; el usuario, su
+   tipo. Los datos sueltos del agente y del usuario pasan de una tarjeta cada uno a una sola tarjeta de filas.
+
+**Descartadas** · Un componente que pinte la tarjeta entera a partir de datos: la franja ancha alinea los valores de
+reparto y salida en una sola rejilla, y la cifra animada de Recursos y el icono de canal son de la app; con la fila sobre
+un `div`, la app conserva las dos cosas.
+
+**Consecuencias** · Páginas en sc-docs (Datos › IconTile y FactRow), su línea base de estilos y una prueba de estructura
+(`dl > div > dt + dd`, la clave enlace, la píldora a 14). Las pruebas del resumen que leían las clases de antes leen las
+del DS. Pendiente: el nodo de los dos componentes en Figma (`figma-pendiente`).
+
+---
+
+## DD-185 · 2026-10-07 — Segunda vuelta de la revisión de grupos: copy de Voice, subir archivo, el estado en el avatar y el repositorio de Email
+
+**Contexto** · Con DD-184 fundida, el equipo corrigió lo que se había entendido al revés y pidió más: el rótulo largo de
+los tiempos era la ayuda, no el nombre; el aviso de Ring All parecía de todo el bloque; «Elegir .wav» y su texto de
+soltar sobraban; y la tabla de agentes del grupo no alineaba sus casillas como la matriz de permisos de Contact Center.
+
+**Decisión** ·
+1. **Chat reparte con «Menos conversaciones atendidas»**, el mismo nombre que Teléfono. Lo guardado como «Menos
+   conversaciones activas» se lee con el de ahora (`RENAMED_STRATEGIES`). En el resumen, el valor largo baja a otra línea.
+2. **Los tiempos**: «Tiempo de ringing» y «Tiempo entre llamadas» vuelven a ser el nombre, y «Tiempo de timbrado de una
+   conversación a un agente» y «Tiempo que espera el agente entre una conversación y otra», su ayuda (DD-184 §3 los había
+   puesto como nombre).
+3. **El aviso de costes de Ring All** sale solo con tres agentes o más, pegado al campo que lo causa (no al bloque) y con
+   su cierre; vuelve si el número baja de tres y se sube otra vez.
+4. **Audios**: «Música de espera» (sin «/Transferencia»), un botón «Subir archivo» con el icono de subida del DS
+   (`chooseIconName` de `sc-fileupload`, que sustituye al `chooseIcon` de fuente de iconos) y sin el texto de soltar:
+   la zona sigue aceptando el arrastre. «Subir» a secas lo ocupa «Subir» de mover una columna, y el gate de i18n no deja
+   dos traducciones de una misma frase.
+5. **Tabla de agentes del grupo, como la matriz de permisos**: la cabecera de cada columna con casilla va centrada, con
+   el rótulo y la casilla de «todos» después, sobre las casillas de sus filas (enmienda DD-180/DD-176 §4, que las
+   alineaba a la izquierda). Asignado, sin rótulo: solo su casilla. Asignado se estrecha a 3,5 rem y Habilitado se
+   ensancha a 9,5; con tres canales la tabla desplaza 51 px a 1440 (antes 59).
+6. **«Administrativo», tintado** como las demás etiquetas (`brown`: fondo `amber-100`, texto `amber-900`; en oscuro,
+   `amber-800` al 45 % y `amber-200`). Lleno, chocaba con el resto (enmienda DD-176 §8).
+
+7. **El estado, en la burbuja del avatar** (`sc-presence-avatar`, el `p-overlay-badge` de primeng.dev/avatar sin valor):
+   un punto abajo a la derecha, del color del punto de su etiqueta, con su palabra dicha al lector y en `title`. Sustituye
+   a la columna «Estado» de la tabla de agentes del grupo, que se va. En el listado de agentes la burbuja va en el avatar y
+   la columna sigue en «Columnas», escondida de inicio. La posición es lo único que se desvía del nativo (arriba a la
+   derecha): va por su propia entrada `style`, sin CSS encima.
+8. **Filtro por estado** en la cabecera del agente de la tabla del grupo: un menú de cinco opciones, de varias en varias,
+   y una marca con cuántas hay elegidas. Los cuatro motivos de no atender (No disponible, Baño, Comida y Formación, los
+   cuatro en rojo) van juntos en «No disponible», para no hacer ruido. Lo que la columna daba al ojear se recupera
+   filtrando.
+9. **Repositorio de Email** (nueva tarjeta en Comunicación del hub, `/admin/emails`): las cuentas de correo y los
+   triggers de la pestaña Emails de Voice, cada uno con su lista y su «Crear», y su editor en su ruta. La cuenta lleva los
+   datos del servidor entrante y del saliente (con su prueba), los triggers que se le aplican y la acción por defecto; el
+   trigger, su condición (campo, operador y valor), su acción y su cuenta. No va en Grupos: es un repositorio. Los
+   almacenes son de prototipo (`sc-mailboxes-repo`, `sc-email-triggers-repo`); las pruebas de conexión no salen a ninguna
+   parte.
+10. **El resumen del grupo**, medido sobre la maqueta del widget en proporción al texto: cada título y cada fila con su
+    icono en una baldosa de 28 (dos veces la letra), radio 6 e icono de 16 con el trazo del texto; la baldosa en un gris
+    frío un paso más hondo que la tarjeta, con brillo arriba y sombra mínima; la tarjeta con la sombra difusa de su
+    hermana destacada; los datos y los títulos un paso más oscuros que la clave, siempre a la derecha y centrados en su
+    fila; la estrategia corta en una píldora verde redondeada y la larga en texto; la salida con sus recursos, y una raya
+    entre reparto y salida con el mismo aire arriba y abajo. Lo que NO se calca: el tinte de la tarjeta (DD-126, el texto
+    gris de la maqueta no llega a AA sobre él) y la letra de la píldora (la del `sc-tag`, 12 en negrita). Si convence, la
+    baldosa y la fila pasan al DS.
+
+**Descartadas** · Quitar la columna «Estado» también del listado de agentes: entra en la búsqueda, la exportación y el
+selector de columnas; se esconde, no se quita.
+
+**Consecuencias** · Los e2e de la tabla de agentes, de los tiempos, de Ring All, de Administrativo y del resumen se ponen
+al día; `ficha-grupo-revision-equipo.spec.ts` fija el aviso de Ring All, la subida y el filtro, y
+`repositorio-email.spec.ts`, el repositorio de Email.
+
+---
+
+## DD-184 · 2026-10-06 — Revisión de grupos del equipo, y `sc-fileupload` para subir cualquier archivo
+
+**Contexto** · El equipo revisó la ficha de grupo punto por punto contra Voice. Lo que ya existía en Voice y aquí
+faltaba o decía otra cosa se alinea (abajo). Y para elegir los audios no había nada más que un botón «Elegir .wav»:
+PrimeNG trae `p-fileupload` (arrastrar y soltar, lista, validación de tipo y tamaño), y no lo habíamos usado.
+
+**Decisión** ·
+1. **`sc-fileupload`**, wrapper Extended sobre `p-fileupload` en su modo `advanced`, el de la documentación
+   (primeng.dev/fileupload; `node tools/primeng-doc.mjs fileupload`). La plantilla, la cabecera, las filas y el
+   movimiento son los de PrimeNG; el aspecto, los tokens `fileupload.*` del preset, que ya existían. Lo que añade el
+   wrapper, y por qué: sin `url` no sube a ningún sitio (`customUpload`: es un prototipo, no un punto de discordia) y
+   entrega los archivos por `filesSelected`/`uploaded`; `auto` por defecto, sin «Subir» ni «Cancelar»;
+   `clearAfterSelect` para quien guarda el archivo en otro campo, así el nombre no se pinta dos veces; los textos
+   (`chooseLabel`, `dropLabel`, avisos de tipo y tamaño) llegan traducidos, porque PrimeNG los toma de su locale
+   inglés; y la plantilla `#empty` va dentro, porque la consulta de PrimeNG no ve una plantilla que atraviesa dos
+   proyecciones (lo mismo que `sc-selectbutton`).
+2. **Dónde se usa**: los cuatro audios de Grupos (música de espera, identificador del grupo, «Eres el siguiente» y
+   mensajes periódicos, estos con `multiple`). **Dónde se usará**: la importación de tipificaciones y de contactos, y cualquier
+   subida nueva; para la foto de una persona o entidad sigue `sc-photo-upload` (recorte e ilustración de reserva).
+3. **Ficha de grupo**: sin Skills ni Rotativa (lo guardado con ellas se lee con Balanceada y Menos conversaciones
+   activas); Ring All con «Nº agentes simultáneos» y su aviso de costes siempre; tiempos hasta 30 min; rótulos del
+   equipo para timbrado, tiempo entre conversaciones, % de servicio, desbordar y música de espera/transferencia;
+   «Anunciar» en vez de «Decir»; voces como las lista Voice; «Caducar sesión» con minutos escritos, sin su ayuda ni la
+   de «Pedir valoración» (que no es una pregunta corta, son estrellas); sin «Sin teléfono saliente» en la cabecera.
+4. **Chat y WhatsApp** en el orden de Voice: Distribución, Cola, y por subcanal sus mensajes inicial y final, su
+   horario (con «Mensaje de horario» y «Mensaje de día no valorable», que dependen de él) y, en Web Chat, dominios y
+   script. WhatsApp va después, con su número elegido de una lista; sin número no se pinta nada de lo que sigue.
+
+**Descartadas** · Envolver `p-fileupload` en modo `basic` (un botón, sin zona de soltar): no es lo que se pidió.
+Sembrar la lista con los archivos ya guardados: solo se guarda el nombre, y un tamaño inventado sería falso.
+
+**Consecuencias** · `ficha-grupo-revision-equipo.spec.ts` fija lo de la ficha y la subida; la página de `sc-docs`
+(Componentes → FileUpload) es la referencia de uso. Pendiente: su nodo en Figma (`docs/figma-pendiente.md`), la
+subida de tipificaciones con este componente y medir el modo `basic` si algún día hace falta.
+
+---
+
+## DD-183 · 2026-10-06 — Sin punto medio («·») entre datos de la interfaz
+
+**Contexto** · El punto entre dos datos («918371548 · Prioridad: Media», «Llamada · grabada», «Nivel · Teléfono») se
+leía como relleno: no dice qué une y ocupa un hueco que ya da la coma o el `gap`. Unos 25 textos por idioma y unos
+30 sitios de código lo escribían.
+
+**Decisión** ·
+1. **Ninguno entre datos que se ven.** Se escribe con lo que ya hay, y nunca más largo que lo que sustituye:
+   - dos datos simples: coma («918371548, prioridad: baja», «3 contactos, activa», «Femenina, español»);
+   - rótulo y estado: dos puntos («Llamada: grabada», «Teléfono no está activo: actívalo en General»);
+   - dos instrucciones o dos hechos de una frase: coma o «y», sin cambiar de oración («Enter guarda el nombre, Esc cancela»);
+   - un rótulo compuesto, sin partícula: «Acceso Web Chat», «Número WhatsApp», «Nivel Teléfono», «Agentes: {grupo}»;
+   - lista de valores: coma («Incluye A, B»);
+   - separador puramente visual: el `gap` del contenedor, o nada (la cabecera de un lector, el resumen de la plantilla).
+2. **Lo que arrastra mayúsculas** baja a minúscula tras la coma («3 contactos, activa»).
+3. **Lo vigila `audit:interpunct`** (en `verify`, tope 0): los textos del i18n del Supervisor y las plantillas, el
+   TypeScript y el SCSS del Supervisor y del DS, sin comentarios. Quedan fuera sc-docs (el showcase) y las réplicas
+   `agent`, `agent-mini` y `cuscare` (DD-35: calcan la app viva).
+
+**Coste** · Ninguno de espacio: cada texto cambiado mide lo mismo o menos (medido por clave en los cuatro idiomas), y
+el portugués de «Número de WhatsApp» se queda como estaba por tener ya su gemelo en Avanzado.
+
+**Descartadas** · Una barra vertical o un guion: es el mismo relleno con otra forma. Un punto solo en listas de
+metadatos: partía la regla en dos y obligaba a decidir caso a caso.
 
 ---
 
@@ -884,7 +1591,8 @@ solo icono de primeng.dev («Icon Only»), en cada sitio donde haya un «+» sol
    con «Guardar»: `<sc-button icon="add" [rounded]="true" appearance="outlined" variant="secondary" [ariaLabel]="…">`.
    Con `rounded`, PrimeNG iguala el alto al ancho: un círculo de 31,5 (el ancho de solo icono del Kit), sin el
    31,5 × 32,5 de DD-91. El nombre va en `ariaLabel`, como pide la sección de accesibilidad de la doc, y el tooltip lo
-   repite al pasar el ratón.
+   repite al pasar el ratón. *(Enmendado por DD-187, 2026-10-09: es el de solo icono, secundario y relleno, del Kit, a la
+   talla de su campo: mediano junto a uno mediano, pequeño junto a uno pequeño.)*
 2. **Va a la derecha de su control, a su alto.** Control y «+» comparten fila (`.control-add`): alineados arriba, con
    7 de hueco, y el control se estira. Medido a 1440 y a 1366: un círculo de 31,5 junto a un control de 32,5, con los
    centros a 0,5 px. Es la regla que ya tenía el «Añadir» de los dominios del chat, que pasa de `.domain-add` a
@@ -1225,6 +1933,15 @@ cuál es el paso esperado, y «Crear grupo» de arriba sigue siendo la única ac
 
 **Descartado.** El ✓ en todas las secciones visitadas (lo de antes); hacer puerta también al editar (al editar se va
 por el índice y no hay pasos); los 8 px del ejemplo entre botones.
+*(Revisado el 2026-10-13; el pie se queda como está.)* Dos más:
+- **«Atrás» a la izquierda y «Siguiente» a la derecha, separados.** Es la geometría de un asistente horizontal
+  (izquierda, atrás; derecha, adelante). Aquí el índice va de arriba abajo, así que «Siguiente» es la sección de
+  abajo, no la de la derecha. La sección acaba en su borde izquierdo, donde está el último campo: separados,
+  «Siguiente» se iba al otro lado de la columna (658 px entre los dos, lo de antes). Hasta los asistentes de
+  escritorio los llevan juntos. Lo que separarlos protege, no pulsar «Atrás» por error, ya lo cubre el peso:
+  «Atrás» secundario y «Siguiente» el principal.
+- **«Atrás» y «Siguiente» también al editar.** Al editar se entra a cambiar una cosa y se va por el índice; un
+  «Siguiente» sugiere un recorrido que no hay, y «Guardar» sigue arriba.
 
 ## DD-157 · 2026-10-04 — Distribución y colas, con el árbol del DS: cada canal una caja, cada parte un slot, y los mensajes de la cola de vuelta
 
@@ -1960,7 +2677,8 @@ para un formulario tan largo, y una ficha que cambia de forma entre crear y edit
    - su rótulo lleva el «*» y el desplegable, `required`;
    - el resumen dice «Falta: … · teléfono saliente», y «Crear grupo» y «Guardar» esperan, con el motivo en la barra;
    - al editar, el aviso va bajo el campo y Distribución y colas lleva el punto del índice; en el alta, después de
-     salir de su sección sin él, como el nombre al salir de General;
+     salir de su sección sin él, como el nombre al salir de General; *(precisado por DD-199, 2026-10-13: al editar,
+     si lo guardado ya venía sin él o desde que se sale de su sección sin él)*
    - en el alta, Distribución no lleva su ✓ sin él, pero no es puerta: los pasos siguen libres; *(enmendado por
      DD-158, 2026-10-04: es la segunda puerta del alta, como el nombre)*
    - duplicar lo pide al enviar, como el resto de sus campos, y lleva el foco a él.

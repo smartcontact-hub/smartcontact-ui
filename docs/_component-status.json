@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "56 componentes · 23 custom · 8 standard · 25 extended · 45 usados en Supervisor.",
+  "summary": "61 componentes · 25 custom · 9 standard · 27 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -27,6 +27,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 3,
       "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
       "sobreObsoleto": []
@@ -42,6 +46,12 @@
       "api": [],
       "nested": [],
       "hasDemo": false,
+      "kit": true,
+      "estado": "experimental",
+      "faltas": [
+        "demo"
+      ],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para apilar varios avatares cuando importa «quiénes» y no «cuántos» exactamente.",
       "sobreObsoleto": []
@@ -61,6 +71,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 6,
       "cuando": "Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.",
       "sobreObsoleto": []
@@ -82,6 +96,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para decir dónde estás dentro de una jerarquía y poder subir. No es navegación principal.",
       "sobreObsoleto": []
@@ -93,15 +111,27 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 1,
+      "inputs": 3,
       "api": [
         "clear",
-        "total"
+        "result",
+        "resultUndoable",
+        "total",
+        "undo"
       ],
-      "nested": [],
+      "nested": [
+        "sc-message",
+        "sc-button"
+      ],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 2,
-      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
+      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale con la selección; tras aplicar un cambio en lote, se queda para contarlo con su «Deshacer».",
       "sobreObsoleto": []
     },
     {
@@ -123,6 +153,12 @@
         "sc-button"
       ],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 3,
       "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
       "sobreObsoleto": []
@@ -160,6 +196,12 @@
         "sc-toggleswitch"
       ],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Solo para el procesado masivo de conversaciones. Es específico del dominio y hoy solo lo usa la demo.",
       "sobreObsoleto": []
@@ -171,7 +213,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/button",
       "cva": false,
-      "inputs": 18,
+      "inputs": 20,
       "api": [
         "appearance",
         "ariaControls",
@@ -184,10 +226,12 @@
         "icon",
         "iconAriaLabel",
         "iconFilled",
+        "iconOnly",
         "iconPosition",
         "iconSize",
         "label",
         "loading",
+        "raised",
         "rounded",
         "size",
         "type",
@@ -195,7 +239,11 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 178,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 187,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -219,6 +267,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para agrupar contenido suelto con una superficie propia. Si el grupo tiene título y pertenece a un formulario, es `sc-section-card`.",
       "sobreObsoleto": []
@@ -242,7 +294,11 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 39,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 47,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -269,7 +325,11 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 6,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 5,
       "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
       "sobreObsoleto": []
     },
@@ -286,6 +346,12 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 3,
       "cuando": "Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.",
       "sobreObsoleto": []
@@ -305,6 +371,12 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para que el usuario decida qué columnas ve en una tabla.",
       "sobreObsoleto": []
@@ -320,6 +392,12 @@
       "api": [],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 4,
       "cuando": "Para llegar a cualquier sitio o acción escribiendo, sin recorrer menús. Es atajo, nunca el único camino.",
       "sobreObsoleto": []
@@ -335,6 +413,10 @@
       "api": [],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para confirmar una acción normal. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.",
       "sobreObsoleto": []
@@ -346,7 +428,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 34,
+      "inputs": 35,
       "api": [
         "columnOrderChange",
         "columnResizeMode",
@@ -354,6 +436,7 @@
         "columns",
         "dataKey",
         "externalSort",
+        "fill",
         "filterChange",
         "filters",
         "first",
@@ -396,7 +479,11 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 13,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 15,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": []
     },
@@ -444,6 +531,10 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
       "sobreObsoleto": []
@@ -467,7 +558,13 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 11,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 12,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "sobreObsoleto": []
     },
@@ -501,7 +598,11 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 22,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 20,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -520,7 +621,11 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 31,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 24,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -550,6 +655,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 3,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
       "sobreObsoleto": []
@@ -573,8 +682,39 @@
         "sc-button"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 18,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 22,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "fact-row",
+      "selector": "div[scFactRow]",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 2,
+      "api": [
+        "href",
+        "icon",
+        "open"
+      ],
+      "nested": [],
+      "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 0,
+      "cuando": "Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.",
       "sobreObsoleto": []
     },
     {
@@ -592,6 +732,13 @@
       ],
       "nested": [],
       "hasDemo": false,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la etiqueta. En una pantalla se usa el campo entero (`sc-inputtext`, `sc-select`…), nunca esto suelto.",
       "sobreObsoleto": []
@@ -610,8 +757,56 @@
       ],
       "nested": [],
       "hasDemo": false,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la ayuda y del error. En una pantalla se usa el campo entero, nunca esto suelto.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "fileupload",
+      "selector": "sc-fileupload",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/fileupload",
+      "cva": false,
+      "inputs": 17,
+      "api": [
+        "accept",
+        "auto",
+        "chooseIconName",
+        "chooseLabel",
+        "clearAfterSelect",
+        "cleared",
+        "disabled",
+        "dropLabel",
+        "fileLimit",
+        "fileRemoved",
+        "filesSelected",
+        "invalidFileSizeMessageDetail",
+        "invalidFileSizeMessageSummary",
+        "invalidFileTypeMessageDetail",
+        "invalidFileTypeMessageSummary",
+        "maxFileSize",
+        "mode",
+        "multiple",
+        "name",
+        "uploaded",
+        "url"
+      ],
+      "nested": [],
+      "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 2,
+      "cuando": "Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.",
       "sobreObsoleto": []
     },
     {
@@ -632,6 +827,12 @@
         "sc-button"
       ],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
       "sobreObsoleto": []
@@ -656,6 +857,12 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 6,
       "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
       "sobreObsoleto": []
@@ -681,6 +888,12 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para una magnitud contra su máximo, de un vistazo. Para progreso de una tarea, `sc-progressbar`.",
       "sobreObsoleto": []
@@ -699,8 +912,39 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 5,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "icon-tile",
+      "selector": "sc-icon-tile",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 3,
+      "api": [
+        "icon",
+        "size",
+        "tone"
+      ],
+      "nested": [],
+      "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 2,
+      "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
       "sobreObsoleto": []
     },
     {
@@ -723,6 +967,12 @@
         "sc-button"
       ],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 3,
       "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
       "sobreObsoleto": []
@@ -743,6 +993,12 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 4,
       "cuando": "Para renombrar en el sitio, sin abrir un formulario.",
       "sobreObsoleto": []
@@ -761,6 +1017,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para un campo con algo pegado (icono, botón, prefijo). Mantiene alineadas las dos piezas.",
       "sobreObsoleto": []
@@ -800,8 +1060,58 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 10,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 12,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "inputtags",
+      "selector": "sc-inputtags",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/inputtags",
+      "cva": false,
+      "inputs": 18,
+      "api": [
+        "addOnBlur",
+        "addOnPaste",
+        "added",
+        "allowDuplicate",
+        "ariaDescribedBy",
+        "ariaLabel",
+        "delimiter",
+        "disabled",
+        "error",
+        "fluid",
+        "helperText",
+        "inputId",
+        "invalid",
+        "label",
+        "max",
+        "placeholder",
+        "removed",
+        "required",
+        "size",
+        "value",
+        "valueChange"
+      ],
+      "nested": [
+        "sc-field-label",
+        "sc-field-msg"
+      ],
+      "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 1,
+      "cuando": "Para varios valores cortos que escribe el usuario (dominios, etiquetas libres, correos). Si salen de una lista cerrada, `sc-multiselect`; si es uno solo, `sc-inputtext`.",
       "sobreObsoleto": []
     },
     {
@@ -842,7 +1152,11 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 36,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 44,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -859,6 +1173,12 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para enseñar los atajos disponibles en la pantalla.",
       "sobreObsoleto": []
@@ -882,6 +1202,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 9,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
@@ -938,7 +1262,11 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 15,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 13,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "sobreObsoleto": [
         {
@@ -964,7 +1292,14 @@
       ],
       "nested": [],
       "hasDemo": false,
-      "usedInSupervisor": 1,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 2,
       "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
       "sobreObsoleto": []
     },
@@ -989,6 +1324,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para un bloque con cabecera propia, plegable y con acciones.",
       "sobreObsoleto": []
@@ -1030,7 +1369,11 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 1,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 2,
       "cuando": "Para una contraseña, con su ojo para mostrarla.",
       "sobreObsoleto": []
     },
@@ -1055,6 +1398,13 @@
         "sc-checkbox"
       ],
       "hasDemo": false,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para dar permisos cruzando quién con qué, marcando por columna entera.",
       "sobreObsoleto": []
@@ -1078,6 +1428,12 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para la foto de una persona, con ilustración de reserva.",
       "sobreObsoleto": []
@@ -1098,6 +1454,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para el avance de una tarea de la que SÍ se sabe cuánto queda. Si no se sabe, `sc-progressspinner`.",
       "sobreObsoleto": []
@@ -1118,6 +1478,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para una espera de duración desconocida. Si la espera es de contenido que va a aparecer, `sc-skeleton` desconcierta menos.",
       "sobreObsoleto": []
@@ -1143,6 +1507,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
       "sobreObsoleto": []
@@ -1172,6 +1540,12 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "usedInSupervisor": 12,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
@@ -1195,9 +1569,15 @@
         "showHeader",
         "surface"
       ],
-      "nested": [],
+      "nested": [
+        "sc-button"
+      ],
       "hasDemo": true,
-      "usedInSupervisor": 26,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 35,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1249,7 +1629,11 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 58,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 60,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1260,7 +1644,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/selectbutton",
       "cva": false,
-      "inputs": 14,
+      "inputs": 15,
       "api": [
         "allowEmpty",
         "ariaDescribedBy",
@@ -1268,6 +1652,7 @@
         "ariaLabelledBy",
         "disabled",
         "fluid",
+        "helperText",
         "invalid",
         "multiple",
         "optionDisabled",
@@ -1278,9 +1663,15 @@
         "value",
         "valueChange"
       ],
-      "nested": [],
+      "nested": [
+        "sc-field-msg"
+      ],
       "hasDemo": true,
-      "usedInSupervisor": 14,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 17,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },
@@ -1302,6 +1693,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.",
       "sobreObsoleto": []
@@ -1322,7 +1717,13 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 8,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 13,
       "cuando": "Para una ranura con título dentro de una composición.",
       "sobreObsoleto": []
     },
@@ -1347,6 +1748,10 @@
         "sc-button"
       ],
       "hasDemo": true,
+      "kit": false,
+      "estado": "deprecated",
+      "faltas": [],
+      "retirado": "RETENIDO PARA ROLLBACK (S59, Supervisor DD#65). Ya NO lo usa ningún form de la app: los 3 form shells migraron al modelo \"todo arriba\" (acciones al TopBar + la ficha del panel para la identidad). Se conserva intacto —exportado + showcased en la demo— como red de seguridad por si se revierte el \"todo arriba\". NO borrar sin decisión explícita (ver DD#65 § \"Cómo revertir\").",
       "usedInSupervisor": 2,
       "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
       "sobreObsoleto": []
@@ -1368,8 +1773,36 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 9,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 18,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "tabs",
+      "selector": "sc-tabs",
+      "provenance": "WRAPPER",
+      "kind": "STANDARD",
+      "primengBase": "primeng/tabs",
+      "cva": false,
+      "inputs": 1,
+      "api": [
+        "value",
+        "valueChange"
+      ],
+      "nested": [],
+      "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 2,
+      "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
       "sobreObsoleto": []
     },
     {
@@ -1379,19 +1812,24 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/tag",
       "cva": false,
-      "inputs": 7,
+      "inputs": 8,
       "api": [
         "bordered",
         "icon",
         "labelColor",
         "rounded",
         "severity",
+        "size",
         "value",
         "variant"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 28,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 30,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
@@ -1400,15 +1838,20 @@
       "selector": "sc-textarea",
       "provenance": "WRAPPER",
       "kind": "EXTENDED",
-      "primengBase": "primeng/textarea",
+      "primengBase": "primeng/textarea, primeng/tooltip",
       "cva": false,
-      "inputs": 14,
+      "inputs": 18,
       "api": [
         "ariaDescribedBy",
         "autoResize",
         "cols",
+        "copied",
+        "copiedLabel",
+        "copyLabel",
+        "copyable",
         "disabled",
         "fluid",
+        "helperText",
         "inputId",
         "invalid",
         "name",
@@ -1421,8 +1864,15 @@
         "valueChange",
         "variant"
       ],
-      "nested": [],
+      "nested": [
+        "sc-button",
+        "sc-field-msg"
+      ],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 7,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
       "sobreObsoleto": []
@@ -1446,6 +1896,10 @@
       ],
       "nested": [],
       "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para el resultado de una acción, que se va solo. Si el aviso pertenece a la página y debe quedarse, `sc-message`.",
       "sobreObsoleto": []
@@ -1472,7 +1926,11 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 33,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 39,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

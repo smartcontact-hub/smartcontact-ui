@@ -44,5 +44,6 @@ export class PatronesComponent {
     { icon: 'text_fields', key: 'type' },
     { icon: 'view_agenda', key: 'grouping' },
     { icon: 'height', key: 'fill' },
+    { icon: 'pending', key: 'blame' },
   ];
 }

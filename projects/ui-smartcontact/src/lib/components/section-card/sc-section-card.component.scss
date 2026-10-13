@@ -1,6 +1,12 @@
 :host {
   display: block;
   margin-bottom: var(--sc-spacing-1-5);
+  /* El icono de la cabecera mide lo que su título (DD-189): `Subtitle` (16) en una sección y
+   * `Title` (20) en la caja que titula la página. Su peso es el del título (600) y el eje óptico
+   * va a 20, el mínimo de Material Symbols, que engorda el trazo en tamaños pequeños hasta
+   * igualarlo con la letra en semibold. Medido contra 14 (hoy), opsz 24 y 40 y el alto de línea:
+   * con 14 se quedaba corto y fino junto a un título de 20, y a 28 dominaba la cabecera. */
+  --section-card-icon-size: var(--sc-font-size-subtitle-1);
 }
 
 .section-card {
@@ -72,41 +78,51 @@
 
   &__icon {
     flex: 0 0 auto;
+    /* `sc-icon size="inherit"` pinta a 1em de esto. */
+    font-size: var(--section-card-icon-size);
     color: var(--sc-icon-subtle);
     align-self: center;
   }
 
-  /* `h3` (18/24) desde el 2026-09-12, y antes era `body-2` (14/20).
+  /* `Subtitle/subtitle-semibold` (16/24) desde el 2026-10-09 (DD-188); `h3` (18/24) desde el
+   * 2026-09-12, y antes `body-2` (14/20).
    *
-   * POR QUÉ CAMBIA. El título medía EXACTAMENTE lo mismo que el texto de debajo —14px las dos
-   * cosas— y lo único que los separaba era el peso. Medido en `config/aed/agentes`: título
-   * 14/20/600 contra cuerpo 14/21/400. Un título que no es más grande que su contenido no
-   * establece jerarquía: salió en revisión visual y la medida lo confirma.
+   * Por qué no se quedó en 14: medía lo mismo que su contenido y solo lo separaba el peso, así
+   * que no establecía jerarquía (medido en `config/aed/agentes`: 14/20/600 contra 14/21/400).
    *
-   * POR QUÉ `h3` Y NO 20px, que fue el tamaño propuesto: 20 existe en la escala
-   * (`--sc-font-size-450`) pero NO lo nombra ningún text style — los seis roles son 64, 48, 24,
-   * 18, 14 y 12. Fijarlo aquí sería la única tipografía de la app fuera de la rampa, justo lo que
-   * `audit:text-styles` existe para impedir, y se quedaría sin seguir un remapeo de Figma. `h3`
-   * es el peldaño CON NOMBRE inmediatamente encima del cuerpo, y la diferencia con 20 no se
-   * aprecia (se construyeron los dos y se miraron juntos antes de elegir).
+   * Por qué ahora 16 y no 18: el título de la PÁGINA era también `h3`, así que página y sección
+   * medían igual (18 y 18, medido en la ficha de agente). El Kit ganó dos estilos, `Title` (20)
+   * para la página y `Subtitle` (16) para la sección, los dos escalones que usa Primer. Si la
+   * caja titula la página (`headingLevel="1"`), sube a `Title`: ver `:host(.sc-section-card--page)`.
    *
-   * ⚠️ ESTO DIVERGE DE FIGMA A PROPÓSITO, y hay que cerrarlo allí. El comentario anterior decía
-   * —con razón— que `Body/body-semibold` era lo que mide una cabecera de sección en la ficha del
-   * Kit. Sigue siéndolo: el cambio es de DISEÑO, no una corrección. Hasta que el text style de la
-   * cabecera de sección pase a `h3` en Figma, este es un punto conocido en el que el código va
-   * por delante. Anotado en la bandeja del frente. */
+   * ⚠️ El maestro `Section` del Kit (691:23956) aún dibuja la cabecera con `Body/body-semibold`.
+   * Hasta que pase a `Subtitle`, el código va por delante: anotado en `docs/figma-pendiente.md`. */
   &__title {
     margin: 0;
-    font-family: var(--sc-font-family-h3);
-    font-size: var(--sc-font-size-h3);
-    line-height: var(--sc-line-height-h3);
-    font-weight: var(--sc-font-weight-semibold);
+    font-family: var(--sc-font-family-subtitle-1);
+    font-size: var(--sc-font-size-subtitle-1);
+    line-height: var(--sc-line-height-subtitle-1);
+    font-weight: var(--sc-font-weight-subtitle-1);
     /* `heading` y no `primary`: el título medía EXACTAMENTE el mismo gris que el texto
      * de debajo, así que la jerarquía la llevaban solo el tamaño y el peso. Con el rol
      * de título sube a 12.16:1 y el cuerpo se queda en 7.38 — un escalón de color que
      * en claro no existía (ver la nota de `--sc-text-heading`). */
     color: var(--sc-text-heading);
-    letter-spacing: -0.01em;
+    /* Sin espaciado propio: los estilos de texto del DS van a 0 (barrido de tipografía del 2026-10-09; era −0,01em). */
+  }
+
+  /* La acción de la sección (`scSectionActions`), en la esquina derecha de la cabecera y centrada con el título. Sin
+   * acción, no ocupa nada. Solo en la cabecera fija: la plegable es un botón y no puede llevar otro dentro. */
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    margin-inline-start: auto;
+    align-self: center;
+
+    &:empty {
+      display: none;
+    }
   }
 
   &__hint {
@@ -122,6 +138,20 @@
   &__body {
     padding: 0 var(--sc-spacing-1-143) var(--sc-spacing-1-25);
   }
+}
+
+/* La caja que titula la página (`headingLevel="1"`) lleva el título de la página, `Title` (20/28),
+ * el mismo que `.page__heading` sobre el lienzo: un título de página mide igual esté donde esté
+ * (lo vigila `e2e/supervisor/page-identity.spec.ts`). */
+:host(.sc-section-card--page) {
+  --section-card-icon-size: var(--sc-font-size-title);
+}
+
+:host(.sc-section-card--page) .section-card__title {
+  font-family: var(--sc-font-family-title);
+  font-size: var(--sc-font-size-title);
+  line-height: var(--sc-line-height-title);
+  font-weight: var(--sc-font-weight-title);
 }
 
 /*
@@ -164,15 +194,18 @@
    * demás (medido en `/config/aed/servicio`: título en 464.5, contenido en 441.8), o
    * sea que la página perdía la única vertical que la ordena justo en su primera línea.
    *
-   * El icono pasa a COLGAR del margen: retrocede 10.5 (`scale/0-75`, negado con el
+   * El icono pasa a COLGAR del margen: retrocedía 10.5 (`scale/0-75`, negado con el
    * mismo `calc(… * -1)` que ya usan el top-bar y el formulario de agentes), que es
    * exactamente lo que sobra entre la sangría de 12.25 y los 22.75 que ocupan el icono
    * y su hueco. Resultado: el icono se queda —es lo que empareja la tarjeta con el
    * icono del índice de la izquierda— y el título aterriza en la misma vertical que los
    * títulos de sección, las pastillas y la tabla.
    */
+  /* Desde DD-189 el icono crece con su título, así que lo que cuelga sale de su tamaño: sangría
+   * menos hueco menos icono. Con 14 da los −10.5 de antes; con 16, −12.5, y con 20, −16.5, y el
+   * título sigue cayendo en la misma vertical que el contenido. */
   .section-card__head > .section-card__icon {
-    margin-inline-start: calc(var(--sc-spacing-0-75) * -1);
+    margin-inline-start: calc(var(--sc-spacing-0-875) - var(--sc-spacing-0-625) - var(--section-card-icon-size));
   }
 
   .section-card__body {
@@ -185,19 +218,10 @@
 }
 
 /*
- * `headingLevel="1"` NO cambia el tamaño, y eso es deliberado (2026-09-09).
- *
- * Hasta hoy subía al rol `h3` (18/24) «el escalón que le toca en la escala del Figma del DS».
- * Ese 18 salía de la ESCALA, no de ningún nodo que dibuje esta pantalla: en el archivo Supervisor
- * no hay un solo texto por encima de 14 —ni en las listas, ni en el rail, ni en la barra— y la
- * jerarquía la llevan el peso, el color y la caja. En la maqueta, «Agentes» y «Configuración»
- * son el MISMO estilo y los separa el icono, que solo lleva la cabecera.
- *
- * Y hay un motivo óptico, que es el que pesa: el icono de la cabecera mide 14 en los DOS nodos
- * de Figma. Un título de 18 al lado de un icono de 14 deja el icono corto. A 14 y 14 casan.
- *
- * Así que el input queda limpio: decide la SEMÁNTICA (`<h1>` o `<h2>`), y el tamaño lo pone el
- * contenedor. La clase `--page` se queda como enganche del DOM para los tests, sin estilo.
+ * `headingLevel="1"` sí cambia el tamaño desde el 2026-10-09 (DD-188): sube a `Title` (20/28),
+ * la regla de arriba. Del 2026-09-09 al 2026-10-09 no cambiaba, porque el título de página y el de
+ * sección compartían `h3` y la caja no tenía con qué distinguirlos. La clase `--page` sigue siendo
+ * además el enganche del DOM para los tests.
  */
 
 /* Variante flush (SnowUI S62): sin caja — el contenido va a sangre sobre la

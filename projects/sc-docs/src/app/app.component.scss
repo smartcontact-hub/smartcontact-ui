@@ -235,7 +235,7 @@
     color: var(--sc-text-secondary);
     font: inherit;
     font-size: var(--sc-font-size-100); /* 12 — era `--sc-font-size-25`, que NO EXISTE: se pintaba por su fallback (11px), y 11 no es peldaño de la rampa. Sube al más cercano. */
-    font-weight: var(--sc-font-weight-bold);
+    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     text-align: left;

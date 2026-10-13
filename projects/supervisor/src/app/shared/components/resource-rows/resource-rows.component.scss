@@ -44,9 +44,13 @@
   color: var(--sc-text-subtle);
 }
 
-/* Un enlace, como «Gestionar en Repositorios»: lleva a otra página. */
+/* Se ve como un enlace, igual que «Gestionar en Repositorios», pero es un botón: abre la ventana de editar sin salir. */
 .resource-rows__edit {
   flex: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
   color: var(--sc-text-link);
   text-decoration: underline;
   text-underline-offset: var(--sc-spacing-0-125);

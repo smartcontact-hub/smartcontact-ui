@@ -166,7 +166,7 @@
     },
     "tabs": {
       "aria": "Monitors",
-      "hint": "Double-click to rename · drag to reorder",
+      "hint": "Double-click to rename, drag to reorder",
       "rename": "Rename",
       "rename_aria": "Monitor name",
       "duplicate": "Duplicate",
@@ -277,12 +277,12 @@
       },
       "status": {
         "call": "Call",
-        "call_recorded": "Call · recorded",
-        "call_transcribed": "Call · recorded and transcribed",
-        "call_analyzed": "Call · recorded, transcribed and analyzed",
+        "call_recorded": "Call: recorded",
+        "call_transcribed": "Call: recorded and transcribed",
+        "call_analyzed": "Call: recorded, transcribed and analyzed",
         "chat": "Chat",
-        "chat_transcribed": "Chat · transcribed",
-        "chat_analyzed": "Chat · analyzed",
+        "chat_transcribed": "Chat: transcribed",
+        "chat_analyzed": "Chat: analyzed",
         "transcribing": "Transcribing…",
         "analyzing": "Analyzing…",
         "failed": "Transcription failed",
@@ -304,6 +304,7 @@
         }
       },
       "filters": {
+        "none": "None",
         "search_placeholder": "Search",
         "services_label": "Services",
         "date_label": "Date",
@@ -349,7 +350,7 @@
     "type_filter": {
       "label": "More filters",
       "aria_default": "Type and status filters",
-      "aria_active": "Type and status filters · active",
+      "aria_active": "Type and status filters active",
       "panel_title": "More filters",
       "reset": "Clear",
       "groups": {
@@ -434,19 +435,19 @@
         "no_transcription_desc": "Generate the text to search within the conversation and enable analysis.",
         "transcribe_btn": "Transcribe",
         "transcribing_btn": "Requesting…",
-        "transcribe_cost": "Incurs cost · ~30 s",
+        "transcribe_cost": "Incurs cost, ~30 s",
         "transcription_empty_title": "Empty transcription",
         "transcription_empty_desc": "Processing finished without extracting lines. This often happens with very short audios or long silences.",
         "ready_title": "Ready to analyze",
         "ready_desc": "Actionable summary and sentiment assessment over the existing transcription.",
         "ready_btn": "Request analysis",
         "requesting_btn": "Requesting…",
-        "ready_cost": "Incurs cost · ~10 s",
+        "ready_cost": "Incurs cost, ~10 s",
         "deadend_title": "Pending transcription and analysis",
         "deadend_desc": "Analysis needs text. We launch transcription and, as soon as it finishes, we generate summary and sentiment.",
         "deadend_btn": "Transcribe and analyze",
         "processing_btn": "Processing…",
-        "deadend_cost": "Incurs cost · transcription + analysis"
+        "deadend_cost": "Incurs cost: transcription + analysis"
       },
       "processing": {
         "transcribing_title": "Transcribing",
@@ -696,11 +697,11 @@
           "impact_title": "Estimated impact",
           "impact": "Would affect {{count}} of the last {{total}} conversations.",
           "impact_note": "type and category are evaluated in the backend",
-          "est_projection": "≈ {{day}} per day · ≈ {{month}} per month, at this rate.",
+          "est_projection": "≈ {{day}} per day, ≈ {{month}} per month, at this rate.",
           "pick_all": "All",
-          "pick_all_hint": "· includes new ones",
+          "pick_all_hint": "includes new ones",
           "search": "Search…",
-          "pick_all_row": "All · applies to anyone, including new ones.",
+          "pick_all_row": "All: applies to anyone, including new ones.",
           "pick_manual": "Choose manually",
           "pick_groups": "Groups (their members)",
           "enabled_members": "{{count}} enabled agents",
@@ -897,7 +898,7 @@
       "analyzing": "Generating AI analysis for {{n}} conversations…",
       "success": "{{n}} conversations processed successfully",
       "all_failed": "{{n}} transcriptions failed. Check 'Failed only' to retry.",
-      "partial": "{{ok}} processed · {{ko}} failed. Check 'Failed only' to retry."
+      "partial": "{{ok}} processed, {{ko}} failed. Check 'Failed only' to retry."
     }
   },
   "common": {
@@ -960,7 +961,7 @@
     "copy_failed": "Could not copy to clipboard",
     "click_to_copy": "Click to copy",
     "remove_from_list": "Remove {{name}} from list",
-    "bulk_updated": "{{count}} items updated",
+    "bulk_applied": "Change applied to {{count}} {{entity}}",
     "columns": "Columns",
     "columns_count": "{0} columns",
     "columns_visible": "Columns, {{visible}} of {{total}}",
@@ -976,9 +977,10 @@
     "discard_body": "Unsaved changes will be lost.",
     "discard_confirm": "Discard",
     "discard_keep": "Keep editing",
-    "cross_tab_warning": "This record is being edited in another tab. Changes may overwrite each other.",
     "undo": "Undo",
     "change_reverted": "Change reverted",
+    "empty_cell": "No data",
+    "not_applicable": "Not applicable",
     "photo": {
       "select": "Select photo",
       "change": "Change photo",
@@ -1192,6 +1194,75 @@
     }
   },
   "repositories": {
+    "emails": {
+      "title": "Email",
+      "mailboxes": "Mail accounts",
+      "triggers": "Triggers",
+      "create": "Create",
+      "created": "Created on",
+      "modified": "Modified on",
+      "total": "Total emails",
+      "mailbox_singular": "mail account",
+      "mailbox_singular_title": "Mail account",
+      "trigger_singular": "trigger",
+      "mailboxes_empty": "No mail accounts yet",
+      "triggers_empty": "No triggers yet",
+      "mailbox": {
+        "create_title": "New mail account",
+        "create_breadcrumb": "New account",
+        "edit_breadcrumb": "Edit account",
+        "create_submit": "Create account",
+        "name_placeholder": "mailbox@example.com",
+        "name_taken": "An account with this address already exists",
+        "section_account": "Account",
+        "section_incoming": "Incoming mail settings",
+        "section_outgoing": "Outgoing mail settings",
+        "host": "Host",
+        "port": "Port",
+        "user": "User",
+        "password": "Password",
+        "test_inbox": "Test inbox",
+        "test_outbox": "Test outbox",
+        "test_ok_incoming": "Incoming server connection successful",
+        "test_ok_outgoing": "Outgoing server connection successful",
+        "test_missing": "The host, port or user is missing",
+        "default_action": "Default action",
+        "action_transfer": "Transfer",
+        "action_queue": "Queue",
+        "target": "Group",
+        "no_target": "No group"
+      },
+      "trigger": {
+        "create_title": "New trigger",
+        "create_breadcrumb": "New trigger",
+        "edit_breadcrumb": "Edit trigger",
+        "create_submit": "Create trigger",
+        "name_taken": "A trigger with this name already exists",
+        "section_trigger": "Trigger",
+        "section_condition": "Condition",
+        "section_action": "Action",
+        "section_mailbox": "Mail account",
+        "label": "Label",
+        "field": "Field",
+        "operator": "Operator",
+        "value": "Value",
+        "mailbox_none": "None",
+        "fields": {
+          "body": "Email body",
+          "date": "Date",
+          "from": "From",
+          "subject": "Subject",
+          "time": "Time",
+          "to": "To"
+        },
+        "operators": {
+          "contains": "Contains",
+          "not_contains": "Does not contain",
+          "equals": "Equals",
+          "starts_with": "Starts with"
+        }
+      }
+    },
     "search_placeholder": "Search {{entity}}...",
     "errors": {
       "name_required": "Name is required",
@@ -1236,6 +1307,7 @@
         "ai": "AI"
       },
       "descriptions": {
+        "emails": "Mail accounts and triggers that route incoming emails",
         "agendas": "The contacts each agent sees in their phone's address book",
         "horarios": "Schedule slots and operating shifts for the contact center",
         "plantillas": "Predefined messages for quick replies and campaigns",
@@ -1246,7 +1318,8 @@
         "intenciones": "User intents detected in natural language",
         "reglas_ia": "Business rules applied to the AI engine",
         "entidades_ia": "Semantic entities managed by language models",
-        "clasificacion_ia": "Automatic conversation classification models"
+        "clasificacion_ia": "Automatic conversation classification models",
+        "equipos": "Agents with something in common, to find them when filtering"
       },
       "all": "All",
       "filter": "Filter by category",
@@ -1334,20 +1407,12 @@
       "columns": {
         "name": "Name",
         "description": "Description",
-        "direction": "Direction",
-        "comments": "Comments",
         "levels": "Levels",
         "groups": "Groups",
         "id": "ID"
       },
-      "direction": {
-        "inbound": "Inbound",
-        "outbound": "Outbound",
-        "both": "Both"
-      },
       "levels_count": "{{count}} levels",
       "levels_count_one": "1 level",
-      "levels_none": "Comment only",
       "levels_first": "Level 1: {{names}}",
       "levels_other": "Level {{level}}: {{count}} options",
       "levels_other_one": "Level {{level}}: 1 option",
@@ -1356,14 +1421,12 @@
       "import_columns": {
         "name": "name",
         "description": "description",
-        "direction": "direction",
-        "comments": "comments",
         "level_1": "level 1",
         "level_2": "level 2",
         "level_3": "level 3"
       },
       "import_title": "Import typifications",
-      "import_help": "One line per path in the tree, as in the template: name, description, direction (Inbound, Outbound or Both), comments (Yes or No) and up to three levels. Lines with the same name are the same typification: its description, direction and comments go on the first one. Up to {{max}} typifications per file.",
+      "import_help": "One line per tree path, as in the template: name, description and up to three levels. Lines with the same name are the same typification: its description goes on the first one. Up to {{max}} typifications per file.",
       "import_template": "Download template",
       "import_template_file": "typifications-template",
       "import_choose": "Choose file",
@@ -1376,11 +1439,8 @@
       "import_error_line": "Line {{line}}: {{reason}}",
       "import_reason": {
         "nombre": "the name is missing",
-        "direccion": "the direction is not Inbound, Outbound or Both",
-        "comentarios": "comments is neither Yes nor No",
         "hueco": "a level is missing between two that are filled in",
-        "nivel": "it does not reach the same level as the first line of its typification",
-        "vacia": "with no levels and no comments it asks for nothing"
+        "vacia": "it has no level"
       },
       "import_more_errors": "and {{count}} more",
       "import_duplicates": "{{count}} already exist with that name and are not created.",
@@ -1396,13 +1456,7 @@
         "2": "Second level",
         "3": "Third level"
       },
-      "level_empty": "No options yet",
-      "level_waiting": {
-        "2": "Choose a first-level option to see its options.",
-        "3": "Choose a second-level option to see its options."
-      },
       "add_option": "Add",
-      "rename_confirm": "Rename",
       "delete_option_title": "Delete “{{name}}”?",
       "delete_option_body": "The {{count}} options below it are deleted too.",
       "delete_option_body_one": "The option below it is deleted too.",
@@ -1412,98 +1466,57 @@
       },
       "section": {
         "general": "General",
-        "categorization": "Categories",
-        "groups": "Groups"
+        "categorization": "Categories"
       },
-      "direction_hint": "Which conversations the agent is asked for it in.",
-      "enable_comments": "Ask for a comment",
-      "groups_hint": "Where the agent fills it in, and on which channels",
       "missing": {
-        "what": "what the agent fills in",
-        "options": "options in every branch",
-        "channel": "a channel in each group",
-        "conflicts": "groups without clashes"
+        "options": "at least one option",
+        "names": "a different name for each option"
       },
-      "groups": {
-        "col_group": "Group",
-        "filter_placeholder": "Search group...",
-        "picker_aria": "Add a group",
-        "add_placeholder": "Add group...",
-        "empty_title": "Not used in any group yet",
-        "empty": "Add the groups where the agent will fill it in.",
-        "no_results": "No group matches the search.",
-        "remove_aria": "Remove {{name}}",
-        "conflict": "Clashes with “{{name}}” on {{direction}} via {{channel}}",
-        "conflict_direction": {
-          "inbound": "inbound",
-          "outbound": "outbound"
-        },
-        "status_ok": "Tick which channels it is used on in each group."
-      },
-      "level_selected": "Option chosen",
-      "level_none_selected": "No option chosen",
-      "comments_hint": "The agent writes a free note, up to 255 characters.",
-      "categorization_hint": "What the agent chooses, in up to three levels",
-      "remove_level": {
-        "1": "Remove the first level",
-        "2": "Remove the second level",
-        "3": "Remove the third level"
-      },
-      "remove_level_title": {
-        "1": "Remove the first level?",
-        "2": "Remove the second level?",
-        "3": "Remove the third level?"
-      },
-      "remove_level_body": "Its {{count}} options are deleted.",
-      "remove_level_body_one": "Its option is deleted.",
-      "remove_level_confirm": "Remove level",
-      "add_level": {
-        "1": "Add first level",
-        "2": "Add second level",
-        "3": "Add third level"
-      },
-      "add_level_hint": {
-        "1": "So the agent chooses a category",
-        "2": "Each first-level option will have its own",
-        "3": "Each second-level option will have its own"
-      },
-      "add_field": {
-        "1": "New first-level option",
-        "2": "New second-level option",
-        "3": "New third-level option"
-      },
+      "categorization_hint": "What the agent chooses, in up to three levels. Each branch goes as deep as it needs",
       "rename_field": "New name for the option",
       "add_first": "Add option…",
       "add_under": "Add under “{{name}}”…",
-      "renaming_hint": "Enter saves the name · Esc cancels",
+      "renaming_hint": "Enter saves the name, Esc cancels",
       "level_needs": "“{{name}}” needs options here",
       "option_actions": {
         "group": "Actions for {{name}}",
         "rename": "Rename {{name}}",
         "up": "Move {{name}} up",
         "down": "Move {{name}} down",
-        "delete": "Delete {{name}}"
+        "delete": "Delete {{name}}",
+        "move": "Move {{name}}",
+        "move_hint": "Drag it, or use the up and down arrows"
       },
       "tree_status": {
-        "none": "No categories: the agent only writes a comment.",
-        "nothing": "With no categories and no comment, the agent would have nothing to fill in.",
-        "empty": "Add the first option.",
-        "missing": "Options are missing under: {{paths}}",
-        "ok": "Complete: every branch reaches level {{count}}.",
-        "ok_one": "Complete: {{last}} options in one level."
+        "repeated": "Some options share a name in the same list.",
+        "unnamed": "Some options have no name."
       },
       "preview": {
-        "title": "What the agent will see",
+        "title": "What the agent sees after a call",
         "window": "Typification",
         "level": "Level {{level}}",
         "comment": "Comment",
         "comment_placeholder": "Write a comment...",
-        "nothing": "It asks for nothing: turn on the comment or add a level.",
+        "nothing": "No categories yet.",
         "saved": "It would be saved as {{path}}",
         "saved_comment": "It would be saved with its comment",
-        "try": "Try it: choose the levels and press Save.",
-        "when": "After hanging up, before taking another conversation"
-      }
+        "try": "Try it: choose and save."
+      },
+      "tree_empty": "No categories yet. Add the first one with “Add category”.",
+      "option_placeholder": "Option name",
+      "unnamed": "unnamed",
+      "add_under_aria": "Add subcategory to “{{name}}”",
+      "options_count": "{{count}} options",
+      "options_count_one": "1 option",
+      "map_edit": "Edit in Repositories",
+      "used_in": "in {{count}} groups",
+      "used_in_one": "in 1 group",
+      "add_category": "Add category",
+      "in_use_one": "Used by the group {{groups}}. If you delete it, that group stops classifying until you choose another one.",
+      "in_use": "Used by {{count}} groups: {{groups}}. If you delete it, they stop classifying until you choose another one.",
+      "in_use_bulk_one": "Used by the group {{groups}}. If you delete them, that group stops classifying until you choose another one.",
+      "in_use_bulk": "Used by {{count}} groups: {{groups}}. If you delete them, they stop classifying until you choose another one.",
+      "and_more": "{{count}} more"
     },
     "variables": {
       "title": "Variables",
@@ -1590,6 +1603,18 @@
       "model_placeholder": "E.g. GPT-4o",
       "categories_placeholder": "Comma-separated categories...",
       "accuracy_placeholder": "E.g. 94.2%"
+    },
+    "equipos": {
+      "title": "Teams",
+      "singular": "team",
+      "plural": "teams",
+      "create_title": "New team",
+      "name_placeholder": "E.g. English",
+      "agents": "Agents",
+      "create_submit": "Create team",
+      "edit_breadcrumb": "Edit team",
+      "name_taken": "There is already a team with this name",
+      "assigned_count": "{{count}} in the team"
     }
   },
   "users": {
@@ -1676,7 +1701,7 @@
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
       "duplicate_title": "Duplicate user",
       "duplicate_breadcrumb": "Duplicate user",
-      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
+      "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "headline": {
         "type": "Type"
       },
@@ -1726,6 +1751,21 @@
     "rename_aria": "Rename {{name}}",
     "bulk_edit_title": "Apply change to {{count}} user(s)"
   },
+  "resources": {
+    "templates_chat": "Chat templates",
+    "templates_email": "Email templates",
+    "none": "None",
+    "selected_many": "{0} selected",
+    "agendas_count": "{0} address books",
+    "agendas_count_one": "1 address book",
+    "templates_count": "{0} templates",
+    "templates_count_one": "1 template",
+    "manage_link": "Manage in Repositories",
+    "teams_hint": "To find them when filtering. They don't route conversations.",
+    "teams_count": "{0} teams",
+    "teams_count_one": "1 team",
+    "none_m": "None"
+  },
   "groups": {
     "page_title": "Groups",
     "create_button": "New group",
@@ -1745,7 +1785,7 @@
       "services": "Services",
       "agents": "Agents",
       "agents_count": "{{count}} agents",
-      "agents_assign_aria": "{{count}} agents · Assign agents to {{name}}",
+      "agents_assign_aria": "{{count}} agents. Assign agents to {{name}}",
       "services_count": "{{count}} services",
       "services_count_one": "1 service",
       "strategy_phone": "Phone strategy",
@@ -1781,12 +1821,16 @@
         "announcements_needs_phone": "Phone channel only: this is what callers hear while they wait.",
         "advanced": "Advanced",
         "general": "General",
-        "general_hint": "Name, priority and channels",
+        "general_hint": "Name, priority, channels and post-conversation",
         "distribution_hint": "How each channel routes and queues",
         "resources_hint": "What is assigned from Repositories",
         "agents_hint": "Who handles it and through which channels"
       },
       "assigned": {
+        "filter_status": "Filter by status or team",
+        "filter_status_count": "{{count}} filters",
+        "filter_status_count_one": "1 filter",
+        "filter_status_clear": "Clear filters",
         "query_placeholder": "Search by name or email…",
         "empty_title": "No assigned agents",
         "empty": "Pick them in \"Add agents\", top right.",
@@ -1795,17 +1839,17 @@
         "col_active": "Enabled",
         "active_aria": "Enabled in this group: {{name}}",
         "incompatible": "No compatible channels",
-        "not_allowed": "{{name}} — {{channel}}: not allowed in agent permissions",
-        "not_allowed_hint": "{{channel}} is not allowed for this agent. Review their permissions.",
-        "permissions_link": "Review permissions for {{name}} in {{channel}}",
+        "not_allowed": "{{name}} — {{channel}}: not among the agent's channels",
+        "not_allowed_hint": "{{channel}} is not among this agent's channels. Review them in their profile.",
+        "permissions_link": "Review {{name}}'s channels for {{channel}}",
         "toggle_all_channel": "Toggle {{channel}} on all visible",
         "remove_aria": "Remove {{name}} from group",
         "warn_no_channels": "Enabled, but has no channels assigned",
         "add_placeholder": "Add agents…",
         "add_aria": "Add agent to the group",
-        "no_channels_warn": "{{count}} with no channel",
+        "no_channels_warn": "{{count}} without a channel: removed when saving",
         "bulk_unassign": "Remove from group",
-        "col_level": "Level · {{channel}}",
+        "col_level": "Level {{channel}}",
         "level_aria": "Level for {{name}} — {{channel}}",
         "paused": "Disabled",
         "last_channel_hint": "At least one channel is required. Uncheck Assigned to remove the agent from the group.",
@@ -1825,7 +1869,10 @@
         "bulk_enable": "Enable",
         "bulk_disable": "Disable",
         "bulk_done": "Updated {{count}} agents.",
-        "bulk_confirm": "Confirm"
+        "bulk_confirm": "Confirm",
+        "self_activate_hint": "The agent changes it: they have “Activation per group”",
+        "self_activate_link": "{{name}}'s settings",
+        "filter_by_state": "Status"
       },
       "fields": {
         "name": "Name",
@@ -1837,27 +1884,26 @@
         "phone_hint": "The number customers see when called.",
         "phone_placeholder": "Choose a number",
         "strategy": "Strategy",
-        "ring_all": "Rings",
-        "ring_all_suffix": "agents at once",
+        "ring_all": "Simultaneous agents",
         "ring_all_summary": "{{count}} at once",
         "sub_strategy": "Within each level",
-        "skills_unavailable": "Needs agent skills",
         "typification": "Typifications",
-        "typification_hint": "What the agent fills in at the end: until they do, they get no other conversation. Created in Repositories.",
         "agenda_new": "New address book",
         "template_new": "New template",
         "label_new": "New label",
-        "typification_count": "{0} typifications",
-        "typification_count_one": "1 typification",
-        "typification_conflict": "“{{a}}” and “{{b}}” both cover {{direction}} via {{channel}}: the agent would not know which one applies."
+        "agenda_edit": "Edit address book",
+        "template_edit": "Edit template",
+        "team_new": "New team",
+        "team_edit": "Edit team"
       },
       "strategy_help": {
         "balanced": "Spreads evenly across the agents.",
         "fewest_conversations": "Goes to the agent who has handled the fewest conversations.",
         "longest_idle": "To the available agent idle the longest.",
-        "levels": "Free level 1 agents first. Levels are set in Agents.",
+        "levels": "The conversation is routed to the highest-level agent. Levels are set in Agents.",
         "ring_all": "Rings several agents at once.",
-        "exclusive": "To the agent the customer dials in the IVR, where it is set up."
+        "exclusive": "To the agent the customer dials in the IVR, where it is set up.",
+        "ring_all_warning": "This strategy can generate extra costs by multiplying the number of outbound calls."
       },
       "assigned_count": "Assigned ({{count}})",
       "available_agents": "Available",
@@ -1869,50 +1915,53 @@
         "title": "You are about to remove channels",
         "body": "{{count}} agents in this group lose {{channels}}. Continue?",
         "confirm": "Yes, remove",
-        "body_orphaned": "{{count}} agents in this group lose {{channels}}, and {{orphaned}} are left with no channel and leave the group. Continue?"
+        "body_orphaned": "{{count}} agents in this group lose {{channels}}, and {{orphaned}} are left with no channel and leave the group. Continue?",
+        "body_one": "1 agent in this group loses {{channels}}. Continue?",
+        "body_orphaned_one": "1 agent in this group loses {{channels}}, is left with no channel and leaves the group. Continue?",
+        "body_orphaned_single": "{{count}} agents in this group lose {{channels}}, and 1 is left with no channel and leaves the group. Continue?"
       },
       "danger_zone_description": "Deleting this group removes it from the rules and routes that reference it. The action cannot be undone.",
       "duplicate_title": "Duplicate group",
       "duplicate_breadcrumb": "Duplicate group",
-      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
+      "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "announcements": {
         "audio_title": "Recordings",
         "hold_music": "Hold music",
-        "default_music": "Default music",
+        "default_music": "Default",
         "use_default": "Use the default",
         "queue_id": "Group identifier",
-        "queue_id_info": "What plays when the call comes in, before the wait. Can say nothing, be read by a synthetic voice, or be your own file.",
+        "queue_id_info": "What plays when the call comes in, before the wait.",
         "next_in_line": "“You are next”",
-        "next_in_line_info": "What plays right before the call reaches the agent. Same three options as the group identifier.",
+        "next_in_line_info": "What plays right before the call reaches the agent.",
         "source_none": "None",
         "source_tts": "Text to speech",
         "source_file": "File",
         "tts_text": "Text the voice reads",
         "no_file": "No file",
-        "choose_file": "Choose .wav",
+        "choose_file": "Upload file",
         "remove_file": "Remove file",
         "periodic": "Periodic messages",
-        "periodic_info": "Audios that repeat while the caller keeps waiting, each with its own frequency. You can add several; they play in turn.",
+        "periodic_info": "Repeats during the wait. You can add several, each with its own frequency.",
         "periodic_count": "messages",
-        "add_periodic": "Add message",
         "remove_periodic_aria": "Remove {{file}}",
         "every": "Every",
         "outbound_audio": "Outbound audio",
-        "outbound_audio_info": "Audio for the group's own outbound calls, not the ones it receives. What plays and when is pending confirmation with development.",
+        "outbound_audio_info": "Audio for the group's own outbound calls, not the ones it receives.",
         "voice": "Message voice",
         "voice_hint": "The synthetic voice that reads the group's messages.",
         "notices_title": "Notices",
-        "avg_wait": "Say the average waiting time",
+        "avg_wait": "Announce the average waiting time",
         "avg_wait_info": "Tells the caller how long the wait usually takes. You type that number; the system does not calculate it.",
         "avg_wait_hint": "The customer hears how long the wait usually is. Set the time they will hear.",
-        "position": "Say the queue position",
+        "position": "Announce the queue position",
         "position_info": "Tells the caller their place in the queue. This one is calculated live.",
         "position_hint": "The customer hears their place in the queue.",
-        "wait_to_agent": "Tell the agent how long the customer waited",
-        "wait_to_agent_info": "The caller never hears this: it tells the agent, right before the call connects, how long the caller has been waiting.",
+        "wait_to_agent": "Announce to the agent how long the customer has waited",
+        "wait_to_agent_info": "The caller never hears this: it tells the agent, right before the call connects.",
         "wait_to_agent_hint": "Said before the call is handed over.",
-        "change_file": "Change",
-        "remove_music": "Remove"
+        "remove_music": "Remove",
+        "invalid_type": "{0}: invalid file. ",
+        "invalid_type_detail": "Only .wav files are accepted."
       },
       "advanced": {
         "defaults_hint": "Starts with the group defaults.",
@@ -1924,12 +1973,10 @@
         "max_queue_wait": "Maximum queue wait time",
         "max_queue_wait_hint": "If unanswered in this time, it moves to the next destination in VUI Designer; if none, it ends.",
         "transfer": "Ringing time",
-        "transfer_hint": "Maximum time to deliver the conversation to another agent.",
         "service_level": "Service level time",
-        "service_level_hint": "Counts those answered within this time.",
+        "service_level_hint": "Time used to measure the service level percentage",
         "wrap_up": "Time between calls",
-        "wrap_up_hint": "How long the agent waits before receiving the next call.",
-        "overflow": "Overflow if all agents are inactive",
+        "overflow": "Overflow conversations if no agents are connected",
         "overflow_hint": "Contacts move on to the next destination, which is not chosen here.",
         "card_opening": "Contact card opening",
         "card_embedded": "Embedded",
@@ -1944,34 +1991,39 @@
         "chat_rating_hint": "A short rating question after saying goodbye.",
         "allowed_domains": "Allowed domains",
         "allowed_domains_placeholder": "example.com",
-        "allowed_domains_add": "Add",
-        "allowed_domains_hint": "The websites that can embed the chat; with none, any website.",
+        "allowed_domains_hint": "The websites where the chat can be embedded.",
         "script_title": "Chat script",
         "script_hint": "Paste this code in the head of the website where you want the chat.",
         "script_copy": "Copy code",
         "script_copied": "Code copied",
         "queue_type": "Queue type",
-        "queue_recommended": "Recommended: 2",
         "queue_variable_error": "Enter a whole number from 1 to 10.",
         "queue_integer_error": "Enter a whole number greater than zero.",
-        "queue_invalid": "Check the queue sizes."
+        "queue_invalid": "Check the queue sizes.",
+        "transfer_hint": "Ringing time of a conversation to an agent",
+        "wrap_up_hint": "Time the agent waits between one conversation and the next"
       },
       "summary": {
         "none": "None",
         "paused": "Disabled",
         "no_channels": "No channels",
         "priority": "Priority: {{value}}",
-        "no_phone": "No outbound phone",
         "title": "Summary",
         "agents_active": "Enabled agents",
         "paused_count": "{{count}} disabled",
         "no_agents": "No agents",
         "routing": "Distribution",
+        "routing_quick": "Change the phone distribution",
+        "routing_see": "Set up queues",
         "outbound": "Outbound",
         "no_number": "No number",
         "resources": "Resources",
+        "resources_quick": "View the group's resources",
+        "resources_empty": "No resources assigned",
+        "resources_see": "View resources",
         "missing_channels": "channels",
-        "missing_phone": "outbound phone"
+        "missing_phone": "outbound phone",
+        "missing_typification": "typification"
       },
       "channels": {
         "title": "Channels",
@@ -1984,26 +2036,33 @@
         "queue": "Queue",
         "queue_messages": "Queue messages",
         "queue_messages_hint": "What the caller hears on entering, while waiting and before being answered. Rarely changed.",
-        "webchat_access": "Web Chat · access",
-        "whatsapp_number": "WhatsApp · number",
+        "webchat_access": "Web Chat domains and scripts",
+        "whatsapp_number": "WhatsApp access",
         "email_note": "Email has no strategy or queue of its own: messages arrive in the group's inbox.",
-        "inactive": "{{channel}} is not active · turn it on in General",
+        "inactive": "{{channel}} is not active: turn it on in General",
         "jump_label": "Go to",
-        "jump_aria": "Channels in this section"
+        "jump_aria": "Channels in this section",
+        "webchat_messages": "Web Chat messages",
+        "webchat_schedule": "Web Chat schedule",
+        "whatsapp_messages": "WhatsApp messages",
+        "whatsapp_schedule": "WhatsApp schedule"
       },
       "chat": {
         "close_on_inactivity": "Expire session",
         "close_on_inactivity_hint": "Closes if the customer writes nothing in this time.",
         "inactivity_minutes": "Minutes without activity",
-        "messages_hint": "What the customer is sent while waiting. If you leave one empty, it is not sent.",
-        "message_on_enter": "On entering the queue",
-        "message_waiting": "While waiting",
-        "message_no_agents": "No agents available",
-        "message_on_enter_placeholder": "E.g.: Hi, we'll be right with you.",
-        "message_waiting_placeholder": "E.g.: You're still in the queue. Thanks for waiting.",
-        "message_no_agents_placeholder": "E.g.: Nobody is available right now. We'll write back as soon as we can.",
+        "inactivity_suffix": "minutes without activity",
+        "messages_hint": "What the customer is sent. If you leave one empty, it is not sent.",
         "attendance_schedule": "Service hours",
-        "schedule_always": "Always"
+        "schedule_always": "Always",
+        "message_initial": "Initial message",
+        "message_initial_placeholder": "E.g.: Hello, we will be with you shortly.",
+        "message_final": "Final message",
+        "message_final_placeholder": "E.g.: Thanks for writing to us. See you soon!",
+        "message_schedule": "Schedule message",
+        "message_schedule_placeholder": "E.g.: We are currently closed. We answer Monday to Friday.",
+        "message_non_working_day": "Non-rateable day message",
+        "message_non_working_day_placeholder": "E.g.: We are closed today. We will write back on the next working day."
       },
       "resources": {
         "client_card": "Contact card",
@@ -2012,6 +2071,22 @@
       "create_submit": "Create group",
       "agents": {
         "assigned_title": "Assigned agents"
+      },
+      "wrapup": {
+        "title": "Post-conversation",
+        "hint": "What it asks the agent at the end of each conversation",
+        "comments": "Allow comments",
+        "classify_calls": "Typify calls",
+        "classify": "Typify conversations",
+        "typification": "Typification",
+        "typification_placeholder": "Choose a typification",
+        "view": "See what “{{name}}” contains",
+        "scope_label": "Which conversations are typified",
+        "scope": {
+          "all": "All",
+          "inbound": "Inbound only",
+          "outbound": "Outbound only"
+        }
       }
     },
     "errors": {
@@ -2019,7 +2094,7 @@
       "channels_required": "Select at least one channel",
       "name_taken": "A group with this name already exists",
       "phone_required": "The outbound phone is required",
-      "typification_conflict": "Two typifications cover the same thing"
+      "typification_required": "Choose a typification"
     },
     "toasts": {
       "created": "Group \"{{name}}\" created",
@@ -2030,7 +2105,7 @@
     },
     "empty": {
       "title": "No groups yet",
-      "body": "Create your first group to start routing interactions."
+      "body": "Create your first group to start distributing conversations."
     },
     "entity_plural": "groups",
     "export": {
@@ -2049,7 +2124,7 @@
     "rename_aria": "Rename {{name}}",
     "bulk_edit_title": "Apply change to {{count}} group(s)",
     "agents_panel": {
-      "title": "Agents · {{name}}",
+      "title": "Agents: {{name}}",
       "assigned": "Assigned: {{count}}",
       "unsaved": "Unsaved: {{count}}",
       "save_count": "Save ({{count}})",
@@ -2087,7 +2162,7 @@
     },
     "ext_kind": {
       "phone": "Phone",
-      "webrtc": "WebRTC"
+      "webrtc": "Browser"
     },
     "presence": {
       "available": "Available",
@@ -2111,20 +2186,31 @@
       "create_breadcrumb": "New agent",
       "edit_breadcrumb": "Edit agent",
       "section": {
-        "identification_hint": "Photo, contact and extension",
+        "identification_hint": "Photo, name and contact",
         "channels": "Channels",
         "recording": "Recording",
         "languages": "Languages",
         "languages_hint": "Languages the agent speaks for routing",
         "labels": "Labels",
         "labels_hint": "Categories that help filter and organize agents",
-        "groups": "Assigned groups",
+        "groups": "Groups",
         "permissions": "Permissions",
         "advanced": "Advanced",
         "resources": "Resources",
         "identity": "Identity",
-        "groups_hint": "Where they work and on which channels",
-        "resources_hint": "What is assigned to them from Repositories"
+        "groups_hint": "Where they work, on which channels and which one their calls go out through",
+        "resources_hint": "What is assigned to them from Repositories",
+        "general": "General",
+        "general_hint": "Who they are, their extension and channels",
+        "extension": "Extension",
+        "extension_hint": "Its number and where it rings",
+        "channels_hint": "At least one. Those they can handle in their groups",
+        "config": "Configuration",
+        "config_hint": "Recording, permissions and settings",
+        "calls": "Calls",
+        "calls_hint": "Which numbers it calls and transfers to",
+        "advanced_hint": "Pickup, integration and session",
+        "permissions_hint": "What the agent can do"
       },
       "advanced": {
         "labels": {
@@ -2141,6 +2227,7 @@
           "pickup_call": "Call pickup",
           "pickup_chat": "Chat pickup",
           "max_chats": "Concurrent chats",
+          "max_chats_inactive": "Concurrent chats: turn on the Chat channel in General",
           "random_order": "Random order",
           "random_order_hint": "Show agents in random order within the group"
         },
@@ -2187,7 +2274,14 @@
         "labels": "Assigned labels",
         "active": "Account active",
         "active_hint": "Activates the agent account. Presence and availability within each group are managed separately.",
-        "recording": "Record calls"
+        "recording": "Record calls",
+        "extension_type": "Extension type",
+        "extension_type_hint": {
+          "webrtc": "Rings in the browser, with Smart Contact Agent.",
+          "phone": "Rings on their mobile phone."
+        },
+        "phone_required_hint": "Calls ring on this phone.",
+        "state": "Status"
       },
       "labels_empty": "No labels yet. Create one from the Labels section.",
       "assigned": {
@@ -2202,14 +2296,28 @@
         "remove_aria": "Remove agent from {{name}}",
         "add_placeholder": "Add group…",
         "filter_placeholder": "Search group…",
-        "no_results": "No assigned groups match the filter.",
-        "channel_not_offered": "This group does not offer the channel"
+        "no_results": "No group matches the filter.",
+        "channel_not_offered": "This group does not offer the channel",
+        "title": "Assigned groups",
+        "filter_label": "Filter by assignment",
+        "col_level": "Level",
+        "col_outbound": "Outbound",
+        "outbound_badge": "Outbound",
+        "outbound_set": "Set {{name}} as their outbound group",
+        "outbound_none": "No phone in this group",
+        "self_activate_hint": "The agent changes it: they have “Activation per group”",
+        "active_self_aria": "Enabled in {{name}}: the agent changes it",
+        "not_assigned_hint": "Not assigned to {{name}}: it turns on once assigned",
+        "not_allowed_hint": "{{channel}} is not among their channels (General)",
+        "bulk_add": "Assign to the agent",
+        "bulk_remove": "Remove from the agent",
+        "bulk_body": "{{action}}: {{count}} groups.",
+        "no_channels_warn": "{{count}} without a channel: removed when saving"
       },
       "allowed": {
         "title": "Allowed channels",
-        "remove_title": "Remove allowed channels",
-        "remove_body": "These channels will be removed from the groups: {{groups}}. Assignments and levels are retained, even if an assignment has no channels left.",
-        "remove_accept": "Save changes"
+        "remove_body": "They stop handling {{channels}} in {{count}} groups. Continue?",
+        "remove_body_orphaned": "They stop handling {{channels}} in {{count}} groups, and leave {{groups}}, which are left with no channel. Continue?"
       },
       "permissions": {
         "manage_devices": "Device management",
@@ -2226,27 +2334,29 @@
         "row_moviles": "Mobiles",
         "row_internacionales": "International",
         "row_especial": "Special numbering",
-        "config_title": "Configuration"
+        "config_title": "Configuration",
+        "manage_devices_no_phone": "Needs a mobile phone, in General.",
+        "pending_conversations": "Pending conversations management",
+        "slot_access": "Access and devices",
+        "slot_tracking": "Recording and tracking"
       },
       "danger_zone_description": "Deleting this agent unassigns them from all groups they participate in. The action cannot be undone.",
       "duplicate_title": "Duplicate agent",
       "duplicate_breadcrumb": "Duplicate agent",
-      "duplicate_hint": "Duplicating «{{source}}» · fill in the required fields and save",
-      "resources": {
-        "templates_chat": "Chat templates",
-        "templates_email": "Email templates",
-        "none": "None",
-        "selected_many": "{0} selected",
-        "agendas_count": "{0} address books",
-        "agendas_count_one": "1 address book",
-        "templates_count": "{0} templates",
-        "templates_count_one": "1 template",
-        "manage_link": "Manage in Repositories"
-      },
+      "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "summary": {
         "no_groups": "No groups",
         "groups_active": "Enabled in groups",
-        "missing_extension": "extension"
+        "missing_extension": "extension",
+        "missing_phone": "mobile phone",
+        "outbound": "Outbound",
+        "missing_email": "email",
+        "missing_channel": "a channel",
+        "missing_group": "a group",
+        "missing_outbound": "a group for outbound calls",
+        "attends_by": "Works on",
+        "no_channels": "No channels",
+        "none": "None"
       },
       "create_submit": "Create agent"
     },
@@ -2262,7 +2372,11 @@
       "extension_required": "Select an extension",
       "channels_required": "Select at least one channel",
       "email_invalid": "Enter a valid email",
-      "pin_invalid": "PIN must have between 3 and 6 digits"
+      "pin_invalid": "PIN must have between 3 and 6 digits",
+      "phone_required": "Enter the mobile phone: the extension rings on it",
+      "email_required": "Enter the email",
+      "group_required": "Assign at least one group",
+      "outbound_required": "Assign a group with Phone for their outbound calls"
     },
     "empty": {
       "title": "No agents yet",
@@ -2289,7 +2403,7 @@
   "config": {
     "sidebar": {
       "title": "Contact Center",
-      "version": "SmartContact · v2.4.0",
+      "version": "SmartContact v2.4.0",
       "servicio_label": "General",
       "agentes_label": "Agents",
       "grupos_label": "Groups"
@@ -2521,7 +2635,8 @@
   "primeng": {
     "today": "Today",
     "clear": "Clear",
-    "week_header": "Wk"
+    "week_header": "Wk",
+    "remove": "Remove"
   },
   "auth": {
     "login": {

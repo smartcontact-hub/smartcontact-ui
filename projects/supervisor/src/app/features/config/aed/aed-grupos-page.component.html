@@ -1,7 +1,6 @@
 <ng-template #topbarActions>
   @if (dirty()) {
     <sc-button
-      size="sm"
       variant="secondary"
       appearance="outlined"
       [label]="'common.undo' | translate"
@@ -9,7 +8,6 @@
     />
   }
   <sc-button
-    size="sm"
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
@@ -252,11 +250,11 @@
   <div class="setting-row">
     <div class="setting-row__text">
       <label class="setting-row__label sc-text-body-regular" [for]="'grupos-' + channel + '-queue-size'">{{ 'groups.form.advanced.queue_size' | translate }}</label>
-      <p class="setting-row__hint sc-text-caption-regular" [id]="'grupos-' + channel + '-queue-help'">{{ (queue.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: queue.queueSize } }} @if (queue.queueSizeType === 'per_agent') { {{ 'groups.form.advanced.queue_recommended' | translate }} }</p>
+      <p class="setting-row__hint sc-text-caption-regular" [id]="'grupos-' + channel + '-queue-help'">{{ (queue.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: queue.queueSize } }}</p>
     </div>
     <span class="setting-row__control setting-row__group">
       <span class="visually-hidden" [id]="'grupos-' + channel + '-queue-type' + '-label'">{{ 'groups.form.advanced.queue_type' | translate }}</span>
-      <sc-select size="sm" optionValue="value" [inputId]="'grupos-' + channel + '-queue-type'" [options]="queueSizeOptions()" [value]="queue.queueSizeType" [ariaLabelledBy]="'grupos-' + channel + '-queue-type' + '-label'" [ariaDescribedBy]="'grupos-' + channel + '-queue-help'" (valueChange)="setQueueType(channel, $event)" />
+      <sc-select optionValue="value" [inputId]="'grupos-' + channel + '-queue-type'" [options]="queueSizeOptions()" [value]="queue.queueSizeType" [ariaLabelledBy]="'grupos-' + channel + '-queue-type' + '-label'" [ariaDescribedBy]="'grupos-' + channel + '-queue-help'" (valueChange)="setQueueType(channel, $event)" />
       <sc-inputnumber class="setting-row__control--number" [inputId]="'grupos-' + channel + '-queue-size'" [ariaDescribedBy]="'grupos-' + channel + '-queue-help'" [min]="1" [max]="queue.queueSizeType === 'per_agent' ? 10 : undefined" [step]="1" [error]="queueSizeError(queue)" [value]="queue.queueSize" (valueChange)="setQueueNumber(channel, 'queueSize', $event)" />
     </span>
   </div>

@@ -7,7 +7,7 @@
     (scClickOutside)="closeCreatePanel()"
     [scClickOutsideEnabled]="creating()"
   >
-    <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
+    <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="onCreateClick()">
       <sc-icon [name]="plusIcon" size="inherit" />
       <span>{{ 'templates.create_button' | translate }}</span>
     </sc-button>
@@ -44,13 +44,14 @@
   [noResultsParams]="{ tab: ('templates.type.' + activeTab()) | translate }"
   tableTestId="templates-table"
 >
-  <p-tabs scListBeforeToolbar class="tabs" [value]="activeTab()" (valueChange)="onTabChange($event)">
-    <!-- El nombre va al nodo con `role="tablist"`, que es el `content` de dentro de `p-tablist`. -->
-    <p-tablist [pt]="{ content: { 'aria-label': 'templates.form.channel' | translate } }">
-      <p-tab value="chat">{{ 'templates.type.chat' | translate }}</p-tab>
-      <p-tab value="email">{{ 'templates.type.email' | translate }}</p-tab>
-    </p-tablist>
-  </p-tabs>
+  <sc-tabs
+    scListBeforeToolbar
+    class="tabs"
+    [ariaLabel]="'templates.form.channel' | translate"
+    [tabs]="[{ value: 'chat', label: 'templates.type.chat' | translate }, { value: 'email', label: 'templates.type.email' | translate }]"
+    [value]="activeTab()"
+    (valueChange)="onTabChange($event)"
+  />
 
   <sc-empty-state
     scListEmpty
@@ -62,7 +63,7 @@
   />
 
   <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
   </ng-container>

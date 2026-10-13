@@ -22,8 +22,10 @@
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
-  font-size: var(--sc-font-size-200);
-  font-weight: var(--sc-font-weight-medium);
+  /* Caption semibold 12/18/600, la de las fichas: una sola etiqueta de campo (DD-187, como en sc-inputtext). */
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-secondary);
   margin-bottom: 2px;
 }
@@ -48,13 +50,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Base (md) font-size. PrimeNG hardcodea `.p-inputtext { font-size: 1rem }`
- * (16px) y el Kit no define base → md se fugaba. Rampa Kit → md = 14px.
- * Host-prefijado para ganar a `.p-inputtext` (misma cuenta de clases). */
-.sc-inputnumber .sc-inputnumber__control {
-  font-size: var(--sc-font-size-200);
-}
-
 /* Strip browser-default spinners — they clash with our design and
  * aren't used in AED. Consumers who need them can re-enable per case. */
 .sc-inputnumber__control::-webkit-outer-spin-button,
@@ -76,7 +71,7 @@
   transform: translateY(-50%);
   color: var(--sc-text-subtle);
   font-size: var(--sc-font-size-100);
-  line-height: 1;
+  line-height: var(--sc-line-height-caption);
   pointer-events: none;
   user-select: none;
   font-variant-numeric: tabular-nums;
@@ -90,23 +85,13 @@
 }
 
 /* ────────────────────────────────────────────────────────────────────
- * Size variants — same scale as sc-inputtext.
+ * Tallas. La letra, el interlineado y el relleno del control los pone el tema por `pSize` (DD-91); aquí solo el sufijo.
  * ────────────────────────────────────────────────────────────────────
  */
-.sc-inputnumber--sm .sc-inputnumber__control {
-  padding-top: 4px;
-  padding-bottom: 4px;
-  font-size: var(--sc-font-size-100);
-}
 .sc-inputnumber--sm .sc-inputnumber__suffix {
   font-size: var(--sc-font-size-50);
 }
 
-.sc-inputnumber--lg .sc-inputnumber__control {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  font-size: var(--sc-font-size-300);
-}
 .sc-inputnumber--lg .sc-inputnumber__suffix {
   font-size: var(--sc-font-size-200);
 }
@@ -127,7 +112,7 @@
   min-height: 1.25em;
   margin-top: var(--sc-spacing-0-25);
   font-size: var(--sc-font-size-100);
-  line-height: 1.45;
+  line-height: var(--sc-line-height-caption); /* caption, 18: la de las ayudas de página (era 1.45, 17,4) */
   color: var(--sc-text-subtle);
 }
 

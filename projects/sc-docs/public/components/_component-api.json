@@ -112,7 +112,7 @@
     },
     {
       "componente": "fileupload",
-      "envuelto": false
+      "envuelto": true
     },
     {
       "componente": "floatlabel",
@@ -172,7 +172,7 @@
     },
     {
       "componente": "inputtags",
-      "envuelto": false
+      "envuelto": true
     },
     {
       "componente": "inputtext",
@@ -328,7 +328,7 @@
     },
     {
       "componente": "tabs",
-      "envuelto": false
+      "envuelto": true
     },
     {
       "componente": "tabview",
@@ -372,7 +372,7 @@
     },
     {
       "componente": "tooltip",
-      "envuelto": false
+      "envuelto": true
     },
     {
       "componente": "tree",
@@ -397,6 +397,9 @@
       "selector": "sc-avatar",
       "name": "avatar",
       "primengBase": "primeng/avatar, primeng/overlaybadge",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
       "contrato": [
         {
@@ -574,6 +577,11 @@
       "selector": "sc-avatargroup",
       "name": "avatargroup",
       "primengBase": "primeng/avatargroup",
+      "estado": "experimental",
+      "faltas": [
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Para apilar varios avatares cuando importa «quiénes» y no «cuántos» exactamente.",
       "contrato": [],
       "ocultas": [
@@ -584,6 +592,9 @@
       "selector": "sc-badge",
       "name": "badge",
       "primengBase": "primeng/badge",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.",
       "contrato": [
         {
@@ -633,6 +644,9 @@
       "selector": "sc-breadcrumb",
       "name": "breadcrumb",
       "primengBase": "primeng/breadcrumb",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para decir dónde estás dentro de una jerarquía y poder subir. No es navegación principal.",
       "contrato": [
         {
@@ -710,7 +724,12 @@
       "selector": "sc-bulk-action-bar",
       "name": "bulk-action-bar",
       "primengBase": "—",
-      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale con la selección; tras aplicar un cambio en lote, se queda para contarlo con su «Deshacer».",
       "contrato": [
         {
           "nombre": "count",
@@ -743,12 +762,42 @@
           "nativo": null
         },
         {
+          "nombre": "result",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El resultado de la acción en lote que se acaba de aplicar («Cambio aplicado a 2 grupos», DD-196). Sin selección, la barra se queda en su sitio y lo cuenta hasta que se cierra o se vuelve a seleccionar: el resultado sale donde se hizo la acción, sin toast que tape filas ni se vaya solo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "resultUndoable",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Si el resultado se puede deshacer todavía: pinta «Deshacer» pegado a su texto, que es lo que deshace.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "undo",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "El usuario ha pulsado «Deshacer» junto al resultado.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "clear",
           "clase": "output",
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": "El usuario ha pulsado deshacer la selección.",
+          "descripcion": "El usuario ha pulsado la «×»: deshacer la selección o, con un resultado, cerrarlo.",
           "origen": "nuestro",
           "nativo": null
         }
@@ -759,6 +808,11 @@
       "selector": "sc-bulk-edit-menu",
       "name": "bulk-edit-menu",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
       "contrato": [
         {
@@ -818,6 +872,11 @@
       "selector": "sc-bulk-transcription-modal",
       "name": "bulk-transcription-modal",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Solo para el procesado masivo de conversaciones. Es específico del dominio y hoy solo lo usa la demo.",
       "contrato": [
         {
@@ -1007,6 +1066,9 @@
       "selector": "sc-button",
       "name": "button",
       "primengBase": "primeng/button",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "contrato": [
         {
@@ -1235,6 +1297,36 @@
           }
         },
         {
+          "nombre": "iconOnly",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Solo el icono, como la propiedad «Icon Only» del Kit: el rótulo no se pinta y pasa a ser el nombre accesible (y el tooltip, si lo pone quien lo usa). Necesita `icon`. Sin esto, un botón de solo icono es el que no lleva `label`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Forces icon-only styling regardless of content. When unset, icon-only is inferred from the absence of a label/badge.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "raised",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Le da la sombra de «Raised» del Kit (`button.raisedShadow` en el preset): el botón que flota sobre un contenido, no el de una barra. Llega a PrimeNG como `raised`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Add a shadow to indicate elevation.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "clicked",
           "clase": "output",
           "tipo": "MouseEvent",
@@ -1252,7 +1344,6 @@
         "buttonProps",
         "fluid",
         "hostName",
-        "iconOnly",
         "iconPos",
         "link",
         "loadingIcon",
@@ -1264,7 +1355,6 @@
         "pButtonPT",
         "pButtonUnstyled",
         "plain",
-        "raised",
         "severity",
         "style",
         "styleClass",
@@ -1276,6 +1366,9 @@
       "selector": "sc-card",
       "name": "card",
       "primengBase": "primeng/card",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para agrupar contenido suelto con una superficie propia. Si el grupo tiene título y pertenece a un formulario, es `sc-section-card`.",
       "contrato": [
         {
@@ -1325,6 +1418,9 @@
       "selector": "sc-checkbox",
       "name": "checkbox",
       "primengBase": "—",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "contrato": [
         {
@@ -1414,6 +1510,9 @@
       "selector": "sc-chip",
       "name": "chip",
       "primengBase": "primeng/chip",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
       "contrato": [
         {
@@ -1566,6 +1665,11 @@
       "selector": "sc-color-dot-picker",
       "name": "color-dot-picker",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.",
       "contrato": [
         {
@@ -1605,6 +1709,11 @@
       "selector": "sc-column-selector",
       "name": "column-selector",
       "primengBase": "primeng/popover",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para que el usuario decida qué columnas ve en una tabla.",
       "contrato": [
         {
@@ -1676,6 +1785,11 @@
       "selector": "sc-command-palette",
       "name": "command-palette",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para llegar a cualquier sitio o acción escribiendo, sin recorrer menús. Es atajo, nunca el único camino.",
       "contrato": [],
       "ocultas": []
@@ -1684,6 +1798,9 @@
       "selector": "sc-confirmdialog",
       "name": "confirmdialog",
       "primengBase": "primeng/confirmdialog",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para confirmar una acción normal. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.",
       "contrato": [],
       "ocultas": [
@@ -1728,6 +1845,9 @@
       "selector": "sc-datatable",
       "name": "datatable",
       "primengBase": "primeng/table",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "contrato": [
         {
@@ -1964,6 +2084,16 @@
             "obsoleta": null,
             "heredadaDe": null
           }
+        },
+        {
+          "nombre": "fill",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Llega al pie aunque no haga falta lista virtual: `sc-datatable--fill` nació atado 1:1 a `virtualScroll` (la ventana necesita un alto en firme), pero eso deja a una tabla corta —por debajo de las 100 filas de DD-176— con su tarjeta ajustada al contenido mientras el resto de la pantalla queda en blanco. Este input pide el mismo CSS de siempre (DD-160, sin reflow: mide `scLlegaAlPie` y lo aplica con `min`/`max-block-size`) sin forzar el gasto de la ventana virtual. (Medido 2026-10-12.)",
+          "origen": "nuestro",
+          "nativo": null
         },
         {
           "nombre": "resizableColumns",
@@ -2355,6 +2485,9 @@
       "selector": "sc-datepicker",
       "name": "datepicker",
       "primengBase": "primeng/datepicker",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
       "contrato": [
         {
@@ -2760,6 +2893,11 @@
       "selector": "sc-delete-entity-dialog",
       "name": "delete-entity-dialog",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "contrato": [
         {
@@ -2859,6 +2997,9 @@
       "selector": "sc-dialog",
       "name": "dialog",
       "primengBase": "primeng/dialog",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "contrato": [
         {
@@ -3118,6 +3259,9 @@
       "selector": "sc-divider",
       "name": "divider",
       "primengBase": "primeng/divider",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "contrato": [
         {
@@ -3172,6 +3316,9 @@
       "selector": "sc-drawer",
       "name": "drawer",
       "primengBase": "primeng/drawer",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
       "contrato": [
         {
@@ -3363,6 +3510,11 @@
       "selector": "sc-empty-state",
       "name": "empty-state",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "contrato": [
         {
@@ -3439,9 +3591,69 @@
       "ocultas": []
     },
     {
+      "selector": "div[scFactRow]",
+      "name": "fact-row",
+      "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "cuando": "Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.",
+      "contrato": [
+        {
+          "nombre": "label",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": true,
+          "descripcion": "La clave, ya traducida.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "icon",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El icono de la clave (Material Symbols). Sin él, va el que se proyecte con `scFactIcon`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "href",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Adónde lleva la clave. Sin `href`, la clave es texto.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "open",
+          "clase": "output",
+          "tipo": "MouseEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "El clic en la clave, con su evento: la app decide si navega por su cuenta.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": []
+    },
+    {
       "selector": "sc-field-label",
       "name": "field-label",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la etiqueta. En una pantalla se usa el campo entero (`sc-inputtext`, `sc-select`…), nunca esto suelto.",
       "contrato": [
         {
@@ -3501,6 +3713,12 @@
       "selector": "sc-field-msg",
       "name": "field-msg",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la ayuda y del error. En una pantalla se usa el campo entero, nunca esto suelto.",
       "contrato": [
         {
@@ -3547,9 +3765,331 @@
       "ocultas": []
     },
     {
+      "selector": "sc-fileupload",
+      "name": "fileupload",
+      "primengBase": "primeng/fileupload",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "cuando": "Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.",
+      "contrato": [
+        {
+          "nombre": "name",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'files[]'",
+          "requerido": false,
+          "descripcion": "Nombre del parámetro con el que viajan los archivos, si hay `url`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Name of the request parameter to identify the files at backend.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "mode",
+          "clase": "input",
+          "tipo": "'advanced' | 'basic'",
+          "porDefecto": "'advanced'",
+          "requerido": false,
+          "descripcion": "`advanced` (zona de soltar y lista) o `basic` (un solo botón).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines the UI of the component.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "multiple",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Varios archivos a la vez. Sin ello, elegir otro sustituye al anterior.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Used to select multiple files at once from file dialog.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "accept",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Tipos admitidos: MIME (`image/*`) o extensiones (`.wav`), separados por coma.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Comma-separated list of pattern to restrict the allowed file types. Can be any combination of either the MIME types (such as \"image/*\") or the file extensions (such as \".jpg\").",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "maxFileSize",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Tamaño máximo por archivo, en bytes.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Maximum file size allowed in bytes.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "fileLimit",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Número máximo de archivos.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Maximum number of files that can be uploaded.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "disabled",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Disables the upload functionality.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "auto",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "El archivo se entrega al elegirlo, sin botón de «Subir».",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When enabled, upload begins automatically after selection is completed.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "url",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Adónde enviar. Sin `url`, el componente no sube nada: entrega los archivos por `uploaded`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Remote url to upload the files.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "clearAfterSelect",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Vacía la lista tras entregar: para quien guarda el archivo en otro sitio.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "chooseLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Texto del botón de elegir, traducido.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Label of the choose button. Defaults to PrimeNG Locale configuration.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "chooseIconName",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'upload'",
+          "requerido": false,
+          "descripcion": "Icono del botón de elegir, del DS (`sc-icon`): por defecto, el de subida.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "dropLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Texto de la zona de soltar, traducido. Sin él, la zona queda vacía.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "invalidFileSizeMessageSummary",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'{0}: Invalid file size, '",
+          "requerido": false,
+          "descripcion": "Avisos de archivo rechazado, con los mismos `{0}` que PrimeNG (nombre del archivo, tamaño o tipos admitidos).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Summary message of the invalid file size.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "invalidFileSizeMessageDetail",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'maximum upload size is {0}.'",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Detail message of the invalid file size.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "invalidFileTypeMessageSummary",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'{0}: Invalid file type, '",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Summary message of the invalid file type.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "invalidFileTypeMessageDetail",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'allowed file types: {0}.'",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Detail message of the invalid file type.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "filesSelected",
+          "clase": "output",
+          "tipo": "readonly File[]",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Los archivos de una elección, ya validados.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "uploaded",
+          "clase": "output",
+          "tipo": "readonly File[]",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Los archivos entregados (con `auto`, nada más elegirlos).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "fileRemoved",
+          "clase": "output",
+          "tipo": "File",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Un archivo quitado de la lista con su botón.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "cleared",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La lista se vació, por quien usa el componente o por `clearAfterSelect`.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": [
+        "cancelButtonProps",
+        "cancelIcon",
+        "cancelLabel",
+        "cancelStyleClass",
+        "chooseButtonProps",
+        "chooseIcon",
+        "chooseStyleClass",
+        "customUpload",
+        "filesInput",
+        "headers",
+        "invalidFileLimitMessageDetail",
+        "invalidFileLimitMessageSummary",
+        "method",
+        "previewWidth",
+        "removeStyleClass",
+        "showCancelButton",
+        "showUploadButton",
+        "style",
+        "styleClass",
+        "uploadButtonProps",
+        "uploadIcon",
+        "uploadLabel",
+        "uploadStyleClass",
+        "withCredentials"
+      ]
+    },
+    {
       "selector": "sc-form-danger-zone",
       "name": "form-danger-zone",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
       "contrato": [
         {
@@ -3609,6 +4149,11 @@
       "selector": "sc-form-section-nav",
       "name": "form-section-nav",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
       "contrato": [
         {
@@ -3708,6 +4253,11 @@
       "selector": "sc-gauge",
       "name": "gauge",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para una magnitud contra su máximo, de un vistazo. Para progreso de una tarea, `sc-progressbar`.",
       "contrato": [
         {
@@ -3807,6 +4357,11 @@
       "selector": "sc-group-popover",
       "name": "group-popover",
       "primengBase": "primeng/popover",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
       "contrato": [
         {
@@ -3855,9 +4410,58 @@
       ]
     },
     {
+      "selector": "sc-icon-tile",
+      "name": "icon-tile",
+      "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
+      "contrato": [
+        {
+          "nombre": "icon",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El icono del DS (nombre de Material Symbols). Sin él, va el que se proyecte dentro.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "size",
+          "clase": "input",
+          "tipo": "'sm' | 'md'",
+          "porDefecto": "'md'",
+          "requerido": false,
+          "descripcion": "`md`: 28 con el icono a 16, para texto de 14. `sm`: 24,5 con el icono a 14, para texto de 12.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "tone",
+          "clase": "input",
+          "tipo": "'default' | 'strong'",
+          "porDefecto": "'default'",
+          "requerido": false,
+          "descripcion": "`strong`: el icono en el color de los títulos (el de un encabezado); por defecto, el del texto.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": []
+    },
+    {
       "selector": "sc-impact-preview-dialog",
       "name": "impact-preview-dialog",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
       "contrato": [
         {
@@ -3957,6 +4561,11 @@
       "selector": "sc-inline-rename-cell",
       "name": "inline-rename-cell",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para renombrar en el sitio, sin abrir un formulario.",
       "contrato": [
         {
@@ -4016,6 +4625,9 @@
       "selector": "sc-inputgroup",
       "name": "inputgroup",
       "primengBase": "primeng/inputgroup",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un campo con algo pegado (icono, botón, prefijo). Mantiene alineadas las dos piezas.",
       "contrato": [
         {
@@ -4045,6 +4657,9 @@
       "selector": "sc-inputnumber",
       "name": "inputnumber",
       "primengBase": "primeng/inputtext",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "contrato": [
         {
@@ -4252,9 +4867,313 @@
       ]
     },
     {
+      "selector": "sc-inputtags",
+      "name": "inputtags",
+      "primengBase": "primeng/inputtags",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
+      "cuando": "Para varios valores cortos que escribe el usuario (dominios, etiquetas libres, correos). Si salen de una lista cerrada, `sc-multiselect`; si es uno solo, `sc-inputtext`.",
+      "contrato": [
+        {
+          "nombre": "size",
+          "clase": "input",
+          "tipo": "ScFieldSize",
+          "porDefecto": "'md'",
+          "requerido": false,
+          "descripcion": "Talla del campo: `sm`, `md` o `lg`, la de los demás campos del DS.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Specifies the size of the component.",
+            "porDefecto": "undefined",
+            "obsoleta": null,
+            "heredadaDe": "BaseInput"
+          }
+        },
+        {
+          "nombre": "label",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Etiqueta del campo. Sin ella el campo no tiene nombre accesible (o se le da uno por `ariaLabel`).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Nombre accesible cuando no hay `label` visible.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "required",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Marca el campo como obligatorio en su etiqueta. No valida por sí solo.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "There must be a value (if set).",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": "BaseEditableHolder"
+          }
+        },
+        {
+          "nombre": "helperText",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Texto de ayuda bajo el campo. Lo tapa `error` cuando lo hay.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "error",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Mensaje de error. Su sola presencia pone el campo en estado inválido.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "invalid",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Estado inválido explícito.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When present, it specifies that the component should have invalid state style.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": "BaseEditableHolder"
+          }
+        },
+        {
+          "nombre": "placeholder",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Texto del campo de escribir mientras está vacío.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Advisory information to display on input.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "disabled",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Deshabilita el campo entero: ni se escribe ni se quitan etiquetas.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When present, it specifies that the component should have disabled state style.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": "BaseEditableHolder"
+          }
+        },
+        {
+          "nombre": "inputId",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Id del campo de escribir; si no se pasa, se genera.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaDescribedBy",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Ids de lo que describe el campo desde fuera; se oyen después de la ayuda propia.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "fluid",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "Ocupa todo el ancho de su contenedor.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Spans 100% width of the container when enabled.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": "BaseInput"
+          }
+        },
+        {
+          "nombre": "delimiter",
+          "clase": "input",
+          "tipo": "string | RegExp",
+          "porDefecto": "','",
+          "requerido": false,
+          "descripcion": "Carácter (o expresión) que, además de Enter, cierra una etiqueta. Por defecto, la coma.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Delimiter character or regex to split input into tags.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "addOnPaste",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "Pegar un texto lo parte por `delimiter` en etiquetas.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to add tags on paste event.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "addOnBlur",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "Salir del campo con algo escrito lo añade como etiqueta.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to add a tag when the input loses focus.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "max",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Cuántas etiquetas como máximo.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Maximum number of tags allowed.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "allowDuplicate",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Deja repetir una etiqueta que ya está.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to allow duplicate tags.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "value",
+          "clase": "model",
+          "tipo": "readonly string[]",
+          "porDefecto": "[]",
+          "requerido": false,
+          "descripcion": "Las etiquetas.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "added",
+          "clase": "output",
+          "tipo": "InputTagsAddEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha añadido una etiqueta.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "removed",
+          "clase": "output",
+          "tipo": "InputTagsRemoveEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha quitado una etiqueta.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": [
+        "addOnTab",
+        "appendTo",
+        "autoOptionFocus",
+        "completeOnFocus",
+        "delay",
+        "focusOnHover",
+        "group",
+        "inputSize",
+        "inputStyle",
+        "inputStyleClass",
+        "maxlength",
+        "min",
+        "minQueryLength",
+        "minlength",
+        "motionOptions",
+        "name",
+        "optionDisabled",
+        "optionGroupChildren",
+        "optionGroupLabel",
+        "optionLabel",
+        "optionValue",
+        "overlayOptions",
+        "panelStyle",
+        "panelStyleClass",
+        "pattern",
+        "scrollHeight",
+        "step",
+        "suggestions",
+        "tabindex",
+        "typeahead",
+        "variant"
+      ]
+    },
+    {
       "selector": "sc-inputtext",
       "name": "inputtext",
       "primengBase": "primeng/inputtext",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "contrato": [
         {
@@ -4499,6 +5418,11 @@
       "selector": "sc-keyboard-shortcuts",
       "name": "keyboard-shortcuts",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para enseñar los atajos disponibles en la pantalla.",
       "contrato": [
         {
@@ -4518,6 +5442,9 @@
       "selector": "sc-message",
       "name": "message",
       "primengBase": "primeng/message",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "contrato": [
         {
@@ -4626,6 +5553,9 @@
       "selector": "sc-multiselect",
       "name": "multiselect",
       "primengBase": "primeng/multiselect",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "contrato": [
         {
@@ -5160,6 +6090,12 @@
       "selector": "sc-option-cards",
       "name": "option-card",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
       "contrato": [
         {
@@ -5229,6 +6165,9 @@
       "selector": "sc-panel",
       "name": "panel",
       "primengBase": "primeng/panel",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para un bloque con cabecera propia, plegable y con acciones.",
       "contrato": [
         {
@@ -5343,6 +6282,9 @@
       "selector": "sc-password",
       "name": "password",
       "primengBase": "primeng/config, primeng/inputpassword",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una contraseña, con su ojo para mostrarla.",
       "contrato": [
         {
@@ -5564,6 +6506,12 @@
       "selector": "sc-permission-matrix",
       "name": "permission-matrix",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
       "cuando": "Para dar permisos cruzando quién con qué, marcando por columna entera.",
       "contrato": [
         {
@@ -5653,6 +6601,11 @@
       "selector": "sc-photo-upload",
       "name": "photo-upload",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para la foto de una persona, con ilustración de reserva.",
       "contrato": [
         {
@@ -5732,6 +6685,9 @@
       "selector": "sc-progressbar",
       "name": "progressbar",
       "primengBase": "primeng/progressbar",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para el avance de una tarea de la que SÍ se sabe cuánto queda. Si no se sabe, `sc-progressspinner`.",
       "contrato": [
         {
@@ -5804,6 +6760,9 @@
       "selector": "sc-progressspinner",
       "name": "progressspinner",
       "primengBase": "primeng/progressspinner",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una espera de duración desconocida. Si la espera es de contenido que va a aparecer, `sc-skeleton` desconcierta menos.",
       "contrato": [
         {
@@ -5877,6 +6836,9 @@
       "selector": "sc-radiobutton",
       "name": "radiobutton",
       "primengBase": "primeng/radiobutton",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
       "contrato": [
         {
@@ -6004,6 +6966,11 @@
       "selector": "sc-search",
       "name": "search",
       "primengBase": "primeng/iconfield, primeng/inputicon, primeng/inputtext",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "contrato": [
         {
@@ -6141,6 +7108,9 @@
       "selector": "sc-section-card",
       "name": "section-card",
       "primengBase": "—",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "contrato": [
         {
@@ -6229,7 +7199,7 @@
           "tipo": "number",
           "porDefecto": "2",
           "requerido": false,
-          "descripcion": "Nivel del encabezado: `2` (por defecto) para una sección DENTRO de una página, `1` cuando esta card lleva el título de LA PÁGINA. Existe porque el patrón «el título va contenido en su sección» (Figma Supervisor 393:12588) lo pedían las dos cosas a la vez: la misma caja, la misma posición y el mismo icono, pero un `<h1>` cuando titula la página y un `<h2>` cuando titula una parte de ella. Sin esto, la página que quisiera el patrón tenía que copiarlo a mano —que es lo que pasaba en `config/aed/*`— y a partir de ahí las dos copias derivan. **Solo cambia la SEMÁNTICA, no el tamaño** (2026-09-09). Los dos niveles miden 14/20 semibold, que es lo que hace la maqueta: en el archivo Supervisor no hay un solo texto por encima de 14, y «Agentes» y «Configuración» comparten estilo — los separa el icono, que solo lleva la cabecera. Hasta hoy el `1` subía a `h3` (18/24), un tamaño que salía de la ESCALA y no de ningún nodo que dibuje la pantalla, y que además dejaba corto al icono de 14. Un documento tiene UN solo `<h1>`, así que `1` es para una card por página. Lo vigila `e2e/supervisor/page-identity.spec.ts`.",
+          "descripcion": "Nivel del encabezado: `2` (por defecto) para una sección DENTRO de una página, `1` cuando esta card lleva el título de LA PÁGINA. Existe porque el patrón «el título va contenido en su sección» (Figma Supervisor 393:12588) lo pedían las dos cosas a la vez: la misma caja, la misma posición y el mismo icono, pero un `<h1>` cuando titula la página y un `<h2>` cuando titula una parte de ella. Sin esto, la página que quisiera el patrón tenía que copiarlo a mano —que es lo que pasaba en `config/aed/*`— y a partir de ahí las dos copias derivan. **Cambia la semántica y el tamaño** (2026-10-09, DD-188): con `1` el título es `Title` (20/28), el de la página; con `2`, `Subtitle` (16/24), el de una sección. Hasta entonces los dos medían `h3` (18/24) y la página no se distinguía de sus secciones. Un documento tiene UN solo `<h1>`, así que `1` es para una card por página. Lo vigila `e2e/supervisor/page-identity.spec.ts`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6250,6 +7220,9 @@
       "selector": "sc-select",
       "name": "select",
       "primengBase": "primeng/select",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "contrato": [
         {
@@ -6738,6 +7711,9 @@
       "selector": "sc-selectbutton",
       "name": "selectbutton",
       "primengBase": "primeng/selectbutton",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "contrato": [
         {
@@ -6926,6 +7902,16 @@
           "nativo": null
         },
         {
+          "nombre": "helperText",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La ayuda del campo, debajo de las opciones como en el resto de campos del DS (DD-198): el rótulo y el control quedan juntos para leer de un vistazo, y lo que la opción elegida abre debajo va después. Se anuncia con el grupo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "value",
           "clase": "model",
           "tipo": "unknown",
@@ -6950,6 +7936,9 @@
       "selector": "sc-skeleton",
       "name": "skeleton",
       "primengBase": "primeng/skeleton",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.",
       "contrato": [
         {
@@ -7049,6 +8038,11 @@
       "selector": "sc-slot",
       "name": "slot",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para una ranura con título dentro de una composición.",
       "contrato": [
         {
@@ -7108,6 +8102,9 @@
       "selector": "sc-sticky-form-header",
       "name": "sticky-form-header",
       "primengBase": "—",
+      "estado": "deprecated",
+      "faltas": [],
+      "retirado": "RETENIDO PARA ROLLBACK (S59, Supervisor DD#65). Ya NO lo usa ningún form de la app: los 3 form shells migraron al modelo \"todo arriba\" (acciones al TopBar + la ficha del panel para la identidad). Se conserva intacto —exportado + showcased en la demo— como red de seguridad por si se revierte el \"todo arriba\". NO borrar sin decisión explícita (ver DD#65 § \"Cómo revertir\").",
       "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
       "contrato": [
         {
@@ -7217,6 +8214,11 @@
       "selector": "sc-subsection",
       "name": "subsection",
       "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit"
+      ],
+      "retirado": null,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "contrato": [
         {
@@ -7283,9 +8285,67 @@
       "ocultas": []
     },
     {
+      "selector": "sc-tabs",
+      "name": "tabs",
+      "primengBase": "primeng/tabs",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
+      "contrato": [
+        {
+          "nombre": "tabs",
+          "clase": "input",
+          "tipo": "readonly ScTab[]",
+          "porDefecto": null,
+          "requerido": true,
+          "descripcion": "Las pestañas, en orden.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": true,
+          "descripcion": "El nombre de la tira para el lector de pantalla («Canal», «Vistas de la conversación»).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "value",
+          "clase": "model",
+          "tipo": "string | number | undefined",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La pestaña elegida (su `value`).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Value of the active tab.",
+            "porDefecto": "undefined",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        }
+      ],
+      "ocultas": [
+        "disabled",
+        "lazy",
+        "scrollStrategy",
+        "scrollable",
+        "selectOnFocus",
+        "showNavigators",
+        "tabindex"
+      ]
+    },
+    {
       "selector": "sc-tag",
       "name": "tag",
       "primengBase": "primeng/tag",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "contrato": [
         {
@@ -7377,6 +8437,16 @@
           "descripcion": "Solo con `variant='label'`: `false` quita el borde y deja el fondo tintado, para una cifra que ya va dentro de una tarjeta con borde (la de cada destino del hub de Repositorios, DD-179). El borde queda transparente, así que la pastilla mide lo mismo con él o sin él.",
           "origen": "nuestro",
           "nativo": null
+        },
+        {
+          "nombre": "size",
+          "clase": "input",
+          "tipo": "'sm' | 'md'",
+          "porDefecto": "'sm'",
+          "requerido": false,
+          "descripcion": "Talla: `sm` (por defecto) es la del Kit, 12 en negrita; `md` es 14 en semibold, la del texto de una fila de datos, para una píldora que hace de valor junto a otros valores de 14 (el resumen de la ficha de grupo, DD-186). Va por la entrada `pt` de `p-tag`, no con CSS encima.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": []
@@ -7384,7 +8454,10 @@
     {
       "selector": "sc-textarea",
       "name": "textarea",
-      "primengBase": "primeng/textarea",
+      "primengBase": "primeng/textarea, primeng/tooltip",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
       "contrato": [
         {
@@ -7453,7 +8526,17 @@
           "tipo": "string | null",
           "porDefecto": "null",
           "requerido": false,
-          "descripcion": "Ids, separados por espacios, de la ayuda que describe el campo desde fuera: la que va a su lado (la fila de un ajuste, de un interruptor). El campo no tiene ayuda propia; sin esto, nadie la anuncia (DD-133).",
+          "descripcion": "Ids, separados por espacios, de la ayuda que describe el campo desde fuera: la que va a su lado (la fila de un ajuste, de un interruptor). Se oye después de la ayuda propia (`helperText`), si la hay (DD-133).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "helperText",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La ayuda del campo, debajo, como en el resto de campos del DS (DD-198). Se anuncia con el campo.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -7556,18 +8639,82 @@
           "descripcion": "El usuario ha arrastrado la esquina para cambiar el tamaño del campo.",
           "origen": "nuestro",
           "nativo": null
+        },
+        {
+          "nombre": "copyable",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Un botón de copiar, solo con su icono, dentro del campo arriba a la derecha (DD-198): para lo que se lee y se copia (un script, una clave). Al pulsarlo, el icono pasa a ✓ dos segundos y el lector oye «Copiado». El texto no pasa por debajo del botón.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "copyLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Nombre del botón de copiar («Copiar código»). Sin él, el del diccionario del DS («Copiar»).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "copiedLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Lo que dice tras copiar («Código copiado»). Sin él, «Copiado».",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "copied",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha copiado el valor.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": [
+        "appendTo",
+        "autoHide",
+        "content",
+        "escape",
+        "fitContent",
+        "hideDelay",
+        "hideOnEscape",
+        "life",
         "pSize",
         "pTextareaPT",
-        "pTextareaUnstyled"
+        "pTextareaUnstyled",
+        "pTooltipPT",
+        "pTooltipUnstyled",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
+        "showDelay",
+        "showOnEllipsis",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
       ]
     },
     {
       "selector": "sc-toast",
       "name": "toast",
       "primengBase": "primeng/toast",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para el resultado de una acción, que se va solo. Si el aviso pertenece a la página y debe quedarse, `sc-message`.",
       "contrato": [
         {
@@ -7684,6 +8831,9 @@
       "selector": "sc-toggleswitch",
       "name": "toggleswitch",
       "primengBase": "primeng/toggleswitch",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "contrato": [
         {

@@ -10,8 +10,16 @@ import type { Translation } from 'primeng/api';
  * etiqueta BCP-47 del idioma: no hay listas de nombres escritas a mano que mantener en cuatro
  * idiomas. Lo que `Intl` no sabe («Hoy», «Limpiar», la cabecera de semana) sale del i18n de la
  * app (`primeng.*`).
+ *
+ * Y el nombre del ✕ de una etiqueta (`aria.removeLabel`), que `p-chip` lee de aquí: con `sc-inputtags` (DD-195)
+ * cada dominio se anunciaba «Remove». PrimeNG fusiona la traducción solo por arriba, así que `aria` llega entera
+ * (`ariaActual`, la que ya tiene) con lo nuestro encima: si no, se perderían sus otros textos.
  */
-export function primengTranslation(locale: string, t: (key: string) => string): Translation {
+export function primengTranslation(
+  locale: string,
+  t: (key: string) => string,
+  ariaActual?: Translation['aria'],
+): Translation {
   const names = (options: Intl.DateTimeFormatOptions, count: number, at: (i: number) => Date) => {
     const fmt = new Intl.DateTimeFormat(locale, options);
     return Array.from({ length: count }, (_, i) => fmt.format(at(i)));
@@ -31,6 +39,7 @@ export function primengTranslation(locale: string, t: (key: string) => string): 
     today: t('primeng.today'),
     clear: t('primeng.clear'),
     weekHeader: t('primeng.week_header'),
+    aria: { ...ariaActual, removeLabel: t('primeng.remove') },
   };
 }
 

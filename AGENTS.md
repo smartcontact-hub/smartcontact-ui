@@ -173,11 +173,19 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
 2. **Estados de carga.** Cuando una pantalla espera datos, pinta `sc-skeleton` con la FORMA del
    contenido (filas, tarjetas) y reserva su hueco. Nunca un spinner centrado ni inyectar datos
    que recolocan la página (layout shift). El componente ya existe (demo en `/components/skeleton`).
+   **Por tiempos** (Primer, DD-188): por debajo de 1 s no se pinta nada, porque un indicador que
+   parpadea hace la app más lenta; de 1 a 3 s, esqueleto; de 3 a 10 s, progreso con cifra; más de
+   10 s, en segundo plano sin bloquear. Un indicador por bloque, no por pieza.
 3. **Copy sin relleno.** Un título que se explica solo NO lleva un subtítulo explicándolo. Un
    lead o descripción solo donde aporta algo no obvio (un catálogo, una regla no evidente). Si al
    quitar el texto no se pierde nada, quítalo.
 4. **Iconografía consistente.** Una sola librería, siempre vía `<sc-icon>` (Material Symbols).
-   Nunca emojis en la interfaz ni un segundo juego de iconos.
+   Nunca emojis en la interfaz ni un segundo juego de iconos. **Un icono que acompaña a un texto
+   sigue a su estilo** (DD-130 §6, DD-189): su tamaño es el del texto (`size="inherit"` con el
+   `font-size` del texto, o su token), su peso el del texto (`weight` 600 junto a semibold) y el eje
+   óptico a su tamaño (`opticalSize` 20, el mínimo, por debajo de 20 px), que engorda el trazo en
+   pequeño hasta igualarlo con la letra. Un icono suelto o de control (chevron, cerrar) no sigue a
+   ningún texto y se queda en su talla.
 5. **Densidad y jerarquía.** Layout compacto. Acciones secundarias en un kebab/overflow, métricas
    alineadas, chips a icono cuando el color ya comunica el estado. No repitas en cada vista los
    KPIs que ya están en el dashboard, y fuera las tarjetas sin dato ni acción.
@@ -186,10 +194,19 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    etiqueta (`aria-label`/`<label>`). No comuniques un estado solo con color.
 7. **Estabilidad visual.** Anima solo `transform`/`opacity` (nunca `top`/`left`/`width`/`height`).
    Imágenes con `width`+`height` o `aspect-ratio`. Banners y toasts en un hueco reservado, no
-   insertados encima del contenido al cargar.
+   insertados encima del contenido al cargar. **El toast, solo para lo que manda el sistema**
+   (DD-191: una tarea en segundo plano que acaba). Lo que acaba de hacer el usuario se cuenta junto
+   a su contexto, con `ResultadoAccionService`: `visto` si el resultado ya se ve (la fila nueva o
+   la que desaparece, la ficha a la que se llega, la descarga), que solo lo anuncia al lector de
+   pantalla; `enLaBarra` si guarda y se queda, junto a los botones de la barra hasta el siguiente
+   cambio; y un `sc-message` junto a su control si el resultado es de ese control (copiar, probar
+   una conexión). Un error no se cierra solo. Lo vigila `audit:screen-hygiene`. Un cambio en lote se cuenta en
+   su propia barra, con «Deshacer» pegado al texto y sin irse sola (`contarLote` de `sc-list-page`, DD-196); el
+   toast con «Deshacer» queda para lo que desaparece sin dejar sitio donde contarlo (quitar un widget del inicio).
 8. **Tipografía por clase, y solo fuera de los componentes.** El texto de la PÁGINA lleva una de
-   las 12 clases `.sc-text-*` (los text styles del Figma del DS: display · h1 · h2 · h3 · body ·
-   caption, en regular y semibold). Un `<sc-*>` **nunca** lleva `.sc-text-*` en su etiqueta: su
+   las 14 clases `.sc-text-*` (los text styles del Figma del DS: display · h1 · h2 · h3 · body ·
+   caption, en regular y semibold, más `title` y `subtitle` en semibold). El título de la página es
+   `title` (20) y el de una sección o tarjeta, `subtitle` (16) (DD-188). Un `<sc-*>` **nunca** lleva `.sc-text-*` en su etiqueta: su
    tipografía la publica el tema, y una clase encima —que va sin capa, y sin capa gana siempre—
    lo desconecta del canal por el que un cambio de token llega solo a todos los componentes. Si
    el texto de un componente tiene que verse distinto, se mueve su TOKEN (DD-55, gateado por
@@ -205,11 +222,24 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    se escanea (el monitor, las listas) y más aire donde se lee y se rellena (fichas, formularios), sin
    aire que no separe nada: el relleno de una caja que ya delimitan su borde y su fondo sobra (DD-125). La misma
    prueba avisa del aire que se suma dentro de una caja (R4): márgenes y rellenos de dentro que llegan a 7.
+   **La cabecera de página, en la misma escalera** (DD-192): de la barra al título 28, del título a lo que titula 14
+   (y de unas pestañas a su buscador), del buscador o los filtros a su tabla 7. El borde de la página, 28 por los
+   cuatro lados, lo pone el molde (`.page__inner`): una pantalla no lo repite. Lo mide `cabecera-escalera.spec.ts`.
 10. **Una tabla dentro de una sección llega al pie de la pantalla** (DD-160). Si necesita más sitio que el que
    tiene, aprovecha el resto de la pantalla: desplaza por dentro, con la cabecera fija, y su tope es lo que queda
    hasta el pie, MEDIDO desde donde empieza (`scLlegaAlPie`, en `core/directives`), con un suelo (`scale/18`) para
    pantallas bajas. Nunca un `100dvh` menos una constante: no sabe dónde empieza la tabla, y deja hueco vacío debajo
    mientras esconde filas. Lo prueba `e2e/supervisor/tabla-al-pie.spec.ts`: 2 px más de tabla y la página desplaza.
+   **En estrecho, el nombre se queda** (DD-193): la columna que nombra la fila va fija a la izquierda y la tabla
+   desplaza de lado; su mínimo sale de las columnas y no baja de 15rem para el nombre. Prueba cada lista a 1024.
+   Esa columna es la cabecera de su fila (`rowHeader` en `ScColumnDef`, DD-194): una tabla nueva con nombre la marca.
+11. **Lo que falta se dice cuando ya hubo ocasión** (DD-199). Un obligatorio vacío no es un error, es algo por
+   rellenar: ni borde rojo, ni aviso bajo el campo, ni punto en el índice hasta que la persona ha tenido ocasión de
+   rellenarlo, que es dejar su sección sin ello (en el alta y al editar) o que lo guardado ya viniera sin ello. Un
+   campo que aparece al encender una opción nace callado, y duplicar es un alta. Mientras tanto lo dicen el resumen
+   («Falta: …») y el motivo junto al botón, sin rojo. Un error de contenido (repetido, mal escrito) va en vivo. En una
+   ficha lo decide `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`); lo vigilan `audit:screen-hygiene` (regla 7)
+   y `sin-acusar-de-primeras.spec.ts`.
 
 **Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
 recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas
@@ -276,6 +306,8 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Cambiar de colección en la misma pantalla (se vacían búsqueda y selección) | Pestañas `p-tabs` de primeng.dev con texto, como su ejemplo básico; el nombre de la tira por `[pt]="{ content: { 'aria-label': … } }"` | Botones con `role="tab"` a mano; `sc-selectbutton`; contador o icono que repiten lo que ya se ve | DD-113 |
 | Filtrar la misma lista o elegir un valor de un grupo corto que se ve entero | `sc-selectbutton` con `ariaLabelledBy` y opciones traducidas | Un `radiogroup` o botones con estado a mano; `p-tabs` | DD-113 |
 | Elegir columnas o mantener acciones visibles en una tabla ancha | `sc-multiselect iconOnly` con nombre accesible y conteo; `ScColumnDef.frozen` / `alignFrozen` nativos | Un selector propio u offsets sticky calculados en la página | DD-153 |
+| La ayuda de un campo | Debajo de su control, con el `helperText` del campo (también `sc-selectbutton` y `sc-textarea`): rótulo y control, juntos · lo que abre la opción elegida, después de la ayuda · solo una lista que crece la lleva bajo su título · lo que se lee y se copia, `sc-textarea copyable` | La ayuda entre el rótulo y el control (alarga cada campo y desalinea la rejilla); un botón «Copiar» con texto debajo del campo | DD-198, DD-133, `audit:screen-hygiene` |
+| Una celda sin dato | `<sc-celda-vacia />`: «—» en gris suave, oculto al lector, que oye «Sin dato» (`[texto]` si tiene su porqué: «No aplica») · si el vacío significa algo («Nunca», «Sin asignar») o es una cifra (0), se escribe | La celda en blanco (parece que no ha cargado); un «—» escrito a mano (el lector lo lee «guion») | DD-197, `audit:screen-hygiene` |
 | El estado de una persona en una tabla | Su propia columna, «Estado», con la `sc-tag` del listado de agentes y el ancho de su etiqueta más larga en los cuatro idiomas | La etiqueta pegada al nombre: no se alinea de una fila a otra y le quita sitio al email | DD-156 |
 | Separar dos bloques con una línea | `sc-divider` | `<hr>`, un `div` de 1 px o un `border-top` entre hermanos | DD-113 |
 | El alta de una ficha con secciones | El índice de la edición (`sc-form-section-nav`) con `sectionsDone` de `seccionesDeAlta()`: ✓ en la sección que se deja completa y el punto rojo en la que se deja sin lo obligatorio; al pie, `sc-alta-pie` («Atrás» / «Siguiente»), que lleva al principio de la sección nueva con `llegarASeccion` | Un Stepper o un asistente (DD-138, revertida); la sección del alta en la dirección; «Siguiente» como puerta fuera de General del grupo | DD-143 |

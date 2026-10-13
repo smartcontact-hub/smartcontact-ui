@@ -1,18 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  type OnDestroy,
-  type OnInit,
-  signal,
-  type TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import {
   ScButtonComponent as ButtonComponent,
   ScDialogComponent as DialogComponent,
@@ -24,9 +12,7 @@ import {
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { CrossTabLockService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
@@ -43,6 +29,7 @@ import {
   TOPE_DE_CONTACTOS,
 } from '../state/agenda-contacts.core.mjs';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
+import { ResultadoAccionService } from '@core/services';
 
 interface AgendaDraft {
   readonly name: string;
@@ -81,13 +68,12 @@ const CAMPOS_DE_CONTACTO: readonly RepoFieldDef[] = [
   styleUrl: './agenda-editor-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy {
+export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly store = inject(AgendasStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
-  private readonly crossTab = inject(CrossTabLockService);
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
 
@@ -99,12 +85,14 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy 
 
   protected readonly mode = signal<'create' | 'edit'>('create');
   private agendaId: number | null = null;
-  private releaseLock: (() => void) | null = null;
-  protected readonly conflictWarning = signal(false);
 
   protected readonly form = signal<AgendaDraft>(VACIA);
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.formDirty()) this.resultado.limpiar();
+  });
 
   protected readonly statusOptions = computed(() => {
     this.lang();
@@ -146,13 +134,8 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy 
     this.agendaId = agenda.id;
     this.form.set({ name: agenda.name, description: agenda.description, status: agenda.status, contacts: agenda.contacts });
     this.dirtyState.markPristine();
-    this.releaseLock = this.crossTab.acquire('agenda', agenda.id, () => this.conflictWarning.set(true));
   }
 
-  ngOnDestroy(): void {
-    this.releaseLock?.();
-    this.releaseLock = null;
-  }
 
   protected update<K extends keyof AgendaDraft>(key: K, value: AgendaDraft[K]): void {
     this.form.update((f) => ({ ...f, [key]: value }));
@@ -165,14 +148,15 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy 
     if (this.mode() === 'create') {
       const created = this.store.addItem(draft);
       this.dirtyState.markPristine();
-      this.toast('repositories.toasts.created', created.name);
-      void this.router.navigateByUrl(`/admin/agendas/editar/${created.id}`, { replaceUrl: true });
+      const creado = this.texto('repositories.toasts.created', created.name);
+      // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
+      void this.router.navigateByUrl(`/admin/agendas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.enLaBarra(creado));
       return;
     }
     this.store.updateItem(this.agendaId!, draft);
     this.form.set(draft);
     this.dirtyState.markPristine();
-    this.toast('repositories.toasts.updated', draft.name);
+    this.resultado.enLaBarra(this.texto('repositories.toasts.updated', draft.name));
   }
 
   protected discard(): void {
@@ -311,11 +295,9 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit, OnDestroy 
     }
   }
 
-  private toast(key: string, name: string): void {
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(key, { entity: this.translate.instant('repositories.agendas.singular'), name }),
-      life: TOAST_LIFE.success,
-    });
+  /** El texto de «creado», «actualizado» o «eliminado» de esta entidad. */
+  private texto(key: string, name: string): string {
+    return this.translate.instant(key, { entity: this.translate.instant('repositories.agendas.singular'), name });
   }
+
 }

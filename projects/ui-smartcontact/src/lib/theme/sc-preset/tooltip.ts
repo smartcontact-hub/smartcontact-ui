@@ -10,7 +10,8 @@ import type { TooltipDesignTokens } from '@primeuix/themes/types/tooltip';
          * (`tooltip-tooltip`, 623:36926) y así casa con menús y desplegables. Por TOKEN y no
          * con una regla en `css.ts`: la hoja de Aura ya lee `tooltip.font.size`, y una clase
          * `.p-tooltip-text` nuestra sería acoplamiento al DOM de PrimeNG que no hace falta
-         * (`audit:primeng-coupling`). El interlineado no tiene token: lo hereda de la página. */
+         * (`audit:primeng-coupling`). El interlineado no tiene token: heredaba el 1.5 de la página (21), y desde el
+         * 2026-10-09 lo pone `css.ts`, el de la rampa (20), sin tocar la letra. */
         fontSize: "var(--sc-font-size-200)",
         borderRadius: "{overlay.popover.border.radius}"
     },

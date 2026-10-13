@@ -2,7 +2,7 @@
      identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
-  <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
+  <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="onCreateClick()">
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'users.create_button' | translate }}</span>
   </sc-button>
@@ -41,7 +41,7 @@
 
   <ng-container ngProjectAs="[scListBulkActions]">
     <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (commit)="onBulkEditCommit($event)" />
-    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
   </ng-container>
@@ -74,7 +74,11 @@
 </ng-template>
 
 <ng-template #identifierTpl let-user>
-  <span class="table__td-text sc-text-body-regular">{{ user.identifier || '—' }}</span>
+  @if (user.identifier) {
+    <span class="table__td-text sc-text-body-regular">{{ user.identifier }}</span>
+  } @else {
+    <span class="table__td-text sc-text-body-regular"><sc-celda-vacia /></span>
+  }
 </ng-template>
 
 <ng-template #typeTpl let-user>

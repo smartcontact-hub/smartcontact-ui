@@ -201,6 +201,12 @@
           "apply": "When a table inside a section needs more room, it uses the rest of the screen: it scrolls inside, with a sticky header and the paginator at the bottom, and its cap is what is left down to the bottom, measured from where it starts. On a short screen it stops at its floor, and then the page scrolls.",
           "avoid": "A fixed cap («window height minus 420 px»): it does not know where the table starts, and leaves empty screen below while hiding rows.",
           "have": "In the supervisor, the scLlegaAlPie directive measures the remaining height; tabla-al-pie tests it: 2 px more of table and the page scrolls."
+        },
+        "blame": {
+          "title": "What is missing is said once there was a chance",
+          "apply": "An empty required field is something still to fill in, not an error: it is flagged in red once the person had a chance to fill it in, by leaving its section without it or because the saved record already lacked it. Until then, the summary and the reason next to the button say what is missing, without red. A content error (a repeated name, a mistyped email) shows live.",
+          "avoid": "A field that appears when an option is switched on and is born red, with its message and a dot in the index, before anything could be chosen: it looks as if the person made a mistake without having done anything.",
+          "have": "In the supervisor, ocasionDeAvisar decides when each form flags; rule 7 of audit:screen-hygiene and sin-acusar-de-primeras guard it."
         }
       }
     },
@@ -245,6 +251,7 @@
     "meta": "{{screens}} screens · {{seen}}/{{total}} DS components seen · captured {{date}} · {{viewport}} · {{theme}} theme",
     "byComponent": "By component",
     "byScreen": "By screen",
+    "viewsAria": "Inventory views",
     "error": "Couldn't load <code>/usage/_usage-status.json</code>. Run <code>npm run usage:capture</code> to generate the captures.",
     "loading": "Loading captures…",
     "screensCount": "{{count}} screen(s)",

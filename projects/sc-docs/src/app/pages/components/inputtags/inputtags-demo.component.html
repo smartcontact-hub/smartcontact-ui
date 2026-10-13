@@ -1,0 +1,54 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<ng-template #playground let-args>
+  <sc-inputtags
+    label="Etiquetas"
+    [size]="args.size"
+    [placeholder]="args.placeholder"
+    [max]="args.max || undefined"
+    [delimiter]="args.delimiter || ','"
+    [addOnPaste]="args.addOnPaste"
+    [addOnBlur]="args.addOnBlur"
+    [allowDuplicate]="args.allowDuplicate"
+    [required]="args.required"
+    [invalid]="args.invalid"
+    [fluid]="args.fluid"
+    [disabled]="args.disabled"
+    [(value)]="pgValue"
+  />
+</ng-template>
+
+<ng-template #domains>
+  <sc-inputtags
+    label="Dominios permitidos"
+    placeholder="ejemplo.com"
+    helperText="Las webs donde se puede insertar el chat."
+    [(value)]="dominios"
+    data-testid="sc-inputtags-domains"
+  />
+</ng-template>
+
+<ng-template #max>
+  <sc-inputtags
+    label="Correos de aviso"
+    placeholder="nombre@example.com"
+    helperText="Hasta tres."
+    [max]="3"
+    [(value)]="correos"
+    data-testid="sc-inputtags-max"
+  />
+</ng-template>
+
+<ng-template #error>
+  <sc-inputtags
+    label="Dominios permitidos"
+    required
+    error="Añade al menos un dominio."
+    [(value)]="vacio"
+    data-testid="sc-inputtags-error"
+  />
+</ng-template>
+
+<ng-template #disabled>
+  <sc-inputtags label="Dominios permitidos" disabled [value]="['ejemplo.com']" data-testid="sc-inputtags-disabled" />
+</ng-template>

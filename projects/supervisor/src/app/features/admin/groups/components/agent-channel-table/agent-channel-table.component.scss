@@ -37,12 +37,12 @@
     display: inline-flex;
   }
 
-  &__no-results {
-    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
-    text-align: center;
-    color: var(--sc-text-subtle);
+  /* El stepper de Nivel: un entero 1-10, no la lista de 10 opciones de antes (auditoría UX, 2026-10) — ancho fijo y
+   * centrado en su celda, no `width: 100%` del campo de formulario normal. */
+  &__level-input {
+    width: 4.5rem;
+    margin-inline: auto;
   }
-
 }
 
 /* En el panel, 7 entre controles y 14 antes de la tabla. El buscador puede ceder ancho
@@ -85,9 +85,30 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* La cabecera de Asignado (DD-176): su casilla de «todos» delante del rótulo, en una fila con las demás cabeceras. */
-.assign__head {
+
+/* La cabecera del agente, con el filtro por estado al lado del nombre (DD-185). */
+.assign__agent-head {
   display: inline-flex;
   align-items: center;
+  gap: var(--sc-spacing-0-25);
+}
+
+.assign__status-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--sc-spacing-0-5);
+  min-width: 12rem;
+}
+
+/* Estados y equipos: dos grupos de casillas a 14 (entre grupos, el doble que dentro). */
+.assign__filters {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-1);
+}
+
+.assign__filter-title {
+  color: var(--sc-text-secondary);
 }

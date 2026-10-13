@@ -2,7 +2,7 @@
      identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
-  <sc-button class="top-bar__cta" size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
+  <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="onCreateClick()">
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'groups.create_button' | translate }}</span>
   </sc-button>
@@ -41,8 +41,12 @@
   />
 
   <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-bulk-edit-menu matchable [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (match)="onBulkMatch($event)" (commit)="onBulkEditCommit($event)" />
-    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+    <sc-bulk-edit-menu matchable [fields]="bulkEditFields()" [buttonLabel]="'common.edit' | translate" (match)="onBulkMatch($event)" (commit)="onBulkEditCommit($event)" />
+    <!-- Por qué no se aplicó, junto al menú que lo intentó (DD-191); se va al cambiar la selección. -->
+    @if (bulkAviso(); as aviso) {
+      <sc-message severity="warn" variant="simple" size="sm" icon="info" [text]="aviso" />
+    }
+    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
   </ng-container>
@@ -80,15 +84,22 @@
 
 <!-- El saliente es del canal Teléfono: un grupo sin él lo guarda y no lo usa, como su ficha, que no lo pinta. -->
 <ng-template #phoneTpl let-group>
-  <span class="table__cell sc-text-body-regular">{{ hasPhone(group) ? group.phone : '—' }}</span>
+  @if (hasPhone(group)) {
+    <span class="table__cell sc-text-body-regular">{{ group.phone }}</span>
+  } @else {
+    <span class="table__cell sc-text-body-regular"><sc-celda-vacia /></span>
+  }
 </ng-template>
 
 <ng-template #channelsTpl let-group>
   <span class="sc-channel-row">
     @for (channel of group.channels; track channel) {
+      <!-- Con nombre, como en el listado de agentes: un `title` solo no se anuncia (barrido de consistencia). -->
       <span
         class="sc-channel-row__item"
+        role="img"
         [attr.data-channel]="channel"
+        [attr.aria-label]="channelLabelKey(channel) | translate"
         [title]="channelLabelKey(channel) | translate"
       >
         <sc-channel-icon [channel]="channel" />
@@ -101,12 +112,12 @@
   <sc-tag [severity]="priorityTone(group.priority)" [value]="priorityLabelKey(group.priority) | translate" />
 </ng-template>
 
-<!-- Una estrategia por familia de canales, como en la ficha; «—» si el grupo no tiene ese canal. -->
+<!-- Una estrategia por familia de canales, como en la ficha; «—» si el grupo no tiene ese canal, y «No aplica» para el lector (DD-197). -->
 <ng-template #strategyTpl let-group>
   @if (phoneStrategy(group); as strategy) {
     <sc-tag severity="secondary" [value]="strategy" />
   } @else {
-    <span class="table__cell sc-text-body-regular">—</span>
+    <span class="table__cell sc-text-body-regular"><sc-celda-vacia [texto]="'common.not_applicable' | translate" /></span>
   }
 </ng-template>
 
@@ -114,7 +125,7 @@
   @if (chatStrategy(group); as strategy) {
     <sc-tag severity="secondary" [value]="strategy" />
   } @else {
-    <span class="table__cell sc-text-body-regular">—</span>
+    <span class="table__cell sc-text-body-regular"><sc-celda-vacia [texto]="'common.not_applicable' | translate" /></span>
   }
 </ng-template>
 

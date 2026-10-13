@@ -58,8 +58,10 @@ test.describe('la franja, por debajo de 1340', () => {
           Math.round(e.getBoundingClientRect().left)
         )
       );
-    // Reparto (2), salida (2) y recursos (1), contados: sobre una lista vacía, «todos alineados» se cumpliría.
-    expect(xs).toHaveLength(5);
+    // Chat (Reparto) y los dos números de Salida: Teléfono (Reparto) y Recursos son un botón, no un `scFactRow`, y
+    // quedan fuera de la subrejilla a propósito (revisión de diseño, 2026-10-11: «quedan a su aire en su propia
+    // fila»). Sobre una lista vacía, «todos alineados» se cumpliría.
+    expect(xs).toHaveLength(3);
     expect(new Set(xs).size, `x de cada valor: ${xs.join(', ')}`).toBe(1);
   });
 });
@@ -175,6 +177,6 @@ test('el icono de un aviso pesa lo que su texto semibold', async ({ page }) => {
 // DD-159: «Asignar» salió de la fila; la cifra de agentes es la que abre la asignación, y su nombre lo dice.
 test('listado de grupos · la cifra de agentes dice cuántos y, en su nombre, que asigna', async ({ page }) => {
   await goto(page, 'admin/grupos');
-  const cifra = page.getByRole('button', { name: /^\d+ agentes · Asignar agentes de Online Support$/ });
+  const cifra = page.getByRole('button', { name: /^\d+ agentes\. Asignar agentes de Online Support$/ });
   await expect(cifra).toHaveText(/^\s*\d+\s*$/);
 });

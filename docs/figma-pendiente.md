@@ -475,10 +475,10 @@ oscuro no se toca.
 
 | Export | Variable | Hoy | Nuevo | Qué consigue |
 |---|---|---|---|---|
-| `aura/semantic/light` | `text/color` | `surface/700` | **`surface/800`** | texto principal 7,38 → 12,16:1 |
-| `aura/semantic/light` | `form/field/color` | `surface/700` | **`surface/800`** | alimenta el mismo `--sc-text-primary`: se mueven juntas |
+| `aura/semantic/light` | `text/color` | `surface/700` | **`surface/900`** (DD-188) | texto principal 7,38 → 16,9:1; del secundario se separa 2,29:1 (con 800, 1,65) |
+| `aura/semantic/light` | `form/field/color` | `surface/700` | **`surface/900`** (DD-188) | alimenta el mismo `--sc-text-primary`: se mueven juntas |
 | `aura/semantic/light` | `text/muted/color` | `slate/600` | **`slate/700`** | texto secundario 4,52 → 7,38:1 |
-| `aura/semantic/light` | `text/hover/color` | `surface/800` | **`surface/900`** (decidido) | que el texto siga cambiando al pasar el ratón |
+| `aura/semantic/light` | `text/hover/color` | `surface/800` | **`surface/900`** (decidido) | con el texto ya en 900 (DD-188) no cambia de color al pasar el ratón: lo marca el fondo, como en GitHub |
 | `aura/component/light` | `togglebutton/color` | `surface/500` | **`surface/700`** | opción no elegida de SelectButton 2,56 → 6,40:1 |
 | `aura/component/light` | `togglebutton/hover/color` | `surface/700` | **`surface/900`** | que el ratón encima se siga notando |
 | `aura/component/light` | `togglebutton/icon/color` | `surface/500` | **`surface/700`** | el icono, igual que su texto |
@@ -1069,6 +1069,149 @@ sin piezas nuevas · **Sin verificar** contra el fichero: el código no cita los
   - la tarjeta, igual: no cambia al pasar.
 
 **Cómo sabes que está hecho:** se ve como `/admin/grupos/editar/11` a 1440, con el ratón sobre «Reparto».
+
+---
+
+## 38 · Title y Subtitle: los dos estilos nuevos, el maestro `Section` y la etiqueta a 600 (2026-10-09, DD-188)
+
+**Estado:** los estilos, HECHOS; lo demás, pendiente · **Dónde:** fichero del DS, página «ª Typography» (`12899:61527`),
+tablero `Text styles` (`13407:3586`).
+
+- **Hecho el 2026-10-09:** `Title/title-semibold` (20/28, atado a `font/size/450` y `line/height/450`) y
+  `Subtitle/subtitle-semibold` (16/24, a `font/size/300` y `line/height/300`), Inter Semi Bold, con sus filas en el
+  tablero (`15334:14` y `15334:18`) y una viñeta nueva en las reglas de jerarquía (`13407:3602`). **Falta publicar la
+  librería** (paso 4) para que el fichero del Supervisor los vea.
+- **El maestro `Section`** (`691:23956`): su título pasa a `Subtitle/subtitle-semibold`, y en la variante que titula la
+  página, a `Title/title-semibold`. Hoy dibuja `Body/body-semibold` (14) y el código pinta 16 y 20.
+- **Las maquetas del Supervisor:** el título de página (`.page__heading`, el nombre de las fichas) a `Title`.
+- **Tag y Badge a 600:** sus maestros llevan 700 (`tag.ts` y `badge.ts` lo copian del Kit). Primer no tiene 700 y DD-13
+  pedía dos pesos, regular y semibold. El código sigue en 700 hasta que el maestro cambie aquí.
+- **Etiquetas en píldora (propuesta, decídela aquí):** Primer separa la etiqueta de dato (píldora con borde de 1, 20 de
+  alto, texto 12 en 500) de la de estado (rellena, con icono), y el contador va en su propio chip (12 en 600, 18 de
+  alto). El Tag del Kit es uno solo: radio 6, sin borde, 21,5 de alto y 700. Si se adopta, primero aquí y luego el
+  código por el export.
+
+**Cómo sabes que está hecho:** `npm run audit:text-styles` lista los 14 estilos en verde, y el título de `Section` en el
+fichero mide 16 (20 en la variante de página).
+
+---
+
+## 39 · Plantillas de vistas: listado, ficha y diálogo ya montados (2026-10-09, DD-188)
+
+**Estado:** pendiente · **Origen:** el estudio de Primer. GitHub publica en Figma, además de sus componentes, una
+librería de plantillas («Primer Interfaces») con las vistas y los patrones que más se repiten, para empezar una maqueta
+desde algo ya montado y no desde piezas sueltas.
+
+- **Qué montar:** tres plantillas en el fichero del DS, a 1440 y medidas sobre producción: el listado (barra con
+  título `Title`, buscador y botón principal a 32,5; tabla), la ficha en tres columnas (nombre en `Title`, índice,
+  secciones con `Subtitle`, resumen) y el diálogo con formulario (la escalera 7 · 14 · 28 de DD-123).
+- **Con qué:** solo instancias de la librería y variables que ya existen. Lo que no tenga componente, se anota.
+- **Cuándo:** después de los pasos 1 a 4 (variables y estilos publicados), para que nazcan con lo nuevo.
+
+**Cómo sabes que está hecho:** una página «Plantillas» con las tres, cada una con su enlace a la pantalla de producción
+que calca, y sin un número suelto que no salga de una variable.
+
+---
+
+## 40 · El icono que acompaña a un texto, al tamaño y al peso de ese texto (2026-10-09, DD-189)
+
+**Estado:** pendiente · **Dónde:** el maestro `Section` (`691:23956`; su icono, `691:23976`) y las maquetas que lo usan.
+
+- **El icono de la cabecera** pasa de 14 a 16 (el tamaño de `Subtitle`) y a 20 en la variante que titula la página
+  (`Title`), en peso 600. Si el `IconSet` expone el eje óptico, a 20.
+- **Lo que cuelga**: el título tiene que seguir en la vertical del contenido; el icono retrocede 12,5 con 16 y 16,5 con
+  20 (sangría 12,25 − hueco 8,75 − icono).
+- **La regla, para cualquier maqueta**: un icono junto a un texto toma su tamaño y su peso; los de control (chevron,
+  cerrar) se quedan en su talla.
+
+**Cómo sabes que está hecho:** en el fichero, el icono de `Section` mide 16 (20 en la de página) y el texto del título
+empieza en la misma x que el contenido de la caja.
+
+---
+
+## 41 · La cabecera de página en la escalera 7 · 14 · 28 (2026-10-11, DD-192)
+
+**Estado:** pendiente · **Dónde:** el `content` de Contact Center (`393:12564`) y las plantillas de la ficha 39.
+
+- **El borde de la página**, 28 por los cuatro lados: el `content` pone 22,75 arriba.
+- **La cabecera de un listado**: barra → título 28, título → buscador 14, buscador → tabla 7; Columnas y el buscador, a 7.
+- **Con pestañas o segmentado**: 14 del título a las pestañas y 14 de las pestañas al buscador.
+
+**Cómo sabes que está hecho:** en el fichero, el índice y la caja de Contact Center arrancan a 28 del borde de arriba
+del `content`, y la plantilla de listado mide 28, 14 y 7.
+
+---
+
+## 42 · Las piezas nuevas del DS desde la revisión de grupos: FileUpload, IconTile, FactRow, Tag mediano, InputTags y la burbuja de estado (2026-10-11, DD-184 a DD-187 y DD-195)
+
+**Estado:** pendiente · **Dónde:** el fichero del DS (maestros) · Ninguna variable nueva: todo sale de las que ya hay.
+La ficha de grupo entera no va (no tiene maqueta desde DD-121; ver abajo). **Mídelo antes**: ningún nodo de esta ficha
+se ha leído en el fichero.
+
+- **FileUpload** (`sc-fileupload`, DD-184): el maestro de PrimeOne en sus dos modos. El de uso hoy es `basic` (los audios
+  del grupo, DD-187): solo el botón, secundario y pequeño, «Subir archivo» con el icono `upload` del `IconSet`. El
+  `advanced` (caja de soltar, lista de archivos, aviso de tipo y tamaño) queda para importar tipificaciones y contactos.
+  La referencia es la página de sc-docs (Componentes › FileUpload).
+- **IconTile** (`sc-icon-tile`, DD-186): la baldosa de un icono. `md`, 28 × 28 con el icono a 16 (para texto de 14);
+  `sm`, 24,5 con el icono a 14; radio `md`. Relleno: el color del título al 6 % sobre la tarjeta; brillo arriba (1 px, la
+  superficie al 60 %) y la sombra `xs`. Variante `tone=strong` para un título. El icono, al peso de su texto (DD-189).
+- **FactRow** (`sc-fact-row`, DD-186): la clave (baldosa `md` + texto 14 regular, del color del texto de su tarjeta) a la izquierda y el
+  valor (14 semibold, color de título) a la derecha, centrados en la fila; si no cabe, el valor baja y sigue a la
+  derecha. Variante con enlace: la clave subrayada al pasar. Las filas, a 7 entre sí dentro de su tarjeta.
+- **Tag mediano** (`sc-tag size="md"`, DD-186): la píldora a 14 en semibold con relleno 1,75 × 10,5, para un valor entre
+  valores de 14. El Tag del Kit (12 en negrita) sigue siendo el pequeño. Va con la ficha 38: si el Tag pasa a 600, el
+  mediano ya nace así.
+- **InputTags** (`sc-inputtags`, DD-195): el Kit no tiene maestro (por eso sale «experimental» en sc-docs). El campo
+  de los demás (32,5 de alto, borde y radio de campo) con las etiquetas dentro: el Chip del Kit a 24,5 de alto, texto
+  14, radio 6, y su ✕ al final; el texto guía a 14 detrás de la última. Mira antes si PrimeOne lo trae.
+- **La burbuja de estado en el avatar** (`sc-presence-avatar`, DD-185 y DD-187 §8): el Avatar con el Badge de punto,
+  abajo a la derecha y dentro del cuadro de la foto; diámetro el 30 % de la foto (8 como mínimo), con un aro del color de
+  la superficie, en el color del punto de la etiqueta de su estado (gris para «Desconectado»). Solo en la tabla de
+  agentes del grupo.
+
+**Cómo sabes que está hecho:** los seis maestros existen en el fichero con estas medidas, atados a variables (ningún
+número suelto), y cada uno con el enlace a su página de sc-docs en la descripción.
+
+---
+
+## 43 · La barra de lote cuenta el resultado, con «Deshacer» (2026-10-11, DD-196)
+
+**Estado:** pendiente · **Dónde:** la barra de lote, si se maqueta (no tiene maestro en el Kit) y la plantilla de
+listado de la ficha 39.
+
+- **Tras aplicar un cambio en lote**, sin filas marcadas, la barra sigue: «✓ Cambio aplicado a 2 grupos» (mensaje
+  simple de éxito, talla pequeña), «Deshacer» (botón secundario con borde, pequeño) pegado al texto y la «×».
+- **Tras deshacer**: «✓ Cambio revertido» y la «×», sin botón.
+- **Ningún toast** en los listados tras un cambio en lote.
+
+**Cómo sabes que está hecho:** la barra tiene sus tres estados (con selección, con resultado y tras deshacer), y
+ninguna maqueta de listado enseña un toast tras editar en lote.
+
+---
+
+## 44 · Una celda sin dato: «—» en gris suave (2026-10-11, DD-197)
+
+**Estado:** pendiente · **Dónde:** las tablas de las plantillas de la ficha 39 y las maquetas con tablas.
+
+- **Celda sin dato**: «—» con el color `text/subtle`, alineado como el resto de la columna. Nunca en blanco.
+- **Una cifra a cero** se escribe «0», como las demás cifras.
+
+**Cómo sabes que está hecho:** ninguna tabla del fichero deja una celda en blanco, y sus guiones van en `text/subtle`.
+
+---
+
+## 45 · La ayuda de un campo, debajo de su control; copiar, dentro del campo (2026-10-11, DD-198)
+
+**Estado:** pendiente · **Dónde:** el maestro del botón segmentado (si lo hay), las maquetas de la ficha de grupo y las
+plantillas de la ficha 39.
+
+- **Ayuda de un campo**: debajo del control, también en un segmentado. Nunca entre el rótulo y el control.
+- **Una lista que crece** (avisos periódicos): su ayuda bajo el título.
+- **Un campo que se copia** (script de Web Chat): botón de solo icono (`content_copy`, pequeño, de texto) dentro del
+  campo arriba a la derecha; sin botón «Copiar» debajo.
+
+**Cómo sabes que está hecho:** en el fichero, ninguna ayuda va entre un rótulo y su control, y el script de Web Chat
+lleva su copiar dentro.
 
 ---
 

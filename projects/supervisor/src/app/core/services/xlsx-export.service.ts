@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 
-import { TOAST_LIFE } from '@core/utils/toast-life';
+import { ResultadoAccionService } from './resultado-accion.service';
 
 const XLSX_MIME =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -12,7 +11,7 @@ export interface XlsxExportOptions {
   readonly headers: readonly string[];
   /** Data rows in the same column order as `headers`. */
   readonly rows: readonly (readonly (string | number)[])[];
-  /** Sheet name shown in Excel's tab. Also used in the success toast. */
+  /** Sheet name shown in Excel's tab. Also used in the announced result. */
   readonly sheetName: string;
   /** File-name prefix; the date is appended in `_YYYY-MM-DD` form. */
   readonly filePrefix: string;
@@ -20,12 +19,12 @@ export interface XlsxExportOptions {
 
 /**
  * Shared XLSX export service. Builds a styled worksheet (bold grey header row,
- * auto-fit column widths), triggers a timestamped download and surfaces a
- * success toast through the PrimeNG `MessageService`.
+ * auto-fit column widths) and triggers a timestamped download. The download itself is the result:
+ * it is only announced to screen readers (DD-191).
  */
 @Injectable({ providedIn: 'root' })
 export class XlsxExportService {
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
 
   /** API pública síncrona; el trabajo real (con `exceljs` diferido) corre en `run`. */
@@ -81,6 +80,7 @@ export class XlsxExportService {
       count: rows.length,
       sheet: sheetName.toLowerCase(),
     });
-    this.messages.add({ severity: 'success', summary, life: TOAST_LIFE.success });
+    // La descarga la enseña el navegador: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(summary);
   }
 }

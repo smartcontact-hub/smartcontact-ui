@@ -7,7 +7,7 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *
  * La revisión de producto del 2026-10-01 dio el flujo de grupos por bueno con ajustes de texto y de campos. Lo que fija:
  *   1. Las estrategias reparten conversaciones, no llamadas ni chats: «Menos conversaciones atendidas» en Teléfono y en
- *      «Dentro de cada nivel», y «Menos conversaciones activas» en Chat, con su ayuda.
+ *      «Dentro de cada nivel», y «Menos conversaciones atendidas» en Chat, con su ayuda.
  *   2. Un grupo o unos valores de Contact Center guardados con los nombres de antes abren con los de ahora y sin cambios
  *      pendientes: el nombre ES el valor guardado, y subir la versión del almacén borraría lo que hay.
  *   3. «Desbordar sesión» sale de la ficha y de Contact Center: lo cubre «Caducar sesión», que se llamaba «Cerrar chat
@@ -15,7 +15,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   4. «Caducar sesión» nace con 5 minutos.
  *   5. El tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, por agente conectado.
  *   6. Las tipificaciones se eligen por su nombre, sin cifras al lado, que se leían como niveles o como grupos. Desde
- *      DD-173 son tipificaciones (árboles con su ficha) y no categorías del repositorio de antes.
+ *      DD-173 son tipificaciones (árboles con su ficha) y no categorías del repositorio de antes; desde DD-187, el grupo
+ *      elige UNA en General › Postconversación, no varias en Recursos.
  *   7. Los nombres largos caben en sus desplegables, en la ficha y en Contact Center.
  *
  * Storage limpio por test → cada almacén vuelve a su semilla.
@@ -56,7 +57,7 @@ test('las estrategias reparten conversaciones: Teléfono, «Dentro de cada nivel
   const deTelefono = await opcionesDe(page, telefono);
   const deChat = await opcionesDe(page, chat);
   expect(deTelefono).toContain('Menos conversaciones atendidas');
-  expect(deChat).toContain('Menos conversaciones activas');
+  expect(deChat).toContain('Menos conversaciones atendidas');
   expect(deChat).toContain('Niveles');
   await pickSelectOption(page, chat, 'Niveles');
   const dentroDeChat = await opcionesDe(page, page.locator('#group-chat-sub-strategy'));
@@ -117,7 +118,7 @@ test('lo guardado con los nombres de antes abre con los de ahora, sin cambios pe
 
   await goto(page, 'admin/grupos/editar/1?seccion=distribucion');
   await expect(page.locator('#group-sub-strategy')).toHaveText('Menos conversaciones atendidas');
-  await expect(page.locator('#group-chat-strategy')).toHaveText('Menos conversaciones activas');
+  await expect(page.locator('#group-chat-strategy')).toHaveText('Menos conversaciones atendidas');
   await expect(page.getByRole('button', GUARDAR)).toBeDisabled();
 
   await goto(page, 'admin/grupos/editar/2?seccion=distribucion');
@@ -128,7 +129,7 @@ test('lo guardado con los nombres de antes abre con los de ahora, sin cambios pe
 
   await goto(page, 'config/aed/grupos');
   await expect(page.locator('#grupos-strategy')).toHaveText('Menos conversaciones atendidas');
-  await expect(page.locator('#grupos-chat-strategy')).toHaveText('Menos conversaciones activas');
+  await expect(page.locator('#grupos-chat-strategy')).toHaveText('Menos conversaciones atendidas');
   await expect(page.getByRole('button', GUARDAR)).toBeDisabled();
 });
 
@@ -160,7 +161,7 @@ test('«Desbordar sesión» sale de la ficha y de Contact Center, y lo que tení
 
   await goto(page, 'admin/grupos/editar/1?seccion=distribucion');
   // La regla común que se queda, a la vista: así el cero de abajo no es de una sección sin pintar.
-  await expect(page.getByRole('switch', { name: 'Desbordar si todos los agentes están inactivos', exact: true })).toBeVisible();
+  await expect(page.getByRole('switch', { name: 'Desbordar conversaciones si no hay agentes conectados', exact: true })).toBeVisible();
   await expect(page.getByText('Desbordar sesión', { exact: true })).toHaveCount(0);
 
   const espera = page.locator('#group-phone-max-wait');
@@ -194,7 +195,7 @@ test('un grupo nuevo caduca la sesión de chat a los 5 minutos si se enciende', 
   await canal(page, 'Chat').click();
   await page.getByRole('button', { name: 'Siguiente', exact: true }).click();
   await page.getByRole('switch', { name: 'Caducar sesión', exact: true }).click();
-  await expect(page.locator('#group-chat-inactivity')).toHaveText('5 min');
+  await expect(page.locator('#group-chat-inactivity')).toHaveValue(/^5/);
 });
 
 test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, por agente conectado', async ({
@@ -207,16 +208,17 @@ test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, p
   await expect(ayuda).toHaveText('Hasta 50 conversaciones en espera en total. ');
 
   await pickSelectOption(page, page.locator('#group-phone-queue-type'), 'Variable');
-  await expect(ayuda).toHaveText('2 conversaciones en cola por agente conectado. Recomendado: 2');
+  await expect(ayuda).toHaveText('2 conversaciones en cola por agente conectado.');
 });
 
-test('las tipificaciones se eligen por su nombre, sin cifras al lado', async ({ page }) => {
-  // El grupo 12 usa «Atención al cliente» y «Encuesta de calidad» (DD-173).
-  await goto(page, 'admin/grupos/editar/12?seccion=recursos');
-  await expect(page.locator('sc-multiselect:has(#group-typification)')).toContainText('2 tipificaciones');
-  await page.locator('sc-multiselect:has(#group-typification) .p-multiselect').click();
-  const opciones = await page.locator('.p-multiselect-overlay .p-multiselect-option').allInnerTexts();
-  expect(opciones.map((o) => o.trim())).toContain('Atención al cliente');
+test('la tipificación se elige por su nombre, sin cifras al lado', async ({ page }) => {
+  // El grupo 12 tipifica con «Atención al cliente»: una, en General › Postconversación (DD-187; hasta entonces, un
+  // multiselect de Recursos con «Atención al cliente» y «Encuesta de calidad», DD-173).
+  await goto(page, 'admin/grupos/editar/12');
+  const tipificacion = page.locator('#group-typification');
+  await expect(tipificacion).toHaveText('Atención al cliente');
+  const opciones = await opcionesDe(page, tipificacion);
+  expect(opciones).toContain('Atención al cliente');
   expect(opciones.filter((o) => /\(\d+\)\s*$/.test(o))).toEqual([]);
 });
 
@@ -224,13 +226,13 @@ test('a 1366 los nombres largos caben en sus desplegables, en la ficha y en Cont
   await page.setViewportSize({ width: 1366, height: 768 });
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   await pickSelectOption(page, page.locator('#group-strategy'), 'Menos conversaciones atendidas');
-  await pickSelectOption(page, page.locator('#group-chat-strategy'), 'Menos conversaciones activas');
+  await pickSelectOption(page, page.locator('#group-chat-strategy'), 'Menos conversaciones atendidas');
   expect(await recortado(page.locator('#group-strategy')), 'la de Teléfono, en la ficha').toBe(false);
   expect(await recortado(page.locator('#group-chat-strategy')), 'la de Chat, en la ficha').toBe(false);
 
   await goto(page, 'config/aed/grupos');
   await pickSelectOption(page, page.locator('#grupos-strategy'), 'Menos conversaciones atendidas');
-  await pickSelectOption(page, page.locator('#grupos-chat-strategy'), 'Menos conversaciones activas');
+  await pickSelectOption(page, page.locator('#grupos-chat-strategy'), 'Menos conversaciones atendidas');
   expect(await recortado(page.locator('#grupos-strategy')), 'la de Teléfono, en Contact Center').toBe(false);
   expect(await recortado(page.locator('#grupos-chat-strategy')), 'la de Chat, en Contact Center').toBe(false);
 });

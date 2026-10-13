@@ -40,7 +40,7 @@ test('la estrategia de teléfono dice qué hace la elegida, se anuncia con el ca
   await pickSelectOption(page, estrategia(page), 'Más tiempo inactivo');
   await expect(estrategia(page)).toHaveAccessibleDescription('Al disponible que lleva más tiempo sin actividad.');
   await pickSelectOption(page, estrategia(page), 'Niveles');
-  await expect(estrategia(page)).toHaveAccessibleDescription(/^Primero, los de nivel 1 libres/);
+  await expect(estrategia(page)).toHaveAccessibleDescription(/^La conversación será distribuida al agente de mayor nivel/);
 });
 
 test('prioridad se nombra por su etiqueta y dice que solo cuenta en las entrantes', async ({ page }) => {
@@ -52,10 +52,11 @@ test('prioridad se nombra por su etiqueta y dice que solo cuenta en las entrante
   await expect(prioridad).not.toHaveAccessibleDescription(/salientes/);
 });
 
-test('la ayuda de un desplegable se anuncia con él: la extensión del agente dice qué es Tel y qué WebRTC', async ({ page }) => {
+test('la ayuda del tipo de extensión se anuncia con él: dice dónde suena', async ({ page }) => {
+  // Desde la revisión del 2026-10-09 el tipo es su propio campo (navegador o teléfono), y su ayuda cambia con él.
   await goto(page, 'admin/agentes/editar/1');
-  const extension = page.getByRole('combobox', { name: /Extensión/ });
-  await expect(extension).toHaveAccessibleDescription(/^Tel: en su móvil\. WebRTC:/);
+  const tipo = page.getByRole('group', { name: 'Tipo de extensión' });
+  await expect(tipo).toHaveAccessibleDescription(/^Suena en el navegador/);
 });
 
 test('la ficha de grupo no tiene ⓘ: cada ayuda se lee sin pasar el ratón', async ({ page }) => {
@@ -66,13 +67,9 @@ test('la ficha de grupo no tiene ⓘ: cada ayuda se lee sin pasar el ratón', as
     await expect(page.locator('main button .sc-icon-font--info'), seccion).toHaveCount(0);
   }
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
-  const dominio = page.getByRole('textbox', { name: 'Dominios permitidos' });
+  // Desde DD-195 los dominios son un `sc-inputtags` (su campo es un combobox) y ya no hay botón «Añadir» al lado.
+  const dominio = page.getByRole('combobox', { name: 'Dominios permitidos' });
   await expect(dominio).toHaveAccessibleDescription(/^Las webs donde se puede insertar el chat/);
-  // La ayuda va dentro del campo, así que la fila ya no centra «Añadir» contra campo + ayuda: el botón se alinea con el
-  // campo (con la ayuda de dos líneas, cayó 21 px).
-  const añadir = page.getByRole('button', { name: 'Añadir' });
-  const [c, b] = [await dominio.boundingBox(), await añadir.boundingBox()];
-  expect(Math.abs(b!.y + b!.height / 2 - (c!.y + c!.height / 2))).toBeLessThanOrEqual(1);
 });
 
 test('los desplegables del DS hablan el idioma de la app: en inglés, «No results» y «Search»', async ({ page }) => {
@@ -110,7 +107,7 @@ test('el tiempo máximo de espera en cola dice qué pasa al agotarse, en los dos
 });
 
 /** La ayuda de un campo: bajo un interruptor, en una fila de ajustes o bajo un campo de la ficha. */
-const AYUDA_DE_CAMPO = '.switch-field__hint, .setting-row__hint, .field__help, .policy-row__hint, .theme-row__hint, .data-row__hint';
+const AYUDA_DE_CAMPO = '.switch-field__hint, .setting-row__hint, .field__help, .sc-selectbutton__msg, .sc-textarea__msg, .policy-row__hint, .theme-row__hint, .data-row__hint';
 /** Su caja: la ayuda es de un campo de ella. */
 const CAJA_DEL_CAMPO = '.switch-field, .setting-row, .field, .policy-row, .theme-row, .data-row';
 /** Un campo. Una fila con solo un botón no tiene (la de borrar los datos confirma con su propio texto). */
@@ -119,8 +116,7 @@ const CAMPO = 'input:not([type=hidden]):not([type=file]), textarea, [role=combob
 const CON_AYUDAS = [
   'admin/grupos/editar/11?seccion=distribucion',
   'admin/agentes/editar/1',
-  'admin/agentes/editar/1?seccion=permisos',
-  'admin/agentes/editar/1?seccion=avanzado',
+  'admin/agentes/editar/1?seccion=configuracion',
   'admin/usuarios/editar/1',
   'config/aed/agentes',
   'config/aed/grupos',
@@ -130,8 +126,10 @@ const CON_AYUDAS = [
 test('cada ayuda de un campo se anuncia con él: fichas, Contact Center y Sistema', async ({ page }) => {
   for (const ruta of CON_AYUDAS) {
     await goto(page, ruta);
-    // Lo plegado también cuenta: «Mensajes en cola» arranca cerrado. Un desplegable no es un `button`.
-    for (const plegado of await page.locator('main button[aria-expanded="false"]:not([aria-haspopup])').all()) {
+    // Lo plegado también cuenta: «Mensajes en cola» arranca cerrado. Un desplegable no es un `button`. El panel rápido
+    // del resumen (Teléfono, Recursos) también es `aria-expanded` sin `aria-haspopup`, pero es otro patrón (una
+    // vista previa, no una ayuda plegada) y abrirlo desplaza el resto de la página: se excluye por su clase.
+    for (const plegado of await page.locator('main button[aria-expanded="false"]:not([aria-haspopup]):not(.resumen__pair-button)').all()) {
       await plegado.click();
     }
     // Cada ayuda, con los campos de su caja que la apuntan. Basta uno: el principal (el interruptor, el desplegable);
@@ -172,6 +170,6 @@ test('Niveles de Chat anuncia su ayuda y nombra Dentro de cada nivel', async ({ 
   const chat = page.locator('#group-channel-chat');
   const estrategiaChat = chat.getByRole('combobox', { name: 'Estrategia', exact: true });
   await pickSelectOption(page, estrategiaChat, 'Niveles');
-  await expect(estrategiaChat).toHaveAccessibleDescription(/^Primero, los de nivel 1/);
+  await expect(estrategiaChat).toHaveAccessibleDescription(/^La conversación será distribuida al agente de mayor nivel/);
   await expect(chat.getByRole('combobox', { name: 'Dentro de cada nivel', exact: true })).toBeVisible();
 });

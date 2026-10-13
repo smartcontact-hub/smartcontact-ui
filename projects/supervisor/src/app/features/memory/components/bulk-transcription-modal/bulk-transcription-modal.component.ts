@@ -160,7 +160,7 @@ export class BulkTranscriptionModalComponent {
         nChats === 1
           ? this.translate.instant('memory.bulk_transcription.chats_one')
           : this.translate.instant('memory.bulk_transcription.chats_many', { count: nChats });
-      return `${head} · ${callsLabel}, ${chatsLabel}`;
+      return `${head}: ${callsLabel}, ${chatsLabel}`;
     }
     return head;
   });
@@ -190,8 +190,8 @@ export class BulkTranscriptionModalComponent {
     }
     if (nIP > 0) excludes.push(`${nIP} en proceso`);
     const parts: string[] = [];
-    if (includes.length > 0) parts.push(`Incluye ${includes.join(' · ')}`);
-    if (excludes.length > 0) parts.push(`Excluye ${excludes.join(' · ')}`);
+    if (includes.length > 0) parts.push(`Incluye ${includes.join(', ')}`);
+    if (excludes.length > 0) parts.push(`Excluye ${excludes.join(', ')}`);
     return parts.length > 0 ? parts.join('. ') + '.' : null;
   });
 
@@ -258,7 +258,7 @@ export class BulkTranscriptionModalComponent {
       badges.push({
         kind: 'exclude',
         count: nIP,
-        label: nIP === 1 ? 'en proceso · excluida' : 'en proceso · excluidas',
+        label: nIP === 1 ? 'en proceso, excluida' : 'en proceso, excluidas',
         icon: 'block',
       });
     }

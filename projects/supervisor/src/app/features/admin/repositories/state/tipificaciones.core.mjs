@@ -1,17 +1,18 @@
 // @ts-check
 /**
- * Las tipificaciones (DD-173), sin Angular: su árbol de hasta tres niveles, qué le falta para guardarse, con qué choca en un
- * grupo y cómo entra y sale de un CSV. Puro para probarlo con node:test (`scripts/__tests__/tipificaciones.test.mjs`);
+ * Las tipificaciones (DD-173), sin Angular: su árbol de hasta tres niveles, qué le falta para guardarse y cómo entra y
+ * sale de un CSV. Puro para probarlo con node:test (`scripts/__tests__/tipificaciones.test.mjs`);
  * lo usan el almacén (`tipificaciones.store.ts`), su listado, su ficha y la ficha de grupo.
  *
- * QUÉ ES UNA TIPIFICACIÓN. Lo que el agente rellena al acabar una conversación, antes de poder recibir otra: un árbol
- * de hasta tres niveles («Compra › Carne › Pollo»), un comentario, o los dos (manual de usuario de Voice, p. 14). En
- * Voice vive dentro de cada grupo; aquí es una ficha propia que se asigna a grupos, por dirección y por canal.
+ * QUÉ ES UNA TIPIFICACIÓN. El árbol que el agente rellena al acabar una conversación, de hasta tres niveles
+ * («Compra › Carne › Pollo»; manual de usuario de Voice, p. 14). Solo eso: su nombre, su descripción y su árbol. Si
+ * un grupo clasifica sus conversaciones, con cuál, en cuáles (todas, entrantes o salientes) y si pide un comentario lo
+ * decide el GRUPO, en su General (revisión de tipificaciones del 2026-10-09). Hasta ese día la tipificación llevaba su
+ * dirección, su comentario y sus grupos por canal (DD-173).
  *
- * DOS REGLAS DE PRODUCTO:
- * - todas las ramas llegan al mismo nivel: con tres niveles, toda opción del primero y del segundo tiene hijas;
- * - en un grupo, cada conversación sabe qué tipificación le toca: dos tipificaciones no pueden cubrir la misma
- *   dirección por el mismo canal del mismo grupo.
+ * Cada rama llega hasta donde haga falta, hasta tres niveles: «Consulta › Facturación › Importe» y «Baja» pueden
+ * convivir, como en Voice (revisión de tipificaciones del 2026-10-09). Hasta ese día todas las ramas tenían que llegar
+ * al mismo nivel (DD-173), y una rama corta no dejaba guardar.
  */
 
 /** Los niveles que puede tener el árbol. */
@@ -22,9 +23,15 @@ export const TOPE_DE_IMPORTACION = 500;
 
 /* ── El árbol ───────────────────────────────────────────────────────────────────────────────────────────────────── */
 
-/** Cuántos niveles pide al agente: los de su árbol si tiene categorización, y ninguno si solo pide comentario. */
+/** Cuántos niveles pide al agente: los de su árbol. */
 export function nivelesDe(t) {
-  return t.categorization ? t.levels : 0;
+  return t.levels;
+}
+
+/** Hasta qué nivel llega la rama más larga, de 1 a 3: los niveles de la tipificación. Sin opciones, 1. */
+export function profundidad(opciones) {
+  const hasta = (lista) => (lista.length === 0 ? 0 : 1 + Math.max(...lista.map((o) => hasta(o.children))));
+  return Math.min(NIVELES_MAXIMOS, Math.max(1, hasta(opciones)));
 }
 
 /** Cuántas opciones hay en cada nivel, del primero al último que se usa: `[3, 6, 18]`. */
@@ -109,93 +116,7 @@ export function nuevoIdDeOpcion(opciones) {
   return `o${max + 1}`;
 }
 
-/* ── Los grupos ─────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-/** Las direcciones que cubre, en orden: `['inbound', 'outbound']`. */
-export function direccionesDe(t) {
-  return /** @type {('inbound' | 'outbound')[]} */ ([t.inbound ? 'inbound' : null, t.outbound ? 'outbound' : null].filter(Boolean));
-}
-
-/**
- * Con qué choca una tipificación en sus grupos: otra del mismo grupo que cubre una de sus direcciones por uno de sus
- * canales. Una entrada por grupo, otra tipificación, dirección y canal. La propia (mismo id) no cuenta, así la ficha la
- * compara con lo guardado de las demás.
- */
-export function choquesDe(tipificacion, todas) {
-  const choques = [];
-  const direcciones = direccionesDe(tipificacion);
-  for (const enlace of tipificacion.groups) {
-    for (const otra of todas) {
-      if (otra.id === tipificacion.id) continue;
-      const suyo = otra.groups.find((g) => g.groupId === enlace.groupId);
-      if (!suyo) continue;
-      for (const direction of direccionesDe(otra).filter((d) => direcciones.includes(d))) {
-        for (const channel of enlace.channels.filter((c) => suyo.channels.includes(c))) {
-          choques.push({ groupId: enlace.groupId, otherId: otra.id, otherName: otra.name, direction, channel });
-        }
-      }
-    }
-  }
-  return choques;
-}
-
-/** Las tipificaciones de un grupo, cada una con los canales por los que se usa en él. */
-export function tipificacionesDeGrupo(todas, groupId) {
-  return todas.flatMap((t) => {
-    const enlace = t.groups.find((g) => g.groupId === groupId);
-    return enlace ? [{ tipificacion: t, channels: enlace.channels }] : [];
-  });
-}
-
-/**
- * Asignar a un grupo, desde su ficha, las tipificaciones `ids`: a las que no lo tenían se les añade con los canales del
- * grupo (`familias`), y a las que lo tenían y ya no están se les quita. Las que siguen conservan sus canales. Devuelve
- * solo las tipificaciones que cambian.
- */
-export function asignarAGrupo(todas, ids, groupId, familias) {
-  const quiero = new Set(ids);
-  const cambian = [];
-  for (const t of todas) {
-    const tiene = t.groups.some((g) => g.groupId === groupId);
-    if (quiero.has(t.id) && !tiene) {
-      cambian.push({ ...t, groups: [...t.groups, { groupId, channels: [...familias] }] });
-    } else if (!quiero.has(t.id) && tiene) {
-      cambian.push({ ...t, groups: t.groups.filter((g) => g.groupId !== groupId) });
-    }
-  }
-  return cambian;
-}
-
-/**
- * Los canales de cada grupo, al día con lo que ofrece el grupo: se queda lo que el grupo sigue ofreciendo y un grupo
- * borrado sale. Devuelve el MISMO objeto si ya estaba al día, para que leer no invente cambios.
- * `familiasDe(groupId)` da las familias del grupo, o `null` si ya no existe.
- */
-export function gruposAlDia(tipificacion, familiasDe) {
-  let cambia = false;
-  const groups = tipificacion.groups.flatMap((g) => {
-    const familias = familiasDe(g.groupId);
-    if (!familias) {
-      cambia = true;
-      return [];
-    }
-    const channels = g.channels.filter((c) => familias.includes(c));
-    if (channels.length !== g.channels.length) cambia = true;
-    return [channels.length === g.channels.length ? g : { ...g, channels }];
-  });
-  return cambia ? { ...tipificacion, groups } : tipificacion;
-}
-
 /* ── Importar y descargar ───────────────────────────────────────────────────────────────────────────────────────── */
-
-/** Las palabras que se leen de una celda, en cualquiera de los cuatro idiomas de la app. */
-const DIRECCIONES = {
-  inbound: /^(entrantes?|inbound|entrants?|entradas?)$/i,
-  outbound: /^(salientes?|outbound|sortants?|sa[ií]das?)$/i,
-  both: /^(ambas|las dos|both|les deux|ambos|as duas)$/i,
-};
-const SI = /^(s[ií]|yes|oui|sim|y|s)$/i;
-const NO = /^(no|non|n[aã]o|n)$/i;
 
 /** La primera columna de la cabecera de la plantilla, en cualquiera de los cuatro idiomas. */
 const CABECERA = /^(nombre|name|nom|nome)$/i;
@@ -228,14 +149,6 @@ function campos(linea, separador) {
   return salida.map((campo) => campo.trim());
 }
 
-/** La dirección de una celda: `{ inbound, outbound }`, o `null` si no se entiende. */
-function leerDireccion(celda) {
-  if (DIRECCIONES.both.test(celda)) return { inbound: true, outbound: true };
-  if (DIRECCIONES.inbound.test(celda)) return { inbound: true, outbound: false };
-  if (DIRECCIONES.outbound.test(celda)) return { inbound: false, outbound: true };
-  return null;
-}
-
 /** Mete un camino en un árbol, sin repetir las opciones que ya están (por nombre, sin mayúsculas). */
 function meterCamino(opciones, camino, siguienteId) {
   if (camino.length === 0) return opciones;
@@ -252,13 +165,11 @@ function meterCamino(opciones, camino, siguienteId) {
 
 /**
  * Lo que entra desde un CSV, una línea por camino del árbol, y lo que no:
- * - columnas: nombre; descripción; dirección; comentarios; nivel 1; nivel 2; nivel 3. Las líneas con el mismo nombre
- *   son la MISMA tipificación: la descripción, la dirección y los comentarios salen de su primera línea;
+ * - columnas: nombre; descripción; nivel 1; nivel 2; nivel 3. Las líneas con el mismo nombre son la MISMA
+ *   tipificación: la descripción sale de su primera línea, y sus niveles son los de su línea más larga;
  * - el separador es el de la primera línea con datos (`;` si lo lleva), la cabecera de la plantilla en cualquier
  *   idioma y las líneas vacías no cuentan;
- * - errores, con su línea: sin nombre, una dirección que no se entiende, un hueco entre niveles (nivel 1 y nivel 3
- *   sin nivel 2), o una línea que no llega al mismo nivel que la primera de su tipificación (todas las ramas, al mismo
- *   nivel). Sin niveles ni comentarios, la tipificación no pide nada: también es un error;
+ * - errores, con su línea: sin nombre, sin ningún nivel, o un hueco entre niveles (nivel 1 y nivel 3 sin nivel 2);
  * - una tipificación con el nombre de una que ya existe se salta y se cuenta;
  * - lo que pasa del tope se cuenta en `sobran`.
  */
@@ -279,7 +190,7 @@ export function parsearTipificacionesCsv(texto, existentes, tope = TOPE_DE_IMPOR
       if (!linea.trim()) return;
       const primera = separador === null;
       separador ??= linea.includes(';') ? ';' : ',';
-      const [name = '', description = '', direccion = '', comentarios = '', n1 = '', n2 = '', n3 = ''] = campos(linea, separador);
+      const [name = '', description = '', n1 = '', n2 = '', n3 = ''] = campos(linea, separador);
       if (primera && CABECERA.test(name)) return;
       const numero = i + 1;
       if (!name) return void resultado.errores.push({ linea: numero, motivo: 'nombre' });
@@ -294,28 +205,15 @@ export function parsearTipificacionesCsv(texto, existentes, tope = TOPE_DE_IMPOR
       if (niveles.slice(0, hasta).some((n) => !n)) return void resultado.errores.push({ linea: numero, motivo: 'hueco' });
       const camino = niveles.slice(0, hasta);
 
+      if (hasta === 0) return void resultado.errores.push({ linea: numero, motivo: 'vacia' });
+
       let t = porNombre.get(clave);
       if (!t) {
-        const dir = leerDireccion(direccion);
-        if (!dir) return void resultado.errores.push({ linea: numero, motivo: 'direccion' });
-        const comments = SI.test(comentarios) ? true : NO.test(comentarios) || !comentarios ? false : null;
-        if (comments === null) return void resultado.errores.push({ linea: numero, motivo: 'comentarios' });
-        if (hasta === 0 && !comments) return void resultado.errores.push({ linea: numero, motivo: 'vacia' });
         if (porNombre.size >= tope) return void resultado.sobran++;
-        t = {
-          name,
-          description,
-          ...dir,
-          comments,
-          categorization: hasta > 0,
-          levels: Math.max(1, hasta),
-          options: [],
-          groups: [],
-          linea: numero,
-        };
+        t = { name, description, levels: hasta, options: [], linea: numero };
         porNombre.set(clave, t);
-      } else if ((t.categorization ? t.levels : 0) !== hasta) {
-        return void resultado.errores.push({ linea: numero, motivo: 'nivel' });
+      } else {
+        t.levels = Math.max(t.levels, hasta);
       }
       t.options = meterCamino(t.options, camino, siguienteId);
     });
@@ -324,16 +222,11 @@ export function parsearTipificacionesCsv(texto, existentes, tope = TOPE_DE_IMPOR
   return resultado;
 }
 
-/**
- * Las filas para descargar, con las columnas de la plantilla: una por camino del árbol, y una sola si solo pide
- * comentario. `textos` traduce la dirección (`inbound`, `outbound`, `both`) y los comentarios (`yes`, `no`).
- */
-export function filasParaDescargar(tipificaciones, textos) {
+/** Las filas para descargar, con las columnas de la plantilla: una por camino del árbol. */
+export function filasParaDescargar(tipificaciones) {
   return tipificaciones.flatMap((t) => {
-    const direccion = t.inbound && t.outbound ? textos.both : t.inbound ? textos.inbound : textos.outbound;
-    const cabeza = [t.name, t.description, direccion, t.comments ? textos.yes : textos.no];
+    const cabeza = [t.name, t.description];
     const niveles = nivelesDe(t);
-    if (niveles === 0) return [[...cabeza, '', '', '']];
     const filas = [];
     const recorrer = (lista, camino) => {
       for (const o of lista) {

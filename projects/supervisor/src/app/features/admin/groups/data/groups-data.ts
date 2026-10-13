@@ -22,6 +22,13 @@ export const CHANNEL_LABEL_KEYS: Readonly<Record<GroupChannel, string>> = {
   email: 'groups.channel.email',
 };
 
+/** El nombre de cada número de salida, el del campo real en Distribución y colas («Teléfono saliente»,
+ *  «Número WhatsApp»): el genérico del canal («Teléfono», «WhatsApp») no es el que lee quien llega ahí. */
+export const OUTBOUND_LABEL_KEYS: Readonly<Record<'phone' | 'whatsapp', string>> = {
+  phone: 'groups.form.fields.phone',
+  whatsapp: 'groups.form.advanced.whatsapp_number',
+};
+
 /** Por dónde atiende un agente en un grupo: Teléfono, Chat (Web Chat y WhatsApp juntos) o Email, como en el AED en
  *  vivo (DD-147). El grupo ofrece sus cuatro canales; el enlace de cada agente guarda familias. */
 export type ChannelFamily = 'phone' | 'chat' | 'email';
@@ -41,26 +48,33 @@ export function compareChannels<C extends string>(a: readonly C[], b: readonly C
 }
 
 /* Las de SISMAC-1975 en COA (decisión de producto, 2026-09-16: las estrategias siguen al COA): quita Aleatoria y Lineal, y
- * añade Niveles, Ring All y Skills. «Agente exclusivo» se queda: el COA no la quita, y el manual de Voice (p. 12) y
- * el Figma de la migración la traen.
- * Skills sale APAGADA con su motivo a la vista, como pide el COA para las que necesitan configuración posterior: aquí
- * Niveles y Ring All ya se configuran en la ficha, pero las skills de cada agente todavía no existen. */
+ * añade Niveles y Ring All. «Agente exclusivo» se queda: el COA no la quita, y el manual de Voice (p. 12) y el Figma de
+ * la migración la traen. Skills salió en la revisión de grupos del equipo (2026-10-06): las skills de cada agente no
+ * existen, y una opción apagada con su motivo solo enseña lo que no hay. */
 export const PHONE_STRATEGIES: readonly string[] = [
   'Balanceada',
   'Menos conversaciones atendidas',
   'Más tiempo inactivo',
   'Niveles',
   'Ring All',
-  'Skills',
   'Agente exclusivo',
 ];
-
-/** Las que aún no se pueden elegir (ver arriba). */
-export const UNAVAILABLE_STRATEGIES: ReadonlySet<string> = new Set(['Skills']);
 
 /** Las que sirven de valor por defecto en Contact Center › Grupos: las que no piden nada más en cada grupo. Niveles,
  *  Ring All, Skills y Agente exclusivo necesitan niveles, un número de agentes, skills o el IVR (SISMAC-1975). */
 export const DEFAULT_STRATEGY_OPTIONS: readonly string[] = ['Balanceada', 'Menos conversaciones atendidas', 'Más tiempo inactivo'];
+
+/** Qué hace cada estrategia de teléfono, en una línea (DD-133): sale del manual de usuario de Voice, que describe
+ *  seis; Skills sale apagada con su motivo y no lleva ayuda. La usan el campo de Distribución y colas y el
+ *  selector rápido del resumen (DD-146): la misma frase en los dos sitios. */
+export const PHONE_STRATEGY_HELP_KEYS: Readonly<Record<string, string>> = {
+  Balanceada: 'groups.form.strategy_help.balanced',
+  'Menos conversaciones atendidas': 'groups.form.strategy_help.fewest_conversations',
+  'Más tiempo inactivo': 'groups.form.strategy_help.longest_idle',
+  Niveles: 'groups.form.strategy_help.levels',
+  'Ring All': 'groups.form.strategy_help.ring_all',
+  'Agente exclusivo': 'groups.form.strategy_help.exclusive',
+};
 
 /** Desempata entre agentes del mismo nivel. No puede ser Niveles (manual de Voice, p. 12). */
 export const SUB_STRATEGIES: readonly string[] = ['Balanceada', 'Más tiempo inactivo', 'Menos conversaciones atendidas'];
@@ -79,7 +93,28 @@ export type QueueSizeType = 'fixed' | 'per_agent';
 export type AudioSource = 'none' | 'tts' | 'file';
 export type CardOpening = 'new_window' | 'embedded';
 
-export const VOICE_OPTIONS: readonly string[] = ['Femenina · español', 'Masculina · español', 'Femenina · inglés', 'Masculina · inglés'];
+/** Las voces sintéticas, con el nombre y el idioma con que las lista Voice. */
+export const VOICE_OPTIONS: readonly string[] = [
+  'Jorge (masculino, Español)',
+  'Monica (femenino, Español)',
+  'Thomas (masculino, Francés)',
+  'Audrey (femenino, Francés)',
+  'Ethan (masculino, Inglés)',
+  'Allison (femenino, Inglés)',
+];
+
+/** Cómo se llamaban las cuatro voces de antes: lo guardado con ellas se lee con la voz de su idioma. */
+const LEGACY_VOICES: Readonly<Record<string, string>> = {
+  'Femenina, español': 'Monica (femenino, Español)',
+  'Masculina, español': 'Jorge (masculino, Español)',
+  'Femenina, inglés': 'Allison (femenino, Inglés)',
+  'Masculina, inglés': 'Ethan (masculino, Inglés)',
+};
+/** El punto medio de antes (DD-183) se lee como la coma de ahora. */
+export function voiceOf(stored: string): string {
+  const sinPuntoMedio = stored.replace(' \u00b7 ', ', ');
+  return LEGACY_VOICES[sinPuntoMedio] ?? sinPuntoMedio;
+}
 
 /** Un anuncio periódico: su .wav y cada cuánto suena. Postventa, 2026-09-18: «posibilidad de meter más de uno». */
 export interface PeriodicAnnouncement {
@@ -156,7 +191,7 @@ export const DEFAULT_ANNOUNCEMENTS: GroupAnnouncements = {
   nextInLineSource: 'none',
   nextInLineFile: null,
   nextInLineText: '',
-  voice: 'Femenina · español',
+  voice: 'Monica (femenino, Español)',
   periodicAnnouncements: [],
   outboundAudioFile: null,
   announceAvgWait: false,
@@ -185,8 +220,7 @@ export const DEFAULT_ADVANCED: GroupAdvanced = {
 };
 
 export const CHAT_STRATEGIES: readonly string[] = [
-  'Rotativa (por turnos)',
-  'Menos conversaciones activas',
+  'Menos conversaciones atendidas',
   'Balanceada',
   'Niveles',
 ];
@@ -198,10 +232,15 @@ export const CHAT_SUB_STRATEGIES = DEFAULT_CHAT_STRATEGY_OPTIONS;
 /** Con la que reparte un grupo de ejemplo con Chat que no ha elegido otra. Uno nuevo nace con la de Contact Center. */
 export const DEFAULT_CHAT_STRATEGY = CHAT_STRATEGIES[0]!;
 
-/** Las estrategias que cambiaron de nombre, con el de ahora: reparten conversaciones, no llamadas ni chats (DD-141). */
+/** Las estrategias que cambiaron de nombre, con el de ahora: reparten conversaciones, no llamadas ni chats (DD-141). Y las
+ *  que salieron en la revisión de grupos del 2026-10-06 (Rotativa no existe en Voice; Skills, sin skills por agente), con
+ *  la que las sustituye: lo guardado con ellas no abre el campo en blanco. */
 const RENAMED_STRATEGIES: Readonly<Record<string, string>> = {
   'Menos llamadas atendidas': 'Menos conversaciones atendidas',
-  'Menos chats activos': 'Menos conversaciones activas',
+  'Menos chats activos': 'Menos conversaciones atendidas',
+  'Menos conversaciones activas': 'Menos conversaciones atendidas',
+  'Rotativa (por turnos)': 'Menos conversaciones atendidas',
+  Skills: 'Balanceada',
 };
 
 /** El nombre de ahora de una estrategia guardada. El nombre ES el valor que se guarda: lo guardado con el de antes se
@@ -258,8 +297,11 @@ export interface ChannelQueue {
 }
 
 /** Catálogos de D3; los valores guardados fuera de ellos siguen siendo legibles, sin migrarlos. */
-export const GROUP_TIME_SECONDS = [5, 10, 15, 20, 25, 30, 60, 90, 120] as const;
+export const GROUP_TIME_SECONDS = [5, 10, 15, 20, 25, 30, 60, 90, 120, 180, 240, 300, 600, 900, 1800] as const;
 export const CHAT_INACTIVITY_MINUTES = [5, 10, 15, 30, 60] as const;
+
+/** Los números de WhatsApp de la cuenta, de los que se elige el del grupo. */
+export const WHATSAPP_NUMBERS: readonly string[] = ['+34 900 100 200', '+34 900 100 201'];
 
 export function groupDurationOptions(current: number, minutes: boolean, locale: string): readonly { label: string; value: number }[] {
   const catalog: readonly number[] = minutes ? CHAT_INACTIVITY_MINUTES : GROUP_TIME_SECONDS;
@@ -277,11 +319,15 @@ export function validQueueSize(queue: ChannelQueue): boolean {
 /** Los subcanales de Chat. `chat` es Web Chat. */
 export type ChatSubchannel = 'chat' | 'whatsapp';
 
-/** Lo que se le escribe al cliente de chat mientras espera. Vacío = no se envía nada. */
+/** Lo que se le escribe al cliente de chat (manual de Voice): el mensaje inicial y el final, y los dos que dependen del
+ *  horario de atención, que solo se envían si hay uno. Vacío = no se envía nada. */
 export interface ChatQueueMessages {
-  readonly onEnter: string;
-  readonly whileWaiting: string;
-  readonly noAgents: string;
+  readonly initial: string;
+  readonly final: string;
+  /** Al escribir fuera del horario de atención. */
+  readonly outOfSchedule: string;
+  /** El día no valorable: el que el horario no cubre. */
+  readonly nonWorkingDay: string;
 }
 
 /** Lo propio de Chat: cerrar por inactividad (visible, no en un «avanzado») y los mensajes de cola de cada
@@ -294,7 +340,7 @@ export interface ChatSettings {
   readonly queueMessages: Readonly<Record<ChatSubchannel, ChatQueueMessages>>;
 }
 
-export const EMPTY_CHAT_MESSAGES: ChatQueueMessages = { onEnter: '', whileWaiting: '', noAgents: '' };
+export const EMPTY_CHAT_MESSAGES: ChatQueueMessages = { initial: '', final: '', outOfSchedule: '', nonWorkingDay: '' };
 
 export const DEFAULT_CHAT_SETTINGS: ChatSettings = {
   closeOnInactivity: false,
@@ -308,6 +354,42 @@ export function queueFrom(advanced: GroupAdvanced): ChannelQueue {
   return { queueSizeType, queueSize, maxQueueWaitSec, serviceLevelSec, transferSec };
 }
 
+/* ── La tipificación del grupo (revisión de tipificaciones del 2026-10-09) ──
+ *
+ * Lo que el grupo pide al agente al acabar cada conversación: un comentario, clasificarla con UNA tipificación, o las
+ * dos cosas, y en cuáles (todas, solo las entrantes o solo las salientes). Es del grupo y no de la tipificación, que
+ * se queda en su árbol: la misma tipificación sirve a un grupo para las entrantes y a otro para todas. Hasta ese día
+ * la tipificación llevaba su dirección, su comentario y sus grupos por canal, y un grupo podía tener varias (DD-173). */
+
+/** En qué conversaciones se clasifica: todas, solo las entrantes o solo las salientes. */
+export type WrapUpScope = 'all' | 'inbound' | 'outbound';
+export const WRAP_UP_SCOPES: readonly WrapUpScope[] = ['all', 'inbound', 'outbound'];
+
+export interface GroupWrapUp {
+  /** «Permitir comentarios»: el agente puede dejar una nota al acabar. */
+  readonly comments: boolean;
+  /** «Clasificar llamadas»: el agente elige del árbol de `typificationId`. */
+  readonly classify: boolean;
+  readonly typificationId: number | null;
+  readonly scope: WrapUpScope;
+}
+
+export const DEFAULT_WRAP_UP: GroupWrapUp = { comments: false, classify: false, typificationId: null, scope: 'all' };
+
+/** La de los grupos de EJEMPLO, por id: la que llevaban las tipificaciones de la semilla hasta el 2026-10-09, una por
+ *  grupo (la de entrantes, si tenía dos). */
+const SEED_WRAP_UP: Readonly<Record<number, GroupWrapUp>> = {
+  2: { comments: true, classify: true, typificationId: 1, scope: 'inbound' },
+  3: { comments: true, classify: true, typificationId: 2, scope: 'outbound' },
+  4: { comments: true, classify: true, typificationId: 2, scope: 'outbound' },
+  9: { comments: true, classify: true, typificationId: 1, scope: 'inbound' },
+  10: { comments: true, classify: true, typificationId: 3, scope: 'all' },
+  11: { comments: true, classify: true, typificationId: 1, scope: 'all' },
+  12: { comments: true, classify: true, typificationId: 1, scope: 'all' },
+  13: { comments: true, classify: true, typificationId: 3, scope: 'all' },
+  14: { comments: true, classify: true, typificationId: 2, scope: 'outbound' },
+};
+
 /** Un grupo con TODO resuelto: lo que guardó, y lo que no, de su juego de antes o de fábrica. */
 export interface ResolvedGroup extends Group {
   readonly announcements: GroupAnnouncements;
@@ -315,6 +397,7 @@ export interface ResolvedGroup extends Group {
   readonly phoneQueue: ChannelQueue;
   readonly chatQueue: ChannelQueue;
   readonly chat: ChatSettings;
+  readonly wrapUp: GroupWrapUp;
 }
 
 /**
@@ -326,12 +409,14 @@ export function resolveGroup(group: Group): ResolvedGroup {
   const advanced: GroupAdvanced = { ...DEFAULT_ADVANCED, ...group.advanced };
   const legacyQueue = queueFrom(advanced);
   const messages = group.chat?.queueMessages;
+  const announcements = { ...DEFAULT_ANNOUNCEMENTS, ...group.announcements };
   return {
     ...group,
-    announcements: { ...DEFAULT_ANNOUNCEMENTS, ...group.announcements },
+    announcements: { ...announcements, voice: voiceOf(announcements.voice) },
     advanced,
     phoneQueue: { ...legacyQueue, ...group.phoneQueue },
     chatQueue: { ...legacyQueue, ...group.chatQueue },
+    wrapUp: { ...DEFAULT_WRAP_UP, ...(group.wrapUp ?? SEED_WRAP_UP[group.id]) },
     chat: {
       ...DEFAULT_CHAT_SETTINGS,
       ...group.chat,
@@ -378,9 +463,10 @@ export interface Group {
   readonly chatSubStrategy?: string;
   readonly ringAllAgents?: number;
   readonly services?: readonly string[];
-  /** La tipificación del grupo: una categoría de `Repositorios > Tipificaciones`. Con ella, el agente tiene que
-   *  tipificar antes de cerrar (manual de Voice, p. 14). */
+  /** De antes de las tipificaciones con su árbol (DD-173): ya no se lee. Lo de ahora va en `wrapUp`. */
   readonly typification?: string;
+  /** Comentario y clasificación al acabar cada conversación. Sin ella, la de su semilla o ninguna (`resolveGroup`). */
+  readonly wrapUp?: GroupWrapUp;
   readonly announcements?: GroupAnnouncements;
   readonly advanced?: GroupAdvanced;
   /** La cola y los tiempos de Teléfono. Sin ella, los de `advanced` (se lee con `resolveGroup`). */
@@ -500,7 +586,7 @@ export const GROUPS_SEED: readonly Group[] = [
     priority: 'Baja',
     channels: ['phone', 'chat'],
     strategy: 'Balanceada',
-    chatStrategy: 'Rotativa (por turnos)',
+    chatStrategy: 'Menos conversaciones atendidas',
     services: ['Atención general', 'Soporte técnico', 'Consultas facturación'],
   },
   {
@@ -511,7 +597,7 @@ export const GROUPS_SEED: readonly Group[] = [
     priority: 'Máxima',
     channels: ['phone', 'chat', 'whatsapp', 'email'],
     strategy: 'Balanceada',
-    chatStrategy: 'Menos conversaciones activas',
+    chatStrategy: 'Menos conversaciones atendidas',
     labels: [3, 6],
     templates: [1, 2, 3, 4, 5, 11],
     services: ['Soporte técnico', 'Soporte web'],
@@ -526,7 +612,7 @@ export const GROUPS_SEED: readonly Group[] = [
     typification: 'Consulta',
     channels: ['phone', 'chat', 'whatsapp'],
     strategy: 'Balanceada',
-    chatStrategy: 'Rotativa (por turnos)',
+    chatStrategy: 'Menos conversaciones atendidas',
     labels: [4, 10],
     templates: [7, 8, 10],
     services: ['Reclamaciones', 'Atención general'],
@@ -540,7 +626,7 @@ export const GROUPS_SEED: readonly Group[] = [
     priority: 'Máxima',
     channels: ['phone', 'chat', 'whatsapp'],
     strategy: 'Más tiempo inactivo',
-    chatStrategy: 'Menos conversaciones activas',
+    chatStrategy: 'Menos conversaciones atendidas',
     services: ['Soporte taller', 'Averías'],
   },
   {

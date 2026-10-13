@@ -22,6 +22,16 @@ const SELECTION_SNIPPET = `<button type="button" (click)="count.set(3)">Seleccio
   <button type="button">Eliminar</button>
 </sc-bulk-action-bar>`;
 
+const RESULT_SNIPPET = `<!-- Tras aplicar un cambio en lote, sin selección, la barra lo cuenta con «Deshacer» pegado al texto (DD-196). -->
+<sc-bulk-action-bar
+  [count]="0"
+  [entity]="entity"
+  [result]="resultado()"
+  [resultUndoable]="sePuedeDeshacer()"
+  (undo)="deshacer()"
+  (clear)="resultado.set(null)"
+/>`;
+
 /** Demo de `sc-bulk-action-bar` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-bulkactionbar-demo',
@@ -32,6 +42,21 @@ const SELECTION_SNIPPET = `<button type="button" (click)="count.set(3)">Seleccio
 export class BulkActionBarDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
   protected readonly selectionTpl = viewChild<TemplateRef<StoryContext>>('selection');
+  protected readonly resultTpl = viewChild<TemplateRef<StoryContext>>('result');
+
+  /** El resultado del último cambio en lote, y si aún se puede deshacer. Sin él, esa barra no se ve. */
+  readonly resultado = signal<string | null>(null);
+  readonly sePuedeDeshacer = signal(false);
+
+  protected aplicar(): void {
+    this.resultado.set('Cambio aplicado a 3 agentes');
+    this.sePuedeDeshacer.set(true);
+  }
+
+  protected deshacer(): void {
+    this.resultado.set('Cambio revertido');
+    this.sePuedeDeshacer.set(false);
+  }
 
   /** Estado de selección compartido por las stories (barra visible con count > 0). */
   readonly count = signal(3);
@@ -42,7 +67,7 @@ export class BulkActionBarDemoComponent {
     tag: 'sc-bulk-action-bar',
     title: 'Bulk Action Bar',
     description:
-      'Barra fija inferior que aparece al seleccionar filas en list pages. Resumen «N entidad seleccionados» + botón de limpiar a la izquierda; acciones proyectadas a la derecha. Aparece fija al fondo de la página cuando count > 0.',
+      'Barra fija inferior que aparece al seleccionar filas en list pages. Resumen «N entidad seleccionados» + botón de limpiar a la izquierda; acciones proyectadas a la derecha. Aparece fija al fondo de la página cuando count > 0. Tras aplicar un cambio en lote, sin selección, se queda y cuenta el resultado (`result`) con «Deshacer» al lado (`resultUndoable`, `undo`), en lugar de un toast.',
     argTypes: [
       {
         name: 'count',
@@ -64,10 +89,12 @@ export class BulkActionBarDemoComponent {
   protected readonly stories = computed<readonly StoryDef[]>(() => {
     const pg = this.playgroundTpl();
     const se = this.selectionTpl();
-    if (!pg || !se) return [];
+    const re = this.resultTpl();
+    if (!pg || !se || !re) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Con selección', template: se, snippet: SELECTION_SNIPPET },
+      { name: 'Tras aplicar un cambio', template: re, snippet: RESULT_SNIPPET },
     ];
   });
 }

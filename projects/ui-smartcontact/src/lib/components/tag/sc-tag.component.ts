@@ -46,6 +46,28 @@ export class ScTagComponent {
      */
     readonly bordered = input(true, { transform: booleanAttribute });
 
+    /**
+     * Talla: `sm` (por defecto) es la del Kit, 12 en negrita; `md` es 14 en semibold, la del texto de una fila de datos,
+     * para una píldora que hace de valor junto a otros valores de 14 (el resumen de la ficha de grupo, DD-186). Va por
+     * la entrada `pt` de `p-tag`, no con CSS encima.
+     */
+    readonly size = input<'sm' | 'md'>('sm');
+
+    protected readonly tagPt = computed(() =>
+        this.size() === 'md'
+            ? {
+                  root: {
+                      style: {
+                          'font-size': 'var(--sc-font-size-body-2)',
+                          'line-height': 'var(--sc-line-height-body-2)',
+                          'font-weight': 'var(--sc-font-weight-semibold)',
+                          padding: 'var(--sc-spacing-0-125) var(--sc-spacing-0-75)'
+                      }
+                  }
+              }
+            : undefined
+    );
+
     /** CSS custom props del color de la etiqueta (consumidas por el SCSS). */
     protected readonly labelVars = computed<Record<string, string>>(() => {
         const c = this.labelColor();
