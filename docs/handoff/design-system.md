@@ -168,17 +168,17 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
-## ✅ 2026-10-13 · sc-docs suma lo que tiene un Storybook, sin cambiarse a él (DD-201)
+## ✅ 2026-10-13 · sc-docs suma lo que tiene un Storybook, sin cambiarse a él (DD-202)
 
 **Sello:** rama `arebury/docs-storybook-vs-sc`, sobre HEAD `9845c34c` (#385). Sale por el tope el tramo del 2026-10-05
 (DD-172): `git show 9845c34c:docs/handoff/design-system.md`.
 
-**Lo que cambia.** Ocho piezas en sc-docs tras barrer el Storybook de Primer (DD-201): dirección por story, ancho en
+**Lo que cambia.** Ocho piezas en sc-docs tras barrer el Storybook de Primer (DD-202): dirección por story, ancho en
 iframe, medir, contornos, axe con su trinquete (`e2e/sc-docs-a11y.spec.ts`), «Todas las combinaciones», los controles en
 un panel a la derecha que marca lo tocado, la ficha para agentes (`docs:ia`) y una captura por story (`docs:capturas`).
 
 - **Tras fundir**: lanzar `docs-capturas` con `rama=main` (o esperar al lunes); hasta entonces, fichas sin captura.
-- **Los 71 fallos de accesibilidad** (por regla, en DD-201): colordotpicker 18, progressbar 12, checkbox 10, inputtags 10,
+- **Los 71 fallos de accesibilidad** (por regla, en DD-202): colordotpicker 18, progressbar 12, checkbox 10, inputtags 10,
   gauge 7, datatable 4, radiobutton 3, tabs 3, grouppopover 2, chip 1, textarea 1. Cada arreglo baja el tope.
 
 ## ✅ 2026-10-13 · Iconos: un icono, un significado (DD-200)

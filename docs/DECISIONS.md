@@ -147,7 +147,7 @@
 
 ---
 
-## DD-201 · 2026-10-13 — sc-docs se queda con su motor y suma lo que tiene un Storybook: dirección por story, anchos, regla, contornos, accesibilidad, todas las combinaciones, controles en un panel lateral y una ficha en texto para agentes
+## DD-202 · 2026-10-13 — sc-docs se queda con su motor y suma lo que tiene un Storybook: dirección por story, anchos, regla, contornos, accesibilidad, todas las combinaciones, controles en un panel lateral y una ficha en texto para agentes
 
 **Contexto** · Barrido del Storybook de Primer el 2026-10-13, por si convenía cambiar sc-docs a Storybook. Primer
 tiene dos: el de tokens (158 historias; 25 solo para capturas de prueba) y el de componentes (1.101 historias de 211

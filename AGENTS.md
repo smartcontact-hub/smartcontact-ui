@@ -494,7 +494,7 @@ Docs MUST:
 - include variants, states, usage, API
 - not invent features
 
-**Para LEER un componente entero, sin abrir cinco ficheros** (DD-201): `npm run docs:ia` escribe en
+**Para LEER un componente entero, sin abrir cinco ficheros** (DD-202): `npm run docs:ia` escribe en
 `projects/sc-docs/public/ia/<ficha>.md` su ficha en texto (cuándo, estado, importar, propiedades, cada story con su código
 y su enlace, anatomía, dónde se usa) y el índice en `projects/sc-docs/public/llms.txt`. No se versionan: se generan en cada
 build, y publicadas viven en `sc-doc.pages.dev/llms.txt` y `/ia/<ficha>.md`. Para ENSEÑAR o capturar una story concreta,
