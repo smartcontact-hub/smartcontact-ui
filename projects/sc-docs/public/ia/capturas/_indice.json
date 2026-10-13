@@ -1,0 +1,1283 @@
+{
+  "generado": "scripts/docs-capturas.mjs",
+  "fecha": "2026-10-13",
+  "viewport": "1280x900",
+  "tema": "claro",
+  "fichas": {
+    "button": {
+      "anatomia": [
+        "sc-button",
+        "  p-button",
+        "    button.p-button.p-button-primary.p-component.p-ripple",
+        "      span.p-button-icon.p-button-icon-left.sc-icon-font.sc-icon-font--check.sc-icon-font--md"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "button/playground.png"
+        },
+        "variantes": {
+          "nombre": "Variantes",
+          "png": "button/variantes.png"
+        },
+        "apariencias": {
+          "nombre": "Apariencias",
+          "png": "button/apariencias.png"
+        },
+        "tamanos": {
+          "nombre": "Tamaños",
+          "png": "button/tamanos.png"
+        },
+        "con-sombra": {
+          "nombre": "Con sombra",
+          "png": "button/con-sombra.png"
+        },
+        "iconos-y-estados": {
+          "nombre": "Iconos y estados",
+          "png": "button/iconos-y-estados.png"
+        },
+        "solo-icono": {
+          "nombre": "Solo icono",
+          "png": "button/solo-icono.png"
+        },
+        "al-pulsar": {
+          "nombre": "Al pulsar",
+          "png": "button/al-pulsar.png"
+        },
+        "abre-un-popup": {
+          "nombre": "Abre un popup",
+          "png": "button/abre-un-popup.png"
+        }
+      }
+    },
+    "badge": {
+      "anatomia": [
+        "sc-badge",
+        "  p-badge.p-badge.p-badge-circle.p-component"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "badge/playground.png"
+        },
+        "variantes": {
+          "nombre": "Variantes",
+          "png": "badge/variantes.png"
+        },
+        "tamanos": {
+          "nombre": "Tamaños",
+          "png": "badge/tamanos.png"
+        }
+      }
+    },
+    "breadcrumb": {
+      "anatomia": [
+        "sc-breadcrumb",
+        "  p-breadcrumb",
+        "    nav.p-breadcrumb.p-component",
+        "      ol.p-breadcrumb-list",
+        "        li.p-breadcrumb-home-item.sc-breadcrumb-item--link",
+        "          a.p-breadcrumb-item-link"
+      ],
+      "historias": {
+        "basico": {
+          "nombre": "Básico",
+          "png": "breadcrumb/basico.png"
+        },
+        "sin-inicio": {
+          "nombre": "Sin inicio",
+          "png": "breadcrumb/sin-inicio.png"
+        },
+        "pagina-raiz": {
+          "nombre": "Página raíz",
+          "png": "breadcrumb/pagina-raiz.png"
+        },
+        "dentro-de-una-barra": {
+          "nombre": "Dentro de una barra",
+          "png": "breadcrumb/dentro-de-una-barra.png"
+        }
+      }
+    },
+    "card": {
+      "anatomia": [
+        "sc-card",
+        "  p-card.p-card.p-component",
+        "    div.p-card-body",
+        "      div.p-card-title"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "card/playground.png"
+        },
+        "basica": {
+          "nombre": "Básica",
+          "png": "card/basica.png"
+        },
+        "con-icono": {
+          "nombre": "Con icono",
+          "png": "card/con-icono.png"
+        }
+      }
+    },
+    "chip": {
+      "anatomia": [
+        "sc-chip",
+        "  p-chip.p-chip.p-component",
+        "    div.p-chip-label"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "chip/playground.png"
+        },
+        "basico": {
+          "nombre": "Básico",
+          "png": "chip/basico.png"
+        },
+        "variante-label": {
+          "nombre": "Variante label",
+          "png": "chip/variante-label.png"
+        }
+      }
+    },
+    "tag": {
+      "anatomia": [
+        "sc-tag",
+        "  p-tag.p-component.p-tag.p-tag-success",
+        "    span.p-tag-label"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "tag/playground.png"
+        },
+        "severities": {
+          "nombre": "Severities",
+          "png": "tag/severities.png"
+        },
+        "variantes": {
+          "nombre": "Variantes",
+          "png": "tag/variantes.png"
+        },
+        "variante-label": {
+          "nombre": "Variante label",
+          "png": "tag/variante-label.png"
+        },
+        "label-sin-borde": {
+          "nombre": "Label sin borde",
+          "png": "tag/label-sin-borde.png"
+        }
+      }
+    },
+    "message": {
+      "anatomia": [
+        "sc-message",
+        "  p-message.p-component.p-message.p-message-enter-active.p-message-info.p-message-simple",
+        "    div.p-message-content-wrapper",
+        "      div.p-message-content",
+        "        span.p-message-text"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "message/playground.png"
+        },
+        "severities": {
+          "nombre": "Severities",
+          "png": "message/severities.png"
+        },
+        "variantes-y-tamanos": {
+          "nombre": "Variantes y tamaños",
+          "png": "message/variantes-y-tamanos.png"
+        }
+      }
+    },
+    "panel": {
+      "anatomia": [
+        "sc-panel.sc-panel",
+        "  p-panel.p-component.p-panel.sc-panel__root",
+        "    div.p-panel-header",
+        "      span.p-panel-title"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "panel/playground.png"
+        },
+        "basico": {
+          "nombre": "Básico",
+          "png": "panel/basico.png"
+        },
+        "con-acciones-en-la-cabecera": {
+          "nombre": "Con acciones en la cabecera",
+          "png": "panel/con-acciones-en-la-cabecera.png"
+        },
+        "ocupa-su-hueco": {
+          "nombre": "Ocupa su hueco",
+          "png": "panel/ocupa-su-hueco.png"
+        },
+        "con-aviso": {
+          "nombre": "Con aviso",
+          "png": "panel/con-aviso.png"
+        },
+        "cabecera-propia": {
+          "nombre": "Cabecera propia",
+          "png": "panel/cabecera-propia.png"
+        }
+      }
+    },
+    "skeleton": {
+      "anatomia": [
+        "sc-skeleton",
+        "  p-skeleton.p-component.p-skeleton"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "skeleton/playground.png"
+        },
+        "formas": {
+          "nombre": "Formas",
+          "png": "skeleton/formas.png"
+        },
+        "tabla": {
+          "nombre": "Tabla",
+          "png": "skeleton/tabla.png"
+        },
+        "lista": {
+          "nombre": "Lista",
+          "png": "skeleton/lista.png"
+        },
+        "formulario": {
+          "nombre": "Formulario",
+          "png": "skeleton/formulario.png"
+        },
+        "tarjeta": {
+          "nombre": "Tarjeta",
+          "png": "skeleton/tarjeta.png"
+        }
+      }
+    },
+    "textarea": {
+      "anatomia": [
+        "sc-textarea",
+        "  textarea.p-component.p-textarea"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "textarea/playground.png"
+        },
+        "estados": {
+          "nombre": "Estados",
+          "png": "textarea/estados.png"
+        },
+        "para-copiar": {
+          "nombre": "Para copiar",
+          "png": "textarea/para-copiar.png"
+        }
+      }
+    },
+    "drawer": {
+      "anatomia": [
+        "sc-drawer",
+        "  p-drawer"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "drawer/playground.png"
+        },
+        "acoplado": {
+          "nombre": "Acoplado",
+          "png": "drawer/acoplado.png"
+        }
+      }
+    },
+    "progressbar": {
+      "anatomia": [
+        "sc-progressbar",
+        "  p-progress-bar.p-component.p-progressbar.p-progressbar-determinate",
+        "    div.p-progressbar-value",
+        "      div.p-progressbar-label",
+        "        div"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "progressbar/playground.png"
+        },
+        "modos": {
+          "nombre": "Modos",
+          "png": "progressbar/modos.png"
+        }
+      }
+    },
+    "progressspinner": {
+      "anatomia": [
+        "sc-progressspinner",
+        "  p-progress-spinner.p-progressspinner",
+        "    svg.p-progressspinner-circle",
+        "      circle.p-progressspinner-circle-track"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "progressspinner/playground.png"
+        },
+        "por-defecto": {
+          "nombre": "Por defecto",
+          "png": "progressspinner/por-defecto.png"
+        }
+      }
+    },
+    "gauge": {
+      "anatomia": [
+        "sc-gauge",
+        "  div.sc-gauge",
+        "    svg.sc-gauge__svg",
+        "      circle.sc-gauge__track"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "gauge/playground.png"
+        },
+        "kpis": {
+          "nombre": "KPIs",
+          "png": "gauge/kpis.png"
+        },
+        "grosor-y-track": {
+          "nombre": "Grosor y track",
+          "png": "gauge/grosor-y-track.png"
+        },
+        "sobre-un-total": {
+          "nombre": "Sobre un total",
+          "png": "gauge/sobre-un-total.png"
+        }
+      }
+    },
+    "radiobutton": {
+      "anatomia": [
+        "sc-radiobutton",
+        "  p-radio-button.p-component.p-radiobutton",
+        "    input.p-radiobutton-input"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "radiobutton/playground.png"
+        },
+        "grupo": {
+          "nombre": "Grupo",
+          "png": "radiobutton/grupo.png"
+        },
+        "tamanos": {
+          "nombre": "Tamaños",
+          "png": "radiobutton/tamanos.png"
+        }
+      }
+    },
+    "avatar": {
+      "anatomia": [
+        "sc-avatar",
+        "  p-avatar.p-avatar.p-avatar-circle.p-component",
+        "    span.p-avatar-label"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "avatar/playground.png"
+        },
+        "tipos-label-icon": {
+          "nombre": "Tipos (Label / Icon)",
+          "png": "avatar/tipos-label-icon.png"
+        },
+        "tamanos": {
+          "nombre": "Tamaños",
+          "png": "avatar/tamanos.png"
+        },
+        "badge": {
+          "nombre": "Badge",
+          "png": "avatar/badge.png"
+        },
+        "grupo": {
+          "nombre": "Grupo",
+          "png": "avatar/grupo.png"
+        },
+        "fallback-de-ilustracion": {
+          "nombre": "Fallback de ilustración",
+          "png": "avatar/fallback-de-ilustracion.png"
+        },
+        "tono-de-etiqueta": {
+          "nombre": "Tono de etiqueta",
+          "png": "avatar/tono-de-etiqueta.png"
+        }
+      }
+    },
+    "toast": {
+      "anatomia": [
+        "sc-toast",
+        "  p-toast.p-component.p-toast.p-toast-bottom-right"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "toast/playground.png"
+        },
+        "disparadores": {
+          "nombre": "Disparadores",
+          "png": "toast/disparadores.png"
+        }
+      }
+    },
+    "divider": {
+      "anatomia": [
+        "sc-divider",
+        "  p-divider.p-component.p-divider.p-divider-horizontal.p-divider-left.p-divider-solid",
+        "    div.p-divider-content"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "divider/playground.png"
+        },
+        "horizontal": {
+          "nombre": "Horizontal",
+          "png": "divider/horizontal.png"
+        },
+        "vertical": {
+          "nombre": "Vertical",
+          "png": "divider/vertical.png"
+        }
+      }
+    },
+    "inputgroup": {
+      "anatomia": [
+        "sc-inputgroup.sc-inputgroup",
+        "  p-inputgroup.p-inputgroup.sc-inputgroup__inner.sc-inputgroup__inner--fluid",
+        "    p-inputgroup-addon.p-inputgroupaddon"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "inputgroup/playground.png"
+        },
+        "con-addons": {
+          "nombre": "Con addons",
+          "png": "inputgroup/con-addons.png"
+        }
+      }
+    },
+    "search": {
+      "anatomia": [
+        "sc-search.sc-search",
+        "  p-iconfield.p-iconfield.sc-search__field",
+        "    p-inputicon.p-inputicon",
+        "      sc-icon",
+        "        span.sc-icon.sc-icon--grade-0.sc-icon--inherit.sc-icon--optical-24.sc-icon--weight-400"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "search/playground.png"
+        },
+        "con-valor": {
+          "nombre": "Con valor",
+          "png": "search/con-valor.png"
+        },
+        "variantes": {
+          "nombre": "Variantes",
+          "png": "search/variantes.png"
+        }
+      }
+    },
+    "datepicker": {
+      "anatomia": [
+        "sc-datepicker.sc-datepicker",
+        "  p-datepicker.p-component.p-datepicker.p-inputwrapper.sc-datepicker__control",
+        "    input.p-component.p-datepicker-input.p-inputtext"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "datepicker/playground.png"
+        },
+        "con-valor": {
+          "nombre": "Con valor",
+          "png": "datepicker/con-valor.png"
+        },
+        "rango-con-atajos": {
+          "nombre": "Rango con atajos",
+          "png": "datepicker/rango-con-atajos.png"
+        },
+        "estados": {
+          "nombre": "Estados",
+          "png": "datepicker/estados.png"
+        },
+        "lo-que-no-se-ve-en-los-otros-ejemplos": {
+          "nombre": "Lo que no se ve en los otros ejemplos",
+          "png": "datepicker/lo-que-no-se-ve-en-los-otros-ejemplos.png"
+        }
+      }
+    },
+    "inputnumber": {
+      "anatomia": [
+        "sc-inputnumber.sc-inputnumber",
+        "  div.sc-inputnumber__field",
+        "    input.p-component.p-inputtext.sc-inputnumber__control"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "inputnumber/playground.png"
+        },
+        "estados": {
+          "nombre": "Estados",
+          "png": "inputnumber/estados.png"
+        }
+      }
+    },
+    "multiselect": {
+      "anatomia": [
+        "sc-multiselect.sc-multiselect",
+        "  div.sc-multiselect__field",
+        "    p-multiselect.p-component.p-inputwrapper.p-multiselect.sc-multiselect__control",
+        "      div.p-hidden-accessible",
+        "        input"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "multiselect/playground.png"
+        },
+        "basico": {
+          "nombre": "Básico",
+          "png": "multiselect/basico.png"
+        },
+        "estados": {
+          "nombre": "Estados",
+          "png": "multiselect/estados.png"
+        },
+        "solo-icono-columnas": {
+          "nombre": "Solo icono · columnas",
+          "png": "multiselect/solo-icono-columnas.png"
+        },
+        "lo-que-no-se-ve-en-los-otros-ejemplos": {
+          "nombre": "Lo que no se ve en los otros ejemplos",
+          "png": "multiselect/lo-que-no-se-ve-en-los-otros-ejemplos.png"
+        }
+      }
+    },
+    "grouppopover": {
+      "anatomia": [
+        "sc-group-popover",
+        "  p-popover"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "grouppopover/playground.png"
+        },
+        "pocos-y-muchos": {
+          "nombre": "Pocos y muchos",
+          "png": "grouppopover/pocos-y-muchos.png"
+        },
+        "al-pulsar-la-cifra": {
+          "nombre": "Al pulsar la cifra",
+          "png": "grouppopover/al-pulsar-la-cifra.png"
+        }
+      }
+    },
+    "columnselector": {
+      "anatomia": [
+        "sc-column-selector",
+        "  p-popover"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "columnselector/playground.png"
+        },
+        "basico": {
+          "nombre": "Básico",
+          "png": "columnselector/basico.png"
+        }
+      }
+    },
+    "confirmdialog": {
+      "anatomia": [
+        "sc-confirmdialog",
+        "  p-confirmdialog",
+        "    p-dialog"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "confirmdialog/playground.png"
+        },
+        "tonos-y-enfasis": {
+          "nombre": "Tonos y énfasis",
+          "png": "confirmdialog/tonos-y-enfasis.png"
+        }
+      }
+    },
+    "inputtext": {
+      "anatomia": [
+        "sc-inputtext.sc-inputtext",
+        "  div.sc-inputtext__field",
+        "    input.p-component.p-inputtext.sc-inputtext__control"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "inputtext/playground.png"
+        },
+        "con-valor": {
+          "nombre": "Con valor",
+          "png": "inputtext/con-valor.png"
+        },
+        "estados": {
+          "nombre": "Estados",
+          "png": "inputtext/estados.png"
+        },
+        "tamanos": {
+          "nombre": "Tamaños",
+          "png": "inputtext/tamanos.png"
+        }
+      }
+    },
+    "password": {
+      "anatomia": [
+        "sc-password.sc-password",
+        "  div.sc-password__field.sc-password__field--toggle",
+        "    input.p-component.p-inputtext.p-password.sc-password__control"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "password/playground.png"
+        },
+        "acceso": {
+          "nombre": "Acceso",
+          "png": "password/acceso.png"
+        },
+        "estados": {
+          "nombre": "Estados",
+          "png": "password/estados.png"
+        },
+        "tamanos": {
+          "nombre": "Tamaños",
+          "png": "password/tamanos.png"
+        },
+        "textos-y-eventos": {
+          "nombre": "Textos y eventos",
+          "png": "password/textos-y-eventos.png"
+        }
+      }
+    },
+    "select": {
+      "anatomia": [
+        "sc-select.sc-select",
+        "  div.sc-select__field",
+        "    p-select.p-component.p-inputwrapper.p-select.sc-select__control",
+        "      span.p-placeholder.p-select-label"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "select/playground.png"
+        },
+        "objetos-plantilla-de-opcion": {
+          "nombre": "Objetos + plantilla de opción",
+          "png": "select/objetos-plantilla-de-opcion.png"
+        },
+        "estados-y-tamanos": {
+          "nombre": "Estados y tamaños",
+          "png": "select/estados-y-tamanos.png"
+        },
+        "lo-que-no-se-ve-en-los-otros-ejemplos": {
+          "nombre": "Lo que no se ve en los otros ejemplos",
+          "png": "select/lo-que-no-se-ve-en-los-otros-ejemplos.png"
+        }
+      }
+    },
+    "selectbutton": {
+      "anatomia": [
+        "sc-selectbutton.sc-selectbutton",
+        "  p-selectbutton.p-component.p-selectbutton",
+        "    p-togglebutton.p-component.p-ripple.p-togglebutton",
+        "      span.p-togglebutton-content",
+        "        span.p-togglebutton-label"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "selectbutton/playground.png"
+        },
+        "vistas-de-una-lista": {
+          "nombre": "Vistas de una lista",
+          "png": "selectbutton/vistas-de-una-lista.png"
+        },
+        "con-icono": {
+          "nombre": "Con icono",
+          "png": "selectbutton/con-icono.png"
+        },
+        "tallas-y-estados": {
+          "nombre": "Tallas y estados",
+          "png": "selectbutton/tallas-y-estados.png"
+        },
+        "con-ayuda": {
+          "nombre": "Con ayuda",
+          "png": "selectbutton/con-ayuda.png"
+        }
+      }
+    },
+    "fileupload": {
+      "anatomia": [
+        "sc-fileupload.sc-fileupload",
+        "  p-fileupload",
+        "    div.p-component.p-fileupload.p-fileupload-advanced",
+        "      input"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "fileupload/playground.png"
+        },
+        "un-audio-guardado-en-el-campo": {
+          "nombre": "Un audio, guardado en el campo",
+          "png": "fileupload/un-audio-guardado-en-el-campo.png"
+        },
+        "varios-archivos-con-su-lista": {
+          "nombre": "Varios archivos, con su lista",
+          "png": "fileupload/varios-archivos-con-su-lista.png"
+        },
+        "validacion-y-envio": {
+          "nombre": "Validación y envío",
+          "png": "fileupload/validacion-y-envio.png"
+        },
+        "basico": {
+          "nombre": "Básico",
+          "png": "fileupload/basico.png"
+        }
+      }
+    },
+    "inputtags": {
+      "anatomia": [
+        "sc-inputtags.sc-inputtags",
+        "  p-inputtags.p-component.p-inputtags.p-inputtags-fluid.p-inputwrapper.sc-inputtags__control",
+        "    p-autocomplete.p-autocomplete.p-component.p-inputwrapper",
+        "      input.p-autocomplete-input.p-component.p-inputtags-input.p-inputtext"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "inputtags/playground.png"
+        },
+        "dominios-del-chat": {
+          "nombre": "Dominios del chat",
+          "png": "inputtags/dominios-del-chat.png"
+        },
+        "con-tope": {
+          "nombre": "Con tope",
+          "png": "inputtags/con-tope.png"
+        },
+        "con-error": {
+          "nombre": "Con error",
+          "png": "inputtags/con-error.png"
+        },
+        "deshabilitado": {
+          "nombre": "Deshabilitado",
+          "png": "inputtags/deshabilitado.png"
+        }
+      }
+    },
+    "tabs": {
+      "anatomia": [
+        "sc-tabs.sc-tabs",
+        "  p-tabs.p-component.p-tabs",
+        "    p-tablist.p-tablist",
+        "      div.p-tablist-content",
+        "        p-tab.p-ripple.p-tab.p-tab-active"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "tabs/playground.png"
+        },
+        "dos-canales": {
+          "nombre": "Dos canales",
+          "png": "tabs/dos-canales.png"
+        },
+        "con-icono-y-una-apagada": {
+          "nombre": "Con icono y una apagada",
+          "png": "tabs/con-icono-y-una-apagada.png"
+        }
+      }
+    },
+    "icontile": {
+      "anatomia": [
+        "sc-icon-tile.sc-icon-tile",
+        "  sc-icon",
+        "    span.sc-icon.sc-icon--grade-0.sc-icon--optical-24.sc-icon--weight-400"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "icontile/playground.png"
+        },
+        "tallas-y-tono": {
+          "nombre": "Tallas y tono",
+          "png": "icontile/tallas-y-tono.png"
+        }
+      }
+    },
+    "factrow": {
+      "anatomia": [],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "factrow/playground.png"
+        },
+        "una-lista-de-datos": {
+          "nombre": "Una lista de datos",
+          "png": "factrow/una-lista-de-datos.png"
+        },
+        "con-un-icono-propio": {
+          "nombre": "Con un icono propio",
+          "png": "factrow/con-un-icono-propio.png"
+        }
+      }
+    },
+    "toggleswitch": {
+      "anatomia": [
+        "sc-toggleswitch",
+        "  p-toggleswitch.p-component.p-toggleswitch",
+        "    input.p-toggleswitch-input"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "toggleswitch/playground.png"
+        },
+        "estados": {
+          "nombre": "Estados",
+          "png": "toggleswitch/estados.png"
+        }
+      }
+    },
+    "dialog": {
+      "anatomia": [
+        "sc-dialog",
+        "  p-dialog"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "dialog/playground.png"
+        },
+        "dynamic-dialog": {
+          "nombre": "Dynamic dialog",
+          "png": "dialog/dynamic-dialog.png"
+        }
+      }
+    },
+    "checkbox": {
+      "anatomia": [
+        "sc-checkbox",
+        "  label",
+        "    input"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "checkbox/playground.png"
+        },
+        "tri-estado-seleccionar-todo": {
+          "nombre": "Tri-estado (seleccionar todo)",
+          "png": "checkbox/tri-estado-seleccionar-todo.png"
+        },
+        "tamanos-y-variantes": {
+          "nombre": "Tamaños y variantes",
+          "png": "checkbox/tamanos-y-variantes.png"
+        }
+      }
+    },
+    "emptystate": {
+      "anatomia": [
+        "sc-empty-state",
+        "  div",
+        "    div",
+        "      sc-icon",
+        "        span.sc-icon.sc-icon--grade-0.sc-icon--optical-24.sc-icon--weight-400"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "emptystate/playground.png"
+        },
+        "sin-cta": {
+          "nombre": "Sin CTA",
+          "png": "emptystate/sin-cta.png"
+        },
+        "con-cta": {
+          "nombre": "Con CTA",
+          "png": "emptystate/con-cta.png"
+        },
+        "busqueda-sin-resultados": {
+          "nombre": "Búsqueda sin resultados",
+          "png": "emptystate/busqueda-sin-resultados.png"
+        }
+      }
+    },
+    "formsectionnav": {
+      "anatomia": [
+        "sc-form-section-nav",
+        "  nav",
+        "    ul",
+        "      li",
+        "        a",
+        "          span"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "formsectionnav/playground.png"
+        },
+        "default": {
+          "nombre": "Default",
+          "png": "formsectionnav/default.png"
+        },
+        "flush-panel-embebido": {
+          "nombre": "Flush (panel embebido)",
+          "png": "formsectionnav/flush-panel-embebido.png"
+        },
+        "enlaces-rotulo-y-cambios-sin-guardar": {
+          "nombre": "Enlaces, rótulo y cambios sin guardar",
+          "png": "formsectionnav/enlaces-rotulo-y-cambios-sin-guardar.png"
+        },
+        "en-un-alta-en-las-secciones-que-se-dejan-completas": {
+          "nombre": "En un alta: ✓ en las secciones que se dejan completas",
+          "png": "formsectionnav/en-un-alta-en-las-secciones-que-se-dejan-completas.png"
+        },
+        "rotulos-largos-envuelven-no-se-recortan": {
+          "nombre": "Rótulos largos (envuelven, no se recortan)",
+          "png": "formsectionnav/rotulos-largos-envuelven-no-se-recortan.png"
+        }
+      }
+    },
+    "bulkeditmenu": {
+      "anatomia": [
+        "sc-bulk-edit-menu",
+        "  div",
+        "    span",
+        "      sc-select.sc-select.sc-select--sm",
+        "        div.sc-select__field",
+        "          p-select.p-component.p-inputfield-sm.p-inputwrapper.p-select.p-select-sm.sc-select__control"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "bulkeditmenu/playground.png"
+        },
+        "editor-inline": {
+          "nombre": "Editor inline",
+          "png": "bulkeditmenu/editor-inline.png"
+        },
+        "de-un-valor-a-otro": {
+          "nombre": "De un valor a otro",
+          "png": "bulkeditmenu/de-un-valor-a-otro.png"
+        }
+      }
+    },
+    "bulkactionbar": {
+      "anatomia": [
+        "sc-bulk-action-bar",
+        "  div",
+        "    div",
+        "      span",
+        "        span"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "bulkactionbar/playground.png"
+        },
+        "con-seleccion": {
+          "nombre": "Con selección",
+          "png": "bulkactionbar/con-seleccion.png"
+        },
+        "tras-aplicar-un-cambio": {
+          "nombre": "Tras aplicar un cambio",
+          "png": "bulkactionbar/tras-aplicar-un-cambio.png"
+        }
+      }
+    },
+    "formdangerzone": {
+      "anatomia": [
+        "sc-form-danger-zone",
+        "  section",
+        "    sc-button",
+        "      p-button",
+        "        button.p-button.p-button-danger.p-button-lg.p-button-outlined.p-component.p-ripple",
+        "          sc-icon"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "formdangerzone/playground.png"
+        },
+        "basica": {
+          "nombre": "Básica",
+          "png": "formdangerzone/basica.png"
+        }
+      }
+    },
+    "stickyformheader": {
+      "anatomia": [
+        "sc-sticky-form-header",
+        "  header",
+        "    div",
+        "      sc-button",
+        "        p-button",
+        "          button.p-button.p-button-primary.p-component.p-ripple"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "stickyformheader/playground.png"
+        },
+        "edit-nombre-editable": {
+          "nombre": "Edit (nombre editable)",
+          "png": "stickyformheader/edit-nombre-editable.png"
+        },
+        "create-input-de-nombre": {
+          "nombre": "Create (input de nombre)",
+          "png": "stickyformheader/create-input-de-nombre.png"
+        }
+      }
+    },
+    "impactpreviewdialog": {
+      "anatomia": [
+        "sc-impact-preview-dialog",
+        "  sc-dialog",
+        "    p-dialog"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "impactpreviewdialog/playground.png"
+        }
+      }
+    },
+    "deleteentitydialog": {
+      "anatomia": [
+        "sc-delete-entity-dialog",
+        "  sc-dialog",
+        "    p-dialog"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "deleteentitydialog/playground.png"
+        }
+      }
+    },
+    "colordotpicker": {
+      "anatomia": [
+        "sc-color-dot-picker",
+        "  div",
+        "    button",
+        "      span"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "colordotpicker/playground.png"
+        },
+        "basico": {
+          "nombre": "Básico",
+          "png": "colordotpicker/basico.png"
+        }
+      }
+    },
+    "photoupload": {
+      "anatomia": [
+        "sc-photo-upload",
+        "  div",
+        "    button",
+        "      img"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "photoupload/playground.png"
+        },
+        "tamanos-md-64-sm-44": {
+          "nombre": "Tamaños (md 64 · sm 44)",
+          "png": "photoupload/tamanos-md-64-sm-44.png"
+        }
+      }
+    },
+    "commandpalette": {
+      "anatomia": [
+        "sc-command-palette"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "commandpalette/playground.png"
+        }
+      }
+    },
+    "keyboardshortcuts": {
+      "anatomia": [
+        "sc-keyboard-shortcuts"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "keyboardshortcuts/playground.png"
+        }
+      }
+    },
+    "inlinerenamecell": {
+      "anatomia": [
+        "sc-inline-rename-cell",
+        "  div",
+        "    input"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "inlinerenamecell/playground.png"
+        },
+        "celda-de-tabla-con-toggle": {
+          "nombre": "Celda de tabla (con toggle)",
+          "png": "inlinerenamecell/celda-de-tabla-con-toggle.png"
+        }
+      }
+    },
+    "datatable": {
+      "anatomia": [
+        "sc-datatable",
+        "  p-table.p-component.p-datatable.p-datatable-hoverable.p-datatable-striped",
+        "    div.p-datatable-header"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "datatable/playground.png"
+        },
+        "columnas-seleccion-multiple-y-paginador": {
+          "nombre": "Columnas, selección múltiple y paginador",
+          "png": "datatable/columnas-seleccion-multiple-y-paginador.png"
+        },
+        "lazy-server-driven-paginacion-orden-filtro-global": {
+          "nombre": "Lazy (server-driven): paginación + orden + filtro global",
+          "png": "datatable/lazy-server-driven-paginacion-orden-filtro-global.png"
+        },
+        "gestos-de-fila-y-columnas-conmutables": {
+          "nombre": "Gestos de fila y columnas conmutables",
+          "png": "datatable/gestos-de-fila-y-columnas-conmutables.png"
+        },
+        "variant-list-la-gramatica-de-tabla-lista": {
+          "nombre": "variant=\"list\" · la gramática de tabla-lista",
+          "png": "datatable/variant-list-la-gramatica-de-tabla-lista.png"
+        },
+        "columnas-fijas": {
+          "nombre": "Columnas fijas",
+          "png": "datatable/columnas-fijas.png"
+        }
+      }
+    },
+    "bulktranscriptionmodal": {
+      "anatomia": [
+        "sc-bulk-transcription-modal",
+        "  section.sc-bulk-modal",
+        "    header.sc-bulk-modal__header",
+        "      sc-button.sc-bulk-modal__close",
+        "        p-button",
+        "          button.p-button.p-button-icon-only.p-button-rounded.p-button-secondary.p-button-text.p-component.p-ripple"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "bulktranscriptionmodal/playground.png"
+        },
+        "hibrido-transcripcion-analisis": {
+          "nombre": "Híbrido (transcripción + análisis)",
+          "png": "bulktranscriptionmodal/hibrido-transcripcion-analisis.png"
+        }
+      }
+    },
+    "sectioncard": {
+      "anatomia": [
+        "sc-section-card",
+        "  section",
+        "    header",
+        "      sc-icon",
+        "        span.sc-icon.sc-icon--grade-0.sc-icon--inherit.sc-icon--optical-20.sc-icon--weight-600"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "sectioncard/playground.png"
+        },
+        "anidado-section-subsections-slots": {
+          "nombre": "Anidado (Section → Subsections → Slots)",
+          "png": "sectioncard/anidado-section-subsections-slots.png"
+        },
+        "plano-retrocompatible-hint": {
+          "nombre": "Plano (retrocompatible) + hint",
+          "png": "sectioncard/plano-retrocompatible-hint.png"
+        },
+        "colapsable-flush": {
+          "nombre": "Colapsable + flush",
+          "png": "sectioncard/colapsable-flush.png"
+        },
+        "sobre-el-lienzo-surface-card-titulo-de-pagina": {
+          "nombre": "Sobre el lienzo (surface=card) + título de página",
+          "png": "sectioncard/sobre-el-lienzo-surface-card-titulo-de-pagina.png"
+        }
+      }
+    },
+    "subsection": {
+      "anatomia": [
+        "sc-subsection",
+        "  div.sc-subsection",
+        "    header.sc-subsection__head",
+        "      h3.sc-subsection__title"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "subsection/playground.png"
+        },
+        "colapsable": {
+          "nombre": "Colapsable",
+          "png": "subsection/colapsable.png"
+        }
+      }
+    },
+    "slot": {
+      "anatomia": [
+        "sc-slot",
+        "  div.sc-slot__head",
+        "    h4.sc-slot__title"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "slot/playground.png"
+        },
+        "en-contexto": {
+          "nombre": "En contexto",
+          "png": "slot/en-contexto.png"
+        }
+      }
+    }
+  }
+}
