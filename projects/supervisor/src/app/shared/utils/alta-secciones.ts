@@ -18,7 +18,7 @@
  *     completa: (id) => id !== GENERAL || this.generalValid(),
  *   });
  */
-import { afterNextRender, computed, signal, type Injector, type Signal } from '@angular/core';
+import { afterNextRender, computed, effect, signal, type Injector, type Signal } from '@angular/core';
 import type { FormNavSection } from '@smartcontact-hub/components';
 
 export interface SeccionesAlta {
@@ -69,6 +69,56 @@ export function seccionesDeAlta(opts: {
     },
     anterior: () => vecina(-1),
     siguiente: () => vecina(1),
+  };
+}
+
+export interface OcasionDeAvisar {
+  /** ¿Se puede decir ya, bajo su campo y con el punto del índice, que falta `falta`, de la sección `seccion`? */
+  acusa(seccion: string, falta: string): boolean;
+}
+
+/**
+ * CUÁNDO SE DICE QUE FALTA ALGO (DD-199): cuando la persona ya tuvo ocasión de rellenarlo. Un obligatorio vacío no es
+ * un error, es algo por rellenar, y pintarlo en rojo antes de tiempo culpa a quien aún no ha podido hacer nada: el
+ * desplegable que aparece al encender «Tipificar llamadas» nacía en rojo, con su aviso y el punto en el índice.
+ *
+ * Hay ocasión cuando se deja la sección sin ello (con «Siguiente», el índice o el resumen), en el alta y al editar, o
+ * cuando lo guardado ya venía sin ello: entonces falta de verdad y se dice al abrir (DD-142). Duplicar es un alta: lo
+ * que se vacía a propósito (el nombre, la extensión) tampoco acusa. Mientras tanto lo dicen el resumen («Falta: …») y
+ * el motivo junto al botón, sin rojo. Un error de CONTENIDO (repetido, mal escrito) no espera ocasión: va en vivo.
+ *
+ * `faltas` son las claves de lo que falta AHORA. Lo guardado es lo que había la última vez que la ficha no tenía cambios
+ * (al abrirla, al guardar o al deshacer), así que no hace falta copiarlo en cada sitio que la marca como guardada.
+ */
+export function ocasionDeAvisar(opts: {
+  readonly alta: SeccionesAlta;
+  /** Se edita algo guardado: ni un alta ni un duplicado. */
+  readonly editando: () => boolean;
+  /** La sección a la vista. */
+  readonly abierta: () => string;
+  /** La ficha tiene cambios sin guardar. */
+  readonly cambios: () => boolean;
+  readonly faltas: () => Iterable<string>;
+}): OcasionDeAvisar {
+  // Se apuntan en el acto, con `effect`, y no al leerse: entre dos lecturas se puede pasar por varias secciones.
+  const faltabaGuardado = signal<ReadonlySet<string>>(new Set());
+  effect(() => {
+    if (!opts.cambios()) faltabaGuardado.set(new Set(opts.faltas()));
+  });
+  // Al editar, la sección vive en la dirección: la que deja de estar a la vista se ha dejado.
+  const dejadasAlEditar = signal<ReadonlySet<string>>(new Set());
+  let antes: string | null = null;
+  effect(() => {
+    const ahora = opts.abierta();
+    const dejada = antes;
+    if (dejada !== null && dejada !== ahora) dejadasAlEditar.update((d) => new Set(d).add(dejada));
+    antes = ahora;
+  });
+  return {
+    acusa(seccion: string, falta: string): boolean {
+      if (!opts.editando()) return opts.alta.dejadas().has(seccion);
+      return dejadasAlEditar().has(seccion) || faltabaGuardado().has(falta);
+    },
   };
 }
 

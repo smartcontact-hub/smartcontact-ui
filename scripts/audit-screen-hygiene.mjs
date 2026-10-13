@@ -4,7 +4,7 @@
  * que hasta ahora SOLO vivían en la doc (AGENTS.md §UX de pantalla). Un principio
  * que no tiene gate se pudre: esto lo convierte en un chequeo.
  *
- * Gatea SEIS cosas. La primera, la segunda y la cuarta, como TRINQUETE por conteo (el mismo patrón
+ * Gatea SIETE cosas. La primera, la segunda y la cuarta, como TRINQUETE por conteo (el mismo patrón
  * que `audit:api-era`: la lista solo puede MENGUAR, y muerde en las dos direcciones):
  *
  * 1. EMOJIS EN LA INTERFAZ. Los iconos salen de `<sc-icon>` (Material Symbols); un
@@ -44,6 +44,12 @@
  *    control (`helperText`): rótulo y control son una pieza que se lee de un vistazo, y en una rejilla los controles
  *    quedan a la misma altura. Se marca un `.field__help` escrito justo antes de un control suelto del DS. La única
  *    excepción, una lista que crece, no lleva un control suelto detrás (su ayuda va bajo el título del grupo).
+ *
+ * 7. UN OBLIGATORIO QUE ACUSA DE PRIMERAS (DD-199), sin trinquete: ninguno. Lo que falta se dice cuando la persona ya
+ *    tuvo ocasión de rellenarlo, y eso lo decide `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`). Se marca la
+ *    ficha que lo decide por su cuenta: un aviso que se enciende por el MODO (`mode() === 'edit' || …`, que en la
+ *    edición acusaba nada más encender «Tipificar llamadas») o que lee `.dejadas()` del alta sin pasar por ella. Solo
+ *    `.ts` del Supervisor; `canSave` y el resumen también miran el modo, pero no acusan, y no se marcan.
  *
  * QUÉ HACER SI SE PONE ROJO:
  *   · «nuevo incumplimiento» → arréglalo (usa `<sc-icon>` en vez del emoji; añade
@@ -199,6 +205,22 @@ export function ayudasEncima(html) {
   return [...limpio.matchAll(re)].map((m) => limpio.slice(0, m.index).split('\n').length);
 }
 
+/** El modo de una ficha en una disyunción: `mode() === 'edit' ||`, `|| this.mode() !== 'create'`… */
+const MODO_O = /mode\(\)\s*[!=]==\s*'(?:edit|create|duplicate)'\s*\|\||\|\|\s*(?:this\.)?mode\(\)\s*[!=]==/;
+/** Lo que delata un aviso: quién acusa, el error, el intento de salir, las secciones dejadas. */
+const AVISO = /\bacusa|[eE]rrors?\b|Error\(|attempted|dejadas/;
+
+/** Líneas de un `.ts` que deciden por su cuenta cuándo se dice que falta algo, sin `ocasionDeAvisar` (DD-199). */
+export function acusaDePrimeras(texto) {
+  const lineas = [];
+  sinComentariosEnSuSitio(texto, false)
+    .split('\n')
+    .forEach((linea, i) => {
+      if ((MODO_O.test(linea) && AVISO.test(linea)) || /\.dejadas\(\)/.test(linea)) lineas.push(i + 1);
+    });
+  return lineas;
+}
+
 /** Las etiquetas `<sc-select` y `<sc-multiselect` de un texto ya sin comentarios. */
 const DESPLEGABLE = /<sc-(select|multiselect)\b/g;
 
@@ -268,6 +290,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   const sinNombre = [];
   const guiones = [];
   const encima = [];
+  const dePrimeras = [];
   let desplegables = 0;
   for (const f of ficheros) {
     const src = readFileSync(f, 'utf8');
@@ -278,6 +301,9 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     if (f.startsWith('projects/supervisor/') && f.endsWith('.ts')) {
       const t = contarToasts(src);
       if (t > 0) toasts[f] = t;
+      if (!f.endsWith('.spec.ts') && !f.endsWith('/shared/utils/alta-secciones.ts')) {
+        for (const linea of acusaDePrimeras(src)) dePrimeras.push(`${f}:${linea}`);
+      }
     }
     desplegables += (sinComentariosEnSuSitio(src, f.endsWith('.html')).match(DESPLEGABLE) ?? []).length;
     for (const linea of desplegablesSinNombre(src, f.endsWith('.html'))) sinNombre.push(`${f}:${linea}`);
@@ -308,6 +334,10 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
       `${donde}: ayuda entre el rótulo y su control (DD-198).`,
       '      → pásala al `helperText` del control, que la pinta debajo y la anuncia; si es una lista que crece, bajo su título.',
     ]),
+    ...dePrimeras.map((donde) => [
+      `${donde}: decide por su cuenta cuándo acusa lo que falta (DD-199). Por el modo, acusa antes de que se pueda rellenar.`,
+      '      → `this.ocasion.acusa(seccion, falta)` con `ocasionDeAvisar` (shared/utils/alta-secciones.ts): al dejar la sección, o si lo guardado ya venía sin ello.',
+    ]),
   ];
 
   const totEmoji = Object.values(emojis).reduce((a, b) => a + b, 0);
@@ -316,14 +346,15 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     `audit:screen-hygiene — ${ficheros.length} plantilla(s): ${totEmoji} emoji astral en ` +
       `${Object.keys(emojis).length} fichero(s), ${totImg} img/iframe sin dims en ${Object.keys(imgs).length} ` +
       `(trinquetes: emoji ${Object.keys(EMOJI_PENDIENTES).length}, img ${Object.keys(IMG_PENDIENTES).length}), ` +
-      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ${guiones.length} guion(es) suelto(s), ${encima.length} ayuda(s) encima, ` +
+      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ${guiones.length} guion(es) suelto(s), ${encima.length} ayuda(s) encima, ${dePrimeras.length} aviso(s) de primeras, ` +
       `${Object.values(toasts).reduce((a, b) => a + b, 0)} toast(s) del sistema en ${Object.keys(toasts).length} fichero(s)\n`,
   );
 
   if (!problemas.length) {
     log(
       '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco, ' +
-        'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema, ningún «—» suelto y ninguna ayuda encima de su control.',
+        'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema, ningún «—» suelto, ninguna ayuda encima de su control ' +
+        'y ningún obligatorio que acuse de primeras.',
     );
     process.exit(0);
   }

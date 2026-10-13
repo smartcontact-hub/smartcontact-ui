@@ -42,6 +42,24 @@ baldosa y la fila del resumen al DS (2026-10-07, DD-186, #356, sin trampas propi
 d94e5ad8:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tipificaciones (2026-10-09, DD-187,
 #360, sin trampas propias): `git show 208019113e9b9fdad6a8c0f6c4338fcf4437260a:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-10-13 · Lo que falta se dice cuando ya hubo ocasión (DD-199)
+
+> **Sello:** worktree `lancetfish`, rama `arebury/fix-no-initial-error` sobre `main` en `c5b95584`.
+
+- **El fallo:** al encender «Tipificar llamadas» en un grupo guardado, el desplegable nacía en rojo (borde, aviso y
+  punto en General) antes de poder elegir nada. La causa, en cuatro fichas: `mode() === 'edit' || …`, que al editar
+  hacía acusar en el acto a todo obligatorio vacío. Pasaba igual al quitar canales y al duplicar un agente o un usuario.
+- **La norma** (DD-199; principio 11 de AGENTS §«UX de pantalla» y su copia en sc-docs › Patrones): acusa al dejar la
+  sección sin ello, o al abrir si lo guardado ya venía sin ello; antes, el resumen y el motivo junto al botón, sin
+  rojo. El contenido equivocado, en vivo.
+- **La pieza:** `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`), en grupo, agente, usuario y tipificación. «Lo
+  guardado» es lo que había la última vez que la ficha no tenía cambios.
+- **Que no vuelva:** regla 7 de `audit:screen-hygiene` (en `main` marcaba las 8 líneas) y
+  `sin-acusar-de-primeras.spec.ts` (3 pruebas, en rojo contra `main`). 68 e2e de las fichas, en verde en local.
+- **El pie «Atrás / Siguiente», revisado: se queda** (DD-158, «Descartado»): juntos a la izquierda, ni separados ni al
+  editar. Medido: el alta de agente ya los lleva en sus cuatro secciones (General, solo «Siguiente»; Grupos, solo
+  «Atrás»); al editar no los lleva ninguna ficha.
+
 ## ✅ 2026-10-12 · Quick-wins de la auditoría UX Agentes/Grupos + columna Nivel
 
 > **Sello:** PR #375, mergeado en main.
