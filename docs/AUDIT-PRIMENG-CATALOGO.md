@@ -36,7 +36,7 @@ Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 | Alta | **InputTags** | «Dominios permitidos» de Web Chat (campo + «Añadir» + chips). También etiquetas libres. | **Hecho**: `sc-inputtags` (wrapper Extended), en los dominios de la ficha de grupo. Sustituye a las tres piezas hechas a mano. |
 | Alta | **TreeSelect · Tree** | Las tipificaciones son un árbol de niveles. | **No**: DD-187 §5 dibuja el árbol entero en columnas por nivel (DD-174), con «+» por fila y tirador, que Tree no da; y el grupo elige una tipificación entera (un desplegable), no una hoja. TreeSelect tendría caso en sc-agent, al cerrar una conversación: se decide allí. |
 | Alta | **OrderList** | Ordenar columnas en el selector de columnas de los listados. | **No**: DD-176 §7 ya calca el ejemplo «Column Toggle» de primeng.dev (Popover, Checkbox y arrastre), que es nativo; con teclado ordenan «Subir» y «Bajar» (DD-162). OrderList añadiría una segunda lista con sus cuatro botones de mover. |
-| Media | **CommandMenu** | La paleta de comandos (Cmd+K). | Sin decidir: ver `sc-command-palette` en la sección 2. |
+| Media | **CommandMenu** | La paleta de comandos (Cmd+K). | **No** (revisado): ver `sc-command-palette` en la sección 2. |
 | Media | **Editor** | El cuerpo de las plantillas de email (hoy, texto plano). | Sin decidir: sería nuevo; se abre con la pantalla. |
 | Media | **Rating** | La valoración del chat («de una a cinco estrellas», revisión del 2026-10-06) en el agente y en los informes. | Sin decidir: sería nuevo. |
 | Media | **Timeline** | La historia de un ticket en CusCare y la de una conversación en Memory. | Sin decidir. CusCare es réplica (DD-35): allí no se toca. |
@@ -57,7 +57,7 @@ Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 | `sc-inputnumber` (sobre InputText) | InputNumber | **Mantener** (revisado, DD-195) | El motivo sigue: enteros sin formato. La unidad, los topes y las flechas ya los da, y acota al salir del campo, como `p-inputnumber` (medido en su código: `onInputBlur`, Enter y Tab). Pasarse cambiaría dos cosas a peor: la unidad entraría en el texto del número, con su color, y el valor solo llega tecla a tecla (pegar con el ratón, el dictado o un `fill` esperan a salir del campo). |
 | `sc-photo-upload` | FileUpload (basic) + Avatar | **Mantener** | Recorte e ilustración de reserva; decisión §10 del componente. El resto de subidas, `sc-fileupload` (DD-184). |
 | `sc-inline-rename-cell` | Inplace | **Mantener** (revisado, DD-195) | No es lo mismo que `sc-name-inplace` (el `p-inplace` nativo del nombre de las fichas, de reposo a edición). La celda no tiene reposo: aparece ya editando tras duplicar una fila, o en el globo de renombrar del Monitor, con confirmar y cancelar. Un `p-inplace` en la fila pelearía con el clic que abre la ficha. |
-| `sc-command-palette` | CommandMenu | **Revisar** | Mirar si CommandMenu cubre la búsqueda por grupos y los atajos antes de tocarla. |
+| `sc-command-palette` | CommandMenu | **Mantener** (revisado) | CommandMenu (22.1.0, `node_modules/primeng/types/primeng-commandmenu.d.ts`) agrupa igual que `sc-command-palette` —un `MenuItem` sin `command`, con `items`, es cabecera de grupo no plegable— y filtra igual o mejor (`filteredModel`, con su `defaultFilter` por etiqueta+`keywords` o un `filter` propio). Pero `sc-command-palette` no es solo esa lista: la mitad de su código es la paleta en sí —Cmd+K/Ctrl+K global, abrir/cerrar, backdrop, Esc, `/` que enfoca el buscador más cercano, resaltado solo con `mousemove` (medido el 2026-08-24, ver el componente)— y CommandMenu no trae nada de eso: es un widget embebido (buscador + lista), no un overlay. Migrar cambiaría el buscador y la lista por los de CommandMenu y dejaría exactamente la misma paleta alrededor, sin ganar la parte que de verdad pesa. |
 | `sc-delete-entity-dialog` | ConfirmDialog | **Mantener** | Lista de lo que se borra y su recuento; ConfirmDialog solo da un mensaje. |
 | `sc-section-card` · `sc-subsection` · `sc-slot` | Card · Fieldset · Panel | **Mantener** | El árbol del DS (DD-157) con sus fondos y medidas; ninguno de los nativos lo da. |
 | `sc-bulk-action-bar` · `sc-sticky-form-header` | Toolbar | **Mantener** | Lógica de selección y de guardado que Toolbar no tiene; la app usa Toolbar directamente donde basta. |
@@ -73,12 +73,12 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 
 | Módulo | Quién | Veredicto |
 |---|---|---|
-| Menu | supervisor (el menú de fila de Reglas, Entidades y la agenda; el «⋮» del Monitor) | Envolver o documentar en sc-docs. |
-| Listbox | supervisor, cuscare | Documentar en sc-docs. |
-| Toolbar | supervisor | Documentar. |
-| Checkbox | supervisor (el «Column Toggle», DD-176 §7), sc-docs | Revisar: el DS tiene `sc-checkbox`; dos casillas distintas en la misma app. |
+| Menu | supervisor (el menú de fila de Reglas, Entidades y la agenda; el «⋮» del Monitor) | Envolver o documentar en sc-docs — ver nota de abajo. |
+| Listbox | supervisor, cuscare | Documentar en sc-docs — ver nota de abajo. |
+| Toolbar | supervisor | Documentar — ver nota de abajo. |
+| Checkbox | supervisor (el «Column Toggle», DD-176 §7), sc-docs | **Bien directo** (revisado): el «Column Toggle» calca el ejemplo nativo de primeng.dev (DD-176 §7), que liga cada casilla a un array por `[value]` + un `ngModel` compartido. `sc-checkbox` no modela ese patrón — su `state` es `input.required<TriState>()` (none/some/all), pensado para una casilla de «todos» por columna, no para una lista de casillas binarias independientes (`projects/ui-smartcontact/src/lib/components/checkbox/sc-checkbox.component.ts`). Dos casillas con trabajos distintos, no una inconsistencia. |
 | Inplace | supervisor (`sc-name-inplace`) | Bien directo: ver sección 2. |
-| MeterGroup | supervisor (resumen de grupo) | Documentar. |
+| MeterGroup | supervisor (resumen de grupo) | Documentar — ver nota de abajo. |
 | Tooltip · AutoFocus · ScrollArea · DynamicDialog · InputGroupAddon | supervisor, sc-docs | Directivas y piezas internas de otro componente: bien directas. |
 | ToggleButton | cuscare | Réplica (DD-35): no se toca. |
 | Sidebar | supervisor (página de laboratorio) | **Se queda.** Es el menú lateral nuevo de la 22, en prueba para la versión «no se cierra nada» del sidebar (frente `supervisor-sidebar`, DD-118). |
@@ -86,6 +86,15 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 **Tabs** ya tiene wrapper (`sc-tabs`, DD-195): Plantillas, el reproductor de Memory y la página «Uso» de sc-docs lo
 usan. Solo las pestañas del Monitor siguen en `p-tabs` directo: se arrastran para ordenarse y se renombran con doble
 clic, y eso necesita sus directivas sobre cada `p-tab`.
+
+⚠️ **«Documentar en sc-docs» no tiene a dónde ir hoy.** sc-docs solo tiene página para wrappers `sc-*`
+(`component-catalog.ts` deriva el showcase de `SC_DEMO_COMPONENT_PAGES`, un registro de wrappers); no hay
+precedente de una página para un nativo SIN wrapper — ni para Menu/Listbox/Toolbar/MeterGroup ni para los que
+ya están «bien directos» (Inplace, Tooltip, Sidebar, las pestañas del Monitor). No es un hueco de estos cuatro:
+es que el showcase no tiene todavía un sitio para «esto es nativo, y así se usa aquí». Antes de escribir páginas
+nuevas hace falta decidir esa forma (¿una categoría «Nativos» en el catálogo? ¿una sola página «PrimeNG directo»
+con una sección por módulo?) — queda en `docs/handoff/supervisor-fichas.md`, no se inventa aquí sin que el
+equipo la mire.
 
 ## 4. Sin caso en el producto hoy
 
@@ -108,6 +117,8 @@ No se deciden solos: van dentro de otro componente o son ayudas de una plantilla
 ## Siguientes pasos
 
 1. **Las «Sin decidir» de la sección 1** se abren con su pantalla, no antes.
-2. **La sección 3**: documentar en sc-docs Menu, Listbox, Toolbar y MeterGroup; revisar las dos casillas.
-3. **`sc-command-palette` frente a CommandMenu** (sección 2).
+2. **La sección 3, revisado el 2026-10-12**: las dos casillas son intencionales (ver su fila). Documentar Menu,
+   Listbox, Toolbar y MeterGroup en sc-docs sigue pendiente — primero decidir DÓNDE vive un nativo sin wrapper en el
+   showcase (nota de la sección 3), que no es solo cosa de estos cuatro.
+3. **`sc-command-palette` frente a CommandMenu** (sección 2) — revisado el 2026-10-12: se mantiene.
 4. Cuando suba PrimeNG, el gate se pone rojo: rehacer esta tabla con la versión nueva.
