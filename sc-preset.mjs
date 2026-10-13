@@ -5788,6 +5788,10 @@ ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) {
 ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) > td {
     border-bottom: 0;
 }
+
+${LIST} .p-datatable-tbody > tr > :is(td, th) :is(.p-tag, button) {
+    vertical-align: middle;
+}
 `;
 var iconOnlyMultiSelectCss = () => `
 .sc-multiselect--icon-only .p-multiselect-label-container {
