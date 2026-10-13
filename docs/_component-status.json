@@ -428,7 +428,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 34,
+      "inputs": 35,
       "api": [
         "columnOrderChange",
         "columnResizeMode",
@@ -436,6 +436,7 @@
         "columns",
         "dataKey",
         "externalSort",
+        "fill",
         "filterChange",
         "filters",
         "first",
@@ -1929,7 +1930,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 38,
+      "usedInSupervisor": 39,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

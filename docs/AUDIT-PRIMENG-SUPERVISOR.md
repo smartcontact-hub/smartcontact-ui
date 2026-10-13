@@ -91,7 +91,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `disabled`, `lazy`, `scrollStrategy`, `scrollable`, `selectOnFocus`, `showNavigators`, `tabindex`
 
-### `sc-toggleswitch` · 38 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 39 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 

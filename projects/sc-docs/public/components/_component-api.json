@@ -2086,6 +2086,16 @@
           }
         },
         {
+          "nombre": "fill",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Llega al pie aunque no haga falta lista virtual: `sc-datatable--fill` nació atado 1:1 a `virtualScroll` (la ventana necesita un alto en firme), pero eso deja a una tabla corta —por debajo de las 100 filas de DD-176— con su tarjeta ajustada al contenido mientras el resto de la pantalla queda en blanco. Este input pide el mismo CSS de siempre (DD-160, sin reflow: mide `scLlegaAlPie` y lo aplica con `min`/`max-block-size`) sin forzar el gasto de la ventana virtual. (Medido 2026-10-12.)",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "resizableColumns",
           "clase": "input",
           "tipo": "boolean",
