@@ -40,11 +40,6 @@
     (cta)="onCreateClick()"
   />
 
-  <!-- Para la revisión con el equipo: la cabecera en la escalera 7 · 14 · 28 (DD-192) y, con la ventana estrecha, el
-       nombre fijo mientras la tabla desplaza de lado (DD-193). Grupos es la lista que más escondía a 1024. -->
-  <sc-nota-decision scListHeadingNote claveTitulo="decision_notes.header_ladder.title" claveTexto="decision_notes.header_ladder.body" />
-  <sc-nota-decision scListHeadingNote claveTitulo="decision_notes.narrow_name.title" claveTexto="decision_notes.narrow_name.body" />
-
   <ng-container ngProjectAs="[scListBulkActions]">
     <sc-bulk-edit-menu matchable [fields]="bulkEditFields()" [buttonLabel]="'common.edit' | translate" (match)="onBulkMatch($event)" (commit)="onBulkEditCommit($event)" />
     <!-- Por qué no se aplicó, junto al menú que lo intentó (DD-191); se va al cambiar la selección. -->

@@ -2,11 +2,7 @@
   <div class="page__inner page__inner--list">
     <!-- El título vive en el cuerpo: la miga de arriba dice DÓNDE estás y esta línea dice QUÉ miras
          (DD-33). Uno por documento. -->
-    <!-- Junto al título, lo que la página quiera decir de sí misma (una nota de decisión, `scListHeadingNote`). -->
-    <div class="page__heading-row">
-      <h1 class="page__heading sc-text-title-semibold">{{ heading() }}</h1>
-      <ng-content select="[scListHeadingNote]" />
-    </div>
+    <h1 class="page__heading sc-text-title-semibold">{{ heading() }}</h1>
 
     <ng-content select="[scListBeforeToolbar]" />
 
@@ -249,7 +245,5 @@
     @if (selectedIds().size > 0) {
       <ng-content select="[scListBulkActions]" />
     }
-    <!-- Para la revisión con el equipo: por qué el resultado va aquí y no en un toast. -->
-    <sc-nota-decision ngProjectAs="[scBulkResult]" claveTitulo="decision_notes.bulk_undo.title" claveTexto="decision_notes.bulk_undo.body" />
   </sc-bulk-action-bar>
 }

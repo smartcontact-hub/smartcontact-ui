@@ -42,7 +42,6 @@ import {
   ScSearchComponent,
 } from '@smartcontact-hub/components';
 import { LlegaAlPieDirective } from '@core/directives';
-import { NotaDecisionComponent } from '../nota-decision/nota-decision.component';
 import { ResultadoAccionService, UndoStackService } from '@core/services';
 import { escapeSearch } from '@core/utils/escape-search';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -140,7 +139,6 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
     CheckboxModule,
     FormsModule,
     MenuModule,
-    NotaDecisionComponent,
     PopoverModule,
     ScBulkActionBarComponent,
     ScButtonComponent,

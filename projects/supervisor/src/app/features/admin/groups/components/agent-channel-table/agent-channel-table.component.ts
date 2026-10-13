@@ -37,7 +37,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
 import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
 
-import { NotaDecisionComponent, PresenceAvatarComponent, ScLinkButtonComponent } from '@shared/components';
+import { PresenceAvatarComponent, ScLinkButtonComponent } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -121,7 +121,6 @@ export function columnsRem(
     InputNumberComponent,
     PopoverModule,
     PresenceAvatarComponent,
-    NotaDecisionComponent,
     SearchComponent,
     ScLinkButtonComponent,
     TagComponent,

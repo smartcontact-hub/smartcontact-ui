@@ -16,7 +16,7 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
-import { CeldaVaciaComponent, ChannelIconComponent, type LabelColor, ListPageComponent, NotaDecisionComponent, PresenceAvatarComponent } from '@shared/components';
+import { CeldaVaciaComponent, ChannelIconComponent, type LabelColor, ListPageComponent, PresenceAvatarComponent } from '@shared/components';
 import {
   useBulkEntityI18n,
   BulkEditCommit,
@@ -76,7 +76,6 @@ const EXTENSION_ICONS: Readonly<Record<ExtensionType, string>> = {
   imports: [
     CeldaVaciaComponent,
     BulkEditMenuComponent,
-    NotaDecisionComponent,
     ButtonComponent,
     TagComponent,
     DeleteEntityDialogComponent,

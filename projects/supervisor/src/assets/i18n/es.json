@@ -2688,40 +2688,5 @@
       "anchor_aria": "Anclar el menú desplegado",
       "unanchor_aria": "Soltar el menú"
     }
-  },
-  "decision_notes": {
-    "label": "Nota para el equipo",
-    "bulk_undo": {
-      "title": "¿El «Deshacer» en la barra o en un aviso flotante?",
-      "body": "Tras un cambio en lote salía un aviso abajo a la derecha: tapaba la última fila, decía «1 elementos actualizados» y se iba a los 8 segundos. Ahora la barra donde se aplicó el cambio se queda con el resultado y su «Deshacer» hasta cerrarla o volver a marcar una fila. Propuesta: la barra. El aviso flotante queda para lo que manda el sistema y para lo que se quita del inicio, que no deja sitio donde contarlo."
-    },
-    "pin": {
-      "title": "¿PIN solo con extensión Teléfono?",
-      "body": "Producto pidió quitar el PIN. Sirve para que el agente se active desde el teléfono, así que aquí solo sale con la extensión en el teléfono. A decidir: quitarlo del todo o dejarlo así."
-    },
-    "state_filter": {
-      "title": "¿Filtrar por estado en este listado?",
-      "body": "Salió en la revisión de agentes. Propuesta: no. El estado cambia en tiempo real y filtrar por él es tarea del Monitor; Administración es configuración. En la tabla de agentes de cada grupo ya se filtra por estado, y el buscador de aquí encuentra «Disponible»."
-    },
-    "presence_ring": {
-      "title": "¿Punto o aro para el estado?",
-      "body": "El estado va en un punto sobre la foto. Medía 16 px en una foto de 24: dos tercios de la foto, la tapaba. Ahora es proporcional, un 30 % de la foto (8 px) con su borde blanco. La otra opción es un aro de color alrededor de la foto, que no tapa nada pero solo dice el estado por el color. Propuesta: el punto proporcional. Solo sale donde el estado sirve para decidir (aquí), no en el listado de Administración."
-    },
-    "empty_cells": {
-      "title": "¿Celdas vacías con «—» o en blanco?",
-      "body": "GitHub (Primer) las deja en blanco porque el lector de pantalla lee el guion. En una tabla con tantas columnas, una celda en blanco parece que no ha cargado. Propuesta: «—» en gris, y el lector oye «Sin dato» (o «No aplica» cuando el grupo no tiene ese canal). Si el vacío significa algo, se escribe: «Nunca», «Sin asignar», o «0» si es una cifra."
-    },
-    "header_ladder": {
-      "title": "¿Cuánto aire entre la barra, el título y la tabla?",
-      "body": "Cada pantalla ponía su propio margen arriba (entre 17,5 y 24,5 px), y el buscador quedaba casi tan cerca del título (14 px) como de la tabla (12). Ahora la cabecera sigue la escalera de 7, 14 y 28 px: de la barra al título 28, del título a lo suyo 14 y del buscador a su tabla 7. Cada nivel se separa el doble que el de dentro, y así se ve qué va con qué. Propuesta: la escalera, en todas las pantallas. A 1440 × 900 ninguna lista pierde filas."
-    },
-    "narrow_name": {
-      "title": "¿Qué hace la lista con la ventana estrecha?",
-      "body": "A 900 o 1024 px de ancho, la columna Nombre se encogía hasta 32 px y en Agentes se leía «No» y media foto. Ahora la tabla se desplaza de lado y el nombre se queda fijo a la izquierda, con una sombra que avisa de lo que queda por ver. Propuesta: el nombre fijo. La otra opción es esconder columnas según el ancho, como propone GitHub (Primer), pero decidir cuál sobra es de producto, y el botón Columnas ya deja quitarlas."
-    },
-    "help_below": {
-      "title": "¿La ayuda de un campo, encima o debajo?",
-      "body": "Aquí la ayuda iba entre el rótulo y las opciones, y en el resto de campos va debajo. Ahora va siempre debajo, como en GitHub (Primer): el rótulo y sus opciones se leen de un vistazo y, en dos columnas, las opciones de cada campo quedan a la misma altura. Lo que abre la opción elegida (el archivo o el texto) sale después, y la ayuda no se mueve. En el script de Web Chat, igual, y el botón de copiar va dentro del campo, solo con su icono. Ponerla encima, como GOV.UK, sirve para formularios que se rellenan una sola vez; esta ficha se vuelve a repasar. Propuesta: debajo."
-    }
   }
 }

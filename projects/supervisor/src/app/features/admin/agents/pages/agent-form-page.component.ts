@@ -23,7 +23,6 @@ import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import {
   AltaPieComponent,
   NameInplaceComponent,
-  NotaDecisionComponent,
   ResourceRowsComponent,
   SummaryKpiComponent,
   SummaryStatusComponent,
@@ -177,7 +176,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     LowerCasePipe,
     ButtonComponent,
     NameInplaceComponent,
-    NotaDecisionComponent,
     SummaryKpiComponent,
     SummaryStatusComponent,
     AltaPieComponent,

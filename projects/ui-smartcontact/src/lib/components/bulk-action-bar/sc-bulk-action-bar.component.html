@@ -6,8 +6,6 @@
       @if (resultUndoable()) {
       <sc-button type="button" size="sm" variant="secondary" appearance="outlined" [label]="'sc.bulkActionBar.undo' | translate" (clicked)="undo.emit()" />
       }
-      <!-- Lo que acompaña al resultado, junto a su «Deshacer» (una nota para el equipo, p. ej.). -->
-      <ng-content select="[scBulkResult]" />
       <button type="button" class="bulk-bar__clear" (click)="clear.emit()" [attr.aria-label]="'sc.bulkActionBar.closeResult' | translate">
         <sc-icon [name]="closeIcon" size="inherit" />
       </button>

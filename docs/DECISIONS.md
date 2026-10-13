@@ -221,9 +221,8 @@ dice qué copia: lo que hay justo debajo del icono.
 
 **Consecuencias** · Lo miden `e2e/supervisor/ayuda-debajo.spec.ts` (orden, rejilla alineada, la ayuda quieta al cambiar
 de opción, copiar dentro) y `components.spec.ts` (las historias «Con ayuda» del segmentado y «Para copiar» del área de
-texto). `ayudas-campos.spec.ts` cuenta también la ayuda del segmentado. Para revisarlo con el equipo, una nota de
-decisión en el rótulo de «Identificador del grupo» (`decision_notes.help_below`); se quita cuando el equipo lo dé por
-bueno.
+texto). `ayudas-campos.spec.ts` cuenta también la ayuda del segmentado. El equipo lo dio por bueno el 2026-10-13 y
+su nota de decisión se quitó.
 
 ---
 
@@ -253,8 +252,8 @@ porqué al lector le da más que el guion a la vista: «No aplica» no es lo mis
 
 **Consecuencias** · `audit:screen-hygiene` gana la regla 5 (`guionesSueltos`, con sus pruebas): en `main` cazaba los
 14. `common.empty_cell` y `common.not_applicable`, en los cuatro idiomas. `listado-grupos.spec.ts` espera «—» y su
-texto para el lector. Para revisarlo con el equipo, una nota de decisión junto al título de Agentes
-(`decision_notes.empty_cells`); se quita cuando el equipo lo dé por bueno.
+texto para el lector. El equipo lo dio por bueno el 2026-10-13 y su nota de decisión se
+quitó.
 
 ---
 
@@ -287,9 +286,9 @@ y aplicó el cambio, y ya tiene su sitio reservado bajo la tabla. Sin plazo, «D
 
 **Consecuencias** · Lo prueba `e2e/supervisor/lote-resultado-en-la-barra.spec.ts` (rojo con el build de antes en sus
 tres casos), y `components.spec.ts` la historia «Tras aplicar un cambio» de sc-docs. `common.bulk_updated` pasa a
-`common.bulk_applied` en los cuatro idiomas. DD-191 queda cumplida también en este caso. Para revisarlo con el
-equipo, una nota de decisión junto al «Deshacer» (`decision_notes.bulk_undo`, hueco `[scBulkResult]` de la barra);
-se quita cuando el equipo lo dé por bueno.
+`common.bulk_applied` en los cuatro idiomas. DD-191 queda cumplida también en este caso. El equipo lo dio por
+bueno el 2026-10-13: su nota de decisión se quitó, y con ella el hueco `[scBulkResult]` de la barra, que solo la llevaba
+a ella.
 
 ---
 
@@ -413,8 +412,8 @@ pasar el ratón y al marcarla.
 
 **Consecuencias** · Lo mide `e2e/supervisor/listas-nombre-fijo.spec.ts` (rojo con el build de antes en los seis
 casos estrechos) y `components.spec.ts` comprueba en la demo del DS que casilla y nombre no se pisan al desplazar.
-Primer pinta esa celda como `<th scope="row">`: hecho en DD-194. Para revisarlo con el equipo, una nota de decisión
-junto al título de Grupos (`decision_notes.narrow_name`); se quita cuando el equipo lo dé por bueno.
+Primer pinta esa celda como `<th scope="row">`: hecho en DD-194. El equipo lo dio por bueno el 2026-10-13 y su nota
+de decisión se quitó.
 
 ---
 
@@ -447,8 +446,8 @@ enseña 9 filas de su tabla en vez de 10.
 
 **Consecuencias** · Lo mide `e2e/supervisor/cabecera-escalera.spec.ts` (rojo con las cifras de antes en los 18 casos).
 `page-anatomy`, `ficha-grupo` y `listados-ordenar-columnas` pasan a 28 y a 7. La maqueta de Contact Center pone 22,75
-arriba: ficha 41 de `docs/figma-pendiente.md`. Escrito en «UX de pantalla» 9. Para revisarlo con el equipo, una nota
-de decisión junto al título de Grupos (`decision_notes.header_ladder`); se quita cuando el equipo lo dé por bueno.
+arriba: ficha 41 de `docs/figma-pendiente.md`. Escrito en «UX de pantalla» 9. El equipo lo dio por bueno el 2026-10-13
+y su nota de decisión se quitó.
 
 ---
 
@@ -632,7 +631,9 @@ grupos por canal, y su editor solo enseñaba la rama elegida.
 8. **El punto de estado**, proporcional (30 % de la foto, 8 px mínimo, con su borde) y solo donde el estado ayuda a
    decidir (la tabla de agentes del grupo); fuera del listado de Administración. Enmienda DD-185.
 9. **Notas de decisión** (`sc-nota-decision`): una tarjeta morada junto a lo que el equipo tiene que decidir (el PIN,
-   filtrar por estado en el listado, punto o aro). Se borran al decidir.
+   filtrar por estado en el listado, punto o aro). Se borran al decidir. **Retiradas el 2026-10-13**, las ocho a la
+   vez, con el componente: el equipo dio por resuelto lo que preguntaban, y queda lo que ya estaba construido (el PIN
+   solo con la extensión en el teléfono, sin filtro de estado en el listado y el punto proporcional).
 10. **Tipografía en la rampa** (barrido medido): el título de `sc-dialog` a 24 de interlineado (era 25,2), la ayuda bajo
     los campos del DS y el error de campo a 18 (17,4 y 15), el título de `sc-section-card` sin espaciado propio, el
     árbol de tipificaciones a la talla de la ficha (14) y las etiquetas del editor de equipos como las de las
