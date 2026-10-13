@@ -37,12 +37,12 @@
     display: inline-flex;
   }
 
-  &__no-results {
-    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
-    text-align: center;
-    color: var(--sc-text-subtle);
+  /* El stepper de Nivel: un entero 1-10, no la lista de 10 opciones de antes (auditoría UX, 2026-10) — ancho fijo y
+   * centrado en su celda, no `width: 100%` del campo de formulario normal. */
+  &__level-input {
+    width: 4.5rem;
+    margin-inline: auto;
   }
-
 }
 
 /* En el panel, 7 entre controles y 14 antes de la tabla. El buscador puede ceder ancho
