@@ -61,6 +61,12 @@ const PATRONES = [
   // con «nada»: suelto salió en un texto del propio agente pegado de vuelta.
   /\bno me gusta\b/i,
   /\bno se parece (?:en )?nada\b/i,
+  // Lo que pidió y no se construyó, y el criterio rebatido (2026-10-13: «No me lo has hecho en local… y me has
+  // mezclado fuentes», «pero no tiene sentido poner… algunas con icono y otras sin»). En el historial de prompts
+  // (leído ese día), los dos «no tiene sentido» eran quejas de un trabajo ya hecho.
+  /\bno me (?:lo )?has hecho\b/i,
+  /\bme has mezclado\b/i,
+  /\bno tiene sentido\b/i,
 ];
 
 // Cierre = el verbo ABRE la frase y no lleva más objeto que la sesión. «cerramos el ticket en
